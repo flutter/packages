@@ -71,15 +71,19 @@ final class ImageReaderRotatedPreview extends StatefulWidget {
   State<StatefulWidget> createState() => _ImageReaderRotatedPreviewState();
 }
 
-final class _ImageReaderRotatedPreviewState extends State<ImageReaderRotatedPreview> {
+final class _ImageReaderRotatedPreviewState
+    extends State<ImageReaderRotatedPreview> {
   late DeviceOrientation deviceOrientation;
   late Future<int> defaultDisplayRotationDegrees;
   late StreamSubscription<DeviceOrientation> deviceOrientationSubscription;
 
   Future<int> _getCurrentDefaultDisplayRotationDegrees() async {
-    final int currentDefaultDisplayRotationQuarterTurns = await widget.deviceOrientationManager
+    final int currentDefaultDisplayRotationQuarterTurns = await widget
+        .deviceOrientationManager
         .getDefaultDisplayRotation();
-    return getQuarterTurnsFromSurfaceRotationConstant(currentDefaultDisplayRotationQuarterTurns) *
+    return getQuarterTurnsFromSurfaceRotationConstant(
+          currentDefaultDisplayRotationQuarterTurns,
+        ) *
         90;
   }
 
@@ -87,9 +91,14 @@ final class _ImageReaderRotatedPreviewState extends State<ImageReaderRotatedPrev
   void initState() {
     deviceOrientation = widget.initialDeviceOrientation;
     defaultDisplayRotationDegrees = Future<int>.value(
-      getQuarterTurnsFromSurfaceRotationConstant(widget.initialDefaultDisplayRotation) * 90,
+      getQuarterTurnsFromSurfaceRotationConstant(
+            widget.initialDefaultDisplayRotation,
+          ) *
+          90,
     );
-    deviceOrientationSubscription = widget.deviceOrientation.listen((DeviceOrientation event) {
+    deviceOrientationSubscription = widget.deviceOrientation.listen((
+      DeviceOrientation event,
+    ) {
       // Ensure that we aren't updating the state if the widget is being destroyed.
       if (!mounted) {
         return;
@@ -97,7 +106,8 @@ final class _ImageReaderRotatedPreviewState extends State<ImageReaderRotatedPrev
 
       setState(() {
         deviceOrientation = event;
-        defaultDisplayRotationDegrees = _getCurrentDefaultDisplayRotationDegrees();
+        defaultDisplayRotationDegrees =
+            _getCurrentDefaultDisplayRotationDegrees();
       });
     });
     super.initState();
@@ -112,13 +122,17 @@ final class _ImageReaderRotatedPreviewState extends State<ImageReaderRotatedPrev
     // Rotate the camera preview according to
     // https://developer.android.com/media/camera/camera2/camera-preview#orientation_calculation.
     double rotationDegrees =
-        (sensorOrientationDegrees - currentDefaultDisplayRotationDegrees * sign + 360) % 360;
+        (sensorOrientationDegrees -
+            currentDefaultDisplayRotationDegrees * sign +
+            360) %
+        360;
 
     // Then, subtract the rotation already applied in the CameraPreview widget
     // (see camera/camera/lib/src/camera_preview.dart) that is not correct
     // for this plugin.
     final double extraRotationDegrees =
-        getPreAppliedQuarterTurnsRotationFromDeviceOrientation(orientation) * 90;
+        getPreAppliedQuarterTurnsRotationFromDeviceOrientation(orientation) *
+        90;
     rotationDegrees -= extraRotationDegrees;
 
     return rotationDegrees;
@@ -157,7 +171,10 @@ final class _ImageReaderRotatedPreviewState extends State<ImageReaderRotatedPrev
             }
           }
 
-          return RotatedBox(quarterTurns: rotationDegrees ~/ 90, child: cameraPreview);
+          return RotatedBox(
+            quarterTurns: rotationDegrees ~/ 90,
+            child: cameraPreview,
+          );
         } else {
           return const SizedBox.shrink();
         }

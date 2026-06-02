@@ -20,11 +20,14 @@ void main() {
 
   test('Cannot be implemented with `implements`', () {
     when(
-      (WebViewPlatform.instance! as MockWebViewPlatform).createPlatformWebViewController(any),
+      (WebViewPlatform.instance! as MockWebViewPlatform)
+          .createPlatformWebViewController(any),
     ).thenReturn(ImplementsPlatformWebViewController());
 
     expect(() {
-      PlatformWebViewController(const PlatformWebViewControllerCreationParams());
+      PlatformWebViewController(
+        const PlatformWebViewControllerCreationParams(),
+      );
       // In versions of `package:plugin_platform_interface` prior to fixing
       // https://github.com/flutter/flutter/issues/109339, an attempt to
       // implement a platform interface using `implements` would sometimes throw
@@ -38,7 +41,8 @@ void main() {
   test('Can be extended', () {
     const params = PlatformWebViewControllerCreationParams();
     when(
-      (WebViewPlatform.instance! as MockWebViewPlatform).createPlatformWebViewController(any),
+      (WebViewPlatform.instance! as MockWebViewPlatform)
+          .createPlatformWebViewController(any),
     ).thenReturn(ExtendsPlatformWebViewController(params));
 
     expect(PlatformWebViewController(params), isNotNull);
@@ -46,19 +50,29 @@ void main() {
 
   test('Can be mocked with `implements`', () {
     when(
-      (WebViewPlatform.instance! as MockWebViewPlatform).createPlatformWebViewController(any),
+      (WebViewPlatform.instance! as MockWebViewPlatform)
+          .createPlatformWebViewController(any),
     ).thenReturn(MockWebViewControllerDelegate());
 
-    expect(PlatformWebViewController(const PlatformWebViewControllerCreationParams()), isNotNull);
-  });
-
-  test('Default implementation of loadFile should throw unimplemented error', () {
-    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-      const PlatformWebViewControllerCreationParams(),
+    expect(
+      PlatformWebViewController(
+        const PlatformWebViewControllerCreationParams(),
+      ),
+      isNotNull,
     );
-
-    expect(() => controller.loadFile(''), throwsUnimplementedError);
   });
+
+  test(
+    'Default implementation of loadFile should throw unimplemented error',
+    () {
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
+
+      expect(() => controller.loadFile(''), throwsUnimplementedError);
+    },
+  );
 
   test('loadFileWithParams redirects to loadFile with correct path', () async {
     final controller = LoadFileSpyPlatformWebViewController(
@@ -73,280 +87,423 @@ void main() {
     expect(controller.loadFilePath, equals(testPath));
   });
 
-  test('Default implementation of loadFlutterAsset should throw unimplemented error', () {
-    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
+  test(
+    'Default implementation of loadFlutterAsset should throw unimplemented error',
+    () {
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
-    expect(() => controller.loadFlutterAsset(''), throwsUnimplementedError);
-  });
+      expect(() => controller.loadFlutterAsset(''), throwsUnimplementedError);
+    },
+  );
 
-  test('Default implementation of loadHtmlString should throw unimplemented error', () {
-    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
+  test(
+    'Default implementation of loadHtmlString should throw unimplemented error',
+    () {
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
-    expect(() => controller.loadHtmlString(''), throwsUnimplementedError);
-  });
+      expect(() => controller.loadHtmlString(''), throwsUnimplementedError);
+    },
+  );
 
-  test('Default implementation of loadRequest should throw unimplemented error', () {
-    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
+  test(
+    'Default implementation of loadRequest should throw unimplemented error',
+    () {
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
-    expect(() => controller.loadRequest(MockLoadRequestParamsDelegate()), throwsUnimplementedError);
-  });
+      expect(
+        () => controller.loadRequest(MockLoadRequestParamsDelegate()),
+        throwsUnimplementedError,
+      );
+    },
+  );
 
-  test('Default implementation of currentUrl should throw unimplemented error', () {
-    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
+  test(
+    'Default implementation of currentUrl should throw unimplemented error',
+    () {
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
-    expect(() => controller.currentUrl(), throwsUnimplementedError);
-  });
+      expect(() => controller.currentUrl(), throwsUnimplementedError);
+    },
+  );
 
-  test('Default implementation of canGoBack should throw unimplemented error', () {
-    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
+  test(
+    'Default implementation of canGoBack should throw unimplemented error',
+    () {
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
-    expect(() => controller.canGoBack(), throwsUnimplementedError);
-  });
+      expect(() => controller.canGoBack(), throwsUnimplementedError);
+    },
+  );
 
-  test('Default implementation of canGoForward should throw unimplemented error', () {
-    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
+  test(
+    'Default implementation of canGoForward should throw unimplemented error',
+    () {
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
-    expect(() => controller.canGoForward(), throwsUnimplementedError);
-  });
+      expect(() => controller.canGoForward(), throwsUnimplementedError);
+    },
+  );
 
   test('Default implementation of goBack should throw unimplemented error', () {
-    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
+    final PlatformWebViewController controller =
+        ExtendsPlatformWebViewController(
+          const PlatformWebViewControllerCreationParams(),
+        );
 
     expect(() => controller.goBack(), throwsUnimplementedError);
   });
 
-  test('Default implementation of goForward should throw unimplemented error', () {
-    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
+  test(
+    'Default implementation of goForward should throw unimplemented error',
+    () {
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
-    expect(() => controller.goForward(), throwsUnimplementedError);
-  });
+      expect(() => controller.goForward(), throwsUnimplementedError);
+    },
+  );
 
   test('Default implementation of reload should throw unimplemented error', () {
-    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
+    final PlatformWebViewController controller =
+        ExtendsPlatformWebViewController(
+          const PlatformWebViewControllerCreationParams(),
+        );
 
     expect(() => controller.reload(), throwsUnimplementedError);
   });
 
-  test('Default implementation of clearCache should throw unimplemented error', () {
-    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
+  test(
+    'Default implementation of clearCache should throw unimplemented error',
+    () {
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
-    expect(() => controller.clearCache(), throwsUnimplementedError);
-  });
+      expect(() => controller.clearCache(), throwsUnimplementedError);
+    },
+  );
 
-  test('Default implementation of clearLocalStorage should throw unimplemented error', () {
-    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
+  test(
+    'Default implementation of clearLocalStorage should throw unimplemented error',
+    () {
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
-    expect(() => controller.clearLocalStorage(), throwsUnimplementedError);
-  });
+      expect(() => controller.clearLocalStorage(), throwsUnimplementedError);
+    },
+  );
 
-  test('Default implementation of the setNavigationCallback should throw unimplemented error', () {
-    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
+  test(
+    'Default implementation of the setNavigationCallback should throw unimplemented error',
+    () {
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
-    expect(
-      () => controller.setPlatformNavigationDelegate(MockNavigationDelegate()),
-      throwsUnimplementedError,
-    );
-  });
+      expect(
+        () =>
+            controller.setPlatformNavigationDelegate(MockNavigationDelegate()),
+        throwsUnimplementedError,
+      );
+    },
+  );
 
-  test('Default implementation of runJavaScript should throw unimplemented error', () {
-    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
+  test(
+    'Default implementation of runJavaScript should throw unimplemented error',
+    () {
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
-    expect(() => controller.runJavaScript('javaScript'), throwsUnimplementedError);
-  });
+      expect(
+        () => controller.runJavaScript('javaScript'),
+        throwsUnimplementedError,
+      );
+    },
+  );
 
   test(
     'Default implementation of runJavaScriptReturningResult should throw unimplemented error',
     () {
-      final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-        const PlatformWebViewControllerCreationParams(),
-      );
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
-      expect(() => controller.runJavaScriptReturningResult('javaScript'), throwsUnimplementedError);
+      expect(
+        () => controller.runJavaScriptReturningResult('javaScript'),
+        throwsUnimplementedError,
+      );
     },
   );
 
-  test('Default implementation of addJavaScriptChannel should throw unimplemented error', () {
-    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
+  test(
+    'Default implementation of addJavaScriptChannel should throw unimplemented error',
+    () {
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
-    expect(
-      () => controller.addJavaScriptChannel(
-        JavaScriptChannelParams(name: 'test', onMessageReceived: (_) {}),
-      ),
-      throwsUnimplementedError,
-    );
-  });
+      expect(
+        () => controller.addJavaScriptChannel(
+          JavaScriptChannelParams(name: 'test', onMessageReceived: (_) {}),
+        ),
+        throwsUnimplementedError,
+      );
+    },
+  );
 
-  test('Default implementation of removeJavaScriptChannel should throw unimplemented error', () {
-    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
+  test(
+    'Default implementation of removeJavaScriptChannel should throw unimplemented error',
+    () {
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
-    expect(() => controller.removeJavaScriptChannel('test'), throwsUnimplementedError);
-  });
+      expect(
+        () => controller.removeJavaScriptChannel('test'),
+        throwsUnimplementedError,
+      );
+    },
+  );
 
-  test('Default implementation of getTitle should throw unimplemented error', () {
-    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
+  test(
+    'Default implementation of getTitle should throw unimplemented error',
+    () {
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
-    expect(() => controller.getTitle(), throwsUnimplementedError);
-  });
+      expect(() => controller.getTitle(), throwsUnimplementedError);
+    },
+  );
 
-  test('Default implementation of scrollTo should throw unimplemented error', () {
-    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
+  test(
+    'Default implementation of scrollTo should throw unimplemented error',
+    () {
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
-    expect(() => controller.scrollTo(0, 0), throwsUnimplementedError);
-  });
+      expect(() => controller.scrollTo(0, 0), throwsUnimplementedError);
+    },
+  );
 
-  test('Default implementation of scrollBy should throw unimplemented error', () {
-    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
+  test(
+    'Default implementation of scrollBy should throw unimplemented error',
+    () {
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
-    expect(() => controller.scrollBy(0, 0), throwsUnimplementedError);
-  });
+      expect(() => controller.scrollBy(0, 0), throwsUnimplementedError);
+    },
+  );
 
   test(
     'Default implementation of setVerticalScrollBarEnabled should throw unimplemented error',
     () {
-      final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-        const PlatformWebViewControllerCreationParams(),
-      );
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
-      expect(() => controller.setVerticalScrollBarEnabled(false), throwsUnimplementedError);
+      expect(
+        () => controller.setVerticalScrollBarEnabled(false),
+        throwsUnimplementedError,
+      );
     },
   );
 
   test(
     'Default implementation of setHorizontalScrollBarEnabled should throw unimplemented error',
     () {
-      final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-        const PlatformWebViewControllerCreationParams(),
-      );
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
-      expect(() => controller.setHorizontalScrollBarEnabled(false), throwsUnimplementedError);
+      expect(
+        () => controller.setHorizontalScrollBarEnabled(false),
+        throwsUnimplementedError,
+      );
     },
   );
 
-  test('Default implementation of supportsSetScrollBarsEnabled returns false', () {
-    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
+  test(
+    'Default implementation of supportsSetScrollBarsEnabled returns false',
+    () {
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
-    expect(controller.supportsSetScrollBarsEnabled(), isFalse);
-  });
+      expect(controller.supportsSetScrollBarsEnabled(), isFalse);
+    },
+  );
 
-  test('Default implementation of getScrollPosition should throw unimplemented error', () {
-    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
+  test(
+    'Default implementation of getScrollPosition should throw unimplemented error',
+    () {
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
-    expect(() => controller.getScrollPosition(), throwsUnimplementedError);
-  });
+      expect(() => controller.getScrollPosition(), throwsUnimplementedError);
+    },
+  );
 
-  test('Default implementation of enableZoom should throw unimplemented error', () {
-    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
+  test(
+    'Default implementation of enableZoom should throw unimplemented error',
+    () {
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
-    expect(() => controller.enableZoom(true), throwsUnimplementedError);
-  });
+      expect(() => controller.enableZoom(true), throwsUnimplementedError);
+    },
+  );
 
-  test('Default implementation of setBackgroundColor should throw unimplemented error', () {
-    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
+  test(
+    'Default implementation of setBackgroundColor should throw unimplemented error',
+    () {
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
-    expect(() => controller.setBackgroundColor(Colors.blue), throwsUnimplementedError);
-  });
+      expect(
+        () => controller.setBackgroundColor(Colors.blue),
+        throwsUnimplementedError,
+      );
+    },
+  );
 
-  test('Default implementation of setJavaScriptMode should throw unimplemented error', () {
-    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
+  test(
+    'Default implementation of setJavaScriptMode should throw unimplemented error',
+    () {
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
-    expect(() => controller.setJavaScriptMode(JavaScriptMode.disabled), throwsUnimplementedError);
-  });
+      expect(
+        () => controller.setJavaScriptMode(JavaScriptMode.disabled),
+        throwsUnimplementedError,
+      );
+    },
+  );
 
-  test('Default implementation of setUserAgent should throw unimplemented error', () {
-    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
+  test(
+    'Default implementation of setUserAgent should throw unimplemented error',
+    () {
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
-    expect(() => controller.setUserAgent(null), throwsUnimplementedError);
-  });
+      expect(() => controller.setUserAgent(null), throwsUnimplementedError);
+    },
+  );
 
-  test('Default implementation of setOnPermissionRequest should throw unimplemented error', () {
-    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
+  test(
+    'Default implementation of setOnPermissionRequest should throw unimplemented error',
+    () {
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
-    expect(() => controller.setOnPlatformPermissionRequest((_) {}), throwsUnimplementedError);
-  });
+      expect(
+        () => controller.setOnPlatformPermissionRequest((_) {}),
+        throwsUnimplementedError,
+      );
+    },
+  );
 
-  test('Default implementation of getUserAgent should throw unimplemented error', () {
-    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
+  test(
+    'Default implementation of getUserAgent should throw unimplemented error',
+    () {
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
-    expect(() => controller.getUserAgent(), throwsUnimplementedError);
-  });
+      expect(() => controller.getUserAgent(), throwsUnimplementedError);
+    },
+  );
 
-  test('Default implementation of setOnConsoleMessage should throw unimplemented error', () {
-    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
+  test(
+    'Default implementation of setOnConsoleMessage should throw unimplemented error',
+    () {
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
-    expect(
-      () => controller.setOnConsoleMessage((JavaScriptConsoleMessage message) {}),
-      throwsUnimplementedError,
-    );
-  });
+      expect(
+        () => controller.setOnConsoleMessage(
+          (JavaScriptConsoleMessage message) {},
+        ),
+        throwsUnimplementedError,
+      );
+    },
+  );
 
-  test('Default implementation of setOnJavaScriptAlertDialog should throw unimplemented error', () {
-    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
+  test(
+    'Default implementation of setOnJavaScriptAlertDialog should throw unimplemented error',
+    () {
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
-    expect(() => controller.setOnJavaScriptAlertDialog((_) async {}), throwsUnimplementedError);
-  });
+      expect(
+        () => controller.setOnJavaScriptAlertDialog((_) async {}),
+        throwsUnimplementedError,
+      );
+    },
+  );
 
   test(
     'Default implementation of setOnJavaScriptConfirmDialog should throw unimplemented error',
     () {
-      final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-        const PlatformWebViewControllerCreationParams(),
-      );
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
       expect(
         () => controller.setOnJavaScriptConfirmDialog((_) async {
@@ -360,9 +517,10 @@ void main() {
   test(
     'Default implementation of setOnJavaScriptTextInputDialog should throw unimplemented error',
     () {
-      final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-        const PlatformWebViewControllerCreationParams(),
-      );
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
       expect(
         () => controller.setOnJavaScriptTextInputDialog((_) async {
@@ -373,16 +531,20 @@ void main() {
     },
   );
 
-  test('Default implementation of setOverScrollMode should throw unimplemented error', () {
-    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
+  test(
+    'Default implementation of setOverScrollMode should throw unimplemented error',
+    () {
+      final PlatformWebViewController controller =
+          ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams(),
+          );
 
-    expect(
-      () => controller.setOverScrollMode(WebViewOverScrollMode.always),
-      throwsUnimplementedError,
-    );
-  });
+      expect(
+        () => controller.setOverScrollMode(WebViewOverScrollMode.always),
+        throwsUnimplementedError,
+      );
+    },
+  );
 }
 
 class MockWebViewPlatformWithMixin extends MockWebViewPlatform

@@ -33,7 +33,9 @@ final class AndroidInteractiveMediaAds extends InteractiveMediaAdsPlatform {
   }
 
   @override
-  AndroidAdsLoader createPlatformAdsLoader(PlatformAdsLoaderCreationParams params) {
+  AndroidAdsLoader createPlatformAdsLoader(
+    PlatformAdsLoaderCreationParams params,
+  ) {
     return AndroidAdsLoader(params);
   }
 
@@ -66,7 +68,9 @@ final class AndroidInteractiveMediaAds extends InteractiveMediaAdsPlatform {
   }
 
   @override
-  AndroidImaSettings createPlatformImaSettings(PlatformImaSettingsCreationParams params) {
+  AndroidImaSettings createPlatformImaSettings(
+    PlatformImaSettingsCreationParams params,
+  ) {
     return AndroidImaSettings(params);
   }
 }

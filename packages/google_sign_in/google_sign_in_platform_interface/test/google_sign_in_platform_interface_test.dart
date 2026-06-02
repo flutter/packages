@@ -38,16 +38,19 @@ void main() {
       expect(ExtendsGoogleSignInPlatform().authenticationEvents, null);
     });
 
-    test('Default implementation of clearAuthorizationToken throws unimplemented error', () {
-      final platform = ExtendsGoogleSignInPlatform();
+    test(
+      'Default implementation of clearAuthorizationToken throws unimplemented error',
+      () {
+        final platform = ExtendsGoogleSignInPlatform();
 
-      expect(
-        () => platform.clearAuthorizationToken(
-          const ClearAuthorizationTokenParams(accessToken: 'someToken'),
-        ),
-        throwsUnimplementedError,
-      );
-    });
+        expect(
+          () => platform.clearAuthorizationToken(
+            const ClearAuthorizationTokenParams(accessToken: 'someToken'),
+          ),
+          throwsUnimplementedError,
+        );
+      },
+    );
   });
 
   group('GoogleSignInUserData', () {
@@ -78,16 +81,24 @@ void main() {
 
   group('ClientAuthorizationTokenData', () {
     test('can be compared by == operator', () {
-      const firstInstance = ClientAuthorizationTokenData(accessToken: 'accessToken');
-      const secondInstance = ClientAuthorizationTokenData(accessToken: 'accessToken');
+      const firstInstance = ClientAuthorizationTokenData(
+        accessToken: 'accessToken',
+      );
+      const secondInstance = ClientAuthorizationTokenData(
+        accessToken: 'accessToken',
+      );
       expect(firstInstance == secondInstance, isTrue);
     });
   });
 
   group('ServerAuthorizationTokenData', () {
     test('can be compared by == operator', () {
-      const firstInstance = ServerAuthorizationTokenData(serverAuthCode: 'serverAuthCode');
-      const secondInstance = ServerAuthorizationTokenData(serverAuthCode: 'serverAuthCode');
+      const firstInstance = ServerAuthorizationTokenData(
+        serverAuthCode: 'serverAuthCode',
+      );
+      const secondInstance = ServerAuthorizationTokenData(
+        serverAuthCode: 'serverAuthCode',
+      );
       expect(firstInstance == secondInstance, isTrue);
     });
   });
@@ -97,7 +108,8 @@ class MockImplementation extends Mock
     with MockPlatformInterfaceMixin
     implements GoogleSignInPlatform {}
 
-class ImplementsGoogleSignInPlatform extends Mock implements GoogleSignInPlatform {}
+class ImplementsGoogleSignInPlatform extends Mock
+    implements GoogleSignInPlatform {}
 
 class ExtendsGoogleSignInPlatform extends GoogleSignInPlatform {
   @override

@@ -15,7 +15,10 @@ void main() {
       const to1 = TileOverlay(tileOverlayId: TileOverlayId('id1'));
       const to2 = TileOverlay(tileOverlayId: TileOverlayId('id2'));
       const to3 = TileOverlay(tileOverlayId: TileOverlayId('id3'));
-      const to3Changed = TileOverlay(tileOverlayId: TileOverlayId('id3'), transparency: 0.5);
+      const to3Changed = TileOverlay(
+        tileOverlayId: TileOverlayId('id3'),
+        transparency: 0.5,
+      );
       const to4 = TileOverlay(tileOverlayId: TileOverlayId('id4'));
       final previous = <TileOverlay>{to1, to2, to3};
       final current = <TileOverlay>{to2, to3Changed, to4};
@@ -35,7 +38,10 @@ void main() {
       const to1 = TileOverlay(tileOverlayId: TileOverlayId('id1'));
       const to2 = TileOverlay(tileOverlayId: TileOverlayId('id2'));
       const to3 = TileOverlay(tileOverlayId: TileOverlayId('id3'));
-      const to3Changed = TileOverlay(tileOverlayId: TileOverlayId('id3'), transparency: 0.5);
+      const to3Changed = TileOverlay(
+        tileOverlayId: TileOverlayId('id3'),
+        transparency: 0.5,
+      );
       const to4 = TileOverlay(tileOverlayId: TileOverlayId('id4'));
       final previous = <TileOverlay>{to1, to2, to3};
       final current = <TileOverlay>{to2, to3Changed, to4};
@@ -44,7 +50,9 @@ void main() {
       final Object json = updates.toJson();
       expect(json, <String, Object>{
         'tileOverlaysToAdd': serializeTileOverlaySet(updates.tileOverlaysToAdd),
-        'tileOverlaysToChange': serializeTileOverlaySet(updates.tileOverlaysToChange),
+        'tileOverlaysToChange': serializeTileOverlaySet(
+          updates.tileOverlaysToChange,
+        ),
         'tileOverlayIdsToRemove': updates.tileOverlayIdsToRemove
             .map<String>((TileOverlayId m) => m.value)
             .toList(),
@@ -55,7 +63,10 @@ void main() {
       const to1 = TileOverlay(tileOverlayId: TileOverlayId('id1'));
       const to2 = TileOverlay(tileOverlayId: TileOverlayId('id2'));
       const to3 = TileOverlay(tileOverlayId: TileOverlayId('id3'));
-      const to3Changed = TileOverlay(tileOverlayId: TileOverlayId('id3'), transparency: 0.5);
+      const to3Changed = TileOverlay(
+        tileOverlayId: TileOverlayId('id3'),
+        transparency: 0.5,
+      );
       const to4 = TileOverlay(tileOverlayId: TileOverlayId('id4'));
       final previous = <TileOverlay>{to1, to2, to3};
       final current1 = <TileOverlay>{to2, to3Changed, to4};
@@ -72,7 +83,10 @@ void main() {
       const to1 = TileOverlay(tileOverlayId: TileOverlayId('id1'));
       const to2 = TileOverlay(tileOverlayId: TileOverlayId('id2'));
       const to3 = TileOverlay(tileOverlayId: TileOverlayId('id3'));
-      const to3Changed = TileOverlay(tileOverlayId: TileOverlayId('id3'), transparency: 0.5);
+      const to3Changed = TileOverlay(
+        tileOverlayId: TileOverlayId('id3'),
+        transparency: 0.5,
+      );
       const to4 = TileOverlay(tileOverlayId: TileOverlayId('id4'));
       final previous = <TileOverlay>{to1, to2, to3};
       final current = <TileOverlay>{to2, to3Changed, to4};
@@ -91,7 +105,10 @@ void main() {
       const to1 = TileOverlay(tileOverlayId: TileOverlayId('id1'));
       const to2 = TileOverlay(tileOverlayId: TileOverlayId('id2'));
       const to3 = TileOverlay(tileOverlayId: TileOverlayId('id3'));
-      const to3Changed = TileOverlay(tileOverlayId: TileOverlayId('id3'), transparency: 0.5);
+      const to3Changed = TileOverlay(
+        tileOverlayId: TileOverlayId('id3'),
+        transparency: 0.5,
+      );
       const to4 = TileOverlay(tileOverlayId: TileOverlayId('id4'));
       final previous = <TileOverlay>{to1, to2, to3};
       final current = <TileOverlay>{to2, to3Changed, to4};

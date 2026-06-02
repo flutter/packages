@@ -7,7 +7,10 @@ import 'image_options.dart';
 /// Specifies options for picking multiple images from the device's gallery.
 class MultiImagePickerOptions {
   /// Creates an instance with the given [imageOptions] and [limit].
-  const MultiImagePickerOptions({this.imageOptions = const ImageOptions(), this.limit});
+  const MultiImagePickerOptions({
+    this.imageOptions = const ImageOptions(),
+    this.limit,
+  });
 
   /// Creates an instance with the given [imageOptions] and [limit].
   ///

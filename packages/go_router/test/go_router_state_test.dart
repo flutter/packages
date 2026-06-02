@@ -75,7 +75,9 @@ void main() {
       expect(find.text('1 /a', skipOffstage: false), findsOneWidget);
     });
 
-    testWidgets('path parameter persists after page is popped', (WidgetTester tester) async {
+    testWidgets('path parameter persists after page is popped', (
+      WidgetTester tester,
+    ) async {
       final routes = <GoRoute>[
         GoRoute(
           path: '/',
@@ -92,7 +94,9 @@ void main() {
               builder: (_, __) {
                 return Builder(
                   builder: (BuildContext context) {
-                    return Text('2 ${GoRouterState.of(context).pathParameters['id']}');
+                    return Text(
+                      '2 ${GoRouterState.of(context).pathParameters['id']}',
+                    );
                   },
                 );
               },
@@ -114,7 +118,9 @@ void main() {
       expect(find.text('2 123'), findsOneWidget);
     });
 
-    testWidgets('registry retains GoRouterState for exiting route', (WidgetTester tester) async {
+    testWidgets('registry retains GoRouterState for exiting route', (
+      WidgetTester tester,
+    ) async {
       final key = UniqueKey();
       final routes = <GoRoute>[
         GoRoute(
@@ -140,10 +146,16 @@ void main() {
           ],
         ),
       ];
-      final GoRouter router = await createRouter(routes, tester, initialLocation: '/a');
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        initialLocation: '/a',
+      );
       expect(tester.widget<Text>(find.byKey(key)).data, '/a');
       final GoRouterStateRegistry registry = tester
-          .widget<GoRouterStateRegistryScope>(find.byType(GoRouterStateRegistryScope))
+          .widget<GoRouterStateRegistryScope>(
+            find.byType(GoRouterStateRegistryScope),
+          )
           .notifier!;
       expect(registry.registry.length, 2);
       router.go('/');
@@ -158,7 +170,9 @@ void main() {
       expect(find.byKey(key), findsNothing);
     });
 
-    testWidgets('imperative pop clears out registry', (WidgetTester tester) async {
+    testWidgets('imperative pop clears out registry', (
+      WidgetTester tester,
+    ) async {
       final key = UniqueKey();
       final nav = GlobalKey<NavigatorState>();
       final routes = <GoRoute>[
@@ -185,10 +199,17 @@ void main() {
           ],
         ),
       ];
-      await createRouter(routes, tester, initialLocation: '/a', navigatorKey: nav);
+      await createRouter(
+        routes,
+        tester,
+        initialLocation: '/a',
+        navigatorKey: nav,
+      );
       expect(tester.widget<Text>(find.byKey(key)).data, '/a');
       final GoRouterStateRegistry registry = tester
-          .widget<GoRouterStateRegistryScope>(find.byType(GoRouterStateRegistryScope))
+          .widget<GoRouterStateRegistryScope>(
+            find.byType(GoRouterStateRegistryScope),
+          )
           .notifier!;
       expect(registry.registry.length, 2);
       nav.currentState!.pop();
@@ -203,36 +224,41 @@ void main() {
       expect(find.byKey(key), findsNothing);
     });
 
-    testWidgets('GoRouterState look up should be resilient when there is a nested navigator.', (
-      WidgetTester tester,
-    ) async {
-      final routes = <GoRoute>[
-        GoRoute(
-          path: '/',
-          builder: (_, __) {
-            return Scaffold(
-              appBar: AppBar(),
-              body: Navigator(
-                pages: <Page<void>>[
-                  MaterialPage<void>(
-                    child: Builder(
-                      builder: (BuildContext context) {
-                        return Center(child: Text(GoRouterState.of(context).uri.toString()));
-                      },
+    testWidgets(
+      'GoRouterState look up should be resilient when there is a nested navigator.',
+      (WidgetTester tester) async {
+        final routes = <GoRoute>[
+          GoRoute(
+            path: '/',
+            builder: (_, __) {
+              return Scaffold(
+                appBar: AppBar(),
+                body: Navigator(
+                  pages: <Page<void>>[
+                    MaterialPage<void>(
+                      child: Builder(
+                        builder: (BuildContext context) {
+                          return Center(
+                            child: Text(
+                              GoRouterState.of(context).uri.toString(),
+                            ),
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                ],
-                onPopPage: (Route<Object?> route, Object? result) {
-                  throw UnimplementedError();
-                },
-              ),
-            );
-          },
-        ),
-      ];
-      await createRouter(routes, tester);
-      expect(find.text('/'), findsOneWidget);
-    });
+                  ],
+                  onPopPage: (Route<Object?> route, Object? result) {
+                    throw UnimplementedError();
+                  },
+                ),
+              );
+            },
+          ),
+        ];
+        await createRouter(routes, tester);
+        expect(find.text('/'), findsOneWidget);
+      },
+    );
 
     testWidgets('GoRouterState topRoute accessible from StatefulShellRoute', (
       WidgetTester tester,
@@ -268,7 +294,9 @@ void main() {
                         GoRouterState state,
                         StatefulNavigationShell navigationShell,
                       ) {
-                        final String? routeName = GoRouterState.of(context).topRoute?.name;
+                        final String? routeName = GoRouterState.of(
+                          context,
+                        ).topRoute?.name;
                         final String title = switch (routeName) {
                           'a' => 'A',
                           'b' => 'B',

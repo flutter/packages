@@ -16,7 +16,8 @@ void main() {
 
   setUp(() {
     final GitDir gitDir;
-    (:packagesDir, processRunner: _, gitProcessRunner: _, :gitDir) = configureBaseCommandMocks();
+    (:packagesDir, processRunner: _, gitProcessRunner: _, :gitDir) =
+        configureBaseCommandMocks();
 
     final command = RemoveDevDependenciesCommand(packagesDir, gitDir: gitDir);
     runner = CommandRunner<void>(
@@ -41,11 +42,18 @@ $addition
       'remove-dev-dependencies',
     ]);
 
-    expect(output, containsAllInOrder(<Matcher>[contains('SKIPPING: Nothing to remove.')]));
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[contains('SKIPPING: Nothing to remove.')]),
+    );
   });
 
   test('removes dev_dependencies', () async {
-    final RepositoryPackage package = createFakePackage('a_package', packagesDir, version: '1.0.0');
+    final RepositoryPackage package = createFakePackage(
+      'a_package',
+      packagesDir,
+      version: '1.0.0',
+    );
 
     addToPubspec(package, '''
 dev_dependencies:
@@ -57,13 +65,26 @@ dev_dependencies:
       'remove-dev-dependencies',
     ]);
 
-    expect(output, containsAllInOrder(<Matcher>[contains('Removed dev_dependencies')]));
-    expect(package.pubspecFile.readAsStringSync(), isNot(contains('some_dependency:')));
-    expect(package.pubspecFile.readAsStringSync(), isNot(contains('another_dependency:')));
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[contains('Removed dev_dependencies')]),
+    );
+    expect(
+      package.pubspecFile.readAsStringSync(),
+      isNot(contains('some_dependency:')),
+    );
+    expect(
+      package.pubspecFile.readAsStringSync(),
+      isNot(contains('another_dependency:')),
+    );
   });
 
   test('removes from examples', () async {
-    final RepositoryPackage package = createFakePackage('a_package', packagesDir, version: '1.0.0');
+    final RepositoryPackage package = createFakePackage(
+      'a_package',
+      packagesDir,
+      version: '1.0.0',
+    );
 
     final RepositoryPackage example = package.getExamples().first;
     addToPubspec(example, '''
@@ -76,8 +97,17 @@ dev_dependencies:
       'remove-dev-dependencies',
     ]);
 
-    expect(output, containsAllInOrder(<Matcher>[contains('Removed dev_dependencies')]));
-    expect(package.pubspecFile.readAsStringSync(), isNot(contains('some_dependency:')));
-    expect(package.pubspecFile.readAsStringSync(), isNot(contains('another_dependency:')));
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[contains('Removed dev_dependencies')]),
+    );
+    expect(
+      package.pubspecFile.readAsStringSync(),
+      isNot(contains('some_dependency:')),
+    );
+    expect(
+      package.pubspecFile.readAsStringSync(),
+      isNot(contains('another_dependency:')),
+    );
   });
 }

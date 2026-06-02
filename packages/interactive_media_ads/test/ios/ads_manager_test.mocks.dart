@@ -5,7 +5,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
 
-import 'package:interactive_media_ads/src/ios/interactive_media_ads.g.dart' as _i2;
+import 'package:interactive_media_ads/src/ios/interactive_media_ads.g.dart'
+    as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -23,7 +24,8 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: subtype_of_sealed_class
 // ignore_for_file: invalid_use_of_internal_member
 
-class _FakePigeonInstanceManager_0 extends _i1.SmartFake implements _i2.PigeonInstanceManager {
+class _FakePigeonInstanceManager_0 extends _i1.SmartFake
+    implements _i2.PigeonInstanceManager {
   _FakePigeonInstanceManager_0(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -33,7 +35,8 @@ class _FakeIMAAdsManager_1 extends _i1.SmartFake implements _i2.IMAAdsManager {
     : super(parent, parentInvocation);
 }
 
-class _FakeIMAAdsRenderingSettings_2 extends _i1.SmartFake implements _i2.IMAAdsRenderingSettings {
+class _FakeIMAAdsRenderingSettings_2 extends _i1.SmartFake
+    implements _i2.IMAAdsRenderingSettings {
   _FakeIMAAdsRenderingSettings_2(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -76,7 +79,9 @@ class MockIMAAdsManager extends _i1.Mock implements _i2.IMAAdsManager {
           as _i3.Future<void>);
 
   @override
-  _i3.Future<void> initialize(_i2.IMAAdsRenderingSettings? adsRenderingSettings) =>
+  _i3.Future<void> initialize(
+    _i2.IMAAdsRenderingSettings? adsRenderingSettings,
+  ) =>
       (super.noSuchMethod(
             Invocation.method(#initialize, [adsRenderingSettings]),
             returnValue: _i3.Future<void>.value(),
@@ -142,7 +147,10 @@ class MockIMAAdsManager extends _i1.Mock implements _i2.IMAAdsManager {
   _i2.IMAAdsManager pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeIMAAdsManager_1(this, Invocation.method(#pigeon_copy, [])),
+            returnValue: _FakeIMAAdsManager_1(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
             returnValueForMissingStub: _FakeIMAAdsManager_1(
               this,
               Invocation.method(#pigeon_copy, []),
@@ -154,7 +162,8 @@ class MockIMAAdsManager extends _i1.Mock implements _i2.IMAAdsManager {
 /// A class which mocks [IMAAdsRenderingSettings].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockIMAAdsRenderingSettings extends _i1.Mock implements _i2.IMAAdsRenderingSettings {
+class MockIMAAdsRenderingSettings extends _i1.Mock
+    implements _i2.IMAAdsRenderingSettings {
   @override
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
       (super.noSuchMethod(
@@ -225,7 +234,9 @@ class MockIMAAdsRenderingSettings extends _i1.Mock implements _i2.IMAAdsRenderin
           as _i3.Future<void>);
 
   @override
-  _i3.Future<void> setLinkOpenerPresentingController(_i2.UIViewController? controller) =>
+  _i3.Future<void> setLinkOpenerPresentingController(
+    _i2.UIViewController? controller,
+  ) =>
       (super.noSuchMethod(
             Invocation.method(#setLinkOpenerPresentingController, [controller]),
             returnValue: _i3.Future<void>.value(),
@@ -237,7 +248,10 @@ class MockIMAAdsRenderingSettings extends _i1.Mock implements _i2.IMAAdsRenderin
   _i2.IMAAdsRenderingSettings pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeIMAAdsRenderingSettings_2(this, Invocation.method(#pigeon_copy, [])),
+            returnValue: _FakeIMAAdsRenderingSettings_2(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
             returnValueForMissingStub: _FakeIMAAdsRenderingSettings_2(
               this,
               Invocation.method(#pigeon_copy, []),

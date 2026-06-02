@@ -3,7 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:interactive_media_ads/src/ios/interactive_media_ads.g.dart' as ima;
+import 'package:interactive_media_ads/src/ios/interactive_media_ads.g.dart'
+    as ima;
 import 'package:interactive_media_ads/src/ios/ios_ads_manager_delegate.dart';
 import 'package:interactive_media_ads/src/platform_interface/platform_interface.dart';
 
@@ -14,15 +15,27 @@ void main() {
 
   group('IOSAdsManagerDelegate', () {
     test('didReceiveAdEvent calls onAdEvent', () {
-      late final void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager, ima.IMAAdEvent)
+      late final void Function(
+        ima.IMAAdsManagerDelegate,
+        ima.IMAAdsManager,
+        ima.IMAAdEvent,
+      )
       didReceiveAdEventCallback;
 
       late final ima.IMAAdsManagerDelegate delegate;
       ima.PigeonOverrides.iMAAdsManagerDelegate_new =
           ({
-            required void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager, ima.IMAAdEvent)
+            required void Function(
+              ima.IMAAdsManagerDelegate,
+              ima.IMAAdsManager,
+              ima.IMAAdEvent,
+            )
             didReceiveAdEvent,
-            required void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager, ima.IMAAdError)
+            required void Function(
+              ima.IMAAdsManagerDelegate,
+              ima.IMAAdsManager,
+              ima.IMAAdError,
+            )
             didReceiveAdError,
             required void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager)
             didRequestContentPause,
@@ -70,9 +83,17 @@ void main() {
       late final ima.IMAAdsManagerDelegate delegate;
       ima.PigeonOverrides.iMAAdsManagerDelegate_new =
           ({
-            required void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager, ima.IMAAdEvent)
+            required void Function(
+              ima.IMAAdsManagerDelegate,
+              ima.IMAAdsManager,
+              ima.IMAAdEvent,
+            )
             didReceiveAdEvent,
-            required void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager, ima.IMAAdError)
+            required void Function(
+              ima.IMAAdsManagerDelegate,
+              ima.IMAAdsManager,
+              ima.IMAAdError,
+            )
             didReceiveAdError,
             required void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager)
             didRequestContentPause,
@@ -114,9 +135,17 @@ void main() {
       late final ima.IMAAdsManagerDelegate delegate;
       ima.PigeonOverrides.iMAAdsManagerDelegate_new =
           ({
-            required void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager, ima.IMAAdEvent)
+            required void Function(
+              ima.IMAAdsManagerDelegate,
+              ima.IMAAdsManager,
+              ima.IMAAdEvent,
+            )
             didReceiveAdEvent,
-            required void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager, ima.IMAAdError)
+            required void Function(
+              ima.IMAAdsManagerDelegate,
+              ima.IMAAdsManager,
+              ima.IMAAdError,
+            )
             didReceiveAdError,
             required void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager)
             didRequestContentPause,
@@ -152,15 +181,27 @@ void main() {
     });
 
     test('didReceiveAdError calls onAdErrorEvent', () {
-      late final void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager, ima.IMAAdError)
+      late final void Function(
+        ima.IMAAdsManagerDelegate,
+        ima.IMAAdsManager,
+        ima.IMAAdError,
+      )
       didReceiveAdErrorCallback;
 
       late final ima.IMAAdsManagerDelegate delegate;
       ima.PigeonOverrides.iMAAdsManagerDelegate_new =
           ({
-            required void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager, ima.IMAAdEvent)
+            required void Function(
+              ima.IMAAdsManagerDelegate,
+              ima.IMAAdsManager,
+              ima.IMAAdEvent,
+            )
             didReceiveAdEvent,
-            required void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager, ima.IMAAdError)
+            required void Function(
+              ima.IMAAdsManagerDelegate,
+              ima.IMAAdsManager,
+              ima.IMAAdError,
+            )
             didReceiveAdError,
             required void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager)
             didRequestContentPause,

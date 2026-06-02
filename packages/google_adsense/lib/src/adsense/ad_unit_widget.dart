@@ -52,7 +52,8 @@ class AdUnitWidget extends StatefulWidget {
   State<AdUnitWidget> createState() => _AdUnitWidgetWebState();
 }
 
-class _AdUnitWidgetWebState extends State<AdUnitWidget> with AutomaticKeepAliveClientMixin {
+class _AdUnitWidgetWebState extends State<AdUnitWidget>
+    with AutomaticKeepAliveClientMixin {
   static int _adUnitCounter = 0;
   static final JSString _adStatusKey = 'adStatus'.toJS;
 
@@ -85,13 +86,18 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget> with AutomaticKeepAliveC
     }
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        if (!widget._adUnitConfiguration.params.containsKey(AdUnitParams.AD_FORMAT)) {
+        if (!widget._adUnitConfiguration.params.containsKey(
+          AdUnitParams.AD_FORMAT,
+        )) {
           _adSize = Size(_adSize.width, constraints.maxHeight);
         }
         return SizedBox(
           height: _adSize.height,
           width: _adSize.width,
-          child: HtmlElementView.fromTagName(tagName: 'div', onElementCreated: _onElementCreated),
+          child: HtmlElementView.fromTagName(
+            tagName: 'div',
+            onElementCreated: _onElementCreated,
+          ),
         );
       },
     );
@@ -125,7 +131,8 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget> with AutomaticKeepAliveC
     web.MutationObserver(
       (JSArray<JSObject> entries, web.MutationObserver observer) {
         for (final JSObject entry in entries.toDart) {
-          final target = (entry as web.MutationRecord).target as web.HTMLElement;
+          final target =
+              (entry as web.MutationRecord).target as web.HTMLElement;
           if (_isLoaded(target)) {
             if (_isFilled(target)) {
               debugLog(
@@ -155,7 +162,9 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget> with AutomaticKeepAliveC
   }
 
   static void _onElementAttached(web.HTMLElement element) {
-    debugLog('$element attached with w=${element.offsetWidth} and h=${element.offsetHeight}');
+    debugLog(
+      '$element attached with w=${element.offsetWidth} and h=${element.offsetHeight}',
+    );
     debugLog(
       '${element.firstChild} size is ${(element.firstChild! as web.HTMLElement).offsetWidth}x${(element.firstChild! as web.HTMLElement).offsetHeight} ',
     );
@@ -163,13 +172,17 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget> with AutomaticKeepAliveC
   }
 
   bool _isLoaded(web.HTMLElement target) {
-    final bool isLoaded = target.dataset.getProperty(_adStatusKey).isDefinedAndNotNull;
+    final bool isLoaded = target.dataset
+        .getProperty(_adStatusKey)
+        .isDefinedAndNotNull;
     debugLog('Ad isLoaded: $isLoaded');
     return isLoaded;
   }
 
   bool _isFilled(web.HTMLElement target) {
-    final String? adStatus = target.dataset.getProperty<JSString?>(_adStatusKey)?.toDart;
+    final String? adStatus = target.dataset
+        .getProperty<JSString?>(_adStatusKey)
+        ?.toDart;
     debugLog('Ad isFilled? $adStatus');
     if (adStatus == AdStatus.FILLED) {
       return true;

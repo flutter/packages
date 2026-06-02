@@ -26,7 +26,8 @@ class CustomParameter {
 }
 
 @TypedGoRoute<OverriddenParameterNameRoute>(path: '/typed-go-route-parameter')
-class OverriddenParameterNameRoute extends GoRouteData with $OverriddenParameterNameRoute {
+class OverriddenParameterNameRoute extends GoRouteData
+    with $OverriddenParameterNameRoute {
   OverriddenParameterNameRoute({
     @TypedQueryParameter(name: 'parameterNameOverride') this.withAnnotation,
     @TypedQueryParameter(name: 'name with space') this.withSpace,
@@ -40,7 +41,10 @@ class OverriddenParameterNameRoute extends GoRouteData with $OverriddenParameter
       decoder: CustomParameter.decode,
       compare: CustomParameter.compare,
     )
-    this.customFieldWithDefaultValue = const CustomParameter(valueString: 'default', valueInt: 0),
+    this.customFieldWithDefaultValue = const CustomParameter(
+      valueString: 'default',
+      valueInt: 0,
+    ),
   });
   final int? withAnnotation;
   final String? withSpace;

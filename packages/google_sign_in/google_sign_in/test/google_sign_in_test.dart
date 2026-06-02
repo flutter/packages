@@ -45,7 +45,9 @@ void main() {
 
       await googleSignIn.initialize();
 
-      final VerificationResult verification = verify(mockPlatform.init(captureAny));
+      final VerificationResult verification = verify(
+        mockPlatform.init(captureAny),
+      );
       final params = verification.captured[0] as InitParameters;
       expect(params.clientId, null);
       expect(params.serverClientId, null);
@@ -67,7 +69,9 @@ void main() {
         hostedDomain: hostedDomain,
       );
 
-      final VerificationResult verification = verify(mockPlatform.init(captureAny));
+      final VerificationResult verification = verify(
+        mockPlatform.init(captureAny),
+      );
       final params = verification.captured[0] as InitParameters;
       expect(params.clientId, clientId);
       expect(params.serverClientId, serverClientId);
@@ -100,47 +104,59 @@ void main() {
       expect(signIn.user.authentication.idToken, idToken);
     });
 
-    test('reports sync exceptions from attemptLightweightAuthentication', () async {
-      final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+    test(
+      'reports sync exceptions from attemptLightweightAuthentication',
+      () async {
+        final GoogleSignIn googleSignIn = GoogleSignIn.instance;
 
-      const exception = GoogleSignInException(code: GoogleSignInExceptionCode.interrupted);
-      when(mockPlatform.attemptLightweightAuthentication(any)).thenThrow(exception);
+        const exception = GoogleSignInException(
+          code: GoogleSignInExceptionCode.interrupted,
+        );
+        when(
+          mockPlatform.attemptLightweightAuthentication(any),
+        ).thenThrow(exception);
 
-      final errorCompleter = Completer<Object>();
-      final StreamSubscription<GoogleSignInAuthenticationEvent> subscription = googleSignIn
-          .authenticationEvents
-          .handleError((Object e) => errorCompleter.complete(e))
-          .listen((_) => fail('The only event should be an error'));
-      await googleSignIn.initialize();
-      // This doesn't throw, since reportAllExceptions is false.
-      await googleSignIn.attemptLightweightAuthentication();
+        final errorCompleter = Completer<Object>();
+        final StreamSubscription<GoogleSignInAuthenticationEvent> subscription =
+            googleSignIn.authenticationEvents
+                .handleError((Object e) => errorCompleter.complete(e))
+                .listen((_) => fail('The only event should be an error'));
+        await googleSignIn.initialize();
+        // This doesn't throw, since reportAllExceptions is false.
+        await googleSignIn.attemptLightweightAuthentication();
 
-      final Object e = await errorCompleter.future;
-      expect(e, exception);
-      await subscription.cancel();
-    });
+        final Object e = await errorCompleter.future;
+        expect(e, exception);
+        await subscription.cancel();
+      },
+    );
 
-    test('reports async exceptions from attemptLightweightAuthentication', () async {
-      final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+    test(
+      'reports async exceptions from attemptLightweightAuthentication',
+      () async {
+        final GoogleSignIn googleSignIn = GoogleSignIn.instance;
 
-      const exception = GoogleSignInException(code: GoogleSignInExceptionCode.interrupted);
-      when(
-        mockPlatform.attemptLightweightAuthentication(any),
-      ).thenAnswer((_) async => throw exception);
+        const exception = GoogleSignInException(
+          code: GoogleSignInExceptionCode.interrupted,
+        );
+        when(
+          mockPlatform.attemptLightweightAuthentication(any),
+        ).thenAnswer((_) async => throw exception);
 
-      final errorCompleter = Completer<Object>();
-      final StreamSubscription<GoogleSignInAuthenticationEvent> subscription = googleSignIn
-          .authenticationEvents
-          .handleError((Object e) => errorCompleter.complete(e))
-          .listen((_) => fail('The only event should be an error'));
-      await googleSignIn.initialize();
-      // This doesn't throw, since reportAllExceptions is false.
-      await googleSignIn.attemptLightweightAuthentication();
+        final errorCompleter = Completer<Object>();
+        final StreamSubscription<GoogleSignInAuthenticationEvent> subscription =
+            googleSignIn.authenticationEvents
+                .handleError((Object e) => errorCompleter.complete(e))
+                .listen((_) => fail('The only event should be an error'));
+        await googleSignIn.initialize();
+        // This doesn't throw, since reportAllExceptions is false.
+        await googleSignIn.attemptLightweightAuthentication();
 
-      final Object e = await errorCompleter.future;
-      expect(e, exception);
-      await subscription.cancel();
-    });
+        final Object e = await errorCompleter.future;
+        expect(e, exception);
+        await subscription.cancel();
+      },
+    );
 
     test('reports success from authenticate', () async {
       final GoogleSignIn googleSignIn = GoogleSignIn.instance;
@@ -168,16 +184,21 @@ void main() {
     test('reports sync exceptions from authenticate', () async {
       final GoogleSignIn googleSignIn = GoogleSignIn.instance;
 
-      const exception = GoogleSignInException(code: GoogleSignInExceptionCode.interrupted);
+      const exception = GoogleSignInException(
+        code: GoogleSignInExceptionCode.interrupted,
+      );
       when(mockPlatform.authenticate(any)).thenThrow(exception);
 
       final errorCompleter = Completer<Object>();
-      final StreamSubscription<GoogleSignInAuthenticationEvent> subscription = googleSignIn
-          .authenticationEvents
-          .handleError((Object e) => errorCompleter.complete(e))
-          .listen((_) => fail('The only event should be an error'));
+      final StreamSubscription<GoogleSignInAuthenticationEvent> subscription =
+          googleSignIn.authenticationEvents
+              .handleError((Object e) => errorCompleter.complete(e))
+              .listen((_) => fail('The only event should be an error'));
       await googleSignIn.initialize();
-      await expectLater(googleSignIn.authenticate(), throwsA(isA<GoogleSignInException>()));
+      await expectLater(
+        googleSignIn.authenticate(),
+        throwsA(isA<GoogleSignInException>()),
+      );
 
       final Object e = await errorCompleter.future;
       expect(e, exception);
@@ -187,16 +208,23 @@ void main() {
     test('reports async exceptions from authenticate', () async {
       final GoogleSignIn googleSignIn = GoogleSignIn.instance;
 
-      const exception = GoogleSignInException(code: GoogleSignInExceptionCode.interrupted);
-      when(mockPlatform.authenticate(any)).thenAnswer((_) async => throw exception);
+      const exception = GoogleSignInException(
+        code: GoogleSignInExceptionCode.interrupted,
+      );
+      when(
+        mockPlatform.authenticate(any),
+      ).thenAnswer((_) async => throw exception);
 
       final errorCompleter = Completer<Object>();
-      final StreamSubscription<GoogleSignInAuthenticationEvent> subscription = googleSignIn
-          .authenticationEvents
-          .handleError((Object e) => errorCompleter.complete(e))
-          .listen((_) => fail('The only event should be an error'));
+      final StreamSubscription<GoogleSignInAuthenticationEvent> subscription =
+          googleSignIn.authenticationEvents
+              .handleError((Object e) => errorCompleter.complete(e))
+              .listen((_) => fail('The only event should be an error'));
       await googleSignIn.initialize();
-      await expectLater(googleSignIn.authenticate(), throwsA(isA<GoogleSignInException>()));
+      await expectLater(
+        googleSignIn.authenticate(),
+        throwsA(isA<GoogleSignInException>()),
+      );
 
       final Object e = await errorCompleter.future;
       expect(e, exception);
@@ -245,7 +273,9 @@ void main() {
       test('reports $support from platform', () async {
         final GoogleSignIn googleSignIn = GoogleSignIn.instance;
 
-        when(mockPlatform.authorizationRequiresUserInteraction()).thenReturn(support);
+        when(
+          mockPlatform.authorizationRequiresUserInteraction(),
+        ).thenReturn(support);
 
         expect(googleSignIn.authorizationRequiresUserInteraction(), support);
       });
@@ -278,12 +308,18 @@ void main() {
     test('reports all exceptions when requested - sync', () async {
       final GoogleSignIn googleSignIn = GoogleSignIn.instance;
 
-      const exception = GoogleSignInException(code: GoogleSignInExceptionCode.canceled);
-      when(mockPlatform.attemptLightweightAuthentication(any)).thenThrow(exception);
+      const exception = GoogleSignInException(
+        code: GoogleSignInExceptionCode.canceled,
+      );
+      when(
+        mockPlatform.attemptLightweightAuthentication(any),
+      ).thenThrow(exception);
 
       await googleSignIn.initialize();
       expect(
-        googleSignIn.attemptLightweightAuthentication(reportAllExceptions: true),
+        googleSignIn.attemptLightweightAuthentication(
+          reportAllExceptions: true,
+        ),
         throwsA(
           isA<GoogleSignInException>().having(
             (GoogleSignInException e) => e.code,
@@ -294,38 +330,47 @@ void main() {
       );
     });
 
-    test('reports serious exceptions even when all exceptions are not requested - sync', () async {
-      final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+    test(
+      'reports serious exceptions even when all exceptions are not requested - sync',
+      () async {
+        final GoogleSignIn googleSignIn = GoogleSignIn.instance;
 
-      const exception = GoogleSignInException(
-        code: GoogleSignInExceptionCode.clientConfigurationError,
-      );
-      when(mockPlatform.attemptLightweightAuthentication(any)).thenThrow(exception);
+        const exception = GoogleSignInException(
+          code: GoogleSignInExceptionCode.clientConfigurationError,
+        );
+        when(
+          mockPlatform.attemptLightweightAuthentication(any),
+        ).thenThrow(exception);
 
-      await googleSignIn.initialize();
-      expect(
-        googleSignIn.attemptLightweightAuthentication(),
-        throwsA(
-          isA<GoogleSignInException>().having(
-            (GoogleSignInException e) => e.code,
-            'code',
-            GoogleSignInExceptionCode.clientConfigurationError,
+        await googleSignIn.initialize();
+        expect(
+          googleSignIn.attemptLightweightAuthentication(),
+          throwsA(
+            isA<GoogleSignInException>().having(
+              (GoogleSignInException e) => e.code,
+              'code',
+              GoogleSignInExceptionCode.clientConfigurationError,
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
 
     test('reports all exceptions when requested - async', () async {
       final GoogleSignIn googleSignIn = GoogleSignIn.instance;
 
-      const exception = GoogleSignInException(code: GoogleSignInExceptionCode.canceled);
+      const exception = GoogleSignInException(
+        code: GoogleSignInExceptionCode.canceled,
+      );
       when(
         mockPlatform.attemptLightweightAuthentication(any),
       ).thenAnswer((_) async => throw exception);
 
       await googleSignIn.initialize();
       expect(
-        googleSignIn.attemptLightweightAuthentication(reportAllExceptions: true),
+        googleSignIn.attemptLightweightAuthentication(
+          reportAllExceptions: true,
+        ),
         throwsA(
           isA<GoogleSignInException>().having(
             (GoogleSignInException e) => e.code,
@@ -336,28 +381,31 @@ void main() {
       );
     });
 
-    test('reports serious exceptions even when all exceptions are not requested - async', () async {
-      final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+    test(
+      'reports serious exceptions even when all exceptions are not requested - async',
+      () async {
+        final GoogleSignIn googleSignIn = GoogleSignIn.instance;
 
-      const exception = GoogleSignInException(
-        code: GoogleSignInExceptionCode.clientConfigurationError,
-      );
-      when(
-        mockPlatform.attemptLightweightAuthentication(any),
-      ).thenAnswer((_) async => throw exception);
+        const exception = GoogleSignInException(
+          code: GoogleSignInExceptionCode.clientConfigurationError,
+        );
+        when(
+          mockPlatform.attemptLightweightAuthentication(any),
+        ).thenAnswer((_) async => throw exception);
 
-      await googleSignIn.initialize();
-      expect(
-        googleSignIn.attemptLightweightAuthentication(),
-        throwsA(
-          isA<GoogleSignInException>().having(
-            (GoogleSignInException e) => e.code,
-            'code',
-            GoogleSignInExceptionCode.clientConfigurationError,
+        await googleSignIn.initialize();
+        expect(
+          googleSignIn.attemptLightweightAuthentication(),
+          throwsA(
+            isA<GoogleSignInException>().having(
+              (GoogleSignInException e) => e.code,
+              'code',
+              GoogleSignInExceptionCode.clientConfigurationError,
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
 
     test('returns a null future from the platform', () async {
       final GoogleSignIn googleSignIn = GoogleSignIn.instance;
@@ -372,7 +420,9 @@ void main() {
     test('returns a future that resolves to null from the platform', () async {
       final GoogleSignIn googleSignIn = GoogleSignIn.instance;
 
-      when(mockPlatform.attemptLightweightAuthentication(any)).thenAnswer((_) async => null);
+      when(
+        mockPlatform.attemptLightweightAuthentication(any),
+      ).thenAnswer((_) async => null);
 
       final Future<GoogleSignInAccount?>? signInFuture = googleSignIn
           .attemptLightweightAuthentication();
@@ -397,7 +447,9 @@ void main() {
       await googleSignIn.initialize();
       await googleSignIn.authenticate(scopeHint: scopes);
 
-      final VerificationResult verification = verify(mockPlatform.authenticate(captureAny));
+      final VerificationResult verification = verify(
+        mockPlatform.authenticate(captureAny),
+      );
       final params = verification.captured[0] as AuthenticateParameters;
       expect(params.scopeHint, scopes);
     });
@@ -424,7 +476,9 @@ void main() {
     test('reports exceptions', () async {
       final GoogleSignIn googleSignIn = GoogleSignIn.instance;
 
-      const exception = GoogleSignInException(code: GoogleSignInExceptionCode.interrupted);
+      const exception = GoogleSignInException(
+        code: GoogleSignInExceptionCode.interrupted,
+      );
       when(mockPlatform.authenticate(any)).thenThrow(exception);
 
       await googleSignIn.initialize();
@@ -451,17 +505,22 @@ void main() {
           authenticationTokens: AuthenticationTokenData(idToken: 'idToken'),
         ),
       );
-      when(mockPlatform.clientAuthorizationTokensForScopes(any)).thenAnswer((_) async => null);
+      when(
+        mockPlatform.clientAuthorizationTokensForScopes(any),
+      ).thenAnswer((_) async => null);
 
       await googleSignIn.initialize();
-      final GoogleSignInAccount authentication = await googleSignIn.authenticate();
+      final GoogleSignInAccount authentication = await googleSignIn
+          .authenticate();
       const scopes = <String>['scope1', 'scope2'];
       await authentication.authorizationClient.authorizationForScopes(scopes);
 
       final VerificationResult verification = verify(
         mockPlatform.clientAuthorizationTokensForScopes(captureAny),
       );
-      final params = verification.captured[0] as ClientAuthorizationTokensForScopesParameters;
+      final params =
+          verification.captured[0]
+              as ClientAuthorizationTokensForScopesParameters;
       expect(params.request.scopes, scopes);
       expect(params.request.userId, defaultUser.id);
       expect(params.request.email, defaultUser.email);
@@ -471,7 +530,9 @@ void main() {
     test('passes expected paramaters when called without a user', () async {
       final GoogleSignIn googleSignIn = GoogleSignIn.instance;
 
-      when(mockPlatform.clientAuthorizationTokensForScopes(any)).thenAnswer((_) async => null);
+      when(
+        mockPlatform.clientAuthorizationTokensForScopes(any),
+      ).thenAnswer((_) async => null);
 
       const scopes = <String>['scope1', 'scope2'];
       await googleSignIn.authorizationClient.authorizationForScopes(scopes);
@@ -479,7 +540,9 @@ void main() {
       final VerificationResult verification = verify(
         mockPlatform.clientAuthorizationTokensForScopes(captureAny),
       );
-      final params = verification.captured[0] as ClientAuthorizationTokensForScopesParameters;
+      final params =
+          verification.captured[0]
+              as ClientAuthorizationTokensForScopesParameters;
       expect(params.request.scopes, scopes);
       expect(params.request.userId, null);
       expect(params.request.email, null);
@@ -490,12 +553,14 @@ void main() {
       final GoogleSignIn googleSignIn = GoogleSignIn.instance;
 
       const accessToken = 'accessToken';
-      when(
-        mockPlatform.clientAuthorizationTokensForScopes(any),
-      ).thenAnswer((_) async => const ClientAuthorizationTokenData(accessToken: accessToken));
+      when(mockPlatform.clientAuthorizationTokensForScopes(any)).thenAnswer(
+        (_) async =>
+            const ClientAuthorizationTokenData(accessToken: accessToken),
+      );
 
       const scopes = <String>['scope1', 'scope2'];
-      final GoogleSignInClientAuthorization? auth = await googleSignIn.authorizationClient
+      final GoogleSignInClientAuthorization? auth = await googleSignIn
+          .authorizationClient
           .authorizationForScopes(scopes);
       expect(auth?.accessToken, accessToken);
     });
@@ -503,10 +568,15 @@ void main() {
     test('reports null', () async {
       final GoogleSignIn googleSignIn = GoogleSignIn.instance;
 
-      when(mockPlatform.clientAuthorizationTokensForScopes(any)).thenAnswer((_) async => null);
+      when(
+        mockPlatform.clientAuthorizationTokensForScopes(any),
+      ).thenAnswer((_) async => null);
 
       const scopes = <String>['scope1', 'scope2'];
-      expect(await googleSignIn.authorizationClient.authorizationForScopes(scopes), null);
+      expect(
+        await googleSignIn.authorizationClient.authorizationForScopes(scopes),
+        null,
+      );
     });
   });
 
@@ -520,19 +590,23 @@ void main() {
           authenticationTokens: AuthenticationTokenData(idToken: 'idToken'),
         ),
       );
-      when(
-        mockPlatform.clientAuthorizationTokensForScopes(any),
-      ).thenAnswer((_) async => const ClientAuthorizationTokenData(accessToken: 'accessToken'));
+      when(mockPlatform.clientAuthorizationTokensForScopes(any)).thenAnswer(
+        (_) async =>
+            const ClientAuthorizationTokenData(accessToken: 'accessToken'),
+      );
 
       await googleSignIn.initialize();
-      final GoogleSignInAccount authentication = await googleSignIn.authenticate();
+      final GoogleSignInAccount authentication = await googleSignIn
+          .authenticate();
       const scopes = <String>['scope1', 'scope2'];
       await authentication.authorizationClient.authorizeScopes(scopes);
 
       final VerificationResult verification = verify(
         mockPlatform.clientAuthorizationTokensForScopes(captureAny),
       );
-      final params = verification.captured[0] as ClientAuthorizationTokensForScopesParameters;
+      final params =
+          verification.captured[0]
+              as ClientAuthorizationTokensForScopesParameters;
       expect(params.request.scopes, scopes);
       expect(params.request.userId, defaultUser.id);
       expect(params.request.email, defaultUser.email);
@@ -542,9 +616,10 @@ void main() {
     test('passes expected paramaters when called without a user', () async {
       final GoogleSignIn googleSignIn = GoogleSignIn.instance;
 
-      when(
-        mockPlatform.clientAuthorizationTokensForScopes(any),
-      ).thenAnswer((_) async => const ClientAuthorizationTokenData(accessToken: 'accessToken'));
+      when(mockPlatform.clientAuthorizationTokensForScopes(any)).thenAnswer(
+        (_) async =>
+            const ClientAuthorizationTokenData(accessToken: 'accessToken'),
+      );
 
       const scopes = <String>['scope1', 'scope2'];
       await googleSignIn.authorizationClient.authorizeScopes(scopes);
@@ -552,7 +627,9 @@ void main() {
       final VerificationResult verification = verify(
         mockPlatform.clientAuthorizationTokensForScopes(captureAny),
       );
-      final params = verification.captured[0] as ClientAuthorizationTokensForScopesParameters;
+      final params =
+          verification.captured[0]
+              as ClientAuthorizationTokensForScopesParameters;
       expect(params.request.scopes, scopes);
       expect(params.request.userId, null);
       expect(params.request.email, null);
@@ -563,12 +640,14 @@ void main() {
       final GoogleSignIn googleSignIn = GoogleSignIn.instance;
 
       const accessToken = 'accessToken';
-      when(
-        mockPlatform.clientAuthorizationTokensForScopes(any),
-      ).thenAnswer((_) async => const ClientAuthorizationTokenData(accessToken: accessToken));
+      when(mockPlatform.clientAuthorizationTokensForScopes(any)).thenAnswer(
+        (_) async =>
+            const ClientAuthorizationTokenData(accessToken: accessToken),
+      );
 
       const scopes = <String>['scope1', 'scope2'];
-      final GoogleSignInClientAuthorization auth = await googleSignIn.authorizationClient
+      final GoogleSignInClientAuthorization auth = await googleSignIn
+          .authorizationClient
           .authorizeScopes(scopes);
       expect(auth.accessToken, accessToken);
     });
@@ -576,7 +655,9 @@ void main() {
     test('throws for unexpected null', () async {
       final GoogleSignIn googleSignIn = GoogleSignIn.instance;
 
-      when(mockPlatform.clientAuthorizationTokensForScopes(any)).thenAnswer((_) async => null);
+      when(
+        mockPlatform.clientAuthorizationTokensForScopes(any),
+      ).thenAnswer((_) async => null);
 
       const scopes = <String>['scope1', 'scope2'];
       await expectLater(
@@ -602,17 +683,22 @@ void main() {
           authenticationTokens: AuthenticationTokenData(idToken: 'idToken'),
         ),
       );
-      when(mockPlatform.serverAuthorizationTokensForScopes(any)).thenAnswer((_) async => null);
+      when(
+        mockPlatform.serverAuthorizationTokensForScopes(any),
+      ).thenAnswer((_) async => null);
 
       await googleSignIn.initialize();
-      final GoogleSignInAccount authentication = await googleSignIn.authenticate();
+      final GoogleSignInAccount authentication = await googleSignIn
+          .authenticate();
       const scopes = <String>['scope1', 'scope2'];
       await authentication.authorizationClient.authorizeServer(scopes);
 
       final VerificationResult verification = verify(
         mockPlatform.serverAuthorizationTokensForScopes(captureAny),
       );
-      final params = verification.captured[0] as ServerAuthorizationTokensForScopesParameters;
+      final params =
+          verification.captured[0]
+              as ServerAuthorizationTokensForScopesParameters;
       expect(params.request.scopes, scopes);
       expect(params.request.userId, defaultUser.id);
       expect(params.request.email, defaultUser.email);
@@ -622,7 +708,9 @@ void main() {
     test('passes expected paramaters when called without a user', () async {
       final GoogleSignIn googleSignIn = GoogleSignIn.instance;
 
-      when(mockPlatform.serverAuthorizationTokensForScopes(any)).thenAnswer((_) async => null);
+      when(
+        mockPlatform.serverAuthorizationTokensForScopes(any),
+      ).thenAnswer((_) async => null);
 
       const scopes = <String>['scope1', 'scope2'];
       await googleSignIn.authorizationClient.authorizeServer(scopes);
@@ -630,7 +718,9 @@ void main() {
       final VerificationResult verification = verify(
         mockPlatform.serverAuthorizationTokensForScopes(captureAny),
       );
-      final params = verification.captured[0] as ServerAuthorizationTokensForScopesParameters;
+      final params =
+          verification.captured[0]
+              as ServerAuthorizationTokensForScopesParameters;
       expect(params.request.scopes, scopes);
       expect(params.request.userId, null);
       expect(params.request.email, null);
@@ -641,12 +731,14 @@ void main() {
       final GoogleSignIn googleSignIn = GoogleSignIn.instance;
 
       const authCode = 'authCode';
-      when(
-        mockPlatform.serverAuthorizationTokensForScopes(any),
-      ).thenAnswer((_) async => const ServerAuthorizationTokenData(serverAuthCode: authCode));
+      when(mockPlatform.serverAuthorizationTokensForScopes(any)).thenAnswer(
+        (_) async =>
+            const ServerAuthorizationTokenData(serverAuthCode: authCode),
+      );
 
       const scopes = <String>['scope1', 'scope2'];
-      final GoogleSignInServerAuthorization? auth = await googleSignIn.authorizationClient
+      final GoogleSignInServerAuthorization? auth = await googleSignIn
+          .authorizationClient
           .authorizeServer(scopes);
       expect(auth?.serverAuthCode, authCode);
     });
@@ -654,10 +746,15 @@ void main() {
     test('reports null', () async {
       final GoogleSignIn googleSignIn = GoogleSignIn.instance;
 
-      when(mockPlatform.serverAuthorizationTokensForScopes(any)).thenAnswer((_) async => null);
+      when(
+        mockPlatform.serverAuthorizationTokensForScopes(any),
+      ).thenAnswer((_) async => null);
 
       const scopes = <String>['scope1', 'scope2'];
-      expect(await googleSignIn.authorizationClient.authorizeServer(scopes), null);
+      expect(
+        await googleSignIn.authorizationClient.authorizeServer(scopes),
+        null,
+      );
     });
   });
 
@@ -666,7 +763,9 @@ void main() {
       final GoogleSignIn googleSignIn = GoogleSignIn.instance;
 
       const token = 'someAccessToken';
-      await googleSignIn.authorizationClient.clearAuthorizationToken(accessToken: token);
+      await googleSignIn.authorizationClient.clearAuthorizationToken(
+        accessToken: token,
+      );
 
       final VerificationResult verification = verify(
         mockPlatform.clearAuthorizationToken(captureAny),

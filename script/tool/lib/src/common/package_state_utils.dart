@@ -93,12 +93,17 @@ Future<PackageChangeState> checkPackageChangeState(
         continue;
       }
 
-      final bool isUnpublishedExampleChange = _isUnpublishedExampleChange(components, package);
+      final bool isUnpublishedExampleChange = _isUnpublishedExampleChange(
+        components,
+        package,
+      );
 
       // Since examples of federated plugin implementations are only intended
       // for testing purposes, any unpublished example change in one of them is
       // effectively a developer-only change.
-      if (package.isFederated && package.isPlatformImplementation && isUnpublishedExampleChange) {
+      if (package.isFederated &&
+          package.isPlatformImplementation &&
+          isUnpublishedExampleChange) {
         continue;
       }
 
@@ -143,7 +148,10 @@ bool _isTestChange(List<String> pathComponents) {
 //
 // This is not exhastive; it currently only handles variations we actually have
 // in our repositories.
-bool _isUnpublishedExampleChange(List<String> pathComponents, RepositoryPackage package) {
+bool _isUnpublishedExampleChange(
+  List<String> pathComponents,
+  RepositoryPackage package,
+) {
   if (pathComponents.first != 'example') {
     return false;
   }
@@ -152,7 +160,9 @@ bool _isUnpublishedExampleChange(List<String> pathComponents, RepositoryPackage 
     return false;
   }
 
-  final Directory exampleDirectory = package.directory.childDirectory('example');
+  final Directory exampleDirectory = package.directory.childDirectory(
+    'example',
+  );
 
   // Check for example.md/EXAMPLE.md first, as that has priority. If it's
   // present, any other example file is unpublished.
@@ -173,7 +183,8 @@ bool _isUnpublishedExampleChange(List<String> pathComponents, RepositoryPackage 
       exampleDirectory.childFile(mainName).existsSync();
   if (hasExampleCode) {
     // If there is an example main, only that example file is published.
-    return !((exampleComponents.length == 1 && exampleComponents.first == mainName) ||
+    return !((exampleComponents.length == 1 &&
+            exampleComponents.first == mainName) ||
         (exampleComponents.length == 2 &&
             exampleComponents.first == 'lib' &&
             exampleComponents[1] == mainName));
@@ -213,12 +224,20 @@ Future<bool> _isDevChange(
       // CI config files don't affect clients.
       pathComponents.last == 'ci_config.yaml' ||
       // Test-only gradle depenedencies don't affect clients.
-      await _isGradleTestDependencyChange(pathComponents, git: git, repoPath: repoPath) ||
+      await _isGradleTestDependencyChange(
+        pathComponents,
+        git: git,
+        repoPath: repoPath,
+      ) ||
       // Implementation comments don't affect clients.
       // This check is currently Dart-only since that's the only place
       // this has come up in practice; it could be generalized to other
       // languages if needed.
-      await _isDartImplementationCommentChange(pathComponents, git: git, repoPath: repoPath);
+      await _isDartImplementationCommentChange(
+        pathComponents,
+        git: git,
+        repoPath: repoPath,
+      );
 }
 
 bool _isExampleBuildFile(List<String> pathComponents) {
@@ -251,10 +270,14 @@ Future<bool> _isGradleTestDependencyChange(
   }
   final List<String> diff = await git.getDiffContents(targetPath: repoPath);
   final changeLine = RegExp(r'^[+-] ');
-  final testDependencyLine = RegExp(r'^[+-]\s*(?:androidT|t)estImplementation(?:\s|\()');
+  final testDependencyLine = RegExp(
+    r'^[+-]\s*(?:androidT|t)estImplementation(?:\s|\()',
+  );
   var foundTestDependencyChange = false;
   for (final line in diff) {
-    if (!changeLine.hasMatch(line) || line.startsWith('--- ') || line.startsWith('+++ ')) {
+    if (!changeLine.hasMatch(line) ||
+        line.startsWith('--- ') ||
+        line.startsWith('+++ ')) {
       continue;
     }
     if (!testDependencyLine.hasMatch(line)) {
@@ -286,7 +309,9 @@ Future<bool> _isDartImplementationCommentChange(
   final nonDocCommentLine = RegExp(r'^[+-]\s*//\s');
   var foundIgnoredChange = false;
   for (final line in diff) {
-    if (!changeLine.hasMatch(line) || line.startsWith('--- ') || line.startsWith('+++ ')) {
+    if (!changeLine.hasMatch(line) ||
+        line.startsWith('--- ') ||
+        line.startsWith('+++ ')) {
       continue;
     }
     if (!nonDocCommentLine.hasMatch(line) && !whitespaceLine.hasMatch(line)) {

@@ -18,13 +18,16 @@ RouteBase get $myShellRouteData => ShellRouteData.$route(
     GoRouteData.$route(
       path: '/users',
       factory: $UsersRouteData._fromState,
-      routes: [GoRouteData.$route(path: ':id', factory: $UserRouteData._fromState)],
+      routes: [
+        GoRouteData.$route(path: ':id', factory: $UserRouteData._fromState),
+      ],
     ),
   ],
 );
 
 extension $MyShellRouteDataExtension on MyShellRouteData {
-  static MyShellRouteData _fromState(GoRouterState state) => const MyShellRouteData();
+  static MyShellRouteData _fromState(GoRouterState state) =>
+      const MyShellRouteData();
 }
 
 mixin $HomeRouteData on GoRouteData {
@@ -40,14 +43,16 @@ mixin $HomeRouteData on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) => context.pushReplacement(location);
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
 }
 
 mixin $UsersRouteData on GoRouteData {
-  static UsersRouteData _fromState(GoRouterState state) => const UsersRouteData();
+  static UsersRouteData _fromState(GoRouterState state) =>
+      const UsersRouteData();
 
   @override
   String get location => GoRouteData.$location('/users');
@@ -59,7 +64,8 @@ mixin $UsersRouteData on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) => context.pushReplacement(location);
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
@@ -72,8 +78,9 @@ mixin $UserRouteData on GoRouteData {
   UserRouteData get _self => this as UserRouteData;
 
   @override
-  String get location =>
-      GoRouteData.$location('/users/${Uri.encodeComponent(_self.id.toString())}');
+  String get location => GoRouteData.$location(
+    '/users/${Uri.encodeComponent(_self.id.toString())}',
+  );
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -82,7 +89,8 @@ mixin $UserRouteData on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) => context.pushReplacement(location);
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);

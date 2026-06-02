@@ -30,7 +30,10 @@ void main() {
 
   SharedPreferencesAsyncAndroid getPreferences(bool useDataStore) {
     final api = _FakeSharedPreferencesApi();
-    final preferences = SharedPreferencesAsyncAndroid(dataStoreApi: api, sharedPreferencesApi: api);
+    final preferences = SharedPreferencesAsyncAndroid(
+      dataStoreApi: api,
+      sharedPreferencesApi: api,
+    );
 
     return preferences;
   }
@@ -45,44 +48,59 @@ void main() {
     );
 
     test('set and get String with $backend', () async {
-      final SharedPreferencesAsyncAndroid preferences = getPreferences(useDataStore);
+      final SharedPreferencesAsyncAndroid preferences = getPreferences(
+        useDataStore,
+      );
 
       await preferences.setString(stringKey, testString, emptyOptions);
       expect(await preferences.getString(stringKey, emptyOptions), testString);
     });
 
     test('set and get bool with $backend', () async {
-      final SharedPreferencesAsyncAndroid preferences = getPreferences(useDataStore);
+      final SharedPreferencesAsyncAndroid preferences = getPreferences(
+        useDataStore,
+      );
 
       await preferences.setBool(boolKey, testBool, emptyOptions);
       expect(await preferences.getBool(boolKey, emptyOptions), testBool);
     });
 
     test('set and get int with $backend', () async {
-      final SharedPreferencesAsyncAndroid preferences = getPreferences(useDataStore);
+      final SharedPreferencesAsyncAndroid preferences = getPreferences(
+        useDataStore,
+      );
 
       await preferences.setInt(intKey, testInt, emptyOptions);
       expect(await preferences.getInt(intKey, emptyOptions), testInt);
     });
 
     test('set and get double with $backend', () async {
-      final SharedPreferencesAsyncAndroid preferences = getPreferences(useDataStore);
+      final SharedPreferencesAsyncAndroid preferences = getPreferences(
+        useDataStore,
+      );
 
       await preferences.setDouble(doubleKey, testDouble, emptyOptions);
       expect(await preferences.getDouble(doubleKey, emptyOptions), testDouble);
     });
 
     test('set and get StringList with $backend', () async {
-      final SharedPreferencesAsyncAndroid preferences = getPreferences(useDataStore);
+      final SharedPreferencesAsyncAndroid preferences = getPreferences(
+        useDataStore,
+      );
 
       await preferences.setStringList(listKey, testList, emptyOptions);
-      final List<String>? response = await preferences.getStringList(listKey, emptyOptions);
+      final List<String>? response = await preferences.getStringList(
+        listKey,
+        emptyOptions,
+      );
 
       expect(response, testList);
     });
 
     test('getPreferences with $backend', () async {
-      final SharedPreferencesAsyncAndroid preferences = getPreferences(useDataStore);
+      final SharedPreferencesAsyncAndroid preferences = getPreferences(
+        useDataStore,
+      );
       await Future.wait(<Future<void>>[
         preferences.setString(stringKey, testString, emptyOptions),
         preferences.setBool(boolKey, testBool, emptyOptions),
@@ -105,7 +123,9 @@ void main() {
     });
 
     test('getPreferences with filter with $backend', () async {
-      final SharedPreferencesAsyncAndroid preferences = getPreferences(useDataStore);
+      final SharedPreferencesAsyncAndroid preferences = getPreferences(
+        useDataStore,
+      );
       await Future.wait(<Future<void>>[
         preferences.setString(stringKey, testString, emptyOptions),
         preferences.setBool(boolKey, testBool, emptyOptions),
@@ -127,7 +147,9 @@ void main() {
     });
 
     test('getKeys with $backend', () async {
-      final SharedPreferencesAsyncAndroid preferences = getPreferences(useDataStore);
+      final SharedPreferencesAsyncAndroid preferences = getPreferences(
+        useDataStore,
+      );
       await Future.wait(<Future<void>>[
         preferences.setString(stringKey, testString, emptyOptions),
         preferences.setBool(boolKey, testBool, emptyOptions),
@@ -150,7 +172,9 @@ void main() {
     });
 
     test('getKeys with filter with $backend', () async {
-      final SharedPreferencesAsyncAndroid preferences = getPreferences(useDataStore);
+      final SharedPreferencesAsyncAndroid preferences = getPreferences(
+        useDataStore,
+      );
       await Future.wait(<Future<void>>[
         preferences.setString(stringKey, testString, emptyOptions),
         preferences.setBool(boolKey, testBool, emptyOptions),
@@ -172,7 +196,9 @@ void main() {
     });
 
     test('clear with $backend', () async {
-      final SharedPreferencesAsyncAndroid preferences = getPreferences(useDataStore);
+      final SharedPreferencesAsyncAndroid preferences = getPreferences(
+        useDataStore,
+      );
       await Future.wait(<Future<void>>[
         preferences.setString(stringKey, testString, emptyOptions),
         preferences.setBool(boolKey, testBool, emptyOptions),
@@ -192,7 +218,9 @@ void main() {
     });
 
     test('clear with filter with $backend', () async {
-      final SharedPreferencesAsyncAndroid preferences = getPreferences(useDataStore);
+      final SharedPreferencesAsyncAndroid preferences = getPreferences(
+        useDataStore,
+      );
       await Future.wait(<Future<void>>[
         preferences.setString(stringKey, testString, emptyOptions),
         preferences.setBool(boolKey, testBool, emptyOptions),
@@ -228,7 +256,10 @@ class _FakeSharedPreferencesApi implements SharedPreferencesAsyncApi {
   String get pigeonVar_messageChannelSuffix => throw UnimplementedError();
 
   @override
-  Future<bool> clear(List<String?>? allowList, SharedPreferencesPigeonOptions options) async {
+  Future<bool> clear(
+    List<String?>? allowList,
+    SharedPreferencesPigeonOptions options,
+  ) async {
     if (allowList != null) {
       items.removeWhere((String key, _) => allowList.contains(key));
     } else {
@@ -251,17 +282,26 @@ class _FakeSharedPreferencesApi implements SharedPreferencesAsyncApi {
   }
 
   @override
-  Future<bool?> getBool(String key, SharedPreferencesPigeonOptions options) async {
+  Future<bool?> getBool(
+    String key,
+    SharedPreferencesPigeonOptions options,
+  ) async {
     return items[key] as bool?;
   }
 
   @override
-  Future<double?> getDouble(String key, SharedPreferencesPigeonOptions options) async {
+  Future<double?> getDouble(
+    String key,
+    SharedPreferencesPigeonOptions options,
+  ) async {
     return items[key] as double?;
   }
 
   @override
-  Future<int?> getInt(String key, SharedPreferencesPigeonOptions options) async {
+  Future<int?> getInt(
+    String key,
+    SharedPreferencesPigeonOptions options,
+  ) async {
     return items[key] as int?;
   }
 
@@ -278,7 +318,10 @@ class _FakeSharedPreferencesApi implements SharedPreferencesAsyncApi {
   }
 
   @override
-  Future<String?> getString(String key, SharedPreferencesPigeonOptions options) async {
+  Future<String?> getString(
+    String key,
+    SharedPreferencesPigeonOptions options,
+  ) async {
     return items[key] as String?;
   }
 
@@ -305,25 +348,41 @@ class _FakeSharedPreferencesApi implements SharedPreferencesAsyncApi {
   }
 
   @override
-  Future<bool> setBool(String key, bool value, SharedPreferencesPigeonOptions options) async {
+  Future<bool> setBool(
+    String key,
+    bool value,
+    SharedPreferencesPigeonOptions options,
+  ) async {
     items[key] = value;
     return true;
   }
 
   @override
-  Future<bool> setDouble(String key, double value, SharedPreferencesPigeonOptions options) async {
+  Future<bool> setDouble(
+    String key,
+    double value,
+    SharedPreferencesPigeonOptions options,
+  ) async {
     items[key] = value;
     return true;
   }
 
   @override
-  Future<bool> setInt(String key, int value, SharedPreferencesPigeonOptions options) async {
+  Future<bool> setInt(
+    String key,
+    int value,
+    SharedPreferencesPigeonOptions options,
+  ) async {
     items[key] = value;
     return true;
   }
 
   @override
-  Future<bool> setString(String key, String value, SharedPreferencesPigeonOptions options) async {
+  Future<bool> setString(
+    String key,
+    String value,
+    SharedPreferencesPigeonOptions options,
+  ) async {
     items[key] = value;
     return true;
   }

@@ -31,7 +31,8 @@ void main() {
       final devices = <String, dynamic>{
         'runtimes': <Map<String, dynamic>>[
           <String, dynamic>{
-            'bundlePath': '/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 13.0.simruntime',
+            'bundlePath':
+                '/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 13.0.simruntime',
             'buildversion': '17A577',
             'runtimeRoot':
                 '/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 13.0.simruntime/Contents/Resources/RuntimeRoot',
@@ -41,7 +42,8 @@ void main() {
             'name': 'iOS 13.0',
           },
           <String, dynamic>{
-            'bundlePath': '/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 13.4.simruntime',
+            'bundlePath':
+                '/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 13.4.simruntime',
             'buildversion': '17L255',
             'runtimeRoot':
                 '/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 13.4.simruntime/Contents/Resources/RuntimeRoot',
@@ -71,7 +73,8 @@ void main() {
                   '/Users/xxx/Library/Logs/CoreSimulator/2706BBEB-1E01-403E-A8E9-70E8E5A24774',
               'udid': '2706BBEB-1E01-403E-A8E9-70E8E5A24774',
               'isAvailable': true,
-              'deviceTypeIdentifier': 'com.apple.CoreSimulator.SimDeviceType.iPhone-8',
+              'deviceTypeIdentifier':
+                  'com.apple.CoreSimulator.SimDeviceType.iPhone-8',
               'state': 'Shutdown',
               'name': 'iPhone 8',
             },
@@ -82,7 +85,8 @@ void main() {
                   '/Users/xxx/Library/Logs/CoreSimulator/1E76A0FD-38AC-4537-A989-EA639D7D012A',
               'udid': expectedDeviceId,
               'isAvailable': true,
-              'deviceTypeIdentifier': 'com.apple.CoreSimulator.SimDeviceType.iPhone-8-Plus',
+              'deviceTypeIdentifier':
+                  'com.apple.CoreSimulator.SimDeviceType.iPhone-8-Plus',
               'state': 'Shutdown',
               'name': 'iPhone 8 Plus',
             },
@@ -91,7 +95,10 @@ void main() {
       };
 
       processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(stdout: jsonEncode(devices)), <String>['simctl', 'list']),
+        FakeProcessInfo(MockProcess(stdout: jsonEncode(devices)), <String>[
+          'simctl',
+          'list',
+        ]),
       ];
 
       expect(await xcode.findBestAvailableIphoneSimulator(), expectedDeviceId);
@@ -124,7 +131,8 @@ void main() {
                   '/Users/xxx/Library/Logs/CoreSimulator/1E76A0FD-38AC-4537-A989-EA639D7D012A',
               'udid': '1E76A0FD-38AC-4537-A989-EA639D7D012A',
               'isAvailable': true,
-              'deviceTypeIdentifier': 'com.apple.CoreSimulator.SimDeviceType.Apple-Watch-38mm',
+              'deviceTypeIdentifier':
+                  'com.apple.CoreSimulator.SimDeviceType.Apple-Watch-38mm',
               'state': 'Shutdown',
               'name': 'Apple Watch',
             },
@@ -133,7 +141,10 @@ void main() {
       };
 
       processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(stdout: jsonEncode(devices)), <String>['simctl', 'list']),
+        FakeProcessInfo(MockProcess(stdout: jsonEncode(devices)), <String>[
+          'simctl',
+          'list',
+        ]),
       ];
 
       expect(await xcode.findBestAvailableIphoneSimulator(), null);
@@ -302,7 +313,9 @@ void main() {
         FakeProcessInfo(MockProcess(stdout: stdout), <String>['xcodebuild']),
       ];
 
-      final Directory project = const LocalFileSystem().directory('/foo.xcodeproj');
+      final Directory project = const LocalFileSystem().directory(
+        '/foo.xcodeproj',
+      );
       expect(await xcode.projectHasTarget(project, 'RunnerTests'), true);
       expect(
         processRunner.recordedCalls,
@@ -340,7 +353,9 @@ void main() {
         FakeProcessInfo(MockProcess(stdout: stdout), <String>['xcodebuild']),
       ];
 
-      final Directory project = const LocalFileSystem().directory('/foo.xcodeproj');
+      final Directory project = const LocalFileSystem().directory(
+        '/foo.xcodeproj',
+      );
       expect(await xcode.projectHasTarget(project, 'RunnerTests'), false);
       expect(
         processRunner.recordedCalls,
@@ -361,7 +376,9 @@ void main() {
         FakeProcessInfo(MockProcess(stdout: '{}'), <String>['xcodebuild']),
       ];
 
-      final Directory project = const LocalFileSystem().directory('/foo.xcodeproj');
+      final Directory project = const LocalFileSystem().directory(
+        '/foo.xcodeproj',
+      );
       expect(await xcode.projectHasTarget(project, 'RunnerTests'), null);
       expect(
         processRunner.recordedCalls,
@@ -382,7 +399,9 @@ void main() {
         FakeProcessInfo(MockProcess(stdout: ':)'), <String>['xcodebuild']),
       ];
 
-      final Directory project = const LocalFileSystem().directory('/foo.xcodeproj');
+      final Directory project = const LocalFileSystem().directory(
+        '/foo.xcodeproj',
+      );
       expect(await xcode.projectHasTarget(project, 'RunnerTests'), null);
       expect(
         processRunner.recordedCalls,
@@ -400,10 +419,15 @@ void main() {
 
     test('returns null for failure', () async {
       processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(exitCode: 1), <String>['xcodebuild', '-list']),
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>[
+          'xcodebuild',
+          '-list',
+        ]),
       ];
 
-      final Directory project = const LocalFileSystem().directory('/foo.xcodeproj');
+      final Directory project = const LocalFileSystem().directory(
+        '/foo.xcodeproj',
+      );
       expect(await xcode.projectHasTarget(project, 'RunnerTests'), null);
       expect(
         processRunner.recordedCalls,

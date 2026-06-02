@@ -73,14 +73,18 @@ void main() {
     );
   }
 
-  testWidgets('Capture specific image resolutions', (WidgetTester tester) async {
-    final List<CameraDescription> cameras = await CameraPlatform.instance.availableCameras();
+  testWidgets('Capture specific image resolutions', (
+    WidgetTester tester,
+  ) async {
+    final List<CameraDescription> cameras = await CameraPlatform.instance
+        .availableCameras();
     if (cameras.isEmpty) {
       return;
     }
     for (final cameraDescription in cameras) {
       var previousPresetExactlySupported = true;
-      for (final MapEntry<ResolutionPreset, Size> preset in presetExpectedSizes.entries) {
+      for (final MapEntry<ResolutionPreset, Size> preset
+          in presetExpectedSizes.entries) {
         final controller = CameraController(cameraDescription, preset.key);
         await controller.initialize();
         final bool presetExactlySupported = await testCaptureImageResolution(
@@ -119,17 +123,24 @@ void main() {
 
     // Verify image dimensions are as expected
     expect(video, isNotNull);
-    return assertExpectedDimensions(expectedSize, Size(video.height, video.width));
+    return assertExpectedDimensions(
+      expectedSize,
+      Size(video.height, video.width),
+    );
   }
 
-  testWidgets('Capture specific video resolutions', (WidgetTester tester) async {
-    final List<CameraDescription> cameras = await CameraPlatform.instance.availableCameras();
+  testWidgets('Capture specific video resolutions', (
+    WidgetTester tester,
+  ) async {
+    final List<CameraDescription> cameras = await CameraPlatform.instance
+        .availableCameras();
     if (cameras.isEmpty) {
       return;
     }
     for (final cameraDescription in cameras) {
       var previousPresetExactlySupported = true;
-      for (final MapEntry<ResolutionPreset, Size> preset in presetExpectedSizes.entries) {
+      for (final MapEntry<ResolutionPreset, Size> preset
+          in presetExpectedSizes.entries) {
         final controller = CameraController(cameraDescription, preset.key);
         await controller.initialize();
         await controller.prepareForVideoRecording();
@@ -148,12 +159,17 @@ void main() {
   });
 
   testWidgets('Pause and resume video recording', (WidgetTester tester) async {
-    final List<CameraDescription> cameras = await CameraPlatform.instance.availableCameras();
+    final List<CameraDescription> cameras = await CameraPlatform.instance
+        .availableCameras();
     if (cameras.isEmpty) {
       return;
     }
 
-    final controller = CameraController(cameras[0], ResolutionPreset.low, enableAudio: false);
+    final controller = CameraController(
+      cameras[0],
+      ResolutionPreset.low,
+      enableAudio: false,
+    );
 
     await controller.initialize();
     await controller.prepareForVideoRecording();
@@ -182,7 +198,8 @@ void main() {
     sleep(const Duration(milliseconds: 500));
 
     final XFile file = await controller.stopVideoRecording();
-    final int recordingTime = DateTime.now().millisecondsSinceEpoch - recordingStart;
+    final int recordingTime =
+        DateTime.now().millisecondsSinceEpoch - recordingStart;
 
     final videoFile = File(file.path);
     final videoController = VideoPlayerController.file(videoFile);
@@ -194,12 +211,17 @@ void main() {
   });
 
   testWidgets('Set description while recording', (WidgetTester tester) async {
-    final List<CameraDescription> cameras = await CameraPlatform.instance.availableCameras();
+    final List<CameraDescription> cameras = await CameraPlatform.instance
+        .availableCameras();
     if (cameras.length < 2) {
       return;
     }
 
-    final controller = CameraController(cameras[0], ResolutionPreset.low, enableAudio: false);
+    final controller = CameraController(
+      cameras[0],
+      ResolutionPreset.low,
+      enableAudio: false,
+    );
 
     await controller.initialize();
     await controller.prepareForVideoRecording();
@@ -211,12 +233,17 @@ void main() {
   });
 
   testWidgets('Set description', (WidgetTester tester) async {
-    final List<CameraDescription> cameras = await CameraPlatform.instance.availableCameras();
+    final List<CameraDescription> cameras = await CameraPlatform.instance
+        .availableCameras();
     if (cameras.length < 2) {
       return;
     }
 
-    final controller = CameraController(cameras[0], ResolutionPreset.low, enableAudio: false);
+    final controller = CameraController(
+      cameras[0],
+      ResolutionPreset.low,
+      enableAudio: false,
+    );
 
     await controller.initialize();
     await controller.setDescription(cameras[1]);
@@ -252,8 +279,11 @@ void main() {
     return completer.future;
   }
 
-  testWidgets('image streaming with imageFormatGroup', (WidgetTester tester) async {
-    final List<CameraDescription> cameras = await CameraPlatform.instance.availableCameras();
+  testWidgets('image streaming with imageFormatGroup', (
+    WidgetTester tester,
+  ) async {
+    final List<CameraDescription> cameras = await CameraPlatform.instance
+        .availableCameras();
     if (cameras.isEmpty) {
       return;
     }
@@ -275,12 +305,17 @@ void main() {
   });
 
   testWidgets('Recording with video streaming', (WidgetTester tester) async {
-    final List<CameraDescription> cameras = await CameraPlatform.instance.availableCameras();
+    final List<CameraDescription> cameras = await CameraPlatform.instance
+        .availableCameras();
     if (cameras.isEmpty) {
       return;
     }
 
-    final controller = CameraController(cameras[0], ResolutionPreset.low, enableAudio: false);
+    final controller = CameraController(
+      cameras[0],
+      ResolutionPreset.low,
+      enableAudio: false,
+    );
 
     await controller.initialize();
     await controller.prepareForVideoRecording();
@@ -300,14 +335,20 @@ void main() {
   });
 
   // Test fileFormat is respected when taking a picture.
-  testWidgets('Capture specific image output formats', (WidgetTester tester) async {
-    final List<CameraDescription> cameras = await CameraPlatform.instance.availableCameras();
+  testWidgets('Capture specific image output formats', (
+    WidgetTester tester,
+  ) async {
+    final List<CameraDescription> cameras = await CameraPlatform.instance
+        .availableCameras();
     if (cameras.isEmpty) {
       return;
     }
     for (final cameraDescription in cameras) {
       for (final ImageFileFormat fileFormat in ImageFileFormat.values) {
-        final controller = CameraController(cameraDescription, ResolutionPreset.low);
+        final controller = CameraController(
+          cameraDescription,
+          ResolutionPreset.low,
+        );
         await controller.initialize();
         await controller.setImageFileFormat(fileFormat);
         final XFile file = await controller.takePicture();
@@ -319,7 +360,8 @@ void main() {
 
   group('Camera settings', () {
     testWidgets('Control FPS', (WidgetTester tester) async {
-      final List<CameraDescription> cameras = await CameraPlatform.instance.availableCameras();
+      final List<CameraDescription> cameras = await CameraPlatform.instance
+          .availableCameras();
       if (cameras.isEmpty) {
         return;
       }
@@ -328,7 +370,10 @@ void main() {
       for (final fps in <int>[10, 30]) {
         final controller = CameraController.withSettings(
           cameras.first,
-          mediaSettings: MediaSettings(resolutionPreset: ResolutionPreset.medium, fps: fps),
+          mediaSettings: MediaSettings(
+            resolutionPreset: ResolutionPreset.medium,
+            fps: fps,
+          ),
         );
         await controller.initialize();
         await controller.prepareForVideoRecording();
@@ -356,7 +401,8 @@ void main() {
     });
 
     testWidgets('Control video bitrate', (WidgetTester tester) async {
-      final List<CameraDescription> cameras = await CameraPlatform.instance.availableCameras();
+      final List<CameraDescription> cameras = await CameraPlatform.instance
+          .availableCameras();
       if (cameras.isEmpty) {
         return;
       }
@@ -397,7 +443,8 @@ void main() {
     });
 
     testWidgets('Control audio bitrate', (WidgetTester tester) async {
-      final List<CameraDescription> cameras = await CameraPlatform.instance.availableCameras();
+      final List<CameraDescription> cameras = await CameraPlatform.instance
+          .availableCameras();
       if (cameras.isEmpty) {
         return;
       }

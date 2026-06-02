@@ -16,8 +16,15 @@ void main() {
           structure: OutputStructure.singleFile,
         ),
       ),
-      androidSdkConfig: AndroidSdkConfig(addGradleDeps: true, androidExample: 'example/'),
-      classes: <String>['android.content.Context', 'java.io.File', 'android.os.Environment'],
+      androidSdkConfig: AndroidSdkConfig(
+        addGradleDeps: true,
+        androidExample: 'example/',
+      ),
+      classes: <String>[
+        'android.content.Context',
+        'java.io.File',
+        'android.os.Environment',
+      ],
     ),
   );
 }

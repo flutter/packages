@@ -30,8 +30,8 @@ HtmlViewFactory get linkViewFactory => LinkViewController._viewFactory;
 
 /// The function used to push routes to the Flutter framework.
 @visibleForTesting
-Future<ByteData> Function(String) pushRouteToFrameworkFunction = (String routeName) =>
-    pushRouteNameToFramework(null, routeName);
+Future<ByteData> Function(String) pushRouteToFrameworkFunction =
+    (String routeName) => pushRouteNameToFramework(null, routeName);
 
 /// The delegate for building the [Link] widget on the web.
 ///
@@ -85,7 +85,8 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
   @override
   void initState() {
     super.initState();
-    _semanticsIdentifier = widget.semanticsIdentifier ?? 'link-${_nextSemanticsIdentifier++}';
+    _semanticsIdentifier =
+        widget.semanticsIdentifier ?? 'link-${_nextSemanticsIdentifier++}';
   }
 
   @override
@@ -121,7 +122,10 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
         link: true,
         identifier: _semanticsIdentifier,
         linkUrl: widget.link.uri,
-        child: widget.link.builder(context, widget.link.isDisabled ? null : _followLink),
+        child: widget.link.builder(
+          context,
+          widget.link.isDisabled ? null : _followLink,
+        ),
       ),
     );
   }
@@ -132,18 +136,23 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
         child: PlatformViewLink(
           viewType: linkViewType,
           onCreatePlatformView: (PlatformViewCreationParams params) {
-            _controller = LinkViewController.fromParams(params, _semanticsIdentifier);
+            _controller = LinkViewController.fromParams(
+              params,
+              _semanticsIdentifier,
+            );
             return _controller
               ..setUri(widget.link.uri)
               ..setTarget(widget.link.target);
           },
-          surfaceFactory: (BuildContext context, PlatformViewController controller) {
-            return PlatformViewSurface(
-              controller: controller,
-              gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
-              hitTestBehavior: PlatformViewHitTestBehavior.transparent,
-            );
-          },
+          surfaceFactory:
+              (BuildContext context, PlatformViewController controller) {
+                return PlatformViewSurface(
+                  controller: controller,
+                  gestureRecognizers:
+                      const <Factory<OneSequenceGestureRecognizer>>{},
+                  hitTestBehavior: PlatformViewHitTestBehavior.transparent,
+                );
+              },
         ),
       ),
     );
@@ -153,7 +162,8 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
 final JSAny _useCapture = <String, Object>{'capture': true}.jsify()!;
 
 /// Signature for the function that triggers a link.
-typedef TriggerLinkCallback = void Function(int viewId, html.MouseEvent? mouseEvent);
+typedef TriggerLinkCallback =
+    void Function(int viewId, html.MouseEvent? mouseEvent);
 
 /// Keeps track of the signals required to trigger a link.
 ///
@@ -243,7 +253,10 @@ class LinkTriggerSignals {
   ///
   /// If `mouseEvent` is not null, `viewId` becomes mandatory. If `viewId` is
   /// not present in this case, a [StateError] is thrown.
-  void onMouseEvent({required int? viewId, required html.MouseEvent? mouseEvent}) {
+  void onMouseEvent({
+    required int? viewId,
+    required html.MouseEvent? mouseEvent,
+  }) {
     if (mouseEvent != null && viewId == null) {
       throw StateError('`viewId` must be provided for mouse events');
     }
@@ -348,7 +361,8 @@ class LinkViewController extends PlatformViewController {
     return controller;
   }
 
-  static final Map<int, LinkViewController> _instancesByViewId = <int, LinkViewController>{};
+  static final Map<int, LinkViewController> _instancesByViewId =
+      <int, LinkViewController>{};
   static final Map<String, LinkViewController> _instancesBySemanticsIdentifier =
       <String, LinkViewController>{};
 
@@ -453,10 +467,14 @@ class LinkViewController extends PlatformViewController {
 
   /// Global click handler that's called for every click event on the window.
   @visibleForTesting
-  static void handleGlobalClick({required html.MouseEvent event, required html.Element? target}) {
+  static void handleGlobalClick({
+    required html.MouseEvent event,
+    required html.Element? target,
+  }) {
     // We only want to handle clicks that land on *our* links. That could be a
     // platform view link or a semantics link.
-    final int? viewIdFromTarget = _getViewIdFromLink(target) ?? _getViewIdFromSemanticsLink(target);
+    final int? viewIdFromTarget =
+        _getViewIdFromLink(target) ?? _getViewIdFromSemanticsLink(target);
 
     if (viewIdFromTarget == null) {
       // The click target was not one of our links, so we don't want to
@@ -525,7 +543,10 @@ class LinkViewController extends PlatformViewController {
     if (controller._isExternalLink) {
       if (!_triggerSignals.canBrowserNavigate) {
         // When the browser can't do the navigation, we have to launch the url manually.
-        UrlLauncherPlatform.instance.launchUrl(controller._uri.toString(), const LaunchOptions());
+        UrlLauncherPlatform.instance.launchUrl(
+          controller._uri.toString(),
+          const LaunchOptions(),
+        );
       }
 
       // Otherwise, let the browser handle it, so we don't have to do anything.
@@ -597,12 +618,15 @@ class LinkViewController extends PlatformViewController {
       return null;
     }
 
-    final String? semanticsIdentifier = semanticsLink.getAttribute('flt-semantics-identifier');
+    final String? semanticsIdentifier = semanticsLink.getAttribute(
+      'flt-semantics-identifier',
+    );
     if (semanticsIdentifier == null) {
       return null;
     }
 
-    final LinkViewController? controller = _instancesBySemanticsIdentifier[semanticsIdentifier];
+    final LinkViewController? controller =
+        _instancesBySemanticsIdentifier[semanticsIdentifier];
     if (controller == null) {
       return null;
     }

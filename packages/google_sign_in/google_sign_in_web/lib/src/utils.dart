@@ -65,7 +65,9 @@ Map<String, Object?>? getResponsePayload(CredentialResponse? response) {
 ///
 /// May return `null`, if the `credentialResponse` is null, or its `credential`
 /// cannot be decoded.
-AuthenticationEvent? gisResponsesToAuthenticationEvent(CredentialResponse? credentialResponse) {
+AuthenticationEvent? gisResponsesToAuthenticationEvent(
+  CredentialResponse? credentialResponse,
+) {
   final Map<String, Object?>? payload = getResponsePayload(credentialResponse);
   if (payload == null) {
     return null;
@@ -83,7 +85,9 @@ AuthenticationEvent? gisResponsesToAuthenticationEvent(CredentialResponse? crede
       displayName: payload['name'] as String?,
       photoUrl: payload['picture'] as String?,
     ),
-    authenticationTokens: AuthenticationTokenData(idToken: credentialResponse!.credential),
+    authenticationTokens: AuthenticationTokenData(
+      idToken: credentialResponse!.credential,
+    ),
   );
 }
 
@@ -91,7 +95,9 @@ AuthenticationEvent? gisResponsesToAuthenticationEvent(CredentialResponse? crede
 ///
 /// May return `null` if the `credentialResponse` is null, its `credential`
 /// cannot be decoded, or the `exp` field is not set on the JWT payload.
-DateTime? getCredentialResponseExpirationTimestamp(CredentialResponse? credentialResponse) {
+DateTime? getCredentialResponseExpirationTimestamp(
+  CredentialResponse? credentialResponse,
+) {
   final Map<String, Object?>? payload = getResponsePayload(credentialResponse);
   // Get the 'exp' field from the payload, if present.
   final int? exp = (payload != null) ? payload['exp'] as int? : null;

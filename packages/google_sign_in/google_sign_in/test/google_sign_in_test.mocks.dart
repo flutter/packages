@@ -5,7 +5,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i4;
 
-import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart' as _i3;
+import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart'
+    as _i3;
 import 'package:google_sign_in_platform_interface/src/types.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 
@@ -23,7 +24,8 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeAuthenticationResults_0 extends _i1.SmartFake implements _i2.AuthenticationResults {
+class _FakeAuthenticationResults_0 extends _i1.SmartFake
+    implements _i2.AuthenticationResults {
   _FakeAuthenticationResults_0(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -31,7 +33,8 @@ class _FakeAuthenticationResults_0 extends _i1.SmartFake implements _i2.Authenti
 /// A class which mocks [GoogleSignInPlatform].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockGoogleSignInPlatform extends _i1.Mock implements _i3.GoogleSignInPlatform {
+class MockGoogleSignInPlatform extends _i1.Mock
+    implements _i3.GoogleSignInPlatform {
   MockGoogleSignInPlatform() {
     _i1.throwOnMissingStub(this);
   }
@@ -49,20 +52,30 @@ class MockGoogleSignInPlatform extends _i1.Mock implements _i3.GoogleSignInPlatf
   _i4.Future<_i2.AuthenticationResults?>? attemptLightweightAuthentication(
     _i2.AttemptLightweightAuthenticationParameters? params,
   ) =>
-      (super.noSuchMethod(Invocation.method(#attemptLightweightAuthentication, [params]))
+      (super.noSuchMethod(
+            Invocation.method(#attemptLightweightAuthentication, [params]),
+          )
           as _i4.Future<_i2.AuthenticationResults?>?);
 
   @override
   bool supportsAuthenticate() =>
-      (super.noSuchMethod(Invocation.method(#supportsAuthenticate, []), returnValue: false)
+      (super.noSuchMethod(
+            Invocation.method(#supportsAuthenticate, []),
+            returnValue: false,
+          )
           as bool);
 
   @override
-  _i4.Future<_i2.AuthenticationResults> authenticate(_i2.AuthenticateParameters? params) =>
+  _i4.Future<_i2.AuthenticationResults> authenticate(
+    _i2.AuthenticateParameters? params,
+  ) =>
       (super.noSuchMethod(
             Invocation.method(#authenticate, [params]),
             returnValue: _i4.Future<_i2.AuthenticationResults>.value(
-              _FakeAuthenticationResults_0(this, Invocation.method(#authenticate, [params])),
+              _FakeAuthenticationResults_0(
+                this,
+                Invocation.method(#authenticate, [params]),
+              ),
             ),
           )
           as _i4.Future<_i2.AuthenticationResults>);
@@ -76,7 +89,8 @@ class MockGoogleSignInPlatform extends _i1.Mock implements _i3.GoogleSignInPlatf
           as bool);
 
   @override
-  _i4.Future<_i2.ClientAuthorizationTokenData?> clientAuthorizationTokensForScopes(
+  _i4.Future<_i2.ClientAuthorizationTokenData?>
+  clientAuthorizationTokensForScopes(
     _i2.ClientAuthorizationTokensForScopesParameters? params,
   ) =>
       (super.noSuchMethod(
@@ -86,7 +100,8 @@ class MockGoogleSignInPlatform extends _i1.Mock implements _i3.GoogleSignInPlatf
           as _i4.Future<_i2.ClientAuthorizationTokenData?>);
 
   @override
-  _i4.Future<_i2.ServerAuthorizationTokenData?> serverAuthorizationTokensForScopes(
+  _i4.Future<_i2.ServerAuthorizationTokenData?>
+  serverAuthorizationTokensForScopes(
     _i2.ServerAuthorizationTokensForScopesParameters? params,
   ) =>
       (super.noSuchMethod(
@@ -96,7 +111,9 @@ class MockGoogleSignInPlatform extends _i1.Mock implements _i3.GoogleSignInPlatf
           as _i4.Future<_i2.ServerAuthorizationTokenData?>);
 
   @override
-  _i4.Future<void> clearAuthorizationToken(_i2.ClearAuthorizationTokenParams? params) =>
+  _i4.Future<void> clearAuthorizationToken(
+    _i2.ClearAuthorizationTokenParams? params,
+  ) =>
       (super.noSuchMethod(
             Invocation.method(#clearAuthorizationToken, [params]),
             returnValue: _i4.Future<void>.value(),

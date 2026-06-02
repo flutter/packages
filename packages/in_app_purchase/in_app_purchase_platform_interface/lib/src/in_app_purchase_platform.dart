@@ -62,7 +62,8 @@ abstract class InAppPurchasePlatform extends PlatformInterface {
       throw UnimplementedError('purchaseStream has not been implemented.');
 
   /// Returns `true` if the payment platform is ready and available.
-  Future<bool> isAvailable() => throw UnimplementedError('isAvailable() has not been implemented.');
+  Future<bool> isAvailable() =>
+      throw UnimplementedError('isAvailable() has not been implemented.');
 
   /// Query product details for the given set of IDs.
   ///
@@ -70,7 +71,9 @@ abstract class InAppPurchasePlatform extends PlatformInterface {
   /// Connect](https://appstoreconnect.apple.com/) for iOS and [Google Play
   /// Console](https://play.google.com/) for Android.
   Future<ProductDetailsResponse> queryProductDetails(Set<String> identifiers) =>
-      throw UnimplementedError('queryProductDetails() had not been implemented.');
+      throw UnimplementedError(
+        'queryProductDetails() had not been implemented.',
+      );
 
   /// Buy a non consumable product or subscription.
   ///
@@ -144,8 +147,10 @@ abstract class InAppPurchasePlatform extends PlatformInterface {
   ///
   /// Calling this method for non consumable items will cause unwanted
   /// behaviors!
-  Future<bool> buyConsumable({required PurchaseParam purchaseParam, bool autoConsume = true}) =>
-      throw UnimplementedError('buyConsumable() has not been implemented.');
+  Future<bool> buyConsumable({
+    required PurchaseParam purchaseParam,
+    bool autoConsume = true,
+  }) => throw UnimplementedError('buyConsumable() has not been implemented.');
 
   /// Mark that purchased content has been delivered to the user.
   ///

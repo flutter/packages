@@ -9,9 +9,12 @@ import 'dart:ui' as _i3;
 import 'package:flutter/foundation.dart' as _i5;
 import 'package:flutter/widgets.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:webview_flutter_platform_interface/src/platform_navigation_delegate.dart' as _i8;
-import 'package:webview_flutter_platform_interface/src/platform_webview_controller.dart' as _i6;
-import 'package:webview_flutter_platform_interface/src/platform_webview_widget.dart' as _i9;
+import 'package:webview_flutter_platform_interface/src/platform_navigation_delegate.dart'
+    as _i8;
+import 'package:webview_flutter_platform_interface/src/platform_webview_controller.dart'
+    as _i6;
+import 'package:webview_flutter_platform_interface/src/platform_webview_widget.dart'
+    as _i9;
 import 'package:webview_flutter_platform_interface/src/types/types.dart' as _i2;
 
 // ignore_for_file: type=lint
@@ -30,35 +33,44 @@ import 'package:webview_flutter_platform_interface/src/types/types.dart' as _i2;
 
 class _FakePlatformWebViewControllerCreationParams_0 extends _i1.SmartFake
     implements _i2.PlatformWebViewControllerCreationParams {
-  _FakePlatformWebViewControllerCreationParams_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakePlatformWebViewControllerCreationParams_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(parent, parentInvocation);
 }
 
 class _FakeObject_1 extends _i1.SmartFake implements Object {
-  _FakeObject_1(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+  _FakeObject_1(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeOffset_2 extends _i1.SmartFake implements _i3.Offset {
-  _FakeOffset_2(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+  _FakeOffset_2(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakePlatformWebViewWidgetCreationParams_3 extends _i1.SmartFake
     implements _i2.PlatformWebViewWidgetCreationParams {
-  _FakePlatformWebViewWidgetCreationParams_3(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakePlatformWebViewWidgetCreationParams_3(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(parent, parentInvocation);
 }
 
 class _FakeWidget_4 extends _i1.SmartFake implements _i4.Widget {
-  _FakeWidget_4(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+  _FakeWidget_4(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 
   @override
-  String toString({_i5.DiagnosticLevel? minLevel = _i5.DiagnosticLevel.info}) => super.toString();
+  String toString({_i5.DiagnosticLevel? minLevel = _i5.DiagnosticLevel.info}) =>
+      super.toString();
 }
 
 /// A class which mocks [PlatformWebViewController].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockPlatformWebViewController extends _i1.Mock implements _i6.PlatformWebViewController {
+class MockPlatformWebViewController extends _i1.Mock
+    implements _i6.PlatformWebViewController {
   MockPlatformWebViewController() {
     _i1.throwOnMissingStub(this);
   }
@@ -180,7 +192,9 @@ class MockPlatformWebViewController extends _i1.Mock implements _i6.PlatformWebV
           as _i7.Future<void>);
 
   @override
-  _i7.Future<void> setPlatformNavigationDelegate(_i8.PlatformNavigationDelegate? handler) =>
+  _i7.Future<void> setPlatformNavigationDelegate(
+    _i8.PlatformNavigationDelegate? handler,
+  ) =>
       (super.noSuchMethod(
             Invocation.method(#setPlatformNavigationDelegate, [handler]),
             returnValue: _i7.Future<void>.value(),
@@ -202,13 +216,18 @@ class MockPlatformWebViewController extends _i1.Mock implements _i6.PlatformWebV
       (super.noSuchMethod(
             Invocation.method(#runJavaScriptReturningResult, [javaScript]),
             returnValue: _i7.Future<Object>.value(
-              _FakeObject_1(this, Invocation.method(#runJavaScriptReturningResult, [javaScript])),
+              _FakeObject_1(
+                this,
+                Invocation.method(#runJavaScriptReturningResult, [javaScript]),
+              ),
             ),
           )
           as _i7.Future<Object>);
 
   @override
-  _i7.Future<void> addJavaScriptChannel(_i6.JavaScriptChannelParams? javaScriptChannelParams) =>
+  _i7.Future<void> addJavaScriptChannel(
+    _i6.JavaScriptChannelParams? javaScriptChannelParams,
+  ) =>
       (super.noSuchMethod(
             Invocation.method(#addJavaScriptChannel, [javaScriptChannelParams]),
             returnValue: _i7.Future<void>.value(),
@@ -219,7 +238,9 @@ class MockPlatformWebViewController extends _i1.Mock implements _i6.PlatformWebV
   @override
   _i7.Future<void> removeJavaScriptChannel(String? javaScriptChannelName) =>
       (super.noSuchMethod(
-            Invocation.method(#removeJavaScriptChannel, [javaScriptChannelName]),
+            Invocation.method(#removeJavaScriptChannel, [
+              javaScriptChannelName,
+            ]),
             returnValue: _i7.Future<void>.value(),
             returnValueForMissingStub: _i7.Future<void>.value(),
           )
@@ -271,7 +292,10 @@ class MockPlatformWebViewController extends _i1.Mock implements _i6.PlatformWebV
 
   @override
   bool supportsSetScrollBarsEnabled() =>
-      (super.noSuchMethod(Invocation.method(#supportsSetScrollBarsEnabled, []), returnValue: false)
+      (super.noSuchMethod(
+            Invocation.method(#supportsSetScrollBarsEnabled, []),
+            returnValue: false,
+          )
           as bool);
 
   @override
@@ -325,7 +349,9 @@ class MockPlatformWebViewController extends _i1.Mock implements _i6.PlatformWebV
     void Function(_i2.PlatformWebViewPermissionRequest)? onPermissionRequest,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#setOnPlatformPermissionRequest, [onPermissionRequest]),
+            Invocation.method(#setOnPlatformPermissionRequest, [
+              onPermissionRequest,
+            ]),
             returnValue: _i7.Future<void>.value(),
             returnValueForMissingStub: _i7.Future<void>.value(),
           )
@@ -355,7 +381,9 @@ class MockPlatformWebViewController extends _i1.Mock implements _i6.PlatformWebV
     void Function(_i2.ScrollPositionChange)? onScrollPositionChange,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#setOnScrollPositionChange, [onScrollPositionChange]),
+            Invocation.method(#setOnScrollPositionChange, [
+              onScrollPositionChange,
+            ]),
             returnValue: _i7.Future<void>.value(),
             returnValueForMissingStub: _i7.Future<void>.value(),
           )
@@ -363,10 +391,13 @@ class MockPlatformWebViewController extends _i1.Mock implements _i6.PlatformWebV
 
   @override
   _i7.Future<void> setOnJavaScriptAlertDialog(
-    _i7.Future<void> Function(_i2.JavaScriptAlertDialogRequest)? onJavaScriptAlertDialog,
+    _i7.Future<void> Function(_i2.JavaScriptAlertDialogRequest)?
+    onJavaScriptAlertDialog,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#setOnJavaScriptAlertDialog, [onJavaScriptAlertDialog]),
+            Invocation.method(#setOnJavaScriptAlertDialog, [
+              onJavaScriptAlertDialog,
+            ]),
             returnValue: _i7.Future<void>.value(),
             returnValueForMissingStub: _i7.Future<void>.value(),
           )
@@ -374,10 +405,13 @@ class MockPlatformWebViewController extends _i1.Mock implements _i6.PlatformWebV
 
   @override
   _i7.Future<void> setOnJavaScriptConfirmDialog(
-    _i7.Future<bool> Function(_i2.JavaScriptConfirmDialogRequest)? onJavaScriptConfirmDialog,
+    _i7.Future<bool> Function(_i2.JavaScriptConfirmDialogRequest)?
+    onJavaScriptConfirmDialog,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#setOnJavaScriptConfirmDialog, [onJavaScriptConfirmDialog]),
+            Invocation.method(#setOnJavaScriptConfirmDialog, [
+              onJavaScriptConfirmDialog,
+            ]),
             returnValue: _i7.Future<void>.value(),
             returnValueForMissingStub: _i7.Future<void>.value(),
           )
@@ -385,10 +419,13 @@ class MockPlatformWebViewController extends _i1.Mock implements _i6.PlatformWebV
 
   @override
   _i7.Future<void> setOnJavaScriptTextInputDialog(
-    _i7.Future<String> Function(_i2.JavaScriptTextInputDialogRequest)? onJavaScriptTextInputDialog,
+    _i7.Future<String> Function(_i2.JavaScriptTextInputDialogRequest)?
+    onJavaScriptTextInputDialog,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#setOnJavaScriptTextInputDialog, [onJavaScriptTextInputDialog]),
+            Invocation.method(#setOnJavaScriptTextInputDialog, [
+              onJavaScriptTextInputDialog,
+            ]),
             returnValue: _i7.Future<void>.value(),
             returnValueForMissingStub: _i7.Future<void>.value(),
           )
@@ -407,7 +444,8 @@ class MockPlatformWebViewController extends _i1.Mock implements _i6.PlatformWebV
 /// A class which mocks [PlatformWebViewWidget].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockPlatformWebViewWidget extends _i1.Mock implements _i9.PlatformWebViewWidget {
+class MockPlatformWebViewWidget extends _i1.Mock
+    implements _i9.PlatformWebViewWidget {
   MockPlatformWebViewWidget() {
     _i1.throwOnMissingStub(this);
   }
@@ -427,7 +465,10 @@ class MockPlatformWebViewWidget extends _i1.Mock implements _i9.PlatformWebViewW
   _i4.Widget build(_i4.BuildContext? context) =>
       (super.noSuchMethod(
             Invocation.method(#build, [context]),
-            returnValue: _FakeWidget_4(this, Invocation.method(#build, [context])),
+            returnValue: _FakeWidget_4(
+              this,
+              Invocation.method(#build, [context]),
+            ),
           )
           as _i4.Widget);
 }

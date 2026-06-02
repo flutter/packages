@@ -93,7 +93,11 @@ class SKPaymentMessage {
 }
 
 class SKErrorMessage {
-  const SKErrorMessage({required this.code, required this.domain, required this.userInfo});
+  const SKErrorMessage({
+    required this.code,
+    required this.domain,
+    required this.userInfo,
+  });
 
   final int code;
   final String domain;
@@ -117,7 +121,10 @@ class SKPaymentDiscountMessage {
 }
 
 class SKStorefrontMessage {
-  const SKStorefrontMessage({required this.countryCode, required this.identifier});
+  const SKStorefrontMessage({
+    required this.countryCode,
+    required this.identifier,
+  });
 
   final String countryCode;
   final String identifier;
@@ -219,7 +226,10 @@ enum SKProductDiscountPaymentModeMessage {
 }
 
 class SKProductSubscriptionPeriodMessage {
-  SKProductSubscriptionPeriodMessage({required this.numberOfUnits, required this.unit});
+  SKProductSubscriptionPeriodMessage({
+    required this.numberOfUnits,
+    required this.unit,
+  });
 
   final int numberOfUnits;
   final SKSubscriptionPeriodUnitMessage unit;
@@ -239,7 +249,9 @@ abstract class InAppPurchaseAPI {
   void addPayment(Map<String, Object?> paymentMap);
 
   @async
-  SKProductsResponseMessage startProductRequest(List<String> productIdentifiers);
+  SKProductsResponseMessage startProductRequest(
+    List<String> productIdentifiers,
+  );
 
   void finishTransaction(Map<String, Object?> finishMap);
 

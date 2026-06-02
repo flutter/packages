@@ -15,9 +15,13 @@ class App extends StatelessWidget {
   App({super.key});
 
   @override
-  Widget build(BuildContext context) => MaterialApp.router(routerConfig: _router);
+  Widget build(BuildContext context) =>
+      MaterialApp.router(routerConfig: _router);
 
-  final GoRouter _router = GoRouter(routes: $appRoutes, initialLocation: '/home');
+  final GoRouter _router = GoRouter(
+    routes: $appRoutes,
+    initialLocation: '/home',
+  );
 }
 
 @TypedShellRoute<MyShellRouteData>(
@@ -25,14 +29,18 @@ class App extends StatelessWidget {
     TypedGoRoute<HomeRouteData>(path: '/home'),
     TypedGoRoute<UsersRouteData>(
       path: '/users',
-      routes: <TypedGoRoute<UserRouteData>>[TypedGoRoute<UserRouteData>(path: ':id')],
+      routes: <TypedGoRoute<UserRouteData>>[
+        TypedGoRoute<UserRouteData>(path: ':id'),
+      ],
     ),
   ],
 )
 class MyShellRouteData extends ShellRouteData {
   const MyShellRouteData();
 
-  static final List<NavigatorObserver> $observers = <NavigatorObserver>[MyNavigatorObserver()];
+  static final List<NavigatorObserver> $observers = <NavigatorObserver>[
+    MyNavigatorObserver(),
+  ];
 
   @override
   Widget builder(BuildContext context, GoRouterState state, Widget navigator) {
@@ -67,8 +75,14 @@ class MyShellRouteScreen extends StatelessWidget {
         children: <Widget>[
           NavigationRail(
             destinations: const <NavigationRailDestination>[
-              NavigationRailDestination(icon: Icon(Icons.home), label: Text('Home')),
-              NavigationRailDestination(icon: Icon(Icons.group), label: Text('Users')),
+              NavigationRailDestination(
+                icon: Icon(Icons.home),
+                label: Text('Home'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.group),
+                label: Text('Users'),
+              ),
             ],
             selectedIndex: selectedIndex,
             onDestinationSelected: (int index) {

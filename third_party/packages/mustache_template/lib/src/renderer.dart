@@ -195,7 +195,10 @@ class Renderer extends Visitor {
       if (lenient) {
         _renderWithValue(node, null);
       } else {
-        throw error('Value was missing for inverse section: ${node.name}.', node);
+        throw error(
+          'Value was missing for inverse section: ${node.name}.',
+          node,
+        );
       }
     } else if (value is Function) {
       // Do nothing.
@@ -295,7 +298,12 @@ class Renderer extends Visitor {
     var startIndex = 0;
     var i = 0;
     for (final int c in s.runes) {
-      if (c == _AMP || c == _LT || c == _GT || c == _QUOTE || c == _APOS || c == _FORWARD_SLASH) {
+      if (c == _AMP ||
+          c == _LT ||
+          c == _GT ||
+          c == _QUOTE ||
+          c == _APOS ||
+          c == _FORWARD_SLASH) {
         buffer.write(s.substring(startIndex, i));
         buffer.write(_htmlEscapeMap[c]);
         startIndex = i + 1;

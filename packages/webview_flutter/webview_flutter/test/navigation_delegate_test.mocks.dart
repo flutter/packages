@@ -7,13 +7,19 @@ import 'dart:async' as _i8;
 
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i10;
-import 'package:webview_flutter_platform_interface/src/platform_navigation_delegate.dart' as _i3;
-import 'package:webview_flutter_platform_interface/src/platform_ssl_auth_error.dart' as _i9;
-import 'package:webview_flutter_platform_interface/src/platform_webview_controller.dart' as _i4;
-import 'package:webview_flutter_platform_interface/src/platform_webview_cookie_manager.dart' as _i2;
-import 'package:webview_flutter_platform_interface/src/platform_webview_widget.dart' as _i5;
+import 'package:webview_flutter_platform_interface/src/platform_navigation_delegate.dart'
+    as _i3;
+import 'package:webview_flutter_platform_interface/src/platform_ssl_auth_error.dart'
+    as _i9;
+import 'package:webview_flutter_platform_interface/src/platform_webview_controller.dart'
+    as _i4;
+import 'package:webview_flutter_platform_interface/src/platform_webview_cookie_manager.dart'
+    as _i2;
+import 'package:webview_flutter_platform_interface/src/platform_webview_widget.dart'
+    as _i5;
 import 'package:webview_flutter_platform_interface/src/types/types.dart' as _i6;
-import 'package:webview_flutter_platform_interface/src/webview_platform.dart' as _i7;
+import 'package:webview_flutter_platform_interface/src/webview_platform.dart'
+    as _i7;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -31,8 +37,10 @@ import 'package:webview_flutter_platform_interface/src/webview_platform.dart' as
 
 class _FakePlatformWebViewCookieManager_0 extends _i1.SmartFake
     implements _i2.PlatformWebViewCookieManager {
-  _FakePlatformWebViewCookieManager_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakePlatformWebViewCookieManager_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(parent, parentInvocation);
 }
 
 class _FakePlatformNavigationDelegate_1 extends _i1.SmartFake
@@ -47,15 +55,18 @@ class _FakePlatformWebViewController_2 extends _i1.SmartFake
     : super(parent, parentInvocation);
 }
 
-class _FakePlatformWebViewWidget_3 extends _i1.SmartFake implements _i5.PlatformWebViewWidget {
+class _FakePlatformWebViewWidget_3 extends _i1.SmartFake
+    implements _i5.PlatformWebViewWidget {
   _FakePlatformWebViewWidget_3(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
 class _FakePlatformNavigationDelegateCreationParams_4 extends _i1.SmartFake
     implements _i6.PlatformNavigationDelegateCreationParams {
-  _FakePlatformNavigationDelegateCreationParams_4(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakePlatformNavigationDelegateCreationParams_4(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(parent, parentInvocation);
 }
 
 /// A class which mocks [WebViewPlatform].
@@ -122,7 +133,8 @@ class MockWebViewPlatform extends _i1.Mock implements _i7.WebViewPlatform {
 /// A class which mocks [PlatformNavigationDelegate].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockPlatformNavigationDelegate extends _i1.Mock implements _i3.PlatformNavigationDelegate {
+class MockPlatformNavigationDelegate extends _i1.Mock
+    implements _i3.PlatformNavigationDelegate {
   MockPlatformNavigationDelegate() {
     _i1.throwOnMissingStub(this);
   }
@@ -139,7 +151,9 @@ class MockPlatformNavigationDelegate extends _i1.Mock implements _i3.PlatformNav
           as _i6.PlatformNavigationDelegateCreationParams);
 
   @override
-  _i8.Future<void> setOnNavigationRequest(_i3.NavigationRequestCallback? onNavigationRequest) =>
+  _i8.Future<void> setOnNavigationRequest(
+    _i3.NavigationRequestCallback? onNavigationRequest,
+  ) =>
       (super.noSuchMethod(
             Invocation.method(#setOnNavigationRequest, [onNavigationRequest]),
             returnValue: _i8.Future<void>.value(),
@@ -184,7 +198,9 @@ class MockPlatformNavigationDelegate extends _i1.Mock implements _i3.PlatformNav
           as _i8.Future<void>);
 
   @override
-  _i8.Future<void> setOnWebResourceError(_i3.WebResourceErrorCallback? onWebResourceError) =>
+  _i8.Future<void> setOnWebResourceError(
+    _i3.WebResourceErrorCallback? onWebResourceError,
+  ) =>
       (super.noSuchMethod(
             Invocation.method(#setOnWebResourceError, [onWebResourceError]),
             returnValue: _i8.Future<void>.value(),
@@ -202,7 +218,9 @@ class MockPlatformNavigationDelegate extends _i1.Mock implements _i3.PlatformNav
           as _i8.Future<void>);
 
   @override
-  _i8.Future<void> setOnHttpAuthRequest(_i3.HttpAuthRequestCallback? onHttpAuthRequest) =>
+  _i8.Future<void> setOnHttpAuthRequest(
+    _i3.HttpAuthRequestCallback? onHttpAuthRequest,
+  ) =>
       (super.noSuchMethod(
             Invocation.method(#setOnHttpAuthRequest, [onHttpAuthRequest]),
             returnValue: _i8.Future<void>.value(),
@@ -211,7 +229,9 @@ class MockPlatformNavigationDelegate extends _i1.Mock implements _i3.PlatformNav
           as _i8.Future<void>);
 
   @override
-  _i8.Future<void> setOnSSlAuthError(_i3.SslAuthErrorCallback? onSslAuthError) =>
+  _i8.Future<void> setOnSSlAuthError(
+    _i3.SslAuthErrorCallback? onSslAuthError,
+  ) =>
       (super.noSuchMethod(
             Invocation.method(#setOnSSlAuthError, [onSslAuthError]),
             returnValue: _i8.Future<void>.value(),
@@ -223,7 +243,8 @@ class MockPlatformNavigationDelegate extends _i1.Mock implements _i3.PlatformNav
 /// A class which mocks [PlatformSslAuthError].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockPlatformSslAuthError extends _i1.Mock implements _i9.PlatformSslAuthError {
+class MockPlatformSslAuthError extends _i1.Mock
+    implements _i9.PlatformSslAuthError {
   MockPlatformSslAuthError() {
     _i1.throwOnMissingStub(this);
   }
@@ -232,7 +253,10 @@ class MockPlatformSslAuthError extends _i1.Mock implements _i9.PlatformSslAuthEr
   String get description =>
       (super.noSuchMethod(
             Invocation.getter(#description),
-            returnValue: _i10.dummyValue<String>(this, Invocation.getter(#description)),
+            returnValue: _i10.dummyValue<String>(
+              this,
+              Invocation.getter(#description),
+            ),
           )
           as String);
 

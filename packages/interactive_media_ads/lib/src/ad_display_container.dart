@@ -43,9 +43,13 @@ class AdDisplayContainer extends StatelessWidget {
          key: key,
          params: PlatformAdDisplayContainerCreationParams(
            onContainerAdded: (PlatformAdDisplayContainer container) {
-             onContainerAdded(AdDisplayContainer.fromPlatform(platform: container));
+             onContainerAdded(
+               AdDisplayContainer.fromPlatform(platform: container),
+             );
            },
-           companionSlots: companionSlots.map((CompanionAdSlot slot) => slot.platform),
+           companionSlots: companionSlots.map(
+             (CompanionAdSlot slot) => slot.platform,
+           ),
            layoutDirection: layoutDirection,
          ),
        );
@@ -80,7 +84,10 @@ class AdDisplayContainer extends StatelessWidget {
   AdDisplayContainer.fromPlatformCreationParams({
     Key? key,
     required PlatformAdDisplayContainerCreationParams params,
-  }) : this.fromPlatform(key: key, platform: PlatformAdDisplayContainer(params));
+  }) : this.fromPlatform(
+         key: key,
+         platform: PlatformAdDisplayContainer(params),
+       );
 
   /// Constructs an [AdDisplayContainer] from a specific platform
   /// implementation.
@@ -95,9 +102,10 @@ class AdDisplayContainer extends StatelessWidget {
       platform.params.onContainerAdded;
 
   /// List of companion ad slots.
-  Iterable<CompanionAdSlot> get companionSlots => platform.params.companionSlots.map(
-    (PlatformCompanionAdSlot slot) => CompanionAdSlot.fromPlatform(slot),
-  );
+  Iterable<CompanionAdSlot> get companionSlots =>
+      platform.params.companionSlots.map(
+        (PlatformCompanionAdSlot slot) => CompanionAdSlot.fromPlatform(slot),
+      );
 
   /// The layout direction to use for the embedded AdDisplayContainer.
   TextDirection get layoutDirection => platform.params.layoutDirection;

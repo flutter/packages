@@ -15,7 +15,9 @@ void main() {
     expect(find.byType(SnackBar), findsOneWidget);
   });
 
-  testWidgets('CameraDescription toggles will not overflow', (WidgetTester tester) async {
+  testWidgets('CameraDescription toggles will not overflow', (
+    WidgetTester tester,
+  ) async {
     WidgetsFlutterBinding.ensureInitialized();
     // Adds 10 fake camera descriptions.
     for (var i = 0; i < 10; i++) {

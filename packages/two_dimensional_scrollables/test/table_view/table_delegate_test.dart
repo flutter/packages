@@ -118,7 +118,9 @@ void main() {
           isA<AssertionError>().having(
             (AssertionError error) => error.toString(),
             'description',
-            contains('pinnedColumnCount + trailingPinnedColumnCount <= columnCount'),
+            contains(
+              'pinnedColumnCount + trailingPinnedColumnCount <= columnCount',
+            ),
           ),
         ),
       );
@@ -327,7 +329,9 @@ void main() {
           isA<AssertionError>().having(
             (AssertionError error) => error.toString(),
             'description',
-            contains('Each list of Widgets within cells must be of the same length.'),
+            contains(
+              'Each list of Widgets within cells must be of the same length.',
+            ),
           ),
         ),
       );
@@ -382,7 +386,8 @@ void main() {
           <TableViewCell>[cell, cell, cell],
           <TableViewCell>[cell, cell, cell],
         ],
-        columnBuilder: (int index) => const TableSpan(extent: FixedTableSpanExtent(150)),
+        columnBuilder: (int index) =>
+            const TableSpan(extent: FixedTableSpanExtent(150)),
         rowBuilder: spanBuilder,
       );
       expect(delegate.shouldRebuild(oldDelegate), isTrue);
@@ -395,7 +400,8 @@ void main() {
           <TableViewCell>[cell, cell, cell],
           <TableViewCell>[cell, cell, cell],
         ],
-        columnBuilder: (int index) => const TableSpan(extent: FixedTableSpanExtent(150)),
+        columnBuilder: (int index) =>
+            const TableSpan(extent: FixedTableSpanExtent(150)),
         rowBuilder: spanBuilder,
       );
       expect(delegate.shouldRebuild(oldDelegate), isTrue);
@@ -408,8 +414,10 @@ void main() {
           <TableViewCell>[cell, cell, cell],
           <TableViewCell>[cell, cell, cell],
         ],
-        columnBuilder: (int index) => const TableSpan(extent: FixedTableSpanExtent(150)),
-        rowBuilder: (int index) => const TableSpan(extent: RemainingTableSpanExtent()),
+        columnBuilder: (int index) =>
+            const TableSpan(extent: FixedTableSpanExtent(150)),
+        rowBuilder: (int index) =>
+            const TableSpan(extent: RemainingTableSpanExtent()),
       );
       expect(delegate.shouldRebuild(oldDelegate), isTrue);
 
@@ -421,8 +429,10 @@ void main() {
           <TableViewCell>[cell, cell, cell],
           <TableViewCell>[cell, cell, cell],
         ],
-        columnBuilder: (int index) => const TableSpan(extent: FixedTableSpanExtent(150)),
-        rowBuilder: (int index) => const TableSpan(extent: RemainingTableSpanExtent()),
+        columnBuilder: (int index) =>
+            const TableSpan(extent: FixedTableSpanExtent(150)),
+        rowBuilder: (int index) =>
+            const TableSpan(extent: RemainingTableSpanExtent()),
         pinnedRowCount: 2,
       );
       expect(delegate.shouldRebuild(oldDelegate), isTrue);
@@ -435,8 +445,10 @@ void main() {
           <TableViewCell>[cell, cell, cell],
           <TableViewCell>[cell, cell, cell],
         ],
-        columnBuilder: (int index) => const TableSpan(extent: FixedTableSpanExtent(150)),
-        rowBuilder: (int index) => const TableSpan(extent: RemainingTableSpanExtent()),
+        columnBuilder: (int index) =>
+            const TableSpan(extent: FixedTableSpanExtent(150)),
+        rowBuilder: (int index) =>
+            const TableSpan(extent: RemainingTableSpanExtent()),
         pinnedColumnCount: 2,
         pinnedRowCount: 2,
       );
@@ -453,8 +465,10 @@ void main() {
           <TableViewCell>[cell, cell, cell],
           <TableViewCell>[cell, cell, cell],
         ],
-        columnBuilder: (int index) => const TableSpan(extent: FixedTableSpanExtent(150)),
-        rowBuilder: (int index) => const TableSpan(extent: RemainingTableSpanExtent()),
+        columnBuilder: (int index) =>
+            const TableSpan(extent: FixedTableSpanExtent(150)),
+        rowBuilder: (int index) =>
+            const TableSpan(extent: RemainingTableSpanExtent()),
         pinnedColumnCount: 2,
         pinnedRowCount: 2,
       );

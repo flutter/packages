@@ -54,7 +54,9 @@ PathProviderPlatform get _platform => PathProviderPlatform.instance;
 Future<Directory> getTemporaryDirectory() async {
   final String? path = await _platform.getTemporaryPath();
   if (path == null) {
-    throw MissingPlatformDirectoryException('Unable to get temporary directory');
+    throw MissingPlatformDirectoryException(
+      'Unable to get temporary directory',
+    );
   }
   return Directory(path);
 }
@@ -76,7 +78,9 @@ Future<Directory> getTemporaryDirectory() async {
 Future<Directory> getApplicationSupportDirectory() async {
   final String? path = await _platform.getApplicationSupportPath();
   if (path == null) {
-    throw MissingPlatformDirectoryException('Unable to get application support directory');
+    throw MissingPlatformDirectoryException(
+      'Unable to get application support directory',
+    );
   }
 
   return Directory(path);
@@ -118,7 +122,9 @@ Future<Directory> getLibraryDirectory() async {
 Future<Directory> getApplicationDocumentsDirectory() async {
   final String? path = await _platform.getApplicationDocumentsPath();
   if (path == null) {
-    throw MissingPlatformDirectoryException('Unable to get application documents directory');
+    throw MissingPlatformDirectoryException(
+      'Unable to get application documents directory',
+    );
   }
   return Directory(path);
 }
@@ -133,7 +139,9 @@ Future<Directory> getApplicationDocumentsDirectory() async {
 Future<Directory> getApplicationCacheDirectory() async {
   final String? path = await _platform.getApplicationCachePath();
   if (path == null) {
-    throw MissingPlatformDirectoryException('Unable to get application cache directory');
+    throw MissingPlatformDirectoryException(
+      'Unable to get application cache directory',
+    );
   }
   return Directory(path);
 }
@@ -194,7 +202,9 @@ Future<List<Directory>?> getExternalStorageDirectories({
   /// how this type translates to Android storage directories.
   StorageDirectory? type,
 }) async {
-  final List<String>? paths = await _platform.getExternalStoragePaths(type: type);
+  final List<String>? paths = await _platform.getExternalStoragePaths(
+    type: type,
+  );
   if (paths == null) {
     return null;
   }

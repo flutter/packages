@@ -15,9 +15,13 @@ class CaseSensitivityApp extends StatelessWidget {
   CaseSensitivityApp({super.key});
 
   @override
-  Widget build(BuildContext context) => MaterialApp.router(routerConfig: _router);
+  Widget build(BuildContext context) =>
+      MaterialApp.router(routerConfig: _router);
 
-  final GoRouter _router = GoRouter(initialLocation: '/case-sensitive', routes: $appRoutes);
+  final GoRouter _router = GoRouter(
+    initialLocation: '/case-sensitive',
+    routes: $appRoutes,
+  );
 }
 
 @TypedGoRoute<CaseSensitiveRoute>(path: '/case-sensitive')
@@ -25,10 +29,14 @@ class CaseSensitiveRoute extends GoRouteData with $CaseSensitiveRoute {
   const CaseSensitiveRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => const Screen(title: 'Case Sensitive');
+  Widget build(BuildContext context, GoRouterState state) =>
+      const Screen(title: 'Case Sensitive');
 }
 
-@TypedGoRoute<NotCaseSensitiveRoute>(path: '/not-case-sensitive', caseSensitive: false)
+@TypedGoRoute<NotCaseSensitiveRoute>(
+  path: '/not-case-sensitive',
+  caseSensitive: false,
+)
 class NotCaseSensitiveRoute extends GoRouteData with $NotCaseSensitiveRoute {
   const NotCaseSensitiveRoute();
 
@@ -46,7 +54,10 @@ class Screen extends StatelessWidget {
     appBar: AppBar(title: Text(title)),
     body: ListView(
       children: <Widget>[
-        ListTile(title: const Text('Case Sensitive'), onTap: () => context.go('/case-sensitive')),
+        ListTile(
+          title: const Text('Case Sensitive'),
+          onTap: () => context.go('/case-sensitive'),
+        ),
         ListTile(
           title: const Text('Not Case Sensitive'),
           onTap: () => context.go('/not-case-sensitive'),

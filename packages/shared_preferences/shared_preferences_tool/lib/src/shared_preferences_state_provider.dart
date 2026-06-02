@@ -28,20 +28,32 @@ class _StateInheritedWidget extends InheritedWidget {
   }
 }
 
-enum _StateInheritedModelAspect { keysList, selectedKey, selectedKeyData, editing, legacyApi }
+enum _StateInheritedModelAspect {
+  keysList,
+  selectedKey,
+  selectedKeyData,
+  editing,
+  legacyApi,
+}
 
 /// An inherited model that provides a [SharedPreferencesState] to its descendants.
 ///
 /// Notifies the descendants depending on the aspect of the state that changed.
 /// This is meant to prevent unnecessary rebuilds.
 /// For more info check [InheritedModel] and [MediaQuery].
-class _SharedPreferencesStateInheritedModel extends InheritedModel<_StateInheritedModelAspect> {
-  const _SharedPreferencesStateInheritedModel({required super.child, required this.state});
+class _SharedPreferencesStateInheritedModel
+    extends InheritedModel<_StateInheritedModelAspect> {
+  const _SharedPreferencesStateInheritedModel({
+    required super.child,
+    required this.state,
+  });
 
   final SharedPreferencesState state;
 
   @override
-  bool updateShouldNotify(covariant _SharedPreferencesStateInheritedModel oldWidget) {
+  bool updateShouldNotify(
+    covariant _SharedPreferencesStateInheritedModel oldWidget,
+  ) {
     return oldWidget.state != state;
   }
 
@@ -52,12 +64,16 @@ class _SharedPreferencesStateInheritedModel extends InheritedModel<_StateInherit
   ) {
     return dependencies.any(
       (_StateInheritedModelAspect aspect) => switch (aspect) {
-        _StateInheritedModelAspect.keysList => state.allKeys != oldWidget.state.allKeys,
-        _StateInheritedModelAspect.selectedKey => state.selectedKey != oldWidget.state.selectedKey,
+        _StateInheritedModelAspect.keysList =>
+          state.allKeys != oldWidget.state.allKeys,
+        _StateInheritedModelAspect.selectedKey =>
+          state.selectedKey != oldWidget.state.selectedKey,
         _StateInheritedModelAspect.selectedKeyData =>
           state.selectedKey?.value != oldWidget.state.selectedKey?.value,
-        _StateInheritedModelAspect.editing => state.editing != oldWidget.state.editing,
-        _StateInheritedModelAspect.legacyApi => state.legacyApi != oldWidget.state.legacyApi,
+        _StateInheritedModelAspect.editing =>
+          state.editing != oldWidget.state.editing,
+        _StateInheritedModelAspect.legacyApi =>
+          state.legacyApi != oldWidget.state.legacyApi,
       },
     );
   }
@@ -88,7 +104,10 @@ class InnerSharedPreferencesStateProvider extends StatelessWidget {
       child: ValueListenableBuilder<SharedPreferencesState>(
         valueListenable: notifier,
         builder: (BuildContext context, SharedPreferencesState value, _) {
-          return _SharedPreferencesStateInheritedModel(state: value, child: child);
+          return _SharedPreferencesStateInheritedModel(
+            state: value,
+            child: child,
+          );
         },
       ),
     );
@@ -108,9 +127,9 @@ class SharedPreferencesStateProvider extends StatefulWidget {
   /// This will not cause a rebuild when any other part of the state changes.
   static AsyncState<List<String>> keysListStateOf(BuildContext context) {
     return context
-        .dependOnInheritedWidgetOfExactType<_SharedPreferencesStateInheritedModel>(
-          aspect: _StateInheritedModelAspect.keysList,
-        )!
+        .dependOnInheritedWidgetOfExactType<
+          _SharedPreferencesStateInheritedModel
+        >(aspect: _StateInheritedModelAspect.keysList)!
         .state
         .allKeys;
   }
@@ -123,9 +142,9 @@ class SharedPreferencesStateProvider extends StatefulWidget {
   /// This will not cause a rebuild when any other part of the state changes.
   static SelectedSharedPreferencesKey? selectedKeyOf(BuildContext context) {
     return context
-        .dependOnInheritedWidgetOfExactType<_SharedPreferencesStateInheritedModel>(
-          aspect: _StateInheritedModelAspect.selectedKey,
-        )!
+        .dependOnInheritedWidgetOfExactType<
+          _SharedPreferencesStateInheritedModel
+        >(aspect: _StateInheritedModelAspect.selectedKey)!
         .state
         .selectedKey;
   }
@@ -134,7 +153,9 @@ class SharedPreferencesStateProvider extends StatefulWidget {
   /// [_SharedPreferencesStateInheritedModel] ancestor.
   ///
   /// Throws an error if the selected key is null.
-  static SelectedSharedPreferencesKey requireSelectedKeyOf(BuildContext context) {
+  static SelectedSharedPreferencesKey requireSelectedKeyOf(
+    BuildContext context,
+  ) {
     return selectedKeyOf(context)!;
   }
 
@@ -143,11 +164,13 @@ class SharedPreferencesStateProvider extends StatefulWidget {
   /// Use of this method will cause the given [context] to rebuild whenever the
   /// selected key data changes, including loading and error states.
   /// This will not cause a rebuild when any other part of the state changes.
-  static AsyncState<SharedPreferencesData>? selectedKeyDataOf(BuildContext context) {
+  static AsyncState<SharedPreferencesData>? selectedKeyDataOf(
+    BuildContext context,
+  ) {
     return context
-        .dependOnInheritedWidgetOfExactType<_SharedPreferencesStateInheritedModel>(
-          aspect: _StateInheritedModelAspect.selectedKeyData,
-        )!
+        .dependOnInheritedWidgetOfExactType<
+          _SharedPreferencesStateInheritedModel
+        >(aspect: _StateInheritedModelAspect.selectedKeyData)!
         .state
         .selectedKey
         ?.value;
@@ -160,9 +183,9 @@ class SharedPreferencesStateProvider extends StatefulWidget {
   /// This will not cause a rebuild when any other part of the state changes.
   static bool editingOf(BuildContext context) {
     return context
-        .dependOnInheritedWidgetOfExactType<_SharedPreferencesStateInheritedModel>(
-          aspect: _StateInheritedModelAspect.editing,
-        )!
+        .dependOnInheritedWidgetOfExactType<
+          _SharedPreferencesStateInheritedModel
+        >(aspect: _StateInheritedModelAspect.editing)!
         .state
         .editing;
   }
@@ -174,9 +197,9 @@ class SharedPreferencesStateProvider extends StatefulWidget {
   /// This will not cause a rebuild when any other part of the state changes.
   static bool legacyApiOf(BuildContext context) {
     return context
-        .dependOnInheritedWidgetOfExactType<_SharedPreferencesStateInheritedModel>(
-          aspect: _StateInheritedModelAspect.legacyApi,
-        )!
+        .dependOnInheritedWidgetOfExactType<
+          _SharedPreferencesStateInheritedModel
+        >(aspect: _StateInheritedModelAspect.legacyApi)!
         .state
         .legacyApi;
   }
@@ -185,10 +208,12 @@ class SharedPreferencesStateProvider extends StatefulWidget {
   final Widget child;
 
   @override
-  State<SharedPreferencesStateProvider> createState() => _SharedPreferencesStateProviderState();
+  State<SharedPreferencesStateProvider> createState() =>
+      _SharedPreferencesStateProviderState();
 }
 
-class _SharedPreferencesStateProviderState extends State<SharedPreferencesStateProvider> {
+class _SharedPreferencesStateProviderState
+    extends State<SharedPreferencesStateProvider> {
   late final SharedPreferencesStateNotifier _notifier;
 
   @override
@@ -213,7 +238,10 @@ class _SharedPreferencesStateProviderState extends State<SharedPreferencesStateP
 
   @override
   Widget build(BuildContext context) {
-    return InnerSharedPreferencesStateProvider(notifier: _notifier, child: widget.child);
+    return InnerSharedPreferencesStateProvider(
+      notifier: _notifier,
+      child: widget.child,
+    );
   }
 }
 

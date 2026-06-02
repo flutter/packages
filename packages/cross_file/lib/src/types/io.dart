@@ -133,7 +133,9 @@ class XFile extends XFileBase {
     if (_bytes != null) {
       return _getBytes(start, end);
     } else {
-      return _file.openRead(start ?? 0, end).map((List<int> chunk) => Uint8List.fromList(chunk));
+      return _file
+          .openRead(start ?? 0, end)
+          .map((List<int> chunk) => Uint8List.fromList(chunk));
     }
   }
 }

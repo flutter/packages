@@ -12,15 +12,22 @@ import 'package:go_router/src/match.dart';
 import 'test_helpers.dart';
 
 void main() {
-  testWidgets('RouteMatchList toString prints the fullPath', (WidgetTester tester) async {
+  testWidgets('RouteMatchList toString prints the fullPath', (
+    WidgetTester tester,
+  ) async {
     final routes = <GoRoute>[
       GoRoute(
         path: '/page-0',
-        builder: (BuildContext context, GoRouterState state) => const Placeholder(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const Placeholder(),
       ),
     ];
 
-    final GoRouter router = await createRouter(routes, tester, initialLocation: '/page-0');
+    final GoRouter router = await createRouter(
+      routes,
+      tester,
+      initialLocation: '/page-0',
+    );
 
     final RouteMatchList matches = router.routerDelegate.currentConfiguration;
     expect(matches.toString(), contains('/page-0'));
@@ -29,7 +36,8 @@ void main() {
   test('RouteMatchList compares', () async {
     final route = GoRoute(
       path: '/page-0',
-      builder: (BuildContext context, GoRouterState state) => const Placeholder(),
+      builder: (BuildContext context, GoRouterState state) =>
+          const Placeholder(),
     );
     final params1 = <String, String>{};
     final List<RouteMatchBase> match1 = RouteMatchBase.match(
@@ -47,9 +55,17 @@ void main() {
       pathParameters: params2,
     );
 
-    final matches1 = RouteMatchList(matches: match1, uri: Uri.parse(''), pathParameters: params1);
+    final matches1 = RouteMatchList(
+      matches: match1,
+      uri: Uri.parse(''),
+      pathParameters: params1,
+    );
 
-    final matches2 = RouteMatchList(matches: match2, uri: Uri.parse(''), pathParameters: params2);
+    final matches2 = RouteMatchList(
+      matches: match2,
+      uri: Uri.parse(''),
+      pathParameters: params2,
+    );
 
     final matches3 = RouteMatchList(
       matches: match2,
@@ -66,11 +82,13 @@ void main() {
       routes: <GoRoute>[
         GoRoute(
           path: '/a',
-          builder: (BuildContext context, GoRouterState state) => const Placeholder(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const Placeholder(),
         ),
         GoRoute(
           path: '/b',
-          builder: (BuildContext context, GoRouterState state) => const Placeholder(),
+          builder: (BuildContext context, GoRouterState state) =>
+              const Placeholder(),
         ),
       ],
       redirectLimit: 0,

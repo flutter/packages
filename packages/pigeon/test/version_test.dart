@@ -17,7 +17,8 @@ void main() {
     expect(
       pigeonVersion,
       match?.group(1)?.trim(),
-      reason: 'Update lib/src/generator_tools.dart pigeonVersion to the value in the pubspec',
+      reason:
+          'Update lib/src/generator_tools.dart pigeonVersion to the value in the pubspec',
     );
   });
 }

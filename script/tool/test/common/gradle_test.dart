@@ -14,7 +14,8 @@ void main() {
   late RecordingProcessRunner processRunner;
 
   setUp(() {
-    (:packagesDir, :processRunner, gitProcessRunner: _, gitDir: _) = configureBaseCommandMocks();
+    (:packagesDir, :processRunner, gitProcessRunner: _, gitDir: _) =
+        configureBaseCommandMocks();
   });
 
   group('isConfigured', () {
@@ -99,7 +100,10 @@ void main() {
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[
           ProcessCall(
-            plugin.platformDirectory(FlutterPlatform.android).childFile('gradlew').path,
+            plugin
+                .platformDirectory(FlutterPlatform.android)
+                .childFile('gradlew')
+                .path,
             const <String>['foo'],
             plugin.platformDirectory(FlutterPlatform.android).path,
           ),
@@ -119,14 +123,20 @@ void main() {
         platform: MockPlatform(isMacOS: true),
       );
 
-      final int exitCode = await project.runCommand('foo', arguments: <String>['--bar', '--baz']);
+      final int exitCode = await project.runCommand(
+        'foo',
+        arguments: <String>['--bar', '--baz'],
+      );
 
       expect(exitCode, 0);
       expect(
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[
           ProcessCall(
-            plugin.platformDirectory(FlutterPlatform.android).childFile('gradlew').path,
+            plugin
+                .platformDirectory(FlutterPlatform.android)
+                .childFile('gradlew')
+                .path,
             const <String>['foo', '--bar', '--baz'],
             plugin.platformDirectory(FlutterPlatform.android).path,
           ),
@@ -153,7 +163,10 @@ void main() {
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[
           ProcessCall(
-            plugin.platformDirectory(FlutterPlatform.android).childFile('gradlew.bat').path,
+            plugin
+                .platformDirectory(FlutterPlatform.android)
+                .childFile('gradlew.bat')
+                .path,
             const <String>['foo'],
             plugin.platformDirectory(FlutterPlatform.android).path,
           ),
@@ -173,9 +186,8 @@ void main() {
         platform: MockPlatform(isWindows: true),
       );
 
-      processRunner.mockProcessesForExecutable[project.gradleWrapper.path] = <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(exitCode: 1)),
-      ];
+      processRunner.mockProcessesForExecutable[project.gradleWrapper.path] =
+          <FakeProcessInfo>[FakeProcessInfo(MockProcess(exitCode: 1))];
 
       final int exitCode = await project.runCommand('foo');
 

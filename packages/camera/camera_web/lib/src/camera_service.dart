@@ -34,7 +34,9 @@ class CameraService {
     final web.MediaDevices mediaDevices = window.navigator.mediaDevices;
 
     try {
-      return await mediaDevices.getUserMedia(options.toMediaStreamConstraints()).toDart;
+      return await mediaDevices
+          .getUserMedia(options.toMediaStreamConstraints())
+          .toDart;
     } on web.DOMException catch (e) {
       switch (e.name) {
         case 'NotFoundError':
@@ -193,7 +195,8 @@ class CameraService {
         return null;
       }
 
-      final web.MediaTrackCapabilities videoTrackCapabilities = videoTrack.getCapabilities();
+      final web.MediaTrackCapabilities videoTrackCapabilities = videoTrack
+          .getCapabilities();
 
       // A list of facing mode capabilities as
       // the camera may support multiple facing modes.
@@ -326,7 +329,9 @@ class CameraService {
   }
 
   /// Maps the given [deviceOrientation] to [OrientationType].
-  String mapDeviceOrientationToOrientationType(DeviceOrientation deviceOrientation) {
+  String mapDeviceOrientationToOrientationType(
+    DeviceOrientation deviceOrientation,
+  ) {
     switch (deviceOrientation) {
       case DeviceOrientation.portraitUp:
         return OrientationType.portraitPrimary;
@@ -340,7 +345,9 @@ class CameraService {
   }
 
   /// Maps the given [orientationType] to [DeviceOrientation].
-  DeviceOrientation mapOrientationTypeToDeviceOrientation(String orientationType) {
+  DeviceOrientation mapOrientationTypeToDeviceOrientation(
+    String orientationType,
+  ) {
     switch (orientationType) {
       case OrientationType.portraitPrimary:
         return DeviceOrientation.portraitUp;

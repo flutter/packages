@@ -38,7 +38,8 @@ class MapConfiguration {
     this.trafficEnabled,
     this.buildingsEnabled,
     String? mapId,
-    @Deprecated('cloudMapId is deprecated. Use mapId instead.') String? cloudMapId,
+    @Deprecated('cloudMapId is deprecated. Use mapId instead.')
+    String? cloudMapId,
     this.style,
     this.markerType,
     this.colorScheme,
@@ -161,17 +162,23 @@ class MapConfiguration {
   /// that are different from [other].
   MapConfiguration diffFrom(MapConfiguration other) {
     return MapConfiguration(
-      webCameraControlPosition: webCameraControlPosition != other.webCameraControlPosition
+      webCameraControlPosition:
+          webCameraControlPosition != other.webCameraControlPosition
           ? webCameraControlPosition
           : null,
-      webCameraControlEnabled: webCameraControlEnabled != other.webCameraControlEnabled
+      webCameraControlEnabled:
+          webCameraControlEnabled != other.webCameraControlEnabled
           ? webCameraControlEnabled
           : null,
       webGestureHandling: webGestureHandling != other.webGestureHandling
           ? webGestureHandling
           : null,
-      compassEnabled: compassEnabled != other.compassEnabled ? compassEnabled : null,
-      mapToolbarEnabled: mapToolbarEnabled != other.mapToolbarEnabled ? mapToolbarEnabled : null,
+      compassEnabled: compassEnabled != other.compassEnabled
+          ? compassEnabled
+          : null,
+      mapToolbarEnabled: mapToolbarEnabled != other.mapToolbarEnabled
+          ? mapToolbarEnabled
+          : null,
       cameraTargetBounds: cameraTargetBounds != other.cameraTargetBounds
           ? cameraTargetBounds
           : null,
@@ -179,10 +186,12 @@ class MapConfiguration {
       minMaxZoomPreference: minMaxZoomPreference != other.minMaxZoomPreference
           ? minMaxZoomPreference
           : null,
-      rotateGesturesEnabled: rotateGesturesEnabled != other.rotateGesturesEnabled
+      rotateGesturesEnabled:
+          rotateGesturesEnabled != other.rotateGesturesEnabled
           ? rotateGesturesEnabled
           : null,
-      scrollGesturesEnabled: scrollGesturesEnabled != other.scrollGesturesEnabled
+      scrollGesturesEnabled:
+          scrollGesturesEnabled != other.scrollGesturesEnabled
           ? scrollGesturesEnabled
           : null,
       tiltGesturesEnabled: tiltGesturesEnabled != other.tiltGesturesEnabled
@@ -201,15 +210,26 @@ class MapConfiguration {
       zoomGesturesEnabled: zoomGesturesEnabled != other.zoomGesturesEnabled
           ? zoomGesturesEnabled
           : null,
-      liteModeEnabled: liteModeEnabled != other.liteModeEnabled ? liteModeEnabled : null,
-      myLocationEnabled: myLocationEnabled != other.myLocationEnabled ? myLocationEnabled : null,
-      myLocationButtonEnabled: myLocationButtonEnabled != other.myLocationButtonEnabled
+      liteModeEnabled: liteModeEnabled != other.liteModeEnabled
+          ? liteModeEnabled
+          : null,
+      myLocationEnabled: myLocationEnabled != other.myLocationEnabled
+          ? myLocationEnabled
+          : null,
+      myLocationButtonEnabled:
+          myLocationButtonEnabled != other.myLocationButtonEnabled
           ? myLocationButtonEnabled
           : null,
       padding: padding != other.padding ? padding : null,
-      indoorViewEnabled: indoorViewEnabled != other.indoorViewEnabled ? indoorViewEnabled : null,
-      trafficEnabled: trafficEnabled != other.trafficEnabled ? trafficEnabled : null,
-      buildingsEnabled: buildingsEnabled != other.buildingsEnabled ? buildingsEnabled : null,
+      indoorViewEnabled: indoorViewEnabled != other.indoorViewEnabled
+          ? indoorViewEnabled
+          : null,
+      trafficEnabled: trafficEnabled != other.trafficEnabled
+          ? trafficEnabled
+          : null,
+      buildingsEnabled: buildingsEnabled != other.buildingsEnabled
+          ? buildingsEnabled
+          : null,
       mapId: mapId != other.mapId ? mapId : null,
       style: style != other.style ? style : null,
       markerType: markerType != other.markerType ? markerType : null,
@@ -221,16 +241,20 @@ class MapConfiguration {
   /// replacing the previous values.
   MapConfiguration applyDiff(MapConfiguration diff) {
     return MapConfiguration(
-      webCameraControlPosition: diff.webCameraControlPosition ?? webCameraControlPosition,
-      webCameraControlEnabled: diff.webCameraControlEnabled ?? webCameraControlEnabled,
+      webCameraControlPosition:
+          diff.webCameraControlPosition ?? webCameraControlPosition,
+      webCameraControlEnabled:
+          diff.webCameraControlEnabled ?? webCameraControlEnabled,
       webGestureHandling: diff.webGestureHandling ?? webGestureHandling,
       compassEnabled: diff.compassEnabled ?? compassEnabled,
       mapToolbarEnabled: diff.mapToolbarEnabled ?? mapToolbarEnabled,
       cameraTargetBounds: diff.cameraTargetBounds ?? cameraTargetBounds,
       mapType: diff.mapType ?? mapType,
       minMaxZoomPreference: diff.minMaxZoomPreference ?? minMaxZoomPreference,
-      rotateGesturesEnabled: diff.rotateGesturesEnabled ?? rotateGesturesEnabled,
-      scrollGesturesEnabled: diff.scrollGesturesEnabled ?? scrollGesturesEnabled,
+      rotateGesturesEnabled:
+          diff.rotateGesturesEnabled ?? rotateGesturesEnabled,
+      scrollGesturesEnabled:
+          diff.scrollGesturesEnabled ?? scrollGesturesEnabled,
       tiltGesturesEnabled: diff.tiltGesturesEnabled ?? tiltGesturesEnabled,
       fortyFiveDegreeImageryEnabled:
           diff.fortyFiveDegreeImageryEnabled ?? fortyFiveDegreeImageryEnabled,
@@ -239,7 +263,8 @@ class MapConfiguration {
       zoomGesturesEnabled: diff.zoomGesturesEnabled ?? zoomGesturesEnabled,
       liteModeEnabled: diff.liteModeEnabled ?? liteModeEnabled,
       myLocationEnabled: diff.myLocationEnabled ?? myLocationEnabled,
-      myLocationButtonEnabled: diff.myLocationButtonEnabled ?? myLocationButtonEnabled,
+      myLocationButtonEnabled:
+          diff.myLocationButtonEnabled ?? myLocationButtonEnabled,
       padding: diff.padding ?? padding,
       indoorViewEnabled: diff.indoorViewEnabled ?? indoorViewEnabled,
       trafficEnabled: diff.trafficEnabled ?? trafficEnabled,

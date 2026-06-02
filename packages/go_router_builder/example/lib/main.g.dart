@@ -22,12 +22,18 @@ RouteBase get $homeRoute => GoRouteData.$route(
           path: 'person/:pid',
           factory: $PersonRoute._fromState,
           routes: [
-            GoRouteData.$route(path: 'details/:details', factory: $PersonDetailsRoute._fromState),
+            GoRouteData.$route(
+              path: 'details/:details',
+              factory: $PersonDetailsRoute._fromState,
+            ),
           ],
         ),
       ],
     ),
-    GoRouteData.$route(path: 'family-count/:count', factory: $FamilyCountRoute._fromState),
+    GoRouteData.$route(
+      path: 'family-count/:count',
+      factory: $FamilyCountRoute._fromState,
+    ),
   ],
 );
 
@@ -44,19 +50,22 @@ mixin $HomeRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) => context.pushReplacement(location);
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
 }
 
 mixin $FamilyRoute on GoRouteData {
-  static FamilyRoute _fromState(GoRouterState state) => FamilyRoute(state.pathParameters['fid']!);
+  static FamilyRoute _fromState(GoRouterState state) =>
+      FamilyRoute(state.pathParameters['fid']!);
 
   FamilyRoute get _self => this as FamilyRoute;
 
   @override
-  String get location => GoRouteData.$location('/family/${Uri.encodeComponent(_self.fid)}');
+  String get location =>
+      GoRouteData.$location('/family/${Uri.encodeComponent(_self.fid)}');
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -65,15 +74,18 @@ mixin $FamilyRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) => context.pushReplacement(location);
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
 }
 
 mixin $PersonRoute on GoRouteData {
-  static PersonRoute _fromState(GoRouterState state) =>
-      PersonRoute(state.pathParameters['fid']!, int.parse(state.pathParameters['pid']!));
+  static PersonRoute _fromState(GoRouterState state) => PersonRoute(
+    state.pathParameters['fid']!,
+    int.parse(state.pathParameters['pid']!),
+  );
 
   PersonRoute get _self => this as PersonRoute;
 
@@ -89,19 +101,21 @@ mixin $PersonRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) => context.pushReplacement(location);
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
 }
 
 mixin $PersonDetailsRoute on GoRouteData {
-  static PersonDetailsRoute _fromState(GoRouterState state) => PersonDetailsRoute(
-    state.pathParameters['fid']!,
-    int.parse(state.pathParameters['pid']!),
-    _$PersonDetailsEnumMap._$fromName(state.pathParameters['details']!)!,
-    $extra: state.extra as int?,
-  );
+  static PersonDetailsRoute _fromState(GoRouterState state) =>
+      PersonDetailsRoute(
+        state.pathParameters['fid']!,
+        int.parse(state.pathParameters['pid']!),
+        _$PersonDetailsEnumMap._$fromName(state.pathParameters['details']!)!,
+        $extra: state.extra as int?,
+      );
 
   PersonDetailsRoute get _self => this as PersonDetailsRoute;
 
@@ -114,14 +128,16 @@ mixin $PersonDetailsRoute on GoRouteData {
   void go(BuildContext context) => context.go(location, extra: _self.$extra);
 
   @override
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location, extra: _self.$extra);
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: _self.$extra);
 
   @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location, extra: _self.$extra);
 
   @override
-  void replace(BuildContext context) => context.replace(location, extra: _self.$extra);
+  void replace(BuildContext context) =>
+      context.replace(location, extra: _self.$extra);
 }
 
 const _$PersonDetailsEnumMap = {
@@ -137,8 +153,9 @@ mixin $FamilyCountRoute on GoRouteData {
   FamilyCountRoute get _self => this as FamilyCountRoute;
 
   @override
-  String get location =>
-      GoRouteData.$location('/family-count/${Uri.encodeComponent(_self.count.toString())}');
+  String get location => GoRouteData.$location(
+    '/family-count/${Uri.encodeComponent(_self.count.toString())}',
+  );
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -147,7 +164,8 @@ mixin $FamilyCountRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) => context.pushReplacement(location);
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
@@ -158,7 +176,8 @@ extension<T extends Enum> on Map<T, String> {
       entries.where((element) => element.value == value).firstOrNull?.key;
 }
 
-RouteBase get $loginRoute => GoRouteData.$route(path: '/login', factory: $LoginRoute._fromState);
+RouteBase get $loginRoute =>
+    GoRouteData.$route(path: '/login', factory: $LoginRoute._fromState);
 
 mixin $LoginRoute on GoRouteData {
   static LoginRoute _fromState(GoRouterState state) =>
@@ -179,7 +198,8 @@ mixin $LoginRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) => context.pushReplacement(location);
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);

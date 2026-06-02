@@ -25,9 +25,8 @@ void main() {
     setUp(() {
       mockPlatform = MockPlatform();
       final GitDir gitDir;
-      (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) = configureBaseCommandMocks(
-        platform: mockPlatform,
-      );
+      (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) =
+          configureBaseCommandMocks(platform: mockPlatform);
       final command = FirebaseTestLabCommand(
         packagesDir,
         processRunner: processRunner,
@@ -35,7 +34,10 @@ void main() {
         gitDir: gitDir,
       );
 
-      runner = CommandRunner<void>('firebase_test_lab_command', 'Test for $FirebaseTestLabCommand');
+      runner = CommandRunner<void>(
+        'firebase_test_lab_command',
+        'Test for $FirebaseTestLabCommand',
+      );
       runner.addCommand(command);
     });
 
@@ -62,7 +64,8 @@ public class MainActivityTest {
         FakeProcessInfo(MockProcess(exitCode: 1), <String>['auth']),
       ];
 
-      const javaTestFileRelativePath = 'example/android/app/src/androidTest/MainActivityTest.java';
+      const javaTestFileRelativePath =
+          'example/android/app/src/androidTest/MainActivityTest.java';
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
@@ -77,14 +80,23 @@ public class MainActivityTest {
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['firebase-test-lab', '--results-bucket=a_bucket', '--service-key=/path/to/key'],
+        <String>[
+          'firebase-test-lab',
+          '--results-bucket=a_bucket',
+          '--service-key=/path/to/key',
+        ],
         errorHandler: (Error e) {
           commandError = e;
         },
       );
 
       expect(commandError, isA<ToolExit>());
-      expect(output, containsAllInOrder(<Matcher>[contains('Unable to activate gcloud account.')]));
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Unable to activate gcloud account.'),
+        ]),
+      );
     });
 
     test('retries gcloud set', () async {
@@ -93,7 +105,8 @@ public class MainActivityTest {
         FakeProcessInfo(MockProcess(exitCode: 1), <String>['config']),
       ];
 
-      const javaTestFileRelativePath = 'example/android/app/src/androidTest/MainActivityTest.java';
+      const javaTestFileRelativePath =
+          'example/android/app/src/androidTest/MainActivityTest.java';
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
@@ -115,13 +128,16 @@ public class MainActivityTest {
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('Warning: gcloud config set returned a non-zero exit code. Continuing anyway.'),
+          contains(
+            'Warning: gcloud config set returned a non-zero exit code. Continuing anyway.',
+          ),
         ]),
       );
     });
 
     test('only runs gcloud configuration once', () async {
-      const javaTestFileRelativePath = 'example/android/app/src/androidTest/MainActivityTest.java';
+      const javaTestFileRelativePath =
+          'example/android/app/src/androidTest/MainActivityTest.java';
       final RepositoryPackage plugin1 = createFakePlugin(
         'plugin1',
         packagesDir,
@@ -185,7 +201,11 @@ public class MainActivityTest {
             'auth activate-service-account --key-file=/path/to/key'.split(' '),
             null,
           ),
-          ProcessCall('gcloud', 'config set project a-project'.split(' '), null),
+          ProcessCall(
+            'gcloud',
+            'config set project a-project'.split(' '),
+            null,
+          ),
           ProcessCall(
             '/packages/plugin1/example/android/gradlew',
             'app:assembleAndroidTest -Pverbose=true'.split(' '),
@@ -231,7 +251,8 @@ public class MainActivityTest {
     });
 
     test('runs integration tests', () async {
-      const javaTestFileRelativePath = 'example/android/app/src/androidTest/MainActivityTest.java';
+      const javaTestFileRelativePath =
+          'example/android/app/src/androidTest/MainActivityTest.java';
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
@@ -268,7 +289,10 @@ public class MainActivityTest {
         ]),
       );
       expect(output, isNot(contains('test/plugin_test.dart')));
-      expect(output, isNot(contains('example/integration_test/should_not_run.dart')));
+      expect(
+        output,
+        isNot(contains('example/integration_test/should_not_run.dart')),
+      );
 
       expect(
         processRunner.recordedCalls,
@@ -314,7 +338,8 @@ public class MainActivityTest {
 
     test('runs for all examples', () async {
       const examples = <String>['example1', 'example2'];
-      const javaTestFileExampleRelativePath = 'android/app/src/androidTest/MainActivityTest.java';
+      const javaTestFileExampleRelativePath =
+          'android/app/src/androidTest/MainActivityTest.java';
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
@@ -328,7 +353,10 @@ public class MainActivityTest {
         ],
       );
       for (final example in examples) {
-        writeJavaTestFile(plugin, 'example/$example/$javaTestFileExampleRelativePath');
+        writeJavaTestFile(
+          plugin,
+          'example/$example/$javaTestFileExampleRelativePath',
+        );
       }
 
       final List<String> output = await runCapturingPrint(runner, <String>[
@@ -384,7 +412,8 @@ public class MainActivityTest {
     });
 
     test('fails if a test fails twice', () async {
-      const javaTestFileRelativePath = 'example/android/app/src/androidTest/MainActivityTest.java';
+      const javaTestFileRelativePath =
+          'example/android/app/src/androidTest/MainActivityTest.java';
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
@@ -406,7 +435,10 @@ public class MainActivityTest {
           'firebase',
           'test',
         ]), // integration test #1 retry
-        FakeProcessInfo(MockProcess(), <String>['firebase', 'test']), // integration test #2
+        FakeProcessInfo(MockProcess(), <String>[
+          'firebase',
+          'test',
+        ]), // integration test #2
       ];
 
       Error? commandError;
@@ -437,52 +469,65 @@ public class MainActivityTest {
       );
     });
 
-    test('passes with warning if a test fails once, then passes on retry', () async {
-      const javaTestFileRelativePath = 'example/android/app/src/androidTest/MainActivityTest.java';
-      final RepositoryPackage plugin = createFakePlugin(
-        'plugin',
-        packagesDir,
-        extraFiles: <String>[
-          'example/integration_test/bar_test.dart',
-          'example/integration_test/foo_test.dart',
-          'example/android/gradlew',
-          javaTestFileRelativePath,
-        ],
-      );
-      writeJavaTestFile(plugin, javaTestFileRelativePath);
+    test(
+      'passes with warning if a test fails once, then passes on retry',
+      () async {
+        const javaTestFileRelativePath =
+            'example/android/app/src/androidTest/MainActivityTest.java';
+        final RepositoryPackage plugin = createFakePlugin(
+          'plugin',
+          packagesDir,
+          extraFiles: <String>[
+            'example/integration_test/bar_test.dart',
+            'example/integration_test/foo_test.dart',
+            'example/android/gradlew',
+            javaTestFileRelativePath,
+          ],
+        );
+        writeJavaTestFile(plugin, javaTestFileRelativePath);
 
-      processRunner.mockProcessesForExecutable['gcloud'] = <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(exitCode: 1), <String>[
-          'firebase',
-          'test',
-        ]), // integration test #1
-        FakeProcessInfo(MockProcess(), <String>['firebase', 'test']), // integration test #1 retry
-        FakeProcessInfo(MockProcess(), <String>['firebase', 'test']), // integration test #2
-      ];
+        processRunner.mockProcessesForExecutable['gcloud'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(exitCode: 1), <String>[
+            'firebase',
+            'test',
+          ]), // integration test #1
+          FakeProcessInfo(MockProcess(), <String>[
+            'firebase',
+            'test',
+          ]), // integration test #1 retry
+          FakeProcessInfo(MockProcess(), <String>[
+            'firebase',
+            'test',
+          ]), // integration test #2
+        ];
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'firebase-test-lab',
-        '--results-bucket=a_bucket',
-        '--device',
-        'model=redfin,version=30',
-      ]);
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'firebase-test-lab',
+          '--results-bucket=a_bucket',
+          '--device',
+          'model=redfin,version=30',
+        ]);
 
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('Testing example/integration_test/bar_test.dart...'),
-          contains('bar_test.dart failed on attempt 1. Retrying...'),
-          contains('Testing example/integration_test/foo_test.dart...'),
-          contains('Ran for 1 package(s) (1 with warnings)'),
-        ]),
-      );
-    });
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Testing example/integration_test/bar_test.dart...'),
+            contains('bar_test.dart failed on attempt 1. Retrying...'),
+            contains('Testing example/integration_test/foo_test.dart...'),
+            contains('Ran for 1 package(s) (1 with warnings)'),
+          ]),
+        );
+      },
+    );
 
     test('fails for plugins with no androidTest directory', () async {
       createFakePlugin(
         'plugin',
         packagesDir,
-        extraFiles: <String>['example/integration_test/foo_test.dart', 'example/android/gradlew'],
+        extraFiles: <String>[
+          'example/integration_test/foo_test.dart',
+          'example/android/gradlew',
+        ],
       );
 
       Error? commandError;
@@ -514,37 +559,47 @@ public class MainActivityTest {
       );
     });
 
-    test('skips for non-plugin packages with no androidTest directory', () async {
-      createFakePackage(
-        'a_package',
-        packagesDir,
-        extraFiles: <String>['example/integration_test/foo_test.dart', 'example/android/gradlew'],
-      );
+    test(
+      'skips for non-plugin packages with no androidTest directory',
+      () async {
+        createFakePackage(
+          'a_package',
+          packagesDir,
+          extraFiles: <String>[
+            'example/integration_test/foo_test.dart',
+            'example/android/gradlew',
+          ],
+        );
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'firebase-test-lab',
-        '--results-bucket=a_bucket',
-        '--device',
-        'model=redfin,version=30',
-      ]);
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'firebase-test-lab',
+          '--results-bucket=a_bucket',
+          '--device',
+          'model=redfin,version=30',
+        ]);
 
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('Running for a_package'),
-          contains('No androidTest directory found.'),
-          contains('No examples support Android.'),
-          contains('Skipped 1 package'),
-        ]),
-      );
-    });
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for a_package'),
+            contains('No androidTest directory found.'),
+            contains('No examples support Android.'),
+            contains('Skipped 1 package'),
+          ]),
+        );
+      },
+    );
 
     test('fails for packages with no integration test files', () async {
-      const javaTestFileRelativePath = 'example/android/app/src/androidTest/MainActivityTest.java';
+      const javaTestFileRelativePath =
+          'example/android/app/src/androidTest/MainActivityTest.java';
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
-        extraFiles: <String>['example/android/gradlew', javaTestFileRelativePath],
+        extraFiles: <String>[
+          'example/android/gradlew',
+          javaTestFileRelativePath,
+        ],
       );
       writeJavaTestFile(plugin, javaTestFileRelativePath);
 
@@ -578,7 +633,8 @@ public class MainActivityTest {
     });
 
     test('fails for packages with no integration_test runner', () async {
-      const javaTestFileRelativePath = 'example/android/app/src/androidTest/MainActivityTest.java';
+      const javaTestFileRelativePath =
+          'example/android/app/src/androidTest/MainActivityTest.java';
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
@@ -592,7 +648,11 @@ public class MainActivityTest {
         ],
       );
       // Use the wrong @RunWith annotation.
-      writeJavaTestFile(plugin, javaTestFileRelativePath, runnerClass: 'AndroidJUnit4.class');
+      writeJavaTestFile(
+        plugin,
+        javaTestFileRelativePath,
+        runnerClass: 'AndroidJUnit4.class',
+      );
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
@@ -626,7 +686,8 @@ public class MainActivityTest {
     });
 
     test('supports kotlin implementation of integration_test runner', () async {
-      const kotlinTestFileRelativePath = 'example/android/app/src/androidTest/MainActivityTest.kt';
+      const kotlinTestFileRelativePath =
+          'example/android/app/src/androidTest/MainActivityTest.kt';
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
@@ -688,17 +749,24 @@ class MainActivityTest {
           contains('No examples support Android'),
         ]),
       );
-      expect(output, isNot(contains('Testing example/integration_test/foo_test.dart...')));
+      expect(
+        output,
+        isNot(contains('Testing example/integration_test/foo_test.dart...')),
+      );
 
       expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
     });
 
     test('builds if gradlew is missing', () async {
-      const javaTestFileRelativePath = 'example/android/app/src/androidTest/MainActivityTest.java';
+      const javaTestFileRelativePath =
+          'example/android/app/src/androidTest/MainActivityTest.java';
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
-        extraFiles: <String>['example/integration_test/foo_test.dart', javaTestFileRelativePath],
+        extraFiles: <String>[
+          'example/integration_test/foo_test.dart',
+          javaTestFileRelativePath,
+        ],
       );
       writeJavaTestFile(plugin, javaTestFileRelativePath);
 
@@ -752,11 +820,15 @@ class MainActivityTest {
     });
 
     test('fails if building to generate gradlew fails', () async {
-      const javaTestFileRelativePath = 'example/android/app/src/androidTest/MainActivityTest.java';
+      const javaTestFileRelativePath =
+          'example/android/app/src/androidTest/MainActivityTest.java';
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
-        extraFiles: <String>['example/integration_test/foo_test.dart', javaTestFileRelativePath],
+        extraFiles: <String>[
+          'example/integration_test/foo_test.dart',
+          javaTestFileRelativePath,
+        ],
       );
       writeJavaTestFile(plugin, javaTestFileRelativePath);
 
@@ -779,15 +851,22 @@ class MainActivityTest {
       );
 
       expect(commandError, isA<ToolExit>());
-      expect(output, containsAllInOrder(<Matcher>[contains('Unable to build example apk')]));
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[contains('Unable to build example apk')]),
+      );
     });
 
     test('fails if assembleAndroidTest fails', () async {
-      const javaTestFileRelativePath = 'example/android/app/src/androidTest/MainActivityTest.java';
+      const javaTestFileRelativePath =
+          'example/android/app/src/androidTest/MainActivityTest.java';
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
-        extraFiles: <String>['example/integration_test/foo_test.dart', javaTestFileRelativePath],
+        extraFiles: <String>[
+          'example/integration_test/foo_test.dart',
+          javaTestFileRelativePath,
+        ],
       );
       writeJavaTestFile(plugin, javaTestFileRelativePath);
 
@@ -798,7 +877,9 @@ class MainActivityTest {
           .childFile('gradlew')
           .path;
       processRunner.mockProcessesForExecutable[gradlewPath] = <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(exitCode: 1), <String>['app:assembleAndroidTest']),
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>[
+          'app:assembleAndroidTest',
+        ]),
       ];
 
       Error? commandError;
@@ -816,15 +897,24 @@ class MainActivityTest {
       );
 
       expect(commandError, isA<ToolExit>());
-      expect(output, containsAllInOrder(<Matcher>[contains('Unable to assemble androidTest')]));
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Unable to assemble androidTest'),
+        ]),
+      );
     });
 
     test('fails if assembleDebug fails', () async {
-      const javaTestFileRelativePath = 'example/android/app/src/androidTest/MainActivityTest.java';
+      const javaTestFileRelativePath =
+          'example/android/app/src/androidTest/MainActivityTest.java';
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
-        extraFiles: <String>['example/integration_test/foo_test.dart', javaTestFileRelativePath],
+        extraFiles: <String>[
+          'example/integration_test/foo_test.dart',
+          javaTestFileRelativePath,
+        ],
       );
       writeJavaTestFile(plugin, javaTestFileRelativePath);
 
@@ -836,7 +926,9 @@ class MainActivityTest {
           .path;
       processRunner.mockProcessesForExecutable[gradlewPath] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(), <String>['app:assembleAndroidTest']),
-        FakeProcessInfo(MockProcess(exitCode: 1), <String>['app:assembleDebug']),
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>[
+          'app:assembleDebug',
+        ]),
       ];
 
       Error? commandError;
@@ -868,7 +960,8 @@ class MainActivityTest {
     });
 
     test('experimental flag', () async {
-      const javaTestFileRelativePath = 'example/android/app/src/androidTest/MainActivityTest.java';
+      const javaTestFileRelativePath =
+          'example/android/app/src/androidTest/MainActivityTest.java';
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
@@ -940,16 +1033,17 @@ class MainActivityTest {
         test('runs command for changes to $file', () async {
           createFakePackage('package_a', packagesDir);
 
-          gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
-            FakeProcessInfo(
-              MockProcess(
-                stdout:
-                    '''
+          gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+              <FakeProcessInfo>[
+                FakeProcessInfo(
+                  MockProcess(
+                    stdout:
+                        '''
 packages/package_a/$file
 ''',
-              ),
-            ),
-          ];
+                  ),
+                ),
+              ];
 
           final List<String> output = await runCapturingPrint(runner, <String>[
             'firebase-test-lab',
@@ -958,24 +1052,28 @@ packages/package_a/$file
             'model=redfin,version=30',
           ]);
 
-          expect(output, containsAllInOrder(<Matcher>[contains('Running for package_a')]));
+          expect(
+            output,
+            containsAllInOrder(<Matcher>[contains('Running for package_a')]),
+          );
         });
       }
 
       test('skips commands if all files should be ignored', () async {
         createFakePackage('package_a', packagesDir);
 
-        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
-          FakeProcessInfo(
-            MockProcess(
-              stdout: '''
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+              FakeProcessInfo(
+                MockProcess(
+                  stdout: '''
 README.md
 SUGGESTED_REVIEWERS.md
 packages/package_a/CHANGELOG.md
 ''',
-            ),
-          ),
-        ];
+                ),
+              ),
+            ];
 
         final List<String> output = await runCapturingPrint(runner, <String>[
           'firebase-test-lab',
@@ -984,8 +1082,16 @@ packages/package_a/CHANGELOG.md
           'model=redfin,version=30',
         ]);
 
-        expect(output, isNot(containsAllInOrder(<Matcher>[contains('Running for package_a')])));
-        expect(output, containsAllInOrder(<Matcher>[contains('SKIPPING ALL PACKAGES')]));
+        expect(
+          output,
+          isNot(
+            containsAllInOrder(<Matcher>[contains('Running for package_a')]),
+          ),
+        );
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[contains('SKIPPING ALL PACKAGES')]),
+        );
       });
     });
   });

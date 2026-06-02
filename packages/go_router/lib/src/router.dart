@@ -59,7 +59,10 @@ class RoutingConfig {
     this.redirectLimit = 5,
   });
 
-  static FutureOr<String?> _defaultRedirect(BuildContext context, GoRouterState state) => null;
+  static FutureOr<String?> _defaultRedirect(
+    BuildContext context,
+    GoRouterState state,
+  ) => null;
 
   /// The supported routes.
   ///
@@ -269,11 +272,16 @@ class GoRouter implements RouterConfig<RouteMatchList> {
 
     final ParserExceptionHandler? parserExceptionHandler;
     if (onException != null) {
-      parserExceptionHandler = (BuildContext context, RouteMatchList routeMatchList) {
-        onException(context, configuration.buildTopLevelGoRouterState(routeMatchList), this);
-        // Avoid updating GoRouterDelegate if onException is provided.
-        return routerDelegate.currentConfiguration;
-      };
+      parserExceptionHandler =
+          (BuildContext context, RouteMatchList routeMatchList) {
+            onException(
+              context,
+              configuration.buildTopLevelGoRouterState(routeMatchList),
+              this,
+            );
+            // Avoid updating GoRouterDelegate if onException is provided.
+            return routerDelegate.currentConfiguration;
+          };
     } else {
       parserExceptionHandler = null;
     }
@@ -412,7 +420,10 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   /// Restore the RouteMatchList
   void restore(RouteMatchList matchList) {
     log('restoring ${matchList.uri}');
-    routeInformationProvider.restore(matchList.uri.toString(), matchList: matchList);
+    routeInformationProvider.restore(
+      matchList.uri.toString(),
+      matchList: matchList,
+    );
   }
 
   /// Navigate to a named route w/ optional parameters, e.g.
@@ -462,7 +473,11 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
   }) => push<T>(
-    namedLocation(name, pathParameters: pathParameters, queryParameters: queryParameters),
+    namedLocation(
+      name,
+      pathParameters: pathParameters,
+      queryParameters: queryParameters,
+    ),
     extra: extra,
   );
 
@@ -475,7 +490,10 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   /// * [replace] which replaces the top-most page of the page stack but treats
   ///   it as the same page. The page key will be reused. This will preserve the
   ///   state and not run any page animation.
-  Future<T?> pushReplacement<T extends Object?>(String location, {Object? extra}) {
+  Future<T?> pushReplacement<T extends Object?>(
+    String location, {
+    Object? extra,
+  }) {
     log('pushReplacement $location');
     return routeInformationProvider.pushReplacement<T>(
       location,
@@ -498,7 +516,11 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     Object? extra,
   }) {
     return pushReplacement<T>(
-      namedLocation(name, pathParameters: pathParameters, queryParameters: queryParameters),
+      namedLocation(
+        name,
+        pathParameters: pathParameters,
+        queryParameters: queryParameters,
+      ),
       extra: extra,
     );
   }
@@ -540,7 +562,11 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     Object? extra,
   }) {
     return replace(
-      namedLocation(name, pathParameters: pathParameters, queryParameters: queryParameters),
+      namedLocation(
+        name,
+        pathParameters: pathParameters,
+        queryParameters: queryParameters,
+      ),
       extra: extra,
     );
   }
@@ -587,7 +613,9 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   /// The current GoRouter in the widget tree, if any.
   static GoRouter? maybeOf(BuildContext context) {
     final inherited =
-        context.getElementForInheritedWidgetOfExactType<InheritedGoRouter>()?.widget
+        context
+                .getElementForInheritedWidgetOfExactType<InheritedGoRouter>()
+                ?.widget
             as InheritedGoRouter?;
     if (inherited != null) {
       return inherited.goRouter;
@@ -610,7 +638,9 @@ class GoRouter implements RouterConfig<RouteMatchList> {
       // verified by assert() during the initialization.
       return initialLocation!;
     }
-    Uri platformDefaultUri = Uri.parse(WidgetsBinding.instance.platformDispatcher.defaultRouteName);
+    Uri platformDefaultUri = Uri.parse(
+      WidgetsBinding.instance.platformDispatcher.defaultRouteName,
+    );
     if (platformDefaultUri.hasEmptyPath) {
       platformDefaultUri = platformDefaultUri.replace(path: '/');
     }

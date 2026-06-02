@@ -66,7 +66,10 @@ class PathDisplay extends StatelessWidget {
       title: Text(fileName),
       content: Text(filePath),
       actions: <Widget>[
-        TextButton(child: const Text('Close'), onPressed: () => Navigator.pop(context)),
+        TextButton(
+          child: const Text('Close'),
+          onPressed: () => Navigator.pop(context),
+        ),
       ],
     );
   }

@@ -68,7 +68,8 @@ class InAppPurchase implements InAppPurchasePlatformAdditionProvider {
   /// time. If you choose to have multiple subscription at the same time, you
   /// should be careful at the fact that each subscription will receive all the
   /// events after they start to listen.
-  Stream<List<PurchaseDetails>> get purchaseStream => InAppPurchasePlatform.instance.purchaseStream;
+  Stream<List<PurchaseDetails>> get purchaseStream =>
+      InAppPurchasePlatform.instance.purchaseStream;
 
   /// Returns `true` if the payment platform is ready and available.
   Future<bool> isAvailable() => InAppPurchasePlatform.instance.isAvailable();
@@ -113,7 +114,9 @@ class InAppPurchase implements InAppPurchasePlatformAdditionProvider {
   ///
   /// Calling this method for consumable items will cause unwanted behaviors!
   Future<bool> buyNonConsumable({required PurchaseParam purchaseParam}) =>
-      InAppPurchasePlatform.instance.buyNonConsumable(purchaseParam: purchaseParam);
+      InAppPurchasePlatform.instance.buyNonConsumable(
+        purchaseParam: purchaseParam,
+      );
 
   /// Buy a consumable product.
   ///
@@ -153,11 +156,13 @@ class InAppPurchase implements InAppPurchasePlatformAdditionProvider {
   ///
   /// Calling this method for non consumable items will cause unwanted
   /// behaviors!
-  Future<bool> buyConsumable({required PurchaseParam purchaseParam, bool autoConsume = true}) =>
-      InAppPurchasePlatform.instance.buyConsumable(
-        purchaseParam: purchaseParam,
-        autoConsume: autoConsume,
-      );
+  Future<bool> buyConsumable({
+    required PurchaseParam purchaseParam,
+    bool autoConsume = true,
+  }) => InAppPurchasePlatform.instance.buyConsumable(
+    purchaseParam: purchaseParam,
+    autoConsume: autoConsume,
+  );
 
   /// Mark that purchased content has been delivered to the user.
   ///
@@ -200,7 +205,9 @@ class InAppPurchase implements InAppPurchasePlatformAdditionProvider {
   ///  * [refreshPurchaseVerificationData], for reloading failed
   ///    [PurchaseDetails.verificationData].
   Future<void> restorePurchases({String? applicationUserName}) =>
-      InAppPurchasePlatform.instance.restorePurchases(applicationUserName: applicationUserName);
+      InAppPurchasePlatform.instance.restorePurchases(
+        applicationUserName: applicationUserName,
+      );
 
   /// Returns the user's country.
   ///

@@ -28,7 +28,8 @@ void main() {
   setUp(() {
     InAppPurchaseStoreKitPlatform.enableStoreKit1();
     InAppPurchaseStoreKitPlatform.registerPlatform();
-    iapStoreKitPlatform = InAppPurchasePlatform.instance as InAppPurchaseStoreKitPlatform;
+    iapStoreKitPlatform =
+        InAppPurchasePlatform.instance as InAppPurchaseStoreKitPlatform;
     fakeStoreKitPlatform.reset();
   });
 
@@ -43,12 +44,8 @@ void main() {
   group('query product list', () {
     test('should get product list and correct invalid identifiers', () async {
       final connection = InAppPurchaseStoreKitPlatform();
-      final ProductDetailsResponse response = await connection.queryProductDetails(<String>{
-        '123',
-        '456',
-        '789',
-        '999',
-      });
+      final ProductDetailsResponse response = await connection
+          .queryProductDetails(<String>{'123', '456', '789', '999'});
       final List<ProductDetails> products = response.productDetails;
       expect(products.first.id, '123');
       expect(products[1].id, '456');
@@ -60,26 +57,26 @@ void main() {
       expect(response.productDetails[1].currencySymbol, 'EUR');
     });
 
-    test('if query products throws error, should get error object in the response', () async {
-      fakeStoreKitPlatform.queryProductException = PlatformException(
-        code: 'error_code',
-        message: 'error_message',
-        details: <Object, Object>{'info': 'error_info'},
-      );
-      final connection = InAppPurchaseStoreKitPlatform();
-      final ProductDetailsResponse response = await connection.queryProductDetails(<String>{
-        '123',
-        '456',
-        '789',
-      });
-      expect(response.productDetails, <ProductDetails>[]);
-      expect(response.notFoundIDs, <String>['123', '456', '789']);
-      expect(response.error, isNotNull);
-      expect(response.error!.source, kIAPSource);
-      expect(response.error!.code, 'error_code');
-      expect(response.error!.message, 'error_message');
-      expect(response.error!.details, <Object, Object>{'info': 'error_info'});
-    });
+    test(
+      'if query products throws error, should get error object in the response',
+      () async {
+        fakeStoreKitPlatform.queryProductException = PlatformException(
+          code: 'error_code',
+          message: 'error_message',
+          details: <Object, Object>{'info': 'error_info'},
+        );
+        final connection = InAppPurchaseStoreKitPlatform();
+        final ProductDetailsResponse response = await connection
+            .queryProductDetails(<String>{'123', '456', '789'});
+        expect(response.productDetails, <ProductDetails>[]);
+        expect(response.notFoundIDs, <String>['123', '456', '789']);
+        expect(response.error, isNotNull);
+        expect(response.error!.source, kIAPSource);
+        expect(response.error!.code, 'error_code');
+        expect(response.error!.message, 'error_message');
+        expect(response.error!.details, <Object, Object>{'info': 'error_info'});
+      },
+    );
   });
 
   group('restore purchases', () {
@@ -93,7 +90,8 @@ void main() {
         fakeStoreKitPlatform.createRestoredTransaction('foo', 'RT2'),
       );
       final completer = Completer<List<PurchaseDetails>>();
-      final Stream<List<PurchaseDetails>> stream = iapStoreKitPlatform.purchaseStream;
+      final Stream<List<PurchaseDetails>> stream =
+          iapStoreKitPlatform.purchaseStream;
 
       late StreamSubscription<List<PurchaseDetails>> subscription;
       subscription = stream.listen((List<PurchaseDetails> purchaseDetailsList) {
@@ -108,14 +106,21 @@ void main() {
 
       expect(details.length, 2);
       for (var i = 0; i < fakeStoreKitPlatform.transactionList.length; i++) {
-        final SKPaymentTransactionWrapper expected = fakeStoreKitPlatform.transactionList[i];
+        final SKPaymentTransactionWrapper expected =
+            fakeStoreKitPlatform.transactionList[i];
         final PurchaseDetails actual = details[i];
 
         expect(actual.purchaseID, expected.transactionIdentifier);
         expect(actual.verificationData, isNotNull);
         expect(actual.status, PurchaseStatus.restored);
-        expect(actual.verificationData.localVerificationData, fakeStoreKitPlatform.receiptData);
-        expect(actual.verificationData.serverVerificationData, fakeStoreKitPlatform.receiptData);
+        expect(
+          actual.verificationData.localVerificationData,
+          fakeStoreKitPlatform.receiptData,
+        );
+        expect(
+          actual.verificationData.serverVerificationData,
+          fakeStoreKitPlatform.receiptData,
+        );
         expect(actual.pendingCompletePurchase, true);
       }
     });
@@ -125,10 +130,13 @@ void main() {
       () async {
         fakeStoreKitPlatform.testRestoredTransactionsNull = true;
         final completer = Completer<List<PurchaseDetails>?>();
-        final Stream<List<PurchaseDetails>> stream = iapStoreKitPlatform.purchaseStream;
+        final Stream<List<PurchaseDetails>> stream =
+            iapStoreKitPlatform.purchaseStream;
 
         late StreamSubscription<List<PurchaseDetails>> subscription;
-        subscription = stream.listen((List<PurchaseDetails> purchaseDetailsList) {
+        subscription = stream.listen((
+          List<PurchaseDetails> purchaseDetailsList,
+        ) {
           expect(purchaseDetailsList.isEmpty, true);
           subscription.cancel();
           completer.complete();
@@ -153,7 +161,8 @@ void main() {
         fakeStoreKitPlatform.createRestoredTransaction('foo', 'RT2'),
       );
       final completer = Completer<List<PurchaseDetails>>();
-      final Stream<List<PurchaseDetails>> stream = iapStoreKitPlatform.purchaseStream;
+      final Stream<List<PurchaseDetails>> stream =
+          iapStoreKitPlatform.purchaseStream;
 
       late StreamSubscription<List<PurchaseDetails>> subscription;
       subscription = stream.listen((List<PurchaseDetails> purchaseDetailsList) {
@@ -166,7 +175,8 @@ void main() {
       final List<PurchaseDetails> details = await completer.future;
       expect(details.length, 3);
       for (var i = 0; i < fakeStoreKitPlatform.transactionList.length; i++) {
-        final SKPaymentTransactionWrapper expected = fakeStoreKitPlatform.transactionList[i];
+        final SKPaymentTransactionWrapper expected =
+            fakeStoreKitPlatform.transactionList[i];
         final PurchaseDetails actual = details[i];
 
         expect(actual.purchaseID, expected.transactionIdentifier);
@@ -178,8 +188,14 @@ void main() {
             expected.error,
           ),
         );
-        expect(actual.verificationData.localVerificationData, fakeStoreKitPlatform.receiptData);
-        expect(actual.verificationData.serverVerificationData, fakeStoreKitPlatform.receiptData);
+        expect(
+          actual.verificationData.localVerificationData,
+          fakeStoreKitPlatform.receiptData,
+        );
+        expect(
+          actual.verificationData.serverVerificationData,
+          fakeStoreKitPlatform.receiptData,
+        );
         expect(actual.pendingCompletePurchase, true);
       }
     });
@@ -192,11 +208,14 @@ void main() {
           fakeStoreKitPlatform.createPurchasedTransaction('foo', 'bar'),
         );
         final completer = Completer<List<List<PurchaseDetails>>>();
-        final Stream<List<PurchaseDetails>> stream = iapStoreKitPlatform.purchaseStream;
+        final Stream<List<PurchaseDetails>> stream =
+            iapStoreKitPlatform.purchaseStream;
         final purchaseDetails = <List<PurchaseDetails>>[];
 
         late StreamSubscription<List<PurchaseDetails>> subscription;
-        subscription = stream.listen((List<PurchaseDetails> purchaseDetailsList) {
+        subscription = stream.listen((
+          List<PurchaseDetails> purchaseDetailsList,
+        ) {
           purchaseDetails.add(purchaseDetailsList);
 
           if (purchaseDetails.length == 2) {
@@ -209,7 +228,8 @@ void main() {
         expect(details.length, 2);
         expect(details[0], <List<PurchaseDetails>>[]);
         for (var i = 0; i < fakeStoreKitPlatform.transactionList.length; i++) {
-          final SKPaymentTransactionWrapper expected = fakeStoreKitPlatform.transactionList[i];
+          final SKPaymentTransactionWrapper expected =
+              fakeStoreKitPlatform.transactionList[i];
           final PurchaseDetails actual = details[1][i];
 
           expect(actual.purchaseID, expected.transactionIdentifier);
@@ -221,42 +241,54 @@ void main() {
               expected.error,
             ),
           );
-          expect(actual.verificationData.localVerificationData, fakeStoreKitPlatform.receiptData);
-          expect(actual.verificationData.serverVerificationData, fakeStoreKitPlatform.receiptData);
+          expect(
+            actual.verificationData.localVerificationData,
+            fakeStoreKitPlatform.receiptData,
+          );
+          expect(
+            actual.verificationData.serverVerificationData,
+            fakeStoreKitPlatform.receiptData,
+          );
           expect(actual.pendingCompletePurchase, true);
         }
       },
     );
 
-    test('receipt error should populate null to verificationData.data', () async {
-      fakeStoreKitPlatform.transactionList.insert(
-        0,
-        fakeStoreKitPlatform.createRestoredTransaction('foo', 'RT1'),
-      );
-      fakeStoreKitPlatform.transactionList.insert(
-        1,
-        fakeStoreKitPlatform.createRestoredTransaction('foo', 'RT2'),
-      );
-      fakeStoreKitPlatform.receiptData = null;
-      final completer = Completer<List<PurchaseDetails>>();
-      final Stream<List<PurchaseDetails>> stream = iapStoreKitPlatform.purchaseStream;
+    test(
+      'receipt error should populate null to verificationData.data',
+      () async {
+        fakeStoreKitPlatform.transactionList.insert(
+          0,
+          fakeStoreKitPlatform.createRestoredTransaction('foo', 'RT1'),
+        );
+        fakeStoreKitPlatform.transactionList.insert(
+          1,
+          fakeStoreKitPlatform.createRestoredTransaction('foo', 'RT2'),
+        );
+        fakeStoreKitPlatform.receiptData = null;
+        final completer = Completer<List<PurchaseDetails>>();
+        final Stream<List<PurchaseDetails>> stream =
+            iapStoreKitPlatform.purchaseStream;
 
-      late StreamSubscription<List<PurchaseDetails>> subscription;
-      subscription = stream.listen((List<PurchaseDetails> purchaseDetailsList) {
-        if (purchaseDetailsList.first.status == PurchaseStatus.restored) {
-          completer.complete(purchaseDetailsList);
-          subscription.cancel();
+        late StreamSubscription<List<PurchaseDetails>> subscription;
+        subscription = stream.listen((
+          List<PurchaseDetails> purchaseDetailsList,
+        ) {
+          if (purchaseDetailsList.first.status == PurchaseStatus.restored) {
+            completer.complete(purchaseDetailsList);
+            subscription.cancel();
+          }
+        });
+
+        await iapStoreKitPlatform.restorePurchases();
+        final List<PurchaseDetails> details = await completer.future;
+
+        for (final purchase in details) {
+          expect(purchase.verificationData.localVerificationData, isEmpty);
+          expect(purchase.verificationData.serverVerificationData, isEmpty);
         }
-      });
-
-      await iapStoreKitPlatform.restorePurchases();
-      final List<PurchaseDetails> details = await completer.future;
-
-      for (final purchase in details) {
-        expect(purchase.verificationData.localVerificationData, isEmpty);
-        expect(purchase.verificationData.serverVerificationData, isEmpty);
-      }
-    });
+      },
+    );
 
     test('test restore error', () {
       fakeStoreKitPlatform.testRestoredError = const SKError(
@@ -271,9 +303,11 @@ void main() {
           isA<SKError>()
               .having((SKError error) => error.code, 'code', 123)
               .having((SKError error) => error.domain, 'domain', 'error_test')
-              .having((SKError error) => error.userInfo, 'userInfo', <String, dynamic>{
-                'message': 'errorMessage',
-              }),
+              .having(
+                (SKError error) => error.userInfo,
+                'userInfo',
+                <String, dynamic>{'message': 'errorMessage'},
+              ),
         ),
       );
     });
@@ -285,10 +319,13 @@ void main() {
       () async {
         final details = <PurchaseDetails>[];
         final completer = Completer<List<PurchaseDetails>>();
-        final Stream<List<PurchaseDetails>> stream = iapStoreKitPlatform.purchaseStream;
+        final Stream<List<PurchaseDetails>> stream =
+            iapStoreKitPlatform.purchaseStream;
 
         late StreamSubscription<List<PurchaseDetails>> subscription;
-        subscription = stream.listen((List<PurchaseDetails> purchaseDetailsList) {
+        subscription = stream.listen((
+          List<PurchaseDetails> purchaseDetailsList,
+        ) {
           details.addAll(purchaseDetailsList);
           if (purchaseDetailsList.first.status == PurchaseStatus.purchased) {
             completer.complete(details);
@@ -296,10 +333,14 @@ void main() {
           }
         });
         final purchaseParam = AppStorePurchaseParam(
-          productDetails: AppStoreProductDetails.fromSKProduct(dummyProductWrapper),
+          productDetails: AppStoreProductDetails.fromSKProduct(
+            dummyProductWrapper,
+          ),
           applicationUserName: 'appName',
         );
-        await iapStoreKitPlatform.buyNonConsumable(purchaseParam: purchaseParam);
+        await iapStoreKitPlatform.buyNonConsumable(
+          purchaseParam: purchaseParam,
+        );
 
         final List<PurchaseDetails> result = await completer.future;
         expect(result.length, 2);
@@ -312,10 +353,13 @@ void main() {
       () async {
         final details = <PurchaseDetails>[];
         final completer = Completer<List<PurchaseDetails>>();
-        final Stream<List<PurchaseDetails>> stream = iapStoreKitPlatform.purchaseStream;
+        final Stream<List<PurchaseDetails>> stream =
+            iapStoreKitPlatform.purchaseStream;
 
         late StreamSubscription<List<PurchaseDetails>> subscription;
-        subscription = stream.listen((List<PurchaseDetails> purchaseDetailsList) {
+        subscription = stream.listen((
+          List<PurchaseDetails> purchaseDetailsList,
+        ) {
           details.addAll(purchaseDetailsList);
           if (purchaseDetailsList.first.status == PurchaseStatus.purchased) {
             completer.complete(details);
@@ -323,7 +367,9 @@ void main() {
           }
         });
         final purchaseParam = AppStorePurchaseParam(
-          productDetails: AppStoreProductDetails.fromSKProduct(dummyProductWrapper),
+          productDetails: AppStoreProductDetails.fromSKProduct(
+            dummyProductWrapper,
+          ),
           applicationUserName: 'appName',
         );
         await iapStoreKitPlatform.buyConsumable(purchaseParam: purchaseParam);
@@ -336,11 +382,16 @@ void main() {
 
     test('buying consumable, should throw when autoConsume is false', () async {
       final purchaseParam = AppStorePurchaseParam(
-        productDetails: AppStoreProductDetails.fromSKProduct(dummyProductWrapper),
+        productDetails: AppStoreProductDetails.fromSKProduct(
+          dummyProductWrapper,
+        ),
         applicationUserName: 'appName',
       );
       expect(
-        () => iapStoreKitPlatform.buyConsumable(purchaseParam: purchaseParam, autoConsume: false),
+        () => iapStoreKitPlatform.buyConsumable(
+          purchaseParam: purchaseParam,
+          autoConsume: false,
+        ),
         throwsA(isInstanceOf<AssertionError>()),
       );
     });
@@ -351,7 +402,8 @@ void main() {
       final completer = Completer<IAPError>();
       late IAPError error;
 
-      final Stream<List<PurchaseDetails>> stream = iapStoreKitPlatform.purchaseStream;
+      final Stream<List<PurchaseDetails>> stream =
+          iapStoreKitPlatform.purchaseStream;
       late StreamSubscription<List<PurchaseDetails>> subscription;
       subscription = stream.listen((List<PurchaseDetails> purchaseDetailsList) {
         details.addAll(purchaseDetailsList);
@@ -364,7 +416,9 @@ void main() {
         }
       });
       final purchaseParam = AppStorePurchaseParam(
-        productDetails: AppStoreProductDetails.fromSKProduct(dummyProductWrapper),
+        productDetails: AppStoreProductDetails.fromSKProduct(
+          dummyProductWrapper,
+        ),
         applicationUserName: 'appName',
       );
       await iapStoreKitPlatform.buyNonConsumable(purchaseParam: purchaseParam);
@@ -373,7 +427,9 @@ void main() {
       expect(completerError.code, 'purchase_error');
       expect(completerError.source, kIAPSource);
       expect(completerError.message, 'ios_domain');
-      expect(completerError.details, <Object, Object>{'message': 'an error message'});
+      expect(completerError.details, <Object, Object>{
+        'message': 'an error message',
+      });
     });
 
     test(
@@ -383,9 +439,12 @@ void main() {
         final details = <PurchaseDetails>[];
         final completer = Completer<PurchaseStatus>();
 
-        final Stream<List<PurchaseDetails>> stream = iapStoreKitPlatform.purchaseStream;
+        final Stream<List<PurchaseDetails>> stream =
+            iapStoreKitPlatform.purchaseStream;
         late StreamSubscription<List<PurchaseDetails>> subscription;
-        subscription = stream.listen((List<PurchaseDetails> purchaseDetailsList) {
+        subscription = stream.listen((
+          List<PurchaseDetails> purchaseDetailsList,
+        ) {
           details.addAll(purchaseDetailsList);
           for (final purchaseDetails in purchaseDetailsList) {
             if (purchaseDetails.status == PurchaseStatus.canceled) {
@@ -395,10 +454,14 @@ void main() {
           }
         });
         final purchaseParam = AppStorePurchaseParam(
-          productDetails: AppStoreProductDetails.fromSKProduct(dummyProductWrapper),
+          productDetails: AppStoreProductDetails.fromSKProduct(
+            dummyProductWrapper,
+          ),
           applicationUserName: 'appName',
         );
-        await iapStoreKitPlatform.buyNonConsumable(purchaseParam: purchaseParam);
+        await iapStoreKitPlatform.buyNonConsumable(
+          purchaseParam: purchaseParam,
+        );
 
         final PurchaseStatus purchaseStatus = await completer.future;
         expect(purchaseStatus, PurchaseStatus.canceled);
@@ -412,9 +475,12 @@ void main() {
         final details = <PurchaseDetails>[];
         final completer = Completer<PurchaseStatus>();
 
-        final Stream<List<PurchaseDetails>> stream = iapStoreKitPlatform.purchaseStream;
+        final Stream<List<PurchaseDetails>> stream =
+            iapStoreKitPlatform.purchaseStream;
         late StreamSubscription<List<PurchaseDetails>> subscription;
-        subscription = stream.listen((List<PurchaseDetails> purchaseDetailsList) {
+        subscription = stream.listen((
+          List<PurchaseDetails> purchaseDetailsList,
+        ) {
           details.addAll(purchaseDetailsList);
           for (final purchaseDetails in purchaseDetailsList) {
             if (purchaseDetails.status == PurchaseStatus.canceled) {
@@ -424,10 +490,14 @@ void main() {
           }
         });
         final purchaseParam = AppStorePurchaseParam(
-          productDetails: AppStoreProductDetails.fromSKProduct(dummyProductWrapper),
+          productDetails: AppStoreProductDetails.fromSKProduct(
+            dummyProductWrapper,
+          ),
           applicationUserName: 'appName',
         );
-        await iapStoreKitPlatform.buyNonConsumable(purchaseParam: purchaseParam);
+        await iapStoreKitPlatform.buyNonConsumable(
+          purchaseParam: purchaseParam,
+        );
 
         final PurchaseStatus purchaseStatus = await completer.future;
         expect(purchaseStatus, PurchaseStatus.canceled);
@@ -439,9 +509,12 @@ void main() {
       () async {
         final details = <PurchaseDetails>[];
         final completer = Completer<List<PurchaseDetails>>();
-        final Stream<List<PurchaseDetails>> stream = iapStoreKitPlatform.purchaseStream;
+        final Stream<List<PurchaseDetails>> stream =
+            iapStoreKitPlatform.purchaseStream;
         late StreamSubscription<List<PurchaseDetails>> subscription;
-        subscription = stream.listen((List<PurchaseDetails> purchaseDetailsList) {
+        subscription = stream.listen((
+          List<PurchaseDetails> purchaseDetailsList,
+        ) {
           details.addAll(purchaseDetailsList);
           for (final purchaseDetails in purchaseDetailsList) {
             if (purchaseDetails.pendingCompletePurchase) {
@@ -451,15 +524,22 @@ void main() {
             }
           }
         });
-        final productDetails = AppStoreProductDetails.fromSKProduct(dummyProductWrapper);
+        final productDetails = AppStoreProductDetails.fromSKProduct(
+          dummyProductWrapper,
+        );
         final purchaseParam = AppStorePurchaseParam(
           productDetails: productDetails,
           quantity: 5,
           applicationUserName: 'appName',
         );
-        await iapStoreKitPlatform.buyNonConsumable(purchaseParam: purchaseParam);
+        await iapStoreKitPlatform.buyNonConsumable(
+          purchaseParam: purchaseParam,
+        );
         await completer.future;
-        expect(fakeStoreKitPlatform.finishedTransactions.first.payment.quantity, 5);
+        expect(
+          fakeStoreKitPlatform.finishedTransactions.first.payment.quantity,
+          5,
+        );
       },
     );
 
@@ -468,9 +548,12 @@ void main() {
       () async {
         final details = <PurchaseDetails>[];
         final completer = Completer<List<PurchaseDetails>>();
-        final Stream<List<PurchaseDetails>> stream = iapStoreKitPlatform.purchaseStream;
+        final Stream<List<PurchaseDetails>> stream =
+            iapStoreKitPlatform.purchaseStream;
         late StreamSubscription<List<PurchaseDetails>> subscription;
-        subscription = stream.listen((List<PurchaseDetails> purchaseDetailsList) {
+        subscription = stream.listen((
+          List<PurchaseDetails> purchaseDetailsList,
+        ) {
           details.addAll(purchaseDetailsList);
           for (final purchaseDetails in purchaseDetailsList) {
             if (purchaseDetails.pendingCompletePurchase) {
@@ -480,7 +563,9 @@ void main() {
             }
           }
         });
-        final productDetails = AppStoreProductDetails.fromSKProduct(dummyProductWrapper);
+        final productDetails = AppStoreProductDetails.fromSKProduct(
+          dummyProductWrapper,
+        );
         final purchaseParam = AppStorePurchaseParam(
           productDetails: productDetails,
           quantity: 5,
@@ -488,7 +573,10 @@ void main() {
         );
         await iapStoreKitPlatform.buyConsumable(purchaseParam: purchaseParam);
         await completer.future;
-        expect(fakeStoreKitPlatform.finishedTransactions.first.payment.quantity, 5);
+        expect(
+          fakeStoreKitPlatform.finishedTransactions.first.payment.quantity,
+          5,
+        );
       },
     );
 
@@ -497,10 +585,13 @@ void main() {
       () async {
         final details = <PurchaseDetails>[];
         final completer = Completer<List<PurchaseDetails>>();
-        final Stream<List<PurchaseDetails>> stream = iapStoreKitPlatform.purchaseStream;
+        final Stream<List<PurchaseDetails>> stream =
+            iapStoreKitPlatform.purchaseStream;
 
         late StreamSubscription<List<PurchaseDetails>> subscription;
-        subscription = stream.listen((List<PurchaseDetails> purchaseDetailsList) {
+        subscription = stream.listen((
+          List<PurchaseDetails> purchaseDetailsList,
+        ) {
           details.addAll(purchaseDetailsList);
           if (purchaseDetailsList.first.status == PurchaseStatus.purchased) {
             completer.complete(details);
@@ -508,16 +599,23 @@ void main() {
           }
         });
         final purchaseParam = AppStorePurchaseParam(
-          productDetails: AppStoreProductDetails.fromSKProduct(dummyProductWrapper),
+          productDetails: AppStoreProductDetails.fromSKProduct(
+            dummyProductWrapper,
+          ),
           applicationUserName: 'userWithDiscount',
           discount: dummyPaymentDiscountWrapper,
         );
-        await iapStoreKitPlatform.buyNonConsumable(purchaseParam: purchaseParam);
+        await iapStoreKitPlatform.buyNonConsumable(
+          purchaseParam: purchaseParam,
+        );
 
         final List<PurchaseDetails> result = await completer.future;
         expect(result.length, 2);
         expect(result.first.productID, dummyProductWrapper.productIdentifier);
-        expect(fakeStoreKitPlatform.discountReceived, dummyPaymentDiscountWrapper.toMap());
+        expect(
+          fakeStoreKitPlatform.discountReceived,
+          dummyPaymentDiscountWrapper.toMap(),
+        );
       },
     );
   });
@@ -526,7 +624,8 @@ void main() {
     test('should complete purchase', () async {
       final details = <PurchaseDetails>[];
       final completer = Completer<List<PurchaseDetails>>();
-      final Stream<List<PurchaseDetails>> stream = iapStoreKitPlatform.purchaseStream;
+      final Stream<List<PurchaseDetails>> stream =
+          iapStoreKitPlatform.purchaseStream;
       late StreamSubscription<List<PurchaseDetails>> subscription;
       subscription = stream.listen((List<PurchaseDetails> purchaseDetailsList) {
         details.addAll(purchaseDetailsList);
@@ -539,7 +638,9 @@ void main() {
         }
       });
       final purchaseParam = AppStorePurchaseParam(
-        productDetails: AppStoreProductDetails.fromSKProduct(dummyProductWrapper),
+        productDetails: AppStoreProductDetails.fromSKProduct(
+          dummyProductWrapper,
+        ),
         applicationUserName: 'appName',
       );
       await iapStoreKitPlatform.buyNonConsumable(purchaseParam: purchaseParam);
@@ -552,15 +653,14 @@ void main() {
 
   group('purchase stream', () {
     test('Should only have active queue when purchaseStream has listeners', () {
-      final Stream<List<PurchaseDetails>> stream = iapStoreKitPlatform.purchaseStream;
+      final Stream<List<PurchaseDetails>> stream =
+          iapStoreKitPlatform.purchaseStream;
       expect(fakeStoreKitPlatform.queueIsActive, false);
-      final StreamSubscription<List<PurchaseDetails>> subscription1 = stream.listen(
-        (List<PurchaseDetails> event) {},
-      );
+      final StreamSubscription<List<PurchaseDetails>> subscription1 = stream
+          .listen((List<PurchaseDetails> event) {});
       expect(fakeStoreKitPlatform.queueIsActive, true);
-      final StreamSubscription<List<PurchaseDetails>> subscription2 = stream.listen(
-        (List<PurchaseDetails> event) {},
-      );
+      final StreamSubscription<List<PurchaseDetails>> subscription2 = stream
+          .listen((List<PurchaseDetails> event) {});
       expect(fakeStoreKitPlatform.queueIsActive, true);
       subscription1.cancel();
       expect(fakeStoreKitPlatform.queueIsActive, true);
@@ -572,7 +672,10 @@ void main() {
   group('billing configuration', () {
     test('country_code', () async {
       const expectedCountryCode = 'CA';
-      fakeStoreKitPlatform.setStoreFrontInfo(countryCode: expectedCountryCode, identifier: 'ABC');
+      fakeStoreKitPlatform.setStoreFrontInfo(
+        countryCode: expectedCountryCode,
+        identifier: 'ABC',
+      );
       final String countryCode = await iapStoreKitPlatform.countryCode();
       expect(countryCode, expectedCountryCode);
       // Ensure deprecated code keeps working until removed.

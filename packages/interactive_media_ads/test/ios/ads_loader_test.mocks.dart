@@ -5,7 +5,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
 
-import 'package:interactive_media_ads/src/ios/interactive_media_ads.g.dart' as _i2;
+import 'package:interactive_media_ads/src/ios/interactive_media_ads.g.dart'
+    as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -24,24 +25,29 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: invalid_use_of_internal_member
 
 class _FakeUIView_0 extends _i1.SmartFake implements _i2.UIView {
-  _FakeUIView_0(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+  _FakeUIView_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
-class _FakePigeonInstanceManager_1 extends _i1.SmartFake implements _i2.PigeonInstanceManager {
+class _FakePigeonInstanceManager_1 extends _i1.SmartFake
+    implements _i2.PigeonInstanceManager {
   _FakePigeonInstanceManager_1(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeIMAAdDisplayContainer_2 extends _i1.SmartFake implements _i2.IMAAdDisplayContainer {
+class _FakeIMAAdDisplayContainer_2 extends _i1.SmartFake
+    implements _i2.IMAAdDisplayContainer {
   _FakeIMAAdDisplayContainer_2(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
 class _FakeIMAAdsLoader_3 extends _i1.SmartFake implements _i2.IMAAdsLoader {
-  _FakeIMAAdsLoader_3(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+  _FakeIMAAdsLoader_3(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
-class _FakeIMAAdsLoaderDelegate_4 extends _i1.SmartFake implements _i2.IMAAdsLoaderDelegate {
+class _FakeIMAAdsLoaderDelegate_4 extends _i1.SmartFake
+    implements _i2.IMAAdsLoaderDelegate {
   _FakeIMAAdsLoaderDelegate_4(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -57,10 +63,12 @@ class _FakeIMAAdsRequest_6 extends _i1.SmartFake implements _i2.IMAAdsRequest {
 }
 
 class _FakeIMASettings_7 extends _i1.SmartFake implements _i2.IMASettings {
-  _FakeIMASettings_7(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+  _FakeIMASettings_7(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
-class _FakeUIViewController_8 extends _i1.SmartFake implements _i2.UIViewController {
+class _FakeUIViewController_8 extends _i1.SmartFake
+    implements _i2.UIViewController {
   _FakeUIViewController_8(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -68,13 +76,17 @@ class _FakeUIViewController_8 extends _i1.SmartFake implements _i2.UIViewControl
 /// A class which mocks [IMAAdDisplayContainer].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockIMAAdDisplayContainer extends _i1.Mock implements _i2.IMAAdDisplayContainer {
+class MockIMAAdDisplayContainer extends _i1.Mock
+    implements _i2.IMAAdDisplayContainer {
   @override
   _i2.UIView get adContainer =>
       (super.noSuchMethod(
             Invocation.getter(#adContainer),
             returnValue: _FakeUIView_0(this, Invocation.getter(#adContainer)),
-            returnValueForMissingStub: _FakeUIView_0(this, Invocation.getter(#adContainer)),
+            returnValueForMissingStub: _FakeUIView_0(
+              this,
+              Invocation.getter(#adContainer),
+            ),
           )
           as _i2.UIView);
 
@@ -94,7 +106,9 @@ class MockIMAAdDisplayContainer extends _i1.Mock implements _i2.IMAAdDisplayCont
           as _i2.PigeonInstanceManager);
 
   @override
-  _i3.Future<void> setAdContainerViewController(_i2.UIViewController? controller) =>
+  _i3.Future<void> setAdContainerViewController(
+    _i2.UIViewController? controller,
+  ) =>
       (super.noSuchMethod(
             Invocation.method(#setAdContainerViewController, [controller]),
             returnValue: _i3.Future<void>.value(),
@@ -107,14 +121,19 @@ class MockIMAAdDisplayContainer extends _i1.Mock implements _i2.IMAAdDisplayCont
       (super.noSuchMethod(
             Invocation.method(#getAdContainerViewController, []),
             returnValue: _i3.Future<_i2.UIViewController?>.value(),
-            returnValueForMissingStub: _i3.Future<_i2.UIViewController?>.value(),
+            returnValueForMissingStub:
+                _i3.Future<_i2.UIViewController?>.value(),
           )
           as _i3.Future<_i2.UIViewController?>);
 
   @override
-  _i3.Future<void> registerFriendlyObstruction(_i2.IMAFriendlyObstruction? friendlyObstruction) =>
+  _i3.Future<void> registerFriendlyObstruction(
+    _i2.IMAFriendlyObstruction? friendlyObstruction,
+  ) =>
       (super.noSuchMethod(
-            Invocation.method(#registerFriendlyObstruction, [friendlyObstruction]),
+            Invocation.method(#registerFriendlyObstruction, [
+              friendlyObstruction,
+            ]),
             returnValue: _i3.Future<void>.value(),
             returnValueForMissingStub: _i3.Future<void>.value(),
           )
@@ -133,7 +152,10 @@ class MockIMAAdDisplayContainer extends _i1.Mock implements _i2.IMAAdDisplayCont
   _i2.IMAAdDisplayContainer pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeIMAAdDisplayContainer_2(this, Invocation.method(#pigeon_copy, [])),
+            returnValue: _FakeIMAAdDisplayContainer_2(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
             returnValueForMissingStub: _FakeIMAAdDisplayContainer_2(
               this,
               Invocation.method(#pigeon_copy, []),
@@ -192,7 +214,10 @@ class MockIMAAdsLoader extends _i1.Mock implements _i2.IMAAdsLoader {
   _i2.IMAAdsLoader pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeIMAAdsLoader_3(this, Invocation.method(#pigeon_copy, [])),
+            returnValue: _FakeIMAAdsLoader_3(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
             returnValueForMissingStub: _FakeIMAAdsLoader_3(
               this,
               Invocation.method(#pigeon_copy, []),
@@ -204,9 +229,14 @@ class MockIMAAdsLoader extends _i1.Mock implements _i2.IMAAdsLoader {
 /// A class which mocks [IMAAdsLoaderDelegate].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockIMAAdsLoaderDelegate extends _i1.Mock implements _i2.IMAAdsLoaderDelegate {
+class MockIMAAdsLoaderDelegate extends _i1.Mock
+    implements _i2.IMAAdsLoaderDelegate {
   @override
-  void Function(_i2.IMAAdsLoaderDelegate, _i2.IMAAdsLoader, _i2.IMAAdsLoadedData)
+  void Function(
+    _i2.IMAAdsLoaderDelegate,
+    _i2.IMAAdsLoader,
+    _i2.IMAAdsLoadedData,
+  )
   get adLoaderLoadedWith =>
       (super.noSuchMethod(
             Invocation.getter(#adLoaderLoadedWith),
@@ -223,10 +253,18 @@ class MockIMAAdsLoaderDelegate extends _i1.Mock implements _i2.IMAAdsLoaderDeleg
                   _i2.IMAAdsLoadedData adsLoadedData,
                 ) {},
           )
-          as void Function(_i2.IMAAdsLoaderDelegate, _i2.IMAAdsLoader, _i2.IMAAdsLoadedData));
+          as void Function(
+            _i2.IMAAdsLoaderDelegate,
+            _i2.IMAAdsLoader,
+            _i2.IMAAdsLoadedData,
+          ));
 
   @override
-  void Function(_i2.IMAAdsLoaderDelegate, _i2.IMAAdsLoader, _i2.IMAAdLoadingErrorData)
+  void Function(
+    _i2.IMAAdsLoaderDelegate,
+    _i2.IMAAdsLoader,
+    _i2.IMAAdLoadingErrorData,
+  )
   get adsLoaderFailedWithErrorData =>
       (super.noSuchMethod(
             Invocation.getter(#adsLoaderFailedWithErrorData),
@@ -243,7 +281,11 @@ class MockIMAAdsLoaderDelegate extends _i1.Mock implements _i2.IMAAdsLoaderDeleg
                   _i2.IMAAdLoadingErrorData adErrorData,
                 ) {},
           )
-          as void Function(_i2.IMAAdsLoaderDelegate, _i2.IMAAdsLoader, _i2.IMAAdLoadingErrorData));
+          as void Function(
+            _i2.IMAAdsLoaderDelegate,
+            _i2.IMAAdsLoader,
+            _i2.IMAAdLoadingErrorData,
+          ));
 
   @override
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
@@ -264,7 +306,10 @@ class MockIMAAdsLoaderDelegate extends _i1.Mock implements _i2.IMAAdsLoaderDeleg
   _i2.IMAAdsLoaderDelegate pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeIMAAdsLoaderDelegate_4(this, Invocation.method(#pigeon_copy, [])),
+            returnValue: _FakeIMAAdsLoaderDelegate_4(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
             returnValueForMissingStub: _FakeIMAAdsLoaderDelegate_4(
               this,
               Invocation.method(#pigeon_copy, []),
@@ -311,7 +356,9 @@ class MockIMAAdsManager extends _i1.Mock implements _i2.IMAAdsManager {
           as _i3.Future<void>);
 
   @override
-  _i3.Future<void> initialize(_i2.IMAAdsRenderingSettings? adsRenderingSettings) =>
+  _i3.Future<void> initialize(
+    _i2.IMAAdsRenderingSettings? adsRenderingSettings,
+  ) =>
       (super.noSuchMethod(
             Invocation.method(#initialize, [adsRenderingSettings]),
             returnValue: _i3.Future<void>.value(),
@@ -377,7 +424,10 @@ class MockIMAAdsManager extends _i1.Mock implements _i2.IMAAdsManager {
   _i2.IMAAdsManager pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeIMAAdsManager_5(this, Invocation.method(#pigeon_copy, [])),
+            returnValue: _FakeIMAAdsManager_5(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
             returnValueForMissingStub: _FakeIMAAdsManager_5(
               this,
               Invocation.method(#pigeon_copy, []),
@@ -428,11 +478,18 @@ class MockIMAAdsRequest extends _i1.Mock implements _i2.IMAAdsRequest {
       (super.noSuchMethod(
             Invocation.method(#getAdDisplayContainer, []),
             returnValue: _i3.Future<_i2.IMAAdDisplayContainer>.value(
-              _FakeIMAAdDisplayContainer_2(this, Invocation.method(#getAdDisplayContainer, [])),
+              _FakeIMAAdDisplayContainer_2(
+                this,
+                Invocation.method(#getAdDisplayContainer, []),
+              ),
             ),
-            returnValueForMissingStub: _i3.Future<_i2.IMAAdDisplayContainer>.value(
-              _FakeIMAAdDisplayContainer_2(this, Invocation.method(#getAdDisplayContainer, [])),
-            ),
+            returnValueForMissingStub:
+                _i3.Future<_i2.IMAAdDisplayContainer>.value(
+                  _FakeIMAAdDisplayContainer_2(
+                    this,
+                    Invocation.method(#getAdDisplayContainer, []),
+                  ),
+                ),
           )
           as _i3.Future<_i2.IMAAdDisplayContainer>);
 
@@ -521,7 +578,10 @@ class MockIMAAdsRequest extends _i1.Mock implements _i2.IMAAdsRequest {
   _i2.IMAAdsRequest pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeIMAAdsRequest_6(this, Invocation.method(#pigeon_copy, [])),
+            returnValue: _FakeIMAAdsRequest_6(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
             returnValueForMissingStub: _FakeIMAAdsRequest_6(
               this,
               Invocation.method(#pigeon_copy, []),
@@ -661,7 +721,10 @@ class MockIMASettings extends _i1.Mock implements _i2.IMASettings {
   _i2.IMASettings pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeIMASettings_7(this, Invocation.method(#pigeon_copy, [])),
+            returnValue: _FakeIMASettings_7(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
             returnValueForMissingStub: _FakeIMASettings_7(
               this,
               Invocation.method(#pigeon_copy, []),
@@ -693,8 +756,14 @@ class MockUIView extends _i1.Mock implements _i2.UIView {
   _i2.UIView pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeUIView_0(this, Invocation.method(#pigeon_copy, [])),
-            returnValueForMissingStub: _FakeUIView_0(this, Invocation.method(#pigeon_copy, [])),
+            returnValue: _FakeUIView_0(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
+            returnValueForMissingStub: _FakeUIView_0(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
           )
           as _i2.UIView);
 }
@@ -708,7 +777,10 @@ class MockUIViewController extends _i1.Mock implements _i2.UIViewController {
       (super.noSuchMethod(
             Invocation.getter(#view),
             returnValue: _FakeUIView_0(this, Invocation.getter(#view)),
-            returnValueForMissingStub: _FakeUIView_0(this, Invocation.getter(#view)),
+            returnValueForMissingStub: _FakeUIView_0(
+              this,
+              Invocation.getter(#view),
+            ),
           )
           as _i2.UIView);
 
@@ -731,8 +803,14 @@ class MockUIViewController extends _i1.Mock implements _i2.UIViewController {
   _i2.UIView pigeonVar_view() =>
       (super.noSuchMethod(
             Invocation.method(#pigeonVar_view, []),
-            returnValue: _FakeUIView_0(this, Invocation.method(#pigeonVar_view, [])),
-            returnValueForMissingStub: _FakeUIView_0(this, Invocation.method(#pigeonVar_view, [])),
+            returnValue: _FakeUIView_0(
+              this,
+              Invocation.method(#pigeonVar_view, []),
+            ),
+            returnValueForMissingStub: _FakeUIView_0(
+              this,
+              Invocation.method(#pigeonVar_view, []),
+            ),
           )
           as _i2.UIView);
 
@@ -740,7 +818,10 @@ class MockUIViewController extends _i1.Mock implements _i2.UIViewController {
   _i2.UIViewController pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeUIViewController_8(this, Invocation.method(#pigeon_copy, [])),
+            returnValue: _FakeUIViewController_8(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
             returnValueForMissingStub: _FakeUIViewController_8(
               this,
               Invocation.method(#pigeon_copy, []),

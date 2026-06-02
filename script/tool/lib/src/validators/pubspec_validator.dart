@@ -102,7 +102,9 @@ class PubspecValidator {
 
     final List<String> pubspecLines = contents.split('\n');
     final bool isPlugin = pubspec.flutter?.containsKey('plugin') ?? false;
-    final List<String> sectionOrder = isPlugin ? _majorPluginSections : _majorPackageSections;
+    final List<String> sectionOrder = isPlugin
+        ? _majorPluginSections
+        : _majorPackageSections;
     bool passing = _checkSectionOrder(pubspecLines, sectionOrder);
     if (!passing) {
       printError(
@@ -113,20 +115,29 @@ class PubspecValidator {
       printError('$listIndentation${sectionOrder.join('\n$listIndentation')}');
     }
 
-    final String? minVersionError = _checkForMinimumVersionError(pubspec, package);
+    final String? minVersionError = _checkForMinimumVersionError(
+      pubspec,
+      package,
+    );
     if (minVersionError != null) {
       printError('$_indentation$minVersionError');
       passing = false;
     }
 
     if (isPlugin) {
-      final String? implementsError = _checkForImplementsError(pubspec, package: package);
+      final String? implementsError = _checkForImplementsError(
+        pubspec,
+        package: package,
+      );
       if (implementsError != null) {
         printError('$_indentation$implementsError');
         passing = false;
       }
 
-      final String? defaultPackageError = _checkForDefaultPackageError(pubspec, package: package);
+      final String? defaultPackageError = _checkForDefaultPackageError(
+        pubspec,
+        package: package,
+      );
       if (defaultPackageError != null) {
         printError('$_indentation$defaultPackageError');
         passing = false;
@@ -136,7 +147,10 @@ class PubspecValidator {
     final String? dependenciesError = _checkDependencies(pubspec);
     if (dependenciesError != null) {
       printError(
-        dependenciesError.split('\n').map((String line) => '$_indentation$line').join('\n'),
+        dependenciesError
+            .split('\n')
+            .map((String line) => '$_indentation$line')
+            .join('\n'),
       );
       passing = false;
     }
@@ -174,7 +188,10 @@ class PubspecValidator {
       // the app-facing package, since they are unlisted, and are expected to
       // have short descriptions.
       if (!package.isPlatformInterface && !package.isPlatformImplementation) {
-        final String? descriptionError = _checkDescription(pubspec, package: package);
+        final String? descriptionError = _checkDescription(
+          pubspec,
+          package: package,
+        );
         if (descriptionError != null) {
           printError('$_indentation$descriptionError');
           passing = false;
@@ -182,10 +199,15 @@ class PubspecValidator {
       }
     }
 
-    return passing ? <String>[] : ['pubspec.yaml failed validation, see above for details'];
+    return passing
+        ? <String>[]
+        : ['pubspec.yaml failed validation, see above for details'];
   }
 
-  bool _checkSectionOrder(List<String> pubspecLines, List<String> sectionOrder) {
+  bool _checkSectionOrder(
+    List<String> pubspecLines,
+    List<String> sectionOrder,
+  ) {
     var previousSectionIndex = 0;
     for (final line in pubspecLines) {
       final int index = sectionOrder.indexOf(line);
@@ -215,10 +237,14 @@ class PubspecValidator {
         platformContext: _path,
       );
       if (!pubspec.repository!.path.endsWith(relativePackagePath)) {
-        errorMessages.add('The "repository" link should end with the package path.');
+        errorMessages.add(
+          'The "repository" link should end with the package path.',
+        );
       }
 
-      if (!pubspec.repository!.toString().startsWith('https://github.com/$repoName/tree/main')) {
+      if (!pubspec.repository!.toString().startsWith(
+        'https://github.com/$repoName/tree/main',
+      )) {
         errorMessages.add(
           'The "repository" link should start with the repository\'s '
           'main tree: "https://github.com/$repoName/tree/main".',
@@ -227,7 +253,9 @@ class PubspecValidator {
     }
 
     if (pubspec.homepage != null) {
-      errorMessages.add('Found a "homepage" entry; only "repository" should be used.');
+      errorMessages.add(
+        'Found a "homepage" entry; only "repository" should be used.',
+      );
     }
 
     return errorMessages;
@@ -235,7 +263,10 @@ class PubspecValidator {
 
   // Validates the "description" field for a package, returning an error
   // string if there are any issues.
-  String? _checkDescription(Pubspec pubspec, {required RepositoryPackage package}) {
+  String? _checkDescription(
+    Pubspec pubspec, {
+    required RepositoryPackage package,
+  }) {
     final String? description = pubspec.description;
     if (description == null) {
       return 'Missing "description"';
@@ -253,7 +284,10 @@ class PubspecValidator {
   }
 
   bool _checkIssueLink(Pubspec pubspec) {
-    return pubspec.issueTracker?.toString().startsWith(_expectedIssueLinkFormat) ?? false;
+    return pubspec.issueTracker?.toString().startsWith(
+          _expectedIssueLinkFormat,
+        ) ??
+        false;
   }
 
   // Validates the "topics" keyword for a plugin, returning an error
@@ -282,7 +316,9 @@ class PubspecValidator {
     final expectedTopicFormat = RegExp(r'^[a-z](?:-?[a-z0-9]+)*$');
     final Iterable<String> invalidTopics = topics.where(
       (String topic) =>
-          !expectedTopicFormat.hasMatch(topic) || topic.length < 2 || topic.length > 32,
+          !expectedTopicFormat.hasMatch(topic) ||
+          topic.length < 2 ||
+          topic.length > 32,
     );
     if (invalidTopics.isNotEmpty) {
       return 'Invalid topic(s): ${invalidTopics.join(', ')} in "topics" section. '
@@ -297,7 +333,10 @@ class PubspecValidator {
   // string if there are any issues.
   //
   // Should only be called on plugin packages.
-  String? _checkForImplementsError(Pubspec pubspec, {required RepositoryPackage package}) {
+  String? _checkForImplementsError(
+    Pubspec pubspec, {
+    required RepositoryPackage package,
+  }) {
     if (_isImplementationPackage(package)) {
       final pluginSection = pubspec.flutter!['plugin'] as YamlMap;
       final implements = pluginSection['implements'] as String?;
@@ -316,7 +355,10 @@ class PubspecValidator {
   // string if there are any issues.
   //
   // Should only be called on plugin packages.
-  String? _checkForDefaultPackageError(Pubspec pubspec, {required RepositoryPackage package}) {
+  String? _checkForDefaultPackageError(
+    Pubspec pubspec, {
+    required RepositoryPackage package,
+  }) {
     final pluginSection = pubspec.flutter!['plugin'] as YamlMap;
     final platforms = pluginSection['platforms'] as YamlMap?;
     if (platforms == null) {
@@ -379,9 +421,16 @@ class PubspecValidator {
   /// (if provided).
   ///
   /// Returns an error string if validation fails.
-  String? _checkForMinimumVersionError(Pubspec pubspec, RepositoryPackage package) {
-    final Version? dartConstraintMin = _minimumForConstraint(pubspec.environment['sdk']);
-    final Version? flutterConstraintMin = _minimumForConstraint(pubspec.environment['flutter']);
+  String? _checkForMinimumVersionError(
+    Pubspec pubspec,
+    RepositoryPackage package,
+  ) {
+    final Version? dartConstraintMin = _minimumForConstraint(
+      pubspec.environment['sdk'],
+    );
+    final Version? flutterConstraintMin = _minimumForConstraint(
+      pubspec.environment['flutter'],
+    );
 
     // Validate the Flutter constraint, if any.
     if (flutterConstraintMin != null && _minMinFlutterVersion != null) {
@@ -402,7 +451,9 @@ class PubspecValidator {
 
       // Ensure that if there is also a Flutter constraint, they are consistent.
       if (flutterConstraintMin != null) {
-        final Version? dartVersionForFlutterMinimum = getDartSdkForFlutterSdk(flutterConstraintMin);
+        final Version? dartVersionForFlutterMinimum = getDartSdkForFlutterSdk(
+          flutterConstraintMin,
+        );
         if (dartVersionForFlutterMinimum == null) {
           return 'Dart SDK version for Flutter SDK version '
               '$flutterConstraintMin is unknown. '
@@ -497,10 +548,12 @@ Please move them to dev_dependencies.
     if (dependency is PathDependency || dependency is SdkDependency) {
       return true;
     }
-    if (_allowedPackages.local.contains(name) || _allowedPackages.unpinned.contains(name)) {
+    if (_allowedPackages.local.contains(name) ||
+        _allowedPackages.unpinned.contains(name)) {
       return true;
     }
-    if (dependency is HostedDependency && _allowedPackages.pinned.contains(name)) {
+    if (dependency is HostedDependency &&
+        _allowedPackages.pinned.contains(name)) {
       final VersionConstraint constraint = dependency.version;
       if (constraint is VersionRange &&
           constraint.min != null &&

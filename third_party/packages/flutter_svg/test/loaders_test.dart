@@ -23,8 +23,12 @@ void main() {
   });
 
   test('SvgTheme updates the cache', () async {
-    const loaderA = TestLoader(theme: SvgTheme(currentColor: Color(0xFFABCDEF)));
-    const loaderB = TestLoader(theme: SvgTheme(currentColor: Color(0xFFFEDCBA)));
+    const loaderA = TestLoader(
+      theme: SvgTheme(currentColor: Color(0xFFABCDEF)),
+    );
+    const loaderB = TestLoader(
+      theme: SvgTheme(currentColor: Color(0xFFFEDCBA)),
+    );
     final ByteData bytesA = await loaderA.loadBytes(null);
     final ByteData bytesB = await loaderB.loadBytes(null);
     expect(identical(bytesA, bytesB), false);
@@ -54,7 +58,11 @@ void main() {
       'packages/packageName/foo': Uint8List(1).buffer.asByteData(),
     });
     final loader = SvgAssetLoader('foo', assetBundle: bundle);
-    final packageLoader = SvgAssetLoader('foo', assetBundle: bundle, packageName: 'packageName');
+    final packageLoader = SvgAssetLoader(
+      'foo',
+      assetBundle: bundle,
+      packageName: 'packageName',
+    );
     expect((await loader.prepareMessage(null))!.lengthInBytes, 0);
     expect((await packageLoader.prepareMessage(null))!.lengthInBytes, 1);
   });
@@ -136,7 +144,11 @@ class TestLoader extends SvgLoader<void> {
 
   @override
   SvgCacheKey cacheKey(BuildContext? context) {
-    return SvgCacheKey(theme: theme, colorMapper: colorMapper, keyData: keyName);
+    return SvgCacheKey(
+      theme: theme,
+      colorMapper: colorMapper,
+      keyData: keyName,
+    );
   }
 }
 
@@ -144,7 +156,12 @@ class _TestColorMapper extends ColorMapper {
   const _TestColorMapper();
 
   @override
-  Color substitute(String? id, String elementName, String attributeName, Color color) {
+  Color substitute(
+    String? id,
+    String elementName,
+    String attributeName,
+    Color color,
+  ) {
     return color;
   }
 }

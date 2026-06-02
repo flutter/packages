@@ -97,7 +97,10 @@ abstract class FileSelectorPlatform extends PlatformInterface {
   ///
   /// Returns `null` if the user cancels the operation.
   @Deprecated('Use getDirectoryPathWithOptions instead')
-  Future<String?> getDirectoryPath({String? initialDirectory, String? confirmButtonText}) {
+  Future<String?> getDirectoryPath({
+    String? initialDirectory,
+    String? confirmButtonText,
+  }) {
     throw UnimplementedError('getDirectoryPath() has not been implemented.');
   }
 
@@ -119,7 +122,10 @@ abstract class FileSelectorPlatform extends PlatformInterface {
   ///
   /// Returns an empty list if the user cancels the operation.
   @Deprecated('Use getDirectoryPathsWithOptions instead')
-  Future<List<String>> getDirectoryPaths({String? initialDirectory, String? confirmButtonText}) {
+  Future<List<String>> getDirectoryPaths({
+    String? initialDirectory,
+    String? confirmButtonText,
+  }) {
     throw UnimplementedError('getDirectoryPaths() has not been implemented.');
   }
 

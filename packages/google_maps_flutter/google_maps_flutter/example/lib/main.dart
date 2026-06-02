@@ -96,7 +96,8 @@ class MapsDemo extends StatelessWidget {
 }
 
 void main() {
-  final GoogleMapsFlutterPlatform mapsImplementation = GoogleMapsFlutterPlatform.instance;
+  final GoogleMapsFlutterPlatform mapsImplementation =
+      GoogleMapsFlutterPlatform.instance;
   if (mapsImplementation is GoogleMapsFlutterAndroid) {
     initializeMapRenderer();
   }
@@ -119,13 +120,15 @@ Future<AndroidMapRenderer?> initializeMapRenderer() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  final GoogleMapsFlutterPlatform mapsImplementation = GoogleMapsFlutterPlatform.instance;
+  final GoogleMapsFlutterPlatform mapsImplementation =
+      GoogleMapsFlutterPlatform.instance;
   if (mapsImplementation is GoogleMapsFlutterAndroid) {
     unawaited(
       mapsImplementation
           .initializeWithRenderer(AndroidMapRenderer.latest)
           .then(
-            (AndroidMapRenderer initializedRenderer) => completer.complete(initializedRenderer),
+            (AndroidMapRenderer initializedRenderer) =>
+                completer.complete(initializedRenderer),
           ),
     );
   } else {

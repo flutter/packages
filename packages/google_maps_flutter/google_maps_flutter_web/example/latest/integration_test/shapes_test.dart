@@ -64,7 +64,9 @@ void main() {
 
       expect(controller.circles[const CircleId('1')]?.circle?.visible, isTrue);
 
-      final updatedCircles = <Circle>{const Circle(circleId: CircleId('1'), visible: false)};
+      final updatedCircles = <Circle>{
+        const Circle(circleId: CircleId('1'), visible: false),
+      };
       controller.changeCircles(updatedCircles);
 
       expect(controller.circles.length, 1);
@@ -83,7 +85,10 @@ void main() {
       expect(controller.circles.length, 3);
 
       // Remove some circles...
-      final circleIdsToRemove = <CircleId>{const CircleId('1'), const CircleId('3')};
+      final circleIdsToRemove = <CircleId>{
+        const CircleId('1'),
+        const CircleId('3'),
+      };
 
       controller.removeCircles(circleIdsToRemove);
 
@@ -107,9 +112,15 @@ void main() {
       final gmaps.Circle circle = controller.circles.values.first.circle!;
 
       expect((circle.get('fillColor')! as JSString).toDart, '#fabada');
-      expect((circle.get('fillOpacity')! as JSNumber).toDartDouble, closeTo(0.5, _acceptableDelta));
+      expect(
+        (circle.get('fillOpacity')! as JSNumber).toDartDouble,
+        closeTo(0.5, _acceptableDelta),
+      );
       expect((circle.get('strokeColor')! as JSString).toDart, '#c0ffee');
-      expect((circle.get('strokeOpacity')! as JSNumber).toDartDouble, closeTo(1, _acceptableDelta));
+      expect(
+        (circle.get('strokeOpacity')! as JSNumber).toDartDouble,
+        closeTo(1, _acceptableDelta),
+      );
     });
 
     testWidgets('addCircles sets clickable according to consumeTapEvents', (
@@ -122,11 +133,15 @@ void main() {
 
       controller.addCircles(circles);
 
-      final CircleController? circle1Controller = controller.circles[const CircleId('1')];
-      final CircleController? circle2Controller = controller.circles[const CircleId('2')];
+      final CircleController? circle1Controller =
+          controller.circles[const CircleId('1')];
+      final CircleController? circle2Controller =
+          controller.circles[const CircleId('2')];
 
-      final bool circle1Clickable = (circle1Controller!.circle! as JSObject).clickable;
-      final bool circle2Clickable = (circle2Controller!.circle! as JSObject).clickable;
+      final bool circle1Clickable =
+          (circle1Controller!.circle! as JSObject).clickable;
+      final bool circle2Clickable =
+          (circle2Controller!.circle! as JSObject).clickable;
 
       expect(circle1Clickable, true);
       expect(circle2Clickable, false);
@@ -161,14 +176,22 @@ void main() {
       final polygons = <Polygon>{const Polygon(polygonId: PolygonId('1'))};
       controller.addPolygons(polygons);
 
-      expect(controller.polygons[const PolygonId('1')]?.polygon?.visible, isTrue);
+      expect(
+        controller.polygons[const PolygonId('1')]?.polygon?.visible,
+        isTrue,
+      );
 
       // Update the polygon
-      final updatedPolygons = <Polygon>{const Polygon(polygonId: PolygonId('1'), visible: false)};
+      final updatedPolygons = <Polygon>{
+        const Polygon(polygonId: PolygonId('1'), visible: false),
+      };
       controller.changePolygons(updatedPolygons);
 
       expect(controller.polygons.length, 1);
-      expect(controller.polygons[const PolygonId('1')]?.polygon?.visible, isFalse);
+      expect(
+        controller.polygons[const PolygonId('1')]?.polygon?.visible,
+        isFalse,
+      );
     });
 
     testWidgets('removePolygons', (WidgetTester tester) async {
@@ -183,7 +206,10 @@ void main() {
       expect(controller.polygons.length, 3);
 
       // Remove some polygons...
-      final polygonIdsToRemove = <PolygonId>{const PolygonId('1'), const PolygonId('3')};
+      final polygonIdsToRemove = <PolygonId>{
+        const PolygonId('1'),
+        const PolygonId('3'),
+      };
 
       controller.removePolygons(polygonIdsToRemove);
 
@@ -228,7 +254,11 @@ void main() {
             LatLng(32.321, -64.757),
           ],
           holes: <List<LatLng>>[
-            <LatLng>[LatLng(28.745, -70.579), LatLng(29.57, -67.514), LatLng(27.339, -66.668)],
+            <LatLng>[
+              LatLng(28.745, -70.579),
+              LatLng(29.57, -67.514),
+              LatLng(27.339, -66.668),
+            ],
           ],
         ),
       };
@@ -250,7 +280,11 @@ void main() {
             LatLng(32.321, -64.757),
           ],
           holes: <List<LatLng>>[
-            <LatLng>[LatLng(28.745, -70.579), LatLng(29.57, -67.514), LatLng(27.339, -66.668)],
+            <LatLng>[
+              LatLng(28.745, -70.579),
+              LatLng(29.57, -67.514),
+              LatLng(27.339, -66.668),
+            ],
           ],
         ),
       };
@@ -263,7 +297,9 @@ void main() {
       expect(geometry.poly.containsLocation(pointInHole, polygon!), false);
     });
 
-    testWidgets('Hole Path gets reversed to display correctly', (WidgetTester tester) async {
+    testWidgets('Hole Path gets reversed to display correctly', (
+      WidgetTester tester,
+    ) async {
       final polygons = <Polygon>{
         const Polygon(
           polygonId: PolygonId('BermudaTriangle'),
@@ -273,7 +309,11 @@ void main() {
             LatLng(32.321, -64.757),
           ],
           holes: <List<LatLng>>[
-            <LatLng>[LatLng(27.339, -66.668), LatLng(29.57, -67.514), LatLng(28.745, -70.579)],
+            <LatLng>[
+              LatLng(27.339, -66.668),
+              LatLng(29.57, -67.514),
+              LatLng(28.745, -70.579),
+            ],
           ],
         ),
       };
@@ -298,11 +338,15 @@ void main() {
 
       controller.addPolygons(polygons);
 
-      final PolygonController? polygon1Controller = controller.polygons[const PolygonId('1')];
-      final PolygonController? polygon2Controller = controller.polygons[const PolygonId('2')];
+      final PolygonController? polygon1Controller =
+          controller.polygons[const PolygonId('1')];
+      final PolygonController? polygon2Controller =
+          controller.polygons[const PolygonId('2')];
 
-      final bool polygon1Clickable = (polygon1Controller!.polygon! as JSObject).clickable;
-      final bool polygon2Clickable = (polygon2Controller!.polygon! as JSObject).clickable;
+      final bool polygon1Clickable =
+          (polygon1Controller!.polygon! as JSObject).clickable;
+      final bool polygon2Clickable =
+          (polygon2Controller!.polygon! as JSObject).clickable;
 
       expect(polygon1Clickable, true);
       expect(polygon2Clickable, false);
@@ -360,7 +404,10 @@ void main() {
       expect(controller.lines.length, 3);
 
       // Remove some polylines...
-      final polylineIdsToRemove = <PolylineId>{const PolylineId('1'), const PolylineId('3')};
+      final polylineIdsToRemove = <PolylineId>{
+        const PolylineId('1'),
+        const PolylineId('3'),
+      };
 
       controller.removePolylines(polylineIdsToRemove);
 
@@ -380,7 +427,10 @@ void main() {
       final gmaps.Polyline line = controller.lines.values.first.line!;
 
       expect((line.get('strokeColor')! as JSString).toDart, '#fabada');
-      expect((line.get('strokeOpacity')! as JSNumber).toDartDouble, closeTo(0.5, _acceptableDelta));
+      expect(
+        (line.get('strokeOpacity')! as JSNumber).toDartDouble,
+        closeTo(0.5, _acceptableDelta),
+      );
     });
 
     testWidgets('addPolylines sets clickable according to consumeTapEvents', (
@@ -393,11 +443,15 @@ void main() {
 
       controller.addPolylines(polylines);
 
-      final PolylineController? polyline1Controller = controller.lines[const PolylineId('1')];
-      final PolylineController? polyline2Controller = controller.lines[const PolylineId('2')];
+      final PolylineController? polyline1Controller =
+          controller.lines[const PolylineId('1')];
+      final PolylineController? polyline2Controller =
+          controller.lines[const PolylineId('2')];
 
-      final bool polyline1Clickable = (polyline1Controller!.line! as JSObject).clickable;
-      final bool polyline2Clickable = (polyline2Controller!.line! as JSObject).clickable;
+      final bool polyline1Clickable =
+          (polyline1Controller!.line! as JSObject).clickable;
+      final bool polyline2Clickable =
+          (polyline2Controller!.line! as JSObject).clickable;
 
       expect(polyline1Clickable, true);
       expect(polyline2Clickable, false);

@@ -14,7 +14,9 @@ RouteBase get $mainShellRouteData => StatefulShellRouteData.$route(
   factory: $MainShellRouteDataExtension._fromState,
   branches: [
     StatefulShellBranchData.$branch(
-      routes: [GoRouteData.$route(path: '/home', factory: $HomeRouteData._fromState)],
+      routes: [
+        GoRouteData.$route(path: '/home', factory: $HomeRouteData._fromState),
+      ],
     ),
     StatefulShellBranchData.$branch(
       initialLocation: NotificationsShellBranchData.$initialLocation,
@@ -26,13 +28,19 @@ RouteBase get $mainShellRouteData => StatefulShellRouteData.$route(
       ],
     ),
     StatefulShellBranchData.$branch(
-      routes: [GoRouteData.$route(path: '/orders', factory: $OrdersRouteData._fromState)],
+      routes: [
+        GoRouteData.$route(
+          path: '/orders',
+          factory: $OrdersRouteData._fromState,
+        ),
+      ],
     ),
   ],
 );
 
 extension $MainShellRouteDataExtension on MainShellRouteData {
-  static MainShellRouteData _fromState(GoRouterState state) => const MainShellRouteData();
+  static MainShellRouteData _fromState(GoRouterState state) =>
+      const MainShellRouteData();
 }
 
 mixin $HomeRouteData on GoRouteData {
@@ -48,16 +56,20 @@ mixin $HomeRouteData on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) => context.pushReplacement(location);
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
 }
 
 mixin $NotificationsRouteData on GoRouteData {
-  static NotificationsRouteData _fromState(GoRouterState state) => NotificationsRouteData(
-    section: _$NotificationsPageSectionEnumMap._$fromName(state.pathParameters['section']!)!,
-  );
+  static NotificationsRouteData _fromState(GoRouterState state) =>
+      NotificationsRouteData(
+        section: _$NotificationsPageSectionEnumMap._$fromName(
+          state.pathParameters['section']!,
+        )!,
+      );
 
   NotificationsRouteData get _self => this as NotificationsRouteData;
 
@@ -73,7 +85,8 @@ mixin $NotificationsRouteData on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) => context.pushReplacement(location);
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
@@ -86,7 +99,8 @@ const _$NotificationsPageSectionEnumMap = {
 };
 
 mixin $OrdersRouteData on GoRouteData {
-  static OrdersRouteData _fromState(GoRouterState state) => const OrdersRouteData();
+  static OrdersRouteData _fromState(GoRouterState state) =>
+      const OrdersRouteData();
 
   @override
   String get location => GoRouteData.$location('/orders');
@@ -98,7 +112,8 @@ mixin $OrdersRouteData on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) => context.pushReplacement(location);
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);

@@ -9,9 +9,13 @@ import 'enum_converter_utils.dart';
 import 'interactive_media_ads.g.dart' as ima;
 
 /// Implementation of [PlatformAdsManagerDelegateCreationParams] for iOS.
-final class IOSAdsManagerDelegateCreationParams extends PlatformAdsManagerDelegateCreationParams {
+final class IOSAdsManagerDelegateCreationParams
+    extends PlatformAdsManagerDelegateCreationParams {
   /// Constructs an [IOSAdsManagerDelegateCreationParams].
-  const IOSAdsManagerDelegateCreationParams({super.onAdEvent, super.onAdErrorEvent}) : super();
+  const IOSAdsManagerDelegateCreationParams({
+    super.onAdEvent,
+    super.onAdErrorEvent,
+  }) : super();
 
   /// Creates an [IOSAdsManagerDelegateCreationParams] from an instance of
   /// [PlatformAdsManagerDelegateCreationParams].
@@ -103,11 +107,17 @@ PlatformAd _asPlatformAd(ima.IMAAd ad) {
     description: ad.adDescription,
     duration: ad.duration == -1
         ? null
-        : Duration(milliseconds: (ad.duration * Duration.millisecondsPerSecond).round()),
+        : Duration(
+            milliseconds: (ad.duration * Duration.millisecondsPerSecond)
+                .round(),
+          ),
     height: ad.height,
     skipTimeOffset: ad.skipTimeOffset == -1
         ? null
-        : Duration(milliseconds: (ad.skipTimeOffset * Duration.millisecondsPerSecond).round()),
+        : Duration(
+            milliseconds: (ad.skipTimeOffset * Duration.millisecondsPerSecond)
+                .round(),
+          ),
     surveyUrl: ad.surveyURL,
     title: ad.adTitle,
     traffickingParameters: ad.traffickingParameters,
@@ -136,10 +146,15 @@ PlatformAdPodInfo _asPlatformAdInfo(ima.IMAAdPodInfo adPodInfo) {
     adPosition: adPodInfo.adPosition,
     maxDuration: adPodInfo.maxDuration == -1
         ? null
-        : Duration(milliseconds: (adPodInfo.maxDuration * Duration.millisecondsPerSecond).round()),
+        : Duration(
+            milliseconds:
+                (adPodInfo.maxDuration * Duration.millisecondsPerSecond)
+                    .round(),
+          ),
     podIndex: adPodInfo.podIndex,
     timeOffset: Duration(
-      milliseconds: (adPodInfo.timeOffset * Duration.millisecondsPerSecond).round(),
+      milliseconds: (adPodInfo.timeOffset * Duration.millisecondsPerSecond)
+          .round(),
     ),
     totalAds: adPodInfo.totalAds,
     isBumper: adPodInfo.isBumper,
@@ -155,9 +170,15 @@ PlatformCompanionAd _asPlatformCompanionAd(ima.IMACompanionAd ad) {
   );
 }
 
-PlatformUniversalAdId _asPlatformUniversalAdId(ima.IMAUniversalAdID universalAdId) {
+PlatformUniversalAdId _asPlatformUniversalAdId(
+  ima.IMAUniversalAdID universalAdId,
+) {
   return PlatformUniversalAdId(
-    adIdValue: universalAdId.adIDValue == 'unknown' ? null : universalAdId.adIDValue,
-    adIdRegistry: universalAdId.adIDRegistry == 'unknown' ? null : universalAdId.adIDRegistry,
+    adIdValue: universalAdId.adIDValue == 'unknown'
+        ? null
+        : universalAdId.adIDValue,
+    adIdRegistry: universalAdId.adIDRegistry == 'unknown'
+        ? null
+        : universalAdId.adIDRegistry,
   );
 }

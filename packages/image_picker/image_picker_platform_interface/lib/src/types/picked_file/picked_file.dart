@@ -5,4 +5,6 @@
 // TODO(dit): Remove this, https://github.com/flutter/flutter/issues/144286
 
 export 'lost_data.dart';
-export 'unsupported.dart' if (dart.library.js_interop) 'html.dart' if (dart.library.io) 'io.dart';
+export 'unsupported.dart'
+    if (dart.library.js_interop) 'html.dart'
+    if (dart.library.io) 'io.dart';

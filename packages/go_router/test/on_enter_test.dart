@@ -18,7 +18,9 @@ void main() {
       return Future<void>.delayed(Duration.zero).then((_) => router.dispose());
     });
 
-    testWidgets('Should set current/next state correctly', (WidgetTester tester) async {
+    testWidgets('Should set current/next state correctly', (
+      WidgetTester tester,
+    ) async {
       GoRouterState? capturedCurrentState;
       GoRouterState? capturedNextState;
       var onEnterCallCount = 0;
@@ -56,7 +58,9 @@ void main() {
       expect(capturedCurrentState?.uri.path, capturedNextState?.uri.path);
     });
 
-    testWidgets('Should block navigation when onEnter returns false', (WidgetTester tester) async {
+    testWidgets('Should block navigation when onEnter returns false', (
+      WidgetTester tester,
+    ) async {
       final navigationAttempts = <String>[];
       var currentPath = '/';
 
@@ -71,7 +75,9 @@ void main() {
             ) async {
               navigationAttempts.add(next.uri.path);
               currentPath = current.uri.path;
-              return next.uri.path.contains('blocked') ? const Block.stop() : const Allow();
+              return next.uri.path.contains('blocked')
+                  ? const Block.stop()
+                  : const Allow();
             },
         routes: <RouteBase>[
           GoRoute(
@@ -90,36 +96,44 @@ void main() {
 
       final BuildContext context = tester.element(find.byType(Router<Object>));
       final GoRouteInformationParser parser = router.routeInformationParser;
-      final RouteMatchList beforeBlockedNav = router.routerDelegate.currentConfiguration;
+      final RouteMatchList beforeBlockedNav =
+          router.routerDelegate.currentConfiguration;
 
       // Try blocked route
-      final RouteMatchList blockedMatch = await parser.parseRouteInformationWithDependencies(
-        RouteInformation(
-          uri: Uri.parse('/blocked'),
-          state: RouteInformationState<void>(type: NavigatingType.go),
-        ),
-        context,
-      );
+      final RouteMatchList blockedMatch = await parser
+          .parseRouteInformationWithDependencies(
+            RouteInformation(
+              uri: Uri.parse('/blocked'),
+              state: RouteInformationState<void>(type: NavigatingType.go),
+            ),
+            context,
+          );
       await tester.pumpAndSettle();
 
-      expect(blockedMatch.uri.toString(), equals(beforeBlockedNav.uri.toString()));
+      expect(
+        blockedMatch.uri.toString(),
+        equals(beforeBlockedNav.uri.toString()),
+      );
       expect(currentPath, equals('/'));
       expect(navigationAttempts, contains('/blocked'));
 
       // Try allowed route
-      final RouteMatchList allowedMatch = await parser.parseRouteInformationWithDependencies(
-        RouteInformation(
-          uri: Uri.parse('/allowed'),
-          state: RouteInformationState<void>(type: NavigatingType.go),
-        ),
-        context,
-      );
+      final RouteMatchList allowedMatch = await parser
+          .parseRouteInformationWithDependencies(
+            RouteInformation(
+              uri: Uri.parse('/allowed'),
+              state: RouteInformationState<void>(type: NavigatingType.go),
+            ),
+            context,
+          );
       expect(allowedMatch.uri.path, equals('/allowed'));
       expect(navigationAttempts, contains('/allowed'));
       await tester.pumpAndSettle();
     });
 
-    testWidgets('Should allow navigation when onEnter returns true', (WidgetTester tester) async {
+    testWidgets('Should allow navigation when onEnter returns true', (
+      WidgetTester tester,
+    ) async {
       var onEnterCallCount = 0;
 
       router = GoRouter(
@@ -132,20 +146,25 @@ void main() {
               GoRouter goRouter,
             ) async {
               onEnterCallCount++;
-              return next.uri.path.contains('block') ? const Block.stop() : const Allow();
+              return next.uri.path.contains('block')
+                  ? const Block.stop()
+                  : const Allow();
             },
         routes: <RouteBase>[
           GoRoute(
             path: '/home',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Home'))),
+            builder: (_, __) =>
+                const Scaffold(body: Center(child: Text('Home'))),
             routes: <GoRoute>[
               GoRoute(
                 path: 'allowed',
-                builder: (_, __) => const Scaffold(body: Center(child: Text('Allowed'))),
+                builder: (_, __) =>
+                    const Scaffold(body: Center(child: Text('Allowed'))),
               ),
               GoRoute(
                 path: 'block',
-                builder: (_, __) => const Scaffold(body: Center(child: Text('Blocked'))),
+                builder: (_, __) =>
+                    const Scaffold(body: Center(child: Text('Blocked'))),
               ),
             ],
           ),
@@ -170,67 +189,79 @@ void main() {
       expect(onEnterCallCount, greaterThan(0));
     });
 
-    testWidgets('Should trigger onException when the redirection limit is exceeded', (
+    testWidgets(
+      'Should trigger onException when the redirection limit is exceeded',
+      (WidgetTester tester) async {
+        final completer = Completer<void>();
+        Object? capturedError;
+
+        router = GoRouter(
+          initialLocation: '/start',
+          redirectLimit: 2,
+          onException:
+              (BuildContext context, GoRouterState state, GoRouter goRouter) {
+                capturedError = state.error;
+                goRouter.go('/fallback');
+                completer.complete();
+              },
+          onEnter:
+              (
+                BuildContext context,
+                GoRouterState current,
+                GoRouterState next,
+                GoRouter goRouter,
+              ) async {
+                if (next.uri.path == '/recursive') {
+                  return Block.then(() => goRouter.push('/recursive'));
+                }
+                return const Allow();
+              },
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/start',
+              builder: (_, __) =>
+                  const Scaffold(body: Center(child: Text('Start'))),
+            ),
+            GoRoute(
+              path: '/recursive',
+              builder: (_, __) =>
+                  const Scaffold(body: Center(child: Text('Recursive'))),
+            ),
+            GoRoute(
+              path: '/fallback',
+              builder: (_, __) =>
+                  const Scaffold(body: Center(child: Text('Fallback'))),
+            ),
+          ],
+        );
+
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pumpAndSettle();
+
+        router.go('/recursive');
+        await completer.future;
+        await tester.pumpAndSettle();
+
+        expect(capturedError, isNotNull);
+        expect(
+          capturedError.toString(),
+          contains('Too many onEnter calls detected'),
+        );
+        expect(find.text('Fallback'), findsOneWidget);
+      },
+    );
+
+    testWidgets('Should handle `go` usage in onEnter', (
       WidgetTester tester,
     ) async {
-      final completer = Completer<void>();
-      Object? capturedError;
-
-      router = GoRouter(
-        initialLocation: '/start',
-        redirectLimit: 2,
-        onException: (BuildContext context, GoRouterState state, GoRouter goRouter) {
-          capturedError = state.error;
-          goRouter.go('/fallback');
-          completer.complete();
-        },
-        onEnter:
-            (
-              BuildContext context,
-              GoRouterState current,
-              GoRouterState next,
-              GoRouter goRouter,
-            ) async {
-              if (next.uri.path == '/recursive') {
-                return Block.then(() => goRouter.push('/recursive'));
-              }
-              return const Allow();
-            },
-        routes: <RouteBase>[
-          GoRoute(
-            path: '/start',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Start'))),
-          ),
-          GoRoute(
-            path: '/recursive',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Recursive'))),
-          ),
-          GoRoute(
-            path: '/fallback',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Fallback'))),
-          ),
-        ],
-      );
-
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-      await tester.pumpAndSettle();
-
-      router.go('/recursive');
-      await completer.future;
-      await tester.pumpAndSettle();
-
-      expect(capturedError, isNotNull);
-      expect(capturedError.toString(), contains('Too many onEnter calls detected'));
-      expect(find.text('Fallback'), findsOneWidget);
-    });
-
-    testWidgets('Should handle `go` usage in onEnter', (WidgetTester tester) async {
       var isAuthenticatedResult = false;
 
-      Future<bool> isAuthenticated() => Future<bool>.value(isAuthenticatedResult);
+      Future<bool> isAuthenticated() =>
+          Future<bool>.value(isAuthenticatedResult);
 
       final paramsSink = StreamController<({String current, String next})>();
-      final Stream<({String current, String next})> paramsStream = paramsSink.stream
+      final Stream<({String current, String next})> paramsStream = paramsSink
+          .stream
           .asBroadcastStream();
 
       router = GoRouter(
@@ -242,8 +273,13 @@ void main() {
               GoRouterState next,
               GoRouter goRouter,
             ) async {
-              final bool isProtected = next.uri.toString().contains('protected');
-              paramsSink.add((current: current.uri.toString(), next: next.uri.toString()));
+              final bool isProtected = next.uri.toString().contains(
+                'protected',
+              );
+              paramsSink.add((
+                current: current.uri.toString(),
+                next: next.uri.toString(),
+              ));
 
               if (!isProtected) {
                 return const Allow();
@@ -256,15 +292,18 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/home',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Home'))),
+            builder: (_, __) =>
+                const Scaffold(body: Center(child: Text('Home'))),
           ),
           GoRoute(
             path: '/protected',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Protected'))),
+            builder: (_, __) =>
+                const Scaffold(body: Center(child: Text('Protected'))),
           ),
           GoRoute(
             path: '/sign-in',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Sign-in'))),
+            builder: (_, __) =>
+                const Scaffold(body: Center(child: Text('Sign-in'))),
           ),
         ],
       );
@@ -294,7 +333,9 @@ void main() {
       await paramsSink.close();
     });
 
-    testWidgets('Should handle `goNamed` usage in onEnter', (WidgetTester tester) async {
+    testWidgets('Should handle `goNamed` usage in onEnter', (
+      WidgetTester tester,
+    ) async {
       final navigationAttempts = <String>[];
 
       router = GoRouter(
@@ -312,7 +353,9 @@ void main() {
                 return Block.then(
                   () => goRouter.goNamed(
                     'login-page',
-                    queryParameters: <String, String>{'from': next.uri.toString()},
+                    queryParameters: <String, String>{
+                      'from': next.uri.toString(),
+                    },
                   ),
                 );
               }
@@ -321,11 +364,14 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/home',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Home'))),
+            builder: (_, __) =>
+                const Scaffold(body: Center(child: Text('Home'))),
           ),
           GoRoute(
             path: '/requires-auth',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Authenticated Content'))),
+            builder: (_, __) => const Scaffold(
+              body: Center(child: Text('Authenticated Content')),
+            ),
           ),
           GoRoute(
             path: '/login',
@@ -335,7 +381,9 @@ void main() {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text('Login Page - From: ${state.uri.queryParameters['from'] ?? 'unknown'}'),
+                    Text(
+                      'Login Page - From: ${state.uri.queryParameters['from'] ?? 'unknown'}',
+                    ),
                     ElevatedButton(
                       onPressed: () => router.go('/home'),
                       child: const Text('Go Home'),
@@ -359,13 +407,17 @@ void main() {
       expect(find.text('Login Page - From: /requires-auth'), findsOneWidget);
     });
 
-    testWidgets('Should handle `push` usage in onEnter', (WidgetTester tester) async {
+    testWidgets('Should handle `push` usage in onEnter', (
+      WidgetTester tester,
+    ) async {
       const isAuthenticatedResult = false;
 
-      Future<bool> isAuthenticated() => Future<bool>.value(isAuthenticatedResult);
+      Future<bool> isAuthenticated() =>
+          Future<bool>.value(isAuthenticatedResult);
 
       final paramsSink = StreamController<({String current, String next})>();
-      final Stream<({String current, String next})> paramsStream = paramsSink.stream
+      final Stream<({String current, String next})> paramsStream = paramsSink
+          .stream
           .asBroadcastStream();
 
       router = GoRouter(
@@ -377,8 +429,13 @@ void main() {
               GoRouterState next,
               GoRouter goRouter,
             ) async {
-              final bool isProtected = next.uri.toString().contains('protected');
-              paramsSink.add((current: current.uri.toString(), next: next.uri.toString()));
+              final bool isProtected = next.uri.toString().contains(
+                'protected',
+              );
+              paramsSink.add((
+                current: current.uri.toString(),
+                next: next.uri.toString(),
+              ));
               if (!isProtected) {
                 return const Allow();
               }
@@ -396,11 +453,13 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/home',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Home'))),
+            builder: (_, __) =>
+                const Scaffold(body: Center(child: Text('Home'))),
           ),
           GoRoute(
             path: '/protected',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Protected'))),
+            builder: (_, __) =>
+                const Scaffold(body: Center(child: Text('Protected'))),
           ),
           GoRoute(
             path: '/sign-in',
@@ -436,7 +495,9 @@ void main() {
       await paramsSink.close();
     });
 
-    testWidgets('Should handle `replace` usage in onEnter', (WidgetTester tester) async {
+    testWidgets('Should handle `replace` usage in onEnter', (
+      WidgetTester tester,
+    ) async {
       final navigationHistory = <String>[];
 
       router = GoRouter(
@@ -460,15 +521,18 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/home',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Home'))),
+            builder: (_, __) =>
+                const Scaffold(body: Center(child: Text('Home'))),
           ),
           GoRoute(
             path: '/old-page',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Old Page'))),
+            builder: (_, __) =>
+                const Scaffold(body: Center(child: Text('Old Page'))),
           ),
           GoRoute(
             path: '/new-version',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('New Version'))),
+            builder: (_, __) =>
+                const Scaffold(body: Center(child: Text('New Version'))),
           ),
         ],
       );
@@ -491,7 +555,9 @@ void main() {
       expect(find.text('Home'), findsOneWidget);
     });
 
-    testWidgets('Should handle `pushReplacement` usage in onEnter', (WidgetTester tester) async {
+    testWidgets('Should handle `pushReplacement` usage in onEnter', (
+      WidgetTester tester,
+    ) async {
       final navigationLog = <String>[];
 
       router = GoRouter(
@@ -515,11 +581,13 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/home',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Home'))),
+            builder: (_, __) =>
+                const Scaffold(body: Center(child: Text('Home'))),
           ),
           GoRoute(
             path: '/outdated',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Outdated'))),
+            builder: (_, __) =>
+                const Scaffold(body: Center(child: Text('Outdated'))),
           ),
           GoRoute(
             path: '/updated',
@@ -530,7 +598,8 @@ void main() {
                   children: <Widget>[
                     const Text('Updated'),
                     ElevatedButton(
-                      onPressed: () => router.go('/home'), // Use go instead of pop
+                      onPressed: () =>
+                          router.go('/home'), // Use go instead of pop
                       child: const Text('Go Home'),
                     ),
                   ],
@@ -561,165 +630,182 @@ void main() {
       expect(find.text('Home'), findsOneWidget);
     });
 
-    testWidgets('onEnter should handle protected route redirection with query parameters', (
-      WidgetTester tester,
-    ) async {
-      // Test setup
-      var isAuthenticatedResult = false;
-      Future<bool> isAuthenticated() => Future<bool>.value(isAuthenticatedResult);
+    testWidgets(
+      'onEnter should handle protected route redirection with query parameters',
+      (WidgetTester tester) async {
+        // Test setup
+        var isAuthenticatedResult = false;
+        Future<bool> isAuthenticated() =>
+            Future<bool>.value(isAuthenticatedResult);
 
-      // Stream to capture onEnter calls
-      final paramsSink = StreamController<({String current, String next})>();
-      // Use broadcast stream for potentially multiple listeners/expects if needed,
-      // although expectLater handles one listener well.
-      final Stream<({String current, String next})> paramsStream = paramsSink.stream
-          .asBroadcastStream();
+        // Stream to capture onEnter calls
+        final paramsSink = StreamController<({String current, String next})>();
+        // Use broadcast stream for potentially multiple listeners/expects if needed,
+        // although expectLater handles one listener well.
+        final Stream<({String current, String next})> paramsStream = paramsSink
+            .stream
+            .asBroadcastStream();
 
-      // Helper to navigate after sign-in button press
-      void goToRedirect(GoRouter router, GoRouterState state) {
-        final String? redirect = state.uri.queryParameters['redirectTo'];
-        // Use null check and Uri.tryParse for safety
-        if (redirect != null && Uri.tryParse(redirect) != null) {
-          // Decode potentially encoded URI component
-          router.go(Uri.decodeComponent(redirect));
-        } else {
-          // Fallback if redirectTo is missing or invalid
-          router.go('/home');
+        // Helper to navigate after sign-in button press
+        void goToRedirect(GoRouter router, GoRouterState state) {
+          final String? redirect = state.uri.queryParameters['redirectTo'];
+          // Use null check and Uri.tryParse for safety
+          if (redirect != null && Uri.tryParse(redirect) != null) {
+            // Decode potentially encoded URI component
+            router.go(Uri.decodeComponent(redirect));
+          } else {
+            // Fallback if redirectTo is missing or invalid
+            router.go('/home');
+          }
         }
-      }
 
-      router = GoRouter(
-        initialLocation: '/home',
-        onEnter:
-            (
-              BuildContext context,
-              GoRouterState current,
-              GoRouterState next,
-              GoRouter goRouter,
-              // Renamed parameter to avoid shadowing router variable
-            ) async {
-              // Log the navigation attempt state URIs
-              paramsSink.add((current: current.uri.toString(), next: next.uri.toString()));
+        router = GoRouter(
+          initialLocation: '/home',
+          onEnter:
+              (
+                BuildContext context,
+                GoRouterState current,
+                GoRouterState next,
+                GoRouter goRouter,
+                // Renamed parameter to avoid shadowing router variable
+              ) async {
+                // Log the navigation attempt state URIs
+                paramsSink.add((
+                  current: current.uri.toString(),
+                  next: next.uri.toString(),
+                ));
 
-              final isNavigatingToProtected = next.uri.path == '/protected';
+                final isNavigatingToProtected = next.uri.path == '/protected';
 
-              // Allow navigation if not going to the protected route
-              if (!isNavigatingToProtected) {
-                return const Allow();
-              }
+                // Allow navigation if not going to the protected route
+                if (!isNavigatingToProtected) {
+                  return const Allow();
+                }
 
-              // Allow navigation if authenticated
-              if (await isAuthenticated()) {
-                return const Allow();
-              }
+                // Allow navigation if authenticated
+                if (await isAuthenticated()) {
+                  return const Allow();
+                }
 
-              // If unauthenticated and going to protected route:
-              // 1. Redirect to sign-in using pushNamed, passing the intended destination
-              await goRouter.pushNamed<void>(
-                'sign-in', // Return type likely void or not needed
-                queryParameters: <String, String>{
-                  'redirectTo': next.uri.toString(), // Pass the full next URI
-                },
-              );
-              // 2. Block the original navigation to '/protected'
-              return const Block.stop();
-            },
-        routes: <RouteBase>[
-          GoRoute(
-            path: '/home',
-            name: 'home', // Good practice to name routes
-            builder: (_, __) =>
-                const Scaffold(body: Center(child: Text('Home Screen'))), // Unique text
-          ),
-          GoRoute(
-            path: '/protected',
-            name: 'protected', // Good practice to name routes
-            builder: (_, __) =>
-                const Scaffold(body: Center(child: Text('Protected Screen'))), // Unique text
-          ),
-          GoRoute(
-            path: '/sign-in',
-            name: 'sign-in',
-            builder: (_, GoRouterState state) => Scaffold(
-              appBar: AppBar(
-                title: const Text('Sign In Screen Title'), // Unique text
-              ),
-              body: Center(
-                child: ElevatedButton(
-                  child: const Text('Sign In Button'), // Unique text
-                  onPressed: () => goToRedirect(router, state),
+                // If unauthenticated and going to protected route:
+                // 1. Redirect to sign-in using pushNamed, passing the intended destination
+                await goRouter.pushNamed<void>(
+                  'sign-in', // Return type likely void or not needed
+                  queryParameters: <String, String>{
+                    'redirectTo': next.uri.toString(), // Pass the full next URI
+                  },
+                );
+                // 2. Block the original navigation to '/protected'
+                return const Block.stop();
+              },
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/home',
+              name: 'home', // Good practice to name routes
+              builder: (_, __) => const Scaffold(
+                body: Center(child: Text('Home Screen')),
+              ), // Unique text
+            ),
+            GoRoute(
+              path: '/protected',
+              name: 'protected', // Good practice to name routes
+              builder: (_, __) => const Scaffold(
+                body: Center(child: Text('Protected Screen')),
+              ), // Unique text
+            ),
+            GoRoute(
+              path: '/sign-in',
+              name: 'sign-in',
+              builder: (_, GoRouterState state) => Scaffold(
+                appBar: AppBar(
+                  title: const Text('Sign In Screen Title'), // Unique text
+                ),
+                body: Center(
+                  child: ElevatedButton(
+                    child: const Text('Sign In Button'), // Unique text
+                    onPressed: () => goToRedirect(router, state),
+                  ),
                 ),
               ),
             ),
+          ],
+        );
+
+        // Expect the stream of onEnter calls to emit events in this specific order
+        // We use unawaited because expectLater returns a Future that completes
+        // when the expectation is met or fails, but we want the test execution
+        // (pumping widgets, triggering actions) to proceed concurrently.
+        unawaited(
+          expectLater(
+            paramsStream,
+            emitsInOrder(<dynamic>[
+              // 1. Initial Load to '/home'
+              equals((current: '/home', next: '/home')),
+              // 2. Attempt go('/protected') -> onEnter blocks
+              equals((current: '/home', next: '/protected')),
+              // 3. onEnter runs for the push('/sign-in?redirectTo=...') triggered internally
+              equals((
+                current: '/home',
+                next: '/sign-in?redirectTo=%2Fprotected',
+              )),
+              // 4. Tap button -> go('/protected') -> onEnter allows access
+              equals((
+                current:
+                    // State when button is tapped
+                    '/sign-in?redirectTo=%2Fprotected',
+                // Target of the 'go' call
+                next: '/protected',
+              )),
+            ]),
           ),
-        ],
-      );
+        );
 
-      // Expect the stream of onEnter calls to emit events in this specific order
-      // We use unawaited because expectLater returns a Future that completes
-      // when the expectation is met or fails, but we want the test execution
-      // (pumping widgets, triggering actions) to proceed concurrently.
-      unawaited(
-        expectLater(
-          paramsStream,
-          emitsInOrder(<dynamic>[
-            // 1. Initial Load to '/home'
-            equals((current: '/home', next: '/home')),
-            // 2. Attempt go('/protected') -> onEnter blocks
-            equals((current: '/home', next: '/protected')),
-            // 3. onEnter runs for the push('/sign-in?redirectTo=...') triggered internally
-            equals((current: '/home', next: '/sign-in?redirectTo=%2Fprotected')),
-            // 4. Tap button -> go('/protected') -> onEnter allows access
-            equals((
-              current:
-                  // State when button is tapped
-                  '/sign-in?redirectTo=%2Fprotected',
-              // Target of the 'go' call
-              next: '/protected',
-            )),
-          ]),
-        ),
-      );
+        // Initial widget pump
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        // Let initial navigation and builds complete
+        await tester.pumpAndSettle();
+        // Verify initial screen
+        expect(find.text('Home Screen'), findsOneWidget);
 
-      // Initial widget pump
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-      // Let initial navigation and builds complete
-      await tester.pumpAndSettle();
-      // Verify initial screen
-      expect(find.text('Home Screen'), findsOneWidget);
+        // Trigger navigation to protected route (user is not authenticated)
+        router.go('/protected');
+        // Allow navigation/redirection to complete
+        await tester.pumpAndSettle();
 
-      // Trigger navigation to protected route (user is not authenticated)
-      router.go('/protected');
-      // Allow navigation/redirection to complete
-      await tester.pumpAndSettle();
+        // Verify state after redirection to sign-in
+        expect(
+          router.state.uri.toString(),
+          equals('/sign-in?redirectTo=%2Fprotected'),
+        );
+        // Verify app bar title
+        expect(find.text('Sign In Screen Title'), findsOneWidget);
+        // Verify button exists
+        expect(
+          find.widgetWithText(ElevatedButton, 'Sign In Button'),
+          findsOneWidget,
+        );
+        // BackButton appears because sign-in was pushed onto the stack
+        expect(find.byType(BackButton), findsOneWidget);
 
-      // Verify state after redirection to sign-in
-      expect(router.state.uri.toString(), equals('/sign-in?redirectTo=%2Fprotected'));
-      // Verify app bar title
-      expect(find.text('Sign In Screen Title'), findsOneWidget);
-      // Verify button exists
-      expect(find.widgetWithText(ElevatedButton, 'Sign In Button'), findsOneWidget);
-      // BackButton appears because sign-in was pushed onto the stack
-      expect(find.byType(BackButton), findsOneWidget);
+        // Simulate successful authentication
+        isAuthenticatedResult = true;
 
-      // Simulate successful authentication
-      isAuthenticatedResult = true;
+        // Trigger navigation back to protected route by tapping the sign-in button
+        await tester.tap(find.widgetWithText(ElevatedButton, 'Sign In Button'));
+        // Allow navigation to protected route to complete
+        await tester.pumpAndSettle();
 
-      // Trigger navigation back to protected route by tapping the sign-in button
-      await tester.tap(find.widgetWithText(ElevatedButton, 'Sign In Button'));
-      // Allow navigation to protected route to complete
-      await tester.pumpAndSettle();
+        // Verify final state
+        expect(router.state.uri.toString(), equals('/protected'));
+        // Verify final screen
+        expect(find.text('Protected Screen'), findsOneWidget);
+        // Verify sign-in screen is gone
+        expect(find.text('Sign In Screen Title'), findsNothing);
 
-      // Verify final state
-      expect(router.state.uri.toString(), equals('/protected'));
-      // Verify final screen
-      expect(find.text('Protected Screen'), findsOneWidget);
-      // Verify sign-in screen is gone
-      expect(find.text('Sign In Screen Title'), findsNothing);
-
-      // Close the stream controller
-      await paramsSink.close();
-    });
+        // Close the stream controller
+        await paramsSink.close();
+      },
+    );
 
     testWidgets('Should handle sequential navigation steps in onEnter', (
       WidgetTester tester,
@@ -757,11 +843,13 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/start',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Start'))),
+            builder: (_, __) =>
+                const Scaffold(body: Center(child: Text('Start'))),
           ),
           GoRoute(
             path: '/multi-step',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Multi Step'))),
+            builder: (_, __) =>
+                const Scaffold(body: Center(child: Text('Multi Step'))),
           ),
           GoRoute(
             path: '/step-one',
@@ -820,12 +908,13 @@ void main() {
       // to avoid triggering the exception when navigating to the fallback route.
       router = GoRouter(
         initialLocation: '/error',
-        onException: (BuildContext context, GoRouterState state, GoRouter goRouter) {
-          capturedError = state.error;
-          // Navigate to a safe fallback route.
-          goRouter.go('/fallback');
-          completer.complete();
-        },
+        onException:
+            (BuildContext context, GoRouterState state, GoRouter goRouter) {
+              capturedError = state.error;
+              // Navigate to a safe fallback route.
+              goRouter.go('/fallback');
+              completer.complete();
+            },
         onEnter:
             (
               BuildContext context,
@@ -843,11 +932,13 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/error',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Error Page'))),
+            builder: (_, __) =>
+                const Scaffold(body: Center(child: Text('Error Page'))),
           ),
           GoRoute(
             path: '/fallback',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Fallback Page'))),
+            builder: (_, __) =>
+                const Scaffold(body: Center(child: Text('Fallback Page'))),
           ),
         ],
       );
@@ -868,7 +959,9 @@ void main() {
       expect(find.text('Fallback Page'), findsOneWidget);
     });
 
-    testWidgets('onEnter has priority over deprecated redirect', (WidgetTester tester) async {
+    testWidgets('onEnter has priority over deprecated redirect', (
+      WidgetTester tester,
+    ) async {
       var redirectCallCount = 0;
       var onEnterCallCount = 0;
       var lastOnEnterBlocked = false;
@@ -939,7 +1032,10 @@ void main() {
         routes: <GoRoute>[
           GoRoute(path: '/page1', builder: (_, __) => const Text('Page 1')),
           GoRoute(path: '/page2', builder: (_, __) => const Text('Page 2')),
-          GoRoute(path: '/protected', builder: (_, __) => const Text('Protected')),
+          GoRoute(
+            path: '/protected',
+            builder: (_, __) => const Text('Protected'),
+          ),
         ],
         onEnter: (_, GoRouterState current, GoRouterState next, ___) async {
           capturedCurrentPath = current.uri.path;
@@ -974,7 +1070,9 @@ void main() {
       expect(capturedNextPath, equals('/protected'));
     });
 
-    testWidgets('pop does not call onEnter but restore does', (WidgetTester tester) async {
+    testWidgets('pop does not call onEnter but restore does', (
+      WidgetTester tester,
+    ) async {
       var onEnterCount = 0;
 
       router = GoRouter(
@@ -1016,7 +1114,9 @@ void main() {
       // Explicit restore would call onEnter (tested separately in integration)
     });
 
-    testWidgets('restore navigation calls onEnter for re-validation', (WidgetTester tester) async {
+    testWidgets('restore navigation calls onEnter for re-validation', (
+      WidgetTester tester,
+    ) async {
       var onEnterCount = 0;
       var allowNavigation = true;
 
@@ -1057,16 +1157,17 @@ void main() {
       final GoRouteInformationParser parser = router.routeInformationParser;
 
       // Create a restore navigation to protected route
-      final RouteMatchList restoredMatch = await parser.parseRouteInformationWithDependencies(
-        RouteInformation(
-          uri: Uri.parse('/protected'),
-          state: RouteInformationState<void>(
-            type: NavigatingType.restore,
-            baseRouteMatchList: router.routerDelegate.currentConfiguration,
-          ),
-        ),
-        context,
-      );
+      final RouteMatchList restoredMatch = await parser
+          .parseRouteInformationWithDependencies(
+            RouteInformation(
+              uri: Uri.parse('/protected'),
+              state: RouteInformationState<void>(
+                type: NavigatingType.restore,
+                baseRouteMatchList: router.routerDelegate.currentConfiguration,
+              ),
+            ),
+            context,
+          );
 
       // onEnter should be called again for restore
       expect(onEnterCount, 3);
@@ -1074,16 +1175,17 @@ void main() {
 
       // Now simulate session expired - block on restore
       allowNavigation = false;
-      final RouteMatchList blockedRestore = await parser.parseRouteInformationWithDependencies(
-        RouteInformation(
-          uri: Uri.parse('/protected'),
-          state: RouteInformationState<void>(
-            type: NavigatingType.restore,
-            baseRouteMatchList: router.routerDelegate.currentConfiguration,
-          ),
-        ),
-        context,
-      );
+      final RouteMatchList blockedRestore = await parser
+          .parseRouteInformationWithDependencies(
+            RouteInformation(
+              uri: Uri.parse('/protected'),
+              state: RouteInformationState<void>(
+                type: NavigatingType.restore,
+                baseRouteMatchList: router.routerDelegate.currentConfiguration,
+              ),
+            ),
+            context,
+          );
 
       // onEnter called again but blocks this time
       expect(onEnterCount, 4);
@@ -1091,45 +1193,49 @@ void main() {
       expect(blockedRestore.uri.path, equals('/protected'));
     });
 
-    testWidgets('goNamed supports fragment (hash) and preserves it in state.uri', (
-      WidgetTester tester,
-    ) async {
-      router = GoRouter(
-        initialLocation: '/',
-        routes: <RouteBase>[
-          GoRoute(
-            path: '/',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Root'))),
-          ),
-          GoRoute(
-            path: '/article/:id',
-            name: 'article',
-            builder: (_, GoRouterState state) {
-              return Scaffold(
-                body: Center(
-                  child: Text('article=${state.pathParameters['id']};frag=${state.uri.fragment}'),
-                ),
-              );
-            },
-          ),
-        ],
-      );
+    testWidgets(
+      'goNamed supports fragment (hash) and preserves it in state.uri',
+      (WidgetTester tester) async {
+        router = GoRouter(
+          initialLocation: '/',
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/',
+              builder: (_, __) =>
+                  const Scaffold(body: Center(child: Text('Root'))),
+            ),
+            GoRoute(
+              path: '/article/:id',
+              name: 'article',
+              builder: (_, GoRouterState state) {
+                return Scaffold(
+                  body: Center(
+                    child: Text(
+                      'article=${state.pathParameters['id']};frag=${state.uri.fragment}',
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        );
 
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pumpAndSettle();
 
-      // Navigate with a fragment
-      router.goNamed(
-        'article',
-        pathParameters: <String, String>{'id': '42'},
-        fragment: 'section-2',
-      );
-      await tester.pumpAndSettle();
+        // Navigate with a fragment
+        router.goNamed(
+          'article',
+          pathParameters: <String, String>{'id': '42'},
+          fragment: 'section-2',
+        );
+        await tester.pumpAndSettle();
 
-      expect(router.state.uri.path, '/article/42');
-      expect(router.state.uri.fragment, 'section-2');
-      expect(find.text('article=42;frag=section-2'), findsOneWidget);
-    });
+        expect(router.state.uri.path, '/article/42');
+        expect(router.state.uri.fragment, 'section-2');
+        expect(find.text('article=42;frag=section-2'), findsOneWidget);
+      },
+    );
 
     testWidgets('relative "./" navigation resolves against current location', (
       WidgetTester tester,
@@ -1139,11 +1245,13 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/parent',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Parent'))),
+            builder: (_, __) =>
+                const Scaffold(body: Center(child: Text('Parent'))),
             routes: <RouteBase>[
               GoRoute(
                 path: 'child',
-                builder: (_, __) => const Scaffold(body: Center(child: Text('Child'))),
+                builder: (_, __) =>
+                    const Scaffold(body: Center(child: Text('Child'))),
               ),
             ],
           ),
@@ -1183,7 +1291,8 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Root'))),
+            builder: (_, __) =>
+                const Scaffold(body: Center(child: Text('Root'))),
           ),
           GoRoute(
             path: '/old',
@@ -1193,7 +1302,8 @@ void main() {
           ),
           GoRoute(
             path: '/new',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('New'))),
+            builder: (_, __) =>
+                const Scaffold(body: Center(child: Text('New'))),
           ),
         ],
       );
@@ -1213,55 +1323,61 @@ void main() {
       expect(find.text('New'), findsOneWidget);
     });
 
-    testWidgets('Allow(then) error is reported but does not revert navigation', (
+    testWidgets(
+      'Allow(then) error is reported but does not revert navigation',
+      (WidgetTester tester) async {
+        // Capture FlutterError.reportError calls
+        FlutterErrorDetails? reported;
+        final void Function(FlutterErrorDetails)? oldHandler =
+            FlutterError.onError;
+        FlutterError.onError = (FlutterErrorDetails details) {
+          reported = details;
+        };
+        addTearDown(() => FlutterError.onError = oldHandler);
+
+        router = GoRouter(
+          initialLocation: '/home',
+          onEnter: (_, __, GoRouterState next, ___) async {
+            if (next.uri.path == '/boom') {
+              // Allow, but run a failing "then" callback
+              return Allow(then: () => throw StateError('then blew up'));
+            }
+            return const Allow();
+          },
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/home',
+              builder: (_, __) =>
+                  const Scaffold(body: Center(child: Text('Home'))),
+            ),
+            GoRoute(
+              path: '/boom',
+              builder: (_, __) =>
+                  const Scaffold(body: Center(child: Text('Boom'))),
+            ),
+          ],
+        );
+
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pumpAndSettle();
+        expect(find.text('Home'), findsOneWidget);
+
+        router.go('/boom');
+        await tester.pumpAndSettle(); // commits nav + runs deferred microtask
+
+        // Navigation should be committed
+        expect(router.state.uri.path, equals('/boom'));
+        expect(find.text('Boom'), findsOneWidget);
+
+        // Error from deferred callback should be reported (but not crash)
+        expect(reported, isNotNull);
+        expect(reported!.exception.toString(), contains('then blew up'));
+      },
+    );
+
+    testWidgets('Hard-stop vs chaining resets onEnter history', (
       WidgetTester tester,
     ) async {
-      // Capture FlutterError.reportError calls
-      FlutterErrorDetails? reported;
-      final void Function(FlutterErrorDetails)? oldHandler = FlutterError.onError;
-      FlutterError.onError = (FlutterErrorDetails details) {
-        reported = details;
-      };
-      addTearDown(() => FlutterError.onError = oldHandler);
-
-      router = GoRouter(
-        initialLocation: '/home',
-        onEnter: (_, __, GoRouterState next, ___) async {
-          if (next.uri.path == '/boom') {
-            // Allow, but run a failing "then" callback
-            return Allow(then: () => throw StateError('then blew up'));
-          }
-          return const Allow();
-        },
-        routes: <RouteBase>[
-          GoRoute(
-            path: '/home',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Home'))),
-          ),
-          GoRoute(
-            path: '/boom',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Boom'))),
-          ),
-        ],
-      );
-
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-      await tester.pumpAndSettle();
-      expect(find.text('Home'), findsOneWidget);
-
-      router.go('/boom');
-      await tester.pumpAndSettle(); // commits nav + runs deferred microtask
-
-      // Navigation should be committed
-      expect(router.state.uri.path, equals('/boom'));
-      expect(find.text('Boom'), findsOneWidget);
-
-      // Error from deferred callback should be reported (but not crash)
-      expect(reported, isNotNull);
-      expect(reported!.exception.toString(), contains('then blew up'));
-    });
-
-    testWidgets('Hard-stop vs chaining resets onEnter history', (WidgetTester tester) async {
       // With redirectLimit=1:
       //  - Block.stop() resets history so repeated attempts don't hit the limit.
       //  - Block.then(() => go(...)) keeps history and will exceed the limit.
@@ -1291,15 +1407,18 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/start',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Start'))),
+            builder: (_, __) =>
+                const Scaffold(body: Center(child: Text('Start'))),
           ),
           GoRoute(
             path: '/blocked-once',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('BlockedOnce'))),
+            builder: (_, __) =>
+                const Scaffold(body: Center(child: Text('BlockedOnce'))),
           ),
           GoRoute(
             path: '/chain',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Chain'))),
+            builder: (_, __) =>
+                const Scaffold(body: Center(child: Text('Chain'))),
           ),
         ],
       );
@@ -1373,7 +1492,10 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify execution order: onEnter -> legacy -> route-level
-      expect(calls, containsAllInOrder(<String>['onEnter', 'legacy', 'route-level']));
+      expect(
+        calls,
+        containsAllInOrder(<String>['onEnter', 'legacy', 'route-level']),
+      );
       expect(router.state.uri.path, '/redirected');
       expect(find.text('Redirected'), findsOneWidget);
 
@@ -1396,157 +1518,179 @@ void main() {
       );
 
       // Verify restore also follows same order
-      expect(calls, containsAllInOrder(<String>['onEnter', 'legacy', 'route-level']));
-    });
-    testWidgets('onEnter blocking prevents stale state restoration (pop case)', (
-      WidgetTester tester,
-    ) async {
-      // This test reproduces https://github.com/flutter/flutter/issues/178853
-      // 1. Push A -> B
-      // 2. Pop B -> A (simulating system back)
-      // 3. Go A -> Blocked
-      // 4. onEnter blocks
-      // 5. Ensure we stay on A and don't "restore" B (stale state)
-
-      router = GoRouter(
-        initialLocation: '/home',
-        onEnter: (_, __, GoRouterState next, ___) =>
-            next.uri.path == '/blocked' ? const Block.stop() : const Allow(),
-        routes: <RouteBase>[
-          GoRoute(
-            path: '/home',
-            builder: (_, __) => const Scaffold(body: Text('Home')),
-          ),
-          GoRoute(
-            path: '/allowed',
-            builder: (_, __) => const Scaffold(body: Text('Allowed')),
-          ),
-          GoRoute(
-            path: '/blocked',
-            builder: (_, __) => const Scaffold(body: Text('Blocked')),
-          ),
-        ],
+      expect(
+        calls,
+        containsAllInOrder(<String>['onEnter', 'legacy', 'route-level']),
       );
-
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-      await tester.pumpAndSettle();
-      expect(find.text('Home'), findsOneWidget);
-
-      // 1. Push allowed
-      router.push('/allowed');
-      await tester.pumpAndSettle();
-      expect(find.text('Allowed'), findsOneWidget);
-
-      // 2. Pop (simulating system back / imperative pop)
-      final NavigatorState navigator = tester.state(find.byType(Navigator).last);
-      navigator.pop();
-      await tester.pumpAndSettle();
-      expect(find.text('Home'), findsOneWidget);
-
-      // 3. Attempt blocked navigation
-      router.go('/blocked');
-      await tester.pumpAndSettle();
-
-      // 4. Verify blocking worked
-      expect(find.text('Blocked'), findsNothing);
-
-      // 5. Verify we didn't restore the popped route (Allowed)
-      expect(find.text('Allowed'), findsNothing);
-      expect(find.text('Home'), findsOneWidget);
     });
+    testWidgets(
+      'onEnter blocking prevents stale state restoration (pop case)',
+      (WidgetTester tester) async {
+        // This test reproduces https://github.com/flutter/flutter/issues/178853
+        // 1. Push A -> B
+        // 2. Pop B -> A (simulating system back)
+        // 3. Go A -> Blocked
+        // 4. onEnter blocks
+        // 5. Ensure we stay on A and don't "restore" B (stale state)
+
+        router = GoRouter(
+          initialLocation: '/home',
+          onEnter: (_, __, GoRouterState next, ___) =>
+              next.uri.path == '/blocked' ? const Block.stop() : const Allow(),
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/home',
+              builder: (_, __) => const Scaffold(body: Text('Home')),
+            ),
+            GoRoute(
+              path: '/allowed',
+              builder: (_, __) => const Scaffold(body: Text('Allowed')),
+            ),
+            GoRoute(
+              path: '/blocked',
+              builder: (_, __) => const Scaffold(body: Text('Blocked')),
+            ),
+          ],
+        );
+
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pumpAndSettle();
+        expect(find.text('Home'), findsOneWidget);
+
+        // 1. Push allowed
+        router.push('/allowed');
+        await tester.pumpAndSettle();
+        expect(find.text('Allowed'), findsOneWidget);
+
+        // 2. Pop (simulating system back / imperative pop)
+        final NavigatorState navigator = tester.state(
+          find.byType(Navigator).last,
+        );
+        navigator.pop();
+        await tester.pumpAndSettle();
+        expect(find.text('Home'), findsOneWidget);
+
+        // 3. Attempt blocked navigation
+        router.go('/blocked');
+        await tester.pumpAndSettle();
+
+        // 4. Verify blocking worked
+        expect(find.text('Blocked'), findsNothing);
+
+        // 5. Verify we didn't restore the popped route (Allowed)
+        expect(find.text('Allowed'), findsNothing);
+        expect(find.text('Home'), findsOneWidget);
+      },
+    );
 
     group('with refreshListenable', () {
-      testWidgets('Block.then(router.go) navigates after refreshListenable fires', (
-        WidgetTester tester,
-      ) async {
-        final isAuthenticated = ValueNotifier<bool>(true);
-        addTearDown(isAuthenticated.dispose);
+      testWidgets(
+        'Block.then(router.go) navigates after refreshListenable fires',
+        (WidgetTester tester) async {
+          final isAuthenticated = ValueNotifier<bool>(true);
+          addTearDown(isAuthenticated.dispose);
 
-        router = GoRouter(
-          initialLocation: '/home',
-          refreshListenable: isAuthenticated,
-          onEnter:
-              (BuildContext context, GoRouterState current, GoRouterState next, GoRouter goRouter) {
-                // Public routes — always allow
-                if (next.uri.path == '/login') {
+          router = GoRouter(
+            initialLocation: '/home',
+            refreshListenable: isAuthenticated,
+            onEnter:
+                (
+                  BuildContext context,
+                  GoRouterState current,
+                  GoRouterState next,
+                  GoRouter goRouter,
+                ) {
+                  // Public routes — always allow
+                  if (next.uri.path == '/login') {
+                    return const Allow();
+                  }
+
+                  // Protected routes — require auth
+                  if (!isAuthenticated.value) {
+                    return Block.then(() => goRouter.go('/login'));
+                  }
                   return const Allow();
-                }
+                },
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/home',
+                builder: (_, __) =>
+                    const Scaffold(body: Center(child: Text('Home'))),
+              ),
+              GoRoute(
+                path: '/login',
+                builder: (_, __) =>
+                    const Scaffold(body: Center(child: Text('Login'))),
+              ),
+            ],
+          );
 
-                // Protected routes — require auth
-                if (!isAuthenticated.value) {
-                  return Block.then(() => goRouter.go('/login'));
-                }
-                return const Allow();
-              },
-          routes: <RouteBase>[
-            GoRoute(
-              path: '/home',
-              builder: (_, __) => const Scaffold(body: Center(child: Text('Home'))),
-            ),
-            GoRoute(
-              path: '/login',
-              builder: (_, __) => const Scaffold(body: Center(child: Text('Login'))),
-            ),
-          ],
-        );
+          await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+          await tester.pumpAndSettle();
+          expect(find.text('Home'), findsOneWidget);
 
-        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-        await tester.pumpAndSettle();
-        expect(find.text('Home'), findsOneWidget);
+          // Toggle auth off — refreshListenable fires, guard blocks and
+          // calls router.go('/login') in Block.then callback.
+          isAuthenticated.value = false;
+          await tester.pumpAndSettle();
 
-        // Toggle auth off — refreshListenable fires, guard blocks and
-        // calls router.go('/login') in Block.then callback.
-        isAuthenticated.value = false;
-        await tester.pumpAndSettle();
+          // The callback navigation must commit.
+          expect(router.state.uri.path, equals('/login'));
+          expect(find.text('Login'), findsOneWidget);
+        },
+      );
 
-        // The callback navigation must commit.
-        expect(router.state.uri.path, equals('/login'));
-        expect(find.text('Login'), findsOneWidget);
-      });
+      testWidgets(
+        'Block.then(router.goNamed) navigates after refreshListenable fires',
+        (WidgetTester tester) async {
+          final isAuthenticated = ValueNotifier<bool>(true);
+          addTearDown(isAuthenticated.dispose);
 
-      testWidgets('Block.then(router.goNamed) navigates after refreshListenable fires', (
-        WidgetTester tester,
-      ) async {
-        final isAuthenticated = ValueNotifier<bool>(true);
-        addTearDown(isAuthenticated.dispose);
+          router = GoRouter(
+            initialLocation: '/home',
+            refreshListenable: isAuthenticated,
+            onEnter:
+                (
+                  BuildContext context,
+                  GoRouterState current,
+                  GoRouterState next,
+                  GoRouter goRouter,
+                ) {
+                  if (next.uri.path == '/login') {
+                    return const Allow();
+                  }
 
-        router = GoRouter(
-          initialLocation: '/home',
-          refreshListenable: isAuthenticated,
-          onEnter:
-              (BuildContext context, GoRouterState current, GoRouterState next, GoRouter goRouter) {
-                if (next.uri.path == '/login') {
+                  if (!isAuthenticated.value) {
+                    return Block.then(() => goRouter.goNamed('login'));
+                  }
                   return const Allow();
-                }
+                },
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/home',
+                builder: (_, __) =>
+                    const Scaffold(body: Center(child: Text('Home'))),
+              ),
+              GoRoute(
+                path: '/login',
+                name: 'login',
+                builder: (_, __) =>
+                    const Scaffold(body: Center(child: Text('Login'))),
+              ),
+            ],
+          );
 
-                if (!isAuthenticated.value) {
-                  return Block.then(() => goRouter.goNamed('login'));
-                }
-                return const Allow();
-              },
-          routes: <RouteBase>[
-            GoRoute(
-              path: '/home',
-              builder: (_, __) => const Scaffold(body: Center(child: Text('Home'))),
-            ),
-            GoRoute(
-              path: '/login',
-              name: 'login',
-              builder: (_, __) => const Scaffold(body: Center(child: Text('Login'))),
-            ),
-          ],
-        );
+          await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+          await tester.pumpAndSettle();
+          expect(find.text('Home'), findsOneWidget);
 
-        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-        await tester.pumpAndSettle();
-        expect(find.text('Home'), findsOneWidget);
+          isAuthenticated.value = false;
+          await tester.pumpAndSettle();
 
-        isAuthenticated.value = false;
-        await tester.pumpAndSettle();
-
-        expect(router.state.uri.path, equals('/login'));
-        expect(find.text('Login'), findsOneWidget);
-      });
+          expect(router.state.uri.path, equals('/login'));
+          expect(find.text('Login'), findsOneWidget);
+        },
+      );
 
       testWidgets(
         'Block.then(router.go) navigates after multiple rapid refreshListenable emissions',
@@ -1576,11 +1720,13 @@ void main() {
             routes: <RouteBase>[
               GoRoute(
                 path: '/home',
-                builder: (_, __) => const Scaffold(body: Center(child: Text('Home'))),
+                builder: (_, __) =>
+                    const Scaffold(body: Center(child: Text('Home'))),
               ),
               GoRoute(
                 path: '/login',
-                builder: (_, __) => const Scaffold(body: Center(child: Text('Login'))),
+                builder: (_, __) =>
+                    const Scaffold(body: Center(child: Text('Login'))),
               ),
             ],
           );
@@ -1600,91 +1746,107 @@ void main() {
         },
       );
 
-      testWidgets('Allow.then(router.go) navigates after refreshListenable fires', (
-        WidgetTester tester,
-      ) async {
-        final shouldRedirect = ValueNotifier<bool>(false);
-        addTearDown(shouldRedirect.dispose);
+      testWidgets(
+        'Allow.then(router.go) navigates after refreshListenable fires',
+        (WidgetTester tester) async {
+          final shouldRedirect = ValueNotifier<bool>(false);
+          addTearDown(shouldRedirect.dispose);
 
-        router = GoRouter(
-          initialLocation: '/home',
-          refreshListenable: shouldRedirect,
-          onEnter:
-              (BuildContext context, GoRouterState current, GoRouterState next, GoRouter goRouter) {
-                if (next.uri.path == '/dashboard') {
+          router = GoRouter(
+            initialLocation: '/home',
+            refreshListenable: shouldRedirect,
+            onEnter:
+                (
+                  BuildContext context,
+                  GoRouterState current,
+                  GoRouterState next,
+                  GoRouter goRouter,
+                ) {
+                  if (next.uri.path == '/dashboard') {
+                    return const Allow();
+                  }
+
+                  if (shouldRedirect.value && next.uri.path == '/home') {
+                    return Allow(then: () => goRouter.go('/dashboard'));
+                  }
                   return const Allow();
-                }
+                },
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/home',
+                builder: (_, __) =>
+                    const Scaffold(body: Center(child: Text('Home'))),
+              ),
+              GoRoute(
+                path: '/dashboard',
+                builder: (_, __) =>
+                    const Scaffold(body: Center(child: Text('Dashboard'))),
+              ),
+            ],
+          );
 
-                if (shouldRedirect.value && next.uri.path == '/home') {
-                  return Allow(then: () => goRouter.go('/dashboard'));
-                }
-                return const Allow();
-              },
-          routes: <RouteBase>[
-            GoRoute(
-              path: '/home',
-              builder: (_, __) => const Scaffold(body: Center(child: Text('Home'))),
-            ),
-            GoRoute(
-              path: '/dashboard',
-              builder: (_, __) => const Scaffold(body: Center(child: Text('Dashboard'))),
-            ),
-          ],
-        );
+          await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+          await tester.pumpAndSettle();
+          expect(find.text('Home'), findsOneWidget);
 
-        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-        await tester.pumpAndSettle();
-        expect(find.text('Home'), findsOneWidget);
+          shouldRedirect.value = true;
+          await tester.pumpAndSettle();
 
-        shouldRedirect.value = true;
-        await tester.pumpAndSettle();
+          expect(router.state.uri.path, equals('/dashboard'));
+          expect(find.text('Dashboard'), findsOneWidget);
+        },
+      );
 
-        expect(router.state.uri.path, equals('/dashboard'));
-        expect(find.text('Dashboard'), findsOneWidget);
-      });
+      testWidgets(
+        'Block.then error is reported after refreshListenable fires',
+        (WidgetTester tester) async {
+          final trigger = ValueNotifier<bool>(false);
+          addTearDown(trigger.dispose);
 
-      testWidgets('Block.then error is reported after refreshListenable fires', (
-        WidgetTester tester,
-      ) async {
-        final trigger = ValueNotifier<bool>(false);
-        addTearDown(trigger.dispose);
+          FlutterErrorDetails? reported;
+          final void Function(FlutterErrorDetails)? oldHandler =
+              FlutterError.onError;
+          FlutterError.onError = (FlutterErrorDetails details) {
+            reported = details;
+          };
+          addTearDown(() => FlutterError.onError = oldHandler);
 
-        FlutterErrorDetails? reported;
-        final void Function(FlutterErrorDetails)? oldHandler = FlutterError.onError;
-        FlutterError.onError = (FlutterErrorDetails details) {
-          reported = details;
-        };
-        addTearDown(() => FlutterError.onError = oldHandler);
+          router = GoRouter(
+            initialLocation: '/home',
+            refreshListenable: trigger,
+            onEnter:
+                (
+                  BuildContext context,
+                  GoRouterState current,
+                  GoRouterState next,
+                  GoRouter goRouter,
+                ) {
+                  if (trigger.value && next.uri.path == '/home') {
+                    return Block.then(() => throw StateError('callback error'));
+                  }
+                  return const Allow();
+                },
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/home',
+                builder: (_, __) =>
+                    const Scaffold(body: Center(child: Text('Home'))),
+              ),
+            ],
+          );
 
-        router = GoRouter(
-          initialLocation: '/home',
-          refreshListenable: trigger,
-          onEnter:
-              (BuildContext context, GoRouterState current, GoRouterState next, GoRouter goRouter) {
-                if (trigger.value && next.uri.path == '/home') {
-                  return Block.then(() => throw StateError('callback error'));
-                }
-                return const Allow();
-              },
-          routes: <RouteBase>[
-            GoRoute(
-              path: '/home',
-              builder: (_, __) => const Scaffold(body: Center(child: Text('Home'))),
-            ),
-          ],
-        );
+          await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+          await tester.pumpAndSettle();
+          expect(find.text('Home'), findsOneWidget);
 
-        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-        await tester.pumpAndSettle();
-        expect(find.text('Home'), findsOneWidget);
+          trigger.value = true;
+          await tester.pumpAndSettle();
 
-        trigger.value = true;
-        await tester.pumpAndSettle();
-
-        // Error should be reported (not swallowed)
-        expect(reported, isNotNull);
-        expect(reported!.exception.toString(), contains('callback error'));
-      });
+          // Error should be reported (not swallowed)
+          expect(reported, isNotNull);
+          expect(reported!.exception.toString(), contains('callback error'));
+        },
+      );
     });
 
     // Tests for onEnter interaction with chained redirects.
@@ -1743,60 +1905,67 @@ void main() {
         expect(redirectCallCount, 3);
       });
 
-      testWidgets('onEnter called once when route-level triggers top-level redirect', (
+      testWidgets(
+        'onEnter called once when route-level triggers top-level redirect',
+        (WidgetTester tester) async {
+          // Route-level on /src: /src -> /dst
+          // Top-level: /dst -> /final
+          // onEnter should be called exactly once.
+          var onEnterCallCount = 0;
+
+          router = GoRouter(
+            initialLocation: '/src',
+            onEnter:
+                (
+                  BuildContext context,
+                  GoRouterState current,
+                  GoRouterState next,
+                  GoRouter goRouter,
+                ) async {
+                  onEnterCallCount++;
+                  return const Allow();
+                },
+            redirect: (BuildContext context, GoRouterState state) {
+              if (state.matchedLocation == '/dst') {
+                return '/final';
+              }
+              return null;
+            },
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/',
+                builder: (_, __) => const Text('Home'),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'src',
+                    builder: (_, __) => const Text('Src'),
+                    redirect: (BuildContext context, GoRouterState state) =>
+                        '/dst',
+                  ),
+                ],
+              ),
+              GoRoute(path: '/dst', builder: (_, __) => const Text('Dst')),
+              GoRoute(path: '/final', builder: (_, __) => const Text('Final')),
+            ],
+          );
+
+          await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+          await tester.pumpAndSettle();
+
+          // Chain should resolve to /final.
+          expect(
+            router.routerDelegate.currentConfiguration.uri.toString(),
+            '/final',
+          );
+          expect(find.text('Final'), findsOneWidget);
+          // onEnter should be called exactly once for the initial navigation.
+          expect(onEnterCallCount, 1);
+        },
+      );
+
+      testWidgets('onEnter block prevents redirect chain evaluation', (
         WidgetTester tester,
       ) async {
-        // Route-level on /src: /src -> /dst
-        // Top-level: /dst -> /final
-        // onEnter should be called exactly once.
-        var onEnterCallCount = 0;
-
-        router = GoRouter(
-          initialLocation: '/src',
-          onEnter:
-              (
-                BuildContext context,
-                GoRouterState current,
-                GoRouterState next,
-                GoRouter goRouter,
-              ) async {
-                onEnterCallCount++;
-                return const Allow();
-              },
-          redirect: (BuildContext context, GoRouterState state) {
-            if (state.matchedLocation == '/dst') {
-              return '/final';
-            }
-            return null;
-          },
-          routes: <RouteBase>[
-            GoRoute(
-              path: '/',
-              builder: (_, __) => const Text('Home'),
-              routes: <RouteBase>[
-                GoRoute(
-                  path: 'src',
-                  builder: (_, __) => const Text('Src'),
-                  redirect: (BuildContext context, GoRouterState state) => '/dst',
-                ),
-              ],
-            ),
-            GoRoute(path: '/dst', builder: (_, __) => const Text('Dst')),
-            GoRoute(path: '/final', builder: (_, __) => const Text('Final')),
-          ],
-        );
-
-        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-        await tester.pumpAndSettle();
-
-        // Chain should resolve to /final.
-        expect(router.routerDelegate.currentConfiguration.uri.toString(), '/final');
-        expect(find.text('Final'), findsOneWidget);
-        // onEnter should be called exactly once for the initial navigation.
-        expect(onEnterCallCount, 1);
-      });
-
-      testWidgets('onEnter block prevents redirect chain evaluation', (WidgetTester tester) async {
         // onEnter blocks navigation to /a.
         // Top-level redirect: /a -> /b (should never be evaluated).
         var redirectCallCount = 0;

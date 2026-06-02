@@ -10,9 +10,8 @@ import 'package:go_router/go_router.dart';
 
 part 'stateful_shell_route_example.g.dart';
 
-final GlobalKey<NavigatorState> _sectionANavigatorKey = GlobalKey<NavigatorState>(
-  debugLabel: 'sectionANav',
-);
+final GlobalKey<NavigatorState> _sectionANavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'sectionANav');
 
 void main() => runApp(App());
 
@@ -20,25 +19,34 @@ class App extends StatelessWidget {
   App({super.key});
 
   @override
-  Widget build(BuildContext context) => MaterialApp.router(routerConfig: _router);
+  Widget build(BuildContext context) =>
+      MaterialApp.router(routerConfig: _router);
 
-  final GoRouter _router = GoRouter(routes: $appRoutes, initialLocation: '/detailsA');
+  final GoRouter _router = GoRouter(
+    routes: $appRoutes,
+    initialLocation: '/detailsA',
+  );
 }
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('foo')));
+  Widget build(BuildContext context) =>
+      Scaffold(appBar: AppBar(title: const Text('foo')));
 }
 
 @TypedStatefulShellRoute<MyShellRouteData>(
   branches: <TypedStatefulShellBranch<StatefulShellBranchData>>[
     TypedStatefulShellBranch<BranchAData>(
-      routes: <TypedRoute<RouteData>>[TypedGoRoute<DetailsARouteData>(path: '/detailsA')],
+      routes: <TypedRoute<RouteData>>[
+        TypedGoRoute<DetailsARouteData>(path: '/detailsA'),
+      ],
     ),
     TypedStatefulShellBranch<BranchBData>(
-      routes: <TypedRoute<RouteData>>[TypedGoRoute<DetailsBRouteData>(path: '/detailsB')],
+      routes: <TypedRoute<RouteData>>[
+        TypedGoRoute<DetailsBRouteData>(path: '/detailsB'),
+      ],
     ),
   ],
 )
@@ -61,7 +69,10 @@ class MyShellRouteData extends StatefulShellRouteData {
     StatefulNavigationShell navigationShell,
     List<Widget> children,
   ) {
-    return ScaffoldWithNavBar(navigationShell: navigationShell, children: children);
+    return ScaffoldWithNavBar(
+      navigationShell: navigationShell,
+      children: children,
+    );
   }
 }
 
@@ -98,8 +109,11 @@ class DetailsBRouteData extends GoRouteData with $DetailsBRouteData {
 /// BottomNavigationBar, where [child] is placed in the body of the Scaffold.
 class ScaffoldWithNavBar extends StatelessWidget {
   /// Constructs an [ScaffoldWithNavBar].
-  const ScaffoldWithNavBar({required this.navigationShell, required this.children, Key? key})
-    : super(key: key ?? const ValueKey<String>('ScaffoldWithNavBar'));
+  const ScaffoldWithNavBar({
+    required this.navigationShell,
+    required this.children,
+    Key? key,
+  }) : super(key: key ?? const ValueKey<String>('ScaffoldWithNavBar'));
 
   /// The navigation shell and container for the branch Navigators.
   final StatefulNavigationShell navigationShell;
@@ -111,7 +125,10 @@ class ScaffoldWithNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: AnimatedBranchContainer(currentIndex: navigationShell.currentIndex, children: children),
+      body: AnimatedBranchContainer(
+        currentIndex: navigationShell.currentIndex,
+        children: children,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         // Here, the items of BottomNavigationBar are hard coded. In a real
         // world scenario, the items would most likely be generated from the
@@ -148,7 +165,11 @@ class ScaffoldWithNavBar extends StatelessWidget {
 /// when switching branches.
 class AnimatedBranchContainer extends StatelessWidget {
   /// Creates a AnimatedBranchContainer
-  const AnimatedBranchContainer({super.key, required this.currentIndex, required this.children});
+  const AnimatedBranchContainer({
+    super.key,
+    required this.currentIndex,
+    required this.children,
+  });
 
   /// The index (in [children]) of the branch Navigator to display.
   final int currentIndex;
@@ -228,10 +249,16 @@ class DetailsScreenState extends State<DetailsScreen> {
           ),
           const Padding(padding: EdgeInsets.all(8)),
           if (widget.param != null)
-            Text('Parameter: ${widget.param!}', style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              'Parameter: ${widget.param!}',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
           const Padding(padding: EdgeInsets.all(8)),
           if (widget.extra != null)
-            Text('Extra: ${widget.extra!}', style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              'Extra: ${widget.extra!}',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
         ],
       ),
     );

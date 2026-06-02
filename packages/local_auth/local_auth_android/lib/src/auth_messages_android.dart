@@ -12,7 +12,11 @@ import 'package:local_auth_platform_interface/types/auth_messages.dart';
 @immutable
 class AndroidAuthMessages extends AuthMessages {
   /// Constructs a new instance.
-  const AndroidAuthMessages({this.signInHint, this.cancelButton, this.signInTitle});
+  const AndroidAuthMessages({
+    this.signInHint,
+    this.cancelButton,
+    this.signInTitle,
+  });
 
   /// Hint message advising the user how to authenticate.
   /// Maximum 60 characters.
@@ -48,7 +52,8 @@ class AndroidAuthMessages extends AuthMessages {
           signInTitle == other.signInTitle;
 
   @override
-  int get hashCode => Object.hash(super.hashCode, signInHint, cancelButton, signInTitle);
+  int get hashCode =>
+      Object.hash(super.hashCode, signInHint, cancelButton, signInTitle);
 }
 
 // Default strings for AndroidAuthMessages. Currently supports English.

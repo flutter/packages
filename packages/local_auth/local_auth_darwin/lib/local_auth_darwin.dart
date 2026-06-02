@@ -41,7 +41,10 @@ class LocalAuthDarwin extends LocalAuthPlatform {
   }) async {
     assert(localizedReason.isNotEmpty);
     final AuthResultDetails resultDetails = await _api.authenticate(
-      AuthOptions(biometricOnly: options.biometricOnly, sticky: options.stickyAuth),
+      AuthOptions(
+        biometricOnly: options.biometricOnly,
+        sticky: options.stickyAuth,
+      ),
       _useMacOSAuthMessages
           ? _pigeonStringsFromMacOSAuthMessages(localizedReason, authMessages)
           : _pigeonStringsFromiOSAuthMessages(localizedReason, authMessages),

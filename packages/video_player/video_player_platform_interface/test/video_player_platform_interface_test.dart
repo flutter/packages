@@ -21,30 +21,45 @@ void main() {
   });
 
   test('default implementation getAudioTracks throws unimplemented', () async {
-    await expectLater(() => initialInstance.getAudioTracks(1), throwsUnimplementedError);
-  });
-
-  test('default implementation selectAudioTrack throws unimplemented', () async {
     await expectLater(
-      () => initialInstance.selectAudioTrack(1, 'trackId'),
+      () => initialInstance.getAudioTracks(1),
       throwsUnimplementedError,
     );
   });
+
+  test(
+    'default implementation selectAudioTrack throws unimplemented',
+    () async {
+      await expectLater(
+        () => initialInstance.selectAudioTrack(1, 'trackId'),
+        throwsUnimplementedError,
+      );
+    },
+  );
 
   test('default implementation isAudioTrackSupportAvailable returns false', () {
     expect(initialInstance.isAudioTrackSupportAvailable(), false);
   });
 
   test('default implementation getVideoTracks throws unimplemented', () async {
-    await expectLater(() => initialInstance.getVideoTracks(1), throwsUnimplementedError);
-  });
-
-  test('default implementation selectVideoTrack throws unimplemented', () async {
     await expectLater(
-      () => initialInstance.selectVideoTrack(1, const VideoTrack(id: 'test', isSelected: false)),
+      () => initialInstance.getVideoTracks(1),
       throwsUnimplementedError,
     );
   });
+
+  test(
+    'default implementation selectVideoTrack throws unimplemented',
+    () async {
+      await expectLater(
+        () => initialInstance.selectVideoTrack(
+          1,
+          const VideoTrack(id: 'test', isSelected: false),
+        ),
+        throwsUnimplementedError,
+      );
+    },
+  );
 
   test('default implementation isVideoTrackSupportAvailable returns false', () {
     expect(initialInstance.isVideoTrackSupportAvailable(), false);
@@ -85,8 +100,18 @@ void main() {
     });
 
     test('equality works correctly', () {
-      const track1 = VideoTrack(id: 'track_1', isSelected: true, label: '1080p', bitrate: 5000000);
-      const track2 = VideoTrack(id: 'track_1', isSelected: true, label: '1080p', bitrate: 5000000);
+      const track1 = VideoTrack(
+        id: 'track_1',
+        isSelected: true,
+        label: '1080p',
+        bitrate: 5000000,
+      );
+      const track2 = VideoTrack(
+        id: 'track_1',
+        isSelected: true,
+        label: '1080p',
+        bitrate: 5000000,
+      );
       const track3 = VideoTrack(id: 'track_2', isSelected: false);
 
       expect(track1, equals(track2));
@@ -94,8 +119,16 @@ void main() {
     });
 
     test('hashCode is consistent with equality', () {
-      const track1 = VideoTrack(id: 'track_1', isSelected: true, label: '1080p');
-      const track2 = VideoTrack(id: 'track_1', isSelected: true, label: '1080p');
+      const track1 = VideoTrack(
+        id: 'track_1',
+        isSelected: true,
+        label: '1080p',
+      );
+      const track2 = VideoTrack(
+        id: 'track_1',
+        isSelected: true,
+        label: '1080p',
+      );
 
       expect(track1.hashCode, equals(track2.hashCode));
     });

@@ -54,7 +54,8 @@ abstract class Node {
   /// the [newAttributes] are from the parent.
   ///
   /// By default, returns this.
-  Node applyAttributes(SvgAttributes newAttributes, {bool replace = false}) => this;
+  Node applyAttributes(SvgAttributes newAttributes, {bool replace = false}) =>
+      this;
 }
 
 class _EmptyNode extends Node {
@@ -139,8 +140,11 @@ typedef NodeCallback = void Function(Node child);
 /// A node that contains children, transformed by [transform].
 class ParentNode extends AttributedNode {
   /// Creates a new [ParentNode].
-  ParentNode(super.attributes, {super.precalculatedTransform, List<Node>? children})
-    : _children = children ?? <Node>[];
+  ParentNode(
+    super.attributes, {
+    super.precalculatedTransform,
+    List<Node>? children,
+  }) : _children = children ?? <Node>[];
 
   /// The child nodes of this node.
   final List<Node> _children;
@@ -196,9 +200,14 @@ class ParentNode extends AttributedNode {
   }
 
   @override
-  AttributedNode applyAttributes(SvgAttributes newAttributes, {bool replace = false}) {
-    return ParentNode(attributes.applyParent(newAttributes), precalculatedTransform: transform)
-      .._children.addAll(_children);
+  AttributedNode applyAttributes(
+    SvgAttributes newAttributes, {
+    bool replace = false,
+  }) {
+    return ParentNode(
+      attributes.applyParent(newAttributes),
+      precalculatedTransform: transform,
+    ).._children.addAll(_children);
   }
 
   /// Create the paint required to draw a save layer, or `null` if none is
@@ -282,7 +291,10 @@ class TextPositionNode extends ParentNode {
   }
 
   @override
-  AttributedNode applyAttributes(SvgAttributes newAttributes, {bool replace = false}) {
+  AttributedNode applyAttributes(
+    SvgAttributes newAttributes, {
+    bool replace = false,
+  }) {
     return TextPositionNode(attributes.applyParent(newAttributes), reset: reset)
       .._children.addAll(_children);
   }
@@ -407,7 +419,11 @@ class PathNode extends AttributedNode {
   /// Compute the paint used by this Path.
   Paint? computePaint(Rect bounds, AffineMatrix transform) {
     final Stroke? stroke = attributes.stroke?.toStroke(bounds, transform);
-    final Fill? fill = attributes.fill?.toFill(bounds, transform, defaultColor: Color.opaqueBlack);
+    final Fill? fill = attributes.fill?.toFill(
+      bounds,
+      transform,
+      defaultColor: Color.opaqueBlack,
+    );
     if (fill == null && stroke == null) {
       return null;
     }
@@ -415,7 +431,10 @@ class PathNode extends AttributedNode {
   }
 
   @override
-  AttributedNode applyAttributes(SvgAttributes newAttributes, {bool replace = false}) {
+  AttributedNode applyAttributes(
+    SvgAttributes newAttributes, {
+    bool replace = false,
+  }) {
     return PathNode(
       path,
       replace
@@ -448,7 +467,10 @@ class DeferredNode extends AttributedNode {
   final Resolver<AttributedNode?> resolver;
 
   @override
-  AttributedNode applyAttributes(SvgAttributes newAttributes, {bool replace = false}) {
+  AttributedNode applyAttributes(
+    SvgAttributes newAttributes, {
+    bool replace = false,
+  }) {
     return DeferredNode(
       replace
           ? newAttributes.applyParent(attributes, transformOverride: transform)
@@ -480,7 +502,11 @@ class TextNode extends AttributedNode {
 
   /// Compute the [Paint] that this text node uses.
   Paint? computePaint(Rect bounds, AffineMatrix transform) {
-    final Fill? fill = attributes.fill?.toFill(bounds, transform, defaultColor: Color.opaqueBlack);
+    final Fill? fill = attributes.fill?.toFill(
+      bounds,
+      transform,
+      defaultColor: Color.opaqueBlack,
+    );
     final Stroke? stroke = attributes.stroke?.toStroke(bounds, transform);
     if (fill == null && stroke == null) {
       return null;
@@ -505,7 +531,10 @@ class TextNode extends AttributedNode {
   }
 
   @override
-  AttributedNode applyAttributes(SvgAttributes newAttributes, {bool replace = false}) {
+  AttributedNode applyAttributes(
+    SvgAttributes newAttributes, {
+    bool replace = false,
+  }) {
     final SvgAttributes resolvedAttributes = replace
         ? newAttributes.applyParent(attributes, transformOverride: transform)
         : attributes.applyParent(newAttributes);
@@ -536,7 +565,10 @@ class ImageNode extends AttributedNode {
   final ImageFormat format;
 
   @override
-  AttributedNode applyAttributes(SvgAttributes newAttributes, {bool replace = false}) {
+  AttributedNode applyAttributes(
+    SvgAttributes newAttributes, {
+    bool replace = false,
+  }) {
     return ImageNode(
       data,
       format,

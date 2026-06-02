@@ -44,8 +44,11 @@ class GooglePlayUserChoiceDetails {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(originalExternalTransactionId, externalTransactionToken, products.hashCode);
+  int get hashCode => Object.hash(
+    originalExternalTransactionId,
+    externalTransactionToken,
+    products.hashCode,
+  );
 }
 
 /// Data structure representing a UserChoiceDetails product.

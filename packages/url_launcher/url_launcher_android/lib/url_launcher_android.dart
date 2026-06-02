@@ -12,7 +12,8 @@ import 'src/messages.g.dart';
 /// An implementation of [UrlLauncherPlatform] for Android.
 class UrlLauncherAndroid extends UrlLauncherPlatform {
   /// Creates a new plugin implementation instance.
-  UrlLauncherAndroid({@visibleForTesting UrlLauncherApi? api}) : _hostApi = api ?? UrlLauncherApi();
+  UrlLauncherAndroid({@visibleForTesting UrlLauncherApi? api})
+    : _hostApi = api ?? UrlLauncherApi();
 
   final UrlLauncherApi _hostApi;
 

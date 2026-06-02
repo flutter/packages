@@ -26,7 +26,8 @@ class ResourceRecordCache {
   /// The number of entries in the cache.
   int get entryCount {
     var count = 0;
-    for (final SplayTreeMap<String, List<ResourceRecord>> map in _cache.values) {
+    for (final SplayTreeMap<String, List<ResourceRecord>> map
+        in _cache.values) {
       for (final List<ResourceRecord> records in map.values) {
         count += records.length;
       }
@@ -45,9 +46,12 @@ class ResourceRecordCache {
       seenRecordTypes[record.resourceRecordType] ??=
           Set<String>(); // ignore: prefer_collection_literals
       if (seenRecordTypes[record.resourceRecordType]!.add(record.name)) {
-        _cache[record.resourceRecordType] ??= SplayTreeMap<String, List<ResourceRecord>>();
+        _cache[record.resourceRecordType] ??=
+            SplayTreeMap<String, List<ResourceRecord>>();
 
-        _cache[record.resourceRecordType]![record.name] = <ResourceRecord>[record];
+        _cache[record.resourceRecordType]![record.name] = <ResourceRecord>[
+          record,
+        ];
       } else {
         _cache[record.resourceRecordType]![record.name]!.add(record);
       }
@@ -55,7 +59,11 @@ class ResourceRecordCache {
   }
 
   /// Get a record from this cache.
-  void lookup<T extends ResourceRecord>(String name, int type, List<T> results) {
+  void lookup<T extends ResourceRecord>(
+    String name,
+    int type,
+    List<T> results,
+  ) {
     assert(ResourceRecordType.debugAssertValid(type));
     final int time = DateTime.now().millisecondsSinceEpoch;
     final SplayTreeMap<String, List<ResourceRecord>>? candidates = _cache[type];
@@ -67,7 +75,9 @@ class ResourceRecordCache {
     if (candidateRecords == null) {
       return;
     }
-    candidateRecords.removeWhere((ResourceRecord candidate) => candidate.validUntil < time);
+    candidateRecords.removeWhere(
+      (ResourceRecord candidate) => candidate.validUntil < time,
+    );
     results.addAll(candidateRecords.cast<T>());
   }
 }

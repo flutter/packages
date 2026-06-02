@@ -13,7 +13,9 @@ void main() {
   testWidgets('routing config works', (WidgetTester tester) async {
     final config = ValueNotifier<RoutingConfig>(
       RoutingConfig(
-        routes: <RouteBase>[GoRoute(path: '/', builder: (_, __) => const Text('home'))],
+        routes: <RouteBase>[
+          GoRoute(path: '/', builder: (_, __) => const Text('home')),
+        ],
         redirect: (_, __) => '/',
       ),
     );
@@ -26,10 +28,14 @@ void main() {
     expect(find.text('home'), findsOneWidget);
   });
 
-  testWidgets('routing config works after builder changes', (WidgetTester tester) async {
+  testWidgets('routing config works after builder changes', (
+    WidgetTester tester,
+  ) async {
     final config = ValueNotifier<RoutingConfig>(
       RoutingConfig(
-        routes: <RouteBase>[GoRoute(path: '/', builder: (_, __) => const Text('home'))],
+        routes: <RouteBase>[
+          GoRoute(path: '/', builder: (_, __) => const Text('home')),
+        ],
       ),
     );
     addTearDown(config.dispose);
@@ -37,16 +43,22 @@ void main() {
     expect(find.text('home'), findsOneWidget);
 
     config.value = RoutingConfig(
-      routes: <RouteBase>[GoRoute(path: '/', builder: (_, __) => const Text('home1'))],
+      routes: <RouteBase>[
+        GoRoute(path: '/', builder: (_, __) => const Text('home1')),
+      ],
     );
     await tester.pumpAndSettle();
     expect(find.text('home1'), findsOneWidget);
   });
 
-  testWidgets('routing config works after routing changes', (WidgetTester tester) async {
+  testWidgets('routing config works after routing changes', (
+    WidgetTester tester,
+  ) async {
     final config = ValueNotifier<RoutingConfig>(
       RoutingConfig(
-        routes: <RouteBase>[GoRoute(path: '/', builder: (_, __) => const Text('home'))],
+        routes: <RouteBase>[
+          GoRoute(path: '/', builder: (_, __) => const Text('home')),
+        ],
       ),
     );
     addTearDown(config.dispose);
@@ -71,7 +83,9 @@ void main() {
     expect(find.text('/abc'), findsOneWidget);
   });
 
-  testWidgets('routing config works after routing changes case 2', (WidgetTester tester) async {
+  testWidgets('routing config works after routing changes case 2', (
+    WidgetTester tester,
+  ) async {
     final config = ValueNotifier<RoutingConfig>(
       RoutingConfig(
         routes: <RouteBase>[
@@ -93,13 +107,17 @@ void main() {
     expect(find.text('/abc'), findsOneWidget);
 
     config.value = RoutingConfig(
-      routes: <RouteBase>[GoRoute(path: '/', builder: (_, __) => const Text('home'))],
+      routes: <RouteBase>[
+        GoRoute(path: '/', builder: (_, __) => const Text('home')),
+      ],
     );
     await tester.pumpAndSettle();
     expect(find.text('error'), findsOneWidget);
   });
 
-  testWidgets('routing config works after routing changes case 3', (WidgetTester tester) async {
+  testWidgets('routing config works after routing changes case 3', (
+    WidgetTester tester,
+  ) async {
     final key = GlobalKey<_StatefulTestState>(debugLabel: 'testState');
     final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 
@@ -108,7 +126,8 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/',
-            builder: (_, __) => StatefulTest(key: key, child: const Text('home')),
+            builder: (_, __) =>
+                StatefulTest(key: key, child: const Text('home')),
           ),
         ],
       ),
@@ -150,8 +169,11 @@ void main() {
           routes: <RouteBase>[
             ShellRoute(
               navigatorKey: shellNavigatorKey,
-              routes: <RouteBase>[GoRoute(path: '/', builder: (_, __) => const Text('home'))],
-              builder: (_, __, Widget widget) => StatefulTest(key: key, child: widget),
+              routes: <RouteBase>[
+                GoRoute(path: '/', builder: (_, __) => const Text('home')),
+              ],
+              builder: (_, __, Widget widget) =>
+                  StatefulTest(key: key, child: widget),
             ),
           ],
         ),
@@ -174,7 +196,8 @@ void main() {
               GoRoute(path: '/', builder: (_, __) => const Text('home')),
               GoRoute(path: '/abc', builder: (_, __) => const Text('/abc')),
             ],
-            builder: (_, __, Widget widget) => StatefulTest(key: key, child: widget),
+            builder: (_, __, Widget widget) =>
+                StatefulTest(key: key, child: widget),
           ),
         ],
       );
@@ -184,12 +207,18 @@ void main() {
     },
   );
 
-  testWidgets('routing config works with named route', (WidgetTester tester) async {
+  testWidgets('routing config works with named route', (
+    WidgetTester tester,
+  ) async {
     final config = ValueNotifier<RoutingConfig>(
       RoutingConfig(
         routes: <RouteBase>[
           GoRoute(path: '/', builder: (_, __) => const Text('home')),
-          GoRoute(path: '/abc', name: 'abc', builder: (_, __) => const Text('/abc')),
+          GoRoute(
+            path: '/abc',
+            name: 'abc',
+            builder: (_, __) => const Text('/abc'),
+          ),
         ],
       ),
     );
@@ -208,8 +237,16 @@ void main() {
 
     config.value = RoutingConfig(
       routes: <RouteBase>[
-        GoRoute(path: '/', name: 'home', builder: (_, __) => const Text('home')),
-        GoRoute(path: '/abc', name: 'def', builder: (_, __) => const Text('def')),
+        GoRoute(
+          path: '/',
+          name: 'home',
+          builder: (_, __) => const Text('home'),
+        ),
+        GoRoute(
+          path: '/abc',
+          name: 'def',
+          builder: (_, __) => const Text('def'),
+        ),
       ],
     );
     await tester.pumpAndSettle();

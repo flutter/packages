@@ -16,20 +16,24 @@ class App extends StatelessWidget {
   static const String title = 'GoRouter Example: Custom Error Screen';
 
   @override
-  Widget build(BuildContext context) => MaterialApp.router(routerConfig: _router, title: title);
+  Widget build(BuildContext context) =>
+      MaterialApp.router(routerConfig: _router, title: title);
 
   final GoRouter _router = GoRouter(
     routes: <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (BuildContext context, GoRouterState state) => const Page1Screen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const Page1Screen(),
       ),
       GoRoute(
         path: '/page2',
-        builder: (BuildContext context, GoRouterState state) => const Page2Screen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const Page2Screen(),
       ),
     ],
-    errorBuilder: (BuildContext context, GoRouterState state) => ErrorScreen(state.error!),
+    errorBuilder: (BuildContext context, GoRouterState state) =>
+        ErrorScreen(state.error!),
   );
 }
 
@@ -45,7 +49,10 @@ class Page1Screen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          ElevatedButton(onPressed: () => context.go('/page2'), child: const Text('Go to page 2')),
+          ElevatedButton(
+            onPressed: () => context.go('/page2'),
+            child: const Text('Go to page 2'),
+          ),
         ],
       ),
     ),
@@ -64,7 +71,10 @@ class Page2Screen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          ElevatedButton(onPressed: () => context.go('/'), child: const Text('Go to home page')),
+          ElevatedButton(
+            onPressed: () => context.go('/'),
+            child: const Text('Go to home page'),
+          ),
         ],
       ),
     ),
@@ -87,7 +97,10 @@ class ErrorScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           SelectableText(error.toString()),
-          TextButton(onPressed: () => context.go('/'), child: const Text('Home')),
+          TextButton(
+            onPressed: () => context.go('/'),
+            child: const Text('Home'),
+          ),
         ],
       ),
     ),

@@ -17,8 +17,9 @@ void main() {
     );
     // Cast to <dynamic, dynamic> to ensure that recreating from JSON, where
     // type information will have likely been lost, still works.
-    final Map<dynamic, dynamic> json = (cameraPosition.toMap() as Map<String, dynamic>)
-        .cast<dynamic, dynamic>();
+    final Map<dynamic, dynamic> json =
+        (cameraPosition.toMap() as Map<String, dynamic>)
+            .cast<dynamic, dynamic>();
     final CameraPosition? cameraPositionFromJson = CameraPosition.fromMap(json);
 
     expect(cameraPosition, cameraPositionFromJson);
@@ -31,7 +32,9 @@ void main() {
       tilt: 30.0,
       zoom: 1.5,
     );
-    final CameraUpdate cameraUpdate = CameraUpdate.newCameraPosition(cameraPosition);
+    final CameraUpdate cameraUpdate = CameraUpdate.newCameraPosition(
+      cameraPosition,
+    );
     expect(cameraUpdate.runtimeType, CameraUpdateNewCameraPosition);
     expect(cameraUpdate.updateType, CameraUpdateType.newCameraPosition);
     cameraUpdate as CameraUpdateNewCameraPosition;
@@ -57,7 +60,10 @@ void main() {
       southwest: const LatLng(-2.0, -3.0),
     );
     const padding = 1.0;
-    final CameraUpdate cameraUpdate = CameraUpdate.newLatLngBounds(latLngBounds, padding);
+    final CameraUpdate cameraUpdate = CameraUpdate.newLatLngBounds(
+      latLngBounds,
+      padding,
+    );
     expect(cameraUpdate.runtimeType, CameraUpdateNewLatLngBounds);
     expect(cameraUpdate.updateType, CameraUpdateType.newLatLngBounds);
     cameraUpdate as CameraUpdateNewLatLngBounds;

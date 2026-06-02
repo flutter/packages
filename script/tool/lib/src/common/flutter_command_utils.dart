@@ -32,12 +32,16 @@ Future<bool> runConfigOnlyBuild(
     FlutterPlatform.windows => 'windows',
   };
 
-  final int exitCode = await processRunner.runAndStream(flutterCommand, <String>[
-    'build',
-    target,
-    if (buildDebug) '--debug',
-    '--config-only',
-    ...extraArgs,
-  ], workingDir: package.directory);
+  final int exitCode = await processRunner.runAndStream(
+    flutterCommand,
+    <String>[
+      'build',
+      target,
+      if (buildDebug) '--debug',
+      '--config-only',
+      ...extraArgs,
+    ],
+    workingDir: package.directory,
+  );
   return exitCode == 0;
 }

@@ -13,7 +13,8 @@ import 'billing_client_wrappers/billing_config_wrapper.dart';
 import 'types/translator.dart';
 
 /// Contains InApp Purchase features that are only available on PlayStore.
-class InAppPurchaseAndroidPlatformAddition extends InAppPurchasePlatformAddition {
+class InAppPurchaseAndroidPlatformAddition
+    extends InAppPurchasePlatformAddition {
   /// Creates a [InAppPurchaseAndroidPlatformAddition] which uses the supplied
   /// `BillingClientManager` to provide Android specific features.
   InAppPurchaseAndroidPlatformAddition(this._billingClientManager) {
@@ -22,7 +23,8 @@ class InAppPurchaseAndroidPlatformAddition extends InAppPurchasePlatformAddition
         .listen(_userChoiceDetailsStreamController.add);
   }
 
-  final StreamController<GooglePlayUserChoiceDetails> _userChoiceDetailsStreamController =
+  final StreamController<GooglePlayUserChoiceDetails>
+  _userChoiceDetailsStreamController =
       StreamController<GooglePlayUserChoiceDetails>.broadcast();
 
   /// [GooglePlayUserChoiceDetails] emits each time user selects alternative billing.
@@ -57,7 +59,9 @@ class InAppPurchaseAndroidPlatformAddition extends InAppPurchasePlatformAddition
   ///
   ///  * [refreshPurchaseVerificationData], for reloading failed
   ///    [PurchaseDetails.verificationData].
-  Future<QueryPurchaseDetailsResponse> queryPastPurchases({String? applicationUserName}) async {
+  Future<QueryPurchaseDetailsResponse> queryPastPurchases({
+    String? applicationUserName,
+  }) async {
     List<PurchasesResultWrapper> responses;
     PlatformException? exception;
 
@@ -93,11 +97,18 @@ class InAppPurchaseAndroidPlatformAddition extends InAppPurchasePlatformAddition
     }
 
     final Set<String> errorCodeSet = responses
-        .where((PurchasesResultWrapper response) => response.responseCode != BillingResponse.ok)
-        .map((PurchasesResultWrapper response) => response.responseCode.toString())
+        .where(
+          (PurchasesResultWrapper response) =>
+              response.responseCode != BillingResponse.ok,
+        )
+        .map(
+          (PurchasesResultWrapper response) => response.responseCode.toString(),
+        )
         .toSet();
 
-    final String errorMessage = errorCodeSet.isNotEmpty ? errorCodeSet.join(', ') : '';
+    final String errorMessage = errorCodeSet.isNotEmpty
+        ? errorCodeSet.join(', ')
+        : '';
 
     final List<GooglePlayPurchaseDetails> pastPurchases = responses
         .expand((PurchasesResultWrapper response) => response.purchasesList)
@@ -116,10 +127,17 @@ class InAppPurchaseAndroidPlatformAddition extends InAppPurchasePlatformAddition
         details: exception.details,
       );
     } else if (errorMessage.isNotEmpty) {
-      error = IAPError(source: kIAPSource, code: kRestoredPurchaseErrorCode, message: errorMessage);
+      error = IAPError(
+        source: kIAPSource,
+        code: kRestoredPurchaseErrorCode,
+        message: errorMessage,
+      );
     }
 
-    return QueryPurchaseDetailsResponse(pastPurchases: pastPurchases, error: error);
+    return QueryPurchaseDetailsResponse(
+      pastPurchases: pastPurchases,
+      error: error,
+    );
   }
 
   /// Checks if the specified feature or capability is supported by the Play Store.
@@ -136,9 +154,8 @@ class InAppPurchaseAndroidPlatformAddition extends InAppPurchasePlatformAddition
   /// See: https://unicode.org/cldr/charts/latest/supplemental/territory_containment_un_m_49.html
   @Deprecated('Use InAppPurchasePlatfrom.countryCode')
   Future<String> getCountryCode() async {
-    final BillingConfigWrapper billingConfig = await _billingClientManager.runWithClient(
-      (BillingClient client) => client.getBillingConfig(),
-    );
+    final BillingConfigWrapper billingConfig = await _billingClientManager
+        .runWithClient((BillingClient client) => client.getBillingConfig());
     return billingConfig.countryCode;
   }
 
@@ -147,19 +164,23 @@ class InAppPurchaseAndroidPlatformAddition extends InAppPurchasePlatformAddition
   ///
   /// See: https://developer.android.com/reference/com/android/billingclient/api/BillingClient#isAlternativeBillingOnlyAvailableAsync(com.android.billingclient.api.AlternativeBillingOnlyAvailabilityListener)
   Future<BillingResultWrapper> isAlternativeBillingOnlyAvailable() async {
-    final BillingResultWrapper wrapper = await _billingClientManager.runWithClient(
-      (BillingClient client) => client.isAlternativeBillingOnlyAvailable(),
-    );
+    final BillingResultWrapper wrapper = await _billingClientManager
+        .runWithClient(
+          (BillingClient client) => client.isAlternativeBillingOnlyAvailable(),
+        );
     return wrapper;
   }
 
   /// Shows the alternative billing only information dialog on top of the calling app.
   ///
   /// See: https://developer.android.com/reference/com/android/billingclient/api/BillingClient#showAlternativeBillingOnlyInformationDialog(android.app.Activity,%20com.android.billingclient.api.AlternativeBillingOnlyInformationDialogListener)
-  Future<BillingResultWrapper> showAlternativeBillingOnlyInformationDialog() async {
-    final BillingResultWrapper wrapper = await _billingClientManager.runWithClient(
-      (BillingClient client) => client.showAlternativeBillingOnlyInformationDialog(),
-    );
+  Future<BillingResultWrapper>
+  showAlternativeBillingOnlyInformationDialog() async {
+    final BillingResultWrapper wrapper = await _billingClientManager
+        .runWithClient(
+          (BillingClient client) =>
+              client.showAlternativeBillingOnlyInformationDialog(),
+        );
     return wrapper;
   }
 
@@ -169,9 +190,10 @@ class InAppPurchaseAndroidPlatformAddition extends InAppPurchasePlatformAddition
   /// See: https://developer.android.com/reference/com/android/billingclient/api/AlternativeBillingOnlyReportingDetails
   Future<AlternativeBillingOnlyReportingDetailsWrapper>
   createAlternativeBillingOnlyReportingDetails() async {
-    final AlternativeBillingOnlyReportingDetailsWrapper wrapper = await _billingClientManager
-        .runWithClient(
-          (BillingClient client) => client.createAlternativeBillingOnlyReportingDetails(),
+    final AlternativeBillingOnlyReportingDetailsWrapper wrapper =
+        await _billingClientManager.runWithClient(
+          (BillingClient client) =>
+              client.createAlternativeBillingOnlyReportingDetails(),
         );
     return wrapper;
   }
@@ -185,6 +207,8 @@ class InAppPurchaseAndroidPlatformAddition extends InAppPurchasePlatformAddition
   /// Play apis have requirements for when this method can be called.
   /// See: https://developer.android.com/google/play/billing/alternative/alternative-billing-without-user-choice-in-app
   Future<void> setBillingChoice(BillingChoiceMode billingChoiceMode) {
-    return _billingClientManager.reconnectWithBillingChoiceMode(billingChoiceMode);
+    return _billingClientManager.reconnectWithBillingChoiceMode(
+      billingChoiceMode,
+    );
   }
 }

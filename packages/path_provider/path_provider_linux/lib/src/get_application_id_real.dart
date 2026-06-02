@@ -49,9 +49,10 @@ class GioUtils {
       return nullptr;
     }
     final _GApplicationGetApplicationIdDart gApplicationGetApplicationId = _gio!
-        .lookupFunction<_GApplicationGetApplicationIdC, _GApplicationGetApplicationIdDart>(
-          'g_application_get_application_id',
-        );
+        .lookupFunction<
+          _GApplicationGetApplicationIdC,
+          _GApplicationGetApplicationIdDart
+        >('g_application_get_application_id');
     return gApplicationGetApplicationId(app);
   }
 }

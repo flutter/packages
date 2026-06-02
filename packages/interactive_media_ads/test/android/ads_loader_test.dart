@@ -11,7 +11,8 @@ import 'package:interactive_media_ads/src/android/android_ad_display_container.d
 import 'package:interactive_media_ads/src/android/android_ads_loader.dart';
 import 'package:interactive_media_ads/src/android/android_content_progress_provider.dart';
 import 'package:interactive_media_ads/src/android/android_ima_settings.dart';
-import 'package:interactive_media_ads/src/android/interactive_media_ads.g.dart' as ima;
+import 'package:interactive_media_ads/src/android/interactive_media_ads.g.dart'
+    as ima;
 import 'package:interactive_media_ads/src/android/platform_views_service_proxy.dart';
 import 'package:interactive_media_ads/src/platform_interface/platform_interface.dart';
 import 'package:mockito/annotations.dart';
@@ -49,14 +50,18 @@ void main() {
     });
 
     testWidgets('instantiate AndroidAdsLoader', (WidgetTester tester) async {
-      final AndroidAdDisplayContainer container = await _pumpAdDisplayContainer(tester);
+      final AndroidAdDisplayContainer container = await _pumpAdDisplayContainer(
+        tester,
+      );
 
       final mockImaSdkSettings = MockImaSdkSettings();
       final MockImaSdkFactory mockSdkFactory = _mockImaSdkFactoryInstance(
         imaSdkSettings: mockImaSdkSettings,
       );
 
-      final settings = AndroidImaSettings(const PlatformImaSettingsCreationParams());
+      final settings = AndroidImaSettings(
+        const PlatformImaSettingsCreationParams(),
+      );
 
       AndroidAdsLoader(
         AndroidAdsLoaderCreationParams(
@@ -68,7 +73,12 @@ void main() {
       );
 
       expect(await settings.nativeSettingsFuture, mockImaSdkSettings);
-      verify(mockSdkFactory.createAdsLoader(mockImaSdkSettings, container.adDisplayContainer));
+      verify(
+        mockSdkFactory.createAdsLoader(
+          mockImaSdkSettings,
+          container.adDisplayContainer,
+        ),
+      );
     });
 
     testWidgets('contentComplete', (WidgetTester tester) async {
@@ -83,7 +93,9 @@ void main() {
       final loader = AndroidAdsLoader(
         AndroidAdsLoaderCreationParams(
           container: container,
-          settings: AndroidImaSettings(const PlatformImaSettingsCreationParams()),
+          settings: AndroidImaSettings(
+            const PlatformImaSettingsCreationParams(),
+          ),
           onAdsLoaded: (PlatformOnAdsLoadedData data) {},
           onAdsLoadError: (AdsLoadErrorData data) {},
         ),
@@ -94,11 +106,16 @@ void main() {
     });
 
     testWidgets('requestAds', (WidgetTester tester) async {
-      final AndroidAdDisplayContainer container = await _pumpAdDisplayContainer(tester);
+      final AndroidAdDisplayContainer container = await _pumpAdDisplayContainer(
+        tester,
+      );
 
       final mockAdsLoader = MockAdsLoader();
       final mockAdsRequest = MockAdsRequest();
-      _mockImaSdkFactoryInstance(adsRequest: mockAdsRequest, adsLoader: mockAdsLoader);
+      _mockImaSdkFactoryInstance(
+        adsRequest: mockAdsRequest,
+        adsLoader: mockAdsLoader,
+      );
 
       ima.PigeonOverrides.contentProgressProvider_new = () =>
           ima.ContentProgressProvider.pigeon_detached();
@@ -106,7 +123,9 @@ void main() {
       final adsLoader = AndroidAdsLoader(
         AndroidAdsLoaderCreationParams(
           container: container,
-          settings: AndroidImaSettings(const PlatformImaSettingsCreationParams()),
+          settings: AndroidImaSettings(
+            const PlatformImaSettingsCreationParams(),
+          ),
           onAdsLoaded: (PlatformOnAdsLoadedData data) {},
           onAdsLoadError: (AdsLoadErrorData data) {},
         ),
@@ -141,17 +160,24 @@ void main() {
         mockAdsRequest.setContentTitle('contentTitle'),
         mockAdsRequest.setLiveStreamPrefetchSeconds(3.0),
         mockAdsRequest.setVastLoadTimeout(5000.0),
-        mockAdsRequest.setContentProgressProvider(progressProvider.progressProvider),
+        mockAdsRequest.setContentProgressProvider(
+          progressProvider.progressProvider,
+        ),
         mockAdsLoader.requestAds(mockAdsRequest),
       ]);
     });
 
     testWidgets('requestAds with adsResponse', (WidgetTester tester) async {
-      final AndroidAdDisplayContainer container = await _pumpAdDisplayContainer(tester);
+      final AndroidAdDisplayContainer container = await _pumpAdDisplayContainer(
+        tester,
+      );
 
       final mockAdsLoader = MockAdsLoader();
       final mockAdsRequest = MockAdsRequest();
-      _mockImaSdkFactoryInstance(adsRequest: mockAdsRequest, adsLoader: mockAdsLoader);
+      _mockImaSdkFactoryInstance(
+        adsRequest: mockAdsRequest,
+        adsLoader: mockAdsLoader,
+      );
 
       ima.PigeonOverrides.contentProgressProvider_new = () =>
           ima.ContentProgressProvider.pigeon_detached();
@@ -159,7 +185,9 @@ void main() {
       final adsLoader = AndroidAdsLoader(
         AndroidAdsLoaderCreationParams(
           container: container,
-          settings: AndroidImaSettings(const PlatformImaSettingsCreationParams()),
+          settings: AndroidImaSettings(
+            const PlatformImaSettingsCreationParams(),
+          ),
           onAdsLoaded: (PlatformOnAdsLoadedData data) {},
           onAdsLoadError: (AdsLoadErrorData data) {},
         ),
@@ -194,13 +222,17 @@ void main() {
         mockAdsRequest.setContentTitle('contentTitle'),
         mockAdsRequest.setLiveStreamPrefetchSeconds(3.0),
         mockAdsRequest.setVastLoadTimeout(5000.0),
-        mockAdsRequest.setContentProgressProvider(progressProvider.progressProvider),
+        mockAdsRequest.setContentProgressProvider(
+          progressProvider.progressProvider,
+        ),
         mockAdsLoader.requestAds(mockAdsRequest),
       ]);
     });
 
     testWidgets('onAdsLoaded', (WidgetTester tester) async {
-      final AndroidAdDisplayContainer container = await _pumpAdDisplayContainer(tester);
+      final AndroidAdDisplayContainer container = await _pumpAdDisplayContainer(
+        tester,
+      );
 
       final mockAdsLoader = MockAdsLoader();
       final addEventListenerCompleter = Completer<void>();
@@ -214,7 +246,10 @@ void main() {
 
       ima.PigeonOverrides.adsLoadedListener_new =
           ({
-            required void Function(ima.AdsLoadedListener, ima.AdsManagerLoadedEvent)
+            required void Function(
+              ima.AdsLoadedListener,
+              ima.AdsManagerLoadedEvent,
+            )
             onAdsManagerLoaded,
           }) {
             onAdsManagerLoadedCallback = onAdsManagerLoaded;
@@ -227,7 +262,9 @@ void main() {
       AndroidAdsLoader(
         AndroidAdsLoaderCreationParams(
           container: container,
-          settings: AndroidImaSettings(const PlatformImaSettingsCreationParams()),
+          settings: AndroidImaSettings(
+            const PlatformImaSettingsCreationParams(),
+          ),
           onAdsLoaded: expectAsync1((_) {}),
           onAdsLoadError: (_) {},
         ),
@@ -241,8 +278,12 @@ void main() {
       onAdsManagerLoadedCallback(MockAdsLoadedListener(), mockLoadedEvent);
     });
 
-    testWidgets('onAdsLoaded does not crash with null manager', (WidgetTester tester) async {
-      final AndroidAdDisplayContainer container = await _pumpAdDisplayContainer(tester);
+    testWidgets('onAdsLoaded does not crash with null manager', (
+      WidgetTester tester,
+    ) async {
+      final AndroidAdDisplayContainer container = await _pumpAdDisplayContainer(
+        tester,
+      );
 
       final mockAdsLoader = MockAdsLoader();
       final addEventListenerCompleter = Completer<void>();
@@ -256,7 +297,10 @@ void main() {
 
       ima.PigeonOverrides.adsLoadedListener_new =
           ({
-            required void Function(ima.AdsLoadedListener, ima.AdsManagerLoadedEvent)
+            required void Function(
+              ima.AdsLoadedListener,
+              ima.AdsManagerLoadedEvent,
+            )
             onAdsManagerLoaded,
           }) {
             onAdsManagerLoadedCallback = onAdsManagerLoaded;
@@ -269,7 +313,9 @@ void main() {
       AndroidAdsLoader(
         AndroidAdsLoaderCreationParams(
           container: container,
-          settings: AndroidImaSettings(const PlatformImaSettingsCreationParams()),
+          settings: AndroidImaSettings(
+            const PlatformImaSettingsCreationParams(),
+          ),
           onAdsLoaded: (_) {
             fail('onAdsLoaded should not be called when AdsManager is null');
           },
@@ -287,7 +333,9 @@ void main() {
     });
 
     testWidgets('onAdError', (WidgetTester tester) async {
-      final AndroidAdDisplayContainer container = await _pumpAdDisplayContainer(tester);
+      final AndroidAdDisplayContainer container = await _pumpAdDisplayContainer(
+        tester,
+      );
 
       final mockAdsLoader = MockAdsLoader();
       final addErrorListenerCompleter = Completer<void>();
@@ -296,13 +344,18 @@ void main() {
       });
       _mockImaSdkFactoryInstance(adsLoader: mockAdsLoader);
 
-      late final void Function(ima.AdErrorListener, ima.AdErrorEvent) onAdErrorCallback;
+      late final void Function(ima.AdErrorListener, ima.AdErrorEvent)
+      onAdErrorCallback;
 
-      ima.PigeonOverrides.adsLoadedListener_new = ({required dynamic onAdsManagerLoaded}) {
-        return MockAdsLoadedListener();
-      };
+      ima.PigeonOverrides.adsLoadedListener_new =
+          ({required dynamic onAdsManagerLoaded}) {
+            return MockAdsLoadedListener();
+          };
       ima.PigeonOverrides.adErrorListener_new =
-          ({required void Function(ima.AdErrorListener, ima.AdErrorEvent) onAdError}) {
+          ({
+            required void Function(ima.AdErrorListener, ima.AdErrorEvent)
+            onAdError,
+          }) {
             onAdErrorCallback = onAdError;
             return MockAdErrorListener();
           };
@@ -310,7 +363,9 @@ void main() {
       AndroidAdsLoader(
         AndroidAdsLoaderCreationParams(
           container: container,
-          settings: AndroidImaSettings(const PlatformImaSettingsCreationParams()),
+          settings: AndroidImaSettings(
+            const PlatformImaSettingsCreationParams(),
+          ),
           onAdsLoaded: (_) {},
           onAdsLoadError: expectAsync1((_) {}),
         ),
@@ -319,7 +374,9 @@ void main() {
       final mockErrorEvent = MockAdErrorEvent();
       final mockError = MockAdError();
       when(mockError.errorType).thenReturn(ima.AdErrorType.load);
-      when(mockError.errorCode).thenReturn(ima.AdErrorCode.adsRequestNetworkError);
+      when(
+        mockError.errorCode,
+      ).thenReturn(ima.AdErrorCode.adsRequestNetworkError);
       when(mockError.message).thenReturn('error message');
       when(mockErrorEvent.error).thenReturn(mockError);
 
@@ -355,13 +412,15 @@ Future<AndroidAdDisplayContainer> _pumpAdDisplayContainer(
 }) async {
   ima.PigeonOverrides.frameLayout_new = () => MockFrameLayout();
   ima.PigeonOverrides.videoView_new =
-      ({required dynamic onError, dynamic onPrepared, dynamic onCompletion}) => MockVideoView();
+      ({required dynamic onError, dynamic onPrepared, dynamic onCompletion}) =>
+          MockVideoView();
   ima.PigeonOverrides.imaSdkFactory_createAdDisplayContainer = (_, __) async {
     return MockAdDisplayContainer();
   };
   ima.PigeonOverrides.videoAdPlayer_new =
       ({
-        required void Function(ima.VideoAdPlayer, ima.VideoAdPlayerCallback) addCallback,
+        required void Function(ima.VideoAdPlayer, ima.VideoAdPlayerCallback)
+        addCallback,
         required dynamic loadAd,
         required dynamic pauseAd,
         required dynamic playAd,
@@ -398,16 +457,24 @@ Future<AndroidAdDisplayContainer> _pumpAdDisplayContainer(
   final container = AndroidAdDisplayContainer(
     AndroidAdDisplayContainerCreationParams(
       onContainerAdded: (PlatformAdDisplayContainer container) {
-        adDisplayContainerCompleter.complete(container as AndroidAdDisplayContainer);
+        adDisplayContainerCompleter.complete(
+          container as AndroidAdDisplayContainer,
+        );
       },
       platformViewsProxy: mockPlatformViewsProxy,
     ),
   );
 
-  await tester.pumpWidget(Builder(builder: (BuildContext context) => container.build(context)));
+  await tester.pumpWidget(
+    Builder(builder: (BuildContext context) => container.build(context)),
+  );
 
   final onPlatformCreatedCallback =
-      verify(mockAndroidViewController.addOnPlatformViewCreatedListener(captureAny)).captured[0]
+      verify(
+            mockAndroidViewController.addOnPlatformViewCreatedListener(
+              captureAny,
+            ),
+          ).captured[0]
           as void Function(int);
 
   onPlatformCreatedCallback(platformViewId);

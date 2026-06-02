@@ -85,7 +85,10 @@ class ImagePicker {
       requestFullMetadata: requestFullMetadata,
     );
 
-    return platform.getImageFromSource(source: source, options: imagePickerOptions);
+    return platform.getImageFromSource(
+      source: source,
+      options: imagePickerOptions,
+    );
   }
 
   /// Returns a [List<XFile>] object wrapping the images that were picked.
@@ -138,7 +141,10 @@ class ImagePicker {
     );
 
     return platform.getMultiImageWithOptions(
-      options: MultiImagePickerOptions.createAndValidate(imageOptions: imageOptions, limit: limit),
+      options: MultiImagePickerOptions.createAndValidate(
+        imageOptions: imageOptions,
+        limit: limit,
+      ),
     );
   }
 

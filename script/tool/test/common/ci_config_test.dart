@@ -11,20 +11,30 @@ void main() {
   late Directory packagesDir;
 
   setUp(() {
-    (:packagesDir, processRunner: _, gitProcessRunner: _, gitDir: _) = configureBaseCommandMocks();
+    (:packagesDir, processRunner: _, gitProcessRunner: _, gitDir: _) =
+        configureBaseCommandMocks();
   });
 
   group('CIConfig', () {
     test('file', () async {
-      final RepositoryPackage plugin = createFakePlugin('a_plugin', packagesDir);
+      final RepositoryPackage plugin = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+      );
 
       final File ciConfigFile = plugin.ciConfigFile;
 
-      expect(ciConfigFile.path, plugin.directory.childFile('ci_config.yaml').path);
+      expect(
+        ciConfigFile.path,
+        plugin.directory.childFile('ci_config.yaml').path,
+      );
     });
 
     test('parsing', () async {
-      final RepositoryPackage plugin = createFakePlugin('a_plugin', packagesDir);
+      final RepositoryPackage plugin = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+      );
       plugin.ciConfigFile.writeAsStringSync('''
 release:
   batch: true
@@ -37,7 +47,10 @@ release:
     });
 
     test('parsing missing file returns null', () async {
-      final RepositoryPackage plugin = createFakePlugin('a_plugin', packagesDir);
+      final RepositoryPackage plugin = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+      );
 
       final CIConfig? config = plugin.parseCIConfig();
 
@@ -45,7 +58,10 @@ release:
     });
 
     test('parsing invalid file throws', () async {
-      final RepositoryPackage plugin = createFakePlugin('a_plugin', packagesDir);
+      final RepositoryPackage plugin = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+      );
       plugin.ciConfigFile.writeAsStringSync('not a map');
 
       expect(
@@ -61,7 +77,10 @@ release:
     });
 
     test('reports unknown keys', () {
-      final RepositoryPackage plugin = createFakePlugin('a_plugin', packagesDir);
+      final RepositoryPackage plugin = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+      );
       plugin.ciConfigFile.writeAsStringSync('''
 foo: bar
 ''');
@@ -79,7 +98,10 @@ foo: bar
     });
 
     test('reports invalid values', () {
-      final RepositoryPackage plugin = createFakePlugin('a_plugin', packagesDir);
+      final RepositoryPackage plugin = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+      );
       plugin.ciConfigFile.writeAsStringSync('''
 release:
   batch: not-a-bool

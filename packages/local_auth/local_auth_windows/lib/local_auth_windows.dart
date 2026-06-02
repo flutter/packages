@@ -15,7 +15,8 @@ export 'package:local_auth_windows/types/auth_messages_windows.dart';
 /// The implementation of [LocalAuthPlatform] for Windows.
 class LocalAuthWindows extends LocalAuthPlatform {
   /// Creates a new plugin implementation instance.
-  LocalAuthWindows({@visibleForTesting LocalAuthApi? api}) : _api = api ?? LocalAuthApi();
+  LocalAuthWindows({@visibleForTesting LocalAuthApi? api})
+    : _api = api ?? LocalAuthApi();
 
   final LocalAuthApi _api;
 
@@ -33,7 +34,9 @@ class LocalAuthWindows extends LocalAuthPlatform {
     assert(localizedReason.isNotEmpty);
 
     if (options.biometricOnly) {
-      throw UnsupportedError("Windows doesn't support the biometricOnly parameter.");
+      throw UnsupportedError(
+        "Windows doesn't support the biometricOnly parameter.",
+      );
     }
 
     return switch (await _api.authenticate(localizedReason)) {

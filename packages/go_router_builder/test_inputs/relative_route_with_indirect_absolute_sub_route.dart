@@ -9,15 +9,19 @@ mixin $ShellRoute {}
 mixin $RelativeRoute {}
 mixin $AbsoluteRoute {}
 
-@TypedGoRoute<HomeRoute>(path: '/', routes: <TypedRoute<RouteData>>[relativeRoute])
+@TypedGoRoute<HomeRoute>(
+  path: '/',
+  routes: <TypedRoute<RouteData>>[relativeRoute],
+)
 class HomeRoute extends GoRouteData with $HomeRoute {
   const HomeRoute();
 }
 
-const TypedRelativeGoRoute<RelativeRoute> relativeRoute = TypedRelativeGoRoute<RelativeRoute>(
-  path: 'relative-route',
-  routes: <TypedRoute<RouteData>>[shellRoute],
-);
+const TypedRelativeGoRoute<RelativeRoute> relativeRoute =
+    TypedRelativeGoRoute<RelativeRoute>(
+      path: 'relative-route',
+      routes: <TypedRoute<RouteData>>[shellRoute],
+    );
 
 const TypedShellRoute<ShellRoute> shellRoute = TypedShellRoute<ShellRoute>(
   routes: <TypedRoute<RouteData>>[absoluteRoute],

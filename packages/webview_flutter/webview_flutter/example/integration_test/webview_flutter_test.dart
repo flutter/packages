@@ -22,7 +22,10 @@ import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 Future<void> main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  final HttpServer server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+  final HttpServer server = await HttpServer.bind(
+    InternetAddress.loopbackIPv4,
+    0,
+  );
   unawaited(
     server.forEach((HttpRequest request) {
       if (request.uri.path == '/hello.txt') {
@@ -34,10 +37,13 @@ Future<void> main() async {
       } else if (request.uri.path == '/favicon.ico') {
         request.response.statusCode = HttpStatus.notFound;
       } else if (request.uri.path == '/http-basic-authentication') {
-        final List<String>? authHeader = request.headers[HttpHeaders.authorizationHeader];
+        final List<String>? authHeader =
+            request.headers[HttpHeaders.authorizationHeader];
         if (authHeader != null) {
           final String encodedCredential = authHeader.first.split(' ')[1];
-          final credential = String.fromCharCodes(base64Decode(encodedCredential));
+          final credential = String.fromCharCodes(
+            base64Decode(encodedCredential),
+          );
           if (credential == 'user:password') {
             request.response.writeln('Authorized');
           } else {
@@ -96,7 +102,10 @@ Future<void> main() async {
 
     await pageFinished.future;
 
-    await expectLater(controller.runJavaScriptReturningResult('1 + 1'), completion(2));
+    await expectLater(
+      controller.runJavaScriptReturningResult('1 + 1'),
+      completion(2),
+    );
   });
 
   testWidgets('loadRequest with headers', (WidgetTester tester) async {
@@ -117,7 +126,9 @@ Future<void> main() async {
     await pageLoads.stream.firstWhere((String url) => url == headersUrl);
 
     final content =
-        await controller.runJavaScriptReturningResult('document.documentElement.innerText')
+        await controller.runJavaScriptReturningResult(
+              'document.documentElement.innerText',
+            )
             as String;
     expect(content.contains('flutter_test_header'), isTrue);
   });
@@ -138,7 +149,9 @@ Future<void> main() async {
       },
     );
 
-    await controller.loadHtmlString('data:text/html;charset=utf-8;base64,PCFET0NUWVBFIGh0bWw+');
+    await controller.loadHtmlString(
+      'data:text/html;charset=utf-8;base64,PCFET0NUWVBFIGh0bWw+',
+    );
 
     await tester.pumpWidget(WebViewWidget(controller: controller));
 
@@ -169,7 +182,10 @@ Future<void> main() async {
 
     await onPageFinished.future;
     // Wait for a potential call to resize after page is loaded.
-    await initialResizeCompleter.future.timeout(const Duration(seconds: 3), onTimeout: () => null);
+    await initialResizeCompleter.future.timeout(
+      const Duration(seconds: 3),
+      onTimeout: () => null,
+    );
 
     resizeButtonTapped = true;
 
@@ -236,7 +252,9 @@ Future<void> main() async {
 
         await pageLoaded.future;
 
-        var isPaused = await controller.runJavaScriptReturningResult('isPaused();') as bool;
+        var isPaused =
+            await controller.runJavaScriptReturningResult('isPaused();')
+                as bool;
         expect(isPaused, false);
 
         pageLoaded = Completer<void>();
@@ -257,7 +275,9 @@ Future<void> main() async {
 
         await pageLoaded.future;
 
-        isPaused = await controller.runJavaScriptReturningResult('isPaused();') as bool;
+        isPaused =
+            await controller.runJavaScriptReturningResult('isPaused();')
+                as bool;
         expect(isPaused, true);
       });
 
@@ -310,7 +330,9 @@ Future<void> main() async {
         // Makes sure we get the correct event that indicates the video is actually playing.
         await videoPlaying.future;
 
-        final fullScreen = await controller.runJavaScriptReturningResult('isFullScreen();') as bool;
+        final fullScreen =
+            await controller.runJavaScriptReturningResult('isFullScreen();')
+                as bool;
         expect(fullScreen, false);
       });
     },
@@ -323,8 +345,12 @@ Future<void> main() async {
     () {
       late String audioTestBase64;
       setUpAll(() async {
-        final ByteData audioData = await rootBundle.load('assets/sample_audio.ogg');
-        final String base64AudioData = base64Encode(Uint8List.view(audioData.buffer));
+        final ByteData audioData = await rootBundle.load(
+          'assets/sample_audio.ogg',
+        );
+        final String base64AudioData = base64Encode(
+          Uint8List.view(audioData.buffer),
+        );
         final audioTest =
             '''
         <!DOCTYPE html><html>
@@ -382,7 +408,9 @@ Future<void> main() async {
 
         await pageLoaded.future;
 
-        var isPaused = await controller.runJavaScriptReturningResult('isPaused();') as bool;
+        var isPaused =
+            await controller.runJavaScriptReturningResult('isPaused();')
+                as bool;
         expect(isPaused, false);
 
         pageLoaded = Completer<void>();
@@ -401,7 +429,9 @@ Future<void> main() async {
         await tester.pumpAndSettle();
         await pageLoaded.future;
 
-        isPaused = await controller.runJavaScriptReturningResult('isPaused();') as bool;
+        isPaused =
+            await controller.runJavaScriptReturningResult('isPaused();')
+                as bool;
         expect(isPaused, true);
       });
     },
@@ -419,7 +449,9 @@ Future<void> main() async {
         </body>
         </html>
       ''';
-    final String getTitleTestBase64 = base64Encode(const Utf8Encoder().convert(getTitleTest));
+    final String getTitleTestBase64 = base64Encode(
+      const Utf8Encoder().convert(getTitleTest),
+    );
     final pageLoaded = Completer<void>();
 
     final controller = WebViewController();
@@ -481,12 +513,16 @@ Future<void> main() async {
         await controller.setNavigationDelegate(
           NavigationDelegate(onPageFinished: (_) => pageLoaded.complete()),
         );
-        await controller.setOnScrollPositionChange((ScrollPositionChange contentOffsetChange) {
+        await controller.setOnScrollPositionChange((
+          ScrollPositionChange contentOffsetChange,
+        ) {
           recordedPosition = contentOffsetChange;
         });
 
         await controller.loadRequest(
-          Uri.parse('data:text/html;charset=utf-8;base64,$scrollTestPageBase64'),
+          Uri.parse(
+            'data:text/html;charset=utf-8;base64,$scrollTestPageBase64',
+          ),
         );
 
         await tester.pumpWidget(WebViewWidget(controller: controller));
@@ -585,7 +621,9 @@ Future<void> main() async {
       expect(error, isNotNull);
     });
 
-    testWidgets('onWebResourceError is not called with valid url', (WidgetTester tester) async {
+    testWidgets('onWebResourceError is not called with valid url', (
+      WidgetTester tester,
+    ) async {
       final errorCompleter = Completer<WebResourceError>();
       final pageFinishCompleter = Completer<void>();
 
@@ -632,12 +670,17 @@ Future<void> main() async {
       await pageLoaded.future; // Wait for initial page load.
 
       pageLoaded = Completer<void>();
-      await controller.runJavaScript('location.href = "https://www.youtube.com/"');
+      await controller.runJavaScript(
+        'location.href = "https://www.youtube.com/"',
+      );
 
       // There should never be any second page load, since our new URL is
       // blocked. Still wait for a potential page change for some time in order
       // to give the test a chance to fail.
-      await pageLoaded.future.timeout(const Duration(milliseconds: 500), onTimeout: () => '');
+      await pageLoaded.future.timeout(
+        const Duration(milliseconds: 500),
+        onTimeout: () => '',
+      );
       final String? currentUrl = await controller.currentUrl();
       expect(currentUrl, isNot(contains('youtube.com')));
     });
@@ -759,10 +802,14 @@ Future<void> main() async {
       await expectLater(urlChangeCompleter.future, completion(primaryUrl));
     });
 
-    testWidgets('can receive updates to history state', (WidgetTester tester) async {
+    testWidgets('can receive updates to history state', (
+      WidgetTester tester,
+    ) async {
       final pageLoaded = Completer<void>();
 
-      final navigationDelegate = NavigationDelegate(onPageFinished: (_) => pageLoaded.complete());
+      final navigationDelegate = NavigationDelegate(
+        onPageFinished: (_) => pageLoaded.complete(),
+      );
 
       final controller = WebViewController();
       await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
@@ -782,18 +829,23 @@ Future<void> main() async {
         ),
       );
 
-      await controller.runJavaScript('window.history.pushState({}, "", "secondary.txt");');
+      await controller.runJavaScript(
+        'window.history.pushState({}, "", "secondary.txt");',
+      );
 
       await expectLater(urlChangeCompleter.future, completion(secondaryUrl));
     });
 
-    testWidgets('can receive HTTP basic auth requests', (WidgetTester tester) async {
+    testWidgets('can receive HTTP basic auth requests', (
+      WidgetTester tester,
+    ) async {
       final authRequested = Completer<void>();
       final controller = WebViewController();
 
       await controller.setNavigationDelegate(
         NavigationDelegate(
-          onHttpAuthRequest: (HttpAuthRequest request) => authRequested.complete(),
+          onHttpAuthRequest: (HttpAuthRequest request) =>
+              authRequested.complete(),
         ),
       );
 
@@ -804,14 +856,17 @@ Future<void> main() async {
       await expectLater(authRequested.future, completes);
     });
 
-    testWidgets('can authenticate to HTTP basic auth requests', (WidgetTester tester) async {
+    testWidgets('can authenticate to HTTP basic auth requests', (
+      WidgetTester tester,
+    ) async {
       final controller = WebViewController();
       final pageFinished = Completer<void>();
 
       await controller.setNavigationDelegate(
         NavigationDelegate(
-          onHttpAuthRequest: (HttpAuthRequest request) =>
-              request.onProceed(const WebViewCredential(user: 'user', password: 'password')),
+          onHttpAuthRequest: (HttpAuthRequest request) => request.onProceed(
+            const WebViewCredential(user: 'user', password: 'password'),
+          ),
           onPageFinished: (_) => pageFinished.complete(),
           onWebResourceError: (_) => fail('Authentication failed'),
         ),
@@ -825,7 +880,9 @@ Future<void> main() async {
     });
   });
 
-  testWidgets('target _blank opens in same window', (WidgetTester tester) async {
+  testWidgets('target _blank opens in same window', (
+    WidgetTester tester,
+  ) async {
     final pageLoaded = Completer<void>();
 
     final controller = WebViewController();
@@ -886,7 +943,10 @@ Future<void> main() async {
 
     await controller.runJavaScript('localStorage.setItem("myCat", "Tom");');
     final myCatItem =
-        await controller.runJavaScriptReturningResult('localStorage.getItem("myCat");') as String;
+        await controller.runJavaScriptReturningResult(
+              'localStorage.getItem("myCat");',
+            )
+            as String;
     expect(myCatItem, _webViewString('Tom'));
 
     await controller.clearLocalStorage();
@@ -898,7 +958,10 @@ Future<void> main() async {
     late final String? nullItem;
     try {
       nullItem =
-          await controller.runJavaScriptReturningResult('localStorage.getItem("myCat");') as String;
+          await controller.runJavaScriptReturningResult(
+                'localStorage.getItem("myCat");',
+              )
+              as String;
     } catch (exception) {
       if (_isWKWebView() &&
           exception is ArgumentError &&
@@ -936,7 +999,11 @@ bool _isWKWebView() {
 }
 
 class ResizableWebView extends StatefulWidget {
-  const ResizableWebView({super.key, required this.onResize, required this.onPageFinished});
+  const ResizableWebView({
+    super.key,
+    required this.onResize,
+    required this.onPageFinished,
+  });
 
   final VoidCallback onResize;
   final VoidCallback onPageFinished;
@@ -948,7 +1015,9 @@ class ResizableWebView extends StatefulWidget {
 class ResizableWebViewState extends State<ResizableWebView> {
   late final WebViewController controller = WebViewController()
     ..setJavaScriptMode(JavaScriptMode.unrestricted)
-    ..setNavigationDelegate(NavigationDelegate(onPageFinished: (_) => widget.onPageFinished()))
+    ..setNavigationDelegate(
+      NavigationDelegate(onPageFinished: (_) => widget.onPageFinished()),
+    )
     ..addJavaScriptChannel(
       'Resize',
       onMessageReceived: (_) {

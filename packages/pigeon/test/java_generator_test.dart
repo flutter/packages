@@ -36,11 +36,20 @@ void main() {
         ),
       ],
     );
-    final root = Root(apis: <Api>[], classes: <Class>[classDefinition], enums: <Enum>[]);
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[classDefinition],
+      enums: <Enum>[],
+    );
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, contains('public class Messages'));
     expect(code, contains('public static final class Foobar'));
@@ -62,7 +71,12 @@ void main() {
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, contains('public enum Foobar'));
     expect(code, contains('    ONE(0),'));
@@ -83,7 +97,11 @@ void main() {
         ),
       ],
     );
-    final root = Root(apis: <Api>[], classes: <Class>[classDefinition], enums: <Enum>[]);
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[classDefinition],
+      enums: <Enum>[],
+    );
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(
       className: 'Messages',
@@ -91,7 +109,12 @@ void main() {
       javaOut: '',
     );
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, contains('package com.google.foobar;'));
   });
@@ -150,18 +173,27 @@ void main() {
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, contains('public interface Api'));
     expect(code, matches('Output.*doSomething.*Input'));
     expect(code, contains('channel.setMessageHandler(null)'));
     expect(
       code,
-      contains('protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer)'),
+      contains(
+        'protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer)',
+      ),
     );
     expect(
       code,
-      contains('protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value)'),
+      contains(
+        'protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value)',
+      ),
     );
     expect(
       code,
@@ -198,19 +230,31 @@ void main() {
               name: 'aString',
             ),
             NamedType(
-              type: const TypeDeclaration(baseName: 'Uint8List', isNullable: true),
+              type: const TypeDeclaration(
+                baseName: 'Uint8List',
+                isNullable: true,
+              ),
               name: 'aUint8List',
             ),
             NamedType(
-              type: const TypeDeclaration(baseName: 'Int32List', isNullable: true),
+              type: const TypeDeclaration(
+                baseName: 'Int32List',
+                isNullable: true,
+              ),
               name: 'aInt32List',
             ),
             NamedType(
-              type: const TypeDeclaration(baseName: 'Int64List', isNullable: true),
+              type: const TypeDeclaration(
+                baseName: 'Int64List',
+                isNullable: true,
+              ),
               name: 'aInt64List',
             ),
             NamedType(
-              type: const TypeDeclaration(baseName: 'Float64List', isNullable: true),
+              type: const TypeDeclaration(
+                baseName: 'Float64List',
+                isNullable: true,
+              ),
               name: 'aFloat64List',
             ),
           ],
@@ -222,7 +266,12 @@ void main() {
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, contains('private @Nullable Boolean aBool;'));
     expect(code, contains('private @Nullable Long aInt;'));
@@ -287,7 +336,12 @@ void main() {
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, contains('public static class Api'));
     expect(code, matches('doSomething.*Input.*Output'));
@@ -333,7 +387,12 @@ void main() {
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, isNot(matches('=.*doSomething')));
     expect(code, contains('doSomething('));
@@ -379,11 +438,18 @@ void main() {
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(
       code,
-      contains('public void doSomething(@NonNull Input arg0Arg, @NonNull VoidResult result)'),
+      contains(
+        'public void doSomething(@NonNull Input arg0Arg, @NonNull VoidResult result)',
+      ),
     );
     expect(code, contains('result.success();'));
   });
@@ -423,7 +489,12 @@ void main() {
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, contains('Output doSomething()'));
     expect(code, contains('api.doSomething()'));
@@ -464,9 +535,17 @@ void main() {
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
-    expect(code, contains('public void doSomething(@NonNull Result<Output> result)'));
+    expect(
+      code,
+      contains('public void doSomething(@NonNull Result<Output> result)'),
+    );
     expect(code, contains(RegExp(r'channel.send\(\s*null')));
   });
 
@@ -489,7 +568,12 @@ void main() {
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, contains('public static final class Foobar'));
     expect(code, contains('private @Nullable List<Object> field1;'));
@@ -514,7 +598,12 @@ void main() {
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, contains('public static final class Foobar'));
     expect(code, contains('private @Nullable Map<Object, Object> field1;'));
@@ -525,7 +614,11 @@ void main() {
       name: 'Outer',
       fields: <NamedType>[
         NamedType(
-          type: TypeDeclaration(baseName: 'Nested', associatedClass: emptyClass, isNullable: true),
+          type: TypeDeclaration(
+            baseName: 'Nested',
+            associatedClass: emptyClass,
+            isNullable: true,
+          ),
           name: 'nested',
         ),
       ],
@@ -547,7 +640,12 @@ void main() {
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, contains('public class Messages'));
     expect(code, contains('public static final class Outer'));
@@ -610,12 +708,22 @@ void main() {
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, contains('public interface Api'));
     expect(code, contains('public interface Result<T> {'));
     expect(code, contains('void error(@NonNull Throwable error);'));
-    expect(code, contains('void doSomething(@NonNull Input arg, @NonNull Result<Output> result);'));
+    expect(
+      code,
+      contains(
+        'void doSomething(@NonNull Input arg, @NonNull Result<Output> result);',
+      ),
+    );
     expect(code, contains('api.doSomething(argArg, resultCallback);'));
     expect(code, contains('channel.setMessageHandler(null)'));
   });
@@ -674,7 +782,12 @@ void main() {
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, contains('public static class Api'));
     expect(code, matches('doSomething.*Input.*Output'));
@@ -693,16 +806,29 @@ void main() {
       name: 'EnumClass',
       fields: <NamedType>[
         NamedType(
-          type: TypeDeclaration(baseName: 'Enum1', associatedEnum: emptyEnum, isNullable: true),
+          type: TypeDeclaration(
+            baseName: 'Enum1',
+            associatedEnum: emptyEnum,
+            isNullable: true,
+          ),
           name: 'enum1',
         ),
       ],
     );
-    final root = Root(apis: <Api>[], classes: <Class>[classDefinition], enums: <Enum>[anEnum]);
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[classDefinition],
+      enums: <Enum>[anEnum],
+    );
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, contains('public enum Enum1'));
     expect(code, contains('    ONE(0),'));
@@ -754,14 +880,26 @@ void main() {
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, contains('public enum Foo'));
     expect(
       code,
-      contains('return value == null ? null : Foo.values()[((Long) value).intValue()];'),
+      contains(
+        'return value == null ? null : Foo.values()[((Long) value).intValue()];',
+      ),
     );
-    expect(code, contains('writeValue(stream, value == null ? null : ((Foo) value).index);'));
+    expect(
+      code,
+      contains(
+        'writeValue(stream, value == null ? null : ((Foo) value).index);',
+      ),
+    );
     expect(code, contains('Foo fooArg = (Foo) args.get(0);'));
   });
 
@@ -778,7 +916,12 @@ void main() {
       javaOut: '',
     );
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, startsWith('// hello world'));
   });
@@ -791,17 +934,28 @@ void main() {
           type: const TypeDeclaration(
             baseName: 'List',
             isNullable: true,
-            typeArguments: <TypeDeclaration>[TypeDeclaration(baseName: 'int', isNullable: true)],
+            typeArguments: <TypeDeclaration>[
+              TypeDeclaration(baseName: 'int', isNullable: true),
+            ],
           ),
           name: 'field1',
         ),
       ],
     );
-    final root = Root(apis: <Api>[], classes: <Class>[classDefinition], enums: <Enum>[]);
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[classDefinition],
+      enums: <Enum>[],
+    );
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, contains('class Foobar'));
     expect(code, contains('List<Long> field1;'));
@@ -824,11 +978,20 @@ void main() {
         ),
       ],
     );
-    final root = Root(apis: <Api>[], classes: <Class>[classDefinition], enums: <Enum>[]);
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[classDefinition],
+      enums: <Enum>[],
+    );
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, contains('class Foobar'));
     expect(code, contains('Map<String, String> field1;'));
@@ -866,7 +1029,12 @@ void main() {
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, contains('doit(@NonNull List<Long> arg'));
   });
@@ -903,7 +1071,12 @@ void main() {
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, contains('doit(@NonNull List<Long> arg'));
   });
@@ -935,7 +1108,12 @@ void main() {
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, contains('List<Long> doit('));
     expect(code, contains('List<Long> output ='));
@@ -968,9 +1146,17 @@ void main() {
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
-    expect(code, contains('public void doit(@NonNull Result<List<Long>> result)'));
+    expect(
+      code,
+      contains('public void doit(@NonNull Result<List<Long>> result)'),
+    );
     expect(code, contains('List<Long> output = (List<Long>) listReply.get(0)'));
   });
 
@@ -983,7 +1169,10 @@ void main() {
             Method(
               name: 'doit',
               location: ApiLocation.flutter,
-              returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+              returnType: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: false,
+              ),
               parameters: <Parameter>[],
               isAsynchronous: true,
             ),
@@ -996,7 +1185,12 @@ void main() {
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, contains('public void doit(@NonNull Result<Long> result)'));
     expect(code, contains('Long output = (Long) listReply.get(0);'));
@@ -1014,14 +1208,23 @@ void main() {
               parameters: <Parameter>[
                 Parameter(
                   name: 'x',
-                  type: const TypeDeclaration(isNullable: false, baseName: 'int'),
+                  type: const TypeDeclaration(
+                    isNullable: false,
+                    baseName: 'int',
+                  ),
                 ),
                 Parameter(
                   name: 'y',
-                  type: const TypeDeclaration(isNullable: false, baseName: 'int'),
+                  type: const TypeDeclaration(
+                    isNullable: false,
+                    baseName: 'int',
+                  ),
                 ),
               ],
-              returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+              returnType: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: false,
+              ),
             ),
           ],
         ),
@@ -1032,11 +1235,19 @@ void main() {
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, contains('class Messages'));
     expect(code, contains('Long add(@NonNull Long x, @NonNull Long y)'));
-    expect(code, contains('ArrayList<Object> args = (ArrayList<Object>) message;'));
+    expect(
+      code,
+      contains('ArrayList<Object> args = (ArrayList<Object>) message;'),
+    );
     expect(code, contains('Long xArg = (Long) args.get(0)'));
     expect(code, contains('Long yArg = (Long) args.get(1)'));
     expect(code, contains('Long output = api.add(xArg, yArg)'));
@@ -1054,7 +1265,10 @@ void main() {
               parameters: <Parameter>[
                 Parameter(
                   name: 'x',
-                  type: const TypeDeclaration(isNullable: false, baseName: 'Object'),
+                  type: const TypeDeclaration(
+                    isNullable: false,
+                    baseName: 'Object',
+                  ),
                 ),
               ],
               returnType: const TypeDeclaration.voidDeclaration(),
@@ -1068,7 +1282,12 @@ void main() {
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Api', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, contains('Object xArg = args.get(0)'));
   });
@@ -1085,14 +1304,23 @@ void main() {
               parameters: <Parameter>[
                 Parameter(
                   name: 'x',
-                  type: const TypeDeclaration(isNullable: false, baseName: 'int'),
+                  type: const TypeDeclaration(
+                    isNullable: false,
+                    baseName: 'int',
+                  ),
                 ),
                 Parameter(
                   name: 'y',
-                  type: const TypeDeclaration(isNullable: false, baseName: 'int'),
+                  type: const TypeDeclaration(
+                    isNullable: false,
+                    baseName: 'int',
+                  ),
                 ),
               ],
-              returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+              returnType: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: false,
+              ),
             ),
           ],
         ),
@@ -1103,7 +1331,12 @@ void main() {
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, contains('class Messages'));
     expect(code, contains('BasicMessageChannel<Object> channel'));
@@ -1136,10 +1369,16 @@ void main() {
               parameters: <Parameter>[
                 Parameter(
                   name: 'x',
-                  type: const TypeDeclaration(isNullable: false, baseName: 'int'),
+                  type: const TypeDeclaration(
+                    isNullable: false,
+                    baseName: 'int',
+                  ),
                 ),
               ],
-              returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+              returnType: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: false,
+              ),
             ),
           ],
         ),
@@ -1150,7 +1389,12 @@ void main() {
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(
       code,
@@ -1171,7 +1415,10 @@ void main() {
             Method(
               name: 'doit',
               location: ApiLocation.host,
-              returnType: const TypeDeclaration(baseName: 'int', isNullable: true),
+              returnType: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: true,
+              ),
               parameters: <Parameter>[],
             ),
           ],
@@ -1183,7 +1430,12 @@ void main() {
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, contains(RegExp(r'@Nullable\s*Long doit\(\);')));
   });
@@ -1197,7 +1449,10 @@ void main() {
             Method(
               name: 'doit',
               location: ApiLocation.host,
-              returnType: const TypeDeclaration(baseName: 'int', isNullable: true),
+              returnType: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: true,
+              ),
               isAsynchronous: true,
               parameters: <Parameter>[],
             ),
@@ -1210,7 +1465,12 @@ void main() {
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     // Java doesn't accept nullability annotations in type arguments.
     expect(code, contains('Result<Long>'));
@@ -1229,7 +1489,10 @@ void main() {
               parameters: <Parameter>[
                 Parameter(
                   name: 'foo',
-                  type: const TypeDeclaration(baseName: 'int', isNullable: true),
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: true,
+                  ),
                 ),
               ],
             ),
@@ -1242,7 +1505,12 @@ void main() {
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, contains('  void doit(@Nullable Long foo);'));
   });
@@ -1260,7 +1528,10 @@ void main() {
               parameters: <Parameter>[
                 Parameter(
                   name: 'foo',
-                  type: const TypeDeclaration(baseName: 'int', isNullable: true),
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: true,
+                  ),
                 ),
               ],
             ),
@@ -1273,9 +1544,19 @@ void main() {
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
-    expect(code, contains('public void doit(@Nullable Long fooArg, @NonNull VoidResult result) {'));
+    expect(
+      code,
+      contains(
+        'public void doit(@Nullable Long fooArg, @NonNull VoidResult result) {',
+      ),
+    );
   });
 
   test('background platform channel', () {
@@ -1291,7 +1572,10 @@ void main() {
               parameters: <Parameter>[
                 Parameter(
                   name: 'foo',
-                  type: const TypeDeclaration(baseName: 'int', isNullable: true),
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: true,
+                  ),
                 ),
               ],
               taskQueueType: TaskQueueType.serialBackgroundThread,
@@ -1305,11 +1589,18 @@ void main() {
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(
       code,
-      contains('BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();'),
+      contains(
+        'BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();',
+      ),
     );
     expect(
       code,
@@ -1326,11 +1617,16 @@ void main() {
     late Root root;
     late StringBuffer sink;
     late JavaGenerator generator;
-    const generatedAnnotation = '@javax.annotation.Generated("$defaultPluginPackageName")';
+    const generatedAnnotation =
+        '@javax.annotation.Generated("$defaultPluginPackageName")';
 
     setUp(() {
       classDefinition = Class(name: 'Foobar', fields: <NamedType>[]);
-      root = Root(apis: <Api>[], classes: <Class>[classDefinition], enums: <Enum>[]);
+      root = Root(
+        apis: <Api>[],
+        classes: <Class>[classDefinition],
+        enums: <Enum>[],
+      );
       sink = StringBuffer();
       generator = const JavaGenerator();
     });
@@ -1341,14 +1637,27 @@ void main() {
         useGeneratedAnnotation: true,
         javaOut: '',
       );
-      generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+      generator.generate(
+        javaOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final code = sink.toString();
       expect(code, contains(generatedAnnotation));
     });
 
     test('without generated annotation', () {
-      const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
-      generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+      const javaOptions = InternalJavaOptions(
+        className: 'Messages',
+        javaOut: '',
+      );
+      generator.generate(
+        javaOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final code = sink.toString();
       expect(code, isNot(contains(generatedAnnotation)));
     });
@@ -1382,7 +1691,10 @@ void main() {
               parameters: <Parameter>[
                 Parameter(
                   name: 'field',
-                  type: const TypeDeclaration(baseName: 'int', isNullable: true),
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: true,
+                  ),
                 ),
               ],
             ),
@@ -1412,9 +1724,15 @@ void main() {
       enums: <Enum>[
         Enum(
           name: 'enum',
-          documentationComments: <String>[comments[count++], unspacedComments[unspacedCount++]],
+          documentationComments: <String>[
+            comments[count++],
+            unspacedComments[unspacedCount++],
+          ],
           members: <EnumMember>[
-            EnumMember(name: 'one', documentationComments: <String>[comments[count++]]),
+            EnumMember(
+              name: 'one',
+              documentationComments: <String>[comments[count++]],
+            ),
             EnumMember(name: 'two'),
           ],
         ),
@@ -1423,12 +1741,20 @@ void main() {
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     for (final comment in comments) {
       // This regex finds the comment only between the open and close comment block
       expect(
-        RegExp(r'(?<=\/\*\*.*?)' + comment + r'(?=.*?\*\/)', dotAll: true).hasMatch(code),
+        RegExp(
+          r'(?<=\/\*\*.*?)' + comment + r'(?=.*?\*\/)',
+          dotAll: true,
+        ).hasMatch(code),
         true,
       );
     }
@@ -1489,18 +1815,33 @@ void main() {
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, contains(' extends StandardMessageCodec'));
   });
 
   test('creates api error class for custom errors', () {
     final Api api = AstHostApi(name: 'Api', methods: <Method>[]);
-    final root = Root(apis: <Api>[api], classes: <Class>[], enums: <Enum>[], containsHostApi: true);
+    final root = Root(
+      apis: <Api>[api],
+      classes: <Class>[],
+      enums: <Enum>[],
+      containsHostApi: true,
+    );
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, contains('class FlutterError'));
   });
@@ -1518,7 +1859,10 @@ void main() {
               parameters: <Parameter>[
                 Parameter(
                   name: 'field',
-                  type: const TypeDeclaration(baseName: 'int', isNullable: true),
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: true,
+                  ),
                 ),
               ],
             ),
@@ -1532,7 +1876,12 @@ void main() {
     final sink = StringBuffer();
     const generator = JavaGenerator();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, contains('createConnectionError(channelName)'));
     expect(
@@ -1553,11 +1902,20 @@ void main() {
         ),
       ],
     );
-    final root = Root(apis: <Api>[], classes: <Class>[classDefinition], enums: <Enum>[]);
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[classDefinition],
+      enums: <Enum>[],
+    );
     final sink = StringBuffer();
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
-    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final code = sink.toString();
     expect(code, contains('public boolean equals(Object o) {'));
     expect(code, contains('public int hashCode() {'));

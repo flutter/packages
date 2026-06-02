@@ -67,7 +67,10 @@ class XFile extends XFileBase {
   Blob _createBlobFromBytes(Uint8List bytes, String? mimeType) {
     return (mimeType == null)
         ? Blob(<JSUint8Array>[bytes.toJS].toJS)
-        : Blob(<JSUint8Array>[bytes.toJS].toJS, BlobPropertyBag(type: mimeType));
+        : Blob(
+            <JSUint8Array>[bytes.toJS].toJS,
+            BlobPropertyBag(type: mimeType),
+          );
   }
 
   // Overridable (meta) data that can be specified by the constructors.
@@ -123,7 +126,10 @@ class XFile extends XFileBase {
       ..open('get', path, true)
       ..responseType = 'blob'
       ..onLoad.listen((ProgressEvent e) {
-        assert(request.response != null, 'The Blob backing this XFile cannot be null!');
+        assert(
+          request.response != null,
+          'The Blob backing this XFile cannot be null!',
+        );
         blobCompleter.complete(request.response! as Blob);
       })
       ..onError.listen((ProgressEvent e) {
@@ -170,7 +176,8 @@ class XFile extends XFileBase {
 
     await reader.onLoadEnd.first;
 
-    final Uint8List? result = (reader.result as JSArrayBuffer?)?.toDart.asUint8List();
+    final Uint8List? result = (reader.result as JSArrayBuffer?)?.toDart
+        .asUint8List();
 
     if (result == null) {
       throw Exception('Cannot read bytes from Blob. Is it still available?');

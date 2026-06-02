@@ -23,7 +23,10 @@ void main() {
       compassEnabled: false,
       mapToolbarEnabled: false,
       cameraTargetBounds: CameraTargetBounds(
-        LatLngBounds(northeast: const LatLng(30, 20), southwest: const LatLng(10, 40)),
+        LatLngBounds(
+          northeast: const LatLng(30, 20),
+          southwest: const LatLng(10, 40),
+        ),
       ),
       mapType: MapType.normal,
       minMaxZoomPreference: const MinMaxZoomPreference(1.0, 10.0),
@@ -81,7 +84,10 @@ void main() {
   });
 
   test('mapId preferred over cloudMapId', () {
-    const config = MapConfiguration(mapId: 'map-id', cloudMapId: 'cloud-map-id');
+    const config = MapConfiguration(
+      mapId: 'map-id',
+      cloudMapId: 'cloud-map-id',
+    );
     final Map<String, Object> json = jsonForMapConfiguration(config);
     expect(json, <String, Object>{'mapId': 'map-id', 'cloudMapId': 'map-id'});
   });
@@ -89,6 +95,9 @@ void main() {
   test('mapId falls back to cloudMapId', () {
     const config = MapConfiguration(cloudMapId: 'cloud-map-id');
     final Map<String, Object> json = jsonForMapConfiguration(config);
-    expect(json, <String, Object>{'mapId': 'cloud-map-id', 'cloudMapId': 'cloud-map-id'});
+    expect(json, <String, Object>{
+      'mapId': 'cloud-map-id',
+      'cloudMapId': 'cloud-map-id',
+    });
   });
 }

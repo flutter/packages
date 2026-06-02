@@ -12,7 +12,9 @@ import 'package:pigeon/pigeon.dart';
     dartOut: 'lib/src/android/interactive_media_ads.g.dart',
     kotlinOut:
         'android/src/main/kotlin/dev/flutter/packages/interactive_media_ads/InteractiveMediaAdsLibrary.g.kt',
-    kotlinOptions: KotlinOptions(package: 'dev.flutter.packages.interactive_media_ads'),
+    kotlinOptions: KotlinOptions(
+      package: 'dev.flutter.packages.interactive_media_ads',
+    ),
   ),
 )
 /// The types of error that can be encountered.
@@ -253,7 +255,8 @@ enum AudioManagerAudioFocus {
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/BaseDisplayContainer.html.
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'com.google.ads.interactivemedia.v3.api.BaseDisplayContainer',
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.BaseDisplayContainer',
   ),
 )
 abstract class BaseDisplayContainer {
@@ -298,7 +301,8 @@ abstract class AdsLoader {
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdsManagerLoadedEvent.html.
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent',
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent',
   ),
 )
 abstract class AdsManagerLoadedEvent {
@@ -420,7 +424,8 @@ abstract class AdsRequest {
 /// See https://developers.google.com/ad-manager/dynamic-ad-insertion/sdk/android/api/reference/com/google/ads/interactivemedia/v3/api/player/ContentProgressProvider.html.
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider',
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider',
   ),
 )
 abstract class ContentProgressProvider {
@@ -540,7 +545,10 @@ abstract class ImaSdkFactory {
   late final ImaSdkFactory instance;
 
   @static
-  AdDisplayContainer createAdDisplayContainer(ViewGroup container, VideoAdPlayer player);
+  AdDisplayContainer createAdDisplayContainer(
+    ViewGroup container,
+    VideoAdPlayer player,
+  );
 
   /// Creates a CompanionAdSlot for the SDK to fill with companion ads.
   CompanionAdSlot createCompanionAdSlot();
@@ -550,7 +558,10 @@ abstract class ImaSdkFactory {
 
   /// Creates an `AdsLoader` for requesting ads using the specified settings
   /// object.
-  AdsLoader createAdsLoader(ImaSdkSettings settings, AdDisplayContainer container);
+  AdsLoader createAdsLoader(
+    ImaSdkSettings settings,
+    AdDisplayContainer container,
+  );
 
   /// Creates an AdsRequest object to contain the data used to request ads.
   AdsRequest createAdsRequest();
@@ -623,7 +634,8 @@ abstract class ImaSdkSettings {
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/VideoProgressUpdate.html.
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate',
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate',
   ),
 )
 abstract class VideoProgressUpdate {
@@ -689,7 +701,11 @@ abstract class AdPodInfo {
 /// single item.
 ///
 /// See https://developer.android.com/reference/android/widget/FrameLayout.
-@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.widget.FrameLayout'))
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.widget.FrameLayout',
+  ),
+)
 abstract class FrameLayout extends ViewGroup {
   FrameLayout();
 }
@@ -697,7 +713,9 @@ abstract class FrameLayout extends ViewGroup {
 /// A special view that can contain other views (called children.)
 ///
 /// See https://developer.android.com/reference/android/view/ViewGroup.
-@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.view.ViewGroup'))
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.view.ViewGroup'),
+)
 abstract class ViewGroup extends View {
   /// Adds a child view.
   void addView(View view);
@@ -711,7 +729,11 @@ abstract class ViewGroup extends View {
 /// Displays a video file.
 ///
 /// See https://developer.android.com/reference/android/widget/VideoView.
-@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.widget.VideoView'))
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.widget.VideoView',
+  ),
+)
 abstract class VideoView extends View {
   VideoView();
 
@@ -744,14 +766,20 @@ abstract class VideoView extends View {
 /// This class represents the basic building block for user interface components.
 ///
 /// See https://developer.android.com/reference/android/view/View.
-@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.view.View'))
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.view.View'),
+)
 abstract class View {}
 
 /// MediaPlayer class can be used to control playback of audio/video files and
 /// streams.
 ///
 /// See https://developer.android.com/reference/android/media/MediaPlayer.
-@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.media.MediaPlayer'))
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.media.MediaPlayer',
+  ),
+)
 abstract class MediaPlayer {
   /// Gets the duration of the file.
   int getDuration();
@@ -780,7 +808,10 @@ abstract class MediaPlayer {
 )
 abstract class VideoAdPlayerCallback {
   /// Fire this callback periodically as ad playback occurs.
-  void onAdProgress(AdMediaInfo adMediaInfo, VideoProgressUpdate videoProgressUpdate);
+  void onAdProgress(
+    AdMediaInfo adMediaInfo,
+    VideoProgressUpdate videoProgressUpdate,
+  );
 
   /// Fire this callback when video playback stalls waiting for data.
   void onBuffering(AdMediaInfo adMediaInfo);
@@ -816,7 +847,8 @@ abstract class VideoAdPlayerCallback {
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/VideoAdPlayer.html.
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer',
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer',
   ),
 )
 abstract class VideoAdPlayer {
@@ -858,7 +890,8 @@ abstract class VideoAdPlayer {
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdsLoader.AdsLoadedListener.html.
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'com.google.ads.interactivemedia.v3.api.AdsLoader.AdsLoadedListener',
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.AdsLoader.AdsLoadedListener',
   ),
 )
 abstract class AdsLoadedListener {
@@ -873,7 +906,8 @@ abstract class AdsLoadedListener {
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdErrorEvent.AdErrorListener.html.
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener',
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener',
   ),
 )
 abstract class AdErrorListener {
@@ -888,7 +922,8 @@ abstract class AdErrorListener {
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdEvent.AdEventListener.html.
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener',
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener',
   ),
 )
 abstract class AdEventListener {
@@ -903,7 +938,8 @@ abstract class AdEventListener {
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdsRenderingSettings.html.
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'com.google.ads.interactivemedia.v3.api.AdsRenderingSettings',
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.AdsRenderingSettings',
   ),
 )
 abstract class AdsRenderingSettings {
@@ -1052,7 +1088,9 @@ abstract class UniversalAdId {
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/Ad.html.
 @ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(fullClassName: 'com.google.ads.interactivemedia.v3.api.Ad'),
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.Ad',
+  ),
 )
 abstract class Ad {
   /// The ad ID as specified in the VAST response.
@@ -1148,7 +1186,8 @@ abstract class Ad {
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/CompanionAdSlot.ClickListener.html.
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'com.google.ads.interactivemedia.v3.api.CompanionAdSlot.ClickListener',
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.CompanionAdSlot.ClickListener',
   ),
 )
 abstract class CompanionAdSlotClickListener {

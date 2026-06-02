@@ -45,7 +45,8 @@ class NavigationDelegate {
   ///   [SslAuthError.cancel] or [SslAuthError.proceed].
   /// {@endtemplate}
   NavigationDelegate({
-    FutureOr<NavigationDecision> Function(NavigationRequest request)? onNavigationRequest,
+    FutureOr<NavigationDecision> Function(NavigationRequest request)?
+    onNavigationRequest,
     void Function(String url)? onPageStarted,
     void Function(String url)? onPageFinished,
     void Function(int progress)? onProgress,
@@ -100,7 +101,8 @@ class NavigationDelegate {
   /// {@endtemplate}
   NavigationDelegate.fromPlatformCreationParams(
     PlatformNavigationDelegateCreationParams params, {
-    FutureOr<NavigationDecision> Function(NavigationRequest request)? onNavigationRequest,
+    FutureOr<NavigationDecision> Function(NavigationRequest request)?
+    onNavigationRequest,
     void Function(String url)? onPageStarted,
     void Function(String url)? onPageFinished,
     void Function(int progress)? onProgress,

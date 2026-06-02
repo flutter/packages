@@ -23,7 +23,10 @@ PushFn mockAdBreak({AdBreakDonePlacementInfo? adBreakDonePlacementInfo}) {
     // Call `adBreakDone` if set, with `adBreakDonePlacementInfo`.
     if (adBreakPlacement?.adBreakDone != null) {
       assert(adBreakDonePlacementInfo != null);
-      adBreakPlacement!.adBreakDone!.callAsFunction(null, adBreakDonePlacementInfo);
+      adBreakPlacement!.adBreakDone!.callAsFunction(
+        null,
+        adBreakDonePlacementInfo,
+      );
     }
   };
 }

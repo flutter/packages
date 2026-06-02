@@ -5,7 +5,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
 
-import 'package:interactive_media_ads/src/ios/interactive_media_ads.g.dart' as _i2;
+import 'package:interactive_media_ads/src/ios/interactive_media_ads.g.dart'
+    as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -23,12 +24,14 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: subtype_of_sealed_class
 // ignore_for_file: invalid_use_of_internal_member
 
-class _FakePigeonInstanceManager_0 extends _i1.SmartFake implements _i2.PigeonInstanceManager {
+class _FakePigeonInstanceManager_0 extends _i1.SmartFake
+    implements _i2.PigeonInstanceManager {
   _FakePigeonInstanceManager_0(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeIMAContentPlayhead_1 extends _i1.SmartFake implements _i2.IMAContentPlayhead {
+class _FakeIMAContentPlayhead_1 extends _i1.SmartFake
+    implements _i2.IMAContentPlayhead {
   _FakeIMAContentPlayhead_1(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -36,7 +39,8 @@ class _FakeIMAContentPlayhead_1 extends _i1.SmartFake implements _i2.IMAContentP
 /// A class which mocks [IMAContentPlayhead].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockIMAContentPlayhead extends _i1.Mock implements _i2.IMAContentPlayhead {
+class MockIMAContentPlayhead extends _i1.Mock
+    implements _i2.IMAContentPlayhead {
   @override
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
       (super.noSuchMethod(
@@ -65,7 +69,10 @@ class MockIMAContentPlayhead extends _i1.Mock implements _i2.IMAContentPlayhead 
   _i2.IMAContentPlayhead pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeIMAContentPlayhead_1(this, Invocation.method(#pigeon_copy, [])),
+            returnValue: _FakeIMAContentPlayhead_1(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
             returnValueForMissingStub: _FakeIMAContentPlayhead_1(
               this,
               Invocation.method(#pigeon_copy, []),

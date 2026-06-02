@@ -50,8 +50,14 @@ class ImagePickerPlugin extends ImagePickerPlatform {
     required ImageSource source,
     ImagePickerOptions options = const ImagePickerOptions(),
   }) async {
-    final String? capture = computeCaptureAttribute(source, options.preferredCameraDevice);
-    final List<XFile> files = await getFiles(accept: _kAcceptImageMimeType, capture: capture);
+    final String? capture = computeCaptureAttribute(
+      source,
+      options.preferredCameraDevice,
+    );
+    final List<XFile> files = await getFiles(
+      accept: _kAcceptImageMimeType,
+      capture: capture,
+    );
     return files.isEmpty
         ? null
         : _imageResizer.resizeImageIfNeeded(
@@ -67,7 +73,10 @@ class ImagePickerPlugin extends ImagePickerPlatform {
   Future<List<XFile>> getMultiImageWithOptions({
     MultiImagePickerOptions options = const MultiImagePickerOptions(),
   }) async {
-    final List<XFile> images = await getFiles(accept: _kAcceptImageMimeType, multiple: true);
+    final List<XFile> images = await getFiles(
+      accept: _kAcceptImageMimeType,
+      multiple: true,
+    );
     final Iterable<Future<XFile>> resized = images.map(
       (XFile image) => _imageResizer.resizeImageIfNeeded(
         image,
@@ -98,8 +107,14 @@ class ImagePickerPlugin extends ImagePickerPlatform {
     CameraDevice preferredCameraDevice = CameraDevice.rear,
     Duration? maxDuration,
   }) async {
-    final String? capture = computeCaptureAttribute(source, preferredCameraDevice);
-    final List<XFile> files = await getFiles(accept: _kAcceptVideoMimeType, capture: capture);
+    final String? capture = computeCaptureAttribute(
+      source,
+      preferredCameraDevice,
+    );
+    final List<XFile> files = await getFiles(
+      accept: _kAcceptVideoMimeType,
+      capture: capture,
+    );
     return files.isEmpty ? null : files.first;
   }
 
@@ -107,7 +122,10 @@ class ImagePickerPlugin extends ImagePickerPlatform {
   Future<List<XFile>> getMultiVideoWithOptions({
     MultiVideoPickerOptions options = const MultiVideoPickerOptions(),
   }) async {
-    final List<XFile> files = await getFiles(accept: _kAcceptVideoMimeType, multiple: true);
+    final List<XFile> files = await getFiles(
+      accept: _kAcceptVideoMimeType,
+      multiple: true,
+    );
     return files;
   }
 
@@ -143,8 +161,16 @@ class ImagePickerPlugin extends ImagePickerPlatform {
   ///
   /// See https://caniuse.com/#feat=html-media-capture
   @visibleForTesting
-  Future<List<XFile>> getFiles({String? accept, String? capture, bool multiple = false}) {
-    final web.HTMLInputElement input = createInputElement(accept, capture, multiple: multiple);
+  Future<List<XFile>> getFiles({
+    String? accept,
+    String? capture,
+    bool multiple = false,
+  }) {
+    final web.HTMLInputElement input = createInputElement(
+      accept,
+      capture,
+      multiple: multiple,
+    );
     _injectAndActivate(input);
 
     return _getSelectedXFiles(input).whenComplete(() {
@@ -247,7 +273,9 @@ class ImagePickerPlugin extends ImagePickerPlatform {
               web.URL.createObjectURL(file),
               name: file.name,
               length: file.size,
-              lastModified: DateTime.fromMillisecondsSinceEpoch(file.lastModified),
+              lastModified: DateTime.fromMillisecondsSinceEpoch(
+                file.lastModified,
+              ),
               mimeType: file.type,
             );
           }).toList(),
@@ -274,8 +302,9 @@ class ImagePickerPlugin extends ImagePickerPlatform {
   web.Element _ensureInitialized(String id) {
     web.Element? target = web.document.querySelector('#$id');
     if (target == null) {
-      final web.Element targetElement = web.document.createElement('flt-image-picker-inputs')
-        ..id = id;
+      final web.Element targetElement = web.document.createElement(
+        'flt-image-picker-inputs',
+      )..id = id;
       // TODO(ditman): Append inside the `view` of the running app.
       web.document.body!.append(targetElement);
       target = targetElement;

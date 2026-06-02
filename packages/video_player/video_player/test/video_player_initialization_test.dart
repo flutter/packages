@@ -15,11 +15,14 @@ void main() {
   late FakeVideoPlayerPlatform fakeVideoPlayerPlatform;
 
   setUp(() {
-    VideoPlayerPlatform.instance = fakeVideoPlayerPlatform = FakeVideoPlayerPlatform();
+    VideoPlayerPlatform.instance = fakeVideoPlayerPlatform =
+        FakeVideoPlayerPlatform();
   });
 
   test('plugin initialized', () async {
-    final controller = VideoPlayerController.networkUrl(Uri.parse('https://127.0.0.1'));
+    final controller = VideoPlayerController.networkUrl(
+      Uri.parse('https://127.0.0.1'),
+    );
     await controller.initialize();
     expect(fakeVideoPlayerPlatform.calls.first, 'init');
   });
@@ -39,7 +42,9 @@ void main() {
 
     expect(
       () {
-        fakeVideoPlayerPlatform.calls.singleWhere((String call) => call == 'setWebOptions');
+        fakeVideoPlayerPlatform.calls.singleWhere(
+          (String call) => call == 'setWebOptions',
+        );
       },
       returnsNormally,
       reason: 'setWebOptions must be called exactly once.',
@@ -62,7 +67,9 @@ void main() {
 
     expect(
       () {
-        fakeVideoPlayerPlatform.calls.singleWhere((String call) => call == 'createWithOptions');
+        fakeVideoPlayerPlatform.calls.singleWhere(
+          (String call) => call == 'createWithOptions',
+        );
       },
       returnsNormally,
       reason: 'createWithOptions must be called exactly once.',

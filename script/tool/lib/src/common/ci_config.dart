@@ -30,7 +30,10 @@ class CIConfig {
     // excerpts.
     final requiresExcerpts = loaded['exempt_from_excerpts'] != true;
 
-    return CIConfig._(isBatchRelease: isBatchRelease, requiresExcerpts: requiresExcerpts);
+    return CIConfig._(
+      isBatchRelease: isBatchRelease,
+      requiresExcerpts: requiresExcerpts,
+    );
   }
 
   static const Map<String, Object?> _validCIConfigSyntax = <String, Object?>{

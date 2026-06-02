@@ -29,7 +29,9 @@ void main() {
   });
 
   test('getTemporaryPath uses fallback if TMPDIR is unset', () async {
-    final PathProviderPlatform plugin = PathProviderLinux.private(environment: <String, String>{});
+    final PathProviderPlatform plugin = PathProviderLinux.private(
+      environment: <String, String>{},
+    );
     expect(await plugin.getTemporaryPath(), '/tmp');
   });
 
@@ -39,18 +41,24 @@ void main() {
       applicationId: 'com.example.Test',
     );
     // Note this will fail if ${xdg.dataHome.path}/path_provider_linux_test_binary exists on the local filesystem.
-    expect(await plugin.getApplicationSupportPath(), '${xdg.dataHome.path}/com.example.Test');
-  });
-
-  test('getApplicationSupportPath uses executable name if no application Id', () async {
-    final PathProviderPlatform plugin = PathProviderLinux.private(
-      executableName: 'path_provider_linux_test_binary',
-    );
     expect(
       await plugin.getApplicationSupportPath(),
-      '${xdg.dataHome.path}/path_provider_linux_test_binary',
+      '${xdg.dataHome.path}/com.example.Test',
     );
   });
+
+  test(
+    'getApplicationSupportPath uses executable name if no application Id',
+    () async {
+      final PathProviderPlatform plugin = PathProviderLinux.private(
+        executableName: 'path_provider_linux_test_binary',
+      );
+      expect(
+        await plugin.getApplicationSupportPath(),
+        '${xdg.dataHome.path}/path_provider_linux_test_binary',
+      );
+    },
+  );
 
   test('getApplicationDocumentsPath', () async {
     final PathProviderPlatform plugin = PathProviderPlatform.instance;

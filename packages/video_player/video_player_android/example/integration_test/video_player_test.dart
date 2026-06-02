@@ -47,7 +47,10 @@ void main() {
       DataSource(sourceType: DataSourceType.asset, asset: _videoAssetKey),
     ))!;
 
-    expect(await _getDuration(player, playerId), const Duration(seconds: 7, milliseconds: 540));
+    expect(
+      await _getDuration(player, playerId),
+      const Duration(seconds: 7, milliseconds: 540),
+    );
 
     await player.dispose(playerId);
   });
@@ -72,7 +75,10 @@ void main() {
     await player.seekTo(playerId, const Duration(seconds: 3));
     await tester.pumpAndSettle(_playDuration);
 
-    expect(await player.getPosition(playerId), greaterThanOrEqualTo(const Duration(seconds: 3)));
+    expect(
+      await player.getPosition(playerId),
+      greaterThanOrEqualTo(const Duration(seconds: 3)),
+    );
     await player.dispose(playerId);
   });
 
@@ -97,7 +103,9 @@ void main() {
     final Directory directory = await getTemporaryDirectory();
     final file = File('${directory.path}/video.mp4');
     await file.writeAsBytes(
-      Uint8List.fromList((await rootBundle.load(_videoAssetKey)).buffer.asUint8List()),
+      Uint8List.fromList(
+        (await rootBundle.load(_videoAssetKey)).buffer.asUint8List(),
+      ),
     );
 
     final int playerId = (await player.create(
@@ -146,7 +154,10 @@ Future<Duration> _getDuration(AndroidVideoPlayer player, int playerId) {
       });
 }
 
-Future<DurationRange> _getBufferingRange(AndroidVideoPlayer player, int playerId) {
+Future<DurationRange> _getBufferingRange(
+  AndroidVideoPlayer player,
+  int playerId,
+) {
   return player
       .videoEventsFor(playerId)
       .firstWhere((VideoEvent event) {

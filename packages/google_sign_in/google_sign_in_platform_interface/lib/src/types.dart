@@ -9,7 +9,11 @@ import 'package:flutter/foundation.dart' show immutable;
 @immutable
 class GoogleSignInException implements Exception {
   /// Crceates a new exception with the given information.
-  const GoogleSignInException({required this.code, this.description, this.details});
+  const GoogleSignInException({
+    required this.code,
+    this.description,
+    this.details,
+  });
 
   /// The type of failure.
   final GoogleSignInExceptionCode code;
@@ -21,7 +25,8 @@ class GoogleSignInException implements Exception {
   final Object? details;
 
   @override
-  String toString() => 'GoogleSignInException(code $code, $description, $details)';
+  String toString() =>
+      'GoogleSignInException(code $code, $description, $details)';
 }
 
 /// Types of [GoogleSignInException]s, as indicated by
@@ -75,7 +80,12 @@ enum GoogleSignInExceptionCode {
 @immutable
 class InitParameters {
   /// The parameters to use when initializing the sign in process.
-  const InitParameters({this.clientId, this.serverClientId, this.nonce, this.hostedDomain});
+  const InitParameters({
+    this.clientId,
+    this.serverClientId,
+    this.nonce,
+    this.hostedDomain,
+  });
 
   /// The OAuth client ID of the app.
   ///
@@ -306,7 +316,8 @@ class ClientAuthorizationTokenData {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is ClientAuthorizationTokenData && other.accessToken == accessToken;
+    return other is ClientAuthorizationTokenData &&
+        other.accessToken == accessToken;
   }
 }
 
@@ -328,7 +339,8 @@ class ServerAuthorizationTokenData {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is ServerAuthorizationTokenData && other.serverAuthCode == serverAuthCode;
+    return other is ServerAuthorizationTokenData &&
+        other.serverAuthCode == serverAuthCode;
   }
 }
 
@@ -339,7 +351,10 @@ class ServerAuthorizationTokenData {
 @immutable
 class AuthenticationResults {
   /// Creates a new result object.
-  const AuthenticationResults({required this.user, required this.authenticationTokens});
+  const AuthenticationResults({
+    required this.user,
+    required this.authenticationTokens,
+  });
 
   /// The user that was authenticated.
   final GoogleSignInUserData user;
@@ -366,7 +381,8 @@ class ClearAuthorizationTokenParams {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is ClearAuthorizationTokenParams && other.accessToken == accessToken;
+    return other is ClearAuthorizationTokenParams &&
+        other.accessToken == accessToken;
   }
 }
 
@@ -401,7 +417,10 @@ sealed class AuthenticationEvent {
 @immutable
 class AuthenticationEventSignIn extends AuthenticationEvent {
   /// Creates an event for a successful sign in.
-  const AuthenticationEventSignIn({required this.user, required this.authenticationTokens});
+  const AuthenticationEventSignIn({
+    required this.user,
+    required this.authenticationTokens,
+  });
 
   /// The user that was authenticated.
   final GoogleSignInUserData user;

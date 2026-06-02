@@ -14,7 +14,8 @@ import 'src/messages.g.dart';
 /// An implementation of [UrlLauncherPlatform] for Linux.
 class UrlLauncherLinux extends UrlLauncherPlatform {
   /// Creates a new URL launcher instance.
-  UrlLauncherLinux({@visibleForTesting UrlLauncherApi? api}) : _hostApi = api ?? UrlLauncherApi();
+  UrlLauncherLinux({@visibleForTesting UrlLauncherApi? api})
+    : _hostApi = api ?? UrlLauncherApi();
 
   /// Registers this class as the default instance of [UrlLauncherPlatform].
   static void registerWith() {
@@ -54,7 +55,10 @@ class UrlLauncherLinux extends UrlLauncherPlatform {
       // TODO(stuartmorgan): Standardize errors across the entire plugin,
       // instead of using PlatformException. This preserves the pre-Pigeon
       // behavior of the C code returning this error response.
-      throw PlatformException(code: 'Launch Error', message: 'Failed to launch URL: $error');
+      throw PlatformException(
+        code: 'Launch Error',
+        message: 'Failed to launch URL: $error',
+      );
     }
     return true;
   }

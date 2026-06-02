@@ -39,7 +39,9 @@ final GoRouter _router = GoRouter(
                     // Change the opacity of the screen using a Curve based on the the animation's
                     // value
                     return FadeTransition(
-                      opacity: CurveTween(curve: Curves.easeInOut).animate(animation),
+                      opacity: CurveTween(
+                        curve: Curves.easeInOut,
+                      ).animate(animation),
                       child: child,
                     );
                   },
@@ -123,8 +125,11 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 48),
             ElevatedButton(
-              onPressed: () => context.go('/custom-reverse-transition-duration'),
-              child: const Text('Go to the Custom Reverse Transition Duration Screen'),
+              onPressed: () =>
+                  context.go('/custom-reverse-transition-duration'),
+              child: const Text(
+                'Go to the Custom Reverse Transition Duration Screen',
+              ),
             ),
           ],
         ),

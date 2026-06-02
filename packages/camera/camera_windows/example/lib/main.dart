@@ -97,7 +97,10 @@ class _MyAppState extends State<MyApp> {
       final int cameraIndex = _cameraIndex % _cameras.length;
       final CameraDescription camera = _cameras[cameraIndex];
 
-      cameraId = await CameraPlatform.instance.createCameraWithSettings(camera, _mediaSettings);
+      cameraId = await CameraPlatform.instance.createCameraWithSettings(
+        camera,
+        _mediaSettings,
+      );
 
       unawaited(_errorStreamSubscription?.cancel());
       _errorStreamSubscription = CameraPlatform.instance
@@ -143,7 +146,8 @@ class _MyAppState extends State<MyApp> {
           _cameraIndex = 0;
           _previewSize = null;
           _recording = false;
-          _cameraInfo = 'Failed to initialize camera: ${e.code}: ${e.description}';
+          _cameraInfo =
+              'Failed to initialize camera: ${e.code}: ${e.description}';
         });
       }
     }
@@ -167,7 +171,8 @@ class _MyAppState extends State<MyApp> {
       } on CameraException catch (e) {
         if (mounted) {
           setState(() {
-            _cameraInfo = 'Failed to dispose camera: ${e.code}: ${e.description}';
+            _cameraInfo =
+                'Failed to dispose camera: ${e.code}: ${e.description}';
           });
         }
       }
@@ -188,7 +193,9 @@ class _MyAppState extends State<MyApp> {
       if (!_recording) {
         await CameraPlatform.instance.startVideoRecording(_cameraId);
       } else {
-        final XFile file = await CameraPlatform.instance.stopVideoRecording(_cameraId);
+        final XFile file = await CameraPlatform.instance.stopVideoRecording(
+          _cameraId,
+        );
 
         _showInSnackBar('Video captured to: ${file.path}');
       }
@@ -295,11 +302,15 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    final List<DropdownMenuItem<ResolutionPreset>> resolutionItems = ResolutionPreset.values
-        .map<DropdownMenuItem<ResolutionPreset>>((ResolutionPreset value) {
-          return DropdownMenuItem<ResolutionPreset>(value: value, child: Text(value.toString()));
-        })
-        .toList();
+    final List<DropdownMenuItem<ResolutionPreset>> resolutionItems =
+        ResolutionPreset.values.map<DropdownMenuItem<ResolutionPreset>>((
+          ResolutionPreset value,
+        ) {
+          return DropdownMenuItem<ResolutionPreset>(
+            value: value,
+            child: Text(value.toString()),
+          );
+        }).toList();
 
     return MaterialApp(
       scaffoldMessengerKey: _scaffoldMessengerKey,
@@ -337,8 +348,12 @@ class _MyAppState extends State<MyApp> {
                   ),
                   const SizedBox(width: 20),
                   ElevatedButton(
-                    onPressed: _initialized ? _disposeCurrentCamera : _initializeCamera,
-                    child: Text(_initialized ? 'Dispose camera' : 'Create camera'),
+                    onPressed: _initialized
+                        ? _disposeCurrentCamera
+                        : _initializeCamera,
+                    child: Text(
+                      _initialized ? 'Dispose camera' : 'Create camera',
+                    ),
                   ),
                   const SizedBox(width: 5),
                   ElevatedButton(
@@ -348,7 +363,9 @@ class _MyAppState extends State<MyApp> {
                   const SizedBox(width: 5),
                   ElevatedButton(
                     onPressed: _initialized ? _togglePreview : null,
-                    child: Text(_previewPaused ? 'Resume preview' : 'Pause preview'),
+                    child: Text(
+                      _previewPaused ? 'Resume preview' : 'Pause preview',
+                    ),
                   ),
                   const SizedBox(width: 5),
                   ElevatedButton(
@@ -357,7 +374,10 @@ class _MyAppState extends State<MyApp> {
                   ),
                   if (_cameras.length > 1) ...<Widget>[
                     const SizedBox(width: 5),
-                    ElevatedButton(onPressed: _switchCamera, child: const Text('Switch camera')),
+                    ElevatedButton(
+                      onPressed: _switchCamera,
+                      child: const Text('Switch camera'),
+                    ),
                   ],
                 ],
               ),

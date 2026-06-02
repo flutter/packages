@@ -24,7 +24,8 @@ import 'package:mockito/src/dummies.dart' as _i3;
 // ignore_for_file: subtype_of_sealed_class
 
 class _FakeSignInResult_0 extends _i1.SmartFake implements _i2.SignInResult {
-  _FakeSignInResult_0(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+  _FakeSignInResult_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [GoogleSignInApi].
@@ -60,7 +61,10 @@ class MockGoogleSignInApi extends _i1.Mock implements _i2.GoogleSignInApi {
       (super.noSuchMethod(
             Invocation.method(#restorePreviousSignIn, []),
             returnValue: _i4.Future<_i2.SignInResult>.value(
-              _FakeSignInResult_0(this, Invocation.method(#restorePreviousSignIn, [])),
+              _FakeSignInResult_0(
+                this,
+                Invocation.method(#restorePreviousSignIn, []),
+              ),
             ),
           )
           as _i4.Future<_i2.SignInResult>);
@@ -70,13 +74,18 @@ class MockGoogleSignInApi extends _i1.Mock implements _i2.GoogleSignInApi {
       (super.noSuchMethod(
             Invocation.method(#signIn, [scopeHint, nonce]),
             returnValue: _i4.Future<_i2.SignInResult>.value(
-              _FakeSignInResult_0(this, Invocation.method(#signIn, [scopeHint, nonce])),
+              _FakeSignInResult_0(
+                this,
+                Invocation.method(#signIn, [scopeHint, nonce]),
+              ),
             ),
           )
           as _i4.Future<_i2.SignInResult>);
 
   @override
-  _i4.Future<_i2.SignInResult> getRefreshedAuthorizationTokens(String? userId) =>
+  _i4.Future<_i2.SignInResult> getRefreshedAuthorizationTokens(
+    String? userId,
+  ) =>
       (super.noSuchMethod(
             Invocation.method(#getRefreshedAuthorizationTokens, [userId]),
             returnValue: _i4.Future<_i2.SignInResult>.value(
@@ -89,11 +98,17 @@ class MockGoogleSignInApi extends _i1.Mock implements _i2.GoogleSignInApi {
           as _i4.Future<_i2.SignInResult>);
 
   @override
-  _i4.Future<_i2.SignInResult> addScopes(List<String>? scopes, String? userId) =>
+  _i4.Future<_i2.SignInResult> addScopes(
+    List<String>? scopes,
+    String? userId,
+  ) =>
       (super.noSuchMethod(
             Invocation.method(#addScopes, [scopes, userId]),
             returnValue: _i4.Future<_i2.SignInResult>.value(
-              _FakeSignInResult_0(this, Invocation.method(#addScopes, [scopes, userId])),
+              _FakeSignInResult_0(
+                this,
+                Invocation.method(#addScopes, [scopes, userId]),
+              ),
             ),
           )
           as _i4.Future<_i2.SignInResult>);

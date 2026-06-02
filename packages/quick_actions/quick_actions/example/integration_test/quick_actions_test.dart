@@ -18,6 +18,9 @@ void main() {
       localizedTitle: 'Action one',
       icon: 'AppIcon',
     );
-    expect(quickActions.setShortcutItems(<ShortcutItem>[shortCutItem]), completes);
+    expect(
+      quickActions.setShortcutItems(<ShortcutItem>[shortCutItem]),
+      completes,
+    );
   });
 }

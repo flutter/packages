@@ -43,7 +43,9 @@ class CameraOptions {
       return true;
     }
 
-    return other is CameraOptions && other.audio == audio && other.video == video;
+    return other is CameraOptions &&
+        other.audio == audio &&
+        other.video == video;
   }
 
   @override
@@ -84,7 +86,12 @@ class AudioConstraints {
 class VideoConstraints {
   /// Creates a new instance of [VideoConstraints]
   /// with the given constraints.
-  const VideoConstraints({this.facingMode, this.width, this.height, this.deviceId});
+  const VideoConstraints({
+    this.facingMode,
+    this.width,
+    this.height,
+    this.deviceId,
+  });
 
   /// The facing mode of the video track.
   final FacingModeConstraint? facingMode;
@@ -157,7 +164,8 @@ enum CameraType {
 class FacingModeConstraint {
   /// Creates a new instance of [FacingModeConstraint]
   /// with [ideal] constraint set to [type].
-  factory FacingModeConstraint(CameraType type) => FacingModeConstraint._(ideal: type);
+  factory FacingModeConstraint(CameraType type) =>
+      FacingModeConstraint._(ideal: type);
 
   /// Creates a new instance of [FacingModeConstraint]
   /// with the given [ideal] and [exact] constraints.
@@ -165,7 +173,8 @@ class FacingModeConstraint {
 
   /// Creates a new instance of [FacingModeConstraint]
   /// with [exact] constraint set to [type].
-  factory FacingModeConstraint.exact(CameraType type) => FacingModeConstraint._(exact: type);
+  factory FacingModeConstraint.exact(CameraType type) =>
+      FacingModeConstraint._(exact: type);
 
   /// The ideal facing mode constraint.
   ///
@@ -194,7 +203,9 @@ class FacingModeConstraint {
       return true;
     }
 
-    return other is FacingModeConstraint && other.ideal == ideal && other.exact == exact;
+    return other is FacingModeConstraint &&
+        other.ideal == ideal &&
+        other.exact == exact;
   }
 
   @override
