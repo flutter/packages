@@ -29,7 +29,7 @@ bool initializeTessellatorFromFlutterCache() {
     abi: Abi.current(),
   );
   if (subpath == null) {
-    print('Tesselation not supported on ${Platform.localeName}');
+    print('Tesselation not supported on ${Abi.current()}');
     return false;
   }
   final tessellator = '${cacheRoot.path}/artifacts/engine/$subpath';

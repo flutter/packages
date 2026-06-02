@@ -29,7 +29,7 @@ bool initializePathOpsFromFlutterCache() {
     abi: Abi.current(),
   );
   if (subpath == null) {
-    print('path_ops not supported on ${Platform.localeName}');
+    print('path_ops not supported on ${Abi.current()}');
     return false;
   }
   final pathops = '${cacheRoot.path}/artifacts/engine/$subpath';
