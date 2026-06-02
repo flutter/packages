@@ -4,19 +4,17 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ffi' as ffi;
+import 'dart:ffi';
 import 'dart:io';
-
-import 'package:objective_c/objective_c.dart';
+import 'dart:ui';
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:flutter/foundation.dart';
+import 'package:objective_c/objective_c.dart';
 import 'package:path/path.dart' as path;
 
-import 'cross_file_darwin_apis.g.dart';
-import 'security_scoped_resource.dart';
-
 import 'ffi_bindings.g.dart';
+import 'security_scoped_resource.dart';
 
 /// Base implementation of [PlatformScopedStorageXFileCreationParams] for iOS
 /// and macOS.
@@ -29,8 +27,7 @@ sealed class DarwinScopedStorageXFileCreationParams
   /// scoped uri.
   factory DarwinScopedStorageXFileCreationParams.securityScoped({
     required String uri,
-  }) =>
-      SecurityScopedDarwinScopedStorageXFileCreationParams(uri: uri);
+  }) => SecurityScopedDarwinScopedStorageXFileCreationParams(uri: uri);
 
   /// Constructs a [DarwinScopedStorageXFileCreationParams] with an asset
   /// identifier from the Photos Library.
@@ -193,16 +190,34 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
 
   @override
   Future<DateTime?> lastModified() async {
-    throw UnsupportedError('');
+    if (_tryGetAsset(identifier: params.uri) case final PHAsset asset) {
+      final NSDate? date = asset.modificationDate;
+      if (date != null) {
+        DateTime.fromMillisecondsSinceEpoch(
+          (date.timeIntervalSince1970 * 1000).round(),
+        );
+      }
+    }
+
+    return null;
   }
 
   @override
   Future<int?> length() async {
-    try {
-      throw UnsupportedError('');
-    } on FileSystemException {
-      return null;
+    if (_tryGetAsset(identifier: params.uri) case final PHAsset asset) {
+      final NSArray resources = PHAssetResource.assetResourcesForAsset(asset);
+      final ObjCObject? firstObject = resources.firstObject;
+
+      if (firstObject != null) {
+        final PHAssetResource resource = PHAssetResource.as(firstObject);
+        final ObjCObject? fileSize = resource.valueForKey(NSString('fileSize'));
+        print(fileSize);
+
+        return null;
+      }
     }
+
+    return null;
   }
 
   @override
@@ -210,11 +225,45 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
       throw UnsupportedError('');
 
   @override
-  Future<Uint8List> readAsBytes() => throw UnsupportedError('');
+  Future<Uint8List> readAsBytes() {
+    if (_tryGetAsset(identifier: params.uri) case final PHAsset asset) {
+      final PHImageManager manager = PHImageManager.defaultManager();
+      final PHImageRequestOptions options = PHImageRequestOptions.new$();
+      options.isNetworkAccessAllowed = true;
+
+      final bytesCompleter = Completer<Uint8List>();
+      void resultHandler(
+        NSData? imageData,
+        NSString? dataUti,
+        CGImagePropertyOrientation orientation,
+        NSDictionary? info,
+      ) {
+        if (imageData != null) {
+          runOnPlatformThread(() {
+            final Uint8List bytes = _extractBytesToUint8List(imageData);
+            bytesCompleter.complete(bytes);
+          });
+        }
+      }
+
+      manager.requestImageDataAndOrientationForAsset(
+        asset,
+        options: options,
+        resultHandler:
+            ObjCBlock_ffiVoid_NSData_NSString_CGImagePropertyOrientation_NSDictionary.listener(
+              resultHandler,
+            ),
+      );
+      return bytesCompleter.future;
+    }
+
+    throw Error();
+  }
 
   @override
-  Future<String> readAsString({Encoding encoding = utf8}) =>
-      throw UnsupportedError('');
+  Future<String> readAsString({Encoding encoding = utf8}) async {
+    return encoding.decode(await readAsBytes());
+  }
 
   @override
   Future<bool> canRead() {
@@ -222,10 +271,46 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
   }
 
   @override
-  Future<bool> exists() async => throw UnsupportedError('');
+  Future<bool> exists() async => _tryGetAsset(identifier: params.uri) != null;
 
   @override
-  Future<String?> name() async => throw UnsupportedError('');
+  Future<String?> name() async {
+    if (_tryGetAsset(identifier: params.uri) case final PHAsset asset) {
+      final NSArray resources = PHAssetResource.assetResourcesForAsset(asset);
+      final ObjCObject? firstObject = resources.firstObject;
+
+      if (firstObject != null) {
+        final PHAssetResource resource = PHAssetResource.as(firstObject);
+        return resource.originalFilename.toDartString();
+      }
+    }
+
+    return null;
+  }
+
+  PHAsset? _tryGetAsset({required String identifier}) {
+    final PHFetchResult result = PHAsset.fetchAssetsWithLocalIdentifiers(
+      <String>[params.uri].toNSArray(),
+    );
+    final ObjCObject? firstObject = result.firstObject;
+    if (firstObject != null) {
+      return PHAsset.as(firstObject);
+    }
+
+    return null;
+  }
+
+  Uint8List _extractBytesToUint8List(NSData data) {
+    int length = data.length;
+
+    if (length == 0) {
+      return Uint8List(0);
+    }
+
+    final Pointer<Uint8> uint8Pointer = data.bytes.cast<Uint8>();
+    final Uint8List byteView = uint8Pointer.asTypedList(length);
+    return Uint8List.fromList(byteView);
+  }
 }
 
 /// Provides platform specific features for

@@ -29,6 +29,7 @@ void main() {
         include: (Declaration declaration) {
           return <String>{
             'NSFileManager',
+            'NSObject',
             'PHAsset',
             'PHAssetResource',
             'PHAssetResourceManager',
@@ -38,6 +39,9 @@ void main() {
           }.contains(declaration.originalName);
         },
         includeMember: (Declaration declaration, String member) {
+          if (declaration.originalName == 'PHImageRequestOptions') {
+            print('Apple: $member');
+          }
           final String interfaceName = declaration.originalName;
           final signature = member;
           return switch (interfaceName) {
@@ -45,6 +49,7 @@ void main() {
               'defaultManager',
               'isReadableFileAtPath:',
             }.contains(signature),
+            'NSObject' => <String>{'valueForKey:'}.contains(signature),
             'PHAsset' => <String>{
               'fetchAssetsWithLocalIdentifiers:options:',
               'modificationDate',
@@ -63,7 +68,8 @@ void main() {
               'requestImageDataAndOrientationForAsset:options:resultHandler:',
             }.contains(signature),
             'PHImageRequestOptions' => <String>{
-              'isNetworkAccessAllowed',
+              'new',
+              'setNetworkAccessAllowed:',
             }.contains(signature),
             _ => false,
           };

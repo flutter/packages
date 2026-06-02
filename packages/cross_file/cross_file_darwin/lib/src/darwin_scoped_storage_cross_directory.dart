@@ -9,7 +9,6 @@ import 'package:cross_file_platform_interface/cross_file_platform_interface.dart
 import 'package:flutter/foundation.dart';
 import 'package:objective_c/objective_c.dart';
 
-import 'cross_file_darwin_apis.g.dart';
 import 'darwin_scoped_storage_cross_file.dart';
 import 'ffi_bindings.g.dart';
 import 'security_scoped_resource.dart';

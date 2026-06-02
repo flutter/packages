@@ -66,6 +66,557 @@ _FoundationFFI_wrapBlockingBlock_xtuoz7(
   ffi.Pointer<objc.DOBJC_Context> context,
 );
 
+late final _class_NSObject = objc.getClass("NSObject");
+late final _sel_version = objc.registerName("version");
+final _objc_msgSend_1hz7y9r = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Long Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+        )
+      >
+    >()
+    .asFunction<
+      int Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+      )
+    >();
+late final _sel_setVersion_ = objc.registerName("setVersion:");
+final _objc_msgSend_4sp4xj = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Long,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        int,
+      )
+    >();
+late final _sel_classForCoder = objc.registerName("classForCoder");
+final _objc_msgSend_151sglz = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Pointer<objc.ObjCObjectImpl> Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObjectImpl> Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+      )
+    >();
+late final _sel_replacementObjectForCoder_ = objc.registerName(
+  "replacementObjectForCoder:",
+);
+final _objc_msgSend_1sotr3r = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Pointer<objc.ObjCObjectImpl> Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObjectImpl> Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
+late final _sel_awakeAfterUsingCoder_ = objc.registerName(
+  "awakeAfterUsingCoder:",
+);
+
+/// NSCoderMethods
+extension NSCoderMethods on objc.NSObject {
+  /// awakeAfterUsingCoder:
+  objc.ObjCObject? awakeAfterUsingCoder(objc.NSCoder coder) {
+    objc.checkOsVersionInternal(
+      'NSObject.awakeAfterUsingCoder:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_1sotr3r(
+      object$.ref.retainAndReturnPointer(),
+      _sel_awakeAfterUsingCoder_,
+      coder.ref.pointer,
+    );
+    return $ret.address == 0
+        ? null
+        : objc.ObjCObject($ret, retain: false, release: true);
+  }
+
+  /// classForCoder
+  objc.ObjCObject get classForCoder {
+    objc.checkOsVersionInternal(
+      'NSObject.classForCoder',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_classForCoder);
+    return objc.ObjCObject($ret, retain: true, release: true);
+  }
+
+  /// replacementObjectForCoder:
+  objc.ObjCObject? replacementObjectForCoder(objc.NSCoder coder) {
+    objc.checkOsVersionInternal(
+      'NSObject.replacementObjectForCoder:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_1sotr3r(
+      object$.ref.pointer,
+      _sel_replacementObjectForCoder_,
+      coder.ref.pointer,
+    );
+    return $ret.address == 0
+        ? null
+        : objc.ObjCObject($ret, retain: true, release: true);
+  }
+
+  /// setVersion:
+  static void setVersion(int aVersion) {
+    objc.checkOsVersionInternal(
+      'NSObject.setVersion:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_4sp4xj(_class_NSObject, _sel_setVersion_, aVersion);
+  }
+
+  /// version
+  static int version() {
+    objc.checkOsVersionInternal(
+      'NSObject.version',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    return _objc_msgSend_1hz7y9r(_class_NSObject, _sel_version);
+  }
+}
+
+late final _sel_poseAsClass_ = objc.registerName("poseAsClass:");
+final _objc_msgSend_xtuoz7 = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
+
+/// NSDeprecatedMethods
+extension NSDeprecatedMethods on objc.NSObject {
+  /// poseAsClass:
+  static void poseAsClass(objc.ObjCObject aClass) {
+    objc.checkOsVersionInternal(
+      'NSObject.poseAsClass:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      _class_NSObject,
+      _sel_poseAsClass_,
+      aClass.ref.pointer,
+    );
+  }
+}
+
+late final _sel_autoContentAccessingProxy = objc.registerName(
+  "autoContentAccessingProxy",
+);
+
+/// NSDiscardableContentProxy
+extension NSDiscardableContentProxy on objc.NSObject {
+  /// autoContentAccessingProxy
+  objc.ObjCObject get autoContentAccessingProxy {
+    objc.checkOsVersionInternal(
+      'NSObject.autoContentAccessingProxy',
+      iOS: (false, (4, 0, 0)),
+      macOS: (false, (10, 6, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(
+      object$.ref.pointer,
+      _sel_autoContentAccessingProxy,
+    );
+    return objc.ObjCObject($ret, retain: true, release: true);
+  }
+}
+
+late final _sel_attemptRecoveryFromError_optionIndex_delegate_didRecoverSelector_contextInfo_ =
+    objc.registerName(
+      "attemptRecoveryFromError:optionIndex:delegate:didRecoverSelector:contextInfo:",
+    );
+final _objc_msgSend_10txwc9 = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.UnsignedLong,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<ffi.Void>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        int,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<ffi.Void>,
+      )
+    >();
+late final _sel_attemptRecoveryFromError_optionIndex_ = objc.registerName(
+  "attemptRecoveryFromError:optionIndex:",
+);
+final _objc_msgSend_z7gxsm = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Bool Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.UnsignedLong,
+        )
+      >
+    >()
+    .asFunction<
+      bool Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        int,
+      )
+    >();
+
+/// NSErrorRecoveryAttempting
+extension NSErrorRecoveryAttempting on objc.NSObject {
+  /// attemptRecoveryFromError:optionIndex:
+  bool attemptRecoveryFromError(
+    objc.NSError error, {
+    required int optionIndex,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.attemptRecoveryFromError:optionIndex:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    return _objc_msgSend_z7gxsm(
+      object$.ref.pointer,
+      _sel_attemptRecoveryFromError_optionIndex_,
+      error.ref.pointer,
+      optionIndex,
+    );
+  }
+
+  /// attemptRecoveryFromError:optionIndex:delegate:didRecoverSelector:contextInfo:
+  void attemptRecoveryFromError$1(
+    objc.NSError error, {
+    required int optionIndex,
+    objc.ObjCObject? delegate,
+    required ffi.Pointer<objc.ObjCSelector> didRecoverSelector,
+    required ffi.Pointer<ffi.Void> contextInfo,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.attemptRecoveryFromError:optionIndex:delegate:didRecoverSelector:contextInfo:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_10txwc9(
+      object$.ref.pointer,
+      _sel_attemptRecoveryFromError_optionIndex_delegate_didRecoverSelector_contextInfo_,
+      error.ref.pointer,
+      optionIndex,
+      delegate?.ref.pointer ?? ffi.nullptr,
+      didRecoverSelector,
+      contextInfo,
+    );
+  }
+}
+
+late final _sel_performSelector_withObject_afterDelay_inModes_ = objc
+    .registerName("performSelector:withObject:afterDelay:inModes:");
+final _objc_msgSend_t8ajot = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Double,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        double,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
+late final _sel_performSelector_withObject_afterDelay_ = objc.registerName(
+  "performSelector:withObject:afterDelay:",
+);
+final _objc_msgSend_7ql5kn = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Double,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        double,
+      )
+    >();
+late final _sel_cancelPreviousPerformRequestsWithTarget_selector_object_ = objc
+    .registerName("cancelPreviousPerformRequestsWithTarget:selector:object:");
+final _objc_msgSend_1ygbbzi = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
+late final _sel_cancelPreviousPerformRequestsWithTarget_ = objc.registerName(
+  "cancelPreviousPerformRequestsWithTarget:",
+);
+
+/// NSDelayedPerforming
+extension NSDelayedPerforming on objc.NSObject {
+  /// performSelector:withObject:afterDelay:
+  void performSelector(
+    ffi.Pointer<objc.ObjCSelector> aSelector, {
+    objc.ObjCObject? withObject,
+    required double afterDelay,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.performSelector:withObject:afterDelay:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_7ql5kn(
+      object$.ref.pointer,
+      _sel_performSelector_withObject_afterDelay_,
+      aSelector,
+      withObject?.ref.pointer ?? ffi.nullptr,
+      afterDelay,
+    );
+  }
+
+  /// performSelector:withObject:afterDelay:inModes:
+  void performSelector$1(
+    ffi.Pointer<objc.ObjCSelector> aSelector, {
+    objc.ObjCObject? withObject,
+    required double afterDelay,
+    required objc.NSArray inModes,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.performSelector:withObject:afterDelay:inModes:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_t8ajot(
+      object$.ref.pointer,
+      _sel_performSelector_withObject_afterDelay_inModes_,
+      aSelector,
+      withObject?.ref.pointer ?? ffi.nullptr,
+      afterDelay,
+      inModes.ref.pointer,
+    );
+  }
+
+  /// cancelPreviousPerformRequestsWithTarget:
+  static void cancelPreviousPerformRequestsWithTarget(objc.ObjCObject aTarget) {
+    objc.checkOsVersionInternal(
+      'NSObject.cancelPreviousPerformRequestsWithTarget:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      _class_NSObject,
+      _sel_cancelPreviousPerformRequestsWithTarget_,
+      aTarget.ref.pointer,
+    );
+  }
+
+  /// cancelPreviousPerformRequestsWithTarget:selector:object:
+  static void cancelPreviousPerformRequestsWithTarget$1(
+    objc.ObjCObject aTarget, {
+    required ffi.Pointer<objc.ObjCSelector> selector,
+    objc.ObjCObject? object,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.cancelPreviousPerformRequestsWithTarget:selector:object:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_1ygbbzi(
+      _class_NSObject,
+      _sel_cancelPreviousPerformRequestsWithTarget_selector_object_,
+      aTarget.ref.pointer,
+      selector,
+      object?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+}
+
+late final _sel_URL_resourceDataDidBecomeAvailable_ = objc.registerName(
+  "URL:resourceDataDidBecomeAvailable:",
+);
+final _objc_msgSend_pfv6jd = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
+late final _sel_URLResourceDidFinishLoading_ = objc.registerName(
+  "URLResourceDidFinishLoading:",
+);
+late final _sel_URLResourceDidCancelLoading_ = objc.registerName(
+  "URLResourceDidCancelLoading:",
+);
+late final _sel_URL_resourceDidFailLoadingWithReason_ = objc.registerName(
+  "URL:resourceDidFailLoadingWithReason:",
+);
+
+/// NSURLClient
+extension NSURLClient on objc.NSObject {
+  /// URL:resourceDataDidBecomeAvailable:
+  void URL(
+    objc.NSURL sender, {
+    required objc.NSData resourceDataDidBecomeAvailable,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.URL:resourceDataDidBecomeAvailable:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_pfv6jd(
+      object$.ref.pointer,
+      _sel_URL_resourceDataDidBecomeAvailable_,
+      sender.ref.pointer,
+      resourceDataDidBecomeAvailable.ref.pointer,
+    );
+  }
+
+  /// URL:resourceDidFailLoadingWithReason:
+  void URL$1(
+    objc.NSURL sender, {
+    required objc.NSString resourceDidFailLoadingWithReason,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.URL:resourceDidFailLoadingWithReason:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_pfv6jd(
+      object$.ref.pointer,
+      _sel_URL_resourceDidFailLoadingWithReason_,
+      sender.ref.pointer,
+      resourceDidFailLoadingWithReason.ref.pointer,
+    );
+  }
+
+  /// URLResourceDidCancelLoading:
+  void URLResourceDidCancelLoading(objc.NSURL sender) {
+    objc.checkOsVersionInternal(
+      'NSObject.URLResourceDidCancelLoading:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      object$.ref.pointer,
+      _sel_URLResourceDidCancelLoading_,
+      sender.ref.pointer,
+    );
+  }
+
+  /// URLResourceDidFinishLoading:
+  void URLResourceDidFinishLoading(objc.NSURL sender) {
+    objc.checkOsVersionInternal(
+      'NSObject.URLResourceDidFinishLoading:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      object$.ref.pointer,
+      _sel_URLResourceDidFinishLoading_,
+      sender.ref.pointer,
+    );
+  }
+}
+
 late final _class_NSFileManager = objc.getClass("NSFileManager");
 late final _sel_isKindOfClass_ = objc.registerName("isKindOfClass:");
 final _objc_msgSend_19nvye5 = objc.msgSendPointer
@@ -86,21 +637,6 @@ final _objc_msgSend_19nvye5 = objc.msgSendPointer
       )
     >();
 late final _sel_defaultManager = objc.registerName("defaultManager");
-final _objc_msgSend_151sglz = objc.msgSendPointer
-    .cast<
-      ffi.NativeFunction<
-        ffi.Pointer<objc.ObjCObjectImpl> Function(
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCSelector>,
-        )
-      >
-    >()
-    .asFunction<
-      ffi.Pointer<objc.ObjCObjectImpl> Function(
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCSelector>,
-      )
-    >();
 late final _sel_isReadableFileAtPath_ = objc.registerName(
   "isReadableFileAtPath:",
 );
@@ -111,23 +647,6 @@ late final _sel_temporaryDirectory = objc.registerName("temporaryDirectory");
 late final _sel_homeDirectoryForUser_ = objc.registerName(
   "homeDirectoryForUser:",
 );
-final _objc_msgSend_1sotr3r = objc.msgSendPointer
-    .cast<
-      ffi.NativeFunction<
-        ffi.Pointer<objc.ObjCObjectImpl> Function(
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCSelector>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-        )
-      >
-    >()
-    .asFunction<
-      ffi.Pointer<objc.ObjCObjectImpl> Function(
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCSelector>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-      )
-    >();
 
 /// NSUserInformation
 extension NSUserInformation on NSFileManager {
@@ -218,6 +737,2566 @@ extension NSFileManager$Methods on NSFileManager {
       object$.ref.pointer,
       _sel_isReadableFileAtPath_,
       path.ref.pointer,
+    );
+  }
+}
+
+late final _sel_fileManager_shouldProceedAfterError_ = objc.registerName(
+  "fileManager:shouldProceedAfterError:",
+);
+final _objc_msgSend_1lsax7n = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Bool Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      bool Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
+late final _sel_fileManager_willProcessPath_ = objc.registerName(
+  "fileManager:willProcessPath:",
+);
+
+/// NSCopyLinkMoveHandler
+extension NSCopyLinkMoveHandler on objc.NSObject {
+  /// fileManager:shouldProceedAfterError:
+  bool fileManager(
+    NSFileManager fm, {
+    required objc.NSDictionary shouldProceedAfterError,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.fileManager:shouldProceedAfterError:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    return _objc_msgSend_1lsax7n(
+      object$.ref.pointer,
+      _sel_fileManager_shouldProceedAfterError_,
+      fm.ref.pointer,
+      shouldProceedAfterError.ref.pointer,
+    );
+  }
+
+  /// fileManager:willProcessPath:
+  void fileManager$1(
+    NSFileManager fm, {
+    required objc.NSString willProcessPath,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.fileManager:willProcessPath:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_pfv6jd(
+      object$.ref.pointer,
+      _sel_fileManager_willProcessPath_,
+      fm.ref.pointer,
+      willProcessPath.ref.pointer,
+    );
+  }
+}
+
+late final _sel_accessInstanceVariablesDirectly = objc.registerName(
+  "accessInstanceVariablesDirectly",
+);
+final _objc_msgSend_91o635 = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Bool Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+        )
+      >
+    >()
+    .asFunction<
+      bool Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+      )
+    >();
+late final _sel_valueForKey_ = objc.registerName("valueForKey:");
+late final _sel_setValue_forKey_ = objc.registerName("setValue:forKey:");
+late final _sel_validateValue_forKey_error_ = objc.registerName(
+  "validateValue:forKey:error:",
+);
+final _objc_msgSend_1j9bhml = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Bool Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<ffi.Pointer<objc.ObjCObjectImpl>>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<ffi.Pointer<objc.ObjCObjectImpl>>,
+        )
+      >
+    >()
+    .asFunction<
+      bool Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<ffi.Pointer<objc.ObjCObjectImpl>>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<ffi.Pointer<objc.ObjCObjectImpl>>,
+      )
+    >();
+late final _sel_mutableArrayValueForKey_ = objc.registerName(
+  "mutableArrayValueForKey:",
+);
+late final _sel_mutableOrderedSetValueForKey_ = objc.registerName(
+  "mutableOrderedSetValueForKey:",
+);
+late final _sel_mutableSetValueForKey_ = objc.registerName(
+  "mutableSetValueForKey:",
+);
+late final _sel_valueForKeyPath_ = objc.registerName("valueForKeyPath:");
+late final _sel_setValue_forKeyPath_ = objc.registerName(
+  "setValue:forKeyPath:",
+);
+late final _sel_validateValue_forKeyPath_error_ = objc.registerName(
+  "validateValue:forKeyPath:error:",
+);
+late final _sel_mutableArrayValueForKeyPath_ = objc.registerName(
+  "mutableArrayValueForKeyPath:",
+);
+late final _sel_mutableOrderedSetValueForKeyPath_ = objc.registerName(
+  "mutableOrderedSetValueForKeyPath:",
+);
+late final _sel_mutableSetValueForKeyPath_ = objc.registerName(
+  "mutableSetValueForKeyPath:",
+);
+late final _sel_valueForUndefinedKey_ = objc.registerName(
+  "valueForUndefinedKey:",
+);
+late final _sel_setValue_forUndefinedKey_ = objc.registerName(
+  "setValue:forUndefinedKey:",
+);
+late final _sel_setNilValueForKey_ = objc.registerName("setNilValueForKey:");
+late final _sel_dictionaryWithValuesForKeys_ = objc.registerName(
+  "dictionaryWithValuesForKeys:",
+);
+late final _sel_setValuesForKeysWithDictionary_ = objc.registerName(
+  "setValuesForKeysWithDictionary:",
+);
+
+/// NSKeyValueCoding
+extension NSKeyValueCoding on objc.NSObject {
+  /// dictionaryWithValuesForKeys:
+  objc.NSDictionary dictionaryWithValuesForKeys(objc.NSArray keys) {
+    objc.checkOsVersionInternal(
+      'NSObject.dictionaryWithValuesForKeys:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_1sotr3r(
+      object$.ref.pointer,
+      _sel_dictionaryWithValuesForKeys_,
+      keys.ref.pointer,
+    );
+    return objc.NSDictionary.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// mutableArrayValueForKey:
+  objc.NSMutableArray mutableArrayValueForKey(objc.NSString key) {
+    objc.checkOsVersionInternal(
+      'NSObject.mutableArrayValueForKey:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_1sotr3r(
+      object$.ref.pointer,
+      _sel_mutableArrayValueForKey_,
+      key.ref.pointer,
+    );
+    return objc.NSMutableArray.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// mutableArrayValueForKeyPath:
+  objc.NSMutableArray mutableArrayValueForKeyPath(objc.NSString keyPath) {
+    objc.checkOsVersionInternal(
+      'NSObject.mutableArrayValueForKeyPath:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_1sotr3r(
+      object$.ref.pointer,
+      _sel_mutableArrayValueForKeyPath_,
+      keyPath.ref.pointer,
+    );
+    return objc.NSMutableArray.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// mutableOrderedSetValueForKey:
+  objc.NSMutableOrderedSet mutableOrderedSetValueForKey(objc.NSString key) {
+    objc.checkOsVersionInternal(
+      'NSObject.mutableOrderedSetValueForKey:',
+      iOS: (false, (5, 0, 0)),
+      macOS: (false, (10, 7, 0)),
+    );
+    final $ret = _objc_msgSend_1sotr3r(
+      object$.ref.pointer,
+      _sel_mutableOrderedSetValueForKey_,
+      key.ref.pointer,
+    );
+    return objc.NSMutableOrderedSet.fromPointer(
+      $ret,
+      retain: true,
+      release: true,
+    );
+  }
+
+  /// mutableOrderedSetValueForKeyPath:
+  objc.NSMutableOrderedSet mutableOrderedSetValueForKeyPath(
+    objc.NSString keyPath,
+  ) {
+    objc.checkOsVersionInternal(
+      'NSObject.mutableOrderedSetValueForKeyPath:',
+      iOS: (false, (5, 0, 0)),
+      macOS: (false, (10, 7, 0)),
+    );
+    final $ret = _objc_msgSend_1sotr3r(
+      object$.ref.pointer,
+      _sel_mutableOrderedSetValueForKeyPath_,
+      keyPath.ref.pointer,
+    );
+    return objc.NSMutableOrderedSet.fromPointer(
+      $ret,
+      retain: true,
+      release: true,
+    );
+  }
+
+  /// mutableSetValueForKey:
+  objc.NSMutableSet mutableSetValueForKey(objc.NSString key) {
+    objc.checkOsVersionInternal(
+      'NSObject.mutableSetValueForKey:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_1sotr3r(
+      object$.ref.pointer,
+      _sel_mutableSetValueForKey_,
+      key.ref.pointer,
+    );
+    return objc.NSMutableSet.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// mutableSetValueForKeyPath:
+  objc.NSMutableSet mutableSetValueForKeyPath(objc.NSString keyPath) {
+    objc.checkOsVersionInternal(
+      'NSObject.mutableSetValueForKeyPath:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_1sotr3r(
+      object$.ref.pointer,
+      _sel_mutableSetValueForKeyPath_,
+      keyPath.ref.pointer,
+    );
+    return objc.NSMutableSet.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// setNilValueForKey:
+  void setNilValueForKey(objc.NSString key) {
+    objc.checkOsVersionInternal(
+      'NSObject.setNilValueForKey:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      object$.ref.pointer,
+      _sel_setNilValueForKey_,
+      key.ref.pointer,
+    );
+  }
+
+  /// setValue:forKey:
+  void setValue(objc.ObjCObject? value, {required objc.NSString forKey}) {
+    objc.checkOsVersionInternal(
+      'NSObject.setValue:forKey:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_pfv6jd(
+      object$.ref.pointer,
+      _sel_setValue_forKey_,
+      value?.ref.pointer ?? ffi.nullptr,
+      forKey.ref.pointer,
+    );
+  }
+
+  /// setValue:forKeyPath:
+  void setValue$1(objc.ObjCObject? value, {required objc.NSString forKeyPath}) {
+    objc.checkOsVersionInternal(
+      'NSObject.setValue:forKeyPath:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_pfv6jd(
+      object$.ref.pointer,
+      _sel_setValue_forKeyPath_,
+      value?.ref.pointer ?? ffi.nullptr,
+      forKeyPath.ref.pointer,
+    );
+  }
+
+  /// setValue:forUndefinedKey:
+  void setValue$2(
+    objc.ObjCObject? value, {
+    required objc.NSString forUndefinedKey,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.setValue:forUndefinedKey:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_pfv6jd(
+      object$.ref.pointer,
+      _sel_setValue_forUndefinedKey_,
+      value?.ref.pointer ?? ffi.nullptr,
+      forUndefinedKey.ref.pointer,
+    );
+  }
+
+  /// setValuesForKeysWithDictionary:
+  void setValuesForKeysWithDictionary(objc.NSDictionary keyedValues) {
+    objc.checkOsVersionInternal(
+      'NSObject.setValuesForKeysWithDictionary:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      object$.ref.pointer,
+      _sel_setValuesForKeysWithDictionary_,
+      keyedValues.ref.pointer,
+    );
+  }
+
+  /// validateValue:forKey:error:
+  bool validateValue(
+    ffi.Pointer<ffi.Pointer<objc.ObjCObjectImpl>> ioValue, {
+    required objc.NSString forKey,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.validateValue:forKey:error:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $err = pkg_ffi.calloc<ffi.Pointer<objc.ObjCObjectImpl>>();
+    try {
+      final $ret = _objc_msgSend_1j9bhml(
+        object$.ref.pointer,
+        _sel_validateValue_forKey_error_,
+        ioValue,
+        forKey.ref.pointer,
+        $err,
+      );
+      objc.NSErrorException.checkErrorPointer($err.value);
+      return $ret;
+    } finally {
+      pkg_ffi.calloc.free($err);
+    }
+  }
+
+  /// validateValue:forKeyPath:error:
+  bool validateValue$1(
+    ffi.Pointer<ffi.Pointer<objc.ObjCObjectImpl>> ioValue, {
+    required objc.NSString forKeyPath,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.validateValue:forKeyPath:error:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $err = pkg_ffi.calloc<ffi.Pointer<objc.ObjCObjectImpl>>();
+    try {
+      final $ret = _objc_msgSend_1j9bhml(
+        object$.ref.pointer,
+        _sel_validateValue_forKeyPath_error_,
+        ioValue,
+        forKeyPath.ref.pointer,
+        $err,
+      );
+      objc.NSErrorException.checkErrorPointer($err.value);
+      return $ret;
+    } finally {
+      pkg_ffi.calloc.free($err);
+    }
+  }
+
+  /// valueForKey:
+  objc.ObjCObject? valueForKey(objc.NSString key) {
+    objc.checkOsVersionInternal(
+      'NSObject.valueForKey:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_1sotr3r(
+      object$.ref.pointer,
+      _sel_valueForKey_,
+      key.ref.pointer,
+    );
+    return $ret.address == 0
+        ? null
+        : objc.ObjCObject($ret, retain: true, release: true);
+  }
+
+  /// valueForKeyPath:
+  objc.ObjCObject? valueForKeyPath(objc.NSString keyPath) {
+    objc.checkOsVersionInternal(
+      'NSObject.valueForKeyPath:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_1sotr3r(
+      object$.ref.pointer,
+      _sel_valueForKeyPath_,
+      keyPath.ref.pointer,
+    );
+    return $ret.address == 0
+        ? null
+        : objc.ObjCObject($ret, retain: true, release: true);
+  }
+
+  /// valueForUndefinedKey:
+  objc.ObjCObject? valueForUndefinedKey(objc.NSString key) {
+    objc.checkOsVersionInternal(
+      'NSObject.valueForUndefinedKey:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_1sotr3r(
+      object$.ref.pointer,
+      _sel_valueForUndefinedKey_,
+      key.ref.pointer,
+    );
+    return $ret.address == 0
+        ? null
+        : objc.ObjCObject($ret, retain: true, release: true);
+  }
+
+  /// accessInstanceVariablesDirectly
+  static bool getAccessInstanceVariablesDirectly() {
+    objc.checkOsVersionInternal(
+      'NSObject.accessInstanceVariablesDirectly',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    return _objc_msgSend_91o635(
+      _class_NSObject,
+      _sel_accessInstanceVariablesDirectly,
+    );
+  }
+}
+
+late final _sel_useStoredAccessor = objc.registerName("useStoredAccessor");
+late final _sel_storedValueForKey_ = objc.registerName("storedValueForKey:");
+late final _sel_takeStoredValue_forKey_ = objc.registerName(
+  "takeStoredValue:forKey:",
+);
+late final _sel_takeValue_forKey_ = objc.registerName("takeValue:forKey:");
+late final _sel_takeValue_forKeyPath_ = objc.registerName(
+  "takeValue:forKeyPath:",
+);
+late final _sel_handleQueryWithUnboundKey_ = objc.registerName(
+  "handleQueryWithUnboundKey:",
+);
+late final _sel_handleTakeValue_forUnboundKey_ = objc.registerName(
+  "handleTakeValue:forUnboundKey:",
+);
+late final _sel_unableToSetNilForKey_ = objc.registerName(
+  "unableToSetNilForKey:",
+);
+late final _sel_valuesForKeys_ = objc.registerName("valuesForKeys:");
+late final _sel_takeValuesFromDictionary_ = objc.registerName(
+  "takeValuesFromDictionary:",
+);
+
+/// NSDeprecatedKeyValueCoding
+extension NSDeprecatedKeyValueCoding on objc.NSObject {
+  /// handleQueryWithUnboundKey:
+  objc.ObjCObject? handleQueryWithUnboundKey(objc.NSString key) {
+    objc.checkOsVersionInternal(
+      'NSObject.handleQueryWithUnboundKey:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_1sotr3r(
+      object$.ref.pointer,
+      _sel_handleQueryWithUnboundKey_,
+      key.ref.pointer,
+    );
+    return $ret.address == 0
+        ? null
+        : objc.ObjCObject($ret, retain: true, release: true);
+  }
+
+  /// handleTakeValue:forUnboundKey:
+  void handleTakeValue(
+    objc.ObjCObject? value, {
+    required objc.NSString forUnboundKey,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.handleTakeValue:forUnboundKey:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_pfv6jd(
+      object$.ref.pointer,
+      _sel_handleTakeValue_forUnboundKey_,
+      value?.ref.pointer ?? ffi.nullptr,
+      forUnboundKey.ref.pointer,
+    );
+  }
+
+  /// storedValueForKey:
+  objc.ObjCObject? storedValueForKey(objc.NSString key) {
+    objc.checkOsVersionInternal(
+      'NSObject.storedValueForKey:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_1sotr3r(
+      object$.ref.pointer,
+      _sel_storedValueForKey_,
+      key.ref.pointer,
+    );
+    return $ret.address == 0
+        ? null
+        : objc.ObjCObject($ret, retain: true, release: true);
+  }
+
+  /// takeStoredValue:forKey:
+  void takeStoredValue(
+    objc.ObjCObject? value, {
+    required objc.NSString forKey,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.takeStoredValue:forKey:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_pfv6jd(
+      object$.ref.pointer,
+      _sel_takeStoredValue_forKey_,
+      value?.ref.pointer ?? ffi.nullptr,
+      forKey.ref.pointer,
+    );
+  }
+
+  /// takeValue:forKey:
+  void takeValue(objc.ObjCObject? value, {required objc.NSString forKey}) {
+    objc.checkOsVersionInternal(
+      'NSObject.takeValue:forKey:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_pfv6jd(
+      object$.ref.pointer,
+      _sel_takeValue_forKey_,
+      value?.ref.pointer ?? ffi.nullptr,
+      forKey.ref.pointer,
+    );
+  }
+
+  /// takeValue:forKeyPath:
+  void takeValue$1(
+    objc.ObjCObject? value, {
+    required objc.NSString forKeyPath,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.takeValue:forKeyPath:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_pfv6jd(
+      object$.ref.pointer,
+      _sel_takeValue_forKeyPath_,
+      value?.ref.pointer ?? ffi.nullptr,
+      forKeyPath.ref.pointer,
+    );
+  }
+
+  /// takeValuesFromDictionary:
+  void takeValuesFromDictionary(objc.NSDictionary properties) {
+    objc.checkOsVersionInternal(
+      'NSObject.takeValuesFromDictionary:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      object$.ref.pointer,
+      _sel_takeValuesFromDictionary_,
+      properties.ref.pointer,
+    );
+  }
+
+  /// unableToSetNilForKey:
+  void unableToSetNilForKey(objc.NSString key) {
+    objc.checkOsVersionInternal(
+      'NSObject.unableToSetNilForKey:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      object$.ref.pointer,
+      _sel_unableToSetNilForKey_,
+      key.ref.pointer,
+    );
+  }
+
+  /// valuesForKeys:
+  objc.NSDictionary valuesForKeys(objc.NSArray keys) {
+    objc.checkOsVersionInternal(
+      'NSObject.valuesForKeys:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_1sotr3r(
+      object$.ref.pointer,
+      _sel_valuesForKeys_,
+      keys.ref.pointer,
+    );
+    return objc.NSDictionary.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// useStoredAccessor
+  static bool useStoredAccessor() {
+    objc.checkOsVersionInternal(
+      'NSObject.useStoredAccessor',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    return _objc_msgSend_91o635(_class_NSObject, _sel_useStoredAccessor);
+  }
+}
+
+late final _sel_observeValueForKeyPath_ofObject_change_context_ = objc
+    .registerName("observeValueForKeyPath:ofObject:change:context:");
+final _objc_msgSend_1pl4k3n = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<ffi.Void>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<ffi.Void>,
+      )
+    >();
+
+/// NSKeyValueObserving
+extension NSKeyValueObserving on objc.NSObject {
+  /// observeValueForKeyPath:ofObject:change:context:
+  void observeValueForKeyPath(
+    objc.NSString? keyPath, {
+    objc.ObjCObject? ofObject,
+    objc.NSDictionary? change,
+    required ffi.Pointer<ffi.Void> context,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.observeValueForKeyPath:ofObject:change:context:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_1pl4k3n(
+      object$.ref.pointer,
+      _sel_observeValueForKeyPath_ofObject_change_context_,
+      keyPath?.ref.pointer ?? ffi.nullptr,
+      ofObject?.ref.pointer ?? ffi.nullptr,
+      change?.ref.pointer ?? ffi.nullptr,
+      context,
+    );
+  }
+}
+
+late final _sel_addObserver_forKeyPath_options_context_ = objc.registerName(
+  "addObserver:forKeyPath:options:context:",
+);
+final _objc_msgSend_akk2cd = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.UnsignedLong,
+          ffi.Pointer<ffi.Void>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        int,
+        ffi.Pointer<ffi.Void>,
+      )
+    >();
+late final _sel_removeObserver_forKeyPath_context_ = objc.registerName(
+  "removeObserver:forKeyPath:context:",
+);
+final _objc_msgSend_1jed5jl = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<ffi.Void>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<ffi.Void>,
+      )
+    >();
+late final _sel_removeObserver_forKeyPath_ = objc.registerName(
+  "removeObserver:forKeyPath:",
+);
+
+/// NSKeyValueObserverRegistration
+extension NSKeyValueObserverRegistration on objc.NSObject {
+  /// addObserver:forKeyPath:options:context:
+  void addObserver(
+    objc.NSObject observer, {
+    required objc.NSString forKeyPath,
+    required int options,
+    required ffi.Pointer<ffi.Void> context,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.addObserver:forKeyPath:options:context:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_akk2cd(
+      object$.ref.pointer,
+      _sel_addObserver_forKeyPath_options_context_,
+      observer.ref.pointer,
+      forKeyPath.ref.pointer,
+      options,
+      context,
+    );
+  }
+
+  /// removeObserver:forKeyPath:
+  void removeObserver(
+    objc.NSObject observer, {
+    required objc.NSString forKeyPath,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.removeObserver:forKeyPath:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_pfv6jd(
+      object$.ref.pointer,
+      _sel_removeObserver_forKeyPath_,
+      observer.ref.pointer,
+      forKeyPath.ref.pointer,
+    );
+  }
+
+  /// removeObserver:forKeyPath:context:
+  void removeObserver$1(
+    objc.NSObject observer, {
+    required objc.NSString forKeyPath,
+    required ffi.Pointer<ffi.Void> context,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.removeObserver:forKeyPath:context:',
+      iOS: (false, (5, 0, 0)),
+      macOS: (false, (10, 7, 0)),
+    );
+    _objc_msgSend_1jed5jl(
+      object$.ref.pointer,
+      _sel_removeObserver_forKeyPath_context_,
+      observer.ref.pointer,
+      forKeyPath.ref.pointer,
+      context,
+    );
+  }
+}
+
+late final _sel_willChangeValueForKey_ = objc.registerName(
+  "willChangeValueForKey:",
+);
+late final _sel_didChangeValueForKey_ = objc.registerName(
+  "didChangeValueForKey:",
+);
+late final _sel_willChange_valuesAtIndexes_forKey_ = objc.registerName(
+  "willChange:valuesAtIndexes:forKey:",
+);
+final _objc_msgSend_1diehjo = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.UnsignedLong,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        int,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
+late final _sel_didChange_valuesAtIndexes_forKey_ = objc.registerName(
+  "didChange:valuesAtIndexes:forKey:",
+);
+late final _sel_willChangeValueForKey_withSetMutation_usingObjects_ = objc
+    .registerName("willChangeValueForKey:withSetMutation:usingObjects:");
+final _objc_msgSend_7w1jp7 = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.UnsignedLong,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        int,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
+late final _sel_didChangeValueForKey_withSetMutation_usingObjects_ = objc
+    .registerName("didChangeValueForKey:withSetMutation:usingObjects:");
+
+/// NSKeyValueObserverNotification
+extension NSKeyValueObserverNotification on objc.NSObject {
+  /// didChange:valuesAtIndexes:forKey:
+  void didChange(
+    objc.NSKeyValueChange changeKind, {
+    required objc.NSIndexSet valuesAtIndexes,
+    required objc.NSString forKey,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.didChange:valuesAtIndexes:forKey:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_1diehjo(
+      object$.ref.pointer,
+      _sel_didChange_valuesAtIndexes_forKey_,
+      changeKind.value,
+      valuesAtIndexes.ref.pointer,
+      forKey.ref.pointer,
+    );
+  }
+
+  /// didChangeValueForKey:
+  void didChangeValueForKey(objc.NSString key) {
+    objc.checkOsVersionInternal(
+      'NSObject.didChangeValueForKey:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      object$.ref.pointer,
+      _sel_didChangeValueForKey_,
+      key.ref.pointer,
+    );
+  }
+
+  /// didChangeValueForKey:withSetMutation:usingObjects:
+  void didChangeValueForKey$1(
+    objc.NSString key, {
+    required objc.NSKeyValueSetMutationKind withSetMutation,
+    required objc.NSSet usingObjects,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.didChangeValueForKey:withSetMutation:usingObjects:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_7w1jp7(
+      object$.ref.pointer,
+      _sel_didChangeValueForKey_withSetMutation_usingObjects_,
+      key.ref.pointer,
+      withSetMutation.value,
+      usingObjects.ref.pointer,
+    );
+  }
+
+  /// willChange:valuesAtIndexes:forKey:
+  void willChange(
+    objc.NSKeyValueChange changeKind, {
+    required objc.NSIndexSet valuesAtIndexes,
+    required objc.NSString forKey,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.willChange:valuesAtIndexes:forKey:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_1diehjo(
+      object$.ref.pointer,
+      _sel_willChange_valuesAtIndexes_forKey_,
+      changeKind.value,
+      valuesAtIndexes.ref.pointer,
+      forKey.ref.pointer,
+    );
+  }
+
+  /// willChangeValueForKey:
+  void willChangeValueForKey(objc.NSString key) {
+    objc.checkOsVersionInternal(
+      'NSObject.willChangeValueForKey:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      object$.ref.pointer,
+      _sel_willChangeValueForKey_,
+      key.ref.pointer,
+    );
+  }
+
+  /// willChangeValueForKey:withSetMutation:usingObjects:
+  void willChangeValueForKey$1(
+    objc.NSString key, {
+    required objc.NSKeyValueSetMutationKind withSetMutation,
+    required objc.NSSet usingObjects,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.willChangeValueForKey:withSetMutation:usingObjects:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_7w1jp7(
+      object$.ref.pointer,
+      _sel_willChangeValueForKey_withSetMutation_usingObjects_,
+      key.ref.pointer,
+      withSetMutation.value,
+      usingObjects.ref.pointer,
+    );
+  }
+}
+
+late final _sel_keyPathsForValuesAffectingValueForKey_ = objc.registerName(
+  "keyPathsForValuesAffectingValueForKey:",
+);
+late final _sel_automaticallyNotifiesObserversForKey_ = objc.registerName(
+  "automaticallyNotifiesObserversForKey:",
+);
+late final _sel_observationInfo = objc.registerName("observationInfo");
+final _objc_msgSend_6ex6p5 = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Pointer<ffi.Void> Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<ffi.Void> Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+      )
+    >();
+late final _sel_setObservationInfo_ = objc.registerName("setObservationInfo:");
+final _objc_msgSend_ovsamd = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<ffi.Void>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<ffi.Void>,
+      )
+    >();
+
+/// NSKeyValueObservingCustomization
+extension NSKeyValueObservingCustomization on objc.NSObject {
+  /// observationInfo
+  ffi.Pointer<ffi.Void> get observationInfo {
+    objc.checkOsVersionInternal(
+      'NSObject.observationInfo',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    return _objc_msgSend_6ex6p5(object$.ref.pointer, _sel_observationInfo);
+  }
+
+  /// setObservationInfo:
+  set observationInfo(ffi.Pointer<ffi.Void> value) {
+    objc.checkOsVersionInternal(
+      'NSObject.setObservationInfo:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_ovsamd(object$.ref.pointer, _sel_setObservationInfo_, value);
+  }
+
+  /// automaticallyNotifiesObserversForKey:
+  static bool automaticallyNotifiesObserversForKey(objc.NSString key) {
+    objc.checkOsVersionInternal(
+      'NSObject.automaticallyNotifiesObserversForKey:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    return _objc_msgSend_19nvye5(
+      _class_NSObject,
+      _sel_automaticallyNotifiesObserversForKey_,
+      key.ref.pointer,
+    );
+  }
+
+  /// keyPathsForValuesAffectingValueForKey:
+  static objc.NSSet keyPathsForValuesAffectingValueForKey(objc.NSString key) {
+    objc.checkOsVersionInternal(
+      'NSObject.keyPathsForValuesAffectingValueForKey:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 5, 0)),
+    );
+    final $ret = _objc_msgSend_1sotr3r(
+      _class_NSObject,
+      _sel_keyPathsForValuesAffectingValueForKey_,
+      key.ref.pointer,
+    );
+    return objc.NSSet.fromPointer($ret, retain: true, release: true);
+  }
+}
+
+late final _sel_setKeys_triggerChangeNotificationsForDependentKey_ = objc
+    .registerName("setKeys:triggerChangeNotificationsForDependentKey:");
+
+/// NSDeprecatedKeyValueObservingCustomization
+extension NSDeprecatedKeyValueObservingCustomization on objc.NSObject {
+  /// setKeys:triggerChangeNotificationsForDependentKey:
+  static void setKeys(
+    objc.NSArray keys, {
+    required objc.NSString triggerChangeNotificationsForDependentKey,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.setKeys:triggerChangeNotificationsForDependentKey:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_pfv6jd(
+      _class_NSObject,
+      _sel_setKeys_triggerChangeNotificationsForDependentKey_,
+      keys.ref.pointer,
+      triggerChangeNotificationsForDependentKey.ref.pointer,
+    );
+  }
+}
+
+/// WARNING: NSKeyValueSharedObserversSnapshot is a stub. To generate bindings for this class, include
+/// NSKeyValueSharedObserversSnapshot in your config's objc-interfaces list.
+///
+/// NSKeyValueSharedObserversSnapshot
+extension type NSKeyValueSharedObserversSnapshot._(objc.ObjCObject object$)
+    implements objc.ObjCObject, objc.NSObject {
+  /// Constructs a [NSKeyValueSharedObserversSnapshot] that points to the same underlying object as [other].
+  NSKeyValueSharedObserversSnapshot.as(objc.ObjCObject other)
+    : object$ = other {
+    objc.checkOsVersionInternal(
+      'NSKeyValueSharedObserversSnapshot',
+      iOS: (false, (18, 0, 0)),
+      macOS: (false, (15, 0, 0)),
+    );
+  }
+
+  /// Constructs a [NSKeyValueSharedObserversSnapshot] that wraps the given raw object pointer.
+  NSKeyValueSharedObserversSnapshot.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
+    objc.checkOsVersionInternal(
+      'NSKeyValueSharedObserversSnapshot',
+      iOS: (false, (18, 0, 0)),
+      macOS: (false, (15, 0, 0)),
+    );
+  }
+}
+
+late final _sel_setSharedObservers_ = objc.registerName("setSharedObservers:");
+
+/// NSKeyValueSharedObserverRegistration
+extension NSKeyValueSharedObserverRegistration on objc.NSObject {
+  /// setSharedObservers:
+  void setSharedObservers(NSKeyValueSharedObserversSnapshot? sharedObservers) {
+    objc.checkOsVersionInternal(
+      'NSObject.setSharedObservers:',
+      iOS: (false, (18, 0, 0)),
+      macOS: (false, (15, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      object$.ref.pointer,
+      _sel_setSharedObservers_,
+      sharedObservers?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+}
+
+/// WARNING: NSKeyedArchiver is a stub. To generate bindings for this class, include
+/// NSKeyedArchiver in your config's objc-interfaces list.
+///
+/// NSKeyedArchiver
+extension type NSKeyedArchiver._(objc.ObjCObject object$)
+    implements objc.ObjCObject, objc.NSCoder {
+  /// Constructs a [NSKeyedArchiver] that points to the same underlying object as [other].
+  NSKeyedArchiver.as(objc.ObjCObject other) : object$ = other {}
+
+  /// Constructs a [NSKeyedArchiver] that wraps the given raw object pointer.
+  NSKeyedArchiver.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {}
+}
+
+late final _sel_classForKeyedArchiver = objc.registerName(
+  "classForKeyedArchiver",
+);
+late final _sel_replacementObjectForKeyedArchiver_ = objc.registerName(
+  "replacementObjectForKeyedArchiver:",
+);
+late final _sel_classFallbacksForKeyedArchiver = objc.registerName(
+  "classFallbacksForKeyedArchiver",
+);
+
+/// NSKeyedArchiverObjectSubstitution
+extension NSKeyedArchiverObjectSubstitution on objc.NSObject {
+  /// classForKeyedArchiver
+  objc.ObjCObject? get classForKeyedArchiver {
+    objc.checkOsVersionInternal(
+      'NSObject.classForKeyedArchiver',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(
+      object$.ref.pointer,
+      _sel_classForKeyedArchiver,
+    );
+    return $ret.address == 0
+        ? null
+        : objc.ObjCObject($ret, retain: true, release: true);
+  }
+
+  /// replacementObjectForKeyedArchiver:
+  objc.ObjCObject? replacementObjectForKeyedArchiver(NSKeyedArchiver archiver) {
+    objc.checkOsVersionInternal(
+      'NSObject.replacementObjectForKeyedArchiver:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_1sotr3r(
+      object$.ref.pointer,
+      _sel_replacementObjectForKeyedArchiver_,
+      archiver.ref.pointer,
+    );
+    return $ret.address == 0
+        ? null
+        : objc.ObjCObject($ret, retain: true, release: true);
+  }
+
+  /// classFallbacksForKeyedArchiver
+  static objc.NSArray classFallbacksForKeyedArchiver() {
+    objc.checkOsVersionInternal(
+      'NSObject.classFallbacksForKeyedArchiver',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(
+      _class_NSObject,
+      _sel_classFallbacksForKeyedArchiver,
+    );
+    return objc.NSArray.fromPointer($ret, retain: true, release: true);
+  }
+}
+
+late final _sel_classForKeyedUnarchiver = objc.registerName(
+  "classForKeyedUnarchiver",
+);
+
+/// NSKeyedUnarchiverObjectSubstitution
+extension NSKeyedUnarchiverObjectSubstitution on objc.NSObject {
+  /// classForKeyedUnarchiver
+  static objc.ObjCObject classForKeyedUnarchiver() {
+    objc.checkOsVersionInternal(
+      'NSObject.classForKeyedUnarchiver',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(
+      _class_NSObject,
+      _sel_classForKeyedUnarchiver,
+    );
+    return objc.ObjCObject($ret, retain: true, release: true);
+  }
+}
+
+/// WARNING: NSThread is a stub. To generate bindings for this class, include
+/// NSThread in your config's objc-interfaces list.
+///
+/// NSThread
+extension type NSThread._(objc.ObjCObject object$)
+    implements objc.ObjCObject, objc.NSObject {
+  /// Constructs a [NSThread] that points to the same underlying object as [other].
+  NSThread.as(objc.ObjCObject other) : object$ = other {}
+
+  /// Constructs a [NSThread] that wraps the given raw object pointer.
+  NSThread.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {}
+}
+
+late final _sel_performSelectorOnMainThread_withObject_waitUntilDone_modes_ =
+    objc.registerName(
+      "performSelectorOnMainThread:withObject:waitUntilDone:modes:",
+    );
+final _objc_msgSend_1fdou4m = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Bool,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        bool,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
+late final _sel_performSelectorOnMainThread_withObject_waitUntilDone_ = objc
+    .registerName("performSelectorOnMainThread:withObject:waitUntilDone:");
+final _objc_msgSend_tsocn4 = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Bool,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        bool,
+      )
+    >();
+late final _sel_performSelector_onThread_withObject_waitUntilDone_modes_ = objc
+    .registerName("performSelector:onThread:withObject:waitUntilDone:modes:");
+final _objc_msgSend_1cc1buo = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Bool,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        bool,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
+late final _sel_performSelector_onThread_withObject_waitUntilDone_ = objc
+    .registerName("performSelector:onThread:withObject:waitUntilDone:");
+final _objc_msgSend_1whyima = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Bool,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        bool,
+      )
+    >();
+late final _sel_performSelectorInBackground_withObject_ = objc.registerName(
+  "performSelectorInBackground:withObject:",
+);
+final _objc_msgSend_1qv0eq4 = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
+
+/// NSThreadPerformAdditions
+extension NSThreadPerformAdditions on objc.NSObject {
+  /// performSelector:onThread:withObject:waitUntilDone:
+  void performSelector(
+    ffi.Pointer<objc.ObjCSelector> aSelector, {
+    required NSThread onThread,
+    objc.ObjCObject? withObject,
+    required bool waitUntilDone,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.performSelector:onThread:withObject:waitUntilDone:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 5, 0)),
+    );
+    _objc_msgSend_1whyima(
+      object$.ref.pointer,
+      _sel_performSelector_onThread_withObject_waitUntilDone_,
+      aSelector,
+      onThread.ref.pointer,
+      withObject?.ref.pointer ?? ffi.nullptr,
+      waitUntilDone,
+    );
+  }
+
+  /// performSelector:onThread:withObject:waitUntilDone:modes:
+  void performSelector$1(
+    ffi.Pointer<objc.ObjCSelector> aSelector, {
+    required NSThread onThread,
+    objc.ObjCObject? withObject,
+    required bool waitUntilDone,
+    objc.NSArray? modes,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.performSelector:onThread:withObject:waitUntilDone:modes:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 5, 0)),
+    );
+    _objc_msgSend_1cc1buo(
+      object$.ref.pointer,
+      _sel_performSelector_onThread_withObject_waitUntilDone_modes_,
+      aSelector,
+      onThread.ref.pointer,
+      withObject?.ref.pointer ?? ffi.nullptr,
+      waitUntilDone,
+      modes?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// performSelectorInBackground:withObject:
+  void performSelectorInBackground(
+    ffi.Pointer<objc.ObjCSelector> aSelector, {
+    objc.ObjCObject? withObject,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.performSelectorInBackground:withObject:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 5, 0)),
+    );
+    _objc_msgSend_1qv0eq4(
+      object$.ref.pointer,
+      _sel_performSelectorInBackground_withObject_,
+      aSelector,
+      withObject?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// performSelectorOnMainThread:withObject:waitUntilDone:
+  void performSelectorOnMainThread(
+    ffi.Pointer<objc.ObjCSelector> aSelector, {
+    objc.ObjCObject? withObject,
+    required bool waitUntilDone,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.performSelectorOnMainThread:withObject:waitUntilDone:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_tsocn4(
+      object$.ref.pointer,
+      _sel_performSelectorOnMainThread_withObject_waitUntilDone_,
+      aSelector,
+      withObject?.ref.pointer ?? ffi.nullptr,
+      waitUntilDone,
+    );
+  }
+
+  /// performSelectorOnMainThread:withObject:waitUntilDone:modes:
+  void performSelectorOnMainThread$1(
+    ffi.Pointer<objc.ObjCSelector> aSelector, {
+    objc.ObjCObject? withObject,
+    required bool waitUntilDone,
+    objc.NSArray? modes,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.performSelectorOnMainThread:withObject:waitUntilDone:modes:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_1fdou4m(
+      object$.ref.pointer,
+      _sel_performSelectorOnMainThread_withObject_waitUntilDone_modes_,
+      aSelector,
+      withObject?.ref.pointer ?? ffi.nullptr,
+      waitUntilDone,
+      modes?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+}
+
+/// WARNING: NSArchiver is a stub. To generate bindings for this class, include
+/// NSArchiver in your config's objc-interfaces list.
+///
+/// NSArchiver
+extension type NSArchiver._(objc.ObjCObject object$)
+    implements objc.ObjCObject, objc.NSCoder {
+  /// Constructs a [NSArchiver] that points to the same underlying object as [other].
+  NSArchiver.as(objc.ObjCObject other) : object$ = other {
+    objc.checkOsVersionInternal(
+      'NSArchiver',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+  }
+
+  /// Constructs a [NSArchiver] that wraps the given raw object pointer.
+  NSArchiver.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
+    objc.checkOsVersionInternal(
+      'NSArchiver',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+  }
+}
+
+late final _sel_classForArchiver = objc.registerName("classForArchiver");
+late final _sel_replacementObjectForArchiver_ = objc.registerName(
+  "replacementObjectForArchiver:",
+);
+
+/// NSArchiverCallback
+extension NSArchiverCallback on objc.NSObject {
+  /// classForArchiver
+  objc.ObjCObject? get classForArchiver {
+    objc.checkOsVersionInternal(
+      'NSObject.classForArchiver',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(
+      object$.ref.pointer,
+      _sel_classForArchiver,
+    );
+    return $ret.address == 0
+        ? null
+        : objc.ObjCObject($ret, retain: true, release: true);
+  }
+
+  /// replacementObjectForArchiver:
+  objc.ObjCObject? replacementObjectForArchiver(NSArchiver archiver) {
+    objc.checkOsVersionInternal(
+      'NSObject.replacementObjectForArchiver:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_1sotr3r(
+      object$.ref.pointer,
+      _sel_replacementObjectForArchiver_,
+      archiver.ref.pointer,
+    );
+    return $ret.address == 0
+        ? null
+        : objc.ObjCObject($ret, retain: true, release: true);
+  }
+}
+
+/// WARNING: NSPortCoder is a stub. To generate bindings for this class, include
+/// NSPortCoder in your config's objc-interfaces list.
+///
+/// NSPortCoder
+extension type NSPortCoder._(objc.ObjCObject object$)
+    implements objc.ObjCObject, objc.NSCoder {
+  /// Constructs a [NSPortCoder] that points to the same underlying object as [other].
+  NSPortCoder.as(objc.ObjCObject other) : object$ = other {
+    objc.checkOsVersionInternal(
+      'NSPortCoder',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+  }
+
+  /// Constructs a [NSPortCoder] that wraps the given raw object pointer.
+  NSPortCoder.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
+    objc.checkOsVersionInternal(
+      'NSPortCoder',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+  }
+}
+
+late final _sel_classForPortCoder = objc.registerName("classForPortCoder");
+late final _sel_replacementObjectForPortCoder_ = objc.registerName(
+  "replacementObjectForPortCoder:",
+);
+
+/// NSDistributedObjects
+extension NSDistributedObjects on objc.NSObject {
+  /// classForPortCoder
+  objc.ObjCObject get classForPortCoder {
+    objc.checkOsVersionInternal(
+      'NSObject.classForPortCoder',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(
+      object$.ref.pointer,
+      _sel_classForPortCoder,
+    );
+    return objc.ObjCObject($ret, retain: true, release: true);
+  }
+
+  /// replacementObjectForPortCoder:
+  objc.ObjCObject? replacementObjectForPortCoder(NSPortCoder coder) {
+    objc.checkOsVersionInternal(
+      'NSObject.replacementObjectForPortCoder:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_1sotr3r(
+      object$.ref.pointer,
+      _sel_replacementObjectForPortCoder_,
+      coder.ref.pointer,
+    );
+    return $ret.address == 0
+        ? null
+        : objc.ObjCObject($ret, retain: true, release: true);
+  }
+}
+
+/// WARNING: NSClassDescription is a stub. To generate bindings for this class, include
+/// NSClassDescription in your config's objc-interfaces list.
+///
+/// NSClassDescription
+extension type NSClassDescription._(objc.ObjCObject object$)
+    implements objc.ObjCObject, objc.NSObject {
+  /// Constructs a [NSClassDescription] that points to the same underlying object as [other].
+  NSClassDescription.as(objc.ObjCObject other) : object$ = other {}
+
+  /// Constructs a [NSClassDescription] that wraps the given raw object pointer.
+  NSClassDescription.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {}
+}
+
+late final _sel_classDescription = objc.registerName("classDescription");
+late final _sel_attributeKeys = objc.registerName("attributeKeys");
+late final _sel_toOneRelationshipKeys = objc.registerName(
+  "toOneRelationshipKeys",
+);
+late final _sel_toManyRelationshipKeys = objc.registerName(
+  "toManyRelationshipKeys",
+);
+late final _sel_inverseForRelationshipKey_ = objc.registerName(
+  "inverseForRelationshipKey:",
+);
+
+/// NSClassDescriptionPrimitives
+extension NSClassDescriptionPrimitives on objc.NSObject {
+  /// attributeKeys
+  objc.NSArray get attributeKeys {
+    objc.checkOsVersionInternal(
+      'NSObject.attributeKeys',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_attributeKeys);
+    return objc.NSArray.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// classDescription
+  NSClassDescription get classDescription {
+    objc.checkOsVersionInternal(
+      'NSObject.classDescription',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(
+      object$.ref.pointer,
+      _sel_classDescription,
+    );
+    return NSClassDescription.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// inverseForRelationshipKey:
+  objc.NSString? inverseForRelationshipKey(objc.NSString relationshipKey) {
+    objc.checkOsVersionInternal(
+      'NSObject.inverseForRelationshipKey:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_1sotr3r(
+      object$.ref.pointer,
+      _sel_inverseForRelationshipKey_,
+      relationshipKey.ref.pointer,
+    );
+    return $ret.address == 0
+        ? null
+        : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// toManyRelationshipKeys
+  objc.NSArray get toManyRelationshipKeys {
+    objc.checkOsVersionInternal(
+      'NSObject.toManyRelationshipKeys',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(
+      object$.ref.pointer,
+      _sel_toManyRelationshipKeys,
+    );
+    return objc.NSArray.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// toOneRelationshipKeys
+  objc.NSArray get toOneRelationshipKeys {
+    objc.checkOsVersionInternal(
+      'NSObject.toOneRelationshipKeys',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(
+      object$.ref.pointer,
+      _sel_toOneRelationshipKeys,
+    );
+    return objc.NSArray.fromPointer($ret, retain: true, release: true);
+  }
+}
+
+/// WARNING: NSScriptObjectSpecifier is a stub. To generate bindings for this class, include
+/// NSScriptObjectSpecifier in your config's objc-interfaces list.
+///
+/// NSScriptObjectSpecifier
+extension type NSScriptObjectSpecifier._(objc.ObjCObject object$)
+    implements objc.ObjCObject, objc.NSObject, objc.NSCoding {
+  /// Constructs a [NSScriptObjectSpecifier] that points to the same underlying object as [other].
+  NSScriptObjectSpecifier.as(objc.ObjCObject other) : object$ = other {}
+
+  /// Constructs a [NSScriptObjectSpecifier] that wraps the given raw object pointer.
+  NSScriptObjectSpecifier.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {}
+}
+
+late final _sel_scriptingValueForSpecifier_ = objc.registerName(
+  "scriptingValueForSpecifier:",
+);
+late final _sel_scriptingProperties = objc.registerName("scriptingProperties");
+late final _sel_setScriptingProperties_ = objc.registerName(
+  "setScriptingProperties:",
+);
+late final _sel_copyScriptingValue_forKey_withProperties_ = objc.registerName(
+  "copyScriptingValue:forKey:withProperties:",
+);
+final _objc_msgSend_11spmsz = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Pointer<objc.ObjCObjectImpl> Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObjectImpl> Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
+late final _sel_newScriptingObjectOfClass_forValueForKey_withContentsValue_properties_ =
+    objc.registerName(
+      "newScriptingObjectOfClass:forValueForKey:withContentsValue:properties:",
+    );
+final _objc_msgSend_s92gih = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Pointer<objc.ObjCObjectImpl> Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObjectImpl> Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
+
+/// NSScripting
+extension NSScripting on objc.NSObject {
+  /// copyScriptingValue:forKey:withProperties:
+  objc.ObjCObject? copyScriptingValue(
+    objc.ObjCObject value, {
+    required objc.NSString forKey,
+    required objc.NSDictionary withProperties,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.copyScriptingValue:forKey:withProperties:',
+      iOS: (true, null),
+      macOS: (false, (10, 5, 0)),
+    );
+    final $ret = _objc_msgSend_11spmsz(
+      object$.ref.pointer,
+      _sel_copyScriptingValue_forKey_withProperties_,
+      value.ref.pointer,
+      forKey.ref.pointer,
+      withProperties.ref.pointer,
+    );
+    return $ret.address == 0
+        ? null
+        : objc.ObjCObject($ret, retain: false, release: true);
+  }
+
+  /// newScriptingObjectOfClass:forValueForKey:withContentsValue:properties:
+  objc.ObjCObject? newScriptingObjectOfClass(
+    objc.ObjCObject objectClass, {
+    required objc.NSString forValueForKey,
+    objc.ObjCObject? withContentsValue,
+    required objc.NSDictionary properties,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.newScriptingObjectOfClass:forValueForKey:withContentsValue:properties:',
+      iOS: (true, null),
+      macOS: (false, (10, 5, 0)),
+    );
+    final $ret = _objc_msgSend_s92gih(
+      object$.ref.pointer,
+      _sel_newScriptingObjectOfClass_forValueForKey_withContentsValue_properties_,
+      objectClass.ref.pointer,
+      forValueForKey.ref.pointer,
+      withContentsValue?.ref.pointer ?? ffi.nullptr,
+      properties.ref.pointer,
+    );
+    return $ret.address == 0
+        ? null
+        : objc.ObjCObject($ret, retain: false, release: true);
+  }
+
+  /// scriptingProperties
+  objc.NSDictionary? get scriptingProperties {
+    objc.checkOsVersionInternal(
+      'NSObject.scriptingProperties',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(
+      object$.ref.pointer,
+      _sel_scriptingProperties,
+    );
+    return $ret.address == 0
+        ? null
+        : objc.NSDictionary.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// scriptingValueForSpecifier:
+  objc.ObjCObject? scriptingValueForSpecifier(
+    NSScriptObjectSpecifier objectSpecifier,
+  ) {
+    objc.checkOsVersionInternal(
+      'NSObject.scriptingValueForSpecifier:',
+      iOS: (true, null),
+      macOS: (false, (10, 5, 0)),
+    );
+    final $ret = _objc_msgSend_1sotr3r(
+      object$.ref.pointer,
+      _sel_scriptingValueForSpecifier_,
+      objectSpecifier.ref.pointer,
+    );
+    return $ret.address == 0
+        ? null
+        : objc.ObjCObject($ret, retain: true, release: true);
+  }
+
+  /// setScriptingProperties:
+  set scriptingProperties(objc.NSDictionary? value) {
+    objc.checkOsVersionInternal(
+      'NSObject.setScriptingProperties:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      object$.ref.pointer,
+      _sel_setScriptingProperties_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+}
+
+late final _sel_classCode = objc.registerName("classCode");
+final _objc_msgSend_3pyzne = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.UnsignedInt Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+        )
+      >
+    >()
+    .asFunction<
+      int Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+      )
+    >();
+late final _sel_className = objc.registerName("className");
+
+/// NSScriptClassDescription
+extension NSScriptClassDescription on objc.NSObject {
+  /// classCode
+  int get classCode {
+    objc.checkOsVersionInternal(
+      'NSObject.classCode',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    return _objc_msgSend_3pyzne(object$.ref.pointer, _sel_classCode);
+  }
+
+  /// className
+  objc.NSString get className {
+    objc.checkOsVersionInternal(
+      'NSObject.className',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_className);
+    return objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+}
+
+late final _sel_valueAtIndex_inPropertyWithKey_ = objc.registerName(
+  "valueAtIndex:inPropertyWithKey:",
+);
+final _objc_msgSend_vbc8p4 = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Pointer<objc.ObjCObjectImpl> Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.UnsignedLong,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObjectImpl> Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        int,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
+late final _sel_valueWithName_inPropertyWithKey_ = objc.registerName(
+  "valueWithName:inPropertyWithKey:",
+);
+final _objc_msgSend_15qeuct = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Pointer<objc.ObjCObjectImpl> Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObjectImpl> Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
+late final _sel_valueWithUniqueID_inPropertyWithKey_ = objc.registerName(
+  "valueWithUniqueID:inPropertyWithKey:",
+);
+late final _sel_insertValue_atIndex_inPropertyWithKey_ = objc.registerName(
+  "insertValue:atIndex:inPropertyWithKey:",
+);
+final _objc_msgSend_10nfbmq = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.UnsignedLong,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        int,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
+late final _sel_removeValueAtIndex_fromPropertyWithKey_ = objc.registerName(
+  "removeValueAtIndex:fromPropertyWithKey:",
+);
+final _objc_msgSend_1gypgok = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.UnsignedLong,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        int,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
+late final _sel_replaceValueAtIndex_inPropertyWithKey_withValue_ = objc
+    .registerName("replaceValueAtIndex:inPropertyWithKey:withValue:");
+final _objc_msgSend_rutu22 = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.UnsignedLong,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        int,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
+late final _sel_insertValue_inPropertyWithKey_ = objc.registerName(
+  "insertValue:inPropertyWithKey:",
+);
+late final _sel_coerceValue_forKey_ = objc.registerName("coerceValue:forKey:");
+
+/// NSScriptKeyValueCoding
+extension NSScriptKeyValueCoding on objc.NSObject {
+  /// coerceValue:forKey:
+  objc.ObjCObject? coerceValue(
+    objc.ObjCObject? value, {
+    required objc.NSString forKey,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.coerceValue:forKey:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_15qeuct(
+      object$.ref.pointer,
+      _sel_coerceValue_forKey_,
+      value?.ref.pointer ?? ffi.nullptr,
+      forKey.ref.pointer,
+    );
+    return $ret.address == 0
+        ? null
+        : objc.ObjCObject($ret, retain: true, release: true);
+  }
+
+  /// insertValue:atIndex:inPropertyWithKey:
+  void insertValue(
+    objc.ObjCObject value, {
+    required int atIndex,
+    required objc.NSString inPropertyWithKey,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.insertValue:atIndex:inPropertyWithKey:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_10nfbmq(
+      object$.ref.pointer,
+      _sel_insertValue_atIndex_inPropertyWithKey_,
+      value.ref.pointer,
+      atIndex,
+      inPropertyWithKey.ref.pointer,
+    );
+  }
+
+  /// insertValue:inPropertyWithKey:
+  void insertValue$1(
+    objc.ObjCObject value, {
+    required objc.NSString inPropertyWithKey,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.insertValue:inPropertyWithKey:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_pfv6jd(
+      object$.ref.pointer,
+      _sel_insertValue_inPropertyWithKey_,
+      value.ref.pointer,
+      inPropertyWithKey.ref.pointer,
+    );
+  }
+
+  /// removeValueAtIndex:fromPropertyWithKey:
+  void removeValueAtIndex(
+    int index, {
+    required objc.NSString fromPropertyWithKey,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.removeValueAtIndex:fromPropertyWithKey:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_1gypgok(
+      object$.ref.pointer,
+      _sel_removeValueAtIndex_fromPropertyWithKey_,
+      index,
+      fromPropertyWithKey.ref.pointer,
+    );
+  }
+
+  /// replaceValueAtIndex:inPropertyWithKey:withValue:
+  void replaceValueAtIndex(
+    int index, {
+    required objc.NSString inPropertyWithKey,
+    required objc.ObjCObject withValue,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.replaceValueAtIndex:inPropertyWithKey:withValue:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_rutu22(
+      object$.ref.pointer,
+      _sel_replaceValueAtIndex_inPropertyWithKey_withValue_,
+      index,
+      inPropertyWithKey.ref.pointer,
+      withValue.ref.pointer,
+    );
+  }
+
+  /// valueAtIndex:inPropertyWithKey:
+  objc.ObjCObject? valueAtIndex(
+    int index, {
+    required objc.NSString inPropertyWithKey,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.valueAtIndex:inPropertyWithKey:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_vbc8p4(
+      object$.ref.pointer,
+      _sel_valueAtIndex_inPropertyWithKey_,
+      index,
+      inPropertyWithKey.ref.pointer,
+    );
+    return $ret.address == 0
+        ? null
+        : objc.ObjCObject($ret, retain: true, release: true);
+  }
+
+  /// valueWithName:inPropertyWithKey:
+  objc.ObjCObject? valueWithName(
+    objc.NSString name, {
+    required objc.NSString inPropertyWithKey,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.valueWithName:inPropertyWithKey:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_15qeuct(
+      object$.ref.pointer,
+      _sel_valueWithName_inPropertyWithKey_,
+      name.ref.pointer,
+      inPropertyWithKey.ref.pointer,
+    );
+    return $ret.address == 0
+        ? null
+        : objc.ObjCObject($ret, retain: true, release: true);
+  }
+
+  /// valueWithUniqueID:inPropertyWithKey:
+  objc.ObjCObject? valueWithUniqueID(
+    objc.ObjCObject uniqueID, {
+    required objc.NSString inPropertyWithKey,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.valueWithUniqueID:inPropertyWithKey:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_15qeuct(
+      object$.ref.pointer,
+      _sel_valueWithUniqueID_inPropertyWithKey_,
+      uniqueID.ref.pointer,
+      inPropertyWithKey.ref.pointer,
+    );
+    return $ret.address == 0
+        ? null
+        : objc.ObjCObject($ret, retain: true, release: true);
+  }
+}
+
+late final _sel_objectSpecifier = objc.registerName("objectSpecifier");
+late final _sel_indicesOfObjectsByEvaluatingObjectSpecifier_ = objc
+    .registerName("indicesOfObjectsByEvaluatingObjectSpecifier:");
+
+/// NSScriptObjectSpecifiers
+extension NSScriptObjectSpecifiers on objc.NSObject {
+  /// indicesOfObjectsByEvaluatingObjectSpecifier:
+  objc.NSArray? indicesOfObjectsByEvaluatingObjectSpecifier(
+    NSScriptObjectSpecifier specifier,
+  ) {
+    objc.checkOsVersionInternal(
+      'NSObject.indicesOfObjectsByEvaluatingObjectSpecifier:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_1sotr3r(
+      object$.ref.pointer,
+      _sel_indicesOfObjectsByEvaluatingObjectSpecifier_,
+      specifier.ref.pointer,
+    );
+    return $ret.address == 0
+        ? null
+        : objc.NSArray.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// objectSpecifier
+  NSScriptObjectSpecifier? get objectSpecifier {
+    objc.checkOsVersionInternal(
+      'NSObject.objectSpecifier',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(
+      object$.ref.pointer,
+      _sel_objectSpecifier,
+    );
+    return $ret.address == 0
+        ? null
+        : NSScriptObjectSpecifier.fromPointer(
+            $ret,
+            retain: true,
+            release: true,
+          );
+  }
+}
+
+late final _sel_isEqualTo_ = objc.registerName("isEqualTo:");
+late final _sel_isLessThanOrEqualTo_ = objc.registerName(
+  "isLessThanOrEqualTo:",
+);
+late final _sel_isLessThan_ = objc.registerName("isLessThan:");
+late final _sel_isGreaterThanOrEqualTo_ = objc.registerName(
+  "isGreaterThanOrEqualTo:",
+);
+late final _sel_isGreaterThan_ = objc.registerName("isGreaterThan:");
+late final _sel_isNotEqualTo_ = objc.registerName("isNotEqualTo:");
+late final _sel_doesContain_ = objc.registerName("doesContain:");
+late final _sel_isLike_ = objc.registerName("isLike:");
+late final _sel_isCaseInsensitiveLike_ = objc.registerName(
+  "isCaseInsensitiveLike:",
+);
+
+/// NSComparisonMethods
+extension NSComparisonMethods on objc.NSObject {
+  /// doesContain:
+  bool doesContain(objc.ObjCObject object) {
+    objc.checkOsVersionInternal(
+      'NSObject.doesContain:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    return _objc_msgSend_19nvye5(
+      object$.ref.pointer,
+      _sel_doesContain_,
+      object.ref.pointer,
+    );
+  }
+
+  /// isCaseInsensitiveLike:
+  bool isCaseInsensitiveLike(objc.NSString object) {
+    objc.checkOsVersionInternal(
+      'NSObject.isCaseInsensitiveLike:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    return _objc_msgSend_19nvye5(
+      object$.ref.pointer,
+      _sel_isCaseInsensitiveLike_,
+      object.ref.pointer,
+    );
+  }
+
+  /// isEqualTo:
+  bool isEqualTo(objc.ObjCObject? object) {
+    objc.checkOsVersionInternal(
+      'NSObject.isEqualTo:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    return _objc_msgSend_19nvye5(
+      object$.ref.pointer,
+      _sel_isEqualTo_,
+      object?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// isGreaterThan:
+  bool isGreaterThan(objc.ObjCObject? object) {
+    objc.checkOsVersionInternal(
+      'NSObject.isGreaterThan:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    return _objc_msgSend_19nvye5(
+      object$.ref.pointer,
+      _sel_isGreaterThan_,
+      object?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// isGreaterThanOrEqualTo:
+  bool isGreaterThanOrEqualTo(objc.ObjCObject? object) {
+    objc.checkOsVersionInternal(
+      'NSObject.isGreaterThanOrEqualTo:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    return _objc_msgSend_19nvye5(
+      object$.ref.pointer,
+      _sel_isGreaterThanOrEqualTo_,
+      object?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// isLessThan:
+  bool isLessThan(objc.ObjCObject? object) {
+    objc.checkOsVersionInternal(
+      'NSObject.isLessThan:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    return _objc_msgSend_19nvye5(
+      object$.ref.pointer,
+      _sel_isLessThan_,
+      object?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// isLessThanOrEqualTo:
+  bool isLessThanOrEqualTo(objc.ObjCObject? object) {
+    objc.checkOsVersionInternal(
+      'NSObject.isLessThanOrEqualTo:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    return _objc_msgSend_19nvye5(
+      object$.ref.pointer,
+      _sel_isLessThanOrEqualTo_,
+      object?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// isLike:
+  bool isLike(objc.NSString object) {
+    objc.checkOsVersionInternal(
+      'NSObject.isLike:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    return _objc_msgSend_19nvye5(
+      object$.ref.pointer,
+      _sel_isLike_,
+      object.ref.pointer,
+    );
+  }
+
+  /// isNotEqualTo:
+  bool isNotEqualTo(objc.ObjCObject? object) {
+    objc.checkOsVersionInternal(
+      'NSObject.isNotEqualTo:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    return _objc_msgSend_19nvye5(
+      object$.ref.pointer,
+      _sel_isNotEqualTo_,
+      object?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+}
+
+late final _sel_scriptingIsEqualTo_ = objc.registerName("scriptingIsEqualTo:");
+late final _sel_scriptingIsLessThanOrEqualTo_ = objc.registerName(
+  "scriptingIsLessThanOrEqualTo:",
+);
+late final _sel_scriptingIsLessThan_ = objc.registerName(
+  "scriptingIsLessThan:",
+);
+late final _sel_scriptingIsGreaterThanOrEqualTo_ = objc.registerName(
+  "scriptingIsGreaterThanOrEqualTo:",
+);
+late final _sel_scriptingIsGreaterThan_ = objc.registerName(
+  "scriptingIsGreaterThan:",
+);
+late final _sel_scriptingBeginsWith_ = objc.registerName(
+  "scriptingBeginsWith:",
+);
+late final _sel_scriptingEndsWith_ = objc.registerName("scriptingEndsWith:");
+late final _sel_scriptingContains_ = objc.registerName("scriptingContains:");
+
+/// NSScriptingComparisonMethods
+extension NSScriptingComparisonMethods on objc.NSObject {
+  /// scriptingBeginsWith:
+  bool scriptingBeginsWith(objc.ObjCObject object) {
+    objc.checkOsVersionInternal(
+      'NSObject.scriptingBeginsWith:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    return _objc_msgSend_19nvye5(
+      object$.ref.pointer,
+      _sel_scriptingBeginsWith_,
+      object.ref.pointer,
+    );
+  }
+
+  /// scriptingContains:
+  bool scriptingContains(objc.ObjCObject object) {
+    objc.checkOsVersionInternal(
+      'NSObject.scriptingContains:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    return _objc_msgSend_19nvye5(
+      object$.ref.pointer,
+      _sel_scriptingContains_,
+      object.ref.pointer,
+    );
+  }
+
+  /// scriptingEndsWith:
+  bool scriptingEndsWith(objc.ObjCObject object) {
+    objc.checkOsVersionInternal(
+      'NSObject.scriptingEndsWith:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    return _objc_msgSend_19nvye5(
+      object$.ref.pointer,
+      _sel_scriptingEndsWith_,
+      object.ref.pointer,
+    );
+  }
+
+  /// scriptingIsEqualTo:
+  bool scriptingIsEqualTo(objc.ObjCObject object) {
+    objc.checkOsVersionInternal(
+      'NSObject.scriptingIsEqualTo:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    return _objc_msgSend_19nvye5(
+      object$.ref.pointer,
+      _sel_scriptingIsEqualTo_,
+      object.ref.pointer,
+    );
+  }
+
+  /// scriptingIsGreaterThan:
+  bool scriptingIsGreaterThan(objc.ObjCObject object) {
+    objc.checkOsVersionInternal(
+      'NSObject.scriptingIsGreaterThan:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    return _objc_msgSend_19nvye5(
+      object$.ref.pointer,
+      _sel_scriptingIsGreaterThan_,
+      object.ref.pointer,
+    );
+  }
+
+  /// scriptingIsGreaterThanOrEqualTo:
+  bool scriptingIsGreaterThanOrEqualTo(objc.ObjCObject object) {
+    objc.checkOsVersionInternal(
+      'NSObject.scriptingIsGreaterThanOrEqualTo:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    return _objc_msgSend_19nvye5(
+      object$.ref.pointer,
+      _sel_scriptingIsGreaterThanOrEqualTo_,
+      object.ref.pointer,
+    );
+  }
+
+  /// scriptingIsLessThan:
+  bool scriptingIsLessThan(objc.ObjCObject object) {
+    objc.checkOsVersionInternal(
+      'NSObject.scriptingIsLessThan:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    return _objc_msgSend_19nvye5(
+      object$.ref.pointer,
+      _sel_scriptingIsLessThan_,
+      object.ref.pointer,
+    );
+  }
+
+  /// scriptingIsLessThanOrEqualTo:
+  bool scriptingIsLessThanOrEqualTo(objc.ObjCObject object) {
+    objc.checkOsVersionInternal(
+      'NSObject.scriptingIsLessThanOrEqualTo:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    return _objc_msgSend_19nvye5(
+      object$.ref.pointer,
+      _sel_scriptingIsLessThanOrEqualTo_,
+      object.ref.pointer,
     );
   }
 }
@@ -381,25 +3460,6 @@ extension type PHFetchOptions._(objc.ObjCObject object$)
 late final _sel_fetchAssetsWithLocalIdentifiers_options_ = objc.registerName(
   "fetchAssetsWithLocalIdentifiers:options:",
 );
-final _objc_msgSend_15qeuct = objc.msgSendPointer
-    .cast<
-      ffi.NativeFunction<
-        ffi.Pointer<objc.ObjCObjectImpl> Function(
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCSelector>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-        )
-      >
-    >()
-    .asFunction<
-      ffi.Pointer<objc.ObjCObjectImpl> Function(
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCSelector>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-      )
-    >();
 
 /// WARNING: PHContentEditingInputRequestOptions is a stub. To generate bindings for this class, include
 /// PHContentEditingInputRequestOptions in your config's objc-interfaces list.
@@ -957,27 +4017,190 @@ extension PHAsset$Methods on PHAsset {
   }
 }
 
-late final _class_PHImageRequestOptions = objc.getClass(
-  "PHImageRequestOptions",
-);
-late final _sel_isNetworkAccessAllowed = objc.registerName(
-  "isNetworkAccessAllowed",
-);
-final _objc_msgSend_91o635 = objc.msgSendPointer
+late final _sel_provideImageData_bytesPerRow_origin__size__userInfo_ = objc
+    .registerName("provideImageData:bytesPerRow:origin::size::userInfo:");
+final _objc_msgSend_haq63t = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
-        ffi.Bool Function(
+        ffi.Void Function(
           ffi.Pointer<objc.ObjCObjectImpl>,
           ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<ffi.Void>,
+          ffi.Size,
+          ffi.Size,
+          ffi.Size,
+          ffi.Size,
+          ffi.Size,
+          ffi.Pointer<objc.ObjCObjectImpl>,
         )
       >
     >()
     .asFunction<
-      bool Function(
+      void Function(
         ffi.Pointer<objc.ObjCObjectImpl>,
         ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<ffi.Void>,
+        int,
+        int,
+        int,
+        int,
+        int,
+        ffi.Pointer<objc.ObjCObjectImpl>,
       )
     >();
+
+/// WARNING: MTLTexture is a stub. To generate bindings for this class, include
+/// MTLTexture in your config's objc-protocols list.
+///
+/// MTLTexture
+extension type MTLTexture._(objc.ObjCProtocol object$)
+    implements objc.ObjCProtocol {
+  /// Constructs a [MTLTexture] that points to the same underlying object as [other].
+  MTLTexture.as(objc.ObjCObject other) : object$ = other;
+
+  /// Constructs a [MTLTexture] that wraps the given raw object pointer.
+  MTLTexture.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCProtocol(other, retain: retain, release: release);
+}
+
+/// WARNING: MTLCommandBuffer is a stub. To generate bindings for this class, include
+/// MTLCommandBuffer in your config's objc-protocols list.
+///
+/// MTLCommandBuffer
+extension type MTLCommandBuffer._(objc.ObjCProtocol object$)
+    implements objc.ObjCProtocol {
+  /// Constructs a [MTLCommandBuffer] that points to the same underlying object as [other].
+  MTLCommandBuffer.as(objc.ObjCObject other) : object$ = other;
+
+  /// Constructs a [MTLCommandBuffer] that wraps the given raw object pointer.
+  MTLCommandBuffer.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCProtocol(other, retain: retain, release: release);
+}
+
+late final _sel_provideImageToMTLTexture_commandBuffer_originx_originy_width_height_userInfo_ =
+    objc.registerName(
+      "provideImageToMTLTexture:commandBuffer:originx:originy:width:height:userInfo:",
+    );
+final _objc_msgSend_1jjfka7 = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Size,
+          ffi.Size,
+          ffi.Size,
+          ffi.Size,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        int,
+        int,
+        int,
+        int,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
+
+/// CIImageProvider
+extension CIImageProvider on objc.NSObject {
+  /// provideImageData:bytesPerRow:origin::size::userInfo:
+  void provideImageData(
+    ffi.Pointer<ffi.Void> data, {
+    required int bytesPerRow,
+    required int origin,
+    required int unnamed,
+    required int size,
+    required int unnamed$1,
+    objc.ObjCObject? userInfo,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.provideImageData:bytesPerRow:origin::size::userInfo:',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    _objc_msgSend_haq63t(
+      object$.ref.pointer,
+      _sel_provideImageData_bytesPerRow_origin__size__userInfo_,
+      data,
+      bytesPerRow,
+      origin,
+      unnamed,
+      size,
+      unnamed$1,
+      userInfo?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// provideImageToMTLTexture:commandBuffer:originx:originy:width:height:userInfo:
+  void provideImageToMTLTexture(
+    MTLTexture texture, {
+    required MTLCommandBuffer commandBuffer,
+    required int originx,
+    required int originy,
+    required int width,
+    required int height,
+    objc.ObjCObject? userInfo,
+  }) {
+    objc.checkOsVersionInternal(
+      'NSObject.provideImageToMTLTexture:commandBuffer:originx:originy:width:height:userInfo:',
+      macOS: (false, (26, 0, 0)),
+    );
+    _objc_msgSend_1jjfka7(
+      object$.ref.pointer,
+      _sel_provideImageToMTLTexture_commandBuffer_originx_originy_width_height_userInfo_,
+      texture.ref.pointer,
+      commandBuffer.ref.pointer,
+      originx,
+      originy,
+      width,
+      height,
+      userInfo?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+}
+
+late final _class_PHImageRequestOptions = objc.getClass(
+  "PHImageRequestOptions",
+);
+late final _sel_setNetworkAccessAllowed_ = objc.registerName(
+  "setNetworkAccessAllowed:",
+);
+final _objc_msgSend_1s56lr9 = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Bool,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        bool,
+      )
+    >();
+typedef instancetype = ffi.Pointer<objc.ObjCObjectImpl>;
+typedef Dartinstancetype = objc.ObjCObject;
+late final _sel_new = objc.registerName("new");
 
 /// PHImageRequestOptions
 extension type PHImageRequestOptions._(objc.ObjCObject object$)
@@ -1012,19 +4235,33 @@ extension type PHImageRequestOptions._(objc.ObjCObject object$)
     _sel_isKindOfClass_,
     _class_PHImageRequestOptions,
   );
+
+  /// new
+  static PHImageRequestOptions new$() {
+    final $ret = _objc_msgSend_151sglz(_class_PHImageRequestOptions, _sel_new);
+    return PHImageRequestOptions.fromPointer(
+      $ret,
+      retain: false,
+      release: true,
+    );
+  }
+
+  /// Returns a new instance of PHImageRequestOptions constructed with the default `new` method.
+  PHImageRequestOptions() : this.as(new$().object$);
 }
 
 extension PHImageRequestOptions$Methods on PHImageRequestOptions {
-  /// isNetworkAccessAllowed
-  bool get isNetworkAccessAllowed {
+  /// setNetworkAccessAllowed:
+  set isNetworkAccessAllowed(bool value) {
     objc.checkOsVersionInternal(
-      'PHImageRequestOptions.isNetworkAccessAllowed',
+      'PHImageRequestOptions.setNetworkAccessAllowed:',
       iOS: (false, (8, 0, 0)),
       macOS: (false, (10, 13, 0)),
     );
-    return _objc_msgSend_91o635(
+    _objc_msgSend_1s56lr9(
       object$.ref.pointer,
-      _sel_isNetworkAccessAllowed,
+      _sel_setNetworkAccessAllowed_,
+      value,
     );
   }
 }
