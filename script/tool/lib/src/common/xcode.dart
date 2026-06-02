@@ -46,9 +46,7 @@ class Xcode {
     Directory? resultBundleTemp;
     try {
       if (logsDirectory != null) {
-        resultBundleTemp = fileSystem.systemTempDirectory.createTempSync(
-          'flutter_xcresult.',
-        );
+        resultBundleTemp = fileSystem.systemTempDirectory.createTempSync('flutter_xcresult.');
         resultBundlePath = resultBundleTemp.childDirectory('result').path;
       }
       File? disabledSandboxEntitlementFile;
@@ -63,10 +61,7 @@ class Xcode {
         ...actions,
         ...<String>['-workspace', workspace],
         ...<String>['-scheme', scheme],
-        if (resultBundlePath != null) ...<String>[
-          '-resultBundlePath',
-          resultBundlePath,
-        ],
+        if (resultBundlePath != null) ...<String>['-resultBundlePath', resultBundlePath],
         if (configuration != null) ...<String>['-configuration', configuration],
         ...extraFlags,
         if (disabledSandboxEntitlementFile != null)
@@ -83,9 +78,7 @@ class Xcode {
       );
 
       if (resultExit != 0 && resultBundleTemp != null) {
-        final Directory xcresultBundle = resultBundleTemp.childDirectory(
-          'result.xcresult',
-        );
+        final Directory xcresultBundle = resultBundleTemp.childDirectory('result.xcresult');
         if (logsDirectory != null) {
           if (xcresultBundle.existsSync()) {
             // Zip the test results to the artifacts directory for upload.
@@ -100,9 +93,7 @@ class Xcode {
               xcresultBundle.basename,
             ], workingDir: resultBundleTemp);
           } else {
-            print(
-              'xcresult bundle ${xcresultBundle.path} does not exist, skipping upload',
-            );
+            print('xcresult bundle ${xcresultBundle.path} does not exist, skipping upload');
           }
         }
       }
@@ -116,18 +107,20 @@ class Xcode {
   /// contains a target called [target], false if it does not, and null if the
   /// check fails (e.g., if [project] is not an Xcode project).
   Future<bool?> projectHasTarget(Directory project, String target) async {
-    final io.ProcessResult result = await processRunner.run(
-      _xcRunCommand,
-      <String>[_xcodeBuildCommand, '-list', '-json', '-project', project.path],
-    );
+    final io.ProcessResult result = await processRunner.run(_xcRunCommand, <String>[
+      _xcodeBuildCommand,
+      '-list',
+      '-json',
+      '-project',
+      project.path,
+    ]);
     if (result.exitCode != 0) {
       return null;
     }
     Map<String, dynamic>? projectInfo;
     try {
       projectInfo =
-          (jsonDecode(result.stdout as String)
-                  as Map<String, dynamic>)['project']
+          (jsonDecode(result.stdout as String) as Map<String, dynamic>)['project']
               as Map<String, dynamic>?;
     } on FormatException {
       return null;
@@ -135,8 +128,7 @@ class Xcode {
     if (projectInfo == null) {
       return null;
     }
-    final List<String>? targets = (projectInfo['targets'] as List<dynamic>?)
-        ?.cast<String>();
+    final List<String>? targets = (projectInfo['targets'] as List<dynamic>?)?.cast<String>();
     return targets?.contains(target) ?? false;
   }
 
@@ -151,8 +143,7 @@ class Xcode {
       'available',
       '--json',
     ];
-    final findSimulatorCompleteCommand =
-        '$_xcRunCommand ${findSimulatorsArguments.join(' ')}';
+    final findSimulatorCompleteCommand = '$_xcRunCommand ${findSimulatorsArguments.join(' ')}';
     if (log) {
       print('Looking for available simulators...');
       print(findSimulatorCompleteCommand);
@@ -171,22 +162,18 @@ class Xcode {
       return null;
     }
     final simulatorListJson =
-        jsonDecode(findSimulatorsResult.stdout as String)
-            as Map<String, dynamic>;
-    final List<Map<String, dynamic>> runtimes =
-        (simulatorListJson['runtimes'] as List<dynamic>)
-            .cast<Map<String, dynamic>>();
-    final Map<String, Object> devices =
-        (simulatorListJson['devices'] as Map<String, dynamic>)
-            .cast<String, Object>();
+        jsonDecode(findSimulatorsResult.stdout as String) as Map<String, dynamic>;
+    final List<Map<String, dynamic>> runtimes = (simulatorListJson['runtimes'] as List<dynamic>)
+        .cast<Map<String, dynamic>>();
+    final Map<String, Object> devices = (simulatorListJson['devices'] as Map<String, dynamic>)
+        .cast<String, Object>();
     if (runtimes.isEmpty || devices.isEmpty) {
       return null;
     }
     String? id;
     // Looking for runtimes, trying to find one with highest OS version.
     for (final Map<String, dynamic> rawRuntimeMap in runtimes.reversed) {
-      final Map<String, Object> runtimeMap = rawRuntimeMap
-          .cast<String, Object>();
+      final Map<String, Object> runtimeMap = rawRuntimeMap.cast<String, Object>();
       if ((runtimeMap['name'] as String?)?.contains('iOS') != true) {
         continue;
       }
@@ -194,8 +181,8 @@ class Xcode {
       if (runtimeID == null) {
         continue;
       }
-      final List<Map<String, dynamic>>? devicesForRuntime =
-          (devices[runtimeID] as List<dynamic>?)?.cast<Map<String, dynamic>>();
+      final List<Map<String, dynamic>>? devicesForRuntime = (devices[runtimeID] as List<dynamic>?)
+          ?.cast<Map<String, dynamic>>();
       if (devicesForRuntime == null || devicesForRuntime.isEmpty) {
         continue;
       }
@@ -222,13 +209,8 @@ class Xcode {
   /// access to the app. To workaround this in CI, we create and use a entitlements
   /// file with sandboxing disabled. See
   /// https://developer.apple.com/documentation/security/app_sandbox/accessing_files_from_the_macos_app_sandbox.
-  File? _createDisabledSandboxEntitlementFile(
-    Directory macOSDirectory,
-    String configuration,
-  ) {
-    final entitlementDefaultFileName = configuration == 'Release'
-        ? 'Release'
-        : 'DebugProfile';
+  File? _createDisabledSandboxEntitlementFile(Directory macOSDirectory, String configuration) {
+    final entitlementDefaultFileName = configuration == 'Release' ? 'Release' : 'DebugProfile';
 
     final File entitlementFile = macOSDirectory
         .childDirectory('Runner')
@@ -239,21 +221,14 @@ class Xcode {
       return null;
     }
 
-    final String originalEntitlementFileContents = entitlementFile
-        .readAsStringSync();
-    final File disabledSandboxEntitlementFile = macOSDirectory
-        .fileSystem
-        .systemTempDirectory
+    final String originalEntitlementFileContents = entitlementFile.readAsStringSync();
+    final File disabledSandboxEntitlementFile = macOSDirectory.fileSystem.systemTempDirectory
         .createTempSync('flutter_disable_sandbox_entitlement.')
-        .childFile(
-          '${entitlementDefaultFileName}WithDisabledSandboxing.entitlements',
-        );
+        .childFile('${entitlementDefaultFileName}WithDisabledSandboxing.entitlements');
     disabledSandboxEntitlementFile.createSync(recursive: true);
     disabledSandboxEntitlementFile.writeAsStringSync(
       originalEntitlementFileContents.replaceAll(
-        RegExp(
-          r'<key>com\.apple\.security\.app-sandbox<\/key>[\S\s]*?<true\/>',
-        ),
+        RegExp(r'<key>com\.apple\.security\.app-sandbox<\/key>[\S\s]*?<true\/>'),
         '''
 <key>com.apple.security.app-sandbox</key>
 	<false/>''',

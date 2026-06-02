@@ -16,10 +16,7 @@ void main() async {
   // #docregion initialize-with-code-parameters
   await adSense.initialize(
     '0123456789012345',
-    adSenseCodeParameters: AdSenseCodeParameters(
-      adbreakTest: 'on',
-      adFrequencyHint: '30s',
-    ),
+    adSenseCodeParameters: AdSenseCodeParameters(adbreakTest: 'on', adFrequencyHint: '30s'),
   );
   // #enddocregion initialize-with-code-parameters
   runApp(const MyApp());
@@ -170,23 +167,16 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Text(
               'Interstitial Ad Status:',
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             Text('Last Status: ${_lastInterstitialInfo?.breakStatus}'),
             const Divider(),
             PaddedCard(
               children: <Widget>[
                 const Text('🪙 Available coins:'),
-                Text(
-                  '$_coins',
-                  style: Theme.of(context).textTheme.displayLarge,
-                ),
+                Text('$_coins', style: Theme.of(context).textTheme.displayLarge),
                 TextButton.icon(
-                  onPressed: _h5Ready && !adBreakAvailable
-                      ? _requestRewardedAd
-                      : null,
+                  onPressed: _h5Ready && !adBreakAvailable ? _requestRewardedAd : null,
                   label: const Text('Prepare Reward'),
                   icon: const Icon(Icons.download_rounded),
                 ),
@@ -199,9 +189,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Text(
               'Rewarded Ad Status:',
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             Text('Requested? $_adBreakRequested'),
             Text('Available? $adBreakAvailable'),

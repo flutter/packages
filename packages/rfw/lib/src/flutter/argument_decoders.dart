@@ -27,12 +27,7 @@ class AnimationDefaults extends InheritedWidget {
   ///
   /// The [duration] and [curve] are optional, and default to 200ms and
   /// [Curves.fastOutSlowIn] respectively.
-  const AnimationDefaults({
-    super.key,
-    this.duration,
-    this.curve,
-    required super.child,
-  });
+  const AnimationDefaults({super.key, this.duration, this.curve, required super.child});
 
   /// The default duration that [ArgumentsDecoder.duration] should use.
   ///
@@ -48,18 +43,21 @@ class AnimationDefaults extends InheritedWidget {
   /// ambient [AnimationDefaults] or if the nearest [AnimationDefaults] has a
   /// null [duration].
   static Duration durationOf(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<AnimationDefaults>()?.duration ?? const Duration(milliseconds: 200);
+    return context.dependOnInheritedWidgetOfExactType<AnimationDefaults>()?.duration ??
+        const Duration(milliseconds: 200);
   }
 
   /// Return the ambient [AnimationDefaults.curve], or [Curves.fastOutSlowIn] if
   /// there is no ambient [AnimationDefaults] or if the nearest
   /// [AnimationDefaults] has a null [curve].
   static Curve curveOf(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<AnimationDefaults>()?.curve ?? Curves.fastOutSlowIn;
+    return context.dependOnInheritedWidgetOfExactType<AnimationDefaults>()?.curve ??
+        Curves.fastOutSlowIn;
   }
 
   @override
-  bool updateShouldNotify(AnimationDefaults oldWidget) => duration != oldWidget.duration || curve != oldWidget.curve;
+  bool updateShouldNotify(AnimationDefaults oldWidget) =>
+      duration != oldWidget.duration || curve != oldWidget.curve;
 }
 
 /// Signature for methods that decode structured values from a [DataSource],
@@ -147,12 +145,7 @@ class ArgumentDecoders {
     final BorderSide? b = borderSide(source, [...key, 1]);
     final BorderSide? c = borderSide(source, [...key, 2]);
     final BorderSide? d = borderSide(source, [...key, 3]);
-    return BorderDirectional(
-      start: a,
-      top: b ?? a,
-      end: c ?? a,
-      bottom: d ?? b ?? a,
-    );
+    return BorderDirectional(start: a, top: b ?? a, end: c ?? a, bottom: d ?? b ?? a);
   }
 
   /// Returns a [BorderRadiusDirectional] from the specified list.
@@ -198,7 +191,9 @@ class ArgumentDecoders {
     return BorderSide(
       color: color(source, [...key, 'color']) ?? const Color(0xFF000000),
       width: source.v<double>([...key, 'width']) ?? 1.0,
-      style: enumValue<BorderStyle>(BorderStyle.values, source, [...key, 'style']) ?? BorderStyle.solid,
+      style:
+          enumValue<BorderStyle>(BorderStyle.values, source, [...key, 'style']) ??
+          BorderStyle.solid,
     );
   }
 
@@ -270,7 +265,8 @@ class ArgumentDecoders {
       case 'mode':
         return ColorFilter.mode(
           color(source, [...key, 'color']) ?? const Color(0xFF000000),
-          enumValue<BlendMode>(BlendMode.values, source, [...key, 'blendMode']) ?? BlendMode.srcOver,
+          enumValue<BlendMode>(BlendMode.values, source, [...key, 'blendMode']) ??
+              BlendMode.srcOver,
         );
       case 'srgbToLinearGamma':
         return const ColorFilter.srgbToLinearGamma();
@@ -284,7 +280,8 @@ class ArgumentDecoders {
   }
 
   /// Extension mechanism for [colorFilter].
-  static final Map<String, ArgumentDecoder<ColorFilter?>> colorFilterDecoders = <String, ArgumentDecoder<ColorFilter?>>{};
+  static final Map<String, ArgumentDecoder<ColorFilter?>> colorFilterDecoders =
+      <String, ArgumentDecoder<ColorFilter?>>{};
 
   /// Returns a list of 20 doubles from the specified list.
   ///
@@ -446,7 +443,8 @@ class ArgumentDecoders {
   ///
   /// The given key will specify a string, which is known to not match any of
   /// the values in [Curves].
-  static final Map<String, ArgumentDecoder<Curve>> curveDecoders = <String, ArgumentDecoder<Curve>>{};
+  static final Map<String, ArgumentDecoder<Curve>> curveDecoders =
+      <String, ArgumentDecoder<Curve>>{};
 
   /// Returns a [Decoration] from the specified map.
   ///
@@ -489,14 +487,22 @@ class ArgumentDecoders {
           borderRadius: borderRadius(source, [...key, 'borderRadius']),
           boxShadow: list<BoxShadow>(source, [...key, 'boxShadow'], boxShadow),
           gradient: gradient(source, [...key, 'gradient']),
-          backgroundBlendMode: enumValue<BlendMode>(BlendMode.values, source, [...key, 'backgroundBlendMode']),
-          shape: enumValue<BoxShape>(BoxShape.values, source, [...key, 'shape']) ?? BoxShape.rectangle,
+          backgroundBlendMode: enumValue<BlendMode>(BlendMode.values, source, [
+            ...key,
+            'backgroundBlendMode',
+          ]),
+          shape:
+              enumValue<BoxShape>(BoxShape.values, source, [...key, 'shape']) ?? BoxShape.rectangle,
         );
       case 'flutterLogo':
         return FlutterLogoDecoration(
           textColor: color(source, [...key, 'color']) ?? const Color(0xFF757575),
-          style: enumValue<FlutterLogoStyle>(FlutterLogoStyle.values, source, [...key, 'style']) ?? FlutterLogoStyle.markOnly,
-          margin: (edgeInsets(source, [...key, 'margin']) ?? EdgeInsets.zero).resolve(TextDirection.ltr),
+          style:
+              enumValue<FlutterLogoStyle>(FlutterLogoStyle.values, source, [...key, 'style']) ??
+              FlutterLogoStyle.markOnly,
+          margin: (edgeInsets(source, [...key, 'margin']) ?? EdgeInsets.zero).resolve(
+            TextDirection.ltr,
+          ),
         );
       case 'shape':
         return ShapeDecoration(
@@ -516,7 +522,8 @@ class ArgumentDecoders {
   }
 
   /// Extension mechanism for [decoration].
-  static final Map<String, ArgumentDecoder<Decoration?>> decorationDecoders = <String, ArgumentDecoder<Decoration?>>{};
+  static final Map<String, ArgumentDecoder<Decoration?>> decorationDecoders =
+      <String, ArgumentDecoder<Decoration?>>{};
 
   /// Returns a [DecorationImage] from the specified map.
   ///
@@ -539,7 +546,10 @@ class ArgumentDecoders {
     return DecorationImage(
       image: provider,
       onError: (Object exception, StackTrace? stackTrace) {
-        final VoidCallback? handler = source.voidHandler([...key, 'onError'], { 'exception': exception.toString(), 'stackTrack': stackTrace.toString() });
+        final VoidCallback? handler = source.voidHandler(
+          [...key, 'onError'],
+          {'exception': exception.toString(), 'stackTrack': stackTrace.toString()},
+        );
         if (handler != null) {
           handler();
         }
@@ -548,9 +558,13 @@ class ArgumentDecoders {
       fit: enumValue<BoxFit>(BoxFit.values, source, [...key, 'fit']),
       alignment: alignment(source, [...key, 'alignment']) ?? Alignment.center,
       centerSlice: rect(source, [...key, 'centerSlice']),
-      repeat: enumValue<ImageRepeat>(ImageRepeat.values, source, [...key, 'repeat']) ?? ImageRepeat.noRepeat,
+      repeat:
+          enumValue<ImageRepeat>(ImageRepeat.values, source, [...key, 'repeat']) ??
+          ImageRepeat.noRepeat,
       matchTextDirection: source.v<bool>([...key, 'matchTextDirection']) ?? false,
-      filterQuality: enumValue<FilterQuality>(FilterQuality.values, source, [...key, 'filterQuality']) ?? FilterQuality.medium,
+      filterQuality:
+          enumValue<FilterQuality>(FilterQuality.values, source, [...key, 'filterQuality']) ??
+          FilterQuality.medium,
     );
   }
 
@@ -598,12 +612,7 @@ class ArgumentDecoders {
     final double? b = source.v<double>([...key, 1]);
     final double? c = source.v<double>([...key, 2]);
     final double? d = source.v<double>([...key, 3]);
-    return EdgeInsetsDirectional.fromSTEB(
-      a,
-      b ?? a,
-      c ?? a,
-      d ?? b ?? a,
-    );
+    return EdgeInsetsDirectional.fromSTEB(a, b ?? a, c ?? a, d ?? b ?? a);
   }
 
   /// Returns one of the values of the specified enum `T`, from the specified string.
@@ -640,7 +649,10 @@ class ArgumentDecoders {
   ///
   /// As this never returns null, it is possible to use it with [list].
   static FontFeature fontFeature(DataSource source, List<Object> key) {
-    return FontFeature(source.v<String>([...key, 'feature']) ?? 'NONE', source.v<int>([...key, 'value']) ?? 1);
+    return FontFeature(
+      source.v<String>([...key, 'feature']) ?? 'NONE',
+      source.v<int>([...key, 'value']) ?? 1,
+    );
   }
 
   /// Returns a [Gradient] from the specified map.
@@ -689,18 +701,24 @@ class ArgumentDecoders {
         return LinearGradient(
           begin: alignment(source, [...key, 'begin']) ?? Alignment.centerLeft,
           end: alignment(source, [...key, 'end']) ?? Alignment.centerRight,
-          colors: list<Color>(source, [...key, 'colors'], colorOrBlack) ?? const <Color>[Color(0xFF000000), Color(0xFFFFFFFF)],
+          colors:
+              list<Color>(source, [...key, 'colors'], colorOrBlack) ??
+              const <Color>[Color(0xFF000000), Color(0xFFFFFFFF)],
           stops: list<double>(source, [...key, 'stops'], doubleOrZero),
-          tileMode: enumValue<TileMode>(TileMode.values, source, [...key, 'tileMode']) ?? TileMode.clamp,
+          tileMode:
+              enumValue<TileMode>(TileMode.values, source, [...key, 'tileMode']) ?? TileMode.clamp,
           // transform: GradientTransformMatrix(matrix(source, [...key, 'transform'])), // blocked by https://github.com/flutter/flutter/issues/87208
         );
       case 'radial':
         return RadialGradient(
           center: alignment(source, [...key, 'center']) ?? Alignment.center,
           radius: source.v<double>([...key, 'radius']) ?? 0.5,
-          colors: list<Color>(source, [...key, 'colors'], colorOrBlack) ?? const <Color>[Color(0xFF000000), Color(0xFFFFFFFF)],
+          colors:
+              list<Color>(source, [...key, 'colors'], colorOrBlack) ??
+              const <Color>[Color(0xFF000000), Color(0xFFFFFFFF)],
           stops: list<double>(source, [...key, 'stops'], doubleOrZero),
-          tileMode: enumValue<TileMode>(TileMode.values, source, [...key, 'tileMode']) ?? TileMode.clamp,
+          tileMode:
+              enumValue<TileMode>(TileMode.values, source, [...key, 'tileMode']) ?? TileMode.clamp,
           focal: alignment(source, [...key, 'focal']),
           focalRadius: source.v<double>([...key, 'focalRadius']) ?? 0.0,
           // transform: GradientTransformMatrix(matrix(source, [...key, 'transform'])), // blocked by https://github.com/flutter/flutter/issues/87208
@@ -710,9 +728,12 @@ class ArgumentDecoders {
           center: alignment(source, [...key, 'center']) ?? Alignment.center,
           startAngle: source.v<double>([...key, 'startAngle']) ?? 0.0,
           endAngle: source.v<double>([...key, 'endAngle']) ?? math.pi * 2,
-          colors: list<Color>(source, [...key, 'colors'], colorOrBlack) ?? const <Color>[Color(0xFF000000), Color(0xFFFFFFFF)],
+          colors:
+              list<Color>(source, [...key, 'colors'], colorOrBlack) ??
+              const <Color>[Color(0xFF000000), Color(0xFFFFFFFF)],
           stops: list<double>(source, [...key, 'stops'], doubleOrZero),
-          tileMode: enumValue<TileMode>(TileMode.values, source, [...key, 'tileMode']) ?? TileMode.clamp,
+          tileMode:
+              enumValue<TileMode>(TileMode.values, source, [...key, 'tileMode']) ?? TileMode.clamp,
           // transform: GradientTransformMatrix(matrix(source, [...key, 'transform'])), // blocked by https://github.com/flutter/flutter/issues/87208
         );
       default:
@@ -725,7 +746,8 @@ class ArgumentDecoders {
   }
 
   /// Extension mechanism for [gradient].
-  static final Map<String, ArgumentDecoder<Gradient?>> gradientDecoders = <String, ArgumentDecoder<Gradient?>>{};
+  static final Map<String, ArgumentDecoder<Gradient?>> gradientDecoders =
+      <String, ArgumentDecoder<Gradient?>>{};
 
   /// Returns a [SliverGridDelegate] from the specified map.
   ///
@@ -780,7 +802,8 @@ class ArgumentDecoders {
   }
 
   /// Extension mechanism for [gridDelegate].
-  static final Map<String, ArgumentDecoder<SliverGridDelegate?>> gridDelegateDecoders = <String, ArgumentDecoder<SliverGridDelegate?>>{};
+  static final Map<String, ArgumentDecoder<SliverGridDelegate?>> gridDelegateDecoders =
+      <String, ArgumentDecoder<SliverGridDelegate?>>{};
 
   /// Returns an [IconData] from the specified map.
   ///
@@ -870,7 +893,8 @@ class ArgumentDecoders {
   }
 
   /// Extension mechanism for [imageProvider].
-  static final Map<String, ArgumentDecoder<ImageProvider?>> imageProviderDecoders = <String, ArgumentDecoder<ImageProvider?>>{};
+  static final Map<String, ArgumentDecoder<ImageProvider?>> imageProviderDecoders =
+      <String, ArgumentDecoder<ImageProvider?>>{};
 
   /// Returns a [List] of `T` values from the specified list, using the given
   /// `decoder` to parse each value.
@@ -921,7 +945,11 @@ class ArgumentDecoders {
       return Locale(subtags[0], subtags[1]);
     }
     // TODO(ianh): verify this is correct (I tried looking up the Unicode spec but it was... confusing)
-    return Locale.fromSubtags(languageCode: subtags[0], scriptCode: subtags[1], countryCode: subtags[2]);
+    return Locale.fromSubtags(
+      languageCode: subtags[0],
+      scriptCode: subtags[1],
+      countryCode: subtags[2],
+    );
   }
 
   /// Returns a list of 16 doubles from the specified list.
@@ -988,7 +1016,8 @@ class ArgumentDecoders {
   }
 
   /// Extension mechanism for [maskFilter].
-  static final Map<String, ArgumentDecoder<MaskFilter?>> maskFilterDecoders = <String, ArgumentDecoder<MaskFilter?>>{};
+  static final Map<String, ArgumentDecoder<MaskFilter?>> maskFilterDecoders =
+      <String, ArgumentDecoder<MaskFilter?>>{};
 
   /// Returns an [Offset] from the specified map.
   ///
@@ -1035,7 +1064,10 @@ class ArgumentDecoders {
       return null;
     }
     final result = Paint();
-    final BlendMode? paintBlendMode = enumValue<BlendMode>(BlendMode.values, source, [...key, 'blendMode']);
+    final BlendMode? paintBlendMode = enumValue<BlendMode>(BlendMode.values, source, [
+      ...key,
+      'blendMode',
+    ]);
     if (paintBlendMode != null) {
       result.blendMode = paintBlendMode;
     }
@@ -1047,7 +1079,11 @@ class ArgumentDecoders {
     if (paintColorFilter != null) {
       result.colorFilter = paintColorFilter;
     }
-    final FilterQuality? paintFilterQuality = enumValue<FilterQuality>(FilterQuality.values, source, [...key, 'filterQuality']);
+    final FilterQuality? paintFilterQuality = enumValue<FilterQuality>(
+      FilterQuality.values,
+      source,
+      [...key, 'filterQuality'],
+    );
     if (paintFilterQuality != null) {
       result.filterQuality = paintFilterQuality;
     }
@@ -1176,7 +1212,9 @@ class ArgumentDecoders {
   static ShapeBorder? shapeBorder(DataSource source, List<Object> key) {
     final List<ShapeBorder?>? shapes = list<ShapeBorder?>(source, key, shapeBorder);
     if (shapes != null) {
-      return shapes.where((ShapeBorder? a) => a != null).reduce((ShapeBorder? a, ShapeBorder? b) => a! + b!);
+      return shapes
+          .where((ShapeBorder? a) => a != null)
+          .reduce((ShapeBorder? a, ShapeBorder? b) => a! + b!);
     }
     final String? type = source.v<String>([...key, 'type']);
     switch (type) {
@@ -1190,9 +1228,7 @@ class ArgumentDecoders {
           borderRadius: borderRadius(source, [...key, 'borderRadius']) ?? BorderRadius.zero,
         );
       case 'circle':
-        return CircleBorder(
-          side: borderSide(source, [...key, 'side']) ?? BorderSide.none,
-        );
+        return CircleBorder(side: borderSide(source, [...key, 'side']) ?? BorderSide.none);
       case 'continuous':
         return ContinuousRectangleBorder(
           side: borderSide(source, [...key, 'side']) ?? BorderSide.none,
@@ -1204,9 +1240,7 @@ class ArgumentDecoders {
           borderRadius: borderRadius(source, [...key, 'borderRadius']) ?? BorderRadius.zero,
         );
       case 'stadium':
-        return StadiumBorder(
-          side: borderSide(source, [...key, 'side']) ?? BorderSide.none,
-        );
+        return StadiumBorder(side: borderSide(source, [...key, 'side']) ?? BorderSide.none);
       default:
         final ArgumentDecoder<ShapeBorder>? decoder = shapeBorderDecoders[type];
         if (decoder == null) {
@@ -1217,7 +1251,8 @@ class ArgumentDecoders {
   }
 
   /// Extension mechanism for [shapeBorder].
-  static final Map<String, ArgumentDecoder<ShapeBorder>> shapeBorderDecoders = <String, ArgumentDecoder<ShapeBorder>>{};
+  static final Map<String, ArgumentDecoder<ShapeBorder>> shapeBorderDecoders =
+      <String, ArgumentDecoder<ShapeBorder>>{};
 
   /// Returns a [Shader] based on the specified map.
   ///
@@ -1243,7 +1278,9 @@ class ArgumentDecoders {
       case 'sweep':
         return gradient(source, key)!.createShader(
           rect(source, [...key, 'rect']) ?? Rect.zero,
-          textDirection: enumValue<TextDirection>(TextDirection.values, source, ['textDirection']) ?? TextDirection.ltr,
+          textDirection:
+              enumValue<TextDirection>(TextDirection.values, source, ['textDirection']) ??
+              TextDirection.ltr,
         );
       default:
         final ArgumentDecoder<Shader?>? decoder = shaderDecoders[type];
@@ -1255,7 +1292,8 @@ class ArgumentDecoders {
   }
 
   /// Extension mechanism for [shader].
-  static final Map<String, ArgumentDecoder<Shader?>> shaderDecoders = <String, ArgumentDecoder<Shader?>>{};
+  static final Map<String, ArgumentDecoder<Shader?>> shaderDecoders =
+      <String, ArgumentDecoder<Shader?>>{};
 
   /// Returns a string from the specified string.
   ///
@@ -1287,7 +1325,11 @@ class ArgumentDecoders {
       fontFamilyFallback: list<String>(source, [...key, 'fontFamilyFallback'], string),
       fontSize: source.v<double>([...key, 'fontSize']),
       height: source.v<double>([...key, 'height']),
-      leadingDistribution: enumValue<TextLeadingDistribution>(TextLeadingDistribution.values, source, [...key, 'leadingDistribution']),
+      leadingDistribution: enumValue<TextLeadingDistribution>(
+        TextLeadingDistribution.values,
+        source,
+        [...key, 'leadingDistribution'],
+      ),
       leading: source.v<double>([...key, 'leading']),
       fontWeight: enumValue<FontWeight>(FontWeight.values, source, [...key, 'fontWeight']),
       fontStyle: enumValue<FontStyle>(FontStyle.values, source, [...key, 'fontStyle']),
@@ -1311,7 +1353,12 @@ class ArgumentDecoders {
     return TextHeightBehavior(
       applyHeightToFirstAscent: source.v<bool>([...key, 'applyHeightToFirstAscent']) ?? true,
       applyHeightToLastDescent: source.v<bool>([...key, 'applyHeightToLastDescent']) ?? true,
-      leadingDistribution: enumValue<TextLeadingDistribution>(TextLeadingDistribution.values, source, [...key, 'leadingDistribution']) ?? TextLeadingDistribution.proportional,
+      leadingDistribution:
+          enumValue<TextLeadingDistribution>(TextLeadingDistribution.values, source, [
+            ...key,
+            'leadingDistribution',
+          ]) ??
+          TextLeadingDistribution.proportional,
     );
   }
 
@@ -1375,7 +1422,11 @@ class ArgumentDecoders {
       wordSpacing: source.v<double>([...key, 'wordSpacing']),
       textBaseline: enumValue<TextBaseline>(TextBaseline.values, source, ['textBaseline']),
       height: source.v<double>([...key, 'height']),
-      leadingDistribution: enumValue<TextLeadingDistribution>(TextLeadingDistribution.values, source, [...key, 'leadingDistribution']),
+      leadingDistribution: enumValue<TextLeadingDistribution>(
+        TextLeadingDistribution.values,
+        source,
+        [...key, 'leadingDistribution'],
+      ),
       locale: locale(source, [...key, 'locale']),
       foreground: paint(source, [...key, 'foreground']),
       background: paint(source, [...key, 'background']),
@@ -1383,7 +1434,10 @@ class ArgumentDecoders {
       fontFeatures: list<FontFeature>(source, [...key, 'fontFeatures'], fontFeature),
       decoration: textDecoration(source, [...key, 'decoration']),
       decorationColor: color(source, [...key, 'decorationColor']),
-      decorationStyle: enumValue<TextDecorationStyle>(TextDecorationStyle.values, source, [...key, 'decorationStyle']),
+      decorationStyle: enumValue<TextDecorationStyle>(TextDecorationStyle.values, source, [
+        ...key,
+        'decorationStyle',
+      ]),
       decorationThickness: source.v<double>([...key, 'decorationThickness']),
       fontFamily: source.v<String>([...key, 'fontFamily']),
       fontFamilyFallback: list<String>(source, [...key, 'fontFamilyFallback'], string),

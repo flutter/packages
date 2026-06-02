@@ -67,26 +67,21 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
       if (packageIndex == -1) {
         continue;
       }
-      final List<String> relativeComponents = allComponents.sublist(
-        packageIndex + 1,
-      );
+      final List<String> relativeComponents = allComponents.sublist(packageIndex + 1);
       // The package name is either the directory directly under packages/, or
       // the directory under that in the case of a federated plugin.
       String packageName = relativeComponents.removeAt(0);
       // Count the top-level plugin as changed.
       _changedPlugins.add(packageName);
       if (relativeComponents[0] == packageName ||
-          (relativeComponents.length > 1 &&
-              relativeComponents[0].startsWith('${packageName}_'))) {
+          (relativeComponents.length > 1 && relativeComponents[0].startsWith('${packageName}_'))) {
         packageName = relativeComponents.removeAt(0);
       }
 
       if (relativeComponents.last.endsWith('.dart') &&
           !await _changeIsCommentOnly(gitVersionFinder, path)) {
         _changedDartFiles[packageName] ??= <String>[];
-        _changedDartFiles[packageName]!.add(
-          p.posix.joinAll(relativeComponents),
-        );
+        _changedDartFiles[packageName]!.add(p.posix.joinAll(relativeComponents));
       }
 
       if (packageName.endsWith(_platformInterfaceSuffix) &&
@@ -110,9 +105,7 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
     if (package.isPlatformInterface) {
       // As the leaf nodes in the graph, a published package interface change is
       // assumed to be correct, and other changes are validated against that.
-      return PackageResult.skip(
-        'Platform interface changes are not validated.',
-      );
+      return PackageResult.skip('Platform interface changes are not validated.');
     }
 
     // Special-case combination PRs that are following repo process, so that
@@ -134,21 +127,16 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
 
     // Uses basename to match _changedPackageFiles.
     final String basePackageName = package.directory.parent.basename;
-    final platformInterfacePackageName =
-        '$basePackageName$_platformInterfaceSuffix';
+    final platformInterfacePackageName = '$basePackageName$_platformInterfaceSuffix';
     final List<String> changedPlatformInterfaceFiles =
         _changedDartFiles[platformInterfacePackageName] ?? <String>[];
 
-    if (!_modifiedAndPublishedPlatformInterfacePackages.contains(
-      platformInterfacePackageName,
-    )) {
+    if (!_modifiedAndPublishedPlatformInterfacePackages.contains(platformInterfacePackageName)) {
       print('No published changes for $platformInterfacePackageName.');
       return PackageResult.success();
     }
 
-    if (!changedPlatformInterfaceFiles.any(
-      (String path) => path.startsWith('lib/'),
-    )) {
+    if (!changedPlatformInterfaceFiles.any((String path) => path.startsWith('lib/'))) {
       print('No public code changes for $platformInterfacePackageName.');
       return PackageResult.success();
     }
@@ -192,14 +180,10 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
       'these two packages into separate PRs.\n\n'
       'If you believe that this is a false positive, please file a bug.',
     );
-    return PackageResult.fail(<String>[
-      '$platformInterfacePackageName changed.',
-    ]);
+    return PackageResult.fail(<String>['$platformInterfacePackageName changed.']);
   }
 
-  Future<bool> _packageWillBePublished(
-    String pubspecRepoRelativePosixPath,
-  ) async {
+  Future<bool> _packageWillBePublished(String pubspecRepoRelativePosixPath) async {
     final File pubspecFile = childFileWithSubcomponents(
       rootDir,
       p.posix.split(pubspecRepoRelativePosixPath),
@@ -224,10 +208,7 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
     return pubspec.version != previousVersion;
   }
 
-  Future<bool> _changeIsCommentOnly(
-    GitVersionFinder git,
-    String repoPath,
-  ) async {
+  Future<bool> _changeIsCommentOnly(GitVersionFinder git, String repoPath) async {
     final List<String> diff = await git.getDiffContents(targetPath: repoPath);
     final changeLine = RegExp(r'^[+-]');
     // This will not catch /**/-style comments, but false negatives are fine
@@ -236,9 +217,7 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
     final blankLine = RegExp(r'^[+-]\s*$');
     var foundComment = false;
     for (final line in diff) {
-      if (!changeLine.hasMatch(line) ||
-          line.startsWith('--- ') ||
-          line.startsWith('+++ ')) {
+      if (!changeLine.hasMatch(line) || line.startsWith('--- ') || line.startsWith('+++ ')) {
         continue;
       }
       if (!(commentLine.hasMatch(line) || blankLine.hasMatch(line))) {

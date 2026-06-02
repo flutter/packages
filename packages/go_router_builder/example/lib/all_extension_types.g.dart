@@ -30,14 +30,8 @@ RouteBase get $allTypesBaseRoute => GoRouteData.$route(
       path: 'double-route/:requiredDoubleField',
       factory: $DoubleExtensionRoute._fromState,
     ),
-    GoRouteData.$route(
-      path: 'int-route/:requiredIntField',
-      factory: $IntExtensionRoute._fromState,
-    ),
-    GoRouteData.$route(
-      path: 'num-route/:requiredNumField',
-      factory: $NumExtensionRoute._fromState,
-    ),
+    GoRouteData.$route(path: 'int-route/:requiredIntField', factory: $IntExtensionRoute._fromState),
+    GoRouteData.$route(path: 'num-route/:requiredNumField', factory: $NumExtensionRoute._fromState),
     GoRouteData.$route(
       path: 'double-route/:requiredDoubleField',
       factory: $DoubleExtensionRoute._fromState,
@@ -54,16 +48,12 @@ RouteBase get $allTypesBaseRoute => GoRouteData.$route(
       path: 'string-route/:requiredStringField',
       factory: $StringExtensionRoute._fromState,
     ),
-    GoRouteData.$route(
-      path: 'uri-route/:requiredUriField',
-      factory: $UriExtensionRoute._fromState,
-    ),
+    GoRouteData.$route(path: 'uri-route/:requiredUriField', factory: $UriExtensionRoute._fromState),
   ],
 );
 
 mixin $AllTypesBaseRoute on GoRouteData {
-  static AllTypesBaseRoute _fromState(GoRouterState state) =>
-      const AllTypesBaseRoute();
+  static AllTypesBaseRoute _fromState(GoRouterState state) => const AllTypesBaseRoute();
 
   @override
   String get location => GoRouteData.$location('/');
@@ -75,33 +65,26 @@ mixin $AllTypesBaseRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
 }
 
 mixin $BigIntExtensionRoute on GoRouteData {
-  static BigIntExtensionRoute _fromState(GoRouterState state) =>
-      BigIntExtensionRoute(
-        requiredBigIntField:
-            BigInt.parse(state.pathParameters['requiredBigIntField']!)
-                as BigIntExtension,
-        bigIntField:
-            BigInt.tryParse(state.uri.queryParameters['big-int-field'] ?? '')
-                as BigIntExtension?,
-      );
+  static BigIntExtensionRoute _fromState(GoRouterState state) => BigIntExtensionRoute(
+    requiredBigIntField:
+        BigInt.parse(state.pathParameters['requiredBigIntField']!) as BigIntExtension,
+    bigIntField:
+        BigInt.tryParse(state.uri.queryParameters['big-int-field'] ?? '') as BigIntExtension?,
+  );
 
   BigIntExtensionRoute get _self => this as BigIntExtensionRoute;
 
   @override
   String get location => GoRouteData.$location(
     '/big-int-route/${Uri.encodeComponent(_self.requiredBigIntField.toString())}',
-    queryParams: {
-      if (_self.bigIntField != null)
-        'big-int-field': _self.bigIntField!.toString(),
-    },
+    queryParams: {if (_self.bigIntField != null) 'big-int-field': _self.bigIntField!.toString()},
   );
 
   @override
@@ -111,26 +94,18 @@ mixin $BigIntExtensionRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
 }
 
 mixin $BoolExtensionRoute on GoRouteData {
-  static BoolExtensionRoute _fromState(
-    GoRouterState state,
-  ) => BoolExtensionRoute(
-    requiredBoolField:
-        bool.parse(state.pathParameters['requiredBoolField']!) as BoolExtension,
-    boolField:
-        bool.tryParse(state.uri.queryParameters['bool-field'] ?? '')
-            as BoolExtension?,
+  static BoolExtensionRoute _fromState(GoRouterState state) => BoolExtensionRoute(
+    requiredBoolField: bool.parse(state.pathParameters['requiredBoolField']!) as BoolExtension,
+    boolField: bool.tryParse(state.uri.queryParameters['bool-field'] ?? '') as BoolExtension?,
     boolFieldWithDefaultValue:
-        bool.tryParse(
-              state.uri.queryParameters['bool-field-with-default-value'] ?? '',
-            )
+        bool.tryParse(state.uri.queryParameters['bool-field-with-default-value'] ?? '')
             as BoolExtension? ??
         const BoolExtension(true),
   );
@@ -143,8 +118,7 @@ mixin $BoolExtensionRoute on GoRouteData {
     queryParams: {
       if (_self.boolField != null) 'bool-field': _self.boolField!.toString(),
       if (_self.boolFieldWithDefaultValue != const BoolExtension(true))
-        'bool-field-with-default-value': _self.boolFieldWithDefaultValue
-            .toString(),
+        'bool-field-with-default-value': _self.boolFieldWithDefaultValue.toString(),
     },
   );
 
@@ -155,25 +129,19 @@ mixin $BoolExtensionRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
 }
 
 mixin $DateTimeExtensionRoute on GoRouteData {
-  static DateTimeExtensionRoute _fromState(GoRouterState state) =>
-      DateTimeExtensionRoute(
-        requiredDateTimeField:
-            DateTime.parse(state.pathParameters['requiredDateTimeField']!)
-                as DateTimeExtension,
-        dateTimeField:
-            DateTime.tryParse(
-                  state.uri.queryParameters['date-time-field'] ?? '',
-                )
-                as DateTimeExtension?,
-      );
+  static DateTimeExtensionRoute _fromState(GoRouterState state) => DateTimeExtensionRoute(
+    requiredDateTimeField:
+        DateTime.parse(state.pathParameters['requiredDateTimeField']!) as DateTimeExtension,
+    dateTimeField:
+        DateTime.tryParse(state.uri.queryParameters['date-time-field'] ?? '') as DateTimeExtension?,
+  );
 
   DateTimeExtensionRoute get _self => this as DateTimeExtensionRoute;
 
@@ -181,8 +149,7 @@ mixin $DateTimeExtensionRoute on GoRouteData {
   String get location => GoRouteData.$location(
     '/date-time-route/${Uri.encodeComponent(_self.requiredDateTimeField.toString())}',
     queryParams: {
-      if (_self.dateTimeField != null)
-        'date-time-field': _self.dateTimeField!.toString(),
+      if (_self.dateTimeField != null) 'date-time-field': _self.dateTimeField!.toString(),
     },
   );
 
@@ -193,28 +160,20 @@ mixin $DateTimeExtensionRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
 }
 
 mixin $DoubleExtensionRoute on GoRouteData {
-  static DoubleExtensionRoute _fromState(
-    GoRouterState state,
-  ) => DoubleExtensionRoute(
+  static DoubleExtensionRoute _fromState(GoRouterState state) => DoubleExtensionRoute(
     requiredDoubleField:
-        double.parse(state.pathParameters['requiredDoubleField']!)
-            as DoubleExtension,
+        double.parse(state.pathParameters['requiredDoubleField']!) as DoubleExtension,
     doubleField:
-        double.tryParse(state.uri.queryParameters['double-field'] ?? '')
-            as DoubleExtension?,
+        double.tryParse(state.uri.queryParameters['double-field'] ?? '') as DoubleExtension?,
     doubleFieldWithDefaultValue:
-        double.tryParse(
-              state.uri.queryParameters['double-field-with-default-value'] ??
-                  '',
-            )
+        double.tryParse(state.uri.queryParameters['double-field-with-default-value'] ?? '')
             as DoubleExtension? ??
         const DoubleExtension(1.0),
   );
@@ -225,11 +184,9 @@ mixin $DoubleExtensionRoute on GoRouteData {
   String get location => GoRouteData.$location(
     '/double-route/${Uri.encodeComponent(_self.requiredDoubleField.toString())}',
     queryParams: {
-      if (_self.doubleField != null)
-        'double-field': _self.doubleField!.toString(),
+      if (_self.doubleField != null) 'double-field': _self.doubleField!.toString(),
       if (_self.doubleFieldWithDefaultValue != const DoubleExtension(1.0))
-        'double-field-with-default-value': _self.doubleFieldWithDefaultValue
-            .toString(),
+        'double-field-with-default-value': _self.doubleFieldWithDefaultValue.toString(),
     },
   );
 
@@ -240,8 +197,7 @@ mixin $DoubleExtensionRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
@@ -249,15 +205,10 @@ mixin $DoubleExtensionRoute on GoRouteData {
 
 mixin $IntExtensionRoute on GoRouteData {
   static IntExtensionRoute _fromState(GoRouterState state) => IntExtensionRoute(
-    requiredIntField:
-        int.parse(state.pathParameters['requiredIntField']!) as IntExtension,
-    intField:
-        int.tryParse(state.uri.queryParameters['int-field'] ?? '')
-            as IntExtension?,
+    requiredIntField: int.parse(state.pathParameters['requiredIntField']!) as IntExtension,
+    intField: int.tryParse(state.uri.queryParameters['int-field'] ?? '') as IntExtension?,
     intFieldWithDefaultValue:
-        int.tryParse(
-              state.uri.queryParameters['int-field-with-default-value'] ?? '',
-            )
+        int.tryParse(state.uri.queryParameters['int-field-with-default-value'] ?? '')
             as IntExtension? ??
         const IntExtension(1),
   );
@@ -270,8 +221,7 @@ mixin $IntExtensionRoute on GoRouteData {
     queryParams: {
       if (_self.intField != null) 'int-field': _self.intField!.toString(),
       if (_self.intFieldWithDefaultValue != const IntExtension(1))
-        'int-field-with-default-value': _self.intFieldWithDefaultValue
-            .toString(),
+        'int-field-with-default-value': _self.intFieldWithDefaultValue.toString(),
     },
   );
 
@@ -282,8 +232,7 @@ mixin $IntExtensionRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
@@ -291,15 +240,10 @@ mixin $IntExtensionRoute on GoRouteData {
 
 mixin $NumExtensionRoute on GoRouteData {
   static NumExtensionRoute _fromState(GoRouterState state) => NumExtensionRoute(
-    requiredNumField:
-        num.parse(state.pathParameters['requiredNumField']!) as NumExtension,
-    numField:
-        num.tryParse(state.uri.queryParameters['num-field'] ?? '')
-            as NumExtension?,
+    requiredNumField: num.parse(state.pathParameters['requiredNumField']!) as NumExtension,
+    numField: num.tryParse(state.uri.queryParameters['num-field'] ?? '') as NumExtension?,
     numFieldWithDefaultValue:
-        num.tryParse(
-              state.uri.queryParameters['num-field-with-default-value'] ?? '',
-            )
+        num.tryParse(state.uri.queryParameters['num-field-with-default-value'] ?? '')
             as NumExtension? ??
         const NumExtension(1),
   );
@@ -312,8 +256,7 @@ mixin $NumExtensionRoute on GoRouteData {
     queryParams: {
       if (_self.numField != null) 'num-field': _self.numField!.toString(),
       if (_self.numFieldWithDefaultValue != const NumExtension(1))
-        'num-field-with-default-value': _self.numFieldWithDefaultValue
-            .toString(),
+        'num-field-with-default-value': _self.numFieldWithDefaultValue.toString(),
     },
   );
 
@@ -324,33 +267,27 @@ mixin $NumExtensionRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
 }
 
 mixin $EnumExtensionRoute on GoRouteData {
-  static EnumExtensionRoute _fromState(GoRouterState state) =>
-      EnumExtensionRoute(
-        requiredEnumField:
-            _$PersonDetailsEnumMap._$fromName(
-                  state.pathParameters['requiredEnumField']!,
-                )
-                as PersonDetailsExtension,
-        enumField:
-            _$PersonDetailsEnumMap._$fromName(
-                  state.uri.queryParameters['enum-field'],
-                )
-                as PersonDetailsExtension?,
-        enumFieldWithDefaultValue:
-            _$PersonDetailsEnumMap._$fromName(
-                  state.uri.queryParameters['enum-field-with-default-value'],
-                )
-                as PersonDetailsExtension? ??
-            const PersonDetailsExtension(PersonDetails.favoriteFood),
-      );
+  static EnumExtensionRoute _fromState(GoRouterState state) => EnumExtensionRoute(
+    requiredEnumField:
+        _$PersonDetailsEnumMap._$fromName(state.pathParameters['requiredEnumField']!)
+            as PersonDetailsExtension,
+    enumField:
+        _$PersonDetailsEnumMap._$fromName(state.uri.queryParameters['enum-field'])
+            as PersonDetailsExtension?,
+    enumFieldWithDefaultValue:
+        _$PersonDetailsEnumMap._$fromName(
+              state.uri.queryParameters['enum-field-with-default-value'],
+            )
+            as PersonDetailsExtension? ??
+        const PersonDetailsExtension(PersonDetails.favoriteFood),
+  );
 
   EnumExtensionRoute get _self => this as EnumExtensionRoute;
 
@@ -359,13 +296,11 @@ mixin $EnumExtensionRoute on GoRouteData {
     '/enum-route/${Uri.encodeComponent(_$PersonDetailsEnumMap[_self.requiredEnumField as PersonDetails]!)}',
     queryParams: {
       if (_self.enumField != null)
-        'enum-field':
-            _$PersonDetailsEnumMap[_self.enumField! as PersonDetails]!,
+        'enum-field': _$PersonDetailsEnumMap[_self.enumField! as PersonDetails]!,
       if (_self.enumFieldWithDefaultValue !=
           const PersonDetailsExtension(PersonDetails.favoriteFood))
         'enum-field-with-default-value':
-            _$PersonDetailsEnumMap[_self.enumFieldWithDefaultValue
-                as PersonDetails]!,
+            _$PersonDetailsEnumMap[_self.enumFieldWithDefaultValue as PersonDetails]!,
     },
   );
 
@@ -376,8 +311,7 @@ mixin $EnumExtensionRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
@@ -390,25 +324,18 @@ const _$PersonDetailsEnumMap = {
 };
 
 mixin $EnhancedEnumExtensionRoute on GoRouteData {
-  static EnhancedEnumExtensionRoute _fromState(GoRouterState state) =>
-      EnhancedEnumExtensionRoute(
-        requiredEnumField:
-            _$SportDetailsEnumMap._$fromName(
-                  state.pathParameters['requiredEnumField']!,
-                )
-                as SportDetailsExtension,
-        enumField:
-            _$SportDetailsEnumMap._$fromName(
-                  state.uri.queryParameters['enum-field'],
-                )
-                as SportDetailsExtension?,
-        enumFieldWithDefaultValue:
-            _$SportDetailsEnumMap._$fromName(
-                  state.uri.queryParameters['enum-field-with-default-value'],
-                )
-                as SportDetailsExtension? ??
-            const SportDetailsExtension(SportDetails.football),
-      );
+  static EnhancedEnumExtensionRoute _fromState(GoRouterState state) => EnhancedEnumExtensionRoute(
+    requiredEnumField:
+        _$SportDetailsEnumMap._$fromName(state.pathParameters['requiredEnumField']!)
+            as SportDetailsExtension,
+    enumField:
+        _$SportDetailsEnumMap._$fromName(state.uri.queryParameters['enum-field'])
+            as SportDetailsExtension?,
+    enumFieldWithDefaultValue:
+        _$SportDetailsEnumMap._$fromName(state.uri.queryParameters['enum-field-with-default-value'])
+            as SportDetailsExtension? ??
+        const SportDetailsExtension(SportDetails.football),
+  );
 
   EnhancedEnumExtensionRoute get _self => this as EnhancedEnumExtensionRoute;
 
@@ -418,11 +345,9 @@ mixin $EnhancedEnumExtensionRoute on GoRouteData {
     queryParams: {
       if (_self.enumField != null)
         'enum-field': _$SportDetailsEnumMap[_self.enumField! as SportDetails]!,
-      if (_self.enumFieldWithDefaultValue !=
-          const SportDetailsExtension(SportDetails.football))
+      if (_self.enumFieldWithDefaultValue != const SportDetailsExtension(SportDetails.football))
         'enum-field-with-default-value':
-            _$SportDetailsEnumMap[_self.enumFieldWithDefaultValue
-                as SportDetails]!,
+            _$SportDetailsEnumMap[_self.enumFieldWithDefaultValue as SportDetails]!,
     },
   );
 
@@ -433,8 +358,7 @@ mixin $EnhancedEnumExtensionRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
@@ -448,17 +372,13 @@ const _$SportDetailsEnumMap = {
 };
 
 mixin $StringExtensionRoute on GoRouteData {
-  static StringExtensionRoute _fromState(GoRouterState state) =>
-      StringExtensionRoute(
-        requiredStringField:
-            state.pathParameters['requiredStringField']! as StringExtension,
-        stringField:
-            state.uri.queryParameters['string-field'] as StringExtension?,
-        stringFieldWithDefaultValue:
-            state.uri.queryParameters['string-field-with-default-value']
-                as StringExtension? ??
-            const StringExtension('defaultValue'),
-      );
+  static StringExtensionRoute _fromState(GoRouterState state) => StringExtensionRoute(
+    requiredStringField: state.pathParameters['requiredStringField']! as StringExtension,
+    stringField: state.uri.queryParameters['string-field'] as StringExtension?,
+    stringFieldWithDefaultValue:
+        state.uri.queryParameters['string-field-with-default-value'] as StringExtension? ??
+        const StringExtension('defaultValue'),
+  );
 
   StringExtensionRoute get _self => this as StringExtensionRoute;
 
@@ -466,12 +386,9 @@ mixin $StringExtensionRoute on GoRouteData {
   String get location => GoRouteData.$location(
     '/string-route/${Uri.encodeComponent(_self.requiredStringField as String)}',
     queryParams: {
-      if (_self.stringField != null)
-        'string-field': _self.stringField! as String,
-      if (_self.stringFieldWithDefaultValue !=
-          const StringExtension('defaultValue'))
-        'string-field-with-default-value':
-            _self.stringFieldWithDefaultValue as String,
+      if (_self.stringField != null) 'string-field': _self.stringField! as String,
+      if (_self.stringFieldWithDefaultValue != const StringExtension('defaultValue'))
+        'string-field-with-default-value': _self.stringFieldWithDefaultValue as String,
     },
   );
 
@@ -482,8 +399,7 @@ mixin $StringExtensionRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
@@ -491,11 +407,8 @@ mixin $StringExtensionRoute on GoRouteData {
 
 mixin $UriExtensionRoute on GoRouteData {
   static UriExtensionRoute _fromState(GoRouterState state) => UriExtensionRoute(
-    requiredUriField:
-        Uri.parse(state.pathParameters['requiredUriField']!) as UriExtension,
-    uriField:
-        Uri.tryParse(state.uri.queryParameters['uri-field'] ?? '')
-            as UriExtension?,
+    requiredUriField: Uri.parse(state.pathParameters['requiredUriField']!) as UriExtension,
+    uriField: Uri.tryParse(state.uri.queryParameters['uri-field'] ?? '') as UriExtension?,
   );
 
   UriExtensionRoute get _self => this as UriExtensionRoute;
@@ -503,9 +416,7 @@ mixin $UriExtensionRoute on GoRouteData {
   @override
   String get location => GoRouteData.$location(
     '/uri-route/${Uri.encodeComponent(_self.requiredUriField.toString())}',
-    queryParams: {
-      if (_self.uriField != null) 'uri-field': _self.uriField!.toString(),
-    },
+    queryParams: {if (_self.uriField != null) 'uri-field': _self.uriField!.toString()},
   );
 
   @override
@@ -515,8 +426,7 @@ mixin $UriExtensionRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
