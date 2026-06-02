@@ -161,3 +161,81 @@ extension NSFileManager$Methods on NSFileManager {
     );
   }
 }
+
+late final _class_PHObject = objc.getClass("PHObject");
+
+/// PHObject
+extension type PHObject._(objc.ObjCObject object$)
+    implements objc.ObjCObject, objc.NSObject, objc.NSCopying {
+  /// Constructs a [PHObject] that points to the same underlying object as [other].
+  PHObject.as(objc.ObjCObject other) : object$ = other {
+    objc.checkOsVersionInternal(
+      'PHObject',
+      iOS: (false, (8, 0, 0)),
+      macOS: (false, (10, 13, 0)),
+    );
+    assert(isA(object$));
+  }
+
+  /// Constructs a [PHObject] that wraps the given raw object pointer.
+  PHObject.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
+    objc.checkOsVersionInternal(
+      'PHObject',
+      iOS: (false, (8, 0, 0)),
+      macOS: (false, (10, 13, 0)),
+    );
+    assert(isA(object$));
+  }
+
+  /// Returns whether [obj] is an instance of [PHObject].
+  static bool isA(objc.ObjCObject obj) => _objc_msgSend_19nvye5(
+    obj.ref.pointer,
+    _sel_isKindOfClass_,
+    _class_PHObject,
+  );
+}
+
+extension PHObject$Methods on PHObject {}
+
+late final _class_PHAsset = objc.getClass("PHAsset");
+
+/// PHAsset
+extension type PHAsset._(objc.ObjCObject object$)
+    implements objc.ObjCObject, PHObject {
+  /// Constructs a [PHAsset] that points to the same underlying object as [other].
+  PHAsset.as(objc.ObjCObject other) : object$ = other {
+    objc.checkOsVersionInternal(
+      'PHAsset',
+      iOS: (false, (8, 0, 0)),
+      macOS: (false, (10, 13, 0)),
+    );
+    assert(isA(object$));
+  }
+
+  /// Constructs a [PHAsset] that wraps the given raw object pointer.
+  PHAsset.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
+    objc.checkOsVersionInternal(
+      'PHAsset',
+      iOS: (false, (8, 0, 0)),
+      macOS: (false, (10, 13, 0)),
+    );
+    assert(isA(object$));
+  }
+
+  /// Returns whether [obj] is an instance of [PHAsset].
+  static bool isA(objc.ObjCObject obj) => _objc_msgSend_19nvye5(
+    obj.ref.pointer,
+    _sel_isKindOfClass_,
+    _class_PHAsset,
+  );
+}
+
+extension PHAsset$Methods on PHAsset {}

@@ -11,10 +11,10 @@ void main() {
   FfiGenerator(
     output: Output(
       dartFile: packageRoot.resolve('lib/src/ffi_bindings.g.dart'),
-      // style: const DynamicLibraryBindings(
-      //   wrapperName: 'FoundationFFI',
-      //   wrapperDocComment: 'Bindings for Photos Library.',
-      // ),
+      style: const DynamicLibraryBindings(
+        wrapperName: 'FoundationFFI',
+        wrapperDocComment: 'Bindings for Foundation and Photos Library.',
+      ),
     ),
     headers: Headers(
       entryPoints: <Uri>[
@@ -46,7 +46,7 @@ void main() {
         include: (Declaration declaration) {
           return <String>{
             'NSFileManager',
-            // 'PHAsset',
+            'PHAsset',
             // 'PHAssetResource',
             // 'PHAssetResourceManager',
             // 'PHFetchResult',
