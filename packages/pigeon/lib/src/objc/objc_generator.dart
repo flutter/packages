@@ -736,10 +736,11 @@ class ObjcSourceGenerator extends StructuredGenerator<InternalObjcOptions> {
         return 'self.${field.name}';
       });
 
-      final args = fieldValues.isEmpty ? '' : ', ${fieldValues.join(', ')}';
-      indent.writeln(
-        'return [NSString stringWithFormat:@"$formatString"$args];',
-      );
+      final String args = <String>[
+        '@"$formatString"',
+        ...fieldValues,
+      ].join(', ');
+      indent.writeln('return [NSString stringWithFormat:$args];');
     });
   }
 

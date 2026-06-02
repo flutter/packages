@@ -30,11 +30,11 @@ typedef NS_ENUM(NSUInteger, PGNCode) {
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithName:(nullable NSString *)name
-                 description:(nullable NSString *)description
+          messageDescription:(nullable NSString *)messageDescription
                         code:(PGNCode)code
                         data:(NSDictionary<NSString *, NSString *> *)data;
 @property(nonatomic, copy, nullable) NSString *name;
-@property(nonatomic, copy, nullable) NSString *description;
+@property(nonatomic, copy, nullable) NSString *messageDescription;
 @property(nonatomic, assign) PGNCode code;
 @property(nonatomic, copy) NSDictionary<NSString *, NSString *> *data;
 @end

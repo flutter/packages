@@ -419,13 +419,9 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
         }
         return '$name=\$$name';
       });
-      if (fieldStrings.isEmpty) {
-        indent.writeln('return "${classDefinition.name}()"');
-      } else {
-        indent.writeln(
-          'return "${classDefinition.name}(${fieldStrings.join(', ')})"',
-        );
-      }
+      indent.writeln(
+        'return "${classDefinition.name}(${fieldStrings.join(', ')})"',
+      );
     });
   }
 

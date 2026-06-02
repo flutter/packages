@@ -690,7 +690,7 @@ if (wrapped == nil) {
           final String comparisons = fields
               .map(
                 (NamedType field) =>
-                    'deepEquals${generatorOptions.fileSpecificClassNameComponent ?? ''}(lhs.${field.name}, rhs.${field.name})',
+                    '${generatorOptions.fileSpecificClassNameComponent ?? ''}PigeonInternal.deepEquals(lhs.${field.name}, rhs.${field.name})',
               )
               .join(' && ');
           indent.writeln('return $comparisons');
@@ -706,7 +706,7 @@ if (wrapped == nil) {
       );
       for (final field in fields) {
         indent.writeln(
-          'deepHash${generatorOptions.fileSpecificClassNameComponent ?? ''}(value: ${field.name}, hasher: &hasher)',
+          '${generatorOptions.fileSpecificClassNameComponent ?? ''}PigeonInternal.deepHash(value: ${field.name}, hasher: &hasher)',
         );
       }
     });
@@ -1469,22 +1469,17 @@ if (wrapped == nil) {
   }
 
   void _writeIsNullish(InternalSwiftOptions generatorOptions, Indent indent) {
-    indent.newln();
-    final String uniqueComponent =
-        generatorOptions.fileSpecificClassNameComponent ?? '';
     indent.format('''
-enum ${uniqueComponent}PigeonInternal {
-  static func isNullish(_ value: Any?) -> Bool {
-    guard let innerValue = value else {
-      return true
-    }
-
-    if case Optional<Any>.some(Optional<Any>.none) = value {
-      return true
-    }
-
-    return innerValue is NSNull
+static func isNullish(_ value: Any?) -> Bool {
+  guard let innerValue = value else {
+    return true
   }
+
+  if case Optional<Any>.some(Optional<Any>.none) = value {
+    return true
+  }
+
+  return innerValue is NSNull
 }''');
   }
 
@@ -1556,20 +1551,12 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   }
 
   void _writeDeepEquals(InternalSwiftOptions generatorOptions, Indent indent) {
-    final deepEqualsName =
-        'deepEquals${generatorOptions.fileSpecificClassNameComponent ?? ''}';
-    final deepHashName =
-        'deepHash${generatorOptions.fileSpecificClassNameComponent ?? ''}';
-    final doubleEqualsName =
-        'doubleEquals${generatorOptions.fileSpecificClassNameComponent ?? ''}';
-    final doubleHashName =
-        'doubleHash${generatorOptions.fileSpecificClassNameComponent ?? ''}';
     indent.format('''
-private func $doubleEqualsName(_ lhs: Double, _ rhs: Double) -> Bool {
+static func doubleEquals(_ lhs: Double, _ rhs: Double) -> Bool {
   return (lhs.isNaN && rhs.isNaN) || lhs == rhs
 }
 
-private func $doubleHashName(_ value: Double, _ hasher: inout Hasher) {
+static func doubleHash(_ value: Double, _ hasher: inout Hasher) {
   if value.isNaN {
     hasher.combine(0x7FF8000000000000)
   } else {
@@ -1578,7 +1565,7 @@ private func $doubleHashName(_ value: Double, _ hasher: inout Hasher) {
   }
 }
 
-func $deepEqualsName(_ lhs: Any?, _ rhs: Any?) -> Bool {
+static func deepEquals(_ lhs: Any?, _ rhs: Any?) -> Bool {
   let cleanLhs = nilOrValue(lhs) as Any?
   let cleanRhs = nilOrValue(rhs) as Any?
   switch (cleanLhs, cleanRhs) {
@@ -1597,7 +1584,7 @@ func $deepEqualsName(_ lhs: Any?, _ rhs: Any?) -> Bool {
   case (let lhsArray, let rhsArray) as ([Any?], [Any?]):
     guard lhsArray.count == rhsArray.count else { return false }
     for (index, element) in lhsArray.enumerated() {
-      if !$deepEqualsName(element, rhsArray[index]) {
+      if !deepEquals(element, rhsArray[index]) {
         return false
       }
     }
@@ -1606,7 +1593,7 @@ func $deepEqualsName(_ lhs: Any?, _ rhs: Any?) -> Bool {
   case (let lhsArray, let rhsArray) as ([Double], [Double]):
     guard lhsArray.count == rhsArray.count else { return false }
     for (index, element) in lhsArray.enumerated() {
-      if !$doubleEqualsName(element, rhsArray[index]) {
+      if !doubleEquals(element, rhsArray[index]) {
         return false
       }
     }
@@ -1617,8 +1604,8 @@ func $deepEqualsName(_ lhs: Any?, _ rhs: Any?) -> Bool {
     for (lhsKey, lhsValue) in lhsDictionary {
       var found = false
       for (rhsKey, rhsValue) in rhsDictionary {
-        if $deepEqualsName(lhsKey, rhsKey) {
-          if $deepEqualsName(lhsValue, rhsValue) {
+        if deepEquals(lhsKey, rhsKey) {
+          if deepEquals(lhsValue, rhsValue) {
             found = true
             break
           } else {
@@ -1631,7 +1618,7 @@ func $deepEqualsName(_ lhs: Any?, _ rhs: Any?) -> Bool {
     return true
 
   case (let lhs as Double, let rhs as Double):
-    return $doubleEqualsName(lhs, rhs)
+    return doubleEquals(lhs, rhs)
 
   case (let lhsHashable, let rhsHashable) as (AnyHashable, AnyHashable):
     return lhsHashable == rhsHashable
@@ -1641,26 +1628,26 @@ func $deepEqualsName(_ lhs: Any?, _ rhs: Any?) -> Bool {
   }
 }
 
-func $deepHashName(value: Any?, hasher: inout Hasher) {
+static func deepHash(value: Any?, hasher: inout Hasher) {
   let cleanValue = nilOrValue(value) as Any?
   if let cleanValue = cleanValue {
     if let doubleValue = cleanValue as? Double {
-      $doubleHashName(doubleValue, &hasher)
+      doubleHash(doubleValue, &hasher)
     } else if let valueList = cleanValue as? [Any?] {
       for item in valueList {
-        $deepHashName(value: item, hasher: &hasher)
+        deepHash(value: item, hasher: &hasher)
       }
     } else if let valueList = cleanValue as? [Double] {
       for item in valueList {
-        $doubleHashName(item, &hasher)
+        doubleHash(item, &hasher)
       }
     } else if let valueDict = cleanValue as? [AnyHashable: Any?] {
       var result = 0
       for (key, value) in valueDict {
         var entryKeyHasher = Hasher()
-        $deepHashName(value: key, hasher: &entryKeyHasher)
+        deepHash(value: key, hasher: &entryKeyHasher)
         var entryValueHasher = Hasher()
-        $deepHashName(value: value, hasher: &entryValueHasher)
+        deepHash(value: value, hasher: &entryValueHasher)
         result = result &+ ((entryKeyHasher.finalize() &* 31) ^ entryValueHasher.finalize())
       }
       hasher.combine(result)
@@ -1674,6 +1661,22 @@ func $deepHashName(value: Any?, hasher: inout Hasher) {
   }
 }
 ''');
+  }
+
+  void _writePigeonInternal(
+    InternalSwiftOptions generatorOptions,
+    Root root,
+    Indent indent,
+  ) {
+    indent.newln();
+    final String uniqueComponent =
+        generatorOptions.fileSpecificClassNameComponent ?? '';
+    indent.writeScoped('enum ${uniqueComponent}PigeonInternal {', '}', () {
+      _writeIsNullish(generatorOptions, indent);
+      if (root.classes.isNotEmpty) {
+        _writeDeepEquals(generatorOptions, indent);
+      }
+    });
   }
 
   @override
@@ -1695,11 +1698,8 @@ func $deepHashName(value: Any?, hasher: inout Hasher) {
       _writeCreateConnectionError(generatorOptions, indent);
     }
 
-    _writeIsNullish(generatorOptions, indent);
+    _writePigeonInternal(generatorOptions, root, indent);
     _writeNilOrValue(indent);
-    if (root.classes.isNotEmpty) {
-      _writeDeepEquals(generatorOptions, indent);
-    }
   }
 
   @override

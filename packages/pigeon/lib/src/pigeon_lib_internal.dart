@@ -505,7 +505,22 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
       );
 
   @override
-  List<Error> validate(InternalPigeonOptions options, Root root) => <Error>[];
+  List<Error> validate(InternalPigeonOptions options, Root root) {
+    final errors = <Error>[];
+    for (final Class classDefinition in root.classes) {
+      for (final NamedType field in classDefinition.fields) {
+        if (field.name == 'description') {
+          errors.add(
+            Error(
+              message:
+                  'Field "description" is not allowed in class "${classDefinition.name}" because it conflicts with Swift\'s NSObject/CustomStringConvertible.description property.',
+            ),
+          );
+        }
+      }
+    }
+    return errors;
+  }
 }
 
 /// A [GeneratorAdapter] that generates C++ source code.
