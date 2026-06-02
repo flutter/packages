@@ -1,5 +1,6 @@
-## NEXT
+## 3.2.4
 
+* Bump org.json:json from 20251224 to 20260522 in example.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 * Updates README to reflect currently supported OS versions for the latest
   versions of the endorsed platform implementations.
