@@ -7,6 +7,7 @@ import 'package:cross_file_platform_interface/cross_file_platform_interface.dart
 
 import 'darwin_scoped_storage_cross_directory.dart';
 import 'darwin_scoped_storage_cross_file.dart';
+import 'ffi_bindings.g.dart';
 
 /// Implementation of [CrossFilePlatform] for iOS and macOS.
 base class CrossFileDarwin extends CrossFileIO {

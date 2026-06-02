@@ -6,6 +6,26 @@ import 'dart:ffi' as ffi;
 import 'package:objective_c/objective_c.dart' as objc;
 import 'package:ffi/ffi.dart' as pkg_ffi;
 
+@ffi.Native<
+  ffi.Pointer<objc.ObjCBlockImpl> Function(ffi.Pointer<objc.ObjCBlockImpl>)
+>(isLeaf: true)
+external ffi.Pointer<objc.ObjCBlockImpl>
+_FoundationFFI_wrapListenerBlock_10c3wkj(ffi.Pointer<objc.ObjCBlockImpl> block);
+
+@ffi.Native<
+  ffi.Pointer<objc.ObjCBlockImpl> Function(
+    ffi.Pointer<objc.ObjCBlockImpl>,
+    ffi.Pointer<objc.ObjCBlockImpl>,
+    ffi.Pointer<objc.DOBJC_Context>,
+  )
+>(isLeaf: true)
+external ffi.Pointer<objc.ObjCBlockImpl>
+_FoundationFFI_wrapBlockingBlock_10c3wkj(
+  ffi.Pointer<objc.ObjCBlockImpl> block,
+  ffi.Pointer<objc.ObjCBlockImpl> listnerBlock,
+  ffi.Pointer<objc.DOBJC_Context> context,
+);
+
 late final _class_NSFileManager = objc.getClass("NSFileManager");
 late final _sel_isKindOfClass_ = objc.registerName("isKindOfClass:");
 final _objc_msgSend_19nvye5 = objc.msgSendPointer
@@ -201,7 +221,133 @@ extension type PHObject._(objc.ObjCObject object$)
 
 extension PHObject$Methods on PHObject {}
 
+late final _class_PHFetchResult = objc.getClass("PHFetchResult");
+late final _sel_firstObject = objc.registerName("firstObject");
+
+/// PHFetchResult
+extension type PHFetchResult._(objc.ObjCObject object$)
+    implements
+        objc.ObjCObject,
+        objc.NSObject,
+        objc.NSCopying,
+        objc.NSFastEnumeration {
+  /// Constructs a [PHFetchResult] that points to the same underlying object as [other].
+  PHFetchResult.as(objc.ObjCObject other) : object$ = other {
+    objc.checkOsVersionInternal(
+      'PHFetchResult',
+      iOS: (false, (8, 0, 0)),
+      macOS: (false, (10, 13, 0)),
+    );
+    assert(isA(object$));
+  }
+
+  /// Constructs a [PHFetchResult] that wraps the given raw object pointer.
+  PHFetchResult.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
+    objc.checkOsVersionInternal(
+      'PHFetchResult',
+      iOS: (false, (8, 0, 0)),
+      macOS: (false, (10, 13, 0)),
+    );
+    assert(isA(object$));
+  }
+
+  /// Returns whether [obj] is an instance of [PHFetchResult].
+  static bool isA(objc.ObjCObject obj) => _objc_msgSend_19nvye5(
+    obj.ref.pointer,
+    _sel_isKindOfClass_,
+    _class_PHFetchResult,
+  );
+}
+
+extension PHFetchResult$Methods on PHFetchResult {
+  /// firstObject
+  objc.ObjCObject? get firstObject {
+    objc.checkOsVersionInternal(
+      'PHFetchResult.firstObject',
+      iOS: (false, (8, 0, 0)),
+      macOS: (false, (10, 13, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_firstObject);
+    return $ret.address == 0
+        ? null
+        : objc.ObjCObject($ret, retain: true, release: true);
+  }
+}
+
+enum CGImagePropertyOrientation {
+  kCGImagePropertyOrientationUp(1),
+  kCGImagePropertyOrientationUpMirrored(2),
+  kCGImagePropertyOrientationDown(3),
+  kCGImagePropertyOrientationDownMirrored(4),
+  kCGImagePropertyOrientationLeftMirrored(5),
+  kCGImagePropertyOrientationRight(6),
+  kCGImagePropertyOrientationRightMirrored(7),
+  kCGImagePropertyOrientationLeft(8);
+
+  final int value;
+  const CGImagePropertyOrientation(this.value);
+
+  static CGImagePropertyOrientation fromValue(int value) => switch (value) {
+    1 => kCGImagePropertyOrientationUp,
+    2 => kCGImagePropertyOrientationUpMirrored,
+    3 => kCGImagePropertyOrientationDown,
+    4 => kCGImagePropertyOrientationDownMirrored,
+    5 => kCGImagePropertyOrientationLeftMirrored,
+    6 => kCGImagePropertyOrientationRight,
+    7 => kCGImagePropertyOrientationRightMirrored,
+    8 => kCGImagePropertyOrientationLeft,
+    _ => throw ArgumentError(
+      'Unknown value for CGImagePropertyOrientation: $value',
+    ),
+  };
+}
+
 late final _class_PHAsset = objc.getClass("PHAsset");
+late final _sel_modificationDate = objc.registerName("modificationDate");
+
+/// WARNING: PHFetchOptions is a stub. To generate bindings for this class, include
+/// PHFetchOptions in your config's objc-interfaces list.
+///
+/// PHFetchOptions
+extension type PHFetchOptions._(objc.ObjCObject object$)
+    implements objc.ObjCObject {
+  /// Constructs a [PHFetchOptions] that points to the same underlying object as [other].
+  PHFetchOptions.as(objc.ObjCObject other) : object$ = other {}
+
+  /// Constructs a [PHFetchOptions] that wraps the given raw object pointer.
+  PHFetchOptions.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {}
+}
+
+late final _sel_fetchAssetsWithLocalIdentifiers_options_ = objc.registerName(
+  "fetchAssetsWithLocalIdentifiers:options:",
+);
+final _objc_msgSend_15qeuct = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Pointer<objc.ObjCObjectImpl> Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObjectImpl> Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
 
 /// PHAsset
 extension type PHAsset._(objc.ObjCObject object$)
@@ -236,6 +382,783 @@ extension type PHAsset._(objc.ObjCObject object$)
     _sel_isKindOfClass_,
     _class_PHAsset,
   );
+
+  /// fetchAssetsWithLocalIdentifiers:options:
+  static PHFetchResult fetchAssetsWithLocalIdentifiers(
+    objc.NSArray identifiers, {
+    PHFetchOptions? options,
+  }) {
+    objc.checkOsVersionInternal(
+      'PHAsset.fetchAssetsWithLocalIdentifiers:options:',
+      iOS: (false, (8, 0, 0)),
+      macOS: (false, (10, 13, 0)),
+    );
+    final $ret = _objc_msgSend_15qeuct(
+      _class_PHAsset,
+      _sel_fetchAssetsWithLocalIdentifiers_options_,
+      identifiers.ref.pointer,
+      options?.ref.pointer ?? ffi.nullptr,
+    );
+    return PHFetchResult.fromPointer($ret, retain: true, release: true);
+  }
 }
 
-extension PHAsset$Methods on PHAsset {}
+extension PHAsset$Methods on PHAsset {
+  /// The date and time of the last modification to this asset or one of its properties
+  objc.NSDate? get modificationDate {
+    objc.checkOsVersionInternal(
+      'PHAsset.modificationDate',
+      iOS: (false, (8, 0, 0)),
+      macOS: (false, (10, 13, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(
+      object$.ref.pointer,
+      _sel_modificationDate,
+    );
+    return $ret.address == 0
+        ? null
+        : objc.NSDate.fromPointer($ret, retain: true, release: true);
+  }
+}
+
+late final _class_PHAssetResource = objc.getClass("PHAssetResource");
+late final _sel_originalFilename = objc.registerName("originalFilename");
+late final _sel_assetResourcesForAsset_ = objc.registerName(
+  "assetResourcesForAsset:",
+);
+
+/// PHAssetResource
+extension type PHAssetResource._(objc.ObjCObject object$)
+    implements objc.ObjCObject, objc.NSObject {
+  /// Constructs a [PHAssetResource] that points to the same underlying object as [other].
+  PHAssetResource.as(objc.ObjCObject other) : object$ = other {
+    objc.checkOsVersionInternal(
+      'PHAssetResource',
+      iOS: (false, (9, 0, 0)),
+      macOS: (false, (10, 15, 0)),
+    );
+    assert(isA(object$));
+  }
+
+  /// Constructs a [PHAssetResource] that wraps the given raw object pointer.
+  PHAssetResource.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
+    objc.checkOsVersionInternal(
+      'PHAssetResource',
+      iOS: (false, (9, 0, 0)),
+      macOS: (false, (10, 15, 0)),
+    );
+    assert(isA(object$));
+  }
+
+  /// Returns whether [obj] is an instance of [PHAssetResource].
+  static bool isA(objc.ObjCObject obj) => _objc_msgSend_19nvye5(
+    obj.ref.pointer,
+    _sel_isKindOfClass_,
+    _class_PHAssetResource,
+  );
+
+  /// assetResourcesForAsset:
+  static objc.NSArray assetResourcesForAsset(PHAsset asset) {
+    objc.checkOsVersionInternal(
+      'PHAssetResource.assetResourcesForAsset:',
+      iOS: (false, (9, 0, 0)),
+      macOS: (false, (10, 15, 0)),
+    );
+    final $ret = _objc_msgSend_1sotr3r(
+      _class_PHAssetResource,
+      _sel_assetResourcesForAsset_,
+      asset.ref.pointer,
+    );
+    return objc.NSArray.fromPointer($ret, retain: true, release: true);
+  }
+}
+
+extension PHAssetResource$Methods on PHAssetResource {
+  /// originalFilename
+  objc.NSString get originalFilename {
+    objc.checkOsVersionInternal(
+      'PHAssetResource.originalFilename',
+      iOS: (false, (9, 0, 0)),
+      macOS: (false, (10, 15, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(
+      object$.ref.pointer,
+      _sel_originalFilename,
+    );
+    return objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+}
+
+late final _class_PHImageRequestOptions = objc.getClass(
+  "PHImageRequestOptions",
+);
+late final _sel_isNetworkAccessAllowed = objc.registerName(
+  "isNetworkAccessAllowed",
+);
+final _objc_msgSend_91o635 = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Bool Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+        )
+      >
+    >()
+    .asFunction<
+      bool Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+      )
+    >();
+
+/// PHImageRequestOptions
+extension type PHImageRequestOptions._(objc.ObjCObject object$)
+    implements objc.ObjCObject, objc.NSObject, objc.NSCopying {
+  /// Constructs a [PHImageRequestOptions] that points to the same underlying object as [other].
+  PHImageRequestOptions.as(objc.ObjCObject other) : object$ = other {
+    objc.checkOsVersionInternal(
+      'PHImageRequestOptions',
+      iOS: (false, (8, 0, 0)),
+      macOS: (false, (10, 13, 0)),
+    );
+    assert(isA(object$));
+  }
+
+  /// Constructs a [PHImageRequestOptions] that wraps the given raw object pointer.
+  PHImageRequestOptions.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
+    objc.checkOsVersionInternal(
+      'PHImageRequestOptions',
+      iOS: (false, (8, 0, 0)),
+      macOS: (false, (10, 13, 0)),
+    );
+    assert(isA(object$));
+  }
+
+  /// Returns whether [obj] is an instance of [PHImageRequestOptions].
+  static bool isA(objc.ObjCObject obj) => _objc_msgSend_19nvye5(
+    obj.ref.pointer,
+    _sel_isKindOfClass_,
+    _class_PHImageRequestOptions,
+  );
+}
+
+extension PHImageRequestOptions$Methods on PHImageRequestOptions {
+  /// isNetworkAccessAllowed
+  bool get isNetworkAccessAllowed {
+    objc.checkOsVersionInternal(
+      'PHImageRequestOptions.isNetworkAccessAllowed',
+      iOS: (false, (8, 0, 0)),
+      macOS: (false, (10, 13, 0)),
+    );
+    return _objc_msgSend_91o635(
+      object$.ref.pointer,
+      _sel_isNetworkAccessAllowed,
+    );
+  }
+}
+
+late final _class_PHImageManager = objc.getClass("PHImageManager");
+
+/// Construction methods for `objc.ObjCBlock<ffi.Void Function(objc.NSData?, objc.NSString?, ffi.Uint32, objc.NSDictionary?)>`.
+abstract final class ObjCBlock_ffiVoid_NSData_NSString_CGImagePropertyOrientation_NSDictionary {
+  /// Returns a block that wraps the given raw block pointer.
+  static objc.ObjCBlock<
+    ffi.Void Function(
+      objc.NSData?,
+      objc.NSString?,
+      ffi.Uint32,
+      objc.NSDictionary?,
+    )
+  >
+  fromPointer(
+    ffi.Pointer<objc.ObjCBlockImpl> pointer, {
+    bool retain = false,
+    bool release = false,
+  }) =>
+      objc.ObjCBlock<
+        ffi.Void Function(
+          objc.NSData?,
+          objc.NSString?,
+          ffi.Uint32,
+          objc.NSDictionary?,
+        )
+      >(pointer, retain: retain, release: release);
+
+  /// Creates a block from a C function pointer.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  static objc.ObjCBlock<
+    ffi.Void Function(
+      objc.NSData?,
+      objc.NSString?,
+      ffi.Uint32,
+      objc.NSDictionary?,
+    )
+  >
+  fromFunctionPointer(
+    ffi.Pointer<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl> arg0,
+          ffi.Pointer<objc.ObjCObjectImpl> arg1,
+          ffi.Uint32 arg2,
+          ffi.Pointer<objc.ObjCObjectImpl> arg3,
+        )
+      >
+    >
+    ptr,
+  ) =>
+      objc.ObjCBlock<
+        ffi.Void Function(
+          objc.NSData?,
+          objc.NSString?,
+          ffi.Uint32,
+          objc.NSDictionary?,
+        )
+      >(
+        objc.newPointerBlock(_fnPtrCallable, ptr.cast()),
+        retain: false,
+        release: true,
+      );
+
+  /// Creates a block from a Dart function.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC.
+  static objc.ObjCBlock<
+    ffi.Void Function(
+      objc.NSData?,
+      objc.NSString?,
+      ffi.Uint32,
+      objc.NSDictionary?,
+    )
+  >
+  fromFunction(
+    void Function(
+      objc.NSData?,
+      objc.NSString?,
+      CGImagePropertyOrientation,
+      objc.NSDictionary?,
+    )
+    fn, {
+    bool keepIsolateAlive = true,
+  }) =>
+      objc.ObjCBlock<
+        ffi.Void Function(
+          objc.NSData?,
+          objc.NSString?,
+          ffi.Uint32,
+          objc.NSDictionary?,
+        )
+      >(
+        objc.newClosureBlock(
+          _closureCallable,
+          (
+            ffi.Pointer<objc.ObjCObjectImpl> arg0,
+            ffi.Pointer<objc.ObjCObjectImpl> arg1,
+            int arg2,
+            ffi.Pointer<objc.ObjCObjectImpl> arg3,
+          ) => fn(
+            arg0.address == 0
+                ? null
+                : objc.NSData.fromPointer(arg0, retain: true, release: true),
+            arg1.address == 0
+                ? null
+                : objc.NSString.fromPointer(arg1, retain: true, release: true),
+            CGImagePropertyOrientation.fromValue(arg2),
+            arg3.address == 0
+                ? null
+                : objc.NSDictionary.fromPointer(
+                    arg3,
+                    retain: true,
+                    release: true,
+                  ),
+          ),
+          keepIsolateAlive,
+        ),
+        retain: false,
+        release: true,
+      );
+
+  /// Creates a listener block from a Dart function.
+  ///
+  /// This is based on FFI's NativeCallable.listener, and has the same
+  /// capabilities and limitations. This block can be invoked from any thread,
+  /// but only supports void functions, and is not run synchronously. See
+  /// NativeCallable.listener for more details.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC.
+  static objc.ObjCBlock<
+    ffi.Void Function(
+      objc.NSData?,
+      objc.NSString?,
+      ffi.Uint32,
+      objc.NSDictionary?,
+    )
+  >
+  listener(
+    void Function(
+      objc.NSData?,
+      objc.NSString?,
+      CGImagePropertyOrientation,
+      objc.NSDictionary?,
+    )
+    fn, {
+    bool keepIsolateAlive = true,
+  }) {
+    final raw = objc.newClosureBlock(
+      _listenerCallable.nativeFunction.cast(),
+      (
+        ffi.Pointer<objc.ObjCObjectImpl> arg0,
+        ffi.Pointer<objc.ObjCObjectImpl> arg1,
+        int arg2,
+        ffi.Pointer<objc.ObjCObjectImpl> arg3,
+      ) => fn(
+        arg0.address == 0
+            ? null
+            : objc.NSData.fromPointer(arg0, retain: false, release: true),
+        arg1.address == 0
+            ? null
+            : objc.NSString.fromPointer(arg1, retain: false, release: true),
+        CGImagePropertyOrientation.fromValue(arg2),
+        arg3.address == 0
+            ? null
+            : objc.NSDictionary.fromPointer(arg3, retain: false, release: true),
+      ),
+      keepIsolateAlive,
+    );
+    final wrapper = _FoundationFFI_wrapListenerBlock_10c3wkj(raw);
+    objc.objectRelease(raw.cast());
+    return objc.ObjCBlock<
+      ffi.Void Function(
+        objc.NSData?,
+        objc.NSString?,
+        ffi.Uint32,
+        objc.NSDictionary?,
+      )
+    >(wrapper, retain: false, release: true);
+  }
+
+  /// Creates a blocking block from a Dart function.
+  ///
+  /// This callback can be invoked from any native thread, and will block the
+  /// caller until the callback is handled by the Dart isolate that created
+  /// the block. Async functions are not supported.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC. If the owner isolate
+  /// has shut down, and the block is invoked by native code, it may block
+  /// indefinitely, or have other undefined behavior.
+  static objc.ObjCBlock<
+    ffi.Void Function(
+      objc.NSData?,
+      objc.NSString?,
+      ffi.Uint32,
+      objc.NSDictionary?,
+    )
+  >
+  blocking(
+    void Function(
+      objc.NSData?,
+      objc.NSString?,
+      CGImagePropertyOrientation,
+      objc.NSDictionary?,
+    )
+    fn, {
+    bool keepIsolateAlive = true,
+  }) {
+    final raw = objc.newClosureBlock(
+      _blockingCallable.nativeFunction.cast(),
+      (
+        ffi.Pointer<objc.ObjCObjectImpl> arg0,
+        ffi.Pointer<objc.ObjCObjectImpl> arg1,
+        int arg2,
+        ffi.Pointer<objc.ObjCObjectImpl> arg3,
+      ) => fn(
+        arg0.address == 0
+            ? null
+            : objc.NSData.fromPointer(arg0, retain: false, release: true),
+        arg1.address == 0
+            ? null
+            : objc.NSString.fromPointer(arg1, retain: false, release: true),
+        CGImagePropertyOrientation.fromValue(arg2),
+        arg3.address == 0
+            ? null
+            : objc.NSDictionary.fromPointer(arg3, retain: false, release: true),
+      ),
+      keepIsolateAlive,
+    );
+    final rawListener = objc.newClosureBlock(
+      _blockingListenerCallable.nativeFunction.cast(),
+      (
+        ffi.Pointer<objc.ObjCObjectImpl> arg0,
+        ffi.Pointer<objc.ObjCObjectImpl> arg1,
+        int arg2,
+        ffi.Pointer<objc.ObjCObjectImpl> arg3,
+      ) => fn(
+        arg0.address == 0
+            ? null
+            : objc.NSData.fromPointer(arg0, retain: false, release: true),
+        arg1.address == 0
+            ? null
+            : objc.NSString.fromPointer(arg1, retain: false, release: true),
+        CGImagePropertyOrientation.fromValue(arg2),
+        arg3.address == 0
+            ? null
+            : objc.NSDictionary.fromPointer(arg3, retain: false, release: true),
+      ),
+      keepIsolateAlive,
+    );
+    final wrapper = _FoundationFFI_wrapBlockingBlock_10c3wkj(
+      raw,
+      rawListener,
+      objc.objCContext,
+    );
+    objc.objectRelease(raw.cast());
+    objc.objectRelease(rawListener.cast());
+    return objc.ObjCBlock<
+      ffi.Void Function(
+        objc.NSData?,
+        objc.NSString?,
+        ffi.Uint32,
+        objc.NSDictionary?,
+      )
+    >(wrapper, retain: false, release: true);
+  }
+
+  static void _listenerTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+    ffi.Pointer<objc.ObjCObjectImpl> arg1,
+    int arg2,
+    ffi.Pointer<objc.ObjCObjectImpl> arg3,
+  ) {
+    (objc.getBlockClosure(block)
+        as void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          int,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        ))(arg0, arg1, arg2, arg3);
+    objc.objectRelease(block.cast());
+  }
+
+  static ffi.NativeCallable<
+    ffi.Void Function(
+      ffi.Pointer<objc.ObjCBlockImpl>,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+      ffi.Uint32,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+    )
+  >
+  _listenerCallable =
+      ffi.NativeCallable<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+            ffi.Uint32,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          )
+        >.listener(_listenerTrampoline)
+        ..keepIsolateAlive = false;
+  static void _blockingTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<ffi.Void> waiter,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+    ffi.Pointer<objc.ObjCObjectImpl> arg1,
+    int arg2,
+    ffi.Pointer<objc.ObjCObjectImpl> arg3,
+  ) {
+    try {
+      (objc.getBlockClosure(block)
+          as void Function(
+            ffi.Pointer<objc.ObjCObjectImpl>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+            int,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          ))(arg0, arg1, arg2, arg3);
+    } catch (e) {
+    } finally {
+      objc.signalWaiter(waiter);
+      objc.objectRelease(block.cast());
+    }
+  }
+
+  static ffi.NativeCallable<
+    ffi.Void Function(
+      ffi.Pointer<objc.ObjCBlockImpl>,
+      ffi.Pointer<ffi.Void>,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+      ffi.Uint32,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+    )
+  >
+  _blockingCallable =
+      ffi.NativeCallable<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<ffi.Void>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+            ffi.Uint32,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          )
+        >.isolateLocal(_blockingTrampoline)
+        ..keepIsolateAlive = false;
+  static ffi.NativeCallable<
+    ffi.Void Function(
+      ffi.Pointer<objc.ObjCBlockImpl>,
+      ffi.Pointer<ffi.Void>,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+      ffi.Uint32,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+    )
+  >
+  _blockingListenerCallable =
+      ffi.NativeCallable<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<ffi.Void>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+            ffi.Uint32,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          )
+        >.listener(_blockingTrampoline)
+        ..keepIsolateAlive = false;
+  static void _fnPtrTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+    ffi.Pointer<objc.ObjCObjectImpl> arg1,
+    int arg2,
+    ffi.Pointer<objc.ObjCObjectImpl> arg3,
+  ) => block.ref.target
+      .cast<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCObjectImpl> arg0,
+            ffi.Pointer<objc.ObjCObjectImpl> arg1,
+            ffi.Uint32 arg2,
+            ffi.Pointer<objc.ObjCObjectImpl> arg3,
+          )
+        >
+      >()
+      .asFunction<
+        void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          int,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >()(arg0, arg1, arg2, arg3);
+  static ffi.Pointer<ffi.Void> _fnPtrCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Void Function(
+              ffi.Pointer<objc.ObjCBlockImpl>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+              ffi.Uint32,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+            )
+          >(_fnPtrTrampoline)
+          .cast();
+  static void _closureTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+    ffi.Pointer<objc.ObjCObjectImpl> arg1,
+    int arg2,
+    ffi.Pointer<objc.ObjCObjectImpl> arg3,
+  ) =>
+      (objc.getBlockClosure(block)
+          as void Function(
+            ffi.Pointer<objc.ObjCObjectImpl>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+            int,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          ))(arg0, arg1, arg2, arg3);
+  static ffi.Pointer<ffi.Void> _closureCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Void Function(
+              ffi.Pointer<objc.ObjCBlockImpl>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+              ffi.Uint32,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+            )
+          >(_closureTrampoline)
+          .cast();
+}
+
+/// Call operator for `objc.ObjCBlock<ffi.Void Function(objc.NSData?, objc.NSString?, ffi.Uint32, objc.NSDictionary?)>`.
+extension ObjCBlock_ffiVoid_NSData_NSString_CGImagePropertyOrientation_NSDictionary$CallExtension
+    on
+        objc.ObjCBlock<
+          ffi.Void Function(
+            objc.NSData?,
+            objc.NSString?,
+            ffi.Uint32,
+            objc.NSDictionary?,
+          )
+        > {
+  void call(
+    objc.NSData? arg0,
+    objc.NSString? arg1,
+    CGImagePropertyOrientation arg2,
+    objc.NSDictionary? arg3,
+  ) =>
+      ref.pointer.ref.invoke
+          .cast<
+            ffi.NativeFunction<
+              ffi.Void Function(
+                ffi.Pointer<objc.ObjCBlockImpl> block,
+                ffi.Pointer<objc.ObjCObjectImpl> arg0,
+                ffi.Pointer<objc.ObjCObjectImpl> arg1,
+                ffi.Uint32 arg2,
+                ffi.Pointer<objc.ObjCObjectImpl> arg3,
+              )
+            >
+          >()
+          .asFunction<
+            void Function(
+              ffi.Pointer<objc.ObjCBlockImpl>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+              int,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+            )
+          >()(
+        ref.pointer,
+        arg0?.ref.pointer ?? ffi.nullptr,
+        arg1?.ref.pointer ?? ffi.nullptr,
+        arg2.value,
+        arg3?.ref.pointer ?? ffi.nullptr,
+      );
+}
+
+late final _sel_requestImageDataAndOrientationForAsset_options_resultHandler_ =
+    objc.registerName(
+      "requestImageDataAndOrientationForAsset:options:resultHandler:",
+    );
+final _objc_msgSend_1urj8nv = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Int32 Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCBlockImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      int Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCBlockImpl>,
+      )
+    >();
+
+/// PHImageManager
+extension type PHImageManager._(objc.ObjCObject object$)
+    implements objc.ObjCObject, objc.NSObject {
+  /// Constructs a [PHImageManager] that points to the same underlying object as [other].
+  PHImageManager.as(objc.ObjCObject other) : object$ = other {
+    objc.checkOsVersionInternal(
+      'PHImageManager',
+      iOS: (false, (8, 0, 0)),
+      macOS: (false, (10, 13, 0)),
+    );
+    assert(isA(object$));
+  }
+
+  /// Constructs a [PHImageManager] that wraps the given raw object pointer.
+  PHImageManager.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
+    objc.checkOsVersionInternal(
+      'PHImageManager',
+      iOS: (false, (8, 0, 0)),
+      macOS: (false, (10, 13, 0)),
+    );
+    assert(isA(object$));
+  }
+
+  /// Returns whether [obj] is an instance of [PHImageManager].
+  static bool isA(objc.ObjCObject obj) => _objc_msgSend_19nvye5(
+    obj.ref.pointer,
+    _sel_isKindOfClass_,
+    _class_PHImageManager,
+  );
+
+  /// defaultManager
+  static PHImageManager defaultManager() {
+    objc.checkOsVersionInternal(
+      'PHImageManager.defaultManager',
+      iOS: (false, (8, 0, 0)),
+      macOS: (false, (10, 13, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(
+      _class_PHImageManager,
+      _sel_defaultManager,
+    );
+    return PHImageManager.fromPointer($ret, retain: true, release: true);
+  }
+}
+
+extension PHImageManager$Methods on PHImageManager {
+  /// @abstract Request largest represented image as data bytes and EXIF orientation for the specified asset.
+  /// @param asset The asset whose image data is to be loaded.
+  /// @param options Options specifying how Photos should handle the request, format the requested image, and notify your app of progress or errors.
+  /// If PHImageRequestOptionsVersionCurrent is requested and the asset has adjustments then the largest rendered image data is returned. In all other cases then the original image data is returned.
+  /// @param resultHandler A block that is called exactly once either synchronously on the current thread or asynchronously on the main thread depending on the synchronous option specified in the PHImageRequestOptions options parameter (deliveryMode is ignored). Orientation is an EXIF orientation as an CGImagePropertyOrientation. For iOS or tvOS, convert this to an UIImageOrientation.
+  int requestImageDataAndOrientationForAsset(
+    PHAsset asset, {
+    PHImageRequestOptions? options,
+    required objc.ObjCBlock<
+      ffi.Void Function(
+        objc.NSData?,
+        objc.NSString?,
+        ffi.Uint32,
+        objc.NSDictionary?,
+      )
+    >
+    resultHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'PHImageManager.requestImageDataAndOrientationForAsset:options:resultHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (10, 15, 0)),
+    );
+    return _objc_msgSend_1urj8nv(
+      object$.ref.pointer,
+      _sel_requestImageDataAndOrientationForAsset_options_resultHandler_,
+      asset.ref.pointer,
+      options?.ref.pointer ?? ffi.nullptr,
+      resultHandler.ref.pointer,
+    );
+  }
+}

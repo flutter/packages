@@ -27,19 +27,20 @@ void main() {
         Uri.file(
           '$macSdkPath/System/Library/Frameworks/Photos.framework/Headers/PHAsset.h',
         ),
-        // Uri.file(
-        //   '$macSdkPath/System/Library/Frameworks/Photos.framework/Headers/PHAssetResource.h',
-        // ),
+        Uri.file(
+          '$macSdkPath/System/Library/Frameworks/Photos.framework/Headers/PHAssetResource.h',
+        ),
         // Uri.file(
         //   '$macSdkPath/System/Library/Frameworks/Photos.framework/Headers/PHAssetResourceManager.h',
         // ),
         // Uri.file(
         //   '$macSdkPath/System/Library/Frameworks/Photos.framework/Headers/PHFetchResult.h',
         // ),
-        // Uri.file(
-        //   '$macSdkPath/System/Library/Frameworks/Photos.framework/Headers/PHImageManager.h',
-        // ),
+        Uri.file(
+          '$macSdkPath/System/Library/Frameworks/Photos.framework/Headers/PHImageManager.h',
+        ),
       ],
+      compilerOptions: <String>['-include stdint.h'],
     ),
     objectiveC: ObjectiveC(
       interfaces: Interfaces(
@@ -47,19 +48,40 @@ void main() {
           return <String>{
             'NSFileManager',
             'PHAsset',
-            // 'PHAssetResource',
+            'PHAssetResource',
             // 'PHAssetResourceManager',
-            // 'PHFetchResult',
-            // 'PHImageManager',
+            'PHFetchResult',
+            'PHImageManager',
+            'PHImageRequestOptions',
           }.contains(declaration.originalName);
         },
         includeMember: (Declaration declaration, String member) {
+          if (declaration.originalName == 'PHAssetResource' &&
+              member.contains('assetResources')) {
+            print('APPLE: $member');
+          }
           final String interfaceName = declaration.originalName;
           final signature = member;
           return switch (interfaceName) {
             'NSFileManager' => <String>{
               'defaultManager',
               'isReadableFileAtPath:',
+            }.contains(signature),
+            'PHAsset' => <String>{
+              'fetchAssetsWithLocalIdentifiers:options:',
+              'modificationDate',
+            }.contains(signature),
+            'PHAssetResource' => <String>{
+              'assetResourcesForAsset:',
+              'originalFilename',
+            }.contains(signature),
+            'PHFetchResult' => <String>{'firstObject'}.contains(signature),
+            'PHImageManager' => <String>{
+              'defaultManager',
+              'requestImageDataAndOrientationForAsset:options:resultHandler:',
+            }.contains(signature),
+            'PHImageRequestOptions' => <String>{
+              'isNetworkAccessAllowed',
             }.contains(signature),
             _ => false,
           };
