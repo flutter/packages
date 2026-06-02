@@ -33,3 +33,14 @@ base class CrossFileDarwin extends CrossFileIO {
     return DarwinScopedStorageXDirectory(params);
   }
 }
+
+// final ffi.DynamicLibrary _dylib = () {
+//   return ffi.DynamicLibrary.open(
+//     '/System/Library/Frameworks/Foundation.framework/Foundation',
+//   );
+// }();
+
+// /// The bindings to the native functions in [_dylib].
+// final FoundationFFI _lib = () {
+//   return FoundationFFI(_dylib);
+// }();

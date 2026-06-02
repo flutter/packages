@@ -4,7 +4,10 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ffi' as ffi;
 import 'dart:io';
+
+import 'package:objective_c/objective_c.dart';
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:flutter/foundation.dart';
@@ -12,6 +15,8 @@ import 'package:path/path.dart' as path;
 
 import 'cross_file_darwin_apis.g.dart';
 import 'security_scoped_resource.dart';
+
+import 'ffi_bindings.g.dart';
 
 /// Base implementation of [PlatformScopedStorageXFileCreationParams] for iOS
 /// and macOS.
@@ -160,13 +165,23 @@ base class SecurityScopedDarwinScopedStorageXFile
   Future<String?> name() async => path.basename(_file.path);
 
   @override
-  Future<bool> startAccessingSecurityScopedResource() {
-    return params.api.startAccessingSecurityScopedResource(params.uri);
+  Future<bool> startAccessingSecurityScopedResource() async {
+    final NSURL? url = NSURL.URLWithString(NSString(params.uri));
+    if (url == null) {
+      return false;
+    }
+    return url.startAccessingSecurityScopedResource();
+    //return params.api.startAccessingSecurityScopedResource(params.uri);
   }
 
   @override
-  Future<void> stopAccessingSecurityScopedResource() {
-    return params.api.stopAccessingSecurityScopedResource(params.uri);
+  Future<void> stopAccessingSecurityScopedResource() async {
+    final NSURL? url = NSURL.URLWithString(NSString(params.uri));
+    if (url != null) {
+      url.stopAccessingSecurityScopedResource();
+    }
+    //return url.stopAccessingSecurityScopedResource();
+    //return params.api.stopAccessingSecurityScopedResource(params.uri);
   }
 }
 
