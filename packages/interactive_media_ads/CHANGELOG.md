@@ -1,3 +1,7 @@
+## 0.3.0+15
+
+* Bumps org.mockito.kotlin:mockito-kotlin from 6.2.3 to 6.3.0 in /packages/interactive_media_ads/android
+
 ## 0.3.0+14
 
 * Updates README to use Kotlin gradle rather than Groovy.
