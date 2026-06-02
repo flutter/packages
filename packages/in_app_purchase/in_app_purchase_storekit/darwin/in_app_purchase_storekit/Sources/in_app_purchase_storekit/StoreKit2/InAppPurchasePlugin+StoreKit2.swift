@@ -85,6 +85,22 @@ extension InAppPurchasePlugin: InAppPurchase2API {
           }
         }
 
+        for await verificationResult in Transaction.unfinished {
+          switch verificationResult {
+          case .verified(let transaction):
+            if transaction.productID == id {
+              let error = PigeonError(
+                code: "storekit_duplicate_product_object",
+                message:
+                  "There is a pending transaction for the same product identifier. Please either wait for it to be finished or finish it manually using `completePurchase` to avoid edge cases.",
+                details: id)
+              return completion(.failure(error))
+            }
+          case .unverified:
+            break
+          }
+        }
+
         let result = try await product.purchase(options: purchaseOptions)
 
         switch result {
