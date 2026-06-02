@@ -29,18 +29,15 @@ sealed class DarwinScopedStorageXFileCreationParams
   /// scoped uri.
   factory DarwinScopedStorageXFileCreationParams.securityScoped({
     required String uri,
-    @visibleForTesting CrossFileDarwinApi? api,
   }) =>
-      SecurityScopedDarwinScopedStorageXFileCreationParams(uri: uri, api: api);
+      SecurityScopedDarwinScopedStorageXFileCreationParams(uri: uri);
 
   /// Constructs a [DarwinScopedStorageXFileCreationParams] with an asset
   /// identifier from the Photos Library.
   factory DarwinScopedStorageXFileCreationParams.photoKit({
     required String localIdentifier,
-    @visibleForTesting CrossFileDarwinApi? api,
   }) => PhotoKitDarwinScopedStorageXFileCreationParams(
     localIdentifier: localIdentifier,
-    api: api,
   );
 }
 
@@ -49,14 +46,9 @@ sealed class DarwinScopedStorageXFileCreationParams
 base class SecurityScopedDarwinScopedStorageXFileCreationParams
     extends DarwinScopedStorageXFileCreationParams {
   /// Constructs a [SecurityScopedDarwinScopedStorageXFileCreationParams].
-  SecurityScopedDarwinScopedStorageXFileCreationParams({
+  const SecurityScopedDarwinScopedStorageXFileCreationParams({
     required super.uri,
-    @visibleForTesting CrossFileDarwinApi? api,
-  }) : api = api ?? CrossFileDarwinApi();
-
-  /// The API used to call to native code to interact with files.
-  @visibleForTesting
-  final CrossFileDarwinApi api;
+  });
 }
 
 /// Creation parameters for [PhotoKitDarwinScopedStorageXFile].
@@ -66,13 +58,7 @@ base class PhotoKitDarwinScopedStorageXFileCreationParams
   /// Constructs a [PhotoKitDarwinScopedStorageXFileCreationParams].
   PhotoKitDarwinScopedStorageXFileCreationParams({
     required String localIdentifier,
-    @visibleForTesting CrossFileDarwinApi? api,
-  }) : api = api ?? CrossFileDarwinApi(),
-       super(uri: localIdentifier);
-
-  /// The API used to call to native code to interact with files.
-  @visibleForTesting
-  final CrossFileDarwinApi api;
+  }) : super(uri: localIdentifier);
 }
 
 /// Base implementation of [PlatformScopedStorageXFile] for iOS and macOS.
@@ -104,10 +90,13 @@ base class SecurityScopedDarwinScopedStorageXFile
     _finalizer.attach(this, params.uri);
   }
 
-  static final Finalizer<String> _finalizer = Finalizer((String url) {
+  static final Finalizer<String> _finalizer = Finalizer((String uri) {
     // Check that this is not called during a unit test.
     if (Platform.environment['FLUTTER_TEST'] != 'true') {
-      CrossFileDarwinApi().stopAccessingSecurityScopedResource(url);
+      final NSURL? url = NSURL.URLWithString(NSString(uri));
+      if (url != null) {
+        url.stopAccessingSecurityScopedResource();
+      }
     }
   });
 
@@ -154,8 +143,10 @@ base class SecurityScopedDarwinScopedStorageXFile
       _file.readAsString(encoding: encoding);
 
   @override
-  Future<bool> canRead() {
-    return params.api.isReadableFile(params.uri);
+  Future<bool> canRead() async {
+    return NSFileManager.getDefaultManager().isReadableFileAtPath(
+      NSString(Uri.file(params.uri).path),
+    );
   }
 
   @override
@@ -171,7 +162,6 @@ base class SecurityScopedDarwinScopedStorageXFile
       return false;
     }
     return url.startAccessingSecurityScopedResource();
-    //return params.api.startAccessingSecurityScopedResource(params.uri);
   }
 
   @override
@@ -180,8 +170,6 @@ base class SecurityScopedDarwinScopedStorageXFile
     if (url != null) {
       url.stopAccessingSecurityScopedResource();
     }
-    //return url.stopAccessingSecurityScopedResource();
-    //return params.api.stopAccessingSecurityScopedResource(params.uri);
   }
 }
 

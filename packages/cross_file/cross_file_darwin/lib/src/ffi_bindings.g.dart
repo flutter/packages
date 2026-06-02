@@ -25,12 +25,7 @@ final _objc_msgSend_19nvye5 = objc.msgSendPointer
         ffi.Pointer<objc.ObjCObjectImpl>,
       )
     >();
-late final _sel_isReadableFileAtPath_ = objc.registerName(
-  "isReadableFileAtPath:",
-);
-late final _sel_homeDirectoryForCurrentUser = objc.registerName(
-  "homeDirectoryForCurrentUser",
-);
+late final _sel_defaultManager = objc.registerName("defaultManager");
 final _objc_msgSend_151sglz = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -46,6 +41,12 @@ final _objc_msgSend_151sglz = objc.msgSendPointer
         ffi.Pointer<objc.ObjCSelector>,
       )
     >();
+late final _sel_isReadableFileAtPath_ = objc.registerName(
+  "isReadableFileAtPath:",
+);
+late final _sel_homeDirectoryForCurrentUser = objc.registerName(
+  "homeDirectoryForCurrentUser",
+);
 late final _sel_temporaryDirectory = objc.registerName("temporaryDirectory");
 late final _sel_homeDirectoryForUser_ = objc.registerName(
   "homeDirectoryForUser:",
@@ -139,6 +140,15 @@ extension type NSFileManager._(objc.ObjCObject object$)
     _sel_isKindOfClass_,
     _class_NSFileManager,
   );
+
+  /// defaultManager
+  static NSFileManager getDefaultManager() {
+    final $ret = _objc_msgSend_151sglz(
+      _class_NSFileManager,
+      _sel_defaultManager,
+    );
+    return NSFileManager.fromPointer($ret, retain: true, release: true);
+  }
 }
 
 extension NSFileManager$Methods on NSFileManager {

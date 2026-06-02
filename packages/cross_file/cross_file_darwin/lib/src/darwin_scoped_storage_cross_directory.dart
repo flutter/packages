@@ -7,9 +7,11 @@ import 'dart:io';
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:flutter/foundation.dart';
+import 'package:objective_c/objective_c.dart';
 
 import 'cross_file_darwin_apis.g.dart';
 import 'darwin_scoped_storage_cross_file.dart';
+import 'ffi_bindings.g.dart';
 import 'security_scoped_resource.dart';
 
 /// Implementation of [PlatformScopedStorageXDirectoryCreationParams] for iOS
@@ -24,11 +26,7 @@ sealed class DarwinScopedStorageXDirectoryCreationParams
   /// scoped uri.
   factory DarwinScopedStorageXDirectoryCreationParams.securityScoped({
     required String uri,
-    @visibleForTesting CrossFileDarwinApi? api,
-  }) => SecurityScopedDarwinScopedStorageXDirectoryCreationParams(
-    uri: uri,
-    api: api,
-  );
+  }) => SecurityScopedDarwinScopedStorageXDirectoryCreationParams(uri: uri);
 }
 
 /// Creation parameters for [SecurityScopedDarwinScopedStorageXDirectory].
@@ -36,14 +34,9 @@ sealed class DarwinScopedStorageXDirectoryCreationParams
 base class SecurityScopedDarwinScopedStorageXDirectoryCreationParams
     extends DarwinScopedStorageXDirectoryCreationParams {
   /// Constructs a [SecurityScopedDarwinScopedStorageXDirectoryCreationParams].
-  SecurityScopedDarwinScopedStorageXDirectoryCreationParams({
+  const SecurityScopedDarwinScopedStorageXDirectoryCreationParams({
     required super.uri,
-    @visibleForTesting CrossFileDarwinApi? api,
-  }) : api = api ?? CrossFileDarwinApi();
-
-  /// The API used to call to native code to interact with files.
-  @visibleForTesting
-  final CrossFileDarwinApi api;
+  });
 }
 
 /// Base implementation of [PlatformScopedStorageXDirectory] for iOS and macOS.
@@ -69,10 +62,13 @@ base class SecurityScopedDarwinScopedStorageXDirectory
     _finalizer.attach(this, params.uri);
   }
 
-  static final Finalizer<String> _finalizer = Finalizer((String url) {
+  static final Finalizer<String> _finalizer = Finalizer((String uri) {
     // Check that this is not called during a unit test.
     if (Platform.environment['FLUTTER_TEST'] != 'true') {
-      CrossFileDarwinApi().stopAccessingSecurityScopedResource(url);
+      final NSURL? url = NSURL.URLWithString(NSString(uri));
+      if (url != null) {
+        url.stopAccessingSecurityScopedResource();
+      }
     }
   });
 
@@ -114,18 +110,27 @@ base class SecurityScopedDarwinScopedStorageXDirectory
   }
 
   @override
-  Future<bool> canRead() {
-    return params.api.isReadableFile(params.uri);
+  Future<bool> canRead() async {
+    return NSFileManager.getDefaultManager().isReadableFileAtPath(
+      NSString(Uri.file(params.uri).path),
+    );
   }
 
   @override
-  Future<bool> startAccessingSecurityScopedResource() {
-    return params.api.startAccessingSecurityScopedResource(params.uri);
+  Future<bool> startAccessingSecurityScopedResource() async {
+    final NSURL? url = NSURL.URLWithString(NSString(params.uri));
+    if (url == null) {
+      return false;
+    }
+    return url.startAccessingSecurityScopedResource();
   }
 
   @override
-  Future<void> stopAccessingSecurityScopedResource() {
-    return params.api.stopAccessingSecurityScopedResource(params.uri);
+  Future<void> stopAccessingSecurityScopedResource() async {
+    final NSURL? url = NSURL.URLWithString(NSString(params.uri));
+    if (url != null) {
+      url.stopAccessingSecurityScopedResource();
+    }
   }
 }
 

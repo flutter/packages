@@ -58,6 +58,7 @@ void main() {
           final signature = member;
           return switch (interfaceName) {
             'NSFileManager' => <String>{
+              'defaultManager',
               'isReadableFileAtPath:',
             }.contains(signature),
             _ => false,
