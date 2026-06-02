@@ -17,9 +17,14 @@ class ImagePickerAndroid extends ImagePickerPlatform {
 
   final ImagePickerApi _hostApi;
 
-  /// Sets [ImagePickerAndroid] to use Android 13 Photo Picker.
+  /// Whether to use the Android Photo Picker on Android versions less than 16.
   ///
-  /// Currently defaults to false, but the default is subject to change.
+  /// On Android 16+ the Photo Picker is always used regardless of this setting.
+  ///
+  /// On earlier Android versions, setting this to false uses the legacy
+  /// `ACTION_GET_CONTENT` picker instead of the Photo Picker.
+  ///
+  /// Defaults to false.
   bool useAndroidPhotoPicker = false;
 
   /// Registers this class as the default platform implementation.

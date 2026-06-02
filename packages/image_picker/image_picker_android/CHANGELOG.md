@@ -1,5 +1,6 @@
 ## NEXT
 
+* Updates plugin to use Android Photo Picker on API 36 and above.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 0.8.13+17
