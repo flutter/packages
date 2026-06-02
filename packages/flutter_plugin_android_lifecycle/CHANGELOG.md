@@ -1,6 +1,6 @@
 ## 2.0.35
 
-* Bump the androidx group across 10 directories with 1 update.
+* Bumps the androidx group across 10 directories with 1 update.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 2.0.34
