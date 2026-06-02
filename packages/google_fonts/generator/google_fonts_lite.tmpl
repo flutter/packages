@@ -1,0 +1,26 @@
+import 'package:flutter/material.dart';
+
+import 'google_fonts_base.dart';
+import 'google_fonts_descriptor.dart';
+import 'google_fonts_variant.dart';
+
+// Hosts a Map<String, Map<GoogleFontsVariant, GoogleFontsFile>> where the String is the font's name.
+// That is used to allow tree-shaking to remove all of the _parts files.
+// If you only call GoogleFontsLite.fontsMap or GoogleFontsLite.loadFont(),
+// the code in the GoogleFonts class and its parts classes is never called.
+// WHat is called is googleFontsTextStyle, which attempts to load a font if not already loaded.
+class GoogleFontsLite {
+  static Map<String, Map<GoogleFontsVariant, GoogleFontsFile>> fontsMap = {
+    {{#fontEntries}}
+      '{{fontFamily}}': {
+      {{#fontUrls}}
+      const GoogleFontsVariant(fontWeight: FontWeight.w{{variantWeight}}, fontStyle: FontStyle.{{variantStyle}},) : const GoogleFontsFile('{{hash}}', {{length}},),
+      {{/fontUrls}}
+      },
+    {{/fontEntries}}
+  };
+  
+  static TextStyle getFont(String fontFamily) {
+    return googleFontsTextStyle(fontFamily: fontFamily, fonts: fontsMap[fontFamily]!);
+  }
+}

@@ -13,6 +13,7 @@ import 'package:mustache_template/mustache.dart';
 import 'fonts.pb.dart';
 
 const String _generatedAllPartsFilePath = 'lib/src/google_fonts_all_parts.dart';
+const String _generatedLiteFilePath = 'lib/src/google_fonts_lite.dart';
 String _generatedPartFilePath(String part) =>
     'lib/src/google_fonts_parts/part_$part.dart';
 const String _familiesSupportedPath = 'generator/families_supported';
@@ -41,11 +42,11 @@ Future<void> main() async {
   File(_familiesDiffPath).writeAsStringSync(familiesDelta.markdownDiff());
   print(_success);
 
-  print('\nGenerating $_generatedAllPartsFilePath and part files...');
+  print('\nGenerating $_generatedAllPartsFilePath, $_generatedLiteFilePath and part files...');
   _generateDartCode(fontDirectory);
   print(_success);
 
-  print('\nFormatting $_generatedAllPartsFilePath and part files...');
+  print('\nFormatting $_generatedAllPartsFilePath, $_generatedLiteFilePath and part files...');
   await Process.run('dart', <String>['format', 'lib']);
   print(_success);
 }
@@ -313,6 +314,18 @@ void _generateDartCode(Directory fontDirectory) {
     });
     _writeDartFile(_generatedPartFilePath(letter), renderedTemplate);
   });
+
+  // Generate lite file.
+  final liteTemplate = Template(
+    File('generator/google_fonts_lite.tmpl').readAsStringSync(),
+    htmlEscapeValues: false,
+  );
+  final String renderedLiteTemplate = liteTemplate.renderString(
+    <String, List<Map<String, dynamic>>>{
+      'fontEntries': methods,
+    },
+  );
+  _writeDartFile(_generatedLiteFilePath, renderedLiteTemplate);
 
   // Generate main file.
   final template = Template(
