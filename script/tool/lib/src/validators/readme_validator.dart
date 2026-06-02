@@ -30,16 +30,13 @@ class ReadmeValidator {
     required path.Context path,
     required String indentation,
     required void Function(String) warningLogger,
-    required bool requireCodeExcerpts,
   }) : _path = path,
        _indentation = indentation,
-       _logWarning = warningLogger,
-       _requireCodeExcerpts = requireCodeExcerpts;
+       _logWarning = warningLogger;
 
   final path.Context _path;
   final String _indentation;
   final void Function(String) _logWarning;
-  final bool _requireCodeExcerpts;
 
   /// Validates the given README file, returning a list of resulting error
   /// strings.
@@ -67,16 +64,25 @@ class ReadmeValidator {
     }
 
     print(
-      '${_indentation}Checking '
+      '${_indentation}Validating '
       '${relativePosixPath(readme, from: mainPackage.directory, platformContext: _path)}...',
     );
 
     final List<String> readmeLines = readme.readAsLinesSync();
     final errors = <String>[];
 
+    // Require code-excerpt managed blocks unless explicitly opted out.
+    final bool requireCodeExcerpts =
+        mainPackage.parseCIConfig()?.requiresExcerpts ?? true;
+    if (!requireCodeExcerpts) {
+      printWarning(
+        '${_indentation}Skipping code excerpt validation due to ${mainPackage.ciConfigFile.basename}',
+      );
+    }
     final String? blockValidationError = _validateCodeBlocks(
       readmeLines,
       mainPackage: mainPackage,
+      requireCodeExcerpts: requireCodeExcerpts,
     );
     if (blockValidationError != null) {
       errors.add(blockValidationError);
@@ -110,6 +116,7 @@ class ReadmeValidator {
   String? _validateCodeBlocks(
     List<String> readmeLines, {
     required RepositoryPackage mainPackage,
+    required bool requireCodeExcerpts,
   }) {
     final codeBlockDelimiterPattern = RegExp(r'^\s*```\s*([^ ]*)\s*');
     const excerptTagStart = '<?code-excerpt ';
@@ -139,7 +146,7 @@ class ReadmeValidator {
       }
 
       // Check for code-excerpt usage if requested.
-      if (_requireCodeExcerpts && infoString == 'dart') {
+      if (requireCodeExcerpts && infoString == 'dart') {
         if (i == 0 || !readmeLines[i - 1].trim().startsWith(excerptTagStart)) {
           missingExcerptLines.add(humanReadableLineNumber);
         }

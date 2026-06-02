@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
 ## 2.0.4
 
 * Fixes a broken README link to the Mustache manual.

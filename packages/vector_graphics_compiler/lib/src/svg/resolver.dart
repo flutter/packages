@@ -9,6 +9,7 @@ import '../geometry/path.dart';
 import '../geometry/vertices.dart';
 import '../image/image_info.dart';
 import '../paint.dart';
+import 'constants.dart';
 import 'node.dart';
 import 'parser.dart';
 import 'visitor.dart';
@@ -18,6 +19,11 @@ import 'visitor.dart';
 /// references/masks/clips.
 class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
   late Rect _bounds;
+
+  final Set<String> _activeMasks = <String>{};
+  final Set<String> _activeDeferred = <String>{};
+  final Set<String> _activePatterns = <String>{};
+  int _deferredExpansionCount = 0;
 
   @override
   Node visitClipNode(ClipNode clipNode, AffineMatrix data) {
@@ -37,19 +43,31 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
 
   @override
   Node visitMaskNode(MaskNode maskNode, AffineMatrix data) {
-    final AttributedNode? resolvedMask = maskNode.resolver(maskNode.maskId);
-    if (resolvedMask == null) {
+    _deferredExpansionCount++;
+    if (_deferredExpansionCount > kMaxReferenceExpansions) {
+      throw StateError(kMaxReferenceExpansionsErrorMessage);
+    }
+    if (!_activeMasks.add(maskNode.maskId)) {
+      // Recursive loop detected.
       return maskNode.child.accept(this, data);
     }
-    final Node child = maskNode.child.accept(this, data);
-    final AffineMatrix childTransform = maskNode.concatTransform(data);
-    final Node mask = resolvedMask.accept(this, childTransform);
+    try {
+      final AttributedNode? resolvedMask = maskNode.resolver(maskNode.maskId);
+      if (resolvedMask == null) {
+        return maskNode.child.accept(this, data);
+      }
+      final Node child = maskNode.child.accept(this, data);
+      final AffineMatrix childTransform = maskNode.concatTransform(data);
+      final Node mask = resolvedMask.accept(this, childTransform);
 
-    return ResolvedMaskNode(
-      child: child,
-      mask: mask,
-      blendMode: maskNode.blendMode,
-    );
+      return ResolvedMaskNode(
+        child: child,
+        mask: mask,
+        blendMode: maskNode.blendMode,
+      );
+    } finally {
+      _activeMasks.remove(maskNode.maskId);
+    }
   }
 
   @override
@@ -180,17 +198,29 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
 
   @override
   Node visitDeferredNode(DeferredNode deferredNode, AffineMatrix data) {
-    final AttributedNode? resolvedNode = deferredNode.resolver(
-      deferredNode.refId,
-    );
-    if (resolvedNode == null) {
+    _deferredExpansionCount++;
+    if (_deferredExpansionCount > kMaxReferenceExpansions) {
+      throw StateError(kMaxReferenceExpansionsErrorMessage);
+    }
+    if (!_activeDeferred.add(deferredNode.refId)) {
+      // Recursive loop detected.
       return Node.empty;
     }
-    final Node concreteRef = resolvedNode.applyAttributes(
-      deferredNode.attributes,
-      replace: true,
-    );
-    return concreteRef.accept(this, data);
+    try {
+      final AttributedNode? resolvedNode = deferredNode.resolver(
+        deferredNode.refId,
+      );
+      if (resolvedNode == null) {
+        return Node.empty;
+      }
+      final Node concreteRef = resolvedNode.applyAttributes(
+        deferredNode.attributes,
+        replace: true,
+      );
+      return concreteRef.accept(this, data);
+    } finally {
+      _activeDeferred.remove(deferredNode.refId);
+    }
   }
 
   @override
@@ -293,26 +323,38 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
 
   @override
   Node visitPatternNode(PatternNode patternNode, AffineMatrix data) {
-    final AttributedNode? resolvedPattern = patternNode.resolver(
-      patternNode.patternId,
-    );
-    if (resolvedPattern == null) {
+    _deferredExpansionCount++;
+    if (_deferredExpansionCount > kMaxReferenceExpansions) {
+      throw StateError(kMaxReferenceExpansionsErrorMessage);
+    }
+    if (!_activePatterns.add(patternNode.patternId)) {
+      // Recursive loop detected.
       return patternNode.child.accept(this, data);
     }
-    final Node child = patternNode.child.accept(this, data);
-    final AffineMatrix childTransform = patternNode.concatTransform(data);
-    final Node pattern = resolvedPattern.accept(this, childTransform);
+    try {
+      final AttributedNode? resolvedPattern = patternNode.resolver(
+        patternNode.patternId,
+      );
+      if (resolvedPattern == null) {
+        return patternNode.child.accept(this, data);
+      }
+      final Node child = patternNode.child.accept(this, data);
+      final AffineMatrix childTransform = patternNode.concatTransform(data);
+      final Node pattern = resolvedPattern.accept(this, childTransform);
 
-    return ResolvedPatternNode(
-      child: child,
-      pattern: pattern,
-      x: resolvedPattern.attributes.x?.calculate(0) ?? 0,
-      y: resolvedPattern.attributes.y?.calculate(0) ?? 0,
-      width: resolvedPattern.attributes.width!,
-      height: resolvedPattern.attributes.height!,
-      transform: data,
-      id: patternNode.patternId,
-    );
+      return ResolvedPatternNode(
+        child: child,
+        pattern: pattern,
+        x: resolvedPattern.attributes.x?.calculate(0) ?? 0,
+        y: resolvedPattern.attributes.y?.calculate(0) ?? 0,
+        width: resolvedPattern.attributes.width!,
+        height: resolvedPattern.attributes.height!,
+        transform: data,
+        id: patternNode.patternId,
+      );
+    } finally {
+      _activePatterns.remove(patternNode.patternId);
+    }
   }
 
   @override

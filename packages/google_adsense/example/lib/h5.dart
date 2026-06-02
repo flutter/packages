@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:google_adsense/google_adsense.dart';
 // #docregion import-h5
 import 'package:google_adsense/h5.dart';
+
 // #enddocregion import-h5
 
 void main() async {

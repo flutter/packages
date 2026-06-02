@@ -21,6 +21,7 @@ import '../vector_instructions.dart';
 import 'clipping_optimizer.dart';
 import 'color_mapper.dart';
 import 'colors.dart';
+import 'constants.dart';
 import 'masking_optimizer.dart';
 import 'node.dart';
 import 'numbers.dart' as numbers show parseDoubleWithUnits;
@@ -758,16 +759,23 @@ class SvgParser {
     final textHasNonWhitespace = text.trim() != '';
 
     // Not from the spec, but seems like how Chrome behaves.
-    // - If `x` is specified, don't prepend whitespace.
-    // - If the last element was a tspan and we're dealing with some
-    //   non-whitespace data, prepend a space.
-    // - If the last text wasn't whitespace and ended with whitespace, prepend
-    //   a space.
+    // - If `x` is specified on the current element, don't prepend whitespace.
+    // - Otherwise prepend a space if either:
+    //     * the previous text emission ended on a space character, or
+    //     * we are following a `</tspan>` and the source actually contains
+    //       whitespace at the boundary (either as a leading-whitespace prefix
+    //       on this text or as an earlier whitespace-only text event that
+    //       was trimmed).
+    //   The "tspan" gate is what prevents `<tspan>A</tspan><tspan>B</tspan>`
+    //   from rendering as "A B" — without it the parser would always inject
+    //   a space between adjacent tspans even when no whitespace exists in
+    //   the source.
+    final bool textHasLeadingWhitespace =
+        text.isNotEmpty && _whitespacePattern.matchAsPrefix(text) != null;
+    final followsTspan = _lastEndElementEvent?.localName == 'tspan';
     final bool prependSpace =
         _currentAttributes.x == null &&
-            (_lastEndElementEvent?.localName == 'tspan' &&
-                textHasNonWhitespace) ||
-        _lastTextEndedWithSpace;
+        (_lastTextEndedWithSpace || (followsTspan && textHasLeadingWhitespace));
 
     _lastTextEndedWithSpace =
         textHasNonWhitespace &&
@@ -785,6 +793,12 @@ class SvgParser {
         .replaceAll(_contiguousSpaceMatcher, ' ');
 
     if (text.isEmpty) {
+      // A pure-whitespace text event sitting between two sibling tspans
+      // still needs to flag that whitespace existed, so the next
+      // non-empty text can prepend a space.
+      if (textHasLeadingWhitespace && followsTspan) {
+        _lastTextEndedWithSpace = true;
+      }
       return;
     }
 
@@ -1665,6 +1679,7 @@ class _Resolver {
   final Map<String, AttributedNode> _drawables = <String, AttributedNode>{};
   final Map<String, Gradient> _shaders = <String, Gradient>{};
   final Map<String, List<Node>> _clips = <String, List<Node>>{};
+  int _deferredExpansionCount = 0;
 
   bool _sealed = false;
 
@@ -1689,6 +1704,7 @@ class _Resolver {
 
     final pathBuilders = <PathBuilder>[];
     PathBuilder? currentPath;
+    final activeDeferred = <String>{};
     void extractPathsFromNode(Node? target) {
       if (target is PathNode) {
         final nextPath = PathBuilder.fromPath(target.path);
@@ -1703,7 +1719,19 @@ class _Resolver {
           currentPath!.addPath(nextPath.toPath(reset: false));
         }
       } else if (target is DeferredNode) {
-        extractPathsFromNode(target.resolver(target.refId));
+        _deferredExpansionCount++;
+        if (_deferredExpansionCount > kMaxReferenceExpansions) {
+          throw StateError(kMaxReferenceExpansionsErrorMessage);
+        }
+        if (!activeDeferred.add(target.refId)) {
+          // Recursive loop detected.
+          return;
+        }
+        try {
+          extractPathsFromNode(target.resolver(target.refId));
+        } finally {
+          activeDeferred.remove(target.refId);
+        }
       } else if (target is ParentNode) {
         target.visitChildren(extractPathsFromNode);
       }

@@ -35,7 +35,7 @@ class CreateAllPackagesAppCommand extends PackageCommand {
   }) {
     argParser.addOption(
       _outputDirectoryFlag,
-      defaultsTo: packagesDir.parent.path,
+      defaultsTo: rootDir.path,
       help:
           'The path the directory to create the "$allPackagesProjectName" '
           'project in.\n'
