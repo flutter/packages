@@ -53,7 +53,7 @@ base class SecurityScopedDarwinScopedStorageXFileCreationParams
 base class PhotoKitDarwinScopedStorageXFileCreationParams
     extends DarwinScopedStorageXFileCreationParams {
   /// Constructs a [PhotoKitDarwinScopedStorageXFileCreationParams].
-  PhotoKitDarwinScopedStorageXFileCreationParams({
+  const PhotoKitDarwinScopedStorageXFileCreationParams({
     required String localIdentifier,
   }) : super(uri: localIdentifier);
 }
@@ -209,7 +209,7 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
       final ObjCObject? firstObject = resources.firstObject;
 
       if (firstObject != null) {
-        final PHAssetResource resource = PHAssetResource.as(firstObject);
+        final resource = PHAssetResource.as(firstObject);
         final ObjCObject? fileSize = resource.valueForKey(NSString('fileSize'));
         print(fileSize);
 
@@ -239,8 +239,8 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
         NSDictionary? info,
       ) {
         if (imageData != null) {
+          final Uint8List bytes = _extractBytesToUint8List(imageData);
           runOnPlatformThread(() {
-            final Uint8List bytes = _extractBytesToUint8List(imageData);
             bytesCompleter.complete(bytes);
           });
         }
@@ -266,9 +266,7 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
   }
 
   @override
-  Future<bool> canRead() {
-    throw UnsupportedError('');
-  }
+  Future<bool> canRead() => exists();
 
   @override
   Future<bool> exists() async => _tryGetAsset(identifier: params.uri) != null;
@@ -280,7 +278,7 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
       final ObjCObject? firstObject = resources.firstObject;
 
       if (firstObject != null) {
-        final PHAssetResource resource = PHAssetResource.as(firstObject);
+        final resource = PHAssetResource.as(firstObject);
         return resource.originalFilename.toDartString();
       }
     }
