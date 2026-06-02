@@ -1,3 +1,8 @@
+## 2.19.11
+
+* Migrates to Built-in Kotlin to support AGP 9.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
 ## 2.19.10
 
 * Updates README to include setup information.
@@ -5,7 +10,6 @@
 ## 2.19.9
 
 * Adds attribution ID for Google Maps SDK usage.
-* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 2.19.8
 
