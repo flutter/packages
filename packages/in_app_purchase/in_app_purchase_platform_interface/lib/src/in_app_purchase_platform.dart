@@ -161,6 +161,16 @@ abstract class InAppPurchasePlatform extends PlatformInterface {
   /// For convenience, [PurchaseDetails.pendingCompletePurchase] indicates if a
   /// purchase is pending for completion.
   ///
+  /// > [!WARNING]
+  /// > On iOS/macOS, If you do not call [completePurchase] for a transaction, that transaction
+  /// > will remain in Apple's unfinished transaction queue. This has two consequences:
+  /// > 1. The transaction will be repeatedly re-delivered on the [purchaseStream]
+  /// >    every time the app is restarted.
+  /// > 2. Any subsequent attempts to buy the same product ID will fail with a purchase
+  /// >    error indicating a duplicate transaction is pending.
+  /// > On Android, If you do not call [completePurchase] for a transaction on Android, Google Play
+  /// > will automatically refund and revoke the purchase after 3 days.
+  ///
   /// The method will throw a [PurchaseException] when the purchase could not be
   /// finished. Depending on the [PurchaseException.errorCode] the developer
   /// should try to complete the purchase via this method again, or retry the
