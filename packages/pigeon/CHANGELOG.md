@@ -2,6 +2,7 @@
 
 * Overrides `toString` (or equivalent) methods on generated data classes.
 * [swift] Updates `isNullish` to handle double nested `Any?` values.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 26.3.4
 

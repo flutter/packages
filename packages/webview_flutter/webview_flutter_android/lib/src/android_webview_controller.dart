@@ -942,8 +942,8 @@ class AndroidWebViewController extends PlatformWebViewController {
 class AndroidWebViewPermissionRequest extends PlatformWebViewPermissionRequest {
   const AndroidWebViewPermissionRequest._({
     required super.types,
-    required android_webview.PermissionRequest request,
-  }) : _request = request;
+    required this._request,
+  });
 
   final android_webview.PermissionRequest _request;
 

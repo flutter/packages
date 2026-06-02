@@ -1,3 +1,12 @@
+## 3.25.1
+
+* Relands update to prevent message calls when application will terminate.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
+## 3.25.0
+
+* Adds support for retrieving cookies with `PlatformWebViewCookieManager.getCookies`.
+
 ## 3.24.5
 
 * Reverts `3.24.4` to prevent missing `FlutterSceneLifeCycleDelegate` build error.

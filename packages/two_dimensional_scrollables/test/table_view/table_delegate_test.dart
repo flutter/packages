@@ -118,7 +118,9 @@ void main() {
           isA<AssertionError>().having(
             (AssertionError error) => error.toString(),
             'description',
-            contains('pinnedColumnCount <= columnCount'),
+            contains(
+              'pinnedColumnCount + trailingPinnedColumnCount <= columnCount',
+            ),
           ),
         ),
       );
@@ -138,7 +140,7 @@ void main() {
           isA<AssertionError>().having(
             (AssertionError error) => error.toString(),
             'description',
-            contains('pinnedRowCount <= rowCount'),
+            contains('pinnedRowCount + trailingPinnedRowCount <= rowCount'),
           ),
         ),
       );
@@ -499,26 +501,26 @@ void main() {
 
       expect(
         () {
-          delegate.pinnedColumnCount = 4;
+          delegate.pinnedColumnCount = 5;
         },
         throwsA(
           isA<AssertionError>().having(
             (AssertionError error) => error.toString(),
             'description',
-            contains('value <= columnCount'),
+            contains('value + trailingPinnedColumnCount <= columnCount'),
           ),
         ),
       );
 
       expect(
         () {
-          delegate.pinnedRowCount = 4;
+          delegate.pinnedRowCount = 5;
         },
         throwsA(
           isA<AssertionError>().having(
             (AssertionError error) => error.toString(),
             'description',
-            contains('value <= rowCount'),
+            contains('value + trailingPinnedRowCount <= rowCount'),
           ),
         ),
       );

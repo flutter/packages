@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // #docregion migrate
 import 'package:shared_preferences/util/legacy_to_async_migration_util.dart';
+
 // #enddocregion migrate
 
 void main() {

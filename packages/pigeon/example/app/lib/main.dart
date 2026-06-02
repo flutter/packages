@@ -19,6 +19,7 @@ class _ExampleFlutterApi implements MessageFlutterApi {
     return aString ?? '';
   }
 }
+
 // #enddocregion main-dart-flutter
 
 void main() {
@@ -86,6 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return Future<bool>(() => true);
     }
   }
+
   // #enddocregion main-dart
 
   // #docregion main-dart-event
@@ -102,6 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     }
   }
+
   // #enddocregion main-dart-event
 
   @override
