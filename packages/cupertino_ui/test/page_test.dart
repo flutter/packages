@@ -23,7 +23,7 @@ void main() {
 
     final Offset widget1InitialTopLeft = tester.getTopLeft(find.text('Page 1'));
 
-    tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+    await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 150));
@@ -100,7 +100,7 @@ void main() {
 
     final Offset widget1InitialTopLeft = tester.getTopLeft(find.text('Page 1'));
 
-    tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+    await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 150));
@@ -155,7 +155,7 @@ void main() {
 
     final Offset widget1InitialTopLeft = tester.getTopLeft(find.text('Page 1'));
 
-    tester
+    await tester
         .state<NavigatorState>(find.byType(Navigator))
         .push(
           CupertinoPageRoute<void>(
@@ -225,7 +225,7 @@ void main() {
       ),
     );
 
-    tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+    await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
 
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
@@ -284,7 +284,7 @@ void main() {
       ),
     );
 
-    tester
+    await tester
         .state<NavigatorState>(find.byType(Navigator))
         .push(
           CupertinoPageRoute<void>(
@@ -295,7 +295,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(seconds: 2));
 
-    tester
+    await tester
         .state<NavigatorState>(find.byType(Navigator))
         .push(
           CupertinoPageRoute<void>(
@@ -335,7 +335,7 @@ void main() {
       ),
     );
 
-    tester
+    await tester
         .state<NavigatorState>(find.byType(Navigator))
         .push(
           CupertinoPageRoute<void>(
@@ -346,7 +346,7 @@ void main() {
     await tester.pump();
     await tester.pumpAndSettle();
 
-    tester
+    await tester
         .state<NavigatorState>(find.byType(Navigator))
         .push(
           CupertinoPageRoute<void>(
@@ -390,7 +390,7 @@ void main() {
     );
     await tester.pump(); // to load the localization, since it doesn't use a synchronous future
 
-    tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+    await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
 
     await tester.pump();
     await tester.pumpAndSettle();
@@ -453,7 +453,7 @@ void main() {
       ),
     );
 
-    tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+    await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
 
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));

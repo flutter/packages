@@ -748,7 +748,7 @@ void main() {
     expect(find.text('Page 1'), findsOneWidget);
     expect(find.text('Page 2'), findsNothing);
 
-    tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+    await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
     await tester.pumpAndSettle();
 
     expect(find.text('Page: /next'), findsOneWidget);

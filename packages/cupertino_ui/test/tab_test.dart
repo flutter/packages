@@ -112,7 +112,7 @@ void main() {
       ),
     );
 
-    key.currentState!.pushNamed('/2');
+    await key.currentState!.pushNamed('/2');
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
@@ -181,7 +181,7 @@ void main() {
     );
     late FlutterError error;
     try {
-      key.currentState!.pushNamed('/2');
+      await key.currentState!.pushNamed('/2');
     } on FlutterError catch (e) {
       error = e;
     }
@@ -219,7 +219,7 @@ void main() {
     );
     late FlutterError error;
     try {
-      key.currentState!.pushNamed('/2');
+      await key.currentState!.pushNamed('/2');
     } on FlutterError catch (e) {
       error = e;
     }

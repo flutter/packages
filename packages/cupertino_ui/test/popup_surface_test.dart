@@ -274,7 +274,7 @@ void main() {
         vsync: const TestVSync(),
       );
       addTearDown(controller.dispose);
-      controller.forward();
+      await controller.forward();
 
       await tester.pumpWidget(
         _FilterTest(

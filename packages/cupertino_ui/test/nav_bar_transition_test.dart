@@ -38,7 +38,7 @@ Future<void> startTransitionBetween(
     ),
   );
 
-  tester
+  await tester
       .state<NavigatorState>(find.byType(Navigator))
       .push(
         CupertinoPageRoute<void>(
@@ -50,7 +50,7 @@ Future<void> startTransitionBetween(
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 600));
 
-  tester
+  await tester
       .state<NavigatorState>(find.byType(Navigator))
       .push(
         CupertinoPageRoute<void>(
@@ -297,7 +297,7 @@ void main() {
   testWidgets('Fullscreen dialogs do not create heroes', (WidgetTester tester) async {
     await tester.pumpWidget(const CupertinoApp(home: Placeholder()));
 
-    tester
+    await tester
         .state<NavigatorState>(find.byType(Navigator))
         .push(
           CupertinoPageRoute<void>(
@@ -309,7 +309,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
 
-    tester
+    await tester
         .state<NavigatorState>(find.byType(Navigator))
         .push(
           CupertinoPageRoute<void>(
@@ -358,7 +358,7 @@ void main() {
       ),
     );
 
-    tester
+    await tester
         .state<NavigatorState>(find.byType(Navigator))
         .push(
           CupertinoSheetRoute<void>(
@@ -370,7 +370,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
 
-    tester
+    await tester
         .state<NavigatorState>(find.byType(Navigator))
         .push(
           CupertinoSheetRoute<void>(
@@ -657,7 +657,7 @@ void main() {
       ),
     );
 
-    tester
+    await tester
         .state<NavigatorState>(find.byType(Navigator))
         .push(
           CupertinoPageRoute<void>(
@@ -681,7 +681,7 @@ void main() {
     scrollController.jumpTo(600.0);
     await tester.pumpAndSettle();
 
-    tester
+    await tester
         .state<NavigatorState>(find.byType(Navigator))
         .push(
           CupertinoPageRoute<void>(
@@ -724,7 +724,7 @@ void main() {
         ),
       );
 
-      tester
+      await tester
           .state<NavigatorState>(find.byType(Navigator))
           .push(
             CupertinoPageRoute<void>(
@@ -748,7 +748,7 @@ void main() {
       scrollController.jumpTo(600.0);
       await tester.pumpAndSettle();
 
-      tester
+      await tester
           .state<NavigatorState>(find.byType(Navigator))
           .push(
             CupertinoPageRoute<void>(
@@ -848,7 +848,7 @@ void main() {
         .findAncestorRenderObjectOfType<RenderAnimatedOpacity>()!;
     expect(userMiddleOpacity.opacity.value, 1.0);
 
-    tester
+    await tester
         .state<NavigatorState>(find.byType(Navigator))
         .push(
           CupertinoPageRoute<void>(
@@ -868,7 +868,7 @@ void main() {
   ) async {
     await tester.pumpWidget(CupertinoApp(home: scaffoldForNavBar(null)));
 
-    tester
+    await tester
         .state<NavigatorState>(find.byType(Navigator))
         .push(
           CupertinoPageRoute<void>(
@@ -913,7 +913,7 @@ void main() {
       ),
     );
 
-    tester
+    await tester
         .state<NavigatorState>(find.byType(Navigator))
         .push(
           CupertinoPageRoute<void>(
@@ -1048,7 +1048,7 @@ void main() {
     await startTransitionBetween(tester, fromTitle: 'Page 1', toTitle: 'Page 2');
 
     await tester.pump(const Duration(milliseconds: 500));
-    tester
+    await tester
         .state<NavigatorState>(find.byType(Navigator))
         .push(
           CupertinoPageRoute<void>(
@@ -1089,7 +1089,7 @@ void main() {
     );
 
     await tester.pump(const Duration(milliseconds: 500));
-    tester
+    await tester
         .state<NavigatorState>(find.byType(Navigator))
         .push(
           CupertinoPageRoute<void>(
@@ -1264,7 +1264,7 @@ void main() {
         ),
       );
 
-      tester
+      await tester
           .state<NavigatorState>(find.byType(Navigator))
           .push(
             CupertinoPageRoute<void>(
@@ -1292,7 +1292,7 @@ void main() {
       expect(find.byIcon(CupertinoIcons.mic_solid), findsOneWidget);
       expect(find.byIcon(CupertinoIcons.search), findsOneWidget);
 
-      tester
+      await tester
           .state<NavigatorState>(find.byType(Navigator))
           .push(
             CupertinoPageRoute<void>(
