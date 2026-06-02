@@ -1,6 +1,7 @@
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+* Fixes WebView content being obscured by system navigation bar on Android 15+
 
 ## 6.3.30
 
