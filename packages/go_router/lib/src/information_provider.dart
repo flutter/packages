@@ -178,6 +178,48 @@ class GoRouteInformationProvider extends RouteInformationProvider
     }
   }
 
+  /// Returns the URI of the top entry in [base], drilling through
+  /// [ShellRouteMatch] wrappers and using the URI of an
+  /// [ImperativeRouteMatch] if it is on top.
+  ///
+  /// This is what relative navigation (`./...`) should resolve against when
+  /// initiated by an imperative API like [push], because the stack-aware top
+  /// of [base] is the route the user is actually viewing — unlike
+  /// [_value.uri], which the framework resets to [base.uri] (the
+  /// non-imperative portion) on every [routerReportsNewRouteInformation]
+  /// callback when [GoRouter.optionURLReflectsImperativeAPIs] is false.
+  static Uri _topUriOf(RouteMatchList base) {
+    if (base.matches.isEmpty) {
+      return base.uri;
+    }
+    RouteMatchBase route = base.matches.last;
+    while (route is! ImperativeRouteMatch) {
+      if (route is ShellRouteMatch && route.matches.isNotEmpty) {
+        route = route.matches.last;
+      } else {
+        break;
+      }
+    }
+    if (route case final ImperativeRouteMatch safeRoute) {
+      return safeRoute.matches.uri;
+    }
+    return base.uri;
+  }
+
+  /// Resolves a relative [location] against the top of [base], returning the
+  /// absolute location string. If [location] is already absolute (does not
+  /// start with `./`), it is returned unchanged.
+  static String _resolveRelativeAgainstBase(
+    String location,
+    RouteMatchList base,
+  ) {
+    if (!location.startsWith('./')) {
+      return location;
+    }
+    final Uri resolved = concatenateUris(_topUriOf(base), Uri.parse(location));
+    return resolved.toString();
+  }
+
   /// Pushes the `location` as a new route on top of `base`.
   Future<T?> push<T>(
     String location, {
@@ -186,7 +228,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
   }) {
     final completer = Completer<T?>();
     _setValue(
-      location,
+      _resolveRelativeAgainstBase(location, base),
       RouteInformationState<T>(
         extra: extra,
         baseRouteMatchList: base,
@@ -226,7 +268,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
   }) {
     final completer = Completer<T?>();
     _setValue(
-      location,
+      _resolveRelativeAgainstBase(location, base),
       RouteInformationState<T>(
         extra: extra,
         baseRouteMatchList: base,
@@ -245,7 +287,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
   }) {
     final completer = Completer<T?>();
     _setValue(
-      location,
+      _resolveRelativeAgainstBase(location, base),
       RouteInformationState<T>(
         extra: extra,
         baseRouteMatchList: base,
