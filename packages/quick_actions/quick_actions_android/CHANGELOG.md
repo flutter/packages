@@ -1,3 +1,7 @@
+## 1.0.32
+
+* Bump the androidx group across 10 directories with 1 update.
+
 ## 1.0.31
 
 * Migrates to Built-in Kotlin to support AGP 9.

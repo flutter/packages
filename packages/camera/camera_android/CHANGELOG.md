@@ -1,5 +1,6 @@
-## NEXT
+## 0.10.10+18
 
+* Bump the androidx group across 10 directories with 1 update.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 0.10.10+17

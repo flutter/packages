@@ -1,3 +1,7 @@
+## 4.12.2
+
+* Bump the androidx group across 10 directories with 1 update.
+
 ## 4.12.1
 
 * Migrates to Built-in Kotlin to support AGP 9.
