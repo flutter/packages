@@ -591,7 +591,7 @@ If build.gradle.kts sets jvmTarget inside kotlin.compilerOptions, it must use Jv
 
   bool _isCompilerOptionsInsideAndroid(List<String> gradleLines) {
     final int androidIndex = gradleLines.indexWhere(
-          (String line) => line.contains('android {') && !_isCommented(line),
+      (String line) => line.contains('android {') && !_isCommented(line),
     );
     if (androidIndex == -1) {
       return false;
