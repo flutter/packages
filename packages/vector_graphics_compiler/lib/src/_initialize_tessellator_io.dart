@@ -7,6 +7,7 @@
 import 'dart:ffi' show Abi;
 import 'dart:io';
 
+import 'engine_artifact.dart';
 import 'svg/tessellator.dart';
 
 /// Look up the location of the tessellator from flutter's artifact cache.
@@ -21,22 +22,17 @@ bool initializeTessellatorFromFlutterCache() {
     return false;
   }
 
-  final String platform;
-  final String executable;
-  if (Platform.isWindows) {
-    platform = 'windows-x64';
-    executable = 'libtessellator.dll';
-  } else if (Platform.isMacOS) {
-    platform = 'darwin-x64';
-    executable = 'libtessellator.dylib';
-  } else if (Platform.isLinux) {
-    platform = Abi.current() == Abi.linuxArm64 ? 'linux-arm64' : 'linux-x64';
-    executable = 'libtessellator.so';
-  } else {
+  final String? subpath = engineArtifactSubpath(
+    windowsFile: 'libtessellator.dll',
+    macOSFile: 'libtessellator.dylib',
+    linuxFile: 'libtessellator.so',
+    abi: Abi.current(),
+  );
+  if (subpath == null) {
     print('Tesselation not supported on ${Platform.localeName}');
     return false;
   }
-  final tessellator = '${cacheRoot.path}/artifacts/engine/$platform/$executable';
+  final tessellator = '${cacheRoot.path}/artifacts/engine/$subpath';
   if (!File(tessellator).existsSync()) {
     print('Could not locate libtessellator at $tessellator.');
     print('Ensure you are on a supported version of flutter and then run ');
