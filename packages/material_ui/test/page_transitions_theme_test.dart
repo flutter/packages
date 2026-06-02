@@ -777,7 +777,7 @@ void main() {
       final Finder page2 = find.text('Page 2');
 
       // Transitioning from page 1 to page 2.
-      tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/2');
+      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/2');
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 50));
 
@@ -813,7 +813,7 @@ void main() {
       final Finder page2 = find.text('Page 2');
 
       // Transitioning from page 1 to page 2.
-      tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/2');
+      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/2');
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 50));
 
@@ -851,7 +851,7 @@ void main() {
       final Finder page2 = find.text('Page 2');
 
       // Transitioning from page 1 to page 2.
-      tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/2');
+      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/2');
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 50));
 

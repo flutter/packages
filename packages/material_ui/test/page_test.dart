@@ -32,7 +32,7 @@ void main() {
 
       final Offset widget1InitialTopLeft = tester.getTopLeft(find.text('Page 1'));
 
-      tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
 
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 150));
@@ -141,7 +141,7 @@ void main() {
         ),
       );
 
-      tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 50));
 
@@ -226,7 +226,7 @@ void main() {
         ),
       );
 
-      tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 50));
 
@@ -279,7 +279,7 @@ void main() {
         ),
       );
 
-      tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 50));
 
@@ -355,7 +355,7 @@ void main() {
       expect(isSnapshotted(page1Finder), isFalse);
 
       // Transitioning from page 1 to page 2.
-      tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/2');
+      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/2');
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 50));
 
@@ -388,7 +388,7 @@ void main() {
 
       final Offset widget1InitialTopLeft = tester.getTopLeft(find.text('Page 1'));
 
-      tester
+      await tester
           .state<NavigatorState>(find.byType(Navigator))
           .push(
             MaterialPageRoute<void>(
@@ -460,7 +460,7 @@ void main() {
       ),
     );
 
-    tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+    await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
     await tester.pumpAndSettle();
 
     expect(find.text('Page 1'), findsNothing);
@@ -492,7 +492,7 @@ void main() {
         ),
       );
 
-      tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
       await tester.pumpAndSettle();
 
       expect(find.text('Page 1'), findsNothing);
@@ -624,7 +624,7 @@ void main() {
     (WidgetTester tester) async {
       await tester.pumpWidget(const MaterialApp(home: Scaffold(body: Text('Page 1'))));
 
-      tester
+      await tester
           .state<NavigatorState>(find.byType(Navigator))
           .push(
             MaterialPageRoute<void>(
@@ -696,7 +696,7 @@ void main() {
 
       final double pageTitleDX = tester.getTopLeft(find.text('Page 1')).dx;
 
-      tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
@@ -736,7 +736,7 @@ void main() {
 
       final Offset widget1InitialTopLeft = tester.getTopLeft(find.text('Page 1'));
 
-      tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
@@ -817,7 +817,7 @@ void main() {
         ),
       );
 
-      tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
 
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));
@@ -859,7 +859,7 @@ void main() {
         ),
       );
 
-      tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
 
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));
@@ -970,7 +970,7 @@ void main() {
       // Use the navigator to push a route instead of tapping the 'push' button.
       // The topmost route (the one that's animating away), ignores input while
       // the pop is underway because route.navigator.userGestureInProgress.
-      Navigator.push<void>(
+      await Navigator.push<void>(
         scaffoldKey.currentContext!,
         MaterialPageRoute<void>(
           builder: (BuildContext context) {
@@ -1016,7 +1016,7 @@ void main() {
       expect(homeTapCount, 1);
       expect(pageTapCount, 0);
 
-      Navigator.push<void>(
+      await Navigator.push<void>(
         homeScaffoldKey.currentContext!,
         MaterialPageRoute<void>(
           builder: (BuildContext context) {
@@ -1101,7 +1101,7 @@ void main() {
       ).userGestureInProgressNotifier;
       expect(notifier.value, false);
 
-      Navigator.push<void>(
+      await Navigator.push<void>(
         homeScaffoldKey.currentContext!,
         MaterialPageRoute<void>(
           builder: (BuildContext context) {
@@ -1166,7 +1166,7 @@ void main() {
 
       final Offset titleInitialTopLeft = tester.getTopLeft(find.text('Title'));
 
-      tester
+      await tester
           .state<NavigatorState>(find.byType(Navigator))
           .push<void>(
             CupertinoPageRoute<void>(builder: (BuildContext context) => const Placeholder()),
@@ -1414,7 +1414,7 @@ void main() {
 
       // Navigate to page two with text.
       final NavigatorState navigator = Navigator.of(savedContext);
-      navigator.push(
+      await navigator.push(
         MaterialPageRoute<void>(
           builder: (BuildContext context) {
             return const Text(pageTwoText);
@@ -1435,7 +1435,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       // Navigate to page two again with requestFocus set to false.
-      navigator.push(
+      await navigator.push(
         MaterialPageRoute<void>(
           requestFocus: false,
           builder: (BuildContext context) {

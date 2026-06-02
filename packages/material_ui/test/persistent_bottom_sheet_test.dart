@@ -703,7 +703,7 @@ void main() {
 
       await tester.pumpWidget(MaterialApp(routes: routes));
 
-      Navigator.pushNamed(containerKey1.currentContext!, '/sheet');
+      await Navigator.pushNamed(containerKey1.currentContext!, '/sheet');
 
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));
@@ -718,7 +718,7 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));
 
-      Navigator.pushNamed(containerKey1.currentContext!, '/sheet');
+      await Navigator.pushNamed(containerKey1.currentContext!, '/sheet');
 
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));

@@ -443,7 +443,7 @@ void main() {
 
         // Check initial scroll offset of first list item relative to
         // the offset of the list view.
-        customController.animateTo(
+        await customController.animateTo(
           40.0,
           duration: const Duration(milliseconds: 200),
           curve: Curves.linear,

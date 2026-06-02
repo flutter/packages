@@ -23,7 +23,7 @@ void main() {
         ),
       );
 
-      tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
 
       await tester.pumpAndSettle();
 
@@ -49,7 +49,7 @@ void main() {
         ),
       );
 
-      tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
 
       await tester.pumpAndSettle();
 
@@ -187,7 +187,7 @@ void main() {
         ),
       );
 
-      tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
 
       await tester.pumpAndSettle();
       final String? expectedLabel;
@@ -232,7 +232,7 @@ void main() {
         ),
       );
 
-      tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
 
       await tester.pumpAndSettle();
       final String? expectedLabel;
@@ -330,7 +330,7 @@ void main() {
         ),
       );
 
-      tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
 
       await tester.pumpAndSettle();
       expect(find.text('Home'), findsNothing); // Start off on the second page.
