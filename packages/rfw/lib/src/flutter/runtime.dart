@@ -419,8 +419,9 @@ class Runtime extends ChangeNotifier {
       }
     } else {
       assert(
-        library is Null,
-      ); // ignore: prefer_void_to_null, type_check_with_null, https://github.com/dart-lang/sdk/issues/47017#issuecomment-907562014
+        library // ignore: prefer_void_to_null, type_check_with_null, https://github.com/dart-lang/sdk/issues/47017#issuecomment-907562014
+            is Null, // ignore: prefer_void_to_null, type_check_with_null, https://github.com/dart-lang/sdk/issues/47017#issuecomment-907562014
+      );
     }
     _cachedConstructors[fullName] = null;
     return null;
