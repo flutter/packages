@@ -15,17 +15,14 @@ class App extends StatelessWidget {
   App({super.key});
 
   @override
-  Widget build(BuildContext context) =>
-      MaterialApp.router(routerConfig: _router, title: _appTitle);
+  Widget build(BuildContext context) => MaterialApp.router(routerConfig: _router, title: _appTitle);
 
   final GoRouter _router = GoRouter(routes: $appRoutes);
 }
 
 @TypedGoRoute<HomeRoute>(
   path: '/',
-  routes: <TypedGoRoute<GoRouteData>>[
-    TypedGoRoute<SubRoute>(path: 'sub-route'),
-  ],
+  routes: <TypedGoRoute<GoRouteData>>[TypedGoRoute<SubRoute>(path: 'sub-route')],
 )
 class HomeRoute extends GoRouteData with $HomeRoute {
   const HomeRoute();

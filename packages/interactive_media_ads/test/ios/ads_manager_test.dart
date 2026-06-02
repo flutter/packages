@@ -3,8 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:interactive_media_ads/src/ios/interactive_media_ads.g.dart'
-    as ima;
+import 'package:interactive_media_ads/src/ios/interactive_media_ads.g.dart' as ima;
 import 'package:interactive_media_ads/src/ios/ios_ads_manager.dart';
 import 'package:interactive_media_ads/src/ios/ios_ads_manager_delegate.dart';
 import 'package:interactive_media_ads/src/ios/ios_ads_rendering_settings.dart';
@@ -39,8 +38,7 @@ void main() {
 
       final adsManager = IOSAdsManager(mockAdsManager);
 
-      ima.PigeonOverrides.iMAAdsRenderingSettings_new = () =>
-          mockAdsRenderingSettings;
+      ima.PigeonOverrides.iMAAdsRenderingSettings_new = () => mockAdsRenderingSettings;
 
       final settings = IOSAdsRenderingSettings(
         const IOSAdsRenderingSettingsCreationParams(
@@ -60,9 +58,7 @@ void main() {
         mockAdsRenderingSettings.setLoadVideoTimeout(9.0),
         mockAdsRenderingSettings.setMimeTypes(<String>['value']),
         mockAdsRenderingSettings.setPlayAdsAfterTime(5.0),
-        mockAdsRenderingSettings.setUIElements(<ima.UIElementType>[
-          ima.UIElementType.countdown,
-        ]),
+        mockAdsRenderingSettings.setUIElements(<ima.UIElementType>[ima.UIElementType.countdown]),
         mockAdsManager.initialize(mockAdsRenderingSettings),
       ]);
     });
@@ -114,17 +110,9 @@ void main() {
       late final ima.IMAAdsManagerDelegate delegate;
       ima.PigeonOverrides.iMAAdsManagerDelegate_new =
           ({
-            required void Function(
-              ima.IMAAdsManagerDelegate,
-              ima.IMAAdsManager,
-              ima.IMAAdEvent,
-            )
+            required void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager, ima.IMAAdEvent)
             didReceiveAdEvent,
-            required void Function(
-              ima.IMAAdsManagerDelegate,
-              ima.IMAAdsManager,
-              ima.IMAAdError,
-            )
+            required void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager, ima.IMAAdError)
             didReceiveAdError,
             required void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager)
             didRequestContentPause,

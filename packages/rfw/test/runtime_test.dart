@@ -16,11 +16,10 @@ import 'package:rfw/rfw.dart';
 
 void main() {
   testWidgets('list lookup', (WidgetTester tester) async {
-    final runtime = Runtime()
-      ..update(const LibraryName(<String>['core']), createCoreWidgets());
+    final runtime = Runtime()..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
     final data = DynamicContent(<String, Object?>{
-      'list': <Object?>[ 0, 1, 2, 3, 4 ],
+      'list': <Object?>[0, 1, 2, 3, 4],
     });
     await tester.pumpWidget(
       RemoteWidget(
@@ -33,14 +32,17 @@ void main() {
     expect(tester.takeException().toString(), contains('Could not find remote widget named'));
     expect(find.byType(ErrorWidget), findsOneWidget);
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = Column(
         children: [
           ...for v in data.list: Text(text: v, textDirection: "ltr"),
         ],
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(find.byType(Text), findsNWidgets(5));
   });
@@ -49,19 +51,22 @@ void main() {
     var buildCount = 0;
     int? lastValue;
     final runtime = Runtime()
-      ..update(const LibraryName(<String>['core']), LocalWidgetLibrary(<String, LocalWidgetBuilder>{
-        'Test': (BuildContext context, DataSource source) {
-          buildCount += 1;
-          lastValue = source.v<int>(<Object>['value']);
-          return const SizedBox.shrink();
-        },
-      }));
+      ..update(
+        const LibraryName(<String>['core']),
+        LocalWidgetLibrary(<String, LocalWidgetBuilder>{
+          'Test': (BuildContext context, DataSource source) {
+            buildCount += 1;
+            lastValue = source.v<int>(<Object>['value']);
+            return const SizedBox.shrink();
+          },
+        }),
+      );
     addTearDown(runtime.dispose);
     final data = DynamicContent(<String, Object?>{
       'list': <Object?>[
-        <String, Object?>{ 'a': 0 },
-        <String, Object?>{ 'a': 1 },
-        <String, Object?>{ 'a': 2 },
+        <String, Object?>{'a': 0},
+        <String, Object?>{'a': 1},
+        <String, Object?>{'a': 2},
       ],
     });
     await tester.pumpWidget(
@@ -75,41 +80,44 @@ void main() {
     expect(buildCount, 0);
     expect(lastValue, isNull);
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = Test(value: data.list.1.a);
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(buildCount, 1);
     expect(lastValue, 1);
 
     data.update('list', <Object?>[
-      <String, Object?>{ 'a': 0 },
-      <String, Object?>{ 'a': 3 },
-      <String, Object?>{ 'a': 2 },
+      <String, Object?>{'a': 0},
+      <String, Object?>{'a': 3},
+      <String, Object?>{'a': 2},
     ]);
     await tester.pump();
     expect(buildCount, 2);
     expect(lastValue, 3);
 
     data.update('list', <Object?>[
-      <String, Object?>{ 'a': 1 },
-      <String, Object?>{ 'a': 3 },
+      <String, Object?>{'a': 1},
+      <String, Object?>{'a': 3},
     ]);
     await tester.pump();
     expect(buildCount, 2);
     expect(lastValue, 3);
 
     data.update('list', <Object?>[
-      <String, Object?>{ 'a': 1 },
-      <String, Object?>{ },
+      <String, Object?>{'a': 1},
+      <String, Object?>{},
     ]);
     await tester.pump();
     expect(buildCount, 3);
     expect(lastValue, null);
 
     data.update('list', <Object?>[
-      <String, Object?>{ 'a': 1 },
+      <String, Object?>{'a': 1},
     ]);
     await tester.pump();
     expect(buildCount, 3);
@@ -122,17 +130,14 @@ void main() {
 
   testWidgets('deepClone', (WidgetTester tester) async {
     final map = <String, Object>{
-      'outer': <String, Object>{
-        'inner': true,
-      }
+      'outer': <String, Object>{'inner': true},
     };
     expect(identical(deepClone(map), map), isFalse);
     expect(deepClone(map), equals(map));
   });
 
   testWidgets('updateText, updateBinary, clearLibraries', (WidgetTester tester) async {
-    final runtime = Runtime()
-      ..update(const LibraryName(<String>['core']), createCoreWidgets());
+    final runtime = Runtime()..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
     final data = DynamicContent();
     await tester.pumpWidget(
@@ -146,17 +151,27 @@ void main() {
     expect(tester.takeException().toString(), contains('Could not find remote widget named'));
     expect(find.byType(ErrorWidget), findsOneWidget);
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = ColoredBox(color: 0xFF000000);
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0xFF000000));
 
-    runtime.update(const LibraryName(<String>['test']), decodeLibraryBlob(encodeLibraryBlob(parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      decodeLibraryBlob(
+        encodeLibraryBlob(
+          parseLibraryFile('''
       import core;
       widget root = ColoredBox(color: 0xFF000001);
-    '''))));
+    '''),
+        ),
+      ),
+    );
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0xFF000001));
 
@@ -168,8 +183,7 @@ void main() {
   });
 
   testWidgets('Runtime cached build', (WidgetTester tester) async {
-    final runtime = Runtime()
-      ..update(const LibraryName(<String>['core']), createCoreWidgets());
+    final runtime = Runtime()..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
     final data = DynamicContent();
     await tester.pumpWidget(
@@ -201,12 +215,18 @@ void main() {
 
   testWidgets('Import loops', (WidgetTester tester) async {
     final runtime = Runtime()
-      ..update(const LibraryName(<String>['a']), parseLibraryFile('''
+      ..update(
+        const LibraryName(<String>['a']),
+        parseLibraryFile('''
         import b;
-      '''))
-      ..update(const LibraryName(<String>['b']), parseLibraryFile('''
+      '''),
+      )
+      ..update(
+        const LibraryName(<String>['b']),
+        parseLibraryFile('''
         import a;
-      '''));
+      '''),
+      );
     addTearDown(runtime.dispose);
     final data = DynamicContent();
     await tester.pumpWidget(
@@ -216,14 +236,20 @@ void main() {
         widget: const FullyQualifiedWidgetName(LibraryName(<String>['a']), 'widget'),
       ),
     );
-    expect(tester.takeException().toString(), 'Library a indirectly depends on itself via b which depends on a.');
+    expect(
+      tester.takeException().toString(),
+      'Library a indirectly depends on itself via b which depends on a.',
+    );
   });
 
   testWidgets('Import loops', (WidgetTester tester) async {
     final runtime = Runtime()
-      ..update(const LibraryName(<String>['a']), parseLibraryFile('''
+      ..update(
+        const LibraryName(<String>['a']),
+        parseLibraryFile('''
         import a;
-      '''));
+      '''),
+      );
     addTearDown(runtime.dispose);
     final data = DynamicContent();
     await tester.pumpWidget(
@@ -238,9 +264,12 @@ void main() {
 
   testWidgets('Missing libraries in import', (WidgetTester tester) async {
     final runtime = Runtime()
-      ..update(const LibraryName(<String>['a']), parseLibraryFile('''
+      ..update(
+        const LibraryName(<String>['a']),
+        parseLibraryFile('''
         import b;
-      '''));
+      '''),
+      );
     addTearDown(runtime.dispose);
     final data = DynamicContent();
     await tester.pumpWidget(
@@ -251,7 +280,12 @@ void main() {
       ),
     );
     expect(tester.takeException().toString(), contains('Could not find remote widget named'));
-    expect(tester.widget<ErrorWidget>(find.byType(ErrorWidget)).message, contains('Could not find remote widget named widget in a, possibly because some dependencies were missing: b'));
+    expect(
+      tester.widget<ErrorWidget>(find.byType(ErrorWidget)).message,
+      contains(
+        'Could not find remote widget named widget in a, possibly because some dependencies were missing: b',
+      ),
+    );
   });
 
   testWidgets('Missing libraries in specified widget', (WidgetTester tester) async {
@@ -266,15 +300,23 @@ void main() {
       ),
     );
     expect(tester.takeException().toString(), contains('Could not find remote widget named'));
-    expect(tester.widget<ErrorWidget>(find.byType(ErrorWidget)).message, contains('Could not find remote widget named widget in a, possibly because some dependencies were missing: a'));
+    expect(
+      tester.widget<ErrorWidget>(find.byType(ErrorWidget)).message,
+      contains(
+        'Could not find remote widget named widget in a, possibly because some dependencies were missing: a',
+      ),
+    );
   });
 
   testWidgets('Missing libraries in import via dependency', (WidgetTester tester) async {
     final runtime = Runtime()
-      ..update(const LibraryName(<String>['a']), parseLibraryFile('''
+      ..update(
+        const LibraryName(<String>['a']),
+        parseLibraryFile('''
         import b;
         widget widget = test();
-      '''));
+      '''),
+      );
     addTearDown(runtime.dispose);
     final data = DynamicContent();
     await tester.pumpWidget(
@@ -285,12 +327,16 @@ void main() {
       ),
     );
     expect(tester.takeException().toString(), contains('Could not find remote widget named'));
-    expect(tester.widget<ErrorWidget>(find.byType(ErrorWidget)).message, contains('Could not find remote widget named test in a, possibly because some dependencies were missing: b'));
+    expect(
+      tester.widget<ErrorWidget>(find.byType(ErrorWidget)).message,
+      contains(
+        'Could not find remote widget named test in a, possibly because some dependencies were missing: b',
+      ),
+    );
   });
 
   testWidgets('Missing widget', (WidgetTester tester) async {
-    final runtime = Runtime()
-      ..update(const LibraryName(<String>['a']), parseLibraryFile(''));
+    final runtime = Runtime()..update(const LibraryName(<String>['a']), parseLibraryFile(''));
     addTearDown(runtime.dispose);
     final data = DynamicContent();
     await tester.pumpWidget(
@@ -301,12 +347,14 @@ void main() {
       ),
     );
     expect(tester.takeException().toString(), contains('Could not find remote widget named'));
-    expect(tester.widget<ErrorWidget>(find.byType(ErrorWidget)).message, contains('Could not find remote widget named widget in a.'));
+    expect(
+      tester.widget<ErrorWidget>(find.byType(ErrorWidget)).message,
+      contains('Could not find remote widget named widget in a.'),
+    );
   });
 
   testWidgets('Runtime', (WidgetTester tester) async {
-    final runtime = Runtime()
-      ..update(const LibraryName(<String>['core']), createCoreWidgets());
+    final runtime = Runtime()..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
     final data = DynamicContent();
     await tester.pumpWidget(
@@ -318,26 +366,31 @@ void main() {
     );
     expect(tester.takeException().toString(), contains('Could not find remote widget named'));
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root { level: 0 } = inner(level: state.level);
       widget inner { level: 1 } = ColoredBox(color: args.level);
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x00000000));
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root { level: 0 } = inner(level: state.level);
       widget inner { level: 1 } = ColoredBox(color: state.level);
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x00000001));
   });
 
   testWidgets('Runtime', (WidgetTester tester) async {
-    final runtime = Runtime()
-      ..update(const LibraryName(<String>['core']), createCoreWidgets());
+    final runtime = Runtime()..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
     final data = DynamicContent();
     await tester.pumpWidget(
@@ -349,19 +402,21 @@ void main() {
     );
     expect(tester.takeException().toString(), contains('Could not find remote widget named'));
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root { level: 0 } = switch state.level {
         0: ColoredBox(color: 2),
       };
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x00000002));
   });
 
   testWidgets('Runtime', (WidgetTester tester) async {
-    final runtime = Runtime()
-          ..update(const LibraryName(<String>['core']), createCoreWidgets());
+    final runtime = Runtime()..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
     expect(runtime.libraries.length, 1);
     final LibraryName libraryName = runtime.libraries.entries.first.key;
@@ -373,8 +428,7 @@ void main() {
   });
 
   testWidgets('Runtime', (WidgetTester tester) async {
-    final runtime = Runtime()
-      ..update(const LibraryName(<String>['core']), createCoreWidgets());
+    final runtime = Runtime()..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
     final data = DynamicContent();
     await tester.pumpWidget(
@@ -386,13 +440,16 @@ void main() {
     );
     expect(tester.takeException().toString(), contains('Could not find remote widget named'));
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root { level: 0 } = GestureDetector(
         onTap: set state.level = 1,
         child: ColoredBox(color: state.level),
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x00000000));
     await tester.tap(find.byType(ColoredBox));
@@ -401,8 +458,7 @@ void main() {
   });
 
   testWidgets('DynamicContent', (WidgetTester tester) async {
-    final runtime = Runtime()
-      ..update(const LibraryName(<String>['core']), createCoreWidgets());
+    final runtime = Runtime()..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
     final data = DynamicContent();
     await tester.pumpWidget(
@@ -414,10 +470,13 @@ void main() {
     );
     expect(tester.takeException().toString(), contains('Could not find remote widget named'));
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = ColoredBox(color: data.color.value);
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0xFF000000));
 
@@ -429,15 +488,20 @@ void main() {
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x00000002));
 
-    data.update('color', decodeDataBlob(Uint8List.fromList(<int>[
-      0xFE, 0x52, 0x57, 0x44, // signature
-      0x07, // data is a map
-      0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // ...which has one key
-      0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // ...which has five letters
-      0x76, 0x61, 0x6c, 0x75, 0x65, // ...which are "value"
-      0x02, // and the value is an integer
-      0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // ...which is the number 2
-    ])));
+    data.update(
+      'color',
+      decodeDataBlob(
+        Uint8List.fromList(<int>[
+          0xFE, 0x52, 0x57, 0x44, // signature
+          0x07, // data is a map
+          0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // ...which has one key
+          0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // ...which has five letters
+          0x76, 0x61, 0x6c, 0x75, 0x65, // ...which are "value"
+          0x02, // and the value is an integer
+          0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // ...which is the number 2
+        ]),
+      ),
+    );
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x00000002));
   });
@@ -448,14 +512,13 @@ void main() {
   });
 
   testWidgets('binding loop variables', (WidgetTester tester) async {
-    final runtime = Runtime()
-      ..update(const LibraryName(<String>['core']), createCoreWidgets());
+    final runtime = Runtime()..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
     final data = DynamicContent(<String, Object?>{
       'list': <Object?>[
         <String, Object?>{
-          'a': <String, Object?>{ 'b': 0xEE },
-          'c': <Object?>[ 0xDD ],
+          'a': <String, Object?>{'b': 0xEE},
+          'c': <Object?>[0xDD],
         },
       ],
     });
@@ -474,7 +537,9 @@ void main() {
     expect(tester.takeException().toString(), contains('Could not find remote widget named'));
     expect(find.byType(ErrorWidget), findsOneWidget);
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget verify = ColoredBox(color: args.value.0.q.0);
       widget root = verify(
@@ -484,11 +549,14 @@ void main() {
           },
         ],
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x000000EE));
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget verify = ColoredBox(color: args.value.0.q.0);
       widget root = verify(
@@ -498,11 +566,14 @@ void main() {
           },
         ],
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x000000DD));
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget verify = ColoredBox(color: args.value.0.q);
       widget root = verify(
@@ -515,11 +586,14 @@ void main() {
           },
         ],
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x000000CC));
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget verify { state: true } = ColoredBox(color: args.value.c.0);
       widget remote = SizedBox(child: args.corn.0);
@@ -529,11 +603,14 @@ void main() {
             verify(value: v),
         ],
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x000000DD));
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget verify { state: true } = ColoredBox(color: args.value);
       widget remote = SizedBox(child: args.corn.0);
@@ -547,11 +624,14 @@ void main() {
             }),
         ],
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0xFF0D0D0D));
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget verify { state: true } = switch args.value.c.0 {
         0xDD: ColoredBox(color: 0xFF0D0D0D),
@@ -564,11 +644,14 @@ void main() {
             verify(value: v),
         ],
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0xFF0D0D0D));
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget verify { state: true } = GestureDetector(
         onTap: event 'test' { test: args.value.a.b },
@@ -581,14 +664,17 @@ void main() {
             verify(value: v),
         ],
       );
-    '''));
+    '''),
+    );
     expect(eventLog, isEmpty);
     await tester.pump();
     await tester.tap(find.byType(ColoredBox));
     expect(eventLog, <String>['test {test: ${0xEE}}']);
     eventLog.clear();
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget verify { state: 0x00 } = GestureDetector(
         onTap: set state.state = args.value.a.b,
@@ -604,18 +690,17 @@ void main() {
             verify(value: v),
         ],
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0xFF000001));
     await tester.tap(find.byType(ColoredBox));
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0xFF000002));
-
   });
 
   testWidgets('list lookup of esoteric values', (WidgetTester tester) async {
-    final runtime = Runtime()
-      ..update(const LibraryName(<String>['core']), createCoreWidgets());
+    final runtime = Runtime()..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
     final data = DynamicContent();
     await tester.pumpWidget(
@@ -627,7 +712,9 @@ void main() {
     );
     expect(tester.takeException().toString(), contains('Could not find remote widget named'));
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = test(list: ['A'], loop: [...for b in ["B", "C"]: b]);
       widget test = Text(
@@ -639,11 +726,14 @@ void main() {
           '<',
         ],
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(find.text('>ABC<'), findsOneWidget);
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = Text(
         textDirection: "ltr",
@@ -653,11 +743,14 @@ void main() {
           '<',
         ],
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(find.text('><'), findsOneWidget);
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = test(list: [test()]);
       widget test = Text(
@@ -668,11 +761,14 @@ void main() {
           '<',
         ],
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(find.text('><'), findsOneWidget);
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root { list: [ 0x01 ] } = GestureDetector(
         onTap: set state.list = [ 0x02, 0x03 ],
@@ -683,7 +779,8 @@ void main() {
           ],
         ),
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x00000001));
     await tester.tap(find.byType(ColoredBox));
@@ -691,7 +788,9 @@ void main() {
     expect(tester.firstWidget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x00000002));
     expect(find.byType(ColoredBox), findsNWidgets(2));
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = Column(
         children: [
@@ -701,11 +800,14 @@ void main() {
           }: v,
         ],
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x00000001));
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = Column(
         children: [
@@ -715,11 +817,14 @@ void main() {
           }: v,
         ],
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(find.byType(ColoredBox), findsNothing);
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = test(
         list: [...for w in [ColoredBox(color: 0xFF00FF00)]: w],
@@ -729,17 +834,19 @@ void main() {
           ...for v in args.list: v,
         ],
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0xFF00FF00));
   });
 
   testWidgets('data lookup', (WidgetTester tester) async {
-    final runtime = Runtime()
-      ..update(const LibraryName(<String>['core']), createCoreWidgets());
+    final runtime = Runtime()..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
     final data = DynamicContent(<String, Object?>{
-      'map': <String, Object?>{ 'list': <Object?>[ 0xAB ] },
+      'map': <String, Object?>{
+        'list': <Object?>[0xAB],
+      },
     });
     await tester.pumpWidget(
       RemoteWidget(
@@ -750,18 +857,20 @@ void main() {
     );
     expect(tester.takeException().toString(), contains('Could not find remote widget named'));
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = test(list: data.map.list);
       widget test = ColoredBox(color: args.list.0);
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x000000AB));
   });
 
   testWidgets('args lookup', (WidgetTester tester) async {
-    final runtime = Runtime()
-      ..update(const LibraryName(<String>['core']), createCoreWidgets());
+    final runtime = Runtime()..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
     final data = DynamicContent();
     await tester.pumpWidget(
@@ -773,19 +882,21 @@ void main() {
     );
     expect(tester.takeException().toString(), contains('Could not find remote widget named'));
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = test1(map: { 'list': [ 0xAC ] });
       widget test1 = test2(list: args.map.list);
       widget test2 = ColoredBox(color: args.list.0);
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x000000AC));
   });
 
   testWidgets('state lookup', (WidgetTester tester) async {
-    final runtime = Runtime()
-      ..update(const LibraryName(<String>['core']), createCoreWidgets());
+    final runtime = Runtime()..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
     final data = DynamicContent();
     await tester.pumpWidget(
@@ -797,18 +908,20 @@ void main() {
     );
     expect(tester.takeException().toString(), contains('Could not find remote widget named'));
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root { map: { 'list': [ 0xAD ] } } = test(list: state.map.list);
       widget test = ColoredBox(color: args.list.0);
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x000000AD));
   });
 
   testWidgets('switch', (WidgetTester tester) async {
-    final runtime = Runtime()
-      ..update(const LibraryName(<String>['core']), createCoreWidgets());
+    final runtime = Runtime()..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
     final data = DynamicContent();
     await tester.pumpWidget(
@@ -820,13 +933,16 @@ void main() {
     );
     expect(tester.takeException().toString(), contains('Could not find remote widget named'));
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = ColoredBox(color: switch data.a.b {
         0: 0x11111111,
         default: 0x22222222,
       });
-    '''));
+    '''),
+    );
     data.update('a', parseDataFile('{ b: 1 }'));
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x22222222));
@@ -834,17 +950,22 @@ void main() {
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x11111111));
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = switch true {};
-    '''));
+    '''),
+    );
     await tester.pump();
-    expect(tester.takeException().toString(), 'Switch in test:root did not resolve to a widget (got <missing>).');
+    expect(
+      tester.takeException().toString(),
+      'Switch in test:root did not resolve to a widget (got <missing>).',
+    );
   });
 
   testWidgets('events with arguments', (WidgetTester tester) async {
-    final runtime = Runtime()
-      ..update(const LibraryName(<String>['core']), createCoreWidgets());
+    final runtime = Runtime()..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
     final data = DynamicContent();
     final eventLog = <String>[];
@@ -860,7 +981,9 @@ void main() {
     );
     expect(tester.takeException().toString(), contains('Could not find remote widget named'));
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = GestureDetector(
         onTap: event 'tap' {
@@ -868,7 +991,8 @@ void main() {
         },
         child: ColoredBox(),
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0xFF000000));
     expect(eventLog, isEmpty);
@@ -876,13 +1000,16 @@ void main() {
     expect(eventLog, <String>['tap {list: [0, 1]}']);
     eventLog.clear();
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = GestureDetector(
         onTap: [ event 'tap' { a: 1 }, event 'tap' { a: 2 }, event 'final tap' { } ],
         child: ColoredBox(),
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0xFF000000));
     expect(eventLog, isEmpty);
@@ -892,48 +1019,58 @@ void main() {
   });
 
   testWidgets('_CurriedWidget toStrings', (WidgetTester tester) async {
-    final runtime = Runtime()
-      ..update(const LibraryName(<String>['core']), createCoreWidgets());
+    final runtime = Runtime()..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
     final data = DynamicContent();
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget stateless = ColoredBox(color: 0xAA);
       widget stateful { test: false } = ColoredBox(color: 0xBB);
       widget switchy = switch true { default: ColoredBox(color: 0xCC) };
-    '''));
+    '''),
+    );
     expect(
       (runtime.build(
-        tester.element(find.byType(View)),
-        const FullyQualifiedWidgetName(LibraryName(<String>['test']), 'stateless'),
-        data,
-        (String eventName, DynamicMap eventArguments) {},
-      ) as dynamic).curriedWidget.toString(),
+                tester.element(find.byType(View)),
+                const FullyQualifiedWidgetName(LibraryName(<String>['test']), 'stateless'),
+                data,
+                (String eventName, DynamicMap eventArguments) {},
+              )
+              as dynamic)
+          .curriedWidget
+          .toString(),
       'core:ColoredBox {} {color: 170}',
     );
     expect(
       (runtime.build(
-        tester.element(find.byType(View)),
-        const FullyQualifiedWidgetName(LibraryName(<String>['test']), 'stateful'),
-        data,
-        (String eventName, DynamicMap eventArguments) {},
-      ) as dynamic).curriedWidget.toString(),
+                tester.element(find.byType(View)),
+                const FullyQualifiedWidgetName(LibraryName(<String>['test']), 'stateful'),
+                data,
+                (String eventName, DynamicMap eventArguments) {},
+              )
+              as dynamic)
+          .curriedWidget
+          .toString(),
       'test:stateful {test: false} {} = core:ColoredBox {} {color: 187}',
     );
     expect(
       (runtime.build(
-        tester.element(find.byType(View)),
-        const FullyQualifiedWidgetName(LibraryName(<String>['test']), 'switchy'),
-        data,
-        (String eventName, DynamicMap eventArguments) {},
-      ) as dynamic).curriedWidget.toString(),
+                tester.element(find.byType(View)),
+                const FullyQualifiedWidgetName(LibraryName(<String>['test']), 'switchy'),
+                data,
+                (String eventName, DynamicMap eventArguments) {},
+              )
+              as dynamic)
+          .curriedWidget
+          .toString(),
       'test:switchy {} {} = switch true {null: core:ColoredBox {} {color: 204}}',
     );
   });
 
   testWidgets('state setting', (WidgetTester tester) async {
-    final runtime = Runtime()
-      ..update(const LibraryName(<String>['core']), createCoreWidgets());
+    final runtime = Runtime()..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
     final data = DynamicContent();
     await tester.pumpWidget(
@@ -945,105 +1082,132 @@ void main() {
     );
     expect(tester.takeException().toString(), contains('Could not find remote widget named'));
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root { a: 0 } = GestureDetector(
         onTap: set state.b = 0,
         child: ColoredBox(),
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     await tester.tap(find.byType(ColoredBox));
     expect(tester.takeException().toString(), 'b does not identify existing state.');
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root { a: 0 } = GestureDetector(
         onTap: set state.0 = 0,
         child: ColoredBox(),
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     await tester.tap(find.byType(ColoredBox));
     expect(tester.takeException().toString(), '0 does not identify existing state.');
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root { a: [] } = GestureDetector(
         onTap: set state.a.b = 0,
         child: ColoredBox(),
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     await tester.tap(find.byType(ColoredBox));
     expect(tester.takeException().toString(), 'a.b does not identify existing state.');
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root { a: [] } = GestureDetector(
         onTap: set state.a.0 = 0,
         child: ColoredBox(),
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     await tester.tap(find.byType(ColoredBox));
     expect(tester.takeException().toString(), 'a.0 does not identify existing state.');
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root { a: true } = GestureDetector(
         onTap: set state.a.0 = 0,
         child: ColoredBox(),
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     await tester.tap(find.byType(ColoredBox));
     expect(tester.takeException().toString(), 'a.0 does not identify existing state.');
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root { a: true } = GestureDetector(
         onTap: set state.a.b = 0,
         child: ColoredBox(),
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     await tester.tap(find.byType(ColoredBox));
     expect(tester.takeException().toString(), 'a.b does not identify existing state.');
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root { a: { b: 0 } } = GestureDetector(
         onTap: set state.a = 15,
         child: ColoredBox(color: state.a),
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0xFF000000));
     await tester.tap(find.byType(ColoredBox));
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x0000000F));
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root { a: [ 0 ] } = GestureDetector(
         onTap: set state.a = 10,
         child: ColoredBox(color: state.a),
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0xFF000000));
     await tester.tap(find.byType(ColoredBox));
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x0000000A));
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root { a: [ [ 1 ] ] } = GestureDetector(
         onTap: set state.a.0.0 = 11,
         child: ColoredBox(color: state.a.0.0),
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0x00000001));
     await tester.tap(find.byType(ColoredBox));
@@ -1068,32 +1232,47 @@ void main() {
     );
     expect(tester.takeException().toString(), contains('Could not find remote widget named'));
 
-    runtime.update(const LibraryName(<String>['local']), LocalWidgetLibrary(<String, LocalWidgetBuilder>{
-      'Test': (BuildContext context, DataSource source) {
-        expect(source.isList(<Object>['a']), isFalse);
-        expect(source.isList(<Object>['b']), isTrue);
-        expect(source.length(<Object>['b']), 1);
-        expect(source.child(<Object>['missing']), isA<ErrorWidget>());
-        expect(tester.takeException().toString(), 'Not a widget at [missing] (got <missing>) for local:Test.');
-        expect(source.childList(<Object>['a']), <Matcher>[isA<ErrorWidget>()]);
-        expect(tester.takeException().toString(), 'Not a widget list at [a] (got 0) for local:Test.');
-        expect(source.childList(<Object>['b']), <Matcher>[isA<ErrorWidget>()]);
-        expect(tester.takeException().toString(), 'Not a widget at [b] (got 1) for local:Test.');
-        expect(eventLog, isEmpty);
-        source.voidHandler(<Object>['callback'], <String, Object?>{ 'extra': 4, 'b': 3 })!();
-        expect(eventLog, <String>['e {a: 1, b: 3, extra: 4}']);
-        return const ColoredBox(color: Color(0xAABBCCDD));
-      },
-    }));
-    runtime.update(const LibraryName(<String>['remote']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['local']),
+      LocalWidgetLibrary(<String, LocalWidgetBuilder>{
+        'Test': (BuildContext context, DataSource source) {
+          expect(source.isList(<Object>['a']), isFalse);
+          expect(source.isList(<Object>['b']), isTrue);
+          expect(source.length(<Object>['b']), 1);
+          expect(source.child(<Object>['missing']), isA<ErrorWidget>());
+          expect(
+            tester.takeException().toString(),
+            'Not a widget at [missing] (got <missing>) for local:Test.',
+          );
+          expect(source.childList(<Object>['a']), <Matcher>[isA<ErrorWidget>()]);
+          expect(
+            tester.takeException().toString(),
+            'Not a widget list at [a] (got 0) for local:Test.',
+          );
+          expect(source.childList(<Object>['b']), <Matcher>[isA<ErrorWidget>()]);
+          expect(tester.takeException().toString(), 'Not a widget at [b] (got 1) for local:Test.');
+          expect(eventLog, isEmpty);
+          source.voidHandler(<Object>['callback'], <String, Object?>{'extra': 4, 'b': 3})!();
+          expect(eventLog, <String>['e {a: 1, b: 3, extra: 4}']);
+          return const ColoredBox(color: Color(0xAABBCCDD));
+        },
+      }),
+    );
+    runtime.update(
+      const LibraryName(<String>['remote']),
+      parseLibraryFile('''
       import local;
       widget test = Test(a: 0, b: [1], callback: event 'e' { a: 1, b: 2 });
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0xAABBCCDD));
     var tested = false;
     tester.element(find.byType(ColoredBox)).visitAncestorElements((Element node) {
-      expect(node.toString(), equalsIgnoringHashCodes('_Widget(state: _WidgetState#00000(name: "local:Test"))'));
+      expect(
+        node.toString(),
+        equalsIgnoringHashCodes('_Widget(state: _WidgetState#00000(name: "local:Test"))'),
+      );
       tested = true;
       return false;
     });
@@ -1106,12 +1285,20 @@ void main() {
       'a': <Object>[0, 1],
       'b': <Object>['q', 'r'],
     });
-    data.subscribe(<Object>[], (Object value) { log.add('root: $value'); });
-    data.subscribe(<Object>['a', 0], (Object value) { log.add('leaf: $value'); });
+    data.subscribe(<Object>[], (Object value) {
+      log.add('root: $value');
+    });
+    data.subscribe(<Object>['a', 0], (Object value) {
+      log.add('leaf: $value');
+    });
     data.update('a', <Object>[2, 3]);
     expect(log, <String>['leaf: 2', 'root: {a: [2, 3], b: [q, r]}']);
     data.update('c', 'test');
-    expect(log, <String>['leaf: 2', 'root: {a: [2, 3], b: [q, r]}', 'root: {a: [2, 3], b: [q, r], c: test}']);
+    expect(log, <String>[
+      'leaf: 2',
+      'root: {a: [2, 3], b: [q, r]}',
+      'root: {a: [2, 3], b: [q, r], c: test}',
+    ]);
   });
 
   testWidgets('Data source - optional builder works', (WidgetTester tester) async {
@@ -1122,26 +1309,33 @@ void main() {
     addTearDown(runtime.dispose);
     final data = DynamicContent();
     runtime.update(coreLibraryName, createCoreWidgets());
-    runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
-      'Builder': (BuildContext context, DataSource source) {
-        final Widget? builder = source.optionalBuilder(<String>['builder'], <String, Object?>{});
-        return builder ?? const Text('Hello World!', textDirection: TextDirection.ltr);
-      },
-    }));
-    runtime.update(remoteLibraryName, parseLibraryFile('''
+    runtime.update(
+      localLibraryName,
+      LocalWidgetLibrary(<String, LocalWidgetBuilder>{
+        'Builder': (BuildContext context, DataSource source) {
+          final Widget? builder = source.optionalBuilder(<String>['builder'], <String, Object?>{});
+          return builder ?? const Text('Hello World!', textDirection: TextDirection.ltr);
+        },
+      }),
+    );
+    runtime.update(
+      remoteLibraryName,
+      parseLibraryFile('''
       import core;
       import local;
 
       widget test = Builder(
         builder: Text(text: 'Not a builder :/'),
       );
-    '''));
-    await tester.pumpWidget(RemoteWidget(
-      runtime: runtime,
-      data: data,
-      widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
-    ));
-
+    '''),
+    );
+    await tester.pumpWidget(
+      RemoteWidget(
+        runtime: runtime,
+        data: data,
+        widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
+      ),
+    );
 
     final Finder textFinder = find.byType(Text);
     expect(textFinder, findsOneWidget);
@@ -1155,41 +1349,51 @@ void main() {
     final runtime = Runtime();
     addTearDown(runtime.dispose);
     final data = DynamicContent();
-    const expectedErrorMessage = 'Not a builder at [builder] (got core:Text {} {text: Not a builder :/}) for local:Builder.';
+    const expectedErrorMessage =
+        'Not a builder at [builder] (got core:Text {} {text: Not a builder :/}) for local:Builder.';
 
     runtime.update(coreLibraryName, createCoreWidgets());
-    runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
-      'Builder': (BuildContext context, DataSource source) {
-        return source.builder(<String>['builder'], <String, Object?>{});
-      },
-    }));
-    runtime.update(remoteLibraryName, parseLibraryFile('''
+    runtime.update(
+      localLibraryName,
+      LocalWidgetLibrary(<String, LocalWidgetBuilder>{
+        'Builder': (BuildContext context, DataSource source) {
+          return source.builder(<String>['builder'], <String, Object?>{});
+        },
+      }),
+    );
+    runtime.update(
+      remoteLibraryName,
+      parseLibraryFile('''
       import core;
       import local;
 
       widget test = Builder(
         builder: Text(text: 'Not a builder :/'),
       );
-    '''));
-    await tester.pumpWidget(RemoteWidget(
-      runtime: runtime,
-      data: data,
-      widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
-    ));
+    '''),
+    );
+    await tester.pumpWidget(
+      RemoteWidget(
+        runtime: runtime,
+        data: data,
+        widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
+      ),
+    );
 
     expect(tester.takeException().toString(), contains(expectedErrorMessage));
     expect(find.byType(ErrorWidget), findsOneWidget);
-    expect(tester.widget<ErrorWidget>(find.byType(ErrorWidget)).message, contains(expectedErrorMessage));
+    expect(
+      tester.widget<ErrorWidget>(find.byType(ErrorWidget)).message,
+      contains(expectedErrorMessage),
+    );
   });
-
 
   testWidgets('Customized error widget', (WidgetTester tester) async {
     final ErrorWidgetBuilder oldBuilder = ErrorWidget.builder;
     ErrorWidget.builder = (FlutterErrorDetails details) {
       return const Text('oopsie!', textDirection: TextDirection.ltr);
     };
-    final runtime = Runtime()
-      ..update(const LibraryName(<String>['a']), parseLibraryFile(''));
+    final runtime = Runtime()..update(const LibraryName(<String>['a']), parseLibraryFile(''));
     addTearDown(runtime.dispose);
     final data = DynamicContent();
     await tester.pumpWidget(
@@ -1215,24 +1419,32 @@ void main() {
     final Finder textFinder = find.byType(Text);
 
     runtime.update(coreLibraryName, createCoreWidgets());
-    runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
-      'Builder': (BuildContext context, DataSource source) {
-        return source.builder(<String>['builder'], <String, Object?>{});
-      },
-    }));
-    runtime.update(remoteLibraryName, parseLibraryFile('''
+    runtime.update(
+      localLibraryName,
+      LocalWidgetLibrary(<String, LocalWidgetBuilder>{
+        'Builder': (BuildContext context, DataSource source) {
+          return source.builder(<String>['builder'], <String, Object?>{});
+        },
+      }),
+    );
+    runtime.update(
+      remoteLibraryName,
+      parseLibraryFile('''
       import core;
       import local;
 
       widget test = Builder(
         builder: (scope) =>  Text(text: 'Hello World!', textDirection: 'ltr'),
       );
-    '''));
-    await tester.pumpWidget(RemoteWidget(
-      runtime: runtime,
-      data: data,
-      widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
-    ));
+    '''),
+    );
+    await tester.pumpWidget(
+      RemoteWidget(
+        runtime: runtime,
+        data: data,
+        widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
+      ),
+    );
 
     expect(textFinder, findsOneWidget);
     expect(tester.widget<Text>(textFinder).data, 'Hello World!');
@@ -1248,25 +1460,33 @@ void main() {
     final Finder textFinder = find.byType(Text);
 
     runtime.update(coreLibraryName, createCoreWidgets());
-    runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
-      'HelloWorld': (BuildContext context, DataSource source) {
-        const result = 'Hello World!';
-        return source.builder(<String>['builder'], <String, Object?>{'result': result});
-      },
-    }));
-    runtime.update(remoteLibraryName, parseLibraryFile('''
+    runtime.update(
+      localLibraryName,
+      LocalWidgetLibrary(<String, LocalWidgetBuilder>{
+        'HelloWorld': (BuildContext context, DataSource source) {
+          const result = 'Hello World!';
+          return source.builder(<String>['builder'], <String, Object?>{'result': result});
+        },
+      }),
+    );
+    runtime.update(
+      remoteLibraryName,
+      parseLibraryFile('''
       import core;
       import local;
 
       widget test = HelloWorld(
         builder: (result) => Text(text: result.result, textDirection: 'ltr'),
       );
-    '''));
-    await tester.pumpWidget(RemoteWidget(
-      runtime: runtime,
-      data: data,
-      widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
-    ));
+    '''),
+    );
+    await tester.pumpWidget(
+      RemoteWidget(
+        runtime: runtime,
+        data: data,
+        widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
+      ),
+    );
 
     expect(textFinder, findsOneWidget);
     expect(tester.widget<Text>(textFinder).data, 'Hello World!');
@@ -1282,14 +1502,19 @@ void main() {
     final Finder textFinder = find.byType(Text);
 
     runtime.update(coreLibraryName, createCoreWidgets());
-    runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
-      'IntToString': (BuildContext context, DataSource source) {
-        final int value = source.v<int>(<String>['value'])!;
-        final result = value.toString();
-        return source.builder(<String>['builder'], <String, Object?>{'result': result});
-      },
-    }));
-    runtime.update(remoteLibraryName, parseLibraryFile('''
+    runtime.update(
+      localLibraryName,
+      LocalWidgetLibrary(<String, LocalWidgetBuilder>{
+        'IntToString': (BuildContext context, DataSource source) {
+          final int value = source.v<int>(<String>['value'])!;
+          final result = value.toString();
+          return source.builder(<String>['builder'], <String, Object?>{'result': result});
+        },
+      }),
+    );
+    runtime.update(
+      remoteLibraryName,
+      parseLibraryFile('''
       import core;
       import local;
 
@@ -1297,17 +1522,19 @@ void main() {
         value: state.value,
         builder: (result) => Text(text: result.result, textDirection: 'ltr'),
       );
-    '''));
-    await tester.pumpWidget(RemoteWidget(
-      runtime: runtime,
-      data: data,
-      widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
-    ));
+    '''),
+    );
+    await tester.pumpWidget(
+      RemoteWidget(
+        runtime: runtime,
+        data: data,
+        widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
+      ),
+    );
 
     expect(textFinder, findsOneWidget);
     expect(tester.widget<Text>(textFinder).data, '0');
   });
-
 
   testWidgets('Widget builders - work with data', (WidgetTester tester) async {
     const coreLibraryName = LibraryName(<String>['core']);
@@ -1319,14 +1546,19 @@ void main() {
     final Finder textFinder = find.byType(Text);
 
     runtime.update(coreLibraryName, createCoreWidgets());
-    runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
-      'IntToString': (BuildContext context, DataSource source) {
-        final int value = source.v<int>(<String>['value'])!;
-        final result = value.toString();
-        return source.builder(<String>['builder'], <String, Object?>{'result': result});
-      },
-    }));
-    runtime.update(remoteLibraryName, parseLibraryFile('''
+    runtime.update(
+      localLibraryName,
+      LocalWidgetLibrary(<String, LocalWidgetBuilder>{
+        'IntToString': (BuildContext context, DataSource source) {
+          final int value = source.v<int>(<String>['value'])!;
+          final result = value.toString();
+          return source.builder(<String>['builder'], <String, Object?>{'result': result});
+        },
+      }),
+    );
+    runtime.update(
+      remoteLibraryName,
+      parseLibraryFile('''
       import core;
       import local;
 
@@ -1334,12 +1566,15 @@ void main() {
         value: data.value,
         builder: (result) => Text(text: result.result, textDirection: 'ltr'),
       );
-    '''));
-    await tester.pumpWidget(RemoteWidget(
-      runtime: runtime,
-      data: data,
-      widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
-    ));
+    '''),
+    );
+    await tester.pumpWidget(
+      RemoteWidget(
+        runtime: runtime,
+        data: data,
+        widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
+      ),
+    );
 
     expect(textFinder, findsOneWidget);
     expect(tester.widget<Text>(textFinder).data, '0');
@@ -1360,12 +1595,17 @@ void main() {
     final Finder textFinder = find.byType(Text);
 
     runtime.update(coreLibraryName, createCoreWidgets());
-    runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
-      'Zero': (BuildContext context, DataSource source) {
-        return source.builder(<String>['builder'], <String, Object?>{'result': 0});
-      },
-    }));
-    runtime.update(remoteLibraryName, parseLibraryFile('''
+    runtime.update(
+      localLibraryName,
+      LocalWidgetLibrary(<String, LocalWidgetBuilder>{
+        'Zero': (BuildContext context, DataSource source) {
+          return source.builder(<String>['builder'], <String, Object?>{'result': 0});
+        },
+      }),
+    );
+    runtime.update(
+      remoteLibraryName,
+      parseLibraryFile('''
       import core;
       import local;
 
@@ -1375,14 +1615,17 @@ void main() {
           child: Text(text: 'Tap to trigger an event.', textDirection: 'ltr'),
         ),
       );
-    '''));
-    await tester.pumpWidget(RemoteWidget(
-      runtime: runtime,
-      data: data,
-      widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
-      onEvent: (String eventName, DynamicMap eventArguments) =>
-        dispatchedEvents.add(RfwEvent(eventName, eventArguments)),
-    ));
+    '''),
+    );
+    await tester.pumpWidget(
+      RemoteWidget(
+        runtime: runtime,
+        data: data,
+        widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
+        onEvent: (String eventName, DynamicMap eventArguments) =>
+            dispatchedEvents.add(RfwEvent(eventName, eventArguments)),
+      ),
+    );
 
     await tester.tap(textFinder);
     await tester.pump();
@@ -1400,20 +1643,25 @@ void main() {
     final data = DynamicContent();
     final Finder textFinder = find.byType(Text);
     runtime.update(coreLibraryName, createCoreWidgets());
-    runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
-      'Sum': (BuildContext context, DataSource source) {
-        final int operand1 = source.v<int>(<String>['operand1'])!;
-        final int operand2 = source.v<int>(<String>['operand2'])!;
-        final int result = operand1 + operand2;
-        return source.builder(<String>['builder'], <String, Object?>{'result': result});
-      },
-      'IntToString': (BuildContext context, DataSource source) {
-        final int value = source.v<int>(<String>['value'])!;
-        final result = value.toString();
-        return source.builder(<String>['builder'], <String, Object?>{'result': result});
-      },
-    }));
-    runtime.update(remoteLibraryName, parseLibraryFile('''
+    runtime.update(
+      localLibraryName,
+      LocalWidgetLibrary(<String, LocalWidgetBuilder>{
+        'Sum': (BuildContext context, DataSource source) {
+          final int operand1 = source.v<int>(<String>['operand1'])!;
+          final int operand2 = source.v<int>(<String>['operand2'])!;
+          final int result = operand1 + operand2;
+          return source.builder(<String>['builder'], <String, Object?>{'result': result});
+        },
+        'IntToString': (BuildContext context, DataSource source) {
+          final int value = source.v<int>(<String>['value'])!;
+          final result = value.toString();
+          return source.builder(<String>['builder'], <String, Object?>{'result': result});
+        },
+      }),
+    );
+    runtime.update(
+      remoteLibraryName,
+      parseLibraryFile('''
       import core;
       import local;
 
@@ -1425,12 +1673,15 @@ void main() {
           builder: (result2) => Text(text: ['1 + 2 = ', result2.result], textDirection: 'ltr'),
         ),
       );
-    '''));
-    await tester.pumpWidget(RemoteWidget(
-      runtime: runtime,
-      data: data,
-      widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
-    ));
+    '''),
+    );
+    await tester.pumpWidget(
+      RemoteWidget(
+        runtime: runtime,
+        data: data,
+        widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
+      ),
+    );
 
     expect(textFinder, findsOneWidget);
     expect(tester.widget<Text>(textFinder).data, '1 + 2 = 3');
@@ -1443,26 +1694,31 @@ void main() {
     final handlers = <String, VoidCallback>{};
     final runtime = Runtime();
     addTearDown(runtime.dispose);
-    final data = DynamicContent(<String, Object?>{
-      'a1': 'apricot',
-      'b1': 'blueberry',
-    });
+    final data = DynamicContent(<String, Object?>{'a1': 'apricot', 'b1': 'blueberry'});
     final Finder textFinder = find.byType(Text);
 
     runtime.update(coreLibraryName, createCoreWidgets());
-    runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
-      'Builder': (BuildContext context, DataSource source) {
-        final String? id = source.v<String>(<String>['id']);
-        if (id != null) {
-          handlers[id] = source.voidHandler(<String>['handler'])!;
-        }
-        return source.builder(<String>['builder'], <String, Object?>{
-          'param1': source.v<String>(<String>['arg1']),
-          'param2': source.v<String>(<String>['arg2']),
-        });
-      },
-    }));
-    runtime.update(remoteLibraryName, parseLibraryFile('''
+    runtime.update(
+      localLibraryName,
+      LocalWidgetLibrary(<String, LocalWidgetBuilder>{
+        'Builder': (BuildContext context, DataSource source) {
+          final String? id = source.v<String>(<String>['id']);
+          if (id != null) {
+            handlers[id] = source.voidHandler(<String>['handler'])!;
+          }
+          return source.builder(
+            <String>['builder'],
+            <String, Object?>{
+              'param1': source.v<String>(<String>['arg1']),
+              'param2': source.v<String>(<String>['arg2']),
+            },
+          );
+        },
+      }),
+    );
+    runtime.update(
+      remoteLibraryName,
+      parseLibraryFile('''
       import core;
       import local;
 
@@ -1482,12 +1738,15 @@ void main() {
           ),
         ),
       );
-    '''));
-    await tester.pumpWidget(RemoteWidget(
-      runtime: runtime,
-      data: data,
-      widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
-    ));
+    '''),
+    );
+    await tester.pumpWidget(
+      RemoteWidget(
+        runtime: runtime,
+        data: data,
+        widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
+      ),
+    );
 
     expect(tester.widget<Text>(textFinder).data, 'strawberry apricot apple blueberry banana');
 
@@ -1514,12 +1773,17 @@ void main() {
     final Finder textFinder = find.byType(Text);
 
     runtime.update(coreLibraryName, createCoreWidgets());
-    runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
-      'Builder': (BuildContext context, DataSource source) {
-        return source.builder(<String>['builder'], <String, Object?>{});
-      },
-    }));
-    runtime.update(remoteLibraryName, parseLibraryFile('''
+    runtime.update(
+      localLibraryName,
+      LocalWidgetLibrary(<String, LocalWidgetBuilder>{
+        'Builder': (BuildContext context, DataSource source) {
+          return source.builder(<String>['builder'], <String, Object?>{});
+        },
+      }),
+    );
+    runtime.update(
+      remoteLibraryName,
+      parseLibraryFile('''
       import core;
       import local;
 
@@ -1536,19 +1800,21 @@ void main() {
           ),
         },
       );
-    '''));
-    await tester.pumpWidget(RemoteWidget(
-      runtime: runtime,
-      data: data,
-      widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
-    ));
-
+    '''),
+    );
+    await tester.pumpWidget(
+      RemoteWidget(
+        runtime: runtime,
+        data: data,
+        widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
+      ),
+    );
 
     expect(textFinder, findsOneWidget);
     expect(tester.widget<Text>(textFinder).data, 'The builder is disabled.');
 
-    await tester.tap(textFinder); 
-    await tester.pump();          
+    await tester.tap(textFinder);
+    await tester.pump();
     expect(textFinder, findsOneWidget);
     expect(tester.widget<Text>(textFinder).data, 'The builder is enabled.');
   });
@@ -1562,13 +1828,18 @@ void main() {
     final data = DynamicContent();
     final Finder textFinder = find.byType(Text);
     runtime.update(coreLibraryName, createCoreWidgets());
-    runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
-      'Inverter': (BuildContext context, DataSource source) {
-        final bool value = source.v<bool>(<String>['value'])!;
-        return source.builder(<String>['builder'], <String, Object?>{'result': !value});
-      },
-    }));
-    runtime.update(remoteLibraryName, parseLibraryFile('''
+    runtime.update(
+      localLibraryName,
+      LocalWidgetLibrary(<String, LocalWidgetBuilder>{
+        'Inverter': (BuildContext context, DataSource source) {
+          final bool value = source.v<bool>(<String>['value'])!;
+          return source.builder(<String>['builder'], <String, Object?>{'result': !value});
+        },
+      }),
+    );
+    runtime.update(
+      remoteLibraryName,
+      parseLibraryFile('''
       import core;
       import local;
 
@@ -1591,18 +1862,21 @@ void main() {
           ),
         },
       );
-    '''));
-    await tester.pumpWidget(RemoteWidget(
-      runtime: runtime,
-      data: data,
-      widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
-    ));
+    '''),
+    );
+    await tester.pumpWidget(
+      RemoteWidget(
+        runtime: runtime,
+        data: data,
+        widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
+      ),
+    );
 
     expect(textFinder, findsOneWidget);
     expect(tester.widget<Text>(textFinder).data, 'The input is false, the output is true');
 
-    await tester.tap(textFinder); 
-    await tester.pump();          
+    await tester.tap(textFinder);
+    await tester.pump();
     expect(textFinder, findsOneWidget);
     expect(tester.widget<Text>(textFinder).data, 'The input is true, the output is false');
   });
@@ -1618,18 +1892,21 @@ void main() {
 
     runtime.update(coreLibraryName, createCoreWidgets());
     runtime.update(
-        localLibraryName,
-        LocalWidgetLibrary(<String, LocalWidgetBuilder>{
-          'Builder': (BuildContext context, DataSource source) {
-            return source.builder(
-              <String>['builder'],
-              <String, Object?>{
-                'values': <String>['Value1', 'Value2', 'Value3'],
-              },
-            );
-          },
-        }));
-    runtime.update(remoteLibraryName, parseLibraryFile('''
+      localLibraryName,
+      LocalWidgetLibrary(<String, LocalWidgetBuilder>{
+        'Builder': (BuildContext context, DataSource source) {
+          return source.builder(
+            <String>['builder'],
+            <String, Object?>{
+              'values': <String>['Value1', 'Value2', 'Value3'],
+            },
+          );
+        },
+      }),
+    );
+    runtime.update(
+      remoteLibraryName,
+      parseLibraryFile('''
       import core;
       import local;
 
@@ -1642,12 +1919,15 @@ void main() {
             ],
           ),
       );
-    '''));
-    await tester.pumpWidget(RemoteWidget(
-      runtime: runtime,
-      data: data,
-      widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
-    ));
+    '''),
+    );
+    await tester.pumpWidget(
+      RemoteWidget(
+        runtime: runtime,
+        data: data,
+        widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
+      ),
+    );
 
     expect(textFinder, findsNWidgets(3));
     expect((textFinder.at(0).evaluate().first.widget as Text).data, 'Value1');

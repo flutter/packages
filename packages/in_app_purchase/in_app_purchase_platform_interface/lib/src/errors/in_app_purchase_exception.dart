@@ -7,11 +7,7 @@
 class InAppPurchaseException implements Exception {
   /// Creates a [InAppPurchaseException] with the specified source and error
   /// [code] and optional [message].
-  InAppPurchaseException({
-    required this.source,
-    required this.code,
-    this.message,
-  });
+  InAppPurchaseException({required this.source, required this.code, this.message});
 
   /// An error code.
   final String code;

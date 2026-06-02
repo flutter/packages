@@ -26,8 +26,7 @@ Future<bool> launchUrlString(
   BrowserConfiguration browserConfiguration = const BrowserConfiguration(),
   String? webOnlyWindowName,
 }) async {
-  if ((mode == LaunchMode.inAppWebView ||
-          mode == LaunchMode.inAppBrowserView) &&
+  if ((mode == LaunchMode.inAppWebView || mode == LaunchMode.inAppBrowserView) &&
       !(urlString.startsWith('https:') || urlString.startsWith('http:'))) {
     throw ArgumentError.value(
       urlString,
