@@ -285,6 +285,29 @@ void main() {
       );
     });
 
+    test('uses dart rather than flutter for non-Flutter packages', () async {
+      final RepositoryPackage package = createFakePackage(
+        'foo',
+        packagesDir,
+        examples: <String>[],
+      );
+
+      await runCapturingPrint(commandRunner, <String>[
+        'publish',
+        '--packages=foo',
+      ]);
+
+      expect(
+        processRunner.recordedCalls,
+        contains(
+          ProcessCall('dart', const <String>[
+            'pub',
+            'publish',
+          ], package.directory.path),
+        ),
+      );
+    });
+
     test('forwards --pub-publish-flags to pub publish', () async {
       final RepositoryPackage plugin = createFakePlugin(
         'foo',
@@ -1333,7 +1356,7 @@ void main() {
                 'publish',
                 '--all-changed',
                 '--base-sha=HEAD~',
-                '--batch-release-branch=release-package1',
+                '--batch-release-branch=release-package1-1.0.0',
               ]);
           // Package1 is published in batch realease, pacakge2 is not.
           expect(
@@ -1404,7 +1427,7 @@ void main() {
                 'publish',
                 '--all-changed',
                 '--base-sha=HEAD~',
-                '--batch-release-branch=release-package1',
+                '--batch-release-branch=release-package1-1.0.0',
               ]);
           // Package1 is published in batch realease, pacakge2 is not.
           expect(
@@ -1533,7 +1556,7 @@ void main() {
             'publish',
             '--all-changed',
             '--base-sha=HEAD~',
-            '--batch-release-branch=release-package1',
+            '--batch-release-branch=release-package1-1.0.0',
           ],
           errorHandler: (Error e) {
             commandError = e;

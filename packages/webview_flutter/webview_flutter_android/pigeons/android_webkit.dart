@@ -141,6 +141,44 @@ enum MixedContentMode {
   neverAllow,
 }
 
+/// Defines different types of sources causing window insets.
+///
+/// See https://developer.android.com/reference/androidx/core/view/WindowInsetsCompat.Type
+enum WindowInsetsType {
+  /// All system bars.
+  ///
+  /// Includes statusBars(), captionBar() as well as navigationBars(),
+  /// systemOverlays(), but not ime().
+  systemBars,
+
+  /// An inset type representing the area that used by DisplayCutout.
+  displayCutout,
+
+  /// An insets type representing the window of a caption bar.
+  captionBar,
+
+  /// An insets type representing the window of an InputMethod.
+  ime,
+
+  mandatorySystemGestures,
+
+  /// An insets type representing any system bars for navigation.
+  navigationBars,
+
+  /// An insets type representing any system bars for displaying status.
+  statusBars,
+
+  /// An insets type representing the system gesture insets.
+  ///
+  /// The system gesture insets represent the area of a window where system
+  /// gestures have priority and may consume some or all touch input, e.g. due
+  /// to the a system bar occupying it, or it being reserved for touch-only
+  /// gestures.
+  systemGestures,
+
+  tappableElement,
+}
+
 /// Encompasses parameters to the `WebViewClient.shouldInterceptRequest` method.
 ///
 /// See https://developer.android.com/reference/android/webkit/WebResourceRequest.
@@ -261,6 +299,15 @@ abstract class CookieManager {
 
   /// Sets whether the `WebView` should allow third party cookies to be set.
   void setAcceptThirdPartyCookies(WebView webView, bool accept);
+
+  /// Gets all the cookies for the given URL.
+  ///
+  /// This may return multiple key-value pairs if multiple cookies are associated with this URL,
+  /// in which case each cookie will be delimited by "; " characters (semicolon followed by a space).
+  /// Each key-value pair will be of the form "key=value".
+  ///
+  /// Note: Any cookies set with the "Partitioned" attribute will only be returned for the top-level partition of url.
+  String? getCookies(String url);
 }
 
 /// A View that displays web pages.
@@ -848,6 +895,14 @@ abstract class View {
 
   /// Set the over-scroll mode for this view.
   void setOverScrollMode(OverScrollMode mode);
+
+  /// Sets the listener to the native method
+  /// `ViewCompat.setOnApplyWindowInsetsListener` to mark the passed insets to
+  /// zero.
+  ///
+  /// This is a convenience method because `View.OnApplyWindowInsetsListener`
+  /// requires implementing a callback that requires a synchronous return value.
+  void setInsetListenerToSetInsetsToZero(List<WindowInsetsType> types);
 }
 
 /// A callback interface used by the host application to set the Geolocation

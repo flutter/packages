@@ -4,10 +4,11 @@
 // See: https://github.com/valotas/mustache4dart
 
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:mustache_template/mustache.dart';
 import 'package:test/test.dart';
+
+import 'specs/specs.dart';
 
 String render(
   String source,
@@ -26,21 +27,12 @@ String render(
   return t.renderString(values);
 }
 
-void main() {
-  defineTests();
-}
-
-void defineTests() {
-  final specsDir = Directory('test/spec/specs');
-  specsDir.listSync().forEach((FileSystemEntity f) {
-    if (f is File) {
-      final String filename = f.path;
-      if (shouldRun(filename)) {
-        final String text = f.readAsStringSync();
-        _defineGroupFromFile(filename, text);
-      }
+void defineTests(List<String> unsupportedSpecs) {
+  for (final MapEntry(key: specName, value: text) in SPECS.entries) {
+    if (shouldRun(specName, unsupportedSpecs)) {
+      _defineGroupFromFile(specName, text);
     }
-  });
+  }
 }
 
 void _defineGroupFromFile(String filename, String text) {
@@ -91,12 +83,8 @@ void _defineGroupFromFile(String filename, String text) {
   });
 }
 
-bool shouldRun(String filename) {
-  // filter out only .json files
-  if (!filename.endsWith('.json')) {
-    return false;
-  }
-  return true;
+bool shouldRun(String specName, List<String> unsupportedSpecs) {
+  return !unsupportedSpecs.contains(specName);
 }
 
 String Function(Object?) _dummyCallableWithState() {

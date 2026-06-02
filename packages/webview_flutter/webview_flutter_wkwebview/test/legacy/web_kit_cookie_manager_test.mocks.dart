@@ -70,6 +70,16 @@ class MockWKHTTPCookieStore extends _i1.Mock implements _i2.WKHTTPCookieStore {
           as _i3.Future<void>);
 
   @override
+  _i3.Future<List<_i2.HTTPCookie>> getAllCookies() =>
+      (super.noSuchMethod(
+            Invocation.method(#getAllCookies, []),
+            returnValue: _i3.Future<List<_i2.HTTPCookie>>.value(
+              <_i2.HTTPCookie>[],
+            ),
+          )
+          as _i3.Future<List<_i2.HTTPCookie>>);
+
+  @override
   _i2.WKHTTPCookieStore pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),

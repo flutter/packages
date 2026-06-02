@@ -71,6 +71,7 @@ class DomHelper {
   }
 
   XFile _convertFileToXFile(File file) => XFile(
+    mimeType: file.type,
     URL.createObjectURL(file),
     name: file.name,
     length: file.size,

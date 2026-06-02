@@ -1,6 +1,11 @@
-## 0.3.0+15
+## 0.3.0+16
 
 * Bumps org.mockito.kotlin:mockito-kotlin from 6.2.3 to 6.3.0 in /packages/interactive_media_ads/android
+
+## 0.3.0+15
+
+* Migrates to Built-in Kotlin to support AGP 9.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 0.3.0+14
 

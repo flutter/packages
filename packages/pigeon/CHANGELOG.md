@@ -1,3 +1,12 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
+## 26.3.4
+
+* [kotlin] Updates generated error class to inherit from `RuntimeException`
+  instead of `Throwable`, for better Java interoperability.
+
 ## 26.3.3
 
 * Updates `analyzer` dependency to support versions 10 through 12.

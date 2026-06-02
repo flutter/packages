@@ -1,3 +1,12 @@
+## 0.8.13+18
+
+* Migrates to Built-in Kotlin to support AGP 9.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
+## 0.8.13+17
+
+* Updates internal implementation to use Kotlin Pigeon.
+
 ## 0.8.13+16
 
 * Bumps androidx.core:core from 1.17.0 to 1.18.0.
