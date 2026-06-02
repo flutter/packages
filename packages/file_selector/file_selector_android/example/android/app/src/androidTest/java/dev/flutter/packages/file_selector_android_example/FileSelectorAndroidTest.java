@@ -21,7 +21,6 @@ import android.app.Instrumentation;
 import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.view.View;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.flutter.api.WidgetAssertion;
@@ -40,21 +39,14 @@ public class FileSelectorAndroidTest {
   @Rule public IntentsRule intentsRule = new IntentsRule();
 
   public void clearAnySystemDialog() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-      return;
-    }
     myActivityTestRule
         .getScenario()
         .onActivity(
             new ActivityScenario.ActivityAction<DriverExtensionActivity>() {
               @Override
               public void perform(DriverExtensionActivity activity) {
-                try {
-                  Intent closeDialog = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
-                  activity.sendBroadcast(closeDialog);
-                } catch (SecurityException e) {
-                  // Suppress exception on S+ emulator devices.
-                }
+                Intent closeDialog = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+                activity.sendBroadcast(closeDialog);
               }
             });
   }

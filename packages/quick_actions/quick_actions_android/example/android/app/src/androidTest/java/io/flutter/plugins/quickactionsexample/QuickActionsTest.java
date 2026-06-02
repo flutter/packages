@@ -12,7 +12,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
-import android.os.Build;
 import android.util.Log;
 import androidx.lifecycle.Lifecycle;
 import androidx.test.core.app.ActivityScenario;
@@ -155,13 +154,6 @@ public class QuickActionsTest {
   // Broadcast a request to clear any system dialog that blocks the application from obtaining
   // focus. See https://github.com/flutter/flutter/issues/140987
   private void clearAnySystemDialog(Context context) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-      return;
-    }
-    try {
-      context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
-    } catch (SecurityException e) {
-      // Suppress exception on Android 12+ where this broadcast is restricted.
-    }
+    context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
   }
 }
