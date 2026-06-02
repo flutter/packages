@@ -1,8 +1,7 @@
 ## NEXT
 
-* Fixes `pickMultiImage(limit: 1)` throwing an `ArgumentError` by delegating
-  to `pickImage` when `limit` is exactly 1, since the platform interface
-  requires `limit >= 2` for multi-image selection.
+* Fixes `pickMultiImage(limit: 1)` and `pickMultipleMedia(limit: 1)` throwing an `ArgumentError` by delegating to
+  single-item pickers when `limit` is exactly 1, since the platform interface requires `limit >= 2` for multi-selection.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 1.2.2
