@@ -51,7 +51,6 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   /// Callback handler for transaction status changes.
   @visibleForTesting
   static SKTransactionObserverWrapper get observer => _sk1transactionObserver;
-
   /// Callback handler for transaction status changes for StoreKit2 transactions
   @visibleForTesting
   static SK2TransactionObserverWrapper get sk2TransactionObserver =>
