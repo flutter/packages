@@ -13,7 +13,12 @@ import 'validators/version_and_changelog_validator.dart';
 /// A command to validate version changes to packages.
 class VersionCheckCommand extends PackageLoopingCommand {
   /// Creates an instance of the version check command.
-  VersionCheckCommand(super.packagesDir, {super.processRunner, super.platform, super.gitDir}) {
+  VersionCheckCommand(
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+    super.gitDir,
+  }) {
     argParser.addOption(
       _prLabelsArg,
       help:
@@ -47,7 +52,8 @@ class VersionCheckCommand extends PackageLoopingCommand {
 
   static const String _prLabelsArg = 'pr-labels';
   static const String _checkForMissingChanges = 'check-for-missing-changes';
-  static const String _ignorePlatformInterfaceBreaks = 'ignore-platform-interface-breaks';
+  static const String _ignorePlatformInterfaceBreaks =
+      'ignore-platform-interface-breaks';
 
   late final GitVersionFinder _gitVersionFinder;
 
@@ -84,7 +90,9 @@ class VersionCheckCommand extends PackageLoopingCommand {
     if (pubspec.publishTo == 'none') {
       return PackageResult.skip('Found "publish_to: none".');
     }
-    final Directory repoRoot = packagesDir.fileSystem.directory((await gitDir).path);
+    final Directory repoRoot = packagesDir.fileSystem.directory(
+      (await gitDir).path,
+    );
 
     final validator = VersionAndChangelogValidator(
       path: path,
@@ -101,7 +109,9 @@ class VersionCheckCommand extends PackageLoopingCommand {
       checkForMissingChanges: getBoolArg(_checkForMissingChanges),
       ignorePlatformInterfaceBreaks: getBoolArg(_ignorePlatformInterfaceBreaks),
     );
-    return errors.isEmpty ? PackageResult.success() : PackageResult.fail(errors);
+    return errors.isEmpty
+        ? PackageResult.success()
+        : PackageResult.fail(errors);
   }
 
   Pubspec? _tryParsePubspec(RepositoryPackage package) {

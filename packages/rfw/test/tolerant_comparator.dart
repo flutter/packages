@@ -7,7 +7,10 @@ import 'package:flutter_test/flutter_test.dart';
 
 /// Sets [_TolerantGoldenFileComparator] as the default golden file comparator
 /// in tests.
-void setUpTolerantComparator({required String testPath, required double precisionTolerance}) {
+void setUpTolerantComparator({
+  required String testPath,
+  required double precisionTolerance,
+}) {
   final GoldenFileComparator oldComparator = goldenFileComparator;
   final newComparator = _TolerantGoldenFileComparator(
     Uri.parse(testPath),
@@ -20,12 +23,14 @@ void setUpTolerantComparator({required String testPath, required double precisio
 }
 
 class _TolerantGoldenFileComparator extends LocalFileComparator {
-  _TolerantGoldenFileComparator(super.testFile, {required double precisionTolerance})
-    : assert(
-        0 <= precisionTolerance && precisionTolerance <= 1,
-        'precisionTolerance must be between 0 and 1',
-      ),
-      _precisionTolerance = precisionTolerance;
+  _TolerantGoldenFileComparator(
+    super.testFile, {
+    required double precisionTolerance,
+  }) : assert(
+         0 <= precisionTolerance && precisionTolerance <= 1,
+         'precisionTolerance must be between 0 and 1',
+       ),
+       _precisionTolerance = precisionTolerance;
 
   /// How much the golden image can differ from the test image.
   ///
@@ -40,7 +45,8 @@ class _TolerantGoldenFileComparator extends LocalFileComparator {
       await getGoldenBytes(golden),
     );
 
-    final bool passed = result.passed || result.diffPercent <= _precisionTolerance;
+    final bool passed =
+        result.passed || result.diffPercent <= _precisionTolerance;
     if (passed) {
       result.dispose();
       return true;

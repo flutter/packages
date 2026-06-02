@@ -14,7 +14,8 @@ import 'url_launcher_uri.dart';
 
 /// The function used to push routes to the Flutter framework.
 @visibleForTesting
-Future<ByteData> Function(Object?, String) pushRouteToFrameworkFunction = pushRouteNameToFramework;
+Future<ByteData> Function(Object?, String) pushRouteToFrameworkFunction =
+    pushRouteNameToFramework;
 
 /// A widget that renders a real link on the web, and uses WebViews in native
 /// platforms to open links.
@@ -69,7 +70,8 @@ class Link extends StatelessWidget implements LinkInfo {
   bool get isDisabled => uri == null;
 
   LinkDelegate get _effectiveDelegate {
-    return UrlLauncherPlatform.instance.linkDelegate ?? DefaultLinkDelegate.create;
+    return UrlLauncherPlatform.instance.linkDelegate ??
+        DefaultLinkDelegate.create;
   }
 
   @override
@@ -123,7 +125,9 @@ class DefaultLinkDelegate extends StatelessWidget {
     try {
       success = await launchUrl(
         url,
-        mode: _useWebView ? LaunchMode.inAppBrowserView : LaunchMode.externalApplication,
+        mode: _useWebView
+            ? LaunchMode.inAppBrowserView
+            : LaunchMode.externalApplication,
       );
     } on PlatformException {
       success = false;
@@ -142,6 +146,9 @@ class DefaultLinkDelegate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return link.builder(context, link.isDisabled ? null : () => _followLink(context));
+    return link.builder(
+      context,
+      link.isDisabled ? null : () => _followLink(context),
+    );
   }
 }

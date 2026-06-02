@@ -169,7 +169,8 @@ class InstallmentPlanDetailsWrapper {
 
     return other is InstallmentPlanDetailsWrapper &&
         other.commitmentPaymentsCount == commitmentPaymentsCount &&
-        other.subsequentCommitmentPaymentsCount == subsequentCommitmentPaymentsCount;
+        other.subsequentCommitmentPaymentsCount ==
+            subsequentCommitmentPaymentsCount;
   }
 
   @override

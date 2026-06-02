@@ -31,7 +31,9 @@ class TestMapsObject implements MapsObject<TestMapsObject> {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is TestMapsObject && mapsId == other.mapsId && data == other.data;
+    return other is TestMapsObject &&
+        mapsId == other.mapsId &&
+        data == other.data;
   }
 
   @override
@@ -39,5 +41,6 @@ class TestMapsObject implements MapsObject<TestMapsObject> {
 }
 
 class TestMapsObjectUpdate extends MapsObjectUpdates<TestMapsObject> {
-  TestMapsObjectUpdate.from(super.previous, super.current) : super.from(objectName: 'testObject');
+  TestMapsObjectUpdate.from(super.previous, super.current)
+    : super.from(objectName: 'testObject');
 }

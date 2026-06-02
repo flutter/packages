@@ -154,8 +154,7 @@ void main() {
     expect(find.byType(_FlutterLogoModal), findsNothing);
   });
 
-  testWidgets(
-      'showModal builds a new route with specified barrier properties '
+  testWidgets('showModal builds a new route with specified barrier properties '
       'with default configuration(FadeScaleTransitionConfiguration)', (
     WidgetTester tester,
   ) async {
@@ -197,8 +196,7 @@ void main() {
     expect(topModalBarrier.semanticsLabel, 'Dismiss');
   });
 
-  testWidgets(
-      'showModal forwards animation '
+  testWidgets('showModal forwards animation '
       'with default configuration(FadeScaleTransitionConfiguration)', (
     WidgetTester tester,
   ) async {
@@ -270,8 +268,7 @@ void main() {
     expect(find.byType(_FlutterLogoModal), findsOneWidget);
   });
 
-  testWidgets(
-      'showModal reverse animation '
+  testWidgets('showModal reverse animation '
       'with default configuration(FadeScaleTransitionConfiguration)', (
     WidgetTester tester,
   ) async {
@@ -561,13 +558,13 @@ class _FlutterLogoModalState extends State<_FlutterLogoModal> {
 
 class _TestModalConfiguration extends ModalConfiguration {
   _TestModalConfiguration()
-      : super(
-          barrierColor: Colors.green,
-          barrierDismissible: true,
-          barrierLabel: 'customLabel',
-          transitionDuration: const Duration(milliseconds: 300),
-          reverseTransitionDuration: const Duration(milliseconds: 200),
-        );
+    : super(
+        barrierColor: Colors.green,
+        barrierDismissible: true,
+        barrierLabel: 'customLabel',
+        transitionDuration: const Duration(milliseconds: 300),
+        reverseTransitionDuration: const Duration(milliseconds: 200),
+      );
 
   @override
   Widget transitionBuilder(

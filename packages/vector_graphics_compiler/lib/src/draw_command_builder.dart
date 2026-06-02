@@ -24,13 +24,20 @@ class DrawCommandBuilder {
   final Map<PatternData, int> _patternData = <PatternData, int>{};
   final Map<TextPosition, int> _textPositions = <TextPosition, int>{};
 
-  int _getOrGenerateId<T>(T object, Map<T, int> map) => map.putIfAbsent(object, () => map.length);
+  int _getOrGenerateId<T>(T object, Map<T, int> map) =>
+      map.putIfAbsent(object, () => map.length);
 
   /// Add a vertices to the command stack.
   void addVertices(IndexedVertices vertices, Paint paint) {
     final int paintId = _getOrGenerateId(paint, _paints);
     final int verticesId = _getOrGenerateId(vertices, _vertices);
-    _commands.add(DrawCommand(DrawCommandType.vertices, paintId: paintId, objectId: verticesId));
+    _commands.add(
+      DrawCommand(
+        DrawCommandType.vertices,
+        paintId: paintId,
+        objectId: verticesId,
+      ),
+    );
   }
 
   /// Add a save layer to the command stack.
@@ -70,14 +77,20 @@ class DrawCommandBuilder {
       _patternData,
     );
     _commands.add(
-      DrawCommand(DrawCommandType.pattern, objectId: patternId, patternDataId: patternDataId),
+      DrawCommand(
+        DrawCommandType.pattern,
+        objectId: patternId,
+        patternDataId: patternDataId,
+      ),
     );
   }
 
   /// Updates the current text position to [position].
   void updateTextPosition(TextPosition position) {
     final int positionId = _getOrGenerateId(position, _textPositions);
-    _commands.add(DrawCommand(DrawCommandType.textPosition, objectId: positionId));
+    _commands.add(
+      DrawCommand(DrawCommandType.textPosition, objectId: positionId),
+    );
   }
 
   /// Add a path to the current draw command stack
@@ -100,7 +113,12 @@ class DrawCommandBuilder {
   }
 
   /// Adds a text to the current draw command stack.
-  void addText(TextConfig textConfig, Paint paint, String? debugString, Object? patternId) {
+  void addText(
+    TextConfig textConfig,
+    Paint paint,
+    String? debugString,
+    Object? patternId,
+  ) {
     final int paintId = _getOrGenerateId(paint, _paints);
     final int styleId = _getOrGenerateId(textConfig, _text);
     _commands.add(
@@ -123,7 +141,11 @@ class DrawCommandBuilder {
 
     final int drawImageId = _getOrGenerateId(drawImageData, _drawImages);
     _commands.add(
-      DrawCommand(DrawCommandType.image, objectId: drawImageId, debugString: debugString),
+      DrawCommand(
+        DrawCommandType.image,
+        objectId: drawImageId,
+        debugString: debugString,
+      ),
     );
   }
 

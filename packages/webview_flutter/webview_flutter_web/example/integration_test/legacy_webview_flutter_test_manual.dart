@@ -32,7 +32,8 @@ void main() async {
     await tester.pump(const Duration(seconds: 5));
 
     // Assert an iframe has been rendered to the DOM with the correct src attribute.
-    final element = web.document.querySelector('iframe') as web.HTMLIFrameElement?;
+    final element =
+        web.document.querySelector('iframe') as web.HTMLIFrameElement?;
     expect(element, isNotNull);
     expect(element!.src, fakeUrl);
   });
@@ -52,7 +53,8 @@ void main() async {
     await tester.pump(const Duration(seconds: 5));
 
     // Assert an iframe has been rendered to the DOM with the correct src attribute.
-    final element = web.document.querySelector('iframe') as web.HTMLIFrameElement?;
+    final element =
+        web.document.querySelector('iframe') as web.HTMLIFrameElement?;
     expect(element, isNotNull);
     expect(element!.src, fakeUrl);
   });

@@ -67,20 +67,9 @@ void main() {
     expect('${const EventHandler("a", <String, Object?>{})}', 'event a {}');
     expect('${const SetStateHandler(StateReference(<Object>["a"]), false)}', 'set state.a = false');
     expect('${const Import(LibraryName(<String>["a"]))}', 'import a;');
-    expect(
-      '${const WidgetDeclaration("a", null, ConstructorCall("b", <String, Object>{}))}',
-      'widget a = b({});',
-    );
-    expect(
-      '${const WidgetDeclaration("a", <String, Object?>{"x": false}, ConstructorCall("b", <String, Object>{}))}',
-      'widget a = b({});',
-    );
-    expect(
-      '${const RemoteWidgetLibrary(<Import>[
-        Import(LibraryName(<String>["a"])),
-      ], <WidgetDeclaration>[WidgetDeclaration("a", null, ConstructorCall("b", <String, Object>{}))])}',
-      'import a;\nwidget a = b({});',
-    );
+    expect('${const WidgetDeclaration("a", null, ConstructorCall("b", <String, Object>{}))}', 'widget a = b({});');
+    expect('${const WidgetDeclaration("a", <String, Object?>{ "x": false }, ConstructorCall("b", <String, Object>{}))}', 'widget a = b({});');
+    expect('${const RemoteWidgetLibrary(<Import>[Import(LibraryName(<String>["a"]))], <WidgetDeclaration>[WidgetDeclaration("a", null, ConstructorCall("b", <String, Object>{}))])}', 'import a;\nwidget a = b({});');
   });
 
   testWidgets('$BoundArgsReference', (WidgetTester tester) async {
@@ -96,25 +85,19 @@ void main() {
   });
 
   testWidgets('$LoopReference', (WidgetTester tester) async {
-    final LoopReference result = const LoopReference(9, <Object>[
-      0,
-    ]).constructReference(<Object>[1]);
+    final LoopReference result = const LoopReference(9, <Object>[0]).constructReference(<Object>[1]);
     expect(result.parts, const <Object>[0, 1]);
   });
 
   testWidgets('$BoundLoopReference', (WidgetTester tester) async {
     final target = Object();
-    final BoundLoopReference result = const LoopReference(9, <Object>[
-      0,
-    ]).bind(target).constructReference(<Object>[1]);
+    final BoundLoopReference result = const LoopReference(9, <Object>[0]).bind(target).constructReference(<Object>[1]);
     expect(result.value, target);
     expect(result.parts, const <Object>[0, 1]);
   });
 
   testWidgets('$BoundStateReference', (WidgetTester tester) async {
-    final BoundStateReference result = const StateReference(<Object>[
-      0,
-    ]).bind(9).constructReference(<Object>[1]);
+    final BoundStateReference result = const StateReference(<Object>[0]).bind(9).constructReference(<Object>[1]);
     expect(result.depth, 9);
     expect(result.parts, const <Object>[0, 1]);
   });
@@ -142,7 +125,10 @@ void main() {
     expect(test2 > test1, isTrue);
     expect(test2 >= test1, isTrue);
     // map
-    final map = <SourceLocation, SourceLocation>{test1: test1, test2: test2};
+    final map = <SourceLocation, SourceLocation>{
+      test1: test1,
+      test2: test2,
+    };
     expect(map[test1], test1);
     expect(map[test2], test2);
   });
@@ -175,7 +161,10 @@ void main() {
     expect(range1 == range2, isFalse);
     expect(range2 == range1, isFalse);
     // map
-    final map = <SourceRange, SourceRange>{range1: range1, range2: range2};
+    final map = <SourceRange, SourceRange>{
+      range1: range1,
+      range2: range2,
+    };
     expect(map[range1], range1);
     expect(map[range2], range2);
   });

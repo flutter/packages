@@ -5,7 +5,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
 
-import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart' as _i5;
+import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart'
+    as _i5;
 import 'package:google_sign_in_web/src/button_configuration.dart' as _i4;
 import 'package:google_sign_in_web/src/gis_client.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
@@ -29,38 +30,51 @@ import 'package:mockito/mockito.dart' as _i1;
 /// See the documentation for Mockito's code generation for more information.
 class MockGisSdkClient extends _i1.Mock implements _i2.GisSdkClient {
   @override
-  void requestOneTap() =>
-      super.noSuchMethod(Invocation.method(#requestOneTap, []), returnValueForMissingStub: null);
+  void requestOneTap() => super.noSuchMethod(
+    Invocation.method(#requestOneTap, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
-  _i3.Future<void> renderButton(Object? parent, _i4.GSIButtonConfiguration? options) =>
+  _i3.Future<void> renderButton(
+    Object? parent,
+    _i4.GSIButtonConfiguration? options,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(#renderButton, [parent, options]),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+            Invocation.method(#renderButton, [parent, options]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 
   @override
-  _i3.Future<String?> requestServerAuthCode(_i5.AuthorizationRequestDetails? request) =>
+  _i3.Future<String?> requestServerAuthCode(
+    _i5.AuthorizationRequestDetails? request,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(#requestServerAuthCode, [request]),
-        returnValue: _i3.Future<String?>.value(),
-        returnValueForMissingStub: _i3.Future<String?>.value(),
-      ) as _i3.Future<String?>);
+            Invocation.method(#requestServerAuthCode, [request]),
+            returnValue: _i3.Future<String?>.value(),
+            returnValueForMissingStub: _i3.Future<String?>.value(),
+          )
+          as _i3.Future<String?>);
 
   @override
-  _i3.Future<void> signOut() => (super.noSuchMethod(
-    Invocation.method(#signOut, []),
-    returnValue: _i3.Future<void>.value(),
-    returnValueForMissingStub: _i3.Future<void>.value(),
-  ) as _i3.Future<void>);
+  _i3.Future<void> signOut() =>
+      (super.noSuchMethod(
+            Invocation.method(#signOut, []),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 
   @override
-  _i3.Future<void> disconnect() => (super.noSuchMethod(
-    Invocation.method(#disconnect, []),
-    returnValue: _i3.Future<void>.value(),
-    returnValueForMissingStub: _i3.Future<void>.value(),
-  ) as _i3.Future<void>);
+  _i3.Future<void> disconnect() =>
+      (super.noSuchMethod(
+            Invocation.method(#disconnect, []),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 
   @override
   void clearAuthorizationToken(String? token) => super.noSuchMethod(
@@ -73,13 +87,18 @@ class MockGisSdkClient extends _i1.Mock implements _i2.GisSdkClient {
     List<String>? scopes, {
     required bool? promptIfUnauthorized,
     String? userHint,
-  }) => (super.noSuchMethod(
-    Invocation.method(
-      #requestScopes,
-      [scopes],
-      {#promptIfUnauthorized: promptIfUnauthorized, #userHint: userHint},
-    ),
-    returnValue: _i3.Future<String?>.value(),
-    returnValueForMissingStub: _i3.Future<String?>.value(),
-  ) as _i3.Future<String?>);
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(
+              #requestScopes,
+              [scopes],
+              {
+                #promptIfUnauthorized: promptIfUnauthorized,
+                #userHint: userHint,
+              },
+            ),
+            returnValue: _i3.Future<String?>.value(),
+            returnValueForMissingStub: _i3.Future<String?>.value(),
+          )
+          as _i3.Future<String?>);
 }

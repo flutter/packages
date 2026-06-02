@@ -31,7 +31,9 @@ abstract class _GoRouteDataBase extends RouteData {
   ///
   /// Corresponds to [GoRoute.builder].
   Widget build(BuildContext context, GoRouterState state) =>
-      throw UnimplementedError('One of `build` or `buildPage` must be implemented.');
+      throw UnimplementedError(
+        'One of `build` or `buildPage` must be implemented.',
+      );
 
   /// A page builder for this route.
   ///
@@ -44,7 +46,8 @@ abstract class _GoRouteDataBase extends RouteData {
   ///
   /// By default, returns a [Page] instance that is ignored, causing a default
   /// [Page] implementation to be used with the results of [build].
-  Page<void> buildPage(BuildContext context, GoRouterState state) => const NoOpPage();
+  Page<void> buildPage(BuildContext context, GoRouterState state) =>
+      const NoOpPage();
 
   /// An optional redirect function for this route.
   ///
@@ -67,9 +70,8 @@ abstract class _GoRouteDataBase extends RouteData {
 
   /// Used to cache [_GoRouteDataBase] that corresponds to a given [GoRouterState]
   /// to minimize the number of times it has to be deserialized.
-  static final Expando<_GoRouteDataBase> stateObjectExpando = Expando<_GoRouteDataBase>(
-    'GoRouteState to _GoRouteDataBase expando',
-  );
+  static final Expando<_GoRouteDataBase> stateObjectExpando =
+      Expando<_GoRouteDataBase>('GoRouteState to _GoRouteDataBase expando');
 }
 
 /// Helper to build a location string from a path and query parameters.
@@ -115,14 +117,14 @@ _GoRouteParameters _createGoRouteParameters<T extends _GoRouteDataBase>({
   }
 
   return _GoRouteParameters(
-    builder:
-        (BuildContext context, GoRouterState state) => factoryImpl(state).build(context, state),
-    pageBuilder:
-        (BuildContext context, GoRouterState state) => factoryImpl(state).buildPage(context, state),
-    redirect:
-        (BuildContext context, GoRouterState state) => factoryImpl(state).redirect(context, state),
-    onExit:
-        (BuildContext context, GoRouterState state) => factoryImpl(state).onExit(context, state),
+    builder: (BuildContext context, GoRouterState state) =>
+        factoryImpl(state).build(context, state),
+    pageBuilder: (BuildContext context, GoRouterState state) =>
+        factoryImpl(state).buildPage(context, state),
+    redirect: (BuildContext context, GoRouterState state) =>
+        factoryImpl(state).redirect(context, state),
+    onExit: (BuildContext context, GoRouterState state) =>
+        factoryImpl(state).onExit(context, state),
   );
 }
 
@@ -177,13 +179,16 @@ abstract class GoRouteData extends _GoRouteDataBase {
   String get location => throw _GoRouteDataBase.shouldBeGeneratedError;
 
   /// Navigate to the route.
-  void go(BuildContext context) => throw _GoRouteDataBase.shouldBeGeneratedError;
+  void go(BuildContext context) =>
+      throw _GoRouteDataBase.shouldBeGeneratedError;
 
   /// Push the route onto the page stack.
-  Future<T?> push<T>(BuildContext context) => throw _GoRouteDataBase.shouldBeGeneratedError;
+  Future<T?> push<T>(BuildContext context) =>
+      throw _GoRouteDataBase.shouldBeGeneratedError;
 
   /// Replaces the top-most page of the page stack with the route.
-  void pushReplacement(BuildContext context) => throw _GoRouteDataBase.shouldBeGeneratedError;
+  void pushReplacement(BuildContext context) =>
+      throw _GoRouteDataBase.shouldBeGeneratedError;
 
   /// Replaces the top-most page of the page stack with the route but treats
   /// it as the same page.
@@ -191,7 +196,8 @@ abstract class GoRouteData extends _GoRouteDataBase {
   /// The page key will be reused. This will preserve the state and not run any
   /// page animation.
   ///
-  void replace(BuildContext context) => throw _GoRouteDataBase.shouldBeGeneratedError;
+  void replace(BuildContext context) =>
+      throw _GoRouteDataBase.shouldBeGeneratedError;
 }
 
 /// A class to represent a relative [GoRoute] in
@@ -246,10 +252,12 @@ abstract class RelativeGoRouteData extends _GoRouteDataBase {
   String get relativeLocation => throw _GoRouteDataBase.shouldBeGeneratedError;
 
   /// Navigate to the route.
-  void goRelative(BuildContext context) => throw _GoRouteDataBase.shouldBeGeneratedError;
+  void goRelative(BuildContext context) =>
+      throw _GoRouteDataBase.shouldBeGeneratedError;
 
   /// Push the route onto the page stack.
-  Future<T?> pushRelative<T>(BuildContext context) => throw _GoRouteDataBase.shouldBeGeneratedError;
+  Future<T?> pushRelative<T>(BuildContext context) =>
+      throw _GoRouteDataBase.shouldBeGeneratedError;
 
   /// Replaces the top-most page of the page stack with the route.
   void pushReplacementRelative(BuildContext context) =>
@@ -261,7 +269,8 @@ abstract class RelativeGoRouteData extends _GoRouteDataBase {
   /// The page key will be reused. This will preserve the state and not run any
   /// page animation.
   ///
-  void replaceRelative(BuildContext context) => throw _GoRouteDataBase.shouldBeGeneratedError;
+  void replaceRelative(BuildContext context) =>
+      throw _GoRouteDataBase.shouldBeGeneratedError;
 }
 
 /// A class to represent a [ShellRoute] in
@@ -273,12 +282,17 @@ abstract class ShellRouteData extends RouteData {
   const ShellRouteData();
 
   /// [pageBuilder] is used to build the page
-  Page<void> pageBuilder(BuildContext context, GoRouterState state, Widget navigator) =>
-      const NoOpPage();
+  Page<void> pageBuilder(
+    BuildContext context,
+    GoRouterState state,
+    Widget navigator,
+  ) => const NoOpPage();
 
   /// [builder] is used to build the widget
   Widget builder(BuildContext context, GoRouterState state, Widget navigator) =>
-      throw UnimplementedError('One of `builder` or `pageBuilder` must be implemented.');
+      throw UnimplementedError(
+        'One of `builder` or `pageBuilder` must be implemented.',
+      );
 
   /// An optional redirect function for this route.
   ///
@@ -307,11 +321,17 @@ abstract class ShellRouteData extends RouteData {
     FutureOr<String?> redirect(BuildContext context, GoRouterState state) =>
         factoryImpl(state).redirect(context, state);
 
-    Widget builder(BuildContext context, GoRouterState state, Widget navigator) =>
-        factoryImpl(state).builder(context, state, navigator);
+    Widget builder(
+      BuildContext context,
+      GoRouterState state,
+      Widget navigator,
+    ) => factoryImpl(state).builder(context, state, navigator);
 
-    Page<void> pageBuilder(BuildContext context, GoRouterState state, Widget navigator) =>
-        factoryImpl(state).pageBuilder(context, state, navigator);
+    Page<void> pageBuilder(
+      BuildContext context,
+      GoRouterState state,
+      Widget navigator,
+    ) => factoryImpl(state).pageBuilder(context, state, navigator);
 
     return ShellRoute(
       builder: builder,
@@ -328,9 +348,8 @@ abstract class ShellRouteData extends RouteData {
 
   /// Used to cache [ShellRouteData] that corresponds to a given [GoRouterState]
   /// to minimize the number of times it has to be deserialized.
-  static final Expando<ShellRouteData> _stateObjectExpando = Expando<ShellRouteData>(
-    'GoRouteState to ShellRouteData expando',
-  );
+  static final Expando<ShellRouteData> _stateObjectExpando =
+      Expando<ShellRouteData>('GoRouteState to ShellRouteData expando');
 }
 
 /// Base class for supporting
@@ -359,7 +378,9 @@ abstract class StatefulShellRouteData extends RouteData {
     BuildContext context,
     GoRouterState state,
     StatefulNavigationShell navigationShell,
-  ) => throw UnimplementedError('One of `builder` or `pageBuilder` must be implemented.');
+  ) => throw UnimplementedError(
+    'One of `builder` or `pageBuilder` must be implemented.',
+  );
 
   /// A helper function used by generated code.
   ///
@@ -414,7 +435,9 @@ abstract class StatefulShellRouteData extends RouteData {
   /// Used to cache [StatefulShellRouteData] that corresponds to a given [GoRouterState]
   /// to minimize the number of times it has to be deserialized.
   static final Expando<StatefulShellRouteData> _stateObjectExpando =
-      Expando<StatefulShellRouteData>('GoRouteState to StatefulShellRouteData expando');
+      Expando<StatefulShellRouteData>(
+        'GoRouteState to StatefulShellRouteData expando',
+      );
 }
 
 /// Base class for supporting
@@ -496,7 +519,8 @@ class TypedGoRoute<T extends GoRouteData> extends TypedRoute<T> {
 
 /// A superclass for each typed relative go route descendant
 @Target(<TargetKind>{TargetKind.library, TargetKind.classType})
-class TypedRelativeGoRoute<T extends RelativeGoRouteData> extends TypedRoute<T> {
+class TypedRelativeGoRoute<T extends RelativeGoRouteData>
+    extends TypedRoute<T> {
   /// Default const constructor
   const TypedRelativeGoRoute({
     required this.path,
@@ -551,7 +575,8 @@ class TypedShellRoute<T extends ShellRouteData> extends TypedRoute<T> {
 
 /// A superclass for each typed shell route descendant
 @Target(<TargetKind>{TargetKind.library, TargetKind.classType})
-class TypedStatefulShellRoute<T extends StatefulShellRouteData> extends TypedRoute<T> {
+class TypedStatefulShellRoute<T extends StatefulShellRouteData>
+    extends TypedRoute<T> {
   /// Default const constructor
   const TypedStatefulShellRoute({
     this.notifyRootObserver = true,
@@ -574,7 +599,9 @@ class TypedStatefulShellRoute<T extends StatefulShellRouteData> extends TypedRou
 @Target(<TargetKind>{TargetKind.library, TargetKind.classType})
 class TypedStatefulShellBranch<T extends StatefulShellBranchData> {
   /// Default const constructor
-  const TypedStatefulShellBranch({this.routes = const <TypedRoute<RouteData>>[]});
+  const TypedStatefulShellBranch({
+    this.routes = const <TypedRoute<RouteData>>[],
+  });
 
   /// Child route definitions.
   ///
@@ -589,7 +616,8 @@ class NoOpPage extends Page<void> {
   const NoOpPage();
 
   @override
-  Route<void> createRoute(BuildContext context) => throw UnsupportedError('Should never be called');
+  Route<void> createRoute(BuildContext context) =>
+      throw UnsupportedError('Should never be called');
 }
 
 /// Signature of custom query parameter encoding.
@@ -615,15 +643,19 @@ typedef QueryParameterDecoder<T> = T Function(String value);
 @Target({TargetKind.parameter})
 class TypedQueryParameter<T> {
   /// Annotation to override the URI name for a route parameter.
-  const TypedQueryParameter({this.name, this.encoder, this.decoder, this.compare})
-    : assert(
-        (encoder == null) == (decoder == null),
-        'encoder and decoder must both be provided together',
-      ),
-      assert(
-        compare == null || encoder != null,
-        'compare function requires an encoder to be provided',
-      );
+  const TypedQueryParameter({
+    this.name,
+    this.encoder,
+    this.decoder,
+    this.compare,
+  }) : assert(
+         (encoder == null) == (decoder == null),
+         'encoder and decoder must both be provided together',
+       ),
+       assert(
+         compare == null || encoder != null,
+         'compare function requires an encoder to be provided',
+       );
 
   /// The name of the parameter in the URI.
   ///

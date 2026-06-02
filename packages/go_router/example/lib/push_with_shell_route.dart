@@ -38,8 +38,9 @@ class PushWithShellRouteExampleApp extends StatelessWidget {
           ),
           GoRoute(
             path: '/shell1',
-            pageBuilder:
-                (_, __) => const NoTransitionPage<void>(child: Center(child: Text('shell1 body'))),
+            pageBuilder: (_, __) => const NoTransitionPage<void>(
+              child: Center(child: Text('shell1 body')),
+            ),
           ),
         ],
       ),
@@ -86,7 +87,10 @@ class ScaffoldForShell1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: const Text('shell1')), body: child);
+    return Scaffold(
+      appBar: AppBar(title: const Text('shell1')),
+      body: child,
+    );
   }
 }
 
@@ -101,7 +105,10 @@ class ScaffoldForShell2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: const Text('shell2')), body: child);
+    return Scaffold(
+      appBar: AppBar(title: const Text('shell2')),
+      body: child,
+    );
   }
 }
 

@@ -155,7 +155,10 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
   // Updates the cache at the start of eah layout pass.
   void _updateAnimationCache() {
     _animationLeadingIndices.clear();
-    _activeAnimations.forEach((UniqueKey key, TreeViewNodesAnimation animation) {
+    _activeAnimations.forEach((
+      UniqueKey key,
+      TreeViewNodesAnimation animation,
+    ) {
       _animationLeadingIndices[animation.fromIndex] = key;
     });
     // Remove any stored offsets or clip layers that are no longer actively
@@ -163,7 +166,10 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     _animationOffsets.removeWhere((UniqueKey key, _) {
       return !_activeAnimations.keys.contains(key);
     });
-    _clipHandles.removeWhere((UniqueKey key, LayerHandle<ClipRectLayer> handle) {
+    _clipHandles.removeWhere((
+      UniqueKey key,
+      LayerHandle<ClipRectLayer> handle,
+    ) {
       if (!_activeAnimations.keys.contains(key)) {
         handle.layer = null;
         return true;
@@ -182,7 +188,9 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
         row = childAfter(row);
         continue;
       }
-      final Rect rowRect = parentData.paintOffset! & Size(viewportDimension.width, row.size.height);
+      final Rect rowRect =
+          parentData.paintOffset! &
+          Size(viewportDimension.width, row.size.height);
       if (rowRect.contains(position)) {
         result.addWithPaintOffset(
           offset: parentData.paintOffset,
@@ -202,7 +210,10 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
 
   @override
   void dispose() {
-    _clipHandles.removeWhere((UniqueKey key, LayerHandle<ClipRectLayer> handle) {
+    _clipHandles.removeWhere((
+      UniqueKey key,
+      LayerHandle<ClipRectLayer> handle,
+    ) {
       handle.layer = null;
       return true;
     });
@@ -227,11 +238,16 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       _Span? span = _rowMetrics.remove(currentIndex);
       assert(needsDelegateRebuild || span != null);
       final TreeRow configuration = needsDelegateRebuild
-          ? delegate.buildRow(TreeVicinity(depth: _rowDepths[currentIndex]!, row: currentIndex))
+          ? delegate.buildRow(
+              TreeVicinity(depth: _rowDepths[currentIndex]!, row: currentIndex),
+            )
           : span!.configuration;
       span ??= _Span();
       final double extent = configuration.extent.calculateExtent(
-        TreeRowExtentDelegate(viewportExtent: viewportDimension.height, precedingExtent: position),
+        TreeRowExtentDelegate(
+          viewportExtent: viewportDimension.height,
+          precedingExtent: position,
+        ),
       );
       totalAnimatingOffset += extent;
       currentPosition += extent;
@@ -276,7 +292,8 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
         }
         // We add the offset accounting for the animation value.
         totalAnimationOffset +=
-            _animationOffsets[animationKey]! * (1 - _activeAnimations[animationKey]!.value);
+            _animationOffsets[animationKey]! *
+            (1 - _activeAnimations[animationKey]!.value);
       }
       span.update(
         configuration: configuration,
@@ -288,7 +305,8 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       if (span.trailingOffset >= verticalOffset.pixels && _firstRow == null) {
         _firstRow = row;
       }
-      if (span.trailingOffset - totalAnimationOffset >= _targetRowPixel && _lastRow == null) {
+      if (span.trailingOffset - totalAnimationOffset >= _targetRowPixel &&
+          _lastRow == null) {
         _lastRow = row;
       }
       startOfRow = span.trailingOffset;
@@ -361,10 +379,13 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     final Alignment resolvedAlignment = alignment.resolve(textDirection);
     _vAlignmentOffset = 0.0;
     if (_rowMetrics.isNotEmpty) {
-      final double totalHeight = _rowMetrics[_rowMetrics.length - 1]!.trailingOffset;
+      final double totalHeight =
+          _rowMetrics[_rowMetrics.length - 1]!.trailingOffset;
       if (totalHeight < viewportDimension.height) {
         _vAlignmentOffset =
-            (viewportDimension.height - totalHeight) * (resolvedAlignment.y + 1.0) / 2.0;
+            (viewportDimension.height - totalHeight) *
+            (resolvedAlignment.y + 1.0) /
+            2.0;
       }
     }
 
@@ -376,7 +397,9 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
 
     _Span rowSpan;
     double rowOffset =
-        -verticalOffset.pixels + _rowMetrics[_firstRow!]!.leadingOffset + _vAlignmentOffset;
+        -verticalOffset.pixels +
+        _rowMetrics[_firstRow!]!.leadingOffset +
+        _vAlignmentOffset;
     for (int row = _firstRow!; row <= _lastRow!; row++) {
       rowSpan = _rowMetrics[row]!;
       final double rowHeight = rowSpan.extent;
@@ -434,14 +457,24 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
           offset,
           Offset.zero & size,
           (PaintingContext context, Offset offset) {
-            _paintRows(context, offset, leadingRow: _firstRow!, trailingRow: _lastRow!);
+            _paintRows(
+              context,
+              offset,
+              leadingRow: _firstRow!,
+              trailingRow: _lastRow!,
+            );
           },
           clipBehavior: clipBehavior,
           oldLayer: _clipHandles[_viewportClipKey]!.layer,
         );
       } else {
         _clipHandles[_viewportClipKey]?.layer = null;
-        _paintRows(context, offset, leadingRow: _firstRow!, trailingRow: _lastRow!);
+        _paintRows(
+          context,
+          offset,
+          leadingRow: _firstRow!,
+          trailingRow: _lastRow!,
+        );
       }
       return;
     }
@@ -449,11 +482,15 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     // We are animating.
     // Separate animating segments to clip for any overlap.
     int leadingIndex = _firstRow!;
-    final List<int> animationIndices = _animationLeadingIndices.keys.toList()..sort();
+    final List<int> animationIndices = _animationLeadingIndices.keys.toList()
+      ..sort();
     final paintSegments = <_PaintSegment>[];
     while (animationIndices.isNotEmpty) {
       final int trailingIndex = animationIndices.removeAt(0);
-      paintSegments.add((leadingIndex: leadingIndex, trailingIndex: trailingIndex - 1));
+      paintSegments.add((
+        leadingIndex: leadingIndex,
+        trailingIndex: trailingIndex - 1,
+      ));
       leadingIndex = trailingIndex;
     }
     paintSegments.add((leadingIndex: leadingIndex, trailingIndex: _lastRow!));
@@ -492,7 +529,8 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       final _PaintSegment segment = paintSegments.removeAt(0);
       final int parentIndex = segment.leadingIndex - 1;
       final double leadingOffset = _rowMetrics[parentIndex]!.trailingOffset;
-      final double trailingOffset = _rowMetrics[segment.trailingIndex]!.trailingOffset;
+      final double trailingOffset =
+          _rowMetrics[segment.trailingIndex]!.trailingOffset;
       final rect = Rect.fromPoints(
         Offset(0.0, leadingOffset - verticalOffset.pixels + _vAlignmentOffset),
         Offset(
@@ -507,17 +545,20 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       // this is the odd man out segment.
       final UniqueKey key = _animationLeadingIndices[leadingIndex]!;
       _clipHandles[key] ??= LayerHandle<ClipRectLayer>();
-      _clipHandles[key]!.layer = context.pushClipRect(needsCompositing, offset, rect, (
-        PaintingContext context,
-        Offset offset,
-      ) {
-        _paintRows(
-          context,
-          offset,
-          leadingRow: segment.leadingIndex,
-          trailingRow: segment.trailingIndex,
-        );
-      }, oldLayer: _clipHandles[key]!.layer);
+      _clipHandles[key]!.layer = context.pushClipRect(
+        needsCompositing,
+        offset,
+        rect,
+        (PaintingContext context, Offset offset) {
+          _paintRows(
+            context,
+            offset,
+            leadingRow: segment.leadingIndex,
+            trailingRow: segment.trailingIndex,
+          );
+        },
+        oldLayer: _clipHandles[key]!.layer,
+      );
     }
   }
 
@@ -542,7 +583,9 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
         )!;
 
         Rect getRowRect(bool consumePadding) {
-          final TwoDimensionalViewportParentData parentData = parentDataOf(child);
+          final TwoDimensionalViewportParentData parentData = parentDataOf(
+            child,
+          );
           // Decoration rects cover the whole row from the left and right
           // edge of the viewport.
           return Rect.fromLTRB(
@@ -557,11 +600,15 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
         }
 
         if (configuration.backgroundDecoration != null) {
-          final Rect rect = getRowRect(configuration.backgroundDecoration!.consumeSpanPadding);
+          final Rect rect = getRowRect(
+            configuration.backgroundDecoration!.consumeSpanPadding,
+          );
           backgroundRows[rect] = configuration.backgroundDecoration!;
         }
         if (configuration.foregroundDecoration != null) {
-          final Rect rect = getRowRect(configuration.foregroundDecoration!.consumeSpanPadding);
+          final Rect rect = getRowRect(
+            configuration.foregroundDecoration!.consumeSpanPadding,
+          );
           foregroundRows[rect] = configuration.foregroundDecoration!;
         }
       }
@@ -581,8 +628,12 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     });
     // Child nodes.
     for (var row = leadingRow; row <= trailingRow; row++) {
-      final RenderBox child = getChildFor(TreeVicinity(depth: _rowDepths[row]!, row: row))!;
-      final TwoDimensionalViewportParentData rowParentData = parentDataOf(child);
+      final RenderBox child = getChildFor(
+        TreeVicinity(depth: _rowDepths[row]!, row: row),
+      )!;
+      final TwoDimensionalViewportParentData rowParentData = parentDataOf(
+        child,
+      );
       if (rowParentData.isVisible) {
         context.paintChild(child, offset + rowParentData.paintOffset!);
       }
@@ -600,7 +651,9 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
   }
 }
 
-class _Span with Diagnosticable implements HitTestTarget, MouseTrackerAnnotation {
+class _Span
+    with Diagnosticable
+    implements HitTestTarget, MouseTrackerAnnotation {
   double get leadingOffset => _leadingOffset;
   late double _leadingOffset;
 
@@ -614,7 +667,10 @@ class _Span with Diagnosticable implements HitTestTarget, MouseTrackerAnnotation
   late double _animationOffset;
 
   double get trailingOffset {
-    return leadingOffset + extent + configuration.padding.leading + configuration.padding.trailing;
+    return leadingOffset +
+        extent +
+        configuration.padding.leading +
+        configuration.padding.trailing;
   }
 
   // ---- Span Management ----
@@ -655,7 +711,8 @@ class _Span with Diagnosticable implements HitTestTarget, MouseTrackerAnnotation
     for (final Type type in configuration.recognizerFactories.keys) {
       assert(!newRecognizers.containsKey(type));
       newRecognizers[type] =
-          _recognizers?.remove(type) ?? configuration.recognizerFactories[type]!.constructor();
+          _recognizers?.remove(type) ??
+          configuration.recognizerFactories[type]!.constructor();
       assert(
         newRecognizers[type].runtimeType == type,
         'GestureRecognizerFactory of type $type created a GestureRecognizer of '
@@ -663,7 +720,9 @@ class _Span with Diagnosticable implements HitTestTarget, MouseTrackerAnnotation
         'GestureRecognizerFactory must be specialized with the type of the '
         'class that it returns from its constructor method.',
       );
-      configuration.recognizerFactories[type]!.initializer(newRecognizers[type]!);
+      configuration.recognizerFactories[type]!.initializer(
+        newRecognizers[type]!,
+      );
     }
     _disposeRecognizers(); // only disposes the ones that where not re-used above.
     _recognizers = newRecognizers;
@@ -682,7 +741,8 @@ class _Span with Diagnosticable implements HitTestTarget, MouseTrackerAnnotation
 
   @override
   void handleEvent(PointerEvent event, HitTestEntry entry) {
-    if (event is PointerDownEvent && configuration.recognizerFactories.isNotEmpty) {
+    if (event is PointerDownEvent &&
+        configuration.recognizerFactories.isNotEmpty) {
       if (_recognizers == null) {
         _syncRecognizers();
       }

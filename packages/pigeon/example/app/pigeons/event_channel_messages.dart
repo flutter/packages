@@ -30,7 +30,6 @@ class StringEvent extends PlatformEvent {
   StringEvent(this.data);
   String data;
 }
-
 // #enddocregion sealed-definitions
 
 // #docregion event-definitions

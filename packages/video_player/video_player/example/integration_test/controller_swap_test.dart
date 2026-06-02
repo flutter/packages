@@ -18,7 +18,9 @@ void main() {
     'can substitute one controller by another without crashing',
     (WidgetTester tester) async {
       // Use WebM for web to allow CI to use Chromium.
-      const videoAssetKey = kIsWeb ? 'assets/Butterfly-209.webm' : 'assets/Butterfly-209.mp4';
+      const videoAssetKey = kIsWeb
+          ? 'assets/Butterfly-209.webm'
+          : 'assets/Butterfly-209.mp4';
 
       final controller = VideoPlayerController.asset(videoAssetKey);
       final another = VideoPlayerController.asset(videoAssetKey);
@@ -34,7 +36,9 @@ void main() {
         if (another.value.isBuffering && !started.isCompleted) {
           started.complete();
         }
-        if (started.isCompleted && !another.value.isBuffering && !ended.isCompleted) {
+        if (started.isCompleted &&
+            !another.value.isBuffering &&
+            !ended.isCompleted) {
           ended.complete();
         }
       });

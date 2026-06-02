@@ -7,7 +7,8 @@ import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i4;
 import 'package:objective_c/objective_c.dart' as _i2;
 import 'package:path_provider_foundation/src/ffi_bindings.g.dart' as _i3;
-import 'package:path_provider_foundation/src/path_provider_foundation_real.dart' as _i5;
+import 'package:path_provider_foundation/src/path_provider_foundation_real.dart'
+    as _i5;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -25,7 +26,8 @@ import 'package:path_provider_foundation/src/path_provider_foundation_real.dart'
 // ignore_for_file: invalid_use_of_internal_member
 
 class _FakeObjCObject_0 extends _i1.SmartFake implements _i2.ObjCObject {
-  _FakeObjCObject_0(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+  _FakeObjCObject_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [FoundationFFI].
@@ -37,17 +39,31 @@ class MockFoundationFFI extends _i1.Mock implements _i3.FoundationFFI {
     _i3.NSSearchPathDirectory? directory,
     int? domainMask,
     bool? expandTilde,
-  ) => (super.noSuchMethod(
-    Invocation.method(#NSSearchPathForDirectoriesInDomains, [directory, domainMask, expandTilde]),
-    returnValue: _FakeObjCObject_0(
-      this,
-      Invocation.method(#NSSearchPathForDirectoriesInDomains, [directory, domainMask, expandTilde]),
-    ),
-    returnValueForMissingStub: _FakeObjCObject_0(
-      this,
-      Invocation.method(#NSSearchPathForDirectoriesInDomains, [directory, domainMask, expandTilde]),
-    ),
-  ) as _i2.NSArray);
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#NSSearchPathForDirectoriesInDomains, [
+              directory,
+              domainMask,
+              expandTilde,
+            ]),
+            returnValue: _FakeObjCObject_0(
+              this,
+              Invocation.method(#NSSearchPathForDirectoriesInDomains, [
+                directory,
+                domainMask,
+                expandTilde,
+              ]),
+            ),
+            returnValueForMissingStub: _FakeObjCObject_0(
+              this,
+              Invocation.method(#NSSearchPathForDirectoriesInDomains, [
+                directory,
+                domainMask,
+                expandTilde,
+              ]),
+            ),
+          )
+          as _i2.NSArray);
 }
 
 /// A class which mocks [ObjCObject].
@@ -55,11 +71,19 @@ class MockFoundationFFI extends _i1.Mock implements _i3.FoundationFFI {
 /// See the documentation for Mockito's code generation for more information.
 class MockObjCObject extends _i1.Mock implements _i2.ObjCObject {
   @override
-  _i2.ObjCObjectRef get ref => (super.noSuchMethod(
-    Invocation.getter(#ref),
-    returnValue: _i4.dummyValue<_i2.ObjCObjectRef>(this, Invocation.getter(#ref)),
-    returnValueForMissingStub: _i4.dummyValue<_i2.ObjCObjectRef>(this, Invocation.getter(#ref)),
-  ) as _i2.ObjCObjectRef);
+  _i2.ObjCObjectRef get ref =>
+      (super.noSuchMethod(
+            Invocation.getter(#ref),
+            returnValue: _i4.dummyValue<_i2.ObjCObjectRef>(
+              this,
+              Invocation.getter(#ref),
+            ),
+            returnValueForMissingStub: _i4.dummyValue<_i2.ObjCObjectRef>(
+              this,
+              Invocation.getter(#ref),
+            ),
+          )
+          as _i2.ObjCObjectRef);
 }
 
 /// A class which mocks [PathProviderPlatformProvider].
@@ -68,16 +92,20 @@ class MockObjCObject extends _i1.Mock implements _i2.ObjCObject {
 class MockPathProviderPlatformProvider extends _i1.Mock
     implements _i5.PathProviderPlatformProvider {
   @override
-  bool get isIOS => (super.noSuchMethod(
-    Invocation.getter(#isIOS),
-    returnValue: false,
-    returnValueForMissingStub: false,
-  ) as bool);
+  bool get isIOS =>
+      (super.noSuchMethod(
+            Invocation.getter(#isIOS),
+            returnValue: false,
+            returnValueForMissingStub: false,
+          )
+          as bool);
 
   @override
-  bool get isMacOS => (super.noSuchMethod(
-    Invocation.getter(#isMacOS),
-    returnValue: false,
-    returnValueForMissingStub: false,
-  ) as bool);
+  bool get isMacOS =>
+      (super.noSuchMethod(
+            Invocation.getter(#isMacOS),
+            returnValue: false,
+            returnValueForMissingStub: false,
+          )
+          as bool);
 }

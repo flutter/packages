@@ -118,7 +118,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   )
                 : await _picker.getMultiImageWithOptions(
-                    options: MultiImagePickerOptions(imageOptions: imageOptions, limit: limit),
+                    options: MultiImagePickerOptions(
+                      imageOptions: imageOptions,
+                      limit: limit,
+                    ),
                   );
             if (pickedFileList.isNotEmpty && context.mounted) {
               _showPickedSnackBar(context, pickedFileList);
@@ -224,9 +227,15 @@ class _MyHomePageState extends State<MyHomePage> {
       return retrieveError;
     }
     if (_controller == null) {
-      return const Text('You have not yet picked a video', textAlign: TextAlign.center);
+      return const Text(
+        'You have not yet picked a video',
+        textAlign: TextAlign.center,
+      );
     }
-    return Padding(padding: const EdgeInsets.all(10.0), child: AspectRatioVideo(_controller));
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: AspectRatioVideo(_controller),
+    );
   }
 
   Widget _previewImages() {
@@ -247,9 +256,16 @@ class _MyHomePageState extends State<MyHomePage> {
               child: mime == null || mime.startsWith('image/')
                   ? Image.file(
                       File(image.path),
-                      errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                        return const Center(child: Text('This image type is not supported'));
-                      },
+                      errorBuilder:
+                          (
+                            BuildContext context,
+                            Object error,
+                            StackTrace? stackTrace,
+                          ) {
+                            return const Center(
+                              child: Text('This image type is not supported'),
+                            );
+                          },
                     )
                   : _buildInlineVideoPlayer(index),
             );
@@ -258,14 +274,22 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       );
     } else if (_pickImageError != null) {
-      return Text('Pick image error: $_pickImageError', textAlign: TextAlign.center);
+      return Text(
+        'Pick image error: $_pickImageError',
+        textAlign: TextAlign.center,
+      );
     } else {
-      return const Text('You have not yet picked an image.', textAlign: TextAlign.center);
+      return const Text(
+        'You have not yet picked an image.',
+        textAlign: TextAlign.center,
+      );
     }
   }
 
   Widget _buildInlineVideoPlayer(int index) {
-    final controller = VideoPlayerController.file(File(_mediaFileList![index].path));
+    final controller = VideoPlayerController.file(
+      File(_mediaFileList![index].path),
+    );
     controller.setVolume(1.0);
     controller.initialize();
     controller.setLooping(true);
@@ -308,7 +332,11 @@ class _MyHomePageState extends State<MyHomePage> {
             child: FloatingActionButton.extended(
               onPressed: () {
                 _isVideo = false;
-                _onImageButtonPressed(ImageSource.gallery, context: context, allowMultiple: true);
+                _onImageButtonPressed(
+                  ImageSource.gallery,
+                  context: context,
+                  allowMultiple: true,
+                );
               },
               heroTag: 'image1',
               tooltip: 'Pick multiple images',
@@ -321,7 +349,11 @@ class _MyHomePageState extends State<MyHomePage> {
             child: FloatingActionButton.extended(
               onPressed: () {
                 _isVideo = false;
-                _onImageButtonPressed(ImageSource.gallery, context: context, isMedia: true);
+                _onImageButtonPressed(
+                  ImageSource.gallery,
+                  context: context,
+                  isMedia: true,
+                );
               },
               heroTag: 'media',
               tooltip: 'Pick item from gallery',
@@ -380,7 +412,11 @@ class _MyHomePageState extends State<MyHomePage> {
               backgroundColor: Colors.red,
               onPressed: () {
                 _isVideo = true;
-                _onImageButtonPressed(ImageSource.gallery, context: context, allowMultiple: true);
+                _onImageButtonPressed(
+                  ImageSource.gallery,
+                  context: context,
+                  allowMultiple: true,
+                );
               },
               heroTag: 'multiVideo',
               tooltip: 'Pick multiple videos',
@@ -430,24 +466,36 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               TextField(
                 controller: maxWidthController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(hintText: 'Enter maxWidth if desired'),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                decoration: const InputDecoration(
+                  hintText: 'Enter maxWidth if desired',
+                ),
               ),
               TextField(
                 controller: maxHeightController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(hintText: 'Enter maxHeight if desired'),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                decoration: const InputDecoration(
+                  hintText: 'Enter maxHeight if desired',
+                ),
               ),
               TextField(
                 controller: qualityController,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(hintText: 'Enter quality if desired'),
+                decoration: const InputDecoration(
+                  hintText: 'Enter quality if desired',
+                ),
               ),
               if (isMulti)
                 TextField(
                   controller: limitController,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(hintText: 'Enter limit if desired'),
+                  decoration: const InputDecoration(
+                    hintText: 'Enter limit if desired',
+                  ),
                 ),
             ],
           ),
@@ -493,12 +541,13 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-typedef OnPickImageCallback = void Function(
-  double? maxWidth,
-  double? maxHeight,
-  int? quality,
-  int? limit,
-);
+typedef OnPickImageCallback =
+    void Function(
+      double? maxWidth,
+      double? maxHeight,
+      int? quality,
+      int? limit,
+    );
 
 class AspectRatioVideo extends StatefulWidget {
   const AspectRatioVideo(this.controller, {super.key});

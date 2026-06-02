@@ -12,13 +12,20 @@ void main() {
 
   group('WebWebViewWidget', () {
     testWidgets('build returns a HtmlElementView', (WidgetTester tester) async {
-      final controller = WebWebViewController(WebWebViewControllerCreationParams());
-
-      final widget = WebWebViewWidget(
-        PlatformWebViewWidgetCreationParams(key: const Key('keyValue'), controller: controller),
+      final controller = WebWebViewController(
+        WebWebViewControllerCreationParams(),
       );
 
-      await tester.pumpWidget(Builder(builder: (BuildContext context) => widget.build(context)));
+      final widget = WebWebViewWidget(
+        PlatformWebViewWidgetCreationParams(
+          key: const Key('keyValue'),
+          controller: controller,
+        ),
+      );
+
+      await tester.pumpWidget(
+        Builder(builder: (BuildContext context) => widget.build(context)),
+      );
 
       expect(find.byType(HtmlElementView), findsOneWidget);
       expect(find.byKey(const Key('keyValue')), findsOneWidget);

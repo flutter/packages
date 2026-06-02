@@ -6,7 +6,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 // #docregion Android_Options1
 import 'package:shared_preferences_android/shared_preferences_android.dart';
-
 // #enddocregion Android_Options1
 
 Future<void> readmeSnippets() async {
@@ -65,7 +64,8 @@ Future<void> readmeSnippetsAsync() async {
 
 Future<void> readmeSnippetsWithCache() async {
   // #docregion WithCache
-  final SharedPreferencesWithCache prefsWithCache = await SharedPreferencesWithCache.create(
+  final SharedPreferencesWithCache
+  prefsWithCache = await SharedPreferencesWithCache.create(
     cacheOptions: const SharedPreferencesWithCacheOptions(
       // When an allowlist is included, any keys that aren't included cannot be used.
       allowList: <String>{'repeat', 'action'},
@@ -97,10 +97,11 @@ Future<void> readmeTestSnippets() async {
 }
 
 // #docregion Android_Options2
-const SharedPreferencesAsyncAndroidOptions options = SharedPreferencesAsyncAndroidOptions(
-  backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
-  originalSharedPreferencesOptions: AndroidSharedPreferencesStoreOptions(
-    fileName: 'the_name_of_a_file',
-  ),
-);
+const SharedPreferencesAsyncAndroidOptions options =
+    SharedPreferencesAsyncAndroidOptions(
+      backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
+      originalSharedPreferencesOptions: AndroidSharedPreferencesStoreOptions(
+        fileName: 'the_name_of_a_file',
+      ),
+    );
 // #enddocregion Android_Options2

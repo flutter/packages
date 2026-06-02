@@ -20,13 +20,17 @@ List<Widget> textStyleExamples(BuildContext context) {
     // #docregion ExistingStyle
     Text(
       'This is Google Fonts',
-      style: GoogleFonts.lato(textStyle: const TextStyle(color: Colors.blue, letterSpacing: .5)),
+      style: GoogleFonts.lato(
+        textStyle: const TextStyle(color: Colors.blue, letterSpacing: .5),
+      ),
     ),
     // #enddocregion ExistingStyle
     // #docregion ExistingThemeStyle
     Text(
       'This is Google Fonts',
-      style: GoogleFonts.lato(textStyle: Theme.of(context).textTheme.headlineMedium),
+      style: GoogleFonts.lato(
+        textStyle: Theme.of(context).textTheme.headlineMedium,
+      ),
     ),
     // #enddocregion ExistingThemeStyle
     // #docregion ExistingStyleWithOverrides
@@ -84,9 +88,10 @@ class MyApp extends StatelessWidget {
 ThemeData _buildTheme(Brightness brightness) {
   final baseTheme = ThemeData(brightness: brightness);
 
-  return baseTheme.copyWith(textTheme: GoogleFonts.latoTextTheme(baseTheme.textTheme));
+  return baseTheme.copyWith(
+    textTheme: GoogleFonts.latoTextTheme(baseTheme.textTheme),
+  );
 }
-
 // #enddocregion AppThemeSimple
 
 /// Multi-font app theme example.
@@ -103,9 +108,9 @@ class MyMultiFontApp extends StatelessWidget {
       title: 'Example',
       // #docregion AppThemeComplex
       theme: ThemeData(
-        textTheme: GoogleFonts.latoTextTheme(
-          textTheme,
-        ).copyWith(bodyMedium: GoogleFonts.oswald(textStyle: textTheme.bodyMedium)),
+        textTheme: GoogleFonts.latoTextTheme(textTheme).copyWith(
+          bodyMedium: GoogleFonts.oswald(textStyle: textTheme.bodyMedium),
+        ),
       ),
       // #enddocregion AppThemeComplex
       home: const Text('placeholder'),

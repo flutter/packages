@@ -34,7 +34,9 @@ class _PigeonCodec extends StandardMessageCodec {
   }
 }
 
-const StandardMethodCodec pigeonMethodCodec = StandardMethodCodec(_PigeonCodec());
+const StandardMethodCodec pigeonMethodCodec = StandardMethodCodec(
+  _PigeonCodec(),
+);
 
 Stream<int> streamIntsAgain({String instanceName = ''}) {
   if (instanceName.isNotEmpty) {

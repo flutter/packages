@@ -14,16 +14,28 @@ part 'all_extension_types.g.dart';
 @TypedGoRoute<AllTypesBaseRoute>(
   path: '/',
   routes: <TypedGoRoute<GoRouteData>>[
-    TypedGoRoute<BigIntExtensionRoute>(path: 'big-int-route/:requiredBigIntField'),
+    TypedGoRoute<BigIntExtensionRoute>(
+      path: 'big-int-route/:requiredBigIntField',
+    ),
     TypedGoRoute<BoolExtensionRoute>(path: 'bool-route/:requiredBoolField'),
-    TypedGoRoute<DateTimeExtensionRoute>(path: 'date-time-route/:requiredDateTimeField'),
-    TypedGoRoute<DoubleExtensionRoute>(path: 'double-route/:requiredDoubleField'),
+    TypedGoRoute<DateTimeExtensionRoute>(
+      path: 'date-time-route/:requiredDateTimeField',
+    ),
+    TypedGoRoute<DoubleExtensionRoute>(
+      path: 'double-route/:requiredDoubleField',
+    ),
     TypedGoRoute<IntExtensionRoute>(path: 'int-route/:requiredIntField'),
     TypedGoRoute<NumExtensionRoute>(path: 'num-route/:requiredNumField'),
-    TypedGoRoute<DoubleExtensionRoute>(path: 'double-route/:requiredDoubleField'),
+    TypedGoRoute<DoubleExtensionRoute>(
+      path: 'double-route/:requiredDoubleField',
+    ),
     TypedGoRoute<EnumExtensionRoute>(path: 'enum-route/:requiredEnumField'),
-    TypedGoRoute<EnhancedEnumExtensionRoute>(path: 'enhanced-enum-route/:requiredEnumField'),
-    TypedGoRoute<StringExtensionRoute>(path: 'string-route/:requiredStringField'),
+    TypedGoRoute<EnhancedEnumExtensionRoute>(
+      path: 'enhanced-enum-route/:requiredEnumField',
+    ),
+    TypedGoRoute<StringExtensionRoute>(
+      path: 'string-route/:requiredStringField',
+    ),
     TypedGoRoute<UriExtensionRoute>(path: 'uri-route/:requiredUriField'),
   ],
 )
@@ -37,27 +49,21 @@ class AllTypesBaseRoute extends GoRouteData with $AllTypesBaseRoute {
 }
 
 extension type const BigIntExtension(BigInt value) {}
-
 extension type const BoolExtension(bool value) {}
-
 extension type const DateTimeExtension(DateTime value) {}
-
 extension type const DoubleExtension(double value) {}
-
 extension type const IntExtension(int value) {}
-
 extension type const NumExtension(num value) {}
-
 extension type const StringExtension(String value) {}
-
 extension type const UriExtension(Uri value) {}
-
 extension type const PersonDetailsExtension(PersonDetails value) {}
-
 extension type const SportDetailsExtension(SportDetails value) {}
 
 class BigIntExtensionRoute extends GoRouteData with $BigIntExtensionRoute {
-  const BigIntExtensionRoute({required this.requiredBigIntField, this.bigIntField});
+  const BigIntExtensionRoute({
+    required this.requiredBigIntField,
+    this.bigIntField,
+  });
 
   final BigIntExtension requiredBigIntField;
   final BigIntExtension? bigIntField;
@@ -103,7 +109,10 @@ class BoolExtensionRoute extends GoRouteData with $BoolExtensionRoute {
 }
 
 class DateTimeExtensionRoute extends GoRouteData with $DateTimeExtensionRoute {
-  const DateTimeExtensionRoute({required this.requiredDateTimeField, this.dateTimeField});
+  const DateTimeExtensionRoute({
+    required this.requiredDateTimeField,
+    this.dateTimeField,
+  });
 
   final DateTimeExtension requiredDateTimeField;
   final DateTimeExtension? dateTimeField;
@@ -204,7 +213,9 @@ class EnumExtensionRoute extends GoRouteData with $EnumExtensionRoute {
   const EnumExtensionRoute({
     required this.requiredEnumField,
     this.enumField,
-    this.enumFieldWithDefaultValue = const PersonDetailsExtension(PersonDetails.favoriteFood),
+    this.enumFieldWithDefaultValue = const PersonDetailsExtension(
+      PersonDetails.favoriteFood,
+    ),
   });
 
   final PersonDetailsExtension requiredEnumField;
@@ -212,12 +223,13 @@ class EnumExtensionRoute extends GoRouteData with $EnumExtensionRoute {
   final PersonDetailsExtension enumFieldWithDefaultValue;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => BasePage<PersonDetails>(
-    dataTitle: 'EnumExtensionRoute',
-    param: requiredEnumField.value,
-    queryParam: enumField?.value,
-    queryParamWithDefaultValue: enumFieldWithDefaultValue.value,
-  );
+  Widget build(BuildContext context, GoRouterState state) =>
+      BasePage<PersonDetails>(
+        dataTitle: 'EnumExtensionRoute',
+        param: requiredEnumField.value,
+        queryParam: enumField?.value,
+        queryParamWithDefaultValue: enumFieldWithDefaultValue.value,
+      );
 
   Widget drawerTile(BuildContext context) => ListTile(
     title: const Text('EnumExtensionRoute'),
@@ -226,11 +238,14 @@ class EnumExtensionRoute extends GoRouteData with $EnumExtensionRoute {
   );
 }
 
-class EnhancedEnumExtensionRoute extends GoRouteData with $EnhancedEnumExtensionRoute {
+class EnhancedEnumExtensionRoute extends GoRouteData
+    with $EnhancedEnumExtensionRoute {
   const EnhancedEnumExtensionRoute({
     required this.requiredEnumField,
     this.enumField,
-    this.enumFieldWithDefaultValue = const SportDetailsExtension(SportDetails.football),
+    this.enumFieldWithDefaultValue = const SportDetailsExtension(
+      SportDetails.football,
+    ),
   });
 
   final SportDetailsExtension requiredEnumField;
@@ -238,12 +253,13 @@ class EnhancedEnumExtensionRoute extends GoRouteData with $EnhancedEnumExtension
   final SportDetailsExtension enumFieldWithDefaultValue;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => BasePage<SportDetails>(
-    dataTitle: 'EnhancedEnumExtensionRoute',
-    param: requiredEnumField.value,
-    queryParam: enumField?.value,
-    queryParamWithDefaultValue: enumFieldWithDefaultValue.value,
-  );
+  Widget build(BuildContext context, GoRouterState state) =>
+      BasePage<SportDetails>(
+        dataTitle: 'EnhancedEnumExtensionRoute',
+        param: requiredEnumField.value,
+        queryParam: enumField?.value,
+        queryParamWithDefaultValue: enumFieldWithDefaultValue.value,
+      );
 
   Widget drawerTile(BuildContext context) => ListTile(
     title: const Text('EnhancedEnumExtensionRoute'),
@@ -347,7 +363,9 @@ class BasePage<T> extends StatelessWidget {
             stringField: StringExtension(r'$!/#bob%%20'),
           ).drawerTile(context),
           const EnumExtensionRoute(
-            requiredEnumField: PersonDetailsExtension(PersonDetails.favoriteSport),
+            requiredEnumField: PersonDetailsExtension(
+              PersonDetails.favoriteSport,
+            ),
             enumField: PersonDetailsExtension(PersonDetails.favoriteFood),
           ).drawerTile(context),
           const EnhancedEnumExtensionRoute(
@@ -371,7 +389,9 @@ class BasePage<T> extends StatelessWidget {
           Text('Query param: $queryParam'),
           Text('Query param with default value: $queryParamWithDefaultValue'),
           SelectableText(GoRouterState.of(context).uri.path),
-          SelectableText(GoRouterState.of(context).uri.queryParameters.toString()),
+          SelectableText(
+            GoRouterState.of(context).uri.queryParameters.toString(),
+          ),
         ],
       ),
     ),
@@ -384,7 +404,8 @@ class AllExtensionTypesApp extends StatelessWidget {
   AllExtensionTypesApp({super.key});
 
   @override
-  Widget build(BuildContext context) => MaterialApp.router(routerConfig: _router);
+  Widget build(BuildContext context) =>
+      MaterialApp.router(routerConfig: _router);
 
   late final GoRouter _router = GoRouter(
     debugLogDiagnostics: true,

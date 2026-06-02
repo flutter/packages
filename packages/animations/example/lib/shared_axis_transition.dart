@@ -17,7 +17,8 @@ class SharedAxisTransitionDemo extends StatefulWidget {
 }
 
 class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
-  SharedAxisTransitionType? _transitionType = SharedAxisTransitionType.horizontal;
+  SharedAxisTransitionType? _transitionType =
+      SharedAxisTransitionType.horizontal;
   bool _isLoggedIn = false;
 
   void _updateTransitionType(SharedAxisTransitionType? newType) {
@@ -43,18 +44,19 @@ class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
             Expanded(
               child: PageTransitionSwitcher(
                 reverse: !_isLoggedIn,
-                transitionBuilder: (
-                  Widget child,
-                  Animation<double> animation,
-                  Animation<double> secondaryAnimation,
-                ) {
-                  return SharedAxisTransition(
-                    animation: animation,
-                    secondaryAnimation: secondaryAnimation,
-                    transitionType: _transitionType!,
-                    child: child,
-                  );
-                },
+                transitionBuilder:
+                    (
+                      Widget child,
+                      Animation<double> animation,
+                      Animation<double> secondaryAnimation,
+                    ) {
+                      return SharedAxisTransition(
+                        animation: animation,
+                        secondaryAnimation: secondaryAnimation,
+                        transitionType: _transitionType!,
+                        child: child,
+                      );
+                    },
                 child: _isLoggedIn ? _CoursePage() : _SignInPage(),
               ),
             ),

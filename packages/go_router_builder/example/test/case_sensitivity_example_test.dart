@@ -20,7 +20,8 @@ void main() {
   testWidgets(
     'It should navigate to the correct screen when the route is not case sensitive and the path matches exactly',
     (WidgetTester tester) async {
-      tester.platformDispatcher.defaultRouteNameTestValue = '/not-case-sensitive';
+      tester.platformDispatcher.defaultRouteNameTestValue =
+          '/not-case-sensitive';
       await tester.pumpWidget(CaseSensitivityApp());
 
       expect(find.widgetWithText(AppBar, 'Not Case Sensitive'), findsOne);
@@ -41,7 +42,8 @@ void main() {
   testWidgets(
     'It should navigate to the correct screen when the route is not case sensitive and the path case does not match',
     (WidgetTester tester) async {
-      tester.platformDispatcher.defaultRouteNameTestValue = '/NOT-case-sensitive';
+      tester.platformDispatcher.defaultRouteNameTestValue =
+          '/NOT-case-sensitive';
       await tester.pumpWidget(CaseSensitivityApp());
 
       expect(find.widgetWithText(AppBar, 'Not Case Sensitive'), findsOne);

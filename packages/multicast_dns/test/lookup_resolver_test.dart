@@ -43,7 +43,10 @@ void testResult() {
       'xxx.local',
       noTimeout,
     );
-    final ResourceRecord response = ip4Result('xxx.local', InternetAddress('1.2.3.4'));
+    final ResourceRecord response = ip4Result(
+      'xxx.local',
+      InternetAddress('1.2.3.4'),
+    );
     resolver.handleResponse(<ResourceRecord>[response]);
     final result = await futureResult.first as IPAddressResourceRecord;
     expect('1.2.3.4', result.address.address);
@@ -65,8 +68,14 @@ void testResult2() {
       'yyy.local',
       noTimeout,
     );
-    final ResourceRecord response1 = ip4Result('xxx.local', InternetAddress('1.2.3.4'));
-    final ResourceRecord response2 = ip4Result('yyy.local', InternetAddress('2.3.4.5'));
+    final ResourceRecord response1 = ip4Result(
+      'xxx.local',
+      InternetAddress('1.2.3.4'),
+    );
+    final ResourceRecord response2 = ip4Result(
+      'yyy.local',
+      InternetAddress('2.3.4.5'),
+    );
     resolver.handleResponse(<ResourceRecord>[response2, response1]);
     final result1 = await futureResult1.first as IPAddressResourceRecord;
     final result2 = await futureResult2.first as IPAddressResourceRecord;
@@ -80,7 +89,10 @@ void testResult3() {
   test('Multiple requests', () async {
     const noTimeout = Duration(days: 1);
     final resolver = LookupResolver();
-    final ResourceRecord response0 = ip4Result('zzz.local', InternetAddress('2.3.4.5'));
+    final ResourceRecord response0 = ip4Result(
+      'zzz.local',
+      InternetAddress('2.3.4.5'),
+    );
     resolver.handleResponse(<ResourceRecord>[response0]);
     final Stream<ResourceRecord> futureResult1 = resolver.addPendingRequest(
       ResourceRecordType.addressIPv4,
@@ -94,9 +106,15 @@ void testResult3() {
       noTimeout,
     );
     resolver.handleResponse(<ResourceRecord>[response0]);
-    final ResourceRecord response1 = ip4Result('xxx.local', InternetAddress('1.2.3.4'));
+    final ResourceRecord response1 = ip4Result(
+      'xxx.local',
+      InternetAddress('1.2.3.4'),
+    );
     resolver.handleResponse(<ResourceRecord>[response0]);
-    final ResourceRecord response2 = ip4Result('yyy.local', InternetAddress('2.3.4.5'));
+    final ResourceRecord response2 = ip4Result(
+      'yyy.local',
+      InternetAddress('2.3.4.5'),
+    );
     resolver.handleResponse(<ResourceRecord>[response0]);
     resolver.handleResponse(<ResourceRecord>[response2, response1]);
     resolver.handleResponse(<ResourceRecord>[response0]);

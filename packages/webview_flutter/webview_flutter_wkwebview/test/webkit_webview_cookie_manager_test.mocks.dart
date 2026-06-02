@@ -23,83 +23,117 @@ import 'package:webview_flutter_wkwebview/src/common/web_kit.g.dart' as _i2;
 // ignore_for_file: subtype_of_sealed_class
 // ignore_for_file: invalid_use_of_internal_member
 
-class _FakeWKHTTPCookieStore_0 extends _i1.SmartFake implements _i2.WKHTTPCookieStore {
+class _FakeWKHTTPCookieStore_0 extends _i1.SmartFake
+    implements _i2.WKHTTPCookieStore {
   _FakeWKHTTPCookieStore_0(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakePigeonInstanceManager_1 extends _i1.SmartFake implements _i2.PigeonInstanceManager {
+class _FakePigeonInstanceManager_1 extends _i1.SmartFake
+    implements _i2.PigeonInstanceManager {
   _FakePigeonInstanceManager_1(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeWKWebsiteDataStore_2 extends _i1.SmartFake implements _i2.WKWebsiteDataStore {
+class _FakeWKWebsiteDataStore_2 extends _i1.SmartFake
+    implements _i2.WKWebsiteDataStore {
   _FakeWKWebsiteDataStore_2(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
 class _FakeHTTPCookie_3 extends _i1.SmartFake implements _i2.HTTPCookie {
-  _FakeHTTPCookie_3(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+  _FakeHTTPCookie_3(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [WKWebsiteDataStore].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockWKWebsiteDataStore extends _i1.Mock implements _i2.WKWebsiteDataStore {
+class MockWKWebsiteDataStore extends _i1.Mock
+    implements _i2.WKWebsiteDataStore {
   MockWKWebsiteDataStore() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i2.WKHTTPCookieStore get httpCookieStore => (super.noSuchMethod(
-    Invocation.getter(#httpCookieStore),
-    returnValue: _FakeWKHTTPCookieStore_0(this, Invocation.getter(#httpCookieStore)),
-  ) as _i2.WKHTTPCookieStore);
+  _i2.WKHTTPCookieStore get httpCookieStore =>
+      (super.noSuchMethod(
+            Invocation.getter(#httpCookieStore),
+            returnValue: _FakeWKHTTPCookieStore_0(
+              this,
+              Invocation.getter(#httpCookieStore),
+            ),
+          )
+          as _i2.WKHTTPCookieStore);
 
   @override
-  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
-    Invocation.getter(#pigeon_instanceManager),
-    returnValue: _FakePigeonInstanceManager_1(this, Invocation.getter(#pigeon_instanceManager)),
-  ) as _i2.PigeonInstanceManager);
+  _i2.PigeonInstanceManager get pigeon_instanceManager =>
+      (super.noSuchMethod(
+            Invocation.getter(#pigeon_instanceManager),
+            returnValue: _FakePigeonInstanceManager_1(
+              this,
+              Invocation.getter(#pigeon_instanceManager),
+            ),
+          )
+          as _i2.PigeonInstanceManager);
 
   @override
-  _i2.WKHTTPCookieStore pigeonVar_httpCookieStore() => (super.noSuchMethod(
-    Invocation.method(#pigeonVar_httpCookieStore, []),
-    returnValue: _FakeWKHTTPCookieStore_0(this, Invocation.method(#pigeonVar_httpCookieStore, [])),
-  ) as _i2.WKHTTPCookieStore);
+  _i2.WKHTTPCookieStore pigeonVar_httpCookieStore() =>
+      (super.noSuchMethod(
+            Invocation.method(#pigeonVar_httpCookieStore, []),
+            returnValue: _FakeWKHTTPCookieStore_0(
+              this,
+              Invocation.method(#pigeonVar_httpCookieStore, []),
+            ),
+          )
+          as _i2.WKHTTPCookieStore);
 
   @override
   _i3.Future<bool> removeDataOfTypes(
     List<_i2.WebsiteDataType>? dataTypes,
     double? modificationTimeInSecondsSinceEpoch,
-  ) => (super.noSuchMethod(
-    Invocation.method(#removeDataOfTypes, [dataTypes, modificationTimeInSecondsSinceEpoch]),
-    returnValue: _i3.Future<bool>.value(false),
-  ) as _i3.Future<bool>);
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#removeDataOfTypes, [
+              dataTypes,
+              modificationTimeInSecondsSinceEpoch,
+            ]),
+            returnValue: _i3.Future<bool>.value(false),
+          )
+          as _i3.Future<bool>);
 
   @override
-  _i2.WKWebsiteDataStore pigeon_copy() => (super.noSuchMethod(
-    Invocation.method(#pigeon_copy, []),
-    returnValue: _FakeWKWebsiteDataStore_2(this, Invocation.method(#pigeon_copy, [])),
-  ) as _i2.WKWebsiteDataStore);
+  _i2.WKWebsiteDataStore pigeon_copy() =>
+      (super.noSuchMethod(
+            Invocation.method(#pigeon_copy, []),
+            returnValue: _FakeWKWebsiteDataStore_2(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
+          )
+          as _i2.WKWebsiteDataStore);
 
   @override
   _i3.Future<void> addObserver(
     _i2.NSObject? observer,
     String? keyPath,
     List<_i2.KeyValueObservingOptions>? options,
-  ) => (super.noSuchMethod(
-    Invocation.method(#addObserver, [observer, keyPath, options]),
-    returnValue: _i3.Future<void>.value(),
-    returnValueForMissingStub: _i3.Future<void>.value(),
-  ) as _i3.Future<void>);
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#addObserver, [observer, keyPath, options]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 
   @override
-  _i3.Future<void> removeObserver(_i2.NSObject? observer, String? keyPath) => (super.noSuchMethod(
-    Invocation.method(#removeObserver, [observer, keyPath]),
-    returnValue: _i3.Future<void>.value(),
-    returnValueForMissingStub: _i3.Future<void>.value(),
-  ) as _i3.Future<void>);
+  _i3.Future<void> removeObserver(_i2.NSObject? observer, String? keyPath) =>
+      (super.noSuchMethod(
+            Invocation.method(#removeObserver, [observer, keyPath]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 }
 
 /// A class which mocks [WKHTTPCookieStore].
@@ -111,47 +145,67 @@ class MockWKHTTPCookieStore extends _i1.Mock implements _i2.WKHTTPCookieStore {
   }
 
   @override
-  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
-    Invocation.getter(#pigeon_instanceManager),
-    returnValue: _FakePigeonInstanceManager_1(this, Invocation.getter(#pigeon_instanceManager)),
-  ) as _i2.PigeonInstanceManager);
+  _i2.PigeonInstanceManager get pigeon_instanceManager =>
+      (super.noSuchMethod(
+            Invocation.getter(#pigeon_instanceManager),
+            returnValue: _FakePigeonInstanceManager_1(
+              this,
+              Invocation.getter(#pigeon_instanceManager),
+            ),
+          )
+          as _i2.PigeonInstanceManager);
 
   @override
-  _i3.Future<void> setCookie(_i2.HTTPCookie? cookie) => (super.noSuchMethod(
-    Invocation.method(#setCookie, [cookie]),
-    returnValue: _i3.Future<void>.value(),
-    returnValueForMissingStub: _i3.Future<void>.value(),
-  ) as _i3.Future<void>);
+  _i3.Future<void> setCookie(_i2.HTTPCookie? cookie) =>
+      (super.noSuchMethod(
+            Invocation.method(#setCookie, [cookie]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 
   @override
-  _i3.Future<List<_i2.HTTPCookie>> getAllCookies() => (super.noSuchMethod(
-    Invocation.method(#getAllCookies, []),
-    returnValue: _i3.Future<List<_i2.HTTPCookie>>.value(<_i2.HTTPCookie>[]),
-  ) as _i3.Future<List<_i2.HTTPCookie>>);
+  _i3.Future<List<_i2.HTTPCookie>> getAllCookies() =>
+      (super.noSuchMethod(
+            Invocation.method(#getAllCookies, []),
+            returnValue: _i3.Future<List<_i2.HTTPCookie>>.value(
+              <_i2.HTTPCookie>[],
+            ),
+          )
+          as _i3.Future<List<_i2.HTTPCookie>>);
 
   @override
-  _i2.WKHTTPCookieStore pigeon_copy() => (super.noSuchMethod(
-    Invocation.method(#pigeon_copy, []),
-    returnValue: _FakeWKHTTPCookieStore_0(this, Invocation.method(#pigeon_copy, [])),
-  ) as _i2.WKHTTPCookieStore);
+  _i2.WKHTTPCookieStore pigeon_copy() =>
+      (super.noSuchMethod(
+            Invocation.method(#pigeon_copy, []),
+            returnValue: _FakeWKHTTPCookieStore_0(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
+          )
+          as _i2.WKHTTPCookieStore);
 
   @override
   _i3.Future<void> addObserver(
     _i2.NSObject? observer,
     String? keyPath,
     List<_i2.KeyValueObservingOptions>? options,
-  ) => (super.noSuchMethod(
-    Invocation.method(#addObserver, [observer, keyPath, options]),
-    returnValue: _i3.Future<void>.value(),
-    returnValueForMissingStub: _i3.Future<void>.value(),
-  ) as _i3.Future<void>);
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#addObserver, [observer, keyPath, options]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 
   @override
-  _i3.Future<void> removeObserver(_i2.NSObject? observer, String? keyPath) => (super.noSuchMethod(
-    Invocation.method(#removeObserver, [observer, keyPath]),
-    returnValue: _i3.Future<void>.value(),
-    returnValueForMissingStub: _i3.Future<void>.value(),
-  ) as _i3.Future<void>);
+  _i3.Future<void> removeObserver(_i2.NSObject? observer, String? keyPath) =>
+      (super.noSuchMethod(
+            Invocation.method(#removeObserver, [observer, keyPath]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 }
 
 /// A class which mocks [HTTPCookie].
@@ -163,38 +217,55 @@ class MockHTTPCookie extends _i1.Mock implements _i2.HTTPCookie {
   }
 
   @override
-  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
-    Invocation.getter(#pigeon_instanceManager),
-    returnValue: _FakePigeonInstanceManager_1(this, Invocation.getter(#pigeon_instanceManager)),
-  ) as _i2.PigeonInstanceManager);
+  _i2.PigeonInstanceManager get pigeon_instanceManager =>
+      (super.noSuchMethod(
+            Invocation.getter(#pigeon_instanceManager),
+            returnValue: _FakePigeonInstanceManager_1(
+              this,
+              Invocation.getter(#pigeon_instanceManager),
+            ),
+          )
+          as _i2.PigeonInstanceManager);
 
   @override
-  _i3.Future<Map<_i2.HttpCookiePropertyKey, Object>?> getProperties() => (super.noSuchMethod(
-    Invocation.method(#getProperties, []),
-    returnValue: _i3.Future<Map<_i2.HttpCookiePropertyKey, Object>?>.value(),
-  ) as _i3.Future<Map<_i2.HttpCookiePropertyKey, Object>?>);
+  _i3.Future<Map<_i2.HttpCookiePropertyKey, Object>?> getProperties() =>
+      (super.noSuchMethod(
+            Invocation.method(#getProperties, []),
+            returnValue:
+                _i3.Future<Map<_i2.HttpCookiePropertyKey, Object>?>.value(),
+          )
+          as _i3.Future<Map<_i2.HttpCookiePropertyKey, Object>?>);
 
   @override
-  _i2.HTTPCookie pigeon_copy() => (super.noSuchMethod(
-    Invocation.method(#pigeon_copy, []),
-    returnValue: _FakeHTTPCookie_3(this, Invocation.method(#pigeon_copy, [])),
-  ) as _i2.HTTPCookie);
+  _i2.HTTPCookie pigeon_copy() =>
+      (super.noSuchMethod(
+            Invocation.method(#pigeon_copy, []),
+            returnValue: _FakeHTTPCookie_3(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
+          )
+          as _i2.HTTPCookie);
 
   @override
   _i3.Future<void> addObserver(
     _i2.NSObject? observer,
     String? keyPath,
     List<_i2.KeyValueObservingOptions>? options,
-  ) => (super.noSuchMethod(
-    Invocation.method(#addObserver, [observer, keyPath, options]),
-    returnValue: _i3.Future<void>.value(),
-    returnValueForMissingStub: _i3.Future<void>.value(),
-  ) as _i3.Future<void>);
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#addObserver, [observer, keyPath, options]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 
   @override
-  _i3.Future<void> removeObserver(_i2.NSObject? observer, String? keyPath) => (super.noSuchMethod(
-    Invocation.method(#removeObserver, [observer, keyPath]),
-    returnValue: _i3.Future<void>.value(),
-    returnValueForMissingStub: _i3.Future<void>.value(),
-  ) as _i3.Future<void>);
+  _i3.Future<void> removeObserver(_i2.NSObject? observer, String? keyPath) =>
+      (super.noSuchMethod(
+            Invocation.method(#removeObserver, [observer, keyPath]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 }

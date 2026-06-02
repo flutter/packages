@@ -28,7 +28,6 @@ void main() async {
   id.prompt(onPromptMoment);
   // #docregion use-loader
 }
-
 // #enddocregion use-loader
 
 /// Handles the ID token returned from the One Tap prompt.

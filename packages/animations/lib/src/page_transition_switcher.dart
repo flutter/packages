@@ -56,7 +56,8 @@ class _ChildEntry {
 /// The builder should return a widget which contains the given children, laid
 /// out as desired. It must not return null. The builder should be able to
 /// handle an empty list of `entries`.
-typedef PageTransitionSwitcherLayoutBuilder = Widget Function(List<Widget> entries);
+typedef PageTransitionSwitcherLayoutBuilder =
+    Widget Function(List<Widget> entries);
 
 /// Signature for builders used to generate custom transitions for
 /// [PageTransitionSwitcher].
@@ -72,11 +73,12 @@ typedef PageTransitionSwitcherLayoutBuilder = Widget Function(List<Widget> entri
 /// incorporate both animations. It will use the primary animation to define how
 /// its child appears, and the secondary animation to define how its child
 /// disappears.
-typedef PageTransitionSwitcherTransitionBuilder = Widget Function(
-  Widget child,
-  Animation<double> primaryAnimation,
-  Animation<double> secondaryAnimation,
-);
+typedef PageTransitionSwitcherTransitionBuilder =
+    Widget Function(
+      Widget child,
+      Animation<double> primaryAnimation,
+      Animation<double> secondaryAnimation,
+    );
 
 /// A widget that transitions from an old child to a new child whenever [child]
 /// changes using an animation specified by [transitionBuilder].
@@ -294,7 +296,8 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
     final hasNewChild = widget.child != null;
     final hasOldChild = _currentEntry != null;
     if (hasNewChild != hasOldChild ||
-        hasNewChild && !Widget.canUpdate(widget.child!, _currentEntry!.widgetChild)) {
+        hasNewChild &&
+            !Widget.canUpdate(widget.child!, _currentEntry!.widgetChild)) {
       // Child has changed, fade current entry out and add new entry.
       _childNumber += 1;
       _addEntryForNewChild(shouldAnimate: true);
@@ -422,7 +425,9 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
   @override
   Widget build(BuildContext context) {
     return widget.layoutBuilder(
-      _activeEntries.map<Widget>((_ChildEntry entry) => entry.transition).toList(),
+      _activeEntries
+          .map<Widget>((_ChildEntry entry) => entry.transition)
+          .toList(),
     );
   }
 }

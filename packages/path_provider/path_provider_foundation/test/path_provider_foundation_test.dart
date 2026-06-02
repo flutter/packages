@@ -36,12 +36,18 @@ void main() {
 
     test('getExternalStoragePath throws', () async {
       final pathProvider = PathProviderFoundation(ffiLib: FakeFoundationFFI());
-      expect(pathProvider.getExternalStoragePath(), throwsA(isUnsupportedError));
+      expect(
+        pathProvider.getExternalStoragePath(),
+        throwsA(isUnsupportedError),
+      );
     });
 
     test('getExternalStoragePaths throws', () async {
       final pathProvider = PathProviderFoundation(ffiLib: FakeFoundationFFI());
-      expect(pathProvider.getExternalStoragePaths(), throwsA(isUnsupportedError));
+      expect(
+        pathProvider.getExternalStoragePaths(),
+        throwsA(isUnsupportedError),
+      );
     });
 
     test('getContainerPath throws on macOS', () async {

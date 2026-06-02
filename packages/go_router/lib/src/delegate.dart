@@ -16,7 +16,8 @@ import 'route.dart';
 import 'state.dart';
 
 /// GoRouter implementation of [RouterDelegate].
-class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifier {
+class GoRouterDelegate extends RouterDelegate<RouteMatchList>
+    with ChangeNotifier {
   /// Constructor for GoRouter's implementation of the RouterDelegate base
   /// class.
   GoRouterDelegate({
@@ -67,7 +68,10 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
     if (lastRoute.onExit != null && navigatorKey.currentContext != null) {
       return !(await lastRoute.onExit!(
         navigatorKey.currentContext!,
-        currentConfiguration.last.buildState(_configuration, currentConfiguration),
+        currentConfiguration.last.buildState(
+          _configuration,
+          currentConfiguration,
+        ),
       ));
     }
 
@@ -118,9 +122,12 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
 
     RouteMatchBase walker = currentConfiguration.matches.last;
     while (walker is ShellRouteMatch) {
-      final NavigatorState potentialCandidate = walker.navigatorKey.currentState!;
+      final NavigatorState potentialCandidate =
+          walker.navigatorKey.currentState!;
 
-      final ModalRoute<dynamic>? modalRoute = ModalRoute.of(potentialCandidate.context);
+      final ModalRoute<dynamic>? modalRoute = ModalRoute.of(
+        potentialCandidate.context,
+      );
       if (modalRoute == null || !modalRoute.isCurrent) {
         // Stop if there is a pageless route on top of the shell route.
         break;
@@ -131,7 +138,11 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
     return states.reversed;
   }
 
-  bool _handlePopPageWithRouteMatch(Route<Object?> route, Object? result, RouteMatchBase match) {
+  bool _handlePopPageWithRouteMatch(
+    Route<Object?> route,
+    Object? result,
+    RouteMatchBase match,
+  ) {
     if (route.willHandlePopInternally) {
       final bool popped = route.didPop(result);
       assert(!popped);
@@ -187,8 +198,10 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
 
   /// The top [GoRouterState], the state of the route that was
   /// last used in either [GoRouter.go] or [GoRouter.push].
-  GoRouterState get state =>
-      currentConfiguration.last.buildState(_configuration, currentConfiguration);
+  GoRouterState get state => currentConfiguration.last.buildState(
+    _configuration,
+    currentConfiguration,
+  );
 
   /// For use by the Router architecture as part of the RouterDelegate.
   GlobalKey<NavigatorState> get navigatorKey => _configuration.navigatorKey;
@@ -232,17 +245,22 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
         return true;
       });
 
-      final int compareUntil = math.min(currentGoRouteMatches.length, newGoRouteMatches.length);
+      final int compareUntil = math.min(
+        currentGoRouteMatches.length,
+        newGoRouteMatches.length,
+      );
       var indexOfFirstDiff = 0;
       for (; indexOfFirstDiff < compareUntil; indexOfFirstDiff++) {
-        if (currentGoRouteMatches[indexOfFirstDiff] != newGoRouteMatches[indexOfFirstDiff]) {
+        if (currentGoRouteMatches[indexOfFirstDiff] !=
+            newGoRouteMatches[indexOfFirstDiff]) {
           break;
         }
       }
 
       if (indexOfFirstDiff < currentGoRouteMatches.length) {
-        final List<RouteMatch> exitingMatches =
-            currentGoRouteMatches.sublist(indexOfFirstDiff).toList();
+        final List<RouteMatch> exitingMatches = currentGoRouteMatches
+            .sublist(indexOfFirstDiff)
+            .toList();
         return _callOnExitStartsAt(
           exitingMatches.length - 1,
           context: navigatorContext,
@@ -279,7 +297,11 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
 
     Future<bool> handleOnExitResult(bool exit) {
       if (exit) {
-        return _callOnExitStartsAt(index - 1, context: context, matches: matches);
+        return _callOnExitStartsAt(
+          index - 1,
+          context: context,
+          matches: matches,
+        );
       }
       return SynchronousFuture<bool>(false);
     }

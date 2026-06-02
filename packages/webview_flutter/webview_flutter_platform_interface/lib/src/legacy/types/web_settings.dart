@@ -52,7 +52,9 @@ class WebSetting<T> {
       return false;
     }
 
-    return other is WebSetting<T> && other.isPresent == isPresent && other._value == _value;
+    return other is WebSetting<T> &&
+        other.isPresent == isPresent &&
+        other._value == _value;
   }
 
   @override

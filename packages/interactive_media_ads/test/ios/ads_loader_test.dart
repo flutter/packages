@@ -4,7 +4,8 @@
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:interactive_media_ads/src/ios/interactive_media_ads.g.dart' as ima;
+import 'package:interactive_media_ads/src/ios/interactive_media_ads.g.dart'
+    as ima;
 import 'package:interactive_media_ads/src/ios/ios_ad_display_container.dart';
 import 'package:interactive_media_ads/src/ios/ios_ads_loader.dart';
 import 'package:interactive_media_ads/src/ios/ios_content_progress_provider.dart';
@@ -36,7 +37,9 @@ void main() {
     });
 
     testWidgets('instantiate IOSAdsLoader', (WidgetTester tester) async {
-      final IOSAdDisplayContainer container = await _pumpAdDisplayContainer(tester);
+      final IOSAdDisplayContainer container = await _pumpAdDisplayContainer(
+        tester,
+      );
 
       IOSAdsLoader(
         IOSAdsLoaderCreationParams(
@@ -49,12 +52,15 @@ void main() {
     });
 
     testWidgets('contentComplete', (WidgetTester tester) async {
-      final IOSAdDisplayContainer container = await _pumpAdDisplayContainer(tester);
+      final IOSAdDisplayContainer container = await _pumpAdDisplayContainer(
+        tester,
+      );
 
       ima.PigeonOverrides.iMASettings_new = () => MockIMASettings();
 
       final mockLoader = MockIMAAdsLoader();
-      ima.PigeonOverrides.iMAAdsLoader_new = ({ima.IMASettings? settings}) => mockLoader;
+      ima.PigeonOverrides.iMAAdsLoader_new = ({ima.IMASettings? settings}) =>
+          mockLoader;
 
       final loader = IOSAdsLoader(
         IOSAdsLoaderCreationParams(
@@ -70,7 +76,9 @@ void main() {
     });
 
     testWidgets('requestAds', (WidgetTester tester) async {
-      final IOSAdDisplayContainer container = await _pumpAdDisplayContainer(tester);
+      final IOSAdDisplayContainer container = await _pumpAdDisplayContainer(
+        tester,
+      );
 
       ima.PigeonOverrides.iMASettings_new = () => MockIMASettings();
 
@@ -79,8 +87,10 @@ void main() {
       final mockLoader = MockIMAAdsLoader();
       final contentPlayheadInstance = ima.IMAContentPlayhead();
       final mockRequest = MockIMAAdsRequest();
-      ima.PigeonOverrides.iMAAdsLoader_new = ({ima.IMASettings? settings}) => mockLoader;
-      ima.PigeonOverrides.iMAContentPlayhead_new = () => contentPlayheadInstance;
+      ima.PigeonOverrides.iMAAdsLoader_new = ({ima.IMASettings? settings}) =>
+          mockLoader;
+      ima.PigeonOverrides.iMAContentPlayhead_new = () =>
+          contentPlayheadInstance;
 
       ima.PigeonOverrides.iMAAdsRequest_new =
           ({
@@ -135,17 +145,28 @@ void main() {
     });
 
     testWidgets('onAdsLoaded', (WidgetTester tester) async {
-      final IOSAdDisplayContainer container = await _pumpAdDisplayContainer(tester);
+      final IOSAdDisplayContainer container = await _pumpAdDisplayContainer(
+        tester,
+      );
 
       ima.PigeonOverrides.iMASettings_new = () => MockIMASettings();
 
-      late final void Function(ima.IMAAdsLoaderDelegate, ima.IMAAdsLoader, ima.IMAAdsLoadedData)
+      late final void Function(
+        ima.IMAAdsLoaderDelegate,
+        ima.IMAAdsLoader,
+        ima.IMAAdsLoadedData,
+      )
       adLoaderLoadedWithCallback;
 
-      ima.PigeonOverrides.iMAAdsLoader_new = ({ima.IMASettings? settings}) => MockIMAAdsLoader();
+      ima.PigeonOverrides.iMAAdsLoader_new = ({ima.IMASettings? settings}) =>
+          MockIMAAdsLoader();
       ima.PigeonOverrides.iMAAdsLoaderDelegate_new =
           ({
-            required void Function(ima.IMAAdsLoaderDelegate, ima.IMAAdsLoader, ima.IMAAdsLoadedData)
+            required void Function(
+              ima.IMAAdsLoaderDelegate,
+              ima.IMAAdsLoader,
+              ima.IMAAdsLoadedData,
+            )
             adLoaderLoadedWith,
             required dynamic adsLoaderFailedWithErrorData,
           }) {
@@ -172,7 +193,9 @@ void main() {
     });
 
     testWidgets('onAdsLoadError', (WidgetTester tester) async {
-      final IOSAdDisplayContainer container = await _pumpAdDisplayContainer(tester);
+      final IOSAdDisplayContainer container = await _pumpAdDisplayContainer(
+        tester,
+      );
 
       ima.PigeonOverrides.iMASettings_new = () => MockIMASettings();
 
@@ -183,7 +206,8 @@ void main() {
       )
       adsLoaderFailedWithErrorDataCallback;
 
-      ima.PigeonOverrides.iMAAdsLoader_new = ({ima.IMASettings? settings}) => MockIMAAdsLoader();
+      ima.PigeonOverrides.iMAAdsLoader_new = ({ima.IMASettings? settings}) =>
+          MockIMAAdsLoader();
       ima.PigeonOverrides.iMAAdsLoaderDelegate_new =
           ({
             required dynamic adLoaderLoadedWith,
@@ -226,7 +250,9 @@ void main() {
   });
 }
 
-Future<IOSAdDisplayContainer> _pumpAdDisplayContainer(WidgetTester tester) async {
+Future<IOSAdDisplayContainer> _pumpAdDisplayContainer(
+  WidgetTester tester,
+) async {
   ima.PigeonOverrides.uIViewController_new =
       ({void Function(ima.UIViewController, bool)? viewDidAppear}) {
         final view = ima.UIView.pigeon_detached();
@@ -237,17 +263,20 @@ Future<IOSAdDisplayContainer> _pumpAdDisplayContainer(WidgetTester tester) async
         when(mockController.view).thenReturn(view);
         return mockController;
       };
-  ima.PigeonOverrides.iMAAdDisplayContainer_new = ({
-    required ima.UIView adContainer,
-    ima.UIViewController? adContainerViewController,
-    List<ima.IMACompanionAdSlot>? companionSlots,
-  }) => MockIMAAdDisplayContainer();
+  ima.PigeonOverrides.iMAAdDisplayContainer_new =
+      ({
+        required ima.UIView adContainer,
+        ima.UIViewController? adContainerViewController,
+        List<ima.IMACompanionAdSlot>? companionSlots,
+      }) => MockIMAAdDisplayContainer();
 
   final container = IOSAdDisplayContainer(
     IOSAdDisplayContainerCreationParams(onContainerAdded: expectAsync1((_) {})),
   );
 
-  await tester.pumpWidget(Builder(builder: (BuildContext context) => container.build(context)));
+  await tester.pumpWidget(
+    Builder(builder: (BuildContext context) => container.build(context)),
+  );
 
   final view = find.byType(UiKitView).evaluate().single.widget as UiKitView;
   view.onPlatformViewCreated!.call(0);

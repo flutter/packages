@@ -157,7 +157,7 @@ abstract class DataSource {
   /// both the arguments specified in the remote widget declaration and the
   /// argument provided to this method have the same name), the arguments
   /// specified here take precedence.
-  VoidCallback? voidHandler(List<Object> argsKey, [DynamicMap? extraArguments]);
+  VoidCallback? voidHandler(List<Object> argsKey, [ DynamicMap? extraArguments ]);
 
   /// Gets an event handler at the given key.
   ///
@@ -282,15 +282,11 @@ class Runtime extends ChangeNotifier {
   ///
   ///  * [update] and [clearLibraries], functions that populate this map.
   UnmodifiableMapView<LibraryName, WidgetLibrary> get libraries {
-    return UnmodifiableMapView<LibraryName, WidgetLibrary>(
-      Map<LibraryName, WidgetLibrary>.from(_libraries),
-    );
+    return UnmodifiableMapView<LibraryName, WidgetLibrary>(Map<LibraryName, WidgetLibrary>.from(_libraries));
   }
 
-  final Map<FullyQualifiedWidgetName, _ResolvedConstructor?> _cachedConstructors =
-      <FullyQualifiedWidgetName, _ResolvedConstructor?>{};
-  final Map<FullyQualifiedWidgetName, _CurriedWidget> _widgets =
-      <FullyQualifiedWidgetName, _CurriedWidget>{};
+  final Map<FullyQualifiedWidgetName, _ResolvedConstructor?> _cachedConstructors = <FullyQualifiedWidgetName, _ResolvedConstructor?>{};
+  final Map<FullyQualifiedWidgetName, _CurriedWidget> _widgets = <FullyQualifiedWidgetName, _CurriedWidget>{};
 
   void _clearCache() {
     _cachedConstructors.clear();
@@ -360,7 +356,7 @@ class Runtime extends ChangeNotifier {
     return (context.widget as _Widget).curriedWidget;
   }
 
-  void _checkForImportLoops(LibraryName name, [Set<LibraryName>? visited]) {
+  void _checkForImportLoops(LibraryName name, [ Set<LibraryName>? visited ]) {
     final WidgetLibrary? library = _libraries[name];
     if (library is RemoteWidgetLibrary) {
       visited ??= <LibraryName>{};
@@ -379,9 +375,7 @@ class Runtime extends ChangeNotifier {
             assert(path.single == dependency);
             throw RemoteFlutterWidgetsException('Library $dependency depends on itself.');
           } else {
-            throw RemoteFlutterWidgetsException(
-              'Library $dependency indirectly depends on itself via ${path.reversed.join(" which depends on ")}.',
-            );
+            throw RemoteFlutterWidgetsException('Library $dependency indirectly depends on itself via ${path.reversed.join(" which depends on ")}.');
           }
         }
         _checkForImportLoops(dependency, visited.toSet());
@@ -403,9 +397,7 @@ class Runtime extends ChangeNotifier {
       }
       for (final Import import in library.imports) {
         final LibraryName dependency = import.name;
-        final _ResolvedConstructor? result = _findConstructor(
-          FullyQualifiedWidgetName(dependency, fullName.widget),
-        );
+        final _ResolvedConstructor? result = _findConstructor(FullyQualifiedWidgetName(dependency, fullName.widget));
         if (result != null) {
           // We cache the constructor under each name that we tried to look it up with, so
           // that next time it takes less time to find it.
@@ -418,9 +410,7 @@ class Runtime extends ChangeNotifier {
         return _cachedConstructors[fullName] = _ResolvedConstructor(fullName, constructor);
       }
     } else {
-      assert(
-        library is Null,
-      ); // ignore: prefer_void_to_null, type_check_with_null, https://github.com/dart-lang/sdk/issues/47017#issuecomment-907562014
+      assert(library is Null); // ignore: prefer_void_to_null, type_check_with_null, https://github.com/dart-lang/sdk/issues/47017#issuecomment-907562014
     }
     _cachedConstructors[fullName] = null;
     return null;
@@ -525,16 +515,13 @@ class Runtime extends ChangeNotifier {
         'possibly because some dependencies were missing: ${missingLibraries.join(", ")}',
       )..propagateSource(source);
     }
-    return _CurriedLocalWidget.error(
-      fullName,
-      'Could not find remote widget named ${fullName.widget} in ${fullName.library}.',
-    )..propagateSource(source);
+    return _CurriedLocalWidget.error(fullName, 'Could not find remote widget named ${fullName.widget} in ${fullName.library}.')
+      ..propagateSource(source);
   }
 
   Object _bindArguments(
     FullyQualifiedWidgetName context,
-    Object node,
-    Object arguments,
+    Object node, Object arguments,
     DynamicMap widgetBuilderScope,
     int stateDepth,
     Set<FullyQualifiedWidgetName> usedWidgets,
@@ -559,7 +546,7 @@ class Runtime extends ChangeNotifier {
     }
     if (node is WidgetBuilderDeclaration) {
       return (DynamicMap widgetBuilderArg) {
-        final newWidgetBuilderScope = <String, Object?>{
+        final newWidgetBuilderScope = <String, Object?> {
           ...widgetBuilderScope,
           node.argumentName: widgetBuilderArg,
         };
@@ -582,7 +569,7 @@ class Runtime extends ChangeNotifier {
         }
         return result as _CurriedWidget;
       };
-    }
+		}
     if (node is DynamicMap) {
       return node.map<String, Object?>(
         (String name, Object? value) => MapEntry<String, Object?>(
@@ -606,42 +593,22 @@ class Runtime extends ChangeNotifier {
       );
     }
     if (node is Loop) {
-      final Object input = _bindArguments(
-        context,
-        node.input,
-        arguments,
-        widgetBuilderScope,
-        stateDepth,
-        usedWidgets,
-      );
-      final Object output = _bindArguments(
-        context,
-        node.output,
-        arguments,
-        widgetBuilderScope,
-        stateDepth,
-        usedWidgets,
-      );
-      return Loop(input, output)..propagateSource(node);
+      final Object input = _bindArguments(context, node.input, arguments, widgetBuilderScope, stateDepth, usedWidgets);
+      final Object output = _bindArguments(context, node.output, arguments, widgetBuilderScope, stateDepth, usedWidgets);
+      return Loop(input, output)
+        ..propagateSource(node);
     }
     if (node is Switch) {
       return Switch(
         _bindArguments(context, node.input, arguments, widgetBuilderScope, stateDepth, usedWidgets),
-        node.outputs.map<Object?, Object>((Object? key, Object value) {
-          return MapEntry<Object?, Object>(
-            key == null
-                ? key
-                : _bindArguments(
-                    context,
-                    key,
-                    arguments,
-                    widgetBuilderScope,
-                    stateDepth,
-                    usedWidgets,
-                  ),
-            _bindArguments(context, value, arguments, widgetBuilderScope, stateDepth, usedWidgets),
-          );
-        }),
+        node.outputs.map<Object?, Object>(
+          (Object? key, Object value) {
+            return MapEntry<Object?, Object>(
+              key == null ? key : _bindArguments(context, key, arguments, widgetBuilderScope, stateDepth, usedWidgets),
+              _bindArguments(context, value, arguments, widgetBuilderScope, stateDepth, usedWidgets),
+            );
+          },
+        ),
       )..propagateSource(node);
     }
     if (node is ArgsReference) {
@@ -665,9 +632,7 @@ class Runtime extends ChangeNotifier {
     }
     if (node is SetStateHandler) {
       assert(node.stateReference is StateReference);
-      final BoundStateReference stateReference = (node.stateReference as StateReference).bind(
-        stateDepth,
-      );
+      final BoundStateReference stateReference = (node.stateReference as StateReference).bind(stateDepth);
       return SetStateHandler(
         stateReference,
         _bindArguments(context, node.value, arguments, widgetBuilderScope, stateDepth, usedWidgets),
@@ -697,7 +662,12 @@ typedef _StateResolverCallback = Object Function(List<Object> stateKey, int dept
 typedef _WidgetBuilderArgResolverCallback = Object Function(List<Object> argKey);
 
 abstract class _CurriedWidget extends BlobNode {
-  const _CurriedWidget(this.fullName, this.arguments, this.widgetBuilderScope, this.initialState);
+  const _CurriedWidget(
+    this.fullName,
+    this.arguments,
+    this.widgetBuilderScope,
+    this.initialState,
+  );
 
   final FullyQualifiedWidgetName fullName;
   final DynamicMap arguments;
@@ -707,8 +677,7 @@ abstract class _CurriedWidget extends BlobNode {
   static Object _bindLoopVariable(Object node, Object argument, int depth) {
     if (node is DynamicMap) {
       return node.map<String, Object?>(
-        (String name, Object? value) =>
-            MapEntry<String, Object?>(name, _bindLoopVariable(value!, argument, depth)),
+        (String name, Object? value) => MapEntry<String, Object?>(name, _bindLoopVariable(value!, argument, depth)),
       );
     }
     if (node is DynamicList) {
@@ -719,10 +688,8 @@ abstract class _CurriedWidget extends BlobNode {
       );
     }
     if (node is Loop) {
-      return Loop(
-        _bindLoopVariable(node.input, argument, depth),
-        _bindLoopVariable(node.output, argument, depth + 1),
-      )..propagateSource(node);
+      return Loop(_bindLoopVariable(node.input, argument, depth), _bindLoopVariable(node.output, argument, depth + 1))
+        ..propagateSource(node);
     }
     if (node is Switch) {
       return Switch(
@@ -732,7 +699,7 @@ abstract class _CurriedWidget extends BlobNode {
             key == null ? null : _bindLoopVariable(key, argument, depth),
             _bindLoopVariable(value, argument, depth),
           ),
-        ),
+        )
       )..propagateSource(node);
     }
     if (node is _CurriedLocalWidget) {
@@ -772,10 +739,8 @@ abstract class _CurriedWidget extends BlobNode {
         ..propagateSource(node);
     }
     if (node is EventHandler) {
-      return EventHandler(
-        node.eventName,
-        _bindLoopVariable(node.eventArguments, argument, depth) as DynamicMap,
-      )..propagateSource(node);
+      return EventHandler(node.eventName, _bindLoopVariable(node.eventArguments, argument, depth) as DynamicMap)
+        ..propagateSource(node);
     }
     if (node is SetStateHandler) {
       return SetStateHandler(node.stateReference, _bindLoopVariable(node.value, argument, depth))
@@ -798,12 +763,9 @@ abstract class _CurriedWidget extends BlobNode {
     _DataResolverCallback dataResolver,
     _WidgetBuilderArgResolverCallback widgetBuilderArgResolver,
   ) {
-    var currentIndex =
-        0; // where we are in `list` (some entries of which might represent multiple values, because they are themselves loops)
-    var effectiveIndex =
-        0; // where we are in the fully expanded list (the coordinate space in which we're aiming for `targetEffectiveIndex`)
-    while ((effectiveIndex <= targetEffectiveIndex || targetEffectiveIndex < 0) &&
-        currentIndex < list.length) {
+    var currentIndex = 0; // where we are in `list` (some entries of which might represent multiple values, because they are themselves loops)
+    var effectiveIndex = 0; // where we are in the fully expanded list (the coordinate space in which we're aiming for `targetEffectiveIndex`)
+    while ((effectiveIndex <= targetEffectiveIndex || targetEffectiveIndex < 0) && currentIndex < list.length) {
       final Object node = list[currentIndex]!;
       if (node is Loop) {
         Object inputList = node.input;
@@ -819,10 +781,9 @@ abstract class _CurriedWidget extends BlobNode {
           } else if (inputList is DataReference) {
             inputList = dataResolver(inputList.parts);
           } else if (inputList is WidgetBuilderArgReference) {
-            inputList = widgetBuilderArgResolver(<Object>[
-              inputList.argumentName,
-              ...inputList.parts,
-            ]);
+            inputList = widgetBuilderArgResolver(
+              <Object>[inputList.argumentName, ...inputList.parts],
+            );
           } else if (inputList is BoundStateReference) {
             inputList = stateResolver(inputList.parts, inputList.depth);
           } else if (inputList is BoundLoopReference) {
@@ -859,8 +820,7 @@ abstract class _CurriedWidget extends BlobNode {
           return _ResolvedDynamicList(null, boundResult, null);
         }
         effectiveIndex += entry.length!;
-      } else {
-        // list[currentIndex] is not a Loop
+      } else { // list[currentIndex] is not a Loop
         if (effectiveIndex == targetEffectiveIndex) {
           return _ResolvedDynamicList(null, list[currentIndex], null);
         }
@@ -939,8 +899,7 @@ abstract class _CurriedWidget extends BlobNode {
         if (current is EventHandler) {
           current = EventHandler(
             current.eventName,
-            _fix(current.eventArguments, stateResolver, dataResolver, widgetBuilderArgResolver)
-                as DynamicMap,
+            _fix(current.eventArguments, stateResolver, dataResolver, widgetBuilderArgResolver) as DynamicMap,
           );
         } else if (current is SetStateHandler) {
           current = SetStateHandler(
@@ -962,15 +921,13 @@ abstract class _CurriedWidget extends BlobNode {
         if (parts[index] is! int) {
           return missing;
         }
-        current =
-            _listLookup(
-              current,
-              parts[index] as int,
-              stateResolver,
-              dataResolver,
-              widgetBuilderArgResolver,
-            ).result ??
-            missing;
+        current = _listLookup(
+          current,
+          parts[index] as int,
+          stateResolver,
+          dataResolver,
+          widgetBuilderArgResolver,
+        ).result ?? missing;
       } else {
         assert(current is! ArgsReference);
         assert(current is! StateReference);
@@ -979,10 +936,7 @@ abstract class _CurriedWidget extends BlobNode {
       }
       index += 1;
     }
-    assert(
-      current is! Reference,
-      'Unexpected unbound reference (of type ${current.runtimeType}): $current',
-    );
+    assert(current is! Reference, 'Unexpected unbound reference (of type ${current.runtimeType}): $current');
     assert(current is! Switch);
     assert(current is! Loop);
     return current;
@@ -995,8 +949,8 @@ abstract class _CurriedWidget extends BlobNode {
     _WidgetBuilderArgResolverCallback widgetBuilderArgResolver,
   ) {
     if (root is DynamicMap) {
-      return root.map(
-        (String key, Object? value) => MapEntry<String, Object?>(
+      return root.map((String key, Object? value) =>
+        MapEntry<String, Object?>(
           key,
           _fix(root[key]!, stateResolver, dataResolver, widgetBuilderArgResolver),
         ),
@@ -1013,7 +967,7 @@ abstract class _CurriedWidget extends BlobNode {
         return DynamicList.generate(
           length,
           (int index) => _fix(
-            _listLookup(root, index, stateResolver, dataResolver, widgetBuilderArgResolver).result!,
+            _listLookup(root, index, stateResolver, dataResolver, widgetBuilderArgResolver).result!, 
             stateResolver,
             dataResolver,
             widgetBuilderArgResolver,
@@ -1026,13 +980,7 @@ abstract class _CurriedWidget extends BlobNode {
         );
       }
     } else if (root is BlobNode) {
-      return _resolveFrom(
-        root,
-        const <Object>[],
-        stateResolver,
-        dataResolver,
-        widgetBuilderArgResolver,
-      );
+      return _resolveFrom(root, const <Object>[], stateResolver, dataResolver, widgetBuilderArgResolver);
     } else {
       return root;
     }
@@ -1045,13 +993,7 @@ abstract class _CurriedWidget extends BlobNode {
     _WidgetBuilderArgResolverCallback widgetBuilderArgResolver, {
     required bool expandLists,
   }) {
-    Object result = _resolveFrom(
-      arguments,
-      parts,
-      stateResolver,
-      dataResolver,
-      widgetBuilderArgResolver,
-    );
+    Object result = _resolveFrom(arguments, parts, stateResolver, dataResolver, widgetBuilderArgResolver);
     if (result is DynamicList && expandLists) {
       result = _listLookup(result, -1, stateResolver, dataResolver, widgetBuilderArgResolver);
     }
@@ -1097,7 +1039,7 @@ class _CurriedLocalWidget extends _CurriedWidget {
     this.child,
     DynamicMap arguments,
     DynamicMap widgetBuilderScope,
-  ) : super(fullName, arguments, widgetBuilderScope, null);
+ ) : super(fullName, arguments, widgetBuilderScope, null);
 
   factory _CurriedLocalWidget.error(FullyQualifiedWidgetName fullName, String message) {
     return _CurriedLocalWidget(
@@ -1120,7 +1062,7 @@ class _CurriedLocalWidget extends _CurriedWidget {
     _StateResolverCallback stateResolver,
     _DataResolverCallback dataResolver,
     _WidgetBuilderArgResolverCallback widgetBuilderArgResolver,
-  ) {
+   ) {
     return child(context, source);
   }
 }
@@ -1186,9 +1128,7 @@ class _CurriedSwitch extends _CurriedWidget {
     if (resolvedWidget is _CurriedWidget) {
       return resolvedWidget.build(context, data, remoteEventTarget, states);
     }
-    return _buildErrorWidget(
-      'Switch in $fullName did not resolve to a widget (got $resolvedWidget).',
-    );
+    return _buildErrorWidget('Switch in $fullName did not resolve to a widget (got $resolvedWidget).');
   }
 
   @override
@@ -1202,7 +1142,7 @@ class _Widget extends StatefulWidget {
     required this.widgetBuilderScope,
     required this.remoteEventTarget,
     required this.states,
-  });
+ });
 
   final _CurriedWidget curriedWidget;
 
@@ -1235,9 +1175,7 @@ class _WidgetState extends State<_Widget> implements DataSource {
     if (oldWidget.curriedWidget != widget.curriedWidget) {
       _updateState();
     }
-    if (oldWidget.data != widget.data ||
-        oldWidget.curriedWidget != widget.curriedWidget ||
-        oldWidget.states != widget.states) {
+    if (oldWidget.data != widget.data || oldWidget.curriedWidget != widget.curriedWidget || oldWidget.states != widget.states) {
       _unsubscribe();
     }
   }
@@ -1275,14 +1213,10 @@ class _WidgetState extends State<_Widget> implements DataSource {
       final Object subindex = parts[index];
       if (current is DynamicMap) {
         if (subindex is! String) {
-          throw RemoteFlutterWidgetsException(
-            '${parts.join(".")} does not identify existing state.',
-          );
+          throw RemoteFlutterWidgetsException('${parts.join(".")} does not identify existing state.');
         }
         if (!current.containsKey(subindex)) {
-          throw RemoteFlutterWidgetsException(
-            '${parts.join(".")} does not identify existing state.',
-          );
+          throw RemoteFlutterWidgetsException('${parts.join(".")} does not identify existing state.');
         }
         if (index == parts.length - 1) {
           current[subindex] = value;
@@ -1291,14 +1225,10 @@ class _WidgetState extends State<_Widget> implements DataSource {
         }
       } else if (current is DynamicList) {
         if (subindex is! int) {
-          throw RemoteFlutterWidgetsException(
-            '${parts.join(".")} does not identify existing state.',
-          );
+          throw RemoteFlutterWidgetsException('${parts.join(".")} does not identify existing state.');
         }
         if (subindex < 0 || subindex >= current.length) {
-          throw RemoteFlutterWidgetsException(
-            '${parts.join(".")} does not identify existing state.',
-          );
+          throw RemoteFlutterWidgetsException('${parts.join(".")} does not identify existing state.');
         }
         if (index == parts.length - 1) {
           current[subindex] = value;
@@ -1336,7 +1266,8 @@ class _WidgetState extends State<_Widget> implements DataSource {
   @override
   bool isList(List<Object> argsKey) {
     final Object value = _fetch(argsKey, expandLists: false);
-    return value is _ResolvedDynamicList || value is DynamicList;
+    return value is _ResolvedDynamicList
+        || value is DynamicList;
   }
 
   @override
@@ -1364,9 +1295,7 @@ class _WidgetState extends State<_Widget> implements DataSource {
     if (value is _CurriedWidget) {
       return value.build(context, widget.data, widget.remoteEventTarget, widget.states);
     }
-    return _buildErrorWidget(
-      'Not a widget at $argsKey (got $value) for ${widget.curriedWidget.fullName}.',
-    );
+    return _buildErrorWidget('Not a widget at $argsKey (got $value) for ${widget.curriedWidget.fullName}.');
   }
 
   @override
@@ -1384,27 +1313,26 @@ class _WidgetState extends State<_Widget> implements DataSource {
     if (value is _ResolvedDynamicList) {
       assert(value.length != null);
       final DynamicList fullList = _fetchList(argsKey, value.length!);
-      return List<Widget>.generate(fullList.length, (int index) {
-        final Object? node = fullList[index];
-        if (node is _CurriedWidget) {
-          return node.build(context, widget.data, widget.remoteEventTarget, _states);
-        }
-        return _buildErrorWidget(
-          'Not a widget at $argsKey (got $node) for ${widget.curriedWidget.fullName}.',
-        );
-      });
+      return List<Widget>.generate(
+        fullList.length,
+        (int index) {
+          final Object? node = fullList[index];
+          if (node is _CurriedWidget) {
+            return node.build(context, widget.data, widget.remoteEventTarget, _states);
+          }
+          return _buildErrorWidget('Not a widget at $argsKey (got $node) for ${widget.curriedWidget.fullName}.');
+        },
+      );
     }
     if (value == missing) {
       return const <Widget>[];
     }
     return <Widget>[
-      _buildErrorWidget(
-        'Not a widget list at $argsKey (got $value) for ${widget.curriedWidget.fullName}.',
-      ),
+      _buildErrorWidget('Not a widget list at $argsKey (got $value) for ${widget.curriedWidget.fullName}.'),
     ];
   }
 
-  @override
+	@override
   Widget builder(List<Object> argsKey, DynamicMap builderArg) {
     return _fetchBuilder(argsKey, builderArg, optional: false)!;
   }
@@ -1414,33 +1342,36 @@ class _WidgetState extends State<_Widget> implements DataSource {
     return _fetchBuilder(argsKey, builderArg);
   }
 
-  Widget? _fetchBuilder(List<Object> argsKey, DynamicMap builderArg, {bool optional = true}) {
+  Widget? _fetchBuilder(
+    List<Object> argsKey,
+    DynamicMap builderArg, {
+    bool optional = true,
+  }) {
     final Object value = _fetch(argsKey, expandLists: false);
     if (value is _RemoteWidgetBuilder) {
       final _CurriedWidget curriedWidget = value(builderArg);
-      return curriedWidget.build(context, widget.data, widget.remoteEventTarget, widget.states);
+      return curriedWidget.build(
+        context,
+        widget.data,
+        widget.remoteEventTarget,
+        widget.states,
+      );
     }
     return optional
-        ? null
-        : _buildErrorWidget(
-            'Not a builder at $argsKey (got $value) for ${widget.curriedWidget.fullName}.',
-          );
+      ? null
+      : _buildErrorWidget('Not a builder at $argsKey (got $value) for ${widget.curriedWidget.fullName}.');
   }
 
   @override
-  VoidCallback? voidHandler(List<Object> argsKey, [DynamicMap? extraArguments]) {
-    return handler<VoidCallback>(
-      argsKey,
-      (HandlerTrigger callback) =>
-          () => callback(extraArguments),
-    );
+  VoidCallback? voidHandler(List<Object> argsKey, [ DynamicMap? extraArguments ]) {
+    return handler<VoidCallback>(argsKey, (HandlerTrigger callback) => () => callback(extraArguments));
   }
 
   @override
   T? handler<T extends Function>(List<Object> argsKey, HandlerGenerator<T> generator) {
     Object value = _fetch(argsKey, expandLists: true);
     if (value is AnyEventHandler) {
-      value = <Object>[value];
+      value = <Object>[ value ];
     } else if (value is _ResolvedDynamicList) {
       value = _fetchList(argsKey, value.length!);
     }
@@ -1452,18 +1383,12 @@ class _WidgetState extends State<_Widget> implements DataSource {
             if (entry is EventHandler) {
               DynamicMap arguments = entry.eventArguments;
               if (extraArguments != null) {
-                arguments = DynamicMap.fromEntries(
-                  arguments.entries.followedBy(extraArguments.entries),
-                );
+                arguments = DynamicMap.fromEntries(arguments.entries.followedBy(extraArguments.entries));
               }
               widget.remoteEventTarget(entry.eventName, arguments);
             } else if (entry is SetStateHandler) {
               assert(entry.stateReference is BoundStateReference);
-              _handleSetState(
-                (entry.stateReference as BoundStateReference).depth,
-                entry.stateReference.parts,
-                entry.value,
-              );
+              _handleSetState((entry.stateReference as BoundStateReference).depth, entry.stateReference.parts, entry.value);
             }
           }
         });
@@ -1478,7 +1403,7 @@ class _WidgetState extends State<_Widget> implements DataSource {
   bool _debugFetching = false;
   final List<_Subscription> _dependencies = <_Subscription>[];
 
-  Object _fetch(List<Object> argsKey, {required bool expandLists}) {
+  Object _fetch(List<Object> argsKey, { required bool expandLists }) {
     final key = _Key(_kArgsSection, argsKey);
     final Object? value = _argsCache[key];
     if (value != null && (value is! DynamicList || !expandLists)) {
@@ -1540,9 +1465,7 @@ class _WidgetState extends State<_Widget> implements DataSource {
     final _Subscription subscription;
     if (!_subscriptions.containsKey(stateKey)) {
       if (depth >= _states.length) {
-        throw const RemoteFlutterWidgetsException(
-          'Reference to state value did not correspond to any stateful remote widget.',
-        );
+        throw const RemoteFlutterWidgetsException('Reference to state value did not correspond to any stateful remote widget.');
       }
       final DynamicContent? state = _states[depth]._state;
       if (state == null) {
@@ -1604,11 +1527,9 @@ class _Key {
 
   @override
   bool operator ==(Object other) {
-    return other
-            is _Key // _Key has no subclasses, don't need to check runtimeType
-            &&
-        section == other.section &&
-        listEquals(parts, other.parts);
+    return other is _Key // _Key has no subclasses, don't need to check runtimeType
+        && section == other.section
+        && listEquals(parts, other.parts);
   }
 
   @override

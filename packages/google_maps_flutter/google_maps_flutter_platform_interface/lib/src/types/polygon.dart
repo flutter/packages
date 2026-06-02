@@ -3,7 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart' show VoidCallback, immutable, listEquals;
+import 'package:flutter/foundation.dart'
+    show VoidCallback, immutable, listEquals;
 import 'package:flutter/material.dart' show Color, Colors;
 
 import 'types.dart';

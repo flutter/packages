@@ -20,14 +20,18 @@ void main() {
 
   group('present code redemption sheet', () {
     test('null', () async {
-      expect(InAppPurchaseStoreKitPlatformAddition().presentCodeRedemptionSheet(), completes);
+      expect(
+        InAppPurchaseStoreKitPlatformAddition().presentCodeRedemptionSheet(),
+        completes,
+      );
     });
   });
 
   group('refresh receipt data', () {
     test('should refresh receipt data', () async {
-      final PurchaseVerificationData? receiptData = await InAppPurchaseStoreKitPlatformAddition()
-          .refreshPurchaseVerificationData();
+      final PurchaseVerificationData? receiptData =
+          await InAppPurchaseStoreKitPlatformAddition()
+              .refreshPurchaseVerificationData();
       expect(receiptData, isNotNull);
       expect(receiptData!.source, kIAPSource);
       expect(receiptData.localVerificationData, 'refreshed receipt data');

@@ -16,19 +16,22 @@ class App extends StatelessWidget {
   static const String title = 'GoRouter Example: Push';
 
   @override
-  Widget build(BuildContext context) => MaterialApp.router(routerConfig: _router, title: title);
+  Widget build(BuildContext context) =>
+      MaterialApp.router(routerConfig: _router, title: title);
 
   late final GoRouter _router = GoRouter(
     routes: <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (BuildContext context, GoRouterState state) => const Page1ScreenWithPush(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const Page1ScreenWithPush(),
       ),
       GoRoute(
         path: '/page2',
-        builder:
-            (BuildContext context, GoRouterState state) =>
-                Page2ScreenWithPush(int.parse(state.uri.queryParameters['push-count']!)),
+        builder: (BuildContext context, GoRouterState state) =>
+            Page2ScreenWithPush(
+              int.parse(state.uri.queryParameters['push-count']!),
+            ),
       ),
     ],
   );
@@ -66,7 +69,9 @@ class Page2ScreenWithPush extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text('${App.title}: page 2 w/ push count $pushCount')),
+    appBar: AppBar(
+      title: Text('${App.title}: page 2 w/ push count $pushCount'),
+    ),
     body: Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -81,7 +86,8 @@ class Page2ScreenWithPush extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8),
             child: ElevatedButton(
-              onPressed: () => context.push('/page2?push-count=${pushCount + 1}'),
+              onPressed: () =>
+                  context.push('/page2?push-count=${pushCount + 1}'),
               child: const Text('Push page 2 (again)'),
             ),
           ),

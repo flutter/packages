@@ -57,11 +57,10 @@ class SettingsContent extends StatelessWidget {
         ),
         Link(
           uri: Uri.parse('/book/0'),
-          builder:
-              (BuildContext context, FollowLink? followLink) => TextButton(
-                onPressed: followLink,
-                child: const Text('Go directly to /book/0 (Link)'),
-              ),
+          builder: (BuildContext context, FollowLink? followLink) => TextButton(
+            onPressed: followLink,
+            child: const Text('Go directly to /book/0 (Link)'),
+          ),
         ),
         TextButton(
           onPressed: () {
@@ -69,27 +68,27 @@ class SettingsContent extends StatelessWidget {
           },
           child: const Text('Go directly to /book/0 (GoRouter)'),
         ),
-      ].map<Widget>((Widget w) => Padding(padding: const EdgeInsets.all(8), child: w)),
+      ].map<Widget>(
+        (Widget w) => Padding(padding: const EdgeInsets.all(8), child: w),
+      ),
       TextButton(
-        onPressed:
-            () => showDialog<String>(
-              context: context,
-              builder:
-                  (BuildContext context) => AlertDialog(
-                    title: const Text('Alert!'),
-                    content: const Text('The alert description goes here.'),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, 'Cancel'),
-                        child: const Text('Cancel'),
-                      ),
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, 'OK'),
-                        child: const Text('OK'),
-                      ),
-                    ],
-                  ),
-            ),
+        onPressed: () => showDialog<String>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text('Alert!'),
+            content: const Text('The alert description goes here.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.pop(context, 'Cancel'),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, 'OK'),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        ),
         child: const Text('Show Dialog'),
       ),
     ],

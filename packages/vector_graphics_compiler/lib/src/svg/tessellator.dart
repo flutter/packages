@@ -2,7 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import '_tessellator_unsupported.dart' if (dart.library.ffi) '_tessellator_ffi.dart' as impl;
+import '_tessellator_unsupported.dart'
+    if (dart.library.ffi) '_tessellator_ffi.dart'
+    as impl;
 import 'node.dart';
 import 'visitor.dart';
 
@@ -24,7 +26,11 @@ void initializeLibTesselator(String path) => impl.initializeLibTesselator(path);
 /// Used by [VerticesBuilder.tessellate].
 class SmoothingApproximation {
   /// Creates a new smoothing approximation instance with default values.
-  const SmoothingApproximation({this.scale = 1.0, this.angleTolerance = 0.0, this.cuspLimit = 0.0});
+  const SmoothingApproximation({
+    this.scale = 1.0,
+    this.angleTolerance = 0.0,
+    this.cuspLimit = 0.0,
+  });
 
   /// The scaling coefficient to use when translating to screen coordinates.
   ///

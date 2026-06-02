@@ -9,7 +9,12 @@ import 'common/repository_package.dart';
 /// A command to run Dart's "fix" command on packages.
 class FixCommand extends PackageLoopingCommand {
   /// Creates a fix command instance.
-  FixCommand(super.packagesDir, {super.processRunner, super.platform, super.gitDir});
+  FixCommand(
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+    super.gitDir,
+  });
 
   @override
   final String name = 'fix';
@@ -25,7 +30,8 @@ class FixCommand extends PackageLoopingCommand {
   final bool hasLongOutput = false;
 
   @override
-  PackageLoopingType get packageLoopingType => PackageLoopingType.includeAllSubpackages;
+  PackageLoopingType get packageLoopingType =>
+      PackageLoopingType.includeAllSubpackages;
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {

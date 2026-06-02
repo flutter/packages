@@ -28,12 +28,18 @@ Future<bool> runPubGet(
   // Running `dart pub get` on a Flutter package can fail if a non-Flutter Dart
   // is first in the path, so use `flutter pub get` for any Flutter package.
   final bool useFlutter = alwaysUseFlutter || package.requiresFlutter();
-  final command = useFlutter ? (platform.isWindows ? 'flutter.bat' : 'flutter') : 'dart';
+  final command = useFlutter
+      ? (platform.isWindows ? 'flutter.bat' : 'flutter')
+      : 'dart';
   final args = <String>['pub', 'get'];
 
   final int exitCode;
   if (streamOutput) {
-    exitCode = await processRunner.runAndStream(command, args, workingDir: package.directory);
+    exitCode = await processRunner.runAndStream(
+      command,
+      args,
+      workingDir: package.directory,
+    );
   } else {
     final io.ProcessResult result = await processRunner.run(
       command,

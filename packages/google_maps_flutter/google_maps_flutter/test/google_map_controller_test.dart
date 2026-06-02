@@ -17,7 +17,9 @@ void main() {
     GoogleMapsFlutterPlatform.instance = platform;
   });
 
-  testWidgets('onMapCreated is called with controller', (WidgetTester tester) async {
+  testWidgets('onMapCreated is called with controller', (
+    WidgetTester tester,
+  ) async {
     GoogleMapController? controller;
 
     await tester.pumpWidget(
@@ -34,7 +36,9 @@ void main() {
     await expectLater(controller?.getZoomLevel(), isNotNull);
   });
 
-  testWidgets('controller throws when used after dispose', (WidgetTester tester) async {
+  testWidgets('controller throws when used after dispose', (
+    WidgetTester tester,
+  ) async {
     GoogleMapController? controller;
 
     await tester.pumpWidget(
@@ -50,6 +54,9 @@ void main() {
     // Now dispose of the map...
     await tester.pumpWidget(Container());
 
-    await expectLater(() => controller?.getZoomLevel(), throwsA(isA<StateError>()));
+    await expectLater(
+      () => controller?.getZoomLevel(),
+      throwsA(isA<StateError>()),
+    );
   });
 }

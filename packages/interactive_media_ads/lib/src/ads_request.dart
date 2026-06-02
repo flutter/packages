@@ -82,7 +82,8 @@ class AdsRequest {
 
   /// A [ContentProgressProvider] instance to allow scheduling of ad breaks
   /// based on content progress (cue points).
-  ContentProgressProvider? get contentProgressProvider => platform.contentProgressProvider != null
+  ContentProgressProvider? get contentProgressProvider =>
+      platform.contentProgressProvider != null
       ? ContentProgressProvider.fromPlatform(platform.contentProgressProvider!)
       : null;
 
@@ -109,7 +110,8 @@ class AdsRequest {
 
   /// Specifies the maximum amount of time to wait, after calling requestAds,
   /// before requesting the ad tag URL.
-  Duration? get liveStreamPrefetchMaxWaitTime => platform.liveStreamPrefetchMaxWaitTime;
+  Duration? get liveStreamPrefetchMaxWaitTime =>
+      platform.liveStreamPrefetchMaxWaitTime;
 
   /// Specifies the VAST load timeout in milliseconds for a single wrapper.
   Duration? get vastLoadTimeout => platform.vastLoadTimeout;

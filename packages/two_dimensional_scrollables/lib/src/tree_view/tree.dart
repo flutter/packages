@@ -30,10 +30,13 @@ const double _kDefaultRowExtent = 40.0;
 /// [TreeView]'s state.
 class TreeViewNode<T> {
   /// Creates a [TreeViewNode] instance for use in a [TreeView].
-  TreeViewNode(T content, {List<TreeViewNode<T>>? children, bool expanded = false})
-    : _expanded = children != null && children.isNotEmpty && expanded,
-      _content = content,
-      _children = children ?? <TreeViewNode<T>>[];
+  TreeViewNode(
+    T content, {
+    List<TreeViewNode<T>>? children,
+    bool expanded = false,
+  }) : _expanded = children != null && children.isNotEmpty && expanded,
+       _content = content,
+       _children = children ?? <TreeViewNode<T>>[];
 
   /// The subject matter of the node.
   ///
@@ -261,7 +264,9 @@ class TreeViewController {
   ///    encloses the given context. Also includes some sample code in its
   ///    documentation.
   static TreeViewController? maybeOf(BuildContext context) {
-    return context.findAncestorStateOfType<_TreeViewState<Object?>>()?.controller;
+    return context
+        .findAncestorStateOfType<_TreeViewState<Object?>>()
+        ?.controller;
   }
 }
 
@@ -571,7 +576,8 @@ class TreeView<T> extends StatefulWidget {
   ) {
     final Duration animationDuration =
         toggleAnimationStyle.duration ?? TreeView.defaultAnimationDuration;
-    final Curve animationCurve = toggleAnimationStyle.curve ?? TreeView.defaultAnimationCurve;
+    final Curve animationCurve =
+        toggleAnimationStyle.curve ?? TreeView.defaultAnimationCurve;
     final int index = TreeViewController.of(context).getActiveIndexFor(node)!;
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -637,7 +643,11 @@ class _TreeViewState<T> extends State<TreeView<T>>
   }
 
   // Flattens the tree, omitting nodes that are not active.
-  void _unpackActiveNodes({int depth = 0, List<TreeViewNode<T>>? nodes, TreeViewNode<T>? parent}) {
+  void _unpackActiveNodes({
+    int depth = 0,
+    List<TreeViewNode<T>>? nodes,
+    TreeViewNode<T>? parent,
+  }) {
     if (nodes == null) {
       _activeNodes.clear();
       _rowDepths.clear();
@@ -649,7 +659,11 @@ class _TreeViewState<T> extends State<TreeView<T>>
       _activeNodes.add(node);
       _rowDepths[_activeNodes.length - 1] = depth;
       if (_shouldUnpackNode(node)) {
-        _unpackActiveNodes(depth: depth + 1, nodes: node.children, parent: node);
+        _unpackActiveNodes(
+          depth: depth + 1,
+          nodes: node.children,
+          parent: node,
+        );
       }
     }
   }
@@ -800,7 +814,10 @@ class _TreeViewState<T> extends State<TreeView<T>>
     activeNodesToExpand.reversed.forEach(toggleNode);
   }
 
-  void _expandAll(List<TreeViewNode<T>> tree, List<TreeViewNode<T>> activeNodesToExpand) {
+  void _expandAll(
+    List<TreeViewNode<T>> tree,
+    List<TreeViewNode<T>> activeNodesToExpand,
+  ) {
     for (final node in tree) {
       if (node.children.isNotEmpty) {
         // This is a parent node.
@@ -829,7 +846,10 @@ class _TreeViewState<T> extends State<TreeView<T>>
     activeNodesToCollapse.reversed.forEach(toggleNode);
   }
 
-  void _collapseAll(List<TreeViewNode<T>> tree, List<TreeViewNode<T>> activeNodesToCollapse) {
+  void _collapseAll(
+    List<TreeViewNode<T>> tree,
+    List<TreeViewNode<T>> activeNodesToCollapse,
+  ) {
     for (final node in tree) {
       if (node.children.isNotEmpty) {
         // This is a parent node.
@@ -857,7 +877,8 @@ class _TreeViewState<T> extends State<TreeView<T>>
     // animations keys each time we build with an updated active node list.
     _activeAnimations.clear();
     for (final TreeViewNode<T> node in _currentAnimationForParent.keys) {
-      final _AnimationRecord animationRecord = _currentAnimationForParent[node]!;
+      final _AnimationRecord animationRecord =
+          _currentAnimationForParent[node]!;
       final int leadingChildIndex = _activeNodes.indexOf(node) + 1;
       final TreeViewNodesAnimation animatingChildren = (
         fromIndex: leadingChildIndex,
@@ -894,7 +915,9 @@ class _TreeViewState<T> extends State<TreeView<T>>
           AnimationController(
             value: node._expanded ? 0.0 : 1.0,
             vsync: this,
-            duration: widget.toggleAnimationStyle?.duration ?? TreeView.defaultAnimationDuration,
+            duration:
+                widget.toggleAnimationStyle?.duration ??
+                TreeView.defaultAnimationDuration,
           );
       controller
         ..addStatusListener((AnimationStatus status) {
@@ -931,7 +954,9 @@ class _TreeViewState<T> extends State<TreeView<T>>
 
       final newAnimation = CurvedAnimation(
         parent: controller,
-        curve: widget.toggleAnimationStyle?.curve ?? TreeView.defaultAnimationCurve,
+        curve:
+            widget.toggleAnimationStyle?.curve ??
+            TreeView.defaultAnimationCurve,
       );
       _currentAnimationForParent[node] = (
         controller: controller,
@@ -1075,7 +1100,10 @@ class TreeViewport extends TwoDimensionalViewport {
   }
 
   @override
-  void updateRenderObject(BuildContext context, RenderTreeViewport renderObject) {
+  void updateRenderObject(
+    BuildContext context,
+    RenderTreeViewport renderObject,
+  ) {
     renderObject
       ..activeAnimations = activeAnimations
       ..rowDepths = rowDepths

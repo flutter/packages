@@ -41,7 +41,9 @@ class CustomTreeExampleState extends State<CustomTreeExample> {
           children: <TreeViewNode<String>>[
             TreeViewNode<String>(
               'common',
-              children: <TreeViewNode<String>>[TreeViewNode<String>('span.dart')],
+              children: <TreeViewNode<String>>[
+                TreeViewNode<String>('span.dart'),
+              ],
             ),
             TreeViewNode<String>(
               'table_view',
@@ -74,7 +76,9 @@ class CustomTreeExampleState extends State<CustomTreeExample> {
       children: <TreeViewNode<String>>[
         TreeViewNode<String>(
           'common',
-          children: <TreeViewNode<String>>[TreeViewNode<String>('span_test.dart')],
+          children: <TreeViewNode<String>>[
+            TreeViewNode<String>('span_test.dart'),
+          ],
         ),
         TreeViewNode<String>(
           'table_view',
@@ -116,7 +120,9 @@ class CustomTreeExampleState extends State<CustomTreeExample> {
         SizedBox(width: 10.0 * node.depth! + 8.0),
         DecoratedBox(
           decoration: BoxDecoration(
-            border: node.parent != null ? Border(left: border, bottom: border) : null,
+            border: node.parent != null
+                ? Border(left: border, bottom: border)
+                : null,
           ),
           child: const SizedBox(height: 50.0, width: 20.0),
         ),
@@ -137,19 +143,22 @@ class CustomTreeExampleState extends State<CustomTreeExample> {
     );
   }
 
-  Map<Type, GestureRecognizerFactory> _getTapRecognizer(TreeViewNode<String> node) {
+  Map<Type, GestureRecognizerFactory> _getTapRecognizer(
+    TreeViewNode<String> node,
+  ) {
     return <Type, GestureRecognizerFactory>{
-      TapGestureRecognizer: GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
-        () => TapGestureRecognizer(),
-        (TapGestureRecognizer t) => t.onTap = () {
-          setState(() {
-            // Toggling the node here instead means any tap on the row can
-            // toggle parent nodes opened and closed.
-            treeController.toggleNode(node);
-            _selectedNode = node;
-          });
-        },
-      ),
+      TapGestureRecognizer:
+          GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
+            () => TapGestureRecognizer(),
+            (TapGestureRecognizer t) => t.onTap = () {
+              setState(() {
+                // Toggling the node here instead means any tap on the row can
+                // toggle parent nodes opened and closed.
+                treeController.toggleNode(node);
+                _selectedNode = node;
+              });
+            },
+          ),
     };
   }
 
@@ -164,8 +173,12 @@ class CustomTreeExampleState extends State<CustomTreeExample> {
           thumbVisibility: true,
           child: TreeView<String>(
             controller: treeController,
-            verticalDetails: ScrollableDetails.vertical(controller: verticalController),
-            horizontalDetails: ScrollableDetails.horizontal(controller: _horizontalController),
+            verticalDetails: ScrollableDetails.vertical(
+              controller: verticalController,
+            ),
+            horizontalDetails: ScrollableDetails.horizontal(
+              controller: _horizontalController,
+            ),
             tree: _tree,
             onNodeToggle: (TreeViewNode<String> node) {
               setState(() {
@@ -176,16 +189,22 @@ class CustomTreeExampleState extends State<CustomTreeExample> {
             treeRowBuilder: (TreeViewNode<String> node) {
               if (_selectedNode == node) {
                 return TreeRow(
-                  extent: FixedTreeRowExtent(node.children.isNotEmpty ? 60.0 : 50.0),
+                  extent: FixedTreeRowExtent(
+                    node.children.isNotEmpty ? 60.0 : 50.0,
+                  ),
                   recognizerFactories: _getTapRecognizer(node),
-                  backgroundDecoration: TreeRowDecoration(color: Colors.amber[100]),
+                  backgroundDecoration: TreeRowDecoration(
+                    color: Colors.amber[100],
+                  ),
                   foregroundDecoration: const TreeRowDecoration(
                     border: TreeRowBorder.all(BorderSide()),
                   ),
                 );
               }
               return TreeRow(
-                extent: FixedTreeRowExtent(node.children.isNotEmpty ? 60.0 : 50.0),
+                extent: FixedTreeRowExtent(
+                  node.children.isNotEmpty ? 60.0 : 50.0,
+                ),
                 recognizerFactories: _getTapRecognizer(node),
               );
             },
@@ -213,7 +232,11 @@ class CustomTreeExampleState extends State<CustomTreeExample> {
     if (_selectedNode != null) {
       selectedChildren.addAll(<Widget>[
         const Spacer(),
-        Icon(_selectedNode!.children.isEmpty ? Icons.file_open_outlined : Icons.folder_outlined),
+        Icon(
+          _selectedNode!.children.isEmpty
+              ? Icons.file_open_outlined
+              : Icons.folder_outlined,
+        ),
         const SizedBox(height: 25.0),
         Text(_selectedNode!.content),
         const Spacer(),

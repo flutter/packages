@@ -25,8 +25,11 @@ class SvgTheme {
   // temporarily and unexpectedly change during route transitions in common
   // patterns used in `MaterialApp`. This busts caching and destroys
   // performance.
-  const SvgTheme({this.currentColor = const Color(0xFF000000), this.fontSize = 14, double? xHeight})
-    : xHeight = xHeight ?? fontSize / 2;
+  const SvgTheme({
+    this.currentColor = const Color(0xFF000000),
+    this.fontSize = 14,
+    double? xHeight,
+  }) : xHeight = xHeight ?? fontSize / 2;
 
   /// The default color applied to SVG elements that inherit the color property.
   /// See: https://developer.mozilla.org/en-US/docs/Web/CSS/color_value#currentcolor_keyword
@@ -82,7 +85,12 @@ abstract class ColorMapper {
   /// Returns a new color to use in place of [color] during SVG parsing.
   ///
   /// The SVG parser will call this method every time it parses a color
-  Color substitute(String? id, String elementName, String attributeName, Color color);
+  Color substitute(
+    String? id,
+    String elementName,
+    String attributeName,
+    Color color,
+  );
 }
 
 class _DelegateVgColorMapper extends vg.ColorMapper {
@@ -91,7 +99,12 @@ class _DelegateVgColorMapper extends vg.ColorMapper {
   final ColorMapper colorMapper;
 
   @override
-  vg.Color substitute(String? id, String elementName, String attributeName, vg.Color color) {
+  vg.Color substitute(
+    String? id,
+    String elementName,
+    String attributeName,
+    vg.Color color,
+  ) {
     final Color substituteColor = colorMapper.substitute(
       id,
       elementName,
@@ -121,7 +134,8 @@ abstract class SvgLoader<T> extends BytesLoader {
 
   /// Will be called
   @protected
-  Future<T?> prepareMessage(BuildContext? context) => SynchronousFuture<T?>(null);
+  Future<T?> prepareMessage(BuildContext? context) =>
+      SynchronousFuture<T?>(null);
 
   /// Returns the svg theme.
   @visibleForTesting
@@ -148,7 +162,9 @@ abstract class SvgLoader<T> extends BytesLoader {
               .encodeSvg(
                 xml: provideSvg(message),
                 theme: theme.toVgTheme(),
-                colorMapper: colorMapper == null ? null : _DelegateVgColorMapper(colorMapper!),
+                colorMapper: colorMapper == null
+                    ? null
+                    : _DelegateVgColorMapper(colorMapper!),
                 debugName: 'Svg loader',
                 enableClippingOptimizer: false,
                 enableMaskingOptimizer: false,
@@ -184,7 +200,11 @@ abstract class SvgLoader<T> extends BytesLoader {
 @immutable
 class SvgCacheKey {
   /// See [SvgCacheKey].
-  const SvgCacheKey({required this.keyData, required this.colorMapper, this.theme});
+  const SvgCacheKey({
+    required this.keyData,
+    required this.colorMapper,
+    this.theme,
+  });
 
   /// The theme for this cached SVG.
   final SvgTheme? theme;
@@ -291,7 +311,11 @@ class SvgFileLoader extends SvgLoader<void> {
 // value of `DefaultAssetBundle.of(context)`.
 @immutable
 class _AssetByteLoaderCacheKey {
-  const _AssetByteLoaderCacheKey(this.assetName, this.packageName, this.assetBundle);
+  const _AssetByteLoaderCacheKey(
+    this.assetName,
+    this.packageName,
+    this.assetBundle,
+  );
 
   final String assetName;
   final String? packageName;
@@ -347,9 +371,9 @@ class SvgAssetLoader extends SvgLoader<ByteData> {
 
   @override
   Future<ByteData?> prepareMessage(BuildContext? context) {
-    return _resolveBundle(
-      context,
-    ).load(packageName == null ? assetName : 'packages/$packageName/$assetName');
+    return _resolveBundle(context).load(
+      packageName == null ? assetName : 'packages/$packageName/$assetName',
+    );
   }
 
   @override
@@ -362,12 +386,17 @@ class SvgAssetLoader extends SvgLoader<ByteData> {
     return SvgCacheKey(
       theme: theme,
       colorMapper: colorMapper,
-      keyData: _AssetByteLoaderCacheKey(assetName, packageName, _resolveBundle(context)),
+      keyData: _AssetByteLoaderCacheKey(
+        assetName,
+        packageName,
+        _resolveBundle(context),
+      ),
     );
   }
 
   @override
-  int get hashCode => Object.hash(assetName, packageName, assetBundle, theme, colorMapper);
+  int get hashCode =>
+      Object.hash(assetName, packageName, assetBundle, theme, colorMapper);
 
   @override
   bool operator ==(Object other) {
@@ -406,7 +435,10 @@ class SvgNetworkLoader extends SvgLoader<Uint8List> {
   @override
   Future<Uint8List?> prepareMessage(BuildContext? context) async {
     final http.Client client = _httpClient ?? http.Client();
-    final http.Response response = await client.get(Uri.parse(url), headers: headers);
+    final http.Response response = await client.get(
+      Uri.parse(url),
+      headers: headers,
+    );
     if (_httpClient == null) {
       client.close();
     }
@@ -414,7 +446,8 @@ class SvgNetworkLoader extends SvgLoader<Uint8List> {
   }
 
   @override
-  String provideSvg(Uint8List? message) => utf8.decode(message!, allowMalformed: true);
+  String provideSvg(Uint8List? message) =>
+      utf8.decode(message!, allowMalformed: true);
 
   @override
   int get hashCode => Object.hash(url, headers, theme, colorMapper);

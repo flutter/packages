@@ -6,27 +6,31 @@ import 'author.dart';
 import 'book.dart';
 
 /// Library data mock.
-final Library libraryInstance =
-    Library()
-      ..addBook(
-        title: 'Left Hand of Darkness',
-        authorName: 'Ursula K. Le Guin',
-        isPopular: true,
-        isNew: true,
-      )
-      ..addBook(
-        title: 'Too Like the Lightning',
-        authorName: 'Ada Palmer',
-        isPopular: false,
-        isNew: true,
-      )
-      ..addBook(title: 'Kindred', authorName: 'Octavia E. Butler', isPopular: true, isNew: false)
-      ..addBook(
-        title: 'The Lathe of Heaven',
-        authorName: 'Ursula K. Le Guin',
-        isPopular: false,
-        isNew: false,
-      );
+final Library libraryInstance = Library()
+  ..addBook(
+    title: 'Left Hand of Darkness',
+    authorName: 'Ursula K. Le Guin',
+    isPopular: true,
+    isNew: true,
+  )
+  ..addBook(
+    title: 'Too Like the Lightning',
+    authorName: 'Ada Palmer',
+    isPopular: false,
+    isNew: true,
+  )
+  ..addBook(
+    title: 'Kindred',
+    authorName: 'Octavia E. Butler',
+    isPopular: true,
+    isNew: false,
+  )
+  ..addBook(
+    title: 'The Lathe of Heaven',
+    authorName: 'Ursula K. Le Guin',
+    isPopular: false,
+    isNew: false,
+  );
 
 /// A library that contains books and authors.
 class Library {
@@ -65,8 +69,12 @@ class Library {
   }
 
   /// The list of popular books in the library.
-  List<Book> get popularBooks => <Book>[...allBooks.where((Book book) => book.isPopular)];
+  List<Book> get popularBooks => <Book>[
+    ...allBooks.where((Book book) => book.isPopular),
+  ];
 
   /// The list of new books in the library.
-  List<Book> get newBooks => <Book>[...allBooks.where((Book book) => book.isNew)];
+  List<Book> get newBooks => <Book>[
+    ...allBooks.where((Book book) => book.isNew),
+  ];
 }

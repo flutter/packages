@@ -13,7 +13,8 @@ import 'interactive_media_ads.g.dart';
 import 'ios_companion_ad_slot.dart';
 
 /// Implementation of [PlatformAdDisplayContainerCreationParams] for iOS.
-final class IOSAdDisplayContainerCreationParams extends PlatformAdDisplayContainerCreationParams {
+final class IOSAdDisplayContainerCreationParams
+    extends PlatformAdDisplayContainerCreationParams {
   /// Constructs a [IOSAdDisplayContainerCreationParams].
   const IOSAdDisplayContainerCreationParams({
     super.key,
@@ -55,7 +56,9 @@ base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
   late final IOSAdDisplayContainerCreationParams _iosParams =
       params is IOSAdDisplayContainerCreationParams
       ? params as IOSAdDisplayContainerCreationParams
-      : IOSAdDisplayContainerCreationParams.fromPlatformAdDisplayContainerCreationParams(params);
+      : IOSAdDisplayContainerCreationParams.fromPlatformAdDisplayContainerCreationParams(
+          params,
+        );
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +78,9 @@ base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
         params.onContainerAdded(this);
       },
       layoutDirection: params.layoutDirection,
-      creationParams: PigeonInstanceManager.instance.getIdentifier(_controller.view),
+      creationParams: PigeonInstanceManager.instance.getIdentifier(
+        _controller.view,
+      ),
       creationParamsCodec: const StandardMessageCodec(),
     );
   }
@@ -89,7 +94,8 @@ base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
     return UIViewController(
       viewDidAppear: (_, bool animated) {
         final IOSAdDisplayContainer? container = interfaceContainer.target;
-        if (container != null && !container._viewDidAppearCompleter.isCompleted) {
+        if (container != null &&
+            !container._viewDidAppearCompleter.isCompleted) {
           container._viewDidAppearCompleter.complete();
         }
       },

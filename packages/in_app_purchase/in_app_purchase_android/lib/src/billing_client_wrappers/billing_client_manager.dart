@@ -22,10 +22,11 @@ abstract class HasBillingResponse {
 /// Factory for creating BillingClient instances, to allow injection of
 /// custom billing clients in tests.
 @visibleForTesting
-typedef BillingClientFactory = BillingClient Function(
-  PurchasesUpdatedListener onPurchasesUpdated,
-  UserSelectedAlternativeBillingListener? alternativeBillingListener,
-);
+typedef BillingClientFactory =
+    BillingClient Function(
+      PurchasesUpdatedListener onPurchasesUpdated,
+      UserSelectedAlternativeBillingListener? alternativeBillingListener,
+    );
 
 /// Utility class that manages a [BillingClient] connection.
 ///
@@ -43,10 +44,13 @@ class BillingClientManager {
   /// Creates the [BillingClientManager].
   ///
   /// Immediately initializes connection to the underlying [BillingClient].
-  BillingClientManager({@visibleForTesting BillingClientFactory? billingClientFactory})
-    : _billingChoiceMode = BillingChoiceMode.playBillingOnly,
-      _pendingPurchasesParams = const PendingPurchasesParamsWrapper(enablePrepaidPlans: false),
-      _billingClientFactory = billingClientFactory ?? _createBillingClient {
+  BillingClientManager({
+    @visibleForTesting BillingClientFactory? billingClientFactory,
+  }) : _billingChoiceMode = BillingChoiceMode.playBillingOnly,
+       _pendingPurchasesParams = const PendingPurchasesParamsWrapper(
+         enablePrepaidPlans: false,
+       ),
+       _billingClientFactory = billingClientFactory ?? _createBillingClient {
     _connect();
   }
 
@@ -84,7 +88,8 @@ class BillingClientManager {
 
   final StreamController<PurchasesResultWrapper> _purchasesUpdatedController =
       StreamController<PurchasesResultWrapper>.broadcast();
-  final StreamController<UserChoiceDetailsWrapper> _userChoiceAlternativeBillingController =
+  final StreamController<UserChoiceDetailsWrapper>
+  _userChoiceAlternativeBillingController =
       StreamController<UserChoiceDetailsWrapper>.broadcast();
 
   BillingChoiceMode _billingChoiceMode;
@@ -114,7 +119,8 @@ class BillingClientManager {
     _debugAssertNotDisposed();
     await _readyFuture;
     final R result = await action(client);
-    if (result.responseCode == BillingResponse.serviceDisconnected && !_isDisposed) {
+    if (result.responseCode == BillingResponse.serviceDisconnected &&
+        !_isDisposed) {
       await _connect();
       return runWithClient(action);
     } else {
@@ -131,7 +137,9 @@ class BillingClientManager {
   ///
   /// See [runWithClient] for operations that return a subclass
   /// of [HasBillingResponse].
-  Future<R> runWithClientNonRetryable<R>(Future<R> Function(BillingClient client) action) async {
+  Future<R> runWithClientNonRetryable<R>(
+    Future<R> Function(BillingClient client) action,
+  ) async {
     _debugAssertNotDisposed();
     await _readyFuture;
     return action(client);
@@ -160,7 +168,9 @@ class BillingClientManager {
   /// Callers need to check if [BillingChoiceMode.alternativeBillingOnly] is
   /// available by calling [BillingClientWrapper.isAlternativeBillingOnlyAvailable]
   /// first.
-  Future<void> reconnectWithBillingChoiceMode(BillingChoiceMode billingChoiceMode) async {
+  Future<void> reconnectWithBillingChoiceMode(
+    BillingChoiceMode billingChoiceMode,
+  ) async {
     _billingChoiceMode = billingChoiceMode;
     await _reconnect();
   }

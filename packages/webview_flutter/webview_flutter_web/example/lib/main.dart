@@ -70,7 +70,10 @@ class _SampleMenu extends StatelessWidget {
     final params = LoadRequestParams(
       uri: Uri.parse('https://httpbin.org/post'),
       method: LoadRequestMethod.post,
-      headers: const <String, String>{'foo': 'bar', 'Content-Type': 'text/plain'},
+      headers: const <String, String>{
+        'foo': 'bar',
+        'Content-Type': 'text/plain',
+      },
       body: Uint8List.fromList('Test Body'.codeUnits),
     );
     await controller.loadRequest(params);

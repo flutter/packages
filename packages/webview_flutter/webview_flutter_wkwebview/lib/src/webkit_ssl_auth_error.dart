@@ -41,7 +41,10 @@ class WebKitSslAuthError extends PlatformSslAuthError {
 
   @override
   Future<void> cancel() async {
-    await _onResponse(UrlSessionAuthChallengeDisposition.cancelAuthenticationChallenge, null);
+    await _onResponse(
+      UrlSessionAuthChallengeDisposition.cancelAuthenticationChallenge,
+      null,
+    );
   }
 
   @override

@@ -129,7 +129,11 @@ void main() {
           fields: <NamedType>[
             NamedType(
               name: 'bar',
-              type: TypeDeclaration(baseName: 'Bar', isNullable: true, associatedClass: emptyClass),
+              type: TypeDeclaration(
+                baseName: 'Bar',
+                isNullable: true,
+                associatedClass: emptyClass,
+              ),
             ),
           ],
         ),
@@ -147,8 +151,14 @@ void main() {
     );
     final List<EnumeratedType> classes = getEnumeratedTypes(root).toList();
     expect(classes.length, 2);
-    expect(classes.where((EnumeratedType element) => element.name == 'Foo').length, 1);
-    expect(classes.where((EnumeratedType element) => element.name == 'Bar').length, 1);
+    expect(
+      classes.where((EnumeratedType element) => element.name == 'Foo').length,
+      1,
+    );
+    expect(
+      classes.where((EnumeratedType element) => element.name == 'Bar').length,
+      1,
+    );
   });
 
   test('getEnumeratedTypes: Object', () {
@@ -192,7 +202,10 @@ void main() {
     );
     final List<EnumeratedType> classes = getEnumeratedTypes(root).toList();
     expect(classes.length, 1);
-    expect(classes.where((EnumeratedType element) => element.name == 'Foo').length, 1);
+    expect(
+      classes.where((EnumeratedType element) => element.name == 'Foo').length,
+      1,
+    );
   });
 
   test('getEnumeratedTypes:ue entries', () {
@@ -254,11 +267,16 @@ void main() {
     );
     final List<EnumeratedType> classes = getEnumeratedTypes(root).toList();
     expect(classes.length, 1);
-    expect(classes.where((EnumeratedType element) => element.name == 'Foo').length, 1);
+    expect(
+      classes.where((EnumeratedType element) => element.name == 'Foo').length,
+      1,
+    );
   });
 
   test('deduces package name successfully', () {
-    final String? dartPackageName = deducePackageName('./pigeons/core_tests.dart');
+    final String? dartPackageName = deducePackageName(
+      './pigeons/core_tests.dart',
+    );
 
     expect(dartPackageName, 'pigeon');
   });
@@ -295,7 +313,10 @@ void main() {
 
     expect(
       api.allSuperClasses().toList(),
-      containsAllInOrder(<AstProxyApi>[superClassApi, superClassOfSuperClassApi]),
+      containsAllInOrder(<AstProxyApi>[
+        superClassApi,
+        superClassOfSuperClassApi,
+      ]),
     );
   });
 
@@ -349,8 +370,16 @@ void main() {
       constructors: <Constructor>[],
       fields: <ApiField>[],
       interfaces: <TypeDeclaration>{
-        TypeDeclaration(baseName: 'Api2', isNullable: false, associatedProxyApi: interfaceApi),
-        TypeDeclaration(baseName: 'Api3', isNullable: false, associatedProxyApi: interfaceApi2),
+        TypeDeclaration(
+          baseName: 'Api2',
+          isNullable: false,
+          associatedProxyApi: interfaceApi,
+        ),
+        TypeDeclaration(
+          baseName: 'Api3',
+          isNullable: false,
+          associatedProxyApi: interfaceApi2,
+        ),
       },
     );
 
@@ -365,38 +394,53 @@ void main() {
     );
   });
 
-  test('recursiveFindAllInterfacesApis throws error if api recursively implements itself', () {
-    final a = AstProxyApi(
-      name: 'A',
-      methods: <Method>[],
-      constructors: <Constructor>[],
-      fields: <ApiField>[],
-    );
-    final b = AstProxyApi(
-      name: 'B',
-      methods: <Method>[],
-      constructors: <Constructor>[],
-      fields: <ApiField>[],
-    );
-    final c = AstProxyApi(
-      name: 'C',
-      methods: <Method>[],
-      constructors: <Constructor>[],
-      fields: <ApiField>[],
-    );
+  test(
+    'recursiveFindAllInterfacesApis throws error if api recursively implements itself',
+    () {
+      final a = AstProxyApi(
+        name: 'A',
+        methods: <Method>[],
+        constructors: <Constructor>[],
+        fields: <ApiField>[],
+      );
+      final b = AstProxyApi(
+        name: 'B',
+        methods: <Method>[],
+        constructors: <Constructor>[],
+        fields: <ApiField>[],
+      );
+      final c = AstProxyApi(
+        name: 'C',
+        methods: <Method>[],
+        constructors: <Constructor>[],
+        fields: <ApiField>[],
+      );
 
-    a.interfaces = <TypeDeclaration>{
-      TypeDeclaration(baseName: 'B', isNullable: false, associatedProxyApi: b),
-    };
-    b.interfaces = <TypeDeclaration>{
-      TypeDeclaration(baseName: 'C', isNullable: false, associatedProxyApi: c),
-    };
-    c.interfaces = <TypeDeclaration>{
-      TypeDeclaration(baseName: 'A', isNullable: false, associatedProxyApi: a),
-    };
+      a.interfaces = <TypeDeclaration>{
+        TypeDeclaration(
+          baseName: 'B',
+          isNullable: false,
+          associatedProxyApi: b,
+        ),
+      };
+      b.interfaces = <TypeDeclaration>{
+        TypeDeclaration(
+          baseName: 'C',
+          isNullable: false,
+          associatedProxyApi: c,
+        ),
+      };
+      c.interfaces = <TypeDeclaration>{
+        TypeDeclaration(
+          baseName: 'A',
+          isNullable: false,
+          associatedProxyApi: a,
+        ),
+      };
 
-    expect(() => a.apisOfInterfaces(), throwsArgumentError);
-  });
+      expect(() => a.apisOfInterfaces(), throwsArgumentError);
+    },
+  );
 
   test('findHighestApiRequirement', () {
     final typeWithoutMinApi = TypeDeclaration(
@@ -432,19 +476,24 @@ void main() {
       ),
     );
 
-    final ({TypeDeclaration type, int version})? result = findHighestApiRequirement(
-      <TypeDeclaration>[typeWithoutMinApi, typeWithMinApi, typeWithHighestMinApi],
-      onGetApiRequirement: (TypeDeclaration type) {
-        if (type == typeWithMinApi) {
-          return 1;
-        } else if (type == typeWithHighestMinApi) {
-          return 2;
-        }
+    final ({TypeDeclaration type, int version})? result =
+        findHighestApiRequirement(
+          <TypeDeclaration>[
+            typeWithoutMinApi,
+            typeWithMinApi,
+            typeWithHighestMinApi,
+          ],
+          onGetApiRequirement: (TypeDeclaration type) {
+            if (type == typeWithMinApi) {
+              return 1;
+            } else if (type == typeWithHighestMinApi) {
+              return 2;
+            }
 
-        return null;
-      },
-      onCompare: (int one, int two) => one.compareTo(two),
-    );
+            return null;
+          },
+          onCompare: (int one, int two) => one.compareTo(two),
+        );
 
     expect(result?.type, typeWithHighestMinApi);
     expect(result?.version, 2);

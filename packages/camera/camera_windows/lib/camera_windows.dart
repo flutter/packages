@@ -15,7 +15,8 @@ import 'src/messages.g.dart';
 /// An implementation of [CameraPlatform] for Windows.
 class CameraWindows extends CameraPlatform {
   /// Creates a new Windows [CameraPlatform] implementation instance.
-  CameraWindows({@visibleForTesting CameraApi? api}) : _hostApi = api ?? CameraApi();
+  CameraWindows({@visibleForTesting CameraApi? api})
+    : _hostApi = api ?? CameraApi();
 
   /// Registers the Windows implementation of CameraPlatform.
   static void registerWith() {
@@ -28,7 +29,8 @@ class CameraWindows extends CameraPlatform {
   /// The per-camera handlers for messages that should be rebroadcast to
   /// clients as [CameraEvent]s.
   @visibleForTesting
-  final Map<int, HostCameraMessageHandler> hostCameraHandlers = <int, HostCameraMessageHandler>{};
+  final Map<int, HostCameraMessageHandler> hostCameraHandlers =
+      <int, HostCameraMessageHandler>{};
 
   /// The controller that broadcasts events coming from handleCameraMethodCall
   ///
@@ -41,8 +43,9 @@ class CameraWindows extends CameraPlatform {
       StreamController<CameraEvent>.broadcast();
 
   /// Returns a stream of camera events for the given [cameraId].
-  Stream<CameraEvent> _cameraEvents(int cameraId) =>
-      cameraEventStreamController.stream.where((CameraEvent event) => event.cameraId == cameraId);
+  Stream<CameraEvent> _cameraEvents(int cameraId) => cameraEventStreamController
+      .stream
+      .where((CameraEvent event) => event.cameraId == cameraId);
 
   @override
   Future<List<CameraDescription>> availableCameras() async {
@@ -80,7 +83,10 @@ class CameraWindows extends CameraPlatform {
   ) async {
     try {
       // If resolutionPreset is not specified, plugin selects the highest resolution possible.
-      return await _hostApi.create(cameraDescription.name, _pigeonMediaSettings(mediaSettings));
+      return await _hostApi.create(
+        cameraDescription.name,
+        _pigeonMediaSettings(mediaSettings),
+      );
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }
@@ -163,7 +169,10 @@ class CameraWindows extends CameraPlatform {
   }
 
   @override
-  Future<void> lockCaptureOrientation(int cameraId, DeviceOrientation orientation) async {
+  Future<void> lockCaptureOrientation(
+    int cameraId,
+    DeviceOrientation orientation,
+  ) async {
     // TODO(jokerttu): Implement lock capture orientation feature, https://github.com/flutter/flutter/issues/97540.
     throw UnimplementedError('lockCaptureOrientation() is not implemented.');
   }
@@ -187,7 +196,10 @@ class CameraWindows extends CameraPlatform {
   }
 
   @override
-  Future<void> startVideoRecording(int cameraId, {Duration? maxVideoDuration}) async {
+  Future<void> startVideoRecording(
+    int cameraId, {
+    Duration? maxVideoDuration,
+  }) async {
     // Ignore maxVideoDuration, as it is unimplemented and deprecated.
     return startVideoCapturing(VideoCaptureOptions(cameraId));
   }
@@ -195,7 +207,9 @@ class CameraWindows extends CameraPlatform {
   @override
   Future<void> startVideoCapturing(VideoCaptureOptions options) async {
     if (options.streamCallback != null || options.streamOptions != null) {
-      throw UnimplementedError('Streaming is not currently supported on Windows');
+      throw UnimplementedError(
+        'Streaming is not currently supported on Windows',
+      );
     }
 
     // Currently none of `options` is supported on Windows, so it's not passed.
@@ -211,12 +225,16 @@ class CameraWindows extends CameraPlatform {
 
   @override
   Future<void> pauseVideoRecording(int cameraId) async {
-    throw UnsupportedError('pauseVideoRecording() is not supported due to Win32 API limitations.');
+    throw UnsupportedError(
+      'pauseVideoRecording() is not supported due to Win32 API limitations.',
+    );
   }
 
   @override
   Future<void> resumeVideoRecording(int cameraId) async {
-    throw UnsupportedError('resumeVideoRecording() is not supported due to Win32 API limitations.');
+    throw UnsupportedError(
+      'resumeVideoRecording() is not supported due to Win32 API limitations.',
+    );
   }
 
   @override
@@ -236,7 +254,9 @@ class CameraWindows extends CameraPlatform {
     assert(point == null || point.x >= 0 && point.x <= 1);
     assert(point == null || point.y >= 0 && point.y <= 1);
 
-    throw UnsupportedError('setExposurePoint() is not supported due to Win32 API limitations.');
+    throw UnsupportedError(
+      'setExposurePoint() is not supported due to Win32 API limitations.',
+    );
   }
 
   @override
@@ -277,7 +297,9 @@ class CameraWindows extends CameraPlatform {
     assert(point == null || point.x >= 0 && point.x <= 1);
     assert(point == null || point.y >= 0 && point.y <= 1);
 
-    throw UnsupportedError('setFocusPoint() is not supported due to Win32 API limitations.');
+    throw UnsupportedError(
+      'setFocusPoint() is not supported due to Win32 API limitations.',
+    );
   }
 
   @override
@@ -327,7 +349,9 @@ class CameraWindows extends CameraPlatform {
   }
 
   /// Returns a [ResolutionPreset]'s Pigeon representation.
-  PlatformResolutionPreset _pigeonResolutionPreset(ResolutionPreset? resolutionPreset) {
+  PlatformResolutionPreset _pigeonResolutionPreset(
+    ResolutionPreset? resolutionPreset,
+  ) {
     if (resolutionPreset == null) {
       // Provide a default if one isn't provided, since the native side needs
       // to set something.

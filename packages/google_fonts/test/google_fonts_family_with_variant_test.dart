@@ -32,7 +32,9 @@ void main() {
     expect(familyWithVariant.toString(), equals('Foo_100italic'));
   });
 
-  testWidgets('toApiFilenamePrefix() works for italic w100', (WidgetTester tester) async {
+  testWidgets('toApiFilenamePrefix() works for italic w100', (
+    WidgetTester tester,
+  ) async {
     const familyWithVariant = GoogleFontsFamilyWithVariant(
       family: 'Foo',
       googleFontsVariant: GoogleFontsVariant(
@@ -44,7 +46,9 @@ void main() {
     expect(familyWithVariant.toApiFilenamePrefix(), equals('Foo-ThinItalic'));
   });
 
-  testWidgets('toApiFilenamePrefix() works for regular', (WidgetTester tester) async {
+  testWidgets('toApiFilenamePrefix() works for regular', (
+    WidgetTester tester,
+  ) async {
     const familyWithVariant = GoogleFontsFamilyWithVariant(
       family: 'Foo',
       googleFontsVariant: GoogleFontsVariant(

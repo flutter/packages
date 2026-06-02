@@ -65,13 +65,16 @@ class _App extends StatelessWidget {
         body: TabBarView(
           children: <Widget>[
             _ViewTypeTabBar(
-              builder: (VideoViewType viewType) => _BumbleBeeRemoteVideo(viewType),
+              builder: (VideoViewType viewType) =>
+                  _BumbleBeeRemoteVideo(viewType),
             ),
             _ViewTypeTabBar(
-              builder: (VideoViewType viewType) => _ButterFlyAssetVideo(viewType),
+              builder: (VideoViewType viewType) =>
+                  _ButterFlyAssetVideo(viewType),
             ),
             _ViewTypeTabBar(
-              builder: (VideoViewType viewType) => _ButterFlyAssetVideoInList(viewType),
+              builder: (VideoViewType viewType) =>
+                  _ButterFlyAssetVideoInList(viewType),
             ),
           ],
         ),
@@ -89,7 +92,8 @@ class _ViewTypeTabBar extends StatefulWidget {
   State<_ViewTypeTabBar> createState() => _ViewTypeTabBarState();
 }
 
-class _ViewTypeTabBarState extends State<_ViewTypeTabBar> with SingleTickerProviderStateMixin {
+class _ViewTypeTabBarState extends State<_ViewTypeTabBar>
+    with SingleTickerProviderStateMixin {
   late final TabController _tabController;
 
   @override
@@ -156,7 +160,9 @@ class _ButterFlyAssetVideoInList extends StatelessWidget {
                     title: Text('Video video'),
                   ),
                   Stack(
-                    alignment: FractionalOffset.bottomRight + const FractionalOffset(-0.1, -0.1),
+                    alignment:
+                        FractionalOffset.bottomRight +
+                        const FractionalOffset(-0.1, -0.1),
                     children: <Widget>[
                       _ButterFlyAssetVideo(viewType),
                       Image.asset('assets/flutter-mark-square-64.png'),

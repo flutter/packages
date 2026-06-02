@@ -18,7 +18,11 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse({
+  Object? result,
+  PlatformException? error,
+  bool empty = false,
+}) {
   if (empty) {
     return <Object?>[];
   }
@@ -31,7 +35,9 @@ List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty
 bool _deepEquals(Object? a, Object? b) {
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed.every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed.every(
+          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
+        );
   }
   if (a is Map && b is Map) {
     return a.length == b.length &&
@@ -181,7 +187,8 @@ class PlatformCameraUpdateNewCameraPosition {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformCameraUpdateNewCameraPosition || other.runtimeType != runtimeType) {
+    if (other is! PlatformCameraUpdateNewCameraPosition ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -217,7 +224,8 @@ class PlatformCameraUpdateNewLatLng {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformCameraUpdateNewLatLng || other.runtimeType != runtimeType) {
+    if (other is! PlatformCameraUpdateNewLatLng ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -233,7 +241,10 @@ class PlatformCameraUpdateNewLatLng {
 
 /// Pigeon equivalent of NewLatLngBounds
 class PlatformCameraUpdateNewLatLngBounds {
-  PlatformCameraUpdateNewLatLngBounds({required this.bounds, required this.padding});
+  PlatformCameraUpdateNewLatLngBounds({
+    required this.bounds,
+    required this.padding,
+  });
 
   PlatformLatLngBounds bounds;
 
@@ -258,7 +269,8 @@ class PlatformCameraUpdateNewLatLngBounds {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformCameraUpdateNewLatLngBounds || other.runtimeType != runtimeType) {
+    if (other is! PlatformCameraUpdateNewLatLngBounds ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -299,7 +311,8 @@ class PlatformCameraUpdateNewLatLngZoom {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformCameraUpdateNewLatLngZoom || other.runtimeType != runtimeType) {
+    if (other is! PlatformCameraUpdateNewLatLngZoom ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -331,13 +344,17 @@ class PlatformCameraUpdateScrollBy {
 
   static PlatformCameraUpdateScrollBy decode(Object result) {
     result as List<Object?>;
-    return PlatformCameraUpdateScrollBy(dx: result[0]! as double, dy: result[1]! as double);
+    return PlatformCameraUpdateScrollBy(
+      dx: result[0]! as double,
+      dy: result[1]! as double,
+    );
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformCameraUpdateScrollBy || other.runtimeType != runtimeType) {
+    if (other is! PlatformCameraUpdateScrollBy ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -378,7 +395,8 @@ class PlatformCameraUpdateZoomBy {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformCameraUpdateZoomBy || other.runtimeType != runtimeType) {
+    if (other is! PlatformCameraUpdateZoomBy ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -414,7 +432,8 @@ class PlatformCameraUpdateZoom {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformCameraUpdateZoom || other.runtimeType != runtimeType) {
+    if (other is! PlatformCameraUpdateZoom ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -450,7 +469,8 @@ class PlatformCameraUpdateZoomTo {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformCameraUpdateZoomTo || other.runtimeType != runtimeType) {
+    if (other is! PlatformCameraUpdateZoomTo ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -1235,7 +1255,14 @@ class PlatformTileOverlay {
   int tileSize;
 
   List<Object?> _toList() {
-    return <Object?>[tileOverlayId, fadeIn, transparency, zIndex, visible, tileSize];
+    return <Object?>[
+      tileOverlayId,
+      fadeIn,
+      transparency,
+      zIndex,
+      visible,
+      tileSize,
+    ];
   }
 
   Object encode() {
@@ -1341,7 +1368,10 @@ class PlatformLatLng {
 
   static PlatformLatLng decode(Object result) {
     result as List<Object?>;
-    return PlatformLatLng(latitude: result[0]! as double, longitude: result[1]! as double);
+    return PlatformLatLng(
+      latitude: result[0]! as double,
+      longitude: result[1]! as double,
+    );
   }
 
   @override
@@ -1421,13 +1451,16 @@ class PlatformCameraTargetBounds {
 
   static PlatformCameraTargetBounds decode(Object result) {
     result as List<Object?>;
-    return PlatformCameraTargetBounds(bounds: result[0] as PlatformLatLngBounds?);
+    return PlatformCameraTargetBounds(
+      bounds: result[0] as PlatformLatLngBounds?,
+    );
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformCameraTargetBounds || other.runtimeType != runtimeType) {
+    if (other is! PlatformCameraTargetBounds ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -1597,16 +1630,20 @@ class PlatformMapViewCreationParams {
       initialPolygons: (result[4] as List<Object?>?)!.cast<PlatformPolygon>(),
       initialPolylines: (result[5] as List<Object?>?)!.cast<PlatformPolyline>(),
       initialHeatmaps: (result[6] as List<Object?>?)!.cast<PlatformHeatmap>(),
-      initialTileOverlays: (result[7] as List<Object?>?)!.cast<PlatformTileOverlay>(),
-      initialClusterManagers: (result[8] as List<Object?>?)!.cast<PlatformClusterManager>(),
-      initialGroundOverlays: (result[9] as List<Object?>?)!.cast<PlatformGroundOverlay>(),
+      initialTileOverlays: (result[7] as List<Object?>?)!
+          .cast<PlatformTileOverlay>(),
+      initialClusterManagers: (result[8] as List<Object?>?)!
+          .cast<PlatformClusterManager>(),
+      initialGroundOverlays: (result[9] as List<Object?>?)!
+          .cast<PlatformGroundOverlay>(),
     );
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformMapViewCreationParams || other.runtimeType != runtimeType) {
+    if (other is! PlatformMapViewCreationParams ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -1733,7 +1770,8 @@ class PlatformMapConfiguration {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformMapConfiguration || other.runtimeType != runtimeType) {
+    if (other is! PlatformMapConfiguration ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -1803,7 +1841,10 @@ class PlatformSize {
 
   static PlatformSize decode(Object result) {
     result as List<Object?>;
-    return PlatformSize(width: result[0]! as double, height: result[1]! as double);
+    return PlatformSize(
+      width: result[0]! as double,
+      height: result[1]! as double,
+    );
   }
 
   @override
@@ -1825,7 +1866,12 @@ class PlatformSize {
 
 /// Pigeon representation of a color.
 class PlatformColor {
-  PlatformColor({required this.red, required this.green, required this.blue, required this.alpha});
+  PlatformColor({
+    required this.red,
+    required this.green,
+    required this.blue,
+    required this.alpha,
+  });
 
   double red;
 
@@ -1940,7 +1986,10 @@ class PlatformZoomRange {
 
   static PlatformZoomRange decode(Object result) {
     result as List<Object?>;
-    return PlatformZoomRange(min: result[0] as double?, max: result[1] as double?);
+    return PlatformZoomRange(
+      min: result[0] as double?,
+      max: result[1] as double?,
+    );
   }
 
   @override
@@ -2027,7 +2076,8 @@ class PlatformBitmapDefaultMarker {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformBitmapDefaultMarker || other.runtimeType != runtimeType) {
+    if (other is! PlatformBitmapDefaultMarker ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -2059,7 +2109,10 @@ class PlatformBitmapBytes {
 
   static PlatformBitmapBytes decode(Object result) {
     result as List<Object?>;
-    return PlatformBitmapBytes(byteData: result[0]! as Uint8List, size: result[1] as PlatformSize?);
+    return PlatformBitmapBytes(
+      byteData: result[0]! as Uint8List,
+      size: result[1] as PlatformSize?,
+    );
   }
 
   @override
@@ -2097,7 +2150,10 @@ class PlatformBitmapAsset {
 
   static PlatformBitmapAsset decode(Object result) {
     result as List<Object?>;
-    return PlatformBitmapAsset(name: result[0]! as String, pkg: result[1] as String?);
+    return PlatformBitmapAsset(
+      name: result[0]! as String,
+      pkg: result[1] as String?,
+    );
   }
 
   @override
@@ -2119,7 +2175,11 @@ class PlatformBitmapAsset {
 
 /// Pigeon equivalent of [AssetImageBitmap].
 class PlatformBitmapAssetImage {
-  PlatformBitmapAssetImage({required this.name, required this.scale, this.size});
+  PlatformBitmapAssetImage({
+    required this.name,
+    required this.scale,
+    this.size,
+  });
 
   String name;
 
@@ -2147,7 +2207,8 @@ class PlatformBitmapAssetImage {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformBitmapAssetImage || other.runtimeType != runtimeType) {
+    if (other is! PlatformBitmapAssetImage ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -2507,7 +2568,9 @@ class _PigeonCodec extends StandardMessageCodec {
         return value == null ? null : PlatformMapType.values[value];
       case 130:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PlatformMarkerCollisionBehavior.values[value];
+        return value == null
+            ? null
+            : PlatformMarkerCollisionBehavior.values[value];
       case 131:
         final value = readValue(buffer) as int?;
         return value == null ? null : PlatformJointType.values[value];
@@ -2658,7 +2721,9 @@ class MapsApi {
   ///
   /// Only non-null configuration values will result in updates; options with
   /// null values will remain unchanged.
-  Future<void> updateMapConfiguration(PlatformMapConfiguration configuration) async {
+  Future<void> updateMapConfiguration(
+    PlatformMapConfiguration configuration,
+  ) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.updateMapConfiguration$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -2666,7 +2731,9 @@ class MapsApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[configuration]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[configuration],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -2694,11 +2761,9 @@ class MapsApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      toAdd,
-      toChange,
-      idsToRemove,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[toAdd, toChange, idsToRemove],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -2726,11 +2791,9 @@ class MapsApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      toAdd,
-      toChange,
-      idsToRemove,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[toAdd, toChange, idsToRemove],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -2757,10 +2820,9 @@ class MapsApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      toAdd,
-      idsToRemove,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[toAdd, idsToRemove],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -2788,11 +2850,9 @@ class MapsApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      toAdd,
-      toChange,
-      idsToRemove,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[toAdd, toChange, idsToRemove],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -2820,11 +2880,9 @@ class MapsApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      toAdd,
-      toChange,
-      idsToRemove,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[toAdd, toChange, idsToRemove],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -2852,11 +2910,9 @@ class MapsApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      toAdd,
-      toChange,
-      idsToRemove,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[toAdd, toChange, idsToRemove],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -2884,11 +2940,9 @@ class MapsApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      toAdd,
-      toChange,
-      idsToRemove,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[toAdd, toChange, idsToRemove],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -2916,11 +2970,9 @@ class MapsApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      toAdd,
-      toChange,
-      idsToRemove,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[toAdd, toChange, idsToRemove],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -2944,7 +2996,9 @@ class MapsApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[latLng]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[latLng],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -2973,9 +3027,9 @@ class MapsApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      screenCoordinate,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[screenCoordinate],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3034,7 +3088,9 @@ class MapsApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[cameraUpdate]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[cameraUpdate],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3051,7 +3107,10 @@ class MapsApi {
 
   /// Moves the camera according to [cameraUpdate], animating the update using a
   /// duration in milliseconds if provided.
-  Future<void> animateCamera(PlatformCameraUpdate cameraUpdate, int? durationMilliseconds) async {
+  Future<void> animateCamera(
+    PlatformCameraUpdate cameraUpdate,
+    int? durationMilliseconds,
+  ) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.animateCamera$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -3059,10 +3118,9 @@ class MapsApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      cameraUpdate,
-      durationMilliseconds,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[cameraUpdate, durationMilliseconds],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3115,7 +3173,9 @@ class MapsApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[markerId]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[markerId],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3139,7 +3199,9 @@ class MapsApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[markerId]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[markerId],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3164,7 +3226,9 @@ class MapsApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[markerId]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[markerId],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3197,7 +3261,9 @@ class MapsApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[style]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[style],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3249,7 +3315,9 @@ class MapsApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[tileOverlayId]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[tileOverlayId],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3368,14 +3436,20 @@ abstract class MapsCallbackApi {
   void onGroundOverlayTap(String groundOverlayId);
 
   /// Called to get data for a map tile.
-  Future<PlatformTile> getTileOverlayTile(String tileOverlayId, PlatformPoint location, int zoom);
+  Future<PlatformTile> getTileOverlayTile(
+    String tileOverlayId,
+    PlatformPoint location,
+    int zoom,
+  );
 
   static void setUp(
     MapsCallbackApi? api, {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) {
-    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty
+        ? '.$messageChannelSuffix'
+        : '';
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onCameraMoveStarted$messageChannelSuffix',
@@ -3414,7 +3488,8 @@ abstract class MapsCallbackApi {
             'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onCameraMove was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final PlatformCameraPosition? arg_cameraPosition = (args[0] as PlatformCameraPosition?);
+          final PlatformCameraPosition? arg_cameraPosition =
+              (args[0] as PlatformCameraPosition?);
           assert(
             arg_cameraPosition != null,
             'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onCameraMove was null, expected non-null PlatformCameraPosition.',
@@ -3923,11 +3998,13 @@ class MapsPlatformViewApi {
   /// Constructor for [MapsPlatformViewApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  MapsPlatformViewApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-    : pigeonVar_binaryMessenger = binaryMessenger,
-      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
-          ? '.$messageChannelSuffix'
-          : '';
+  MapsPlatformViewApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -3942,7 +4019,9 @@ class MapsPlatformViewApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[type]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[type],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3963,11 +4042,13 @@ class MapsInspectorApi {
   /// Constructor for [MapsInspectorApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  MapsInspectorApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-    : pigeonVar_binaryMessenger = binaryMessenger,
-      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
-          ? '.$messageChannelSuffix'
-          : '';
+  MapsInspectorApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -4206,7 +4287,9 @@ class MapsInspectorApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[tileOverlayId]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[tileOverlayId],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4221,7 +4304,9 @@ class MapsInspectorApi {
     }
   }
 
-  Future<PlatformGroundOverlay?> getGroundOverlayInfo(String groundOverlayId) async {
+  Future<PlatformGroundOverlay?> getGroundOverlayInfo(
+    String groundOverlayId,
+  ) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.google_maps_flutter_ios.MapsInspectorApi.getGroundOverlayInfo$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -4229,7 +4314,9 @@ class MapsInspectorApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[groundOverlayId]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[groundOverlayId],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4252,7 +4339,9 @@ class MapsInspectorApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[heatmapId]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[heatmapId],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4303,9 +4392,9 @@ class MapsInspectorApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      clusterManagerId,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[clusterManagerId],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4321,7 +4410,8 @@ class MapsInspectorApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (pigeonVar_replyList[0] as List<Object?>?)!.cast<PlatformCluster>();
+      return (pigeonVar_replyList[0] as List<Object?>?)!
+          .cast<PlatformCluster>();
     }
   }
 

@@ -38,7 +38,8 @@ class PointerInterceptorIOSExample extends StatefulWidget {
   }
 }
 
-class _PointerInterceptorIOSExampleState extends State<PointerInterceptorIOSExample> {
+class _PointerInterceptorIOSExampleState
+    extends State<PointerInterceptorIOSExample> {
   bool _buttonTapped = false;
 
   @override
@@ -52,7 +53,9 @@ class _PointerInterceptorIOSExampleState extends State<PointerInterceptorIOSExam
             PointerInterceptorPlatform.instance.buildWidget(
               child: TextButton(
                 style: TextButton.styleFrom(foregroundColor: Colors.red),
-                child: _buttonTapped ? const Text('Tapped') : const Text('Initial'),
+                child: _buttonTapped
+                    ? const Text('Tapped')
+                    : const Text('Initial'),
                 onPressed: () {
                   setState(() {
                     _buttonTapped = !_buttonTapped;

@@ -39,7 +39,12 @@ void main() {
     platform = MockPlatform(isLinux: true);
     processRunner = TestProcessRunner();
     final GitDir gitDir;
-    (:packagesDir, processRunner: _, gitProcessRunner: _, :gitDir) = configureBaseCommandMocks(
+    (
+      :packagesDir,
+      processRunner: _,
+      gitProcessRunner: _,
+      :gitDir,
+    ) = configureBaseCommandMocks(
       platform: platform,
       customProcessRunner: processRunner,
       customGitProcessRunner: processRunner,
@@ -48,7 +53,10 @@ void main() {
 
     mockHttpResponses = <String, Map<String, dynamic>>{};
     final mockClient = MockClient((http.Request request) async {
-      final String packageName = request.url.pathSegments.last.replaceAll('.json', '');
+      final String packageName = request.url.pathSegments.last.replaceAll(
+        '.json',
+        '',
+      );
       final Map<String, dynamic>? response = mockHttpResponses[packageName];
       if (response != null) {
         return http.Response(json.encode(response), 200);
@@ -71,10 +79,17 @@ void main() {
 
   group('Initial validation', () {
     test('refuses to proceed with dirty files', () async {
-      final RepositoryPackage plugin = createFakePlugin('foo', packagesDir, examples: <String>[]);
+      final RepositoryPackage plugin = createFakePlugin(
+        'foo',
+        packagesDir,
+        examples: <String>[],
+      );
 
-      processRunner.mockProcessesForExecutable['git-status'] = <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(stdout: '?? ${plugin.directory.childFile('tmp').path}\n')),
+      processRunner
+          .mockProcessesForExecutable['git-status'] = <FakeProcessInfo>[
+        FakeProcessInfo(
+          MockProcess(stdout: '?? ${plugin.directory.childFile('tmp').path}\n'),
+        ),
       ];
 
       Error? commandError;
@@ -108,9 +123,8 @@ void main() {
     test("fails immediately if the remote doesn't exist", () async {
       createFakePlugin('foo', packagesDir, examples: <String>[]);
 
-      processRunner.mockProcessesForExecutable['git-remote'] = <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(exitCode: 1)),
-      ];
+      processRunner.mockProcessesForExecutable['git-remote'] =
+          <FakeProcessInfo>[FakeProcessInfo(MockProcess(exitCode: 1))];
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
@@ -133,13 +147,17 @@ void main() {
 
   group('pre-publish script', () {
     test('runs if present', () async {
-      final RepositoryPackage package = createFakePackage('foo', packagesDir, examples: <String>[]);
+      final RepositoryPackage package = createFakePackage(
+        'foo',
+        packagesDir,
+        examples: <String>[],
+      );
       package.prePublishScript.createSync(recursive: true);
 
-      final List<String> output = await runCapturingPrint(commandRunner, <String>[
-        'publish',
-        '--packages=foo',
-      ]);
+      final List<String> output = await runCapturingPrint(
+        commandRunner,
+        <String>['publish', '--packages=foo'],
+      );
 
       expect(
         output,
@@ -150,7 +168,10 @@ void main() {
       expect(
         processRunner.recordedCalls,
         containsAllInOrder(<ProcessCall>[
-          ProcessCall('dart', const <String>['pub', 'get'], package.directory.path),
+          ProcessCall('dart', const <String>[
+            'pub',
+            'get',
+          ], package.directory.path),
           ProcessCall('dart', const <String>[
             'run',
             'tool/pre_publish.dart',
@@ -169,7 +190,9 @@ void main() {
       package.prePublishScript.createSync(recursive: true);
 
       processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(exitCode: 1), <String>['run']), // run tool/pre_publish.dart
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>[
+          'run',
+        ]), // run tool/pre_publish.dart
       ];
 
       Error? commandError;
@@ -182,7 +205,10 @@ void main() {
       );
 
       expect(commandError, isA<ToolExit>());
-      expect(output, containsAllInOrder(<Matcher>[contains('Pre-publish script failed.')]));
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[contains('Pre-publish script failed.')]),
+      );
       expect(
         processRunner.recordedCalls,
         containsAllInOrder(<ProcessCall>[
@@ -206,19 +232,28 @@ void main() {
 
       processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
         FakeProcessInfo(
-          MockProcess(stdout: 'Foo', stderr: 'Bar', stdoutEncoding: utf8, stderrEncoding: utf8),
+          MockProcess(
+            stdout: 'Foo',
+            stderr: 'Bar',
+            stdoutEncoding: utf8,
+            stderrEncoding: utf8,
+          ),
           <String>['pub', 'publish'],
         ), // publish for plugin1
         FakeProcessInfo(
-          MockProcess(stdout: 'Baz', stdoutEncoding: utf8, stderrEncoding: utf8),
+          MockProcess(
+            stdout: 'Baz',
+            stdoutEncoding: utf8,
+            stderrEncoding: utf8,
+          ),
           <String>['pub', 'publish'],
         ), // publish for plugin2
       ];
 
-      final List<String> output = await runCapturingPrint(commandRunner, <String>[
-        'publish',
-        '--packages=plugin1,plugin2',
-      ]);
+      final List<String> output = await runCapturingPrint(
+        commandRunner,
+        <String>['publish', '--packages=plugin1,plugin2'],
+      );
 
       expect(
         output,
@@ -239,13 +274,23 @@ void main() {
 
       mockStdin.mockUserInputs.add(utf8.encode('user input'));
 
-      await runCapturingPrint(commandRunner, <String>['publish', '--packages=foo']);
+      await runCapturingPrint(commandRunner, <String>[
+        'publish',
+        '--packages=foo',
+      ]);
 
-      expect(processRunner.mockPublishProcess.stdinMock.lines, contains('user input'));
+      expect(
+        processRunner.mockPublishProcess.stdinMock.lines,
+        contains('user input'),
+      );
     });
 
     test('forwards --pub-publish-flags to pub publish', () async {
-      final RepositoryPackage plugin = createFakePlugin('foo', packagesDir, examples: <String>[]);
+      final RepositoryPackage plugin = createFakePlugin(
+        'foo',
+        packagesDir,
+        examples: <String>[],
+      );
 
       await runCapturingPrint(commandRunner, <String>[
         'publish',
@@ -267,30 +312,37 @@ void main() {
       );
     });
 
-    test('--skip-confirmation flag automatically adds --force to --pub-publish-flags', () async {
-      createMockCredentialFile();
-      final RepositoryPackage plugin = createFakePlugin('foo', packagesDir, examples: <String>[]);
+    test(
+      '--skip-confirmation flag automatically adds --force to --pub-publish-flags',
+      () async {
+        createMockCredentialFile();
+        final RepositoryPackage plugin = createFakePlugin(
+          'foo',
+          packagesDir,
+          examples: <String>[],
+        );
 
-      await runCapturingPrint(commandRunner, <String>[
-        'publish',
-        '--packages=foo',
-        '--skip-confirmation',
-        '--pub-publish-flags',
-        '--server=bar',
-      ]);
+        await runCapturingPrint(commandRunner, <String>[
+          'publish',
+          '--packages=foo',
+          '--skip-confirmation',
+          '--pub-publish-flags',
+          '--server=bar',
+        ]);
 
-      expect(
-        processRunner.recordedCalls,
-        contains(
-          ProcessCall('flutter', const <String>[
-            'pub',
-            'publish',
-            '--server=bar',
-            '--force',
-          ], plugin.path),
-        ),
-      );
-    });
+        expect(
+          processRunner.recordedCalls,
+          contains(
+            ProcessCall('flutter', const <String>[
+              'pub',
+              'publish',
+              '--server=bar',
+              '--force',
+            ], plugin.path),
+          ),
+        );
+      },
+    );
 
     test('--force is only added once, regardless of plugin count', () async {
       createMockCredentialFile();
@@ -332,23 +384,28 @@ void main() {
       );
     });
 
-    test('creates credential file from envirnoment variable if necessary', () async {
-      createFakePlugin('foo', packagesDir, examples: <String>[]);
-      const credentials = 'some credential';
-      platform.environment['PUB_CREDENTIALS'] = credentials;
+    test(
+      'creates credential file from envirnoment variable if necessary',
+      () async {
+        createFakePlugin('foo', packagesDir, examples: <String>[]);
+        const credentials = 'some credential';
+        platform.environment['PUB_CREDENTIALS'] = credentials;
 
-      await runCapturingPrint(commandRunner, <String>[
-        'publish',
-        '--packages=foo',
-        '--skip-confirmation',
-        '--pub-publish-flags',
-        '--server=bar',
-      ]);
+        await runCapturingPrint(commandRunner, <String>[
+          'publish',
+          '--packages=foo',
+          '--skip-confirmation',
+          '--pub-publish-flags',
+          '--server=bar',
+        ]);
 
-      final File credentialFile = packagesDir.fileSystem.file(command.credentialsPath);
-      expect(credentialFile.existsSync(), true);
-      expect(credentialFile.readAsStringSync(), credentials);
-    });
+        final File credentialFile = packagesDir.fileSystem.file(
+          command.credentialsPath,
+        );
+        expect(credentialFile.existsSync(), true);
+        expect(credentialFile.readAsStringSync(), credentials);
+      },
+    );
 
     test('throws if pub publish fails', () async {
       createFakePlugin('foo', packagesDir, examples: <String>[]);
@@ -367,17 +424,23 @@ void main() {
       );
 
       expect(commandError, isA<ToolExit>());
-      expect(output, containsAllInOrder(<Matcher>[contains('Publishing foo failed.')]));
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[contains('Publishing foo failed.')]),
+      );
     });
 
     test('publish, dry run', () async {
-      final RepositoryPackage plugin = createFakePlugin('foo', packagesDir, examples: <String>[]);
+      final RepositoryPackage plugin = createFakePlugin(
+        'foo',
+        packagesDir,
+        examples: <String>[],
+      );
 
-      final List<String> output = await runCapturingPrint(commandRunner, <String>[
-        'publish',
-        '--packages=foo',
-        '--dry-run',
-      ]);
+      final List<String> output = await runCapturingPrint(
+        commandRunner,
+        <String>['publish', '--packages=foo', '--dry-run'],
+      );
 
       expect(
         processRunner.recordedCalls.map((ProcessCall call) => call.executable),
@@ -400,10 +463,10 @@ void main() {
       const packageName = 'a_package';
       createFakePackage(packageName, packagesDir);
 
-      final List<String> output = await runCapturingPrint(commandRunner, <String>[
-        'publish',
-        '--packages=$packageName',
-      ]);
+      final List<String> output = await runCapturingPrint(
+        commandRunner,
+        <String>['publish', '--packages=$packageName'],
+      );
 
       expect(
         output,
@@ -418,11 +481,14 @@ void main() {
       const packageName = 'a_package';
       createFakePackage(packageName, packagesDir);
 
-      final List<String> output = await runCapturingPrint(commandRunner, <String>[
-        'publish',
-        '--packages=$packageName',
-        '--tag-for-auto-publish',
-      ]);
+      final List<String> output = await runCapturingPrint(
+        commandRunner,
+        <String>[
+          'publish',
+          '--packages=$packageName',
+          '--tag-for-auto-publish',
+        ],
+      );
 
       // There should be no variant of any command containing "publish".
       expect(
@@ -430,14 +496,22 @@ void main() {
         isNot(contains(contains('publish'))),
       );
       // The output should indicate that it was tagged, not published.
-      expect(output, containsAllInOrder(<Matcher>[contains('Tagged a_package successfully!')]));
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Tagged a_package successfully!'),
+        ]),
+      );
     });
   });
 
   group('Tags release', () {
     test('with the version and name from the pubspec.yaml', () async {
       createFakePlugin('foo', packagesDir, examples: <String>[]);
-      await runCapturingPrint(commandRunner, <String>['publish', '--packages=foo']);
+      await runCapturingPrint(commandRunner, <String>[
+        'publish',
+        '--packages=foo',
+      ]);
 
       expect(
         processRunner.recordedCalls,
@@ -462,10 +536,15 @@ void main() {
       );
 
       expect(commandError, isA<ToolExit>());
-      expect(output, containsAllInOrder(<Matcher>[contains('Publishing foo failed.')]));
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[contains('Publishing foo failed.')]),
+      );
       expect(
         processRunner.recordedCalls,
-        isNot(contains(const ProcessCall('git-tag', <String>['foo-v0.0.1'], null))),
+        isNot(
+          contains(const ProcessCall('git-tag', <String>['foo-v0.0.1'], null)),
+        ),
       );
     });
 
@@ -490,14 +569,19 @@ void main() {
 
       mockStdin.readLineOutput = 'y';
 
-      final List<String> output = await runCapturingPrint(commandRunner, <String>[
-        'publish',
-        '--packages=foo',
-      ]);
+      final List<String> output = await runCapturingPrint(
+        commandRunner,
+        <String>['publish', '--packages=foo'],
+      );
 
       expect(
         processRunner.recordedCalls,
-        contains(const ProcessCall('git-push', <String>['upstream', 'foo-v0.0.1'], null)),
+        contains(
+          const ProcessCall('git-push', <String>[
+            'upstream',
+            'foo-v0.0.1',
+          ], null),
+        ),
       );
       expect(
         output,
@@ -508,22 +592,34 @@ void main() {
       );
     });
 
-    test('does not ask for user input if the --skip-confirmation flag is on', () async {
-      createMockCredentialFile();
-      createFakePlugin('foo', packagesDir, examples: <String>[]);
+    test(
+      'does not ask for user input if the --skip-confirmation flag is on',
+      () async {
+        createMockCredentialFile();
+        createFakePlugin('foo', packagesDir, examples: <String>[]);
 
-      final List<String> output = await runCapturingPrint(commandRunner, <String>[
-        'publish',
-        '--skip-confirmation',
-        '--packages=foo',
-      ]);
+        final List<String> output = await runCapturingPrint(
+          commandRunner,
+          <String>['publish', '--skip-confirmation', '--packages=foo'],
+        );
 
-      expect(
-        processRunner.recordedCalls,
-        contains(const ProcessCall('git-push', <String>['upstream', 'foo-v0.0.1'], null)),
-      );
-      expect(output, containsAllInOrder(<Matcher>[contains('Published foo successfully!')]));
-    });
+        expect(
+          processRunner.recordedCalls,
+          contains(
+            const ProcessCall('git-push', <String>[
+              'upstream',
+              'foo-v0.0.1',
+            ], null),
+          ),
+        );
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Published foo successfully!'),
+          ]),
+        );
+      },
+    );
 
     test('when passed --tag-for-auto-publish', () async {
       createFakePlugin('foo', packagesDir, examples: <String>[]);
@@ -536,20 +632,28 @@ void main() {
 
       expect(
         processRunner.recordedCalls,
-        contains(const ProcessCall('git-push', <String>['upstream', 'foo-v0.0.1'], null)),
+        contains(
+          const ProcessCall('git-push', <String>[
+            'upstream',
+            'foo-v0.0.1',
+          ], null),
+        ),
       );
     });
 
     test('to upstream by default, dry run', () async {
-      final RepositoryPackage plugin = createFakePlugin('foo', packagesDir, examples: <String>[]);
+      final RepositoryPackage plugin = createFakePlugin(
+        'foo',
+        packagesDir,
+        examples: <String>[],
+      );
 
       mockStdin.readLineOutput = 'y';
 
-      final List<String> output = await runCapturingPrint(commandRunner, <String>[
-        'publish',
-        '--packages=foo',
-        '--dry-run',
-      ]);
+      final List<String> output = await runCapturingPrint(
+        commandRunner,
+        <String>['publish', '--packages=foo', '--dry-run'],
+      );
 
       expect(
         processRunner.recordedCalls.map((ProcessCall call) => call.executable),
@@ -572,18 +676,21 @@ void main() {
 
       mockStdin.readLineOutput = 'y';
 
-      final List<String> output = await runCapturingPrint(commandRunner, <String>[
-        'publish',
-        '--packages=foo',
-        '--remote',
-        'origin',
-      ]);
+      final List<String> output = await runCapturingPrint(
+        commandRunner,
+        <String>['publish', '--packages=foo', '--remote', 'origin'],
+      );
 
       expect(
         processRunner.recordedCalls,
-        contains(const ProcessCall('git-push', <String>['origin', 'foo-v0.0.1'], null)),
+        contains(
+          const ProcessCall('git-push', <String>['origin', 'foo-v0.0.1'], null),
+        ),
       );
-      expect(output, containsAllInOrder(<Matcher>[contains('Published foo successfully!')]));
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[contains('Published foo successfully!')]),
+      );
     });
   });
 
@@ -593,7 +700,10 @@ void main() {
 
       processRunner.mockProcessesForExecutable['git-tag'] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess()), // Skip the initializeRun call.
-        FakeProcessInfo(MockProcess(stdout: 'foo-v0.0.1\n'), <String>['--points-at', 'HEAD']),
+        FakeProcessInfo(MockProcess(stdout: 'foo-v0.0.1\n'), <String>[
+          '--points-at',
+          'HEAD',
+        ]),
       ];
 
       await runCapturingPrint(commandRunner, <String>[
@@ -630,7 +740,10 @@ void main() {
 
       processRunner.mockProcessesForExecutable['git-tag'] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess()), // Skip the initializeRun call.
-        FakeProcessInfo(MockProcess(stdout: 'foo-v0.0.1\n'), <String>['--points-at', 'HEAD']),
+        FakeProcessInfo(MockProcess(stdout: 'foo-v0.0.1\n'), <String>[
+          '--points-at',
+          'HEAD',
+        ]),
       ];
 
       await runCapturingPrint(commandRunner, <String>[
@@ -641,7 +754,9 @@ void main() {
 
       expect(
         processRunner.recordedCalls,
-        isNot(contains(const ProcessCall('git-tag', <String>['foo-v0.0.1'], null))),
+        isNot(
+          contains(const ProcessCall('git-tag', <String>['foo-v0.0.1'], null)),
+        ),
       );
       expect(
         processRunner.recordedCalls.map((ProcessCall call) => call.executable),
@@ -652,12 +767,21 @@ void main() {
 
   group('Auto release (all-changed flag)', () {
     test('can release newly created plugins', () async {
-      mockHttpResponses['plugin1'] = <String, dynamic>{'name': 'plugin1', 'versions': <String>[]};
+      mockHttpResponses['plugin1'] = <String, dynamic>{
+        'name': 'plugin1',
+        'versions': <String>[],
+      };
 
-      mockHttpResponses['plugin2'] = <String, dynamic>{'name': 'plugin2', 'versions': <String>[]};
+      mockHttpResponses['plugin2'] = <String, dynamic>{
+        'name': 'plugin2',
+        'versions': <String>[],
+      };
 
       // Non-federated
-      final RepositoryPackage plugin1 = createFakePlugin('plugin1', packagesDir);
+      final RepositoryPackage plugin1 = createFakePlugin(
+        'plugin1',
+        packagesDir,
+      );
       // federated
       final RepositoryPackage plugin2 = createFakePlugin(
         'plugin2',
@@ -674,16 +798,17 @@ void main() {
       ];
       mockStdin.readLineOutput = 'y';
 
-      final List<String> output = await runCapturingPrint(commandRunner, <String>[
-        'publish',
-        '--all-changed',
-        '--base-sha=HEAD~',
-      ]);
+      final List<String> output = await runCapturingPrint(
+        commandRunner,
+        <String>['publish', '--all-changed', '--base-sha=HEAD~'],
+      );
 
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('Publishing all packages that have changed relative to "HEAD~"'),
+          contains(
+            'Publishing all packages that have changed relative to "HEAD~"',
+          ),
           contains('Running `pub publish ` in ${plugin1.path}...'),
           contains('Running `pub publish ` in ${plugin2.path}...'),
           contains('plugin1 - published'),
@@ -692,81 +817,122 @@ void main() {
       );
       expect(
         processRunner.recordedCalls,
-        contains(const ProcessCall('git-push', <String>['upstream', 'plugin1-v0.0.1'], null)),
-      );
-      expect(
-        processRunner.recordedCalls,
-        contains(const ProcessCall('git-push', <String>['upstream', 'plugin2-v0.0.1'], null)),
-      );
-    });
-
-    test('can release newly created plugins, while there are existing plugins', () async {
-      mockHttpResponses['plugin0'] = <String, dynamic>{
-        'name': 'plugin0',
-        'versions': <String>['0.0.1'],
-      };
-
-      mockHttpResponses['plugin1'] = <String, dynamic>{'name': 'plugin1', 'versions': <String>[]};
-
-      mockHttpResponses['plugin2'] = <String, dynamic>{'name': 'plugin2', 'versions': <String>[]};
-
-      // The existing plugin.
-      createFakePlugin('plugin0', packagesDir);
-      // Non-federated
-      final RepositoryPackage plugin1 = createFakePlugin('plugin1', packagesDir);
-      // federated
-      final RepositoryPackage plugin2 = createFakePlugin(
-        'plugin2',
-        packagesDir.childDirectory('plugin2'),
-      );
-
-      // Git results for plugin0 having been released already, and plugin1 and
-      // plugin2 being new.
-      processRunner.mockProcessesForExecutable['git-tag'] = <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(stdout: 'plugin0-v0.0.1\n')),
-      ];
-      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
-        FakeProcessInfo(
-          MockProcess(
-            stdout:
-                '${plugin1.pubspecFile.path}\n'
-                '${plugin2.pubspecFile.path}\n',
-          ),
+        contains(
+          const ProcessCall('git-push', <String>[
+            'upstream',
+            'plugin1-v0.0.1',
+          ], null),
         ),
-      ];
-
-      mockStdin.readLineOutput = 'y';
-
-      final List<String> output = await runCapturingPrint(commandRunner, <String>[
-        'publish',
-        '--all-changed',
-        '--base-sha=HEAD~',
-      ]);
-
-      expect(
-        output,
-        containsAllInOrder(<String>[
-          'Running `pub publish ` in ${plugin1.path}...\n',
-          'Running `pub publish ` in ${plugin2.path}...\n',
-        ]),
       );
       expect(
         processRunner.recordedCalls,
-        contains(const ProcessCall('git-push', <String>['upstream', 'plugin1-v0.0.1'], null)),
-      );
-      expect(
-        processRunner.recordedCalls,
-        contains(const ProcessCall('git-push', <String>['upstream', 'plugin2-v0.0.1'], null)),
+        contains(
+          const ProcessCall('git-push', <String>[
+            'upstream',
+            'plugin2-v0.0.1',
+          ], null),
+        ),
       );
     });
+
+    test(
+      'can release newly created plugins, while there are existing plugins',
+      () async {
+        mockHttpResponses['plugin0'] = <String, dynamic>{
+          'name': 'plugin0',
+          'versions': <String>['0.0.1'],
+        };
+
+        mockHttpResponses['plugin1'] = <String, dynamic>{
+          'name': 'plugin1',
+          'versions': <String>[],
+        };
+
+        mockHttpResponses['plugin2'] = <String, dynamic>{
+          'name': 'plugin2',
+          'versions': <String>[],
+        };
+
+        // The existing plugin.
+        createFakePlugin('plugin0', packagesDir);
+        // Non-federated
+        final RepositoryPackage plugin1 = createFakePlugin(
+          'plugin1',
+          packagesDir,
+        );
+        // federated
+        final RepositoryPackage plugin2 = createFakePlugin(
+          'plugin2',
+          packagesDir.childDirectory('plugin2'),
+        );
+
+        // Git results for plugin0 having been released already, and plugin1 and
+        // plugin2 being new.
+        processRunner.mockProcessesForExecutable['git-tag'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'plugin0-v0.0.1\n')),
+        ];
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+              FakeProcessInfo(
+                MockProcess(
+                  stdout:
+                      '${plugin1.pubspecFile.path}\n'
+                      '${plugin2.pubspecFile.path}\n',
+                ),
+              ),
+            ];
+
+        mockStdin.readLineOutput = 'y';
+
+        final List<String> output = await runCapturingPrint(
+          commandRunner,
+          <String>['publish', '--all-changed', '--base-sha=HEAD~'],
+        );
+
+        expect(
+          output,
+          containsAllInOrder(<String>[
+            'Running `pub publish ` in ${plugin1.path}...\n',
+            'Running `pub publish ` in ${plugin2.path}...\n',
+          ]),
+        );
+        expect(
+          processRunner.recordedCalls,
+          contains(
+            const ProcessCall('git-push', <String>[
+              'upstream',
+              'plugin1-v0.0.1',
+            ], null),
+          ),
+        );
+        expect(
+          processRunner.recordedCalls,
+          contains(
+            const ProcessCall('git-push', <String>[
+              'upstream',
+              'plugin2-v0.0.1',
+            ], null),
+          ),
+        );
+      },
+    );
 
     test('can release newly created plugins, dry run', () async {
-      mockHttpResponses['plugin1'] = <String, dynamic>{'name': 'plugin1', 'versions': <String>[]};
+      mockHttpResponses['plugin1'] = <String, dynamic>{
+        'name': 'plugin1',
+        'versions': <String>[],
+      };
 
-      mockHttpResponses['plugin2'] = <String, dynamic>{'name': 'plugin2', 'versions': <String>[]};
+      mockHttpResponses['plugin2'] = <String, dynamic>{
+        'name': 'plugin2',
+        'versions': <String>[],
+      };
 
       // Non-federated
-      final RepositoryPackage plugin1 = createFakePlugin('plugin1', packagesDir);
+      final RepositoryPackage plugin1 = createFakePlugin(
+        'plugin1',
+        packagesDir,
+      );
       // federated
       final RepositoryPackage plugin2 = createFakePlugin(
         'plugin2',
@@ -784,12 +950,10 @@ void main() {
       ];
       mockStdin.readLineOutput = 'y';
 
-      final List<String> output = await runCapturingPrint(commandRunner, <String>[
-        'publish',
-        '--all-changed',
-        '--base-sha=HEAD~',
-        '--dry-run',
-      ]);
+      final List<String> output = await runCapturingPrint(
+        commandRunner,
+        <String>['publish', '--all-changed', '--base-sha=HEAD~', '--dry-run'],
+      );
 
       expect(
         output,
@@ -823,7 +987,11 @@ void main() {
       };
 
       // Non-federated
-      final RepositoryPackage plugin1 = createFakePlugin('plugin1', packagesDir, version: '0.0.2');
+      final RepositoryPackage plugin1 = createFakePlugin(
+        'plugin1',
+        packagesDir,
+        version: '0.0.2',
+      );
       // federated
       final RepositoryPackage plugin2 = createFakePlugin(
         'plugin2',
@@ -843,11 +1011,10 @@ void main() {
 
       mockStdin.readLineOutput = 'y';
 
-      final List<String> output2 = await runCapturingPrint(commandRunner, <String>[
-        'publish',
-        '--all-changed',
-        '--base-sha=HEAD~',
-      ]);
+      final List<String> output2 = await runCapturingPrint(
+        commandRunner,
+        <String>['publish', '--all-changed', '--base-sha=HEAD~'],
+      );
       expect(
         output2,
         containsAllInOrder(<Matcher>[
@@ -859,192 +1026,236 @@ void main() {
       );
       expect(
         processRunner.recordedCalls,
-        contains(const ProcessCall('git-push', <String>['upstream', 'plugin1-v0.0.2'], null)),
+        contains(
+          const ProcessCall('git-push', <String>[
+            'upstream',
+            'plugin1-v0.0.2',
+          ], null),
+        ),
       );
       expect(
         processRunner.recordedCalls,
-        contains(const ProcessCall('git-push', <String>['upstream', 'plugin2-v0.0.2'], null)),
+        contains(
+          const ProcessCall('git-push', <String>[
+            'upstream',
+            'plugin2-v0.0.2',
+          ], null),
+        ),
       );
     });
 
-    test('delete package will not trigger publish but exit the command successfully!', () async {
-      mockHttpResponses['plugin1'] = <String, dynamic>{
-        'name': 'plugin1',
-        'versions': <String>['0.0.1'],
-      };
+    test(
+      'delete package will not trigger publish but exit the command successfully!',
+      () async {
+        mockHttpResponses['plugin1'] = <String, dynamic>{
+          'name': 'plugin1',
+          'versions': <String>['0.0.1'],
+        };
 
-      mockHttpResponses['plugin2'] = <String, dynamic>{
-        'name': 'plugin2',
-        'versions': <String>['0.0.1'],
-      };
+        mockHttpResponses['plugin2'] = <String, dynamic>{
+          'name': 'plugin2',
+          'versions': <String>['0.0.1'],
+        };
 
-      // Non-federated
-      final RepositoryPackage plugin1 = createFakePlugin('plugin1', packagesDir, version: '0.0.2');
-      // federated
-      final RepositoryPackage plugin2 = createFakePlugin(
-        'plugin2',
-        packagesDir.childDirectory('plugin2'),
-      );
-      plugin2.directory.deleteSync(recursive: true);
+        // Non-federated
+        final RepositoryPackage plugin1 = createFakePlugin(
+          'plugin1',
+          packagesDir,
+          version: '0.0.2',
+        );
+        // federated
+        final RepositoryPackage plugin2 = createFakePlugin(
+          'plugin2',
+          packagesDir.childDirectory('plugin2'),
+        );
+        plugin2.directory.deleteSync(recursive: true);
 
-      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
-        FakeProcessInfo(
-          MockProcess(
-            stdout:
-                '${plugin1.pubspecFile.path}\n'
-                '${plugin2.pubspecFile.path}\n',
-          ),
-        ),
-      ];
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+              FakeProcessInfo(
+                MockProcess(
+                  stdout:
+                      '${plugin1.pubspecFile.path}\n'
+                      '${plugin2.pubspecFile.path}\n',
+                ),
+              ),
+            ];
 
-      mockStdin.readLineOutput = 'y';
+        mockStdin.readLineOutput = 'y';
 
-      final List<String> output2 = await runCapturingPrint(commandRunner, <String>[
-        'publish',
-        '--all-changed',
-        '--base-sha=HEAD~',
-      ]);
-      expect(
-        output2,
-        containsAllInOrder(<Matcher>[
-          contains('Running `pub publish ` in ${plugin1.path}...'),
-          contains('Published plugin1 successfully!'),
+        final List<String> output2 = await runCapturingPrint(
+          commandRunner,
+          <String>['publish', '--all-changed', '--base-sha=HEAD~'],
+        );
+        expect(
+          output2,
+          containsAllInOrder(<Matcher>[
+            contains('Running `pub publish ` in ${plugin1.path}...'),
+            contains('Published plugin1 successfully!'),
+            contains(
+              'The pubspec file for plugin2/plugin2 does not exist, so no publishing will happen.\nSafe to ignore if the package is deleted in this commit.\n',
+            ),
+            contains('SKIPPING: package deleted'),
+            contains('skipped (with warning)'),
+          ]),
+        );
+        expect(
+          processRunner.recordedCalls,
           contains(
-            'The pubspec file for plugin2/plugin2 does not exist, so no publishing will happen.\nSafe to ignore if the package is deleted in this commit.\n',
+            const ProcessCall('git-push', <String>[
+              'upstream',
+              'plugin1-v0.0.2',
+            ], null),
           ),
-          contains('SKIPPING: package deleted'),
-          contains('skipped (with warning)'),
-        ]),
-      );
-      expect(
-        processRunner.recordedCalls,
-        contains(const ProcessCall('git-push', <String>['upstream', 'plugin1-v0.0.2'], null)),
-      );
-    });
+        );
+      },
+    );
 
-    test('Existing versions do not trigger release, also prints out message.', () async {
-      mockHttpResponses['plugin1'] = <String, dynamic>{
-        'name': 'plugin1',
-        'versions': <String>['0.0.2'],
-      };
+    test(
+      'Existing versions do not trigger release, also prints out message.',
+      () async {
+        mockHttpResponses['plugin1'] = <String, dynamic>{
+          'name': 'plugin1',
+          'versions': <String>['0.0.2'],
+        };
 
-      mockHttpResponses['plugin2'] = <String, dynamic>{
-        'name': 'plugin2',
-        'versions': <String>['0.0.2'],
-      };
+        mockHttpResponses['plugin2'] = <String, dynamic>{
+          'name': 'plugin2',
+          'versions': <String>['0.0.2'],
+        };
 
-      // Non-federated
-      final RepositoryPackage plugin1 = createFakePlugin('plugin1', packagesDir, version: '0.0.2');
-      // federated
-      final RepositoryPackage plugin2 = createFakePlugin(
-        'plugin2',
-        packagesDir.childDirectory('plugin2'),
-        version: '0.0.2',
-      );
+        // Non-federated
+        final RepositoryPackage plugin1 = createFakePlugin(
+          'plugin1',
+          packagesDir,
+          version: '0.0.2',
+        );
+        // federated
+        final RepositoryPackage plugin2 = createFakePlugin(
+          'plugin2',
+          packagesDir.childDirectory('plugin2'),
+          version: '0.0.2',
+        );
 
-      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
-        FakeProcessInfo(
-          MockProcess(
-            stdout:
-                '${plugin1.pubspecFile.path}\n'
-                '${plugin2.pubspecFile.path}\n',
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+              FakeProcessInfo(
+                MockProcess(
+                  stdout:
+                      '${plugin1.pubspecFile.path}\n'
+                      '${plugin2.pubspecFile.path}\n',
+                ),
+              ),
+            ];
+        processRunner.mockProcessesForExecutable['git-tag'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+            MockProcess(
+              stdout:
+                  'plugin1-v0.0.2\n'
+                  'plugin2-v0.0.2\n',
+            ),
           ),
-        ),
-      ];
-      processRunner.mockProcessesForExecutable['git-tag'] = <FakeProcessInfo>[
-        FakeProcessInfo(
-          MockProcess(
-            stdout:
-                'plugin1-v0.0.2\n'
-                'plugin2-v0.0.2\n',
+        ];
+
+        final List<String> output = await runCapturingPrint(
+          commandRunner,
+          <String>['publish', '--all-changed', '--base-sha=HEAD~'],
+        );
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('plugin1 0.0.2 has already been published'),
+            contains('SKIPPING: already published'),
+            contains('plugin2 0.0.2 has already been published'),
+            contains('SKIPPING: already published'),
+          ]),
+        );
+
+        expect(
+          processRunner.recordedCalls.map(
+            (ProcessCall call) => call.executable,
           ),
-        ),
-      ];
+          isNot(contains('git-push')),
+        );
+      },
+    );
 
-      final List<String> output = await runCapturingPrint(commandRunner, <String>[
-        'publish',
-        '--all-changed',
-        '--base-sha=HEAD~',
-      ]);
+    test(
+      'Existing versions do not trigger release, but fail if the tags do not exist.',
+      () async {
+        mockHttpResponses['plugin1'] = <String, dynamic>{
+          'name': 'plugin1',
+          'versions': <String>['0.0.2'],
+        };
 
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('plugin1 0.0.2 has already been published'),
-          contains('SKIPPING: already published'),
-          contains('plugin2 0.0.2 has already been published'),
-          contains('SKIPPING: already published'),
-        ]),
-      );
+        mockHttpResponses['plugin2'] = <String, dynamic>{
+          'name': 'plugin2',
+          'versions': <String>['0.0.2'],
+        };
 
-      expect(
-        processRunner.recordedCalls.map((ProcessCall call) => call.executable),
-        isNot(contains('git-push')),
-      );
-    });
+        // Non-federated
+        final RepositoryPackage plugin1 = createFakePlugin(
+          'plugin1',
+          packagesDir,
+          version: '0.0.2',
+        );
+        // federated
+        final RepositoryPackage plugin2 = createFakePlugin(
+          'plugin2',
+          packagesDir.childDirectory('plugin2'),
+          version: '0.0.2',
+        );
 
-    test('Existing versions do not trigger release, but fail if the tags do not exist.', () async {
-      mockHttpResponses['plugin1'] = <String, dynamic>{
-        'name': 'plugin1',
-        'versions': <String>['0.0.2'],
-      };
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+              FakeProcessInfo(
+                MockProcess(
+                  stdout:
+                      '${plugin1.pubspecFile.path}\n'
+                      '${plugin2.pubspecFile.path}\n',
+                ),
+              ),
+            ];
 
-      mockHttpResponses['plugin2'] = <String, dynamic>{
-        'name': 'plugin2',
-        'versions': <String>['0.0.2'],
-      };
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+          commandRunner,
+          <String>['publish', '--all-changed', '--base-sha=HEAD~'],
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
 
-      // Non-federated
-      final RepositoryPackage plugin1 = createFakePlugin('plugin1', packagesDir, version: '0.0.2');
-      // federated
-      final RepositoryPackage plugin2 = createFakePlugin(
-        'plugin2',
-        packagesDir.childDirectory('plugin2'),
-        version: '0.0.2',
-      );
-
-      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
-        FakeProcessInfo(
-          MockProcess(
-            stdout:
-                '${plugin1.pubspecFile.path}\n'
-                '${plugin2.pubspecFile.path}\n',
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+              'plugin1 0.0.2 has already been published, '
+              'however the git release tag (plugin1-v0.0.2) was not found.',
+            ),
+            contains(
+              'plugin2 0.0.2 has already been published, '
+              'however the git release tag (plugin2-v0.0.2) was not found.',
+            ),
+          ]),
+        );
+        expect(
+          processRunner.recordedCalls.map(
+            (ProcessCall call) => call.executable,
           ),
-        ),
-      ];
-
-      Error? commandError;
-      final List<String> output = await runCapturingPrint(
-        commandRunner,
-        <String>['publish', '--all-changed', '--base-sha=HEAD~'],
-        errorHandler: (Error e) {
-          commandError = e;
-        },
-      );
-
-      expect(commandError, isA<ToolExit>());
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains(
-            'plugin1 0.0.2 has already been published, '
-            'however the git release tag (plugin1-v0.0.2) was not found.',
-          ),
-          contains(
-            'plugin2 0.0.2 has already been published, '
-            'however the git release tag (plugin2-v0.0.2) was not found.',
-          ),
-        ]),
-      );
-      expect(
-        processRunner.recordedCalls.map((ProcessCall call) => call.executable),
-        isNot(contains('git-push')),
-      );
-    });
+          isNot(contains('git-push')),
+        );
+      },
+    );
 
     test('No version change does not release any plugins', () async {
       // Non-federated
-      final RepositoryPackage plugin1 = createFakePlugin('plugin1', packagesDir);
+      final RepositoryPackage plugin1 = createFakePlugin(
+        'plugin1',
+        packagesDir,
+      );
       // federated
       final RepositoryPackage plugin2 = createFakePlugin(
         'plugin2',
@@ -1061,11 +1272,10 @@ void main() {
         ),
       ];
 
-      final List<String> output = await runCapturingPrint(commandRunner, <String>[
-        'publish',
-        '--all-changed',
-        '--base-sha=HEAD~',
-      ]);
+      final List<String> output = await runCapturingPrint(
+        commandRunner,
+        <String>['publish', '--all-changed', '--base-sha=HEAD~'],
+      );
 
       expect(output, containsAllInOrder(<String>['Ran for 0 package(s)']));
       expect(
@@ -1075,114 +1285,150 @@ void main() {
     });
 
     group('--batch-release-branch flag', () {
-      test('filters packages based on the existence of ci_config.yaml', () async {
-        // Mock pub.dev responses.
-        mockHttpResponses['package1'] = <String, dynamic>{
-          'name': 'package1',
-          'versions': <String>['0.0.1'],
-        };
-        mockHttpResponses['package2'] = <String, dynamic>{
-          'name': 'package2',
-          'versions': <String>['0.0.1'],
-        };
+      test(
+        'filters packages based on the existence of ci_config.yaml',
+        () async {
+          // Mock pub.dev responses.
+          mockHttpResponses['package1'] = <String, dynamic>{
+            'name': 'package1',
+            'versions': <String>['0.0.1'],
+          };
+          mockHttpResponses['package2'] = <String, dynamic>{
+            'name': 'package2',
+            'versions': <String>['0.0.1'],
+          };
 
-        // Mock packages.
-        final RepositoryPackage package1 = createFakePackage(
-          'package1',
-          packagesDir,
-          version: '0.0.2',
-        );
-        createFakeCiConfig(package: package1, batchRelease: true);
+          // Mock packages.
+          final RepositoryPackage package1 = createFakePackage(
+            'package1',
+            packagesDir,
+            version: '0.0.2',
+          );
+          createFakeCiConfig(package: package1, batchRelease: true);
 
-        final RepositoryPackage package2 = createFakePackage(
-          'package2',
-          packagesDir,
-          version: '0.0.2',
-        );
+          final RepositoryPackage package2 = createFakePackage(
+            'package2',
+            packagesDir,
+            version: '0.0.2',
+          );
 
-        expect(package1.ciConfigFile.existsSync(), true);
-        expect(package2.ciConfigFile.existsSync(), false);
+          expect(package1.ciConfigFile.existsSync(), true);
+          expect(package2.ciConfigFile.existsSync(), false);
 
-        // Mock git diff to show both packages have changed.
-        processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
-          FakeProcessInfo(
-            MockProcess(stdout: '${package1.pubspecFile.path}\n${package2.pubspecFile.path}'),
-          ),
-        ];
+          // Mock git diff to show both packages have changed.
+          processRunner
+              .mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+            FakeProcessInfo(
+              MockProcess(
+                stdout:
+                    '${package1.pubspecFile.path}\n${package2.pubspecFile.path}',
+              ),
+            ),
+          ];
 
-        mockStdin.readLineOutput = 'y';
+          mockStdin.readLineOutput = 'y';
 
-        final List<String> output = await runCapturingPrint(commandRunner, <String>[
-          'publish',
-          '--all-changed',
-          '--base-sha=HEAD~',
-          '--batch-release-branch=release-package1-1.0.0',
-        ]);
-        // Package1 is published in batch realease, pacakge2 is not.
-        expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains('Running `pub publish ` in ${package1.path}...'),
-            contains('Published package1 successfully!'),
-          ]),
-        );
+          final List<String> output =
+              await runCapturingPrint(commandRunner, <String>[
+                'publish',
+                '--all-changed',
+                '--base-sha=HEAD~',
+                '--batch-release-branch=release-package1-1.0.0',
+              ]);
+          // Package1 is published in batch realease, pacakge2 is not.
+          expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('Running `pub publish ` in ${package1.path}...'),
+              contains('Published package1 successfully!'),
+            ]),
+          );
 
-        expect(output, isNot(contains(contains('Running `pub publish ` in ${package2.path}...!'))));
-        expect(output, isNot(contains(contains('Published package2 successfully!'))));
-      });
+          expect(
+            output,
+            isNot(
+              contains(
+                contains('Running `pub publish ` in ${package2.path}...!'),
+              ),
+            ),
+          );
+          expect(
+            output,
+            isNot(contains(contains('Published package2 successfully!'))),
+          );
+        },
+      );
 
-      test('filters packages based on the batch release flag value in ci_config.yaml', () async {
-        // Mock pub.dev responses.
-        mockHttpResponses['package1'] = <String, dynamic>{
-          'name': 'package1',
-          'versions': <String>['0.0.1'],
-        };
-        mockHttpResponses['package2'] = <String, dynamic>{
-          'name': 'package2',
-          'versions': <String>['0.0.1'],
-        };
+      test(
+        'filters packages based on the batch release flag value in ci_config.yaml',
+        () async {
+          // Mock pub.dev responses.
+          mockHttpResponses['package1'] = <String, dynamic>{
+            'name': 'package1',
+            'versions': <String>['0.0.1'],
+          };
+          mockHttpResponses['package2'] = <String, dynamic>{
+            'name': 'package2',
+            'versions': <String>['0.0.1'],
+          };
 
-        // Mock packages.
-        final RepositoryPackage package1 = createFakePackage(
-          'package1',
-          packagesDir,
-          version: '0.0.2',
-        );
-        createFakeCiConfig(package: package1, batchRelease: true);
-        final RepositoryPackage package2 = createFakePackage(
-          'package2',
-          packagesDir,
-          version: '0.0.2',
-        );
-        createFakeCiConfig(package: package2, batchRelease: false);
+          // Mock packages.
+          final RepositoryPackage package1 = createFakePackage(
+            'package1',
+            packagesDir,
+            version: '0.0.2',
+          );
+          createFakeCiConfig(package: package1, batchRelease: true);
+          final RepositoryPackage package2 = createFakePackage(
+            'package2',
+            packagesDir,
+            version: '0.0.2',
+          );
+          createFakeCiConfig(package: package2, batchRelease: false);
 
-        // Mock git diff to show both packages have changed.
-        processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
-          FakeProcessInfo(
-            MockProcess(stdout: '${package1.pubspecFile.path}\n${package2.pubspecFile.path}'),
-          ),
-        ];
+          // Mock git diff to show both packages have changed.
+          processRunner
+              .mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+            FakeProcessInfo(
+              MockProcess(
+                stdout:
+                    '${package1.pubspecFile.path}\n${package2.pubspecFile.path}',
+              ),
+            ),
+          ];
 
-        mockStdin.readLineOutput = 'y';
+          mockStdin.readLineOutput = 'y';
 
-        final List<String> output = await runCapturingPrint(commandRunner, <String>[
-          'publish',
-          '--all-changed',
-          '--base-sha=HEAD~',
-          '--batch-release-branch=release-package1-1.0.0',
-        ]);
-        // Package1 is published in batch realease, pacakge2 is not.
-        expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains('Running `pub publish ` in ${package1.path}...'),
-            contains('Published package1 successfully!'),
-          ]),
-        );
+          final List<String> output =
+              await runCapturingPrint(commandRunner, <String>[
+                'publish',
+                '--all-changed',
+                '--base-sha=HEAD~',
+                '--batch-release-branch=release-package1-1.0.0',
+              ]);
+          // Package1 is published in batch realease, pacakge2 is not.
+          expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('Running `pub publish ` in ${package1.path}...'),
+              contains('Published package1 successfully!'),
+            ]),
+          );
 
-        expect(output, isNot(contains(contains('Running `pub publish ` in ${package2.path}...!'))));
-        expect(output, isNot(contains(contains('Published package2 successfully!'))));
-      });
+          expect(
+            output,
+            isNot(
+              contains(
+                contains('Running `pub publish ` in ${package2.path}...!'),
+              ),
+            ),
+          );
+          expect(
+            output,
+            isNot(contains(contains('Published package2 successfully!'))),
+          );
+        },
+      );
 
       test(
         'when --batch-release-branch flag value is empty, batch release packages are filtered out',
@@ -1212,19 +1458,22 @@ void main() {
           createFakeCiConfig(package: package2, batchRelease: true);
 
           // Mock git diff to show both packages have changed.
-          processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+          processRunner
+              .mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
             FakeProcessInfo(
-              MockProcess(stdout: '${package1.pubspecFile.path}\n${package2.pubspecFile.path}'),
+              MockProcess(
+                stdout:
+                    '${package1.pubspecFile.path}\n${package2.pubspecFile.path}',
+              ),
             ),
           ];
 
           mockStdin.readLineOutput = 'y';
 
-          final List<String> output = await runCapturingPrint(commandRunner, <String>[
-            'publish',
-            '--all-changed',
-            '--base-sha=HEAD~',
-          ]);
+          final List<String> output = await runCapturingPrint(
+            commandRunner,
+            <String>['publish', '--all-changed', '--base-sha=HEAD~'],
+          );
           // Package1 is published in batch realease, pacakge2 is not.
           expect(
             output,
@@ -1236,9 +1485,16 @@ void main() {
 
           expect(
             output,
-            isNot(contains(contains('Running `pub publish ` in ${package2.path}...!'))),
+            isNot(
+              contains(
+                contains('Running `pub publish ` in ${package2.path}...!'),
+              ),
+            ),
           );
-          expect(output, isNot(contains(contains('Published package2 successfully!'))));
+          expect(
+            output,
+            isNot(contains(contains('Published package2 successfully!'))),
+          );
         },
       );
       test(' throw tool exit when could not parse ci config file', () async {
@@ -1255,12 +1511,17 @@ void main() {
           version: '0.0.2',
         );
         createFakeCiConfig(package: package1, batchRelease: false);
-        package1.ciConfigFile.writeAsStringSync('wrong format of ci config file');
+        package1.ciConfigFile.writeAsStringSync(
+          'wrong format of ci config file',
+        );
 
         // Mock git diff to show both packages have changed.
-        processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
-          FakeProcessInfo(MockProcess(stdout: '${package1.pubspecFile.path}\n')),
-        ];
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+              FakeProcessInfo(
+                MockProcess(stdout: '${package1.pubspecFile.path}\n'),
+              ),
+            ];
 
         mockStdin.readLineOutput = 'y';
 
@@ -1302,22 +1563,30 @@ void main() {
         packagesDir,
       );
       processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(stdout: flutterPluginTools.pubspecFile.path)),
+        FakeProcessInfo(
+          MockProcess(stdout: flutterPluginTools.pubspecFile.path),
+        ),
       ];
 
-      final List<String> output = await runCapturingPrint(commandRunner, <String>[
-        'publish',
-        '--all-changed',
-        '--base-sha=HEAD~',
-      ]);
+      final List<String> output = await runCapturingPrint(
+        commandRunner,
+        <String>['publish', '--all-changed', '--base-sha=HEAD~'],
+      );
 
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('SKIPPING: publishing flutter_plugin_tools via the tool is not supported'),
+          contains(
+            'SKIPPING: publishing flutter_plugin_tools via the tool is not supported',
+          ),
         ]),
       );
-      expect(output.contains('Running `pub publish ` in ${flutterPluginTools.path}...'), isFalse);
+      expect(
+        output.contains(
+          'Running `pub publish ` in ${flutterPluginTools.path}...',
+        ),
+        isFalse,
+      );
       expect(
         processRunner.recordedCalls.map((ProcessCall call) => call.executable),
         isNot(contains('git-push')),
@@ -1331,7 +1600,10 @@ void main() {
       platform.environment['XDG_CONFIG_HOME'] = '/xdghome/config';
       command = PublishCommand(packagesDir, platform: platform);
 
-      expect(command.credentialsPath, '/xdghome/config/dart/pub-credentials.json');
+      expect(
+        command.credentialsPath,
+        '/xdghome/config/dart/pub-credentials.json',
+      );
     });
 
     test('Linux without XDG', () async {
@@ -1339,7 +1611,10 @@ void main() {
       platform.environment['HOME'] = '/home';
       command = PublishCommand(packagesDir, platform: platform);
 
-      expect(command.credentialsPath, '/home/.config/dart/pub-credentials.json');
+      expect(
+        command.credentialsPath,
+        '/home/.config/dart/pub-credentials.json',
+      );
     });
 
     test('macOS', () async {
@@ -1358,7 +1633,10 @@ void main() {
       platform.environment['APPDATA'] = r'C:\Users\SomeUser\AppData';
       command = PublishCommand(packagesDir, platform: platform);
 
-      expect(command.credentialsPath, r'C:\Users\SomeUser\AppData\dart\pub-credentials.json');
+      expect(
+        command.credentialsPath,
+        r'C:\Users\SomeUser\AppData\dart\pub-credentials.json',
+      );
     });
   });
 }
@@ -1380,7 +1658,10 @@ class TestProcessRunner extends RecordingProcessRunner {
       args,
       workingDirectory: workingDirectory,
     );
-    if (executable == 'flutter' && args.isNotEmpty && args[0] == 'pub' && args[1] == 'publish') {
+    if (executable == 'flutter' &&
+        args.isNotEmpty &&
+        args[0] == 'pub' &&
+        args[1] == 'publish') {
       mockPublishProcess = process as MockProcess;
     }
     return process;
@@ -1414,8 +1695,10 @@ class MockStdin extends Mock implements io.Stdin {
   }
 
   @override
-  String? readLineSync({Encoding encoding = io.systemEncoding, bool retainNewlines = false}) =>
-      readLineOutput;
+  String? readLineSync({
+    Encoding encoding = io.systemEncoding,
+    bool retainNewlines = false,
+  }) => readLineOutput;
 
   void _addUserInputsToSteam(List<int> input) => _controller.add(input);
 }

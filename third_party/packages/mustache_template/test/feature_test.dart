@@ -7,41 +7,46 @@ const String BAD_TAG_NAME = 'Unless in lenient mode, tags may only contain';
 const String VALUE_MISSING = 'Value was missing';
 const String UNCLOSED_TAG = 'Unclosed tag';
 
-Template parse(String source, {bool lenient = false}) => Template(source, lenient: lenient);
+Template parse(String source, {bool lenient = false}) =>
+    Template(source, lenient: lenient);
 
 void main() {
   group('Basic', () {
     test('Variable', () {
-      final String output = parse('_{{var}}_').renderString(<String, String>{'var': 'bob'});
+      final String output = parse(
+        '_{{var}}_',
+      ).renderString(<String, String>{'var': 'bob'});
       expect(output, equals('_bob_'));
     });
     test('Comment', () {
-      final String output = parse('_{{! i am a\n comment ! }}_').renderString(<dynamic, dynamic>{});
+      final String output = parse(
+        '_{{! i am a\n comment ! }}_',
+      ).renderString(<dynamic, dynamic>{});
       expect(output, equals('__'));
     });
     test('Emoji', () {
-      final String output = parse('Hello! 🖖👍🏽\nBye! 🏳️‍🌈').renderString(<dynamic, dynamic>{});
+      final String output = parse(
+        'Hello! 🖖👍🏽\nBye! 🏳️‍🌈',
+      ).renderString(<dynamic, dynamic>{});
       expect(output, equals('Hello! 🖖👍🏽\nBye! 🏳️‍🌈'));
     });
   });
   group('Section', () {
     test('Map', () {
-      final String output = parse('{{#section}}_{{var}}_{{/section}}').renderString(
-        <String, Map<String, String>>{
-          'section': <String, String>{'var': 'bob'},
-        },
-      );
+      final String output = parse('{{#section}}_{{var}}_{{/section}}')
+          .renderString(<String, Map<String, String>>{
+            'section': <String, String>{'var': 'bob'},
+          });
       expect(output, equals('_bob_'));
     });
     test('List', () {
-      final String output = parse('{{#section}}_{{var}}_{{/section}}').renderString(
-        <String, List<Map<String, String>>>{
-          'section': <Map<String, String>>[
-            <String, String>{'var': 'bob'},
-            <String, String>{'var': 'jim'},
-          ],
-        },
-      );
+      final String output = parse('{{#section}}_{{var}}_{{/section}}')
+          .renderString(<String, List<Map<String, String>>>{
+            'section': <Map<String, String>>[
+              <String, String>{'var': 'bob'},
+              <String, String>{'var': 'jim'},
+            ],
+          });
       expect(output, equals('_bob__jim_'));
     });
     test('Empty List', () {
@@ -57,9 +62,10 @@ void main() {
       expect(output, equals(''));
     });
     test('Invalid value', () {
-      final Exception? ex = renderFail('{{#section}}_{{var}}_{{/section}}', <String, int>{
-        'section': 42,
-      });
+      final Exception? ex = renderFail(
+        '{{#section}}_{{var}}_{{/section}}',
+        <String, int>{'section': 42},
+      );
       if (ex is TemplateException) {
         expect(ex.message, startsWith(VALUE_MISSING));
       } else {
@@ -99,51 +105,67 @@ void main() {
 
     test('Whitespace in section tags', () {
       expect(
-        parse('{{#foo.bar}}oi{{/foo.bar}}').renderString(<String, Map<String, bool>>{
-          'foo': <String, bool>{'bar': true},
-        }),
+        parse('{{#foo.bar}}oi{{/foo.bar}}').renderString(
+          <String, Map<String, bool>>{
+            'foo': <String, bool>{'bar': true},
+          },
+        ),
         equals('oi'),
       );
       expect(
-        parse('{{# foo.bar}}oi{{/foo.bar}}').renderString(<String, Map<String, bool>>{
-          'foo': <String, bool>{'bar': true},
-        }),
+        parse('{{# foo.bar}}oi{{/foo.bar}}').renderString(
+          <String, Map<String, bool>>{
+            'foo': <String, bool>{'bar': true},
+          },
+        ),
         equals('oi'),
       );
       expect(
-        parse('{{#foo.bar }}oi{{/foo.bar}}').renderString(<String, Map<String, bool>>{
-          'foo': <String, bool>{'bar': true},
-        }),
+        parse('{{#foo.bar }}oi{{/foo.bar}}').renderString(
+          <String, Map<String, bool>>{
+            'foo': <String, bool>{'bar': true},
+          },
+        ),
         equals('oi'),
       );
       expect(
-        parse('{{# foo.bar }}oi{{/foo.bar}}').renderString(<String, Map<String, bool>>{
-          'foo': <String, bool>{'bar': true},
-        }),
+        parse('{{# foo.bar }}oi{{/foo.bar}}').renderString(
+          <String, Map<String, bool>>{
+            'foo': <String, bool>{'bar': true},
+          },
+        ),
         equals('oi'),
       );
       expect(
-        parse('{{#foo.bar}}oi{{/ foo.bar}}').renderString(<String, Map<String, bool>>{
-          'foo': <String, bool>{'bar': true},
-        }),
+        parse('{{#foo.bar}}oi{{/ foo.bar}}').renderString(
+          <String, Map<String, bool>>{
+            'foo': <String, bool>{'bar': true},
+          },
+        ),
         equals('oi'),
       );
       expect(
-        parse('{{#foo.bar}}oi{{/foo.bar }}').renderString(<String, Map<String, bool>>{
-          'foo': <String, bool>{'bar': true},
-        }),
+        parse('{{#foo.bar}}oi{{/foo.bar }}').renderString(
+          <String, Map<String, bool>>{
+            'foo': <String, bool>{'bar': true},
+          },
+        ),
         equals('oi'),
       );
       expect(
-        parse('{{#foo.bar}}oi{{/ foo.bar }}').renderString(<String, Map<String, bool>>{
-          'foo': <String, bool>{'bar': true},
-        }),
+        parse('{{#foo.bar}}oi{{/ foo.bar }}').renderString(
+          <String, Map<String, bool>>{
+            'foo': <String, bool>{'bar': true},
+          },
+        ),
         equals('oi'),
       );
       expect(
-        parse('{{# foo.bar }}oi{{/ foo.bar }}').renderString(<String, Map<String, bool>>{
-          'foo': <String, bool>{'bar': true},
-        }),
+        parse('{{# foo.bar }}oi{{/ foo.bar }}').renderString(
+          <String, Map<String, bool>>{
+            'foo': <String, bool>{'bar': true},
+          },
+        ),
         equals('oi'),
       );
     });
@@ -176,30 +198,47 @@ void main() {
     });
 
     test('Odd whitespace in tags', () {
-      void render(String source, dynamic values, dynamic output) =>
-          expect(parse(source, lenient: true).renderString(values), equals(output));
+      void render(String source, dynamic values, dynamic output) => expect(
+        parse(source, lenient: true).renderString(values),
+        equals(output),
+      );
 
       render('{{\t# foo}}oi{{\n/foo}}', <String, bool>{'foo': true}, 'oi');
 
-      render('{{ # # foo }} {{ oi }} {{ / # foo }}', <String, List<Map<String, String>>>{
-        '# foo': <Map<String, String>>[
-          <String, String>{'oi': 'OI!'},
-        ],
-      }, ' OI! ');
+      render(
+        '{{ # # foo }} {{ oi }} {{ / # foo }}',
+        <String, List<Map<String, String>>>{
+          '# foo': <Map<String, String>>[
+            <String, String>{'oi': 'OI!'},
+          ],
+        },
+        ' OI! ',
+      );
 
-      render('{{ #foo }} {{ oi }} {{ /foo }}', <String, List<Map<String, String>>>{
-        'foo': <Map<String, String>>[
-          <String, String>{'oi': 'OI!'},
-        ],
-      }, ' OI! ');
+      render(
+        '{{ #foo }} {{ oi }} {{ /foo }}',
+        <String, List<Map<String, String>>>{
+          'foo': <Map<String, String>>[
+            <String, String>{'oi': 'OI!'},
+          ],
+        },
+        ' OI! ',
+      );
 
-      render('{{\t#foo }} {{ oi }} {{ /foo }}', <String, List<Map<String, String>>>{
-        'foo': <Map<String, String>>[
-          <String, String>{'oi': 'OI!'},
-        ],
-      }, ' OI! ');
+      render(
+        '{{\t#foo }} {{ oi }} {{ /foo }}',
+        <String, List<Map<String, String>>>{
+          'foo': <Map<String, String>>[
+            <String, String>{'oi': 'OI!'},
+          ],
+        },
+        ' OI! ',
+      );
 
-      render('{{{ #foo }}} {{{ /foo }}}', <String, int>{'#foo': 1, '/foo': 2}, '1 2');
+      render('{{{ #foo }}} {{{ /foo }}}', <String, int>{
+        '#foo': 1,
+        '/foo': 2,
+      }, '1 2');
 
       // Invalid - I'm ok with that for now.
       //      render(
@@ -217,16 +256,33 @@ void main() {
     });
 
     test('Sigils in tag names in lenient mode', () {
-      void render(String source, dynamic values, dynamic output) =>
-          expect(parse(source, lenient: true).renderString(values), equals(output));
+      void render(String source, dynamic values, dynamic output) => expect(
+        parse(source, lenient: true).renderString(values),
+        equals(output),
+      );
 
       // Even in lenient mode, tag names may not be a single sigil
       // character.
-      expect(() => parse('{{#}}', lenient: true), throwsA(isA<TemplateException>()));
-      expect(() => parse('{{>}}', lenient: true), throwsA(isA<TemplateException>()));
-      expect(() => parse('{{&}}', lenient: true), throwsA(isA<TemplateException>()));
-      expect(() => parse('{{/}}', lenient: true), throwsA(isA<TemplateException>()));
-      expect(() => parse('{{^}}', lenient: true), throwsA(isA<TemplateException>()));
+      expect(
+        () => parse('{{#}}', lenient: true),
+        throwsA(isA<TemplateException>()),
+      );
+      expect(
+        () => parse('{{>}}', lenient: true),
+        throwsA(isA<TemplateException>()),
+      );
+      expect(
+        () => parse('{{&}}', lenient: true),
+        throwsA(isA<TemplateException>()),
+      );
+      expect(
+        () => parse('{{/}}', lenient: true),
+        throwsA(isA<TemplateException>()),
+      );
+      expect(
+        () => parse('{{^}}', lenient: true),
+        throwsA(isA<TemplateException>()),
+      );
 
       // >a means 'a partial named "a"', not a variable named ">a",
       // and in lenient mode the missing partial should fail silently
@@ -256,22 +312,20 @@ void main() {
 
   group('Inverse Section', () {
     test('Map', () {
-      final String output = parse('{{^section}}_{{var}}_{{/section}}').renderString(
-        <String, Map<String, String>>{
-          'section': <String, String>{'var': 'bob'},
-        },
-      );
+      final String output = parse('{{^section}}_{{var}}_{{/section}}')
+          .renderString(<String, Map<String, String>>{
+            'section': <String, String>{'var': 'bob'},
+          });
       expect(output, equals(''));
     });
     test('List', () {
-      final String output = parse('{{^section}}_{{var}}_{{/section}}').renderString(
-        <String, List<Map<String, String>>>{
-          'section': <Map<String, String>>[
-            <String, String>{'var': 'bob'},
-            <String, String>{'var': 'jim'},
-          ],
-        },
-      );
+      final String output = parse('{{^section}}_{{var}}_{{/section}}')
+          .renderString(<String, List<Map<String, String>>>{
+            'section': <Map<String, String>>[
+              <String, String>{'var': 'bob'},
+              <String, String>{'var': 'jim'},
+            ],
+          });
       expect(output, equals(''));
     });
     test('Empty List', () {
@@ -287,11 +341,15 @@ void main() {
       expect(output, equals('_ok_'));
     });
     test('Invalid value', () {
-      final Exception? ex = renderFail('{{^section}}_{{var}}_{{/section}}', <String, int>{
-        'section': 42,
-      });
+      final Exception? ex = renderFail(
+        '{{^section}}_{{var}}_{{/section}}',
+        <String, int>{'section': 42},
+      );
       expect(ex is TemplateException, isTrue);
-      expect((ex! as TemplateException).message, startsWith(BAD_VALUE_INV_SECTION));
+      expect(
+        (ex! as TemplateException).message,
+        startsWith(BAD_VALUE_INV_SECTION),
+      );
     });
     test('Invalid value - lenient mode', () {
       final String output = parse(
@@ -310,42 +368,58 @@ void main() {
 
   group('Html escape', () {
     test('Escape at start', () {
-      final String output = parse('_{{var}}_').renderString(<String, String>{'var': '&.'});
+      final String output = parse(
+        '_{{var}}_',
+      ).renderString(<String, String>{'var': '&.'});
       expect(output, equals('_&amp;._'));
     });
 
     test('Escape at end', () {
-      final String output = parse('_{{var}}_').renderString(<String, String>{'var': '.&'});
+      final String output = parse(
+        '_{{var}}_',
+      ).renderString(<String, String>{'var': '.&'});
       expect(output, equals('_.&amp;_'));
     });
 
     test('&', () {
-      final String output = parse('_{{var}}_').renderString(<String, String>{'var': '&'});
+      final String output = parse(
+        '_{{var}}_',
+      ).renderString(<String, String>{'var': '&'});
       expect(output, equals('_&amp;_'));
     });
 
     test('<', () {
-      final String output = parse('_{{var}}_').renderString(<String, String>{'var': '<'});
+      final String output = parse(
+        '_{{var}}_',
+      ).renderString(<String, String>{'var': '<'});
       expect(output, equals('_&lt;_'));
     });
 
     test('>', () {
-      final String output = parse('_{{var}}_').renderString(<String, String>{'var': '>'});
+      final String output = parse(
+        '_{{var}}_',
+      ).renderString(<String, String>{'var': '>'});
       expect(output, equals('_&gt;_'));
     });
 
     test('"', () {
-      final String output = parse('_{{var}}_').renderString(<String, String>{'var': '"'});
+      final String output = parse(
+        '_{{var}}_',
+      ).renderString(<String, String>{'var': '"'});
       expect(output, equals('_&quot;_'));
     });
 
     test("'", () {
-      final String output = parse('_{{var}}_').renderString(<String, String>{'var': "'"});
+      final String output = parse(
+        '_{{var}}_',
+      ).renderString(<String, String>{'var': "'"});
       expect(output, equals('_&#x27;_'));
     });
 
     test('/', () {
-      final String output = parse('_{{var}}_').renderString(<String, String>{'var': '/'});
+      final String output = parse(
+        '_{{var}}_',
+      ).renderString(<String, String>{'var': '/'});
       expect(output, equals('_&#x2F;_'));
     });
   });
@@ -419,27 +493,35 @@ void main() {
 
   group('Lenient', () {
     test('Odd section name', () {
-      final String output = parse(r'{{#section$%$^%}}_{{var}}_{{/section$%$^%}}', lenient: true)
-          .renderString(<String, Map<String, String>>{
+      final String output =
+          parse(
+            r'{{#section$%$^%}}_{{var}}_{{/section$%$^%}}',
+            lenient: true,
+          ).renderString(<String, Map<String, String>>{
             r'section$%$^%': <String, String>{'var': 'bob'},
           });
       expect(output, equals('_bob_'));
     });
 
     test('Odd variable name', () {
-      final String output = parse(r'{{#section}}_{{var$%$^%}}_{{/section}}', lenient: true)
-          .renderString(<String, Map<String, String>>{
+      final String output =
+          parse(
+            r'{{#section}}_{{var$%$^%}}_{{/section}}',
+            lenient: true,
+          ).renderString(<String, Map<String, String>>{
             'section': <String, String>{r'var$%$^%': 'bob'},
           });
       expect(output, equals('_bob_'));
     });
 
     test('Null variable', () {
-      final String output = parse(r'{{#section}}_{{var}}_{{/section}}', lenient: true).renderString(
-        <String, Map<String, void>>{
-          'section': <String, void>{'var': null},
-        },
-      );
+      final String output =
+          parse(
+            r'{{#section}}_{{var}}_{{/section}}',
+            lenient: true,
+          ).renderString(<String, Map<String, void>>{
+            'section': <String, void>{'var': null},
+          });
       expect(output, equals('__'));
     });
 
@@ -454,11 +536,15 @@ void main() {
 
   group('Escape tags', () {
     test('{{{ ... }}}', () {
-      final String output = parse('{{{blah}}}').renderString(<String, String>{'blah': '&'});
+      final String output = parse(
+        '{{{blah}}}',
+      ).renderString(<String, String>{'blah': '&'});
       expect(output, equals('&'));
     });
     test('{{& ... }}', () {
-      final String output = parse('{{{blah}}}').renderString(<String, String>{'blah': '&'});
+      final String output = parse(
+        '{{{blah}}}',
+      ).renderString(<String, String>{'blah': '&'});
       expect(output, equals('&'));
     });
   });
@@ -536,7 +622,10 @@ void main() {
             <String, Object>{'content': 'Y', 'nodes': <dynamic>[]},
           ],
         },
-        <String, Object>{'root': '{{>node}}', 'node': '{{content}}<{{#nodes}}{{>node}}{{/nodes}}>'},
+        <String, Object>{
+          'root': '{{>node}}',
+          'node': '{{content}}<{{#nodes}}{{>node}}{{/nodes}}>',
+        },
         'root',
         lenient: true,
       );
@@ -556,7 +645,10 @@ void main() {
     test('standalone indentation', () {
       final String output = partialTest(
         <String, Object>{'content': '<\n->'},
-        <String, Object>{'root': '\\\n {{>partial}}\n/\n', 'partial': '|\n{{{content}}}\n|\n'},
+        <String, Object>{
+          'root': '\\\n {{>partial}}\n/\n',
+          'partial': '|\n{{{content}}}\n|\n',
+        },
         'root',
         lenient: true,
       );
@@ -565,15 +657,29 @@ void main() {
   });
 
   group('Lambdas', () {
-    void lambdaTest({required String template, dynamic lambda, dynamic output}) =>
-        expect(parse(template).renderString(<String, dynamic>{'lambda': lambda}), equals(output));
+    void lambdaTest({
+      required String template,
+      dynamic lambda,
+      dynamic output,
+    }) => expect(
+      parse(template).renderString(<String, dynamic>{'lambda': lambda}),
+      equals(output),
+    );
 
     test('basic', () {
-      lambdaTest(template: 'Hello, {{lambda}}!', lambda: (_) => 'world', output: 'Hello, world!');
+      lambdaTest(
+        template: 'Hello, {{lambda}}!',
+        lambda: (_) => 'world',
+        output: 'Hello, world!',
+      );
     });
 
     test('escaping', () {
-      lambdaTest(template: '<{{lambda}}{{{lambda}}}', lambda: (_) => '>', output: '<&gt;>');
+      lambdaTest(
+        template: '<{{lambda}}{{{lambda}}}',
+        lambda: (_) => '>',
+        output: '<&gt;>',
+      );
     });
 
     test('sections', () {
@@ -586,7 +692,10 @@ void main() {
 
     test('inverted sections truthy', () {
       const template = '<{{^lambda}}{{static}}{{/lambda}}>';
-      final values = <String, Object>{'lambda': (_) => false, 'static': 'static'};
+      final values = <String, Object>{
+        'lambda': (_) => false,
+        'static': 'static',
+      };
       const output = '<>';
       expect(parse(template).renderString(values), equals(output));
     });
@@ -629,7 +738,8 @@ void main() {
       //function() { return "|planet| => {{planet}}" }
       final values = <String, Object>{
         'planet': 'world',
-        'lambda': (LambdaContext ctx) => ctx.renderSource('|planet| => {{planet}}'),
+        'lambda': (LambdaContext ctx) =>
+            ctx.renderSource('|planet| => {{planet}}'),
       };
 
       const output = 'Hello, (|planet| => world)!';
@@ -668,7 +778,10 @@ void main() {
     test('LambdaContext.lookup closed', () {
       final t = Template('{{ foo }}');
       LambdaContext? lc2;
-      t.renderString(<String, Object>{'foo': (LambdaContext lc) => lc2 = lc, 'bar': 'jim'});
+      t.renderString(<String, Object>{
+        'foo': (LambdaContext lc) => lc2 = lc,
+        'bar': 'jim',
+      });
       expect(lc2, isNotNull);
       expect(() => lc2?.lookup('foo'), throwsException);
     });
@@ -784,7 +897,10 @@ void main() {
       const template = '<{{#markdown}}{{content}}{{/markdown}}>';
       final values = <String, String Function(LambdaContext ctx)>{
         'markdown': (LambdaContext ctx) {
-          return ctx.renderSource(ctx.source, value: <String, String>{'content': 'oi!'});
+          return ctx.renderSource(
+            ctx.source,
+            value: <String, String>{'content': 'oi!'},
+          );
         },
       };
       const output = '<oi!>';
@@ -794,7 +910,9 @@ void main() {
     test('LambdaContext renderString on non-section throws', () {
       final t = Template('{{ foo }}');
       expect(
-        () => t.renderString(<String, Object>{'foo': (LambdaContext lc) => lc.renderString()}),
+        () => t.renderString(<String, Object>{
+          'foo': (LambdaContext lc) => lc.renderString(),
+        }),
         throwsA(isA<TemplateException>()),
       );
     });
@@ -823,7 +941,12 @@ Exception? renderFail(String source, Object values) {
   }
 }
 
-void expectFail(Exception? ex, int? line, int? column, [String? msgStartsWith]) {
+void expectFail(
+  Exception? ex,
+  int? line,
+  int? column, [
+  String? msgStartsWith,
+]) {
   if (ex is! TemplateException) {
     fail('Unexpected type: $ex');
   }

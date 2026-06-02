@@ -313,6 +313,7 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
             ],
           ),
           const SizedBox(height: 16),
+
           if (_audioTracks.isEmpty)
             const Expanded(
               child: Center(
@@ -362,8 +363,10 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
             if (track.language != null) Text('Language: ${track.language}'),
             if (track.codec != null) Text('Codec: ${track.codec}'),
             if (track.bitrate != null) Text('Bitrate: ${track.bitrate} bps'),
-            if (track.sampleRate != null) Text('Sample Rate: ${track.sampleRate} Hz'),
-            if (track.channelCount != null) Text('Channels: ${track.channelCount}'),
+            if (track.sampleRate != null)
+              Text('Sample Rate: ${track.sampleRate} Hz'),
+            if (track.channelCount != null)
+              Text('Channels: ${track.channelCount}'),
           ],
         ),
         trailing: track.isSelected

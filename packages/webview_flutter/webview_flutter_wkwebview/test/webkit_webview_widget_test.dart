@@ -12,7 +12,11 @@ import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 import 'webkit_webview_widget_test.mocks.dart';
 
-@GenerateMocks(<Type>[WKUIDelegate, WKWebViewConfiguration, UIScrollViewDelegate])
+@GenerateMocks(<Type>[
+  WKUIDelegate,
+  WKWebViewConfiguration,
+  UIScrollViewDelegate,
+])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -27,13 +31,22 @@ void main() {
       final WebKitWebViewController controller = createTestWebViewController();
 
       final widget = WebKitWebViewWidget(
-        WebKitWebViewWidgetCreationParams(key: const Key('keyValue'), controller: controller),
+        WebKitWebViewWidgetCreationParams(
+          key: const Key('keyValue'),
+          controller: controller,
+        ),
       );
 
-      await tester.pumpWidget(Builder(builder: (BuildContext context) => widget.build(context)));
+      await tester.pumpWidget(
+        Builder(builder: (BuildContext context) => widget.build(context)),
+      );
 
       expect(
-        find.byType(defaultTargetPlatform == TargetPlatform.macOS ? AppKitView : UiKitView),
+        find.byType(
+          defaultTargetPlatform == TargetPlatform.macOS
+              ? AppKitView
+              : UiKitView,
+        ),
         findsOneWidget,
       );
       expect(find.byKey(const Key('keyValue')), findsOneWidget);
@@ -53,7 +66,9 @@ void main() {
       );
 
       await tester.pumpWidget(
-        Builder(builder: (BuildContext context) => webViewWidget.build(context)),
+        Builder(
+          builder: (BuildContext context) => webViewWidget.build(context),
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -73,7 +88,9 @@ void main() {
       );
 
       await tester.pumpWidget(
-        Builder(builder: (BuildContext context) => webViewWidget2.build(context)),
+        Builder(
+          builder: (BuildContext context) => webViewWidget2.build(context),
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -98,52 +115,58 @@ void main() {
       debugDefaultTargetPlatformOverride = null;
     });
 
-    testWidgets('Key of the PlatformView is the same when the creation params are equal', (
-      WidgetTester tester,
-    ) async {
-      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+    testWidgets(
+      'Key of the PlatformView is the same when the creation params are equal',
+      (WidgetTester tester) async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
 
-      final WebKitWebViewController controller = createTestWebViewController();
+        final WebKitWebViewController controller =
+            createTestWebViewController();
 
-      final webViewWidget = WebKitWebViewWidget(
-        WebKitWebViewWidgetCreationParams(controller: controller),
-      );
+        final webViewWidget = WebKitWebViewWidget(
+          WebKitWebViewWidgetCreationParams(controller: controller),
+        );
 
-      await tester.pumpWidget(
-        Builder(builder: (BuildContext context) => webViewWidget.build(context)),
-      );
-      await tester.pumpAndSettle();
-
-      expect(
-        find.byKey(
-          ValueKey<WebKitWebViewWidgetCreationParams>(
-            webViewWidget.params as WebKitWebViewWidgetCreationParams,
+        await tester.pumpWidget(
+          Builder(
+            builder: (BuildContext context) => webViewWidget.build(context),
           ),
-        ),
-        findsOneWidget,
-      );
+        );
+        await tester.pumpAndSettle();
 
-      final webViewWidget2 = WebKitWebViewWidget(
-        WebKitWebViewWidgetCreationParams(controller: controller),
-      );
-
-      await tester.pumpWidget(
-        Builder(builder: (BuildContext context) => webViewWidget2.build(context)),
-      );
-      await tester.pumpAndSettle();
-
-      // Can find the new widget with the key of the first widget.
-      expect(
-        find.byKey(
-          ValueKey<WebKitWebViewWidgetCreationParams>(
-            webViewWidget.params as WebKitWebViewWidgetCreationParams,
+        expect(
+          find.byKey(
+            ValueKey<WebKitWebViewWidgetCreationParams>(
+              webViewWidget.params as WebKitWebViewWidgetCreationParams,
+            ),
           ),
-        ),
-        findsOneWidget,
-      );
+          findsOneWidget,
+        );
 
-      debugDefaultTargetPlatformOverride = null;
-    });
+        final webViewWidget2 = WebKitWebViewWidget(
+          WebKitWebViewWidgetCreationParams(controller: controller),
+        );
+
+        await tester.pumpWidget(
+          Builder(
+            builder: (BuildContext context) => webViewWidget2.build(context),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // Can find the new widget with the key of the first widget.
+        expect(
+          find.byKey(
+            ValueKey<WebKitWebViewWidgetCreationParams>(
+              webViewWidget.params as WebKitWebViewWidgetCreationParams,
+            ),
+          ),
+          findsOneWidget,
+        );
+
+        debugDefaultTargetPlatformOverride = null;
+      },
+    );
   });
 }
 
@@ -151,7 +174,13 @@ WebKitWebViewController createTestWebViewController() {
   PigeonOverrides.uIViewWKWebView_new =
       ({
         required WKWebViewConfiguration initialConfiguration,
-        void Function(NSObject, String?, NSObject?, Map<KeyValueChangeKey, Object>?)? observeValue,
+        void Function(
+          NSObject,
+          String?,
+          NSObject?,
+          Map<KeyValueChangeKey, Object>?,
+        )?
+        observeValue,
       }) {
         final webView = UIViewWKWebView.pigeon_detached();
         PigeonInstanceManager.instance.addDartCreatedInstance(webView);
@@ -175,12 +204,17 @@ WebKitWebViewController createTestWebViewController() {
         PigeonInstanceManager.instance.addDartCreatedInstance(mockWKUIDelegate);
         return mockWKUIDelegate;
       };
-  PigeonOverrides.uIScrollViewDelegate_new = ({dynamic scrollViewDidScroll, dynamic observeValue}) {
-    final mockScrollViewDelegate = MockUIScrollViewDelegate();
-    when(mockScrollViewDelegate.pigeon_copy()).thenReturn(MockUIScrollViewDelegate());
+  PigeonOverrides.uIScrollViewDelegate_new =
+      ({dynamic scrollViewDidScroll, dynamic observeValue}) {
+        final mockScrollViewDelegate = MockUIScrollViewDelegate();
+        when(
+          mockScrollViewDelegate.pigeon_copy(),
+        ).thenReturn(MockUIScrollViewDelegate());
 
-    PigeonInstanceManager.instance.addDartCreatedInstance(mockScrollViewDelegate);
-    return mockScrollViewDelegate;
-  };
+        PigeonInstanceManager.instance.addDartCreatedInstance(
+          mockScrollViewDelegate,
+        );
+        return mockScrollViewDelegate;
+      };
   return WebKitWebViewController(WebKitWebViewControllerCreationParams());
 }

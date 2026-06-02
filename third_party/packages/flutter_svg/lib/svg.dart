@@ -18,14 +18,12 @@ export 'src/loaders.dart';
 
 /// Builder function to create an error widget. This builder is called when
 /// the image failed loading.
-typedef SvgErrorWidgetBuilder = Widget Function(
-  BuildContext context,
-  Object error,
-  StackTrace stackTrace,
-);
+typedef SvgErrorWidgetBuilder =
+    Widget Function(BuildContext context, Object error, StackTrace stackTrace);
 
 /// Builder function to wrap the successfully loaded SVG widget.
-typedef SvgImageWidgetBuilder = Widget Function(BuildContext context, Widget child);
+typedef SvgImageWidgetBuilder =
+    Widget Function(BuildContext context, Widget child);
 
 /// Instance for [Svg]'s utility methods, which can produce a [DrawableRoot]
 /// or [PictureInfo] from [String] or [Uint8List].
@@ -205,7 +203,8 @@ class SvgPicture extends StatelessWidget {
     ColorMapper? colorMapper,
     ui.ColorFilter? colorFilter,
     @Deprecated('Use colorFilter instead.') ui.Color? color,
-    @Deprecated('Use colorFilter instead.') ui.BlendMode colorBlendMode = ui.BlendMode.srcIn,
+    @Deprecated('Use colorFilter instead.')
+    ui.BlendMode colorBlendMode = ui.BlendMode.srcIn,
     @Deprecated('This no longer does anything.') bool cacheColorFilter = false,
     this.renderingStrategy = RenderingStrategy.picture,
   }) : bytesLoader = SvgAssetLoader(
@@ -262,7 +261,8 @@ class SvgPicture extends StatelessWidget {
     this.placeholderBuilder,
     ui.ColorFilter? colorFilter,
     @Deprecated('Use colorFilter instead.') ui.Color? color,
-    @Deprecated('Use colorFilter instead.') ui.BlendMode colorBlendMode = ui.BlendMode.srcIn,
+    @Deprecated('Use colorFilter instead.')
+    ui.BlendMode colorBlendMode = ui.BlendMode.srcIn,
     this.semanticsLabel,
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
@@ -324,7 +324,8 @@ class SvgPicture extends StatelessWidget {
     this.placeholderBuilder,
     ui.ColorFilter? colorFilter,
     @Deprecated('Use colorFilter instead.') ui.Color? color,
-    @Deprecated('Use colorFilter instead.') ui.BlendMode colorBlendMode = ui.BlendMode.srcIn,
+    @Deprecated('Use colorFilter instead.')
+    ui.BlendMode colorBlendMode = ui.BlendMode.srcIn,
     this.semanticsLabel,
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
@@ -334,7 +335,11 @@ class SvgPicture extends StatelessWidget {
     ColorMapper? colorMapper,
     @Deprecated('This no longer does anything.') bool cacheColorFilter = false,
     this.renderingStrategy = RenderingStrategy.picture,
-  }) : bytesLoader = SvgFileLoader(file, theme: theme, colorMapper: colorMapper),
+  }) : bytesLoader = SvgFileLoader(
+         file,
+         theme: theme,
+         colorMapper: colorMapper,
+       ),
        colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode);
 
   /// Creates a widget that displays an SVG obtained from a [Uint8List].
@@ -376,7 +381,8 @@ class SvgPicture extends StatelessWidget {
     this.placeholderBuilder,
     ui.ColorFilter? colorFilter,
     @Deprecated('Use colorFilter instead.') ui.Color? color,
-    @Deprecated('Use colorFilter instead.') ui.BlendMode colorBlendMode = ui.BlendMode.srcIn,
+    @Deprecated('Use colorFilter instead.')
+    ui.BlendMode colorBlendMode = ui.BlendMode.srcIn,
     this.semanticsLabel,
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
@@ -386,7 +392,11 @@ class SvgPicture extends StatelessWidget {
     ColorMapper? colorMapper,
     @Deprecated('This no longer does anything.') bool cacheColorFilter = false,
     this.renderingStrategy = RenderingStrategy.picture,
-  }) : bytesLoader = SvgBytesLoader(bytes, theme: theme, colorMapper: colorMapper),
+  }) : bytesLoader = SvgBytesLoader(
+         bytes,
+         theme: theme,
+         colorMapper: colorMapper,
+       ),
        colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode);
 
   /// Creates a widget that displays an SVG obtained from a [String].
@@ -428,7 +438,8 @@ class SvgPicture extends StatelessWidget {
     this.placeholderBuilder,
     ui.ColorFilter? colorFilter,
     @Deprecated('Use colorFilter instead.') ui.Color? color,
-    @Deprecated('Use colorFilter instead.') ui.BlendMode colorBlendMode = ui.BlendMode.srcIn,
+    @Deprecated('Use colorFilter instead.')
+    ui.BlendMode colorBlendMode = ui.BlendMode.srcIn,
     this.semanticsLabel,
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
@@ -438,15 +449,22 @@ class SvgPicture extends StatelessWidget {
     ColorMapper? colorMapper,
     @Deprecated('This no longer does anything.') bool cacheColorFilter = false,
     this.renderingStrategy = RenderingStrategy.picture,
-  }) : bytesLoader = SvgStringLoader(string, theme: theme, colorMapper: colorMapper),
+  }) : bytesLoader = SvgStringLoader(
+         string,
+         theme: theme,
+         colorMapper: colorMapper,
+       ),
        colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode);
 
-  static ColorFilter? _getColorFilter(ui.Color? color, ui.BlendMode colorBlendMode) =>
-      color == null ? null : ui.ColorFilter.mode(color, colorBlendMode);
+  static ColorFilter? _getColorFilter(
+    ui.Color? color,
+    ui.BlendMode colorBlendMode,
+  ) => color == null ? null : ui.ColorFilter.mode(color, colorBlendMode);
 
   /// The default placeholder for a SVG that may take time to parse or
   /// retrieve, e.g. from a network location.
-  static WidgetBuilder defaultPlaceholderBuilder = (BuildContext ctx) => const LimitedBox();
+  static WidgetBuilder defaultPlaceholderBuilder = (BuildContext ctx) =>
+      const LimitedBox();
 
   /// If specified, the width to use for the SVG.  If unspecified, the SVG
   /// will take the width of its parent.
@@ -565,7 +583,9 @@ class SvgPicture extends StatelessWidget {
     super.debugFillProperties(properties);
 
     properties
-      ..add(StringProperty('bytesLoader', bytesLoader.toString(), showName: false))
+      ..add(
+        StringProperty('bytesLoader', bytesLoader.toString(), showName: false),
+      )
       ..add(DoubleProperty('width', width, defaultValue: null))
       ..add(DoubleProperty('height', height, defaultValue: null))
       ..add(
@@ -582,14 +602,34 @@ class SvgPicture extends StatelessWidget {
           defaultValue: false,
         ),
       )
-      ..add(EnumProperty<Clip>('clipBehavior', clipBehavior, defaultValue: BoxFit.contain))
-      ..add(StringProperty('colorFilter', colorFilter.toString(), defaultValue: null))
-      ..add(EnumProperty<BoxFit>('fit', fit, defaultValue: BoxFit.contain))
       ..add(
-        DiagnosticsProperty<Function>('placeholderBuilder', placeholderBuilder, defaultValue: null),
+        EnumProperty<Clip>(
+          'clipBehavior',
+          clipBehavior,
+          defaultValue: BoxFit.contain,
+        ),
       )
       ..add(
-        DiagnosticsProperty<bool>('matchTextDirection', matchTextDirection, defaultValue: false),
+        StringProperty(
+          'colorFilter',
+          colorFilter.toString(),
+          defaultValue: null,
+        ),
+      )
+      ..add(EnumProperty<BoxFit>('fit', fit, defaultValue: BoxFit.contain))
+      ..add(
+        DiagnosticsProperty<Function>(
+          'placeholderBuilder',
+          placeholderBuilder,
+          defaultValue: null,
+        ),
+      )
+      ..add(
+        DiagnosticsProperty<bool>(
+          'matchTextDirection',
+          matchTextDirection,
+          defaultValue: false,
+        ),
       )
       ..add(
         DiagnosticsProperty<bool>(
@@ -598,6 +638,8 @@ class SvgPicture extends StatelessWidget {
           defaultValue: false,
         ),
       )
-      ..add(StringProperty('semanticsLabel', semanticsLabel, defaultValue: null));
+      ..add(
+        StringProperty('semanticsLabel', semanticsLabel, defaultValue: null),
+      );
   }
 }

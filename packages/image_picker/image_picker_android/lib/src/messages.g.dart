@@ -49,7 +49,9 @@ bool _deepEquals(Object? a, Object? b) {
   }
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed.every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed.every(
+          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
+        );
   }
   if (a is Map && b is Map) {
     if (a.length != b.length) {
@@ -105,7 +107,11 @@ enum SourceType { camera, gallery }
 enum CacheRetrievalType { image, video }
 
 class GeneralOptions {
-  GeneralOptions({required this.allowMultiple, required this.usePhotoPicker, this.limit});
+  GeneralOptions({
+    required this.allowMultiple,
+    required this.usePhotoPicker,
+    this.limit,
+  });
 
   bool allowMultiple;
 
@@ -215,7 +221,9 @@ class MediaSelectionOptions {
 
   static MediaSelectionOptions decode(Object result) {
     result as List<Object?>;
-    return MediaSelectionOptions(imageSelectionOptions: result[0]! as ImageSelectionOptions);
+    return MediaSelectionOptions(
+      imageSelectionOptions: result[0]! as ImageSelectionOptions,
+    );
   }
 
   @override
@@ -290,7 +298,10 @@ class SourceSpecification {
 
   static SourceSpecification decode(Object result) {
     result as List<Object?>;
-    return SourceSpecification(type: result[0]! as SourceType, camera: result[1] as SourceCamera?);
+    return SourceSpecification(
+      type: result[0]! as SourceType,
+      camera: result[1] as SourceCamera?,
+    );
   }
 
   @override
@@ -330,7 +341,10 @@ class CacheRetrievalError {
 
   static CacheRetrievalError decode(Object result) {
     result as List<Object?>;
-    return CacheRetrievalError(code: result[0]! as String, message: result[1] as String?);
+    return CacheRetrievalError(
+      code: result[0]! as String,
+      message: result[1] as String?,
+    );
   }
 
   @override
@@ -352,7 +366,11 @@ class CacheRetrievalError {
 
 /// The result of retrieving cached results from a previous run.
 class CacheRetrievalResult {
-  CacheRetrievalResult({required this.type, this.error, this.paths = const <String>[]});
+  CacheRetrievalResult({
+    required this.type,
+    this.error,
+    this.paths = const <String>[],
+  });
 
   /// The type of the retrieved data.
   CacheRetrievalType type;
@@ -477,11 +495,13 @@ class ImagePickerApi {
   /// Constructor for [ImagePickerApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  ImagePickerApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-    : pigeonVar_binaryMessenger = binaryMessenger,
-      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
-          ? '.$messageChannelSuffix'
-          : '';
+  ImagePickerApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -501,11 +521,9 @@ class ImagePickerApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      source,
-      options,
-      generalOptions,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[source, options, generalOptions],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -529,11 +547,9 @@ class ImagePickerApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      source,
-      options,
-      generalOptions,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[source, options, generalOptions],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -556,10 +572,9 @@ class ImagePickerApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      mediaSelectionOptions,
-      generalOptions,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[mediaSelectionOptions, generalOptions],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(

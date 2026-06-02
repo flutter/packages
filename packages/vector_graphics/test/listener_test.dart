@@ -51,7 +51,8 @@ void main() {
       loader: const AssetBytesLoader('test'),
     );
     final ui.Image image = info.picture.toImageSync(15, 15);
-    final Uint32List imageBytes = (await image.toByteData())!.buffer.asUint32List();
+    final Uint32List imageBytes = (await image.toByteData())!.buffer
+        .asUint32List();
     expect(imageBytes.first, 0xFF000000);
     expect(imageBytes.last, 0x00000000);
   }, skip: kIsWeb);
@@ -65,7 +66,8 @@ void main() {
       loader: const AssetBytesLoader('test'),
     );
     final ui.Image image = info.picture.toImageSync(15, 15);
-    final Uint32List imageBytes = (await image.toByteData())!.buffer.asUint32List();
+    final Uint32List imageBytes = (await image.toByteData())!.buffer
+        .asUint32List();
     expect(imageBytes.first, 0xFF000000);
     expect(imageBytes.last, 0xFF000000);
   }, skip: kIsWeb);
@@ -80,7 +82,10 @@ void main() {
     expect(drawRect.isMethod, true);
     expect(drawRect.memberName, #drawImageRect);
     expect(drawRect.positionalArguments[1], const ui.Rect.fromLTRB(0, 0, 1, 1));
-    expect(drawRect.positionalArguments[2], const ui.Rect.fromLTRB(10, 10, 40, 40));
+    expect(
+      drawRect.positionalArguments[2],
+      const ui.Rect.fromLTRB(10, 10, 40, 40),
+    );
   });
 
   test('Pattern start clips the new canvas', () async {
@@ -90,7 +95,10 @@ void main() {
     final Invocation clipRect = factory.fakeCanvases.last.invocations.single;
     expect(clipRect.isMethod, true);
     expect(clipRect.memberName, #clipRect);
-    expect(clipRect.positionalArguments.single, const ui.Rect.fromLTRB(0, 0, 100, 100));
+    expect(
+      clipRect.positionalArguments.single,
+      const ui.Rect.fromLTRB(0, 0, 100, 100),
+    );
   });
 
   test('Text position is respected', () async {
@@ -130,7 +138,10 @@ void main() {
     final listener = FlutterVectorGraphicsListener(pictureFactory: factory);
     listener.onImage(0, 0, base64.decode(bluePngPixel));
     await listener.waitForImageDecode();
-    expect(() => listener.onDrawImage(2, 10, 10, 100, 100, null), throwsAssertionError);
+    expect(
+      () => listener.onDrawImage(2, 10, 10, 100, 100, null),
+      throwsAssertionError,
+    );
   });
 }
 

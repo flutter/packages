@@ -22,7 +22,10 @@ File childFileWithSubcomponents(Directory base, List<String> components) {
 /// Example:
 ///   childFileWithSubcomponents(rootDir, ['foo', 'bar'])
 /// creates a File representing /rootDir/foo/bar/.
-Directory childDirectoryWithSubcomponents(Directory base, List<String> components) {
+Directory childDirectoryWithSubcomponents(
+  Directory base,
+  List<String> components,
+) {
   var dir = base;
   for (final directoryName in components) {
     dir = dir.childDirectory(directoryName);
@@ -42,5 +45,7 @@ String relativePosixPath(
   required Directory from,
   required p.Context platformContext,
 }) => p.posix.joinAll(
-  platformContext.split(platformContext.relative(entity.absolute.path, from: from.path)),
+  platformContext.split(
+    platformContext.relative(entity.absolute.path, from: from.path),
+  ),
 );

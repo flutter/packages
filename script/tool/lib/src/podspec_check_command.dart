@@ -21,7 +21,12 @@ const int _exitPodNotInstalled = 3;
 /// See https://guides.cocoapods.org/terminal/commands.html#pod_lib_lint.
 class PodspecCheckCommand extends PackageLoopingCommand {
   /// Creates an instance of the linter command.
-  PodspecCheckCommand(super.packagesDir, {super.processRunner, super.platform, super.gitDir});
+  PodspecCheckCommand(
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+    super.gitDir,
+  });
 
   @override
   final String name = 'podspec-check';
@@ -70,7 +75,9 @@ class PodspecCheckCommand extends PackageLoopingCommand {
     }
 
     if (await _hasIOSSwiftCode(package)) {
-      print('iOS Swift code found, checking for search paths settings and Swift version...');
+      print(
+        'iOS Swift code found, checking for search paths settings and Swift version...',
+      );
       for (final podspec in podspecs) {
         if (_isPodspecMissingSearchPaths(podspec)) {
           const workaroundBlock = r'''
@@ -79,7 +86,10 @@ class PodspecCheckCommand extends PackageLoopingCommand {
     'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',
   }
 ''';
-          final String path = getRelativePosixPath(podspec, from: package.directory);
+          final String path = getRelativePosixPath(
+            podspec,
+            from: package.directory,
+          );
           printError(
             '$path is missing search path configuration. Any iOS '
             'plugin implementation that contains Swift implementation code '
@@ -91,7 +101,10 @@ class PodspecCheckCommand extends PackageLoopingCommand {
         }
 
         if (_isPodspecMissingSwiftVersion(podspec)) {
-          final String path = getRelativePosixPath(podspec, from: package.directory);
+          final String path = getRelativePosixPath(
+            podspec,
+            from: package.directory,
+          );
           printError(
             '$path is missing Swift version configuration. Any iOS '
             'plugin implementation that contains Swift implementation code '
@@ -114,13 +127,20 @@ class PodspecCheckCommand extends PackageLoopingCommand {
       errors.add('No privacy manifest');
     }
 
-    return errors.isEmpty ? PackageResult.success() : PackageResult.fail(errors);
+    return errors.isEmpty
+        ? PackageResult.success()
+        : PackageResult.fail(errors);
   }
 
   Future<List<File>> _podspecsToLint(RepositoryPackage package) async {
-    final List<File> podspecs = await getFilesForPackage(package).where((File entity) {
+    final List<File> podspecs = await getFilesForPackage(package).where((
+      File entity,
+    ) {
       final String filename = entity.basename;
-      final String relativePath = getRelativePosixPath(entity, from: package.directory);
+      final String relativePath = getRelativePosixPath(
+        entity,
+        from: package.directory,
+      );
       return path.extension(filename) == '.podspec' &&
           filename != 'Flutter.podspec' &&
           filename != 'FlutterMacOS.podspec' &&
@@ -171,7 +191,10 @@ class PodspecCheckCommand extends PackageLoopingCommand {
         .childFile('Package.swift')
         .path;
     return getFilesForPackage(package).any((File entity) {
-      final String relativePath = getRelativePosixPath(entity, from: package.directory);
+      final String relativePath = getRelativePosixPath(
+        entity,
+        from: package.directory,
+      );
       // Ignore example code.
       if (relativePath.startsWith('example/')) {
         return false;
@@ -222,8 +245,11 @@ class PodspecCheckCommand extends PackageLoopingCommand {
 
   /// Returns true if [podspec] specifies a .xcprivacy file.
   bool _hasPrivacyManifest(File podspec) {
-    final manifestBundling = RegExp(r'''
-\.(?:ios\.)?resource_bundles\s*=\s*{[^}]*PrivacyInfo.xcprivacy''', dotAll: true);
+    final manifestBundling = RegExp(
+      r'''
+\.(?:ios\.)?resource_bundles\s*=\s*{[^}]*PrivacyInfo.xcprivacy''',
+      dotAll: true,
+    );
     return manifestBundling.hasMatch(podspec.readAsStringSync());
   }
 

@@ -13,7 +13,8 @@ bool isMaterialApp(BuildContext context) =>
     context.findAncestorWidgetOfExactType<MaterialApp>() != null;
 
 /// Creates a Material HeroController.
-HeroController createMaterialHeroController() => MaterialApp.createMaterialHeroController();
+HeroController createMaterialHeroController() =>
+    MaterialApp.createMaterialHeroController();
 
 /// Builds a Material page.
 MaterialPage<void> pageBuilderForMaterialApp({
@@ -46,7 +47,10 @@ class MaterialErrorScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           SelectableText(error?.toString() ?? 'page not found'),
-          TextButton(onPressed: () => context.go('/'), child: const Text('Home')),
+          TextButton(
+            onPressed: () => context.go('/'),
+            child: const Text('Home'),
+          ),
         ],
       ),
     ),

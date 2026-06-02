@@ -5,7 +5,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
 
-import 'package:interactive_media_ads/src/ios/interactive_media_ads.g.dart' as _i2;
+import 'package:interactive_media_ads/src/ios/interactive_media_ads.g.dart'
+    as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -23,7 +24,8 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: subtype_of_sealed_class
 // ignore_for_file: invalid_use_of_internal_member
 
-class _FakePigeonInstanceManager_0 extends _i1.SmartFake implements _i2.PigeonInstanceManager {
+class _FakePigeonInstanceManager_0 extends _i1.SmartFake
+    implements _i2.PigeonInstanceManager {
   _FakePigeonInstanceManager_0(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -33,7 +35,8 @@ class _FakeIMAAdsManager_1 extends _i1.SmartFake implements _i2.IMAAdsManager {
     : super(parent, parentInvocation);
 }
 
-class _FakeIMAAdsRenderingSettings_2 extends _i1.SmartFake implements _i2.IMAAdsRenderingSettings {
+class _FakeIMAAdsRenderingSettings_2 extends _i1.SmartFake
+    implements _i2.IMAAdsRenderingSettings {
   _FakeIMAAdsRenderingSettings_2(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -43,158 +46,216 @@ class _FakeIMAAdsRenderingSettings_2 extends _i1.SmartFake implements _i2.IMAAds
 /// See the documentation for Mockito's code generation for more information.
 class MockIMAAdsManager extends _i1.Mock implements _i2.IMAAdsManager {
   @override
-  List<double> get adCuePoints => (super.noSuchMethod(
-    Invocation.getter(#adCuePoints),
-    returnValue: <double>[],
-    returnValueForMissingStub: <double>[],
-  ) as List<double>);
-
-  @override
-  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
-    Invocation.getter(#pigeon_instanceManager),
-    returnValue: _FakePigeonInstanceManager_0(this, Invocation.getter(#pigeon_instanceManager)),
-    returnValueForMissingStub: _FakePigeonInstanceManager_0(
-      this,
-      Invocation.getter(#pigeon_instanceManager),
-    ),
-  ) as _i2.PigeonInstanceManager);
-
-  @override
-  _i3.Future<void> setDelegate(_i2.IMAAdsManagerDelegate? delegate) => (super.noSuchMethod(
-    Invocation.method(#setDelegate, [delegate]),
-    returnValue: _i3.Future<void>.value(),
-    returnValueForMissingStub: _i3.Future<void>.value(),
-  ) as _i3.Future<void>);
-
-  @override
-  _i3.Future<void> initialize(_i2.IMAAdsRenderingSettings? adsRenderingSettings) =>
+  List<double> get adCuePoints =>
       (super.noSuchMethod(
-        Invocation.method(#initialize, [adsRenderingSettings]),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+            Invocation.getter(#adCuePoints),
+            returnValue: <double>[],
+            returnValueForMissingStub: <double>[],
+          )
+          as List<double>);
 
   @override
-  _i3.Future<void> start() => (super.noSuchMethod(
-    Invocation.method(#start, []),
-    returnValue: _i3.Future<void>.value(),
-    returnValueForMissingStub: _i3.Future<void>.value(),
-  ) as _i3.Future<void>);
+  _i2.PigeonInstanceManager get pigeon_instanceManager =>
+      (super.noSuchMethod(
+            Invocation.getter(#pigeon_instanceManager),
+            returnValue: _FakePigeonInstanceManager_0(
+              this,
+              Invocation.getter(#pigeon_instanceManager),
+            ),
+            returnValueForMissingStub: _FakePigeonInstanceManager_0(
+              this,
+              Invocation.getter(#pigeon_instanceManager),
+            ),
+          )
+          as _i2.PigeonInstanceManager);
 
   @override
-  _i3.Future<void> pause() => (super.noSuchMethod(
-    Invocation.method(#pause, []),
-    returnValue: _i3.Future<void>.value(),
-    returnValueForMissingStub: _i3.Future<void>.value(),
-  ) as _i3.Future<void>);
+  _i3.Future<void> setDelegate(_i2.IMAAdsManagerDelegate? delegate) =>
+      (super.noSuchMethod(
+            Invocation.method(#setDelegate, [delegate]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 
   @override
-  _i3.Future<void> resume() => (super.noSuchMethod(
-    Invocation.method(#resume, []),
-    returnValue: _i3.Future<void>.value(),
-    returnValueForMissingStub: _i3.Future<void>.value(),
-  ) as _i3.Future<void>);
+  _i3.Future<void> initialize(
+    _i2.IMAAdsRenderingSettings? adsRenderingSettings,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#initialize, [adsRenderingSettings]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 
   @override
-  _i3.Future<void> skip() => (super.noSuchMethod(
-    Invocation.method(#skip, []),
-    returnValue: _i3.Future<void>.value(),
-    returnValueForMissingStub: _i3.Future<void>.value(),
-  ) as _i3.Future<void>);
+  _i3.Future<void> start() =>
+      (super.noSuchMethod(
+            Invocation.method(#start, []),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 
   @override
-  _i3.Future<void> discardAdBreak() => (super.noSuchMethod(
-    Invocation.method(#discardAdBreak, []),
-    returnValue: _i3.Future<void>.value(),
-    returnValueForMissingStub: _i3.Future<void>.value(),
-  ) as _i3.Future<void>);
+  _i3.Future<void> pause() =>
+      (super.noSuchMethod(
+            Invocation.method(#pause, []),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 
   @override
-  _i3.Future<void> destroy() => (super.noSuchMethod(
-    Invocation.method(#destroy, []),
-    returnValue: _i3.Future<void>.value(),
-    returnValueForMissingStub: _i3.Future<void>.value(),
-  ) as _i3.Future<void>);
+  _i3.Future<void> resume() =>
+      (super.noSuchMethod(
+            Invocation.method(#resume, []),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 
   @override
-  _i2.IMAAdsManager pigeon_copy() => (super.noSuchMethod(
-    Invocation.method(#pigeon_copy, []),
-    returnValue: _FakeIMAAdsManager_1(this, Invocation.method(#pigeon_copy, [])),
-    returnValueForMissingStub: _FakeIMAAdsManager_1(this, Invocation.method(#pigeon_copy, [])),
-  ) as _i2.IMAAdsManager);
+  _i3.Future<void> skip() =>
+      (super.noSuchMethod(
+            Invocation.method(#skip, []),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> discardAdBreak() =>
+      (super.noSuchMethod(
+            Invocation.method(#discardAdBreak, []),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> destroy() =>
+      (super.noSuchMethod(
+            Invocation.method(#destroy, []),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+
+  @override
+  _i2.IMAAdsManager pigeon_copy() =>
+      (super.noSuchMethod(
+            Invocation.method(#pigeon_copy, []),
+            returnValue: _FakeIMAAdsManager_1(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
+            returnValueForMissingStub: _FakeIMAAdsManager_1(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
+          )
+          as _i2.IMAAdsManager);
 }
 
 /// A class which mocks [IMAAdsRenderingSettings].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockIMAAdsRenderingSettings extends _i1.Mock implements _i2.IMAAdsRenderingSettings {
+class MockIMAAdsRenderingSettings extends _i1.Mock
+    implements _i2.IMAAdsRenderingSettings {
   @override
-  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
-    Invocation.getter(#pigeon_instanceManager),
-    returnValue: _FakePigeonInstanceManager_0(this, Invocation.getter(#pigeon_instanceManager)),
-    returnValueForMissingStub: _FakePigeonInstanceManager_0(
-      this,
-      Invocation.getter(#pigeon_instanceManager),
-    ),
-  ) as _i2.PigeonInstanceManager);
-
-  @override
-  _i3.Future<void> setMimeTypes(List<String>? types) => (super.noSuchMethod(
-    Invocation.method(#setMimeTypes, [types]),
-    returnValue: _i3.Future<void>.value(),
-    returnValueForMissingStub: _i3.Future<void>.value(),
-  ) as _i3.Future<void>);
-
-  @override
-  _i3.Future<void> setBitrate(int? bitrate) => (super.noSuchMethod(
-    Invocation.method(#setBitrate, [bitrate]),
-    returnValue: _i3.Future<void>.value(),
-    returnValueForMissingStub: _i3.Future<void>.value(),
-  ) as _i3.Future<void>);
-
-  @override
-  _i3.Future<void> setLoadVideoTimeout(double? seconds) => (super.noSuchMethod(
-    Invocation.method(#setLoadVideoTimeout, [seconds]),
-    returnValue: _i3.Future<void>.value(),
-    returnValueForMissingStub: _i3.Future<void>.value(),
-  ) as _i3.Future<void>);
-
-  @override
-  _i3.Future<void> setPlayAdsAfterTime(double? seconds) => (super.noSuchMethod(
-    Invocation.method(#setPlayAdsAfterTime, [seconds]),
-    returnValue: _i3.Future<void>.value(),
-    returnValueForMissingStub: _i3.Future<void>.value(),
-  ) as _i3.Future<void>);
-
-  @override
-  _i3.Future<void> setUIElements(List<_i2.UIElementType>? types) => (super.noSuchMethod(
-    Invocation.method(#setUIElements, [types]),
-    returnValue: _i3.Future<void>.value(),
-    returnValueForMissingStub: _i3.Future<void>.value(),
-  ) as _i3.Future<void>);
-
-  @override
-  _i3.Future<void> setEnablePreloading(bool? enable) => (super.noSuchMethod(
-    Invocation.method(#setEnablePreloading, [enable]),
-    returnValue: _i3.Future<void>.value(),
-    returnValueForMissingStub: _i3.Future<void>.value(),
-  ) as _i3.Future<void>);
-
-  @override
-  _i3.Future<void> setLinkOpenerPresentingController(_i2.UIViewController? controller) =>
+  _i2.PigeonInstanceManager get pigeon_instanceManager =>
       (super.noSuchMethod(
-        Invocation.method(#setLinkOpenerPresentingController, [controller]),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+            Invocation.getter(#pigeon_instanceManager),
+            returnValue: _FakePigeonInstanceManager_0(
+              this,
+              Invocation.getter(#pigeon_instanceManager),
+            ),
+            returnValueForMissingStub: _FakePigeonInstanceManager_0(
+              this,
+              Invocation.getter(#pigeon_instanceManager),
+            ),
+          )
+          as _i2.PigeonInstanceManager);
 
   @override
-  _i2.IMAAdsRenderingSettings pigeon_copy() => (super.noSuchMethod(
-    Invocation.method(#pigeon_copy, []),
-    returnValue: _FakeIMAAdsRenderingSettings_2(this, Invocation.method(#pigeon_copy, [])),
-    returnValueForMissingStub: _FakeIMAAdsRenderingSettings_2(
-      this,
-      Invocation.method(#pigeon_copy, []),
-    ),
-  ) as _i2.IMAAdsRenderingSettings);
+  _i3.Future<void> setMimeTypes(List<String>? types) =>
+      (super.noSuchMethod(
+            Invocation.method(#setMimeTypes, [types]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setBitrate(int? bitrate) =>
+      (super.noSuchMethod(
+            Invocation.method(#setBitrate, [bitrate]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setLoadVideoTimeout(double? seconds) =>
+      (super.noSuchMethod(
+            Invocation.method(#setLoadVideoTimeout, [seconds]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setPlayAdsAfterTime(double? seconds) =>
+      (super.noSuchMethod(
+            Invocation.method(#setPlayAdsAfterTime, [seconds]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setUIElements(List<_i2.UIElementType>? types) =>
+      (super.noSuchMethod(
+            Invocation.method(#setUIElements, [types]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setEnablePreloading(bool? enable) =>
+      (super.noSuchMethod(
+            Invocation.method(#setEnablePreloading, [enable]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setLinkOpenerPresentingController(
+    _i2.UIViewController? controller,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#setLinkOpenerPresentingController, [controller]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+
+  @override
+  _i2.IMAAdsRenderingSettings pigeon_copy() =>
+      (super.noSuchMethod(
+            Invocation.method(#pigeon_copy, []),
+            returnValue: _FakeIMAAdsRenderingSettings_2(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
+            returnValueForMissingStub: _FakeIMAAdsRenderingSettings_2(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
+          )
+          as _i2.IMAAdsRenderingSettings);
 }

@@ -28,7 +28,9 @@ class GoRouterGenerator extends Generator {
   const GoRouterGenerator();
 
   TypeChecker get _typeChecker => TypeChecker.any(
-    _annotations.keys.map((String annotation) => TypeChecker.fromUrl('$_routeDataUrl#$annotation')),
+    _annotations.keys.map(
+      (String annotation) => TypeChecker.fromUrl('$_routeDataUrl#$annotation'),
+    ),
   );
 
   @override
@@ -56,8 +58,14 @@ ${getters.map((String e) => "$e,").join('\n')}
   ///
   /// This public method is for testing purposes and should not be called
   /// directly.
-  void generateForAnnotation(LibraryReader library, Set<String> values, Set<String> getters) {
-    for (final AnnotatedElement annotatedElement in library.annotatedWith(_typeChecker)) {
+  void generateForAnnotation(
+    LibraryReader library,
+    Set<String> values,
+    Set<String> getters,
+  ) {
+    for (final AnnotatedElement annotatedElement in library.annotatedWith(
+      _typeChecker,
+    )) {
       final InfoIterable generatedValue = _generateForAnnotatedElement(
         annotatedElement.element,
         annotatedElement.annotation,
@@ -67,11 +75,17 @@ ${getters.map((String e) => "$e,").join('\n')}
     }
   }
 
-  InfoIterable _generateForAnnotatedElement(Element element, ConstantReader annotation) {
+  InfoIterable _generateForAnnotatedElement(
+    Element element,
+    ConstantReader annotation,
+  ) {
     final String typedAnnotation = withoutNullability(
       annotation.objectValue.type!.getDisplayString(),
     );
-    final String type = typedAnnotation.substring(0, typedAnnotation.indexOf('<'));
+    final String type = typedAnnotation.substring(
+      0,
+      typedAnnotation.indexOf('<'),
+    );
     final String routeData = _annotations[type]!;
     if (element is! ClassElement) {
       throw InvalidGenerationSourceError(
@@ -81,7 +95,9 @@ ${getters.map((String e) => "$e,").join('\n')}
     }
 
     final dataChecker = TypeChecker.fromUrl('$_routeDataUrl#$routeData');
-    if (!element.allSupertypes.any((InterfaceType element) => dataChecker.isExactlyType(element))) {
+    if (!element.allSupertypes.any(
+      (InterfaceType element) => dataChecker.isExactlyType(element),
+    )) {
       throw InvalidGenerationSourceError(
         'The @$type annotation can only be applied to classes that '
         'extend or implement `$routeData`.',
@@ -89,6 +105,9 @@ ${getters.map((String e) => "$e,").join('\n')}
       );
     }
 
-    return RouteBaseConfig.fromAnnotation(annotation, element).generateMembers();
+    return RouteBaseConfig.fromAnnotation(
+      annotation,
+      element,
+    ).generateMembers();
   }
 }

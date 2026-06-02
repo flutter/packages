@@ -31,30 +31,45 @@ class MockFileSelectorApi extends _i1.Mock implements _i2.FileSelectorApi {
   }
 
   @override
-  String get pigeonVar_messageChannelSuffix => (super.noSuchMethod(
-    Invocation.getter(#pigeonVar_messageChannelSuffix),
-    returnValue: _i3.dummyValue<String>(this, Invocation.getter(#pigeonVar_messageChannelSuffix)),
-  ) as String);
+  String get pigeonVar_messageChannelSuffix =>
+      (super.noSuchMethod(
+            Invocation.getter(#pigeonVar_messageChannelSuffix),
+            returnValue: _i3.dummyValue<String>(
+              this,
+              Invocation.getter(#pigeonVar_messageChannelSuffix),
+            ),
+          )
+          as String);
 
   @override
-  _i4.Future<_i2.FileResponse?> openFile(String? initialDirectory, _i2.FileTypes? allowedTypes) =>
+  _i4.Future<_i2.FileResponse?> openFile(
+    String? initialDirectory,
+    _i2.FileTypes? allowedTypes,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(#openFile, [initialDirectory, allowedTypes]),
-        returnValue: _i4.Future<_i2.FileResponse?>.value(),
-      ) as _i4.Future<_i2.FileResponse?>);
+            Invocation.method(#openFile, [initialDirectory, allowedTypes]),
+            returnValue: _i4.Future<_i2.FileResponse?>.value(),
+          )
+          as _i4.Future<_i2.FileResponse?>);
 
   @override
   _i4.Future<List<_i2.FileResponse>> openFiles(
     String? initialDirectory,
     _i2.FileTypes? allowedTypes,
-  ) => (super.noSuchMethod(
-    Invocation.method(#openFiles, [initialDirectory, allowedTypes]),
-    returnValue: _i4.Future<List<_i2.FileResponse>>.value(<_i2.FileResponse>[]),
-  ) as _i4.Future<List<_i2.FileResponse>>);
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#openFiles, [initialDirectory, allowedTypes]),
+            returnValue: _i4.Future<List<_i2.FileResponse>>.value(
+              <_i2.FileResponse>[],
+            ),
+          )
+          as _i4.Future<List<_i2.FileResponse>>);
 
   @override
-  _i4.Future<String?> getDirectoryPath(String? initialDirectory) => (super.noSuchMethod(
-    Invocation.method(#getDirectoryPath, [initialDirectory]),
-    returnValue: _i4.Future<String?>.value(),
-  ) as _i4.Future<String?>);
+  _i4.Future<String?> getDirectoryPath(String? initialDirectory) =>
+      (super.noSuchMethod(
+            Invocation.method(#getDirectoryPath, [initialDirectory]),
+            returnValue: _i4.Future<String?>.value(),
+          )
+          as _i4.Future<String?>);
 }

@@ -18,7 +18,8 @@ void main() {
 
   GoogleMapsFlutterPlatform.instance.enableDebugInspection();
   final GoogleMapsFlutterPlatform plugin = GoogleMapsFlutterPlatform.instance;
-  final GoogleMapsInspectorPlatform inspector = GoogleMapsInspectorPlatform.instance!;
+  final GoogleMapsInspectorPlatform inspector =
+      GoogleMapsInspectorPlatform.instance!;
 
   const mapCenter = LatLng(20, 20);
   const initialCameraPosition = CameraPosition(target: mapCenter);
@@ -57,7 +58,10 @@ void main() {
             initialCameraPosition: initialCameraPosition,
             textDirection: TextDirection.ltr,
           ),
-          mapObjects: MapObjects(clusterManagers: clusterManagers, markers: initialMarkers),
+          mapObjects: MapObjects(
+            clusterManagers: clusterManagers,
+            markers: initialMarkers,
+          ),
         ),
       );
 
@@ -67,7 +71,10 @@ void main() {
       final List<Cluster> clusters =
           await waitForValueMatchingPredicate<List<Cluster>>(
             tester,
-            () async => inspector.getClusters(mapId: mapId, clusterManagerId: clusterManagerId),
+            () async => inspector.getClusters(
+              mapId: mapId,
+              clusterManagerId: clusterManagerId,
+            ),
             (List<Cluster> clusters) => clusters.isNotEmpty,
           ) ??
           <Cluster>[];
@@ -77,7 +84,9 @@ void main() {
 
       // Copy only the first marker with null clusterManagerId.
       // This means that both markers should be removed from the cluster.
-      final updatedMarkers = <Marker>{_copyMarkerWithClusterManagerId(initialMarkers.first, null)};
+      final updatedMarkers = <Marker>{
+        _copyMarkerWithClusterManagerId(initialMarkers.first, null),
+      };
 
       final markerUpdates = MarkerUpdates.from(initialMarkers, updatedMarkers);
       await plugin.updateMarkers(markerUpdates, mapId: mapId);
@@ -85,7 +94,10 @@ void main() {
       final List<Cluster> updatedClusters =
           await waitForValueMatchingPredicate<List<Cluster>>(
             tester,
-            () async => inspector.getClusters(mapId: mapId, clusterManagerId: clusterManagerId),
+            () async => inspector.getClusters(
+              mapId: mapId,
+              clusterManagerId: clusterManagerId,
+            ),
             (List<Cluster> clusters) => clusters.isNotEmpty,
           ) ??
           <Cluster>[];
@@ -93,7 +105,9 @@ void main() {
       expect(updatedClusters.length, 0);
     });
 
-    testWidgets('clusters render once per batched add', (WidgetTester tester) async {
+    testWidgets('clusters render once per batched add', (
+      WidgetTester tester,
+    ) async {
       const clusterManagerId = ClusterManagerId('cluster 1');
 
       final clusterManagers = <ClusterManager>{
@@ -128,7 +142,10 @@ void main() {
           (int id) async {
             final StreamSubscription<ClusteringEvent>? subscription =
                 (inspector as GoogleMapsInspectorWeb)
-                    .getClusteringEvents(mapId: testMapId, clusterManagerId: clusterManagerId)
+                    .getClusteringEvents(
+                      mapId: testMapId,
+                      clusterManagerId: clusterManagerId,
+                    )
                     ?.listen(events.add);
 
             await plugin.updateMarkers(
@@ -144,7 +161,10 @@ void main() {
             initialCameraPosition: initialCameraPosition,
             textDirection: TextDirection.ltr,
           ),
-          mapObjects: MapObjects(clusterManagers: clusterManagers, markers: initialMarkers),
+          mapObjects: MapObjects(
+            clusterManagers: clusterManagers,
+            markers: initialMarkers,
+          ),
         ),
       );
 
@@ -189,7 +209,10 @@ Future<T?> waitForValueMatchingPredicate<T>(
   return null;
 }
 
-Marker _copyMarkerWithClusterManagerId(Marker marker, ClusterManagerId? clusterManagerId) {
+Marker _copyMarkerWithClusterManagerId(
+  Marker marker,
+  ClusterManagerId? clusterManagerId,
+) {
   return Marker(
     markerId: marker.markerId,
     alpha: marker.alpha,
@@ -213,7 +236,11 @@ Marker _copyMarkerWithClusterManagerId(Marker marker, ClusterManagerId? clusterM
 }
 
 /// Pumps a [map] widget in [tester] of a certain [size], then waits until it settles.
-Future<void> _pumpMap(WidgetTester tester, Widget map, [Size size = const Size.square(200)]) async {
+Future<void> _pumpMap(
+  WidgetTester tester,
+  Widget map, [
+  Size size = const Size.square(200),
+]) async {
   await tester.pumpWidget(_wrapMap(map, size));
   await tester.pumpAndSettle();
 }

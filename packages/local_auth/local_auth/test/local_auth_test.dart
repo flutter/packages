@@ -46,29 +46,39 @@ void main() {
   });
 
   test('isDeviceSupported calls platform implementation', () {
-    when(mockLocalAuthPlatform.isDeviceSupported()).thenAnswer((_) async => true);
+    when(
+      mockLocalAuthPlatform.isDeviceSupported(),
+    ).thenAnswer((_) async => true);
     localAuthentication.isDeviceSupported();
     verify(mockLocalAuthPlatform.isDeviceSupported()).called(1);
   });
 
   test('getEnrolledBiometrics calls platform implementation', () {
-    when(mockLocalAuthPlatform.getEnrolledBiometrics()).thenAnswer((_) async => <BiometricType>[]);
+    when(
+      mockLocalAuthPlatform.getEnrolledBiometrics(),
+    ).thenAnswer((_) async => <BiometricType>[]);
     localAuthentication.getAvailableBiometrics();
     verify(mockLocalAuthPlatform.getEnrolledBiometrics()).called(1);
   });
 
   test('stopAuthentication calls platform implementation', () {
-    when(mockLocalAuthPlatform.stopAuthentication()).thenAnswer((_) async => true);
+    when(
+      mockLocalAuthPlatform.stopAuthentication(),
+    ).thenAnswer((_) async => true);
     localAuthentication.stopAuthentication();
     verify(mockLocalAuthPlatform.stopAuthentication()).called(1);
   });
 
   test('canCheckBiometrics returns correct result', () async {
-    when(mockLocalAuthPlatform.deviceSupportsBiometrics()).thenAnswer((_) async => false);
+    when(
+      mockLocalAuthPlatform.deviceSupportsBiometrics(),
+    ).thenAnswer((_) async => false);
     bool? result;
     result = await localAuthentication.canCheckBiometrics;
     expect(result, false);
-    when(mockLocalAuthPlatform.deviceSupportsBiometrics()).thenAnswer((_) async => true);
+    when(
+      mockLocalAuthPlatform.deviceSupportsBiometrics(),
+    ).thenAnswer((_) async => true);
     result = await localAuthentication.canCheckBiometrics;
     expect(result, true);
     verify(mockLocalAuthPlatform.deviceSupportsBiometrics()).called(2);
@@ -87,36 +97,46 @@ class MockLocalAuthPlatform extends Mock
     required String? localizedReason,
     required Iterable<AuthMessages>? authMessages,
     AuthenticationOptions? options = const AuthenticationOptions(),
-  }) => super.noSuchMethod(
-    Invocation.method(#authenticate, <Object>[], <Symbol, Object?>{
-      #localizedReason: localizedReason,
-      #authMessages: authMessages,
-      #options: options,
-    }),
-    returnValue: Future<bool>.value(false),
-  ) as Future<bool>;
+  }) =>
+      super.noSuchMethod(
+            Invocation.method(#authenticate, <Object>[], <Symbol, Object?>{
+              #localizedReason: localizedReason,
+              #authMessages: authMessages,
+              #options: options,
+            }),
+            returnValue: Future<bool>.value(false),
+          )
+          as Future<bool>;
 
   @override
-  Future<List<BiometricType>> getEnrolledBiometrics() => super.noSuchMethod(
-    Invocation.method(#getEnrolledBiometrics, <Object>[]),
-    returnValue: Future<List<BiometricType>>.value(<BiometricType>[]),
-  ) as Future<List<BiometricType>>;
+  Future<List<BiometricType>> getEnrolledBiometrics() =>
+      super.noSuchMethod(
+            Invocation.method(#getEnrolledBiometrics, <Object>[]),
+            returnValue: Future<List<BiometricType>>.value(<BiometricType>[]),
+          )
+          as Future<List<BiometricType>>;
 
   @override
-  Future<bool> isDeviceSupported() => super.noSuchMethod(
-    Invocation.method(#isDeviceSupported, <Object>[]),
-    returnValue: Future<bool>.value(false),
-  ) as Future<bool>;
+  Future<bool> isDeviceSupported() =>
+      super.noSuchMethod(
+            Invocation.method(#isDeviceSupported, <Object>[]),
+            returnValue: Future<bool>.value(false),
+          )
+          as Future<bool>;
 
   @override
-  Future<bool> stopAuthentication() => super.noSuchMethod(
-    Invocation.method(#stopAuthentication, <Object>[]),
-    returnValue: Future<bool>.value(false),
-  ) as Future<bool>;
+  Future<bool> stopAuthentication() =>
+      super.noSuchMethod(
+            Invocation.method(#stopAuthentication, <Object>[]),
+            returnValue: Future<bool>.value(false),
+          )
+          as Future<bool>;
 
   @override
-  Future<bool> deviceSupportsBiometrics() => super.noSuchMethod(
-    Invocation.method(#deviceSupportsBiometrics, <Object>[]),
-    returnValue: Future<bool>.value(false),
-  ) as Future<bool>;
+  Future<bool> deviceSupportsBiometrics() =>
+      super.noSuchMethod(
+            Invocation.method(#deviceSupportsBiometrics, <Object>[]),
+            returnValue: Future<bool>.value(false),
+          )
+          as Future<bool>;
 }

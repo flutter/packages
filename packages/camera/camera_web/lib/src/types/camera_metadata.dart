@@ -30,7 +30,9 @@ class CameraMetadata {
       return true;
     }
 
-    return other is CameraMetadata && other.deviceId == deviceId && other.facingMode == facingMode;
+    return other is CameraMetadata &&
+        other.deviceId == deviceId &&
+        other.facingMode == facingMode;
   }
 
   @override

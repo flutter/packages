@@ -16,7 +16,11 @@ void main() {
       initialLocation: '/',
       routes: <GoRoute>[
         GoRoute(path: '/', name: 'home', builder: (_, __) => const Text('A')),
-        GoRoute(path: '/second', name: 'second', builder: (_, __) => Text('B', key: innerKey)),
+        GoRoute(
+          path: '/second',
+          name: 'second',
+          builder: (_, __) => Text('B', key: innerKey),
+        ),
       ],
       requestFocus: false,
     );

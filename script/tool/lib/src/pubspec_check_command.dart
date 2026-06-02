@@ -17,10 +17,16 @@ import 'validators/pubspec_validator.dart';
 /// across multiple pubspec files easier.
 class PubspecCheckCommand extends PackageLoopingCommand {
   /// Creates an instance of the version check command.
-  PubspecCheckCommand(super.packagesDir, {super.processRunner, super.platform, super.gitDir}) {
+  PubspecCheckCommand(
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+    super.gitDir,
+  }) {
     argParser.addOption(
       _minMinFlutterVersionFlag,
-      help: 'The minimum Flutter version to allow as the minimum SDK constraint.',
+      help:
+          'The minimum Flutter version to allow as the minimum SDK constraint.',
     );
     argParser.addMultiOption(
       _allowDependenciesFlag,
@@ -44,7 +50,8 @@ class PubspecCheckCommand extends PackageLoopingCommand {
 
   static const String _minMinFlutterVersionFlag = 'min-min-flutter-version';
   static const String _allowDependenciesFlag = 'allow-dependencies';
-  static const String _allowPinnedDependenciesFlag = 'allow-pinned-dependencies';
+  static const String _allowPinnedDependenciesFlag =
+      'allow-pinned-dependencies';
 
   // The names of all published packages in the repository.
   final AllowPackageLists _allowedPackages = (
@@ -60,13 +67,15 @@ class PubspecCheckCommand extends PackageLoopingCommand {
   List<String> get aliases => <String>['check-pubspec'];
 
   @override
-  final String description = 'Checks that pubspecs follow repository conventions.';
+  final String description =
+      'Checks that pubspecs follow repository conventions.';
 
   @override
   bool get hasLongOutput => false;
 
   @override
-  PackageLoopingType get packageLoopingType => PackageLoopingType.includeAllSubpackages;
+  PackageLoopingType get packageLoopingType =>
+      PackageLoopingType.includeAllSubpackages;
 
   @override
   Future<void> initializeRun() async {
@@ -74,7 +83,9 @@ class PubspecCheckCommand extends PackageLoopingCommand {
     _allowedPackages.local.addAll(await _findAllPublishedPackages().toList());
     // Load explicitly allowed packages.
     _allowedPackages.unpinned.addAll(getYamlListArg(_allowDependenciesFlag));
-    _allowedPackages.pinned.addAll(getYamlListArg(_allowPinnedDependenciesFlag));
+    _allowedPackages.pinned.addAll(
+      getYamlListArg(_allowPinnedDependenciesFlag),
+    );
   }
 
   @override
@@ -88,14 +99,20 @@ class PubspecCheckCommand extends PackageLoopingCommand {
       minMinFlutterVersion: getStringArg(_minMinFlutterVersionFlag),
     );
     final List<String> errors = await validator.validatePubspec(package);
-    return errors.isEmpty ? PackageResult.success() : PackageResult.fail(errors);
+    return errors.isEmpty
+        ? PackageResult.success()
+        : PackageResult.fail(errors);
   }
 
   Stream<String> _findAllPublishedPackages() async* {
     for (final File pubspecFile
-        in (await packagesDir.parent.list(recursive: true, followLinks: false).toList())
+        in (await packagesDir.parent
+                .list(recursive: true, followLinks: false)
+                .toList())
             .whereType<File>()
-            .where((File entity) => p.basename(entity.path) == 'pubspec.yaml')) {
+            .where(
+              (File entity) => p.basename(entity.path) == 'pubspec.yaml',
+            )) {
       final Pubspec? pubspec = _tryParsePubspec(pubspecFile.readAsStringSync());
       if (pubspec != null && pubspec.publishTo != 'none') {
         yield pubspec.name;

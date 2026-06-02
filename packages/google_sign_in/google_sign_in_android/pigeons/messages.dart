@@ -7,7 +7,8 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    kotlinOut: 'android/src/main/kotlin/io/flutter/plugins/googlesignin/Messages.kt',
+    kotlinOut:
+        'android/src/main/kotlin/io/flutter/plugins/googlesignin/Messages.kt',
     kotlinOptions: KotlinOptions(package: 'io.flutter.plugins.googlesignin'),
     copyrightHeader: 'pigeons/copyright.txt',
   ),
@@ -70,7 +71,10 @@ class GetCredentialRequestGoogleIdOptionParams {
 /// Corresponds to the native RevokeAccessRequest.
 /// https://developers.google.com/android/reference/com/google/android/gms/auth/api/identity/RevokeAccessRequest
 class PlatformRevokeAccessRequest {
-  PlatformRevokeAccessRequest({required this.accountEmail, required this.scopes});
+  PlatformRevokeAccessRequest({
+    required this.accountEmail,
+    required this.scopes,
+  });
 
   /// The email for the Google account to revoke authorizations for.
   String accountEmail;

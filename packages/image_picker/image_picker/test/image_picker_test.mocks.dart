@@ -26,10 +26,12 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: subtype_of_sealed_class
 
 class _FakeLostData_0 extends _i1.SmartFake implements _i2.LostData {
-  _FakeLostData_0(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+  _FakeLostData_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
-class _FakeLostDataResponse_1 extends _i1.SmartFake implements _i2.LostDataResponse {
+class _FakeLostDataResponse_1 extends _i1.SmartFake
+    implements _i2.LostDataResponse {
   _FakeLostDataResponse_1(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -37,7 +39,8 @@ class _FakeLostDataResponse_1 extends _i1.SmartFake implements _i2.LostDataRespo
 /// A class which mocks [ImagePickerPlatform].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockImagePickerPlatform extends _i1.Mock implements _i3.ImagePickerPlatform {
+class MockImagePickerPlatform extends _i1.Mock
+    implements _i3.ImagePickerPlatform {
   MockImagePickerPlatform() {
     _i1.throwOnMissingStub(this);
   }
@@ -49,52 +52,60 @@ class MockImagePickerPlatform extends _i1.Mock implements _i3.ImagePickerPlatfor
     double? maxHeight,
     int? imageQuality,
     _i2.CameraDevice? preferredCameraDevice = _i2.CameraDevice.rear,
-  }) => (super.noSuchMethod(
-    Invocation.method(#pickImage, [], {
-      #source: source,
-      #maxWidth: maxWidth,
-      #maxHeight: maxHeight,
-      #imageQuality: imageQuality,
-      #preferredCameraDevice: preferredCameraDevice,
-    }),
-    returnValue: _i4.Future<_i2.PickedFile?>.value(),
-  ) as _i4.Future<_i2.PickedFile?>);
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#pickImage, [], {
+              #source: source,
+              #maxWidth: maxWidth,
+              #maxHeight: maxHeight,
+              #imageQuality: imageQuality,
+              #preferredCameraDevice: preferredCameraDevice,
+            }),
+            returnValue: _i4.Future<_i2.PickedFile?>.value(),
+          )
+          as _i4.Future<_i2.PickedFile?>);
 
   @override
   _i4.Future<List<_i2.PickedFile>?> pickMultiImage({
     double? maxWidth,
     double? maxHeight,
     int? imageQuality,
-  }) => (super.noSuchMethod(
-    Invocation.method(#pickMultiImage, [], {
-      #maxWidth: maxWidth,
-      #maxHeight: maxHeight,
-      #imageQuality: imageQuality,
-    }),
-    returnValue: _i4.Future<List<_i2.PickedFile>?>.value(),
-  ) as _i4.Future<List<_i2.PickedFile>?>);
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#pickMultiImage, [], {
+              #maxWidth: maxWidth,
+              #maxHeight: maxHeight,
+              #imageQuality: imageQuality,
+            }),
+            returnValue: _i4.Future<List<_i2.PickedFile>?>.value(),
+          )
+          as _i4.Future<List<_i2.PickedFile>?>);
 
   @override
   _i4.Future<_i2.PickedFile?> pickVideo({
     required _i2.ImageSource? source,
     _i2.CameraDevice? preferredCameraDevice = _i2.CameraDevice.rear,
     Duration? maxDuration,
-  }) => (super.noSuchMethod(
-    Invocation.method(#pickVideo, [], {
-      #source: source,
-      #preferredCameraDevice: preferredCameraDevice,
-      #maxDuration: maxDuration,
-    }),
-    returnValue: _i4.Future<_i2.PickedFile?>.value(),
-  ) as _i4.Future<_i2.PickedFile?>);
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#pickVideo, [], {
+              #source: source,
+              #preferredCameraDevice: preferredCameraDevice,
+              #maxDuration: maxDuration,
+            }),
+            returnValue: _i4.Future<_i2.PickedFile?>.value(),
+          )
+          as _i4.Future<_i2.PickedFile?>);
 
   @override
-  _i4.Future<_i2.LostData> retrieveLostData() => (super.noSuchMethod(
-    Invocation.method(#retrieveLostData, []),
-    returnValue: _i4.Future<_i2.LostData>.value(
-      _FakeLostData_0(this, Invocation.method(#retrieveLostData, [])),
-    ),
-  ) as _i4.Future<_i2.LostData>);
+  _i4.Future<_i2.LostData> retrieveLostData() =>
+      (super.noSuchMethod(
+            Invocation.method(#retrieveLostData, []),
+            returnValue: _i4.Future<_i2.LostData>.value(
+              _FakeLostData_0(this, Invocation.method(#retrieveLostData, [])),
+            ),
+          )
+          as _i4.Future<_i2.LostData>);
 
   @override
   _i4.Future<_i5.XFile?> getImage({
@@ -103,86 +114,115 @@ class MockImagePickerPlatform extends _i1.Mock implements _i3.ImagePickerPlatfor
     double? maxHeight,
     int? imageQuality,
     _i2.CameraDevice? preferredCameraDevice = _i2.CameraDevice.rear,
-  }) => (super.noSuchMethod(
-    Invocation.method(#getImage, [], {
-      #source: source,
-      #maxWidth: maxWidth,
-      #maxHeight: maxHeight,
-      #imageQuality: imageQuality,
-      #preferredCameraDevice: preferredCameraDevice,
-    }),
-    returnValue: _i4.Future<_i5.XFile?>.value(),
-  ) as _i4.Future<_i5.XFile?>);
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#getImage, [], {
+              #source: source,
+              #maxWidth: maxWidth,
+              #maxHeight: maxHeight,
+              #imageQuality: imageQuality,
+              #preferredCameraDevice: preferredCameraDevice,
+            }),
+            returnValue: _i4.Future<_i5.XFile?>.value(),
+          )
+          as _i4.Future<_i5.XFile?>);
 
   @override
   _i4.Future<List<_i5.XFile>?> getMultiImage({
     double? maxWidth,
     double? maxHeight,
     int? imageQuality,
-  }) => (super.noSuchMethod(
-    Invocation.method(#getMultiImage, [], {
-      #maxWidth: maxWidth,
-      #maxHeight: maxHeight,
-      #imageQuality: imageQuality,
-    }),
-    returnValue: _i4.Future<List<_i5.XFile>?>.value(),
-  ) as _i4.Future<List<_i5.XFile>?>);
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#getMultiImage, [], {
+              #maxWidth: maxWidth,
+              #maxHeight: maxHeight,
+              #imageQuality: imageQuality,
+            }),
+            returnValue: _i4.Future<List<_i5.XFile>?>.value(),
+          )
+          as _i4.Future<List<_i5.XFile>?>);
 
   @override
-  _i4.Future<List<_i5.XFile>> getMedia({required _i2.MediaOptions? options}) => (super.noSuchMethod(
-    Invocation.method(#getMedia, [], {#options: options}),
-    returnValue: _i4.Future<List<_i5.XFile>>.value(<_i5.XFile>[]),
-  ) as _i4.Future<List<_i5.XFile>>);
+  _i4.Future<List<_i5.XFile>> getMedia({required _i2.MediaOptions? options}) =>
+      (super.noSuchMethod(
+            Invocation.method(#getMedia, [], {#options: options}),
+            returnValue: _i4.Future<List<_i5.XFile>>.value(<_i5.XFile>[]),
+          )
+          as _i4.Future<List<_i5.XFile>>);
 
   @override
   _i4.Future<_i5.XFile?> getVideo({
     required _i2.ImageSource? source,
     _i2.CameraDevice? preferredCameraDevice = _i2.CameraDevice.rear,
     Duration? maxDuration,
-  }) => (super.noSuchMethod(
-    Invocation.method(#getVideo, [], {
-      #source: source,
-      #preferredCameraDevice: preferredCameraDevice,
-      #maxDuration: maxDuration,
-    }),
-    returnValue: _i4.Future<_i5.XFile?>.value(),
-  ) as _i4.Future<_i5.XFile?>);
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#getVideo, [], {
+              #source: source,
+              #preferredCameraDevice: preferredCameraDevice,
+              #maxDuration: maxDuration,
+            }),
+            returnValue: _i4.Future<_i5.XFile?>.value(),
+          )
+          as _i4.Future<_i5.XFile?>);
 
   @override
-  _i4.Future<_i2.LostDataResponse> getLostData() => (super.noSuchMethod(
-    Invocation.method(#getLostData, []),
-    returnValue: _i4.Future<_i2.LostDataResponse>.value(
-      _FakeLostDataResponse_1(this, Invocation.method(#getLostData, [])),
-    ),
-  ) as _i4.Future<_i2.LostDataResponse>);
+  _i4.Future<_i2.LostDataResponse> getLostData() =>
+      (super.noSuchMethod(
+            Invocation.method(#getLostData, []),
+            returnValue: _i4.Future<_i2.LostDataResponse>.value(
+              _FakeLostDataResponse_1(
+                this,
+                Invocation.method(#getLostData, []),
+              ),
+            ),
+          )
+          as _i4.Future<_i2.LostDataResponse>);
 
   @override
   _i4.Future<_i5.XFile?> getImageFromSource({
     required _i2.ImageSource? source,
     _i2.ImagePickerOptions? options = const _i2.ImagePickerOptions(),
-  }) => (super.noSuchMethod(
-    Invocation.method(#getImageFromSource, [], {#source: source, #options: options}),
-    returnValue: _i4.Future<_i5.XFile?>.value(),
-  ) as _i4.Future<_i5.XFile?>);
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#getImageFromSource, [], {
+              #source: source,
+              #options: options,
+            }),
+            returnValue: _i4.Future<_i5.XFile?>.value(),
+          )
+          as _i4.Future<_i5.XFile?>);
 
   @override
   _i4.Future<List<_i5.XFile>> getMultiImageWithOptions({
     _i2.MultiImagePickerOptions? options = const _i2.MultiImagePickerOptions(),
-  }) => (super.noSuchMethod(
-    Invocation.method(#getMultiImageWithOptions, [], {#options: options}),
-    returnValue: _i4.Future<List<_i5.XFile>>.value(<_i5.XFile>[]),
-  ) as _i4.Future<List<_i5.XFile>>);
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#getMultiImageWithOptions, [], {
+              #options: options,
+            }),
+            returnValue: _i4.Future<List<_i5.XFile>>.value(<_i5.XFile>[]),
+          )
+          as _i4.Future<List<_i5.XFile>>);
 
   @override
   _i4.Future<List<_i5.XFile>> getMultiVideoWithOptions({
     _i2.MultiVideoPickerOptions? options = const _i2.MultiVideoPickerOptions(),
-  }) => (super.noSuchMethod(
-    Invocation.method(#getMultiVideoWithOptions, [], {#options: options}),
-    returnValue: _i4.Future<List<_i5.XFile>>.value(<_i5.XFile>[]),
-  ) as _i4.Future<List<_i5.XFile>>);
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#getMultiVideoWithOptions, [], {
+              #options: options,
+            }),
+            returnValue: _i4.Future<List<_i5.XFile>>.value(<_i5.XFile>[]),
+          )
+          as _i4.Future<List<_i5.XFile>>);
 
   @override
   bool supportsImageSource(_i2.ImageSource? source) =>
-      (super.noSuchMethod(Invocation.method(#supportsImageSource, [source]), returnValue: false)
+      (super.noSuchMethod(
+            Invocation.method(#supportsImageSource, [source]),
+            returnValue: false,
+          )
           as bool);
 }

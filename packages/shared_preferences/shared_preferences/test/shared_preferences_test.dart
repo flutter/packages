@@ -70,11 +70,26 @@ void main() {
       preferences.setStringList('List', testList2),
     ]);
     expect(store.log, <Matcher>[
-      isMethodCall('setValue', arguments: <dynamic>['String', 'flutter.String', testString2]),
-      isMethodCall('setValue', arguments: <dynamic>['Bool', 'flutter.bool', testBool2]),
-      isMethodCall('setValue', arguments: <dynamic>['Int', 'flutter.int', testInt2]),
-      isMethodCall('setValue', arguments: <dynamic>['Double', 'flutter.double', testDouble2]),
-      isMethodCall('setValue', arguments: <dynamic>['StringList', 'flutter.List', testList2]),
+      isMethodCall(
+        'setValue',
+        arguments: <dynamic>['String', 'flutter.String', testString2],
+      ),
+      isMethodCall(
+        'setValue',
+        arguments: <dynamic>['Bool', 'flutter.bool', testBool2],
+      ),
+      isMethodCall(
+        'setValue',
+        arguments: <dynamic>['Int', 'flutter.int', testInt2],
+      ),
+      isMethodCall(
+        'setValue',
+        arguments: <dynamic>['Double', 'flutter.double', testDouble2],
+      ),
+      isMethodCall(
+        'setValue',
+        arguments: <dynamic>['StringList', 'flutter.List', testList2],
+      ),
     ]);
     store.log.clear();
 
@@ -91,7 +106,11 @@ void main() {
     await preferences.remove(key);
     expect(
       store.log,
-      List<Matcher>.filled(1, isMethodCall('remove', arguments: 'flutter.$key'), growable: true),
+      List<Matcher>.filled(
+        1,
+        isMethodCall('remove', arguments: 'flutter.$key'),
+        growable: true,
+      ),
     );
   });
 
@@ -145,14 +164,18 @@ void main() {
     const prefixedKey = 'flutter.$key';
 
     test('test 1', () async {
-      SharedPreferences.setMockInitialValues(<String, Object>{prefixedKey: 'my string'});
+      SharedPreferences.setMockInitialValues(<String, Object>{
+        prefixedKey: 'my string',
+      });
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final String? value = prefs.getString(key);
       expect(value, 'my string');
     });
 
     test('test 2', () async {
-      SharedPreferences.setMockInitialValues(<String, Object>{prefixedKey: 'my other string'});
+      SharedPreferences.setMockInitialValues(<String, Object>{
+        prefixedKey: 'my other string',
+      });
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final String? value = prefs.getString(key);
       expect(value, 'my other string');
@@ -182,8 +205,10 @@ void main() {
   test('getInstance always returns the same instance', () async {
     SharedPreferencesStorePlatform.instance = SlowInitSharedPreferencesStore();
 
-    final Future<SharedPreferences> firstFuture = SharedPreferences.getInstance();
-    final Future<SharedPreferences> secondFuture = SharedPreferences.getInstance();
+    final Future<SharedPreferences> firstFuture =
+        SharedPreferences.getInstance();
+    final Future<SharedPreferences> secondFuture =
+        SharedPreferences.getInstance();
     expect(identical(await firstFuture, await secondFuture), true);
   });
 
@@ -277,24 +302,30 @@ void main() {
       err = e;
     }
     expect(err, isA<UnimplementedError>());
-    expect(err.toString(), contains("Shared Preferences doesn't yet support the setPrefix method"));
+    expect(
+      err.toString(),
+      contains("Shared Preferences doesn't yet support the setPrefix method"),
+    );
   });
 
-  test('non-Unimplemented errors pass through withParameters methods correctly', () async {
-    final localStore = ThrowingSharedPreferencesStore();
-    SharedPreferencesStorePlatform.instance = localStore;
-    SharedPreferences.resetStatic();
-    SharedPreferences.setPrefix('');
-    Object? err;
+  test(
+    'non-Unimplemented errors pass through withParameters methods correctly',
+    () async {
+      final localStore = ThrowingSharedPreferencesStore();
+      SharedPreferencesStorePlatform.instance = localStore;
+      SharedPreferences.resetStatic();
+      SharedPreferences.setPrefix('');
+      Object? err;
 
-    try {
-      await SharedPreferences.getInstance();
-    } catch (e) {
-      err = e;
-    }
-    expect(err, isA<StateError>());
-    expect(err.toString(), contains('State Error'));
-  });
+      try {
+        await SharedPreferences.getInstance();
+      } catch (e) {
+        err = e;
+      }
+      expect(err, isA<StateError>());
+      expect(err.toString(), contains('State Error'));
+    },
+  );
 }
 
 class FakeSharedPreferencesStore extends SharedPreferencesStorePlatform {
@@ -323,7 +354,9 @@ class FakeSharedPreferencesStore extends SharedPreferencesStorePlatform {
   }
 
   @override
-  Future<Map<String, Object>> getAllWithParameters(GetAllParameters parameters) {
+  Future<Map<String, Object>> getAllWithParameters(
+    GetAllParameters parameters,
+  ) {
     log.add(const MethodCall('getAllWithParameters'));
     return backend.getAllWithParameters(parameters);
   }
@@ -341,7 +374,8 @@ class FakeSharedPreferencesStore extends SharedPreferencesStorePlatform {
   }
 }
 
-class UnimplementedSharedPreferencesStore extends SharedPreferencesStorePlatform {
+class UnimplementedSharedPreferencesStore
+    extends SharedPreferencesStorePlatform {
   @override
   Future<bool> clear() {
     throw UnimplementedError();
@@ -363,7 +397,8 @@ class UnimplementedSharedPreferencesStore extends SharedPreferencesStorePlatform
   }
 }
 
-class SlowInitSharedPreferencesStore extends UnimplementedSharedPreferencesStore {
+class SlowInitSharedPreferencesStore
+    extends UnimplementedSharedPreferencesStore {
   @override
   Future<Map<String, Object>> getAll() async {
     await Future<void>.delayed(const Duration(seconds: 1));
@@ -393,7 +428,9 @@ class ThrowingSharedPreferencesStore extends SharedPreferencesStorePlatform {
   }
 
   @override
-  Future<Map<String, Object>> getAllWithParameters(GetAllParameters parameters) {
+  Future<Map<String, Object>> getAllWithParameters(
+    GetAllParameters parameters,
+  ) {
     throw StateError('State Error');
   }
 }

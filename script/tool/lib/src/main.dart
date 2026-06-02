@@ -42,7 +42,9 @@ import 'version_check_command.dart';
 
 void main(List<String> args) {
   const FileSystem fileSystem = LocalFileSystem();
-  final Directory scriptDir = fileSystem.file(io.Platform.script.toFilePath()).parent;
+  final Directory scriptDir = fileSystem
+      .file(io.Platform.script.toFilePath())
+      .parent;
   // Support running either via directly invoking main.dart, or the wrapper in
   // bin/.
   final Directory toolsDir = scriptDir.basename == 'bin'

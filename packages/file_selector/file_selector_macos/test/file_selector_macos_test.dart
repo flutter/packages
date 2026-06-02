@@ -68,9 +68,18 @@ void main() {
       await plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
 
       final OpenPanelOptions options = api.passedOpenPanelOptions!;
-      expect(options.baseOptions.allowedFileTypes!.extensions, <String>['txt', 'jpg']);
-      expect(options.baseOptions.allowedFileTypes!.mimeTypes, <String>['text/plain', 'image/jpg']);
-      expect(options.baseOptions.allowedFileTypes!.utis, <String>['public.text', 'public.image']);
+      expect(options.baseOptions.allowedFileTypes!.extensions, <String>[
+        'txt',
+        'jpg',
+      ]);
+      expect(options.baseOptions.allowedFileTypes!.mimeTypes, <String>[
+        'text/plain',
+        'image/jpg',
+      ]);
+      expect(options.baseOptions.allowedFileTypes!.utis, <String>[
+        'public.text',
+        'public.image',
+      ]);
     });
 
     test('passes initialDirectory correctly', () async {
@@ -88,7 +97,10 @@ void main() {
     });
 
     test('throws for a type group that does not support macOS', () async {
-      const group = XTypeGroup(label: 'images', webWildCards: <String>['images/*']);
+      const group = XTypeGroup(
+        label: 'images',
+        webWildCards: <String>['images/*'],
+      );
 
       await expectLater(
         plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]),
@@ -99,7 +111,10 @@ void main() {
     test('allows a wildcard group', () async {
       const group = XTypeGroup(label: 'text');
 
-      await expectLater(plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]), completes);
+      await expectLater(
+        plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]),
+        completes,
+      );
     });
   });
 
@@ -148,9 +163,18 @@ void main() {
       await plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
 
       final OpenPanelOptions options = api.passedOpenPanelOptions!;
-      expect(options.baseOptions.allowedFileTypes!.extensions, <String>['txt', 'jpg']);
-      expect(options.baseOptions.allowedFileTypes!.mimeTypes, <String>['text/plain', 'image/jpg']);
-      expect(options.baseOptions.allowedFileTypes!.utis, <String>['public.text', 'public.image']);
+      expect(options.baseOptions.allowedFileTypes!.extensions, <String>[
+        'txt',
+        'jpg',
+      ]);
+      expect(options.baseOptions.allowedFileTypes!.mimeTypes, <String>[
+        'text/plain',
+        'image/jpg',
+      ]);
+      expect(options.baseOptions.allowedFileTypes!.utis, <String>[
+        'public.text',
+        'public.image',
+      ]);
     });
 
     test('passes initialDirectory correctly', () async {
@@ -168,7 +192,10 @@ void main() {
     });
 
     test('throws for a type group that does not support macOS', () async {
-      const group = XTypeGroup(label: 'images', webWildCards: <String>['images/*']);
+      const group = XTypeGroup(
+        label: 'images',
+        webWildCards: <String>['images/*'],
+      );
 
       await expectLater(
         plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group]),
@@ -179,7 +206,10 @@ void main() {
     test('allows a wildcard group', () async {
       const group = XTypeGroup(label: 'text');
 
-      await expectLater(plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group]), completes);
+      await expectLater(
+        plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group]),
+        completes,
+      );
     });
   });
 
@@ -221,12 +251,20 @@ void main() {
         webWildCards: <String>['image/*'],
       );
 
-      await plugin.getSavePath(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
+      await plugin.getSavePath(
+        acceptedTypeGroups: <XTypeGroup>[group, groupTwo],
+      );
 
       final SavePanelOptions options = api.passedSavePanelOptions!;
       expect(options.allowedFileTypes!.extensions, <String>['txt', 'jpg']);
-      expect(options.allowedFileTypes!.mimeTypes, <String>['text/plain', 'image/jpg']);
-      expect(options.allowedFileTypes!.utis, <String>['public.text', 'public.image']);
+      expect(options.allowedFileTypes!.mimeTypes, <String>[
+        'text/plain',
+        'image/jpg',
+      ]);
+      expect(options.allowedFileTypes!.utis, <String>[
+        'public.text',
+        'public.image',
+      ]);
     });
 
     test('passes initialDirectory correctly', () async {
@@ -244,7 +282,10 @@ void main() {
     });
 
     test('throws for a type group that does not support macOS', () async {
-      const group = XTypeGroup(label: 'images', webWildCards: <String>['images/*']);
+      const group = XTypeGroup(
+        label: 'images',
+        webWildCards: <String>['images/*'],
+      );
 
       await expectLater(
         plugin.getSavePath(acceptedTypeGroups: <XTypeGroup>[group]),
@@ -255,7 +296,10 @@ void main() {
     test('allows a wildcard group', () async {
       const group = XTypeGroup(label: 'text');
 
-      await expectLater(plugin.getSavePath(acceptedTypeGroups: <XTypeGroup>[group]), completes);
+      await expectLater(
+        plugin.getSavePath(acceptedTypeGroups: <XTypeGroup>[group]),
+        completes,
+      );
     });
 
     test('ignores all type groups if any of them is a wildcard', () async {
@@ -320,17 +364,27 @@ void main() {
         webWildCards: <String>['image/*'],
       );
 
-      await plugin.getSaveLocation(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
+      await plugin.getSaveLocation(
+        acceptedTypeGroups: <XTypeGroup>[group, groupTwo],
+      );
 
       final SavePanelOptions options = api.passedSavePanelOptions!;
       expect(options.allowedFileTypes!.extensions, <String>['txt', 'jpg']);
-      expect(options.allowedFileTypes!.mimeTypes, <String>['text/plain', 'image/jpg']);
-      expect(options.allowedFileTypes!.utis, <String>['public.text', 'public.image']);
+      expect(options.allowedFileTypes!.mimeTypes, <String>[
+        'text/plain',
+        'image/jpg',
+      ]);
+      expect(options.allowedFileTypes!.utis, <String>[
+        'public.text',
+        'public.image',
+      ]);
     });
 
     test('passes initialDirectory correctly', () async {
       await plugin.getSaveLocation(
-        options: const SaveDialogOptions(initialDirectory: '/example/directory'),
+        options: const SaveDialogOptions(
+          initialDirectory: '/example/directory',
+        ),
       );
 
       final SavePanelOptions options = api.passedSavePanelOptions!;
@@ -347,7 +401,10 @@ void main() {
     });
 
     test('throws for a type group that does not support macOS', () async {
-      const group = XTypeGroup(label: 'images', webWildCards: <String>['images/*']);
+      const group = XTypeGroup(
+        label: 'images',
+        webWildCards: <String>['images/*'],
+      );
 
       await expectLater(
         plugin.getSaveLocation(acceptedTypeGroups: <XTypeGroup>[group]),
@@ -358,7 +415,10 @@ void main() {
     test('allows a wildcard group', () async {
       const group = XTypeGroup(label: 'text');
 
-      await expectLater(plugin.getSaveLocation(acceptedTypeGroups: <XTypeGroup>[group]), completes);
+      await expectLater(
+        plugin.getSaveLocation(acceptedTypeGroups: <XTypeGroup>[group]),
+        completes,
+      );
     });
 
     test('ignores all type groups if any of them is a wildcard', () async {
@@ -429,7 +489,9 @@ void main() {
     test('works as expected with no arguments', () async {
       api.result = <String>['foo'];
 
-      final String? path = await plugin.getDirectoryPathWithOptions(const FileDialogOptions());
+      final String? path = await plugin.getDirectoryPathWithOptions(
+        const FileDialogOptions(),
+      );
 
       expect(path, 'foo');
       final OpenPanelOptions options = api.passedOpenPanelOptions!;
@@ -481,11 +543,19 @@ void main() {
 
   group('getDirectoryPaths', () {
     test('works as expected with no arguments', () async {
-      api.result = <String>['firstDirectory', 'secondDirectory', 'thirdDirectory'];
+      api.result = <String>[
+        'firstDirectory',
+        'secondDirectory',
+        'thirdDirectory',
+      ];
 
       final List<String> path = await plugin.getDirectoryPaths();
 
-      expect(path, <String>['firstDirectory', 'secondDirectory', 'thirdDirectory']);
+      expect(path, <String>[
+        'firstDirectory',
+        'secondDirectory',
+        'thirdDirectory',
+      ]);
       final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.allowsMultipleSelection, true);
       expect(options.canChooseFiles, false);
@@ -521,13 +591,21 @@ void main() {
 
   group('getDirectoryPathsWithOptions', () {
     test('works as expected with no arguments', () async {
-      api.result = <String>['firstDirectory', 'secondDirectory', 'thirdDirectory'];
+      api.result = <String>[
+        'firstDirectory',
+        'secondDirectory',
+        'thirdDirectory',
+      ];
 
       final List<String> path = await plugin.getDirectoryPathsWithOptions(
         const FileDialogOptions(),
       );
 
-      expect(path, <String>['firstDirectory', 'secondDirectory', 'thirdDirectory']);
+      expect(path, <String>[
+        'firstDirectory',
+        'secondDirectory',
+        'thirdDirectory',
+      ]);
       final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.allowsMultipleSelection, true);
       expect(options.canChooseFiles, false);

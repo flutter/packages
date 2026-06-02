@@ -16,7 +16,10 @@ void main() {
         ),
       );
 
-      expect(state.copyWith(selectedKey: null), equals(const SharedPreferencesState()));
+      expect(
+        state.copyWith(selectedKey: null),
+        equals(const SharedPreferencesState()),
+      );
     });
   });
 
@@ -34,7 +37,9 @@ void main() {
       const boolData = SharedPreferencesData.bool(value: true);
       expect(boolData.valueAsString, 'true');
 
-      const stringListData = SharedPreferencesData.stringList(value: <String>['value1', 'value2']);
+      const stringListData = SharedPreferencesData.stringList(
+        value: <String>['value1', 'value2'],
+      );
       expect(stringListData.valueAsString, '\n0 -> value1\n1 -> value2');
     });
   });
@@ -52,7 +57,9 @@ void main() {
     const boolData = SharedPreferencesData.bool(value: true);
     expect(boolData.kind, 'bool');
 
-    const stringListData = SharedPreferencesData.stringList(value: <String>['value1', 'value2']);
+    const stringListData = SharedPreferencesData.stringList(
+      value: <String>['value1', 'value2'],
+    );
     expect(stringListData.kind, 'List<String>');
   });
 
@@ -101,7 +108,9 @@ void main() {
       ),
     );
 
-    const stringListData = SharedPreferencesData.stringList(value: <String>['value1', 'value2']);
+    const stringListData = SharedPreferencesData.stringList(
+      value: <String>['value1', 'value2'],
+    );
     const newStringListValue = '["newValue1", "newValue2"]';
     expect(
       stringListData.changeValue(newStringListValue),

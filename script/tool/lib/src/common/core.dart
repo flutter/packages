@@ -102,7 +102,8 @@ final Map<Version, Version> _dartSdkForFlutterSdk = <Version, Version>{
 
 /// Returns the version of the Dart SDK that shipped with the given Flutter
 /// SDK.
-Version? getDartSdkForFlutterSdk(Version flutterVersion) => _dartSdkForFlutterSdk[flutterVersion];
+Version? getDartSdkForFlutterSdk(Version flutterVersion) =>
+    _dartSdkForFlutterSdk[flutterVersion];
 
 /// Returns whether the given directory is a Dart package.
 bool isPackage(FileSystemEntity entity) {

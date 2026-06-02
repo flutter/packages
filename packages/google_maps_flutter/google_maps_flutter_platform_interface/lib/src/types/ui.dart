@@ -87,7 +87,10 @@ class MinMaxZoomPreference {
   final double? maxZoom;
 
   /// Unbounded zooming.
-  static const MinMaxZoomPreference unbounded = MinMaxZoomPreference(null, null);
+  static const MinMaxZoomPreference unbounded = MinMaxZoomPreference(
+    null,
+    null,
+  );
 
   /// Converts this object to something serializable in JSON.
   Object toJson() => <Object?>[minZoom, maxZoom];
@@ -100,7 +103,9 @@ class MinMaxZoomPreference {
     if (runtimeType != other.runtimeType) {
       return false;
     }
-    return other is MinMaxZoomPreference && minZoom == other.minZoom && maxZoom == other.maxZoom;
+    return other is MinMaxZoomPreference &&
+        minZoom == other.minZoom &&
+        maxZoom == other.maxZoom;
   }
 
   @override

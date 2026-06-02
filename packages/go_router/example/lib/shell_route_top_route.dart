@@ -5,8 +5,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
-final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
+final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'root',
+);
+final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'shell',
+);
 
 // This scenario demonstrates how to set up nested navigation using ShellRoute,
 // which is a pattern where an additional Navigator is placed in the widget tree
@@ -133,7 +137,11 @@ class ShellRouteExampleApp extends StatelessWidget {
 /// BottomNavigationBar, where [child] is placed in the body of the Scaffold.
 class ScaffoldWithNavBar extends StatelessWidget {
   /// Constructs an [ScaffoldWithNavBar].
-  const ScaffoldWithNavBar({super.key, required this.title, required this.child});
+  const ScaffoldWithNavBar({
+    super.key,
+    required this.title,
+    required this.child,
+  });
 
   /// The title to display in the AppBar.
   final String title;
@@ -150,7 +158,10 @@ class ScaffoldWithNavBar extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'A Screen'),
-          BottomNavigationBarItem(icon: Icon(Icons.business), label: 'B Screen'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.business),
+            label: 'B Screen',
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.notification_important_rounded),
             label: 'C Screen',
@@ -167,11 +178,13 @@ class ScaffoldWithNavBar extends StatelessWidget {
   /// The [Scaffold]'s default back button cannot be used because it doesn't
   /// have the context of the current child.
   Widget? _buildLeadingButton(BuildContext context) {
-    final RouteMatchList currentConfiguration =
-        GoRouter.of(context).routerDelegate.currentConfiguration;
+    final RouteMatchList currentConfiguration = GoRouter.of(
+      context,
+    ).routerDelegate.currentConfiguration;
     final RouteMatch lastMatch = currentConfiguration.last;
-    final Uri location =
-        lastMatch is ImperativeRouteMatch ? lastMatch.matches.uri : currentConfiguration.uri;
+    final Uri location = lastMatch is ImperativeRouteMatch
+        ? lastMatch.matches.uri
+        : currentConfiguration.uri;
     final bool canPop = location.pathSegments.length > 1;
     return canPop ? BackButton(onPressed: GoRouter.of(context).pop) : null;
   }
@@ -274,7 +287,10 @@ class DetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text('Details for $label', style: Theme.of(context).textTheme.headlineMedium),
+        child: Text(
+          'Details for $label',
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
       ),
     );
   }

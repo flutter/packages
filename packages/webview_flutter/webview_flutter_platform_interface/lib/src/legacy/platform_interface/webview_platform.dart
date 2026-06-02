@@ -14,9 +14,8 @@ import 'webview_platform_controller.dart';
 /// Signature for callbacks reporting that a [WebViewPlatformController] was created.
 ///
 /// See also the `onWebViewPlatformCreated` argument for [WebViewPlatform.build].
-typedef WebViewPlatformCreatedCallback = void Function(
-  WebViewPlatformController? webViewPlatformController,
-);
+typedef WebViewPlatformCreatedCallback =
+    void Function(WebViewPlatformController? webViewPlatformController);
 
 /// Interface for a platform implementation of a WebView.
 ///
@@ -62,6 +61,8 @@ abstract class WebViewPlatform {
   /// Returns true if cookies were present before clearing, else false.
   /// Soon to be deprecated. 'Use `WebViewCookieManagerPlatform.clearCookies` instead.
   Future<bool> clearCookies() {
-    throw UnimplementedError('WebView clearCookies is not implemented on the current platform');
+    throw UnimplementedError(
+      'WebView clearCookies is not implemented on the current platform',
+    );
   }
 }

@@ -18,13 +18,15 @@ class GradleCheckCommand extends PackageLoopingCommand {
   List<String> get aliases => <String>['check-gradle'];
 
   @override
-  final String description = 'Checks that gradle files follow repository conventions.';
+  final String description =
+      'Checks that gradle files follow repository conventions.';
 
   @override
   bool get hasLongOutput => false;
 
   @override
-  PackageLoopingType get packageLoopingType => PackageLoopingType.includeAllSubpackages;
+  PackageLoopingType get packageLoopingType =>
+      PackageLoopingType.includeAllSubpackages;
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {

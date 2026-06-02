@@ -21,7 +21,6 @@ String? encodeQueryParameters(Map<String, String> params) {
       )
       .join('&');
 }
-
 // #enddocregion encode-query-parameters
 
 void main() => runApp(
@@ -30,7 +29,10 @@ void main() => runApp(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          ElevatedButton(onPressed: _composeMail, child: Text('Compose an email')),
+          ElevatedButton(
+            onPressed: _composeMail,
+            child: Text('Compose an email'),
+          ),
         ],
       ),
     ),

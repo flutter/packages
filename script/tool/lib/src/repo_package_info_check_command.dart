@@ -17,7 +17,8 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
   late Directory _repoRoot;
 
   /// Data from the root README.md table of packages.
-  final Map<String, List<String>> _readmeTableEntries = <String, List<String>>{};
+  final Map<String, List<String>> _readmeTableEntries =
+      <String, List<String>>{};
 
   /// Packages with entries in labeler.yml.
   final Set<String> _autoLabeledPackages = <String>{};
@@ -29,7 +30,8 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
   List<String> get aliases => <String>['check-repo-package-info'];
 
   @override
-  final String description = 'Checks that all packages are listed correctly in repo metadata.';
+  final String description =
+      'Checks that all packages are listed correctly in repo metadata.';
 
   @override
   final bool hasLongOutput = false;
@@ -47,7 +49,9 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
       ),
     );
     // Extract all of the lebeler.yml package entries.
-    _autoLabeledPackages.addAll(RepoInfoValidator.loadAutoLabeledPackages(repoRoot: _repoRoot));
+    _autoLabeledPackages.addAll(
+      RepoInfoValidator.loadAutoLabeledPackages(repoRoot: _repoRoot),
+    );
   }
 
   @override
@@ -60,6 +64,8 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
     );
     final List<String> errors = await validator.validatePackage(package);
 
-    return errors.isEmpty ? PackageResult.success() : PackageResult.fail(errors);
+    return errors.isEmpty
+        ? PackageResult.success()
+        : PackageResult.fail(errors);
   }
 }

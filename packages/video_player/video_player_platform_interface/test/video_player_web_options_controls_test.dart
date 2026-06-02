@@ -56,7 +56,10 @@ void main() {
         });
 
         test('expect controlsList is correct', () {
-          expect(controls.controlsList, 'nodownload nofullscreen noplaybackrate');
+          expect(
+            controls.controlsList,
+            'nodownload nofullscreen noplaybackrate',
+          );
         });
       });
     });

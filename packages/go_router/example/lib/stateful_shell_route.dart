@@ -5,10 +5,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
-final GlobalKey<NavigatorState> _sectionANavigatorKey = GlobalKey<NavigatorState>(
-  debugLabel: 'sectionANav',
+final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'root',
 );
+final GlobalKey<NavigatorState> _sectionANavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'sectionANav');
 
 // This example demonstrates how to setup nested navigation using a
 // BottomNavigationBar, where each bar item uses its own persistent navigator,
@@ -30,17 +31,18 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
     routes: <RouteBase>[
       // #docregion configuration-builder
       StatefulShellRoute.indexedStack(
-        builder: (
-          BuildContext context,
-          GoRouterState state,
-          StatefulNavigationShell navigationShell,
-        ) {
-          // Return the widget that implements the custom shell (in this case
-          // using a BottomNavigationBar). The StatefulNavigationShell is passed
-          // to be able access the state of the shell and to navigate to other
-          // branches in a stateful way.
-          return ScaffoldWithNavBar(navigationShell: navigationShell);
-        },
+        builder:
+            (
+              BuildContext context,
+              GoRouterState state,
+              StatefulNavigationShell navigationShell,
+            ) {
+              // Return the widget that implements the custom shell (in this case
+              // using a BottomNavigationBar). The StatefulNavigationShell is passed
+              // to be able access the state of the shell and to navigate to other
+              // branches in a stateful way.
+              return ScaffoldWithNavBar(navigationShell: navigationShell);
+            },
         // #enddocregion configuration-builder
         // #docregion configuration-branches
         branches: <StatefulShellBranch>[
@@ -52,18 +54,16 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                 // The screen to display as the root in the first tab of the
                 // bottom navigation bar.
                 path: '/a',
-                builder:
-                    (BuildContext context, GoRouterState state) =>
-                        const RootScreen(label: 'A', detailsPath: '/a/details'),
+                builder: (BuildContext context, GoRouterState state) =>
+                    const RootScreen(label: 'A', detailsPath: '/a/details'),
                 routes: <RouteBase>[
                   // The details screen to display stacked on navigator of the
                   // first tab. This will cover screen A but not the application
                   // shell (bottom navigation bar).
                   GoRoute(
                     path: 'details',
-                    builder:
-                        (BuildContext context, GoRouterState state) =>
-                            const DetailsScreen(label: 'A'),
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const DetailsScreen(label: 'A'),
                   ),
                 ],
               ),
@@ -82,8 +82,8 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                 // The screen to display as the root in the second tab of the
                 // bottom navigation bar.
                 path: '/b',
-                builder:
-                    (BuildContext context, GoRouterState state) => const RootScreen(
+                builder: (BuildContext context, GoRouterState state) =>
+                    const RootScreen(
                       label: 'B',
                       detailsPath: '/b/details/1',
                       secondDetailsPath: '/b/details/2',
@@ -91,9 +91,11 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                 routes: <RouteBase>[
                   GoRoute(
                     path: 'details/:param',
-                    builder:
-                        (BuildContext context, GoRouterState state) =>
-                            DetailsScreen(label: 'B', param: state.pathParameters['param']),
+                    builder: (BuildContext context, GoRouterState state) =>
+                        DetailsScreen(
+                          label: 'B',
+                          param: state.pathParameters['param'],
+                        ),
                   ),
                 ],
               ),
@@ -107,15 +109,13 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                 // The screen to display as the root in the third tab of the
                 // bottom navigation bar.
                 path: '/c',
-                builder:
-                    (BuildContext context, GoRouterState state) =>
-                        const RootScreen(label: 'C', detailsPath: '/c/details'),
+                builder: (BuildContext context, GoRouterState state) =>
+                    const RootScreen(label: 'C', detailsPath: '/c/details'),
                 routes: <RouteBase>[
                   GoRoute(
                     path: 'details',
-                    builder:
-                        (BuildContext context, GoRouterState state) =>
-                            DetailsScreen(label: 'C', extra: state.extra),
+                    builder: (BuildContext context, GoRouterState state) =>
+                        DetailsScreen(label: 'C', extra: state.extra),
                   ),
                 ],
               ),
@@ -170,7 +170,6 @@ class ScaffoldWithNavBar extends StatelessWidget {
       ),
     );
   }
-
   // #enddocregion configuration-custom-shell
 
   /// NOTE: For a slightly more sophisticated branch switching, change the onTap
@@ -219,7 +218,10 @@ class RootScreen extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Text('Screen $label', style: Theme.of(context).textTheme.titleLarge),
+            Text(
+              'Screen $label',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
             const Padding(padding: EdgeInsets.all(4)),
             TextButton(
               onPressed: () {
@@ -281,7 +283,10 @@ class DetailsScreenState extends State<DetailsScreen> {
         body: _build(context),
       );
     } else {
-      return ColoredBox(color: Theme.of(context).scaffoldBackgroundColor, child: _build(context));
+      return ColoredBox(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: _build(context),
+      );
     }
   }
 
@@ -305,10 +310,16 @@ class DetailsScreenState extends State<DetailsScreen> {
           ),
           const Padding(padding: EdgeInsets.all(8)),
           if (widget.param != null)
-            Text('Parameter: ${widget.param!}', style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              'Parameter: ${widget.param!}',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
           const Padding(padding: EdgeInsets.all(8)),
           if (widget.extra != null)
-            Text('Extra: ${widget.extra!}', style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              'Extra: ${widget.extra!}',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
           if (!widget.withScaffold) ...<Widget>[
             const Padding(padding: EdgeInsets.all(16)),
             TextButton(

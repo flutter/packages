@@ -37,11 +37,17 @@ class Person {
 const Map<String, Family> _families = <String, Family>{
   'f1': Family(
     name: 'Doe',
-    people: <String, Person>{'p1': Person(name: 'Jane'), 'p2': Person(name: 'John')},
+    people: <String, Person>{
+      'p1': Person(name: 'Jane'),
+      'p2': Person(name: 'John'),
+    },
   ),
   'f2': Family(
     name: 'Wong',
-    people: <String, Person>{'p1': Person(name: 'June'), 'p2': Person(name: 'Xin')},
+    people: <String, Person>{
+      'p1': Person(name: 'June'),
+      'p2': Person(name: 'Xin'),
+    },
   ),
 };
 
@@ -57,14 +63,18 @@ class App extends StatelessWidget {
 
   // add the login info into the tree as app state that can change over time
   @override
-  Widget build(BuildContext context) =>
-      MaterialApp.router(routerConfig: _router, title: title, debugShowCheckedModeBanner: false);
+  Widget build(BuildContext context) => MaterialApp.router(
+    routerConfig: _router,
+    title: title,
+    debugShowCheckedModeBanner: false,
+  );
 
   late final GoRouter _router = GoRouter(
     routes: <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (BuildContext context, GoRouterState state) => const HomeScreen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const HomeScreen(),
         routes: <GoRoute>[
           GoRoute(
             name: 'family',
@@ -118,8 +128,9 @@ class FamilyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Map<String, String> newQueries;
-    final List<String> names =
-        _families[fid]!.people.values.map<String>((Person p) => p.name).toList();
+    final List<String> names = _families[fid]!.people.values
+        .map<String>((Person p) => p.name)
+        .toList();
     names.sort();
     if (asc) {
       newQueries = const <String, String>{'sort': 'desc'};
@@ -131,12 +142,11 @@ class FamilyScreen extends StatelessWidget {
         title: Text(_families[fid]!.name),
         actions: <Widget>[
           IconButton(
-            onPressed:
-                () => context.goNamed(
-                  'family',
-                  pathParameters: <String, String>{'fid': fid},
-                  queryParameters: newQueries,
-                ),
+            onPressed: () => context.goNamed(
+              'family',
+              pathParameters: <String, String>{'fid': fid},
+              queryParameters: newQueries,
+            ),
             tooltip: 'sort ascending or descending',
             icon: const Icon(Icons.sort),
           ),
@@ -144,7 +154,8 @@ class FamilyScreen extends StatelessWidget {
       ),
       body: ListView(
         children: <Widget>[
-          for (final String name in asc ? names : names.reversed) ListTile(title: Text(name)),
+          for (final String name in asc ? names : names.reversed)
+            ListTile(title: Text(name)),
         ],
       ),
     );

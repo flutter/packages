@@ -16,17 +16,21 @@ class App extends StatelessWidget {
   static const String title = 'GoRouter Example: Custom Transitions';
 
   @override
-  Widget build(BuildContext context) => MaterialApp.router(routerConfig: _router, title: title);
+  Widget build(BuildContext context) =>
+      MaterialApp.router(routerConfig: _router, title: title);
 
   final GoRouter _router = GoRouter(
     routes: <GoRoute>[
       GoRoute(path: '/', redirect: (_, __) => '/none'),
       GoRoute(
         path: '/fade',
-        pageBuilder:
-            (BuildContext context, GoRouterState state) => CustomTransitionPage<void>(
+        pageBuilder: (BuildContext context, GoRouterState state) =>
+            CustomTransitionPage<void>(
               key: state.pageKey,
-              child: const ExampleTransitionsScreen(kind: 'fade', color: Colors.red),
+              child: const ExampleTransitionsScreen(
+                kind: 'fade',
+                color: Colors.red,
+              ),
               transitionsBuilder:
                   (
                     BuildContext context,
@@ -38,10 +42,13 @@ class App extends StatelessWidget {
       ),
       GoRoute(
         path: '/scale',
-        pageBuilder:
-            (BuildContext context, GoRouterState state) => CustomTransitionPage<void>(
+        pageBuilder: (BuildContext context, GoRouterState state) =>
+            CustomTransitionPage<void>(
               key: state.pageKey,
-              child: const ExampleTransitionsScreen(kind: 'scale', color: Colors.green),
+              child: const ExampleTransitionsScreen(
+                kind: 'scale',
+                color: Colors.green,
+              ),
               transitionsBuilder:
                   (
                     BuildContext context,
@@ -53,10 +60,13 @@ class App extends StatelessWidget {
       ),
       GoRoute(
         path: '/slide',
-        pageBuilder:
-            (BuildContext context, GoRouterState state) => CustomTransitionPage<void>(
+        pageBuilder: (BuildContext context, GoRouterState state) =>
+            CustomTransitionPage<void>(
               key: state.pageKey,
-              child: const ExampleTransitionsScreen(kind: 'slide', color: Colors.yellow),
+              child: const ExampleTransitionsScreen(
+                kind: 'slide',
+                color: Colors.yellow,
+              ),
               transitionsBuilder:
                   (
                     BuildContext context,
@@ -76,10 +86,13 @@ class App extends StatelessWidget {
       ),
       GoRoute(
         path: '/rotation',
-        pageBuilder:
-            (BuildContext context, GoRouterState state) => CustomTransitionPage<void>(
+        pageBuilder: (BuildContext context, GoRouterState state) =>
+            CustomTransitionPage<void>(
               key: state.pageKey,
-              child: const ExampleTransitionsScreen(kind: 'rotation', color: Colors.purple),
+              child: const ExampleTransitionsScreen(
+                kind: 'rotation',
+                color: Colors.purple,
+              ),
               transitionsBuilder:
                   (
                     BuildContext context,
@@ -91,10 +104,13 @@ class App extends StatelessWidget {
       ),
       GoRoute(
         path: '/none',
-        pageBuilder:
-            (BuildContext context, GoRouterState state) => NoTransitionPage<void>(
+        pageBuilder: (BuildContext context, GoRouterState state) =>
+            NoTransitionPage<void>(
               key: state.pageKey,
-              child: const ExampleTransitionsScreen(kind: 'none', color: Colors.white),
+              child: const ExampleTransitionsScreen(
+                kind: 'none',
+                color: Colors.white,
+              ),
             ),
       ),
     ],
@@ -104,10 +120,20 @@ class App extends StatelessWidget {
 /// An Example transitions screen.
 class ExampleTransitionsScreen extends StatelessWidget {
   /// Creates an [ExampleTransitionsScreen].
-  const ExampleTransitionsScreen({required this.color, required this.kind, super.key});
+  const ExampleTransitionsScreen({
+    required this.color,
+    required this.kind,
+    super.key,
+  });
 
   /// The available transition kinds.
-  static final List<String> kinds = <String>['fade', 'scale', 'slide', 'rotation', 'none'];
+  static final List<String> kinds = <String>[
+    'fade',
+    'scale',
+    'slide',
+    'rotation',
+    'none',
+  ];
 
   /// The color of the container.
   final Color color;

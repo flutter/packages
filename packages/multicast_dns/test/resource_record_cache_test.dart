@@ -8,7 +8,8 @@
 
 import 'dart:io';
 
-import 'package:multicast_dns/src/native_protocol_client.dart' show ResourceRecordCache;
+import 'package:multicast_dns/src/native_protocol_client.dart'
+    show ResourceRecordCache;
 import 'package:multicast_dns/src/resource_record.dart';
 import 'package:test/test.dart';
 
@@ -48,7 +49,9 @@ void testOverwrite() {
     expect(cache.entryCount, 3);
 
     // Overwrite the two cached entries with one with the same name.
-    cache.updateRecords(<ResourceRecord>[IPAddressResourceRecord('hest', valid, address: ip1)]);
+    cache.updateRecords(<ResourceRecord>[
+      IPAddressResourceRecord('hest', valid, address: ip1),
+    ]);
     expect(cache.entryCount, 2);
   });
 }
@@ -61,10 +64,14 @@ void testTimeout() {
 
     final cache = ResourceRecordCache();
 
-    cache.updateRecords(<ResourceRecord>[IPAddressResourceRecord('hest', valid, address: ip1)]);
+    cache.updateRecords(<ResourceRecord>[
+      IPAddressResourceRecord('hest', valid, address: ip1),
+    ]);
     expect(cache.entryCount, 1);
 
-    cache.updateRecords(<ResourceRecord>[IPAddressResourceRecord('fisk', notValid, address: ip1)]);
+    cache.updateRecords(<ResourceRecord>[
+      IPAddressResourceRecord('fisk', notValid, address: ip1),
+    ]);
 
     var results = <ResourceRecord>[];
     cache.lookup('hest', ResourceRecordType.addressIPv4, results);

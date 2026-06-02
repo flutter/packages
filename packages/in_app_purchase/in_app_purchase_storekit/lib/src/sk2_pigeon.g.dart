@@ -18,7 +18,11 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse({
+  Object? result,
+  PlatformException? error,
+  bool empty = false,
+}) {
   if (empty) {
     return <Object?>[];
   }
@@ -31,7 +35,9 @@ List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty
 bool _deepEquals(Object? a, Object? b) {
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed.every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed.every(
+          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
+        );
   }
   if (a is Map && b is Map) {
     return a.length == b.length &&
@@ -60,11 +66,20 @@ enum SK2ProductTypeMessage {
 
 enum SK2SubscriptionOfferTypeMessage { introductory, promotional, winBack }
 
-enum SK2SubscriptionOfferPaymentModeMessage { payAsYouGo, payUpFront, freeTrial }
+enum SK2SubscriptionOfferPaymentModeMessage {
+  payAsYouGo,
+  payUpFront,
+  freeTrial,
+}
 
 enum SK2SubscriptionPeriodUnitMessage { day, week, month, year }
 
-enum SK2ProductPurchaseResultMessage { success, unverified, userCancelled, pending }
+enum SK2ProductPurchaseResultMessage {
+  success,
+  unverified,
+  userCancelled,
+  pending,
+}
 
 /// The status of a purchase transaction.
 /// Used to communicate the result state to Dart layer via purchaseStream.
@@ -127,7 +142,8 @@ class SK2SubscriptionOfferMessage {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! SK2SubscriptionOfferMessage || other.runtimeType != runtimeType) {
+    if (other is! SK2SubscriptionOfferMessage ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -169,7 +185,8 @@ class SK2SubscriptionPeriodMessage {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! SK2SubscriptionPeriodMessage || other.runtimeType != runtimeType) {
+    if (other is! SK2SubscriptionPeriodMessage ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -200,7 +217,11 @@ class SK2SubscriptionInfoMessage {
   SK2SubscriptionPeriodMessage subscriptionPeriod;
 
   List<Object?> _toList() {
-    return <Object?>[promotionalOffers, subscriptionGroupID, subscriptionPeriod];
+    return <Object?>[
+      promotionalOffers,
+      subscriptionGroupID,
+      subscriptionPeriod,
+    ];
   }
 
   Object encode() {
@@ -210,7 +231,8 @@ class SK2SubscriptionInfoMessage {
   static SK2SubscriptionInfoMessage decode(Object result) {
     result as List<Object?>;
     return SK2SubscriptionInfoMessage(
-      promotionalOffers: (result[0] as List<Object?>?)!.cast<SK2SubscriptionOfferMessage>(),
+      promotionalOffers: (result[0] as List<Object?>?)!
+          .cast<SK2SubscriptionOfferMessage>(),
       subscriptionGroupID: result[1]! as String,
       subscriptionPeriod: result[2]! as SK2SubscriptionPeriodMessage,
     );
@@ -219,7 +241,8 @@ class SK2SubscriptionInfoMessage {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! SK2SubscriptionInfoMessage || other.runtimeType != runtimeType) {
+    if (other is! SK2SubscriptionInfoMessage ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -320,7 +343,10 @@ class SK2ProductMessage {
 }
 
 class SK2PriceLocaleMessage {
-  SK2PriceLocaleMessage({required this.currencyCode, required this.currencySymbol});
+  SK2PriceLocaleMessage({
+    required this.currencyCode,
+    required this.currencySymbol,
+  });
 
   String currencyCode;
 
@@ -398,7 +424,8 @@ class SK2SubscriptionOfferSignatureMessage {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! SK2SubscriptionOfferSignatureMessage || other.runtimeType != runtimeType) {
+    if (other is! SK2SubscriptionOfferSignatureMessage ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -434,14 +461,16 @@ class SK2SubscriptionOfferPurchaseMessage {
     result as List<Object?>;
     return SK2SubscriptionOfferPurchaseMessage(
       promotionalOfferId: result[0]! as String,
-      promotionalOfferSignature: result[1]! as SK2SubscriptionOfferSignatureMessage,
+      promotionalOfferSignature:
+          result[1]! as SK2SubscriptionOfferSignatureMessage,
     );
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! SK2SubscriptionOfferPurchaseMessage || other.runtimeType != runtimeType) {
+    if (other is! SK2SubscriptionOfferPurchaseMessage ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -472,7 +501,12 @@ class SK2ProductPurchaseOptionsMessage {
   String? winBackOfferId;
 
   List<Object?> _toList() {
-    return <Object?>[appAccountToken, quantity, promotionalOffer, winBackOfferId];
+    return <Object?>[
+      appAccountToken,
+      quantity,
+      promotionalOffer,
+      winBackOfferId,
+    ];
   }
 
   Object encode() {
@@ -492,7 +526,8 @@ class SK2ProductPurchaseOptionsMessage {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! SK2ProductPurchaseOptionsMessage || other.runtimeType != runtimeType) {
+    if (other is! SK2ProductPurchaseOptionsMessage ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -710,16 +745,24 @@ class _PigeonCodec extends StandardMessageCodec {
         return value == null ? null : SK2ProductTypeMessage.values[value];
       case 130:
         final value = readValue(buffer) as int?;
-        return value == null ? null : SK2SubscriptionOfferTypeMessage.values[value];
+        return value == null
+            ? null
+            : SK2SubscriptionOfferTypeMessage.values[value];
       case 131:
         final value = readValue(buffer) as int?;
-        return value == null ? null : SK2SubscriptionOfferPaymentModeMessage.values[value];
+        return value == null
+            ? null
+            : SK2SubscriptionOfferPaymentModeMessage.values[value];
       case 132:
         final value = readValue(buffer) as int?;
-        return value == null ? null : SK2SubscriptionPeriodUnitMessage.values[value];
+        return value == null
+            ? null
+            : SK2SubscriptionPeriodUnitMessage.values[value];
       case 133:
         final value = readValue(buffer) as int?;
-        return value == null ? null : SK2ProductPurchaseResultMessage.values[value];
+        return value == null
+            ? null
+            : SK2ProductPurchaseResultMessage.values[value];
       case 134:
         final value = readValue(buffer) as int?;
         return value == null ? null : SK2PurchaseStatusMessage.values[value];
@@ -753,11 +796,13 @@ class InAppPurchase2API {
   /// Constructor for [InAppPurchase2API].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  InAppPurchase2API({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-    : pigeonVar_binaryMessenger = binaryMessenger,
-      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
-          ? '.$messageChannelSuffix'
-          : '';
+  InAppPurchase2API({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -800,7 +845,9 @@ class InAppPurchase2API {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[identifiers]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[identifiers],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -816,7 +863,8 @@ class InAppPurchase2API {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (pigeonVar_replyList[0] as List<Object?>?)!.cast<SK2ProductMessage>();
+      return (pigeonVar_replyList[0] as List<Object?>?)!
+          .cast<SK2ProductMessage>();
     }
   }
 
@@ -831,7 +879,9 @@ class InAppPurchase2API {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[id, options]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[id, options],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -859,10 +909,9 @@ class InAppPurchase2API {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      productId,
-      offerId,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[productId, offerId],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -890,7 +939,9 @@ class InAppPurchase2API {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[productId]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[productId],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -934,7 +985,8 @@ class InAppPurchase2API {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (pigeonVar_replyList[0] as List<Object?>?)!.cast<SK2TransactionMessage>();
+      return (pigeonVar_replyList[0] as List<Object?>?)!
+          .cast<SK2TransactionMessage>();
     }
   }
 
@@ -962,7 +1014,8 @@ class InAppPurchase2API {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (pigeonVar_replyList[0] as List<Object?>?)!.cast<SK2TransactionMessage>();
+      return (pigeonVar_replyList[0] as List<Object?>?)!
+          .cast<SK2TransactionMessage>();
     }
   }
 
@@ -974,7 +1027,9 @@ class InAppPurchase2API {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[id]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[id],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -1120,7 +1175,9 @@ abstract class InAppPurchase2CallbackAPI {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) {
-    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty
+        ? '.$messageChannelSuffix'
+        : '';
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2CallbackAPI.onTransactionsUpdated$messageChannelSuffix',
@@ -1136,8 +1193,8 @@ abstract class InAppPurchase2CallbackAPI {
             'Argument for dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2CallbackAPI.onTransactionsUpdated was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final List<SK2TransactionMessage>? arg_newTransactions = (args[0] as List<Object?>?)
-              ?.cast<SK2TransactionMessage>();
+          final List<SK2TransactionMessage>? arg_newTransactions =
+              (args[0] as List<Object?>?)?.cast<SK2TransactionMessage>();
           assert(
             arg_newTransactions != null,
             'Argument for dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2CallbackAPI.onTransactionsUpdated was null, expected non-null List<SK2TransactionMessage>.',

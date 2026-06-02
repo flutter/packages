@@ -62,10 +62,12 @@ void main() {
     test('should select key', () async {
       const keys = <String>['key1', 'key2'];
       const keyValue = SharedPreferencesData.string(value: 'value');
+      when(evalMock.fetchAllKeys()).thenAnswer(
+        (_) async => (asyncKeys: keys, legacyKeys: const <String>[]),
+      );
       when(
-        evalMock.fetchAllKeys(),
-      ).thenAnswer((_) async => (asyncKeys: keys, legacyKeys: const <String>[]));
-      when(evalMock.fetchValue('key1', false)).thenAnswer((_) async => keyValue);
+        evalMock.fetchValue('key1', false),
+      ).thenAnswer((_) async => keyValue);
       await notifier.fetchAllKeys();
 
       await notifier.selectKey('key1');
@@ -84,9 +86,9 @@ void main() {
     test('should select key for legacy api', () async {
       const keys = <String>['key1', 'key2'];
       const keyValue = SharedPreferencesData.string(value: 'value');
-      when(
-        evalMock.fetchAllKeys(),
-      ).thenAnswer((_) async => (asyncKeys: const <String>[], legacyKeys: keys));
+      when(evalMock.fetchAllKeys()).thenAnswer(
+        (_) async => (asyncKeys: const <String>[], legacyKeys: keys),
+      );
       when(evalMock.fetchValue('key1', true)).thenAnswer((_) async => keyValue);
       await notifier.fetchAllKeys();
       notifier.selectApi(legacyApi: true);
@@ -148,7 +150,9 @@ void main() {
         evalMock.fetchAllKeys(),
       ).thenAnswer((_) async => (asyncKeys: asyncKeys, legacyKeys: legacyKeys));
       const keyValue = SharedPreferencesData.string(value: 'value');
-      when(evalMock.fetchValue('key1', false)).thenAnswer((_) async => keyValue);
+      when(
+        evalMock.fetchValue('key1', false),
+      ).thenAnswer((_) async => keyValue);
       await notifier.fetchAllKeys();
       await notifier.selectKey('key1');
 
@@ -164,14 +168,22 @@ void main() {
         evalMock.fetchAllKeys(),
       ).thenAnswer((_) async => (asyncKeys: asyncKeys, legacyKeys: legacyKeys));
       const keyValue = SharedPreferencesData.string(value: 'value');
-      when(evalMock.fetchValue('key1', false)).thenAnswer((_) async => keyValue);
+      when(
+        evalMock.fetchValue('key1', false),
+      ).thenAnswer((_) async => keyValue);
       await notifier.fetchAllKeys();
       await notifier.selectKey('key1');
 
-      await notifier.changeValue(const SharedPreferencesData.string(value: 'newValue'));
+      await notifier.changeValue(
+        const SharedPreferencesData.string(value: 'newValue'),
+      );
 
       verify(
-        evalMock.changeValue('key1', const SharedPreferencesData.string(value: 'newValue'), false),
+        evalMock.changeValue(
+          'key1',
+          const SharedPreferencesData.string(value: 'newValue'),
+          false,
+        ),
       ).called(1);
     });
 

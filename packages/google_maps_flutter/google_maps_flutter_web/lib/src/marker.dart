@@ -105,7 +105,8 @@ abstract class MarkerController<T, O> {
 ///
 /// [gmaps.Marker] is a legacy class that is being replaced
 /// by [gmaps.AdvancedMarkerElement].
-class LegacyMarkerController extends MarkerController<gmaps.Marker, gmaps.MarkerOptions> {
+class LegacyMarkerController
+    extends MarkerController<gmaps.Marker, gmaps.MarkerOptions> {
   /// Creates a `LegacyMarkerController`, which wraps a [gmaps.Marker] object.
   LegacyMarkerController({
     required super.marker,
@@ -123,7 +124,8 @@ class LegacyMarkerController extends MarkerController<gmaps.Marker, gmaps.Marker
   /// This list keeps track of all event subscriptions created for the marker,
   /// including taps and different drag events.
   /// These subscriptions should be disposed when the controller is disposed.
-  final List<StreamSubscription<dynamic>> _subscriptions = <StreamSubscription<dynamic>>[];
+  final List<StreamSubscription<dynamic>> _subscriptions =
+      <StreamSubscription<dynamic>>[];
 
   @override
   void addMarkerListener({
@@ -193,7 +195,10 @@ class LegacyMarkerController extends MarkerController<gmaps.Marker, gmaps.Marker
   }
 
   @override
-  void update(gmaps.MarkerOptions options, {web.HTMLElement? newInfoWindowContent}) {
+  void update(
+    gmaps.MarkerOptions options, {
+    web.HTMLElement? newInfoWindowContent,
+  }) {
     assert(_marker != null, 'Cannot `update` Marker after calling `remove`.');
     _marker!.options = options;
 
@@ -211,7 +216,11 @@ class LegacyMarkerController extends MarkerController<gmaps.Marker, gmaps.Marker
 /// [gmaps.AdvancedMarkerElement] is a new class that is
 /// replacing [gmaps.Marker].
 class AdvancedMarkerController
-    extends MarkerController<gmaps.AdvancedMarkerElement, gmaps.AdvancedMarkerElementOptions> {
+    extends
+        MarkerController<
+          gmaps.AdvancedMarkerElement,
+          gmaps.AdvancedMarkerElementOptions
+        > {
   /// Creates a `AdvancedMarkerController`, which wraps
   /// a [gmaps.AdvancedMarkerElement] object.
   AdvancedMarkerController({
@@ -230,7 +239,8 @@ class AdvancedMarkerController
   /// This list keeps track of all event subscriptions created for the marker,
   /// including taps and different drag events.
   /// These subscriptions should be disposed when the controller is disposed.
-  final List<StreamSubscription<dynamic>> _subscriptions = <StreamSubscription<dynamic>>[];
+  final List<StreamSubscription<dynamic>> _subscriptions =
+      <StreamSubscription<dynamic>>[];
 
   @override
   void addMarkerListener({
@@ -302,7 +312,10 @@ class AdvancedMarkerController
   }
 
   @override
-  void update(gmaps.AdvancedMarkerElementOptions options, {web.HTMLElement? newInfoWindowContent}) {
+  void update(
+    gmaps.AdvancedMarkerElementOptions options, {
+    web.HTMLElement? newInfoWindowContent,
+  }) {
     assert(_marker != null, 'Cannot `update` Marker after calling `remove`.');
 
     final gmaps.AdvancedMarkerElement marker = _marker!;

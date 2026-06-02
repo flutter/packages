@@ -33,7 +33,9 @@ import 'package:web/web.dart' as web;
     },
   ),
   MockSpec<CameraOptions>(
-    fallbackGenerators: <Symbol, Function>{#toMediaStreamConstraints: toMediaStreamConstraintsShim},
+    fallbackGenerators: <Symbol, Function>{
+      #toMediaStreamConstraints: toMediaStreamConstraintsShim,
+    },
   ),
 ])
 export 'mocks.mocks.dart';
@@ -44,7 +46,8 @@ Future<web.MediaStream> getMediaStreamForOptionsShim(
   CameraOptions? options, {
   int? cameraId = 0,
 }) async {
-  return createJSInteropWrapper(FakeMediaStream(<web.MediaStreamTrack>[])) as web.MediaStream;
+  return createJSInteropWrapper(FakeMediaStream(<web.MediaStreamTrack>[]))
+      as web.MediaStream;
 }
 
 web.HTMLVideoElement videoElementShim() {
@@ -57,7 +60,8 @@ web.Blob blobBuilderShim([List<web.Blob>? blobs, String? type]) {
   throw UnimplementedError();
 }
 
-web.MediaStreamConstraints toMediaStreamConstraintsShim() => throw UnimplementedError();
+web.MediaStreamConstraints toMediaStreamConstraintsShim() =>
+    throw UnimplementedError();
 
 @JSExport()
 class MockWindow {
@@ -139,18 +143,12 @@ class MockVideoElement {
 @JSExport()
 class MockMediaRecorder {
   /// `void Function(String type, web.EventListener? callback, [JSAny options])`
-  JSFunction addEventListener = (
-    String type,
-    web.EventListener? callback, [
-    JSAny? options,
-  ]) {}.toJS;
+  JSFunction addEventListener =
+      (String type, web.EventListener? callback, [JSAny? options]) {}.toJS;
 
   /// `void Function(String type, web.EventListener? callback, [JSAny options])`
-  JSFunction removeEventListener = (
-    String type,
-    web.EventListener? callback, [
-    JSAny? options,
-  ]) {}.toJS;
+  JSFunction removeEventListener =
+      (String type, web.EventListener? callback, [JSAny? options]) {}.toJS;
 
   /// `void Function([int timeslice])`
   JSFunction start = ([int? timeslice]) {}.toJS;
@@ -197,7 +195,8 @@ class FakeMediaError {
 }
 
 /// A fake [web.ElementStream] that listens to the provided [_stream] on [listen].
-class FakeElementStream<T extends web.Event> extends Fake implements web.ElementStream<T> {
+class FakeElementStream<T extends web.Event> extends Fake
+    implements web.ElementStream<T> {
   FakeElementStream(this._stream);
 
   final Stream<T> _stream;
@@ -209,7 +208,12 @@ class FakeElementStream<T extends web.Event> extends Fake implements web.Element
     void Function()? onDone,
     bool? cancelOnError,
   }) {
-    return _stream.listen(onData, onError: onError, onDone: onDone, cancelOnError: cancelOnError);
+    return _stream.listen(
+      onData,
+      onError: onError,
+      onDone: onDone,
+      cancelOnError: cancelOnError,
+    );
   }
 }
 
@@ -243,7 +247,8 @@ web.HTMLVideoElement getVideoElementWithBlankStream(Size videoSize) {
     ..height = videoSize.height.toInt()
     ..context2D.fillRect(0, 0, videoSize.width, videoSize.height);
 
-  final videoElement = web.HTMLVideoElement()..srcObject = canvasElement.captureStream();
+  final videoElement = web.HTMLVideoElement()
+    ..srcObject = canvasElement.captureStream();
 
   return videoElement;
 }
@@ -253,17 +258,27 @@ class MockEventStreamProvider<T extends web.Event> extends Mock
   @override
   Stream<T> forTarget(web.EventTarget? e, {bool? useCapture = false}) {
     return super.noSuchMethod(
-      Invocation.method(#forTarget, <Object?>[e], <Symbol, Object?>{#useCapture: useCapture}),
-      returnValue: Stream<T>.empty(),
-    ) as Stream<T>;
+          Invocation.method(
+            #forTarget,
+            <Object?>[e],
+            <Symbol, Object?>{#useCapture: useCapture},
+          ),
+          returnValue: Stream<T>.empty(),
+        )
+        as Stream<T>;
   }
 
   @override
   web.ElementStream<T> forElement(web.Element? e, {bool? useCapture = false}) {
     return super.noSuchMethod(
-      Invocation.method(#forElement, <Object?>[e], <Symbol, Object?>{#useCapture: useCapture}),
-      returnValue: FakeElementStream<T>(Stream<T>.empty()),
-    ) as web.ElementStream<T>;
+          Invocation.method(
+            #forElement,
+            <Object?>[e],
+            <Symbol, Object?>{#useCapture: useCapture},
+          ),
+          returnValue: FakeElementStream<T>(Stream<T>.empty()),
+        )
+        as web.ElementStream<T>;
   }
 }
 

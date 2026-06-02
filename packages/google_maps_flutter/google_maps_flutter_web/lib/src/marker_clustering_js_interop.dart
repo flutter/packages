@@ -16,11 +16,8 @@ import 'package:google_maps/google_maps.dart' as gmaps;
 import 'marker_clustering.dart';
 
 /// A typedef representing a callback function for handling cluster tap events.
-typedef ClusterClickHandler<T> = void Function(
-  gmaps.MapMouseEvent,
-  MarkerClustererCluster<T>,
-  gmaps.Map,
-);
+typedef ClusterClickHandler<T> =
+    void Function(gmaps.MapMouseEvent, MarkerClustererCluster<T>, gmaps.Map);
 
 /// The [MarkerClustererOptions] object used to initialize [MarkerClusterer].
 ///
@@ -37,11 +34,13 @@ extension type MarkerClustererOptions<T>._(JSObject _) implements JSObject {
     map: map as JSAny?,
     markers: markers?.cast<JSAny>().toJS ?? JSArray<JSAny>(),
     onClusterClick: onClusterClick != null
-        ? ((JSAny event, MarkerClustererCluster<T> cluster, JSAny map) => onClusterClick(
-            event as gmaps.MapMouseEvent,
-            cluster,
-            map as gmaps.Map,
-          )).toJS
+        ? ((JSAny event, MarkerClustererCluster<T> cluster, JSAny map) =>
+                  onClusterClick(
+                    event as gmaps.MapMouseEvent,
+                    cluster,
+                    map as gmaps.Map,
+                  ))
+              .toJS
         : null,
   );
 
@@ -62,13 +61,18 @@ extension type MarkerClustererOptions<T>._(JSObject _) implements JSObject {
   external JSArray<JSAny>? get _markers;
 
   /// Returns the onClusterClick handler.
-  ClusterClickHandler<T>? get onClusterClick => _onClusterClick?.toDart as ClusterClickHandler?;
+  ClusterClickHandler<T>? get onClusterClick =>
+      _onClusterClick?.toDart as ClusterClickHandler?;
   @JS('onClusterClick')
   external JSExportedDartFunction? get _onClusterClick;
 }
 
 @JS('google.maps.event.addListener')
-external JSAny _gmapsAddListener(JSAny instance, String eventName, JSFunction handler);
+external JSAny _gmapsAddListener(
+  JSAny instance,
+  String eventName,
+  JSFunction handler,
+);
 
 @JS('google.maps.event.removeListener')
 external void _gmapsRemoveListener(JSAny listenerHandle);
@@ -131,7 +135,8 @@ extension type MarkerClusterer<T>._(JSObject _) implements JSObject {
   external void _addMarkers(JSArray<JSAny>? markers, bool? noDraw);
 
   /// Removes a marker from the [MarkerClusterer].
-  bool removeMarker(T marker, bool? noDraw) => _removeMarker(marker as JSAny, noDraw);
+  bool removeMarker(T marker, bool? noDraw) =>
+      _removeMarker(marker as JSAny, noDraw);
   @JS('removeMarker')
   external bool _removeMarker(JSAny marker, bool? noDraw);
 
@@ -166,7 +171,10 @@ MarkerClusterer<T> createMarkerClusterer<T>(
   gmaps.Map map,
   ClusterClickHandler<T> onClusterClickHandler,
 ) {
-  final options = MarkerClustererOptions<T>(map: map, onClusterClick: onClusterClickHandler);
+  final options = MarkerClustererOptions<T>(
+    map: map,
+    onClusterClick: onClusterClickHandler,
+  );
   return MarkerClusterer<T>(options);
 }
 

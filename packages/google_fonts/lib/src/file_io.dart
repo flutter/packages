@@ -30,6 +30,9 @@ Future<void> saveFontToDeviceFileSystem({
 
 /// Stubbed out version of loadFontFromDeviceFileSystem from
 /// `file_io_desktop_and_mobile.dart`.
-Future<ByteData?> loadFontFromDeviceFileSystem({required String name, required String fileHash}) {
+Future<ByteData?> loadFontFromDeviceFileSystem({
+  required String name,
+  required String fileHash,
+}) {
   return Future<ByteData?>.value();
 }

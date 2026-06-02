@@ -16,17 +16,19 @@ typedef CloseContainerActionCallback<S> = void Function({S? returnValue});
 ///
 /// The `action` callback provided to [OpenContainer.openBuilder] can be used
 /// to close the container.
-typedef OpenContainerBuilder<S> = Widget Function(
-  BuildContext context,
-  CloseContainerActionCallback<S> action,
-);
+typedef OpenContainerBuilder<S> =
+    Widget Function(
+      BuildContext context,
+      CloseContainerActionCallback<S> action,
+    );
 
 /// Signature for a function that creates a [Widget] in closed state within an
 /// [OpenContainer].
 ///
 /// The `action` callback provided to [OpenContainer.closedBuilder] can be used
 /// to open the container.
-typedef CloseContainerBuilder = Widget Function(BuildContext context, VoidCallback action);
+typedef CloseContainerBuilder =
+    Widget Function(BuildContext context, VoidCallback action);
 
 /// The [OpenContainer] widget's fade transition type.
 ///
@@ -336,31 +338,33 @@ class OpenContainerState<T> extends State<OpenContainer<T?>> {
   /// Open the container using the given middle color and specific route,
   /// then call `onClosed` with the returned data after popped.
   Future<void> openContainer() async {
-    final Color middleColor = widget.middleColor ?? Theme.of(context).canvasColor;
-    final T? data = await Navigator.of(
-      context,
-      rootNavigator: widget.useRootNavigator,
-    ).push(
-      _OpenContainerRoute<T>(
-        closedColor: widget.closedColor,
-        openColor: widget.openColor,
-        middleColor: middleColor,
-        closedElevation: widget.closedElevation,
-        openElevation: widget.openElevation,
-        closedShape: widget.closedShape,
-        openShape: widget.openShape,
-        closedBuilder: widget.closedBuilder,
-        openBuilder: widget.openBuilder,
-        hideableKey: _hideableKey,
-        closedBuilderKey: _closedBuilderKey,
-        transitionDuration: widget.transitionDuration,
-        transitionType: widget.transitionType,
-        useRootNavigator: widget.useRootNavigator,
-        routeSettings: widget.routeSettings,
-        closedShadows: widget.closedShadows,
-        openShadows: widget.openShadows,
-      ),
-    );
+    final Color middleColor =
+        widget.middleColor ?? Theme.of(context).canvasColor;
+    final T? data =
+        await Navigator.of(
+          context,
+          rootNavigator: widget.useRootNavigator,
+        ).push(
+          _OpenContainerRoute<T>(
+            closedColor: widget.closedColor,
+            openColor: widget.openColor,
+            middleColor: middleColor,
+            closedElevation: widget.closedElevation,
+            openElevation: widget.openElevation,
+            closedShape: widget.closedShape,
+            openShape: widget.openShape,
+            closedBuilder: widget.closedBuilder,
+            openBuilder: widget.openBuilder,
+            hideableKey: _hideableKey,
+            closedBuilderKey: _closedBuilderKey,
+            transitionDuration: widget.transitionDuration,
+            transitionType: widget.transitionType,
+            useRootNavigator: widget.useRootNavigator,
+            routeSettings: widget.routeSettings,
+            closedShadows: widget.closedShadows,
+            openShadows: widget.openShadows,
+          ),
+        );
     if (widget.onClosed != null) {
       widget.onClosed!(data);
     }
@@ -486,21 +490,21 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
     required RouteSettings? routeSettings,
     required this.closedShadows,
     required this.openShadows,
-  })  : _elevationTween = Tween<double>(
-          begin: closedShadows == null ? closedElevation : 0.0,
-          end: openShadows == null ? openElevation : 0.0,
-        ),
-        _shadowsTween = _getShadowsTween(closedShadows, openShadows),
-        _shapeTween = ShapeBorderTween(begin: closedShape, end: openShape),
-        _colorTween = _getColorTween(
-          transitionType: transitionType,
-          closedColor: closedColor,
-          openColor: openColor,
-          middleColor: middleColor,
-        ),
-        _closedOpacityTween = _getClosedOpacityTween(transitionType),
-        _openOpacityTween = _getOpenOpacityTween(transitionType),
-        super(settings: routeSettings);
+  }) : _elevationTween = Tween<double>(
+         begin: closedShadows == null ? closedElevation : 0.0,
+         end: openShadows == null ? openElevation : 0.0,
+       ),
+       _shadowsTween = _getShadowsTween(closedShadows, openShadows),
+       _shapeTween = ShapeBorderTween(begin: closedShape, end: openShape),
+       _colorTween = _getColorTween(
+         transitionType: transitionType,
+         closedColor: closedColor,
+         openColor: openColor,
+         middleColor: middleColor,
+       ),
+       _closedOpacityTween = _getClosedOpacityTween(transitionType),
+       _openOpacityTween = _getOpenOpacityTween(transitionType),
+       super(settings: routeSettings);
 
   static _FlippableTweenSequence<Color?> _getColorTween({
     required ContainerTransitionType transitionType,
@@ -627,15 +631,15 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
 
   static final TweenSequence<Color?> _scrimFadeInTween =
       TweenSequence<Color?>(<TweenSequenceItem<Color?>>[
-    TweenSequenceItem<Color?>(
-      tween: ColorTween(begin: Colors.transparent, end: Colors.black54),
-      weight: 1 / 5,
-    ),
-    TweenSequenceItem<Color>(
-      tween: ConstantTween<Color>(Colors.black54),
-      weight: 4 / 5,
-    ),
-  ]);
+        TweenSequenceItem<Color?>(
+          tween: ColorTween(begin: Colors.transparent, end: Colors.black54),
+          weight: 1 / 5,
+        ),
+        TweenSequenceItem<Color>(
+          tween: ConstantTween<Color>(Colors.black54),
+          weight: 4 / 5,
+        ),
+      ]);
   static final Tween<Color?> _scrimFadeOutTween = ColorTween(
     begin: Colors.transparent,
     end: Colors.black54,
@@ -718,10 +722,12 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
     required BuildContext navigatorContext,
     bool delayForSourceRoute = false,
   }) {
-    final navigator = Navigator.of(
-      navigatorContext,
-      rootNavigator: useRootNavigator,
-    ).context.findRenderObject()! as RenderBox;
+    final navigator =
+        Navigator.of(
+              navigatorContext,
+              rootNavigator: useRootNavigator,
+            ).context.findRenderObject()!
+            as RenderBox;
     final Size navSize = _getSize(navigator);
     _rectTween.end = Offset.zero & navSize;
 
@@ -831,7 +837,9 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
           final Animation<double> curvedAnimation = CurvedAnimation(
             parent: animation,
             curve: Curves.fastOutSlowIn,
-            reverseCurve: _transitionWasInterrupted ? null : Curves.fastOutSlowIn.flipped,
+            reverseCurve: _transitionWasInterrupted
+                ? null
+                : Curves.fastOutSlowIn.flipped,
           );
           TweenSequence<Color?>? colorTween;
           TweenSequence<double>? closedOpacityTween, openOpacityTween;

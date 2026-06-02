@@ -138,7 +138,11 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     // onPressed calls using this URL are not gated on a 'canLaunch' check
     // because the assumption is that every device can launch a web URL.
-    final toLaunch = Uri(scheme: 'https', host: 'www.cylog.org', path: 'headers/');
+    final toLaunch = Uri(
+      scheme: 'https',
+      host: 'www.cylog.org',
+      path: 'headers/',
+    );
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
       body: ListView(
@@ -150,7 +154,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 padding: const EdgeInsets.all(16.0),
                 child: TextField(
                   onChanged: (String text) => _phone = text,
-                  decoration: const InputDecoration(hintText: 'Input the phone number to launch'),
+                  decoration: const InputDecoration(
+                    hintText: 'Input the phone number to launch',
+                  ),
                 ),
               ),
               ElevatedButton(
@@ -163,7 +169,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     ? const Text('Make phone call')
                     : const Text('Calling not supported'),
               ),
-              Padding(padding: const EdgeInsets.all(16.0), child: Text(toLaunch.toString())),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(toLaunch.toString()),
+              ),
               ElevatedButton(
                 onPressed: () => setState(() {
                   _launched = _launchInBrowser(toLaunch);

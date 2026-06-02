@@ -48,7 +48,10 @@ abstract class Visitor<S, V> {
   S visitPatternNode(PatternNode patternNode, V data);
 
   /// Visit a [ResolvedTextPositionNode].
-  S visitResolvedTextPositionNode(ResolvedTextPositionNode textPositionNode, V data);
+  S visitResolvedTextPositionNode(
+    ResolvedTextPositionNode textPositionNode,
+    V data,
+  );
 
   /// Visit a [ResolvedTextNode].
   S visitResolvedText(ResolvedTextNode textNode, V data);
@@ -122,7 +125,8 @@ mixin ErrorOnUnResolvedNode<S, V> on Visitor<S, V> {
 }
 
 /// A visitor that builds up a [VectorInstructions] for binary encoding.
-class CommandBuilderVisitor extends Visitor<void, void> with ErrorOnUnResolvedNode<void, void> {
+class CommandBuilderVisitor extends Visitor<void, void>
+    with ErrorOnUnResolvedNode<void, void> {
   final DrawCommandBuilder _builder = DrawCommandBuilder();
   late double _width;
   late double _height;
@@ -162,7 +166,9 @@ class CommandBuilderVisitor extends Visitor<void, void> with ErrorOnUnResolvedNo
 
   @override
   void visitResolvedMaskNode(ResolvedMaskNode maskNode, void data) {
-    _builder.addSaveLayer(Paint(blendMode: maskNode.blendMode, fill: const Fill()));
+    _builder.addSaveLayer(
+      Paint(blendMode: maskNode.blendMode, fill: const Fill()),
+    );
     maskNode.child.accept(this, data);
     _builder.addMask();
     maskNode.mask.accept(this, data);
@@ -176,7 +182,10 @@ class CommandBuilderVisitor extends Visitor<void, void> with ErrorOnUnResolvedNo
   }
 
   @override
-  void visitResolvedTextPositionNode(ResolvedTextPositionNode textPositionNode, void data) {
+  void visitResolvedTextPositionNode(
+    ResolvedTextPositionNode textPositionNode,
+    void data,
+  ) {
     _builder.updateTextPosition(textPositionNode.textPosition);
     textPositionNode.visitChildren((Node child) {
       child.accept(this, data);
@@ -185,7 +194,12 @@ class CommandBuilderVisitor extends Visitor<void, void> with ErrorOnUnResolvedNo
 
   @override
   void visitResolvedText(ResolvedTextNode textNode, void data) {
-    _builder.addText(textNode.textConfig, textNode.paint, null, currentPatternId);
+    _builder.addText(
+      textNode.textConfig,
+      textNode.paint,
+      null,
+      currentPatternId,
+    );
   }
 
   @override

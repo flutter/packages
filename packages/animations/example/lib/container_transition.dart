@@ -49,7 +49,8 @@ class OpenContainerTransformDemo extends StatefulWidget {
   }
 }
 
-class _OpenContainerTransformDemoState extends State<OpenContainerTransformDemo> {
+class _OpenContainerTransformDemoState
+    extends State<OpenContainerTransformDemo> {
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
 
   void _showMarkedAsDoneSnackbar(bool? isMarkedAsDone) {
@@ -528,18 +529,18 @@ class _DetailsPage extends StatelessWidget {
                 Text(
                   'Title',
                   style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                        color: Colors.black54,
-                        fontSize: 30.0,
-                      ),
+                    color: Colors.black54,
+                    fontSize: 30.0,
+                  ),
                 ),
                 const SizedBox(height: 10),
                 Text(
                   _loremIpsumParagraph,
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        color: Colors.black54,
-                        height: 1.5,
-                        fontSize: 16.0,
-                      ),
+                    color: Colors.black54,
+                    height: 1.5,
+                    fontSize: 16.0,
+                  ),
                 ),
               ],
             ),

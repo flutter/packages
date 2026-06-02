@@ -18,7 +18,10 @@ void main() {
   group('CameraErrorCode', () {
     group('toString returns a correct type for', () {
       testWidgets('notSupported', (WidgetTester tester) async {
-        expect(CameraErrorCode.notSupported.toString(), equals('cameraNotSupported'));
+        expect(
+          CameraErrorCode.notSupported.toString(),
+          equals('cameraNotSupported'),
+        );
       });
 
       testWidgets('notFound', (WidgetTester tester) async {
@@ -26,15 +29,24 @@ void main() {
       });
 
       testWidgets('notReadable', (WidgetTester tester) async {
-        expect(CameraErrorCode.notReadable.toString(), equals('cameraNotReadable'));
+        expect(
+          CameraErrorCode.notReadable.toString(),
+          equals('cameraNotReadable'),
+        );
       });
 
       testWidgets('overconstrained', (WidgetTester tester) async {
-        expect(CameraErrorCode.overconstrained.toString(), equals('cameraOverconstrained'));
+        expect(
+          CameraErrorCode.overconstrained.toString(),
+          equals('cameraOverconstrained'),
+        );
       });
 
       testWidgets('permissionDenied', (WidgetTester tester) async {
-        expect(CameraErrorCode.permissionDenied.toString(), equals('CameraAccessDenied'));
+        expect(
+          CameraErrorCode.permissionDenied.toString(),
+          equals('CameraAccessDenied'),
+        );
       });
 
       testWidgets('type', (WidgetTester tester) async {
@@ -50,7 +62,10 @@ void main() {
       });
 
       testWidgets('missingMetadata', (WidgetTester tester) async {
-        expect(CameraErrorCode.missingMetadata.toString(), equals('cameraMissingMetadata'));
+        expect(
+          CameraErrorCode.missingMetadata.toString(),
+          equals('cameraMissingMetadata'),
+        );
       });
 
       testWidgets('orientationNotSupported', (WidgetTester tester) async {
@@ -61,19 +76,31 @@ void main() {
       });
 
       testWidgets('torchModeNotSupported', (WidgetTester tester) async {
-        expect(CameraErrorCode.torchModeNotSupported.toString(), equals('torchModeNotSupported'));
+        expect(
+          CameraErrorCode.torchModeNotSupported.toString(),
+          equals('torchModeNotSupported'),
+        );
       });
 
       testWidgets('zoomLevelNotSupported', (WidgetTester tester) async {
-        expect(CameraErrorCode.zoomLevelNotSupported.toString(), equals('zoomLevelNotSupported'));
+        expect(
+          CameraErrorCode.zoomLevelNotSupported.toString(),
+          equals('zoomLevelNotSupported'),
+        );
       });
 
       testWidgets('zoomLevelInvalid', (WidgetTester tester) async {
-        expect(CameraErrorCode.zoomLevelInvalid.toString(), equals('zoomLevelInvalid'));
+        expect(
+          CameraErrorCode.zoomLevelInvalid.toString(),
+          equals('zoomLevelInvalid'),
+        );
       });
 
       testWidgets('notStarted', (WidgetTester tester) async {
-        expect(CameraErrorCode.notStarted.toString(), equals('cameraNotStarted'));
+        expect(
+          CameraErrorCode.notStarted.toString(),
+          equals('cameraNotStarted'),
+        );
       });
 
       testWidgets('videoRecordingNotStarted', (WidgetTester tester) async {
@@ -91,7 +118,10 @@ void main() {
         testWidgets('with aborted error code', (WidgetTester tester) async {
           expect(
             CameraErrorCode.fromMediaError(
-              createJSInteropWrapper(FakeMediaError(MediaError.MEDIA_ERR_ABORTED)) as MediaError,
+              createJSInteropWrapper(
+                    FakeMediaError(MediaError.MEDIA_ERR_ABORTED),
+                  )
+                  as MediaError,
             ).toString(),
             equals('mediaErrorAborted'),
           );
@@ -100,7 +130,10 @@ void main() {
         testWidgets('with network error code', (WidgetTester tester) async {
           expect(
             CameraErrorCode.fromMediaError(
-              createJSInteropWrapper(FakeMediaError(MediaError.MEDIA_ERR_NETWORK)) as MediaError,
+              createJSInteropWrapper(
+                    FakeMediaError(MediaError.MEDIA_ERR_NETWORK),
+                  )
+                  as MediaError,
             ).toString(),
             equals('mediaErrorNetwork'),
           );
@@ -109,16 +142,23 @@ void main() {
         testWidgets('with decode error code', (WidgetTester tester) async {
           expect(
             CameraErrorCode.fromMediaError(
-              createJSInteropWrapper(FakeMediaError(MediaError.MEDIA_ERR_DECODE)) as MediaError,
+              createJSInteropWrapper(
+                    FakeMediaError(MediaError.MEDIA_ERR_DECODE),
+                  )
+                  as MediaError,
             ).toString(),
             equals('mediaErrorDecode'),
           );
         });
 
-        testWidgets('with source not supported error code', (WidgetTester tester) async {
+        testWidgets('with source not supported error code', (
+          WidgetTester tester,
+        ) async {
           expect(
             CameraErrorCode.fromMediaError(
-              createJSInteropWrapper(FakeMediaError(MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED))
+              createJSInteropWrapper(
+                    FakeMediaError(MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED),
+                  )
                   as MediaError,
             ).toString(),
             equals('mediaErrorSourceNotSupported'),

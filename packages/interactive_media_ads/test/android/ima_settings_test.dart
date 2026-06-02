@@ -4,7 +4,8 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:interactive_media_ads/src/android/android_ima_settings.dart';
-import 'package:interactive_media_ads/src/android/interactive_media_ads.g.dart' as ima;
+import 'package:interactive_media_ads/src/android/interactive_media_ads.g.dart'
+    as ima;
 import 'package:interactive_media_ads/src/platform_interface/platform_ima_settings.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -37,7 +38,9 @@ void main() {
       final MockImaSdkSettings mockImaSdkSettings = _mockImaSdkSettings();
 
       const autoPlayAdBreaks = true;
-      final settings = AndroidImaSettings(const PlatformImaSettingsCreationParams());
+      final settings = AndroidImaSettings(
+        const PlatformImaSettingsCreationParams(),
+      );
       await settings.setAutoPlayAdBreaks(autoPlayAdBreaks);
 
       verify(mockImaSdkSettings.setAutoPlayAdBreaks(autoPlayAdBreaks));
@@ -47,7 +50,9 @@ void main() {
       final MockImaSdkSettings mockImaSdkSettings = _mockImaSdkSettings();
 
       const debugMode = false;
-      final settings = AndroidImaSettings(const PlatformImaSettingsCreationParams());
+      final settings = AndroidImaSettings(
+        const PlatformImaSettingsCreationParams(),
+      );
       await settings.setDebugMode(debugMode);
 
       verify(mockImaSdkSettings.setDebugMode(debugMode));
@@ -57,7 +62,9 @@ void main() {
       final MockImaSdkSettings mockImaSdkSettings = _mockImaSdkSettings();
 
       const featureFlags = <String, String>{'a': 'flag'};
-      final settings = AndroidImaSettings(const PlatformImaSettingsCreationParams());
+      final settings = AndroidImaSettings(
+        const PlatformImaSettingsCreationParams(),
+      );
       await settings.setFeatureFlags(featureFlags);
 
       verify(mockImaSdkSettings.setFeatureFlags(featureFlags));
@@ -67,7 +74,9 @@ void main() {
       final MockImaSdkSettings mockImaSdkSettings = _mockImaSdkSettings();
 
       const maxRedirects = 12;
-      final settings = AndroidImaSettings(const PlatformImaSettingsCreationParams());
+      final settings = AndroidImaSettings(
+        const PlatformImaSettingsCreationParams(),
+      );
       await settings.setMaxRedirects(maxRedirects);
 
       verify(mockImaSdkSettings.setMaxRedirects(maxRedirects));
@@ -77,7 +86,9 @@ void main() {
       final MockImaSdkSettings mockImaSdkSettings = _mockImaSdkSettings();
 
       const playerType = 'playerType';
-      final settings = AndroidImaSettings(const PlatformImaSettingsCreationParams());
+      final settings = AndroidImaSettings(
+        const PlatformImaSettingsCreationParams(),
+      );
       await settings.setPlayerType(playerType);
 
       verify(mockImaSdkSettings.setPlayerType(playerType));
@@ -87,7 +98,9 @@ void main() {
       final MockImaSdkSettings mockImaSdkSettings = _mockImaSdkSettings();
 
       const playerVersion = 'playerVersion';
-      final settings = AndroidImaSettings(const PlatformImaSettingsCreationParams());
+      final settings = AndroidImaSettings(
+        const PlatformImaSettingsCreationParams(),
+      );
       await settings.setPlayerVersion(playerVersion);
 
       verify(mockImaSdkSettings.setPlayerVersion(playerVersion));
@@ -97,7 +110,9 @@ void main() {
       final MockImaSdkSettings mockImaSdkSettings = _mockImaSdkSettings();
 
       const ppid = 'ppid';
-      final settings = AndroidImaSettings(const PlatformImaSettingsCreationParams());
+      final settings = AndroidImaSettings(
+        const PlatformImaSettingsCreationParams(),
+      );
       await settings.setPpid(ppid);
 
       verify(mockImaSdkSettings.setPpid(ppid));
@@ -107,7 +122,9 @@ void main() {
       final MockImaSdkSettings mockImaSdkSettings = _mockImaSdkSettings();
 
       const sessionID = 'sessionID';
-      final settings = AndroidImaSettings(const PlatformImaSettingsCreationParams());
+      final settings = AndroidImaSettings(
+        const PlatformImaSettingsCreationParams(),
+      );
       await settings.setSessionID(sessionID);
 
       verify(mockImaSdkSettings.setSessionId(sessionID));
@@ -118,7 +135,9 @@ void main() {
 MockImaSdkSettings _mockImaSdkSettings() {
   final mockImaSdkFactory = MockImaSdkFactory();
   final mockImaSdkSettings = MockImaSdkSettings();
-  when(mockImaSdkFactory.createImaSdkSettings()).thenAnswer((_) async => mockImaSdkSettings);
+  when(
+    mockImaSdkFactory.createImaSdkSettings(),
+  ).thenAnswer((_) async => mockImaSdkSettings);
   ima.PigeonOverrides.imaSdkFactory_instance = mockImaSdkFactory;
 
   return mockImaSdkSettings;

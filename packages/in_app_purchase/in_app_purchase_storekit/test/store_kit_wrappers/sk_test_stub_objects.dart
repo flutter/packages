@@ -36,27 +36,30 @@ const SKError dummyError = SKError(
   userInfo: <String, dynamic>{'key': 'value'},
 );
 
-final SKPaymentTransactionWrapper dummyOriginalTransaction = SKPaymentTransactionWrapper(
-  transactionState: SKPaymentTransactionStateWrapper.purchased,
-  payment: dummyPayment,
-  transactionTimeStamp: 1231231231.00,
-  transactionIdentifier: '123123',
-  error: dummyError,
-);
+final SKPaymentTransactionWrapper dummyOriginalTransaction =
+    SKPaymentTransactionWrapper(
+      transactionState: SKPaymentTransactionStateWrapper.purchased,
+      payment: dummyPayment,
+      transactionTimeStamp: 1231231231.00,
+      transactionIdentifier: '123123',
+      error: dummyError,
+    );
 
-final SKPaymentTransactionWrapper dummyTransaction = SKPaymentTransactionWrapper(
-  transactionState: SKPaymentTransactionStateWrapper.purchased,
-  payment: dummyPayment,
-  originalTransaction: dummyOriginalTransaction,
-  transactionTimeStamp: 1231231231.00,
-  transactionIdentifier: '123123',
-  error: dummyError,
-);
+final SKPaymentTransactionWrapper dummyTransaction =
+    SKPaymentTransactionWrapper(
+      transactionState: SKPaymentTransactionStateWrapper.purchased,
+      payment: dummyPayment,
+      originalTransaction: dummyOriginalTransaction,
+      transactionTimeStamp: 1231231231.00,
+      transactionIdentifier: '123123',
+      error: dummyError,
+    );
 
-final SKPaymentTransactionMessage dummyTransactionMessage = SKPaymentTransactionMessage(
-  payment: dummyPaymentMessage,
-  transactionState: SKPaymentTransactionStateMessage.purchased,
-);
+final SKPaymentTransactionMessage dummyTransactionMessage =
+    SKPaymentTransactionMessage(
+      payment: dummyPaymentMessage,
+      transactionState: SKPaymentTransactionStateMessage.purchased,
+    );
 
 final SKPriceLocaleWrapper dollarLocale = SKPriceLocaleWrapper(
   currencySymbol: r'$',
@@ -76,10 +79,11 @@ final SKPriceLocaleWrapper noSymbolLocale = SKPriceLocaleWrapper(
   countryCode: 'UK',
 );
 
-final SKProductSubscriptionPeriodWrapper dummySubscription = SKProductSubscriptionPeriodWrapper(
-  numberOfUnits: 1,
-  unit: SKSubscriptionPeriodUnit.month,
-);
+final SKProductSubscriptionPeriodWrapper dummySubscription =
+    SKProductSubscriptionPeriodWrapper(
+      numberOfUnits: 1,
+      unit: SKSubscriptionPeriodUnit.month,
+    );
 
 final SKProductSubscriptionPeriodMessage dummySubscriptionMessage =
     SKProductSubscriptionPeriodMessage(
@@ -107,15 +111,16 @@ final SKProductDiscountMessage dummyDiscountMessage = SKProductDiscountMessage(
   type: SKProductDiscountTypeMessage.subscription,
 );
 
-final SKProductDiscountWrapper dummyDiscountMissingIdentifierAndType = SKProductDiscountWrapper(
-  price: '1.0',
-  priceLocale: dollarLocale,
-  numberOfPeriods: 1,
-  paymentMode: SKProductDiscountPaymentMode.payUpFront,
-  subscriptionPeriod: dummySubscription,
-  identifier: null,
-  type: SKProductDiscountType.introductory,
-);
+final SKProductDiscountWrapper dummyDiscountMissingIdentifierAndType =
+    SKProductDiscountWrapper(
+      price: '1.0',
+      priceLocale: dollarLocale,
+      numberOfPeriods: 1,
+      paymentMode: SKProductDiscountPaymentMode.payUpFront,
+      subscriptionPeriod: dummySubscription,
+      identifier: null,
+      type: SKProductDiscountType.introductory,
+    );
 
 final SKProductWrapper dummyProductWrapper = SKProductWrapper(
   productIdentifier: 'id',
@@ -141,15 +146,17 @@ final SKProductMessage dummyProductMessage = SKProductMessage(
   discounts: <SKProductDiscountMessage>[dummyDiscountMessage],
 );
 
-final SkProductResponseWrapper dummyProductResponseWrapper = SkProductResponseWrapper(
-  products: <SKProductWrapper>[dummyProductWrapper],
-  invalidProductIdentifiers: const <String>['123'],
-);
+final SkProductResponseWrapper dummyProductResponseWrapper =
+    SkProductResponseWrapper(
+      products: <SKProductWrapper>[dummyProductWrapper],
+      invalidProductIdentifiers: const <String>['123'],
+    );
 
-final SKProductsResponseMessage dummyProductResponseMessage = SKProductsResponseMessage(
-  products: <SKProductMessage>[dummyProductMessage],
-  invalidProductIdentifiers: const <String>['123'],
-);
+final SKProductsResponseMessage dummyProductResponseMessage =
+    SKProductsResponseMessage(
+      products: <SKProductMessage>[dummyProductMessage],
+      invalidProductIdentifiers: const <String>['123'],
+    );
 
 Map<String, dynamic> buildLocaleMap(SKPriceLocaleWrapper local) {
   return <String, dynamic>{
@@ -159,7 +166,9 @@ Map<String, dynamic> buildLocaleMap(SKPriceLocaleWrapper local) {
   };
 }
 
-Map<String, dynamic>? buildSubscriptionPeriodMap(SKProductSubscriptionPeriodWrapper? sub) {
+Map<String, dynamic>? buildSubscriptionPeriodMap(
+  SKProductSubscriptionPeriodWrapper? sub,
+) {
   if (sub == null) {
     return null;
   }
@@ -174,20 +183,30 @@ Map<String, dynamic> buildDiscountMap(SKProductDiscountWrapper discount) {
     'price': discount.price,
     'priceLocale': buildLocaleMap(discount.priceLocale),
     'numberOfPeriods': discount.numberOfPeriods,
-    'paymentMode': SKProductDiscountPaymentMode.values.indexOf(discount.paymentMode),
-    'subscriptionPeriod': buildSubscriptionPeriodMap(discount.subscriptionPeriod),
+    'paymentMode': SKProductDiscountPaymentMode.values.indexOf(
+      discount.paymentMode,
+    ),
+    'subscriptionPeriod': buildSubscriptionPeriodMap(
+      discount.subscriptionPeriod,
+    ),
     'identifier': discount.identifier,
     'type': SKProductDiscountType.values.indexOf(discount.type),
   };
 }
 
-Map<String, dynamic> buildDiscountMapMissingIdentifierAndType(SKProductDiscountWrapper discount) {
+Map<String, dynamic> buildDiscountMapMissingIdentifierAndType(
+  SKProductDiscountWrapper discount,
+) {
   return <String, dynamic>{
     'price': discount.price,
     'priceLocale': buildLocaleMap(discount.priceLocale),
     'numberOfPeriods': discount.numberOfPeriods,
-    'paymentMode': SKProductDiscountPaymentMode.values.indexOf(discount.paymentMode),
-    'subscriptionPeriod': buildSubscriptionPeriodMap(discount.subscriptionPeriod),
+    'paymentMode': SKProductDiscountPaymentMode.values.indexOf(
+      discount.paymentMode,
+    ),
+    'subscriptionPeriod': buildSubscriptionPeriodMap(
+      discount.subscriptionPeriod,
+    ),
   };
 }
 
@@ -199,13 +218,17 @@ Map<String, dynamic> buildProductMap(SKProductWrapper product) {
     'priceLocale': buildLocaleMap(product.priceLocale),
     'subscriptionGroupIdentifier': product.subscriptionGroupIdentifier,
     'price': product.price,
-    'subscriptionPeriod': buildSubscriptionPeriodMap(product.subscriptionPeriod),
+    'subscriptionPeriod': buildSubscriptionPeriodMap(
+      product.subscriptionPeriod,
+    ),
     'introductoryPrice': buildDiscountMap(product.introductoryPrice!),
     'discounts': <dynamic>[buildDiscountMap(product.introductoryPrice!)],
   };
 }
 
-Map<String, dynamic> buildProductResponseMap(SkProductResponseWrapper response) {
+Map<String, dynamic> buildProductResponseMap(
+  SkProductResponseWrapper response,
+) {
   final List<dynamic> productsMap = response.products
       .map((SKProductWrapper product) => buildProductMap(product))
       .toList();
@@ -216,10 +239,16 @@ Map<String, dynamic> buildProductResponseMap(SkProductResponseWrapper response) 
 }
 
 Map<String, dynamic> buildErrorMap(SKError error) {
-  return <String, dynamic>{'code': error.code, 'domain': error.domain, 'userInfo': error.userInfo};
+  return <String, dynamic>{
+    'code': error.code,
+    'domain': error.domain,
+    'userInfo': error.userInfo,
+  };
 }
 
-Map<String, dynamic> buildTransactionMap(SKPaymentTransactionWrapper transaction) {
+Map<String, dynamic> buildTransactionMap(
+  SKPaymentTransactionWrapper transaction,
+) {
   final map = <String, dynamic>{
     'transactionState': SKPaymentTransactionStateWrapper.values.indexOf(
       SKPaymentTransactionStateWrapper.purchased,
@@ -235,7 +264,9 @@ Map<String, dynamic> buildTransactionMap(SKPaymentTransactionWrapper transaction
   return map;
 }
 
-Map<String, dynamic> buildTransactionMessage(SKPaymentTransactionWrapper transaction) {
+Map<String, dynamic> buildTransactionMessage(
+  SKPaymentTransactionWrapper transaction,
+) {
   final map = <String, dynamic>{
     'transactionState': SKPaymentTransactionStateWrapper.values.indexOf(
       SKPaymentTransactionStateWrapper.purchased,

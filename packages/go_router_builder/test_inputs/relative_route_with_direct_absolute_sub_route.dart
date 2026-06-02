@@ -5,20 +5,24 @@
 import 'package:go_router/go_router.dart';
 
 mixin $HomeRoute {}
-
 mixin $RelativeRoute {}
-
 mixin $NonRelativeRoute {}
 
-@TypedGoRoute<HomeRoute>(path: '/', routes: <TypedRoute<RouteData>>[relativeRoute])
+@TypedGoRoute<HomeRoute>(
+  path: '/',
+  routes: <TypedRoute<RouteData>>[relativeRoute],
+)
 class HomeRoute extends GoRouteData with $HomeRoute {
   const HomeRoute();
 }
 
-const TypedRelativeGoRoute<RelativeRoute> relativeRoute = TypedRelativeGoRoute<RelativeRoute>(
-  path: 'relative-route',
-  routes: <TypedRoute<RouteData>>[TypedGoRoute<NonRelativeRoute>(path: 'non-relative-route')],
-);
+const TypedRelativeGoRoute<RelativeRoute> relativeRoute =
+    TypedRelativeGoRoute<RelativeRoute>(
+      path: 'relative-route',
+      routes: <TypedRoute<RouteData>>[
+        TypedGoRoute<NonRelativeRoute>(path: 'non-relative-route'),
+      ],
+    );
 
 class RelativeRoute extends RelativeGoRouteData with $RelativeRoute {
   const RelativeRoute();

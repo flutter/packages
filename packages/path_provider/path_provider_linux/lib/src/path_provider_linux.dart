@@ -40,7 +40,9 @@ class PathProviderLinux extends PathProviderPlatform {
   @override
   Future<String?> getTemporaryPath() {
     final String environmentTmpDir = _environment['TMPDIR'] ?? '';
-    return Future<String?>.value(environmentTmpDir.isEmpty ? '/tmp' : environmentTmpDir);
+    return Future<String?>.value(
+      environmentTmpDir.isEmpty ? '/tmp' : environmentTmpDir,
+    );
   }
 
   @override
@@ -52,7 +54,9 @@ class PathProviderLinux extends PathProviderPlatform {
 
     // This plugin originally used the executable name as a directory.
     // Use that if it exists for backwards compatibility.
-    final legacyDirectory = Directory(path.join(xdg.dataHome.path, await _getExecutableName()));
+    final legacyDirectory = Directory(
+      path.join(xdg.dataHome.path, await _getExecutableName()),
+    );
     if (legacyDirectory.existsSync()) {
       return legacyDirectory.path;
     }

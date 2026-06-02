@@ -44,7 +44,11 @@ class ProcessRunner {
       mode: io.ProcessStartMode.inheritStdio,
     );
     if (exitOnError && await process.exitCode != 0) {
-      final String error = _getErrorString(executable, args, workingDir: workingDir);
+      final String error = _getErrorString(
+        executable,
+        args,
+        workingDir: workingDir,
+      );
       print('$error See above for details.');
       throw ToolExit(await process.exitCode);
     }
@@ -84,7 +88,11 @@ class ProcessRunner {
     );
     if (result.exitCode != 0) {
       if (logOnError) {
-        final String error = _getErrorString(executable, args, workingDir: workingDir);
+        final String error = _getErrorString(
+          executable,
+          args,
+          workingDir: workingDir,
+        );
         print('$error Stderr:\n${result.stdout}');
       }
       if (exitOnError) {
@@ -113,7 +121,11 @@ class ProcessRunner {
     return process;
   }
 
-  String _getErrorString(String executable, List<String> args, {Directory? workingDir}) {
+  String _getErrorString(
+    String executable,
+    List<String> args, {
+    Directory? workingDir,
+  }) {
     final workdir = workingDir == null ? '' : ' in ${workingDir.path}';
     return 'ERROR: Unable to execute "$executable ${args.join(' ')}"$workdir.';
   }

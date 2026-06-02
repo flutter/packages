@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 // #docregion CameraDelegate
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
-
 // #enddocregion CameraDelegate
 
 /// Example of a camera delegate
@@ -14,19 +13,20 @@ import 'package:image_picker_platform_interface/image_picker_platform_interface.
 class MyCameraDelegate extends ImagePickerCameraDelegate {
   @override
   Future<XFile?> takePhoto({
-    ImagePickerCameraDelegateOptions options = const ImagePickerCameraDelegateOptions(),
+    ImagePickerCameraDelegateOptions options =
+        const ImagePickerCameraDelegateOptions(),
   }) async {
     return _takeAPhoto(options.preferredCameraDevice);
   }
 
   @override
   Future<XFile?> takeVideo({
-    ImagePickerCameraDelegateOptions options = const ImagePickerCameraDelegateOptions(),
+    ImagePickerCameraDelegateOptions options =
+        const ImagePickerCameraDelegateOptions(),
   }) async {
     return _takeAVideo(options.preferredCameraDevice);
   }
 }
-
 // #enddocregion CameraDelegate
 
 /// Example function for README demonstration of various pick* calls.
@@ -38,7 +38,9 @@ Future<List<XFile?>> readmePickExample() async {
   // Capture a photo.
   final XFile? photo = await picker.pickImage(source: ImageSource.camera);
   // Pick a video.
-  final XFile? galleryVideo = await picker.pickVideo(source: ImageSource.gallery);
+  final XFile? galleryVideo = await picker.pickVideo(
+    source: ImageSource.gallery,
+  );
   // Capture a video.
   final XFile? cameraVideo = await picker.pickVideo(source: ImageSource.camera);
   // Pick multiple images.
@@ -76,7 +78,6 @@ Future<void> getLostData() async {
     _handleError(response.exception);
   }
 }
-
 // #enddocregion LostData
 
 /// Example of camera delegate setup.
@@ -87,7 +88,6 @@ void setUpCameraDelegate() {
     instance.cameraDelegate = MyCameraDelegate();
   }
 }
-
 // #enddocregion CameraDelegate
 
 // Stubs for the getLostData function.

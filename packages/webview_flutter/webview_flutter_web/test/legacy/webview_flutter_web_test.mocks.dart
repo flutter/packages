@@ -12,7 +12,8 @@ import 'package:flutter/widgets.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:webview_flutter_platform_interface/src/legacy/platform_interface/webview_platform_callbacks_handler.dart'
     as _i6;
-import 'package:webview_flutter_platform_interface/src/legacy/types/types.dart' as _i5;
+import 'package:webview_flutter_platform_interface/src/legacy/types/types.dart'
+    as _i5;
 import 'package:webview_flutter_web/src/http_request_factory.dart' as _i8;
 
 // ignore_for_file: type=lint
@@ -29,21 +30,26 @@ import 'package:webview_flutter_web/src/http_request_factory.dart' as _i8;
 // ignore_for_file: subtype_of_sealed_class
 
 class _FakeWidget_0 extends _i1.SmartFake implements _i2.Widget {
-  _FakeWidget_0(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+  _FakeWidget_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 
   @override
-  String toString({_i3.DiagnosticLevel? minLevel = _i3.DiagnosticLevel.info}) => super.toString();
+  String toString({_i3.DiagnosticLevel? minLevel = _i3.DiagnosticLevel.info}) =>
+      super.toString();
 }
 
-class _FakeInheritedWidget_1 extends _i1.SmartFake implements _i2.InheritedWidget {
+class _FakeInheritedWidget_1 extends _i1.SmartFake
+    implements _i2.InheritedWidget {
   _FakeInheritedWidget_1(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 
   @override
-  String toString({_i3.DiagnosticLevel? minLevel = _i3.DiagnosticLevel.info}) => super.toString();
+  String toString({_i3.DiagnosticLevel? minLevel = _i3.DiagnosticLevel.info}) =>
+      super.toString();
 }
 
-class _FakeDiagnosticsNode_2 extends _i1.SmartFake implements _i3.DiagnosticsNode {
+class _FakeDiagnosticsNode_2 extends _i1.SmartFake
+    implements _i3.DiagnosticsNode {
   _FakeDiagnosticsNode_2(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 
@@ -55,7 +61,8 @@ class _FakeDiagnosticsNode_2 extends _i1.SmartFake implements _i3.DiagnosticsNod
 }
 
 class _FakeObject_3 extends _i1.SmartFake implements Object {
-  _FakeObject_3(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+  _FakeObject_3(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [BuildContext].
@@ -67,33 +74,54 @@ class MockBuildContext extends _i1.Mock implements _i2.BuildContext {
   }
 
   @override
-  _i2.Widget get widget => (super.noSuchMethod(
-    Invocation.getter(#widget),
-    returnValue: _FakeWidget_0(this, Invocation.getter(#widget)),
-  ) as _i2.Widget);
+  _i2.Widget get widget =>
+      (super.noSuchMethod(
+            Invocation.getter(#widget),
+            returnValue: _FakeWidget_0(this, Invocation.getter(#widget)),
+          )
+          as _i2.Widget);
 
   @override
-  bool get mounted => (super.noSuchMethod(Invocation.getter(#mounted), returnValue: false) as bool);
+  bool get mounted =>
+      (super.noSuchMethod(Invocation.getter(#mounted), returnValue: false)
+          as bool);
 
   @override
   bool get debugDoingBuild =>
-      (super.noSuchMethod(Invocation.getter(#debugDoingBuild), returnValue: false) as bool);
-
-  @override
-  _i2.InheritedWidget dependOnInheritedElement(_i2.InheritedElement? ancestor, {Object? aspect}) =>
       (super.noSuchMethod(
-        Invocation.method(#dependOnInheritedElement, [ancestor], {#aspect: aspect}),
-        returnValue: _FakeInheritedWidget_1(
-          this,
-          Invocation.method(#dependOnInheritedElement, [ancestor], {#aspect: aspect}),
-        ),
-      ) as _i2.InheritedWidget);
+            Invocation.getter(#debugDoingBuild),
+            returnValue: false,
+          )
+          as bool);
 
   @override
-  void visitAncestorElements(_i2.ConditionalElementVisitor? visitor) => super.noSuchMethod(
-    Invocation.method(#visitAncestorElements, [visitor]),
-    returnValueForMissingStub: null,
-  );
+  _i2.InheritedWidget dependOnInheritedElement(
+    _i2.InheritedElement? ancestor, {
+    Object? aspect,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(
+              #dependOnInheritedElement,
+              [ancestor],
+              {#aspect: aspect},
+            ),
+            returnValue: _FakeInheritedWidget_1(
+              this,
+              Invocation.method(
+                #dependOnInheritedElement,
+                [ancestor],
+                {#aspect: aspect},
+              ),
+            ),
+          )
+          as _i2.InheritedWidget);
+
+  @override
+  void visitAncestorElements(_i2.ConditionalElementVisitor? visitor) =>
+      super.noSuchMethod(
+        Invocation.method(#visitAncestorElements, [visitor]),
+        returnValueForMissingStub: null,
+      );
 
   @override
   void visitChildElements(_i2.ElementVisitor? visitor) => super.noSuchMethod(
@@ -102,49 +130,62 @@ class MockBuildContext extends _i1.Mock implements _i2.BuildContext {
   );
 
   @override
-  void dispatchNotification(_i4.Notification? notification) => super.noSuchMethod(
-    Invocation.method(#dispatchNotification, [notification]),
-    returnValueForMissingStub: null,
-  );
+  void dispatchNotification(_i4.Notification? notification) =>
+      super.noSuchMethod(
+        Invocation.method(#dispatchNotification, [notification]),
+        returnValueForMissingStub: null,
+      );
 
   @override
   _i3.DiagnosticsNode describeElement(
     String? name, {
     _i3.DiagnosticsTreeStyle? style = _i3.DiagnosticsTreeStyle.errorProperty,
-  }) => (super.noSuchMethod(
-    Invocation.method(#describeElement, [name], {#style: style}),
-    returnValue: _FakeDiagnosticsNode_2(
-      this,
-      Invocation.method(#describeElement, [name], {#style: style}),
-    ),
-  ) as _i3.DiagnosticsNode);
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#describeElement, [name], {#style: style}),
+            returnValue: _FakeDiagnosticsNode_2(
+              this,
+              Invocation.method(#describeElement, [name], {#style: style}),
+            ),
+          )
+          as _i3.DiagnosticsNode);
 
   @override
   _i3.DiagnosticsNode describeWidget(
     String? name, {
     _i3.DiagnosticsTreeStyle? style = _i3.DiagnosticsTreeStyle.errorProperty,
-  }) => (super.noSuchMethod(
-    Invocation.method(#describeWidget, [name], {#style: style}),
-    returnValue: _FakeDiagnosticsNode_2(
-      this,
-      Invocation.method(#describeWidget, [name], {#style: style}),
-    ),
-  ) as _i3.DiagnosticsNode);
-
-  @override
-  List<_i3.DiagnosticsNode> describeMissingAncestor({required Type? expectedAncestorType}) =>
+  }) =>
       (super.noSuchMethod(
-        Invocation.method(#describeMissingAncestor, [], {
-          #expectedAncestorType: expectedAncestorType,
-        }),
-        returnValue: <_i3.DiagnosticsNode>[],
-      ) as List<_i3.DiagnosticsNode>);
+            Invocation.method(#describeWidget, [name], {#style: style}),
+            returnValue: _FakeDiagnosticsNode_2(
+              this,
+              Invocation.method(#describeWidget, [name], {#style: style}),
+            ),
+          )
+          as _i3.DiagnosticsNode);
 
   @override
-  _i3.DiagnosticsNode describeOwnershipChain(String? name) => (super.noSuchMethod(
-    Invocation.method(#describeOwnershipChain, [name]),
-    returnValue: _FakeDiagnosticsNode_2(this, Invocation.method(#describeOwnershipChain, [name])),
-  ) as _i3.DiagnosticsNode);
+  List<_i3.DiagnosticsNode> describeMissingAncestor({
+    required Type? expectedAncestorType,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#describeMissingAncestor, [], {
+              #expectedAncestorType: expectedAncestorType,
+            }),
+            returnValue: <_i3.DiagnosticsNode>[],
+          )
+          as List<_i3.DiagnosticsNode>);
+
+  @override
+  _i3.DiagnosticsNode describeOwnershipChain(String? name) =>
+      (super.noSuchMethod(
+            Invocation.method(#describeOwnershipChain, [name]),
+            returnValue: _FakeDiagnosticsNode_2(
+              this,
+              Invocation.method(#describeOwnershipChain, [name]),
+            ),
+          )
+          as _i3.DiagnosticsNode);
 }
 
 /// A class which mocks [CreationParams].
@@ -157,18 +198,28 @@ class MockCreationParams extends _i1.Mock implements _i5.CreationParams {
 
   @override
   Set<String> get javascriptChannelNames =>
-      (super.noSuchMethod(Invocation.getter(#javascriptChannelNames), returnValue: <String>{})
+      (super.noSuchMethod(
+            Invocation.getter(#javascriptChannelNames),
+            returnValue: <String>{},
+          )
           as Set<String>);
 
   @override
-  _i5.AutoMediaPlaybackPolicy get autoMediaPlaybackPolicy => (super.noSuchMethod(
-    Invocation.getter(#autoMediaPlaybackPolicy),
-    returnValue: _i5.AutoMediaPlaybackPolicy.require_user_action_for_all_media_types,
-  ) as _i5.AutoMediaPlaybackPolicy);
+  _i5.AutoMediaPlaybackPolicy get autoMediaPlaybackPolicy =>
+      (super.noSuchMethod(
+            Invocation.getter(#autoMediaPlaybackPolicy),
+            returnValue: _i5
+                .AutoMediaPlaybackPolicy
+                .require_user_action_for_all_media_types,
+          )
+          as _i5.AutoMediaPlaybackPolicy);
 
   @override
   List<_i5.WebViewCookie> get cookies =>
-      (super.noSuchMethod(Invocation.getter(#cookies), returnValue: <_i5.WebViewCookie>[])
+      (super.noSuchMethod(
+            Invocation.getter(#cookies),
+            returnValue: <_i5.WebViewCookie>[],
+          )
           as List<_i5.WebViewCookie>);
 }
 
@@ -182,15 +233,24 @@ class MockWebViewPlatformCallbacksHandler extends _i1.Mock
   }
 
   @override
-  _i7.FutureOr<bool> onNavigationRequest({required String? url, required bool? isForMainFrame}) =>
+  _i7.FutureOr<bool> onNavigationRequest({
+    required String? url,
+    required bool? isForMainFrame,
+  }) =>
       (super.noSuchMethod(
-        Invocation.method(#onNavigationRequest, [], {#url: url, #isForMainFrame: isForMainFrame}),
-        returnValue: _i7.Future<bool>.value(false),
-      ) as _i7.FutureOr<bool>);
+            Invocation.method(#onNavigationRequest, [], {
+              #url: url,
+              #isForMainFrame: isForMainFrame,
+            }),
+            returnValue: _i7.Future<bool>.value(false),
+          )
+          as _i7.FutureOr<bool>);
 
   @override
-  void onPageStarted(String? url) =>
-      super.noSuchMethod(Invocation.method(#onPageStarted, [url]), returnValueForMissingStub: null);
+  void onPageStarted(String? url) => super.noSuchMethod(
+    Invocation.method(#onPageStarted, [url]),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void onPageFinished(String? url) => super.noSuchMethod(
@@ -214,7 +274,8 @@ class MockWebViewPlatformCallbacksHandler extends _i1.Mock
 /// A class which mocks [HttpRequestFactory].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockHttpRequestFactory extends _i1.Mock implements _i8.HttpRequestFactory {
+class MockHttpRequestFactory extends _i1.Mock
+    implements _i8.HttpRequestFactory {
   MockHttpRequestFactory() {
     _i1.throwOnMissingStub(this);
   }
@@ -227,33 +288,35 @@ class MockHttpRequestFactory extends _i1.Mock implements _i8.HttpRequestFactory 
     String? mimeType,
     Map<String, String>? requestHeaders,
     _i9.Uint8List? sendData,
-  }) => (super.noSuchMethod(
-    Invocation.method(
-      #request,
-      [url],
-      {
-        #method: method,
-        #withCredentials: withCredentials,
-        #mimeType: mimeType,
-        #requestHeaders: requestHeaders,
-        #sendData: sendData,
-      },
-    ),
-    returnValue: _i7.Future<Object>.value(
-      _FakeObject_3(
-        this,
-        Invocation.method(
-          #request,
-          [url],
-          {
-            #method: method,
-            #withCredentials: withCredentials,
-            #mimeType: mimeType,
-            #requestHeaders: requestHeaders,
-            #sendData: sendData,
-          },
-        ),
-      ),
-    ),
-  ) as _i7.Future<Object>);
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(
+              #request,
+              [url],
+              {
+                #method: method,
+                #withCredentials: withCredentials,
+                #mimeType: mimeType,
+                #requestHeaders: requestHeaders,
+                #sendData: sendData,
+              },
+            ),
+            returnValue: _i7.Future<Object>.value(
+              _FakeObject_3(
+                this,
+                Invocation.method(
+                  #request,
+                  [url],
+                  {
+                    #method: method,
+                    #withCredentials: withCredentials,
+                    #mimeType: mimeType,
+                    #requestHeaders: requestHeaders,
+                    #sendData: sendData,
+                  },
+                ),
+              ),
+            ),
+          )
+          as _i7.Future<Object>);
 }

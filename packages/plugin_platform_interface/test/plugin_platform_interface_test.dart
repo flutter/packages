@@ -36,12 +36,13 @@ abstract class SamplePluginPlatform extends PlatformInterface {
 class SamplePluginDefault extends SamplePluginPlatform {
   // A default real implementation of the platform interface would go here.
 }
-
 // #enddocregion Example
 
-class ImplementsSamplePluginPlatform extends Mock implements SamplePluginPlatform {}
+class ImplementsSamplePluginPlatform extends Mock
+    implements SamplePluginPlatform {}
 
-class ImplementsSamplePluginPlatformUsingNoSuchMethod implements SamplePluginPlatform {
+class ImplementsSamplePluginPlatformUsingNoSuchMethod
+    implements SamplePluginPlatform {
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
@@ -50,7 +51,6 @@ class ImplementsSamplePluginPlatformUsingNoSuchMethod implements SamplePluginPla
 class SamplePluginPlatformMock extends Mock
     with MockPlatformInterfaceMixin
     implements SamplePluginPlatform {}
-
 // #enddocregion Mock
 
 class SamplePluginPlatformFake extends Fake
@@ -84,9 +84,11 @@ class VerifyTokenPluginPlatform extends PlatformInterface {
   }
 }
 
-class ImplementsVerifyTokenPluginPlatform extends Mock implements VerifyTokenPluginPlatform {}
+class ImplementsVerifyTokenPluginPlatform extends Mock
+    implements VerifyTokenPluginPlatform {}
 
-class ImplementsVerifyTokenPluginPlatformUsingMockPlatformInterfaceMixin extends Mock
+class ImplementsVerifyTokenPluginPlatformUsingMockPlatformInterfaceMixin
+    extends Mock
     with MockPlatformInterfaceMixin
     implements VerifyTokenPluginPlatform {}
 
@@ -113,7 +115,8 @@ class ImplementsConstVerifyTokenPluginPlatform extends PlatformInterface
 // conflicts with instance methods in subclasses.
 class StaticMethodsOnlyPlatformInterfaceTest implements PlatformInterface {}
 
-class StaticMethodsOnlyMockPlatformInterfaceMixinTest implements MockPlatformInterfaceMixin {}
+class StaticMethodsOnlyMockPlatformInterfaceMixinTest
+    implements MockPlatformInterfaceMixin {}
 
 void main() {
   group('`verify`', () {
@@ -125,7 +128,8 @@ void main() {
 
     test('prevents implmentation with `implements` and `noSuchMethod`', () {
       expect(() {
-        SamplePluginPlatform.instance = ImplementsSamplePluginPlatformUsingNoSuchMethod();
+        SamplePluginPlatform.instance =
+            ImplementsSamplePluginPlatformUsingNoSuchMethod();
       }, throwsA(isA<AssertionError>()));
     });
 
@@ -154,7 +158,8 @@ void main() {
   group('`verifyToken`', () {
     test('prevents implementation with `implements`', () {
       expect(() {
-        VerifyTokenPluginPlatform.instance = ImplementsVerifyTokenPluginPlatform();
+        VerifyTokenPluginPlatform.instance =
+            ImplementsVerifyTokenPluginPlatform();
       }, throwsA(isA<AssertionError>()));
     });
 
@@ -169,7 +174,8 @@ void main() {
     });
 
     test('does not prevent `const Object()` token', () {
-      ConstVerifyTokenPluginPlatform.instance = ImplementsConstVerifyTokenPluginPlatform();
+      ConstVerifyTokenPluginPlatform.instance =
+          ImplementsConstVerifyTokenPluginPlatform();
     });
   });
 }

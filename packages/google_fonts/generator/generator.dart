@@ -13,7 +13,8 @@ import 'package:mustache_template/mustache.dart';
 import 'fonts.pb.dart';
 
 const String _generatedAllPartsFilePath = 'lib/src/google_fonts_all_parts.dart';
-String _generatedPartFilePath(String part) => 'lib/src/google_fonts_parts/part_$part.dart';
+String _generatedPartFilePath(String part) =>
+    'lib/src/google_fonts_parts/part_$part.dart';
 const String _familiesSupportedPath = 'generator/families_supported';
 const String _familiesDiffPath = 'generator/families_diff';
 
@@ -34,7 +35,9 @@ Future<void> main() async {
   print(_success);
 
   print('\nGenerating $_familiesSupportedPath & $_familiesDiffPath ...');
-  File(_familiesSupportedPath).writeAsStringSync(familiesDelta.printableSupported());
+  File(
+    _familiesSupportedPath,
+  ).writeAsStringSync(familiesDelta.printableSupported());
   File(_familiesDiffPath).writeAsStringSync(familiesDelta.markdownDiff());
   print(_success);
 
@@ -63,7 +66,9 @@ Future<Uri> _getProtoUrl({int initialVersion = 7}) async {
 
   Uri url(int directoryVersion) {
     final String paddedVersion = directoryVersion.toString().padLeft(3, '0');
-    return Uri.parse('https://fonts.gstatic.com/s/f/directory$paddedVersion.pb');
+    return Uri.parse(
+      'https://fonts.gstatic.com/s/f/directory$paddedVersion.pb',
+    );
   }
 
   var didReachLatestUrl = false;
@@ -93,7 +98,8 @@ Future<void> _verifyUrls(Directory fontDirectory) async {
   var i = 1;
   for (final FontFamily family in fontDirectory.family) {
     for (final Font font in family.fonts) {
-      final urlString = 'https://fonts.gstatic.com/s/a/${_hashToString(font.file.hash)}.ttf';
+      final urlString =
+          'https://fonts.gstatic.com/s/a/${_hashToString(font.file.hash)}.ttf';
       final Uri url = Uri.parse(urlString);
       await _tryUrl(client, url, font);
       print('Verified URL ($i/$totalFonts): $urlString');
@@ -108,7 +114,8 @@ Future<void> _tryUrl(http.Client client, Uri url, Font font) async {
     final http.Response fileContents = await client.get(url);
     final int actualFileLength = fileContents.bodyBytes.length;
     final actualFileHash = sha256.convert(fileContents.bodyBytes).toString();
-    if (font.file.fileSize != actualFileLength || _hashToString(font.file.hash) != actualFileHash) {
+    if (font.file.fileSize != actualFileLength ||
+        _hashToString(font.file.hash) != actualFileHash) {
       throw Exception('Font from $url did not match length of or checksum.');
     }
   } catch (e) {
@@ -140,10 +147,14 @@ class _FamiliesDelta {
 
   void _init(Directory fontDirectory) {
     // Currently supported families.
-    final familiesSupported = Set<String>.from(File(_familiesSupportedPath).readAsLinesSync());
+    final familiesSupported = Set<String>.from(
+      File(_familiesSupportedPath).readAsLinesSync(),
+    );
 
     // Newly supported families.
-    all = Set<String>.from(fontDirectory.family.map<String>((FontFamily item) => item.name));
+    all = Set<String>.from(
+      fontDirectory.family.map<String>((FontFamily item) => item.name),
+    );
 
     added = all.difference(familiesSupported);
     removed = familiesSupported.difference(all);
@@ -155,8 +166,12 @@ class _FamiliesDelta {
   // Diff of font families, suitable for markdown
   // (e.g. CHANGELOG, PR description).
   String markdownDiff() {
-    final Iterable<String> addedPrintable = added.map((String family) => '  - `$family`');
-    final Iterable<String> removedPrintable = removed.map((String family) => '  - `$family`');
+    final Iterable<String> addedPrintable = added.map(
+      (String family) => '  - `$family`',
+    );
+    final Iterable<String> removedPrintable = removed.map(
+      (String family) => '  - `$family`',
+    );
 
     var diff = '';
     if (addedPrintable.isNotEmpty) {
@@ -250,13 +265,16 @@ void _generateDartCode(Directory fontDirectory) {
         for (final Font variant in filteredVariants)
           <String, Object>{
             'variantWeight': variant.weight.start,
-            'variantStyle': variant.italic.start.round() == 1 ? 'italic' : 'normal',
+            'variantStyle': variant.italic.start.round() == 1
+                ? 'italic'
+                : 'normal',
             'hash': _hashToString(variant.file.hash),
             'length': variant.file.fileSize,
           },
       ],
       'themeParams': <Map<String, String>>[
-        for (final String themeParam in themeParams) <String, String>{'value': themeParam},
+        for (final String themeParam in themeParams)
+          <String, String>{'value': themeParam},
       ],
     });
   }
@@ -270,7 +288,9 @@ void _generateDartCode(Directory fontDirectory) {
     final String firstLetter = methodName[0];
     if (!methodsByLetter.containsKey(firstLetter)) {
       allParts.add(<String, dynamic>{
-        'partFilePath': _generatedPartFilePath(firstLetter).replaceFirst('lib/src/', ''),
+        'partFilePath': _generatedPartFilePath(
+          firstLetter,
+        ).replaceFirst('lib/src/', ''),
       });
       methodsByLetter[firstLetter] = <Map<String, dynamic>>[map];
     } else {
@@ -283,7 +303,10 @@ void _generateDartCode(Directory fontDirectory) {
     File('generator/google_fonts_part.tmpl').readAsStringSync(),
     htmlEscapeValues: false,
   );
-  methodsByLetter.forEach((String letter, List<Map<String, dynamic>> methods) async {
+  methodsByLetter.forEach((
+    String letter,
+    List<Map<String, dynamic>> methods,
+  ) async {
     final String renderedTemplate = partTemplate.renderString(<String, Object>{
       'part': letter.toUpperCase(),
       'method': methods,
@@ -296,10 +319,12 @@ void _generateDartCode(Directory fontDirectory) {
     File('generator/google_fonts.tmpl').readAsStringSync(),
     htmlEscapeValues: false,
   );
-  final String renderedTemplate = template.renderString(<String, List<Map<String, dynamic>>>{
-    'allParts': allParts,
-    'method': methods,
-  });
+  final String renderedTemplate = template.renderString(
+    <String, List<Map<String, dynamic>>>{
+      'allParts': allParts,
+      'method': methods,
+    },
+  );
   _writeDartFile(_generatedAllPartsFilePath, renderedTemplate);
 }
 

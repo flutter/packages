@@ -13,7 +13,12 @@ import 'validators/readme_validator.dart';
 /// A command to enforce README conventions across the repository.
 class ReadmeCheckCommand extends PackageLoopingCommand {
   /// Creates an instance of the README check command.
-  ReadmeCheckCommand(super.packagesDir, {super.processRunner, super.platform, super.gitDir}) {
+  ReadmeCheckCommand(
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+    super.gitDir,
+  }) {
     argParser.addFlag(
       _requireExcerptsArg,
       help: 'Require that Dart code blocks be managed by code-excerpt.',
@@ -29,7 +34,8 @@ class ReadmeCheckCommand extends PackageLoopingCommand {
   List<String> get aliases => <String>['check-readme'];
 
   @override
-  final String description = 'Checks that READMEs follow repository conventions.';
+  final String description =
+      'Checks that READMEs follow repository conventions.';
 
   @override
   bool get hasLongOutput => false;
@@ -50,7 +56,11 @@ class ReadmeCheckCommand extends PackageLoopingCommand {
     );
     for (final RepositoryPackage packageToCheck in package.getExamples()) {
       errors.addAll(
-        validator.validateReadme(packageToCheck.readmeFile, mainPackage: package, isExample: true),
+        validator.validateReadme(
+          packageToCheck.readmeFile,
+          mainPackage: package,
+          isExample: true,
+        ),
       );
     }
 
@@ -60,10 +70,16 @@ class ReadmeCheckCommand extends PackageLoopingCommand {
     final File exampleDirReadme = exampleDir.childFile('README.md');
     if (exampleDir.existsSync() && !isPackage(exampleDir)) {
       errors.addAll(
-        validator.validateReadme(exampleDirReadme, mainPackage: package, isExample: true),
+        validator.validateReadme(
+          exampleDirReadme,
+          mainPackage: package,
+          isExample: true,
+        ),
       );
     }
 
-    return errors.isEmpty ? PackageResult.success() : PackageResult.fail(errors);
+    return errors.isEmpty
+        ? PackageResult.success()
+        : PackageResult.fail(errors);
   }
 }

@@ -23,16 +23,17 @@ class _AppState extends State<App> {
     routes: <RouteBase>[
       StatefulShellRoute.indexedStack(
         restorationScopeId: 'appShell',
-        pageBuilder: (
-          BuildContext context,
-          GoRouterState state,
-          StatefulNavigationShell navigationShell,
-        ) {
-          return MaterialPage<void>(
-            restorationId: 'appShellPage',
-            child: AppShell(navigationShell: navigationShell),
-          );
-        },
+        pageBuilder:
+            (
+              BuildContext context,
+              GoRouterState state,
+              StatefulNavigationShell navigationShell,
+            ) {
+              return MaterialPage<void>(
+                restorationId: 'appShellPage',
+                child: AppShell(navigationShell: navigationShell),
+              );
+            },
         branches: <StatefulShellBranch>[
           StatefulShellBranch(
             restorationScopeId: 'homeBranch',
@@ -88,7 +89,10 @@ class AppShell extends StatelessWidget {
         },
         destinations: const <NavigationDestination>[
           NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
-          NavigationDestination(icon: Icon(Icons.account_circle), label: 'Profile'),
+          NavigationDestination(
+            icon: Icon(Icons.account_circle),
+            label: 'Profile',
+          ),
         ],
       ),
     );
@@ -104,7 +108,10 @@ class HomeBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Column(
       children: <Widget>[
-        TextField(restorationId: 'homeTextField', decoration: InputDecoration(labelText: 'Home')),
+        TextField(
+          restorationId: 'homeTextField',
+          decoration: InputDecoration(labelText: 'Home'),
+        ),
       ],
     );
   }

@@ -25,10 +25,12 @@ class DependabotCheckCommand extends PackageLoopingCommand {
   List<String> get aliases => <String>['check-dependabot'];
 
   @override
-  final String description = 'Checks that all packages have Dependabot coverage.';
+  final String description =
+      'Checks that all packages have Dependabot coverage.';
 
   @override
-  final PackageLoopingType packageLoopingType = PackageLoopingType.includeAllSubpackages;
+  final PackageLoopingType packageLoopingType =
+      PackageLoopingType.includeAllSubpackages;
 
   @override
   final bool hasLongOutput = false;
@@ -55,6 +57,8 @@ class DependabotCheckCommand extends PackageLoopingCommand {
 
     // TODO(stuartmorgan): Add other ecosystem checks here as more are enabled.
 
-    return errors.isEmpty ? PackageResult.success() : PackageResult.fail(errors);
+    return errors.isEmpty
+        ? PackageResult.success()
+        : PackageResult.fail(errors);
   }
 }

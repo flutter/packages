@@ -11,7 +11,8 @@ class FadeThroughTransitionDemo extends StatefulWidget {
   const FadeThroughTransitionDemo({super.key});
 
   @override
-  State<FadeThroughTransitionDemo> createState() => _FadeThroughTransitionDemoState();
+  State<FadeThroughTransitionDemo> createState() =>
+      _FadeThroughTransitionDemoState();
 }
 
 class _FadeThroughTransitionDemoState extends State<FadeThroughTransitionDemo> {
@@ -24,17 +25,18 @@ class _FadeThroughTransitionDemoState extends State<FadeThroughTransitionDemo> {
     return Scaffold(
       appBar: AppBar(title: const Text('Fade through')),
       body: PageTransitionSwitcher(
-        transitionBuilder: (
-          Widget child,
-          Animation<double> animation,
-          Animation<double> secondaryAnimation,
-        ) {
-          return FadeThroughTransition(
-            animation: animation,
-            secondaryAnimation: secondaryAnimation,
-            child: child,
-          );
-        },
+        transitionBuilder:
+            (
+              Widget child,
+              Animation<double> animation,
+              Animation<double> secondaryAnimation,
+            ) {
+              return FadeThroughTransition(
+                animation: animation,
+                secondaryAnimation: secondaryAnimation,
+                child: child,
+              );
+            },
         child: pageList[pageIndex],
       ),
       bottomNavigationBar: BottomNavigationBar(

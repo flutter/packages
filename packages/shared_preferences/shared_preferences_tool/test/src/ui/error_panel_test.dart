@@ -12,7 +12,9 @@ import 'package:shared_preferences_tool/src/ui/error_panel.dart';
 
 void main() {
   group('ErrorPanel', () {
-    testWidgets('should show error and stacktrace', (WidgetTester tester) async {
+    testWidgets('should show error and stacktrace', (
+      WidgetTester tester,
+    ) async {
       const error = 'error';
       final StackTrace stackTrace = StackTrace.current;
 

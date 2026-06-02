@@ -6,7 +6,8 @@
 import 'dart:async' as _i4;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:webview_flutter_platform_interface/src/platform_webview_cookie_manager.dart' as _i3;
+import 'package:webview_flutter_platform_interface/src/platform_webview_cookie_manager.dart'
+    as _i3;
 import 'package:webview_flutter_platform_interface/src/types/types.dart' as _i2;
 
 // ignore_for_file: type=lint
@@ -25,8 +26,10 @@ import 'package:webview_flutter_platform_interface/src/types/types.dart' as _i2;
 
 class _FakePlatformWebViewCookieManagerCreationParams_0 extends _i1.SmartFake
     implements _i2.PlatformWebViewCookieManagerCreationParams {
-  _FakePlatformWebViewCookieManagerCreationParams_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakePlatformWebViewCookieManagerCreationParams_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(parent, parentInvocation);
 }
 
 /// A class which mocks [PlatformWebViewCookieManager].
@@ -39,24 +42,30 @@ class MockPlatformWebViewCookieManager extends _i1.Mock
   }
 
   @override
-  _i2.PlatformWebViewCookieManagerCreationParams get params => (super.noSuchMethod(
-    Invocation.getter(#params),
-    returnValue: _FakePlatformWebViewCookieManagerCreationParams_0(
-      this,
-      Invocation.getter(#params),
-    ),
-  ) as _i2.PlatformWebViewCookieManagerCreationParams);
+  _i2.PlatformWebViewCookieManagerCreationParams get params =>
+      (super.noSuchMethod(
+            Invocation.getter(#params),
+            returnValue: _FakePlatformWebViewCookieManagerCreationParams_0(
+              this,
+              Invocation.getter(#params),
+            ),
+          )
+          as _i2.PlatformWebViewCookieManagerCreationParams);
 
   @override
-  _i4.Future<bool> clearCookies() => (super.noSuchMethod(
-    Invocation.method(#clearCookies, []),
-    returnValue: _i4.Future<bool>.value(false),
-  ) as _i4.Future<bool>);
+  _i4.Future<bool> clearCookies() =>
+      (super.noSuchMethod(
+            Invocation.method(#clearCookies, []),
+            returnValue: _i4.Future<bool>.value(false),
+          )
+          as _i4.Future<bool>);
 
   @override
-  _i4.Future<void> setCookie(_i2.WebViewCookie? cookie) => (super.noSuchMethod(
-    Invocation.method(#setCookie, [cookie]),
-    returnValue: _i4.Future<void>.value(),
-    returnValueForMissingStub: _i4.Future<void>.value(),
-  ) as _i4.Future<void>);
+  _i4.Future<void> setCookie(_i2.WebViewCookie? cookie) =>
+      (super.noSuchMethod(
+            Invocation.method(#setCookie, [cookie]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 }
