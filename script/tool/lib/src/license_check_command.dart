@@ -351,14 +351,13 @@ class LicenseCheckCommand extends PackageCommand {
       printError('Unable to get list of files under source control');
       throw ToolExit(_exitListFilesFailed);
     }
-    final Directory repoRoot = packagesDir.parent;
     return (result.stdout as String)
         .trim()
         .split('\n')
         .where((String path) => path.isNotEmpty)
-        .map((String path) => repoRoot.childFile(path))
+        .map((String path) => rootDir.childFile(path))
         // Filter out symbolic links to avoid checking files multiple times.
-        .where((File f) => !repoRoot.fileSystem.isLinkSync(f.path));
+        .where((File f) => !rootDir.fileSystem.isLinkSync(f.path));
   }
 
   // Returns the directories containing mapped submodules, if any.
@@ -381,11 +380,7 @@ class LicenseCheckCommand extends PackageCommand {
   }
 
   String _repoRelativePath(File file) {
-    return relativePosixPath(
-      file,
-      from: packagesDir.parent,
-      platformContext: path,
-    );
+    return relativePosixPath(file, from: rootDir, platformContext: path);
   }
 }
 

@@ -1,3 +1,15 @@
+## 2.18.4
+
+* Updates README to include setup information.
+
+## 2.18.3
+
+* Remove privacy manifest entries duplicated from Google Maps SDK.
+
+## 2.18.2
+
+* Adds attribution ID for Google Maps SDK usage.
+
 ## 2.18.1
 
 * Removes the requirement to use static builds with Swift Package Manager.

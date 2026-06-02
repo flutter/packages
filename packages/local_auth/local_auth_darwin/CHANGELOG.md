@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
 ## 2.0.3
 
 * Adds iOS setup instructions to README.
