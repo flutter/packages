@@ -1,9 +1,7 @@
 #include <stdint.h>
 #import <Foundation/Foundation.h>
 #import <objc/message.h>
-#import <Photos/PHAsset.h>
-#import <Photos/PHAssetResource.h>
-#import <Photos/PHImageManager.h>
+#import <Photos/Photos.h>
 
 #if !__has_feature(objc_arc)
 #error "This file must be compiled with ARC enabled"
@@ -51,19 +49,42 @@ id objc_retainBlock(id);
   };
 
 
-typedef void  (^_ListenerTrampoline)(id arg0, id arg1, CGImagePropertyOrientation arg2, id arg3);
+typedef void  (^_ListenerTrampoline)(id arg0, id arg1);
 __attribute__((visibility("default"))) __attribute__((used))
-_ListenerTrampoline _FoundationFFI_wrapListenerBlock_10c3wkj(_ListenerTrampoline block) NS_RETURNS_RETAINED {
+_ListenerTrampoline _FoundationFFI_wrapListenerBlock_pfv6jd(_ListenerTrampoline block) NS_RETURNS_RETAINED {
+  return ^void(id arg0, id arg1) {
+    objc_retainBlock(block);
+    block((__bridge id)(__bridge_retained void*)(arg0), (__bridge id)(__bridge_retained void*)(arg1));
+  };
+}
+
+typedef void  (^_BlockingTrampoline)(void * waiter, id arg0, id arg1);
+__attribute__((visibility("default"))) __attribute__((used))
+_ListenerTrampoline _FoundationFFI_wrapBlockingBlock_pfv6jd(
+    _BlockingTrampoline block, _BlockingTrampoline listenerBlock,
+    DOBJC_Context* ctx) NS_RETURNS_RETAINED {
+  BLOCKING_BLOCK_IMPL(ctx, ^void(id arg0, id arg1), {
+    objc_retainBlock(block);
+    block(nil, (__bridge id)(__bridge_retained void*)(arg0), (__bridge id)(__bridge_retained void*)(arg1));
+  }, {
+    objc_retainBlock(listenerBlock);
+    listenerBlock(waiter, (__bridge id)(__bridge_retained void*)(arg0), (__bridge id)(__bridge_retained void*)(arg1));
+  });
+}
+
+typedef void  (^_ListenerTrampoline_1)(id arg0, id arg1, CGImagePropertyOrientation arg2, id arg3);
+__attribute__((visibility("default"))) __attribute__((used))
+_ListenerTrampoline_1 _FoundationFFI_wrapListenerBlock_10c3wkj(_ListenerTrampoline_1 block) NS_RETURNS_RETAINED {
   return ^void(id arg0, id arg1, CGImagePropertyOrientation arg2, id arg3) {
     objc_retainBlock(block);
     block((__bridge id)(__bridge_retained void*)(arg0), (__bridge id)(__bridge_retained void*)(arg1), arg2, (__bridge id)(__bridge_retained void*)(arg3));
   };
 }
 
-typedef void  (^_BlockingTrampoline)(void * waiter, id arg0, id arg1, CGImagePropertyOrientation arg2, id arg3);
+typedef void  (^_BlockingTrampoline_1)(void * waiter, id arg0, id arg1, CGImagePropertyOrientation arg2, id arg3);
 __attribute__((visibility("default"))) __attribute__((used))
-_ListenerTrampoline _FoundationFFI_wrapBlockingBlock_10c3wkj(
-    _BlockingTrampoline block, _BlockingTrampoline listenerBlock,
+_ListenerTrampoline_1 _FoundationFFI_wrapBlockingBlock_10c3wkj(
+    _BlockingTrampoline_1 block, _BlockingTrampoline_1 listenerBlock,
     DOBJC_Context* ctx) NS_RETURNS_RETAINED {
   BLOCKING_BLOCK_IMPL(ctx, ^void(id arg0, id arg1, CGImagePropertyOrientation arg2, id arg3), {
     objc_retainBlock(block);
@@ -71,6 +92,29 @@ _ListenerTrampoline _FoundationFFI_wrapBlockingBlock_10c3wkj(
   }, {
     objc_retainBlock(listenerBlock);
     listenerBlock(waiter, (__bridge id)(__bridge_retained void*)(arg0), (__bridge id)(__bridge_retained void*)(arg1), arg2, (__bridge id)(__bridge_retained void*)(arg3));
+  });
+}
+
+typedef void  (^_ListenerTrampoline_2)(id arg0);
+__attribute__((visibility("default"))) __attribute__((used))
+_ListenerTrampoline_2 _FoundationFFI_wrapListenerBlock_xtuoz7(_ListenerTrampoline_2 block) NS_RETURNS_RETAINED {
+  return ^void(id arg0) {
+    objc_retainBlock(block);
+    block((__bridge id)(__bridge_retained void*)(arg0));
+  };
+}
+
+typedef void  (^_BlockingTrampoline_2)(void * waiter, id arg0);
+__attribute__((visibility("default"))) __attribute__((used))
+_ListenerTrampoline_2 _FoundationFFI_wrapBlockingBlock_xtuoz7(
+    _BlockingTrampoline_2 block, _BlockingTrampoline_2 listenerBlock,
+    DOBJC_Context* ctx) NS_RETURNS_RETAINED {
+  BLOCKING_BLOCK_IMPL(ctx, ^void(id arg0), {
+    objc_retainBlock(block);
+    block(nil, (__bridge id)(__bridge_retained void*)(arg0));
+  }, {
+    objc_retainBlock(listenerBlock);
+    listenerBlock(waiter, (__bridge id)(__bridge_retained void*)(arg0));
   });
 }
 #undef BLOCKING_BLOCK_IMPL

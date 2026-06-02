@@ -18,26 +18,8 @@ void main() {
     ),
     headers: Headers(
       entryPoints: <Uri>[
-        // Uri.file(
-        //   '$macSdkPath/System/Library/Frameworks/Photos.framework/Headers/Photos.h',
-        // ),
-        // Uri.file(
-        //   '$macSdkPath/System/Library/Frameworks/Foundation.framework/Headers/NSFileManager.h',
-        // ),
         Uri.file(
-          '$macSdkPath/System/Library/Frameworks/Photos.framework/Headers/PHAsset.h',
-        ),
-        Uri.file(
-          '$macSdkPath/System/Library/Frameworks/Photos.framework/Headers/PHAssetResource.h',
-        ),
-        // Uri.file(
-        //   '$macSdkPath/System/Library/Frameworks/Photos.framework/Headers/PHAssetResourceManager.h',
-        // ),
-        // Uri.file(
-        //   '$macSdkPath/System/Library/Frameworks/Photos.framework/Headers/PHFetchResult.h',
-        // ),
-        Uri.file(
-          '$macSdkPath/System/Library/Frameworks/Photos.framework/Headers/PHImageManager.h',
+          '$macSdkPath/System/Library/Frameworks/Photos.framework/Headers/Photos.h',
         ),
       ],
       compilerOptions: <String>['-include stdint.h'],
@@ -49,17 +31,13 @@ void main() {
             'NSFileManager',
             'PHAsset',
             'PHAssetResource',
-            // 'PHAssetResourceManager',
+            'PHAssetResourceManager',
             'PHFetchResult',
             'PHImageManager',
             'PHImageRequestOptions',
           }.contains(declaration.originalName);
         },
         includeMember: (Declaration declaration, String member) {
-          if (declaration.originalName == 'PHAssetResource' &&
-              member.contains('assetResources')) {
-            print('APPLE: $member');
-          }
           final String interfaceName = declaration.originalName;
           final signature = member;
           return switch (interfaceName) {
@@ -75,6 +53,10 @@ void main() {
               'assetResourcesForAsset:',
               'originalFilename',
             }.contains(signature),
+            'PHAssetResourceManager' => <String>{
+              'defaultManager',
+              'requestDataForAssetResource:options:dataReceivedHandler:completionHandler:',
+            }.contains(signature),
             'PHFetchResult' => <String>{'firstObject'}.contains(signature),
             'PHImageManager' => <String>{
               'defaultManager',
@@ -87,16 +69,6 @@ void main() {
           };
         },
       ),
-      // categories: Categories(
-      //   include: (Declaration declaration) => <String>{
-      //     // For URLByAppendingPathComponent:
-      //     'NSURLPathUtilities',
-      //   }.contains(declaration.originalName),
-      //   includeTransitive: false,
-      // ),
     ),
-    // functions: Functions.includeSet(<String>{
-    //   'NSSearchPathForDirectoriesInDomains',
-    // }),
   ).generate();
 }
