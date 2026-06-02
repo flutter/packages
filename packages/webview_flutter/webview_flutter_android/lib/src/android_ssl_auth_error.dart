@@ -12,9 +12,9 @@ class AndroidSslAuthError extends PlatformSslAuthError {
   AndroidSslAuthError._({
     required super.certificate,
     required super.description,
-    required android.SslErrorHandler handler,
+    required this._handler,
     required this.url,
-  }) : _handler = handler;
+  });
 
   final android.SslErrorHandler _handler;
 
