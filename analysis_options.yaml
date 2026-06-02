@@ -108,7 +108,7 @@ linter:
     - implicit_call_tearoffs
     - implicit_reopen
     - invalid_case_patterns
-    - invalid_runtime_check_with_js_interop_types
+    # - invalid_runtime_check_with_js_interop_types # DIFFERENT FROM FLUTTER/FLUTTER temporarily disabled due to https://github.com/flutter/flutter/issues/187454
     # - join_return_with_assignment # not required by flutter style
     - leading_newlines_in_multiline_strings
     - library_annotations
