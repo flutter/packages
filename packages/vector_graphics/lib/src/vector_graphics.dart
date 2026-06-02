@@ -296,6 +296,11 @@ class _PictureData {
   final PictureInfo pictureInfo;
   _PictureKey key;
   int count = 0;
+
+  /// True when [precacheVectorGraphic] holds a reference to this entry.
+  /// Prevents double-counting if [precacheVectorGraphic] is called more than
+  /// once for the same key.
+  bool precached = false;
 }
 
 @immutable
@@ -370,8 +375,8 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
     }
   }
 
-  Future<_PictureData> _loadPicture(
-    BuildContext context,
+  static Future<_PictureData> _loadPicture(
+    BuildContext? context,
     _PictureKey key,
     BytesLoader loader,
   ) {
@@ -668,6 +673,89 @@ class _RawPictureVectorGraphicWidget extends SingleChildRenderObjectWidget {
       ..pictureInfo = pictureInfo
       ..colorFilter = colorFilter
       ..opacity = opacity;
+  }
+}
+
+/// Warms the [VectorGraphic] picture cache for [loader] using [context] to
+/// resolve [Locale] and [TextDirection], so that a subsequent [VectorGraphic]
+/// widget with the same loader renders synchronously from cache instead of
+/// triggering a decode on the first frame.
+///
+/// This is analogous to [precacheImage] for raster images. Call it in
+/// [State.didChangeDependencies] before navigating to a route that contains a
+/// [VectorGraphic]:
+///
+/// ```dart
+/// @override
+/// void didChangeDependencies() {
+///   super.didChangeDependencies();
+///   precacheVectorGraphic(AssetBytesLoader('assets/icon.vg'), context);
+/// }
+/// ```
+///
+/// The [context] is used to derive the [Locale] and [TextDirection] that
+/// [VectorGraphic] uses as part of its picture cache key. Providing the same
+/// context (or one with identical inherited locale and directionality) avoids
+/// a cache miss when the widget is first built.
+///
+/// The decoded picture is kept alive in the internal picture cache with a
+/// reference count of 1. When a [VectorGraphic] widget mounts with the same
+/// key it increments the count; when it disposes the count is decremented.
+/// The precache reference ensures the picture survives route transitions where
+/// all [VectorGraphic] widgets temporarily unmount (count would otherwise drop
+/// to zero and the picture would be disposed). Calling this function multiple
+/// times for the same key is safe; only one reference is held regardless.
+///
+/// If [onError] is provided it is called with the error and stack trace
+/// instead of propagating the exception; otherwise the error is rethrown.
+Future<void> precacheVectorGraphic(
+  BytesLoader loader,
+  BuildContext context, {
+  bool clipViewbox = true,
+  VectorGraphicsErrorListener? onError,
+}) async {
+  final Locale? locale = Localizations.maybeLocaleOf(context);
+  final TextDirection? textDirection = Directionality.maybeOf(context);
+  final Object loaderKey = loader.cacheKey(context);
+  final _PictureKey key = _PictureKey(loaderKey, locale, textDirection, clipViewbox);
+
+  // If there is already a live entry, hold our own reference so the picture
+  // survives route transitions (counts would otherwise drop to zero while all
+  // VectorGraphic widgets are temporarily unmounted).  Guard with `precached`
+  // so repeated calls for the same key don't leak extra references.
+  final _PictureData? existing =
+      _VectorGraphicWidgetState._livePictureCache[key];
+  if (existing != null) {
+    if (!existing.precached) {
+      existing.precached = true;
+      existing.count += 1;
+    }
+    return;
+  }
+
+  try {
+    final _PictureData data =
+        await _VectorGraphicWidgetState._loadPicture(context, key, loader);
+    // A widget (or a concurrent precache call) may have populated the cache
+    // while we were awaiting the decode.
+    final _PictureData? inCache =
+        _VectorGraphicWidgetState._livePictureCache[key];
+    if (inCache != null) {
+      if (!inCache.precached) {
+        inCache.precached = true;
+        inCache.count += 1;
+      }
+    } else {
+      data.count += 1;
+      data.precached = true;
+      _VectorGraphicWidgetState._livePictureCache[key] = data;
+    }
+  } catch (error, stackTrace) {
+    if (onError != null) {
+      onError.call(error, stackTrace);
+    } else {
+      rethrow;
+    }
   }
 }
 

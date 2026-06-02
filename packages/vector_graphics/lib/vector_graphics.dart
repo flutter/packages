@@ -10,4 +10,5 @@ export 'src/vector_graphics.dart'
         PictureInfo,
         VectorGraphic,
         VectorGraphicUtilities,
+        precacheVectorGraphic,
         vg;
