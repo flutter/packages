@@ -67,6 +67,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
+
 private class CrossFileDarwinApisPigeonCodecReader: FlutterStandardReader {
 }
 
@@ -84,8 +85,7 @@ private class CrossFileDarwinApisPigeonCodecReaderWriter: FlutterStandardReaderW
 }
 
 class CrossFileDarwinApisPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
-  static let shared = CrossFileDarwinApisPigeonCodec(
-    readerWriter: CrossFileDarwinApisPigeonCodecReaderWriter())
+  static let shared = CrossFileDarwinApisPigeonCodec(readerWriter: CrossFileDarwinApisPigeonCodecReaderWriter())
 }
 
 /// Api for getting access to file information.
@@ -100,43 +100,17 @@ protocol CrossFileDarwinApi {
   func stopAccessingSecurityScopedResource(url: String) throws
   /// Whether the native FileManager is able to read a specified file.
   func isReadableFile(url: String) throws -> Bool
-  /// Date and time when the resource was last modified, if the information is
-  /// available.
-  ///
-  /// Returns null if file doesn't exist or information is not available.
-  func lastModified(identifier: String, completion: @escaping (Result<Int64?, Error>) -> Void)
-  /// The length of the data represented by this uri, in bytes.
-  ///
-  /// Returns null if file doesn't exist or information is not available.
-  /// Reads the entire resource contents as a list of bytes.
-  ///
-  /// Platforms may throw an exception if there is an error opening or reading
-  /// the resource.
-  func readAsBytes(
-    identifier: String, completion: @escaping (Result<FlutterStandardTypedData, Error>) -> Void)
-  /// The name of the resource represented by this object.
-  ///
-  /// The path is excluded from this value.
-  ///
-  /// Returns null if file doesn't exist or information is not available.
-  func name(identifier: String, completion: @escaping (Result<String?, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
 class CrossFileDarwinApiSetup {
   static var codec: FlutterStandardMessageCodec { CrossFileDarwinApisPigeonCodec.shared }
   /// Sets up an instance of `CrossFileDarwinApi` to handle messages through the `binaryMessenger`.
-  static func setUp(
-    binaryMessenger: FlutterBinaryMessenger, api: CrossFileDarwinApi?,
-    messageChannelSuffix: String = ""
-  ) {
+  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: CrossFileDarwinApi?, messageChannelSuffix: String = "") {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
     /// In an app that has adopted App Sandbox, makes the resource pointed to by a
     /// security-scoped URL available to the app.
-    let startAccessingSecurityScopedResourceChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.startAccessingSecurityScopedResource\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let startAccessingSecurityScopedResourceChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.startAccessingSecurityScopedResource\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       startAccessingSecurityScopedResourceChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -153,10 +127,7 @@ class CrossFileDarwinApiSetup {
     }
     /// In an app that adopts App Sandbox, revokes access to the resource pointed
     /// to by a security-scoped URL.
-    let stopAccessingSecurityScopedResourceChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.stopAccessingSecurityScopedResource\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let stopAccessingSecurityScopedResourceChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.stopAccessingSecurityScopedResource\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       stopAccessingSecurityScopedResourceChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -172,10 +143,7 @@ class CrossFileDarwinApiSetup {
       stopAccessingSecurityScopedResourceChannel.setMessageHandler(nil)
     }
     /// Whether the native FileManager is able to read a specified file.
-    let isReadableFileChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.isReadableFile\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let isReadableFileChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.isReadableFile\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       isReadableFileChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -189,79 +157,6 @@ class CrossFileDarwinApiSetup {
       }
     } else {
       isReadableFileChannel.setMessageHandler(nil)
-    }
-    /// Date and time when the resource was last modified, if the information is
-    /// available.
-    ///
-    /// Returns null if file doesn't exist or information is not available.
-    let lastModifiedChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.lastModified\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      lastModifiedChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let identifierArg = args[0] as! String
-        api.lastModified(identifier: identifierArg) { result in
-          switch result {
-          case .success(let res):
-            reply(wrapResult(res))
-          case .failure(let error):
-            reply(wrapError(error))
-          }
-        }
-      }
-    } else {
-      lastModifiedChannel.setMessageHandler(nil)
-    }
-    /// The length of the data represented by this uri, in bytes.
-    ///
-    /// Returns null if file doesn't exist or information is not available.
-    /// Reads the entire resource contents as a list of bytes.
-    ///
-    /// Platforms may throw an exception if there is an error opening or reading
-    /// the resource.
-    let readAsBytesChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.readAsBytes\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      readAsBytesChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let identifierArg = args[0] as! String
-        api.readAsBytes(identifier: identifierArg) { result in
-          switch result {
-          case .success(let res):
-            reply(wrapResult(res))
-          case .failure(let error):
-            reply(wrapError(error))
-          }
-        }
-      }
-    } else {
-      readAsBytesChannel.setMessageHandler(nil)
-    }
-    /// The name of the resource represented by this object.
-    ///
-    /// The path is excluded from this value.
-    ///
-    /// Returns null if file doesn't exist or information is not available.
-    let nameChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.name\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      nameChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let identifierArg = args[0] as! String
-        api.name(identifier: identifierArg) { result in
-          switch result {
-          case .success(let res):
-            reply(wrapResult(res))
-          case .failure(let error):
-            reply(wrapError(error))
-          }
-        }
-      }
-    } else {
-      nameChannel.setMessageHandler(nil)
     }
   }
 }

@@ -27,31 +27,31 @@ abstract class CrossFileDarwinApi {
 
   /// Whether the native FileManager is able to read a specified file.
   bool isReadableFile(String url);
-
-  /// Date and time when the resource was last modified, if the information is
-  /// available.
-  ///
-  /// Returns null if file doesn't exist or information is not available.
-  @async
-  int? lastModified(String identifier);
-
-  /// The length of the data represented by this uri, in bytes.
-  ///
-  /// Returns null if file doesn't exist or information is not available.
-  //Future<int?> length(String identifier);
-
-  /// Reads the entire resource contents as a list of bytes.
-  ///
-  /// Platforms may throw an exception if there is an error opening or reading
-  /// the resource.
-  @async
-  Uint8List readAsBytes(String identifier);
-
-  /// The name of the resource represented by this object.
-  ///
-  /// The path is excluded from this value.
-  ///
-  /// Returns null if file doesn't exist or information is not available.
-  @async
-  String? name(String identifier);
+  //
+  // /// Date and time when the resource was last modified, if the information is
+  // /// available.
+  // ///
+  // /// Returns null if file doesn't exist or information is not available.
+  // @async
+  // int? lastModified(String identifier);
+  //
+  // /// The length of the data represented by this uri, in bytes.
+  // ///
+  // /// Returns null if file doesn't exist or information is not available.
+  // //Future<int?> length(String identifier);
+  //
+  // /// Reads the entire resource contents as a list of bytes.
+  // ///
+  // /// Platforms may throw an exception if there is an error opening or reading
+  // /// the resource.
+  // @async
+  // Uint8List readAsBytes(String identifier);
+  //
+  // /// The name of the resource represented by this object.
+  // ///
+  // /// The path is excluded from this value.
+  // ///
+  // /// Returns null if file doesn't exist or information is not available.
+  // @async
+  // String? name(String identifier);
 }
