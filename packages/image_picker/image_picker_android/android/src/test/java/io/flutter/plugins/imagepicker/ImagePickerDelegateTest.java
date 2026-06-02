@@ -389,35 +389,35 @@ public class ImagePickerDelegateTest {
         () -> File.createTempFile(any(), eq(".jpg"), eq(externalDirectory)), times(1));
   }
 
-    @Test
-    @Config(sdk = 30)
-    public void takeImageWithCamera_whenQueryIntentActivitiesThrows_doesNotCrashAndLogsError() {
-        when(mockPermissionManager.isPermissionGranted(Manifest.permission.CAMERA)).thenReturn(true);
+  @Test
+  @Config(sdk = 30)
+  public void takeImageWithCamera_whenQueryIntentActivitiesThrows_doesNotCrashAndLogsError() {
+    when(mockPermissionManager.isPermissionGranted(Manifest.permission.CAMERA)).thenReturn(true);
 
-        PackageManager mockPackageManager = mockActivity.getPackageManager();
+    PackageManager mockPackageManager = mockActivity.getPackageManager();
 
-        when(mockPackageManager.queryIntentActivities(any(Intent.class), eq(PackageManager.MATCH_DEFAULT_ONLY)))
-                .thenThrow(new RuntimeException("Simulated Package Visibility Exception"));
+    when(mockPackageManager.queryIntentActivities(
+            any(Intent.class), eq(PackageManager.MATCH_DEFAULT_ONLY)))
+        .thenThrow(new RuntimeException("Simulated Package Visibility Exception"));
 
-        ImagePickerDelegate delegate = createDelegate();
-        delegate.takeImageWithCamera(
-                DEFAULT_IMAGE_OPTIONS, ResultCompat.asCompatCallback(reply -> null));
+    ImagePickerDelegate delegate = createDelegate();
+    delegate.takeImageWithCamera(
+        DEFAULT_IMAGE_OPTIONS, ResultCompat.asCompatCallback(reply -> null));
 
-        List<ShadowLog.LogItem> logs = ShadowLog.getLogsForTag("ImagePickerDelegate");
-        assertFalse("Expected an error log to be generated", logs.isEmpty());
-        ShadowLog.LogItem errorLog = logs.get(0);
-        assertEquals(android.util.Log.ERROR, errorLog.type);
-        assertTrue(
-                "Log message did not match expected output",
-                errorLog.msg.contains("Fallback query for intent activities failed")
-        );
+    List<ShadowLog.LogItem> logs = ShadowLog.getLogsForTag("ImagePickerDelegate");
+    assertFalse("Expected an error log to be generated", logs.isEmpty());
+    ShadowLog.LogItem errorLog = logs.get(0);
+    assertEquals(android.util.Log.ERROR, errorLog.type);
+    assertTrue(
+        "Log message did not match expected output",
+        errorLog.msg.contains("Fallback query for intent activities failed"));
 
-        verify(mockActivity, never()).grantUriPermission(anyString(), any(Uri.class), anyInt());
+    verify(mockActivity, never()).grantUriPermission(anyString(), any(Uri.class), anyInt());
 
-        verify(mockActivity)
-                .startActivityForResult(
-                        any(Intent.class), eq(ImagePickerDelegate.REQUEST_CODE_TAKE_IMAGE_WITH_CAMERA));
-    }
+    verify(mockActivity)
+        .startActivityForResult(
+            any(Intent.class), eq(ImagePickerDelegate.REQUEST_CODE_TAKE_IMAGE_WITH_CAMERA));
+  }
 
   @Test
   public void onRequestPermissionsResult_whenCameraPermissionDenied_finishesWithError() {

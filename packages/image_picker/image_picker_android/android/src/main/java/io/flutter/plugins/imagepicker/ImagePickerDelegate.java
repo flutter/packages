@@ -630,21 +630,21 @@ public class ImagePickerDelegate
     }
   }
 
-    @SuppressWarnings({"deprecation", "QueryPermissionsNeeded"})
-    private static List<ResolveInfo> queryIntentActivitiesPreApi33(
-            PackageManager packageManager, Intent intent) {
-        try {
-            return packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-        } catch (Exception e) {
-            Log.e(
-                    "ImagePickerDelegate",
-                    "Fallback query for intent activities failed. Ensure the intent is properly "
-                            + "formatted and check if Android 11+ package visibility restrictions "
-                            + "require a specific <queries> declaration in your app's AndroidManifest.xml.",
-                    e);
-            return Collections.emptyList();
-        }
+  @SuppressWarnings({"deprecation", "QueryPermissionsNeeded"})
+  private static List<ResolveInfo> queryIntentActivitiesPreApi33(
+      PackageManager packageManager, Intent intent) {
+    try {
+      return packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+    } catch (Exception e) {
+      Log.e(
+          "ImagePickerDelegate",
+          "Fallback query for intent activities failed. Ensure the intent is properly "
+              + "formatted and check if Android 11+ package visibility restrictions "
+              + "require a specific <queries> declaration in your app's AndroidManifest.xml.",
+          e);
+      return Collections.emptyList();
     }
+  }
 
   @Override
   public boolean onRequestPermissionsResult(
