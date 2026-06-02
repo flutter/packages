@@ -1,3 +1,12 @@
+## 0.6.2+3
+
+* Updates README to include setup information.
+
+## 0.6.2+2
+
+* Updates README to note that heatmap support was removed from the underlying SDK in 3.65.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
 ## 0.6.2+1
 
 * Fixes a bug that prevented non-cloud styles from being applied.

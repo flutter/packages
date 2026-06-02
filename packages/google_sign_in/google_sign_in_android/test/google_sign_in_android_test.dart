@@ -40,7 +40,7 @@ void main() {
 
     provideDummy<GetCredentialResult>(
       GetCredentialSuccess(
-        credential: PlatformGoogleIdTokenCredential(id: '', idToken: ''),
+        credential: PlatformGoogleIdTokenCredential(email: '', idToken: ''),
       ),
     );
     provideDummy<AuthorizeResult>(
@@ -126,7 +126,7 @@ void main() {
           credential: PlatformGoogleIdTokenCredential(
             displayName: _testUser.displayName,
             profilePictureUri: _testUser.photoUrl,
-            id: _testUser.email,
+            email: _testUser.email,
             idToken: _testAuthnToken.idToken!,
           ),
         ),
@@ -284,7 +284,7 @@ void main() {
           credential: PlatformGoogleIdTokenCredential(
             displayName: _testUser.displayName,
             profilePictureUri: _testUser.photoUrl,
-            id: _testUser.email,
+            email: _testUser.email,
             idToken: _testAuthnToken.idToken!,
           ),
         ),
@@ -992,7 +992,7 @@ void main() {
             credential: PlatformGoogleIdTokenCredential(
               displayName: _testUser.displayName,
               profilePictureUri: _testUser.photoUrl,
-              id: _testUser.email,
+              email: _testUser.email,
               idToken: _testAuthnToken.idToken!,
             ),
           ),

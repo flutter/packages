@@ -1,3 +1,21 @@
+## 1.2.5
+
+* Updates allowed version range of `xml` to include up to 7.0.1.
+
+## 1.2.4
+
+* Fix Stack Overflow crashes caused by circular references (masks, patterns, deferred nodes, and clip paths).
+* Prevent CPU/Memory Denial of Service (DoS) resource exhaustion from exponential DAG reference expansions (Billion Laughs SVG exploits) by enforcing a strict, cumulative reference expansion safety limit of 1,000.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
+## 1.2.3
+
+* Fixes the SVG parser injecting a spurious space between adjacent
+  `<tspan>` elements that have no whitespace between them in the source.
+  Previously `<tspan>A</tspan><tspan>B</tspan>` was emitted as `"A"` +
+  `" B"`, producing a visible gap; it now emits `"A"` + `"B"` to match
+  every browser.
+
 ## 1.2.2
 
 * Adds support for modern space-separated HSL and HSLA color syntax.
