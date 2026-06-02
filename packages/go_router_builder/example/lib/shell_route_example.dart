@@ -15,21 +15,16 @@ class App extends StatelessWidget {
   App({super.key});
 
   @override
-  Widget build(BuildContext context) =>
-      MaterialApp.router(routerConfig: _router);
+  Widget build(BuildContext context) => MaterialApp.router(routerConfig: _router);
 
-  final GoRouter _router = GoRouter(
-    routes: $appRoutes,
-    initialLocation: '/foo',
-  );
+  final GoRouter _router = GoRouter(routes: $appRoutes, initialLocation: '/foo');
 }
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) =>
-      Scaffold(appBar: AppBar(title: const Text('foo')));
+  Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('foo')));
 }
 
 @TypedShellRoute<MyShellRouteData>(
@@ -125,8 +120,7 @@ class LoginRoute extends GoRouteData with $LoginRoute {
   const LoginRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const LoginScreen();
+  Widget build(BuildContext context, GoRouterState state) => const LoginScreen();
 }
 
 class LoginScreen extends StatelessWidget {

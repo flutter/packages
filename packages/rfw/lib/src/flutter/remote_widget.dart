@@ -20,7 +20,13 @@ class RemoteWidget extends StatefulWidget {
   /// Inserts the specified [widget] into the tree.
   ///
   /// The [onEvent] argument is optional. When omitted, events are discarded.
-  const RemoteWidget({ super.key, required this.runtime, required this.widget, required this.data, this.onEvent });
+  const RemoteWidget({
+    super.key,
+    required this.runtime,
+    required this.widget,
+    required this.data,
+    this.onEvent,
+  });
 
   /// The [Runtime] to use to render the widget specified by [widget].
   ///
@@ -83,7 +89,9 @@ class _RemoteWidgetState extends State<RemoteWidget> {
   }
 
   void _runtimeChanged() {
-    setState(() { /* widget probably changed */ });
+    setState(() {
+      /* widget probably changed */
+    });
   }
 
   void _eventHandler(String eventName, DynamicMap eventArguments) {

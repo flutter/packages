@@ -6,8 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:webview_flutter_platform_interface/src/webview_flutter_platform_interface_legacy.dart';
 
 void main() {
-  final List<String> validChars =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_'.split('');
+  final List<String> validChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_'.split('');
   final List<String> commonInvalidChars =
       r'`~!@#$%^&*()-=+[]{}\|"'
               ':;/?<>,. '
@@ -19,10 +18,7 @@ void main() {
     () {
       for (final char in validChars) {
         for (final digit in digits) {
-          final channel = JavascriptChannel(
-            name: '$char$digit',
-            onMessageReceived: (_) {},
-          );
+          final channel = JavascriptChannel(name: '$char$digit', onMessageReceived: (_) {});
 
           expect(channel.name, '$char$digit');
         }
@@ -32,10 +28,7 @@ void main() {
 
   test('ctor should assert when channel name starts with a number.', () {
     for (final i in digits) {
-      expect(
-        () => JavascriptChannel(name: '$i', onMessageReceived: (_) {}),
-        throwsAssertionError,
-      );
+      expect(() => JavascriptChannel(name: '$i', onMessageReceived: (_) {}), throwsAssertionError);
     }
   });
 
@@ -43,10 +36,7 @@ void main() {
     for (final validChar in validChars) {
       for (final invalidChar in commonInvalidChars) {
         expect(
-          () => JavascriptChannel(
-            name: validChar + invalidChar,
-            onMessageReceived: (_) {},
-          ),
+          () => JavascriptChannel(name: validChar + invalidChar, onMessageReceived: (_) {}),
           throwsAssertionError,
         );
       }

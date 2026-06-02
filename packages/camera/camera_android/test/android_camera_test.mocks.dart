@@ -48,18 +48,14 @@ class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
             returnValue: _i4.Future<List<_i2.PlatformCameraDescription>>.value(
               <_i2.PlatformCameraDescription>[],
             ),
-            returnValueForMissingStub:
-                _i4.Future<List<_i2.PlatformCameraDescription>>.value(
-                  <_i2.PlatformCameraDescription>[],
-                ),
+            returnValueForMissingStub: _i4.Future<List<_i2.PlatformCameraDescription>>.value(
+              <_i2.PlatformCameraDescription>[],
+            ),
           )
           as _i4.Future<List<_i2.PlatformCameraDescription>>);
 
   @override
-  _i4.Future<int> create(
-    String? cameraName,
-    _i2.PlatformMediaSettings? mediaSettings,
-  ) =>
+  _i4.Future<int> create(String? cameraName, _i2.PlatformMediaSettings? mediaSettings) =>
       (super.noSuchMethod(
             Invocation.method(#create, [cameraName, mediaSettings]),
             returnValue: _i4.Future<int>.value(0),
@@ -86,9 +82,7 @@ class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
           as _i4.Future<void>);
 
   @override
-  _i4.Future<void> lockCaptureOrientation(
-    _i2.PlatformDeviceOrientation? orientation,
-  ) =>
+  _i4.Future<void> lockCaptureOrientation(_i2.PlatformDeviceOrientation? orientation) =>
       (super.noSuchMethod(
             Invocation.method(#lockCaptureOrientation, [orientation]),
             returnValue: _i4.Future<void>.value(),
@@ -132,16 +126,10 @@ class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
       (super.noSuchMethod(
             Invocation.method(#stopVideoRecording, []),
             returnValue: _i4.Future<String>.value(
-              _i3.dummyValue<String>(
-                this,
-                Invocation.method(#stopVideoRecording, []),
-              ),
+              _i3.dummyValue<String>(this, Invocation.method(#stopVideoRecording, [])),
             ),
             returnValueForMissingStub: _i4.Future<String>.value(
-              _i3.dummyValue<String>(
-                this,
-                Invocation.method(#stopVideoRecording, []),
-              ),
+              _i3.dummyValue<String>(this, Invocation.method(#stopVideoRecording, [])),
             ),
           )
           as _i4.Future<String>);

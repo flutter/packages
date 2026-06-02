@@ -39,9 +39,7 @@ class DependabotValidator {
   /// Loads Dependabot coverage from the repository's configuration file.
   static DependabotCoverage loadConfig({required Directory repoRoot}) {
     final DependabotCoverage coverage = (gradleDirs: <String>{});
-    final config =
-        loadYaml(repoRoot.childFile(_configFilePath).readAsStringSync())
-            as YamlMap;
+    final config = loadYaml(repoRoot.childFile(_configFilePath).readAsStringSync()) as YamlMap;
     final dynamic entries = config['updates'];
     if (entries is YamlList) {
       const typeKey = 'package-ecosystem';
@@ -72,9 +70,7 @@ class DependabotValidator {
   List<String> validateDependabotCoverage(RepositoryPackage package) {
     final errors = <String>[];
 
-    final String? missingGradlePath = _validateDependabotGradleCoverage(
-      package,
-    );
+    final String? missingGradlePath = _validateDependabotGradleCoverage(package);
     if (missingGradlePath != null) {
       printError('${_indentation}Missing Gradle coverage.');
       print(
@@ -91,24 +87,18 @@ class DependabotValidator {
 
   /// Returns the path of a file that is missing dependabot coverage, if any.
   String? _validateDependabotGradleCoverage(RepositoryPackage package) {
-    final Directory androidDir = package.platformDirectory(
-      FlutterPlatform.android,
-    );
+    final Directory androidDir = package.platformDirectory(FlutterPlatform.android);
     final Directory appDir = androidDir.childDirectory('app');
     if (appDir.existsSync()) {
       // It's an app, so only check for the app directory to be covered.
       final dependabotPath =
           '/${relativePosixPath(appDir, from: _repoRoot, platformContext: _path)}';
-      return _coverage.gradleDirs.contains(dependabotPath)
-          ? null
-          : dependabotPath;
+      return _coverage.gradleDirs.contains(dependabotPath) ? null : dependabotPath;
     } else if (androidDir.existsSync()) {
       // It's a library, so only check for the android directory to be covered.
       final dependabotPath =
           '/${relativePosixPath(androidDir, from: _repoRoot, platformContext: _path)}';
-      return _coverage.gradleDirs.contains(dependabotPath)
-          ? null
-          : dependabotPath;
+      return _coverage.gradleDirs.contains(dependabotPath) ? null : dependabotPath;
     }
     return null;
   }
