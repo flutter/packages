@@ -133,6 +133,18 @@ class ImagePicker {
     int? limit,
     bool requestFullMetadata = true,
   }) {
+    // limit: 1 would fail MultiImagePickerOptions validation (requires >= 2),
+    // so delegate to pickImage which already handles single-image selection.
+    if (limit == 1) {
+      return pickImage(
+        source: ImageSource.gallery,
+        maxWidth: maxWidth,
+        maxHeight: maxHeight,
+        imageQuality: imageQuality,
+        requestFullMetadata: requestFullMetadata,
+      ).then((XFile? image) => image == null ? <XFile>[] : <XFile>[image]);
+    }
+
     final imageOptions = ImageOptions.createAndValidate(
       maxWidth: maxWidth,
       maxHeight: maxHeight,
@@ -249,6 +261,17 @@ class ImagePicker {
     int? limit,
     bool requestFullMetadata = true,
   }) {
+    // limit: 1 would fail MediaOptions validation (requires >= 2),
+    // so delegate to pickMedia which already handles single-item selection.
+    if (limit == 1) {
+      return pickMedia(
+        maxWidth: maxWidth,
+        maxHeight: maxHeight,
+        imageQuality: imageQuality,
+        requestFullMetadata: requestFullMetadata,
+      ).then((XFile? media) => media == null ? <XFile>[] : <XFile>[media]);
+    }
+
     return platform.getMedia(
       options: MediaOptions.createAndValidate(
         allowMultiple: true,
