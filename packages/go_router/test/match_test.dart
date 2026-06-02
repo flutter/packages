@@ -248,6 +248,30 @@ void main() {
       expect(match1 == match2, isFalse);
       expect(match1.hashCode == match2.hashCode, isFalse);
     });
+
+    test('complete is idempotent — second call is a no-op', () async {
+      // Regression test for the `Bad state: Future already completed`
+      // throw observed when `GoRouterDelegate._handlePopPageWithRouteMatch`
+      // fires twice for the same imperative match before either
+      // scheduled microtask runs `_completeRouteMatch` (e.g. the iOS
+      // interactive back-edge gesture, or chained `context.pop(result)`
+      // calls for nested modals). See
+      // https://github.com/flutter/flutter/issues/187326 and the
+      // duplicates cross-referenced there.
+      final completer = Completer<Object?>();
+      final match = ImperativeRouteMatch(
+        pageKey: const ValueKey<String>('idempotent'),
+        matches: matchList1,
+        completer: completer,
+      );
+
+      match.complete('first');
+      // Must not throw — the page is already gone from
+      // currentConfiguration and the future has already resolved.
+      match.complete('second');
+
+      expect(await completer.future, 'first');
+    });
   });
 }
 
