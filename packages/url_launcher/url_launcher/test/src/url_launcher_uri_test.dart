@@ -142,7 +142,10 @@ void main() {
           showTitle: false,
         )
         ..setResponse(true);
-      expect(await launchUrl(url, mode: LaunchMode.externalApplication), isTrue);
+      expect(
+        await launchUrl(url, mode: LaunchMode.externalApplication),
+        isTrue,
+      );
     });
 
     test('external non-browser only', () async {
@@ -159,7 +162,10 @@ void main() {
           showTitle: false,
         )
         ..setResponse(true);
-      expect(await launchUrl(url, mode: LaunchMode.externalNonBrowserApplication), isTrue);
+      expect(
+        await launchUrl(url, mode: LaunchMode.externalNonBrowserApplication),
+        isTrue,
+      );
     });
 
     test('in-app webview without javascript', () async {
@@ -180,7 +186,9 @@ void main() {
         await launchUrl(
           url,
           mode: LaunchMode.inAppWebView,
-          webViewConfiguration: const WebViewConfiguration(enableJavaScript: false),
+          webViewConfiguration: const WebViewConfiguration(
+            enableJavaScript: false,
+          ),
         ),
         isTrue,
       );
@@ -228,7 +236,9 @@ void main() {
         await launchUrl(
           url,
           mode: LaunchMode.inAppWebView,
-          webViewConfiguration: const WebViewConfiguration(enableDomStorage: false),
+          webViewConfiguration: const WebViewConfiguration(
+            enableDomStorage: false,
+          ),
         ),
         isTrue,
       );
@@ -312,14 +322,20 @@ void main() {
     test('handles returning true', () async {
       mock.setResponse(true);
 
-      expect(await supportsCloseForLaunchMode(LaunchMode.inAppBrowserView), true);
+      expect(
+        await supportsCloseForLaunchMode(LaunchMode.inAppBrowserView),
+        true,
+      );
       expect(mock.launchMode, PreferredLaunchMode.inAppBrowserView);
     });
 
     test('handles returning false', () async {
       mock.setResponse(false);
 
-      expect(await supportsCloseForLaunchMode(LaunchMode.inAppBrowserView), false);
+      expect(
+        await supportsCloseForLaunchMode(LaunchMode.inAppBrowserView),
+        false,
+      );
       expect(mock.launchMode, PreferredLaunchMode.inAppBrowserView);
     });
   });

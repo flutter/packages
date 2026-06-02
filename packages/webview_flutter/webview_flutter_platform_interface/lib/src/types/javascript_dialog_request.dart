@@ -8,7 +8,10 @@ import 'package:flutter/foundation.dart';
 @immutable
 class JavaScriptAlertDialogRequest {
   /// Creates a [JavaScriptAlertDialogRequest].
-  const JavaScriptAlertDialogRequest({required this.message, required this.url});
+  const JavaScriptAlertDialogRequest({
+    required this.message,
+    required this.url,
+  });
 
   /// The message to be displayed in the window.
   final String message;
@@ -21,7 +24,10 @@ class JavaScriptAlertDialogRequest {
 @immutable
 class JavaScriptConfirmDialogRequest {
   /// Creates a [JavaScriptConfirmDialogRequest].
-  const JavaScriptConfirmDialogRequest({required this.message, required this.url});
+  const JavaScriptConfirmDialogRequest({
+    required this.message,
+    required this.url,
+  });
 
   /// The message to be displayed in the window.
   final String message;

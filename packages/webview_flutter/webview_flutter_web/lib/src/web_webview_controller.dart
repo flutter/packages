@@ -16,7 +16,8 @@ import 'http_request_factory.dart';
 /// An implementation of [PlatformWebViewControllerCreationParams] using Flutter
 /// for Web API.
 @immutable
-class WebWebViewControllerCreationParams extends PlatformWebViewControllerCreationParams {
+class WebWebViewControllerCreationParams
+    extends PlatformWebViewControllerCreationParams {
   /// Creates a new [AndroidWebViewControllerCreationParams] instance.
   WebWebViewControllerCreationParams({
     @visibleForTesting this.httpRequestFactory = const HttpRequestFactory(),
@@ -27,7 +28,8 @@ class WebWebViewControllerCreationParams extends PlatformWebViewControllerCreati
     // Recommended placeholder to prevent being broken by platform interface.
     // ignore: avoid_unused_constructor_parameters
     PlatformWebViewControllerCreationParams params, {
-    @visibleForTesting HttpRequestFactory httpRequestFactory = const HttpRequestFactory(),
+    @visibleForTesting
+    HttpRequestFactory httpRequestFactory = const HttpRequestFactory(),
   }) : this(httpRequestFactory: httpRequestFactory);
 
   static int _nextIFrameId = 0;
@@ -71,7 +73,9 @@ class WebWebViewController extends PlatformWebViewController {
   @override
   Future<void> loadRequest(LoadRequestParams params) async {
     if (!params.uri.hasScheme) {
-      throw ArgumentError('LoadRequestParams#uri is required to have a scheme.');
+      throw ArgumentError(
+        'LoadRequestParams#uri is required to have a scheme.',
+      );
     }
 
     if (params.headers.isEmpty &&
@@ -109,7 +113,8 @@ class WebWebViewController extends PlatformWebViewController {
 /// An implementation of [PlatformWebViewWidget] using Flutter the for Web API.
 class WebWebViewWidget extends PlatformWebViewWidget {
   /// Constructs a [WebWebViewWidget].
-  WebWebViewWidget(PlatformWebViewWidgetCreationParams params) : super.implementation(params) {
+  WebWebViewWidget(PlatformWebViewWidgetCreationParams params)
+    : super.implementation(params) {
     final controller = params.controller as WebWebViewController;
     ui_web.platformViewRegistry.registerViewFactory(
       controller._webWebViewParams.iFrame.id,
@@ -121,7 +126,10 @@ class WebWebViewWidget extends PlatformWebViewWidget {
   Widget build(BuildContext context) {
     return HtmlElementView(
       key: params.key,
-      viewType: (params.controller as WebWebViewController)._webWebViewParams.iFrame.id,
+      viewType: (params.controller as WebWebViewController)
+          ._webWebViewParams
+          .iFrame
+          .id,
     );
   }
 }

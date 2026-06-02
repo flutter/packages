@@ -19,7 +19,8 @@ class App extends StatelessWidget {
   App({super.key});
 
   @override
-  Widget build(BuildContext context) => MaterialApp.router(routerConfig: _router, title: _appTitle);
+  Widget build(BuildContext context) =>
+      MaterialApp.router(routerConfig: _router, title: _appTitle);
 
   final GoRouter _router = GoRouter(routes: $appRoutes);
 }
@@ -42,7 +43,8 @@ class JsonRoute extends GoRouteData with $JsonRoute {
   final JsonExample json;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => JsonScreen(json: json);
+  Widget build(BuildContext context, GoRouterState state) =>
+      JsonScreen(json: json);
 }
 
 class HomeScreen extends StatelessWidget {
@@ -54,7 +56,10 @@ class HomeScreen extends StatelessWidget {
     body: ListView(
       children: <Widget>[
         for (final JsonExample json in jsonData)
-          ListTile(title: Text(json.name), onTap: () => JsonRoute(json).go(context)),
+          ListTile(
+            title: Text(json.name),
+            onTap: () => JsonRoute(json).go(context),
+          ),
       ],
     ),
   );

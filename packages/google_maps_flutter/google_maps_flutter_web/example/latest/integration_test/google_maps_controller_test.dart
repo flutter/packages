@@ -23,15 +23,27 @@ const String _kMapId = '000000000000000'; // Dummy map ID.
 gmaps.Map mapShim() => throw UnimplementedError();
 
 @GenerateNiceMocks(<MockSpec<dynamic>>[
-  MockSpec<CirclesController>(fallbackGenerators: <Symbol, Function>{#googleMap: mapShim}),
-  MockSpec<HeatmapsController>(fallbackGenerators: <Symbol, Function>{#googleMap: mapShim}),
-  MockSpec<PolygonsController>(fallbackGenerators: <Symbol, Function>{#googleMap: mapShim}),
-  MockSpec<PolylinesController>(fallbackGenerators: <Symbol, Function>{#googleMap: mapShim}),
+  MockSpec<CirclesController>(
+    fallbackGenerators: <Symbol, Function>{#googleMap: mapShim},
+  ),
+  MockSpec<HeatmapsController>(
+    fallbackGenerators: <Symbol, Function>{#googleMap: mapShim},
+  ),
+  MockSpec<PolygonsController>(
+    fallbackGenerators: <Symbol, Function>{#googleMap: mapShim},
+  ),
+  MockSpec<PolylinesController>(
+    fallbackGenerators: <Symbol, Function>{#googleMap: mapShim},
+  ),
   MockSpec<MarkersController<Object, Object>>(
     fallbackGenerators: <Symbol, Function>{#googleMap: mapShim},
   ),
-  MockSpec<TileOverlaysController>(fallbackGenerators: <Symbol, Function>{#googleMap: mapShim}),
-  MockSpec<GroundOverlaysController>(fallbackGenerators: <Symbol, Function>{#googleMap: mapShim}),
+  MockSpec<TileOverlaysController>(
+    fallbackGenerators: <Symbol, Function>{#googleMap: mapShim},
+  ),
+  MockSpec<GroundOverlaysController>(
+    fallbackGenerators: <Symbol, Function>{#googleMap: mapShim},
+  ),
 ])
 /// Test Google Map Controller
 void main() {
@@ -44,7 +56,9 @@ void main() {
 
     // Creates a controller with the default mapId and stream controller, and any `options` needed.
     GoogleMapController createController({
-      CameraPosition initialCameraPosition = const CameraPosition(target: LatLng(0, 0)),
+      CameraPosition initialCameraPosition = const CameraPosition(
+        target: LatLng(0, 0),
+      ),
       MapObjects mapObjects = const MapObjects(),
       MapConfiguration mapConfiguration = const MapConfiguration(),
     }) {
@@ -72,7 +86,10 @@ void main() {
       testWidgets('constructor creates widget', (WidgetTester tester) async {
         expect(controller.widget, isNotNull);
         expect(controller.widget, isA<HtmlElementView>());
-        expect((controller.widget! as HtmlElementView).viewType, endsWith('$mapId'));
+        expect(
+          (controller.widget! as HtmlElementView).viewType,
+          endsWith('$mapId'),
+        );
       });
 
       testWidgets('widget is cached when reused', (WidgetTester tester) async {
@@ -82,14 +99,18 @@ void main() {
       });
 
       group('dispose', () {
-        testWidgets('closes the stream and removes the widget', (WidgetTester tester) async {
+        testWidgets('closes the stream and removes the widget', (
+          WidgetTester tester,
+        ) async {
           controller.dispose();
 
           expect(stream.isClosed, isTrue);
           expect(controller.widget, isNull);
         });
 
-        testWidgets('cannot call getVisibleRegion after dispose', (WidgetTester tester) async {
+        testWidgets('cannot call getVisibleRegion after dispose', (
+          WidgetTester tester,
+        ) async {
           controller.dispose();
 
           expect(() async {
@@ -97,15 +118,21 @@ void main() {
           }, throwsAssertionError);
         });
 
-        testWidgets('cannot call getScreenCoordinate after dispose', (WidgetTester tester) async {
+        testWidgets('cannot call getScreenCoordinate after dispose', (
+          WidgetTester tester,
+        ) async {
           controller.dispose();
 
           expect(() async {
-            await controller.getScreenCoordinate(const LatLng(43.3072465, -5.6918241));
+            await controller.getScreenCoordinate(
+              const LatLng(43.3072465, -5.6918241),
+            );
           }, throwsAssertionError);
         });
 
-        testWidgets('cannot call getLatLng after dispose', (WidgetTester tester) async {
+        testWidgets('cannot call getLatLng after dispose', (
+          WidgetTester tester,
+        ) async {
           controller.dispose();
 
           expect(() async {
@@ -113,7 +140,9 @@ void main() {
           }, throwsAssertionError);
         });
 
-        testWidgets('cannot call moveCamera after dispose', (WidgetTester tester) async {
+        testWidgets('cannot call moveCamera after dispose', (
+          WidgetTester tester,
+        ) async {
           controller.dispose();
 
           expect(() async {
@@ -121,7 +150,9 @@ void main() {
           }, throwsAssertionError);
         });
 
-        testWidgets('cannot call getZoomLevel after dispose', (WidgetTester tester) async {
+        testWidgets('cannot call getZoomLevel after dispose', (
+          WidgetTester tester,
+        ) async {
           controller.dispose();
 
           expect(() async {
@@ -129,31 +160,45 @@ void main() {
           }, throwsAssertionError);
         });
 
-        testWidgets('cannot updateCircles after dispose', (WidgetTester tester) async {
+        testWidgets('cannot updateCircles after dispose', (
+          WidgetTester tester,
+        ) async {
           controller.dispose();
 
           expect(() {
-            controller.updateCircles(CircleUpdates.from(const <Circle>{}, const <Circle>{}));
+            controller.updateCircles(
+              CircleUpdates.from(const <Circle>{}, const <Circle>{}),
+            );
           }, throwsAssertionError);
         });
 
-        testWidgets('cannot updateHeatmaps after dispose', (WidgetTester tester) async {
+        testWidgets('cannot updateHeatmaps after dispose', (
+          WidgetTester tester,
+        ) async {
           controller.dispose();
 
           expect(() {
-            controller.updateHeatmaps(HeatmapUpdates.from(const <Heatmap>{}, const <Heatmap>{}));
+            controller.updateHeatmaps(
+              HeatmapUpdates.from(const <Heatmap>{}, const <Heatmap>{}),
+            );
           }, throwsAssertionError);
         });
 
-        testWidgets('cannot updatePolygons after dispose', (WidgetTester tester) async {
+        testWidgets('cannot updatePolygons after dispose', (
+          WidgetTester tester,
+        ) async {
           controller.dispose();
 
           expect(() {
-            controller.updatePolygons(PolygonUpdates.from(const <Polygon>{}, const <Polygon>{}));
+            controller.updatePolygons(
+              PolygonUpdates.from(const <Polygon>{}, const <Polygon>{}),
+            );
           }, throwsAssertionError);
         });
 
-        testWidgets('cannot updatePolylines after dispose', (WidgetTester tester) async {
+        testWidgets('cannot updatePolylines after dispose', (
+          WidgetTester tester,
+        ) async {
           controller.dispose();
 
           expect(() {
@@ -163,11 +208,15 @@ void main() {
           }, throwsAssertionError);
         });
 
-        testWidgets('cannot updateMarkers after dispose', (WidgetTester tester) async {
+        testWidgets('cannot updateMarkers after dispose', (
+          WidgetTester tester,
+        ) async {
           controller.dispose();
 
           await expectLater(
-            controller.updateMarkers(MarkerUpdates.from(const <Marker>{}, const <Marker>{})),
+            controller.updateMarkers(
+              MarkerUpdates.from(const <Marker>{}, const <Marker>{}),
+            ),
             throwsAssertionError,
           );
 
@@ -180,7 +229,9 @@ void main() {
           }, throwsAssertionError);
         });
 
-        testWidgets('cannot updateTileOverlays after dispose', (WidgetTester tester) async {
+        testWidgets('cannot updateTileOverlays after dispose', (
+          WidgetTester tester,
+        ) async {
           controller.dispose();
 
           expect(() {
@@ -188,7 +239,9 @@ void main() {
           }, throwsAssertionError);
         });
 
-        testWidgets('isInfoWindowShown defaults to false', (WidgetTester tester) async {
+        testWidgets('isInfoWindowShown defaults to false', (
+          WidgetTester tester,
+        ) async {
           controller.dispose();
 
           expect(controller.isInfoWindowShown(const MarkerId('any')), false);
@@ -233,8 +286,16 @@ void main() {
         // Trigger events on the map, and verify they've been broadcast to the stream
         final Stream<MapEvent<Object?>> capturedEvents = stream.stream.take(5);
 
-        gmaps.event.trigger(map, 'click', gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0));
-        gmaps.event.trigger(map, 'rightclick', gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0));
+        gmaps.event.trigger(
+          map,
+          'click',
+          gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
+        );
+        gmaps.event.trigger(
+          map,
+          'rightclick',
+          gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
+        );
         // The following line causes 2 events
         gmaps.event.trigger(map, 'bounds_changed');
         gmaps.event.trigger(map, 'idle');
@@ -248,7 +309,9 @@ void main() {
         expect(events[4], isA<CameraIdleEvent>());
       });
 
-      testWidgets('stops listening to map events once disposed', (WidgetTester tester) async {
+      testWidgets('stops listening to map events once disposed', (
+        WidgetTester tester,
+      ) async {
         controller = createController()
           ..debugSetOverrides(
             createMap: (_, __) => map,
@@ -266,8 +329,16 @@ void main() {
         // Trigger events on the map, and verify they've been broadcast to the stream
         final Stream<MapEvent<Object?>> capturedEvents = stream.stream.take(5);
 
-        gmaps.event.trigger(map, 'click', gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0));
-        gmaps.event.trigger(map, 'rightclick', gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0));
+        gmaps.event.trigger(
+          map,
+          'click',
+          gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
+        );
+        gmaps.event.trigger(
+          map,
+          'rightclick',
+          gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
+        );
         // The following line causes 2 events
         gmaps.event.trigger(map, 'bounds_changed');
         gmaps.event.trigger(map, 'idle');
@@ -277,7 +348,9 @@ void main() {
         expect(events, isEmpty);
       });
 
-      testWidgets("binds geometry controllers to map's", (WidgetTester tester) async {
+      testWidgets("binds geometry controllers to map's", (
+        WidgetTester tester,
+      ) async {
         controller = createController()
           ..debugSetOverrides(
             createMap: (_, __) => map,
@@ -302,7 +375,9 @@ void main() {
 
       testWidgets('renders initial geometry', (WidgetTester tester) async {
         final mapObjects = MapObjects(
-          circles: <Circle>{const Circle(circleId: CircleId('circle-1'), zIndex: 1234)},
+          circles: <Circle>{
+            const Circle(circleId: CircleId('circle-1'), zIndex: 1234),
+          },
           heatmaps: <Heatmap>{
             const Heatmap(
               heatmapId: HeatmapId('heatmap-1'),
@@ -318,7 +393,10 @@ void main() {
           markers: <Marker>{
             const Marker(
               markerId: MarkerId('marker-1'),
-              infoWindow: InfoWindow(title: 'title for test', snippet: 'snippet for test'),
+              infoWindow: InfoWindow(
+                title: 'title for test',
+                snippet: 'snippet for test',
+              ),
             ),
           },
           polygons: <Polygon>{
@@ -359,7 +437,9 @@ void main() {
               ],
             ),
           },
-          tileOverlays: <TileOverlay>{const TileOverlay(tileOverlayId: TileOverlayId('overlay-1'))},
+          tileOverlays: <TileOverlay>{
+            const TileOverlay(tileOverlayId: TileOverlayId('overlay-1')),
+          },
           groundOverlays: <GroundOverlay>{
             GroundOverlay.fromBounds(
               groundOverlayId: const GroundOverlayId('bounds_1'),
@@ -433,7 +513,9 @@ void main() {
           expect(capturedOptions!.tilt, 0);
         });
 
-        testWidgets('translates fortyFiveDegreeImageryEnabled option', (WidgetTester tester) async {
+        testWidgets('translates fortyFiveDegreeImageryEnabled option', (
+          WidgetTester tester,
+        ) async {
           gmaps.MapOptions? capturedOptions;
           controller = createController(
             mapConfiguration: const MapConfiguration(
@@ -455,7 +537,9 @@ void main() {
           expect(capturedOptions!.tilt, isNull);
         });
 
-        testWidgets('translates webGestureHandling option', (WidgetTester tester) async {
+        testWidgets('translates webGestureHandling option', (
+          WidgetTester tester,
+        ) async {
           gmaps.MapOptions? capturedOptions;
           controller = createController(
             mapConfiguration: const MapConfiguration(
@@ -476,7 +560,9 @@ void main() {
           expect(capturedOptions!.gestureHandling, 'greedy');
         });
 
-        testWidgets('translates webCameraControlEnabled option', (WidgetTester tester) async {
+        testWidgets('translates webCameraControlEnabled option', (
+          WidgetTester tester,
+        ) async {
           gmaps.MapOptions? capturedOptions;
           controller = createController(
             mapConfiguration: const MapConfiguration(
@@ -497,7 +583,9 @@ void main() {
           expect(capturedOptions!.cameraControl, isTrue);
         });
 
-        testWidgets('translates webCameraControlPosition option', (WidgetTester tester) async {
+        testWidgets('translates webCameraControlPosition option', (
+          WidgetTester tester,
+        ) async {
           gmaps.MapOptions? capturedOptions;
           controller = createController(
             mapConfiguration: const MapConfiguration(
@@ -523,7 +611,9 @@ void main() {
           );
         });
 
-        testWidgets('translates cameraTargetBounds option', (WidgetTester tester) async {
+        testWidgets('translates cameraTargetBounds option', (
+          WidgetTester tester,
+        ) async {
           final mockLatLngBounds = LatLngBounds(
             southwest: const LatLng(20, 30),
             northeast: const LatLng(25, 35),
@@ -554,7 +644,9 @@ void main() {
           expect(capturedBounds.west, mockLatLngBounds.southwest.longitude);
         });
 
-        testWidgets('sets initial position when passed', (WidgetTester tester) async {
+        testWidgets('sets initial position when passed', (
+          WidgetTester tester,
+        ) async {
           gmaps.MapOptions? capturedOptions;
           controller =
               createController(
@@ -584,7 +676,9 @@ void main() {
   "elementType": "labels.text.fill",
   "stylers": [{"color": "#6b9a76"}]
 }]''';
-          controller = createController(mapConfiguration: const MapConfiguration(style: style));
+          controller = createController(
+            mapConfiguration: const MapConfiguration(style: style),
+          );
           controller.debugSetOverrides(
             createMap: (_, gmaps.MapOptions options) {
               capturedOptions = options;
@@ -598,7 +692,9 @@ void main() {
           expect(capturedOptions!.styles?.length, 1);
         });
 
-        testWidgets('stores style errors for later querying', (WidgetTester tester) async {
+        testWidgets('stores style errors for later querying', (
+          WidgetTester tester,
+        ) async {
           gmaps.MapOptions? capturedOptions;
           controller = createController(
             mapConfiguration: const MapConfiguration(
@@ -621,7 +717,9 @@ void main() {
           expect(capturedOptions!.zoomControl, true);
         });
 
-        testWidgets('setting invalid style leaves previous style', (WidgetTester tester) async {
+        testWidgets('setting invalid style leaves previous style', (
+          WidgetTester tester,
+        ) async {
           gmaps.MapOptions? initialCapturedOptions;
           gmaps.MapOptions? updatedCapturedOptions;
           const style = '''
@@ -630,7 +728,9 @@ void main() {
   "elementType": "labels.text.fill",
   "stylers": [{"color": "#6b9a76"}]
 }]''';
-          controller = createController(mapConfiguration: const MapConfiguration(style: style));
+          controller = createController(
+            mapConfiguration: const MapConfiguration(style: style),
+          );
           controller.debugSetOverrides(
             createMap: (_, gmaps.MapOptions options) {
               initialCapturedOptions = options;
@@ -642,12 +742,17 @@ void main() {
           );
 
           controller.init();
-          controller.updateMapConfiguration(const MapConfiguration(style: '[[invalid style'));
+          controller.updateMapConfiguration(
+            const MapConfiguration(style: '[[invalid style'),
+          );
 
           expect(initialCapturedOptions, isNotNull);
           expect(initialCapturedOptions!.styles?.length, 1);
           // The styles should not have changed.
-          expect(updatedCapturedOptions!.styles, initialCapturedOptions!.styles);
+          expect(
+            updatedCapturedOptions!.styles,
+            initialCapturedOptions!.styles,
+          );
         });
       });
 
@@ -657,9 +762,15 @@ void main() {
           expect(controller.trafficLayer, isNull);
         });
 
-        testWidgets('initializes with traffic layer', (WidgetTester tester) async {
+        testWidgets('initializes with traffic layer', (
+          WidgetTester tester,
+        ) async {
           controller =
-              createController(mapConfiguration: const MapConfiguration(trafficEnabled: true))
+              createController(
+                  mapConfiguration: const MapConfiguration(
+                    trafficEnabled: true,
+                  ),
+                )
                 ..debugSetOverrides(createMap: (_, __) => map)
                 ..init();
           expect(controller.trafficLayer, isNotNull);
@@ -685,7 +796,9 @@ void main() {
 
       group('updateMapConfiguration', () {
         testWidgets('can update `options`', (WidgetTester tester) async {
-          controller.updateMapConfiguration(const MapConfiguration(mapType: MapType.satellite));
+          controller.updateMapConfiguration(
+            const MapConfiguration(mapType: MapType.satellite),
+          );
 
           expect(map.mapTypeId, gmaps.MapTypeId.SATELLITE);
         });
@@ -693,11 +806,15 @@ void main() {
         testWidgets('can turn on/off traffic', (WidgetTester tester) async {
           expect(controller.trafficLayer, isNull);
 
-          controller.updateMapConfiguration(const MapConfiguration(trafficEnabled: true));
+          controller.updateMapConfiguration(
+            const MapConfiguration(trafficEnabled: true),
+          );
 
           expect(controller.trafficLayer, isNotNull);
 
-          controller.updateMapConfiguration(const MapConfiguration(trafficEnabled: false));
+          controller.updateMapConfiguration(
+            const MapConfiguration(trafficEnabled: false),
+          );
 
           expect(controller.trafficLayer, isNull);
         });
@@ -709,13 +826,17 @@ void main() {
   "elementType": "labels.text.fill",
   "stylers": [{"color": "#6b9a76"}]
 }]''';
-          controller.updateMapConfiguration(const MapConfiguration(style: style));
+          controller.updateMapConfiguration(
+            const MapConfiguration(style: style),
+          );
 
           expect(controller.styles.length, 1);
         });
 
         testWidgets('can update style', (WidgetTester tester) async {
-          controller.updateMapConfiguration(const MapConfiguration(style: '[[[invalid style'));
+          controller.updateMapConfiguration(
+            const MapConfiguration(style: '[[[invalid style'),
+          );
 
           expect(controller.styles, isEmpty);
           expect(controller.lastStyleError, isNotNull);
@@ -725,14 +846,18 @@ void main() {
       group('viewport getters', () {
         testWidgets('getVisibleRegion', (WidgetTester tester) async {
           final gmaps.LatLng gmCenter = map.center;
-          final center = LatLng(gmCenter.lat.toDouble(), gmCenter.lng.toDouble());
+          final center = LatLng(
+            gmCenter.lat.toDouble(),
+            gmCenter.lng.toDouble(),
+          );
 
           final LatLngBounds bounds = await controller.getVisibleRegion();
 
           expect(
             bounds.contains(center),
             isTrue,
-            reason: 'The computed visible region must contain the center of the created map.',
+            reason:
+                'The computed visible region must contain the center of the created map.',
           );
         });
 
@@ -769,7 +894,11 @@ void main() {
         controller.updateCircles(CircleUpdates.from(previous, current));
 
         verify(mock.removeCircles(<CircleId>{const CircleId('to-be-removed')}));
-        verify(mock.addCircles(<Circle>{const Circle(circleId: CircleId('to-be-added'))}));
+        verify(
+          mock.addCircles(<Circle>{
+            const Circle(circleId: CircleId('to-be-added')),
+          }),
+        );
         verify(
           mock.changeCircles(<Circle>{
             const Circle(circleId: CircleId('to-be-updated'), visible: false),
@@ -827,7 +956,9 @@ void main() {
 
         controller.updateHeatmaps(HeatmapUpdates.from(previous, current));
 
-        verify(mock.removeHeatmaps(<HeatmapId>{const HeatmapId('to-be-removed')}));
+        verify(
+          mock.removeHeatmaps(<HeatmapId>{const HeatmapId('to-be-removed')}),
+        );
         verify(
           mock.addHeatmaps(<Heatmap>{
             const Heatmap(
@@ -866,7 +997,11 @@ void main() {
         await controller.updateMarkers(MarkerUpdates.from(previous, current));
 
         verify(mock.removeMarkers(<MarkerId>{const MarkerId('to-be-removed')}));
-        verify(mock.addMarkers(<Marker>{const Marker(markerId: MarkerId('to-be-added'))}));
+        verify(
+          mock.addMarkers(<Marker>{
+            const Marker(markerId: MarkerId('to-be-added')),
+          }),
+        );
         verify(
           mock.changeMarkers(<Marker>{
             const Marker(markerId: MarkerId('to-be-updated'), visible: false),
@@ -890,11 +1025,20 @@ void main() {
 
         controller.updatePolygons(PolygonUpdates.from(previous, current));
 
-        verify(mock.removePolygons(<PolygonId>{const PolygonId('to-be-removed')}));
-        verify(mock.addPolygons(<Polygon>{const Polygon(polygonId: PolygonId('to-be-added'))}));
+        verify(
+          mock.removePolygons(<PolygonId>{const PolygonId('to-be-removed')}),
+        );
+        verify(
+          mock.addPolygons(<Polygon>{
+            const Polygon(polygonId: PolygonId('to-be-added')),
+          }),
+        );
         verify(
           mock.changePolygons(<Polygon>{
-            const Polygon(polygonId: PolygonId('to-be-updated'), visible: false),
+            const Polygon(
+              polygonId: PolygonId('to-be-updated'),
+              visible: false,
+            ),
           }),
         );
       });
@@ -909,19 +1053,29 @@ void main() {
         };
 
         final current = <Polyline>{
-          const Polyline(polylineId: PolylineId('to-be-updated'), visible: false),
+          const Polyline(
+            polylineId: PolylineId('to-be-updated'),
+            visible: false,
+          ),
           const Polyline(polylineId: PolylineId('to-be-added')),
         };
 
         controller.updatePolylines(PolylineUpdates.from(previous, current));
 
-        verify(mock.removePolylines(<PolylineId>{const PolylineId('to-be-removed')}));
         verify(
-          mock.addPolylines(<Polyline>{const Polyline(polylineId: PolylineId('to-be-added'))}),
+          mock.removePolylines(<PolylineId>{const PolylineId('to-be-removed')}),
+        );
+        verify(
+          mock.addPolylines(<Polyline>{
+            const Polyline(polylineId: PolylineId('to-be-added')),
+          }),
         );
         verify(
           mock.changePolylines(<Polyline>{
-            const Polyline(polylineId: PolylineId('to-be-updated'), visible: false),
+            const Polyline(
+              polylineId: PolylineId('to-be-updated'),
+              visible: false,
+            ),
           }),
         );
       });
@@ -938,11 +1092,18 @@ void main() {
         )..debugSetOverrides(tileOverlays: mock);
 
         controller.updateTileOverlays(<TileOverlay>{
-          const TileOverlay(tileOverlayId: TileOverlayId('to-be-updated'), visible: false),
+          const TileOverlay(
+            tileOverlayId: TileOverlayId('to-be-updated'),
+            visible: false,
+          ),
           const TileOverlay(tileOverlayId: TileOverlayId('to-be-added')),
         });
 
-        verify(mock.removeTileOverlays(<TileOverlayId>{const TileOverlayId('to-be-removed')}));
+        verify(
+          mock.removeTileOverlays(<TileOverlayId>{
+            const TileOverlayId('to-be-removed'),
+          }),
+        );
         verify(
           mock.addTileOverlays(<TileOverlay>{
             const TileOverlay(tileOverlayId: TileOverlayId('to-be-added')),
@@ -950,14 +1111,18 @@ void main() {
         );
         verify(
           mock.changeTileOverlays(<TileOverlay>{
-            const TileOverlay(tileOverlayId: TileOverlayId('to-be-updated'), visible: false),
+            const TileOverlay(
+              tileOverlayId: TileOverlayId('to-be-updated'),
+              visible: false,
+            ),
           }),
         );
       });
 
       testWidgets('updateGroundOverlays', (WidgetTester tester) async {
         final mock = MockGroundOverlaysController();
-        controller = createController()..debugSetOverrides(groundOverlays: mock);
+        controller = createController()
+          ..debugSetOverrides(groundOverlays: mock);
 
         final bounds = LatLngBounds(
           northeast: const LatLng(100, 0),
@@ -986,17 +1151,24 @@ void main() {
           position: position,
         );
 
-        final previous = <GroundOverlay>{groundOverlayToBeUpdated, groundOverlayToBeRemoved};
+        final previous = <GroundOverlay>{
+          groundOverlayToBeUpdated,
+          groundOverlayToBeRemoved,
+        };
 
         final current = <GroundOverlay>{
           groundOverlayToBeUpdated.copyWith(visibleParam: false),
           groundOverlayToBeAdded,
         };
 
-        controller.updateGroundOverlays(GroundOverlayUpdates.from(previous, current));
+        controller.updateGroundOverlays(
+          GroundOverlayUpdates.from(previous, current),
+        );
 
         verify(
-          mock.removeGroundOverlays(<GroundOverlayId>{groundOverlayToBeRemoved.groundOverlayId}),
+          mock.removeGroundOverlays(<GroundOverlayId>{
+            groundOverlayToBeRemoved.groundOverlayId,
+          }),
         );
         verify(mock.addGroundOverlays(<GroundOverlay>{groundOverlayToBeAdded}));
         verify(

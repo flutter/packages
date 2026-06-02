@@ -34,7 +34,10 @@ RouteBase get $homeRoute => GoRouteData.$route(
       path: 'details/:detailId',
       factory: $DetailsRoute._fromState,
       routes: [
-        RelativeGoRouteData.$route(path: 'settings/:settingId', factory: $SettingsRoute._fromState),
+        RelativeGoRouteData.$route(
+          path: 'settings/:settingId',
+          factory: $SettingsRoute._fromState,
+        ),
       ],
     ),
   ],
@@ -53,7 +56,8 @@ mixin $HomeRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) => context.pushReplacement(location);
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
@@ -72,7 +76,8 @@ mixin $DashboardRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) => context.pushReplacement(location);
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
@@ -85,8 +90,9 @@ mixin $DetailsRoute on RelativeGoRouteData {
   DetailsRoute get _self => this as DetailsRoute;
 
   @override
-  String get subLocation =>
-      RelativeGoRouteData.$location('details/${Uri.encodeComponent(_self.detailId)}');
+  String get subLocation => RelativeGoRouteData.$location(
+    'details/${Uri.encodeComponent(_self.detailId)}',
+  );
 
   @override
   String get relativeLocation => './$subLocation';
@@ -95,13 +101,16 @@ mixin $DetailsRoute on RelativeGoRouteData {
   void goRelative(BuildContext context) => context.go(relativeLocation);
 
   @override
-  Future<T?> pushRelative<T>(BuildContext context) => context.push<T>(relativeLocation);
+  Future<T?> pushRelative<T>(BuildContext context) =>
+      context.push<T>(relativeLocation);
 
   @override
-  void pushReplacementRelative(BuildContext context) => context.pushReplacement(relativeLocation);
+  void pushReplacementRelative(BuildContext context) =>
+      context.pushReplacement(relativeLocation);
 
   @override
-  void replaceRelative(BuildContext context) => context.replace(relativeLocation);
+  void replaceRelative(BuildContext context) =>
+      context.replace(relativeLocation);
 }
 
 mixin $SettingsRoute on RelativeGoRouteData {
@@ -111,8 +120,9 @@ mixin $SettingsRoute on RelativeGoRouteData {
   SettingsRoute get _self => this as SettingsRoute;
 
   @override
-  String get subLocation =>
-      RelativeGoRouteData.$location('settings/${Uri.encodeComponent(_self.settingId)}');
+  String get subLocation => RelativeGoRouteData.$location(
+    'settings/${Uri.encodeComponent(_self.settingId)}',
+  );
 
   @override
   String get relativeLocation => './$subLocation';
@@ -121,11 +131,14 @@ mixin $SettingsRoute on RelativeGoRouteData {
   void goRelative(BuildContext context) => context.go(relativeLocation);
 
   @override
-  Future<T?> pushRelative<T>(BuildContext context) => context.push<T>(relativeLocation);
+  Future<T?> pushRelative<T>(BuildContext context) =>
+      context.push<T>(relativeLocation);
 
   @override
-  void pushReplacementRelative(BuildContext context) => context.pushReplacement(relativeLocation);
+  void pushReplacementRelative(BuildContext context) =>
+      context.pushReplacement(relativeLocation);
 
   @override
-  void replaceRelative(BuildContext context) => context.replace(relativeLocation);
+  void replaceRelative(BuildContext context) =>
+      context.replace(relativeLocation);
 }

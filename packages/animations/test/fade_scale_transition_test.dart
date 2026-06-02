@@ -8,7 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('FadeScaleTransitionConfiguration builds a new route', (WidgetTester tester) async {
+  testWidgets('FadeScaleTransitionConfiguration builds a new route', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -37,7 +39,9 @@ void main() {
     expect(find.byType(_FlutterLogoModal), findsOneWidget);
   });
 
-  testWidgets('FadeScaleTransitionConfiguration runs forward', (WidgetTester tester) async {
+  testWidgets('FadeScaleTransitionConfiguration runs forward', (
+    WidgetTester tester,
+  ) async {
     final GlobalKey key = GlobalKey();
     await tester.pumpWidget(
       MaterialApp(
@@ -103,7 +107,9 @@ void main() {
     expect(find.byType(_FlutterLogoModal), findsOneWidget);
   });
 
-  testWidgets('FadeScaleTransitionConfiguration runs forward', (WidgetTester tester) async {
+  testWidgets('FadeScaleTransitionConfiguration runs forward', (
+    WidgetTester tester,
+  ) async {
     final GlobalKey key = GlobalKey();
     await tester.pumpWidget(
       MaterialApp(
@@ -166,104 +172,107 @@ void main() {
     expect(find.byType(_FlutterLogoModal), findsNothing);
   });
 
-  testWidgets('FadeScaleTransitionConfiguration does not jump when interrupted', (
-    WidgetTester tester,
-  ) async {
-    final GlobalKey key = GlobalKey();
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: Builder(
-            builder: (BuildContext context) {
-              return Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    showModal<void>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return _FlutterLogoModal(key: key);
-                      },
-                    );
-                  },
-                  child: const Icon(Icons.add),
-                ),
-              );
-            },
+  testWidgets(
+    'FadeScaleTransitionConfiguration does not jump when interrupted',
+    (WidgetTester tester) async {
+      final GlobalKey key = GlobalKey();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      showModal<void>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return _FlutterLogoModal(key: key);
+                        },
+                      );
+                    },
+                    child: const Icon(Icons.add),
+                  ),
+                );
+              },
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    await tester.tap(find.byType(ElevatedButton));
-    await tester.pump();
-    // Opacity duration: First 30% of 150ms, linear transition
-    double topFadeTransitionOpacity = _getOpacity(key, tester);
-    double topScale = _getScale(key, tester);
-    expect(topFadeTransitionOpacity, 0.0);
-    expect(topScale, 0.80);
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pump();
+      // Opacity duration: First 30% of 150ms, linear transition
+      double topFadeTransitionOpacity = _getOpacity(key, tester);
+      double topScale = _getScale(key, tester);
+      expect(topFadeTransitionOpacity, 0.0);
+      expect(topScale, 0.80);
 
-    // 3/10 * 150ms = 45ms (total opacity animation duration)
-    // End of opacity animation
-    await tester.pump(const Duration(milliseconds: 45));
-    topFadeTransitionOpacity = _getOpacity(key, tester);
-    expect(topFadeTransitionOpacity, 1.0);
-    topScale = _getScale(key, tester);
-    expect(topScale, greaterThan(0.80));
-    expect(topScale, lessThan(1.0));
+      // 3/10 * 150ms = 45ms (total opacity animation duration)
+      // End of opacity animation
+      await tester.pump(const Duration(milliseconds: 45));
+      topFadeTransitionOpacity = _getOpacity(key, tester);
+      expect(topFadeTransitionOpacity, 1.0);
+      topScale = _getScale(key, tester);
+      expect(topScale, greaterThan(0.80));
+      expect(topScale, lessThan(1.0));
 
-    // 100ms into the animation
-    await tester.pump(const Duration(milliseconds: 55));
-    topFadeTransitionOpacity = _getOpacity(key, tester);
-    expect(topFadeTransitionOpacity, 1.0);
-    topScale = _getScale(key, tester);
-    expect(topScale, greaterThan(0.80));
-    expect(topScale, lessThan(1.0));
+      // 100ms into the animation
+      await tester.pump(const Duration(milliseconds: 55));
+      topFadeTransitionOpacity = _getOpacity(key, tester);
+      expect(topFadeTransitionOpacity, 1.0);
+      topScale = _getScale(key, tester);
+      expect(topScale, greaterThan(0.80));
+      expect(topScale, lessThan(1.0));
 
-    // Start the reverse transition by interrupting the forwards
-    // transition.
-    await tester.tapAt(Offset.zero);
-    await tester.pump();
-    // Opacity and scale values should remain the same after
-    // the reverse animation starts.
-    expect(_getOpacity(key, tester), topFadeTransitionOpacity);
-    expect(_getScale(key, tester), topScale);
+      // Start the reverse transition by interrupting the forwards
+      // transition.
+      await tester.tapAt(Offset.zero);
+      await tester.pump();
+      // Opacity and scale values should remain the same after
+      // the reverse animation starts.
+      expect(_getOpacity(key, tester), topFadeTransitionOpacity);
+      expect(_getScale(key, tester), topScale);
 
-    // Should animate in reverse with 2/3 * 75ms = 50ms
-    // using the enter transition's animation pattern
-    // instead of the exit animation pattern.
+      // Should animate in reverse with 2/3 * 75ms = 50ms
+      // using the enter transition's animation pattern
+      // instead of the exit animation pattern.
 
-    // Calculation for the time when the linear fade
-    // transition should start if running backwards:
-    // 3/10 * 75ms = 22.5ms
-    // To get the 22.5ms timestamp, run backwards for:
-    // 50ms - 22.5ms = ~27.5ms
-    await tester.pump(const Duration(milliseconds: 27));
-    topFadeTransitionOpacity = _getOpacity(key, tester);
-    expect(topFadeTransitionOpacity, 1.0);
-    topScale = _getScale(key, tester);
-    expect(topScale, greaterThan(0.80));
-    expect(topScale, lessThan(1.0));
+      // Calculation for the time when the linear fade
+      // transition should start if running backwards:
+      // 3/10 * 75ms = 22.5ms
+      // To get the 22.5ms timestamp, run backwards for:
+      // 50ms - 22.5ms = ~27.5ms
+      await tester.pump(const Duration(milliseconds: 27));
+      topFadeTransitionOpacity = _getOpacity(key, tester);
+      expect(topFadeTransitionOpacity, 1.0);
+      topScale = _getScale(key, tester);
+      expect(topScale, greaterThan(0.80));
+      expect(topScale, lessThan(1.0));
 
-    // Halfway through fade animation
-    await tester.pump(const Duration(milliseconds: 12));
-    topFadeTransitionOpacity = _getOpacity(key, tester);
-    expect(topFadeTransitionOpacity, closeTo(0.5, 0.05));
-    topScale = _getScale(key, tester);
-    expect(topScale, greaterThan(0.80));
-    expect(topScale, lessThan(1.0));
+      // Halfway through fade animation
+      await tester.pump(const Duration(milliseconds: 12));
+      topFadeTransitionOpacity = _getOpacity(key, tester);
+      expect(topFadeTransitionOpacity, closeTo(0.5, 0.05));
+      topScale = _getScale(key, tester);
+      expect(topScale, greaterThan(0.80));
+      expect(topScale, lessThan(1.0));
 
-    // Complete the rest of the animation
-    await tester.pump(const Duration(milliseconds: 11));
-    topFadeTransitionOpacity = _getOpacity(key, tester);
-    expect(topFadeTransitionOpacity, 0.0);
-    topScale = _getScale(key, tester);
-    expect(topScale, 0.8);
+      // Complete the rest of the animation
+      await tester.pump(const Duration(milliseconds: 11));
+      topFadeTransitionOpacity = _getOpacity(key, tester);
+      expect(topFadeTransitionOpacity, 0.0);
+      topScale = _getScale(key, tester);
+      expect(topScale, 0.8);
 
-    await tester.pump(const Duration(milliseconds: 1));
-    expect(find.byType(_FlutterLogoModal), findsNothing);
-  });
+      await tester.pump(const Duration(milliseconds: 1));
+      expect(find.byType(_FlutterLogoModal), findsNothing);
+    },
+  );
 
-  testWidgets('State is not lost when transitioning', (WidgetTester tester) async {
+  testWidgets('State is not lost when transitioning', (
+    WidgetTester tester,
+  ) async {
     final GlobalKey bottomKey = GlobalKey();
     final GlobalKey topKey = GlobalKey();
 
@@ -280,7 +289,10 @@ void main() {
                         showModal<void>(
                           context: context,
                           builder: (BuildContext context) {
-                            return _FlutterLogoModal(key: topKey, name: 'top route');
+                            return _FlutterLogoModal(
+                              key: topKey,
+                              name: 'top route',
+                            );
                           },
                         );
                       },
@@ -297,7 +309,9 @@ void main() {
     );
 
     // The bottom route's state should already exist.
-    final _FlutterLogoModalState bottomState = tester.state(find.byKey(bottomKey));
+    final _FlutterLogoModalState bottomState = tester.state(
+      find.byKey(bottomKey),
+    );
     expect(bottomState.widget.name, 'bottom route');
 
     // Start the enter transition of the modal route.
@@ -320,7 +334,10 @@ void main() {
     // End the transition and see if top and bottom routes'
     // states persist.
     await tester.pumpAndSettle();
-    expect(tester.state(find.byKey(bottomKey, skipOffstage: false)), bottomState);
+    expect(
+      tester.state(find.byKey(bottomKey, skipOffstage: false)),
+      bottomState,
+    );
     expect(tester.state(find.byKey(topKey)), topState);
 
     // Start the reverse animation. Both top and bottom
@@ -353,13 +370,18 @@ void main() {
       MaterialApp(
         home: Scaffold(
           body: Center(
-            child: FadeScaleTransition(animation: controller, child: const _FlutterLogoModal()),
+            child: FadeScaleTransition(
+              animation: controller,
+              child: const _FlutterLogoModal(),
+            ),
           ),
         ),
       ),
     );
 
-    final State<StatefulWidget> state = tester.state(find.byType(_FlutterLogoModal));
+    final State<StatefulWidget> state = tester.state(
+      find.byType(_FlutterLogoModal),
+    );
     expect(state, isNotNull);
 
     controller.forward();
@@ -389,7 +411,10 @@ void main() {
 }
 
 double _getOpacity(GlobalKey key, WidgetTester tester) {
-  final Finder finder = find.ancestor(of: find.byKey(key), matching: find.byType(FadeTransition));
+  final Finder finder = find.ancestor(
+    of: find.byKey(key),
+    matching: find.byType(FadeTransition),
+  );
   return tester.widgetList(finder).fold<double>(1.0, (double a, Widget widget) {
     final transition = widget as FadeTransition;
     return a * transition.opacity.value;
@@ -397,7 +422,10 @@ double _getOpacity(GlobalKey key, WidgetTester tester) {
 }
 
 double _getScale(GlobalKey key, WidgetTester tester) {
-  final Finder finder = find.ancestor(of: find.byKey(key), matching: find.byType(ScaleTransition));
+  final Finder finder = find.ancestor(
+    of: find.byKey(key),
+    matching: find.byType(ScaleTransition),
+  );
   return tester.widgetList(finder).fold<double>(1.0, (double a, Widget widget) {
     final transition = widget as ScaleTransition;
     return a * transition.scale.value;

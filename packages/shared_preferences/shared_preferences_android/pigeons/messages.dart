@@ -7,7 +7,8 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     input: 'pigeons/messages.dart',
-    javaOut: 'android/src/main/java/io/flutter/plugins/sharedpreferences/Messages.java',
+    javaOut:
+        'android/src/main/java/io/flutter/plugins/sharedpreferences/Messages.java',
     javaOptions: JavaOptions(
       className: 'Messages',
       package: 'io.flutter.plugins.sharedpreferences',

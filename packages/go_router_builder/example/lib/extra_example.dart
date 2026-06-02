@@ -11,7 +11,10 @@ part 'extra_example.g.dart';
 
 void main() => runApp(const App());
 
-final GoRouter _router = GoRouter(routes: $appRoutes, initialLocation: '/splash');
+final GoRouter _router = GoRouter(
+  routes: $appRoutes,
+  initialLocation: '/splash',
+);
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -35,7 +38,8 @@ class RequiredExtraRoute extends GoRouteData with $RequiredExtraRoute {
   final Extra $extra;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => RequiredExtraScreen(extra: $extra);
+  Widget build(BuildContext context, GoRouterState state) =>
+      RequiredExtraScreen(extra: $extra);
 }
 
 class RequiredExtraScreen extends StatelessWidget {
@@ -59,7 +63,8 @@ class OptionalExtraRoute extends GoRouteData with $OptionalExtraRoute {
   final Extra? $extra;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => OptionalExtraScreen(extra: $extra);
+  Widget build(BuildContext context, GoRouterState state) =>
+      OptionalExtraScreen(extra: $extra);
 }
 
 class OptionalExtraScreen extends StatelessWidget {
@@ -96,11 +101,13 @@ class Splash extends StatelessWidget {
         children: <Widget>[
           const Placeholder(),
           ElevatedButton(
-            onPressed: () => const RequiredExtraRoute($extra: Extra(1)).go(context),
+            onPressed: () =>
+                const RequiredExtraRoute($extra: Extra(1)).go(context),
             child: const Text('Required Extra'),
           ),
           ElevatedButton(
-            onPressed: () => const OptionalExtraRoute($extra: Extra(2)).go(context),
+            onPressed: () =>
+                const OptionalExtraRoute($extra: Extra(2)).go(context),
             child: const Text('Optional Extra'),
           ),
           ElevatedButton(

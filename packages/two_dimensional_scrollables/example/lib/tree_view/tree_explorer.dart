@@ -81,7 +81,10 @@ class _TreeExplorerState extends State<TreeExplorer> {
         title: Text(_getTitle()),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(50),
-          child: Padding(padding: const EdgeInsets.all(8.0), child: _getRadioRow()),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: _getRadioRow(),
+          ),
         ),
       ),
       body: _getTree(),

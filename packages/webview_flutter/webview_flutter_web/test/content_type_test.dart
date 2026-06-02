@@ -32,7 +32,9 @@ void main() {
     });
 
     test('with charset and boundary', () {
-      final contentType = ContentType.parse('text/pLaIn; charset=utf-8; boundary=---xyz');
+      final contentType = ContentType.parse(
+        'text/pLaIn; charset=utf-8; boundary=---xyz',
+      );
 
       expect(contentType.mimeType, 'text/plain');
       expect(contentType.boundary, '---xyz');
@@ -40,7 +42,9 @@ void main() {
     });
 
     test('with boundary and charset', () {
-      final contentType = ContentType.parse('text/pLaIn; boundary=---xyz; charset=utf-8');
+      final contentType = ContentType.parse(
+        'text/pLaIn; boundary=---xyz; charset=utf-8',
+      );
 
       expect(contentType.mimeType, 'text/plain');
       expect(contentType.boundary, '---xyz');

@@ -36,7 +36,9 @@ final class LcovLine {
 
   @override
   bool operator ==(Object other) {
-    return other is LcovLine && other.line == line && other.filename == filename;
+    return other is LcovLine &&
+        other.line == line &&
+        other.filename == filename;
   }
 
   @override
@@ -98,7 +100,9 @@ Future<void> main(List<String> arguments) async {
     }
   }
 
-  final List<lcov.Record> records = await lcov.Parser.parse('coverage/lcov.info');
+  final List<lcov.Record> records = await lcov.Parser.parse(
+    'coverage/lcov.info',
+  );
   var totalLines = 0;
   var coveredLines = 0;
   var deadLinesError = false;
@@ -110,7 +114,10 @@ Future<void> main(List<String> arguments) async {
         for (var index = 0; index < record.lines!.details!.length; index += 1) {
           if (record.lines!.details![index].hit != null &&
               record.lines!.details![index].line != null) {
-            final line = LcovLine(record.file!, record.lines!.details![index].line!);
+            final line = LcovLine(
+              record.file!,
+              record.lines!.details![index].line!,
+            );
             if (flakyLines.contains(line)) {
               totalLines -= 1;
               if (record.lines!.details![index].hit! > 0) {
@@ -121,7 +128,9 @@ Future<void> main(List<String> arguments) async {
               deadLines.remove(line);
               totalLines -= 1;
               if (record.lines!.details![index].hit! > 0) {
-                print('$line: Line is marked as being dead code but was nonetheless covered.');
+                print(
+                  '$line: Line is marked as being dead code but was nonetheless covered.',
+                );
                 deadLinesError = true;
               }
             }
@@ -136,7 +145,9 @@ Future<void> main(List<String> arguments) async {
         '$line: Line is marked as being undetectably dead code but was not considered reachable.',
       );
     }
-    print('Consider removing the "dead code on VM target" comment from affected lines.');
+    print(
+      'Consider removing the "dead code on VM target" comment from affected lines.',
+    );
     exit(1);
   }
   if (totalLines <= 0 || totalLines < coveredLines) {
@@ -144,7 +155,8 @@ Future<void> main(List<String> arguments) async {
     exit(1);
   }
 
-  final String coveredPercent = (100.0 * coveredLines / totalLines).toStringAsFixed(1);
+  final String coveredPercent = (100.0 * coveredLines / totalLines)
+      .toStringAsFixed(1);
 
   if (targetLines != null) {
     if (targetLines! < totalLines) {

@@ -7,7 +7,9 @@ import 'package:flutter/services.dart';
 
 import '../../file_selector_platform_interface.dart';
 
-const MethodChannel _channel = MethodChannel('plugins.flutter.io/file_selector');
+const MethodChannel _channel = MethodChannel(
+  'plugins.flutter.io/file_selector',
+);
 
 /// An implementation of [FileSelectorPlatform] that uses method channels.
 class MethodChannelFileSelector extends FileSelectorPlatform {
@@ -59,7 +61,9 @@ class MethodChannelFileSelector extends FileSelectorPlatform {
     String? confirmButtonText,
   }) async {
     return _channel.invokeMethod<String>('getSavePath', <String, dynamic>{
-      'acceptedTypeGroups': acceptedTypeGroups?.map((XTypeGroup group) => group.toJSON()).toList(),
+      'acceptedTypeGroups': acceptedTypeGroups
+          ?.map((XTypeGroup group) => group.toJSON())
+          .toList(),
       'initialDirectory': initialDirectory,
       'suggestedName': suggestedName,
       'confirmButtonText': confirmButtonText,
@@ -67,7 +71,10 @@ class MethodChannelFileSelector extends FileSelectorPlatform {
   }
 
   @override
-  Future<String?> getDirectoryPath({String? initialDirectory, String? confirmButtonText}) async {
+  Future<String?> getDirectoryPath({
+    String? initialDirectory,
+    String? confirmButtonText,
+  }) async {
     return _channel.invokeMethod<String>('getDirectoryPath', <String, dynamic>{
       'initialDirectory': initialDirectory,
       'confirmButtonText': confirmButtonText,

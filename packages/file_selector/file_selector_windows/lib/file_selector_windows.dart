@@ -27,7 +27,9 @@ class FileSelectorWindows extends FileSelectorPlatform {
     String? confirmButtonText,
   }) async {
     final FileDialogResult result = await _hostApi.showOpenDialog(
-      SelectionOptions(allowedTypes: _typeGroupsFromXTypeGroups(acceptedTypeGroups)),
+      SelectionOptions(
+        allowedTypes: _typeGroupsFromXTypeGroups(acceptedTypeGroups),
+      ),
       initialDirectory,
       confirmButtonText,
     );
@@ -75,7 +77,9 @@ class FileSelectorWindows extends FileSelectorPlatform {
     SaveDialogOptions options = const SaveDialogOptions(),
   }) async {
     final FileDialogResult result = await _hostApi.showSaveDialog(
-      SelectionOptions(allowedTypes: _typeGroupsFromXTypeGroups(acceptedTypeGroups)),
+      SelectionOptions(
+        allowedTypes: _typeGroupsFromXTypeGroups(acceptedTypeGroups),
+      ),
       options.initialDirectory,
       options.suggestedName,
       options.confirmButtonText,
@@ -85,12 +89,17 @@ class FileSelectorWindows extends FileSelectorPlatform {
         ? null
         : FileSaveLocation(
             result.paths.first,
-            activeFilter: groupIndex == null ? null : acceptedTypeGroups?[groupIndex],
+            activeFilter: groupIndex == null
+                ? null
+                : acceptedTypeGroups?[groupIndex],
           );
   }
 
   @override
-  Future<String?> getDirectoryPath({String? initialDirectory, String? confirmButtonText}) async {
+  Future<String?> getDirectoryPath({
+    String? initialDirectory,
+    String? confirmButtonText,
+  }) async {
     final FileDialogResult result = await _hostApi.showOpenDialog(
       SelectionOptions(selectFolders: true, allowedTypes: <TypeGroup>[]),
       initialDirectory,
@@ -105,7 +114,11 @@ class FileSelectorWindows extends FileSelectorPlatform {
     String? confirmButtonText,
   }) async {
     final FileDialogResult result = await _hostApi.showOpenDialog(
-      SelectionOptions(allowMultiple: true, selectFolders: true, allowedTypes: <TypeGroup>[]),
+      SelectionOptions(
+        allowMultiple: true,
+        selectFolders: true,
+        allowedTypes: <TypeGroup>[],
+      ),
       initialDirectory,
       confirmButtonText,
     );
@@ -123,6 +136,9 @@ List<TypeGroup> _typeGroupsFromXTypeGroups(List<XTypeGroup>? xtypes) {
         'anything is non-empty.',
       );
     }
-    return TypeGroup(label: xtype.label ?? '', extensions: xtype.extensions ?? <String>[]);
+    return TypeGroup(
+      label: xtype.label ?? '',
+      extensions: xtype.extensions ?? <String>[],
+    );
   }).toList();
 }

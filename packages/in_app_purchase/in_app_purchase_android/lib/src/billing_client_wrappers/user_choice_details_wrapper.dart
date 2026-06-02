@@ -33,8 +33,11 @@ class UserChoiceDetailsWrapper {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(originalExternalTransactionId, externalTransactionToken, products.hashCode);
+  int get hashCode => Object.hash(
+    originalExternalTransactionId,
+    externalTransactionToken,
+    products.hashCode,
+  );
 
   /// Returns the external transaction Id of the originating subscription, if
   /// the purchase is a subscription upgrade/downgrade.

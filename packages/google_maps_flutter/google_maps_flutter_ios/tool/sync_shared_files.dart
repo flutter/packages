@@ -18,15 +18,23 @@ import 'utils.dart';
 const String _sharedSourceRootName = 'google_maps_flutter_ios_shared_code';
 
 Future<void> main(List<String> args) async {
-  final Directory packageRoot = Directory(p.dirname(Platform.script.path)).parent;
+  final Directory packageRoot = Directory(
+    p.dirname(Platform.script.path),
+  ).parent;
   final String packageName = p.basename(packageRoot.path);
-  final sharedSourceRoot = Directory(p.join(packageRoot.parent.path, _sharedSourceRootName));
+  final sharedSourceRoot = Directory(
+    p.join(packageRoot.parent.path, _sharedSourceRootName),
+  );
 
   _syncSharedFiles(packageRoot, packageName, sharedSourceRoot);
   _reportUnsharedFiles(packageRoot, packageName, sharedSourceRoot);
 }
 
-void _syncSharedFiles(Directory packageRoot, String packageName, Directory sharedSourceRoot) {
+void _syncSharedFiles(
+  Directory packageRoot,
+  String packageName,
+  Directory sharedSourceRoot,
+) {
   final List<String> otherImplementationPackages = sharedSourceRoot.parent
       .listSync()
       .whereType<Directory>()
@@ -41,11 +49,16 @@ void _syncSharedFiles(Directory packageRoot, String packageName, Directory share
 
   final copiedFiles = <String>[];
   final missingFiles = <String>[];
-  for (final FileSystemEntity entity in sharedSourceRoot.listSync(recursive: true)) {
+  for (final FileSystemEntity entity in sharedSourceRoot.listSync(
+    recursive: true,
+  )) {
     if (entity is! File) {
       continue;
     }
-    final String relativePath = p.relative(entity.path, from: sharedSourceRoot.path);
+    final String relativePath = p.relative(
+      entity.path,
+      from: sharedSourceRoot.path,
+    );
     // The shared source README.md is not part of the shared source of truth,
     // just an explanation of this source-sharing system.
     if (relativePath == 'README.md') {
@@ -75,7 +88,10 @@ void _syncSharedFiles(Directory packageRoot, String packageName, Directory share
         final String otherPackagePath = p.join(
           packageRoot.parent.path,
           otherPackageName,
-          packageRelativePathForSharedSourceRelativePath(otherPackageName, relativePath),
+          packageRelativePathForSharedSourceRelativePath(
+            otherPackageName,
+            relativePath,
+          ),
         );
         _syncFile(packageFile, otherPackagePath, otherPackageName);
       }
@@ -89,7 +105,9 @@ void _syncSharedFiles(Directory packageRoot, String packageName, Directory share
     }
   }
   if (missingFiles.isNotEmpty) {
-    print('This package is missing the following files from the shared source:');
+    print(
+      'This package is missing the following files from the shared source:',
+    );
     for (final file in missingFiles) {
       print('  $file');
     }
@@ -105,7 +123,11 @@ void _syncSharedFiles(Directory packageRoot, String packageName, Directory share
 /// If the file needs special handling of package names that appear within the
 /// contents of the file, it will update the package name in the file to match
 /// the destination package name.
-void _syncFile(File source, String destinationPath, String destinationPackageName) {
+void _syncFile(
+  File source,
+  String destinationPath,
+  String destinationPackageName,
+) {
   source.copySync(destinationPath);
   if (<String>[
     // The Pigeon definition file has output paths that must use the
@@ -114,7 +136,10 @@ void _syncFile(File source, String destinationPath, String destinationPackageNam
     // The mock needs to import the package.
     '.mocks.dart',
   ].any((pattern) => source.absolute.path.contains(pattern))) {
-    updatePackageNameInPathReferences(File(destinationPath), destinationPackageName);
+    updatePackageNameInPathReferences(
+      File(destinationPath),
+      destinationPackageName,
+    );
   }
   // Native unit tests need to import the Swift package.
   if (source.absolute.path.contains('/RunnerTests/')) {
@@ -122,7 +147,11 @@ void _syncFile(File source, String destinationPath, String destinationPackageNam
   }
 }
 
-void _reportUnsharedFiles(Directory packageRoot, String packageName, Directory sharedSourceRoot) {
+void _reportUnsharedFiles(
+  Directory packageRoot,
+  String packageName,
+  Directory sharedSourceRoot,
+) {
   final List<String> unsharedFiles = unexpectedUnsharedSourceFiles(
     packageRoot,
     packageName,

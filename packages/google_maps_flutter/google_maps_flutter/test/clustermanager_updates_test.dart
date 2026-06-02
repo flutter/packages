@@ -37,8 +37,14 @@ void main() {
     final ClusterManager initializedHeatmap =
         map.clusterManagerUpdates.last.clusterManagersToAdd.first;
     expect(initializedHeatmap, equals(cm1));
-    expect(map.clusterManagerUpdates.last.clusterManagerIdsToRemove.isEmpty, true);
-    expect(map.clusterManagerUpdates.last.clusterManagersToChange.isEmpty, true);
+    expect(
+      map.clusterManagerUpdates.last.clusterManagerIdsToRemove.isEmpty,
+      true,
+    );
+    expect(
+      map.clusterManagerUpdates.last.clusterManagersToChange.isEmpty,
+      true,
+    );
   });
 
   testWidgets('Adding a cluster manager', (WidgetTester tester) async {
@@ -46,7 +52,9 @@ void main() {
     const cm2 = ClusterManager(clusterManagerId: ClusterManagerId('cm_2'));
 
     await tester.pumpWidget(_mapWithClusterManagers(<ClusterManager>{cm1}));
-    await tester.pumpWidget(_mapWithClusterManagers(<ClusterManager>{cm1, cm2}));
+    await tester.pumpWidget(
+      _mapWithClusterManagers(<ClusterManager>{cm1, cm2}),
+    );
 
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
     expect(map.clusterManagerUpdates.last.clusterManagersToAdd.length, 1);
@@ -55,9 +63,15 @@ void main() {
         map.clusterManagerUpdates.last.clusterManagersToAdd.first;
     expect(addedClusterManager, equals(cm2));
 
-    expect(map.clusterManagerUpdates.last.clusterManagerIdsToRemove.isEmpty, true);
+    expect(
+      map.clusterManagerUpdates.last.clusterManagerIdsToRemove.isEmpty,
+      true,
+    );
 
-    expect(map.clusterManagerUpdates.last.clusterManagersToChange.isEmpty, true);
+    expect(
+      map.clusterManagerUpdates.last.clusterManagersToChange.isEmpty,
+      true,
+    );
   });
 
   testWidgets('Removing a cluster manager', (WidgetTester tester) async {
@@ -73,7 +87,10 @@ void main() {
       equals(cm1.clusterManagerId),
     );
 
-    expect(map.clusterManagerUpdates.last.clusterManagersToChange.isEmpty, true);
+    expect(
+      map.clusterManagerUpdates.last.clusterManagersToChange.isEmpty,
+      true,
+    );
     expect(map.clusterManagerUpdates.last.clusterManagersToAdd.isEmpty, true);
   });
 
@@ -82,7 +99,9 @@ void main() {
   // properties to change, it should not trigger any updates. If new properties
   // are added to [ClusterManager] in the future, this test will need to be
   // updated accordingly to check that changes are triggered.
-  testWidgets('Updating a cluster manager with same data', (WidgetTester tester) async {
+  testWidgets('Updating a cluster manager with same data', (
+    WidgetTester tester,
+  ) async {
     const cm1 = ClusterManager(clusterManagerId: ClusterManagerId('cm_1'));
     const cm2 = ClusterManager(clusterManagerId: ClusterManagerId('cm_1'));
 
@@ -93,8 +112,14 @@ void main() {
 
     // As cluster manager does not have any properties to change,
     // it should not populate the clusterManagersToChange set.
-    expect(map.clusterManagerUpdates.last.clusterManagersToChange.isEmpty, true);
-    expect(map.clusterManagerUpdates.last.clusterManagerIdsToRemove.isEmpty, true);
+    expect(
+      map.clusterManagerUpdates.last.clusterManagersToChange.isEmpty,
+      true,
+    );
+    expect(
+      map.clusterManagerUpdates.last.clusterManagerIdsToRemove.isEmpty,
+      true,
+    );
     expect(map.clusterManagerUpdates.last.clusterManagersToAdd.isEmpty, true);
   });
 
@@ -119,7 +144,10 @@ void main() {
     // As cluster manager does not have any properties to change,
     // it should not populate the clusterManagersToChange set.
     expect(map.clusterManagerUpdates.last.clusterManagersToAdd.isEmpty, true);
-    expect(map.clusterManagerUpdates.last.clusterManagerIdsToRemove.isEmpty, true);
+    expect(
+      map.clusterManagerUpdates.last.clusterManagerIdsToRemove.isEmpty,
+      true,
+    );
     expect(map.clusterManagerUpdates.last.clusterManagersToAdd.isEmpty, true);
   });
 
@@ -131,7 +159,9 @@ void main() {
   testWidgets('Partial update with same data', (WidgetTester tester) async {
     const cm1 = ClusterManager(clusterManagerId: ClusterManagerId('heatmap_1'));
     const cm2 = ClusterManager(clusterManagerId: ClusterManagerId('heatmap_2'));
-    var cm3 = const ClusterManager(clusterManagerId: ClusterManagerId('heatmap_3'));
+    var cm3 = const ClusterManager(
+      clusterManagerId: ClusterManagerId('heatmap_3'),
+    );
     final prev = <ClusterManager>{cm1, cm2, cm3};
     cm3 = const ClusterManager(clusterManagerId: ClusterManagerId('heatmap_3'));
     final cur = <ClusterManager>{cm1, cm2, cm3};
@@ -143,8 +173,14 @@ void main() {
 
     // As cluster manager does not have any properties to change,
     // it should not populate the clusterManagersToChange set.
-    expect(map.clusterManagerUpdates.last.clusterManagersToChange.isEmpty, true);
-    expect(map.clusterManagerUpdates.last.clusterManagerIdsToRemove.isEmpty, true);
+    expect(
+      map.clusterManagerUpdates.last.clusterManagersToChange.isEmpty,
+      true,
+    );
+    expect(
+      map.clusterManagerUpdates.last.clusterManagerIdsToRemove.isEmpty,
+      true,
+    );
     expect(map.clusterManagerUpdates.last.clusterManagersToAdd.isEmpty, true);
   });
 }

@@ -14,7 +14,8 @@ import 'android_webview_controller.dart';
 /// value to avoid breaking changes. See [PlatformWebViewCookieManagerCreationParams] for
 /// more information.
 @immutable
-class AndroidWebViewCookieManagerCreationParams extends PlatformWebViewCookieManagerCreationParams {
+class AndroidWebViewCookieManagerCreationParams
+    extends PlatformWebViewCookieManagerCreationParams {
   /// Creates a new [AndroidWebViewCookieManagerCreationParams] instance.
   const AndroidWebViewCookieManagerCreationParams._(
     // This parameter prevents breaking changes later.
@@ -55,7 +56,9 @@ class AndroidWebViewCookieManager extends PlatformWebViewCookieManager {
   @override
   Future<void> setCookie(WebViewCookie cookie) {
     if (!_isValidPath(cookie.path)) {
-      throw ArgumentError('The path property for the provided cookie was not given a legal value.');
+      throw ArgumentError(
+        'The path property for the provided cookie was not given a legal value.',
+      );
     }
     return _cookieManager.setCookie(
       cookie.domain,
@@ -76,10 +79,12 @@ class AndroidWebViewCookieManager extends PlatformWebViewCookieManager {
   /// Sets whether the WebView should allow third party cookies to be set.
   ///
   /// Defaults to false.
-  Future<void> setAcceptThirdPartyCookies(AndroidWebViewController controller, bool accept) {
-    final WebView webView = PigeonInstanceManager.instance.getInstanceWithWeakReference(
-      controller.webViewIdentifier,
-    )!;
+  Future<void> setAcceptThirdPartyCookies(
+    AndroidWebViewController controller,
+    bool accept,
+  ) {
+    final WebView webView = PigeonInstanceManager.instance
+        .getInstanceWithWeakReference(controller.webViewIdentifier)!;
     return _cookieManager.setAcceptThirdPartyCookies(webView, accept);
   }
 
@@ -94,7 +99,11 @@ class AndroidWebViewCookieManager extends PlatformWebViewCookieManager {
     for (final String cookie in cookies.split('; ')) {
       final List<String> cookieValue = cookie.split('=');
       webViewCookies.add(
-        WebViewCookie(name: cookieValue.first, value: cookieValue.last, domain: url.toString()),
+        WebViewCookie(
+          name: cookieValue.first,
+          value: cookieValue.last,
+          domain: url.toString(),
+        ),
       );
     }
 

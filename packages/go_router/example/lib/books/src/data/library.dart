@@ -19,7 +19,12 @@ final Library libraryInstance = Library()
     isPopular: false,
     isNew: true,
   )
-  ..addBook(title: 'Kindred', authorName: 'Octavia E. Butler', isPopular: true, isNew: false)
+  ..addBook(
+    title: 'Kindred',
+    authorName: 'Octavia E. Butler',
+    isPopular: true,
+    isNew: false,
+  )
   ..addBook(
     title: 'The Lathe of Heaven',
     authorName: 'Ursula K. Le Guin',
@@ -64,8 +69,12 @@ class Library {
   }
 
   /// The list of popular books in the library.
-  List<Book> get popularBooks => <Book>[...allBooks.where((Book book) => book.isPopular)];
+  List<Book> get popularBooks => <Book>[
+    ...allBooks.where((Book book) => book.isPopular),
+  ];
 
   /// The list of new books in the library.
-  List<Book> get newBooks => <Book>[...allBooks.where((Book book) => book.isNew)];
+  List<Book> get newBooks => <Book>[
+    ...allBooks.where((Book book) => book.isNew),
+  ];
 }

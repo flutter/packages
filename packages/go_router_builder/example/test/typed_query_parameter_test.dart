@@ -33,7 +33,11 @@ void main() {
 
     await tester.tap(find.text('intFieldWithSpace:'));
     await tester.pumpAndSettle();
-    expect(find.text('1'), findsExactly(2), reason: 'intField and intFieldWithSpace are both 1');
+    expect(
+      find.text('1'),
+      findsExactly(2),
+      reason: 'intField and intFieldWithSpace are both 1',
+    );
     expect(find.text('2'), findsOne);
   });
 

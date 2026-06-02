@@ -14,7 +14,9 @@ import 'fake_google_maps_flutter_platform.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('Subscriptions are canceled on dispose', (WidgetTester tester) async {
+  testWidgets('Subscriptions are canceled on dispose', (
+    WidgetTester tester,
+  ) async {
     final platform = FakeGoogleMapsFlutterPlatform();
 
     GoogleMapsFlutterPlatform.instance = platform;
@@ -28,7 +30,9 @@ void main() {
       initialCameraPosition: const CameraPosition(target: LatLng(0, 0)),
     );
 
-    await tester.pumpWidget(Directionality(textDirection: TextDirection.ltr, child: googleMap));
+    await tester.pumpWidget(
+      Directionality(textDirection: TextDirection.ltr, child: googleMap),
+    );
 
     await tester.pump();
 

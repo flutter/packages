@@ -23,7 +23,10 @@ class CustomParameter {
 
   static CustomParameter decode(String value) {
     final List<String> parts = value.split(',');
-    return CustomParameter(valueString: parts[0], valueInt: int.parse(parts[1]));
+    return CustomParameter(
+      valueString: parts[0],
+      valueInt: int.parse(parts[1]),
+    );
   }
 
   static bool compare(CustomParameter a, CustomParameter b) {
@@ -35,16 +38,21 @@ class App extends StatelessWidget {
   App({super.key});
 
   @override
-  Widget build(BuildContext context) => MaterialApp.router(routerConfig: _router);
+  Widget build(BuildContext context) =>
+      MaterialApp.router(routerConfig: _router);
 
-  final GoRouter _router = GoRouter(initialLocation: '/int-route', routes: $appRoutes);
+  final GoRouter _router = GoRouter(
+    initialLocation: '/int-route',
+    routes: $appRoutes,
+  );
 }
 
 @TypedGoRoute<IntRoute>(path: '/int-route')
 class IntRoute extends GoRouteData with $IntRoute {
   IntRoute({
     @TypedQueryParameter(name: 'intField') this.intField,
-    @TypedQueryParameter(name: 'int_field_with_default_value') this.intFieldWithDefaultValue = 1,
+    @TypedQueryParameter(name: 'int_field_with_default_value')
+    this.intFieldWithDefaultValue = 1,
     @TypedQueryParameter(name: 'int field') this.intFieldWithSpace,
     @TypedQueryParameter<CustomParameter>(
       encoder: CustomParameter.encode,
@@ -56,7 +64,10 @@ class IntRoute extends GoRouteData with $IntRoute {
       decoder: CustomParameter.decode,
       compare: CustomParameter.compare,
     )
-    this.customFieldWithDefaultValue = const CustomParameter(valueString: 'default', valueInt: 0),
+    this.customFieldWithDefaultValue = const CustomParameter(
+      valueString: 'default',
+      valueInt: 0,
+    ),
   });
 
   final int? intField;
@@ -92,7 +103,9 @@ class Screen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Go router with custom URI parameter names')),
+    appBar: AppBar(
+      title: const Text('Go router with custom URI parameter names'),
+    ),
     body: Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -144,7 +157,9 @@ class Screen extends StatelessWidget {
           ),
           ListTile(
             title: const Text('customField:'),
-            subtitle: Text(customField == null ? '' : CustomParameter.encode(customField!)),
+            subtitle: Text(
+              customField == null ? '' : CustomParameter.encode(customField!),
+            ),
             trailing: const Icon(Icons.add),
             onTap: () {
               final newValue = CustomParameter(

@@ -17,22 +17,29 @@ class App extends StatelessWidget {
   App({super.key});
 
   @override
-  Widget build(BuildContext context) => MaterialApp.router(routerConfig: _router);
+  Widget build(BuildContext context) =>
+      MaterialApp.router(routerConfig: _router);
 
-  final GoRouter _router = GoRouter(routes: $appRoutes, initialLocation: '/home');
+  final GoRouter _router = GoRouter(
+    routes: $appRoutes,
+    initialLocation: '/home',
+  );
 }
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('foo')));
+  Widget build(BuildContext context) =>
+      Scaffold(appBar: AppBar(title: const Text('foo')));
 }
 
 @TypedStatefulShellRoute<MainShellRouteData>(
   branches: <TypedStatefulShellBranch<StatefulShellBranchData>>[
     TypedStatefulShellBranch<HomeShellBranchData>(
-      routes: <TypedRoute<RouteData>>[TypedGoRoute<HomeRouteData>(path: '/home')],
+      routes: <TypedRoute<RouteData>>[
+        TypedGoRoute<HomeRouteData>(path: '/home'),
+      ],
     ),
     TypedStatefulShellBranch<NotificationsShellBranchData>(
       routes: <TypedRoute<RouteData>>[
@@ -40,7 +47,9 @@ class HomeScreen extends StatelessWidget {
       ],
     ),
     TypedStatefulShellBranch<OrdersShellBranchData>(
-      routes: <TypedRoute<RouteData>>[TypedGoRoute<OrdersRouteData>(path: '/orders')],
+      routes: <TypedRoute<RouteData>>[
+        TypedGoRoute<OrdersRouteData>(path: '/orders'),
+      ],
     ),
   ],
 )
@@ -106,7 +115,10 @@ class MainPageView extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Notifications'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            label: 'Notifications',
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Orders'),
         ],
         currentIndex: navigationShell.currentIndex,
@@ -116,7 +128,10 @@ class MainPageView extends StatelessWidget {
   }
 
   void _onTap(BuildContext context, int index) {
-    navigationShell.goBranch(index, initialLocation: index == navigationShell.currentIndex);
+    navigationShell.goBranch(
+      index,
+      initialLocation: index == navigationShell.currentIndex,
+    );
   }
 }
 

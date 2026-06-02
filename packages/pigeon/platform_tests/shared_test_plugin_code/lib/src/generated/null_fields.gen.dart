@@ -38,7 +38,11 @@ Object? _extractReplyValueOrThrow(
   return replyList.firstOrNull;
 }
 
-List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse({
+  Object? result,
+  PlatformException? error,
+  bool empty = false,
+}) {
   if (empty) {
     return <Object?>[];
   }
@@ -60,7 +64,9 @@ bool _deepEquals(Object? a, Object? b) {
   }
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed.every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed.every(
+          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
+        );
   }
   if (a is Map && b is Map) {
     if (a.length != b.length) {
@@ -128,7 +134,10 @@ class NullFieldsSearchRequest {
 
   static NullFieldsSearchRequest decode(Object result) {
     result as List<Object?>;
-    return NullFieldsSearchRequest(query: result[0] as String?, identifier: result[1]! as int);
+    return NullFieldsSearchRequest(
+      query: result[0] as String?,
+      identifier: result[1]! as int,
+    );
   }
 
   @override
@@ -140,7 +149,8 @@ class NullFieldsSearchRequest {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(query, other.query) && _deepEquals(identifier, other.identifier);
+    return _deepEquals(query, other.query) &&
+        _deepEquals(identifier, other.identifier);
   }
 
   @override
@@ -149,7 +159,13 @@ class NullFieldsSearchRequest {
 }
 
 class NullFieldsSearchReply {
-  NullFieldsSearchReply({this.result, this.error, this.indices, this.request, this.type});
+  NullFieldsSearchReply({
+    this.result,
+    this.error,
+    this.indices,
+    this.request,
+    this.type,
+  });
 
   String? result;
 
@@ -242,11 +258,13 @@ class NullFieldsHostApi {
   /// Constructor for [NullFieldsHostApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  NullFieldsHostApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-    : pigeonVar_binaryMessenger = binaryMessenger,
-      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
-          ? '.$messageChannelSuffix'
-          : '';
+  NullFieldsHostApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -261,7 +279,9 @@ class NullFieldsHostApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[nested]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[nested],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -283,7 +303,9 @@ abstract class NullFieldsFlutterApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) {
-    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty
+        ? '.$messageChannelSuffix'
+        : '';
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.NullFieldsFlutterApi.search$messageChannelSuffix',
@@ -295,7 +317,8 @@ abstract class NullFieldsFlutterApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final NullFieldsSearchRequest arg_request = args[0]! as NullFieldsSearchRequest;
+          final NullFieldsSearchRequest arg_request =
+              args[0]! as NullFieldsSearchRequest;
           try {
             final NullFieldsSearchReply output = api.search(arg_request);
             return wrapResponse(result: output);

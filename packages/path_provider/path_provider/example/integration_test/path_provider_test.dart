@@ -83,12 +83,15 @@ void main() {
   ];
 
   for (final type in allDirs) {
-    testWidgets('getExternalStorageDirectories (type: $type)', (WidgetTester tester) async {
+    testWidgets('getExternalStorageDirectories (type: $type)', (
+      WidgetTester tester,
+    ) async {
       if (Platform.isIOS) {
         final Future<List<Directory>?> result = getExternalStorageDirectories();
         await expectLater(result, throwsA(isInstanceOf<UnsupportedError>()));
       } else if (Platform.isAndroid) {
-        final List<Directory>? directories = await getExternalStorageDirectories(type: type);
+        final List<Directory>? directories =
+            await getExternalStorageDirectories(type: type);
         expect(directories, isNotNull);
         for (final Directory result in directories!) {
           _verifySampleFile(result, '$type');
@@ -126,7 +129,10 @@ void _verifySampleFile(Directory? directory, String name) {
   // This check intentionally avoids using Directory.listSync on Android due to
   // https://github.com/dart-lang/sdk/issues/54287.
   if (Platform.isAndroid) {
-    expect(Process.runSync('ls', <String>[directory.path]).stdout, contains(name));
+    expect(
+      Process.runSync('ls', <String>[directory.path]).stdout,
+      contains(name),
+    );
   } else {
     expect(directory.listSync(), isNotEmpty);
   }

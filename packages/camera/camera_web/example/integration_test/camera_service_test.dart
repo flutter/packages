@@ -44,7 +44,8 @@ void main() {
 
       window = createJSInteropWrapper(mockWindow) as web.Window;
       navigator = createJSInteropWrapper(mockNavigator) as web.Navigator;
-      mediaDevices = createJSInteropWrapper(mockMediaDevices) as web.MediaDevices;
+      mediaDevices =
+          createJSInteropWrapper(mockMediaDevices) as web.MediaDevices;
 
       mockWindow.navigator = navigator;
       mockNavigator.mediaDevices = mediaDevices;
@@ -53,9 +54,10 @@ void main() {
 
       // Mock JsUtil to return the real getProperty from dart:js_util.
       when(jsUtil.getProperty(any, any)).thenAnswer(
-        (Invocation invocation) => (invocation.positionalArguments[0] as JSObject).getProperty(
-          invocation.positionalArguments[1] as JSAny,
-        ),
+        (Invocation invocation) =>
+            (invocation.positionalArguments[0] as JSObject).getProperty(
+              invocation.positionalArguments[1] as JSAny,
+            ),
       );
 
       cameraService = CameraService()..window = window;
@@ -65,10 +67,12 @@ void main() {
       testWidgets('calls MediaDevices.getUserMedia '
           'with provided options', (WidgetTester tester) async {
         late final web.MediaStreamConstraints? capturedConstraints;
-        mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? constraints]) {
+        mockMediaDevices
+            .getUserMedia = ([web.MediaStreamConstraints? constraints]) {
           capturedConstraints = constraints;
           final stream =
-              createJSInteropWrapper(FakeMediaStream(<web.MediaStreamTrack>[])) as web.MediaStream;
+              createJSInteropWrapper(FakeMediaStream(<web.MediaStreamTrack>[]))
+                  as web.MediaStream;
           return Future<web.MediaStream>.value(stream).toJS;
         }.toJS;
 
@@ -102,11 +106,22 @@ void main() {
           }.toJS;
 
           expect(
-            () => cameraService.getMediaStreamForOptions(const CameraOptions(), cameraId: cameraId),
+            () => cameraService.getMediaStreamForOptions(
+              const CameraOptions(),
+              cameraId: cameraId,
+            ),
             throwsA(
               isA<CameraWebException>()
-                  .having((CameraWebException e) => e.cameraId, 'cameraId', cameraId)
-                  .having((CameraWebException e) => e.code, 'code', CameraErrorCode.notFound),
+                  .having(
+                    (CameraWebException e) => e.cameraId,
+                    'cameraId',
+                    cameraId,
+                  )
+                  .having(
+                    (CameraWebException e) => e.code,
+                    'code',
+                    CameraErrorCode.notFound,
+                  ),
             ),
           );
         });
@@ -121,11 +136,22 @@ void main() {
           }.toJS;
 
           expect(
-            () => cameraService.getMediaStreamForOptions(const CameraOptions(), cameraId: cameraId),
+            () => cameraService.getMediaStreamForOptions(
+              const CameraOptions(),
+              cameraId: cameraId,
+            ),
             throwsA(
               isA<CameraWebException>()
-                  .having((CameraWebException e) => e.cameraId, 'cameraId', cameraId)
-                  .having((CameraWebException e) => e.code, 'code', CameraErrorCode.notFound),
+                  .having(
+                    (CameraWebException e) => e.cameraId,
+                    'cameraId',
+                    cameraId,
+                  )
+                  .having(
+                    (CameraWebException e) => e.code,
+                    'code',
+                    CameraErrorCode.notFound,
+                  ),
             ),
           );
         });
@@ -139,11 +165,22 @@ void main() {
             return Future<web.MediaStream>.value(web.MediaStream()).toJS;
           }.toJS;
           expect(
-            () => cameraService.getMediaStreamForOptions(const CameraOptions(), cameraId: cameraId),
+            () => cameraService.getMediaStreamForOptions(
+              const CameraOptions(),
+              cameraId: cameraId,
+            ),
             throwsA(
               isA<CameraWebException>()
-                  .having((CameraWebException e) => e.cameraId, 'cameraId', cameraId)
-                  .having((CameraWebException e) => e.code, 'code', CameraErrorCode.notReadable),
+                  .having(
+                    (CameraWebException e) => e.cameraId,
+                    'cameraId',
+                    cameraId,
+                  )
+                  .having(
+                    (CameraWebException e) => e.code,
+                    'code',
+                    CameraErrorCode.notReadable,
+                  ),
             ),
           );
         });
@@ -158,11 +195,22 @@ void main() {
           }.toJS;
 
           expect(
-            () => cameraService.getMediaStreamForOptions(const CameraOptions(), cameraId: cameraId),
+            () => cameraService.getMediaStreamForOptions(
+              const CameraOptions(),
+              cameraId: cameraId,
+            ),
             throwsA(
               isA<CameraWebException>()
-                  .having((CameraWebException e) => e.cameraId, 'cameraId', cameraId)
-                  .having((CameraWebException e) => e.code, 'code', CameraErrorCode.notReadable),
+                  .having(
+                    (CameraWebException e) => e.cameraId,
+                    'cameraId',
+                    cameraId,
+                  )
+                  .having(
+                    (CameraWebException e) => e.code,
+                    'code',
+                    CameraErrorCode.notReadable,
+                  ),
             ),
           );
         });
@@ -177,10 +225,17 @@ void main() {
           }.toJS;
 
           expect(
-            () => cameraService.getMediaStreamForOptions(const CameraOptions(), cameraId: cameraId),
+            () => cameraService.getMediaStreamForOptions(
+              const CameraOptions(),
+              cameraId: cameraId,
+            ),
             throwsA(
               isA<CameraWebException>()
-                  .having((CameraWebException e) => e.cameraId, 'cameraId', cameraId)
+                  .having(
+                    (CameraWebException e) => e.cameraId,
+                    'cameraId',
+                    cameraId,
+                  )
                   .having(
                     (CameraWebException e) => e.code,
                     'code',
@@ -200,10 +255,17 @@ void main() {
           }.toJS;
 
           expect(
-            () => cameraService.getMediaStreamForOptions(const CameraOptions(), cameraId: cameraId),
+            () => cameraService.getMediaStreamForOptions(
+              const CameraOptions(),
+              cameraId: cameraId,
+            ),
             throwsA(
               isA<CameraWebException>()
-                  .having((CameraWebException e) => e.cameraId, 'cameraId', cameraId)
+                  .having(
+                    (CameraWebException e) => e.cameraId,
+                    'cameraId',
+                    cameraId,
+                  )
                   .having(
                     (CameraWebException e) => e.code,
                     'code',
@@ -223,10 +285,17 @@ void main() {
           }.toJS;
 
           expect(
-            () => cameraService.getMediaStreamForOptions(const CameraOptions(), cameraId: cameraId),
+            () => cameraService.getMediaStreamForOptions(
+              const CameraOptions(),
+              cameraId: cameraId,
+            ),
             throwsA(
               isA<CameraWebException>()
-                  .having((CameraWebException e) => e.cameraId, 'cameraId', cameraId)
+                  .having(
+                    (CameraWebException e) => e.cameraId,
+                    'cameraId',
+                    cameraId,
+                  )
                   .having(
                     (CameraWebException e) => e.code,
                     'code',
@@ -246,10 +315,17 @@ void main() {
           }.toJS;
 
           expect(
-            () => cameraService.getMediaStreamForOptions(const CameraOptions(), cameraId: cameraId),
+            () => cameraService.getMediaStreamForOptions(
+              const CameraOptions(),
+              cameraId: cameraId,
+            ),
             throwsA(
               isA<CameraWebException>()
-                  .having((CameraWebException e) => e.cameraId, 'cameraId', cameraId)
+                  .having(
+                    (CameraWebException e) => e.cameraId,
+                    'cameraId',
+                    cameraId,
+                  )
                   .having(
                     (CameraWebException e) => e.code,
                     'code',
@@ -269,11 +345,22 @@ void main() {
           }.toJS;
 
           expect(
-            () => cameraService.getMediaStreamForOptions(const CameraOptions(), cameraId: cameraId),
+            () => cameraService.getMediaStreamForOptions(
+              const CameraOptions(),
+              cameraId: cameraId,
+            ),
             throwsA(
               isA<CameraWebException>()
-                  .having((CameraWebException e) => e.cameraId, 'cameraId', cameraId)
-                  .having((CameraWebException e) => e.code, 'code', CameraErrorCode.type),
+                  .having(
+                    (CameraWebException e) => e.cameraId,
+                    'cameraId',
+                    cameraId,
+                  )
+                  .having(
+                    (CameraWebException e) => e.code,
+                    'code',
+                    CameraErrorCode.type,
+                  ),
             ),
           );
         });
@@ -288,11 +375,22 @@ void main() {
           }.toJS;
 
           expect(
-            () => cameraService.getMediaStreamForOptions(const CameraOptions(), cameraId: cameraId),
+            () => cameraService.getMediaStreamForOptions(
+              const CameraOptions(),
+              cameraId: cameraId,
+            ),
             throwsA(
               isA<CameraWebException>()
-                  .having((CameraWebException e) => e.cameraId, 'cameraId', cameraId)
-                  .having((CameraWebException e) => e.code, 'code', CameraErrorCode.abort),
+                  .having(
+                    (CameraWebException e) => e.cameraId,
+                    'cameraId',
+                    cameraId,
+                  )
+                  .having(
+                    (CameraWebException e) => e.code,
+                    'code',
+                    CameraErrorCode.abort,
+                  ),
             ),
           );
         });
@@ -307,11 +405,22 @@ void main() {
           }.toJS;
 
           expect(
-            () => cameraService.getMediaStreamForOptions(const CameraOptions(), cameraId: cameraId),
+            () => cameraService.getMediaStreamForOptions(
+              const CameraOptions(),
+              cameraId: cameraId,
+            ),
             throwsA(
               isA<CameraWebException>()
-                  .having((CameraWebException e) => e.cameraId, 'cameraId', cameraId)
-                  .having((CameraWebException e) => e.code, 'code', CameraErrorCode.security),
+                  .having(
+                    (CameraWebException e) => e.cameraId,
+                    'cameraId',
+                    cameraId,
+                  )
+                  .having(
+                    (CameraWebException e) => e.code,
+                    'code',
+                    CameraErrorCode.security,
+                  ),
             ),
           );
         });
@@ -326,11 +435,22 @@ void main() {
           }.toJS;
 
           expect(
-            () => cameraService.getMediaStreamForOptions(const CameraOptions(), cameraId: cameraId),
+            () => cameraService.getMediaStreamForOptions(
+              const CameraOptions(),
+              cameraId: cameraId,
+            ),
             throwsA(
               isA<CameraWebException>()
-                  .having((CameraWebException e) => e.cameraId, 'cameraId', cameraId)
-                  .having((CameraWebException e) => e.code, 'code', CameraErrorCode.unknown),
+                  .having(
+                    (CameraWebException e) => e.cameraId,
+                    'cameraId',
+                    cameraId,
+                  )
+                  .having(
+                    (CameraWebException e) => e.code,
+                    'code',
+                    CameraErrorCode.unknown,
+                  ),
             ),
           );
         });
@@ -346,11 +466,22 @@ void main() {
           }.toJS;
 
           expect(
-            () => cameraService.getMediaStreamForOptions(const CameraOptions(), cameraId: cameraId),
+            () => cameraService.getMediaStreamForOptions(
+              const CameraOptions(),
+              cameraId: cameraId,
+            ),
             throwsA(
               isA<CameraWebException>()
-                  .having((CameraWebException e) => e.cameraId, 'cameraId', cameraId)
-                  .having((CameraWebException e) => e.code, 'code', CameraErrorCode.unknown),
+                  .having(
+                    (CameraWebException e) => e.cameraId,
+                    'cameraId',
+                    cameraId,
+                  )
+                  .having(
+                    (CameraWebException e) => e.code,
+                    'code',
+                    CameraErrorCode.unknown,
+                  ),
             ),
           );
         });
@@ -367,13 +498,15 @@ void main() {
         mockVideoTrack = MockMediaStreamTrack();
         videoTracks = <web.MediaStreamTrack>[
           createJSInteropWrapper(mockVideoTrack) as web.MediaStreamTrack,
-          createJSInteropWrapper(MockMediaStreamTrack()) as web.MediaStreamTrack,
+          createJSInteropWrapper(MockMediaStreamTrack())
+              as web.MediaStreamTrack,
         ];
 
         when(camera.textureId).thenReturn(0);
-        when(
-          camera.stream,
-        ).thenReturn(createJSInteropWrapper(FakeMediaStream(videoTracks)) as web.MediaStream);
+        when(camera.stream).thenReturn(
+          createJSInteropWrapper(FakeMediaStream(videoTracks))
+              as web.MediaStream,
+        );
 
         cameraService.jsUtil = jsUtil;
       });
@@ -416,7 +549,11 @@ void main() {
             () => cameraService.getZoomLevelCapabilityForCamera(camera),
             throwsA(
               isA<CameraWebException>()
-                  .having((CameraWebException e) => e.cameraId, 'cameraId', camera.textureId)
+                  .having(
+                    (CameraWebException e) => e.cameraId,
+                    'cameraId',
+                    camera.textureId,
+                  )
                   .having(
                     (CameraWebException e) => e.code,
                     'code',
@@ -427,22 +564,33 @@ void main() {
         });
 
         testWidgets('with notStarted error '
-            'when the camera stream has not been initialized', (WidgetTester tester) async {
+            'when the camera stream has not been initialized', (
+          WidgetTester tester,
+        ) async {
           mockMediaDevices.getSupportedConstraints = () {
             return web.MediaTrackSupportedConstraints(zoom: true);
           }.toJS;
 
           // Create a camera stream with no video tracks.
           when(camera.stream).thenReturn(
-            createJSInteropWrapper(FakeMediaStream(<web.MediaStreamTrack>[])) as web.MediaStream,
+            createJSInteropWrapper(FakeMediaStream(<web.MediaStreamTrack>[]))
+                as web.MediaStream,
           );
 
           expect(
             () => cameraService.getZoomLevelCapabilityForCamera(camera),
             throwsA(
               isA<CameraWebException>()
-                  .having((CameraWebException e) => e.cameraId, 'cameraId', camera.textureId)
-                  .having((CameraWebException e) => e.code, 'code', CameraErrorCode.notStarted),
+                  .having(
+                    (CameraWebException e) => e.cameraId,
+                    'cameraId',
+                    camera.textureId,
+                  )
+                  .having(
+                    (CameraWebException e) => e.code,
+                    'code',
+                    CameraErrorCode.notStarted,
+                  ),
             ),
           );
         });
@@ -461,7 +609,8 @@ void main() {
         }.toJS;
 
         final String? facingMode = cameraService.getFacingModeForVideoTrack(
-          createJSInteropWrapper(MockMediaStreamTrack()) as web.MediaStreamTrack,
+          createJSInteropWrapper(MockMediaStreamTrack())
+              as web.MediaStreamTrack,
         );
 
         expect(facingMode, isNull);
@@ -473,9 +622,12 @@ void main() {
 
         setUp(() {
           mockVideoTrack = MockMediaStreamTrack();
-          videoTrack = createJSInteropWrapper(mockVideoTrack) as web.MediaStreamTrack;
+          videoTrack =
+              createJSInteropWrapper(mockVideoTrack) as web.MediaStreamTrack;
 
-          when(jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS)).thenReturn(true);
+          when(
+            jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS),
+          ).thenReturn(true);
 
           mockMediaDevices.getSupportedConstraints = () {
             return web.MediaTrackSupportedConstraints(facingMode: true);
@@ -488,14 +640,18 @@ void main() {
             return web.MediaTrackSettings(facingMode: 'user');
           }.toJS;
 
-          final String? facingMode = cameraService.getFacingModeForVideoTrack(videoTrack);
+          final String? facingMode = cameraService.getFacingModeForVideoTrack(
+            videoTrack,
+          );
 
           expect(facingMode, equals('user'));
         });
 
         testWidgets('returns an appropriate facing mode '
             'based on the video track capabilities '
-            'when the facing mode setting is empty', (WidgetTester tester) async {
+            'when the facing mode setting is empty', (
+          WidgetTester tester,
+        ) async {
           mockVideoTrack.getSettings = () {
             return web.MediaTrackSettings(facingMode: '');
           }.toJS;
@@ -505,9 +661,13 @@ void main() {
             );
           }.toJS;
 
-          when(jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS)).thenReturn(true);
+          when(
+            jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS),
+          ).thenReturn(true);
 
-          final String? facingMode = cameraService.getFacingModeForVideoTrack(videoTrack);
+          final String? facingMode = cameraService.getFacingModeForVideoTrack(
+            videoTrack,
+          );
 
           expect(facingMode, equals('environment'));
         });
@@ -522,21 +682,29 @@ void main() {
             return web.MediaTrackCapabilities(facingMode: <JSString>[].toJS);
           }.toJS;
 
-          final String? facingMode = cameraService.getFacingModeForVideoTrack(videoTrack);
+          final String? facingMode = cameraService.getFacingModeForVideoTrack(
+            videoTrack,
+          );
 
           expect(facingMode, isNull);
         });
 
         testWidgets('returns null '
             'when the facing mode setting is empty and '
-            'the video track capabilities are not supported', (WidgetTester tester) async {
+            'the video track capabilities are not supported', (
+          WidgetTester tester,
+        ) async {
           mockVideoTrack.getSettings = () {
             return web.MediaTrackSettings(facingMode: '');
           }.toJS;
 
-          when(jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS)).thenReturn(false);
+          when(
+            jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS),
+          ).thenReturn(false);
 
-          final String? facingMode = cameraService.getFacingModeForVideoTrack(videoTrack);
+          final String? facingMode = cameraService.getFacingModeForVideoTrack(
+            videoTrack,
+          );
 
           expect(facingMode, isNull);
         });
@@ -545,16 +713,21 @@ void main() {
             'when the facing mode setting is empty and '
             'the facingMode capability is null', (WidgetTester tester) async {
           mockVideoTrack.getSettings = () {
-            return createJSInteropWrapper(FakeMediaTrackSettings()) as web.MediaTrackSettings;
+            return createJSInteropWrapper(FakeMediaTrackSettings())
+                as web.MediaTrackSettings;
           }.toJS;
           mockVideoTrack.getCapabilities = () {
             return createJSInteropWrapper(FakeMediaTrackCapabilities())
                 as web.MediaTrackCapabilities;
           }.toJS;
 
-          when(jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS)).thenReturn(true);
+          when(
+            jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS),
+          ).thenReturn(true);
 
-          final String? facingMode = cameraService.getFacingModeForVideoTrack(videoTrack);
+          final String? facingMode = cameraService.getFacingModeForVideoTrack(
+            videoTrack,
+          );
 
           expect(facingMode, isNull);
         });
@@ -598,7 +771,10 @@ void main() {
     group('mapFacingModeToCameraType', () {
       testWidgets('returns user '
           'when the facing mode is user', (WidgetTester tester) async {
-        expect(cameraService.mapFacingModeToCameraType('user'), equals(CameraType.user));
+        expect(
+          cameraService.mapFacingModeToCameraType('user'),
+          equals(CameraType.user),
+        );
       });
 
       testWidgets('returns environment '
@@ -611,12 +787,18 @@ void main() {
 
       testWidgets('returns user '
           'when the facing mode is left', (WidgetTester tester) async {
-        expect(cameraService.mapFacingModeToCameraType('left'), equals(CameraType.user));
+        expect(
+          cameraService.mapFacingModeToCameraType('left'),
+          equals(CameraType.user),
+        );
       });
 
       testWidgets('returns user '
           'when the facing mode is right', (WidgetTester tester) async {
-        expect(cameraService.mapFacingModeToCameraType('right'), equals(CameraType.user));
+        expect(
+          cameraService.mapFacingModeToCameraType('right'),
+          equals(CameraType.user),
+        );
       });
     });
 
@@ -630,7 +812,9 @@ void main() {
       });
 
       testWidgets('returns 4096x2160 '
-          'when the resolution preset is ultraHigh', (WidgetTester tester) async {
+          'when the resolution preset is ultraHigh', (
+        WidgetTester tester,
+      ) async {
         expect(
           cameraService.mapResolutionPresetToSize(ResolutionPreset.ultraHigh),
           equals(const Size(4096, 2160)),
@@ -638,7 +822,9 @@ void main() {
       });
 
       testWidgets('returns 1920x1080 '
-          'when the resolution preset is veryHigh', (WidgetTester tester) async {
+          'when the resolution preset is veryHigh', (
+        WidgetTester tester,
+      ) async {
         expect(
           cameraService.mapResolutionPresetToSize(ResolutionPreset.veryHigh),
           equals(const Size(1920, 1080)),
@@ -672,33 +858,49 @@ void main() {
 
     group('mapDeviceOrientationToOrientationType', () {
       testWidgets('returns portraitPrimary '
-          'when the device orientation is portraitUp', (WidgetTester tester) async {
+          'when the device orientation is portraitUp', (
+        WidgetTester tester,
+      ) async {
         expect(
-          cameraService.mapDeviceOrientationToOrientationType(DeviceOrientation.portraitUp),
+          cameraService.mapDeviceOrientationToOrientationType(
+            DeviceOrientation.portraitUp,
+          ),
           equals(OrientationType.portraitPrimary),
         );
       });
 
       testWidgets('returns landscapePrimary '
-          'when the device orientation is landscapeLeft', (WidgetTester tester) async {
+          'when the device orientation is landscapeLeft', (
+        WidgetTester tester,
+      ) async {
         expect(
-          cameraService.mapDeviceOrientationToOrientationType(DeviceOrientation.landscapeLeft),
+          cameraService.mapDeviceOrientationToOrientationType(
+            DeviceOrientation.landscapeLeft,
+          ),
           equals(OrientationType.landscapePrimary),
         );
       });
 
       testWidgets('returns portraitSecondary '
-          'when the device orientation is portraitDown', (WidgetTester tester) async {
+          'when the device orientation is portraitDown', (
+        WidgetTester tester,
+      ) async {
         expect(
-          cameraService.mapDeviceOrientationToOrientationType(DeviceOrientation.portraitDown),
+          cameraService.mapDeviceOrientationToOrientationType(
+            DeviceOrientation.portraitDown,
+          ),
           equals(OrientationType.portraitSecondary),
         );
       });
 
       testWidgets('returns landscapeSecondary '
-          'when the device orientation is landscapeRight', (WidgetTester tester) async {
+          'when the device orientation is landscapeRight', (
+        WidgetTester tester,
+      ) async {
         expect(
-          cameraService.mapDeviceOrientationToOrientationType(DeviceOrientation.landscapeRight),
+          cameraService.mapDeviceOrientationToOrientationType(
+            DeviceOrientation.landscapeRight,
+          ),
           equals(OrientationType.landscapeSecondary),
         );
       });
@@ -706,41 +908,61 @@ void main() {
 
     group('mapOrientationTypeToDeviceOrientation', () {
       testWidgets('returns portraitUp '
-          'when the orientation type is portraitPrimary', (WidgetTester tester) async {
+          'when the orientation type is portraitPrimary', (
+        WidgetTester tester,
+      ) async {
         expect(
-          cameraService.mapOrientationTypeToDeviceOrientation(OrientationType.portraitPrimary),
+          cameraService.mapOrientationTypeToDeviceOrientation(
+            OrientationType.portraitPrimary,
+          ),
           equals(DeviceOrientation.portraitUp),
         );
       });
 
       testWidgets('returns landscapeLeft '
-          'when the orientation type is landscapePrimary', (WidgetTester tester) async {
+          'when the orientation type is landscapePrimary', (
+        WidgetTester tester,
+      ) async {
         expect(
-          cameraService.mapOrientationTypeToDeviceOrientation(OrientationType.landscapePrimary),
+          cameraService.mapOrientationTypeToDeviceOrientation(
+            OrientationType.landscapePrimary,
+          ),
           equals(DeviceOrientation.landscapeLeft),
         );
       });
 
       testWidgets('returns portraitDown '
-          'when the orientation type is portraitSecondary', (WidgetTester tester) async {
+          'when the orientation type is portraitSecondary', (
+        WidgetTester tester,
+      ) async {
         expect(
-          cameraService.mapOrientationTypeToDeviceOrientation(OrientationType.portraitSecondary),
+          cameraService.mapOrientationTypeToDeviceOrientation(
+            OrientationType.portraitSecondary,
+          ),
           equals(DeviceOrientation.portraitDown),
         );
       });
 
       testWidgets('returns portraitDown '
-          'when the orientation type is portraitSecondary', (WidgetTester tester) async {
+          'when the orientation type is portraitSecondary', (
+        WidgetTester tester,
+      ) async {
         expect(
-          cameraService.mapOrientationTypeToDeviceOrientation(OrientationType.portraitSecondary),
+          cameraService.mapOrientationTypeToDeviceOrientation(
+            OrientationType.portraitSecondary,
+          ),
           equals(DeviceOrientation.portraitDown),
         );
       });
 
       testWidgets('returns landscapeRight '
-          'when the orientation type is landscapeSecondary', (WidgetTester tester) async {
+          'when the orientation type is landscapeSecondary', (
+        WidgetTester tester,
+      ) async {
         expect(
-          cameraService.mapOrientationTypeToDeviceOrientation(OrientationType.landscapeSecondary),
+          cameraService.mapOrientationTypeToDeviceOrientation(
+            OrientationType.landscapeSecondary,
+          ),
           equals(DeviceOrientation.landscapeRight),
         );
       });

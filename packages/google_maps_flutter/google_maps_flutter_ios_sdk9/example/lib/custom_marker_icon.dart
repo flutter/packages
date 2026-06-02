@@ -20,7 +20,9 @@ Future<ByteData> createCustomMarkerIconImage({required Size size}) async {
     size.height.floor(),
   );
 
-  final ByteData? bytes = await image.toByteData(format: ui.ImageByteFormat.png);
+  final ByteData? bytes = await image.toByteData(
+    format: ui.ImageByteFormat.png,
+  );
   return bytes!;
 }
 

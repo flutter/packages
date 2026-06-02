@@ -78,25 +78,33 @@ void runAllGroups(
   group('file name (or equivalent) sharedPreferencesAsyncOptions', () {
     final SharedPreferencesOptions sharedPreferencesAsyncOptions;
     if (Platform.isAndroid) {
-      sharedPreferencesAsyncOptions = const SharedPreferencesAsyncAndroidOptions(
-        backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
-        originalSharedPreferencesOptions: AndroidSharedPreferencesStoreOptions(
-          fileName: 'fileName',
-        ),
-      );
+      sharedPreferencesAsyncOptions =
+          const SharedPreferencesAsyncAndroidOptions(
+            backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
+            originalSharedPreferencesOptions:
+                AndroidSharedPreferencesStoreOptions(fileName: 'fileName'),
+          );
     } else if (Platform.isIOS || Platform.isMacOS) {
       sharedPreferencesAsyncOptions = SharedPreferencesAsyncFoundationOptions(
         suiteName: 'group.fileName',
       );
     } else if (Platform.isLinux) {
-      sharedPreferencesAsyncOptions = const SharedPreferencesLinuxOptions(fileName: 'fileName');
+      sharedPreferencesAsyncOptions = const SharedPreferencesLinuxOptions(
+        fileName: 'fileName',
+      );
     } else if (Platform.isWindows) {
-      sharedPreferencesAsyncOptions = const SharedPreferencesWindowsOptions(fileName: 'fileName');
+      sharedPreferencesAsyncOptions = const SharedPreferencesWindowsOptions(
+        fileName: 'fileName',
+      );
     } else {
       sharedPreferencesAsyncOptions = const SharedPreferencesOptions();
     }
 
-    runTests(sharedPreferencesAsyncOptions, legacySharedPrefsConfig, stringValue: stringValue);
+    runTests(
+      sharedPreferencesAsyncOptions,
+      legacySharedPrefsConfig,
+      stringValue: stringValue,
+    );
   });
 
   if (Platform.isAndroid) {
@@ -104,10 +112,15 @@ void runAllGroups(
       const SharedPreferencesOptions sharedPreferencesAsyncOptions =
           SharedPreferencesAsyncAndroidOptions(
             backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
-            originalSharedPreferencesOptions: AndroidSharedPreferencesStoreOptions(),
+            originalSharedPreferencesOptions:
+                AndroidSharedPreferencesStoreOptions(),
           );
 
-      runTests(sharedPreferencesAsyncOptions, legacySharedPrefsConfig, stringValue: stringValue);
+      runTests(
+        sharedPreferencesAsyncOptions,
+        legacySharedPrefsConfig,
+        stringValue: stringValue,
+      );
     });
   }
 }
@@ -133,7 +146,9 @@ void runTests(
   });
 
   tearDown(() async {
-    await SharedPreferencesAsync(options: sharedPreferencesAsyncOptions).clear();
+    await SharedPreferencesAsync(
+      options: sharedPreferencesAsyncOptions,
+    ).clear();
   });
 
   testWidgets('data is successfully transferred to new system', (_) async {
@@ -144,7 +159,9 @@ void runTests(
       migrationCompletedKey: migrationCompletedKey,
     );
 
-    final asyncPreferences = SharedPreferencesAsync(options: sharedPreferencesAsyncOptions);
+    final asyncPreferences = SharedPreferencesAsync(
+      options: sharedPreferencesAsyncOptions,
+    );
 
     expect(await asyncPreferences.getBool(boolKey), testBool);
     expect(await asyncPreferences.getInt(intKey), testInt);
@@ -161,7 +178,9 @@ void runTests(
       migrationCompletedKey: migrationCompletedKey,
     );
 
-    final asyncPreferences = SharedPreferencesAsync(options: sharedPreferencesAsyncOptions);
+    final asyncPreferences = SharedPreferencesAsync(
+      options: sharedPreferencesAsyncOptions,
+    );
 
     expect(await asyncPreferences.getBool(migrationCompletedKey), true);
   });
@@ -169,14 +188,17 @@ void runTests(
   testWidgets(
     're-running migration tool does not overwrite data',
     (_) async {
-      final SharedPreferences preferences = await SharedPreferences.getInstance();
+      final SharedPreferences preferences =
+          await SharedPreferences.getInstance();
       await migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary(
         legacySharedPreferencesInstance: preferences,
         sharedPreferencesAsyncOptions: sharedPreferencesAsyncOptions,
         migrationCompletedKey: migrationCompletedKey,
       );
 
-      final asyncPreferences = SharedPreferencesAsync(options: sharedPreferencesAsyncOptions);
+      final asyncPreferences = SharedPreferencesAsync(
+        options: sharedPreferencesAsyncOptions,
+      );
       await preferences.setInt(intKey, -0);
       await migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary(
         legacySharedPreferencesInstance: preferences,
@@ -188,6 +210,9 @@ void runTests(
     // Skips platforms that would be adding the preferences to the same file.
     skip:
         keysAndNamesCollide &&
-        (Platform.isWindows || Platform.isLinux || Platform.isMacOS || Platform.isIOS),
+        (Platform.isWindows ||
+            Platform.isLinux ||
+            Platform.isMacOS ||
+            Platform.isIOS),
   );
 }

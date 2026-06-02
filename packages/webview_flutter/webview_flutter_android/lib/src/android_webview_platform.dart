@@ -29,7 +29,9 @@ class AndroidWebViewPlatform extends WebViewPlatform {
   }
 
   @override
-  AndroidWebViewWidget createPlatformWebViewWidget(PlatformWebViewWidgetCreationParams params) {
+  AndroidWebViewWidget createPlatformWebViewWidget(
+    PlatformWebViewWidgetCreationParams params,
+  ) {
     return AndroidWebViewWidget(params);
   }
 

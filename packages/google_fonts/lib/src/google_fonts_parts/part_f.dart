@@ -2943,7 +2943,9 @@ class PartF {
       displayMedium: firaSansExtraCondensed(textStyle: textTheme.displayMedium),
       displaySmall: firaSansExtraCondensed(textStyle: textTheme.displaySmall),
       headlineLarge: firaSansExtraCondensed(textStyle: textTheme.headlineLarge),
-      headlineMedium: firaSansExtraCondensed(textStyle: textTheme.headlineMedium),
+      headlineMedium: firaSansExtraCondensed(
+        textStyle: textTheme.headlineMedium,
+      ),
       headlineSmall: firaSansExtraCondensed(textStyle: textTheme.headlineSmall),
       titleLarge: firaSansExtraCondensed(textStyle: textTheme.titleLarge),
       titleMedium: firaSansExtraCondensed(textStyle: textTheme.titleMedium),

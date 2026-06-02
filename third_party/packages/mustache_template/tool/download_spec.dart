@@ -23,7 +23,12 @@ Future<void> main(List<String> args) async {
   ]);
 
   final String headHash =
-      ((await _runGit(packageRoot.path, <String>['-C', tmpSpecPath, 'rev-parse', 'HEAD'])).stdout
+      ((await _runGit(packageRoot.path, <String>[
+                '-C',
+                tmpSpecPath,
+                'rev-parse',
+                'HEAD',
+              ])).stdout
               as String)
           .trim();
 
@@ -36,7 +41,11 @@ Future<void> main(List<String> args) async {
 
   final clonedSpecs = Directory(_join(tmpSpecPath, 'specs'));
   final List<File> jsonFiles =
-      clonedSpecs.listSync().whereType<File>().where((File f) => f.path.endsWith('.json')).toList()
+      clonedSpecs
+          .listSync()
+          .whereType<File>()
+          .where((File f) => f.path.endsWith('.json'))
+          .toList()
         ..sort((File a, File b) => a.path.compareTo(b.path));
 
   final exports = StringBuffer();
@@ -99,7 +108,10 @@ String _join(String a, String b, [String? c]) {
   return [a, b, if (c != null) c].join(sep);
 }
 
-Future<ProcessResult> _runGit(String workingDirectory, List<String> arguments) async {
+Future<ProcessResult> _runGit(
+  String workingDirectory,
+  List<String> arguments,
+) async {
   final ProcessResult result = await Process.run(
     'git',
     arguments,

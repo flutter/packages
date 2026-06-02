@@ -84,7 +84,8 @@ class _SvgFinder extends MatchFinder {
 }
 
 class _SvgAssetWithPathFinder extends MatchFinder {
-  _SvgAssetWithPathFinder({required String svgPath, super.skipOffstage}) : _svgPath = svgPath;
+  _SvgAssetWithPathFinder({required String svgPath, super.skipOffstage})
+    : _svgPath = svgPath;
   final String _svgPath;
 
   @override
@@ -92,12 +93,16 @@ class _SvgAssetWithPathFinder extends MatchFinder {
 
   @override
   bool matches(Element candidate) {
-    return _getBytesLoader(candidate, (SvgAssetLoader loader) => loader.assetName == _svgPath);
+    return _getBytesLoader(
+      candidate,
+      (SvgAssetLoader loader) => loader.assetName == _svgPath,
+    );
   }
 }
 
 class _SvgNetworkWithUrlFinder extends MatchFinder {
-  _SvgNetworkWithUrlFinder({required String url, super.skipOffstage}) : _url = url;
+  _SvgNetworkWithUrlFinder({required String url, super.skipOffstage})
+    : _url = url;
   final String _url;
 
   @override
@@ -105,12 +110,16 @@ class _SvgNetworkWithUrlFinder extends MatchFinder {
 
   @override
   bool matches(Element candidate) {
-    return _getBytesLoader(candidate, (SvgNetworkLoader loader) => loader.url == _url);
+    return _getBytesLoader(
+      candidate,
+      (SvgNetworkLoader loader) => loader.url == _url,
+    );
   }
 }
 
 class _SvgFileWithPathFinder extends MatchFinder {
-  _SvgFileWithPathFinder({required String path, super.skipOffstage}) : _path = path;
+  _SvgFileWithPathFinder({required String path, super.skipOffstage})
+    : _path = path;
   final String _path;
 
   @override
@@ -118,12 +127,16 @@ class _SvgFileWithPathFinder extends MatchFinder {
 
   @override
   bool matches(Element candidate) {
-    return _getBytesLoader(candidate, (SvgFileLoader loader) => loader.file.path == _path);
+    return _getBytesLoader(
+      candidate,
+      (SvgFileLoader loader) => loader.file.path == _path,
+    );
   }
 }
 
 class _SvgMemoryWithBytesFinder extends MatchFinder {
-  _SvgMemoryWithBytesFinder({required Uint8List bytes, super.skipOffstage}) : _bytes = bytes;
+  _SvgMemoryWithBytesFinder({required Uint8List bytes, super.skipOffstage})
+    : _bytes = bytes;
   final Uint8List _bytes;
 
   @override
@@ -131,7 +144,10 @@ class _SvgMemoryWithBytesFinder extends MatchFinder {
 
   @override
   bool matches(Element candidate) {
-    return _getBytesLoader(candidate, (SvgBytesLoader loader) => loader.bytes == _bytes);
+    return _getBytesLoader(
+      candidate,
+      (SvgBytesLoader loader) => loader.bytes == _bytes,
+    );
   }
 }
 

@@ -12,13 +12,19 @@ void main() {
     final router = GoRouter(
       routes: <GoRoute>[
         GoRoute(path: '/', name: 'Name', builder: (_, __) => const ScreenA()),
-        GoRoute(path: '/path', name: 'name', builder: (_, __) => const ScreenB()),
+        GoRoute(
+          path: '/path',
+          name: 'name',
+          builder: (_, __) => const ScreenB(),
+        ),
       ],
     );
     addTearDown(router.dispose);
 
     // run MaterialApp, initial screen path is '/' -> ScreenA
-    await tester.pumpWidget(MaterialApp.router(routerConfig: router, title: 'GoRouter Testcase'));
+    await tester.pumpWidget(
+      MaterialApp.router(routerConfig: router, title: 'GoRouter Testcase'),
+    );
 
     // go to ScreenB
     router.goNamed('name');

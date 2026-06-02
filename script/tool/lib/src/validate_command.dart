@@ -85,7 +85,8 @@ class ValidateCommand extends PackageLoopingCommand {
 
   static const String _prLabelsArg = 'pr-labels';
   static const String _checkForMissingChanges = 'check-for-missing-changes';
-  static const String _ignorePlatformInterfaceBreaks = 'ignore-platform-interface-breaks';
+  static const String _ignorePlatformInterfaceBreaks =
+      'ignore-platform-interface-breaks';
 
   /// The validators to run.
   ///
@@ -99,7 +100,8 @@ class ValidateCommand extends PackageLoopingCommand {
   late final Set<String> _prLabels = _getPRLabels();
 
   /// Data from the root README.md table of packages.
-  final Map<String, List<String>> _readmeTableEntries = <String, List<String>>{};
+  final Map<String, List<String>> _readmeTableEntries =
+      <String, List<String>>{};
 
   /// Packages with entries in labeler.yml.
   final Set<String> _autoLabeledPackages = <String>{};
@@ -127,7 +129,8 @@ class ValidateCommand extends PackageLoopingCommand {
   final String description = 'Checks that packages follow team guidelines.';
 
   @override
-  final PackageLoopingType packageLoopingType = PackageLoopingType.includeAllSubpackages;
+  final PackageLoopingType packageLoopingType =
+      PackageLoopingType.includeAllSubpackages;
 
   @override
   final bool hasLongOutput = false;
@@ -147,14 +150,18 @@ class ValidateCommand extends PackageLoopingCommand {
         ),
       );
       // Extract all of the labeler.yml package entries.
-      _autoLabeledPackages.addAll(RepoInfoValidator.loadAutoLabeledPackages(repoRoot: _repoRoot));
+      _autoLabeledPackages.addAll(
+        RepoInfoValidator.loadAutoLabeledPackages(repoRoot: _repoRoot),
+      );
     }
     if (_shouldRun(Validator.pubspec)) {
       await _loadAllowedDependencies();
-      final (flutter: Version? minFlutter, dart: Version? minDart) = _loadMinMinSdkVersions();
+      final (flutter: Version? minFlutter, dart: Version? minDart) =
+          _loadMinMinSdkVersions();
       _minMinFlutterVersion = minFlutter;
       _minMinDartVersion =
-          minDart ?? (minFlutter == null ? null : getDartSdkForFlutterSdk(minFlutter));
+          minDart ??
+          (minFlutter == null ? null : getDartSdkForFlutterSdk(minFlutter));
       if (_minMinDartVersion == null) {
         printError(
           'Dart SDK version for Flutter SDK version $_minMinFlutterVersion is unknown. '
@@ -175,15 +182,20 @@ class ValidateCommand extends PackageLoopingCommand {
       if (_shouldRun(Validator.repoInfo)) ...await _validateRepoInfo(package),
       if (_shouldRun(Validator.pubspec)) ...await _validatePubspec(package),
       if (_shouldRun(Validator.readme)) ...await _validateReadme(package),
-      if (_shouldRun(Validator.dependabot)) ...await _validateDependabot(package),
+      if (_shouldRun(Validator.dependabot))
+        ...await _validateDependabot(package),
       if (_shouldRun(Validator.gradle)) ...await _validateGradle(package),
-      if (_shouldRun(Validator.version)) ...await _validateVersionAndChangelog(package),
+      if (_shouldRun(Validator.version))
+        ...await _validateVersionAndChangelog(package),
     ];
 
-    return errors.isEmpty ? PackageResult.success() : PackageResult.fail(errors);
+    return errors.isEmpty
+        ? PackageResult.success()
+        : PackageResult.fail(errors);
   }
 
-  bool _shouldRun(Validator validator) => targetedValidators?.contains(validator) ?? true;
+  bool _shouldRun(Validator validator) =>
+      targetedValidators?.contains(validator) ?? true;
 
   /// Runs repo-level checks.
   Future<List<String>> _validateRepoInfo(RepositoryPackage package) async {
@@ -255,7 +267,11 @@ class ValidateCommand extends PackageLoopingCommand {
     );
     for (final RepositoryPackage packageToCheck in package.getExamples()) {
       errors.addAll(
-        validator.validateReadme(packageToCheck.readmeFile, mainPackage: package, isExample: true),
+        validator.validateReadme(
+          packageToCheck.readmeFile,
+          mainPackage: package,
+          isExample: true,
+        ),
       );
     }
 
@@ -265,19 +281,27 @@ class ValidateCommand extends PackageLoopingCommand {
     final File exampleDirReadme = exampleDir.childFile('README.md');
     if (exampleDir.existsSync() && !isPackage(exampleDir)) {
       errors.addAll(
-        validator.validateReadme(exampleDirReadme, mainPackage: package, isExample: true),
+        validator.validateReadme(
+          exampleDirReadme,
+          mainPackage: package,
+          isExample: true,
+        ),
       );
     }
 
     return errors;
   }
 
-  Future<List<String>> _validateVersionAndChangelog(RepositoryPackage package) async {
+  Future<List<String>> _validateVersionAndChangelog(
+    RepositoryPackage package,
+  ) async {
     if (!package.isTopLevel) {
       return [];
     }
 
-    final Directory repoRoot = packagesDir.fileSystem.directory((await gitDir).path);
+    final Directory repoRoot = packagesDir.fileSystem.directory(
+      (await gitDir).path,
+    );
 
     final validator = VersionAndChangelogValidator(
       path: path,
@@ -300,7 +324,9 @@ class ValidateCommand extends PackageLoopingCommand {
     for (final File pubspecFile
         in (await _repoRoot.list(recursive: true, followLinks: false).toList())
             .whereType<File>()
-            .where((File entity) => p.basename(entity.path) == 'pubspec.yaml')) {
+            .where(
+              (File entity) => p.basename(entity.path) == 'pubspec.yaml',
+            )) {
       final Pubspec? pubspec = _tryParsePubspec(pubspecFile.readAsStringSync());
       if (pubspec != null && pubspec.publishTo != 'none') {
         yield pubspec.name;
@@ -312,9 +338,8 @@ class ValidateCommand extends PackageLoopingCommand {
     // Find all local, published packages.
     _allowedPackages.local.addAll(await _findAllPublishedPackages().toList());
 
-    final ({List<String> pinned, List<String> unpinned}) allowedDeps = getAllowedDependencies(
-      _repoRoot,
-    );
+    final ({List<String> pinned, List<String> unpinned}) allowedDeps =
+        getAllowedDependencies(_repoRoot);
     _allowedPackages.unpinned.addAll(allowedDeps.unpinned);
     _allowedPackages.pinned.addAll(allowedDeps.pinned);
   }

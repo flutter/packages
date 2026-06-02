@@ -22,7 +22,9 @@ void main() {
       widgetFactoryNumber++;
     });
 
-    testWidgets('empty case, calls onElementCreated', (WidgetTester tester) async {
+    testWidgets('empty case, calls onElementCreated', (
+      WidgetTester tester,
+    ) async {
       final viewCreatedCompleter = Completer<Object>();
 
       await pumpResizableWidget(
@@ -36,10 +38,15 @@ void main() {
       await expectLater(viewCreatedCompleter.future, completes);
     });
 
-    testWidgets('empty case, renders with initial size', (WidgetTester tester) async {
+    testWidgets('empty case, renders with initial size', (
+      WidgetTester tester,
+    ) async {
       const initialSize = Size(160, 100);
 
-      final Element element = await pumpResizableWidget(tester, initialSize: initialSize);
+      final Element element = await pumpResizableWidget(
+        tester,
+        initialSize: initialSize,
+      );
       await tester.pumpAndSettle();
 
       // Expect that the element matches the initialSize.
@@ -47,7 +54,9 @@ void main() {
       expect(element.size!.height, initialSize.height);
     });
 
-    testWidgets('initialSize null, adopts size of injected element', (WidgetTester tester) async {
+    testWidgets('initialSize null, adopts size of injected element', (
+      WidgetTester tester,
+    ) async {
       const childSize = Size(300, 40);
 
       final resizable = web.document.createElement('div') as web.HTMLDivElement;
@@ -64,7 +73,9 @@ void main() {
       expect(element.size!.height, childSize.height);
     });
 
-    testWidgets('with initialSize, adopts size of injected element', (WidgetTester tester) async {
+    testWidgets('with initialSize, adopts size of injected element', (
+      WidgetTester tester,
+    ) async {
       const initialSize = Size(160, 100);
       const newSize = Size(300, 40);
 
@@ -83,13 +94,18 @@ void main() {
       expect(element.size!.height, newSize.height);
     });
 
-    testWidgets('with injected element that resizes, follows resizes', (WidgetTester tester) async {
+    testWidgets('with injected element that resizes, follows resizes', (
+      WidgetTester tester,
+    ) async {
       const initialSize = Size(160, 100);
       final Size expandedSize = initialSize * 2;
       final Size contractedSize = initialSize / 2;
 
       final resizable = web.document.createElement('div') as web.HTMLDivElement
-        ..setAttribute('style', 'width: 100%; height: 100%; background: #fabada;');
+        ..setAttribute(
+          'style',
+          'width: 100%; height: 100%; background: #fabada;',
+        );
 
       final Element element = await pumpResizableWidget(
         tester,
@@ -147,16 +163,24 @@ Future<Element> pumpResizableWidget(
 }
 
 class ResizableFromJs extends StatelessWidget {
-  ResizableFromJs({required this.instanceId, this.onElementCreated, this.initialSize, super.key}) {
-    ui_web.platformViewRegistry.registerViewFactory('resizable_from_js_$instanceId', (int viewId) {
-      final element = web.document.createElement('div') as web.HTMLDivElement;
-      element.setAttribute(
-        'style',
-        'width: 100%; height: 100%; overflow: hidden; background: red;',
-      );
-      element.id = 'test_element_$viewId';
-      return element;
-    });
+  ResizableFromJs({
+    required this.instanceId,
+    this.onElementCreated,
+    this.initialSize,
+    super.key,
+  }) {
+    ui_web.platformViewRegistry.registerViewFactory(
+      'resizable_from_js_$instanceId',
+      (int viewId) {
+        final element = web.document.createElement('div') as web.HTMLDivElement;
+        element.setAttribute(
+          'style',
+          'width: 100%; height: 100%; overflow: hidden; background: red;',
+        );
+        element.id = 'test_element_$viewId';
+        return element;
+      },
+    );
   }
 
   final int instanceId;

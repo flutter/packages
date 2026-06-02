@@ -45,7 +45,9 @@ void main() {
     }
   }
 
-  testWidgets('Camera allows to control video bitrate', (WidgetTester tester) async {
+  testWidgets('Camera allows to control video bitrate', (
+    WidgetTester tester,
+  ) async {
     //const String supportedVideoType = 'video/webm';
     const supportedVideoType = 'video/webm;codecs="vp9,opus"';
     bool isVideoTypeSupported(String type) => type == supportedVideoType;
@@ -57,7 +59,8 @@ void main() {
 
       final window = createJSInteropWrapper(mockWindow) as Window;
       final navigator = createJSInteropWrapper(mockNavigator) as Navigator;
-      final mediaDevices = createJSInteropWrapper(mockMediaDevices) as MediaDevices;
+      final mediaDevices =
+          createJSInteropWrapper(mockMediaDevices) as MediaDevices;
 
       mockWindow.navigator = navigator;
       mockNavigator.mediaDevices = mediaDevices;
@@ -71,7 +74,8 @@ void main() {
 
       final cameraService = MockCameraService();
 
-      CameraPlatform.instance = CameraPlugin(cameraService: cameraService)..window = window;
+      CameraPlatform.instance = CameraPlugin(cameraService: cameraService)
+        ..window = window;
 
       final options = CameraOptions(
         audio: const AudioConstraints(),

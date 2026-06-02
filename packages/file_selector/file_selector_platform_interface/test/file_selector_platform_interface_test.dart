@@ -32,7 +32,8 @@ void main() {
 
   group('getDirectoryPathWithOptions', () {
     test('Should fall back to getDirectoryPath by default', () async {
-      final FileSelectorPlatform fileSelector = OldFileSelectorPlatformImplementation();
+      final FileSelectorPlatform fileSelector =
+          OldFileSelectorPlatformImplementation();
 
       final String? result = await fileSelector.getDirectoryPathWithOptions(
         const FileDialogOptions(),
@@ -55,19 +56,22 @@ void main() {
 
   group('getDirectoryPathsWithOptions', () {
     test('Should fall back to getDirectoryPaths by default', () async {
-      final FileSelectorPlatform fileSelector = OldFileSelectorPlatformImplementation();
+      final FileSelectorPlatform fileSelector =
+          OldFileSelectorPlatformImplementation();
 
-      final List<String> result = await fileSelector.getDirectoryPathsWithOptions(
-        const FileDialogOptions(),
-      );
+      final List<String> result = await fileSelector
+          .getDirectoryPathsWithOptions(const FileDialogOptions());
 
       // Should call the old method and return its result
-      expect(result, <String>[OldFileSelectorPlatformImplementation.directoryPath]);
+      expect(result, <String>[
+        OldFileSelectorPlatformImplementation.directoryPath,
+      ]);
     });
   });
 
   test('getSaveLocation falls back to getSavePath by default', () async {
-    final FileSelectorPlatform fileSelector = OldFileSelectorPlatformImplementation();
+    final FileSelectorPlatform fileSelector =
+        OldFileSelectorPlatformImplementation();
 
     final FileSaveLocation? result = await fileSelector.getSaveLocation();
 
@@ -93,7 +97,10 @@ class OldFileSelectorPlatformImplementation extends FileSelectorPlatform {
   }
 
   @override
-  Future<String?> getDirectoryPath({String? initialDirectory, String? confirmButtonText}) async {
+  Future<String?> getDirectoryPath({
+    String? initialDirectory,
+    String? confirmButtonText,
+  }) async {
     return directoryPath;
   }
 

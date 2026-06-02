@@ -47,10 +47,14 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
   ];
 
-  void _pushVideoAdExampleWithAdTagUrl({required String adType, required String adTagUrl}) {
+  void _pushVideoAdExampleWithAdTagUrl({
+    required String adType,
+    required String adTagUrl,
+  }) {
     Navigator.of(context).push<void>(
       MaterialPageRoute<void>(
-        builder: (_) => VideoAdExampleScreen(adType: adType, adTagUrl: adTagUrl),
+        builder: (_) =>
+            VideoAdExampleScreen(adType: adType, adTagUrl: adTagUrl),
       ),
     );
   }
@@ -58,7 +62,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('IMA Test App'), backgroundColor: Colors.blue),
+      appBar: AppBar(
+        title: const Text('IMA Test App'),
+        backgroundColor: Colors.blue,
+      ),
       body: Center(
         child: ListView.separated(
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 60),
@@ -67,7 +74,10 @@ class _HomeScreenState extends State<HomeScreen> {
           itemBuilder: (_, int index) {
             final (String adType, String adTagUrl) = _testAdTagUrls[index];
             return ElevatedButton(
-              onPressed: () => _pushVideoAdExampleWithAdTagUrl(adType: adType, adTagUrl: adTagUrl),
+              onPressed: () => _pushVideoAdExampleWithAdTagUrl(
+                adType: adType,
+                adTagUrl: adTagUrl,
+              ),
               child: Text(adType),
             );
           },

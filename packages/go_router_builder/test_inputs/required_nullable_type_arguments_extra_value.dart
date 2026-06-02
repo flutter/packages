@@ -6,7 +6,9 @@ import 'package:go_router/go_router.dart';
 
 mixin $RequiredNullableTypeArgumentsExtraValueRoute {}
 
-@TypedGoRoute<RequiredNullableTypeArgumentsExtraValueRoute>(path: '/default-value-route')
+@TypedGoRoute<RequiredNullableTypeArgumentsExtraValueRoute>(
+  path: '/default-value-route',
+)
 class RequiredNullableTypeArgumentsExtraValueRoute extends GoRouteData
     with $RequiredNullableTypeArgumentsExtraValueRoute {
   RequiredNullableTypeArgumentsExtraValueRoute({required this.$extra});

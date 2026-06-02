@@ -35,32 +35,47 @@ void main() {
       QuickActionsPlatform.instance = ExtendsQuickActionsPlatform();
     });
 
-    test('Default implementation of initialize() should throw unimplemented error', () {
-      // Arrange
-      final quickActionsPlatform = ExtendsQuickActionsPlatform();
+    test(
+      'Default implementation of initialize() should throw unimplemented error',
+      () {
+        // Arrange
+        final quickActionsPlatform = ExtendsQuickActionsPlatform();
 
-      // Act & Assert
-      expect(() => quickActionsPlatform.initialize((String type) {}), throwsUnimplementedError);
-    });
+        // Act & Assert
+        expect(
+          () => quickActionsPlatform.initialize((String type) {}),
+          throwsUnimplementedError,
+        );
+      },
+    );
 
-    test('Default implementation of setShortcutItems() should throw unimplemented error', () {
-      // Arrange
-      final quickActionsPlatform = ExtendsQuickActionsPlatform();
+    test(
+      'Default implementation of setShortcutItems() should throw unimplemented error',
+      () {
+        // Arrange
+        final quickActionsPlatform = ExtendsQuickActionsPlatform();
 
-      // Act & Assert
-      expect(
-        () => quickActionsPlatform.setShortcutItems(<ShortcutItem>[]),
-        throwsUnimplementedError,
-      );
-    });
+        // Act & Assert
+        expect(
+          () => quickActionsPlatform.setShortcutItems(<ShortcutItem>[]),
+          throwsUnimplementedError,
+        );
+      },
+    );
 
-    test('Default implementation of clearShortcutItems() should throw unimplemented error', () {
-      // Arrange
-      final quickActionsPlatform = ExtendsQuickActionsPlatform();
+    test(
+      'Default implementation of clearShortcutItems() should throw unimplemented error',
+      () {
+        // Arrange
+        final quickActionsPlatform = ExtendsQuickActionsPlatform();
 
-      // Act & Assert
-      expect(() => quickActionsPlatform.clearShortcutItems(), throwsUnimplementedError);
-    });
+        // Act & Assert
+        expect(
+          () => quickActionsPlatform.clearShortcutItems(),
+          throwsUnimplementedError,
+        );
+      },
+    );
   });
 }
 

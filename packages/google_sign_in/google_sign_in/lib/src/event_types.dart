@@ -18,7 +18,8 @@ sealed class GoogleSignInAuthenticationEvent {
 /// A sign-in event, corresponding to an authentication flow completing
 /// successfully.
 @immutable
-class GoogleSignInAuthenticationEventSignIn extends GoogleSignInAuthenticationEvent {
+class GoogleSignInAuthenticationEventSignIn
+    extends GoogleSignInAuthenticationEvent {
   /// Creates an event for a successful sign in.
   const GoogleSignInAuthenticationEventSignIn({required this.user});
 
@@ -31,4 +32,5 @@ class GoogleSignInAuthenticationEventSignIn extends GoogleSignInAuthenticationEv
 /// Implicit sign-outs (for example, due to server-side authentication
 /// revocation, or timeouts) are not guaranteed to send events.
 @immutable
-class GoogleSignInAuthenticationEventSignOut extends GoogleSignInAuthenticationEvent {}
+class GoogleSignInAuthenticationEventSignOut
+    extends GoogleSignInAuthenticationEvent {}

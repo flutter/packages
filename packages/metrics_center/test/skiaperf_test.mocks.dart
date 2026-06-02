@@ -25,31 +25,38 @@ import 'package:mockito/src/dummies.dart' as _i5;
 // ignore_for_file: subtype_of_sealed_class
 
 class _FakeStreamSink_0<S> extends _i1.SmartFake implements _i2.StreamSink<S> {
-  _FakeStreamSink_0(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+  _FakeStreamSink_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeObjectInfo_1 extends _i1.SmartFake implements _i3.ObjectInfo {
-  _FakeObjectInfo_1(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+  _FakeObjectInfo_1(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakePage_2<T> extends _i1.SmartFake implements _i4.Page<T> {
-  _FakePage_2(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+  _FakePage_2(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeDateTime_3 extends _i1.SmartFake implements DateTime {
-  _FakeDateTime_3(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+  _FakeDateTime_3(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeUri_4 extends _i1.SmartFake implements Uri {
-  _FakeUri_4(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+  _FakeUri_4(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
-class _FakeObjectGeneration_5 extends _i1.SmartFake implements _i3.ObjectGeneration {
+class _FakeObjectGeneration_5 extends _i1.SmartFake
+    implements _i3.ObjectGeneration {
   _FakeObjectGeneration_5(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeObjectMetadata_6 extends _i1.SmartFake implements _i3.ObjectMetadata {
+class _FakeObjectMetadata_6 extends _i1.SmartFake
+    implements _i3.ObjectMetadata {
   _FakeObjectMetadata_6(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -66,7 +73,10 @@ class MockBucket extends _i1.Mock implements _i3.Bucket {
   String get bucketName =>
       (super.noSuchMethod(
             Invocation.getter(#bucketName),
-            returnValue: _i5.dummyValue<String>(this, Invocation.getter(#bucketName)),
+            returnValue: _i5.dummyValue<String>(
+              this,
+              Invocation.getter(#bucketName),
+            ),
           )
           as String);
 
@@ -160,7 +170,11 @@ class MockBucket extends _i1.Mock implements _i3.Bucket {
   @override
   _i2.Stream<List<int>> read(String? objectName, {int? offset, int? length}) =>
       (super.noSuchMethod(
-            Invocation.method(#read, [objectName], {#offset: offset, #length: length}),
+            Invocation.method(
+              #read,
+              [objectName],
+              {#offset: offset, #length: length},
+            ),
             returnValue: _i2.Stream<List<int>>.empty(),
           )
           as _i2.Stream<List<int>>);
@@ -184,7 +198,10 @@ class MockBucket extends _i1.Mock implements _i3.Bucket {
           as _i2.Future<dynamic>);
 
   @override
-  _i2.Future<dynamic> updateMetadata(String? objectName, _i3.ObjectMetadata? metadata) =>
+  _i2.Future<dynamic> updateMetadata(
+    String? objectName,
+    _i3.ObjectMetadata? metadata,
+  ) =>
       (super.noSuchMethod(
             Invocation.method(#updateMetadata, [objectName, metadata]),
             returnValue: _i2.Future<dynamic>.value(),
@@ -194,7 +211,10 @@ class MockBucket extends _i1.Mock implements _i3.Bucket {
   @override
   _i2.Stream<_i3.BucketEntry> list({String? prefix, String? delimiter}) =>
       (super.noSuchMethod(
-            Invocation.method(#list, [], {#prefix: prefix, #delimiter: delimiter}),
+            Invocation.method(#list, [], {
+              #prefix: prefix,
+              #delimiter: delimiter,
+            }),
             returnValue: _i2.Stream<_i3.BucketEntry>.empty(),
           )
           as _i2.Stream<_i3.BucketEntry>);
@@ -242,7 +262,8 @@ class MockObjectInfo extends _i1.Mock implements _i3.ObjectInfo {
           as String);
 
   @override
-  int get length => (super.noSuchMethod(Invocation.getter(#length), returnValue: 0) as int);
+  int get length =>
+      (super.noSuchMethod(Invocation.getter(#length), returnValue: 0) as int);
 
   @override
   DateTime get updated =>
@@ -262,11 +283,13 @@ class MockObjectInfo extends _i1.Mock implements _i3.ObjectInfo {
 
   @override
   List<int> get md5Hash =>
-      (super.noSuchMethod(Invocation.getter(#md5Hash), returnValue: <int>[]) as List<int>);
+      (super.noSuchMethod(Invocation.getter(#md5Hash), returnValue: <int>[])
+          as List<int>);
 
   @override
   int get crc32CChecksum =>
-      (super.noSuchMethod(Invocation.getter(#crc32CChecksum), returnValue: 0) as int);
+      (super.noSuchMethod(Invocation.getter(#crc32CChecksum), returnValue: 0)
+          as int);
 
   @override
   Uri get downloadLink =>
@@ -280,7 +303,10 @@ class MockObjectInfo extends _i1.Mock implements _i3.ObjectInfo {
   _i3.ObjectGeneration get generation =>
       (super.noSuchMethod(
             Invocation.getter(#generation),
-            returnValue: _FakeObjectGeneration_5(this, Invocation.getter(#generation)),
+            returnValue: _FakeObjectGeneration_5(
+              this,
+              Invocation.getter(#generation),
+            ),
           )
           as _i3.ObjectGeneration);
 
@@ -288,7 +314,10 @@ class MockObjectInfo extends _i1.Mock implements _i3.ObjectInfo {
   _i3.ObjectMetadata get metadata =>
       (super.noSuchMethod(
             Invocation.getter(#metadata),
-            returnValue: _FakeObjectMetadata_6(this, Invocation.getter(#metadata)),
+            returnValue: _FakeObjectMetadata_6(
+              this,
+              Invocation.getter(#metadata),
+            ),
           )
           as _i3.ObjectMetadata);
 }

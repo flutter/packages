@@ -64,6 +64,9 @@ class SKStorefrontWrapper {
 
   /// Converts the pigeon equivalent to an instance of SKStorefrontWrapper
   static SKStorefrontWrapper convertFromPigeon(SKStorefrontMessage msg) {
-    return SKStorefrontWrapper(countryCode: msg.countryCode, identifier: msg.identifier);
+    return SKStorefrontWrapper(
+      countryCode: msg.countryCode,
+      identifier: msg.identifier,
+    );
   }
 }

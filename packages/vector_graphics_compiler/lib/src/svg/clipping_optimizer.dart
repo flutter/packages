@@ -23,7 +23,8 @@ class _Result {
 /// there are multiple path nodes in ResolvedClipNode.clips
 /// or cases where the intersection of the clip and the path
 /// results in Path.commands being empty.
-class ClippingOptimizer extends Visitor<_Result, Node> with ErrorOnUnResolvedNode<_Result, Node> {
+class ClippingOptimizer extends Visitor<_Result, Node>
+    with ErrorOnUnResolvedNode<_Result, Node> {
   ///List of clips to apply.
   final List<Path> clipsToApply = <Path>[];
 
@@ -146,12 +147,18 @@ class ClippingOptimizer extends Visitor<_Result, Node> with ErrorOnUnResolvedNod
       if (childResult.deleteClipNode) {
         result = _Result(childResult.node);
       } else {
-        final newClipNode = ResolvedClipNode(child: childResult.node, clips: clipNode.clips);
+        final newClipNode = ResolvedClipNode(
+          child: childResult.node,
+          clips: clipNode.clips,
+        );
         result = _Result(newClipNode);
       }
     } else {
       final _Result childResult = clipNode.child.accept(this, clipNode);
-      final newClipNode = ResolvedClipNode(child: childResult.node, clips: clipNode.clips);
+      final newClipNode = ResolvedClipNode(
+        child: childResult.node,
+        clips: clipNode.clips,
+      );
       result = _Result(newClipNode);
     }
     return result;
@@ -197,7 +204,10 @@ class ClippingOptimizer extends Visitor<_Result, Node> with ErrorOnUnResolvedNod
 
   @override
   // ignore: library_private_types_in_public_api
-  _Result visitResolvedVerticesNode(ResolvedVerticesNode verticesNode, Node data) {
+  _Result visitResolvedVerticesNode(
+    ResolvedVerticesNode verticesNode,
+    Node data,
+  ) {
     final result = _Result(verticesNode);
     return result;
   }
@@ -247,7 +257,10 @@ class ClippingOptimizer extends Visitor<_Result, Node> with ErrorOnUnResolvedNod
 
   @override
   // ignore: library_private_types_in_public_api
-  _Result visitResolvedImageNode(ResolvedImageNode resolvedImageNode, Node data) {
+  _Result visitResolvedImageNode(
+    ResolvedImageNode resolvedImageNode,
+    Node data,
+  ) {
     final result = _Result(resolvedImageNode);
     result.deleteClipNode = false;
     return result;
@@ -261,10 +274,14 @@ class ClippingOptimizer extends Visitor<_Result, Node> with ErrorOnUnResolvedNod
 
   @override
   // ignore: library_private_types_in_public_api
-  _Result visitResolvedTextPositionNode(ResolvedTextPositionNode textPositionNode, void data) {
+  _Result visitResolvedTextPositionNode(
+    ResolvedTextPositionNode textPositionNode,
+    void data,
+  ) {
     return _Result(
       ResolvedTextPositionNode(textPositionNode.textPosition, <Node>[
-        for (final Node child in textPositionNode.children) child.accept(this, data).node,
+        for (final Node child in textPositionNode.children)
+          child.accept(this, data).node,
       ]),
     );
   }

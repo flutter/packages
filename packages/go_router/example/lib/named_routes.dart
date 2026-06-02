@@ -65,8 +65,11 @@ class App extends StatelessWidget {
   static const String title = 'GoRouter Example: Named Routes';
 
   @override
-  Widget build(BuildContext context) =>
-      MaterialApp.router(routerConfig: _router, title: title, debugShowCheckedModeBanner: false);
+  Widget build(BuildContext context) => MaterialApp.router(
+    routerConfig: _router,
+    title: title,
+    debugShowCheckedModeBanner: false,
+  );
 
   late final GoRouter _router = GoRouter(
     debugLogDiagnostics: true,
@@ -74,7 +77,8 @@ class App extends StatelessWidget {
       GoRoute(
         name: 'home',
         path: '/',
-        builder: (BuildContext context, GoRouterState state) => const HomeScreen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const HomeScreen(),
         routes: <GoRoute>[
           GoRoute(
             name: 'family',
@@ -115,7 +119,10 @@ class HomeScreen extends StatelessWidget {
             ListTile(
               title: Text(entry.value.name),
               onTap: () => context.go(
-                context.namedLocation('family', pathParameters: <String, String>{'fid': entry.key}),
+                context.namedLocation(
+                  'family',
+                  pathParameters: <String, String>{'fid': entry.key},
+                ),
               ),
             ),
         ],
@@ -145,7 +152,10 @@ class FamilyScreen extends StatelessWidget {
               onTap: () => context.go(
                 context.namedLocation(
                   'person',
-                  pathParameters: <String, String>{'fid': fid, 'pid': entry.key},
+                  pathParameters: <String, String>{
+                    'fid': fid,
+                    'pid': entry.key,
+                  },
                   queryParameters: <String, String>{'qid': 'quid'},
                 ),
               ),

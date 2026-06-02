@@ -42,7 +42,9 @@ void main() async {
     error_callback: onError,
   );
 
-  final overridableCfg = OverridableTokenClientConfig(scope: scopes + myConnectionsScopes);
+  final overridableCfg = OverridableTokenClientConfig(
+    scope: scopes + myConnectionsScopes,
+  );
 
   final TokenClient client = oauth2.initTokenClient(config);
 
@@ -97,7 +99,9 @@ Future<Object?> get(TokenResponse token, String url) async {
   final Uri uri = Uri.parse(url);
   final http.Response response = await http.get(
     uri,
-    headers: <String, String>{'Authorization': '${token.token_type} ${token.access_token}'},
+    headers: <String, String>{
+      'Authorization': '${token.token_type} ${token.access_token}',
+    },
   );
 
   if (response.statusCode != 200) {

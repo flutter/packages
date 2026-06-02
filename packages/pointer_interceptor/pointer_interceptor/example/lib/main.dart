@@ -22,7 +22,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(title: 'Stopping Clicks with some DOM', home: MyHomePage());
+    return const MaterialApp(
+      title: 'Stopping Clicks with some DOM',
+      home: MyHomePage(),
+    );
   }
 }
 
@@ -94,7 +97,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         intercepting: false,
                         child: ElevatedButton(
                           key: const Key('wrapped-transparent-button'),
-                          child: const Text('Never calls onPressed transparent'),
+                          child: const Text(
+                            'Never calls onPressed transparent',
+                          ),
                           onPressed: () {
                             _clickedOn('wrapped-transparent-button');
                           },

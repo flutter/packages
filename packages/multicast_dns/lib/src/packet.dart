@@ -89,7 +89,8 @@ List<int> encodeMDnsQuery(
   offset += 2;
   packetByteData.setUint16(
     offset,
-    ResourceRecordClass.internet | (multicast ? QuestionType.multicast : QuestionType.unicast),
+    ResourceRecordClass.internet |
+        (multicast ? QuestionType.multicast : QuestionType.unicast),
   );
 
   return data;
@@ -115,7 +116,9 @@ class _FQDNReadResult {
 
 /// Reads a FQDN from raw packet data.
 String readFQDN(List<int> packet, [int offset = 0]) {
-  final Uint8List data = packet is Uint8List ? packet : Uint8List.fromList(packet);
+  final Uint8List data = packet is Uint8List
+      ? packet
+      : Uint8List.fromList(packet);
   final byteData = ByteData.view(data.buffer);
 
   return _readFQDN(data, byteData, offset, data.length).fqdn;
@@ -125,7 +128,12 @@ String readFQDN(List<int> packet, [int offset = 0]) {
 // parts and the number of bytes consumed.
 //
 // If decoding fails (e.g. due to an invalid packet) `null` is returned.
-_FQDNReadResult _readFQDN(Uint8List data, ByteData byteData, int offset, int length) {
+_FQDNReadResult _readFQDN(
+  Uint8List data,
+  ByteData byteData,
+  int offset,
+  int length,
+) {
   void checkLength(int required) {
     if (length < required) {
       throw MDnsDecodeException(required);
@@ -195,7 +203,9 @@ List<ResourceRecord>? decodeMDnsResponse(List<int> packet) {
     return null;
   }
 
-  final Uint8List data = packet is Uint8List ? packet : Uint8List.fromList(packet);
+  final Uint8List data = packet is Uint8List
+      ? packet
+      : Uint8List.fromList(packet);
   final packetBytes = ByteData.view(data.buffer);
 
   final int answerCount = packetBytes.getUint16(_kAncountOffset);
@@ -255,7 +265,11 @@ List<ResourceRecord>? decodeMDnsResponse(List<int> packet) {
           addr.write('.');
           addr.write(packetBytes.getUint8(offset));
         }
-        return IPAddressResourceRecord(fqdn, validUntil, address: InternetAddress(addr.toString()));
+        return IPAddressResourceRecord(
+          fqdn,
+          validUntil,
+          address: InternetAddress(addr.toString()),
+        );
       case ResourceRecordType.addressIPv6:
         checkLength(offset + readDataLength);
         final addr = StringBuffer();
@@ -266,7 +280,11 @@ List<ResourceRecord>? decodeMDnsResponse(List<int> packet) {
           addr.write(':');
           addr.write(packetBytes.getUint16(offset).toRadixString(16));
         }
-        return IPAddressResourceRecord(fqdn, validUntil, address: InternetAddress(addr.toString()));
+        return IPAddressResourceRecord(
+          fqdn,
+          validUntil,
+          address: InternetAddress(addr.toString()),
+        );
       case ResourceRecordType.service:
         checkLength(offset + 2);
         final int priority = packetBytes.getUint16(offset);
@@ -277,7 +295,12 @@ List<ResourceRecord>? decodeMDnsResponse(List<int> packet) {
         checkLength(offset + 2);
         final int port = packetBytes.getUint16(offset);
         offset += 2;
-        final _FQDNReadResult result = _readFQDN(data, packetBytes, offset, length);
+        final _FQDNReadResult result = _readFQDN(
+          data,
+          packetBytes,
+          offset,
+          length,
+        );
         offset += result.bytesRead;
         return SrvResourceRecord(
           fqdn,
@@ -289,7 +312,12 @@ List<ResourceRecord>? decodeMDnsResponse(List<int> packet) {
         );
       case ResourceRecordType.serverPointer:
         checkLength(offset + readDataLength);
-        final _FQDNReadResult result = _readFQDN(data, packetBytes, offset, length);
+        final _FQDNReadResult result = _readFQDN(
+          data,
+          packetBytes,
+          offset,
+          length,
+        );
         offset += readDataLength;
         return PtrResourceRecord(fqdn, validUntil, domainName: result.fqdn);
       case ResourceRecordType.text:
@@ -328,7 +356,12 @@ List<ResourceRecord>? decodeMDnsResponse(List<int> packet) {
 
   try {
     for (var i = 0; i < questionCount; i++) {
-      final _FQDNReadResult result = _readFQDN(data, packetBytes, offset, length);
+      final _FQDNReadResult result = _readFQDN(
+        data,
+        packetBytes,
+        offset,
+        length,
+      );
       offset += result.bytesRead;
       checkLength(offset + 4);
       offset += 4;

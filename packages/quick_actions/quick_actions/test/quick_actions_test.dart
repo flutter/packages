@@ -34,7 +34,9 @@ void main() {
       quickActions.setShortcutItems(<ShortcutItem>[]);
 
       verify(QuickActionsPlatform.instance.initialize(handler)).called(1);
-      verify(QuickActionsPlatform.instance.setShortcutItems(<ShortcutItem>[])).called(1);
+      verify(
+        QuickActionsPlatform.instance.setShortcutItems(<ShortcutItem>[]),
+      ).called(1);
     });
 
     test('clearShortcutItems() PlatformInterface', () {
@@ -62,6 +64,6 @@ class MockQuickActionsPlatform extends Mock
       super.noSuchMethod(Invocation.method(#initialize, <Object?>[handler]));
 
   @override
-  Future<void> setShortcutItems(List<ShortcutItem>? items) async =>
-      super.noSuchMethod(Invocation.method(#setShortcutItems, <Object?>[items]));
+  Future<void> setShortcutItems(List<ShortcutItem>? items) async => super
+      .noSuchMethod(Invocation.method(#setShortcutItems, <Object?>[items]));
 }

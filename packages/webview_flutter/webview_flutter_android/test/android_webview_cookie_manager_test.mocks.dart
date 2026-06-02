@@ -8,8 +8,10 @@ import 'dart:ui' as _i4;
 
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:webview_flutter_android/src/android_webkit.g.dart' as _i2;
-import 'package:webview_flutter_android/src/android_webview_controller.dart' as _i6;
-import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart' as _i3;
+import 'package:webview_flutter_android/src/android_webview_controller.dart'
+    as _i6;
+import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart'
+    as _i3;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -26,7 +28,8 @@ import 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
 // ignore_for_file: subtype_of_sealed_class
 // ignore_for_file: invalid_use_of_internal_member
 
-class _FakePigeonInstanceManager_0 extends _i1.SmartFake implements _i2.PigeonInstanceManager {
+class _FakePigeonInstanceManager_0 extends _i1.SmartFake
+    implements _i2.PigeonInstanceManager {
   _FakePigeonInstanceManager_0(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -38,16 +41,20 @@ class _FakeCookieManager_1 extends _i1.SmartFake implements _i2.CookieManager {
 
 class _FakePlatformWebViewControllerCreationParams_2 extends _i1.SmartFake
     implements _i3.PlatformWebViewControllerCreationParams {
-  _FakePlatformWebViewControllerCreationParams_2(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakePlatformWebViewControllerCreationParams_2(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(parent, parentInvocation);
 }
 
 class _FakeObject_3 extends _i1.SmartFake implements Object {
-  _FakeObject_3(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+  _FakeObject_3(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeOffset_4 extends _i1.SmartFake implements _i4.Offset {
-  _FakeOffset_4(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+  _FakeOffset_4(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [CookieManager].
@@ -87,7 +94,10 @@ class MockCookieManager extends _i1.Mock implements _i2.CookieManager {
           as _i5.Future<bool>);
 
   @override
-  _i5.Future<void> setAcceptThirdPartyCookies(_i2.WebView? webView, bool? accept) =>
+  _i5.Future<void> setAcceptThirdPartyCookies(
+    _i2.WebView? webView,
+    bool? accept,
+  ) =>
       (super.noSuchMethod(
             Invocation.method(#setAcceptThirdPartyCookies, [webView, accept]),
             returnValue: _i5.Future<void>.value(),
@@ -107,7 +117,10 @@ class MockCookieManager extends _i1.Mock implements _i2.CookieManager {
   _i2.CookieManager pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeCookieManager_1(this, Invocation.method(#pigeon_copy, [])),
+            returnValue: _FakeCookieManager_1(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
           )
           as _i2.CookieManager);
 }
@@ -115,14 +128,16 @@ class MockCookieManager extends _i1.Mock implements _i2.CookieManager {
 /// A class which mocks [AndroidWebViewController].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAndroidWebViewController extends _i1.Mock implements _i6.AndroidWebViewController {
+class MockAndroidWebViewController extends _i1.Mock
+    implements _i6.AndroidWebViewController {
   MockAndroidWebViewController() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
   int get webViewIdentifier =>
-      (super.noSuchMethod(Invocation.getter(#webViewIdentifier), returnValue: 0) as int);
+      (super.noSuchMethod(Invocation.getter(#webViewIdentifier), returnValue: 0)
+          as int);
 
   @override
   _i3.PlatformWebViewControllerCreationParams get params =>
@@ -259,7 +274,9 @@ class MockAndroidWebViewController extends _i1.Mock implements _i6.AndroidWebVie
           as _i5.Future<void>);
 
   @override
-  _i5.Future<void> setPlatformNavigationDelegate(_i3.PlatformNavigationDelegate? handler) =>
+  _i5.Future<void> setPlatformNavigationDelegate(
+    _i3.PlatformNavigationDelegate? handler,
+  ) =>
       (super.noSuchMethod(
             Invocation.method(#setPlatformNavigationDelegate, [handler]),
             returnValue: _i5.Future<void>.value(),
@@ -281,13 +298,18 @@ class MockAndroidWebViewController extends _i1.Mock implements _i6.AndroidWebVie
       (super.noSuchMethod(
             Invocation.method(#runJavaScriptReturningResult, [javaScript]),
             returnValue: _i5.Future<Object>.value(
-              _FakeObject_3(this, Invocation.method(#runJavaScriptReturningResult, [javaScript])),
+              _FakeObject_3(
+                this,
+                Invocation.method(#runJavaScriptReturningResult, [javaScript]),
+              ),
             ),
           )
           as _i5.Future<Object>);
 
   @override
-  _i5.Future<void> addJavaScriptChannel(_i3.JavaScriptChannelParams? javaScriptChannelParams) =>
+  _i5.Future<void> addJavaScriptChannel(
+    _i3.JavaScriptChannelParams? javaScriptChannelParams,
+  ) =>
       (super.noSuchMethod(
             Invocation.method(#addJavaScriptChannel, [javaScriptChannelParams]),
             returnValue: _i5.Future<void>.value(),
@@ -298,7 +320,9 @@ class MockAndroidWebViewController extends _i1.Mock implements _i6.AndroidWebVie
   @override
   _i5.Future<void> removeJavaScriptChannel(String? javaScriptChannelName) =>
       (super.noSuchMethod(
-            Invocation.method(#removeJavaScriptChannel, [javaScriptChannelName]),
+            Invocation.method(#removeJavaScriptChannel, [
+              javaScriptChannelName,
+            ]),
             returnValue: _i5.Future<void>.value(),
             returnValueForMissingStub: _i5.Future<void>.value(),
           )
@@ -381,7 +405,9 @@ class MockAndroidWebViewController extends _i1.Mock implements _i6.AndroidWebVie
     void Function(_i3.ScrollPositionChange)? onScrollPositionChange,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#setOnScrollPositionChange, [onScrollPositionChange]),
+            Invocation.method(#setOnScrollPositionChange, [
+              onScrollPositionChange,
+            ]),
             returnValue: _i5.Future<void>.value(),
             returnValueForMissingStub: _i5.Future<void>.value(),
           )
@@ -434,7 +460,8 @@ class MockAndroidWebViewController extends _i1.Mock implements _i6.AndroidWebVie
 
   @override
   _i5.Future<void> setOnShowFileSelector(
-    _i5.Future<List<String>> Function(_i6.FileSelectorParams)? onShowFileSelector,
+    _i5.Future<List<String>> Function(_i6.FileSelectorParams)?
+    onShowFileSelector,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#setOnShowFileSelector, [onShowFileSelector]),
@@ -448,7 +475,9 @@ class MockAndroidWebViewController extends _i1.Mock implements _i6.AndroidWebVie
     void Function(_i3.PlatformWebViewPermissionRequest)? onPermissionRequest,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#setOnPlatformPermissionRequest, [onPermissionRequest]),
+            Invocation.method(#setOnPlatformPermissionRequest, [
+              onPermissionRequest,
+            ]),
             returnValue: _i5.Future<void>.value(),
             returnValueForMissingStub: _i5.Future<void>.value(),
           )
@@ -505,10 +534,13 @@ class MockAndroidWebViewController extends _i1.Mock implements _i6.AndroidWebVie
 
   @override
   _i5.Future<void> setOnJavaScriptAlertDialog(
-    _i5.Future<void> Function(_i3.JavaScriptAlertDialogRequest)? onJavaScriptAlertDialog,
+    _i5.Future<void> Function(_i3.JavaScriptAlertDialogRequest)?
+    onJavaScriptAlertDialog,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#setOnJavaScriptAlertDialog, [onJavaScriptAlertDialog]),
+            Invocation.method(#setOnJavaScriptAlertDialog, [
+              onJavaScriptAlertDialog,
+            ]),
             returnValue: _i5.Future<void>.value(),
             returnValueForMissingStub: _i5.Future<void>.value(),
           )
@@ -516,10 +548,13 @@ class MockAndroidWebViewController extends _i1.Mock implements _i6.AndroidWebVie
 
   @override
   _i5.Future<void> setOnJavaScriptConfirmDialog(
-    _i5.Future<bool> Function(_i3.JavaScriptConfirmDialogRequest)? onJavaScriptConfirmDialog,
+    _i5.Future<bool> Function(_i3.JavaScriptConfirmDialogRequest)?
+    onJavaScriptConfirmDialog,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#setOnJavaScriptConfirmDialog, [onJavaScriptConfirmDialog]),
+            Invocation.method(#setOnJavaScriptConfirmDialog, [
+              onJavaScriptConfirmDialog,
+            ]),
             returnValue: _i5.Future<void>.value(),
             returnValueForMissingStub: _i5.Future<void>.value(),
           )
@@ -527,10 +562,13 @@ class MockAndroidWebViewController extends _i1.Mock implements _i6.AndroidWebVie
 
   @override
   _i5.Future<void> setOnJavaScriptTextInputDialog(
-    _i5.Future<String> Function(_i3.JavaScriptTextInputDialogRequest)? onJavaScriptTextInputDialog,
+    _i5.Future<String> Function(_i3.JavaScriptTextInputDialogRequest)?
+    onJavaScriptTextInputDialog,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#setOnJavaScriptTextInputDialog, [onJavaScriptTextInputDialog]),
+            Invocation.method(#setOnJavaScriptTextInputDialog, [
+              onJavaScriptTextInputDialog,
+            ]),
             returnValue: _i5.Future<void>.value(),
             returnValueForMissingStub: _i5.Future<void>.value(),
           )
@@ -556,7 +594,10 @@ class MockAndroidWebViewController extends _i1.Mock implements _i6.AndroidWebVie
 
   @override
   bool supportsSetScrollBarsEnabled() =>
-      (super.noSuchMethod(Invocation.method(#supportsSetScrollBarsEnabled, []), returnValue: false)
+      (super.noSuchMethod(
+            Invocation.method(#supportsSetScrollBarsEnabled, []),
+            returnValue: false,
+          )
           as bool);
 
   @override
@@ -578,7 +619,9 @@ class MockAndroidWebViewController extends _i1.Mock implements _i6.AndroidWebVie
           as _i5.Future<void>);
 
   @override
-  _i5.Future<bool> isWebViewFeatureSupported(_i6.WebViewFeatureType? featureType) =>
+  _i5.Future<bool> isWebViewFeatureSupported(
+    _i6.WebViewFeatureType? featureType,
+  ) =>
       (super.noSuchMethod(
             Invocation.method(#isWebViewFeatureSupported, [featureType]),
             returnValue: _i5.Future<bool>.value(false),

@@ -61,7 +61,13 @@ class MediaSettings {
   }
 
   @override
-  int get hashCode => Object.hash(resolutionPreset, fps, videoBitrate, audioBitrate, enableAudio);
+  int get hashCode => Object.hash(
+    resolutionPreset,
+    fps,
+    videoBitrate,
+    audioBitrate,
+    enableAudio,
+  );
 
   @override
   String toString() {

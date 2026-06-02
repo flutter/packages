@@ -35,7 +35,9 @@ abstract class CameraEvent {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is CameraEvent && runtimeType == other.runtimeType && cameraId == other.cameraId;
+      other is CameraEvent &&
+          runtimeType == other.runtimeType &&
+          cameraId == other.cameraId;
 
   @override
   int get hashCode => cameraId.hashCode;
@@ -64,7 +66,8 @@ class CameraInitializedEvent extends CameraEvent {
     : previewWidth = json['previewWidth']! as double,
       previewHeight = json['previewHeight']! as double,
       exposureMode = deserializeExposureMode(json['exposureMode']! as String),
-      exposurePointSupported = (json['exposurePointSupported'] as bool?) ?? false,
+      exposurePointSupported =
+          (json['exposurePointSupported'] as bool?) ?? false,
       focusMode = deserializeFocusMode(json['focusMode']! as String),
       focusPointSupported = (json['focusPointSupported'] as bool?) ?? false,
       super(json['cameraId']! as int);
@@ -131,7 +134,11 @@ class CameraResolutionChangedEvent extends CameraEvent {
   ///
   /// The `captureWidth` represents the width of the resulting image in pixels.
   /// The `captureHeight` represents the height of the resulting image in pixels.
-  const CameraResolutionChangedEvent(super.cameraId, this.captureWidth, this.captureHeight);
+  const CameraResolutionChangedEvent(
+    super.cameraId,
+    this.captureWidth,
+    this.captureHeight,
+  );
 
   /// Converts the supplied [Map] to an instance of the
   /// [CameraResolutionChangedEvent] class.
@@ -175,7 +182,8 @@ class CameraClosingEvent extends CameraEvent {
 
   /// Converts the supplied [Map] to an instance of the [CameraClosingEvent]
   /// class.
-  CameraClosingEvent.fromJson(Map<String, dynamic> json) : super(json['cameraId']! as int);
+  CameraClosingEvent.fromJson(Map<String, dynamic> json)
+    : super(json['cameraId']! as int);
 
   /// Converts the [CameraClosingEvent] instance into a [Map] instance that can
   /// be serialized to JSON.
@@ -184,7 +192,9 @@ class CameraClosingEvent extends CameraEvent {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      super == other && other is CameraClosingEvent && runtimeType == other.runtimeType;
+      super == other &&
+          other is CameraClosingEvent &&
+          runtimeType == other.runtimeType;
 
   @override
   // This is here even though it just calls super to make it less likely that

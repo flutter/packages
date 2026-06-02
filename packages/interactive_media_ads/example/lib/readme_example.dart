@@ -21,7 +21,8 @@ class AdExampleWidget extends StatefulWidget {
   State<AdExampleWidget> createState() => _AdExampleWidgetState();
 }
 
-class _AdExampleWidgetState extends State<AdExampleWidget> with WidgetsBindingObserver {
+class _AdExampleWidgetState extends State<AdExampleWidget>
+    with WidgetsBindingObserver {
   // IMA sample tag for a pre-, mid-, and post-roll, single inline video ad. See more IMA sample
   // tags at https://developers.google.com/interactive-media-ads/docs/sdks/html5/client-side/tags
   static const String _adTagUrl =
@@ -51,7 +52,8 @@ class _AdExampleWidgetState extends State<AdExampleWidget> with WidgetsBindingOb
 
   // Provides the SDK with the current playback progress of the content video.
   // This is required to support mid-roll ads.
-  final ContentProgressProvider _contentProgressProvider = ContentProgressProvider();
+  final ContentProgressProvider _contentProgressProvider =
+      ContentProgressProvider();
   // #enddocregion example_widget
 
   // #docregion ad_and_content_players
@@ -113,7 +115,9 @@ class _AdExampleWidgetState extends State<AdExampleWidget> with WidgetsBindingOb
     // #docregion ad_and_content_players
     _contentVideoController =
         VideoPlayerController.networkUrl(
-            Uri.parse('https://storage.googleapis.com/gvabox/media/samples/stock.mp4'),
+            Uri.parse(
+              'https://storage.googleapis.com/gvabox/media/samples/stock.mp4',
+            ),
           )
           ..addListener(() {
             if (_contentVideoController.value.isCompleted) {
@@ -141,7 +145,8 @@ class _AdExampleWidgetState extends State<AdExampleWidget> with WidgetsBindingOb
         // because it corresponds to `Activity.onPause`. This state is also
         // triggered before resume, so this will only pause the Ad if the app is
         // in the process of being sent to the background.
-        if (!_shouldShowContentVideo && _lastLifecycleState == AppLifecycleState.resumed) {
+        if (!_shouldShowContentVideo &&
+            _lastLifecycleState == AppLifecycleState.resumed) {
           _adsManager?.pause();
         }
       case AppLifecycleState.hidden:
@@ -154,7 +159,10 @@ class _AdExampleWidgetState extends State<AdExampleWidget> with WidgetsBindingOb
   // #docregion request_ads
   Future<void> _requestAds(AdDisplayContainer container) {
     return _adsLoader.requestAds(
-      AdsRequest(adTagUrl: _adTagUrl, contentProgressProvider: _contentProgressProvider),
+      AdsRequest(
+        adTagUrl: _adTagUrl,
+        contentProgressProvider: _contentProgressProvider,
+      ),
     );
   }
 
@@ -164,19 +172,20 @@ class _AdExampleWidgetState extends State<AdExampleWidget> with WidgetsBindingOb
     });
 
     if (_adsManager != null) {
-      _contentProgressTimer = Timer.periodic(const Duration(milliseconds: 200), (
-        Timer timer,
-      ) async {
-        if (_contentVideoController.value.isInitialized) {
-          final Duration? progress = await _contentVideoController.position;
-          if (progress != null) {
-            await _contentProgressProvider.setProgress(
-              progress: progress,
-              duration: _contentVideoController.value.duration,
-            );
+      _contentProgressTimer = Timer.periodic(
+        const Duration(milliseconds: 200),
+        (Timer timer) async {
+          if (_contentVideoController.value.isInitialized) {
+            final Duration? progress = await _contentVideoController.position;
+            if (progress != null) {
+              await _contentProgressProvider.setProgress(
+                progress: progress,
+                duration: _contentVideoController.value.duration,
+              );
+            }
           }
-        }
-      });
+        },
+      );
     }
 
     await _contentVideoController.play();
@@ -226,13 +235,15 @@ class _AdExampleWidgetState extends State<AdExampleWidget> with WidgetsBindingOb
                       // loaded and can't be removed between ads. This handles clicks for
                       // ads.
                       _adDisplayContainer,
-                      if (_shouldShowContentVideo) VideoPlayer(_contentVideoController),
+                      if (_shouldShowContentVideo)
+                        VideoPlayer(_contentVideoController),
                     ],
                   ),
                 ),
         ),
       ),
-      floatingActionButton: _contentVideoController.value.isInitialized && _shouldShowContentVideo
+      floatingActionButton:
+          _contentVideoController.value.isInitialized && _shouldShowContentVideo
           ? FloatingActionButton(
               onPressed: () {
                 setState(() {
@@ -241,7 +252,11 @@ class _AdExampleWidgetState extends State<AdExampleWidget> with WidgetsBindingOb
                       : _contentVideoController.play();
                 });
               },
-              child: Icon(_contentVideoController.value.isPlaying ? Icons.pause : Icons.play_arrow),
+              child: Icon(
+                _contentVideoController.value.isPlaying
+                    ? Icons.pause
+                    : Icons.play_arrow,
+              ),
             )
           : null,
     );

@@ -18,7 +18,8 @@ import 'package:webview_flutter_platform_interface/src/legacy/platform_interface
     as _i6;
 import 'package:webview_flutter_platform_interface/src/legacy/platform_interface/webview_platform_controller.dart'
     as _i10;
-import 'package:webview_flutter_platform_interface/src/legacy/types/types.dart' as _i5;
+import 'package:webview_flutter_platform_interface/src/legacy/types/types.dart'
+    as _i5;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -35,10 +36,12 @@ import 'package:webview_flutter_platform_interface/src/legacy/types/types.dart' 
 // ignore_for_file: subtype_of_sealed_class
 
 class _FakeWidget_0 extends _i1.SmartFake implements _i2.Widget {
-  _FakeWidget_0(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+  _FakeWidget_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 
   @override
-  String toString({_i3.DiagnosticLevel? minLevel = _i3.DiagnosticLevel.info}) => super.toString();
+  String toString({_i3.DiagnosticLevel? minLevel = _i3.DiagnosticLevel.info}) =>
+      super.toString();
 }
 
 /// A class which mocks [WebViewPlatform].
@@ -53,7 +56,8 @@ class MockWebViewPlatform extends _i1.Mock implements _i4.WebViewPlatform {
   _i2.Widget build({
     required _i2.BuildContext? context,
     required _i5.CreationParams? creationParams,
-    required _i6.WebViewPlatformCallbacksHandler? webViewPlatformCallbacksHandler,
+    required _i6.WebViewPlatformCallbacksHandler?
+    webViewPlatformCallbacksHandler,
     required _i7.JavascriptChannelRegistry? javascriptChannelRegistry,
     _i4.WebViewPlatformCreatedCallback? onWebViewPlatformCreated,
     Set<_i3.Factory<_i8.OneSequenceGestureRecognizer>>? gestureRecognizers,
@@ -72,7 +76,8 @@ class MockWebViewPlatform extends _i1.Mock implements _i4.WebViewPlatform {
               Invocation.method(#build, [], {
                 #context: context,
                 #creationParams: creationParams,
-                #webViewPlatformCallbacksHandler: webViewPlatformCallbacksHandler,
+                #webViewPlatformCallbacksHandler:
+                    webViewPlatformCallbacksHandler,
                 #javascriptChannelRegistry: javascriptChannelRegistry,
                 #onWebViewPlatformCreated: onWebViewPlatformCreated,
                 #gestureRecognizers: gestureRecognizers,
@@ -93,7 +98,8 @@ class MockWebViewPlatform extends _i1.Mock implements _i4.WebViewPlatform {
 /// A class which mocks [WebViewPlatformController].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockWebViewPlatformController extends _i1.Mock implements _i10.WebViewPlatformController {
+class MockWebViewPlatformController extends _i1.Mock
+    implements _i10.WebViewPlatformController {
   MockWebViewPlatformController() {
     _i1.throwOnMissingStub(this);
   }
@@ -217,7 +223,10 @@ class MockWebViewPlatformController extends _i1.Mock implements _i10.WebViewPlat
       (super.noSuchMethod(
             Invocation.method(#evaluateJavascript, [javascript]),
             returnValue: _i9.Future<String>.value(
-              _i11.dummyValue<String>(this, Invocation.method(#evaluateJavascript, [javascript])),
+              _i11.dummyValue<String>(
+                this,
+                Invocation.method(#evaluateJavascript, [javascript]),
+              ),
             ),
           )
           as _i9.Future<String>);
@@ -254,9 +263,13 @@ class MockWebViewPlatformController extends _i1.Mock implements _i10.WebViewPlat
           as _i9.Future<void>);
 
   @override
-  _i9.Future<void> removeJavascriptChannels(Set<String>? javascriptChannelNames) =>
+  _i9.Future<void> removeJavascriptChannels(
+    Set<String>? javascriptChannelNames,
+  ) =>
       (super.noSuchMethod(
-            Invocation.method(#removeJavascriptChannels, [javascriptChannelNames]),
+            Invocation.method(#removeJavascriptChannels, [
+              javascriptChannelNames,
+            ]),
             returnValue: _i9.Future<void>.value(),
             returnValueForMissingStub: _i9.Future<void>.value(),
           )
@@ -290,11 +303,17 @@ class MockWebViewPlatformController extends _i1.Mock implements _i10.WebViewPlat
 
   @override
   _i9.Future<int> getScrollX() =>
-      (super.noSuchMethod(Invocation.method(#getScrollX, []), returnValue: _i9.Future<int>.value(0))
+      (super.noSuchMethod(
+            Invocation.method(#getScrollX, []),
+            returnValue: _i9.Future<int>.value(0),
+          )
           as _i9.Future<int>);
 
   @override
   _i9.Future<int> getScrollY() =>
-      (super.noSuchMethod(Invocation.method(#getScrollY, []), returnValue: _i9.Future<int>.value(0))
+      (super.noSuchMethod(
+            Invocation.method(#getScrollY, []),
+            returnValue: _i9.Future<int>.value(0),
+          )
           as _i9.Future<int>);
 }

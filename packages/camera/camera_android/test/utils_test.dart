@@ -48,8 +48,14 @@ void main() {
     });
 
     test('exposureModeFromPlatform() should convert correctly', () {
-      expect(exposureModeFromPlatform(PlatformExposureMode.auto), ExposureMode.auto);
-      expect(exposureModeFromPlatform(PlatformExposureMode.locked), ExposureMode.locked);
+      expect(
+        exposureModeFromPlatform(PlatformExposureMode.auto),
+        ExposureMode.auto,
+      );
+      expect(
+        exposureModeFromPlatform(PlatformExposureMode.locked),
+        ExposureMode.locked,
+      );
     });
 
     test('focusModeFromPlatform() should convert correctly', () {

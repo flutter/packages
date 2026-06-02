@@ -76,7 +76,9 @@ class ExtendsWebViewWidgetDelegate extends PlatformWebViewWidget {
 
   @override
   Widget build(BuildContext context) {
-    throw UnimplementedError('build is not implemented for ExtendedWebViewWidgetDelegate.');
+    throw UnimplementedError(
+      'build is not implemented for ExtendedWebViewWidgetDelegate.',
+    );
   }
 }
 

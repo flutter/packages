@@ -26,7 +26,10 @@ void main() {
     objectiveC: ObjectiveC(
       interfaces: Interfaces(
         include: (Declaration declaration) {
-          return <String>{'NSFileManager', 'NSURL'}.contains(declaration.originalName);
+          return <String>{
+            'NSFileManager',
+            'NSURL',
+          }.contains(declaration.originalName);
         },
         includeMember: (Declaration declaration, String member) {
           final String interfaceName = declaration.originalName;
@@ -52,6 +55,8 @@ void main() {
         includeTransitive: false,
       ),
     ),
-    functions: Functions.includeSet(<String>{'NSSearchPathForDirectoriesInDomains'}),
+    functions: Functions.includeSet(<String>{
+      'NSSearchPathForDirectoriesInDomains',
+    }),
   ).generate();
 }

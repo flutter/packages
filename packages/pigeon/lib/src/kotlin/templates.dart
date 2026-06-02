@@ -266,4 +266,5 @@ class ${kotlinInstanceManagerClassName(options)}(private val finalizationListene
 ''';
 }
 
-const String _finalizationListenerClassName = '${proxyApiClassNamePrefix}FinalizationListener';
+const String _finalizationListenerClassName =
+    '${proxyApiClassNamePrefix}FinalizationListener';

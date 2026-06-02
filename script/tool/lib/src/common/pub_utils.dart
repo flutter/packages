@@ -42,11 +42,19 @@ Future<bool> runPubCommand(
   bool streamOutput = true,
   String? dartSdkPathOverride,
 }) async {
-  final String command = _pubCommand(package, platform, dartSdkPathOverride: dartSdkPathOverride);
+  final String command = _pubCommand(
+    package,
+    platform,
+    dartSdkPathOverride: dartSdkPathOverride,
+  );
   final args = <String>['pub', ...commandArgs];
   final int exitCode;
   if (streamOutput) {
-    exitCode = await processRunner.runAndStream(command, args, workingDir: package.directory);
+    exitCode = await processRunner.runAndStream(
+      command,
+      args,
+      workingDir: package.directory,
+    );
   } else {
     final io.ProcessResult result = await processRunner.run(
       command,
@@ -78,7 +86,11 @@ Future<io.Process> startPubCommand(
   ], workingDirectory: package.directory);
 }
 
-String _pubCommand(RepositoryPackage package, Platform platform, {String? dartSdkPathOverride}) {
+String _pubCommand(
+  RepositoryPackage package,
+  Platform platform, {
+  String? dartSdkPathOverride,
+}) {
   // Running `dart pub get` on a Flutter package can fail if a non-Flutter Dart
   // is first in the path, so use `flutter pub get` for any Flutter package.
   return package.requiresFlutter()

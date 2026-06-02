@@ -65,7 +65,10 @@ void main() {
           platformRequest.liveStreamPrefetchMaxWaitTime,
         );
         expect(request.vastLoadTimeout, platformRequest.vastLoadTimeout);
-        expect(request.contentProgressProvider, platformRequest.contentProgressProvider);
+        expect(
+          request.contentProgressProvider,
+          platformRequest.contentProgressProvider,
+        );
       }),
       onContentComplete: () async {},
     );
@@ -80,7 +83,8 @@ void main() {
         contentDuration: platformRequest.contentDuration,
         contentKeywords: platformRequest.contentKeywords,
         contentTitle: platformRequest.contentTitle,
-        liveStreamPrefetchMaxWaitTime: platformRequest.liveStreamPrefetchMaxWaitTime,
+        liveStreamPrefetchMaxWaitTime:
+            platformRequest.liveStreamPrefetchMaxWaitTime,
         vastLoadTimeout: platformRequest.vastLoadTimeout,
         contentProgressProvider: ContentProgressProvider.fromPlatform(
           platformRequest.contentProgressProvider!,

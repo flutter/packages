@@ -5,7 +5,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
 
-import 'package:interactive_media_ads/src/android/interactive_media_ads.g.dart' as _i2;
+import 'package:interactive_media_ads/src/android/interactive_media_ads.g.dart'
+    as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -23,25 +24,30 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: subtype_of_sealed_class
 // ignore_for_file: invalid_use_of_internal_member
 
-class _FakePigeonInstanceManager_0 extends _i1.SmartFake implements _i2.PigeonInstanceManager {
+class _FakePigeonInstanceManager_0 extends _i1.SmartFake
+    implements _i2.PigeonInstanceManager {
   _FakePigeonInstanceManager_0(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
 class _FakeAdsManager_1 extends _i1.SmartFake implements _i2.AdsManager {
-  _FakeAdsManager_1(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+  _FakeAdsManager_1(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeAdEvent_2 extends _i1.SmartFake implements _i2.AdEvent {
-  _FakeAdEvent_2(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+  _FakeAdEvent_2(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
-class _FakeAdEventListener_3 extends _i1.SmartFake implements _i2.AdEventListener {
+class _FakeAdEventListener_3 extends _i1.SmartFake
+    implements _i2.AdEventListener {
   _FakeAdEventListener_3(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeAdErrorListener_4 extends _i1.SmartFake implements _i2.AdErrorListener {
+class _FakeAdErrorListener_4 extends _i1.SmartFake
+    implements _i2.AdErrorListener {
   _FakeAdErrorListener_4(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -123,8 +129,14 @@ class MockAdsManager extends _i1.Mock implements _i2.AdsManager {
   _i2.AdsManager pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeAdsManager_1(this, Invocation.method(#pigeon_copy, [])),
-            returnValueForMissingStub: _FakeAdsManager_1(this, Invocation.method(#pigeon_copy, [])),
+            returnValue: _FakeAdsManager_1(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
+            returnValueForMissingStub: _FakeAdsManager_1(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
           )
           as _i2.AdsManager);
 
@@ -201,7 +213,9 @@ class MockAdsManager extends _i1.Mock implements _i2.AdsManager {
           as _i3.Future<void>);
 
   @override
-  _i3.Future<void> removeAdEventListener(_i2.AdEventListener? adEventListener) =>
+  _i3.Future<void> removeAdEventListener(
+    _i2.AdEventListener? adEventListener,
+  ) =>
       (super.noSuchMethod(
             Invocation.method(#removeAdEventListener, [adEventListener]),
             returnValue: _i3.Future<void>.value(),
@@ -242,8 +256,14 @@ class MockAdEvent extends _i1.Mock implements _i2.AdEvent {
   _i2.AdEvent pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeAdEvent_2(this, Invocation.method(#pigeon_copy, [])),
-            returnValueForMissingStub: _FakeAdEvent_2(this, Invocation.method(#pigeon_copy, [])),
+            returnValue: _FakeAdEvent_2(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
+            returnValueForMissingStub: _FakeAdEvent_2(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
           )
           as _i2.AdEvent);
 }
@@ -256,8 +276,10 @@ class MockAdEventListener extends _i1.Mock implements _i2.AdEventListener {
   void Function(_i2.AdEventListener, _i2.AdEvent) get onAdEvent =>
       (super.noSuchMethod(
             Invocation.getter(#onAdEvent),
-            returnValue: (_i2.AdEventListener pigeon_instance, _i2.AdEvent event) {},
-            returnValueForMissingStub: (_i2.AdEventListener pigeon_instance, _i2.AdEvent event) {},
+            returnValue:
+                (_i2.AdEventListener pigeon_instance, _i2.AdEvent event) {},
+            returnValueForMissingStub:
+                (_i2.AdEventListener pigeon_instance, _i2.AdEvent event) {},
           )
           as void Function(_i2.AdEventListener, _i2.AdEvent));
 
@@ -280,7 +302,10 @@ class MockAdEventListener extends _i1.Mock implements _i2.AdEventListener {
   _i2.AdEventListener pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeAdEventListener_3(this, Invocation.method(#pigeon_copy, [])),
+            returnValue: _FakeAdEventListener_3(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
             returnValueForMissingStub: _FakeAdEventListener_3(
               this,
               Invocation.method(#pigeon_copy, []),
@@ -297,9 +322,16 @@ class MockAdErrorListener extends _i1.Mock implements _i2.AdErrorListener {
   void Function(_i2.AdErrorListener, _i2.AdErrorEvent) get onAdError =>
       (super.noSuchMethod(
             Invocation.getter(#onAdError),
-            returnValue: (_i2.AdErrorListener pigeon_instance, _i2.AdErrorEvent event) {},
+            returnValue:
+                (
+                  _i2.AdErrorListener pigeon_instance,
+                  _i2.AdErrorEvent event,
+                ) {},
             returnValueForMissingStub:
-                (_i2.AdErrorListener pigeon_instance, _i2.AdErrorEvent event) {},
+                (
+                  _i2.AdErrorListener pigeon_instance,
+                  _i2.AdErrorEvent event,
+                ) {},
           )
           as void Function(_i2.AdErrorListener, _i2.AdErrorEvent));
 
@@ -322,7 +354,10 @@ class MockAdErrorListener extends _i1.Mock implements _i2.AdErrorListener {
   _i2.AdErrorListener pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeAdErrorListener_4(this, Invocation.method(#pigeon_copy, [])),
+            returnValue: _FakeAdErrorListener_4(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
             returnValueForMissingStub: _FakeAdErrorListener_4(
               this,
               Invocation.method(#pigeon_copy, []),

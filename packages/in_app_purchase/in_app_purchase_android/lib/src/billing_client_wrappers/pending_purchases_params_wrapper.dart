@@ -26,7 +26,8 @@ class PendingPurchasesParamsWrapper {
       return false;
     }
 
-    return other is PendingPurchasesParamsWrapper && other.enablePrepaidPlans == enablePrepaidPlans;
+    return other is PendingPurchasesParamsWrapper &&
+        other.enablePrepaidPlans == enablePrepaidPlans;
   }
 
   @override

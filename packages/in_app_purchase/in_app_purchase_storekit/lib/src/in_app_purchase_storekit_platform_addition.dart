@@ -10,7 +10,8 @@ import '../store_kit_wrappers.dart';
 import './in_app_purchase_storekit_platform.dart';
 
 /// Contains InApp Purchase features that are only available on iOS.
-class InAppPurchaseStoreKitPlatformAddition extends InAppPurchasePlatformAddition {
+class InAppPurchaseStoreKitPlatformAddition
+    extends InAppPurchasePlatformAddition {
   /// Synchronizes your app’s transaction information and subscription status
   /// with information from the App Store.
   /// Storekit 2 only
@@ -72,5 +73,6 @@ class InAppPurchaseStoreKitPlatformAddition extends InAppPurchasePlatformAdditio
   /// `SKPaymentQueueDelegateWrapper.shouldShowPriceConsent()` method was called.
   ///
   /// See documentation of StoreKit's [`-[SKPaymentQueue showPriceConsentIfNeeded]`](https://developer.apple.com/documentation/storekit/skpaymentqueue/3521327-showpriceconsentifneeded?language=objc).
-  Future<void> showPriceConsentIfNeeded() => SKPaymentQueueWrapper().showPriceConsentIfNeeded();
+  Future<void> showPriceConsentIfNeeded() =>
+      SKPaymentQueueWrapper().showPriceConsentIfNeeded();
 }

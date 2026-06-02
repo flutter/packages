@@ -34,7 +34,9 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     LocalAuthPlatform.instance.isDeviceSupported().then(
       (bool isSupported) => setState(
-        () => _supportState = isSupported ? _SupportState.supported : _SupportState.unsupported,
+        () => _supportState = isSupported
+            ? _SupportState.supported
+            : _SupportState.unsupported,
       ),
     );
   }
@@ -42,7 +44,8 @@ class _MyAppState extends State<MyApp> {
   Future<void> _checkBiometrics() async {
     late bool deviceSupportsBiometrics;
     try {
-      deviceSupportsBiometrics = await LocalAuthPlatform.instance.deviceSupportsBiometrics();
+      deviceSupportsBiometrics = await LocalAuthPlatform.instance
+          .deviceSupportsBiometrics();
     } on PlatformException catch (e) {
       deviceSupportsBiometrics = false;
       print(e);
@@ -59,7 +62,8 @@ class _MyAppState extends State<MyApp> {
   Future<void> _getEnrolledBiometrics() async {
     late List<BiometricType> enrolledBiometrics;
     try {
-      enrolledBiometrics = await LocalAuthPlatform.instance.getEnrolledBiometrics();
+      enrolledBiometrics = await LocalAuthPlatform.instance
+          .getEnrolledBiometrics();
     } on PlatformException catch (e) {
       enrolledBiometrics = <BiometricType>[];
       print(e);
@@ -110,7 +114,9 @@ class _MyAppState extends State<MyApp> {
       return;
     }
 
-    setState(() => _authorized = authenticated ? 'Authorized' : 'Not Authorized');
+    setState(
+      () => _authorized = authenticated ? 'Authorized' : 'Not Authorized',
+    );
   }
 
   Future<void> _authenticateWithBiometrics() async {
@@ -121,9 +127,13 @@ class _MyAppState extends State<MyApp> {
         _authorized = 'Authenticating';
       });
       authenticated = await LocalAuthPlatform.instance.authenticate(
-        localizedReason: 'Scan your fingerprint (or face or whatever) to authenticate',
+        localizedReason:
+            'Scan your fingerprint (or face or whatever) to authenticate',
         authMessages: <AuthMessages>[const IOSAuthMessages()],
-        options: const AuthenticationOptions(stickyAuth: true, biometricOnly: true),
+        options: const AuthenticationOptions(
+          stickyAuth: true,
+          biometricOnly: true,
+        ),
       );
       setState(() {
         _isAuthenticating = false;
@@ -181,7 +191,10 @@ class _MyAppState extends State<MyApp> {
                   const Text('This device is not supported'),
                 const Divider(height: 100),
                 Text('Device supports biometrics: $_canCheckBiometrics\n'),
-                ElevatedButton(onPressed: _checkBiometrics, child: const Text('Check biometrics')),
+                ElevatedButton(
+                  onPressed: _checkBiometrics,
+                  child: const Text('Check biometrics'),
+                ),
                 const Divider(height: 100),
                 Text('Enrolled biometrics: $_enrolledBiometrics\n'),
                 ElevatedButton(
@@ -195,7 +208,10 @@ class _MyAppState extends State<MyApp> {
                     onPressed: _cancelAuthentication,
                     child: const Row(
                       mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[Text('Cancel Authentication'), Icon(Icons.cancel)],
+                      children: <Widget>[
+                        Text('Cancel Authentication'),
+                        Icon(Icons.cancel),
+                      ],
                     ),
                   )
                 else
@@ -216,7 +232,11 @@ class _MyAppState extends State<MyApp> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            Text(_isAuthenticating ? 'Cancel' : 'Authenticate: biometrics only'),
+                            Text(
+                              _isAuthenticating
+                                  ? 'Cancel'
+                                  : 'Authenticate: biometrics only',
+                            ),
                             const Icon(Icons.fingerprint),
                           ],
                         ),

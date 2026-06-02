@@ -73,9 +73,14 @@ class TextDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(fileName),
-      content: Scrollbar(child: SingleChildScrollView(child: Text(fileContent))),
+      content: Scrollbar(
+        child: SingleChildScrollView(child: Text(fileContent)),
+      ),
       actions: <Widget>[
-        TextButton(child: const Text('Close'), onPressed: () => Navigator.pop(context)),
+        TextButton(
+          child: const Text('Close'),
+          onPressed: () => Navigator.pop(context),
+        ),
       ],
     );
   }

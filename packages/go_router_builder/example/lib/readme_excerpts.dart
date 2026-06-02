@@ -26,7 +26,8 @@ void otherDoc(BuildContext context) {
   // #enddocregion GoRoute
 
   // #docregion GoWrong
-  void tap() => context.go('/familyId/a42'); // This is an error: `a42` is not an `int`.
+  void tap() =>
+      context.go('/familyId/a42'); // This is an error: `a42` is not an `int`.
   // #enddocregion GoWrong
 
   // #docregion GoRouter
@@ -85,7 +86,9 @@ void otherDoc(BuildContext context) {
 // #docregion TypedGoRouteHomeRoute
 @TypedGoRoute<HomeRoute>(
   path: '/',
-  routes: <TypedGoRoute<GoRouteData>>[TypedGoRoute<FamilyRoute>(path: 'family/:fid')],
+  routes: <TypedGoRoute<GoRouteData>>[
+    TypedGoRoute<FamilyRoute>(path: 'family/:fid'),
+  ],
 )
 // #docregion HomeRoute
 class HomeRoute extends GoRouteData with $HomeRoute {
@@ -133,7 +136,9 @@ class HomeScreen extends StatelessWidget {
       body: TextButton(
         onPressed: () async {
           // #docregion awaitPush
-          final bool? result = await const FamilyRoute(fid: 'John').push<bool>(context);
+          final bool? result = await const FamilyRoute(
+            fid: 'John',
+          ).push<bool>(context);
           // #enddocregion awaitPush
           print('result is $result');
         },
@@ -260,7 +265,8 @@ class PersonScreen extends StatelessWidget {
 
 // #docregion HotdogRouteWithEverything
 @TypedGoRoute<HotdogRouteWithEverything>(path: '/:ketchup')
-class HotdogRouteWithEverything extends GoRouteData with $HotdogRouteWithEverything {
+class HotdogRouteWithEverything extends GoRouteData
+    with $HotdogRouteWithEverything {
   HotdogRouteWithEverything(this.ketchup, this.mustard, this.$extra);
   final bool ketchup; // A required path parameter.
   final String? mustard; // An optional query parameter.
@@ -354,7 +360,10 @@ class MyShellRoutePage extends StatelessWidget {
 class FancyRoute extends GoRouteData with $FancyRoute {
   const FancyRoute();
   @override
-  CustomTransitionPage<void> buildPage(BuildContext context, GoRouterState state) {
+  CustomTransitionPage<void> buildPage(
+    BuildContext context,
+    GoRouterState state,
+  ) {
     return CustomTransitionPage<void>(
       key: state.pageKey,
       child: const MyPage(),
@@ -378,7 +387,9 @@ final GlobalKey<NavigatorState> shellNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
 @TypedShellRoute<MyShellRouteData>(
-  routes: <TypedRoute<RouteData>>[TypedGoRoute<MyGoRouteData>(path: 'my-go-route')],
+  routes: <TypedRoute<RouteData>>[
+    TypedGoRoute<MyGoRouteData>(path: 'my-go-route'),
+  ],
 )
 class MyShellRouteData extends ShellRouteData {
   const MyShellRouteData();
@@ -409,7 +420,8 @@ class DetailsRoute extends RelativeGoRouteData with $DetailsRoute {
   const DetailsRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => const DetailsScreen();
+  Widget build(BuildContext context, GoRouterState state) =>
+      const DetailsScreen();
 }
 
 // #enddocregion relativeRoute

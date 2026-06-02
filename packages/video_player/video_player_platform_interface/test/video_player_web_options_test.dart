@@ -6,10 +6,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 void main() {
-  test('VideoPlayerOptions controls defaults to VideoPlayerWebOptionsControls.disabled()', () {
-    const options = VideoPlayerWebOptions();
-    expect(options.controls, const VideoPlayerWebOptionsControls.disabled());
-  });
+  test(
+    'VideoPlayerOptions controls defaults to VideoPlayerWebOptionsControls.disabled()',
+    () {
+      const options = VideoPlayerWebOptions();
+      expect(options.controls, const VideoPlayerWebOptionsControls.disabled());
+    },
+  );
 
   test('VideoPlayerOptions allowContextMenu defaults to true', () {
     const options = VideoPlayerWebOptions();
@@ -28,7 +31,9 @@ void main() {
     });
 
     test('with a value', () {
-      final options = VideoPlayerWebOptions(poster: Uri.parse('https://example.com/poster.jpg'));
+      final options = VideoPlayerWebOptions(
+        poster: Uri.parse('https://example.com/poster.jpg'),
+      );
       expect(options.poster, Uri.parse('https://example.com/poster.jpg'));
     });
   });

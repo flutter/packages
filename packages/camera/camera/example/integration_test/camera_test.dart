@@ -32,8 +32,12 @@ void main() {
   });
 
   final presetExpectedSizes = <ResolutionPreset, Size>{
-    ResolutionPreset.low: Platform.isAndroid ? const Size(240, 320) : const Size(288, 352),
-    ResolutionPreset.medium: Platform.isAndroid ? const Size(480, 720) : const Size(480, 640),
+    ResolutionPreset.low: Platform.isAndroid
+        ? const Size(240, 320)
+        : const Size(288, 352),
+    ResolutionPreset.medium: Platform.isAndroid
+        ? const Size(480, 720)
+        : const Size(480, 640),
     ResolutionPreset.high: const Size(720, 1280),
     ResolutionPreset.veryHigh: const Size(1080, 1920),
     ResolutionPreset.ultraHigh: const Size(2160, 3840),
@@ -72,7 +76,10 @@ void main() {
 
     // Verify image dimensions are as expected
     expect(video, isNotNull);
-    return assertExpectedDimensions(expectedSize, Size(video.height, video.width));
+    return assertExpectedDimensions(
+      expectedSize,
+      Size(video.height, video.width),
+    );
   }
 
   testWidgets(
@@ -84,7 +91,8 @@ void main() {
       }
       for (final cameraDescription in cameras) {
         var previousPresetExactlySupported = true;
-        for (final MapEntry<ResolutionPreset, Size> preset in presetExpectedSizes.entries) {
+        for (final MapEntry<ResolutionPreset, Size> preset
+            in presetExpectedSizes.entries) {
           final controller = CameraController(cameraDescription, preset.key);
           await controller.initialize();
           await controller.prepareForVideoRecording();
@@ -111,7 +119,11 @@ void main() {
       return;
     }
 
-    final controller = CameraController(cameras[0], ResolutionPreset.low, enableAudio: false);
+    final controller = CameraController(
+      cameras[0],
+      ResolutionPreset.low,
+      enableAudio: false,
+    );
     await controller.initialize();
     await controller.prepareForVideoRecording();
 
@@ -121,7 +133,8 @@ void main() {
     sleep(const Duration(seconds: 2));
 
     final XFile file = await controller.stopVideoRecording();
-    final int recordingTime = DateTime.now().millisecondsSinceEpoch - recordingStart;
+    final int recordingTime =
+        DateTime.now().millisecondsSinceEpoch - recordingStart;
 
     final videoFile = File(file.path);
     final videoController = VideoPlayerController.file(videoFile);
@@ -138,7 +151,11 @@ void main() {
       return;
     }
 
-    final controller = CameraController(cameras[0], ResolutionPreset.low, enableAudio: false);
+    final controller = CameraController(
+      cameras[0],
+      ResolutionPreset.low,
+      enableAudio: false,
+    );
 
     await controller.initialize();
     await controller.prepareForVideoRecording();
@@ -162,7 +179,8 @@ void main() {
     }
 
     final XFile file = await controller.stopVideoRecording();
-    final int recordingTime = DateTime.now().millisecondsSinceEpoch - recordingStart;
+    final int recordingTime =
+        DateTime.now().millisecondsSinceEpoch - recordingStart;
 
     final videoFile = File(file.path);
     final videoController = VideoPlayerController.file(videoFile);
@@ -179,7 +197,11 @@ void main() {
       return;
     }
 
-    final controller = CameraController(cameras[0], ResolutionPreset.low, enableAudio: false);
+    final controller = CameraController(
+      cameras[0],
+      ResolutionPreset.low,
+      enableAudio: false,
+    );
 
     await controller.initialize();
     var isDetecting = false;
@@ -230,7 +252,9 @@ void main() {
     return completer.future;
   }
 
-  testWidgets('Set description while recording captures full video', (WidgetTester tester) async {
+  testWidgets('Set description while recording captures full video', (
+    WidgetTester tester,
+  ) async {
     final List<CameraDescription> cameras = await availableCameras();
     if (cameras.length < 2) {
       return;
@@ -258,7 +282,10 @@ void main() {
     final int duration = videoController.value.duration.inMilliseconds;
     await videoController.dispose();
 
-    expect(duration, greaterThanOrEqualTo(const Duration(seconds: 4).inMilliseconds));
+    expect(
+      duration,
+      greaterThanOrEqualTo(const Duration(seconds: 4).inMilliseconds),
+    );
     await controller.dispose();
   });
 
@@ -268,7 +295,11 @@ void main() {
       return;
     }
 
-    final controller = CameraController(cameras[0], ResolutionPreset.low, enableAudio: false);
+    final controller = CameraController(
+      cameras[0],
+      ResolutionPreset.low,
+      enableAudio: false,
+    );
 
     await controller.initialize();
     await controller.setDescription(cameras[1]);
@@ -276,7 +307,9 @@ void main() {
     expect(controller.description, cameras[1]);
   });
 
-  testWidgets('iOS image streaming with imageFormatGroup', (WidgetTester tester) async {
+  testWidgets('iOS image streaming with imageFormatGroup', (
+    WidgetTester tester,
+  ) async {
     final List<CameraDescription> cameras = await availableCameras();
     if (cameras.isEmpty) {
       return;

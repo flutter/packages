@@ -187,28 +187,31 @@ void main() {
       expect(firstEvent == secondEvent, false);
     });
 
-    test('equals should return false if exposurePointSupported is different', () {
-      const firstEvent = CameraInitializedEvent(
-        1,
-        1024,
-        640,
-        ExposureMode.auto,
-        true,
-        FocusMode.auto,
-        true,
-      );
-      const secondEvent = CameraInitializedEvent(
-        1,
-        1024,
-        640,
-        ExposureMode.auto,
-        false,
-        FocusMode.auto,
-        true,
-      );
+    test(
+      'equals should return false if exposurePointSupported is different',
+      () {
+        const firstEvent = CameraInitializedEvent(
+          1,
+          1024,
+          640,
+          ExposureMode.auto,
+          true,
+          FocusMode.auto,
+          true,
+        );
+        const secondEvent = CameraInitializedEvent(
+          1,
+          1024,
+          640,
+          ExposureMode.auto,
+          false,
+          FocusMode.auto,
+          true,
+        );
 
-      expect(firstEvent == secondEvent, false);
-    });
+        expect(firstEvent == secondEvent, false);
+      },
+    );
 
     test('equals should return false if focusMode is different', () {
       const firstEvent = CameraInitializedEvent(
@@ -290,11 +293,13 @@ void main() {
     });
 
     test('fromJson should initialize all properties', () {
-      final event = CameraResolutionChangedEvent.fromJson(const <String, dynamic>{
-        'cameraId': 1,
-        'captureWidth': 1024.0,
-        'captureHeight': 640.0,
-      });
+      final event = CameraResolutionChangedEvent.fromJson(
+        const <String, dynamic>{
+          'cameraId': 1,
+          'captureWidth': 1024.0,
+          'captureHeight': 640.0,
+        },
+      );
 
       expect(event.cameraId, 1);
       expect(event.captureWidth, 1024);
@@ -360,7 +365,9 @@ void main() {
     });
 
     test('fromJson should initialize all properties', () {
-      final event = CameraClosingEvent.fromJson(const <String, dynamic>{'cameraId': 1});
+      final event = CameraClosingEvent.fromJson(const <String, dynamic>{
+        'cameraId': 1,
+      });
 
       expect(event.cameraId, 1);
     });
@@ -447,7 +454,10 @@ void main() {
 
     test('hashCode should match hashCode of all properties', () {
       const event = CameraErrorEvent(1, 'Error');
-      final int expectedHashCode = Object.hash(event.cameraId.hashCode, event.description);
+      final int expectedHashCode = Object.hash(
+        event.cameraId.hashCode,
+        event.description,
+      );
 
       expect(event.hashCode, expectedHashCode);
     });

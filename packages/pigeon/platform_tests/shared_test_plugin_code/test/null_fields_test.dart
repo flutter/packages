@@ -41,13 +41,17 @@ void main() {
   });
 
   test('test request decode with values', () {
-    final NullFieldsSearchRequest request = NullFieldsSearchRequest.decode(<dynamic>['query', 1]);
+    final NullFieldsSearchRequest request = NullFieldsSearchRequest.decode(
+      <dynamic>['query', 1],
+    );
 
     expect(request.query, 'query');
   });
 
   test('test request decode with null', () {
-    final NullFieldsSearchRequest request = NullFieldsSearchRequest.decode(<dynamic>[null, 1]);
+    final NullFieldsSearchRequest request = NullFieldsSearchRequest.decode(
+      <dynamic>[null, 1],
+    );
 
     expect(request.query, isNull);
   });

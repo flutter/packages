@@ -48,18 +48,26 @@ class SharedPreferencesLinux extends SharedPreferencesStorePlatform {
   /// Checks for cached preferences and returns them or loads preferences from
   /// file and returns and caches them.
   Future<Map<String, Object>> _readPreferences() async {
-    _cachedPreferences ??= await _reload(_defaultFileName, fs: fs, pathProvider: pathProvider);
+    _cachedPreferences ??= await _reload(
+      _defaultFileName,
+      fs: fs,
+      pathProvider: pathProvider,
+    );
     return _cachedPreferences!;
   }
 
   @override
   Future<bool> clear() async {
-    return clearWithParameters(ClearParameters(filter: PreferencesFilter(prefix: _defaultPrefix)));
+    return clearWithParameters(
+      ClearParameters(filter: PreferencesFilter(prefix: _defaultPrefix)),
+    );
   }
 
   @override
   Future<bool> clearWithPrefix(String prefix) async {
-    return clearWithParameters(ClearParameters(filter: PreferencesFilter(prefix: prefix)));
+    return clearWithParameters(
+      ClearParameters(filter: PreferencesFilter(prefix: prefix)),
+    );
   }
 
   @override
@@ -72,7 +80,12 @@ class SharedPreferencesLinux extends SharedPreferencesStorePlatform {
           key.startsWith(filter.prefix) &&
           (filter.allowList == null || filter.allowList!.contains(key)),
     );
-    return _writePreferences(preferences, _defaultFileName, fs: fs, pathProvider: pathProvider);
+    return _writePreferences(
+      preferences,
+      _defaultFileName,
+      fs: fs,
+      pathProvider: pathProvider,
+    );
   }
 
   @override
@@ -84,16 +97,21 @@ class SharedPreferencesLinux extends SharedPreferencesStorePlatform {
 
   @override
   Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
-    return getAllWithParameters(GetAllParameters(filter: PreferencesFilter(prefix: prefix)));
+    return getAllWithParameters(
+      GetAllParameters(filter: PreferencesFilter(prefix: prefix)),
+    );
   }
 
   @override
-  Future<Map<String, Object>> getAllWithParameters(GetAllParameters parameters) async {
+  Future<Map<String, Object>> getAllWithParameters(
+    GetAllParameters parameters,
+  ) async {
     final PreferencesFilter filter = parameters.filter;
     final withPrefix = Map<String, Object>.from(await _readPreferences());
     withPrefix.removeWhere(
       (String key, _) =>
-          !(key.startsWith(filter.prefix) && (filter.allowList?.contains(key) ?? true)),
+          !(key.startsWith(filter.prefix) &&
+              (filter.allowList?.contains(key) ?? true)),
     );
     return withPrefix;
   }
@@ -102,14 +120,24 @@ class SharedPreferencesLinux extends SharedPreferencesStorePlatform {
   Future<bool> remove(String key) async {
     final Map<String, Object> preferences = await _readPreferences();
     preferences.remove(key);
-    return _writePreferences(preferences, _defaultFileName, fs: fs, pathProvider: pathProvider);
+    return _writePreferences(
+      preferences,
+      _defaultFileName,
+      fs: fs,
+      pathProvider: pathProvider,
+    );
   }
 
   @override
   Future<bool> setValue(String valueType, String key, Object value) async {
     final Map<String, Object> preferences = await _readPreferences();
     preferences[key] = value;
-    return _writePreferences(preferences, _defaultFileName, fs: fs, pathProvider: pathProvider);
+    return _writePreferences(
+      preferences,
+      _defaultFileName,
+      fs: fs,
+      pathProvider: pathProvider,
+    );
   }
 }
 
@@ -142,17 +170,29 @@ base class SharedPreferencesAsyncLinux extends SharedPreferencesAsyncPlatform {
   }
 
   @override
-  Future<void> setString(String key, String value, SharedPreferencesOptions options) {
+  Future<void> setString(
+    String key,
+    String value,
+    SharedPreferencesOptions options,
+  ) {
     return _setValue(key, value, options);
   }
 
   @override
-  Future<void> setBool(String key, bool value, SharedPreferencesOptions options) {
+  Future<void> setBool(
+    String key,
+    bool value,
+    SharedPreferencesOptions options,
+  ) {
     return _setValue(key, value, options);
   }
 
   @override
-  Future<void> setDouble(String key, double value, SharedPreferencesOptions options) {
+  Future<void> setDouble(
+    String key,
+    double value,
+    SharedPreferencesOptions options,
+  ) {
     return _setValue(key, value, options);
   }
 
@@ -162,12 +202,19 @@ base class SharedPreferencesAsyncLinux extends SharedPreferencesAsyncPlatform {
   }
 
   @override
-  Future<void> setStringList(String key, List<String> value, SharedPreferencesOptions options) {
+  Future<void> setStringList(
+    String key,
+    List<String> value,
+    SharedPreferencesOptions options,
+  ) {
     return _setValue(key, value, options);
   }
 
   @override
-  Future<String?> getString(String key, SharedPreferencesOptions options) async {
+  Future<String?> getString(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
     final Map<String, Object> data = await _readAll(<String>{key}, options);
     return data[key] as String?;
   }
@@ -179,7 +226,10 @@ base class SharedPreferencesAsyncLinux extends SharedPreferencesAsyncPlatform {
   }
 
   @override
-  Future<double?> getDouble(String key, SharedPreferencesOptions options) async {
+  Future<double?> getDouble(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
     final Map<String, Object> data = await _readAll(<String>{key}, options);
     return data[key] as double?;
   }
@@ -191,7 +241,10 @@ base class SharedPreferencesAsyncLinux extends SharedPreferencesAsyncPlatform {
   }
 
   @override
-  Future<List<String>?> getStringList(String key, SharedPreferencesOptions options) async {
+  Future<List<String>?> getStringList(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
     final Map<String, Object> data = await _readAll(<String>{key}, options);
     return (data[key] as List<Object?>?)?.cast<String>().toList();
   }
@@ -204,11 +257,19 @@ base class SharedPreferencesAsyncLinux extends SharedPreferencesAsyncPlatform {
     final SharedPreferencesLinuxOptions linuxOptions =
         SharedPreferencesLinuxOptions.fromSharedPreferencesOptions(options);
     final PreferencesFilters filter = parameters.filter;
-    final Map<String, Object> preferences = await _readPreferences(linuxOptions.fileName);
-    preferences.removeWhere(
-      (String key, _) => filter.allowList == null || filter.allowList!.contains(key),
+    final Map<String, Object> preferences = await _readPreferences(
+      linuxOptions.fileName,
     );
-    await _writePreferences(preferences, linuxOptions.fileName, fs: fs, pathProvider: pathProvider);
+    preferences.removeWhere(
+      (String key, _) =>
+          filter.allowList == null || filter.allowList!.contains(key),
+    );
+    await _writePreferences(
+      preferences,
+      linuxOptions.fileName,
+      fs: fs,
+      pathProvider: pathProvider,
+    );
   }
 
   @override
@@ -231,23 +292,40 @@ base class SharedPreferencesAsyncLinux extends SharedPreferencesAsyncPlatform {
   ) async {
     final SharedPreferencesLinuxOptions linuxOptions =
         SharedPreferencesLinuxOptions.fromSharedPreferencesOptions(options);
-    final prefs = Map<String, Object>.from(await _readPreferences(linuxOptions.fileName));
+    final prefs = Map<String, Object>.from(
+      await _readPreferences(linuxOptions.fileName),
+    );
     prefs.removeWhere((String key, _) => !(allowList?.contains(key) ?? true));
     return prefs;
   }
 
-  Future<void> _setValue(String key, Object value, SharedPreferencesOptions options) async {
+  Future<void> _setValue(
+    String key,
+    Object value,
+    SharedPreferencesOptions options,
+  ) async {
     final SharedPreferencesLinuxOptions linuxOptions =
         SharedPreferencesLinuxOptions.fromSharedPreferencesOptions(options);
-    final Map<String, Object> preferences = await _readPreferences(linuxOptions.fileName);
+    final Map<String, Object> preferences = await _readPreferences(
+      linuxOptions.fileName,
+    );
     preferences[key] = value;
-    await _writePreferences(preferences, linuxOptions.fileName, fs: fs, pathProvider: pathProvider);
+    await _writePreferences(
+      preferences,
+      linuxOptions.fileName,
+      fs: fs,
+      pathProvider: pathProvider,
+    );
   }
 
   /// Checks for cached preferences and returns them or loads preferences from
   /// file and returns and caches them.
   Future<Map<String, Object>> _readPreferences(String fileName) async {
-    _cachedPreferences ??= await _reload(fileName, fs: fs, pathProvider: pathProvider);
+    _cachedPreferences ??= await _reload(
+      fileName,
+      fs: fs,
+      pathProvider: pathProvider,
+    );
     return _cachedPreferences!;
   }
 }
@@ -274,7 +352,11 @@ Future<Map<String, Object>> _reload(
   PathProviderLinux? pathProvider,
 }) async {
   var preferences = <String, Object>{};
-  final File? localDataFile = await _getLocalDataFile(fileName, fs: fs, pathProvider: pathProvider);
+  final File? localDataFile = await _getLocalDataFile(
+    fileName,
+    fs: fs,
+    pathProvider: pathProvider,
+  );
   if (localDataFile != null && localDataFile.existsSync()) {
     final String stringMap = localDataFile.readAsStringSync();
     if (stringMap.isNotEmpty) {

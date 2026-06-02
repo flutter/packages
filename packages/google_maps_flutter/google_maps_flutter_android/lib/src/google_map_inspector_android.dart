@@ -15,8 +15,9 @@ import 'messages.g.dart';
 class GoogleMapsInspectorAndroid extends GoogleMapsInspectorPlatform {
   /// Creates an inspector API instance for a given map ID from
   /// [inspectorProvider].
-  GoogleMapsInspectorAndroid(MapsInspectorApi? Function(int mapId) inspectorProvider)
-    : _inspectorProvider = inspectorProvider;
+  GoogleMapsInspectorAndroid(
+    MapsInspectorApi? Function(int mapId) inspectorProvider,
+  ) : _inspectorProvider = inspectorProvider;
 
   final MapsInspectorApi? Function(int mapId) _inspectorProvider;
 
@@ -52,12 +53,17 @@ class GoogleMapsInspectorAndroid extends GoogleMapsInspectorPlatform {
 
   @override
   Future<MinMaxZoomPreference> getMinMaxZoomLevels({required int mapId}) async {
-    final PlatformZoomRange zoomLevels = await _inspectorProvider(mapId)!.getZoomRange();
+    final PlatformZoomRange zoomLevels = await _inspectorProvider(
+      mapId,
+    )!.getZoomRange();
     return MinMaxZoomPreference(zoomLevels.min, zoomLevels.max);
   }
 
   @override
-  Future<TileOverlay?> getTileOverlayInfo(TileOverlayId tileOverlayId, {required int mapId}) async {
+  Future<TileOverlay?> getTileOverlayInfo(
+    TileOverlayId tileOverlayId, {
+    required int mapId,
+  }) async {
     final PlatformTileLayer? tileInfo = await _inspectorProvider(
       mapId,
     )!.getTileOverlayInfo(tileOverlayId.value);
@@ -115,14 +121,23 @@ class GoogleMapsInspectorAndroid extends GoogleMapsInspectorPlatform {
         transparency: groundOverlayInfo.transparency,
         visible: groundOverlayInfo.visible,
         clickable: groundOverlayInfo.clickable,
-        anchor: Offset(groundOverlayInfo.anchor!.x, groundOverlayInfo.anchor!.y),
+        anchor: Offset(
+          groundOverlayInfo.anchor!.x,
+          groundOverlayInfo.anchor!.y,
+        ),
       );
     } else if (bounds != null) {
       return GroundOverlay.fromBounds(
         groundOverlayId: groundOverlayId,
         bounds: LatLngBounds(
-          southwest: LatLng(bounds.southwest.latitude, bounds.southwest.longitude),
-          northeast: LatLng(bounds.northeast.latitude, bounds.northeast.longitude),
+          southwest: LatLng(
+            bounds.southwest.latitude,
+            bounds.southwest.longitude,
+          ),
+          northeast: LatLng(
+            bounds.northeast.latitude,
+            bounds.northeast.longitude,
+          ),
         ),
         image: dummyImage,
         zIndex: groundOverlayInfo.zIndex,
@@ -166,7 +181,9 @@ class GoogleMapsInspectorAndroid extends GoogleMapsInspectorPlatform {
     required int mapId,
     required ClusterManagerId clusterManagerId,
   }) async {
-    return (await _inspectorProvider(mapId)!.getClusters(clusterManagerId.value))
+    return (await _inspectorProvider(
+          mapId,
+        )!.getClusters(clusterManagerId.value))
         // See comment in messages.dart for why the force unwrap is okay.
         .map(
           (PlatformCluster? cluster) =>
@@ -184,7 +201,10 @@ class GoogleMapsInspectorAndroid extends GoogleMapsInspectorPlatform {
       mapId,
     )!.getCameraPosition();
     return CameraPosition(
-      target: LatLng(cameraPosition.target.latitude, cameraPosition.target.longitude),
+      target: LatLng(
+        cameraPosition.target.latitude,
+        cameraPosition.target.longitude,
+      ),
       bearing: cameraPosition.bearing,
       tilt: cameraPosition.tilt,
       zoom: cameraPosition.zoom,

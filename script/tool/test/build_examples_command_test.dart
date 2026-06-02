@@ -24,9 +24,8 @@ void main() {
     setUp(() {
       mockPlatform = MockPlatform();
       final GitDir gitDir;
-      (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) = configureBaseCommandMocks(
-        platform: mockPlatform,
-      );
+      (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) =
+          configureBaseCommandMocks(platform: mockPlatform);
       final command = BuildExamplesCommand(
         packagesDir,
         processRunner: processRunner,
@@ -34,7 +33,10 @@ void main() {
         gitDir: gitDir,
       );
 
-      runner = CommandRunner<void>('build_examples_command', 'Test for build_example_command');
+      runner = CommandRunner<void>(
+        'build_examples_command',
+        'Test for build_example_command',
+      );
       runner.addCommand(command);
     });
 
@@ -51,7 +53,9 @@ void main() {
       expect(commandError, isA<ToolExit>());
       expect(
         output,
-        containsAllInOrder(<Matcher>[contains('At least one platform must be provided')]),
+        containsAllInOrder(<Matcher>[
+          contains('At least one platform must be provided'),
+        ]),
       );
     });
 
@@ -64,7 +68,9 @@ void main() {
         },
       );
 
-      processRunner.mockProcessesForExecutable[getFlutterCommand(mockPlatform)] = <FakeProcessInfo>[
+      processRunner.mockProcessesForExecutable[getFlutterCommand(
+        mockPlatform,
+      )] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(exitCode: 1), <String>['build']),
       ];
 
@@ -100,7 +106,9 @@ void main() {
         },
       );
 
-      processRunner.mockProcessesForExecutable[getFlutterCommand(mockPlatform)] = <FakeProcessInfo>[
+      processRunner.mockProcessesForExecutable[getFlutterCommand(
+        mockPlatform,
+      )] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(exitCode: 1), <String>['pub', 'get']),
       ];
 
@@ -126,27 +134,30 @@ void main() {
       );
     });
 
-    test('building for iOS when plugin is not set up for iOS results in no-op', () async {
-      mockPlatform.isMacOS = true;
-      createFakePlugin('plugin', packagesDir);
+    test(
+      'building for iOS when plugin is not set up for iOS results in no-op',
+      () async {
+        mockPlatform.isMacOS = true;
+        createFakePlugin('plugin', packagesDir);
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'build-examples',
-        '--ios',
-      ]);
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'build-examples',
+          '--ios',
+        ]);
 
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('Running for plugin'),
-          contains('iOS is not supported by this plugin'),
-        ]),
-      );
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for plugin'),
+            contains('iOS is not supported by this plugin'),
+          ]),
+        );
 
-      // Output should be empty since running build-examples --macos with no macos
-      // implementation is a no-op.
-      expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
-    });
+        // Output should be empty since running build-examples --macos with no macos
+        // implementation is a no-op.
+        expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
+      },
+    );
 
     test('building for iOS', () async {
       mockPlatform.isMacOS = true;
@@ -166,7 +177,10 @@ void main() {
         '--enable-experiment=exp1',
       ]);
 
-      expect(output, containsAllInOrder(<String>['\nBUILDING plugin/example for iOS']));
+      expect(
+        output,
+        containsAllInOrder(<String>['\nBUILDING plugin/example for iOS']),
+      );
 
       expect(
         processRunner.recordedCalls,
@@ -193,9 +207,12 @@ void main() {
       );
 
       final RepositoryPackage example = plugin.getExamples().first;
-      final String originalPubspecContents = example.pubspecFile.readAsStringSync();
+      final String originalPubspecContents = example.pubspecFile
+          .readAsStringSync();
       String? buildTimePubspecContents;
-      processRunner.mockProcessesForExecutable[getFlutterCommand(mockPlatform)] = <FakeProcessInfo>[
+      processRunner.mockProcessesForExecutable[getFlutterCommand(
+        mockPlatform,
+      )] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(), <String>['build'], () {
           buildTimePubspecContents = example.pubspecFile.readAsStringSync();
         }),
@@ -208,13 +225,25 @@ void main() {
         '--no-swift-package-manager',
       ]);
 
-      expect(output, containsAllInOrder(<String>['\nBUILDING plugin/example for iOS']));
+      expect(
+        output,
+        containsAllInOrder(<String>['\nBUILDING plugin/example for iOS']),
+      );
 
       // Ensure that SwiftPM was disabled for the package.
-      expect(originalPubspecContents, isNot(contains('enable-swift-package-manager: false')));
-      expect(buildTimePubspecContents, contains('enable-swift-package-manager: false'));
+      expect(
+        originalPubspecContents,
+        isNot(contains('enable-swift-package-manager: false')),
+      );
+      expect(
+        buildTimePubspecContents,
+        contains('enable-swift-package-manager: false'),
+      );
       // And that it was undone after.
-      expect(example.pubspecFile.readAsStringSync().trim(), originalPubspecContents.trim());
+      expect(
+        example.pubspecFile.readAsStringSync().trim(),
+        originalPubspecContents.trim(),
+      );
 
       expect(
         processRunner.recordedCalls,
@@ -241,9 +270,12 @@ void main() {
       );
 
       final RepositoryPackage example = plugin.getExamples().first;
-      final String originalPubspecContents = example.pubspecFile.readAsStringSync();
+      final String originalPubspecContents = example.pubspecFile
+          .readAsStringSync();
       String? buildTimePubspecContents;
-      processRunner.mockProcessesForExecutable[getFlutterCommand(mockPlatform)] = <FakeProcessInfo>[
+      processRunner.mockProcessesForExecutable[getFlutterCommand(
+        mockPlatform,
+      )] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(), <String>['build'], () {
           buildTimePubspecContents = example.pubspecFile.readAsStringSync();
         }),
@@ -256,13 +288,25 @@ void main() {
         '--swift-package-manager',
       ]);
 
-      expect(output, containsAllInOrder(<String>['\nBUILDING plugin/example for iOS']));
+      expect(
+        output,
+        containsAllInOrder(<String>['\nBUILDING plugin/example for iOS']),
+      );
 
       // Ensure that SwiftPM was enabled for the package.
-      expect(originalPubspecContents, isNot(contains('enable-swift-package-manager: true')));
-      expect(buildTimePubspecContents, contains('enable-swift-package-manager: true'));
+      expect(
+        originalPubspecContents,
+        isNot(contains('enable-swift-package-manager: true')),
+      );
+      expect(
+        buildTimePubspecContents,
+        contains('enable-swift-package-manager: true'),
+      );
       // And that it was undone after.
-      expect(example.pubspecFile.readAsStringSync().trim(), originalPubspecContents.trim());
+      expect(
+        example.pubspecFile.readAsStringSync().trim(),
+        originalPubspecContents.trim(),
+      );
 
       expect(
         processRunner.recordedCalls,
@@ -277,59 +321,77 @@ void main() {
       );
     });
 
-    test('building non-plugin package for iOS with Swift Package Manager', () async {
-      mockPlatform.isMacOS = true;
+    test(
+      'building non-plugin package for iOS with Swift Package Manager',
+      () async {
+        mockPlatform.isMacOS = true;
 
-      final RepositoryPackage package = createFakePackage(
-        'a_package',
-        packagesDir,
-        isFlutter: true,
-      );
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          isFlutter: true,
+        );
 
-      final RepositoryPackage example = package.getExamples().first;
-      example.directory.childDirectory('ios').createSync(recursive: true);
-      final String originalPubspecContents = example.pubspecFile.readAsStringSync();
-      String? buildTimePubspecContents;
-      processRunner.mockProcessesForExecutable[getFlutterCommand(mockPlatform)] = <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(), <String>['build'], () {
-          buildTimePubspecContents = example.pubspecFile.readAsStringSync();
-        }),
-      ];
+        final RepositoryPackage example = package.getExamples().first;
+        example.directory.childDirectory('ios').createSync(recursive: true);
+        final String originalPubspecContents = example.pubspecFile
+            .readAsStringSync();
+        String? buildTimePubspecContents;
+        processRunner.mockProcessesForExecutable[getFlutterCommand(
+          mockPlatform,
+        )] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(), <String>['build'], () {
+            buildTimePubspecContents = example.pubspecFile.readAsStringSync();
+          }),
+        ];
 
-      await runCapturingPrint(runner, <String>[
-        'build-examples',
-        '--ios',
-        '--swift-package-manager',
-      ]);
+        await runCapturingPrint(runner, <String>[
+          'build-examples',
+          '--ios',
+          '--swift-package-manager',
+        ]);
 
-      // Ensure that SwiftPM was enabled for the package.
-      expect(originalPubspecContents, isNot(contains('enable-swift-package-manager: true')));
-      expect(buildTimePubspecContents, contains('enable-swift-package-manager: true'));
-      // And that it was undone after.
-      expect(example.pubspecFile.readAsStringSync().trim(), originalPubspecContents.trim());
-    });
+        // Ensure that SwiftPM was enabled for the package.
+        expect(
+          originalPubspecContents,
+          isNot(contains('enable-swift-package-manager: true')),
+        );
+        expect(
+          buildTimePubspecContents,
+          contains('enable-swift-package-manager: true'),
+        );
+        // And that it was undone after.
+        expect(
+          example.pubspecFile.readAsStringSync().trim(),
+          originalPubspecContents.trim(),
+        );
+      },
+    );
 
-    test('building for Linux when plugin is not set up for Linux results in no-op', () async {
-      mockPlatform.isLinux = true;
-      createFakePlugin('plugin', packagesDir);
+    test(
+      'building for Linux when plugin is not set up for Linux results in no-op',
+      () async {
+        mockPlatform.isLinux = true;
+        createFakePlugin('plugin', packagesDir);
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'build-examples',
-        '--linux',
-      ]);
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'build-examples',
+          '--linux',
+        ]);
 
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('Running for plugin'),
-          contains('Linux is not supported by this plugin'),
-        ]),
-      );
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for plugin'),
+            contains('Linux is not supported by this plugin'),
+          ]),
+        );
 
-      // Output should be empty since running build-examples --linux with no
-      // Linux implementation is a no-op.
-      expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
-    });
+        // Output should be empty since running build-examples --linux with no
+        // Linux implementation is a no-op.
+        expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
+      },
+    );
 
     test('building for Linux', () async {
       mockPlatform.isLinux = true;
@@ -348,7 +410,10 @@ void main() {
         '--linux',
       ]);
 
-      expect(output, containsAllInOrder(<String>['\nBUILDING plugin/example for Linux']));
+      expect(
+        output,
+        containsAllInOrder(<String>['\nBUILDING plugin/example for Linux']),
+      );
 
       expect(
         processRunner.recordedCalls,
@@ -400,7 +465,10 @@ void main() {
         '--macos',
       ]);
 
-      expect(output, containsAllInOrder(<String>['\nBUILDING plugin/example for macOS']));
+      expect(
+        output,
+        containsAllInOrder(<String>['\nBUILDING plugin/example for macOS']),
+      );
 
       expect(
         processRunner.recordedCalls,
@@ -425,9 +493,12 @@ void main() {
       );
 
       final RepositoryPackage example = plugin.getExamples().first;
-      final String originalPubspecContents = example.pubspecFile.readAsStringSync();
+      final String originalPubspecContents = example.pubspecFile
+          .readAsStringSync();
       String? buildTimePubspecContents;
-      processRunner.mockProcessesForExecutable[getFlutterCommand(mockPlatform)] = <FakeProcessInfo>[
+      processRunner.mockProcessesForExecutable[getFlutterCommand(
+        mockPlatform,
+      )] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(), <String>['build'], () {
           buildTimePubspecContents = example.pubspecFile.readAsStringSync();
         }),
@@ -439,13 +510,25 @@ void main() {
         '--no-swift-package-manager',
       ]);
 
-      expect(output, containsAllInOrder(<String>['\nBUILDING plugin/example for macOS']));
+      expect(
+        output,
+        containsAllInOrder(<String>['\nBUILDING plugin/example for macOS']),
+      );
 
       // Ensure that SwiftPM was enabled for the package.
-      expect(originalPubspecContents, isNot(contains('enable-swift-package-manager: false')));
-      expect(buildTimePubspecContents, contains('enable-swift-package-manager: false'));
+      expect(
+        originalPubspecContents,
+        isNot(contains('enable-swift-package-manager: false')),
+      );
+      expect(
+        buildTimePubspecContents,
+        contains('enable-swift-package-manager: false'),
+      );
       // And that it was undone after.
-      expect(example.pubspecFile.readAsStringSync().trim(), originalPubspecContents.trim());
+      expect(
+        example.pubspecFile.readAsStringSync().trim(),
+        originalPubspecContents.trim(),
+      );
 
       expect(
         processRunner.recordedCalls,
@@ -470,9 +553,12 @@ void main() {
       );
 
       final RepositoryPackage example = plugin.getExamples().first;
-      final String originalPubspecContents = example.pubspecFile.readAsStringSync();
+      final String originalPubspecContents = example.pubspecFile
+          .readAsStringSync();
       String? buildTimePubspecContents;
-      processRunner.mockProcessesForExecutable[getFlutterCommand(mockPlatform)] = <FakeProcessInfo>[
+      processRunner.mockProcessesForExecutable[getFlutterCommand(
+        mockPlatform,
+      )] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(), <String>['build'], () {
           buildTimePubspecContents = example.pubspecFile.readAsStringSync();
         }),
@@ -484,13 +570,25 @@ void main() {
         '--swift-package-manager',
       ]);
 
-      expect(output, containsAllInOrder(<String>['\nBUILDING plugin/example for macOS']));
+      expect(
+        output,
+        containsAllInOrder(<String>['\nBUILDING plugin/example for macOS']),
+      );
 
       // Ensure that SwiftPM was enabled for the package.
-      expect(originalPubspecContents, isNot(contains('enable-swift-package-manager: true')));
-      expect(buildTimePubspecContents, contains('enable-swift-package-manager: true'));
+      expect(
+        originalPubspecContents,
+        isNot(contains('enable-swift-package-manager: true')),
+      );
+      expect(
+        buildTimePubspecContents,
+        contains('enable-swift-package-manager: true'),
+      );
       // And that it was undone after.
-      expect(example.pubspecFile.readAsStringSync().trim(), originalPubspecContents.trim());
+      expect(
+        example.pubspecFile.readAsStringSync().trim(),
+        originalPubspecContents.trim(),
+      );
 
       expect(
         processRunner.recordedCalls,
@@ -540,7 +638,10 @@ void main() {
         '--web',
       ]);
 
-      expect(output, containsAllInOrder(<String>['\nBUILDING plugin/example for web']));
+      expect(
+        output,
+        containsAllInOrder(<String>['\nBUILDING plugin/example for web']),
+      );
 
       expect(
         processRunner.recordedCalls,
@@ -553,27 +654,30 @@ void main() {
       );
     });
 
-    test('building for Windows when plugin is not set up for Windows results in no-op', () async {
-      mockPlatform.isWindows = true;
-      createFakePlugin('plugin', packagesDir);
+    test(
+      'building for Windows when plugin is not set up for Windows results in no-op',
+      () async {
+        mockPlatform.isWindows = true;
+        createFakePlugin('plugin', packagesDir);
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'build-examples',
-        '--windows',
-      ]);
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'build-examples',
+          '--windows',
+        ]);
 
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('Running for plugin'),
-          contains('Windows is not supported by this plugin'),
-        ]),
-      );
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for plugin'),
+            contains('Windows is not supported by this plugin'),
+          ]),
+        );
 
-      // Output should be empty since running build-examples --windows with no
-      // Windows implementation is a no-op.
-      expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
-    });
+        // Output should be empty since running build-examples --windows with no
+        // Windows implementation is a no-op.
+        expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
+      },
+    );
 
     test('building for Windows', () async {
       mockPlatform.isWindows = true;
@@ -592,7 +696,10 @@ void main() {
         '--windows',
       ]);
 
-      expect(output, containsAllInOrder(<String>['\nBUILDING plugin/example for Windows']));
+      expect(
+        output,
+        containsAllInOrder(<String>['\nBUILDING plugin/example for Windows']),
+      );
 
       expect(
         processRunner.recordedCalls,
@@ -605,26 +712,29 @@ void main() {
       );
     });
 
-    test('building for Android when plugin is not set up for Android results in no-op', () async {
-      createFakePlugin('plugin', packagesDir);
+    test(
+      'building for Android when plugin is not set up for Android results in no-op',
+      () async {
+        createFakePlugin('plugin', packagesDir);
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'build-examples',
-        '--apk',
-      ]);
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'build-examples',
+          '--apk',
+        ]);
 
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('Running for plugin'),
-          contains('Android is not supported by this plugin'),
-        ]),
-      );
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for plugin'),
+            contains('Android is not supported by this plugin'),
+          ]),
+        );
 
-      // Output should be empty since running build-examples --macos with no macos
-      // implementation is a no-op.
-      expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
-    });
+        // Output should be empty since running build-examples --macos with no macos
+        // implementation is a no-op.
+        expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
+      },
+    );
 
     test('building for Android', () async {
       final RepositoryPackage plugin = createFakePlugin(
@@ -642,7 +752,12 @@ void main() {
         '--apk',
       ]);
 
-      expect(output, containsAllInOrder(<String>['\nBUILDING plugin/example for Android (apk)']));
+      expect(
+        output,
+        containsAllInOrder(<String>[
+          '\nBUILDING plugin/example for Android (apk)',
+        ]),
+      );
 
       expect(
         processRunner.recordedCalls,
@@ -671,7 +786,12 @@ void main() {
         '--android',
       ]);
 
-      expect(output, containsAllInOrder(<String>['\nBUILDING plugin/example for Android (apk)']));
+      expect(
+        output,
+        containsAllInOrder(<String>[
+          '\nBUILDING plugin/example for Android (apk)',
+        ]),
+      );
 
       expect(
         processRunner.recordedCalls,
@@ -760,7 +880,9 @@ void main() {
 
       expect(
         output,
-        containsAllInOrder(<Matcher>[contains('Skipping unsupported platform(s): iOS, macOS')]),
+        containsAllInOrder(<Matcher>[
+          contains('Skipping unsupported platform(s): iOS, macOS'),
+        ]),
       );
     });
 
@@ -818,7 +940,12 @@ void main() {
       });
 
       test('skips when there is no example', () async {
-        createFakePackage('package', packagesDir, isFlutter: true, examples: <String>[]);
+        createFakePackage(
+          'package',
+          packagesDir,
+          isFlutter: true,
+          examples: <String>[],
+        );
 
         final List<String> output = await runCapturingPrint(runner, <String>[
           'build-examples',
@@ -912,11 +1039,19 @@ void main() {
       final File pluginExampleConfigFile = pluginExampleDirectory.childFile(
         '.pluginToolsConfig.yaml',
       );
-      pluginExampleConfigFile.writeAsStringSync('buildFlags:\n  global:\n     - "test argument"');
+      pluginExampleConfigFile.writeAsStringSync(
+        'buildFlags:\n  global:\n     - "test argument"',
+      );
 
       final output = <String>[
-        ...await runCapturingPrint(runner, <String>['build-examples', '--linux']),
-        ...await runCapturingPrint(runner, <String>['build-examples', '--macos']),
+        ...await runCapturingPrint(runner, <String>[
+          'build-examples',
+          '--linux',
+        ]),
+        ...await runCapturingPrint(runner, <String>[
+          'build-examples',
+          '--macos',
+        ]),
       ];
 
       expect(
@@ -960,16 +1095,17 @@ void main() {
         test('runs command for changes to $file', () async {
           createFakePackage('package_a', packagesDir);
 
-          gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
-            FakeProcessInfo(
-              MockProcess(
-                stdout:
-                    '''
+          gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+              <FakeProcessInfo>[
+                FakeProcessInfo(
+                  MockProcess(
+                    stdout:
+                        '''
 packages/package_a/$file
 ''',
-              ),
-            ),
-          ];
+                  ),
+                ),
+              ];
 
           // The target platform is irrelevant here; because this repo's
           // packages are fully federated, there's no need to distinguish
@@ -981,29 +1117,43 @@ packages/package_a/$file
             '--web',
           ]);
 
-          expect(output, containsAllInOrder(<Matcher>[contains('Running for package_a')]));
+          expect(
+            output,
+            containsAllInOrder(<Matcher>[contains('Running for package_a')]),
+          );
         });
       }
 
       test('skips commands if all files should be ignored', () async {
         createFakePackage('package_a', packagesDir);
 
-        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
-          FakeProcessInfo(
-            MockProcess(
-              stdout: '''
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+              FakeProcessInfo(
+                MockProcess(
+                  stdout: '''
 README.md
 SUGGESTED_REVIEWERS.md
 packages/package_a/CHANGELOG.md
 ''',
-            ),
+                ),
+              ),
+            ];
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'build-examples',
+        ]);
+
+        expect(
+          output,
+          isNot(
+            containsAllInOrder(<Matcher>[contains('Running for package_a')]),
           ),
-        ];
-
-        final List<String> output = await runCapturingPrint(runner, <String>['build-examples']);
-
-        expect(output, isNot(containsAllInOrder(<Matcher>[contains('Running for package_a')])));
-        expect(output, containsAllInOrder(<Matcher>[contains('SKIPPING ALL PACKAGES')]));
+        );
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[contains('SKIPPING ALL PACKAGES')]),
+        );
       });
     });
   });

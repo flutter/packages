@@ -17,7 +17,8 @@ class App extends StatelessWidget {
   static const String title = 'GoRouter Example: Navigator Observer';
 
   @override
-  Widget build(BuildContext context) => MaterialApp.router(routerConfig: _router, title: title);
+  Widget build(BuildContext context) =>
+      MaterialApp.router(routerConfig: _router, title: title);
 
   final GoRouter _router = GoRouter(
     observers: <NavigatorObserver>[MyNavObserver()],
@@ -25,17 +26,20 @@ class App extends StatelessWidget {
       GoRoute(
         // if there's no name, path will be used as name for observers
         path: '/',
-        builder: (BuildContext context, GoRouterState state) => const Page1Screen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const Page1Screen(),
         routes: <GoRoute>[
           GoRoute(
             name: 'page2',
             path: 'page2/:p1',
-            builder: (BuildContext context, GoRouterState state) => const Page2Screen(),
+            builder: (BuildContext context, GoRouterState state) =>
+                const Page2Screen(),
             routes: <GoRoute>[
               GoRoute(
                 name: 'page3',
                 path: 'page3',
-                builder: (BuildContext context, GoRouterState state) => const Page3Screen(),
+                builder: (BuildContext context, GoRouterState state) =>
+                    const Page3Screen(),
               ),
             ],
           ),
@@ -72,7 +76,10 @@ class MyNavObserver extends NavigatorObserver {
       log.info('didReplace: new= ${newRoute?.str}, old= ${oldRoute?.str}');
 
   @override
-  void didStartUserGesture(Route<dynamic> route, Route<dynamic>? previousRoute) => log.info(
+  void didStartUserGesture(
+    Route<dynamic> route,
+    Route<dynamic>? previousRoute,
+  ) => log.info(
     'didStartUserGesture: ${route.str}, '
     'previousRoute= ${previousRoute?.str}',
   );
@@ -124,8 +131,10 @@ class Page2Screen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           ElevatedButton(
-            onPressed: () =>
-                context.goNamed('page3', pathParameters: <String, String>{'p1': 'pv2'}),
+            onPressed: () => context.goNamed(
+              'page3',
+              pathParameters: <String, String>{'p1': 'pv2'},
+            ),
             child: const Text('Go to page 3'),
           ),
         ],
@@ -146,7 +155,10 @@ class Page3Screen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          ElevatedButton(onPressed: () => context.go('/'), child: const Text('Go to home page')),
+          ElevatedButton(
+            onPressed: () => context.go('/'),
+            child: const Text('Go to home page'),
+          ),
         ],
       ),
     ),

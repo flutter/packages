@@ -25,9 +25,8 @@ void main() {
     setUp(() {
       mockPlatform = MockPlatform();
       final GitDir gitDir;
-      (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) = configureBaseCommandMocks(
-        platform: mockPlatform,
-      );
+      (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) =
+          configureBaseCommandMocks(platform: mockPlatform);
       final command = DartTestCommand(
         packagesDir,
         processRunner: processRunner,
@@ -92,7 +91,10 @@ void main() {
       final RepositoryPackage plugin = createFakePlugin(
         'a_plugin',
         packagesDir,
-        extraFiles: <String>['test/empty_test.dart', 'example/test/an_example_test.dart'],
+        extraFiles: <String>[
+          'test/empty_test.dart',
+          'example/test/an_example_test.dart',
+        ],
       );
 
       await runCapturingPrint(runner, <String>['dart-test']);
@@ -113,11 +115,23 @@ void main() {
     });
 
     test('fails when Flutter tests fail', () async {
-      createFakePlugin('plugin1', packagesDir, extraFiles: <String>['test/empty_test.dart']);
-      createFakePlugin('plugin2', packagesDir, extraFiles: <String>['test/empty_test.dart']);
+      createFakePlugin(
+        'plugin1',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
+      createFakePlugin(
+        'plugin2',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
 
-      processRunner.mockProcessesForExecutable[getFlutterCommand(mockPlatform)] = <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(exitCode: 1), <String>['dart-test']), // plugin 1 test
+      processRunner.mockProcessesForExecutable[getFlutterCommand(
+        mockPlatform,
+      )] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>[
+          'dart-test',
+        ]), // plugin 1 test
         FakeProcessInfo(MockProcess(), <String>['dart-test']), // plugin 2 test
       ];
 
@@ -173,7 +187,10 @@ void main() {
         extraFiles: <String>['test/empty_test.dart'],
       );
 
-      await runCapturingPrint(runner, <String>['dart-test', '--enable-experiment=exp1']);
+      await runCapturingPrint(runner, <String>[
+        'dart-test',
+        '--enable-experiment=exp1',
+      ]);
 
       expect(
         processRunner.recordedCalls,
@@ -197,7 +214,10 @@ void main() {
       final RepositoryPackage package = createFakePackage(
         'a_package',
         packagesDir,
-        extraFiles: <String>['test/empty_test.dart', 'example/test/an_example_test.dart'],
+        extraFiles: <String>[
+          'test/empty_test.dart',
+          'example/test/an_example_test.dart',
+        ],
       );
 
       await runCapturingPrint(runner, <String>['dart-test']);
@@ -207,14 +227,24 @@ void main() {
         orderedEquals(<ProcessCall>[
           ProcessCall('dart', const <String>['pub', 'get'], package.path),
           ProcessCall('dart', const <String>['run', 'test'], package.path),
-          ProcessCall('dart', const <String>['pub', 'get'], getExampleDir(package).path),
-          ProcessCall('dart', const <String>['run', 'test'], getExampleDir(package).path),
+          ProcessCall('dart', const <String>[
+            'pub',
+            'get',
+          ], getExampleDir(package).path),
+          ProcessCall('dart', const <String>[
+            'run',
+            'test',
+          ], getExampleDir(package).path),
         ]),
       );
     });
 
     test('fails when getting non-Flutter package dependencies fails', () async {
-      createFakePackage('a_package', packagesDir, extraFiles: <String>['test/empty_test.dart']);
+      createFakePackage(
+        'a_package',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
 
       processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(exitCode: 1), <String>['pub', 'get']),
@@ -241,7 +271,11 @@ void main() {
     });
 
     test('fails when non-Flutter tests fail', () async {
-      createFakePackage('a_package', packagesDir, extraFiles: <String>['test/empty_test.dart']);
+      createFakePackage(
+        'a_package',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
 
       processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
@@ -363,7 +397,10 @@ test_on: vm && browser
         extraFiles: <String>['test/empty_test.dart'],
       );
 
-      await runCapturingPrint(runner, <String>['dart-test', '--platform=chrome']);
+      await runCapturingPrint(runner, <String>[
+        'dart-test',
+        '--platform=chrome',
+      ]);
 
       expect(
         processRunner.recordedCalls,
@@ -385,7 +422,11 @@ test_on: vm && browser
         extraFiles: <String>['test/empty_test.dart'],
       );
 
-      await runCapturingPrint(runner, <String>['dart-test', '--platform=chrome', '--wasm']);
+      await runCapturingPrint(runner, <String>[
+        'dart-test',
+        '--platform=chrome',
+        '--wasm',
+      ]);
 
       expect(
         processRunner.recordedCalls,
@@ -400,80 +441,99 @@ test_on: vm && browser
       );
     });
 
-    test('runs in Chrome by default for Flutter plugins that implement web', () async {
-      final RepositoryPackage plugin = createFakePlugin(
-        'some_plugin_web',
-        packagesDir,
-        extraFiles: <String>['test/empty_test.dart'],
-        platformSupport: <String, PlatformDetails>{
-          platformWeb: const PlatformDetails(PlatformSupport.inline),
-        },
-      );
+    test(
+      'runs in Chrome by default for Flutter plugins that implement web',
+      () async {
+        final RepositoryPackage plugin = createFakePlugin(
+          'some_plugin_web',
+          packagesDir,
+          extraFiles: <String>['test/empty_test.dart'],
+          platformSupport: <String, PlatformDetails>{
+            platformWeb: const PlatformDetails(PlatformSupport.inline),
+          },
+        );
 
-      await runCapturingPrint(runner, <String>['dart-test']);
+        await runCapturingPrint(runner, <String>['dart-test']);
 
-      expect(
-        processRunner.recordedCalls,
-        orderedEquals(<ProcessCall>[
-          ProcessCall(getFlutterCommand(mockPlatform), const <String>[
-            'test',
-            '--color',
-            '--platform=chrome',
-          ], plugin.path),
-        ]),
-      );
-    });
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(getFlutterCommand(mockPlatform), const <String>[
+              'test',
+              '--color',
+              '--platform=chrome',
+            ], plugin.path),
+          ]),
+        );
+      },
+    );
 
-    test('runs in Chrome when requested for Flutter plugins that implement web', () async {
-      final RepositoryPackage plugin = createFakePlugin(
-        'some_plugin_web',
-        packagesDir,
-        extraFiles: <String>['test/empty_test.dart'],
-        platformSupport: <String, PlatformDetails>{
-          platformWeb: const PlatformDetails(PlatformSupport.inline),
-        },
-      );
+    test(
+      'runs in Chrome when requested for Flutter plugins that implement web',
+      () async {
+        final RepositoryPackage plugin = createFakePlugin(
+          'some_plugin_web',
+          packagesDir,
+          extraFiles: <String>['test/empty_test.dart'],
+          platformSupport: <String, PlatformDetails>{
+            platformWeb: const PlatformDetails(PlatformSupport.inline),
+          },
+        );
 
-      await runCapturingPrint(runner, <String>['dart-test', '--platform=chrome']);
+        await runCapturingPrint(runner, <String>[
+          'dart-test',
+          '--platform=chrome',
+        ]);
 
-      expect(
-        processRunner.recordedCalls,
-        orderedEquals(<ProcessCall>[
-          ProcessCall(getFlutterCommand(mockPlatform), const <String>[
-            'test',
-            '--color',
-            '--platform=chrome',
-          ], plugin.path),
-        ]),
-      );
-    });
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(getFlutterCommand(mockPlatform), const <String>[
+              'test',
+              '--color',
+              '--platform=chrome',
+            ], plugin.path),
+          ]),
+        );
+      },
+    );
 
-    test('runs in Chrome when requested for Flutter plugin that endorse web', () async {
-      final RepositoryPackage plugin = createFakePlugin(
-        'plugin',
-        packagesDir,
-        extraFiles: <String>['test/empty_test.dart'],
-        platformSupport: <String, PlatformDetails>{
-          platformWeb: const PlatformDetails(PlatformSupport.federated),
-        },
-      );
+    test(
+      'runs in Chrome when requested for Flutter plugin that endorse web',
+      () async {
+        final RepositoryPackage plugin = createFakePlugin(
+          'plugin',
+          packagesDir,
+          extraFiles: <String>['test/empty_test.dart'],
+          platformSupport: <String, PlatformDetails>{
+            platformWeb: const PlatformDetails(PlatformSupport.federated),
+          },
+        );
 
-      await runCapturingPrint(runner, <String>['dart-test', '--platform=chrome']);
+        await runCapturingPrint(runner, <String>[
+          'dart-test',
+          '--platform=chrome',
+        ]);
 
-      expect(
-        processRunner.recordedCalls,
-        orderedEquals(<ProcessCall>[
-          ProcessCall(getFlutterCommand(mockPlatform), const <String>[
-            'test',
-            '--color',
-            '--platform=chrome',
-          ], plugin.path),
-        ]),
-      );
-    });
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(getFlutterCommand(mockPlatform), const <String>[
+              'test',
+              '--color',
+              '--platform=chrome',
+            ], plugin.path),
+          ]),
+        );
+      },
+    );
 
     test('skips running non-web plugins in browser mode', () async {
-      createFakePlugin('non_web_plugin', packagesDir, extraFiles: <String>['test/empty_test.dart']);
+      createFakePlugin(
+        'non_web_plugin',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
 
       final List<String> output = await runCapturingPrint(runner, <String>[
         'dart-test',
@@ -482,7 +542,9 @@ test_on: vm && browser
 
       expect(
         output,
-        containsAllInOrder(<Matcher>[contains("Non-web plugin tests don't need web testing.")]),
+        containsAllInOrder(<Matcher>[
+          contains("Non-web plugin tests don't need web testing."),
+        ]),
       );
       expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
     });
@@ -504,7 +566,9 @@ test_on: vm && browser
 
       expect(
         output,
-        containsAllInOrder(<Matcher>[contains("Web plugin tests don't need vm testing.")]),
+        containsAllInOrder(<Matcher>[
+          contains("Web plugin tests don't need vm testing."),
+        ]),
       );
       expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
     });
@@ -520,7 +584,10 @@ test_on: vm && browser
         },
       );
 
-      await runCapturingPrint(runner, <String>['dart-test', '--platform=chrome']);
+      await runCapturingPrint(runner, <String>[
+        'dart-test',
+        '--platform=chrome',
+      ]);
 
       expect(
         processRunner.recordedCalls,
@@ -541,13 +608,20 @@ test_on: vm && browser
         extraFiles: <String>['test/empty_test.dart'],
       );
 
-      await runCapturingPrint(runner, <String>['dart-test', '--platform=chrome']);
+      await runCapturingPrint(runner, <String>[
+        'dart-test',
+        '--platform=chrome',
+      ]);
 
       expect(
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[
           ProcessCall('dart', const <String>['pub', 'get'], package.path),
-          ProcessCall('dart', const <String>['run', 'test', '--platform=chrome'], package.path),
+          ProcessCall('dart', const <String>[
+            'run',
+            'test',
+            '--platform=chrome',
+          ], package.path),
         ]),
       );
     });
@@ -559,7 +633,11 @@ test_on: vm && browser
         extraFiles: <String>['test/empty_test.dart'],
       );
 
-      await runCapturingPrint(runner, <String>['dart-test', '--platform=chrome', '--wasm']);
+      await runCapturingPrint(runner, <String>[
+        'dart-test',
+        '--platform=chrome',
+        '--wasm',
+      ]);
 
       expect(
         processRunner.recordedCalls,
@@ -592,7 +670,9 @@ test_on: vm
 
       expect(
         output,
-        containsAllInOrder(<Matcher>[contains('Package has opted out of non-vm testing.')]),
+        containsAllInOrder(<Matcher>[
+          contains('Package has opted out of non-vm testing.'),
+        ]),
       );
       expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
     });
@@ -612,7 +692,10 @@ test_on: vm
         '--platform=vm',
       ]);
 
-      expect(output, isNot(containsAllInOrder(<Matcher>[contains('Package has opted out')])));
+      expect(
+        output,
+        isNot(containsAllInOrder(<Matcher>[contains('Package has opted out')])),
+      );
       expect(processRunner.recordedCalls, isNotEmpty);
     });
 
@@ -633,7 +716,9 @@ test_on: browser
 
       expect(
         output,
-        containsAllInOrder(<Matcher>[contains('Package has opted out of vm testing.')]),
+        containsAllInOrder(<Matcher>[
+          contains('Package has opted out of vm testing.'),
+        ]),
       );
       expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
     });
@@ -653,30 +738,36 @@ test_on: browser
         '--platform=browser',
       ]);
 
-      expect(output, isNot(containsAllInOrder(<Matcher>[contains('Package has opted out')])));
+      expect(
+        output,
+        isNot(containsAllInOrder(<Matcher>[contains('Package has opted out')])),
+      );
       expect(processRunner.recordedCalls, isNotEmpty);
     });
 
-    test('tries to run for a test_on that the tool does not recognize', () async {
-      final RepositoryPackage package = createFakePackage(
-        'a_package',
-        packagesDir,
-        extraFiles: <String>['test/empty_test.dart'],
-      );
-      package.directory.childFile('dart_test.yaml').writeAsStringSync('''
+    test(
+      'tries to run for a test_on that the tool does not recognize',
+      () async {
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          extraFiles: <String>['test/empty_test.dart'],
+        );
+        package.directory.childFile('dart_test.yaml').writeAsStringSync('''
 test_on: !vm && firefox
 ''');
 
-      await runCapturingPrint(runner, <String>['dart-test']);
+        await runCapturingPrint(runner, <String>['dart-test']);
 
-      expect(
-        processRunner.recordedCalls,
-        orderedEquals(<ProcessCall>[
-          ProcessCall('dart', const <String>['pub', 'get'], package.path),
-          ProcessCall('dart', const <String>['run', 'test'], package.path),
-        ]),
-      );
-    });
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall('dart', const <String>['pub', 'get'], package.path),
+            ProcessCall('dart', const <String>['run', 'test'], package.path),
+          ]),
+        );
+      },
+    );
 
     test('enable-experiment flag', () async {
       final RepositoryPackage plugin = createFakePlugin(
@@ -690,7 +781,10 @@ test_on: !vm && firefox
         extraFiles: <String>['test/empty_test.dart'],
       );
 
-      await runCapturingPrint(runner, <String>['dart-test', '--enable-experiment=exp1']);
+      await runCapturingPrint(runner, <String>[
+        'dart-test',
+        '--enable-experiment=exp1',
+      ]);
 
       expect(
         processRunner.recordedCalls,
@@ -714,19 +808,25 @@ test_on: !vm && firefox
       test('runs command for changes to Dart source', () async {
         createFakePackage('package_a', packagesDir);
 
-        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
-          FakeProcessInfo(
-            MockProcess(
-              stdout: '''
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+              FakeProcessInfo(
+                MockProcess(
+                  stdout: '''
 packages/package_a/foo.dart
 ''',
-            ),
-          ),
-        ];
+                ),
+              ),
+            ];
 
-        final List<String> output = await runCapturingPrint(runner, <String>['test']);
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'test',
+        ]);
 
-        expect(output, containsAllInOrder(<Matcher>[contains('Running for package_a')]));
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[contains('Running for package_a')]),
+        );
       });
 
       const files = <String>[
@@ -743,43 +843,65 @@ packages/package_a/foo.dart
         test('skips command for changes to non-Dart source $file', () async {
           createFakePackage('package_a', packagesDir);
 
-          gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
-            FakeProcessInfo(
-              MockProcess(
-                stdout:
-                    '''
+          gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+              <FakeProcessInfo>[
+                FakeProcessInfo(
+                  MockProcess(
+                    stdout:
+                        '''
 packages/package_a/$file
 ''',
-              ),
+                  ),
+                ),
+              ];
+
+          final List<String> output = await runCapturingPrint(runner, <String>[
+            'test',
+          ]);
+
+          expect(
+            output,
+            isNot(
+              containsAllInOrder(<Matcher>[contains('Running for package_a')]),
             ),
-          ];
-
-          final List<String> output = await runCapturingPrint(runner, <String>['test']);
-
-          expect(output, isNot(containsAllInOrder(<Matcher>[contains('Running for package_a')])));
-          expect(output, containsAllInOrder(<Matcher>[contains('SKIPPING ALL PACKAGES')]));
+          );
+          expect(
+            output,
+            containsAllInOrder(<Matcher>[contains('SKIPPING ALL PACKAGES')]),
+          );
         });
       }
 
       test('skips commands if all files should be ignored', () async {
         createFakePackage('package_a', packagesDir);
 
-        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
-          FakeProcessInfo(
-            MockProcess(
-              stdout: '''
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+              FakeProcessInfo(
+                MockProcess(
+                  stdout: '''
 README.md
 SUGGESTED_REVIEWERS.md
 packages/package_a/CHANGELOG.md
 ''',
-            ),
+                ),
+              ),
+            ];
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'test',
+        ]);
+
+        expect(
+          output,
+          isNot(
+            containsAllInOrder(<Matcher>[contains('Running for package_a')]),
           ),
-        ];
-
-        final List<String> output = await runCapturingPrint(runner, <String>['test']);
-
-        expect(output, isNot(containsAllInOrder(<Matcher>[contains('Running for package_a')])));
-        expect(output, containsAllInOrder(<Matcher>[contains('SKIPPING ALL PACKAGES')]));
+        );
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[contains('SKIPPING ALL PACKAGES')]),
+        );
       });
     });
   });

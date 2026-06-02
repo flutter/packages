@@ -70,7 +70,9 @@ class IllegalImplementation implements SharedPreferencesStorePlatform {
   }
 
   @override
-  Future<Map<String, Object>> getAllWithParameters(GetAllParameters parameters) {
+  Future<Map<String, Object>> getAllWithParameters(
+    GetAllParameters parameters,
+  ) {
     throw UnimplementedError();
   }
 
@@ -115,7 +117,9 @@ class LegacyIsMockImplementation implements SharedPreferencesStorePlatform {
   }
 
   @override
-  Future<Map<String, Object>> getAllWithParameters(GetAllParameters parameters) {
+  Future<Map<String, Object>> getAllWithParameters(
+    GetAllParameters parameters,
+  ) {
     throw UnimplementedError();
   }
 
@@ -162,7 +166,9 @@ class ModernMockImplementation
   }
 
   @override
-  Future<Map<String, Object>> getAllWithParameters(GetAllParameters parameters) {
+  Future<Map<String, Object>> getAllWithParameters(
+    GetAllParameters parameters,
+  ) {
     throw UnimplementedError();
   }
 
