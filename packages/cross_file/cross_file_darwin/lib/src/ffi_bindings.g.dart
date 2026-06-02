@@ -10,7 +10,7 @@ import 'package:ffi/ffi.dart' as pkg_ffi;
   ffi.Pointer<objc.ObjCBlockImpl> Function(ffi.Pointer<objc.ObjCBlockImpl>)
 >(isLeaf: true)
 external ffi.Pointer<objc.ObjCBlockImpl>
-_FoundationFFI_wrapListenerBlock_pfv6jd(ffi.Pointer<objc.ObjCBlockImpl> block);
+_NativeLibrary_wrapListenerBlock_pfv6jd(ffi.Pointer<objc.ObjCBlockImpl> block);
 
 @ffi.Native<
   ffi.Pointer<objc.ObjCBlockImpl> Function(
@@ -20,7 +20,7 @@ _FoundationFFI_wrapListenerBlock_pfv6jd(ffi.Pointer<objc.ObjCBlockImpl> block);
   )
 >(isLeaf: true)
 external ffi.Pointer<objc.ObjCBlockImpl>
-_FoundationFFI_wrapBlockingBlock_pfv6jd(
+_NativeLibrary_wrapBlockingBlock_pfv6jd(
   ffi.Pointer<objc.ObjCBlockImpl> block,
   ffi.Pointer<objc.ObjCBlockImpl> listnerBlock,
   ffi.Pointer<objc.DOBJC_Context> context,
@@ -30,7 +30,7 @@ _FoundationFFI_wrapBlockingBlock_pfv6jd(
   ffi.Pointer<objc.ObjCBlockImpl> Function(ffi.Pointer<objc.ObjCBlockImpl>)
 >(isLeaf: true)
 external ffi.Pointer<objc.ObjCBlockImpl>
-_FoundationFFI_wrapListenerBlock_10c3wkj(ffi.Pointer<objc.ObjCBlockImpl> block);
+_NativeLibrary_wrapListenerBlock_10c3wkj(ffi.Pointer<objc.ObjCBlockImpl> block);
 
 @ffi.Native<
   ffi.Pointer<objc.ObjCBlockImpl> Function(
@@ -40,7 +40,7 @@ _FoundationFFI_wrapListenerBlock_10c3wkj(ffi.Pointer<objc.ObjCBlockImpl> block);
   )
 >(isLeaf: true)
 external ffi.Pointer<objc.ObjCBlockImpl>
-_FoundationFFI_wrapBlockingBlock_10c3wkj(
+_NativeLibrary_wrapBlockingBlock_10c3wkj(
   ffi.Pointer<objc.ObjCBlockImpl> block,
   ffi.Pointer<objc.ObjCBlockImpl> listnerBlock,
   ffi.Pointer<objc.DOBJC_Context> context,
@@ -50,7 +50,7 @@ _FoundationFFI_wrapBlockingBlock_10c3wkj(
   ffi.Pointer<objc.ObjCBlockImpl> Function(ffi.Pointer<objc.ObjCBlockImpl>)
 >(isLeaf: true)
 external ffi.Pointer<objc.ObjCBlockImpl>
-_FoundationFFI_wrapListenerBlock_xtuoz7(ffi.Pointer<objc.ObjCBlockImpl> block);
+_NativeLibrary_wrapListenerBlock_xtuoz7(ffi.Pointer<objc.ObjCBlockImpl> block);
 
 @ffi.Native<
   ffi.Pointer<objc.ObjCBlockImpl> Function(
@@ -60,7 +60,7 @@ _FoundationFFI_wrapListenerBlock_xtuoz7(ffi.Pointer<objc.ObjCBlockImpl> block);
   )
 >(isLeaf: true)
 external ffi.Pointer<objc.ObjCBlockImpl>
-_FoundationFFI_wrapBlockingBlock_xtuoz7(
+_NativeLibrary_wrapBlockingBlock_xtuoz7(
   ffi.Pointer<objc.ObjCBlockImpl> block,
   ffi.Pointer<objc.ObjCBlockImpl> listnerBlock,
   ffi.Pointer<objc.DOBJC_Context> context,
@@ -3634,7 +3634,7 @@ abstract final class ObjCBlock_ffiVoid_PHContentEditingInput_NSDictionary {
       ),
       keepIsolateAlive,
     );
-    final wrapper = _FoundationFFI_wrapListenerBlock_pfv6jd(raw);
+    final wrapper = _NativeLibrary_wrapListenerBlock_pfv6jd(raw);
     objc.objectRelease(raw.cast());
     return objc.ObjCBlock<
       ffi.Void Function(PHContentEditingInput?, objc.NSDictionary)
@@ -3692,7 +3692,7 @@ abstract final class ObjCBlock_ffiVoid_PHContentEditingInput_NSDictionary {
       ),
       keepIsolateAlive,
     );
-    final wrapper = _FoundationFFI_wrapBlockingBlock_pfv6jd(
+    final wrapper = _NativeLibrary_wrapBlockingBlock_pfv6jd(
       raw,
       rawListener,
       objc.objCContext,
@@ -4443,7 +4443,7 @@ abstract final class ObjCBlock_ffiVoid_NSData_NSString_CGImagePropertyOrientatio
       ),
       keepIsolateAlive,
     );
-    final wrapper = _FoundationFFI_wrapListenerBlock_10c3wkj(raw);
+    final wrapper = _NativeLibrary_wrapListenerBlock_10c3wkj(raw);
     objc.objectRelease(raw.cast());
     return objc.ObjCBlock<
       ffi.Void Function(
@@ -4525,7 +4525,7 @@ abstract final class ObjCBlock_ffiVoid_NSData_NSString_CGImagePropertyOrientatio
       ),
       keepIsolateAlive,
     );
-    final wrapper = _FoundationFFI_wrapBlockingBlock_10c3wkj(
+    final wrapper = _NativeLibrary_wrapBlockingBlock_10c3wkj(
       raw,
       rawListener,
       objc.objCContext,
@@ -5036,7 +5036,7 @@ abstract final class ObjCBlock_ffiVoid_NSData {
           fn(objc.NSData.fromPointer(arg0, retain: false, release: true)),
       keepIsolateAlive,
     );
-    final wrapper = _FoundationFFI_wrapListenerBlock_xtuoz7(raw);
+    final wrapper = _NativeLibrary_wrapListenerBlock_xtuoz7(raw);
     objc.objectRelease(raw.cast());
     return objc.ObjCBlock<ffi.Void Function(objc.NSData)>(
       wrapper,
@@ -5071,7 +5071,7 @@ abstract final class ObjCBlock_ffiVoid_NSData {
           fn(objc.NSData.fromPointer(arg0, retain: false, release: true)),
       keepIsolateAlive,
     );
-    final wrapper = _FoundationFFI_wrapBlockingBlock_xtuoz7(
+    final wrapper = _NativeLibrary_wrapBlockingBlock_xtuoz7(
       raw,
       rawListener,
       objc.objCContext,
@@ -5287,7 +5287,7 @@ abstract final class ObjCBlock_ffiVoid_NSError {
       ),
       keepIsolateAlive,
     );
-    final wrapper = _FoundationFFI_wrapListenerBlock_xtuoz7(raw);
+    final wrapper = _NativeLibrary_wrapListenerBlock_xtuoz7(raw);
     objc.objectRelease(raw.cast());
     return objc.ObjCBlock<ffi.Void Function(objc.NSError?)>(
       wrapper,
@@ -5328,7 +5328,7 @@ abstract final class ObjCBlock_ffiVoid_NSError {
       ),
       keepIsolateAlive,
     );
-    final wrapper = _FoundationFFI_wrapBlockingBlock_xtuoz7(
+    final wrapper = _NativeLibrary_wrapBlockingBlock_xtuoz7(
       raw,
       rawListener,
       objc.objCContext,

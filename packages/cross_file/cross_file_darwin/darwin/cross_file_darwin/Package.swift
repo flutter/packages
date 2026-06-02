@@ -9,8 +9,8 @@ import PackageDescription
 let package = Package(
   name: "cross_file_darwin",
   platforms: [
-    .iOS("13.0"),
-    .macOS("10.15"),
+    .iOS(.v13),
+    .macOS(.v10_15),
   ],
   products: [
     .library(name: "cross-file-darwin", targets: ["cross_file_darwin"])
@@ -18,11 +18,21 @@ let package = Package(
   dependencies: [],
   targets: [
     .target(
-      name: "cross_file_darwin",
+        name: "cross_file_darwin",
+        dependencies: [
+          "cross_file_darwin_objc"
+        ],
+        resources: [
+          .process("Resources")
+        ]
+    ),
+    .target(
+      name: "cross_file_darwin_objc",
       dependencies: [],
-      resources: [
-        .process("Resources")
-      ]
+      sources: [
+        "ffi_bindings.g.m",
+      ],
+      publicHeadersPath: "include",
     )
   ]
 )

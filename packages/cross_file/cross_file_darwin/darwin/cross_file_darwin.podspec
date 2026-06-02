@@ -14,7 +14,7 @@ Downloaded by pub (not CocoaPods).
   s.author           = { 'Flutter Dev Team' => 'flutter-dev@googlegroups.com' }
   s.source           = { :http => 'https://github.com/flutter/packages/tree/main/packages/cross_file/cross_file_darwin' }
   s.documentation_url = 'https://pub.dev/packages/cross_file'
-  s.source_files = 'cross_file_darwin/Sources/cross_file_darwin/**/*.swift'
+  s.source_files = 'cross_file_darwin/Sources/**/*.{m,swift}'
   s.ios.dependency 'Flutter'
   s.osx.dependency 'FlutterMacOS'
   s.ios.deployment_target = '13.0'

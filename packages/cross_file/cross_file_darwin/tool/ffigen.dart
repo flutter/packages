@@ -11,9 +11,8 @@ void main() {
   FfiGenerator(
     output: Output(
       dartFile: packageRoot.resolve('lib/src/ffi_bindings.g.dart'),
-      style: const DynamicLibraryBindings(
-        wrapperName: 'FoundationFFI',
-        wrapperDocComment: 'Bindings for Foundation and Photos Library.',
+      objectiveCFile: packageRoot.resolve(
+        'darwin/cross_file_darwin/Sources/cross_file_darwin_objc/ffi_bindings.g.m',
       ),
     ),
     headers: Headers(
