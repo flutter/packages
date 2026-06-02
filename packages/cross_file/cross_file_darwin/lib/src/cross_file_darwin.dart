@@ -16,7 +16,7 @@ base class CrossFileDarwin extends CrossFileIO {
   static void registerWith() {
     CrossFilePlatform.instance = CrossFileDarwin();
     ffi.DynamicLibrary.open(
-      '/System/Library/Frameworks/Photos.framework/Versions/Current/Photos',
+      '/System/Library/Frameworks/Photos.framework/Photos',
     );
   }
 
