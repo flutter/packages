@@ -90,7 +90,12 @@ class LocalAuthentication {
   Future<bool> isDeviceSupported() async =>
       LocalAuthPlatform.instance.isDeviceSupported();
 
-  /// Returns a list of enrolled biometrics.
+  /// Returns a list of biometrics that are available for the app to use.
+  ///
+  /// This may not include every biometric that is enrolled on the device. For
+  /// example, on iOS a biometric can be enrolled but still be unavailable to
+  /// the app, such as when the user has denied the app permission to use
+  /// biometrics.
   Future<List<BiometricType>> getAvailableBiometrics() =>
       LocalAuthPlatform.instance.getEnrolledBiometrics();
 }

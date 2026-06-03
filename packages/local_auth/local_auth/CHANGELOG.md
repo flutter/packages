@@ -1,6 +1,9 @@
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+* Clarifies the documentation of `getAvailableBiometrics` to note that it
+  returns the biometrics available to the app, which may not include every
+  enrolled biometric.
 
 ## 3.0.1
 
