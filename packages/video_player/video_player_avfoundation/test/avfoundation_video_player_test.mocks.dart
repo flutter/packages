@@ -7,10 +7,8 @@ import 'dart:async' as _i4;
 
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i3;
-import 'package:video_player_avfoundation/src/video_player_instance_messages.g.dart'
-    as _i5;
-import 'package:video_player_avfoundation/src/video_player_plugin_messages.g.dart'
-    as _i2;
+import 'package:video_player_avfoundation/src/video_player_instance_messages.g.dart' as _i5;
+import 'package:video_player_avfoundation/src/video_player_plugin_messages.g.dart' as _i2;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -27,8 +25,7 @@ import 'package:video_player_avfoundation/src/video_player_plugin_messages.g.dar
 // ignore_for_file: subtype_of_sealed_class
 // ignore_for_file: invalid_use_of_internal_member
 
-class _FakeTexturePlayerIds_0 extends _i1.SmartFake
-    implements _i2.TexturePlayerIds {
+class _FakeTexturePlayerIds_0 extends _i1.SmartFake implements _i2.TexturePlayerIds {
   _FakeTexturePlayerIds_0(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -36,8 +33,7 @@ class _FakeTexturePlayerIds_0 extends _i1.SmartFake
 /// A class which mocks [AVFoundationVideoPlayerApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAVFoundationVideoPlayerApi extends _i1.Mock
-    implements _i2.AVFoundationVideoPlayerApi {
+class MockAVFoundationVideoPlayerApi extends _i1.Mock implements _i2.AVFoundationVideoPlayerApi {
   @override
   String get pigeonVar_messageChannelSuffix =>
       (super.noSuchMethod(
@@ -72,9 +68,7 @@ class MockAVFoundationVideoPlayerApi extends _i1.Mock
           as _i4.Future<int>);
 
   @override
-  _i4.Future<_i2.TexturePlayerIds> createForTextureView(
-    _i2.CreationOptions? creationOptions,
-  ) =>
+  _i4.Future<_i2.TexturePlayerIds> createForTextureView(_i2.CreationOptions? creationOptions) =>
       (super.noSuchMethod(
             Invocation.method(#createForTextureView, [creationOptions]),
             returnValue: _i4.Future<_i2.TexturePlayerIds>.value(
@@ -114,8 +108,7 @@ class MockAVFoundationVideoPlayerApi extends _i1.Mock
 /// A class which mocks [VideoPlayerInstanceApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockVideoPlayerInstanceApi extends _i1.Mock
-    implements _i5.VideoPlayerInstanceApi {
+class MockVideoPlayerInstanceApi extends _i1.Mock implements _i5.VideoPlayerInstanceApi {
   @override
   String get pigeonVar_messageChannelSuffix =>
       (super.noSuchMethod(
@@ -207,14 +200,12 @@ class MockVideoPlayerInstanceApi extends _i1.Mock
   _i4.Future<List<_i5.MediaSelectionAudioTrackData>> getAudioTracks() =>
       (super.noSuchMethod(
             Invocation.method(#getAudioTracks, []),
-            returnValue:
-                _i4.Future<List<_i5.MediaSelectionAudioTrackData>>.value(
-                  <_i5.MediaSelectionAudioTrackData>[],
-                ),
-            returnValueForMissingStub:
-                _i4.Future<List<_i5.MediaSelectionAudioTrackData>>.value(
-                  <_i5.MediaSelectionAudioTrackData>[],
-                ),
+            returnValue: _i4.Future<List<_i5.MediaSelectionAudioTrackData>>.value(
+              <_i5.MediaSelectionAudioTrackData>[],
+            ),
+            returnValueForMissingStub: _i4.Future<List<_i5.MediaSelectionAudioTrackData>>.value(
+              <_i5.MediaSelectionAudioTrackData>[],
+            ),
           )
           as _i4.Future<List<_i5.MediaSelectionAudioTrackData>>);
 

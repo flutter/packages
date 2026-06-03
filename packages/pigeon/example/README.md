@@ -23,8 +23,7 @@ needed for your project.
     gobjectHeaderOut: 'linux/messages.g.h',
     gobjectSourceOut: 'linux/messages.g.cc',
     gobjectOptions: GObjectOptions(),
-    kotlinOut:
-        'android/app/src/main/kotlin/dev/flutter/pigeon_example_app/Messages.g.kt',
+    kotlinOut: 'android/app/src/main/kotlin/dev/flutter/pigeon_example_app/Messages.g.kt',
     kotlinOptions: KotlinOptions(),
     javaOut: 'android/app/src/main/java/io/flutter/plugins/Messages.java',
     javaOptions: JavaOptions(),
