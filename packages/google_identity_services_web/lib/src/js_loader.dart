@@ -8,6 +8,7 @@ import 'dart:js_interop';
 import 'package:web/web.dart' as web;
 
 import 'js_interop/load_callback.dart';
+import 'js_interop/package_web_tweaks.dart';
 
 // The URL from which the script should be downloaded.
 const String _url = 'https://accounts.google.com/gsi/client';
