@@ -1,3 +1,7 @@
+## 3.3.0
+
+* Updates `in_app_purchase_android` dependency to `^0.5.0`.
+
 ## 3.2.4
 
 * Bump org.json:json from 20251224 to 20260522 in example.
