@@ -90,19 +90,22 @@ class _GoRouteParameters {
     required this.builder,
     required this.pageBuilder,
     required this.redirect,
-    required this.onExit,
+    this.onExit,
   });
 
   final GoRouterWidgetBuilder builder;
   final GoRouterPageBuilder pageBuilder;
   final GoRouterRedirect redirect;
-  final ExitCallback onExit;
+  final ExitCallback? onExit;
 }
 
 /// Helper to create [GoRoute] parameters from a factory function and an Expando.
+///
+/// When [hasOverriddenOnExit] is null, treat it the same as true for backward compatibility.
 _GoRouteParameters _createGoRouteParameters<T extends _GoRouteDataBase>({
   required T Function(GoRouterState) factory,
   required Expando<_GoRouteDataBase> expando,
+  bool? hasOverriddenOnExit,
 }) {
   T factoryImpl(GoRouterState state) {
     final Object? extra = state.extra;
@@ -123,8 +126,10 @@ _GoRouteParameters _createGoRouteParameters<T extends _GoRouteDataBase>({
         factoryImpl(state).buildPage(context, state),
     redirect: (BuildContext context, GoRouterState state) =>
         factoryImpl(state).redirect(context, state),
-    onExit: (BuildContext context, GoRouterState state) =>
-        factoryImpl(state).onExit(context, state),
+    onExit: hasOverriddenOnExit == null || hasOverriddenOnExit
+        ? (BuildContext context, GoRouterState state) =>
+              factoryImpl(state).onExit(context, state)
+        : null,
   );
 }
 
@@ -156,10 +161,12 @@ abstract class GoRouteData extends _GoRouteDataBase {
     required T Function(GoRouterState) factory,
     GlobalKey<NavigatorState>? parentNavigatorKey,
     List<RouteBase> routes = const <RouteBase>[],
+    bool? hasOverriddenOnExit,
   }) {
     final _GoRouteParameters params = _createGoRouteParameters<T>(
       factory: factory,
       expando: _GoRouteDataBase.stateObjectExpando,
+      hasOverriddenOnExit: hasOverriddenOnExit,
     );
 
     return GoRoute(
@@ -227,10 +234,12 @@ abstract class RelativeGoRouteData extends _GoRouteDataBase {
     required T Function(GoRouterState) factory,
     GlobalKey<NavigatorState>? parentNavigatorKey,
     List<RouteBase> routes = const <RouteBase>[],
+    bool? hasOverriddenOnExit,
   }) {
     final _GoRouteParameters params = _createGoRouteParameters<T>(
       factory: factory,
       expando: _GoRouteDataBase.stateObjectExpando,
+      hasOverriddenOnExit: hasOverriddenOnExit,
     );
 
     return GoRoute(
