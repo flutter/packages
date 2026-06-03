@@ -14,12 +14,7 @@ RouteBase get $homeRoute => GoRouteData.$route(
   path: '/',
   name: 'Home',
   factory: $HomeRoute._fromState,
-  routes: [
-    GoRouteData.$route(
-      path: 'family/:familyId',
-      factory: $FamilyRoute._fromState,
-    ),
-  ],
+  routes: [GoRouteData.$route(path: 'family/:familyId', factory: $FamilyRoute._fromState)],
 );
 
 mixin $HomeRoute on GoRouteData {
@@ -35,8 +30,7 @@ mixin $HomeRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
@@ -49,8 +43,7 @@ mixin $FamilyRoute on GoRouteData {
   FamilyRoute get _self => this as FamilyRoute;
 
   @override
-  String get location =>
-      GoRouteData.$location('/family/${Uri.encodeComponent(_self.familyId)}');
+  String get location => GoRouteData.$location('/family/${Uri.encodeComponent(_self.familyId)}');
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -59,8 +52,7 @@ mixin $FamilyRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);

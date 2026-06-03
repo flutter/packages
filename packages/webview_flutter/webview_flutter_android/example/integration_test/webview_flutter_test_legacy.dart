@@ -101,28 +101,26 @@ Future<void> main() async {
     );
   });
 
-  testWidgets(
-    'withWeakRefenceTo allows encapsulating class to be garbage collected',
-    (WidgetTester tester) async {
-      final gcCompleter = Completer<int>();
-      final instanceManager = android.PigeonInstanceManager(
-        onWeakReferenceRemoved: gcCompleter.complete,
-      );
+  testWidgets('withWeakRefenceTo allows encapsulating class to be garbage collected', (
+    WidgetTester tester,
+  ) async {
+    final gcCompleter = Completer<int>();
+    final instanceManager = android.PigeonInstanceManager(
+      onWeakReferenceRemoved: gcCompleter.complete,
+    );
 
-      ClassWithCallbackClass? instance = ClassWithCallbackClass();
-      instanceManager.addHostCreatedInstance(instance.callbackClass, 0);
-      instance = null;
+    ClassWithCallbackClass? instance = ClassWithCallbackClass();
+    instanceManager.addHostCreatedInstance(instance.callbackClass, 0);
+    instance = null;
 
-      // Force garbage collection.
-      await IntegrationTestWidgetsFlutterBinding.instance.watchPerformance(() async {
-        await tester.pumpAndSettle();
-      });
+    // Force garbage collection.
+    await IntegrationTestWidgetsFlutterBinding.instance.watchPerformance(() async {
+      await tester.pumpAndSettle();
+    });
 
-      final int gcIdentifier = await gcCompleter.future;
-      expect(gcIdentifier, 0);
-    },
-    timeout: const Timeout(Duration(seconds: 10)),
-  );
+    final int gcIdentifier = await gcCompleter.future;
+    expect(gcIdentifier, 0);
+  }, timeout: const Timeout(Duration(seconds: 10)));
 
   // TODO(bparrishMines): This test is skipped because of
   // https://github.com/flutter/flutter/issues/123327
