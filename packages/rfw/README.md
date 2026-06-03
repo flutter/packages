@@ -430,10 +430,7 @@ a map with a `name` subkey, or a scalar String:
 ```dart
 'Foo': (BuildContext context, DataSource source) {
   if (source.isMap(<Object>['bar'])) {
-    return Text(
-      '${source.v<String>(<Object>['bar', 'name'])}',
-      textDirection: TextDirection.ltr,
-    );
+    return Text('${source.v<String>(<Object>['bar', 'name'])}', textDirection: TextDirection.ltr);
   }
   return Text('${source.v<String>(<Object>['bar'])}', textDirection: TextDirection.ltr);
 },
@@ -467,10 +464,7 @@ method is similar but reports on whether the specified key identifies a list:
 ```dart
 'Foo': (BuildContext context, DataSource source) {
   if (source.isList(<Object>['bar', 'quux'])) {
-    return Text(
-      '${source.v<String>(<Object>['bar', 'quux', 2])}',
-      textDirection: TextDirection.ltr,
-    );
+    return Text('${source.v<String>(<Object>['bar', 'quux', 2])}', textDirection: TextDirection.ltr);
   }
   return Text('${source.v<String>(<Object>['baz'])}', textDirection: TextDirection.ltr);
 },
@@ -523,10 +517,7 @@ to obtain the widget, in a manner similar to the `v` method:
 <?code-excerpt "test/readme_test.dart (child)"?>
 ```rfwtxt
 'GreenBox': (BuildContext context, DataSource source) {
-  return ColoredBox(
-    color: const Color(0xFF002211),
-    child: source.child(<Object>['child']),
-  );
+  return ColoredBox(color: const Color(0xFF002211), child: source.child(<Object>['child']));
 },
 ```
 
@@ -538,10 +529,7 @@ argument that isn't a widget, the `child` method returns an
 <?code-excerpt "test/readme_test.dart (optionalChild)"?>
 ```rfwtxt
 'GreenBox': (BuildContext context, DataSource source) {
-  return ColoredBox(
-    color: const Color(0xFF002211),
-    child: source.optionalChild(<Object>['child']),
-  );
+  return ColoredBox(color: const Color(0xFF002211), child: source.optionalChild(<Object>['child']));
 },
 ```
 
@@ -556,34 +544,15 @@ method can be used. For example, this is how `Row` is defined in
 ```rfwtxt
 'Row': (BuildContext context, DataSource source) {
   return Row(
-    mainAxisAlignment:
-        ArgumentDecoders.enumValue<MainAxisAlignment>(MainAxisAlignment.values, source, [
-          'mainAxisAlignment',
-        ]) ??
-        MainAxisAlignment.start,
-    mainAxisSize:
-        ArgumentDecoders.enumValue<MainAxisSize>(MainAxisSize.values, source, ['mainAxisSize']) ??
-        MainAxisSize.max,
-    crossAxisAlignment:
-        ArgumentDecoders.enumValue<CrossAxisAlignment>(CrossAxisAlignment.values, source, [
-          'crossAxisAlignment',
-        ]) ??
-        CrossAxisAlignment.center,
-    textDirection: ArgumentDecoders.enumValue<TextDirection>(TextDirection.values, source, [
-      'textDirection',
-    ]),
-    verticalDirection:
-        ArgumentDecoders.enumValue<VerticalDirection>(VerticalDirection.values, source, [
-          'verticalDirection',
-        ]) ??
-        VerticalDirection.down,
-    textBaseline: ArgumentDecoders.enumValue<TextBaseline>(TextBaseline.values, source, [
-      'textBaseline',
-    ]),
+    mainAxisAlignment: ArgumentDecoders.enumValue<MainAxisAlignment>(MainAxisAlignment.values, source, ['mainAxisAlignment']) ?? MainAxisAlignment.start,
+    mainAxisSize: ArgumentDecoders.enumValue<MainAxisSize>(MainAxisSize.values, source, ['mainAxisSize']) ?? MainAxisSize.max,
+    crossAxisAlignment: ArgumentDecoders.enumValue<CrossAxisAlignment>(CrossAxisAlignment.values, source, ['crossAxisAlignment']) ?? CrossAxisAlignment.center,
+    textDirection: ArgumentDecoders.enumValue<TextDirection>(TextDirection.values, source, ['textDirection']),
+    verticalDirection: ArgumentDecoders.enumValue<VerticalDirection>(VerticalDirection.values, source, ['verticalDirection']) ?? VerticalDirection.down,
+    textBaseline: ArgumentDecoders.enumValue<TextBaseline>(TextBaseline.values, source, ['textBaseline']),
     children: source.childList(['children']),
   );
 },
-
 ```
 
 #### `ArgumentDecoders`
@@ -697,11 +666,7 @@ This is usually written something like the following:
 <?code-excerpt "test/readme_test.dart (onTapDown)"?>
 ```dart
 return GestureDetector(
-  onTapDown: source.handler(
-    <Object>['onTapDown'],
-    (HandlerTrigger trigger) =>
-        (TapDownDetails details) => trigger(),
-  ),
+  onTapDown: source.handler(<Object>['onTapDown'], (HandlerTrigger trigger) => (TapDownDetails details) => trigger()),
   child: source.optionalChild(<Object>['child']),
 );
 ```
@@ -712,13 +677,10 @@ To break this down more clearly:
 ```dart
 return GestureDetector(
   // onTapDown expects a function that takes a TapDownDetails
-  onTapDown: source.handler<GestureTapDownCallback>(
-    // this returns a function that takes a TapDownDetails
+  onTapDown: source.handler<GestureTapDownCallback>( // this returns a function that takes a TapDownDetails
     <Object>['onTapDown'],
-    (HandlerTrigger trigger) {
-      // "trigger" is the function that will send the event to RemoteWidget.onEvent
-      return (TapDownDetails details) {
-        // this is the function that is returned by handler() above
+    (HandlerTrigger trigger) { // "trigger" is the function that will send the event to RemoteWidget.onEvent
+      return (TapDownDetails details) { // this is the function that is returned by handler() above
         trigger(); // the function calls "trigger"
       };
     },
