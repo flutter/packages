@@ -30,7 +30,8 @@ mixin $HomeRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) => context.pushReplacement(location);
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
@@ -44,8 +45,10 @@ mixin $JsonRoute on GoRouteData {
   JsonRoute get _self => this as JsonRoute;
 
   @override
-  String get location =>
-      GoRouteData.$location('/json', queryParams: {'json': jsonEncode(_self.json.toJson())});
+  String get location => GoRouteData.$location(
+    '/json',
+    queryParams: {'json': jsonEncode(_self.json.toJson())},
+  );
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -54,7 +57,8 @@ mixin $JsonRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) => context.pushReplacement(location);
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);

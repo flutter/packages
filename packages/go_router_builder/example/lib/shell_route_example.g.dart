@@ -19,7 +19,8 @@ RouteBase get $myShellRouteData => ShellRouteData.$route(
 );
 
 extension $MyShellRouteDataExtension on MyShellRouteData {
-  static MyShellRouteData _fromState(GoRouterState state) => const MyShellRouteData();
+  static MyShellRouteData _fromState(GoRouterState state) =>
+      const MyShellRouteData();
 }
 
 mixin $FooRouteData on GoRouteData {
@@ -35,7 +36,8 @@ mixin $FooRouteData on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) => context.pushReplacement(location);
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
@@ -54,13 +56,15 @@ mixin $BarRouteData on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) => context.pushReplacement(location);
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $loginRoute => GoRouteData.$route(path: '/login', factory: $LoginRoute._fromState);
+RouteBase get $loginRoute =>
+    GoRouteData.$route(path: '/login', factory: $LoginRoute._fromState);
 
 mixin $LoginRoute on GoRouteData {
   static LoginRoute _fromState(GoRouterState state) => const LoginRoute();
@@ -75,7 +79,8 @@ mixin $LoginRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) => context.pushReplacement(location);
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
