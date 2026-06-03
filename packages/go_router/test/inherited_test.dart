@@ -13,7 +13,7 @@ void main() {
   group('updateShouldNotify', () {
     test('does not update when goRouter does not change', () {
       final goRouter = GoRouter(
-        routes: <GoRoute>[GoRoute(path: '/', builder: (_, __) => const Page1())],
+        routes: <GoRoute>[GoRoute(path: '/', builder: (_, _) => const Page1())],
       );
       final bool shouldNotify = setupInheritedGoRouterChange(
         oldGoRouter: goRouter,
@@ -24,10 +24,10 @@ void main() {
 
     test('does not update even when goRouter changes', () {
       final oldGoRouter = GoRouter(
-        routes: <GoRoute>[GoRoute(path: '/', builder: (_, __) => const Page1())],
+        routes: <GoRoute>[GoRoute(path: '/', builder: (_, _) => const Page1())],
       );
       final newGoRouter = GoRouter(
-        routes: <GoRoute>[GoRoute(path: '/', builder: (_, __) => const Page2())],
+        routes: <GoRoute>[GoRoute(path: '/', builder: (_, _) => const Page2())],
       );
       final bool shouldNotify = setupInheritedGoRouterChange(
         oldGoRouter: oldGoRouter,
@@ -39,7 +39,7 @@ void main() {
 
   test('adds [goRouter] as a diagnostics property', () {
     final goRouter = GoRouter(
-      routes: <GoRoute>[GoRoute(path: '/', builder: (_, __) => const Page1())],
+      routes: <GoRoute>[GoRoute(path: '/', builder: (_, _) => const Page1())],
     );
     final inheritedGoRouter = InheritedGoRouter(goRouter: goRouter, child: Container());
     final properties = DiagnosticPropertiesBuilder();
@@ -68,7 +68,7 @@ void main() {
       routes: <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (BuildContext context, __) {
+          builder: (BuildContext context, _) {
             buildContextRouter = GoRouter.of(context);
             return const DummyScreen();
           },

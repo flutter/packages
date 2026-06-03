@@ -138,24 +138,24 @@ class App extends StatelessWidget {
 
       routes: <RouteBase>[
         // Simple “root → home”
-        GoRoute(path: '/', redirect: (BuildContext _, GoRouterState __) => '/home'),
+        GoRoute(path: '/', redirect: (BuildContext _, GoRouterState _) => '/home'),
 
         // Auth + simple pages
-        GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
-        GoRoute(path: '/home', builder: (_, __) => const HomeScreen()),
-        GoRoute(path: '/settings', builder: (_, __) => const SettingsScreen()),
+        GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
+        GoRoute(path: '/home', builder: (_, _) => const HomeScreen()),
+        GoRoute(path: '/settings', builder: (_, _) => const SettingsScreen()),
 
         // The following routes will never render (we always Block in onEnter),
         // but they exist so deep-links resolve safely.
-        GoRoute(path: '/referral', builder: (_, __) => const SizedBox.shrink()),
-        GoRoute(path: '/auth', builder: (_, __) => const SizedBox.shrink()),
-        GoRoute(path: '/crash-test', builder: (_, __) => const SizedBox.shrink()),
+        GoRoute(path: '/referral', builder: (_, _) => const SizedBox.shrink()),
+        GoRoute(path: '/auth', builder: (_, _) => const SizedBox.shrink()),
+        GoRoute(path: '/crash-test', builder: (_, _) => const SizedBox.shrink()),
 
         // Route-level redirect happens AFTER top-level onEnter allows.
         GoRoute(
           path: '/old',
-          builder: (_, __) => const SizedBox.shrink(),
-          redirect: (_, __) => '/home?from=old',
+          builder: (_, _) => const SizedBox.shrink(),
+          redirect: (_, _) => '/home?from=old',
         ),
 
         // A page that shows fragments (#hash) via state.uri.fragment
@@ -172,7 +172,7 @@ class App extends StatelessWidget {
           },
         ),
 
-        GoRoute(path: '/error', builder: (_, __) => const ErrorScreen()),
+        GoRoute(path: '/error', builder: (_, _) => const ErrorScreen()),
       ],
     );
   }

@@ -42,7 +42,7 @@ void main() {
       final routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (_, __) {
+          builder: (_, _) {
             return Builder(
               builder: (BuildContext context) {
                 return Text('1 ${GoRouterState.of(context).uri.path}');
@@ -52,7 +52,7 @@ void main() {
           routes: <GoRoute>[
             GoRoute(
               path: 'a',
-              builder: (_, __) {
+              builder: (_, _) {
                 return Builder(
                   builder: (BuildContext context) {
                     return Text('2 ${GoRouterState.of(context).uri.path}');
@@ -79,7 +79,7 @@ void main() {
       final routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (_, __) {
+          builder: (_, _) {
             return Builder(
               builder: (BuildContext context) {
                 return Text('1 ${GoRouterState.of(context).uri.path}');
@@ -89,7 +89,7 @@ void main() {
           routes: <GoRoute>[
             GoRoute(
               path: ':id',
-              builder: (_, __) {
+              builder: (_, _) {
                 return Builder(
                   builder: (BuildContext context) {
                     return Text('2 ${GoRouterState.of(context).pathParameters['id']}');
@@ -119,7 +119,7 @@ void main() {
       final routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (_, __) {
+          builder: (_, _) {
             return Builder(
               builder: (BuildContext context) {
                 return Text(GoRouterState.of(context).uri.path);
@@ -129,7 +129,7 @@ void main() {
           routes: <GoRoute>[
             GoRoute(
               path: 'a',
-              builder: (_, __) {
+              builder: (_, _) {
                 return Builder(
                   builder: (BuildContext context) {
                     return Text(key: key, GoRouterState.of(context).uri.path);
@@ -164,7 +164,7 @@ void main() {
       final routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (_, __) {
+          builder: (_, _) {
             return Builder(
               builder: (BuildContext context) {
                 return Text(GoRouterState.of(context).uri.path);
@@ -174,7 +174,7 @@ void main() {
           routes: <GoRoute>[
             GoRoute(
               path: 'a',
-              builder: (_, __) {
+              builder: (_, _) {
                 return Builder(
                   builder: (BuildContext context) {
                     return Text(key: key, GoRouterState.of(context).uri.path);
@@ -209,7 +209,7 @@ void main() {
       final routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (_, __) {
+          builder: (_, _) {
             return Scaffold(
               appBar: AppBar(),
               body: Navigator(

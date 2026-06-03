@@ -423,7 +423,7 @@ class ImperativeRouteMatch extends RouteMatch {
 
   static GoRoute _getsLastRouteFromMatches(RouteMatchList matchList) {
     if (matchList.isError) {
-      return GoRoute(path: 'error', builder: (_, __) => throw UnimplementedError());
+      return GoRoute(path: 'error', builder: (_, _) => throw UnimplementedError());
     }
     return matchList.last.route;
   }

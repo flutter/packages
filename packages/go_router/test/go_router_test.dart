@@ -199,7 +199,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final routes = <GoRoute>[
-        GoRoute(path: '/profile', builder: dummy, redirect: (_, __) => '/profile/foo'),
+        GoRoute(path: '/profile', builder: dummy, redirect: (_, _) => '/profile/foo'),
         GoRoute(path: '/profile/:kind', builder: dummy),
       ];
 
@@ -216,7 +216,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final routes = <GoRoute>[
-        GoRoute(path: '/profile', builder: dummy, redirect: (_, __) => '/profile/foo'),
+        GoRoute(path: '/profile', builder: dummy, redirect: (_, _) => '/profile/foo'),
         GoRoute(path: '/profile/:kind', builder: dummy),
       ];
 
@@ -275,7 +275,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final routes = <GoRoute>[
-        GoRoute(path: '/profile', builder: dummy, redirect: (_, __) => '/profile/foo'),
+        GoRoute(path: '/profile', builder: dummy, redirect: (_, _) => '/profile/foo'),
         GoRoute(path: '/profile/:kind', builder: dummy),
       ];
 
@@ -292,7 +292,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final routes = <GoRoute>[
-        GoRoute(path: '/profile', builder: dummy, redirect: (_, __) => '/profile/foo'),
+        GoRoute(path: '/profile', builder: dummy, redirect: (_, _) => '/profile/foo'),
         GoRoute(path: '/profile/:kind', builder: dummy),
       ];
 
@@ -314,11 +314,11 @@ void main() {
       final routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (_, __) => DummyScreen(key: home),
+          builder: (_, _) => DummyScreen(key: home),
         ),
         GoRoute(
           path: '/settings',
-          builder: (_, __) => DummyScreen(key: settings),
+          builder: (_, _) => DummyScreen(key: settings),
         ),
       ];
       final GoRouter router = await createRouter(routes, tester, navigatorKey: navKey);
@@ -359,7 +359,7 @@ void main() {
       final routes = <RouteBase>[
         GoRoute(
           path: '/',
-          builder: (_, __) => const Text('home'),
+          builder: (_, _) => const Text('home'),
           routes: <RouteBase>[
             ShellRoute(
               builder: (BuildContext context, GoRouterState state, Widget child) {
@@ -368,7 +368,7 @@ void main() {
               routes: <GoRoute>[
                 GoRoute(
                   path: 'page',
-                  builder: (BuildContext context, __) {
+                  builder: (BuildContext context, _) {
                     return TextButton(
                       onPressed: () {
                         Navigator.of(context, rootNavigator: true).push(
@@ -413,15 +413,15 @@ void main() {
       final routes = <GoRoute>[
         GoRoute(
           path: '/',
-          pageBuilder: (_, __) => const MaterialPage<Object>(child: HomeScreen()),
+          pageBuilder: (_, _) => const MaterialPage<Object>(child: HomeScreen()),
         ),
         GoRoute(
           path: '/page1',
-          pageBuilder: (_, __) => const MaterialPage<Object>(child: Page1Screen()),
+          pageBuilder: (_, _) => const MaterialPage<Object>(child: Page1Screen()),
         ),
         GoRoute(
           path: '/page2',
-          pageBuilder: (_, __) => const MaterialPage<Object>(child: Page2Screen()),
+          pageBuilder: (_, _) => const MaterialPage<Object>(child: Page2Screen()),
         ),
       ];
       final GoRouter router = await createRouter(routes, tester, navigatorKey: navKey);
@@ -1166,8 +1166,8 @@ void main() {
     testWidgets('on push with optionURLReflectImperativeAPIs = true', (WidgetTester tester) async {
       GoRouter.optionURLReflectsImperativeAPIs = true;
       final routes = <GoRoute>[
-        GoRoute(path: '/', builder: (_, __) => const DummyScreen()),
-        GoRoute(path: '/settings', builder: (_, __) => const DummyScreen()),
+        GoRoute(path: '/', builder: (_, _) => const DummyScreen()),
+        GoRoute(path: '/settings', builder: (_, _) => const DummyScreen()),
       ];
 
       final GoRouter router = await createRouter(routes, tester);
@@ -1189,8 +1189,8 @@ void main() {
 
     testWidgets('on push', (WidgetTester tester) async {
       final routes = <GoRoute>[
-        GoRoute(path: '/', builder: (_, __) => const DummyScreen()),
-        GoRoute(path: '/settings', builder: (_, __) => const DummyScreen()),
+        GoRoute(path: '/', builder: (_, _) => const DummyScreen()),
+        GoRoute(path: '/settings', builder: (_, _) => const DummyScreen()),
       ];
 
       final GoRouter router = await createRouter(routes, tester);
@@ -1209,8 +1209,8 @@ void main() {
       final routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (_, __) => const DummyScreen(),
-          routes: <RouteBase>[GoRoute(path: 'settings', builder: (_, __) => const DummyScreen())],
+          builder: (_, _) => const DummyScreen(),
+          routes: <RouteBase>[GoRoute(path: 'settings', builder: (_, _) => const DummyScreen())],
         ),
       ];
 
@@ -1229,13 +1229,13 @@ void main() {
       final routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (_, __) => const DummyScreen(),
+          builder: (_, _) => const DummyScreen(),
           routes: <RouteBase>[
             GoRoute(
               path: 'settings',
-              builder: (_, __) => const DummyScreen(),
+              builder: (_, _) => const DummyScreen(),
               routes: <RouteBase>[
-                GoRoute(path: 'profile', builder: (_, __) => const DummyScreen()),
+                GoRoute(path: 'profile', builder: (_, _) => const DummyScreen()),
               ],
             ),
           ],
@@ -1262,9 +1262,9 @@ void main() {
       final routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (_, __) => const DummyScreen(),
+          builder: (_, _) => const DummyScreen(),
           routes: <RouteBase>[
-            GoRoute(path: 'settings/:id', builder: (_, __) => const DummyScreen()),
+            GoRoute(path: 'settings/:id', builder: (_, _) => const DummyScreen()),
           ],
         ),
       ];
@@ -1284,8 +1284,8 @@ void main() {
       final routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (_, __) => const DummyScreen(),
-          routes: <RouteBase>[GoRoute(path: ':id', builder: (_, __) => const DummyScreen())],
+          builder: (_, _) => const DummyScreen(),
+          routes: <RouteBase>[GoRoute(path: ':id', builder: (_, _) => const DummyScreen())],
         ),
       ];
 
@@ -1365,7 +1365,7 @@ void main() {
       final routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (_, __) => const DummyScreen(key: ValueKey<String>('home')),
+          builder: (_, _) => const DummyScreen(key: ValueKey<String>('home')),
           routes: <RouteBase>[
             GoRoute(
               path: 'settings',
@@ -1417,17 +1417,17 @@ void main() {
     testWidgets('works correctly with async redirect', (WidgetTester tester) async {
       final login = UniqueKey();
       final routes = <GoRoute>[
-        GoRoute(path: '/', builder: (_, __) => const DummyScreen()),
+        GoRoute(path: '/', builder: (_, _) => const DummyScreen()),
         GoRoute(
           path: '/login',
-          builder: (_, __) => DummyScreen(key: login),
+          builder: (_, _) => DummyScreen(key: login),
         ),
       ];
       final completer = Completer<void>();
       final GoRouter router = await createRouter(
         routes,
         tester,
-        redirect: (_, __) async {
+        redirect: (_, _) async {
           await completer.future;
           return '/login';
         },
@@ -1649,7 +1649,7 @@ void main() {
 
     testWidgets('sparsely named routes', (WidgetTester tester) async {
       final routes = <GoRoute>[
-        GoRoute(path: '/', builder: dummy, redirect: (_, __) => '/family/f2'),
+        GoRoute(path: '/', builder: dummy, redirect: (_, _) => '/family/f2'),
         GoRoute(
           path: '/family/:fid',
           builder: (BuildContext context, GoRouterState state) =>
@@ -2530,7 +2530,7 @@ void main() {
 
     testWidgets('can push error page', (WidgetTester tester) async {
       final GoRouter router = await createRouter(
-        <GoRoute>[GoRoute(path: '/', builder: (_, __) => const Text('/'))],
+        <GoRoute>[GoRoute(path: '/', builder: (_, _) => const Text('/'))],
         tester,
         errorBuilder: (_, GoRouterState state) {
           return Text(state.uri.toString());
@@ -3988,7 +3988,7 @@ void main() {
       final routes = <RouteBase>[
         GoRoute(
           path: '/:id',
-          builder: (_, __) => const Placeholder(),
+          builder: (_, _) => const Placeholder(),
           routes: <RouteBase>[
             StatefulShellRoute.indexedStack(
               builder:
@@ -4568,7 +4568,7 @@ void main() {
             ),
             StatefulShellBranch(
               routes: <GoRoute>[
-                GoRoute(path: '/c', redirect: (_, __) => '/c/main2'),
+                GoRoute(path: '/c', redirect: (_, _) => '/c/main2'),
                 GoRoute(
                   path: '/c/main1',
                   builder: (BuildContext context, GoRouterState state) => const Text('Screen C1'),
@@ -4786,7 +4786,7 @@ void main() {
           config,
           tester,
           initialLocation: '/a',
-          errorBuilder: (_, __) => const Text('error'),
+          errorBuilder: (_, _) => const Text('error'),
         );
         await tester.pumpAndSettle();
 
@@ -4838,7 +4838,7 @@ void main() {
                 );
               },
             ),
-            GoRoute(path: '/a', builder: (_, __) => const DummyScreen()),
+            GoRoute(path: '/a', builder: (_, _) => const DummyScreen()),
           ],
         );
         addTearDown(router.dispose);
@@ -5003,7 +5003,7 @@ void main() {
                   ),
                 );
               },
-              routes: <RouteBase>[GoRoute(path: '/', builder: (_, __) => const Text('A Screen'))],
+              routes: <RouteBase>[GoRoute(path: '/', builder: (_, _) => const Text('A Screen'))],
             ),
           ],
         );
@@ -5055,12 +5055,12 @@ void main() {
                   routes: <RouteBase>[
                     GoRoute(
                       path: 'a',
-                      builder: (_, __) => const Text('A Screen'),
+                      builder: (_, _) => const Text('A Screen'),
                       routes: <RouteBase>[
                         GoRoute(
                           parentNavigatorKey: root,
                           path: 'b',
-                          builder: (_, __) => const Text('B Screen'),
+                          builder: (_, _) => const Text('B Screen'),
                         ),
                       ],
                     ),
@@ -5125,7 +5125,7 @@ void main() {
                     );
                   },
                   routes: <RouteBase>[
-                    GoRoute(path: 'a', builder: (_, __) => const Text('A Screen')),
+                    GoRoute(path: 'a', builder: (_, _) => const Text('A Screen')),
                   ],
                 ),
               ],
@@ -5173,7 +5173,7 @@ void main() {
                   return Hero(
                     tag: kHeroTag,
                     child: Container(),
-                    flightShuttleBuilder: (_, __, ___, ____, _____) {
+                    flightShuttleBuilder: (_, _, _, _, _) {
                       return Container(key: heroKey);
                     },
                   );
@@ -5214,7 +5214,7 @@ void main() {
       final routes = <RouteBase>[
         GoRoute(
           path: '/',
-          builder: (_, __) => const SizedBox(key: key),
+          builder: (_, _) => const SizedBox(key: key),
         ),
       ];
 
@@ -5243,7 +5243,7 @@ void main() {
       final routes = <RouteBase>[
         GoRoute(
           path: '/',
-          builder: (_, __) => const SizedBox(key: key),
+          builder: (_, _) => const SizedBox(key: key),
         ),
       ];
 

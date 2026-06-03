@@ -208,7 +208,7 @@ void main() {
     final home = UniqueKey();
     final routes = <RouteBase>[
       ShellRoute(
-        builder: (_, __, Widget child) => child,
+        builder: (_, _, Widget child) => child,
         routes: <RouteBase>[
           GoRoute(
             path: '/',
@@ -459,12 +459,12 @@ void main() {
       <RouteBase>[
         GoRoute(
           path: '/',
-          builder: (_, __) => DummyScreen(key: homeKey),
+          builder: (_, _) => DummyScreen(key: homeKey),
           routes: <RouteBase>[
             GoRoute(
               path: 'detail',
-              onExit: (_, __) => true,
-              builder: (_, __) => DummyScreen(key: detailKey),
+              onExit: (_, _) => true,
+              builder: (_, _) => DummyScreen(key: detailKey),
             ),
           ],
         ),
@@ -504,12 +504,12 @@ void main() {
       <RouteBase>[
         GoRoute(
           path: '/',
-          builder: (_, __) => DummyScreen(key: homeKey),
+          builder: (_, _) => DummyScreen(key: homeKey),
           routes: <RouteBase>[
             GoRoute(
               path: 'detail',
-              onExit: (_, __) => false, // Always prevent leaving.
-              builder: (_, __) => DummyScreen(key: detailKey),
+              onExit: (_, _) => false, // Always prevent leaving.
+              builder: (_, _) => DummyScreen(key: detailKey),
             ),
           ],
         ),

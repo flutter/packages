@@ -312,7 +312,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       indent.addScoped('(', ');', () {
         enumerate(getFieldsInSerializationOrder(classDefinition), (
           int index,
-          final NamedType field,
+          NamedType field,
         ) {
           indent.write('${field.name}: ');
           indent.add(_castValue('result[$index]', field.type));
@@ -432,7 +432,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
           indent.writeln('buffer.putInt64(value);');
         }, addTrailingNewline: false);
         var nonSerializedClassCount = 0;
-        enumerate(enumeratedTypes, (int index, final EnumeratedType customType) {
+        enumerate(enumeratedTypes, (int index, EnumeratedType customType) {
           if (customType.associatedClass?.isSealed ?? false) {
             nonSerializedClassCount += 1;
             return;

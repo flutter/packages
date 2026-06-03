@@ -45,7 +45,7 @@ class _MyAppState extends State<MyApp> {
       routes: <RouteBase>[
         GoRoute(
           path: '/',
-          builder: (_, __) {
+          builder: (_, _) {
             return Scaffold(
               appBar: AppBar(title: const Text('Home')),
               body: Center(
@@ -81,7 +81,7 @@ class _MyAppState extends State<MyApp> {
         if (isNewRouteAdded)
           GoRoute(
             path: '/new-route',
-            builder: (_, __) {
+            builder: (_, _) {
               return Scaffold(
                 appBar: AppBar(title: const Text('A new Route')),
                 body: Center(

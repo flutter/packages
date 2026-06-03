@@ -171,7 +171,7 @@ void main() {
         var cell = const TableViewCell(rowMergeStart: 1, rowMergeSpan: 2, child: SizedBox.shrink());
         await tester.pumpWidget(
           TableView.builder(
-            cellBuilder: (_, __) => cell,
+            cellBuilder: (_, _) => cell,
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
             columnCount: 1,
@@ -200,7 +200,7 @@ void main() {
         );
         await tester.pumpWidget(
           TableView.builder(
-            cellBuilder: (_, __) => cell,
+            cellBuilder: (_, _) => cell,
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
             columnCount: 3,
@@ -228,7 +228,7 @@ void main() {
         );
         await tester.pumpWidget(
           TableView.builder(
-            cellBuilder: (_, __) => cell,
+            cellBuilder: (_, _) => cell,
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
             columnCount: 1,
@@ -252,7 +252,7 @@ void main() {
         );
         await tester.pumpWidget(
           TableView.builder(
-            cellBuilder: (_, __) => cell,
+            cellBuilder: (_, _) => cell,
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
             columnCount: 3,
@@ -276,7 +276,7 @@ void main() {
         var cell = const TableViewCell(rowMergeStart: 0, rowMergeSpan: 3, child: SizedBox.shrink());
         await tester.pumpWidget(
           TableView.builder(
-            cellBuilder: (_, __) => cell,
+            cellBuilder: (_, _) => cell,
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
             columnCount: 1,
@@ -301,7 +301,7 @@ void main() {
         );
         await tester.pumpWidget(
           TableView.builder(
-            cellBuilder: (_, __) => cell,
+            cellBuilder: (_, _) => cell,
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
             columnCount: 3,

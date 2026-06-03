@@ -13,7 +13,7 @@ void main() {
   group('TableCellBuilderDelegate', () {
     test('exposes addAutomaticKeepAlives from super class', () {
       final delegate = TableCellBuilderDelegate(
-        cellBuilder: (_, __) => cell,
+        cellBuilder: (_, _) => cell,
         columnBuilder: (_) => span,
         rowBuilder: (_) => span,
         columnCount: 5,
@@ -28,7 +28,7 @@ void main() {
       expect(
         () {
           delegate = TableCellBuilderDelegate(
-            cellBuilder: (_, __) => cell,
+            cellBuilder: (_, _) => cell,
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
             columnCount: 1,
@@ -48,7 +48,7 @@ void main() {
       expect(
         () {
           delegate = TableCellBuilderDelegate(
-            cellBuilder: (_, __) => cell,
+            cellBuilder: (_, _) => cell,
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
             columnCount: 1,
@@ -68,7 +68,7 @@ void main() {
       expect(
         () {
           delegate = TableCellBuilderDelegate(
-            cellBuilder: (_, __) => cell,
+            cellBuilder: (_, _) => cell,
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
             columnCount: 1,
@@ -87,7 +87,7 @@ void main() {
       expect(
         () {
           delegate = TableCellBuilderDelegate(
-            cellBuilder: (_, __) => cell,
+            cellBuilder: (_, _) => cell,
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
             columnCount: -1, // asserts
@@ -106,7 +106,7 @@ void main() {
       expect(
         () {
           delegate = TableCellBuilderDelegate(
-            cellBuilder: (_, __) => cell,
+            cellBuilder: (_, _) => cell,
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
             columnCount: 1,
@@ -126,7 +126,7 @@ void main() {
       expect(
         () {
           delegate = TableCellBuilderDelegate(
-            cellBuilder: (_, __) => cell,
+            cellBuilder: (_, _) => cell,
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
             columnCount: 1,
@@ -148,7 +148,7 @@ void main() {
 
     test('sets max x and y index of super class', () {
       final delegate = TableCellBuilderDelegate(
-        cellBuilder: (_, __) => cell,
+        cellBuilder: (_, _) => cell,
         columnBuilder: (_) => span,
         rowBuilder: (_) => span,
         columnCount: 5,
@@ -160,7 +160,7 @@ void main() {
 
     test('Respects super class default for addRepaintBoundaries', () {
       final delegate = TableCellBuilderDelegate(
-        cellBuilder: (_, __) => cell,
+        cellBuilder: (_, _) => cell,
         columnBuilder: (_) => span,
         rowBuilder: (_) => span,
         columnCount: 1,

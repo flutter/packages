@@ -700,8 +700,8 @@ class CapturingWebChromeClient extends android_webview.WebChromeClient {
   }
 
   static CapturingWebChromeClient lastCreatedDelegate = CapturingWebChromeClient(
-    onJsConfirm: (_, __, ___, ____) async => false,
-    onShowFileChooser: (_, __, ___) async => <String>[],
+    onJsConfirm: (_, _, _, _) async => false,
+    onShowFileChooser: (_, _, _) async => <String>[],
   );
 }
 
@@ -712,7 +712,7 @@ class CapturingDownloadListener extends android_webview.DownloadListener {
   }
 
   static CapturingDownloadListener lastCreatedListener = CapturingDownloadListener(
-    onDownloadStart: (_, __, ___, ____, _____, ______) {},
+    onDownloadStart: (_, _, _, _, _, _) {},
   );
 }
 

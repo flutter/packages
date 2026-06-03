@@ -251,7 +251,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     addDocumentationComments(indent, anEnum.documentationComments, _docCommentSpec);
     indent.write('enum class ${anEnum.name}(val raw: Int) ');
     indent.addScoped('{', '}', () {
-      enumerate(anEnum.members, (int index, final EnumMember member) {
+      enumerate(anEnum.members, (int index, EnumMember member) {
         addDocumentationComments(indent, member.documentationComments, _docCommentSpec);
         final String nameScreamingSnakeCase = toScreamingSnakeCase(member.name);
         indent.write('$nameScreamingSnakeCase($index)');
@@ -425,7 +425,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
       indent.addScoped('{', '}', () {
         enumerate(getFieldsInSerializationOrder(classDefinition), (
           int index,
-          final NamedType field,
+          NamedType field,
         ) {
           final listValue = '${varNamePrefix}list[$index]';
           indent.writeln('val ${field.name} = ${_cast(indent, listValue, type: field.type)}');

@@ -251,7 +251,7 @@ Future<int> runPigeon({
   // parse results in advance when overflow is included to avoid exposing as public option
   final ParseResults parseResults = Pigeon().parseFile(input);
   if (injectOverflowTypes) {
-    final addedEnums = List<Enum>.generate(totalCustomCodecKeysAllowed - 1, (final int tag) {
+    final addedEnums = List<Enum>.generate(totalCustomCodecKeysAllowed - 1, (int tag) {
       return Enum(
         name: 'FillerEnum$tag',
         members: <EnumMember>[EnumMember(name: 'FillerMember$tag')],

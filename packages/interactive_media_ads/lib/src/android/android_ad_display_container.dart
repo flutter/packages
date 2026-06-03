@@ -218,7 +218,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   // prevent a circular reference that prevents garbage collection.
   static ima.VideoView _setUpVideoView(WeakReference<AndroidAdDisplayContainer> weakThis) {
     return ima.VideoView(
-      onCompletion: (_, __) {
+      onCompletion: (_, _) {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
           container._clearMediaPlayer();
@@ -243,7 +243,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
           }
         }
       },
-      onError: (_, __, ___, ____) {
+      onError: (_, _, _, _) {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
           container._clearMediaPlayer();
@@ -266,7 +266,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
       removeCallback: (_, ima.VideoAdPlayerCallback callback) {
         weakThis.target?.videoAdPlayerCallbacks.remove(callback);
       },
-      loadAd: (_, ima.AdMediaInfo adMediaInfo, __) {
+      loadAd: (_, ima.AdMediaInfo adMediaInfo, _) {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
           container._loadedAdMediaInfoQueue.add(adMediaInfo);
@@ -275,7 +275,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
           }
         }
       },
-      pauseAd: (_, __) async {
+      pauseAd: (_, _) async {
         final AndroidAdDisplayContainer? container = weakThis.target;
         final ima.MediaPlayer? player = container?._mediaPlayer;
         if (container != null && player != null) {
@@ -313,7 +313,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
         }
       },
       release: (_) => weakThis.target?._release(),
-      stopAd: (_, __) {
+      stopAd: (_, _) {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
           container._resetStateForNextAd();
