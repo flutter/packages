@@ -1,6 +1,7 @@
 ## 3.26.0
 
 * Adds new method for accessing a native `WKWebView` from a `FlutterPluginRegistrar`.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 3.25.1
 
