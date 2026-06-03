@@ -17,7 +17,8 @@ class App extends StatelessWidget {
   App({super.key});
 
   @override
-  Widget build(BuildContext context) => MaterialApp.router(routerConfig: _router, title: _appTitle);
+  Widget build(BuildContext context) =>
+      MaterialApp.router(routerConfig: _router, title: _appTitle);
 
   final GoRouter _router = GoRouter(routes: $appRoutes);
 }
@@ -25,7 +26,9 @@ class App extends StatelessWidget {
 @TypedGoRoute<HomeRoute>(
   path: '/',
   name: 'Home',
-  routes: <TypedGoRoute<GoRouteData>>[TypedGoRoute<EncodedRoute>(path: 'encoded')],
+  routes: <TypedGoRoute<GoRouteData>>[
+    TypedGoRoute<EncodedRoute>(path: 'encoded'),
+  ],
 )
 class HomeRoute extends GoRouteData with $HomeRoute {
   const HomeRoute();
@@ -41,7 +44,8 @@ class EncodedRoute extends GoRouteData with $EncodedRoute {
   final String token;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => EncodedScreen(token: token);
+  Widget build(BuildContext context, GoRouterState state) =>
+      EncodedScreen(token: token);
 }
 
 class HomeScreen extends StatelessWidget {
@@ -78,7 +82,9 @@ class EncodedScreen extends StatelessWidget {
 }
 
 String fromBase64(String value) {
-  return const Utf8Decoder().convert(base64Url.decode(base64Url.normalize(value)));
+  return const Utf8Decoder().convert(
+    base64Url.decode(base64Url.normalize(value)),
+  );
 }
 
 String toBase64(String value) {

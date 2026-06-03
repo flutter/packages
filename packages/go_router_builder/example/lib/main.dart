@@ -94,7 +94,8 @@ class LoginRoute extends GoRouteData with $LoginRoute {
   final String? fromPage;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => LoginScreen(from: fromPage);
+  Widget build(BuildContext context, GoRouterState state) =>
+      LoginScreen(from: fromPage);
 }
 
 class FamilyRoute extends GoRouteData with $FamilyRoute {
@@ -103,7 +104,8 @@ class FamilyRoute extends GoRouteData with $FamilyRoute {
   final String fid;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => FamilyScreen(family: familyById(fid));
+  Widget build(BuildContext context, GoRouterState state) =>
+      FamilyScreen(family: familyById(fid));
 }
 
 class PersonRoute extends GoRouteData with $PersonRoute {
@@ -136,7 +138,12 @@ class PersonDetailsRoute extends GoRouteData with $PersonDetailsRoute {
     return MaterialPage<Object>(
       fullscreenDialog: true,
       key: state.pageKey,
-      child: PersonDetailsPage(family: family, person: person, detailsKey: details, extra: $extra),
+      child: PersonDetailsPage(
+        family: family,
+        person: person,
+        detailsKey: details,
+        extra: $extra,
+      ),
     );
   }
 }
@@ -147,7 +154,8 @@ class FamilyCountRoute extends GoRouteData with $FamilyCountRoute {
   final int count;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => FamilyCountScreen(count: count);
+  Widget build(BuildContext context, GoRouterState state) =>
+      FamilyCountScreen(count: count);
 }
 
 class HomeScreen extends StatelessWidget {
@@ -175,14 +183,16 @@ class HomeScreen extends StatelessWidget {
                   child: const Text('Push w/ return value'),
                   onTap: () async {
                     unawaited(
-                      FamilyCountRoute(familyData.length).push<int>(context).then((int? value) {
+                      FamilyCountRoute(
+                        familyData.length,
+                      ).push<int>(context).then((int? value) {
                         if (!context.mounted) {
                           return;
                         }
                         if (value != null) {
-                          ScaffoldMessenger.of(
-                            context,
-                          ).showSnackBar(SnackBar(content: Text('Age was: $value')));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Age was: $value')),
+                          );
                         }
                       }),
                     );
@@ -201,7 +211,10 @@ class HomeScreen extends StatelessWidget {
       body: ListView(
         children: <Widget>[
           for (final Family f in familyData)
-            ListTile(title: Text(f.name), onTap: () => FamilyRoute(f.id).go(context)),
+            ListTile(
+              title: Text(f.name),
+              onTap: () => FamilyRoute(f.id).go(context),
+            ),
         ],
       ),
     );
@@ -218,7 +231,10 @@ class FamilyScreen extends StatelessWidget {
     body: ListView(
       children: <Widget>[
         for (final Person p in family.people)
-          ListTile(title: Text(p.name), onTap: () => PersonRoute(family.id, p.id).go(context)),
+          ListTile(
+            title: Text(p.name),
+            onTap: () => PersonRoute(family.id, p.id).go(context),
+          ),
       ],
     ),
   );
@@ -237,8 +253,13 @@ class PersonScreen extends StatelessWidget {
     appBar: AppBar(title: Text(person.name)),
     body: ListView(
       children: <Widget>[
-        ListTile(title: Text('${person.name} ${family.name} is ${person.age} years old')),
-        for (final MapEntry<PersonDetails, String> entry in person.details.entries)
+        ListTile(
+          title: Text(
+            '${person.name} ${family.name} is ${person.age} years old',
+          ),
+        ),
+        for (final MapEntry<PersonDetails, String> entry
+            in person.details.entries)
           ListTile(
             title: Text('${entry.key.name} - ${entry.value}'),
             trailing: OutlinedButton(
@@ -250,7 +271,8 @@ class PersonScreen extends StatelessWidget {
               ).go(context),
               child: const Text('With extra...'),
             ),
-            onTap: () => PersonDetailsRoute(family.id, person.id, entry.key).go(context),
+            onTap: () =>
+                PersonDetailsRoute(family.id, person.id, entry.key).go(context),
           ),
       ],
     ),
