@@ -24,8 +24,7 @@ typedef TableSpanBuilder = TableSpan? Function(int index);
 ///
 /// Used by [TableCellBuilderDelegate.builder] to build cells on demand for the
 /// table.
-typedef TableViewCellBuilder =
-    TableViewCell Function(BuildContext context, TableVicinity vicinity);
+typedef TableViewCellBuilder = TableViewCell Function(BuildContext context, TableVicinity vicinity);
 
 /// A mixin that defines the model for a [TwoDimensionalChildDelegate] to be
 /// used with a [TableView].
@@ -198,14 +197,8 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
        assert(trailingPinnedRowCount >= 0),
        assert(rowCount == null || rowCount >= 0),
        assert(columnCount == null || columnCount >= 0),
-       assert(
-         columnCount == null ||
-             pinnedColumnCount + trailingPinnedColumnCount <= columnCount,
-       ),
-       assert(
-         rowCount == null ||
-             pinnedRowCount + trailingPinnedRowCount <= rowCount,
-       ),
+       assert(columnCount == null || pinnedColumnCount + trailingPinnedColumnCount <= columnCount),
+       assert(rowCount == null || pinnedRowCount + trailingPinnedRowCount <= rowCount),
        _rowBuilder = rowBuilder,
        _columnBuilder = columnBuilder,
        _pinnedColumnCount = pinnedColumnCount,
@@ -225,9 +218,7 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
   int? get columnCount => maxXIndex == null ? null : maxXIndex! + 1;
 
   set columnCount(int? value) {
-    assert(
-      value == null || pinnedColumnCount + trailingPinnedColumnCount <= value,
-    );
+    assert(value == null || pinnedColumnCount + trailingPinnedColumnCount <= value);
     maxXIndex = value == null ? null : value - 1;
   }
 
@@ -246,9 +237,7 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
   int _pinnedColumnCount;
   set pinnedColumnCount(int value) {
     assert(value >= 0);
-    assert(
-      columnCount == null || value + trailingPinnedColumnCount <= columnCount!,
-    );
+    assert(columnCount == null || value + trailingPinnedColumnCount <= columnCount!);
     if (pinnedColumnCount == value) {
       return;
     }
@@ -324,8 +313,7 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
 /// Unlike the base [TwoDimensionalChildBuilderDelegate] this delegate does not
 /// automatically insert repaint boundaries. Instead, repaint boundaries are
 /// controlled by [TableViewCell.addRepaintBoundaries].
-class TableCellListDelegate extends TwoDimensionalChildListDelegate
-    with TableCellDelegateMixin {
+class TableCellListDelegate extends TwoDimensionalChildListDelegate with TableCellDelegateMixin {
   /// Creates a delegate that supplies children for a [TableView].
   TableCellListDelegate({
     int pinnedColumnCount = 0,

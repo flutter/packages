@@ -6,11 +6,9 @@ import 'package:collection/collection.dart' show ListEquality;
 import 'package:meta/meta.dart';
 
 import 'generator_tools.dart';
-import 'kotlin/kotlin_generator.dart'
-    show KotlinEventChannelOptions, KotlinProxyApiOptions;
+import 'kotlin/kotlin_generator.dart' show KotlinEventChannelOptions, KotlinProxyApiOptions;
 import 'pigeon_lib.dart';
-import 'swift/swift_generator.dart'
-    show SwiftEventChannelOptions, SwiftProxyApiOptions;
+import 'swift/swift_generator.dart' show SwiftEventChannelOptions, SwiftProxyApiOptions;
 
 typedef _ListEquals = bool Function(List<Object?>, List<Object?>);
 
@@ -91,12 +89,8 @@ class Method extends Node {
 
   @override
   String toString() {
-    final objcSelectorStr = objcSelector.isEmpty
-        ? ''
-        : ' objcSelector:$objcSelector';
-    final swiftFunctionStr = swiftFunction.isEmpty
-        ? ''
-        : ' swiftFunction:$swiftFunction';
+    final objcSelectorStr = objcSelector.isEmpty ? '' : ' objcSelector:$objcSelector';
+    final swiftFunctionStr = swiftFunction.isEmpty ? '' : ' swiftFunction:$swiftFunction';
     return '(Method name:$name returnType:$returnType parameters:$parameters isAsynchronous:$isAsynchronous$objcSelectorStr$swiftFunctionStr documentationComments:$documentationComments)';
   }
 }
@@ -182,14 +176,12 @@ class AstProxyApi extends Api {
   /// All fields that are attached.
   ///
   /// See [attached].
-  Iterable<ApiField> get attachedFields =>
-      fields.where((ApiField field) => field.isAttached);
+  Iterable<ApiField> get attachedFields => fields.where((ApiField field) => field.isAttached);
 
   /// All fields that are not attached.
   ///
   /// See [attached].
-  Iterable<ApiField> get unattachedFields =>
-      fields.where((ApiField field) => !field.isAttached);
+  Iterable<ApiField> get unattachedFields => fields.where((ApiField field) => !field.isAttached);
 
   /// A list of [AstProxyApi]s where each is the [superClass] of the one
   /// proceeding it.
@@ -205,9 +197,7 @@ class AstProxyApi extends Api {
     final superClassChain = <AstProxyApi>[];
 
     if (superClass != null && !superClass!.isProxyApi) {
-      throw ArgumentError(
-        'Could not find a ProxyApi for super class: ${superClass!.baseName}',
-      );
+      throw ArgumentError('Could not find a ProxyApi for super class: ${superClass!.baseName}');
     }
 
     AstProxyApi? currentProxyApi = superClass?.associatedProxyApi;
@@ -221,8 +211,7 @@ class AstProxyApi extends Api {
 
       superClassChain.add(currentProxyApi);
 
-      if (currentProxyApi.superClass != null &&
-          !currentProxyApi.superClass!.isProxyApi) {
+      if (currentProxyApi.superClass != null && !currentProxyApi.superClass!.isProxyApi) {
         throw ArgumentError(
           'Could not find a ProxyApi for super class: '
           '${currentProxyApi.superClass!.baseName}',
@@ -250,14 +239,12 @@ class AstProxyApi extends Api {
   /// Returns a record for each Flutter method inherited from [superClass].
   ///
   /// This also includes methods that the [superClass] inherits from interfaces.
-  Iterable<(Method, AstProxyApi)>
-  flutterMethodsFromSuperClassesWithApis() sync* {
+  Iterable<(Method, AstProxyApi)> flutterMethodsFromSuperClassesWithApis() sync* {
     for (final AstProxyApi proxyApi in allSuperClasses().toList().reversed) {
       yield* proxyApi.flutterMethods.map((Method method) => (method, proxyApi));
     }
     if (superClass != null) {
-      final Set<AstProxyApi> interfaceApisFromSuperClasses = superClass!
-          .associatedProxyApi!
+      final Set<AstProxyApi> interfaceApisFromSuperClasses = superClass!.associatedProxyApi!
           ._recursiveFindAllInterfaceApis();
       for (final proxyApi in interfaceApisFromSuperClasses) {
         yield* proxyApi.methods.map((Method method) => (method, proxyApi));
@@ -267,9 +254,7 @@ class AstProxyApi extends Api {
 
   /// All methods inherited from interfaces.
   Iterable<Method> flutterMethodsFromInterfaces() sync* {
-    yield* flutterMethodsFromInterfacesWithApis().map(
-      ((Method, AstProxyApi) method) => method.$1,
-    );
+    yield* flutterMethodsFromInterfacesWithApis().map(((Method, AstProxyApi) method) => method.$1);
   }
 
   /// A list of Flutter methods inherited from [superClass].
@@ -299,14 +284,11 @@ class AstProxyApi extends Api {
   /// Whether the Dart proxy class makes any message calls to the native type
   /// API.
   bool hasAnyHostMessageCalls() =>
-      constructors.isNotEmpty ||
-      attachedFields.isNotEmpty ||
-      hostMethods.isNotEmpty;
+      constructors.isNotEmpty || attachedFields.isNotEmpty || hostMethods.isNotEmpty;
 
   /// Whether the native type API makes any message calls to the Dart proxy
   /// class or calls to instantiate a Dart proxy class instance.
-  bool hasAnyFlutterMessageCalls() =>
-      hasCallbackConstructor() || flutterMethods.isNotEmpty;
+  bool hasAnyFlutterMessageCalls() => hasCallbackConstructor() || flutterMethods.isNotEmpty;
 
   /// Whether the native type API will have methods that need to be implemented.
   bool hasMethodsRequiringImplementation() =>
@@ -325,13 +307,9 @@ class AstProxyApi extends Api {
     allInterfaces.addAll(
       interfaces.map((TypeDeclaration type) {
         if (!type.isProxyApi) {
-          throw ArgumentError(
-            'Could not find a valid ProxyApi for an interface: $type',
-          );
+          throw ArgumentError('Could not find a valid ProxyApi for an interface: $type');
         } else if (seenApis.contains(type.associatedProxyApi)) {
-          throw ArgumentError(
-            'A ProxyApi cannot be a super class of itself: ${type.baseName}',
-          );
+          throw ArgumentError('A ProxyApi cannot be a super class of itself: ${type.baseName}');
         }
         return type.associatedProxyApi!;
       }),
@@ -342,9 +320,7 @@ class AstProxyApi extends Api {
     final newSeenApis = <AstProxyApi>{...seenApis, this};
 
     for (final interfaceApi in <AstProxyApi>{...allInterfaces}) {
-      allInterfaces.addAll(
-        interfaceApi._recursiveFindAllInterfaceApis(newSeenApis),
-      );
+      allInterfaces.addAll(interfaceApi._recursiveFindAllInterfaceApis(newSeenApis));
     }
 
     return allInterfaces;
@@ -390,16 +366,11 @@ class Constructor extends Method {
     super.offset,
     super.swiftFunction = '',
     super.documentationComments = const <String>[],
-  }) : super(
-         returnType: const TypeDeclaration.voidDeclaration(),
-         location: ApiLocation.host,
-       );
+  }) : super(returnType: const TypeDeclaration.voidDeclaration(), location: ApiLocation.host);
 
   @override
   String toString() {
-    final swiftFunctionStr = swiftFunction.isEmpty
-        ? ''
-        : ' swiftFunction:$swiftFunction';
+    final swiftFunctionStr = swiftFunction.isEmpty ? '' : ' swiftFunction:$swiftFunction';
     return '(Constructor name:$name parameters:$parameters $swiftFunctionStr documentationComments:$documentationComments)';
   }
 }
@@ -449,11 +420,7 @@ class ApiField extends NamedType {
 /// Represents a collection of [Method]s.
 sealed class Api extends Node {
   /// Parametric constructor for [Api].
-  Api({
-    required this.name,
-    required this.methods,
-    this.documentationComments = const <String>[],
-  });
+  Api({required this.name, required this.methods, this.documentationComments = const <String>[]});
 
   /// The name of the API.
   String name;
@@ -602,9 +569,7 @@ class TypeDeclaration {
 
   @override
   String toString() {
-    final typeArgumentsStr = typeArguments.isEmpty
-        ? ''
-        : ' typeArguments:$typeArguments';
+    final typeArgumentsStr = typeArguments.isEmpty ? '' : ' typeArguments:$typeArguments';
     return '(TypeDeclaration baseName:$baseName isNullable:$isNullable$typeArgumentsStr isEnum:$isEnum isClass:$isClass isProxyApi:$isProxyApi)';
   }
 }
@@ -778,11 +743,7 @@ class Class extends Node {
 /// Represents a Enum.
 class Enum extends Node {
   /// Parametric constructor for [Enum].
-  Enum({
-    required this.name,
-    required this.members,
-    this.documentationComments = const <String>[],
-  });
+  Enum({required this.name, required this.members, this.documentationComments = const <String>[]});
 
   /// The name of the enum.
   String name;
@@ -806,10 +767,7 @@ class Enum extends Node {
 /// Represents a Enum member.
 class EnumMember extends Node {
   /// Parametric constructor for [EnumMember].
-  EnumMember({
-    required this.name,
-    this.documentationComments = const <String>[],
-  });
+  EnumMember({required this.name, this.documentationComments = const <String>[]});
 
   /// The name of the enum member.
   final String name;
@@ -869,8 +827,7 @@ class Root extends Node {
   /// Returns true if the number of custom types would exceed the available enumerations
   /// on the standard codec.
   bool get requiresOverflowClass =>
-      classes.length - _numberOfSealedClasses() + enums.length >=
-      totalCustomCodecKeysAllowed;
+      classes.length - _numberOfSealedClasses() + enums.length >= totalCustomCodecKeysAllowed;
 
   int _numberOfSealedClasses() => classes.where((Class c) => c.isSealed).length;
 

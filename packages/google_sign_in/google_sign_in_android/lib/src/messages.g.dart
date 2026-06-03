@@ -21,9 +21,7 @@ PlatformException _createConnectionError(String channelName) {
 bool _deepEquals(Object? a, Object? b) {
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed.every(
-          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
-        );
+        a.indexed.every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
     return a.length == b.length &&
@@ -113,12 +111,7 @@ class PlatformAuthorizationRequest {
   String? serverClientIdForForcedRefreshToken;
 
   List<Object?> _toList() {
-    return <Object?>[
-      scopes,
-      hostedDomain,
-      accountEmail,
-      serverClientIdForForcedRefreshToken,
-    ];
+    return <Object?>[scopes, hostedDomain, accountEmail, serverClientIdForForcedRefreshToken];
   }
 
   Object encode() {
@@ -138,8 +131,7 @@ class PlatformAuthorizationRequest {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformAuthorizationRequest ||
-        other.runtimeType != runtimeType) {
+    if (other is! PlatformAuthorizationRequest || other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -184,13 +176,7 @@ class GetCredentialRequestParams {
   String? nonce;
 
   List<Object?> _toList() {
-    return <Object?>[
-      useButtonFlow,
-      googleIdOptionParams,
-      serverClientId,
-      hostedDomain,
-      nonce,
-    ];
+    return <Object?>[useButtonFlow, googleIdOptionParams, serverClientId, hostedDomain, nonce];
   }
 
   Object encode() {
@@ -201,8 +187,7 @@ class GetCredentialRequestParams {
     result as List<Object?>;
     return GetCredentialRequestParams(
       useButtonFlow: result[0]! as bool,
-      googleIdOptionParams:
-          result[1]! as GetCredentialRequestGoogleIdOptionParams,
+      googleIdOptionParams: result[1]! as GetCredentialRequestGoogleIdOptionParams,
       serverClientId: result[2] as String?,
       hostedDomain: result[3] as String?,
       nonce: result[4] as String?,
@@ -212,8 +197,7 @@ class GetCredentialRequestParams {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! GetCredentialRequestParams ||
-        other.runtimeType != runtimeType) {
+    if (other is! GetCredentialRequestParams || other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -256,8 +240,7 @@ class GetCredentialRequestGoogleIdOptionParams {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! GetCredentialRequestGoogleIdOptionParams ||
-        other.runtimeType != runtimeType) {
+    if (other is! GetCredentialRequestGoogleIdOptionParams || other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -276,10 +259,7 @@ class GetCredentialRequestGoogleIdOptionParams {
 /// Corresponds to the native RevokeAccessRequest.
 /// https://developers.google.com/android/reference/com/google/android/gms/auth/api/identity/RevokeAccessRequest
 class PlatformRevokeAccessRequest {
-  PlatformRevokeAccessRequest({
-    required this.accountEmail,
-    required this.scopes,
-  });
+  PlatformRevokeAccessRequest({required this.accountEmail, required this.scopes});
 
   /// The email for the Google account to revoke authorizations for.
   String accountEmail;
@@ -309,8 +289,7 @@ class PlatformRevokeAccessRequest {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformRevokeAccessRequest ||
-        other.runtimeType != runtimeType) {
+    if (other is! PlatformRevokeAccessRequest || other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -348,14 +327,7 @@ class PlatformGoogleIdTokenCredential {
   String? profilePictureUri;
 
   List<Object?> _toList() {
-    return <Object?>[
-      displayName,
-      familyName,
-      givenName,
-      email,
-      idToken,
-      profilePictureUri,
-    ];
+    return <Object?>[displayName, familyName, givenName, email, idToken, profilePictureUri];
   }
 
   Object encode() {
@@ -377,8 +349,7 @@ class PlatformGoogleIdTokenCredential {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformGoogleIdTokenCredential ||
-        other.runtimeType != runtimeType) {
+    if (other is! PlatformGoogleIdTokenCredential || other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -463,9 +434,7 @@ class GetCredentialSuccess extends GetCredentialResult {
 
   static GetCredentialSuccess decode(Object result) {
     result as List<Object?>;
-    return GetCredentialSuccess(
-      credential: result[0]! as PlatformGoogleIdTokenCredential,
-    );
+    return GetCredentialSuccess(credential: result[0]! as PlatformGoogleIdTokenCredential);
   }
 
   @override
@@ -539,11 +508,7 @@ class AuthorizeFailure extends AuthorizeResult {
 ///
 /// Corresponds to a native AuthorizationResult.
 class PlatformAuthorizationResult extends AuthorizeResult {
-  PlatformAuthorizationResult({
-    this.accessToken,
-    this.serverAuthCode,
-    required this.grantedScopes,
-  });
+  PlatformAuthorizationResult({this.accessToken, this.serverAuthCode, required this.grantedScopes});
 
   String? accessToken;
 
@@ -571,8 +536,7 @@ class PlatformAuthorizationResult extends AuthorizeResult {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformAuthorizationResult ||
-        other.runtimeType != runtimeType) {
+    if (other is! PlatformAuthorizationResult || other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -645,9 +609,7 @@ class _PigeonCodec extends StandardMessageCodec {
       case 132:
         return GetCredentialRequestParams.decode(readValue(buffer)!);
       case 133:
-        return GetCredentialRequestGoogleIdOptionParams.decode(
-          readValue(buffer)!,
-        );
+        return GetCredentialRequestGoogleIdOptionParams.decode(readValue(buffer)!);
       case 134:
         return PlatformRevokeAccessRequest.decode(readValue(buffer)!);
       case 135:
@@ -670,13 +632,11 @@ class GoogleSignInApi {
   /// Constructor for [GoogleSignInApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  GoogleSignInApi({
-    BinaryMessenger? binaryMessenger,
-    String messageChannelSuffix = '',
-  }) : pigeonVar_binaryMessenger = binaryMessenger,
-       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
-           ? '.$messageChannelSuffix'
-           : '';
+  GoogleSignInApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+    : pigeonVar_binaryMessenger = binaryMessenger,
+      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+          ? '.$messageChannelSuffix'
+          : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -688,15 +648,13 @@ class GoogleSignInApi {
   Future<String?> getGoogleServicesJsonServerClientId() async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.getGoogleServicesJsonServerClientId$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-          pigeonVar_channelName,
-          pigeonChannelCodec,
-          binaryMessenger: pigeonVar_binaryMessenger,
-        );
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -712,22 +670,16 @@ class GoogleSignInApi {
 
   /// Requests an authentication credential (sign in) via CredentialManager's
   /// getCredential.
-  Future<GetCredentialResult> getCredential(
-    GetCredentialRequestParams params,
-  ) async {
+  Future<GetCredentialResult> getCredential(GetCredentialRequestParams params) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.getCredential$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-          pigeonVar_channelName,
-          pigeonChannelCodec,
-          binaryMessenger: pigeonVar_binaryMessenger,
-        );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[params],
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[params]);
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -750,15 +702,13 @@ class GoogleSignInApi {
   Future<void> clearCredentialState() async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.clearCredentialState$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-          pigeonVar_channelName,
-          pigeonChannelCodec,
-          binaryMessenger: pigeonVar_binaryMessenger,
-        );
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -776,17 +726,13 @@ class GoogleSignInApi {
   Future<void> clearAuthorizationToken(String token) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.clearAuthorizationToken$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-          pigeonVar_channelName,
-          pigeonChannelCodec,
-          binaryMessenger: pigeonVar_binaryMessenger,
-        );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[token],
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[token]);
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -807,17 +753,16 @@ class GoogleSignInApi {
   }) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.authorize$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-          pigeonVar_channelName,
-          pigeonChannelCodec,
-          binaryMessenger: pigeonVar_binaryMessenger,
-        );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[params, promptIfUnauthorized],
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      params,
+      promptIfUnauthorized,
+    ]);
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -839,17 +784,13 @@ class GoogleSignInApi {
   Future<void> revokeAccess(PlatformRevokeAccessRequest params) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.revokeAccess$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-          pigeonVar_channelName,
-          pigeonChannelCodec,
-          binaryMessenger: pigeonVar_binaryMessenger,
-        );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[params],
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[params]);
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {

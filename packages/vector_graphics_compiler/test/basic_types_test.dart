@@ -33,12 +33,7 @@ void main() {
     expect(Rect.zero.bottom, 0);
 
     expect(
-      const Rect.fromLTRB(
-        1,
-        2,
-        3,
-        4,
-      ).expanded(const Rect.fromLTRB(0, 0, 10, 10)),
+      const Rect.fromLTRB(1, 2, 3, 4).expanded(const Rect.fromLTRB(0, 0, 10, 10)),
       const Rect.fromLTRB(0, 0, 10, 10),
     );
 

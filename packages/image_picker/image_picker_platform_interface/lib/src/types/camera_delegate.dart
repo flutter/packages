@@ -38,8 +38,7 @@ abstract class ImagePickerCameraDelegate {
   ///
   /// Returns null if the photo could not be taken, or the user cancelled.
   Future<XFile?> takePhoto({
-    ImagePickerCameraDelegateOptions options =
-        const ImagePickerCameraDelegateOptions(),
+    ImagePickerCameraDelegateOptions options = const ImagePickerCameraDelegateOptions(),
   });
 
   /// Records a video with the given [options] and returns an [XFile] to the
@@ -47,7 +46,6 @@ abstract class ImagePickerCameraDelegate {
   ///
   /// Returns null if the video could not be recorded, or the user cancelled.
   Future<XFile?> takeVideo({
-    ImagePickerCameraDelegateOptions options =
-        const ImagePickerCameraDelegateOptions(),
+    ImagePickerCameraDelegateOptions options = const ImagePickerCameraDelegateOptions(),
   });
 }
