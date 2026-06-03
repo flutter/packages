@@ -14,8 +14,7 @@ typedef FollowLink = Future<void> Function();
 
 /// Signature for a builder function passed to the [Link] widget to construct
 /// the widget tree under it.
-typedef LinkWidgetBuilder =
-    Widget Function(BuildContext context, FollowLink? followLink);
+typedef LinkWidgetBuilder = Widget Function(BuildContext context, FollowLink? followLink);
 
 /// Signature for a delegate function to build the [Link] widget.
 typedef LinkDelegate = Widget Function(LinkInfo linkWidget);
@@ -41,9 +40,7 @@ class LinkTarget {
   ///
   /// iOS, on the other hand, defaults to [self] for web URLs, and [blank] for
   /// non-web URLs.
-  static const LinkTarget defaultTarget = LinkTarget._(
-    debugLabel: 'defaultTarget',
-  );
+  static const LinkTarget defaultTarget = LinkTarget._(debugLabel: 'defaultTarget');
 
   /// On the web, this opens the link in the same tab where the flutter app is
   /// running.
@@ -89,10 +86,7 @@ Future<ByteData> pushRouteNameToFramework(Object? _, String routeName) {
   ui.channelBuffers.push(
     'flutter/navigation',
     _codec.encodeMethodCall(
-      MethodCall('pushRouteInformation', <dynamic, dynamic>{
-        'location': routeName,
-        'state': null,
-      }),
+      MethodCall('pushRouteInformation', <dynamic, dynamic>{'location': routeName, 'state': null}),
     ),
     completer.complete,
   );
