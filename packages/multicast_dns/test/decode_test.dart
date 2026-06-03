@@ -58,11 +58,7 @@ void testValidPackages() {
         priority: 0,
         weight: 0,
       ),
-      TxtResourceRecord(
-        'raspberrypi._udisks-ssh._tcp.local',
-        result[3].validUntil,
-        text: '',
-      ),
+      TxtResourceRecord('raspberrypi._udisks-ssh._tcp.local', result[3].validUntil, text: ''),
       PtrResourceRecord(
         '_services._dns-sd._udp.local',
         result[4].validUntil,
@@ -129,9 +125,7 @@ void testValidPackages() {
 
   // Fixes https://github.com/flutter/flutter/issues/31854
   test('Can decode packages with question, answer and additional', () {
-    final List<ResourceRecord> result = decodeMDnsResponse(
-      packetWithQuestionAnArCount,
-    )!;
+    final List<ResourceRecord> result = decodeMDnsResponse(packetWithQuestionAnArCount)!;
     expect(result, isNotNull);
     expect(result.length, 2);
     expect(result, <ResourceRecord>[
@@ -149,28 +143,23 @@ void testValidPackages() {
   });
 
   // Fixes https://github.com/flutter/flutter/issues/31854
-  test(
-    'Can decode packages without question and with answer and additional',
-    () {
-      final List<ResourceRecord> result = decodeMDnsResponse(
-        packetWithoutQuestionWithAnArCount,
-      )!;
-      expect(result, isNotNull);
-      expect(result.length, 2);
-      expect(result, <ResourceRecord>[
-        PtrResourceRecord(
-          '_______________.____._____',
-          result[0].validUntil,
-          domainName: '______________________._______________.____._____',
-        ),
-        TxtResourceRecord(
-          '______________________.____________.____._____',
-          result[1].validUntil,
-          text: 'model=MacBookPro14,3\nosxvers=18\necolor=225,225,223\n',
-        ),
-      ]);
-    },
-  );
+  test('Can decode packages without question and with answer and additional', () {
+    final List<ResourceRecord> result = decodeMDnsResponse(packetWithoutQuestionWithAnArCount)!;
+    expect(result, isNotNull);
+    expect(result.length, 2);
+    expect(result, <ResourceRecord>[
+      PtrResourceRecord(
+        '_______________.____._____',
+        result[0].validUntil,
+        domainName: '______________________._______________.____._____',
+      ),
+      TxtResourceRecord(
+        '______________________.____________.____._____',
+        result[1].validUntil,
+        text: 'model=MacBookPro14,3\nosxvers=18\necolor=225,225,223\n',
+      ),
+    ]);
+  });
 
   test('Can decode packages with a long text resource', () {
     final List<ResourceRecord> result = decodeMDnsResponse(packetWithLongTxt)!;
@@ -207,10 +196,7 @@ void testBadPackages() {
 
 void testPTRRData() {
   test('Can read FQDN from PTR data', () {
-    expect(
-      'sgjesse-macbookpro2 [78:31:c1:b8:55:38]._workstation._tcp.local',
-      readFQDN(ptrRData),
-    );
+    expect('sgjesse-macbookpro2 [78:31:c1:b8:55:38]._workstation._tcp.local', readFQDN(ptrRData));
     expect('fletch-agent._fletch_agent._tcp.local', readFQDN(ptrRData2));
   });
 }

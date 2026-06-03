@@ -7,13 +7,12 @@ import 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
 
 /// Example function for README demonstration of Payment Request API.
 Future<void> enablePaymentRequest() async {
-  final controller = PlatformWebViewController(
-    AndroidWebViewControllerCreationParams(),
-  );
+  final controller = PlatformWebViewController(AndroidWebViewControllerCreationParams());
   final androidController = controller as AndroidWebViewController;
   // #docregion payment_request_example
-  final bool paymentRequestEnabled = await androidController
-      .isWebViewFeatureSupported(WebViewFeatureType.paymentRequest);
+  final bool paymentRequestEnabled = await androidController.isWebViewFeatureSupported(
+    WebViewFeatureType.paymentRequest,
+  );
 
   if (paymentRequestEnabled) {
     await androidController.setPaymentRequestEnabled(true);
@@ -26,9 +25,7 @@ Future<void> enablePaymentRequest() async {
 /// content from a domain controlled by the app developer) and geolocation
 /// should always be allowed.
 Future<void> setGeolocationPermissionsPrompt() async {
-  final controller = PlatformWebViewController(
-    AndroidWebViewControllerCreationParams(),
-  );
+  final controller = PlatformWebViewController(AndroidWebViewControllerCreationParams());
   final androidController = controller as AndroidWebViewController;
   // #docregion geolocation_example
   await androidController.setGeolocationPermissionsPromptCallbacks(

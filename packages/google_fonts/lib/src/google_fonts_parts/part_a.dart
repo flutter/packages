@@ -5991,19 +5991,11 @@ class PartA {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
       displayLarge: alumniSansCollegiateOne(textStyle: textTheme.displayLarge),
-      displayMedium: alumniSansCollegiateOne(
-        textStyle: textTheme.displayMedium,
-      ),
+      displayMedium: alumniSansCollegiateOne(textStyle: textTheme.displayMedium),
       displaySmall: alumniSansCollegiateOne(textStyle: textTheme.displaySmall),
-      headlineLarge: alumniSansCollegiateOne(
-        textStyle: textTheme.headlineLarge,
-      ),
-      headlineMedium: alumniSansCollegiateOne(
-        textStyle: textTheme.headlineMedium,
-      ),
-      headlineSmall: alumniSansCollegiateOne(
-        textStyle: textTheme.headlineSmall,
-      ),
+      headlineLarge: alumniSansCollegiateOne(textStyle: textTheme.headlineLarge),
+      headlineMedium: alumniSansCollegiateOne(textStyle: textTheme.headlineMedium),
+      headlineSmall: alumniSansCollegiateOne(textStyle: textTheme.headlineSmall),
       titleLarge: alumniSansCollegiateOne(textStyle: textTheme.titleLarge),
       titleMedium: alumniSansCollegiateOne(textStyle: textTheme.titleMedium),
       titleSmall: alumniSansCollegiateOne(textStyle: textTheme.titleSmall),
@@ -9725,9 +9717,7 @@ class PartA {
       displayMedium: annieUseYourTelescope(textStyle: textTheme.displayMedium),
       displaySmall: annieUseYourTelescope(textStyle: textTheme.displaySmall),
       headlineLarge: annieUseYourTelescope(textStyle: textTheme.headlineLarge),
-      headlineMedium: annieUseYourTelescope(
-        textStyle: textTheme.headlineMedium,
-      ),
+      headlineMedium: annieUseYourTelescope(textStyle: textTheme.headlineMedium),
       headlineSmall: annieUseYourTelescope(textStyle: textTheme.headlineSmall),
       titleLarge: annieUseYourTelescope(textStyle: textTheme.titleLarge),
       titleMedium: annieUseYourTelescope(textStyle: textTheme.titleMedium),
@@ -14222,19 +14212,11 @@ class PartA {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
       displayLarge: atkinsonHyperlegibleMono(textStyle: textTheme.displayLarge),
-      displayMedium: atkinsonHyperlegibleMono(
-        textStyle: textTheme.displayMedium,
-      ),
+      displayMedium: atkinsonHyperlegibleMono(textStyle: textTheme.displayMedium),
       displaySmall: atkinsonHyperlegibleMono(textStyle: textTheme.displaySmall),
-      headlineLarge: atkinsonHyperlegibleMono(
-        textStyle: textTheme.headlineLarge,
-      ),
-      headlineMedium: atkinsonHyperlegibleMono(
-        textStyle: textTheme.headlineMedium,
-      ),
-      headlineSmall: atkinsonHyperlegibleMono(
-        textStyle: textTheme.headlineSmall,
-      ),
+      headlineLarge: atkinsonHyperlegibleMono(textStyle: textTheme.headlineLarge),
+      headlineMedium: atkinsonHyperlegibleMono(textStyle: textTheme.headlineMedium),
+      headlineSmall: atkinsonHyperlegibleMono(textStyle: textTheme.headlineSmall),
       titleLarge: atkinsonHyperlegibleMono(textStyle: textTheme.titleLarge),
       titleMedium: atkinsonHyperlegibleMono(textStyle: textTheme.titleMedium),
       titleSmall: atkinsonHyperlegibleMono(textStyle: textTheme.titleSmall),
@@ -14408,19 +14390,11 @@ class PartA {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
       displayLarge: atkinsonHyperlegibleNext(textStyle: textTheme.displayLarge),
-      displayMedium: atkinsonHyperlegibleNext(
-        textStyle: textTheme.displayMedium,
-      ),
+      displayMedium: atkinsonHyperlegibleNext(textStyle: textTheme.displayMedium),
       displaySmall: atkinsonHyperlegibleNext(textStyle: textTheme.displaySmall),
-      headlineLarge: atkinsonHyperlegibleNext(
-        textStyle: textTheme.headlineLarge,
-      ),
-      headlineMedium: atkinsonHyperlegibleNext(
-        textStyle: textTheme.headlineMedium,
-      ),
-      headlineSmall: atkinsonHyperlegibleNext(
-        textStyle: textTheme.headlineSmall,
-      ),
+      headlineLarge: atkinsonHyperlegibleNext(textStyle: textTheme.headlineLarge),
+      headlineMedium: atkinsonHyperlegibleNext(textStyle: textTheme.headlineMedium),
+      headlineSmall: atkinsonHyperlegibleNext(textStyle: textTheme.headlineSmall),
       titleLarge: atkinsonHyperlegibleNext(textStyle: textTheme.titleLarge),
       titleMedium: atkinsonHyperlegibleNext(textStyle: textTheme.titleMedium),
       titleSmall: atkinsonHyperlegibleNext(textStyle: textTheme.titleSmall),

@@ -2493,9 +2493,7 @@ class PartY {
       displayMedium: yujiHentaiganaAkebono(textStyle: textTheme.displayMedium),
       displaySmall: yujiHentaiganaAkebono(textStyle: textTheme.displaySmall),
       headlineLarge: yujiHentaiganaAkebono(textStyle: textTheme.headlineLarge),
-      headlineMedium: yujiHentaiganaAkebono(
-        textStyle: textTheme.headlineMedium,
-      ),
+      headlineMedium: yujiHentaiganaAkebono(textStyle: textTheme.headlineMedium),
       headlineSmall: yujiHentaiganaAkebono(textStyle: textTheme.headlineSmall),
       titleLarge: yujiHentaiganaAkebono(textStyle: textTheme.titleLarge),
       titleMedium: yujiHentaiganaAkebono(textStyle: textTheme.titleMedium),

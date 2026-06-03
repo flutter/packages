@@ -16,6 +16,7 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
+import android.util.Log;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -27,6 +28,7 @@ import io.flutter.plugin.common.PluginRegistry;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -608,6 +610,7 @@ public class ImagePickerDelegate
     return image;
   }
 
+  @SuppressWarnings("QueryPermissionsNeeded")
   private void grantUriPermissions(Intent intent, Uri imageUri) {
     PackageManager packageManager = activity.getPackageManager();
     List<ResolveInfo> compatibleActivities;
@@ -627,10 +630,20 @@ public class ImagePickerDelegate
     }
   }
 
-  @SuppressWarnings("deprecation")
+  @SuppressWarnings({"deprecation", "QueryPermissionsNeeded"})
   private static List<ResolveInfo> queryIntentActivitiesPreApi33(
       PackageManager packageManager, Intent intent) {
-    return packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+    try {
+      return packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+    } catch (Exception e) {
+      Log.e(
+          "ImagePickerDelegate",
+          "Fallback query for intent activities failed. Ensure the intent is properly "
+              + "formatted and check if Android 11+ package visibility restrictions "
+              + "require a specific <queries> declaration in your app's AndroidManifest.xml.",
+          e);
+      return Collections.emptyList();
+    }
   }
 
   @Override

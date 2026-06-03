@@ -25,10 +25,7 @@ InAppPurchase2API hostApi2 = InAppPurchase2API();
 
 /// Set up pigeon API.
 @visibleForTesting
-void setInAppPurchaseHostApis({
-  InAppPurchaseAPI? api,
-  InAppPurchase2API? api2,
-}) {
+void setInAppPurchaseHostApis({InAppPurchaseAPI? api, InAppPurchase2API? api2}) {
   if (api != null) {
     hostApi = api;
   }
