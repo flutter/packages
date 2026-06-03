@@ -555,9 +555,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       // scrollable cells from stealing hits inside the trailing pinned area.
       // This mirrors the pushClipRect applied to each section during painting.
       if (cellRect.contains(position) &&
-          _sectionClipRectFor(
-            cellParentData.tableVicinity,
-          ).contains(position)) {
+          _sectionClipRectFor(cellParentData.tableVicinity).contains(position)) {
         result.addWithPaintOffset(
           offset: cellParentData.paintOffset,
           position: position,
@@ -633,8 +631,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         rowTop = 0.0;
         rowBottom = _leadingPinnedRowsExtent;
       }
-    } else if (_firstTrailingPinnedRow != null &&
-        vicinity.row >= _firstTrailingPinnedRow!) {
+    } else if (_firstTrailingPinnedRow != null && vicinity.row >= _firstTrailingPinnedRow!) {
       // Trailing pinned row — visually on the top when axis is reversed.
       if (reversedV) {
         rowTop = 0.0;

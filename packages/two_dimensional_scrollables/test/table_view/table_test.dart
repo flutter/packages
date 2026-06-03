@@ -4042,259 +4042,232 @@ void main() {
     // (col 8 is never added to the child list), so there is no overlap.
     // The same argument applies symmetrically for rows.
 
-    testWidgets(
-      'Trailing pinned column takes precedence over scrolled-under regular cell',
-      (WidgetTester tester) async {
-        final horizontalController = ScrollController();
-        TableVicinity? lastTapped;
+    testWidgets('Trailing pinned column takes precedence over scrolled-under regular cell', (
+      WidgetTester tester,
+    ) async {
+      final horizontalController = ScrollController();
+      TableVicinity? lastTapped;
 
-        await tester.pumpWidget(
-          MaterialApp(
-            home: Scaffold(
-              body: SizedBox(
-                height: 400,
-                width: 400,
-                child: TableView.builder(
-                  cacheExtent: 0.0,
-                  columnCount: 10,
-                  rowCount: 1,
-                  trailingPinnedColumnCount: 1,
-                  horizontalDetails: ScrollableDetails.horizontal(
-                    controller: horizontalController,
-                  ),
-                  columnBuilder: (_) =>
-                      const TableSpan(extent: FixedTableSpanExtent(100)),
-                  rowBuilder: (_) =>
-                      const TableSpan(extent: FixedTableSpanExtent(100)),
-                  cellBuilder: (_, TableVicinity vicinity) {
-                    return TableViewCell(
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: () => lastTapped = vicinity,
-                        child: const SizedBox.expand(),
-                      ),
-                    );
-                  },
-                ),
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              height: 400,
+              width: 400,
+              child: TableView.builder(
+                cacheExtent: 0.0,
+                columnCount: 10,
+                rowCount: 1,
+                trailingPinnedColumnCount: 1,
+                horizontalDetails: ScrollableDetails.horizontal(controller: horizontalController),
+                columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+                rowBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+                cellBuilder: (_, TableVicinity vicinity) {
+                  return TableViewCell(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () => lastTapped = vicinity,
+                      child: const SizedBox.expand(),
+                    ),
+                  );
+                },
               ),
             ),
           ),
-        );
+        ),
+      );
 
-        // col 8 (regular) lands at x = 275..375, overlapping the trailing
-        // pinned col 9 (x = 300..400). A tap at x = 350 hits both; col 9 wins.
-        horizontalController.jumpTo(525);
-        await tester.pump();
+      // col 8 (regular) lands at x = 275..375, overlapping the trailing
+      // pinned col 9 (x = 300..400). A tap at x = 350 hits both; col 9 wins.
+      horizontalController.jumpTo(525);
+      await tester.pump();
 
-        await tester.tapAt(const Offset(350, 50));
-        await tester.pumpAndSettle();
+      await tester.tapAt(const Offset(350, 50));
+      await tester.pumpAndSettle();
 
-        expect(
-          lastTapped?.column,
-          9,
-          reason:
-              'Trailing pinned column 9 must receive the tap; column 8 (scrolled underneath) must not.',
-        );
-      },
-    );
+      expect(
+        lastTapped?.column,
+        9,
+        reason:
+            'Trailing pinned column 9 must receive the tap; column 8 (scrolled underneath) must not.',
+      );
+    });
 
-    testWidgets(
-      'Trailing pinned row takes precedence over scrolled-under regular cell',
-      (WidgetTester tester) async {
-        final verticalController = ScrollController();
-        TableVicinity? lastTapped;
+    testWidgets('Trailing pinned row takes precedence over scrolled-under regular cell', (
+      WidgetTester tester,
+    ) async {
+      final verticalController = ScrollController();
+      TableVicinity? lastTapped;
 
-        await tester.pumpWidget(
-          MaterialApp(
-            home: Scaffold(
-              body: SizedBox(
-                height: 400,
-                width: 400,
-                child: TableView.builder(
-                  cacheExtent: 0.0,
-                  columnCount: 1,
-                  rowCount: 10,
-                  trailingPinnedRowCount: 1,
-                  verticalDetails: ScrollableDetails.vertical(
-                    controller: verticalController,
-                  ),
-                  columnBuilder: (_) =>
-                      const TableSpan(extent: FixedTableSpanExtent(100)),
-                  rowBuilder: (_) =>
-                      const TableSpan(extent: FixedTableSpanExtent(100)),
-                  cellBuilder: (_, TableVicinity vicinity) {
-                    return TableViewCell(
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: () => lastTapped = vicinity,
-                        child: const SizedBox.expand(),
-                      ),
-                    );
-                  },
-                ),
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              height: 400,
+              width: 400,
+              child: TableView.builder(
+                cacheExtent: 0.0,
+                columnCount: 1,
+                rowCount: 10,
+                trailingPinnedRowCount: 1,
+                verticalDetails: ScrollableDetails.vertical(controller: verticalController),
+                columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+                rowBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+                cellBuilder: (_, TableVicinity vicinity) {
+                  return TableViewCell(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () => lastTapped = vicinity,
+                      child: const SizedBox.expand(),
+                    ),
+                  );
+                },
               ),
             ),
           ),
-        );
+        ),
+      );
 
-        // row 8 (regular) lands at y = 275..375, overlapping the trailing
-        // pinned row 9 (y = 300..400). A tap at y = 350 hits both; row 9 wins.
-        verticalController.jumpTo(525);
-        await tester.pump();
+      // row 8 (regular) lands at y = 275..375, overlapping the trailing
+      // pinned row 9 (y = 300..400). A tap at y = 350 hits both; row 9 wins.
+      verticalController.jumpTo(525);
+      await tester.pump();
 
-        await tester.tapAt(const Offset(50, 350));
-        await tester.pumpAndSettle();
+      await tester.tapAt(const Offset(50, 350));
+      await tester.pumpAndSettle();
 
-        expect(
-          lastTapped?.row,
-          9,
-          reason:
-              'Trailing pinned row 9 must receive the tap; row 8 (scrolled underneath) must not.',
-        );
-      },
-    );
+      expect(
+        lastTapped?.row,
+        9,
+        reason: 'Trailing pinned row 9 must receive the tap; row 8 (scrolled underneath) must not.',
+      );
+    });
 
-    testWidgets(
-      'Trailing pinned corner cell takes precedence over scrolled-under regular cells',
-      (WidgetTester tester) async {
-        final horizontalController = ScrollController();
-        final verticalController = ScrollController();
-        TableVicinity? lastTapped;
+    testWidgets('Trailing pinned corner cell takes precedence over scrolled-under regular cells', (
+      WidgetTester tester,
+    ) async {
+      final horizontalController = ScrollController();
+      final verticalController = ScrollController();
+      TableVicinity? lastTapped;
 
-        await tester.pumpWidget(
-          MaterialApp(
-            home: Scaffold(
-              body: SizedBox(
-                height: 400,
-                width: 400,
-                child: TableView.builder(
-                  cacheExtent: 0.0,
-                  columnCount: 10,
-                  rowCount: 10,
-                  trailingPinnedColumnCount: 1,
-                  trailingPinnedRowCount: 1,
-                  horizontalDetails: ScrollableDetails.horizontal(
-                    controller: horizontalController,
-                  ),
-                  verticalDetails: ScrollableDetails.vertical(
-                    controller: verticalController,
-                  ),
-                  columnBuilder: (_) =>
-                      const TableSpan(extent: FixedTableSpanExtent(100)),
-                  rowBuilder: (_) =>
-                      const TableSpan(extent: FixedTableSpanExtent(100)),
-                  cellBuilder: (_, TableVicinity vicinity) {
-                    return TableViewCell(
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: () => lastTapped = vicinity,
-                        child: const SizedBox.expand(),
-                      ),
-                    );
-                  },
-                ),
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              height: 400,
+              width: 400,
+              child: TableView.builder(
+                cacheExtent: 0.0,
+                columnCount: 10,
+                rowCount: 10,
+                trailingPinnedColumnCount: 1,
+                trailingPinnedRowCount: 1,
+                horizontalDetails: ScrollableDetails.horizontal(controller: horizontalController),
+                verticalDetails: ScrollableDetails.vertical(controller: verticalController),
+                columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+                rowBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+                cellBuilder: (_, TableVicinity vicinity) {
+                  return TableViewCell(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () => lastTapped = vicinity,
+                      child: const SizedBox.expand(),
+                    ),
+                  );
+                },
               ),
             ),
           ),
-        );
+        ),
+      );
 
-        // Regular cell (row 8, col 8) lands at x = 275..375, y = 275..375,
-        // overlapping the trailing corner cell (row 9, col 9) at x = 300..400,
-        // y = 300..400. A tap at (350, 350) hits both; (row 9, col 9) wins.
-        horizontalController.jumpTo(525);
-        verticalController.jumpTo(525);
-        await tester.pump();
+      // Regular cell (row 8, col 8) lands at x = 275..375, y = 275..375,
+      // overlapping the trailing corner cell (row 9, col 9) at x = 300..400,
+      // y = 300..400. A tap at (350, 350) hits both; (row 9, col 9) wins.
+      horizontalController.jumpTo(525);
+      verticalController.jumpTo(525);
+      await tester.pump();
 
-        await tester.tapAt(const Offset(350, 350));
-        await tester.pumpAndSettle();
+      await tester.tapAt(const Offset(350, 350));
+      await tester.pumpAndSettle();
 
-        expect(
-          lastTapped,
-          const TableVicinity(column: 9, row: 9),
-          reason:
-              'Trailing pinned corner cell (row 9, col 9) must receive the tap; the regular cell (row 8, col 8) scrolled underneath must not.',
-        );
-      },
-    );
+      expect(
+        lastTapped,
+        const TableVicinity(column: 9, row: 9),
+        reason:
+            'Trailing pinned corner cell (row 9, col 9) must receive the tap; the regular cell (row 8, col 8) scrolled underneath must not.',
+      );
+    });
 
-    testWidgets(
-      'Leading and trailing pinned columns each clip to their own viewport band',
-      (WidgetTester tester) async {
-        final horizontalController = ScrollController();
-        final tappedColumns = <int>[];
+    testWidgets('Leading and trailing pinned columns each clip to their own viewport band', (
+      WidgetTester tester,
+    ) async {
+      final horizontalController = ScrollController();
+      final tappedColumns = <int>[];
 
-        await tester.pumpWidget(
-          MaterialApp(
-            home: Scaffold(
-              body: SizedBox(
-                height: 100,
-                width: 400,
-                child: TableView.builder(
-                  cacheExtent: 0.0,
-                  columnCount: 10,
-                  rowCount: 1,
-                  // col 0  → always at x = 0..100
-                  pinnedColumnCount: 1,
-                  // col 9  → always at x = 300..400
-                  trailingPinnedColumnCount: 1,
-                  horizontalDetails: ScrollableDetails.horizontal(
-                    controller: horizontalController,
-                  ),
-                  columnBuilder: (_) =>
-                      const TableSpan(extent: FixedTableSpanExtent(100)),
-                  rowBuilder: (_) =>
-                      const TableSpan(extent: FixedTableSpanExtent(100)),
-                  cellBuilder: (_, TableVicinity vicinity) {
-                    return TableViewCell(
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: () => tappedColumns.add(vicinity.column),
-                        child: const SizedBox.expand(),
-                      ),
-                    );
-                  },
-                ),
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              height: 100,
+              width: 400,
+              child: TableView.builder(
+                cacheExtent: 0.0,
+                columnCount: 10,
+                rowCount: 1,
+                // col 0  → always at x = 0..100
+                pinnedColumnCount: 1,
+                // col 9  → always at x = 300..400
+                trailingPinnedColumnCount: 1,
+                horizontalDetails: ScrollableDetails.horizontal(controller: horizontalController),
+                columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+                rowBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+                cellBuilder: (_, TableVicinity vicinity) {
+                  return TableViewCell(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () => tappedColumns.add(vicinity.column),
+                      child: const SizedBox.expand(),
+                    ),
+                  );
+                },
               ),
             ),
           ),
-        );
+        ),
+      );
 
-        // With leading pinned extent = 100 and trailing pinned extent = 100 the
-        // non-pinned band is x = 100..300 (200 px wide).  The formula becomes
-        //   paintOffset.dx(col k) = k×100 − scroll
-        // so col 8 lands at x = 275..375 at scroll = 525, overlapping trailing
-        // col 9 (x = 300..400) at x = 300..375.
-        horizontalController.jumpTo(525);
-        await tester.pump();
+      // With leading pinned extent = 100 and trailing pinned extent = 100 the
+      // non-pinned band is x = 100..300 (200 px wide).  The formula becomes
+      //   paintOffset.dx(col k) = k×100 − scroll
+      // so col 8 lands at x = 275..375 at scroll = 525, overlapping trailing
+      // col 9 (x = 300..400) at x = 300..375.
+      horizontalController.jumpTo(525);
+      await tester.pump();
 
-        // 1. Tap the trailing band (x = 350) → col 9, NOT the underlying col 8.
-        await tester.tapAt(const Offset(350, 50));
-        await tester.pumpAndSettle();
-        expect(
-          tappedColumns.last,
-          9,
-          reason: 'Tap at x=350 should hit trailing pinned col 9, not col 8.',
-        );
+      // 1. Tap the trailing band (x = 350) → col 9, NOT the underlying col 8.
+      await tester.tapAt(const Offset(350, 50));
+      await tester.pumpAndSettle();
+      expect(
+        tappedColumns.last,
+        9,
+        reason: 'Tap at x=350 should hit trailing pinned col 9, not col 8.',
+      );
 
-        // 2. Tap the leading band (x = 50) → col 0.
-        await tester.tapAt(const Offset(50, 50));
-        await tester.pumpAndSettle();
-        expect(
-          tappedColumns.last,
-          0,
-          reason: 'Tap at x=50 should hit leading pinned col 0.',
-        );
+      // 2. Tap the leading band (x = 50) → col 0.
+      await tester.tapAt(const Offset(50, 50));
+      await tester.pumpAndSettle();
+      expect(tappedColumns.last, 0, reason: 'Tap at x=50 should hit leading pinned col 0.');
 
-        // 3. Tap the middle of the non-pinned band (x = 200) → neither pinned col.
-        await tester.tapAt(const Offset(200, 50));
-        await tester.pumpAndSettle();
-        expect(
-          tappedColumns.last,
-          isNot(anyOf(0, 9)),
-          reason: 'Tap at x=200 should hit a non-pinned column.',
-        );
-      },
-    );
+      // 3. Tap the middle of the non-pinned band (x = 200) → neither pinned col.
+      await tester.tapAt(const Offset(200, 50));
+      await tester.pumpAndSettle();
+      expect(
+        tappedColumns.last,
+        isNot(anyOf(0, 9)),
+        reason: 'Tap at x=200 should hit a non-pinned column.',
+      );
+    });
   });
 }
 
