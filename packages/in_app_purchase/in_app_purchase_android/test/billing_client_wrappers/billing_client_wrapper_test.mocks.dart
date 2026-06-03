@@ -22,18 +22,15 @@ import 'package:mockito/src/dummies.dart' as _i3;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakePlatformBillingResult_0 extends _i1.SmartFake
-    implements _i2.PlatformBillingResult {
+class _FakePlatformBillingResult_0 extends _i1.SmartFake implements _i2.PlatformBillingResult {
   _FakePlatformBillingResult_0(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
 class _FakePlatformBillingConfigResponse_1 extends _i1.SmartFake
     implements _i2.PlatformBillingConfigResponse {
-  _FakePlatformBillingConfigResponse_1(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(parent, parentInvocation);
+  _FakePlatformBillingConfigResponse_1(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakePlatformPurchasesResponse_2 extends _i1.SmartFake
@@ -44,22 +41,17 @@ class _FakePlatformPurchasesResponse_2 extends _i1.SmartFake
 
 class _FakePlatformPurchaseHistoryResponse_3 extends _i1.SmartFake
     implements _i2.PlatformPurchaseHistoryResponse {
-  _FakePlatformPurchaseHistoryResponse_3(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(parent, parentInvocation);
+  _FakePlatformPurchaseHistoryResponse_3(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakePlatformProductDetailsResponse_4 extends _i1.SmartFake
     implements _i2.PlatformProductDetailsResponse {
-  _FakePlatformProductDetailsResponse_4(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(parent, parentInvocation);
+  _FakePlatformProductDetailsResponse_4(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
-class _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_5
-    extends _i1.SmartFake
+class _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_5 extends _i1.SmartFake
     implements _i2.PlatformAlternativeBillingOnlyReportingDetailsResponse {
   _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_5(
     Object parent,
@@ -117,17 +109,16 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
                 ]),
               ),
             ),
-            returnValueForMissingStub:
-                _i4.Future<_i2.PlatformBillingResult>.value(
-                  _FakePlatformBillingResult_0(
-                    this,
-                    Invocation.method(#startConnection, [
-                      callbackHandle,
-                      billingMode,
-                      pendingPurchasesParams,
-                    ]),
-                  ),
-                ),
+            returnValueForMissingStub: _i4.Future<_i2.PlatformBillingResult>.value(
+              _FakePlatformBillingResult_0(
+                this,
+                Invocation.method(#startConnection, [
+                  callbackHandle,
+                  billingMode,
+                  pendingPurchasesParams,
+                ]),
+              ),
+            ),
           )
           as _i4.Future<_i2.PlatformBillingResult>);
 
@@ -150,42 +141,30 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
                 Invocation.method(#getBillingConfigAsync, []),
               ),
             ),
-            returnValueForMissingStub:
-                _i4.Future<_i2.PlatformBillingConfigResponse>.value(
-                  _FakePlatformBillingConfigResponse_1(
-                    this,
-                    Invocation.method(#getBillingConfigAsync, []),
-                  ),
-                ),
+            returnValueForMissingStub: _i4.Future<_i2.PlatformBillingConfigResponse>.value(
+              _FakePlatformBillingConfigResponse_1(
+                this,
+                Invocation.method(#getBillingConfigAsync, []),
+              ),
+            ),
           )
           as _i4.Future<_i2.PlatformBillingConfigResponse>);
 
   @override
-  _i4.Future<_i2.PlatformBillingResult> launchBillingFlow(
-    _i2.PlatformBillingFlowParams? params,
-  ) =>
+  _i4.Future<_i2.PlatformBillingResult> launchBillingFlow(_i2.PlatformBillingFlowParams? params) =>
       (super.noSuchMethod(
             Invocation.method(#launchBillingFlow, [params]),
             returnValue: _i4.Future<_i2.PlatformBillingResult>.value(
-              _FakePlatformBillingResult_0(
-                this,
-                Invocation.method(#launchBillingFlow, [params]),
-              ),
+              _FakePlatformBillingResult_0(this, Invocation.method(#launchBillingFlow, [params])),
             ),
-            returnValueForMissingStub:
-                _i4.Future<_i2.PlatformBillingResult>.value(
-                  _FakePlatformBillingResult_0(
-                    this,
-                    Invocation.method(#launchBillingFlow, [params]),
-                  ),
-                ),
+            returnValueForMissingStub: _i4.Future<_i2.PlatformBillingResult>.value(
+              _FakePlatformBillingResult_0(this, Invocation.method(#launchBillingFlow, [params])),
+            ),
           )
           as _i4.Future<_i2.PlatformBillingResult>);
 
   @override
-  _i4.Future<_i2.PlatformBillingResult> acknowledgePurchase(
-    String? purchaseToken,
-  ) =>
+  _i4.Future<_i2.PlatformBillingResult> acknowledgePurchase(String? purchaseToken) =>
       (super.noSuchMethod(
             Invocation.method(#acknowledgePurchase, [purchaseToken]),
             returnValue: _i4.Future<_i2.PlatformBillingResult>.value(
@@ -194,13 +173,12 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
                 Invocation.method(#acknowledgePurchase, [purchaseToken]),
               ),
             ),
-            returnValueForMissingStub:
-                _i4.Future<_i2.PlatformBillingResult>.value(
-                  _FakePlatformBillingResult_0(
-                    this,
-                    Invocation.method(#acknowledgePurchase, [purchaseToken]),
-                  ),
-                ),
+            returnValueForMissingStub: _i4.Future<_i2.PlatformBillingResult>.value(
+              _FakePlatformBillingResult_0(
+                this,
+                Invocation.method(#acknowledgePurchase, [purchaseToken]),
+              ),
+            ),
           )
           as _i4.Future<_i2.PlatformBillingResult>);
 
@@ -209,18 +187,11 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
       (super.noSuchMethod(
             Invocation.method(#consumeAsync, [purchaseToken]),
             returnValue: _i4.Future<_i2.PlatformBillingResult>.value(
-              _FakePlatformBillingResult_0(
-                this,
-                Invocation.method(#consumeAsync, [purchaseToken]),
-              ),
+              _FakePlatformBillingResult_0(this, Invocation.method(#consumeAsync, [purchaseToken])),
             ),
-            returnValueForMissingStub:
-                _i4.Future<_i2.PlatformBillingResult>.value(
-                  _FakePlatformBillingResult_0(
-                    this,
-                    Invocation.method(#consumeAsync, [purchaseToken]),
-                  ),
-                ),
+            returnValueForMissingStub: _i4.Future<_i2.PlatformBillingResult>.value(
+              _FakePlatformBillingResult_0(this, Invocation.method(#consumeAsync, [purchaseToken])),
+            ),
           )
           as _i4.Future<_i2.PlatformBillingResult>);
 
@@ -236,13 +207,12 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
                 Invocation.method(#queryPurchasesAsync, [productType]),
               ),
             ),
-            returnValueForMissingStub:
-                _i4.Future<_i2.PlatformPurchasesResponse>.value(
-                  _FakePlatformPurchasesResponse_2(
-                    this,
-                    Invocation.method(#queryPurchasesAsync, [productType]),
-                  ),
-                ),
+            returnValueForMissingStub: _i4.Future<_i2.PlatformPurchasesResponse>.value(
+              _FakePlatformPurchasesResponse_2(
+                this,
+                Invocation.method(#queryPurchasesAsync, [productType]),
+              ),
+            ),
           )
           as _i4.Future<_i2.PlatformPurchasesResponse>);
 
@@ -258,15 +228,12 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
                 Invocation.method(#queryPurchaseHistoryAsync, [productType]),
               ),
             ),
-            returnValueForMissingStub:
-                _i4.Future<_i2.PlatformPurchaseHistoryResponse>.value(
-                  _FakePlatformPurchaseHistoryResponse_3(
-                    this,
-                    Invocation.method(#queryPurchaseHistoryAsync, [
-                      productType,
-                    ]),
-                  ),
-                ),
+            returnValueForMissingStub: _i4.Future<_i2.PlatformPurchaseHistoryResponse>.value(
+              _FakePlatformPurchaseHistoryResponse_3(
+                this,
+                Invocation.method(#queryPurchaseHistoryAsync, [productType]),
+              ),
+            ),
           )
           as _i4.Future<_i2.PlatformPurchaseHistoryResponse>);
 
@@ -282,20 +249,17 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
                 Invocation.method(#queryProductDetailsAsync, [products]),
               ),
             ),
-            returnValueForMissingStub:
-                _i4.Future<_i2.PlatformProductDetailsResponse>.value(
-                  _FakePlatformProductDetailsResponse_4(
-                    this,
-                    Invocation.method(#queryProductDetailsAsync, [products]),
-                  ),
-                ),
+            returnValueForMissingStub: _i4.Future<_i2.PlatformProductDetailsResponse>.value(
+              _FakePlatformProductDetailsResponse_4(
+                this,
+                Invocation.method(#queryProductDetailsAsync, [products]),
+              ),
+            ),
           )
           as _i4.Future<_i2.PlatformProductDetailsResponse>);
 
   @override
-  _i4.Future<bool> isFeatureSupported(
-    _i2.PlatformBillingClientFeature? feature,
-  ) =>
+  _i4.Future<bool> isFeatureSupported(_i2.PlatformBillingClientFeature? feature) =>
       (super.noSuchMethod(
             Invocation.method(#isFeatureSupported, [feature]),
             returnValue: _i4.Future<bool>.value(false),
@@ -304,8 +268,7 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
           as _i4.Future<bool>);
 
   @override
-  _i4.Future<_i2.PlatformBillingResult>
-  isAlternativeBillingOnlyAvailableAsync() =>
+  _i4.Future<_i2.PlatformBillingResult> isAlternativeBillingOnlyAvailableAsync() =>
       (super.noSuchMethod(
             Invocation.method(#isAlternativeBillingOnlyAvailableAsync, []),
             returnValue: _i4.Future<_i2.PlatformBillingResult>.value(
@@ -314,43 +277,31 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
                 Invocation.method(#isAlternativeBillingOnlyAvailableAsync, []),
               ),
             ),
-            returnValueForMissingStub:
-                _i4.Future<_i2.PlatformBillingResult>.value(
-                  _FakePlatformBillingResult_0(
-                    this,
-                    Invocation.method(
-                      #isAlternativeBillingOnlyAvailableAsync,
-                      [],
-                    ),
-                  ),
-                ),
+            returnValueForMissingStub: _i4.Future<_i2.PlatformBillingResult>.value(
+              _FakePlatformBillingResult_0(
+                this,
+                Invocation.method(#isAlternativeBillingOnlyAvailableAsync, []),
+              ),
+            ),
           )
           as _i4.Future<_i2.PlatformBillingResult>);
 
   @override
-  _i4.Future<_i2.PlatformBillingResult>
-  showAlternativeBillingOnlyInformationDialog() =>
+  _i4.Future<_i2.PlatformBillingResult> showAlternativeBillingOnlyInformationDialog() =>
       (super.noSuchMethod(
             Invocation.method(#showAlternativeBillingOnlyInformationDialog, []),
             returnValue: _i4.Future<_i2.PlatformBillingResult>.value(
               _FakePlatformBillingResult_0(
                 this,
-                Invocation.method(
-                  #showAlternativeBillingOnlyInformationDialog,
-                  [],
-                ),
+                Invocation.method(#showAlternativeBillingOnlyInformationDialog, []),
               ),
             ),
-            returnValueForMissingStub:
-                _i4.Future<_i2.PlatformBillingResult>.value(
-                  _FakePlatformBillingResult_0(
-                    this,
-                    Invocation.method(
-                      #showAlternativeBillingOnlyInformationDialog,
-                      [],
-                    ),
-                  ),
-                ),
+            returnValueForMissingStub: _i4.Future<_i2.PlatformBillingResult>.value(
+              _FakePlatformBillingResult_0(
+                this,
+                Invocation.method(#showAlternativeBillingOnlyInformationDialog, []),
+              ),
+            ),
           )
           as _i4.Future<_i2.PlatformBillingResult>);
 
@@ -358,36 +309,21 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
   _i4.Future<_i2.PlatformAlternativeBillingOnlyReportingDetailsResponse>
   createAlternativeBillingOnlyReportingDetailsAsync() =>
       (super.noSuchMethod(
-            Invocation.method(
-              #createAlternativeBillingOnlyReportingDetailsAsync,
-              [],
-            ),
+            Invocation.method(#createAlternativeBillingOnlyReportingDetailsAsync, []),
             returnValue:
-                _i4.Future<
-                  _i2.PlatformAlternativeBillingOnlyReportingDetailsResponse
-                >.value(
+                _i4.Future<_i2.PlatformAlternativeBillingOnlyReportingDetailsResponse>.value(
                   _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_5(
                     this,
-                    Invocation.method(
-                      #createAlternativeBillingOnlyReportingDetailsAsync,
-                      [],
-                    ),
+                    Invocation.method(#createAlternativeBillingOnlyReportingDetailsAsync, []),
                   ),
                 ),
             returnValueForMissingStub:
-                _i4.Future<
-                  _i2.PlatformAlternativeBillingOnlyReportingDetailsResponse
-                >.value(
+                _i4.Future<_i2.PlatformAlternativeBillingOnlyReportingDetailsResponse>.value(
                   _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_5(
                     this,
-                    Invocation.method(
-                      #createAlternativeBillingOnlyReportingDetailsAsync,
-                      [],
-                    ),
+                    Invocation.method(#createAlternativeBillingOnlyReportingDetailsAsync, []),
                   ),
                 ),
           )
-          as _i4.Future<
-            _i2.PlatformAlternativeBillingOnlyReportingDetailsResponse
-          >);
+          as _i4.Future<_i2.PlatformAlternativeBillingOnlyReportingDetailsResponse>);
 }

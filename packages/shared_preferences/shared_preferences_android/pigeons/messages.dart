@@ -10,11 +10,8 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     input: 'pigeons/messages.dart',
-    kotlinOut:
-        'android/src/main/kotlin/io/flutter/plugins/sharedpreferences/Messages.g.kt',
-    kotlinOptions: KotlinOptions(
-      package: 'io.flutter.plugins.sharedpreferences',
-    ),
+    kotlinOut: 'android/src/main/kotlin/io/flutter/plugins/sharedpreferences/Messages.g.kt',
+    kotlinOptions: KotlinOptions(package: 'io.flutter.plugins.sharedpreferences'),
     dartOut: 'lib/src/messages.g.dart',
     copyrightHeader: 'pigeons/copyright.txt',
   ),

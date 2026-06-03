@@ -8,9 +8,7 @@ import 'package:go_router_examples/state_restoration/go_route_state_restoration.
 
 void main() {
   testWidgets('GoRoute navigation location and route state '
-      'is restored when restorationIds are provided', (
-    WidgetTester tester,
-  ) async {
+      'is restored when restorationIds are provided', (WidgetTester tester) async {
     const homeTitle = 'Home';
     const loginTitle = 'Login';
 

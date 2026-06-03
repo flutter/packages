@@ -20,8 +20,9 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   bool isNewRouteAdded = false;
 
-  late final ValueNotifier<RoutingConfig> myConfig =
-      ValueNotifier<RoutingConfig>(_generateRoutingConfig());
+  late final ValueNotifier<RoutingConfig> myConfig = ValueNotifier<RoutingConfig>(
+    _generateRoutingConfig(),
+  );
 
   late final GoRouter router = GoRouter.routingConfig(
     routingConfig: myConfig,
@@ -32,10 +33,7 @@ class _MyAppState extends State<MyApp> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text('${state.uri} does not exist'),
-            ElevatedButton(
-              onPressed: () => router.go('/'),
-              child: const Text('Go to home'),
-            ),
+            ElevatedButton(onPressed: () => router.go('/'), child: const Text('Go to home')),
           ],
         ),
       ),

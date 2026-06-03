@@ -57,9 +57,7 @@ class TemplateException implements m.TemplateException {
     }
     _isUpdated = true;
 
-    if (source == null ||
-        offset == null ||
-        (offset! < 0 || offset! > source!.length)) {
+    if (source == null || offset == null || (offset! < 0 || offset! > source!.length)) {
       return;
     }
 
