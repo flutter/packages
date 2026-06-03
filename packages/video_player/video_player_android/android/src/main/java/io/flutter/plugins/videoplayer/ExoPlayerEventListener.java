@@ -16,7 +16,7 @@ import androidx.media3.common.Tracks;
 import androidx.media3.exoplayer.ExoPlayer;
 
 public abstract class ExoPlayerEventListener implements Player.Listener {
-  private static final long DURATION_UNSET_INITIALIZATION_TIMEOUT_MS = 2000;
+  static final long DURATION_UNSET_INITIALIZATION_TIMEOUT_MS = 2000;
   private boolean isInitialized = false;
   private boolean isWaitingForValidDuration = false;
   private final Handler mainHandler = new Handler(Looper.getMainLooper());

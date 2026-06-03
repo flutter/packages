@@ -135,7 +135,8 @@ public final class ExoPlayerEventListenerTest {
     eventListener.onPlaybackStateChanged(Player.STATE_READY);
     assertFalse(eventListener.calledSendInitialized());
 
-    Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(500));
+    Shadows.shadowOf(Looper.getMainLooper())
+      .idleFor(Duration.ofMillis(ExoPlayerEventListener.DURATION_UNSET_INITIALIZATION_TIMEOUT_MS));
 
     assertTrue(eventListener.calledSendInitialized());
   }
