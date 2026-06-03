@@ -337,7 +337,7 @@ Future<List<String>> runCapturingPrint(
 }) async {
   final prints = <String>[];
   final spec = ZoneSpecification(
-    print: (_, __, ___, String message) {
+    print: (_, _, _, String message) {
       prints.add(message);
     },
   );
