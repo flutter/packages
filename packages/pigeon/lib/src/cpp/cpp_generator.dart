@@ -1155,7 +1155,7 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
         enumerate(orderedFields, (int index, final NamedType field) {
           final name = 'obj.${_makeInstanceVariableName(field)}';
           final comma = index == 0 ? '' : ', ';
-          indent.writeln('os << "$comma${field.name}: ";');
+          indent.writeln('os << "$comma${_makeVariableName(field)}: ";');
           if (field.type.isNullable) {
             indent.writeScoped('if ($name.has_value()) {', '}', () {
               if (field.type.isClass) {

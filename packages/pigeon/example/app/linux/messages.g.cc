@@ -448,7 +448,7 @@ gchar* pigeon_example_package_message_data_to_string(
   } else {
     g_string_append(str, "null");
   }
-  g_string_append(str, ", messageDescription: ");
+  g_string_append(str, ", message_description: ");
   if (self->message_description != nullptr) {
     g_string_append_printf(str, "\"%s\"", self->message_description);
   } else {

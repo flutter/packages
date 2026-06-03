@@ -437,7 +437,7 @@ std::ostream& operator<<(std::ostream& os, const MessageData& obj) {
   } else {
     os << "null";
   }
-  os << ", messageDescription: ";
+  os << ", message_description: ";
   if (obj.message_description_.has_value()) {
     os << PigeonInternalToString(*obj.message_description_);
   } else {

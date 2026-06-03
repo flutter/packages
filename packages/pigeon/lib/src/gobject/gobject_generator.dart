@@ -1370,7 +1370,9 @@ class GObjectSourceGenerator
       enumerate(classDefinition.fields, (int index, final NamedType field) {
         final String fieldName = _getFieldName(field.name);
         final comma = index == 0 ? '' : ', ';
-        indent.writeln('g_string_append(str, "$comma${field.name}: ");');
+        indent.writeln(
+          'g_string_append(str, "$comma${_getFieldName(field.name)}: ");',
+        );
 
         if (field.type.isClass) {
           final String fieldMethodPrefix = _getMethodPrefix(
