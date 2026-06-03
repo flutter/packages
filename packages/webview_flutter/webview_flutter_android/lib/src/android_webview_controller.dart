@@ -869,18 +869,15 @@ class AndroidWebViewPermissionRequest extends PlatformWebViewPermissionRequest {
 }
 
 /// Signature for the `setGeolocationPermissionsPromptCallbacks` callback responsible for request the Geolocation API.
-typedef OnGeolocationPermissionsShowPrompt = Future<GeolocationPermissionsResponse> Function(
-  GeolocationPermissionsRequestParams request,
-);
+typedef OnGeolocationPermissionsShowPrompt =
+    Future<GeolocationPermissionsResponse> Function(GeolocationPermissionsRequestParams request);
 
 /// Signature for the `setGeolocationPermissionsPromptCallbacks` callback responsible for request the Geolocation API is cancel.
 typedef OnGeolocationPermissionsHidePrompt = void Function();
 
 /// Signature for the `setCustomWidgetCallbacks` callback responsible for showing the custom view.
-typedef OnShowCustomWidgetCallback = void Function(
-  Widget widget,
-  void Function() onCustomWidgetHidden,
-);
+typedef OnShowCustomWidgetCallback =
+    void Function(Widget widget, void Function() onCustomWidgetHidden);
 
 /// Signature for the `setCustomWidgetCallbacks` callback responsible for hiding the custom view.
 typedef OnHideCustomWidgetCallback = void Function();
