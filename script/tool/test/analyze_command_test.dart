@@ -300,7 +300,7 @@ void main() {
 
     test('downgrades using flutter for non-Flutter packages with Flutter examples', () async {
       final RepositoryPackage package = createFakePackage('a', packagesDir, examples: []);
-      createFakePackage('example', package.directory, isFlutter: true);
+      createFakePackage('example', package.directory, examples: [], isFlutter: true);
 
       await runCapturingPrint(runner, <String>['analyze', '--downgrade']);
 
