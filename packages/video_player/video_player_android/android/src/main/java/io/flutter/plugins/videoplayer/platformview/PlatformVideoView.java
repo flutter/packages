@@ -59,7 +59,8 @@ public final class PlatformVideoView implements PlatformView {
 
               @Override
               public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
-                // Use clearVideoSurface to ensure we only unbind if this surface is currently active.
+                // Use clearVideoSurface to ensure we only unbind if this surface is currently
+                // active.
                 exoPlayer.clearVideoSurface(holder.getSurface());
               }
             });
