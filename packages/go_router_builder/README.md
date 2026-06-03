@@ -73,7 +73,8 @@ it easy to write code that is not type-safe, e.g.
 
 <?code-excerpt "example/lib/readme_excerpts.dart (GoWrong)"?>
 ```dart
-void tap() => context.go('/familyId/a42'); // This is an error: `a42` is not an `int`.
+void tap() =>
+    context.go('/familyId/a42'); // This is an error: `a42` is not an `int`.
 ```
 
 Dart's type system allows mistakes to be caught at compile-time instead of
@@ -106,7 +107,9 @@ The tree of routes is defined as an attribute on each of the top-level routes:
 ```dart
 @TypedGoRoute<HomeRoute>(
   path: '/',
-  routes: <TypedGoRoute<GoRouteData>>[TypedGoRoute<FamilyRoute>(path: 'family/:fid')],
+  routes: <TypedGoRoute<GoRouteData>>[
+    TypedGoRoute<FamilyRoute>(path: 'family/:fid'),
+  ],
 )
 class HomeRoute extends GoRouteData with $HomeRoute {
   const HomeRoute();
@@ -204,7 +207,9 @@ a return value. The generated routes also follow this functionality.
 
 <?code-excerpt "example/lib/readme_excerpts.dart (awaitPush)"?>
 ```dart
-final bool? result = await const FamilyRoute(fid: 'John').push<bool>(context);
+final bool? result = await const FamilyRoute(
+  fid: 'John',
+).push<bool>(context);
 ```
 
 ## Query parameters
@@ -288,7 +293,8 @@ You can, of course, combine the use of path, query and $extra parameters:
 <?code-excerpt "example/lib/readme_excerpts.dart (HotdogRouteWithEverything)"?>
 ```dart
 @TypedGoRoute<HotdogRouteWithEverything>(path: '/:ketchup')
-class HotdogRouteWithEverything extends GoRouteData with $HotdogRouteWithEverything {
+class HotdogRouteWithEverything extends GoRouteData
+    with $HotdogRouteWithEverything {
   HotdogRouteWithEverything(this.ketchup, this.mustard, this.$extra);
   final bool ketchup; // A required path parameter.
   final String? mustard; // An optional query parameter.
@@ -400,7 +406,10 @@ Overriding the `buildPage` method is also useful for custom transitions:
 class FancyRoute extends GoRouteData with $FancyRoute {
   const FancyRoute();
   @override
-  CustomTransitionPage<void> buildPage(BuildContext context, GoRouterState state) {
+  CustomTransitionPage<void> buildPage(
+    BuildContext context,
+    GoRouterState state,
+  ) {
     return CustomTransitionPage<void>(
       key: state.pageKey,
       child: const MyPage(),
@@ -436,7 +445,9 @@ final GlobalKey<NavigatorState> shellNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
 @TypedShellRoute<MyShellRouteData>(
-  routes: <TypedRoute<RouteData>>[TypedGoRoute<MyGoRouteData>(path: 'my-go-route')],
+  routes: <TypedRoute<RouteData>>[
+    TypedGoRoute<MyGoRouteData>(path: 'my-go-route'),
+  ],
 )
 class MyShellRouteData extends ShellRouteData {
   const MyShellRouteData();
@@ -475,7 +486,8 @@ class DetailsRoute extends RelativeGoRouteData with $DetailsRoute {
   const DetailsRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => const DetailsScreen();
+  Widget build(BuildContext context, GoRouterState state) =>
+      const DetailsScreen();
 }
 
 ```
