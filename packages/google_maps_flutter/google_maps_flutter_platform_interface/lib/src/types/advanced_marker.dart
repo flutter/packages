@@ -109,8 +109,7 @@ class AdvancedMarker extends Marker {
       'zIndex': zIndex,
       'collisionBehavior': collisionBehavior.index,
       'anchor': _offsetToJson(anchor),
-      if (clusterManagerIdValue != null)
-        'clusterManagerId': clusterManagerIdValue,
+      if (clusterManagerIdValue != null) 'clusterManagerId': clusterManagerIdValue,
     };
   }
 

@@ -67,13 +67,8 @@ class GradleValidator {
     return <String>[];
   }
 
-  bool _validateBuildGradles(
-    RepositoryPackage package, {
-    required bool isExample,
-  }) {
-    final Directory androidDir = package.platformDirectory(
-      FlutterPlatform.android,
-    );
+  bool _validateBuildGradles(RepositoryPackage package, {required bool isExample}) {
+    final Directory androidDir = package.platformDirectory(FlutterPlatform.android);
     final File topLevelGradleFile = _getBuildGradleFile(androidDir);
 
     // This is tracked as a variable rather than a sequence of &&s so that all
@@ -83,19 +78,12 @@ class GradleValidator {
       if (!_validateExampleTopLevelBuildGradle(package, topLevelGradleFile)) {
         succeeded = false;
       }
-      final File topLevelSettingsGradleFile = _getSettingsGradleFile(
-        androidDir,
-      );
-      if (!_validateExampleTopLevelSettingsGradle(
-        package,
-        topLevelSettingsGradleFile,
-      )) {
+      final File topLevelSettingsGradleFile = _getSettingsGradleFile(androidDir);
+      if (!_validateExampleTopLevelSettingsGradle(package, topLevelSettingsGradleFile)) {
         succeeded = false;
       }
 
-      final File appGradleFile = _getBuildGradleFile(
-        androidDir.childDirectory('app'),
-      );
+      final File appGradleFile = _getBuildGradleFile(androidDir.childDirectory('app'));
       if (!_validateExampleAppBuildGradle(package, appGradleFile)) {
         succeeded = false;
       }
@@ -127,20 +115,10 @@ class GradleValidator {
   }
 
   // Returns the main/AndroidManifest.xml file for the given package.
-  File _getMainAndroidManifest(
-    RepositoryPackage package, {
-    required bool isExample,
-  }) {
-    final Directory androidDir = package.platformDirectory(
-      FlutterPlatform.android,
-    );
-    final Directory baseDir = isExample
-        ? androidDir.childDirectory('app')
-        : androidDir;
-    return baseDir
-        .childDirectory('src')
-        .childDirectory('main')
-        .childFile('AndroidManifest.xml');
+  File _getMainAndroidManifest(RepositoryPackage package, {required bool isExample}) {
+    final Directory androidDir = package.platformDirectory(FlutterPlatform.android);
+    final Directory baseDir = isExample ? androidDir.childDirectory('app') : androidDir;
+    return baseDir.childDirectory('src').childDirectory('main').childFile('AndroidManifest.xml');
   }
 
   bool _isCommented(String line) => line.trim().startsWith('//');
@@ -186,10 +164,7 @@ class GradleValidator {
   /// when ARTIFACT_HUB_REPOSITORY is set.
   ///
   /// Required in root gradle file.
-  bool _validateArtifactHubUsage(
-    RepositoryPackage example,
-    List<String> gradleLines,
-  ) {
+  bool _validateArtifactHubUsage(RepositoryPackage example, List<String> gradleLines) {
     // Gradle variable name used to hold environment variable string.
     const keyVariable = 'artifactRepoKey';
     const urlVariable = 'artifactRepoUrl';
@@ -212,18 +187,12 @@ class GradleValidator {
       r'\)',
     );
 
-    final bool keyPresent = gradleLines.any(
-      (String line) => keyPresentRegex.hasMatch(line),
-    );
+    final bool keyPresent = gradleLines.any((String line) => keyPresentRegex.hasMatch(line));
     final bool documentationPresent = gradleLines.any(
       (String line) => documentationPresentRegex.hasMatch(line),
     );
-    final bool keyRead = gradleLines.any(
-      (String line) => keyReadRegex.hasMatch(line),
-    );
-    final bool keyUsed = gradleLines.any(
-      (String line) => keyUsedRegex.hasMatch(line),
-    );
+    final bool keyRead = gradleLines.any((String line) => keyReadRegex.hasMatch(line));
+    final bool keyUsed = gradleLines.any((String line) => keyUsedRegex.hasMatch(line));
 
     if (!(documentationPresent && keyPresent && keyRead && keyUsed)) {
       printError(
@@ -237,10 +206,7 @@ class GradleValidator {
 
   /// Validates the top-level settings.gradle for an example app (e.g.,
   /// some_package/example/android/settings.gradle).
-  bool _validateExampleTopLevelSettingsGradle(
-    RepositoryPackage package,
-    File gradleSettingsFile,
-  ) {
+  bool _validateExampleTopLevelSettingsGradle(RepositoryPackage package, File gradleSettingsFile) {
     print(
       '${_indentation}Validating '
       '${_getRelativePosixPath(gradleSettingsFile, from: package.directory)}.',
@@ -274,10 +240,7 @@ plugins {
   /// when ARTIFACT_HUB_REPOSITORY is set.
   ///
   /// Required in root gradle file.
-  bool _validateArtifactHubSettingsUsage(
-    RepositoryPackage example,
-    List<String> gradleLines,
-  ) {
+  bool _validateArtifactHubSettingsUsage(RepositoryPackage example, List<String> gradleLines) {
     final documentationPresentRegex = RegExp(
       r'github\.com.*flutter.*blob.*Plugins-and-Packages-repository-structure.*gradle-structure',
     );
@@ -314,10 +277,7 @@ plugins {
 
   /// Validates the top-level build.gradle(.kts) for an example app (e.g.,
   /// some_package/example/android/build.gradle(.kts)).
-  bool _validateExampleTopLevelBuildGradle(
-    RepositoryPackage package,
-    File gradleFile,
-  ) {
+  bool _validateExampleTopLevelBuildGradle(RepositoryPackage package, File gradleFile) {
     print(
       '${_indentation}Validating '
       '${_getRelativePosixPath(gradleFile, from: package.directory)}.',
@@ -339,10 +299,7 @@ plugins {
 
   /// Validates the app-level build.gradle(.kts) for an example app (e.g.,
   /// some_package/example/android/app/build.gradle(.kts)).
-  bool _validateExampleAppBuildGradle(
-    RepositoryPackage package,
-    File gradleFile,
-  ) {
+  bool _validateExampleAppBuildGradle(RepositoryPackage package, File gradleFile) {
     print(
       '${_indentation}Validating '
       '${_getRelativePosixPath(gradleFile, from: package.directory)}.',
@@ -368,13 +325,8 @@ plugins {
     // Regex to validate that the following namespace definition
     // is found (where the single quotes can be single or double):
     //  - namespace = 'dev.flutter.foo'
-    final nameSpaceRegex = RegExp(
-      '^\\s*namespace\\s+=\\s*[\'"](.*?)[\'"]',
-      multiLine: true,
-    );
-    final RegExpMatch? nameSpaceRegexMatch = nameSpaceRegex.firstMatch(
-      gradleContents,
-    );
+    final nameSpaceRegex = RegExp('^\\s*namespace\\s+=\\s*[\'"](.*?)[\'"]', multiLine: true);
+    final RegExpMatch? nameSpaceRegexMatch = nameSpaceRegex.firstMatch(gradleContents);
 
     if (nameSpaceRegexMatch == null) {
       const errorMessage = '''
@@ -389,9 +341,7 @@ present. For more information, see:
 https://developer.android.com/build/publish-library/prep-lib-release#choose-namespace
 ''';
 
-      printError(
-        '$_indentation${errorMessage.split('\n').join('\n$_indentation')}',
-      );
+      printError('$_indentation${errorMessage.split('\n').join('\n$_indentation')}');
       return false;
     } else {
       return _validateNamespaceMatchesManifest(
@@ -417,9 +367,7 @@ https://developer.android.com/build/publish-library/prep-lib-release#choose-name
       package,
       isExample: isExample,
     ).readAsStringSync();
-    final RegExpMatch? packageMatch = manifestPackageRegex.firstMatch(
-      manifestContents,
-    );
+    final RegExpMatch? packageMatch = manifestPackageRegex.firstMatch(manifestContents);
     if (packageMatch != null && namespace != packageMatch.group(1)) {
       const buildGradleName = 'build.gradle.kts';
       final errorMessage =
@@ -428,9 +376,7 @@ $buildGradleName "namespace" must match the "package" attribute in AndroidManife
   $buildGradleName namespace: "$namespace"
   AndroidMastifest.xml package: "${packageMatch.group(1)}"
 ''';
-      printError(
-        '$_indentation${errorMessage.split('\n').join('\n$_indentation')}',
-      );
+      printError('$_indentation${errorMessage.split('\n').join('\n$_indentation')}');
       return false;
     }
     return true;
@@ -446,8 +392,7 @@ $buildGradleName "namespace" must match the "package" attribute in AndroidManife
     final bool hasCompabilityVersions =
         gradleLines.any(
           (String line) =>
-              line.contains('sourceCompatibility = JavaVersion.VERSION_') &&
-              !_isCommented(line),
+              line.contains('sourceCompatibility = JavaVersion.VERSION_') && !_isCommented(line),
         ) &&
         // Newer toolchains default targetCompatibility to the same value as
         // sourceCompatibility, but older toolchains require it to be set
@@ -456,8 +401,7 @@ $buildGradleName "namespace" must match the "package" attribute in AndroidManife
         // https://github.com/flutter/flutter/issues/125482
         gradleLines.any(
           (String line) =>
-              line.contains('targetCompatibility = JavaVersion.VERSION_') &&
-              !_isCommented(line),
+              line.contains('targetCompatibility = JavaVersion.VERSION_') && !_isCommented(line),
         );
     if (!hasLanguageVersion && !hasCompabilityVersions) {
       const javaErrorMessage =
@@ -483,9 +427,7 @@ See:
 https://docs.gradle.org/current/userguide/java_plugin.html#toolchain_and_compatibility
 for more details.''';
 
-      printError(
-        '$_indentation${javaErrorMessage.split('\n').join('\n$_indentation')}',
-      );
+      printError('$_indentation${javaErrorMessage.split('\n').join('\n$_indentation')}');
       return false;
     }
 
@@ -493,8 +435,7 @@ for more details.''';
   }
 
   bool _validateKotlinJvmCompatibility(List<String> gradleLines) {
-    bool isKotlinOptions(String line) =>
-        line.contains('kotlinOptions') && !_isCommented(line);
+    bool isKotlinOptions(String line) => line.contains('kotlinOptions') && !_isCommented(line);
     final bool hasKotlinOptions = gradleLines.any(isKotlinOptions);
     if (hasKotlinOptions) {
       const kotlinOptionsErrorMessage =
@@ -507,14 +448,11 @@ kotlin {
     }
 }
 ''';
-      printError(
-        '$_indentation${kotlinOptionsErrorMessage.split('\n').join('\n$_indentation')}',
-      );
+      printError('$_indentation${kotlinOptionsErrorMessage.split('\n').join('\n$_indentation')}');
       return false;
     }
 
-    bool isCompilerOptions(String line) =>
-        line.contains('compilerOptions') && !_isCommented(line);
+    bool isCompilerOptions(String line) => line.contains('compilerOptions') && !_isCommented(line);
     final bool hasCompilerOptions = gradleLines.any(isCompilerOptions);
 
     if (hasCompilerOptions && _isCompilerOptionsInsideAndroid(gradleLines)) {
@@ -548,23 +486,15 @@ build.gradle.kts must not nest "kotlin" or "compilerOptions" inside the "android
 
     final bool compilerOptionsUsesJvmTargetEnum = gradleLines.any(
       (String line) =>
-          RegExp(
-            r'jvmTarget\s*=\s*(?:[a-zA-Z0-9.]+)?JvmTarget\.JVM_\d+',
-          ).hasMatch(line) &&
+          RegExp(r'jvmTarget\s*=\s*(?:[a-zA-Z0-9.]+)?JvmTarget\.JVM_\d+').hasMatch(line) &&
           !_isCommented(line),
     );
 
     // Either does not set compilerOptions or does and uses non-string based syntax.
     if (hasCompilerOptions && !compilerOptionsUsesJvmTargetEnum) {
       var badLines = '';
-      final int startIndex = gradleLines.indexOf(
-        gradleLines.firstWhere(isCompilerOptions),
-      );
-      for (
-        var i = startIndex;
-        i < math.min(startIndex + 4, gradleLines.length);
-        i++
-      ) {
+      final int startIndex = gradleLines.indexOf(gradleLines.firstWhere(isCompilerOptions));
+      for (var i = startIndex; i < math.min(startIndex + 4, gradleLines.length); i++) {
         badLines += '${gradleLines[i]}\n';
       }
 
@@ -580,9 +510,7 @@ If build.gradle.kts sets jvmTarget inside kotlin.compilerOptions, it must use Jv
   BAD:
     ${badLines.trim()}
 ''';
-      printError(
-        '$_indentation${kotlinErrorMessage.split('\n').join('\n$_indentation')}',
-      );
+      printError('$_indentation${kotlinErrorMessage.split('\n').join('\n$_indentation')}');
       return false;
     }
     // No error condition.
@@ -648,9 +576,7 @@ The kotlin-android plugin should not be applied in the plugin module's build.gra
         id("kotlin-android")
     }
 ''';
-      printError(
-        '$_indentation${kotlinPluginErrorMessage.split('\n').join('\n$_indentation')}',
-      );
+      printError('$_indentation${kotlinPluginErrorMessage.split('\n').join('\n$_indentation')}');
       return false;
     }
 
@@ -661,12 +587,8 @@ The kotlin-android plugin should not be applied in the plugin module's build.gra
     final javaVersions = <String>[];
     // Some java versions have the format VERSION_1_8 but we dont need to handle those
     // because they are below the minimum.
-    final javaVersionMatcher = RegExp(
-      r'JavaVersion.VERSION_(?<javaVersion>\d+)',
-    );
-    final kotlinJvmTargetMatcher = RegExp(
-      r'JvmTarget.JVM_(?<kotlinJvmVersion>\d+)',
-    );
+    final javaVersionMatcher = RegExp(r'JavaVersion.VERSION_(?<javaVersion>\d+)');
+    final kotlinJvmTargetMatcher = RegExp(r'JvmTarget.JVM_(?<kotlinJvmVersion>\d+)');
     for (final line in gradleLines) {
       if (_isCommented(line)) {
         continue;
@@ -678,13 +600,9 @@ The kotlin-android plugin should not be applied in the plugin module's build.gra
           javaVersions.add(foundVersion);
         }
       }
-      final RegExpMatch? kotlinJvmMatch = kotlinJvmTargetMatcher.firstMatch(
-        line,
-      );
+      final RegExpMatch? kotlinJvmMatch = kotlinJvmTargetMatcher.firstMatch(line);
       if (kotlinJvmMatch != null) {
-        final String? foundVersion = kotlinJvmMatch.namedGroup(
-          'kotlinJvmVersion',
-        );
+        final String? foundVersion = kotlinJvmMatch.namedGroup('kotlinJvmVersion');
         if (foundVersion != null) {
           javaVersions.add(foundVersion);
         }
@@ -696,9 +614,7 @@ The kotlin-android plugin should not be applied in the plugin module's build.gra
         const javaVersionAlignmentError = '''
 If build.gradle.kts uses JavaVersion.* and JvmTarget.*, the versions must be the same.
 ''';
-        printError(
-          '$_indentation${javaVersionAlignmentError.split('\n').join('\n$_indentation')}',
-        );
+        printError('$_indentation${javaVersionAlignmentError.split('\n').join('\n$_indentation')}');
         return false;
       }
 
@@ -708,9 +624,7 @@ If build.gradle.kts uses JavaVersion.* and JvmTarget.*, the versions must be the
 build.gradle.kts uses "JavaVersion.VERSION_$version".
 Which is below the minimum required. Use at least "JavaVersion.VERSION_$_minimumJavaVersion".
 ''';
-        printError(
-          '$_indentation${minimumJavaVersionError.split('\n').join('\n$_indentation')}',
-        );
+        printError('$_indentation${minimumJavaVersionError.split('\n').join('\n$_indentation')}');
         return false;
       }
     }
@@ -723,12 +637,10 @@ Which is below the minimum required. Use at least "JavaVersion.VERSION_$_minimum
   /// errors.
   bool _validateGradleDrivenLintConfig(List<String> gradleLines) {
     if (!gradleLines.any(
-          (String line) =>
-              line.contains('checkAllWarnings = true') && !_isCommented(line),
+          (String line) => line.contains('checkAllWarnings = true') && !_isCommented(line),
         ) ||
         !gradleLines.any(
-          (String line) =>
-              line.contains('warningsAsErrors = true') && !_isCommented(line),
+          (String line) => line.contains('warningsAsErrors = true') && !_isCommented(line),
         )) {
       printError(
         '${_indentation}This package is not configured to enable all '
@@ -745,10 +657,7 @@ Which is below the minimum required. Use at least "JavaVersion.VERSION_$_minimum
     return true;
   }
 
-  bool _validateCompileSdkUsage(
-    RepositoryPackage package,
-    List<String> gradleLines,
-  ) {
+  bool _validateCompileSdkUsage(RepositoryPackage package, List<String> gradleLines) {
     final linePattern = RegExp(r'^\s*compileSdk.*\s+=');
     final legacySettingPattern = RegExp(r'^\s*compileSdkVersion');
     final String? compileSdkLine = gradleLines.firstWhereOrNull(
@@ -764,9 +673,7 @@ Which is below the minimum required. Use at least "JavaVersion.VERSION_$_minimum
       if (methodAssignmentLine == null) {
         printError('${_indentation}No compileSdk or compileSdkVersion found.');
       } else {
-        printError(
-          '${_indentation}No "compileSdk =" found. Please use property assignment.',
-        );
+        printError('${_indentation}No "compileSdk =" found. Please use property assignment.');
       }
       return false;
     }
@@ -779,8 +686,7 @@ Which is below the minimum required. Use at least "JavaVersion.VERSION_$_minimum
     }
     if (compileSdkLine.contains('flutter.compileSdkVersion')) {
       final Pubspec pubspec = package.parsePubspec();
-      final VersionConstraint? flutterConstraint =
-          pubspec.environment['flutter'];
+      final VersionConstraint? flutterConstraint = pubspec.environment['flutter'];
       final Version? minFlutterVersion =
           flutterConstraint != null && flutterConstraint is VersionRange
           ? flutterConstraint.min
@@ -806,9 +712,7 @@ Which is below the minimum required. Use at least "JavaVersion.VERSION_$_minimum
     } else {
       // Extract compileSdkVersion and check if it is higher than flutter.compileSdkVersion.
       final numericVersionPattern = RegExp(r'=\s*(\d+)');
-      final RegExpMatch? versionMatch = numericVersionPattern.firstMatch(
-        compileSdkLine,
-      );
+      final RegExpMatch? versionMatch = numericVersionPattern.firstMatch(compileSdkLine);
 
       if (versionMatch != null) {
         final int compileSdkVersion = int.parse(versionMatch.group(1)!);
@@ -840,17 +744,12 @@ Which is below the minimum required. Use at least "JavaVersion.VERSION_$_minimum
   ///
   /// If [example]'s enclosing package is not a plugin package, this just
   /// returns true.
-  bool _validateJavacLintConfig(
-    RepositoryPackage example,
-    List<String> gradleLines,
-  ) {
+  bool _validateJavacLintConfig(RepositoryPackage example, List<String> gradleLines) {
     final RepositoryPackage enclosingPackage = example.getEnclosingPackage()!;
     // This checks for android/ rather than using pluginSupportsPlatform because
     // Dart-only implementations (e.g., usin jnigen) won't have this
     // configuration since there's no native plugin code to check.
-    if (!enclosingPackage
-        .platformDirectory(FlutterPlatform.android)
-        .existsSync()) {
+    if (!enclosingPackage.platformDirectory(FlutterPlatform.android).existsSync()) {
       return true;
     }
     final String enclosingPackageName = enclosingPackage.directory.basename;
@@ -858,9 +757,7 @@ Which is below the minimum required. Use at least "JavaVersion.VERSION_$_minimum
     // The check here is intentionally somewhat loose, to allow for the
     // possibility of variations (e.g., not using Xlint:all in some cases, or
     // passing other arguments).
-    if (!(gradleLines.any(
-          (String line) => line.contains('project(":$enclosingPackageName")'),
-        ) &&
+    if (!(gradleLines.any((String line) => line.contains('project(":$enclosingPackageName")')) &&
         gradleLines.any(
           (String line) =>
               line.contains('options.compilerArgs') &&
@@ -889,10 +786,7 @@ gradle.projectsEvaluated {
 
   /// Validates whether the given [example] has its Kotlin version set to at
   /// least a minimum value, if it is set at all.
-  bool _validateKotlinVersion(
-    RepositoryPackage example,
-    List<String> gradleLines,
-  ) {
+  bool _validateKotlinVersion(RepositoryPackage example, List<String> gradleLines) {
     final kotlinVersionRegex = RegExp(
       r'id\("org\.jetbrains\.kotlin\.android"\) version "([\d.]+)"',
     );
@@ -915,10 +809,7 @@ gradle.projectsEvaluated {
     return true;
   }
 
-  String _getRelativePosixPath(
-    FileSystemEntity file, {
-    required Directory from,
-  }) {
+  String _getRelativePosixPath(FileSystemEntity file, {required Directory from}) {
     return relativePosixPath(file, from: from, platformContext: _path);
   }
 }

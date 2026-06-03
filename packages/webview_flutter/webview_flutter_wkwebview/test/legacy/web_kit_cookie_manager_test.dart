@@ -30,9 +30,7 @@ void main() {
     setUp(() {
       mockWebsiteDataStore = MockWKWebsiteDataStore();
       mockWKHttpCookieStore = MockWKHTTPCookieStore();
-      when(
-        mockWebsiteDataStore.httpCookieStore,
-      ).thenReturn(mockWKHttpCookieStore);
+      when(mockWebsiteDataStore.httpCookieStore).thenReturn(mockWKHttpCookieStore);
 
       PigeonOverrides.hTTPCookie_new =
           ({
@@ -48,23 +46,17 @@ void main() {
             cookieProperties = properties;
             return cookie = HTTPCookie.pigeon_detached();
           };
-      cookieManager = WKWebViewCookieManager(
-        websiteDataStore: mockWebsiteDataStore,
-      );
+      cookieManager = WKWebViewCookieManager(websiteDataStore: mockWebsiteDataStore);
     });
 
     test('clearCookies', () async {
       when(
-        mockWebsiteDataStore.removeDataOfTypes(<WebsiteDataType>[
-          WebsiteDataType.cookies,
-        ], any),
+        mockWebsiteDataStore.removeDataOfTypes(<WebsiteDataType>[WebsiteDataType.cookies], any),
       ).thenAnswer((_) => Future<bool>.value(true));
       expect(cookieManager.clearCookies(), completion(true));
 
       when(
-        mockWebsiteDataStore.removeDataOfTypes(<WebsiteDataType>[
-          WebsiteDataType.cookies,
-        ], any),
+        mockWebsiteDataStore.removeDataOfTypes(<WebsiteDataType>[WebsiteDataType.cookies], any),
       ).thenAnswer((_) => Future<bool>.value(false));
       expect(cookieManager.clearCookies(), completion(false));
     });
@@ -86,12 +78,7 @@ void main() {
     test('setCookie throws argument error with invalid path', () async {
       expect(
         () => cookieManager.setCookie(
-          WebViewCookie(
-            name: 'a',
-            value: 'b',
-            domain: 'c',
-            path: String.fromCharCode(0x1F),
-          ),
+          WebViewCookie(name: 'a', value: 'b', domain: 'c', path: String.fromCharCode(0x1F)),
         ),
         throwsArgumentError,
       );
