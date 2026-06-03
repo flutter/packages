@@ -1234,9 +1234,7 @@ void main() {
             GoRoute(
               path: 'settings',
               builder: (_, _) => const DummyScreen(),
-              routes: <RouteBase>[
-                GoRoute(path: 'profile', builder: (_, _) => const DummyScreen()),
-              ],
+              routes: <RouteBase>[GoRoute(path: 'profile', builder: (_, _) => const DummyScreen())],
             ),
           ],
         ),

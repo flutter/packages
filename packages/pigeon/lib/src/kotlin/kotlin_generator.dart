@@ -423,10 +423,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
       indent.write('fun fromList(${varNamePrefix}list: List<Any?>): $className ');
 
       indent.addScoped('{', '}', () {
-        enumerate(getFieldsInSerializationOrder(classDefinition), (
-          int index,
-          NamedType field,
-        ) {
+        enumerate(getFieldsInSerializationOrder(classDefinition), (int index, NamedType field) {
           final listValue = '${varNamePrefix}list[$index]';
           indent.writeln('val ${field.name} = ${_cast(indent, listValue, type: field.type)}');
         });

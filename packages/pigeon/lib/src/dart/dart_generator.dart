@@ -310,10 +310,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       indent.writeln('result as List<Object?>;');
       indent.write('return ${classDefinition.name}');
       indent.addScoped('(', ');', () {
-        enumerate(getFieldsInSerializationOrder(classDefinition), (
-          int index,
-          NamedType field,
-        ) {
+        enumerate(getFieldsInSerializationOrder(classDefinition), (int index, NamedType field) {
           indent.write('${field.name}: ');
           indent.add(_castValue('result[$index]', field.type));
           indent.addln(',');
