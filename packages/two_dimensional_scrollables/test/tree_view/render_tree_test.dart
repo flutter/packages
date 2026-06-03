@@ -682,7 +682,9 @@ void main() {
         await tester.pumpWidget(MaterialApp(home: treeView));
         await tester.pump();
         expect(verticalController.position.pixels, 0.0);
-        expect(verticalController.position.maxScrollExtent, 600.0);
+        // The total height accounts for all visible nodes (7 nodes * 400 = 2800).
+        // With a default viewport height of 600, the max scroll extent is 2200 (2800 - 600).
+        expect(verticalController.position.maxScrollExtent, 2200.0);
 
         bool rowNeedsPaint(String row) {
           return find.text(row).evaluate().first.renderObject!.debugNeedsPaint;
@@ -864,6 +866,128 @@ void main() {
               color: const Color(0xFFF44336),
             ),
         );
+      });
+    });
+
+    group('Scroll bounds', () {
+      // Regression tests for https://github.com/flutter/flutter/issues/164981
+      testWidgets('shrinking to 0 rows updates scroll bounds and does not crash', (
+        WidgetTester tester,
+      ) async {
+        // Setup a TreeView with 10 rows to ensure the content exceeds the viewport height.
+        var rows = 10;
+        late StateSetter setState;
+        final controller = ScrollController();
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: SizedBox(
+                height: 400,
+                width: 400,
+                child: StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setter) {
+                    setState = setter;
+                    return TreeView<String>(
+                      verticalDetails: ScrollableDetails.vertical(
+                        controller: controller,
+                      ),
+                      tree: List<TreeViewNode<String>>.generate(
+                        rows,
+                        (int index) => TreeViewNode<String>('Row $index'),
+                      ),
+                      treeRowBuilder: (TreeViewNode<String> node) =>
+                          const TreeRow(extent: FixedTreeRowExtent(64.0)),
+                      treeNodeBuilder:
+                          (
+                            BuildContext context,
+                            TreeViewNode<String> node,
+                            AnimationStyle toggleAnimationStyle,
+                          ) => Text(node.content),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+        );
+
+        await tester.pump();
+        final double oldMax = controller.position.maxScrollExtent;
+        expect(oldMax, greaterThan(0));
+
+        // Jump to the maximum scroll extent to test position correction.
+        controller.jumpTo(oldMax);
+        await tester.pump();
+        expect(controller.offset, oldMax);
+
+        // Shrink to 0 rows.
+        setState(() {
+          rows = 0;
+        });
+        // This should not crash and should update scroll bounds.
+        await tester.pump();
+
+        // Verify that the scroll bounds are updated to 0.0 and the offset is corrected to 0.0.
+        expect(controller.position.maxScrollExtent, 0.0);
+        expect(controller.offset, 0.0);
+      });
+
+      testWidgets('collapsing last node updates scroll bounds and does not crash', (
+        WidgetTester tester,
+      ) async {
+        final treeController = TreeViewController();
+        final scrollController = ScrollController();
+
+        // Setup a TreeView with one expanded root node and one child node.
+        final treeNodes = <TreeViewNode<String>>[
+          TreeViewNode<String>(
+            'Root',
+            expanded: true,
+            children: <TreeViewNode<String>>[TreeViewNode<String>('Child')],
+          ),
+        ];
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: SizedBox(
+                height: 100,
+                width: 400,
+                child: TreeView<String>(
+                  controller: treeController,
+                  verticalDetails: ScrollableDetails.vertical(
+                    controller: scrollController,
+                  ),
+                  tree: treeNodes,
+                  treeRowBuilder: (TreeViewNode<String> node) =>
+                      const TreeRow(extent: FixedTreeRowExtent(60.0)),
+                  treeNodeBuilder:
+                      (
+                        BuildContext context,
+                        TreeViewNode<String> node,
+                        AnimationStyle toggleAnimationStyle,
+                      ) => Text(node.content),
+                ),
+              ),
+            ),
+          ),
+        );
+
+        await tester.pump();
+        // Root (60) + Child (60) = 120. Viewport is 100. Max scroll extent is 20.
+        expect(scrollController.position.maxScrollExtent, 20.0);
+
+        // Jump to the maximum scroll extent.
+        scrollController.jumpTo(20.0);
+        await tester.pump();
+
+        // Collapse the Root node. Now only Root (60) is visible, fitting within the viewport (100).
+        treeController.toggleNode(treeNodes[0]);
+        await tester.pumpAndSettle();
+
+        // Verify that the scroll bounds are updated to 0.0 and the offset is corrected to 0.0.
+        expect(scrollController.position.maxScrollExtent, 0.0);
+        expect(scrollController.offset, 0.0);
       });
     });
   });

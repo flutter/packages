@@ -136,6 +136,8 @@ void main() {
 
   group('dart analyze', () {
     test('analyzes all packages', () async {
+      // Create a non-Flutter Dart package and a Flutter plugin to make sure
+      // the right command is used for each.
       final RepositoryPackage package1 = createFakePackage('a', packagesDir);
       final RepositoryPackage plugin2 = createFakePlugin('b', packagesDir);
 
@@ -144,7 +146,7 @@ void main() {
       expect(
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[
-          ProcessCall('flutter', const <String>['pub', 'get'], package1.path),
+          ProcessCall('dart', const <String>['pub', 'get'], package1.path),
           ProcessCall('dart', const <String>[
             'analyze',
             '--fatal-infos',
@@ -158,7 +160,7 @@ void main() {
       );
     });
 
-    test('skips flutter pub get for examples', () async {
+    test('skips pub get for examples', () async {
       final RepositoryPackage plugin1 = createFakePlugin('a', packagesDir);
 
       await runCapturingPrint(runner, <String>['analyze']);
@@ -175,7 +177,7 @@ void main() {
       );
     });
 
-    test('runs flutter pub get for non-example subpackages', () async {
+    test('runs pub get for non-example subpackages', () async {
       final RepositoryPackage mainPackage = createFakePackage('a', packagesDir);
       final Directory otherPackagesDir = mainPackage.directory.childDirectory(
         'other_packages',
@@ -194,18 +196,9 @@ void main() {
       expect(
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[
-          ProcessCall('flutter', const <String>[
-            'pub',
-            'get',
-          ], mainPackage.path),
-          ProcessCall('flutter', const <String>[
-            'pub',
-            'get',
-          ], subpackage1.path),
-          ProcessCall('flutter', const <String>[
-            'pub',
-            'get',
-          ], subpackage2.path),
+          ProcessCall('dart', const <String>['pub', 'get'], mainPackage.path),
+          ProcessCall('dart', const <String>['pub', 'get'], subpackage1.path),
+          ProcessCall('dart', const <String>['pub', 'get'], subpackage2.path),
           ProcessCall('dart', const <String>[
             'analyze',
             '--fatal-infos',
@@ -225,7 +218,7 @@ void main() {
       expect(
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[
-          ProcessCall('flutter', const <String>['pub', 'get'], package.path),
+          ProcessCall('dart', const <String>['pub', 'get'], package.path),
           ProcessCall('dart', const <String>[
             'analyze',
             '--fatal-infos',
@@ -255,7 +248,7 @@ void main() {
     });
 
     test(
-      'does not run flutter pub get for non-example subpackages with --lib-only',
+      'does not run pub get for non-example subpackages with --lib-only',
       () async {
         final RepositoryPackage mainPackage = createFakePackage(
           'a',
@@ -272,10 +265,7 @@ void main() {
         expect(
           processRunner.recordedCalls,
           orderedEquals(<ProcessCall>[
-            ProcessCall('flutter', const <String>[
-              'pub',
-              'get',
-            ], mainPackage.path),
+            ProcessCall('dart', const <String>['pub', 'get'], mainPackage.path),
             ProcessCall('dart', const <String>[
               'analyze',
               '--fatal-infos',
@@ -901,11 +891,11 @@ packages/package_a/CHANGELOG.md
       expect(
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[
-          ProcessCall(
-            getFlutterCommand(mockPlatform),
-            const <String>['build', 'apk', '--config-only'],
-            plugin.getExamples().first.directory.path,
-          ),
+          ProcessCall(getFlutterCommand(mockPlatform), const <String>[
+            'build',
+            'apk',
+            '--config-only',
+          ], plugin.getExamples().first.directory.path),
           ProcessCall(androidDir.childFile('gradlew').path, const <String>[
             'plugin1:lintDebug',
           ], androidDir.path),
