@@ -133,6 +133,32 @@ ${readmeTableEntry('a_package', repoName: repoName)}
   });
 
   test(
+    'passes when no .ci.yaml is present if nothing uses batched release',
+    () async {
+      final packages = <RepositoryPackage>[
+        createFakePackage('a_package', packagesDir),
+      ];
+
+      root.childFile('README.md').writeAsStringSync('''
+${readmeTableHeader()}
+${readmeTableEntry('a_package')}
+''');
+      writeAutoLabelerYaml(packages);
+
+      root.childFile('.ci.yaml').deleteSync();
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'validate',
+      ]);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[contains('Running for a_package')]),
+      );
+    },
+  );
+
+  test(
     'passes for federated plugins with only app-facing package listed',
     () async {
       const pluginName = 'foo';

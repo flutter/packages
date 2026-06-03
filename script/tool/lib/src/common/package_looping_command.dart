@@ -95,10 +95,19 @@ abstract class PackageLoopingCommand extends PackageCommand {
           'the provided version, or a Dart version newer than the '
           'corresponding Dart version.',
     );
+    argParser.addOption(
+      _skipByDartVersionArg,
+      help:
+          'Skip any packages that require a Dart version newer than the '
+          'provided version.',
+    );
   }
 
   static const String _skipByFlutterVersionArg =
       'skip-if-not-supporting-flutter-version';
+
+  static const String _skipByDartVersionArg =
+      'skip-if-not-supporting-dart-version';
 
   /// Packages that had at least one [logWarning] call.
   final Set<PackageEnumerationEntry> _packagesWithWarnings =
@@ -289,9 +298,15 @@ abstract class PackageLoopingCommand extends PackageCommand {
     final Version? minFlutterVersion = minFlutterVersionArg.isEmpty
         ? null
         : Version.parse(minFlutterVersionArg);
-    final Version? minDartVersion = minFlutterVersion == null
-        ? null
-        : getDartSdkForFlutterSdk(minFlutterVersion);
+
+    // Use the explicit Dart min if provided, otherwise fall back to the
+    // version corresponding to the Flutter min if that was provided.
+    final String minDartVersionArg = getStringArg(_skipByDartVersionArg);
+    final Version? minDartVersion = minDartVersionArg.isNotEmpty
+        ? Version.parse(minDartVersionArg)
+        : (minFlutterVersion == null
+              ? null
+              : getDartSdkForFlutterSdk(minFlutterVersion));
 
     final runStart = DateTime.now();
 

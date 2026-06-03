@@ -65,20 +65,23 @@ class PubspecValidator {
     required AllowPackageLists allowedPackages,
     required void Function(String) warningLogger,
     required Directory repoRoot,
-    required String minMinFlutterVersion,
+    Version? minMinFlutterVersion,
+    Version? minMinDartVersion,
   }) : _path = path,
        _indentation = indentation,
        _allowedPackages = allowedPackages,
        _logWarning = warningLogger,
        _repoRoot = repoRoot,
-       _minMinFlutterVersion = minMinFlutterVersion;
+       _minMinFlutterVersion = minMinFlutterVersion,
+       _minMinDartVersion = minMinDartVersion;
 
   final path.Context _path;
   final String _indentation;
   final AllowPackageLists _allowedPackages;
   final void Function(String) _logWarning;
   final Directory _repoRoot;
-  final String _minMinFlutterVersion;
+  final Version? _minMinFlutterVersion;
+  final Version? _minMinDartVersion;
 
   /// Validates that the pubspec of a package follows repository conventions,
   /// returning a list of errors.
@@ -115,9 +118,6 @@ class PubspecValidator {
     final String? minVersionError = _checkForMinimumVersionError(
       pubspec,
       package,
-      minMinFlutterVersion: _minMinFlutterVersion.isEmpty
-          ? null
-          : Version.parse(_minMinFlutterVersion),
     );
     if (minVersionError != null) {
       printError('$_indentation$minVersionError');
@@ -423,24 +423,8 @@ class PubspecValidator {
   /// Returns an error string if validation fails.
   String? _checkForMinimumVersionError(
     Pubspec pubspec,
-    RepositoryPackage package, {
-    Version? minMinFlutterVersion,
-  }) {
-    String unknownDartVersionError(Version flutterVersion) {
-      return 'Dart SDK version for Flutter SDK version '
-          '$flutterVersion is unknown. '
-          'Please update the map for getDartSdkForFlutterSdk with the '
-          'corresponding Dart version.';
-    }
-
-    Version? minMinDartVersion;
-    if (minMinFlutterVersion != null) {
-      minMinDartVersion = getDartSdkForFlutterSdk(minMinFlutterVersion);
-      if (minMinDartVersion == null) {
-        return unknownDartVersionError(minMinFlutterVersion);
-      }
-    }
-
+    RepositoryPackage package,
+  ) {
     final Version? dartConstraintMin = _minimumForConstraint(
       pubspec.environment['sdk'],
     );
@@ -449,19 +433,19 @@ class PubspecValidator {
     );
 
     // Validate the Flutter constraint, if any.
-    if (flutterConstraintMin != null && minMinFlutterVersion != null) {
-      if (flutterConstraintMin < minMinFlutterVersion) {
+    if (flutterConstraintMin != null && _minMinFlutterVersion != null) {
+      if (flutterConstraintMin < _minMinFlutterVersion) {
         return 'Minimum allowed Flutter version $flutterConstraintMin is less '
-            'than $minMinFlutterVersion';
+            'than $_minMinFlutterVersion';
       }
     }
 
     // Validate the Dart constraint, if any.
     if (dartConstraintMin != null) {
       // Ensure that it satisfies the minimum.
-      if (minMinDartVersion != null) {
-        if (dartConstraintMin < minMinDartVersion) {
-          return 'Minimum allowed Dart version $dartConstraintMin is less than $minMinDartVersion';
+      if (_minMinDartVersion != null) {
+        if (dartConstraintMin < _minMinDartVersion) {
+          return 'Minimum allowed Dart version $dartConstraintMin is less than $_minMinDartVersion';
         }
       }
 
@@ -471,7 +455,10 @@ class PubspecValidator {
           flutterConstraintMin,
         );
         if (dartVersionForFlutterMinimum == null) {
-          return unknownDartVersionError(flutterConstraintMin);
+          return 'Dart SDK version for Flutter SDK version '
+              '$flutterConstraintMin is unknown. '
+              'Please update the map for getDartSdkForFlutterSdk with the '
+              'corresponding Dart version.';
         }
         if (dartVersionForFlutterMinimum != dartConstraintMin) {
           return 'The minimum Dart version is $dartConstraintMin, but the '

@@ -598,6 +598,7 @@ void setToolConfig(
   Directory repoRoot, {
   String repoName = 'flutter/packages',
   String? minFlutterVersion,
+  String? minDartVersion,
   List<String>? pinnedDependencies,
   List<String>? unpinnedDependencies,
   Map<String, String>? packageLabels,
@@ -605,6 +606,9 @@ void setToolConfig(
   final editor = YamlEditor('{repo_name: $repoName}');
   if (minFlutterVersion != null) {
     editor.update(['min_flutter'], minFlutterVersion);
+  }
+  if (minDartVersion != null) {
+    editor.update(['min_dart'], minDartVersion);
   }
   if (pinnedDependencies != null || unpinnedDependencies != null) {
     const allowedDependenciesKey = 'allowed_dependencies';
