@@ -21,10 +21,7 @@ List<String> unexpectedUnsharedSourceFiles(
       .listSync(recursive: true)
       .whereType<File>()
       // Only report code files.
-      .where(
-        (file) =>
-            <String>['.swift', '.m', '.h', '.dart'].any(file.path.endsWith),
-      )
+      .where((file) => <String>['.swift', '.m', '.h', '.dart'].any(file.path.endsWith))
       // Flutter-generated files aren't expected to be shared.
       .where((file) => !file.path.contains('GeneratedPluginRegistrant'))
       // Ignore intermediate file directories.
@@ -64,10 +61,7 @@ String packageRelativePathForSharedSourceRelativePath(
   String packageName,
   String sharedSourceRelativePath,
 ) {
-  return sharedSourceRelativePath.replaceAll(
-    '/google_maps_flutter_ios/',
-    '/$packageName/',
-  );
+  return sharedSourceRelativePath.replaceAll('/google_maps_flutter_ios/', '/$packageName/');
 }
 
 /// Returns the contents of the file with any differences caused only by the
@@ -76,10 +70,7 @@ String normalizedFileContents(File file) {
   return file
       .readAsStringSync()
       // Ignore differences caused only by the package name.
-      .replaceAll(
-        RegExp(r'google_maps_flutter_ios_[\w\d]+'),
-        'google_maps_flutter_ios',
-      )
+      .replaceAll(RegExp(r'google_maps_flutter_ios_[\w\d]+'), 'google_maps_flutter_ios')
       // Package name diffs could change line wrapping, so collapse whitespace.
       .replaceAll(RegExp(r'[\s\n]+'), ' ')
       .trim();
@@ -106,10 +97,7 @@ void updatePackageNameInPathReferences(File file, String packageName) {
 /// package by name.
 void updatePackageNameInImports(File file, String packageName) {
   final String newContents = file.readAsStringSync().replaceAllMapped(
-    RegExp(
-      r'^(@?)import google_maps_flutter_ios[_\w\d]*(;?)$',
-      multiLine: true,
-    ),
+    RegExp(r'^(@?)import google_maps_flutter_ios[_\w\d]*(;?)$', multiLine: true),
     (match) => '${match.group(1)}import $packageName${match.group(2)}',
   );
   file.writeAsStringSync(newContents);

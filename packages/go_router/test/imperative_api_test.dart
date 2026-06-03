@@ -33,11 +33,7 @@ void main() {
         ],
       ),
     ];
-    final GoRouter router = await createRouter(
-      routes,
-      tester,
-      initialLocation: '/a',
-    );
+    final GoRouter router = await createRouter(routes, tester, initialLocation: '/a');
 
     expect(find.text('shell'), findsOneWidget);
     expect(find.byKey(a), findsOneWidget);
@@ -73,11 +69,7 @@ void main() {
         ],
       ),
     ];
-    final GoRouter router = await createRouter(
-      routes,
-      tester,
-      initialLocation: '/a',
-    );
+    final GoRouter router = await createRouter(routes, tester, initialLocation: '/a');
 
     expect(find.text('shell'), findsNothing);
     expect(find.byKey(a), findsOneWidget);
@@ -89,9 +81,7 @@ void main() {
     expect(find.byKey(b), findsOneWidget);
   });
 
-  testWidgets('shell route reflect imperative push', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('shell route reflect imperative push', (WidgetTester tester) async {
     // Regression test for https://github.com/flutter/flutter/issues/125752.
     final home = UniqueKey();
     final a = UniqueKey();
@@ -117,11 +107,7 @@ void main() {
         ],
       ),
     ];
-    final GoRouter router = await createRouter(
-      routes,
-      tester,
-      initialLocation: '/a',
-    );
+    final GoRouter router = await createRouter(routes, tester, initialLocation: '/a');
 
     expect(find.text('location: /a'), findsOneWidget);
     expect(find.byKey(a), findsOneWidget);
@@ -139,9 +125,7 @@ void main() {
     expect(find.byKey(home), findsNothing);
   });
 
-  testWidgets('push shell route in another shell route', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('push shell route in another shell route', (WidgetTester tester) async {
     // Regression test for https://github.com/flutter/flutter/issues/120791.
     final b = UniqueKey();
     final a = UniqueKey();
@@ -175,11 +159,7 @@ void main() {
         ],
       ),
     ];
-    final GoRouter router = await createRouter(
-      routes,
-      tester,
-      initialLocation: '/a',
-    );
+    final GoRouter router = await createRouter(routes, tester, initialLocation: '/a');
 
     expect(find.text('shell1'), findsOneWidget);
     expect(find.byKey(a), findsOneWidget);
@@ -192,9 +172,7 @@ void main() {
     expect(find.byKey(b), findsOneWidget);
   });
 
-  testWidgets('push inside or outside shell route', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('push inside or outside shell route', (WidgetTester tester) async {
     // Regression test for https://github.com/flutter/flutter/issues/120665.
     final inside = UniqueKey();
     final outside = UniqueKey();
@@ -218,11 +196,7 @@ void main() {
         builder: (_, __) => DummyScreen(key: outside),
       ),
     ];
-    final GoRouter router = await createRouter(
-      routes,
-      tester,
-      initialLocation: '/out',
-    );
+    final GoRouter router = await createRouter(routes, tester, initialLocation: '/out');
 
     expect(find.text('shell'), findsNothing);
     expect(find.byKey(outside), findsOneWidget);
@@ -281,11 +255,7 @@ void main() {
         builder: (_, __) => DummyScreen(key: b),
       ),
     ];
-    final GoRouter router = await createRouter(
-      routes,
-      tester,
-      initialLocation: '/a',
-    );
+    final GoRouter router = await createRouter(routes, tester, initialLocation: '/a');
 
     expect(find.text('shell'), findsOneWidget);
     expect(find.byKey(a), findsOneWidget);

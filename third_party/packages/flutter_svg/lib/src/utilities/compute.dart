@@ -19,7 +19,6 @@ Future<R> _testCompute<Q, R>(
 }
 
 /// A compute implementation that does not spawn isolates in tests.
-const foundation.ComputeImpl compute =
-    (foundation.kDebugMode || foundation.kIsWeb)
+const foundation.ComputeImpl compute = (foundation.kDebugMode || foundation.kIsWeb)
     ? _testCompute
     : foundation.compute;

@@ -67,7 +67,7 @@ android {
         testImplementation("androidx.test.ext:junit-ktx:1.3.0")
         testImplementation("org.robolectric:robolectric:4.16")
         testImplementation("org.mockito:mockito-inline:5.2.0")
-        testImplementation("io.mockk:mockk:1.14.9")
+        testImplementation("io.mockk:mockk:1.14.11")
     }
 
     testOptions {

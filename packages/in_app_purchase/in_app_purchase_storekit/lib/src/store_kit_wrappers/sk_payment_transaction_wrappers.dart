@@ -21,14 +21,10 @@ part 'sk_payment_transaction_wrappers.g.dart';
 /// This class is a Dart wrapper around [SKTransactionObserver](https://developer.apple.com/documentation/storekit/skpaymenttransactionobserver?language=objc).
 abstract class SKTransactionObserverWrapper {
   /// Triggered when any transactions are updated.
-  void updatedTransactions({
-    required List<SKPaymentTransactionWrapper> transactions,
-  });
+  void updatedTransactions({required List<SKPaymentTransactionWrapper> transactions});
 
   /// Triggered when any transactions are removed from the payment queue.
-  void removedTransactions({
-    required List<SKPaymentTransactionWrapper> transactions,
-  });
+  void removedTransactions({required List<SKPaymentTransactionWrapper> transactions});
 
   /// Triggered when there is an error while restoring transactions.
   void restoreCompletedTransactionsFailed({required SKError error});
@@ -98,9 +94,7 @@ enum SKPaymentTransactionStateWrapper {
   unspecified;
 
   /// Converts [SKPaymentTransactionStateMessages] into the dart equivalent
-  static SKPaymentTransactionStateWrapper convertFromPigeon(
-    SKPaymentTransactionStateMessage msg,
-  ) {
+  static SKPaymentTransactionStateWrapper convertFromPigeon(SKPaymentTransactionStateMessage msg) {
     switch (msg) {
       case SKPaymentTransactionStateMessage.purchased:
         return SKPaymentTransactionStateWrapper.purchased;
@@ -232,14 +226,10 @@ class SKPaymentTransactionWrapper {
   };
 
   /// Converts [SKPaymentTransactionMessages] into the dart equivalent
-  static SKPaymentTransactionWrapper convertFromPigeon(
-    SKPaymentTransactionMessage msg,
-  ) {
+  static SKPaymentTransactionWrapper convertFromPigeon(SKPaymentTransactionMessage msg) {
     return SKPaymentTransactionWrapper(
       payment: SKPaymentWrapper.convertFromPigeon(msg.payment),
-      transactionState: SKPaymentTransactionStateWrapper.convertFromPigeon(
-        msg.transactionState,
-      ),
+      transactionState: SKPaymentTransactionStateWrapper.convertFromPigeon(msg.transactionState),
       originalTransaction: msg.originalTransaction == null
           ? null
           : convertFromPigeon(msg.originalTransaction!),

@@ -44,9 +44,7 @@ void main() async {
   });
 
   group('adSense.adUnit', () {
-    testWidgets('Responsive (with adFormat) ad units reflow flutter', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('Responsive (with adFormat) ad units reflow flutter', (WidgetTester tester) async {
       // The size of the ad that we're going to "inject"
       const double expectedHeight = 137;
 
@@ -76,44 +74,38 @@ void main() async {
       expect(size.height, expectedHeight);
     });
 
-    testWidgets(
-      'Fixed size (without adFormat) ad units respect flutter constraints',
-      (WidgetTester tester) async {
-        const double maxHeight = 100;
-        const constraints = BoxConstraints(maxHeight: maxHeight);
-
-        // When
-        mockAdsByGoogle(mockAd(size: const Size(320, 157)));
-
-        await adSense.initialize(testClient);
-
-        final tracker = CallbackTracker();
-        final Widget adUnitWidget = AdUnitWidget(
-          configuration: AdUnitConfiguration.displayAdUnit(adSlot: testSlot),
-          adClient: adSense.adClient,
-          onInjected: tracker.createCallback(),
-        );
-
-        final Widget constrainedAd = Container(
-          constraints: constraints,
-          child: adUnitWidget,
-        );
-
-        await pumpAdWidget(constrainedAd, tester, tracker);
-
-        // Then
-        // Widget level
-        final Finder adUnit = find.byWidget(adUnitWidget);
-        expect(adUnit, findsOneWidget);
-
-        final Size size = tester.getSize(adUnit);
-        expect(size.height, maxHeight);
-      },
-    );
-
-    testWidgets('Unfilled ad units collapse widget height', (
+    testWidgets('Fixed size (without adFormat) ad units respect flutter constraints', (
       WidgetTester tester,
     ) async {
+      const double maxHeight = 100;
+      const constraints = BoxConstraints(maxHeight: maxHeight);
+
+      // When
+      mockAdsByGoogle(mockAd(size: const Size(320, 157)));
+
+      await adSense.initialize(testClient);
+
+      final tracker = CallbackTracker();
+      final Widget adUnitWidget = AdUnitWidget(
+        configuration: AdUnitConfiguration.displayAdUnit(adSlot: testSlot),
+        adClient: adSense.adClient,
+        onInjected: tracker.createCallback(),
+      );
+
+      final Widget constrainedAd = Container(constraints: constraints, child: adUnitWidget);
+
+      await pumpAdWidget(constrainedAd, tester, tracker);
+
+      // Then
+      // Widget level
+      final Finder adUnit = find.byWidget(adUnitWidget);
+      expect(adUnit, findsOneWidget);
+
+      final Size size = tester.getSize(adUnit);
+      expect(size.height, maxHeight);
+    });
+
+    testWidgets('Unfilled ad units collapse widget height', (WidgetTester tester) async {
       // When
       mockAdsByGoogle(mockAd(adStatus: AdStatus.UNFILLED));
 
@@ -176,9 +168,7 @@ void main() async {
           Container(
             constraints: const BoxConstraints(maxHeight: 100),
             child: AdUnitWidget(
-              configuration: AdUnitConfiguration.displayAdUnit(
-                adSlot: testSlot,
-              ),
+              configuration: AdUnitConfiguration.displayAdUnit(adSlot: testSlot),
               adClient: adSense.adClient,
               onInjected: tracker.createCallback(),
             ),
@@ -205,11 +195,7 @@ void main() async {
         200,
         reason: 'Responsive ad widget should resize to match its `ins`',
       );
-      expect(
-        tester.getSize(adUnits.at(1)).height,
-        0,
-        reason: 'Unfulfilled ad should be 0x0',
-      );
+      expect(tester.getSize(adUnits.at(1)).height, 0, reason: 'Unfulfilled ad should be 0x0');
       expect(
         tester.getSize(adUnits.at(2)).height,
         100,
@@ -220,11 +206,7 @@ void main() async {
 }
 
 // Pumps an AdUnit Widget into a given tester, with some parameters
-Future<void> pumpAdWidget(
-  Widget adUnit,
-  WidgetTester tester,
-  CallbackTracker tracker,
-) async {
+Future<void> pumpAdWidget(Widget adUnit, WidgetTester tester, CallbackTracker tracker) async {
   await tester.pumpWidget(
     MaterialApp(
       home: Scaffold(body: Center(child: adUnit)),

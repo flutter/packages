@@ -21,9 +21,7 @@ PlatformException _createConnectionError(String channelName) {
 bool _deepEquals(Object? a, Object? b) {
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed.every(
-          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
-        );
+        a.indexed.every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
     return a.length == b.length &&
@@ -69,11 +67,7 @@ enum AuthBiometric { face, fingerprint }
 ///
 /// See auth_messages_ios.dart for details.
 class AuthStrings {
-  AuthStrings({
-    required this.reason,
-    required this.cancelButton,
-    this.localizedFallbackTitle,
-  });
+  AuthStrings({required this.reason, required this.cancelButton, this.localizedFallbackTitle});
 
   String reason;
 
@@ -132,10 +126,7 @@ class AuthOptions {
 
   static AuthOptions decode(Object result) {
     result as List<Object?>;
-    return AuthOptions(
-      biometricOnly: result[0]! as bool,
-      sticky: result[1]! as bool,
-    );
+    return AuthOptions(biometricOnly: result[0]! as bool, sticky: result[1]! as bool);
   }
 
   @override
@@ -156,11 +147,7 @@ class AuthOptions {
 }
 
 class AuthResultDetails {
-  AuthResultDetails({
-    required this.result,
-    this.errorMessage,
-    this.errorDetails,
-  });
+  AuthResultDetails({required this.result, this.errorMessage, this.errorDetails});
 
   /// The result of authenticating.
   AuthResult result;
@@ -257,13 +244,11 @@ class LocalAuthApi {
   /// Constructor for [LocalAuthApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  LocalAuthApi({
-    BinaryMessenger? binaryMessenger,
-    String messageChannelSuffix = '',
-  }) : pigeonVar_binaryMessenger = binaryMessenger,
-       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
-           ? '.$messageChannelSuffix'
-           : '';
+  LocalAuthApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+    : pigeonVar_binaryMessenger = binaryMessenger,
+      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+          ? '.$messageChannelSuffix'
+          : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -274,15 +259,13 @@ class LocalAuthApi {
   Future<bool> isDeviceSupported() async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.isDeviceSupported$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-          pigeonVar_channelName,
-          pigeonChannelCodec,
-          binaryMessenger: pigeonVar_binaryMessenger,
-        );
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -306,15 +289,13 @@ class LocalAuthApi {
   Future<bool> deviceCanSupportBiometrics() async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.deviceCanSupportBiometrics$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-          pigeonVar_channelName,
-          pigeonChannelCodec,
-          binaryMessenger: pigeonVar_binaryMessenger,
-        );
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -338,15 +319,13 @@ class LocalAuthApi {
   Future<List<AuthBiometric>> getEnrolledBiometrics() async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.getEnrolledBiometrics$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-          pigeonVar_channelName,
-          pigeonChannelCodec,
-          binaryMessenger: pigeonVar_binaryMessenger,
-        );
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -367,23 +346,19 @@ class LocalAuthApi {
 
   /// Attempts to authenticate the user with the provided [options], and using
   /// [strings] for any UI.
-  Future<AuthResultDetails> authenticate(
-    AuthOptions options,
-    AuthStrings strings,
-  ) async {
+  Future<AuthResultDetails> authenticate(AuthOptions options, AuthStrings strings) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.authenticate$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-          pigeonVar_channelName,
-          pigeonChannelCodec,
-          binaryMessenger: pigeonVar_binaryMessenger,
-        );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[options, strings],
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      options,
+      strings,
+    ]);
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {

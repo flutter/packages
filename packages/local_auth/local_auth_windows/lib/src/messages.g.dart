@@ -73,13 +73,11 @@ class LocalAuthApi {
   /// Constructor for [LocalAuthApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  LocalAuthApi({
-    BinaryMessenger? binaryMessenger,
-    String messageChannelSuffix = '',
-  }) : pigeonVar_binaryMessenger = binaryMessenger,
-       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
-           ? '.$messageChannelSuffix'
-           : '';
+  LocalAuthApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+    : pigeonVar_binaryMessenger = binaryMessenger,
+      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+          ? '.$messageChannelSuffix'
+          : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -90,15 +88,13 @@ class LocalAuthApi {
   Future<bool> isDeviceSupported() async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.local_auth_windows.LocalAuthApi.isDeviceSupported$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-          pigeonVar_channelName,
-          pigeonChannelCodec,
-          binaryMessenger: pigeonVar_binaryMessenger,
-        );
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -122,17 +118,13 @@ class LocalAuthApi {
   Future<AuthResult> authenticate(String localizedReason) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.local_auth_windows.LocalAuthApi.authenticate$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-          pigeonVar_channelName,
-          pigeonChannelCodec,
-          binaryMessenger: pigeonVar_binaryMessenger,
-        );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[localizedReason],
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[localizedReason]);
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {

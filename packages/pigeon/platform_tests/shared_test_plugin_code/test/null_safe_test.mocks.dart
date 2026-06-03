@@ -11,8 +11,7 @@ import 'dart:ui' as _i5;
 
 import 'package:flutter/services.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:shared_test_plugin_code/src/generated/nullable_returns.gen.dart'
-    as _i6;
+import 'package:shared_test_plugin_code/src/generated/nullable_returns.gen.dart' as _i6;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -83,8 +82,7 @@ class MockBinaryMessenger extends _i1.Mock implements _i2.BinaryMessenger {
 /// A class which mocks [NullableArgFlutterApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockNullableArgFlutterApi extends _i1.Mock
-    implements _i6.NullableArgFlutterApi {
+class MockNullableArgFlutterApi extends _i1.Mock implements _i6.NullableArgFlutterApi {
   MockNullableArgFlutterApi() {
     _i1.throwOnMissingStub(this);
   }
@@ -102,8 +100,7 @@ class MockNullableArgFlutterApi extends _i1.Mock
 /// A class which mocks [NullableReturnFlutterApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockNullableReturnFlutterApi extends _i1.Mock
-    implements _i6.NullableReturnFlutterApi {
+class MockNullableReturnFlutterApi extends _i1.Mock implements _i6.NullableReturnFlutterApi {
   MockNullableReturnFlutterApi() {
     _i1.throwOnMissingStub(this);
   }
