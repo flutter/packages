@@ -18,11 +18,7 @@ void main() {
       const statusCode = 404;
       const headers = <String, String>{'a': 'header'};
 
-      final response = WebResourceResponse(
-        uri: uri,
-        statusCode: statusCode,
-        headers: headers,
-      );
+      final response = WebResourceResponse(uri: uri, statusCode: statusCode, headers: headers);
 
       expect(response.uri, uri);
       expect(response.statusCode, statusCode);

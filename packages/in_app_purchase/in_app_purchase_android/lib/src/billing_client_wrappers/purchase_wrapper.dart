@@ -155,10 +155,7 @@ class PurchaseWrapper {
 /// This wraps [`com.android.billingclient.api.Purchase.PendingPurchaseUpdate`](https://developer.android.com/reference/com/android/billingclient/api/Purchase.PendingPurchaseUpdate).
 class PendingPurchaseUpdateWrapper {
   /// Creates a pending purchase wrapper update wrapper with the given purchase details.
-  const PendingPurchaseUpdateWrapper({
-    required this.purchaseToken,
-    required this.products,
-  });
+  const PendingPurchaseUpdateWrapper({required this.purchaseToken, required this.products});
 
   /// A token that uniquely identifies this pending transaction.
   final String purchaseToken;

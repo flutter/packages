@@ -47,9 +47,8 @@ typedef RawDatagramSocketFactory =
 /// section 5.1 of [RFC 6762](https://tools.ietf.org/html/rfc6762).
 class MDnsClient {
   /// Create a new [MDnsClient].
-  MDnsClient({
-    RawDatagramSocketFactory rawDatagramSocketFactory = RawDatagramSocket.bind,
-  }) : _rawDatagramSocketFactory = rawDatagramSocketFactory;
+  MDnsClient({RawDatagramSocketFactory rawDatagramSocketFactory = RawDatagramSocket.bind})
+    : _rawDatagramSocketFactory = rawDatagramSocketFactory;
 
   bool _starting = false;
   bool _started = false;
@@ -63,14 +62,8 @@ class MDnsClient {
   int? _mDnsPort;
 
   /// Find all network interfaces with an the [InternetAddressType] specified.
-  Future<Iterable<NetworkInterface>> allInterfacesFactory(
-    InternetAddressType type,
-  ) {
-    return NetworkInterface.list(
-      includeLinkLocal: true,
-      type: type,
-      includeLoopback: true,
-    );
+  Future<Iterable<NetworkInterface>> allInterfacesFactory(InternetAddressType type) {
+    return NetworkInterface.list(includeLinkLocal: true, type: type, includeLoopback: true);
   }
 
   /// Start the mDNS client.
@@ -168,10 +161,7 @@ class MDnsClient {
       // Join multicast on this interface.
       incoming.joinMulticast(_mDnsAddress!, interface);
     }
-    incoming.listen(
-      (RawSocketEvent event) => _handleIncoming(event, incoming),
-      onError: onError,
-    );
+    incoming.listen((RawSocketEvent event) => _handleIncoming(event, incoming), onError: onError);
     _started = true;
     _starting = false;
   }
@@ -218,11 +208,7 @@ class MDnsClient {
     }
     // Look for entries in the cache.
     final cached = <T>[];
-    _cache.lookup<T>(
-      query.fullyQualifiedName,
-      query.resourceRecordType,
-      cached,
-    );
+    _cache.lookup<T>(query.fullyQualifiedName, query.resourceRecordType, cached);
     if (cached.isNotEmpty) {
       final controller = StreamController<T>();
       cached.forEach(controller.add);
