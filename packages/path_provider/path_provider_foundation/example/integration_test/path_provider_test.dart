@@ -29,7 +29,8 @@ void main() {
     testWidgets('getTemporaryDirectory', (WidgetTester tester) async {
       final PathProviderPlatform provider = PathProviderPlatform.instance;
       final String? result = await provider.getTemporaryPath();
-      _verifySampleFile(result, 'temporaryDirectory');
+      // getTemporaryPath does not guarantee that the returned directory exists.
+      _verifySampleFile(result, 'temporaryDirectory', createDirectory: true);
     });
 
     testWidgets('getApplicationDocumentsDirectory', (WidgetTester tester) async {
@@ -374,7 +375,7 @@ NSArray _arrayWithString(String s) {
 /// contents when necessary.
 ///
 /// If [createDirectory] is true, the directory will be created if missing.
-void _verifySampleFile(String? directoryPath, String name) {
+void _verifySampleFile(String? directoryPath, String name, {bool createDirectory = false}) {
   expect(directoryPath, isNotNull);
   if (directoryPath == null) {
     return;
@@ -385,6 +386,10 @@ void _verifySampleFile(String? directoryPath, String name) {
   if (file.existsSync()) {
     file.deleteSync();
     expect(file.existsSync(), isFalse);
+  }
+
+  if (createDirectory && !directory.existsSync()) {
+    directory.createSync(recursive: true);
   }
 
   file.writeAsStringSync('Hello world!');
