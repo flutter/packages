@@ -85,7 +85,7 @@ class ImageOptions {
   final bool requestFullMetadata;
 
   /// Validates that all values are within required ranges. Throws if not.
-  static void _validateOptions({double? maxWidth, final double? maxHeight, int? imageQuality}) {
+  static void _validateOptions({double? maxWidth, double? maxHeight, int? imageQuality}) {
     if (imageQuality != null && (imageQuality < 0 || imageQuality > 100)) {
       throw ArgumentError.value(imageQuality, 'imageQuality', 'must be between 0 and 100');
     }

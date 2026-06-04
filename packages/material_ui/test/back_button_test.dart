@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async' show unawaited;
 import 'dart:ui' show PointerDeviceKind;
 
 import 'package:flutter/foundation.dart';
@@ -23,7 +24,7 @@ void main() {
         ),
       );
 
-      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+      unawaited(tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next'));
 
       await tester.pumpAndSettle();
 
@@ -49,7 +50,7 @@ void main() {
         ),
       );
 
-      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+      unawaited(tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next'));
 
       await tester.pumpAndSettle();
 
@@ -187,7 +188,7 @@ void main() {
         ),
       );
 
-      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+      unawaited(tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next'));
 
       await tester.pumpAndSettle();
       final String? expectedLabel;
@@ -232,7 +233,7 @@ void main() {
         ),
       );
 
-      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+      unawaited(tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next'));
 
       await tester.pumpAndSettle();
       final String? expectedLabel;
@@ -330,7 +331,7 @@ void main() {
         ),
       );
 
-      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+      unawaited(tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next'));
 
       await tester.pumpAndSettle();
       expect(find.text('Home'), findsNothing); // Start off on the second page.

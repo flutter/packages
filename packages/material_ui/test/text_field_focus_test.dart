@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async' show unawaited;
 import 'dart:ui';
 
 import 'package:flutter/services.dart';
@@ -48,9 +49,11 @@ void main() {
 
     final BuildContext context = tester.element(find.byType(TextField));
 
-    await showDialog<void>(
-      context: context,
-      builder: (BuildContext context) => const SimpleDialog(title: Text('Dialog')),
+    unawaited(
+      showDialog<void>(
+        context: context,
+        builder: (BuildContext context) => const SimpleDialog(title: Text('Dialog')),
+      ),
     );
 
     await tester.pump();
@@ -433,51 +436,49 @@ void main() {
     variant: TargetPlatformVariant.desktop(),
   );
 
-  testWidgets(
-    'A Focused text-field will not lose focus when clicking on its decoration',
-    (WidgetTester tester) async {
-      final focusNodeA = FocusNode();
-      addTearDown(focusNodeA.dispose);
-      final Key iconKey = UniqueKey();
+  testWidgets('A Focused text-field will not lose focus when clicking on its decoration', (
+    WidgetTester tester,
+  ) async {
+    final focusNodeA = FocusNode();
+    addTearDown(focusNodeA.dispose);
+    final Key iconKey = UniqueKey();
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Material(
-            child: ListView(
-              children: <Widget>[
-                TextField(
-                  focusNode: focusNodeA,
-                  decoration: InputDecoration(icon: Icon(Icons.copy_all, key: iconKey)),
-                ),
-              ],
-            ),
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: ListView(
+            children: <Widget>[
+              TextField(
+                focusNode: focusNodeA,
+                decoration: InputDecoration(icon: Icon(Icons.copy_all, key: iconKey)),
+              ),
+            ],
           ),
         ),
-      );
+      ),
+    );
 
-      final TestGesture down1 = await tester.startGesture(
-        tester.getCenter(find.byType(TextField).first),
-        kind: PointerDeviceKind.mouse,
-      );
-      await tester.pump();
-      await down1.removePointer();
+    final TestGesture down1 = await tester.startGesture(
+      tester.getCenter(find.byType(TextField).first),
+      kind: PointerDeviceKind.mouse,
+    );
+    await tester.pump();
+    await down1.removePointer();
 
-      expect(focusNodeA.hasFocus, true);
+    expect(focusNodeA.hasFocus, true);
 
-      // Click on the icon which has a different RO than the text field's focus node context
-      final TestGesture down2 = await tester.startGesture(
-        tester.getCenter(find.byKey(iconKey)),
-        kind: PointerDeviceKind.mouse,
-      );
-      await tester.pump();
-      await tester.pumpAndSettle();
-      await down2.up();
-      await down2.removePointer();
+    // Click on the icon which has a different RO than the text field's focus node context
+    final TestGesture down2 = await tester.startGesture(
+      tester.getCenter(find.byKey(iconKey)),
+      kind: PointerDeviceKind.mouse,
+    );
+    await tester.pump();
+    await tester.pumpAndSettle();
+    await down2.up();
+    await down2.removePointer();
 
-      expect(focusNodeA.hasFocus, true);
-    },
-    variant: TargetPlatformVariant.desktop(),
-  );
+    expect(focusNodeA.hasFocus, true);
+  }, variant: TargetPlatformVariant.desktop());
 
   testWidgets(
     'A Focused text-field will lose focus when clicking outside of its hitbox with a mouse on desktop after tab navigation',

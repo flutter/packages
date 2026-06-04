@@ -38,7 +38,7 @@ void main() {
   testWidgets('getImageFromSource can select a file', (WidgetTester _) async {
     final mockInput = web.HTMLInputElement()..type = 'file';
     final overrides = ImagePickerPluginTestOverrides()
-      ..createInputElement = ((_, __) => mockInput)
+      ..createInputElement = ((_, _) => mockInput)
       ..getMultipleFilesFromInput = ((_) => <web.File>[textFile]);
 
     final plugin = ImagePickerPlugin(overrides: overrides);
@@ -72,7 +72,7 @@ void main() {
     final mockInput = web.HTMLInputElement()..type = 'file';
 
     final overrides = ImagePickerPluginTestOverrides()
-      ..createInputElement = ((_, __) => mockInput)
+      ..createInputElement = ((_, _) => mockInput)
       ..getMultipleFilesFromInput = ((_) => <web.File>[textFile, secondTextFile]);
 
     final plugin = ImagePickerPlugin(overrides: overrides);
@@ -100,7 +100,7 @@ void main() {
     final mockInput = web.HTMLInputElement()..type = 'file';
 
     final overrides = ImagePickerPluginTestOverrides()
-      ..createInputElement = ((_, __) => mockInput)
+      ..createInputElement = ((_, _) => mockInput)
       ..getMultipleFilesFromInput = ((_) => <web.File>[textFile, secondTextFile]);
 
     final plugin = ImagePickerPlugin(overrides: overrides);
@@ -130,7 +130,7 @@ void main() {
     final mockInput = web.HTMLInputElement()..type = 'file';
 
     final overrides = ImagePickerPluginTestOverrides()
-      ..createInputElement = ((_, __) => mockInput)
+      ..createInputElement = ((_, _) => mockInput)
       ..getMultipleFilesFromInput = ((_) => <web.File>[textFile, secondTextFile]);
 
     final plugin = ImagePickerPlugin(overrides: overrides);
@@ -162,7 +162,7 @@ void main() {
     setUp(() {
       mockInput = web.HTMLInputElement()..type = 'file';
       overrides = ImagePickerPluginTestOverrides()
-        ..createInputElement = ((_, __) => mockInput)
+        ..createInputElement = ((_, _) => mockInput)
         ..getMultipleFilesFromInput = ((_) => <web.File>[textFile]);
       plugin = ImagePickerPlugin(overrides: overrides);
     });
@@ -271,7 +271,7 @@ void main() {
     setUp(() {
       mockInput = web.HTMLInputElement()..type = 'file';
       overrides = ImagePickerPluginTestOverrides()
-        ..createInputElement = ((_, __) => mockInput)
+        ..createInputElement = ((_, _) => mockInput)
         ..getMultipleFilesFromInput = ((_) => <web.File>[textFile]);
       plugin = ImagePickerPlugin(overrides: overrides);
     });

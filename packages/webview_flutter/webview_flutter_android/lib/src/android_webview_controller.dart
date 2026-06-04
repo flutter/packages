@@ -322,7 +322,7 @@ class AndroidWebViewController extends PlatformWebViewController {
       };
     }),
     onJsAlert: withWeakReferenceTo(this, (WeakReference<AndroidWebViewController> weakReference) {
-      return (_, __, String url, String message) async {
+      return (_, _, String url, String message) async {
         final Future<void> Function(JavaScriptAlertDialogRequest)? callback =
             weakReference.target?._onJavaScriptAlert;
         if (callback != null) {
@@ -334,7 +334,7 @@ class AndroidWebViewController extends PlatformWebViewController {
       };
     }),
     onJsConfirm: withWeakReferenceTo(this, (WeakReference<AndroidWebViewController> weakReference) {
-      return (_, __, String url, String message) async {
+      return (_, _, String url, String message) async {
         final Future<bool> Function(JavaScriptConfirmDialogRequest)? callback =
             weakReference.target?._onJavaScriptConfirm;
         if (callback != null) {
@@ -346,7 +346,7 @@ class AndroidWebViewController extends PlatformWebViewController {
       };
     }),
     onJsPrompt: withWeakReferenceTo(this, (WeakReference<AndroidWebViewController> weakReference) {
-      return (_, __, String url, String message, String defaultValue) async {
+      return (_, _, String url, String message, String defaultValue) async {
         final Future<String> Function(JavaScriptTextInputDialogRequest)? callback =
             weakReference.target?._onJavaScriptPrompt;
         if (callback != null) {
@@ -1487,14 +1487,14 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
               httpAuthHandler.cancel();
             }
           },
-      onFormResubmission: (_, __, android_webview.AndroidMessage dontResend, ___) {
+      onFormResubmission: (_, _, android_webview.AndroidMessage dontResend, _) {
         dontResend.sendToTarget();
       },
-      onReceivedClientCertRequest: (_, __, android_webview.ClientCertRequest request) {
+      onReceivedClientCertRequest: (_, _, android_webview.ClientCertRequest request) {
         request.cancel();
       },
       onReceivedSslError:
-          (_, __, android_webview.SslErrorHandler handler, android_webview.SslError error) async {
+          (_, _, android_webview.SslErrorHandler handler, android_webview.SslError error) async {
             final void Function(PlatformSslAuthError)? callback = weakThis.target?._onSslAuthError;
 
             if (callback != null) {
@@ -1528,8 +1528,8 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
   }
 
   late final android_webview.WebChromeClient _webChromeClient = android_webview.WebChromeClient(
-    onJsConfirm: (_, __, ___, ____) async => false,
-    onShowFileChooser: (_, __, ___) async => <String>[],
+    onJsConfirm: (_, _, _, _) async => false,
+    onShowFileChooser: (_, _, _) async => <String>[],
   );
 
   /// Gets the native [android_webview.WebChromeClient] that is bridged by this [AndroidNavigationDelegate].

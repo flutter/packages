@@ -3,8 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:material_ui_examples/expansible/expansible.0.dart'
-    as example;
+import 'package:material_ui_examples/expansible/expansible.0.dart' as example;
 
 void main() {
   testWidgets('Expansible can be expanded', (WidgetTester tester) async {

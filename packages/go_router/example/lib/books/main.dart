@@ -37,7 +37,7 @@ class Bookstore extends StatelessWidget {
 
   late final GoRouter _router = GoRouter(
     routes: <GoRoute>[
-      GoRoute(path: '/', redirect: (_, __) => '/books'),
+      GoRoute(path: '/', redirect: (_, _) => '/books'),
       GoRoute(
         path: '/signin',
         pageBuilder: (BuildContext context, GoRouterState state) => FadeTransitionPage(
@@ -49,7 +49,7 @@ class Bookstore extends StatelessWidget {
           ),
         ),
       ),
-      GoRoute(path: '/books', redirect: (_, __) => '/books/popular'),
+      GoRoute(path: '/books', redirect: (_, _) => '/books/popular'),
       GoRoute(
         path: '/book/:bookId',
         redirect: (BuildContext context, GoRouterState state) =>

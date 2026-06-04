@@ -5,7 +5,6 @@
 @Skip(
   'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
 )
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:material_ui/material_ui.dart';
@@ -1633,32 +1632,30 @@ void main() {
     }
   });
 
-  testWidgets(
-    'ElevatedButton uses InkSparkle only for Android non-web when useMaterial3 is true',
-    (WidgetTester tester) async {
-      final theme = ThemeData();
+  testWidgets('ElevatedButton uses InkSparkle only for Android non-web when useMaterial3 is true', (
+    WidgetTester tester,
+  ) async {
+    final theme = ThemeData();
 
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: theme,
-          home: Center(
-            child: ElevatedButton(onPressed: () {}, child: const Text('button')),
-          ),
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: theme,
+        home: Center(
+          child: ElevatedButton(onPressed: () {}, child: const Text('button')),
         ),
-      );
+      ),
+    );
 
-      final InkWell buttonInkWell = tester.widget<InkWell>(
-        find.descendant(of: find.byType(ElevatedButton), matching: find.byType(InkWell)),
-      );
+    final InkWell buttonInkWell = tester.widget<InkWell>(
+      find.descendant(of: find.byType(ElevatedButton), matching: find.byType(InkWell)),
+    );
 
-      if (debugDefaultTargetPlatformOverride! == TargetPlatform.android && !kIsWeb) {
-        expect(buttonInkWell.splashFactory, equals(InkSparkle.splashFactory));
-      } else {
-        expect(buttonInkWell.splashFactory, equals(InkRipple.splashFactory));
-      }
-    },
-    variant: TargetPlatformVariant.all(),
-  );
+    if (debugDefaultTargetPlatformOverride! == TargetPlatform.android && !kIsWeb) {
+      expect(buttonInkWell.splashFactory, equals(InkSparkle.splashFactory));
+    } else {
+      expect(buttonInkWell.splashFactory, equals(InkRipple.splashFactory));
+    }
+  }, variant: TargetPlatformVariant.all());
 
   testWidgets('ElevatedButton uses InkRipple when useMaterial3 is false', (
     WidgetTester tester,

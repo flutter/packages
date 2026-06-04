@@ -5,7 +5,6 @@
 @Skip(
   'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
 )
-
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/gestures.dart';
 import 'package:material_ui/material_ui.dart';

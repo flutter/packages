@@ -20,7 +20,7 @@ class App extends StatelessWidget {
 
   final GoRouter _router = GoRouter(
     routes: <GoRoute>[
-      GoRoute(path: '/', redirect: (_, __) => '/none'),
+      GoRoute(path: '/', redirect: (_, _) => '/none'),
       GoRoute(
         path: '/fade',
         pageBuilder: (BuildContext context, GoRouterState state) => CustomTransitionPage<void>(

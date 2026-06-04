@@ -223,7 +223,7 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
 
     indent.write('public enum ${anEnum.name} ');
     indent.addScoped('{', '}', () {
-      enumerate(anEnum.members, (int index, final EnumMember member) {
+      enumerate(anEnum.members, (int index, EnumMember member) {
         addDocumentationComments(indent, member.documentationComments, _docCommentSpec);
         indent.writeln(
           '${camelToSnake(member.name)}($index)${index == anEnum.members.length - 1 ? ';' : ','}',
@@ -611,7 +611,7 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
     indent.addScoped('{', '}', () {
       const result = 'pigeonResult';
       indent.writeln('${classDefinition.name} $result = new ${classDefinition.name}();');
-      enumerate(getFieldsInSerializationOrder(classDefinition), (int index, final NamedType field) {
+      enumerate(getFieldsInSerializationOrder(classDefinition), (int index, NamedType field) {
         final String fieldVariable = field.name;
         final String setter = _makeSetter(field);
         indent.writeln('Object $fieldVariable = ${varNamePrefix}list.get($index);');
@@ -1047,7 +1047,7 @@ if (wrapped == null) {
     Root root,
     Indent indent,
     Api api,
-    final Method method,
+    Method method,
   ) {
     final String resultType = _getResultType(method.returnType);
     final String nullableType = method.isAsynchronous
@@ -1088,7 +1088,7 @@ if (wrapped == null) {
     Root root,
     Indent indent,
     Api api,
-    final Method method, {
+    Method method, {
     required String dartPackageName,
     String? serialBackgroundQueue,
   }) {

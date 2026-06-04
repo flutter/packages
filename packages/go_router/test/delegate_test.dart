@@ -17,9 +17,9 @@ Future<GoRouter> createGoRouter(
   final router = GoRouter(
     initialLocation: '/',
     routes: <GoRoute>[
-      GoRoute(path: '/', builder: (_, __) => const DummyStatefulWidget()),
-      GoRoute(path: '/a', builder: (_, __) => const DummyStatefulWidget()),
-      GoRoute(path: '/error', builder: (_, __) => const ErrorScreen(null)),
+      GoRoute(path: '/', builder: (_, _) => const DummyStatefulWidget()),
+      GoRoute(path: '/a', builder: (_, _) => const DummyStatefulWidget()),
+      GoRoute(path: '/error', builder: (_, _) => const ErrorScreen(null)),
     ],
     refreshListenable: refreshListenable,
   );
@@ -34,18 +34,18 @@ Future<GoRouter> createGoRouterWithStatefulShellRoute(WidgetTester tester) async
   final router = GoRouter(
     initialLocation: '/',
     routes: <RouteBase>[
-      GoRoute(path: '/', builder: (_, __) => const DummyStatefulWidget()),
-      GoRoute(path: '/a', builder: (_, __) => const DummyStatefulWidget()),
+      GoRoute(path: '/', builder: (_, _) => const DummyStatefulWidget()),
+      GoRoute(path: '/a', builder: (_, _) => const DummyStatefulWidget()),
       StatefulShellRoute.indexedStack(
         branches: <StatefulShellBranch>[
           StatefulShellBranch(
             routes: <RouteBase>[
               GoRoute(
                 path: '/c',
-                builder: (_, __) => const DummyStatefulWidget(),
+                builder: (_, _) => const DummyStatefulWidget(),
                 routes: <RouteBase>[
-                  GoRoute(path: 'c1', builder: (_, __) => const DummyStatefulWidget()),
-                  GoRoute(path: 'c2', builder: (_, __) => const DummyStatefulWidget()),
+                  GoRoute(path: 'c1', builder: (_, _) => const DummyStatefulWidget()),
+                  GoRoute(path: 'c2', builder: (_, _) => const DummyStatefulWidget()),
                 ],
               ),
             ],
@@ -54,9 +54,9 @@ Future<GoRouter> createGoRouterWithStatefulShellRoute(WidgetTester tester) async
             routes: <RouteBase>[
               GoRoute(
                 path: '/d',
-                builder: (_, __) => const DummyStatefulWidget(),
+                builder: (_, _) => const DummyStatefulWidget(),
                 routes: <RouteBase>[
-                  GoRoute(path: 'd1', builder: (_, __) => const DummyStatefulWidget()),
+                  GoRoute(path: 'd1', builder: (_, _) => const DummyStatefulWidget()),
                 ],
               ),
             ],
@@ -89,7 +89,7 @@ Future<GoRouter> createGoRouterWithStatefulShellRouteAndPopScopes(
             routes: <RouteBase>[
               GoRoute(
                 path: '/c',
-                builder: (_, __) => PopScope(
+                builder: (_, _) => PopScope(
                   onPopInvokedWithResult: onPopBranch,
                   canPop: canPopBranch,
                   child: const Text('Home'),
@@ -97,7 +97,7 @@ Future<GoRouter> createGoRouterWithStatefulShellRouteAndPopScopes(
                 routes: <RouteBase>[
                   GoRoute(
                     path: 'c1',
-                    builder: (_, __) => PopScope(
+                    builder: (_, _) => PopScope(
                       onPopInvokedWithResult: onPopBranchSubRoute,
                       canPop: canPopBranchSubRoute,
                       child: const Text('SubRoute'),
@@ -165,7 +165,7 @@ void main() {
         routes: <GoRoute>[
           GoRoute(
             path: '/',
-            builder: (_, __) => PopScope(
+            builder: (_, _) => PopScope(
               onPopInvokedWithResult: (bool result, _) {
                 didPop = true;
               },
@@ -202,9 +202,9 @@ void main() {
       await createGoRouterWithStatefulShellRouteAndPopScopes(
         tester,
         canPopShellRouteBuilder: false,
-        onPopShellRouteBuilder: (_, __) => didPopShellRouteBuilder = true,
-        onPopBranch: (_, __) => didPopBranch = true,
-        onPopBranchSubRoute: (_, __) => didPopBranchSubRoute = true,
+        onPopShellRouteBuilder: (_, _) => didPopShellRouteBuilder = true,
+        onPopBranch: (_, _) => didPopBranch = true,
+        onPopBranchSubRoute: (_, _) => didPopBranchSubRoute = true,
       );
 
       expect(find.text('Home'), findsOneWidget);
@@ -229,9 +229,9 @@ void main() {
       await createGoRouterWithStatefulShellRouteAndPopScopes(
         tester,
         canPopBranch: false,
-        onPopShellRouteBuilder: (_, __) => didPopShellRouteBuilder = true,
-        onPopBranch: (_, __) => didPopBranch = true,
-        onPopBranchSubRoute: (_, __) => didPopBranchSubRoute = true,
+        onPopShellRouteBuilder: (_, _) => didPopShellRouteBuilder = true,
+        onPopBranch: (_, _) => didPopBranch = true,
+        onPopBranchSubRoute: (_, _) => didPopBranchSubRoute = true,
       );
 
       expect(find.text('Home'), findsOneWidget);
@@ -256,9 +256,9 @@ void main() {
       final GoRouter goRouter = await createGoRouterWithStatefulShellRouteAndPopScopes(
         tester,
         canPopBranchSubRoute: false,
-        onPopShellRouteBuilder: (_, __) => didPopShellRouteBuilder = true,
-        onPopBranch: (_, __) => didPopBranch = true,
-        onPopBranchSubRoute: (_, __) => didPopBranchSubRoute = true,
+        onPopShellRouteBuilder: (_, _) => didPopShellRouteBuilder = true,
+        onPopBranch: (_, _) => didPopBranch = true,
+        onPopBranchSubRoute: (_, _) => didPopBranchSubRoute = true,
       );
 
       goRouter.push('/c/c1');
@@ -290,17 +290,17 @@ void main() {
       final GoRouter goRouter = await createRouter(<RouteBase>[
         ShellRoute(
           navigatorKey: rootKey,
-          builder: (_, __, Widget child) => child,
+          builder: (_, _, Widget child) => child,
           routes: <RouteBase>[
             ShellRoute(
               parentNavigatorKey: rootKey,
               navigatorKey: navKey,
-              builder: (_, __, Widget child) => child,
+              builder: (_, _, Widget child) => child,
               routes: <RouteBase>[
                 GoRoute(
                   path: '/',
                   parentNavigatorKey: navKey,
-                  builder: (_, __) => const Text('Home'),
+                  builder: (_, _) => const Text('Home'),
                 ),
               ],
             ),
@@ -324,17 +324,17 @@ void main() {
       final GoRouter goRouter = await createRouter(<RouteBase>[
         ShellRoute(
           navigatorKey: rootKey,
-          builder: (_, __, Widget child) => child,
+          builder: (_, _, Widget child) => child,
           routes: <RouteBase>[
             ShellRoute(
               parentNavigatorKey: rootKey,
               navigatorKey: navKey,
-              builder: (_, __, Widget child) => child,
+              builder: (_, _, Widget child) => child,
               routes: <RouteBase>[
                 GoRoute(
                   path: '/',
                   parentNavigatorKey: navKey,
-                  builder: (_, __) => const Text('Home'),
+                  builder: (_, _) => const Text('Home'),
                 ),
               ],
             ),
@@ -449,9 +449,9 @@ void main() {
       final goRouter = GoRouter(
         initialLocation: '/',
         routes: <GoRoute>[
-          GoRoute(path: '/', builder: (_, __) => const SizedBox()),
-          GoRoute(path: '/page-0', builder: (_, __) => const SizedBox()),
-          GoRoute(path: '/page-1', builder: (_, __) => const SizedBox()),
+          GoRoute(path: '/', builder: (_, _) => const SizedBox()),
+          GoRoute(path: '/page-0', builder: (_, _) => const SizedBox()),
+          GoRoute(path: '/page-1', builder: (_, _) => const SizedBox()),
         ],
       );
       addTearDown(goRouter.dispose);
@@ -512,9 +512,9 @@ void main() {
       final goRouter = GoRouter(
         initialLocation: '/',
         routes: <GoRoute>[
-          GoRoute(path: '/', builder: (_, __) => const SizedBox()),
-          GoRoute(path: '/page-0', name: 'page0', builder: (_, __) => const SizedBox()),
-          GoRoute(path: '/page-1', name: 'page1', builder: (_, __) => const SizedBox()),
+          GoRoute(path: '/', builder: (_, _) => const SizedBox()),
+          GoRoute(path: '/page-0', name: 'page0', builder: (_, _) => const SizedBox()),
+          GoRoute(path: '/page-1', name: 'page1', builder: (_, _) => const SizedBox()),
         ],
       );
       addTearDown(goRouter.dispose);
@@ -554,9 +554,9 @@ void main() {
       final goRouter = GoRouter(
         initialLocation: '/',
         routes: <GoRoute>[
-          GoRoute(path: '/', builder: (_, __) => const SizedBox()),
-          GoRoute(path: '/page-0', builder: (_, __) => const SizedBox()),
-          GoRoute(path: '/page-1', builder: (_, __) => const SizedBox()),
+          GoRoute(path: '/', builder: (_, _) => const SizedBox()),
+          GoRoute(path: '/page-0', builder: (_, _) => const SizedBox()),
+          GoRoute(path: '/page-1', builder: (_, _) => const SizedBox()),
         ],
       );
       addTearDown(goRouter.dispose);
@@ -635,9 +635,9 @@ void main() {
       final router = GoRouter(
         initialLocation: '/',
         routes: <GoRoute>[
-          GoRoute(path: '/', name: 'home', builder: (_, __) => const SizedBox()),
-          GoRoute(path: '/page-0', name: 'page0', builder: (_, __) => const SizedBox()),
-          GoRoute(path: '/page-1', name: 'page1', builder: (_, __) => const SizedBox()),
+          GoRoute(path: '/', name: 'home', builder: (_, _) => const SizedBox()),
+          GoRoute(path: '/page-0', name: 'page0', builder: (_, _) => const SizedBox()),
+          GoRoute(path: '/page-1', name: 'page1', builder: (_, _) => const SizedBox()),
         ],
       );
       addTearDown(router.dispose);

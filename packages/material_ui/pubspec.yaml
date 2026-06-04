@@ -6,7 +6,7 @@ repository: https://github.com/flutter/packages/tree/main/packages/material_ui
 issue_tracker:  https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A%20material%20design%22
 
 environment:
-  sdk: ^3.9.0
+  sdk: ^3.12.0
   flutter: ">=3.44.0"
 
 workspace:

@@ -756,25 +756,21 @@ class _ContextMenuRoute<T> extends PopupRoute<T> {
   // Build a _ContextMenuRoute.
   _ContextMenuRoute({
     required List<Widget> actions,
-    required _ContextMenuLocation contextMenuLocation,
+    required this._contextMenuLocation,
     this.barrierLabel,
-    CupertinoContextMenuBuilder? builder,
+    this._builder,
     super.filter,
-    required Rect previousChildRect,
-    required double scaleFactor,
+    required this._previousChildRect,
+    required this._scaleFactor,
     super.settings,
   }) : assert(actions.isNotEmpty),
-       _actions = actions,
-       _builder = builder,
-       _contextMenuLocation = contextMenuLocation,
-       _previousChildRect = previousChildRect,
-       _scaleFactor = scaleFactor;
+       _actions = actions;
 
   // Barrier color for a Cupertino modal barrier.
   static const Color _kModalBarrierColor = Color(0x6604040F);
 
   final List<Widget> _actions;
-  final CupertinoContextMenuBuilder? _builder;
+  late final CupertinoContextMenuBuilder? _builder;
   final GlobalKey _childGlobalKey = GlobalKey();
   final _ContextMenuLocation _contextMenuLocation;
   bool _externalOffstage = false;

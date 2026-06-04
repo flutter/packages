@@ -5,7 +5,6 @@
 @Skip(
   'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
 )
-
 import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
@@ -4109,12 +4108,11 @@ void main() {
           darkColor: Color.fromRGBO(150, 0, 0, 1),
         );
 
-        const decoration = WidgetStateProperty<BoxDecoration>.fromMap(
-          <WidgetStatesConstraint, BoxDecoration>{
-            WidgetState.dragged: BoxDecoration(color: customSwipedColor),
-            WidgetState.any: BoxDecoration(),
-          },
-        );
+        const decoration =
+            WidgetStateProperty<BoxDecoration>.fromMap(<WidgetStatesConstraint, BoxDecoration>{
+              WidgetState.dragged: BoxDecoration(color: customSwipedColor),
+              WidgetState.any: BoxDecoration(),
+            });
 
         BoxDecoration getItemDecoration(Tag tag) {
           return tester

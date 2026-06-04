@@ -55,12 +55,8 @@ class CupertinoFocusHalo extends StatefulWidget {
   ///   ),
   /// )
   /// ```
-  const CupertinoFocusHalo.withRRect({
-    required this.child,
-    required BorderRadiusGeometry borderRadius,
-    super.key,
-  }) : _borderRadius = borderRadius,
-       _shapeBuilder = RoundedRectangleBorder.new;
+  const CupertinoFocusHalo.withRRect({required this.child, required this._borderRadius, super.key})
+    : _shapeBuilder = RoundedRectangleBorder.new;
 
   /// Creates a rounded superellipse-shaped [CupertinoFocusHalo] around the child
   ///
@@ -85,10 +81,9 @@ class CupertinoFocusHalo extends StatefulWidget {
   ///   the rounded superellipse shape.
   const CupertinoFocusHalo.withRoundedSuperellipse({
     required this.child,
-    required BorderRadiusGeometry borderRadius,
+    required this._borderRadius,
     super.key,
-  }) : _borderRadius = borderRadius,
-       _shapeBuilder = RoundedSuperellipseBorder.new;
+  }) : _shapeBuilder = RoundedSuperellipseBorder.new;
 
   final BorderRadiusGeometry _borderRadius;
 

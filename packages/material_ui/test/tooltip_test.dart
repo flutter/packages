@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async' show unawaited;
 import 'dart:ui';
 
 import 'package:cupertino_ui/cupertino_ui.dart';
@@ -1981,19 +1982,23 @@ void main() {
         home: const Scaffold(body: Placeholder()),
       ),
     );
-    await showModalBottomSheet<void>(
-      context: navigatorKey.currentContext!,
-      builder: (_) {
-        return const Center(
-          child: Tooltip(message: 'Hello', child: Text('World')),
-        );
-      },
+    unawaited(
+      showModalBottomSheet<void>(
+        context: navigatorKey.currentContext!,
+        builder: (_) {
+          return const Center(
+            child: Tooltip(message: 'Hello', child: Text('World')),
+          );
+        },
+      ),
     );
     await tester.pumpAndSettle();
-    await showMenu<void>(
-      context: navigatorKey.currentContext!,
-      items: <PopupMenuEntry<int>>[const PopupMenuItem<int>(value: 0, child: Text('item 1'))],
-      position: RelativeRect.fill,
+    unawaited(
+      showMenu<void>(
+        context: navigatorKey.currentContext!,
+        items: <PopupMenuEntry<int>>[const PopupMenuItem<int>(value: 0, child: Text('item 1'))],
+        position: RelativeRect.fill,
+      ),
     );
     await tester.pumpAndSettle();
     navigatorKey.currentState!.pop();

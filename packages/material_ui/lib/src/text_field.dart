@@ -1514,6 +1514,7 @@ class _TextFieldState extends State<TextField>
       autofillConfiguration: autofillConfiguration,
     );
   }
+
   // AutofillClient implementation end.
 
   TextStyle _getInputStyleForState(TextStyle style) {

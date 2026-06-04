@@ -4,8 +4,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:material_ui_examples/app_bar/sliver_app_bar.1.dart'
-    as example;
+import 'package:material_ui_examples/app_bar/sliver_app_bar.1.dart' as example;
 
 const Offset _kOffset = Offset(0.0, -200.0);
 

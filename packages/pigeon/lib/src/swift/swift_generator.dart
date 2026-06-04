@@ -236,7 +236,7 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
 
     indent.write('enum ${anEnum.name}: Int ');
     indent.addScoped('{', '}', () {
-      enumerate(anEnum.members, (int index, final EnumMember member) {
+      enumerate(anEnum.members, (int index, EnumMember member) {
         addDocumentationComments(indent, member.documentationComments, _docCommentSpec);
         indent.writeln('case ${_camelCase(member.name)} = $index');
       });
@@ -651,7 +651,7 @@ if (wrapped == nil) {
     indent.write('static func fromList(_ ${varNamePrefix}list: [Any?]) -> $className? ');
 
     indent.addScoped('{', '}', () {
-      enumerate(getFieldsInSerializationOrder(classDefinition), (int index, final NamedType field) {
+      enumerate(getFieldsInSerializationOrder(classDefinition), (int index, NamedType field) {
         final listValue = '${varNamePrefix}list[$index]';
 
         _writeGenericCasting(
