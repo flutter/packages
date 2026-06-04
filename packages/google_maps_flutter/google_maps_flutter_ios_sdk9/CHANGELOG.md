@@ -1,6 +1,6 @@
 ## 2.18.5
 
-* Corrects the README header
+* Corrects the README header.
 
 ## 2.18.4
 
