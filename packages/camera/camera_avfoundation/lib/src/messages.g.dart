@@ -341,10 +341,7 @@ class PlatformCameraImageData {
         _deepEquals(height, other.height) &&
         _deepEquals(planes, other.planes) &&
         _deepEquals(lensAperture, other.lensAperture) &&
-        _deepEquals(
-          sensorExposureTimeNanoseconds,
-          other.sensorExposureTimeNanoseconds,
-        ) &&
+        _deepEquals(sensorExposureTimeNanoseconds, other.sensorExposureTimeNanoseconds) &&
         _deepEquals(sensorSensitivity, other.sensorSensitivity);
   }
 
@@ -690,8 +687,7 @@ class CameraApi {
       pigeonVar_channelName,
       isNullValid: false,
     );
-    return (pigeonVar_replyValue! as List<Object?>)
-        .cast<PlatformCameraDescription>();
+    return (pigeonVar_replyValue! as List<Object?>).cast<PlatformCameraDescription>();
   }
 
   /// Create a new camera with the given settings, and returns its ID.
@@ -732,11 +728,7 @@ class CameraApi {
     ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Begins streaming frames from the camera.
@@ -751,11 +743,7 @@ class CameraApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Stops streaming frames from the camera.
@@ -770,11 +758,7 @@ class CameraApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Called by the Dart side of the plugin when it has received the last image
@@ -792,11 +776,7 @@ class CameraApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Indicates that the given camera is no longer being used on the Dart side,
@@ -812,11 +792,7 @@ class CameraApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[cameraId]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Locks the camera capture to the current device orientation.
@@ -831,11 +807,7 @@ class CameraApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[orientation]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Unlocks camera capture orientation, allowing it to automatically adapt to
@@ -851,11 +823,7 @@ class CameraApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Takes a picture with the current settings, and returns the path to the
@@ -891,19 +859,12 @@ class CameraApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Begins recording video, optionally enabling streaming to Dart at the same
   /// time.
-  Future<void> startVideoRecording(
-    bool enableStream,
-    String? videoOutputPath,
-  ) async {
+  Future<void> startVideoRecording(bool enableStream, String? videoOutputPath) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.camera_avfoundation.CameraApi.startVideoRecording$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -911,14 +872,13 @@ class CameraApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enableStream, videoOutputPath]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      enableStream,
+      videoOutputPath,
+    ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Stops recording video, and results the path to the resulting file.
@@ -953,11 +913,7 @@ class CameraApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Resumes a previously paused video recording.
@@ -972,11 +928,7 @@ class CameraApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Switches the camera to the given flash mode.
@@ -991,11 +943,7 @@ class CameraApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[mode]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Switches the camera to the given exposure mode.
@@ -1010,11 +958,7 @@ class CameraApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[mode]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Anchors auto-exposure to the given point in (0,1) coordinate space.
@@ -1031,11 +975,7 @@ class CameraApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[point]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Returns the minimum exposure offset supported by the camera.
@@ -1090,11 +1030,7 @@ class CameraApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[offset]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Switches the camera to the given focus mode.
@@ -1109,11 +1045,7 @@ class CameraApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[mode]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Anchors auto-focus to the given point in (0,1) coordinate space.
@@ -1130,11 +1062,7 @@ class CameraApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[point]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Returns the minimum zoom level supported by the camera.
@@ -1189,11 +1117,7 @@ class CameraApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[zoom]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Sets the video stabilization mode.
@@ -1208,11 +1132,7 @@ class CameraApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[mode]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Gets if the given video stabilization mode is supported.
@@ -1247,11 +1167,7 @@ class CameraApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Resumes a previously paused preview stream.
@@ -1266,11 +1182,7 @@ class CameraApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Changes the camera used while recording video.
@@ -1287,11 +1199,7 @@ class CameraApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[cameraName]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Sets the file format used for taking pictures.
@@ -1306,11 +1214,7 @@ class CameraApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[format]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 }
 
@@ -1351,8 +1255,7 @@ abstract class CameraGlobalEventApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final PlatformDeviceOrientation arg_orientation =
-              args[0]! as PlatformDeviceOrientation;
+          final PlatformDeviceOrientation arg_orientation = args[0]! as PlatformDeviceOrientation;
           try {
             api.deviceOrientationChanged(arg_orientation);
             return wrapResponse(empty: true);

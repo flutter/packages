@@ -242,10 +242,7 @@ class MockStreamingCameraPlatform extends MockCameraPlatform {
   }) {
     streamCallLog.add('startVideoRecording');
     // Ignore maxVideoDuration, as it is unimplemented and deprecated.
-    return super.startVideoRecording(
-      cameraId,
-      videoOutputPath: videoOutputPath,
-    );
+    return super.startVideoRecording(cameraId, videoOutputPath: videoOutputPath);
   }
 
   @override

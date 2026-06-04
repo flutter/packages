@@ -193,9 +193,7 @@ class CameraWindows extends CameraPlatform {
     String? videoOutputPath,
   }) async {
     // Ignore maxVideoDuration, as it is unimplemented and deprecated.
-    return startVideoCapturing(
-      VideoCaptureOptions(cameraId, videoOutputPath: videoOutputPath),
-    );
+    return startVideoCapturing(VideoCaptureOptions(cameraId, videoOutputPath: videoOutputPath));
   }
 
   @override
@@ -205,10 +203,7 @@ class CameraWindows extends CameraPlatform {
     }
 
     // Currently none of `options` is supported on Windows, so it's not passed.
-    await _hostApi.startVideoRecording(
-      options.cameraId,
-      options.videoOutputPath,
-    );
+    await _hostApi.startVideoRecording(options.cameraId, options.videoOutputPath);
   }
 
   @override

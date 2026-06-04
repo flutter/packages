@@ -322,10 +322,7 @@ class CameraController extends ValueNotifier<CameraValue> {
     if (videoOutputPath != null) {
       final String lowerPath = videoOutputPath.toLowerCase();
       if (!lowerPath.endsWith('.mp4')) {
-        throw CameraException(
-          'InvalidFilePath',
-          'Invalid video extension. Supported: .mp4',
-        );
+        throw CameraException('InvalidFilePath', 'Invalid video extension. Supported: .mp4');
       }
     }
 

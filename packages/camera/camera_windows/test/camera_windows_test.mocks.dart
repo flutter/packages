@@ -101,15 +101,9 @@ class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
           as _i4.Future<String>);
 
   @override
-  _i4.Future<void> startVideoRecording(
-    int? cameraId,
-    String? videoOutputPath,
-  ) =>
+  _i4.Future<void> startVideoRecording(int? cameraId, String? videoOutputPath) =>
       (super.noSuchMethod(
-            Invocation.method(#startVideoRecording, [
-              cameraId,
-              videoOutputPath,
-            ]),
+            Invocation.method(#startVideoRecording, [cameraId, videoOutputPath]),
             returnValue: _i4.Future<void>.value(),
             returnValueForMissingStub: _i4.Future<void>.value(),
           )

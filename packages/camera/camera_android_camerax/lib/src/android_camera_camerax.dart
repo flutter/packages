@@ -1092,9 +1092,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     String? videoOutputPath,
   }) async {
     // Ignore maxVideoDuration, as it is unimplemented and deprecated.
-    return startVideoCapturing(
-      VideoCaptureOptions(cameraId, videoOutputPath: videoOutputPath),
-    );
+    return startVideoCapturing(VideoCaptureOptions(cameraId, videoOutputPath: videoOutputPath));
   }
 
   /// Starts a video recording and/or streaming session.
@@ -1127,8 +1125,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
 
     videoOutputPath =
-        options.videoOutputPath ??
-        await systemServicesManager.getTempFilePath(videoPrefix, '.mp4');
+        options.videoOutputPath ?? await systemServicesManager.getTempFilePath(videoPrefix, '.mp4');
     pendingRecording = await recorder!.prepareRecording(videoOutputPath!);
 
     if (options.enablePersistentRecording) {

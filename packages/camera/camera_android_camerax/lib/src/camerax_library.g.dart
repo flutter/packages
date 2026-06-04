@@ -634,9 +634,7 @@ class _PigeonInternalInstanceManagerApi {
           final List<Object?> args = message! as List<Object?>;
           final int arg_identifier = args[0]! as int;
           try {
-            (instanceManager ?? PigeonInstanceManager.instance).remove(
-              arg_identifier,
-            );
+            (instanceManager ?? PigeonInstanceManager.instance).remove(arg_identifier);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -661,11 +659,7 @@ class _PigeonInternalInstanceManagerApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[identifier]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Clear the native `PigeonInstanceManager`.
@@ -682,11 +676,7 @@ class _PigeonInternalInstanceManagerApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 }
 
@@ -1083,11 +1073,7 @@ class CameraSize extends PigeonInternalProxyApiBaseClass {
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 
@@ -1294,11 +1280,7 @@ class CameraIntegerRange extends PigeonInternalProxyApiBaseClass {
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 
@@ -1713,11 +1695,7 @@ class Observer extends PigeonInternalProxyApiBaseClass {
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 
@@ -1780,10 +1758,7 @@ class Observer extends PigeonInternalProxyApiBaseClass {
           final Observer arg_pigeon_instance = args[0]! as Observer;
           final Object arg_value = args[1]!;
           try {
-            (onChanged ?? arg_pigeon_instance.onChanged).call(
-              arg_pigeon_instance,
-              arg_value,
-            );
+            (onChanged ?? arg_pigeon_instance.onChanged).call(arg_pigeon_instance, arg_value);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -2002,11 +1977,7 @@ class CameraSelector extends PigeonInternalProxyApiBaseClass {
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 
@@ -2101,11 +2072,7 @@ class CameraSelector extends PigeonInternalProxyApiBaseClass {
       ]);
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
     return pigeonVar_instance;
   }
@@ -2133,11 +2100,7 @@ class CameraSelector extends PigeonInternalProxyApiBaseClass {
       ]);
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
     return pigeonVar_instance;
   }
@@ -2356,11 +2319,7 @@ class ProcessCameraProvider extends PigeonInternalProxyApiBaseClass {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, useCases]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Unbinds all use cases from the lifecycle provider and removes them from
@@ -2379,11 +2338,7 @@ class ProcessCameraProvider extends PigeonInternalProxyApiBaseClass {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   @override
@@ -2600,11 +2555,7 @@ class SystemServicesManager extends PigeonInternalProxyApiBaseClass {
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 
@@ -2868,11 +2819,7 @@ class DeviceOrientationManager extends PigeonInternalProxyApiBaseClass {
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 
@@ -2934,13 +2881,13 @@ class DeviceOrientationManager extends PigeonInternalProxyApiBaseClass {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final DeviceOrientationManager arg_pigeon_instance =
-              args[0]! as DeviceOrientationManager;
+          final DeviceOrientationManager arg_pigeon_instance = args[0]! as DeviceOrientationManager;
           final String arg_orientation = args[1]! as String;
           try {
-            (onDeviceOrientationChanged ??
-                    arg_pigeon_instance.onDeviceOrientationChanged)
-                .call(arg_pigeon_instance, arg_orientation);
+            (onDeviceOrientationChanged ?? arg_pigeon_instance.onDeviceOrientationChanged).call(
+              arg_pigeon_instance,
+              arg_orientation,
+            );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -2968,11 +2915,7 @@ class DeviceOrientationManager extends PigeonInternalProxyApiBaseClass {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   Future<void> stopListeningForDeviceOrientationChange() async {
@@ -2989,11 +2932,7 @@ class DeviceOrientationManager extends PigeonInternalProxyApiBaseClass {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   Future<int> getDefaultDisplayRotation() async {
@@ -3104,11 +3043,7 @@ class Preview extends UseCase {
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 
@@ -3221,11 +3156,7 @@ class Preview extends UseCase {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Gets selected resolution information of the `Preview`.
@@ -3264,11 +3195,7 @@ class Preview extends UseCase {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, rotation]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Returns whether or not the preview's surface producer handles correctly
@@ -3355,11 +3282,7 @@ class VideoCapture extends UseCase {
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 
@@ -3454,11 +3377,7 @@ class VideoCapture extends UseCase {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, rotation]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   @override
@@ -3589,11 +3508,7 @@ class Recorder extends PigeonInternalProxyApiBaseClass implements VideoOutput {
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 
@@ -3789,11 +3704,7 @@ class VideoRecordEventListener extends PigeonInternalProxyApiBaseClass {
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 
@@ -3853,14 +3764,10 @@ class VideoRecordEventListener extends PigeonInternalProxyApiBaseClass {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final VideoRecordEventListener arg_pigeon_instance =
-              args[0]! as VideoRecordEventListener;
+          final VideoRecordEventListener arg_pigeon_instance = args[0]! as VideoRecordEventListener;
           final VideoRecordEvent arg_event = args[1]! as VideoRecordEvent;
           try {
-            (onEvent ?? arg_pigeon_instance.onEvent).call(
-              arg_pigeon_instance,
-              arg_event,
-            );
+            (onEvent ?? arg_pigeon_instance.onEvent).call(arg_pigeon_instance, arg_event);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -4099,11 +4006,7 @@ class Recording extends PigeonInternalProxyApiBaseClass {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Pauses the current recording if active.
@@ -4119,11 +4022,7 @@ class Recording extends PigeonInternalProxyApiBaseClass {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Resumes the current recording if paused.
@@ -4139,11 +4038,7 @@ class Recording extends PigeonInternalProxyApiBaseClass {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Stops the recording, as if calling `close`.
@@ -4161,11 +4056,7 @@ class Recording extends PigeonInternalProxyApiBaseClass {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   @override
@@ -4222,22 +4113,16 @@ class ImageCapture extends UseCase {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[
-        pigeonVar_instanceIdentifier,
-        resolutionSelector,
-        targetRotation,
-        flashMode,
-      ],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      pigeonVar_instanceIdentifier,
+      resolutionSelector,
+      targetRotation,
+      flashMode,
+    ]);
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 
@@ -4317,11 +4202,7 @@ class ImageCapture extends UseCase {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, flashMode]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Captures a new still image for in memory access.
@@ -4363,11 +4244,7 @@ class ImageCapture extends UseCase {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, rotation]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   @override
@@ -4430,11 +4307,7 @@ class ResolutionStrategy extends PigeonInternalProxyApiBaseClass {
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 
@@ -4522,11 +4395,7 @@ class ResolutionStrategy extends PigeonInternalProxyApiBaseClass {
       ]);
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
     return pigeonVar_instance;
   }
@@ -4640,11 +4509,7 @@ class ResolutionSelector extends PigeonInternalProxyApiBaseClass {
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 
@@ -4810,11 +4675,7 @@ class AspectRatioStrategy extends PigeonInternalProxyApiBaseClass {
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 
@@ -4917,11 +4778,7 @@ class AspectRatioStrategy extends PigeonInternalProxyApiBaseClass {
       ]);
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
     return pigeonVar_instance;
   }
@@ -4949,11 +4806,7 @@ class AspectRatioStrategy extends PigeonInternalProxyApiBaseClass {
       ]);
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
     return pigeonVar_instance;
   }
@@ -5142,8 +4995,7 @@ class ExposureState extends PigeonInternalProxyApiBaseClass {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
           final int arg_pigeon_instanceIdentifier = args[0]! as int;
-          final CameraIntegerRange arg_exposureCompensationRange =
-              args[1]! as CameraIntegerRange;
+          final CameraIntegerRange arg_exposureCompensationRange = args[1]! as CameraIntegerRange;
           final double arg_exposureCompensationStep = args[2]! as double;
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
@@ -5230,20 +5082,16 @@ class ZoomState extends PigeonInternalProxyApiBaseClass {
           final double arg_minZoomRatio = args[1]! as double;
           final double arg_maxZoomRatio = args[2]! as double;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
-                .addHostCreatedInstance(
-                  pigeon_newInstance?.call(
-                        arg_minZoomRatio,
-                        arg_maxZoomRatio,
-                      ) ??
-                      ZoomState.pigeon_detached(
-                        pigeon_binaryMessenger: pigeon_binaryMessenger,
-                        pigeon_instanceManager: pigeon_instanceManager,
-                        minZoomRatio: arg_minZoomRatio,
-                        maxZoomRatio: arg_maxZoomRatio,
-                      ),
-                  arg_pigeon_instanceIdentifier,
-                );
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+              pigeon_newInstance?.call(arg_minZoomRatio, arg_maxZoomRatio) ??
+                  ZoomState.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                    minZoomRatio: arg_minZoomRatio,
+                    maxZoomRatio: arg_maxZoomRatio,
+                  ),
+              arg_pigeon_instanceIdentifier,
+            );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -5328,11 +5176,7 @@ class ImageAnalysis extends UseCase {
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 
@@ -5412,11 +5256,7 @@ class ImageAnalysis extends UseCase {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, analyzer]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Removes a previously set analyzer.
@@ -5433,11 +5273,7 @@ class ImageAnalysis extends UseCase {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Sets the target rotation.
@@ -5454,11 +5290,7 @@ class ImageAnalysis extends UseCase {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, rotation]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   @override
@@ -5512,11 +5344,7 @@ class Analyzer extends PigeonInternalProxyApiBaseClass {
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 
@@ -5579,10 +5407,7 @@ class Analyzer extends PigeonInternalProxyApiBaseClass {
           final Analyzer arg_pigeon_instance = args[0]! as Analyzer;
           final ImageProxy arg_image = args[1]! as ImageProxy;
           try {
-            (analyze ?? arg_pigeon_instance.analyze).call(
-              arg_pigeon_instance,
-              arg_image,
-            );
+            (analyze ?? arg_pigeon_instance.analyze).call(arg_pigeon_instance, arg_image);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -5765,11 +5590,7 @@ class LiveData extends PigeonInternalProxyApiBaseClass {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, observer]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Removes all observers that are tied to the given `LifecycleOwner`.
@@ -5786,11 +5607,7 @@ class LiveData extends PigeonInternalProxyApiBaseClass {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Returns the current value.
@@ -5879,18 +5696,17 @@ class ImageProxy extends PigeonInternalProxyApiBaseClass {
           final int arg_width = args[2]! as int;
           final int arg_height = args[3]! as int;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
-                .addHostCreatedInstance(
-                  pigeon_newInstance?.call(arg_format, arg_width, arg_height) ??
-                      ImageProxy.pigeon_detached(
-                        pigeon_binaryMessenger: pigeon_binaryMessenger,
-                        pigeon_instanceManager: pigeon_instanceManager,
-                        format: arg_format,
-                        width: arg_width,
-                        height: arg_height,
-                      ),
-                  arg_pigeon_instanceIdentifier,
-                );
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+              pigeon_newInstance?.call(arg_format, arg_width, arg_height) ??
+                  ImageProxy.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                    format: arg_format,
+                    width: arg_width,
+                    height: arg_height,
+                  ),
+              arg_pigeon_instanceIdentifier,
+            );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -5938,11 +5754,7 @@ class ImageProxy extends PigeonInternalProxyApiBaseClass {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   @override
@@ -6112,22 +5924,17 @@ class PlaneProxy extends PigeonInternalProxyApiBaseClass {
           final int arg_pixelStride = args[2]! as int;
           final int arg_rowStride = args[3]! as int;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
-                .addHostCreatedInstance(
-                  pigeon_newInstance?.call(
-                        arg_buffer,
-                        arg_pixelStride,
-                        arg_rowStride,
-                      ) ??
-                      PlaneProxy.pigeon_detached(
-                        pigeon_binaryMessenger: pigeon_binaryMessenger,
-                        pigeon_instanceManager: pigeon_instanceManager,
-                        buffer: arg_buffer,
-                        pixelStride: arg_pixelStride,
-                        rowStride: arg_rowStride,
-                      ),
-                  arg_pigeon_instanceIdentifier,
-                );
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+              pigeon_newInstance?.call(arg_buffer, arg_pixelStride, arg_rowStride) ??
+                  PlaneProxy.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                    buffer: arg_buffer,
+                    pixelStride: arg_pixelStride,
+                    rowStride: arg_rowStride,
+                  ),
+              arg_pigeon_instanceIdentifier,
+            );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -6204,11 +6011,7 @@ class QualitySelector extends PigeonInternalProxyApiBaseClass {
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 
@@ -6259,11 +6062,7 @@ class QualitySelector extends PigeonInternalProxyApiBaseClass {
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 
@@ -6413,11 +6212,7 @@ class FallbackStrategy extends PigeonInternalProxyApiBaseClass {
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 
@@ -6463,11 +6258,7 @@ class FallbackStrategy extends PigeonInternalProxyApiBaseClass {
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 
@@ -6513,11 +6304,7 @@ class FallbackStrategy extends PigeonInternalProxyApiBaseClass {
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 
@@ -6563,11 +6350,7 @@ class FallbackStrategy extends PigeonInternalProxyApiBaseClass {
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 
@@ -6708,11 +6491,7 @@ class CameraControl extends PigeonInternalProxyApiBaseClass {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, torch]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Sets current zoom by ratio.
@@ -6729,11 +6508,7 @@ class CameraControl extends PigeonInternalProxyApiBaseClass {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, ratio]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Starts a focus and metering action configured by the
@@ -6773,11 +6548,7 @@ class CameraControl extends PigeonInternalProxyApiBaseClass {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Set the exposure compensation value for the camera.
@@ -6858,11 +6629,7 @@ class FocusMeteringActionBuilder extends PigeonInternalProxyApiBaseClass {
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 
@@ -6911,11 +6678,7 @@ class FocusMeteringActionBuilder extends PigeonInternalProxyApiBaseClass {
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 
@@ -6991,11 +6754,7 @@ class FocusMeteringActionBuilder extends PigeonInternalProxyApiBaseClass {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, point]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Adds another MeteringPoint with specified meteringMode.
@@ -7017,11 +6776,7 @@ class FocusMeteringActionBuilder extends PigeonInternalProxyApiBaseClass {
     ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Disables the auto-cancel.
@@ -7039,11 +6794,7 @@ class FocusMeteringActionBuilder extends PigeonInternalProxyApiBaseClass {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Builds the `FocusMeteringAction` instance.
@@ -7374,11 +7125,7 @@ class CaptureRequest extends PigeonInternalProxyApiBaseClass {
       ]);
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
     return pigeonVar_instance;
   }
@@ -7406,11 +7153,7 @@ class CaptureRequest extends PigeonInternalProxyApiBaseClass {
       ]);
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
     return pigeonVar_instance;
   }
@@ -7532,11 +7275,7 @@ class CaptureRequestOptions extends PigeonInternalProxyApiBaseClass {
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 
@@ -7676,11 +7415,7 @@ class Camera2CameraControl extends PigeonInternalProxyApiBaseClass {
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 
@@ -7757,11 +7492,7 @@ class Camera2CameraControl extends PigeonInternalProxyApiBaseClass {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, bundle]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   @override
@@ -7818,11 +7549,7 @@ class ResolutionFilter extends PigeonInternalProxyApiBaseClass {
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 
@@ -8091,11 +7818,7 @@ class CameraCharacteristics extends PigeonInternalProxyApiBaseClass {
       ]);
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
     return pigeonVar_instance;
   }
@@ -8123,11 +7846,7 @@ class CameraCharacteristics extends PigeonInternalProxyApiBaseClass {
       ]);
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
     return pigeonVar_instance;
   }
@@ -8155,11 +7874,7 @@ class CameraCharacteristics extends PigeonInternalProxyApiBaseClass {
       ]);
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
     return pigeonVar_instance;
   }
@@ -8217,11 +7932,7 @@ class Camera2CameraInfo extends PigeonInternalProxyApiBaseClass {
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 
@@ -8516,11 +8227,7 @@ class DisplayOrientedMeteringPointFactory extends MeteringPointFactory {
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 

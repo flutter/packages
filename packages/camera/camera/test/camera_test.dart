@@ -3499,9 +3499,7 @@ class MockCameraPlatform extends Mock with MockPlatformInterfaceMixin implements
     String? videoOutputPath,
   }) {
     // Ignore maxVideoDuration, as it is unimplemented and deprecated.
-    return startVideoCapturing(
-      VideoCaptureOptions(cameraId, videoOutputPath: videoOutputPath),
-    );
+    return startVideoCapturing(VideoCaptureOptions(cameraId, videoOutputPath: videoOutputPath));
   }
 
   @override

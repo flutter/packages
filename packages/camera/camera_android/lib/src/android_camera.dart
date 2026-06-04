@@ -192,9 +192,7 @@ class AndroidCamera extends CameraPlatform {
     String? videoOutputPath,
   }) async {
     // Ignore maxVideoDuration, as it is unimplemented and deprecated.
-    return startVideoCapturing(
-      VideoCaptureOptions(cameraId, videoOutputPath: videoOutputPath),
-    );
+    return startVideoCapturing(VideoCaptureOptions(cameraId, videoOutputPath: videoOutputPath));
   }
 
   @override

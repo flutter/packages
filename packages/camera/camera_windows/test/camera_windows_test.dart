@@ -345,9 +345,7 @@ void main() {
         const path = '/test/video.mp4';
 
         // Act
-        await plugin.startVideoCapturing(
-          const VideoCaptureOptions(1, videoOutputPath: path),
-        );
+        await plugin.startVideoCapturing(const VideoCaptureOptions(1, videoOutputPath: path));
 
         // Assert
         verify(mockApi.startVideoRecording(1, path));
