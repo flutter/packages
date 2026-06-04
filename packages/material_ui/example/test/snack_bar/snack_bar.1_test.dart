@@ -4,8 +4,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:material_ui_examples/snack_bar/snack_bar.1.dart'
-    as example;
+import 'package:material_ui_examples/snack_bar/snack_bar.1.dart' as example;
 
 void main() {
   testWidgets('Tapping on button shows snackbar', (WidgetTester tester) async {

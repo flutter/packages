@@ -20,15 +20,17 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('Without semantics', () {
-    testWidgets('on wrapped elements, the browser does not hit the background-html-view', (
-      WidgetTester tester,
-    ) async {
-      await _fullyRenderApp(tester);
+    testWidgets(
+      'on wrapped elements, the browser does not hit the background-html-view',
+      (WidgetTester tester) async {
+        await _fullyRenderApp(tester);
 
-      final web.Element element = _getHtmlElementAtCenter(clickableButtonFinder, tester);
+        final web.Element element = _getHtmlElementAtCenter(clickableButtonFinder, tester);
 
-      expect(element.id, isNot('background-html-view'));
-    }, semanticsEnabled: false);
+        expect(element.id, isNot('background-html-view'));
+      },
+      semanticsEnabled: false,
+    );
 
     testWidgets(
       'on wrapped elements with intercepting set to false, the browser hits the background-html-view',

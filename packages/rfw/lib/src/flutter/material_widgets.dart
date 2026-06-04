@@ -101,9 +101,7 @@ import 'runtime.dart';
 LocalWidgetLibrary createMaterialWidgets() => LocalWidgetLibrary(_materialWidgetsDefinitions);
 
 Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, LocalWidgetBuilder>{
-
   // Keep these in alphabetical order.
-
   'AboutListTile': (BuildContext context, DataSource source) {
     return AboutListTile(
       icon: source.optionalChild(['icon']),
@@ -156,14 +154,28 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
   //
   // It is recommended to use the [OverflowBar] widget.
   'ButtonBar': (BuildContext context, DataSource source) {
-    final EdgeInsetsGeometry buttonPadding = ArgumentDecoders.edgeInsets(source, ['buttonPadding']) ?? const EdgeInsets.all(8.0);
-    final ButtonBarLayoutBehavior layoutBehavior = ArgumentDecoders.enumValue<ButtonBarLayoutBehavior>(ButtonBarLayoutBehavior.values, source, ['layoutBehavior'])
-      ?? ButtonBarLayoutBehavior.padded;
+    final EdgeInsetsGeometry buttonPadding =
+        ArgumentDecoders.edgeInsets(source, ['buttonPadding']) ?? const EdgeInsets.all(8.0);
+    final ButtonBarLayoutBehavior layoutBehavior =
+        ArgumentDecoders.enumValue<ButtonBarLayoutBehavior>(
+          ButtonBarLayoutBehavior.values,
+          source,
+          ['layoutBehavior'],
+        ) ??
+        ButtonBarLayoutBehavior.padded;
 
     Widget overflowBar = OverflowBar(
-      alignment: ArgumentDecoders.enumValue<MainAxisAlignment>(MainAxisAlignment.values, source, ['alignment']) ?? MainAxisAlignment.start,
+      alignment:
+          ArgumentDecoders.enumValue<MainAxisAlignment>(MainAxisAlignment.values, source, [
+            'alignment',
+          ]) ??
+          MainAxisAlignment.start,
       spacing: buttonPadding.horizontal / 2,
-      overflowDirection: ArgumentDecoders.enumValue<VerticalDirection>(VerticalDirection.values, source, ['overflowDirection']) ?? VerticalDirection.down,
+      overflowDirection:
+          ArgumentDecoders.enumValue<VerticalDirection>(VerticalDirection.values, source, [
+            'overflowDirection',
+          ]) ??
+          VerticalDirection.down,
       overflowSpacing: source.v<double>(['overflowButtonSpacing']) ?? 0.0,
       children: source.childList(['children']),
     );
@@ -186,7 +198,8 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
         );
     }
 
-    if (ArgumentDecoders.enumValue<MainAxisSize>(MainAxisSize.values, source, ['mainAxisSize']) == MainAxisSize.min) {
+    if (ArgumentDecoders.enumValue<MainAxisSize>(MainAxisSize.values, source, ['mainAxisSize']) ==
+        MainAxisSize.min) {
       return IntrinsicWidth(child: overflowBar);
     }
 
@@ -196,13 +209,23 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
   'OverflowBar': (BuildContext context, DataSource source) {
     return OverflowBar(
       spacing: source.v<double>(['spacing']) ?? 0.0,
-      alignment: ArgumentDecoders.enumValue<MainAxisAlignment>(MainAxisAlignment.values, source, ['alignment']),
+      alignment: ArgumentDecoders.enumValue<MainAxisAlignment>(MainAxisAlignment.values, source, [
+        'alignment',
+      ]),
       overflowSpacing: source.v<double>(['overflowSpacing']) ?? 0.0,
-      overflowAlignment: ArgumentDecoders.enumValue<OverflowBarAlignment>(OverflowBarAlignment.values, source, ['overflowAlignment'])
-        ?? OverflowBarAlignment.start,
-      overflowDirection: ArgumentDecoders.enumValue<VerticalDirection>(VerticalDirection.values, source, ['overflowDirection'])
-        ?? VerticalDirection.down,
-      textDirection: ArgumentDecoders.enumValue<TextDirection>(TextDirection.values, source, ['textDirection']),
+      overflowAlignment:
+          ArgumentDecoders.enumValue<OverflowBarAlignment>(OverflowBarAlignment.values, source, [
+            'overflowAlignment',
+          ]) ??
+          OverflowBarAlignment.start,
+      overflowDirection:
+          ArgumentDecoders.enumValue<VerticalDirection>(VerticalDirection.values, source, [
+            'overflowDirection',
+          ]) ??
+          VerticalDirection.down,
+      textDirection: ArgumentDecoders.enumValue<TextDirection>(TextDirection.values, source, [
+        'textDirection',
+      ]),
       children: source.childList(['children']),
     );
   },
@@ -215,7 +238,8 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
       shape: ArgumentDecoders.shapeBorder(source, ['shape']),
       borderOnForeground: source.v<bool>(['borderOnForeground']) ?? true,
       margin: ArgumentDecoders.edgeInsets(source, ['margin']),
-      clipBehavior: ArgumentDecoders.enumValue<Clip>(Clip.values, source, ['clipBehavior']) ?? Clip.none,
+      clipBehavior:
+          ArgumentDecoders.enumValue<Clip>(Clip.values, source, ['clipBehavior']) ?? Clip.none,
       semanticContainer: source.v<bool>(['semanticContainer']) ?? true,
       child: source.optionalChild(['child']),
     );
@@ -257,7 +281,9 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
       curve: ArgumentDecoders.curve(source, ['curve'], context),
       decoration: ArgumentDecoders.decoration(source, ['decoration']),
       margin: ArgumentDecoders.edgeInsets(source, ['margin']) ?? const EdgeInsets.only(bottom: 8.0),
-      padding: ArgumentDecoders.edgeInsets(source, ['padding']) ?? const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
+      padding:
+          ArgumentDecoders.edgeInsets(source, ['padding']) ??
+          const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
       child: source.optionalChild(['child']),
     );
   },
@@ -268,18 +294,32 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
       length,
       (int index) => DropdownMenuItem<Object>(
         onTap: source.voidHandler(['items', index, 'onTap']),
-        value: source.v<String>(['items', index, 'value']) ?? source.v<int>(['items', index, 'value']) ?? source.v<double>(['items', index, 'value']) ?? source.v<bool>(['items', index, 'value']),
+        value:
+            source.v<String>(['items', index, 'value']) ??
+            source.v<int>(['items', index, 'value']) ??
+            source.v<double>(['items', index, 'value']) ??
+            source.v<bool>(['items', index, 'value']),
         enabled: source.v<bool>(['items', index, 'enabled']) ?? true,
-        alignment: ArgumentDecoders.alignment(source, ['items', index, 'alignment']) ?? AlignmentDirectional.centerStart,
+        alignment:
+            ArgumentDecoders.alignment(source, ['items', index, 'alignment']) ??
+            AlignmentDirectional.centerStart,
         child: source.child(['items', index, 'child']),
       ),
     );
 
     return DropdownButton<Object>(
       items: dropdownMenuItems,
-      value: source.v<String>(['value']) ?? source.v<int>(['value']) ?? source.v<double>(['value']) ?? source.v<bool>(['value']),
+      value:
+          source.v<String>(['value']) ??
+          source.v<int>(['value']) ??
+          source.v<double>(['value']) ??
+          source.v<bool>(['value']),
       disabledHint: source.optionalChild(['disabledHint']),
-      onChanged: source.handler(<Object>['onChanged'], (HandlerTrigger trigger) => (Object? value) => trigger(<String, Object?>{'value': value})),
+      onChanged: source.handler(
+        <Object>['onChanged'],
+        (HandlerTrigger trigger) =>
+            (Object? value) => trigger(<String, Object?>{'value': value}),
+      ),
       onTap: source.voidHandler(['onTap']),
       elevation: source.v<int>(['elevation']) ?? 8,
       style: ArgumentDecoders.textStyle(source, ['style']),
@@ -296,8 +336,11 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
       dropdownColor: ArgumentDecoders.color(source, ['dropdownColor']),
       menuMaxHeight: source.v<double>(['menuMaxHeight']),
       enableFeedback: source.v<bool>(['enableFeedback']),
-      alignment: ArgumentDecoders.alignment(source, ['alignment']) ?? AlignmentDirectional.centerStart,
-      borderRadius: ArgumentDecoders.borderRadius(source, ['borderRadius'])?.resolve(Directionality.of(context)),
+      alignment:
+          ArgumentDecoders.alignment(source, ['alignment']) ?? AlignmentDirectional.centerStart,
+      borderRadius: ArgumentDecoders.borderRadius(source, [
+        'borderRadius',
+      ])?.resolve(Directionality.of(context)),
       padding: ArgumentDecoders.edgeInsets(source, ['padding']),
     );
   },
@@ -308,7 +351,8 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
       onPressed: source.voidHandler(['onPressed']),
       onLongPress: source.voidHandler(['onLongPress']),
       autofocus: source.v<bool>(['autofocus']) ?? false,
-      clipBehavior: ArgumentDecoders.enumValue<Clip>(Clip.values, source, ['clipBehavior']) ?? Clip.none,
+      clipBehavior:
+          ArgumentDecoders.enumValue<Clip>(Clip.values, source, ['clipBehavior']) ?? Clip.none,
       child: source.child(['child']),
     );
   },
@@ -331,9 +375,14 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
       onPressed: source.voidHandler(['onPressed']),
       mini: source.v<bool>(['mini']) ?? false,
       shape: ArgumentDecoders.shapeBorder(source, ['shape']),
-      clipBehavior: ArgumentDecoders.enumValue<Clip>(Clip.values, source, ['clipBehavior']) ?? Clip.none,
+      clipBehavior:
+          ArgumentDecoders.enumValue<Clip>(Clip.values, source, ['clipBehavior']) ?? Clip.none,
       autofocus: source.v<bool>(['autofocus']) ?? false,
-      materialTapTargetSize: ArgumentDecoders.enumValue<MaterialTapTargetSize>(MaterialTapTargetSize.values, source, ['materialTapTargetSize']),
+      materialTapTargetSize: ArgumentDecoders.enumValue<MaterialTapTargetSize>(
+        MaterialTapTargetSize.values,
+        source,
+        ['materialTapTargetSize'],
+      ),
       isExtended: source.v<bool>(['isExtended']) ?? false,
       enableFeedback: source.v<bool>(['enableFeedback']),
       child: source.child(['child']),
@@ -344,21 +393,49 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
     // not implemented: mouseCursor, overlayColor, splashFactory, focusNode.
     return InkResponse(
       onTap: source.voidHandler(['onTap']),
-      onTapDown: source.handler(['onTapDown'], (VoidCallback trigger) => (TapDownDetails details) => trigger()),
-      onTapUp: source.handler(['onTapUp'], (VoidCallback trigger) => (TapUpDetails details) => trigger()),
+      onTapDown: source.handler(
+        ['onTapDown'],
+        (VoidCallback trigger) =>
+            (TapDownDetails details) => trigger(),
+      ),
+      onTapUp: source.handler(
+        ['onTapUp'],
+        (VoidCallback trigger) =>
+            (TapUpDetails details) => trigger(),
+      ),
       onTapCancel: source.voidHandler(['onTapCancel']),
       onDoubleTap: source.voidHandler(['onDoubleTap']),
       onLongPress: source.voidHandler(['onLongPress']),
       onSecondaryTap: source.voidHandler(['onSecondaryTap']),
-      onSecondaryTapUp: source.handler(['onSecondaryTapUp'], (VoidCallback trigger) => (TapUpDetails details) => trigger()),
-      onSecondaryTapDown: source.handler(['onSecondaryTapDown'], (VoidCallback trigger) => (TapDownDetails details) => trigger()),
+      onSecondaryTapUp: source.handler(
+        ['onSecondaryTapUp'],
+        (VoidCallback trigger) =>
+            (TapUpDetails details) => trigger(),
+      ),
+      onSecondaryTapDown: source.handler(
+        ['onSecondaryTapDown'],
+        (VoidCallback trigger) =>
+            (TapDownDetails details) => trigger(),
+      ),
       onSecondaryTapCancel: source.voidHandler(['onSecondaryTapCancel']),
-      onHighlightChanged: source.handler(['onHighlightChanged'], (VoidCallback trigger) => (bool highlighted) => trigger()),
-      onHover: source.handler(['onHover'], (VoidCallback trigger) => (bool hovered) => trigger()),
+      onHighlightChanged: source.handler(
+        ['onHighlightChanged'],
+        (VoidCallback trigger) =>
+            (bool highlighted) => trigger(),
+      ),
+      onHover: source.handler(
+        ['onHover'],
+        (VoidCallback trigger) =>
+            (bool hovered) => trigger(),
+      ),
       containedInkWell: source.v<bool>(['containedInkWell']) ?? false,
-      highlightShape: ArgumentDecoders.enumValue<BoxShape>(BoxShape.values, source, ['highlightShape']) ?? BoxShape.circle,
+      highlightShape:
+          ArgumentDecoders.enumValue<BoxShape>(BoxShape.values, source, ['highlightShape']) ??
+          BoxShape.circle,
       radius: source.v<double>(['radius']),
-      borderRadius: ArgumentDecoders.borderRadius(source, ['borderRadius'])?.resolve(Directionality.of(context)),
+      borderRadius: ArgumentDecoders.borderRadius(source, [
+        'borderRadius',
+      ])?.resolve(Directionality.of(context)),
       customBorder: ArgumentDecoders.shapeBorder(source, ['customBorder']),
       focusColor: ArgumentDecoders.color(source, ['focusColor']),
       hoverColor: ArgumentDecoders.color(source, ['hoverColor']),
@@ -367,7 +444,11 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
       enableFeedback: source.v<bool>(['enableFeedback']) ?? true,
       excludeFromSemantics: source.v<bool>(['excludeFromSemantics']) ?? false,
       canRequestFocus: source.v<bool>(['canRequestFocus']) ?? true,
-      onFocusChange: source.handler(['onFocusChange'], (VoidCallback trigger) => (bool focus) => trigger()),
+      onFocusChange: source.handler(
+        ['onFocusChange'],
+        (VoidCallback trigger) =>
+            (bool focus) => trigger(),
+      ),
       autofocus: source.v<bool>(['autofocus']) ?? false,
       hoverDuration: ArgumentDecoders.duration(source, ['hoverDuration'], context),
       child: source.optionalChild(['child']),
@@ -380,20 +461,42 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
       onTap: source.voidHandler(['onTap']),
       onDoubleTap: source.voidHandler(['onDoubleTap']),
       onLongPress: source.voidHandler(['onLongPress']),
-      onTapDown: source.handler(['onTapDown'], (VoidCallback trigger) => (TapDownDetails details) => trigger()),
+      onTapDown: source.handler(
+        ['onTapDown'],
+        (VoidCallback trigger) =>
+            (TapDownDetails details) => trigger(),
+      ),
       onTapCancel: source.voidHandler(['onTapCancel']),
       onSecondaryTap: source.voidHandler(['onSecondaryTap']),
-      onSecondaryTapUp: source.handler(['onSecondaryTapUp'], (VoidCallback trigger) => (TapUpDetails details) => trigger()),
-      onSecondaryTapDown: source.handler(['onSecondaryTapDown'], (VoidCallback trigger) => (TapDownDetails details) => trigger()),
+      onSecondaryTapUp: source.handler(
+        ['onSecondaryTapUp'],
+        (VoidCallback trigger) =>
+            (TapUpDetails details) => trigger(),
+      ),
+      onSecondaryTapDown: source.handler(
+        ['onSecondaryTapDown'],
+        (VoidCallback trigger) =>
+            (TapDownDetails details) => trigger(),
+      ),
       onSecondaryTapCancel: source.voidHandler(['onSecondaryTapCancel']),
-      onHighlightChanged: source.handler(['onHighlightChanged'], (VoidCallback trigger) => (bool highlighted) => trigger()),
-      onHover: source.handler(['onHover'], (VoidCallback trigger) => (bool hovered) => trigger()),
+      onHighlightChanged: source.handler(
+        ['onHighlightChanged'],
+        (VoidCallback trigger) =>
+            (bool highlighted) => trigger(),
+      ),
+      onHover: source.handler(
+        ['onHover'],
+        (VoidCallback trigger) =>
+            (bool hovered) => trigger(),
+      ),
       focusColor: ArgumentDecoders.color(source, ['focusColor']),
       hoverColor: ArgumentDecoders.color(source, ['hoverColor']),
       highlightColor: ArgumentDecoders.color(source, ['highlightColor']),
       splashColor: ArgumentDecoders.color(source, ['splashColor']),
       radius: source.v<double>(['radius']),
-      borderRadius: ArgumentDecoders.borderRadius(source, ['borderRadius'])?.resolve(Directionality.of(context)),
+      borderRadius: ArgumentDecoders.borderRadius(source, [
+        'borderRadius',
+      ])?.resolve(Directionality.of(context)),
       customBorder: ArgumentDecoders.shapeBorder(source, ['customBorder']),
       enableFeedback: source.v<bool>(['enableFeedback']) ?? true,
       excludeFromSemantics: source.v<bool>(['excludeFromSemantics']) ?? false,
@@ -444,7 +547,9 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
 
   'Material': (BuildContext context, DataSource source) {
     return Material(
-      type: ArgumentDecoders.enumValue<MaterialType>(MaterialType.values,source, ['type']) ?? MaterialType.canvas,
+      type:
+          ArgumentDecoders.enumValue<MaterialType>(MaterialType.values, source, ['type']) ??
+          MaterialType.canvas,
       elevation: source.v<double>(['elevation']) ?? 0.0,
       color: ArgumentDecoders.color(source, ['color']),
       shadowColor: ArgumentDecoders.color(source, ['shadowColor']),
@@ -453,7 +558,8 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
       borderRadius: ArgumentDecoders.borderRadius(source, ['borderRadius']),
       shape: ArgumentDecoders.shapeBorder(source, ['shape']),
       borderOnForeground: source.v<bool>(['borderOnForeground']) ?? true,
-      clipBehavior: ArgumentDecoders.enumValue<Clip>(Clip.values, source, ['clipBehavior']) ?? Clip.none,
+      clipBehavior:
+          ArgumentDecoders.enumValue<Clip>(Clip.values, source, ['clipBehavior']) ?? Clip.none,
       animationDuration: ArgumentDecoders.duration(source, ['animationDuration'], context),
       child: source.child(['child']),
     );
@@ -465,7 +571,8 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
       onPressed: source.voidHandler(['onPressed']),
       onLongPress: source.voidHandler(['onLongPress']),
       autofocus: source.v<bool>(['autofocus']) ?? false,
-      clipBehavior: ArgumentDecoders.enumValue<Clip>(Clip.values, source, ['clipBehavior']) ?? Clip.none,
+      clipBehavior:
+          ArgumentDecoders.enumValue<Clip>(Clip.values, source, ['clipBehavior']) ?? Clip.none,
       child: source.child(['child']),
     );
   },
@@ -475,10 +582,12 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
     final Widget? appBarWidget = source.optionalChild(['appBar']);
     final List<Widget> persistentFooterButtons = source.childList(['persistentFooterButtons']);
     return Scaffold(
-      appBar: appBarWidget == null ? null : PreferredSize(
-        preferredSize: Size.fromHeight(source.v<double>(['bottomHeight']) ?? 56.0),
-        child: appBarWidget,
-      ),
+      appBar: appBarWidget == null
+          ? null
+          : PreferredSize(
+              preferredSize: Size.fromHeight(source.v<double>(['bottomHeight']) ?? 56.0),
+              child: appBarWidget,
+            ),
       body: source.optionalChild(['body']),
       floatingActionButton: source.optionalChild(['floatingActionButton']),
       persistentFooterButtons: persistentFooterButtons.isEmpty ? null : persistentFooterButtons,
@@ -489,7 +598,11 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
       backgroundColor: ArgumentDecoders.color(source, ['backgroundColor']),
       resizeToAvoidBottomInset: source.v<bool>(['resizeToAvoidBottomInset']),
       primary: source.v<bool>(['primary']) ?? true,
-      drawerDragStartBehavior: ArgumentDecoders.enumValue<DragStartBehavior>(DragStartBehavior.values, source, ['drawerDragStartBehavior']) ?? DragStartBehavior.start,
+      drawerDragStartBehavior:
+          ArgumentDecoders.enumValue<DragStartBehavior>(DragStartBehavior.values, source, [
+            'drawerDragStartBehavior',
+          ]) ??
+          DragStartBehavior.start,
       extendBody: source.v<bool>(['extendBody']) ?? false,
       extendBodyBehindAppBar: source.v<bool>(['extendBodyBehindAppBar']) ?? false,
       drawerScrimColor: ArgumentDecoders.color(source, ['drawerScrimColor']),
@@ -505,22 +618,30 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
     final double min = source.v<double>(['min']) ?? 0.0;
     final double value = source.v<double>(['value']) ?? min;
     final String? labelText = source.v<String>(['label']);
-    final String label = labelText != null ? '$labelText: ${value.toStringAsFixed(2)}' : value.toStringAsFixed(2);
+    final String label = labelText != null
+        ? '$labelText: ${value.toStringAsFixed(2)}'
+        : value.toStringAsFixed(2);
     return Slider(
       value: value,
       secondaryTrackValue: source.v<double>(['secondaryTrackValue']),
-      onChanged: source.handler(['onChanged'],
-          (HandlerTrigger trigger) => (double value) {
-            trigger({'value': value});
-          }),
-      onChangeStart: source.handler(['onChangeStart'],
-          (HandlerTrigger trigger) => (double value) {
-            trigger({'value': value});
-          }),
-      onChangeEnd: source.handler(['onChangeEnd'],
-          (HandlerTrigger trigger) => (double value) {
-            trigger({'value': value});
-          }),
+      onChanged: source.handler(
+        ['onChanged'],
+        (HandlerTrigger trigger) => (double value) {
+          trigger({'value': value});
+        },
+      ),
+      onChangeStart: source.handler(
+        ['onChangeStart'],
+        (HandlerTrigger trigger) => (double value) {
+          trigger({'value': value});
+        },
+      ),
+      onChangeEnd: source.handler(
+        ['onChangeEnd'],
+        (HandlerTrigger trigger) => (double value) {
+          trigger({'value': value});
+        },
+      ),
       min: min,
       max: source.v<double>(['max']) ?? 1.0,
       divisions: source.v<int>(['divisions']),
@@ -529,7 +650,11 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
       inactiveColor: ArgumentDecoders.color(source, ['inactiveColor']),
       secondaryActiveColor: ArgumentDecoders.color(source, ['secondaryActiveColor']),
       thumbColor: ArgumentDecoders.color(source, ['thumbColor']),
-      allowedInteraction: ArgumentDecoders.enumValue<SliderInteraction>(SliderInteraction.values, source, ['allowedInteraction']),
+      allowedInteraction: ArgumentDecoders.enumValue<SliderInteraction>(
+        SliderInteraction.values,
+        source,
+        ['allowedInteraction'],
+      ),
     );
   },
 
@@ -539,7 +664,8 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
       onPressed: source.voidHandler(['onPressed']),
       onLongPress: source.voidHandler(['onLongPress']),
       autofocus: source.v<bool>(['autofocus']) ?? false,
-      clipBehavior: ArgumentDecoders.enumValue<Clip>(Clip.values, source, ['clipBehavior']) ?? Clip.none,
+      clipBehavior:
+          ArgumentDecoders.enumValue<Clip>(Clip.values, source, ['clipBehavior']) ?? Clip.none,
       child: source.child(['child']),
     );
   },
@@ -553,5 +679,4 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
       color: ArgumentDecoders.color(source, ['color']),
     );
   },
-
 };

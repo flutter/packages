@@ -4,8 +4,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:material_ui_examples/data_table/data_table.0.dart'
-    as example;
+import 'package:material_ui_examples/data_table/data_table.0.dart' as example;
 
 void main() {
   testWidgets('DataTable Smoke Test', (WidgetTester tester) async {

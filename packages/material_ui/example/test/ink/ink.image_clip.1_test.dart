@@ -6,8 +6,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:material_ui_examples/ink/ink.image_clip.1.dart'
-    as example;
+import 'package:material_ui_examples/ink/ink.image_clip.1.dart' as example;
 
 void main() {
   const List<int> kTransparentImage = <int>[

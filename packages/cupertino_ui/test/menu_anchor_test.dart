@@ -5,7 +5,6 @@
 @Skip(
   'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
 )
-
 import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' as ui;

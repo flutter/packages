@@ -2734,45 +2734,49 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     }
   }, skip: !eventChannelSupported.contains(targetGenerator));
 
-  testWidgets('event channel handles extended sealed classes', (_) async {
-    final completer = Completer<void>();
-    var count = 0;
-    final Stream<PlatformEvent> events = streamEvents();
-    events.listen((PlatformEvent event) {
-      switch (event) {
-        case IntEvent():
-          expect(event.value, 1);
-          expect(count, 0);
-          count++;
-        case StringEvent():
-          expect(event.value, 'string');
-          expect(count, 1);
-          count++;
-        case BoolEvent():
-          expect(event.value, false);
-          expect(count, 2);
-          count++;
-        case DoubleEvent():
-          expect(event.value, 3.14);
-          expect(count, 3);
-          count++;
-        case ObjectsEvent():
-          expect(event.value, true);
-          expect(count, 4);
-          count++;
-        case EnumEvent():
-          expect(event.value, EventEnum.fortyTwo);
-          expect(count, 5);
-          count++;
-        case ClassEvent():
-          expect(event.value.aNullableInt, 0);
-          expect(count, 6);
-          count++;
-          completer.complete();
-      }
-    });
-    await completer.future;
-  }, skip: !eventChannelSupported.contains(targetGenerator));
+  testWidgets(
+    'event channel handles extended sealed classes',
+    (_) async {
+      final completer = Completer<void>();
+      var count = 0;
+      final Stream<PlatformEvent> events = streamEvents();
+      events.listen((PlatformEvent event) {
+        switch (event) {
+          case IntEvent():
+            expect(event.value, 1);
+            expect(count, 0);
+            count++;
+          case StringEvent():
+            expect(event.value, 'string');
+            expect(count, 1);
+            count++;
+          case BoolEvent():
+            expect(event.value, false);
+            expect(count, 2);
+            count++;
+          case DoubleEvent():
+            expect(event.value, 3.14);
+            expect(count, 3);
+            count++;
+          case ObjectsEvent():
+            expect(event.value, true);
+            expect(count, 4);
+            count++;
+          case EnumEvent():
+            expect(event.value, EventEnum.fortyTwo);
+            expect(count, 5);
+            count++;
+          case ClassEvent():
+            expect(event.value.aNullableInt, 0);
+            expect(count, 6);
+            count++;
+            completer.complete();
+        }
+      });
+      await completer.future;
+    },
+    skip: !eventChannelSupported.contains(targetGenerator),
+  );
 
   testWidgets('event channels handle multiple instances', (_) async {
     final completer1 = Completer<void>();

@@ -4,8 +4,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:material_ui_examples/list_tile/list_tile.2.dart'
-    as example;
+import 'package:material_ui_examples/list_tile/list_tile.2.dart' as example;
 
 void main() {
   testWidgets('ListTile leading and trailing widgets are aligned appropriately', (
