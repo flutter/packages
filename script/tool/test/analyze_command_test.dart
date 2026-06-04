@@ -175,6 +175,21 @@ void main() {
       );
     });
 
+    test('runs flutter pub get for non-Flutter packages with Flutter examples', () async {
+      final RepositoryPackage mainPackage = createFakePackage('a', packagesDir, examples: []);
+      createFakePackage('example', mainPackage.directory, examples: [], isFlutter: true);
+
+      await runCapturingPrint(runner, <String>['analyze']);
+
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall('flutter', const <String>['pub', 'get'], mainPackage.path),
+          ProcessCall('dart', const <String>['analyze', '--fatal-infos'], mainPackage.path),
+        ]),
+      );
+    });
+
     test('passes lib/ directory with --lib-only', () async {
       final RepositoryPackage package = createFakePackage('a_package', packagesDir);
 
@@ -254,16 +269,47 @@ void main() {
     });
 
     test('downgrades first when requested', () async {
-      final RepositoryPackage plugin = createFakePlugin('a', packagesDir);
+      final RepositoryPackage package = createFakePackage('a', packagesDir);
 
       await runCapturingPrint(runner, <String>['analyze', '--downgrade']);
 
       expect(
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[
-          ProcessCall('flutter', const <String>['pub', 'downgrade'], plugin.path),
-          ProcessCall('flutter', const <String>['pub', 'get'], plugin.path),
-          ProcessCall('dart', const <String>['analyze', '--fatal-infos'], plugin.path),
+          ProcessCall('dart', const <String>['pub', 'downgrade'], package.path),
+          ProcessCall('dart', const <String>['pub', 'get'], package.path),
+          ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
+        ]),
+      );
+    });
+
+    test('downgrades using flutter for Flutter packages', () async {
+      final RepositoryPackage package = createFakePackage('a', packagesDir, isFlutter: true);
+
+      await runCapturingPrint(runner, <String>['analyze', '--downgrade']);
+
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall('flutter', const <String>['pub', 'downgrade'], package.path),
+          ProcessCall('flutter', const <String>['pub', 'get'], package.path),
+          ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
+        ]),
+      );
+    });
+
+    test('downgrades using flutter for non-Flutter packages with Flutter examples', () async {
+      final RepositoryPackage package = createFakePackage('a', packagesDir, examples: []);
+      createFakePackage('example', package.directory, examples: [], isFlutter: true);
+
+      await runCapturingPrint(runner, <String>['analyze', '--downgrade']);
+
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall('flutter', const <String>['pub', 'downgrade'], package.path),
+          ProcessCall('flutter', const <String>['pub', 'get'], package.path),
+          ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
         ]),
       );
     });
