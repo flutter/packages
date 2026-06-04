@@ -4,7 +4,8 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:material_ui_examples/theme/theme_extension.1.dart' as example;
+import 'package:material_ui_examples/theme/theme_extension.1.dart'
+    as example;
 
 void main() {
   testWidgets('ThemeExtension can be obtained', (WidgetTester tester) async {

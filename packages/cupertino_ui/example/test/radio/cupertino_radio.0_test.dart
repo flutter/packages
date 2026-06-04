@@ -3,7 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:cupertino_ui/cupertino_ui.dart';
-import 'package:cupertino_ui_examples/radio/cupertino_radio.0.dart' as example;
+import 'package:cupertino_ui_examples/radio/cupertino_radio.0.dart'
+    as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

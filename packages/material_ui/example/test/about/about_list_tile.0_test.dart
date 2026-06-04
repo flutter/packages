@@ -4,7 +4,8 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:material_ui_examples/about/about_list_tile.0.dart' as example;
+import 'package:material_ui_examples/about/about_list_tile.0.dart'
+    as example;
 
 void main() {
   testWidgets('It should show the about dialog after clicking on the button', (

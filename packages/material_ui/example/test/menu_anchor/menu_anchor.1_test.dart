@@ -6,7 +6,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:material_ui_examples/menu_anchor/menu_anchor.1.dart' as example;
+import 'package:material_ui_examples/menu_anchor/menu_anchor.1.dart'
+    as example;
 
 void main() {
   testWidgets('Can open menu', (WidgetTester tester) async {

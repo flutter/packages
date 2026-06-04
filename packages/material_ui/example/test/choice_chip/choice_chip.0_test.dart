@@ -4,7 +4,8 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:material_ui_examples/choice_chip/choice_chip.0.dart' as example;
+import 'package:material_ui_examples/choice_chip/choice_chip.0.dart'
+    as example;
 
 void main() {
   testWidgets('Can choose an item using ChoiceChip', (
