@@ -12,8 +12,8 @@ void main() {
       final router = GoRouter(
         initialLocation: '/',
         routes: <GoRoute>[
-          GoRoute(path: '/', name: 'home', builder: (_, __) => const _MyWidget()),
-          GoRoute(path: '/page-0/:tab', name: 'page-0', builder: (_, __) => const SizedBox()),
+          GoRoute(path: '/', name: 'home', builder: (_, _) => const _MyWidget()),
+          GoRoute(path: '/page-0/:tab', name: 'page-0', builder: (_, _) => const SizedBox()),
         ],
       );
       addTearDown(router.dispose);

@@ -871,7 +871,7 @@ void main() {
             horizontalAxisDirection: AxisDirection.right,
             delegate: TreeRowBuilderDelegate(
               rowCount: 0,
-              nodeBuilder: (_, __) => const SizedBox(),
+              nodeBuilder: (_, _) => const SizedBox(),
               rowBuilder: (_) => const TreeRow(extent: FixedTreeRowExtent(40.0)),
             ),
             activeAnimations: const <UniqueKey, TreeViewNodesAnimation>{},
@@ -896,7 +896,7 @@ void main() {
             horizontalAxisDirection: AxisDirection.left,
             delegate: TreeRowBuilderDelegate(
               rowCount: 0,
-              nodeBuilder: (_, __) => const SizedBox(),
+              nodeBuilder: (_, _) => const SizedBox(),
               rowBuilder: (_) => const TreeRow(extent: FixedTreeRowExtent(40.0)),
             ),
             activeAnimations: const <UniqueKey, TreeViewNodesAnimation>{},

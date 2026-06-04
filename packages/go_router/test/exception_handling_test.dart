@@ -18,8 +18,8 @@ void main() {
         routes: <RouteBase>[
           GoRoute(path: '/', builder: (_, GoRouterState state) => const Text('home')),
         ],
-        errorBuilder: (_, __) => const Text(''),
-        onException: (_, __, ___) {},
+        errorBuilder: (_, _) => const Text(''),
+        onException: (_, _, _) {},
       );
     } on Error {
       thrown = true;
@@ -32,8 +32,8 @@ void main() {
         routes: <RouteBase>[
           GoRoute(path: '/', builder: (_, GoRouterState state) => const Text('home')),
         ],
-        errorBuilder: (_, __) => const Text(''),
-        errorPageBuilder: (_, __) => const MaterialPage<void>(child: Text('')),
+        errorBuilder: (_, _) => const Text(''),
+        errorPageBuilder: (_, _) => const MaterialPage<void>(child: Text('')),
       );
     } on Error {
       thrown = true;
@@ -46,8 +46,8 @@ void main() {
         routes: <RouteBase>[
           GoRoute(path: '/', builder: (_, GoRouterState state) => const Text('home')),
         ],
-        onException: (_, __, ___) {},
-        errorPageBuilder: (_, __) => const MaterialPage<void>(child: Text('')),
+        onException: (_, _, _) {},
+        errorPageBuilder: (_, _) => const MaterialPage<void>(child: Text('')),
       );
     } on Error {
       thrown = true;
@@ -98,7 +98,7 @@ void main() {
       final GoRouter router = await createRouter(
         <RouteBase>[GoRoute(path: '/', builder: (_, GoRouterState state) => const Text('home'))],
         tester,
-        onException: (_, __, ___) {},
+        onException: (_, _, _) {},
       );
       expect(find.text('home'), findsOneWidget);
 

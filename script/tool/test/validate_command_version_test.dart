@@ -1584,7 +1584,7 @@ release:
         );
       });
       test(
-        'ignores changelog and pubspec yaml version modifications check with override: post-release label',
+        'ignores changelog and pubspec yaml version modifications check with override: skip-batch-release-repo-check label',
         () async {
           final RepositoryPackage package = createFakePackage(
             'package',
@@ -1615,7 +1615,7 @@ packages/package/pubspec.yaml
           final List<String> output = await runCapturingPrint(runner, <String>[
             'validate',
             '--base-sha=main',
-            '--pr-labels=override: post-release-package',
+            '--pr-labels=override: skip-batch-release-repo-check-package',
           ]);
 
           expect(
