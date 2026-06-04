@@ -195,7 +195,8 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
         print('here');
         if (fileSize != null) {
           print('inside');
-          final Pointer<UnsignedLong> pointer = Pointer.fromAddress(fileSize.ref.pointer.address);
+          print(fileSize.ref.pointer.address);
+          final pointer = Pointer<Long>.fromAddress(fileSize.ref.pointer.address);
           print('pointer made');
           return pointer.value;
         }
