@@ -146,7 +146,7 @@ void main() {
         addTearDown(() {
           helpers.createAnchorElementFunction = original;
         });
-        helpers.createAnchorElementFunction = (_, __) => mockAnchor;
+        helpers.createAnchorElementFunction = (_, _) => mockAnchor;
 
         final file = XFile.fromData(bytes, name: textFile.name);
 

@@ -40,10 +40,10 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/',
-            builder: (_, __) => const Placeholder(),
+            builder: (_, _) => const Placeholder(),
             routes: <GoRoute>[
-              GoRoute(path: 'allowed', builder: (_, __) => const Placeholder()),
-              GoRoute(path: 'blocked', builder: (_, __) => const Placeholder()),
+              GoRoute(path: 'allowed', builder: (_, _) => const Placeholder()),
+              GoRoute(path: 'blocked', builder: (_, _) => const Placeholder()),
             ],
           ),
         ],
@@ -76,10 +76,10 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/',
-            builder: (_, __) => const Placeholder(),
+            builder: (_, _) => const Placeholder(),
             routes: <GoRoute>[
-              GoRoute(path: 'blocked', builder: (_, __) => const Placeholder()),
-              GoRoute(path: 'allowed', builder: (_, __) => const Placeholder()),
+              GoRoute(path: 'blocked', builder: (_, _) => const Placeholder()),
+              GoRoute(path: 'allowed', builder: (_, _) => const Placeholder()),
             ],
           ),
         ],
@@ -137,15 +137,15 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/home',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Home'))),
+            builder: (_, _) => const Scaffold(body: Center(child: Text('Home'))),
             routes: <GoRoute>[
               GoRoute(
                 path: 'allowed',
-                builder: (_, __) => const Scaffold(body: Center(child: Text('Allowed'))),
+                builder: (_, _) => const Scaffold(body: Center(child: Text('Allowed'))),
               ),
               GoRoute(
                 path: 'block',
-                builder: (_, __) => const Scaffold(body: Center(child: Text('Blocked'))),
+                builder: (_, _) => const Scaffold(body: Center(child: Text('Blocked'))),
               ),
             ],
           ),
@@ -199,15 +199,15 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/start',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Start'))),
+            builder: (_, _) => const Scaffold(body: Center(child: Text('Start'))),
           ),
           GoRoute(
             path: '/recursive',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Recursive'))),
+            builder: (_, _) => const Scaffold(body: Center(child: Text('Recursive'))),
           ),
           GoRoute(
             path: '/fallback',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Fallback'))),
+            builder: (_, _) => const Scaffold(body: Center(child: Text('Fallback'))),
           ),
         ],
       );
@@ -256,15 +256,15 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/home',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Home'))),
+            builder: (_, _) => const Scaffold(body: Center(child: Text('Home'))),
           ),
           GoRoute(
             path: '/protected',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Protected'))),
+            builder: (_, _) => const Scaffold(body: Center(child: Text('Protected'))),
           ),
           GoRoute(
             path: '/sign-in',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Sign-in'))),
+            builder: (_, _) => const Scaffold(body: Center(child: Text('Sign-in'))),
           ),
         ],
       );
@@ -321,11 +321,11 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/home',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Home'))),
+            builder: (_, _) => const Scaffold(body: Center(child: Text('Home'))),
           ),
           GoRoute(
             path: '/requires-auth',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Authenticated Content'))),
+            builder: (_, _) => const Scaffold(body: Center(child: Text('Authenticated Content'))),
           ),
           GoRoute(
             path: '/login',
@@ -396,15 +396,15 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/home',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Home'))),
+            builder: (_, _) => const Scaffold(body: Center(child: Text('Home'))),
           ),
           GoRoute(
             path: '/protected',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Protected'))),
+            builder: (_, _) => const Scaffold(body: Center(child: Text('Protected'))),
           ),
           GoRoute(
             path: '/sign-in',
-            builder: (_, __) => Scaffold(
+            builder: (_, _) => Scaffold(
               appBar: AppBar(title: const Text('Sign in')),
               body: const Center(child: Text('Sign-in')),
             ),
@@ -460,15 +460,15 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/home',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Home'))),
+            builder: (_, _) => const Scaffold(body: Center(child: Text('Home'))),
           ),
           GoRoute(
             path: '/old-page',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Old Page'))),
+            builder: (_, _) => const Scaffold(body: Center(child: Text('Old Page'))),
           ),
           GoRoute(
             path: '/new-version',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('New Version'))),
+            builder: (_, _) => const Scaffold(body: Center(child: Text('New Version'))),
           ),
         ],
       );
@@ -515,15 +515,15 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/home',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Home'))),
+            builder: (_, _) => const Scaffold(body: Center(child: Text('Home'))),
           ),
           GoRoute(
             path: '/outdated',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Outdated'))),
+            builder: (_, _) => const Scaffold(body: Center(child: Text('Outdated'))),
           ),
           GoRoute(
             path: '/updated',
-            builder: (_, __) => Scaffold(
+            builder: (_, _) => Scaffold(
               body: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -628,13 +628,13 @@ void main() {
           GoRoute(
             path: '/home',
             name: 'home', // Good practice to name routes
-            builder: (_, __) =>
+            builder: (_, _) =>
                 const Scaffold(body: Center(child: Text('Home Screen'))), // Unique text
           ),
           GoRoute(
             path: '/protected',
             name: 'protected', // Good practice to name routes
-            builder: (_, __) =>
+            builder: (_, _) =>
                 const Scaffold(body: Center(child: Text('Protected Screen'))), // Unique text
           ),
           GoRoute(
@@ -757,15 +757,15 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/start',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Start'))),
+            builder: (_, _) => const Scaffold(body: Center(child: Text('Start'))),
           ),
           GoRoute(
             path: '/multi-step',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Multi Step'))),
+            builder: (_, _) => const Scaffold(body: Center(child: Text('Multi Step'))),
           ),
           GoRoute(
             path: '/step-one',
-            builder: (_, __) => Scaffold(
+            builder: (_, _) => Scaffold(
               body: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -843,11 +843,11 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/error',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Error Page'))),
+            builder: (_, _) => const Scaffold(body: Center(child: Text('Error Page'))),
           ),
           GoRoute(
             path: '/fallback',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Fallback Page'))),
+            builder: (_, _) => const Scaffold(body: Center(child: Text('Fallback Page'))),
           ),
         ],
       );
@@ -876,11 +876,11 @@ void main() {
       router = GoRouter(
         initialLocation: '/start',
         routes: <GoRoute>[
-          GoRoute(path: '/start', builder: (_, __) => const Text('Start')),
-          GoRoute(path: '/blocked', builder: (_, __) => const Text('Blocked')),
-          GoRoute(path: '/allowed', builder: (_, __) => const Text('Allowed')),
+          GoRoute(path: '/start', builder: (_, _) => const Text('Start')),
+          GoRoute(path: '/blocked', builder: (_, _) => const Text('Blocked')),
+          GoRoute(path: '/allowed', builder: (_, _) => const Text('Allowed')),
         ],
-        onEnter: (_, __, GoRouterState next, ___) async {
+        onEnter: (_, _, GoRouterState next, _) async {
           onEnterCallCount++;
           lastOnEnterBlocked = next.uri.path == '/blocked';
           if (lastOnEnterBlocked) {
@@ -937,11 +937,11 @@ void main() {
       router = GoRouter(
         initialLocation: '/page1',
         routes: <GoRoute>[
-          GoRoute(path: '/page1', builder: (_, __) => const Text('Page 1')),
-          GoRoute(path: '/page2', builder: (_, __) => const Text('Page 2')),
-          GoRoute(path: '/protected', builder: (_, __) => const Text('Protected')),
+          GoRoute(path: '/page1', builder: (_, _) => const Text('Page 1')),
+          GoRoute(path: '/page2', builder: (_, _) => const Text('Page 2')),
+          GoRoute(path: '/protected', builder: (_, _) => const Text('Protected')),
         ],
-        onEnter: (_, GoRouterState current, GoRouterState next, ___) async {
+        onEnter: (_, GoRouterState current, GoRouterState next, _) async {
           capturedCurrentPath = current.uri.path;
           capturedNextPath = next.uri.path;
 
@@ -979,18 +979,18 @@ void main() {
 
       router = GoRouter(
         initialLocation: '/a',
-        onEnter: (_, __, ___, ____) async {
+        onEnter: (_, _, _, _) async {
           onEnterCount++;
           return const Allow();
         },
         routes: <RouteBase>[
           GoRoute(
             path: '/a',
-            builder: (_, __) => const Scaffold(body: Text('A')),
+            builder: (_, _) => const Scaffold(body: Text('A')),
             routes: <RouteBase>[
               GoRoute(
                 path: 'b',
-                builder: (_, __) => const Scaffold(body: Text('B')),
+                builder: (_, _) => const Scaffold(body: Text('B')),
               ),
             ],
           ),
@@ -1022,7 +1022,7 @@ void main() {
 
       router = GoRouter(
         initialLocation: '/home',
-        onEnter: (_, __, GoRouterState next, ____) async {
+        onEnter: (_, _, GoRouterState next, _) async {
           onEnterCount++;
           // Simulate auth check - block protected route if not allowed
           if (next.uri.path == '/protected' && !allowNavigation) {
@@ -1033,11 +1033,11 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/home',
-            builder: (_, __) => const Scaffold(body: Text('Home')),
+            builder: (_, _) => const Scaffold(body: Text('Home')),
           ),
           GoRoute(
             path: '/protected',
-            builder: (_, __) => const Scaffold(body: Text('Protected')),
+            builder: (_, _) => const Scaffold(body: Text('Protected')),
           ),
         ],
       );
@@ -1099,7 +1099,7 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Root'))),
+            builder: (_, _) => const Scaffold(body: Center(child: Text('Root'))),
           ),
           GoRoute(
             path: '/article/:id',
@@ -1139,11 +1139,11 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/parent',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Parent'))),
+            builder: (_, _) => const Scaffold(body: Center(child: Text('Parent'))),
             routes: <RouteBase>[
               GoRoute(
                 path: 'child',
-                builder: (_, __) => const Scaffold(body: Center(child: Text('Child'))),
+                builder: (_, _) => const Scaffold(body: Center(child: Text('Child'))),
               ),
             ],
           ),
@@ -1183,17 +1183,17 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Root'))),
+            builder: (_, _) => const Scaffold(body: Center(child: Text('Root'))),
           ),
           GoRoute(
             path: '/old',
-            builder: (_, __) => const SizedBox.shrink(),
+            builder: (_, _) => const SizedBox.shrink(),
             // Route-level redirect: should run AFTER onEnter allows
-            redirect: (_, __) => '/new',
+            redirect: (_, _) => '/new',
           ),
           GoRoute(
             path: '/new',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('New'))),
+            builder: (_, _) => const Scaffold(body: Center(child: Text('New'))),
           ),
         ],
       );
@@ -1226,7 +1226,7 @@ void main() {
 
       router = GoRouter(
         initialLocation: '/home',
-        onEnter: (_, __, GoRouterState next, ___) async {
+        onEnter: (_, _, GoRouterState next, _) async {
           if (next.uri.path == '/boom') {
             // Allow, but run a failing "then" callback
             return Allow(then: () => throw StateError('then blew up'));
@@ -1236,11 +1236,11 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/home',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Home'))),
+            builder: (_, _) => const Scaffold(body: Center(child: Text('Home'))),
           ),
           GoRoute(
             path: '/boom',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Boom'))),
+            builder: (_, _) => const Scaffold(body: Center(child: Text('Boom'))),
           ),
         ],
       );
@@ -1271,13 +1271,13 @@ void main() {
       router = GoRouter(
         initialLocation: '/start',
         redirectLimit: 1,
-        onException: (_, __, ___) {
+        onException: (_, _, _) {
           onExceptionCalls++;
           if (!exceededCompleter.isCompleted) {
             exceededCompleter.complete();
           }
         },
-        onEnter: (_, __, GoRouterState next, GoRouter goRouter) async {
+        onEnter: (_, _, GoRouterState next, GoRouter goRouter) async {
           if (next.uri.path == '/blocked-once') {
             // Hard stop: no then -> history should reset
             return const Block.stop();
@@ -1291,15 +1291,15 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/start',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Start'))),
+            builder: (_, _) => const Scaffold(body: Center(child: Text('Start'))),
           ),
           GoRoute(
             path: '/blocked-once',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('BlockedOnce'))),
+            builder: (_, _) => const Scaffold(body: Center(child: Text('BlockedOnce'))),
           ),
           GoRoute(
             path: '/chain',
-            builder: (_, __) => const Scaffold(body: Center(child: Text('Chain'))),
+            builder: (_, _) => const Scaffold(body: Center(child: Text('Chain'))),
           ),
         ],
       );
@@ -1339,27 +1339,27 @@ void main() {
         routes: <GoRoute>[
           GoRoute(
             path: '/home',
-            builder: (_, __) => const Scaffold(body: Text('Home')),
+            builder: (_, _) => const Scaffold(body: Text('Home')),
           ),
           GoRoute(
             path: '/has-route-redirect',
-            builder: (_, __) => const Scaffold(body: Text('Never shown')),
-            redirect: (_, __) {
+            builder: (_, _) => const Scaffold(body: Text('Never shown')),
+            redirect: (_, _) {
               calls.add('route-level');
               return '/redirected';
             },
           ),
           GoRoute(
             path: '/redirected',
-            builder: (_, __) => const Scaffold(body: Text('Redirected')),
+            builder: (_, _) => const Scaffold(body: Text('Redirected')),
           ),
         ],
-        onEnter: (_, __, ___, ____) {
+        onEnter: (_, _, _, _) {
           calls.add('onEnter');
           return const Allow();
         },
         // ignore: deprecated_member_use_from_same_package
-        redirect: (_, __) {
+        redirect: (_, _) {
           calls.add('legacy');
           return null;
         },
@@ -1410,20 +1410,20 @@ void main() {
 
       router = GoRouter(
         initialLocation: '/home',
-        onEnter: (_, __, GoRouterState next, ___) =>
+        onEnter: (_, _, GoRouterState next, _) =>
             next.uri.path == '/blocked' ? const Block.stop() : const Allow(),
         routes: <RouteBase>[
           GoRoute(
             path: '/home',
-            builder: (_, __) => const Scaffold(body: Text('Home')),
+            builder: (_, _) => const Scaffold(body: Text('Home')),
           ),
           GoRoute(
             path: '/allowed',
-            builder: (_, __) => const Scaffold(body: Text('Allowed')),
+            builder: (_, _) => const Scaffold(body: Text('Allowed')),
           ),
           GoRoute(
             path: '/blocked',
-            builder: (_, __) => const Scaffold(body: Text('Blocked')),
+            builder: (_, _) => const Scaffold(body: Text('Blocked')),
           ),
         ],
       );
@@ -1481,11 +1481,11 @@ void main() {
           routes: <RouteBase>[
             GoRoute(
               path: '/home',
-              builder: (_, __) => const Scaffold(body: Center(child: Text('Home'))),
+              builder: (_, _) => const Scaffold(body: Center(child: Text('Home'))),
             ),
             GoRoute(
               path: '/login',
-              builder: (_, __) => const Scaffold(body: Center(child: Text('Login'))),
+              builder: (_, _) => const Scaffold(body: Center(child: Text('Login'))),
             ),
           ],
         );
@@ -1527,12 +1527,12 @@ void main() {
           routes: <RouteBase>[
             GoRoute(
               path: '/home',
-              builder: (_, __) => const Scaffold(body: Center(child: Text('Home'))),
+              builder: (_, _) => const Scaffold(body: Center(child: Text('Home'))),
             ),
             GoRoute(
               path: '/login',
               name: 'login',
-              builder: (_, __) => const Scaffold(body: Center(child: Text('Login'))),
+              builder: (_, _) => const Scaffold(body: Center(child: Text('Login'))),
             ),
           ],
         );
@@ -1576,11 +1576,11 @@ void main() {
             routes: <RouteBase>[
               GoRoute(
                 path: '/home',
-                builder: (_, __) => const Scaffold(body: Center(child: Text('Home'))),
+                builder: (_, _) => const Scaffold(body: Center(child: Text('Home'))),
               ),
               GoRoute(
                 path: '/login',
-                builder: (_, __) => const Scaffold(body: Center(child: Text('Login'))),
+                builder: (_, _) => const Scaffold(body: Center(child: Text('Login'))),
               ),
             ],
           );
@@ -1623,11 +1623,11 @@ void main() {
           routes: <RouteBase>[
             GoRoute(
               path: '/home',
-              builder: (_, __) => const Scaffold(body: Center(child: Text('Home'))),
+              builder: (_, _) => const Scaffold(body: Center(child: Text('Home'))),
             ),
             GoRoute(
               path: '/dashboard',
-              builder: (_, __) => const Scaffold(body: Center(child: Text('Dashboard'))),
+              builder: (_, _) => const Scaffold(body: Center(child: Text('Dashboard'))),
             ),
           ],
         );
@@ -1669,7 +1669,7 @@ void main() {
           routes: <RouteBase>[
             GoRoute(
               path: '/home',
-              builder: (_, __) => const Scaffold(body: Center(child: Text('Home'))),
+              builder: (_, _) => const Scaffold(body: Center(child: Text('Home'))),
             ),
           ],
         );
@@ -1725,9 +1725,9 @@ void main() {
             return null;
           },
           routes: <RouteBase>[
-            GoRoute(path: '/', builder: (_, __) => const Text('Home')),
-            GoRoute(path: '/a', builder: (_, __) => const Text('A')),
-            GoRoute(path: '/b', builder: (_, __) => const Text('B')),
+            GoRoute(path: '/', builder: (_, _) => const Text('Home')),
+            GoRoute(path: '/a', builder: (_, _) => const Text('A')),
+            GoRoute(path: '/b', builder: (_, _) => const Text('B')),
           ],
         );
 
@@ -1772,17 +1772,17 @@ void main() {
           routes: <RouteBase>[
             GoRoute(
               path: '/',
-              builder: (_, __) => const Text('Home'),
+              builder: (_, _) => const Text('Home'),
               routes: <RouteBase>[
                 GoRoute(
                   path: 'src',
-                  builder: (_, __) => const Text('Src'),
+                  builder: (_, _) => const Text('Src'),
                   redirect: (BuildContext context, GoRouterState state) => '/dst',
                 ),
               ],
             ),
-            GoRoute(path: '/dst', builder: (_, __) => const Text('Dst')),
-            GoRoute(path: '/final', builder: (_, __) => const Text('Final')),
+            GoRoute(path: '/dst', builder: (_, _) => const Text('Dst')),
+            GoRoute(path: '/final', builder: (_, _) => const Text('Final')),
           ],
         );
 
@@ -1824,9 +1824,9 @@ void main() {
             return null;
           },
           routes: <RouteBase>[
-            GoRoute(path: '/', builder: (_, __) => const Text('Home')),
-            GoRoute(path: '/a', builder: (_, __) => const Text('A')),
-            GoRoute(path: '/b', builder: (_, __) => const Text('B')),
+            GoRoute(path: '/', builder: (_, _) => const Text('Home')),
+            GoRoute(path: '/a', builder: (_, _) => const Text('A')),
+            GoRoute(path: '/b', builder: (_, _) => const Text('B')),
           ],
         );
 

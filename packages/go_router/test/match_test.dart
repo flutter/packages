@@ -151,7 +151,7 @@ void main() {
     final matchList1 = RouteMatchList(
       matches: <RouteMatch>[
         RouteMatch(
-          route: GoRoute(path: '/', builder: (_, __) => const Text('hi')),
+          route: GoRoute(path: '/', builder: (_, _) => const Text('hi')),
           matchedLocation: '/',
           pageKey: const ValueKey<String>('dummy'),
         ),
@@ -163,7 +163,7 @@ void main() {
     final matchList2 = RouteMatchList(
       matches: <RouteMatch>[
         RouteMatch(
-          route: GoRoute(path: '/a', builder: (_, __) => const Text('a')),
+          route: GoRoute(path: '/a', builder: (_, _) => const Text('a')),
           matchedLocation: '/a',
           pageKey: const ValueKey<String>('dummy'),
         ),

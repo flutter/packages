@@ -253,7 +253,7 @@ void main() {
     android_webview.PigeonOverrides.webViewFeature_isFeatureSupported =
         isWebViewFeatureSupported ?? (_) async => false;
     android_webview.PigeonOverrides.webSettingsCompat_setPaymentRequestEnabled =
-        setPaymentRequestEnabled ?? (_, __) async {};
+        setPaymentRequestEnabled ?? (_, _) async {};
 
     final creationParams = AndroidWebViewControllerCreationParams(
       androidWebStorage: mockWebStorage ?? MockWebStorage(),
@@ -789,8 +789,8 @@ void main() {
 
       CapturingWebChromeClient.lastCreatedDelegate.onProgressChanged!(
         TestWebChromeClient(
-          onJsConfirm: (_, __, ___, ____) async => false,
-          onShowFileChooser: (_, __, ___) async => <String>[],
+          onJsConfirm: (_, _, _, _) async => false,
+          onShowFileChooser: (_, _, _) async => <String>[],
         ),
         MockWebView(),
         42,
@@ -808,8 +808,8 @@ void main() {
       // Should not cause LateInitializationError
       CapturingWebChromeClient.lastCreatedDelegate.onProgressChanged!(
         TestWebChromeClient(
-          onJsConfirm: (_, __, ___, ____) async => false,
-          onShowFileChooser: (_, __, ___) async => <String>[],
+          onJsConfirm: (_, _, _, _) async => false,
+          onShowFileChooser: (_, _, _) async => <String>[],
         ),
         MockWebView(),
         42,
@@ -1053,8 +1053,8 @@ void main() {
 
       onPermissionRequestCallback(
         android_webview.WebChromeClient.pigeon_detached(
-          onJsConfirm: (_, __, ___, ____) async => false,
-          onShowFileChooser: (_, __, ___) async => <String>[],
+          onJsConfirm: (_, _, _, _) async => false,
+          onShowFileChooser: (_, _, _) async => <String>[],
         ),
         mockPermissionRequest,
       );
@@ -1111,8 +1111,8 @@ void main() {
 
         onPermissionRequestCallback(
           android_webview.WebChromeClient.pigeon_detached(
-            onJsConfirm: (_, __, ___, ____) async => false,
-            onShowFileChooser: (_, __, ___) async => <String>[],
+            onJsConfirm: (_, _, _, _) async => false,
+            onShowFileChooser: (_, _, _) async => <String>[],
           ),
           mockPermissionRequest,
         );

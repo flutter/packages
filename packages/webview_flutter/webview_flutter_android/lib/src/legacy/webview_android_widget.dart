@@ -121,14 +121,14 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
     onPageStarted: withWeakReferenceTo(this, (
       WeakReference<WebViewAndroidPlatformController> weakReference,
     ) {
-      return (_, __, String url) {
+      return (_, _, String url) {
         weakReference.target?.callbacksHandler.onPageStarted(url);
       };
     }),
     onPageFinished: withWeakReferenceTo(this, (
       WeakReference<WebViewAndroidPlatformController> weakReference,
     ) {
-      return (_, __, String url) {
+      return (_, _, String url) {
         weakReference.target?.callbacksHandler.onPageFinished(url);
       };
     }),
@@ -137,7 +137,7 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
     ) {
       return (
         _,
-        __,
+        _,
         android_webview.WebResourceRequest request,
         android_webview.WebResourceError error,
       ) {
@@ -156,23 +156,23 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
     urlLoading: withWeakReferenceTo(this, (
       WeakReference<WebViewAndroidPlatformController> weakReference,
     ) {
-      return (_, __, String url) {
+      return (_, _, String url) {
         weakReference.target?._handleNavigationRequest(url: url, isForMainFrame: true);
       };
     }),
-    onFormResubmission: (_, __, android_webview.AndroidMessage dontResend, ___) {
+    onFormResubmission: (_, _, android_webview.AndroidMessage dontResend, _) {
       dontResend.sendToTarget();
     },
-    onReceivedClientCertRequest: (_, __, android_webview.ClientCertRequest request) {
+    onReceivedClientCertRequest: (_, _, android_webview.ClientCertRequest request) {
       request.cancel();
     },
-    onReceivedSslError: (_, __, android_webview.SslErrorHandler handler, ___) {
+    onReceivedSslError: (_, _, android_webview.SslErrorHandler handler, _) {
       handler.cancel();
     },
     requestLoading: withWeakReferenceTo(this, (
       WeakReference<WebViewAndroidPlatformController> weakReference,
     ) {
-      return (_, __, android_webview.WebResourceRequest request) {
+      return (_, _, android_webview.WebResourceRequest request) {
         weakReference.target?._handleNavigationRequest(
           url: request.url,
           isForMainFrame: request.isForMainFrame,
@@ -228,15 +228,15 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
     onProgressChanged: withWeakReferenceTo(this, (
       WeakReference<WebViewAndroidPlatformController> weakReference,
     ) {
-      return (_, __, int progress) {
+      return (_, _, int progress) {
         final WebViewAndroidPlatformController? controller = weakReference.target;
         if (controller != null && controller._hasProgressTracking) {
           controller.callbacksHandler.onProgress(progress);
         }
       };
     }),
-    onJsConfirm: (_, __, ___, ____) async => false,
-    onShowFileChooser: (_, __, ___) async => <String>[],
+    onJsConfirm: (_, _, _, _) async => false,
+    onShowFileChooser: (_, _, _) async => <String>[],
   );
 
   /// Manages the JavaScript storage APIs.

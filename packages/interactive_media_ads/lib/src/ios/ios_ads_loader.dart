@@ -114,12 +114,12 @@ base class IOSAdsLoader extends PlatformAdsLoader {
     WeakReference<IOSAdsLoader> interfaceLoader,
   ) {
     return IMAAdsLoaderDelegate(
-      adLoaderLoadedWith: (_, __, IMAAdsLoadedData adsLoadedData) {
+      adLoaderLoadedWith: (_, _, IMAAdsLoadedData adsLoadedData) {
         interfaceLoader.target?._iosParams.onAdsLoaded(
           PlatformOnAdsLoadedData(manager: IOSAdsManager(adsLoadedData.adsManager!)),
         );
       },
-      adsLoaderFailedWithErrorData: (_, __, IMAAdLoadingErrorData adErrorData) {
+      adsLoaderFailedWithErrorData: (_, _, IMAAdLoadingErrorData adErrorData) {
         interfaceLoader.target?._iosParams.onAdsLoadError(
           AdsLoadErrorData(
             error: AdError(
