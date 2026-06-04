@@ -4268,6 +4268,236 @@ void main() {
         reason: 'Tap at x=200 should hit a non-pinned column.',
       );
     });
+
+    testWidgets(
+      'Tapping on a pinned column in an aligned table (with _hAlignmentOffset) registers correctly',
+      (WidgetTester tester) async {
+        TableVicinity? lastTapped;
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: SizedBox(
+                height: 400,
+                width: 400,
+                child: TableView.builder(
+                  cacheExtent: 0.0,
+                  columnCount: 3,
+                  rowCount: 1,
+                  pinnedColumnCount: 1,
+                  alignment: Alignment.center,
+                  columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+                  rowBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+                  cellBuilder: (_, TableVicinity vicinity) {
+                    return TableViewCell(
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () => lastTapped = vicinity,
+                        child: const SizedBox.expand(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+        );
+
+        // Pinned column 0 is at x = 50..150 due to Alignment.center. Tap at (100, 200).
+        await tester.tapAt(const Offset(100, 200));
+        await tester.pumpAndSettle();
+
+        expect(
+          lastTapped,
+          TableVicinity.zero,
+          reason:
+              'Tapping at x=100 (inside aligned pinned column 0) should register a tap on column 0.',
+        );
+      },
+    );
+
+    testWidgets(
+      'Tapping on a pinned row in an aligned table (with _vAlignmentOffset) registers correctly',
+      (WidgetTester tester) async {
+        TableVicinity? lastTapped;
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: SizedBox(
+                height: 600,
+                width: 100,
+                child: TableView.builder(
+                  columnCount: 1,
+                  rowCount: 3,
+                  pinnedRowCount: 1,
+                  alignment: Alignment.center,
+                  columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+                  rowBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+                  cellBuilder: (_, TableVicinity vicinity) {
+                    return TableViewCell(
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () => lastTapped = vicinity,
+                        child: const SizedBox.expand(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+        );
+
+        // Row 0 (leading pinned) is at y = 150..250.
+        await tester.tapAt(const Offset(50, 200));
+        await tester.pumpAndSettle();
+        expect(
+          lastTapped?.row,
+          0,
+          reason:
+              'Leading pinned row 0 shifted to y = 150..250 by the alignment offset must receive a tap at y = 200.',
+        );
+
+        // Row 1 (non-pinned) is at y = 250..350.
+        await tester.tapAt(const Offset(50, 300));
+        await tester.pumpAndSettle();
+        expect(
+          lastTapped?.row,
+          1,
+          reason: 'Non-pinned row 1 at y = 250..350 must receive a tap at y = 300.',
+        );
+      },
+    );
+
+    testWidgets(
+      'Tapping on pinned cells in an aligned table with both _hAlignmentOffset and _vAlignmentOffset non-zero',
+      (WidgetTester tester) async {
+        TableVicinity? lastTapped;
+
+        // 2 columns (col 0 leading pinned) x 2 rows (row 0 leading pinned),
+        // each 100 px.  Viewport 600 x 600 px.  Table = 200 x 200 px.
+        // Alignment.center:
+        //   _hAlignmentOffset = (600 − 200) × 0.5 = 200
+        //   _vAlignmentOffset = (600 − 200) × 0.5 = 200
+        //
+        // Cell positions (paintOffset):
+        //   (col 0, row 0) — (L,L) corner     -> [200, 300) x [200, 300)
+        //   (col 0, row 1) — (L,N)            -> [200, 300) x [300, 400)
+        //   (col 1, row 0) — (N,L)            -> [300, 400) x [200, 300)
+        //   (col 1, row 1) — (N,N)            -> [300, 400) x [300, 400)
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: SizedBox(
+                height: 600,
+                width: 600,
+                child: TableView.builder(
+                  columnCount: 2,
+                  rowCount: 2,
+                  pinnedColumnCount: 1,
+                  pinnedRowCount: 1,
+                  alignment: Alignment.center,
+                  columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+                  rowBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+                  cellBuilder: (_, TableVicinity vicinity) {
+                    return TableViewCell(
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () => lastTapped = vicinity,
+                        child: const SizedBox.expand(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+        );
+
+        // (L,L) corner — both column AND row clip must be shifted.
+        await tester.tapAt(const Offset(250, 250));
+        await tester.pumpAndSettle();
+        expect(
+          lastTapped,
+          TableVicinity.zero,
+          reason: '(L,L) corner cell at [200,300)x[200,300) must receive tap at (250,250).',
+        );
+
+        // (L,N) — only the column clip needs shifting.
+        await tester.tapAt(const Offset(250, 350));
+        await tester.pumpAndSettle();
+        expect(
+          lastTapped,
+          const TableVicinity(column: 0, row: 1),
+          reason: '(L,N) cell at [200,300)x[300,400) must receive tap at (250,350).',
+        );
+
+        // (N,L) — only the row clip needs shifting.
+        await tester.tapAt(const Offset(350, 250));
+        await tester.pumpAndSettle();
+        expect(
+          lastTapped,
+          const TableVicinity(column: 1, row: 0),
+          reason: '(N,L) cell at [300,400)x[200,300) must receive tap at (350,250).',
+        );
+
+        // (N,N) — neither clip needs shifting; verifies no regression.
+        await tester.tapAt(const Offset(350, 350));
+        await tester.pumpAndSettle();
+        expect(
+          lastTapped,
+          const TableVicinity(column: 1, row: 1),
+          reason: '(N,N) cell at [300,400)x[300,400) must receive tap at (350,350).',
+        );
+      },
+    );
+
+    testWidgets('Tapping on a pinned column in a reversed + aligned table registers correctly', (
+      WidgetTester tester,
+    ) async {
+      TableVicinity? lastTapped;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              height: 100,
+              width: 600,
+              child: TableView.builder(
+                columnCount: 3,
+                rowCount: 1,
+                pinnedColumnCount: 1,
+                alignment: Alignment.center,
+                horizontalDetails: const ScrollableDetails.horizontal(reverse: true),
+                columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+                rowBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+                cellBuilder: (_, TableVicinity vicinity) {
+                  return TableViewCell(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () => lastTapped = vicinity,
+                      child: const SizedBox.expand(),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // Leading pinned col 0 is at x = 350..450 (shifted left by alignment
+      // in the reversed direction).
+      await tester.tapAt(const Offset(400, 50));
+      await tester.pumpAndSettle();
+      expect(
+        lastTapped?.column,
+        0,
+        reason:
+            'Leading pinned col 0 is at x = 350..450 in a reversed + aligned table; a tap at x = 400 must reach it.',
+      );
+    });
   });
 }
 

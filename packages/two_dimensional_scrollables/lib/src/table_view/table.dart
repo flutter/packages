@@ -585,6 +585,16 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   // a cell belongs to (leading-pinned, non-pinned, or trailing-pinned for each
   // axis). Intersecting the raw cell rect with this rect in hitTestChildren
   // prevents scrollable cells from capturing taps inside pinned areas.
+  //
+  // Alignment offsets must be factored in:
+  //   * Leading-pinned cells are laid out with _hAlignmentOffset /
+  //     _vAlignmentOffset applied, so their paint position (and section
+  //     boundary) shifts by those values.
+  //   * Trailing-pinned cells are always placed at the absolute viewport edge
+  //     via -(viewportDimension - trailingExtent), independent of alignment.
+  //   * Non-pinned boundaries that border the leading-pinned section inherit
+  //     the same shift; boundaries that border the trailing-pinned section
+  //     do not.
   Rect _sectionClipRectFor(TableVicinity vicinity) {
     final bool reversedH = axisDirectionIsReversed(horizontalAxisDirection);
     final bool reversedV = axisDirectionIsReversed(verticalAxisDirection);
@@ -592,17 +602,17 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
 
     final double colLeft, colRight;
     if (vicinity.column < delegate.pinnedColumnCount) {
-      // Leading pinned column — visually on the right when axis is reversed.
+      // Leading pinned column.
       if (reversedH) {
-        colLeft = viewportSize.width - _leadingPinnedColumnsExtent;
-        colRight = viewportSize.width;
+        colLeft = viewportSize.width - _leadingPinnedColumnsExtent - _hAlignmentOffset;
+        colRight = viewportSize.width - _hAlignmentOffset;
       } else {
-        colLeft = 0.0;
-        colRight = _leadingPinnedColumnsExtent;
+        colLeft = _hAlignmentOffset;
+        colRight = _hAlignmentOffset + _leadingPinnedColumnsExtent;
       }
     } else if (_firstTrailingPinnedColumn != null &&
         vicinity.column >= _firstTrailingPinnedColumn!) {
-      // Trailing pinned column — visually on the left when axis is reversed.
+      // Trailing pinned column.
       if (reversedH) {
         colLeft = 0.0;
         colRight = _trailingPinnedColumnsExtent;
@@ -614,25 +624,25 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       // Non-pinned column.
       if (reversedH) {
         colLeft = _trailingPinnedColumnsExtent;
-        colRight = viewportSize.width - _leadingPinnedColumnsExtent;
+        colRight = viewportSize.width - _leadingPinnedColumnsExtent - _hAlignmentOffset;
       } else {
-        colLeft = _leadingPinnedColumnsExtent;
+        colLeft = _leadingPinnedColumnsExtent + _hAlignmentOffset;
         colRight = viewportSize.width - _trailingPinnedColumnsExtent;
       }
     }
 
     final double rowTop, rowBottom;
     if (vicinity.row < delegate.pinnedRowCount) {
-      // Leading pinned row — visually on the bottom when axis is reversed.
+      // Leading pinned row.
       if (reversedV) {
-        rowTop = viewportSize.height - _leadingPinnedRowsExtent;
-        rowBottom = viewportSize.height;
+        rowTop = viewportSize.height - _leadingPinnedRowsExtent - _vAlignmentOffset;
+        rowBottom = viewportSize.height - _vAlignmentOffset;
       } else {
-        rowTop = 0.0;
-        rowBottom = _leadingPinnedRowsExtent;
+        rowTop = _vAlignmentOffset;
+        rowBottom = _vAlignmentOffset + _leadingPinnedRowsExtent;
       }
     } else if (_firstTrailingPinnedRow != null && vicinity.row >= _firstTrailingPinnedRow!) {
-      // Trailing pinned row — visually on the top when axis is reversed.
+      // Trailing pinned row.
       if (reversedV) {
         rowTop = 0.0;
         rowBottom = _trailingPinnedRowsExtent;
@@ -644,9 +654,9 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       // Non-pinned row.
       if (reversedV) {
         rowTop = _trailingPinnedRowsExtent;
-        rowBottom = viewportSize.height - _leadingPinnedRowsExtent;
+        rowBottom = viewportSize.height - _leadingPinnedRowsExtent - _vAlignmentOffset;
       } else {
-        rowTop = _leadingPinnedRowsExtent;
+        rowTop = _leadingPinnedRowsExtent + _vAlignmentOffset;
         rowBottom = viewportSize.height - _trailingPinnedRowsExtent;
       }
     }
