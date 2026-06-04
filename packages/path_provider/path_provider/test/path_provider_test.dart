@@ -73,31 +73,19 @@ void main() {
     });
 
     test('getTemporaryDirectory throws on null', () async {
-      expect(
-        getTemporaryDirectory(),
-        throwsA(isA<MissingPlatformDirectoryException>()),
-      );
+      expect(getTemporaryDirectory(), throwsA(isA<MissingPlatformDirectoryException>()));
     });
 
     test('getApplicationSupportDirectory throws on null', () async {
-      expect(
-        getApplicationSupportDirectory(),
-        throwsA(isA<MissingPlatformDirectoryException>()),
-      );
+      expect(getApplicationSupportDirectory(), throwsA(isA<MissingPlatformDirectoryException>()));
     });
 
     test('getLibraryDirectory throws on null', () async {
-      expect(
-        getLibraryDirectory(),
-        throwsA(isA<MissingPlatformDirectoryException>()),
-      );
+      expect(getLibraryDirectory(), throwsA(isA<MissingPlatformDirectoryException>()));
     });
 
     test('getApplicationDocumentsDirectory throws on null', () async {
-      expect(
-        getApplicationDocumentsDirectory(),
-        throwsA(isA<MissingPlatformDirectoryException>()),
-      );
+      expect(getApplicationDocumentsDirectory(), throwsA(isA<MissingPlatformDirectoryException>()));
     });
 
     test('getExternalStorageDirectory passes null through', () async {
@@ -156,9 +144,7 @@ class FakePathProviderPlatform extends Fake
   }
 
   @override
-  Future<List<String>?> getExternalStoragePaths({
-    StorageDirectory? type,
-  }) async {
+  Future<List<String>?> getExternalStoragePaths({StorageDirectory? type}) async {
     return <String>[kExternalStoragePath];
   }
 
@@ -202,9 +188,7 @@ class AllNullFakePathProviderPlatform extends Fake
   }
 
   @override
-  Future<List<String>?> getExternalStoragePaths({
-    StorageDirectory? type,
-  }) async {
+  Future<List<String>?> getExternalStoragePaths({StorageDirectory? type}) async {
     return null;
   }
 

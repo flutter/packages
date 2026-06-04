@@ -58,9 +58,7 @@ void main() {
             isA<AssertionError>().having(
               (AssertionError error) => error.toString(),
               'description',
-              contains(
-                'Row merge start and span must both be set, or both unset.',
-              ),
+              contains('Row merge start and span must both be set, or both unset.'),
             ),
           ),
         );
@@ -72,19 +70,13 @@ void main() {
             isA<AssertionError>().having(
               (AssertionError error) => error.toString(),
               'description',
-              contains(
-                'Row merge start and span must both be set, or both unset.',
-              ),
+              contains('Row merge start and span must both be set, or both unset.'),
             ),
           ),
         );
         expect(
           () {
-            cell = TableViewCell(
-              rowMergeStart: -1,
-              rowMergeSpan: 2,
-              child: child,
-            );
+            cell = TableViewCell(rowMergeStart: -1, rowMergeSpan: 2, child: child);
           },
           throwsA(
             isA<AssertionError>().having(
@@ -96,11 +88,7 @@ void main() {
         );
         expect(
           () {
-            cell = TableViewCell(
-              rowMergeStart: 0,
-              rowMergeSpan: 0,
-              child: child,
-            );
+            cell = TableViewCell(rowMergeStart: 0, rowMergeSpan: 0, child: child);
           },
           throwsA(
             isA<AssertionError>().having(
@@ -118,9 +106,7 @@ void main() {
             isA<AssertionError>().having(
               (AssertionError error) => error.toString(),
               'description',
-              contains(
-                'Column merge start and span must both be set, or both unset.',
-              ),
+              contains('Column merge start and span must both be set, or both unset.'),
             ),
           ),
         );
@@ -132,19 +118,13 @@ void main() {
             isA<AssertionError>().having(
               (AssertionError error) => error.toString(),
               'description',
-              contains(
-                'Column merge start and span must both be set, or both unset.',
-              ),
+              contains('Column merge start and span must both be set, or both unset.'),
             ),
           ),
         );
         expect(
           () {
-            cell = TableViewCell(
-              columnMergeStart: -1,
-              columnMergeSpan: 2,
-              child: child,
-            );
+            cell = TableViewCell(columnMergeStart: -1, columnMergeSpan: 2, child: child);
           },
           throwsA(
             isA<AssertionError>().having(
@@ -156,11 +136,7 @@ void main() {
         );
         expect(
           () {
-            cell = TableViewCell(
-              columnMergeStart: 0,
-              columnMergeSpan: 0,
-              child: child,
-            );
+            cell = TableViewCell(columnMergeStart: 0, columnMergeSpan: 0, child: child);
           },
           throwsA(
             isA<AssertionError>().having(
@@ -214,10 +190,7 @@ void main() {
           );
           FlutterError.onError = oldHandler;
           expect(exceptions, hasLength(2));
-          expect(
-            exceptions.first.toString(),
-            contains('spanMergeStart <= currentSpan'),
-          );
+          expect(exceptions.first.toString(), contains('spanMergeStart <= currentSpan'));
 
           await tester.pumpWidget(const SizedBox());
           exceptions.clear();
@@ -246,10 +219,7 @@ void main() {
           );
           FlutterError.onError = oldHandler;
           expect(exceptions, hasLength(2));
-          expect(
-            exceptions.first.toString(),
-            contains('spanMergeStart <= currentSpan'),
-          );
+          expect(exceptions.first.toString(), contains('spanMergeStart <= currentSpan'));
         },
       );
 
@@ -283,10 +253,7 @@ void main() {
           );
           FlutterError.onError = oldHandler;
           expect(exceptions, hasLength(2));
-          expect(
-            exceptions.first.toString(),
-            contains('spanMergeEnd < spanCount'),
-          );
+          expect(exceptions.first.toString(), contains('spanMergeEnd < spanCount'));
 
           await tester.pumpWidget(const SizedBox());
           exceptions.clear();
@@ -310,10 +277,7 @@ void main() {
           );
           FlutterError.onError = oldHandler;
           expect(exceptions, hasLength(2));
-          expect(
-            exceptions.first.toString(),
-            contains('spanMergeEnd < spanCount'),
-          );
+          expect(exceptions.first.toString(), contains('spanMergeEnd < spanCount'));
         },
       );
 
@@ -348,10 +312,7 @@ void main() {
           );
           FlutterError.onError = oldHandler;
           expect(exceptions, hasLength(2));
-          expect(
-            exceptions.first.toString(),
-            contains('spanMergeEnd < pinnedSpanCount'),
-          );
+          expect(exceptions.first.toString(), contains('spanMergeEnd < pinnedSpanCount'));
 
           await tester.pumpWidget(const SizedBox());
           exceptions.clear();
@@ -376,10 +337,7 @@ void main() {
           );
           FlutterError.onError = oldHandler;
           expect(exceptions, hasLength(2));
-          expect(
-            exceptions.first.toString(),
-            contains('spanMergeEnd < pinnedSpanCount'),
-          );
+          expect(exceptions.first.toString(), contains('spanMergeEnd < pinnedSpanCount'));
         },
       );
     });
@@ -428,8 +386,7 @@ void main() {
       };
 
       TableViewCell cellBuilder(BuildContext context, TableVicinity vicinity) {
-        if (mergedColumns.keys.contains(vicinity) ||
-            mergedRows.keys.contains(vicinity)) {
+        if (mergedColumns.keys.contains(vicinity) || mergedRows.keys.contains(vicinity)) {
           return TableViewCell(
             rowMergeStart: mergedRows[vicinity]?.$1,
             rowMergeSpan: mergedRows[vicinity]?.$2,
@@ -446,9 +403,7 @@ void main() {
             ),
           );
         }
-        return TableViewCell(
-          child: Text('M(${vicinity.row},${vicinity.column})'),
-        );
+        return TableViewCell(child: Text('M(${vicinity.row},${vicinity.column})'));
       }
 
       setUp(() {
@@ -462,19 +417,13 @@ void main() {
         horizontalController.dispose();
       });
 
-      testWidgets('vertical main axis and natural scroll directions', (
-        WidgetTester tester,
-      ) async {
+      testWidgets('vertical main axis and natural scroll directions', (WidgetTester tester) async {
         await tester.pumpWidget(
           Directionality(
             textDirection: TextDirection.ltr,
             child: TableView.builder(
-              verticalDetails: ScrollableDetails.vertical(
-                controller: verticalController,
-              ),
-              horizontalDetails: ScrollableDetails.horizontal(
-                controller: horizontalController,
-              ),
+              verticalDetails: ScrollableDetails.vertical(controller: verticalController),
+              horizontalDetails: ScrollableDetails.horizontal(controller: horizontalController),
               cellBuilder: cellBuilder,
               columnBuilder: (_) => span,
               rowBuilder: (_) => span,
@@ -487,32 +436,17 @@ void main() {
         expect(find.text('M(0,0)'), findsOneWidget);
         expect(find.text('M(0,1)'), findsOneWidget);
         expect(find.text('M(0,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 0, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 0, column: 2)], isNull);
         expect(find.text('M(1,0)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 0)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 0)], isNull);
         expect(find.text('M(1,1)'), findsOneWidget);
         expect(find.text('M(1,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 2)], isNull);
         expect(find.text('M(2,0)'), findsOneWidget);
         expect(find.text('M(2,1)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 1)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 1)], isNull);
         expect(find.text('M(2,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 2)], isNull);
 
         expect(tester.getTopLeft(find.text('M(0,0)')), Offset.zero);
         expect(tester.getSize(find.text('M(0,0)')), const Size(100.0, 200.0));
@@ -521,30 +455,21 @@ void main() {
           BoxConstraints.tight(const Size(100.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(0,1)')),
-          const Offset(100.0, 0.0),
-        );
+        expect(tester.getTopLeft(find.text('M(0,1)')), const Offset(100.0, 0.0));
         expect(tester.getSize(find.text('M(0,1)')), const Size(200.0, 100.0));
         expect(
           layoutConstraints[const TableVicinity(row: 0, column: 1)],
           BoxConstraints.tight(const Size(200.0, 100.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(1,1)')),
-          const Offset(100.0, 100.0),
-        );
+        expect(tester.getTopLeft(find.text('M(1,1)')), const Offset(100.0, 100.0));
         expect(tester.getSize(find.text('M(1,1)')), const Size(200.0, 200.0));
         expect(
           layoutConstraints[const TableVicinity(row: 1, column: 1)],
           BoxConstraints.tight(const Size(200.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(2,0)')),
-          const Offset(0.0, 200.0),
-        );
+        expect(tester.getTopLeft(find.text('M(2,0)')), const Offset(0.0, 200.0));
         expect(tester.getSize(find.text('M(2,0)')), const Size(100.0, 100.0));
 
         // Let's scroll a bit and check the layout
@@ -554,73 +479,44 @@ void main() {
         expect(find.text('M(0,0)'), findsOneWidget);
         expect(find.text('M(0,1)'), findsOneWidget);
         expect(find.text('M(0,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 0, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 0, column: 2)], isNull);
         expect(find.text('M(1,0)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 0)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 0)], isNull);
         expect(find.text('M(1,1)'), findsOneWidget);
         expect(find.text('M(1,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 2)], isNull);
         expect(find.text('M(2,0)'), findsOneWidget);
         expect(find.text('M(2,1)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 1)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 1)], isNull);
         expect(find.text('M(2,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 2)], isNull);
 
-        expect(
-          tester.getTopLeft(find.text('M(0,0)')),
-          const Offset(-30.0, -25.0),
-        );
+        expect(tester.getTopLeft(find.text('M(0,0)')), const Offset(-30.0, -25.0));
         expect(tester.getSize(find.text('M(0,0)')), const Size(100.0, 200.0));
         expect(
           layoutConstraints[TableVicinity.zero],
           BoxConstraints.tight(const Size(100.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(0,1)')),
-          const Offset(70.0, -25.0),
-        );
+        expect(tester.getTopLeft(find.text('M(0,1)')), const Offset(70.0, -25.0));
         expect(tester.getSize(find.text('M(0,1)')), const Size(200.0, 100.0));
         expect(
           layoutConstraints[const TableVicinity(row: 0, column: 1)],
           BoxConstraints.tight(const Size(200.0, 100.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(1,1)')),
-          const Offset(70.0, 75.0),
-        );
+        expect(tester.getTopLeft(find.text('M(1,1)')), const Offset(70.0, 75.0));
         expect(tester.getSize(find.text('M(1,1)')), const Size(200.0, 200.0));
         expect(
           layoutConstraints[const TableVicinity(row: 1, column: 1)],
           BoxConstraints.tight(const Size(200.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(2,0)')),
-          const Offset(-30.0, 175.0),
-        );
+        expect(tester.getTopLeft(find.text('M(2,0)')), const Offset(-30.0, 175.0));
         expect(tester.getSize(find.text('M(2,0)')), const Size(100.0, 100.0));
       });
 
-      testWidgets('vertical main axis, reversed vertical', (
-        WidgetTester tester,
-      ) async {
+      testWidgets('vertical main axis, reversed vertical', (WidgetTester tester) async {
         await tester.pumpWidget(
           Directionality(
             textDirection: TextDirection.ltr,
@@ -629,9 +525,7 @@ void main() {
                 controller: verticalController,
                 reverse: true,
               ),
-              horizontalDetails: ScrollableDetails.horizontal(
-                controller: horizontalController,
-              ),
+              horizontalDetails: ScrollableDetails.horizontal(controller: horizontalController),
               cellBuilder: cellBuilder,
               columnBuilder: (_) => span,
               rowBuilder: (_) => span,
@@ -644,67 +538,40 @@ void main() {
         expect(find.text('M(0,0)'), findsOneWidget);
         expect(find.text('M(0,1)'), findsOneWidget);
         expect(find.text('M(0,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 0, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 0, column: 2)], isNull);
         expect(find.text('M(1,0)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 0)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 0)], isNull);
         expect(find.text('M(1,1)'), findsOneWidget);
         expect(find.text('M(1,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 2)], isNull);
         expect(find.text('M(2,0)'), findsOneWidget);
         expect(find.text('M(2,1)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 1)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 1)], isNull);
         expect(find.text('M(2,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 2)], isNull);
 
-        expect(
-          tester.getTopLeft(find.text('M(0,0)')),
-          const Offset(0.0, 400.0),
-        );
+        expect(tester.getTopLeft(find.text('M(0,0)')), const Offset(0.0, 400.0));
         expect(tester.getSize(find.text('M(0,0)')), const Size(100.0, 200.0));
         expect(
           layoutConstraints[TableVicinity.zero],
           BoxConstraints.tight(const Size(100.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(0,1)')),
-          const Offset(100.0, 500.0),
-        );
+        expect(tester.getTopLeft(find.text('M(0,1)')), const Offset(100.0, 500.0));
         expect(tester.getSize(find.text('M(0,1)')), const Size(200.0, 100.0));
         expect(
           layoutConstraints[const TableVicinity(row: 0, column: 1)],
           BoxConstraints.tight(const Size(200.0, 100.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(1,1)')),
-          const Offset(100.0, 300.0),
-        );
+        expect(tester.getTopLeft(find.text('M(1,1)')), const Offset(100.0, 300.0));
         expect(tester.getSize(find.text('M(1,1)')), const Size(200.0, 200.0));
         expect(
           layoutConstraints[const TableVicinity(row: 1, column: 1)],
           BoxConstraints.tight(const Size(200.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(2,0)')),
-          const Offset(0.0, 300.0),
-        );
+        expect(tester.getTopLeft(find.text('M(2,0)')), const Offset(0.0, 300.0));
         expect(tester.getSize(find.text('M(2,0)')), const Size(100.0, 100.0));
 
         // Let's scroll a bit and check the layout
@@ -714,80 +581,49 @@ void main() {
         expect(find.text('M(0,0)'), findsOneWidget);
         expect(find.text('M(0,1)'), findsOneWidget);
         expect(find.text('M(0,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 0, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 0, column: 2)], isNull);
         expect(find.text('M(1,0)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 0)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 0)], isNull);
         expect(find.text('M(1,1)'), findsOneWidget);
         expect(find.text('M(1,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 2)], isNull);
         expect(find.text('M(2,0)'), findsOneWidget);
         expect(find.text('M(2,1)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 1)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 1)], isNull);
         expect(find.text('M(2,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 2)], isNull);
 
-        expect(
-          tester.getTopLeft(find.text('M(0,0)')),
-          const Offset(-30.0, 425.0),
-        );
+        expect(tester.getTopLeft(find.text('M(0,0)')), const Offset(-30.0, 425.0));
         expect(tester.getSize(find.text('M(0,0)')), const Size(100.0, 200.0));
         expect(
           layoutConstraints[TableVicinity.zero],
           BoxConstraints.tight(const Size(100.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(0,1)')),
-          const Offset(70.0, 525.0),
-        );
+        expect(tester.getTopLeft(find.text('M(0,1)')), const Offset(70.0, 525.0));
         expect(tester.getSize(find.text('M(0,1)')), const Size(200.0, 100.0));
         expect(
           layoutConstraints[const TableVicinity(row: 0, column: 1)],
           BoxConstraints.tight(const Size(200.0, 100.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(1,1)')),
-          const Offset(70.0, 325.0),
-        );
+        expect(tester.getTopLeft(find.text('M(1,1)')), const Offset(70.0, 325.0));
         expect(tester.getSize(find.text('M(1,1)')), const Size(200.0, 200.0));
         expect(
           layoutConstraints[const TableVicinity(row: 1, column: 1)],
           BoxConstraints.tight(const Size(200.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(2,0)')),
-          const Offset(-30.0, 325.0),
-        );
+        expect(tester.getTopLeft(find.text('M(2,0)')), const Offset(-30.0, 325.0));
         expect(tester.getSize(find.text('M(2,0)')), const Size(100.0, 100.0));
       });
 
-      testWidgets('vertical main axis, reversed horizontal', (
-        WidgetTester tester,
-      ) async {
+      testWidgets('vertical main axis, reversed horizontal', (WidgetTester tester) async {
         await tester.pumpWidget(
           Directionality(
             textDirection: TextDirection.ltr,
             child: TableView.builder(
-              verticalDetails: ScrollableDetails.vertical(
-                controller: verticalController,
-              ),
+              verticalDetails: ScrollableDetails.vertical(controller: verticalController),
               horizontalDetails: ScrollableDetails.horizontal(
                 controller: horizontalController,
                 reverse: true,
@@ -804,67 +640,40 @@ void main() {
         expect(find.text('M(0,0)'), findsOneWidget);
         expect(find.text('M(0,1)'), findsOneWidget);
         expect(find.text('M(0,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 0, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 0, column: 2)], isNull);
         expect(find.text('M(1,0)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 0)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 0)], isNull);
         expect(find.text('M(1,1)'), findsOneWidget);
         expect(find.text('M(1,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 2)], isNull);
         expect(find.text('M(2,0)'), findsOneWidget);
         expect(find.text('M(2,1)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 1)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 1)], isNull);
         expect(find.text('M(2,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 2)], isNull);
 
-        expect(
-          tester.getTopLeft(find.text('M(0,0)')),
-          const Offset(700.0, 0.0),
-        );
+        expect(tester.getTopLeft(find.text('M(0,0)')), const Offset(700.0, 0.0));
         expect(tester.getSize(find.text('M(0,0)')), const Size(100.0, 200.0));
         expect(
           layoutConstraints[TableVicinity.zero],
           BoxConstraints.tight(const Size(100.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(0,1)')),
-          const Offset(500.0, 0.0),
-        );
+        expect(tester.getTopLeft(find.text('M(0,1)')), const Offset(500.0, 0.0));
         expect(tester.getSize(find.text('M(0,1)')), const Size(200.0, 100.0));
         expect(
           layoutConstraints[const TableVicinity(row: 0, column: 1)],
           BoxConstraints.tight(const Size(200.0, 100.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(1,1)')),
-          const Offset(500.0, 100.0),
-        );
+        expect(tester.getTopLeft(find.text('M(1,1)')), const Offset(500.0, 100.0));
         expect(tester.getSize(find.text('M(1,1)')), const Size(200.0, 200.0));
         expect(
           layoutConstraints[const TableVicinity(row: 1, column: 1)],
           BoxConstraints.tight(const Size(200.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(2,0)')),
-          const Offset(700.0, 200.0),
-        );
+        expect(tester.getTopLeft(find.text('M(2,0)')), const Offset(700.0, 200.0));
         expect(tester.getSize(find.text('M(2,0)')), const Size(100.0, 100.0));
 
         // Let's scroll a bit and check the layout
@@ -874,73 +683,44 @@ void main() {
         expect(find.text('M(0,0)'), findsOneWidget);
         expect(find.text('M(0,1)'), findsOneWidget);
         expect(find.text('M(0,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 0, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 0, column: 2)], isNull);
         expect(find.text('M(1,0)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 0)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 0)], isNull);
         expect(find.text('M(1,1)'), findsOneWidget);
         expect(find.text('M(1,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 2)], isNull);
         expect(find.text('M(2,0)'), findsOneWidget);
         expect(find.text('M(2,1)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 1)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 1)], isNull);
         expect(find.text('M(2,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 2)], isNull);
 
-        expect(
-          tester.getTopLeft(find.text('M(0,0)')),
-          const Offset(730.0, -25.0),
-        );
+        expect(tester.getTopLeft(find.text('M(0,0)')), const Offset(730.0, -25.0));
         expect(tester.getSize(find.text('M(0,0)')), const Size(100.0, 200.0));
         expect(
           layoutConstraints[TableVicinity.zero],
           BoxConstraints.tight(const Size(100.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(0,1)')),
-          const Offset(530.0, -25.0),
-        );
+        expect(tester.getTopLeft(find.text('M(0,1)')), const Offset(530.0, -25.0));
         expect(tester.getSize(find.text('M(0,1)')), const Size(200.0, 100.0));
         expect(
           layoutConstraints[const TableVicinity(row: 0, column: 1)],
           BoxConstraints.tight(const Size(200.0, 100.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(1,1)')),
-          const Offset(530.0, 75.0),
-        );
+        expect(tester.getTopLeft(find.text('M(1,1)')), const Offset(530.0, 75.0));
         expect(tester.getSize(find.text('M(1,1)')), const Size(200.0, 200.0));
         expect(
           layoutConstraints[const TableVicinity(row: 1, column: 1)],
           BoxConstraints.tight(const Size(200.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(2,0)')),
-          const Offset(730.0, 175.0),
-        );
+        expect(tester.getTopLeft(find.text('M(2,0)')), const Offset(730.0, 175.0));
         expect(tester.getSize(find.text('M(2,0)')), const Size(100.0, 100.0));
       });
 
-      testWidgets('vertical main axis, both axes reversed', (
-        WidgetTester tester,
-      ) async {
+      testWidgets('vertical main axis, both axes reversed', (WidgetTester tester) async {
         await tester.pumpWidget(
           Directionality(
             textDirection: TextDirection.ltr,
@@ -965,67 +745,40 @@ void main() {
         expect(find.text('M(0,0)'), findsOneWidget);
         expect(find.text('M(0,1)'), findsOneWidget);
         expect(find.text('M(0,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 0, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 0, column: 2)], isNull);
         expect(find.text('M(1,0)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 0)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 0)], isNull);
         expect(find.text('M(1,1)'), findsOneWidget);
         expect(find.text('M(1,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 2)], isNull);
         expect(find.text('M(2,0)'), findsOneWidget);
         expect(find.text('M(2,1)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 1)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 1)], isNull);
         expect(find.text('M(2,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 2)], isNull);
 
-        expect(
-          tester.getTopLeft(find.text('M(0,0)')),
-          const Offset(700.0, 400.0),
-        );
+        expect(tester.getTopLeft(find.text('M(0,0)')), const Offset(700.0, 400.0));
         expect(tester.getSize(find.text('M(0,0)')), const Size(100.0, 200.0));
         expect(
           layoutConstraints[TableVicinity.zero],
           BoxConstraints.tight(const Size(100.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(0,1)')),
-          const Offset(500.0, 500.0),
-        );
+        expect(tester.getTopLeft(find.text('M(0,1)')), const Offset(500.0, 500.0));
         expect(tester.getSize(find.text('M(0,1)')), const Size(200.0, 100.0));
         expect(
           layoutConstraints[const TableVicinity(row: 0, column: 1)],
           BoxConstraints.tight(const Size(200.0, 100.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(1,1)')),
-          const Offset(500.0, 300.0),
-        );
+        expect(tester.getTopLeft(find.text('M(1,1)')), const Offset(500.0, 300.0));
         expect(tester.getSize(find.text('M(1,1)')), const Size(200.0, 200.0));
         expect(
           layoutConstraints[const TableVicinity(row: 1, column: 1)],
           BoxConstraints.tight(const Size(200.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(2,0)')),
-          const Offset(700.0, 300.0),
-        );
+        expect(tester.getTopLeft(find.text('M(2,0)')), const Offset(700.0, 300.0));
         expect(tester.getSize(find.text('M(2,0)')), const Size(100.0, 100.0));
 
         // Let's scroll a bit and check the layout
@@ -1035,67 +788,40 @@ void main() {
         expect(find.text('M(0,0)'), findsOneWidget);
         expect(find.text('M(0,1)'), findsOneWidget);
         expect(find.text('M(0,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 0, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 0, column: 2)], isNull);
         expect(find.text('M(1,0)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 0)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 0)], isNull);
         expect(find.text('M(1,1)'), findsOneWidget);
         expect(find.text('M(1,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 2)], isNull);
         expect(find.text('M(2,0)'), findsOneWidget);
         expect(find.text('M(2,1)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 1)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 1)], isNull);
         expect(find.text('M(2,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 2)], isNull);
 
-        expect(
-          tester.getTopLeft(find.text('M(0,0)')),
-          const Offset(730.0, 425.0),
-        );
+        expect(tester.getTopLeft(find.text('M(0,0)')), const Offset(730.0, 425.0));
         expect(tester.getSize(find.text('M(0,0)')), const Size(100.0, 200.0));
         expect(
           layoutConstraints[TableVicinity.zero],
           BoxConstraints.tight(const Size(100.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(0,1)')),
-          const Offset(530.0, 525.0),
-        );
+        expect(tester.getTopLeft(find.text('M(0,1)')), const Offset(530.0, 525.0));
         expect(tester.getSize(find.text('M(0,1)')), const Size(200.0, 100.0));
         expect(
           layoutConstraints[const TableVicinity(row: 0, column: 1)],
           BoxConstraints.tight(const Size(200.0, 100.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(1,1)')),
-          const Offset(530.0, 325.0),
-        );
+        expect(tester.getTopLeft(find.text('M(1,1)')), const Offset(530.0, 325.0));
         expect(tester.getSize(find.text('M(1,1)')), const Size(200.0, 200.0));
         expect(
           layoutConstraints[const TableVicinity(row: 1, column: 1)],
           BoxConstraints.tight(const Size(200.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(2,0)')),
-          const Offset(730.0, 325.0),
-        );
+        expect(tester.getTopLeft(find.text('M(2,0)')), const Offset(730.0, 325.0));
         expect(tester.getSize(find.text('M(2,0)')), const Size(100.0, 100.0));
       });
 
@@ -1107,12 +833,8 @@ void main() {
             textDirection: TextDirection.ltr,
             child: TableView.builder(
               mainAxis: Axis.horizontal,
-              verticalDetails: ScrollableDetails.vertical(
-                controller: verticalController,
-              ),
-              horizontalDetails: ScrollableDetails.horizontal(
-                controller: horizontalController,
-              ),
+              verticalDetails: ScrollableDetails.vertical(controller: verticalController),
+              horizontalDetails: ScrollableDetails.horizontal(controller: horizontalController),
               cellBuilder: cellBuilder,
               columnBuilder: (_) => span,
               rowBuilder: (_) => span,
@@ -1125,32 +847,17 @@ void main() {
         expect(find.text('M(0,0)'), findsOneWidget);
         expect(find.text('M(0,1)'), findsOneWidget);
         expect(find.text('M(0,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 0, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 0, column: 2)], isNull);
         expect(find.text('M(1,0)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 0)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 0)], isNull);
         expect(find.text('M(1,1)'), findsOneWidget);
         expect(find.text('M(1,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 2)], isNull);
         expect(find.text('M(2,0)'), findsOneWidget);
         expect(find.text('M(2,1)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 1)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 1)], isNull);
         expect(find.text('M(2,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 2)], isNull);
 
         expect(tester.getTopLeft(find.text('M(0,0)')), Offset.zero);
         expect(tester.getSize(find.text('M(0,0)')), const Size(100.0, 200.0));
@@ -1159,30 +866,21 @@ void main() {
           BoxConstraints.tight(const Size(100.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(0,1)')),
-          const Offset(100.0, 0.0),
-        );
+        expect(tester.getTopLeft(find.text('M(0,1)')), const Offset(100.0, 0.0));
         expect(tester.getSize(find.text('M(0,1)')), const Size(200.0, 100.0));
         expect(
           layoutConstraints[const TableVicinity(row: 0, column: 1)],
           BoxConstraints.tight(const Size(200.0, 100.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(1,1)')),
-          const Offset(100.0, 100.0),
-        );
+        expect(tester.getTopLeft(find.text('M(1,1)')), const Offset(100.0, 100.0));
         expect(tester.getSize(find.text('M(1,1)')), const Size(200.0, 200.0));
         expect(
           layoutConstraints[const TableVicinity(row: 1, column: 1)],
           BoxConstraints.tight(const Size(200.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(2,0)')),
-          const Offset(0.0, 200.0),
-        );
+        expect(tester.getTopLeft(find.text('M(2,0)')), const Offset(0.0, 200.0));
         expect(tester.getSize(find.text('M(2,0)')), const Size(100.0, 100.0));
 
         // Let's scroll a bit and check the layout
@@ -1192,73 +890,44 @@ void main() {
         expect(find.text('M(0,0)'), findsOneWidget);
         expect(find.text('M(0,1)'), findsOneWidget);
         expect(find.text('M(0,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 0, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 0, column: 2)], isNull);
         expect(find.text('M(1,0)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 0)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 0)], isNull);
         expect(find.text('M(1,1)'), findsOneWidget);
         expect(find.text('M(1,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 2)], isNull);
         expect(find.text('M(2,0)'), findsOneWidget);
         expect(find.text('M(2,1)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 1)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 1)], isNull);
         expect(find.text('M(2,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 2)], isNull);
 
-        expect(
-          tester.getTopLeft(find.text('M(0,0)')),
-          const Offset(-30.0, -25.0),
-        );
+        expect(tester.getTopLeft(find.text('M(0,0)')), const Offset(-30.0, -25.0));
         expect(tester.getSize(find.text('M(0,0)')), const Size(100.0, 200.0));
         expect(
           layoutConstraints[TableVicinity.zero],
           BoxConstraints.tight(const Size(100.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(0,1)')),
-          const Offset(70.0, -25.0),
-        );
+        expect(tester.getTopLeft(find.text('M(0,1)')), const Offset(70.0, -25.0));
         expect(tester.getSize(find.text('M(0,1)')), const Size(200.0, 100.0));
         expect(
           layoutConstraints[const TableVicinity(row: 0, column: 1)],
           BoxConstraints.tight(const Size(200.0, 100.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(1,1)')),
-          const Offset(70.0, 75.0),
-        );
+        expect(tester.getTopLeft(find.text('M(1,1)')), const Offset(70.0, 75.0));
         expect(tester.getSize(find.text('M(1,1)')), const Size(200.0, 200.0));
         expect(
           layoutConstraints[const TableVicinity(row: 1, column: 1)],
           BoxConstraints.tight(const Size(200.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(2,0)')),
-          const Offset(-30.0, 175.0),
-        );
+        expect(tester.getTopLeft(find.text('M(2,0)')), const Offset(-30.0, 175.0));
         expect(tester.getSize(find.text('M(2,0)')), const Size(100.0, 100.0));
       });
 
-      testWidgets('horizontal main axis, reversed vertical', (
-        WidgetTester tester,
-      ) async {
+      testWidgets('horizontal main axis, reversed vertical', (WidgetTester tester) async {
         await tester.pumpWidget(
           Directionality(
             textDirection: TextDirection.ltr,
@@ -1268,9 +937,7 @@ void main() {
                 controller: verticalController,
                 reverse: true,
               ),
-              horizontalDetails: ScrollableDetails.horizontal(
-                controller: horizontalController,
-              ),
+              horizontalDetails: ScrollableDetails.horizontal(controller: horizontalController),
               cellBuilder: cellBuilder,
               columnBuilder: (_) => span,
               rowBuilder: (_) => span,
@@ -1283,67 +950,40 @@ void main() {
         expect(find.text('M(0,0)'), findsOneWidget);
         expect(find.text('M(0,1)'), findsOneWidget);
         expect(find.text('M(0,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 0, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 0, column: 2)], isNull);
         expect(find.text('M(1,0)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 0)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 0)], isNull);
         expect(find.text('M(1,1)'), findsOneWidget);
         expect(find.text('M(1,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 2)], isNull);
         expect(find.text('M(2,0)'), findsOneWidget);
         expect(find.text('M(2,1)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 1)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 1)], isNull);
         expect(find.text('M(2,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 2)], isNull);
 
-        expect(
-          tester.getTopLeft(find.text('M(0,0)')),
-          const Offset(0.0, 400.0),
-        );
+        expect(tester.getTopLeft(find.text('M(0,0)')), const Offset(0.0, 400.0));
         expect(tester.getSize(find.text('M(0,0)')), const Size(100.0, 200.0));
         expect(
           layoutConstraints[TableVicinity.zero],
           BoxConstraints.tight(const Size(100.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(0,1)')),
-          const Offset(100.0, 500.0),
-        );
+        expect(tester.getTopLeft(find.text('M(0,1)')), const Offset(100.0, 500.0));
         expect(tester.getSize(find.text('M(0,1)')), const Size(200.0, 100.0));
         expect(
           layoutConstraints[const TableVicinity(row: 0, column: 1)],
           BoxConstraints.tight(const Size(200.0, 100.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(1,1)')),
-          const Offset(100.0, 300.0),
-        );
+        expect(tester.getTopLeft(find.text('M(1,1)')), const Offset(100.0, 300.0));
         expect(tester.getSize(find.text('M(1,1)')), const Size(200.0, 200.0));
         expect(
           layoutConstraints[const TableVicinity(row: 1, column: 1)],
           BoxConstraints.tight(const Size(200.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(2,0)')),
-          const Offset(0.0, 300.0),
-        );
+        expect(tester.getTopLeft(find.text('M(2,0)')), const Offset(0.0, 300.0));
         expect(tester.getSize(find.text('M(2,0)')), const Size(100.0, 100.0));
 
         // Let's scroll a bit and check the layout
@@ -1353,81 +993,50 @@ void main() {
         expect(find.text('M(0,0)'), findsOneWidget);
         expect(find.text('M(0,1)'), findsOneWidget);
         expect(find.text('M(0,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 0, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 0, column: 2)], isNull);
         expect(find.text('M(1,0)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 0)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 0)], isNull);
         expect(find.text('M(1,1)'), findsOneWidget);
         expect(find.text('M(1,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 2)], isNull);
         expect(find.text('M(2,0)'), findsOneWidget);
         expect(find.text('M(2,1)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 1)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 1)], isNull);
         expect(find.text('M(2,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 2)], isNull);
 
-        expect(
-          tester.getTopLeft(find.text('M(0,0)')),
-          const Offset(-30.0, 425.0),
-        );
+        expect(tester.getTopLeft(find.text('M(0,0)')), const Offset(-30.0, 425.0));
         expect(tester.getSize(find.text('M(0,0)')), const Size(100.0, 200.0));
         expect(
           layoutConstraints[TableVicinity.zero],
           BoxConstraints.tight(const Size(100.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(0,1)')),
-          const Offset(70.0, 525.0),
-        );
+        expect(tester.getTopLeft(find.text('M(0,1)')), const Offset(70.0, 525.0));
         expect(tester.getSize(find.text('M(0,1)')), const Size(200.0, 100.0));
         expect(
           layoutConstraints[const TableVicinity(row: 0, column: 1)],
           BoxConstraints.tight(const Size(200.0, 100.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(1,1)')),
-          const Offset(70.0, 325.0),
-        );
+        expect(tester.getTopLeft(find.text('M(1,1)')), const Offset(70.0, 325.0));
         expect(tester.getSize(find.text('M(1,1)')), const Size(200.0, 200.0));
         expect(
           layoutConstraints[const TableVicinity(row: 1, column: 1)],
           BoxConstraints.tight(const Size(200.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(2,0)')),
-          const Offset(-30.0, 325.0),
-        );
+        expect(tester.getTopLeft(find.text('M(2,0)')), const Offset(-30.0, 325.0));
         expect(tester.getSize(find.text('M(2,0)')), const Size(100.0, 100.0));
       });
 
-      testWidgets('horizontal main axis, reversed horizontal', (
-        WidgetTester tester,
-      ) async {
+      testWidgets('horizontal main axis, reversed horizontal', (WidgetTester tester) async {
         await tester.pumpWidget(
           Directionality(
             textDirection: TextDirection.ltr,
             child: TableView.builder(
               mainAxis: Axis.horizontal,
-              verticalDetails: ScrollableDetails.vertical(
-                controller: verticalController,
-              ),
+              verticalDetails: ScrollableDetails.vertical(controller: verticalController),
               horizontalDetails: ScrollableDetails.horizontal(
                 controller: horizontalController,
                 reverse: true,
@@ -1444,67 +1053,40 @@ void main() {
         expect(find.text('M(0,0)'), findsOneWidget);
         expect(find.text('M(0,1)'), findsOneWidget);
         expect(find.text('M(0,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 0, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 0, column: 2)], isNull);
         expect(find.text('M(1,0)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 0)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 0)], isNull);
         expect(find.text('M(1,1)'), findsOneWidget);
         expect(find.text('M(1,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 2)], isNull);
         expect(find.text('M(2,0)'), findsOneWidget);
         expect(find.text('M(2,1)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 1)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 1)], isNull);
         expect(find.text('M(2,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 2)], isNull);
 
-        expect(
-          tester.getTopLeft(find.text('M(0,0)')),
-          const Offset(700.0, 0.0),
-        );
+        expect(tester.getTopLeft(find.text('M(0,0)')), const Offset(700.0, 0.0));
         expect(tester.getSize(find.text('M(0,0)')), const Size(100.0, 200.0));
         expect(
           layoutConstraints[TableVicinity.zero],
           BoxConstraints.tight(const Size(100.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(0,1)')),
-          const Offset(500.0, 0.0),
-        );
+        expect(tester.getTopLeft(find.text('M(0,1)')), const Offset(500.0, 0.0));
         expect(tester.getSize(find.text('M(0,1)')), const Size(200.0, 100.0));
         expect(
           layoutConstraints[const TableVicinity(row: 0, column: 1)],
           BoxConstraints.tight(const Size(200.0, 100.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(1,1)')),
-          const Offset(500.0, 100.0),
-        );
+        expect(tester.getTopLeft(find.text('M(1,1)')), const Offset(500.0, 100.0));
         expect(tester.getSize(find.text('M(1,1)')), const Size(200.0, 200.0));
         expect(
           layoutConstraints[const TableVicinity(row: 1, column: 1)],
           BoxConstraints.tight(const Size(200.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(2,0)')),
-          const Offset(700.0, 200.0),
-        );
+        expect(tester.getTopLeft(find.text('M(2,0)')), const Offset(700.0, 200.0));
         expect(tester.getSize(find.text('M(2,0)')), const Size(100.0, 100.0));
 
         // Let's scroll a bit and check the layout
@@ -1514,73 +1096,44 @@ void main() {
         expect(find.text('M(0,0)'), findsOneWidget);
         expect(find.text('M(0,1)'), findsOneWidget);
         expect(find.text('M(0,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 0, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 0, column: 2)], isNull);
         expect(find.text('M(1,0)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 0)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 0)], isNull);
         expect(find.text('M(1,1)'), findsOneWidget);
         expect(find.text('M(1,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 2)], isNull);
         expect(find.text('M(2,0)'), findsOneWidget);
         expect(find.text('M(2,1)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 1)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 1)], isNull);
         expect(find.text('M(2,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 2)], isNull);
 
-        expect(
-          tester.getTopLeft(find.text('M(0,0)')),
-          const Offset(730.0, -25.0),
-        );
+        expect(tester.getTopLeft(find.text('M(0,0)')), const Offset(730.0, -25.0));
         expect(tester.getSize(find.text('M(0,0)')), const Size(100.0, 200.0));
         expect(
           layoutConstraints[TableVicinity.zero],
           BoxConstraints.tight(const Size(100.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(0,1)')),
-          const Offset(530.0, -25.0),
-        );
+        expect(tester.getTopLeft(find.text('M(0,1)')), const Offset(530.0, -25.0));
         expect(tester.getSize(find.text('M(0,1)')), const Size(200.0, 100.0));
         expect(
           layoutConstraints[const TableVicinity(row: 0, column: 1)],
           BoxConstraints.tight(const Size(200.0, 100.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(1,1)')),
-          const Offset(530.0, 75.0),
-        );
+        expect(tester.getTopLeft(find.text('M(1,1)')), const Offset(530.0, 75.0));
         expect(tester.getSize(find.text('M(1,1)')), const Size(200.0, 200.0));
         expect(
           layoutConstraints[const TableVicinity(row: 1, column: 1)],
           BoxConstraints.tight(const Size(200.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(2,0)')),
-          const Offset(730.0, 175.0),
-        );
+        expect(tester.getTopLeft(find.text('M(2,0)')), const Offset(730.0, 175.0));
         expect(tester.getSize(find.text('M(2,0)')), const Size(100.0, 100.0));
       });
 
-      testWidgets('horizontal main axis, both axes reversed', (
-        WidgetTester tester,
-      ) async {
+      testWidgets('horizontal main axis, both axes reversed', (WidgetTester tester) async {
         await tester.pumpWidget(
           Directionality(
             textDirection: TextDirection.ltr,
@@ -1606,67 +1159,40 @@ void main() {
         expect(find.text('M(0,0)'), findsOneWidget);
         expect(find.text('M(0,1)'), findsOneWidget);
         expect(find.text('M(0,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 0, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 0, column: 2)], isNull);
         expect(find.text('M(1,0)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 0)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 0)], isNull);
         expect(find.text('M(1,1)'), findsOneWidget);
         expect(find.text('M(1,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 2)], isNull);
         expect(find.text('M(2,0)'), findsOneWidget);
         expect(find.text('M(2,1)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 1)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 1)], isNull);
         expect(find.text('M(2,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 2)], isNull);
 
-        expect(
-          tester.getTopLeft(find.text('M(0,0)')),
-          const Offset(700.0, 400.0),
-        );
+        expect(tester.getTopLeft(find.text('M(0,0)')), const Offset(700.0, 400.0));
         expect(tester.getSize(find.text('M(0,0)')), const Size(100.0, 200.0));
         expect(
           layoutConstraints[TableVicinity.zero],
           BoxConstraints.tight(const Size(100.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(0,1)')),
-          const Offset(500.0, 500.0),
-        );
+        expect(tester.getTopLeft(find.text('M(0,1)')), const Offset(500.0, 500.0));
         expect(tester.getSize(find.text('M(0,1)')), const Size(200.0, 100.0));
         expect(
           layoutConstraints[const TableVicinity(row: 0, column: 1)],
           BoxConstraints.tight(const Size(200.0, 100.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(1,1)')),
-          const Offset(500.0, 300.0),
-        );
+        expect(tester.getTopLeft(find.text('M(1,1)')), const Offset(500.0, 300.0));
         expect(tester.getSize(find.text('M(1,1)')), const Size(200.0, 200.0));
         expect(
           layoutConstraints[const TableVicinity(row: 1, column: 1)],
           BoxConstraints.tight(const Size(200.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(2,0)')),
-          const Offset(700.0, 300.0),
-        );
+        expect(tester.getTopLeft(find.text('M(2,0)')), const Offset(700.0, 300.0));
         expect(tester.getSize(find.text('M(2,0)')), const Size(100.0, 100.0));
 
         // Let's scroll a bit and check the layout
@@ -1676,67 +1202,40 @@ void main() {
         expect(find.text('M(0,0)'), findsOneWidget);
         expect(find.text('M(0,1)'), findsOneWidget);
         expect(find.text('M(0,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 0, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 0, column: 2)], isNull);
         expect(find.text('M(1,0)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 0)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 0)], isNull);
         expect(find.text('M(1,1)'), findsOneWidget);
         expect(find.text('M(1,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 1, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 1, column: 2)], isNull);
         expect(find.text('M(2,0)'), findsOneWidget);
         expect(find.text('M(2,1)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 1)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 1)], isNull);
         expect(find.text('M(2,2)'), findsNothing); // Merged
-        expect(
-          layoutConstraints[const TableVicinity(row: 2, column: 2)],
-          isNull,
-        );
+        expect(layoutConstraints[const TableVicinity(row: 2, column: 2)], isNull);
 
-        expect(
-          tester.getTopLeft(find.text('M(0,0)')),
-          const Offset(730.0, 425.0),
-        );
+        expect(tester.getTopLeft(find.text('M(0,0)')), const Offset(730.0, 425.0));
         expect(tester.getSize(find.text('M(0,0)')), const Size(100.0, 200.0));
         expect(
           layoutConstraints[TableVicinity.zero],
           BoxConstraints.tight(const Size(100.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(0,1)')),
-          const Offset(530.0, 525.0),
-        );
+        expect(tester.getTopLeft(find.text('M(0,1)')), const Offset(530.0, 525.0));
         expect(tester.getSize(find.text('M(0,1)')), const Size(200.0, 100.0));
         expect(
           layoutConstraints[const TableVicinity(row: 0, column: 1)],
           BoxConstraints.tight(const Size(200.0, 100.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(1,1)')),
-          const Offset(530.0, 325.0),
-        );
+        expect(tester.getTopLeft(find.text('M(1,1)')), const Offset(530.0, 325.0));
         expect(tester.getSize(find.text('M(1,1)')), const Size(200.0, 200.0));
         expect(
           layoutConstraints[const TableVicinity(row: 1, column: 1)],
           BoxConstraints.tight(const Size(200.0, 200.0)),
         );
 
-        expect(
-          tester.getTopLeft(find.text('M(2,0)')),
-          const Offset(730.0, 325.0),
-        );
+        expect(tester.getTopLeft(find.text('M(2,0)')), const Offset(730.0, 325.0));
         expect(tester.getSize(find.text('M(2,0)')), const Size(100.0, 100.0));
       });
     });

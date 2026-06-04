@@ -74,10 +74,7 @@ void main() {
         )
         ..setResponse(true);
       expect(
-        await launch(
-          'http://flutter.dev/',
-          headers: <String, String>{'key': 'value'},
-        ),
+        await launch('http://flutter.dev/', headers: <String, String>{'key': 'value'}),
         isTrue,
       );
     });
@@ -114,11 +111,7 @@ void main() {
         )
         ..setResponse(true);
       expect(
-        await launch(
-          'http://flutter.dev/',
-          forceSafariVC: false,
-          universalLinksOnly: true,
-        ),
+        await launch('http://flutter.dev/', forceSafariVC: false, universalLinksOnly: true),
         isTrue,
       );
     });
@@ -155,11 +148,7 @@ void main() {
         )
         ..setResponse(true);
       expect(
-        await launch(
-          'http://flutter.dev/',
-          forceWebView: true,
-          enableJavaScript: true,
-        ),
+        await launch('http://flutter.dev/', forceWebView: true, enableJavaScript: true),
         isTrue,
       );
     });
@@ -179,11 +168,7 @@ void main() {
         )
         ..setResponse(true);
       expect(
-        await launch(
-          'http://flutter.dev/',
-          forceWebView: true,
-          enableDomStorage: true,
-        ),
+        await launch('http://flutter.dev/', forceWebView: true, enableDomStorage: true),
         isTrue,
       );
     });
@@ -226,45 +211,33 @@ void main() {
           showTitle: false,
         )
         ..setResponse(true);
-      expect(
-        await launch('mailto:gmail-noreply@google.com?subject=Hello'),
-        isTrue,
-      );
+      expect(await launch('mailto:gmail-noreply@google.com?subject=Hello'), isTrue);
     });
 
     test('cannot send e-mail with forceSafariVC: true', () async {
       expect(
-        () async => launch(
-          'mailto:gmail-noreply@google.com?subject=Hello',
-          forceSafariVC: true,
-        ),
+        () async => launch('mailto:gmail-noreply@google.com?subject=Hello', forceSafariVC: true),
         throwsA(isA<PlatformException>()),
       );
     });
 
     test('cannot send e-mail with forceWebView: true', () async {
       expect(
+        () async => launch('mailto:gmail-noreply@google.com?subject=Hello', forceWebView: true),
+        throwsA(isA<PlatformException>()),
+      );
+    });
+
+    test('cannot send e-mail with forceSafariVC: false and forceWebView: true', () async {
+      expect(
         () async => launch(
           'mailto:gmail-noreply@google.com?subject=Hello',
+          forceSafariVC: false,
           forceWebView: true,
         ),
         throwsA(isA<PlatformException>()),
       );
     });
-
-    test(
-      'cannot send e-mail with forceSafariVC: false and forceWebView: true',
-      () async {
-        expect(
-          () async => launch(
-            'mailto:gmail-noreply@google.com?subject=Hello',
-            forceSafariVC: false,
-            forceWebView: true,
-          ),
-          throwsA(isA<PlatformException>()),
-        );
-      },
-    );
 
     test('controls system UI when changing statusBarBrightness', () async {
       mock
@@ -281,12 +254,9 @@ void main() {
         )
         ..setResponse(true);
 
-      final TestWidgetsFlutterBinding binding =
-          TestWidgetsFlutterBinding.ensureInitialized();
+      final TestWidgetsFlutterBinding binding = TestWidgetsFlutterBinding.ensureInitialized();
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-      final renderView = RenderView(
-        view: binding.platformDispatcher.implicitView!,
-      );
+      final renderView = RenderView(view: binding.platformDispatcher.implicitView!);
       binding.addRenderView(renderView);
       renderView.automaticSystemUiAdjustment = true;
       final Future<bool> launchResult = launch(
@@ -317,12 +287,9 @@ void main() {
         )
         ..setResponse(true);
 
-      final TestWidgetsFlutterBinding binding =
-          TestWidgetsFlutterBinding.ensureInitialized();
+      final TestWidgetsFlutterBinding binding = TestWidgetsFlutterBinding.ensureInitialized();
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
-      final renderView = RenderView(
-        view: binding.platformDispatcher.implicitView!,
-      );
+      final renderView = RenderView(view: binding.platformDispatcher.implicitView!);
       binding.addRenderView(renderView);
       expect(renderView.automaticSystemUiAdjustment, true);
       final Future<bool> launchResult = launch(
@@ -341,8 +308,7 @@ void main() {
     test('open non-parseable url', () async {
       mock
         ..setLaunchExpectations(
-          url:
-              'rdp://full%20address=s:mypc:3389&audiomode=i:2&disable%20themes=i:1',
+          url: 'rdp://full%20address=s:mypc:3389&audiomode=i:2&disable%20themes=i:1',
           useSafariVC: false,
           useWebView: false,
           enableJavaScript: false,
@@ -354,9 +320,7 @@ void main() {
         )
         ..setResponse(true);
       expect(
-        await launch(
-          'rdp://full%20address=s:mypc:3389&audiomode=i:2&disable%20themes=i:1',
-        ),
+        await launch('rdp://full%20address=s:mypc:3389&audiomode=i:2&disable%20themes=i:1'),
         isTrue,
       );
     });

@@ -20,10 +20,7 @@ void main() {
                 name: 'name',
                 parameters: <Parameter>[
                   Parameter(
-                    type: const TypeDeclaration(
-                      baseName: 'Input',
-                      isNullable: false,
-                    ),
+                    type: const TypeDeclaration(baseName: 'Input', isNullable: false),
                     name: 'input',
                   ),
                 ],
@@ -41,34 +38,22 @@ void main() {
                 location: ApiLocation.host,
                 parameters: <Parameter>[
                   Parameter(
-                    type: const TypeDeclaration(
-                      baseName: 'Input',
-                      isNullable: false,
-                    ),
+                    type: const TypeDeclaration(baseName: 'Input', isNullable: false),
                     name: 'input',
                   ),
                 ],
-                returnType: const TypeDeclaration(
-                  baseName: 'String',
-                  isNullable: false,
-                ),
+                returnType: const TypeDeclaration(baseName: 'String', isNullable: false),
               ),
               Method(
                 name: 'doSomethingElse',
                 location: ApiLocation.flutter,
                 parameters: <Parameter>[
                   Parameter(
-                    type: const TypeDeclaration(
-                      baseName: 'Input',
-                      isNullable: false,
-                    ),
+                    type: const TypeDeclaration(baseName: 'Input', isNullable: false),
                     name: 'input',
                   ),
                 ],
-                returnType: const TypeDeclaration(
-                  baseName: 'String',
-                  isNullable: false,
-                ),
+                returnType: const TypeDeclaration(baseName: 'String', isNullable: false),
                 isRequired: false,
               ),
             ],
@@ -97,10 +82,7 @@ void main() {
 
       // Codec and class
       expect(code, contains('class _PigeonInternalProxyApiBaseCodec'));
-      expect(
-        code,
-        contains(r'class Api extends PigeonInternalProxyApiBaseClass'),
-      );
+      expect(code, contains(r'class Api extends PigeonInternalProxyApiBaseClass'));
 
       // Constructors
       expect(
@@ -127,9 +109,7 @@ void main() {
       expect(code, contains(r'static void pigeon_setUpMessageHandlers({'));
       expect(
         collapsedCode,
-        contains(
-          'final String Function( Api pigeon_instance, Input input, )? doSomethingElse;',
-        ),
+        contains('final String Function( Api pigeon_instance, Input input, )? doSomethingElse;'),
       );
 
       // Copy method
@@ -162,10 +142,7 @@ void main() {
 
       expect(code, contains(r'class _PigeonInternalInstanceManagerApi'));
 
-      expect(
-        code,
-        contains('Future<void> removeStrongReference(int identifier)'),
-      );
+      expect(code, contains('Future<void> removeStrongReference(int identifier)'));
       expect(
         code,
         contains(
@@ -174,17 +151,13 @@ void main() {
       );
       expect(
         collapsedCode,
-        contains(
-          '(instanceManager ?? PigeonInstanceManager.instance) .remove(arg_identifier);',
-        ),
+        contains('(instanceManager ?? PigeonInstanceManager.instance) .remove(arg_identifier);'),
       );
 
       expect(code, contains('Future<void> clear()'));
       expect(
         code,
-        contains(
-          'dev.flutter.pigeon.$DEFAULT_PACKAGE_NAME.PigeonInternalInstanceManager.clear',
-        ),
+        contains('dev.flutter.pigeon.$DEFAULT_PACKAGE_NAME.PigeonInternalInstanceManager.clear'),
       );
     });
 
@@ -212,10 +185,7 @@ void main() {
         );
         final code = sink.toString();
 
-        expect(
-          code,
-          contains(r'abstract class PigeonInternalProxyApiBaseClass'),
-        );
+        expect(code, contains(r'abstract class PigeonInternalProxyApiBaseClass'));
       });
 
       test('InstanceManager field', () {
@@ -312,11 +282,7 @@ void main() {
               fields: <ApiField>[],
               methods: <Method>[],
               interfaces: <TypeDeclaration>{
-                TypeDeclaration(
-                  baseName: 'Api2',
-                  isNullable: false,
-                  associatedProxyApi: api2,
-                ),
+                TypeDeclaration(baseName: 'Api2', isNullable: false, associatedProxyApi: api2),
               },
             ),
             api2,
@@ -335,9 +301,7 @@ void main() {
         final code = sink.toString();
         expect(
           code,
-          contains(
-            r'class Api extends PigeonInternalProxyApiBaseClass implements Api2',
-          ),
+          contains(r'class Api extends PigeonInternalProxyApiBaseClass implements Api2'),
         );
       });
 
@@ -362,16 +326,8 @@ void main() {
               fields: <ApiField>[],
               methods: <Method>[],
               interfaces: <TypeDeclaration>{
-                TypeDeclaration(
-                  baseName: 'Api2',
-                  isNullable: false,
-                  associatedProxyApi: api2,
-                ),
-                TypeDeclaration(
-                  baseName: 'Api3',
-                  isNullable: false,
-                  associatedProxyApi: api2,
-                ),
+                TypeDeclaration(baseName: 'Api2', isNullable: false, associatedProxyApi: api2),
+                TypeDeclaration(baseName: 'Api3', isNullable: false, associatedProxyApi: api2),
               },
             ),
             api2,
@@ -391,9 +347,7 @@ void main() {
         final code = sink.toString();
         expect(
           code,
-          contains(
-            r'class Api extends PigeonInternalProxyApiBaseClass implements Api2, Api3',
-          ),
+          contains(r'class Api extends PigeonInternalProxyApiBaseClass implements Api2, Api3'),
         );
       });
 
@@ -426,11 +380,7 @@ void main() {
               fields: <ApiField>[],
               methods: <Method>[],
               interfaces: <TypeDeclaration>{
-                TypeDeclaration(
-                  baseName: 'Api2',
-                  isNullable: false,
-                  associatedProxyApi: api2,
-                ),
+                TypeDeclaration(baseName: 'Api2', isNullable: false, associatedProxyApi: api2),
               },
             ),
             api2,
@@ -450,9 +400,7 @@ void main() {
         final String collapsedCode = _collapseNewlineAndIndentation(code);
         expect(
           code,
-          contains(
-            r'class Api extends PigeonInternalProxyApiBaseClass implements Api2',
-          ),
+          contains(r'class Api extends PigeonInternalProxyApiBaseClass implements Api2'),
         );
         expect(
           collapsedCode,
@@ -472,9 +420,7 @@ void main() {
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
-              constructors: <Constructor>[
-                Constructor(name: '', parameters: <Parameter>[]),
-              ],
+              constructors: <Constructor>[Constructor(name: '', parameters: <Parameter>[])],
               fields: <ApiField>[],
               methods: <Method>[],
             ),
@@ -541,10 +487,7 @@ void main() {
                   name: 'name',
                   parameters: <Parameter>[
                     Parameter(
-                      type: const TypeDeclaration(
-                        isNullable: false,
-                        baseName: 'int',
-                      ),
+                      type: const TypeDeclaration(isNullable: false, baseName: 'int'),
                       name: 'validType',
                     ),
                     Parameter(
@@ -556,17 +499,11 @@ void main() {
                       name: 'enumType',
                     ),
                     Parameter(
-                      type: const TypeDeclaration(
-                        isNullable: false,
-                        baseName: 'Api2',
-                      ),
+                      type: const TypeDeclaration(isNullable: false, baseName: 'Api2'),
                       name: 'proxyApiType',
                     ),
                     Parameter(
-                      type: const TypeDeclaration(
-                        isNullable: true,
-                        baseName: 'int',
-                      ),
+                      type: const TypeDeclaration(isNullable: true, baseName: 'int'),
                       name: 'nullableValidType',
                     ),
                     Parameter(
@@ -578,10 +515,7 @@ void main() {
                       name: 'nullableEnumType',
                     ),
                     Parameter(
-                      type: const TypeDeclaration(
-                        isNullable: true,
-                        baseName: 'Api2',
-                      ),
+                      type: const TypeDeclaration(isNullable: true, baseName: 'Api2'),
                       name: 'nullableProxyApiType',
                     ),
                   ],
@@ -659,15 +593,10 @@ void main() {
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
-              constructors: <Constructor>[
-                Constructor(name: 'name', parameters: <Parameter>[]),
-              ],
+              constructors: <Constructor>[Constructor(name: 'name', parameters: <Parameter>[])],
               fields: <ApiField>[
                 ApiField(
-                  type: const TypeDeclaration(
-                    isNullable: false,
-                    baseName: 'int',
-                  ),
+                  type: const TypeDeclaration(isNullable: false, baseName: 'int'),
                   name: 'validType',
                 ),
                 ApiField(
@@ -679,17 +608,11 @@ void main() {
                   name: 'enumType',
                 ),
                 ApiField(
-                  type: const TypeDeclaration(
-                    isNullable: false,
-                    baseName: 'Api2',
-                  ),
+                  type: const TypeDeclaration(isNullable: false, baseName: 'Api2'),
                   name: 'proxyApiType',
                 ),
                 ApiField(
-                  type: const TypeDeclaration(
-                    isNullable: true,
-                    baseName: 'int',
-                  ),
+                  type: const TypeDeclaration(isNullable: true, baseName: 'int'),
                   name: 'nullableValidType',
                 ),
                 ApiField(
@@ -701,10 +624,7 @@ void main() {
                   name: 'nullableEnumType',
                 ),
                 ApiField(
-                  type: const TypeDeclaration(
-                    isNullable: true,
-                    baseName: 'Api2',
-                  ),
+                  type: const TypeDeclaration(isNullable: true, baseName: 'Api2'),
                   name: 'nullableProxyApiType',
                 ),
               ],
@@ -859,16 +779,8 @@ void main() {
         );
         final code = sink.toString();
         expect(code, contains('class Api'));
-        expect(
-          code,
-          contains(
-            r'static Api2 get aField => PigeonOverrides.api_aField ?? _aField;',
-          ),
-        );
-        expect(
-          code,
-          contains(r'static final Api2 _aField = pigeonVar_aField();'),
-        );
+        expect(code, contains(r'static Api2 get aField => PigeonOverrides.api_aField ?? _aField;'));
+        expect(code, contains(r'static final Api2 _aField = pigeonVar_aField();'));
         expect(code, contains(r'static Api2 pigeonVar_aField()'));
       });
     });
@@ -891,10 +803,7 @@ void main() {
                   location: ApiLocation.host,
                   parameters: <Parameter>[
                     Parameter(
-                      type: const TypeDeclaration(
-                        isNullable: false,
-                        baseName: 'int',
-                      ),
+                      type: const TypeDeclaration(isNullable: false, baseName: 'int'),
                       name: 'validType',
                     ),
                     Parameter(
@@ -906,17 +815,11 @@ void main() {
                       name: 'enumType',
                     ),
                     Parameter(
-                      type: const TypeDeclaration(
-                        isNullable: false,
-                        baseName: 'Api2',
-                      ),
+                      type: const TypeDeclaration(isNullable: false, baseName: 'Api2'),
                       name: 'proxyApiType',
                     ),
                     Parameter(
-                      type: const TypeDeclaration(
-                        isNullable: true,
-                        baseName: 'int',
-                      ),
+                      type: const TypeDeclaration(isNullable: true, baseName: 'int'),
                       name: 'nullableValidType',
                     ),
                     Parameter(
@@ -928,10 +831,7 @@ void main() {
                       name: 'nullableEnumType',
                     ),
                     Parameter(
-                      type: const TypeDeclaration(
-                        isNullable: true,
-                        baseName: 'Api2',
-                      ),
+                      type: const TypeDeclaration(isNullable: true, baseName: 'Api2'),
                       name: 'nullableProxyApiType',
                     ),
                   ],
@@ -1042,10 +942,7 @@ void main() {
                   isRequired: false,
                   parameters: <Parameter>[
                     Parameter(
-                      type: const TypeDeclaration(
-                        isNullable: false,
-                        baseName: 'int',
-                      ),
+                      type: const TypeDeclaration(isNullable: false, baseName: 'int'),
                       name: 'validType',
                     ),
                     Parameter(
@@ -1057,17 +954,11 @@ void main() {
                       name: 'enumType',
                     ),
                     Parameter(
-                      type: const TypeDeclaration(
-                        isNullable: false,
-                        baseName: 'Api2',
-                      ),
+                      type: const TypeDeclaration(isNullable: false, baseName: 'Api2'),
                       name: 'proxyApiType',
                     ),
                     Parameter(
-                      type: const TypeDeclaration(
-                        isNullable: true,
-                        baseName: 'int',
-                      ),
+                      type: const TypeDeclaration(isNullable: true, baseName: 'int'),
                       name: 'nullableValidType',
                     ),
                     Parameter(
@@ -1079,10 +970,7 @@ void main() {
                       name: 'nullableEnumType',
                     ),
                     Parameter(
-                      type: const TypeDeclaration(
-                        isNullable: true,
-                        baseName: 'Api2',
-                      ),
+                      type: const TypeDeclaration(isNullable: true, baseName: 'Api2'),
                       name: 'nullableProxyApiType',
                     ),
                   ],
@@ -1123,27 +1011,12 @@ void main() {
             r'doSomething',
           ),
         );
-        expect(
-          code,
-          contains(r'final Api arg_pigeon_instance = args[0]! as Api;'),
-        );
+        expect(code, contains(r'final Api arg_pigeon_instance = args[0]! as Api;'));
         expect(code, contains(r'final int arg_validType = args[1]! as int;'));
-        expect(
-          code,
-          contains(r'final AnEnum arg_enumType = args[2]! as AnEnum;'),
-        );
-        expect(
-          code,
-          contains(r'final Api2 arg_proxyApiType = args[3]! as Api2;'),
-        );
-        expect(
-          code,
-          contains(r'final int? arg_nullableValidType = args[4] as int?;'),
-        );
-        expect(
-          code,
-          contains(r'final AnEnum? arg_nullableEnumType = args[5] as AnEnum?;'),
-        );
+        expect(code, contains(r'final AnEnum arg_enumType = args[2]! as AnEnum;'));
+        expect(code, contains(r'final Api2 arg_proxyApiType = args[3]! as Api2;'));
+        expect(code, contains(r'final int? arg_nullableValidType = args[4] as int?;'));
+        expect(code, contains(r'final AnEnum? arg_nullableEnumType = args[5] as AnEnum?;'));
         expect(
           collapsedCode,
           contains(

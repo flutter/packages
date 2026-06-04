@@ -40,9 +40,7 @@ class _TableExampleState extends State<TableExample> {
         child: _selectionMode == _TableSelection.multiCell
             ? SelectionArea(
                 child: TableView.builder(
-                  verticalDetails: ScrollableDetails.vertical(
-                    controller: _verticalController,
-                  ),
+                  verticalDetails: ScrollableDetails.vertical(controller: _verticalController),
                   cellBuilder: _buildCell,
                   columnCount: 20,
                   columnBuilder: _buildColumnSpan,
@@ -52,9 +50,7 @@ class _TableExampleState extends State<TableExample> {
               )
             : TableView.builder(
                 key: ValueKey(_selectionMode),
-                verticalDetails: ScrollableDetails.vertical(
-                  controller: _verticalController,
-                ),
+                verticalDetails: ScrollableDetails.vertical(controller: _verticalController),
                 cellBuilder: _buildCell,
                 columnCount: 20,
                 columnBuilder: _buildColumnSpan,
@@ -111,9 +107,7 @@ class _TableExampleState extends State<TableExample> {
                 ),
                 TextButton(
                   onPressed: () {
-                    _verticalController.jumpTo(
-                      _verticalController.position.maxScrollExtent,
-                    );
+                    _verticalController.jumpTo(_verticalController.position.maxScrollExtent);
                   },
                   child: const Text('Jump to Bottom'),
                 ),
@@ -134,9 +128,7 @@ class _TableExampleState extends State<TableExample> {
   }
 
   TableViewCell _buildCell(BuildContext context, TableVicinity vicinity) {
-    Widget result = Center(
-      child: Text('Tile c: ${vicinity.column}, r: ${vicinity.row}'),
-    );
+    Widget result = Center(child: Text('Tile c: ${vicinity.column}, r: ${vicinity.row}'));
     if (_selectionMode == _TableSelection.singleCell) {
       result = SelectionArea(child: result);
     }
@@ -144,9 +136,7 @@ class _TableExampleState extends State<TableExample> {
   }
 
   TableSpan _buildColumnSpan(int index) {
-    const decoration = TableSpanDecoration(
-      border: TableSpanBorder(trailing: BorderSide()),
-    );
+    const decoration = TableSpanDecoration(border: TableSpanBorder(trailing: BorderSide()));
 
     switch (index % 5) {
       case 0:
@@ -155,12 +145,10 @@ class _TableExampleState extends State<TableExample> {
           extent: const FixedTableSpanExtent(100),
           onEnter: (_) => print('Entered column $index'),
           recognizerFactories: <Type, GestureRecognizerFactory>{
-            TapGestureRecognizer:
-                GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
-                  () => TapGestureRecognizer(),
-                  (TapGestureRecognizer t) =>
-                      t.onTap = () => print('Tap column $index'),
-                ),
+            TapGestureRecognizer: GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
+              () => TapGestureRecognizer(),
+              (TapGestureRecognizer t) => t.onTap = () => print('Tap column $index'),
+            ),
           },
         );
       case 1:
@@ -207,12 +195,10 @@ class _TableExampleState extends State<TableExample> {
           backgroundDecoration: decoration,
           extent: const FixedTableSpanExtent(50),
           recognizerFactories: <Type, GestureRecognizerFactory>{
-            TapGestureRecognizer:
-                GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
-                  () => TapGestureRecognizer(),
-                  (TapGestureRecognizer t) =>
-                      t.onTap = () => print('Tap row $index'),
-                ),
+            TapGestureRecognizer: GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
+              () => TapGestureRecognizer(),
+              (TapGestureRecognizer t) => t.onTap = () => print('Tap row $index'),
+            ),
           },
         );
       case 1:

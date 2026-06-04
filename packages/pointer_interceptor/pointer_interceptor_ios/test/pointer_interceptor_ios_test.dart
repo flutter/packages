@@ -41,9 +41,7 @@ class TestAppState extends State<TestApp> {
 
 void main() {
   testWidgets('Button remains clickable and is added to '
-      'hierarchy after being wrapped in pointer interceptor', (
-    WidgetTester tester,
-  ) async {
+      'hierarchy after being wrapped in pointer interceptor', (WidgetTester tester) async {
     await tester.pumpWidget(const TestApp());
     await tester.tap(find.text('Test Button'));
     await tester.pump();

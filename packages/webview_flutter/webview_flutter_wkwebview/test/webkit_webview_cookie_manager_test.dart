@@ -24,23 +24,16 @@ void main() {
     test('clearCookies', () {
       final mockWKWebsiteDataStore = MockWKWebsiteDataStore();
 
-      PigeonOverrides.wKWebsiteDataStore_defaultDataStore =
-          mockWKWebsiteDataStore;
-      final manager = WebKitWebViewCookieManager(
-        WebKitWebViewCookieManagerCreationParams(),
-      );
+      PigeonOverrides.wKWebsiteDataStore_defaultDataStore = mockWKWebsiteDataStore;
+      final manager = WebKitWebViewCookieManager(WebKitWebViewCookieManagerCreationParams());
 
       when(
-        mockWKWebsiteDataStore.removeDataOfTypes(<WebsiteDataType>[
-          WebsiteDataType.cookies,
-        ], 0.0),
+        mockWKWebsiteDataStore.removeDataOfTypes(<WebsiteDataType>[WebsiteDataType.cookies], 0.0),
       ).thenAnswer((_) => Future<bool>.value(true));
       expect(manager.clearCookies(), completion(true));
 
       when(
-        mockWKWebsiteDataStore.removeDataOfTypes(<WebsiteDataType>[
-          WebsiteDataType.cookies,
-        ], 0.0),
+        mockWKWebsiteDataStore.removeDataOfTypes(<WebsiteDataType>[WebsiteDataType.cookies], 0.0),
       ).thenAnswer((_) => Future<bool>.value(false));
       expect(manager.clearCookies(), completion(false));
     });
@@ -54,23 +47,15 @@ void main() {
       Map<HttpCookiePropertyKey, Object?>? cookieProperties;
       final cookie = HTTPCookie.pigeon_detached();
 
-      PigeonOverrides.wKWebsiteDataStore_defaultDataStore =
-          mockWKWebsiteDataStore;
+      PigeonOverrides.wKWebsiteDataStore_defaultDataStore = mockWKWebsiteDataStore;
       PigeonOverrides.hTTPCookie_new =
-          ({
-            required Map<HttpCookiePropertyKey, Object> properties,
-            dynamic observeValue,
-          }) {
+          ({required Map<HttpCookiePropertyKey, Object> properties, dynamic observeValue}) {
             cookieProperties = properties;
             return cookie;
           };
-      final manager = WebKitWebViewCookieManager(
-        WebKitWebViewCookieManagerCreationParams(),
-      );
+      final manager = WebKitWebViewCookieManager(WebKitWebViewCookieManagerCreationParams());
 
-      await manager.setCookie(
-        const WebViewCookie(name: 'a', value: 'b', domain: 'c', path: 'd'),
-      );
+      await manager.setCookie(const WebViewCookie(name: 'a', value: 'b', domain: 'c', path: 'd'));
 
       verify(mockCookieStore.setCookie(cookie));
       expect(cookieProperties, <HttpCookiePropertyKey, Object>{
@@ -87,20 +72,12 @@ void main() {
       final mockCookieStore = MockWKHTTPCookieStore();
       when(mockWKWebsiteDataStore.httpCookieStore).thenReturn(mockCookieStore);
 
-      PigeonOverrides.wKWebsiteDataStore_defaultDataStore =
-          mockWKWebsiteDataStore;
-      final manager = WebKitWebViewCookieManager(
-        WebKitWebViewCookieManagerCreationParams(),
-      );
+      PigeonOverrides.wKWebsiteDataStore_defaultDataStore = mockWKWebsiteDataStore;
+      final manager = WebKitWebViewCookieManager(WebKitWebViewCookieManagerCreationParams());
 
       expect(
         () => manager.setCookie(
-          WebViewCookie(
-            name: 'a',
-            value: 'b',
-            domain: 'c',
-            path: String.fromCharCode(0x1F),
-          ),
+          WebViewCookie(name: 'a', value: 'b', domain: 'c', path: String.fromCharCode(0x1F)),
         ),
         throwsArgumentError,
       );
@@ -148,12 +125,9 @@ void main() {
         mockCookieStore.getAllCookies(),
       ).thenAnswer((_) async => [mockCookie1, mockCookie2, mockCookie3]);
 
-      PigeonOverrides.wKWebsiteDataStore_defaultDataStore =
-          mockWKWebsiteDataStore;
+      PigeonOverrides.wKWebsiteDataStore_defaultDataStore = mockWKWebsiteDataStore;
 
-      final manager = WebKitWebViewCookieManager(
-        WebKitWebViewCookieManagerCreationParams(),
-      );
+      final manager = WebKitWebViewCookieManager(WebKitWebViewCookieManagerCreationParams());
 
       final List<WebViewCookie> cookies = await manager.getCookies(
         Uri.parse('https://flutter.dev'),

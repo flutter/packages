@@ -21,10 +21,7 @@ class ErrorPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(densePadding),
-      child: Text(
-        'Error:\n$error\n\n$stackTrace',
-        style: Theme.of(context).errorTextStyle,
-      ),
+      child: Text('Error:\n$error\n\n$stackTrace', style: Theme.of(context).errorTextStyle),
     );
   }
 }
