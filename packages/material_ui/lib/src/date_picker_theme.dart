@@ -1243,6 +1243,7 @@ class _DatePickerDefaultsM2 extends DatePickerThemeData {
         return null;
       });
 }
+
 // BEGIN GENERATED TOKEN PROPERTIES - DatePicker
 
 // Do not edit by hand. The code between the "BEGIN GENERATED" and

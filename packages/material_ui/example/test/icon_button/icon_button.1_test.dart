@@ -4,8 +4,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:material_ui_examples/icon_button/icon_button.1.dart'
-    as example;
+import 'package:material_ui_examples/icon_button/icon_button.1.dart' as example;
 
 void main() {
   testWidgets('IconButton', (WidgetTester tester) async {

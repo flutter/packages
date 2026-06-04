@@ -1439,6 +1439,7 @@ class _CupertinoTextFieldState extends State<CupertinoTextField>
       autofillConfiguration: autofillConfiguration,
     );
   }
+
   // AutofillClient implementation end.
 
   @override

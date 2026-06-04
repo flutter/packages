@@ -6,8 +6,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:material_ui_examples/carousel/carousel.0.dart'
-    as example;
+import 'package:material_ui_examples/carousel/carousel.0.dart' as example;
 
 void main() {
   // The app being tested loads images via HTTP which the test

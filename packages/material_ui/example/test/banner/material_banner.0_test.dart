@@ -4,8 +4,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:material_ui_examples/banner/material_banner.0.dart'
-    as example;
+import 'package:material_ui_examples/banner/material_banner.0.dart' as example;
 
 void main() {
   testWidgets('Shows all elements', (WidgetTester tester) async {

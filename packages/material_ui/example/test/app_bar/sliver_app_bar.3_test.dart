@@ -4,8 +4,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:material_ui_examples/app_bar/sliver_app_bar.3.dart'
-    as example;
+import 'package:material_ui_examples/app_bar/sliver_app_bar.3.dart' as example;
 
 void main() {
   testWidgets('Visibility and interaction of crucial widgets', (

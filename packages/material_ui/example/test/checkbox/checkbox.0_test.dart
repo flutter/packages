@@ -4,8 +4,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:material_ui_examples/checkbox/checkbox.0.dart'
-    as example;
+import 'package:material_ui_examples/checkbox/checkbox.0.dart' as example;
 
 void main() {
   testWidgets('Checkbox can be checked', (WidgetTester tester) async {

@@ -2396,7 +2396,11 @@ void main() {
     // With consumeMaxWeight and [1,7,1], animateToItem(1) places item 1 in the
     // max-weight position. This is one item forward from initial (item 0 in hero).
     // The offset should increase (scroll forward), not decrease (scroll backward).
-    await controller.animateToItem(1, duration: const Duration(milliseconds: 200), curve: Curves.linear);
+    await controller.animateToItem(
+      1,
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.linear,
+    );
     await tester.pumpAndSettle();
 
     expect(controller.offset, greaterThan(initialOffset));
@@ -2427,7 +2431,11 @@ void main() {
     );
 
     // First scroll forward to item 2.
-    await controller.animateToItem(2, duration: const Duration(milliseconds: 200), curve: Curves.linear);
+    await controller.animateToItem(
+      2,
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.linear,
+    );
     await tester.pumpAndSettle();
     expect(controller.leadingItem, equals(2));
 
@@ -2435,7 +2443,11 @@ void main() {
 
     // Now animate to item 1 which is just behind. In infinite mode this should
     // scroll forward through items 3 → 4 → 0 → 1, not backward.
-    await controller.animateToItem(1, duration: const Duration(milliseconds: 200), curve: Curves.linear);
+    await controller.animateToItem(
+      1,
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.linear,
+    );
     await tester.pumpAndSettle();
 
     expect(controller.leadingItem, equals(1));
@@ -3013,7 +3025,11 @@ Future<void> runCarouselTest({
   expect(realOffset(), controller.offset);
 
   // Scroll to the first item.
-  await controller.animateToItem(0, duration: const Duration(milliseconds: 100), curve: Curves.easeInOut);
+  await controller.animateToItem(
+    0,
+    duration: const Duration(milliseconds: 100),
+    curve: Curves.easeInOut,
+  );
   await tester.pumpAndSettle();
 
   // Verify that the first item is visible.
