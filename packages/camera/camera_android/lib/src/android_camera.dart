@@ -17,8 +17,7 @@ import 'utils.dart';
 /// The Android implementation of [CameraPlatform] that uses method channels.
 class AndroidCamera extends CameraPlatform {
   /// Creates a new [CameraPlatform] instance.
-  AndroidCamera({@visibleForTesting CameraApi? hostApi})
-    : _hostApi = hostApi ?? CameraApi();
+  AndroidCamera({@visibleForTesting CameraApi? hostApi}) : _hostApi = hostApi ?? CameraApi();
 
   /// Registers this class as the default instance of [CameraPlatform].
   static void registerWith() {
@@ -30,8 +29,7 @@ class AndroidCamera extends CameraPlatform {
   /// The name of the channel that device events from the platform side are
   /// sent on.
   @visibleForTesting
-  static const String deviceEventChannelName =
-      'plugins.flutter.io/camera_android/fromPlatform';
+  static const String deviceEventChannelName = 'plugins.flutter.io/camera_android/fromPlatform';
 
   /// The controller we need to broadcast the different events coming
   /// from handleMethodCall, specific to camera events.
@@ -51,8 +49,7 @@ class AndroidCamera extends CameraPlatform {
   /// Map of camera IDs to camera-level callback handlers listening to their
   /// respective platform channels.
   @visibleForTesting
-  final Map<int, HostCameraMessageHandler> hostCameraHandlers =
-      <int, HostCameraMessageHandler>{};
+  final Map<int, HostCameraMessageHandler> hostCameraHandlers = <int, HostCameraMessageHandler>{};
 
   // The stream to receive frames from the native code.
   StreamSubscription<dynamic>? _platformImageStreamSubscription;
@@ -60,23 +57,18 @@ class AndroidCamera extends CameraPlatform {
   // The stream for vending frames to platform interface clients.
   StreamController<CameraImageData>? _frameStreamController;
 
-  Stream<CameraEvent> _cameraEvents(int cameraId) => cameraEventStreamController
-      .stream
-      .where((CameraEvent event) => event.cameraId == cameraId);
+  Stream<CameraEvent> _cameraEvents(int cameraId) =>
+      cameraEventStreamController.stream.where((CameraEvent event) => event.cameraId == cameraId);
 
   @override
   Future<List<CameraDescription>> availableCameras() async {
     try {
       final List<PlatformCameraDescription> cameraDescriptions = await _hostApi
           .getAvailableCameras();
-      return cameraDescriptions.map((
-        PlatformCameraDescription cameraDescription,
-      ) {
+      return cameraDescriptions.map((PlatformCameraDescription cameraDescription) {
         return CameraDescription(
           name: cameraDescription.name,
-          lensDirection: cameraLensDirectionFromPlatform(
-            cameraDescription.lensDirection,
-          ),
+          lensDirection: cameraLensDirectionFromPlatform(cameraDescription.lensDirection),
           sensorOrientation: cameraDescription.sensorOrientation,
         );
       }).toList();
@@ -101,10 +93,7 @@ class AndroidCamera extends CameraPlatform {
     MediaSettings? mediaSettings,
   ) async {
     try {
-      return await _hostApi.create(
-        cameraDescription.name,
-        mediaSettingsToPlatform(mediaSettings),
-      );
+      return await _hostApi.create(cameraDescription.name, mediaSettingsToPlatform(mediaSettings));
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }
@@ -139,9 +128,7 @@ class AndroidCamera extends CameraPlatform {
 
   @override
   Future<void> dispose(int cameraId) async {
-    final HostCameraMessageHandler? handler = hostCameraHandlers.remove(
-      cameraId,
-    );
+    final HostCameraMessageHandler? handler = hostCameraHandlers.remove(cameraId);
     handler?.dispose();
 
     await _hostApi.dispose();
@@ -179,13 +166,8 @@ class AndroidCamera extends CameraPlatform {
   }
 
   @override
-  Future<void> lockCaptureOrientation(
-    int cameraId,
-    DeviceOrientation orientation,
-  ) async {
-    await _hostApi.lockCaptureOrientation(
-      deviceOrientationToPlatform(orientation),
-    );
+  Future<void> lockCaptureOrientation(int cameraId, DeviceOrientation orientation) async {
+    await _hostApi.lockCaptureOrientation(deviceOrientationToPlatform(orientation));
   }
 
   @override
@@ -235,12 +217,10 @@ class AndroidCamera extends CameraPlatform {
   }
 
   @override
-  Future<void> pauseVideoRecording(int cameraId) =>
-      _hostApi.pauseVideoRecording();
+  Future<void> pauseVideoRecording(int cameraId) => _hostApi.pauseVideoRecording();
 
   @override
-  Future<void> resumeVideoRecording(int cameraId) =>
-      _hostApi.resumeVideoRecording();
+  Future<void> resumeVideoRecording(int cameraId) => _hostApi.resumeVideoRecording();
 
   @override
   bool supportsImageStreaming() => true;
@@ -254,9 +234,7 @@ class AndroidCamera extends CameraPlatform {
     return _frameStreamController!.stream;
   }
 
-  StreamController<CameraImageData> _installStreamController({
-    void Function()? onListen,
-  }) {
+  StreamController<CameraImageData> _installStreamController({void Function()? onListen}) {
     _frameStreamController = StreamController<CameraImageData>(
       onListen: onListen ?? () {},
       onPause: _onFrameStreamPauseResume,
@@ -276,16 +254,12 @@ class AndroidCamera extends CameraPlatform {
   }
 
   void _startStreamListener() {
-    const cameraEventChannel = EventChannel(
-      'plugins.flutter.io/camera_android/imageStream',
-    );
-    _platformImageStreamSubscription = cameraEventChannel
-        .receiveBroadcastStream()
-        .listen((dynamic imageData) {
-          _frameStreamController!.add(
-            cameraImageFromPlatformData(imageData as Map<dynamic, dynamic>),
-          );
-        });
+    const cameraEventChannel = EventChannel('plugins.flutter.io/camera_android/imageStream');
+    _platformImageStreamSubscription = cameraEventChannel.receiveBroadcastStream().listen((
+      dynamic imageData,
+    ) {
+      _frameStreamController!.add(cameraImageFromPlatformData(imageData as Map<dynamic, dynamic>));
+    });
   }
 
   FutureOr<void> _onFrameStreamCancel() async {
@@ -380,9 +354,7 @@ class AndroidCamera extends CameraPlatform {
   }
 
   @override
-  Future<void> setDescriptionWhileRecording(
-    CameraDescription description,
-  ) async {
+  Future<void> setDescriptionWhileRecording(CameraDescription description) async {
     await _hostApi.setDescriptionWhileRecording(description.name);
   }
 

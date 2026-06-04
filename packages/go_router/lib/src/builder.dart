@@ -17,8 +17,7 @@ import 'route_data.dart';
 import 'state.dart';
 
 /// Signature of a go router builder function with navigator.
-typedef GoRouterBuilderWithNav =
-    Widget Function(BuildContext context, Widget child);
+typedef GoRouterBuilderWithNav = Widget Function(BuildContext context, Widget child);
 
 typedef _PageBuilderForAppType =
     Page<void> Function({
@@ -29,8 +28,7 @@ typedef _PageBuilderForAppType =
       required Widget child,
     });
 
-typedef _ErrorBuilderForAppType =
-    Widget Function(BuildContext context, GoRouterState state);
+typedef _ErrorBuilderForAppType = Widget Function(BuildContext context, GoRouterState state);
 
 /// Signature for a function that takes in a `route` to be popped with
 /// the `result` and returns a boolean decision on whether the pop
@@ -214,10 +212,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
         }
         pages.add(page);
         pageToRouteMatchBase[page] = match;
-        registry[page] = match.buildState(
-          widget.configuration,
-          widget.matchList,
-        );
+        registry[page] = match.buildState(widget.configuration, widget.matchList);
       }
     }
     _pages = pages;
@@ -241,10 +236,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
   /// Builds a [Page] for a [RouteMatch]
   Page<Object?>? _buildPageForGoRoute(BuildContext context, RouteMatch match) {
     final GoRouterPageBuilder? pageBuilder = match.route.pageBuilder;
-    final GoRouterState state = match.buildState(
-      widget.configuration,
-      widget.matchList,
-    );
+    final GoRouterState state = match.buildState(widget.configuration, widget.matchList);
     if (pageBuilder != null) {
       final Page<Object?> page = pageBuilder(context, state);
       if (page is! NoOpPage) {
@@ -269,14 +261,8 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
   }
 
   /// Builds a [Page] for a [ShellRouteMatch]
-  Page<Object?> _buildPageForShellRoute(
-    BuildContext context,
-    ShellRouteMatch match,
-  ) {
-    final GoRouterState state = match.buildState(
-      widget.configuration,
-      widget.matchList,
-    );
+  Page<Object?> _buildPageForShellRoute(BuildContext context, ShellRouteMatch match) {
+    final GoRouterState state = match.buildState(widget.configuration, widget.matchList);
     final GlobalKey<NavigatorState> navigatorKey = match.navigatorKey;
     final shellRouteContext = ShellRouteContext(
       route: match.route,
@@ -316,11 +302,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
             );
           },
     );
-    final Page<Object?>? page = match.route.buildPage(
-      context,
-      state,
-      shellRouteContext,
-    );
+    final Page<Object?>? page = match.route.buildPage(context, state, shellRouteContext);
     if (page != null && page is! NoOpPage) {
       return page;
     }
@@ -352,8 +334,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
       if (elem != null && isMaterialApp(elem)) {
         log('Using MaterialApp configuration');
         _pageBuilderForAppType = pageBuilderForMaterialApp;
-        _errorBuilderForAppType = (BuildContext c, GoRouterState s) =>
-            MaterialErrorScreen(s.error);
+        _errorBuilderForAppType = (BuildContext c, GoRouterState s) => MaterialErrorScreen(s.error);
       } else if (elem != null && isCupertinoApp(elem)) {
         log('Using CupertinoApp configuration');
         _pageBuilderForAppType = pageBuilderForCupertinoApp;
@@ -375,8 +356,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
               restorationId: restorationId,
               child: child,
             );
-        _errorBuilderForAppType = (BuildContext c, GoRouterState s) =>
-            ErrorScreen(s.error);
+        _errorBuilderForAppType = (BuildContext c, GoRouterState s) => ErrorScreen(s.error);
       }
     }
 
@@ -385,20 +365,13 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
   }
 
   /// builds the page based on app type, i.e. MaterialApp vs. CupertinoApp
-  Page<Object?> _buildPlatformAdapterPage(
-    BuildContext context,
-    GoRouterState state,
-    Widget child,
-  ) {
+  Page<Object?> _buildPlatformAdapterPage(BuildContext context, GoRouterState state, Widget child) {
     // build the page based on app type
     _cacheAppType(context);
     return _pageBuilderForAppType!(
       key: state.pageKey,
       name: state.name ?? state.path,
-      arguments: <String, String>{
-        ...state.pathParameters,
-        ...state.uri.queryParameters,
-      },
+      arguments: <String, String>{...state.pathParameters, ...state.uri.queryParameters},
       restorationId: state.pageKey.value,
       child: child,
     );

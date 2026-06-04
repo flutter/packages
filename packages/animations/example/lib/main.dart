@@ -122,11 +122,7 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
 }
 
 class _TransitionListTile extends StatelessWidget {
-  const _TransitionListTile({
-    this.onTap,
-    required this.title,
-    required this.subtitle,
-  });
+  const _TransitionListTile({this.onTap, required this.title, required this.subtitle});
 
   final GestureTapCallback? onTap;
   final String title;

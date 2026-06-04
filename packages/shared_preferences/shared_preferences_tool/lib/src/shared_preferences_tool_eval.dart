@@ -48,10 +48,7 @@ class SharedPreferencesToolEval {
       return (data[key]! as List<Object?>).cast();
     }
 
-    return (
-      asyncKeys: castList('asyncKeys'),
-      legacyKeys: castList('legacyKeys'),
-    );
+    return (asyncKeys: castList('asyncKeys'), legacyKeys: castList('legacyKeys'));
   }
 
   Future<Map<String, Object?>> _evalMethod({
@@ -71,10 +68,7 @@ class SharedPreferencesToolEval {
       }
     });
 
-    await _eval.eval(
-      'SharedPreferencesDevToolsExtensionData().$method',
-      isAlive: isAlive,
-    );
+    await _eval.eval('SharedPreferencesDevToolsExtensionData().$method', isAlive: isAlive);
 
     return completer.future;
   }
@@ -112,19 +106,14 @@ class SharedPreferencesToolEval {
 
   /// Changes the value of the key in the shared preferences of the target debug
   /// session.
-  Future<void> changeValue(
-    String key,
-    SharedPreferencesData value,
-    bool legacy,
-  ) async {
+  Future<void> changeValue(String key, SharedPreferencesData value, bool legacy) async {
     _changeValueDisposable?.dispose();
     _changeValueDisposable = Disposable();
 
     final String serializedValue = jsonEncode(value.value);
     final String kind = value.kind;
     await _evalMethod(
-      method:
-          "requestValueChange('$key', '$serializedValue', '$kind', $legacy)",
+      method: "requestValueChange('$key', '$serializedValue', '$kind', $legacy)",
       eventKind: 'change_value',
       isAlive: _changeValueDisposable,
     );

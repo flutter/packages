@@ -12,15 +12,9 @@ const StandardMessageCodec messageCodec = StandardMessageCodec();
 void main() {
   group('Standard method codec', () {
     test('Should encode and decode objects produced from codec', () {
-      final ByteData? data = messageCodec.encodeMessage(<Object, Object>{
-        'foo': true,
-        3: 'fizz',
-      });
+      final ByteData? data = messageCodec.encodeMessage(<Object, Object>{'foo': true, 3: 'fizz'});
 
-      expect(messageCodec.decodeMessage(data), <Object?, Object?>{
-        'foo': true,
-        3: 'fizz',
-      });
+      expect(messageCodec.decodeMessage(data), <Object?, Object?>{'foo': true, 3: 'fizz'});
     });
   });
 
@@ -152,10 +146,7 @@ void main() {
     });
 
     test('empty WriteBuffer', () {
-      expect(
-        () => WriteBuffer(startCapacity: 0),
-        throwsA(isA<AssertionError>()),
-      );
+      expect(() => WriteBuffer(startCapacity: 0), throwsA(isA<AssertionError>()));
     });
 
     test('size 1', () {

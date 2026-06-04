@@ -12,10 +12,7 @@ class VideoCaptureOptions {
   /// Constructs a new instance.
   const VideoCaptureOptions(
     this.cameraId, {
-    @Deprecated(
-      'This parameter is unused, and will be ignored on all platforms',
-    )
-    this.maxDuration,
+    @Deprecated('This parameter is unused, and will be ignored on all platforms') this.maxDuration,
     this.streamCallback,
     this.streamOptions,
     this.enablePersistentRecording = true,
@@ -74,12 +71,6 @@ class VideoCaptureOptions {
           videoOutputPath == other.videoOutputPath;
 
   @override
-  int get hashCode => Object.hash(
-    cameraId,
-    maxDuration,
-    streamCallback,
-    streamOptions,
-    enablePersistentRecording,
-    videoOutputPath,
-  );
+  int get hashCode =>
+      Object.hash(cameraId, maxDuration, streamCallback, streamOptions, enablePersistentRecording);
 }

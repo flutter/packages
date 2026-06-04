@@ -25,8 +25,7 @@ import 'package:mockito/src/dummies.dart' as _i3;
 // ignore_for_file: invalid_use_of_internal_member
 
 class _FakePlatformSize_0 extends _i1.SmartFake implements _i2.PlatformSize {
-  _FakePlatformSize_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakePlatformSize_0(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
 }
 
 /// A class which mocks [CameraApi].
@@ -53,17 +52,12 @@ class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
       (super.noSuchMethod(
             Invocation.method(#getAvailableCameras, []),
             returnValue: _i4.Future<List<String>>.value(<String>[]),
-            returnValueForMissingStub: _i4.Future<List<String>>.value(
-              <String>[],
-            ),
+            returnValueForMissingStub: _i4.Future<List<String>>.value(<String>[]),
           )
           as _i4.Future<List<String>>);
 
   @override
-  _i4.Future<int> create(
-    String? cameraName,
-    _i2.PlatformMediaSettings? settings,
-  ) =>
+  _i4.Future<int> create(String? cameraName, _i2.PlatformMediaSettings? settings) =>
       (super.noSuchMethod(
             Invocation.method(#create, [cameraName, settings]),
             returnValue: _i4.Future<int>.value(0),
@@ -76,16 +70,10 @@ class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
       (super.noSuchMethod(
             Invocation.method(#initialize, [cameraId]),
             returnValue: _i4.Future<_i2.PlatformSize>.value(
-              _FakePlatformSize_0(
-                this,
-                Invocation.method(#initialize, [cameraId]),
-              ),
+              _FakePlatformSize_0(this, Invocation.method(#initialize, [cameraId])),
             ),
             returnValueForMissingStub: _i4.Future<_i2.PlatformSize>.value(
-              _FakePlatformSize_0(
-                this,
-                Invocation.method(#initialize, [cameraId]),
-              ),
+              _FakePlatformSize_0(this, Invocation.method(#initialize, [cameraId])),
             ),
           )
           as _i4.Future<_i2.PlatformSize>);
@@ -104,16 +92,10 @@ class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
       (super.noSuchMethod(
             Invocation.method(#takePicture, [cameraId]),
             returnValue: _i4.Future<String>.value(
-              _i3.dummyValue<String>(
-                this,
-                Invocation.method(#takePicture, [cameraId]),
-              ),
+              _i3.dummyValue<String>(this, Invocation.method(#takePicture, [cameraId])),
             ),
             returnValueForMissingStub: _i4.Future<String>.value(
-              _i3.dummyValue<String>(
-                this,
-                Invocation.method(#takePicture, [cameraId]),
-              ),
+              _i3.dummyValue<String>(this, Invocation.method(#takePicture, [cameraId])),
             ),
           )
           as _i4.Future<String>);
@@ -138,16 +120,10 @@ class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
       (super.noSuchMethod(
             Invocation.method(#stopVideoRecording, [cameraId]),
             returnValue: _i4.Future<String>.value(
-              _i3.dummyValue<String>(
-                this,
-                Invocation.method(#stopVideoRecording, [cameraId]),
-              ),
+              _i3.dummyValue<String>(this, Invocation.method(#stopVideoRecording, [cameraId])),
             ),
             returnValueForMissingStub: _i4.Future<String>.value(
-              _i3.dummyValue<String>(
-                this,
-                Invocation.method(#stopVideoRecording, [cameraId]),
-              ),
+              _i3.dummyValue<String>(this, Invocation.method(#stopVideoRecording, [cameraId])),
             ),
           )
           as _i4.Future<String>);
