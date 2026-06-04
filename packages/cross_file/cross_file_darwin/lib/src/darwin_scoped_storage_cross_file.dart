@@ -25,17 +25,13 @@ sealed class DarwinScopedStorageXFileCreationParams
 
   /// Constructs a [DarwinScopedStorageXFileCreationParams] with a security
   /// scoped uri.
-  factory DarwinScopedStorageXFileCreationParams.securityScoped({
-    required String uri,
-  }) => SecurityScopedDarwinScopedStorageXFileCreationParams(uri: uri);
+  factory DarwinScopedStorageXFileCreationParams.securityScoped({required String uri}) =>
+      SecurityScopedDarwinScopedStorageXFileCreationParams(uri: uri);
 
   /// Constructs a [DarwinScopedStorageXFileCreationParams] with an asset
   /// identifier from the Photos Library.
-  factory DarwinScopedStorageXFileCreationParams.photoKit({
-    required String localIdentifier,
-  }) => PhotoKitDarwinScopedStorageXFileCreationParams(
-    localIdentifier: localIdentifier,
-  );
+  factory DarwinScopedStorageXFileCreationParams.photoKit({required String localIdentifier}) =>
+      PhotoKitDarwinScopedStorageXFileCreationParams(localIdentifier: localIdentifier);
 }
 
 /// Creation parameters for [SecurityScopedDarwinScopedStorageXFile].
@@ -43,9 +39,7 @@ sealed class DarwinScopedStorageXFileCreationParams
 base class SecurityScopedDarwinScopedStorageXFileCreationParams
     extends DarwinScopedStorageXFileCreationParams {
   /// Constructs a [SecurityScopedDarwinScopedStorageXFileCreationParams].
-  const SecurityScopedDarwinScopedStorageXFileCreationParams({
-    required super.uri,
-  });
+  const SecurityScopedDarwinScopedStorageXFileCreationParams({required super.uri});
 }
 
 /// Creation parameters for [PhotoKitDarwinScopedStorageXFile].
@@ -53,19 +47,15 @@ base class SecurityScopedDarwinScopedStorageXFileCreationParams
 base class PhotoKitDarwinScopedStorageXFileCreationParams
     extends DarwinScopedStorageXFileCreationParams {
   /// Constructs a [PhotoKitDarwinScopedStorageXFileCreationParams].
-  const PhotoKitDarwinScopedStorageXFileCreationParams({
-    required String localIdentifier,
-  }) : super(uri: localIdentifier);
+  const PhotoKitDarwinScopedStorageXFileCreationParams({required String localIdentifier})
+    : super(uri: localIdentifier);
 }
 
 /// Base implementation of [PlatformScopedStorageXFile] for iOS and macOS.
 sealed class DarwinScopedStorageXFile extends PlatformScopedStorageXFile {
-  factory DarwinScopedStorageXFile(
-    PlatformScopedStorageXFileCreationParams params,
-  ) {
+  factory DarwinScopedStorageXFile(PlatformScopedStorageXFileCreationParams params) {
     return switch (params) {
-      final SecurityScopedDarwinScopedStorageXFileCreationParams
-      securityScopedParams =>
+      final SecurityScopedDarwinScopedStorageXFileCreationParams securityScopedParams =>
         SecurityScopedDarwinScopedStorageXFile(securityScopedParams),
       final PhotoKitDarwinScopedStorageXFileCreationParams photoKitParams =>
         PhotoKitDarwinScopedStorageXFile(photoKitParams),
@@ -79,8 +69,7 @@ sealed class DarwinScopedStorageXFile extends PlatformScopedStorageXFile {
 
 /// Implementation of [DarwinScopedStorageXFile] for interacting with a
 /// security-scoped URL.
-base class SecurityScopedDarwinScopedStorageXFile
-    extends DarwinScopedStorageXFile
+base class SecurityScopedDarwinScopedStorageXFile extends DarwinScopedStorageXFile
     with SecurityScopedDarwinScopedStorageXFileExtension {
   /// Constructs a [SecurityScopedDarwinScopedStorageXFile].
   SecurityScopedDarwinScopedStorageXFile(super.params) : super._() {
@@ -103,9 +92,7 @@ base class SecurityScopedDarwinScopedStorageXFile
   late final SecurityScopedDarwinScopedStorageXFileCreationParams params =
       super.params is SecurityScopedDarwinScopedStorageXFileCreationParams
       ? super.params as SecurityScopedDarwinScopedStorageXFileCreationParams
-      : SecurityScopedDarwinScopedStorageXFileCreationParams(
-          uri: super.params.uri,
-        );
+      : SecurityScopedDarwinScopedStorageXFileCreationParams(uri: super.params.uri);
 
   @override
   SecurityScopedDarwinScopedStorageXFileExtension? get extension => this;
@@ -122,22 +109,20 @@ base class SecurityScopedDarwinScopedStorageXFile
   @override
   Future<int?> length() async {
     try {
-      return _file.length();
+      return _file.lengthSync();
     } on FileSystemException {
       return null;
     }
   }
 
   @override
-  Stream<Uint8List> openRead([int? start, int? end]) =>
-      _file.openRead(start, end).cast();
+  Stream<Uint8List> openRead([int? start, int? end]) => _file.openRead(start, end).cast();
 
   @override
   Future<Uint8List> readAsBytes() => _file.readAsBytes();
 
   @override
-  Future<String> readAsString({Encoding encoding = utf8}) =>
-      _file.readAsString(encoding: encoding);
+  Future<String> readAsString({Encoding encoding = utf8}) => _file.readAsString(encoding: encoding);
 
   @override
   Future<bool> canRead() async {
@@ -181,9 +166,7 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
   late final PhotoKitDarwinScopedStorageXFileCreationParams params =
       super.params is PhotoKitDarwinScopedStorageXFileCreationParams
       ? super.params as PhotoKitDarwinScopedStorageXFileCreationParams
-      : PhotoKitDarwinScopedStorageXFileCreationParams(
-          localIdentifier: super.params.uri,
-        );
+      : PhotoKitDarwinScopedStorageXFileCreationParams(localIdentifier: super.params.uri);
 
   @override
   PhotoKitDarwinScopedStorageXFileExtension? get extension => this;
@@ -193,9 +176,7 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
     if (_tryGetAsset(identifier: params.uri) case final PHAsset asset) {
       final NSDate? date = asset.modificationDate;
       if (date != null) {
-        DateTime.fromMillisecondsSinceEpoch(
-          (date.timeIntervalSince1970 * 1000).round(),
-        );
+        DateTime.fromMillisecondsSinceEpoch((date.timeIntervalSince1970 * 1000).round());
       }
     }
 
@@ -211,9 +192,7 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
       if (firstObject != null) {
         final resource = PHAssetResource.as(firstObject);
         final ObjCObject? fileSize = resource.valueForKey(NSString('fileSize'));
-        print(fileSize);
-
-        return null;
+        return fileSize?.ref.pointer.cast<UnsignedLong>().value;
       }
     }
 
@@ -221,8 +200,7 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
   }
 
   @override
-  Stream<Uint8List> openRead([int? start, int? end]) =>
-      throw UnsupportedError('');
+  Stream<Uint8List> openRead([int? start, int? end]) => throw UnsupportedError('');
 
   @override
   Future<Uint8List> readAsBytes() {
@@ -299,14 +277,12 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
   }
 
   Uint8List _extractBytesToUint8List(NSData data) {
-    int length = data.length;
-
-    if (length == 0) {
+    if (data.length == 0) {
       return Uint8List(0);
     }
 
     final Pointer<Uint8> uint8Pointer = data.bytes.cast<Uint8>();
-    final Uint8List byteView = uint8Pointer.asTypedList(length);
+    final Uint8List byteView = uint8Pointer.asTypedList(data.length);
     return Uint8List.fromList(byteView);
   }
 }
@@ -318,5 +294,4 @@ mixin SecurityScopedDarwinScopedStorageXFileExtension
 
 /// Provides platform specific features for
 /// [PhotoKitDarwinScopedStorageXFile].
-mixin PhotoKitDarwinScopedStorageXFileExtension
-    implements PlatformScopedStorageXFileExtension {}
+mixin PhotoKitDarwinScopedStorageXFileExtension implements PlatformScopedStorageXFileExtension {}
