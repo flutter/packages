@@ -26,21 +26,14 @@ class LambdaContext implements m.LambdaContext {
   }
 
   TemplateException _error(String msg) {
-    return TemplateException(
-      msg,
-      _renderer.templateName,
-      _renderer.source,
-      _node.start,
-    );
+    return TemplateException(msg, _renderer.templateName, _renderer.source, _node.start);
   }
 
   @override
   String renderString({Object? value}) {
     _checkClosed();
     if (_node is! SectionNode) {
-      throw _error(
-        'LambdaContext.renderString() can only be called on section tags.',
-      );
+      throw _error('LambdaContext.renderString() can only be called on section tags.');
     }
     final sink = StringBuffer();
     _renderSubtree(sink, value);
@@ -60,9 +53,7 @@ class LambdaContext implements m.LambdaContext {
   void render({Object? value}) {
     _checkClosed();
     if (_node is! SectionNode) {
-      throw _error(
-        'LambdaContext.render() can only be called on section tags.',
-      );
+      throw _error('LambdaContext.render() can only be called on section tags.');
     }
     _renderSubtree(_renderer.sink, value);
   }
