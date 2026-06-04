@@ -191,14 +191,16 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
 
       if (firstObject != null) {
         final resource = PHAssetResource.as(firstObject);
-        final ObjCObject? fileSize = resource.valueForKey(NSString('fileSize'));
+        final ObjCObject? fileSize = resource.valueForKey('fileSize'.toNSString());
         print('here');
         if (fileSize != null) {
-          print('inside');
-          print(fileSize.ref.pointer.address);
-          final pointer = Pointer<Long>.fromAddress(fileSize.ref.pointer.address);
-          print('pointer made');
-          return pointer.value;
+          final b = NSNumber.as(fileSize);
+          return b.intValue;
+          // print('inside');
+          // print(fileSize.ref.pointer.address);
+          // final pointer = Pointer<Long>.fromAddress(fileSize.ref.pointer.address);
+          // print('pointer made');
+          // return pointer.value;
         }
         //return figleSize?.ref.pointer.cast<UnsignedLong>().value;
       }
