@@ -770,7 +770,7 @@ class _ContextMenuRoute<T> extends PopupRoute<T> {
   static const Color _kModalBarrierColor = Color(0x6604040F);
 
   final List<Widget> _actions;
-  final CupertinoContextMenuBuilder? _builder;
+  late final CupertinoContextMenuBuilder? _builder;
   final GlobalKey _childGlobalKey = GlobalKey();
   final _ContextMenuLocation _contextMenuLocation;
   bool _externalOffstage = false;
