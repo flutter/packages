@@ -432,13 +432,13 @@ size_t MessageData::Hash() const {
 std::ostream& operator<<(std::ostream& os, const MessageData& obj) {
   os << "MessageData(";
   os << "name: ";
-  if (obj.name_.has_value()) {
+  if (obj.name_) {
     os << PigeonInternalToString(*obj.name_);
   } else {
     os << "null";
   }
   os << ", message_description: ";
-  if (obj.message_description_.has_value()) {
+  if (obj.message_description_) {
     os << PigeonInternalToString(*obj.message_description_);
   } else {
     os << "null";

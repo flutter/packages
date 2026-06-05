@@ -41,7 +41,7 @@ TEST(EqualityTests, OptionalNaNEquality) {
 }
 
 TEST(EqualityTests, NestedNaNEquality) {
-  std::vector<double> list = {NAN};
+  flutter::EncodableList list = {flutter::EncodableValue(NAN)};
   AllNullableTypes all1;
   all1.set_double_list(list);
 
@@ -62,11 +62,11 @@ TEST(EqualityTests, SignedZeroEquality) {
 }
 
 TEST(EqualityTests, NestedZeroListEquality) {
-  std::vector<double> list1 = {0.0};
+  flutter::EncodableList list1 = {flutter::EncodableValue(0.0)};
   AllNullableTypes all1;
   all1.set_double_list(list1);
 
-  std::vector<double> list2 = {-0.0};
+  flutter::EncodableList list2 = {flutter::EncodableValue(-0.0)};
   AllNullableTypes all2;
   all2.set_double_list(list2);
 

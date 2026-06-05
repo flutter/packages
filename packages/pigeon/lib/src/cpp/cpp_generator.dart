@@ -1046,7 +1046,7 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
           final comma = index == 0 ? '' : ', ';
           indent.writeln('os << "$comma${_makeVariableName(field)}: ";');
           if (field.type.isNullable) {
-            indent.writeScoped('if ($name.has_value()) {', '}', () {
+            indent.writeScoped('if ($name) {', '}', () {
               if (field.type.isClass) {
                 indent.writeln('os << *$name;');
               } else {
