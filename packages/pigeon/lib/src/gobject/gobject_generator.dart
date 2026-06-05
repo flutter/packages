@@ -1214,7 +1214,7 @@ class GObjectSourceGenerator extends StructuredGenerator<InternalGObjectOptions>
       indent.writeln('g_return_val_if_fail($testMacro(self), NULL);');
       indent.writeln('GString* str = g_string_new("${classDefinition.name}(");');
 
-      enumerate(classDefinition.fields, (int index, final NamedType field) {
+      enumerate(classDefinition.fields, (int index, NamedType field) {
         final String fieldName = _getFieldName(field.name);
         final comma = index == 0 ? '' : ', ';
         indent.writeln('g_string_append(str, "$comma${_getFieldName(field.name)}: ");');

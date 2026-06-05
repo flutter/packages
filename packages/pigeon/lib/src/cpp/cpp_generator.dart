@@ -1041,7 +1041,7 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
       parameters: <String>['std::ostream& os', 'const ${classDefinition.name}& obj'],
       body: () {
         indent.writeln('os << "${classDefinition.name}(";');
-        enumerate(orderedFields, (int index, final NamedType field) {
+        enumerate(orderedFields, (int index, NamedType field) {
           final name = 'obj.${_makeInstanceVariableName(field)}';
           final comma = index == 0 ? '' : ', ';
           indent.writeln('os << "$comma${_makeVariableName(field)}: ";');
