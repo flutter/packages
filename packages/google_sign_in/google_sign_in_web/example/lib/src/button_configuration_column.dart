@@ -10,10 +10,7 @@ typedef OnWebConfigChangeFn = void Function(GSIButtonConfiguration newConfig);
 
 /// The type of the widget builder function for each Card in the ListView builder
 typedef CardBuilder =
-    Widget Function(
-      GSIButtonConfiguration? currentConfig,
-      OnWebConfigChangeFn? onChange,
-    );
+    Widget Function(GSIButtonConfiguration? currentConfig, OnWebConfigChangeFn? onChange);
 
 // (Incomplete) List of the locales that can be used to configure the button.
 const List<String> _availableLocales = <String>[
@@ -27,19 +24,17 @@ const List<String> _availableLocales = <String>[
 
 // The builder functions for the Cards that let users customize the button.
 final List<CardBuilder> _cards = <CardBuilder>[
-  (GSIButtonConfiguration? currentConfig, OnWebConfigChangeFn? onChange) =>
-      _renderLocaleCard(
-        value: currentConfig?.locale ?? 'en_US',
-        locales: _availableLocales,
-        onChanged: _onChanged<String>(currentConfig, onChange),
-      ),
-  (GSIButtonConfiguration? currentConfig, OnWebConfigChangeFn? onChange) =>
-      _renderMinimumWidthCard(
-        value: currentConfig?.minimumWidth,
-        max: 500,
-        actualMax: 400,
-        onChanged: _onChanged<double>(currentConfig, onChange),
-      ),
+  (GSIButtonConfiguration? currentConfig, OnWebConfigChangeFn? onChange) => _renderLocaleCard(
+    value: currentConfig?.locale ?? 'en_US',
+    locales: _availableLocales,
+    onChanged: _onChanged<String>(currentConfig, onChange),
+  ),
+  (GSIButtonConfiguration? currentConfig, OnWebConfigChangeFn? onChange) => _renderMinimumWidthCard(
+    value: currentConfig?.minimumWidth,
+    max: 500,
+    actualMax: 400,
+    onChanged: _onChanged<double>(currentConfig, onChange),
+  ),
   (GSIButtonConfiguration? currentConfig, OnWebConfigChangeFn? onChange) =>
       _renderRadioListTileCard<GSIButtonType>(
         title: 'ButtonType',
@@ -99,8 +94,7 @@ Widget renderWebButtonConfiguration(
       child: ListView.builder(
         controller: scrollController,
         itemCount: _cards.length,
-        itemBuilder: (BuildContext _, int index) =>
-            _cards[index](currentConfig, onChange),
+        itemBuilder: (BuildContext _, int index) => _cards[index](currentConfig, onChange),
       ),
     ),
   );
@@ -119,12 +113,7 @@ Widget _renderLocaleCard({
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: DropdownButton<String>(
           items: locales
-              .map(
-                (String locale) => DropdownMenuItem<String>(
-                  value: locale,
-                  child: Text(locale),
-                ),
-              )
+              .map((String locale) => DropdownMenuItem<String>(value: locale, child: Text(locale)))
               .toList(),
           value: value,
           onChanged: onChanged,
@@ -193,19 +182,13 @@ Widget _renderRadioListTileCard<T extends Enum>({
 }
 
 /// Renders a Card where we render some `children` that change config.
-Widget _renderConfigCard({
-  required String title,
-  required List<Widget> children,
-}) {
+Widget _renderConfigCard({required String title, required List<Widget> children}) {
   return Card(
     child: Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         ListTile(
-          title: Text(
-            title,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
+          title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
           dense: true,
         ),
         ...children,
@@ -215,15 +198,10 @@ Widget _renderConfigCard({
 }
 
 /// Sets a `value` into an `old` configuration object.
-GSIButtonConfiguration _copyConfigWith<T>(
-  GSIButtonConfiguration? old,
-  T? value,
-) {
+GSIButtonConfiguration _copyConfigWith<T>(GSIButtonConfiguration? old, T? value) {
   return GSIButtonConfiguration(
     locale: value is String ? value : old?.locale,
-    minimumWidth: value is double
-        ? (value == 0 ? null : value)
-        : old?.minimumWidth,
+    minimumWidth: value is double ? (value == 0 ? null : value) : old?.minimumWidth,
     type: value is GSIButtonType ? value : old?.type,
     theme: value is GSIButtonTheme ? value : old?.theme,
     size: value is GSIButtonSize ? value : old?.size,
@@ -234,10 +212,7 @@ GSIButtonConfiguration _copyConfigWith<T>(
 }
 
 /// Returns a function that modifies the `current` configuration with a `value`, then calls `fn` with it.
-void Function(T?)? _onChanged<T>(
-  GSIButtonConfiguration? current,
-  OnWebConfigChangeFn? fn,
-) {
+void Function(T?)? _onChanged<T>(GSIButtonConfiguration? current, OnWebConfigChangeFn? fn) {
   if (fn == null) {
     return null;
   }

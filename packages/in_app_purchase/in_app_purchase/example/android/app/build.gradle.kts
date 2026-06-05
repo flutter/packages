@@ -100,7 +100,7 @@ dependencies {
     implementation("com.android.billingclient:billing:3.0.2")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:5.0.0")
-    testImplementation("org.json:json:20251224")
+    testImplementation("org.json:json:20260522")
     androidTestImplementation("androidx.test:runner:1.1.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.1.1")
 }

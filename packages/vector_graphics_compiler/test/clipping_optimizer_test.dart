@@ -51,9 +51,7 @@ void main() {
     final visitor = ClippingOptimizer();
     final Node newNode = visitor.apply(node);
 
-    final List<ResolvedClipNode> clipNodesNew = queryChildren<ResolvedClipNode>(
-      newNode,
-    );
+    final List<ResolvedClipNode> clipNodesNew = queryChildren<ResolvedClipNode>(newNode);
 
     expect(clipNodesNew.length, 0);
   });
@@ -72,17 +70,14 @@ void main() {
       final visitor = ClippingOptimizer();
       final Node newNode = visitor.apply(node);
 
-      final List<ResolvedClipNode> clipNodesNew =
-          queryChildren<ResolvedClipNode>(newNode);
+      final List<ResolvedClipNode> clipNodesNew = queryChildren<ResolvedClipNode>(newNode);
 
       expect(clipNodesNew.length, 1);
     },
   );
 
-  test(
-    "Don't resolve ClipNode if intersection of Clip and Path is empty",
-    () async {
-      final Node node = parseAndResolve('''
+  test("Don't resolve ClipNode if intersection of Clip and Path is empty", () async {
+    final Node node = parseAndResolve('''
 <svg width="200px" height="200x" viewBox="0 0 200 200">
   <defs>
     <clipPath id="a">
@@ -93,30 +88,24 @@ void main() {
 </svg>
 
 ''');
-      final visitor = ClippingOptimizer();
-      final Node newNode = visitor.apply(node);
+    final visitor = ClippingOptimizer();
+    final Node newNode = visitor.apply(node);
 
-      final List<ResolvedClipNode> clipNodesNew =
-          queryChildren<ResolvedClipNode>(newNode);
+    final List<ResolvedClipNode> clipNodesNew = queryChildren<ResolvedClipNode>(newNode);
 
-      expect(clipNodesNew.length, 1);
-    },
-  );
+    expect(clipNodesNew.length, 1);
+  });
 
   test('ParentNode and PathNode count should stay the same', () async {
     final Node node = parseAndResolve(pathAndParent);
 
-    final List<ResolvedPathNode> pathNodesOld = queryChildren<ResolvedPathNode>(
-      node,
-    );
+    final List<ResolvedPathNode> pathNodesOld = queryChildren<ResolvedPathNode>(node);
     final List<ParentNode> parentNodesOld = queryChildren<ParentNode>(node);
 
     final visitor = ClippingOptimizer();
     final Node newNode = visitor.apply(node);
 
-    final List<ResolvedPathNode> pathNodesNew = queryChildren<ResolvedPathNode>(
-      newNode,
-    );
+    final List<ResolvedPathNode> pathNodesNew = queryChildren<ResolvedPathNode>(newNode);
     final List<ParentNode> parentNodesNew = queryChildren<ParentNode>(newNode);
 
     expect(pathNodesOld.length, pathNodesNew.length);
@@ -126,10 +115,7 @@ void main() {
   test('Does not combine clips with multiple fill rules', () {
     final VectorInstructions instructions = parse(multiClip);
     expect(instructions.paths, <Path>[
-      parseSvgPathData(
-        'M 250,75 L 323,301 131,161 369,161 177,301 z',
-        PathFillType.evenOdd,
-      ),
+      parseSvgPathData('M 250,75 L 323,301 131,161 369,161 177,301 z', PathFillType.evenOdd),
       PathBuilder().addOval(const Rect.fromCircle(400, 200, 150)).toPath(),
       parseSvgPathData(
         'M 250,75 L 323,301 131,161 369,161 177,301 z',
@@ -153,10 +139,7 @@ void main() {
   });
 
   test('Combines clips where possible', () {
-    final VectorInstructions instructions = parse(
-      basicClip,
-      enableClippingOptimizer: false,
-    );
+    final VectorInstructions instructions = parse(basicClip, enableClippingOptimizer: false);
     final VectorInstructions instructionsWithOptimizer = parse(basicClip);
 
     expect(instructionsWithOptimizer.paths, basicClipsForClippingOptimzer);

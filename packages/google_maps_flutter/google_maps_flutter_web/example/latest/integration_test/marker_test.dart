@@ -3,11 +3,11 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:js_interop';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps/google_maps.dart' as gmaps;
 import 'package:google_maps_flutter_web/google_maps_flutter_web.dart';
+// ignore: implementation_imports
 import 'package:google_maps_flutter_web/src/utils.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -46,14 +46,14 @@ void main() {
   });
 
   group('MarkerController', () {
-    late gmaps.AdvancedMarkerElement marker;
+    late gmaps.Marker marker;
 
     setUp(() {
-      marker = gmaps.AdvancedMarkerElement();
+      marker = gmaps.Marker();
     });
 
     testWidgets('onTap gets called', (WidgetTester tester) async {
-      AdvancedMarkerController(marker: marker, onTap: onTap);
+      LegacyMarkerController(marker: marker, onTap: onTap);
 
       // Trigger a click event...
       gmaps.event.trigger(marker, 'click', gmaps.MapMouseEvent());
@@ -63,73 +63,49 @@ void main() {
     });
 
     testWidgets('onDragStart gets called', (WidgetTester tester) async {
-      AdvancedMarkerController(marker: marker, onDragStart: onDragStart);
+      LegacyMarkerController(marker: marker, onDragStart: onDragStart);
 
       // Trigger a drag end event...
-      gmaps.event.trigger(
-        marker,
-        'dragstart',
-        gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
-      );
+      gmaps.event.trigger(marker, 'dragstart', gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0));
 
       expect(await methodCalled, isTrue);
     });
 
     testWidgets('onDrag gets called', (WidgetTester tester) async {
-      AdvancedMarkerController(marker: marker, onDrag: onDrag);
+      LegacyMarkerController(marker: marker, onDrag: onDrag);
 
       // Trigger a drag end event...
-      gmaps.event.trigger(
-        marker,
-        'drag',
-        gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
-      );
+      gmaps.event.trigger(marker, 'drag', gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0));
 
       expect(await methodCalled, isTrue);
     });
 
     testWidgets('onDragEnd gets called', (WidgetTester tester) async {
-      AdvancedMarkerController(marker: marker, onDragEnd: onDragEnd);
+      LegacyMarkerController(marker: marker, onDragEnd: onDragEnd);
 
       // Trigger a drag end event...
-      gmaps.event.trigger(
-        marker,
-        'dragend',
-        gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
-      );
+      gmaps.event.trigger(marker, 'dragend', gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0));
 
       expect(await methodCalled, isTrue);
     });
 
     testWidgets('update', (WidgetTester tester) async {
-      final controller = AdvancedMarkerController(marker: marker);
-      final options = gmaps.AdvancedMarkerElementOptions()
-        ..collisionBehavior =
-            gmaps.CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY
-        ..gmpDraggable = true
+      final controller = LegacyMarkerController(marker: marker);
+      final options = gmaps.MarkerOptions()
+        ..draggable = true
         ..position = gmaps.LatLng(42, 54);
 
-      expect(marker.collisionBehavior, gmaps.CollisionBehavior.REQUIRED);
-      expect(marker.gmpDraggable, isFalse);
+      expect(marker.isDraggableDefined(), isFalse);
 
       controller.update(options);
 
-      expect(marker.gmpDraggable, isTrue);
-      expect(
-        marker.collisionBehavior,
-        gmaps.CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY,
-      );
-      final JSAny? position = marker.position;
-      expect(position, isNotNull);
-      expect(position is gmaps.LatLngLiteral, isTrue);
-      expect((position! as gmaps.LatLngLiteral).lat, equals(42));
-      expect((position as gmaps.LatLngLiteral).lng, equals(54));
+      expect(marker.draggable, isTrue);
+      expect(marker.position?.lat, equals(42));
+      expect(marker.position?.lng, equals(54));
     });
 
-    testWidgets('infoWindow null, showInfoWindow.', (
-      WidgetTester tester,
-    ) async {
-      final controller = AdvancedMarkerController(marker: marker);
+    testWidgets('infoWindow null, showInfoWindow.', (WidgetTester tester) async {
+      final controller = LegacyMarkerController(marker: marker);
 
       controller.showInfoWindow();
 
@@ -139,11 +115,8 @@ void main() {
     testWidgets('showInfoWindow', (WidgetTester tester) async {
       final infoWindow = gmaps.InfoWindow();
       final map = gmaps.Map(createDivElement());
-      marker.map = map;
-      final controller = AdvancedMarkerController(
-        marker: marker,
-        infoWindow: infoWindow,
-      );
+      marker.set('map', map);
+      final controller = LegacyMarkerController(marker: marker, infoWindow: infoWindow);
 
       controller.showInfoWindow();
 
@@ -154,11 +127,8 @@ void main() {
     testWidgets('hideInfoWindow', (WidgetTester tester) async {
       final infoWindow = gmaps.InfoWindow();
       final map = gmaps.Map(createDivElement());
-      marker.map = map;
-      final controller = AdvancedMarkerController(
-        marker: marker,
-        infoWindow: infoWindow,
-      );
+      marker.set('map', map);
+      final controller = LegacyMarkerController(marker: marker, infoWindow: infoWindow);
 
       controller.hideInfoWindow();
 
@@ -167,16 +137,13 @@ void main() {
     });
 
     group('remove', () {
-      late AdvancedMarkerController controller;
+      late LegacyMarkerController controller;
 
       setUp(() {
         final infoWindow = gmaps.InfoWindow();
         final map = gmaps.Map(createDivElement());
-        marker.map = map;
-        controller = AdvancedMarkerController(
-          marker: marker,
-          infoWindow: infoWindow,
-        );
+        marker.set('map', map);
+        controller = LegacyMarkerController(marker: marker, infoWindow: infoWindow);
       });
 
       testWidgets('drops gmaps instance', (WidgetTester tester) async {
@@ -185,11 +152,8 @@ void main() {
         expect(controller.marker, isNull);
       });
 
-      testWidgets('cannot call update after remove', (
-        WidgetTester tester,
-      ) async {
-        final options = gmaps.AdvancedMarkerElementOptions()
-          ..gmpDraggable = true;
+      testWidgets('cannot call update after remove', (WidgetTester tester) async {
+        final options = gmaps.MarkerOptions()..draggable = true;
 
         controller.remove();
 
@@ -198,9 +162,7 @@ void main() {
         }, throwsAssertionError);
       });
 
-      testWidgets('cannot call showInfoWindow after remove', (
-        WidgetTester tester,
-      ) async {
+      testWidgets('cannot call showInfoWindow after remove', (WidgetTester tester) async {
         controller.remove();
 
         expect(() {
@@ -208,9 +170,7 @@ void main() {
         }, throwsStateError);
       });
 
-      testWidgets('cannot call hideInfoWindow after remove', (
-        WidgetTester tester,
-      ) async {
+      testWidgets('cannot call hideInfoWindow after remove', (WidgetTester tester) async {
         controller.remove();
 
         expect(() {

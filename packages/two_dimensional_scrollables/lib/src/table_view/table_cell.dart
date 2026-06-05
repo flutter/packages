@@ -17,8 +17,7 @@ import 'table.dart';
 class TableVicinity extends ChildVicinity {
   /// Creates a reference to a child in a [TableView], with the [xIndex] and
   /// [yIndex] converted to terms of [row] and [column].
-  const TableVicinity({required int row, required int column})
-    : super(xIndex: column, yIndex: row);
+  const TableVicinity({required int row, required int column}) : super(xIndex: column, yIndex: row);
 
   /// The row index of the child in the [TableView].
   ///

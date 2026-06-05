@@ -40,8 +40,7 @@ void runTests() {
           ),
         ),
       );
-      final GoogleMapController mapController =
-          await mapControllerCompleter.future;
+      final GoogleMapController mapController = await mapControllerCompleter.future;
 
       await tester.pumpAndSettle();
 
@@ -50,8 +49,9 @@ void runTests() {
       // https://github.com/flutter/flutter/issues/54758
       await Future<void>.delayed(const Duration(seconds: 1));
 
-      final ScreenCoordinate coordinate = await mapController
-          .getScreenCoordinate(kInitialCameraPosition.target);
+      final ScreenCoordinate coordinate = await mapController.getScreenCoordinate(
+        kInitialCameraPosition.target,
+      );
       final Rect rect = tester.getRect(find.byKey(key));
       if (isIOS || isWeb) {
         // On iOS, the coordinate value from the GoogleMapSdk doesn't include the devicePixelRatio`.
@@ -61,13 +61,11 @@ void runTests() {
       } else {
         expect(
           coordinate.x,
-          ((rect.center.dx - rect.topLeft.dx) * tester.view.devicePixelRatio)
-              .round(),
+          ((rect.center.dx - rect.topLeft.dx) * tester.view.devicePixelRatio).round(),
         );
         expect(
           coordinate.y,
-          ((rect.center.dy - rect.topLeft.dy) * tester.view.devicePixelRatio)
-              .round(),
+          ((rect.center.dy - rect.topLeft.dy) * tester.view.devicePixelRatio).round(),
         );
       }
       await tester.binding.setSurfaceSize(null);
@@ -105,8 +103,7 @@ void runTests() {
         ),
       );
       await tester.pumpAndSettle();
-      final GoogleMapController mapController =
-          await mapControllerCompleter.future;
+      final GoogleMapController mapController = await mapControllerCompleter.future;
 
       // Wait for the visible region to be non-zero.
       final LatLngBounds firstVisibleRegion =
@@ -137,21 +134,15 @@ void runTests() {
       expect(firstVisibleRegion.contains(northEast), isFalse);
       expect(firstVisibleRegion.contains(southWest), isFalse);
 
-      final latLngBounds = LatLngBounds(
-        southwest: southWest,
-        northeast: northEast,
-      );
+      final latLngBounds = LatLngBounds(southwest: southWest, northeast: northEast);
 
       // TODO(iskakaushik): non-zero padding is needed for some device configurations
       // https://github.com/flutter/flutter/issues/30575
       const double padding = 0;
-      await mapController.moveCamera(
-        CameraUpdate.newLatLngBounds(latLngBounds, padding),
-      );
+      await mapController.moveCamera(CameraUpdate.newLatLngBounds(latLngBounds, padding));
       await tester.pumpAndSettle(const Duration(seconds: 3));
 
-      final LatLngBounds secondVisibleRegion = await mapController
-          .getVisibleRegion();
+      final LatLngBounds secondVisibleRegion = await mapController.getVisibleRegion();
 
       expect(secondVisibleRegion, isNot(zeroLatLngBounds));
 
@@ -178,16 +169,13 @@ void runTests() {
     );
     final GoogleMapController controller = await controllerCompleter.future;
 
-    const mapStyle =
-        '[{"elementType":"geometry","stylers":[{"color":"#242f3e"}]}]';
+    const mapStyle = '[{"elementType":"geometry","stylers":[{"color":"#242f3e"}]}]';
     // Intentionally testing the deprecated code path.
     // ignore: deprecated_member_use
     await controller.setMapStyle(mapStyle);
   });
 
-  testWidgets('testSetMapStyle invalid Json String', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('testSetMapStyle invalid Json String', (WidgetTester tester) async {
     final Key key = GlobalKey();
     final controllerCompleter = Completer<GoogleMapController>();
 
@@ -257,13 +245,8 @@ void runTests() {
     await Future<void>.delayed(const Duration(seconds: 1));
 
     final LatLngBounds visibleRegion = await controller.getVisibleRegion();
-    final LatLng topLeft = await controller.getLatLng(
-      const ScreenCoordinate(x: 0, y: 0),
-    );
-    final northWest = LatLng(
-      visibleRegion.northeast.latitude,
-      visibleRegion.southwest.longitude,
-    );
+    final LatLng topLeft = await controller.getLatLng(const ScreenCoordinate(x: 0, y: 0));
+    final northWest = LatLng(visibleRegion.northeast.latitude, visibleRegion.southwest.longitude);
 
     expect(topLeft, northWest);
   });
@@ -329,13 +312,8 @@ void runTests() {
       await Future<void>.delayed(const Duration(seconds: 1));
 
       final LatLngBounds visibleRegion = await controller.getVisibleRegion();
-      final northWest = LatLng(
-        visibleRegion.northeast.latitude,
-        visibleRegion.southwest.longitude,
-      );
-      final ScreenCoordinate topLeft = await controller.getScreenCoordinate(
-        northWest,
-      );
+      final northWest = LatLng(visibleRegion.northeast.latitude, visibleRegion.southwest.longitude);
+      final ScreenCoordinate topLeft = await controller.getScreenCoordinate(northWest);
       expect(topLeft, const ScreenCoordinate(x: 0, y: 0));
     },
     // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
@@ -411,9 +389,7 @@ void runTests() {
     // re-evaluated when that issue is fixed.
     await Future<void>.delayed(const Duration(seconds: 1));
 
-    bool iwVisibleStatus = await controller.isMarkerInfoWindowShown(
-      marker.markerId,
-    );
+    bool iwVisibleStatus = await controller.isMarkerInfoWindowShown(marker.markerId);
     expect(iwVisibleStatus, false);
 
     await controller.showMarkerInfoWindow(marker.markerId);
@@ -450,16 +426,11 @@ void runTests() {
   });
 
   testWidgets('markerWithAssetMapBitmapCreate', (WidgetTester tester) async {
-    final imageConfiguration = ImageConfiguration(
-      devicePixelRatio: tester.view.devicePixelRatio,
-    );
+    final imageConfiguration = ImageConfiguration(devicePixelRatio: tester.view.devicePixelRatio);
     final markers = <Marker>{
       Marker(
         markerId: const MarkerId('1'),
-        icon: await AssetMapBitmap.create(
-          imageConfiguration,
-          'assets/red_square.png',
-        ),
+        icon: await AssetMapBitmap.create(imageConfiguration, 'assets/red_square.png'),
       ),
     };
     await pumpMap(
@@ -476,10 +447,7 @@ void runTests() {
     final markers = <Marker>{
       Marker(
         markerId: const MarkerId('1'),
-        icon: BytesMapBitmap(
-          bytes,
-          imagePixelRatio: tester.view.devicePixelRatio,
-        ),
+        icon: BytesMapBitmap(bytes, imagePixelRatio: tester.view.devicePixelRatio),
       ),
     };
     await pumpMap(
@@ -502,10 +470,7 @@ void runTests() {
         markerId: const MarkerId('1'),
         // Intentionally testing the deprecated code path.
         // ignore: deprecated_member_use
-        icon: await BitmapDescriptor.fromAssetImage(
-          imageConfiguration,
-          'assets/red_square.png',
-        ),
+        icon: await BitmapDescriptor.fromAssetImage(imageConfiguration, 'assets/red_square.png'),
       ),
     };
     await pumpMap(

@@ -1,6 +1,10 @@
 ## 0.7.3
 
 * Adds support for `ImageFormatGroup.rgba8888` image format.
+
+## 0.7.2+1
+
+* Migrates to Built-in Kotlin to support AGP 9.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 0.7.2
