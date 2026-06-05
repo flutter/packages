@@ -216,7 +216,10 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
           final int startOrZero = start ?? 0;
 
           if (end == null) {
+            print('end null');
             if (currentByteIndex >= startOrZero) {
+              print('add');
+              print(bytes.length);
               streamController.add(bytes);
             } else {
               if (newByteIndex > startOrZero) {
