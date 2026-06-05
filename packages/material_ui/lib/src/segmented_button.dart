@@ -780,9 +780,7 @@ class _RenderSegmentedButton<T> extends RenderBox
     required this._tapTargetVerticalPadding,
     required this._isExpanded,
     required this._direction,
-  }) :
-       ,
-       ;
+  });
 
   List<ButtonSegment<T>> get segments => _segments;
   List<ButtonSegment<T>> _segments;

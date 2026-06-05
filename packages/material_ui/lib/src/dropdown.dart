@@ -1073,8 +1073,8 @@ class DropdownButton<T> extends StatefulWidget {
     this.barrierDismissible = true,
     this.mouseCursor,
     this.dropdownMenuItemMouseCursor,
-    required InputDecoration inputDecoration,
-    required bool isEmpty,
+    required this._inputDecoration,
+    required this._isEmpty,
   }) : assert(
          items == null ||
              items.isEmpty ||

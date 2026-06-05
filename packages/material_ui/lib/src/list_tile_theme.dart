@@ -365,9 +365,9 @@ class ListTileTheme extends InheritedTheme {
   const ListTileTheme({
     super.key,
     ListTileThemeData? data,
-    bool? dense,
+    this._dense,
     ShapeBorder? shape,
-    ListTileStyle? style,
+    this._style,
     Color? selectedColor,
     Color? iconColor,
     Color? textColor,

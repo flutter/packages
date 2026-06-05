@@ -432,9 +432,7 @@ class _RenderTextSelectionToolbarItemsLayout extends RenderBox
     required this._isAbove,
     required this._overflowOpen,
     required this._textDirection,
-  }) :
-       ,
-       super();
+  }) : super();
 
   // The index of the last item that doesn't overflow.
   int _lastIndexThatFits = -1;

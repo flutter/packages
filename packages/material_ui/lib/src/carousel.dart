@@ -789,7 +789,7 @@ class _RenderSliverFixedExtentCarousel extends RenderSliverFixedExtentBoxAdaptor
     required this._maxExtent,
     required this._minExtent,
     required this._infinite,
-  }) ;
+  });
 
   double get maxExtent => _maxExtent;
   double _maxExtent;
@@ -1024,7 +1024,7 @@ class _RenderSliverWeightedCarousel extends RenderSliverFixedExtentBoxAdaptor {
     required this._shrinkExtent,
     required this._weights,
     required this._infinite,
-  }) ;
+  });
 
   bool get consumeMaxWeight => _consumeMaxWeight;
   bool _consumeMaxWeight;
@@ -1619,15 +1619,14 @@ class _CarouselPosition extends ScrollPositionWithSingleContext implements _Caro
     this.initialItem = 0,
     double? itemExtent,
     List<int>? flexWeights,
-    bool consumeMaxWeight = true,
-    bool infinite = false,
-    int? itemCount,
+    this._consumeMaxWeight = true,
+    this._infinite = false,
+    this._itemCount,
     super.oldPosition,
   }) : assert(
          flexWeights != null && itemExtent == null || flexWeights == null && itemExtent != null,
        ),
        _itemToShowOnStartup = initialItem.toDouble(),
-       ,
        super(initialPixels: null);
 
   int initialItem;

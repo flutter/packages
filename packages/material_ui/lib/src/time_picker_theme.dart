@@ -50,7 +50,7 @@ class TimePickerThemeData with Diagnosticable {
     this.cancelButtonStyle,
     this.confirmButtonStyle,
     this.dayPeriodBorderSide,
-    Color? dayPeriodColor,
+    this._dayPeriodColor,
     this.dayPeriodShape,
     this.dayPeriodTextColor,
     this.dayPeriodTextStyle,

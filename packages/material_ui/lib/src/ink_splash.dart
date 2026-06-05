@@ -132,7 +132,7 @@ class InkSplash extends InteractiveInkFeature {
   InkSplash({
     required MaterialInkController controller,
     required super.referenceBox,
-    required TextDirection textDirection,
+    required this._textDirection,
     Offset? position,
     required Color color,
     bool containedInkWell = false,

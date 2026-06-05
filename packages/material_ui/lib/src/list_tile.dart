@@ -1328,11 +1328,7 @@ class _RenderListTile extends RenderBox
     required this._minLeadingWidth,
     this._minTileHeight,
     required this._titleAlignment,
-  }) :
-       ,
-       ,
-       ,
-       ;
+  });
 
   RenderBox? get leading => childForSlot(_ListTileSlot.leading);
   RenderBox get title => childForSlot(_ListTileSlot.title)!;

@@ -729,9 +729,7 @@ class _RenderDecoration extends RenderBox
     required this._expands,
     required this._material3,
     this._textAlignVertical,
-  }) :
-       ,
-       ;
+  });
 
   // TODO(bleroux): consider defining this value as a Material token and making it
   // configurable by InputDecorationThemeData.

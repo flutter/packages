@@ -104,7 +104,7 @@ class InkSparkle extends InteractiveInkFeature {
     required super.referenceBox,
     required super.color,
     required Offset position,
-    required TextDirection textDirection,
+    required this._textDirection,
     bool containedInkWell = true,
     RectCallback? rectCallback,
     BorderRadius? borderRadius,

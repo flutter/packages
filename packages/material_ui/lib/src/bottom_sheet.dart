@@ -530,9 +530,7 @@ class _RenderBottomSheetLayoutWithSizeListener extends RenderShiftedBox {
     required this._animationValue,
     required this._isScrollControlled,
     required this._scrollControlDisabledMaxHeightRatio,
-  }) :
-       ,
-       super(child);
+  }) : super(child);
 
   Size _lastSize = Size.zero;
 
