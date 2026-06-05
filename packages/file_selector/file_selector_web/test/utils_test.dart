@@ -39,10 +39,7 @@ void main() {
 
       test('works with mime types', () {
         const acceptedTypes = <XTypeGroup>[
-          XTypeGroup(
-            label: 'jpgs',
-            mimeTypes: <String>['image/jpeg', 'image/jpg'],
-          ),
+          XTypeGroup(label: 'jpgs', mimeTypes: <String>['image/jpeg', 'image/jpg']),
           XTypeGroup(label: 'pngs', mimeTypes: <String>['image/png']),
         ];
         final String accepts = acceptedTypesToString(acceptedTypes);
@@ -61,10 +58,7 @@ void main() {
 
       test('throws for a type group that does not support web', () {
         const acceptedTypes = <XTypeGroup>[
-          XTypeGroup(
-            label: 'text',
-            uniformTypeIdentifiers: <String>['public.text'],
-          ),
+          XTypeGroup(label: 'text', uniformTypeIdentifiers: <String>['public.text']),
         ];
         expect(() => acceptedTypesToString(acceptedTypes), throwsArgumentError);
       });

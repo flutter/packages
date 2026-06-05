@@ -38,12 +38,7 @@ class Caption {
   ///
   /// This is not recommended for direct use unless you are writing a parser for
   /// a new closed captioning file type.
-  const Caption({
-    required this.number,
-    required this.start,
-    required this.end,
-    required this.text,
-  });
+  const Caption({required this.number, required this.start, required this.end, required this.text});
 
   /// The number that this caption was assigned.
   final int number;

@@ -50,8 +50,7 @@ class VersionInfoQuerier {
     if (versionInfo == null) {
       return null;
     }
-    final Pointer<Utf16> keyPath = '\\StringFileInfo\\$language$encoding\\$key'
-        .toNativeUtf16();
+    final Pointer<Utf16> keyPath = '\\StringFileInfo\\$language$encoding\\$key'.toNativeUtf16();
     final Pointer<UINT> length = calloc<UINT>();
     final Pointer<Pointer<Utf16>> valueAddress = calloc<Pointer<Utf16>>();
     try {
@@ -120,8 +119,7 @@ class PathProviderWindows extends PathProviderPlatform {
       _createApplicationSubdirectory(WindowsKnownFolder.RoamingAppData);
 
   @override
-  Future<String?> getApplicationDocumentsPath() =>
-      getPath(WindowsKnownFolder.Documents);
+  Future<String?> getApplicationDocumentsPath() => getPath(WindowsKnownFolder.Documents);
 
   @override
   Future<String?> getApplicationCachePath() =>
@@ -139,12 +137,7 @@ class PathProviderWindows extends PathProviderPlatform {
     final Pointer<GUID> knownFolderID = calloc<GUID>()..ref.parse(folderID);
 
     try {
-      final int hr = SHGetKnownFolderPath(
-        knownFolderID,
-        KF_FLAG_DEFAULT,
-        NULL,
-        pathPtrPtr,
-      );
+      final int hr = SHGetKnownFolderPath(knownFolderID, KF_FLAG_DEFAULT, NULL, pathPtrPtr);
 
       if (FAILED(hr)) {
         if (hr == E_INVALIDARG || hr == E_FAIL) {
@@ -189,18 +182,12 @@ class PathProviderWindows extends PathProviderPlatform {
     String? companyName;
     String? productName;
 
-    final Pointer<Utf16> moduleNameBuffer = calloc<WCHAR>(
-      MAX_PATH + 1,
-    ).cast<Utf16>();
+    final Pointer<Utf16> moduleNameBuffer = calloc<WCHAR>(MAX_PATH + 1).cast<Utf16>();
     final Pointer<DWORD> unused = calloc<DWORD>();
     Pointer<BYTE>? infoBuffer;
     try {
       // Get the module name.
-      final int moduleNameLength = GetModuleFileName(
-        0,
-        moduleNameBuffer,
-        MAX_PATH,
-      );
+      final int moduleNameLength = GetModuleFileName(0, moduleNameBuffer, MAX_PATH);
       if (moduleNameLength == 0) {
         final int error = GetLastError();
         throw _createWin32Exception(error);
@@ -210,27 +197,18 @@ class PathProviderWindows extends PathProviderPlatform {
       final int infoSize = GetFileVersionInfoSize(moduleNameBuffer, unused);
       if (infoSize != 0) {
         infoBuffer = calloc<BYTE>(infoSize);
-        if (GetFileVersionInfo(moduleNameBuffer, 0, infoSize, infoBuffer) ==
-            0) {
+        if (GetFileVersionInfo(moduleNameBuffer, 0, infoSize, infoBuffer) == 0) {
           calloc.free(infoBuffer);
           infoBuffer = null;
         }
       }
-      companyName = _sanitizedDirectoryName(
-        _getStringValue(infoBuffer, 'CompanyName'),
-      );
-      productName = _sanitizedDirectoryName(
-        _getStringValue(infoBuffer, 'ProductName'),
-      );
+      companyName = _sanitizedDirectoryName(_getStringValue(infoBuffer, 'CompanyName'));
+      productName = _sanitizedDirectoryName(_getStringValue(infoBuffer, 'ProductName'));
 
       // If there was no product name, use the executable name.
-      productName ??= path.basenameWithoutExtension(
-        moduleNameBuffer.toDartString(),
-      );
+      productName ??= path.basenameWithoutExtension(moduleNameBuffer.toDartString());
 
-      return companyName != null
-          ? path.join(companyName, productName)
-          : productName;
+      return companyName != null ? path.join(companyName, productName) : productName;
     } finally {
       calloc.free(moduleNameBuffer);
       calloc.free(unused);
@@ -267,9 +245,7 @@ class PathProviderWindows extends PathProviderPlatform {
     if (baseDir == null) {
       return null;
     }
-    final directory = Directory(
-      path.join(baseDir, _getApplicationSpecificSubdirectory()),
-    );
+    final directory = Directory(path.join(baseDir, _getApplicationSpecificSubdirectory()));
     // Ensure that the directory exists if possible, since it will on other
     // platforms. If the name is longer than MAXPATH, creating will fail, so
     // skip that step; it's up to the client to decide what to do with the path

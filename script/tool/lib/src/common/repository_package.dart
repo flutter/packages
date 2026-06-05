@@ -45,8 +45,7 @@ class RepositoryPackage {
     }
     // For the common federated plugin pattern of `foo/foo_subpackage`, drop
     // the first part since it's not useful.
-    if (components.length >= 2 &&
-        components[1].startsWith('${components[0]}_')) {
+    if (components.length >= 2 && components[1].startsWith('${components[0]}_')) {
       components = components.sublist(1);
     }
     return p.posix.joinAll(components);
@@ -74,16 +73,13 @@ class RepositoryPackage {
   Directory get testDirectory => directory.childDirectory('test');
 
   /// The path to the script that is run by the `custom-test` command.
-  File get customTestScript =>
-      directory.childDirectory('tool').childFile('run_tests.dart');
+  File get customTestScript => directory.childDirectory('tool').childFile('run_tests.dart');
 
   /// The path to the script that is run before publishing.
-  File get prePublishScript =>
-      directory.childDirectory('tool').childFile('pre_publish.dart');
+  File get prePublishScript => directory.childDirectory('tool').childFile('pre_publish.dart');
 
   /// The directory containing pending changelog entries.
-  Directory get pendingChangelogsDirectory =>
-      directory.childDirectory('pending_changelogs');
+  Directory get pendingChangelogsDirectory => directory.childDirectory('pending_changelogs');
 
   /// Returns the directory containing support for [platform].
   Directory platformDirectory(FlutterPlatform platform) {
@@ -115,9 +111,7 @@ class RepositoryPackage {
     return platformDirectory(platform).existsSync();
   }
 
-  late final Pubspec _parsedPubspec = Pubspec.parse(
-    pubspecFile.readAsStringSync(),
-  );
+  late final Pubspec _parsedPubspec = Pubspec.parse(pubspecFile.readAsStringSync());
 
   /// Returns the parsed [pubspecFile].
   ///
@@ -150,22 +144,18 @@ class RepositoryPackage {
   /// True if this appears to be the app-facing package of a federated plugin,
   /// according to repository conventions.
   bool get isAppFacing =>
-      directory.parent.basename != 'packages' &&
-      directory.basename == directory.parent.basename;
+      directory.parent.basename != 'packages' && directory.basename == directory.parent.basename;
 
   /// True if this appears to be a platform interface package, according to
   /// repository conventions.
-  bool get isPlatformInterface =>
-      directory.basename.endsWith('_platform_interface');
+  bool get isPlatformInterface => directory.basename.endsWith('_platform_interface');
 
   /// True if this appears to be a platform implementation package, according to
   /// repository conventions.
   bool get isPlatformImplementation =>
       // Any part of a federated plugin that isn't the platform interface and
       // isn't the app-facing package should be an implementation package.
-      isFederated &&
-      !isPlatformInterface &&
-      directory.basename != directory.parent.basename;
+      isFederated && !isPlatformInterface && directory.basename != directory.parent.basename;
 
   /// True if this appears to be a top-level package, according to repository
   /// conventions.
@@ -180,9 +170,7 @@ class RepositoryPackage {
       return false;
     }
     // Check whether this is one of the enclosing package's examples.
-    return enclosingPackage.getExamples().any(
-      (RepositoryPackage p) => p.path == path,
-    );
+    return enclosingPackage.getExamples().any((RepositoryPackage p) => p.path == path);
   }
 
   /// Returns the Flutter example packages contained in the package, if any.
@@ -201,9 +189,7 @@ class RepositoryPackage {
         .listSync()
         .where((FileSystemEntity entity) => isPackage(entity))
         // isPackage guarantees that the cast to Directory is safe.
-        .map(
-          (FileSystemEntity entity) => RepositoryPackage(entity as Directory),
-        );
+        .map((FileSystemEntity entity) => RepositoryPackage(entity as Directory));
   }
 
   /// Returns the package that this package is a part of, if any.
@@ -231,10 +217,7 @@ class RepositoryPackage {
               // isPackage guarantees that this cast is valid.
               RepositoryPackage(directory as Directory),
         )
-        .where(
-          (RepositoryPackage p) =>
-              includeExamples || (p.directory.basename != 'example'),
-        );
+        .where((RepositoryPackage p) => includeExamples || (p.directory.basename != 'example'));
   }
 
   /// Returns true if the package is not marked as "publish_to: none".
@@ -254,9 +237,7 @@ class RepositoryPackage {
 
     final Directory pendingChangelogsDir = pendingChangelogsDirectory;
     if (!pendingChangelogsDir.existsSync()) {
-      throw FormatException(
-        'No pending_changelogs folder found for $displayName.',
-      );
+      throw FormatException('No pending_changelogs folder found for $displayName.');
     }
 
     final List<File> pendingChangelogFiles = pendingChangelogsDir
@@ -277,9 +258,7 @@ class RepositoryPackage {
       try {
         entries.add(PendingChangelogEntry.parse(file.readAsStringSync(), file));
       } on FormatException catch (e) {
-        throw FormatException(
-          'Malformed pending changelog file: ${file.path}\n$e',
-        );
+        throw FormatException('Malformed pending changelog file: ${file.path}\n$e');
       }
     }
     return entries;
