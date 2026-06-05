@@ -8,8 +8,8 @@ import static io.flutter.plugins.inapppurchase.TranslatorKt.fromAlternativeBilli
 import static io.flutter.plugins.inapppurchase.TranslatorKt.fromBillingConfig;
 import static io.flutter.plugins.inapppurchase.TranslatorKt.fromBillingResult;
 import static io.flutter.plugins.inapppurchase.TranslatorKt.fromProductDetailsList;
-import static io.flutter.plugins.inapppurchase.TranslatorKt.fromPurchaseHistoryRecordList;
 import static io.flutter.plugins.inapppurchase.TranslatorKt.fromPurchasesList;
+import static io.flutter.plugins.inapppurchase.TranslatorKt.fromUnfetchedProductList;
 import static io.flutter.plugins.inapppurchase.TranslatorKt.toBillingClientFeature;
 import static io.flutter.plugins.inapppurchase.TranslatorKt.toProductList;
 import static io.flutter.plugins.inapppurchase.TranslatorKt.toProductTypeString;
@@ -33,7 +33,6 @@ import com.android.billingclient.api.ConsumeResponseListener;
 import com.android.billingclient.api.GetBillingConfigParams;
 import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.QueryProductDetailsParams;
-import com.android.billingclient.api.QueryPurchaseHistoryParams;
 import com.android.billingclient.api.QueryPurchasesParams;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -225,11 +224,13 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
           QueryProductDetailsParams.newBuilder().setProductList(toProductList(products)).build();
       billingClient.queryProductDetailsAsync(
           params,
-          (billingResult, productDetailsList) -> {
-            updateCachedProducts(productDetailsList);
+          (billingResult, productDetailsResult) -> {
+            updateCachedProducts(productDetailsResult.getProductDetailsList());
             PlatformProductDetailsResponse response =
                 new PlatformProductDetailsResponse(
-                    fromBillingResult(billingResult), fromProductDetailsList(productDetailsList));
+                    fromBillingResult(billingResult),
+                    fromProductDetailsList(productDetailsResult.getProductDetailsList()),
+                    fromUnfetchedProductList(productDetailsResult.getUnfetchedProductList()));
             ResultCompat.success(response, callback);
           });
     } catch (RuntimeException e) {
@@ -394,33 +395,6 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
             PlatformPurchasesResponse response =
                 new PlatformPurchasesResponse(
                     fromBillingResult(billingResult), fromPurchasesList(purchasesList));
-            ResultCompat.success(response, callback);
-          });
-    } catch (RuntimeException e) {
-      ResultUtilsKt.completeWithError(
-          callback, new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));
-    }
-  }
-
-  @Override
-  @Deprecated
-  public void queryPurchaseHistoryAsync(
-      @NonNull PlatformProductType productType,
-      @NonNull Function1<? super Result<PlatformPurchaseHistoryResponse>, Unit> callback) {
-    if (billingClient == null) {
-      ResultUtilsKt.completeWithError(callback, getNullBillingClientError());
-      return;
-    }
-
-    try {
-      billingClient.queryPurchaseHistoryAsync(
-          QueryPurchaseHistoryParams.newBuilder()
-              .setProductType(toProductTypeString(productType))
-              .build(),
-          (billingResult, purchasesList) -> {
-            PlatformPurchaseHistoryResponse response =
-                new PlatformPurchaseHistoryResponse(
-                    fromBillingResult(billingResult), fromPurchaseHistoryRecordList(purchasesList));
             ResultCompat.success(response, callback);
           });
     } catch (RuntimeException e) {

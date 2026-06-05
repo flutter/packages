@@ -37,10 +37,7 @@ class FlutterDestination extends MetricDestination {
     bool isTesting = false,
   }) async {
     final SkiaPerfDestination skiaPerfDestination =
-        await SkiaPerfDestination.makeFromGcpCredentials(
-          json,
-          isTesting: isTesting,
-        );
+        await SkiaPerfDestination.makeFromGcpCredentials(json, isTesting: isTesting);
     return FlutterDestination._(skiaPerfDestination);
   }
 
@@ -50,21 +47,16 @@ class FlutterDestination extends MetricDestination {
     String projectId, {
     bool isTesting = false,
   }) async {
-    final SkiaPerfDestination skiaPerfDestination =
-        await SkiaPerfDestination.makeFromAccessToken(
-          accessToken,
-          projectId,
-          isTesting: isTesting,
-        );
+    final SkiaPerfDestination skiaPerfDestination = await SkiaPerfDestination.makeFromAccessToken(
+      accessToken,
+      projectId,
+      isTesting: isTesting,
+    );
     return FlutterDestination._(skiaPerfDestination);
   }
 
   @override
-  Future<void> update(
-    List<MetricPoint> points,
-    DateTime commitTime,
-    String taskName,
-  ) async {
+  Future<void> update(List<MetricPoint> points, DateTime commitTime, String taskName) async {
     await _skiaPerfDestination.update(points, commitTime, taskName);
   }
 

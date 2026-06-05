@@ -9,48 +9,47 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets(
-    'showModal builds a new route with specified barrier properties',
-    (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: Builder(
-              builder: (BuildContext context) {
-                return Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      showModal<void>(
-                        context: context,
-                        configuration: _TestModalConfiguration(),
-                        builder: (BuildContext context) {
-                          return const _FlutterLogoModal();
-                        },
-                      );
-                    },
-                    child: const Icon(Icons.add),
-                  ),
-                );
-              },
-            ),
+  testWidgets('showModal builds a new route with specified barrier properties', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (BuildContext context) {
+              return Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    showModal<void>(
+                      context: context,
+                      configuration: _TestModalConfiguration(),
+                      builder: (BuildContext context) {
+                        return const _FlutterLogoModal();
+                      },
+                    );
+                  },
+                  child: const Icon(Icons.add),
+                ),
+              );
+            },
           ),
         ),
-      );
-      await tester.tap(find.byType(ElevatedButton));
-      await tester.pumpAndSettle();
+      ),
+    );
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pumpAndSettle();
 
-      // New route containing _FlutterLogoModal is present.
-      expect(find.byType(_FlutterLogoModal), findsOneWidget);
-      final ModalBarrier topModalBarrier = tester.widget<ModalBarrier>(
-        find.byType(ModalBarrier).at(1),
-      );
+    // New route containing _FlutterLogoModal is present.
+    expect(find.byType(_FlutterLogoModal), findsOneWidget);
+    final ModalBarrier topModalBarrier = tester.widget<ModalBarrier>(
+      find.byType(ModalBarrier).at(1),
+    );
 
-      // Verify new route's modal barrier properties are correct.
-      expect(topModalBarrier.color, Colors.green);
-      expect(topModalBarrier.barrierSemanticsDismissible, true);
-      expect(topModalBarrier.semanticsLabel, 'customLabel');
-    },
-  );
+    // Verify new route's modal barrier properties are correct.
+    expect(topModalBarrier.color, Colors.green);
+    expect(topModalBarrier.barrierSemanticsDismissible, true);
+    expect(topModalBarrier.semanticsLabel, 'customLabel');
+  });
 
   testWidgets('showModal forwards animation', (WidgetTester tester) async {
     final GlobalKey key = GlobalKey();
@@ -155,9 +154,7 @@ void main() {
   });
 
   testWidgets('showModal builds a new route with specified barrier properties '
-      'with default configuration(FadeScaleTransitionConfiguration)', (
-    WidgetTester tester,
-  ) async {
+      'with default configuration(FadeScaleTransitionConfiguration)', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -197,9 +194,7 @@ void main() {
   });
 
   testWidgets('showModal forwards animation '
-      'with default configuration(FadeScaleTransitionConfiguration)', (
-    WidgetTester tester,
-  ) async {
+      'with default configuration(FadeScaleTransitionConfiguration)', (WidgetTester tester) async {
     final GlobalKey key = GlobalKey();
     await tester.pumpWidget(
       MaterialApp(
@@ -269,9 +264,7 @@ void main() {
   });
 
   testWidgets('showModal reverse animation '
-      'with default configuration(FadeScaleTransitionConfiguration)', (
-    WidgetTester tester,
-  ) async {
+      'with default configuration(FadeScaleTransitionConfiguration)', (WidgetTester tester) async {
     final GlobalKey key = GlobalKey();
     await tester.pumpWidget(
       MaterialApp(
@@ -336,9 +329,7 @@ void main() {
     expect(find.byType(_FlutterLogoModal), findsNothing);
   });
 
-  testWidgets('State is not lost when transitioning', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('State is not lost when transitioning', (WidgetTester tester) async {
     final GlobalKey bottomKey = GlobalKey();
     final GlobalKey topKey = GlobalKey();
 
@@ -356,10 +347,7 @@ void main() {
                           context: context,
                           configuration: _TestModalConfiguration(),
                           builder: (BuildContext context) {
-                            return _FlutterLogoModal(
-                              key: topKey,
-                              name: 'top route',
-                            );
+                            return _FlutterLogoModal(key: topKey, name: 'top route');
                           },
                         );
                       },
@@ -376,9 +364,7 @@ void main() {
     );
 
     // The bottom route's state should already exist.
-    final _FlutterLogoModalState bottomState = tester.state(
-      find.byKey(bottomKey),
-    );
+    final _FlutterLogoModalState bottomState = tester.state(find.byKey(bottomKey));
     expect(bottomState.widget.name, 'bottom route');
 
     // Start the enter transition of the modal route.
@@ -401,10 +387,7 @@ void main() {
     // End the transition and see if top and bottom routes'
     // states persist.
     await tester.pumpAndSettle();
-    expect(
-      tester.state(find.byKey(bottomKey, skipOffstage: false)),
-      bottomState,
-    );
+    expect(tester.state(find.byKey(bottomKey, skipOffstage: false)), bottomState);
     expect(tester.state(find.byKey(topKey)), topState);
 
     // Start the reverse animation. Both top and bottom
@@ -430,10 +413,7 @@ void main() {
   testWidgets('showModal builds a new route with specified route settings', (
     WidgetTester tester,
   ) async {
-    const routeSettings = RouteSettings(
-      name: 'route-name',
-      arguments: 'arguments',
-    );
+    const routeSettings = RouteSettings(name: 'route-name', arguments: 'arguments');
 
     final Widget button = Builder(
       builder: (BuildContext context) {
@@ -513,10 +493,7 @@ void main() {
 Widget _boilerplate(Widget child) => MaterialApp(home: Scaffold(body: child));
 
 double _getOpacity(GlobalKey key, WidgetTester tester) {
-  final Finder finder = find.ancestor(
-    of: find.byKey(key),
-    matching: find.byType(FadeTransition),
-  );
+  final Finder finder = find.ancestor(of: find.byKey(key), matching: find.byType(FadeTransition));
   return tester.widgetList(finder).fold<double>(1.0, (double a, Widget widget) {
     final transition = widget as FadeTransition;
     return a * transition.opacity.value;
@@ -524,10 +501,7 @@ double _getOpacity(GlobalKey key, WidgetTester tester) {
 }
 
 double _getScale(GlobalKey key, WidgetTester tester) {
-  final Finder finder = find.ancestor(
-    of: find.byKey(key),
-    matching: find.byType(ScaleTransition),
-  );
+  final Finder finder = find.ancestor(of: find.byKey(key), matching: find.byType(ScaleTransition));
   return tester.widgetList(finder).fold<double>(1.0, (double a, Widget widget) {
     final transition = widget as ScaleTransition;
     return a * transition.scale.value;
