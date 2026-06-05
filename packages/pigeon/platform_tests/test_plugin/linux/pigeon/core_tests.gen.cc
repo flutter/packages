@@ -217,7 +217,9 @@ static gchar* G_GNUC_UNUSED flpigeon_to_string(FlValue* value) {
       size_t len = fl_value_get_length(value);
       const uint8_t* data = fl_value_get_uint8_list(value);
       for (size_t i = 0; i < len; i++) {
-        if (i > 0) g_string_append(str, ", ");
+        if (i > 0) {
+          g_string_append(str, ", ");
+        }
         g_string_append_printf(str, "%d", data[i]);
       }
       g_string_append(str, "]");
@@ -228,7 +230,9 @@ static gchar* G_GNUC_UNUSED flpigeon_to_string(FlValue* value) {
       size_t len = fl_value_get_length(value);
       const int32_t* data = fl_value_get_int32_list(value);
       for (size_t i = 0; i < len; i++) {
-        if (i > 0) g_string_append(str, ", ");
+        if (i > 0) {
+          g_string_append(str, ", ");
+        }
         g_string_append_printf(str, "%d", data[i]);
       }
       g_string_append(str, "]");
@@ -239,7 +243,9 @@ static gchar* G_GNUC_UNUSED flpigeon_to_string(FlValue* value) {
       size_t len = fl_value_get_length(value);
       const int64_t* data = fl_value_get_int64_list(value);
       for (size_t i = 0; i < len; i++) {
-        if (i > 0) g_string_append(str, ", ");
+        if (i > 0) {
+          g_string_append(str, ", ");
+        }
         g_string_append_printf(str, "%" G_GINT64_FORMAT, data[i]);
       }
       g_string_append(str, "]");
@@ -250,7 +256,9 @@ static gchar* G_GNUC_UNUSED flpigeon_to_string(FlValue* value) {
       size_t len = fl_value_get_length(value);
       const double* data = fl_value_get_float_list(value);
       for (size_t i = 0; i < len; i++) {
-        if (i > 0) g_string_append(str, ", ");
+        if (i > 0) {
+          g_string_append(str, ", ");
+        }
         g_string_append_printf(str, "%g", data[i]);
       }
       g_string_append(str, "]");
@@ -260,7 +268,9 @@ static gchar* G_GNUC_UNUSED flpigeon_to_string(FlValue* value) {
       GString* str = g_string_new("[");
       size_t len = fl_value_get_length(value);
       for (size_t i = 0; i < len; i++) {
-        if (i > 0) g_string_append(str, ", ");
+        if (i > 0) {
+          g_string_append(str, ", ");
+        }
         gchar* item_str = flpigeon_to_string(fl_value_get_list_value(value, i));
         g_string_append(str, item_str);
         g_free(item_str);
@@ -272,7 +282,9 @@ static gchar* G_GNUC_UNUSED flpigeon_to_string(FlValue* value) {
       GString* str = g_string_new("{");
       size_t len = fl_value_get_length(value);
       for (size_t i = 0; i < len; i++) {
-        if (i > 0) g_string_append(str, ", ");
+        if (i > 0) {
+          g_string_append(str, ", ");
+        }
         gchar* key_str = flpigeon_to_string(fl_value_get_map_key(value, i));
         gchar* val_str = flpigeon_to_string(fl_value_get_map_value(value, i));
         g_string_append_printf(str, "%s: %s", key_str, val_str);
@@ -1033,7 +1045,9 @@ gchar* core_tests_pigeon_test_all_types_to_string(
     size_t len = self->a_byte_array_length;
     const uint8_t* data = self->a_byte_array;
     for (size_t i = 0; i < len; i++) {
-      if (i > 0) g_string_append(str, ", ");
+      if (i > 0) {
+        g_string_append(str, ", ");
+      }
       g_string_append_printf(str, "%d", static_cast<int>(data[i]));
     }
     g_string_append(str, "]");
@@ -1046,7 +1060,9 @@ gchar* core_tests_pigeon_test_all_types_to_string(
     size_t len = self->a4_byte_array_length;
     const int32_t* data = self->a4_byte_array;
     for (size_t i = 0; i < len; i++) {
-      if (i > 0) g_string_append(str, ", ");
+      if (i > 0) {
+        g_string_append(str, ", ");
+      }
       g_string_append_printf(str, "%d", static_cast<int>(data[i]));
     }
     g_string_append(str, "]");
@@ -1059,7 +1075,9 @@ gchar* core_tests_pigeon_test_all_types_to_string(
     size_t len = self->a8_byte_array_length;
     const int64_t* data = self->a8_byte_array;
     for (size_t i = 0; i < len; i++) {
-      if (i > 0) g_string_append(str, ", ");
+      if (i > 0) {
+        g_string_append(str, ", ");
+      }
       g_string_append_printf(str, "%" G_GINT64_FORMAT, data[i]);
     }
     g_string_append(str, "]");
@@ -1072,7 +1090,9 @@ gchar* core_tests_pigeon_test_all_types_to_string(
     size_t len = self->a_float_array_length;
     const double* data = self->a_float_array;
     for (size_t i = 0; i < len; i++) {
-      if (i > 0) g_string_append(str, ", ");
+      if (i > 0) {
+        g_string_append(str, ", ");
+      }
       g_string_append_printf(str, "%g", data[i]);
     }
     g_string_append(str, "]");
@@ -2356,7 +2376,9 @@ gchar* core_tests_pigeon_test_all_nullable_types_to_string(
     size_t len = self->a_nullable_byte_array_length;
     const uint8_t* data = self->a_nullable_byte_array;
     for (size_t i = 0; i < len; i++) {
-      if (i > 0) g_string_append(str, ", ");
+      if (i > 0) {
+        g_string_append(str, ", ");
+      }
       g_string_append_printf(str, "%d", static_cast<int>(data[i]));
     }
     g_string_append(str, "]");
@@ -2369,7 +2391,9 @@ gchar* core_tests_pigeon_test_all_nullable_types_to_string(
     size_t len = self->a_nullable4_byte_array_length;
     const int32_t* data = self->a_nullable4_byte_array;
     for (size_t i = 0; i < len; i++) {
-      if (i > 0) g_string_append(str, ", ");
+      if (i > 0) {
+        g_string_append(str, ", ");
+      }
       g_string_append_printf(str, "%d", static_cast<int>(data[i]));
     }
     g_string_append(str, "]");
@@ -2382,7 +2406,9 @@ gchar* core_tests_pigeon_test_all_nullable_types_to_string(
     size_t len = self->a_nullable8_byte_array_length;
     const int64_t* data = self->a_nullable8_byte_array;
     for (size_t i = 0; i < len; i++) {
-      if (i > 0) g_string_append(str, ", ");
+      if (i > 0) {
+        g_string_append(str, ", ");
+      }
       g_string_append_printf(str, "%" G_GINT64_FORMAT, data[i]);
     }
     g_string_append(str, "]");
@@ -2395,7 +2421,9 @@ gchar* core_tests_pigeon_test_all_nullable_types_to_string(
     size_t len = self->a_nullable_float_array_length;
     const double* data = self->a_nullable_float_array;
     for (size_t i = 0; i < len; i++) {
-      if (i > 0) g_string_append(str, ", ");
+      if (i > 0) {
+        g_string_append(str, ", ");
+      }
       g_string_append_printf(str, "%g", data[i]);
     }
     g_string_append(str, "]");
@@ -3681,7 +3709,9 @@ gchar* core_tests_pigeon_test_all_nullable_types_without_recursion_to_string(
     size_t len = self->a_nullable_byte_array_length;
     const uint8_t* data = self->a_nullable_byte_array;
     for (size_t i = 0; i < len; i++) {
-      if (i > 0) g_string_append(str, ", ");
+      if (i > 0) {
+        g_string_append(str, ", ");
+      }
       g_string_append_printf(str, "%d", static_cast<int>(data[i]));
     }
     g_string_append(str, "]");
@@ -3694,7 +3724,9 @@ gchar* core_tests_pigeon_test_all_nullable_types_without_recursion_to_string(
     size_t len = self->a_nullable4_byte_array_length;
     const int32_t* data = self->a_nullable4_byte_array;
     for (size_t i = 0; i < len; i++) {
-      if (i > 0) g_string_append(str, ", ");
+      if (i > 0) {
+        g_string_append(str, ", ");
+      }
       g_string_append_printf(str, "%d", static_cast<int>(data[i]));
     }
     g_string_append(str, "]");
@@ -3707,7 +3739,9 @@ gchar* core_tests_pigeon_test_all_nullable_types_without_recursion_to_string(
     size_t len = self->a_nullable8_byte_array_length;
     const int64_t* data = self->a_nullable8_byte_array;
     for (size_t i = 0; i < len; i++) {
-      if (i > 0) g_string_append(str, ", ");
+      if (i > 0) {
+        g_string_append(str, ", ");
+      }
       g_string_append_printf(str, "%" G_GINT64_FORMAT, data[i]);
     }
     g_string_append(str, "]");
@@ -3720,7 +3754,9 @@ gchar* core_tests_pigeon_test_all_nullable_types_without_recursion_to_string(
     size_t len = self->a_nullable_float_array_length;
     const double* data = self->a_nullable_float_array;
     for (size_t i = 0; i < len; i++) {
-      if (i > 0) g_string_append(str, ", ");
+      if (i > 0) {
+        g_string_append(str, ", ");
+      }
       g_string_append_printf(str, "%g", data[i]);
     }
     g_string_append(str, "]");

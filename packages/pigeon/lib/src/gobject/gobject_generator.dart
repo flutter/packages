@@ -1432,7 +1432,9 @@ class GObjectSourceGenerator
                 'const $elementTypeName* data = self->$fieldName;',
               );
               indent.writeScoped('for (size_t i = 0; i < len; i++) {', '}', () {
-                indent.writeln('if (i > 0) g_string_append(str, ", ");');
+                indent.writeScoped('if (i > 0) {', '}', () {
+                  indent.writeln('g_string_append(str, ", ");');
+                });
                 if (field.type.baseName == 'Int64List') {
                   indent.writeln(
                     'g_string_append_printf(str, "%" G_GINT64_FORMAT, data[i]);',
@@ -3288,7 +3290,9 @@ static gchar* G_GNUC_UNUSED flpigeon_to_string(FlValue* value) {
       size_t len = fl_value_get_length(value);
       const uint8_t* data = fl_value_get_uint8_list(value);
       for (size_t i = 0; i < len; i++) {
-        if (i > 0) g_string_append(str, ", ");
+        if (i > 0) {
+          g_string_append(str, ", ");
+        }
         g_string_append_printf(str, "%d", data[i]);
       }
       g_string_append(str, "]");
@@ -3299,7 +3303,9 @@ static gchar* G_GNUC_UNUSED flpigeon_to_string(FlValue* value) {
       size_t len = fl_value_get_length(value);
       const int32_t* data = fl_value_get_int32_list(value);
       for (size_t i = 0; i < len; i++) {
-        if (i > 0) g_string_append(str, ", ");
+        if (i > 0) {
+          g_string_append(str, ", ");
+        }
         g_string_append_printf(str, "%d", data[i]);
       }
       g_string_append(str, "]");
@@ -3310,7 +3316,9 @@ static gchar* G_GNUC_UNUSED flpigeon_to_string(FlValue* value) {
       size_t len = fl_value_get_length(value);
       const int64_t* data = fl_value_get_int64_list(value);
       for (size_t i = 0; i < len; i++) {
-        if (i > 0) g_string_append(str, ", ");
+        if (i > 0) {
+          g_string_append(str, ", ");
+        }
         g_string_append_printf(str, "%" G_GINT64_FORMAT, data[i]);
       }
       g_string_append(str, "]");
@@ -3321,7 +3329,9 @@ static gchar* G_GNUC_UNUSED flpigeon_to_string(FlValue* value) {
       size_t len = fl_value_get_length(value);
       const double* data = fl_value_get_float_list(value);
       for (size_t i = 0; i < len; i++) {
-        if (i > 0) g_string_append(str, ", ");
+        if (i > 0) {
+          g_string_append(str, ", ");
+        }
         g_string_append_printf(str, "%g", data[i]);
       }
       g_string_append(str, "]");
@@ -3331,7 +3341,9 @@ static gchar* G_GNUC_UNUSED flpigeon_to_string(FlValue* value) {
       GString* str = g_string_new("[");
       size_t len = fl_value_get_length(value);
       for (size_t i = 0; i < len; i++) {
-        if (i > 0) g_string_append(str, ", ");
+        if (i > 0) {
+          g_string_append(str, ", ");
+        }
         gchar* item_str = flpigeon_to_string(fl_value_get_list_value(value, i));
         g_string_append(str, item_str);
         g_free(item_str);
@@ -3343,7 +3355,9 @@ static gchar* G_GNUC_UNUSED flpigeon_to_string(FlValue* value) {
       GString* str = g_string_new("{");
       size_t len = fl_value_get_length(value);
       for (size_t i = 0; i < len; i++) {
-        if (i > 0) g_string_append(str, ", ");
+        if (i > 0) {
+          g_string_append(str, ", ");
+        }
         gchar* key_str = flpigeon_to_string(fl_value_get_map_key(value, i));
         gchar* val_str = flpigeon_to_string(fl_value_get_map_value(value, i));
         g_string_append_printf(str, "%s: %s", key_str, val_str);

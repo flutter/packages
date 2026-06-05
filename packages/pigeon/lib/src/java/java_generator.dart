@@ -1117,46 +1117,41 @@ if (wrapped == null) {
             indent.writeln('$sendArgument,');
             indent.write('channelReply -> ');
             indent.addScoped('{', '});', () {
-              indent.writeScoped(
-                'if (channelReply instanceof List) {',
-                '} ',
-                () {
+              indent.writeScoped('if (channelReply instanceof List) {', '} ', () {
+                indent.writeln(
+                  'List<Object> listReply = (List<Object>) channelReply;',
+                );
+                indent.writeScoped('if (listReply.size() > 1) {', '} ', () {
                   indent.writeln(
-                    'List<Object> listReply = (List<Object>) channelReply;',
+                    'result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));',
                   );
-                  indent.writeScoped('if (listReply.size() > 1) {', '} ', () {
-                    indent.writeln(
-                      'result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));',
-                    );
-                  }, addTrailingNewline: false);
-                  if (!func.returnType.isNullable && !func.returnType.isVoid) {
-                    indent.addScoped(
-                      'else if (listReply.get(0) == null) {',
-                      '} ',
-                      () {
-                        indent.writeln(
-                          'result.error(new FlutterError("null-error", "Flutter api returned null value for non-null return value.", ""));',
-                        );
-                      },
-                      addTrailingNewline: false,
-                    );
+                }, addTrailingNewline: false);
+                if (!func.returnType.isNullable && !func.returnType.isVoid) {
+                  indent.addScoped(
+                    'else if (listReply.get(0) == null) {',
+                    '} ',
+                    () {
+                      indent.writeln(
+                        'result.error(new FlutterError("null-error", "Flutter api returned null value for non-null return value.", ""));',
+                      );
+                    },
+                    addTrailingNewline: false,
+                  );
+                }
+                indent.addScoped('else {', '}', () {
+                  if (func.returnType.isVoid) {
+                    indent.writeln('result.success();');
+                  } else {
+                    const output = 'output';
+                    final String outputExpression;
+                    indent.writeln('@SuppressWarnings("ConstantConditions")');
+                    outputExpression =
+                        '${_cast('listReply.get(0)', javaType: returnType)};';
+                    indent.writeln('$returnType $output = $outputExpression');
+                    indent.writeln('result.success($output);');
                   }
-                  indent.addScoped('else {', '}', () {
-                    if (func.returnType.isVoid) {
-                      indent.writeln('result.success();');
-                    } else {
-                      const output = 'output';
-                      final String outputExpression;
-                      indent.writeln('@SuppressWarnings("ConstantConditions")');
-                      outputExpression =
-                          '${_cast('listReply.get(0)', javaType: returnType)};';
-                      indent.writeln('$returnType $output = $outputExpression');
-                      indent.writeln('result.success($output);');
-                    }
-                  });
-                },
-                addTrailingNewline: false,
-              );
+                });
+              }, addTrailingNewline: false);
               indent.addScoped(' else {', '} ', () {
                 indent.writeln(
                   'result.error(createConnectionError(channelName));',
