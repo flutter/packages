@@ -852,10 +852,10 @@ mixin _CupertinoSheetRouteTransitionMixin<T> on PageRoute<T> {
   ) {
     return _CupertinoDragGestureController<T>(
       topGap: topGap,
-      navigator: route.navigator,
+      navigator: route.navigator!,
       getIsCurrent: () => route.isCurrent,
       getIsActive: () => route.isActive,
-      popDragController: route.controller, // protected access
+      popDragController: route.controller!, // protected access
     );
   }
 

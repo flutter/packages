@@ -683,7 +683,7 @@ class _SegmentedControlState<T extends Object> extends State<CupertinoSlidingSeg
 
   // Converts local coordinate to segments.
   T segmentForXPosition(double dx) {
-    final BuildContext currentContext = segmentedControlRenderWidgetKey.currentContext;
+    final BuildContext currentContext = segmentedControlRenderWidgetKey.currentContext!;
     final renderBox = currentContext.findRenderObject()! as _RenderSegmentedControl<T>;
 
     final int numOfChildren = widget.children.length;
@@ -1056,12 +1056,15 @@ class _RenderSegmentedControl<T extends Object> extends RenderBox
         ContainerRenderObjectMixin<RenderBox, ContainerBoxParentData<RenderBox>>,
         RenderBoxContainerDefaultsMixin<RenderBox, ContainerBoxParentData<RenderBox>> {
   _RenderSegmentedControl({
-    required this._highlightedIndex,
-    required this._thumbColor,
-    required this._thumbScale,
-    required this._proportionalWidth,
+    required int? highlightedIndex,
+    required Color thumbColor,
+    required double thumbScale,
+    required bool proportionalWidth,
     required this.state,
-  });
+  }) : _highlightedIndex = highlightedIndex,
+       _thumbColor = thumbColor,
+       _thumbScale = thumbScale,
+       _proportionalWidth = proportionalWidth;
 
   final _SegmentedControlState<T> state;
 

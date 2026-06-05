@@ -373,7 +373,7 @@ class _CupertinoPickerState extends State<CupertinoPicker> {
               ),
             ),
           ),
-          if (widget.selectionOverlay != null) _buildSelectionOverlay(widget.selectionOverlay),
+          if (widget.selectionOverlay != null) _buildSelectionOverlay(widget.selectionOverlay!),
         ],
       ),
     );

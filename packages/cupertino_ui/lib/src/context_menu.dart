@@ -120,7 +120,7 @@ class CupertinoContextMenu extends StatefulWidget {
   CupertinoContextMenu({
     super.key,
     required this.actions,
-    required this.child,
+    required Widget this.child,
     this.enableHapticFeedback = false,
   }) : assert(actions.isNotEmpty),
        builder = ((BuildContext context, Animation<double> animation) => child);
@@ -473,7 +473,7 @@ class _CupertinoContextMenuState extends State<CupertinoContextMenu> with Ticker
       barrierLabel: CupertinoLocalizations.of(context).menuDismissLabel,
       filter: ui.ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
       contextMenuLocation: _contextMenuLocation,
-      previousChildRect: _decoyChildEndRect,
+      previousChildRect: _decoyChildEndRect!,
       scaleFactor: _scaleFactor,
       builder: (BuildContext context, Animation<double> animation) {
         if (widget.child == null) {
@@ -483,7 +483,7 @@ class _CupertinoContextMenuState extends State<CupertinoContextMenu> with Ticker
           ).animate(animation);
           return widget.builder(context, localAnimation);
         }
-        return _defaultPreviewBuilder(context, animation, widget.child);
+        return _defaultPreviewBuilder(context, animation, widget.child!);
       },
     );
     Navigator.of(context, rootNavigator: true).push<void>(_route!);
@@ -756,15 +756,19 @@ class _ContextMenuRoute<T> extends PopupRoute<T> {
   // Build a _ContextMenuRoute.
   _ContextMenuRoute({
     required List<Widget> actions,
-    required this._contextMenuLocation,
+    required _ContextMenuLocation contextMenuLocation,
     this.barrierLabel,
-    this._builder,
+    CupertinoContextMenuBuilder? builder,
     super.filter,
-    required this._previousChildRect,
-    required this._scaleFactor,
+    required Rect previousChildRect,
+    required double scaleFactor,
     super.settings,
   }) : assert(actions.isNotEmpty),
-       _actions = actions;
+       _actions = actions,
+       _builder = builder,
+       _contextMenuLocation = contextMenuLocation,
+       _previousChildRect = previousChildRect,
+       _scaleFactor = scaleFactor;
 
   // Barrier color for a Cupertino modal barrier.
   static const Color _kModalBarrierColor = Color(0x6604040F);

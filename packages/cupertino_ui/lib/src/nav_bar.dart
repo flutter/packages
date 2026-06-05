@@ -1008,7 +1008,7 @@ class CupertinoSliverNavigationBar extends StatefulWidget {
   /// {@end-tool}
   const CupertinoSliverNavigationBar.search({
     super.key,
-    required this.searchField,
+    required Widget this.searchField,
     this.largeTitle,
     this.leading,
     this.automaticallyImplyLeading = true,
@@ -1662,8 +1662,10 @@ class _LargeTitle extends SingleChildRenderObjectWidget {
 }
 
 class _RenderLargeTitle extends RenderShiftedBox {
-  _RenderLargeTitle({required this._alignment, required this._height})
-    : super(null);
+  _RenderLargeTitle({required Alignment alignment, required double height})
+    : _alignment = alignment,
+      _height = height,
+      super(null);
 
   Alignment get alignment => _alignment;
   Alignment _alignment;
@@ -2694,7 +2696,7 @@ class _NavigationBarTransition extends StatelessWidget {
     // The text scaling is disabled to avoid odd transitions between pages.
     return MediaQuery.withNoTextScaling(
       child: SizedBox(
-        height: math.max(heightTween.begin, heightTween.end) + MediaQuery.paddingOf(context).top,
+        height: math.max(heightTween.begin!, heightTween.end!) + MediaQuery.paddingOf(context).top,
         width: double.infinity,
         child: Stack(children: children),
       ),
@@ -2923,7 +2925,7 @@ class _NavigationBarComponentsTransition {
       child: _wrapWithBackground(
         // Don't update the system status bar color mid-flight.
         updateSystemUiOverlay: false,
-        backgroundColor: bottomBackgroundColor,
+        backgroundColor: bottomBackgroundColor!,
         border: topBorder,
         child: SizedBox(height: bottomNavBarBox.size.height, width: double.infinity),
       ),
@@ -3177,7 +3179,7 @@ class _NavigationBarComponentsTransition {
       child: _wrapWithBackground(
         // Don't update the system status bar color mid-flight.
         updateSystemUiOverlay: false,
-        backgroundColor: topBackgroundColor,
+        backgroundColor: topBackgroundColor!,
         border: topBorder,
         child: SizedBox(height: topNavBarBox.size.height, width: double.infinity),
       ),

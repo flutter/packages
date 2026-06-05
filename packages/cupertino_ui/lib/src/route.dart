@@ -204,10 +204,10 @@ mixin CupertinoRouteTransitionMixin<T> on PageRoute<T> {
     assert(route.popGestureEnabled);
 
     return _CupertinoBackGestureController<T>(
-      navigator: route.navigator,
+      navigator: route.navigator!,
       getIsCurrent: () => route.isCurrent,
       getIsActive: () => route.isActive,
-      controller: route.controller, // protected access
+      controller: route.controller!, // protected access
     );
   }
 
@@ -967,14 +967,14 @@ class _CupertinoEdgeShadowDecoration extends Decoration {
       return b!._colors == null
           ? b
           : _CupertinoEdgeShadowDecoration._(
-              b._colors!.map<Color>((Color color) => Color.lerp(null, color, t)).toList(),
+              b._colors!.map<Color>((Color color) => Color.lerp(null, color, t)!).toList(),
             );
     }
     if (b == null) {
       return a._colors == null
           ? a
           : _CupertinoEdgeShadowDecoration._(
-              a._colors.map<Color>((Color color) => Color.lerp(null, color, 1.0 - t)).toList(),
+              a._colors.map<Color>((Color color) => Color.lerp(null, color, 1.0 - t)!).toList(),
             );
     }
     assert(b._colors != null || a._colors != null);
@@ -1084,7 +1084,7 @@ class _CupertinoEdgeShadowPainter extends BoxPainter {
           colors[bandColorIndex],
           colors[bandColorIndex + 1],
           (dx % bandWidth) / bandWidth,
-        );
+        )!;
       final double x = start + shadowDirection * dx;
       canvas.drawRect(Rect.fromLTWH(x - 1.0, offset.dy, 1.0, shadowHeight), paint);
     }
@@ -1156,13 +1156,14 @@ class CupertinoModalPopupRoute<T> extends PopupRoute<T> {
     required this.builder,
     this.barrierLabel = 'Dismiss',
     this.barrierColor = kCupertinoModalBarrierColor,
-    this._barrierDismissible = true,
-    this._semanticsDismissible = false,
+    bool barrierDismissible = true,
+    bool semanticsDismissible = false,
     super.filter,
     super.settings,
     super.requestFocus,
     this.anchorPoint,
-  });
+  }) : _barrierDismissible = barrierDismissible,
+       _semanticsDismissible = semanticsDismissible;
 
   /// A builder that builds the widget tree for the [CupertinoModalPopupRoute].
   ///

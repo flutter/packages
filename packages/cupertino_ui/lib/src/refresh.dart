@@ -66,10 +66,11 @@ class _RenderCupertinoSliverRefresh extends RenderSliver
     with RenderObjectWithChildMixin<RenderBox> {
   _RenderCupertinoSliverRefresh({
     required double refreshIndicatorExtent,
-    required this._hasLayoutExtent,
+    required bool hasLayoutExtent,
     RenderBox? child,
   }) : assert(refreshIndicatorExtent >= 0.0),
-       _refreshIndicatorExtent = refreshIndicatorExtent {
+       _refreshIndicatorExtent = refreshIndicatorExtent,
+       _hasLayoutExtent = hasLayoutExtent {
     this.child = child;
   }
 

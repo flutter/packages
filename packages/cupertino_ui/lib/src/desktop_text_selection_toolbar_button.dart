@@ -29,7 +29,7 @@ class CupertinoDesktopTextSelectionToolbarButton extends StatefulWidget {
   const CupertinoDesktopTextSelectionToolbarButton({
     super.key,
     required this.onPressed,
-    required this.child,
+    required Widget this.child,
   }) : buttonItem = null,
        text = null;
 
@@ -46,7 +46,7 @@ class CupertinoDesktopTextSelectionToolbarButton extends StatefulWidget {
   /// the given [ContextMenuButtonItem].
   CupertinoDesktopTextSelectionToolbarButton.buttonItem({
     super.key,
-    required this.buttonItem,
+    required ContextMenuButtonItem this.buttonItem,
   }) : onPressed = buttonItem.onPressed,
        text = null,
        child = null;
@@ -90,7 +90,7 @@ class _CupertinoDesktopTextSelectionToolbarButtonState
         widget.child ??
         Text(
           widget.text ??
-              CupertinoTextSelectionToolbarButton.getButtonLabel(context, widget.buttonItem),
+              CupertinoTextSelectionToolbarButton.getButtonLabel(context, widget.buttonItem!),
           overflow: TextOverflow.ellipsis,
           style: _kToolbarButtonFontStyle.copyWith(
             color: _isHovered

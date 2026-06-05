@@ -42,9 +42,9 @@ class CupertinoUserInterfaceLevel extends InheritedWidget {
   /// visual level.
   const CupertinoUserInterfaceLevel({
     super.key,
-    required this._data,
+    required CupertinoUserInterfaceLevelData data,
     required super.child,
-  });
+  }) : _data = data;
 
   final CupertinoUserInterfaceLevelData _data;
 
