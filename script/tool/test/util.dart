@@ -32,15 +32,12 @@ const String _defaultFlutterConstraint = '>=2.5.0';
 
 /// Returns the exe name that command will use when running Flutter on
 /// [platform].
-String getFlutterCommand(Platform platform) =>
-    platform.isWindows ? 'flutter.bat' : 'flutter';
+String getFlutterCommand(Platform platform) => platform.isWindows ? 'flutter.bat' : 'flutter';
 
 /// Creates a packages directory at an arbitrary location in the given
 /// filesystem.
 Directory createPackagesDirectory(FileSystem fileSystem) {
-  final Directory packagesDir = fileSystem.currentDirectory.childDirectory(
-    'packages',
-  );
+  final Directory packagesDir = fileSystem.currentDirectory.childDirectory('packages');
   packagesDir.createSync();
   return packagesDir;
 }
@@ -48,11 +45,7 @@ Directory createPackagesDirectory(FileSystem fileSystem) {
 /// Details for platform support in a plugin.
 @immutable
 class PlatformDetails {
-  const PlatformDetails(
-    this.type, {
-    this.hasNativeCode = true,
-    this.hasDartCode = false,
-  });
+  const PlatformDetails(this.type, {this.hasNativeCode = true, this.hasDartCode = false});
 
   /// The type of support for the platform.
   final PlatformSupport type;
@@ -94,8 +87,7 @@ RepositoryPackage createFakePlugin(
   Directory parentDirectory, {
   List<String> examples = const <String>['example'],
   List<String> extraFiles = const <String>[],
-  Map<String, PlatformDetails> platformSupport =
-      const <String, PlatformDetails>{},
+  Map<String, PlatformDetails> platformSupport = const <String, PlatformDetails>{},
   String? version = '0.0.1',
   String flutterConstraint = _defaultFlutterConstraint,
   String dartConstraint = _defaultDartConstraint,
@@ -147,9 +139,7 @@ RepositoryPackage createFakePackage(
   String? directoryName,
   String? publishTo,
 }) {
-  final package = RepositoryPackage(
-    parentDirectory.childDirectory(directoryName ?? name),
-  );
+  final package = RepositoryPackage(parentDirectory.childDirectory(directoryName ?? name));
   package.directory.createSync(recursive: true);
 
   package.libDirectory.createSync();
@@ -220,8 +210,7 @@ void createFakePubspec(
   String name = 'fake_package',
   bool isFlutter = true,
   bool isPlugin = false,
-  Map<String, PlatformDetails> platformSupport =
-      const <String, PlatformDetails>{},
+  Map<String, PlatformDetails> platformSupport = const <String, PlatformDetails>{},
   String? publishTo,
   String? version,
   String dartConstraint = _defaultDartConstraint,
@@ -256,13 +245,8 @@ flutter:
   plugin:
     platforms:
 ''';
-      for (final MapEntry<String, PlatformDetails> platform
-          in platformSupport.entries) {
-        pluginSection += _pluginPlatformSection(
-          platform.key,
-          platform.value,
-          name,
-        );
+      for (final MapEntry<String, PlatformDetails> platform in platformSupport.entries) {
+        pluginSection += _pluginPlatformSection(platform.key, platform.value, name);
       }
     }
   }
@@ -270,8 +254,7 @@ flutter:
   // Default to a fake server to avoid ever accidentally publishing something
   // from a test. Does not use 'none' since that changes the behavior of some
   // commands.
-  final publishToSection =
-      'publish_to: ${publishTo ?? 'http://no_pub_server.com'}';
+  final publishToSection = 'publish_to: ${publishTo ?? 'http://no_pub_server.com'}';
 
   final yaml =
       '''
@@ -291,10 +274,7 @@ $pluginSection
 }
 
 /// Creates a `ci_config.yaml` file for [package].
-void createFakeCiConfig({
-  required RepositoryPackage package,
-  required bool batchRelease,
-}) {
+void createFakeCiConfig({required RepositoryPackage package, required bool batchRelease}) {
   final yaml =
       '''
 release:
@@ -305,11 +285,7 @@ release:
   package.ciConfigFile.writeAsStringSync(yaml);
 }
 
-String _pluginPlatformSection(
-  String platform,
-  PlatformDetails support,
-  String packageName,
-) {
+String _pluginPlatformSection(String platform, PlatformDetails support, String packageName) {
   var entry = '';
   // Build the main plugin entry.
   if (support.type == PlatformSupport.federated) {
@@ -330,9 +306,7 @@ String _pluginPlatformSection(
       case platformMacOS:
       case platformWindows:
         if (support.hasNativeCode) {
-          final className = platform == platformIOS
-              ? 'FLTFakePlugin'
-              : 'FakePlugin';
+          final className = platform == platformIOS ? 'FLTFakePlugin' : 'FakePlugin';
           lines.add('        pluginClass: $className');
         }
         if (support.hasDartCode) {
@@ -363,14 +337,12 @@ Future<List<String>> runCapturingPrint(
 }) async {
   final prints = <String>[];
   final spec = ZoneSpecification(
-    print: (_, __, ___, String message) {
+    print: (_, _, _, String message) {
       prints.add(message);
     },
   );
   try {
-    await Zone.current
-        .fork(specification: spec)
-        .run<Future<void>>(() => runner.run(args));
+    await Zone.current.fork(specification: spec).run<Future<void>>(() => runner.run(args));
   } on Error catch (e) {
     if (errorHandler == null) {
       rethrow;
@@ -437,9 +409,7 @@ class RecordingProcessRunner extends ProcessRunner {
   }) async {
     recordedCalls.add(ProcessCall(executable, args, workingDir?.path));
     final io.Process? processToReturn = _runFakeProcess(executable, args);
-    final int exitCode = processToReturn == null
-        ? 0
-        : await processToReturn.exitCode;
+    final int exitCode = processToReturn == null ? 0 : await processToReturn.exitCode;
     if (exitOnError && (exitCode != 0)) {
       throw io.ProcessException(executable, args);
     }
@@ -488,9 +458,7 @@ class RecordingProcessRunner extends ProcessRunner {
     Directory? workingDirectory,
   }) async {
     recordedCalls.add(ProcessCall(executable, args, workingDirectory?.path));
-    return Future<io.Process>.value(
-      _runFakeProcess(executable, args) ?? MockProcess(),
-    );
+    return Future<io.Process>.value(_runFakeProcess(executable, args) ?? MockProcess());
   }
 
   /// Returns the fake process for the given executable and args after running
@@ -501,10 +469,7 @@ class RecordingProcessRunner extends ProcessRunner {
     if (fakes.isNotEmpty) {
       final FakeProcessInfo fake = fakes.removeAt(0);
       if (args.length < fake.expectedInitialArgs.length ||
-          !listsEqual(
-            args.sublist(0, fake.expectedInitialArgs.length),
-            fake.expectedInitialArgs,
-          )) {
+          !listsEqual(args.sublist(0, fake.expectedInitialArgs.length), fake.expectedInitialArgs)) {
         throw StateError(
           'Next fake process for $executable expects arguments '
           '[${fake.expectedInitialArgs.join(', ')}] but was called with '
@@ -570,14 +535,11 @@ configureBaseCommandMocks({
   RecordingProcessRunner? customGitProcessRunner,
 }) {
   final FileSystem fileSystem = MemoryFileSystem(
-    style: (platform?.isWindows ?? false)
-        ? FileSystemStyle.windows
-        : FileSystemStyle.posix,
+    style: (platform?.isWindows ?? false) ? FileSystemStyle.windows : FileSystemStyle.posix,
   );
   final Directory packagesDir = createPackagesDirectory(fileSystem);
 
-  final RecordingProcessRunner processRunner =
-      customProcessRunner ?? RecordingProcessRunner();
+  final RecordingProcessRunner processRunner = customProcessRunner ?? RecordingProcessRunner();
 
   final RecordingProcessRunner gitProcessRunner =
       customGitProcessRunner ?? RecordingProcessRunner();
@@ -634,8 +596,6 @@ void setToolConfig(
       editor.update(['package_labels', entry.key], entry.value);
     }
   }
-  repoRoot
-      .childFile('.repo_tool_config.yaml')
-      .writeAsStringSync(editor.toString());
+  repoRoot.childFile('.repo_tool_config.yaml').writeAsStringSync(editor.toString());
   clearToolConfigCache();
 }

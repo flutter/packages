@@ -98,14 +98,11 @@ abstract class PlatformInterface {
       }
       return;
     }
-    if (preventConstObject &&
-        identical(_instanceTokens[instance], const Object())) {
+    if (preventConstObject && identical(_instanceTokens[instance], const Object())) {
       throw AssertionError('`const Object()` cannot be used as the token.');
     }
     if (!identical(token, _instanceTokens[instance])) {
-      throw AssertionError(
-        'Platform interfaces must not be implemented with `implements`',
-      );
+      throw AssertionError('Platform interfaces must not be implemented with `implements`');
     }
   }
 }

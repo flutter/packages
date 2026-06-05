@@ -44,9 +44,7 @@ void main() async {
       expect(injected.async, true);
     });
 
-    testWidgets('sets AdSenseCodeParameters in script tag.', (
-      WidgetTester _,
-    ) async {
+    testWidgets('sets AdSenseCodeParameters in script tag.', (WidgetTester _) async {
       final web.HTMLElement target = web.HTMLDivElement();
 
       await adSense.initialize(
@@ -67,27 +65,16 @@ void main() async {
       final injected = target.lastElementChild! as web.HTMLScriptElement;
 
       expect(injected.dataset['adHost'], 'test-adHost');
-      expect(
-        injected.dataset['admobInterstitialSlot'],
-        'test-admobInterstitialSlot',
-      );
+      expect(injected.dataset['admobInterstitialSlot'], 'test-admobInterstitialSlot');
       expect(injected.dataset['admobRewardedSlot'], 'test-admobRewardedSlot');
       expect(injected.dataset['adChannel'], 'test-adChannel');
       expect(injected.dataset['adbreakTest'], 'test-adbreakTest');
-      expect(
-        injected.dataset['tagForChildDirectedTreatment'],
-        'test-tagForChildDirectedTreatment',
-      );
-      expect(
-        injected.dataset['tagForUnderAgeOfConsent'],
-        'test-tagForUnderAgeOfConsent',
-      );
+      expect(injected.dataset['tagForChildDirectedTreatment'], 'test-tagForChildDirectedTreatment');
+      expect(injected.dataset['tagForUnderAgeOfConsent'], 'test-tagForUnderAgeOfConsent');
       expect(injected.dataset['adFrequencyHint'], 'test-adFrequencyHint');
     });
 
-    testWidgets('Skips initialization if script is already present.', (
-      WidgetTester _,
-    ) async {
+    testWidgets('Skips initialization if script is already present.', (WidgetTester _) async {
       final script = web.HTMLScriptElement()
         ..id = 'previously-injected'
         ..src = testScriptUrl;

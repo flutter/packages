@@ -68,6 +68,7 @@ jobs:
             --base "${{ needs.create_batch_release_branch.outputs.release_branch }}" \
             --head "${{ env.HEAD_BRANCH_NAME }}" \
             --title "[${{ github.event.client_payload.package }}] Batch release" \
-            --body "This PR was created automatically to batch release the \`${{ github.event.client_payload.package }}\`."
+            --body "This PR was created automatically to batch release the \`${{ github.event.client_payload.package }}\`." \
+            --label "override: skip-batch-release-repo-check-${{ github.event.client_payload.package }}"
 
 
