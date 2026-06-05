@@ -915,19 +915,12 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
     required DeviceGestureSettings gestureSettings,
   }) : assert(values.start >= 0.0 && values.start <= 1.0),
        assert(values.end >= 0.0 && values.end <= 1.0),
-       _platform = platform,
-       _semanticFormatterCallback = semanticFormatterCallback,
-       _labels = labels,
+       ,
        _values = values,
-       _divisions = divisions,
-       _sliderTheme = sliderTheme,
-       _theme = theme,
-       _textScaleFactor = textScaleFactor,
-       _screenSize = screenSize,
-       _onChanged = onChanged,
-       _state = state,
-       _textDirection = textDirection,
-       _hovering = hovering {
+       ,
+       ,
+       ,
+        {
     _updateLabelPainters();
     final team = GestureArenaTeam();
     _drag = HorizontalDragGestureRecognizer()
@@ -2043,7 +2036,7 @@ class _ValueIndicatorRenderObjectWidget extends LeafRenderObjectWidget {
 }
 
 class _RenderValueIndicator extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
-  _RenderValueIndicator({required _RangeSliderState state}) : _state = state {
+  _RenderValueIndicator({required this._state})  {
     _valueIndicatorAnimation = CurvedAnimation(
       parent: _state.valueIndicatorController,
       curve: Curves.fastOutSlowIn,

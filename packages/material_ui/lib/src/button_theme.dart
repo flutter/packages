@@ -198,15 +198,10 @@ class ButtonThemeData with Diagnosticable {
     MaterialTapTargetSize? materialTapTargetSize,
   }) : assert(minWidth >= 0.0),
        assert(height >= 0.0),
-       _buttonColor = buttonColor,
-       _disabledColor = disabledColor,
-       _focusColor = focusColor,
-       _hoverColor = hoverColor,
-       _highlightColor = highlightColor,
-       _splashColor = splashColor,
-       _padding = padding,
-       _shape = shape,
-       _materialTapTargetSize = materialTapTargetSize;
+       ,
+       ,
+       ,
+       ;
 
   /// The minimum width for buttons.
   ///

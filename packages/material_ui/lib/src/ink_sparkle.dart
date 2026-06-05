@@ -116,7 +116,6 @@ class InkSparkle extends InteractiveInkFeature {
        _color = color,
        _position = position,
        _borderRadius = borderRadius ?? BorderRadius.zero,
-       _textDirection = textDirection,
        _targetRadius =
            (radius ?? _getTargetRadius(referenceBox, containedInkWell, rectCallback, position)) *
            _targetRadiusMultiplier,

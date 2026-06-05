@@ -76,8 +76,7 @@ class TimePickerThemeData with Diagnosticable {
              (inputDecorationTheme is InputDecorationTheme ||
                  inputDecorationTheme is InputDecorationThemeData),
        ),
-       _inputDecorationTheme = inputDecorationTheme,
-       _dayPeriodColor = dayPeriodColor;
+       _inputDecorationTheme = inputDecorationTheme;
 
   /// The background color of a time picker.
   ///

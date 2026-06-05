@@ -147,7 +147,6 @@ class InkSplash extends InteractiveInkFeature {
            radius ?? _getTargetRadius(referenceBox, containedInkWell, rectCallback, position!),
        _clipCallback = _getClipCallback(referenceBox, containedInkWell, rectCallback),
        _repositionToReferenceBox = !containedInkWell,
-       _textDirection = textDirection,
        super(controller: controller, color: color) {
     _radiusController =
         AnimationController(duration: _kUnconfirmedSplashDuration, vsync: controller.vsync)
