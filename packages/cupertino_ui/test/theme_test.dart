@@ -21,12 +21,12 @@ final Widget singletonThemeSubtree = Builder(
 
 Future<CupertinoThemeData> testTheme(WidgetTester tester, CupertinoThemeData theme) async {
   await tester.pumpWidget(CupertinoTheme(data: theme, child: singletonThemeSubtree));
-  return actualTheme!;
+  return actualTheme;
 }
 
 Future<IconThemeData> testIconTheme(WidgetTester tester, CupertinoThemeData theme) async {
   await tester.pumpWidget(CupertinoTheme(data: theme, child: singletonThemeSubtree));
-  return actualIconTheme!;
+  return actualIconTheme;
 }
 
 void main() {
@@ -146,7 +146,7 @@ void main() {
     final Color darkColor = (await testIconTheme(
       tester,
       themeData.copyWith(brightness: Brightness.dark),
-    )).color!;
+    )).color;
 
     expect(darkColor, isSameColorAs(primaryColor.darkColor));
   });

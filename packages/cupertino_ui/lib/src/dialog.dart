@@ -1210,14 +1210,14 @@ class _CupertinoActionSheetState extends State<CupertinoActionSheet> {
     return Padding(
       padding: EdgeInsets.only(top: cancelPadding),
       child: CupertinoFocusHalo.withRRect(
-        borderRadius: kCupertinoButtonSizeBorderRadius[CupertinoButtonSize.large]!,
+        borderRadius: kCupertinoButtonSizeBorderRadius[CupertinoButtonSize.large],
         child: _ActionSheetButtonBackground(
           isCancel: true,
           pressed: _pressedIndex == _kCancelButtonIndex,
           onPressStateChange: (bool state) {
             _onPressedUpdate(_kCancelButtonIndex, state);
           },
-          child: widget.cancelButton!,
+          child: widget.cancelButton,
         ),
       ),
     );
@@ -1945,7 +1945,7 @@ class _ActionSheetMainSheet extends StatelessWidget {
     }
 
     return _PriorityColumn(
-      top: contentSection!,
+      top: contentSection,
       bottom: _dividerAndActionsSection(context),
       bottomMinHeight: _kActionSheetActionsSectionMinHeight + _kDividerThickness,
     );
@@ -2404,8 +2404,7 @@ class _CupertinoDialogActionState extends State<CupertinoDialogAction> implement
 // and divider widgets in an alternating sequence. Therefore, the list must have
 // an odd length.
 class _AlertDialogActionsLayout extends MultiChildRenderObjectWidget {
-  const _AlertDialogActionsLayout({required double dividerThickness, required super.children})
-    : _dividerThickness = dividerThickness;
+  const _AlertDialogActionsLayout({required this._dividerThickness, required super.children});
 
   final double _dividerThickness;
 
@@ -2428,10 +2427,9 @@ class _AlertDialogActionsLayout extends MultiChildRenderObjectWidget {
 class _RenderAlertDialogActionsLayout extends RenderFlex {
   _RenderAlertDialogActionsLayout({
     List<RenderBox>? children,
-    required double dividerThickness,
+    required this._dividerThickness,
     super.textDirection,
-  }) : _dividerThickness = dividerThickness,
-       super(
+  }) : super(
          direction: Axis.vertical,
          mainAxisSize: MainAxisSize.min,
          crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -2518,7 +2516,7 @@ class _RenderAlertDialogActionsLayout extends RenderFlex {
     size = Size(overallWidth, height);
 
     final ltr = textDirection == TextDirection.ltr;
-    RenderBox slot = firstChild!;
+    RenderBox slot = firstChild;
     double x = ltr ? 0 : (overallWidth - slotWidth);
     while (true) {
       slot.layout(BoxConstraints.tight(Size(slotWidth, height)), parentUsesSize: true);
@@ -2540,7 +2538,7 @@ class _RenderAlertDialogActionsLayout extends RenderFlex {
       } else {
         x -= dividerThickness;
       }
-      slot = childAfter(divider)!;
+      slot = childAfter(divider);
     }
   }
 
@@ -2568,7 +2566,7 @@ class _RenderAlertDialogActionsLayout extends RenderFlex {
       return false;
     }
     final double slotWidth = horizontalSlotWidthFor(overallWidth: overallWidth);
-    RenderBox child = firstChild!;
+    RenderBox child = firstChild;
     while (true) {
       // If both children fit into a half-row slot, use the horizontal layout.
       // Max intrinsic widths are used here, which, according to
@@ -2581,21 +2579,21 @@ class _RenderAlertDialogActionsLayout extends RenderFlex {
       if (divider == null) {
         break;
       }
-      child = childAfter(divider)!;
+      child = childAfter(divider);
     }
     return true;
   }
 
   void _forEachSlot(ValueSetter<RenderBox> action) {
     assert(childCount.isOdd);
-    RenderBox slot = firstChild!;
+    RenderBox slot = firstChild;
     while (true) {
       action(slot);
       final RenderBox? divider = childAfter(slot);
       if (divider == null) {
         break;
       }
-      slot = childAfter(divider)!;
+      slot = childAfter(divider);
     }
   }
 }
@@ -2643,9 +2641,8 @@ class _PriorityColumn extends MultiChildRenderObjectWidget {
 }
 
 class _RenderPriorityColumn extends RenderFlex {
-  _RenderPriorityColumn({List<RenderBox>? children, required double bottomMinHeight})
-    : _bottomMinHeight = bottomMinHeight,
-      super(
+  _RenderPriorityColumn({List<RenderBox>? children, required this._bottomMinHeight})
+    : super(
         direction: Axis.vertical,
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,

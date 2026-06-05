@@ -963,7 +963,7 @@ class _MenuOverlayState extends State<_MenuOverlay>
       _attachmentPoint = widget.anchorRect.topLeft + widget.anchorPosition!;
       transformOrigin = _attachmentPoint;
     } else {
-      final ui.Offset offset = _kAttachmentOffset * dy;
+      const ui.Offset offset = _kAttachmentOffset * dy;
       _attachmentPoint = Alignment(dx, dy).withinRect(widget.anchorRect) + offset;
       transformOrigin = Alignment(0, dy).withinRect(widget.anchorRect) + offset;
     }
@@ -1057,7 +1057,7 @@ class _MenuOverlayState extends State<_MenuOverlay>
   Widget build(BuildContext context) {
     final BoxConstraints constraints;
     if (widget.constraints != null) {
-      constraints = widget.constraints!;
+      constraints = widget.constraints;
     } else {
       final bool isLargeTextModeEnabled = _largeTextModeEnabled(context);
       final double screenWidth = MediaQuery.widthOf(context);
@@ -2108,11 +2108,10 @@ class _CupertinoMenuItemLabel extends StatelessWidget {
     this.trailing,
     this.trailingWidth,
     AlignmentGeometry? trailingMidpointAlignment,
-    BoxConstraints? constraints,
+    this._constraints,
     this.padding,
   }) : _leadingAlignment = leadingMidpointAlignment,
-       _trailingAlignment = trailingMidpointAlignment,
-       _constraints = constraints;
+       _trailingAlignment = trailingMidpointAlignment;
 
   static const double _kDefaultHorizontalWidth = 16;
 
@@ -2260,7 +2259,7 @@ class _CupertinoMenuItemLabel extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[child, const SizedBox(height: 1), subtitle!],
+                      children: <Widget>[child, const SizedBox(height: 1), subtitle],
                     ),
             ),
             if (trailing != null)
@@ -2780,7 +2779,7 @@ class _SwipeRegionState extends State<_SwipeRegion> {
     double minimumSquaredDistance = double.maxFinite;
     for (final _RenderSwipeSurface surface in _surfaces) {
       final double squaredDistance = _computeSquaredDistanceToRect(
-        _position!,
+        _position,
         surface.computeRect(),
       );
 
@@ -2850,11 +2849,10 @@ class _SwipeSurface extends SingleChildRenderObjectWidget {
 
 class _RenderSwipeSurface extends RenderProxyBoxWithHitTestBehavior {
   _RenderSwipeSurface({
-    required _SwipeRegionState region,
+    required this._region,
     required this.delay,
     required this.onStart,
-  }) : _region = region,
-       super(behavior: HitTestBehavior.opaque) {
+  }) : super(behavior: HitTestBehavior.opaque) {
     _region.attachSurface(this);
   }
 

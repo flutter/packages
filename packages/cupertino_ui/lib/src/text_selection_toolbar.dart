@@ -195,13 +195,11 @@ class CupertinoTextSelectionToolbar extends StatelessWidget {
 // The anchor should be in global coordinates.
 class _CupertinoTextSelectionToolbarShape extends SingleChildRenderObjectWidget {
   const _CupertinoTextSelectionToolbarShape({
-    required Offset anchorAbove,
-    required Offset anchorBelow,
-    Color? shadowColor,
+    required this._anchorAbove,
+    required this._anchorBelow,
+    this._shadowColor,
     super.child,
-  }) : _anchorAbove = anchorAbove,
-       _anchorBelow = anchorBelow,
-       _shadowColor = shadowColor;
+  });
 
   final Offset _anchorAbove;
   final Offset _anchorBelow;
@@ -398,7 +396,7 @@ class _RenderCupertinoTextSelectionToolbarShape extends RenderShiftedBox {
           arrowBaseY,
         ); // left side of the arrow triangle
     } else {
-      final double arrowBaseY = _kToolbarArrowSize.height;
+      const double arrowBaseY = _kToolbarArrowSize.height;
       const arrowTipY = 0.0;
       path
         ..moveTo(
@@ -957,13 +955,10 @@ class _RenderCupertinoTextSelectionToolbarItems extends RenderBox
         ContainerRenderObjectMixin<RenderBox, ToolbarItemsParentData>,
         RenderBoxContainerDefaultsMixin<RenderBox, ToolbarItemsParentData> {
   _RenderCupertinoTextSelectionToolbarItems({
-    required Color dividerColor,
-    required double dividerWidth,
-    required int page,
-  }) : _dividerColor = dividerColor,
-       _dividerWidth = dividerWidth,
-       _page = page,
-       super();
+    required this._dividerColor,
+    required this._dividerWidth,
+    required this._page,
+  }) : super();
 
   final Map<_CupertinoTextSelectionToolbarItemsSlot, RenderBox> slottedChildren =
       <_CupertinoTextSelectionToolbarItemsSlot, RenderBox>{};

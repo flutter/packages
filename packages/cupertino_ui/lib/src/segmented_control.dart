@@ -520,7 +520,7 @@ class _SegmentedControlState<T extends Object> extends State<CupertinoSegmentedC
         ),
       );
 
-      backgroundColors.add(getBackgroundColor(index, currentKey)!);
+      backgroundColors.add(getBackgroundColor(index, currentKey));
       gestureChildren.add(child);
       index += 1;
     }
@@ -529,7 +529,7 @@ class _SegmentedControlState<T extends Object> extends State<CupertinoSegmentedC
       selectedIndex: selectedIndex,
       pressedIndex: pressedIndex,
       backgroundColors: backgroundColors,
-      borderColor: _borderColor!,
+      borderColor: _borderColor,
       children: gestureChildren,
     );
 
@@ -599,16 +599,12 @@ class _RenderSegmentedControl<T> extends RenderBox
         ContainerRenderObjectMixin<RenderBox, ContainerBoxParentData<RenderBox>>,
         RenderBoxContainerDefaultsMixin<RenderBox, ContainerBoxParentData<RenderBox>> {
   _RenderSegmentedControl({
-    required int? selectedIndex,
-    required int? pressedIndex,
-    required TextDirection textDirection,
-    required List<Color> backgroundColors,
-    required Color borderColor,
-  }) : _textDirection = textDirection,
-       _selectedIndex = selectedIndex,
-       _pressedIndex = pressedIndex,
-       _backgroundColors = backgroundColors,
-       _borderColor = borderColor;
+    required this._selectedIndex,
+    required this._pressedIndex,
+    required this._textDirection,
+    required this._backgroundColors,
+    required this._borderColor,
+  });
 
   int? get selectedIndex => _selectedIndex;
   int? _selectedIndex;

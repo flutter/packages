@@ -2070,7 +2070,7 @@ void main() {
     // Find the day picker column semantics node
     // The day picker should have increase action (to go to day 11) but NO decrease action
     // (because day 9 is disabled and wrapped with ExcludeSemantics)
-    final SemanticsNode rootNode = tester.binding.pipelineOwner.semanticsOwner!.rootSemanticsNode!;
+    final SemanticsNode rootNode = tester.binding.pipelineOwner.semanticsOwner!.rootSemanticsNode;
 
     // Find semantics node with value '10' (the current day)
     SemanticsNode? findNodeWithValue(SemanticsNode node, String value) {
