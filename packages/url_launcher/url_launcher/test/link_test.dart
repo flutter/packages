@@ -131,7 +131,7 @@ void main() {
       var frameworkCalled = false;
       final Future<ByteData> Function(Object?, String) originalPushFunction =
           pushRouteToFrameworkFunction;
-      pushRouteToFrameworkFunction = (Object? _, String __) {
+      pushRouteToFrameworkFunction = (Object? _, String _) {
         frameworkCalled = true;
         return Future<ByteData>.value(ByteData(0));
       };

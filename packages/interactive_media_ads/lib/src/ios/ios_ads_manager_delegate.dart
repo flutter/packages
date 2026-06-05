@@ -46,7 +46,7 @@ final class IOSAdsManagerDelegate extends PlatformAdsManagerDelegate {
     WeakReference<IOSAdsManagerDelegate> interfaceDelegate,
   ) {
     return ima.IMAAdsManagerDelegate(
-      didReceiveAdEvent: (_, __, ima.IMAAdEvent event) {
+      didReceiveAdEvent: (_, _, ima.IMAAdEvent event) {
         interfaceDelegate.target?.params.onAdEvent?.call(
           PlatformAdEvent(
             type: toInterfaceEventType(event.type),
@@ -59,7 +59,7 @@ final class IOSAdsManagerDelegate extends PlatformAdsManagerDelegate {
           ),
         );
       },
-      didReceiveAdError: (_, __, ima.IMAAdError event) {
+      didReceiveAdError: (_, _, ima.IMAAdError event) {
         interfaceDelegate.target?.params.onAdErrorEvent?.call(
           AdErrorEvent(
             error: AdError(
@@ -70,12 +70,12 @@ final class IOSAdsManagerDelegate extends PlatformAdsManagerDelegate {
           ),
         );
       },
-      didRequestContentPause: (_, __) {
+      didRequestContentPause: (_, _) {
         interfaceDelegate.target?.params.onAdEvent?.call(
           const PlatformAdEvent(type: AdEventType.contentPauseRequested),
         );
       },
-      didRequestContentResume: (_, __) {
+      didRequestContentResume: (_, _) {
         interfaceDelegate.target?.params.onAdEvent?.call(
           const PlatformAdEvent(type: AdEventType.contentResumeRequested),
         );

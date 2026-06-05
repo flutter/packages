@@ -323,6 +323,9 @@ class AnalyzeCommand extends PackageLoopingCommand {
       processRunner,
       platform,
       dartSdkPathOverride: _dartBinaryPath,
+      // 'get' and 'downgrade' resolve examples as well, so check
+      // those as well when deciding between `flutter` and `dart`.
+      recursiveFlutterCheck: true,
     );
   }
 

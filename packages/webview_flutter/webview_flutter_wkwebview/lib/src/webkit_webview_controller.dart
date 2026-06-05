@@ -226,7 +226,7 @@ class WebKitWebViewController extends PlatformWebViewController {
               return decisionCompleter.future;
             }
           },
-      runJavaScriptAlertPanel: (_, __, String message, WKFrameInfo frame) async {
+      runJavaScriptAlertPanel: (_, _, String message, WKFrameInfo frame) async {
         final Future<void> Function(JavaScriptAlertDialogRequest request)? callback =
             weakThis.target?._onJavaScriptAlertDialog;
         if (callback != null) {
@@ -238,7 +238,7 @@ class WebKitWebViewController extends PlatformWebViewController {
           return;
         }
       },
-      runJavaScriptConfirmPanel: (_, __, String message, WKFrameInfo frame) async {
+      runJavaScriptConfirmPanel: (_, _, String message, WKFrameInfo frame) async {
         final Future<bool> Function(JavaScriptConfirmDialogRequest request)? callback =
             weakThis.target?._onJavaScriptConfirmDialog;
         if (callback != null) {
@@ -253,7 +253,7 @@ class WebKitWebViewController extends PlatformWebViewController {
         return false;
       },
       runJavaScriptTextInputPanel:
-          (_, __, String prompt, String? defaultText, WKFrameInfo frame) async {
+          (_, _, String prompt, String? defaultText, WKFrameInfo frame) async {
             final Future<String> Function(JavaScriptTextInputDialogRequest request)? callback =
                 weakThis.target?._onJavaScriptTextInputDialog;
             if (callback != null) {
@@ -738,7 +738,7 @@ class WebKitWebViewController extends PlatformWebViewController {
       if (onScrollPositionChange != null) {
         final weakThis = WeakReference<WebKitWebViewController>(this);
         _uiScrollViewDelegate = UIScrollViewDelegate(
-          scrollViewDidScroll: (_, __, double x, double y) {
+          scrollViewDidScroll: (_, _, double x, double y) {
             weakThis.target?._onScrollPositionChangeCallback?.call(ScrollPositionChange(x, y));
           },
         );
@@ -922,7 +922,7 @@ class WebKitJavaScriptChannelParams extends JavaScriptChannelParams {
         didReceiveScriptMessage: withWeakReferenceTo(onMessageReceived, (
           WeakReference<void Function(JavaScriptMessage)> weakReference,
         ) {
-          return (_, __, WKScriptMessage message) {
+          return (_, _, WKScriptMessage message) {
             if (weakReference.target != null) {
               // When message.body is null, return '(null)' for consistency
               // with previous implementations.
@@ -1086,17 +1086,17 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
       ) {
     final weakThis = WeakReference<WebKitNavigationDelegate>(this);
     _navigationDelegate = WKNavigationDelegate(
-      didFinishNavigation: (_, __, String? url) {
+      didFinishNavigation: (_, _, String? url) {
         if (weakThis.target?._onPageFinished != null) {
           weakThis.target!._onPageFinished!(url ?? '');
         }
       },
-      didStartProvisionalNavigation: (_, __, String? url) {
+      didStartProvisionalNavigation: (_, _, String? url) {
         if (weakThis.target?._onPageStarted != null) {
           weakThis.target!._onPageStarted!(url ?? '');
         }
       },
-      decidePolicyForNavigationResponse: (_, __, WKNavigationResponse response) async {
+      decidePolicyForNavigationResponse: (_, _, WKNavigationResponse response) async {
         final URLResponse urlResponse = response.response;
         if (weakThis.target?._onHttpError != null &&
             urlResponse is HTTPURLResponse &&
@@ -1110,7 +1110,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
 
         return NavigationResponsePolicy.allow;
       },
-      decidePolicyForNavigationAction: (_, __, WKNavigationAction action) async {
+      decidePolicyForNavigationAction: (_, _, WKNavigationAction action) async {
         if (weakThis.target?._onNavigationRequest != null) {
           final NavigationDecision decision = await weakThis.target!._onNavigationRequest!(
             NavigationRequest(
@@ -1127,7 +1127,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
         }
         return NavigationActionPolicy.allow;
       },
-      didFailNavigation: (_, __, NSError error) {
+      didFailNavigation: (_, _, NSError error) {
         if (weakThis.target?._onWebResourceError != null) {
           weakThis.target!._onWebResourceError!(
             WebKitWebResourceError._(
@@ -1138,7 +1138,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
           );
         }
       },
-      didFailProvisionalNavigation: (_, __, NSError error) async {
+      didFailProvisionalNavigation: (_, _, NSError error) async {
         var url = error.userInfo[NSErrorUserInfoKey.NSURLErrorFailingURLStringError] as String?;
 
         // On iOS 26+, the error is stored with `NSURLErrorFailingURLErrorKey`.
@@ -1153,7 +1153,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
           );
         }
       },
-      webViewWebContentProcessDidTerminate: (_, __) {
+      webViewWebContentProcessDidTerminate: (_, _) {
         if (weakThis.target?._onWebResourceError != null) {
           weakThis.target!._onWebResourceError!(
             WebKitWebResourceError._(
@@ -1169,7 +1169,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
           );
         }
       },
-      didReceiveAuthenticationChallenge: (_, __, URLAuthenticationChallenge challenge) async {
+      didReceiveAuthenticationChallenge: (_, _, URLAuthenticationChallenge challenge) async {
         final WebKitNavigationDelegate? delegate = weakThis.target;
 
         if (delegate != null) {
@@ -1353,10 +1353,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
 
 /// WebKit implementation of [PlatformWebViewPermissionRequest].
 class WebKitWebViewPermissionRequest extends PlatformWebViewPermissionRequest {
-  const WebKitWebViewPermissionRequest._({
-    required super.types,
-    required void Function(PermissionDecision decision) onDecision,
-  }) : _onDecision = onDecision;
+  const WebKitWebViewPermissionRequest._({required super.types, required this._onDecision});
 
   final void Function(PermissionDecision) _onDecision;
 

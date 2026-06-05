@@ -56,7 +56,7 @@ final GoRouter _router = GoRouter(
               barrierColor: Colors.black38,
               opaque: false,
               transitionDuration: Duration.zero,
-              transitionsBuilder: (_, __, ___, Widget child) => child,
+              transitionsBuilder: (_, _, _, Widget child) => child,
             );
           },
         ),

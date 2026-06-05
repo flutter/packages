@@ -58,7 +58,7 @@ void main() {
       ima.PigeonOverrides.frameLayout_new = () => MockFrameLayout();
       ima.PigeonOverrides.videoView_new =
           ({required dynamic onError, dynamic onPrepared, dynamic onCompletion}) => MockVideoView();
-      ima.PigeonOverrides.imaSdkFactory_createAdDisplayContainer = (_, __) async {
+      ima.PigeonOverrides.imaSdkFactory_createAdDisplayContainer = (_, _) async {
         return MockAdDisplayContainer();
       };
       ima.PigeonOverrides.videoAdPlayer_new =
@@ -125,7 +125,7 @@ void main() {
             onCompletionCallback = onCompletion!;
             return MockVideoView();
           };
-      ima.PigeonOverrides.imaSdkFactory_createAdDisplayContainer = (_, __) async {
+      ima.PigeonOverrides.imaSdkFactory_createAdDisplayContainer = (_, _) async {
         return MockAdDisplayContainer();
       };
       ima.PigeonOverrides.videoAdPlayer_new =
@@ -173,7 +173,7 @@ void main() {
             onErrorCallback = onError;
             return MockVideoView();
           };
-      ima.PigeonOverrides.imaSdkFactory_createAdDisplayContainer = (_, __) async {
+      ima.PigeonOverrides.imaSdkFactory_createAdDisplayContainer = (_, _) async {
         return MockAdDisplayContainer();
       };
       ima.PigeonOverrides.videoAdPlayer_new =
@@ -228,7 +228,7 @@ void main() {
             when(mockVideoView.getCurrentPosition()).thenAnswer((_) async => adProgress);
             return mockVideoView;
           };
-      ima.PigeonOverrides.imaSdkFactory_createAdDisplayContainer = (_, __) async {
+      ima.PigeonOverrides.imaSdkFactory_createAdDisplayContainer = (_, _) async {
         return MockAdDisplayContainer();
       };
       ima.PigeonOverrides.videoAdPlayer_new =
@@ -297,7 +297,7 @@ void main() {
             when(mockVideoView.getCurrentPosition()).thenAnswer((_) async => 10);
             return mockVideoView;
           };
-      ima.PigeonOverrides.imaSdkFactory_createAdDisplayContainer = (_, __) async {
+      ima.PigeonOverrides.imaSdkFactory_createAdDisplayContainer = (_, _) async {
         return MockAdDisplayContainer();
       };
       ima.PigeonOverrides.videoAdPlayer_new =
@@ -360,7 +360,7 @@ void main() {
             when(mockVideoView.getCurrentPosition()).thenAnswer((_) async => 10);
             return mockVideoView;
           };
-      ima.PigeonOverrides.imaSdkFactory_createAdDisplayContainer = (_, __) async {
+      ima.PigeonOverrides.imaSdkFactory_createAdDisplayContainer = (_, _) async {
         return MockAdDisplayContainer();
       };
       ima.PigeonOverrides.videoAdPlayer_new =
@@ -424,7 +424,7 @@ void main() {
             when(mockVideoView.getCurrentPosition()).thenAnswer((_) async => 10);
             return mockVideoView;
           };
-      ima.PigeonOverrides.imaSdkFactory_createAdDisplayContainer = (_, __) async {
+      ima.PigeonOverrides.imaSdkFactory_createAdDisplayContainer = (_, _) async {
         return MockAdDisplayContainer();
       };
       ima.PigeonOverrides.videoAdPlayer_new =
@@ -485,7 +485,7 @@ void main() {
           ({dynamic onError, dynamic onPrepared, dynamic onCompletion}) {
             return mockVideoView;
           };
-      ima.PigeonOverrides.imaSdkFactory_createAdDisplayContainer = (_, __) async {
+      ima.PigeonOverrides.imaSdkFactory_createAdDisplayContainer = (_, _) async {
         return MockAdDisplayContainer();
       };
       ima.PigeonOverrides.videoAdPlayer_new =
@@ -535,7 +535,7 @@ void main() {
                 fail('newVideoView was called too many times');
             }
           };
-      ima.PigeonOverrides.imaSdkFactory_createAdDisplayContainer = (_, __) async {
+      ima.PigeonOverrides.imaSdkFactory_createAdDisplayContainer = (_, _) async {
         return MockAdDisplayContainer();
       };
       ima.PigeonOverrides.videoAdPlayer_new =
@@ -582,7 +582,7 @@ void main() {
                 fail('newVideoView was called too many times');
             }
           };
-      ima.PigeonOverrides.imaSdkFactory_createAdDisplayContainer = (_, __) async {
+      ima.PigeonOverrides.imaSdkFactory_createAdDisplayContainer = (_, _) async {
         return MockAdDisplayContainer();
       };
       ima.PigeonOverrides.videoAdPlayer_new =
@@ -614,7 +614,7 @@ void main() {
       ima.PigeonOverrides.frameLayout_new = () => MockFrameLayout();
       ima.PigeonOverrides.videoView_new =
           ({required dynamic onError, dynamic onPrepared, dynamic onCompletion}) => MockVideoView();
-      ima.PigeonOverrides.imaSdkFactory_createAdDisplayContainer = (_, __) async {
+      ima.PigeonOverrides.imaSdkFactory_createAdDisplayContainer = (_, _) async {
         return mockAdDisplayContainer;
       };
       ima.PigeonOverrides.videoAdPlayer_new =
@@ -698,7 +698,7 @@ void main() {
             onCompletionCallback = onCompletion!;
             return mockVideoView;
           };
-      ima.PigeonOverrides.imaSdkFactory_createAdDisplayContainer = (_, __) async {
+      ima.PigeonOverrides.imaSdkFactory_createAdDisplayContainer = (_, _) async {
         return MockAdDisplayContainer();
       };
       ima.PigeonOverrides.videoAdPlayer_new =

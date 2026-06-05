@@ -15,7 +15,7 @@ void main() {
     final b = UniqueKey();
     final routes = <RouteBase>[
       ShellRoute(
-        builder: (_, __, Widget child) {
+        builder: (_, _, Widget child) {
           return Scaffold(
             appBar: AppBar(title: const Text('shell')),
             body: child,
@@ -24,11 +24,11 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/a',
-            builder: (_, __) => DummyScreen(key: a),
+            builder: (_, _) => DummyScreen(key: a),
           ),
           GoRoute(
             path: '/b',
-            builder: (_, __) => DummyScreen(key: b),
+            builder: (_, _) => DummyScreen(key: b),
           ),
         ],
       ),
@@ -52,10 +52,10 @@ void main() {
     final routes = <RouteBase>[
       GoRoute(
         path: '/a',
-        builder: (_, __) => DummyScreen(key: a),
+        builder: (_, _) => DummyScreen(key: a),
       ),
       ShellRoute(
-        builder: (_, __, Widget child) {
+        builder: (_, _, Widget child) {
           return Scaffold(
             appBar: AppBar(title: const Text('shell')),
             body: child,
@@ -64,7 +64,7 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/b',
-            builder: (_, __) => DummyScreen(key: b),
+            builder: (_, _) => DummyScreen(key: b),
           ),
         ],
       ),
@@ -96,11 +96,11 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/',
-            builder: (_, __) => DummyScreen(key: home),
+            builder: (_, _) => DummyScreen(key: home),
             routes: <RouteBase>[
               GoRoute(
                 path: 'a',
-                builder: (_, __) => DummyScreen(key: a),
+                builder: (_, _) => DummyScreen(key: a),
               ),
             ],
           ),
@@ -131,7 +131,7 @@ void main() {
     final a = UniqueKey();
     final routes = <RouteBase>[
       ShellRoute(
-        builder: (_, __, Widget child) {
+        builder: (_, _, Widget child) {
           return Scaffold(
             appBar: AppBar(title: const Text('shell1')),
             body: child,
@@ -140,12 +140,12 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/a',
-            builder: (_, __) => DummyScreen(key: a),
+            builder: (_, _) => DummyScreen(key: a),
           ),
         ],
       ),
       ShellRoute(
-        builder: (_, __, Widget child) {
+        builder: (_, _, Widget child) {
           return Scaffold(
             appBar: AppBar(title: const Text('shell2')),
             body: child,
@@ -154,7 +154,7 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/b',
-            builder: (_, __) => DummyScreen(key: b),
+            builder: (_, _) => DummyScreen(key: b),
           ),
         ],
       ),
@@ -178,7 +178,7 @@ void main() {
     final outside = UniqueKey();
     final routes = <RouteBase>[
       ShellRoute(
-        builder: (_, __, Widget child) {
+        builder: (_, _, Widget child) {
           return Scaffold(
             appBar: AppBar(title: const Text('shell')),
             body: child,
@@ -187,13 +187,13 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/in',
-            builder: (_, __) => DummyScreen(key: inside),
+            builder: (_, _) => DummyScreen(key: inside),
           ),
         ],
       ),
       GoRoute(
         path: '/out',
-        builder: (_, __) => DummyScreen(key: outside),
+        builder: (_, _) => DummyScreen(key: outside),
       ),
     ];
     final GoRouter router = await createRouter(routes, tester, initialLocation: '/out');
@@ -223,7 +223,7 @@ void main() {
     final e = UniqueKey();
     final routes = <RouteBase>[
       ShellRoute(
-        builder: (_, __, Widget child) {
+        builder: (_, _, Widget child) {
           return Scaffold(
             appBar: AppBar(title: const Text('shell')),
             body: child,
@@ -232,27 +232,27 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/a',
-            builder: (_, __) => DummyScreen(key: a),
+            builder: (_, _) => DummyScreen(key: a),
           ),
           GoRoute(
             path: '/c',
-            builder: (_, __) => DummyScreen(key: c),
+            builder: (_, _) => DummyScreen(key: c),
           ),
         ],
       ),
       GoRoute(
         path: '/d',
-        builder: (_, __) => DummyScreen(key: d),
+        builder: (_, _) => DummyScreen(key: d),
         routes: <RouteBase>[
           GoRoute(
             path: 'e',
-            builder: (_, __) => DummyScreen(key: e),
+            builder: (_, _) => DummyScreen(key: e),
           ),
         ],
       ),
       GoRoute(
         path: '/b',
-        builder: (_, __) => DummyScreen(key: b),
+        builder: (_, _) => DummyScreen(key: b),
       ),
     ];
     final GoRouter router = await createRouter(routes, tester, initialLocation: '/a');

@@ -220,7 +220,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<InternalObjcOptions> {
 
     indent.write('typedef NS_ENUM(NSUInteger, $enumName) ');
     indent.addScoped('{', '};', () {
-      enumerate(anEnum.members, (int index, final EnumMember member) {
+      enumerate(anEnum.members, (int index, EnumMember member) {
         addDocumentationComments(indent, member.documentationComments, _docCommentSpec);
         // Capitalized first letter to ensure Swift compatibility
         indent.writeln(
@@ -625,7 +625,7 @@ class ObjcSourceGenerator extends StructuredGenerator<InternalObjcOptions> {
     indent.addScoped('{', '}', () {
       const resultName = 'pigeonResult';
       indent.writeln('$className *$resultName = [[$className alloc] init];');
-      enumerate(getFieldsInSerializationOrder(classDefinition), (int index, final NamedType field) {
+      enumerate(getFieldsInSerializationOrder(classDefinition), (int index, NamedType field) {
         final valueGetter = 'GetNullableObjectAtIndex(list, $index)';
         final String? primitiveExtractionMethod = _nsnumberExtractionMethod(field.type);
         final String ivarValueExpression;
