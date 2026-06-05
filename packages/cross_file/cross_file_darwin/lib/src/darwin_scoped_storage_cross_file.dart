@@ -6,6 +6,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
@@ -79,7 +80,7 @@ base class SecurityScopedDarwinScopedStorageXFile extends DarwinScopedStorageXFi
   static final Finalizer<String> _finalizer = Finalizer((String uri) {
     // Check that this is not called during a unit test.
     if (Platform.environment['FLUTTER_TEST'] != 'true') {
-      final NSURL? url = NSURL.URLWithString(NSString(uri));
+      final NSURL? url = NSURL.URLWithString(uri.toNSString());
       if (url != null) {
         url.stopAccessingSecurityScopedResource();
       }
@@ -127,7 +128,7 @@ base class SecurityScopedDarwinScopedStorageXFile extends DarwinScopedStorageXFi
   @override
   Future<bool> canRead() async {
     return NSFileManager.getDefaultManager().isReadableFileAtPath(
-      NSString(Uri.file(params.uri).path),
+      Uri.file(params.uri).path.toNSString(),
     );
   }
 
@@ -139,7 +140,7 @@ base class SecurityScopedDarwinScopedStorageXFile extends DarwinScopedStorageXFi
 
   @override
   Future<bool> startAccessingSecurityScopedResource() async {
-    final NSURL? url = NSURL.URLWithString(NSString(params.uri));
+    final NSURL? url = NSURL.URLWithString(params.uri.toNSString());
     if (url == null) {
       return false;
     }
@@ -148,7 +149,7 @@ base class SecurityScopedDarwinScopedStorageXFile extends DarwinScopedStorageXFi
 
   @override
   Future<void> stopAccessingSecurityScopedResource() async {
-    final NSURL? url = NSURL.URLWithString(NSString(params.uri));
+    final NSURL? url = NSURL.URLWithString(params.uri.toNSString());
     if (url != null) {
       url.stopAccessingSecurityScopedResource();
     }
@@ -185,17 +186,11 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
 
   @override
   Future<int?> length() async {
-    if (_tryGetAsset(identifier: params.uri) case final PHAsset asset) {
-      final NSArray resources = PHAssetResource.assetResourcesForAsset(asset);
-      final ObjCObject? firstObject = resources.firstObject;
+    if (_tryGetAssetResource(identifier: params.uri) case final PHAssetResource resource) {
+      final ObjCObject? fileSize = resource.valueForKey('fileSize'.toNSString());
 
-      if (firstObject != null) {
-        final resource = PHAssetResource.as(firstObject);
-        final ObjCObject? fileSize = resource.valueForKey('fileSize'.toNSString());
-
-        if (fileSize != null) {
-          return NSNumber.as(fileSize).intValue;
-        }
+      if (fileSize != null) {
+        return NSNumber.as(fileSize).intValue;
       }
     }
 
@@ -203,7 +198,73 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
   }
 
   @override
-  Stream<Uint8List> openRead([int? start, int? end]) => throw UnsupportedError('');
+  Stream<Uint8List> openRead([int? start, int? end]) {
+    assert(start == null || start >= 0);
+    assert(end == null || end >= (start ?? 0));
+
+    if (_tryGetAssetResource(identifier: params.uri) case final PHAssetResource resource) {
+      final PHAssetResourceManager resourceManager = PHAssetResourceManager.defaultManager();
+
+      final streamController = StreamController<Uint8List>();
+      var currentByteIndex = 0;
+
+      void dataReceivedHandler(NSData data) {
+        final Uint8List bytes = _extractBytesToUint8List(data);
+
+        runOnPlatformThread(() {
+          final int newByteIndex = currentByteIndex + bytes.length;
+          final int startOrZero = start ?? 0;
+
+          if (end == null) {
+            if (currentByteIndex >= startOrZero) {
+              streamController.add(bytes);
+            } else {
+              if (newByteIndex > startOrZero) {
+                streamController.add(bytes.sublist(startOrZero - currentByteIndex));
+              }
+            }
+          } else {
+            final int bytesLeftToRead = end - max(currentByteIndex, startOrZero);
+
+            if (bytesLeftToRead > 0) {
+              if (currentByteIndex >= startOrZero) {
+                streamController.add(bytes.sublist(0, min(bytesLeftToRead, bytes.length)));
+              } else if (newByteIndex > startOrZero) {
+                streamController.add(
+                  bytes.sublist(
+                    startOrZero - currentByteIndex,
+                    min(startOrZero - currentByteIndex + bytesLeftToRead, bytes.length),
+                  ),
+                );
+              }
+            }
+          }
+
+          currentByteIndex = newByteIndex;
+        });
+      }
+
+      void completionHandler(NSError? error) {
+        runOnPlatformThread(() {
+          if (error != null) {
+            streamController.addError(Exception(error.localizedDescription.toDartString()));
+          }
+
+          return streamController.close();
+        });
+      }
+
+      resourceManager.requestDataForAssetResource(
+        resource,
+        dataReceivedHandler: ObjCBlock_ffiVoid_NSData.listener(dataReceivedHandler),
+        completionHandler: ObjCBlock_ffiVoid_NSError.listener(completionHandler),
+      );
+
+      return streamController.stream;
+    }
+
+    throw Error();
+  }
 
   @override
   Future<Uint8List> readAsBytes() {
@@ -242,9 +303,7 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
   }
 
   @override
-  Future<String> readAsString({Encoding encoding = utf8}) async {
-    return encoding.decode(await readAsBytes());
-  }
+  Future<String> readAsString({Encoding encoding = utf8}) => encoding.decodeStream(openRead());
 
   @override
   Future<bool> canRead() => exists();
@@ -254,14 +313,8 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
 
   @override
   Future<String?> name() async {
-    if (_tryGetAsset(identifier: params.uri) case final PHAsset asset) {
-      final NSArray resources = PHAssetResource.assetResourcesForAsset(asset);
-      final ObjCObject? firstObject = resources.firstObject;
-
-      if (firstObject != null) {
-        final resource = PHAssetResource.as(firstObject);
-        return resource.originalFilename.toDartString();
-      }
+    if (_tryGetAssetResource(identifier: params.uri) case final PHAssetResource resource) {
+      return resource.originalFilename.toDartString();
     }
 
     return null;
@@ -274,6 +327,19 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
     final ObjCObject? firstObject = result.firstObject;
     if (firstObject != null) {
       return PHAsset.as(firstObject);
+    }
+
+    return null;
+  }
+
+  PHAssetResource? _tryGetAssetResource({required String identifier}) {
+    if (_tryGetAsset(identifier: params.uri) case final PHAsset asset) {
+      final NSArray resources = PHAssetResource.assetResourcesForAsset(asset);
+      final ObjCObject? firstObject = resources.firstObject;
+
+      if (firstObject != null) {
+        return PHAssetResource.as(firstObject);
+      }
     }
 
     return null;
