@@ -275,8 +275,7 @@ class _TextSelectionToolbarTrailingEdgeAlignRenderBox extends RenderProxyBox {
   _TextSelectionToolbarTrailingEdgeAlignRenderBox({
     required this._overflowOpen,
     required this._textDirection,
-  }) :
-       super();
+  }) : super();
 
   // The width of the menu when it was closed. This is used to achieve the
   // behavior where the open menu aligns its trailing edge to the closed menu's

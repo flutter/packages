@@ -1181,7 +1181,8 @@ class _RenderSlider extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
     required this._allowedInteraction,
   }) : assert(_value >= 0.0 && _value <= 1.0),
        assert(
-         _secondaryTrackValue == null || (_secondaryTrackValue >= 0.0 && _secondaryTrackValue <= 1.0),
+         _secondaryTrackValue == null ||
+             (_secondaryTrackValue >= 0.0 && _secondaryTrackValue <= 1.0),
        ) {
     _updateLabelPainter();
     final team = GestureArenaTeam();

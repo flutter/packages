@@ -1662,8 +1662,7 @@ class _LargeTitle extends SingleChildRenderObjectWidget {
 }
 
 class _RenderLargeTitle extends RenderShiftedBox {
-  _RenderLargeTitle({required this._alignment, required this._height})
-    : super(null);
+  _RenderLargeTitle({required this._alignment, required this._height}) : super(null);
 
   Alignment get alignment => _alignment;
   Alignment _alignment;
