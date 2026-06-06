@@ -13,10 +13,7 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('canLaunch', (WidgetTester _) async {
-    expect(
-      await canLaunchUrl(Uri(scheme: 'randomscheme', path: 'a_path')),
-      false,
-    );
+    expect(await canLaunchUrl(Uri(scheme: 'randomscheme', path: 'a_path')), false);
 
     // Generally all devices should have some default browser.
     expect(await canLaunchUrl(Uri(scheme: 'http', host: 'flutter.dev')), true);

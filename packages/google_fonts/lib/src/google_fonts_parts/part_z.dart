@@ -968,19 +968,11 @@ class PartZ {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
       displayLarge: zalandoSansSemiExpanded(textStyle: textTheme.displayLarge),
-      displayMedium: zalandoSansSemiExpanded(
-        textStyle: textTheme.displayMedium,
-      ),
+      displayMedium: zalandoSansSemiExpanded(textStyle: textTheme.displayMedium),
       displaySmall: zalandoSansSemiExpanded(textStyle: textTheme.displaySmall),
-      headlineLarge: zalandoSansSemiExpanded(
-        textStyle: textTheme.headlineLarge,
-      ),
-      headlineMedium: zalandoSansSemiExpanded(
-        textStyle: textTheme.headlineMedium,
-      ),
-      headlineSmall: zalandoSansSemiExpanded(
-        textStyle: textTheme.headlineSmall,
-      ),
+      headlineLarge: zalandoSansSemiExpanded(textStyle: textTheme.headlineLarge),
+      headlineMedium: zalandoSansSemiExpanded(textStyle: textTheme.headlineMedium),
+      headlineSmall: zalandoSansSemiExpanded(textStyle: textTheme.headlineSmall),
       titleLarge: zalandoSansSemiExpanded(textStyle: textTheme.titleLarge),
       titleMedium: zalandoSansSemiExpanded(textStyle: textTheme.titleMedium),
       titleSmall: zalandoSansSemiExpanded(textStyle: textTheme.titleSmall),

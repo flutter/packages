@@ -11,8 +11,7 @@ class FadeThroughTransitionDemo extends StatefulWidget {
   const FadeThroughTransitionDemo({super.key});
 
   @override
-  State<FadeThroughTransitionDemo> createState() =>
-      _FadeThroughTransitionDemoState();
+  State<FadeThroughTransitionDemo> createState() => _FadeThroughTransitionDemoState();
 }
 
 class _FadeThroughTransitionDemoState extends State<FadeThroughTransitionDemo> {
@@ -26,11 +25,7 @@ class _FadeThroughTransitionDemoState extends State<FadeThroughTransitionDemo> {
       appBar: AppBar(title: const Text('Fade through')),
       body: PageTransitionSwitcher(
         transitionBuilder:
-            (
-              Widget child,
-              Animation<double> animation,
-              Animation<double> secondaryAnimation,
-            ) {
+            (Widget child, Animation<double> animation, Animation<double> secondaryAnimation) {
               return FadeThroughTransition(
                 animation: animation,
                 secondaryAnimation: secondaryAnimation,
@@ -47,10 +42,7 @@ class _FadeThroughTransitionDemoState extends State<FadeThroughTransitionDemo> {
           });
         },
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.photo_library),
-            label: 'Albums',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.photo_library), label: 'Albums'),
           BottomNavigationBarItem(icon: Icon(Icons.photo), label: 'Photos'),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
         ],
@@ -74,9 +66,7 @@ class _ExampleCard extends StatelessWidget {
                     color: Colors.black26,
                     child: Padding(
                       padding: const EdgeInsets.all(30.0),
-                      child: Ink.image(
-                        image: const AssetImage('assets/placeholder_image.png'),
-                      ),
+                      child: Ink.image(image: const AssetImage('assets/placeholder_image.png')),
                     ),
                   ),
                 ),
@@ -85,14 +75,8 @@ class _ExampleCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        '123 photos',
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                      Text(
-                        '123 photos',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
+                      Text('123 photos', style: Theme.of(context).textTheme.bodyLarge),
+                      Text('123 photos', style: Theme.of(context).textTheme.bodySmall),
                     ],
                   ),
                 ),
