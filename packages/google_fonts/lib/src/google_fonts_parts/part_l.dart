@@ -4005,9 +4005,7 @@ class PartL {
       displayMedium: libertinusSerifDisplay(textStyle: textTheme.displayMedium),
       displaySmall: libertinusSerifDisplay(textStyle: textTheme.displaySmall),
       headlineLarge: libertinusSerifDisplay(textStyle: textTheme.headlineLarge),
-      headlineMedium: libertinusSerifDisplay(
-        textStyle: textTheme.headlineMedium,
-      ),
+      headlineMedium: libertinusSerifDisplay(textStyle: textTheme.headlineMedium),
       headlineSmall: libertinusSerifDisplay(textStyle: textTheme.headlineSmall),
       titleLarge: libertinusSerifDisplay(textStyle: textTheme.titleLarge),
       titleMedium: libertinusSerifDisplay(textStyle: textTheme.titleMedium),
@@ -4222,13 +4220,8 @@ class PartL {
     double? decorationThickness,
   }) {
     final fonts = <GoogleFontsVariant, GoogleFontsFile>{
-      const GoogleFontsVariant(
-        fontWeight: FontWeight.w400,
-        fontStyle: FontStyle.normal,
-      ): GoogleFontsFile(
-        'a25d156d437de61fd0000652114599b4d454496b7c82a255a6c2ae7fce3052ab',
-        7628,
-      ),
+      const GoogleFontsVariant(fontWeight: FontWeight.w400, fontStyle: FontStyle.normal):
+          GoogleFontsFile('a25d156d437de61fd0000652114599b4d454496b7c82a255a6c2ae7fce3052ab', 7628),
     };
 
     return googleFontsTextStyle(
@@ -4355,9 +4348,7 @@ class PartL {
       displayMedium: libreBarcode39Extended(textStyle: textTheme.displayMedium),
       displaySmall: libreBarcode39Extended(textStyle: textTheme.displaySmall),
       headlineLarge: libreBarcode39Extended(textStyle: textTheme.headlineLarge),
-      headlineMedium: libreBarcode39Extended(
-        textStyle: textTheme.headlineMedium,
-      ),
+      headlineMedium: libreBarcode39Extended(textStyle: textTheme.headlineMedium),
       headlineSmall: libreBarcode39Extended(textStyle: textTheme.headlineSmall),
       titleLarge: libreBarcode39Extended(textStyle: textTheme.titleLarge),
       titleMedium: libreBarcode39Extended(textStyle: textTheme.titleMedium),
@@ -4440,24 +4431,12 @@ class PartL {
   static TextTheme libreBarcode39ExtendedTextTextTheme([TextTheme? textTheme]) {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
-      displayLarge: libreBarcode39ExtendedText(
-        textStyle: textTheme.displayLarge,
-      ),
-      displayMedium: libreBarcode39ExtendedText(
-        textStyle: textTheme.displayMedium,
-      ),
-      displaySmall: libreBarcode39ExtendedText(
-        textStyle: textTheme.displaySmall,
-      ),
-      headlineLarge: libreBarcode39ExtendedText(
-        textStyle: textTheme.headlineLarge,
-      ),
-      headlineMedium: libreBarcode39ExtendedText(
-        textStyle: textTheme.headlineMedium,
-      ),
-      headlineSmall: libreBarcode39ExtendedText(
-        textStyle: textTheme.headlineSmall,
-      ),
+      displayLarge: libreBarcode39ExtendedText(textStyle: textTheme.displayLarge),
+      displayMedium: libreBarcode39ExtendedText(textStyle: textTheme.displayMedium),
+      displaySmall: libreBarcode39ExtendedText(textStyle: textTheme.displaySmall),
+      headlineLarge: libreBarcode39ExtendedText(textStyle: textTheme.headlineLarge),
+      headlineMedium: libreBarcode39ExtendedText(textStyle: textTheme.headlineMedium),
+      headlineSmall: libreBarcode39ExtendedText(textStyle: textTheme.headlineSmall),
       titleLarge: libreBarcode39ExtendedText(textStyle: textTheme.titleLarge),
       titleMedium: libreBarcode39ExtendedText(textStyle: textTheme.titleMedium),
       titleSmall: libreBarcode39ExtendedText(textStyle: textTheme.titleSmall),
@@ -4630,9 +4609,7 @@ class PartL {
       displayMedium: libreBarcodeEan13Text(textStyle: textTheme.displayMedium),
       displaySmall: libreBarcodeEan13Text(textStyle: textTheme.displaySmall),
       headlineLarge: libreBarcodeEan13Text(textStyle: textTheme.headlineLarge),
-      headlineMedium: libreBarcodeEan13Text(
-        textStyle: textTheme.headlineMedium,
-      ),
+      headlineMedium: libreBarcodeEan13Text(textStyle: textTheme.headlineMedium),
       headlineSmall: libreBarcodeEan13Text(textStyle: textTheme.headlineSmall),
       titleLarge: libreBarcodeEan13Text(textStyle: textTheme.titleLarge),
       titleMedium: libreBarcodeEan13Text(textStyle: textTheme.titleMedium),

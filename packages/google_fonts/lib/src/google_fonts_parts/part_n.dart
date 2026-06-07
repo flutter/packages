@@ -4332,9 +4332,7 @@ class PartN {
       displayMedium: notoSansAdlamUnjoined(textStyle: textTheme.displayMedium),
       displaySmall: notoSansAdlamUnjoined(textStyle: textTheme.displaySmall),
       headlineLarge: notoSansAdlamUnjoined(textStyle: textTheme.headlineLarge),
-      headlineMedium: notoSansAdlamUnjoined(
-        textStyle: textTheme.headlineMedium,
-      ),
+      headlineMedium: notoSansAdlamUnjoined(textStyle: textTheme.headlineMedium),
       headlineSmall: notoSansAdlamUnjoined(textStyle: textTheme.headlineSmall),
       titleLarge: notoSansAdlamUnjoined(textStyle: textTheme.titleLarge),
       titleMedium: notoSansAdlamUnjoined(textStyle: textTheme.titleMedium),
@@ -4414,41 +4412,23 @@ class PartN {
   ///
   /// See:
   ///  * https://fonts.google.com/specimen/Noto+Sans+Anatolian+Hieroglyphs
-  static TextTheme notoSansAnatolianHieroglyphsTextTheme([
-    TextTheme? textTheme,
-  ]) {
+  static TextTheme notoSansAnatolianHieroglyphsTextTheme([TextTheme? textTheme]) {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
-      displayLarge: notoSansAnatolianHieroglyphs(
-        textStyle: textTheme.displayLarge,
-      ),
-      displayMedium: notoSansAnatolianHieroglyphs(
-        textStyle: textTheme.displayMedium,
-      ),
-      displaySmall: notoSansAnatolianHieroglyphs(
-        textStyle: textTheme.displaySmall,
-      ),
-      headlineLarge: notoSansAnatolianHieroglyphs(
-        textStyle: textTheme.headlineLarge,
-      ),
-      headlineMedium: notoSansAnatolianHieroglyphs(
-        textStyle: textTheme.headlineMedium,
-      ),
-      headlineSmall: notoSansAnatolianHieroglyphs(
-        textStyle: textTheme.headlineSmall,
-      ),
+      displayLarge: notoSansAnatolianHieroglyphs(textStyle: textTheme.displayLarge),
+      displayMedium: notoSansAnatolianHieroglyphs(textStyle: textTheme.displayMedium),
+      displaySmall: notoSansAnatolianHieroglyphs(textStyle: textTheme.displaySmall),
+      headlineLarge: notoSansAnatolianHieroglyphs(textStyle: textTheme.headlineLarge),
+      headlineMedium: notoSansAnatolianHieroglyphs(textStyle: textTheme.headlineMedium),
+      headlineSmall: notoSansAnatolianHieroglyphs(textStyle: textTheme.headlineSmall),
       titleLarge: notoSansAnatolianHieroglyphs(textStyle: textTheme.titleLarge),
-      titleMedium: notoSansAnatolianHieroglyphs(
-        textStyle: textTheme.titleMedium,
-      ),
+      titleMedium: notoSansAnatolianHieroglyphs(textStyle: textTheme.titleMedium),
       titleSmall: notoSansAnatolianHieroglyphs(textStyle: textTheme.titleSmall),
       bodyLarge: notoSansAnatolianHieroglyphs(textStyle: textTheme.bodyLarge),
       bodyMedium: notoSansAnatolianHieroglyphs(textStyle: textTheme.bodyMedium),
       bodySmall: notoSansAnatolianHieroglyphs(textStyle: textTheme.bodySmall),
       labelLarge: notoSansAnatolianHieroglyphs(textStyle: textTheme.labelLarge),
-      labelMedium: notoSansAnatolianHieroglyphs(
-        textStyle: textTheme.labelMedium,
-      ),
+      labelMedium: notoSansAnatolianHieroglyphs(textStyle: textTheme.labelMedium),
       labelSmall: notoSansAnatolianHieroglyphs(textStyle: textTheme.labelSmall),
     );
   }
@@ -5853,24 +5833,12 @@ class PartN {
   static TextTheme notoSansCanadianAboriginalTextTheme([TextTheme? textTheme]) {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
-      displayLarge: notoSansCanadianAboriginal(
-        textStyle: textTheme.displayLarge,
-      ),
-      displayMedium: notoSansCanadianAboriginal(
-        textStyle: textTheme.displayMedium,
-      ),
-      displaySmall: notoSansCanadianAboriginal(
-        textStyle: textTheme.displaySmall,
-      ),
-      headlineLarge: notoSansCanadianAboriginal(
-        textStyle: textTheme.headlineLarge,
-      ),
-      headlineMedium: notoSansCanadianAboriginal(
-        textStyle: textTheme.headlineMedium,
-      ),
-      headlineSmall: notoSansCanadianAboriginal(
-        textStyle: textTheme.headlineSmall,
-      ),
+      displayLarge: notoSansCanadianAboriginal(textStyle: textTheme.displayLarge),
+      displayMedium: notoSansCanadianAboriginal(textStyle: textTheme.displayMedium),
+      displaySmall: notoSansCanadianAboriginal(textStyle: textTheme.displaySmall),
+      headlineLarge: notoSansCanadianAboriginal(textStyle: textTheme.headlineLarge),
+      headlineMedium: notoSansCanadianAboriginal(textStyle: textTheme.headlineMedium),
+      headlineSmall: notoSansCanadianAboriginal(textStyle: textTheme.headlineSmall),
       titleLarge: notoSansCanadianAboriginal(textStyle: textTheme.titleLarge),
       titleMedium: notoSansCanadianAboriginal(textStyle: textTheme.titleMedium),
       titleSmall: notoSansCanadianAboriginal(textStyle: textTheme.titleSmall),
@@ -6039,24 +6007,12 @@ class PartN {
   static TextTheme notoSansCaucasianAlbanianTextTheme([TextTheme? textTheme]) {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
-      displayLarge: notoSansCaucasianAlbanian(
-        textStyle: textTheme.displayLarge,
-      ),
-      displayMedium: notoSansCaucasianAlbanian(
-        textStyle: textTheme.displayMedium,
-      ),
-      displaySmall: notoSansCaucasianAlbanian(
-        textStyle: textTheme.displaySmall,
-      ),
-      headlineLarge: notoSansCaucasianAlbanian(
-        textStyle: textTheme.headlineLarge,
-      ),
-      headlineMedium: notoSansCaucasianAlbanian(
-        textStyle: textTheme.headlineMedium,
-      ),
-      headlineSmall: notoSansCaucasianAlbanian(
-        textStyle: textTheme.headlineSmall,
-      ),
+      displayLarge: notoSansCaucasianAlbanian(textStyle: textTheme.displayLarge),
+      displayMedium: notoSansCaucasianAlbanian(textStyle: textTheme.displayMedium),
+      displaySmall: notoSansCaucasianAlbanian(textStyle: textTheme.displaySmall),
+      headlineLarge: notoSansCaucasianAlbanian(textStyle: textTheme.headlineLarge),
+      headlineMedium: notoSansCaucasianAlbanian(textStyle: textTheme.headlineMedium),
+      headlineSmall: notoSansCaucasianAlbanian(textStyle: textTheme.headlineSmall),
       titleLarge: notoSansCaucasianAlbanian(textStyle: textTheme.titleLarge),
       titleMedium: notoSansCaucasianAlbanian(textStyle: textTheme.titleMedium),
       titleSmall: notoSansCaucasianAlbanian(textStyle: textTheme.titleSmall),
@@ -7473,41 +7429,23 @@ class PartN {
   ///
   /// See:
   ///  * https://fonts.google.com/specimen/Noto+Sans+Egyptian+Hieroglyphs
-  static TextTheme notoSansEgyptianHieroglyphsTextTheme([
-    TextTheme? textTheme,
-  ]) {
+  static TextTheme notoSansEgyptianHieroglyphsTextTheme([TextTheme? textTheme]) {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
-      displayLarge: notoSansEgyptianHieroglyphs(
-        textStyle: textTheme.displayLarge,
-      ),
-      displayMedium: notoSansEgyptianHieroglyphs(
-        textStyle: textTheme.displayMedium,
-      ),
-      displaySmall: notoSansEgyptianHieroglyphs(
-        textStyle: textTheme.displaySmall,
-      ),
-      headlineLarge: notoSansEgyptianHieroglyphs(
-        textStyle: textTheme.headlineLarge,
-      ),
-      headlineMedium: notoSansEgyptianHieroglyphs(
-        textStyle: textTheme.headlineMedium,
-      ),
-      headlineSmall: notoSansEgyptianHieroglyphs(
-        textStyle: textTheme.headlineSmall,
-      ),
+      displayLarge: notoSansEgyptianHieroglyphs(textStyle: textTheme.displayLarge),
+      displayMedium: notoSansEgyptianHieroglyphs(textStyle: textTheme.displayMedium),
+      displaySmall: notoSansEgyptianHieroglyphs(textStyle: textTheme.displaySmall),
+      headlineLarge: notoSansEgyptianHieroglyphs(textStyle: textTheme.headlineLarge),
+      headlineMedium: notoSansEgyptianHieroglyphs(textStyle: textTheme.headlineMedium),
+      headlineSmall: notoSansEgyptianHieroglyphs(textStyle: textTheme.headlineSmall),
       titleLarge: notoSansEgyptianHieroglyphs(textStyle: textTheme.titleLarge),
-      titleMedium: notoSansEgyptianHieroglyphs(
-        textStyle: textTheme.titleMedium,
-      ),
+      titleMedium: notoSansEgyptianHieroglyphs(textStyle: textTheme.titleMedium),
       titleSmall: notoSansEgyptianHieroglyphs(textStyle: textTheme.titleSmall),
       bodyLarge: notoSansEgyptianHieroglyphs(textStyle: textTheme.bodyLarge),
       bodyMedium: notoSansEgyptianHieroglyphs(textStyle: textTheme.bodyMedium),
       bodySmall: notoSansEgyptianHieroglyphs(textStyle: textTheme.bodySmall),
       labelLarge: notoSansEgyptianHieroglyphs(textStyle: textTheme.labelLarge),
-      labelMedium: notoSansEgyptianHieroglyphs(
-        textStyle: textTheme.labelMedium,
-      ),
+      labelMedium: notoSansEgyptianHieroglyphs(textStyle: textTheme.labelMedium),
       labelSmall: notoSansEgyptianHieroglyphs(textStyle: textTheme.labelSmall),
     );
   }
@@ -8864,9 +8802,7 @@ class PartN {
       displayMedium: notoSansHanifiRohingya(textStyle: textTheme.displayMedium),
       displaySmall: notoSansHanifiRohingya(textStyle: textTheme.displaySmall),
       headlineLarge: notoSansHanifiRohingya(textStyle: textTheme.headlineLarge),
-      headlineMedium: notoSansHanifiRohingya(
-        textStyle: textTheme.headlineMedium,
-      ),
+      headlineMedium: notoSansHanifiRohingya(textStyle: textTheme.headlineMedium),
       headlineSmall: notoSansHanifiRohingya(textStyle: textTheme.headlineSmall),
       titleLarge: notoSansHanifiRohingya(textStyle: textTheme.titleLarge),
       titleMedium: notoSansHanifiRohingya(textStyle: textTheme.titleMedium),
@@ -9267,19 +9203,11 @@ class PartN {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
       displayLarge: notoSansImperialAramaic(textStyle: textTheme.displayLarge),
-      displayMedium: notoSansImperialAramaic(
-        textStyle: textTheme.displayMedium,
-      ),
+      displayMedium: notoSansImperialAramaic(textStyle: textTheme.displayMedium),
       displaySmall: notoSansImperialAramaic(textStyle: textTheme.displaySmall),
-      headlineLarge: notoSansImperialAramaic(
-        textStyle: textTheme.headlineLarge,
-      ),
-      headlineMedium: notoSansImperialAramaic(
-        textStyle: textTheme.headlineMedium,
-      ),
-      headlineSmall: notoSansImperialAramaic(
-        textStyle: textTheme.headlineSmall,
-      ),
+      headlineLarge: notoSansImperialAramaic(textStyle: textTheme.headlineLarge),
+      headlineMedium: notoSansImperialAramaic(textStyle: textTheme.headlineMedium),
+      headlineSmall: notoSansImperialAramaic(textStyle: textTheme.headlineSmall),
       titleLarge: notoSansImperialAramaic(textStyle: textTheme.titleLarge),
       titleMedium: notoSansImperialAramaic(textStyle: textTheme.titleMedium),
       titleSmall: notoSansImperialAramaic(textStyle: textTheme.titleSmall),
@@ -9361,24 +9289,12 @@ class PartN {
   static TextTheme notoSansIndicSiyaqNumbersTextTheme([TextTheme? textTheme]) {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
-      displayLarge: notoSansIndicSiyaqNumbers(
-        textStyle: textTheme.displayLarge,
-      ),
-      displayMedium: notoSansIndicSiyaqNumbers(
-        textStyle: textTheme.displayMedium,
-      ),
-      displaySmall: notoSansIndicSiyaqNumbers(
-        textStyle: textTheme.displaySmall,
-      ),
-      headlineLarge: notoSansIndicSiyaqNumbers(
-        textStyle: textTheme.headlineLarge,
-      ),
-      headlineMedium: notoSansIndicSiyaqNumbers(
-        textStyle: textTheme.headlineMedium,
-      ),
-      headlineSmall: notoSansIndicSiyaqNumbers(
-        textStyle: textTheme.headlineSmall,
-      ),
+      displayLarge: notoSansIndicSiyaqNumbers(textStyle: textTheme.displayLarge),
+      displayMedium: notoSansIndicSiyaqNumbers(textStyle: textTheme.displayMedium),
+      displaySmall: notoSansIndicSiyaqNumbers(textStyle: textTheme.displaySmall),
+      headlineLarge: notoSansIndicSiyaqNumbers(textStyle: textTheme.headlineLarge),
+      headlineMedium: notoSansIndicSiyaqNumbers(textStyle: textTheme.headlineMedium),
+      headlineSmall: notoSansIndicSiyaqNumbers(textStyle: textTheme.headlineSmall),
       titleLarge: notoSansIndicSiyaqNumbers(textStyle: textTheme.titleLarge),
       titleMedium: notoSansIndicSiyaqNumbers(textStyle: textTheme.titleMedium),
       titleSmall: notoSansIndicSiyaqNumbers(textStyle: textTheme.titleSmall),
@@ -9457,41 +9373,23 @@ class PartN {
   ///
   /// See:
   ///  * https://fonts.google.com/specimen/Noto+Sans+Inscriptional+Pahlavi
-  static TextTheme notoSansInscriptionalPahlaviTextTheme([
-    TextTheme? textTheme,
-  ]) {
+  static TextTheme notoSansInscriptionalPahlaviTextTheme([TextTheme? textTheme]) {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
-      displayLarge: notoSansInscriptionalPahlavi(
-        textStyle: textTheme.displayLarge,
-      ),
-      displayMedium: notoSansInscriptionalPahlavi(
-        textStyle: textTheme.displayMedium,
-      ),
-      displaySmall: notoSansInscriptionalPahlavi(
-        textStyle: textTheme.displaySmall,
-      ),
-      headlineLarge: notoSansInscriptionalPahlavi(
-        textStyle: textTheme.headlineLarge,
-      ),
-      headlineMedium: notoSansInscriptionalPahlavi(
-        textStyle: textTheme.headlineMedium,
-      ),
-      headlineSmall: notoSansInscriptionalPahlavi(
-        textStyle: textTheme.headlineSmall,
-      ),
+      displayLarge: notoSansInscriptionalPahlavi(textStyle: textTheme.displayLarge),
+      displayMedium: notoSansInscriptionalPahlavi(textStyle: textTheme.displayMedium),
+      displaySmall: notoSansInscriptionalPahlavi(textStyle: textTheme.displaySmall),
+      headlineLarge: notoSansInscriptionalPahlavi(textStyle: textTheme.headlineLarge),
+      headlineMedium: notoSansInscriptionalPahlavi(textStyle: textTheme.headlineMedium),
+      headlineSmall: notoSansInscriptionalPahlavi(textStyle: textTheme.headlineSmall),
       titleLarge: notoSansInscriptionalPahlavi(textStyle: textTheme.titleLarge),
-      titleMedium: notoSansInscriptionalPahlavi(
-        textStyle: textTheme.titleMedium,
-      ),
+      titleMedium: notoSansInscriptionalPahlavi(textStyle: textTheme.titleMedium),
       titleSmall: notoSansInscriptionalPahlavi(textStyle: textTheme.titleSmall),
       bodyLarge: notoSansInscriptionalPahlavi(textStyle: textTheme.bodyLarge),
       bodyMedium: notoSansInscriptionalPahlavi(textStyle: textTheme.bodyMedium),
       bodySmall: notoSansInscriptionalPahlavi(textStyle: textTheme.bodySmall),
       labelLarge: notoSansInscriptionalPahlavi(textStyle: textTheme.labelLarge),
-      labelMedium: notoSansInscriptionalPahlavi(
-        textStyle: textTheme.labelMedium,
-      ),
+      labelMedium: notoSansInscriptionalPahlavi(textStyle: textTheme.labelMedium),
       labelSmall: notoSansInscriptionalPahlavi(textStyle: textTheme.labelSmall),
     );
   }
@@ -9562,52 +9460,24 @@ class PartN {
   ///
   /// See:
   ///  * https://fonts.google.com/specimen/Noto+Sans+Inscriptional+Parthian
-  static TextTheme notoSansInscriptionalParthianTextTheme([
-    TextTheme? textTheme,
-  ]) {
+  static TextTheme notoSansInscriptionalParthianTextTheme([TextTheme? textTheme]) {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
-      displayLarge: notoSansInscriptionalParthian(
-        textStyle: textTheme.displayLarge,
-      ),
-      displayMedium: notoSansInscriptionalParthian(
-        textStyle: textTheme.displayMedium,
-      ),
-      displaySmall: notoSansInscriptionalParthian(
-        textStyle: textTheme.displaySmall,
-      ),
-      headlineLarge: notoSansInscriptionalParthian(
-        textStyle: textTheme.headlineLarge,
-      ),
-      headlineMedium: notoSansInscriptionalParthian(
-        textStyle: textTheme.headlineMedium,
-      ),
-      headlineSmall: notoSansInscriptionalParthian(
-        textStyle: textTheme.headlineSmall,
-      ),
-      titleLarge: notoSansInscriptionalParthian(
-        textStyle: textTheme.titleLarge,
-      ),
-      titleMedium: notoSansInscriptionalParthian(
-        textStyle: textTheme.titleMedium,
-      ),
-      titleSmall: notoSansInscriptionalParthian(
-        textStyle: textTheme.titleSmall,
-      ),
+      displayLarge: notoSansInscriptionalParthian(textStyle: textTheme.displayLarge),
+      displayMedium: notoSansInscriptionalParthian(textStyle: textTheme.displayMedium),
+      displaySmall: notoSansInscriptionalParthian(textStyle: textTheme.displaySmall),
+      headlineLarge: notoSansInscriptionalParthian(textStyle: textTheme.headlineLarge),
+      headlineMedium: notoSansInscriptionalParthian(textStyle: textTheme.headlineMedium),
+      headlineSmall: notoSansInscriptionalParthian(textStyle: textTheme.headlineSmall),
+      titleLarge: notoSansInscriptionalParthian(textStyle: textTheme.titleLarge),
+      titleMedium: notoSansInscriptionalParthian(textStyle: textTheme.titleMedium),
+      titleSmall: notoSansInscriptionalParthian(textStyle: textTheme.titleSmall),
       bodyLarge: notoSansInscriptionalParthian(textStyle: textTheme.bodyLarge),
-      bodyMedium: notoSansInscriptionalParthian(
-        textStyle: textTheme.bodyMedium,
-      ),
+      bodyMedium: notoSansInscriptionalParthian(textStyle: textTheme.bodyMedium),
       bodySmall: notoSansInscriptionalParthian(textStyle: textTheme.bodySmall),
-      labelLarge: notoSansInscriptionalParthian(
-        textStyle: textTheme.labelLarge,
-      ),
-      labelMedium: notoSansInscriptionalParthian(
-        textStyle: textTheme.labelMedium,
-      ),
-      labelSmall: notoSansInscriptionalParthian(
-        textStyle: textTheme.labelSmall,
-      ),
+      labelLarge: notoSansInscriptionalParthian(textStyle: textTheme.labelLarge),
+      labelMedium: notoSansInscriptionalParthian(textStyle: textTheme.labelMedium),
+      labelSmall: notoSansInscriptionalParthian(textStyle: textTheme.labelSmall),
     );
   }
 
@@ -11624,13 +11494,8 @@ class PartN {
     double? decorationThickness,
   }) {
     final fonts = <GoogleFontsVariant, GoogleFontsFile>{
-      const GoogleFontsVariant(
-        fontWeight: FontWeight.w400,
-        fontStyle: FontStyle.normal,
-      ): GoogleFontsFile(
-        '75575abbe344a6327d36709c771ce18f37609a7875a1486bf4e9eda959d814ee',
-        3380,
-      ),
+      const GoogleFontsVariant(fontWeight: FontWeight.w400, fontStyle: FontStyle.normal):
+          GoogleFontsFile('75575abbe344a6327d36709c771ce18f37609a7875a1486bf4e9eda959d814ee', 3380),
     };
 
     return googleFontsTextStyle(
@@ -12509,9 +12374,7 @@ class PartN {
       displayMedium: notoSansMayanNumerals(textStyle: textTheme.displayMedium),
       displaySmall: notoSansMayanNumerals(textStyle: textTheme.displaySmall),
       headlineLarge: notoSansMayanNumerals(textStyle: textTheme.headlineLarge),
-      headlineMedium: notoSansMayanNumerals(
-        textStyle: textTheme.headlineMedium,
-      ),
+      headlineMedium: notoSansMayanNumerals(textStyle: textTheme.headlineMedium),
       headlineSmall: notoSansMayanNumerals(textStyle: textTheme.headlineSmall),
       titleLarge: notoSansMayanNumerals(textStyle: textTheme.titleLarge),
       titleMedium: notoSansMayanNumerals(textStyle: textTheme.titleMedium),
@@ -14869,19 +14732,11 @@ class PartN {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
       displayLarge: notoSansOldNorthArabian(textStyle: textTheme.displayLarge),
-      displayMedium: notoSansOldNorthArabian(
-        textStyle: textTheme.displayMedium,
-      ),
+      displayMedium: notoSansOldNorthArabian(textStyle: textTheme.displayMedium),
       displaySmall: notoSansOldNorthArabian(textStyle: textTheme.displaySmall),
-      headlineLarge: notoSansOldNorthArabian(
-        textStyle: textTheme.headlineLarge,
-      ),
-      headlineMedium: notoSansOldNorthArabian(
-        textStyle: textTheme.headlineMedium,
-      ),
-      headlineSmall: notoSansOldNorthArabian(
-        textStyle: textTheme.headlineSmall,
-      ),
+      headlineLarge: notoSansOldNorthArabian(textStyle: textTheme.headlineLarge),
+      headlineMedium: notoSansOldNorthArabian(textStyle: textTheme.headlineMedium),
+      headlineSmall: notoSansOldNorthArabian(textStyle: textTheme.headlineSmall),
       titleLarge: notoSansOldNorthArabian(textStyle: textTheme.titleLarge),
       titleMedium: notoSansOldNorthArabian(textStyle: textTheme.titleMedium),
       titleSmall: notoSansOldNorthArabian(textStyle: textTheme.titleSmall),
@@ -15225,19 +15080,11 @@ class PartN {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
       displayLarge: notoSansOldSouthArabian(textStyle: textTheme.displayLarge),
-      displayMedium: notoSansOldSouthArabian(
-        textStyle: textTheme.displayMedium,
-      ),
+      displayMedium: notoSansOldSouthArabian(textStyle: textTheme.displayMedium),
       displaySmall: notoSansOldSouthArabian(textStyle: textTheme.displaySmall),
-      headlineLarge: notoSansOldSouthArabian(
-        textStyle: textTheme.headlineLarge,
-      ),
-      headlineMedium: notoSansOldSouthArabian(
-        textStyle: textTheme.headlineMedium,
-      ),
-      headlineSmall: notoSansOldSouthArabian(
-        textStyle: textTheme.headlineSmall,
-      ),
+      headlineLarge: notoSansOldSouthArabian(textStyle: textTheme.headlineLarge),
+      headlineMedium: notoSansOldSouthArabian(textStyle: textTheme.headlineMedium),
+      headlineSmall: notoSansOldSouthArabian(textStyle: textTheme.headlineSmall),
       titleLarge: notoSansOldSouthArabian(textStyle: textTheme.titleLarge),
       titleMedium: notoSansOldSouthArabian(textStyle: textTheme.titleMedium),
       titleSmall: notoSansOldSouthArabian(textStyle: textTheme.titleSmall),
@@ -16162,9 +16009,7 @@ class PartN {
       displayMedium: notoSansPsalterPahlavi(textStyle: textTheme.displayMedium),
       displaySmall: notoSansPsalterPahlavi(textStyle: textTheme.displaySmall),
       headlineLarge: notoSansPsalterPahlavi(textStyle: textTheme.headlineLarge),
-      headlineMedium: notoSansPsalterPahlavi(
-        textStyle: textTheme.headlineMedium,
-      ),
+      headlineMedium: notoSansPsalterPahlavi(textStyle: textTheme.headlineMedium),
       headlineSmall: notoSansPsalterPahlavi(textStyle: textTheme.headlineSmall),
       titleLarge: notoSansPsalterPahlavi(textStyle: textTheme.titleLarge),
       titleMedium: notoSansPsalterPahlavi(textStyle: textTheme.titleMedium),
@@ -18226,9 +18071,7 @@ class PartN {
       displayMedium: notoSansSyriacEastern(textStyle: textTheme.displayMedium),
       displaySmall: notoSansSyriacEastern(textStyle: textTheme.displaySmall),
       headlineLarge: notoSansSyriacEastern(textStyle: textTheme.headlineLarge),
-      headlineMedium: notoSansSyriacEastern(
-        textStyle: textTheme.headlineMedium,
-      ),
+      headlineMedium: notoSansSyriacEastern(textStyle: textTheme.headlineMedium),
       headlineSmall: notoSansSyriacEastern(textStyle: textTheme.headlineSmall),
       titleLarge: notoSansSyriacEastern(textStyle: textTheme.titleLarge),
       titleMedium: notoSansSyriacEastern(textStyle: textTheme.titleMedium),
@@ -18371,9 +18214,7 @@ class PartN {
       displayMedium: notoSansSyriacWestern(textStyle: textTheme.displayMedium),
       displaySmall: notoSansSyriacWestern(textStyle: textTheme.displaySmall),
       headlineLarge: notoSansSyriacWestern(textStyle: textTheme.headlineLarge),
-      headlineMedium: notoSansSyriacWestern(
-        textStyle: textTheme.headlineMedium,
-      ),
+      headlineMedium: notoSansSyriacWestern(textStyle: textTheme.headlineMedium),
       headlineSmall: notoSansSyriacWestern(textStyle: textTheme.headlineSmall),
       titleLarge: notoSansSyriacWestern(textStyle: textTheme.titleLarge),
       titleMedium: notoSansSyriacWestern(textStyle: textTheme.titleMedium),
@@ -19286,19 +19127,11 @@ class PartN {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
       displayLarge: notoSansTamilSupplement(textStyle: textTheme.displayLarge),
-      displayMedium: notoSansTamilSupplement(
-        textStyle: textTheme.displayMedium,
-      ),
+      displayMedium: notoSansTamilSupplement(textStyle: textTheme.displayMedium),
       displaySmall: notoSansTamilSupplement(textStyle: textTheme.displaySmall),
-      headlineLarge: notoSansTamilSupplement(
-        textStyle: textTheme.headlineLarge,
-      ),
-      headlineMedium: notoSansTamilSupplement(
-        textStyle: textTheme.headlineMedium,
-      ),
-      headlineSmall: notoSansTamilSupplement(
-        textStyle: textTheme.headlineSmall,
-      ),
+      headlineLarge: notoSansTamilSupplement(textStyle: textTheme.headlineLarge),
+      headlineMedium: notoSansTamilSupplement(textStyle: textTheme.headlineMedium),
+      headlineSmall: notoSansTamilSupplement(textStyle: textTheme.headlineSmall),
       titleLarge: notoSansTamilSupplement(textStyle: textTheme.titleLarge),
       titleMedium: notoSansTamilSupplement(textStyle: textTheme.titleMedium),
       titleSmall: notoSansTamilSupplement(textStyle: textTheme.titleSmall),
@@ -20778,19 +20611,11 @@ class PartN {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
       displayLarge: notoSansZanabazarSquare(textStyle: textTheme.displayLarge),
-      displayMedium: notoSansZanabazarSquare(
-        textStyle: textTheme.displayMedium,
-      ),
+      displayMedium: notoSansZanabazarSquare(textStyle: textTheme.displayMedium),
       displaySmall: notoSansZanabazarSquare(textStyle: textTheme.displaySmall),
-      headlineLarge: notoSansZanabazarSquare(
-        textStyle: textTheme.headlineLarge,
-      ),
-      headlineMedium: notoSansZanabazarSquare(
-        textStyle: textTheme.headlineMedium,
-      ),
-      headlineSmall: notoSansZanabazarSquare(
-        textStyle: textTheme.headlineSmall,
-      ),
+      headlineLarge: notoSansZanabazarSquare(textStyle: textTheme.headlineLarge),
+      headlineMedium: notoSansZanabazarSquare(textStyle: textTheme.headlineMedium),
+      headlineSmall: notoSansZanabazarSquare(textStyle: textTheme.headlineSmall),
       titleLarge: notoSansZanabazarSquare(textStyle: textTheme.titleLarge),
       titleMedium: notoSansZanabazarSquare(textStyle: textTheme.titleMedium),
       titleSmall: notoSansZanabazarSquare(textStyle: textTheme.titleSmall),
@@ -23550,24 +23375,12 @@ class PartN {
   static TextTheme notoSerifKhitanSmallScriptTextTheme([TextTheme? textTheme]) {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
-      displayLarge: notoSerifKhitanSmallScript(
-        textStyle: textTheme.displayLarge,
-      ),
-      displayMedium: notoSerifKhitanSmallScript(
-        textStyle: textTheme.displayMedium,
-      ),
-      displaySmall: notoSerifKhitanSmallScript(
-        textStyle: textTheme.displaySmall,
-      ),
-      headlineLarge: notoSerifKhitanSmallScript(
-        textStyle: textTheme.headlineLarge,
-      ),
-      headlineMedium: notoSerifKhitanSmallScript(
-        textStyle: textTheme.headlineMedium,
-      ),
-      headlineSmall: notoSerifKhitanSmallScript(
-        textStyle: textTheme.headlineSmall,
-      ),
+      displayLarge: notoSerifKhitanSmallScript(textStyle: textTheme.displayLarge),
+      displayMedium: notoSerifKhitanSmallScript(textStyle: textTheme.displayMedium),
+      displaySmall: notoSerifKhitanSmallScript(textStyle: textTheme.displaySmall),
+      headlineLarge: notoSerifKhitanSmallScript(textStyle: textTheme.headlineLarge),
+      headlineMedium: notoSerifKhitanSmallScript(textStyle: textTheme.headlineMedium),
+      headlineSmall: notoSerifKhitanSmallScript(textStyle: textTheme.headlineSmall),
       titleLarge: notoSerifKhitanSmallScript(textStyle: textTheme.titleLarge),
       titleMedium: notoSerifKhitanSmallScript(textStyle: textTheme.titleMedium),
       titleSmall: notoSerifKhitanSmallScript(textStyle: textTheme.titleSmall),
@@ -24723,9 +24536,7 @@ class PartN {
       displayMedium: notoSerifOttomanSiyaq(textStyle: textTheme.displayMedium),
       displaySmall: notoSerifOttomanSiyaq(textStyle: textTheme.displaySmall),
       headlineLarge: notoSerifOttomanSiyaq(textStyle: textTheme.headlineLarge),
-      headlineMedium: notoSerifOttomanSiyaq(
-        textStyle: textTheme.headlineMedium,
-      ),
+      headlineMedium: notoSerifOttomanSiyaq(textStyle: textTheme.headlineMedium),
       headlineSmall: notoSerifOttomanSiyaq(textStyle: textTheme.headlineSmall),
       titleLarge: notoSerifOttomanSiyaq(textStyle: textTheme.titleLarge),
       titleMedium: notoSerifOttomanSiyaq(textStyle: textTheme.titleMedium),
@@ -26468,41 +26279,23 @@ class PartN {
   ///
   /// See:
   ///  * https://fonts.google.com/specimen/Noto+Znamenny+Musical+Notation
-  static TextTheme notoZnamennyMusicalNotationTextTheme([
-    TextTheme? textTheme,
-  ]) {
+  static TextTheme notoZnamennyMusicalNotationTextTheme([TextTheme? textTheme]) {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
-      displayLarge: notoZnamennyMusicalNotation(
-        textStyle: textTheme.displayLarge,
-      ),
-      displayMedium: notoZnamennyMusicalNotation(
-        textStyle: textTheme.displayMedium,
-      ),
-      displaySmall: notoZnamennyMusicalNotation(
-        textStyle: textTheme.displaySmall,
-      ),
-      headlineLarge: notoZnamennyMusicalNotation(
-        textStyle: textTheme.headlineLarge,
-      ),
-      headlineMedium: notoZnamennyMusicalNotation(
-        textStyle: textTheme.headlineMedium,
-      ),
-      headlineSmall: notoZnamennyMusicalNotation(
-        textStyle: textTheme.headlineSmall,
-      ),
+      displayLarge: notoZnamennyMusicalNotation(textStyle: textTheme.displayLarge),
+      displayMedium: notoZnamennyMusicalNotation(textStyle: textTheme.displayMedium),
+      displaySmall: notoZnamennyMusicalNotation(textStyle: textTheme.displaySmall),
+      headlineLarge: notoZnamennyMusicalNotation(textStyle: textTheme.headlineLarge),
+      headlineMedium: notoZnamennyMusicalNotation(textStyle: textTheme.headlineMedium),
+      headlineSmall: notoZnamennyMusicalNotation(textStyle: textTheme.headlineSmall),
       titleLarge: notoZnamennyMusicalNotation(textStyle: textTheme.titleLarge),
-      titleMedium: notoZnamennyMusicalNotation(
-        textStyle: textTheme.titleMedium,
-      ),
+      titleMedium: notoZnamennyMusicalNotation(textStyle: textTheme.titleMedium),
       titleSmall: notoZnamennyMusicalNotation(textStyle: textTheme.titleSmall),
       bodyLarge: notoZnamennyMusicalNotation(textStyle: textTheme.bodyLarge),
       bodyMedium: notoZnamennyMusicalNotation(textStyle: textTheme.bodyMedium),
       bodySmall: notoZnamennyMusicalNotation(textStyle: textTheme.bodySmall),
       labelLarge: notoZnamennyMusicalNotation(textStyle: textTheme.labelLarge),
-      labelMedium: notoZnamennyMusicalNotation(
-        textStyle: textTheme.labelMedium,
-      ),
+      labelMedium: notoZnamennyMusicalNotation(textStyle: textTheme.labelMedium),
       labelSmall: notoZnamennyMusicalNotation(textStyle: textTheme.labelSmall),
     );
   }

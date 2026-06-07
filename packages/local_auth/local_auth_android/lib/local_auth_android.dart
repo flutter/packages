@@ -16,8 +16,7 @@ export 'package:local_auth_platform_interface/types/biometric_type.dart';
 /// The implementation of [LocalAuthPlatform] for Android.
 class LocalAuthAndroid extends LocalAuthPlatform {
   /// Creates a new plugin implementation instance.
-  LocalAuthAndroid({@visibleForTesting LocalAuthApi? api})
-    : _api = api ?? LocalAuthApi();
+  LocalAuthAndroid({@visibleForTesting LocalAuthApi? api}) : _api = api ?? LocalAuthApi();
 
   /// Registers this class as the default instance of [LocalAuthPlatform].
   static void registerWith() {
@@ -48,19 +47,13 @@ class LocalAuthAndroid extends LocalAuthPlatform {
       case AuthResultCode.userCanceled:
         // Variants of user cancelation format are not currently distinguished,
         // but could be if there's a use case for it in the future.
-        throw const LocalAuthException(
-          code: LocalAuthExceptionCode.userCanceled,
-        );
+        throw const LocalAuthException(code: LocalAuthExceptionCode.userCanceled);
       case AuthResultCode.systemCanceled:
-        throw const LocalAuthException(
-          code: LocalAuthExceptionCode.systemCanceled,
-        );
+        throw const LocalAuthException(code: LocalAuthExceptionCode.systemCanceled);
       case AuthResultCode.timeout:
         throw const LocalAuthException(code: LocalAuthExceptionCode.timeout);
       case AuthResultCode.alreadyInProgress:
-        throw const LocalAuthException(
-          code: LocalAuthExceptionCode.authInProgress,
-        );
+        throw const LocalAuthException(code: LocalAuthExceptionCode.authInProgress);
       case AuthResultCode.noActivity:
         throw const LocalAuthException(
           code: LocalAuthExceptionCode.uiUnavailable,
@@ -72,29 +65,19 @@ class LocalAuthAndroid extends LocalAuthPlatform {
           description: 'The current Activity must be a FragmentActivity.',
         );
       case AuthResultCode.noCredentials:
-        throw const LocalAuthException(
-          code: LocalAuthExceptionCode.noCredentialsSet,
-        );
+        throw const LocalAuthException(code: LocalAuthExceptionCode.noCredentialsSet);
       case AuthResultCode.noHardware:
-        throw const LocalAuthException(
-          code: LocalAuthExceptionCode.noBiometricHardware,
-        );
+        throw const LocalAuthException(code: LocalAuthExceptionCode.noBiometricHardware);
       case AuthResultCode.hardwareUnavailable:
         throw const LocalAuthException(
           code: LocalAuthExceptionCode.biometricHardwareTemporarilyUnavailable,
         );
       case AuthResultCode.notEnrolled:
-        throw const LocalAuthException(
-          code: LocalAuthExceptionCode.noBiometricsEnrolled,
-        );
+        throw const LocalAuthException(code: LocalAuthExceptionCode.noBiometricsEnrolled);
       case AuthResultCode.lockedOutTemporarily:
-        throw const LocalAuthException(
-          code: LocalAuthExceptionCode.temporaryLockout,
-        );
+        throw const LocalAuthException(code: LocalAuthExceptionCode.temporaryLockout);
       case AuthResultCode.lockedOutPermanently:
-        throw const LocalAuthException(
-          code: LocalAuthExceptionCode.biometricLockout,
-        );
+        throw const LocalAuthException(code: LocalAuthExceptionCode.biometricLockout);
       case AuthResultCode.noSpace:
         throw LocalAuthException(
           code: LocalAuthExceptionCode.deviceError,

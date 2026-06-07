@@ -26,9 +26,7 @@ void main() {
   testWidgets(
     'clicking the button should redirect to /',
     testClickingTheButtonRedirectsToRoot(
-      buttonFinder: find.byWidgetPredicate(
-        (Widget widget) => widget is GestureDetector,
-      ),
+      buttonFinder: find.byWidgetPredicate((Widget widget) => widget is GestureDetector),
       widget: widgetsAppBuilder(home: const ErrorScreen(null)),
     ),
   );

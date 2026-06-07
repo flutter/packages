@@ -8,8 +8,7 @@ import 'package:pigeon/pigeon.dart';
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
     kotlinOptions: KotlinOptions(package: 'io.flutter.plugins.inapppurchase'),
-    kotlinOut:
-        'android/src/main/kotlin/io/flutter/plugins/inapppurchase/Messages.kt',
+    kotlinOut: 'android/src/main/kotlin/io/flutter/plugins/inapppurchase/Messages.kt',
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
@@ -37,9 +36,11 @@ class PlatformBillingResult {
   PlatformBillingResult({
     required this.responseCode,
     required this.debugMessage,
+    this.subResponseCode = 0,
   });
   final PlatformBillingResponse responseCode;
   final String debugMessage;
+  final int subResponseCode;
 }
 
 /// Pigeon version of Java BillingClient.BillingResponseCode.
@@ -81,6 +82,7 @@ class PlatformProductDetails {
     required this.productType,
     required this.title,
     required this.oneTimePurchaseOfferDetails,
+    required this.oneTimePurchaseOfferDetailsList,
     required this.subscriptionOfferDetails,
   });
 
@@ -90,6 +92,7 @@ class PlatformProductDetails {
   final PlatformProductType productType;
   final String title;
   final PlatformOneTimePurchaseOfferDetails? oneTimePurchaseOfferDetails;
+  final List<PlatformOneTimePurchaseOfferDetails>? oneTimePurchaseOfferDetailsList;
   final List<PlatformSubscriptionOfferDetails>? subscriptionOfferDetails;
 }
 
@@ -99,10 +102,12 @@ class PlatformProductDetailsResponse {
   PlatformProductDetailsResponse({
     required this.billingResult,
     required this.productDetails,
+    required this.unfetchedProductList,
   });
 
   final PlatformBillingResult billingResult;
   final List<PlatformProductDetails> productDetails;
+  final List<PlatformUnfetchedProduct> unfetchedProductList;
 }
 
 /// Pigeon version of AlternativeBillingOnlyReportingDetailsWrapper, which
@@ -121,10 +126,7 @@ class PlatformAlternativeBillingOnlyReportingDetailsResponse {
 /// Pigeon version of BillingConfigWrapper, which contains the components of the
 /// Java BillingConfigResponseListener callback.
 class PlatformBillingConfigResponse {
-  PlatformBillingConfigResponse({
-    required this.billingResult,
-    required this.countryCode,
-  });
+  PlatformBillingConfigResponse({required this.billingResult, required this.countryCode});
 
   final PlatformBillingResult billingResult;
   final String countryCode;
@@ -220,10 +222,7 @@ class PlatformPurchase {
 ///
 /// See also PendingPurchaseUpdateWrapper on the Dart side.
 class PlatformPendingPurchaseUpdate {
-  PlatformPendingPurchaseUpdate({
-    required this.products,
-    required this.purchaseToken,
-  });
+  PlatformPendingPurchaseUpdate({required this.products, required this.purchaseToken});
 
   final List<String> products;
   final String purchaseToken;
@@ -255,10 +254,7 @@ class PlatformPurchaseHistoryRecord {
 /// Pigeon version of PurchasesHistoryResult, which contains the components of
 /// the Java PurchaseHistoryResponseListener callback.
 class PlatformPurchaseHistoryResponse {
-  PlatformPurchaseHistoryResponse({
-    required this.billingResult,
-    required this.purchases,
-  });
+  PlatformPurchaseHistoryResponse({required this.billingResult, required this.purchases});
 
   final PlatformBillingResult billingResult;
   final List<PlatformPurchaseHistoryRecord> purchases;
@@ -267,10 +263,7 @@ class PlatformPurchaseHistoryResponse {
 /// Pigeon version of PurchasesResultWrapper, which contains the components of
 /// the Java PurchasesResponseListener callback.
 class PlatformPurchasesResponse {
-  PlatformPurchasesResponse({
-    required this.billingResult,
-    required this.purchases,
-  });
+  PlatformPurchasesResponse({required this.billingResult, required this.purchases});
 
   final PlatformBillingResult billingResult;
   final List<PlatformPurchase> purchases;
@@ -314,11 +307,7 @@ class PlatformUserChoiceDetails {
 
 /// Pigeon version of UserChoiseDetails.Product.
 class PlatformUserChoiceProduct {
-  PlatformUserChoiceProduct({
-    required this.id,
-    required this.offerToken,
-    required this.type,
-  });
+  PlatformUserChoiceProduct({required this.id, required this.offerToken, required this.type});
 
   final String id;
   final String? offerToken;
@@ -342,6 +331,13 @@ class PlatformPendingPurchasesParams {
   PlatformPendingPurchasesParams({required this.enablePrepaidPlans});
 
   final bool enablePrepaidPlans;
+}
+
+/// Pigeon version of Java [UnfetchedProduct](https://developer.android.com/reference/com/android/billingclient/api/QueryProductDetailsParams.Product).
+class PlatformUnfetchedProduct {
+  PlatformUnfetchedProduct({required this.productId});
+
+  final String productId;
 }
 
 /// Pigeon version of Java BillingClient.ProductType.
@@ -412,21 +408,11 @@ abstract class InAppPurchaseApi {
 
   /// Wraps BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener).
   @async
-  PlatformPurchasesResponse queryPurchasesAsync(
-    PlatformProductType productType,
-  );
-
-  /// Wraps BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams, PurchaseHistoryResponseListener).
-  @async
-  PlatformPurchaseHistoryResponse queryPurchaseHistoryAsync(
-    PlatformProductType productType,
-  );
+  PlatformPurchasesResponse queryPurchasesAsync(PlatformProductType productType);
 
   /// Wraps BillingClient#queryProductDetailsAsync(QueryProductDetailsParams, ProductDetailsResponseListener).
   @async
-  PlatformProductDetailsResponse queryProductDetailsAsync(
-    List<PlatformQueryProduct> products,
-  );
+  PlatformProductDetailsResponse queryProductDetailsAsync(List<PlatformQueryProduct> products);
 
   /// Wraps BillingClient#isFeatureSupported(String).
   bool isFeatureSupported(PlatformBillingClientFeature feature);

@@ -19,9 +19,7 @@ import 'package:test/test.dart';
 const GoRouterGenerator generator = GoRouterGenerator();
 
 Future<void> main() async {
-  final formatter = dart_style.DartFormatter(
-    languageVersion: await _packageVersion(),
-  );
+  final formatter = dart_style.DartFormatter(languageVersion: await _packageVersion());
   final dir = Directory('test_inputs');
   final List<File> testFiles = dir
       .listSync()
@@ -68,9 +66,7 @@ Future<void> main() async {
 }
 
 Future<Version> _packageVersion() async {
-  final PackageConfig packageConfig = await loadPackageConfigUri(
-    Isolate.packageConfigSync!,
-  );
+  final PackageConfig packageConfig = await loadPackageConfigUri(Isolate.packageConfigSync!);
   final Uri pkgUri = Platform.script.resolve('../pubspec.yaml');
   final Package? package = packageConfig.packageOf(pkgUri);
   if (package == null) {
