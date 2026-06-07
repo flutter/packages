@@ -55,14 +55,11 @@ void main() {
         expect(addSizeDirectiveToUrl(url, size), expected);
       });
 
-      test(
-        'many directives, sets size and crop, preserves other directives',
-        () {
-          const url = '$base=s120-c-fSoften=1,50,0';
-          const expected = '$base=c-fSoften=1,50,0-s20';
-          expect(addSizeDirectiveToUrl(url, size), expected);
-        },
-      );
+      test('many directives, sets size and crop, preserves other directives', () {
+        const url = '$base=s120-c-fSoften=1,50,0';
+        const expected = '$base=c-fSoften=1,50,0-s20';
+        expect(addSizeDirectiveToUrl(url, size), expected);
+      });
     });
   });
 }

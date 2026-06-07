@@ -55,28 +55,19 @@ void main() {
 
     setUp(() {
       mockGis = MockGisSdkClient();
-      plugin = GoogleSignInPlugin(
-        debugOverrideLoader: true,
-        debugOverrideGisSdkClient: mockGis,
-      );
+      plugin = GoogleSignInPlugin(debugOverrideLoader: true, debugOverrideGisSdkClient: mockGis);
     });
 
     testWidgets('initializes if all is OK', (_) async {
-      await plugin.init(
-        const InitParameters(clientId: 'some-non-null-client-id'),
-      );
+      await plugin.init(const InitParameters(clientId: 'some-non-null-client-id'));
     });
 
     testWidgets('throws if init is called twice', (_) async {
-      await plugin.init(
-        const InitParameters(clientId: 'some-non-null-client-id'),
-      );
+      await plugin.init(const InitParameters(clientId: 'some-non-null-client-id'));
 
       // Calling init() a second time should throw state error
       expect(
-        () => plugin.init(
-          const InitParameters(clientId: 'some-non-null-client-id'),
-        ),
+        () => plugin.init(const InitParameters(clientId: 'some-non-null-client-id')),
         throwsStateError,
       );
     });
@@ -88,9 +79,7 @@ void main() {
 
       // Calling init() a second time synchronously should throw state error
       expect(
-        () => plugin.init(
-          const InitParameters(clientId: 'some-non-null-client-id'),
-        ),
+        () => plugin.init(const InitParameters(clientId: 'some-non-null-client-id')),
         throwsStateError,
       );
 
@@ -122,9 +111,7 @@ void main() {
       expect(plugin.supportsAuthenticate(), false);
     });
 
-    testWidgets('reports requirement for user interaction to authorize', (
-      _,
-    ) async {
+    testWidgets('reports requirement for user interaction to authorize', (_) async {
       final plugin = GoogleSignInPlugin(debugOverrideLoader: true);
 
       expect(plugin.authorizationRequiresUserInteraction(), true);
@@ -138,10 +125,7 @@ void main() {
 
     setUp(() {
       mockGis = MockGisSdkClient();
-      plugin = GoogleSignInPlugin(
-        debugOverrideLoader: true,
-        debugOverrideGisSdkClient: mockGis,
-      );
+      plugin = GoogleSignInPlugin(debugOverrideLoader: true, debugOverrideGisSdkClient: mockGis);
     });
 
     group('attemptLightweightAuthentication', () {
@@ -150,14 +134,11 @@ void main() {
       });
 
       testWidgets('Calls requestOneTap on GIS client', (_) async {
-        mockito
-            .when(mockGis.requestOneTap())
-            .thenAnswer((_) => Future<void>.value());
+        mockito.when(mockGis.requestOneTap()).thenAnswer((_) => Future<void>.value());
 
-        final Future<AuthenticationResults?>? future = plugin
-            .attemptLightweightAuthentication(
-              const AttemptLightweightAuthenticationParameters(),
-            );
+        final Future<AuthenticationResults?>? future = plugin.attemptLightweightAuthentication(
+          const AttemptLightweightAuthenticationParameters(),
+        );
 
         expect(future, null);
 
@@ -188,25 +169,22 @@ void main() {
             )
             .thenAnswer((_) => Future<String>.value(someAccessToken));
 
-        final ClientAuthorizationTokenData? token = await plugin
-            .clientAuthorizationTokensForScopes(
-              const ClientAuthorizationTokensForScopesParameters(
-                request: AuthorizationRequestDetails(
-                  scopes: scopes,
-                  userId: null,
-                  email: null,
-                  promptIfUnauthorized: false,
-                ),
-              ),
-            );
+        final ClientAuthorizationTokenData? token = await plugin.clientAuthorizationTokensForScopes(
+          const ClientAuthorizationTokensForScopesParameters(
+            request: AuthorizationRequestDetails(
+              scopes: scopes,
+              userId: null,
+              email: null,
+              promptIfUnauthorized: false,
+            ),
+          ),
+        );
 
         final List<Object?> arguments = mockito
             .verify(
               mockGis.requestScopes(
                 mockito.captureAny,
-                promptIfUnauthorized: mockito.captureAnyNamed(
-                  'promptIfUnauthorized',
-                ),
+                promptIfUnauthorized: mockito.captureAnyNamed('promptIfUnauthorized'),
                 userHint: mockito.captureAnyNamed('userHint'),
               ),
             )
@@ -231,25 +209,22 @@ void main() {
             )
             .thenAnswer((_) => Future<String>.value(someAccessToken));
 
-        final ClientAuthorizationTokenData? token = await plugin
-            .clientAuthorizationTokensForScopes(
-              const ClientAuthorizationTokensForScopesParameters(
-                request: AuthorizationRequestDetails(
-                  scopes: scopes,
-                  userId: someUserId,
-                  email: 'someone@example.com',
-                  promptIfUnauthorized: true,
-                ),
-              ),
-            );
+        final ClientAuthorizationTokenData? token = await plugin.clientAuthorizationTokensForScopes(
+          const ClientAuthorizationTokensForScopesParameters(
+            request: AuthorizationRequestDetails(
+              scopes: scopes,
+              userId: someUserId,
+              email: 'someone@example.com',
+              promptIfUnauthorized: true,
+            ),
+          ),
+        );
 
         final List<Object?> arguments = mockito
             .verify(
               mockGis.requestScopes(
                 mockito.captureAny,
-                promptIfUnauthorized: mockito.captureAnyNamed(
-                  'promptIfUnauthorized',
-                ),
+                promptIfUnauthorized: mockito.captureAnyNamed('promptIfUnauthorized'),
                 userHint: mockito.captureAnyNamed('userHint'),
               ),
             )
@@ -298,12 +273,9 @@ void main() {
           email: null,
           promptIfUnauthorized: true,
         );
-        final ServerAuthorizationTokenData? token = await plugin
-            .serverAuthorizationTokensForScopes(
-              const ServerAuthorizationTokensForScopesParameters(
-                request: request,
-              ),
-            );
+        final ServerAuthorizationTokenData? token = await plugin.serverAuthorizationTokensForScopes(
+          const ServerAuthorizationTokensForScopesParameters(request: request),
+        );
 
         final List<Object?> arguments = mockito
             .verify(mockGis.requestServerAuthCode(mockito.captureAny))
@@ -315,10 +287,7 @@ void main() {
         expect(passedRequest.scopes, request.scopes);
         expect(passedRequest.userId, request.userId);
         expect(passedRequest.email, request.email);
-        expect(
-          passedRequest.promptIfUnauthorized,
-          request.promptIfUnauthorized,
-        );
+        expect(passedRequest.promptIfUnauthorized, request.promptIfUnauthorized);
       });
 
       testWidgets('asserts no scopes have any spaces', (_) async {
@@ -370,8 +339,7 @@ void main() {
     });
 
     testWidgets('accepts async user data events from GIS.', (_) async {
-      final Future<AuthenticationEvent> event =
-          plugin.authenticationEvents.first;
+      final Future<AuthenticationEvent> event = plugin.authenticationEvents.first;
 
       const AuthenticationEvent expected = AuthenticationEventSignIn(
         user: GoogleSignInUserData(email: 'someone@example.com', id: 'user_id'),
@@ -379,14 +347,9 @@ void main() {
       );
       controller.add(expected);
 
-      expect(
-        await event,
-        expected,
-        reason: 'Sign-in events should be propagated',
-      );
+      expect(await event, expected, reason: 'Sign-in events should be propagated');
 
-      final Future<AuthenticationEvent?> nextEvent =
-          plugin.authenticationEvents.first;
+      final Future<AuthenticationEvent?> nextEvent = plugin.authenticationEvents.first;
       controller.add(AuthenticationEventSignOut());
 
       expect(

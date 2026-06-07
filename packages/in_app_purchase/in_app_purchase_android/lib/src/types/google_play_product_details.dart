@@ -35,8 +35,7 @@ class GooglePlayProductDetails extends ProductDetails {
         productDetails.oneTimePurchaseOfferDetails!;
 
     final String formattedPrice = oneTimePurchaseOfferDetails.formattedPrice;
-    final double rawPrice =
-        oneTimePurchaseOfferDetails.priceAmountMicros / 1000000.0;
+    final double rawPrice = oneTimePurchaseOfferDetails.priceAmountMicros / 1000000.0;
     final String currencyCode = oneTimePurchaseOfferDetails.priceCurrencyCode;
     final String? currencySymbol = _extractCurrencySymbol(formattedPrice);
 
@@ -70,8 +69,7 @@ class GooglePlayProductDetails extends ProductDetails {
     final SubscriptionOfferDetailsWrapper subscriptionOfferDetails =
         productDetails.subscriptionOfferDetails![subscriptionIndex];
 
-    final PricingPhaseWrapper firstPricingPhase =
-        subscriptionOfferDetails.pricingPhases.first;
+    final PricingPhaseWrapper firstPricingPhase = subscriptionOfferDetails.pricingPhases.first;
     final String formattedPrice = firstPricingPhase.formattedPrice;
     final double rawPrice = firstPricingPhase.priceAmountMicros / 1000000.0;
     final String currencyCode = firstPricingPhase.priceCurrencyCode;
@@ -98,14 +96,10 @@ class GooglePlayProductDetails extends ProductDetails {
   /// If [productDetails] is of type [ProductType.subs], a list is returned
   /// where every element corresponds to a base plan or its offer in
   /// [productDetails.subscriptionOfferDetails].
-  static List<GooglePlayProductDetails> fromProductDetails(
-    ProductDetailsWrapper productDetails,
-  ) {
+  static List<GooglePlayProductDetails> fromProductDetails(ProductDetailsWrapper productDetails) {
     if (productDetails.productType == ProductType.inapp) {
       return <GooglePlayProductDetails>[
-        GooglePlayProductDetails._fromOneTimePurchaseProductDetails(
-          productDetails,
-        ),
+        GooglePlayProductDetails._fromOneTimePurchaseProductDetails(productDetails),
       ];
     } else {
       final productDetailList = <GooglePlayProductDetails>[];
@@ -115,10 +109,7 @@ class GooglePlayProductDetails extends ProductDetails {
         subscriptionIndex++
       ) {
         productDetailList.add(
-          GooglePlayProductDetails._fromSubscription(
-            productDetails,
-            subscriptionIndex,
-          ),
+          GooglePlayProductDetails._fromSubscription(productDetails, subscriptionIndex),
         );
       }
 
@@ -158,10 +149,7 @@ class GooglePlayProductDetails extends ProductDetails {
   /// The offerToken of the subscription this [GooglePlayProductDetails]
   /// object was contructed for, or `null` if it was not a subscription.
   String? get offerToken =>
-      subscriptionIndex != null &&
-          productDetails.subscriptionOfferDetails != null
-      ? productDetails
-            .subscriptionOfferDetails![subscriptionIndex!]
-            .offerIdToken
+      subscriptionIndex != null && productDetails.subscriptionOfferDetails != null
+      ? productDetails.subscriptionOfferDetails![subscriptionIndex!].offerIdToken
       : null;
 }

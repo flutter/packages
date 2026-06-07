@@ -16,10 +16,7 @@ import 'image_picker_test.mocks.dart' as base_mock;
 class _MockImagePickerPlatform extends base_mock.MockImagePickerPlatform
     with MockPlatformInterfaceMixin {}
 
-@GenerateMocks(
-  <Type>[],
-  customMocks: <MockSpec<dynamic>>[MockSpec<ImagePickerPlatform>()],
-)
+@GenerateMocks(<Type>[], customMocks: <MockSpec<dynamic>>[MockSpec<ImagePickerPlatform>()])
 void main() {
   group('ImagePicker', () {
     late _MockImagePickerPlatform mockPlatform;
@@ -48,17 +45,11 @@ void main() {
           verifyInOrder(<Object>[
             mockPlatform.getImageFromSource(
               source: ImageSource.camera,
-              options: argThat(
-                isInstanceOf<ImagePickerOptions>(),
-                named: 'options',
-              ),
+              options: argThat(isInstanceOf<ImagePickerOptions>(), named: 'options'),
             ),
             mockPlatform.getImageFromSource(
               source: ImageSource.gallery,
-              options: argThat(
-                isInstanceOf<ImagePickerOptions>(),
-                named: 'options',
-              ),
+              options: argThat(isInstanceOf<ImagePickerOptions>(), named: 'options'),
             ),
           ]);
         });
@@ -68,21 +59,9 @@ void main() {
           await picker.pickImage(source: ImageSource.camera);
           await picker.pickImage(source: ImageSource.camera, maxWidth: 10.0);
           await picker.pickImage(source: ImageSource.camera, maxHeight: 10.0);
-          await picker.pickImage(
-            source: ImageSource.camera,
-            maxWidth: 10.0,
-            maxHeight: 20.0,
-          );
-          await picker.pickImage(
-            source: ImageSource.camera,
-            maxWidth: 10.0,
-            imageQuality: 70,
-          );
-          await picker.pickImage(
-            source: ImageSource.camera,
-            maxHeight: 10.0,
-            imageQuality: 70,
-          );
+          await picker.pickImage(source: ImageSource.camera, maxWidth: 10.0, maxHeight: 20.0);
+          await picker.pickImage(source: ImageSource.camera, maxWidth: 10.0, imageQuality: 70);
+          await picker.pickImage(source: ImageSource.camera, maxHeight: 10.0, imageQuality: 70);
           await picker.pickImage(
             source: ImageSource.camera,
             maxWidth: 10.0,
@@ -95,16 +74,8 @@ void main() {
               source: ImageSource.camera,
               options: argThat(
                 isInstanceOf<ImagePickerOptions>()
-                    .having(
-                      (ImagePickerOptions options) => options.maxWidth,
-                      'maxWidth',
-                      isNull,
-                    )
-                    .having(
-                      (ImagePickerOptions options) => options.maxHeight,
-                      'maxHeight',
-                      isNull,
-                    )
+                    .having((ImagePickerOptions options) => options.maxWidth, 'maxWidth', isNull)
+                    .having((ImagePickerOptions options) => options.maxHeight, 'maxHeight', isNull)
                     .having(
                       (ImagePickerOptions options) => options.imageQuality,
                       'imageQuality',
@@ -122,11 +93,7 @@ void main() {
                       'maxWidth',
                       equals(10.0),
                     )
-                    .having(
-                      (ImagePickerOptions options) => options.maxHeight,
-                      'maxHeight',
-                      isNull,
-                    )
+                    .having((ImagePickerOptions options) => options.maxHeight, 'maxHeight', isNull)
                     .having(
                       (ImagePickerOptions options) => options.imageQuality,
                       'imageQuality',
@@ -139,11 +106,7 @@ void main() {
               source: ImageSource.camera,
               options: argThat(
                 isInstanceOf<ImagePickerOptions>()
-                    .having(
-                      (ImagePickerOptions options) => options.maxWidth,
-                      'maxWidth',
-                      isNull,
-                    )
+                    .having((ImagePickerOptions options) => options.maxWidth, 'maxWidth', isNull)
                     .having(
                       (ImagePickerOptions options) => options.maxHeight,
                       'maxHeight',
@@ -188,11 +151,7 @@ void main() {
                       'maxWidth',
                       equals(10.0),
                     )
-                    .having(
-                      (ImagePickerOptions options) => options.maxHeight,
-                      'maxHeight',
-                      isNull,
-                    )
+                    .having((ImagePickerOptions options) => options.maxHeight, 'maxHeight', isNull)
                     .having(
                       (ImagePickerOptions options) => options.imageQuality,
                       'imageQuality',
@@ -205,11 +164,7 @@ void main() {
               source: ImageSource.camera,
               options: argThat(
                 isInstanceOf<ImagePickerOptions>()
-                    .having(
-                      (ImagePickerOptions options) => options.maxWidth,
-                      'maxWidth',
-                      isNull,
-                    )
+                    .having((ImagePickerOptions options) => options.maxWidth, 'maxWidth', isNull)
                     .having(
                       (ImagePickerOptions options) => options.maxHeight,
                       'maxHeight',
@@ -330,10 +285,7 @@ void main() {
 
         test('passes the full metadata argument correctly', () async {
           final picker = ImagePicker();
-          await picker.pickImage(
-            source: ImageSource.gallery,
-            requestFullMetadata: false,
-          );
+          await picker.pickImage(source: ImageSource.gallery, requestFullMetadata: false);
 
           verify(
             mockPlatform.getImageFromSource(
@@ -438,40 +390,28 @@ void main() {
           expect(response.file!.path, '/example/path');
         });
 
-        test(
-          'retrieveLostData should successfully retrieve multiple files',
-          () async {
-            final picker = ImagePicker();
-            final lostFiles = <XFile>[
-              XFile('/example/path0'),
-              XFile('/example/path1'),
-            ];
-            when(mockPlatform.getLostData()).thenAnswer(
-              (Invocation _) async => LostDataResponse(
-                file: lostFiles.last,
-                files: lostFiles,
-                type: RetrieveType.image,
-              ),
-            );
+        test('retrieveLostData should successfully retrieve multiple files', () async {
+          final picker = ImagePicker();
+          final lostFiles = <XFile>[XFile('/example/path0'), XFile('/example/path1')];
+          when(mockPlatform.getLostData()).thenAnswer(
+            (Invocation _) async =>
+                LostDataResponse(file: lostFiles.last, files: lostFiles, type: RetrieveType.image),
+          );
 
-            final LostDataResponse response = await picker.retrieveLostData();
+          final LostDataResponse response = await picker.retrieveLostData();
 
-            expect(response.type, RetrieveType.image);
-            expect(response.file, isNotNull);
-            expect(response.file!.path, '/example/path1');
-            expect(response.files!.first.path, '/example/path0');
-            expect(response.files!.length, 2);
-          },
-        );
+          expect(response.type, RetrieveType.image);
+          expect(response.file, isNotNull);
+          expect(response.file!.path, '/example/path1');
+          expect(response.files!.first.path, '/example/path0');
+          expect(response.files!.length, 2);
+        });
 
         test('retrieveLostData get error response', () async {
           final picker = ImagePicker();
           when(mockPlatform.getLostData()).thenAnswer(
             (Invocation _) async => LostDataResponse(
-              exception: PlatformException(
-                code: 'test_error_code',
-                message: 'test_error_message',
-              ),
+              exception: PlatformException(code: 'test_error_code', message: 'test_error_message'),
               type: RetrieveType.video,
             ),
           );
@@ -499,10 +439,7 @@ void main() {
 
           verifyInOrder(<Object>[
             mockPlatform.getMultiVideoWithOptions(
-              options: argThat(
-                isInstanceOf<MultiVideoPickerOptions>(),
-                named: 'options',
-              ),
+              options: argThat(isInstanceOf<MultiVideoPickerOptions>(), named: 'options'),
             ),
             mockPlatform.getMultiVideoWithOptions(
               options: argThat(
@@ -545,30 +482,17 @@ void main() {
           await picker.pickMultiImage(maxWidth: 10.0, maxHeight: 20.0);
           await picker.pickMultiImage(maxWidth: 10.0, imageQuality: 70);
           await picker.pickMultiImage(maxHeight: 10.0, imageQuality: 70);
-          await picker.pickMultiImage(
-            maxWidth: 10.0,
-            maxHeight: 20.0,
-            imageQuality: 70,
-          );
-          await picker.pickMultiImage(
-            maxWidth: 10.0,
-            maxHeight: 20.0,
-            imageQuality: 70,
-            limit: 5,
-          );
+          await picker.pickMultiImage(maxWidth: 10.0, maxHeight: 20.0, imageQuality: 70);
+          await picker.pickMultiImage(maxWidth: 10.0, maxHeight: 20.0, imageQuality: 70, limit: 5);
 
           verifyInOrder(<Object>[
             mockPlatform.getMultiImageWithOptions(
-              options: argThat(
-                isInstanceOf<MultiImagePickerOptions>(),
-                named: 'options',
-              ),
+              options: argThat(isInstanceOf<MultiImagePickerOptions>(), named: 'options'),
             ),
             mockPlatform.getMultiImageWithOptions(
               options: argThat(
                 isInstanceOf<MultiImagePickerOptions>().having(
-                  (MultiImagePickerOptions options) =>
-                      options.imageOptions.maxWidth,
+                  (MultiImagePickerOptions options) => options.imageOptions.maxWidth,
                   'maxWidth',
                   equals(10.0),
                 ),
@@ -578,8 +502,7 @@ void main() {
             mockPlatform.getMultiImageWithOptions(
               options: argThat(
                 isInstanceOf<MultiImagePickerOptions>().having(
-                  (MultiImagePickerOptions options) =>
-                      options.imageOptions.maxHeight,
+                  (MultiImagePickerOptions options) => options.imageOptions.maxHeight,
                   'maxHeight',
                   equals(10.0),
                 ),
@@ -590,14 +513,12 @@ void main() {
               options: argThat(
                 isInstanceOf<MultiImagePickerOptions>()
                     .having(
-                      (MultiImagePickerOptions options) =>
-                          options.imageOptions.maxWidth,
+                      (MultiImagePickerOptions options) => options.imageOptions.maxWidth,
                       'maxWidth',
                       equals(10.0),
                     )
                     .having(
-                      (MultiImagePickerOptions options) =>
-                          options.imageOptions.maxHeight,
+                      (MultiImagePickerOptions options) => options.imageOptions.maxHeight,
                       'maxHeight',
                       equals(20.0),
                     ),
@@ -608,14 +529,12 @@ void main() {
               options: argThat(
                 isInstanceOf<MultiImagePickerOptions>()
                     .having(
-                      (MultiImagePickerOptions options) =>
-                          options.imageOptions.maxWidth,
+                      (MultiImagePickerOptions options) => options.imageOptions.maxWidth,
                       'maxWidth',
                       equals(10.0),
                     )
                     .having(
-                      (MultiImagePickerOptions options) =>
-                          options.imageOptions.imageQuality,
+                      (MultiImagePickerOptions options) => options.imageOptions.imageQuality,
                       'imageQuality',
                       equals(70),
                     ),
@@ -626,14 +545,12 @@ void main() {
               options: argThat(
                 isInstanceOf<MultiImagePickerOptions>()
                     .having(
-                      (MultiImagePickerOptions options) =>
-                          options.imageOptions.maxHeight,
+                      (MultiImagePickerOptions options) => options.imageOptions.maxHeight,
                       'maxHeight',
                       equals(10.0),
                     )
                     .having(
-                      (MultiImagePickerOptions options) =>
-                          options.imageOptions.imageQuality,
+                      (MultiImagePickerOptions options) => options.imageOptions.imageQuality,
                       'imageQuality',
                       equals(70),
                     ),
@@ -644,20 +561,17 @@ void main() {
               options: argThat(
                 isInstanceOf<MultiImagePickerOptions>()
                     .having(
-                      (MultiImagePickerOptions options) =>
-                          options.imageOptions.maxWidth,
+                      (MultiImagePickerOptions options) => options.imageOptions.maxWidth,
                       'maxWidth',
                       equals(10.0),
                     )
                     .having(
-                      (MultiImagePickerOptions options) =>
-                          options.imageOptions.maxHeight,
+                      (MultiImagePickerOptions options) => options.imageOptions.maxHeight,
                       'maxHeight',
                       equals(20.0),
                     )
                     .having(
-                      (MultiImagePickerOptions options) =>
-                          options.imageOptions.imageQuality,
+                      (MultiImagePickerOptions options) => options.imageOptions.imageQuality,
                       'imageQuality',
                       equals(70),
                     ),
@@ -668,28 +582,21 @@ void main() {
               options: argThat(
                 isInstanceOf<MultiImagePickerOptions>()
                     .having(
-                      (MultiImagePickerOptions options) =>
-                          options.imageOptions.maxWidth,
+                      (MultiImagePickerOptions options) => options.imageOptions.maxWidth,
                       'maxWidth',
                       equals(10.0),
                     )
                     .having(
-                      (MultiImagePickerOptions options) =>
-                          options.imageOptions.maxHeight,
+                      (MultiImagePickerOptions options) => options.imageOptions.maxHeight,
                       'maxHeight',
                       equals(20.0),
                     )
                     .having(
-                      (MultiImagePickerOptions options) =>
-                          options.imageOptions.imageQuality,
+                      (MultiImagePickerOptions options) => options.imageOptions.imageQuality,
                       'imageQuality',
                       equals(70),
                     )
-                    .having(
-                      (MultiImagePickerOptions options) => options.limit,
-                      'limit',
-                      equals(5),
-                    ),
+                    .having((MultiImagePickerOptions options) => options.limit, 'limit', equals(5)),
                 named: 'options',
               ),
             ),
@@ -698,15 +605,9 @@ void main() {
 
         test('does not accept a negative width or height argument', () {
           final picker = ImagePicker();
-          expect(
-            () => picker.pickMultiImage(maxWidth: -1.0),
-            throwsArgumentError,
-          );
+          expect(() => picker.pickMultiImage(maxWidth: -1.0), throwsArgumentError);
 
-          expect(
-            () => picker.pickMultiImage(maxHeight: -1.0),
-            throwsArgumentError,
-          );
+          expect(() => picker.pickMultiImage(maxHeight: -1.0), throwsArgumentError);
         });
 
         test('does not accept a limit argument lower than 1', () {
@@ -780,8 +681,7 @@ void main() {
             mockPlatform.getMultiImageWithOptions(
               options: argThat(
                 isInstanceOf<MultiImagePickerOptions>().having(
-                  (MultiImagePickerOptions options) =>
-                      options.imageOptions.requestFullMetadata,
+                  (MultiImagePickerOptions options) => options.imageOptions.requestFullMetadata,
                   'requestFullMetadata',
                   isTrue,
                 ),
@@ -799,8 +699,7 @@ void main() {
             mockPlatform.getMultiImageWithOptions(
               options: argThat(
                 isInstanceOf<MultiImagePickerOptions>().having(
-                  (MultiImagePickerOptions options) =>
-                      options.imageOptions.requestFullMetadata,
+                  (MultiImagePickerOptions options) => options.imageOptions.requestFullMetadata,
                   'requestFullMetadata',
                   isFalse,
                 ),
@@ -828,21 +727,11 @@ void main() {
           await picker.pickMedia(maxWidth: 10.0, maxHeight: 20.0);
           await picker.pickMedia(maxWidth: 10.0, imageQuality: 70);
           await picker.pickMedia(maxHeight: 10.0, imageQuality: 70);
-          await picker.pickMedia(
-            maxWidth: 10.0,
-            maxHeight: 20.0,
-            imageQuality: 70,
-          );
-          await picker.pickMedia(
-            maxWidth: 10.0,
-            maxHeight: 20.0,
-            imageQuality: 70,
-          );
+          await picker.pickMedia(maxWidth: 10.0, maxHeight: 20.0, imageQuality: 70);
+          await picker.pickMedia(maxWidth: 10.0, maxHeight: 20.0, imageQuality: 70);
 
           verifyInOrder(<Object>[
-            mockPlatform.getMedia(
-              options: argThat(isInstanceOf<MediaOptions>(), named: 'options'),
-            ),
+            mockPlatform.getMedia(options: argThat(isInstanceOf<MediaOptions>(), named: 'options')),
             mockPlatform.getMedia(
               options: argThat(
                 isInstanceOf<MediaOptions>().having(
@@ -888,8 +777,7 @@ void main() {
                       equals(10.0),
                     )
                     .having(
-                      (MediaOptions options) =>
-                          options.imageOptions.imageQuality,
+                      (MediaOptions options) => options.imageOptions.imageQuality,
                       'imageQuality',
                       equals(70),
                     ),
@@ -905,8 +793,7 @@ void main() {
                       equals(10.0),
                     )
                     .having(
-                      (MediaOptions options) =>
-                          options.imageOptions.imageQuality,
+                      (MediaOptions options) => options.imageOptions.imageQuality,
                       'imageQuality',
                       equals(70),
                     ),
@@ -927,8 +814,7 @@ void main() {
                       equals(10.0),
                     )
                     .having(
-                      (MediaOptions options) =>
-                          options.imageOptions.imageQuality,
+                      (MediaOptions options) => options.imageOptions.imageQuality,
                       'imageQuality',
                       equals(70),
                     ),
@@ -960,8 +846,7 @@ void main() {
             mockPlatform.getMedia(
               options: argThat(
                 isInstanceOf<MediaOptions>().having(
-                  (MediaOptions options) =>
-                      options.imageOptions.requestFullMetadata,
+                  (MediaOptions options) => options.imageOptions.requestFullMetadata,
                   'requestFullMetadata',
                   isTrue,
                 ),
@@ -979,8 +864,7 @@ void main() {
             mockPlatform.getMedia(
               options: argThat(
                 isInstanceOf<MediaOptions>().having(
-                  (MediaOptions options) =>
-                      options.imageOptions.requestFullMetadata,
+                  (MediaOptions options) => options.imageOptions.requestFullMetadata,
                   'requestFullMetadata',
                   isFalse,
                 ),
@@ -1000,11 +884,7 @@ void main() {
           await picker.pickMultipleMedia(maxWidth: 10.0, maxHeight: 20.0);
           await picker.pickMultipleMedia(maxWidth: 10.0, imageQuality: 70);
           await picker.pickMultipleMedia(maxHeight: 10.0, imageQuality: 70);
-          await picker.pickMultipleMedia(
-            maxWidth: 10.0,
-            maxHeight: 20.0,
-            imageQuality: 70,
-          );
+          await picker.pickMultipleMedia(maxWidth: 10.0, maxHeight: 20.0, imageQuality: 70);
           await picker.pickMultipleMedia(
             maxWidth: 10.0,
             maxHeight: 20.0,
@@ -1013,9 +893,7 @@ void main() {
           );
 
           verifyInOrder(<Object>[
-            mockPlatform.getMedia(
-              options: argThat(isInstanceOf<MediaOptions>(), named: 'options'),
-            ),
+            mockPlatform.getMedia(options: argThat(isInstanceOf<MediaOptions>(), named: 'options')),
             mockPlatform.getMedia(
               options: argThat(
                 isInstanceOf<MediaOptions>().having(
@@ -1061,8 +939,7 @@ void main() {
                       equals(10.0),
                     )
                     .having(
-                      (MediaOptions options) =>
-                          options.imageOptions.imageQuality,
+                      (MediaOptions options) => options.imageOptions.imageQuality,
                       'imageQuality',
                       equals(70),
                     ),
@@ -1078,8 +955,7 @@ void main() {
                       equals(10.0),
                     )
                     .having(
-                      (MediaOptions options) =>
-                          options.imageOptions.imageQuality,
+                      (MediaOptions options) => options.imageOptions.imageQuality,
                       'imageQuality',
                       equals(70),
                     ),
@@ -1100,8 +976,7 @@ void main() {
                       equals(10.0),
                     )
                     .having(
-                      (MediaOptions options) =>
-                          options.imageOptions.imageQuality,
+                      (MediaOptions options) => options.imageOptions.imageQuality,
                       'imageQuality',
                       equals(70),
                     ),
@@ -1122,16 +997,11 @@ void main() {
                       equals(10.0),
                     )
                     .having(
-                      (MediaOptions options) =>
-                          options.imageOptions.imageQuality,
+                      (MediaOptions options) => options.imageOptions.imageQuality,
                       'imageQuality',
                       equals(70),
                     )
-                    .having(
-                      (MediaOptions options) => options.limit,
-                      'limit',
-                      equals(5),
-                    ),
+                    .having((MediaOptions options) => options.limit, 'limit', equals(5)),
                 named: 'options',
               ),
             ),
@@ -1140,23 +1010,14 @@ void main() {
 
         test('does not accept a negative width or height argument', () {
           final picker = ImagePicker();
-          expect(
-            () => picker.pickMultipleMedia(maxWidth: -1.0),
-            throwsArgumentError,
-          );
+          expect(() => picker.pickMultipleMedia(maxWidth: -1.0), throwsArgumentError);
 
-          expect(
-            () => picker.pickMultipleMedia(maxHeight: -1.0),
-            throwsArgumentError,
-          );
+          expect(() => picker.pickMultipleMedia(maxHeight: -1.0), throwsArgumentError);
         });
 
         test('does not accept a limit argument lower than 1', () {
           final picker = ImagePicker();
-          expect(
-            () => picker.pickMultipleMedia(limit: -1),
-            throwsArgumentError,
-          );
+          expect(() => picker.pickMultipleMedia(limit: -1), throwsArgumentError);
 
           expect(() => picker.pickMultipleMedia(limit: 0), throwsArgumentError);
         });
@@ -1229,8 +1090,7 @@ void main() {
             mockPlatform.getMedia(
               options: argThat(
                 isInstanceOf<MediaOptions>().having(
-                  (MediaOptions options) =>
-                      options.imageOptions.requestFullMetadata,
+                  (MediaOptions options) => options.imageOptions.requestFullMetadata,
                   'requestFullMetadata',
                   isTrue,
                 ),
@@ -1248,8 +1108,7 @@ void main() {
             mockPlatform.getMedia(
               options: argThat(
                 isInstanceOf<MediaOptions>().having(
-                  (MediaOptions options) =>
-                      options.imageOptions.requestFullMetadata,
+                  (MediaOptions options) => options.imageOptions.requestFullMetadata,
                   'requestFullMetadata',
                   isFalse,
                 ),

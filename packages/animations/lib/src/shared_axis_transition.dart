@@ -73,10 +73,7 @@ enum SharedAxisTransitionType {
 /// ```
 class SharedAxisPageTransitionsBuilder extends PageTransitionsBuilder {
   /// Construct a [SharedAxisPageTransitionsBuilder].
-  const SharedAxisPageTransitionsBuilder({
-    required this.transitionType,
-    this.fillColor,
-  });
+  const SharedAxisPageTransitionsBuilder({required this.transitionType, this.fillColor});
 
   /// Determines which [SharedAxisTransitionType] to build.
   final SharedAxisTransitionType transitionType;
@@ -233,44 +230,36 @@ class SharedAxisTransition extends StatelessWidget {
     final Color color = fillColor ?? Theme.of(context).canvasColor;
     return DualTransitionBuilder(
       animation: animation,
-      forwardBuilder:
-          (BuildContext context, Animation<double> animation, Widget? child) {
-            return _EnterTransition(
-              animation: animation,
-              transitionType: transitionType,
-              child: child,
-            );
-          },
-      reverseBuilder:
-          (BuildContext context, Animation<double> animation, Widget? child) {
-            return _ExitTransition(
-              animation: animation,
-              transitionType: transitionType,
-              reverse: true,
-              fillColor: color,
-              child: child,
-            );
-          },
+      forwardBuilder: (BuildContext context, Animation<double> animation, Widget? child) {
+        return _EnterTransition(animation: animation, transitionType: transitionType, child: child);
+      },
+      reverseBuilder: (BuildContext context, Animation<double> animation, Widget? child) {
+        return _ExitTransition(
+          animation: animation,
+          transitionType: transitionType,
+          reverse: true,
+          fillColor: color,
+          child: child,
+        );
+      },
       child: DualTransitionBuilder(
         animation: ReverseAnimation(secondaryAnimation),
-        forwardBuilder:
-            (BuildContext context, Animation<double> animation, Widget? child) {
-              return _EnterTransition(
-                animation: animation,
-                transitionType: transitionType,
-                reverse: true,
-                child: child,
-              );
-            },
-        reverseBuilder:
-            (BuildContext context, Animation<double> animation, Widget? child) {
-              return _ExitTransition(
-                animation: animation,
-                transitionType: transitionType,
-                fillColor: color,
-                child: child,
-              );
-            },
+        forwardBuilder: (BuildContext context, Animation<double> animation, Widget? child) {
+          return _EnterTransition(
+            animation: animation,
+            transitionType: transitionType,
+            reverse: true,
+            child: child,
+          );
+        },
+        reverseBuilder: (BuildContext context, Animation<double> animation, Widget? child) {
+          return _ExitTransition(
+            animation: animation,
+            transitionType: transitionType,
+            fillColor: color,
+            child: child,
+          );
+        },
         child: child,
       ),
     );
@@ -349,8 +338,7 @@ class _EnterTransition extends StatelessWidget {
         return FadeTransition(
           opacity: _fadeInTransition.animate(animation),
           child: ScaleTransition(
-            scale: (!reverse ? _scaleUpTransition : _scaleDownTransition)
-                .animate(animation),
+            scale: (!reverse ? _scaleUpTransition : _scaleDownTransition).animate(animation),
             child: child,
           ),
         );
@@ -440,8 +428,7 @@ class _ExitTransition extends StatelessWidget {
           child: ColoredBox(
             color: fillColor,
             child: ScaleTransition(
-              scale: (!reverse ? _scaleUpTransition : _scaleDownTransition)
-                  .animate(animation),
+              scale: (!reverse ? _scaleUpTransition : _scaleDownTransition).animate(animation),
               child: child,
             ),
           ),
