@@ -924,6 +924,7 @@ private let hlsAudioTestURI =
     let realObjectFactory = FVPDefaultAVFactory()
     let videoPlayerPlugin = try createInitializedPlugin(avFactory: realObjectFactory)
 
+    var error: FlutterError?
     let identifiers = try videoPlayerPlugin.createTexturePlayer(
       options: CreationOptions(uri: mp4TestURI, httpHeaders: [:]))
 
