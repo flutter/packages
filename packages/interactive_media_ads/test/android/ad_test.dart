@@ -5,8 +5,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:interactive_media_ads/src/android/android_ads_manager.dart';
 import 'package:interactive_media_ads/src/android/android_ads_manager_delegate.dart';
-import 'package:interactive_media_ads/src/android/interactive_media_ads.g.dart'
-    as ima;
+import 'package:interactive_media_ads/src/android/interactive_media_ads.g.dart' as ima;
 import 'package:interactive_media_ads/src/platform_interface/platform_interface.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -28,22 +27,16 @@ void main() {
     test('UniversalAdId sets unknown values to null', () async {
       final mockAdsManager = MockAdsManager();
 
-      late final void Function(ima.AdEventListener, ima.AdEvent)
-      onAdEventCallback;
+      late final void Function(ima.AdEventListener, ima.AdEvent) onAdEventCallback;
 
       ima.PigeonOverrides.adEventListener_new =
-          ({
-            required void Function(ima.AdEventListener, ima.AdEvent) onAdEvent,
-          }) {
+          ({required void Function(ima.AdEventListener, ima.AdEvent) onAdEvent}) {
             onAdEventCallback = onAdEvent;
             return MockAdEventListener();
           };
 
       ima.PigeonOverrides.adErrorListener_new =
-          ({
-            required void Function(ima.AdErrorListener, ima.AdErrorEvent)
-            onAdError,
-          }) {
+          ({required void Function(ima.AdErrorListener, ima.AdErrorEvent) onAdError}) {
             return MockAdErrorListener();
           };
 
@@ -65,10 +58,7 @@ void main() {
       when(mockAdEvent.ad).thenReturn(
         createTestAd(
           universalAdIds: <ima.UniversalAdId>[
-            ima.UniversalAdId.pigeon_detached(
-              adIdRegistry: 'unknown',
-              adIdValue: 'unknown',
-            ),
+            ima.UniversalAdId.pigeon_detached(adIdRegistry: 'unknown', adIdValue: 'unknown'),
           ],
         ),
       );
@@ -79,22 +69,16 @@ void main() {
     test('CompanionAd sets 0 values for height/width to null', () async {
       final mockAdsManager = MockAdsManager();
 
-      late final void Function(ima.AdEventListener, ima.AdEvent)
-      onAdEventCallback;
+      late final void Function(ima.AdEventListener, ima.AdEvent) onAdEventCallback;
 
       ima.PigeonOverrides.adEventListener_new =
-          ({
-            required void Function(ima.AdEventListener, ima.AdEvent) onAdEvent,
-          }) {
+          ({required void Function(ima.AdEventListener, ima.AdEvent) onAdEvent}) {
             onAdEventCallback = onAdEvent;
             return MockAdEventListener();
           };
 
       ima.PigeonOverrides.adErrorListener_new =
-          ({
-            required void Function(ima.AdErrorListener, ima.AdErrorEvent)
-            onAdError,
-          }) {
+          ({required void Function(ima.AdErrorListener, ima.AdErrorEvent) onAdError}) {
             return MockAdErrorListener();
           };
 
@@ -115,9 +99,7 @@ void main() {
       when(mockAdEvent.type).thenReturn(ima.AdEventType.allAdsCompleted);
       when(mockAdEvent.ad).thenReturn(
         createTestAd(
-          companionAds: <ima.CompanionAd>[
-            ima.CompanionAd.pigeon_detached(height: 0, width: 0),
-          ],
+          companionAds: <ima.CompanionAd>[ima.CompanionAd.pigeon_detached(height: 0, width: 0)],
         ),
       );
 
@@ -127,22 +109,16 @@ void main() {
     test('Ad sets durations of -1 to null', () async {
       final mockAdsManager = MockAdsManager();
 
-      late final void Function(ima.AdEventListener, ima.AdEvent)
-      onAdEventCallback;
+      late final void Function(ima.AdEventListener, ima.AdEvent) onAdEventCallback;
 
       ima.PigeonOverrides.adEventListener_new =
-          ({
-            required void Function(ima.AdEventListener, ima.AdEvent) onAdEvent,
-          }) {
+          ({required void Function(ima.AdEventListener, ima.AdEvent) onAdEvent}) {
             onAdEventCallback = onAdEvent;
             return MockAdEventListener();
           };
 
       ima.PigeonOverrides.adErrorListener_new =
-          ({
-            required void Function(ima.AdErrorListener, ima.AdErrorEvent)
-            onAdError,
-          }) {
+          ({required void Function(ima.AdErrorListener, ima.AdErrorEvent) onAdError}) {
             return MockAdErrorListener();
           };
 

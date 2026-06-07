@@ -29,10 +29,7 @@ class PolylinesController extends GeometryController {
   }
 
   void _addPolyline(Polyline polyline) {
-    final gmaps.PolylineOptions polylineOptions = _polylineOptionsFromPolyline(
-      googleMap,
-      polyline,
-    );
+    final gmaps.PolylineOptions polylineOptions = _polylineOptionsFromPolyline(googleMap, polyline);
     final gmPolyline = gmaps.Polyline(polylineOptions)..map = googleMap;
     final controller = PolylineController(
       polyline: gmPolyline,
@@ -50,11 +47,8 @@ class PolylinesController extends GeometryController {
   }
 
   void _changePolyline(Polyline polyline) {
-    final PolylineController? polylineController =
-        _polylineIdToController[polyline.polylineId];
-    polylineController?.update(
-      _polylineOptionsFromPolyline(googleMap, polyline),
-    );
+    final PolylineController? polylineController = _polylineIdToController[polyline.polylineId];
+    polylineController?.update(_polylineOptionsFromPolyline(googleMap, polyline));
   }
 
   /// Removes a set of [PolylineId]s from the cache.
@@ -64,8 +58,7 @@ class PolylinesController extends GeometryController {
 
   // Removes a polyline and its controller by its [PolylineId].
   void _removePolyline(PolylineId polylineId) {
-    final PolylineController? polylineController =
-        _polylineIdToController[polylineId];
+    final PolylineController? polylineController = _polylineIdToController[polylineId];
     polylineController?.remove();
     _polylineIdToController.remove(polylineId);
   }

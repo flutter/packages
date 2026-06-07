@@ -16,28 +16,15 @@ void main() {
       Center(
         child: DualTransitionBuilder(
           animation: controller,
-          forwardBuilder:
-              (
-                BuildContext context,
-                Animation<double> animation,
-                Widget? child,
-              ) {
-                return ScaleTransition(scale: animation, child: child);
-              },
-          reverseBuilder:
-              (
-                BuildContext context,
-                Animation<double> animation,
-                Widget? child,
-              ) {
-                return FadeTransition(
-                  opacity: Tween<double>(
-                    begin: 1.0,
-                    end: 0.0,
-                  ).animate(animation),
-                  child: child,
-                );
-              },
+          forwardBuilder: (BuildContext context, Animation<double> animation, Widget? child) {
+            return ScaleTransition(scale: animation, child: child);
+          },
+          reverseBuilder: (BuildContext context, Animation<double> animation, Widget? child) {
+            return FadeTransition(
+              opacity: Tween<double>(begin: 1.0, end: 0.0).animate(animation),
+              child: child,
+            );
+          },
           child: Container(color: Colors.green, height: 100, width: 100),
         ),
       ),
@@ -86,36 +73,21 @@ void main() {
         child: Center(
           child: DualTransitionBuilder(
             animation: controller,
-            forwardBuilder:
-                (
-                  BuildContext context,
-                  Animation<double> animation,
-                  Widget? child,
-                ) {
-                  return ScaleTransition(scale: animation, child: child);
-                },
-            reverseBuilder:
-                (
-                  BuildContext context,
-                  Animation<double> animation,
-                  Widget? child,
-                ) {
-                  return FadeTransition(
-                    opacity: Tween<double>(
-                      begin: 1.0,
-                      end: 0.0,
-                    ).animate(animation),
-                    child: child,
-                  );
-                },
+            forwardBuilder: (BuildContext context, Animation<double> animation, Widget? child) {
+              return ScaleTransition(scale: animation, child: child);
+            },
+            reverseBuilder: (BuildContext context, Animation<double> animation, Widget? child) {
+              return FadeTransition(
+                opacity: Tween<double>(begin: 1.0, end: 0.0).animate(animation),
+                child: child,
+              );
+            },
             child: const _StatefulTestWidget(name: 'Foo'),
           ),
         ),
       ),
     );
-    final State<StatefulWidget> state = tester.state(
-      find.byType(_StatefulTestWidget),
-    );
+    final State<StatefulWidget> state = tester.state(find.byType(_StatefulTestWidget));
     expect(state, isNotNull);
 
     controller.forward();
@@ -143,9 +115,7 @@ void main() {
     expect(state, same(tester.state(find.byType(_StatefulTestWidget))));
   });
 
-  testWidgets('does not jump when interrupted - forward', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('does not jump when interrupted - forward', (WidgetTester tester) async {
     final controller = AnimationController(
       vsync: const TestVSync(),
       duration: const Duration(milliseconds: 300),
@@ -154,28 +124,15 @@ void main() {
       Center(
         child: DualTransitionBuilder(
           animation: controller,
-          forwardBuilder:
-              (
-                BuildContext context,
-                Animation<double> animation,
-                Widget? child,
-              ) {
-                return ScaleTransition(scale: animation, child: child);
-              },
-          reverseBuilder:
-              (
-                BuildContext context,
-                Animation<double> animation,
-                Widget? child,
-              ) {
-                return FadeTransition(
-                  opacity: Tween<double>(
-                    begin: 1.0,
-                    end: 0.0,
-                  ).animate(animation),
-                  child: child,
-                );
-              },
+          forwardBuilder: (BuildContext context, Animation<double> animation, Widget? child) {
+            return ScaleTransition(scale: animation, child: child);
+          },
+          reverseBuilder: (BuildContext context, Animation<double> animation, Widget? child) {
+            return FadeTransition(
+              opacity: Tween<double>(begin: 1.0, end: 0.0).animate(animation),
+              child: child,
+            );
+          },
           child: Container(color: Colors.green, height: 100, width: 100),
         ),
       ),
@@ -209,9 +166,7 @@ void main() {
     expect(_getOpacity(tester), 1.0);
   });
 
-  testWidgets('does not jump when interrupted - reverse', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('does not jump when interrupted - reverse', (WidgetTester tester) async {
     final controller = AnimationController(
       value: 1.0,
       vsync: const TestVSync(),
@@ -221,28 +176,15 @@ void main() {
       Center(
         child: DualTransitionBuilder(
           animation: controller,
-          forwardBuilder:
-              (
-                BuildContext context,
-                Animation<double> animation,
-                Widget? child,
-              ) {
-                return ScaleTransition(scale: animation, child: child);
-              },
-          reverseBuilder:
-              (
-                BuildContext context,
-                Animation<double> animation,
-                Widget? child,
-              ) {
-                return FadeTransition(
-                  opacity: Tween<double>(
-                    begin: 1.0,
-                    end: 0.0,
-                  ).animate(animation),
-                  child: child,
-                );
-              },
+          forwardBuilder: (BuildContext context, Animation<double> animation, Widget? child) {
+            return ScaleTransition(scale: animation, child: child);
+          },
+          reverseBuilder: (BuildContext context, Animation<double> animation, Widget? child) {
+            return FadeTransition(
+              opacity: Tween<double>(begin: 1.0, end: 0.0).animate(animation),
+              child: child,
+            );
+          },
           child: Container(color: Colors.green, height: 100, width: 100),
         ),
       ),

@@ -28,8 +28,7 @@ Future<void> main() async {
   test('Can run a web benchmark with an alternate benchmarkPath', () async {
     final BenchmarkResults results = await _runBenchmarks(
       benchmarkNames: <String>[BenchmarkName.simpleBenchmarkPathCheck.name],
-      entryPoint:
-          'benchmark/test_infra/client/simple_benchmark_path_client.dart',
+      entryPoint: 'benchmark/test_infra/client/simple_benchmark_path_client.dart',
       benchmarkPath: testBenchmarkPath,
     );
 
@@ -55,8 +54,7 @@ Future<void> main() async {
 
     // The runner puts an `isWasm` metric in the results so that we can verify
     // we are running with the correct compiler and renderer.
-    final List<BenchmarkScore>? scores =
-        results.scores[BenchmarkName.simpleCompilationCheck.name];
+    final List<BenchmarkScore>? scores = results.scores[BenchmarkName.simpleCompilationCheck.name];
     expect(scores, isNotNull);
 
     final BenchmarkScore isWasmScore = scores!.firstWhere(
@@ -86,12 +84,10 @@ Future<BenchmarkResults> _runBenchmarks({
 
   for (final benchmarkName in benchmarkNames) {
     for (final metricName in expectedMetrics) {
-      for (final BenchmarkMetricComputation computation
-          in BenchmarkMetricComputation.values) {
+      for (final BenchmarkMetricComputation computation in BenchmarkMetricComputation.values) {
         expect(
           taskResult.scores[benchmarkName]!.where(
-            (BenchmarkScore score) =>
-                score.metric == '$metricName.${computation.name}',
+            (BenchmarkScore score) => score.metric == '$metricName.${computation.name}',
           ),
           hasLength(1),
           reason:
@@ -108,9 +104,6 @@ Future<BenchmarkResults> _runBenchmarks({
     );
   }
 
-  expect(
-    const JsonEncoder.withIndent('  ').convert(taskResult.toJson()),
-    isA<String>(),
-  );
+  expect(const JsonEncoder.withIndent('  ').convert(taskResult.toJson()), isA<String>());
   return taskResult;
 }

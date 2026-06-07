@@ -17,9 +17,6 @@ void main() {
     final actual = exception.toString();
 
     // Assert
-    expect(
-      actual,
-      'InAppPurchaseException(error_code, dummy message, dummy_source)',
-    );
+    expect(actual, 'InAppPurchaseException(error_code, dummy message, dummy_source)');
   });
 }

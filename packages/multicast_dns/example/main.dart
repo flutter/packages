@@ -29,8 +29,7 @@ Future<void> main() async {
       ResourceRecordQuery.service(ptr.domainName),
     )) {
       // Domain name will be something like "io.flutter.example@some-iphone.local._dartobservatory._tcp.local"
-      final String bundleId =
-          ptr.domainName; //.substring(0, ptr.domainName.indexOf('@'));
+      final String bundleId = ptr.domainName; //.substring(0, ptr.domainName.indexOf('@'));
       print(
         'Dart observatory instance found at '
         '${srv.target}:${srv.port} for "$bundleId".',

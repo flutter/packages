@@ -39,9 +39,7 @@ void main() {
 
     group('loadHtmlString', () {
       test('loadHtmlString loads html into iframe', () async {
-        final controller = WebWebViewController(
-          WebWebViewControllerCreationParams(),
-        );
+        final controller = WebWebViewController(WebWebViewControllerCreationParams());
 
         await controller.loadHtmlString('test html');
         expect(
@@ -51,9 +49,7 @@ void main() {
       });
 
       test('loadHtmlString escapes "#" correctly', () async {
-        final controller = WebWebViewController(
-          WebWebViewControllerCreationParams(),
-        );
+        final controller = WebWebViewController(WebWebViewControllerCreationParams());
 
         await controller.loadHtmlString('#');
         expect(
@@ -65,14 +61,10 @@ void main() {
 
     group('loadRequest', () {
       test('throws ArgumentError on missing scheme', () async {
-        final controller = WebWebViewController(
-          WebWebViewControllerCreationParams(),
-        );
+        final controller = WebWebViewController(WebWebViewControllerCreationParams());
 
         await expectLater(
-          () async => controller.loadRequest(
-            LoadRequestParams(uri: Uri.parse('flutter.dev')),
-          ),
+          () async => controller.loadRequest(LoadRequestParams(uri: Uri.parse('flutter.dev'))),
           throwsA(const TypeMatcher<ArgumentError>()),
         );
       });
@@ -80,9 +72,7 @@ void main() {
       test('skips XHR for simple GETs (no headers, no data)', () async {
         final mockHttpRequestFactory = MockHttpRequestFactory();
         final controller = WebWebViewController(
-          WebWebViewControllerCreationParams(
-            httpRequestFactory: mockHttpRequestFactory,
-          ),
+          WebWebViewControllerCreationParams(httpRequestFactory: mockHttpRequestFactory),
         );
 
         when(
@@ -92,13 +82,9 @@ void main() {
             requestHeaders: anyNamed('requestHeaders'),
             sendData: anyNamed('sendData'),
           ),
-        ).thenThrow(
-          StateError('The `request` method should not have been called.'),
-        );
+        ).thenThrow(StateError('The `request` method should not have been called.'));
 
-        await controller.loadRequest(
-          LoadRequestParams(uri: Uri.parse('https://flutter.dev')),
-        );
+        await controller.loadRequest(LoadRequestParams(uri: Uri.parse('https://flutter.dev')));
 
         expect(
           (controller.params as WebWebViewControllerCreationParams).iFrame.src,
@@ -109,9 +95,7 @@ void main() {
       test('makes request and loads response into iframe', () async {
         final mockHttpRequestFactory = MockHttpRequestFactory();
         final controller = WebWebViewController(
-          WebWebViewControllerCreationParams(
-            httpRequestFactory: mockHttpRequestFactory,
-          ),
+          WebWebViewControllerCreationParams(httpRequestFactory: mockHttpRequestFactory),
         );
 
         final fakeResponse = web.Response(
@@ -158,9 +142,7 @@ void main() {
       test('parses content-type response header correctly', () async {
         final mockHttpRequestFactory = MockHttpRequestFactory();
         final controller = WebWebViewController(
-          WebWebViewControllerCreationParams(
-            httpRequestFactory: mockHttpRequestFactory,
-          ),
+          WebWebViewControllerCreationParams(httpRequestFactory: mockHttpRequestFactory),
         );
 
         final Encoding iso = Encoding.getByName('latin1')!;
@@ -168,9 +150,7 @@ void main() {
         final fakeResponse = web.Response(
           String.fromCharCodes(iso.encode('España')).toJS,
           <String, Object>{
-                'headers': <String, Object>{
-                  'content-type': 'Text/HTmL; charset=latin1',
-                },
+                'headers': <String, Object>{'content-type': 'Text/HTmL; charset=latin1'},
               }.jsify()!
               as web.ResponseInit,
         );
@@ -185,10 +165,7 @@ void main() {
         ).thenAnswer((_) => Future<web.Response>.value(fakeResponse));
 
         await controller.loadRequest(
-          LoadRequestParams(
-            uri: Uri.parse('https://flutter.dev'),
-            method: LoadRequestMethod.post,
-          ),
+          LoadRequestParams(uri: Uri.parse('https://flutter.dev'), method: LoadRequestMethod.post),
         );
 
         expect(
@@ -200,9 +177,7 @@ void main() {
       test('escapes "#" correctly', () async {
         final mockHttpRequestFactory = MockHttpRequestFactory();
         final controller = WebWebViewController(
-          WebWebViewControllerCreationParams(
-            httpRequestFactory: mockHttpRequestFactory,
-          ),
+          WebWebViewControllerCreationParams(httpRequestFactory: mockHttpRequestFactory),
         );
 
         final fakeResponse = web.Response(
