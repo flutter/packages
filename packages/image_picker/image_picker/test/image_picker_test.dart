@@ -610,13 +610,72 @@ void main() {
           expect(() => picker.pickMultiImage(maxHeight: -1.0), throwsArgumentError);
         });
 
-        test('does not accept a limit argument lower than 2', () {
+        test('does not accept a limit argument lower than 1', () {
           final picker = ImagePicker();
           expect(() => picker.pickMultiImage(limit: -1), throwsArgumentError);
 
           expect(() => picker.pickMultiImage(limit: 0), throwsArgumentError);
+        });
 
-          expect(() => picker.pickMultiImage(limit: 1), throwsArgumentError);
+        test('uses the single-image picker for a limit of 1', () async {
+          final image = XFile('picked-image.jpg');
+          when(
+            mockPlatform.getImageFromSource(
+              source: anyNamed('source'),
+              options: anyNamed('options'),
+            ),
+          ).thenAnswer((Invocation _) async => image);
+
+          final List<XFile> result = await ImagePicker().pickMultiImage(
+            maxWidth: 10,
+            maxHeight: 20,
+            imageQuality: 70,
+            limit: 1,
+            requestFullMetadata: false,
+          );
+
+          expect(result, <XFile>[image]);
+          verify(
+            mockPlatform.getImageFromSource(
+              source: ImageSource.gallery,
+              options: argThat(
+                isInstanceOf<ImagePickerOptions>()
+                    .having(
+                      (ImagePickerOptions options) => options.maxWidth,
+                      'maxWidth',
+                      equals(10),
+                    )
+                    .having(
+                      (ImagePickerOptions options) => options.maxHeight,
+                      'maxHeight',
+                      equals(20),
+                    )
+                    .having(
+                      (ImagePickerOptions options) => options.imageQuality,
+                      'imageQuality',
+                      equals(70),
+                    )
+                    .having(
+                      (ImagePickerOptions options) => options.requestFullMetadata,
+                      'requestFullMetadata',
+                      isFalse,
+                    ),
+                named: 'options',
+              ),
+            ),
+          );
+          verifyNever(mockPlatform.getMultiImageWithOptions(options: anyNamed('options')));
+        });
+
+        test('returns an empty list when single-image selection is canceled', () async {
+          when(
+            mockPlatform.getImageFromSource(
+              source: anyNamed('source'),
+              options: anyNamed('options'),
+            ),
+          ).thenAnswer((Invocation _) async => null);
+
+          expect(await ImagePicker().pickMultiImage(limit: 1), isEmpty);
         });
 
         test('handles an empty image file response gracefully', () async {

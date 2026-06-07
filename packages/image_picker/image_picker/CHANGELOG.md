@@ -1,5 +1,6 @@
-## NEXT
+## 1.2.3
 
+* Handles a `pickMultiImage` limit of 1 by using single-image selection.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 1.2.2

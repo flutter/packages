@@ -109,6 +109,7 @@ class ImagePicker {
   /// supported for the image that is picked, a warning message will be logged.
   ///
   /// The `limit` parameter modifies the maximum number of images that can be selected.
+  /// A value of 1 delegates to the single-image picker.
   /// This value may be ignored by platforms that cannot support it.
   ///
   /// Use `requestFullMetadata` (defaults to `true`) to control how much additional
@@ -130,6 +131,16 @@ class ImagePicker {
     int? limit,
     bool requestFullMetadata = true,
   }) {
+    if (limit == 1) {
+      return pickImage(
+        source: ImageSource.gallery,
+        maxWidth: maxWidth,
+        maxHeight: maxHeight,
+        imageQuality: imageQuality,
+        requestFullMetadata: requestFullMetadata,
+      ).then((XFile? image) => <XFile>[if (image != null) image]);
+    }
+
     final imageOptions = ImageOptions.createAndValidate(
       maxWidth: maxWidth,
       maxHeight: maxHeight,
