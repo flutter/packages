@@ -688,10 +688,11 @@ class Camera {
     int? animationFrameId;
     final num fpsInterval = 1000 / fps;
     num lastFrameTimestamp = 0;
+late JSExportedDartFunction jsAnimate;
 
     int? animate(num timestamp) {
       // Schedule the next frame
-      animationFrameId = window.requestAnimationFrame(animate.toJS);
+      animationFrameId = window.requestAnimationFrame(jsAnimate);
       // Calculate the elapsed time since the last frame
       final num elapsed = timestamp - lastFrameTimestamp;
 
@@ -705,6 +706,7 @@ class Camera {
       return animationFrameId;
     }
 
+jsAnimate = animate.toJS;
     // Initialize the animation loop
     animationFrameId = animate(window.performance.now());
 
