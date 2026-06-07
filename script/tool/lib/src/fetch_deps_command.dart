@@ -259,10 +259,7 @@ class FetchDepsCommand extends PackageLoopingCommand {
     return PackageResult.success();
   }
 
-  Future<PackageResult> _fetchDarwinDeps(
-    RepositoryPackage package,
-    final String platformString,
-  ) async {
+  Future<PackageResult> _fetchDarwinDeps(RepositoryPackage package, String platformString) async {
     if (!pluginSupportsPlatform(platformString, package, requiredMode: PlatformSupport.inline)) {
       // Convert from the flag (lower case ios/macos) to the actual name.
       final String displayPlatform = platformString.replaceFirst('os', 'OS');

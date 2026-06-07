@@ -153,7 +153,7 @@ void main() {
     ) async {
       var messageCallMade = false;
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.allMessagesHandler =
-          (_, __, ___) {
+          (_, _, _) {
             messageCallMade = true;
             return null;
           };
@@ -170,7 +170,7 @@ void main() {
       (WidgetTester tester) async {
         var messageCallMade = false;
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.allMessagesHandler =
-            (_, __, ___) {
+            (_, _, _) {
               messageCallMade = true;
               return null;
             };

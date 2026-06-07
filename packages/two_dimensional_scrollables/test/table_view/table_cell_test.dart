@@ -181,7 +181,7 @@ void main() {
           );
           await tester.pumpWidget(
             TableView.builder(
-              cellBuilder: (_, __) => cell,
+              cellBuilder: (_, _) => cell,
               columnBuilder: (_) => span,
               rowBuilder: (_) => span,
               columnCount: 1,
@@ -210,7 +210,7 @@ void main() {
           );
           await tester.pumpWidget(
             TableView.builder(
-              cellBuilder: (_, __) => cell,
+              cellBuilder: (_, _) => cell,
               columnBuilder: (_) => span,
               rowBuilder: (_) => span,
               columnCount: 3,
@@ -244,7 +244,7 @@ void main() {
           );
           await tester.pumpWidget(
             TableView.builder(
-              cellBuilder: (_, __) => cell,
+              cellBuilder: (_, _) => cell,
               columnBuilder: (_) => span,
               rowBuilder: (_) => span,
               columnCount: 1,
@@ -268,7 +268,7 @@ void main() {
           );
           await tester.pumpWidget(
             TableView.builder(
-              cellBuilder: (_, __) => cell,
+              cellBuilder: (_, _) => cell,
               columnBuilder: (_) => span,
               rowBuilder: (_) => span,
               columnCount: 3,
@@ -302,7 +302,7 @@ void main() {
           );
           await tester.pumpWidget(
             TableView.builder(
-              cellBuilder: (_, __) => cell,
+              cellBuilder: (_, _) => cell,
               columnBuilder: (_) => span,
               rowBuilder: (_) => span,
               columnCount: 1,
@@ -327,7 +327,7 @@ void main() {
           );
           await tester.pumpWidget(
             TableView.builder(
-              cellBuilder: (_, __) => cell,
+              cellBuilder: (_, _) => cell,
               columnBuilder: (_) => span,
               rowBuilder: (_) => span,
               columnCount: 3,

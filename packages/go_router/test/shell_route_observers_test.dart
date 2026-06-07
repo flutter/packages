@@ -36,16 +36,16 @@ void main() {
     final root = GlobalKey<NavigatorState>(debugLabel: 'root');
     await createRouter(
       <RouteBase>[
-        GoRoute(path: '/', builder: (_, __) => const Text('Home')),
+        GoRoute(path: '/', builder: (_, _) => const Text('Home')),
         ShellRoute(
-          builder: (_, __, Widget child) => child,
-          routes: <RouteBase>[GoRoute(path: '/test1', builder: (_, __) => const Text('Test1'))],
+          builder: (_, _, Widget child) => child,
+          routes: <RouteBase>[GoRoute(path: '/test1', builder: (_, _) => const Text('Test1'))],
         ),
         StatefulShellRoute.indexedStack(
-          builder: (_, __, Widget child) => child,
+          builder: (_, _, Widget child) => child,
           branches: <StatefulShellBranch>[
             StatefulShellBranch(
-              routes: <RouteBase>[GoRoute(path: '/test2', builder: (_, __) => const Text('Test2'))],
+              routes: <RouteBase>[GoRoute(path: '/test2', builder: (_, _) => const Text('Test2'))],
             ),
           ],
         ),

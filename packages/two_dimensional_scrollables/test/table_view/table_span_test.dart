@@ -1589,7 +1589,7 @@ void main() {
         child: TableView.builder(
           rowCount: 2,
           columnCount: 1,
-          cellBuilder: (_, __) {
+          cellBuilder: (_, _) {
             return const TableViewCell(rowMergeStart: 0, rowMergeSpan: 2, child: Text('M(0,0)'));
           },
           columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100.0)),
@@ -1613,7 +1613,7 @@ void main() {
         child: TableView.builder(
           rowCount: 1,
           columnCount: 2,
-          cellBuilder: (_, __) {
+          cellBuilder: (_, _) {
             return const TableViewCell(
               columnMergeStart: 0,
               columnMergeSpan: 2,
@@ -1641,7 +1641,7 @@ void main() {
         child: TableView.builder(
           rowCount: 2,
           columnCount: 2,
-          cellBuilder: (_, __) {
+          cellBuilder: (_, _) {
             return const TableViewCell(
               rowMergeStart: 0,
               rowMergeSpan: 2,
