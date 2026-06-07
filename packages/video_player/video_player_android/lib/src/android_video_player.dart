@@ -418,35 +418,40 @@ class _PlayerInstance {
   }
 
   Future<void> selectVideoTrack(VideoTrack? track) async {
-    // Use local variables for the per-call state, then publish them to the
-    // shared fields. The cleanup in `finally` only resets the shared fields if
-    // they still reference *this* call's state — so a newer concurrent
-    // selectVideoTrack call isn't clobbered when an older one returns.
+    if (track == null) {
+      // Auto/adaptive quality. Clearing the override has no single
+      // deterministic "selected track" to wait for, and the resulting
+      // VideoTrackChangedEvent reports whatever concrete track the adaptive
+      // selector happens to pick. Waiting for "the next" event would race with
+      // events still in flight from a prior selectVideoTrack(track) call and
+      // complete this future on the wrong event. So just clear the override
+      // and return.
+      await _api.enableAutoVideoQuality();
+      return;
+    }
+
+    // Explicit selection. Wait for the ExoPlayer event reporting this exact
+    // track id. Use local variables for the per-call state, then publish them
+    // to the shared fields. The cleanup in `finally` only resets the shared
+    // fields if they still reference *this* call's state — so a newer
+    // concurrent selectVideoTrack call isn't clobbered when an older one
+    // returns.
     final completer = Completer<void>();
-    final String? expectedId = track?.id;
+    final String expectedId = track.id;
     _videoTrackSelectionCompleter = completer;
     _expectedVideoTrackId = expectedId;
 
     try {
-      if (track == null) {
-        // Auto quality - use dedicated method
-        await _api.enableAutoVideoQuality();
-      } else {
-        final (int groupIndex, int trackIndex) = _parseAndroidTrackId(track.id);
-
-        await _api.selectVideoTrack(groupIndex, trackIndex);
-      }
+      final (int groupIndex, int trackIndex) = _parseAndroidTrackId(track.id);
+      await _api.selectVideoTrack(groupIndex, trackIndex);
 
       // Wait for the onTracksChanged event from ExoPlayer with a timeout
       await completer.future.timeout(
         const Duration(seconds: 5),
         onTimeout: () {
-          final selectionDescription = expectedId == null
-              ? 'auto quality selection'
-              : 'track "$expectedId"';
           debugPrint(
-            'Timed out waiting for video track selection event for '
-            '$selectionDescription.',
+            'Timed out waiting for video track selection event for track '
+            '"$expectedId".',
           );
         },
       );
@@ -580,16 +585,16 @@ class _PlayerInstance {
         }
       case VideoTrackChangedEvent _:
         // Complete the video track selection completer only if:
-        // 1. A completer exists (we're waiting for a selection)
+        // 1. A completer exists (we're waiting for an explicit selection)
         // 2. The completer hasn't already completed
-        // 3. The selected track ID matches what we're expecting (or we're expecting null for auto)
+        // 3. The reported track ID matches the one we're waiting for, so an
+        //    event from an unrelated/earlier selection can't complete us.
+        // Auto/adaptive selections (selectVideoTrack(null)) don't register a
+        // completer, so they are never matched here.
         if (_videoTrackSelectionCompleter != null &&
-            !_videoTrackSelectionCompleter!.isCompleted) {
-          // Complete if the track ID matches our expectation, or if we expected null (auto mode)
-          if (_expectedVideoTrackId == null ||
-              event.selectedTrackId == _expectedVideoTrackId) {
-            _videoTrackSelectionCompleter!.complete();
-          }
+            !_videoTrackSelectionCompleter!.isCompleted &&
+            event.selectedTrackId == _expectedVideoTrackId) {
+          _videoTrackSelectionCompleter!.complete();
         }
     }
   }

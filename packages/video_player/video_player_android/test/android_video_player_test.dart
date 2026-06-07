@@ -1097,6 +1097,70 @@ void main() {
           verify(api.selectVideoTrack(0, 2));
         },
       );
+
+      test(
+        'selectVideoTrack(null) resolves without waiting for a track event',
+        () async {
+          final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) =
+              setUpMockPlayer(playerId: 1);
+          when(api.enableAutoVideoQuality()).thenAnswer((_) async {});
+
+          // Auto/adaptive selection must complete on its own (clearing the
+          // override), without depending on a VideoTrackChangedEvent. If it
+          // waited for an event, no event is delivered here so this would hang
+          // until the 5s fallback timeout.
+          await player
+              .selectVideoTrack(1, null)
+              .timeout(
+                const Duration(seconds: 1),
+                onTimeout: () => fail(
+                  'selectVideoTrack(null) should not wait for a track event',
+                ),
+              );
+
+          verify(api.enableAutoVideoQuality());
+        },
+      );
+
+      test(
+        "selectVideoTrack(null) is not completed by a prior selection's event",
+        () async {
+          final (
+            AndroidVideoPlayer player,
+            _,
+            MockVideoPlayerInstanceApi api,
+            StreamController<PlatformVideoEvent> streamController,
+          ) = setUpMockPlayerWithStream(
+            playerId: 1,
+          );
+
+          when(api.selectVideoTrack(0, 1)).thenAnswer((_) async {});
+          when(api.enableAutoVideoQuality()).thenAnswer((_) async {});
+
+          const trackA = VideoTrack(id: '0_1', isSelected: false);
+
+          // Start an explicit selection that is still in flight (its event has
+          // not arrived yet) when we switch to auto.
+          var explicitCompleted = false;
+          unawaited(
+            player.selectVideoTrack(1, trackA).then((_) {
+              explicitCompleted = true;
+            }),
+          );
+
+          // Switch to auto. This resolves on its own.
+          await player.selectVideoTrack(1, null);
+          verify(api.enableAutoVideoQuality());
+
+          // Now deliver the stale event for the explicit ("0_1") selection.
+          // It must complete the explicit future only — never the auto call,
+          // which has already resolved and never registered a completer.
+          streamController.add(VideoTrackChangedEvent(selectedTrackId: '0_1'));
+          await Future<void>.delayed(Duration.zero);
+
+          expect(explicitCompleted, isTrue);
+        },
+      );
     });
   });
 }
