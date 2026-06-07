@@ -43,9 +43,7 @@ abstract class PackageCommand extends Command<void> {
     this.platform = const LocalPlatform(),
     GitDir? gitDir,
   }) : _gitDir = gitDir {
-    thirdPartyPackagesDir = rootDir
-        .childDirectory('third_party')
-        .childDirectory('packages');
+    thirdPartyPackagesDir = rootDir.childDirectory('third_party').childDirectory('packages');
 
     argParser.addMultiOption(
       _packagesArg,
@@ -248,10 +246,7 @@ abstract class PackageCommand extends Command<void> {
       printError('$packagesPath is not a valid Git repository.');
       throw ToolExit(2);
     }
-    gitDir = await GitDir.fromExisting(
-      packagesDir.path,
-      allowSubdirectory: true,
-    );
+    gitDir = await GitDir.fromExisting(packagesDir.path, allowSubdirectory: true);
     _gitDir = gitDir;
     return gitDir;
   }
@@ -317,9 +312,7 @@ abstract class PackageCommand extends Command<void> {
       usageException('$_shardCountArg must be positive');
     }
     if (shardIndex < 0 || shardCount <= shardIndex) {
-      usageException(
-        '$_shardIndexArg must be in the half-open range [0..$shardCount[',
-      );
+      usageException('$_shardIndexArg must be in the half-open range [0..$shardCount[');
     }
     _shardIndex = shardIndex;
     _shardCount = shardCount;
@@ -327,8 +320,7 @@ abstract class PackageCommand extends Command<void> {
 
   /// Returns the set of packages to exclude based on the `--exclude` argument.
   Set<String> getExcludedPackageNames() {
-    final Set<String> excludedPackages =
-        _excludedPackages ?? getYamlListArg(_excludeArg);
+    final Set<String> excludedPackages = _excludedPackages ?? getYamlListArg(_excludeArg);
     // Cache for future calls.
     _excludedPackages = excludedPackages;
     return excludedPackages;
@@ -343,29 +335,22 @@ abstract class PackageCommand extends Command<void> {
   ///
   /// By default, packages excluded via --exclude will not be in the stream, but
   /// they can be included by passing false for [filterExcluded].
-  Stream<PackageEnumerationEntry> getTargetPackages({
-    bool filterExcluded = true,
-  }) async* {
+  Stream<PackageEnumerationEntry> getTargetPackages({bool filterExcluded = true}) async* {
     // To avoid assuming consistency of `Directory.list` across command
     // invocations, we collect and sort the package folders before sharding.
     // This is considered an implementation detail which is why the API still
     // uses streams.
-    final List<PackageEnumerationEntry> allPackages = await _getAllPackages()
-        .toList();
+    final List<PackageEnumerationEntry> allPackages = await _getAllPackages().toList();
     allPackages.sort(
       (PackageEnumerationEntry p1, PackageEnumerationEntry p2) =>
           p1.package.path.compareTo(p2.package.path),
     );
     final int shardSize =
-        allPackages.length ~/ shardCount +
-        (allPackages.length % shardCount == 0 ? 0 : 1);
+        allPackages.length ~/ shardCount + (allPackages.length % shardCount == 0 ? 0 : 1);
     final int start = min(shardIndex * shardSize, allPackages.length);
     final int end = min(start + shardSize, allPackages.length);
 
-    for (final PackageEnumerationEntry package in allPackages.sublist(
-      start,
-      end,
-    )) {
+    for (final PackageEnumerationEntry package in allPackages.sublist(start, end)) {
       if (!(filterExcluded && package.excluded)) {
         yield package;
       }
@@ -403,10 +388,7 @@ abstract class PackageCommand extends Command<void> {
       _packagesForBranchArg,
       _currentPackageArg,
     };
-    if (packageSelectionFlags
-            .where((String flag) => argResults!.wasParsed(flag))
-            .length >
-        1) {
+    if (packageSelectionFlags.where((String flag) => argResults!.wasParsed(flag)).length > 1) {
       printError(
         'Only one of the package selection arguments '
         '(${packageSelectionFlags.join(", ")}) '
@@ -447,18 +429,14 @@ abstract class PackageCommand extends Command<void> {
           print('--$_packagesForBranchArg: running on default branch.');
           lastCommitOnly = true;
         } else if (await _isCheckoutFromBranch('main')) {
-          print(
-            '--$_packagesForBranchArg: running on a commit from default branch.',
-          );
+          print('--$_packagesForBranchArg: running on a commit from default branch.');
           lastCommitOnly = true;
         } else {
           print('--$_packagesForBranchArg: running on branch "$branch".');
           lastCommitOnly = false;
         }
         if (lastCommitOnly) {
-          print(
-            '--$_packagesForBranchArg: using parent commit as the diff base.',
-          );
+          print('--$_packagesForBranchArg: using parent commit as the diff base.');
           changedFileFinder = GitVersionFinder(await gitDir, baseSha: 'HEAD~');
         } else {
           changedFileFinder = await retrieveVersionFinder();
@@ -470,17 +448,14 @@ abstract class PackageCommand extends Command<void> {
 
     if (changedFileFinder != null) {
       final String baseSha = await changedFileFinder.getBaseSha();
-      final List<String> changedFiles = await changedFileFinder
-          .getChangedFiles();
+      final List<String> changedFiles = await changedFileFinder.getChangedFiles();
       if (_changesRequireFullTest(changedFiles)) {
         print(
           'Running for all packages, since a file has changed that could '
           'affect the entire repository.',
         );
       } else {
-        print(
-          'Running for all packages that have diffs relative to "$baseSha"\n',
-        );
+        print('Running for all packages that have diffs relative to "$baseSha"\n');
         packages = _getChangedPackageNames(changedFiles);
       }
     } else if (getBoolArg(_runOnDirtyPackagesArg)) {
@@ -514,10 +489,8 @@ abstract class PackageCommand extends Command<void> {
     final Set<String>? excludeAllButPackageNames = hasFilter
         ? getYamlListArg(_filterPackagesArg)
         : null;
-    if (excludeAllButPackageNames != null &&
-        excludeAllButPackageNames.isNotEmpty) {
-      final List<String> sortedList = excludeAllButPackageNames.toList()
-        ..sort();
+    if (excludeAllButPackageNames != null && excludeAllButPackageNames.isNotEmpty) {
+      final List<String> sortedList = excludeAllButPackageNames.toList()..sort();
       print(
         '--$_filterPackagesArg is excluding packages that are not '
         'included in: ${sortedList.join(',')}',
@@ -536,20 +509,12 @@ abstract class PackageCommand extends Command<void> {
     await for (final RepositoryPackage package in _everyTopLevelPackage()) {
       if (packages.isEmpty ||
           packages
-              .intersection(
-                _possiblePackageIdentifiers(
-                  package,
-                  allowGroup: allowGroupMatching,
-                ),
-              )
+              .intersection(_possiblePackageIdentifiers(package, allowGroup: allowGroupMatching))
               .isNotEmpty) {
         // Exclusion is always human input, so groups should always be allowed
         // unless they have been specifically forbidden.
         final bool excluded = isExcluded(
-          _possiblePackageIdentifiers(
-            package,
-            allowGroup: !getBoolArg(_exactMatchOnlyArg),
-          ),
+          _possiblePackageIdentifiers(package, allowGroup: !getBoolArg(_exactMatchOnlyArg)),
         );
         yield PackageEnumerationEntry(package, excluded: excluded);
       }
@@ -569,18 +534,14 @@ abstract class PackageCommand extends Command<void> {
       packagesDir,
       if (thirdPartyPackagesDir.existsSync()) thirdPartyPackagesDir,
     ]) {
-      await for (final FileSystemEntity entity in dir.list(
-        followLinks: false,
-      )) {
+      await for (final FileSystemEntity entity in dir.list(followLinks: false)) {
         // A top-level Dart package is a standard package.
         if (isPackage(entity)) {
           yield RepositoryPackage(entity as Directory);
         } else if (entity is Directory) {
           // Look for Dart packages under this top-level directory; this is the
           // standard structure for federated plugins.
-          await for (final FileSystemEntity subdir in entity.list(
-            followLinks: false,
-          )) {
+          await for (final FileSystemEntity subdir in entity.list(followLinks: false)) {
             if (isPackage(subdir)) {
               yield RepositoryPackage(subdir as Directory);
             }
@@ -590,10 +551,7 @@ abstract class PackageCommand extends Command<void> {
     }
   }
 
-  Set<String> _possiblePackageIdentifiers(
-    RepositoryPackage package, {
-    required bool allowGroup,
-  }) {
+  Set<String> _possiblePackageIdentifiers(RepositoryPackage package, {required bool allowGroup}) {
     final String packageName = path.basename(package.path);
     if (package.isFederated) {
       // There are three ways for a federated plugin to be identified:
@@ -604,10 +562,7 @@ abstract class PackageCommand extends Command<void> {
       final io.Directory parentDir = package.directory.parent;
       return <String>{
         packageName,
-        path.relative(
-          package.path,
-          from: parentDir.parent.path,
-        ), // fully specified
+        path.relative(package.path, from: parentDir.parent.path), // fully specified
         if (allowGroup) path.basename(parentDir.path), // group name
       };
     } else {
@@ -660,9 +615,7 @@ abstract class PackageCommand extends Command<void> {
   /// Throws tool exit if [gitDir] nor root directory is a git directory.
   Future<GitVersionFinder> retrieveVersionFinder() async {
     final String? baseSha = getNullableStringArg(_baseShaArg);
-    final String? baseBranch = baseSha == null
-        ? getNullableStringArg(_baseBranchArg)
-        : null;
+    final String? baseBranch = baseSha == null ? getNullableStringArg(_baseBranchArg) : null;
 
     final gitVersionFinder = GitVersionFinder(
       await gitDir,
@@ -705,10 +658,7 @@ abstract class PackageCommand extends Command<void> {
         final String topLevelName = pathComponents[packagesIndex + 1];
         var packageName = topLevelName;
         if (packagesIndex + 2 < pathComponents.length &&
-            isFederatedPackage(
-              pathComponents[packagesIndex + 2],
-              topLevelName,
-            )) {
+            isFederatedPackage(pathComponents[packagesIndex + 2], topLevelName)) {
           // This looks like a federated package; use the full specifier if
           // the name would be ambiguous (i.e., for the app-facing package).
           packageName = pathComponents[packagesIndex + 2];
@@ -729,10 +679,7 @@ abstract class PackageCommand extends Command<void> {
   }
 
   String? _getCurrentDirectoryPackageName() {
-    final absolutePackagesDirs = <Directory>{
-      packagesDir.absolute,
-      thirdPartyPackagesDir.absolute,
-    };
+    final absolutePackagesDirs = <Directory>{packagesDir.absolute, thirdPartyPackagesDir.absolute};
     bool isATopLevelPackagesDir(Directory directory) =>
         absolutePackagesDirs.any((Directory d) => d.path == directory.path);
 
@@ -740,9 +687,7 @@ abstract class PackageCommand extends Command<void> {
     // Ensure that the current directory is within one of the top-level packages
     // directories.
     if (isATopLevelPackagesDir(currentDir) ||
-        !absolutePackagesDirs.any(
-          (Directory d) => currentDir.path.startsWith(d.path),
-        )) {
+        !absolutePackagesDirs.any((Directory d) => currentDir.path.startsWith(d.path))) {
       return null;
     }
     // If the current directory is a direct subdirectory of a packages
@@ -778,11 +723,7 @@ abstract class PackageCommand extends Command<void> {
   Future<bool> _isCheckoutFromBranch(String branchName) async {
     // The target branch may not exist locally; try some common remote names for
     // the branch as well.
-    final candidateBranchNames = <String>[
-      branchName,
-      'origin/$branchName',
-      'upstream/$branchName',
-    ];
+    final candidateBranchNames = <String>[branchName, 'origin/$branchName', 'upstream/$branchName'];
     for (final branch in candidateBranchNames) {
       final io.ProcessResult result = await (await gitDir).runCommand(<String>[
         'merge-base',
@@ -804,10 +745,11 @@ abstract class PackageCommand extends Command<void> {
   }
 
   Future<String?> _getBranch() async {
-    final io.ProcessResult branchResult = await (await gitDir).runCommand(
-      <String>['rev-parse', '--abbrev-ref', 'HEAD'],
-      throwOnError: false,
-    );
+    final io.ProcessResult branchResult = await (await gitDir).runCommand(<String>[
+      'rev-parse',
+      '--abbrev-ref',
+      'HEAD',
+    ], throwOnError: false);
     if (branchResult.exitCode != 0) {
       return null;
     }

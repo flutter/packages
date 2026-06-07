@@ -61,9 +61,7 @@ final Uint8List _transparentImage = Uint8List.fromList(<int>[
 /// A mocked [HttpClientResponse] which is empty and has a [statusCode] of 200
 /// and returns valid image.
 class _MockHttpResponse extends Fake implements HttpClientResponse {
-  final Stream<Uint8List> _delegate = Stream<Uint8List>.value(
-    _transparentImage,
-  );
+  final Stream<Uint8List> _delegate = Stream<Uint8List>.value(_transparentImage);
 
   @override
   int get contentLength => -1;
@@ -80,12 +78,7 @@ class _MockHttpResponse extends Fake implements HttpClientResponse {
     void Function()? onDone,
     bool? cancelOnError,
   }) {
-    return _delegate.listen(
-      onData,
-      onError: onError,
-      onDone: onDone,
-      cancelOnError: cancelOnError,
-    );
+    return _delegate.listen(onData, onError: onError, onDone: onDone, cancelOnError: cancelOnError);
   }
 
   @override

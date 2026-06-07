@@ -38,9 +38,7 @@ void main() {
   });
 
   group('Link Widget', () {
-    testWidgets('creates anchor with correct attributes', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('creates anchor with correct attributes', (WidgetTester tester) async {
       final Uri uri = Uri.parse('http://foobar/example?q=1');
       await tester.pumpWidget(
         Directionality(
@@ -106,10 +104,7 @@ void main() {
 
       // Check that internal route properly prepares using the default
       // [UrlStrategy]
-      expect(
-        anchor.getAttribute('href'),
-        ui_web.urlStrategy?.prepareExternalUrl(uri3.toString()),
-      );
+      expect(anchor.getAttribute('href'), ui_web.urlStrategy?.prepareExternalUrl(uri3.toString()));
       expect(anchor.getAttribute('target'), '_self');
     });
 
@@ -200,11 +195,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.pump();
 
-      await tester.scrollUntilVisible(
-        find.text('#${itemCount - 1}'),
-        800,
-        maxScrolls: 1000,
-      );
+      await tester.scrollUntilVisible(find.text('#${itemCount - 1}'), 800, maxScrolls: 1000);
     });
 
     testWidgets('MergeSemantics is always present to avoid duplicate nodes', (
@@ -259,9 +250,7 @@ void main() {
       UrlLauncherPlatform.instance = originalPlugin;
     });
 
-    testWidgets('click to navigate to internal link', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('click to navigate to internal link', (WidgetTester tester) async {
       final Uri uri = Uri.parse('/foobar');
       FollowLink? followLinkCallback;
 
@@ -301,9 +290,7 @@ void main() {
       expect(event.defaultPrevented, isTrue);
     });
 
-    testWidgets('keydown to navigate to internal link', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('keydown to navigate to internal link', (WidgetTester tester) async {
       final Uri uri = Uri.parse('/foobar');
       FollowLink? followLinkCallback;
 
@@ -343,9 +330,7 @@ void main() {
       expect(event.defaultPrevented, isFalse);
     });
 
-    testWidgets('click to navigate to external link', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('click to navigate to external link', (WidgetTester tester) async {
       final Uri uri = Uri.parse('https://flutter.dev');
       FollowLink? followLinkCallback;
 
@@ -383,9 +368,7 @@ void main() {
       expect(event.defaultPrevented, isFalse);
     });
 
-    testWidgets('keydown to navigate to external link', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('keydown to navigate to external link', (WidgetTester tester) async {
       final Uri uri = Uri.parse('https://flutter.dev');
       FollowLink? followLinkCallback;
 
@@ -431,10 +414,8 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           routes: <String, WidgetBuilder>{
-            '/foobar1': (BuildContext context) =>
-                const Text('Internal route 1'),
-            '/foobar2': (BuildContext context) =>
-                const Text('Internal route 2'),
+            '/foobar1': (BuildContext context) => const Text('Internal route 1'),
+            '/foobar2': (BuildContext context) => const Text('Internal route 2'),
           },
           home: Column(
             children: <Widget>[
@@ -469,11 +450,8 @@ void main() {
       expect(pushedRouteNames, isEmpty);
       expect(testPlugin.launches, isEmpty);
 
-      final [
-        html.Element anchor1,
-        html.Element anchor2,
-        ...List<html.Element> rest,
-      ] = _findAllAnchors();
+      final [html.Element anchor1, html.Element anchor2, ...List<html.Element> rest] =
+          _findAllAnchors();
       expect(rest, isEmpty);
 
       await followLinkCallback2!();
@@ -504,9 +482,7 @@ void main() {
       expect(event.defaultPrevented, isTrue);
     });
 
-    testWidgets('trigger signals are reset after a delay', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('trigger signals are reset after a delay', (WidgetTester tester) async {
       final Uri uri = Uri.parse('/foobar');
       FollowLink? followLinkCallback;
 
@@ -570,9 +546,7 @@ void main() {
       expect(event3.defaultPrevented, isTrue);
     });
 
-    testWidgets('ignores clicks on non-Flutter link', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('ignores clicks on non-Flutter link', (WidgetTester tester) async {
       final Uri uri = Uri.parse('/foobar');
       FollowLink? followLinkCallback;
 
@@ -652,9 +626,7 @@ void main() {
       expect(event.defaultPrevented, isFalse);
     });
 
-    testWidgets('ignores keydown when it is a modifier key', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('ignores keydown when it is a modifier key', (WidgetTester tester) async {
       final Uri uri = Uri.parse('/foobar');
       FollowLink? followLinkCallback;
 
@@ -716,9 +688,7 @@ void main() {
       UrlLauncherPlatform.instance = originalPlugin;
     });
 
-    testWidgets('click to navigate to internal link', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('click to navigate to internal link', (WidgetTester tester) async {
       final Uri uri = Uri.parse('/foobar');
       FollowLink? followLinkCallback;
 
@@ -758,9 +728,7 @@ void main() {
       expect(event.defaultPrevented, isTrue);
     });
 
-    testWidgets('keydown to navigate to internal link', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('keydown to navigate to internal link', (WidgetTester tester) async {
       final Uri uri = Uri.parse('/foobar');
       FollowLink? followLinkCallback;
 
@@ -800,9 +768,7 @@ void main() {
       expect(event.defaultPrevented, isFalse);
     });
 
-    testWidgets('click to navigate to external link', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('click to navigate to external link', (WidgetTester tester) async {
       final Uri uri = Uri.parse('https://flutter.dev');
       FollowLink? followLinkCallback;
 
@@ -840,9 +806,7 @@ void main() {
       expect(event.defaultPrevented, isFalse);
     });
 
-    testWidgets('keydown to navigate to external link', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('keydown to navigate to external link', (WidgetTester tester) async {
       final Uri uri = Uri.parse('https://flutter.dev');
       FollowLink? followLinkCallback;
 
@@ -894,9 +858,7 @@ void main() {
       UrlLauncherPlatform.instance = originalPlugin;
     });
 
-    testWidgets('produces the correct semantics tree with a button', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('produces the correct semantics tree with a button', (WidgetTester tester) async {
       final SemanticsHandle semanticsHandle = tester.ensureSemantics();
       final Key linkKey = UniqueKey();
 
@@ -910,10 +872,7 @@ void main() {
               uri: Uri.parse('https://foobar/example?q=1'),
               target: LinkTarget.blank,
               builder: (BuildContext context, FollowLink? followLink) {
-                return ElevatedButton(
-                  onPressed: followLink,
-                  child: const Text('Button Link Text'),
-                );
+                return ElevatedButton(onPressed: followLink, child: const Text('Button Link Text'));
               },
             ),
           ),
@@ -923,10 +882,7 @@ void main() {
       final Finder linkFinder = find.byKey(linkKey);
       expect(
         tester.getSemantics(
-          find.descendant(
-            of: linkFinder,
-            matching: find.byType(Semantics).first,
-          ),
+          find.descendant(of: linkFinder, matching: find.byType(Semantics).first),
         ),
         matchesSemantics(
           isLink: true,
@@ -945,9 +901,7 @@ void main() {
       semanticsHandle.dispose();
     });
 
-    testWidgets('produces the correct semantics tree with text', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('produces the correct semantics tree with text', (WidgetTester tester) async {
       final SemanticsHandle semanticsHandle = tester.ensureSemantics();
       final Key linkKey = UniqueKey();
 
@@ -961,10 +915,7 @@ void main() {
               uri: Uri.parse('https://foobar/example?q=1'),
               target: LinkTarget.blank,
               builder: (BuildContext context, FollowLink? followLink) {
-                return GestureDetector(
-                  onTap: followLink,
-                  child: const Text('Link Text'),
-                );
+                return GestureDetector(onTap: followLink, child: const Text('Link Text'));
               },
             ),
           ),
@@ -974,9 +925,7 @@ void main() {
       final Finder linkFinder = find.byKey(linkKey);
       expect(
         tester.getSemantics(
-          find
-              .descendant(of: linkFinder, matching: find.byType(Semantics))
-              .first,
+          find.descendant(of: linkFinder, matching: find.byType(Semantics)).first,
         ),
         matchesSemantics(
           isLink: true,
@@ -990,9 +939,7 @@ void main() {
       semanticsHandle.dispose();
     });
 
-    testWidgets('handles clicks on semantic link with a button', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('handles clicks on semantic link with a button', (WidgetTester tester) async {
       final Uri uri = Uri.parse('/foobar');
       FollowLink? followLinkCallback;
 
@@ -1008,10 +955,7 @@ void main() {
               target: LinkTarget.blank,
               builder: (BuildContext context, FollowLink? followLink) {
                 followLinkCallback = followLink;
-                return ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('My Button Link'),
-                );
+                return ElevatedButton(onPressed: () {}, child: const Text('My Button Link'));
               },
             ),
           ),
@@ -1021,9 +965,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.pump();
 
-      final html.Element semanticsHost = html.document.createElement(
-        'flt-semantics-host',
-      );
+      final html.Element semanticsHost = html.document.createElement('flt-semantics-host');
       html.document.body!.append(semanticsHost);
       final html.Element semanticsAnchor = html.document.createElement('a')
         ..setAttribute('id', 'flt-semantic-node-99')
@@ -1034,10 +976,9 @@ void main() {
         'flt-semantics-container',
       );
       semanticsAnchor.append(semanticsContainer);
-      final html.Element semanticsButton =
-          html.document.createElement('flt-semantics')
-            ..setAttribute('role', 'button')
-            ..textContent = 'My Button Link';
+      final html.Element semanticsButton = html.document.createElement('flt-semantics')
+        ..setAttribute('role', 'button')
+        ..textContent = 'My Button Link';
       semanticsContainer.append(semanticsButton);
 
       expect(pushedRouteNames, isEmpty);
@@ -1061,9 +1002,7 @@ void main() {
       expect(event2.defaultPrevented, isTrue);
     });
 
-    testWidgets('handles clicks on semantic link with text', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('handles clicks on semantic link with text', (WidgetTester tester) async {
       final Uri uri = Uri.parse('/foobar');
       FollowLink? followLinkCallback;
 
@@ -1079,10 +1018,7 @@ void main() {
               target: LinkTarget.blank,
               builder: (BuildContext context, FollowLink? followLink) {
                 followLinkCallback = followLink;
-                return GestureDetector(
-                  onTap: () {},
-                  child: const Text('My Link'),
-                );
+                return GestureDetector(onTap: () {}, child: const Text('My Link'));
               },
             ),
           ),
@@ -1092,9 +1028,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.pump();
 
-      final html.Element semanticsHost = html.document.createElement(
-        'flt-semantics-host',
-      );
+      final html.Element semanticsHost = html.document.createElement('flt-semantics-host');
       html.document.body!.append(semanticsHost);
       final html.Element semanticsAnchor = html.document.createElement('a')
         ..setAttribute('id', 'flt-semantic-node-99')
@@ -1114,9 +1048,7 @@ void main() {
       expect(event.defaultPrevented, isTrue);
     });
 
-    testWidgets('handles debounced clicks on semantic link', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('handles debounced clicks on semantic link', (WidgetTester tester) async {
       final Uri uri = Uri.parse('https://flutter.dev');
       FollowLink? followLinkCallback;
 
@@ -1129,10 +1061,7 @@ void main() {
               target: LinkTarget.blank,
               builder: (BuildContext context, FollowLink? followLink) {
                 followLinkCallback = followLink;
-                return GestureDetector(
-                  onTap: () {},
-                  child: const Text('My Link'),
-                );
+                return GestureDetector(onTap: () {}, child: const Text('My Link'));
               },
             ),
           ),
@@ -1142,9 +1071,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.pump();
 
-      final html.Element semanticsHost = html.document.createElement(
-        'flt-semantics-host',
-      );
+      final html.Element semanticsHost = html.document.createElement('flt-semantics-host');
       html.document.body!.append(semanticsHost);
       final html.Element semanticsAnchor = html.document.createElement('a')
         ..setAttribute('id', 'flt-semantic-node-99')
@@ -1185,10 +1112,7 @@ void main() {
               uri: uri,
               target: LinkTarget.blank,
               builder: (BuildContext context, FollowLink? followLink) {
-                return GestureDetector(
-                  onTap: () {},
-                  child: const Text('My Link'),
-                );
+                return GestureDetector(onTap: () {}, child: const Text('My Link'));
               },
             ),
           ),
@@ -1198,9 +1122,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.pump();
 
-      final html.Element semanticsHost = html.document.createElement(
-        'flt-semantics-host',
-      );
+      final html.Element semanticsHost = html.document.createElement('flt-semantics-host');
       html.document.body!.append(semanticsHost);
       final html.Element semanticsAnchor = html.document.createElement('a')
         ..setAttribute('id', 'flt-semantic-node-99')
@@ -1227,9 +1149,7 @@ void main() {
 
     // TODO(mdebbar): Remove this test after the engine PR [1] makes it to stable.
     //                [1] https://github.com/flutter/engine/pull/52720
-    testWidgets('handles clicks on (old) semantic link with a button', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('handles clicks on (old) semantic link with a button', (WidgetTester tester) async {
       final Uri uri = Uri.parse('/foobar');
       FollowLink? followLinkCallback;
 
@@ -1254,9 +1174,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.pump();
 
-      final html.Element semanticsHost = html.document.createElement(
-        'flt-semantics-host',
-      );
+      final html.Element semanticsHost = html.document.createElement('flt-semantics-host');
       html.document.body!.append(semanticsHost);
       final html.Element semanticsAnchor = html.document.createElement('a')
         ..setAttribute('id', 'flt-semantic-node-99')
@@ -1266,10 +1184,9 @@ void main() {
         'flt-semantics-container',
       );
       semanticsAnchor.append(semanticsContainer);
-      final html.Element semanticsButton =
-          html.document.createElement('flt-semantics')
-            ..setAttribute('role', 'button')
-            ..textContent = 'My Button';
+      final html.Element semanticsButton = html.document.createElement('flt-semantics')
+        ..setAttribute('role', 'button')
+        ..textContent = 'My Button';
       semanticsContainer.append(semanticsButton);
 
       expect(pushedRouteNames, isEmpty);
@@ -1287,9 +1204,7 @@ void main() {
 
     // TODO(mdebbar): Remove this test after the engine PR [1] makes it to stable.
     //                [1] https://github.com/flutter/engine/pull/52720
-    testWidgets('handles clicks on (old) semantic link with text', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('handles clicks on (old) semantic link with text', (WidgetTester tester) async {
       final Uri uri = Uri.parse('/foobar');
       FollowLink? followLinkCallback;
 
@@ -1304,10 +1219,7 @@ void main() {
               target: LinkTarget.blank,
               builder: (BuildContext context, FollowLink? followLink) {
                 followLinkCallback = followLink;
-                return GestureDetector(
-                  onTap: () {},
-                  child: const Text('My Link'),
-                );
+                return GestureDetector(onTap: () {}, child: const Text('My Link'));
               },
             ),
           ),
@@ -1317,9 +1229,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.pump();
 
-      final html.Element semanticsHost = html.document.createElement(
-        'flt-semantics-host',
-      );
+      final html.Element semanticsHost = html.document.createElement('flt-semantics-host');
       html.document.body!.append(semanticsHost);
       final html.Element semanticsAnchor = html.document.createElement('a')
         ..setAttribute('id', 'flt-semantic-node-99')
@@ -1374,10 +1284,7 @@ html.MouseEvent _simulateClick(html.Element target, {bool metaKey = false}) {
   return mouseEvent;
 }
 
-html.KeyboardEvent _simulateKeydown(
-  html.Element target, {
-  bool metaKey = false,
-}) {
+html.KeyboardEvent _simulateKeydown(html.Element target, {bool metaKey = false}) {
   final keydownEvent = html.KeyboardEvent(
     'keydown',
     html.KeyboardEventInit(
@@ -1392,11 +1299,7 @@ html.KeyboardEvent _simulateKeydown(
 }
 
 class TestLinkInfo extends LinkInfo {
-  TestLinkInfo({
-    required this.uri,
-    required this.target,
-    required this.builder,
-  });
+  TestLinkInfo({required this.uri, required this.target, required this.builder});
 
   @override
   final LinkWidgetBuilder builder;

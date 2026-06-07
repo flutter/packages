@@ -1,8 +1,10 @@
 ## 2.10.0
 * Implements `getVideoTracks()` and `selectVideoTrack()` methods for video track (quality) selection using ExoPlayer.
-* Fixes a potential crash when the player is disposed during a video-track switch that changes dimensions (the delayed renderer-reset callback no longer runs after `dispose()`).
-* Fixes a race condition where overlapping `selectVideoTrack` calls would clobber each other's completer state, causing later calls to time out instead of completing on their matching `VideoTrackChangedEvent`.
-* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
+## 2.9.6
+
+* Migrates to Built-in Kotlin to support AGP 9.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 2.9.5
 

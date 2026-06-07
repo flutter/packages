@@ -18,13 +18,7 @@ class NullFieldsSearchRequest {
 enum NullFieldsSearchReplyType { success, failure }
 
 class NullFieldsSearchReply {
-  NullFieldsSearchReply(
-    this.result,
-    this.error,
-    this.indices,
-    this.request,
-    this.type,
-  );
+  NullFieldsSearchReply(this.result, this.error, this.indices, this.request, this.type);
   String? result;
   String? error;
   List<int?>? indices;

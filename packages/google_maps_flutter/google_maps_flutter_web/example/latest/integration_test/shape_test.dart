@@ -3,11 +3,9 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:js_interop';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps/google_maps.dart' as gmaps;
-import 'package:google_maps/google_maps_visualization.dart' as visualization;
 import 'package:google_maps_flutter_web/google_maps_flutter_web.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -74,9 +72,7 @@ void main() {
         expect(controller.circle, isNull);
       });
 
-      testWidgets('cannot call update after remove', (
-        WidgetTester tester,
-      ) async {
+      testWidgets('cannot call update after remove', (WidgetTester tester) async {
         final options = gmaps.CircleOptions()..draggable = true;
 
         controller.remove();
@@ -129,9 +125,7 @@ void main() {
         expect(controller.polygon, isNull);
       });
 
-      testWidgets('cannot call update after remove', (
-        WidgetTester tester,
-      ) async {
+      testWidgets('cannot call update after remove', (WidgetTester tester) async {
         final options = gmaps.PolygonOptions()..draggable = true;
 
         controller.remove();
@@ -151,11 +145,7 @@ void main() {
     });
 
     testWidgets('onTap gets called', (WidgetTester tester) async {
-      PolylineController(
-        polyline: polyline,
-        consumeTapEvents: true,
-        onTap: onTap,
-      );
+      PolylineController(polyline: polyline, consumeTapEvents: true, onTap: onTap);
 
       // Trigger a click event...
       gmaps.event.trigger(polyline, 'click', gmaps.MapMouseEvent());
@@ -188,56 +178,8 @@ void main() {
         expect(controller.line, isNull);
       });
 
-      testWidgets('cannot call update after remove', (
-        WidgetTester tester,
-      ) async {
+      testWidgets('cannot call update after remove', (WidgetTester tester) async {
         final options = gmaps.PolylineOptions()..draggable = true;
-
-        controller.remove();
-
-        expect(() {
-          controller.update(options);
-        }, throwsAssertionError);
-      });
-    });
-  });
-
-  group('HeatmapController', () {
-    late visualization.HeatmapLayer heatmap;
-
-    setUp(() {
-      heatmap = visualization.HeatmapLayer();
-    });
-
-    testWidgets('update', (WidgetTester tester) async {
-      final controller = HeatmapController(heatmap: heatmap);
-      final options = visualization.HeatmapLayerOptions()
-        ..data = <gmaps.LatLng>[gmaps.LatLng(0, 0)].toJS;
-
-      expect(heatmap.data.array.toDart, hasLength(0));
-
-      controller.update(options);
-
-      expect(heatmap.data.array.toDart, hasLength(1));
-    });
-
-    group('remove', () {
-      late HeatmapController controller;
-
-      setUp(() {
-        controller = HeatmapController(heatmap: heatmap);
-      });
-
-      testWidgets('drops gmaps instance', (WidgetTester tester) async {
-        controller.remove();
-
-        expect(controller.heatmap, isNull);
-      });
-
-      testWidgets('cannot call update after remove', (
-        WidgetTester tester,
-      ) async {
-        final options = visualization.HeatmapLayerOptions()..dissipating = true;
 
         controller.remove();
 
