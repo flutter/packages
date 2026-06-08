@@ -18,3 +18,6 @@ class GoogleFontsConfig {
   /// If you supply a client, you are responsible for closing it.
   http.Client? httpClient;
 }
+
+@Deprecated('Use GoogleFontsConfig instead')
+typedef Config = GoogleFontsConfig;
