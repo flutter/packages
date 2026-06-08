@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async' show unawaited;
+
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
@@ -753,7 +755,7 @@ void main() {
       final Finder page2 = find.text('Page 2');
 
       // Transitioning from page 1 to page 2.
-      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/2');
+      unawaited(tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/2'));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 50));
 
@@ -789,7 +791,7 @@ void main() {
       final Finder page2 = find.text('Page 2');
 
       // Transitioning from page 1 to page 2.
-      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/2');
+      unawaited(tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/2'));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 50));
 
@@ -827,7 +829,7 @@ void main() {
       final Finder page2 = find.text('Page 2');
 
       // Transitioning from page 1 to page 2.
-      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/2');
+      unawaited(tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/2'));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 50));
 

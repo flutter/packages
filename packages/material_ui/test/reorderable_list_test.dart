@@ -7,6 +7,8 @@
 @Tags(<String>['reduced-test-set'])
 library;
 
+import 'dart:async' show unawaited;
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -443,11 +445,11 @@ void main() {
 
         // Check initial scroll offset of first list item relative to
         // the offset of the list view.
-        await customController.animateTo(
+        unawaited(customController.animateTo(
           40.0,
           duration: const Duration(milliseconds: 200),
           curve: Curves.linear,
-        );
+        ));
         await tester.pumpAndSettle();
         Offset listViewTopLeft = tester.getTopLeft(find.byType(ReorderableListView));
         Offset firstBoxTopLeft = tester.getTopLeft(find.byKey(firstBox));

@@ -312,11 +312,13 @@ void main() {
     );
 
     var completed = false;
-    await tester.state<RefreshIndicatorState>(find.byType(RefreshIndicator)).show().then<void>((
-      void value,
-    ) {
-      completed = true;
-    });
+    unawaited(
+      tester.state<RefreshIndicatorState>(find.byType(RefreshIndicator)).show().then<void>((
+        void value,
+      ) {
+        completed = true;
+      }),
+    );
     await tester.pump();
     expect(completed, false);
     await tester.pump(const Duration(seconds: 1));
@@ -326,11 +328,13 @@ void main() {
     expect(completed, false);
     completed = false;
     refreshCalled = false;
-    await tester.state<RefreshIndicatorState>(find.byType(RefreshIndicator)).show().then<void>((
-      void value,
-    ) {
-      completed = true;
-    });
+    unawaited(
+      tester.state<RefreshIndicatorState>(find.byType(RefreshIndicator)).show().then<void>((
+        void value,
+      ) {
+        completed = true;
+      }),
+    );
     await tester.pump();
     expect(completed, false);
     await tester.pump(const Duration(seconds: 1));
@@ -354,11 +358,13 @@ void main() {
     );
 
     var completed = false;
-    await tester.state<RefreshIndicatorState>(find.byType(RefreshIndicator)).show().then<void>((
-      void value,
-    ) {
-      completed = true;
-    });
+    unawaited(
+      tester.state<RefreshIndicatorState>(find.byType(RefreshIndicator)).show().then<void>((
+        void value,
+      ) {
+        completed = true;
+      }),
+    );
     await tester.pump();
     expect(completed, false);
     await tester.pump(const Duration(seconds: 1));
@@ -368,11 +374,11 @@ void main() {
     expect(completed, true);
     completed = false;
     refreshCalled = false;
-    await tester.state<RefreshIndicatorState>(find.byType(RefreshIndicator)).show().then<void>((
+    unawaited(tester.state<RefreshIndicatorState>(find.byType(RefreshIndicator)).show().then<void>((
       void value,
     ) {
       completed = true;
-    });
+    }));
     await tester.pump();
     expect(completed, false);
     await tester.pump(const Duration(seconds: 1));
@@ -397,17 +403,17 @@ void main() {
     );
 
     var completed1 = false;
-    await tester.state<RefreshIndicatorState>(find.byType(RefreshIndicator)).show().then<void>((
+    unawaited(tester.state<RefreshIndicatorState>(find.byType(RefreshIndicator)).show().then<void>((
       void value,
     ) {
       completed1 = true;
-    });
+    }));
     var completed2 = false;
-    await tester.state<RefreshIndicatorState>(find.byType(RefreshIndicator)).show().then<void>((
+    unawaited(tester.state<RefreshIndicatorState>(find.byType(RefreshIndicator)).show().then<void>((
       void value,
     ) {
       completed2 = true;
-    });
+    }));
     await tester.pump();
     expect(completed1, false);
     expect(completed2, false);

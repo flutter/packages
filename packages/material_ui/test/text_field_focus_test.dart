@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async' show unawaited;
 import 'dart:ui';
 
 import 'package:flutter/services.dart';
@@ -48,9 +49,11 @@ void main() {
 
     final BuildContext context = tester.element(find.byType(TextField));
 
-    await showDialog<void>(
-      context: context,
-      builder: (BuildContext context) => const SimpleDialog(title: Text('Dialog')),
+    unawaited(
+      showDialog<void>(
+        context: context,
+        builder: (BuildContext context) => const SimpleDialog(title: Text('Dialog')),
+      ),
     );
 
     await tester.pump();
