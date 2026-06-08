@@ -188,8 +188,8 @@
 
 - (void)didTapPointOfInterestWithPlaceId:(NSString *)placeId {
   [self.callbackHandler didTapPointOfInterestWithPlaceId:placeId
-                                            completion:^(FlutterError *_){
-                                            }];
+                                              completion:^(FlutterError *_){
+                                              }];
 }
 
 - (void)didTapCluster:(FGMPlatformCluster *)cluster {
@@ -568,7 +568,9 @@
     didTapPOIWithPlaceID:(NSString *)placeID
                     name:(NSString *)name
                 location:(CLLocationCoordinate2D)location {
-  [self.mapEventHandler didTapPointOfInterestWithPlaceId:placeID];
+  if (placeID != nil) {
+    [self.mapEventHandler didTapPointOfInterestWithPlaceId:placeID];
+  }
 }
 
 - (void)mapView:(GMSMapView *)mapView didTapAtCoordinate:(CLLocationCoordinate2D)coordinate {

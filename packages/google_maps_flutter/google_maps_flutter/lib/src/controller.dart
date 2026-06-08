@@ -59,15 +59,13 @@ class GoogleMapController {
             .listen((_) => _googleMapState.widget.onCameraIdle!()),
       );
     }
-    if (_googleMapState.widget.onPointOfInterestTap != null) {
-      _streamSubscriptions.add(
-        GoogleMapsFlutterPlatform.instance
-            .onPointOfInterestTap(mapId: mapId)
-            .listen(
-              (PointOfInterestTapEvent e) => _googleMapState.onPointOfInterestTap(e.value),
-            ),
-      );
-    }
+    _streamSubscriptions.add(
+      GoogleMapsFlutterPlatform.instance
+          .onPointOfInterestTap(mapId: mapId)
+          .listen(
+            (PointOfInterestTapEvent e) => _googleMapState.onPointOfInterestTap(e.value),
+          ),
+    );
     _streamSubscriptions.add(
       GoogleMapsFlutterPlatform.instance
           .onMarkerTap(mapId: mapId)
