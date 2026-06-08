@@ -28,3 +28,7 @@
 - rfw/example
 # Disables docs requirements, as it is test code.
 - web_benchmarks/testing/test_app
+# Temporarily ignore tests that have yet to have their cross imports fixed.
+# See https://github.com/flutter/flutter/issues/177028.
+- material_ui
+- cupertino_ui
