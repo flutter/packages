@@ -365,7 +365,7 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
     final Pointer<Uint8> uint8Pointer = data.bytes.cast<Uint8>();
     final Uint8List byteView = uint8Pointer.asTypedList(data.length);
     final a = Uint8List.fromList(byteView);
-    print('extract: ${a[0]} ${a[1]}');
+    print('extract: ${a[0]} ${a[1]} ${a[2]} ${a[3]} ${a[4]}');
     print('extract: ${a[a.length - 1]}');
     print('extract: ${a[a.length - 2]}');
     return a;
