@@ -38,6 +38,98 @@ class StubBinaryMessenger: NSObject, FlutterBinaryMessenger {
   }
 }
 
+/// Fake implementation of FGMMapsCallbackApiProtocol that records the calls it receives.
+class MockMapsCallbackApi: NSObject, FGMMapsCallbackApiProtocol {
+  var lastTappedPointOfInterestPlaceIdentifier: String?
+
+  func didTapPointOfInterest(
+    withPlaceIdentifier placeIdentifier: String,
+    completion: @escaping (FlutterError?) -> Void
+  ) {
+    lastTappedPointOfInterestPlaceIdentifier = placeIdentifier
+    completion(nil)
+  }
+
+  func didStartCameraMove(completion: @escaping (FlutterError?) -> Void) { completion(nil) }
+
+  func didMoveCamera(
+    to cameraPosition: FGMPlatformCameraPosition,
+    completion: @escaping (FlutterError?) -> Void
+  ) { completion(nil) }
+
+  func didIdleCamera(completion: @escaping (FlutterError?) -> Void) { completion(nil) }
+
+  func didTap(
+    atPosition position: FGMPlatformLatLng,
+    completion: @escaping (FlutterError?) -> Void
+  ) { completion(nil) }
+
+  func didLongPress(
+    atPosition position: FGMPlatformLatLng,
+    completion: @escaping (FlutterError?) -> Void
+  ) { completion(nil) }
+
+  func didTapMarker(
+    withIdentifier markerId: String,
+    completion: @escaping (FlutterError?) -> Void
+  ) { completion(nil) }
+
+  func didStartDragForMarker(
+    withIdentifier markerId: String,
+    atPosition position: FGMPlatformLatLng,
+    completion: @escaping (FlutterError?) -> Void
+  ) { completion(nil) }
+
+  func didDragMarker(
+    withIdentifier markerId: String,
+    atPosition position: FGMPlatformLatLng,
+    completion: @escaping (FlutterError?) -> Void
+  ) { completion(nil) }
+
+  func didEndDragForMarker(
+    withIdentifier markerId: String,
+    atPosition position: FGMPlatformLatLng,
+    completion: @escaping (FlutterError?) -> Void
+  ) { completion(nil) }
+
+  func didTapInfoWindowOfMarker(
+    withIdentifier markerId: String,
+    completion: @escaping (FlutterError?) -> Void
+  ) { completion(nil) }
+
+  func didTapCircle(
+    withIdentifier circleId: String,
+    completion: @escaping (FlutterError?) -> Void
+  ) { completion(nil) }
+
+  func didTap(
+    _ cluster: FGMPlatformCluster,
+    completion: @escaping (FlutterError?) -> Void
+  ) { completion(nil) }
+
+  func didTapPolygon(
+    withIdentifier polygonId: String,
+    completion: @escaping (FlutterError?) -> Void
+  ) { completion(nil) }
+
+  func didTapPolyline(
+    withIdentifier polylineId: String,
+    completion: @escaping (FlutterError?) -> Void
+  ) { completion(nil) }
+
+  func didTapGroundOverlay(
+    withIdentifier groundOverlayId: String,
+    completion: @escaping (FlutterError?) -> Void
+  ) { completion(nil) }
+
+  func tile(
+    withOverlayIdentifier tileOverlayId: String,
+    location: FGMPlatformPoint,
+    zoom: Int,
+    completion: @escaping (FGMPlatformTile?, FlutterError?) -> Void
+  ) { completion(nil, nil) }
+}
+
 class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
   var viewController: UIViewController? { nil }
   func publish(_ value: NSObject) {}
@@ -74,7 +166,8 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
       viewIdentifier: 0,
       creationParameters: emptyCreationParameters(),
       assetProvider: TestAssetProvider(),
-      binaryMessenger: StubBinaryMessenger()
+      binaryMessenger: StubBinaryMessenger(),
+      callbackHandler: MockMapsCallbackApi()
     )
 
     for _ in 0..<10 {
@@ -133,7 +226,8 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
       viewIdentifier: 0,
       creationParameters: emptyCreationParameters(),
       assetProvider: TestAssetProvider(),
-      binaryMessenger: StubBinaryMessenger()
+      binaryMessenger: StubBinaryMessenger(),
+      callbackHandler: MockMapsCallbackApi()
     )
 
     let mockTransactionWrapper = MockCATransaction()
@@ -165,7 +259,8 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
       viewIdentifier: 0,
       creationParameters: emptyCreationParameters(),
       assetProvider: TestAssetProvider(),
-      binaryMessenger: StubBinaryMessenger()
+      binaryMessenger: StubBinaryMessenger(),
+      callbackHandler: MockMapsCallbackApi()
     )
 
     let mockTransactionWrapper = MockCATransaction()
@@ -188,6 +283,34 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
     #expect(mockTransactionWrapper.animationDuration == durationMilliseconds.doubleValue / 1000)
   }
 
+  @Test func didTapPOIForwardsPlaceIdentifierToCallbackApi() {
+    let frame = CGRect(x: 0, y: 0, width: 100, height: 100)
+    let mapViewOptions = GMSMapViewOptions()
+    mapViewOptions.frame = frame
+    mapViewOptions.camera = GMSCameraPosition(latitude: 0, longitude: 0, zoom: 0)
+
+    let mapView = PartiallyMockedMapView(options: mapViewOptions)
+
+    let callbackApi = MockMapsCallbackApi()
+    let controller = FGMGoogleMapController(
+      mapView: mapView,
+      viewIdentifier: 0,
+      creationParameters: emptyCreationParameters(),
+      assetProvider: TestAssetProvider(),
+      binaryMessenger: StubBinaryMessenger(),
+      callbackHandler: callbackApi
+    )
+
+    controller.mapView(
+      mapView,
+      didTapPOIWithPlaceID: "place-123",
+      name: "Test Place",
+      location: CLLocationCoordinate2DMake(0, 0)
+    )
+
+    #expect(callbackApi.lastTappedPointOfInterestPlaceIdentifier == "place-123")
+  }
+
   @Test func inspectorAPICameraPosition() throws {
     let frame = CGRect(x: 0, y: 0, width: 100, height: 100)
     let mapViewOptions = GMSMapViewOptions()
@@ -205,7 +328,8 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
       viewIdentifier: 0,
       creationParameters: emptyCreationParameters(),
       assetProvider: TestAssetProvider(),
-      binaryMessenger: binaryMessenger
+      binaryMessenger: binaryMessenger,
+      callbackHandler: MockMapsCallbackApi()
     )
 
     let inspector = FGMMapInspector(

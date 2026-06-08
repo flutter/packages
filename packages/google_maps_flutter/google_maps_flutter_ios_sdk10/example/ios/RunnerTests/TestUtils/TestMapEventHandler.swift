@@ -32,6 +32,8 @@ class TestMapEventHandler: NSObject, FGMMapEventDelegate {
 
   func didTapCircle(withIdentifier circleId: String) {}
 
+  func didTapPointOfInterest(withPlaceIdentifier placeIdentifier: String) {}
+
   func didTap(_ cluster: FGMPlatformCluster) {}
 
   func didTapPolygon(withIdentifier polygonId: String) {}

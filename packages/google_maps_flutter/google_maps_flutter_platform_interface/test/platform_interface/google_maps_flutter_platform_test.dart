@@ -95,6 +95,12 @@ void main() {
       );
     });
 
+    test('onPointOfInterestTap() returns empty stream', () async {
+      final Stream<PointOfInterestTapEvent> stream = BuildViewGoogleMapsFlutterPlatform()
+          .onPointOfInterestTap(mapId: 0);
+      expect(await stream.isEmpty, isTrue);
+    });
+
     test('default implementation of `getStyleError` returns null', () async {
       final GoogleMapsFlutterPlatform platform = BuildViewGoogleMapsFlutterPlatform();
       expect(await platform.getStyleError(mapId: 0), null);
