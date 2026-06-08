@@ -26,6 +26,7 @@ void main() {
     objectiveC: ObjectiveC(
       interfaces: Interfaces(
         include: (Declaration declaration) {
+          print('Apple: ${declaration.originalName}');
           return <String>{
             'NSFileManager',
             'NSObject',
@@ -38,9 +39,6 @@ void main() {
           }.contains(declaration.originalName);
         },
         includeMember: (Declaration declaration, String member) {
-          if (declaration.originalName == 'PHImageRequestOptions') {
-            print('Apple: $member');
-          }
           final String interfaceName = declaration.originalName;
           final signature = member;
           return switch (interfaceName) {
@@ -56,6 +54,7 @@ void main() {
             'PHAssetResource' => <String>{
               'assetResourcesForAsset:',
               'originalFilename',
+              'type',
             }.contains(signature),
             'PHAssetResourceManager' => <String>{
               'defaultManager',
@@ -74,6 +73,7 @@ void main() {
           };
         },
       ),
+
     ),
   ).generate();
 }

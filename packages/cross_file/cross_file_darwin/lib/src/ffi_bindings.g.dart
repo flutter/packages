@@ -6,11 +6,10 @@ import 'dart:ffi' as ffi;
 import 'package:objective_c/objective_c.dart' as objc;
 import 'package:ffi/ffi.dart' as pkg_ffi;
 
-@ffi.Native<
-  ffi.Pointer<objc.ObjCBlockImpl> Function(ffi.Pointer<objc.ObjCBlockImpl>)
->(isLeaf: true)
-external ffi.Pointer<objc.ObjCBlockImpl>
-_NativeLibrary_wrapListenerBlock_pfv6jd(ffi.Pointer<objc.ObjCBlockImpl> block);
+@ffi.Native<ffi.Pointer<objc.ObjCBlockImpl> Function(ffi.Pointer<objc.ObjCBlockImpl>)>(isLeaf: true)
+external ffi.Pointer<objc.ObjCBlockImpl> _NativeLibrary_wrapListenerBlock_pfv6jd(
+  ffi.Pointer<objc.ObjCBlockImpl> block,
+);
 
 @ffi.Native<
   ffi.Pointer<objc.ObjCBlockImpl> Function(
@@ -19,18 +18,16 @@ _NativeLibrary_wrapListenerBlock_pfv6jd(ffi.Pointer<objc.ObjCBlockImpl> block);
     ffi.Pointer<objc.DOBJC_Context>,
   )
 >(isLeaf: true)
-external ffi.Pointer<objc.ObjCBlockImpl>
-_NativeLibrary_wrapBlockingBlock_pfv6jd(
+external ffi.Pointer<objc.ObjCBlockImpl> _NativeLibrary_wrapBlockingBlock_pfv6jd(
   ffi.Pointer<objc.ObjCBlockImpl> block,
   ffi.Pointer<objc.ObjCBlockImpl> listnerBlock,
   ffi.Pointer<objc.DOBJC_Context> context,
 );
 
-@ffi.Native<
-  ffi.Pointer<objc.ObjCBlockImpl> Function(ffi.Pointer<objc.ObjCBlockImpl>)
->(isLeaf: true)
-external ffi.Pointer<objc.ObjCBlockImpl>
-_NativeLibrary_wrapListenerBlock_10c3wkj(ffi.Pointer<objc.ObjCBlockImpl> block);
+@ffi.Native<ffi.Pointer<objc.ObjCBlockImpl> Function(ffi.Pointer<objc.ObjCBlockImpl>)>(isLeaf: true)
+external ffi.Pointer<objc.ObjCBlockImpl> _NativeLibrary_wrapListenerBlock_10c3wkj(
+  ffi.Pointer<objc.ObjCBlockImpl> block,
+);
 
 @ffi.Native<
   ffi.Pointer<objc.ObjCBlockImpl> Function(
@@ -39,18 +36,16 @@ _NativeLibrary_wrapListenerBlock_10c3wkj(ffi.Pointer<objc.ObjCBlockImpl> block);
     ffi.Pointer<objc.DOBJC_Context>,
   )
 >(isLeaf: true)
-external ffi.Pointer<objc.ObjCBlockImpl>
-_NativeLibrary_wrapBlockingBlock_10c3wkj(
+external ffi.Pointer<objc.ObjCBlockImpl> _NativeLibrary_wrapBlockingBlock_10c3wkj(
   ffi.Pointer<objc.ObjCBlockImpl> block,
   ffi.Pointer<objc.ObjCBlockImpl> listnerBlock,
   ffi.Pointer<objc.DOBJC_Context> context,
 );
 
-@ffi.Native<
-  ffi.Pointer<objc.ObjCBlockImpl> Function(ffi.Pointer<objc.ObjCBlockImpl>)
->(isLeaf: true)
-external ffi.Pointer<objc.ObjCBlockImpl>
-_NativeLibrary_wrapListenerBlock_xtuoz7(ffi.Pointer<objc.ObjCBlockImpl> block);
+@ffi.Native<ffi.Pointer<objc.ObjCBlockImpl> Function(ffi.Pointer<objc.ObjCBlockImpl>)>(isLeaf: true)
+external ffi.Pointer<objc.ObjCBlockImpl> _NativeLibrary_wrapListenerBlock_xtuoz7(
+  ffi.Pointer<objc.ObjCBlockImpl> block,
+);
 
 @ffi.Native<
   ffi.Pointer<objc.ObjCBlockImpl> Function(
@@ -59,8 +54,7 @@ _NativeLibrary_wrapListenerBlock_xtuoz7(ffi.Pointer<objc.ObjCBlockImpl> block);
     ffi.Pointer<objc.DOBJC_Context>,
   )
 >(isLeaf: true)
-external ffi.Pointer<objc.ObjCBlockImpl>
-_NativeLibrary_wrapBlockingBlock_xtuoz7(
+external ffi.Pointer<objc.ObjCBlockImpl> _NativeLibrary_wrapBlockingBlock_xtuoz7(
   ffi.Pointer<objc.ObjCBlockImpl> block,
   ffi.Pointer<objc.ObjCBlockImpl> listnerBlock,
   ffi.Pointer<objc.DOBJC_Context> context,
@@ -71,18 +65,10 @@ late final _sel_version = objc.registerName("version");
 final _objc_msgSend_1hz7y9r = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
-        ffi.Long Function(
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCSelector>,
-        )
+        ffi.Long Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCSelector>)
       >
     >()
-    .asFunction<
-      int Function(
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCSelector>,
-      )
-    >();
+    .asFunction<int Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCSelector>)>();
 late final _sel_setVersion_ = objc.registerName("setVersion:");
 final _objc_msgSend_4sp4xj = objc.msgSendPointer
     .cast<
@@ -95,11 +81,7 @@ final _objc_msgSend_4sp4xj = objc.msgSendPointer
       >
     >()
     .asFunction<
-      void Function(
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCSelector>,
-        int,
-      )
+      void Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCSelector>, int)
     >();
 late final _sel_classForCoder = objc.registerName("classForCoder");
 final _objc_msgSend_151sglz = objc.msgSendPointer
@@ -117,9 +99,7 @@ final _objc_msgSend_151sglz = objc.msgSendPointer
         ffi.Pointer<objc.ObjCSelector>,
       )
     >();
-late final _sel_replacementObjectForCoder_ = objc.registerName(
-  "replacementObjectForCoder:",
-);
+late final _sel_replacementObjectForCoder_ = objc.registerName("replacementObjectForCoder:");
 final _objc_msgSend_1sotr3r = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -137,9 +117,7 @@ final _objc_msgSend_1sotr3r = objc.msgSendPointer
         ffi.Pointer<objc.ObjCObjectImpl>,
       )
     >();
-late final _sel_awakeAfterUsingCoder_ = objc.registerName(
-  "awakeAfterUsingCoder:",
-);
+late final _sel_awakeAfterUsingCoder_ = objc.registerName("awakeAfterUsingCoder:");
 
 /// NSCoderMethods
 extension NSCoderMethods on objc.NSObject {
@@ -155,9 +133,7 @@ extension NSCoderMethods on objc.NSObject {
       _sel_awakeAfterUsingCoder_,
       coder.ref.pointer,
     );
-    return $ret.address == 0
-        ? null
-        : objc.ObjCObject($ret, retain: false, release: true);
+    return $ret.address == 0 ? null : objc.ObjCObject($ret, retain: false, release: true);
   }
 
   /// classForCoder
@@ -183,9 +159,7 @@ extension NSCoderMethods on objc.NSObject {
       _sel_replacementObjectForCoder_,
       coder.ref.pointer,
     );
-    return $ret.address == 0
-        ? null
-        : objc.ObjCObject($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.ObjCObject($ret, retain: true, release: true);
   }
 
   /// setVersion:
@@ -237,17 +211,11 @@ extension NSDeprecatedMethods on objc.NSObject {
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    _objc_msgSend_xtuoz7(
-      _class_NSObject,
-      _sel_poseAsClass_,
-      aClass.ref.pointer,
-    );
+    _objc_msgSend_xtuoz7(_class_NSObject, _sel_poseAsClass_, aClass.ref.pointer);
   }
 }
 
-late final _sel_autoContentAccessingProxy = objc.registerName(
-  "autoContentAccessingProxy",
-);
+late final _sel_autoContentAccessingProxy = objc.registerName("autoContentAccessingProxy");
 
 /// NSDiscardableContentProxy
 extension NSDiscardableContentProxy on objc.NSObject {
@@ -258,18 +226,13 @@ extension NSDiscardableContentProxy on objc.NSObject {
       iOS: (false, (4, 0, 0)),
       macOS: (false, (10, 6, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.pointer,
-      _sel_autoContentAccessingProxy,
-    );
+    final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_autoContentAccessingProxy);
     return objc.ObjCObject($ret, retain: true, release: true);
   }
 }
 
-late final _sel_attemptRecoveryFromError_optionIndex_delegate_didRecoverSelector_contextInfo_ =
-    objc.registerName(
-      "attemptRecoveryFromError:optionIndex:delegate:didRecoverSelector:contextInfo:",
-    );
+late final _sel_attemptRecoveryFromError_optionIndex_delegate_didRecoverSelector_contextInfo_ = objc
+    .registerName("attemptRecoveryFromError:optionIndex:delegate:didRecoverSelector:contextInfo:");
 final _objc_msgSend_10txwc9 = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -321,10 +284,7 @@ final _objc_msgSend_z7gxsm = objc.msgSendPointer
 /// NSErrorRecoveryAttempting
 extension NSErrorRecoveryAttempting on objc.NSObject {
   /// attemptRecoveryFromError:optionIndex:
-  bool attemptRecoveryFromError(
-    objc.NSError error, {
-    required int optionIndex,
-  }) {
+  bool attemptRecoveryFromError(objc.NSError error, {required int optionIndex}) {
     objc.checkOsVersionInternal(
       'NSObject.attemptRecoveryFromError:optionIndex:',
       iOS: (false, (2, 0, 0)),
@@ -363,8 +323,9 @@ extension NSErrorRecoveryAttempting on objc.NSObject {
   }
 }
 
-late final _sel_performSelector_withObject_afterDelay_inModes_ = objc
-    .registerName("performSelector:withObject:afterDelay:inModes:");
+late final _sel_performSelector_withObject_afterDelay_inModes_ = objc.registerName(
+  "performSelector:withObject:afterDelay:inModes:",
+);
 final _objc_msgSend_t8ajot = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -412,8 +373,9 @@ final _objc_msgSend_7ql5kn = objc.msgSendPointer
         double,
       )
     >();
-late final _sel_cancelPreviousPerformRequestsWithTarget_selector_object_ = objc
-    .registerName("cancelPreviousPerformRequestsWithTarget:selector:object:");
+late final _sel_cancelPreviousPerformRequestsWithTarget_selector_object_ = objc.registerName(
+  "cancelPreviousPerformRequestsWithTarget:selector:object:",
+);
 final _objc_msgSend_1ygbbzi = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -540,12 +502,8 @@ final _objc_msgSend_pfv6jd = objc.msgSendPointer
         ffi.Pointer<objc.ObjCObjectImpl>,
       )
     >();
-late final _sel_URLResourceDidFinishLoading_ = objc.registerName(
-  "URLResourceDidFinishLoading:",
-);
-late final _sel_URLResourceDidCancelLoading_ = objc.registerName(
-  "URLResourceDidCancelLoading:",
-);
+late final _sel_URLResourceDidFinishLoading_ = objc.registerName("URLResourceDidFinishLoading:");
+late final _sel_URLResourceDidCancelLoading_ = objc.registerName("URLResourceDidCancelLoading:");
 late final _sel_URL_resourceDidFailLoadingWithReason_ = objc.registerName(
   "URL:resourceDidFailLoadingWithReason:",
 );
@@ -553,10 +511,7 @@ late final _sel_URL_resourceDidFailLoadingWithReason_ = objc.registerName(
 /// NSURLClient
 extension NSURLClient on objc.NSObject {
   /// URL:resourceDataDidBecomeAvailable:
-  void URL(
-    objc.NSURL sender, {
-    required objc.NSData resourceDataDidBecomeAvailable,
-  }) {
+  void URL(objc.NSURL sender, {required objc.NSData resourceDataDidBecomeAvailable}) {
     objc.checkOsVersionInternal(
       'NSObject.URL:resourceDataDidBecomeAvailable:',
       iOS: (false, (2, 0, 0)),
@@ -571,10 +526,7 @@ extension NSURLClient on objc.NSObject {
   }
 
   /// URL:resourceDidFailLoadingWithReason:
-  void URL$1(
-    objc.NSURL sender, {
-    required objc.NSString resourceDidFailLoadingWithReason,
-  }) {
+  void URL$1(objc.NSURL sender, {required objc.NSString resourceDidFailLoadingWithReason}) {
     objc.checkOsVersionInternal(
       'NSObject.URL:resourceDidFailLoadingWithReason:',
       iOS: (false, (2, 0, 0)),
@@ -637,16 +589,10 @@ final _objc_msgSend_19nvye5 = objc.msgSendPointer
       )
     >();
 late final _sel_defaultManager = objc.registerName("defaultManager");
-late final _sel_isReadableFileAtPath_ = objc.registerName(
-  "isReadableFileAtPath:",
-);
-late final _sel_homeDirectoryForCurrentUser = objc.registerName(
-  "homeDirectoryForCurrentUser",
-);
+late final _sel_isReadableFileAtPath_ = objc.registerName("isReadableFileAtPath:");
+late final _sel_homeDirectoryForCurrentUser = objc.registerName("homeDirectoryForCurrentUser");
 late final _sel_temporaryDirectory = objc.registerName("temporaryDirectory");
-late final _sel_homeDirectoryForUser_ = objc.registerName(
-  "homeDirectoryForUser:",
-);
+late final _sel_homeDirectoryForUser_ = objc.registerName("homeDirectoryForUser:");
 
 /// NSUserInformation
 extension NSUserInformation on NSFileManager {
@@ -657,10 +603,7 @@ extension NSUserInformation on NSFileManager {
       iOS: (true, null),
       macOS: (false, (10, 12, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.pointer,
-      _sel_homeDirectoryForCurrentUser,
-    );
+    final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_homeDirectoryForCurrentUser);
     return objc.NSURL.fromPointer($ret, retain: true, release: true);
   }
 
@@ -676,9 +619,7 @@ extension NSUserInformation on NSFileManager {
       _sel_homeDirectoryForUser_,
       userName.ref.pointer,
     );
-    return $ret.address == 0
-        ? null
-        : objc.NSURL.fromPointer($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.NSURL.fromPointer($ret, retain: true, release: true);
   }
 
   /// temporaryDirectory
@@ -688,17 +629,13 @@ extension NSUserInformation on NSFileManager {
       iOS: (false, (10, 0, 0)),
       macOS: (false, (10, 12, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.pointer,
-      _sel_temporaryDirectory,
-    );
+    final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_temporaryDirectory);
     return objc.NSURL.fromPointer($ret, retain: true, release: true);
   }
 }
 
 /// NSFileManager
-extension type NSFileManager._(objc.ObjCObject object$)
-    implements objc.ObjCObject, objc.NSObject {
+extension type NSFileManager._(objc.ObjCObject object$) implements objc.ObjCObject, objc.NSObject {
   /// Constructs a [NSFileManager] that points to the same underlying object as [other].
   NSFileManager.as(objc.ObjCObject other) : object$ = other {
     assert(isA(object$));
@@ -714,18 +651,12 @@ extension type NSFileManager._(objc.ObjCObject object$)
   }
 
   /// Returns whether [obj] is an instance of [NSFileManager].
-  static bool isA(objc.ObjCObject obj) => _objc_msgSend_19nvye5(
-    obj.ref.pointer,
-    _sel_isKindOfClass_,
-    _class_NSFileManager,
-  );
+  static bool isA(objc.ObjCObject obj) =>
+      _objc_msgSend_19nvye5(obj.ref.pointer, _sel_isKindOfClass_, _class_NSFileManager);
 
   /// defaultManager
   static NSFileManager getDefaultManager() {
-    final $ret = _objc_msgSend_151sglz(
-      _class_NSFileManager,
-      _sel_defaultManager,
-    );
+    final $ret = _objc_msgSend_151sglz(_class_NSFileManager, _sel_defaultManager);
     return NSFileManager.fromPointer($ret, retain: true, release: true);
   }
 }
@@ -733,11 +664,7 @@ extension type NSFileManager._(objc.ObjCObject object$)
 extension NSFileManager$Methods on NSFileManager {
   /// isReadableFileAtPath:
   bool isReadableFileAtPath(objc.NSString path) {
-    return _objc_msgSend_19nvye5(
-      object$.ref.pointer,
-      _sel_isReadableFileAtPath_,
-      path.ref.pointer,
-    );
+    return _objc_msgSend_19nvye5(object$.ref.pointer, _sel_isReadableFileAtPath_, path.ref.pointer);
   }
 }
 
@@ -763,17 +690,12 @@ final _objc_msgSend_1lsax7n = objc.msgSendPointer
         ffi.Pointer<objc.ObjCObjectImpl>,
       )
     >();
-late final _sel_fileManager_willProcessPath_ = objc.registerName(
-  "fileManager:willProcessPath:",
-);
+late final _sel_fileManager_willProcessPath_ = objc.registerName("fileManager:willProcessPath:");
 
 /// NSCopyLinkMoveHandler
 extension NSCopyLinkMoveHandler on objc.NSObject {
   /// fileManager:shouldProceedAfterError:
-  bool fileManager(
-    NSFileManager fm, {
-    required objc.NSDictionary shouldProceedAfterError,
-  }) {
+  bool fileManager(NSFileManager fm, {required objc.NSDictionary shouldProceedAfterError}) {
     objc.checkOsVersionInternal(
       'NSObject.fileManager:shouldProceedAfterError:',
       iOS: (false, (2, 0, 0)),
@@ -788,10 +710,7 @@ extension NSCopyLinkMoveHandler on objc.NSObject {
   }
 
   /// fileManager:willProcessPath:
-  void fileManager$1(
-    NSFileManager fm, {
-    required objc.NSString willProcessPath,
-  }) {
+  void fileManager$1(NSFileManager fm, {required objc.NSString willProcessPath}) {
     objc.checkOsVersionInternal(
       'NSObject.fileManager:willProcessPath:',
       iOS: (false, (2, 0, 0)),
@@ -812,23 +731,13 @@ late final _sel_accessInstanceVariablesDirectly = objc.registerName(
 final _objc_msgSend_91o635 = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
-        ffi.Bool Function(
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCSelector>,
-        )
+        ffi.Bool Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCSelector>)
       >
     >()
-    .asFunction<
-      bool Function(
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCSelector>,
-      )
-    >();
+    .asFunction<bool Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCSelector>)>();
 late final _sel_valueForKey_ = objc.registerName("valueForKey:");
 late final _sel_setValue_forKey_ = objc.registerName("setValue:forKey:");
-late final _sel_validateValue_forKey_error_ = objc.registerName(
-  "validateValue:forKey:error:",
-);
+late final _sel_validateValue_forKey_error_ = objc.registerName("validateValue:forKey:error:");
 final _objc_msgSend_1j9bhml = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -850,41 +759,23 @@ final _objc_msgSend_1j9bhml = objc.msgSendPointer
         ffi.Pointer<ffi.Pointer<objc.ObjCObjectImpl>>,
       )
     >();
-late final _sel_mutableArrayValueForKey_ = objc.registerName(
-  "mutableArrayValueForKey:",
-);
-late final _sel_mutableOrderedSetValueForKey_ = objc.registerName(
-  "mutableOrderedSetValueForKey:",
-);
-late final _sel_mutableSetValueForKey_ = objc.registerName(
-  "mutableSetValueForKey:",
-);
+late final _sel_mutableArrayValueForKey_ = objc.registerName("mutableArrayValueForKey:");
+late final _sel_mutableOrderedSetValueForKey_ = objc.registerName("mutableOrderedSetValueForKey:");
+late final _sel_mutableSetValueForKey_ = objc.registerName("mutableSetValueForKey:");
 late final _sel_valueForKeyPath_ = objc.registerName("valueForKeyPath:");
-late final _sel_setValue_forKeyPath_ = objc.registerName(
-  "setValue:forKeyPath:",
-);
+late final _sel_setValue_forKeyPath_ = objc.registerName("setValue:forKeyPath:");
 late final _sel_validateValue_forKeyPath_error_ = objc.registerName(
   "validateValue:forKeyPath:error:",
 );
-late final _sel_mutableArrayValueForKeyPath_ = objc.registerName(
-  "mutableArrayValueForKeyPath:",
-);
+late final _sel_mutableArrayValueForKeyPath_ = objc.registerName("mutableArrayValueForKeyPath:");
 late final _sel_mutableOrderedSetValueForKeyPath_ = objc.registerName(
   "mutableOrderedSetValueForKeyPath:",
 );
-late final _sel_mutableSetValueForKeyPath_ = objc.registerName(
-  "mutableSetValueForKeyPath:",
-);
-late final _sel_valueForUndefinedKey_ = objc.registerName(
-  "valueForUndefinedKey:",
-);
-late final _sel_setValue_forUndefinedKey_ = objc.registerName(
-  "setValue:forUndefinedKey:",
-);
+late final _sel_mutableSetValueForKeyPath_ = objc.registerName("mutableSetValueForKeyPath:");
+late final _sel_valueForUndefinedKey_ = objc.registerName("valueForUndefinedKey:");
+late final _sel_setValue_forUndefinedKey_ = objc.registerName("setValue:forUndefinedKey:");
 late final _sel_setNilValueForKey_ = objc.registerName("setNilValueForKey:");
-late final _sel_dictionaryWithValuesForKeys_ = objc.registerName(
-  "dictionaryWithValuesForKeys:",
-);
+late final _sel_dictionaryWithValuesForKeys_ = objc.registerName("dictionaryWithValuesForKeys:");
 late final _sel_setValuesForKeysWithDictionary_ = objc.registerName(
   "setValuesForKeysWithDictionary:",
 );
@@ -948,17 +839,11 @@ extension NSKeyValueCoding on objc.NSObject {
       _sel_mutableOrderedSetValueForKey_,
       key.ref.pointer,
     );
-    return objc.NSMutableOrderedSet.fromPointer(
-      $ret,
-      retain: true,
-      release: true,
-    );
+    return objc.NSMutableOrderedSet.fromPointer($ret, retain: true, release: true);
   }
 
   /// mutableOrderedSetValueForKeyPath:
-  objc.NSMutableOrderedSet mutableOrderedSetValueForKeyPath(
-    objc.NSString keyPath,
-  ) {
+  objc.NSMutableOrderedSet mutableOrderedSetValueForKeyPath(objc.NSString keyPath) {
     objc.checkOsVersionInternal(
       'NSObject.mutableOrderedSetValueForKeyPath:',
       iOS: (false, (5, 0, 0)),
@@ -969,11 +854,7 @@ extension NSKeyValueCoding on objc.NSObject {
       _sel_mutableOrderedSetValueForKeyPath_,
       keyPath.ref.pointer,
     );
-    return objc.NSMutableOrderedSet.fromPointer(
-      $ret,
-      retain: true,
-      release: true,
-    );
+    return objc.NSMutableOrderedSet.fromPointer($ret, retain: true, release: true);
   }
 
   /// mutableSetValueForKey:
@@ -1013,11 +894,7 @@ extension NSKeyValueCoding on objc.NSObject {
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    _objc_msgSend_xtuoz7(
-      object$.ref.pointer,
-      _sel_setNilValueForKey_,
-      key.ref.pointer,
-    );
+    _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setNilValueForKey_, key.ref.pointer);
   }
 
   /// setValue:forKey:
@@ -1051,10 +928,7 @@ extension NSKeyValueCoding on objc.NSObject {
   }
 
   /// setValue:forUndefinedKey:
-  void setValue$2(
-    objc.ObjCObject? value, {
-    required objc.NSString forUndefinedKey,
-  }) {
+  void setValue$2(objc.ObjCObject? value, {required objc.NSString forUndefinedKey}) {
     objc.checkOsVersionInternal(
       'NSObject.setValue:forUndefinedKey:',
       iOS: (false, (2, 0, 0)),
@@ -1141,14 +1015,8 @@ extension NSKeyValueCoding on objc.NSObject {
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    final $ret = _objc_msgSend_1sotr3r(
-      object$.ref.pointer,
-      _sel_valueForKey_,
-      key.ref.pointer,
-    );
-    return $ret.address == 0
-        ? null
-        : objc.ObjCObject($ret, retain: true, release: true);
+    final $ret = _objc_msgSend_1sotr3r(object$.ref.pointer, _sel_valueForKey_, key.ref.pointer);
+    return $ret.address == 0 ? null : objc.ObjCObject($ret, retain: true, release: true);
   }
 
   /// valueForKeyPath:
@@ -1163,9 +1031,7 @@ extension NSKeyValueCoding on objc.NSObject {
       _sel_valueForKeyPath_,
       keyPath.ref.pointer,
     );
-    return $ret.address == 0
-        ? null
-        : objc.ObjCObject($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.ObjCObject($ret, retain: true, release: true);
   }
 
   /// valueForUndefinedKey:
@@ -1180,9 +1046,7 @@ extension NSKeyValueCoding on objc.NSObject {
       _sel_valueForUndefinedKey_,
       key.ref.pointer,
     );
-    return $ret.address == 0
-        ? null
-        : objc.ObjCObject($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.ObjCObject($ret, retain: true, release: true);
   }
 
   /// accessInstanceVariablesDirectly
@@ -1192,35 +1056,22 @@ extension NSKeyValueCoding on objc.NSObject {
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    return _objc_msgSend_91o635(
-      _class_NSObject,
-      _sel_accessInstanceVariablesDirectly,
-    );
+    return _objc_msgSend_91o635(_class_NSObject, _sel_accessInstanceVariablesDirectly);
   }
 }
 
 late final _sel_useStoredAccessor = objc.registerName("useStoredAccessor");
 late final _sel_storedValueForKey_ = objc.registerName("storedValueForKey:");
-late final _sel_takeStoredValue_forKey_ = objc.registerName(
-  "takeStoredValue:forKey:",
-);
+late final _sel_takeStoredValue_forKey_ = objc.registerName("takeStoredValue:forKey:");
 late final _sel_takeValue_forKey_ = objc.registerName("takeValue:forKey:");
-late final _sel_takeValue_forKeyPath_ = objc.registerName(
-  "takeValue:forKeyPath:",
-);
-late final _sel_handleQueryWithUnboundKey_ = objc.registerName(
-  "handleQueryWithUnboundKey:",
-);
+late final _sel_takeValue_forKeyPath_ = objc.registerName("takeValue:forKeyPath:");
+late final _sel_handleQueryWithUnboundKey_ = objc.registerName("handleQueryWithUnboundKey:");
 late final _sel_handleTakeValue_forUnboundKey_ = objc.registerName(
   "handleTakeValue:forUnboundKey:",
 );
-late final _sel_unableToSetNilForKey_ = objc.registerName(
-  "unableToSetNilForKey:",
-);
+late final _sel_unableToSetNilForKey_ = objc.registerName("unableToSetNilForKey:");
 late final _sel_valuesForKeys_ = objc.registerName("valuesForKeys:");
-late final _sel_takeValuesFromDictionary_ = objc.registerName(
-  "takeValuesFromDictionary:",
-);
+late final _sel_takeValuesFromDictionary_ = objc.registerName("takeValuesFromDictionary:");
 
 /// NSDeprecatedKeyValueCoding
 extension NSDeprecatedKeyValueCoding on objc.NSObject {
@@ -1236,16 +1087,11 @@ extension NSDeprecatedKeyValueCoding on objc.NSObject {
       _sel_handleQueryWithUnboundKey_,
       key.ref.pointer,
     );
-    return $ret.address == 0
-        ? null
-        : objc.ObjCObject($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.ObjCObject($ret, retain: true, release: true);
   }
 
   /// handleTakeValue:forUnboundKey:
-  void handleTakeValue(
-    objc.ObjCObject? value, {
-    required objc.NSString forUnboundKey,
-  }) {
+  void handleTakeValue(objc.ObjCObject? value, {required objc.NSString forUnboundKey}) {
     objc.checkOsVersionInternal(
       'NSObject.handleTakeValue:forUnboundKey:',
       iOS: (false, (2, 0, 0)),
@@ -1271,16 +1117,11 @@ extension NSDeprecatedKeyValueCoding on objc.NSObject {
       _sel_storedValueForKey_,
       key.ref.pointer,
     );
-    return $ret.address == 0
-        ? null
-        : objc.ObjCObject($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.ObjCObject($ret, retain: true, release: true);
   }
 
   /// takeStoredValue:forKey:
-  void takeStoredValue(
-    objc.ObjCObject? value, {
-    required objc.NSString forKey,
-  }) {
+  void takeStoredValue(objc.ObjCObject? value, {required objc.NSString forKey}) {
     objc.checkOsVersionInternal(
       'NSObject.takeStoredValue:forKey:',
       iOS: (false, (2, 0, 0)),
@@ -1310,10 +1151,7 @@ extension NSDeprecatedKeyValueCoding on objc.NSObject {
   }
 
   /// takeValue:forKeyPath:
-  void takeValue$1(
-    objc.ObjCObject? value, {
-    required objc.NSString forKeyPath,
-  }) {
+  void takeValue$1(objc.ObjCObject? value, {required objc.NSString forKeyPath}) {
     objc.checkOsVersionInternal(
       'NSObject.takeValue:forKeyPath:',
       iOS: (false, (2, 0, 0)),
@@ -1348,11 +1186,7 @@ extension NSDeprecatedKeyValueCoding on objc.NSObject {
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    _objc_msgSend_xtuoz7(
-      object$.ref.pointer,
-      _sel_unableToSetNilForKey_,
-      key.ref.pointer,
-    );
+    _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_unableToSetNilForKey_, key.ref.pointer);
   }
 
   /// valuesForKeys:
@@ -1362,11 +1196,7 @@ extension NSDeprecatedKeyValueCoding on objc.NSObject {
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    final $ret = _objc_msgSend_1sotr3r(
-      object$.ref.pointer,
-      _sel_valuesForKeys_,
-      keys.ref.pointer,
-    );
+    final $ret = _objc_msgSend_1sotr3r(object$.ref.pointer, _sel_valuesForKeys_, keys.ref.pointer);
     return objc.NSDictionary.fromPointer($ret, retain: true, release: true);
   }
 
@@ -1381,8 +1211,9 @@ extension NSDeprecatedKeyValueCoding on objc.NSObject {
   }
 }
 
-late final _sel_observeValueForKeyPath_ofObject_change_context_ = objc
-    .registerName("observeValueForKeyPath:ofObject:change:context:");
+late final _sel_observeValueForKeyPath_ofObject_change_context_ = objc.registerName(
+  "observeValueForKeyPath:ofObject:change:context:",
+);
 final _objc_msgSend_1pl4k3n = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -1482,9 +1313,7 @@ final _objc_msgSend_1jed5jl = objc.msgSendPointer
         ffi.Pointer<ffi.Void>,
       )
     >();
-late final _sel_removeObserver_forKeyPath_ = objc.registerName(
-  "removeObserver:forKeyPath:",
-);
+late final _sel_removeObserver_forKeyPath_ = objc.registerName("removeObserver:forKeyPath:");
 
 /// NSKeyValueObserverRegistration
 extension NSKeyValueObserverRegistration on objc.NSObject {
@@ -1511,10 +1340,7 @@ extension NSKeyValueObserverRegistration on objc.NSObject {
   }
 
   /// removeObserver:forKeyPath:
-  void removeObserver(
-    objc.NSObject observer, {
-    required objc.NSString forKeyPath,
-  }) {
+  void removeObserver(objc.NSObject observer, {required objc.NSString forKeyPath}) {
     objc.checkOsVersionInternal(
       'NSObject.removeObserver:forKeyPath:',
       iOS: (false, (2, 0, 0)),
@@ -1549,12 +1375,8 @@ extension NSKeyValueObserverRegistration on objc.NSObject {
   }
 }
 
-late final _sel_willChangeValueForKey_ = objc.registerName(
-  "willChangeValueForKey:",
-);
-late final _sel_didChangeValueForKey_ = objc.registerName(
-  "didChangeValueForKey:",
-);
+late final _sel_willChangeValueForKey_ = objc.registerName("willChangeValueForKey:");
+late final _sel_didChangeValueForKey_ = objc.registerName("didChangeValueForKey:");
 late final _sel_willChange_valuesAtIndexes_forKey_ = objc.registerName(
   "willChange:valuesAtIndexes:forKey:",
 );
@@ -1582,8 +1404,9 @@ final _objc_msgSend_1diehjo = objc.msgSendPointer
 late final _sel_didChange_valuesAtIndexes_forKey_ = objc.registerName(
   "didChange:valuesAtIndexes:forKey:",
 );
-late final _sel_willChangeValueForKey_withSetMutation_usingObjects_ = objc
-    .registerName("willChangeValueForKey:withSetMutation:usingObjects:");
+late final _sel_willChangeValueForKey_withSetMutation_usingObjects_ = objc.registerName(
+  "willChangeValueForKey:withSetMutation:usingObjects:",
+);
 final _objc_msgSend_7w1jp7 = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -1605,8 +1428,9 @@ final _objc_msgSend_7w1jp7 = objc.msgSendPointer
         ffi.Pointer<objc.ObjCObjectImpl>,
       )
     >();
-late final _sel_didChangeValueForKey_withSetMutation_usingObjects_ = objc
-    .registerName("didChangeValueForKey:withSetMutation:usingObjects:");
+late final _sel_didChangeValueForKey_withSetMutation_usingObjects_ = objc.registerName(
+  "didChangeValueForKey:withSetMutation:usingObjects:",
+);
 
 /// NSKeyValueObserverNotification
 extension NSKeyValueObserverNotification on objc.NSObject {
@@ -1637,11 +1461,7 @@ extension NSKeyValueObserverNotification on objc.NSObject {
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    _objc_msgSend_xtuoz7(
-      object$.ref.pointer,
-      _sel_didChangeValueForKey_,
-      key.ref.pointer,
-    );
+    _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_didChangeValueForKey_, key.ref.pointer);
   }
 
   /// didChangeValueForKey:withSetMutation:usingObjects:
@@ -1691,11 +1511,7 @@ extension NSKeyValueObserverNotification on objc.NSObject {
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    _objc_msgSend_xtuoz7(
-      object$.ref.pointer,
-      _sel_willChangeValueForKey_,
-      key.ref.pointer,
-    );
+    _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_willChangeValueForKey_, key.ref.pointer);
   }
 
   /// willChangeValueForKey:withSetMutation:usingObjects:
@@ -1812,8 +1628,9 @@ extension NSKeyValueObservingCustomization on objc.NSObject {
   }
 }
 
-late final _sel_setKeys_triggerChangeNotificationsForDependentKey_ = objc
-    .registerName("setKeys:triggerChangeNotificationsForDependentKey:");
+late final _sel_setKeys_triggerChangeNotificationsForDependentKey_ = objc.registerName(
+  "setKeys:triggerChangeNotificationsForDependentKey:",
+);
 
 /// NSDeprecatedKeyValueObservingCustomization
 extension NSDeprecatedKeyValueObservingCustomization on objc.NSObject {
@@ -1843,8 +1660,7 @@ extension NSDeprecatedKeyValueObservingCustomization on objc.NSObject {
 extension type NSKeyValueSharedObserversSnapshot._(objc.ObjCObject object$)
     implements objc.ObjCObject, objc.NSObject {
   /// Constructs a [NSKeyValueSharedObserversSnapshot] that points to the same underlying object as [other].
-  NSKeyValueSharedObserversSnapshot.as(objc.ObjCObject other)
-    : object$ = other {
+  NSKeyValueSharedObserversSnapshot.as(objc.ObjCObject other) : object$ = other {
     objc.checkOsVersionInternal(
       'NSKeyValueSharedObserversSnapshot',
       iOS: (false, (18, 0, 0)),
@@ -1889,8 +1705,7 @@ extension NSKeyValueSharedObserverRegistration on objc.NSObject {
 /// NSKeyedArchiver in your config's objc-interfaces list.
 ///
 /// NSKeyedArchiver
-extension type NSKeyedArchiver._(objc.ObjCObject object$)
-    implements objc.ObjCObject, objc.NSCoder {
+extension type NSKeyedArchiver._(objc.ObjCObject object$) implements objc.ObjCObject, objc.NSCoder {
   /// Constructs a [NSKeyedArchiver] that points to the same underlying object as [other].
   NSKeyedArchiver.as(objc.ObjCObject other) : object$ = other {}
 
@@ -1902,9 +1717,7 @@ extension type NSKeyedArchiver._(objc.ObjCObject object$)
   }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {}
 }
 
-late final _sel_classForKeyedArchiver = objc.registerName(
-  "classForKeyedArchiver",
-);
+late final _sel_classForKeyedArchiver = objc.registerName("classForKeyedArchiver");
 late final _sel_replacementObjectForKeyedArchiver_ = objc.registerName(
   "replacementObjectForKeyedArchiver:",
 );
@@ -1921,13 +1734,8 @@ extension NSKeyedArchiverObjectSubstitution on objc.NSObject {
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.pointer,
-      _sel_classForKeyedArchiver,
-    );
-    return $ret.address == 0
-        ? null
-        : objc.ObjCObject($ret, retain: true, release: true);
+    final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_classForKeyedArchiver);
+    return $ret.address == 0 ? null : objc.ObjCObject($ret, retain: true, release: true);
   }
 
   /// replacementObjectForKeyedArchiver:
@@ -1942,9 +1750,7 @@ extension NSKeyedArchiverObjectSubstitution on objc.NSObject {
       _sel_replacementObjectForKeyedArchiver_,
       archiver.ref.pointer,
     );
-    return $ret.address == 0
-        ? null
-        : objc.ObjCObject($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.ObjCObject($ret, retain: true, release: true);
   }
 
   /// classFallbacksForKeyedArchiver
@@ -1954,17 +1760,12 @@ extension NSKeyedArchiverObjectSubstitution on objc.NSObject {
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(
-      _class_NSObject,
-      _sel_classFallbacksForKeyedArchiver,
-    );
+    final $ret = _objc_msgSend_151sglz(_class_NSObject, _sel_classFallbacksForKeyedArchiver);
     return objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 }
 
-late final _sel_classForKeyedUnarchiver = objc.registerName(
-  "classForKeyedUnarchiver",
-);
+late final _sel_classForKeyedUnarchiver = objc.registerName("classForKeyedUnarchiver");
 
 /// NSKeyedUnarchiverObjectSubstitution
 extension NSKeyedUnarchiverObjectSubstitution on objc.NSObject {
@@ -1975,10 +1776,7 @@ extension NSKeyedUnarchiverObjectSubstitution on objc.NSObject {
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(
-      _class_NSObject,
-      _sel_classForKeyedUnarchiver,
-    );
+    final $ret = _objc_msgSend_151sglz(_class_NSObject, _sel_classForKeyedUnarchiver);
     return objc.ObjCObject($ret, retain: true, release: true);
   }
 }
@@ -1987,8 +1785,7 @@ extension NSKeyedUnarchiverObjectSubstitution on objc.NSObject {
 /// NSThread in your config's objc-interfaces list.
 ///
 /// NSThread
-extension type NSThread._(objc.ObjCObject object$)
-    implements objc.ObjCObject, objc.NSObject {
+extension type NSThread._(objc.ObjCObject object$) implements objc.ObjCObject, objc.NSObject {
   /// Constructs a [NSThread] that points to the same underlying object as [other].
   NSThread.as(objc.ObjCObject other) : object$ = other {}
 
@@ -2000,10 +1797,9 @@ extension type NSThread._(objc.ObjCObject object$)
   }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {}
 }
 
-late final _sel_performSelectorOnMainThread_withObject_waitUntilDone_modes_ =
-    objc.registerName(
-      "performSelectorOnMainThread:withObject:waitUntilDone:modes:",
-    );
+late final _sel_performSelectorOnMainThread_withObject_waitUntilDone_modes_ = objc.registerName(
+  "performSelectorOnMainThread:withObject:waitUntilDone:modes:",
+);
 final _objc_msgSend_1fdou4m = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -2027,8 +1823,9 @@ final _objc_msgSend_1fdou4m = objc.msgSendPointer
         ffi.Pointer<objc.ObjCObjectImpl>,
       )
     >();
-late final _sel_performSelectorOnMainThread_withObject_waitUntilDone_ = objc
-    .registerName("performSelectorOnMainThread:withObject:waitUntilDone:");
+late final _sel_performSelectorOnMainThread_withObject_waitUntilDone_ = objc.registerName(
+  "performSelectorOnMainThread:withObject:waitUntilDone:",
+);
 final _objc_msgSend_tsocn4 = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -2050,8 +1847,9 @@ final _objc_msgSend_tsocn4 = objc.msgSendPointer
         bool,
       )
     >();
-late final _sel_performSelector_onThread_withObject_waitUntilDone_modes_ = objc
-    .registerName("performSelector:onThread:withObject:waitUntilDone:modes:");
+late final _sel_performSelector_onThread_withObject_waitUntilDone_modes_ = objc.registerName(
+  "performSelector:onThread:withObject:waitUntilDone:modes:",
+);
 final _objc_msgSend_1cc1buo = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -2077,8 +1875,9 @@ final _objc_msgSend_1cc1buo = objc.msgSendPointer
         ffi.Pointer<objc.ObjCObjectImpl>,
       )
     >();
-late final _sel_performSelector_onThread_withObject_waitUntilDone_ = objc
-    .registerName("performSelector:onThread:withObject:waitUntilDone:");
+late final _sel_performSelector_onThread_withObject_waitUntilDone_ = objc.registerName(
+  "performSelector:onThread:withObject:waitUntilDone:",
+);
 final _objc_msgSend_1whyima = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -2238,15 +2037,10 @@ extension NSThreadPerformAdditions on objc.NSObject {
 /// NSArchiver in your config's objc-interfaces list.
 ///
 /// NSArchiver
-extension type NSArchiver._(objc.ObjCObject object$)
-    implements objc.ObjCObject, objc.NSCoder {
+extension type NSArchiver._(objc.ObjCObject object$) implements objc.ObjCObject, objc.NSCoder {
   /// Constructs a [NSArchiver] that points to the same underlying object as [other].
   NSArchiver.as(objc.ObjCObject other) : object$ = other {
-    objc.checkOsVersionInternal(
-      'NSArchiver',
-      iOS: (false, (2, 0, 0)),
-      macOS: (false, (10, 0, 0)),
-    );
+    objc.checkOsVersionInternal('NSArchiver', iOS: (false, (2, 0, 0)), macOS: (false, (10, 0, 0)));
   }
 
   /// Constructs a [NSArchiver] that wraps the given raw object pointer.
@@ -2255,18 +2049,12 @@ extension type NSArchiver._(objc.ObjCObject object$)
     bool retain = false,
     bool release = false,
   }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
-    objc.checkOsVersionInternal(
-      'NSArchiver',
-      iOS: (false, (2, 0, 0)),
-      macOS: (false, (10, 0, 0)),
-    );
+    objc.checkOsVersionInternal('NSArchiver', iOS: (false, (2, 0, 0)), macOS: (false, (10, 0, 0)));
   }
 }
 
 late final _sel_classForArchiver = objc.registerName("classForArchiver");
-late final _sel_replacementObjectForArchiver_ = objc.registerName(
-  "replacementObjectForArchiver:",
-);
+late final _sel_replacementObjectForArchiver_ = objc.registerName("replacementObjectForArchiver:");
 
 /// NSArchiverCallback
 extension NSArchiverCallback on objc.NSObject {
@@ -2277,13 +2065,8 @@ extension NSArchiverCallback on objc.NSObject {
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.pointer,
-      _sel_classForArchiver,
-    );
-    return $ret.address == 0
-        ? null
-        : objc.ObjCObject($ret, retain: true, release: true);
+    final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_classForArchiver);
+    return $ret.address == 0 ? null : objc.ObjCObject($ret, retain: true, release: true);
   }
 
   /// replacementObjectForArchiver:
@@ -2298,9 +2081,7 @@ extension NSArchiverCallback on objc.NSObject {
       _sel_replacementObjectForArchiver_,
       archiver.ref.pointer,
     );
-    return $ret.address == 0
-        ? null
-        : objc.ObjCObject($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.ObjCObject($ret, retain: true, release: true);
   }
 }
 
@@ -2308,15 +2089,10 @@ extension NSArchiverCallback on objc.NSObject {
 /// NSPortCoder in your config's objc-interfaces list.
 ///
 /// NSPortCoder
-extension type NSPortCoder._(objc.ObjCObject object$)
-    implements objc.ObjCObject, objc.NSCoder {
+extension type NSPortCoder._(objc.ObjCObject object$) implements objc.ObjCObject, objc.NSCoder {
   /// Constructs a [NSPortCoder] that points to the same underlying object as [other].
   NSPortCoder.as(objc.ObjCObject other) : object$ = other {
-    objc.checkOsVersionInternal(
-      'NSPortCoder',
-      iOS: (false, (2, 0, 0)),
-      macOS: (false, (10, 0, 0)),
-    );
+    objc.checkOsVersionInternal('NSPortCoder', iOS: (false, (2, 0, 0)), macOS: (false, (10, 0, 0)));
   }
 
   /// Constructs a [NSPortCoder] that wraps the given raw object pointer.
@@ -2325,11 +2101,7 @@ extension type NSPortCoder._(objc.ObjCObject object$)
     bool retain = false,
     bool release = false,
   }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
-    objc.checkOsVersionInternal(
-      'NSPortCoder',
-      iOS: (false, (2, 0, 0)),
-      macOS: (false, (10, 0, 0)),
-    );
+    objc.checkOsVersionInternal('NSPortCoder', iOS: (false, (2, 0, 0)), macOS: (false, (10, 0, 0)));
   }
 }
 
@@ -2347,10 +2119,7 @@ extension NSDistributedObjects on objc.NSObject {
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.pointer,
-      _sel_classForPortCoder,
-    );
+    final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_classForPortCoder);
     return objc.ObjCObject($ret, retain: true, release: true);
   }
 
@@ -2366,9 +2135,7 @@ extension NSDistributedObjects on objc.NSObject {
       _sel_replacementObjectForPortCoder_,
       coder.ref.pointer,
     );
-    return $ret.address == 0
-        ? null
-        : objc.ObjCObject($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.ObjCObject($ret, retain: true, release: true);
   }
 }
 
@@ -2391,15 +2158,9 @@ extension type NSClassDescription._(objc.ObjCObject object$)
 
 late final _sel_classDescription = objc.registerName("classDescription");
 late final _sel_attributeKeys = objc.registerName("attributeKeys");
-late final _sel_toOneRelationshipKeys = objc.registerName(
-  "toOneRelationshipKeys",
-);
-late final _sel_toManyRelationshipKeys = objc.registerName(
-  "toManyRelationshipKeys",
-);
-late final _sel_inverseForRelationshipKey_ = objc.registerName(
-  "inverseForRelationshipKey:",
-);
+late final _sel_toOneRelationshipKeys = objc.registerName("toOneRelationshipKeys");
+late final _sel_toManyRelationshipKeys = objc.registerName("toManyRelationshipKeys");
+late final _sel_inverseForRelationshipKey_ = objc.registerName("inverseForRelationshipKey:");
 
 /// NSClassDescriptionPrimitives
 extension NSClassDescriptionPrimitives on objc.NSObject {
@@ -2421,10 +2182,7 @@ extension NSClassDescriptionPrimitives on objc.NSObject {
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.pointer,
-      _sel_classDescription,
-    );
+    final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_classDescription);
     return NSClassDescription.fromPointer($ret, retain: true, release: true);
   }
 
@@ -2440,9 +2198,7 @@ extension NSClassDescriptionPrimitives on objc.NSObject {
       _sel_inverseForRelationshipKey_,
       relationshipKey.ref.pointer,
     );
-    return $ret.address == 0
-        ? null
-        : objc.NSString.fromPointer($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
   }
 
   /// toManyRelationshipKeys
@@ -2452,10 +2208,7 @@ extension NSClassDescriptionPrimitives on objc.NSObject {
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.pointer,
-      _sel_toManyRelationshipKeys,
-    );
+    final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_toManyRelationshipKeys);
     return objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
@@ -2466,10 +2219,7 @@ extension NSClassDescriptionPrimitives on objc.NSObject {
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.pointer,
-      _sel_toOneRelationshipKeys,
-    );
+    final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_toOneRelationshipKeys);
     return objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 }
@@ -2491,13 +2241,9 @@ extension type NSScriptObjectSpecifier._(objc.ObjCObject object$)
   }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {}
 }
 
-late final _sel_scriptingValueForSpecifier_ = objc.registerName(
-  "scriptingValueForSpecifier:",
-);
+late final _sel_scriptingValueForSpecifier_ = objc.registerName("scriptingValueForSpecifier:");
 late final _sel_scriptingProperties = objc.registerName("scriptingProperties");
-late final _sel_setScriptingProperties_ = objc.registerName(
-  "setScriptingProperties:",
-);
+late final _sel_setScriptingProperties_ = objc.registerName("setScriptingProperties:");
 late final _sel_copyScriptingValue_forKey_withProperties_ = objc.registerName(
   "copyScriptingValue:forKey:withProperties:",
 );
@@ -2522,10 +2268,8 @@ final _objc_msgSend_11spmsz = objc.msgSendPointer
         ffi.Pointer<objc.ObjCObjectImpl>,
       )
     >();
-late final _sel_newScriptingObjectOfClass_forValueForKey_withContentsValue_properties_ =
-    objc.registerName(
-      "newScriptingObjectOfClass:forValueForKey:withContentsValue:properties:",
-    );
+late final _sel_newScriptingObjectOfClass_forValueForKey_withContentsValue_properties_ = objc
+    .registerName("newScriptingObjectOfClass:forValueForKey:withContentsValue:properties:");
 final _objc_msgSend_s92gih = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -2570,9 +2314,7 @@ extension NSScripting on objc.NSObject {
       forKey.ref.pointer,
       withProperties.ref.pointer,
     );
-    return $ret.address == 0
-        ? null
-        : objc.ObjCObject($ret, retain: false, release: true);
+    return $ret.address == 0 ? null : objc.ObjCObject($ret, retain: false, release: true);
   }
 
   /// newScriptingObjectOfClass:forValueForKey:withContentsValue:properties:
@@ -2595,9 +2337,7 @@ extension NSScripting on objc.NSObject {
       withContentsValue?.ref.pointer ?? ffi.nullptr,
       properties.ref.pointer,
     );
-    return $ret.address == 0
-        ? null
-        : objc.ObjCObject($ret, retain: false, release: true);
+    return $ret.address == 0 ? null : objc.ObjCObject($ret, retain: false, release: true);
   }
 
   /// scriptingProperties
@@ -2607,19 +2347,14 @@ extension NSScripting on objc.NSObject {
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.pointer,
-      _sel_scriptingProperties,
-    );
+    final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_scriptingProperties);
     return $ret.address == 0
         ? null
         : objc.NSDictionary.fromPointer($ret, retain: true, release: true);
   }
 
   /// scriptingValueForSpecifier:
-  objc.ObjCObject? scriptingValueForSpecifier(
-    NSScriptObjectSpecifier objectSpecifier,
-  ) {
+  objc.ObjCObject? scriptingValueForSpecifier(NSScriptObjectSpecifier objectSpecifier) {
     objc.checkOsVersionInternal(
       'NSObject.scriptingValueForSpecifier:',
       iOS: (true, null),
@@ -2630,9 +2365,7 @@ extension NSScripting on objc.NSObject {
       _sel_scriptingValueForSpecifier_,
       objectSpecifier.ref.pointer,
     );
-    return $ret.address == 0
-        ? null
-        : objc.ObjCObject($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.ObjCObject($ret, retain: true, release: true);
   }
 
   /// setScriptingProperties:
@@ -2654,18 +2387,10 @@ late final _sel_classCode = objc.registerName("classCode");
 final _objc_msgSend_3pyzne = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
-        ffi.UnsignedInt Function(
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCSelector>,
-        )
+        ffi.UnsignedInt Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCSelector>)
       >
     >()
-    .asFunction<
-      int Function(
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCSelector>,
-      )
-    >();
+    .asFunction<int Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCSelector>)>();
 late final _sel_className = objc.registerName("className");
 
 /// NSScriptClassDescription
@@ -2785,8 +2510,9 @@ final _objc_msgSend_1gypgok = objc.msgSendPointer
         ffi.Pointer<objc.ObjCObjectImpl>,
       )
     >();
-late final _sel_replaceValueAtIndex_inPropertyWithKey_withValue_ = objc
-    .registerName("replaceValueAtIndex:inPropertyWithKey:withValue:");
+late final _sel_replaceValueAtIndex_inPropertyWithKey_withValue_ = objc.registerName(
+  "replaceValueAtIndex:inPropertyWithKey:withValue:",
+);
 final _objc_msgSend_rutu22 = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -2816,10 +2542,7 @@ late final _sel_coerceValue_forKey_ = objc.registerName("coerceValue:forKey:");
 /// NSScriptKeyValueCoding
 extension NSScriptKeyValueCoding on objc.NSObject {
   /// coerceValue:forKey:
-  objc.ObjCObject? coerceValue(
-    objc.ObjCObject? value, {
-    required objc.NSString forKey,
-  }) {
+  objc.ObjCObject? coerceValue(objc.ObjCObject? value, {required objc.NSString forKey}) {
     objc.checkOsVersionInternal(
       'NSObject.coerceValue:forKey:',
       iOS: (false, (2, 0, 0)),
@@ -2831,9 +2554,7 @@ extension NSScriptKeyValueCoding on objc.NSObject {
       value?.ref.pointer ?? ffi.nullptr,
       forKey.ref.pointer,
     );
-    return $ret.address == 0
-        ? null
-        : objc.ObjCObject($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.ObjCObject($ret, retain: true, release: true);
   }
 
   /// insertValue:atIndex:inPropertyWithKey:
@@ -2857,10 +2578,7 @@ extension NSScriptKeyValueCoding on objc.NSObject {
   }
 
   /// insertValue:inPropertyWithKey:
-  void insertValue$1(
-    objc.ObjCObject value, {
-    required objc.NSString inPropertyWithKey,
-  }) {
+  void insertValue$1(objc.ObjCObject value, {required objc.NSString inPropertyWithKey}) {
     objc.checkOsVersionInternal(
       'NSObject.insertValue:inPropertyWithKey:',
       iOS: (false, (2, 0, 0)),
@@ -2875,10 +2593,7 @@ extension NSScriptKeyValueCoding on objc.NSObject {
   }
 
   /// removeValueAtIndex:fromPropertyWithKey:
-  void removeValueAtIndex(
-    int index, {
-    required objc.NSString fromPropertyWithKey,
-  }) {
+  void removeValueAtIndex(int index, {required objc.NSString fromPropertyWithKey}) {
     objc.checkOsVersionInternal(
       'NSObject.removeValueAtIndex:fromPropertyWithKey:',
       iOS: (false, (2, 0, 0)),
@@ -2913,10 +2628,7 @@ extension NSScriptKeyValueCoding on objc.NSObject {
   }
 
   /// valueAtIndex:inPropertyWithKey:
-  objc.ObjCObject? valueAtIndex(
-    int index, {
-    required objc.NSString inPropertyWithKey,
-  }) {
+  objc.ObjCObject? valueAtIndex(int index, {required objc.NSString inPropertyWithKey}) {
     objc.checkOsVersionInternal(
       'NSObject.valueAtIndex:inPropertyWithKey:',
       iOS: (false, (2, 0, 0)),
@@ -2928,16 +2640,11 @@ extension NSScriptKeyValueCoding on objc.NSObject {
       index,
       inPropertyWithKey.ref.pointer,
     );
-    return $ret.address == 0
-        ? null
-        : objc.ObjCObject($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.ObjCObject($ret, retain: true, release: true);
   }
 
   /// valueWithName:inPropertyWithKey:
-  objc.ObjCObject? valueWithName(
-    objc.NSString name, {
-    required objc.NSString inPropertyWithKey,
-  }) {
+  objc.ObjCObject? valueWithName(objc.NSString name, {required objc.NSString inPropertyWithKey}) {
     objc.checkOsVersionInternal(
       'NSObject.valueWithName:inPropertyWithKey:',
       iOS: (false, (2, 0, 0)),
@@ -2949,9 +2656,7 @@ extension NSScriptKeyValueCoding on objc.NSObject {
       name.ref.pointer,
       inPropertyWithKey.ref.pointer,
     );
-    return $ret.address == 0
-        ? null
-        : objc.ObjCObject($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.ObjCObject($ret, retain: true, release: true);
   }
 
   /// valueWithUniqueID:inPropertyWithKey:
@@ -2970,22 +2675,19 @@ extension NSScriptKeyValueCoding on objc.NSObject {
       uniqueID.ref.pointer,
       inPropertyWithKey.ref.pointer,
     );
-    return $ret.address == 0
-        ? null
-        : objc.ObjCObject($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.ObjCObject($ret, retain: true, release: true);
   }
 }
 
 late final _sel_objectSpecifier = objc.registerName("objectSpecifier");
-late final _sel_indicesOfObjectsByEvaluatingObjectSpecifier_ = objc
-    .registerName("indicesOfObjectsByEvaluatingObjectSpecifier:");
+late final _sel_indicesOfObjectsByEvaluatingObjectSpecifier_ = objc.registerName(
+  "indicesOfObjectsByEvaluatingObjectSpecifier:",
+);
 
 /// NSScriptObjectSpecifiers
 extension NSScriptObjectSpecifiers on objc.NSObject {
   /// indicesOfObjectsByEvaluatingObjectSpecifier:
-  objc.NSArray? indicesOfObjectsByEvaluatingObjectSpecifier(
-    NSScriptObjectSpecifier specifier,
-  ) {
+  objc.NSArray? indicesOfObjectsByEvaluatingObjectSpecifier(NSScriptObjectSpecifier specifier) {
     objc.checkOsVersionInternal(
       'NSObject.indicesOfObjectsByEvaluatingObjectSpecifier:',
       iOS: (false, (2, 0, 0)),
@@ -2996,9 +2698,7 @@ extension NSScriptObjectSpecifiers on objc.NSObject {
       _sel_indicesOfObjectsByEvaluatingObjectSpecifier_,
       specifier.ref.pointer,
     );
-    return $ret.address == 0
-        ? null
-        : objc.NSArray.fromPointer($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
   /// objectSpecifier
@@ -3008,35 +2708,22 @@ extension NSScriptObjectSpecifiers on objc.NSObject {
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.pointer,
-      _sel_objectSpecifier,
-    );
+    final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_objectSpecifier);
     return $ret.address == 0
         ? null
-        : NSScriptObjectSpecifier.fromPointer(
-            $ret,
-            retain: true,
-            release: true,
-          );
+        : NSScriptObjectSpecifier.fromPointer($ret, retain: true, release: true);
   }
 }
 
 late final _sel_isEqualTo_ = objc.registerName("isEqualTo:");
-late final _sel_isLessThanOrEqualTo_ = objc.registerName(
-  "isLessThanOrEqualTo:",
-);
+late final _sel_isLessThanOrEqualTo_ = objc.registerName("isLessThanOrEqualTo:");
 late final _sel_isLessThan_ = objc.registerName("isLessThan:");
-late final _sel_isGreaterThanOrEqualTo_ = objc.registerName(
-  "isGreaterThanOrEqualTo:",
-);
+late final _sel_isGreaterThanOrEqualTo_ = objc.registerName("isGreaterThanOrEqualTo:");
 late final _sel_isGreaterThan_ = objc.registerName("isGreaterThan:");
 late final _sel_isNotEqualTo_ = objc.registerName("isNotEqualTo:");
 late final _sel_doesContain_ = objc.registerName("doesContain:");
 late final _sel_isLike_ = objc.registerName("isLike:");
-late final _sel_isCaseInsensitiveLike_ = objc.registerName(
-  "isCaseInsensitiveLike:",
-);
+late final _sel_isCaseInsensitiveLike_ = objc.registerName("isCaseInsensitiveLike:");
 
 /// NSComparisonMethods
 extension NSComparisonMethods on objc.NSObject {
@@ -3047,11 +2734,7 @@ extension NSComparisonMethods on objc.NSObject {
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    return _objc_msgSend_19nvye5(
-      object$.ref.pointer,
-      _sel_doesContain_,
-      object.ref.pointer,
-    );
+    return _objc_msgSend_19nvye5(object$.ref.pointer, _sel_doesContain_, object.ref.pointer);
   }
 
   /// isCaseInsensitiveLike:
@@ -3145,11 +2828,7 @@ extension NSComparisonMethods on objc.NSObject {
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    return _objc_msgSend_19nvye5(
-      object$.ref.pointer,
-      _sel_isLike_,
-      object.ref.pointer,
-    );
+    return _objc_msgSend_19nvye5(object$.ref.pointer, _sel_isLike_, object.ref.pointer);
   }
 
   /// isNotEqualTo:
@@ -3168,21 +2847,13 @@ extension NSComparisonMethods on objc.NSObject {
 }
 
 late final _sel_scriptingIsEqualTo_ = objc.registerName("scriptingIsEqualTo:");
-late final _sel_scriptingIsLessThanOrEqualTo_ = objc.registerName(
-  "scriptingIsLessThanOrEqualTo:",
-);
-late final _sel_scriptingIsLessThan_ = objc.registerName(
-  "scriptingIsLessThan:",
-);
+late final _sel_scriptingIsLessThanOrEqualTo_ = objc.registerName("scriptingIsLessThanOrEqualTo:");
+late final _sel_scriptingIsLessThan_ = objc.registerName("scriptingIsLessThan:");
 late final _sel_scriptingIsGreaterThanOrEqualTo_ = objc.registerName(
   "scriptingIsGreaterThanOrEqualTo:",
 );
-late final _sel_scriptingIsGreaterThan_ = objc.registerName(
-  "scriptingIsGreaterThan:",
-);
-late final _sel_scriptingBeginsWith_ = objc.registerName(
-  "scriptingBeginsWith:",
-);
+late final _sel_scriptingIsGreaterThan_ = objc.registerName("scriptingIsGreaterThan:");
+late final _sel_scriptingBeginsWith_ = objc.registerName("scriptingBeginsWith:");
 late final _sel_scriptingEndsWith_ = objc.registerName("scriptingEndsWith:");
 late final _sel_scriptingContains_ = objc.registerName("scriptingContains:");
 
@@ -3209,11 +2880,7 @@ extension NSScriptingComparisonMethods on objc.NSObject {
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    return _objc_msgSend_19nvye5(
-      object$.ref.pointer,
-      _sel_scriptingContains_,
-      object.ref.pointer,
-    );
+    return _objc_msgSend_19nvye5(object$.ref.pointer, _sel_scriptingContains_, object.ref.pointer);
   }
 
   /// scriptingEndsWith:
@@ -3223,11 +2890,7 @@ extension NSScriptingComparisonMethods on objc.NSObject {
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    return _objc_msgSend_19nvye5(
-      object$.ref.pointer,
-      _sel_scriptingEndsWith_,
-      object.ref.pointer,
-    );
+    return _objc_msgSend_19nvye5(object$.ref.pointer, _sel_scriptingEndsWith_, object.ref.pointer);
   }
 
   /// scriptingIsEqualTo:
@@ -3237,11 +2900,7 @@ extension NSScriptingComparisonMethods on objc.NSObject {
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    return _objc_msgSend_19nvye5(
-      object$.ref.pointer,
-      _sel_scriptingIsEqualTo_,
-      object.ref.pointer,
-    );
+    return _objc_msgSend_19nvye5(object$.ref.pointer, _sel_scriptingIsEqualTo_, object.ref.pointer);
   }
 
   /// scriptingIsGreaterThan:
@@ -3301,6 +2960,42 @@ extension NSScriptingComparisonMethods on objc.NSObject {
   }
 }
 
+enum PHAssetResourceType {
+  PHAssetResourceTypePhoto(1),
+  PHAssetResourceTypeVideo(2),
+  PHAssetResourceTypeAudio(3),
+  PHAssetResourceTypeAlternatePhoto(4),
+  PHAssetResourceTypeFullSizePhoto(5),
+  PHAssetResourceTypeFullSizeVideo(6),
+  PHAssetResourceTypeAdjustmentData(7),
+  PHAssetResourceTypeAdjustmentBasePhoto(8),
+  PHAssetResourceTypePairedVideo(9),
+  PHAssetResourceTypeFullSizePairedVideo(10),
+  PHAssetResourceTypeAdjustmentBasePairedVideo(11),
+  PHAssetResourceTypeAdjustmentBaseVideo(12),
+  PHAssetResourceTypePhotoProxy(19);
+
+  final int value;
+  const PHAssetResourceType(this.value);
+
+  static PHAssetResourceType fromValue(int value) => switch (value) {
+    1 => PHAssetResourceTypePhoto,
+    2 => PHAssetResourceTypeVideo,
+    3 => PHAssetResourceTypeAudio,
+    4 => PHAssetResourceTypeAlternatePhoto,
+    5 => PHAssetResourceTypeFullSizePhoto,
+    6 => PHAssetResourceTypeFullSizeVideo,
+    7 => PHAssetResourceTypeAdjustmentData,
+    8 => PHAssetResourceTypeAdjustmentBasePhoto,
+    9 => PHAssetResourceTypePairedVideo,
+    10 => PHAssetResourceTypeFullSizePairedVideo,
+    11 => PHAssetResourceTypeAdjustmentBasePairedVideo,
+    12 => PHAssetResourceTypeAdjustmentBaseVideo,
+    19 => PHAssetResourceTypePhotoProxy,
+    _ => throw ArgumentError('Unknown value for PHAssetResourceType: $value'),
+  };
+}
+
 late final _class_PHObject = objc.getClass("PHObject");
 
 /// PHObject
@@ -3308,11 +3003,7 @@ extension type PHObject._(objc.ObjCObject object$)
     implements objc.ObjCObject, objc.NSObject, objc.NSCopying {
   /// Constructs a [PHObject] that points to the same underlying object as [other].
   PHObject.as(objc.ObjCObject other) : object$ = other {
-    objc.checkOsVersionInternal(
-      'PHObject',
-      iOS: (false, (8, 0, 0)),
-      macOS: (false, (10, 13, 0)),
-    );
+    objc.checkOsVersionInternal('PHObject', iOS: (false, (8, 0, 0)), macOS: (false, (10, 13, 0)));
     assert(isA(object$));
   }
 
@@ -3322,20 +3013,13 @@ extension type PHObject._(objc.ObjCObject object$)
     bool retain = false,
     bool release = false,
   }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
-    objc.checkOsVersionInternal(
-      'PHObject',
-      iOS: (false, (8, 0, 0)),
-      macOS: (false, (10, 13, 0)),
-    );
+    objc.checkOsVersionInternal('PHObject', iOS: (false, (8, 0, 0)), macOS: (false, (10, 13, 0)));
     assert(isA(object$));
   }
 
   /// Returns whether [obj] is an instance of [PHObject].
-  static bool isA(objc.ObjCObject obj) => _objc_msgSend_19nvye5(
-    obj.ref.pointer,
-    _sel_isKindOfClass_,
-    _class_PHObject,
-  );
+  static bool isA(objc.ObjCObject obj) =>
+      _objc_msgSend_19nvye5(obj.ref.pointer, _sel_isKindOfClass_, _class_PHObject);
 }
 
 extension PHObject$Methods on PHObject {}
@@ -3345,11 +3029,7 @@ late final _sel_firstObject = objc.registerName("firstObject");
 
 /// PHFetchResult
 extension type PHFetchResult._(objc.ObjCObject object$)
-    implements
-        objc.ObjCObject,
-        objc.NSObject,
-        objc.NSCopying,
-        objc.NSFastEnumeration {
+    implements objc.ObjCObject, objc.NSObject, objc.NSCopying, objc.NSFastEnumeration {
   /// Constructs a [PHFetchResult] that points to the same underlying object as [other].
   PHFetchResult.as(objc.ObjCObject other) : object$ = other {
     objc.checkOsVersionInternal(
@@ -3375,11 +3055,8 @@ extension type PHFetchResult._(objc.ObjCObject object$)
   }
 
   /// Returns whether [obj] is an instance of [PHFetchResult].
-  static bool isA(objc.ObjCObject obj) => _objc_msgSend_19nvye5(
-    obj.ref.pointer,
-    _sel_isKindOfClass_,
-    _class_PHFetchResult,
-  );
+  static bool isA(objc.ObjCObject obj) =>
+      _objc_msgSend_19nvye5(obj.ref.pointer, _sel_isKindOfClass_, _class_PHFetchResult);
 }
 
 extension PHFetchResult$Methods on PHFetchResult {
@@ -3391,9 +3068,7 @@ extension PHFetchResult$Methods on PHFetchResult {
       macOS: (false, (10, 13, 0)),
     );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_firstObject);
-    return $ret.address == 0
-        ? null
-        : objc.ObjCObject($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.ObjCObject($ret, retain: true, release: true);
   }
 }
 
@@ -3419,9 +3094,7 @@ enum CGImagePropertyOrientation {
     6 => kCGImagePropertyOrientationRight,
     7 => kCGImagePropertyOrientationRightMirrored,
     8 => kCGImagePropertyOrientationLeft,
-    _ => throw ArgumentError(
-      'Unknown value for CGImagePropertyOrientation: $value',
-    ),
+    _ => throw ArgumentError('Unknown value for CGImagePropertyOrientation: $value'),
   };
 }
 
@@ -3468,8 +3141,7 @@ late final _sel_fetchAssetsWithLocalIdentifiers_options_ = objc.registerName(
 extension type PHContentEditingInputRequestOptions._(objc.ObjCObject object$)
     implements objc.ObjCObject, objc.NSObject {
   /// Constructs a [PHContentEditingInputRequestOptions] that points to the same underlying object as [other].
-  PHContentEditingInputRequestOptions.as(objc.ObjCObject other)
-    : object$ = other {
+  PHContentEditingInputRequestOptions.as(objc.ObjCObject other) : object$ = other {
     objc.checkOsVersionInternal(
       'PHContentEditingInputRequestOptions',
       iOS: (false, (8, 0, 0)),
@@ -3523,26 +3195,22 @@ extension type PHContentEditingInput._(objc.ObjCObject object$)
 /// Construction methods for `objc.ObjCBlock<ffi.Void Function(PHContentEditingInput?, objc.NSDictionary)>`.
 abstract final class ObjCBlock_ffiVoid_PHContentEditingInput_NSDictionary {
   /// Returns a block that wraps the given raw block pointer.
-  static objc.ObjCBlock<
-    ffi.Void Function(PHContentEditingInput?, objc.NSDictionary)
-  >
-  fromPointer(
+  static objc.ObjCBlock<ffi.Void Function(PHContentEditingInput?, objc.NSDictionary)> fromPointer(
     ffi.Pointer<objc.ObjCBlockImpl> pointer, {
     bool retain = false,
     bool release = false,
-  }) =>
-      objc.ObjCBlock<
-        ffi.Void Function(PHContentEditingInput?, objc.NSDictionary)
-      >(pointer, retain: retain, release: release);
+  }) => objc.ObjCBlock<ffi.Void Function(PHContentEditingInput?, objc.NSDictionary)>(
+    pointer,
+    retain: retain,
+    release: release,
+  );
 
   /// Creates a block from a C function pointer.
   ///
   /// This block must be invoked by native code running on the same thread as
   /// the isolate that registered it. Invoking the block on the wrong thread
   /// will result in a crash.
-  static objc.ObjCBlock<
-    ffi.Void Function(PHContentEditingInput?, objc.NSDictionary)
-  >
+  static objc.ObjCBlock<ffi.Void Function(PHContentEditingInput?, objc.NSDictionary)>
   fromFunctionPointer(
     ffi.Pointer<
       ffi.NativeFunction<
@@ -3553,14 +3221,11 @@ abstract final class ObjCBlock_ffiVoid_PHContentEditingInput_NSDictionary {
       >
     >
     ptr,
-  ) =>
-      objc.ObjCBlock<
-        ffi.Void Function(PHContentEditingInput?, objc.NSDictionary)
-      >(
-        objc.newPointerBlock(_fnPtrCallable, ptr.cast()),
-        retain: false,
-        release: true,
-      );
+  ) => objc.ObjCBlock<ffi.Void Function(PHContentEditingInput?, objc.NSDictionary)>(
+    objc.newPointerBlock(_fnPtrCallable, ptr.cast()),
+    retain: false,
+    release: true,
+  );
 
   /// Creates a block from a Dart function.
   ///
@@ -3570,36 +3235,23 @@ abstract final class ObjCBlock_ffiVoid_PHContentEditingInput_NSDictionary {
   ///
   /// If `keepIsolateAlive` is true, this block will keep this isolate alive
   /// until it is garbage collected by both Dart and ObjC.
-  static objc.ObjCBlock<
-    ffi.Void Function(PHContentEditingInput?, objc.NSDictionary)
-  >
-  fromFunction(
+  static objc.ObjCBlock<ffi.Void Function(PHContentEditingInput?, objc.NSDictionary)> fromFunction(
     void Function(PHContentEditingInput?, objc.NSDictionary) fn, {
     bool keepIsolateAlive = true,
-  }) =>
-      objc.ObjCBlock<
-        ffi.Void Function(PHContentEditingInput?, objc.NSDictionary)
-      >(
-        objc.newClosureBlock(
-          _closureCallable,
-          (
-            ffi.Pointer<objc.ObjCObjectImpl> arg0,
-            ffi.Pointer<objc.ObjCObjectImpl> arg1,
-          ) => fn(
-            arg0.address == 0
-                ? null
-                : PHContentEditingInput.fromPointer(
-                    arg0,
-                    retain: true,
-                    release: true,
-                  ),
-            objc.NSDictionary.fromPointer(arg1, retain: true, release: true),
-          ),
-          keepIsolateAlive,
-        ),
-        retain: false,
-        release: true,
-      );
+  }) => objc.ObjCBlock<ffi.Void Function(PHContentEditingInput?, objc.NSDictionary)>(
+    objc.newClosureBlock(
+      _closureCallable,
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0, ffi.Pointer<objc.ObjCObjectImpl> arg1) => fn(
+        arg0.address == 0
+            ? null
+            : PHContentEditingInput.fromPointer(arg0, retain: true, release: true),
+        objc.NSDictionary.fromPointer(arg1, retain: true, release: true),
+      ),
+      keepIsolateAlive,
+    ),
+    retain: false,
+    release: true,
+  );
 
   /// Creates a listener block from a Dart function.
   ///
@@ -3610,35 +3262,27 @@ abstract final class ObjCBlock_ffiVoid_PHContentEditingInput_NSDictionary {
   ///
   /// If `keepIsolateAlive` is true, this block will keep this isolate alive
   /// until it is garbage collected by both Dart and ObjC.
-  static objc.ObjCBlock<
-    ffi.Void Function(PHContentEditingInput?, objc.NSDictionary)
-  >
-  listener(
+  static objc.ObjCBlock<ffi.Void Function(PHContentEditingInput?, objc.NSDictionary)> listener(
     void Function(PHContentEditingInput?, objc.NSDictionary) fn, {
     bool keepIsolateAlive = true,
   }) {
     final raw = objc.newClosureBlock(
       _listenerCallable.nativeFunction.cast(),
-      (
-        ffi.Pointer<objc.ObjCObjectImpl> arg0,
-        ffi.Pointer<objc.ObjCObjectImpl> arg1,
-      ) => fn(
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0, ffi.Pointer<objc.ObjCObjectImpl> arg1) => fn(
         arg0.address == 0
             ? null
-            : PHContentEditingInput.fromPointer(
-                arg0,
-                retain: false,
-                release: true,
-              ),
+            : PHContentEditingInput.fromPointer(arg0, retain: false, release: true),
         objc.NSDictionary.fromPointer(arg1, retain: false, release: true),
       ),
       keepIsolateAlive,
     );
     final wrapper = _NativeLibrary_wrapListenerBlock_pfv6jd(raw);
     objc.objectRelease(raw.cast());
-    return objc.ObjCBlock<
-      ffi.Void Function(PHContentEditingInput?, objc.NSDictionary)
-    >(wrapper, retain: false, release: true);
+    return objc.ObjCBlock<ffi.Void Function(PHContentEditingInput?, objc.NSDictionary)>(
+      wrapper,
+      retain: false,
+      release: true,
+    );
   }
 
   /// Creates a blocking block from a Dart function.
@@ -3651,57 +3295,38 @@ abstract final class ObjCBlock_ffiVoid_PHContentEditingInput_NSDictionary {
   /// until it is garbage collected by both Dart and ObjC. If the owner isolate
   /// has shut down, and the block is invoked by native code, it may block
   /// indefinitely, or have other undefined behavior.
-  static objc.ObjCBlock<
-    ffi.Void Function(PHContentEditingInput?, objc.NSDictionary)
-  >
-  blocking(
+  static objc.ObjCBlock<ffi.Void Function(PHContentEditingInput?, objc.NSDictionary)> blocking(
     void Function(PHContentEditingInput?, objc.NSDictionary) fn, {
     bool keepIsolateAlive = true,
   }) {
     final raw = objc.newClosureBlock(
       _blockingCallable.nativeFunction.cast(),
-      (
-        ffi.Pointer<objc.ObjCObjectImpl> arg0,
-        ffi.Pointer<objc.ObjCObjectImpl> arg1,
-      ) => fn(
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0, ffi.Pointer<objc.ObjCObjectImpl> arg1) => fn(
         arg0.address == 0
             ? null
-            : PHContentEditingInput.fromPointer(
-                arg0,
-                retain: false,
-                release: true,
-              ),
+            : PHContentEditingInput.fromPointer(arg0, retain: false, release: true),
         objc.NSDictionary.fromPointer(arg1, retain: false, release: true),
       ),
       keepIsolateAlive,
     );
     final rawListener = objc.newClosureBlock(
       _blockingListenerCallable.nativeFunction.cast(),
-      (
-        ffi.Pointer<objc.ObjCObjectImpl> arg0,
-        ffi.Pointer<objc.ObjCObjectImpl> arg1,
-      ) => fn(
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0, ffi.Pointer<objc.ObjCObjectImpl> arg1) => fn(
         arg0.address == 0
             ? null
-            : PHContentEditingInput.fromPointer(
-                arg0,
-                retain: false,
-                release: true,
-              ),
+            : PHContentEditingInput.fromPointer(arg0, retain: false, release: true),
         objc.NSDictionary.fromPointer(arg1, retain: false, release: true),
       ),
       keepIsolateAlive,
     );
-    final wrapper = _NativeLibrary_wrapBlockingBlock_pfv6jd(
-      raw,
-      rawListener,
-      objc.objCContext,
-    );
+    final wrapper = _NativeLibrary_wrapBlockingBlock_pfv6jd(raw, rawListener, objc.objCContext);
     objc.objectRelease(raw.cast());
     objc.objectRelease(rawListener.cast());
-    return objc.ObjCBlock<
-      ffi.Void Function(PHContentEditingInput?, objc.NSDictionary)
-    >(wrapper, retain: false, release: true);
+    return objc.ObjCBlock<ffi.Void Function(PHContentEditingInput?, objc.NSDictionary)>(
+      wrapper,
+      retain: false,
+      release: true,
+    );
   }
 
   static void _listenerTrampoline(
@@ -3710,10 +3335,10 @@ abstract final class ObjCBlock_ffiVoid_PHContentEditingInput_NSDictionary {
     ffi.Pointer<objc.ObjCObjectImpl> arg1,
   ) {
     (objc.getBlockClosure(block)
-        as void Function(
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-        ))(arg0, arg1);
+        as void Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCObjectImpl>))(
+      arg0,
+      arg1,
+    );
     objc.objectRelease(block.cast());
   }
 
@@ -3741,10 +3366,10 @@ abstract final class ObjCBlock_ffiVoid_PHContentEditingInput_NSDictionary {
   ) {
     try {
       (objc.getBlockClosure(block)
-          as void Function(
-            ffi.Pointer<objc.ObjCObjectImpl>,
-            ffi.Pointer<objc.ObjCObjectImpl>,
-          ))(arg0, arg1);
+          as void Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCObjectImpl>))(
+        arg0,
+        arg1,
+      );
     } catch (e) {
     } finally {
       objc.signalWaiter(waiter);
@@ -3802,10 +3427,7 @@ abstract final class ObjCBlock_ffiVoid_PHContentEditingInput_NSDictionary {
         >
       >()
       .asFunction<
-        void Function(
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-        )
+        void Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCObjectImpl>)
       >()(arg0, arg1);
   static ffi.Pointer<ffi.Void> _fnPtrCallable =
       ffi.Pointer.fromFunction<
@@ -3822,10 +3444,10 @@ abstract final class ObjCBlock_ffiVoid_PHContentEditingInput_NSDictionary {
     ffi.Pointer<objc.ObjCObjectImpl> arg1,
   ) =>
       (objc.getBlockClosure(block)
-          as void Function(
-            ffi.Pointer<objc.ObjCObjectImpl>,
-            ffi.Pointer<objc.ObjCObjectImpl>,
-          ))(arg0, arg1);
+          as void Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCObjectImpl>))(
+        arg0,
+        arg1,
+      );
   static ffi.Pointer<ffi.Void> _closureCallable =
       ffi.Pointer.fromFunction<
             ffi.Void Function(
@@ -3839,14 +3461,8 @@ abstract final class ObjCBlock_ffiVoid_PHContentEditingInput_NSDictionary {
 
 /// Call operator for `objc.ObjCBlock<ffi.Void Function(PHContentEditingInput?, objc.NSDictionary)>`.
 extension ObjCBlock_ffiVoid_PHContentEditingInput_NSDictionary$CallExtension
-    on
-        objc.ObjCBlock<
-          ffi.Void Function(PHContentEditingInput?, objc.NSDictionary)
-        > {
-  void call(PHContentEditingInput? arg0, objc.NSDictionary arg1) => ref
-      .pointer
-      .ref
-      .invoke
+    on objc.ObjCBlock<ffi.Void Function(PHContentEditingInput?, objc.NSDictionary)> {
+  void call(PHContentEditingInput? arg0, objc.NSDictionary arg1) => ref.pointer.ref.invoke
       .cast<
         ffi.NativeFunction<
           ffi.Void Function(
@@ -3865,8 +3481,9 @@ extension ObjCBlock_ffiVoid_PHContentEditingInput_NSDictionary$CallExtension
       >()(ref.pointer, arg0?.ref.pointer ?? ffi.nullptr, arg1.ref.pointer);
 }
 
-late final _sel_requestContentEditingInputWithOptions_completionHandler_ = objc
-    .registerName("requestContentEditingInputWithOptions:completionHandler:");
+late final _sel_requestContentEditingInputWithOptions_completionHandler_ = objc.registerName(
+  "requestContentEditingInputWithOptions:completionHandler:",
+);
 final _objc_msgSend_jkkt9d = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -3900,11 +3517,7 @@ final _objc_msgSend_1i9r4xy = objc.msgSendPointer
       >
     >()
     .asFunction<
-      void Function(
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCSelector>,
-        int,
-      )
+      void Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCSelector>, int)
     >();
 
 /// PHContentEditingInput
@@ -3916,19 +3529,13 @@ extension PHContentEditingInput$1 on PHAsset {
       iOS: (false, (8, 0, 0)),
       macOS: (false, (10, 15, 0)),
     );
-    _objc_msgSend_1i9r4xy(
-      object$.ref.pointer,
-      _sel_cancelContentEditingInputRequest_,
-      requestID,
-    );
+    _objc_msgSend_1i9r4xy(object$.ref.pointer, _sel_cancelContentEditingInputRequest_, requestID);
   }
 
   /// requestContentEditingInputWithOptions:completionHandler:
   int requestContentEditingInputWithOptions(
     PHContentEditingInputRequestOptions? options, {
-    required objc.ObjCBlock<
-      ffi.Void Function(PHContentEditingInput?, objc.NSDictionary)
-    >
+    required objc.ObjCBlock<ffi.Void Function(PHContentEditingInput?, objc.NSDictionary)>
     completionHandler,
   }) {
     objc.checkOsVersionInternal(
@@ -3946,15 +3553,10 @@ extension PHContentEditingInput$1 on PHAsset {
 }
 
 /// PHAsset
-extension type PHAsset._(objc.ObjCObject object$)
-    implements objc.ObjCObject, PHObject {
+extension type PHAsset._(objc.ObjCObject object$) implements objc.ObjCObject, PHObject {
   /// Constructs a [PHAsset] that points to the same underlying object as [other].
   PHAsset.as(objc.ObjCObject other) : object$ = other {
-    objc.checkOsVersionInternal(
-      'PHAsset',
-      iOS: (false, (8, 0, 0)),
-      macOS: (false, (10, 13, 0)),
-    );
+    objc.checkOsVersionInternal('PHAsset', iOS: (false, (8, 0, 0)), macOS: (false, (10, 13, 0)));
     assert(isA(object$));
   }
 
@@ -3964,20 +3566,13 @@ extension type PHAsset._(objc.ObjCObject object$)
     bool retain = false,
     bool release = false,
   }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
-    objc.checkOsVersionInternal(
-      'PHAsset',
-      iOS: (false, (8, 0, 0)),
-      macOS: (false, (10, 13, 0)),
-    );
+    objc.checkOsVersionInternal('PHAsset', iOS: (false, (8, 0, 0)), macOS: (false, (10, 13, 0)));
     assert(isA(object$));
   }
 
   /// Returns whether [obj] is an instance of [PHAsset].
-  static bool isA(objc.ObjCObject obj) => _objc_msgSend_19nvye5(
-    obj.ref.pointer,
-    _sel_isKindOfClass_,
-    _class_PHAsset,
-  );
+  static bool isA(objc.ObjCObject obj) =>
+      _objc_msgSend_19nvye5(obj.ref.pointer, _sel_isKindOfClass_, _class_PHAsset);
 
   /// fetchAssetsWithLocalIdentifiers:options:
   static PHFetchResult fetchAssetsWithLocalIdentifiers(
@@ -4007,18 +3602,14 @@ extension PHAsset$Methods on PHAsset {
       iOS: (false, (8, 0, 0)),
       macOS: (false, (10, 13, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.pointer,
-      _sel_modificationDate,
-    );
-    return $ret.address == 0
-        ? null
-        : objc.NSDate.fromPointer($ret, retain: true, release: true);
+    final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_modificationDate);
+    return $ret.address == 0 ? null : objc.NSDate.fromPointer($ret, retain: true, release: true);
   }
 }
 
-late final _sel_provideImageData_bytesPerRow_origin__size__userInfo_ = objc
-    .registerName("provideImageData:bytesPerRow:origin::size::userInfo:");
+late final _sel_provideImageData_bytesPerRow_origin__size__userInfo_ = objc.registerName(
+  "provideImageData:bytesPerRow:origin::size::userInfo:",
+);
 final _objc_msgSend_haq63t = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -4053,8 +3644,7 @@ final _objc_msgSend_haq63t = objc.msgSendPointer
 /// MTLTexture in your config's objc-protocols list.
 ///
 /// MTLTexture
-extension type MTLTexture._(objc.ObjCProtocol object$)
-    implements objc.ObjCProtocol {
+extension type MTLTexture._(objc.ObjCProtocol object$) implements objc.ObjCProtocol {
   /// Constructs a [MTLTexture] that points to the same underlying object as [other].
   MTLTexture.as(objc.ObjCObject other) : object$ = other;
 
@@ -4070,8 +3660,7 @@ extension type MTLTexture._(objc.ObjCProtocol object$)
 /// MTLCommandBuffer in your config's objc-protocols list.
 ///
 /// MTLCommandBuffer
-extension type MTLCommandBuffer._(objc.ObjCProtocol object$)
-    implements objc.ObjCProtocol {
+extension type MTLCommandBuffer._(objc.ObjCProtocol object$) implements objc.ObjCProtocol {
   /// Constructs a [MTLCommandBuffer] that points to the same underlying object as [other].
   MTLCommandBuffer.as(objc.ObjCObject other) : object$ = other;
 
@@ -4083,10 +3672,8 @@ extension type MTLCommandBuffer._(objc.ObjCProtocol object$)
   }) : object$ = objc.ObjCProtocol(other, retain: retain, release: release);
 }
 
-late final _sel_provideImageToMTLTexture_commandBuffer_originx_originy_width_height_userInfo_ =
-    objc.registerName(
-      "provideImageToMTLTexture:commandBuffer:originx:originy:width:height:userInfo:",
-    );
+late final _sel_provideImageToMTLTexture_commandBuffer_originx_originy_width_height_userInfo_ = objc
+    .registerName("provideImageToMTLTexture:commandBuffer:originx:originy:width:height:userInfo:");
 final _objc_msgSend_1jjfka7 = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -4175,12 +3762,8 @@ extension CIImageProvider on objc.NSObject {
   }
 }
 
-late final _class_PHImageRequestOptions = objc.getClass(
-  "PHImageRequestOptions",
-);
-late final _sel_setNetworkAccessAllowed_ = objc.registerName(
-  "setNetworkAccessAllowed:",
-);
+late final _class_PHImageRequestOptions = objc.getClass("PHImageRequestOptions");
+late final _sel_setNetworkAccessAllowed_ = objc.registerName("setNetworkAccessAllowed:");
 final _objc_msgSend_1s56lr9 = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -4192,11 +3775,7 @@ final _objc_msgSend_1s56lr9 = objc.msgSendPointer
       >
     >()
     .asFunction<
-      void Function(
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCSelector>,
-        bool,
-      )
+      void Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCSelector>, bool)
     >();
 typedef instancetype = ffi.Pointer<objc.ObjCObjectImpl>;
 typedef Dartinstancetype = objc.ObjCObject;
@@ -4230,20 +3809,13 @@ extension type PHImageRequestOptions._(objc.ObjCObject object$)
   }
 
   /// Returns whether [obj] is an instance of [PHImageRequestOptions].
-  static bool isA(objc.ObjCObject obj) => _objc_msgSend_19nvye5(
-    obj.ref.pointer,
-    _sel_isKindOfClass_,
-    _class_PHImageRequestOptions,
-  );
+  static bool isA(objc.ObjCObject obj) =>
+      _objc_msgSend_19nvye5(obj.ref.pointer, _sel_isKindOfClass_, _class_PHImageRequestOptions);
 
   /// new
   static PHImageRequestOptions new$() {
     final $ret = _objc_msgSend_151sglz(_class_PHImageRequestOptions, _sel_new);
-    return PHImageRequestOptions.fromPointer(
-      $ret,
-      retain: false,
-      release: true,
-    );
+    return PHImageRequestOptions.fromPointer($ret, retain: false, release: true);
   }
 
   /// Returns a new instance of PHImageRequestOptions constructed with the default `new` method.
@@ -4258,11 +3830,7 @@ extension PHImageRequestOptions$Methods on PHImageRequestOptions {
       iOS: (false, (8, 0, 0)),
       macOS: (false, (10, 13, 0)),
     );
-    _objc_msgSend_1s56lr9(
-      object$.ref.pointer,
-      _sel_setNetworkAccessAllowed_,
-      value,
-    );
+    _objc_msgSend_1s56lr9(object$.ref.pointer, _sel_setNetworkAccessAllowed_, value);
   }
 }
 
@@ -4272,12 +3840,7 @@ late final _class_PHImageManager = objc.getClass("PHImageManager");
 abstract final class ObjCBlock_ffiVoid_NSData_NSString_CGImagePropertyOrientation_NSDictionary {
   /// Returns a block that wraps the given raw block pointer.
   static objc.ObjCBlock<
-    ffi.Void Function(
-      objc.NSData?,
-      objc.NSString?,
-      ffi.Uint32,
-      objc.NSDictionary?,
-    )
+    ffi.Void Function(objc.NSData?, objc.NSString?, ffi.Uint32, objc.NSDictionary?)
   >
   fromPointer(
     ffi.Pointer<objc.ObjCBlockImpl> pointer, {
@@ -4285,12 +3848,7 @@ abstract final class ObjCBlock_ffiVoid_NSData_NSString_CGImagePropertyOrientatio
     bool release = false,
   }) =>
       objc.ObjCBlock<
-        ffi.Void Function(
-          objc.NSData?,
-          objc.NSString?,
-          ffi.Uint32,
-          objc.NSDictionary?,
-        )
+        ffi.Void Function(objc.NSData?, objc.NSString?, ffi.Uint32, objc.NSDictionary?)
       >(pointer, retain: retain, release: release);
 
   /// Creates a block from a C function pointer.
@@ -4299,12 +3857,7 @@ abstract final class ObjCBlock_ffiVoid_NSData_NSString_CGImagePropertyOrientatio
   /// the isolate that registered it. Invoking the block on the wrong thread
   /// will result in a crash.
   static objc.ObjCBlock<
-    ffi.Void Function(
-      objc.NSData?,
-      objc.NSString?,
-      ffi.Uint32,
-      objc.NSDictionary?,
-    )
+    ffi.Void Function(objc.NSData?, objc.NSString?, ffi.Uint32, objc.NSDictionary?)
   >
   fromFunctionPointer(
     ffi.Pointer<
@@ -4320,17 +3873,8 @@ abstract final class ObjCBlock_ffiVoid_NSData_NSString_CGImagePropertyOrientatio
     ptr,
   ) =>
       objc.ObjCBlock<
-        ffi.Void Function(
-          objc.NSData?,
-          objc.NSString?,
-          ffi.Uint32,
-          objc.NSDictionary?,
-        )
-      >(
-        objc.newPointerBlock(_fnPtrCallable, ptr.cast()),
-        retain: false,
-        release: true,
-      );
+        ffi.Void Function(objc.NSData?, objc.NSString?, ffi.Uint32, objc.NSDictionary?)
+      >(objc.newPointerBlock(_fnPtrCallable, ptr.cast()), retain: false, release: true);
 
   /// Creates a block from a Dart function.
   ///
@@ -4341,30 +3885,15 @@ abstract final class ObjCBlock_ffiVoid_NSData_NSString_CGImagePropertyOrientatio
   /// If `keepIsolateAlive` is true, this block will keep this isolate alive
   /// until it is garbage collected by both Dart and ObjC.
   static objc.ObjCBlock<
-    ffi.Void Function(
-      objc.NSData?,
-      objc.NSString?,
-      ffi.Uint32,
-      objc.NSDictionary?,
-    )
+    ffi.Void Function(objc.NSData?, objc.NSString?, ffi.Uint32, objc.NSDictionary?)
   >
   fromFunction(
-    void Function(
-      objc.NSData?,
-      objc.NSString?,
-      CGImagePropertyOrientation,
-      objc.NSDictionary?,
-    )
+    void Function(objc.NSData?, objc.NSString?, CGImagePropertyOrientation, objc.NSDictionary?)
     fn, {
     bool keepIsolateAlive = true,
   }) =>
       objc.ObjCBlock<
-        ffi.Void Function(
-          objc.NSData?,
-          objc.NSString?,
-          ffi.Uint32,
-          objc.NSDictionary?,
-        )
+        ffi.Void Function(objc.NSData?, objc.NSString?, ffi.Uint32, objc.NSDictionary?)
       >(
         objc.newClosureBlock(
           _closureCallable,
@@ -4374,20 +3903,12 @@ abstract final class ObjCBlock_ffiVoid_NSData_NSString_CGImagePropertyOrientatio
             int arg2,
             ffi.Pointer<objc.ObjCObjectImpl> arg3,
           ) => fn(
-            arg0.address == 0
-                ? null
-                : objc.NSData.fromPointer(arg0, retain: true, release: true),
-            arg1.address == 0
-                ? null
-                : objc.NSString.fromPointer(arg1, retain: true, release: true),
+            arg0.address == 0 ? null : objc.NSData.fromPointer(arg0, retain: true, release: true),
+            arg1.address == 0 ? null : objc.NSString.fromPointer(arg1, retain: true, release: true),
             CGImagePropertyOrientation.fromValue(arg2),
             arg3.address == 0
                 ? null
-                : objc.NSDictionary.fromPointer(
-                    arg3,
-                    retain: true,
-                    release: true,
-                  ),
+                : objc.NSDictionary.fromPointer(arg3, retain: true, release: true),
           ),
           keepIsolateAlive,
         ),
@@ -4405,20 +3926,10 @@ abstract final class ObjCBlock_ffiVoid_NSData_NSString_CGImagePropertyOrientatio
   /// If `keepIsolateAlive` is true, this block will keep this isolate alive
   /// until it is garbage collected by both Dart and ObjC.
   static objc.ObjCBlock<
-    ffi.Void Function(
-      objc.NSData?,
-      objc.NSString?,
-      ffi.Uint32,
-      objc.NSDictionary?,
-    )
+    ffi.Void Function(objc.NSData?, objc.NSString?, ffi.Uint32, objc.NSDictionary?)
   >
   listener(
-    void Function(
-      objc.NSData?,
-      objc.NSString?,
-      CGImagePropertyOrientation,
-      objc.NSDictionary?,
-    )
+    void Function(objc.NSData?, objc.NSString?, CGImagePropertyOrientation, objc.NSDictionary?)
     fn, {
     bool keepIsolateAlive = true,
   }) {
@@ -4430,12 +3941,8 @@ abstract final class ObjCBlock_ffiVoid_NSData_NSString_CGImagePropertyOrientatio
         int arg2,
         ffi.Pointer<objc.ObjCObjectImpl> arg3,
       ) => fn(
-        arg0.address == 0
-            ? null
-            : objc.NSData.fromPointer(arg0, retain: false, release: true),
-        arg1.address == 0
-            ? null
-            : objc.NSString.fromPointer(arg1, retain: false, release: true),
+        arg0.address == 0 ? null : objc.NSData.fromPointer(arg0, retain: false, release: true),
+        arg1.address == 0 ? null : objc.NSString.fromPointer(arg1, retain: false, release: true),
         CGImagePropertyOrientation.fromValue(arg2),
         arg3.address == 0
             ? null
@@ -4446,12 +3953,7 @@ abstract final class ObjCBlock_ffiVoid_NSData_NSString_CGImagePropertyOrientatio
     final wrapper = _NativeLibrary_wrapListenerBlock_10c3wkj(raw);
     objc.objectRelease(raw.cast());
     return objc.ObjCBlock<
-      ffi.Void Function(
-        objc.NSData?,
-        objc.NSString?,
-        ffi.Uint32,
-        objc.NSDictionary?,
-      )
+      ffi.Void Function(objc.NSData?, objc.NSString?, ffi.Uint32, objc.NSDictionary?)
     >(wrapper, retain: false, release: true);
   }
 
@@ -4466,20 +3968,10 @@ abstract final class ObjCBlock_ffiVoid_NSData_NSString_CGImagePropertyOrientatio
   /// has shut down, and the block is invoked by native code, it may block
   /// indefinitely, or have other undefined behavior.
   static objc.ObjCBlock<
-    ffi.Void Function(
-      objc.NSData?,
-      objc.NSString?,
-      ffi.Uint32,
-      objc.NSDictionary?,
-    )
+    ffi.Void Function(objc.NSData?, objc.NSString?, ffi.Uint32, objc.NSDictionary?)
   >
   blocking(
-    void Function(
-      objc.NSData?,
-      objc.NSString?,
-      CGImagePropertyOrientation,
-      objc.NSDictionary?,
-    )
+    void Function(objc.NSData?, objc.NSString?, CGImagePropertyOrientation, objc.NSDictionary?)
     fn, {
     bool keepIsolateAlive = true,
   }) {
@@ -4491,12 +3983,8 @@ abstract final class ObjCBlock_ffiVoid_NSData_NSString_CGImagePropertyOrientatio
         int arg2,
         ffi.Pointer<objc.ObjCObjectImpl> arg3,
       ) => fn(
-        arg0.address == 0
-            ? null
-            : objc.NSData.fromPointer(arg0, retain: false, release: true),
-        arg1.address == 0
-            ? null
-            : objc.NSString.fromPointer(arg1, retain: false, release: true),
+        arg0.address == 0 ? null : objc.NSData.fromPointer(arg0, retain: false, release: true),
+        arg1.address == 0 ? null : objc.NSString.fromPointer(arg1, retain: false, release: true),
         CGImagePropertyOrientation.fromValue(arg2),
         arg3.address == 0
             ? null
@@ -4512,12 +4000,8 @@ abstract final class ObjCBlock_ffiVoid_NSData_NSString_CGImagePropertyOrientatio
         int arg2,
         ffi.Pointer<objc.ObjCObjectImpl> arg3,
       ) => fn(
-        arg0.address == 0
-            ? null
-            : objc.NSData.fromPointer(arg0, retain: false, release: true),
-        arg1.address == 0
-            ? null
-            : objc.NSString.fromPointer(arg1, retain: false, release: true),
+        arg0.address == 0 ? null : objc.NSData.fromPointer(arg0, retain: false, release: true),
+        arg1.address == 0 ? null : objc.NSString.fromPointer(arg1, retain: false, release: true),
         CGImagePropertyOrientation.fromValue(arg2),
         arg3.address == 0
             ? null
@@ -4525,20 +4009,11 @@ abstract final class ObjCBlock_ffiVoid_NSData_NSString_CGImagePropertyOrientatio
       ),
       keepIsolateAlive,
     );
-    final wrapper = _NativeLibrary_wrapBlockingBlock_10c3wkj(
-      raw,
-      rawListener,
-      objc.objCContext,
-    );
+    final wrapper = _NativeLibrary_wrapBlockingBlock_10c3wkj(raw, rawListener, objc.objCContext);
     objc.objectRelease(raw.cast());
     objc.objectRelease(rawListener.cast());
     return objc.ObjCBlock<
-      ffi.Void Function(
-        objc.NSData?,
-        objc.NSString?,
-        ffi.Uint32,
-        objc.NSDictionary?,
-      )
+      ffi.Void Function(objc.NSData?, objc.NSString?, ffi.Uint32, objc.NSDictionary?)
     >(wrapper, retain: false, release: true);
   }
 
@@ -4713,12 +4188,7 @@ abstract final class ObjCBlock_ffiVoid_NSData_NSString_CGImagePropertyOrientatio
 extension ObjCBlock_ffiVoid_NSData_NSString_CGImagePropertyOrientation_NSDictionary$CallExtension
     on
         objc.ObjCBlock<
-          ffi.Void Function(
-            objc.NSData?,
-            objc.NSString?,
-            ffi.Uint32,
-            objc.NSDictionary?,
-          )
+          ffi.Void Function(objc.NSData?, objc.NSString?, ffi.Uint32, objc.NSDictionary?)
         > {
   void call(
     objc.NSData? arg0,
@@ -4755,10 +4225,9 @@ extension ObjCBlock_ffiVoid_NSData_NSString_CGImagePropertyOrientation_NSDiction
       );
 }
 
-late final _sel_requestImageDataAndOrientationForAsset_options_resultHandler_ =
-    objc.registerName(
-      "requestImageDataAndOrientationForAsset:options:resultHandler:",
-    );
+late final _sel_requestImageDataAndOrientationForAsset_options_resultHandler_ = objc.registerName(
+  "requestImageDataAndOrientationForAsset:options:resultHandler:",
+);
 final _objc_msgSend_1urj8nv = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -4782,8 +4251,7 @@ final _objc_msgSend_1urj8nv = objc.msgSendPointer
     >();
 
 /// PHImageManager
-extension type PHImageManager._(objc.ObjCObject object$)
-    implements objc.ObjCObject, objc.NSObject {
+extension type PHImageManager._(objc.ObjCObject object$) implements objc.ObjCObject, objc.NSObject {
   /// Constructs a [PHImageManager] that points to the same underlying object as [other].
   PHImageManager.as(objc.ObjCObject other) : object$ = other {
     objc.checkOsVersionInternal(
@@ -4809,11 +4277,8 @@ extension type PHImageManager._(objc.ObjCObject object$)
   }
 
   /// Returns whether [obj] is an instance of [PHImageManager].
-  static bool isA(objc.ObjCObject obj) => _objc_msgSend_19nvye5(
-    obj.ref.pointer,
-    _sel_isKindOfClass_,
-    _class_PHImageManager,
-  );
+  static bool isA(objc.ObjCObject obj) =>
+      _objc_msgSend_19nvye5(obj.ref.pointer, _sel_isKindOfClass_, _class_PHImageManager);
 
   /// defaultManager
   static PHImageManager defaultManager() {
@@ -4822,10 +4287,7 @@ extension type PHImageManager._(objc.ObjCObject object$)
       iOS: (false, (8, 0, 0)),
       macOS: (false, (10, 13, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(
-      _class_PHImageManager,
-      _sel_defaultManager,
-    );
+    final $ret = _objc_msgSend_151sglz(_class_PHImageManager, _sel_defaultManager);
     return PHImageManager.fromPointer($ret, retain: true, release: true);
   }
 }
@@ -4836,12 +4298,7 @@ extension PHImageManager$Methods on PHImageManager {
     PHAsset asset, {
     PHImageRequestOptions? options,
     required objc.ObjCBlock<
-      ffi.Void Function(
-        objc.NSData?,
-        objc.NSString?,
-        ffi.Uint32,
-        objc.NSDictionary?,
-      )
+      ffi.Void Function(objc.NSData?, objc.NSString?, ffi.Uint32, objc.NSDictionary?)
     >
     resultHandler,
   }) {
@@ -4889,14 +4346,18 @@ extension type PHAssetResourceRequestOptions._(objc.ObjCObject object$)
   }
 }
 
-late final _class_PHAssetResourceManager = objc.getClass(
-  "PHAssetResourceManager",
-);
+late final _class_PHAssetResourceManager = objc.getClass("PHAssetResourceManager");
 late final _class_PHAssetResource = objc.getClass("PHAssetResource");
+late final _sel_type = objc.registerName("type");
+final _objc_msgSend_1or4ucj = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Long Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCSelector>)
+      >
+    >()
+    .asFunction<int Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCSelector>)>();
 late final _sel_originalFilename = objc.registerName("originalFilename");
-late final _sel_assetResourcesForAsset_ = objc.registerName(
-  "assetResourcesForAsset:",
-);
+late final _sel_assetResourcesForAsset_ = objc.registerName("assetResourcesForAsset:");
 
 /// PHAssetResource
 extension type PHAssetResource._(objc.ObjCObject object$)
@@ -4926,11 +4387,8 @@ extension type PHAssetResource._(objc.ObjCObject object$)
   }
 
   /// Returns whether [obj] is an instance of [PHAssetResource].
-  static bool isA(objc.ObjCObject obj) => _objc_msgSend_19nvye5(
-    obj.ref.pointer,
-    _sel_isKindOfClass_,
-    _class_PHAssetResource,
-  );
+  static bool isA(objc.ObjCObject obj) =>
+      _objc_msgSend_19nvye5(obj.ref.pointer, _sel_isKindOfClass_, _class_PHAssetResource);
 
   /// assetResourcesForAsset:
   static objc.NSArray assetResourcesForAsset(PHAsset asset) {
@@ -4956,11 +4414,19 @@ extension PHAssetResource$Methods on PHAssetResource {
       iOS: (false, (9, 0, 0)),
       macOS: (false, (10, 15, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.pointer,
-      _sel_originalFilename,
-    );
+    final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_originalFilename);
     return objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// type
+  PHAssetResourceType get type {
+    objc.checkOsVersionInternal(
+      'PHAssetResource.type',
+      iOS: (false, (9, 0, 0)),
+      macOS: (false, (10, 15, 0)),
+    );
+    final $ret = _objc_msgSend_1or4ucj(object$.ref.pointer, _sel_type);
+    return PHAssetResourceType.fromValue($ret);
   }
 }
 
@@ -4971,11 +4437,7 @@ abstract final class ObjCBlock_ffiVoid_NSData {
     ffi.Pointer<objc.ObjCBlockImpl> pointer, {
     bool retain = false,
     bool release = false,
-  }) => objc.ObjCBlock<ffi.Void Function(objc.NSData)>(
-    pointer,
-    retain: retain,
-    release: release,
-  );
+  }) => objc.ObjCBlock<ffi.Void Function(objc.NSData)>(pointer, retain: retain, release: release);
 
   /// Creates a block from a C function pointer.
   ///
@@ -4983,12 +4445,7 @@ abstract final class ObjCBlock_ffiVoid_NSData {
   /// the isolate that registered it. Invoking the block on the wrong thread
   /// will result in a crash.
   static objc.ObjCBlock<ffi.Void Function(objc.NSData)> fromFunctionPointer(
-    ffi.Pointer<
-      ffi.NativeFunction<
-        ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)
-      >
-    >
-    ptr,
+    ffi.Pointer<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)>> ptr,
   ) => objc.ObjCBlock<ffi.Void Function(objc.NSData)>(
     objc.newPointerBlock(_fnPtrCallable, ptr.cast()),
     retain: false,
@@ -5038,11 +4495,7 @@ abstract final class ObjCBlock_ffiVoid_NSData {
     );
     final wrapper = _NativeLibrary_wrapListenerBlock_xtuoz7(raw);
     objc.objectRelease(raw.cast());
-    return objc.ObjCBlock<ffi.Void Function(objc.NSData)>(
-      wrapper,
-      retain: false,
-      release: true,
-    );
+    return objc.ObjCBlock<ffi.Void Function(objc.NSData)>(wrapper, retain: false, release: true);
   }
 
   /// Creates a blocking block from a Dart function.
@@ -5071,41 +4524,26 @@ abstract final class ObjCBlock_ffiVoid_NSData {
           fn(objc.NSData.fromPointer(arg0, retain: false, release: true)),
       keepIsolateAlive,
     );
-    final wrapper = _NativeLibrary_wrapBlockingBlock_xtuoz7(
-      raw,
-      rawListener,
-      objc.objCContext,
-    );
+    final wrapper = _NativeLibrary_wrapBlockingBlock_xtuoz7(raw, rawListener, objc.objCContext);
     objc.objectRelease(raw.cast());
     objc.objectRelease(rawListener.cast());
-    return objc.ObjCBlock<ffi.Void Function(objc.NSData)>(
-      wrapper,
-      retain: false,
-      release: true,
-    );
+    return objc.ObjCBlock<ffi.Void Function(objc.NSData)>(wrapper, retain: false, release: true);
   }
 
   static void _listenerTrampoline(
     ffi.Pointer<objc.ObjCBlockImpl> block,
     ffi.Pointer<objc.ObjCObjectImpl> arg0,
   ) {
-    (objc.getBlockClosure(block)
-        as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+    (objc.getBlockClosure(block) as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
     objc.objectRelease(block.cast());
   }
 
   static ffi.NativeCallable<
-    ffi.Void Function(
-      ffi.Pointer<objc.ObjCBlockImpl>,
-      ffi.Pointer<objc.ObjCObjectImpl>,
-    )
+    ffi.Void Function(ffi.Pointer<objc.ObjCBlockImpl>, ffi.Pointer<objc.ObjCObjectImpl>)
   >
   _listenerCallable =
       ffi.NativeCallable<
-          ffi.Void Function(
-            ffi.Pointer<objc.ObjCBlockImpl>,
-            ffi.Pointer<objc.ObjCObjectImpl>,
-          )
+          ffi.Void Function(ffi.Pointer<objc.ObjCBlockImpl>, ffi.Pointer<objc.ObjCObjectImpl>)
         >.listener(_listenerTrampoline)
         ..keepIsolateAlive = false;
   static void _blockingTrampoline(
@@ -5114,8 +4552,7 @@ abstract final class ObjCBlock_ffiVoid_NSData {
     ffi.Pointer<objc.ObjCObjectImpl> arg0,
   ) {
     try {
-      (objc.getBlockClosure(block)
-          as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+      (objc.getBlockClosure(block) as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
     } catch (e) {
     } finally {
       objc.signalWaiter(waiter);
@@ -5159,39 +4596,26 @@ abstract final class ObjCBlock_ffiVoid_NSData {
     ffi.Pointer<objc.ObjCBlockImpl> block,
     ffi.Pointer<objc.ObjCObjectImpl> arg0,
   ) => block.ref.target
-      .cast<
-        ffi.NativeFunction<
-          ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)
-        >
-      >()
+      .cast<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)>>()
       .asFunction<void Function(ffi.Pointer<objc.ObjCObjectImpl>)>()(arg0);
   static ffi.Pointer<ffi.Void> _fnPtrCallable =
       ffi.Pointer.fromFunction<
-            ffi.Void Function(
-              ffi.Pointer<objc.ObjCBlockImpl>,
-              ffi.Pointer<objc.ObjCObjectImpl>,
-            )
+            ffi.Void Function(ffi.Pointer<objc.ObjCBlockImpl>, ffi.Pointer<objc.ObjCObjectImpl>)
           >(_fnPtrTrampoline)
           .cast();
   static void _closureTrampoline(
     ffi.Pointer<objc.ObjCBlockImpl> block,
     ffi.Pointer<objc.ObjCObjectImpl> arg0,
-  ) =>
-      (objc.getBlockClosure(block)
-          as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+  ) => (objc.getBlockClosure(block) as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
   static ffi.Pointer<ffi.Void> _closureCallable =
       ffi.Pointer.fromFunction<
-            ffi.Void Function(
-              ffi.Pointer<objc.ObjCBlockImpl>,
-              ffi.Pointer<objc.ObjCObjectImpl>,
-            )
+            ffi.Void Function(ffi.Pointer<objc.ObjCBlockImpl>, ffi.Pointer<objc.ObjCObjectImpl>)
           >(_closureTrampoline)
           .cast();
 }
 
 /// Call operator for `objc.ObjCBlock<ffi.Void Function(objc.NSData)>`.
-extension ObjCBlock_ffiVoid_NSData$CallExtension
-    on objc.ObjCBlock<ffi.Void Function(objc.NSData)> {
+extension ObjCBlock_ffiVoid_NSData$CallExtension on objc.ObjCBlock<ffi.Void Function(objc.NSData)> {
   void call(objc.NSData arg0) => ref.pointer.ref.invoke
       .cast<
         ffi.NativeFunction<
@@ -5202,10 +4626,7 @@ extension ObjCBlock_ffiVoid_NSData$CallExtension
         >
       >()
       .asFunction<
-        void Function(
-          ffi.Pointer<objc.ObjCBlockImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-        )
+        void Function(ffi.Pointer<objc.ObjCBlockImpl>, ffi.Pointer<objc.ObjCObjectImpl>)
       >()(ref.pointer, arg0.ref.pointer);
 }
 
@@ -5216,11 +4637,7 @@ abstract final class ObjCBlock_ffiVoid_NSError {
     ffi.Pointer<objc.ObjCBlockImpl> pointer, {
     bool retain = false,
     bool release = false,
-  }) => objc.ObjCBlock<ffi.Void Function(objc.NSError?)>(
-    pointer,
-    retain: retain,
-    release: release,
-  );
+  }) => objc.ObjCBlock<ffi.Void Function(objc.NSError?)>(pointer, retain: retain, release: release);
 
   /// Creates a block from a C function pointer.
   ///
@@ -5228,12 +4645,7 @@ abstract final class ObjCBlock_ffiVoid_NSError {
   /// the isolate that registered it. Invoking the block on the wrong thread
   /// will result in a crash.
   static objc.ObjCBlock<ffi.Void Function(objc.NSError?)> fromFunctionPointer(
-    ffi.Pointer<
-      ffi.NativeFunction<
-        ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)
-      >
-    >
-    ptr,
+    ffi.Pointer<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)>> ptr,
   ) => objc.ObjCBlock<ffi.Void Function(objc.NSError?)>(
     objc.newPointerBlock(_fnPtrCallable, ptr.cast()),
     retain: false,
@@ -5255,9 +4667,7 @@ abstract final class ObjCBlock_ffiVoid_NSError {
     objc.newClosureBlock(
       _closureCallable,
       (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
-        arg0.address == 0
-            ? null
-            : objc.NSError.fromPointer(arg0, retain: true, release: true),
+        arg0.address == 0 ? null : objc.NSError.fromPointer(arg0, retain: true, release: true),
       ),
       keepIsolateAlive,
     ),
@@ -5281,19 +4691,13 @@ abstract final class ObjCBlock_ffiVoid_NSError {
     final raw = objc.newClosureBlock(
       _listenerCallable.nativeFunction.cast(),
       (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
-        arg0.address == 0
-            ? null
-            : objc.NSError.fromPointer(arg0, retain: false, release: true),
+        arg0.address == 0 ? null : objc.NSError.fromPointer(arg0, retain: false, release: true),
       ),
       keepIsolateAlive,
     );
     final wrapper = _NativeLibrary_wrapListenerBlock_xtuoz7(raw);
     objc.objectRelease(raw.cast());
-    return objc.ObjCBlock<ffi.Void Function(objc.NSError?)>(
-      wrapper,
-      retain: false,
-      release: true,
-    );
+    return objc.ObjCBlock<ffi.Void Function(objc.NSError?)>(wrapper, retain: false, release: true);
   }
 
   /// Creates a blocking block from a Dart function.
@@ -5313,56 +4717,37 @@ abstract final class ObjCBlock_ffiVoid_NSError {
     final raw = objc.newClosureBlock(
       _blockingCallable.nativeFunction.cast(),
       (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
-        arg0.address == 0
-            ? null
-            : objc.NSError.fromPointer(arg0, retain: false, release: true),
+        arg0.address == 0 ? null : objc.NSError.fromPointer(arg0, retain: false, release: true),
       ),
       keepIsolateAlive,
     );
     final rawListener = objc.newClosureBlock(
       _blockingListenerCallable.nativeFunction.cast(),
       (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
-        arg0.address == 0
-            ? null
-            : objc.NSError.fromPointer(arg0, retain: false, release: true),
+        arg0.address == 0 ? null : objc.NSError.fromPointer(arg0, retain: false, release: true),
       ),
       keepIsolateAlive,
     );
-    final wrapper = _NativeLibrary_wrapBlockingBlock_xtuoz7(
-      raw,
-      rawListener,
-      objc.objCContext,
-    );
+    final wrapper = _NativeLibrary_wrapBlockingBlock_xtuoz7(raw, rawListener, objc.objCContext);
     objc.objectRelease(raw.cast());
     objc.objectRelease(rawListener.cast());
-    return objc.ObjCBlock<ffi.Void Function(objc.NSError?)>(
-      wrapper,
-      retain: false,
-      release: true,
-    );
+    return objc.ObjCBlock<ffi.Void Function(objc.NSError?)>(wrapper, retain: false, release: true);
   }
 
   static void _listenerTrampoline(
     ffi.Pointer<objc.ObjCBlockImpl> block,
     ffi.Pointer<objc.ObjCObjectImpl> arg0,
   ) {
-    (objc.getBlockClosure(block)
-        as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+    (objc.getBlockClosure(block) as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
     objc.objectRelease(block.cast());
   }
 
   static ffi.NativeCallable<
-    ffi.Void Function(
-      ffi.Pointer<objc.ObjCBlockImpl>,
-      ffi.Pointer<objc.ObjCObjectImpl>,
-    )
+    ffi.Void Function(ffi.Pointer<objc.ObjCBlockImpl>, ffi.Pointer<objc.ObjCObjectImpl>)
   >
   _listenerCallable =
       ffi.NativeCallable<
-          ffi.Void Function(
-            ffi.Pointer<objc.ObjCBlockImpl>,
-            ffi.Pointer<objc.ObjCObjectImpl>,
-          )
+          ffi.Void Function(ffi.Pointer<objc.ObjCBlockImpl>, ffi.Pointer<objc.ObjCObjectImpl>)
         >.listener(_listenerTrampoline)
         ..keepIsolateAlive = false;
   static void _blockingTrampoline(
@@ -5371,8 +4756,7 @@ abstract final class ObjCBlock_ffiVoid_NSError {
     ffi.Pointer<objc.ObjCObjectImpl> arg0,
   ) {
     try {
-      (objc.getBlockClosure(block)
-          as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+      (objc.getBlockClosure(block) as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
     } catch (e) {
     } finally {
       objc.signalWaiter(waiter);
@@ -5416,32 +4800,20 @@ abstract final class ObjCBlock_ffiVoid_NSError {
     ffi.Pointer<objc.ObjCBlockImpl> block,
     ffi.Pointer<objc.ObjCObjectImpl> arg0,
   ) => block.ref.target
-      .cast<
-        ffi.NativeFunction<
-          ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)
-        >
-      >()
+      .cast<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)>>()
       .asFunction<void Function(ffi.Pointer<objc.ObjCObjectImpl>)>()(arg0);
   static ffi.Pointer<ffi.Void> _fnPtrCallable =
       ffi.Pointer.fromFunction<
-            ffi.Void Function(
-              ffi.Pointer<objc.ObjCBlockImpl>,
-              ffi.Pointer<objc.ObjCObjectImpl>,
-            )
+            ffi.Void Function(ffi.Pointer<objc.ObjCBlockImpl>, ffi.Pointer<objc.ObjCObjectImpl>)
           >(_fnPtrTrampoline)
           .cast();
   static void _closureTrampoline(
     ffi.Pointer<objc.ObjCBlockImpl> block,
     ffi.Pointer<objc.ObjCObjectImpl> arg0,
-  ) =>
-      (objc.getBlockClosure(block)
-          as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+  ) => (objc.getBlockClosure(block) as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
   static ffi.Pointer<ffi.Void> _closureCallable =
       ffi.Pointer.fromFunction<
-            ffi.Void Function(
-              ffi.Pointer<objc.ObjCBlockImpl>,
-              ffi.Pointer<objc.ObjCObjectImpl>,
-            )
+            ffi.Void Function(ffi.Pointer<objc.ObjCBlockImpl>, ffi.Pointer<objc.ObjCObjectImpl>)
           >(_closureTrampoline)
           .cast();
 }
@@ -5459,17 +4831,12 @@ extension ObjCBlock_ffiVoid_NSError$CallExtension
         >
       >()
       .asFunction<
-        void Function(
-          ffi.Pointer<objc.ObjCBlockImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-        )
+        void Function(ffi.Pointer<objc.ObjCBlockImpl>, ffi.Pointer<objc.ObjCObjectImpl>)
       >()(ref.pointer, arg0?.ref.pointer ?? ffi.nullptr);
 }
 
-late final _sel_requestDataForAssetResource_options_dataReceivedHandler_completionHandler_ =
-    objc.registerName(
-      "requestDataForAssetResource:options:dataReceivedHandler:completionHandler:",
-    );
+late final _sel_requestDataForAssetResource_options_dataReceivedHandler_completionHandler_ = objc
+    .registerName("requestDataForAssetResource:options:dataReceivedHandler:completionHandler:");
 final _objc_msgSend_p4k360 = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -5522,11 +4889,8 @@ extension type PHAssetResourceManager._(objc.ObjCObject object$)
   }
 
   /// Returns whether [obj] is an instance of [PHAssetResourceManager].
-  static bool isA(objc.ObjCObject obj) => _objc_msgSend_19nvye5(
-    obj.ref.pointer,
-    _sel_isKindOfClass_,
-    _class_PHAssetResourceManager,
-  );
+  static bool isA(objc.ObjCObject obj) =>
+      _objc_msgSend_19nvye5(obj.ref.pointer, _sel_isKindOfClass_, _class_PHAssetResourceManager);
 
   /// defaultManager
   static PHAssetResourceManager defaultManager() {
@@ -5535,15 +4899,8 @@ extension type PHAssetResourceManager._(objc.ObjCObject object$)
       iOS: (false, (9, 0, 0)),
       macOS: (false, (10, 15, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(
-      _class_PHAssetResourceManager,
-      _sel_defaultManager,
-    );
-    return PHAssetResourceManager.fromPointer(
-      $ret,
-      retain: true,
-      release: true,
-    );
+    final $ret = _objc_msgSend_151sglz(_class_PHAssetResourceManager, _sel_defaultManager);
+    return PHAssetResourceManager.fromPointer($ret, retain: true, release: true);
   }
 }
 
