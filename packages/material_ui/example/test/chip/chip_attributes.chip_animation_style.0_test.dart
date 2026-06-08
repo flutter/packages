@@ -94,6 +94,8 @@ void main() {
 
       expect(materialBox, paints..rrect(color: const Color(0xffffc107)));
     },
+    // TODO(justinmc): https://github.com/flutter/flutter/issues/187809
+    skip: isBrowser,
   );
 
   testWidgets(

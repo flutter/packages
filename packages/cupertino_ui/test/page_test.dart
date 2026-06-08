@@ -356,13 +356,15 @@ void main() {
     await tester.pump();
     await tester.pumpAndSettle();
 
-    unawaited(tester
-        .state<NavigatorState>(find.byType(Navigator))
-        .push(
-          CupertinoPageRoute<void>(
-            builder: (BuildContext context) => const Center(child: Text('Page 2')),
+    unawaited(
+      tester
+          .state<NavigatorState>(find.byType(Navigator))
+          .push(
+            CupertinoPageRoute<void>(
+              builder: (BuildContext context) => const Center(child: Text('Page 2')),
+            ),
           ),
-        ));
+    );
 
     await tester.pump();
     await tester.pumpAndSettle();

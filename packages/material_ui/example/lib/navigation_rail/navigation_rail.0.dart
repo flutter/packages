@@ -120,7 +120,7 @@ class _NavRailExampleState extends State<NavRailExample> {
                         },
                   ),
                   const SizedBox(height: 20),
-                  Text('Group alignment: $groupAlignment'),
+                  Text('Group alignment: ${groupAlignment.toStringAsFixed(1)}'),
                   const SizedBox(height: 10),
                   SegmentedButton<double>(
                     segments: const <ButtonSegment<double>>[

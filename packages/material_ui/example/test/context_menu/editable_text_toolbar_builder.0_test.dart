@@ -14,11 +14,28 @@ void main() {
   testWidgets(
     'showing and hiding the context menu in TextField with custom buttons',
     (WidgetTester tester) async {
+      bool disabledWasCalled = false;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.contextMenu, (
+            MethodCall methodCall,
+          ) {
+            if (methodCall.method == 'disableContextMenu') {
+              expect(methodCall.arguments, isNull);
+              disabledWasCalled = true;
+            }
+            return;
+          });
+
+      addTearDown(() {
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(SystemChannels.contextMenu, null);
+      });
       await tester.pumpWidget(
         const example.EditableTextToolbarBuilderExampleApp(),
       );
 
       expect(BrowserContextMenu.enabled, !kIsWeb);
+      expect(disabledWasCalled, kIsWeb);
 
       await tester.tap(find.byType(EditableText));
       await tester.pump();

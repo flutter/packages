@@ -42,7 +42,7 @@ class _CupertinoSliderExampleState extends State<CupertinoSliderExample> {
           mainAxisSize: .min,
           children: <Widget>[
             // Display the current slider value.
-            Text('$_currentSliderValue'),
+            Text(_currentSliderValue.toStringAsFixed(1)),
             CupertinoSlider(
               key: const Key('slider'),
               value: _currentSliderValue,

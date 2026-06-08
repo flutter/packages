@@ -445,11 +445,13 @@ void main() {
 
         // Check initial scroll offset of first list item relative to
         // the offset of the list view.
-        unawaited(customController.animateTo(
-          40.0,
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.linear,
-        ));
+        unawaited(
+          customController.animateTo(
+            40.0,
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.linear,
+          ),
+        );
         await tester.pumpAndSettle();
         Offset listViewTopLeft = tester.getTopLeft(find.byType(ReorderableListView));
         Offset firstBoxTopLeft = tester.getTopLeft(find.byKey(firstBox));

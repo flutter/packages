@@ -9,78 +9,83 @@ import 'package:material_ui/material_ui.dart';
 import 'package:material_ui_examples/menu_anchor/menu_anchor.1.dart' as example;
 
 void main() {
-  testWidgets('Can open menu', (WidgetTester tester) async {
-    Finder findMenu() {
-      return find
-          .ancestor(
-            of: find.text(example.MenuEntry.about.label),
-            matching: find.byType(FocusScope),
-          )
-          .first;
-    }
+  testWidgets(
+    'Can open menu',
+    (WidgetTester tester) async {
+      Finder findMenu() {
+        return find
+            .ancestor(
+              of: find.text(example.MenuEntry.about.label),
+              matching: find.byType(FocusScope),
+            )
+            .first;
+      }
 
-    await tester.pumpWidget(const example.ContextMenuApp());
+      await tester.pumpWidget(const example.ContextMenuApp());
 
-    await tester.tapAt(const Offset(100, 200), buttons: kSecondaryButton);
-    await tester.pumpAndSettle();
-    expect(tester.getRect(findMenu()).left, equals(100.0));
-    expect(tester.getRect(findMenu()).top, equals(200.0));
-    expect(tester.getRect(findMenu()).right, closeTo(389.8, 0.1));
-    expect(tester.getRect(findMenu()).bottom, equals(360.0));
+      await tester.tapAt(const Offset(100, 200), buttons: kSecondaryButton);
+      await tester.pumpAndSettle();
+      expect(tester.getRect(findMenu()).left, equals(100.0));
+      expect(tester.getRect(findMenu()).top, equals(200.0));
+      expect(tester.getRect(findMenu()).right, closeTo(389.8, 0.1));
+      expect(tester.getRect(findMenu()).bottom, equals(360.0));
 
-    // Make sure tapping in a different place causes the menu to move.
-    await tester.tapAt(const Offset(200, 100), buttons: kSecondaryButton);
-    await tester.pump();
+      // Make sure tapping in a different place causes the menu to move.
+      await tester.tapAt(const Offset(200, 100), buttons: kSecondaryButton);
+      await tester.pump();
 
-    expect(tester.getRect(findMenu()).left, equals(200.0));
-    expect(tester.getRect(findMenu()).top, equals(100.0));
-    expect(tester.getRect(findMenu()).right, closeTo(489.8, 0.1));
-    expect(tester.getRect(findMenu()).bottom, equals(260.0));
+      expect(tester.getRect(findMenu()).left, equals(200.0));
+      expect(tester.getRect(findMenu()).top, equals(100.0));
+      expect(tester.getRect(findMenu()).right, closeTo(489.8, 0.1));
+      expect(tester.getRect(findMenu()).bottom, equals(260.0));
 
-    expect(find.text(example.MenuEntry.about.label), findsOneWidget);
-    expect(find.text(example.MenuEntry.showMessage.label), findsOneWidget);
-    expect(find.text(example.MenuEntry.hideMessage.label), findsNothing);
-    expect(find.text('Background Color'), findsOneWidget);
-    expect(find.text(example.MenuEntry.colorRed.label), findsNothing);
-    expect(find.text(example.MenuEntry.colorGreen.label), findsNothing);
-    expect(find.text(example.MenuEntry.colorBlue.label), findsNothing);
-    expect(find.text(example.ContextMenuApp.kMessage), findsNothing);
+      expect(find.text(example.MenuEntry.about.label), findsOneWidget);
+      expect(find.text(example.MenuEntry.showMessage.label), findsOneWidget);
+      expect(find.text(example.MenuEntry.hideMessage.label), findsNothing);
+      expect(find.text('Background Color'), findsOneWidget);
+      expect(find.text(example.MenuEntry.colorRed.label), findsNothing);
+      expect(find.text(example.MenuEntry.colorGreen.label), findsNothing);
+      expect(find.text(example.MenuEntry.colorBlue.label), findsNothing);
+      expect(find.text(example.ContextMenuApp.kMessage), findsNothing);
 
-    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-    await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pump();
 
-    expect(find.text('Background Color'), findsOneWidget);
+      expect(find.text('Background Color'), findsOneWidget);
 
-    // Focusing the background color item with the keyboard caused the submenu
-    // to open. Tapping it should cause it to close.
-    await tester.tap(find.text('Background Color'));
-    await tester.pump();
-    await tester.pumpAndSettle();
+      // Focusing the background color item with the keyboard caused the submenu
+      // to open. Tapping it should cause it to close.
+      await tester.tap(find.text('Background Color'));
+      await tester.pump();
+      await tester.pumpAndSettle();
 
-    expect(find.text(example.MenuEntry.colorRed.label), findsNothing);
-    expect(find.text(example.MenuEntry.colorGreen.label), findsNothing);
-    expect(find.text(example.MenuEntry.colorBlue.label), findsNothing);
+      expect(find.text(example.MenuEntry.colorRed.label), findsNothing);
+      expect(find.text(example.MenuEntry.colorGreen.label), findsNothing);
+      expect(find.text(example.MenuEntry.colorBlue.label), findsNothing);
 
-    await tester.tap(find.text('Background Color'));
-    await tester.pump();
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('Background Color'));
+      await tester.pump();
+      await tester.pumpAndSettle();
 
-    expect(find.text(example.MenuEntry.colorRed.label), findsOneWidget);
-    expect(find.text(example.MenuEntry.colorGreen.label), findsOneWidget);
-    expect(find.text(example.MenuEntry.colorBlue.label), findsOneWidget);
+      expect(find.text(example.MenuEntry.colorRed.label), findsOneWidget);
+      expect(find.text(example.MenuEntry.colorGreen.label), findsOneWidget);
+      expect(find.text(example.MenuEntry.colorBlue.label), findsOneWidget);
 
-    await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
-    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
-    await tester.pumpAndSettle();
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
 
-    expect(find.text(example.ContextMenuApp.kMessage), findsOneWidget);
-    expect(
-      find.text('Last Selected: ${example.MenuEntry.showMessage.label}'),
-      findsOneWidget,
-    );
-  });
+      expect(find.text(example.ContextMenuApp.kMessage), findsOneWidget);
+      expect(
+        find.text('Last Selected: ${example.MenuEntry.showMessage.label}'),
+        findsOneWidget,
+      );
+    },
+    // TODO(justinmc): https://github.com/flutter/flutter/issues/187804
+    skip: isBrowser,
+  );
 
   testWidgets('Shortcuts work', (WidgetTester tester) async {
     await tester.pumpWidget(const example.ContextMenuApp());

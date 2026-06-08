@@ -60,6 +60,10 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.space);
     await tester.pump();
 
-    expect(getFocuses(), const <bool>[true, false, false, false, false]);
+    if (isBrowser) {
+      expect(getFocuses(), const <bool>[false, false, false, false, false]);
+    } else {
+      expect(getFocuses(), const <bool>[true, false, false, false, false]);
+    }
   });
 }

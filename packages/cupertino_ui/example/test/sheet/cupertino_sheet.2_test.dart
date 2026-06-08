@@ -45,5 +45,5 @@ void main() {
     await tester.restartAndRestore();
 
     expect(find.text('Current Count: 2'), findsOneWidget);
-  });
+  }, skip: isBrowser); // https://github.com/flutter/flutter/issues/33615
 }

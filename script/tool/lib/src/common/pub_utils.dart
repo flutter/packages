@@ -26,6 +26,7 @@ Future<bool> runPubGet(
     processRunner,
     platform,
     streamOutput: streamOutput,
+    recursiveFlutterCheck: true,
   );
 }
 
@@ -41,8 +42,14 @@ Future<bool> runPubCommand(
   Platform platform, {
   bool streamOutput = true,
   String? dartSdkPathOverride,
+  bool recursiveFlutterCheck = false,
 }) async {
-  final String command = _pubCommand(package, platform, dartSdkPathOverride: dartSdkPathOverride);
+  final String command = _pubCommand(
+    package,
+    platform,
+    dartSdkPathOverride: dartSdkPathOverride,
+    recursiveFlutterCheck: recursiveFlutterCheck,
+  );
   final args = <String>['pub', ...commandArgs];
   final int exitCode;
   if (streamOutput) {
@@ -78,10 +85,24 @@ Future<io.Process> startPubCommand(
   ], workingDirectory: package.directory);
 }
 
-String _pubCommand(RepositoryPackage package, Platform platform, {String? dartSdkPathOverride}) {
+String _pubCommand(
+  RepositoryPackage package,
+  Platform platform, {
+  String? dartSdkPathOverride,
+  bool recursiveFlutterCheck = false,
+}) {
   // Running `dart pub get` on a Flutter package can fail if a non-Flutter Dart
   // is first in the path, so use `flutter pub get` for any Flutter package.
-  return package.requiresFlutter()
+  bool useFlutter = package.requiresFlutter();
+  if (!useFlutter && recursiveFlutterCheck) {
+    for (final RepositoryPackage example in package.getExamples()) {
+      if (example.requiresFlutter()) {
+        useFlutter = true;
+        break;
+      }
+    }
+  }
+  return useFlutter
       ? (platform.isWindows ? 'flutter.bat' : 'flutter')
       : (dartSdkPathOverride ?? 'dart');
 }
