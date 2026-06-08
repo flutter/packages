@@ -832,6 +832,10 @@ abstract class MapsCallbackApi {
   @ObjCSelector('didTapCircleWithIdentifier:')
   void onCircleTap(String circleId);
 
+  /// Called when a point of interest is tapped.
+  @ObjCSelector('didTapPointOfInterestWithPlaceId:')
+  void onPointOfInterestTap(String placeId);
+
   /// Called when a marker cluster is tapped.
   @ObjCSelector('didTapCluster:')
   void onClusterTap(PlatformCluster cluster);

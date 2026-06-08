@@ -1,3 +1,7 @@
+## 2.20.0
+
+* Adds support for tapping points of interest on the map.
+
 ## 2.19.12
 
 * Bumps the androidx group across 10 directories with 1 update.

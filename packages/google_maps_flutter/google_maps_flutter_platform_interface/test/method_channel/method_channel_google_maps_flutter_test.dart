@@ -119,5 +119,20 @@ void main() {
       expect((await markerDragStream.next).value.value, equals('drag-marker'));
       expect((await markerDragEndStream.next).value.value, equals('drag-end-marker'));
     });
+
+    test('point of interest tap sends event to correct stream', () async {
+      const mapId = 1;
+      const placeId = 'place-123';
+      final jsonEvent = <dynamic, dynamic>{'placeId': placeId};
+
+      final maps = MethodChannelGoogleMapsFlutter();
+      maps.ensureChannelInitialized(mapId);
+
+      final stream = StreamQueue<PointOfInterestTapEvent>(maps.onPointOfInterestTap(mapId: mapId));
+
+      await sendPlatformMessage(mapId, 'map#onPointOfInterestTap', jsonEvent);
+
+      expect((await stream.next).value.value, equals(placeId));
+    });
   });
 }

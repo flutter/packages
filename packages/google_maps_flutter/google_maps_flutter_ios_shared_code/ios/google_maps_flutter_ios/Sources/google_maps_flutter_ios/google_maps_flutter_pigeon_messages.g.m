@@ -2336,11 +2336,11 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
         binaryMessenger:binaryMessenger
                   codec:FGMGetGoogleMapsFlutterPigeonMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(updatePolylinesByAdding:
-                                                                 changing:removing:error:)],
-                @"FGMMapsApi api (%@) doesn't respond to "
-                @"@selector(updatePolylinesByAdding:changing:removing:error:)",
-                api);
+      NSCAssert(
+          [api respondsToSelector:@selector(updatePolylinesByAdding:changing:removing:error:)],
+          @"FGMMapsApi api (%@) doesn't respond to "
+          @"@selector(updatePolylinesByAdding:changing:removing:error:)",
+          api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSArray<FGMPlatformPolyline *> *arg_toAdd = GetNullableObjectAtIndex(args, 0);
@@ -2367,11 +2367,11 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
         binaryMessenger:binaryMessenger
                   codec:FGMGetGoogleMapsFlutterPigeonMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(updateTileOverlaysByAdding:
-                                                                    changing:removing:error:)],
-                @"FGMMapsApi api (%@) doesn't respond to "
-                @"@selector(updateTileOverlaysByAdding:changing:removing:error:)",
-                api);
+      NSCAssert(
+          [api respondsToSelector:@selector(updateTileOverlaysByAdding:changing:removing:error:)],
+          @"FGMMapsApi api (%@) doesn't respond to "
+          @"@selector(updateTileOverlaysByAdding:changing:removing:error:)",
+          api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSArray<FGMPlatformTileOverlay *> *arg_toAdd = GetNullableObjectAtIndex(args, 0);
@@ -2398,11 +2398,11 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
         binaryMessenger:binaryMessenger
                   codec:FGMGetGoogleMapsFlutterPigeonMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(updateGroundOverlaysByAdding:
-                                                                      changing:removing:error:)],
-                @"FGMMapsApi api (%@) doesn't respond to "
-                @"@selector(updateGroundOverlaysByAdding:changing:removing:error:)",
-                api);
+      NSCAssert(
+          [api respondsToSelector:@selector(updateGroundOverlaysByAdding:changing:removing:error:)],
+          @"FGMMapsApi api (%@) doesn't respond to "
+          @"@selector(updateGroundOverlaysByAdding:changing:removing:error:)",
+          api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSArray<FGMPlatformGroundOverlay *> *arg_toAdd = GetNullableObjectAtIndex(args, 0);
@@ -2631,11 +2631,11 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
         binaryMessenger:binaryMessenger
                   codec:FGMGetGoogleMapsFlutterPigeonMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(isShowingInfoWindowForMarkerWithIdentifier:
-                                                                                       error:)],
-                @"FGMMapsApi api (%@) doesn't respond to "
-                @"@selector(isShowingInfoWindowForMarkerWithIdentifier:error:)",
-                api);
+      NSCAssert(
+          [api respondsToSelector:@selector(isShowingInfoWindowForMarkerWithIdentifier:error:)],
+          @"FGMMapsApi api (%@) doesn't respond to "
+          @"@selector(isShowingInfoWindowForMarkerWithIdentifier:error:)",
+          api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSString *arg_markerId = GetNullableObjectAtIndex(args, 0);
@@ -3054,6 +3054,32 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
              binaryMessenger:self.binaryMessenger
                        codec:FGMGetGoogleMapsFlutterPigeonMessagesCodec()];
   [channel sendMessage:@[ arg_circleId ?: [NSNull null] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion([FlutterError errorWithCode:reply[0]
+                                                      message:reply[1]
+                                                      details:reply[2]]);
+                     } else {
+                       completion(nil);
+                     }
+                   } else {
+                     completion(createConnectionError(channelName));
+                   }
+                 }];
+}
+- (void)didTapPointOfInterestWithPlaceId:(NSString *)arg_placeId
+                              completion:(void (^)(FlutterError *_Nullable))completion {
+  NSString *channelName = [NSString
+      stringWithFormat:
+          @"%@%@",
+          @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onPointOfInterestTap",
+          _messageChannelSuffix];
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:channelName
+             binaryMessenger:self.binaryMessenger
+                       codec:FGMGetGoogleMapsFlutterPigeonMessagesCodec()];
+  [channel sendMessage:@[ arg_placeId ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
                      if (reply.count > 1) {

@@ -289,6 +289,13 @@ class GoogleMapController {
     _onClickSubscription = map.onClick.listen((gmaps.MapMouseEventOrIconMouseEvent event) {
       assert(event.latLng != null);
       if (!_streamController.isClosed) {
+        if (event.hasProperty('placeId'.toJS).toDart) {
+          final String? placeId = (event as gmaps.IconMouseEvent).placeId;
+          if (placeId != null) {
+            _streamController.add(PointOfInterestTapEvent(_mapId, PointOfInterestId(placeId)));
+            return;
+          }
+        }
         _streamController.add(MapTapEvent(_mapId, gmLatLngToLatLng(event.latLng!)));
       }
     });

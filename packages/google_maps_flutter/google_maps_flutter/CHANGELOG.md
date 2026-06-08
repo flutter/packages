@@ -1,3 +1,7 @@
+## 2.18.0
+
+* Adds support for tapping points of interest on the map.
+
 ## 2.17.1
 
 * Updates README to link to implementation packages for platform-specific
