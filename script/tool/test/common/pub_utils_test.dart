@@ -17,7 +17,7 @@ void main() {
     (:packagesDir, :processRunner, gitProcessRunner: _, gitDir: _) = configureBaseCommandMocks();
   });
 
-  test('runs with Dart for a non-Flutter package by default', () async {
+  test('runs with Dart for a non-Flutter package', () async {
     final RepositoryPackage package = createFakePackage('a_package', packagesDir);
     final platform = MockPlatform();
 
@@ -31,8 +31,23 @@ void main() {
     );
   });
 
-  test('runs with Flutter for a Flutter package by default', () async {
+  test('runs with Flutter for a Flutter package', () async {
     final RepositoryPackage package = createFakePackage('a_package', packagesDir, isFlutter: true);
+    final platform = MockPlatform();
+
+    await runPubGet(package, processRunner, platform);
+
+    expect(
+      processRunner.recordedCalls,
+      orderedEquals(<ProcessCall>[
+        ProcessCall('flutter', const <String>['pub', 'get'], package.path),
+      ]),
+    );
+  });
+
+  test('runs with Flutter for a non-Flutter package with a Flutter example', () async {
+    final RepositoryPackage package = createFakePackage('a_package', packagesDir, examples: []);
+    createFakePackage('example', package.directory, examples: [], isFlutter: true);
     final platform = MockPlatform();
 
     await runPubGet(package, processRunner, platform);
