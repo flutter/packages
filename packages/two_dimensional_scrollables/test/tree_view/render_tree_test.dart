@@ -161,6 +161,48 @@ void main() {
       expect(log, <String>['First', 'Second', 'Third']);
     });
 
+    testWidgets('TreeRow gesture hit testing spans the viewport width', (
+      WidgetTester tester,
+    ) async {
+      var tapped = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Align(
+            alignment: Alignment.topLeft,
+            child: SizedBox(
+              width: 200,
+              height: 40,
+              child: TreeView<int>(
+                tree: <TreeViewNode<int>>[TreeViewNode<int>(0)],
+                treeNodeBuilder: (_, _, _) => const SizedBox(width: 50, height: 40),
+                treeRowBuilder: (_) {
+                  return TreeRow(
+                    extent: const FixedTreeRowExtent(40),
+                    recognizerFactories: <Type, GestureRecognizerFactory>{
+                      TapGestureRecognizer:
+                          GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
+                            TapGestureRecognizer.new,
+                            (TapGestureRecognizer recognizer) {
+                              recognizer.onTap = () => tapped = true;
+                            },
+                          ),
+                    },
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      await tester.tapAt(const Offset(175, 20));
+      await tester.pump();
+
+      expect(tapped, isTrue);
+    });
+
     testWidgets('row children remain hittable after horizontal scrolling', (
       WidgetTester tester,
     ) async {
