@@ -348,11 +348,21 @@ plugins {
       '${_getRelativePosixPath(gradleFile, from: package.directory)}.',
     );
     final String contents = gradleFile.readAsStringSync();
+    final List<String> lines = contents.split('\n');
 
     // This is tracked as a variable rather than a sequence of &&s so that all
     // failures are reported at once, not just the first one.
     var succeeded = true;
     if (!_validateNamespace(package, contents, isExample: true)) {
+      succeeded = false;
+    }
+    if (!_validateKotlinPluginUsage(lines)) {
+      succeeded = false;
+    }
+    if (!_validateKotlinJvmCompatibility(lines)) {
+      succeeded = false;
+    }
+    if (!_validateJavaKotlinCompilerOptionsAlignment(lines)) {
       succeeded = false;
     }
     return succeeded;
@@ -636,15 +646,24 @@ If build.gradle.kts sets jvmTarget inside kotlin.compilerOptions, it must use Jv
     );
 
     if (hasKotlinPlugin) {
-      const kotlinPluginErrorMessage = '''
-The kotlin-android plugin should not be applied in the plugin module's build.gradle.kts.
+      final bool isApp = gradleLines.any(
+        (String line) =>
+            line.contains('com.android.application') && !_isCommented(line),
+      );
+      final moduleType = isApp ? 'app' : 'plugin';
+      final pluginId = isApp
+          ? 'com.android.application'
+          : 'com.android.library';
+      final kotlinPluginErrorMessage =
+          '''
+The kotlin-android plugin should not be applied in the $moduleType module's build.gradle.kts.
   Good:
     plugins {
-        id("com.android.library")
+        id("$pluginId")
     }
   BAD:
     plugins {
-        id("com.android.library")
+        id("$pluginId")
         id("kotlin-android")
     }
 ''';
