@@ -358,6 +358,8 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
   }
 
   Uint8List _extractBytesToUint8List(NSData data) {
+    print('start extract');
+    print(data.hashCode);
     if (data.length == 0) {
       return Uint8List(0);
     }
