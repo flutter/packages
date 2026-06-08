@@ -42,7 +42,7 @@ TableSpan getMouseTrackingSpan(
 void main() {
   group('TableView.builder', () {
     testWidgets('creates correct delegate', (WidgetTester tester) async {
-      final Widget widget = TableView.builder(
+      final widget = TableView.builder(
         columnCount: 3,
         rowCount: 2,
         rowBuilder: (_) => span,
@@ -52,7 +52,9 @@ void main() {
 
       await tester.pumpWidget(widget);
 
-      final TableView tableView = tester.widget<TableView>(find.byType(TableView));
+      final TwoDimensionalScrollView tableView = tester.widget<TwoDimensionalScrollView>(
+        find.byWidgetPredicate((widget) => widget is TwoDimensionalScrollView),
+      );
 
       final delegate = tableView.delegate as TableCellBuilderDelegate;
       expect(delegate.pinnedRowCount, 0);
@@ -65,7 +67,7 @@ void main() {
     });
 
     test('asserts correct counts', () {
-      Widget? tableView;
+      TableView? tableView;
       expect(
         () {
           tableView = TableView.builder(
@@ -196,7 +198,7 @@ void main() {
         horizontalController.dispose();
       });
 
-      Widget getTableView({
+      TableView getTableView({
         int? columnCount,
         int? rowCount,
         TableSpanBuilder? columnBuilder,
@@ -1940,7 +1942,7 @@ void main() {
 
   group('TableView.list', () {
     testWidgets('creates correct delegate', (WidgetTester tester) async {
-      final Widget widget = TableView.list(
+      final widget = TableView.list(
         rowBuilder: (_) => span,
         columnBuilder: (_) => span,
         cells: const <List<TableViewCell>>[
@@ -1951,7 +1953,9 @@ void main() {
 
       await tester.pumpWidget(widget);
 
-      final TableView tableView = tester.widget<TableView>(find.byType(TableView));
+      final TwoDimensionalScrollView tableView = tester.widget<TwoDimensionalScrollView>(
+        find.byWidgetPredicate((widget) => widget is TwoDimensionalScrollView),
+      );
 
       final delegate = tableView.delegate as TableCellListDelegate;
       expect(delegate.pinnedRowCount, 0);
@@ -1964,7 +1968,7 @@ void main() {
     });
 
     test('asserts correct counts', () {
-      Widget? tableView;
+      TableView? tableView;
       expect(
         () {
           tableView = TableView.list(
@@ -2011,7 +2015,7 @@ void main() {
     testWidgets('parent data and table vicinities', (WidgetTester tester) async {
       final childKeys = <TableVicinity, UniqueKey>{};
       const span = TableSpan(extent: FixedTableSpanExtent(200));
-      final Widget tableView = TableView.builder(
+      final tableView = TableView.builder(
         rowCount: 5,
         columnCount: 5,
         columnBuilder: (_) => span,
@@ -2071,7 +2075,7 @@ void main() {
         extent: FixedTableSpanExtent(200),
         padding: TableSpanPadding(leading: 30.0, trailing: 40.0),
       );
-      Widget tableView = TableView.builder(
+      var tableView = TableView.builder(
         rowCount: 2,
         columnCount: 2,
         columnBuilder: (_) => columnSpan,
@@ -2164,7 +2168,7 @@ void main() {
     testWidgets('TableSpan gesture hit testing', (WidgetTester tester) async {
       var tapCounter = 0;
       // Rows
-      Widget tableView = TableView.builder(
+      var tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
         columnBuilder: (_) => span,
@@ -2385,7 +2389,7 @@ void main() {
     testWidgets('First row/column layout based on padding', (WidgetTester tester) async {
       // Huge padding, first span layout
       // Column-wise
-      Widget tableView = TableView.builder(
+      var tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
         columnBuilder: (_) => const TableSpan(
@@ -2454,7 +2458,7 @@ void main() {
     testWidgets('lazy layout accounts for gradually accrued padding', (WidgetTester tester) async {
       // Check with gradually accrued paddings
       // Column-wise
-      Widget tableView = TableView.builder(
+      var tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
         columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(200)),
@@ -2947,7 +2951,7 @@ void main() {
     });
 
     testWidgets('paints decorations in correct order', (WidgetTester tester) async {
-      Widget tableView = TableView.builder(
+      var tableView = TableView.builder(
         rowCount: 2,
         columnCount: 2,
         columnBuilder: (int index) => TableSpan(
@@ -3191,7 +3195,7 @@ void main() {
       WidgetTester tester,
     ) async {
       // Both reversed - Regression test for https://github.com/flutter/flutter/issues/135386
-      Widget tableView = TableView.builder(
+      var tableView = TableView.builder(
         verticalDetails: const ScrollableDetails.vertical(reverse: true),
         horizontalDetails: const ScrollableDetails.horizontal(reverse: true),
         rowCount: 2,
@@ -3274,7 +3278,7 @@ void main() {
     testWidgets('mouse handling', (WidgetTester tester) async {
       var enterCounter = 0;
       var exitCounter = 0;
-      final Widget tableView = TableView.builder(
+      final tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
         columnBuilder: (_) => span,
