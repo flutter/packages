@@ -8,7 +8,7 @@ import UIKit
 import XCTest
 
 class ViewProviderTests: XCTestCase {
-    func testDefaultViewProvider_ReturnsViewControllerFromRegistrar() {
+    @MainActor func testDefaultViewProvider_ReturnsViewControllerFromRegistrar() {
         let mockRegistrar = MockPluginRegistrar()
         let expectedVC = UIViewController()
         mockRegistrar.mockViewController = expectedVC
