@@ -161,9 +161,11 @@ void main() {
       expect(log, <String>['First', 'Second', 'Third']);
     });
 
-    testWidgets('TreeRow gesture hit testing spans the viewport width', (
+    testWidgets('TreeRow gesture hit testing spans the viewport when scrolled', (
       WidgetTester tester,
     ) async {
+      final horizontalController = ScrollController();
+      addTearDown(horizontalController.dispose);
       var tapped = false;
 
       await tester.pumpWidget(
@@ -172,22 +174,28 @@ void main() {
             alignment: Alignment.topLeft,
             child: SizedBox(
               width: 200,
-              height: 40,
+              height: 80,
               child: TreeView<int>(
-                tree: <TreeViewNode<int>>[TreeViewNode<int>(0)],
-                treeNodeBuilder: (_, _, _) => const SizedBox(width: 50, height: 40),
-                treeRowBuilder: (_) {
+                tree: <TreeViewNode<int>>[TreeViewNode<int>(0), TreeViewNode<int>(1)],
+                horizontalDetails: ScrollableDetails.horizontal(controller: horizontalController),
+                indentation: TreeViewIndentationType.none,
+                treeNodeBuilder: (_, TreeViewNode<int> node, _) {
+                  return SizedBox(width: node.content == 0 ? 100 : 250, height: 40);
+                },
+                treeRowBuilder: (TreeViewNode<int> node) {
                   return TreeRow(
                     extent: const FixedTreeRowExtent(40),
-                    recognizerFactories: <Type, GestureRecognizerFactory>{
-                      TapGestureRecognizer:
-                          GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
-                            TapGestureRecognizer.new,
-                            (TapGestureRecognizer recognizer) {
-                              recognizer.onTap = () => tapped = true;
-                            },
-                          ),
-                    },
+                    recognizerFactories: node.content == 0
+                        ? <Type, GestureRecognizerFactory>{
+                            TapGestureRecognizer:
+                                GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
+                                  TapGestureRecognizer.new,
+                                  (TapGestureRecognizer recognizer) {
+                                    recognizer.onTap = () => tapped = true;
+                                  },
+                                ),
+                          }
+                        : <Type, GestureRecognizerFactory>{},
                   );
                 },
               ),
@@ -197,6 +205,8 @@ void main() {
       );
       await tester.pump();
 
+      horizontalController.jumpTo(50);
+      await tester.pump();
       await tester.tapAt(const Offset(175, 20));
       await tester.pump();
 
