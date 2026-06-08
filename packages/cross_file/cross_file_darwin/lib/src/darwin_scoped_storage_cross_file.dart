@@ -230,6 +230,9 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
             final int bytesLeftToRead = end - max(currentByteIndex, startOrZero);
 
             if (bytesLeftToRead > 0) {
+              // late final int bytesStart;
+              // late final int bytesEnd;
+
               if (currentByteIndex >= startOrZero) {
                 streamController.add(bytes.sublist(0, min(bytesLeftToRead, bytes.length)));
               } else if (newByteIndex > startOrZero) {
@@ -250,8 +253,10 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
       void completionHandler(NSError? error) {
         runOnPlatformThread(() {
           if (error != null) {
+            print('ERROR');
             streamController.addError(Exception(error.localizedDescription.toDartString()));
           }
+          print('FINISHED');
 
           return streamController.close();
         });
