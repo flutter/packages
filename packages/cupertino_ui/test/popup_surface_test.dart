@@ -7,6 +7,8 @@
 @Tags(<String>['reduced-test-set'])
 library;
 
+import 'dart:async' show unawaited;
+
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
@@ -274,7 +276,7 @@ void main() {
       vsync: const TestVSync(),
     );
     addTearDown(controller.dispose);
-    await controller.forward();
+    unawaited(controller.forward());
 
     await tester.pumpWidget(
       _FilterTest(

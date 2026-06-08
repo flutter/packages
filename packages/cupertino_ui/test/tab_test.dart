@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async' show unawaited;
+
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -112,7 +114,7 @@ void main() {
       ),
     );
 
-    await key.currentState!.pushNamed('/2');
+    unawaited(key.currentState!.pushNamed('/2'));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
@@ -181,7 +183,7 @@ void main() {
     );
     late FlutterError error;
     try {
-      await key.currentState!.pushNamed('/2');
+      unawaited(key.currentState!.pushNamed('/2'));
     } on FlutterError catch (e) {
       error = e;
     }
@@ -219,7 +221,7 @@ void main() {
     );
     late FlutterError error;
     try {
-      await key.currentState!.pushNamed('/2');
+      unawaited(key.currentState!.pushNamed('/2'));
     } on FlutterError catch (e) {
       error = e;
     }

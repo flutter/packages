@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async' show unawaited;
+
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -23,7 +25,7 @@ void main() {
 
     final Offset widget1InitialTopLeft = tester.getTopLeft(find.text('Page 1'));
 
-    await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+    unawaited(tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next'));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 150));
@@ -100,7 +102,7 @@ void main() {
 
     final Offset widget1InitialTopLeft = tester.getTopLeft(find.text('Page 1'));
 
-    await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+    unawaited(tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next'));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 150));
@@ -155,16 +157,18 @@ void main() {
 
     final Offset widget1InitialTopLeft = tester.getTopLeft(find.text('Page 1'));
 
-    await tester
-        .state<NavigatorState>(find.byType(Navigator))
-        .push(
-          CupertinoPageRoute<void>(
-            builder: (BuildContext context) {
-              return const Center(child: Text('Page 2'));
-            },
-            fullscreenDialog: true,
+    unawaited(
+      tester
+          .state<NavigatorState>(find.byType(Navigator))
+          .push(
+            CupertinoPageRoute<void>(
+              builder: (BuildContext context) {
+                return const Center(child: Text('Page 2'));
+              },
+              fullscreenDialog: true,
+            ),
           ),
-        );
+    );
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
@@ -225,7 +229,7 @@ void main() {
       ),
     );
 
-    await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+    unawaited(tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next'));
 
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
@@ -284,24 +288,28 @@ void main() {
       ),
     );
 
-    await tester
-        .state<NavigatorState>(find.byType(Navigator))
-        .push(
-          CupertinoPageRoute<void>(
-            builder: (BuildContext context) => const Center(child: Text('Page 1')),
+    unawaited(
+      tester
+          .state<NavigatorState>(find.byType(Navigator))
+          .push(
+            CupertinoPageRoute<void>(
+              builder: (BuildContext context) => const Center(child: Text('Page 1')),
+            ),
           ),
-        );
+    );
 
     await tester.pump();
     await tester.pump(const Duration(seconds: 2));
 
-    await tester
-        .state<NavigatorState>(find.byType(Navigator))
-        .push(
-          CupertinoPageRoute<void>(
-            builder: (BuildContext context) => const Center(child: Text('Page 2')),
+    unawaited(
+      tester
+          .state<NavigatorState>(find.byType(Navigator))
+          .push(
+            CupertinoPageRoute<void>(
+              builder: (BuildContext context) => const Center(child: Text('Page 2')),
+            ),
           ),
-        );
+    );
     await tester.pump();
     await tester.pumpAndSettle();
 
@@ -335,24 +343,26 @@ void main() {
       ),
     );
 
-    await tester
-        .state<NavigatorState>(find.byType(Navigator))
-        .push(
-          CupertinoPageRoute<void>(
-            builder: (BuildContext context) => const Center(child: Text('Page 1')),
+    unawaited(
+      tester
+          .state<NavigatorState>(find.byType(Navigator))
+          .push(
+            CupertinoPageRoute<void>(
+              builder: (BuildContext context) => const Center(child: Text('Page 1')),
+            ),
           ),
-        );
+    );
 
     await tester.pump();
     await tester.pumpAndSettle();
 
-    await tester
+    unawaited(tester
         .state<NavigatorState>(find.byType(Navigator))
         .push(
           CupertinoPageRoute<void>(
             builder: (BuildContext context) => const Center(child: Text('Page 2')),
           ),
-        );
+        ));
 
     await tester.pump();
     await tester.pumpAndSettle();
@@ -390,7 +400,7 @@ void main() {
     );
     await tester.pump(); // to load the localization, since it doesn't use a synchronous future
 
-    await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+    unawaited(tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next'));
 
     await tester.pump();
     await tester.pumpAndSettle();
@@ -453,7 +463,7 @@ void main() {
       ),
     );
 
-    await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+    unawaited(tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next'));
 
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));

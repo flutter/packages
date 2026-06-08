@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async' show unawaited;
+
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -748,7 +750,7 @@ void main() {
     expect(find.text('Page 1'), findsOneWidget);
     expect(find.text('Page 2'), findsNothing);
 
-    tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+    unawaited(tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next'));
     await tester.pumpAndSettle();
 
     expect(find.text('Page: /next'), findsOneWidget);
