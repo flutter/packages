@@ -4,8 +4,7 @@
 
 import 'dart:ui' show Offset;
 
-import 'package:flutter/foundation.dart'
-    show ValueChanged, VoidCallback, immutable;
+import 'package:flutter/foundation.dart' show ValueChanged, VoidCallback, immutable;
 
 import 'types.dart';
 
@@ -17,12 +16,7 @@ Object _offsetToJson(Offset offset) {
 @immutable
 class InfoWindow {
   /// Creates an immutable representation of a label on for [Marker].
-  const InfoWindow({
-    this.title,
-    this.snippet,
-    this.anchor = const Offset(0.5, 0.0),
-    this.onTap,
-  });
+  const InfoWindow({this.title, this.snippet, this.anchor = const Offset(0.5, 0.0), this.onTap});
 
   /// Text labels specifying that no text is to be displayed.
   static const InfoWindow noText = InfoWindow();
@@ -165,10 +159,7 @@ class Marker implements MapsObject<Marker> {
     this.onDragStart,
     this.onDragEnd,
   }) : assert(0.0 <= alpha && alpha <= 1.0),
-       assert(
-         zIndex == 0.0 || zIndexInt == 0,
-         'Only one of zIndex and zIndexInt can be provided',
-       ),
+       assert(zIndex == 0.0 || zIndexInt == 0, 'Only one of zIndex and zIndexInt can be provided'),
        _zIndexNum = zIndexInt == 0 ? zIndex : zIndexInt;
 
   /// Uniquely identifies a [Marker].

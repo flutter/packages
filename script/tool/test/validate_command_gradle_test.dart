@@ -23,18 +23,14 @@ void main() {
 
   setUp(() {
     final GitDir gitDir;
-    (:packagesDir, processRunner: _, gitProcessRunner: _, :gitDir) =
-        configureBaseCommandMocks();
+    (:packagesDir, processRunner: _, gitProcessRunner: _, :gitDir) = configureBaseCommandMocks();
     final command = ValidateCommand(
       packagesDir,
       gitDir: gitDir,
       targetedValidators: {Validator.gradle},
     );
 
-    runner = CommandRunner<void>(
-      'validate_gradle_test',
-      'Test for gradle validations',
-    );
+    runner = CommandRunner<void>('validate_gradle_test', 'Test for gradle validations');
     runner.addCommand(command);
   });
 
@@ -240,7 +236,7 @@ pluginManagement {
 ${includeArtifactDocumentation ? '// See ${GradleValidator.artifactHubDocumentationString} for more info.' : ''}
 plugins {
     id("dev.flutter.flutter-plugin-loader") version "1.0.0"
-    id("com.android.application") version "9.0.1" apply false
+    id("com.android.application") version "8.11.1" apply false
     id("org.jetbrains.kotlin.android") version "$kotlinVersion" apply false
     ${includeArtifactHub ? 'id("com.google.cloud.artifactregistry.gradle-plugin") version "2.2.1"' : ''}
 }

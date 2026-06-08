@@ -19,13 +19,12 @@ To use the `Android SharedPreferences` backend, use the `SharedPreferencesAsyncA
 
 <?code-excerpt "example/lib/main.dart (Android_Options)"?>
 ```dart
-const SharedPreferencesAsyncAndroidOptions options =
-    SharedPreferencesAsyncAndroidOptions(
-      backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
-      originalSharedPreferencesOptions: AndroidSharedPreferencesStoreOptions(
-        fileName: 'the_name_of_a_file',
-      ),
-    );
+const SharedPreferencesAsyncAndroidOptions options = SharedPreferencesAsyncAndroidOptions(
+  backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
+  originalSharedPreferencesOptions: AndroidSharedPreferencesStoreOptions(
+    fileName: 'the_name_of_a_file',
+  ),
+);
 
 ```
 

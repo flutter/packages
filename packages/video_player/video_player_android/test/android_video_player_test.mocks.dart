@@ -23,14 +23,12 @@ import 'package:video_player_android/src/messages.g.dart' as _i2;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeTexturePlayerIds_0 extends _i1.SmartFake
-    implements _i2.TexturePlayerIds {
+class _FakeTexturePlayerIds_0 extends _i1.SmartFake implements _i2.TexturePlayerIds {
   _FakeTexturePlayerIds_0(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeNativeAudioTrackData_1 extends _i1.SmartFake
-    implements _i2.NativeAudioTrackData {
+class _FakeNativeAudioTrackData_1 extends _i1.SmartFake implements _i2.NativeAudioTrackData {
   _FakeNativeAudioTrackData_1(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -38,8 +36,7 @@ class _FakeNativeAudioTrackData_1 extends _i1.SmartFake
 /// A class which mocks [AndroidVideoPlayerApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAndroidVideoPlayerApi extends _i1.Mock
-    implements _i2.AndroidVideoPlayerApi {
+class MockAndroidVideoPlayerApi extends _i1.Mock implements _i2.AndroidVideoPlayerApi {
   @override
   String get pigeonVar_messageChannelSuffix =>
       (super.noSuchMethod(
@@ -74,22 +71,14 @@ class MockAndroidVideoPlayerApi extends _i1.Mock
           as _i4.Future<int>);
 
   @override
-  _i4.Future<_i2.TexturePlayerIds> createForTextureView(
-    _i2.CreationOptions? options,
-  ) =>
+  _i4.Future<_i2.TexturePlayerIds> createForTextureView(_i2.CreationOptions? options) =>
       (super.noSuchMethod(
             Invocation.method(#createForTextureView, [options]),
             returnValue: _i4.Future<_i2.TexturePlayerIds>.value(
-              _FakeTexturePlayerIds_0(
-                this,
-                Invocation.method(#createForTextureView, [options]),
-              ),
+              _FakeTexturePlayerIds_0(this, Invocation.method(#createForTextureView, [options])),
             ),
             returnValueForMissingStub: _i4.Future<_i2.TexturePlayerIds>.value(
-              _FakeTexturePlayerIds_0(
-                this,
-                Invocation.method(#createForTextureView, [options]),
-              ),
+              _FakeTexturePlayerIds_0(this, Invocation.method(#createForTextureView, [options])),
             ),
           )
           as _i4.Future<_i2.TexturePlayerIds>);
@@ -135,8 +124,7 @@ class MockAndroidVideoPlayerApi extends _i1.Mock
 /// A class which mocks [VideoPlayerInstanceApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockVideoPlayerInstanceApi extends _i1.Mock
-    implements _i2.VideoPlayerInstanceApi {
+class MockVideoPlayerInstanceApi extends _i1.Mock implements _i2.VideoPlayerInstanceApi {
   @override
   String get pigeonVar_messageChannelSuffix =>
       (super.noSuchMethod(
@@ -229,18 +217,11 @@ class MockVideoPlayerInstanceApi extends _i1.Mock
       (super.noSuchMethod(
             Invocation.method(#getAudioTracks, []),
             returnValue: _i4.Future<_i2.NativeAudioTrackData>.value(
-              _FakeNativeAudioTrackData_1(
-                this,
-                Invocation.method(#getAudioTracks, []),
-              ),
+              _FakeNativeAudioTrackData_1(this, Invocation.method(#getAudioTracks, [])),
             ),
-            returnValueForMissingStub:
-                _i4.Future<_i2.NativeAudioTrackData>.value(
-                  _FakeNativeAudioTrackData_1(
-                    this,
-                    Invocation.method(#getAudioTracks, []),
-                  ),
-                ),
+            returnValueForMissingStub: _i4.Future<_i2.NativeAudioTrackData>.value(
+              _FakeNativeAudioTrackData_1(this, Invocation.method(#getAudioTracks, [])),
+            ),
           )
           as _i4.Future<_i2.NativeAudioTrackData>);
 

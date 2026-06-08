@@ -48,10 +48,7 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      restorationScopeId: 'mainApp',
-      routerConfig: _router,
-    );
+    return MaterialApp.router(restorationScopeId: 'mainApp', routerConfig: _router);
   }
 }
 

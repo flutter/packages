@@ -117,11 +117,7 @@ void main() {
                           path: 'c',
                           builder: _builder,
                           routes: <RouteBase>[
-                            GoRoute(
-                              parentNavigatorKey: root,
-                              path: 'd',
-                              builder: _builder,
-                            ),
+                            GoRoute(parentNavigatorKey: root, path: 'd', builder: _builder),
                           ],
                         ),
                       ],
@@ -142,33 +138,20 @@ void main() {
       rootNavigatorKey: root,
     );
     expect(matches.length, 4);
-    expect(
-      matches[0].route,
-      isA<GoRoute>().having((GoRoute route) => route.path, 'path', '/'),
-    );
+    expect(matches[0].route, isA<GoRoute>().having((GoRoute route) => route.path, 'path', '/'));
     expect(
       matches[1].route,
-      isA<ShellRoute>().having(
-        (ShellRoute route) => route.navigatorKey,
-        'navigator key',
-        shell1,
-      ),
+      isA<ShellRoute>().having((ShellRoute route) => route.navigatorKey, 'navigator key', shell1),
     );
-    expect(
-      matches[2].route,
-      isA<GoRoute>().having((GoRoute route) => route.path, 'path', 'b'),
-    );
-    expect(
-      matches[3].route,
-      isA<GoRoute>().having((GoRoute route) => route.path, 'path', 'd'),
-    );
+    expect(matches[2].route, isA<GoRoute>().having((GoRoute route) => route.path, 'path', 'b'));
+    expect(matches[3].route, isA<GoRoute>().having((GoRoute route) => route.path, 'path', 'd'));
   });
 
   group('ImperativeRouteMatch', () {
     final matchList1 = RouteMatchList(
       matches: <RouteMatch>[
         RouteMatch(
-          route: GoRoute(path: '/', builder: (_, __) => const Text('hi')),
+          route: GoRoute(path: '/', builder: (_, _) => const Text('hi')),
           matchedLocation: '/',
           pageKey: const ValueKey<String>('dummy'),
         ),
@@ -180,7 +163,7 @@ void main() {
     final matchList2 = RouteMatchList(
       matches: <RouteMatch>[
         RouteMatch(
-          route: GoRoute(path: '/a', builder: (_, __) => const Text('a')),
+          route: GoRoute(path: '/a', builder: (_, _) => const Text('a')),
           matchedLocation: '/a',
           pageKey: const ValueKey<String>('dummy'),
         ),
@@ -196,63 +179,30 @@ void main() {
     final completer2 = Completer<void>();
 
     test('can equal and has', () async {
-      var match1 = ImperativeRouteMatch(
-        pageKey: key1,
-        matches: matchList1,
-        completer: completer1,
-      );
-      var match2 = ImperativeRouteMatch(
-        pageKey: key1,
-        matches: matchList1,
-        completer: completer1,
-      );
+      var match1 = ImperativeRouteMatch(pageKey: key1, matches: matchList1, completer: completer1);
+      var match2 = ImperativeRouteMatch(pageKey: key1, matches: matchList1, completer: completer1);
       expect(match1 == match2, isTrue);
       expect(match1.hashCode == match2.hashCode, isTrue);
 
-      match1 = ImperativeRouteMatch(
-        pageKey: key1,
-        matches: matchList1,
-        completer: completer1,
-      );
-      match2 = ImperativeRouteMatch(
-        pageKey: key2,
-        matches: matchList1,
-        completer: completer1,
-      );
+      match1 = ImperativeRouteMatch(pageKey: key1, matches: matchList1, completer: completer1);
+      match2 = ImperativeRouteMatch(pageKey: key2, matches: matchList1, completer: completer1);
       expect(match1 == match2, isFalse);
       expect(match1.hashCode == match2.hashCode, isFalse);
 
-      match1 = ImperativeRouteMatch(
-        pageKey: key1,
-        matches: matchList1,
-        completer: completer1,
-      );
-      match2 = ImperativeRouteMatch(
-        pageKey: key1,
-        matches: matchList2,
-        completer: completer1,
-      );
+      match1 = ImperativeRouteMatch(pageKey: key1, matches: matchList1, completer: completer1);
+      match2 = ImperativeRouteMatch(pageKey: key1, matches: matchList2, completer: completer1);
       expect(match1 == match2, isFalse);
       expect(match1.hashCode == match2.hashCode, isFalse);
 
-      match1 = ImperativeRouteMatch(
-        pageKey: key1,
-        matches: matchList1,
-        completer: completer1,
-      );
-      match2 = ImperativeRouteMatch(
-        pageKey: key1,
-        matches: matchList1,
-        completer: completer2,
-      );
+      match1 = ImperativeRouteMatch(pageKey: key1, matches: matchList1, completer: completer1);
+      match2 = ImperativeRouteMatch(pageKey: key1, matches: matchList1, completer: completer2);
       expect(match1 == match2, isFalse);
       expect(match1.hashCode == match2.hashCode, isFalse);
     });
   });
 }
 
-Widget _builder(BuildContext context, GoRouterState state) =>
-    const Placeholder();
+Widget _builder(BuildContext context, GoRouterState state) => const Placeholder();
 
 Widget _shellBuilder(BuildContext context, GoRouterState state, Widget child) =>
     const Placeholder();

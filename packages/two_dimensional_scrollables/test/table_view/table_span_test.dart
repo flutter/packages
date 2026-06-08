@@ -18,10 +18,7 @@ void main() {
       );
       expect(
         extent.calculateExtent(
-          const TableSpanExtentDelegate(
-            precedingExtent: 100,
-            viewportExtent: 1000,
-          ),
+          const TableSpanExtentDelegate(precedingExtent: 100, viewportExtent: 1000),
         ),
         150,
       );
@@ -50,10 +47,7 @@ void main() {
       );
       expect(
         extent.calculateExtent(
-          const TableSpanExtentDelegate(
-            precedingExtent: 100,
-            viewportExtent: 1000,
-          ),
+          const TableSpanExtentDelegate(precedingExtent: 100, viewportExtent: 1000),
         ),
         500,
       );
@@ -82,10 +76,7 @@ void main() {
       );
       expect(
         extent.calculateExtent(
-          const TableSpanExtentDelegate(
-            precedingExtent: 100,
-            viewportExtent: 1000,
-          ),
+          const TableSpanExtentDelegate(precedingExtent: 100, viewportExtent: 1000),
         ),
         900,
       );
@@ -107,20 +98,14 @@ void main() {
       );
       expect(
         extent.calculateExtent(
-          const TableSpanExtentDelegate(
-            precedingExtent: 100,
-            viewportExtent: 1000,
-          ),
+          const TableSpanExtentDelegate(precedingExtent: 100, viewportExtent: 1000),
         ),
         1000,
       );
     });
 
     test('MaxTableSpanExtent', () {
-      const extent = MaxTableSpanExtent(
-        FixedTableSpanExtent(100),
-        RemainingTableSpanExtent(),
-      );
+      const extent = MaxTableSpanExtent(FixedTableSpanExtent(100), RemainingTableSpanExtent());
       expect(
         extent.calculateExtent(
           const TableSpanExtentDelegate(precedingExtent: 0, viewportExtent: 0),
@@ -129,20 +114,14 @@ void main() {
       );
       expect(
         extent.calculateExtent(
-          const TableSpanExtentDelegate(
-            precedingExtent: 100,
-            viewportExtent: 1000,
-          ),
+          const TableSpanExtentDelegate(precedingExtent: 100, viewportExtent: 1000),
         ),
         900,
       );
     });
 
     test('MinTableSpanExtent', () {
-      const extent = MinTableSpanExtent(
-        FixedTableSpanExtent(100),
-        RemainingTableSpanExtent(),
-      );
+      const extent = MinTableSpanExtent(FixedTableSpanExtent(100), RemainingTableSpanExtent());
       expect(
         extent.calculateExtent(
           const TableSpanExtentDelegate(precedingExtent: 0, viewportExtent: 0),
@@ -151,10 +130,7 @@ void main() {
       );
       expect(
         extent.calculateExtent(
-          const TableSpanExtentDelegate(
-            precedingExtent: 100,
-            viewportExtent: 1000,
-          ),
+          const TableSpanExtentDelegate(precedingExtent: 100, viewportExtent: 1000),
         ),
         100,
       );
@@ -209,26 +185,17 @@ void main() {
       );
     }
 
-    testWidgets('Vertical main axis, vertical reversed', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('Vertical main axis, vertical reversed', (WidgetTester tester) async {
       final table = TableView.builder(
-        verticalDetails: ScrollableDetails.vertical(
-          controller: verticalController,
-          reverse: true,
-        ),
-        horizontalDetails: ScrollableDetails.horizontal(
-          controller: horizontalController,
-        ),
+        verticalDetails: ScrollableDetails.vertical(controller: verticalController, reverse: true),
+        horizontalDetails: ScrollableDetails.horizontal(controller: horizontalController),
         rowCount: 10,
         columnCount: 10,
         rowBuilder: (_) => buildSpan(false),
         columnBuilder: (_) => buildSpan(true),
         cellBuilder: buildCell,
       );
-      await tester.pumpWidget(
-        Directionality(textDirection: TextDirection.ltr, child: table),
-      );
+      await tester.pumpWidget(Directionality(textDirection: TextDirection.ltr, child: table));
       await tester.pumpAndSettle();
 
       expect(
@@ -255,10 +222,7 @@ void main() {
             rect: const Rect.fromLTRB(0.0, 100.0, 1000.0, 200.0),
             color: const Color(0xffbbdefb),
           )
-          ..rect(
-            rect: const Rect.fromLTRB(0.0, 0.0, 1000.0, 100.0),
-            color: const Color(0xffbbdefb),
-          )
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 1000.0, 100.0), color: const Color(0xffbbdefb))
           ..rect(
             rect: const Rect.fromLTRB(0.0, -100.0, 1000.0, 0.0),
             color: const Color(0xffbbdefb),
@@ -315,13 +279,9 @@ void main() {
       );
     });
 
-    testWidgets('Vertical main axis, horizontal reversed', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('Vertical main axis, horizontal reversed', (WidgetTester tester) async {
       final table = TableView.builder(
-        verticalDetails: ScrollableDetails.vertical(
-          controller: verticalController,
-        ),
+        verticalDetails: ScrollableDetails.vertical(controller: verticalController),
         horizontalDetails: ScrollableDetails.horizontal(
           controller: horizontalController,
           reverse: true,
@@ -332,9 +292,7 @@ void main() {
         columnBuilder: (_) => buildSpan(true),
         cellBuilder: buildCell,
       );
-      await tester.pumpWidget(
-        Directionality(textDirection: TextDirection.ltr, child: table),
-      );
+      await tester.pumpWidget(Directionality(textDirection: TextDirection.ltr, child: table));
       await tester.pumpAndSettle();
 
       expect(
@@ -406,14 +364,8 @@ void main() {
             rect: const Rect.fromLTRB(100.0, 0.0, 200.0, 900.0),
             color: const Color(0xffe1bee7),
           )
-          ..rect(
-            rect: const Rect.fromLTRB(0.0, 0.0, 100.0, 900.0),
-            color: const Color(0xffe1bee7),
-          )
-          ..rect(
-            rect: const Rect.fromLTRB(-100.0, 0.0, 0.0, 900.0),
-            color: const Color(0xffe1bee7),
-          )
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 100.0, 900.0), color: const Color(0xffe1bee7))
+          ..rect(rect: const Rect.fromLTRB(-100.0, 0.0, 0.0, 900.0), color: const Color(0xffe1bee7))
           ..rect(
             rect: const Rect.fromLTRB(-200.0, 0.0, -100.0, 900.0),
             color: const Color(0xffe1bee7),
@@ -421,14 +373,9 @@ void main() {
       );
     });
 
-    testWidgets('Vertical main axis, both reversed', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('Vertical main axis, both reversed', (WidgetTester tester) async {
       final table = TableView.builder(
-        verticalDetails: ScrollableDetails.vertical(
-          controller: verticalController,
-          reverse: true,
-        ),
+        verticalDetails: ScrollableDetails.vertical(controller: verticalController, reverse: true),
         horizontalDetails: ScrollableDetails.horizontal(
           controller: horizontalController,
           reverse: true,
@@ -439,9 +386,7 @@ void main() {
         columnBuilder: (_) => buildSpan(true),
         cellBuilder: buildCell,
       );
-      await tester.pumpWidget(
-        Directionality(textDirection: TextDirection.ltr, child: table),
-      );
+      await tester.pumpWidget(Directionality(textDirection: TextDirection.ltr, child: table));
       await tester.pumpAndSettle();
 
       expect(
@@ -528,27 +473,18 @@ void main() {
       );
     });
 
-    testWidgets('Horizontal main axis, vertical reversed', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('Horizontal main axis, vertical reversed', (WidgetTester tester) async {
       final table = TableView.builder(
         mainAxis: Axis.horizontal,
-        verticalDetails: ScrollableDetails.vertical(
-          controller: verticalController,
-          reverse: true,
-        ),
-        horizontalDetails: ScrollableDetails.horizontal(
-          controller: horizontalController,
-        ),
+        verticalDetails: ScrollableDetails.vertical(controller: verticalController, reverse: true),
+        horizontalDetails: ScrollableDetails.horizontal(controller: horizontalController),
         rowCount: 10,
         columnCount: 10,
         rowBuilder: (_) => buildSpan(false),
         columnBuilder: (_) => buildSpan(true),
         cellBuilder: buildCell,
       );
-      await tester.pumpWidget(
-        Directionality(textDirection: TextDirection.ltr, child: table),
-      );
+      await tester.pumpWidget(Directionality(textDirection: TextDirection.ltr, child: table));
       await tester.pumpAndSettle();
 
       expect(
@@ -616,10 +552,7 @@ void main() {
             rect: const Rect.fromLTRB(0.0, 100.0, 1000.0, 200.0),
             color: const Color(0xffbbdefb),
           )
-          ..rect(
-            rect: const Rect.fromLTRB(0.0, 0.0, 1000.0, 100.0),
-            color: const Color(0xffbbdefb),
-          )
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 1000.0, 100.0), color: const Color(0xffbbdefb))
           ..rect(
             rect: const Rect.fromLTRB(0.0, -100.0, 1000.0, 0.0),
             color: const Color(0xffbbdefb),
@@ -635,14 +568,10 @@ void main() {
       );
     });
 
-    testWidgets('Horizontal main axis, horizontal reversed', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('Horizontal main axis, horizontal reversed', (WidgetTester tester) async {
       final table = TableView.builder(
         mainAxis: Axis.horizontal,
-        verticalDetails: ScrollableDetails.vertical(
-          controller: verticalController,
-        ),
+        verticalDetails: ScrollableDetails.vertical(controller: verticalController),
         horizontalDetails: ScrollableDetails.horizontal(
           controller: horizontalController,
           reverse: true,
@@ -653,9 +582,7 @@ void main() {
         columnBuilder: (_) => buildSpan(true),
         cellBuilder: buildCell,
       );
-      await tester.pumpWidget(
-        Directionality(textDirection: TextDirection.ltr, child: table),
-      );
+      await tester.pumpWidget(Directionality(textDirection: TextDirection.ltr, child: table));
       await tester.pumpAndSettle();
 
       expect(
@@ -690,14 +617,8 @@ void main() {
             rect: const Rect.fromLTRB(100.0, 0.0, 200.0, 900.0),
             color: const Color(0xffe1bee7),
           )
-          ..rect(
-            rect: const Rect.fromLTRB(0.0, 0.0, 100.0, 900.0),
-            color: const Color(0xffe1bee7),
-          )
-          ..rect(
-            rect: const Rect.fromLTRB(-100.0, 0.0, 0.0, 900.0),
-            color: const Color(0xffe1bee7),
-          )
+          ..rect(rect: const Rect.fromLTRB(0.0, 0.0, 100.0, 900.0), color: const Color(0xffe1bee7))
+          ..rect(rect: const Rect.fromLTRB(-100.0, 0.0, 0.0, 900.0), color: const Color(0xffe1bee7))
           ..rect(
             rect: const Rect.fromLTRB(-200.0, 0.0, -100.0, 900.0),
             color: const Color(0xffe1bee7),
@@ -742,15 +663,10 @@ void main() {
       );
     });
 
-    testWidgets('Horizontal main axis, both reversed', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('Horizontal main axis, both reversed', (WidgetTester tester) async {
       final table = TableView.builder(
         mainAxis: Axis.horizontal,
-        verticalDetails: ScrollableDetails.vertical(
-          controller: verticalController,
-          reverse: true,
-        ),
+        verticalDetails: ScrollableDetails.vertical(controller: verticalController, reverse: true),
         horizontalDetails: ScrollableDetails.horizontal(
           controller: horizontalController,
           reverse: true,
@@ -761,9 +677,7 @@ void main() {
         columnBuilder: (_) => buildSpan(true),
         cellBuilder: buildCell,
       );
-      await tester.pumpWidget(
-        Directionality(textDirection: TextDirection.ltr, child: table),
-      );
+      await tester.pumpWidget(Directionality(textDirection: TextDirection.ltr, child: table));
       await tester.pumpAndSettle();
 
       expect(
@@ -850,109 +764,87 @@ void main() {
       );
     });
 
-    testWidgets(
-      'paints borders correctly when cross axis is reversed (TableView)',
-      (WidgetTester tester) async {
-        // Regression test for https://github.com/flutter/flutter/issues/177117
-        final tableView = TableView.builder(
-          horizontalDetails: const ScrollableDetails.horizontal(reverse: true),
-          rowCount: 1,
-          columnCount: 1,
-          columnBuilder: (int index) => const TableSpan(
-            extent: FixedTableSpanExtent(200.0),
-            foregroundDecoration: TableSpanDecoration(
-              border: TableSpanBorder(
-                leading: BorderSide(color: Colors.orange, width: 3),
-              ),
-            ),
+    testWidgets('paints borders correctly when cross axis is reversed (TableView)', (
+      WidgetTester tester,
+    ) async {
+      // Regression test for https://github.com/flutter/flutter/issues/177117
+      final tableView = TableView.builder(
+        horizontalDetails: const ScrollableDetails.horizontal(reverse: true),
+        rowCount: 1,
+        columnCount: 1,
+        columnBuilder: (int index) => const TableSpan(
+          extent: FixedTableSpanExtent(200.0),
+          foregroundDecoration: TableSpanDecoration(
+            border: TableSpanBorder(leading: BorderSide(color: Colors.orange, width: 3)),
           ),
-          rowBuilder: (int index) =>
-              const TableSpan(extent: FixedTableSpanExtent(200.0)),
-          cellBuilder: (_, TableVicinity vicinity) {
-            return TableViewCell(
-              child: Container(
-                height: 200,
-                width: 200,
-                color: Colors.grey.withValues(alpha: 0.5),
-              ),
-            );
-          },
-        );
+        ),
+        rowBuilder: (int index) => const TableSpan(extent: FixedTableSpanExtent(200.0)),
+        cellBuilder: (_, TableVicinity vicinity) {
+          return TableViewCell(
+            child: Container(height: 200, width: 200, color: Colors.grey.withValues(alpha: 0.5)),
+          );
+        },
+      );
 
-        tester.view.physicalSize = const Size(400, 400);
-        tester.view.devicePixelRatio = 1.0;
-        addTearDown(() {
-          tester.view.resetPhysicalSize();
-          tester.view.resetDevicePixelRatio();
-        });
+      tester.view.physicalSize = const Size(400, 400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
 
-        await tester.pumpWidget(MaterialApp(home: Scaffold(body: tableView)));
-        await tester.pumpAndSettle();
+      await tester.pumpWidget(MaterialApp(home: Scaffold(body: tableView)));
+      await tester.pumpAndSettle();
 
-        expect(
-          find.byType(TableViewport),
-          paints..path(
-            includes: <Offset>[
-              const Offset(400.0, 0.0),
-              const Offset(400.0, 200.0),
-            ],
-            color: const Color(0xffff9800),
+      expect(
+        find.byType(TableViewport),
+        paints..path(
+          includes: <Offset>[const Offset(400.0, 0.0), const Offset(400.0, 200.0)],
+          color: const Color(0xffff9800),
+        ),
+      );
+    });
+
+    testWidgets('paints borders correctly when vertical scrolling is reversed (TableView)', (
+      WidgetTester tester,
+    ) async {
+      // Regression test for https://github.com/flutter/flutter/issues/177117
+      final tableView = TableView.builder(
+        verticalDetails: const ScrollableDetails.vertical(reverse: true),
+        rowCount: 1,
+        columnCount: 1,
+        columnBuilder: (int index) => const TableSpan(extent: FixedTableSpanExtent(200.0)),
+        rowBuilder: (int index) => const TableSpan(
+          extent: FixedTableSpanExtent(200.0),
+          foregroundDecoration: TableSpanDecoration(
+            border: TableSpanBorder(leading: BorderSide(color: Colors.orange, width: 3)),
           ),
-        );
-      },
-    );
+        ),
+        cellBuilder: (_, TableVicinity vicinity) {
+          return TableViewCell(
+            child: Container(height: 200, width: 200, color: Colors.grey.withValues(alpha: 0.5)),
+          );
+        },
+      );
 
-    testWidgets(
-      'paints borders correctly when vertical scrolling is reversed (TableView)',
-      (WidgetTester tester) async {
-        // Regression test for https://github.com/flutter/flutter/issues/177117
-        final tableView = TableView.builder(
-          verticalDetails: const ScrollableDetails.vertical(reverse: true),
-          rowCount: 1,
-          columnCount: 1,
-          columnBuilder: (int index) =>
-              const TableSpan(extent: FixedTableSpanExtent(200.0)),
-          rowBuilder: (int index) => const TableSpan(
-            extent: FixedTableSpanExtent(200.0),
-            foregroundDecoration: TableSpanDecoration(
-              border: TableSpanBorder(
-                leading: BorderSide(color: Colors.orange, width: 3),
-              ),
-            ),
-          ),
-          cellBuilder: (_, TableVicinity vicinity) {
-            return TableViewCell(
-              child: Container(
-                height: 200,
-                width: 200,
-                color: Colors.grey.withValues(alpha: 0.5),
-              ),
-            );
-          },
-        );
+      tester.view.physicalSize = const Size(400, 400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
 
-        tester.view.physicalSize = const Size(400, 400);
-        tester.view.devicePixelRatio = 1.0;
-        addTearDown(() {
-          tester.view.resetPhysicalSize();
-          tester.view.resetDevicePixelRatio();
-        });
+      await tester.pumpWidget(MaterialApp(home: Scaffold(body: tableView)));
+      await tester.pumpAndSettle();
 
-        await tester.pumpWidget(MaterialApp(home: Scaffold(body: tableView)));
-        await tester.pumpAndSettle();
-
-        expect(
-          find.byType(TableViewport),
-          paints..path(
-            includes: <Offset>[
-              const Offset(0.0, 400.0),
-              const Offset(200.0, 400.0),
-            ],
-            color: const Color(0xffff9800),
-          ),
-        );
-      },
-    );
+      expect(
+        find.byType(TableViewport),
+        paints..path(
+          includes: <Offset>[const Offset(0.0, 400.0), const Offset(200.0, 400.0)],
+          color: const Color(0xffff9800),
+        ),
+      );
+    });
 
     testWidgets(
       'TableView row decoration rect is correct when vertical axis is reversed and padding is used',
@@ -962,17 +854,14 @@ void main() {
           verticalDetails: const ScrollableDetails.vertical(reverse: true),
           rowCount: 1,
           columnCount: 1,
-          columnBuilder: (int index) =>
-              const TableSpan(extent: FixedTableSpanExtent(200.0)),
+          columnBuilder: (int index) => const TableSpan(extent: FixedTableSpanExtent(200.0)),
           rowBuilder: (int index) => const TableSpan(
             extent: FixedTableSpanExtent(200.0),
             padding: TableSpanPadding(leading: 10.0, trailing: 20.0),
             backgroundDecoration: TableSpanDecoration(color: Colors.red),
           ),
           cellBuilder: (_, TableVicinity vicinity) {
-            return TableViewCell(
-              child: Container(width: 200, height: 200, color: Colors.blue),
-            );
+            return TableViewCell(child: Container(width: 200, height: 200, color: Colors.blue));
           },
         );
 
@@ -992,10 +881,7 @@ void main() {
         // Content covers from y=190 to y=390.
         expect(
           find.byType(TableViewport),
-          paints..rect(
-            rect: const Rect.fromLTRB(0.0, 170.0, 200.0, 400.0),
-            color: Colors.red,
-          ),
+          paints..rect(rect: const Rect.fromLTRB(0.0, 170.0, 200.0, 400.0), color: Colors.red),
         );
       },
     );
@@ -1037,15 +923,10 @@ void main() {
       const TableVicinity(row: 3, column: 2): (2, 2),
     };
 
-    TableView buildScenario1({
-      bool reverseVertical = false,
-      bool reverseHorizontal = false,
-    }) {
+    TableView buildScenario1({bool reverseVertical = false, bool reverseHorizontal = false}) {
       return TableView.builder(
         verticalDetails: ScrollableDetails.vertical(reverse: reverseVertical),
-        horizontalDetails: ScrollableDetails.horizontal(
-          reverse: reverseHorizontal,
-        ),
+        horizontalDetails: ScrollableDetails.horizontal(reverse: reverseHorizontal),
         columnCount: 3,
         rowCount: 4,
         cellBuilder: (_, TableVicinity vicinity) {
@@ -1068,9 +949,7 @@ void main() {
           }
           return TableSpan(
             extent: const FixedTableSpanExtent(100.0),
-            backgroundDecoration: color == null
-                ? null
-                : TableSpanDecoration(color: color),
+            backgroundDecoration: color == null ? null : TableSpanDecoration(color: color),
           );
         },
       );
@@ -1099,15 +978,10 @@ void main() {
       const TableVicinity(row: 2, column: 3): (2, 2),
     };
 
-    TableView buildScenario2({
-      bool reverseVertical = false,
-      bool reverseHorizontal = false,
-    }) {
+    TableView buildScenario2({bool reverseVertical = false, bool reverseHorizontal = false}) {
       return TableView.builder(
         verticalDetails: ScrollableDetails.vertical(reverse: reverseVertical),
-        horizontalDetails: ScrollableDetails.horizontal(
-          reverse: reverseHorizontal,
-        ),
+        horizontalDetails: ScrollableDetails.horizontal(reverse: reverseHorizontal),
         columnCount: 4,
         rowCount: 3,
         cellBuilder: (_, TableVicinity vicinity) {
@@ -1130,9 +1004,7 @@ void main() {
           }
           return TableSpan(
             extent: const FixedTableSpanExtent(100.0),
-            backgroundDecoration: color == null
-                ? null
-                : TableSpanDecoration(color: color),
+            backgroundDecoration: color == null ? null : TableSpanDecoration(color: color),
           );
         },
       );
@@ -1184,9 +1056,7 @@ void main() {
       return TableView.builder(
         mainAxis: mainAxis,
         verticalDetails: ScrollableDetails.vertical(reverse: reverseVertical),
-        horizontalDetails: ScrollableDetails.horizontal(
-          reverse: reverseHorizontal,
-        ),
+        horizontalDetails: ScrollableDetails.horizontal(reverse: reverseHorizontal),
         columnCount: 4,
         rowCount: 3,
         cellBuilder: (_, TableVicinity vicinity) {
@@ -1206,9 +1076,7 @@ void main() {
           }
           return TableSpan(
             extent: const FixedTableSpanExtent(100.0),
-            backgroundDecoration: color == null
-                ? null
-                : TableSpanDecoration(color: color),
+            backgroundDecoration: color == null ? null : TableSpanDecoration(color: color),
           );
         },
         columnBuilder: (int index) {
@@ -1220,17 +1088,13 @@ void main() {
           }
           return TableSpan(
             extent: const FixedTableSpanExtent(100.0),
-            backgroundDecoration: color == null
-                ? null
-                : TableSpanDecoration(color: color),
+            backgroundDecoration: color == null ? null : TableSpanDecoration(color: color),
           );
         },
       );
     }
 
-    testWidgets('Vertical main axis, natural scroll directions', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('Vertical main axis, natural scroll directions', (WidgetTester tester) async {
       // Scenario 1
       await tester.pumpWidget(buildScenario1());
       expect(
@@ -1312,9 +1176,7 @@ void main() {
       );
     });
 
-    testWidgets('Vertical main axis, vertical reversed', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('Vertical main axis, vertical reversed', (WidgetTester tester) async {
       // Scenario 1
       await tester.pumpWidget(buildScenario1(reverseVertical: true));
       expect(
@@ -1390,20 +1252,13 @@ void main() {
             color: const Color(0xff4caf50),
           )
           ..rect(
-            rect: const Rect.fromLTRB(
-              300.0,
-              500.0,
-              400.0,
-              600.0,
-            ), // Last column
+            rect: const Rect.fromLTRB(300.0, 500.0, 400.0, 600.0), // Last column
             color: const Color(0xff4caf50),
           ),
       );
     });
 
-    testWidgets('Vertical main axis, horizontal reversed', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('Vertical main axis, horizontal reversed', (WidgetTester tester) async {
       // Scenario 1
       await tester.pumpWidget(buildScenario1(reverseHorizontal: true));
       expect(
@@ -1485,13 +1340,9 @@ void main() {
       );
     });
 
-    testWidgets('Vertical main axis, both reversed', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('Vertical main axis, both reversed', (WidgetTester tester) async {
       // Scenario 1
-      await tester.pumpWidget(
-        buildScenario1(reverseHorizontal: true, reverseVertical: true),
-      );
+      await tester.pumpWidget(buildScenario1(reverseHorizontal: true, reverseVertical: true));
       expect(
         find.byType(TableViewport),
         paints
@@ -1513,9 +1364,7 @@ void main() {
       );
 
       // Scenario 2
-      await tester.pumpWidget(
-        buildScenario2(reverseHorizontal: true, reverseVertical: true),
-      );
+      await tester.pumpWidget(buildScenario2(reverseHorizontal: true, reverseVertical: true));
       expect(
         find.byType(TableViewport),
         paints
@@ -1542,9 +1391,7 @@ void main() {
       );
 
       // Scenario 3
-      await tester.pumpWidget(
-        buildScenario3(reverseHorizontal: true, reverseVertical: true),
-      );
+      await tester.pumpWidget(buildScenario3(reverseHorizontal: true, reverseVertical: true));
       expect(
         find.byType(TableViewport),
         paints
@@ -1576,9 +1423,7 @@ void main() {
       );
     });
 
-    testWidgets('Horizontal main axis, natural scroll directions', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('Horizontal main axis, natural scroll directions', (WidgetTester tester) async {
       // Scenarios 1 & 2 do not mix column and row decorations, so main axis
       // does not affect them.
 
@@ -1614,16 +1459,12 @@ void main() {
       );
     });
 
-    testWidgets('Horizontal main axis, vertical reversed', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('Horizontal main axis, vertical reversed', (WidgetTester tester) async {
       // Scenarios 1 & 2 do not mix column and row decorations, so main axis
       // does not affect them.
 
       // Scenario 3
-      await tester.pumpWidget(
-        buildScenario3(reverseVertical: true, mainAxis: Axis.horizontal),
-      );
+      await tester.pumpWidget(buildScenario3(reverseVertical: true, mainAxis: Axis.horizontal));
       expect(
         find.byType(TableViewport),
         paints
@@ -1655,16 +1496,12 @@ void main() {
       );
     });
 
-    testWidgets('Horizontal main axis, horizontal reversed', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('Horizontal main axis, horizontal reversed', (WidgetTester tester) async {
       // Scenarios 1 & 2 do not mix column and row decorations, so main axis
       // does not affect them.
 
       // Scenario 3
-      await tester.pumpWidget(
-        buildScenario3(reverseHorizontal: true, mainAxis: Axis.horizontal),
-      );
+      await tester.pumpWidget(buildScenario3(reverseHorizontal: true, mainAxis: Axis.horizontal));
       expect(
         find.byType(TableViewport),
         paints
@@ -1695,19 +1532,13 @@ void main() {
       );
     });
 
-    testWidgets('Horizontal main axis, both reversed', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('Horizontal main axis, both reversed', (WidgetTester tester) async {
       // Scenarios 1 & 2 do not mix column and row decorations, so main axis
       // does not affect them.
 
       // Scenario 3
       await tester.pumpWidget(
-        buildScenario3(
-          reverseHorizontal: true,
-          reverseVertical: true,
-          mainAxis: Axis.horizontal,
-        ),
+        buildScenario3(reverseHorizontal: true, reverseVertical: true, mainAxis: Axis.horizontal),
       );
       expect(
         find.byType(TableViewport),
@@ -1723,12 +1554,7 @@ void main() {
             color: const Color(0xff4caf50),
           )
           ..rect(
-            rect: const Rect.fromLTRB(
-              400.0,
-              500.0,
-              500.0,
-              600.0,
-            ), // Last column
+            rect: const Rect.fromLTRB(400.0, 500.0, 500.0, 600.0), // Last column
             color: const Color(0xff4caf50),
           )
           // Row decorations
@@ -1745,9 +1571,7 @@ void main() {
     });
   });
 
-  testWidgets('merged cells account for row/column padding', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('merged cells account for row/column padding', (WidgetTester tester) async {
     // Leading padding on the leading cell, and trailing padding on the
     // trailing cell should be excluded. Interim leading/trailing
     // paddings are consumed by the merged cell.
@@ -1765,15 +1589,10 @@ void main() {
         child: TableView.builder(
           rowCount: 2,
           columnCount: 1,
-          cellBuilder: (_, __) {
-            return const TableViewCell(
-              rowMergeStart: 0,
-              rowMergeSpan: 2,
-              child: Text('M(0,0)'),
-            );
+          cellBuilder: (_, _) {
+            return const TableViewCell(rowMergeStart: 0, rowMergeSpan: 2, child: Text('M(0,0)'));
           },
-          columnBuilder: (_) =>
-              const TableSpan(extent: FixedTableSpanExtent(100.0)),
+          columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100.0)),
           rowBuilder: (_) {
             return const TableSpan(
               extent: FixedTableSpanExtent(100.0),
@@ -1794,15 +1613,14 @@ void main() {
         child: TableView.builder(
           rowCount: 1,
           columnCount: 2,
-          cellBuilder: (_, __) {
+          cellBuilder: (_, _) {
             return const TableViewCell(
               columnMergeStart: 0,
               columnMergeSpan: 2,
               child: Text('M(0,0)'),
             );
           },
-          rowBuilder: (_) =>
-              const TableSpan(extent: FixedTableSpanExtent(100.0)),
+          rowBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100.0)),
           columnBuilder: (_) {
             return const TableSpan(
               extent: FixedTableSpanExtent(100.0),
@@ -1823,7 +1641,7 @@ void main() {
         child: TableView.builder(
           rowCount: 2,
           columnCount: 2,
-          cellBuilder: (_, __) {
+          cellBuilder: (_, _) {
             return const TableViewCell(
               rowMergeStart: 0,
               rowMergeSpan: 2,

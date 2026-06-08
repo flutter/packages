@@ -25,9 +25,7 @@ YamlMap _getToolConfig(Directory repoRoot) {
   if (_toolConfig == null) {
     final File configFile = repoRoot.childFile(configFilename);
     if (!configFile.existsSync()) {
-      printError(
-        'Configuration file $configFilename not found at repository root.',
-      );
+      printError('Configuration file $configFilename not found at repository root.');
       throw ToolExit(exitInvalidArguments);
     }
     final Object yaml = loadYamlNode(configFile.readAsStringSync());
@@ -77,23 +75,16 @@ String? getMinDartVersion(Directory repoRoot) {
 }
 
 /// Returns the allowed dependencies, grouped by 'pinned' and 'unpinned'.
-({List<String> pinned, List<String> unpinned}) getAllowedDependencies(
-  Directory repoRoot,
-) {
-  final allowedDeps =
-      _getToolConfig(repoRoot)['allowed_dependencies'] as YamlMap?;
+({List<String> pinned, List<String> unpinned}) getAllowedDependencies(Directory repoRoot) {
+  final allowedDeps = _getToolConfig(repoRoot)['allowed_dependencies'] as YamlMap?;
   if (allowedDeps == null) {
     return (pinned: <String>[], unpinned: <String>[]);
   }
 
   final List<String> pinned =
-      (allowedDeps['pinned'] as YamlList?)?.map((e) => e as String).toList() ??
-      <String>[];
+      (allowedDeps['pinned'] as YamlList?)?.map((e) => e as String).toList() ?? <String>[];
   final List<String> unpinned =
-      (allowedDeps['unpinned'] as YamlList?)
-          ?.map((e) => e as String)
-          .toList() ??
-      <String>[];
+      (allowedDeps['unpinned'] as YamlList?)?.map((e) => e as String).toList() ?? <String>[];
 
   return (pinned: pinned, unpinned: unpinned);
 }
@@ -107,7 +98,5 @@ Map<String, String> getNonStandardPackageLabels(Directory repoRoot) {
     return <String, String>{};
   }
 
-  return customLabels.map(
-    (key, value) => MapEntry(key as String, value as String),
-  );
+  return customLabels.map((key, value) => MapEntry(key as String, value as String));
 }
