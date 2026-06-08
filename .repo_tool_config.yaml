@@ -35,9 +35,6 @@ allowed_dependencies:
     # the risk of the package being compromised.
     - xml
 
-    # For material_ui, taken from flutter/flutter.
-    - material_color_utilities
-
   # Dependencies that can be unpinned. Package should only ever be added here if
   # we fully trust the package's development and publishing process.
   unpinned:
@@ -116,6 +113,7 @@ allowed_dependencies:
     - googleapis
     - googleapis_auth
     - json_annotation
+    - material_color_utilities
     - protobuf
     - quiver
     - sanitize_html
