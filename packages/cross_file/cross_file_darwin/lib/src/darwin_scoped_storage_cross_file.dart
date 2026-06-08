@@ -217,8 +217,7 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
 
           if (end == null) {
             if (currentByteIndex >= startOrZero) {
-              print('add');
-              print(bytes.length);
+              print('adding ${bytes.length} bytes. starting with ${bytes[0]} ${bytes[1]}');
               streamController.add(bytes);
             } else {
               if (newByteIndex > startOrZero) {
@@ -255,6 +254,7 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
             streamController.addError(Exception(error.localizedDescription.toDartString()));
           }
 
+          print('end stream');
           return streamController.close();
         });
       }
