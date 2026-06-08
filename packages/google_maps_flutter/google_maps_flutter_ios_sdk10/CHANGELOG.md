@@ -1,3 +1,7 @@
+## 2.19.0
+
+* Adds support for tapping points of interest on the map.
+
 ## 2.18.4
 
 * Updates README to include setup information.

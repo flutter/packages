@@ -189,6 +189,27 @@
                  [durationMilliseconds doubleValue] / 1000);
 }
 
+- (void)testDidTapPOIForwardsPlaceId {
+  CGRect frame = CGRectMake(0, 0, 100, 100);
+  GMSMapViewOptions *mapViewOptions = [[GMSMapViewOptions alloc] init];
+  mapViewOptions.frame = frame;
+  mapViewOptions.camera = [[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0];
+
+  PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc] initWithOptions:mapViewOptions];
+
+  FGMGoogleMapController *controller =
+      [[FGMGoogleMapController alloc] initWithMapView:mapView
+                                       viewIdentifier:0
+                                   creationParameters:[self emptyCreationParameters]
+                                        assetProvider:[[TestAssetProvider alloc] init]
+                                      binaryMessenger:[[StubBinaryMessenger alloc] init]];
+
+  [controller mapView:mapView
+      didTapPOIWithPlaceID:@"place-123"
+                      name:@"Test Place"
+                  location:CLLocationCoordinate2DMake(0, 0)];
+}
+
 - (void)testInspectorAPICameraPosition {
   CGRect frame = CGRectMake(0, 0, 100, 100);
   GMSMapViewOptions *mapViewOptions = [[GMSMapViewOptions alloc] init];

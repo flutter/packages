@@ -133,6 +133,7 @@ class GoogleMap extends StatefulWidget {
     this.onCameraIdle,
     this.onTap,
     this.onLongPress,
+    this.onPointOfInterestTap,
     this.markerType = GoogleMapMarkerType.marker,
     this.colorScheme,
     String? mapId,
@@ -296,6 +297,11 @@ class GoogleMap extends StatefulWidget {
 
   /// Called every time a [GoogleMap] is long pressed.
   final ArgumentCallback<LatLng>? onLongPress;
+
+  /// Called when a point of interest on the map is tapped.
+  ///
+  /// May not be supported on all platforms.
+  final ArgumentCallback<PointOfInterestId>? onPointOfInterestTap;
 
   /// True if a "My Location" layer should be shown on the map.
   ///
@@ -682,6 +688,14 @@ class _GoogleMapState extends State<GoogleMap> {
     final VoidCallback? onTap = marker.infoWindow.onTap;
     if (onTap != null) {
       onTap();
+    }
+  }
+
+  void onPointOfInterestTap(PointOfInterestId pointOfInterestId) {
+    final ArgumentCallback<PointOfInterestId>? onPointOfInterestTap =
+        widget.onPointOfInterestTap;
+    if (onPointOfInterestTap != null) {
+      onPointOfInterestTap(pointOfInterestId);
     }
   }
 

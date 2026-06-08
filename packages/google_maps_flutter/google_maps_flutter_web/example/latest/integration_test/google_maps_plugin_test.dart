@@ -467,6 +467,18 @@ void main() {
 
         await testStreamFiltering(stream, event);
       });
+      testWidgets('onPointOfInterestTap', (WidgetTester tester) async {
+        final event = PointOfInterestTapEvent(
+          mapId,
+          const PointOfInterestId('place-123'),
+        );
+
+        final Stream<PointOfInterestTapEvent> stream = plugin.onPointOfInterestTap(
+          mapId: mapId,
+        );
+
+        await testStreamFiltering(stream, event);
+      });
       // Map taps
       testWidgets('onTap', (WidgetTester tester) async {
         final event = MapTapEvent(mapId, const LatLng(43.3597, -5.8458));

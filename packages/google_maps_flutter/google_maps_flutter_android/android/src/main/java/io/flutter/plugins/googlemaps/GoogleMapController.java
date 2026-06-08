@@ -38,6 +38,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapCapabilities;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.PointOfInterest;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.TileOverlay;
@@ -386,6 +387,12 @@ class GoogleMapController
   }
 
   @Override
+  public void onPoiClick(PointOfInterest pointOfInterest) {
+    flutterApi.onPointOfInterestTap(
+        pointOfInterest.placeId, (Result<Unit> result) -> Unit.INSTANCE);
+  }
+
+  @Override
   public void onGroundOverlayClick(@NonNull GroundOverlay groundOverlay) {
     groundOverlaysController.onGroundOverlayTap(groundOverlay.getId());
   }
@@ -421,6 +428,7 @@ class GoogleMapController
     googleMap.setOnPolygonClickListener(listener);
     googleMap.setOnPolylineClickListener(listener);
     googleMap.setOnCircleClickListener(listener);
+    googleMap.setOnPoiClickListener(listener);
     googleMap.setOnMapClickListener(listener);
     googleMap.setOnMapLongClickListener(listener);
     googleMap.setOnGroundOverlayClickListener(listener);

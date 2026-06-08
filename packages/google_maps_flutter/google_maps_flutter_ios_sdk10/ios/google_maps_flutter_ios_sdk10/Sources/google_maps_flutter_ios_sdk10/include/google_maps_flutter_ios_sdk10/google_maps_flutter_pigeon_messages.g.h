@@ -910,6 +910,9 @@ extern void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
 /// Called when a circle is tapped.
 - (void)didTapCircleWithIdentifier:(NSString *)circleId
                         completion:(void (^)(FlutterError *_Nullable))completion;
+/// Called when a point of interest is tapped.
+- (void)didTapPointOfInterestWithPlaceId:(NSString *)placeId
+                              completion:(void (^)(FlutterError *_Nullable))completion;
 /// Called when a marker cluster is tapped.
 - (void)didTapCluster:(FGMPlatformCluster *)cluster
            completion:(void (^)(FlutterError *_Nullable))completion;

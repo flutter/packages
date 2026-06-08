@@ -776,4 +776,29 @@ void main() {
       const GoogleMap(initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0)));
     }, returnsNormally);
   });
+
+  testWidgets('onPointOfInterestTap invokes callback', (WidgetTester tester) async {
+    final poiCompleter = Completer<PointOfInterestId>();
+    final controllerCompleter = Completer<GoogleMapController>();
+
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition: const CameraPosition(target: LatLng(0.0, 0.0)),
+          onMapCreated: controllerCompleter.complete,
+          onPointOfInterestTap: poiCompleter.complete,
+        ),
+      ),
+    );
+
+    await controllerCompleter.future;
+    final int mapId = platform.createdIds.first;
+
+    platform.mapEventStreamController.add(
+      PointOfInterestTapEvent(mapId, const PointOfInterestId('place-123')),
+    );
+
+    expect(await poiCompleter.future, const PointOfInterestId('place-123'));
+  });
 }

@@ -30,6 +30,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// Called when the map, not a specifc map object, is long pressed.
 - (void)didLongPressAtPosition:(FGMPlatformLatLng *)position;
 
+/// Called when a point of interest is tapped.
+- (void)didTapPointOfInterestWithPlaceId:(NSString *)placeId;
+
 /// Called when a marker is tapped.
 - (void)didTapMarkerWithIdentifier:(NSString *)markerId;
 

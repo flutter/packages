@@ -186,6 +186,12 @@
                                         }];
 }
 
+- (void)didTapPointOfInterestWithPlaceId:(NSString *)placeId {
+  [self.callbackHandler didTapPointOfInterestWithPlaceId:placeId
+                                              completion:^(FlutterError *_){
+                                              }];
+}
+
 - (void)didTapCluster:(FGMPlatformCluster *)cluster {
   [self.callbackHandler didTapCluster:cluster
                            completion:^(FlutterError *_){
@@ -556,6 +562,13 @@
   } else if ([self.groundOverlaysController hasGroundOverlaysWithIdentifier:overlayId]) {
     [self.groundOverlaysController didTapGroundOverlayWithIdentifier:overlayId];
   }
+}
+
+- (void)mapView:(GMSMapView *)mapView
+    didTapPOIWithPlaceID:(NSString *)placeID
+                    name:(NSString *)name
+                location:(CLLocationCoordinate2D)location {
+  [self.mapEventHandler didTapPointOfInterestWithPlaceId:placeID];
 }
 
 - (void)mapView:(GMSMapView *)mapView didTapAtCoordinate:(CLLocationCoordinate2D)coordinate {
