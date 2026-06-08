@@ -7,13 +7,7 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    objcHeaderOut:
-        'ios/image_picker_ios/Sources/image_picker_ios/include/image_picker_ios/messages.g.h',
-    objcSourceOut: 'ios/image_picker_ios/Sources/image_picker_ios/messages.g.m',
-    objcOptions: ObjcOptions(
-      prefix: 'FLT',
-      headerIncludePath: './include/image_picker_ios/messages.g.h',
-    ),
+    swiftOut: 'ios/image_picker_ios/Sources/image_picker_ios/Messages.g.swift',
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
@@ -56,19 +50,19 @@ abstract class ImagePickerApi {
   @async
   @ObjCSelector('pickImageWithSource:maxSize:quality:fullMetadata:')
   String? pickImage(
-    SourceSpecification source,
-    MaxSize maxSize,
-    int? imageQuality,
-    bool requestFullMetadata,
-  );
+      SourceSpecification source,
+      MaxSize maxSize,
+      int? imageQuality,
+      bool requestFullMetadata,
+      );
   @async
   @ObjCSelector('pickMultiImageWithMaxSize:quality:fullMetadata:limit:')
   List<String> pickMultiImage(
-    MaxSize maxSize,
-    int? imageQuality,
-    bool requestFullMetadata,
-    int? limit,
-  );
+      MaxSize maxSize,
+      int? imageQuality,
+      bool requestFullMetadata,
+      int? limit,
+      );
   @async
   @ObjCSelector('pickVideoWithSource:maxDuration:')
   String? pickVideo(SourceSpecification source, int? maxDurationSeconds);
@@ -80,4 +74,11 @@ abstract class ImagePickerApi {
   @async
   @ObjCSelector('pickMediaWithMediaSelectionOptions:')
   List<String> pickMedia(MediaSelectionOptions mediaSelectionOptions);
+}
+
+/// A model used to test deep equality and hashing of collections.
+class CoverageModel {
+  CoverageModel(this.list, this.map);
+  List<Object?>? list;
+  Map<Object?, Object?>? map;
 }
