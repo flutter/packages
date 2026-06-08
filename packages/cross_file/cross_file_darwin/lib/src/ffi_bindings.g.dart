@@ -3607,6 +3607,214 @@ extension PHAsset$Methods on PHAsset {
   }
 }
 
+late final _class_UTType = objc.getClass("UTType");
+late final _sel_preferredMIMEType = objc.registerName("preferredMIMEType");
+late final _sel_conformsToType_ = objc.registerName("conformsToType:");
+late final _sel_isSupertypeOfType_ = objc.registerName("isSupertypeOfType:");
+late final _sel_isSubtypeOfType_ = objc.registerName("isSubtypeOfType:");
+late final _sel_supertypes = objc.registerName("supertypes");
+
+/// Conformance
+extension Conformance on UTType {
+  /// conformsToType:
+  bool conformsToType(UTType type) {
+    objc.checkOsVersionInternal(
+      'UTType.conformsToType:',
+      iOS: (false, (14, 0, 0)),
+      macOS: (false, (11, 0, 0)),
+    );
+    return _objc_msgSend_19nvye5(object$.ref.pointer, _sel_conformsToType_, type.ref.pointer);
+  }
+
+  /// isSubtypeOfType:
+  bool isSubtypeOfType(UTType type) {
+    objc.checkOsVersionInternal(
+      'UTType.isSubtypeOfType:',
+      iOS: (false, (14, 0, 0)),
+      macOS: (false, (11, 0, 0)),
+    );
+    return _objc_msgSend_19nvye5(object$.ref.pointer, _sel_isSubtypeOfType_, type.ref.pointer);
+  }
+
+  /// isSupertypeOfType:
+  bool isSupertypeOfType(UTType type) {
+    objc.checkOsVersionInternal(
+      'UTType.isSupertypeOfType:',
+      iOS: (false, (14, 0, 0)),
+      macOS: (false, (11, 0, 0)),
+    );
+    return _objc_msgSend_19nvye5(object$.ref.pointer, _sel_isSupertypeOfType_, type.ref.pointer);
+  }
+
+  /// supertypes
+  objc.NSSet get supertypes {
+    objc.checkOsVersionInternal(
+      'UTType.supertypes',
+      iOS: (false, (14, 0, 0)),
+      macOS: (false, (11, 0, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_supertypes);
+    return objc.NSSet.fromPointer($ret, retain: true, release: true);
+  }
+}
+
+late final _sel_typesWithTag_tagClass_conformingToType_ = objc.registerName(
+  "typesWithTag:tagClass:conformingToType:",
+);
+late final _sel_tags = objc.registerName("tags");
+
+/// UTTagSpecification
+extension UTTagSpecification on UTType {
+  /// tags
+  objc.NSDictionary get tags {
+    objc.checkOsVersionInternal(
+      'UTType.tags',
+      iOS: (false, (14, 0, 0)),
+      macOS: (false, (11, 0, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_tags);
+    return objc.NSDictionary.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// typesWithTag:tagClass:conformingToType:
+  static objc.NSArray typesWithTag(
+    objc.NSString tag, {
+    required objc.NSString tagClass,
+    UTType? conformingToType,
+  }) {
+    objc.checkOsVersionInternal(
+      'UTType.typesWithTag:tagClass:conformingToType:',
+      iOS: (false, (14, 0, 0)),
+      macOS: (false, (11, 0, 0)),
+    );
+    final $ret = _objc_msgSend_11spmsz(
+      _class_UTType,
+      _sel_typesWithTag_tagClass_conformingToType_,
+      tag.ref.pointer,
+      tagClass.ref.pointer,
+      conformingToType?.ref.pointer ?? ffi.nullptr,
+    );
+    return objc.NSArray.fromPointer($ret, retain: true, release: true);
+  }
+}
+
+late final _sel_exportedTypeWithIdentifier_ = objc.registerName("exportedTypeWithIdentifier:");
+late final _sel_exportedTypeWithIdentifier_conformingToType_ = objc.registerName(
+  "exportedTypeWithIdentifier:conformingToType:",
+);
+late final _sel_importedTypeWithIdentifier_ = objc.registerName("importedTypeWithIdentifier:");
+late final _sel_importedTypeWithIdentifier_conformingToType_ = objc.registerName(
+  "importedTypeWithIdentifier:conformingToType:",
+);
+
+/// LocalConstants
+extension LocalConstants on UTType {
+  /// exportedTypeWithIdentifier:
+  static UTType exportedTypeWithIdentifier(objc.NSString identifier) {
+    objc.checkOsVersionInternal(
+      'UTType.exportedTypeWithIdentifier:',
+      iOS: (false, (14, 0, 0)),
+      macOS: (false, (11, 0, 0)),
+    );
+    final $ret = _objc_msgSend_1sotr3r(
+      _class_UTType,
+      _sel_exportedTypeWithIdentifier_,
+      identifier.ref.pointer,
+    );
+    return UTType.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// exportedTypeWithIdentifier:conformingToType:
+  static UTType exportedTypeWithIdentifier$1(
+    objc.NSString identifier, {
+    required UTType conformingToType,
+  }) {
+    objc.checkOsVersionInternal(
+      'UTType.exportedTypeWithIdentifier:conformingToType:',
+      iOS: (false, (14, 0, 0)),
+      macOS: (false, (11, 0, 0)),
+    );
+    final $ret = _objc_msgSend_15qeuct(
+      _class_UTType,
+      _sel_exportedTypeWithIdentifier_conformingToType_,
+      identifier.ref.pointer,
+      conformingToType.ref.pointer,
+    );
+    return UTType.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// importedTypeWithIdentifier:
+  static UTType importedTypeWithIdentifier(objc.NSString identifier) {
+    objc.checkOsVersionInternal(
+      'UTType.importedTypeWithIdentifier:',
+      iOS: (false, (14, 0, 0)),
+      macOS: (false, (11, 0, 0)),
+    );
+    final $ret = _objc_msgSend_1sotr3r(
+      _class_UTType,
+      _sel_importedTypeWithIdentifier_,
+      identifier.ref.pointer,
+    );
+    return UTType.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// importedTypeWithIdentifier:conformingToType:
+  static UTType importedTypeWithIdentifier$1(
+    objc.NSString identifier, {
+    required UTType conformingToType,
+  }) {
+    objc.checkOsVersionInternal(
+      'UTType.importedTypeWithIdentifier:conformingToType:',
+      iOS: (false, (14, 0, 0)),
+      macOS: (false, (11, 0, 0)),
+    );
+    final $ret = _objc_msgSend_15qeuct(
+      _class_UTType,
+      _sel_importedTypeWithIdentifier_conformingToType_,
+      identifier.ref.pointer,
+      conformingToType.ref.pointer,
+    );
+    return UTType.fromPointer($ret, retain: true, release: true);
+  }
+}
+
+/// UTType
+extension type UTType._(objc.ObjCObject object$)
+    implements objc.ObjCObject, objc.NSObject, objc.NSCopying, objc.NSSecureCoding {
+  /// Constructs a [UTType] that points to the same underlying object as [other].
+  UTType.as(objc.ObjCObject other) : object$ = other {
+    objc.checkOsVersionInternal('UTType', iOS: (false, (14, 0, 0)), macOS: (false, (11, 0, 0)));
+    assert(isA(object$));
+  }
+
+  /// Constructs a [UTType] that wraps the given raw object pointer.
+  UTType.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
+    objc.checkOsVersionInternal('UTType', iOS: (false, (14, 0, 0)), macOS: (false, (11, 0, 0)));
+    assert(isA(object$));
+  }
+
+  /// Returns whether [obj] is an instance of [UTType].
+  static bool isA(objc.ObjCObject obj) =>
+      _objc_msgSend_19nvye5(obj.ref.pointer, _sel_isKindOfClass_, _class_UTType);
+}
+
+extension UTType$Methods on UTType {
+  /// preferredMIMEType
+  objc.NSString? get preferredMIMEType {
+    objc.checkOsVersionInternal(
+      'UTType.preferredMIMEType',
+      iOS: (false, (14, 0, 0)),
+      macOS: (false, (11, 0, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_preferredMIMEType);
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+}
+
 late final _sel_provideImageData_bytesPerRow_origin__size__userInfo_ = objc.registerName(
   "provideImageData:bytesPerRow:origin::size::userInfo:",
 );
@@ -4357,6 +4565,7 @@ final _objc_msgSend_1or4ucj = objc.msgSendPointer
     >()
     .asFunction<int Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCSelector>)>();
 late final _sel_originalFilename = objc.registerName("originalFilename");
+late final _sel_contentType = objc.registerName("contentType");
 late final _sel_assetResourcesForAsset_ = objc.registerName("assetResourcesForAsset:");
 
 /// PHAssetResource
@@ -4407,6 +4616,17 @@ extension type PHAssetResource._(objc.ObjCObject object$)
 }
 
 extension PHAssetResource$Methods on PHAssetResource {
+  /// contentType
+  UTType get contentType {
+    objc.checkOsVersionInternal(
+      'PHAssetResource.contentType',
+      iOS: (false, (26, 0, 0)),
+      macOS: (false, (26, 0, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_contentType);
+    return UTType.fromPointer($ret, retain: true, release: true);
+  }
+
   /// originalFilename
   objc.NSString get originalFilename {
     objc.checkOsVersionInternal(

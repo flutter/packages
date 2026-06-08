@@ -17,9 +17,7 @@ void main() {
     ),
     headers: Headers(
       entryPoints: <Uri>[
-        Uri.file(
-          '$macSdkPath/System/Library/Frameworks/Photos.framework/Headers/Photos.h',
-        ),
+        Uri.file('$macSdkPath/System/Library/Frameworks/Photos.framework/Headers/Photos.h'),
       ],
       compilerOptions: <String>['-include stdint.h'],
     ),
@@ -36,6 +34,7 @@ void main() {
             'PHFetchResult',
             'PHImageManager',
             'PHImageRequestOptions',
+            'UTType',
           }.contains(declaration.originalName);
         },
         includeMember: (Declaration declaration, String member) {
@@ -53,6 +52,7 @@ void main() {
             }.contains(signature),
             'PHAssetResource' => <String>{
               'assetResourcesForAsset:',
+              'contentType',
               'originalFilename',
               'type',
             }.contains(signature),
@@ -69,11 +69,11 @@ void main() {
               'new',
               'setNetworkAccessAllowed:',
             }.contains(signature),
+            'UTType' => <String>{'preferredMIMEType'}.contains(signature),
             _ => false,
           };
         },
       ),
-
     ),
   ).generate();
 }

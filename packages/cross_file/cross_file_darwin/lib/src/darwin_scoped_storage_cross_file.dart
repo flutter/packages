@@ -346,6 +346,7 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
       for (var index = 0; index < resources.count; index++) {
         final resource = PHAssetResource.as(resources.objectAtIndex(index));
         print('cfd: ${resource.type}');
+        print('cfd: ${resource.contentType.preferredMIMEType}');
       }
 
       if (firstObject != null) {
