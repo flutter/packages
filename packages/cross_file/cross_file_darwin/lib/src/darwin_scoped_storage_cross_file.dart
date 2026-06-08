@@ -358,7 +358,6 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
   }
 
   Uint8List _extractBytesToUint8List(NSData data) {
-    print('hoho: ${data.length}');
     if (data.length == 0) {
       return Uint8List(0);
     }
@@ -367,6 +366,8 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
     final Uint8List byteView = uint8Pointer.asTypedList(data.length);
     final a = Uint8List.fromList(byteView);
     print('extract: ${a[0]} ${a[1]}');
+    print('extract: ${a[a.length - 1]}');
+    print('extract: ${a[a.length - 2]}');
     return a;
   }
 }
