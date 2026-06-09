@@ -319,8 +319,8 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
   late bool testTransactionFail;
   late int testTransactionCancel;
   late List<SK2Transaction> finishedTransactions;
-  late List<SK2TransactionMessage> transactionsList;
-  late List<SK2TransactionMessage> unfinishedTransactionsList;
+  List<SK2TransactionMessage> transactionsList = <SK2TransactionMessage>[];
+  List<SK2TransactionMessage> unfinishedTransactionsList = <SK2TransactionMessage>[];
 
   PlatformException? queryProductException;
   bool isListenerRegistered = false;
