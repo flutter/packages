@@ -58,16 +58,12 @@ class SharedPreferencesWindows extends SharedPreferencesStorePlatform {
 
   @override
   Future<bool> clear() async {
-    return clearWithParameters(
-      ClearParameters(filter: PreferencesFilter(prefix: _defaultPrefix)),
-    );
+    return clearWithParameters(ClearParameters(filter: PreferencesFilter(prefix: _defaultPrefix)));
   }
 
   @override
   Future<bool> clearWithPrefix(String prefix) async {
-    return clearWithParameters(
-      ClearParameters(filter: PreferencesFilter(prefix: prefix)),
-    );
+    return clearWithParameters(ClearParameters(filter: PreferencesFilter(prefix: prefix)));
   }
 
   @override
@@ -80,12 +76,7 @@ class SharedPreferencesWindows extends SharedPreferencesStorePlatform {
           key.startsWith(filter.prefix) &&
           (filter.allowList == null || filter.allowList!.contains(key)),
     );
-    return _writePreferences(
-      preferences,
-      _defaultFileName,
-      fs: fs,
-      pathProvider: pathProvider,
-    );
+    return _writePreferences(preferences, _defaultFileName, fs: fs, pathProvider: pathProvider);
   }
 
   @override
@@ -97,21 +88,16 @@ class SharedPreferencesWindows extends SharedPreferencesStorePlatform {
 
   @override
   Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
-    return getAllWithParameters(
-      GetAllParameters(filter: PreferencesFilter(prefix: prefix)),
-    );
+    return getAllWithParameters(GetAllParameters(filter: PreferencesFilter(prefix: prefix)));
   }
 
   @override
-  Future<Map<String, Object>> getAllWithParameters(
-    GetAllParameters parameters,
-  ) async {
+  Future<Map<String, Object>> getAllWithParameters(GetAllParameters parameters) async {
     final PreferencesFilter filter = parameters.filter;
     final withPrefix = Map<String, Object>.from(await _readPreferences());
     withPrefix.removeWhere(
       (String key, _) =>
-          !(key.startsWith(filter.prefix) &&
-              (filter.allowList?.contains(key) ?? true)),
+          !(key.startsWith(filter.prefix) && (filter.allowList?.contains(key) ?? true)),
     );
     return withPrefix;
   }
@@ -120,32 +106,21 @@ class SharedPreferencesWindows extends SharedPreferencesStorePlatform {
   Future<bool> remove(String key) async {
     final Map<String, Object> preferences = await _readPreferences();
     preferences.remove(key);
-    return _writePreferences(
-      preferences,
-      _defaultFileName,
-      fs: fs,
-      pathProvider: pathProvider,
-    );
+    return _writePreferences(preferences, _defaultFileName, fs: fs, pathProvider: pathProvider);
   }
 
   @override
   Future<bool> setValue(String valueType, String key, Object value) async {
     final Map<String, Object> preferences = await _readPreferences();
     preferences[key] = value;
-    return _writePreferences(
-      preferences,
-      _defaultFileName,
-      fs: fs,
-      pathProvider: pathProvider,
-    );
+    return _writePreferences(preferences, _defaultFileName, fs: fs, pathProvider: pathProvider);
   }
 }
 
 /// The Windows implementation of [SharedPreferencesAsyncPlatform].
 ///
 /// This class implements the `package:shared_preferences` functionality for Windows.
-base class SharedPreferencesAsyncWindows
-    extends SharedPreferencesAsyncPlatform {
+base class SharedPreferencesAsyncWindows extends SharedPreferencesAsyncPlatform {
   /// Registers the Windows implementation.
   static void registerWith() {
     SharedPreferencesAsyncPlatform.instance = SharedPreferencesAsyncWindows();
@@ -171,29 +146,17 @@ base class SharedPreferencesAsyncWindows
   }
 
   @override
-  Future<void> setString(
-    String key,
-    String value,
-    SharedPreferencesOptions options,
-  ) {
+  Future<void> setString(String key, String value, SharedPreferencesOptions options) {
     return _setValue(key, value, options);
   }
 
   @override
-  Future<void> setBool(
-    String key,
-    bool value,
-    SharedPreferencesOptions options,
-  ) {
+  Future<void> setBool(String key, bool value, SharedPreferencesOptions options) {
     return _setValue(key, value, options);
   }
 
   @override
-  Future<void> setDouble(
-    String key,
-    double value,
-    SharedPreferencesOptions options,
-  ) {
+  Future<void> setDouble(String key, double value, SharedPreferencesOptions options) {
     return _setValue(key, value, options);
   }
 
@@ -203,19 +166,12 @@ base class SharedPreferencesAsyncWindows
   }
 
   @override
-  Future<void> setStringList(
-    String key,
-    List<String> value,
-    SharedPreferencesOptions options,
-  ) {
+  Future<void> setStringList(String key, List<String> value, SharedPreferencesOptions options) {
     return _setValue(key, value, options);
   }
 
   @override
-  Future<String?> getString(
-    String key,
-    SharedPreferencesOptions options,
-  ) async {
+  Future<String?> getString(String key, SharedPreferencesOptions options) async {
     final Map<String, Object> data = await _readAll(<String>{key}, options);
     return data[key] as String?;
   }
@@ -227,10 +183,7 @@ base class SharedPreferencesAsyncWindows
   }
 
   @override
-  Future<double?> getDouble(
-    String key,
-    SharedPreferencesOptions options,
-  ) async {
+  Future<double?> getDouble(String key, SharedPreferencesOptions options) async {
     final Map<String, Object> data = await _readAll(<String>{key}, options);
     return data[key] as double?;
   }
@@ -242,10 +195,7 @@ base class SharedPreferencesAsyncWindows
   }
 
   @override
-  Future<List<String>?> getStringList(
-    String key,
-    SharedPreferencesOptions options,
-  ) async {
+  Future<List<String>?> getStringList(String key, SharedPreferencesOptions options) async {
     final Map<String, Object> data = await _readAll(<String>{key}, options);
     return (data[key] as List<Object?>?)?.cast<String>().toList();
   }
@@ -258,12 +208,9 @@ base class SharedPreferencesAsyncWindows
     final SharedPreferencesWindowsOptions windowsOptions =
         SharedPreferencesWindowsOptions.fromSharedPreferencesOptions(options);
     final PreferencesFilters filter = parameters.filter;
-    final Map<String, Object> preferences = await _readPreferences(
-      windowsOptions.fileName,
-    );
+    final Map<String, Object> preferences = await _readPreferences(windowsOptions.fileName);
     preferences.removeWhere(
-      (String key, _) =>
-          filter.allowList == null || filter.allowList!.contains(key),
+      (String key, _) => filter.allowList == null || filter.allowList!.contains(key),
     );
     await _writePreferences(
       preferences,
@@ -293,23 +240,15 @@ base class SharedPreferencesAsyncWindows
   ) async {
     final SharedPreferencesWindowsOptions windowsOptions =
         SharedPreferencesWindowsOptions.fromSharedPreferencesOptions(options);
-    final prefs = Map<String, Object>.from(
-      await _readPreferences(windowsOptions.fileName),
-    );
+    final prefs = Map<String, Object>.from(await _readPreferences(windowsOptions.fileName));
     prefs.removeWhere((String key, _) => !(allowList?.contains(key) ?? true));
     return prefs;
   }
 
-  Future<void> _setValue(
-    String key,
-    Object value,
-    SharedPreferencesOptions options,
-  ) async {
+  Future<void> _setValue(String key, Object value, SharedPreferencesOptions options) async {
     final SharedPreferencesWindowsOptions windowsOptions =
         SharedPreferencesWindowsOptions.fromSharedPreferencesOptions(options);
-    final Map<String, Object> preferences = await _readPreferences(
-      windowsOptions.fileName,
-    );
+    final Map<String, Object> preferences = await _readPreferences(windowsOptions.fileName);
     preferences[key] = value;
     await _writePreferences(
       preferences,
@@ -322,11 +261,7 @@ base class SharedPreferencesAsyncWindows
   /// Checks for cached preferences and returns them or loads preferences from
   /// file and returns and caches them.
   Future<Map<String, Object>> _readPreferences(String fileName) async {
-    _cachedPreferences ??= await _readFromFile(
-      fileName,
-      fs: fs,
-      pathProvider: pathProvider,
-    );
+    _cachedPreferences ??= await _readFromFile(fileName, fs: fs, pathProvider: pathProvider);
     return _cachedPreferences!;
   }
 }
@@ -353,11 +288,7 @@ Future<Map<String, Object>> _readFromFile(
   PathProviderWindows? pathProvider,
 }) async {
   var preferences = <String, Object>{};
-  final File? localDataFile = await _getLocalDataFile(
-    fileName,
-    fs: fs,
-    pathProvider: pathProvider,
-  );
+  final File? localDataFile = await _getLocalDataFile(fileName, fs: fs, pathProvider: pathProvider);
   if (localDataFile != null && localDataFile.existsSync()) {
     final String stringMap = localDataFile.readAsStringSync();
     if (stringMap.isNotEmpty) {

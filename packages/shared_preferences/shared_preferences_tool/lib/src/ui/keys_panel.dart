@@ -56,10 +56,7 @@ class _KeysPanelState extends State<KeysPanel> {
             tall: true,
             title: Row(
               children: <Widget>[
-                Text(
-                  'Stored Keys',
-                  style: Theme.of(context).textTheme.titleSmall,
-                ),
+                Text('Stored Keys', style: Theme.of(context).textTheme.titleSmall),
                 if (searching) ...<Widget>[
                   const SizedBox(width: denseSpacing),
                   Expanded(
@@ -98,11 +95,7 @@ class _KeysPanelState extends State<KeysPanel> {
 
 // TODO(adsonpleal): replace this with `ToolbarAction` once it's available in `devtools_app_shared`, https://github.com/flutter/devtools/issues/7793.
 class _ToolbarAction extends StatelessWidget {
-  const _ToolbarAction({
-    required this.tooltipMessage,
-    required this.icon,
-    required this.onPressed,
-  });
+  const _ToolbarAction({required this.tooltipMessage, required this.icon, required this.onPressed});
 
   final String tooltipMessage;
   final IconData icon;
@@ -118,21 +111,14 @@ class _ToolbarAction extends StatelessWidget {
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
         onPressed: onPressed,
-        child: Icon(
-          icon,
-          size: actionsIconSize,
-          color: Theme.of(context).colorScheme.onSurface,
-        ),
+        child: Icon(icon, size: actionsIconSize, color: Theme.of(context).colorScheme.onSurface),
       ),
     );
   }
 }
 
 class _SearchField extends StatelessWidget {
-  const _SearchField({
-    required this.searchFocusNode,
-    required this.stopSearching,
-  });
+  const _SearchField({required this.searchFocusNode, required this.stopSearching});
 
   final FocusNode searchFocusNode;
   final VoidCallback stopSearching;
@@ -177,9 +163,7 @@ class _StateMapper extends StatelessWidget {
         error: value.error,
         stackTrace: value.stackTrace,
       ),
-      AsyncStateLoading<List<String>>() => const Center(
-        child: CircularProgressIndicator(),
-      ),
+      AsyncStateLoading<List<String>>() => const Center(child: CircularProgressIndicator()),
     };
   }
 }
@@ -208,9 +192,7 @@ class _KeysListState extends State<_KeysList> {
       controller: scrollController,
       child: ListView(
         controller: scrollController,
-        children: <Widget>[
-          for (final String keyName in widget.keys) _KeyItem(keyName: keyName),
-        ],
+        children: <Widget>[for (final String keyName in widget.keys) _KeyItem(keyName: keyName)],
       ),
     );
   }
@@ -223,13 +205,12 @@ class _KeyItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final SelectedSharedPreferencesKey? selectedKey =
-        SharedPreferencesStateProvider.selectedKeyOf(context);
+    final SelectedSharedPreferencesKey? selectedKey = SharedPreferencesStateProvider.selectedKeyOf(
+      context,
+    );
     final isSelected = selectedKey?.key == keyName;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final Color? backgroundColor = isSelected
-        ? colorScheme.selectedRowBackgroundColor
-        : null;
+    final Color? backgroundColor = isSelected ? colorScheme.selectedRowBackgroundColor : null;
 
     return InkWell(
       onTap: () {

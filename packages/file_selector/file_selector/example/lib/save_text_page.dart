@@ -38,11 +38,7 @@ class SaveTextPage extends StatelessWidget {
     final String text = _contentController.text;
     final fileData = Uint8List.fromList(text.codeUnits);
     const fileMimeType = 'text/plain';
-    final textFile = XFile.fromData(
-      fileData,
-      mimeType: fileMimeType,
-      name: fileName,
-    );
+    final textFile = XFile.fromData(fileData, mimeType: fileMimeType, name: fileName);
 
     await textFile.saveTo(result.path);
   }
@@ -61,9 +57,7 @@ class SaveTextPage extends StatelessWidget {
                 minLines: 1,
                 maxLines: 12,
                 controller: _nameController,
-                decoration: const InputDecoration(
-                  hintText: '(Optional) Suggest File Name',
-                ),
+                decoration: const InputDecoration(hintText: '(Optional) Suggest File Name'),
               ),
             ),
             SizedBox(
@@ -72,9 +66,7 @@ class SaveTextPage extends StatelessWidget {
                 minLines: 1,
                 maxLines: 12,
                 controller: _contentController,
-                decoration: const InputDecoration(
-                  hintText: 'Enter File Contents',
-                ),
+                decoration: const InputDecoration(hintText: 'Enter File Contents'),
               ),
             ),
             const SizedBox(height: 10),

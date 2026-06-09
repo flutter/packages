@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 group = "dev.flutter.packages.file_selector_android"
 version = "1.0"
 
@@ -25,12 +23,11 @@ allprojects {
 
 plugins {
     id("com.android.library")
-    id("kotlin-android")
 }
 
 kotlin {
     compilerOptions {
-        jvmTarget = JvmTarget.fromTarget(JavaVersion.VERSION_17.toString())
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
     }
 }
 
@@ -48,7 +45,7 @@ android {
     }
 
     dependencies {
-        implementation("androidx.annotation:annotation:1.9.1")
+        implementation("androidx.annotation:annotation:1.10.0")
         testImplementation("junit:junit:4.13.2")
         testImplementation("org.mockito:mockito-core:5.23.0")
         testImplementation("androidx.test:core:1.7.0")

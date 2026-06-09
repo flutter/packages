@@ -72,9 +72,7 @@ void main() {
         expect(controller.circle, isNull);
       });
 
-      testWidgets('cannot call update after remove', (
-        WidgetTester tester,
-      ) async {
+      testWidgets('cannot call update after remove', (WidgetTester tester) async {
         final options = gmaps.CircleOptions()..draggable = true;
 
         controller.remove();
@@ -127,9 +125,7 @@ void main() {
         expect(controller.polygon, isNull);
       });
 
-      testWidgets('cannot call update after remove', (
-        WidgetTester tester,
-      ) async {
+      testWidgets('cannot call update after remove', (WidgetTester tester) async {
         final options = gmaps.PolygonOptions()..draggable = true;
 
         controller.remove();
@@ -149,11 +145,7 @@ void main() {
     });
 
     testWidgets('onTap gets called', (WidgetTester tester) async {
-      PolylineController(
-        polyline: polyline,
-        consumeTapEvents: true,
-        onTap: onTap,
-      );
+      PolylineController(polyline: polyline, consumeTapEvents: true, onTap: onTap);
 
       // Trigger a click event...
       gmaps.event.trigger(polyline, 'click', gmaps.MapMouseEvent());
@@ -186,9 +178,7 @@ void main() {
         expect(controller.line, isNull);
       });
 
-      testWidgets('cannot call update after remove', (
-        WidgetTester tester,
-      ) async {
+      testWidgets('cannot call update after remove', (WidgetTester tester) async {
         final options = gmaps.PolylineOptions()..draggable = true;
 
         controller.remove();

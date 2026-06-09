@@ -42,8 +42,9 @@ void main() {
     });
 
     test('toJson', () {
-      final BitmapDescriptor testDescriptor =
-          BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan);
+      final BitmapDescriptor testDescriptor = BitmapDescriptor.defaultMarkerWithHue(
+        BitmapDescriptor.hueCyan,
+      );
       final marker = AdvancedMarker(
         markerId: const MarkerId('ABC123'),
         alpha: 0.12345,
@@ -87,8 +88,7 @@ void main() {
         'rotation': 100.0,
         'visible': false,
         'zIndex': 100.0,
-        'collisionBehavior':
-            MarkerCollisionBehavior.requiredAndHidesOptional.index,
+        'collisionBehavior': MarkerCollisionBehavior.requiredAndHidesOptional.index,
       });
     });
 
@@ -105,8 +105,9 @@ void main() {
       const markerId = MarkerId('ABC123');
       final marker = AdvancedMarker(markerId: markerId);
 
-      final BitmapDescriptor testDescriptor =
-          BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan);
+      final BitmapDescriptor testDescriptor = BitmapDescriptor.defaultMarkerWithHue(
+        BitmapDescriptor.hueCyan,
+      );
       const testAlphaParam = 0.12345;
       const testAnchorParam = Offset(100, 100);
       final bool testConsumeTapEventsParam = !marker.consumeTapEvents;
@@ -180,30 +181,21 @@ void main() {
     });
 
     test('zIndex param', () {
-      final marker = AdvancedMarker(
-        markerId: const MarkerId('ABC123'),
-        zIndex: 5,
-      );
+      final marker = AdvancedMarker(markerId: const MarkerId('ABC123'), zIndex: 5);
 
       expect(marker.zIndexInt, 5);
       expect(marker.zIndex, 5.00);
     });
 
     test('zIndexInt param copyWith', () {
-      final marker = AdvancedMarker(
-        markerId: const MarkerId('ABC123'),
-        zIndex: 5,
-      );
+      final marker = AdvancedMarker(markerId: const MarkerId('ABC123'), zIndex: 5);
       final AdvancedMarker copy = marker.copyWith(zIndexIntParam: 10);
       expect(copy.zIndexInt, 10);
       expect(copy.zIndex, 10.0);
     });
 
     test('zIndex param copyWith', () {
-      final marker = AdvancedMarker(
-        markerId: const MarkerId('ABC123'),
-        zIndex: 5,
-      );
+      final marker = AdvancedMarker(markerId: const MarkerId('ABC123'), zIndex: 5);
       final AdvancedMarker copy = marker.copyWith(zIndexParam: 10.0);
       expect(copy.zIndexInt, 10);
       expect(copy.zIndex, 10.0);
