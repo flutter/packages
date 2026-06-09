@@ -130,6 +130,9 @@ class ImagePicker {
     int? limit,
     bool requestFullMetadata = true,
   }) async {
+    if (limit != null && limit < 1) {
+      throw ArgumentError.value(limit, 'limit', 'cannot be lower than 1');
+    }
     // limit: 1 would fail MultiImagePickerOptions validation (requires >= 2),
     // so delegate to pickImage which already handles single-image selection.
     if (limit == 1) {
@@ -256,6 +259,9 @@ class ImagePicker {
     int? limit,
     bool requestFullMetadata = true,
   }) async {
+    if (limit != null && limit < 1) {
+      throw ArgumentError.value(limit, 'limit', 'cannot be lower than 1');
+    }
     // limit: 1 would fail MediaOptions validation (requires >= 2),
     // so delegate to pickMedia which already handles single-item selection.
     if (limit == 1) {
