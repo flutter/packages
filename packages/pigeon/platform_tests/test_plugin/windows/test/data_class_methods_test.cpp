@@ -112,7 +112,7 @@ TEST(SerializationTests, StreamOutputSnapshot) {
   std::stringstream ss;
   ss << msg;
 
-  EXPECT_EQ(ss.str(), "TestMessage(testList: [\"hello\", 42])");
+  EXPECT_EQ(ss.str(), "TestMessage(test_list: [\"hello\", 42])");
 }
 
 // On Windows, C++ stream serialization and std::map key traversal are
@@ -139,22 +139,18 @@ TEST(SerializationTests, StreamOutputFullSnapshot) {
 
   EXPECT_EQ(
       ss.str(),
-      "AllNullableTypes(aNullableBool: true, aNullableInt: 1, aNullableInt64: "
-      "null, "
-      "aNullableDouble: 2, aNullableByteArray: null, aNullable4ByteArray: "
-      "null, "
-      "aNullable8ByteArray: null, aNullableFloatArray: null, aNullableEnum: "
-      "null, "
-      "anotherNullableEnum: null, aNullableString: 123, aNullableObject: null, "
-      "allNullableTypes: null, list: [\"string\", 1], stringList: null, "
-      "intList: null, "
-      "doubleList: null, boolList: null, enumList: null, objectList: null, "
-      "listList: null, "
-      "mapList: null, recursiveClassList: null, map: null, stringMap: "
-      "{\"hello\": \"you\"}, "
-      "intMap: null, enumMap: null, objectMap: null, listMap: null, mapMap: "
-      "null, "
-      "recursiveClassMap: null)");
+      "AllNullableTypes(a_nullable_bool: true, a_nullable_int: 1, "
+      "a_nullable_int64: null, a_nullable_double: 2, a_nullable_byte_array: "
+      "null, a_nullable4_byte_array: null, a_nullable8_byte_array: null, "
+      "a_nullable_float_array: null, a_nullable_enum: null, "
+      "another_nullable_enum: null, a_nullable_string: 123, a_nullable_object: "
+      "null, all_nullable_types: null, list: [\"string\", 1], string_list: "
+      "null, int_list: null, double_list: null, bool_list: null, enum_list: "
+      "null, object_list: null, list_list: null, map_list: null, "
+      "recursive_class_list: null, map: null, string_map: {\"hello\": "
+      "\"you\"}, "
+      "int_map: null, enum_map: null, object_map: null, list_map: null, "
+      "map_map: null, recursive_class_map: null)");
 }
 
 }  // namespace test
