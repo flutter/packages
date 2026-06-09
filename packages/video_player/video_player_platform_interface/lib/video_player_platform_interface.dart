@@ -119,9 +119,7 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
 
   /// Sets whether the video should continue to play in the background.
   Future<void> setAllowBackgroundPlayback(bool allowBackgroundPlayback) {
-    throw UnimplementedError(
-      'setAllowBackgroundPlayback() has not been implemented.',
-    );
+    throw UnimplementedError('setAllowBackgroundPlayback() has not been implemented.');
   }
 
   /// Sets whether the screen is prevented from sleeping during video playback.
@@ -161,6 +159,41 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   /// The default implementation returns `false`. Platform implementations
   /// should override this to return `true` if they support audio track selection.
   bool isAudioTrackSupportAvailable() {
+    return false;
+  }
+
+  /// Gets the available video tracks (quality variants) for the video.
+  ///
+  /// Returns a list of [VideoTrack] objects representing the available
+  /// video quality variants. For HLS/DASH streams, this returns the different
+  /// quality levels available. For non-adaptive videos, platform
+  /// implementations may return one or more tracks, or an empty list,
+  /// depending on the media and the metadata available.
+  Future<List<VideoTrack>> getVideoTracks(int playerId) {
+    throw UnimplementedError('getVideoTracks() has not been implemented.');
+  }
+
+  /// Selects which video track (quality variant) is chosen for playback.
+  ///
+  /// Pass a [VideoTrack] to select a specific quality.
+  /// Pass `null` to enable automatic quality selection (adaptive streaming).
+  Future<void> selectVideoTrack(int playerId, VideoTrack? track) {
+    throw UnimplementedError('selectVideoTrack() has not been implemented.');
+  }
+
+  /// Returns whether video track selection is supported on this platform.
+  ///
+  /// This method allows developers to query at runtime whether the current
+  /// platform supports video track (quality) selection functionality. This is
+  /// useful for platforms like web where video track selection may not be
+  /// available.
+  ///
+  /// Returns `true` if [getVideoTracks] and [selectVideoTrack] are supported,
+  /// `false` otherwise.
+  ///
+  /// The default implementation returns `false`. Platform implementations
+  /// should override this to return `true` if they support video track selection.
+  bool isVideoTrackSupportAvailable() {
     return false;
   }
 }
@@ -327,14 +360,8 @@ class VideoEvent {
   }
 
   @override
-  int get hashCode => Object.hash(
-    eventType,
-    duration,
-    size,
-    rotationCorrection,
-    buffered,
-    isPlaying,
-  );
+  int get hashCode =>
+      Object.hash(eventType, duration, size, rotationCorrection, buffered, isPlaying);
 }
 
 /// Type of the event.
@@ -419,8 +446,7 @@ class DurationRange {
   }
 
   @override
-  String toString() =>
-      '${objectRuntimeType(this, 'DurationRange')}(start: $start, end: $end)';
+  String toString() => '${objectRuntimeType(this, 'DurationRange')}(start: $start, end: $end)';
 
   @override
   bool operator ==(Object other) =>
@@ -568,10 +594,7 @@ class VideoViewOptions {
 @immutable
 class VideoCreationOptions {
   /// Constructs an instance of [VideoCreationOptions].
-  const VideoCreationOptions({
-    required this.dataSource,
-    required this.viewType,
-  });
+  const VideoCreationOptions({required this.dataSource, required this.viewType});
 
   /// The data source used to create the player.
   final DataSource dataSource;
@@ -647,16 +670,8 @@ class VideoAudioTrack {
   }
 
   @override
-  int get hashCode => Object.hash(
-    id,
-    label,
-    language,
-    isSelected,
-    bitrate,
-    sampleRate,
-    channelCount,
-    codec,
-  );
+  int get hashCode =>
+      Object.hash(id, label, language, isSelected, bitrate, sampleRate, channelCount, codec);
 
   @override
   String toString() =>
@@ -668,5 +683,95 @@ class VideoAudioTrack {
       'bitrate: $bitrate, '
       'sampleRate: $sampleRate, '
       'channelCount: $channelCount, '
+      'codec: $codec)';
+}
+
+/// Represents a video track (quality variant) in a video with its metadata.
+///
+/// For HLS/DASH streams, each [VideoTrack] represents a different quality
+/// level (e.g., 1080p, 720p, 480p). For regular videos, there may be only
+/// one track or none available.
+@immutable
+class VideoTrack {
+  /// Constructs an instance of [VideoTrack].
+  const VideoTrack({
+    required this.id,
+    required this.isSelected,
+    this.label,
+    this.bitrate,
+    this.width,
+    this.height,
+    this.frameRate,
+    this.codec,
+  });
+
+  /// Unique identifier for the video track.
+  ///
+  /// The format is platform-specific:
+  /// - Android: `"{groupIndex}_{trackIndex}"` (e.g., `"0_2"`)
+  /// - iOS: `"variant_{bitrate}"` for HLS, `"asset_{trackID}"` for regular videos
+  final String id;
+
+  /// Whether this track is currently selected.
+  final bool isSelected;
+
+  /// Human-readable label for the track (e.g., "1080p", "720p").
+  ///
+  /// May be null if not available from the platform.
+  final String? label;
+
+  /// Bitrate of the video track in bits per second.
+  ///
+  /// May be null if not available from the platform.
+  final int? bitrate;
+
+  /// Video width in pixels.
+  ///
+  /// May be null if not available from the platform.
+  final int? width;
+
+  /// Video height in pixels.
+  ///
+  /// May be null if not available from the platform.
+  final int? height;
+
+  /// Frame rate in frames per second.
+  ///
+  /// May be null if not available from the platform.
+  final double? frameRate;
+
+  /// Video codec used (e.g., "avc1", "hevc", "vp9").
+  ///
+  /// May be null if not available from the platform.
+  final String? codec;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is VideoTrack &&
+            runtimeType == other.runtimeType &&
+            id == other.id &&
+            isSelected == other.isSelected &&
+            label == other.label &&
+            bitrate == other.bitrate &&
+            width == other.width &&
+            height == other.height &&
+            frameRate == other.frameRate &&
+            codec == other.codec;
+  }
+
+  @override
+  int get hashCode => Object.hash(id, isSelected, label, bitrate, width, height, frameRate, codec);
+
+  @override
+  String toString() =>
+      'VideoTrack('
+      'id: $id, '
+      'isSelected: $isSelected, '
+      'label: $label, '
+      'bitrate: $bitrate, '
+      'width: $width, '
+      'height: $height, '
+      'frameRate: $frameRate, '
       'codec: $codec)';
 }

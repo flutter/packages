@@ -7,7 +7,7 @@ import 'package:yaml/yaml.dart';
 /// A class representing the parsed content of a `ci_config.yaml` file.
 class CIConfig {
   /// Creates a [CIConfig] from a parsed YAML map.
-  CIConfig._(this.isBatchRelease);
+  CIConfig._({required this.isBatchRelease, required this.requiresExcerpts});
 
   /// Parses a [CIConfig] from a YAML string.
   ///
@@ -26,17 +26,25 @@ class CIConfig {
       isBatchRelease = release['batch'] == true;
     }
 
-    return CIConfig._(isBatchRelease);
+    // Any package that hasn't been explicitly exempted is assumed to require
+    // excerpts.
+    final requiresExcerpts = loaded['exempt_from_excerpts'] != true;
+
+    return CIConfig._(isBatchRelease: isBatchRelease, requiresExcerpts: requiresExcerpts);
   }
 
   static const Map<String, Object?> _validCIConfigSyntax = <String, Object?>{
     'release': <String, Object?>{
       'batch': <bool>{true, false},
     },
+    'exempt_from_excerpts': <bool>{true, false},
   };
 
   /// Returns true if the package is configured for batch release.
   final bool isBatchRelease;
+
+  /// Returns true if the package is configured to require excerpts.
+  final bool requiresExcerpts;
 
   static void _checkCIConfigEntries(
     YamlMap config, {

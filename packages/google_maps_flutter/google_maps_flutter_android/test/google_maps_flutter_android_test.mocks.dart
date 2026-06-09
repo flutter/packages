@@ -29,14 +29,12 @@ class _FakePlatformPoint_0 extends _i1.SmartFake implements _i2.PlatformPoint {
     : super(parent, parentInvocation);
 }
 
-class _FakePlatformLatLng_1 extends _i1.SmartFake
-    implements _i2.PlatformLatLng {
+class _FakePlatformLatLng_1 extends _i1.SmartFake implements _i2.PlatformLatLng {
   _FakePlatformLatLng_1(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakePlatformLatLngBounds_2 extends _i1.SmartFake
-    implements _i2.PlatformLatLngBounds {
+class _FakePlatformLatLngBounds_2 extends _i1.SmartFake implements _i2.PlatformLatLngBounds {
   _FakePlatformLatLngBounds_2(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -70,9 +68,7 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
           as _i4.Future<void>);
 
   @override
-  _i4.Future<void> updateMapConfiguration(
-    _i2.PlatformMapConfiguration? configuration,
-  ) =>
+  _i4.Future<void> updateMapConfiguration(_i2.PlatformMapConfiguration? configuration) =>
       (super.noSuchMethod(
             Invocation.method(#updateMapConfiguration, [configuration]),
             returnValue: _i4.Future<void>.value(),
@@ -164,11 +160,7 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
     List<String>? idsToRemove,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#updateTileOverlays, [
-              toAdd,
-              toChange,
-              idsToRemove,
-            ]),
+            Invocation.method(#updateTileOverlays, [toAdd, toChange, idsToRemove]),
             returnValue: _i4.Future<void>.value(),
             returnValueForMissingStub: _i4.Future<void>.value(),
           )
@@ -181,54 +173,34 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
     List<String>? idsToRemove,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#updateGroundOverlays, [
-              toAdd,
-              toChange,
-              idsToRemove,
-            ]),
+            Invocation.method(#updateGroundOverlays, [toAdd, toChange, idsToRemove]),
             returnValue: _i4.Future<void>.value(),
             returnValueForMissingStub: _i4.Future<void>.value(),
           )
           as _i4.Future<void>);
 
   @override
-  _i4.Future<_i2.PlatformPoint> getScreenCoordinate(
-    _i2.PlatformLatLng? latLng,
-  ) =>
+  _i4.Future<_i2.PlatformPoint> getScreenCoordinate(_i2.PlatformLatLng? latLng) =>
       (super.noSuchMethod(
             Invocation.method(#getScreenCoordinate, [latLng]),
             returnValue: _i4.Future<_i2.PlatformPoint>.value(
-              _FakePlatformPoint_0(
-                this,
-                Invocation.method(#getScreenCoordinate, [latLng]),
-              ),
+              _FakePlatformPoint_0(this, Invocation.method(#getScreenCoordinate, [latLng])),
             ),
             returnValueForMissingStub: _i4.Future<_i2.PlatformPoint>.value(
-              _FakePlatformPoint_0(
-                this,
-                Invocation.method(#getScreenCoordinate, [latLng]),
-              ),
+              _FakePlatformPoint_0(this, Invocation.method(#getScreenCoordinate, [latLng])),
             ),
           )
           as _i4.Future<_i2.PlatformPoint>);
 
   @override
-  _i4.Future<_i2.PlatformLatLng> getLatLng(
-    _i2.PlatformPoint? screenCoordinate,
-  ) =>
+  _i4.Future<_i2.PlatformLatLng> getLatLng(_i2.PlatformPoint? screenCoordinate) =>
       (super.noSuchMethod(
             Invocation.method(#getLatLng, [screenCoordinate]),
             returnValue: _i4.Future<_i2.PlatformLatLng>.value(
-              _FakePlatformLatLng_1(
-                this,
-                Invocation.method(#getLatLng, [screenCoordinate]),
-              ),
+              _FakePlatformLatLng_1(this, Invocation.method(#getLatLng, [screenCoordinate])),
             ),
             returnValueForMissingStub: _i4.Future<_i2.PlatformLatLng>.value(
-              _FakePlatformLatLng_1(
-                this,
-                Invocation.method(#getLatLng, [screenCoordinate]),
-              ),
+              _FakePlatformLatLng_1(this, Invocation.method(#getLatLng, [screenCoordinate])),
             ),
           )
           as _i4.Future<_i2.PlatformLatLng>);
@@ -238,18 +210,11 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
       (super.noSuchMethod(
             Invocation.method(#getVisibleRegion, []),
             returnValue: _i4.Future<_i2.PlatformLatLngBounds>.value(
-              _FakePlatformLatLngBounds_2(
-                this,
-                Invocation.method(#getVisibleRegion, []),
-              ),
+              _FakePlatformLatLngBounds_2(this, Invocation.method(#getVisibleRegion, [])),
             ),
-            returnValueForMissingStub:
-                _i4.Future<_i2.PlatformLatLngBounds>.value(
-                  _FakePlatformLatLngBounds_2(
-                    this,
-                    Invocation.method(#getVisibleRegion, []),
-                  ),
-                ),
+            returnValueForMissingStub: _i4.Future<_i2.PlatformLatLngBounds>.value(
+              _FakePlatformLatLngBounds_2(this, Invocation.method(#getVisibleRegion, [])),
+            ),
           )
           as _i4.Future<_i2.PlatformLatLngBounds>);
 
@@ -268,10 +233,7 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
     int? durationMilliseconds,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#animateCamera, [
-              cameraUpdate,
-              durationMilliseconds,
-            ]),
+            Invocation.method(#animateCamera, [cameraUpdate, durationMilliseconds]),
             returnValue: _i4.Future<void>.value(),
             returnValueForMissingStub: _i4.Future<void>.value(),
           )
@@ -354,9 +316,7 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
       (super.noSuchMethod(
             Invocation.method(#takeSnapshot, []),
             returnValue: _i4.Future<_i5.Uint8List>.value(_i5.Uint8List(0)),
-            returnValueForMissingStub: _i4.Future<_i5.Uint8List>.value(
-              _i5.Uint8List(0),
-            ),
+            returnValueForMissingStub: _i4.Future<_i5.Uint8List>.value(_i5.Uint8List(0)),
           )
           as _i4.Future<_i5.Uint8List>);
 }
@@ -364,8 +324,7 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
 /// A class which mocks [MapsInitializerApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockMapsInitializerApi extends _i1.Mock
-    implements _i2.MapsInitializerApi {
+class MockMapsInitializerApi extends _i1.Mock implements _i2.MapsInitializerApi {
   @override
   String get pigeonVar_messageChannelSuffix =>
       (super.noSuchMethod(
@@ -390,10 +349,9 @@ class MockMapsInitializerApi extends _i1.Mock
             returnValue: _i4.Future<_i2.PlatformRendererType>.value(
               _i2.PlatformRendererType.legacy,
             ),
-            returnValueForMissingStub:
-                _i4.Future<_i2.PlatformRendererType>.value(
-                  _i2.PlatformRendererType.legacy,
-                ),
+            returnValueForMissingStub: _i4.Future<_i2.PlatformRendererType>.value(
+              _i2.PlatformRendererType.legacy,
+            ),
           )
           as _i4.Future<_i2.PlatformRendererType>);
 
