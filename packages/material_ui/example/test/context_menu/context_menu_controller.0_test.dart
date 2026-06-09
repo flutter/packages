@@ -14,9 +14,26 @@ void main() {
   testWidgets('showing and hiding the custom context menu in the whole app', (
     WidgetTester tester,
   ) async {
+      bool disabledWasCalled = false;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.contextMenu, (
+            MethodCall methodCall,
+          ) {
+            if (methodCall.method == 'disableContextMenu') {
+              expect(methodCall.arguments, isNull);
+              disabledWasCalled = true;
+            }
+            return;
+          });
+      addTearDown(() {
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(SystemChannels.contextMenu, null);
+      });
+
     await tester.pumpWidget(const example.ContextMenuControllerExampleApp());
 
     expect(BrowserContextMenu.enabled, !kIsWeb);
+      expect(disabledWasCalled, kIsWeb);
 
     expect(find.byType(AdaptiveTextSelectionToolbar), findsNothing);
 

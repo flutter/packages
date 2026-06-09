@@ -46,7 +46,7 @@ class _IconButtonExampleState extends State<IconButtonExample> {
             });
           },
         ),
-        Text('Volume : $_volume'),
+        Text('Volume : ${_volume.toStringAsFixed(1)}'),
       ],
     );
   }

@@ -109,7 +109,7 @@ class _AppBarExampleState extends State<AppBarExample> {
                   }
                 },
                 child: Text(
-                  'scrolledUnderElevation: ${scrolledUnderElevation ?? 'default'}',
+                  'scrolledUnderElevation: ${scrolledUnderElevation?.toStringAsFixed(1) ?? 'default'}',
                 ),
               ),
             ],
