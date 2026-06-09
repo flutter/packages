@@ -6,13 +6,12 @@ import XCTest
 
 @MainActor
 class ImagePickerSpreadsheetUITests: XCTestCase {
-    var app: XCUIApplication!
+    var app = XCUIApplication()
     let elementWaitingTime: TimeInterval = 60
 
     override func setUp() async throws {
         try await super.setUp()
         continueAfterFailure = false
-        app = XCUIApplication()
         app.launch()
     }
 

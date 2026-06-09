@@ -282,7 +282,7 @@ class ImageUtilTests: XCTestCase {
         XCTAssertNil(invalidResult)
     }
 
-    func normalizedImage(_ image: UIImage) -> UIImage {
+    func normalizedImage(_ image: UIImage) throws -> UIImage {
         if image.imageOrientation == .up {
             return image
         }
@@ -314,20 +314,20 @@ class ImageUtilTests: XCTestCase {
         }
 
         UIGraphicsBeginImageContextWithOptions(newSize, false, image.scale)
-        let context = UIGraphicsGetCurrentContext()!
+        defer { UIGraphicsEndImageContext() }
+        let context = try XCTUnwrap(UIGraphicsGetCurrentContext())
 
         context.concatenate(transform)
 
+        let cgImage = try XCTUnwrap(image.cgImage)
+
         if image.imageOrientation == .left || image.imageOrientation == .right {
-            context.draw(image.cgImage!, in: CGRect(x: 0, y: 0, width: image.size.height, height: image.size.width))
+            context.draw(cgImage, in: CGRect(x: 0, y: 0, width: image.size.height, height: image.size.width))
         } else {
-            context.draw(image.cgImage!, in: CGRect(origin: .zero, size: image.size))
+            context.draw(cgImage, in: CGRect(origin: .zero, size: image.size))
         }
 
-        let normalizedImage = UIGraphicsGetImageFromCurrentImageContext()!
-        UIGraphicsEndImageContext()
-
-        return normalizedImage
+        return try XCTUnwrap(UIGraphicsGetImageFromCurrentImageContext())
     }
 
     func testScaledImage_ShouldBeCorrectRotation() throws {
@@ -340,7 +340,7 @@ class ImageUtilTests: XCTestCase {
         XCTAssertEqual(image.size.height, 174)
         XCTAssertEqual(image.imageOrientation, .right)
 
-        let normalized = normalizedImage(image)
+        let normalized = try normalizedImage(image)
 
         let newImage = ImagePickerImageUtil.scaledImage(
             normalized,
