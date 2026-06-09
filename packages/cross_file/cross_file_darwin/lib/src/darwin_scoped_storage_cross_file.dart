@@ -262,7 +262,7 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
       resourceManager.requestDataForAssetResource(
         resource,
         dataReceivedHandler: ObjCBlock_ffiVoid_NSData.fromFunction(dataReceivedHandler),
-        completionHandler: ObjCBlock_ffiVoid_NSError.listener(completionHandler),
+        completionHandler: ObjCBlock_ffiVoid_NSError.blocking(completionHandler),
       );
 
       return streamController.stream;
