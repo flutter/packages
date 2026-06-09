@@ -575,13 +575,10 @@ If build.gradle.kts sets jvmTarget inside kotlin.compilerOptions, it must use Jv
 
     if (hasKotlinPlugin) {
       final bool isApp = gradleLines.any(
-        (String line) =>
-            line.contains('com.android.application') && !_isCommented(line),
+        (String line) => line.contains('com.android.application') && !_isCommented(line),
       );
       final moduleType = isApp ? 'app' : 'plugin';
-      final pluginId = isApp
-          ? 'com.android.application'
-          : 'com.android.library';
+      final pluginId = isApp ? 'com.android.application' : 'com.android.library';
       final kotlinPluginErrorMessage =
           '''
 The kotlin-android plugin should not be applied in the $moduleType module's build.gradle.kts.
