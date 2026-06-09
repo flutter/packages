@@ -655,5 +655,23 @@ void main() {
       expect(transactions.first.appAccountToken, isNotNull);
       expect(transactions.first.appAccountToken, 'fake_app_account_token');
     });
+
+    test('should expose purchased quantity in unfinished transactions', () async {
+      final List<SK2Transaction> transactions = await SK2Transaction.unfinishedTransactions();
+
+      expect(transactions, isNotEmpty);
+      expect(transactions.first.quantity, 3);
+    });
+  });
+
+  group('transactions', () {
+    test('should return transactions', () async {
+      final List<SK2Transaction> transactions = await SK2Transaction.transactions();
+
+      expect(transactions, isNotEmpty);
+      expect(transactions.first.id, '123');
+      expect(transactions.first.productId, 'product_id');
+      expect(transactions.first.quantity, 2);
+    });
   });
 }
