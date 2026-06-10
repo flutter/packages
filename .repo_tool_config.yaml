@@ -58,6 +58,7 @@ allowed_dependencies:
     - build_config
     - build_runner
     - build_test
+    - clock
     - code_builder
     - collection
     - convert
@@ -112,6 +113,7 @@ allowed_dependencies:
     - googleapis
     - googleapis_auth
     - json_annotation
+    - material_color_utilities
     - protobuf
     - quiver
     - sanitize_html

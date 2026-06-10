@@ -35,12 +35,9 @@ class _ConnectionManagerState extends State<_ConnectionManager> {
     super.initState();
     // Used to move the application back to the loading state on the simulated
     // environment when the developer disconnects the app.
-    serviceManager.registerLifecycleCallback(
-      ServiceManagerLifecycle.afterCloseVmService,
-      (_) {
-        setState(() {});
-      },
-    );
+    serviceManager.registerLifecycleCallback(ServiceManagerLifecycle.afterCloseVmService, (_) {
+      setState(() {});
+    });
   }
 
   @override
@@ -52,9 +49,7 @@ class _ConnectionManagerState extends State<_ConnectionManager> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        return const SharedPreferencesStateProvider(
-          child: SharedPreferencesBody(),
-        );
+        return const SharedPreferencesStateProvider(child: SharedPreferencesBody());
       },
     );
   }

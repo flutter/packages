@@ -9,8 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps/google_maps.dart' as gmaps;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_maps_flutter_web/google_maps_flutter_web.dart'
-    hide GoogleMapController;
+import 'package:google_maps_flutter_web/google_maps_flutter_web.dart' hide GoogleMapController;
 // ignore: implementation_imports
 import 'package:google_maps_flutter_web/src/utils.dart';
 import 'package:integration_test/integration_test.dart';
@@ -23,9 +22,7 @@ import 'overlays_test.mocks.dart';
 
 MockTileProvider neverTileProvider() {
   final tileProvider = MockTileProvider();
-  when(
-    tileProvider.getTile(any, any, any),
-  ).thenAnswer((_) => Completer<Tile>().future);
+  when(tileProvider.getTile(any, any, any)).thenAnswer((_) => Completer<Tile>().future);
   return tileProvider;
 }
 
@@ -51,9 +48,7 @@ void main() {
       map = gmaps.Map(createDivElement());
       controller.googleMap = map;
 
-      tileProviders = <MockTileProvider>[
-        for (int i = 0; i < 3; ++i) neverTileProvider(),
-      ];
+      tileProviders = <MockTileProvider>[for (int i = 0; i < 3; ++i) neverTileProvider()];
 
       tileOverlays = <TileOverlay>[
         for (int i = 0; i < 3; ++i)
@@ -99,9 +94,7 @@ void main() {
       verifyNoMoreInteractions(tileProviders[2]);
 
       // Re-enable overlay 0.
-      controller.changeTileOverlays(<TileOverlay>{
-        tileOverlays[0].copyWith(visibleParam: true),
-      });
+      controller.changeTileOverlays(<TileOverlay>{tileOverlays[0].copyWith(visibleParam: true)});
 
       probeTiles();
 
@@ -115,19 +108,18 @@ void main() {
       verifyNoMoreInteractions(tileProviders[2]);
     });
 
-    testWidgets(
-      'updating the z index of a hidden layer does not make it visible',
-      (WidgetTester tester) async {
-        controller.addTileOverlays(<TileOverlay>{...tileOverlays});
+    testWidgets('updating the z index of a hidden layer does not make it visible', (
+      WidgetTester tester,
+    ) async {
+      controller.addTileOverlays(<TileOverlay>{...tileOverlays});
 
-        controller.changeTileOverlays(<TileOverlay>{
-          tileOverlays[0].copyWith(zIndexParam: -1, visibleParam: false),
-        });
+      controller.changeTileOverlays(<TileOverlay>{
+        tileOverlays[0].copyWith(zIndexParam: -1, visibleParam: false),
+      });
 
-        probeTiles();
-        verifyZeroInteractions(tileProviders[0]);
-      },
-    );
+      probeTiles();
+      verifyZeroInteractions(tileProviders[0]);
+    });
 
     testWidgets('removeTileOverlays', (WidgetTester tester) async {
       controller.addTileOverlays(<TileOverlay>{...tileOverlays});

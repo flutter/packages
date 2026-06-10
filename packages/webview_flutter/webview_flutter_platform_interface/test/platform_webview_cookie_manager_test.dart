@@ -16,14 +16,11 @@ void main() {
 
   test('Cannot be implemented with `implements`', () {
     when(
-      (WebViewPlatform.instance! as MockWebViewPlatform)
-          .createPlatformCookieManager(any),
+      (WebViewPlatform.instance! as MockWebViewPlatform).createPlatformCookieManager(any),
     ).thenReturn(ImplementsPlatformWebViewCookieManager());
 
     expect(() {
-      PlatformWebViewCookieManager(
-        const PlatformWebViewCookieManagerCreationParams(),
-      );
+      PlatformWebViewCookieManager(const PlatformWebViewCookieManagerCreationParams());
       // In versions of `package:plugin_platform_interface` prior to fixing
       // https://github.com/flutter/flutter/issues/109339, an attempt to
       // implement a platform interface using `implements` would sometimes throw
@@ -37,8 +34,7 @@ void main() {
   test('Can be extended', () {
     const params = PlatformWebViewCookieManagerCreationParams();
     when(
-      (WebViewPlatform.instance! as MockWebViewPlatform)
-          .createPlatformCookieManager(any),
+      (WebViewPlatform.instance! as MockWebViewPlatform).createPlatformCookieManager(any),
     ).thenReturn(ExtendsPlatformWebViewCookieManager(params));
 
     expect(PlatformWebViewCookieManager(params), isNotNull);
@@ -46,61 +42,46 @@ void main() {
 
   test('Can be mocked with `implements`', () {
     when(
-      (WebViewPlatform.instance! as MockWebViewPlatform)
-          .createPlatformCookieManager(any),
+      (WebViewPlatform.instance! as MockWebViewPlatform).createPlatformCookieManager(any),
     ).thenReturn(MockWebViewCookieManagerDelegate());
 
     expect(
-      PlatformWebViewCookieManager(
-        const PlatformWebViewCookieManagerCreationParams(),
-      ),
+      PlatformWebViewCookieManager(const PlatformWebViewCookieManagerCreationParams()),
       isNotNull,
     );
   });
 
-  test(
-    'Default implementation of clearCookies should throw unimplemented error',
-    () {
-      final PlatformWebViewCookieManager cookieManager =
-          ExtendsPlatformWebViewCookieManager(
-            const PlatformWebViewCookieManagerCreationParams(),
-          );
+  test('Default implementation of clearCookies should throw unimplemented error', () {
+    final PlatformWebViewCookieManager cookieManager = ExtendsPlatformWebViewCookieManager(
+      const PlatformWebViewCookieManagerCreationParams(),
+    );
 
-      expect(() => cookieManager.clearCookies(), throwsUnimplementedError);
-    },
-  );
+    expect(() => cookieManager.clearCookies(), throwsUnimplementedError);
+  });
 
-  test(
-    'Default implementation of setCookie should throw unimplemented error',
-    () {
-      final PlatformWebViewCookieManager cookieManager =
-          ExtendsPlatformWebViewCookieManager(
-            const PlatformWebViewCookieManagerCreationParams(),
-          );
+  test('Default implementation of setCookie should throw unimplemented error', () {
+    final PlatformWebViewCookieManager cookieManager = ExtendsPlatformWebViewCookieManager(
+      const PlatformWebViewCookieManagerCreationParams(),
+    );
 
-      expect(
-        () => cookieManager.setCookie(
-          const WebViewCookie(name: 'foo', value: 'bar', domain: 'flutter.dev'),
-        ),
-        throwsUnimplementedError,
-      );
-    },
-  );
+    expect(
+      () => cookieManager.setCookie(
+        const WebViewCookie(name: 'foo', value: 'bar', domain: 'flutter.dev'),
+      ),
+      throwsUnimplementedError,
+    );
+  });
 
-  test(
-    'Default implementation of getCookies should throw unimplemented error',
-    () {
-      final PlatformWebViewCookieManager cookieManager =
-          ExtendsPlatformWebViewCookieManager(
-            const PlatformWebViewCookieManagerCreationParams(),
-          );
+  test('Default implementation of getCookies should throw unimplemented error', () {
+    final PlatformWebViewCookieManager cookieManager = ExtendsPlatformWebViewCookieManager(
+      const PlatformWebViewCookieManagerCreationParams(),
+    );
 
-      expect(
-        () => cookieManager.getCookies(Uri.parse('https://flutter.dev')),
-        throwsUnimplementedError,
-      );
-    },
-  );
+    expect(
+      () => cookieManager.getCookies(Uri.parse('https://flutter.dev')),
+      throwsUnimplementedError,
+    );
+  });
 }
 
 class MockWebViewPlatformWithMixin extends MockWebViewPlatform
@@ -108,8 +89,7 @@ class MockWebViewPlatformWithMixin extends MockWebViewPlatform
         // ignore: prefer_mixin
         MockPlatformInterfaceMixin {}
 
-class ImplementsPlatformWebViewCookieManager
-    implements PlatformWebViewCookieManager {
+class ImplementsPlatformWebViewCookieManager implements PlatformWebViewCookieManager {
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

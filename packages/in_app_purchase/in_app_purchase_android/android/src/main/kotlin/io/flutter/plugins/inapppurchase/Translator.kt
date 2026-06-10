@@ -15,6 +15,7 @@ import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.Purchase.PendingPurchaseUpdate
 import com.android.billingclient.api.PurchaseHistoryRecord
 import com.android.billingclient.api.QueryProductDetailsParams
+import com.android.billingclient.api.UnfetchedProduct
 import com.android.billingclient.api.UserChoiceDetails
 
 fun fromProductDetail(detail: ProductDetails): PlatformProductDetails {
@@ -26,6 +27,8 @@ fun fromProductDetail(detail: ProductDetails): PlatformProductDetails {
       title = detail.title,
       oneTimePurchaseOfferDetails =
           fromOneTimePurchaseOfferDetails(detail.oneTimePurchaseOfferDetails),
+      oneTimePurchaseOfferDetailsList =
+          fromOneTimePurchaseOfferDetailsList(detail.oneTimePurchaseOfferDetailsList),
       subscriptionOfferDetails = fromSubscriptionOfferDetailsList(detail.subscriptionOfferDetails))
 }
 
@@ -74,6 +77,13 @@ fun fromOneTimePurchaseOfferDetails(
       priceAmountMicros = oneTimePurchaseOfferDetails.priceAmountMicros,
       formattedPrice = oneTimePurchaseOfferDetails.formattedPrice,
       priceCurrencyCode = oneTimePurchaseOfferDetails.priceCurrencyCode)
+}
+
+fun fromOneTimePurchaseOfferDetailsList(
+    oneTimePurchaseOfferDetailsList: List<ProductDetails.OneTimePurchaseOfferDetails>?
+): List<PlatformOneTimePurchaseOfferDetails>? {
+  // Using mapNotNull ensures the resulting list doesn't contain nulls
+  return oneTimePurchaseOfferDetailsList?.mapNotNull { fromOneTimePurchaseOfferDetails(it) }
 }
 
 fun fromSubscriptionOfferDetailsList(
@@ -206,9 +216,21 @@ fun fromPurchaseHistoryRecordList(
   return purchaseHistoryRecords?.map { fromPurchaseHistoryRecord(it) } ?: emptyList()
 }
 
+fun fromUnfetchedProductList(
+    unfetchedProductList: List<UnfetchedProduct>?
+): List<PlatformUnfetchedProduct> {
+  return unfetchedProductList?.map { fromUnfetchedProduct(it) } ?: emptyList()
+}
+
+fun fromUnfetchedProduct(unfetchedProduct: UnfetchedProduct): PlatformUnfetchedProduct {
+  return PlatformUnfetchedProduct(productId = unfetchedProduct.productId)
+}
+
 fun fromBillingResult(billingResult: BillingResult): PlatformBillingResult {
   return PlatformBillingResult(
-      fromBillingResponseCode(billingResult.responseCode), billingResult.debugMessage)
+      fromBillingResponseCode(billingResult.responseCode),
+      billingResult.debugMessage,
+      billingResult.onPurchasesUpdatedSubResponseCode.toLong())
 }
 
 fun fromBillingResponseCode(billingResponseCode: Int): PlatformBillingResponse =

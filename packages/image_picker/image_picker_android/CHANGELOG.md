@@ -1,6 +1,11 @@
-## NEXT
+## 0.8.13+19
 
-* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+* Bumps the androidx group across 10 directories with 1 update.
+
+## 0.8.13+18
+
+* Migrates to Built-in Kotlin to support AGP 9.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 0.8.13+17
 

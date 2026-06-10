@@ -13,11 +13,7 @@ void main() => runApp(const MyApp());
 /// The router configuration.
 final GoRouter _router = GoRouter(
   routes: <RouteBase>[
-    GoRoute(
-      path: '/',
-      builder: (BuildContext context, GoRouterState state) =>
-          const HomeScreen(),
-    ),
+    GoRoute(path: '/', builder: (BuildContext context, GoRouterState state) => const HomeScreen()),
   ],
   extraCodec: const MyExtraCodec(),
 );
@@ -49,9 +45,7 @@ class HomeScreen extends StatelessWidget {
             const Text(
               "If running in web, use the browser's backward and forward button to test extra codec after setting extra several times.",
             ),
-            Text(
-              'The extra for this page is: ${GoRouterState.of(context).extra}',
-            ),
+            Text('The extra for this page is: ${GoRouterState.of(context).extra}'),
             ElevatedButton(
               onPressed: () => context.go('/', extra: ComplexData1('data')),
               child: const Text('Set extra to ComplexData1'),
