@@ -59,10 +59,8 @@ Widget loadNetworkAssetWithPlaceholder() {
   final Widget networkSvg = SvgPicture.network(
     'https://site-that-takes-a-while.com/image.svg',
     semanticsLabel: 'A shark?!',
-    placeholderBuilder: (BuildContext context) => Container(
-      padding: const EdgeInsets.all(30.0),
-      child: const CircularProgressIndicator(),
-    ),
+    placeholderBuilder: (BuildContext context) =>
+        Container(padding: const EdgeInsets.all(30.0), child: const CircularProgressIndicator()),
   );
   // #enddocregion AssetWithPlaceholder
   return networkSvg;
@@ -86,10 +84,7 @@ Future<ui.Image> convertSvgOutput() async {
 
   // #docregion OutputConversion
   const rawSvg = '''<svg ...>...</svg>''';
-  final PictureInfo pictureInfo = await vg.loadPicture(
-    const SvgStringLoader(rawSvg),
-    null,
-  );
+  final PictureInfo pictureInfo = await vg.loadPicture(const SvgStringLoader(rawSvg), null);
 
   // You can scale the canvas to achieve lossless scaling:
   canvas.scale(1.2, 1.2);
@@ -110,12 +105,7 @@ class _MyColorMapper extends ColorMapper {
   const _MyColorMapper();
 
   @override
-  Color substitute(
-    String? id,
-    String elementName,
-    String attributeName,
-    Color color,
-  ) {
+  Color substitute(String? id, String elementName, String attributeName, Color color) {
     if (color == const Color(0xFFFF0000)) {
       return Colors.blue;
     }
@@ -137,10 +127,7 @@ Widget loadWithColorMapper() {
   <circle cx="75" cy="75" r="25" fill="#00FF00" />
 </svg>
 ''';
-  final Widget svgIcon = SvgPicture.string(
-    svgString,
-    colorMapper: const _MyColorMapper(),
-  );
+  final Widget svgIcon = SvgPicture.string(svgString, colorMapper: const _MyColorMapper());
   // #enddocregion ColorMapper
   return svgIcon;
 }

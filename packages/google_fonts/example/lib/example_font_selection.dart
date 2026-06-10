@@ -27,9 +27,7 @@ class ExampleFontSelectionState extends State<ExampleFontSelection> {
   @override
   void initState() {
     _selectedFont = fonts.first;
-    _googleFontsPending = GoogleFonts.pendingFonts(<TextStyle>[
-      GoogleFonts.getFont(_selectedFont),
-    ]);
+    _googleFontsPending = GoogleFonts.pendingFonts(<TextStyle>[GoogleFonts.getFont(_selectedFont)]);
     super.initState();
   }
 
@@ -63,18 +61,13 @@ class ExampleFontSelectionState extends State<ExampleFontSelection> {
                         onSelected: (String? newValue) {
                           setState(() {
                             _selectedFont = newValue!;
-                            _googleFontsPending = GoogleFonts.pendingFonts(
-                              <TextStyle>[GoogleFonts.getFont(_selectedFont)],
-                            );
+                            _googleFontsPending = GoogleFonts.pendingFonts(<TextStyle>[
+                              GoogleFonts.getFont(_selectedFont),
+                            ]);
                           });
                         },
-                        dropdownMenuEntries: GoogleFonts.asMap().keys.map((
-                          String font,
-                        ) {
-                          return DropdownMenuEntry<String>(
-                            label: font,
-                            value: font,
-                          );
+                        dropdownMenuEntries: GoogleFonts.asMap().keys.map((String font) {
+                          return DropdownMenuEntry<String>(label: font, value: font);
                         }).toList(),
                       ),
                     ],
@@ -83,24 +76,16 @@ class ExampleFontSelectionState extends State<ExampleFontSelection> {
                   Expanded(
                     child: FutureBuilder<List<void>>(
                       future: _googleFontsPending,
-                      builder:
-                          (
-                            BuildContext context,
-                            AsyncSnapshot<List<void>> snapshot,
-                          ) {
-                            if (snapshot.connectionState !=
-                                ConnectionState.done) {
-                              return const SizedBox();
-                            }
+                      builder: (BuildContext context, AsyncSnapshot<List<void>> snapshot) {
+                        if (snapshot.connectionState != ConnectionState.done) {
+                          return const SizedBox();
+                        }
 
-                            return Text(
-                              _textEditingController.text,
-                              style: GoogleFonts.getFont(
-                                _selectedFont,
-                                fontSize: 50.0,
-                              ),
-                            );
-                          },
+                        return Text(
+                          _textEditingController.text,
+                          style: GoogleFonts.getFont(_selectedFont, fontSize: 50.0),
+                        );
+                      },
                     ),
                   ),
                 ],

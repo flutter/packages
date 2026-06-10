@@ -32,19 +32,14 @@ void main() {
   test('GcsLock prints warnings for long waits', () {
     // Capture print to verify error messages.
     final prints = <String>[];
-    final spec = ZoneSpecification(
-      print: (_, __, ___, String msg) => prints.add(msg),
-    );
+    final spec = ZoneSpecification(print: (_, _, _, String msg) => prints.add(msg));
 
     Zone.current.fork(specification: spec).run<void>(() {
       fakeAsync((FakeAsync fakeAsync) {
         final mockClient = MockAuthClient();
         final lock = GcsLock(StorageApi(mockClient), 'mockBucket');
         when(mockClient.send(any)).thenThrow(DetailedApiRequestError(412, ''));
-        final Future<void> runFinished = lock.protectedRun(
-          'mock.lock',
-          () async {},
-        );
+        final Future<void> runFinished = lock.protectedRun('mock.lock', () async {});
         fakeAsync.elapse(const Duration(seconds: 10));
         when(mockClient.send(any)).thenThrow(AssertionError('Stop!'));
         runFinished.catchError((dynamic e) {
@@ -133,14 +128,10 @@ void main() {
 
       // Allow time to pass by to ensure deleting the lock file is retried multiple times.
       fakeAsync.elapse(const Duration(milliseconds: 30));
-      verify(
-        mockObjectsResource.delete(kTestBucketName, lockFileName),
-      ).called(3);
+      verify(mockObjectsResource.delete(kTestBucketName, lockFileName)).called(3);
 
       // Simulate a successful deletion of the lock file.
-      when(
-        mockObjectsResource.delete(kTestBucketName, lockFileName),
-      ).thenAnswer(
+      when(mockObjectsResource.delete(kTestBucketName, lockFileName)).thenAnswer(
         (_) => Future<void>(() {
           return;
         }),
@@ -148,9 +139,7 @@ void main() {
 
       // At this point, there should only be one more (successful) attempt to delete the lock file.
       fakeAsync.elapse(const Duration(minutes: 2));
-      verify(
-        mockObjectsResource.delete(kTestBucketName, lockFileName),
-      ).called(1);
+      verify(mockObjectsResource.delete(kTestBucketName, lockFileName)).called(1);
     });
   });
 }

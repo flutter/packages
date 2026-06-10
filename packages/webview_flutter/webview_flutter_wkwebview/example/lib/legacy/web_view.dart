@@ -26,8 +26,7 @@ typedef WebViewCreatedCallback = void Function(WebViewController controller);
 /// `navigation` should be handled.
 ///
 /// See also: [WebView.navigationDelegate].
-typedef NavigationDelegate =
-    FutureOr<NavigationDecision> Function(NavigationRequest navigation);
+typedef NavigationDelegate = FutureOr<NavigationDecision> Function(NavigationRequest navigation);
 
 /// Signature for when a [WebView] has started loading a page.
 typedef PageStartedCallback = void Function(String url);
@@ -243,8 +242,7 @@ class WebView extends StatefulWidget {
 }
 
 class _WebViewState extends State<WebView> {
-  final Completer<WebViewController> _controller =
-      Completer<WebViewController>();
+  final Completer<WebViewController> _controller = Completer<WebViewController>();
   late final JavascriptChannelRegistry _javascriptChannelRegistry;
   late final _PlatformCallbacksHandler _platformCallbacksHandler;
 
@@ -252,9 +250,7 @@ class _WebViewState extends State<WebView> {
   void initState() {
     super.initState();
     _platformCallbacksHandler = _PlatformCallbacksHandler(widget);
-    _javascriptChannelRegistry = JavascriptChannelRegistry(
-      widget.javascriptChannels,
-    );
+    _javascriptChannelRegistry = JavascriptChannelRegistry(widget.javascriptChannels);
   }
 
   @override
@@ -269,25 +265,23 @@ class _WebViewState extends State<WebView> {
   Widget build(BuildContext context) {
     return WebView.platform.build(
       context: context,
-      onWebViewPlatformCreated:
-          (WebViewPlatformController? webViewPlatformController) {
-            final controller = WebViewController._(
-              widget,
-              webViewPlatformController!,
-              _javascriptChannelRegistry,
-            );
-            _controller.complete(controller);
+      onWebViewPlatformCreated: (WebViewPlatformController? webViewPlatformController) {
+        final controller = WebViewController._(
+          widget,
+          webViewPlatformController!,
+          _javascriptChannelRegistry,
+        );
+        _controller.complete(controller);
 
-            if (widget.onWebViewCreated != null) {
-              widget.onWebViewCreated!(controller);
-            }
-          },
+        if (widget.onWebViewCreated != null) {
+          widget.onWebViewCreated!(controller);
+        }
+      },
       webViewPlatformCallbacksHandler: _platformCallbacksHandler,
       creationParams: CreationParams(
         initialUrl: widget.initialUrl,
         webSettings: _webSettingsFromWidget(widget),
-        javascriptChannelNames: _javascriptChannelRegistry.channels.keys
-            .toSet(),
+        javascriptChannelNames: _javascriptChannelRegistry.channels.keys.toSet(),
         autoMediaPlaybackPolicy: widget.initialMediaPlaybackPolicy,
         userAgent: widget.userAgent,
         cookies: widget.initialCookies,
@@ -430,36 +424,22 @@ class WebViewController {
   Future<void> _updateWidget(WebView widget) async {
     _widget = widget;
     await _updateSettings(_webSettingsFromWidget(widget));
-    await _updateJavascriptChannels(
-      _javascriptChannelRegistry.channels.values.toSet(),
-    );
+    await _updateJavascriptChannels(_javascriptChannelRegistry.channels.values.toSet());
   }
 
   Future<void> _updateSettings(WebSettings newSettings) {
-    final WebSettings update = _clearUnchangedWebSettings(
-      _settings,
-      newSettings,
-    );
+    final WebSettings update = _clearUnchangedWebSettings(_settings, newSettings);
     _settings = newSettings;
     return _webViewPlatformController.updateSettings(update);
   }
 
-  Future<void> _updateJavascriptChannels(
-    Set<JavascriptChannel>? newChannels,
-  ) async {
-    final Set<String> currentChannels = _javascriptChannelRegistry.channels.keys
-        .toSet();
+  Future<void> _updateJavascriptChannels(Set<JavascriptChannel>? newChannels) async {
+    final Set<String> currentChannels = _javascriptChannelRegistry.channels.keys.toSet();
     final Set<String> newChannelNames = _extractChannelNames(newChannels);
-    final Set<String> channelsToAdd = newChannelNames.difference(
-      currentChannels,
-    );
-    final Set<String> channelsToRemove = currentChannels.difference(
-      newChannelNames,
-    );
+    final Set<String> channelsToAdd = newChannelNames.difference(currentChannels);
+    final Set<String> channelsToRemove = currentChannels.difference(newChannelNames);
     if (channelsToRemove.isNotEmpty) {
-      await _webViewPlatformController.removeJavascriptChannels(
-        channelsToRemove,
-      );
+      await _webViewPlatformController.removeJavascriptChannels(channelsToRemove);
     }
     if (channelsToAdd.isNotEmpty) {
       await _webViewPlatformController.addJavascriptChannels(channelsToAdd);
@@ -490,9 +470,7 @@ class WebViewController {
   Future<void> runJavascript(String javaScriptString) {
     if (_settings.javascriptMode == JavascriptMode.disabled) {
       return Future<void>.error(
-        FlutterError(
-          'Javascript mode must be enabled/unrestricted when calling runJavascript.',
-        ),
+        FlutterError('Javascript mode must be enabled/unrestricted when calling runJavascript.'),
       );
     }
     return _webViewPlatformController.runJavascript(javaScriptString);
@@ -519,9 +497,7 @@ class WebViewController {
         ),
       );
     }
-    return _webViewPlatformController.runJavascriptReturningResult(
-      javaScriptString,
-    );
+    return _webViewPlatformController.runJavascriptReturningResult(javaScriptString);
   }
 
   /// Returns the title of the currently loaded page.
@@ -558,10 +534,7 @@ class WebViewController {
   }
 
   // This method assumes that no fields in `currentValue` are null.
-  WebSettings _clearUnchangedWebSettings(
-    WebSettings currentValue,
-    WebSettings newValue,
-  ) {
+  WebSettings _clearUnchangedWebSettings(WebSettings currentValue, WebSettings newValue) {
     assert(currentValue.javascriptMode != null);
     assert(currentValue.hasNavigationDelegate != null);
     assert(currentValue.hasProgressTracking != null);
@@ -639,10 +612,7 @@ class _PlatformCallbacksHandler implements WebViewPlatformCallbacksHandler {
   final WebView _webView;
 
   @override
-  FutureOr<bool> onNavigationRequest({
-    required String url,
-    required bool isForMainFrame,
-  }) async {
+  FutureOr<bool> onNavigationRequest({required String url, required bool isForMainFrame}) async {
     if (url.startsWith('https://www.youtube.com/')) {
       debugPrint('blocking navigation to $url');
       return false;

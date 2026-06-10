@@ -1,6 +1,12 @@
-## NEXT
+## 7.2.13
 
+* Bumps com.google.android.gms:play-services-auth from 21.5.1 to 21.6.0.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
+## 7.2.12
+
+* Migrates to Built-in Kotlin to support AGP 9.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 7.2.11
 
