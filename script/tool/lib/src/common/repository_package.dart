@@ -129,10 +129,17 @@ class RepositoryPackage {
 
   /// Returns true if the package depends on Flutter.
   bool requiresFlutter() {
-    const flutterDependency = 'flutter';
     final Pubspec pubspec = parsePubspec();
-    return pubspec.dependencies.containsKey(flutterDependency) ||
-        pubspec.devDependencies.containsKey(flutterDependency);
+    return _includesFlutterSdkDependency(pubspec.dependencies) ||
+        _includesFlutterSdkDependency(pubspec.devDependencies);
+  }
+
+  /// True if this package has a dependency on Flutter.
+  bool _includesFlutterSdkDependency(Map<String, Dependency> deps) {
+    const flutterSdkDependencyName = 'flutter';
+    return deps.values.whereType<SdkDependency>().any(
+      (SdkDependency dependency) => dependency.sdk == flutterSdkDependencyName,
+    );
   }
 
   /// True if this appears to be a federated plugin package, according to
