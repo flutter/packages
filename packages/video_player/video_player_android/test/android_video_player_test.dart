@@ -429,7 +429,7 @@ void main() {
         VideoCreationOptions(
           dataSource: DataSource(sourceType: DataSourceType.network, uri: 'https://example.com'),
           viewType: VideoViewType.textureView,
-          videoPlayerOptions: const VideoPlayerOptions(backBufferDurationMs: 20000),
+          videoPlayerOptions: VideoPlayerOptions(backBufferDurationMs: 20000),
         ),
       );
 
@@ -448,7 +448,7 @@ void main() {
         VideoCreationOptions(
           dataSource: DataSource(sourceType: DataSourceType.network, uri: 'https://example.com'),
           viewType: VideoViewType.platformView,
-          videoPlayerOptions: const VideoPlayerOptions(backBufferDurationMs: 20000),
+          videoPlayerOptions: VideoPlayerOptions(backBufferDurationMs: 20000),
         ),
       );
 

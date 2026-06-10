@@ -7,11 +7,11 @@ import 'package:video_player_platform_interface/video_player_platform_interface.
 
 void main() {
   test('VideoPlayerOptions allowBackgroundPlayback defaults to false', () {
-    const options = VideoPlayerOptions();
+    final options = VideoPlayerOptions();
     expect(options.allowBackgroundPlayback, false);
   });
   test('VideoPlayerOptions mixWithOthers defaults to false', () {
-    const options = VideoPlayerOptions();
+    final options = VideoPlayerOptions();
     expect(options.mixWithOthers, false);
   });
   test('VideoPlayerOptions preventsDisplaySleepDuringVideoPlayback defaults to true', () {
@@ -19,11 +19,11 @@ void main() {
     expect(options.preventsDisplaySleepDuringVideoPlayback, true);
   });
   test('VideoPlayerOptions backBufferDurationMs defaults to null', () {
-    const options = VideoPlayerOptions();
+    final options = VideoPlayerOptions();
     expect(options.backBufferDurationMs, null);
   });
   test('VideoPlayerOptions backBufferDurationMs stores configured value', () {
-    const options = VideoPlayerOptions(backBufferDurationMs: 20000);
+    final options = VideoPlayerOptions(backBufferDurationMs: 20000);
     expect(options.backBufferDurationMs, 20000);
   });
 }
