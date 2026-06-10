@@ -301,6 +301,32 @@ abstract class Api {
     expect(results.errors[0].message, contains('Enum1'));
   });
 
+  test('enum with a mixin or interface is an error', () {
+    const code = '''
+mixin Mixin1 {}
+
+abstract class Interface1 {}
+
+enum Enum1 with Mixin1 implements Interface1 {
+  one,
+  two,
+}
+
+class ClassWithEnum {
+  Enum1? enum1;
+}
+
+@HostApi
+abstract class Api {
+  ClassWithEnum foo();
+}
+''';
+    final ParseResults results = parseSource(code);
+    expect(results.errors, hasLength(1));
+    expect(results.errors[0].message, contains('enhanced enums'));
+    expect(results.errors[0].message, contains('Enum1'));
+  });
+
   test('plain enum with a trailing semicolon is not an error', () {
     const code = '''
 enum Enum1 {

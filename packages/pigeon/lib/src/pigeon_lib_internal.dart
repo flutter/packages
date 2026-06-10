@@ -1757,17 +1757,20 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     // The enum is still registered below (by its value names) so that classes
     // referencing it don't produce additional, confusing "Unknown type"
     // errors; recording the error here already prevents code generation.
-    final bool hasEnumMembers = node.body.members.isNotEmpty;
-    final bool hasConstantArguments = node.body.constants.any(
-      (dart_ast.EnumConstantDeclaration e) => e.arguments != null,
-    );
-    final bool isEnhancedEnum = hasEnumMembers || hasConstantArguments;
+    final bool isEnhancedEnum =
+        node.body.members.isNotEmpty ||
+        node.body.constants.any((dart_ast.EnumConstantDeclaration e) => e.arguments != null) ||
+        node.namePart.typeParameters != null ||
+        node.namePart is dart_ast.PrimaryConstructorDeclaration ||
+        node.withClause != null ||
+        node.implementsClause != null;
     if (isEnhancedEnum) {
       _errors.add(
         Error(
           message:
               'Pigeon doesn\'t support enhanced enums ("${node.namePart.typeName.lexeme}"). '
-              'Use a plain enum without a constructor, fields, methods, or arguments on its values.',
+              'Use a plain enum without a constructor, fields, methods, type parameters, '
+              'mixins, interfaces, or arguments on its values.',
           lineNumber: calculateLineNumber(source, node.offset),
         ),
       );
