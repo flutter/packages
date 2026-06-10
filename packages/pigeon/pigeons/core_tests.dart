@@ -335,6 +335,26 @@ abstract class HostIntegrationCoreApi {
   List<Object?> echoList(List<Object?> list);
 
   /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoStringList:')
+  @SwiftFunction('echo(stringList:)')
+  List<String?> echoStringList(List<String?> stringList);
+
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoIntList:')
+  @SwiftFunction('echo(intList:)')
+  List<int?> echoIntList(List<int?> intList);
+
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoDoubleList:')
+  @SwiftFunction('echo(doubleList:)')
+  List<double?> echoDoubleList(List<double?> doubleList);
+
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoBoolList:')
+  @SwiftFunction('echo(boolList:)')
+  List<bool?> echoBoolList(List<bool?> boolList);
+
+  /// Returns the passed list, to test serialization and deserialization.
   @ObjCSelector('echoEnumList:')
   @SwiftFunction('echo(enumList:)')
   List<AnEnum?> echoEnumList(List<AnEnum?> enumList);

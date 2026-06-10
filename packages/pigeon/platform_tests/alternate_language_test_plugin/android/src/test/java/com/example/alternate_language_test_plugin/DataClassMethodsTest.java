@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import org.junit.Test;
 
-public class AllDatatypesTest {
+public class DataClassMethodsTest {
 
   void compareAllTypes(AllTypes firstTypes, AllTypes secondTypes) {
     assertEquals(firstTypes == null, secondTypes == null);
@@ -265,6 +265,63 @@ public class AllDatatypesTest {
           }
         });
     assertTrue(didCall[0]);
+  }
+
+  @Test
+  public void testToStringFullOutput() {
+    final List<Object> genericList = Arrays.asList(new Object[] {"hello", 1, true, false, null});
+    final List<List<Object>> listList = new ArrayList<>(Arrays.asList());
+    final List<Map<Object, Object>> mapList = new ArrayList<>(Arrays.asList());
+    final Map<Long, List<Object>> listMap = new HashMap<Long, List<Object>>();
+    final Map<Long, Map<Object, Object>> mapMap = new HashMap<Long, Map<Object, Object>>();
+    listList.add(genericList);
+    mapList.add(makeMap("hello", 1234));
+    listMap.put(1L, genericList);
+    mapMap.put(1L, makeMap("hello", 1234));
+    AllTypes allEverything =
+        new AllTypes.Builder()
+            .setABool(false)
+            .setAnInt(1234L)
+            .setAnInt64(4321L)
+            .setADouble(2.0)
+            .setAString("hello")
+            .setAByteArray(new byte[] {1, 2, 3, 4})
+            .setA4ByteArray(new int[] {1, 2, 3, 4})
+            .setA8ByteArray(new long[] {1, 2, 3, 4})
+            .setAFloatArray(new double[] {0.5, 0.25, 1.5, 1.25})
+            .setAnEnum(CoreTests.AnEnum.ONE)
+            .setAnotherEnum(CoreTests.AnotherEnum.JUST_IN_CASE)
+            .setAnObject(0)
+            .setList(genericList)
+            .setBoolList(Arrays.asList(new Boolean[] {true, false}))
+            .setDoubleList(Arrays.asList(new Double[] {0.5, 0.25, 1.5, 1.25}))
+            .setIntList(Arrays.asList(new Long[] {1l, 2l, 3l, 4l}))
+            .setStringList(Arrays.asList(new String[] {"string", "another one"}))
+            .setObjectList(genericList)
+            .setEnumList(
+                Arrays.asList(
+                    new CoreTests.AnEnum[] {CoreTests.AnEnum.ONE, CoreTests.AnEnum.FORTY_TWO}))
+            .setListList(listList)
+            .setMapList(mapList)
+            .setMap(makeMap("hello", 1234))
+            .setIntMap(makeMap(1L, 0L))
+            .setStringMap(makeMap("hello", "you"))
+            .setObjectMap(makeMap("E", 4321))
+            .setEnumMap(makeMap(CoreTests.AnEnum.ONE, CoreTests.AnEnum.FOUR_HUNDRED_TWENTY_TWO))
+            .setListMap(listMap)
+            .setMapMap(mapMap)
+            .build();
+    assertEquals(
+        "AllTypes{aBool=false, anInt=1234, anInt64=4321, aDouble=2.0, aByteArray=[1, 2, 3, 4],"
+            + " a4ByteArray=[1, 2, 3, 4], a8ByteArray=[1, 2, 3, 4], aFloatArray=[0.5, 0.25, 1.5,"
+            + " 1.25], anEnum=ONE, anotherEnum=JUST_IN_CASE, aString=hello, anObject=0,"
+            + " list=[hello, 1, true, false, null], stringList=[string, another one], intList=[1,"
+            + " 2, 3, 4], doubleList=[0.5, 0.25, 1.5, 1.25], boolList=[true, false], enumList=[ONE,"
+            + " FORTY_TWO], objectList=[hello, 1, true, false, null], listList=[[hello, 1, true,"
+            + " false, null]], mapList=[{hello=1234}], map={hello=1234}, stringMap={hello=you},"
+            + " intMap={1=0}, enumMap={ONE=FOUR_HUNDRED_TWENTY_TWO}, objectMap={E=4321},"
+            + " listMap={1=[hello, 1, true, false, null]}, mapMap={1={hello=1234}}}",
+        allEverything.toString());
   }
 
   @Test

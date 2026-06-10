@@ -10,11 +10,11 @@
 #import "EchoMessenger.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-@interface AllDatatypesTest : XCTestCase
+@interface DataClassMethodsTest : XCTestCase
 @end
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-@implementation AllDatatypesTest
+@implementation DataClassMethodsTest
 
 - (void)testAllNull {
   FLTAllNullableTypes *everything = [[FLTAllNullableTypes alloc] init];
@@ -112,6 +112,24 @@
                    [expectation fulfill];
                  }];
   [self waitForExpectations:@[ expectation ] timeout:1.0];
+}
+
+- (void)testDescriptionFullOutput {
+  FLTAllNullableTypes *everything = [[FLTAllNullableTypes alloc] init];
+  everything.aNullableBool = @NO;
+  everything.aNullableInt = @(1);
+  everything.aNullableDouble = @(2.0);
+  everything.aNullableString = @"123";
+  everything.list = @[ @"string", @1 ];
+  everything.stringMap = @{@"hello" : @"you", @"goodbye" : @"world"};
+
+  NSString *desc = everything.description;
+  XCTAssertTrue([desc hasPrefix:@"FLTAllNullableTypes("]);
+  XCTAssertTrue([desc containsString:@"aNullableBool: "]);
+  XCTAssertTrue([desc containsString:@"aNullableInt: "]);
+  XCTAssertTrue([desc containsString:@"aNullableDouble: "]);
+  XCTAssertTrue([desc containsString:@"123"]);
+  XCTAssertTrue([desc containsString:@"stringMap: "]);
 }
 
 - (void)testEquality {

@@ -1516,4 +1516,25 @@ void main() {
     expect(code, contains('static func == (lhs: Foobar, rhs: Foobar) -> Bool {'));
     expect(code, contains('func hash(into hasher: inout Hasher) {'));
   });
+
+  test('data class toString', () {
+    final classDefinition = Class(
+      name: 'Foobar',
+      fields: <NamedType>[
+        NamedType(
+          type: const TypeDeclaration(baseName: 'int', isNullable: true),
+          name: 'field1',
+        ),
+      ],
+    );
+    final root = Root(apis: <Api>[], classes: <Class>[classDefinition], enums: <Enum>[]);
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(swiftOut: '');
+    const generator = SwiftGenerator();
+    generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains(': Hashable, CustomStringConvertible'));
+    expect(code, contains('public var description: String {'));
+    expect(code, contains(r'return "Foobar(field1: \(String(describing: field1)))"'));
+  });
 }

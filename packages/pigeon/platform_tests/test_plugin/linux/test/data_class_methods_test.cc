@@ -236,3 +236,70 @@ TEST(Equality, SignedZeroMapValue) {
   EXPECT_EQ(core_tests_pigeon_test_all_nullable_types_hash(all1),
             core_tests_pigeon_test_all_nullable_types_hash(all2));
 }
+
+TEST(Equality, ToStringSnapshot) {
+  g_autoptr(CoreTestsPigeonTestAllNullableTypes) empty_obj =
+      create_empty_all_nullable_types();
+
+  gchar* str = core_tests_pigeon_test_all_nullable_types_to_string(empty_obj);
+  ASSERT_NE(str, nullptr);
+
+  // Verify structural validation across all 31 serialized fields.
+  const char* expected_fields[] = {"AllNullableTypes(",
+                                   "a_nullable_bool: null",
+                                   "a_nullable_int: null",
+                                   "a_nullable_int64: null",
+                                   "a_nullable_double: null",
+                                   "a_nullable_byte_array: null",
+                                   "a_nullable4_byte_array: null",
+                                   "a_nullable8_byte_array: null",
+                                   "a_nullable_float_array: null",
+                                   "a_nullable_enum: null",
+                                   "another_nullable_enum: null",
+                                   "a_nullable_string: null",
+                                   "a_nullable_object: null",
+                                   "all_nullable_types: null",
+                                   "list: null",
+                                   "string_list: null",
+                                   "int_list: null",
+                                   "double_list: null",
+                                   "bool_list: null",
+                                   "enum_list: null",
+                                   "object_list: null",
+                                   "list_list: null",
+                                   "map_list: null",
+                                   "recursive_class_list: null",
+                                   "map: null",
+                                   "string_map: null",
+                                   "int_map: null",
+                                   "enum_map: null",
+                                   "object_map: null",
+                                   "list_map: null",
+                                   "map_map: null",
+                                   "recursive_class_map: null"};
+
+  for (const char* field : expected_fields) {
+    EXPECT_TRUE(strstr(str, field) != nullptr)
+        << "Missing expected serialized field content: " << field;
+  }
+
+  // Also verify exact expected canonical string layout for empty
+  // initialization.
+  const char* exact_expected =
+      "AllNullableTypes(a_nullable_bool: null, a_nullable_int: null, "
+      "a_nullable_int64: null, a_nullable_double: null, a_nullable_byte_array: "
+      "null, "
+      "a_nullable4_byte_array: null, a_nullable8_byte_array: null, "
+      "a_nullable_float_array: null, a_nullable_enum: null, "
+      "another_nullable_enum: null, a_nullable_string: null, "
+      "a_nullable_object: null, "
+      "all_nullable_types: null, list: null, string_list: null, int_list: "
+      "null, "
+      "double_list: null, bool_list: null, enum_list: null, object_list: null, "
+      "list_list: null, map_list: null, recursive_class_list: null, map: null, "
+      "string_map: null, int_map: null, enum_map: null, object_map: null, "
+      "list_map: null, map_map: null, recursive_class_map: null)";
+  EXPECT_STREQ(str, exact_expected);
+
+  g_free(str);
+}

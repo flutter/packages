@@ -15,7 +15,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-internal class AllDatatypesTest {
+internal class DataClassMethodsTest {
 
   @Test
   fun testNullValues() {
@@ -291,5 +291,16 @@ internal class AllDatatypesTest {
     val b = AllNullableTypes(aNullableFloatArray = doubleArrayOf(-0.0))
     assertEquals(a, b)
     assertEquals(a.hashCode(), b.hashCode())
+  }
+
+  @Test
+  fun `toString full output serialization`() {
+    // On the JVM/Android, LinkedHashMap and standard Collection string formatting
+    // are deterministic, preserving insertion order. Thus, exact string snapshotting
+    // provides safe, complete, and robust validation across all 31 fields.
+    val everything = getFullyPopulatedAllNullableTypes()
+    assertEquals(
+        "AllNullableTypes(aNullableBool=false, aNullableInt=1234, aNullableInt64=null, aNullableDouble=2.0, aNullableByteArray=[1, 2, 3, 4], aNullable4ByteArray=[1, 2, 3, 4], aNullable8ByteArray=[1, 2, 3, 4], aNullableFloatArray=[0.5, 0.25, 1.5, 1.25], aNullableEnum=TWO, anotherNullableEnum=JUST_IN_CASE, aNullableString=hello, aNullableObject=0, allNullableTypes=null, list=[1, 2, 3], stringList=[string, another one], intList=[1, 2], doubleList=[1.1, 2.2], boolList=[true, false], enumList=[ONE, TWO], objectList=[1, 2, 3], listList=[[string, another one], [string, another one]], mapList=[{hello=1234}, {hello=1234}], recursiveClassList=null, map={hello=1234}, stringMap={hello=you}, intMap={1=0}, enumMap={ONE=FORTY_TWO, TWO=FOUR_HUNDRED_TWENTY_TWO}, objectMap={hello=1234}, listMap={1=[string, another one]}, mapMap={1={}}, recursiveClassMap=null)",
+        everything.toString())
   }
 }
