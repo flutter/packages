@@ -33,7 +33,7 @@ void main() {
 
     final controller = VideoPlayerController.networkUrl(
       Uri.parse('https://127.0.0.1'),
-      videoPlayerOptions: const VideoPlayerOptions(webOptions: expected),
+      videoPlayerOptions: VideoPlayerOptions(webOptions: expected),
     );
     await controller.initialize();
 
@@ -79,9 +79,7 @@ void main() {
 
     final controller = VideoPlayerController.networkUrl(
       Uri.parse('https://127.0.0.1'),
-      videoPlayerOptions: const VideoPlayerOptions(
-        backBufferDurationMs: expectedBackBufferDurationMs,
-      ),
+      videoPlayerOptions: VideoPlayerOptions(backBufferDurationMs: expectedBackBufferDurationMs),
     );
 
     await controller.initialize();
