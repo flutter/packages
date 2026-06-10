@@ -1,10 +1,7 @@
-## NEXT
-
-* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
-
 ## 2.12.0
 
 * Passes `backBufferDurationMs` from `VideoPlayerOptions` to the underlying platform interface.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 2.11.1
 
