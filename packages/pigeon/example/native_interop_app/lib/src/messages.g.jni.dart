@@ -40,9 +40,7 @@ const _$jniVersionCheck = jni$_.JniVersionCheck(1, 0);
 
 /// from: `dev.flutter.pigeon_example_app.FlutterError`
 extension type FlutterError._(jni$_.JObject _$this) implements jni$_.JObject {
-  static final _class = jni$_.JClass.forName(
-    r'dev/flutter/pigeon_example_app/FlutterError',
-  );
+  static final _class = jni$_.JClass.forName(r'dev/flutter/pigeon_example_app/FlutterError');
 
   /// The type which includes information such as the signature of this class.
   static const jni$_.JType<FlutterError> type = $FlutterError$Type$();
@@ -57,11 +55,7 @@ extension type FlutterError._(jni$_.JObject _$this) implements jni$_.JObject {
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
                 jni$_.VarArgs<
-                  (
-                    jni$_.Pointer<jni$_.Void>,
-                    jni$_.Pointer<jni$_.Void>,
-                    jni$_.Pointer<jni$_.Void>,
-                  )
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
                 >,
               )
             >
@@ -78,11 +72,7 @@ extension type FlutterError._(jni$_.JObject _$this) implements jni$_.JObject {
 
   /// from: `public void <init>(java.lang.String string, java.lang.String string1, java.lang.Object object)`
   /// The returned object must be released after use, by calling the [release] method.
-  factory FlutterError(
-    jni$_.JString string,
-    jni$_.JString? string1,
-    jni$_.JObject? object,
-  ) {
+  factory FlutterError(jni$_.JString string, jni$_.JString? string1, jni$_.JObject? object) {
     final _$string = string.reference;
     final _$string1 = string1?.reference ?? jni$_.jNullReference;
     final _$object = object?.reference ?? jni$_.jNullReference;
@@ -141,8 +131,7 @@ extension type FlutterError._(jni$_.JObject _$this) implements jni$_.JObject {
     final _$string = string?.reference ?? jni$_.jNullReference;
     final _$string1 = string1?.reference ?? jni$_.jNullReference;
     final _$object = object?.reference ?? jni$_.jNullReference;
-    final _$defaultConstructorMarker =
-        defaultConstructorMarker?.reference ?? jni$_.jNullReference;
+    final _$defaultConstructorMarker = defaultConstructorMarker?.reference ?? jni$_.jNullReference;
     return _new$1(
       _class.reference.pointer,
       _id_new$1.pointer,
@@ -164,26 +153,15 @@ extension FlutterError$$Methods on FlutterError {
   static final _get$code =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-              )
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
             >
           >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-            )
-          >();
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
   /// from: `public final java.lang.String getCode()`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JString get code {
-    return _get$code(
-      reference.pointer,
-      _id_get$code.pointer,
-    ).object<jni$_.JString>();
+    return _get$code(reference.pointer, _id_get$code.pointer).object<jni$_.JString>();
   }
 
   static final _id_get$message = FlutterError._class.instanceMethodId(
@@ -194,26 +172,15 @@ extension FlutterError$$Methods on FlutterError {
   static final _get$message =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-              )
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
             >
           >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-            )
-          >();
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
   /// from: `public java.lang.String getMessage()`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JString? get message {
-    return _get$message(
-      reference.pointer,
-      _id_get$message.pointer,
-    ).object<jni$_.JString?>();
+    return _get$message(reference.pointer, _id_get$message.pointer).object<jni$_.JString?>();
   }
 
   static final _id_get$details = FlutterError._class.instanceMethodId(
@@ -224,26 +191,15 @@ extension FlutterError$$Methods on FlutterError {
   static final _get$details =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-              )
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
             >
           >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-            )
-          >();
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
   /// from: `public final java.lang.Object getDetails()`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JObject? get details {
-    return _get$details(
-      reference.pointer,
-      _id_get$details.pointer,
-    ).object<jni$_.JObject?>();
+    return _get$details(reference.pointer, _id_get$details.pointer).object<jni$_.JObject?>();
   }
 }
 
@@ -258,33 +214,25 @@ final class $FlutterError$Type$ extends jni$_.JType<FlutterError> {
 
 /// from: `dev.flutter.pigeon_example_app.ExampleHostApi`
 extension type ExampleHostApi._(jni$_.JObject _$this) implements jni$_.JObject {
-  static final _class = jni$_.JClass.forName(
-    r'dev/flutter/pigeon_example_app/ExampleHostApi',
-  );
+  static final _class = jni$_.JClass.forName(r'dev/flutter/pigeon_example_app/ExampleHostApi');
 
   /// The type which includes information such as the signature of this class.
   static const jni$_.JType<ExampleHostApi> type = $ExampleHostApi$Type$();
 }
 
 extension ExampleHostApi$$Methods on ExampleHostApi {
-  static final _id_determineHostLanguage = ExampleHostApi._class
-      .instanceMethodId(r'determineHostLanguage', r'()Ljava/lang/String;');
+  static final _id_determineHostLanguage = ExampleHostApi._class.instanceMethodId(
+    r'determineHostLanguage',
+    r'()Ljava/lang/String;',
+  );
 
   static final _determineHostLanguage =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-              )
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
             >
           >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-            )
-          >();
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
   /// from: `public fun determineHostLanguage(): kotlin.String`
   /// The returned object must be released after use, by calling the [release] method.
@@ -295,10 +243,7 @@ extension ExampleHostApi$$Methods on ExampleHostApi {
     ).object<jni$_.JString>();
   }
 
-  static final _id_add = ExampleHostApi._class.instanceMethodId(
-    r'add',
-    r'(JJ)J',
-  );
+  static final _id_add = ExampleHostApi._class.instanceMethodId(r'add', r'(JJ)J');
 
   static final _add =
       jni$_.ProtectedJniExtensions.lookup<
@@ -335,9 +280,7 @@ extension ExampleHostApi$$Methods on ExampleHostApi {
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<
-                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
-                >,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -367,16 +310,11 @@ extension ExampleHostApi$$Methods on ExampleHostApi {
     if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(
-        jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)),
-      );
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
       if ($o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
       } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
-        final $e = jni$_.failureExceptionField.get(
-          $o,
-          const jni$_.$JObject$Type$(),
-        );
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
       }
@@ -397,40 +335,27 @@ final class $ExampleHostApi$Type$ extends jni$_.JType<ExampleHostApi> {
 }
 
 /// from: `dev.flutter.pigeon_example_app.ExampleHostApiRegistrar`
-extension type ExampleHostApiRegistrar._(jni$_.JObject _$this)
-    implements ExampleHostApi {
+extension type ExampleHostApiRegistrar._(jni$_.JObject _$this) implements ExampleHostApi {
   static final _class = jni$_.JClass.forName(
     r'dev/flutter/pigeon_example_app/ExampleHostApiRegistrar',
   );
 
   /// The type which includes information such as the signature of this class.
-  static const jni$_.JType<ExampleHostApiRegistrar> type =
-      $ExampleHostApiRegistrar$Type$();
+  static const jni$_.JType<ExampleHostApiRegistrar> type = $ExampleHostApiRegistrar$Type$();
   static final _id_new$ = _class.constructorId(r'()V');
 
   static final _new$ =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-              )
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
             >
           >('globalEnv_NewObject')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-            )
-          >();
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
   /// from: `public void <init>()`
   /// The returned object must be released after use, by calling the [release] method.
   factory ExampleHostApiRegistrar() {
-    return _new$(
-      _class.reference.pointer,
-      _id_new$.pointer,
-    ).object<ExampleHostApiRegistrar>();
+    return _new$(_class.reference.pointer, _id_new$.pointer).object<ExampleHostApiRegistrar>();
   }
 }
 
@@ -443,26 +368,15 @@ extension ExampleHostApiRegistrar$$Methods on ExampleHostApiRegistrar {
   static final _get$api =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-              )
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
             >
           >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-            )
-          >();
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
   /// from: `public final dev.flutter.pigeon_example_app.ExampleHostApi getApi()`
   /// The returned object must be released after use, by calling the [release] method.
   ExampleHostApi? get api {
-    return _get$api(
-      reference.pointer,
-      _id_get$api.pointer,
-    ).object<ExampleHostApi?>();
+    return _get$api(reference.pointer, _id_get$api.pointer).object<ExampleHostApi?>();
   }
 
   static final _id_set$api = ExampleHostApiRegistrar._class.instanceMethodId(
@@ -491,11 +405,7 @@ extension ExampleHostApiRegistrar$$Methods on ExampleHostApiRegistrar {
   /// from: `public final void setApi(dev.flutter.pigeon_example_app.ExampleHostApi exampleHostApi)`
   set api(ExampleHostApi? exampleHostApi) {
     final _$exampleHostApi = exampleHostApi?.reference ?? jni$_.jNullReference;
-    _set$api(
-      reference.pointer,
-      _id_set$api.pointer,
-      _$exampleHostApi.pointer,
-    ).check();
+    _set$api(reference.pointer, _id_set$api.pointer, _$exampleHostApi.pointer).check();
   }
 
   static final _id_register = ExampleHostApiRegistrar._class.instanceMethodId(
@@ -509,9 +419,7 @@ extension ExampleHostApiRegistrar$$Methods on ExampleHostApiRegistrar {
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<
-                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
-                >,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -526,10 +434,7 @@ extension ExampleHostApiRegistrar$$Methods on ExampleHostApiRegistrar {
 
   /// from: `public fun register(api: dev.flutter.pigeon_example_app.ExampleHostApi, name: kotlin.String): dev.flutter.pigeon_example_app.ExampleHostApiRegistrar`
   /// The returned object must be released after use, by calling the [release] method.
-  ExampleHostApiRegistrar register(
-    ExampleHostApi exampleHostApi,
-    jni$_.JString string,
-  ) {
+  ExampleHostApiRegistrar register(ExampleHostApi exampleHostApi, jni$_.JString string) {
     final _$exampleHostApi = exampleHostApi.reference;
     final _$string = string.reference;
     return _register(
@@ -574,24 +479,18 @@ extension ExampleHostApiRegistrar$$Methods on ExampleHostApiRegistrar {
     ).object<ExampleHostApiRegistrar?>();
   }
 
-  static final _id_determineHostLanguage = ExampleHostApiRegistrar._class
-      .instanceMethodId(r'determineHostLanguage', r'()Ljava/lang/String;');
+  static final _id_determineHostLanguage = ExampleHostApiRegistrar._class.instanceMethodId(
+    r'determineHostLanguage',
+    r'()Ljava/lang/String;',
+  );
 
   static final _determineHostLanguage =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-              )
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
             >
           >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-            )
-          >();
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
   /// from: `public fun determineHostLanguage(): kotlin.String`
   /// The returned object must be released after use, by calling the [release] method.
@@ -602,10 +501,7 @@ extension ExampleHostApiRegistrar$$Methods on ExampleHostApiRegistrar {
     ).object<jni$_.JString>();
   }
 
-  static final _id_add = ExampleHostApiRegistrar._class.instanceMethodId(
-    r'add',
-    r'(JJ)J',
-  );
+  static final _id_add = ExampleHostApiRegistrar._class.instanceMethodId(r'add', r'(JJ)J');
 
   static final _add =
       jni$_.ProtectedJniExtensions.lookup<
@@ -642,9 +538,7 @@ extension ExampleHostApiRegistrar$$Methods on ExampleHostApiRegistrar {
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<
-                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
-                >,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -674,16 +568,11 @@ extension ExampleHostApiRegistrar$$Methods on ExampleHostApiRegistrar {
     if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(
-        jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)),
-      );
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
       if ($o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
       } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
-        final $e = jni$_.failureExceptionField.get(
-          $o,
-          const jni$_.$JObject$Type$(),
-        );
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
       }
@@ -694,23 +583,18 @@ extension ExampleHostApiRegistrar$$Methods on ExampleHostApiRegistrar {
   }
 }
 
-final class $ExampleHostApiRegistrar$Type$
-    extends jni$_.JType<ExampleHostApiRegistrar> {
+final class $ExampleHostApiRegistrar$Type$ extends jni$_.JType<ExampleHostApiRegistrar> {
   @jni$_.internal
   const $ExampleHostApiRegistrar$Type$();
 
   @jni$_.internal
   @core$_.override
-  String get signature =>
-      r'Ldev/flutter/pigeon_example_app/ExampleHostApiRegistrar;';
+  String get signature => r'Ldev/flutter/pigeon_example_app/ExampleHostApiRegistrar;';
 }
 
 /// from: `dev.flutter.pigeon_example_app.MessageFlutterApi`
-extension type MessageFlutterApi._(jni$_.JObject _$this)
-    implements jni$_.JObject {
-  static final _class = jni$_.JClass.forName(
-    r'dev/flutter/pigeon_example_app/MessageFlutterApi',
-  );
+extension type MessageFlutterApi._(jni$_.JObject _$this) implements jni$_.JObject {
+  static final _class = jni$_.JClass.forName(r'dev/flutter/pigeon_example_app/MessageFlutterApi');
 
   /// The type which includes information such as the signature of this class.
   static const jni$_.JType<MessageFlutterApi> type = $MessageFlutterApi$Type$();
@@ -729,25 +613,17 @@ extension type MessageFlutterApi._(jni$_.JObject _$this)
   }
 
   static final jni$_.Pointer<
-    jni$_.NativeFunction<
-      jni$_.JObjectPtr Function(jni$_.Int64, jni$_.JObjectPtr, jni$_.JObjectPtr)
-    >
+    jni$_.NativeFunction<jni$_.JObjectPtr Function(jni$_.Int64, jni$_.JObjectPtr, jni$_.JObjectPtr)>
   >
   _$invokePointer = jni$_.Pointer.fromFunction(_$invoke);
 
-  static jni$_.Pointer<jni$_.Void> _$invokeMethod(
-    core$_.int $p,
-    jni$_.MethodInvocation $i,
-  ) {
+  static jni$_.Pointer<jni$_.Void> _$invokeMethod(core$_.int $p, jni$_.MethodInvocation $i) {
     try {
       final $d = $i.methodDescriptor.toDartString(releaseOriginal: true);
       final $a = $i.args;
       if ($d == r'flutterMethod(Ljava/lang/String;)Ljava/lang/String;') {
         final $r = _$impls[$p]!.flutterMethod(($a![0] as jni$_.JString?));
-        return ($r as jni$_.JObject?)
-                ?.as(const jni$_.$JObject$Type$())
-                .reference
-                .toPointer() ??
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
     } catch (e) {
@@ -756,10 +632,7 @@ extension type MessageFlutterApi._(jni$_.JObject _$this)
     return jni$_.nullptr;
   }
 
-  static void implementIn(
-    jni$_.JImplementer implementer,
-    $MessageFlutterApi $impl,
-  ) {
+  static void implementIn(jni$_.JImplementer implementer, $MessageFlutterApi $impl) {
     late final jni$_.RawReceivePort $p;
     $p = jni$_.RawReceivePort(($m) {
       if ($m == null) {
@@ -771,12 +644,7 @@ extension type MessageFlutterApi._(jni$_.JObject _$this)
       final $r = _$invokeMethod($p.sendPort.nativePort, $i);
       jni$_.ProtectedJniExtensions.returnResult($i.result, $r);
     });
-    implementer.add(
-      r'dev.flutter.pigeon_example_app.MessageFlutterApi',
-      $p,
-      _$invokePointer,
-      [],
-    );
+    implementer.add(r'dev.flutter.pigeon_example_app.MessageFlutterApi', $p, _$invokePointer, []);
     final $a = $p.sendPort.nativePort;
     _$impls[$a] = $impl;
   }
@@ -833,9 +701,8 @@ abstract base mixin class $MessageFlutterApi {
 }
 
 final class _$MessageFlutterApi with $MessageFlutterApi {
-  _$MessageFlutterApi({
-    required jni$_.JString Function(jni$_.JString? string) flutterMethod,
-  }) : _flutterMethod = flutterMethod;
+  _$MessageFlutterApi({required jni$_.JString Function(jni$_.JString? string) flutterMethod})
+    : _flutterMethod = flutterMethod;
 
   final jni$_.JString Function(jni$_.JString? string) _flutterMethod;
 
@@ -854,49 +721,35 @@ final class $MessageFlutterApi$Type$ extends jni$_.JType<MessageFlutterApi> {
 }
 
 /// from: `dev.flutter.pigeon_example_app.MessageFlutterApiRegistrar`
-extension type MessageFlutterApiRegistrar._(jni$_.JObject _$this)
-    implements jni$_.JObject {
+extension type MessageFlutterApiRegistrar._(jni$_.JObject _$this) implements jni$_.JObject {
   static final _class = jni$_.JClass.forName(
     r'dev/flutter/pigeon_example_app/MessageFlutterApiRegistrar',
   );
 
   /// The type which includes information such as the signature of this class.
-  static const jni$_.JType<MessageFlutterApiRegistrar> type =
-      $MessageFlutterApiRegistrar$Type$();
+  static const jni$_.JType<MessageFlutterApiRegistrar> type = $MessageFlutterApiRegistrar$Type$();
   static final _id_new$ = _class.constructorId(r'()V');
 
   static final _new$ =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-              )
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
             >
           >('globalEnv_NewObject')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-            )
-          >();
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
   /// from: `public void <init>()`
   /// The returned object must be released after use, by calling the [release] method.
   factory MessageFlutterApiRegistrar() {
-    return _new$(
-      _class.reference.pointer,
-      _id_new$.pointer,
-    ).object<MessageFlutterApiRegistrar>();
+    return _new$(_class.reference.pointer, _id_new$.pointer).object<MessageFlutterApiRegistrar>();
   }
 }
 
 extension MessageFlutterApiRegistrar$$Methods on MessageFlutterApiRegistrar {
-  static final _id_registerInstance = MessageFlutterApiRegistrar._class
-      .instanceMethodId(
-        r'registerInstance',
-        r'(Ldev/flutter/pigeon_example_app/MessageFlutterApi;Ljava/lang/String;)V',
-      );
+  static final _id_registerInstance = MessageFlutterApiRegistrar._class.instanceMethodId(
+    r'registerInstance',
+    r'(Ldev/flutter/pigeon_example_app/MessageFlutterApi;Ljava/lang/String;)V',
+  );
 
   static final _registerInstance =
       jni$_.ProtectedJniExtensions.lookup<
@@ -904,9 +757,7 @@ extension MessageFlutterApiRegistrar$$Methods on MessageFlutterApiRegistrar {
               jni$_.JThrowablePtr Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<
-                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
-                >,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
               )
             >
           >('globalEnv_CallVoidMethod')
@@ -920,10 +771,7 @@ extension MessageFlutterApiRegistrar$$Methods on MessageFlutterApiRegistrar {
           >();
 
   /// from: `public fun registerInstance(api: dev.flutter.pigeon_example_app.MessageFlutterApi, name: kotlin.String): kotlin.Unit`
-  void registerInstance(
-    MessageFlutterApi messageFlutterApi,
-    jni$_.JString string,
-  ) {
+  void registerInstance(MessageFlutterApi messageFlutterApi, jni$_.JString string) {
     final _$messageFlutterApi = messageFlutterApi.reference;
     final _$string = string.reference;
     _registerInstance(
@@ -934,11 +782,10 @@ extension MessageFlutterApiRegistrar$$Methods on MessageFlutterApiRegistrar {
     ).check();
   }
 
-  static final _id_getInstance = MessageFlutterApiRegistrar._class
-      .instanceMethodId(
-        r'getInstance',
-        r'(Ljava/lang/String;)Ldev/flutter/pigeon_example_app/MessageFlutterApi;',
-      );
+  static final _id_getInstance = MessageFlutterApiRegistrar._class.instanceMethodId(
+    r'getInstance',
+    r'(Ljava/lang/String;)Ldev/flutter/pigeon_example_app/MessageFlutterApi;',
+  );
 
   static final _getInstance =
       jni$_.ProtectedJniExtensions.lookup<
@@ -970,27 +817,23 @@ extension MessageFlutterApiRegistrar$$Methods on MessageFlutterApiRegistrar {
   }
 }
 
-final class $MessageFlutterApiRegistrar$Type$
-    extends jni$_.JType<MessageFlutterApiRegistrar> {
+final class $MessageFlutterApiRegistrar$Type$ extends jni$_.JType<MessageFlutterApiRegistrar> {
   @jni$_.internal
   const $MessageFlutterApiRegistrar$Type$();
 
   @jni$_.internal
   @core$_.override
-  String get signature =>
-      r'Ldev/flutter/pigeon_example_app/MessageFlutterApiRegistrar;';
+  String get signature => r'Ldev/flutter/pigeon_example_app/MessageFlutterApiRegistrar;';
 }
 
 /// from: `dev.flutter.pigeon_example_app.MessageData$Companion`
-extension type MessageData$Companion._(jni$_.JObject _$this)
-    implements jni$_.JObject {
+extension type MessageData$Companion._(jni$_.JObject _$this) implements jni$_.JObject {
   static final _class = jni$_.JClass.forName(
     r'dev/flutter/pigeon_example_app/MessageData$Companion',
   );
 
   /// The type which includes information such as the signature of this class.
-  static const jni$_.JType<MessageData$Companion> type =
-      $MessageData$Companion$Type$();
+  static const jni$_.JType<MessageData$Companion> type = $MessageData$Companion$Type$();
   static final _id_new$ = _class.constructorId(
     r'(Lkotlin/jvm/internal/DefaultConstructorMarker;)V',
   );
@@ -1016,8 +859,7 @@ extension type MessageData$Companion._(jni$_.JObject _$this)
   /// from: `synthetic public void <init>(kotlin.jvm.internal.DefaultConstructorMarker defaultConstructorMarker)`
   /// The returned object must be released after use, by calling the [release] method.
   factory MessageData$Companion(jni$_.JObject? defaultConstructorMarker) {
-    final _$defaultConstructorMarker =
-        defaultConstructorMarker?.reference ?? jni$_.jNullReference;
+    final _$defaultConstructorMarker = defaultConstructorMarker?.reference ?? jni$_.jNullReference;
     return _new$(
       _class.reference.pointer,
       _id_new$.pointer,
@@ -1054,30 +896,22 @@ extension MessageData$Companion$$Methods on MessageData$Companion {
   /// The returned object must be released after use, by calling the [release] method.
   MessageData fromList(jni$_.JList<jni$_.JObject?> list) {
     final _$list = list.reference;
-    return _fromList(
-      reference.pointer,
-      _id_fromList.pointer,
-      _$list.pointer,
-    ).object<MessageData>();
+    return _fromList(reference.pointer, _id_fromList.pointer, _$list.pointer).object<MessageData>();
   }
 }
 
-final class $MessageData$Companion$Type$
-    extends jni$_.JType<MessageData$Companion> {
+final class $MessageData$Companion$Type$ extends jni$_.JType<MessageData$Companion> {
   @jni$_.internal
   const $MessageData$Companion$Type$();
 
   @jni$_.internal
   @core$_.override
-  String get signature =>
-      r'Ldev/flutter/pigeon_example_app/MessageData$Companion;';
+  String get signature => r'Ldev/flutter/pigeon_example_app/MessageData$Companion;';
 }
 
 /// from: `dev.flutter.pigeon_example_app.MessageData`
 extension type MessageData._(jni$_.JObject _$this) implements jni$_.JObject {
-  static final _class = jni$_.JClass.forName(
-    r'dev/flutter/pigeon_example_app/MessageData',
-  );
+  static final _class = jni$_.JClass.forName(r'dev/flutter/pigeon_example_app/MessageData');
 
   /// The type which includes information such as the signature of this class.
   static const jni$_.JType<MessageData> type = $MessageData$Type$();
@@ -1089,8 +923,7 @@ extension type MessageData._(jni$_.JObject _$this) implements jni$_.JObject {
   /// from: `static public final dev.flutter.pigeon_example_app.MessageData$Companion Companion`
   /// The returned object must be released after use, by calling the [release] method.
   static MessageData$Companion get Companion =>
-      _id_Companion.get(_class, MessageData$Companion.type)
-          as MessageData$Companion;
+      _id_Companion.get(_class, MessageData$Companion.type) as MessageData$Companion;
 
   static final _id_new$ = _class.constructorId(
     r'(Ljava/lang/String;Ljava/lang/String;Ldev/flutter/pigeon_example_app/Code;Ljava/util/Map;)V',
@@ -1196,8 +1029,7 @@ extension type MessageData._(jni$_.JObject _$this) implements jni$_.JObject {
     final _$string1 = string1?.reference ?? jni$_.jNullReference;
     final _$code = code?.reference ?? jni$_.jNullReference;
     final _$map = map?.reference ?? jni$_.jNullReference;
-    final _$defaultConstructorMarker =
-        defaultConstructorMarker?.reference ?? jni$_.jNullReference;
+    final _$defaultConstructorMarker = defaultConstructorMarker?.reference ?? jni$_.jNullReference;
     return _new$1(
       _class.reference.pointer,
       _id_new$1.pointer,
@@ -1220,26 +1052,15 @@ extension MessageData$$Methods on MessageData {
   static final _get$name =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-              )
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
             >
           >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-            )
-          >();
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
   /// from: `public final java.lang.String getName()`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JString? get name {
-    return _get$name(
-      reference.pointer,
-      _id_get$name.pointer,
-    ).object<jni$_.JString?>();
+    return _get$name(reference.pointer, _id_get$name.pointer).object<jni$_.JString?>();
   }
 
   static final _id_get$messageDescription = MessageData._class.instanceMethodId(
@@ -1250,18 +1071,10 @@ extension MessageData$$Methods on MessageData {
   static final _get$messageDescription =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-              )
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
             >
           >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-            )
-          >();
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
   /// from: `public final java.lang.String getMessageDescription()`
   /// The returned object must be released after use, by calling the [release] method.
@@ -1280,18 +1093,10 @@ extension MessageData$$Methods on MessageData {
   static final _get$code =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-              )
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
             >
           >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-            )
-          >();
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
   /// from: `public final dev.flutter.pigeon_example_app.Code getCode()`
   /// The returned object must be released after use, by calling the [release] method.
@@ -1299,26 +1104,15 @@ extension MessageData$$Methods on MessageData {
     return _get$code(reference.pointer, _id_get$code.pointer).object<Code>();
   }
 
-  static final _id_get$data = MessageData._class.instanceMethodId(
-    r'getData',
-    r'()Ljava/util/Map;',
-  );
+  static final _id_get$data = MessageData._class.instanceMethodId(r'getData', r'()Ljava/util/Map;');
 
   static final _get$data =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-              )
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
             >
           >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-            )
-          >();
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
   /// from: `public final java.util.Map<java.lang.String, java.lang.String> getData()`
   /// The returned object must be released after use, by calling the [release] method.
@@ -1329,34 +1123,20 @@ extension MessageData$$Methods on MessageData {
     ).object<jni$_.JMap<jni$_.JString, jni$_.JString>>();
   }
 
-  static final _id_toList = MessageData._class.instanceMethodId(
-    r'toList',
-    r'()Ljava/util/List;',
-  );
+  static final _id_toList = MessageData._class.instanceMethodId(r'toList', r'()Ljava/util/List;');
 
   static final _toList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-              )
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
             >
           >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-            )
-          >();
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
   /// from: `public fun toList(): kotlin.collections.List<kotlin.Any?>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<jni$_.JObject?> toList() {
-    return _toList(
-      reference.pointer,
-      _id_toList.pointer,
-    ).object<jni$_.JList<jni$_.JObject?>>();
+    return _toList(reference.pointer, _id_toList.pointer).object<jni$_.JList<jni$_.JObject?>>();
   }
 
   static final _id_equals = MessageData._class.instanceMethodId(
@@ -1385,33 +1165,18 @@ extension MessageData$$Methods on MessageData {
   /// from: `public operator fun equals(other: kotlin.Any?): kotlin.Boolean`
   core$_.bool equals(jni$_.JObject? object) {
     final _$object = object?.reference ?? jni$_.jNullReference;
-    return _equals(
-      reference.pointer,
-      _id_equals.pointer,
-      _$object.pointer,
-    ).boolean;
+    return _equals(reference.pointer, _id_equals.pointer, _$object.pointer).boolean;
   }
 
-  static final _id_hashCode$1 = MessageData._class.instanceMethodId(
-    r'hashCode',
-    r'()I',
-  );
+  static final _id_hashCode$1 = MessageData._class.instanceMethodId(r'hashCode', r'()I');
 
   static final _hashCode$1 =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-              )
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
             >
           >('globalEnv_CallIntMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-            )
-          >();
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
   /// from: `public fun hashCode(): kotlin.Int`
   core$_.int hashCode$1() {
@@ -1426,26 +1191,15 @@ extension MessageData$$Methods on MessageData {
   static final _component1 =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-              )
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
             >
           >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-            )
-          >();
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
   /// from: `public operator fun component1(): kotlin.String?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JString? component1() {
-    return _component1(
-      reference.pointer,
-      _id_component1.pointer,
-    ).object<jni$_.JString?>();
+    return _component1(reference.pointer, _id_component1.pointer).object<jni$_.JString?>();
   }
 
   static final _id_component2 = MessageData._class.instanceMethodId(
@@ -1456,26 +1210,15 @@ extension MessageData$$Methods on MessageData {
   static final _component2 =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-              )
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
             >
           >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-            )
-          >();
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
   /// from: `public operator fun component2(): kotlin.String?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JString? component2() {
-    return _component2(
-      reference.pointer,
-      _id_component2.pointer,
-    ).object<jni$_.JString?>();
+    return _component2(reference.pointer, _id_component2.pointer).object<jni$_.JString?>();
   }
 
   static final _id_component3 = MessageData._class.instanceMethodId(
@@ -1486,26 +1229,15 @@ extension MessageData$$Methods on MessageData {
   static final _component3 =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-              )
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
             >
           >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-            )
-          >();
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
   /// from: `public operator fun component3(): dev.flutter.pigeon_example_app.Code`
   /// The returned object must be released after use, by calling the [release] method.
   Code component3() {
-    return _component3(
-      reference.pointer,
-      _id_component3.pointer,
-    ).object<Code>();
+    return _component3(reference.pointer, _id_component3.pointer).object<Code>();
   }
 
   static final _id_component4 = MessageData._class.instanceMethodId(
@@ -1516,18 +1248,10 @@ extension MessageData$$Methods on MessageData {
   static final _component4 =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-              )
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
             >
           >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-            )
-          >();
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
   /// from: `public operator fun component4(): kotlin.collections.Map<kotlin.String, kotlin.String>`
   /// The returned object must be released after use, by calling the [release] method.
@@ -1601,26 +1325,15 @@ extension MessageData$$Methods on MessageData {
   static final _toString$1 =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-              )
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
             >
           >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-            )
-          >();
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
   /// from: `public fun toString(): kotlin.String`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JString toString$1() {
-    return _toString$1(
-      reference.pointer,
-      _id_toString$1.pointer,
-    ).object<jni$_.JString>();
+    return _toString$1(reference.pointer, _id_toString$1.pointer).object<jni$_.JString>();
   }
 }
 
@@ -1635,9 +1348,7 @@ final class $MessageData$Type$ extends jni$_.JType<MessageData> {
 
 /// from: `dev.flutter.pigeon_example_app.Code$Companion`
 extension type Code$Companion._(jni$_.JObject _$this) implements jni$_.JObject {
-  static final _class = jni$_.JClass.forName(
-    r'dev/flutter/pigeon_example_app/Code$Companion',
-  );
+  static final _class = jni$_.JClass.forName(r'dev/flutter/pigeon_example_app/Code$Companion');
 
   /// The type which includes information such as the signature of this class.
   static const jni$_.JType<Code$Companion> type = $Code$Companion$Type$();
@@ -1666,8 +1377,7 @@ extension type Code$Companion._(jni$_.JObject _$this) implements jni$_.JObject {
   /// from: `synthetic public void <init>(kotlin.jvm.internal.DefaultConstructorMarker defaultConstructorMarker)`
   /// The returned object must be released after use, by calling the [release] method.
   factory Code$Companion(jni$_.JObject? defaultConstructorMarker) {
-    final _$defaultConstructorMarker =
-        defaultConstructorMarker?.reference ?? jni$_.jNullReference;
+    final _$defaultConstructorMarker = defaultConstructorMarker?.reference ?? jni$_.jNullReference;
     return _new$(
       _class.reference.pointer,
       _id_new$.pointer,
@@ -1693,11 +1403,7 @@ extension Code$Companion$$Methods on Code$Companion {
             >
           >('globalEnv_CallObjectMethod')
           .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              core$_.int,
-            )
+            jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
   /// from: `public fun ofRaw(raw: kotlin.Int): dev.flutter.pigeon_example_app.Code?`
@@ -1718,9 +1424,7 @@ final class $Code$Companion$Type$ extends jni$_.JType<Code$Companion> {
 
 /// from: `dev.flutter.pigeon_example_app.Code`
 extension type Code._(jni$_.JObject _$this) implements jni$_.JObject {
-  static final _class = jni$_.JClass.forName(
-    r'dev/flutter/pigeon_example_app/Code',
-  );
+  static final _class = jni$_.JClass.forName(r'dev/flutter/pigeon_example_app/Code');
 
   /// The type which includes information such as the signature of this class.
   static const jni$_.JType<Code> type = $Code$Type$();
@@ -1734,19 +1438,13 @@ extension type Code._(jni$_.JObject _$this) implements jni$_.JObject {
   static Code$Companion get Companion =>
       _id_Companion.get(_class, Code$Companion.type) as Code$Companion;
 
-  static final _id_ONE = _class.staticFieldId(
-    r'ONE',
-    r'Ldev/flutter/pigeon_example_app/Code;',
-  );
+  static final _id_ONE = _class.staticFieldId(r'ONE', r'Ldev/flutter/pigeon_example_app/Code;');
 
   /// from: `static public final dev.flutter.pigeon_example_app.Code ONE`
   /// The returned object must be released after use, by calling the [release] method.
   static Code get ONE => _id_ONE.get(_class, Code.type) as Code;
 
-  static final _id_TWO = _class.staticFieldId(
-    r'TWO',
-    r'Ldev/flutter/pigeon_example_app/Code;',
-  );
+  static final _id_TWO = _class.staticFieldId(r'TWO', r'Ldev/flutter/pigeon_example_app/Code;');
 
   /// from: `static public final dev.flutter.pigeon_example_app.Code TWO`
   /// The returned object must be released after use, by calling the [release] method.
@@ -1760,26 +1458,15 @@ extension type Code._(jni$_.JObject _$this) implements jni$_.JObject {
   static final _values =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-              )
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
             >
           >('globalEnv_CallStaticObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-            )
-          >();
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
   /// from: `static public dev.flutter.pigeon_example_app.Code[] values()`
   /// The returned object must be released after use, by calling the [release] method.
   static jni$_.JArray<Code?>? values() {
-    return _values(
-      _class.reference.pointer,
-      _id_values.pointer,
-    ).object<jni$_.JArray<Code?>?>();
+    return _values(_class.reference.pointer, _id_values.pointer).object<jni$_.JArray<Code?>?>();
   }
 
   static final _id_valueOf = _class.staticMethodId(
@@ -1824,26 +1511,15 @@ extension type Code._(jni$_.JObject _$this) implements jni$_.JObject {
   static final _get$entries =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-              )
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
             >
           >('globalEnv_CallStaticObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-            )
-          >();
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
   /// from: `static public kotlin.enums.EnumEntries<dev.flutter.pigeon_example_app.Code> getEntries()`
   /// The returned object must be released after use, by calling the [release] method.
   static jni$_.JObject get entries {
-    return _get$entries(
-      _class.reference.pointer,
-      _id_get$entries.pointer,
-    ).object<jni$_.JObject>();
+    return _get$entries(_class.reference.pointer, _id_get$entries.pointer).object<jni$_.JObject>();
   }
 }
 
@@ -1853,18 +1529,10 @@ extension Code$$Methods on Code {
   static final _get$raw =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-              )
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
             >
           >('globalEnv_CallIntMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-            )
-          >();
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
   /// from: `public final int getRaw()`
   core$_.int get raw {

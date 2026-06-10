@@ -16,9 +16,7 @@ void main() {
     testWidgets('serializes correctly', (WidgetTester tester) async {
       final cameraOptions = CameraOptions(
         audio: const AudioConstraints(enabled: true),
-        video: VideoConstraints(
-          facingMode: FacingModeConstraint.exact(CameraType.user),
-        ),
+        video: VideoConstraints(facingMode: FacingModeConstraint.exact(CameraType.user)),
       );
 
       expect(
@@ -36,16 +34,8 @@ void main() {
           audio: const AudioConstraints(),
           video: VideoConstraints(
             facingMode: FacingModeConstraint(CameraType.environment),
-            width: const VideoSizeConstraint(
-              minimum: 10,
-              ideal: 15,
-              maximum: 20,
-            ),
-            height: const VideoSizeConstraint(
-              minimum: 15,
-              ideal: 20,
-              maximum: 25,
-            ),
+            width: const VideoSizeConstraint(minimum: 10, ideal: 15, maximum: 20),
+            height: const VideoSizeConstraint(minimum: 15, ideal: 20, maximum: 25),
             deviceId: 'deviceId',
           ),
         ),
@@ -54,16 +44,8 @@ void main() {
             audio: const AudioConstraints(),
             video: VideoConstraints(
               facingMode: FacingModeConstraint(CameraType.environment),
-              width: const VideoSizeConstraint(
-                minimum: 10,
-                ideal: 15,
-                maximum: 20,
-              ),
-              height: const VideoSizeConstraint(
-                minimum: 15,
-                ideal: 20,
-                maximum: 25,
-              ),
+              width: const VideoSizeConstraint(minimum: 10, ideal: 15, maximum: 20),
+              height: const VideoSizeConstraint(minimum: 15, ideal: 20, maximum: 25),
               deviceId: 'deviceId',
             ),
           ),
@@ -74,17 +56,11 @@ void main() {
 
   group('AudioConstraints', () {
     testWidgets('serializes correctly', (WidgetTester tester) async {
-      expect(
-        const AudioConstraints(enabled: true).toMediaStreamConstraints(),
-        true.toJS,
-      );
+      expect(const AudioConstraints(enabled: true).toMediaStreamConstraints(), true.toJS);
     });
 
     testWidgets('supports value equality', (WidgetTester tester) async {
-      expect(
-        const AudioConstraints(enabled: true),
-        equals(const AudioConstraints(enabled: true)),
-      );
+      expect(const AudioConstraints(enabled: true), equals(const AudioConstraints(enabled: true)));
     });
   });
 
@@ -108,9 +84,7 @@ void main() {
       );
     });
 
-    testWidgets('serializes to true when no constraints are provided', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('serializes to true when no constraints are provided', (WidgetTester tester) async {
       const videoConstraints = VideoConstraints();
       expect(videoConstraints.toMediaStreamConstraints().dartify(), isTrue);
     });
@@ -119,31 +93,15 @@ void main() {
       expect(
         VideoConstraints(
           facingMode: FacingModeConstraint.exact(CameraType.environment),
-          width: const VideoSizeConstraint(
-            minimum: 90,
-            ideal: 100,
-            maximum: 100,
-          ),
-          height: const VideoSizeConstraint(
-            minimum: 40,
-            ideal: 50,
-            maximum: 50,
-          ),
+          width: const VideoSizeConstraint(minimum: 90, ideal: 100, maximum: 100),
+          height: const VideoSizeConstraint(minimum: 40, ideal: 50, maximum: 50),
           deviceId: 'deviceId',
         ),
         equals(
           VideoConstraints(
             facingMode: FacingModeConstraint.exact(CameraType.environment),
-            width: const VideoSizeConstraint(
-              minimum: 90,
-              ideal: 100,
-              maximum: 100,
-            ),
-            height: const VideoSizeConstraint(
-              minimum: 40,
-              ideal: 50,
-              maximum: 50,
-            ),
+            width: const VideoSizeConstraint(minimum: 90, ideal: 100, maximum: 100),
+            height: const VideoSizeConstraint(minimum: 40, ideal: 50, maximum: 50),
             deviceId: 'deviceId',
           ),
         ),
@@ -206,11 +164,7 @@ void main() {
   group('VideoSizeConstraint ', () {
     testWidgets('serializes correctly', (WidgetTester tester) async {
       expect(
-        const VideoSizeConstraint(
-          minimum: 200,
-          ideal: 400,
-          maximum: 400,
-        ).toJson(),
+        const VideoSizeConstraint(minimum: 200, ideal: 400, maximum: 400).toJson(),
         equals(<String, Object>{'min': 200, 'ideal': 400, 'max': 400}),
       );
     });
@@ -218,9 +172,7 @@ void main() {
     testWidgets('supports value equality', (WidgetTester tester) async {
       expect(
         const VideoSizeConstraint(minimum: 100, ideal: 200, maximum: 300),
-        equals(
-          const VideoSizeConstraint(minimum: 100, ideal: 200, maximum: 300),
-        ),
+        equals(const VideoSizeConstraint(minimum: 100, ideal: 200, maximum: 300)),
       );
     });
   });

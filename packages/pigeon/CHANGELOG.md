@@ -2,6 +2,7 @@
 
 * [swift] [kotlin] Adds support for FFI and JNI.
 * Exposes missing PigeonOptions and language-specific configurations as command-line arguments.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 26.3.4
 

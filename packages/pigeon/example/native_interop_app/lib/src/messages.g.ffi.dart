@@ -41,9 +41,7 @@ external ffi.Pointer<objc.ObjCBlockImpl> _x6jxzu_wrapBlockingBlock_xtuoz7(
   ffi.Pointer<objc.DOBJC_Context> context,
 );
 
-@ffi.Native<
-  ffi.Pointer<objc.ObjCBlockImpl> Function(ffi.Pointer<objc.ObjCBlockImpl>)
->(isLeaf: true)
+@ffi.Native<ffi.Pointer<objc.ObjCBlockImpl> Function(ffi.Pointer<objc.ObjCBlockImpl>)>(isLeaf: true)
 external ffi.Pointer<objc.ObjCBlockImpl> _x6jxzu_wrapListenerBlock_xtuoz7(
   ffi.Pointer<objc.ObjCBlockImpl> block,
 );
@@ -95,11 +93,7 @@ extension type ExampleHostApiSetup._(objc.ObjCObject object$)
   /// Returns whether [obj] is an instance of [ExampleHostApiSetup].
   static bool isA(objc.ObjCObject? obj) => obj == null
       ? false
-      : _objc_msgSend_19nvye5(
-          obj.ref.pointer,
-          _sel_isKindOfClass_,
-          _class_ExampleHostApiSetup,
-        );
+      : _objc_msgSend_19nvye5(obj.ref.pointer, _sel_isKindOfClass_, _class_ExampleHostApiSetup);
 
   /// alloc
   static ExampleHostApiSetup alloc() {
@@ -109,11 +103,7 @@ extension type ExampleHostApiSetup._(objc.ObjCObject object$)
 
   /// allocWithZone:
   static ExampleHostApiSetup allocWithZone(ffi.Pointer<objc.NSZone> zone) {
-    final $ret = _objc_msgSend_1cwp428(
-      _class_ExampleHostApiSetup,
-      _sel_allocWithZone_,
-      zone,
-    );
+    final $ret = _objc_msgSend_1cwp428(_class_ExampleHostApiSetup, _sel_allocWithZone_, zone);
     return ExampleHostApiSetup.fromPointer($ret, retain: false, release: true);
   }
 
@@ -152,11 +142,7 @@ extension ExampleHostApiSetup$Methods on ExampleHostApiSetup {
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 10.15.0
-  objc.NSNumber? addWithA(
-    int a, {
-    required int b,
-    required PigeonError wrappedError,
-  }) {
+  objc.NSNumber? addWithA(int a, {required int b, required PigeonError wrappedError}) {
     objc.checkOsVersionInternal(
       'ExampleHostApiSetup.addWithA:b:wrappedError:',
       iOS: (false, (13, 0, 0)),
@@ -169,18 +155,14 @@ extension ExampleHostApiSetup$Methods on ExampleHostApiSetup {
       b,
       wrappedError.ref.pointer,
     );
-    return $ret.address == 0
-        ? null
-        : objc.NSNumber.fromPointer($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
   }
 
   /// determineHostLanguageWithWrappedError:
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 10.15.0
-  objc.NSString? determineHostLanguageWithWrappedError(
-    PigeonError wrappedError,
-  ) {
+  objc.NSString? determineHostLanguageWithWrappedError(PigeonError wrappedError) {
     objc.checkOsVersionInternal(
       'ExampleHostApiSetup.determineHostLanguageWithWrappedError:',
       iOS: (false, (13, 0, 0)),
@@ -191,9 +173,7 @@ extension ExampleHostApiSetup$Methods on ExampleHostApiSetup {
       _sel_determineHostLanguageWithWrappedError_,
       wrappedError.ref.pointer,
     );
-    return $ret.address == 0
-        ? null
-        : objc.NSString.fromPointer($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
   }
 
   /// init
@@ -203,10 +183,7 @@ extension ExampleHostApiSetup$Methods on ExampleHostApiSetup {
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.retainAndReturnPointer(),
-      _sel_init,
-    );
+    final $ret = _objc_msgSend_151sglz(object$.ref.retainAndReturnPointer(), _sel_init);
     return ExampleHostApiSetup.fromPointer($ret, retain: false, release: true);
   }
 
@@ -217,8 +194,7 @@ extension ExampleHostApiSetup$Methods on ExampleHostApiSetup {
   void sendMessageWithMessage(
     MessageDataBridge message, {
     required PigeonError wrappedError,
-    required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)>
-    completionHandler,
+    required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
     objc.checkOsVersionInternal(
       'ExampleHostApiSetup.sendMessageWithMessage:wrappedError:completionHandler:',
@@ -268,11 +244,7 @@ extension type MessageDataBridge._(objc.ObjCObject object$)
   /// Returns whether [obj] is an instance of [MessageDataBridge].
   static bool isA(objc.ObjCObject? obj) => obj == null
       ? false
-      : _objc_msgSend_19nvye5(
-          obj.ref.pointer,
-          _sel_isKindOfClass_,
-          _class_MessageDataBridge,
-        );
+      : _objc_msgSend_19nvye5(obj.ref.pointer, _sel_isKindOfClass_, _class_MessageDataBridge);
 
   /// alloc
   static MessageDataBridge alloc() {
@@ -282,11 +254,7 @@ extension type MessageDataBridge._(objc.ObjCObject object$)
 
   /// allocWithZone:
   static MessageDataBridge allocWithZone(ffi.Pointer<objc.NSZone> zone) {
-    final $ret = _objc_msgSend_1cwp428(
-      _class_MessageDataBridge,
-      _sel_allocWithZone_,
-      zone,
-    );
+    final $ret = _objc_msgSend_1cwp428(_class_MessageDataBridge, _sel_allocWithZone_, zone);
     return MessageDataBridge.fromPointer($ret, retain: false, release: true);
   }
 }
@@ -350,13 +318,8 @@ extension MessageDataBridge$Methods on MessageDataBridge {
       iOS: (false, (13, 0, 0)),
       macOS: (false, (10, 15, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.pointer,
-      _sel_messageDescription,
-    );
-    return $ret.address == 0
-        ? null
-        : objc.NSString.fromPointer($ret, retain: true, release: true);
+    final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_messageDescription);
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
   }
 
   /// iOS: introduced 13.0.0
@@ -368,9 +331,7 @@ extension MessageDataBridge$Methods on MessageDataBridge {
       macOS: (false, (10, 15, 0)),
     );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_name);
-    return $ret.address == 0
-        ? null
-        : objc.NSString.fromPointer($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
   }
 
   /// iOS: introduced 13.0.0
@@ -418,11 +379,7 @@ extension MessageDataBridge$Methods on MessageDataBridge {
       iOS: (false, (13, 0, 0)),
       macOS: (false, (10, 15, 0)),
     );
-    _objc_msgSend_xtuoz7(
-      object$.ref.pointer,
-      _sel_setName_,
-      value?.ref.pointer ?? ffi.nullptr,
-    );
+    _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setName_, value?.ref.pointer ?? ffi.nullptr);
   }
 }
 
@@ -430,8 +387,7 @@ extension MessageDataBridge$Methods on MessageDataBridge {
 ///
 /// iOS: introduced 13.0.0
 /// macOS: introduced 10.15.0
-extension type MessageFlutterApiBridge._(objc.ObjCProtocol object$)
-    implements objc.ObjCProtocol {
+extension type MessageFlutterApiBridge._(objc.ObjCProtocol object$) implements objc.ObjCProtocol {
   /// Constructs a [MessageFlutterApiBridge] that points to the same underlying object as [other].
   MessageFlutterApiBridge.as(objc.ObjCObject other) : object$ = other;
 
@@ -457,10 +413,7 @@ extension MessageFlutterApiBridge$Methods on MessageFlutterApiBridge {
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 10.15.0
-  objc.NSString? flutterMethodWithAString(
-    objc.NSString? aString, {
-    required PigeonError error,
-  }) {
+  objc.NSString? flutterMethodWithAString(objc.NSString? aString, {required PigeonError error}) {
     objc.checkOsVersionInternal(
       'MessageFlutterApiBridge.flutterMethodWithAString:error:',
       iOS: (false, (13, 0, 0)),
@@ -472,9 +425,7 @@ extension MessageFlutterApiBridge$Methods on MessageFlutterApiBridge {
       aString?.ref.pointer ?? ffi.nullptr,
       error.ref.pointer,
     );
-    return $ret.address == 0
-        ? null
-        : objc.NSString.fromPointer($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
   }
 }
 
@@ -489,21 +440,16 @@ interface class MessageFlutterApiBridge$Builder {
   /// If `$keepIsolateAlive` is true, this protocol will keep this isolate
   /// alive until it is garbage collected by both Dart and ObjC.
   static MessageFlutterApiBridge implement({
-    required objc.NSString? Function(objc.NSString?, PigeonError)
-    flutterMethodWithAString_error_,
+    required objc.NSString? Function(objc.NSString?, PigeonError) flutterMethodWithAString_error_,
     bool $keepIsolateAlive = true,
   }) {
-    final builder = objc.ObjCProtocolBuilder(
-      debugName: 'MessageFlutterApiBridge',
-    );
+    final builder = objc.ObjCProtocolBuilder(debugName: 'MessageFlutterApiBridge');
     MessageFlutterApiBridge$Builder.flutterMethodWithAString_error_.implement(
       builder,
       flutterMethodWithAString_error_,
     );
     builder.addProtocol($protocol);
-    return MessageFlutterApiBridge.as(
-      builder.build(keepIsolateAlive: $keepIsolateAlive),
-    );
+    return MessageFlutterApiBridge.as(builder.build(keepIsolateAlive: $keepIsolateAlive));
   }
 
   /// Adds the implementation of the MessageFlutterApiBridge protocol to an existing
@@ -512,8 +458,7 @@ interface class MessageFlutterApiBridge$Builder {
   /// Note: You cannot call this method after you have called `builder.build`.
   static void addToBuilder(
     objc.ObjCProtocolBuilder builder, {
-    required objc.NSString? Function(objc.NSString?, PigeonError)
-    flutterMethodWithAString_error_,
+    required objc.NSString? Function(objc.NSString?, PigeonError) flutterMethodWithAString_error_,
     bool $keepIsolateAlive = true,
   }) {
     MessageFlutterApiBridge$Builder.flutterMethodWithAString_error_.implement(
@@ -528,9 +473,7 @@ interface class MessageFlutterApiBridge$Builder {
   /// iOS: introduced 13.0.0
   /// macOS: introduced 10.15.0
   static final flutterMethodWithAString_error_ =
-      objc.ObjCProtocolMethod<
-        objc.NSString? Function(objc.NSString?, PigeonError)
-      >(
+      objc.ObjCProtocolMethod<objc.NSString? Function(objc.NSString?, PigeonError)>(
         _protocol_MessageFlutterApiBridge,
         _sel_flutterMethodWithAString_error_,
         ffi.Native.addressOf<
@@ -552,11 +495,7 @@ interface class MessageFlutterApiBridge$Builder {
         ),
         (objc.NSString? Function(objc.NSString?, PigeonError) func) =>
             ObjCBlock_NSString_ffiVoid_NSString_PigeonError.fromFunction(
-              (
-                ffi.Pointer<ffi.Void> _,
-                objc.NSString? arg1,
-                PigeonError arg2,
-              ) => func(arg1, arg2),
+              (ffi.Pointer<ffi.Void> _, objc.NSString? arg1, PigeonError arg2) => func(arg1, arg2),
             ),
       );
 }
@@ -602,54 +541,31 @@ extension type MessageFlutterApiRegistrar._(objc.ObjCObject object$)
 
   /// alloc
   static MessageFlutterApiRegistrar alloc() {
-    final $ret = _objc_msgSend_151sglz(
-      _class_MessageFlutterApiRegistrar,
-      _sel_alloc,
-    );
-    return MessageFlutterApiRegistrar.fromPointer(
-      $ret,
-      retain: false,
-      release: true,
-    );
+    final $ret = _objc_msgSend_151sglz(_class_MessageFlutterApiRegistrar, _sel_alloc);
+    return MessageFlutterApiRegistrar.fromPointer($ret, retain: false, release: true);
   }
 
   /// allocWithZone:
-  static MessageFlutterApiRegistrar allocWithZone(
-    ffi.Pointer<objc.NSZone> zone,
-  ) {
+  static MessageFlutterApiRegistrar allocWithZone(ffi.Pointer<objc.NSZone> zone) {
     final $ret = _objc_msgSend_1cwp428(
       _class_MessageFlutterApiRegistrar,
       _sel_allocWithZone_,
       zone,
     );
-    return MessageFlutterApiRegistrar.fromPointer(
-      $ret,
-      retain: false,
-      release: true,
-    );
+    return MessageFlutterApiRegistrar.fromPointer($ret, retain: false, release: true);
   }
 
   /// new
   static MessageFlutterApiRegistrar new$() {
-    final $ret = _objc_msgSend_151sglz(
-      _class_MessageFlutterApiRegistrar,
-      _sel_new,
-    );
-    return MessageFlutterApiRegistrar.fromPointer(
-      $ret,
-      retain: false,
-      release: true,
-    );
+    final $ret = _objc_msgSend_151sglz(_class_MessageFlutterApiRegistrar, _sel_new);
+    return MessageFlutterApiRegistrar.fromPointer($ret, retain: false, release: true);
   }
 
   /// registerInstanceWithApi:name:
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 10.15.0
-  static void registerInstanceWithApi(
-    MessageFlutterApiBridge api, {
-    required objc.NSString name,
-  }) {
+  static void registerInstanceWithApi(MessageFlutterApiBridge api, {required objc.NSString name}) {
     objc.checkOsVersionInternal(
       'MessageFlutterApiRegistrar.registerInstanceWithApi:name:',
       iOS: (false, (13, 0, 0)),
@@ -675,15 +591,8 @@ extension MessageFlutterApiRegistrar$Methods on MessageFlutterApiRegistrar {
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.retainAndReturnPointer(),
-      _sel_init,
-    );
-    return MessageFlutterApiRegistrar.fromPointer(
-      $ret,
-      retain: false,
-      release: true,
-    );
+    final $ret = _objc_msgSend_151sglz(object$.ref.retainAndReturnPointer(), _sel_init);
+    return MessageFlutterApiRegistrar.fromPointer($ret, retain: false, release: true);
   }
 }
 
@@ -707,48 +616,25 @@ extension type MessagesNumberWrapper._(objc.ObjCObject object$)
   /// Returns whether [obj] is an instance of [MessagesNumberWrapper].
   static bool isA(objc.ObjCObject? obj) => obj == null
       ? false
-      : _objc_msgSend_19nvye5(
-          obj.ref.pointer,
-          _sel_isKindOfClass_,
-          _class_MessagesNumberWrapper,
-        );
+      : _objc_msgSend_19nvye5(obj.ref.pointer, _sel_isKindOfClass_, _class_MessagesNumberWrapper);
 
   /// alloc
   static MessagesNumberWrapper alloc() {
-    final $ret = _objc_msgSend_151sglz(
-      _class_MessagesNumberWrapper,
-      _sel_alloc,
-    );
-    return MessagesNumberWrapper.fromPointer(
-      $ret,
-      retain: false,
-      release: true,
-    );
+    final $ret = _objc_msgSend_151sglz(_class_MessagesNumberWrapper, _sel_alloc);
+    return MessagesNumberWrapper.fromPointer($ret, retain: false, release: true);
   }
 
   /// allocWithZone:
   static MessagesNumberWrapper allocWithZone(ffi.Pointer<objc.NSZone> zone) {
-    final $ret = _objc_msgSend_1cwp428(
-      _class_MessagesNumberWrapper,
-      _sel_allocWithZone_,
-      zone,
-    );
-    return MessagesNumberWrapper.fromPointer(
-      $ret,
-      retain: false,
-      release: true,
-    );
+    final $ret = _objc_msgSend_1cwp428(_class_MessagesNumberWrapper, _sel_allocWithZone_, zone);
+    return MessagesNumberWrapper.fromPointer($ret, retain: false, release: true);
   }
 }
 
 extension MessagesNumberWrapper$Methods on MessagesNumberWrapper {
   /// copyWithZone:
   objc.ObjCObject copyWithZone$1(ffi.Pointer<objc.NSZone> zone) {
-    final $ret = _objc_msgSend_1cwp428(
-      object$.ref.pointer,
-      _sel_copyWithZone_,
-      zone,
-    );
+    final $ret = _objc_msgSend_1cwp428(object$.ref.pointer, _sel_copyWithZone_, zone);
     return objc.ObjCObject($ret, retain: false, release: true);
   }
 
@@ -758,21 +644,14 @@ extension MessagesNumberWrapper$Methods on MessagesNumberWrapper {
   }
 
   /// initWithNumber:type:
-  MessagesNumberWrapper initWithNumber(
-    objc.NSNumber number, {
-    required int type,
-  }) {
+  MessagesNumberWrapper initWithNumber(objc.NSNumber number, {required int type}) {
     final $ret = _objc_msgSend_9slupp(
       object$.ref.retainAndReturnPointer(),
       _sel_initWithNumber_type_,
       number.ref.pointer,
       type,
     );
-    return MessagesNumberWrapper.fromPointer(
-      $ret,
-      retain: false,
-      release: true,
-    );
+    return MessagesNumberWrapper.fromPointer($ret, retain: false, release: true);
   }
 
   /// isEqual:
@@ -792,11 +671,7 @@ extension MessagesNumberWrapper$Methods on MessagesNumberWrapper {
 
   /// setNumber:
   set number(objc.NSNumber value) {
-    _objc_msgSend_xtuoz7(
-      object$.ref.pointer,
-      _sel_setNumber_,
-      value.ref.pointer,
-    );
+    _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setNumber_, value.ref.pointer);
   }
 
   /// setType:
@@ -838,44 +713,24 @@ extension type MessagesPigeonInternalNull._(objc.ObjCObject object$)
 
   /// alloc
   static MessagesPigeonInternalNull alloc() {
-    final $ret = _objc_msgSend_151sglz(
-      _class_MessagesPigeonInternalNull,
-      _sel_alloc,
-    );
-    return MessagesPigeonInternalNull.fromPointer(
-      $ret,
-      retain: false,
-      release: true,
-    );
+    final $ret = _objc_msgSend_151sglz(_class_MessagesPigeonInternalNull, _sel_alloc);
+    return MessagesPigeonInternalNull.fromPointer($ret, retain: false, release: true);
   }
 
   /// allocWithZone:
-  static MessagesPigeonInternalNull allocWithZone(
-    ffi.Pointer<objc.NSZone> zone,
-  ) {
+  static MessagesPigeonInternalNull allocWithZone(ffi.Pointer<objc.NSZone> zone) {
     final $ret = _objc_msgSend_1cwp428(
       _class_MessagesPigeonInternalNull,
       _sel_allocWithZone_,
       zone,
     );
-    return MessagesPigeonInternalNull.fromPointer(
-      $ret,
-      retain: false,
-      release: true,
-    );
+    return MessagesPigeonInternalNull.fromPointer($ret, retain: false, release: true);
   }
 
   /// new
   static MessagesPigeonInternalNull new$() {
-    final $ret = _objc_msgSend_151sglz(
-      _class_MessagesPigeonInternalNull,
-      _sel_new,
-    );
-    return MessagesPigeonInternalNull.fromPointer(
-      $ret,
-      retain: false,
-      release: true,
-    );
+    final $ret = _objc_msgSend_151sglz(_class_MessagesPigeonInternalNull, _sel_new);
+    return MessagesPigeonInternalNull.fromPointer($ret, retain: false, release: true);
   }
 
   /// Returns a new instance of MessagesPigeonInternalNull constructed with the default `new` method.
@@ -890,15 +745,8 @@ extension MessagesPigeonInternalNull$Methods on MessagesPigeonInternalNull {
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.retainAndReturnPointer(),
-      _sel_init,
-    );
-    return MessagesPigeonInternalNull.fromPointer(
-      $ret,
-      retain: false,
-      release: true,
-    );
+    final $ret = _objc_msgSend_151sglz(object$.ref.retainAndReturnPointer(), _sel_init);
+    return MessagesPigeonInternalNull.fromPointer($ret, retain: false, release: true);
   }
 }
 
@@ -935,37 +783,18 @@ extension type MessagesPigeonTypedData._(objc.ObjCObject object$)
   /// Returns whether [obj] is an instance of [MessagesPigeonTypedData].
   static bool isA(objc.ObjCObject? obj) => obj == null
       ? false
-      : _objc_msgSend_19nvye5(
-          obj.ref.pointer,
-          _sel_isKindOfClass_,
-          _class_MessagesPigeonTypedData,
-        );
+      : _objc_msgSend_19nvye5(obj.ref.pointer, _sel_isKindOfClass_, _class_MessagesPigeonTypedData);
 
   /// alloc
   static MessagesPigeonTypedData alloc() {
-    final $ret = _objc_msgSend_151sglz(
-      _class_MessagesPigeonTypedData,
-      _sel_alloc,
-    );
-    return MessagesPigeonTypedData.fromPointer(
-      $ret,
-      retain: false,
-      release: true,
-    );
+    final $ret = _objc_msgSend_151sglz(_class_MessagesPigeonTypedData, _sel_alloc);
+    return MessagesPigeonTypedData.fromPointer($ret, retain: false, release: true);
   }
 
   /// allocWithZone:
   static MessagesPigeonTypedData allocWithZone(ffi.Pointer<objc.NSZone> zone) {
-    final $ret = _objc_msgSend_1cwp428(
-      _class_MessagesPigeonTypedData,
-      _sel_allocWithZone_,
-      zone,
-    );
-    return MessagesPigeonTypedData.fromPointer(
-      $ret,
-      retain: false,
-      release: true,
-    );
+    final $ret = _objc_msgSend_1cwp428(_class_MessagesPigeonTypedData, _sel_allocWithZone_, zone);
+    return MessagesPigeonTypedData.fromPointer($ret, retain: false, release: true);
   }
 }
 
@@ -998,11 +827,7 @@ extension MessagesPigeonTypedData$Methods on MessagesPigeonTypedData {
       data.ref.pointer,
       type,
     );
-    return MessagesPigeonTypedData.fromPointer(
-      $ret,
-      retain: false,
-      release: true,
-    );
+    return MessagesPigeonTypedData.fromPointer($ret, retain: false, release: true);
   }
 
   /// iOS: introduced 13.0.0
@@ -1020,30 +845,23 @@ extension MessagesPigeonTypedData$Methods on MessagesPigeonTypedData {
 /// Construction methods for `objc.ObjCBlock<objc.NSString? Function(ffi.Pointer<ffi.Void>, objc.NSString?, PigeonError)>`.
 abstract final class ObjCBlock_NSString_ffiVoid_NSString_PigeonError {
   /// Returns a block that wraps the given raw block pointer.
-  static objc.ObjCBlock<
-    objc.NSString? Function(ffi.Pointer<ffi.Void>, objc.NSString?, PigeonError)
-  >
+  static objc.ObjCBlock<objc.NSString? Function(ffi.Pointer<ffi.Void>, objc.NSString?, PigeonError)>
   fromPointer(
     ffi.Pointer<objc.ObjCBlockImpl> pointer, {
     bool retain = false,
     bool release = false,
-  }) =>
-      objc.ObjCBlock<
-        objc.NSString? Function(
-          ffi.Pointer<ffi.Void>,
-          objc.NSString?,
-          PigeonError,
-        )
-      >(pointer, retain: retain, release: release);
+  }) => objc.ObjCBlock<objc.NSString? Function(ffi.Pointer<ffi.Void>, objc.NSString?, PigeonError)>(
+    pointer,
+    retain: retain,
+    release: release,
+  );
 
   /// Creates a block from a C function pointer.
   ///
   /// This block must be invoked by native code running on the same thread as
   /// the isolate that registered it. Invoking the block on the wrong thread
   /// will result in a crash.
-  static objc.ObjCBlock<
-    objc.NSString? Function(ffi.Pointer<ffi.Void>, objc.NSString?, PigeonError)
-  >
+  static objc.ObjCBlock<objc.NSString? Function(ffi.Pointer<ffi.Void>, objc.NSString?, PigeonError)>
   fromFunctionPointer(
     ffi.Pointer<
       ffi.NativeFunction<
@@ -1055,18 +873,11 @@ abstract final class ObjCBlock_NSString_ffiVoid_NSString_PigeonError {
       >
     >
     ptr,
-  ) =>
-      objc.ObjCBlock<
-        objc.NSString? Function(
-          ffi.Pointer<ffi.Void>,
-          objc.NSString?,
-          PigeonError,
-        )
-      >(
-        objc.newPointerBlock(_fnPtrCallable, ptr.cast()),
-        retain: false,
-        release: true,
-      );
+  ) => objc.ObjCBlock<objc.NSString? Function(ffi.Pointer<ffi.Void>, objc.NSString?, PigeonError)>(
+    objc.newPointerBlock(_fnPtrCallable, ptr.cast()),
+    retain: false,
+    release: true,
+  );
 
   /// Creates a block from a Dart function.
   ///
@@ -1076,45 +887,29 @@ abstract final class ObjCBlock_NSString_ffiVoid_NSString_PigeonError {
   ///
   /// If `keepIsolateAlive` is true, this block will keep this isolate alive
   /// until it is garbage collected by both Dart and ObjC.
-  static objc.ObjCBlock<
-    objc.NSString? Function(ffi.Pointer<ffi.Void>, objc.NSString?, PigeonError)
-  >
+  static objc.ObjCBlock<objc.NSString? Function(ffi.Pointer<ffi.Void>, objc.NSString?, PigeonError)>
   fromFunction(
-    objc.NSString? Function(ffi.Pointer<ffi.Void>, objc.NSString?, PigeonError)
-    fn, {
+    objc.NSString? Function(ffi.Pointer<ffi.Void>, objc.NSString?, PigeonError) fn, {
     bool keepIsolateAlive = true,
-  }) =>
-      objc.ObjCBlock<
-        objc.NSString? Function(
-          ffi.Pointer<ffi.Void>,
-          objc.NSString?,
-          PigeonError,
-        )
-      >(
-        objc.newClosureBlock(
-          _closureCallable,
-          (
-            ffi.Pointer<ffi.Void> arg0,
-            ffi.Pointer<objc.ObjCObjectImpl> arg1,
-            ffi.Pointer<objc.ObjCObjectImpl> arg2,
-          ) =>
-              fn(
-                arg0,
-                arg1.address == 0
-                    ? null
-                    : objc.NSString.fromPointer(
-                        arg1,
-                        retain: true,
-                        release: true,
-                      ),
-                PigeonError.fromPointer(arg2, retain: true, release: true),
-              )?.ref.retainAndAutorelease() ??
-              ffi.nullptr,
-          keepIsolateAlive,
-        ),
-        retain: false,
-        release: true,
-      );
+  }) => objc.ObjCBlock<objc.NSString? Function(ffi.Pointer<ffi.Void>, objc.NSString?, PigeonError)>(
+    objc.newClosureBlock(
+      _closureCallable,
+      (
+        ffi.Pointer<ffi.Void> arg0,
+        ffi.Pointer<objc.ObjCObjectImpl> arg1,
+        ffi.Pointer<objc.ObjCObjectImpl> arg2,
+      ) =>
+          fn(
+            arg0,
+            arg1.address == 0 ? null : objc.NSString.fromPointer(arg1, retain: true, release: true),
+            PigeonError.fromPointer(arg2, retain: true, release: true),
+          )?.ref.retainAndAutorelease() ??
+          ffi.nullptr,
+      keepIsolateAlive,
+    ),
+    retain: false,
+    release: true,
+  );
 
   static ffi.Pointer<objc.ObjCObjectImpl> _fnPtrTrampoline(
     ffi.Pointer<objc.ObjCBlockImpl> block,
@@ -1174,19 +969,8 @@ abstract final class ObjCBlock_NSString_ffiVoid_NSString_PigeonError {
 
 /// Call operator for `objc.ObjCBlock<objc.NSString? Function(ffi.Pointer<ffi.Void>, objc.NSString?, PigeonError)>`.
 extension ObjCBlock_NSString_ffiVoid_NSString_PigeonError$CallExtension
-    on
-        objc.ObjCBlock<
-          objc.NSString? Function(
-            ffi.Pointer<ffi.Void>,
-            objc.NSString?,
-            PigeonError,
-          )
-        > {
-  objc.NSString? call(
-    ffi.Pointer<ffi.Void> arg0,
-    objc.NSString? arg1,
-    PigeonError arg2,
-  ) =>
+    on objc.ObjCBlock<objc.NSString? Function(ffi.Pointer<ffi.Void>, objc.NSString?, PigeonError)> {
+  objc.NSString? call(ffi.Pointer<ffi.Void> arg0, objc.NSString? arg1, PigeonError arg2) =>
       ref.pointer.ref.invoke
               .cast<
                 ffi.NativeFunction<
@@ -1205,12 +989,7 @@ extension ObjCBlock_NSString_ffiVoid_NSString_PigeonError$CallExtension
                   ffi.Pointer<objc.ObjCObjectImpl>,
                   ffi.Pointer<objc.ObjCObjectImpl>,
                 )
-              >()(
-                ref.pointer,
-                arg0,
-                arg1?.ref.pointer ?? ffi.nullptr,
-                arg2.ref.pointer,
-              )
+              >()(ref.pointer, arg0, arg1?.ref.pointer ?? ffi.nullptr, arg2.ref.pointer)
               .address ==
           0
       ? null
@@ -1233,12 +1012,7 @@ extension ObjCBlock_NSString_ffiVoid_NSString_PigeonError$CallExtension
                   ffi.Pointer<objc.ObjCObjectImpl>,
                   ffi.Pointer<objc.ObjCObjectImpl>,
                 )
-              >()(
-            ref.pointer,
-            arg0,
-            arg1?.ref.pointer ?? ffi.nullptr,
-            arg2.ref.pointer,
-          ),
+              >()(ref.pointer, arg0, arg1?.ref.pointer ?? ffi.nullptr, arg2.ref.pointer),
           retain: true,
           release: true,
         );
@@ -1251,11 +1025,8 @@ abstract final class ObjCBlock_ffiVoid_NSNumber {
     ffi.Pointer<objc.ObjCBlockImpl> pointer, {
     bool retain = false,
     bool release = false,
-  }) => objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)>(
-    pointer,
-    retain: retain,
-    release: release,
-  );
+  }) =>
+      objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)>(pointer, retain: retain, release: release);
 
   /// Creates a block from a C function pointer.
   ///
@@ -1263,12 +1034,7 @@ abstract final class ObjCBlock_ffiVoid_NSNumber {
   /// the isolate that registered it. Invoking the block on the wrong thread
   /// will result in a crash.
   static objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> fromFunctionPointer(
-    ffi.Pointer<
-      ffi.NativeFunction<
-        ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)
-      >
-    >
-    ptr,
+    ffi.Pointer<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)>> ptr,
   ) => objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)>(
     objc.newPointerBlock(_fnPtrCallable, ptr.cast()),
     retain: false,
@@ -1290,9 +1056,7 @@ abstract final class ObjCBlock_ffiVoid_NSNumber {
     objc.newClosureBlock(
       _closureCallable,
       (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
-        arg0.address == 0
-            ? null
-            : objc.NSNumber.fromPointer(arg0, retain: true, release: true),
+        arg0.address == 0 ? null : objc.NSNumber.fromPointer(arg0, retain: true, release: true),
       ),
       keepIsolateAlive,
     ),
@@ -1316,19 +1080,13 @@ abstract final class ObjCBlock_ffiVoid_NSNumber {
     final raw = objc.newClosureBlock(
       _listenerCallable.nativeFunction.cast(),
       (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
-        arg0.address == 0
-            ? null
-            : objc.NSNumber.fromPointer(arg0, retain: false, release: true),
+        arg0.address == 0 ? null : objc.NSNumber.fromPointer(arg0, retain: false, release: true),
       ),
       keepIsolateAlive,
     );
     final wrapper = _x6jxzu_wrapListenerBlock_xtuoz7(raw);
     objc.objectRelease(raw.cast());
-    return objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)>(
-      wrapper,
-      retain: false,
-      release: true,
-    );
+    return objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)>(wrapper, retain: false, release: true);
   }
 
   /// Creates a blocking block from a Dart function.
@@ -1348,56 +1106,37 @@ abstract final class ObjCBlock_ffiVoid_NSNumber {
     final raw = objc.newClosureBlock(
       _blockingCallable.nativeFunction.cast(),
       (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
-        arg0.address == 0
-            ? null
-            : objc.NSNumber.fromPointer(arg0, retain: false, release: true),
+        arg0.address == 0 ? null : objc.NSNumber.fromPointer(arg0, retain: false, release: true),
       ),
       keepIsolateAlive,
     );
     final rawListener = objc.newClosureBlock(
       _blockingListenerCallable.nativeFunction.cast(),
       (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
-        arg0.address == 0
-            ? null
-            : objc.NSNumber.fromPointer(arg0, retain: false, release: true),
+        arg0.address == 0 ? null : objc.NSNumber.fromPointer(arg0, retain: false, release: true),
       ),
       keepIsolateAlive,
     );
-    final wrapper = _x6jxzu_wrapBlockingBlock_xtuoz7(
-      raw,
-      rawListener,
-      objc.objCContext,
-    );
+    final wrapper = _x6jxzu_wrapBlockingBlock_xtuoz7(raw, rawListener, objc.objCContext);
     objc.objectRelease(raw.cast());
     objc.objectRelease(rawListener.cast());
-    return objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)>(
-      wrapper,
-      retain: false,
-      release: true,
-    );
+    return objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)>(wrapper, retain: false, release: true);
   }
 
   static void _listenerTrampoline(
     ffi.Pointer<objc.ObjCBlockImpl> block,
     ffi.Pointer<objc.ObjCObjectImpl> arg0,
   ) {
-    (objc.getBlockClosure(block)
-        as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+    (objc.getBlockClosure(block) as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
     objc.objectRelease(block.cast());
   }
 
   static ffi.NativeCallable<
-    ffi.Void Function(
-      ffi.Pointer<objc.ObjCBlockImpl>,
-      ffi.Pointer<objc.ObjCObjectImpl>,
-    )
+    ffi.Void Function(ffi.Pointer<objc.ObjCBlockImpl>, ffi.Pointer<objc.ObjCObjectImpl>)
   >
   _listenerCallable =
       ffi.NativeCallable<
-          ffi.Void Function(
-            ffi.Pointer<objc.ObjCBlockImpl>,
-            ffi.Pointer<objc.ObjCObjectImpl>,
-          )
+          ffi.Void Function(ffi.Pointer<objc.ObjCBlockImpl>, ffi.Pointer<objc.ObjCObjectImpl>)
         >.listener(_listenerTrampoline)
         ..keepIsolateAlive = false;
   static void _blockingTrampoline(
@@ -1406,8 +1145,7 @@ abstract final class ObjCBlock_ffiVoid_NSNumber {
     ffi.Pointer<objc.ObjCObjectImpl> arg0,
   ) {
     try {
-      (objc.getBlockClosure(block)
-          as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+      (objc.getBlockClosure(block) as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
     } catch (e) {
     } finally {
       objc.signalWaiter(waiter);
@@ -1451,32 +1189,20 @@ abstract final class ObjCBlock_ffiVoid_NSNumber {
     ffi.Pointer<objc.ObjCBlockImpl> block,
     ffi.Pointer<objc.ObjCObjectImpl> arg0,
   ) => block.ref.target
-      .cast<
-        ffi.NativeFunction<
-          ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)
-        >
-      >()
+      .cast<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)>>()
       .asFunction<void Function(ffi.Pointer<objc.ObjCObjectImpl>)>()(arg0);
   static ffi.Pointer<ffi.Void> _fnPtrCallable =
       ffi.Pointer.fromFunction<
-            ffi.Void Function(
-              ffi.Pointer<objc.ObjCBlockImpl>,
-              ffi.Pointer<objc.ObjCObjectImpl>,
-            )
+            ffi.Void Function(ffi.Pointer<objc.ObjCBlockImpl>, ffi.Pointer<objc.ObjCObjectImpl>)
           >(_fnPtrTrampoline)
           .cast();
   static void _closureTrampoline(
     ffi.Pointer<objc.ObjCBlockImpl> block,
     ffi.Pointer<objc.ObjCObjectImpl> arg0,
-  ) =>
-      (objc.getBlockClosure(block)
-          as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+  ) => (objc.getBlockClosure(block) as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
   static ffi.Pointer<ffi.Void> _closureCallable =
       ffi.Pointer.fromFunction<
-            ffi.Void Function(
-              ffi.Pointer<objc.ObjCBlockImpl>,
-              ffi.Pointer<objc.ObjCObjectImpl>,
-            )
+            ffi.Void Function(ffi.Pointer<objc.ObjCBlockImpl>, ffi.Pointer<objc.ObjCObjectImpl>)
           >(_closureTrampoline)
           .cast();
 }
@@ -1494,16 +1220,12 @@ extension ObjCBlock_ffiVoid_NSNumber$CallExtension
         >
       >()
       .asFunction<
-        void Function(
-          ffi.Pointer<objc.ObjCBlockImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-        )
+        void Function(ffi.Pointer<objc.ObjCBlockImpl>, ffi.Pointer<objc.ObjCObjectImpl>)
       >()(ref.pointer, arg0?.ref.pointer ?? ffi.nullptr);
 }
 
 /// Error class for passing custom error details to Dart side.
-extension type PigeonError._(objc.ObjCObject object$)
-    implements objc.ObjCObject, objc.NSObject {
+extension type PigeonError._(objc.ObjCObject object$) implements objc.ObjCObject, objc.NSObject {
   /// Constructs a [PigeonError] that points to the same underlying object as [other].
   PigeonError.as(objc.ObjCObject other) : object$ = other {
     assert(isA(object$));
@@ -1521,11 +1243,7 @@ extension type PigeonError._(objc.ObjCObject object$)
   /// Returns whether [obj] is an instance of [PigeonError].
   static bool isA(objc.ObjCObject? obj) => obj == null
       ? false
-      : _objc_msgSend_19nvye5(
-          obj.ref.pointer,
-          _sel_isKindOfClass_,
-          _class_PigeonError,
-        );
+      : _objc_msgSend_19nvye5(obj.ref.pointer, _sel_isKindOfClass_, _class_PigeonError);
 
   /// alloc
   static PigeonError alloc() {
@@ -1535,11 +1253,7 @@ extension type PigeonError._(objc.ObjCObject object$)
 
   /// allocWithZone:
   static PigeonError allocWithZone(ffi.Pointer<objc.NSZone> zone) {
-    final $ret = _objc_msgSend_1cwp428(
-      _class_PigeonError,
-      _sel_allocWithZone_,
-      zone,
-    );
+    final $ret = _objc_msgSend_1cwp428(_class_PigeonError, _sel_allocWithZone_, zone);
     return PigeonError.fromPointer($ret, retain: false, release: true);
   }
 
@@ -1557,17 +1271,13 @@ extension PigeonError$Methods on PigeonError {
   /// code
   objc.NSString? get code {
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_code);
-    return $ret.address == 0
-        ? null
-        : objc.NSString.fromPointer($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
   }
 
   /// details
   objc.NSString? get details {
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_details);
-    return $ret.address == 0
-        ? null
-        : objc.NSString.fromPointer($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
   }
 
   /// init
@@ -1577,19 +1287,12 @@ extension PigeonError$Methods on PigeonError {
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.retainAndReturnPointer(),
-      _sel_init,
-    );
+    final $ret = _objc_msgSend_151sglz(object$.ref.retainAndReturnPointer(), _sel_init);
     return PigeonError.fromPointer($ret, retain: false, release: true);
   }
 
   /// initWithCode:message:details:
-  PigeonError initWithCode(
-    objc.NSString? code, {
-    objc.NSString? message,
-    objc.NSString? details,
-  }) {
+  PigeonError initWithCode(objc.NSString? code, {objc.NSString? message, objc.NSString? details}) {
     final $ret = _objc_msgSend_11spmsz(
       object$.ref.retainAndReturnPointer(),
       _sel_initWithCode_message_details_,
@@ -1603,55 +1306,31 @@ extension PigeonError$Methods on PigeonError {
   /// message
   objc.NSString? get message {
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_message);
-    return $ret.address == 0
-        ? null
-        : objc.NSString.fromPointer($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
   }
 
   /// setCode:
   set code(objc.NSString? value) {
-    _objc_msgSend_xtuoz7(
-      object$.ref.pointer,
-      _sel_setCode_,
-      value?.ref.pointer ?? ffi.nullptr,
-    );
+    _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setCode_, value?.ref.pointer ?? ffi.nullptr);
   }
 
   /// setDetails:
   set details(objc.NSString? value) {
-    _objc_msgSend_xtuoz7(
-      object$.ref.pointer,
-      _sel_setDetails_,
-      value?.ref.pointer ?? ffi.nullptr,
-    );
+    _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setDetails_, value?.ref.pointer ?? ffi.nullptr);
   }
 
   /// setMessage:
   set message(objc.NSString? value) {
-    _objc_msgSend_xtuoz7(
-      object$.ref.pointer,
-      _sel_setMessage_,
-      value?.ref.pointer ?? ffi.nullptr,
-    );
+    _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setMessage_, value?.ref.pointer ?? ffi.nullptr);
   }
 }
 
-late final _class_ExampleHostApiSetup = objc.getClass(
-  "Runner.ExampleHostApiSetup",
-);
+late final _class_ExampleHostApiSetup = objc.getClass("Runner.ExampleHostApiSetup");
 late final _class_MessageDataBridge = objc.getClass("Runner.MessageDataBridge");
-late final _class_MessageFlutterApiRegistrar = objc.getClass(
-  "Runner.MessageFlutterApiRegistrar",
-);
-late final _class_MessagesNumberWrapper = objc.getClass(
-  "Runner.MessagesNumberWrapper",
-);
-late final _class_MessagesPigeonInternalNull = objc.getClass(
-  "Runner.MessagesPigeonInternalNull",
-);
-late final _class_MessagesPigeonTypedData = objc.getClass(
-  "Runner.MessagesPigeonTypedData",
-);
+late final _class_MessageFlutterApiRegistrar = objc.getClass("Runner.MessageFlutterApiRegistrar");
+late final _class_MessagesNumberWrapper = objc.getClass("Runner.MessagesNumberWrapper");
+late final _class_MessagesPigeonInternalNull = objc.getClass("Runner.MessagesPigeonInternalNull");
+late final _class_MessagesPigeonTypedData = objc.getClass("Runner.MessagesPigeonTypedData");
 late final _class_PigeonError = objc.getClass("Runner.PigeonError");
 final _objc_msgSend_11spmsz = objc.msgSendPointer
     .cast<
@@ -1749,18 +1428,10 @@ final _objc_msgSend_19nvye5 = objc.msgSendPointer
 final _objc_msgSend_1cv3oi8 = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
-        ffi.Long Function(
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCSelector>,
-        )
+        ffi.Long Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCSelector>)
       >
     >()
-    .asFunction<
-      int Function(
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCSelector>,
-      )
-    >();
+    .asFunction<int Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCSelector>)>();
 final _objc_msgSend_1cwp428 = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -1781,18 +1452,10 @@ final _objc_msgSend_1cwp428 = objc.msgSendPointer
 final _objc_msgSend_1hz7y9r = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
-        ffi.Long Function(
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCSelector>,
-        )
+        ffi.Long Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCSelector>)
       >
     >()
-    .asFunction<
-      int Function(
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCSelector>,
-      )
-    >();
+    .asFunction<int Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCSelector>)>();
 final _objc_msgSend_1n05qvw = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -1844,11 +1507,7 @@ final _objc_msgSend_4sp4xj = objc.msgSendPointer
       >
     >()
     .asFunction<
-      void Function(
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCSelector>,
-        int,
-      )
+      void Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCSelector>, int)
     >();
 final _objc_msgSend_6vqy4b = objc.msgSendPointer
     .cast<
@@ -1918,11 +1577,7 @@ final _objc_msgSend_o94sji = objc.msgSendPointer
       >
     >()
     .asFunction<
-      void Function(
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCSelector>,
-        int,
-      )
+      void Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCSelector>, int)
     >();
 final _objc_msgSend_pfv6jd = objc.msgSendPointer
     .cast<
@@ -1963,24 +1618,12 @@ final _objc_msgSend_xtuoz7 = objc.msgSendPointer
 final _objc_msgSend_xw2lbc = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
-        ffi.UnsignedLong Function(
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCSelector>,
-        )
+        ffi.UnsignedLong Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCSelector>)
       >
     >()
-    .asFunction<
-      int Function(
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCSelector>,
-      )
-    >();
-late final _protocol_MessageFlutterApiBridge = objc.getProtocol(
-  "Runner.MessageFlutterApiBridge",
-);
-late final _sel_addWithA_b_wrappedError_ = objc.registerName(
-  "addWithA:b:wrappedError:",
-);
+    .asFunction<int Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCSelector>)>();
+late final _protocol_MessageFlutterApiBridge = objc.getProtocol("Runner.MessageFlutterApiBridge");
+late final _sel_addWithA_b_wrappedError_ = objc.registerName("addWithA:b:wrappedError:");
 late final _sel_alloc = objc.registerName("alloc");
 late final _sel_allocWithZone_ = objc.registerName("allocWithZone:");
 late final _sel_code = objc.registerName("code");
@@ -1994,21 +1637,15 @@ late final _sel_determineHostLanguageWithWrappedError_ = objc.registerName(
 late final _sel_flutterMethodWithAString_error_ = objc.registerName(
   "flutterMethodWithAString:error:",
 );
-late final _sel_getInstanceWithName_ = objc.registerName(
-  "getInstanceWithName:",
-);
+late final _sel_getInstanceWithName_ = objc.registerName("getInstanceWithName:");
 late final _sel_hash = objc.registerName("hash");
 late final _sel_init = objc.registerName("init");
-late final _sel_initWithCode_message_details_ = objc.registerName(
-  "initWithCode:message:details:",
-);
+late final _sel_initWithCode_message_details_ = objc.registerName("initWithCode:message:details:");
 late final _sel_initWithData_type_ = objc.registerName("initWithData:type:");
 late final _sel_initWithName_messageDescription_code_data_ = objc.registerName(
   "initWithName:messageDescription:code:data:",
 );
-late final _sel_initWithNumber_type_ = objc.registerName(
-  "initWithNumber:type:",
-);
+late final _sel_initWithNumber_type_ = objc.registerName("initWithNumber:type:");
 late final _sel_isEqual_ = objc.registerName("isEqual:");
 late final _sel_isKindOfClass_ = objc.registerName("isKindOfClass:");
 late final _sel_message = objc.registerName("message");
@@ -2016,17 +1653,14 @@ late final _sel_messageDescription = objc.registerName("messageDescription");
 late final _sel_name = objc.registerName("name");
 late final _sel_new = objc.registerName("new");
 late final _sel_number = objc.registerName("number");
-late final _sel_registerInstanceWithApi_name_ = objc.registerName(
-  "registerInstanceWithApi:name:",
+late final _sel_registerInstanceWithApi_name_ = objc.registerName("registerInstanceWithApi:name:");
+late final _sel_sendMessageWithMessage_wrappedError_completionHandler_ = objc.registerName(
+  "sendMessageWithMessage:wrappedError:completionHandler:",
 );
-late final _sel_sendMessageWithMessage_wrappedError_completionHandler_ = objc
-    .registerName("sendMessageWithMessage:wrappedError:completionHandler:");
 late final _sel_setCode_ = objc.registerName("setCode:");
 late final _sel_setData_ = objc.registerName("setData:");
 late final _sel_setDetails_ = objc.registerName("setDetails:");
-late final _sel_setMessageDescription_ = objc.registerName(
-  "setMessageDescription:",
-);
+late final _sel_setMessageDescription_ = objc.registerName("setMessageDescription:");
 late final _sel_setMessage_ = objc.registerName("setMessage:");
 late final _sel_setName_ = objc.registerName("setName:");
 late final _sel_setNumber_ = objc.registerName("setNumber:");

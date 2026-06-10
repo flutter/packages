@@ -8,8 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'generated.dart';
-import 'integration_tests.dart'
-    show TargetGenerator, proxyApiSupportedLanguages;
+import 'integration_tests.dart' show TargetGenerator, proxyApiSupportedLanguages;
 
 /// Runs the Proxy API integration tests.
 
@@ -56,19 +55,13 @@ void runProxyApiIntegrationTests(TargetGenerator targetGenerator) {
     testWidgets('throwError', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
 
-      await expectLater(
-        () => api.throwError(),
-        throwsA(isA<PlatformException>()),
-      );
+      await expectLater(() => api.throwError(), throwsA(isA<PlatformException>()));
     });
 
     testWidgets('throwErrorFromVoid', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
 
-      await expectLater(
-        () => api.throwErrorFromVoid(),
-        throwsA(isA<PlatformException>()),
-      );
+      await expectLater(() => api.throwErrorFromVoid(), throwsA(isA<PlatformException>()));
     });
 
     testWidgets('throwFlutterError', (_) async {
@@ -154,9 +147,7 @@ void runProxyApiIntegrationTests(TargetGenerator targetGenerator) {
     testWidgets('echoProxyApiMap', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
 
-      final value = <String, ProxyApiTestClass>{
-        '42': _createGenericProxyApiTestClass(),
-      };
+      final value = <String, ProxyApiTestClass>{'42': _createGenericProxyApiTestClass()};
       expect(await api.echoProxyApiMap(value), value);
     });
 
@@ -219,19 +210,13 @@ void runProxyApiIntegrationTests(TargetGenerator targetGenerator) {
     testWidgets('echoNullableMap', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
       expect(await api.echoNullableMap(null), null);
-      expect(
-        await api.echoNullableMap(<String, int>{'value': 1}),
-        <String, int>{'value': 1},
-      );
+      expect(await api.echoNullableMap(<String, int>{'value': 1}), <String, int>{'value': 1});
     });
 
     testWidgets('echoNullableEnum', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
       expect(await api.echoNullableEnum(null), null);
-      expect(
-        await api.echoNullableEnum(ProxyApiTestEnum.one),
-        ProxyApiTestEnum.one,
-      );
+      expect(await api.echoNullableEnum(ProxyApiTestEnum.one), ProxyApiTestEnum.one);
     });
 
     testWidgets('echoNullableProxyApi', (_) async {
@@ -313,19 +298,13 @@ void runProxyApiIntegrationTests(TargetGenerator targetGenerator) {
     testWidgets('throwAsyncError', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
 
-      await expectLater(
-        () => api.throwAsyncError(),
-        throwsA(isA<PlatformException>()),
-      );
+      await expectLater(() => api.throwAsyncError(), throwsA(isA<PlatformException>()));
     });
 
     testWidgets('throwAsyncErrorFromVoid', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
 
-      await expectLater(
-        () => api.throwAsyncErrorFromVoid(),
-        throwsA(isA<PlatformException>()),
-      );
+      await expectLater(() => api.throwAsyncErrorFromVoid(), throwsA(isA<PlatformException>()));
     });
 
     testWidgets('throwAsyncFlutterError', (_) async {
@@ -387,19 +366,15 @@ void runProxyApiIntegrationTests(TargetGenerator targetGenerator) {
     testWidgets('echoAsyncNullableMap', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
       expect(await api.echoAsyncNullableMap(null), null);
-      expect(
-        await api.echoAsyncNullableMap(<String, int>{'banana': 1}),
-        <String, int>{'banana': 1},
-      );
+      expect(await api.echoAsyncNullableMap(<String, int>{'banana': 1}), <String, int>{
+        'banana': 1,
+      });
     });
 
     testWidgets('echoAsyncNullableEnum', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
       expect(await api.echoAsyncNullableEnum(null), null);
-      expect(
-        await api.echoAsyncNullableEnum(ProxyApiTestEnum.one),
-        ProxyApiTestEnum.one,
-      );
+      expect(await api.echoAsyncNullableEnum(ProxyApiTestEnum.one), ProxyApiTestEnum.one);
     });
 
     testWidgets('staticNoop', (_) async {
@@ -524,9 +499,7 @@ void runProxyApiIntegrationTests(TargetGenerator targetGenerator) {
         flutterEchoProxyApiList: (_, List<ProxyApiTestClass?> aList) => aList,
       );
 
-      final List<ProxyApiTestClass?> value = <ProxyApiTestClass>[
-        _createGenericProxyApiTestClass(),
-      ];
+      final List<ProxyApiTestClass?> value = <ProxyApiTestClass>[_createGenericProxyApiTestClass()];
       expect(await api.callFlutterEchoProxyApiList(value), value);
     });
 
@@ -541,13 +514,10 @@ void runProxyApiIntegrationTests(TargetGenerator targetGenerator) {
 
     testWidgets('callFlutterEchoProxyApiMap', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass(
-        flutterEchoProxyApiMap: (_, Map<String?, ProxyApiTestClass?> aMap) =>
-            aMap,
+        flutterEchoProxyApiMap: (_, Map<String?, ProxyApiTestClass?> aMap) => aMap,
       );
 
-      final value = <String?, ProxyApiTestClass?>{
-        'a String': _createGenericProxyApiTestClass(),
-      };
+      final value = <String?, ProxyApiTestClass?>{'a String': _createGenericProxyApiTestClass()};
       expect(await api.callFlutterEchoProxyApiMap(value), value);
     });
 
@@ -606,10 +576,7 @@ void runProxyApiIntegrationTests(TargetGenerator targetGenerator) {
         flutterEchoNullableUint8List: (_, Uint8List? aUint8List) => aUint8List,
       );
       expect(await api.callFlutterEchoNullableUint8List(null), null);
-      expect(
-        await api.callFlutterEchoNullableUint8List(Uint8List(0)),
-        Uint8List(0),
-      );
+      expect(await api.callFlutterEchoNullableUint8List(Uint8List(0)), Uint8List(0));
     });
 
     testWidgets('callFlutterEchoNullableList', (_) async {
@@ -625,10 +592,9 @@ void runProxyApiIntegrationTests(TargetGenerator targetGenerator) {
         flutterEchoNullableMap: (_, Map<String?, Object?>? aMap) => aMap,
       );
       expect(await api.callFlutterEchoNullableMap(null), null);
-      expect(
-        await api.callFlutterEchoNullableMap(<String, int>{'str': 0}),
-        <String, int>{'str': 0},
-      );
+      expect(await api.callFlutterEchoNullableMap(<String, int>{'str': 0}), <String, int>{
+        'str': 0,
+      });
     });
 
     testWidgets('callFlutterEchoNullableEnum', (_) async {
@@ -636,16 +602,12 @@ void runProxyApiIntegrationTests(TargetGenerator targetGenerator) {
         flutterEchoNullableEnum: (_, ProxyApiTestEnum? anEnum) => anEnum,
       );
       expect(await api.callFlutterEchoNullableEnum(null), null);
-      expect(
-        await api.callFlutterEchoNullableEnum(ProxyApiTestEnum.two),
-        ProxyApiTestEnum.two,
-      );
+      expect(await api.callFlutterEchoNullableEnum(ProxyApiTestEnum.two), ProxyApiTestEnum.two);
     });
 
     testWidgets('callFlutterEchoNullableProxyApi', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass(
-        flutterEchoNullableProxyApi: (_, ProxyApiSuperClass? aProxyApi) =>
-            aProxyApi,
+        flutterEchoNullableProxyApi: (_, ProxyApiSuperClass? aProxyApi) => aProxyApi,
       );
 
       expect(await api.callFlutterEchoNullableProxyApi(null), null);
@@ -684,37 +646,24 @@ ProxyApiTestClass _createGenericProxyApiTestClass({
   String Function(ProxyApiTestClass, String)? flutterEchoString,
   Uint8List Function(ProxyApiTestClass, Uint8List)? flutterEchoUint8List,
   List<Object?> Function(ProxyApiTestClass, List<Object?>)? flutterEchoList,
-  List<ProxyApiTestClass?> Function(
-    ProxyApiTestClass,
-    List<ProxyApiTestClass?>,
-  )?
+  List<ProxyApiTestClass?> Function(ProxyApiTestClass, List<ProxyApiTestClass?>)?
   flutterEchoProxyApiList,
-  Map<String?, Object?> Function(ProxyApiTestClass, Map<String?, Object?>)?
-  flutterEchoMap,
-  ProxyApiTestEnum Function(ProxyApiTestClass, ProxyApiTestEnum)?
-  flutterEchoEnum,
-  ProxyApiSuperClass Function(ProxyApiTestClass, ProxyApiSuperClass)?
-  flutterEchoProxyApi,
+  Map<String?, Object?> Function(ProxyApiTestClass, Map<String?, Object?>)? flutterEchoMap,
+  ProxyApiTestEnum Function(ProxyApiTestClass, ProxyApiTestEnum)? flutterEchoEnum,
+  ProxyApiSuperClass Function(ProxyApiTestClass, ProxyApiSuperClass)? flutterEchoProxyApi,
   Future<String> Function(ProxyApiTestClass, String)? flutterEchoAsyncString,
-  Map<String?, ProxyApiTestClass?> Function(
-    ProxyApiTestClass,
-    Map<String?, ProxyApiTestClass?>,
-  )?
+  Map<String?, ProxyApiTestClass?> Function(ProxyApiTestClass, Map<String?, ProxyApiTestClass?>)?
   flutterEchoProxyApiMap,
   bool? Function(ProxyApiTestClass, bool?)? flutterEchoNullableBool,
   int? Function(ProxyApiTestClass, int?)? flutterEchoNullableInt,
   double? Function(ProxyApiTestClass, double?)? flutterEchoNullableDouble,
   String? Function(ProxyApiTestClass, String?)? flutterEchoNullableString,
-  Uint8List? Function(ProxyApiTestClass, Uint8List?)?
-  flutterEchoNullableUint8List,
-  List<Object?>? Function(ProxyApiTestClass, List<Object?>?)?
-  flutterEchoNullableList,
+  Uint8List? Function(ProxyApiTestClass, Uint8List?)? flutterEchoNullableUint8List,
+  List<Object?>? Function(ProxyApiTestClass, List<Object?>?)? flutterEchoNullableList,
   Map<String?, Object?>? Function(ProxyApiTestClass, Map<String?, Object?>?)?
   flutterEchoNullableMap,
-  ProxyApiTestEnum? Function(ProxyApiTestClass, ProxyApiTestEnum?)?
-  flutterEchoNullableEnum,
-  ProxyApiSuperClass? Function(ProxyApiTestClass, ProxyApiSuperClass?)?
-  flutterEchoNullableProxyApi,
+  ProxyApiTestEnum? Function(ProxyApiTestClass, ProxyApiTestEnum?)? flutterEchoNullableEnum,
+  ProxyApiSuperClass? Function(ProxyApiTestClass, ProxyApiSuperClass?)? flutterEchoNullableProxyApi,
   Future<void> Function(ProxyApiTestClass)? flutterNoopAsync,
   Future<void> Function(ProxyApiTestClass)? flutterNoop,
   void Function(ProxyApiTestClass)? flutterThrowError,
@@ -730,44 +679,31 @@ ProxyApiTestClass _createGenericProxyApiTestClass({
     aMap: const <String?, Object?>{},
     anEnum: ProxyApiTestEnum.one,
     aProxyApi: ProxyApiSuperClass(),
-    flutterEchoBool:
-        flutterEchoBool ?? (ProxyApiTestClass instance, bool aBool) => aBool,
+    flutterEchoBool: flutterEchoBool ?? (ProxyApiTestClass instance, bool aBool) => aBool,
     flutterEchoInt: flutterEchoInt ?? (_, int anInt) => anInt,
     flutterEchoDouble: flutterEchoDouble ?? (_, double aDouble) => aDouble,
     flutterEchoString: flutterEchoString ?? (_, String aString) => aString,
-    flutterEchoUint8List:
-        flutterEchoUint8List ?? (_, Uint8List aUint8List) => aUint8List,
+    flutterEchoUint8List: flutterEchoUint8List ?? (_, Uint8List aUint8List) => aUint8List,
     flutterEchoList: flutterEchoList ?? (_, List<Object?> aList) => aList,
     flutterEchoProxyApiList:
         flutterEchoProxyApiList ?? (_, List<ProxyApiTestClass?> aList) => aList,
     flutterEchoMap: flutterEchoMap ?? (_, Map<String?, Object?> aMap) => aMap,
     flutterEchoEnum: flutterEchoEnum ?? (_, ProxyApiTestEnum anEnum) => anEnum,
-    flutterEchoProxyApi:
-        flutterEchoProxyApi ?? (_, ProxyApiSuperClass aProxyApi) => aProxyApi,
-    flutterEchoAsyncString:
-        flutterEchoAsyncString ?? (_, String aString) async => aString,
+    flutterEchoProxyApi: flutterEchoProxyApi ?? (_, ProxyApiSuperClass aProxyApi) => aProxyApi,
+    flutterEchoAsyncString: flutterEchoAsyncString ?? (_, String aString) async => aString,
     flutterEchoProxyApiMap:
-        flutterEchoProxyApiMap ??
-        (_, Map<String?, ProxyApiTestClass?> aMap) => aMap,
-    flutterEchoNullableBool:
-        flutterEchoNullableBool ?? (_, bool? aBool) => aBool,
+        flutterEchoProxyApiMap ?? (_, Map<String?, ProxyApiTestClass?> aMap) => aMap,
+    flutterEchoNullableBool: flutterEchoNullableBool ?? (_, bool? aBool) => aBool,
     flutterEchoNullableInt: flutterEchoNullableInt ?? (_, int? anInt) => anInt,
-    flutterEchoNullableDouble:
-        flutterEchoNullableDouble ?? (_, double? aDouble) => aDouble,
-    flutterEchoNullableString:
-        flutterEchoNullableString ?? (_, String? aString) => aString,
+    flutterEchoNullableDouble: flutterEchoNullableDouble ?? (_, double? aDouble) => aDouble,
+    flutterEchoNullableString: flutterEchoNullableString ?? (_, String? aString) => aString,
     flutterEchoNullableUint8List:
-        flutterEchoNullableUint8List ??
-        (_, Uint8List? aUint8List) => aUint8List,
-    flutterEchoNullableList:
-        flutterEchoNullableList ?? (_, List<Object?>? aList) => aList,
-    flutterEchoNullableMap:
-        flutterEchoNullableMap ?? (_, Map<String?, Object?>? aMap) => aMap,
-    flutterEchoNullableEnum:
-        flutterEchoNullableEnum ?? (_, ProxyApiTestEnum? anEnum) => anEnum,
+        flutterEchoNullableUint8List ?? (_, Uint8List? aUint8List) => aUint8List,
+    flutterEchoNullableList: flutterEchoNullableList ?? (_, List<Object?>? aList) => aList,
+    flutterEchoNullableMap: flutterEchoNullableMap ?? (_, Map<String?, Object?>? aMap) => aMap,
+    flutterEchoNullableEnum: flutterEchoNullableEnum ?? (_, ProxyApiTestEnum? anEnum) => anEnum,
     flutterEchoNullableProxyApi:
-        flutterEchoNullableProxyApi ??
-        (_, ProxyApiSuperClass? aProxyApi) => aProxyApi,
+        flutterEchoNullableProxyApi ?? (_, ProxyApiSuperClass? aProxyApi) => aProxyApi,
     flutterNoopAsync: flutterNoopAsync ?? (_) async {},
     flutterNoop: flutterNoop ?? (_) async {},
     flutterThrowError: flutterThrowError ?? (_) => null,

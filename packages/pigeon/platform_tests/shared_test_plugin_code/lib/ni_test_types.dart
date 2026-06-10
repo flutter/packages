@@ -39,12 +39,7 @@ final List<List<Object>> nonNullListList = <List<Object>>[
   nonNullEnumList,
 ];
 
-final Map<Object, Object> nonNullMap = <Object, Object>{
-  'a': 1,
-  'b': 2.0,
-  'c': 'three',
-  'd': false,
-};
+final Map<Object, Object> nonNullMap = <Object, Object>{'a': 1, 'b': 2.0, 'c': 'three', 'd': false};
 
 final Map<String, String> nonNullStringMap = <String, String>{
   'a': '1',
@@ -55,12 +50,7 @@ final Map<String, String> nonNullStringMap = <String, String>{
 
 final Map<int, int> nonNullIntMap = <int, int>{0: 0, 1: 1, 2: 3, 4: -1};
 
-final Map<double, double> nonNullDoubleMap = <double, double>{
-  0.0: 0,
-  1.1: 2.0,
-  3: 0.3,
-  -.4: -0.2,
-};
+final Map<double, double> nonNullDoubleMap = <double, double>{0.0: 0, 1.1: 2.0, 3: 0.3, -.4: -0.2};
 
 final Map<int, bool> nonNullBoolMap = <int, bool>{0: true, 1: false, 2: true};
 
@@ -100,13 +90,7 @@ final List<Map<Object, Object>> nonNullMapList = <Map<Object, Object>>[
 
 final List<Object?> list = <Object?>['Thing 1', 2, true, 3.14, null];
 
-final List<String?> stringList = <String?>[
-  'Thing 1',
-  '2',
-  'true',
-  '3.14',
-  null,
-];
+final List<String?> stringList = <String?>['Thing 1', '2', 'true', '3.14', null];
 
 final List<int?> intList = <int?>[1, 2, 3, 4, null];
 
@@ -160,12 +144,7 @@ final Map<double?, double?> doubleMap = <double?, double?>{
   1111111111111111.11111111111111111111111111111111111111111111: null,
 };
 
-final Map<int?, bool?> boolMap = <int?, bool?>{
-  0: true,
-  1: false,
-  2: true,
-  3: null,
-};
+final Map<int?, bool?> boolMap = <int?, bool?>{0: true, 1: false, 2: true, 3: null};
 
 final Map<NIAnEnum?, NIAnEnum?> enumMap = <NIAnEnum?, NIAnEnum?>{
   NIAnEnum.one: NIAnEnum.one,
@@ -205,46 +184,45 @@ final List<Map<Object?, Object?>?> mapList = <Map<Object?, Object?>?>[
   null,
 ];
 
-final NIAllNullableTypesWithoutRecursion
-genericNIAllNullableTypesWithoutRecursion = NIAllNullableTypesWithoutRecursion(
-  aNullableBool: true,
-  aNullableInt: regularInt,
-  aNullableInt64: biggerThanBigInt,
-  aNullableDouble: doublePi,
-  aNullableString: 'Hello host!',
-  aNullableByteArray: Uint8List.fromList(<int>[1, 2, 3]),
-  aNullable4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
-  aNullable8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
-  aNullableFloatArray: Float64List.fromList(<double>[2.71828, doublePi]),
-  aNullableEnum: NIAnEnum.fourHundredTwentyTwo,
-  aNullableObject: 'nullable',
-  list: list,
-  stringList: stringList,
-  intList: intList,
-  doubleList: doubleList,
-  boolList: boolList,
-  enumList: enumList,
-  objectList: list,
-  listList: listList,
-  mapList: mapList,
-  map: map,
-  stringMap: stringMap,
-  intMap: intMap,
-  enumMap: enumMap,
-  objectMap: map,
-  listMap: listMap,
-  mapMap: mapMap,
-);
+final NIAllNullableTypesWithoutRecursion genericNIAllNullableTypesWithoutRecursion =
+    NIAllNullableTypesWithoutRecursion(
+      aNullableBool: true,
+      aNullableInt: regularInt,
+      aNullableInt64: biggerThanBigInt,
+      aNullableDouble: doublePi,
+      aNullableString: 'Hello host!',
+      aNullableByteArray: Uint8List.fromList(<int>[1, 2, 3]),
+      aNullable4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
+      aNullable8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
+      aNullableFloatArray: Float64List.fromList(<double>[2.71828, doublePi]),
+      aNullableEnum: NIAnEnum.fourHundredTwentyTwo,
+      aNullableObject: 'nullable',
+      list: list,
+      stringList: stringList,
+      intList: intList,
+      doubleList: doubleList,
+      boolList: boolList,
+      enumList: enumList,
+      objectList: list,
+      listList: listList,
+      mapList: mapList,
+      map: map,
+      stringMap: stringMap,
+      intMap: intMap,
+      enumMap: enumMap,
+      objectMap: map,
+      listMap: listMap,
+      mapMap: mapMap,
+    );
 
-final List<NIAllNullableTypesWithoutRecursion?>
-allNullableTypesWithoutRecursionList = <NIAllNullableTypesWithoutRecursion?>[
-  genericNIAllNullableTypesWithoutRecursion,
-  NIAllNullableTypesWithoutRecursion(),
-  null,
-];
+final List<NIAllNullableTypesWithoutRecursion?> allNullableTypesWithoutRecursionList =
+    <NIAllNullableTypesWithoutRecursion?>[
+      genericNIAllNullableTypesWithoutRecursion,
+      NIAllNullableTypesWithoutRecursion(),
+      null,
+    ];
 
-final Map<int, NIAllNullableTypesWithoutRecursion?>
-allNullableTypesWithoutRecursionMap =
+final Map<int, NIAllNullableTypesWithoutRecursion?> allNullableTypesWithoutRecursionMap =
     <int, NIAllNullableTypesWithoutRecursion?>{
       0: genericNIAllNullableTypesWithoutRecursion,
       1: NIAllNullableTypesWithoutRecursion(),
@@ -283,15 +261,9 @@ final NIAllTypes genericNIAllTypes = NIAllTypes(
   mapMap: nonNullMapMap,
 );
 
-final List<NIAllTypes?> allTypesClassList = <NIAllTypes?>[
-  genericNIAllTypes,
-  null,
-];
+final List<NIAllTypes?> allTypesClassList = <NIAllTypes?>[genericNIAllTypes, null];
 
-final Map<int, NIAllTypes?> allTypesClassMap = <int, NIAllTypes?>{
-  0: genericNIAllTypes,
-  1: null,
-};
+final Map<int, NIAllTypes?> allTypesClassMap = <int, NIAllTypes?>{0: genericNIAllTypes, 1: null};
 
 final NIAllNullableTypes genericNIAllNullableTypes = NIAllNullableTypes(
   aNullableBool: true,
@@ -323,24 +295,23 @@ final NIAllNullableTypes genericNIAllNullableTypes = NIAllNullableTypes(
   mapMap: mapMap,
 );
 
-final List<NIAllNullableTypes> nonNullNIAllNullableTypesList =
-    <NIAllNullableTypes>[genericNIAllNullableTypes, NIAllNullableTypes()];
+final List<NIAllNullableTypes> nonNullNIAllNullableTypesList = <NIAllNullableTypes>[
+  genericNIAllNullableTypes,
+  NIAllNullableTypes(),
+];
 
-final Map<int, NIAllNullableTypes> nonNullNIAllNullableTypesMap =
-    <int, NIAllNullableTypes>{
-      0: genericNIAllNullableTypes,
-      1: NIAllNullableTypes(),
-    };
+final Map<int, NIAllNullableTypes> nonNullNIAllNullableTypesMap = <int, NIAllNullableTypes>{
+  0: genericNIAllNullableTypes,
+  1: NIAllNullableTypes(),
+};
 
-final List<NIAllNullableTypesWithoutRecursion>
-nonNullNIAllNullableTypesWithoutRecursionList =
+final List<NIAllNullableTypesWithoutRecursion> nonNullNIAllNullableTypesWithoutRecursionList =
     <NIAllNullableTypesWithoutRecursion>[
       genericNIAllNullableTypesWithoutRecursion,
       NIAllNullableTypesWithoutRecursion(),
     ];
 
-final Map<int, NIAllNullableTypesWithoutRecursion>
-nonNullNIAllNullableTypesWithoutRecursionMap =
+final Map<int, NIAllNullableTypesWithoutRecursion> nonNullNIAllNullableTypesWithoutRecursionMap =
     <int, NIAllNullableTypesWithoutRecursion>{
       0: genericNIAllNullableTypesWithoutRecursion,
       1: NIAllNullableTypesWithoutRecursion(),
@@ -352,12 +323,11 @@ final List<NIAllNullableTypes?> allNullableTypesList = <NIAllNullableTypes?>[
   null,
 ];
 
-final Map<int, NIAllNullableTypes?> allNullableTypesMap =
-    <int, NIAllNullableTypes?>{
-      0: genericNIAllNullableTypes,
-      1: NIAllNullableTypes(),
-      2: null,
-    };
+final Map<int, NIAllNullableTypes?> allNullableTypesMap = <int, NIAllNullableTypes?>{
+  0: genericNIAllNullableTypes,
+  1: NIAllNullableTypes(),
+  2: null,
+};
 
 final NIAllNullableTypes recursiveNIAllNullableTypes = NIAllNullableTypes(
   aNullableBool: true,

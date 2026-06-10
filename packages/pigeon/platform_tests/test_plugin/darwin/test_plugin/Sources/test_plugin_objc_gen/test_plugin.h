@@ -340,8 +340,8 @@ typedef unsigned int swift_uint4 __attribute__((__ext_vector_type__(4)));
 /// data from Swift to Objective-C.
 SWIFT_CLASS("_TtC11test_plugin25NIAllClassesWrapperBridge")
 SWIFT_AVAILABILITY(macos, introduced = 10.15)
-SWIFT_AVAILABILITY(ios, introduced = 13)
-@interface NIAllClassesWrapperBridge : NSObject
+    SWIFT_AVAILABILITY(ios, introduced = 13)
+        @interface NIAllClassesWrapperBridge : NSObject
 - (nonnull instancetype)
             initWithAllNullableTypes:
                 (NIAllNullableTypesBridge* _Nonnull)allNullableTypes
@@ -380,8 +380,8 @@ SWIFT_AVAILABILITY(ios, introduced = 13)
 /// Objective-C.
 SWIFT_CLASS("_TtC11test_plugin24NIAllNullableTypesBridge")
 SWIFT_AVAILABILITY(macos, introduced = 10.15)
-SWIFT_AVAILABILITY(ios, introduced = 13)
-@interface NIAllNullableTypesBridge : NSObject
+    SWIFT_AVAILABILITY(ios, introduced = 13) @interface NIAllNullableTypesBridge
+    : NSObject
 - (nonnull instancetype)
     initWithANullableBool:(NSNumber* _Nullable)aNullableBool
              aNullableInt:(NSNumber* _Nullable)aNullableInt
@@ -476,8 +476,8 @@ SWIFT_AVAILABILITY(ios, introduced = 13)
 /// from Swift to Objective-C.
 SWIFT_CLASS("_TtC11test_plugin40NIAllNullableTypesWithoutRecursionBridge")
 SWIFT_AVAILABILITY(macos, introduced = 10.15)
-SWIFT_AVAILABILITY(ios, introduced = 13)
-@interface NIAllNullableTypesWithoutRecursionBridge : NSObject
+    SWIFT_AVAILABILITY(ios, introduced = 13)
+        @interface NIAllNullableTypesWithoutRecursionBridge : NSObject
 - (nonnull instancetype)
     initWithANullableBool:(NSNumber* _Nullable)aNullableBool
              aNullableInt:(NSNumber* _Nullable)aNullableInt
@@ -564,7 +564,8 @@ enum NIAnotherEnum : NSInteger;
 /// Objective-C.
 SWIFT_CLASS("_TtC11test_plugin16NIAllTypesBridge")
 SWIFT_AVAILABILITY(macos, introduced = 10.15)
-SWIFT_AVAILABILITY(ios, introduced = 13) @interface NIAllTypesBridge : NSObject
+    SWIFT_AVAILABILITY(ios, introduced = 13) @interface NIAllTypesBridge
+    : NSObject
 - (nonnull instancetype)
     initWithABool:(BOOL)aBool
             anInt:(int64_t)anInt
@@ -652,8 +653,8 @@ typedef SWIFT_ENUM(NSInteger, NIAnotherEnum, closed){
 /// called from Swift.
 SWIFT_PROTOCOL("_TtP11test_plugin33NIFlutterIntegrationCoreApiBridge_")
 SWIFT_AVAILABILITY(macos, introduced = 10.15)
-SWIFT_AVAILABILITY(ios, introduced = 13)
-@protocol NIFlutterIntegrationCoreApiBridge
+    SWIFT_AVAILABILITY(ios, introduced = 13)
+        @protocol NIFlutterIntegrationCoreApiBridge
 /// A no-op function taking no arguments and returning no value, to sanity
 /// test basic calling.
 - (void)noopWithError:(NiTestsError* _Nonnull)error;
@@ -1236,8 +1237,8 @@ SWIFT_AVAILABILITY(ios, introduced = 13)
 
 SWIFT_CLASS("_TtC11test_plugin36NIFlutterIntegrationCoreApiRegistrar")
 SWIFT_AVAILABILITY(macos, introduced = 10.15)
-SWIFT_AVAILABILITY(ios, introduced = 13)
-@interface NIFlutterIntegrationCoreApiRegistrar : NSObject
+    SWIFT_AVAILABILITY(ios, introduced = 13)
+        @interface NIFlutterIntegrationCoreApiRegistrar : NSObject
 + (void)registerInstanceWithApi:
             (id<NIFlutterIntegrationCoreApiBridge> _Nonnull)api
                            name:(NSString* _Nonnull)name;
@@ -1248,8 +1249,8 @@ SWIFT_AVAILABILITY(ios, introduced = 13)
 /// NIHostIntegrationCoreApi classes.
 SWIFT_CLASS("_TtC11test_plugin29NIHostIntegrationCoreApiSetup")
 SWIFT_AVAILABILITY(macos, introduced = 10.15)
-SWIFT_AVAILABILITY(ios, introduced = 13)
-@interface NIHostIntegrationCoreApiSetup : NSObject
+    SWIFT_AVAILABILITY(ios, introduced = 13)
+        @interface NIHostIntegrationCoreApiSetup : NSObject
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 + (NIHostIntegrationCoreApiSetup* _Nullable)getInstanceWithName:
     (NSString* _Nonnull)name SWIFT_WARN_UNUSED_RESULT;
@@ -2660,8 +2661,8 @@ SWIFT_AVAILABILITY(ios, introduced = 13)
 /// Objective-C.
 SWIFT_CLASS("_TtC11test_plugin19NIUnusedClassBridge")
 SWIFT_AVAILABILITY(macos, introduced = 10.15)
-SWIFT_AVAILABILITY(ios, introduced = 13)
-@interface NIUnusedClassBridge : NSObject
+    SWIFT_AVAILABILITY(ios, introduced = 13) @interface NIUnusedClassBridge
+    : NSObject
 - (nonnull instancetype)initWithAField:(NSObject* _Nullable)aField
     OBJC_DESIGNATED_INITIALIZER;
 @property(nonatomic, strong) NSObject* _Nullable aField;
@@ -2705,8 +2706,8 @@ SWIFT_CLASS("_TtC11test_plugin25NiTestsPigeonInternalNull")
 @class NSData;
 SWIFT_CLASS("_TtC11test_plugin22NiTestsPigeonTypedData")
 SWIFT_AVAILABILITY(macos, introduced = 10.15)
-SWIFT_AVAILABILITY(ios, introduced = 13)
-@interface NiTestsPigeonTypedData : NSObject
+    SWIFT_AVAILABILITY(ios, introduced = 13) @interface NiTestsPigeonTypedData
+    : NSObject
 @property(nonatomic, readonly, strong) NSData* _Nonnull data;
 @property(nonatomic, readonly) NSInteger type;
 - (nonnull instancetype)initWithData:(NSData* _Nonnull)data

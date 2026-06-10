@@ -37,18 +37,14 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
       final mcStopwatch = Stopwatch()..start();
       await mcApi.echoUint8List(data);
       mcStopwatch.stop();
-      print(
-        'MC_BENCHMARK: 1MB Uint8List Echo took ${mcStopwatch.elapsedMilliseconds}ms',
-      );
+      print('MC_BENCHMARK: 1MB Uint8List Echo took ${mcStopwatch.elapsedMilliseconds}ms');
 
       // Native Interop
       if (niApi != null) {
         final niStopwatch = Stopwatch()..start();
         niApi.echoUint8List(data);
         niStopwatch.stop();
-        print(
-          'NI_BENCHMARK: 1MB Uint8List Echo took ${niStopwatch.elapsedMilliseconds}ms',
-        );
+        print('NI_BENCHMARK: 1MB Uint8List Echo took ${niStopwatch.elapsedMilliseconds}ms');
       } else {
         print('NI_BENCHMARK: Native Interop API not available');
       }
@@ -68,18 +64,14 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
       final mcStopwatch = Stopwatch()..start();
       await mcApi.echoClassList(coreList);
       mcStopwatch.stop();
-      print(
-        'MC_BENCHMARK: 15 Objects List Echo took ${mcStopwatch.elapsedMilliseconds}ms',
-      );
+      print('MC_BENCHMARK: 15 Objects List Echo took ${mcStopwatch.elapsedMilliseconds}ms');
 
       // Native Interop
       if (niApi != null) {
         final niStopwatch = Stopwatch()..start();
         niApi.echoClassList(niList);
         niStopwatch.stop();
-        print(
-          'NI_BENCHMARK: 15 Objects List Echo took ${niStopwatch.elapsedMilliseconds}ms',
-        );
+        print('NI_BENCHMARK: 15 Objects List Echo took ${niStopwatch.elapsedMilliseconds}ms');
       }
     });
 
@@ -90,18 +82,14 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
       final mcStopwatch = Stopwatch()..start();
       await mcApi.echoList(list);
       mcStopwatch.stop();
-      print(
-        'MC_BENCHMARK: 200 Ints List Echo took ${mcStopwatch.elapsedMilliseconds}ms',
-      );
+      print('MC_BENCHMARK: 200 Ints List Echo took ${mcStopwatch.elapsedMilliseconds}ms');
 
       // Native Interop
       if (niApi != null) {
         final niStopwatch = Stopwatch()..start();
         niApi.echoIntList(list);
         niStopwatch.stop();
-        print(
-          'NI_BENCHMARK: 200 Ints List Echo took ${niStopwatch.elapsedMilliseconds}ms',
-        );
+        print('NI_BENCHMARK: 200 Ints List Echo took ${niStopwatch.elapsedMilliseconds}ms');
       }
     });
 
@@ -112,18 +100,14 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
       final mcStopwatch = Stopwatch()..start();
       await mcApi.echoIntMap(map);
       mcStopwatch.stop();
-      print(
-        'MC_BENCHMARK: 200 Ints Map Echo took ${mcStopwatch.elapsedMilliseconds}ms',
-      );
+      print('MC_BENCHMARK: 200 Ints Map Echo took ${mcStopwatch.elapsedMilliseconds}ms');
 
       // Native Interop
       if (niApi != null) {
         final niStopwatch = Stopwatch()..start();
         niApi.echoIntMap(map);
         niStopwatch.stop();
-        print(
-          'NI_BENCHMARK: 200 Ints Map Echo took ${niStopwatch.elapsedMilliseconds}ms',
-        );
+        print('NI_BENCHMARK: 200 Ints Map Echo took ${niStopwatch.elapsedMilliseconds}ms');
       }
     });
 
@@ -136,9 +120,7 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
         await mcApi.echoString(text);
       }
       mcStopwatch.stop();
-      print(
-        'MC_BENCHMARK: 200 Strings Echo took ${mcStopwatch.elapsedMilliseconds}ms',
-      );
+      print('MC_BENCHMARK: 200 Strings Echo took ${mcStopwatch.elapsedMilliseconds}ms');
 
       // Native Interop
       if (niApi != null) {
@@ -147,9 +129,7 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
           niApi.echoString(text);
         }
         niStopwatch.stop();
-        print(
-          'NI_BENCHMARK: 200 Strings Echo took ${niStopwatch.elapsedMilliseconds}ms',
-        );
+        print('NI_BENCHMARK: 200 Strings Echo took ${niStopwatch.elapsedMilliseconds}ms');
       }
     });
 
@@ -162,9 +142,7 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
         await mcApi.echoInt(value);
       }
       mcStopwatch.stop();
-      print(
-        'MC_BENCHMARK: 200 Ints Echo took ${mcStopwatch.elapsedMilliseconds}ms',
-      );
+      print('MC_BENCHMARK: 200 Ints Echo took ${mcStopwatch.elapsedMilliseconds}ms');
 
       // Native Interop
       if (niApi != null) {
@@ -173,15 +151,11 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
           niApi.echoInt(value);
         }
         niStopwatch.stop();
-        print(
-          'NI_BENCHMARK: 200 Ints Echo took ${niStopwatch.elapsedMilliseconds}ms',
-        );
+        print('NI_BENCHMARK: 200 Ints Echo took ${niStopwatch.elapsedMilliseconds}ms');
       }
     });
 
-    testWidgets('Flutter String Echo Comparison (x200)', (
-      WidgetTester _,
-    ) async {
+    testWidgets('Flutter String Echo Comparison (x200)', (WidgetTester _) async {
       const text = 'Hello Pigeon Benchmark!';
 
       // MethodChannel
@@ -190,9 +164,7 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
         await mcApi.callFlutterEchoString(text);
       }
       mcStopwatch.stop();
-      print(
-        'MC_BENCHMARK: 200 Flutter Strings Echo took ${mcStopwatch.elapsedMilliseconds}ms',
-      );
+      print('MC_BENCHMARK: 200 Flutter Strings Echo took ${mcStopwatch.elapsedMilliseconds}ms');
 
       // Native Interop
       final niStopwatch = Stopwatch()..start();
@@ -200,9 +172,7 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
         niApi!.callFlutterEchoString(text);
       }
       niStopwatch.stop();
-      print(
-        'NI_BENCHMARK: 200 Flutter Strings Echo took ${niStopwatch.elapsedMilliseconds}ms',
-      );
+      print('NI_BENCHMARK: 200 Flutter Strings Echo took ${niStopwatch.elapsedMilliseconds}ms');
     });
 
     testWidgets('Flutter Int Echo Comparison (x200)', (WidgetTester _) async {
@@ -214,9 +184,7 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
         await mcApi.callFlutterEchoInt(value);
       }
       mcStopwatch.stop();
-      print(
-        'MC_BENCHMARK: 200 Flutter Ints Echo took ${mcStopwatch.elapsedMilliseconds}ms',
-      );
+      print('MC_BENCHMARK: 200 Flutter Ints Echo took ${mcStopwatch.elapsedMilliseconds}ms');
 
       // Native Interop
       final niStopwatch = Stopwatch()..start();
@@ -224,14 +192,10 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
         niApi!.callFlutterEchoInt(value);
       }
       niStopwatch.stop();
-      print(
-        'NI_BENCHMARK: 200 Flutter Ints Echo took ${niStopwatch.elapsedMilliseconds}ms',
-      );
+      print('NI_BENCHMARK: 200 Flutter Ints Echo took ${niStopwatch.elapsedMilliseconds}ms');
     });
 
-    testWidgets('Flutter Uint8List Echo 1MB Comparison', (
-      WidgetTester _,
-    ) async {
+    testWidgets('Flutter Uint8List Echo 1MB Comparison', (WidgetTester _) async {
       const int size = 1024 * 1024;
       final data = Uint8List(size);
       for (var i = 0; i < size; i++) {
@@ -242,22 +206,16 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
       final mcStopwatch = Stopwatch()..start();
       await mcApi.callFlutterEchoUint8List(data);
       mcStopwatch.stop();
-      print(
-        'MC_BENCHMARK: 1MB Flutter Uint8List Echo took ${mcStopwatch.elapsedMilliseconds}ms',
-      );
+      print('MC_BENCHMARK: 1MB Flutter Uint8List Echo took ${mcStopwatch.elapsedMilliseconds}ms');
 
       // Native Interop
       final niStopwatch = Stopwatch()..start();
       niApi!.callFlutterEchoUint8List(data);
       niStopwatch.stop();
-      print(
-        'NI_BENCHMARK: 1MB Flutter Uint8List Echo took ${niStopwatch.elapsedMilliseconds}ms',
-      );
+      print('NI_BENCHMARK: 1MB Flutter Uint8List Echo took ${niStopwatch.elapsedMilliseconds}ms');
     });
 
-    testWidgets('Flutter Large Object List 15 Comparison', (
-      WidgetTester _,
-    ) async {
+    testWidgets('Flutter Large Object List 15 Comparison', (WidgetTester _) async {
       final coreList = List<core.AllNullableTypes?>.generate(
         15,
         (_) => core_types.genericAllNullableTypes,
@@ -271,39 +229,29 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
       final mcStopwatch = Stopwatch()..start();
       await mcApi.callFlutterEchoClassList(coreList);
       mcStopwatch.stop();
-      print(
-        'MC_BENCHMARK: 15 Flutter Objects List Echo took ${mcStopwatch.elapsedMilliseconds}ms',
-      );
+      print('MC_BENCHMARK: 15 Flutter Objects List Echo took ${mcStopwatch.elapsedMilliseconds}ms');
 
       // Native Interop
       final niStopwatch = Stopwatch()..start();
       niApi!.callFlutterEchoClassList(niList);
       niStopwatch.stop();
-      print(
-        'NI_BENCHMARK: 15 Flutter Objects List Echo took ${niStopwatch.elapsedMilliseconds}ms',
-      );
+      print('NI_BENCHMARK: 15 Flutter Objects List Echo took ${niStopwatch.elapsedMilliseconds}ms');
     });
 
-    testWidgets('Flutter Large Int List 200 Comparison', (
-      WidgetTester _,
-    ) async {
+    testWidgets('Flutter Large Int List 200 Comparison', (WidgetTester _) async {
       final list = List<int?>.generate(200, (i) => i);
 
       // MethodChannel
       final mcStopwatch = Stopwatch()..start();
       await mcApi.callFlutterEchoList(list);
       mcStopwatch.stop();
-      print(
-        'MC_BENCHMARK: 200 Flutter Ints List Echo took ${mcStopwatch.elapsedMilliseconds}ms',
-      );
+      print('MC_BENCHMARK: 200 Flutter Ints List Echo took ${mcStopwatch.elapsedMilliseconds}ms');
 
       // Native Interop
       final niStopwatch = Stopwatch()..start();
       niApi!.callFlutterEchoList(list);
       niStopwatch.stop();
-      print(
-        'NI_BENCHMARK: 200 Flutter Ints List Echo took ${niStopwatch.elapsedMilliseconds}ms',
-      );
+      print('NI_BENCHMARK: 200 Flutter Ints List Echo took ${niStopwatch.elapsedMilliseconds}ms');
     });
 
     testWidgets('Flutter Large Int Map 200 Comparison', (WidgetTester _) async {
@@ -313,17 +261,13 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
       final mcStopwatch = Stopwatch()..start();
       await mcApi.callFlutterEchoIntMap(map);
       mcStopwatch.stop();
-      print(
-        'MC_BENCHMARK: 200 Flutter Ints Map Echo took ${mcStopwatch.elapsedMilliseconds}ms',
-      );
+      print('MC_BENCHMARK: 200 Flutter Ints Map Echo took ${mcStopwatch.elapsedMilliseconds}ms');
 
       // Native Interop
       final niStopwatch = Stopwatch()..start();
       niApi!.callFlutterEchoIntMap(map);
       niStopwatch.stop();
-      print(
-        'NI_BENCHMARK: 200 Flutter Ints Map Echo took ${niStopwatch.elapsedMilliseconds}ms',
-      );
+      print('NI_BENCHMARK: 200 Flutter Ints Map Echo took ${niStopwatch.elapsedMilliseconds}ms');
     });
 
     if (targetGenerator == TargetGenerator.kotlin) {
@@ -335,10 +279,7 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
         }
 
         // Simulate generating a mock JList
-        final List<JString> dartList = List.generate(
-          200,
-          (i) => 'Item $i'.toJString(),
-        );
+        final List<JString> dartList = List.generate(200, (i) => 'Item $i'.toJString());
         final JList<JString> jList = dartList.toJList();
 
         const iters = 100;
@@ -351,9 +292,7 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
           }
         }
         sw1.stop();
-        print(
-          'JLIST_BENCHMARK (without asDart, uncached .size()): ${sw1.elapsedMilliseconds}ms',
-        );
+        print('JLIST_BENCHMARK (without asDart, uncached .size()): ${sw1.elapsedMilliseconds}ms');
 
         // 2. Without asDart(), cached size()
         final sw2 = Stopwatch()..start();
@@ -364,9 +303,7 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
           }
         }
         sw2.stop();
-        print(
-          'JLIST_BENCHMARK (without asDart, cached .size()): ${sw2.elapsedMilliseconds}ms',
-        );
+        print('JLIST_BENCHMARK (without asDart, cached .size()): ${sw2.elapsedMilliseconds}ms');
 
         // 3. With asDart(), uncached length
         final sw3 = Stopwatch()..start();
@@ -377,9 +314,7 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
           }
         }
         sw3.stop();
-        print(
-          'JLIST_BENCHMARK (with asDart, uncached .length): ${sw3.elapsedMilliseconds}ms',
-        );
+        print('JLIST_BENCHMARK (with asDart, uncached .length): ${sw3.elapsedMilliseconds}ms');
 
         // 4. With asDart(), cached length (current Pigeon code)
         final sw4 = Stopwatch()..start();
@@ -391,9 +326,7 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
           }
         }
         sw4.stop();
-        print(
-          'JLIST_BENCHMARK (with asDart, cached .length): ${sw4.elapsedMilliseconds}ms',
-        );
+        print('JLIST_BENCHMARK (with asDart, cached .length): ${sw4.elapsedMilliseconds}ms');
 
         // Check difference
         print('JLIST_BENCHMARK differences confirmed via benchmark.');
@@ -401,63 +334,54 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
     }
 
     if (targetGenerator == TargetGenerator.swift) {
-      testWidgets(
-        'FFI list casting overhead micro-benchmark: cast() vs List.from() vs map()',
-        (WidgetTester _) async {
-          if (niApi == null) {
-            return;
+      testWidgets('FFI list casting overhead micro-benchmark: cast() vs List.from() vs map()', (
+        WidgetTester _,
+      ) async {
+        if (niApi == null) {
+          return;
+        }
+
+        // Simulate a decoded FFI NSArray which arrives as List<Object?> via StandardMessageCodec
+        final ffiList = List<Object?>.generate(200, (i) => 'Item $i');
+
+        const iters = 100;
+
+        // 1. .cast<String>() iteration (What Pigeon currently uses for FFI)
+        final sw1 = Stopwatch()..start();
+        for (var iter = 0; iter < iters; iter++) {
+          final List<String> castList = ffiList.cast<String>();
+          final int len = castList.length;
+          for (var i = 0; i < len; i++) {
+            final String _ = castList[i];
           }
+        }
+        sw1.stop();
+        print('FFI_BENCHMARK (cast<T>() iteration): ${sw1.elapsedMilliseconds}ms');
 
-          // Simulate a decoded FFI NSArray which arrives as List<Object?> via StandardMessageCodec
-          final ffiList = List<Object?>.generate(200, (i) => 'Item $i');
-
-          const iters = 100;
-
-          // 1. .cast<String>() iteration (What Pigeon currently uses for FFI)
-          final sw1 = Stopwatch()..start();
-          for (var iter = 0; iter < iters; iter++) {
-            final List<String> castList = ffiList.cast<String>();
-            final int len = castList.length;
-            for (var i = 0; i < len; i++) {
-              final String _ = castList[i];
-            }
+        // 2. List.from() iteration
+        final sw2 = Stopwatch()..start();
+        for (var iter = 0; iter < iters; iter++) {
+          final fromList = List<String>.from(ffiList);
+          final int len = fromList.length;
+          for (var i = 0; i < len; i++) {
+            final String _ = fromList[i];
           }
-          sw1.stop();
-          print(
-            'FFI_BENCHMARK (cast<T>() iteration): ${sw1.elapsedMilliseconds}ms',
-          );
+        }
+        sw2.stop();
+        print('FFI_BENCHMARK (List.from() iteration): ${sw2.elapsedMilliseconds}ms');
 
-          // 2. List.from() iteration
-          final sw2 = Stopwatch()..start();
-          for (var iter = 0; iter < iters; iter++) {
-            final fromList = List<String>.from(ffiList);
-            final int len = fromList.length;
-            for (var i = 0; i < len; i++) {
-              final String _ = fromList[i];
-            }
+        // 3. .map().toList() iteration
+        final sw3 = Stopwatch()..start();
+        for (var iter = 0; iter < iters; iter++) {
+          final List<String> mapList = ffiList.map((e) => e! as String).toList();
+          final int len = mapList.length;
+          for (var i = 0; i < len; i++) {
+            final String _ = mapList[i];
           }
-          sw2.stop();
-          print(
-            'FFI_BENCHMARK (List.from() iteration): ${sw2.elapsedMilliseconds}ms',
-          );
-
-          // 3. .map().toList() iteration
-          final sw3 = Stopwatch()..start();
-          for (var iter = 0; iter < iters; iter++) {
-            final List<String> mapList = ffiList
-                .map((e) => e! as String)
-                .toList();
-            final int len = mapList.length;
-            for (var i = 0; i < len; i++) {
-              final String _ = mapList[i];
-            }
-          }
-          sw3.stop();
-          print(
-            'FFI_BENCHMARK (.map().toList() iteration): ${sw3.elapsedMilliseconds}ms',
-          );
-        },
-      );
+        }
+        sw3.stop();
+        print('FFI_BENCHMARK (.map().toList() iteration): ${sw3.elapsedMilliseconds}ms');
+      });
     }
   });
 }

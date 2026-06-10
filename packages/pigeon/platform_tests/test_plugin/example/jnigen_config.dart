@@ -7,17 +7,12 @@ import 'package:logging/logging.dart';
 void main() async {
   await generateJniBindings(
     Config(
-      androidSdkConfig: AndroidSdkConfig(
-        addGradleDeps: true,
-        androidExample: './',
-      ),
+      androidSdkConfig: AndroidSdkConfig(addGradleDeps: true, androidExample: './'),
       summarizerOptions: SummarizerOptions(backend: SummarizerBackend.asm),
       outputConfig: OutputConfig(
         dartConfig: DartCodeOutputConfig(
           // Path is relative to appDirectory.
-          path: Uri.file(
-            '../../shared_test_plugin_code/lib/src/generated/ni_tests.gen.jni.dart',
-          ),
+          path: Uri.file('../../shared_test_plugin_code/lib/src/generated/ni_tests.gen.jni.dart'),
           structure: OutputStructure.singleFile,
         ),
       ),

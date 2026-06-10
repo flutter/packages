@@ -205,11 +205,7 @@ abstract class ImagePickerPlatform extends PlatformInterface {
   ///
   /// If no images were picked, the return value is null.
   @Deprecated('Use getMultiImageWithOptions instead.')
-  Future<List<XFile>?> getMultiImage({
-    double? maxWidth,
-    double? maxHeight,
-    int? imageQuality,
-  }) {
+  Future<List<XFile>?> getMultiImage({double? maxWidth, double? maxHeight, int? imageQuality}) {
     throw UnimplementedError('getMultiImage() has not been implemented.');
   }
 
@@ -331,9 +327,7 @@ abstract class ImagePickerPlatform extends PlatformInterface {
   Future<List<XFile>> getMultiVideoWithOptions({
     MultiVideoPickerOptions options = const MultiVideoPickerOptions(),
   }) {
-    throw UnimplementedError(
-      'getMultiVideoWithOptions() has not been implemented.',
-    );
+    throw UnimplementedError('getMultiVideoWithOptions() has not been implemented.');
   }
 
   /// Returns true if the implementation supports [source].

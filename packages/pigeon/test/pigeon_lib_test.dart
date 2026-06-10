@@ -26,12 +26,7 @@ class _ValidatorGeneratorAdapter implements GeneratorAdapter {
   final IOSink? sink;
 
   @override
-  void generate(
-    StringSink sink,
-    InternalPigeonOptions options,
-    Root root,
-    FileType fileType,
-  ) {}
+  void generate(StringSink sink, InternalPigeonOptions options, Root root, FileType fileType) {}
 
   @override
   IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) => sink;
@@ -70,81 +65,52 @@ void main() {
   }
 
   test('parse args - input', () {
-    final PigeonOptions opts = Pigeon.parseArgs(<String>[
-      '--input',
-      'foo.dart',
-    ]);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--input', 'foo.dart']);
     expect(opts.input, equals('foo.dart'));
   });
 
   test('parse args - dart_out', () {
-    final PigeonOptions opts = Pigeon.parseArgs(<String>[
-      '--dart_out',
-      'foo.dart',
-    ]);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--dart_out', 'foo.dart']);
     expect(opts.dartOut, equals('foo.dart'));
   });
 
   test('parse args - java_package', () {
-    final PigeonOptions opts = Pigeon.parseArgs(<String>[
-      '--java_package',
-      'com.google.foo',
-    ]);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--java_package', 'com.google.foo']);
     expect(opts.javaOptions?.package, equals('com.google.foo'));
   });
 
   test('parse args - input', () {
-    final PigeonOptions opts = Pigeon.parseArgs(<String>[
-      '--java_out',
-      'foo.java',
-    ]);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--java_out', 'foo.java']);
     expect(opts.javaOut, equals('foo.java'));
   });
 
   test('parse args - objc_header_out', () {
-    final PigeonOptions opts = Pigeon.parseArgs(<String>[
-      '--objc_header_out',
-      'foo.h',
-    ]);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--objc_header_out', 'foo.h']);
     expect(opts.objcHeaderOut, equals('foo.h'));
   });
 
   test('parse args - objc_source_out', () {
-    final PigeonOptions opts = Pigeon.parseArgs(<String>[
-      '--objc_source_out',
-      'foo.m',
-    ]);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--objc_source_out', 'foo.m']);
     expect(opts.objcSourceOut, equals('foo.m'));
   });
 
   test('parse args - swift_out', () {
-    final PigeonOptions opts = Pigeon.parseArgs(<String>[
-      '--swift_out',
-      'Foo.swift',
-    ]);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--swift_out', 'Foo.swift']);
     expect(opts.swiftOut, equals('Foo.swift'));
   });
 
   test('parse args - kotlin_out', () {
-    final PigeonOptions opts = Pigeon.parseArgs(<String>[
-      '--kotlin_out',
-      'Foo.kt',
-    ]);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--kotlin_out', 'Foo.kt']);
     expect(opts.kotlinOut, equals('Foo.kt'));
   });
 
   test('parse args - kotlin_package', () {
-    final PigeonOptions opts = Pigeon.parseArgs(<String>[
-      '--kotlin_package',
-      'com.google.foo',
-    ]);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--kotlin_package', 'com.google.foo']);
     expect(opts.kotlinOptions?.package, equals('com.google.foo'));
   });
 
   test('parse args - kotlin_use_generated_annotation', () {
-    final PigeonOptions opts = Pigeon.parseArgs(<String>[
-      '--kotlin_use_generated_annotation',
-    ]);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--kotlin_use_generated_annotation']);
     expect(opts.kotlinOptions!.useGeneratedAnnotation, isTrue);
   });
 
@@ -155,56 +121,36 @@ void main() {
       '--kotlin_jni_classpaths',
       'baz.jar',
     ]);
-    expect(
-      opts.kotlinOptions?.jniClassPaths,
-      equals(<String>['foo/bar', 'baz.jar']),
-    );
+    expect(opts.kotlinOptions?.jniClassPaths, equals(<String>['foo/bar', 'baz.jar']));
   });
 
   test('parse args - cpp_header_out', () {
-    final PigeonOptions opts = Pigeon.parseArgs(<String>[
-      '--cpp_header_out',
-      'foo.h',
-    ]);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--cpp_header_out', 'foo.h']);
     expect(opts.cppHeaderOut, equals('foo.h'));
   });
 
   test('parse args - java_use_generated_annotation', () {
-    final PigeonOptions opts = Pigeon.parseArgs(<String>[
-      '--java_use_generated_annotation',
-    ]);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--java_use_generated_annotation']);
     expect(opts.javaOptions!.useGeneratedAnnotation, isTrue);
   });
 
   test('parse args - cpp_source_out', () {
-    final PigeonOptions opts = Pigeon.parseArgs(<String>[
-      '--cpp_source_out',
-      'foo.cpp',
-    ]);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--cpp_source_out', 'foo.cpp']);
     expect(opts.cppSourceOut, equals('foo.cpp'));
   });
 
   test('parse args - ast_out', () {
-    final PigeonOptions opts = Pigeon.parseArgs(<String>[
-      '--ast_out',
-      'stdout',
-    ]);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--ast_out', 'stdout']);
     expect(opts.astOut, equals('stdout'));
   });
 
   test('parse args - base_path', () {
-    final PigeonOptions opts = Pigeon.parseArgs(<String>[
-      '--base_path',
-      './foo/',
-    ]);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--base_path', './foo/']);
     expect(opts.basePath, equals('./foo/'));
   });
 
   test('parse args - app_directory', () {
-    final PigeonOptions opts = Pigeon.parseArgs(<String>[
-      '--app_directory',
-      './foo/',
-    ]);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--app_directory', './foo/']);
     expect(opts.appDirectory, equals('./foo/'));
   });
 
@@ -233,10 +179,7 @@ void main() {
   });
 
   test('parse args - java options', () {
-    final PigeonOptions opts = Pigeon.parseArgs(<String>[
-      '--java_class_name',
-      'MyClass',
-    ]);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--java_class_name', 'MyClass']);
     expect(opts.javaOptions?.className, equals('MyClass'));
   });
 
@@ -255,10 +198,7 @@ void main() {
     expect(opts.kotlinOptions?.appDirectory, equals('./app/'));
     expect(opts.kotlinOptions?.errorClassName, equals('MyError'));
     expect(opts.kotlinOptions?.includeErrorClass, isFalse);
-    expect(
-      opts.kotlinOptions?.fileSpecificClassNameComponent,
-      equals('MyComponent'),
-    );
+    expect(opts.kotlinOptions?.fileSpecificClassNameComponent, equals('MyComponent'));
   });
 
   test('parse args - cpp options', () {
@@ -284,10 +224,7 @@ void main() {
   });
 
   test('parse args - objc options', () {
-    final PigeonOptions opts = Pigeon.parseArgs(<String>[
-      '--objc_header_include_path',
-      'foo.h',
-    ]);
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--objc_header_include_path', 'foo.h']);
     expect(opts.objcOptions?.headerIncludePath, equals('foo.h'));
   });
 
@@ -319,10 +256,7 @@ abstract class Api1 {
     expect(root.apis[0].methods, hasLength(1));
     expect(root.apis[0].methods[0].name, equals('doit'));
     expect(root.apis[0].methods[0].parameters[0].name, equals('input'));
-    expect(
-      root.apis[0].methods[0].parameters[0].type.baseName,
-      equals('Input1'),
-    );
+    expect(root.apis[0].methods[0].parameters[0].type.baseName, equals('Input1'));
     expect(root.apis[0].methods[0].returnType.baseName, equals('Output1'));
 
     Class? input;
@@ -477,9 +411,7 @@ abstract class Api {
     final ParseResults results = parseSource(code);
     expect(results.errors, isEmpty);
     expect(results.root.classes, hasLength(2));
-    final Class nested = results.root.classes.firstWhere(
-      (Class x) => x.name == 'Nested',
-    );
+    final Class nested = results.root.classes.firstWhere((Class x) => x.name == 'Nested');
     expect(nested.fields, hasLength(1));
     expect(nested.fields[0].type.baseName, equals('Input1'));
     expect(nested.fields[0].type.isNullable, isTrue);
@@ -542,10 +474,7 @@ abstract class VoidArgApi {
     expect(results.root.apis, hasLength(1));
     expect(results.root.apis[0].methods, hasLength(1));
     expect(results.root.apis[0].name, equals('VoidArgApi'));
-    expect(
-      results.root.apis[0].methods[0].returnType.baseName,
-      equals('Output1'),
-    );
+    expect(results.root.apis[0].methods[0].returnType.baseName, equals('Output1'));
     expect(results.root.apis[0].methods[0].parameters.isEmpty, isTrue);
   });
 
@@ -587,27 +516,19 @@ abstract class NestorApi {
     final ParseResults results = parseSource(code);
     expect(results.errors, isEmpty);
     expect(results.root.apis, hasLength(1));
-    final List<String> classNames = results.root.classes
-        .map((Class x) => x.name)
-        .toList();
+    final List<String> classNames = results.root.classes.map((Class x) => x.name).toList();
     expect(classNames, hasLength(2));
     expect(classNames, containsAll(['Nestor', 'OnlyVisibleFromNesting']));
   });
 
   test('copyright flag', () {
-    final PigeonOptions results = Pigeon.parseArgs(<String>[
-      '--copyright_header',
-      'foobar.txt',
-    ]);
+    final PigeonOptions results = Pigeon.parseArgs(<String>['--copyright_header', 'foobar.txt']);
     expect(results.copyrightHeader, 'foobar.txt');
   });
 
   test('Dart generator copyright flag', () {
     final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
-    const options = PigeonOptions(
-      copyrightHeader: './copyright_header.txt',
-      dartOut: '',
-    );
+    const options = PigeonOptions(copyrightHeader: './copyright_header.txt', dartOut: '');
     const dartGeneratorAdapter = DartGeneratorAdapter();
     final buffer = StringBuffer();
     dartGeneratorAdapter.generate(
@@ -621,10 +542,7 @@ abstract class NestorApi {
 
   test('Java generator copyright flag', () {
     final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
-    const options = PigeonOptions(
-      javaOut: 'Foo.java',
-      copyrightHeader: './copyright_header.txt',
-    );
+    const options = PigeonOptions(javaOut: 'Foo.java', copyrightHeader: './copyright_header.txt');
     const javaGeneratorAdapter = JavaGeneratorAdapter();
     final buffer = StringBuffer();
     javaGeneratorAdapter.generate(
@@ -674,10 +592,7 @@ abstract class NestorApi {
 
   test('Swift generator copyright flag', () {
     final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
-    const options = PigeonOptions(
-      swiftOut: 'Foo.swift',
-      copyrightHeader: './copyright_header.txt',
-    );
+    const options = PigeonOptions(swiftOut: 'Foo.swift', copyrightHeader: './copyright_header.txt');
     const swiftGeneratorAdapter = SwiftGeneratorAdapter();
     final buffer = StringBuffer();
     swiftGeneratorAdapter.generate(
@@ -772,9 +687,7 @@ abstract class NotificationsHostApi {
     final ParseResults results = parseSource(code);
     expect(results.errors, isEmpty);
     expect(results.root.classes, hasLength(2));
-    final Class foo = results.root.classes.firstWhere(
-      (Class aClass) => aClass.name == 'Foo',
-    );
+    final Class foo = results.root.classes.firstWhere((Class aClass) => aClass.name == 'Foo');
     expect(foo.fields, hasLength(1));
     expect(foo.fields[0].type.baseName, 'Bar');
   });
@@ -1075,20 +988,8 @@ abstract class Api {
 ''';
     final ParseResults parseResult = parseSource(code);
     expect(parseResult.root.apis[0].methods[0].returnType.baseName, 'List');
-    expect(
-      parseResult.root.apis[0].methods[0].returnType.typeArguments[0].baseName,
-      'double',
-    );
-    expect(
-      parseResult
-          .root
-          .apis[0]
-          .methods[0]
-          .returnType
-          .typeArguments[0]
-          .isNullable,
-      isTrue,
-    );
+    expect(parseResult.root.apis[0].methods[0].returnType.typeArguments[0].baseName, 'double');
+    expect(parseResult.root.apis[0].methods[0].returnType.typeArguments[0].isNullable, isTrue);
   });
 
   test('argument generics', () {
@@ -1099,30 +1000,13 @@ abstract class Api {
 }
 ''';
     final ParseResults parseResult = parseSource(code);
+    expect(parseResult.root.apis[0].methods[0].parameters[1].type.baseName, 'List');
     expect(
-      parseResult.root.apis[0].methods[0].parameters[1].type.baseName,
-      'List',
-    );
-    expect(
-      parseResult
-          .root
-          .apis[0]
-          .methods[0]
-          .parameters[1]
-          .type
-          .typeArguments[0]
-          .baseName,
+      parseResult.root.apis[0].methods[0].parameters[1].type.typeArguments[0].baseName,
       'double',
     );
     expect(
-      parseResult
-          .root
-          .apis[0]
-          .methods[0]
-          .parameters[1]
-          .type
-          .typeArguments[0]
-          .isNullable,
+      parseResult.root.apis[0].methods[0].parameters[1].type.typeArguments[0].isNullable,
       isTrue,
     );
   });
@@ -1173,10 +1057,7 @@ abstract class Api {
     final ParseResults results = parseSource(code);
     expect(results.errors, hasLength(1));
     expect(results.errors[0].lineNumber, 3);
-    expect(
-      results.errors[0].message,
-      contains('Parameters must specify their type'),
-    );
+    expect(results.errors[0].message, contains('Parameters must specify their type'));
   });
 
   test('custom objc selector', () {
@@ -1191,10 +1072,7 @@ abstract class Api {
     expect(results.errors, isEmpty);
     expect(results.root.apis, hasLength(1));
     expect(results.root.apis[0].methods, hasLength(1));
-    expect(
-      results.root.apis[0].methods[0].objcSelector,
-      equals('subtractValue:by:'),
-    );
+    expect(results.root.apis[0].methods[0].objcSelector, equals('subtractValue:by:'));
   });
 
   test('custom objc invalid selector', () {
@@ -1208,10 +1086,7 @@ abstract class Api {
     final ParseResults results = parseSource(code);
     expect(results.errors, hasLength(1));
     expect(results.errors[0].lineNumber, 3);
-    expect(
-      results.errors[0].message,
-      contains('Invalid selector, expected 2 parameters'),
-    );
+    expect(results.errors[0].message, contains('Invalid selector, expected 2 parameters'));
   });
 
   test('custom objc no parameters', () {
@@ -1241,10 +1116,7 @@ abstract class Api {
     expect(results.errors, isEmpty);
     expect(results.root.apis, hasLength(1));
     expect(results.root.apis[0].methods, hasLength(1));
-    expect(
-      results.root.apis[0].methods[0].swiftFunction,
-      equals('subtractValue(_:by:)'),
-    );
+    expect(results.root.apis[0].methods[0].swiftFunction, equals('subtractValue(_:by:)'));
   });
 
   test('custom swift invalid function signature', () {
@@ -1350,14 +1222,8 @@ abstract class Api {
     final ParseResults results = parseSource(code);
     expect(results.errors, isEmpty);
     expect(results.root.classes, hasLength(2));
-    expect(
-      results.root.classes.where((Class element) => element.name == 'Foo'),
-      hasLength(1),
-    );
-    expect(
-      results.root.classes.where((Class element) => element.name == 'Bar'),
-      hasLength(1),
-    );
+    expect(results.root.classes.where((Class element) => element.name == 'Foo'), hasLength(1));
+    expect(results.root.classes.where((Class element) => element.name == 'Bar'), hasLength(1));
   });
 
   test('undeclared class in argument type argument', () {
@@ -1536,10 +1402,7 @@ abstract class Api {
 ''';
     final ParseResults results = parseSource(code);
     expect(results.errors, isEmpty);
-    expect(
-      results.root.apis[0].methods[0].parameters[0].type.isNullable,
-      isTrue,
-    );
+    expect(results.root.apis[0].methods[0].parameters[0].type.isNullable, isTrue);
   });
 
   test('task queue specified', () {
@@ -1569,10 +1432,7 @@ abstract class Api {
 
     final ParseResults results = parseSource(code);
     expect(results.errors, isEmpty);
-    expect(
-      results.root.apis[0].methods[0].taskQueueType,
-      equals(TaskQueueType.serial),
-    );
+    expect(results.root.apis[0].methods[0].taskQueueType, equals(TaskQueueType.serial));
   });
 
   test('unsupported task queue on FlutterApi', () {
@@ -1586,10 +1446,7 @@ abstract class Api {
 
     final ParseResults results = parseSource(code);
     expect(results.errors, hasLength(1));
-    expect(
-      results.errors[0].message,
-      contains('Unsupported TaskQueue specification'),
-    );
+    expect(results.errors[0].message, contains('Unsupported TaskQueue specification'));
   });
 
   test('generator validation', () async {
@@ -1647,10 +1504,7 @@ abstract class Api {
 
     final ParseResults results = parseSource(code);
     expect(results.errors, hasLength(1));
-    expect(
-      results.errors[0].message,
-      contains('FlutterApi method parameters must be positional'),
-    );
+    expect(results.errors[0].message, contains('FlutterApi method parameters must be positional'));
   });
 
   test('unsupported optional parameters on FlutterApi', () {
@@ -1712,10 +1566,7 @@ abstract class MyClass {
 ''';
       final ParseResults parseResult = parseSource(code);
       expect(parseResult.errors, hasLength(1));
-      expect(
-        parseResult.errors.single.message,
-        contains('ProxyApis do not support data classes'),
-      );
+      expect(parseResult.errors.single.message, contains('ProxyApis do not support data classes'));
     });
 
     test('super class must be proxy api', () {
@@ -1776,10 +1627,8 @@ abstract class MyOtherClass {
       );
     });
 
-    test(
-      'api is not used as an attached field while having an unattached field',
-      () {
-        const code = '''
+    test('api is not used as an attached field while having an unattached field', () {
+      const code = '''
 @ProxyApi()
 abstract class MyClass {
   @attached
@@ -1791,21 +1640,18 @@ abstract class MyOtherClass {
   late int aField;
 }
 ''';
-        final ParseResults parseResult = parseSource(code);
-        expect(parseResult.errors, isNotEmpty);
-        expect(
-          parseResult.errors[0].message,
-          contains(
-            'ProxyApis with unattached fields can not be used as attached fields: anAttachedField',
-          ),
-        );
-      },
-    );
+      final ParseResults parseResult = parseSource(code);
+      expect(parseResult.errors, isNotEmpty);
+      expect(
+        parseResult.errors[0].message,
+        contains(
+          'ProxyApis with unattached fields can not be used as attached fields: anAttachedField',
+        ),
+      );
+    });
 
-    test(
-      'api is not used as an attached field while having a required Flutter method',
-      () {
-        const code = '''
+    test('api is not used as an attached field while having a required Flutter method', () {
+      const code = '''
 @ProxyApi()
 abstract class MyClass {
   @attached
@@ -1817,16 +1663,15 @@ abstract class MyOtherClass {
   late void Function() aCallbackMethod;
 }
 ''';
-        final ParseResults parseResult = parseSource(code);
-        expect(parseResult.errors, isNotEmpty);
-        expect(
-          parseResult.errors[0].message,
-          contains(
-            'ProxyApis with required callback methods can not be used as attached fields: anAttachedField',
-          ),
-        );
-      },
-    );
+      final ParseResults parseResult = parseSource(code);
+      expect(parseResult.errors, isNotEmpty);
+      expect(
+        parseResult.errors[0].message,
+        contains(
+          'ProxyApis with required callback methods can not be used as attached fields: anAttachedField',
+        ),
+      );
+    });
 
     test('interfaces can only have callback methods', () {
       const code = '''
@@ -1859,10 +1704,7 @@ abstract class MyClass {
 ''';
       final ParseResults parseResult = parseSource(code);
       expect(parseResult.errors, isNotEmpty);
-      expect(
-        parseResult.errors[0].message,
-        contains('Attached fields must be a ProxyApi: int'),
-      );
+      expect(parseResult.errors[0].message, contains('Attached fields must be a ProxyApi: int'));
     });
 
     test('attached fields must not be nullable', () {
@@ -2002,9 +1844,7 @@ abstract class events {
     test(
       'FfigenConfigGeneratorAdapter validation passes if ffi, objective_c, ffigen exist',
       () async {
-        final Directory tempDir = Directory.systemTemp.createTempSync(
-          'pigeon_dependency_test_',
-        );
+        final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_dependency_test_');
         try {
           final pubspecFile = File('${tempDir.path}/pubspec.yaml');
           pubspecFile.writeAsStringSync('''
@@ -2015,16 +1855,15 @@ dependencies:
 dev_dependencies:
   ffigen: ^20.0.0
 ''');
-          final InternalPigeonOptions options =
-              InternalPigeonOptions.fromPigeonOptions(
-                PigeonOptions(
-                  input: 'foo.dart',
-                  dartOut: '${tempDir.path}/lib/messages.dart',
-                  swiftOut: '${tempDir.path}/lib/messages.swift',
-                  swiftOptions: const SwiftOptions(useFfi: true),
-                  dartPackageName: 'my_package',
-                ),
-              );
+          final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+            PigeonOptions(
+              input: 'foo.dart',
+              dartOut: '${tempDir.path}/lib/messages.dart',
+              swiftOut: '${tempDir.path}/lib/messages.swift',
+              swiftOptions: const SwiftOptions(useFfi: true),
+              dartPackageName: 'my_package',
+            ),
+          );
           const adapter = FfigenConfigGeneratorAdapter();
           final List<Error> errors = adapter.validate(
             options,
@@ -2037,127 +1876,101 @@ dev_dependencies:
       },
     );
 
-    test(
-      'FfigenConfigGeneratorAdapter validation fails if objective_c is missing',
-      () async {
-        final Directory tempDir = Directory.systemTemp.createTempSync(
-          'pigeon_dependency_test_',
-        );
-        try {
-          final pubspecFile = File('${tempDir.path}/pubspec.yaml');
-          pubspecFile.writeAsStringSync('''
+    test('FfigenConfigGeneratorAdapter validation fails if objective_c is missing', () async {
+      final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_dependency_test_');
+      try {
+        final pubspecFile = File('${tempDir.path}/pubspec.yaml');
+        pubspecFile.writeAsStringSync('''
 name: my_package
 dependencies:
   ffi: ^2.0.0
 dev_dependencies:
   ffigen: ^20.0.0
 ''');
-          final InternalPigeonOptions options =
-              InternalPigeonOptions.fromPigeonOptions(
-                PigeonOptions(
-                  input: 'foo.dart',
-                  dartOut: '${tempDir.path}/lib/messages.dart',
-                  swiftOut: '${tempDir.path}/lib/messages.swift',
-                  swiftOptions: const SwiftOptions(useFfi: true),
-                  dartPackageName: 'my_package',
-                ),
-              );
-          const adapter = FfigenConfigGeneratorAdapter();
-          final List<Error> errors = adapter.validate(
-            options,
-            Root(apis: [], classes: [], enums: []),
-          );
-          expect(errors, isNotEmpty);
-          expect(
-            errors[0].message,
-            contains('Missing required dependency "objective_c"'),
-          );
-        } finally {
-          tempDir.deleteSync(recursive: true);
-        }
-      },
-    );
-
-    test(
-      'JnigenConfigGeneratorAdapter validation passes if jni and jnigen exist',
-      () async {
-        final Directory tempDir = Directory.systemTemp.createTempSync(
-          'pigeon_dependency_test_',
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          PigeonOptions(
+            input: 'foo.dart',
+            dartOut: '${tempDir.path}/lib/messages.dart',
+            swiftOut: '${tempDir.path}/lib/messages.swift',
+            swiftOptions: const SwiftOptions(useFfi: true),
+            dartPackageName: 'my_package',
+          ),
         );
-        try {
-          final pubspecFile = File('${tempDir.path}/pubspec.yaml');
-          pubspecFile.writeAsStringSync('''
+        const adapter = FfigenConfigGeneratorAdapter();
+        final List<Error> errors = adapter.validate(
+          options,
+          Root(apis: [], classes: [], enums: []),
+        );
+        expect(errors, isNotEmpty);
+        expect(errors[0].message, contains('Missing required dependency "objective_c"'));
+      } finally {
+        tempDir.deleteSync(recursive: true);
+      }
+    });
+
+    test('JnigenConfigGeneratorAdapter validation passes if jni and jnigen exist', () async {
+      final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_dependency_test_');
+      try {
+        final pubspecFile = File('${tempDir.path}/pubspec.yaml');
+        pubspecFile.writeAsStringSync('''
 name: my_package
 dependencies:
   jni: ^2.0.0
 dev_dependencies:
   jnigen: ^20.0.0
 ''');
-          final InternalPigeonOptions options =
-              InternalPigeonOptions.fromPigeonOptions(
-                PigeonOptions(
-                  input: 'foo.dart',
-                  dartOut: '${tempDir.path}/lib/messages.dart',
-                  kotlinOut: '${tempDir.path}/lib/messages.kt',
-                  kotlinOptions: const KotlinOptions(useJni: true),
-                  dartPackageName: 'my_package',
-                ),
-              );
-          const adapter = JnigenConfigGeneratorAdapter();
-          final List<Error> errors = adapter.validate(
-            options,
-            Root(apis: [], classes: [], enums: []),
-          );
-          expect(errors, isEmpty);
-        } finally {
-          tempDir.deleteSync(recursive: true);
-        }
-      },
-    );
-
-    test(
-      'JnigenConfigGeneratorAdapter validation fails if jni is missing',
-      () async {
-        final Directory tempDir = Directory.systemTemp.createTempSync(
-          'pigeon_dependency_test_',
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          PigeonOptions(
+            input: 'foo.dart',
+            dartOut: '${tempDir.path}/lib/messages.dart',
+            kotlinOut: '${tempDir.path}/lib/messages.kt',
+            kotlinOptions: const KotlinOptions(useJni: true),
+            dartPackageName: 'my_package',
+          ),
         );
-        try {
-          final pubspecFile = File('${tempDir.path}/pubspec.yaml');
-          pubspecFile.writeAsStringSync('''
+        const adapter = JnigenConfigGeneratorAdapter();
+        final List<Error> errors = adapter.validate(
+          options,
+          Root(apis: [], classes: [], enums: []),
+        );
+        expect(errors, isEmpty);
+      } finally {
+        tempDir.deleteSync(recursive: true);
+      }
+    });
+
+    test('JnigenConfigGeneratorAdapter validation fails if jni is missing', () async {
+      final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_dependency_test_');
+      try {
+        final pubspecFile = File('${tempDir.path}/pubspec.yaml');
+        pubspecFile.writeAsStringSync('''
 name: my_package
 dev_dependencies:
   jnigen: ^20.0.0
 ''');
-          final InternalPigeonOptions options =
-              InternalPigeonOptions.fromPigeonOptions(
-                PigeonOptions(
-                  input: 'foo.dart',
-                  dartOut: '${tempDir.path}/lib/messages.dart',
-                  kotlinOut: '${tempDir.path}/lib/messages.kt',
-                  kotlinOptions: const KotlinOptions(useJni: true),
-                  dartPackageName: 'my_package',
-                ),
-              );
-          const adapter = JnigenConfigGeneratorAdapter();
-          final List<Error> errors = adapter.validate(
-            options,
-            Root(apis: [], classes: [], enums: []),
-          );
-          expect(errors, isNotEmpty);
-          expect(
-            errors[0].message,
-            contains('Missing required dependency "jni"'),
-          );
-        } finally {
-          tempDir.deleteSync(recursive: true);
-        }
-      },
-    );
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          PigeonOptions(
+            input: 'foo.dart',
+            dartOut: '${tempDir.path}/lib/messages.dart',
+            kotlinOut: '${tempDir.path}/lib/messages.kt',
+            kotlinOptions: const KotlinOptions(useJni: true),
+            dartPackageName: 'my_package',
+          ),
+        );
+        const adapter = JnigenConfigGeneratorAdapter();
+        final List<Error> errors = adapter.validate(
+          options,
+          Root(apis: [], classes: [], enums: []),
+        );
+        expect(errors, isNotEmpty);
+        expect(errors[0].message, contains('Missing required dependency "jni"'));
+      } finally {
+        tempDir.deleteSync(recursive: true);
+      }
+    });
 
     test('KotlinOptions serialization/deserialization with jniClassPaths', () {
-      const options = KotlinOptions(
-        jniClassPaths: <String>['foo/bar', 'baz.jar'],
-      );
+      const options = KotlinOptions(jniClassPaths: <String>['foo/bar', 'baz.jar']);
       final Map<String, Object> map = options.toMap();
       expect(map['jniClassPaths'], equals(<String>['foo/bar', 'baz.jar']));
 
@@ -2170,10 +1983,7 @@ dev_dependencies:
       final sink = StringBuffer();
       final generator = JnigenConfigGenerator();
       final options = InternalJnigenConfigOptions(
-        const InternalDartOptions(
-          dartOut: 'lib/messages.dart',
-          ignoreLints: false,
-        ),
+        const InternalDartOptions(dartOut: 'lib/messages.dart', ignoreLints: false),
         const InternalKotlinOptions(
           kotlinOut: 'android/Messages.kt',
           jniClassPaths: <String>['foo/bar', 'baz.jar'],
@@ -2183,10 +1993,7 @@ dev_dependencies:
       );
       generator.generate(options, root, sink, dartPackageName: 'foo_package');
       final output = sink.toString();
-      expect(
-        output,
-        contains("classPath: [Uri.directory('foo/bar'), Uri.file('baz.jar')]"),
-      );
+      expect(output, contains("classPath: [Uri.directory('foo/bar'), Uri.file('baz.jar')]"));
     });
   });
 }

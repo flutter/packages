@@ -35,9 +35,10 @@ jobs:
             exit 0
           fi
 
-          # 3. Extract release name without version for label
+          # 3. Extract package name for label
           BRANCH_NAME="${{ github.ref_name }}"
-          RELEASE_NAME="${BRANCH_NAME%-*}"
+          TEMP="${BRANCH_NAME#release-}"
+          PACKAGE_NAME="${TEMP%-*}"
 
           # 4. Create the PR directly
           gh pr create \
@@ -45,4 +46,4 @@ jobs:
             --head "${{ github.ref_name }}" \
             --title "Sync ${{ github.ref_name }} to main" \
             --body "This automated PR syncs the changes from the release branch ${{ github.ref_name }} back to the main branch." \
-            --label "override: post-${RELEASE_NAME}"
+            --label "override: skip-batch-release-repo-check-${PACKAGE_NAME}"

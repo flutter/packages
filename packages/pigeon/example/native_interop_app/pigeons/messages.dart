@@ -15,12 +15,8 @@ import 'package:pigeon/pigeon.dart';
     gobjectHeaderOut: 'linux/messages.g.h',
     gobjectSourceOut: 'linux/messages.g.cc',
     gobjectOptions: GObjectOptions(),
-    kotlinOut:
-        'android/app/src/main/kotlin/dev/flutter/pigeon_example_app/Messages.g.kt',
-    kotlinOptions: KotlinOptions(
-      package: 'dev.flutter.pigeon_example_app',
-      useJni: true,
-    ),
+    kotlinOut: 'android/app/src/main/kotlin/dev/flutter/pigeon_example_app/Messages.g.kt',
+    kotlinOptions: KotlinOptions(package: 'dev.flutter.pigeon_example_app', useJni: true),
     javaOut: 'android/app/src/main/java/io/flutter/plugins/Messages.java',
     javaOptions: JavaOptions(package: 'io.flutter.plugins'),
     swiftOut: 'ios/Runner/Messages.g.swift',

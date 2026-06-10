@@ -21,104 +21,43 @@ abstract class Generator<T extends InternalOptions> {
   /// Generates files for specified language with specified [generatorOptions]
   ///
   /// This method must create an [Indent] and call `sink.write(indent.toString())`.
-  void generate(
-    T generatorOptions,
-    Root root,
-    StringSink sink, {
-    required String dartPackageName,
-  });
+  void generate(T generatorOptions, Root root, StringSink sink, {required String dartPackageName});
 }
 
 /// An abstract base class that enforces code generation across platforms.
-abstract class StructuredGenerator<T extends InternalOptions>
-    extends Generator<T> {
+abstract class StructuredGenerator<T extends InternalOptions> extends Generator<T> {
   /// Constructor.
   const StructuredGenerator();
 
   @override
-  void generate(
-    T generatorOptions,
-    Root root,
-    StringSink sink, {
-    required String dartPackageName,
-  }) {
+  void generate(T generatorOptions, Root root, StringSink sink, {required String dartPackageName}) {
     final indent = Indent();
 
-    writeFilePrologue(
-      generatorOptions,
-      root,
-      indent,
-      dartPackageName: dartPackageName,
-    );
+    writeFilePrologue(generatorOptions, root, indent, dartPackageName: dartPackageName);
 
-    writeFileImports(
-      generatorOptions,
-      root,
-      indent,
-      dartPackageName: dartPackageName,
-    );
+    writeFileImports(generatorOptions, root, indent, dartPackageName: dartPackageName);
 
-    writeOpenNamespace(
-      generatorOptions,
-      root,
-      indent,
-      dartPackageName: dartPackageName,
-    );
+    writeOpenNamespace(generatorOptions, root, indent, dartPackageName: dartPackageName);
 
-    writeGeneralUtilities(
-      generatorOptions,
-      root,
-      indent,
-      dartPackageName: dartPackageName,
-    );
+    writeGeneralUtilities(generatorOptions, root, indent, dartPackageName: dartPackageName);
 
     if (root.apis.any((Api api) => api is AstProxyApi)) {
-      writeInstanceManager(
-        generatorOptions,
-        root,
-        indent,
-        dartPackageName: dartPackageName,
-      );
+      writeInstanceManager(generatorOptions, root, indent, dartPackageName: dartPackageName);
 
-      writeInstanceManagerApi(
-        generatorOptions,
-        root,
-        indent,
-        dartPackageName: dartPackageName,
-      );
+      writeInstanceManagerApi(generatorOptions, root, indent, dartPackageName: dartPackageName);
 
       writeProxyApiBaseCodec(generatorOptions, root, indent);
     }
 
-    writeEnums(
-      generatorOptions,
-      root,
-      indent,
-      dartPackageName: dartPackageName,
-    );
+    writeEnums(generatorOptions, root, indent, dartPackageName: dartPackageName);
 
-    writeDataClasses(
-      generatorOptions,
-      root,
-      indent,
-      dartPackageName: dartPackageName,
-    );
+    writeDataClasses(generatorOptions, root, indent, dartPackageName: dartPackageName);
 
-    writeGeneralCodec(
-      generatorOptions,
-      root,
-      indent,
-      dartPackageName: dartPackageName,
-    );
+    writeGeneralCodec(generatorOptions, root, indent, dartPackageName: dartPackageName);
 
     writeApis(generatorOptions, root, indent, dartPackageName: dartPackageName);
 
-    writeCloseNamespace(
-      generatorOptions,
-      root,
-      indent,
-      dartPackageName: dartPackageName,
-    );
+    writeCloseNamespace(generatorOptions, root, indent, dartPackageName: dartPackageName);
 
     sink.write(indent.toString());
   }
@@ -172,20 +111,9 @@ abstract class StructuredGenerator<T extends InternalOptions>
   /// Writes all enums to [indent].
   ///
   /// Can be overridden to add extra code before/after enums.
-  void writeEnums(
-    T generatorOptions,
-    Root root,
-    Indent indent, {
-    required String dartPackageName,
-  }) {
+  void writeEnums(T generatorOptions, Root root, Indent indent, {required String dartPackageName}) {
     for (final Enum anEnum in root.enums) {
-      writeEnum(
-        generatorOptions,
-        root,
-        indent,
-        anEnum,
-        dartPackageName: dartPackageName,
-      );
+      writeEnum(generatorOptions, root, indent, anEnum, dartPackageName: dartPackageName);
     }
   }
 
@@ -265,38 +193,15 @@ abstract class StructuredGenerator<T extends InternalOptions>
   /// Writes all apis to [indent].
   ///
   /// Can be overridden to add extra code before/after classes.
-  void writeApis(
-    T generatorOptions,
-    Root root,
-    Indent indent, {
-    required String dartPackageName,
-  }) {
+  void writeApis(T generatorOptions, Root root, Indent indent, {required String dartPackageName}) {
     for (final Api api in root.apis) {
       switch (api) {
         case AstHostApi():
-          writeHostApi(
-            generatorOptions,
-            root,
-            indent,
-            api,
-            dartPackageName: dartPackageName,
-          );
+          writeHostApi(generatorOptions, root, indent, api, dartPackageName: dartPackageName);
         case AstFlutterApi():
-          writeFlutterApi(
-            generatorOptions,
-            root,
-            indent,
-            api,
-            dartPackageName: dartPackageName,
-          );
+          writeFlutterApi(generatorOptions, root, indent, api, dartPackageName: dartPackageName);
         case AstProxyApi():
-          writeProxyApi(
-            generatorOptions,
-            root,
-            indent,
-            api,
-            dartPackageName: dartPackageName,
-          );
+          writeProxyApi(generatorOptions, root, indent, api, dartPackageName: dartPackageName);
         case AstEventChannelApi():
           writeEventChannelApi(
             generatorOptions,

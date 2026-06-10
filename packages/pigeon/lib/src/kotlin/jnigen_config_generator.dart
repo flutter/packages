@@ -50,10 +50,7 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
     indent.writeln("import 'package:logging/logging.dart';");
 
     final String fullDartOut = generatorOptions.basePath != null
-        ? path.posix.join(
-            generatorOptions.basePath!,
-            generatorOptions.dartOptions.dartOut ?? '',
-          )
+        ? path.posix.join(generatorOptions.basePath!, generatorOptions.dartOptions.dartOut ?? '')
         : (generatorOptions.dartOptions.dartOut ?? './lib/pigeons/');
 
     final List<String> jniClassPaths =

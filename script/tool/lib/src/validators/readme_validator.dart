@@ -30,16 +30,13 @@ class ReadmeValidator {
     required path.Context path,
     required String indentation,
     required void Function(String) warningLogger,
-    required bool requireCodeExcerpts,
   }) : _path = path,
        _indentation = indentation,
-       _logWarning = warningLogger,
-       _requireCodeExcerpts = requireCodeExcerpts;
+       _logWarning = warningLogger;
 
   final path.Context _path;
   final String _indentation;
   final void Function(String) _logWarning;
-  final bool _requireCodeExcerpts;
 
   /// Validates the given README file, returning a list of resulting error
   /// strings.
@@ -67,27 +64,31 @@ class ReadmeValidator {
     }
 
     print(
-      '${_indentation}Checking '
+      '${_indentation}Validating '
       '${relativePosixPath(readme, from: mainPackage.directory, platformContext: _path)}...',
     );
 
     final List<String> readmeLines = readme.readAsLinesSync();
     final errors = <String>[];
 
+    // Require code-excerpt managed blocks unless explicitly opted out.
+    final bool requireCodeExcerpts = mainPackage.parseCIConfig()?.requiresExcerpts ?? true;
+    if (!requireCodeExcerpts) {
+      printWarning(
+        '${_indentation}Skipping code excerpt validation due to ${mainPackage.ciConfigFile.basename}',
+      );
+    }
     final String? blockValidationError = _validateCodeBlocks(
       readmeLines,
       mainPackage: mainPackage,
+      requireCodeExcerpts: requireCodeExcerpts,
     );
     if (blockValidationError != null) {
       errors.add(blockValidationError);
     }
 
     errors.addAll(
-      _validateBoilerplate(
-        readmeLines,
-        mainPackage: mainPackage,
-        isExample: isExample,
-      ),
+      _validateBoilerplate(readmeLines, mainPackage: mainPackage, isExample: isExample),
     );
 
     // Check if this is the main readme for a plugin, and if so enforce extra
@@ -110,6 +111,7 @@ class ReadmeValidator {
   String? _validateCodeBlocks(
     List<String> readmeLines, {
     required RepositoryPackage mainPackage,
+    required bool requireCodeExcerpts,
   }) {
     final codeBlockDelimiterPattern = RegExp(r'^\s*```\s*([^ ]*)\s*');
     const excerptTagStart = '<?code-excerpt ';
@@ -117,9 +119,7 @@ class ReadmeValidator {
     final missingExcerptLines = <int>[];
     var inBlock = false;
     for (var i = 0; i < readmeLines.length; ++i) {
-      final RegExpMatch? match = codeBlockDelimiterPattern.firstMatch(
-        readmeLines[i],
-      );
+      final RegExpMatch? match = codeBlockDelimiterPattern.firstMatch(readmeLines[i]);
       if (match == null) {
         continue;
       }
@@ -139,7 +139,7 @@ class ReadmeValidator {
       }
 
       // Check for code-excerpt usage if requested.
-      if (_requireCodeExcerpts && infoString == 'dart') {
+      if (requireCodeExcerpts && infoString == 'dart') {
         if (i == 0 || !readmeLines[i - 1].trim().startsWith(excerptTagStart)) {
           missingExcerptLines.add(humanReadableLineNumber);
         }
@@ -183,10 +183,7 @@ class ReadmeValidator {
 
   /// Validates that the plugin has a supported platforms table following the
   /// expected format, returning an error string if any issues are found.
-  String? _validateSupportedPlatforms(
-    List<String> readmeLines,
-    Pubspec pubspec,
-  ) {
+  String? _validateSupportedPlatforms(List<String> readmeLines, Pubspec pubspec) {
     // Example table following expected format:
     // |                | Android | iOS      | Web                    |
     // |----------------|---------|----------|------------------------|
@@ -206,9 +203,7 @@ class ReadmeValidator {
     // sorted, comma-separated string of its elements.
     String sortedListString(Iterable<String> entries) {
       final List<String> entryList = entries.toList();
-      entryList.sort(
-        (String a, String b) => a.toLowerCase().compareTo(b.toLowerCase()),
-      );
+      entryList.sort((String a, String b) => a.toLowerCase().compareTo(b.toLowerCase()));
       return entryList.join(', ');
     }
 
@@ -220,9 +215,7 @@ class ReadmeValidator {
       return null;
     }
     final platformSupportMaps = platformsEntry as YamlMap;
-    final Set<String> actuallySupportedPlatform = platformSupportMaps.keys
-        .toSet()
-        .cast<String>();
+    final Set<String> actuallySupportedPlatform = platformSupportMaps.keys.toSet().cast<String>();
     final Iterable<String> documentedPlatforms = readmeLines[osLineNumber]
         .split('|')
         .map((String entry) => entry.trim())
@@ -231,9 +224,7 @@ class ReadmeValidator {
         .map((String entry) => entry.toLowerCase())
         .toSet();
     if (actuallySupportedPlatform.length != documentedPlatforms.length ||
-        actuallySupportedPlatform
-                .intersection(documentedPlatformsLowercase)
-                .length !=
+        actuallySupportedPlatform.intersection(documentedPlatformsLowercase).length !=
             actuallySupportedPlatform.length) {
       printError('''
 ${_indentation}OS support table does not match supported platforms:
@@ -244,9 +235,9 @@ ${_indentation * 2}Documented: ${sortedListString(documentedPlatformsLowercase)}
     }
 
     // Enforce a standard set of capitalizations for the OS headings.
-    final Iterable<String> incorrectCapitalizations = documentedPlatforms
-        .toSet()
-        .difference(_standardPlatformNames.values.toSet());
+    final Iterable<String> incorrectCapitalizations = documentedPlatforms.toSet().difference(
+      _standardPlatformNames.values.toSet(),
+    );
     if (incorrectCapitalizations.isNotEmpty) {
       final Iterable<String> expectedVersions = incorrectCapitalizations.map(
         (String name) => _standardPlatformNames[name.toLowerCase()]!,
@@ -311,29 +302,21 @@ ${_indentation * 2}Please use standard capitalizations: ${sortedListString(expec
   /// Returns true if the README still has unwanted parts of the boilerplate
   /// from the `flutter create` templates.
   bool _containsTemplateFlutterBoilerplate(List<String> readmeLines) {
-    return readmeLines.any(
-      (String line) => line.contains('For help getting started with Flutter'),
-    );
+    return readmeLines.any((String line) => line.contains('For help getting started with Flutter'));
   }
 
   /// Returns true if the README still has the generic description of an
   /// example from the `flutter create` templates.
   bool _containsExampleBoilerplate(List<String> readmeLines) {
-    return readmeLines.any(
-      (String line) => line.contains('Demonstrates how to use the'),
-    );
+    return readmeLines.any((String line) => line.contains('Demonstrates how to use the'));
   }
 
   /// Returns true if the README contains the repository-standard explanation of
   /// the purpose of a federated plugin implementation's example.
   bool _containsImplementationExampleExplanation(List<String> readmeLines) {
     return (readmeLines.contains('# Platform Implementation Test App') &&
-            readmeLines.any(
-              (String line) => line.contains('This is a test app for'),
-            )) ||
+            readmeLines.any((String line) => line.contains('This is a test app for'))) ||
         (readmeLines.contains('# Platform Implementation Test Apps') &&
-            readmeLines.any(
-              (String line) => line.contains('These are test apps for'),
-            ));
+            readmeLines.any((String line) => line.contains('These are test apps for')));
   }
 }

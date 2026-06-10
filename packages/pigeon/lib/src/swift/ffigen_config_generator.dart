@@ -60,26 +60,17 @@ import 'package:swiftgen/swiftgen.dart';
 
   ''');
     final bool hasAsyncFlutterApi = root.apis.whereType<AstFlutterApi>().any(
-      (AstFlutterApi api) =>
-          api.methods.any((Method method) => method.isAsynchronous),
+      (AstFlutterApi api) => api.methods.any((Method method) => method.isAsynchronous),
     );
 
-    final String? configuredSdkPath =
-        generatorOptions.swiftOptions.appleSdkPath;
-    final String? configuredSdkTriple =
-        generatorOptions.swiftOptions.appleSdkTriple;
+    final String? configuredSdkPath = generatorOptions.swiftOptions.appleSdkPath;
+    final String? configuredSdkTriple = generatorOptions.swiftOptions.appleSdkTriple;
 
     final String fullSwiftOut = generatorOptions.basePath != null
-        ? path.posix.join(
-            generatorOptions.basePath!,
-            generatorOptions.swiftOptions.swiftOut,
-          )
+        ? path.posix.join(generatorOptions.basePath!, generatorOptions.swiftOptions.swiftOut)
         : generatorOptions.swiftOptions.swiftOut;
     final String fullDartOut = generatorOptions.basePath != null
-        ? path.posix.join(
-            generatorOptions.basePath!,
-            generatorOptions.dartOut ?? '',
-          )
+        ? path.posix.join(generatorOptions.basePath!, generatorOptions.dartOut ?? '')
         : (generatorOptions.dartOut ?? '');
 
     final String objcDir = path.posix.join(
@@ -87,8 +78,7 @@ import 'package:swiftgen/swiftgen.dart';
       '${path.posix.basename(path.posix.dirname(fullSwiftOut))}_objc_gen',
     );
 
-    final String moduleName =
-        generatorOptions.swiftOptions.ffiModuleName?.isNotEmpty ?? false
+    final String moduleName = generatorOptions.swiftOptions.ffiModuleName?.isNotEmpty ?? false
         ? generatorOptions.swiftOptions.ffiModuleName!
         : 'Runner';
 
@@ -101,8 +91,7 @@ import 'package:swiftgen/swiftgen.dart';
     sdk = ${configuredSdkPath != null ? "Uri.directory('$configuredSdkPath')" : "await iOSSdk"};
   }
 ''');
-      final String prefix =
-          generatorOptions.swiftOptions.fileSpecificClassNameComponent ?? '';
+      final String prefix = generatorOptions.swiftOptions.fileSpecificClassNameComponent ?? '';
       indent.writeScoped('final classes = <String>[', '];', () {
         indent.inc();
         indent.writeln("'${prefix}PigeonInternalNull',");
@@ -124,9 +113,7 @@ import 'package:swiftgen/swiftgen.dart';
         for (final Class dataClass in root.classes) {
           indent.writeln("'${dataClass.name}Bridge',");
         }
-        indent.writeln(
-          "'${generatorOptions.swiftOptions.errorClassName ?? 'PigeonError'}'",
-        );
+        indent.writeln("'${generatorOptions.swiftOptions.errorClassName ?? 'PigeonError'}'");
         indent.dec();
       });
       indent.writeScoped('final enums = <String>[', '];', () {

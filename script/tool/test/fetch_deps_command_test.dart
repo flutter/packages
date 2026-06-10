@@ -23,8 +23,9 @@ void main() {
     setUp(() {
       mockPlatform = MockPlatform();
       final GitDir gitDir;
-      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
-          configureBaseCommandMocks(platform: mockPlatform);
+      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) = configureBaseCommandMocks(
+        platform: mockPlatform,
+      );
 
       final command = FetchDepsCommand(
         packagesDir,
@@ -33,10 +34,7 @@ void main() {
         gitDir: gitDir,
       );
 
-      runner = CommandRunner<void>(
-        'fetch_deps_test',
-        'Test for $FetchDepsCommand',
-      );
+      runner = CommandRunner<void>('fetch_deps_test', 'Test for $FetchDepsCommand');
       runner.addCommand(command);
     });
 
@@ -50,17 +48,12 @@ void main() {
           },
         );
 
-        final List<String> output = await runCapturingPrint(runner, <String>[
-          'fetch-deps',
-        ]);
+        final List<String> output = await runCapturingPrint(runner, <String>['fetch-deps']);
 
         expect(
           processRunner.recordedCalls,
           orderedEquals(<ProcessCall>[
-            ProcessCall('flutter', const <String>[
-              'pub',
-              'get',
-            ], plugin.directory.path),
+            ProcessCall('flutter', const <String>['pub', 'get'], plugin.directory.path),
           ]),
         );
 
@@ -86,21 +79,13 @@ void main() {
           plugin.directory.childDirectory('extras'),
         );
 
-        final List<String> output = await runCapturingPrint(runner, <String>[
-          'fetch-deps',
-        ]);
+        final List<String> output = await runCapturingPrint(runner, <String>['fetch-deps']);
 
         expect(
           processRunner.recordedCalls,
           orderedEquals(<ProcessCall>[
-            ProcessCall('flutter', const <String>[
-              'pub',
-              'get',
-            ], plugin.directory.path),
-            ProcessCall('dart', const <String>[
-              'pub',
-              'get',
-            ], subpackage.directory.path),
+            ProcessCall('flutter', const <String>['pub', 'get'], plugin.directory.path),
+            ProcessCall('dart', const <String>['pub', 'get'], subpackage.directory.path),
           ]),
         );
 
@@ -122,11 +107,8 @@ void main() {
           },
         );
 
-        processRunner.mockProcessesForExecutable[getFlutterCommand(
-          mockPlatform,
-        )] = <FakeProcessInfo>[
-          FakeProcessInfo(MockProcess(exitCode: 1)),
-        ];
+        processRunner.mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
+            <FakeProcessInfo>[FakeProcessInfo(MockProcess(exitCode: 1))];
 
         Error? commandError;
         final List<String> output = await runCapturingPrint(
@@ -138,52 +120,37 @@ void main() {
         );
 
         expect(commandError, isA<ToolExit>());
-        expect(
-          output,
-          containsAllInOrder(<Matcher>[contains('Failed to "pub get"')]),
-        );
+        expect(output, containsAllInOrder(<Matcher>[contains('Failed to "pub get"')]));
       });
 
-      test(
-        'skips unsupported packages when any platforms are passed',
-        () async {
-          final RepositoryPackage packageWithBoth = createFakePackage(
-            'supports_both',
-            packagesDir,
-            extraFiles: <String>[
-              'example/linux/placeholder',
-              'example/windows/placeholder',
-            ],
-          );
-          final RepositoryPackage packageWithOne = createFakePackage(
-            'supports_one',
-            packagesDir,
-            extraFiles: <String>['example/linux/placeholder'],
-          );
-          createFakePackage('supports_neither', packagesDir);
+      test('skips unsupported packages when any platforms are passed', () async {
+        final RepositoryPackage packageWithBoth = createFakePackage(
+          'supports_both',
+          packagesDir,
+          extraFiles: <String>['example/linux/placeholder', 'example/windows/placeholder'],
+        );
+        final RepositoryPackage packageWithOne = createFakePackage(
+          'supports_one',
+          packagesDir,
+          extraFiles: <String>['example/linux/placeholder'],
+        );
+        createFakePackage('supports_neither', packagesDir);
 
-          await runCapturingPrint(runner, <String>[
-            'fetch-deps',
-            '--linux',
-            '--windows',
-            '--supporting-target-platforms-only',
-          ]);
+        await runCapturingPrint(runner, <String>[
+          'fetch-deps',
+          '--linux',
+          '--windows',
+          '--supporting-target-platforms-only',
+        ]);
 
-          expect(
-            processRunner.recordedCalls,
-            orderedEquals(<ProcessCall>[
-              ProcessCall('dart', const <String>[
-                'pub',
-                'get',
-              ], packageWithBoth.path),
-              ProcessCall('dart', const <String>[
-                'pub',
-                'get',
-              ], packageWithOne.path),
-            ]),
-          );
-        },
-      );
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall('dart', const <String>['pub', 'get'], packageWithBoth.path),
+            ProcessCall('dart', const <String>['pub', 'get'], packageWithOne.path),
+          ]),
+        );
+      });
     });
 
     group('android', () {
@@ -197,10 +164,9 @@ void main() {
           },
         );
 
-        final Directory androidDir = plugin
-            .getExamples()
-            .first
-            .platformDirectory(FlutterPlatform.android);
+        final Directory androidDir = plugin.getExamples().first.platformDirectory(
+          FlutterPlatform.android,
+        );
 
         final List<String> output = await runCapturingPrint(runner, <String>[
           'fetch-deps',
@@ -210,10 +176,7 @@ void main() {
         expect(
           processRunner.recordedCalls,
           orderedEquals(<ProcessCall>[
-            ProcessCall('flutter', const <String>[
-              'pub',
-              'get',
-            ], plugin.directory.path),
+            ProcessCall('flutter', const <String>['pub', 'get'], plugin.directory.path),
             ProcessCall(androidDir.childFile('gradlew').path, const <String>[
               'plugin1:dependencies',
             ], androidDir.path),
@@ -239,10 +202,9 @@ void main() {
           },
         );
 
-        final Directory androidDir = plugin
-            .getExamples()
-            .first
-            .platformDirectory(FlutterPlatform.android);
+        final Directory androidDir = plugin.getExamples().first.platformDirectory(
+          FlutterPlatform.android,
+        );
 
         final List<String> output = await runCapturingPrint(runner, <String>[
           'fetch-deps',
@@ -284,8 +246,7 @@ void main() {
         );
 
         final Iterable<Directory> exampleAndroidDirs = plugin.getExamples().map(
-          (RepositoryPackage example) =>
-              example.platformDirectory(FlutterPlatform.android),
+          (RepositoryPackage example) => example.platformDirectory(FlutterPlatform.android),
         );
 
         final List<String> output = await runCapturingPrint(runner, <String>[
@@ -322,10 +283,9 @@ void main() {
           },
         );
 
-        final Directory androidDir = plugin
-            .getExamples()
-            .first
-            .platformDirectory(FlutterPlatform.android);
+        final Directory androidDir = plugin.getExamples().first.platformDirectory(
+          FlutterPlatform.android,
+        );
 
         final List<String> output = await runCapturingPrint(runner, <String>[
           'fetch-deps',
@@ -336,11 +296,11 @@ void main() {
         expect(
           processRunner.recordedCalls,
           orderedEquals(<ProcessCall>[
-            ProcessCall(
-              getFlutterCommand(mockPlatform),
-              const <String>['build', 'apk', '--config-only'],
-              plugin.getExamples().first.directory.path,
-            ),
+            ProcessCall(getFlutterCommand(mockPlatform), const <String>[
+              'build',
+              'apk',
+              '--config-only',
+            ], plugin.getExamples().first.directory.path),
             ProcessCall(androidDir.childFile('gradlew').path, const <String>[
               'plugin1:dependencies',
             ], androidDir.path),
@@ -365,11 +325,8 @@ void main() {
           },
         );
 
-        processRunner.mockProcessesForExecutable[getFlutterCommand(
-          mockPlatform,
-        )] = <FakeProcessInfo>[
-          FakeProcessInfo(MockProcess(exitCode: 1)),
-        ];
+        processRunner.mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
+            <FakeProcessInfo>[FakeProcessInfo(MockProcess(exitCode: 1))];
 
         Error? commandError;
         final List<String> output = await runCapturingPrint(
@@ -383,9 +340,7 @@ void main() {
         expect(commandError, isA<ToolExit>());
         expect(
           output,
-          containsAllInOrder(<Matcher>[
-            contains('Unable to configure Gradle project'),
-          ]),
+          containsAllInOrder(<Matcher>[contains('Unable to configure Gradle project')]),
         );
       });
 
@@ -405,8 +360,9 @@ void main() {
             .platformDirectory(FlutterPlatform.android)
             .childFile('gradlew')
             .path;
-        processRunner.mockProcessesForExecutable[gradlewPath] =
-            <FakeProcessInfo>[FakeProcessInfo(MockProcess(exitCode: 1))];
+        processRunner.mockProcessesForExecutable[gradlewPath] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(exitCode: 1)),
+        ];
 
         Error? commandError;
         final List<String> output = await runCapturingPrint(
@@ -420,9 +376,7 @@ void main() {
         expect(commandError, isA<ToolExit>());
         expect(
           output,
-          containsAllInOrder(<Matcher>[
-            contains('The following packages had errors:'),
-          ]),
+          containsAllInOrder(<Matcher>[contains('The following packages had errors:')]),
         );
       });
 
@@ -525,11 +479,7 @@ void main() {
           mockPlatform,
         )] = <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(), <String>['precache']),
-          FakeProcessInfo(MockProcess(exitCode: 1), <String>[
-            'build',
-            'ios',
-            '--config-only',
-          ]),
+          FakeProcessInfo(MockProcess(exitCode: 1), <String>['build', 'ios', '--config-only']),
         ];
 
         Error? commandError;
@@ -544,9 +494,7 @@ void main() {
         expect(commandError, isA<ToolExit>());
         expect(
           output,
-          containsAllInOrder(<Matcher>[
-            contains('The following packages had errors:'),
-          ]),
+          containsAllInOrder(<Matcher>[contains('The following packages had errors:')]),
         );
       });
 
@@ -561,9 +509,7 @@ void main() {
 
         expect(
           output,
-          containsAllInOrder(<Matcher>[
-            contains('Package does not have native iOS dependencies.'),
-          ]),
+          containsAllInOrder(<Matcher>[contains('Package does not have native iOS dependencies.')]),
         );
       });
 
@@ -584,9 +530,7 @@ void main() {
 
         expect(
           output,
-          containsAllInOrder(<Matcher>[
-            contains('Package does not have native iOS dependencies.'),
-          ]),
+          containsAllInOrder(<Matcher>[contains('Package does not have native iOS dependencies.')]),
         );
       });
     });
@@ -649,11 +593,7 @@ void main() {
           mockPlatform,
         )] = <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(), <String>['precache']),
-          FakeProcessInfo(MockProcess(exitCode: 1), <String>[
-            'build',
-            'macos',
-            '--config-only',
-          ]),
+          FakeProcessInfo(MockProcess(exitCode: 1), <String>['build', 'macos', '--config-only']),
         ];
 
         Error? commandError;
@@ -668,9 +608,7 @@ void main() {
         expect(commandError, isA<ToolExit>());
         expect(
           output,
-          containsAllInOrder(<Matcher>[
-            contains('The following packages had errors:'),
-          ]),
+          containsAllInOrder(<Matcher>[contains('The following packages had errors:')]),
         );
       });
 
@@ -728,35 +666,23 @@ void main() {
               },
             );
             final RepositoryPackage example = plugin.getExamples().first;
-            final String originalPubspecContents = example.pubspecFile
-                .readAsStringSync();
+            final String originalPubspecContents = example.pubspecFile.readAsStringSync();
             String? buildTimePubspecContents;
             processRunner.mockProcessesForExecutable[getFlutterCommand(
               mockPlatform,
             )] = <FakeProcessInfo>[
               FakeProcessInfo(MockProcess(), <String>['precache']),
               FakeProcessInfo(MockProcess(), <String>['build'], () {
-                buildTimePubspecContents = example.pubspecFile
-                    .readAsStringSync();
+                buildTimePubspecContents = example.pubspecFile.readAsStringSync();
               }),
             ];
 
-            await runCapturingPrint(runner, <String>[
-              'fetch-deps',
-              '--no-dart',
-              '--$platformName',
-            ]);
+            await runCapturingPrint(runner, <String>['fetch-deps', '--no-dart', '--$platformName']);
 
             // Ensure that SwiftPM was not set at build time.
-            expect(
-              buildTimePubspecContents,
-              isNot(contains('enable-swift-package-manager')),
-            );
+            expect(buildTimePubspecContents, isNot(contains('enable-swift-package-manager')));
             // And that the pubspec wasn't changed at all.
-            expect(
-              example.pubspecFile.readAsStringSync().trim(),
-              originalPubspecContents.trim(),
-            );
+            expect(example.pubspecFile.readAsStringSync().trim(), originalPubspecContents.trim());
           });
 
           test('can be enabled', () async {
@@ -769,15 +695,13 @@ void main() {
               },
             );
             final RepositoryPackage example = plugin.getExamples().first;
-            final String originalPubspecContents = example.pubspecFile
-                .readAsStringSync();
+            final String originalPubspecContents = example.pubspecFile.readAsStringSync();
             String? buildTimePubspecContents;
             processRunner.mockProcessesForExecutable[getFlutterCommand(
               mockPlatform,
             )] = <FakeProcessInfo>[
               FakeProcessInfo(MockProcess(), <String>['build'], () {
-                buildTimePubspecContents = example.pubspecFile
-                    .readAsStringSync();
+                buildTimePubspecContents = example.pubspecFile.readAsStringSync();
               }),
             ];
 
@@ -789,19 +713,10 @@ void main() {
             ]);
 
             // Ensure that SwiftPM was enabled for the package.
-            expect(
-              originalPubspecContents,
-              isNot(contains('enable-swift-package-manager: true')),
-            );
-            expect(
-              buildTimePubspecContents,
-              contains('enable-swift-package-manager: true'),
-            );
+            expect(originalPubspecContents, isNot(contains('enable-swift-package-manager: true')));
+            expect(buildTimePubspecContents, contains('enable-swift-package-manager: true'));
             // And that it was undone after.
-            expect(
-              example.pubspecFile.readAsStringSync().trim(),
-              originalPubspecContents.trim(),
-            );
+            expect(example.pubspecFile.readAsStringSync().trim(), originalPubspecContents.trim());
           });
 
           test('can be disabled', () async {
@@ -814,16 +729,14 @@ void main() {
               },
             );
             final RepositoryPackage example = plugin.getExamples().first;
-            final String originalPubspecContents = example.pubspecFile
-                .readAsStringSync();
+            final String originalPubspecContents = example.pubspecFile.readAsStringSync();
             String? buildTimePubspecContents;
             processRunner.mockProcessesForExecutable[getFlutterCommand(
               mockPlatform,
             )] = <FakeProcessInfo>[
               FakeProcessInfo(MockProcess(), <String>['precache']),
               FakeProcessInfo(MockProcess(), <String>['build'], () {
-                buildTimePubspecContents = example.pubspecFile
-                    .readAsStringSync();
+                buildTimePubspecContents = example.pubspecFile.readAsStringSync();
               }),
             ];
 
@@ -835,84 +748,62 @@ void main() {
             ]);
 
             // Ensure that SwiftPM was disabled for the package.
-            expect(
-              originalPubspecContents,
-              isNot(contains('enable-swift-package-manager: false')),
-            );
-            expect(
-              buildTimePubspecContents,
-              contains('enable-swift-package-manager: false'),
-            );
+            expect(originalPubspecContents, isNot(contains('enable-swift-package-manager: false')));
+            expect(buildTimePubspecContents, contains('enable-swift-package-manager: false'));
             // And that it was undone after.
-            expect(
-              example.pubspecFile.readAsStringSync().trim(),
-              originalPubspecContents.trim(),
-            );
+            expect(example.pubspecFile.readAsStringSync().trim(), originalPubspecContents.trim());
           });
 
-          test(
-            'is set before running pub get, and includes the plugin package',
-            () async {
-              mockPlatform.isMacOS = true;
-              final RepositoryPackage plugin = createFakePlugin(
-                'plugin1',
-                packagesDir,
-                platformSupport: <String, PlatformDetails>{
-                  platformName: const PlatformDetails(PlatformSupport.inline),
-                },
-              );
-              final RepositoryPackage example = plugin.getExamples().first;
-              final String originalPluginPubspecContents = plugin.pubspecFile
-                  .readAsStringSync();
-              final String originalExamplePubspecContents = example.pubspecFile
-                  .readAsStringSync();
-              String? buildTimePluginPubspecContents;
-              String? buildTimeExamplePubspecContents;
-              processRunner.mockProcessesForExecutable[getFlutterCommand(
-                mockPlatform,
-              )] = <FakeProcessInfo>[
-                FakeProcessInfo(MockProcess(), <String>['pub', 'get'], () {
-                  buildTimePluginPubspecContents = plugin.pubspecFile
-                      .readAsStringSync();
-                  buildTimeExamplePubspecContents = example.pubspecFile
-                      .readAsStringSync();
-                }),
-              ];
+          test('is set before running pub get, and includes the plugin package', () async {
+            mockPlatform.isMacOS = true;
+            final RepositoryPackage plugin = createFakePlugin(
+              'plugin1',
+              packagesDir,
+              platformSupport: <String, PlatformDetails>{
+                platformName: const PlatformDetails(PlatformSupport.inline),
+              },
+            );
+            final RepositoryPackage example = plugin.getExamples().first;
+            final String originalPluginPubspecContents = plugin.pubspecFile.readAsStringSync();
+            final String originalExamplePubspecContents = example.pubspecFile.readAsStringSync();
+            String? buildTimePluginPubspecContents;
+            String? buildTimeExamplePubspecContents;
+            processRunner.mockProcessesForExecutable[getFlutterCommand(
+              mockPlatform,
+            )] = <FakeProcessInfo>[
+              FakeProcessInfo(MockProcess(), <String>['pub', 'get'], () {
+                buildTimePluginPubspecContents = plugin.pubspecFile.readAsStringSync();
+                buildTimeExamplePubspecContents = example.pubspecFile.readAsStringSync();
+              }),
+            ];
 
-              await runCapturingPrint(runner, <String>[
-                'fetch-deps',
-                '--$platformName',
-                '--swift-package-manager',
-              ]);
+            await runCapturingPrint(runner, <String>[
+              'fetch-deps',
+              '--$platformName',
+              '--swift-package-manager',
+            ]);
 
-              // Ensure that SwiftPM was enabled for the plugin and the example.
-              expect(
-                originalPluginPubspecContents,
-                isNot(contains('enable-swift-package-manager: true')),
-              );
-              expect(
-                originalExamplePubspecContents,
-                isNot(contains('enable-swift-package-manager: true')),
-              );
-              expect(
-                buildTimePluginPubspecContents,
-                contains('enable-swift-package-manager: true'),
-              );
-              expect(
-                buildTimeExamplePubspecContents,
-                contains('enable-swift-package-manager: true'),
-              );
-              // And that it was undone after.
-              expect(
-                plugin.pubspecFile.readAsStringSync().trim(),
-                originalPluginPubspecContents.trim(),
-              );
-              expect(
-                example.pubspecFile.readAsStringSync().trim(),
-                originalExamplePubspecContents.trim(),
-              );
-            },
-          );
+            // Ensure that SwiftPM was enabled for the plugin and the example.
+            expect(
+              originalPluginPubspecContents,
+              isNot(contains('enable-swift-package-manager: true')),
+            );
+            expect(
+              originalExamplePubspecContents,
+              isNot(contains('enable-swift-package-manager: true')),
+            );
+            expect(buildTimePluginPubspecContents, contains('enable-swift-package-manager: true'));
+            expect(buildTimeExamplePubspecContents, contains('enable-swift-package-manager: true'));
+            // And that it was undone after.
+            expect(
+              plugin.pubspecFile.readAsStringSync().trim(),
+              originalPluginPubspecContents.trim(),
+            );
+            expect(
+              example.pubspecFile.readAsStringSync().trim(),
+              originalExamplePubspecContents.trim(),
+            );
+          });
         });
       }
     });

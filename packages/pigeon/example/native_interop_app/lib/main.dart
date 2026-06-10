@@ -50,14 +50,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final ExampleHostApi _hostApi =
-      (Platform.isAndroid || Platform.isIOS || Platform.isMacOS)
+  final ExampleHostApi _hostApi = (Platform.isAndroid || Platform.isIOS || Platform.isMacOS)
       ? ExampleHostApi.createWithNativeInteropApi()
       : ExampleHostApi();
   String? _hostCallResult;
 
-  final ExampleHostApi _api =
-      (Platform.isAndroid || Platform.isIOS || Platform.isMacOS)
+  final ExampleHostApi _api = (Platform.isAndroid || Platform.isIOS || Platform.isMacOS)
       ? ExampleHostApi.createWithNativeInteropApi()
       : ExampleHostApi();
 

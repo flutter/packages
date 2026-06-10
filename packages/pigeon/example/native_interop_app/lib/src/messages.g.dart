@@ -9,8 +9,7 @@
 import 'dart:async';
 import 'dart:ffi';
 import 'dart:io' show Platform;
-import 'dart:typed_data'
-    show Float32List, Float64List, Int32List, Int64List, Int8List, TypedData;
+import 'dart:typed_data' show Float32List, Float64List, Int32List, Int64List, Int8List, TypedData;
 
 import 'package:ffi/ffi.dart';
 import 'package:flutter/services.dart';
@@ -45,11 +44,7 @@ Object? _extractReplyValueOrThrow(
   return replyList.firstOrNull;
 }
 
-List<Object?> wrapResponse({
-  Object? result,
-  PlatformException? error,
-  bool empty = false,
-}) {
+List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
   }
@@ -71,9 +66,7 @@ bool _deepEquals(Object? a, Object? b) {
   }
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed.every(
-          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
-        );
+        a.indexed.every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
     if (a.length != b.length) {
@@ -126,9 +119,7 @@ class _PigeonJniCodec {
   static JObject get _kotlinUnit {
     final JClass unitClass = JClass.forName('kotlin/Unit');
     try {
-      return unitClass
-          .staticFieldId('INSTANCE', 'Lkotlin/Unit;')
-          .get(unitClass, JObject.type);
+      return unitClass.staticFieldId('INSTANCE', 'Lkotlin/Unit;').get(unitClass, JObject.type);
     } finally {
       unitClass.release();
     }
@@ -167,9 +158,7 @@ class _PigeonJniCodec {
         res.add(readValue(list[i]));
       }
       return res;
-    } else if (value.isA<JMap<JObject, JObject>>(
-      JMap.type as JType<JMap<JObject, JObject>>,
-    )) {
+    } else if (value.isA<JMap<JObject, JObject>>(JMap.type as JType<JMap<JObject, JObject>>)) {
       final Map<JObject?, JObject?> map = value.as(JMap.type).asDart();
       final res = <Object?, Object?>{};
       for (final MapEntry<JObject?, JObject?> entry in map.entries) {
@@ -225,32 +214,28 @@ class _PigeonJniCodec {
     } else if (value is Map<String, String>) {
       return value
               .map<JString, JString>(
-                (k, v) =>
-                    MapEntry(writeValue<JString>(k), writeValue<JString>(v)),
+                (k, v) => MapEntry(writeValue<JString>(k), writeValue<JString>(v)),
               )
               .toJMap()
           as T;
     } else if (value is Map<Object, Object>) {
       return value
               .map<JObject, JObject>(
-                (k, v) =>
-                    MapEntry(writeValue<JObject>(k), writeValue<JObject>(v)),
+                (k, v) => MapEntry(writeValue<JObject>(k), writeValue<JObject>(v)),
               )
               .toJMap()
           as T;
     } else if (value is Map<Object, Object?>) {
       return value
               .map<JObject, JObject?>(
-                (k, v) =>
-                    MapEntry(writeValue<JObject>(k), writeValue<JObject?>(v)),
+                (k, v) => MapEntry(writeValue<JObject>(k), writeValue<JObject?>(v)),
               )
               .toJMap()
           as T;
     } else if (value is Map) {
       return value
               .map<JObject?, JObject?>(
-                (k, v) =>
-                    MapEntry(writeValue<JObject?>(k), writeValue<JObject?>(v)),
+                (k, v) => MapEntry(writeValue<JObject?>(k), writeValue<JObject?>(v)),
               )
               .toJMap()
           as T;
@@ -282,9 +267,7 @@ class _PigeonFfiCodec {
     } else if (NSString.isA(value)) {
       return NSString.as(value).toDartString();
     } else if (ffi_bridge.MessagesPigeonTypedData.isA(value)) {
-      return getValueFromPigeonTypedData(
-        value as ffi_bridge.MessagesPigeonTypedData,
-      );
+      return getValueFromPigeonTypedData(value as ffi_bridge.MessagesPigeonTypedData);
     } else if (NSArray.isA(value)) {
       final NSArray array = NSArray.as(value);
       final List<Object?> res = <Object?>[];
@@ -298,17 +281,11 @@ class _PigeonFfiCodec {
       final Map<Object?, Object?> res = <Object?, Object?>{};
       for (int i = 0; i < keys.count; i++) {
         final ObjCObject key = keys.objectAtIndex(i);
-        res[readValue(key, type, type2)] = readValue(
-          dict.objectForKey(key),
-          type,
-          type2,
-        );
+        res[readValue(key, type, type2)] = readValue(dict.objectForKey(key), type, type2);
       }
       return res;
     } else if (ffi_bridge.MessagesNumberWrapper.isA(value)) {
-      return convertNumberWrapperToDart(
-        ffi_bridge.MessagesNumberWrapper.as(value),
-      );
+      return convertNumberWrapperToDart(ffi_bridge.MessagesNumberWrapper.as(value));
     } else if (ffi_bridge.MessageDataBridge.isA(value)) {
       return MessageData.fromFfi(ffi_bridge.MessageDataBridge.as(value));
     } else {
@@ -316,13 +293,9 @@ class _PigeonFfiCodec {
     }
   }
 
-  static T writeValue<T extends ObjCObject?>(
-    Object? value, {
-    bool generic = false,
-  }) {
+  static T writeValue<T extends ObjCObject?>(Object? value, {bool generic = false}) {
     if (value == null) {
-      if (isTypeOrNullableType<T>(ObjCObject) ||
-          isTypeOrNullableType<T>(NSObject)) {
+      if (isTypeOrNullableType<T>(ObjCObject) || isTypeOrNullableType<T>(NSObject)) {
         return ffi_bridge.MessagesPigeonInternalNull() as T;
       }
       return null as T;
@@ -333,15 +306,11 @@ class _PigeonFfiCodec {
               : NSNumber.alloc().initWithLong(value ? 1 : 0))
           as T;
     } else if (value is double) {
-      return (generic
-              ? convertToFfiNumberWrapper(value)
-              : NSNumber.alloc().initWithDouble(value))
+      return (generic ? convertToFfiNumberWrapper(value) : NSNumber.alloc().initWithDouble(value))
           as T;
       // ignore: avoid_double_and_int_checks
     } else if (value is int) {
-      return (generic
-              ? convertToFfiNumberWrapper(value)
-              : NSNumber.alloc().initWithLong(value))
+      return (generic ? convertToFfiNumberWrapper(value) : NSNumber.alloc().initWithLong(value))
           as T;
     } else if (value is Enum) {
       return (generic
@@ -362,8 +331,7 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
-    } else if (value is Map<String, String> &&
-        isTypeOrNullableType<NSDictionary>(T)) {
+    } else if (value is Map<String, String> && isTypeOrNullableType<NSDictionary>(T)) {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<String, String> entry in value.entries) {
         res.setObject(
@@ -395,67 +363,37 @@ ffi_bridge.MessagesPigeonTypedData toPigeonTypedData(TypedData value) {
     final int length = value.length;
     final Pointer<Uint8> ptr = calloc<Uint8>(length);
     ptr.asTypedList(length).setAll(0, value);
-    final NSData nsData = NSData.dataWithBytes(
-      ptr.cast<Void>(),
-      length: lengthInBytes,
-    );
+    final NSData nsData = NSData.dataWithBytes(ptr.cast<Void>(), length: lengthInBytes);
     calloc.free(ptr);
-    return ffi_bridge.MessagesPigeonTypedData.alloc().initWithData(
-      nsData,
-      type: 0,
-    );
+    return ffi_bridge.MessagesPigeonTypedData.alloc().initWithData(nsData, type: 0);
   } else if (value is Int32List) {
     final int length = value.length;
     final Pointer<Int32> ptr = calloc<Int32>(length);
     ptr.asTypedList(length).setAll(0, value);
-    final NSData nsData = NSData.dataWithBytes(
-      ptr.cast<Void>(),
-      length: lengthInBytes,
-    );
+    final NSData nsData = NSData.dataWithBytes(ptr.cast<Void>(), length: lengthInBytes);
     calloc.free(ptr);
-    return ffi_bridge.MessagesPigeonTypedData.alloc().initWithData(
-      nsData,
-      type: 1,
-    );
+    return ffi_bridge.MessagesPigeonTypedData.alloc().initWithData(nsData, type: 1);
   } else if (value is Int64List) {
     final int length = value.length;
     final Pointer<Int64> ptr = calloc<Int64>(length);
     ptr.asTypedList(length).setAll(0, value);
-    final NSData nsData = NSData.dataWithBytes(
-      ptr.cast<Void>(),
-      length: lengthInBytes,
-    );
+    final NSData nsData = NSData.dataWithBytes(ptr.cast<Void>(), length: lengthInBytes);
     calloc.free(ptr);
-    return ffi_bridge.MessagesPigeonTypedData.alloc().initWithData(
-      nsData,
-      type: 2,
-    );
+    return ffi_bridge.MessagesPigeonTypedData.alloc().initWithData(nsData, type: 2);
   } else if (value is Float32List) {
     final int length = value.length;
     final Pointer<Float> ptr = calloc<Float>(length);
     ptr.asTypedList(length).setAll(0, value);
-    final NSData nsData = NSData.dataWithBytes(
-      ptr.cast<Void>(),
-      length: lengthInBytes,
-    );
+    final NSData nsData = NSData.dataWithBytes(ptr.cast<Void>(), length: lengthInBytes);
     calloc.free(ptr);
-    return ffi_bridge.MessagesPigeonTypedData.alloc().initWithData(
-      nsData,
-      type: 3,
-    );
+    return ffi_bridge.MessagesPigeonTypedData.alloc().initWithData(nsData, type: 3);
   } else if (value is Float64List) {
     final int length = value.length;
     final Pointer<Double> ptr = calloc<Double>(length);
     ptr.asTypedList(length).setAll(0, value);
-    final NSData nsData = NSData.dataWithBytes(
-      ptr.cast<Void>(),
-      length: lengthInBytes,
-    );
+    final NSData nsData = NSData.dataWithBytes(ptr.cast<Void>(), length: lengthInBytes);
     calloc.free(ptr);
-    return ffi_bridge.MessagesPigeonTypedData.alloc().initWithData(
-      nsData,
-      type: 4,
-    );
+    return ffi_bridge.MessagesPigeonTypedData.alloc().initWithData(nsData, type: 4);
   }
   throw ArgumentError.value(value);
 }
@@ -467,21 +405,13 @@ Object? getValueFromPigeonTypedData(ffi_bridge.MessagesPigeonTypedData value) {
     case 0:
       return Uint8List.fromList(bytes.cast<Uint8>().asTypedList(data.length));
     case 1:
-      return Int32List.fromList(
-        bytes.cast<Int32>().asTypedList(data.length ~/ 4),
-      );
+      return Int32List.fromList(bytes.cast<Int32>().asTypedList(data.length ~/ 4));
     case 2:
-      return Int64List.fromList(
-        bytes.cast<Int64>().asTypedList(data.length ~/ 8),
-      );
+      return Int64List.fromList(bytes.cast<Int64>().asTypedList(data.length ~/ 8));
     case 3:
-      return Float32List.fromList(
-        bytes.cast<Float>().asTypedList(data.length ~/ 4),
-      );
+      return Float32List.fromList(bytes.cast<Float>().asTypedList(data.length ~/ 4));
     case 4:
-      return Float64List.fromList(
-        bytes.cast<Double>().asTypedList(data.length ~/ 8),
-      );
+      return Float64List.fromList(bytes.cast<Double>().asTypedList(data.length ~/ 8));
     default:
       throw ArgumentError.value(value);
   }
@@ -520,10 +450,7 @@ ffi_bridge.MessagesNumberWrapper convertToFfiNumberWrapper(Object value) {
         type: 3,
       );
     case Code _:
-      return ffi_bridge.MessagesNumberWrapper.alloc().initWithNumber(
-        value.toNSNumber(),
-        type: 4,
-      );
+      return ffi_bridge.MessagesNumberWrapper.alloc().initWithNumber(value.toNSNumber(), type: 4);
     default:
       throw ArgumentError.value(value);
   }
@@ -547,14 +474,11 @@ void _throwIfFfiError(ffi_bridge.PigeonError error) {
   }
 }
 
-PlatformException _wrapFfiError(ffi_bridge.PigeonError error) =>
-    PlatformException(
-      code: error.code!.toDartString(),
-      message: error.message?.toDartString(),
-      details: NSString.isA(error.details)
-          ? error.details!.toDartString()
-          : error.details,
-    );
+PlatformException _wrapFfiError(ffi_bridge.PigeonError error) => PlatformException(
+  code: error.code!.toDartString(),
+  message: error.message?.toDartString(),
+  details: NSString.isA(error.details) ? error.details!.toDartString() : error.details,
+);
 
 void _reportFfiError(ffi_bridge.PigeonError errorOut, Object e) {
   if (e is PlatformException) {
@@ -570,9 +494,7 @@ void _reportFfiError(ffi_bridge.PigeonError errorOut, Object e) {
 
 PlatformException _wrapJniException(JThrowable e) {
   if (e.isA<jni_bridge.FlutterError>(jni_bridge.FlutterError.type)) {
-    final jni_bridge.FlutterError pigeonError = e.as(
-      jni_bridge.FlutterError.type,
-    );
+    final jni_bridge.FlutterError pigeonError = e.as(jni_bridge.FlutterError.type);
     return PlatformException(
       code: pigeonError.code.toDartString(),
       message: pigeonError.message?.toDartString(),
@@ -616,12 +538,7 @@ enum Code {
 }
 
 class MessageData {
-  MessageData({
-    this.name,
-    this.messageDescription,
-    required this.code,
-    required this.data,
-  });
+  MessageData({this.name, this.messageDescription, required this.code, required this.data});
 
   String? name;
 
@@ -647,9 +564,7 @@ class MessageData {
   ffi_bridge.MessageDataBridge toFfi() {
     return ffi_bridge.MessageDataBridge.alloc().initWithName(
       _PigeonFfiCodec.writeValue<NSString?>(name),
-      messageDescription: _PigeonFfiCodec.writeValue<NSString?>(
-        messageDescription,
-      ),
+      messageDescription: _PigeonFfiCodec.writeValue<NSString?>(messageDescription),
       code: ffi_bridge.Code.values[code.index],
       data: _PigeonFfiCodec.writeValue<NSDictionary>(data),
     );
@@ -664,14 +579,10 @@ class MessageData {
         ? null
         : MessageData(
             name: jniClass.name?.toDartString(releaseOriginal: true),
-            messageDescription: jniClass.messageDescription?.toDartString(
-              releaseOriginal: true,
-            ),
+            messageDescription: jniClass.messageDescription?.toDartString(releaseOriginal: true),
             code: Code.fromJni(jniClass.code)!,
-            data:
-                (_PigeonJniCodec.readValue(jniClass.data)!
-                        as Map<Object?, Object?>)
-                    .cast<String, String>(),
+            data: (_PigeonJniCodec.readValue(jniClass.data)! as Map<Object?, Object?>)
+                .cast<String, String>(),
           );
   }
 
@@ -682,10 +593,8 @@ class MessageData {
             name: ffiClass.name?.toDartString(),
             messageDescription: ffiClass.messageDescription?.toDartString(),
             code: Code.values[ffiClass.code.index],
-            data:
-                (_PigeonFfiCodec.readValue(ffiClass.data)!
-                        as Map<Object?, Object?>)
-                    .cast<String, String>(),
+            data: (_PigeonFfiCodec.readValue(ffiClass.data)! as Map<Object?, Object?>)
+                .cast<String, String>(),
           );
   }
 
@@ -756,8 +665,7 @@ class _PigeonCodec extends StandardMessageCodec {
   }
 }
 
-const String defaultInstanceName =
-    'PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u';
+const String defaultInstanceName = 'PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u';
 
 class ExampleHostApiForNativeInterop {
   ExampleHostApiForNativeInterop._withRegistrar({
@@ -767,22 +675,18 @@ class ExampleHostApiForNativeInterop {
        _ffiApi = ffiApi;
 
   /// Returns instance of ExampleHostApiForNativeInterop with specified [channelName] if one has been registered.
-  static ExampleHostApiForNativeInterop? getInstance({
-    String channelName = defaultInstanceName,
-  }) {
+  static ExampleHostApiForNativeInterop? getInstance({String channelName = defaultInstanceName}) {
     late ExampleHostApiForNativeInterop res;
     if (Platform.isAndroid) {
-      final jni_bridge.ExampleHostApiRegistrar? link =
-          jni_bridge.ExampleHostApiRegistrar().getInstance(
-            channelName.toJString(),
-          );
+      final jni_bridge.ExampleHostApiRegistrar? link = jni_bridge.ExampleHostApiRegistrar()
+          .getInstance(channelName.toJString());
       if (link == null) {
         _throwNoInstanceError(channelName);
       }
       res = ExampleHostApiForNativeInterop._withRegistrar(jniApi: link);
     } else if (Platform.isIOS || Platform.isMacOS) {
-      final ffi_bridge.ExampleHostApiSetup? link = ffi_bridge
-          .ExampleHostApiSetup.getInstanceWithName(NSString(channelName));
+      final ffi_bridge.ExampleHostApiSetup? link =
+          ffi_bridge.ExampleHostApiSetup.getInstanceWithName(NSString(channelName));
       if (link == null) {
         _throwNoInstanceError(channelName);
       }
@@ -802,9 +706,7 @@ class ExampleHostApiForNativeInterop {
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.PigeonError();
-        final NSString? res = _ffiApi.determineHostLanguageWithWrappedError(
-          error,
-        );
+        final NSString? res = _ffiApi.determineHostLanguageWithWrappedError(error);
         _throwIfFfiError(error);
         final String dartTypeRes = res!.toDartString();
         return dartTypeRes;
@@ -846,9 +748,7 @@ class ExampleHostApiForNativeInterop {
         _ffiApi.sendMessageWithMessage(
           message.toFfi(),
           wrappedError: error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
-            NSNumber? res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((NSNumber? res) {
             if (error.code != null) {
               completer.completeError(_wrapFfiError(error));
             } else {
@@ -921,8 +821,7 @@ class ExampleHostApi {
   final ExampleHostApiForNativeInterop? _nativeInteropApi;
 
   Future<String> determineHostLanguage() async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
-        _nativeInteropApi != null) {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
       return _nativeInteropApi.determineHostLanguage();
     }
     final pigeonVar_channelName =
@@ -944,8 +843,7 @@ class ExampleHostApi {
   }
 
   Future<int> add(int a, int b) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
-        _nativeInteropApi != null) {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
       return _nativeInteropApi.add(a, b);
     }
     final pigeonVar_channelName =
@@ -955,9 +853,7 @@ class ExampleHostApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[a, b],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[a, b]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -969,8 +865,7 @@ class ExampleHostApi {
   }
 
   Future<bool> sendMessage(MessageData message) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
-        _nativeInteropApi != null) {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
       return _nativeInteropApi.sendMessage(message);
     }
     final pigeonVar_channelName =
@@ -980,9 +875,7 @@ class ExampleHostApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[message],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[message]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -997,54 +890,37 @@ class ExampleHostApi {
 final class MessageFlutterApiRegistrar with jni_bridge.$MessageFlutterApi {
   MessageFlutterApi? dartApi;
 
-  MessageFlutterApi register(
-    MessageFlutterApi api, {
-    String name = defaultInstanceName,
-  }) {
+  MessageFlutterApi register(MessageFlutterApi api, {String name = defaultInstanceName}) {
     dartApi = api;
 
     if (Platform.isAndroid) {
-      final jni_bridge.MessageFlutterApi impl =
-          jni_bridge.MessageFlutterApi.implement(this);
-      jni_bridge.MessageFlutterApiRegistrar().registerInstance(
-        impl,
-        name.toJString(),
-      );
+      final jni_bridge.MessageFlutterApi impl = jni_bridge.MessageFlutterApi.implement(this);
+      jni_bridge.MessageFlutterApiRegistrar().registerInstance(impl, name.toJString());
     }
     if (Platform.isIOS || Platform.isMacOS) {
-      final ObjCProtocolBuilder builder = ObjCProtocolBuilder(
-        debugName: 'MessageFlutterApiBridge',
-      );
-      ffi_bridge.MessageFlutterApiBridge$Builder.flutterMethodWithAString_error_
-          .implement(builder, (
-            NSString? aString,
-            ffi_bridge.PigeonError errorOut,
-          ) {
-            try {
-              if (dartApi != null) {
-                final String response = dartApi!.flutterMethod(
-                  aString?.toDartString(),
-                );
-                return _PigeonFfiCodec.writeValue<NSString>(response);
-              } else {
-                _reportFfiError(
-                  errorOut,
-                  'ArgumentError: MessageFlutterApi was not registered.',
-                );
-                return null;
-              }
-            } catch (e) {
-              _reportFfiError(errorOut, e);
+      final ObjCProtocolBuilder builder = ObjCProtocolBuilder(debugName: 'MessageFlutterApiBridge');
+      ffi_bridge.MessageFlutterApiBridge$Builder.flutterMethodWithAString_error_.implement(
+        builder,
+        (NSString? aString, ffi_bridge.PigeonError errorOut) {
+          try {
+            if (dartApi != null) {
+              final String response = dartApi!.flutterMethod(aString?.toDartString());
+              return _PigeonFfiCodec.writeValue<NSString>(response);
+            } else {
+              _reportFfiError(errorOut, 'ArgumentError: MessageFlutterApi was not registered.');
               return null;
             }
-          });
-      builder.addProtocol(ffi_bridge.MessageFlutterApiBridge$Builder.$protocol);
-      final ffi_bridge.MessageFlutterApiBridge impl =
-          ffi_bridge.MessageFlutterApiBridge.as(builder.build());
-      ffi_bridge.MessageFlutterApiRegistrar.registerInstanceWithApi(
-        impl,
-        name: NSString(name),
+          } catch (e) {
+            _reportFfiError(errorOut, e);
+            return null;
+          }
+        },
       );
+      builder.addProtocol(ffi_bridge.MessageFlutterApiBridge$Builder.$protocol);
+      final ffi_bridge.MessageFlutterApiBridge impl = ffi_bridge.MessageFlutterApiBridge.as(
+        builder.build(),
+      );
+      ffi_bridge.MessageFlutterApiRegistrar.registerInstanceWithApi(impl, name: NSString(name));
     }
     return api;
   }
@@ -1052,9 +928,7 @@ final class MessageFlutterApiRegistrar with jni_bridge.$MessageFlutterApi {
   @override
   JString flutterMethod(JString? aString) {
     if (dartApi != null) {
-      final String response = dartApi!.flutterMethod(
-        aString?.toDartString(releaseOriginal: true),
-      );
+      final String response = dartApi!.flutterMethod(aString?.toDartString(releaseOriginal: true));
       return _PigeonJniCodec.writeValue<JString>(response);
     } else {
       throw ArgumentError('MessageFlutterApi was not registered.');
@@ -1075,24 +949,18 @@ abstract class MessageFlutterApi {
     if (Platform.isAndroid && api != null) {
       MessageFlutterApiRegistrar().register(
         api,
-        name: messageChannelSuffix.isEmpty
-            ? defaultInstanceName
-            : messageChannelSuffix,
+        name: messageChannelSuffix.isEmpty ? defaultInstanceName : messageChannelSuffix,
       );
     }
 
     if ((Platform.isIOS || Platform.isMacOS) && api != null) {
       MessageFlutterApiRegistrar().register(
         api,
-        name: messageChannelSuffix.isEmpty
-            ? defaultInstanceName
-            : messageChannelSuffix,
+        name: messageChannelSuffix.isEmpty ? defaultInstanceName : messageChannelSuffix,
       );
     }
 
-    messageChannelSuffix = messageChannelSuffix.isNotEmpty
-        ? '.$messageChannelSuffix'
-        : '';
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod$messageChannelSuffix',
@@ -1120,10 +988,7 @@ abstract class MessageFlutterApi {
     }
   }
 
-  static MessageFlutterApi implement(
-    MessageFlutterApi api, {
-    String name = '',
-  }) {
+  static MessageFlutterApi implement(MessageFlutterApi api, {String name = ''}) {
     return MessageFlutterApiRegistrar().register(api, name: name);
   }
 }

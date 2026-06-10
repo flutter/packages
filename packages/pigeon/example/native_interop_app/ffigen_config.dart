@@ -38,12 +38,9 @@ Future<void> main(List<String> args) async {
   await SwiftGenerator(
     target: Target(triple: targetTriple, sdk: sdk),
     inputs: <SwiftGenInput>[
-      ObjCCompatibleSwiftFileInput(
-        files: <Uri>[Uri.file('ios/Runner/Messages.g.swift')],
-      ),
+      ObjCCompatibleSwiftFileInput(files: <Uri>[Uri.file('ios/Runner/Messages.g.swift')]),
     ],
-    include: (Declaration d) =>
-        classes.contains(d.name) || enums.contains(d.name),
+    include: (Declaration d) => classes.contains(d.name) || enums.contains(d.name),
     output: Output(
       module: 'Runner',
       // Path is relative to appDirectory.
@@ -66,8 +63,7 @@ Future<void> main(List<String> args) async {
         ),
         interfaces: fg.Interfaces(
           include: (fg.Declaration decl) =>
-              classes.contains(decl.originalName) ||
-              enums.contains(decl.originalName),
+              classes.contains(decl.originalName) || enums.contains(decl.originalName),
           module: (fg.Declaration decl) {
             return decl.originalName.startsWith('NS') ? null : 'Runner';
           },
@@ -82,8 +78,6 @@ Future<void> main(List<String> args) async {
     ),
   ).generate(
     logger: null,
-    tempDirectory: Uri.directory(
-      './example/native_interop_app/ios/Runner_objc_gen',
-    ),
+    tempDirectory: Uri.directory('./example/native_interop_app/ios/Runner_objc_gen'),
   );
 }
