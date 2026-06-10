@@ -21,6 +21,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'color_scheme.dart';
@@ -484,6 +485,50 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
   final FocusNode startFocusNode = FocusNode();
   final FocusNode endFocusNode = FocusNode();
 
+  final GlobalKey _renderObjectKey = GlobalKey();
+
+  // Whether the slider is currently in the value adjustment mode while using
+  // directional navigation (e.g. a TV remote or D-pad). When false, arrow keys
+  // are left unhandled so they can move the focus between views; when true,
+  // arrow keys adjust the slider value. Toggled by the enter key. This has no
+  // effect when using traditional navigation.
+  bool _isEditingInDirectionalMode = false;
+
+  // Keyboard mapping for a focused range slider.
+  static const Map<ShortcutActivator, Intent> _traditionalNavShortcutMap =
+      <ShortcutActivator, Intent>{
+        SingleActivator(LogicalKeyboardKey.arrowUp): _AdjustSliderIntent.up(),
+        SingleActivator(LogicalKeyboardKey.arrowDown): _AdjustSliderIntent.down(),
+        SingleActivator(LogicalKeyboardKey.arrowLeft): _AdjustSliderIntent.left(),
+        SingleActivator(LogicalKeyboardKey.arrowRight): _AdjustSliderIntent.right(),
+      };
+
+  // Keyboard mapping for a focused range slider when using directional
+  // navigation and not in the value adjustment mode. Only the enter key is
+  // handled, to enter the value adjustment mode. The arrow keys are left
+  // unhandled so they can move the focus between views.
+  static const Map<ShortcutActivator, Intent> _directionalNavShortcutMap =
+      <ShortcutActivator, Intent>{
+        SingleActivator(LogicalKeyboardKey.enter): _ToggleRangeSliderEditModeIntent(),
+      };
+
+  // Keyboard mapping for a focused range slider when using directional
+  // navigation and in the value adjustment mode. The horizontal inputs adjust
+  // the value and the enter key exits the value adjustment mode. The vertical
+  // inputs are not handled to allow navigating out of the slider.
+  static const Map<ShortcutActivator, Intent> _directionalNavEditingShortcutMap =
+      <ShortcutActivator, Intent>{
+        SingleActivator(LogicalKeyboardKey.arrowLeft): _AdjustSliderIntent.left(),
+        SingleActivator(LogicalKeyboardKey.arrowRight): _AdjustSliderIntent.right(),
+        SingleActivator(LogicalKeyboardKey.enter): _ToggleRangeSliderEditModeIntent(),
+      };
+
+  // Action mapping for the start thumb.
+  late Map<Type, Action<Intent>> _startActionMap;
+
+  // Action mapping for the end thumb.
+  late Map<Type, Action<Intent>> _endActionMap;
+
   // Animation controller that is run when the overlay (a.k.a radial reaction)
   // changes visibility in response to user interaction.
   late AnimationController overlayController;
@@ -544,6 +589,22 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
   @override
   void initState() {
     super.initState();
+    _startActionMap = <Type, Action<Intent>>{
+      _AdjustSliderIntent: CallbackAction<_AdjustSliderIntent>(
+        onInvoke: (_AdjustSliderIntent intent) => _actionHandler(intent, Thumb.start),
+      ),
+      _ToggleRangeSliderEditModeIntent: CallbackAction<_ToggleRangeSliderEditModeIntent>(
+        onInvoke: (_ToggleRangeSliderEditModeIntent intent) => _toggleEditMode(),
+      ),
+    };
+    _endActionMap = <Type, Action<Intent>>{
+      _AdjustSliderIntent: CallbackAction<_AdjustSliderIntent>(
+        onInvoke: (_AdjustSliderIntent intent) => _actionHandler(intent, Thumb.end),
+      ),
+      _ToggleRangeSliderEditModeIntent: CallbackAction<_ToggleRangeSliderEditModeIntent>(
+        onInvoke: (_ToggleRangeSliderEditModeIntent intent) => _toggleEditMode(),
+      ),
+    };
     overlayController = AnimationController(duration: kRadialReactionDuration, vsync: this);
     valueIndicatorController = AnimationController(
       duration: valueIndicatorAnimationDuration,
@@ -605,6 +666,41 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
     }
   }
 
+  void _actionHandler(_AdjustSliderIntent intent, Thumb thumb) {
+    final slider = _renderObjectKey.currentContext!.findRenderObject()! as _RenderRangeSlider;
+    final TextDirection directionality = Directionality.of(_renderObjectKey.currentContext!);
+    final bool increase = switch (intent.type) {
+      _SliderAdjustmentType.up => true,
+      _SliderAdjustmentType.down => false,
+      _SliderAdjustmentType.left => directionality == TextDirection.rtl,
+      _SliderAdjustmentType.right => directionality == TextDirection.ltr,
+    };
+    switch (thumb) {
+      case Thumb.start:
+        increase ? slider.increaseStartAction() : slider.decreaseStartAction();
+      case Thumb.end:
+        increase ? slider.increaseEndAction() : slider.decreaseEndAction();
+    }
+  }
+
+  // Toggles the value adjustment mode used by directional navigation. Entered
+  // and exited by pressing the enter key on a focused thumb.
+  void _toggleEditMode() {
+    setState(() {
+      _isEditingInDirectionalMode = !_isEditingInDirectionalMode;
+    });
+  }
+
+  // Exits the value adjustment mode when a thumb loses focus, so the slider
+  // does not stay in the editing state after the user navigates away.
+  void _handleFocusChanged(bool hasFocus) {
+    if (!hasFocus && _isEditingInDirectionalMode) {
+      setState(() {
+        _isEditingInDirectionalMode = false;
+      });
+    }
+  }
+
   void _handleDragStart(RangeValues values) {
     setState(() {
       _dragging = true;
@@ -642,13 +738,16 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
 
   Widget _buildThumbFocusDetector({
     required FocusNode focusNode,
+    required Map<Type, Action<Intent>> actions,
     required ValueChanged<bool> onShowFocusHighlight,
   }) {
     return FocusableActionDetector(
       focusNode: focusNode,
       enabled: _enabled,
       includeFocusSemantics: false,
+      actions: actions,
       onShowFocusHighlight: onShowFocusHighlight,
+      onFocusChange: _handleFocusChanged,
       child: const SizedBox.shrink(),
     );
   }
@@ -812,6 +911,7 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
           return _buildValueIndicator(sliderTheme.showValueIndicator!);
         },
         child: _RangeSliderRenderObjectWidget(
+          key: _renderObjectKey,
           values: _unlerpRangeValues(widget.values),
           divisions: widget.divisions,
           labels: widget.labels,
@@ -835,20 +935,34 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
       result = Padding(padding: padding, child: result);
     }
 
+    final Map<ShortcutActivator, Intent> shortcutMap = switch (MediaQuery.navigationModeOf(
+      context,
+    )) {
+      NavigationMode.directional => _isEditingInDirectionalMode
+          ? _directionalNavEditingShortcutMap
+          : _directionalNavShortcutMap,
+      NavigationMode.traditional => _traditionalNavShortcutMap,
+    };
+
     return Stack(
       children: <Widget>[
         // Adds two invisible focus nodes to the range slider for its two thumbs.
-        Row(
-          children: <Widget>[
-            _buildThumbFocusDetector(
-              focusNode: startFocusNode,
-              onShowFocusHighlight: _handleStartFocusHighlightChanged,
-            ),
-            _buildThumbFocusDetector(
-              focusNode: endFocusNode,
-              onShowFocusHighlight: _handleEndFocusHighlightChanged,
-            ),
-          ],
+        Shortcuts(
+          shortcuts: shortcutMap,
+          child: Row(
+            children: <Widget>[
+              _buildThumbFocusDetector(
+                focusNode: startFocusNode,
+                actions: _startActionMap,
+                onShowFocusHighlight: _handleStartFocusHighlightChanged,
+              ),
+              _buildThumbFocusDetector(
+                focusNode: endFocusNode,
+                actions: _endActionMap,
+                onShowFocusHighlight: _handleEndFocusHighlightChanged,
+              ),
+            ],
+          ),
         ),
         MouseRegion(
           onEnter: (_) => _handleHoverChanged(true),
@@ -881,6 +995,7 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
 
 class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
   const _RangeSliderRenderObjectWidget({
+    super.key,
     required this.values,
     required this.divisions,
     required this.labels,
@@ -2014,16 +2129,16 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
       values.start,
       _increasedStartValue,
       _decreasedStartValue,
-      _increaseStartAction,
-      _decreaseStartAction,
+      increaseStartAction,
+      decreaseStartAction,
       focused: _state.startFocusNode.hasFocus,
     );
     final SemanticsConfiguration endSemanticsConfiguration = _createSemanticsConfiguration(
       values.end,
       _increasedEndValue,
       _decreasedEndValue,
-      _increaseEndAction,
-      _decreaseEndAction,
+      increaseEndAction,
+      decreaseEndAction,
       focused: _state.endFocusNode.hasFocus,
     );
 
@@ -2074,25 +2189,25 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
 
   double get _semanticActionUnit => divisions != null ? 1.0 / divisions! : _adjustmentUnit;
 
-  void _increaseStartAction() {
+  void increaseStartAction() {
     if (isEnabled) {
       onChanged!(RangeValues(_increasedStartValue, values.end));
     }
   }
 
-  void _decreaseStartAction() {
+  void decreaseStartAction() {
     if (isEnabled) {
       onChanged!(RangeValues(_decreasedStartValue, values.end));
     }
   }
 
-  void _increaseEndAction() {
+  void increaseEndAction() {
     if (isEnabled) {
       onChanged!(RangeValues(values.start, _increasedEndValue));
     }
   }
 
-  void _decreaseEndAction() {
+  void decreaseEndAction() {
     if (isEnabled) {
       onChanged!(RangeValues(values.start, _decreasedEndValue));
     }
@@ -2261,6 +2376,28 @@ class _RangeSliderDefaultsM2 extends SliderThemeData {
 
   @override
   double? get minThumbSeparation => 8;
+}
+
+class _AdjustSliderIntent extends Intent {
+  const _AdjustSliderIntent({required this.type});
+
+  const _AdjustSliderIntent.right() : type = _SliderAdjustmentType.right;
+
+  const _AdjustSliderIntent.left() : type = _SliderAdjustmentType.left;
+
+  const _AdjustSliderIntent.up() : type = _SliderAdjustmentType.up;
+
+  const _AdjustSliderIntent.down() : type = _SliderAdjustmentType.down;
+
+  final _SliderAdjustmentType type;
+}
+
+enum _SliderAdjustmentType { right, left, up, down }
+
+// Toggles the value adjustment mode used by directional navigation, so the
+// thumb that has focus enters or exits the editing state.
+class _ToggleRangeSliderEditModeIntent extends Intent {
+  const _ToggleRangeSliderEditModeIntent();
 }
 
 // BEGIN GENERATED TOKEN PROPERTIES - RangeSlider
