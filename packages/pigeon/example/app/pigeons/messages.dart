@@ -36,7 +36,7 @@ enum Code { one, two }
 class MessageData {
   MessageData({required this.code, required this.data});
   String? name;
-  String? description;
+  String? messageDescription;
   Code code;
   Map<String, String> data;
 }

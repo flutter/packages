@@ -31,4 +31,13 @@ struct ListTests {
     }
   }
 
+  @Test
+  func descriptionSnapshot() {
+    let msg = TestMessage(testList: ["hello", 42])
+    let desc = msg.description
+    #expect(desc.hasPrefix("TestMessage(testList: "))
+    #expect(desc.contains("hello"))
+    #expect(desc.contains("42"))
+  }
+
 }

@@ -167,6 +167,11 @@ class MessageSearchRequest {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'MessageSearchRequest(query: $query, anInt: $anInt, aBool: $aBool)';
+  }
 }
 
 /// This comment is to test class documentation comments.
@@ -218,6 +223,11 @@ class MessageSearchReply {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'MessageSearchReply(result: $result, error: $error, state: $state)';
+  }
 }
 
 /// This comment is to test class documentation comments.
@@ -255,6 +265,11 @@ class MessageNested {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'MessageNested(request: $request)';
+  }
 }
 
 class _PigeonCodec extends StandardMessageCodec {
@@ -303,8 +318,8 @@ class _PigeonCodec extends StandardMessageCodec {
 ///
 /// This comment also tests multiple line comments.
 class MessageApi {
-  /// Constructor for [MessageApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
+  /// Constructor for [MessageApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   MessageApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
     : pigeonVar_binaryMessenger = binaryMessenger,
@@ -357,8 +372,8 @@ class MessageApi {
 
 /// This comment is to test api documentation comments.
 class MessageNestedApi {
-  /// Constructor for [MessageNestedApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
+  /// Constructor for [MessageNestedApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   MessageNestedApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
     : pigeonVar_binaryMessenger = binaryMessenger,

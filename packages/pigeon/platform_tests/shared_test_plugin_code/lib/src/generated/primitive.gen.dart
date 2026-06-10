@@ -70,8 +70,8 @@ class _PigeonCodec extends StandardMessageCodec {
 }
 
 class PrimitiveHostApi {
-  /// Constructor for [PrimitiveHostApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
+  /// Constructor for [PrimitiveHostApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   PrimitiveHostApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
     : pigeonVar_binaryMessenger = binaryMessenger,

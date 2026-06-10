@@ -93,6 +93,17 @@ guint core_tests_pigeon_test_unused_class_hash(
     CoreTestsPigeonTestUnusedClass* object);
 
 /**
+ * core_tests_pigeon_test_unused_class_to_string:
+ * @object: a #CoreTestsPigeonTestUnusedClass.
+ *
+ * Returns a string representation of a #CoreTestsPigeonTestUnusedClass object.
+ *
+ * Returns: (transfer full): a new string, free with g_free().
+ */
+gchar* core_tests_pigeon_test_unused_class_to_string(
+    CoreTestsPigeonTestUnusedClass* object);
+
+/**
  * CoreTestsPigeonTestAllTypes:
  *
  * A class containing all supported types.
@@ -489,6 +500,17 @@ gboolean core_tests_pigeon_test_all_types_equals(
  * Returns: the hash code.
  */
 guint core_tests_pigeon_test_all_types_hash(
+    CoreTestsPigeonTestAllTypes* object);
+
+/**
+ * core_tests_pigeon_test_all_types_to_string:
+ * @object: a #CoreTestsPigeonTestAllTypes.
+ *
+ * Returns a string representation of a #CoreTestsPigeonTestAllTypes object.
+ *
+ * Returns: (transfer full): a new string, free with g_free().
+ */
+gchar* core_tests_pigeon_test_all_types_to_string(
     CoreTestsPigeonTestAllTypes* object);
 
 /**
@@ -939,6 +961,18 @@ guint core_tests_pigeon_test_all_nullable_types_hash(
     CoreTestsPigeonTestAllNullableTypes* object);
 
 /**
+ * core_tests_pigeon_test_all_nullable_types_to_string:
+ * @object: a #CoreTestsPigeonTestAllNullableTypes.
+ *
+ * Returns a string representation of a #CoreTestsPigeonTestAllNullableTypes
+ * object.
+ *
+ * Returns: (transfer full): a new string, free with g_free().
+ */
+gchar* core_tests_pigeon_test_all_nullable_types_to_string(
+    CoreTestsPigeonTestAllNullableTypes* object);
+
+/**
  * CoreTestsPigeonTestAllNullableTypesWithoutRecursion:
  *
  * The primary purpose for this class is to ensure coverage of Swift structs
@@ -1376,6 +1410,18 @@ guint core_tests_pigeon_test_all_nullable_types_without_recursion_hash(
     CoreTestsPigeonTestAllNullableTypesWithoutRecursion* object);
 
 /**
+ * core_tests_pigeon_test_all_nullable_types_without_recursion_to_string:
+ * @object: a #CoreTestsPigeonTestAllNullableTypesWithoutRecursion.
+ *
+ * Returns a string representation of a
+ * #CoreTestsPigeonTestAllNullableTypesWithoutRecursion object.
+ *
+ * Returns: (transfer full): a new string, free with g_free().
+ */
+gchar* core_tests_pigeon_test_all_nullable_types_without_recursion_to_string(
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* object);
+
+/**
  * CoreTestsPigeonTestAllClassesWrapper:
  *
  * A class for testing nested class handling.
@@ -1517,6 +1563,18 @@ guint core_tests_pigeon_test_all_classes_wrapper_hash(
     CoreTestsPigeonTestAllClassesWrapper* object);
 
 /**
+ * core_tests_pigeon_test_all_classes_wrapper_to_string:
+ * @object: a #CoreTestsPigeonTestAllClassesWrapper.
+ *
+ * Returns a string representation of a #CoreTestsPigeonTestAllClassesWrapper
+ * object.
+ *
+ * Returns: (transfer full): a new string, free with g_free().
+ */
+gchar* core_tests_pigeon_test_all_classes_wrapper_to_string(
+    CoreTestsPigeonTestAllClassesWrapper* object);
+
+/**
  * CoreTestsPigeonTestTestMessage:
  *
  * A data class containing a List, used in unit tests.
@@ -1569,6 +1627,17 @@ gboolean core_tests_pigeon_test_test_message_equals(
  * Returns: the hash code.
  */
 guint core_tests_pigeon_test_test_message_hash(
+    CoreTestsPigeonTestTestMessage* object);
+
+/**
+ * core_tests_pigeon_test_test_message_to_string:
+ * @object: a #CoreTestsPigeonTestTestMessage.
+ *
+ * Returns a string representation of a #CoreTestsPigeonTestTestMessage object.
+ *
+ * Returns: (transfer full): a new string, free with g_free().
+ */
+gchar* core_tests_pigeon_test_test_message_to_string(
     CoreTestsPigeonTestTestMessage* object);
 
 G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestMessageCodec,
@@ -1975,6 +2044,134 @@ core_tests_pigeon_test_host_integration_core_api_echo_list_response_new(
  */
 CoreTestsPigeonTestHostIntegrationCoreApiEchoListResponse*
 core_tests_pigeon_test_host_integration_core_api_echo_list_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details);
+
+G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoStringListResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_string_list_response,
+    CORE_TESTS_PIGEON_TEST, HOST_INTEGRATION_CORE_API_ECHO_STRING_LIST_RESPONSE,
+    GObject)
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_echo_string_list_response_new:
+ *
+ * Creates a new response to HostIntegrationCoreApi.echoStringList.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiEchoStringListResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiEchoStringListResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_string_list_response_new(
+    FlValue* return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_echo_string_list_response_new_error:
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Creates a new error response to HostIntegrationCoreApi.echoStringList.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiEchoStringListResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiEchoStringListResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_string_list_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details);
+
+G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoIntListResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_int_list_response,
+    CORE_TESTS_PIGEON_TEST, HOST_INTEGRATION_CORE_API_ECHO_INT_LIST_RESPONSE,
+    GObject)
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_echo_int_list_response_new:
+ *
+ * Creates a new response to HostIntegrationCoreApi.echoIntList.
+ *
+ * Returns: a new #CoreTestsPigeonTestHostIntegrationCoreApiEchoIntListResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiEchoIntListResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_int_list_response_new(
+    FlValue* return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_echo_int_list_response_new_error:
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Creates a new error response to HostIntegrationCoreApi.echoIntList.
+ *
+ * Returns: a new #CoreTestsPigeonTestHostIntegrationCoreApiEchoIntListResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiEchoIntListResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_int_list_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details);
+
+G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoDoubleListResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_double_list_response,
+    CORE_TESTS_PIGEON_TEST, HOST_INTEGRATION_CORE_API_ECHO_DOUBLE_LIST_RESPONSE,
+    GObject)
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_echo_double_list_response_new:
+ *
+ * Creates a new response to HostIntegrationCoreApi.echoDoubleList.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiEchoDoubleListResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiEchoDoubleListResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_double_list_response_new(
+    FlValue* return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_echo_double_list_response_new_error:
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Creates a new error response to HostIntegrationCoreApi.echoDoubleList.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiEchoDoubleListResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiEchoDoubleListResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_double_list_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details);
+
+G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoBoolListResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_bool_list_response,
+    CORE_TESTS_PIGEON_TEST, HOST_INTEGRATION_CORE_API_ECHO_BOOL_LIST_RESPONSE,
+    GObject)
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_echo_bool_list_response_new:
+ *
+ * Creates a new response to HostIntegrationCoreApi.echoBoolList.
+ *
+ * Returns: a new #CoreTestsPigeonTestHostIntegrationCoreApiEchoBoolListResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiEchoBoolListResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_bool_list_response_new(
+    FlValue* return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_echo_bool_list_response_new_error:
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Creates a new error response to HostIntegrationCoreApi.echoBoolList.
+ *
+ * Returns: a new #CoreTestsPigeonTestHostIntegrationCoreApiEchoBoolListResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiEchoBoolListResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_bool_list_response_new_error(
     const gchar* code, const gchar* message, FlValue* details);
 
 G_DECLARE_FINAL_TYPE(
@@ -3812,6 +4009,14 @@ typedef struct {
       FlValue* an_object, gpointer user_data);
   CoreTestsPigeonTestHostIntegrationCoreApiEchoListResponse* (*echo_list)(
       FlValue* list, gpointer user_data);
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoStringListResponse* (
+      *echo_string_list)(FlValue* string_list, gpointer user_data);
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoIntListResponse* (
+      *echo_int_list)(FlValue* int_list, gpointer user_data);
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoDoubleListResponse* (
+      *echo_double_list)(FlValue* double_list, gpointer user_data);
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoBoolListResponse* (
+      *echo_bool_list)(FlValue* bool_list, gpointer user_data);
   CoreTestsPigeonTestHostIntegrationCoreApiEchoEnumListResponse* (
       *echo_enum_list)(FlValue* enum_list, gpointer user_data);
   CoreTestsPigeonTestHostIntegrationCoreApiEchoClassListResponse* (
