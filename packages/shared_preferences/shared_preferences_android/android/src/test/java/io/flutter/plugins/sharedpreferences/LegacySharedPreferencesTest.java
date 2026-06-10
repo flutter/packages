@@ -230,7 +230,8 @@ public class LegacySharedPreferencesTest {
     }
 
     @Override
-    public @NonNull SharedPreferences.Editor putString(@NonNull String key, @Nullable String value) {
+    public @NonNull SharedPreferences.Editor putString(
+        @NonNull String key, @Nullable String value) {
       sharedPrefData.put(key, value);
       return this;
     }
