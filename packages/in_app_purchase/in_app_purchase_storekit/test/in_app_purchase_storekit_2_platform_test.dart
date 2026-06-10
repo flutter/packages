@@ -674,4 +674,33 @@ void main() {
       expect(transactions.first.quantity, 2);
     });
   });
+
+  group('latestTransaction', () {
+    test('should return latest transaction when product has one', () async {
+      final SK2Transaction? transaction = await SK2Transaction.latestTransaction('product_id');
+
+      expect(transaction, isNotNull);
+      expect(transaction!.id, '123');
+      expect(transaction.productId, 'product_id');
+      expect(transaction.quantity, 2);
+    });
+
+    test('should return null when product has no transactions', () async {
+      final SK2Transaction? transaction = await SK2Transaction.latestTransaction(
+        'non_existent_product',
+      );
+
+      expect(transaction, isNull);
+    });
+
+    test('should return latest transaction via platform addition', () async {
+      final addition =
+          InAppPurchasePlatformAddition.instance! as InAppPurchaseStoreKitPlatformAddition;
+      final SK2Transaction? transaction = await addition.latestTransaction('product_id');
+
+      expect(transaction, isNotNull);
+      expect(transaction!.id, '123');
+      expect(transaction.productId, 'product_id');
+    });
+  });
 }

@@ -1,3 +1,7 @@
+## 0.4.11
+
+* Adds latestTransaction to SK2Transaction wrapper and InAppPurchaseStoreKitPlatformAddition.
+
 ## 0.4.10+1
 
 * Fixes SK2Transaction to expose the real purchased quantity instead of defaulting to 1.

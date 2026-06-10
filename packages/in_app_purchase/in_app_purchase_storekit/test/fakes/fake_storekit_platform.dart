@@ -556,6 +556,16 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
 
   @override
   Future<void> presentOfferCodeRedeemSheet() async {}
+
+  @override
+  Future<SK2TransactionMessage?> latestTransaction(String productId) async {
+    for (final SK2TransactionMessage tx in transactionsList) {
+      if (tx.productId == productId) {
+        return tx;
+      }
+    }
+    return null;
+  }
 }
 
 SK2TransactionMessage createPendingTransaction(String id, {int quantity = 1}) {

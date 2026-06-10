@@ -733,11 +733,11 @@ void SetUpFIAInAppPurchaseAPIWithSuffix(id<FlutterBinaryMessenger> binaryMesseng
         binaryMessenger:binaryMessenger
                   codec:FIAGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(startProductRequestProductIdentifiers:
-                                                                             completion:)],
-                @"FIAInAppPurchaseAPI api (%@) doesn't respond to "
-                @"@selector(startProductRequestProductIdentifiers:completion:)",
-                api);
+      NSCAssert(
+          [api respondsToSelector:@selector(startProductRequestProductIdentifiers:completion:)],
+          @"FIAInAppPurchaseAPI api (%@) doesn't respond to "
+          @"@selector(startProductRequestProductIdentifiers:completion:)",
+          api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSArray<NSString *> *arg_productIdentifiers = GetNullableObjectAtIndex(args, 0);
