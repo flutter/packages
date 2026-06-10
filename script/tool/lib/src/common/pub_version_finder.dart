@@ -48,7 +48,7 @@ class PubVersionFinder {
     final responseBody = json.decode(response.body) as Map<Object?, Object?>;
     final List<Version> versions = (responseBody['versions']! as List<Object?>)
         .cast<String>()
-        .map<Version>((final String versionString) => Version.parse(versionString))
+        .map<Version>((String versionString) => Version.parse(versionString))
         .toList();
 
     return PubVersionFinderResponse(

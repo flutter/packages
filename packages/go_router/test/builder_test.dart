@@ -431,7 +431,7 @@ class _BuilderTestWidget extends StatelessWidget {
       },
       restorationScopeId: null,
       observers: <NavigatorObserver>[],
-      onPopPageWithRouteMatch: (_, __, ___) => false,
+      onPopPageWithRouteMatch: (_, _, _) => false,
     );
   }
 

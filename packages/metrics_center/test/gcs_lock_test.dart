@@ -32,7 +32,7 @@ void main() {
   test('GcsLock prints warnings for long waits', () {
     // Capture print to verify error messages.
     final prints = <String>[];
-    final spec = ZoneSpecification(print: (_, __, ___, String msg) => prints.add(msg));
+    final spec = ZoneSpecification(print: (_, _, _, String msg) => prints.add(msg));
 
     Zone.current.fork(specification: spec).run<void>(() {
       fakeAsync((FakeAsync fakeAsync) {

@@ -28,7 +28,7 @@ void main() {
     test('WebKitNavigationDelegate uses params field in constructor', () async {
       await runZonedGuarded(
         () async => WebKitNavigationDelegate(const PlatformNavigationDelegateCreationParams()),
-        (Object error, __) {
+        (Object error, _) {
           expect(error, isNot(isA<TypeError>()));
         },
       );
@@ -45,13 +45,13 @@ void main() {
 
       CapturingNavigationDelegate.lastCreatedDelegate.didFinishNavigation!(
         WKNavigationDelegate.pigeon_detached(
-          decidePolicyForNavigationAction: (_, __, ___) async {
+          decidePolicyForNavigationAction: (_, _, _) async {
             return NavigationActionPolicy.cancel;
           },
-          decidePolicyForNavigationResponse: (_, __, ___) async {
+          decidePolicyForNavigationResponse: (_, _, _) async {
             return NavigationResponsePolicy.cancel;
           },
-          didReceiveAuthenticationChallenge: (_, __, ___) async {
+          didReceiveAuthenticationChallenge: (_, _, _) async {
             return AuthenticationChallengeResponse.pigeon_detached(
               disposition: UrlSessionAuthChallengeDisposition.performDefaultHandling,
             );
@@ -75,13 +75,13 @@ void main() {
 
       CapturingNavigationDelegate.lastCreatedDelegate.didStartProvisionalNavigation!(
         WKNavigationDelegate.pigeon_detached(
-          decidePolicyForNavigationAction: (_, __, ___) async {
+          decidePolicyForNavigationAction: (_, _, _) async {
             return NavigationActionPolicy.cancel;
           },
-          decidePolicyForNavigationResponse: (_, __, ___) async {
+          decidePolicyForNavigationResponse: (_, _, _) async {
             return NavigationResponsePolicy.cancel;
           },
-          didReceiveAuthenticationChallenge: (_, __, ___) async {
+          didReceiveAuthenticationChallenge: (_, _, _) async {
             return AuthenticationChallengeResponse.pigeon_detached(
               disposition: UrlSessionAuthChallengeDisposition.performDefaultHandling,
             );
@@ -109,13 +109,13 @@ void main() {
 
       await CapturingNavigationDelegate.lastCreatedDelegate.decidePolicyForNavigationResponse(
         WKNavigationDelegate.pigeon_detached(
-          decidePolicyForNavigationAction: (_, __, ___) async {
+          decidePolicyForNavigationAction: (_, _, _) async {
             return NavigationActionPolicy.cancel;
           },
-          decidePolicyForNavigationResponse: (_, __, ___) async {
+          decidePolicyForNavigationResponse: (_, _, _) async {
             return NavigationResponsePolicy.cancel;
           },
-          didReceiveAuthenticationChallenge: (_, __, ___) async {
+          didReceiveAuthenticationChallenge: (_, _, _) async {
             return AuthenticationChallengeResponse.pigeon_detached(
               disposition: UrlSessionAuthChallengeDisposition.performDefaultHandling,
             );
@@ -146,13 +146,13 @@ void main() {
 
       await CapturingNavigationDelegate.lastCreatedDelegate.decidePolicyForNavigationResponse(
         WKNavigationDelegate.pigeon_detached(
-          decidePolicyForNavigationAction: (_, __, ___) async {
+          decidePolicyForNavigationAction: (_, _, _) async {
             return NavigationActionPolicy.cancel;
           },
-          decidePolicyForNavigationResponse: (_, __, ___) async {
+          decidePolicyForNavigationResponse: (_, _, _) async {
             return NavigationResponsePolicy.cancel;
           },
-          didReceiveAuthenticationChallenge: (_, __, ___) async {
+          didReceiveAuthenticationChallenge: (_, _, _) async {
             return AuthenticationChallengeResponse.pigeon_detached(
               disposition: UrlSessionAuthChallengeDisposition.performDefaultHandling,
             );
@@ -183,13 +183,13 @@ void main() {
 
       CapturingNavigationDelegate.lastCreatedDelegate.didFailNavigation!(
         WKNavigationDelegate.pigeon_detached(
-          decidePolicyForNavigationAction: (_, __, ___) async {
+          decidePolicyForNavigationAction: (_, _, _) async {
             return NavigationActionPolicy.cancel;
           },
-          decidePolicyForNavigationResponse: (_, __, ___) async {
+          decidePolicyForNavigationResponse: (_, _, _) async {
             return NavigationResponsePolicy.cancel;
           },
-          didReceiveAuthenticationChallenge: (_, __, ___) async {
+          didReceiveAuthenticationChallenge: (_, _, _) async {
             return AuthenticationChallengeResponse.pigeon_detached(
               disposition: UrlSessionAuthChallengeDisposition.performDefaultHandling,
             );
@@ -229,13 +229,13 @@ void main() {
 
       CapturingNavigationDelegate.lastCreatedDelegate.didFailProvisionalNavigation!(
         WKNavigationDelegate.pigeon_detached(
-          decidePolicyForNavigationAction: (_, __, ___) async {
+          decidePolicyForNavigationAction: (_, _, _) async {
             return NavigationActionPolicy.cancel;
           },
-          decidePolicyForNavigationResponse: (_, __, ___) async {
+          decidePolicyForNavigationResponse: (_, _, _) async {
             return NavigationResponsePolicy.cancel;
           },
-          didReceiveAuthenticationChallenge: (_, __, ___) async {
+          didReceiveAuthenticationChallenge: (_, _, _) async {
             return AuthenticationChallengeResponse.pigeon_detached(
               disposition: UrlSessionAuthChallengeDisposition.performDefaultHandling,
             );
@@ -275,13 +275,13 @@ void main() {
 
       CapturingNavigationDelegate.lastCreatedDelegate.didFailProvisionalNavigation!(
         WKNavigationDelegate.pigeon_detached(
-          decidePolicyForNavigationAction: (_, __, ___) async {
+          decidePolicyForNavigationAction: (_, _, _) async {
             return NavigationActionPolicy.cancel;
           },
-          decidePolicyForNavigationResponse: (_, __, ___) async {
+          decidePolicyForNavigationResponse: (_, _, _) async {
             return NavigationResponsePolicy.cancel;
           },
-          didReceiveAuthenticationChallenge: (_, __, ___) async {
+          didReceiveAuthenticationChallenge: (_, _, _) async {
             return AuthenticationChallengeResponse.pigeon_detached(
               disposition: UrlSessionAuthChallengeDisposition.performDefaultHandling,
             );
@@ -316,13 +316,13 @@ void main() {
 
       CapturingNavigationDelegate.lastCreatedDelegate.webViewWebContentProcessDidTerminate!(
         WKNavigationDelegate.pigeon_detached(
-          decidePolicyForNavigationAction: (_, __, ___) async {
+          decidePolicyForNavigationAction: (_, _, _) async {
             return NavigationActionPolicy.cancel;
           },
-          decidePolicyForNavigationResponse: (_, __, ___) async {
+          decidePolicyForNavigationResponse: (_, _, _) async {
             return NavigationResponsePolicy.cancel;
           },
-          didReceiveAuthenticationChallenge: (_, __, ___) async {
+          didReceiveAuthenticationChallenge: (_, _, _) async {
             return AuthenticationChallengeResponse.pigeon_detached(
               disposition: UrlSessionAuthChallengeDisposition.performDefaultHandling,
             );
@@ -358,13 +358,13 @@ void main() {
       expect(
         await CapturingNavigationDelegate.lastCreatedDelegate.decidePolicyForNavigationAction(
           WKNavigationDelegate.pigeon_detached(
-            decidePolicyForNavigationAction: (_, __, ___) async {
+            decidePolicyForNavigationAction: (_, _, _) async {
               return NavigationActionPolicy.cancel;
             },
-            decidePolicyForNavigationResponse: (_, __, ___) async {
+            decidePolicyForNavigationResponse: (_, _, _) async {
               return NavigationResponsePolicy.cancel;
             },
-            didReceiveAuthenticationChallenge: (_, __, ___) async {
+            didReceiveAuthenticationChallenge: (_, _, _) async {
               return AuthenticationChallengeResponse.pigeon_detached(
                 disposition: UrlSessionAuthChallengeDisposition.performDefaultHandling,
               );
@@ -425,13 +425,13 @@ void main() {
 
       await CapturingNavigationDelegate.lastCreatedDelegate.didReceiveAuthenticationChallenge(
         WKNavigationDelegate.pigeon_detached(
-          decidePolicyForNavigationAction: (_, __, ___) async {
+          decidePolicyForNavigationAction: (_, _, _) async {
             return NavigationActionPolicy.cancel;
           },
-          decidePolicyForNavigationResponse: (_, __, ___) async {
+          decidePolicyForNavigationResponse: (_, _, _) async {
             return NavigationResponsePolicy.cancel;
           },
-          didReceiveAuthenticationChallenge: (_, __, ___) async {
+          didReceiveAuthenticationChallenge: (_, _, _) async {
             return AuthenticationChallengeResponse.pigeon_detached(
               disposition: UrlSessionAuthChallengeDisposition.performDefaultHandling,
             );
@@ -499,13 +499,13 @@ void main() {
           .lastCreatedDelegate
           .didReceiveAuthenticationChallenge(
             WKNavigationDelegate.pigeon_detached(
-              decidePolicyForNavigationAction: (_, __, ___) async {
+              decidePolicyForNavigationAction: (_, _, _) async {
                 return NavigationActionPolicy.cancel;
               },
-              decidePolicyForNavigationResponse: (_, __, ___) async {
+              decidePolicyForNavigationResponse: (_, _, _) async {
                 return NavigationResponsePolicy.cancel;
               },
-              didReceiveAuthenticationChallenge: (_, __, ___) async {
+              didReceiveAuthenticationChallenge: (_, _, _) async {
                 return AuthenticationChallengeResponse.pigeon_detached(
                   disposition: UrlSessionAuthChallengeDisposition.performDefaultHandling,
                 );
@@ -583,13 +583,13 @@ void main() {
       });
 
       final testDelegate = WKNavigationDelegate.pigeon_detached(
-        decidePolicyForNavigationAction: (_, __, ___) async {
+        decidePolicyForNavigationAction: (_, _, _) async {
           return NavigationActionPolicy.cancel;
         },
-        decidePolicyForNavigationResponse: (_, __, ___) async {
+        decidePolicyForNavigationResponse: (_, _, _) async {
           return NavigationResponsePolicy.cancel;
         },
-        didReceiveAuthenticationChallenge: (_, __, ___) async {
+        didReceiveAuthenticationChallenge: (_, _, _) async {
           return AuthenticationChallengeResponse.pigeon_detached(
             disposition: UrlSessionAuthChallengeDisposition.performDefaultHandling,
           );
@@ -649,13 +649,13 @@ void main() {
       });
 
       final testDelegate = WKNavigationDelegate.pigeon_detached(
-        decidePolicyForNavigationAction: (_, __, ___) async {
+        decidePolicyForNavigationAction: (_, _, _) async {
           return NavigationActionPolicy.cancel;
         },
-        decidePolicyForNavigationResponse: (_, __, ___) async {
+        decidePolicyForNavigationResponse: (_, _, _) async {
           return NavigationResponsePolicy.cancel;
         },
-        didReceiveAuthenticationChallenge: (_, __, ___) async {
+        didReceiveAuthenticationChallenge: (_, _, _) async {
           return AuthenticationChallengeResponse.pigeon_detached(
             disposition: UrlSessionAuthChallengeDisposition.performDefaultHandling,
           );
@@ -689,13 +689,13 @@ class CapturingNavigationDelegate extends WKNavigationDelegate {
     lastCreatedDelegate = this;
   }
   static CapturingNavigationDelegate lastCreatedDelegate = CapturingNavigationDelegate(
-    decidePolicyForNavigationAction: (_, __, ___) async {
+    decidePolicyForNavigationAction: (_, _, _) async {
       return NavigationActionPolicy.cancel;
     },
-    decidePolicyForNavigationResponse: (_, __, ___) async {
+    decidePolicyForNavigationResponse: (_, _, _) async {
       return NavigationResponsePolicy.cancel;
     },
-    didReceiveAuthenticationChallenge: (_, __, ___) async {
+    didReceiveAuthenticationChallenge: (_, _, _) async {
       return AuthenticationChallengeResponse.pigeon_detached(
         disposition: UrlSessionAuthChallengeDisposition.performDefaultHandling,
       );

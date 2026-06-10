@@ -98,7 +98,7 @@ List<String> printLog = <String>[];
 
 void overridePrint(Future<void> Function() testFn) => () {
   final spec = ZoneSpecification(
-    print: (_, __, ___, String msg) {
+    print: (_, _, _, String msg) {
       // Add to log instead of printing to stdout
       printLog.add(msg);
     },

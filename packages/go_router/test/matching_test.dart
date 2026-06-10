@@ -75,7 +75,7 @@ void main() {
       ],
       redirectLimit: 0,
       navigatorKey: GlobalKey<NavigatorState>(),
-      topRedirect: (_, __) => null,
+      topRedirect: (_, _) => null,
     );
     final codec = RouteMatchListCodec(configuration);
 

@@ -18,7 +18,7 @@ void main() {
   });
 
   test('does not throw when only redirect is provided', () {
-    GoRoute(path: '/', redirect: (_, __) => '/a');
+    GoRoute(path: '/', redirect: (_, _) => '/a');
   });
 
   testWidgets('ShellRoute can use parent navigator key', (WidgetTester tester) async {
@@ -105,7 +105,7 @@ void main() {
             routes: <RouteBase>[
               StatefulShellRoute.indexedStack(
                 parentNavigatorKey: rootNavigatorKey,
-                builder: (_, __, StatefulNavigationShell navigationShell) {
+                builder: (_, _, StatefulNavigationShell navigationShell) {
                   return Column(
                     children: <Widget>[
                       const Text('Screen D'),
@@ -146,12 +146,12 @@ void main() {
     try {
       ShellRoute(
         navigatorKey: key1,
-        builder: (_, __, Widget child) => child,
+        builder: (_, _, Widget child) => child,
         routes: <RouteBase>[
           ShellRoute(
             parentNavigatorKey: key2,
-            builder: (_, __, Widget child) => child,
-            routes: <RouteBase>[GoRoute(path: '1', builder: (_, __) => const Text('/route/1'))],
+            builder: (_, _, Widget child) => child,
+            routes: <RouteBase>[GoRoute(path: '1', builder: (_, _) => const Text('/route/1'))],
           ),
         ],
       );
@@ -166,12 +166,12 @@ void main() {
       final GoRouter router = await createRouter(<RouteBase>[
         GoRoute(
           path: '/',
-          builder: (_, __) => const Text('home'),
+          builder: (_, _) => const Text('home'),
           routes: <RouteBase>[
             GoRoute(
               path: 'route',
-              redirect: (_, __) => '/route/1',
-              routes: <RouteBase>[GoRoute(path: '1', builder: (_, __) => const Text('/route/1'))],
+              redirect: (_, _) => '/route/1',
+              routes: <RouteBase>[GoRoute(path: '1', builder: (_, _) => const Text('/route/1'))],
             ),
           ],
         ),
@@ -193,12 +193,12 @@ void main() {
       final GoRouter router = await createRouter(<RouteBase>[
         GoRoute(
           path: '/',
-          builder: (_, __) => const Text('home'),
+          builder: (_, _) => const Text('home'),
           routes: <RouteBase>[
             GoRoute(
               path: 'route',
-              redirect: (_, __) => '/route',
-              routes: <RouteBase>[GoRoute(path: '1', builder: (_, __) => const Text('/route/1'))],
+              redirect: (_, _) => '/route',
+              routes: <RouteBase>[GoRoute(path: '1', builder: (_, _) => const Text('/route/1'))],
             ),
           ],
         ),
@@ -215,7 +215,7 @@ void main() {
       final GoRouter router = await createRouter(<RouteBase>[
         GoRoute(
           path: '/',
-          builder: (_, __) => const Text('home'),
+          builder: (_, _) => const Text('home'),
           routes: <RouteBase>[
             GoRoute(
               path: 'route',
@@ -231,7 +231,7 @@ void main() {
               routes: <RouteBase>[
                 GoRoute(
                   path: '1',
-                  builder: (_, __) => const Text('/route/1'), // Renders "/route/1" text
+                  builder: (_, _) => const Text('/route/1'), // Renders "/route/1" text
                 ),
               ],
             ),
@@ -265,16 +265,16 @@ void main() {
       try {
         ShellRoute(
           navigatorKey: key1,
-          builder: (_, __, Widget child) => child,
+          builder: (_, _, Widget child) => child,
           routes: <RouteBase>[
             GoRoute(
               path: '/',
-              redirect: (_, __) => '/route',
+              redirect: (_, _) => '/route',
               routes: <RouteBase>[
                 GoRoute(
                   parentNavigatorKey: key2,
                   path: 'route',
-                  builder: (_, __) => const Text('/route/1'),
+                  builder: (_, _) => const Text('/route/1'),
                 ),
               ],
             ),

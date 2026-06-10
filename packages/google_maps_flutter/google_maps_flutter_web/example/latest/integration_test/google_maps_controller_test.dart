@@ -220,7 +220,7 @@ void main() {
       testWidgets('listens to map events', (WidgetTester tester) async {
         controller = createController()
           ..debugSetOverrides(
-            createMap: (_, __) => map,
+            createMap: (_, _) => map,
             circles: circles,
             heatmaps: heatmaps,
             markers: markers,
@@ -251,7 +251,7 @@ void main() {
       testWidgets('stops listening to map events once disposed', (WidgetTester tester) async {
         controller = createController()
           ..debugSetOverrides(
-            createMap: (_, __) => map,
+            createMap: (_, _) => map,
             circles: circles,
             heatmaps: heatmaps,
             markers: markers,
@@ -280,7 +280,7 @@ void main() {
       testWidgets("binds geometry controllers to map's", (WidgetTester tester) async {
         controller = createController()
           ..debugSetOverrides(
-            createMap: (_, __) => map,
+            createMap: (_, _) => map,
             circles: circles,
             heatmaps: heatmaps,
             markers: markers,
@@ -660,7 +660,7 @@ void main() {
         testWidgets('initializes with traffic layer', (WidgetTester tester) async {
           controller =
               createController(mapConfiguration: const MapConfiguration(trafficEnabled: true))
-                ..debugSetOverrides(createMap: (_, __) => map)
+                ..debugSetOverrides(createMap: (_, _) => map)
                 ..init();
           expect(controller.trafficLayer, isNotNull);
         });
@@ -679,7 +679,7 @@ void main() {
             ..center = gmaps.LatLng(0, 0),
         );
         controller = createController()
-          ..debugSetOverrides(createMap: (_, __) => map)
+          ..debugSetOverrides(createMap: (_, _) => map)
           ..init();
       });
 

@@ -133,13 +133,13 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
     WeakReference<WebKitWebViewPlatformController> weakReference,
   ) {
     return webViewProxy.createNavigationDelegate(
-      didFinishNavigation: (_, __, String? url) {
+      didFinishNavigation: (_, _, String? url) {
         weakReference.target?.callbacksHandler.onPageFinished(url ?? '');
       },
-      didStartProvisionalNavigation: (_, __, String? url) {
+      didStartProvisionalNavigation: (_, _, String? url) {
         weakReference.target?.callbacksHandler.onPageStarted(url ?? '');
       },
-      decidePolicyForNavigationAction: (_, __, WKNavigationAction action) async {
+      decidePolicyForNavigationAction: (_, _, WKNavigationAction action) async {
         if (weakReference.target == null) {
           return NavigationActionPolicy.allow;
         }
@@ -155,13 +155,13 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
 
         return allow ? NavigationActionPolicy.allow : NavigationActionPolicy.cancel;
       },
-      didFailNavigation: (_, __, NSError error) {
+      didFailNavigation: (_, _, NSError error) {
         weakReference.target?.callbacksHandler.onWebResourceError(_toWebResourceError(error));
       },
-      didFailProvisionalNavigation: (_, __, NSError error) {
+      didFailProvisionalNavigation: (_, _, NSError error) {
         weakReference.target?.callbacksHandler.onWebResourceError(_toWebResourceError(error));
       },
-      webViewWebContentProcessDidTerminate: (_, __) {
+      webViewWebContentProcessDidTerminate: (_, _) {
         weakReference.target?.callbacksHandler.onWebResourceError(
           WebResourceError(
             errorCode: WKErrorCode.webContentProcessTerminated,
@@ -172,10 +172,10 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
           ),
         );
       },
-      decidePolicyForNavigationResponse: (_, __, ___) async {
+      decidePolicyForNavigationResponse: (_, _, _) async {
         return NavigationResponsePolicy.allow;
       },
-      didReceiveAuthenticationChallenge: (_, __, ___) async {
+      didReceiveAuthenticationChallenge: (_, _, _) async {
         return AuthenticationChallengeResponse(
           disposition: UrlSessionAuthChallengeDisposition.performDefaultHandling,
         );
@@ -680,10 +680,10 @@ class WebViewWidgetProxy {
   }) {
     return WKUIDelegate(
       onCreateWebView: onCreateWebView,
-      requestMediaCapturePermission: (_, __, ___, ____, _____) async {
+      requestMediaCapturePermission: (_, _, _, _, _) async {
         return PermissionDecision.deny;
       },
-      runJavaScriptConfirmPanel: (_, __, ___, ____) async {
+      runJavaScriptConfirmPanel: (_, _, _, _) async {
         return false;
       },
     );

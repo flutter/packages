@@ -74,7 +74,7 @@ base class IOSCompanionAdSlot extends PlatformCompanionAdSlot {
   // prevent a circular reference that prevents garbage collection.
   static IMACompanionDelegate _createCompanionDelegate(WeakReference<IOSCompanionAdSlot> weakThis) {
     return IMACompanionDelegate(
-      companionSlotWasClicked: (_, __) {
+      companionSlotWasClicked: (_, _) {
         weakThis.target?.params.onClicked!.call();
       },
     );

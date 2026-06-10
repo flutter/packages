@@ -239,7 +239,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
     addDocumentationComments(indent, anEnum.documentationComments, _docCommentSpec);
     indent.write('enum class ${anEnum.name} ');
     indent.addScoped('{', '};', () {
-      enumerate(anEnum.members, (int index, final EnumMember member) {
+      enumerate(anEnum.members, (int index, EnumMember member) {
         addDocumentationComments(indent, member.documentationComments, _docCommentSpec);
         final valueName = 'k${_pascalCaseFromCamelCase(member.name)}';
         indent.writeln('$valueName = $index${index == anEnum.members.length - 1 ? '' : ','}');
@@ -2448,7 +2448,7 @@ void _writeFunction(
     indent.add('(${parameters.first})');
   } else {
     indent.addScoped('(', null, () {
-      enumerate(parameters, (int index, final String param) {
+      enumerate(parameters, (int index, String param) {
         if (index == parameters.length - 1) {
           indent.write('$param)');
         } else {

@@ -12,11 +12,11 @@ void main() {
   ) async {
     const child = HomeScreen();
     final transition = CustomTransitionPage<void>(
-      transitionsBuilder: expectAsync4((_, __, ___, Widget child) => child),
+      transitionsBuilder: expectAsync4((_, _, _, Widget child) => child),
       child: child,
     );
     final router = GoRouter(
-      routes: <GoRoute>[GoRoute(path: '/', pageBuilder: (_, __) => transition)],
+      routes: <GoRoute>[GoRoute(path: '/', pageBuilder: (_, _) => transition)],
     );
     addTearDown(router.dispose);
     await tester.pumpWidget(MaterialApp.router(routerConfig: router, title: 'GoRouter Example'));
@@ -30,7 +30,7 @@ void main() {
       MaterialApp(
         home: ValueListenableBuilder<bool>(
           valueListenable: showHomeValueNotifier,
-          builder: (_, bool showHome, __) {
+          builder: (_, bool showHome, _) {
             return Navigator(
               pages: <Page<void>>[
                 const NoTransitionPage<void>(child: LoginScreen()),
@@ -75,7 +75,7 @@ void main() {
       MaterialApp(
         home: ValueListenableBuilder<bool>(
           valueListenable: showHomeValueNotifier,
-          builder: (_, bool showHome, __) {
+          builder: (_, bool showHome, _) {
             return Navigator(
               pages: <Page<void>>[
                 const NoTransitionPage<void>(child: LoginScreen()),
@@ -107,14 +107,14 @@ void main() {
       routes: <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (_, __) => const HomeScreen(key: homeKey),
+          builder: (_, _) => const HomeScreen(key: homeKey),
         ),
         GoRoute(
           path: '/dismissible-modal',
           pageBuilder: (_, GoRouterState state) => CustomTransitionPage<void>(
             key: state.pageKey,
             barrierDismissible: true,
-            transitionsBuilder: (_, __, ___, Widget child) => child,
+            transitionsBuilder: (_, _, _, Widget child) => child,
             child: const DismissibleModal(key: dismissibleModalKey),
           ),
         ),
@@ -143,7 +143,7 @@ void main() {
       routes: <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (_, __) => const HomeScreen(key: homeKey),
+          builder: (_, _) => const HomeScreen(key: homeKey),
         ),
         GoRoute(
           path: '/login',
@@ -151,7 +151,7 @@ void main() {
             key: state.pageKey,
             transitionDuration: transitionDuration,
             reverseTransitionDuration: reverseTransitionDuration,
-            transitionsBuilder: (_, Animation<double> animation, ___, Widget child) =>
+            transitionsBuilder: (_, Animation<double> animation, _, Widget child) =>
                 FadeTransition(opacity: animation, child: child),
             child: const LoginScreen(key: loginKey),
           ),
