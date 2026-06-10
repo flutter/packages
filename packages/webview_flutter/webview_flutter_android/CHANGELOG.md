@@ -1,6 +1,5 @@
 ## 4.14.0
 * Adds support for configuring Web Authentication in `AndroidWebViewController` with `setWebAuthenticationSupport` to enable Passkey and other related Authentication.
-* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 4.13.0
 
