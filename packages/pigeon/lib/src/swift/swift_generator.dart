@@ -389,13 +389,21 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
     Class classDefinition, {
     bool private = false,
     bool hashable = true,
+    bool customStringConvertible = true,
   }) {
     final privateString = private ? 'private ' : '';
-    final extendsString = classDefinition.superClass != null
-        ? ': ${classDefinition.superClass!.name}'
-        : hashable
-        ? ': Hashable, CustomStringConvertible'
-        : ': CustomStringConvertible';
+    final protocols = <String>[];
+    if (classDefinition.superClass != null) {
+      protocols.add(classDefinition.superClass!.name);
+    } else {
+      if (hashable) {
+        protocols.add('Hashable');
+      }
+      if (customStringConvertible) {
+        protocols.add('CustomStringConvertible');
+      }
+    }
+    final extendsString = protocols.isEmpty ? '' : ': ${protocols.join(', ')}';
     if (classDefinition.isSwiftClass) {
       indent.write('${privateString}class ${classDefinition.name}$extendsString ');
     } else if (classDefinition.isSealed) {
@@ -438,7 +446,13 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
     final overflowFields = <NamedType>[overflowInt, overflowObject];
     final overflowClass = Class(name: _overflowClassName, fields: overflowFields);
     indent.newln();
-    _writeDataClassSignature(indent, overflowClass, private: true, hashable: false);
+    _writeDataClassSignature(
+      indent,
+      overflowClass,
+      private: true,
+      hashable: false,
+      customStringConvertible: false,
+    );
     indent.addScoped('', '}', () {
       writeClassEncode(
         generatorOptions,
