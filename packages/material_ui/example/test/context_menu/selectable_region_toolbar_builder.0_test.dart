@@ -14,28 +14,28 @@ void main() {
   testWidgets('showing and hiding the custom context menu on SelectionArea', (
     WidgetTester tester,
   ) async {
-      bool disabledWasCalled = false;
+    bool disabledWasCalled = false;
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(SystemChannels.contextMenu, (
+          MethodCall methodCall,
+        ) {
+          if (methodCall.method == 'disableContextMenu') {
+            expect(methodCall.arguments, isNull);
+            disabledWasCalled = true;
+          }
+          return;
+        });
+    addTearDown(() {
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(SystemChannels.contextMenu, (
-            MethodCall methodCall,
-          ) {
-            if (methodCall.method == 'disableContextMenu') {
-              expect(methodCall.arguments, isNull);
-              disabledWasCalled = true;
-            }
-            return;
-          });
-      addTearDown(() {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMethodCallHandler(SystemChannels.contextMenu, null);
-      });
+          .setMockMethodCallHandler(SystemChannels.contextMenu, null);
+    });
 
     await tester.pumpWidget(
       const example.SelectableRegionToolbarBuilderExampleApp(),
     );
 
     expect(BrowserContextMenu.enabled, !kIsWeb);
-      expect(disabledWasCalled, kIsWeb);
+    expect(disabledWasCalled, kIsWeb);
 
     // Allow the selection overlay geometry to be created.
     await tester.pumpAndSettle();

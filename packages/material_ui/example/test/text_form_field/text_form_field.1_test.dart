@@ -61,9 +61,9 @@ void main() {
     await tester.pump();
 
     if (isBrowser) {
-    expect(getFocuses(), const <bool>[false, false, false, false, false]);
+      expect(getFocuses(), const <bool>[false, false, false, false, false]);
     } else {
-    expect(getFocuses(), const <bool>[true, false, false, false, false]);
+      expect(getFocuses(), const <bool>[true, false, false, false, false]);
     }
   });
 }
