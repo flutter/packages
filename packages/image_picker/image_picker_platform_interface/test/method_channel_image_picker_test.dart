@@ -18,13 +18,13 @@ void main() {
 
     setUp(() {
       returnValue = '';
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(picker.channel, (
-            MethodCall methodCall,
-          ) async {
-            log.add(methodCall);
-            return returnValue;
-          });
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+        picker.channel,
+        (MethodCall methodCall) async {
+          log.add(methodCall);
+          return returnValue;
+        },
+      );
 
       log.clear();
     });
@@ -64,21 +64,9 @@ void main() {
         await picker.pickImage(source: ImageSource.camera);
         await picker.pickImage(source: ImageSource.camera, maxWidth: 10.0);
         await picker.pickImage(source: ImageSource.camera, maxHeight: 10.0);
-        await picker.pickImage(
-          source: ImageSource.camera,
-          maxWidth: 10.0,
-          maxHeight: 20.0,
-        );
-        await picker.pickImage(
-          source: ImageSource.camera,
-          maxWidth: 10.0,
-          imageQuality: 70,
-        );
-        await picker.pickImage(
-          source: ImageSource.camera,
-          maxHeight: 10.0,
-          imageQuality: 70,
-        );
+        await picker.pickImage(source: ImageSource.camera, maxWidth: 10.0, maxHeight: 20.0);
+        await picker.pickImage(source: ImageSource.camera, maxWidth: 10.0, imageQuality: 70);
+        await picker.pickImage(source: ImageSource.camera, maxHeight: 10.0, imageQuality: 70);
         await picker.pickImage(
           source: ImageSource.camera,
           maxWidth: 10.0,
@@ -174,8 +162,7 @@ void main() {
         );
 
         expect(
-          () =>
-              picker.pickImage(imageQuality: 101, source: ImageSource.gallery),
+          () => picker.pickImage(imageQuality: 101, source: ImageSource.gallery),
           throwsArgumentError,
         );
 
@@ -203,11 +190,10 @@ void main() {
       });
 
       test('handles a null image path response gracefully', () async {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMethodCallHandler(
-              picker.channel,
-              (MethodCall methodCall) => null,
-            );
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+          picker.channel,
+          (MethodCall methodCall) => null,
+        );
 
         expect(await picker.pickImage(source: ImageSource.gallery), isNull);
         expect(await picker.pickImage(source: ImageSource.camera), isNull);
@@ -280,11 +266,7 @@ void main() {
         await picker.pickMultiImage(maxWidth: 10.0, maxHeight: 20.0);
         await picker.pickMultiImage(maxWidth: 10.0, imageQuality: 70);
         await picker.pickMultiImage(maxHeight: 10.0, imageQuality: 70);
-        await picker.pickMultiImage(
-          maxWidth: 10.0,
-          maxHeight: 20.0,
-          imageQuality: 70,
-        );
+        await picker.pickMultiImage(maxWidth: 10.0, maxHeight: 20.0, imageQuality: 70);
 
         expect(log, <Matcher>[
           isMethodCall(
@@ -362,36 +344,23 @@ void main() {
 
       test('does not accept a negative width or height argument', () {
         returnValue = <dynamic>['0', '1'];
-        expect(
-          () => picker.pickMultiImage(maxWidth: -1.0),
-          throwsArgumentError,
-        );
+        expect(() => picker.pickMultiImage(maxWidth: -1.0), throwsArgumentError);
 
-        expect(
-          () => picker.pickMultiImage(maxHeight: -1.0),
-          throwsArgumentError,
-        );
+        expect(() => picker.pickMultiImage(maxHeight: -1.0), throwsArgumentError);
       });
 
       test('does not accept an invalid imageQuality argument', () {
         returnValue = <dynamic>['0', '1'];
-        expect(
-          () => picker.pickMultiImage(imageQuality: -1),
-          throwsArgumentError,
-        );
+        expect(() => picker.pickMultiImage(imageQuality: -1), throwsArgumentError);
 
-        expect(
-          () => picker.pickMultiImage(imageQuality: 101),
-          throwsArgumentError,
-        );
+        expect(() => picker.pickMultiImage(imageQuality: 101), throwsArgumentError);
       });
 
       test('handles a null image path response gracefully', () async {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMethodCallHandler(
-              picker.channel,
-              (MethodCall methodCall) => null,
-            );
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+          picker.channel,
+          (MethodCall methodCall) => null,
+        );
 
         expect(await picker.pickMultiImage(), isNull);
         expect(await picker.pickMultiImage(), isNull);
@@ -406,19 +375,11 @@ void main() {
         expect(log, <Matcher>[
           isMethodCall(
             'pickVideo',
-            arguments: <String, dynamic>{
-              'source': 0,
-              'cameraDevice': 0,
-              'maxDuration': null,
-            },
+            arguments: <String, dynamic>{'source': 0, 'cameraDevice': 0, 'maxDuration': null},
           ),
           isMethodCall(
             'pickVideo',
-            arguments: <String, dynamic>{
-              'source': 1,
-              'cameraDevice': 0,
-              'maxDuration': null,
-            },
+            arguments: <String, dynamic>{'source': 1, 'cameraDevice': 0, 'maxDuration': null},
           ),
         ]);
       });
@@ -429,56 +390,33 @@ void main() {
           source: ImageSource.camera,
           maxDuration: const Duration(seconds: 10),
         );
-        await picker.pickVideo(
-          source: ImageSource.camera,
-          maxDuration: const Duration(minutes: 1),
-        );
-        await picker.pickVideo(
-          source: ImageSource.camera,
-          maxDuration: const Duration(hours: 1),
-        );
+        await picker.pickVideo(source: ImageSource.camera, maxDuration: const Duration(minutes: 1));
+        await picker.pickVideo(source: ImageSource.camera, maxDuration: const Duration(hours: 1));
         expect(log, <Matcher>[
           isMethodCall(
             'pickVideo',
-            arguments: <String, dynamic>{
-              'source': 0,
-              'maxDuration': null,
-              'cameraDevice': 0,
-            },
+            arguments: <String, dynamic>{'source': 0, 'maxDuration': null, 'cameraDevice': 0},
           ),
           isMethodCall(
             'pickVideo',
-            arguments: <String, dynamic>{
-              'source': 0,
-              'maxDuration': 10,
-              'cameraDevice': 0,
-            },
+            arguments: <String, dynamic>{'source': 0, 'maxDuration': 10, 'cameraDevice': 0},
           ),
           isMethodCall(
             'pickVideo',
-            arguments: <String, dynamic>{
-              'source': 0,
-              'maxDuration': 60,
-              'cameraDevice': 0,
-            },
+            arguments: <String, dynamic>{'source': 0, 'maxDuration': 60, 'cameraDevice': 0},
           ),
           isMethodCall(
             'pickVideo',
-            arguments: <String, dynamic>{
-              'source': 0,
-              'maxDuration': 3600,
-              'cameraDevice': 0,
-            },
+            arguments: <String, dynamic>{'source': 0, 'maxDuration': 3600, 'cameraDevice': 0},
           ),
         ]);
       });
 
       test('handles a null video path response gracefully', () async {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMethodCallHandler(
-              picker.channel,
-              (MethodCall methodCall) => null,
-            );
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+          picker.channel,
+          (MethodCall methodCall) => null,
+        );
 
         expect(await picker.pickVideo(source: ImageSource.gallery), isNull);
         expect(await picker.pickVideo(source: ImageSource.camera), isNull);
@@ -490,11 +428,7 @@ void main() {
         expect(log, <Matcher>[
           isMethodCall(
             'pickVideo',
-            arguments: <String, dynamic>{
-              'source': 0,
-              'cameraDevice': 0,
-              'maxDuration': null,
-            },
+            arguments: <String, dynamic>{'source': 0, 'cameraDevice': 0, 'maxDuration': null},
           ),
         ]);
       });
@@ -508,11 +442,7 @@ void main() {
         expect(log, <Matcher>[
           isMethodCall(
             'pickVideo',
-            arguments: <String, dynamic>{
-              'source': 0,
-              'maxDuration': null,
-              'cameraDevice': 1,
-            },
+            arguments: <String, dynamic>{'source': 0, 'maxDuration': null, 'cameraDevice': 1},
           ),
         ]);
       });
@@ -520,12 +450,12 @@ void main() {
 
     group('#retrieveLostData', () {
       test('retrieveLostData get success response', () async {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMethodCallHandler(picker.channel, (
-              MethodCall methodCall,
-            ) async {
-              return <String, String>{'type': 'image', 'path': '/example/path'};
-            });
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+          picker.channel,
+          (MethodCall methodCall) async {
+            return <String, String>{'type': 'image', 'path': '/example/path'};
+          },
+        );
         final LostData response = await picker.retrieveLostData();
         expect(response.type, RetrieveType.image);
         expect(response.file, isNotNull);
@@ -533,16 +463,16 @@ void main() {
       });
 
       test('retrieveLostData get error response', () async {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMethodCallHandler(picker.channel, (
-              MethodCall methodCall,
-            ) async {
-              return <String, String>{
-                'type': 'video',
-                'errorCode': 'test_error_code',
-                'errorMessage': 'test_error_message',
-              };
-            });
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+          picker.channel,
+          (MethodCall methodCall) async {
+            return <String, String>{
+              'type': 'video',
+              'errorCode': 'test_error_code',
+              'errorMessage': 'test_error_message',
+            };
+          },
+        );
         final LostData response = await picker.retrieveLostData();
         expect(response.type, RetrieveType.video);
         expect(response.exception, isNotNull);
@@ -551,27 +481,27 @@ void main() {
       });
 
       test('retrieveLostData get null response', () async {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMethodCallHandler(picker.channel, (
-              MethodCall methodCall,
-            ) async {
-              return null;
-            });
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+          picker.channel,
+          (MethodCall methodCall) async {
+            return null;
+          },
+        );
         expect((await picker.retrieveLostData()).isEmpty, true);
       });
 
       test('retrieveLostData get both path and error should throw', () async {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMethodCallHandler(picker.channel, (
-              MethodCall methodCall,
-            ) async {
-              return <String, String>{
-                'type': 'video',
-                'errorCode': 'test_error_code',
-                'errorMessage': 'test_error_message',
-                'path': '/example/path',
-              };
-            });
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+          picker.channel,
+          (MethodCall methodCall) async {
+            return <String, String>{
+              'type': 'video',
+              'errorCode': 'test_error_code',
+              'errorMessage': 'test_error_message',
+              'path': '/example/path',
+            };
+          },
+        );
         expect(picker.retrieveLostData(), throwsAssertionError);
       });
     });
@@ -611,21 +541,9 @@ void main() {
         await picker.getImage(source: ImageSource.camera);
         await picker.getImage(source: ImageSource.camera, maxWidth: 10.0);
         await picker.getImage(source: ImageSource.camera, maxHeight: 10.0);
-        await picker.getImage(
-          source: ImageSource.camera,
-          maxWidth: 10.0,
-          maxHeight: 20.0,
-        );
-        await picker.getImage(
-          source: ImageSource.camera,
-          maxWidth: 10.0,
-          imageQuality: 70,
-        );
-        await picker.getImage(
-          source: ImageSource.camera,
-          maxHeight: 10.0,
-          imageQuality: 70,
-        );
+        await picker.getImage(source: ImageSource.camera, maxWidth: 10.0, maxHeight: 20.0);
+        await picker.getImage(source: ImageSource.camera, maxWidth: 10.0, imageQuality: 70);
+        await picker.getImage(source: ImageSource.camera, maxHeight: 10.0, imageQuality: 70);
         await picker.getImage(
           source: ImageSource.camera,
           maxWidth: 10.0,
@@ -749,11 +667,10 @@ void main() {
       });
 
       test('handles a null image path response gracefully', () async {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMethodCallHandler(
-              picker.channel,
-              (MethodCall methodCall) => null,
-            );
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+          picker.channel,
+          (MethodCall methodCall) => null,
+        );
 
         expect(await picker.getImage(source: ImageSource.gallery), isNull);
         expect(await picker.getImage(source: ImageSource.camera), isNull);
@@ -826,11 +743,7 @@ void main() {
         await picker.getMultiImage(maxWidth: 10.0, maxHeight: 20.0);
         await picker.getMultiImage(maxWidth: 10.0, imageQuality: 70);
         await picker.getMultiImage(maxHeight: 10.0, imageQuality: 70);
-        await picker.getMultiImage(
-          maxWidth: 10.0,
-          maxHeight: 20.0,
-          imageQuality: 70,
-        );
+        await picker.getMultiImage(maxWidth: 10.0, maxHeight: 20.0, imageQuality: 70);
 
         expect(log, <Matcher>[
           isMethodCall(
@@ -910,31 +823,21 @@ void main() {
         returnValue = <dynamic>['0', '1'];
         expect(() => picker.getMultiImage(maxWidth: -1.0), throwsArgumentError);
 
-        expect(
-          () => picker.getMultiImage(maxHeight: -1.0),
-          throwsArgumentError,
-        );
+        expect(() => picker.getMultiImage(maxHeight: -1.0), throwsArgumentError);
       });
 
       test('does not accept an invalid imageQuality argument', () {
         returnValue = <dynamic>['0', '1'];
-        expect(
-          () => picker.getMultiImage(imageQuality: -1),
-          throwsArgumentError,
-        );
+        expect(() => picker.getMultiImage(imageQuality: -1), throwsArgumentError);
 
-        expect(
-          () => picker.getMultiImage(imageQuality: 101),
-          throwsArgumentError,
-        );
+        expect(() => picker.getMultiImage(imageQuality: 101), throwsArgumentError);
       });
 
       test('handles a null image path response gracefully', () async {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMethodCallHandler(
-              picker.channel,
-              (MethodCall methodCall) => null,
-            );
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+          picker.channel,
+          (MethodCall methodCall) => null,
+        );
 
         expect(await picker.getMultiImage(), isNull);
         expect(await picker.getMultiImage(), isNull);
@@ -944,9 +847,7 @@ void main() {
     group('#getMedia', () {
       test('calls the method correctly', () async {
         returnValue = <String>['0'];
-        await picker.getMedia(
-          options: MediaOptions.createAndValidate(allowMultiple: true),
-        );
+        await picker.getMedia(options: MediaOptions.createAndValidate(allowMultiple: true));
 
         expect(log, <Matcher>[
           isMethodCall(
@@ -965,9 +866,7 @@ void main() {
       test('passes the selection options correctly', () async {
         // Default options
         returnValue = <String>['0'];
-        await picker.getMedia(
-          options: MediaOptions.createAndValidate(allowMultiple: true),
-        );
+        await picker.getMedia(options: MediaOptions.createAndValidate(allowMultiple: true));
         // Various image options
         returnValue = <String>['0'];
         await picker.getMedia(
@@ -1101,39 +1000,26 @@ void main() {
         final Matcher throwsLimitArgumentError = throwsA(
           isA<ArgumentError>()
               .having((ArgumentError error) => error.name, 'name', 'limit')
-              .having(
-                (ArgumentError error) => error.message,
-                'message',
-                'cannot be lower than 2',
-              ),
+              .having((ArgumentError error) => error.message, 'message', 'cannot be lower than 2'),
         );
 
         expect(
           () => picker.getMedia(
-            options: MediaOptions.createAndValidate(
-              allowMultiple: true,
-              limit: -1,
-            ),
+            options: MediaOptions.createAndValidate(allowMultiple: true, limit: -1),
           ),
           throwsLimitArgumentError,
         );
 
         expect(
           () => picker.getMedia(
-            options: MediaOptions.createAndValidate(
-              allowMultiple: true,
-              limit: 0,
-            ),
+            options: MediaOptions.createAndValidate(allowMultiple: true, limit: 0),
           ),
           throwsLimitArgumentError,
         );
 
         expect(
           () => picker.getMedia(
-            options: MediaOptions.createAndValidate(
-              allowMultiple: true,
-              limit: 1,
-            ),
+            options: MediaOptions.createAndValidate(allowMultiple: true, limit: 1),
           ),
           throwsLimitArgumentError,
         );
@@ -1142,25 +1028,19 @@ void main() {
       test('does not accept a not null limit when allowMultiple is false', () {
         expect(
           () => picker.getMedia(
-            options: MediaOptions.createAndValidate(
-              allowMultiple: false,
-              limit: 5,
-            ),
+            options: MediaOptions.createAndValidate(allowMultiple: false, limit: 5),
           ),
           throwsArgumentError,
         );
       });
 
       test('handles a null path response gracefully', () async {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMethodCallHandler(
-              picker.channel,
-              (MethodCall methodCall) => null,
-            );
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+          picker.channel,
+          (MethodCall methodCall) => null,
+        );
         expect(
-          await picker.getMedia(
-            options: MediaOptions.createAndValidate(allowMultiple: true),
-          ),
+          await picker.getMedia(options: MediaOptions.createAndValidate(allowMultiple: true)),
           <XFile>[],
         );
       });
@@ -1174,79 +1054,45 @@ void main() {
         expect(log, <Matcher>[
           isMethodCall(
             'pickVideo',
-            arguments: <String, dynamic>{
-              'source': 0,
-              'cameraDevice': 0,
-              'maxDuration': null,
-            },
+            arguments: <String, dynamic>{'source': 0, 'cameraDevice': 0, 'maxDuration': null},
           ),
           isMethodCall(
             'pickVideo',
-            arguments: <String, dynamic>{
-              'source': 1,
-              'cameraDevice': 0,
-              'maxDuration': null,
-            },
+            arguments: <String, dynamic>{'source': 1, 'cameraDevice': 0, 'maxDuration': null},
           ),
         ]);
       });
 
       test('passes the duration argument correctly', () async {
         await picker.getVideo(source: ImageSource.camera);
-        await picker.getVideo(
-          source: ImageSource.camera,
-          maxDuration: const Duration(seconds: 10),
-        );
-        await picker.getVideo(
-          source: ImageSource.camera,
-          maxDuration: const Duration(minutes: 1),
-        );
-        await picker.getVideo(
-          source: ImageSource.camera,
-          maxDuration: const Duration(hours: 1),
-        );
+        await picker.getVideo(source: ImageSource.camera, maxDuration: const Duration(seconds: 10));
+        await picker.getVideo(source: ImageSource.camera, maxDuration: const Duration(minutes: 1));
+        await picker.getVideo(source: ImageSource.camera, maxDuration: const Duration(hours: 1));
         expect(log, <Matcher>[
           isMethodCall(
             'pickVideo',
-            arguments: <String, dynamic>{
-              'source': 0,
-              'maxDuration': null,
-              'cameraDevice': 0,
-            },
+            arguments: <String, dynamic>{'source': 0, 'maxDuration': null, 'cameraDevice': 0},
           ),
           isMethodCall(
             'pickVideo',
-            arguments: <String, dynamic>{
-              'source': 0,
-              'maxDuration': 10,
-              'cameraDevice': 0,
-            },
+            arguments: <String, dynamic>{'source': 0, 'maxDuration': 10, 'cameraDevice': 0},
           ),
           isMethodCall(
             'pickVideo',
-            arguments: <String, dynamic>{
-              'source': 0,
-              'maxDuration': 60,
-              'cameraDevice': 0,
-            },
+            arguments: <String, dynamic>{'source': 0, 'maxDuration': 60, 'cameraDevice': 0},
           ),
           isMethodCall(
             'pickVideo',
-            arguments: <String, dynamic>{
-              'source': 0,
-              'maxDuration': 3600,
-              'cameraDevice': 0,
-            },
+            arguments: <String, dynamic>{'source': 0, 'maxDuration': 3600, 'cameraDevice': 0},
           ),
         ]);
       });
 
       test('handles a null video path response gracefully', () async {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMethodCallHandler(
-              picker.channel,
-              (MethodCall methodCall) => null,
-            );
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+          picker.channel,
+          (MethodCall methodCall) => null,
+        );
 
         expect(await picker.getVideo(source: ImageSource.gallery), isNull);
         expect(await picker.getVideo(source: ImageSource.camera), isNull);
@@ -1258,11 +1104,7 @@ void main() {
         expect(log, <Matcher>[
           isMethodCall(
             'pickVideo',
-            arguments: <String, dynamic>{
-              'source': 0,
-              'cameraDevice': 0,
-              'maxDuration': null,
-            },
+            arguments: <String, dynamic>{'source': 0, 'cameraDevice': 0, 'maxDuration': null},
           ),
         ]);
       });
@@ -1276,11 +1118,7 @@ void main() {
         expect(log, <Matcher>[
           isMethodCall(
             'pickVideo',
-            arguments: <String, dynamic>{
-              'source': 0,
-              'maxDuration': null,
-              'cameraDevice': 1,
-            },
+            arguments: <String, dynamic>{'source': 0, 'maxDuration': null, 'cameraDevice': 1},
           ),
         ]);
       });
@@ -1288,12 +1126,12 @@ void main() {
 
     group('#getLostData', () {
       test('getLostData get success response', () async {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMethodCallHandler(picker.channel, (
-              MethodCall methodCall,
-            ) async {
-              return <String, String>{'type': 'image', 'path': '/example/path'};
-            });
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+          picker.channel,
+          (MethodCall methodCall) async {
+            return <String, String>{'type': 'image', 'path': '/example/path'};
+          },
+        );
         final LostDataResponse response = await picker.getLostData();
         expect(response.type, RetrieveType.image);
         expect(response.file, isNotNull);
@@ -1301,16 +1139,16 @@ void main() {
       });
 
       test('getLostData should successfully retrieve multiple files', () async {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMethodCallHandler(picker.channel, (
-              MethodCall methodCall,
-            ) async {
-              return <String, dynamic>{
-                'type': 'image',
-                'path': '/example/path1',
-                'pathList': <dynamic>['/example/path0', '/example/path1'],
-              };
-            });
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+          picker.channel,
+          (MethodCall methodCall) async {
+            return <String, dynamic>{
+              'type': 'image',
+              'path': '/example/path1',
+              'pathList': <dynamic>['/example/path0', '/example/path1'],
+            };
+          },
+        );
         final LostDataResponse response = await picker.getLostData();
         expect(response.type, RetrieveType.image);
         expect(response.file, isNotNull);
@@ -1320,16 +1158,16 @@ void main() {
       });
 
       test('getLostData get error response', () async {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMethodCallHandler(picker.channel, (
-              MethodCall methodCall,
-            ) async {
-              return <String, String>{
-                'type': 'video',
-                'errorCode': 'test_error_code',
-                'errorMessage': 'test_error_message',
-              };
-            });
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+          picker.channel,
+          (MethodCall methodCall) async {
+            return <String, String>{
+              'type': 'video',
+              'errorCode': 'test_error_code',
+              'errorMessage': 'test_error_message',
+            };
+          },
+        );
         final LostDataResponse response = await picker.getLostData();
         expect(response.type, RetrieveType.video);
         expect(response.exception, isNotNull);
@@ -1338,27 +1176,27 @@ void main() {
       });
 
       test('getLostData get null response', () async {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMethodCallHandler(picker.channel, (
-              MethodCall methodCall,
-            ) async {
-              return null;
-            });
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+          picker.channel,
+          (MethodCall methodCall) async {
+            return null;
+          },
+        );
         expect((await picker.getLostData()).isEmpty, true);
       });
 
       test('getLostData get both path and error should throw', () async {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMethodCallHandler(picker.channel, (
-              MethodCall methodCall,
-            ) async {
-              return <String, String>{
-                'type': 'video',
-                'errorCode': 'test_error_code',
-                'errorMessage': 'test_error_message',
-                'path': '/example/path',
-              };
-            });
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+          picker.channel,
+          (MethodCall methodCall) async {
+            return <String, String>{
+              'type': 'video',
+              'errorCode': 'test_error_code',
+              'errorMessage': 'test_error_message',
+              'path': '/example/path',
+            };
+          },
+        );
         expect(picker.getLostData(), throwsAssertionError);
       });
     });
@@ -1418,11 +1256,7 @@ void main() {
         );
         await picker.getImageFromSource(
           source: ImageSource.camera,
-          options: const ImagePickerOptions(
-            maxWidth: 10.0,
-            maxHeight: 20.0,
-            imageQuality: 70,
-          ),
+          options: const ImagePickerOptions(maxWidth: 10.0, maxHeight: 20.0, imageQuality: 70),
         );
 
         expect(log, <Matcher>[
@@ -1559,20 +1393,13 @@ void main() {
       });
 
       test('handles a null image path response gracefully', () async {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMethodCallHandler(
-              picker.channel,
-              (MethodCall methodCall) => null,
-            );
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+          picker.channel,
+          (MethodCall methodCall) => null,
+        );
 
-        expect(
-          await picker.getImageFromSource(source: ImageSource.gallery),
-          isNull,
-        );
-        expect(
-          await picker.getImageFromSource(source: ImageSource.camera),
-          isNull,
-        );
+        expect(await picker.getImageFromSource(source: ImageSource.gallery), isNull);
+        expect(await picker.getImageFromSource(source: ImageSource.camera), isNull);
       });
 
       test('camera position defaults to back', () async {
@@ -1596,9 +1423,7 @@ void main() {
       test('camera position can set to front', () async {
         await picker.getImageFromSource(
           source: ImageSource.camera,
-          options: const ImagePickerOptions(
-            preferredCameraDevice: CameraDevice.front,
-          ),
+          options: const ImagePickerOptions(preferredCameraDevice: CameraDevice.front),
         );
 
         expect(log, <Matcher>[
@@ -1657,157 +1482,138 @@ void main() {
         ]);
       });
 
-      test(
-        'passes the width, height and imageQuality arguments correctly',
-        () async {
-          returnValue = <dynamic>['0', '1'];
-          await picker.getMultiImageWithOptions();
-          await picker.getMultiImageWithOptions(
-            options: const MultiImagePickerOptions(
-              imageOptions: ImageOptions(maxWidth: 10.0),
-            ),
-          );
-          await picker.getMultiImageWithOptions(
-            options: const MultiImagePickerOptions(
-              imageOptions: ImageOptions(maxHeight: 10.0),
-            ),
-          );
-          await picker.getMultiImageWithOptions(
-            options: const MultiImagePickerOptions(
-              imageOptions: ImageOptions(maxWidth: 10.0, maxHeight: 20.0),
-            ),
-          );
-          await picker.getMultiImageWithOptions(
-            options: const MultiImagePickerOptions(
-              imageOptions: ImageOptions(maxWidth: 10.0, imageQuality: 70),
-            ),
-          );
-          await picker.getMultiImageWithOptions(
-            options: const MultiImagePickerOptions(
-              imageOptions: ImageOptions(maxHeight: 10.0, imageQuality: 70),
-            ),
-          );
-          await picker.getMultiImageWithOptions(
-            options: const MultiImagePickerOptions(
-              imageOptions: ImageOptions(
-                maxWidth: 10.0,
-                maxHeight: 20.0,
-                imageQuality: 70,
-              ),
-            ),
-          );
-          await picker.getMultiImageWithOptions(
-            options: const MultiImagePickerOptions(
-              imageOptions: ImageOptions(
-                maxWidth: 10.0,
-                maxHeight: 20.0,
-                imageQuality: 70,
-              ),
-              limit: 5,
-            ),
-          );
+      test('passes the width, height and imageQuality arguments correctly', () async {
+        returnValue = <dynamic>['0', '1'];
+        await picker.getMultiImageWithOptions();
+        await picker.getMultiImageWithOptions(
+          options: const MultiImagePickerOptions(imageOptions: ImageOptions(maxWidth: 10.0)),
+        );
+        await picker.getMultiImageWithOptions(
+          options: const MultiImagePickerOptions(imageOptions: ImageOptions(maxHeight: 10.0)),
+        );
+        await picker.getMultiImageWithOptions(
+          options: const MultiImagePickerOptions(
+            imageOptions: ImageOptions(maxWidth: 10.0, maxHeight: 20.0),
+          ),
+        );
+        await picker.getMultiImageWithOptions(
+          options: const MultiImagePickerOptions(
+            imageOptions: ImageOptions(maxWidth: 10.0, imageQuality: 70),
+          ),
+        );
+        await picker.getMultiImageWithOptions(
+          options: const MultiImagePickerOptions(
+            imageOptions: ImageOptions(maxHeight: 10.0, imageQuality: 70),
+          ),
+        );
+        await picker.getMultiImageWithOptions(
+          options: const MultiImagePickerOptions(
+            imageOptions: ImageOptions(maxWidth: 10.0, maxHeight: 20.0, imageQuality: 70),
+          ),
+        );
+        await picker.getMultiImageWithOptions(
+          options: const MultiImagePickerOptions(
+            imageOptions: ImageOptions(maxWidth: 10.0, maxHeight: 20.0, imageQuality: 70),
+            limit: 5,
+          ),
+        );
 
-          expect(log, <Matcher>[
-            isMethodCall(
-              'pickMultiImage',
-              arguments: <String, dynamic>{
-                'maxWidth': null,
-                'maxHeight': null,
-                'imageQuality': null,
-                'requestFullMetadata': true,
-                'limit': null,
-              },
-            ),
-            isMethodCall(
-              'pickMultiImage',
-              arguments: <String, dynamic>{
-                'maxWidth': 10.0,
-                'maxHeight': null,
-                'imageQuality': null,
-                'requestFullMetadata': true,
-                'limit': null,
-              },
-            ),
-            isMethodCall(
-              'pickMultiImage',
-              arguments: <String, dynamic>{
-                'maxWidth': null,
-                'maxHeight': 10.0,
-                'imageQuality': null,
-                'requestFullMetadata': true,
-                'limit': null,
-              },
-            ),
-            isMethodCall(
-              'pickMultiImage',
-              arguments: <String, dynamic>{
-                'maxWidth': 10.0,
-                'maxHeight': 20.0,
-                'imageQuality': null,
-                'requestFullMetadata': true,
-                'limit': null,
-              },
-            ),
-            isMethodCall(
-              'pickMultiImage',
-              arguments: <String, dynamic>{
-                'maxWidth': 10.0,
-                'maxHeight': null,
-                'imageQuality': 70,
-                'requestFullMetadata': true,
-                'limit': null,
-              },
-            ),
-            isMethodCall(
-              'pickMultiImage',
-              arguments: <String, dynamic>{
-                'maxWidth': null,
-                'maxHeight': 10.0,
-                'imageQuality': 70,
-                'requestFullMetadata': true,
-                'limit': null,
-              },
-            ),
-            isMethodCall(
-              'pickMultiImage',
-              arguments: <String, dynamic>{
-                'maxWidth': 10.0,
-                'maxHeight': 20.0,
-                'imageQuality': 70,
-                'requestFullMetadata': true,
-                'limit': null,
-              },
-            ),
-            isMethodCall(
-              'pickMultiImage',
-              arguments: <String, dynamic>{
-                'maxWidth': 10.0,
-                'maxHeight': 20.0,
-                'imageQuality': 70,
-                'requestFullMetadata': true,
-                'limit': 5,
-              },
-            ),
-          ]);
-        },
-      );
+        expect(log, <Matcher>[
+          isMethodCall(
+            'pickMultiImage',
+            arguments: <String, dynamic>{
+              'maxWidth': null,
+              'maxHeight': null,
+              'imageQuality': null,
+              'requestFullMetadata': true,
+              'limit': null,
+            },
+          ),
+          isMethodCall(
+            'pickMultiImage',
+            arguments: <String, dynamic>{
+              'maxWidth': 10.0,
+              'maxHeight': null,
+              'imageQuality': null,
+              'requestFullMetadata': true,
+              'limit': null,
+            },
+          ),
+          isMethodCall(
+            'pickMultiImage',
+            arguments: <String, dynamic>{
+              'maxWidth': null,
+              'maxHeight': 10.0,
+              'imageQuality': null,
+              'requestFullMetadata': true,
+              'limit': null,
+            },
+          ),
+          isMethodCall(
+            'pickMultiImage',
+            arguments: <String, dynamic>{
+              'maxWidth': 10.0,
+              'maxHeight': 20.0,
+              'imageQuality': null,
+              'requestFullMetadata': true,
+              'limit': null,
+            },
+          ),
+          isMethodCall(
+            'pickMultiImage',
+            arguments: <String, dynamic>{
+              'maxWidth': 10.0,
+              'maxHeight': null,
+              'imageQuality': 70,
+              'requestFullMetadata': true,
+              'limit': null,
+            },
+          ),
+          isMethodCall(
+            'pickMultiImage',
+            arguments: <String, dynamic>{
+              'maxWidth': null,
+              'maxHeight': 10.0,
+              'imageQuality': 70,
+              'requestFullMetadata': true,
+              'limit': null,
+            },
+          ),
+          isMethodCall(
+            'pickMultiImage',
+            arguments: <String, dynamic>{
+              'maxWidth': 10.0,
+              'maxHeight': 20.0,
+              'imageQuality': 70,
+              'requestFullMetadata': true,
+              'limit': null,
+            },
+          ),
+          isMethodCall(
+            'pickMultiImage',
+            arguments: <String, dynamic>{
+              'maxWidth': 10.0,
+              'maxHeight': 20.0,
+              'imageQuality': 70,
+              'requestFullMetadata': true,
+              'limit': 5,
+            },
+          ),
+        ]);
+      });
 
       test('does not accept a negative width or height argument', () {
         returnValue = <dynamic>['0', '1'];
         expect(
           () => picker.getMultiImageWithOptions(
-            options: const MultiImagePickerOptions(
-              imageOptions: ImageOptions(maxWidth: -1.0),
-            ),
+            options: const MultiImagePickerOptions(imageOptions: ImageOptions(maxWidth: -1.0)),
           ),
           throwsArgumentError,
         );
 
         expect(
           () => picker.getMultiImageWithOptions(
-            options: const MultiImagePickerOptions(
-              imageOptions: ImageOptions(maxHeight: -1.0),
-            ),
+            options: const MultiImagePickerOptions(imageOptions: ImageOptions(maxHeight: -1.0)),
           ),
           throwsArgumentError,
         );
@@ -1817,18 +1623,14 @@ void main() {
         returnValue = <dynamic>['0', '1'];
         expect(
           () => picker.getMultiImageWithOptions(
-            options: const MultiImagePickerOptions(
-              imageOptions: ImageOptions(imageQuality: -1),
-            ),
+            options: const MultiImagePickerOptions(imageOptions: ImageOptions(imageQuality: -1)),
           ),
           throwsArgumentError,
         );
 
         expect(
           () => picker.getMultiImageWithOptions(
-            options: const MultiImagePickerOptions(
-              imageOptions: ImageOptions(imageQuality: 101),
-            ),
+            options: const MultiImagePickerOptions(imageOptions: ImageOptions(imageQuality: 101)),
           ),
           throwsArgumentError,
         );
@@ -1839,11 +1641,7 @@ void main() {
         final Matcher throwsLimitArgumentError = throwsA(
           isA<ArgumentError>()
               .having((ArgumentError error) => error.name, 'name', 'limit')
-              .having(
-                (ArgumentError error) => error.message,
-                'message',
-                'cannot be lower than 2',
-              ),
+              .having((ArgumentError error) => error.message, 'message', 'cannot be lower than 2'),
         );
 
         expect(
@@ -1869,11 +1667,10 @@ void main() {
       });
 
       test('handles a null image path response gracefully', () async {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMethodCallHandler(
-              picker.channel,
-              (MethodCall methodCall) => null,
-            );
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+          picker.channel,
+          (MethodCall methodCall) => null,
+        );
 
         expect(await picker.getMultiImage(), isNull);
         expect(await picker.getMultiImage(), isNull);

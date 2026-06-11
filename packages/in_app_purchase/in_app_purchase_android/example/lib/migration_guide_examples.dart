@@ -15,12 +15,12 @@ void handleOneTimePurchasePrice(ProductDetails productDetails) {
     final ProductDetailsWrapper product = productDetails.productDetails;
     if (product.productType == ProductType.inapp) {
       // Unwrapping is safe because the product is a one time purchase.
-      final OneTimePurchaseOfferDetailsWrapper offer =
-          product.oneTimePurchaseOfferDetails!;
+      final OneTimePurchaseOfferDetailsWrapper offer = product.oneTimePurchaseOfferDetails!;
       final String price = offer.formattedPrice;
     }
   }
 }
+
 // #enddocregion one-time-purchase-price
 
 // #docregion subscription-free-trial
@@ -39,6 +39,7 @@ void handleFreeTrialPeriod(ProductDetails productDetails) {
     }
   }
 }
+
 // #enddocregion subscription-free-trial
 
 // #docregion subscription-introductory-price
@@ -52,8 +53,7 @@ void handleIntroductoryPricePeriod(ProductDetails productDetails) {
           product.subscriptionOfferDetails![productDetails.subscriptionIndex!];
       final List<PricingPhaseWrapper> pricingPhases = offer.pricingPhases;
       if (pricingPhases.length >= 2 &&
-          pricingPhases.first.priceAmountMicros <
-              pricingPhases[1].priceAmountMicros) {
+          pricingPhases.first.priceAmountMicros < pricingPhases[1].priceAmountMicros) {
         // Introductory pricing period logic.
       }
     }

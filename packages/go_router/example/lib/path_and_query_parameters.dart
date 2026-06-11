@@ -63,18 +63,14 @@ class App extends StatelessWidget {
 
   // add the login info into the tree as app state that can change over time
   @override
-  Widget build(BuildContext context) => MaterialApp.router(
-    routerConfig: _router,
-    title: title,
-    debugShowCheckedModeBanner: false,
-  );
+  Widget build(BuildContext context) =>
+      MaterialApp.router(routerConfig: _router, title: title, debugShowCheckedModeBanner: false);
 
   late final GoRouter _router = GoRouter(
     routes: <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (BuildContext context, GoRouterState state) =>
-            const HomeScreen(),
+        builder: (BuildContext context, GoRouterState state) => const HomeScreen(),
         routes: <GoRoute>[
           GoRoute(
             name: 'family',
@@ -154,8 +150,7 @@ class FamilyScreen extends StatelessWidget {
       ),
       body: ListView(
         children: <Widget>[
-          for (final String name in asc ? names : names.reversed)
-            ListTile(title: Text(name)),
+          for (final String name in asc ? names : names.reversed) ListTile(title: Text(name)),
         ],
       ),
     );

@@ -20,6 +20,7 @@ That object can then be used to create instances of `googleapis` API clients:
 <?code-excerpt "example/lib/main.dart (CreateAPIClient)"?>
 ```dart
 import 'package:googleapis_auth/googleapis_auth.dart' as auth show AuthClient;
+
 // ···
     // Retrieve an [auth.AuthClient] from a GoogleSignInClientAuthorization.
     final auth.AuthClient client = authorization.authClient(scopes: scopes);
@@ -27,8 +28,10 @@ import 'package:googleapis_auth/googleapis_auth.dart' as auth show AuthClient;
     // Prepare a People Service authenticated client.
     final peopleApi = PeopleServiceApi(client);
     // Retrieve a list of connected contacts' names.
-    final ListConnectionsResponse response = await peopleApi.people.connections
-        .list('people/me', personFields: 'names');
+    final ListConnectionsResponse response = await peopleApi.people.connections.list(
+      'people/me',
+      personFields: 'names',
+    );
 ```
 
 ## Example

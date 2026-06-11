@@ -43,4 +43,13 @@ class ListTest {
 
     assertTrue(didCall)
   }
+
+  @Test
+  fun testToStringSnapshot() {
+    val msg = TestMessage(listOf("hello", 42))
+    val str = msg.toString()
+    assertTrue(str.startsWith("TestMessage(testList="))
+    assertTrue(str.contains("hello"))
+    assertTrue(str.contains("42"))
+  }
 }
