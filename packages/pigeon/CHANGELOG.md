@@ -1,3 +1,7 @@
+## 27.1.0
+
+* Updates minimum Flutter version to 3.41 and adds FlutterFramework dependency to SwiftPM plugins.
+
 ## 27.0.0
 
 * **Breaking Change** Overrides `toString` (or equivalent) methods on generated data classes

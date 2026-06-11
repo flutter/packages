@@ -1,5 +1,6 @@
-## NEXT
+## 3.3.0
 
+* Updates minimum Flutter version to 3.41 and adds FlutterFramework dependency to SwiftPM plugins.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 3.2.5
