@@ -91,6 +91,14 @@ class TestPlugin : public flutter::Plugin,
       const flutter::EncodableValue& an_object) override;
   core_tests_pigeontest::ErrorOr<flutter::EncodableList> EchoList(
       const flutter::EncodableList& a_list) override;
+  core_tests_pigeontest::ErrorOr<flutter::EncodableList> EchoStringList(
+      const flutter::EncodableList& string_list) override;
+  core_tests_pigeontest::ErrorOr<flutter::EncodableList> EchoIntList(
+      const flutter::EncodableList& int_list) override;
+  core_tests_pigeontest::ErrorOr<flutter::EncodableList> EchoDoubleList(
+      const flutter::EncodableList& double_list) override;
+  core_tests_pigeontest::ErrorOr<flutter::EncodableList> EchoBoolList(
+      const flutter::EncodableList& bool_list) override;
   core_tests_pigeontest::ErrorOr<flutter::EncodableList> EchoEnumList(
       const flutter::EncodableList& enum_list) override;
   core_tests_pigeontest::ErrorOr<flutter::EncodableList> EchoClassList(

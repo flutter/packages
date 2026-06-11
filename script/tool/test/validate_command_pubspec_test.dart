@@ -59,8 +59,8 @@ ${publishable ? '' : "publish_to: 'none'"}
 }
 
 String _environmentSection({
-  String dartConstraint = '>=2.17.0 <4.0.0',
-  String? flutterConstraint = '>=3.0.0',
+  String dartConstraint = '^3.5.0',
+  String? flutterConstraint = '>=3.24.0',
 }) {
   return <String>[
     'environment:',
@@ -73,8 +73,7 @@ String _environmentSection({
 String _flutterSection({
   bool isPlugin = false,
   String? implementedPackage,
-  Map<String, Map<String, String>> pluginPlatformDetails =
-      const <String, Map<String, String>>{},
+  Map<String, Map<String, String>> pluginPlatformDetails = const <String, Map<String, String>>{},
 }) {
   var pluginEntry =
       '''
@@ -83,8 +82,7 @@ ${implementedPackage == null ? '' : '    implements: $implementedPackage'}
     platforms:
 ''';
 
-  for (final MapEntry<String, Map<String, String>> platform
-      in pluginPlatformDetails.entries) {
+  for (final MapEntry<String, Map<String, String>> platform in pluginPlatformDetails.entries) {
     pluginEntry +=
         '''
       ${platform.key}:
@@ -103,9 +101,7 @@ ${isPlugin ? pluginEntry : ''}
 ''';
 }
 
-String _dependenciesSection([
-  List<String> extraDependencies = const <String>[],
-]) {
+String _dependenciesSection([List<String> extraDependencies = const <String>[]]) {
   return '''
 dependencies:
   flutter:
@@ -114,9 +110,7 @@ ${extraDependencies.map((String dep) => '  $dep').join('\n')}
 ''';
 }
 
-String _devDependenciesSection([
-  List<String> extraDependencies = const <String>[],
-]) {
+String _devDependenciesSection([List<String> extraDependencies = const <String>[]]) {
   return '''
 dev_dependencies:
   flutter_test:
@@ -144,16 +138,18 @@ void main() {
     late CommandRunner<void> runner;
     late MockPlatform mockPlatform;
     late Directory packagesDir;
-    late Directory toolConfigDir;
-
+    late Directory repoRoot;
     setUp(() {
       mockPlatform = MockPlatform();
       final RecordingProcessRunner processRunner;
       final GitDir gitDir;
-      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
-          configureBaseCommandMocks(platform: mockPlatform);
-      toolConfigDir = packagesDir.parent.childDirectory('tool_config');
-      toolConfigDir.createSync(recursive: true);
+      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) = configureBaseCommandMocks(
+        platform: mockPlatform,
+      );
+      repoRoot = packagesDir.parent;
+      // Set an basic config with just the required elements so that tests
+      // that don't need test-specific settings still pass.
+      setToolConfig(repoRoot, minDartVersion: '1.0.0');
 
       final command = ValidateCommand(
         packagesDir,
@@ -163,36 +159,9 @@ void main() {
         targetedValidators: {Validator.pubspec},
       );
 
-      runner = CommandRunner<void>(
-        'validate_pubspec_test',
-        'Test for pubspec validation',
-      );
+      runner = CommandRunner<void>('validate_pubspec_test', 'Test for pubspec validation');
       runner.addCommand(command);
     });
-
-    void setVersionConfig({required String minFlutterVersion}) {
-      toolConfigDir
-          .childFile('min_version.yaml')
-          .writeAsStringSync('min_flutter: "$minFlutterVersion"');
-    }
-
-    void setAllowedDependencies({
-      Iterable<String>? pinned,
-      Iterable<String>? unpinned,
-    }) {
-      if (pinned != null) {
-        toolConfigDir
-            .childFile('allowed_pinned_dependencies.yaml')
-            .writeAsStringSync(pinned.map((String dep) => '- $dep').join('\n'));
-      }
-      if (unpinned != null) {
-        toolConfigDir
-            .childFile('allowed_unpinned_dependencies.yaml')
-            .writeAsStringSync(
-              unpinned.map((String dep) => '- $dep').join('\n'),
-            );
-      }
-    }
 
     test('passes for a plugin following conventions', () async {
       final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir);
@@ -214,9 +183,7 @@ ${_dependenciesSection()}
 ${_flutterSection()}
 ''');
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'validate',
-      ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['validate']);
 
       expect(
         output,
@@ -229,10 +196,7 @@ ${_flutterSection()}
     });
 
     test('passes for a Flutter package following conventions', () async {
-      final RepositoryPackage package = createFakePackage(
-        'a_package',
-        packagesDir,
-      );
+      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
 
       package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
@@ -251,9 +215,7 @@ ${_dependenciesSection()}
 ${_flutterSection()}
 ''');
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'validate',
-      ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['validate']);
 
       expect(
         output,
@@ -279,9 +241,7 @@ ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'validate',
-      ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['validate']);
 
       expect(
         output,
@@ -320,9 +280,7 @@ ${_devDependenciesSection()}
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains(
-            'Found a "homepage" entry; only "repository" should be used.',
-          ),
+          contains('Found a "homepage" entry; only "repository" should be used.'),
         ]),
       );
     });
@@ -352,10 +310,7 @@ ${_devDependenciesSection()}
       );
 
       expect(commandError, isA<ToolExit>());
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[contains('Missing "repository"')]),
-      );
+      expect(output, containsAllInOrder(<Matcher>[contains('Missing "repository"')]));
     });
 
     test('fails when homepage is given instead of repository', () async {
@@ -386,9 +341,7 @@ ${_devDependenciesSection()}
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains(
-            'Found a "homepage" entry; only "repository" should be used.',
-          ),
+          contains('Found a "homepage" entry; only "repository" should be used.'),
         ]),
       );
     });
@@ -462,7 +415,7 @@ ${_devDependenciesSection()}
       );
     });
 
-    test('fails when repository is not flutter/packages', () async {
+    test('fails when repository does not match the tool config', () async {
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
@@ -498,6 +451,34 @@ ${_devDependenciesSection()}
       );
     });
 
+    test('passes for a correct non-flutter/package repository', () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin',
+        packagesDir,
+        examples: <String>[],
+      );
+
+      plugin.pubspecFile.writeAsStringSync('''
+${_headerSection('plugin', repository: 'flutter/core-packages')}
+${_environmentSection()}
+${_flutterSection(isPlugin: true)}
+${_dependenciesSection()}
+${_devDependenciesSection()}
+${_topicsSection()}
+''');
+      setToolConfig(repoRoot, repoName: 'flutter/core-packages', minDartVersion: '3.0.0');
+
+      final List<String> output = await runCapturingPrint(runner, <String>['validate']);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Running for plugin...'),
+          contains('No issues found!'),
+        ]),
+      );
+    });
+
     test('fails when issue tracker is missing', () async {
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
@@ -525,9 +506,7 @@ ${_devDependenciesSection()}
       expect(commandError, isA<ToolExit>());
       expect(
         output,
-        containsAllInOrder(<Matcher>[
-          contains('A package should have an "issue_tracker" link'),
-        ]),
+        containsAllInOrder(<Matcher>[contains('A package should have an "issue_tracker" link')]),
       );
     });
 
@@ -567,16 +546,14 @@ ${_devDependenciesSection()}
       );
     });
 
-    test(
-      'allows short descriptions for non-app-facing parts of federated plugins',
-      () async {
-        final RepositoryPackage plugin = createFakePlugin(
-          'plugin',
-          packagesDir,
-          examples: <String>[],
-        );
+    test('allows short descriptions for non-app-facing parts of federated plugins', () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin',
+        packagesDir,
+        examples: <String>[],
+      );
 
-        plugin.pubspecFile.writeAsStringSync('''
+      plugin.pubspecFile.writeAsStringSync('''
 ${_headerSection('plugin', description: 'Too short')}
 ${_environmentSection()}
 ${_flutterSection(isPlugin: true)}
@@ -584,27 +561,26 @@ ${_dependenciesSection()}
 ${_devDependenciesSection()}
 ''');
 
-        Error? commandError;
-        final List<String> output = await runCapturingPrint(
-          runner,
-          <String>['validate'],
-          errorHandler: (Error e) {
-            commandError = e;
-          },
-        );
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['validate'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
-        expect(commandError, isA<ToolExit>());
-        expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains(
-              '"description" is too short. pub.dev recommends package '
-              'descriptions of 60-180 characters.',
-            ),
-          ]),
-        );
-      },
-    );
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(
+            '"description" is too short. pub.dev recommends package '
+            'descriptions of 60-180 characters.',
+          ),
+        ]),
+      );
+    });
 
     test('fails when description is too long', () async {
       final RepositoryPackage plugin = createFakePlugin(
@@ -675,9 +651,7 @@ ${_devDependenciesSection()}
       expect(commandError, isA<ToolExit>());
       expect(
         output,
-        containsAllInOrder(<Matcher>[
-          contains('A published package should include "topics".'),
-        ]),
+        containsAllInOrder(<Matcher>[contains('A published package should include "topics".')]),
       );
     });
 
@@ -709,22 +683,18 @@ ${_topicsSection(<String>[])}
       expect(commandError, isA<ToolExit>());
       expect(
         output,
-        containsAllInOrder(<Matcher>[
-          contains('A published package should include "topics".'),
-        ]),
+        containsAllInOrder(<Matcher>[contains('A published package should include "topics".')]),
       );
     });
 
-    test(
-      'fails when federated plugin topics do not include plugin name',
-      () async {
-        final RepositoryPackage plugin = createFakePlugin(
-          'some_plugin_ios',
-          packagesDir.childDirectory('some_plugin'),
-          examples: <String>[],
-        );
+    test('fails when federated plugin topics do not include plugin name', () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'some_plugin_ios',
+        packagesDir.childDirectory('some_plugin'),
+        examples: <String>[],
+      );
 
-        plugin.pubspecFile.writeAsStringSync('''
+      plugin.pubspecFile.writeAsStringSync('''
 ${_headerSection('plugin')}
 ${_environmentSection()}
 ${_flutterSection(isPlugin: true)}
@@ -733,27 +703,26 @@ ${_devDependenciesSection()}
 ${_topicsSection()}
 ''');
 
-        Error? commandError;
-        final List<String> output = await runCapturingPrint(
-          runner,
-          <String>['validate'],
-          errorHandler: (Error e) {
-            commandError = e;
-          },
-        );
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['validate'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
-        expect(commandError, isA<ToolExit>());
-        expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains(
-              'A federated plugin package should include its plugin name as a topic. '
-              'Add "some-plugin" to the "topics" section.',
-            ),
-          ]),
-        );
-      },
-    );
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(
+            'A federated plugin package should include its plugin name as a topic. '
+            'Add "some-plugin" to the "topics" section.',
+          ),
+        ]),
+      );
+    });
 
     test('fails when topic name contains a space', () async {
       final RepositoryPackage plugin = createFakePlugin(
@@ -783,9 +752,7 @@ ${_topicsSection(<String>['plugin a'])}
       expect(commandError, isA<ToolExit>());
       expect(
         output,
-        containsAllInOrder(<Matcher>[
-          contains('Invalid topic(s): plugin a in "topics" section. '),
-        ]),
+        containsAllInOrder(<Matcher>[contains('Invalid topic(s): plugin a in "topics" section. ')]),
       );
     });
 
@@ -885,9 +852,7 @@ ${_topicsSection(<String>['plugin-A'])}
       expect(commandError, isA<ToolExit>());
       expect(
         output,
-        containsAllInOrder(<Matcher>[
-          contains('Invalid topic(s): plugin-A in "topics" section. '),
-        ]),
+        containsAllInOrder(<Matcher>[contains('Invalid topic(s): plugin-A in "topics" section. ')]),
       );
     });
 
@@ -991,9 +956,7 @@ ${_topicsSection(<String>['a'])}
       expect(commandError, isA<ToolExit>());
       expect(
         output,
-        containsAllInOrder(<Matcher>[
-          contains('Invalid topic(s): a in "topics" section. '),
-        ]),
+        containsAllInOrder(<Matcher>[contains('Invalid topic(s): a in "topics" section. ')]),
       );
     });
 
@@ -1025,9 +988,7 @@ ${_topicsSection(<String>['plugin-'])}
       expect(commandError, isA<ToolExit>());
       expect(
         output,
-        containsAllInOrder(<Matcher>[
-          contains('Invalid topic(s): plugin- in "topics" section. '),
-        ]),
+        containsAllInOrder(<Matcher>[contains('Invalid topic(s): plugin- in "topics" section. ')]),
       );
     });
 
@@ -1098,9 +1059,7 @@ ${_environmentSection()}
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains(
-            'Major sections should follow standard repository ordering:',
-          ),
+          contains('Major sections should follow standard repository ordering:'),
         ]),
       );
     });
@@ -1133,9 +1092,7 @@ ${_devDependenciesSection()}
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains(
-            'Major sections should follow standard repository ordering:',
-          ),
+          contains('Major sections should follow standard repository ordering:'),
         ]),
       );
     });
@@ -1168,9 +1125,7 @@ ${_dependenciesSection()}
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains(
-            'Major sections should follow standard repository ordering:',
-          ),
+          contains('Major sections should follow standard repository ordering:'),
         ]),
       );
     });
@@ -1199,9 +1154,7 @@ ${_dependenciesSection()}
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains(
-            'Major sections should follow standard repository ordering:',
-          ),
+          contains('Major sections should follow standard repository ordering:'),
         ]),
       );
     });
@@ -1236,23 +1189,19 @@ ${_topicsSection()}
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains(
-            'Major sections should follow standard repository ordering:',
-          ),
+          contains('Major sections should follow standard repository ordering:'),
         ]),
       );
     });
 
-    test(
-      'fails when an implemenation package is missing "implements"',
-      () async {
-        final RepositoryPackage plugin = createFakePlugin(
-          'plugin_a_foo',
-          packagesDir.childDirectory('plugin_a'),
-          examples: <String>[],
-        );
+    test('fails when an implemenation package is missing "implements"', () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin_a_foo',
+        packagesDir.childDirectory('plugin_a'),
+        examples: <String>[],
+      );
 
-        plugin.pubspecFile.writeAsStringSync('''
+      plugin.pubspecFile.writeAsStringSync('''
 ${_headerSection('plugin_a_foo')}
 ${_environmentSection()}
 ${_flutterSection(isPlugin: true)}
@@ -1261,35 +1210,32 @@ ${_devDependenciesSection()}
 ${_topicsSection()}
 ''');
 
-        Error? commandError;
-        final List<String> output = await runCapturingPrint(
-          runner,
-          <String>['validate'],
-          errorHandler: (Error e) {
-            commandError = e;
-          },
-        );
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['validate'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
-        expect(commandError, isA<ToolExit>());
-        expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains('Missing "implements: plugin_a" in "plugin" section.'),
-          ]),
-        );
-      },
-    );
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Missing "implements: plugin_a" in "plugin" section.'),
+        ]),
+      );
+    });
 
-    test(
-      'fails when an implemenation package has the wrong "implements"',
-      () async {
-        final RepositoryPackage plugin = createFakePlugin(
-          'plugin_a_foo',
-          packagesDir.childDirectory('plugin_a'),
-          examples: <String>[],
-        );
+    test('fails when an implemenation package has the wrong "implements"', () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin_a_foo',
+        packagesDir.childDirectory('plugin_a'),
+        examples: <String>[],
+      );
 
-        plugin.pubspecFile.writeAsStringSync('''
+      plugin.pubspecFile.writeAsStringSync('''
 ${_headerSection('plugin_a_foo')}
 ${_environmentSection()}
 ${_flutterSection(isPlugin: true, implementedPackage: 'plugin_a_foo')}
@@ -1298,27 +1244,26 @@ ${_devDependenciesSection()}
 ${_topicsSection()}
 ''');
 
-        Error? commandError;
-        final List<String> output = await runCapturingPrint(
-          runner,
-          <String>['validate'],
-          errorHandler: (Error e) {
-            commandError = e;
-          },
-        );
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['validate'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
-        expect(commandError, isA<ToolExit>());
-        expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains(
-              'Expecetd "implements: plugin_a"; '
-              'found "implements: plugin_a_foo".',
-            ),
-          ]),
-        );
-      },
-    );
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(
+            'Expecetd "implements: plugin_a"; '
+            'found "implements: plugin_a_foo".',
+          ),
+        ]),
+      );
+    });
 
     test('passes for a correct implemenation package', () async {
       final RepositoryPackage plugin = createFakePlugin(
@@ -1336,9 +1281,7 @@ ${_devDependenciesSection()}
 ${_topicsSection(<String>['plugin-a'])}
 ''');
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'validate',
-      ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['validate']);
 
       expect(
         output,
@@ -1380,54 +1323,49 @@ ${_topicsSection()}
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains(
-            '"plugin_b_android" is not an expected implementation name for "plugin_a"',
-          ),
+          contains('"plugin_b_android" is not an expected implementation name for "plugin_a"'),
         ]),
       );
     });
 
-    test(
-      'fails when a "default_package" does not have a corresponding dependency',
-      () async {
-        final RepositoryPackage plugin = createFakePlugin(
-          'plugin_a',
-          packagesDir.childDirectory('plugin_a'),
-          examples: <String>[],
-        );
+    test('fails when a "default_package" does not have a corresponding dependency', () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin_a',
+        packagesDir.childDirectory('plugin_a'),
+        examples: <String>[],
+      );
 
-        plugin.pubspecFile.writeAsStringSync('''
+      plugin.pubspecFile.writeAsStringSync('''
 ${_headerSection('plugin_a', repositoryPackagesDirRelativePath: 'plugin_a/plugin_a')}
 ${_environmentSection()}
 ${_flutterSection(isPlugin: true, pluginPlatformDetails: <String, Map<String, String>>{
-          'android': <String, String>{'default_package': 'plugin_a_android'},
-        })}
+        'android': <String, String>{'default_package': 'plugin_a_android'},
+      })}
 ${_dependenciesSection()}
 ${_devDependenciesSection()}
 ${_topicsSection()}
 ''');
 
-        Error? commandError;
-        final List<String> output = await runCapturingPrint(
-          runner,
-          <String>['validate'],
-          errorHandler: (Error e) {
-            commandError = e;
-          },
-        );
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['validate'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
-        expect(commandError, isA<ToolExit>());
-        expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains(
-              'The following default_packages are missing corresponding '
-              'dependencies:\n  plugin_a_android',
-            ),
-          ]),
-        );
-      },
-    );
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(
+            'The following default_packages are missing corresponding '
+            'dependencies:\n  plugin_a_android',
+          ),
+        ]),
+      );
+    });
 
     test('passes for an app-facing package without "implements"', () async {
       final RepositoryPackage plugin = createFakePlugin(
@@ -1445,9 +1383,7 @@ ${_devDependenciesSection()}
 ${_topicsSection(<String>['plugin-a'])}
 ''');
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'validate',
-      ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['validate']);
 
       expect(
         output,
@@ -1458,16 +1394,14 @@ ${_topicsSection(<String>['plugin-a'])}
       );
     });
 
-    test(
-      'passes for a platform interface package without "implements"',
-      () async {
-        final RepositoryPackage plugin = createFakePlugin(
-          'plugin_a_platform_interface',
-          packagesDir.childDirectory('plugin_a'),
-          examples: <String>[],
-        );
+    test('passes for a platform interface package without "implements"', () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin_a_platform_interface',
+        packagesDir.childDirectory('plugin_a'),
+        examples: <String>[],
+      );
 
-        plugin.pubspecFile.writeAsStringSync('''
+      plugin.pubspecFile.writeAsStringSync('''
 ${_headerSection('plugin_a_platform_interface', repositoryPackagesDirRelativePath: 'plugin_a/plugin_a_platform_interface')}
 ${_environmentSection()}
 ${_flutterSection(isPlugin: true)}
@@ -1476,19 +1410,16 @@ ${_devDependenciesSection()}
 ${_topicsSection(<String>['plugin-a'])}
 ''');
 
-        final List<String> output = await runCapturingPrint(runner, <String>[
-          'validate',
-        ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['validate']);
 
-        expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains('Running for plugin_a_platform_interface...'),
-            contains('No issues found!'),
-          ]),
-        );
-      },
-    );
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Running for plugin_a_platform_interface...'),
+          contains('No issues found!'),
+        ]),
+      );
+    });
 
     test('validates some properties even for unpublished packages', () async {
       final RepositoryPackage plugin = createFakePlugin(
@@ -1520,9 +1451,7 @@ ${_environmentSection()}
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains(
-            'Major sections should follow standard repository ordering:',
-          ),
+          contains('Major sections should follow standard repository ordering:'),
           contains('Missing "implements: plugin_a" in "plugin" section.'),
         ]),
       );
@@ -1545,9 +1474,7 @@ ${_dependenciesSection()}
 ${_devDependenciesSection()}
 ''');
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'validate',
-      ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['validate']);
 
       expect(
         output,
@@ -1558,208 +1485,266 @@ ${_devDependenciesSection()}
       );
     });
 
-    test(
-      'fails when a Flutter package has a too-low minimum Flutter version',
-      () async {
-        final RepositoryPackage package = createFakePackage(
-          'a_package',
-          packagesDir,
-          isFlutter: true,
-          examples: <String>[],
-        );
+    test('fails when a Flutter package has a too-low minimum Flutter version', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        isFlutter: true,
+        examples: <String>[],
+      );
 
-        package.pubspecFile.writeAsStringSync('''
+      package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(flutterConstraint: '>=2.10.0')}
+${_environmentSection(flutterConstraint: '>=3.10.0')}
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
-        setVersionConfig(minFlutterVersion: '3.0.0');
+      setToolConfig(repoRoot, minFlutterVersion: '3.38.0');
 
-        Error? commandError;
-        final List<String> output = await runCapturingPrint(
-          runner,
-          <String>['validate'],
-          errorHandler: (Error e) {
-            commandError = e;
-          },
-        );
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['validate'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
-        expect(commandError, isA<ToolExit>());
-        expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains(
-              'Minimum allowed Flutter version 2.10.0 is less than 3.0.0',
-            ),
-          ]),
-        );
-      },
-    );
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Minimum allowed Flutter version 3.10.0 is less than 3.38.0'),
+        ]),
+      );
+    });
 
-    test(
-      'passes when a Flutter package requires exactly the minimum Flutter version',
-      () async {
-        final RepositoryPackage package = createFakePackage(
-          'a_package',
-          packagesDir,
-          isFlutter: true,
-          examples: <String>[],
-        );
+    test('passes when a Flutter package requires exactly the minimum Flutter version', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        isFlutter: true,
+        examples: <String>[],
+      );
 
-        package.pubspecFile.writeAsStringSync('''
+      package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(flutterConstraint: '>=3.3.0', dartConstraint: '>=2.18.0 <4.0.0')}
+${_environmentSection(flutterConstraint: '>=3.35.0', dartConstraint: '^3.9.0')}
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
-        setVersionConfig(minFlutterVersion: '3.3.0');
+      setToolConfig(repoRoot, minFlutterVersion: '3.35.0');
 
-        final List<String> output = await runCapturingPrint(runner, <String>[
-          'validate',
-        ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['validate']);
 
-        expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains('Running for a_package...'),
-            contains('No issues found!'),
-          ]),
-        );
-      },
-    );
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Running for a_package...'),
+          contains('No issues found!'),
+        ]),
+      );
+    });
 
-    test(
-      'passes when a Flutter package requires a higher minimum Flutter version',
-      () async {
-        final RepositoryPackage package = createFakePackage(
-          'a_package',
-          packagesDir,
-          isFlutter: true,
-          examples: <String>[],
-        );
+    test('passes when a Flutter package requires a higher minimum Flutter version', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        isFlutter: true,
+        examples: <String>[],
+      );
 
-        package.pubspecFile.writeAsStringSync('''
+      package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(flutterConstraint: '>=3.7.0', dartConstraint: '>=2.19.0 <4.0.0')}
+${_environmentSection(flutterConstraint: '>=3.38.0', dartConstraint: '^3.10.0')}
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
-        setVersionConfig(minFlutterVersion: '3.3.0');
+      setToolConfig(repoRoot, minFlutterVersion: '3.35.0');
 
-        final List<String> output = await runCapturingPrint(runner, <String>[
-          'validate',
-        ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['validate']);
 
-        expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains('Running for a_package...'),
-            contains('No issues found!'),
-          ]),
-        );
-      },
-    );
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Running for a_package...'),
+          contains('No issues found!'),
+        ]),
+      );
+    });
 
-    test(
-      'fails when a non-Flutter package has a too-low minimum Dart version',
-      () async {
-        final RepositoryPackage package = createFakePackage(
-          'a_package',
-          packagesDir,
-          examples: <String>[],
-        );
+    test('fails when a non-Flutter package has a too-low minimum Dart version '
+        'for the min Flutter version', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        examples: <String>[],
+      );
 
-        package.pubspecFile.writeAsStringSync('''
+      package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(dartConstraint: '>=2.14.0 <4.0.0', flutterConstraint: null)}
+${_environmentSection(dartConstraint: '^3.1.0', flutterConstraint: null)}
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
-        setVersionConfig(minFlutterVersion: '3.0.0');
+      setToolConfig(repoRoot, minFlutterVersion: '3.38.0');
 
-        Error? commandError;
-        final List<String> output = await runCapturingPrint(
-          runner,
-          <String>['validate'],
-          errorHandler: (Error e) {
-            commandError = e;
-          },
-        );
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['validate'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
-        expect(commandError, isA<ToolExit>());
-        expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains('Minimum allowed Dart version 2.14.0 is less than 2.17.0'),
-          ]),
-        );
-      },
-    );
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Minimum allowed Dart version 3.1.0 is less than 3.10.0'),
+        ]),
+      );
+    });
 
-    test(
-      'passes when a non-Flutter package requires exactly the minimum Dart version',
-      () async {
-        final RepositoryPackage package = createFakePackage(
-          'a_package',
-          packagesDir,
-          isFlutter: true,
-          examples: <String>[],
-        );
+    test('passes when a non-Flutter package requires exactly the minimum Dart version '
+        'for the min Flutter version', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        examples: <String>[],
+      );
 
-        package.pubspecFile.writeAsStringSync('''
+      package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(dartConstraint: '>=2.18.0 <4.0.0', flutterConstraint: null)}
+${_environmentSection(dartConstraint: '^3.8.0', flutterConstraint: null)}
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
-        setVersionConfig(minFlutterVersion: '3.3.0');
+      setToolConfig(repoRoot, minFlutterVersion: '3.32.0');
 
-        final List<String> output = await runCapturingPrint(runner, <String>[
-          'validate',
-        ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['validate']);
 
-        expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains('Running for a_package...'),
-            contains('No issues found!'),
-          ]),
-        );
-      },
-    );
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Running for a_package...'),
+          contains('No issues found!'),
+        ]),
+      );
+    });
 
-    test(
-      'passes when a non-Flutter package requires a higher minimum Dart version',
-      () async {
-        final RepositoryPackage package = createFakePackage(
-          'a_package',
-          packagesDir,
-          isFlutter: true,
-          examples: <String>[],
-        );
+    test('passes when a non-Flutter package requires a higher minimum Dart version '
+        'for the min Flutter version', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        examples: <String>[],
+      );
 
-        package.pubspecFile.writeAsStringSync('''
+      package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(dartConstraint: '>=2.18.0 <4.0.0', flutterConstraint: null)}
+${_environmentSection(dartConstraint: '^3.8.0', flutterConstraint: null)}
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
-        setVersionConfig(minFlutterVersion: '3.0.0');
+      setToolConfig(repoRoot, minFlutterVersion: '3.22.0');
 
-        final List<String> output = await runCapturingPrint(runner, <String>[
-          'validate',
-        ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['validate']);
 
-        expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains('Running for a_package...'),
-            contains('No issues found!'),
-          ]),
-        );
-      },
-    );
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Running for a_package...'),
+          contains('No issues found!'),
+        ]),
+      );
+    });
+
+    test('fails when a non-Flutter package has a too-low minimum Dart version', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        examples: <String>[],
+      );
+
+      package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package')}
+${_environmentSection(dartConstraint: '^3.1.0', flutterConstraint: null)}
+${_dependenciesSection()}
+${_topicsSection()}
+''');
+      setToolConfig(repoRoot, minDartVersion: '3.10.0');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['validate'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Minimum allowed Dart version 3.1.0 is less than 3.10.0'),
+        ]),
+      );
+    });
+
+    test('passes when a non-Flutter package requires exactly the minimum Dart version', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        examples: <String>[],
+      );
+
+      package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package')}
+${_environmentSection(dartConstraint: '^3.8.0', flutterConstraint: null)}
+${_dependenciesSection()}
+${_topicsSection()}
+''');
+      setToolConfig(repoRoot, minDartVersion: '3.8.0');
+
+      final List<String> output = await runCapturingPrint(runner, <String>['validate']);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Running for a_package...'),
+          contains('No issues found!'),
+        ]),
+      );
+    });
+
+    test('passes when a non-Flutter package requires a higher minimum Dart version', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        examples: <String>[],
+      );
+
+      package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package')}
+${_environmentSection(dartConstraint: '^3.8.0', flutterConstraint: null)}
+${_dependenciesSection()}
+${_topicsSection()}
+''');
+      setToolConfig(repoRoot, minDartVersion: '3.6.0');
+
+      final List<String> output = await runCapturingPrint(runner, <String>['validate']);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Running for a_package...'),
+          contains('No issues found!'),
+        ]),
+      );
+    });
 
     test('fails when a Flutter->Dart SDK version mapping is missing', () async {
       final RepositoryPackage package = createFakePackage(
@@ -1774,7 +1759,7 @@ ${_environmentSection()}
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
-      setVersionConfig(minFlutterVersion: '2.0.0');
+      setToolConfig(repoRoot, minFlutterVersion: '2.0.0');
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
@@ -1805,7 +1790,7 @@ ${_topicsSection()}
 
       package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(flutterConstraint: '>=3.3.0', dartConstraint: '>=2.16.0 <4.0.0')}
+${_environmentSection(flutterConstraint: '>=3.38.0', dartConstraint: '^3.4.0')}
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
@@ -1824,9 +1809,9 @@ ${_topicsSection()}
         output,
         containsAllInOrder(<Matcher>[
           contains(
-            'The minimum Dart version is 2.16.0, but the '
-            'minimum Flutter version of 3.3.0 shipped with '
-            'Dart 2.18.0. Please use consistent lower SDK '
+            'The minimum Dart version is 3.4.0, but the '
+            'minimum Flutter version of 3.38.0 shipped with '
+            'Dart 3.10.0. Please use consistent lower SDK '
             'bounds',
           ),
         ]),
@@ -1835,10 +1820,7 @@ ${_topicsSection()}
 
     group('dependency check', () {
       test('passes for local dependencies', () async {
-        final RepositoryPackage package = createFakePackage(
-          'a_package',
-          packagesDir,
-        );
+        final RepositoryPackage package = createFakePackage('a_package', packagesDir);
         final RepositoryPackage dependencyPackage = createFakePackage(
           'local_dependency',
           packagesDir,
@@ -1857,9 +1839,7 @@ ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
 
-        final List<String> output = await runCapturingPrint(runner, <String>[
-          'validate',
-        ]);
+        final List<String> output = await runCapturingPrint(runner, <String>['validate']);
 
         expect(
           output,
@@ -1946,10 +1926,7 @@ ${_topicsSection()}
       });
 
       test('passes when a dependency is on the allow list', () async {
-        final RepositoryPackage package = createFakePackage(
-          'a_package',
-          packagesDir,
-        );
+        final RepositoryPackage package = createFakePackage('a_package', packagesDir);
 
         package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
@@ -1957,11 +1934,13 @@ ${_environmentSection()}
 ${_dependenciesSection(<String>['allowed: ^1.0.0'])}
 ${_topicsSection()}
 ''');
-        setAllowedDependencies(unpinned: <String>['allowed']);
+        setToolConfig(
+          packagesDir.parent,
+          unpinnedDependencies: <String>['allowed'],
+          minDartVersion: '1.0.0',
+        );
 
-        final List<String> output = await runCapturingPrint(runner, <String>[
-          'validate',
-        ]);
+        final List<String> output = await runCapturingPrint(runner, <String>['validate']);
 
         expect(
           output,
@@ -1972,71 +1951,60 @@ ${_topicsSection()}
         );
       });
 
-      test(
-        'passes when an exactly-pinned dependency is on the pinned allow list',
-        () async {
-          final RepositoryPackage package = createFakePackage(
-            'a_package',
-            packagesDir,
-          );
+      test('passes when an exactly-pinned dependency is on the pinned allow list', () async {
+        final RepositoryPackage package = createFakePackage('a_package', packagesDir);
 
-          package.pubspecFile.writeAsStringSync('''
+        package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
 ${_environmentSection()}
 ${_dependenciesSection(<String>['allow_pinned: 1.0.0'])}
 ${_topicsSection()}
 ''');
-          setAllowedDependencies(pinned: <String>['allow_pinned']);
+        setToolConfig(
+          packagesDir.parent,
+          pinnedDependencies: <String>['allow_pinned'],
+          minDartVersion: '1.0.0',
+        );
 
-          final List<String> output = await runCapturingPrint(runner, <String>[
-            'validate',
-          ]);
+        final List<String> output = await runCapturingPrint(runner, <String>['validate']);
 
-          expect(
-            output,
-            containsAllInOrder(<Matcher>[
-              contains('Running for a_package...'),
-              contains('No issues found!'),
-            ]),
-          );
-        },
-      );
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for a_package...'),
+            contains('No issues found!'),
+          ]),
+        );
+      });
 
-      test(
-        'passes when an explicit-range-pinned dependency is on the pinned allow list',
-        () async {
-          final RepositoryPackage package = createFakePackage(
-            'a_package',
-            packagesDir,
-          );
+      test('passes when an explicit-range-pinned dependency is on the pinned allow list', () async {
+        final RepositoryPackage package = createFakePackage('a_package', packagesDir);
 
-          package.pubspecFile.writeAsStringSync('''
+        package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
 ${_environmentSection()}
 ${_dependenciesSection(<String>['allow_pinned: ">=1.0.0 <=1.3.1"'])}
 ${_topicsSection()}
 ''');
-          setAllowedDependencies(pinned: <String>['allow_pinned']);
+        setToolConfig(
+          packagesDir.parent,
+          pinnedDependencies: <String>['allow_pinned'],
+          minDartVersion: '1.0.0',
+        );
 
-          final List<String> output = await runCapturingPrint(runner, <String>[
-            'validate',
-          ]);
+        final List<String> output = await runCapturingPrint(runner, <String>['validate']);
 
-          expect(
-            output,
-            containsAllInOrder(<Matcher>[
-              contains('Running for a_package...'),
-              contains('No issues found!'),
-            ]),
-          );
-        },
-      );
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for a_package...'),
+            contains('No issues found!'),
+          ]),
+        );
+      });
 
       test('fails when an allowed-when-pinned dependency is unpinned', () async {
-        final RepositoryPackage package = createFakePackage(
-          'a_package',
-          packagesDir,
-        );
+        final RepositoryPackage package = createFakePackage('a_package', packagesDir);
 
         package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
@@ -2044,7 +2012,11 @@ ${_environmentSection()}
 ${_dependenciesSection(<String>['allow_pinned: ^1.0.0'])}
 ${_topicsSection()}
 ''');
-        setAllowedDependencies(pinned: <String>['allow_pinned']);
+        setToolConfig(
+          packagesDir.parent,
+          pinnedDependencies: <String>['allow_pinned'],
+          minDartVersion: '1.0.0',
+        );
 
         Error? commandError;
         final List<String> output = await runCapturingPrint(
@@ -2087,8 +2059,7 @@ ${_topicsSection()}
               examples: <String>[],
             );
 
-            final version =
-                dependency == 'integration_test' || dependency == 'flutter_test'
+            final version = dependency == 'integration_test' || dependency == 'flutter_test'
                 ? '{ sdk: flutter }'
                 : '1.0.0';
             package.pubspecFile.writeAsStringSync('''
@@ -2140,9 +2111,7 @@ ${_devDependenciesSection()}
 ${_topicsSection()}
 ''');
 
-          final List<String> output = await runCapturingPrint(runner, <String>[
-            'validate',
-          ]);
+          final List<String> output = await runCapturingPrint(runner, <String>['validate']);
 
           expect(
             output,
@@ -2165,8 +2134,9 @@ ${_topicsSection()}
       mockPlatform = MockPlatform(isWindows: true);
       final RecordingProcessRunner processRunner;
       final GitDir gitDir;
-      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
-          configureBaseCommandMocks(platform: mockPlatform);
+      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) = configureBaseCommandMocks(
+        platform: mockPlatform,
+      );
       final command = ValidateCommand(
         packagesDir,
         processRunner: processRunner,
@@ -2175,10 +2145,7 @@ ${_topicsSection()}
         targetedValidators: {Validator.pubspec},
       );
 
-      runner = CommandRunner<void>(
-        'pubspec_check_command',
-        'Test for pubspec_check_command',
-      );
+      runner = CommandRunner<void>('pubspec_check_command', 'Test for pubspec_check_command');
       runner.addCommand(command);
     });
 
@@ -2196,9 +2163,7 @@ ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'validate',
-      ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['validate']);
 
       expect(
         output,

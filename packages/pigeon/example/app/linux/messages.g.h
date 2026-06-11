@@ -34,7 +34,7 @@ G_DECLARE_FINAL_TYPE(PigeonExamplePackageMessageData,
 /**
  * pigeon_example_package_message_data_new:
  * name: field in this object.
- * description: field in this object.
+ * message_description: field in this object.
  * code: field in this object.
  * data: field in this object.
  *
@@ -43,8 +43,8 @@ G_DECLARE_FINAL_TYPE(PigeonExamplePackageMessageData,
  * Returns: a new #PigeonExamplePackageMessageData
  */
 PigeonExamplePackageMessageData* pigeon_example_package_message_data_new(
-    const gchar* name, const gchar* description, PigeonExamplePackageCode code,
-    FlValue* data);
+    const gchar* name, const gchar* message_description,
+    PigeonExamplePackageCode code, FlValue* data);
 
 /**
  * pigeon_example_package_message_data_get_name
@@ -58,14 +58,14 @@ const gchar* pigeon_example_package_message_data_get_name(
     PigeonExamplePackageMessageData* object);
 
 /**
- * pigeon_example_package_message_data_get_description
+ * pigeon_example_package_message_data_get_message_description
  * @object: a #PigeonExamplePackageMessageData.
  *
- * Gets the value of the description field of @object.
+ * Gets the value of the messageDescription field of @object.
  *
  * Returns: the field value.
  */
-const gchar* pigeon_example_package_message_data_get_description(
+const gchar* pigeon_example_package_message_data_get_message_description(
     PigeonExamplePackageMessageData* object);
 
 /**
@@ -111,6 +111,17 @@ gboolean pigeon_example_package_message_data_equals(
  * Returns: the hash code.
  */
 guint pigeon_example_package_message_data_hash(
+    PigeonExamplePackageMessageData* object);
+
+/**
+ * pigeon_example_package_message_data_to_string:
+ * @object: a #PigeonExamplePackageMessageData.
+ *
+ * Returns a string representation of a #PigeonExamplePackageMessageData object.
+ *
+ * Returns: (transfer full): a new string, free with g_free().
+ */
+gchar* pigeon_example_package_message_data_to_string(
     PigeonExamplePackageMessageData* object);
 
 G_DECLARE_FINAL_TYPE(PigeonExamplePackageMessageCodec,

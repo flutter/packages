@@ -81,11 +81,7 @@ final ArgParser argParser = ArgParser()
         'The output directory  path '
         'use it with --input-dir to specific the output dirictory',
   )
-  ..addOption(
-    'input',
-    abbr: 'i',
-    help: 'The path to a file containing a single SVG',
-  )
+  ..addOption('input', abbr: 'i', help: 'The path to a file containing a single SVG')
   ..addOption(
     'concurrency',
     abbr: 'k',
@@ -115,9 +111,7 @@ final ArgParser argParser = ArgParser()
 void validateOptions(ArgResults results) {
   if (results.wasParsed('input-dir') &&
       (results.wasParsed('input') || results.wasParsed('output'))) {
-    print(
-      '--input-dir cannot be combined with --input and/or --output options.',
-    );
+    print('--input-dir cannot be combined with --input and/or --output options.');
     exit(1);
   }
   if (!results.wasParsed('input') && !results.wasParsed('input-dir')) {
@@ -135,9 +129,7 @@ SvgTheme _parseTheme(ArgResults results) {
   return SvgTheme(
     currentColor: currentColor,
     fontSize: double.tryParse(results['font-size'] as String) ?? 14,
-    xHeight: results.wasParsed('x-height')
-        ? double.tryParse(results['x-height'] as String)
-        : null,
+    xHeight: results.wasParsed('x-height') ? double.tryParse(results['x-height'] as String) : null,
   );
 }
 
@@ -159,8 +151,7 @@ Future<void> main(List<String> args) async {
       print('input-dir ${directory.path} does not exist.');
       exit(1);
     }
-    for (final File file
-        in directory.listSync(recursive: true).whereType<File>()) {
+    for (final File file in directory.listSync(recursive: true).whereType<File>()) {
       if (!file.path.endsWith('.svg')) {
         continue;
       }
@@ -181,8 +172,7 @@ Future<void> main(List<String> args) async {
     }
   } else {
     final inputFilePath = results['input'] as String;
-    final String outputFilePath =
-        results['output'] as String? ?? '$inputFilePath.vec';
+    final String outputFilePath = results['output'] as String? ?? '$inputFilePath.vec';
     pairs.add(Pair(inputFilePath, outputFilePath));
   }
 
@@ -191,8 +181,7 @@ Future<void> main(List<String> args) async {
   final overdrawOptimizerEnabled = results['optimize-overdraw'] == true;
   final tessellate = results['tessellate'] == true;
   final dumpDebug = results['dump-debug'] == true;
-  final useHalfPrecisionControlPoints =
-      results['use-half-precision-control-points'] == true;
+  final useHalfPrecisionControlPoints = results['use-half-precision-control-points'] == true;
   final int concurrency;
   if (results.wasParsed('concurrency')) {
     concurrency = int.parse(results['concurrency'] as String);

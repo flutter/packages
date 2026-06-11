@@ -40,14 +40,7 @@ void writeSvgPathDataToPath(String? svg, PathProxy path) {
 abstract class PathProxy {
   void moveTo(double x, double y);
   void lineTo(double x, double y);
-  void cubicTo(
-    double x1,
-    double y1,
-    double x2,
-    double y2,
-    double x3,
-    double y3,
-  );
+  void cubicTo(double x1, double y1, double x2, double y2, double x3, double y3);
   void close();
 }
 
@@ -68,13 +61,10 @@ class _PathOffset {
   _PathOffset translate(double translateX, double translateY) =>
       _PathOffset(dx + translateX, dy + translateY);
 
-  _PathOffset operator +(_PathOffset other) =>
-      _PathOffset(dx + other.dx, dy + other.dy);
-  _PathOffset operator -(_PathOffset other) =>
-      _PathOffset(dx - other.dx, dy - other.dy);
+  _PathOffset operator +(_PathOffset other) => _PathOffset(dx + other.dx, dy + other.dy);
+  _PathOffset operator -(_PathOffset other) => _PathOffset(dx - other.dx, dy - other.dy);
 
-  _PathOffset operator *(double operand) =>
-      _PathOffset(dx * operand, dy * operand);
+  _PathOffset operator *(double operand) => _PathOffset(dx * operand, dy * operand);
 
   @override
   String toString() => 'PathOffset{$dx,$dy}';
@@ -146,9 +136,7 @@ class SvgPathStringSource {
     }
   }
 
-  void _skipOptionalSvgSpacesOrDelimiter([
-    int delimiter = AsciiConstants.comma,
-  ]) {
+  void _skipOptionalSvgSpacesOrDelimiter([int delimiter = AsciiConstants.comma]) {
     final int c = _skipOptionalSvgSpaces();
     if (c == delimiter) {
       _idx++;
@@ -157,23 +145,18 @@ class SvgPathStringSource {
   }
 
   static bool _isNumberStart(int lookahead) {
-    return (lookahead >= AsciiConstants.number0 &&
-            lookahead <= AsciiConstants.number9) ||
+    return (lookahead >= AsciiConstants.number0 && lookahead <= AsciiConstants.number9) ||
         lookahead == AsciiConstants.plus ||
         lookahead == AsciiConstants.minus ||
         lookahead == AsciiConstants.period;
   }
 
-  SvgPathSegType _maybeImplicitCommand(
-    int lookahead,
-    SvgPathSegType nextCommand,
-  ) {
+  SvgPathSegType _maybeImplicitCommand(int lookahead, SvgPathSegType nextCommand) {
     // Check if the current lookahead may start a number - in which case it
     // could be the start of an implicit command. The 'close' command does not
     // have any parameters though and hence can't have an implicit
     // 'continuation'.
-    if (!_isNumberStart(lookahead) ||
-        _previousCommand == SvgPathSegType.close) {
+    if (!_isNumberStart(lookahead) || _previousCommand == SvgPathSegType.close) {
       return nextCommand;
     }
     // Implicit continuations of moveto command translate to linetos.
@@ -186,8 +169,7 @@ class SvgPathStringSource {
     return _previousCommand;
   }
 
-  bool _isValidRange(double x) =>
-      -double.maxFinite <= x && x <= double.maxFinite;
+  bool _isValidRange(double x) => -double.maxFinite <= x && x <= double.maxFinite;
 
   bool _isValidExponent(double x) => -37 <= x && x <= 38;
 
@@ -218,8 +200,7 @@ class SvgPathStringSource {
       c = _readCodeUnit();
     }
 
-    if ((c < AsciiConstants.number0 || c > AsciiConstants.number9) &&
-        c != AsciiConstants.period) {
+    if ((c < AsciiConstants.number0 || c > AsciiConstants.number9) && c != AsciiConstants.period) {
       throw StateError('First character of a number must be one of [0-9+-.].');
     }
 
@@ -345,8 +326,7 @@ class SvgPathStringSource {
     SvgPathSegType command = AsciiConstants.mapLetterToSegmentType(lookahead);
     if (_previousCommand == SvgPathSegType.unknown) {
       // First command has to be a moveto.
-      if (command != SvgPathSegType.moveToRel &&
-          command != SvgPathSegType.moveToAbs) {
+      if (command != SvgPathSegType.moveToRel && command != SvgPathSegType.moveToAbs) {
         throw StateError('Expected to find moveTo command');
       }
       // Consume command letter.
@@ -385,16 +365,10 @@ class SvgPathStringSource {
         segment.targetPoint = _PathOffset(_parseNumber(), _parseNumber());
       case SvgPathSegType.lineToHorizontalRel:
       case SvgPathSegType.lineToHorizontalAbs:
-        segment.targetPoint = _PathOffset(
-          _parseNumber(),
-          segment.targetPoint.dy,
-        );
+        segment.targetPoint = _PathOffset(_parseNumber(), segment.targetPoint.dy);
       case SvgPathSegType.lineToVerticalRel:
       case SvgPathSegType.lineToVerticalAbs:
-        segment.targetPoint = _PathOffset(
-          segment.targetPoint.dx,
-          _parseNumber(),
-        );
+        segment.targetPoint = _PathOffset(segment.targetPoint.dx, _parseNumber());
       case SvgPathSegType.close:
         _skipOptionalSvgSpaces();
       case SvgPathSegType.quadToRel:
@@ -418,10 +392,7 @@ class SvgPathStringSource {
 
 @Deprecated('Utility function that should not be public.')
 // TODO(kevmoo): Remove this in the next release https://github.com/flutter/flutter/issues/157940
-_PathOffset reflectedPoint(
-  _PathOffset reflectedIn,
-  _PathOffset pointToReflect,
-) {
+_PathOffset reflectedPoint(_PathOffset reflectedIn, _PathOffset pointToReflect) {
   return _PathOffset(
     2 * reflectedIn.dx - pointToReflect.dx,
     2 * reflectedIn.dy - pointToReflect.dy,
@@ -434,10 +405,7 @@ const double _kOneOverThree = 1.0 / 3.0;
 @Deprecated('Utility function that should not be public.')
 // TODO(kevmoo): Remove this in the next release https://github.com/flutter/flutter/issues/157940
 _PathOffset blendPoints(_PathOffset p1, _PathOffset p2) {
-  return _PathOffset(
-    (p1.dx + 2 * p2.dx) * _kOneOverThree,
-    (p1.dy + 2 * p2.dy) * _kOneOverThree,
-  );
+  return _PathOffset((p1.dx + 2 * p2.dx) * _kOneOverThree, (p1.dy + 2 * p2.dy) * _kOneOverThree);
 }
 
 bool isCubicCommand(SvgPathSegType command) {
@@ -457,10 +425,7 @@ bool isQuadraticCommand(SvgPathSegType command) {
 // TODO(dnfield): This can probably be cleaned up a bit.  Some of this was designed in such a way to pack data/optimize for C++
 // There are probably better/clearer ways to do it for Dart.
 class PathSegmentData {
-  PathSegmentData()
-    : command = SvgPathSegType.unknown,
-      arcSweep = false,
-      arcLarge = false;
+  PathSegmentData() : command = SvgPathSegType.unknown, arcSweep = false, arcLarge = false;
 
   @Deprecated('Utility member that should not be public.')
   // TODO(kevmoo): Remove this in the next release https://github.com/flutter/flutter/issues/157940
@@ -539,15 +504,9 @@ class SvgPathNormalizer {
       case SvgPathSegType.arcToRel:
         normSeg.targetPoint += _currentPoint;
       case SvgPathSegType.lineToHorizontalAbs:
-        normSeg.targetPoint = _PathOffset(
-          normSeg.targetPoint.dx,
-          _currentPoint.dy,
-        );
+        normSeg.targetPoint = _PathOffset(normSeg.targetPoint.dx, _currentPoint.dy);
       case SvgPathSegType.lineToVerticalAbs:
-        normSeg.targetPoint = _PathOffset(
-          _currentPoint.dx,
-          normSeg.targetPoint.dy,
-        );
+        normSeg.targetPoint = _PathOffset(_currentPoint.dx, normSeg.targetPoint.dy);
       case SvgPathSegType.close:
         // Reset m_currentPoint for the next path.
         normSeg.targetPoint = _subPathPoint;
@@ -641,8 +600,7 @@ class SvgPathNormalizer {
 
     _currentPoint = normSeg.targetPoint;
 
-    if (!isCubicCommand(segment.command) &&
-        !isQuadraticCommand(segment.command)) {
+    if (!isCubicCommand(segment.command) && !isQuadraticCommand(segment.command)) {
       _controlPoint = _currentPoint;
     }
 
@@ -653,11 +611,7 @@ class SvgPathNormalizer {
   // Partly adapted from Niko's code in kdelibs/kdecore/svgicons.
   // See also SVG implementation notes:
   // http://www.w3.org/TR/SVG/implnote.html#ArcConversionEndpointToCenter
-  bool _decomposeArcToCubic(
-    _PathOffset currentPoint,
-    PathSegmentData arcSegment,
-    PathProxy path,
-  ) {
+  bool _decomposeArcToCubic(_PathOffset currentPoint, PathSegmentData arcSegment, PathProxy path) {
     // If rx = 0 or ry = 0 then this arc is treated as a straight line segment (a
     // "lineto") joining the endpoints.
     // http://www.w3.org/TR/SVG/implnote.html#ArcOutOfRangeParameters
@@ -675,8 +629,7 @@ class SvgPathNormalizer {
 
     final double angle = radians(arcSegment.arcAngle);
 
-    final _PathOffset midPointDistance =
-        (currentPoint - arcSegment.targetPoint) * 0.5;
+    final _PathOffset midPointDistance = (currentPoint - arcSegment.targetPoint) * 0.5;
 
     final pointTransform = Matrix4.identity();
     pointTransform.rotateZ(-angle);
@@ -719,10 +672,7 @@ class SvgPathNormalizer {
     }
 
     delta = delta * scaleFactor;
-    final _PathOffset centerPoint = ((point1 + point2) * 0.5).translate(
-      -delta.dy,
-      delta.dx,
-    );
+    final _PathOffset centerPoint = ((point1 + point2) * 0.5).translate(-delta.dy, delta.dx);
 
     final double theta1 = (point1 - centerPoint).direction;
     final double theta2 = (point2 - centerPoint).direction;
@@ -788,12 +738,8 @@ class SvgPathNormalizer {
   _PathOffset _mapPoint(Matrix4 transform, _PathOffset point) {
     // a, b, 0.0, 0.0, c, d, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, e, f, 0.0, 1.0
     return _PathOffset(
-      transform.storage[0] * point.dx +
-          transform.storage[4] * point.dy +
-          transform.storage[12],
-      transform.storage[1] * point.dx +
-          transform.storage[5] * point.dy +
-          transform.storage[13],
+      transform.storage[0] * point.dx + transform.storage[4] * point.dy + transform.storage[12],
+      transform.storage[1] * point.dx + transform.storage[5] * point.dy + transform.storage[13],
     );
   }
 }

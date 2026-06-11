@@ -5,20 +5,23 @@
 import 'package:file/file.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
-import 'package:yaml/yaml.dart';
+import 'package:pub_semver/pub_semver.dart';
 
 import 'common/core.dart';
-import 'common/file_utils.dart';
 import 'common/git_version_finder.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/repository_package.dart';
+import 'common/tool_config.dart';
 import 'validators/dependabot_validator.dart';
 import 'validators/gradle_validator.dart';
 import 'validators/pubspec_validator.dart';
 import 'validators/readme_validator.dart';
 import 'validators/repo_info_validator.dart';
 import 'validators/version_and_changelog_validator.dart';
+
+const int _missingMinSdkVersionExitCode = 3;
+const int _unknownVersionMappingExitCode = 4;
 
 /// The set of possible validators.
 ///
@@ -31,15 +34,6 @@ import 'validators/version_and_changelog_validator.dart';
 @visibleForTesting
 // ignore: public_member_api_docs
 enum Validator { dependabot, gradle, pubspec, readme, repoInfo, version }
-
-// Config file names.
-const String _versionConfigFileName = 'min_version.yaml';
-const String _allowedPinnedDependenciesFileName =
-    'allowed_pinned_dependencies.yaml';
-const String _allowedUnpinnedDependenciesFileName =
-    'allowed_unpinned_dependencies.yaml';
-
-const int _exitCodeVersionConfigIssue = 3;
 
 /// A command to validate that packages follow various team conventions,
 /// guidelines, and best practices.
@@ -91,8 +85,7 @@ class ValidateCommand extends PackageLoopingCommand {
 
   static const String _prLabelsArg = 'pr-labels';
   static const String _checkForMissingChanges = 'check-for-missing-changes';
-  static const String _ignorePlatformInterfaceBreaks =
-      'ignore-platform-interface-breaks';
+  static const String _ignorePlatformInterfaceBreaks = 'ignore-platform-interface-breaks';
 
   /// The validators to run.
   ///
@@ -106,8 +99,7 @@ class ValidateCommand extends PackageLoopingCommand {
   late final Set<String> _prLabels = _getPRLabels();
 
   /// Data from the root README.md table of packages.
-  final Map<String, List<String>> _readmeTableEntries =
-      <String, List<String>>{};
+  final Map<String, List<String>> _readmeTableEntries = <String, List<String>>{};
 
   /// Packages with entries in labeler.yml.
   final Set<String> _autoLabeledPackages = <String>{};
@@ -123,7 +115,10 @@ class ValidateCommand extends PackageLoopingCommand {
   );
 
   /// The minimum version of Flutter that is allowed for any package.
-  late final String _minMinFlutterVersion;
+  Version? _minMinFlutterVersion;
+
+  /// The minimum version of Dart that is allowed for any package.
+  Version? _minMinDartVersion;
 
   @override
   final String name = 'validate';
@@ -132,8 +127,7 @@ class ValidateCommand extends PackageLoopingCommand {
   final String description = 'Checks that packages follow team guidelines.';
 
   @override
-  final PackageLoopingType packageLoopingType =
-      PackageLoopingType.includeAllSubpackages;
+  final PackageLoopingType packageLoopingType = PackageLoopingType.includeAllSubpackages;
 
   @override
   final bool hasLongOutput = false;
@@ -153,13 +147,22 @@ class ValidateCommand extends PackageLoopingCommand {
         ),
       );
       // Extract all of the labeler.yml package entries.
-      _autoLabeledPackages.addAll(
-        RepoInfoValidator.loadAutoLabeledPackages(repoRoot: _repoRoot),
-      );
+      _autoLabeledPackages.addAll(RepoInfoValidator.loadAutoLabeledPackages(repoRoot: _repoRoot));
     }
     if (_shouldRun(Validator.pubspec)) {
       await _loadAllowedDependencies();
-      _minMinFlutterVersion = await _loadMinMinFlutterVersion();
+      final (flutter: Version? minFlutter, dart: Version? minDart) = _loadMinMinSdkVersions();
+      _minMinFlutterVersion = minFlutter;
+      _minMinDartVersion =
+          minDart ?? (minFlutter == null ? null : getDartSdkForFlutterSdk(minFlutter));
+      if (_minMinDartVersion == null) {
+        printError(
+          'Dart SDK version for Flutter SDK version $_minMinFlutterVersion is unknown. '
+          'Please update the map for getDartSdkForFlutterSdk with the '
+          'corresponding Dart version.',
+        );
+        throw ToolExit(_unknownVersionMappingExitCode);
+      }
     }
     if (_shouldRun(Validator.dependabot)) {
       _dependabotCoverage = DependabotValidator.loadConfig(repoRoot: _repoRoot);
@@ -172,20 +175,15 @@ class ValidateCommand extends PackageLoopingCommand {
       if (_shouldRun(Validator.repoInfo)) ...await _validateRepoInfo(package),
       if (_shouldRun(Validator.pubspec)) ...await _validatePubspec(package),
       if (_shouldRun(Validator.readme)) ...await _validateReadme(package),
-      if (_shouldRun(Validator.dependabot))
-        ...await _validateDependabot(package),
+      if (_shouldRun(Validator.dependabot)) ...await _validateDependabot(package),
       if (_shouldRun(Validator.gradle)) ...await _validateGradle(package),
-      if (_shouldRun(Validator.version))
-        ...await _validateVersionAndChangelog(package),
+      if (_shouldRun(Validator.version)) ...await _validateVersionAndChangelog(package),
     ];
 
-    return errors.isEmpty
-        ? PackageResult.success()
-        : PackageResult.fail(errors);
+    return errors.isEmpty ? PackageResult.success() : PackageResult.fail(errors);
   }
 
-  bool _shouldRun(Validator validator) =>
-      targetedValidators?.contains(validator) ?? true;
+  bool _shouldRun(Validator validator) => targetedValidators?.contains(validator) ?? true;
 
   /// Runs repo-level checks.
   Future<List<String>> _validateRepoInfo(RepositoryPackage package) async {
@@ -197,6 +195,7 @@ class ValidateCommand extends PackageLoopingCommand {
       readmeTableEntries: _readmeTableEntries,
       autoLabeledPackages: _autoLabeledPackages,
       gitDir: await gitDir,
+      repoRoot: _repoRoot,
       indentation: indentation,
     );
     return validator.validatePackage(package);
@@ -227,8 +226,9 @@ class ValidateCommand extends PackageLoopingCommand {
       indentation: indentation,
       warningLogger: printWarning,
       allowedPackages: _allowedPackages,
-      repoRoot: packagesDir.parent,
+      repoRoot: rootDir,
       minMinFlutterVersion: _minMinFlutterVersion,
+      minMinDartVersion: _minMinDartVersion,
     );
     return validator.validatePubspec(package);
   }
@@ -255,11 +255,7 @@ class ValidateCommand extends PackageLoopingCommand {
     );
     for (final RepositoryPackage packageToCheck in package.getExamples()) {
       errors.addAll(
-        validator.validateReadme(
-          packageToCheck.readmeFile,
-          mainPackage: package,
-          isExample: true,
-        ),
+        validator.validateReadme(packageToCheck.readmeFile, mainPackage: package, isExample: true),
       );
     }
 
@@ -269,27 +265,19 @@ class ValidateCommand extends PackageLoopingCommand {
     final File exampleDirReadme = exampleDir.childFile('README.md');
     if (exampleDir.existsSync() && !isPackage(exampleDir)) {
       errors.addAll(
-        validator.validateReadme(
-          exampleDirReadme,
-          mainPackage: package,
-          isExample: true,
-        ),
+        validator.validateReadme(exampleDirReadme, mainPackage: package, isExample: true),
       );
     }
 
     return errors;
   }
 
-  Future<List<String>> _validateVersionAndChangelog(
-    RepositoryPackage package,
-  ) async {
+  Future<List<String>> _validateVersionAndChangelog(RepositoryPackage package) async {
     if (!package.isTopLevel) {
       return [];
     }
 
-    final Directory repoRoot = packagesDir.fileSystem.directory(
-      (await gitDir).path,
-    );
+    final Directory repoRoot = packagesDir.fileSystem.directory((await gitDir).path);
 
     final validator = VersionAndChangelogValidator(
       path: path,
@@ -312,9 +300,7 @@ class ValidateCommand extends PackageLoopingCommand {
     for (final File pubspecFile
         in (await _repoRoot.list(recursive: true, followLinks: false).toList())
             .whereType<File>()
-            .where(
-              (File entity) => p.basename(entity.path) == 'pubspec.yaml',
-            )) {
+            .where((File entity) => p.basename(entity.path) == 'pubspec.yaml')) {
       final Pubspec? pubspec = _tryParsePubspec(pubspecFile.readAsStringSync());
       if (pubspec != null && pubspec.publishTo != 'none') {
         yield pubspec.name;
@@ -323,44 +309,30 @@ class ValidateCommand extends PackageLoopingCommand {
   }
 
   Future<void> _loadAllowedDependencies() async {
-    final Directory toolConfigDir = toolConfigDirectory(_repoRoot);
-
     // Find all local, published packages.
     _allowedPackages.local.addAll(await _findAllPublishedPackages().toList());
-    // Load explicitly allowed packages.
-    _allowedPackages.unpinned.addAll(
-      loadYamlList(
-            toolConfigDir.childFile(_allowedUnpinnedDependenciesFileName),
-          ) ??
-          <String>[],
+
+    final ({List<String> pinned, List<String> unpinned}) allowedDeps = getAllowedDependencies(
+      _repoRoot,
     );
-    _allowedPackages.pinned.addAll(
-      loadYamlList(
-            toolConfigDir.childFile(_allowedPinnedDependenciesFileName),
-          ) ??
-          <String>[],
-    );
+    _allowedPackages.unpinned.addAll(allowedDeps.unpinned);
+    _allowedPackages.pinned.addAll(allowedDeps.pinned);
   }
 
-  Future<String> _loadMinMinFlutterVersion() async {
-    final File versionConfig = toolConfigDirectory(
-      _repoRoot,
-    ).childFile(_versionConfigFileName);
-    if (!versionConfig.existsSync()) {
+  ({Version? flutter, Version? dart}) _loadMinMinSdkVersions() {
+    final String? minFlutter = getMinFlutterVersion(_repoRoot);
+    final String? minDart = getMinDartVersion(_repoRoot);
+    if (minFlutter == null && minDart == null) {
       printError(
-        'Minimum version configuration file not found at $_versionConfigFileName',
+        'Either min_flutter or min_dart must be provided '
+        'in the repo tool configuration.',
       );
-      return '';
+      throw ToolExit(_missingMinSdkVersionExitCode);
     }
-    const minFlutterKey = 'min_flutter';
-    final config = loadYaml(versionConfig.readAsStringSync()) as YamlMap?;
-    if (config == null || config[minFlutterKey] == null) {
-      printError(
-        '$_versionConfigFileName must be a map containing a "$minFlutterKey" entry',
-      );
-      throw ToolExit(_exitCodeVersionConfigIssue);
-    }
-    return (config[minFlutterKey] as String).trim();
+    return (
+      flutter: minFlutter == null ? null : Version.parse(minFlutter),
+      dart: minDart == null ? null : Version.parse(minDart),
+    );
   }
 
   Pubspec? _tryParsePubspec(String pubspecContents) {

@@ -20,17 +20,10 @@ void main() {
   });
   group('shared_preferences_web', () {
     testWidgets('registers itself', (WidgetTester tester) async {
-      SharedPreferencesStorePlatform.instance =
-          MethodChannelSharedPreferencesStore();
-      expect(
-        SharedPreferencesStorePlatform.instance,
-        isNot(isA<SharedPreferencesPlugin>()),
-      );
+      SharedPreferencesStorePlatform.instance = MethodChannelSharedPreferencesStore();
+      expect(SharedPreferencesStorePlatform.instance, isNot(isA<SharedPreferencesPlugin>()));
       SharedPreferencesPlugin.registerWith(null);
-      expect(
-        SharedPreferencesStorePlatform.instance,
-        isA<SharedPreferencesPlugin>(),
-      );
+      expect(SharedPreferencesStorePlatform.instance, isA<SharedPreferencesPlugin>());
     });
 
     const flutterTestValues = <String, Object>{
@@ -70,9 +63,7 @@ void main() {
     });
 
     tearDown(() async {
-      await preferences.clearWithParameters(
-        ClearParameters(filter: PreferencesFilter(prefix: '')),
-      );
+      await preferences.clearWithParameters(ClearParameters(filter: PreferencesFilter(prefix: '')));
     });
 
     testWidgets('reading', (WidgetTester _) async {
@@ -85,56 +76,20 @@ void main() {
       await preferences.setValue('Bool', 'Bool', allTestValues['Bool']!);
       await preferences.setValue('Int', 'Int', allTestValues['Int']!);
       await preferences.setValue('Double', 'Double', allTestValues['Double']!);
-      await preferences.setValue(
-        'StringList',
-        'StringList',
-        allTestValues['StringList']!,
-      );
-      await preferences.setValue(
-        'String',
-        'prefix.String',
-        allTestValues['prefix.String']!,
-      );
-      await preferences.setValue(
-        'Bool',
-        'prefix.Bool',
-        allTestValues['prefix.Bool']!,
-      );
-      await preferences.setValue(
-        'Int',
-        'prefix.Int',
-        allTestValues['prefix.Int']!,
-      );
-      await preferences.setValue(
-        'Double',
-        'prefix.Double',
-        allTestValues['prefix.Double']!,
-      );
+      await preferences.setValue('StringList', 'StringList', allTestValues['StringList']!);
+      await preferences.setValue('String', 'prefix.String', allTestValues['prefix.String']!);
+      await preferences.setValue('Bool', 'prefix.Bool', allTestValues['prefix.Bool']!);
+      await preferences.setValue('Int', 'prefix.Int', allTestValues['prefix.Int']!);
+      await preferences.setValue('Double', 'prefix.Double', allTestValues['prefix.Double']!);
       await preferences.setValue(
         'StringList',
         'prefix.StringList',
         allTestValues['prefix.StringList']!,
       );
-      await preferences.setValue(
-        'String',
-        'flutter.String',
-        allTestValues['flutter.String']!,
-      );
-      await preferences.setValue(
-        'Bool',
-        'flutter.Bool',
-        allTestValues['flutter.Bool']!,
-      );
-      await preferences.setValue(
-        'Int',
-        'flutter.Int',
-        allTestValues['flutter.Int']!,
-      );
-      await preferences.setValue(
-        'Double',
-        'flutter.Double',
-        allTestValues['flutter.Double']!,
-      );
+      await preferences.setValue('String', 'flutter.String', allTestValues['flutter.String']!);
+      await preferences.setValue('Bool', 'flutter.Bool', allTestValues['flutter.Bool']!);
+      await preferences.setValue('Int', 'flutter.Int', allTestValues['flutter.Int']!);
+      await preferences.setValue('Double', 'flutter.Double', allTestValues['flutter.Double']!);
       await preferences.setValue(
         'StringList',
         'flutter.StringList',
@@ -200,10 +155,7 @@ void main() {
         expect(values['flutter.Bool'], allTestValues['flutter.Bool']);
         expect(values['flutter.Int'], allTestValues['flutter.Int']);
         expect(values['flutter.Double'], allTestValues['flutter.Double']);
-        expect(
-          values['flutter.StringList'],
-          allTestValues['flutter.StringList'],
-        );
+        expect(values['flutter.StringList'], allTestValues['flutter.StringList']);
       });
 
       testWidgets('clearWithPrefix', (WidgetTester _) async {
@@ -223,10 +175,7 @@ void main() {
         expect(values['flutter.Bool'], allTestValues['flutter.Bool']);
         expect(values['flutter.Int'], allTestValues['flutter.Int']);
         expect(values['flutter.Double'], allTestValues['flutter.Double']);
-        expect(
-          values['flutter.StringList'],
-          allTestValues['flutter.StringList'],
-        );
+        expect(values['flutter.StringList'], allTestValues['flutter.StringList']);
       });
 
       testWidgets('clearWithNoPrefix', (WidgetTester _) async {
@@ -256,18 +205,16 @@ void main() {
       testWidgets('remove', (WidgetTester _) async {
         const key = 'flutter.String';
         await preferences.remove(key);
-        final Map<String, Object> values = await preferences
-            .getAllWithParameters(
-              GetAllParameters(filter: PreferencesFilter(prefix: '')),
-            );
+        final Map<String, Object> values = await preferences.getAllWithParameters(
+          GetAllParameters(filter: PreferencesFilter(prefix: '')),
+        );
         expect(values[key], isNull);
       });
 
       testWidgets('get all with prefix', (WidgetTester _) async {
-        final Map<String, Object> values = await preferences
-            .getAllWithParameters(
-              GetAllParameters(filter: PreferencesFilter(prefix: 'prefix.')),
-            );
+        final Map<String, Object> values = await preferences.getAllWithParameters(
+          GetAllParameters(filter: PreferencesFilter(prefix: 'prefix.')),
+        );
         expect(values['prefix.String'], allTestValues['prefix.String']);
         expect(values['prefix.Bool'], allTestValues['prefix.Bool']);
         expect(values['prefix.Int'], allTestValues['prefix.Int']);
@@ -276,15 +223,11 @@ void main() {
       });
 
       testWidgets('get all with allow list', (WidgetTester _) async {
-        final Map<String, Object> values = await preferences
-            .getAllWithParameters(
-              GetAllParameters(
-                filter: PreferencesFilter(
-                  prefix: 'prefix.',
-                  allowList: <String>{'prefix.String'},
-                ),
-              ),
-            );
+        final Map<String, Object> values = await preferences.getAllWithParameters(
+          GetAllParameters(
+            filter: PreferencesFilter(prefix: 'prefix.', allowList: <String>{'prefix.String'}),
+          ),
+        );
         expect(values['prefix.String'], allTestValues['prefix.String']);
         expect(values['prefix.Bool'], null);
         expect(values['prefix.Int'], null);
@@ -293,10 +236,9 @@ void main() {
       });
 
       testWidgets('getAllWithNoPrefix', (WidgetTester _) async {
-        final Map<String, Object> values = await preferences
-            .getAllWithParameters(
-              GetAllParameters(filter: PreferencesFilter(prefix: '')),
-            );
+        final Map<String, Object> values = await preferences.getAllWithParameters(
+          GetAllParameters(filter: PreferencesFilter(prefix: '')),
+        );
         expect(values['String'], allTestValues['String']);
         expect(values['Bool'], allTestValues['Bool']);
         expect(values['Int'], allTestValues['Int']);
@@ -306,10 +248,7 @@ void main() {
         expect(values['flutter.Bool'], allTestValues['flutter.Bool']);
         expect(values['flutter.Int'], allTestValues['flutter.Int']);
         expect(values['flutter.Double'], allTestValues['flutter.Double']);
-        expect(
-          values['flutter.StringList'],
-          allTestValues['flutter.StringList'],
-        );
+        expect(values['flutter.StringList'], allTestValues['flutter.StringList']);
       });
 
       testWidgets('clearWithParameters', (WidgetTester _) async {
@@ -331,22 +270,14 @@ void main() {
         expect(values['flutter.Bool'], allTestValues['flutter.Bool']);
         expect(values['flutter.Int'], allTestValues['flutter.Int']);
         expect(values['flutter.Double'], allTestValues['flutter.Double']);
-        expect(
-          values['flutter.StringList'],
-          allTestValues['flutter.StringList'],
-        );
+        expect(values['flutter.StringList'], allTestValues['flutter.StringList']);
       });
 
-      testWidgets('clearWithParameters with allow list', (
-        WidgetTester _,
-      ) async {
+      testWidgets('clearWithParameters with allow list', (WidgetTester _) async {
         await addData();
         await preferences.clearWithParameters(
           ClearParameters(
-            filter: PreferencesFilter(
-              prefix: 'prefix.',
-              allowList: <String>{'prefix.StringList'},
-            ),
+            filter: PreferencesFilter(prefix: 'prefix.', allowList: <String>{'prefix.StringList'}),
           ),
         );
         Map<String, Object> values = await preferences.getAllWithParameters(
@@ -364,20 +295,16 @@ void main() {
         expect(values['flutter.Bool'], allTestValues['flutter.Bool']);
         expect(values['flutter.Int'], allTestValues['flutter.Int']);
         expect(values['flutter.Double'], allTestValues['flutter.Double']);
-        expect(
-          values['flutter.StringList'],
-          allTestValues['flutter.StringList'],
-        );
+        expect(values['flutter.StringList'], allTestValues['flutter.StringList']);
       });
 
       testWidgets('clearWithNoPrefix', (WidgetTester _) async {
         await preferences.clearWithParameters(
           ClearParameters(filter: PreferencesFilter(prefix: '')),
         );
-        final Map<String, Object> values = await preferences
-            .getAllWithParameters(
-              GetAllParameters(filter: PreferencesFilter(prefix: '')),
-            );
+        final Map<String, Object> values = await preferences.getAllWithParameters(
+          GetAllParameters(filter: PreferencesFilter(prefix: '')),
+        );
         expect(values['String'], null);
         expect(values['Bool'], null);
         expect(values['Int'], null);
@@ -440,8 +367,7 @@ void main() {
     const testList = <String>['foo', 'bar'];
 
     Future<SharedPreferencesAsyncPlatform> getPreferences() async {
-      final SharedPreferencesAsyncPlatform preferences =
-          SharedPreferencesAsyncPlatform.instance!;
+      final SharedPreferencesAsyncPlatform preferences = SharedPreferencesAsyncPlatform.instance!;
       await preferences.clear(
         const ClearPreferencesParameters(filter: PreferencesFilters()),
         emptyOptions,
@@ -488,17 +414,12 @@ void main() {
       final SharedPreferencesAsyncPlatform preferences = await getPreferences();
 
       await preferences.setStringList(listKey, testList, emptyOptions);
-      final List<String>? list = await preferences.getStringList(
-        listKey,
-        emptyOptions,
-      );
+      final List<String>? list = await preferences.getStringList(listKey, emptyOptions);
       list?.add('value');
       expect(list?.length, testList.length + 1);
     });
 
-    testWidgets('returns null when reading invalid JSON value', (
-      WidgetTester _,
-    ) async {
+    testWidgets('returns null when reading invalid JSON value', (WidgetTester _) async {
       const value = 'value';
       const invalidJsonDataKey = 'invalidJsonData';
       const validJsonDataKey = 'validJsonData';
@@ -507,14 +428,8 @@ void main() {
       html.window.localStorage.setItem(invalidJsonDataKey, value);
       html.window.localStorage.setItem(validJsonDataKey, '"$value"');
 
-      expect(
-        await preferences.getString(invalidJsonDataKey, emptyOptions),
-        isNull,
-      );
-      expect(
-        await preferences.getString(validJsonDataKey, emptyOptions),
-        equals(value),
-      );
+      expect(await preferences.getString(invalidJsonDataKey, emptyOptions), isNull);
+      expect(await preferences.getString(validJsonDataKey, emptyOptions), equals(value));
     });
 
     testWidgets('getPreferences', (WidgetTester _) async {

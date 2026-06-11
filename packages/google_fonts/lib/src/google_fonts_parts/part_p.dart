@@ -9034,9 +9034,7 @@ class PartP {
       displayMedium: playwriteDeGrundGuides(textStyle: textTheme.displayMedium),
       displaySmall: playwriteDeGrundGuides(textStyle: textTheme.displaySmall),
       headlineLarge: playwriteDeGrundGuides(textStyle: textTheme.headlineLarge),
-      headlineMedium: playwriteDeGrundGuides(
-        textStyle: textTheme.headlineMedium,
-      ),
+      headlineMedium: playwriteDeGrundGuides(textStyle: textTheme.headlineMedium),
       headlineSmall: playwriteDeGrundGuides(textStyle: textTheme.headlineSmall),
       titleLarge: playwriteDeGrundGuides(textStyle: textTheme.titleLarge),
       titleMedium: playwriteDeGrundGuides(textStyle: textTheme.titleMedium),
@@ -9813,19 +9811,11 @@ class PartP {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
       displayLarge: playwriteDkLoopetGuides(textStyle: textTheme.displayLarge),
-      displayMedium: playwriteDkLoopetGuides(
-        textStyle: textTheme.displayMedium,
-      ),
+      displayMedium: playwriteDkLoopetGuides(textStyle: textTheme.displayMedium),
       displaySmall: playwriteDkLoopetGuides(textStyle: textTheme.displaySmall),
-      headlineLarge: playwriteDkLoopetGuides(
-        textStyle: textTheme.headlineLarge,
-      ),
-      headlineMedium: playwriteDkLoopetGuides(
-        textStyle: textTheme.headlineMedium,
-      ),
-      headlineSmall: playwriteDkLoopetGuides(
-        textStyle: textTheme.headlineSmall,
-      ),
+      headlineLarge: playwriteDkLoopetGuides(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteDkLoopetGuides(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteDkLoopetGuides(textStyle: textTheme.headlineSmall),
       titleLarge: playwriteDkLoopetGuides(textStyle: textTheme.titleLarge),
       titleMedium: playwriteDkLoopetGuides(textStyle: textTheme.titleMedium),
       titleSmall: playwriteDkLoopetGuides(textStyle: textTheme.titleSmall),
@@ -10016,19 +10006,11 @@ class PartP {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
       displayLarge: playwriteDkUloopetGuides(textStyle: textTheme.displayLarge),
-      displayMedium: playwriteDkUloopetGuides(
-        textStyle: textTheme.displayMedium,
-      ),
+      displayMedium: playwriteDkUloopetGuides(textStyle: textTheme.displayMedium),
       displaySmall: playwriteDkUloopetGuides(textStyle: textTheme.displaySmall),
-      headlineLarge: playwriteDkUloopetGuides(
-        textStyle: textTheme.headlineLarge,
-      ),
-      headlineMedium: playwriteDkUloopetGuides(
-        textStyle: textTheme.headlineMedium,
-      ),
-      headlineSmall: playwriteDkUloopetGuides(
-        textStyle: textTheme.headlineSmall,
-      ),
+      headlineLarge: playwriteDkUloopetGuides(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteDkUloopetGuides(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteDkUloopetGuides(textStyle: textTheme.headlineSmall),
       titleLarge: playwriteDkUloopetGuides(textStyle: textTheme.titleLarge),
       titleMedium: playwriteDkUloopetGuides(textStyle: textTheme.titleMedium),
       titleSmall: playwriteDkUloopetGuides(textStyle: textTheme.titleSmall),
@@ -10330,9 +10312,7 @@ class PartP {
       displayMedium: playwriteEsDecoGuides(textStyle: textTheme.displayMedium),
       displaySmall: playwriteEsDecoGuides(textStyle: textTheme.displaySmall),
       headlineLarge: playwriteEsDecoGuides(textStyle: textTheme.headlineLarge),
-      headlineMedium: playwriteEsDecoGuides(
-        textStyle: textTheme.headlineMedium,
-      ),
+      headlineMedium: playwriteEsDecoGuides(textStyle: textTheme.headlineMedium),
       headlineSmall: playwriteEsDecoGuides(textStyle: textTheme.headlineSmall),
       titleLarge: playwriteEsDecoGuides(textStyle: textTheme.titleLarge),
       titleMedium: playwriteEsDecoGuides(textStyle: textTheme.titleMedium),
@@ -10611,19 +10591,11 @@ class PartP {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
       displayLarge: playwriteFrModerneGuides(textStyle: textTheme.displayLarge),
-      displayMedium: playwriteFrModerneGuides(
-        textStyle: textTheme.displayMedium,
-      ),
+      displayMedium: playwriteFrModerneGuides(textStyle: textTheme.displayMedium),
       displaySmall: playwriteFrModerneGuides(textStyle: textTheme.displaySmall),
-      headlineLarge: playwriteFrModerneGuides(
-        textStyle: textTheme.headlineLarge,
-      ),
-      headlineMedium: playwriteFrModerneGuides(
-        textStyle: textTheme.headlineMedium,
-      ),
-      headlineSmall: playwriteFrModerneGuides(
-        textStyle: textTheme.headlineSmall,
-      ),
+      headlineLarge: playwriteFrModerneGuides(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteFrModerneGuides(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteFrModerneGuides(textStyle: textTheme.headlineSmall),
       titleLarge: playwriteFrModerneGuides(textStyle: textTheme.titleLarge),
       titleMedium: playwriteFrModerneGuides(textStyle: textTheme.titleMedium),
       titleSmall: playwriteFrModerneGuides(textStyle: textTheme.titleSmall),
@@ -10817,9 +10789,7 @@ class PartP {
       displayMedium: playwriteFrTradGuides(textStyle: textTheme.displayMedium),
       displaySmall: playwriteFrTradGuides(textStyle: textTheme.displaySmall),
       headlineLarge: playwriteFrTradGuides(textStyle: textTheme.headlineLarge),
-      headlineMedium: playwriteFrTradGuides(
-        textStyle: textTheme.headlineMedium,
-      ),
+      headlineMedium: playwriteFrTradGuides(textStyle: textTheme.headlineMedium),
       headlineSmall: playwriteFrTradGuides(textStyle: textTheme.headlineSmall),
       titleLarge: playwriteFrTradGuides(textStyle: textTheme.titleLarge),
       titleMedium: playwriteFrTradGuides(textStyle: textTheme.titleMedium),
@@ -11666,19 +11636,11 @@ class PartP {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
       displayLarge: playwriteHrLijevaGuides(textStyle: textTheme.displayLarge),
-      displayMedium: playwriteHrLijevaGuides(
-        textStyle: textTheme.displayMedium,
-      ),
+      displayMedium: playwriteHrLijevaGuides(textStyle: textTheme.displayMedium),
       displaySmall: playwriteHrLijevaGuides(textStyle: textTheme.displaySmall),
-      headlineLarge: playwriteHrLijevaGuides(
-        textStyle: textTheme.headlineLarge,
-      ),
-      headlineMedium: playwriteHrLijevaGuides(
-        textStyle: textTheme.headlineMedium,
-      ),
-      headlineSmall: playwriteHrLijevaGuides(
-        textStyle: textTheme.headlineSmall,
-      ),
+      headlineLarge: playwriteHrLijevaGuides(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteHrLijevaGuides(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteHrLijevaGuides(textStyle: textTheme.headlineSmall),
       titleLarge: playwriteHrLijevaGuides(textStyle: textTheme.titleLarge),
       titleMedium: playwriteHrLijevaGuides(textStyle: textTheme.titleMedium),
       titleSmall: playwriteHrLijevaGuides(textStyle: textTheme.titleSmall),
@@ -12844,19 +12806,11 @@ class PartP {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
       displayLarge: playwriteItModernaGuides(textStyle: textTheme.displayLarge),
-      displayMedium: playwriteItModernaGuides(
-        textStyle: textTheme.displayMedium,
-      ),
+      displayMedium: playwriteItModernaGuides(textStyle: textTheme.displayMedium),
       displaySmall: playwriteItModernaGuides(textStyle: textTheme.displaySmall),
-      headlineLarge: playwriteItModernaGuides(
-        textStyle: textTheme.headlineLarge,
-      ),
-      headlineMedium: playwriteItModernaGuides(
-        textStyle: textTheme.headlineMedium,
-      ),
-      headlineSmall: playwriteItModernaGuides(
-        textStyle: textTheme.headlineSmall,
-      ),
+      headlineLarge: playwriteItModernaGuides(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteItModernaGuides(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteItModernaGuides(textStyle: textTheme.headlineSmall),
       titleLarge: playwriteItModernaGuides(textStyle: textTheme.titleLarge),
       titleMedium: playwriteItModernaGuides(textStyle: textTheme.titleMedium),
       titleSmall: playwriteItModernaGuides(textStyle: textTheme.titleSmall),
@@ -13050,9 +13004,7 @@ class PartP {
       displayMedium: playwriteItTradGuides(textStyle: textTheme.displayMedium),
       displaySmall: playwriteItTradGuides(textStyle: textTheme.displaySmall),
       headlineLarge: playwriteItTradGuides(textStyle: textTheme.headlineLarge),
-      headlineMedium: playwriteItTradGuides(
-        textStyle: textTheme.headlineMedium,
-      ),
+      headlineMedium: playwriteItTradGuides(textStyle: textTheme.headlineMedium),
       headlineSmall: playwriteItTradGuides(textStyle: textTheme.headlineSmall),
       titleLarge: playwriteItTradGuides(textStyle: textTheme.titleLarge),
       titleMedium: playwriteItTradGuides(textStyle: textTheme.titleMedium),
@@ -13439,19 +13391,11 @@ class PartP {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
       displayLarge: playwriteNgModernGuides(textStyle: textTheme.displayLarge),
-      displayMedium: playwriteNgModernGuides(
-        textStyle: textTheme.displayMedium,
-      ),
+      displayMedium: playwriteNgModernGuides(textStyle: textTheme.displayMedium),
       displaySmall: playwriteNgModernGuides(textStyle: textTheme.displaySmall),
-      headlineLarge: playwriteNgModernGuides(
-        textStyle: textTheme.headlineLarge,
-      ),
-      headlineMedium: playwriteNgModernGuides(
-        textStyle: textTheme.headlineMedium,
-      ),
-      headlineSmall: playwriteNgModernGuides(
-        textStyle: textTheme.headlineSmall,
-      ),
+      headlineLarge: playwriteNgModernGuides(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteNgModernGuides(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteNgModernGuides(textStyle: textTheme.headlineSmall),
       titleLarge: playwriteNgModernGuides(textStyle: textTheme.titleLarge),
       titleMedium: playwriteNgModernGuides(textStyle: textTheme.titleMedium),
       titleSmall: playwriteNgModernGuides(textStyle: textTheme.titleSmall),
@@ -15397,19 +15341,11 @@ class PartP {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
       displayLarge: playwriteUsModernGuides(textStyle: textTheme.displayLarge),
-      displayMedium: playwriteUsModernGuides(
-        textStyle: textTheme.displayMedium,
-      ),
+      displayMedium: playwriteUsModernGuides(textStyle: textTheme.displayMedium),
       displaySmall: playwriteUsModernGuides(textStyle: textTheme.displaySmall),
-      headlineLarge: playwriteUsModernGuides(
-        textStyle: textTheme.headlineLarge,
-      ),
-      headlineMedium: playwriteUsModernGuides(
-        textStyle: textTheme.headlineMedium,
-      ),
-      headlineSmall: playwriteUsModernGuides(
-        textStyle: textTheme.headlineSmall,
-      ),
+      headlineLarge: playwriteUsModernGuides(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteUsModernGuides(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteUsModernGuides(textStyle: textTheme.headlineSmall),
       titleLarge: playwriteUsModernGuides(textStyle: textTheme.titleLarge),
       titleMedium: playwriteUsModernGuides(textStyle: textTheme.titleMedium),
       titleSmall: playwriteUsModernGuides(textStyle: textTheme.titleSmall),
@@ -15603,9 +15539,7 @@ class PartP {
       displayMedium: playwriteUsTradGuides(textStyle: textTheme.displayMedium),
       displaySmall: playwriteUsTradGuides(textStyle: textTheme.displaySmall),
       headlineLarge: playwriteUsTradGuides(textStyle: textTheme.headlineLarge),
-      headlineMedium: playwriteUsTradGuides(
-        textStyle: textTheme.headlineMedium,
-      ),
+      headlineMedium: playwriteUsTradGuides(textStyle: textTheme.headlineMedium),
       headlineSmall: playwriteUsTradGuides(textStyle: textTheme.headlineSmall),
       titleLarge: playwriteUsTradGuides(textStyle: textTheme.titleLarge),
       titleMedium: playwriteUsTradGuides(textStyle: textTheme.titleMedium),
