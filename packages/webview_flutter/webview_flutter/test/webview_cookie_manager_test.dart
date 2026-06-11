@@ -40,11 +40,8 @@ void main() {
     });
 
     test('getCookies', () async {
-      final mockPlatformWebViewCookieManager =
-          MockPlatformWebViewCookieManager();
-      final cookieManager = WebViewCookieManager.fromPlatform(
-        mockPlatformWebViewCookieManager,
-      );
+      final mockPlatformWebViewCookieManager = MockPlatformWebViewCookieManager();
+      final cookieManager = WebViewCookieManager.fromPlatform(mockPlatformWebViewCookieManager);
 
       when(
         mockPlatformWebViewCookieManager.getCookies(Uri(host: 'flutter.dev')),
@@ -56,25 +53,17 @@ void main() {
 
       expect(cookies, isEmpty);
 
-      verify(
-        mockPlatformWebViewCookieManager.getCookies(Uri(host: 'flutter.dev')),
-      ).called(1);
+      verify(mockPlatformWebViewCookieManager.getCookies(Uri(host: 'flutter.dev'))).called(1);
 
-      const cookie = WebViewCookie(
-        name: 'name',
-        value: 'value',
-        domain: 'domain',
-      );
+      const cookie = WebViewCookie(name: 'name', value: 'value', domain: 'domain');
 
       when(
         mockPlatformWebViewCookieManager.getCookies(Uri(host: 'domain')),
       ).thenAnswer((_) => Future.value([cookie]));
 
-      await cookieManager.getCookies(domain: Uri(host: 'domain'));
+      expect(await cookieManager.getCookies(domain: Uri(host: 'domain')), isNotEmpty);
 
-      verify(
-        mockPlatformWebViewCookieManager.getCookies(Uri(host: 'domain')),
-      ).called(1);
+      verify(mockPlatformWebViewCookieManager.getCookies(Uri(host: 'domain'))).called(1);
     });
   });
 }
