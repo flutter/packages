@@ -89,6 +89,5 @@ class WebViewCookieManager {
   ///
   /// Each platform can have different url requirements. Please check individual
   /// platform implementation for details
-  Future<List<WebViewCookie>> getCookies({required Uri domain}) =>
-      platform.getCookies(domain);
+  Future<List<WebViewCookie>> getCookies({required Uri domain}) => platform.getCookies(domain);
 }
