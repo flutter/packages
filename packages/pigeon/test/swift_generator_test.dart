@@ -61,7 +61,7 @@ void main() {
     const generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
-    expect(code, contains('enum Foobar: Int'));
+    expect(code, contains('enum Foobar: Int, CaseIterable'));
     expect(code, contains('  case one = 0'));
     expect(code, contains('  case two = 1'));
     expect(code, isNot(contains('if (')));
