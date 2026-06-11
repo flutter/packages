@@ -3489,4 +3489,63 @@ void main() {
       expect(code, contains('- (NSUInteger)hash {'));
     }
   });
+
+  test('data class description', () {
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[
+        Class(
+          name: 'Foo',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'int', isNullable: false),
+              name: 'bar',
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions = OutputFileOptions<InternalObjcOptions>(
+      fileType: FileType.source,
+      languageOptions: const InternalObjcOptions(
+        prefix: 'ABC',
+        objcHeaderOut: '',
+        objcSourceOut: '',
+        headerIncludePath: '',
+      ),
+    );
+    generator.generate(generatorOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('- (NSString *)description {'));
+    expect(
+      code,
+      contains('return [NSString stringWithFormat:@"ABCFoo(bar: %ld)", (long)self.bar];'),
+    );
+  });
+
+  test('data class description empty', () {
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[Class(name: 'Foo', fields: <NamedType>[])],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions = OutputFileOptions<InternalObjcOptions>(
+      fileType: FileType.source,
+      languageOptions: const InternalObjcOptions(
+        prefix: 'ABC',
+        objcHeaderOut: '',
+        objcSourceOut: '',
+        headerIncludePath: '',
+      ),
+    );
+    generator.generate(generatorOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('- (NSString *)description {'));
+    expect(code, contains('return [NSString stringWithFormat:@"ABCFoo()"];'));
+  });
 }
