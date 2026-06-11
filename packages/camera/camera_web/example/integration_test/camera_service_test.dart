@@ -525,25 +525,17 @@ void main() {
                 as web.MediaTrackCapabilities;
           }.toJS;
 
-          when(
-            jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS),
-          ).thenReturn(true);
-          when(
-            jsUtil.getProperty(any, 'facingMode'.toJS),
-          ).thenReturn(<JSAny>[true.toJS].toJS);
+          when(jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS)).thenReturn(true);
+          when(jsUtil.getProperty(any, 'facingMode'.toJS)).thenReturn(<JSAny>[true.toJS].toJS);
 
-          final String? facingMode = cameraService.getFacingModeForVideoTrack(
-            videoTrack,
-          );
+          final String? facingMode = cameraService.getFacingModeForVideoTrack(videoTrack);
 
           expect(facingMode, isNull);
         });
 
         testWidgets('returns null '
             'when the facing mode setting is empty and '
-            'the facingMode capability is not a JavaScript array', (
-          WidgetTester tester,
-        ) async {
+            'the facingMode capability is not a JavaScript array', (WidgetTester tester) async {
           mockVideoTrack.getSettings = () {
             return web.MediaTrackSettings(facingMode: '');
           }.toJS;
@@ -552,16 +544,10 @@ void main() {
                 as web.MediaTrackCapabilities;
           }.toJS;
 
-          when(
-            jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS),
-          ).thenReturn(true);
-          when(
-            jsUtil.getProperty(any, 'facingMode'.toJS),
-          ).thenReturn(true.toJS);
+          when(jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS)).thenReturn(true);
+          when(jsUtil.getProperty(any, 'facingMode'.toJS)).thenReturn(true.toJS);
 
-          final String? facingMode = cameraService.getFacingModeForVideoTrack(
-            videoTrack,
-          );
+          final String? facingMode = cameraService.getFacingModeForVideoTrack(videoTrack);
 
           expect(facingMode, isNull);
         });
