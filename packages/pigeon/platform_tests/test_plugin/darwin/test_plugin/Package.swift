@@ -16,11 +16,15 @@ let package = Package(
   products: [
     .library(name: "test-plugin", targets: ["test_plugin"])
   ],
-  dependencies: [],
+  dependencies: [
+    .package(name: "FlutterFramework", path: "../FlutterFramework")
+  ],
   targets: [
     .target(
       name: "test_plugin",
-      dependencies: [],
+      dependencies: [
+    .product(name: "FlutterFramework", package: "FlutterFramework")
+  ],
       resources: []
     )
   ]

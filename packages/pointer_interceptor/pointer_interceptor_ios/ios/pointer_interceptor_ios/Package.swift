@@ -15,11 +15,15 @@ let package = Package(
   products: [
     .library(name: "pointer-interceptor-ios", targets: ["pointer_interceptor_ios"])
   ],
-  dependencies: [],
+  dependencies: [
+    .package(name: "FlutterFramework", path: "../FlutterFramework")
+  ],
   targets: [
     .target(
       name: "pointer_interceptor_ios",
-      dependencies: [],
+      dependencies: [
+        .product(name: "FlutterFramework", package: "FlutterFramework")
+      ],
       resources: [
         .process("PrivacyInfo.xcprivacy")
       ]

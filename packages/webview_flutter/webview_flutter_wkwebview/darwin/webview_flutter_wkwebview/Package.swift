@@ -15,11 +15,15 @@ let package = Package(
   products: [
     .library(name: "webview-flutter-wkwebview", targets: ["webview_flutter_wkwebview"])
   ],
-  dependencies: [],
+  dependencies: [
+    .package(name: "FlutterFramework", path: "../FlutterFramework")
+  ],
   targets: [
     .target(
       name: "webview_flutter_wkwebview",
-      dependencies: [],
+      dependencies: [
+        .product(name: "FlutterFramework", package: "FlutterFramework")
+      ],
       resources: [
         .process("Resources")
       ]

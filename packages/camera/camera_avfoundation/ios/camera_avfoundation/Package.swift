@@ -15,10 +15,15 @@ let package = Package(
     .library(
       name: "camera-avfoundation", targets: ["camera_avfoundation"])
   ],
-  dependencies: [],
+  dependencies: [
+    .package(name: "FlutterFramework", path: "../FlutterFramework")
+  ],
   targets: [
     .target(
       name: "camera_avfoundation",
+      dependencies: [
+        .product(name: "FlutterFramework", package: "FlutterFramework")
+      ],
       path: "Sources/camera_avfoundation",
       resources: [
         .process("Resources")

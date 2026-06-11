@@ -16,11 +16,15 @@ let package = Package(
   products: [
     .library(name: "local-auth-darwin", targets: ["local_auth_darwin"])
   ],
-  dependencies: [],
+  dependencies: [
+    .package(name: "FlutterFramework", path: "../FlutterFramework")
+  ],
   targets: [
     .target(
       name: "local_auth_darwin",
-      dependencies: [],
+      dependencies: [
+        .product(name: "FlutterFramework", package: "FlutterFramework")
+      ],
       resources: [
         .process("Resources")
       ],
