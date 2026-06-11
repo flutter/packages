@@ -1,3 +1,8 @@
+## 0.7.2+2
+
+* Fixes a `StateError` ("Bad state: No element") in `setFocusMode(FocusMode.auto)`
+  when the current focus and metering action has no auto-focus points.
+
 ## 0.7.2+1
 
 * Migrates to Built-in Kotlin to support AGP 9.
