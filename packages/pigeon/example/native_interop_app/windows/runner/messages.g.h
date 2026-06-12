@@ -13,6 +13,7 @@
 
 #include <map>
 #include <optional>
+#include <ostream>
 #include <string>
 
 namespace pigeon_example {
@@ -91,6 +92,8 @@ class MessageData {
   /// Returns a hash code value for the object. This method is supported for the
   /// benefit of hash tables.
   size_t Hash() const;
+  /// Stream output operator for formatted string representation.
+  friend std::ostream& operator<<(std::ostream& os, const MessageData& obj);
 
  private:
   static MessageData FromEncodableList(const ::flutter::EncodableList& list);

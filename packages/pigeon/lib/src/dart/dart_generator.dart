@@ -863,11 +863,6 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         classDefinition,
         dartPackageName: dartPackageName,
       );
-      indent.newln();
-      indent.writeln('@override');
-      indent.writeScoped('String toString() {', '}', () {
-        indent.write('return _toList().toString();');
-      });
     });
   }
 
@@ -1003,10 +998,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       indent.writeln('result as List<Object?>;');
       indent.write('return ${classDefinition.name}');
       indent.addScoped('(', ');', () {
-        enumerate(getFieldsInSerializationOrder(classDefinition), (
-          int index,
-          final NamedType field,
-        ) {
+        enumerate(getFieldsInSerializationOrder(classDefinition), (int index, NamedType field) {
           indent.write('${field.name}: ');
           indent.add(_castValue('result[$index]', field.type));
           indent.addln(',');
@@ -1051,6 +1043,16 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     indent.writeln('@override');
     indent.writeln('// ignore: avoid_equals_and_hash_code_on_mutable_classes');
     indent.writeln('int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);');
+
+    indent.newln();
+    indent.writeln('@override');
+    indent.writeScoped('String toString() {', '}', () {
+      final Iterable<NamedType> fields = getFieldsInSerializationOrder(classDefinition);
+      final Iterable<String> fieldStrings = fields.map((NamedType field) {
+        return '${field.name}: \$${field.name}';
+      });
+      indent.writeln("return '${classDefinition.name}(${fieldStrings.join(', ')})';");
+    });
   }
 
   @override
@@ -2889,7 +2891,7 @@ Object? _extractReplyValueOrThrow(
 \t\t\tdetails: replyList[2],
 \t\t);''');
     // On iOS we can return nil from functions to accommodate error
-    // handling.  Returning a nil value and not returning an error is an
+    // handling. Returning a nil value and not returning an error is an
     // exception.
     indent.format('''
 \t} else if (!isNullValid && (replyList.isNotEmpty && replyList[0] == null)) {

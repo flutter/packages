@@ -17,6 +17,7 @@
 #include <limits>
 #include <map>
 #include <optional>
+#include <sstream>
 #include <string>
 
 namespace pigeon_example {
@@ -238,6 +239,101 @@ size_t PigeonInternalDeepHash(const ::flutter::EncodableValue& v) {
   return result;
 }
 
+template <typename T>
+std::string PigeonInternalToString(const T& v);
+
+std::string PigeonInternalToString(const bool& v);
+
+template <typename T>
+std::string PigeonInternalToString(const std::vector<T>& v);
+
+template <typename K, typename V>
+std::string PigeonInternalToString(const std::map<K, V>& v);
+
+template <typename T>
+std::string PigeonInternalToString(const std::optional<T>& v);
+
+template <typename T>
+std::string PigeonInternalToString(const std::unique_ptr<T>& v);
+
+std::string PigeonInternalToString(const ::flutter::EncodableValue& v);
+
+template <typename T>
+std::string PigeonInternalToString(const T& v) {
+  std::stringstream ss;
+  if constexpr (std::is_enum_v<T>) {
+    ss << static_cast<int>(v);
+  } else {
+    ss << v;
+  }
+  return ss.str();
+}
+
+std::string PigeonInternalToString(const bool& v) {
+  return v ? "true" : "false";
+}
+
+template <typename T>
+std::string PigeonInternalToString(const std::vector<T>& v) {
+  std::stringstream ss;
+  ss << "[";
+  for (size_t i = 0; i < v.size(); ++i) {
+    if (i > 0) {
+      ss << ", ";
+    }
+    ss << PigeonInternalToString(v[i]);
+  }
+  ss << "]";
+  return ss.str();
+}
+
+template <typename K, typename V>
+std::string PigeonInternalToString(const std::map<K, V>& v) {
+  std::stringstream ss;
+  ss << "{";
+  bool first = true;
+  for (const auto& kv : v) {
+    if (!first) {
+      ss << ", ";
+    }
+    first = false;
+    ss << PigeonInternalToString(kv.first) << ": "
+       << PigeonInternalToString(kv.second);
+  }
+  ss << "}";
+  return ss.str();
+}
+
+template <typename T>
+std::string PigeonInternalToString(const std::optional<T>& v) {
+  return v ? PigeonInternalToString(*v) : "null";
+}
+
+template <typename T>
+std::string PigeonInternalToString(const std::unique_ptr<T>& v) {
+  return v ? PigeonInternalToString(*v) : "null";
+}
+
+std::string PigeonInternalToString(const ::flutter::EncodableValue& v) {
+  return std::visit(
+      [](const auto& val) {
+        using T = std::decay_t<decltype(val)>;
+        if constexpr (std::is_same_v<T, std::monostate>) {
+          return std::string("null");
+        } else if constexpr (std::is_same_v<T, bool>) {
+          return val ? std::string("true") : std::string("false");
+        } else if constexpr (std::is_same_v<T, std::string>) {
+          return "\"" + val + "\"";
+        } else if constexpr (std::is_same_v<T,
+                                            ::flutter::CustomEncodableValue>) {
+          return std::string("[custom]");
+        } else {
+          return PigeonInternalToString(val);
+        }
+      },
+      v);
+}
+
 }  // namespace
 // MessageData
 
@@ -331,6 +427,28 @@ size_t MessageData::Hash() const {
   result = result * 31 + PigeonInternalDeepHash(code_);
   result = result * 31 + PigeonInternalDeepHash(data_);
   return result;
+}
+
+std::ostream& operator<<(std::ostream& os, const MessageData& obj) {
+  os << "MessageData(";
+  os << "name: ";
+  if (obj.name_) {
+    os << PigeonInternalToString(*obj.name_);
+  } else {
+    os << "null";
+  }
+  os << ", message_description: ";
+  if (obj.message_description_) {
+    os << PigeonInternalToString(*obj.message_description_);
+  } else {
+    os << "null";
+  }
+  os << ", code: ";
+  os << PigeonInternalToString(obj.code_);
+  os << ", data: ";
+  os << PigeonInternalToString(obj.data_);
+  os << ")";
+  return os;
 }
 
 size_t PigeonInternalDeepHash(const MessageData& v) { return v.Hash(); }

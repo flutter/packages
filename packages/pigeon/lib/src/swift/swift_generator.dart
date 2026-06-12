@@ -315,7 +315,9 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
     indent.newln();
     addDocumentationComments(indent, anEnum.documentationComments, _docCommentSpec);
 
-    indent.write('${generatorOptions.useFfi ? '@objc ' : ''}enum ${anEnum.name}: Int ');
+    indent.write(
+      '${generatorOptions.useFfi ? '@objc ' : ''}enum ${anEnum.name}: Int, CaseIterable ',
+    );
     indent.addScoped('{', '}', () {
       enumerate(anEnum.members, (int index, EnumMember member) {
         addDocumentationComments(indent, member.documentationComments, _docCommentSpec);
@@ -332,7 +334,7 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
 @available(iOS 13, macOS 10.15, *)
 class _PigeonFfiCodec {
   static func readValue(value: NSObject?, type: String? = nil, type2: String? = nil) -> Any? {
-    if (isNullish(value)) {
+    if (${_classNamePrefix}PigeonInternal.isNullish(value)) {
       return nil
     }
     if let typedData = value as? ${_classNamePrefix}PigeonTypedData {
@@ -399,7 +401,7 @@ class _PigeonFfiCodec {
   }
 
   static func writeValue(value: Any?, isObject: Bool = false) -> Any? {
-    if (isNullish(value)) {
+    if (${_classNamePrefix}PigeonInternal.isNullish(value)) {
       return ${_classNamePrefix}PigeonInternalNull()
     }
     if let uint8Array = value as? [UInt8] {
@@ -440,14 +442,14 @@ class _PigeonFfiCodec {
     if (value is [Any]) {
       let res: NSMutableArray = NSMutableArray()
       for item in (value as! [Any]) {
-        res.add(isNullish(item) ? ${_classNamePrefix}PigeonInternalNull() : writeValue(value: item, isObject: true) as! NSObject)
+        res.add(${_classNamePrefix}PigeonInternal.isNullish(item) ? ${_classNamePrefix}PigeonInternalNull() : writeValue(value: item, isObject: true) as! NSObject)
       }
       return res
     }
     if (value is [AnyHashable: Any]) {
       let res: NSMutableDictionary = NSMutableDictionary()
       for (key, value) in (value as! [AnyHashable: Any]) {
-         res.setObject(isNullish(key) ? ${_classNamePrefix}PigeonInternalNull() : writeValue(value: value, isObject: true) as! NSObject, forKey: writeValue(value: key, isObject: true) as! NSCopying)
+         res.setObject(${_classNamePrefix}PigeonInternal.isNullish(key) ? ${_classNamePrefix}PigeonInternalNull() : writeValue(value: value, isObject: true) as! NSObject, forKey: writeValue(value: key, isObject: true) as! NSCopying)
       }
       return res
     }
@@ -618,21 +620,26 @@ class _PigeonFfiCodec {
     bool useFfi = false,
     bool useFfiTypedData = false,
     bool hashable = true,
+    bool customStringConvertible = true,
   }) {
     final privateString = private ? 'private ' : '';
     final objcString = useFfi ? '@objc ' : '';
     final bridge = useFfi ? 'Bridge' : '';
-    var extendsString = '';
+    final protocols = <String>[];
     if (useFfi) {
-      extendsString += ': NSObject';
+      protocols.add('NSObject');
     }
     if (classDefinition.superClass != null) {
-      extendsString += useFfi ? ', ' : ': ';
-      extendsString += classDefinition.superClass!.name;
-    } else if (hashable) {
-      extendsString += useFfi ? ', ' : ': ';
-      extendsString += useFfi ? 'Hashable' : 'Hashable';
+      protocols.add(classDefinition.superClass!.name);
+    } else {
+      if (hashable) {
+        protocols.add('Hashable');
+      }
+      if (customStringConvertible && !useFfi) {
+        protocols.add('CustomStringConvertible');
+      }
     }
+    final extendsString = protocols.isEmpty ? '' : ': ${protocols.join(', ')}';
     if (classDefinition.isSwiftClass || useFfi) {
       indent.write(
         '$privateString${objcString}class ${classDefinition.name}$bridge$extendsString ',
@@ -689,7 +696,13 @@ class _PigeonFfiCodec {
     final overflowFields = <NamedType>[overflowInt, overflowObject];
     final overflowClass = Class(name: _overflowClassName, fields: overflowFields);
     indent.newln();
-    _writeDataClassSignature(indent, overflowClass, private: true, hashable: false);
+    _writeDataClassSignature(
+      indent,
+      overflowClass,
+      private: true,
+      hashable: false,
+      customStringConvertible: false,
+    );
     indent.addScoped('', '}', () {
       writeClassEncode(
         generatorOptions,
@@ -789,6 +802,14 @@ if (wrapped == nil) {
         classDefinition,
         dartPackageName: dartPackageName,
       );
+      indent.newln();
+      writeClassToString(
+        generatorOptions,
+        root,
+        indent,
+        classDefinition,
+        dartPackageName: dartPackageName,
+      );
     });
     if (generatorOptions.useFfi) {
       _writeFfiBridgeClass(
@@ -829,9 +850,13 @@ if (wrapped == nil) {
         'static func fromSwift(_ ${varNamePrefix}Class: ${classDefinition.name}?) -> ${classDefinition.name}Bridge? {',
         '}',
         () {
-          indent.writeScoped('if (isNullish(${varNamePrefix}Class)) {', '}', () {
-            indent.writeln('return nil');
-          });
+          indent.writeScoped(
+            'if (${_classNamePrefix}PigeonInternal.isNullish(${varNamePrefix}Class)) {',
+            '}',
+            () {
+              indent.writeln('return nil');
+            },
+          );
           indent.writeScoped('return ${classDefinition.name}Bridge(', ')', () {
             for (final NamedType field in classDefinition.fields) {
               indent.writeln(
@@ -868,7 +893,7 @@ if (wrapped == nil) {
       case 'Float64List':
         return wrapConditionally(
           '${_classNamePrefix}PigeonTypedData($varName${type.isNullable ? '!' : ''})',
-          'isNullish($varName) ? nil : ',
+          '${_classNamePrefix}PigeonInternal.isNullish($varName) ? nil : ',
           '',
           type.isNullable || forceNullable,
         );
@@ -895,12 +920,14 @@ if (wrapped == nil) {
   }
 
   String _numberToObjc(String varName, {String getter = '', bool isNullable = true}) => isNullable
-      ? 'isNullish($varName) ? nil : NSNumber(value: $varName$getter)'
+      ? '${_classNamePrefix}PigeonInternal.isNullish($varName) ? nil : NSNumber(value: $varName$getter)'
       : 'NSNumber(value: $varName$getter)';
 
   String _varToSwift(String varName, TypeDeclaration type, {bool forceNullable = false}) {
     final nullable = type.isNullable ? '?' : '';
-    final checkNullish = type.isNullable || forceNullable ? 'isNullish($varName) ? nil : ' : '';
+    final checkNullish = type.isNullable || forceNullable
+        ? '${_classNamePrefix}PigeonInternal.isNullish($varName) ? nil : '
+        : '';
     switch (type.baseName) {
       case 'Object':
         return '_PigeonFfiCodec.readValue(value: $varName)${type.isNullable || forceNullable ? '' : '!'}';
@@ -1043,7 +1070,7 @@ if (wrapped == nil) {
           final String comparisons = fields
               .map(
                 (NamedType field) =>
-                    'deepEquals${generatorOptions.fileSpecificClassNameComponent ?? ''}(lhs.${field.name}, rhs.${field.name})',
+                    '${generatorOptions.fileSpecificClassNameComponent ?? ''}PigeonInternal.deepEquals(lhs.${field.name}, rhs.${field.name})',
               )
               .join(' && ');
           indent.writeln('return $comparisons');
@@ -1057,9 +1084,28 @@ if (wrapped == nil) {
       final Iterable<NamedType> fields = getFieldsInSerializationOrder(classDefinition);
       for (final field in fields) {
         indent.writeln(
-          'deepHash${generatorOptions.fileSpecificClassNameComponent ?? ''}(value: ${field.name}, hasher: &hasher)',
+          '${generatorOptions.fileSpecificClassNameComponent ?? ''}PigeonInternal.deepHash(value: ${field.name}, hasher: &hasher)',
         );
       }
+    });
+  }
+
+  /// Writes the `CustomStringConvertible` conformance for a class.
+  void writeClassToString(
+    InternalSwiftOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Class classDefinition, {
+    required String dartPackageName,
+  }) {
+    final overrideString = (classDefinition.superClass != null && classDefinition.isSwiftClass)
+        ? 'override '
+        : '';
+    indent.writeScoped('${overrideString}public var description: String {', '}', () {
+      final Iterable<String> fieldStrings = classDefinition.fields.map((NamedType field) {
+        return '${field.name}: \\(String(describing: ${field.name}))';
+      });
+      indent.writeln('return "${classDefinition.name}(${fieldStrings.join(', ')})"');
     });
   }
 
@@ -1407,7 +1453,7 @@ if (wrapped == nil) {
                 }).join(', ')})${method.returnType.isEnum ? '?.rawValue' : ''}',
               );
               indent.writeln(
-                'return isNullish(res) ? nil : ${method.returnType.isEnum ? 'NSNumber(value: res!)' : '${_classNamePrefix}PigeonTypedData(res${method.returnType.isNullable ? '!' : ''})'}',
+                'return ${_classNamePrefix}PigeonInternal.isNullish(res) ? nil : ${method.returnType.isEnum ? 'NSNumber(value: res!)' : '${_classNamePrefix}PigeonTypedData(res${method.returnType.isNullable ? '!' : ''})'}',
               );
             } else {
               indent.writeln(
@@ -1970,20 +2016,19 @@ if (wrapped == nil) {
     }
   }
 
-  void _writeIsNullish(Indent indent, {bool useFfi = false}) {
-    indent.newln();
+  void _writeIsNullish(InternalSwiftOptions generatorOptions, Indent indent) {
     indent.format('''
-      private func isNullish(_ value: Any?) -> Bool {
-        guard let innerValue = value else {
-            return true
-        }
-        
-        if case Optional<Any>.some(Optional<Any>.none) = value {
-            return true
-        }
+static func isNullish(_ value: Any?) -> Bool {
+  guard let innerValue = value else {
+    return true
+  }
 
-        return innerValue is NSNull${useFfi ? ' || innerValue is ${_classNamePrefix}PigeonInternalNull' : ''}
-      }''');
+  if case Optional<Any>.some(Optional<Any>.none) = value {
+    return true
+  }
+
+  return innerValue is NSNull${generatorOptions.useFfi ? ' || innerValue is ${_classNamePrefix}PigeonInternalNull' : ''}
+}''');
   }
 
   void _writeWrapResult(Indent indent) {
@@ -2049,16 +2094,12 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   }
 
   void _writeDeepEquals(InternalSwiftOptions generatorOptions, Indent indent) {
-    final deepEqualsName = 'deepEquals${generatorOptions.fileSpecificClassNameComponent ?? ''}';
-    final deepHashName = 'deepHash${generatorOptions.fileSpecificClassNameComponent ?? ''}';
-    final doubleEqualsName = 'doubleEquals${generatorOptions.fileSpecificClassNameComponent ?? ''}';
-    final doubleHashName = 'doubleHash${generatorOptions.fileSpecificClassNameComponent ?? ''}';
     indent.format('''
-private func $doubleEqualsName(_ lhs: Double, _ rhs: Double) -> Bool {
+static func doubleEquals(_ lhs: Double, _ rhs: Double) -> Bool {
   return (lhs.isNaN && rhs.isNaN) || lhs == rhs
 }
 
-private func $doubleHashName(_ value: Double, _ hasher: inout Hasher) {
+static func doubleHash(_ value: Double, _ hasher: inout Hasher) {
   if value.isNaN {
     hasher.combine(0x7FF8000000000000)
   } else {
@@ -2067,7 +2108,7 @@ private func $doubleHashName(_ value: Double, _ hasher: inout Hasher) {
   }
 }
 
-func $deepEqualsName(_ lhs: Any?, _ rhs: Any?) -> Bool {
+static func deepEquals(_ lhs: Any?, _ rhs: Any?) -> Bool {
   let cleanLhs = nilOrValue(lhs) as Any?
   let cleanRhs = nilOrValue(rhs) as Any?
   switch (cleanLhs, cleanRhs) {
@@ -2086,7 +2127,7 @@ func $deepEqualsName(_ lhs: Any?, _ rhs: Any?) -> Bool {
   case (let lhsArray, let rhsArray) as ([Any?], [Any?]):
     guard lhsArray.count == rhsArray.count else { return false }
     for (index, element) in lhsArray.enumerated() {
-      if !$deepEqualsName(element, rhsArray[index]) {
+      if !deepEquals(element, rhsArray[index]) {
         return false
       }
     }
@@ -2095,7 +2136,7 @@ func $deepEqualsName(_ lhs: Any?, _ rhs: Any?) -> Bool {
   case (let lhsArray, let rhsArray) as ([Double], [Double]):
     guard lhsArray.count == rhsArray.count else { return false }
     for (index, element) in lhsArray.enumerated() {
-      if !$doubleEqualsName(element, rhsArray[index]) {
+      if !doubleEquals(element, rhsArray[index]) {
         return false
       }
     }
@@ -2106,8 +2147,8 @@ func $deepEqualsName(_ lhs: Any?, _ rhs: Any?) -> Bool {
     for (lhsKey, lhsValue) in lhsDictionary {
       var found = false
       for (rhsKey, rhsValue) in rhsDictionary {
-        if $deepEqualsName(lhsKey, rhsKey) {
-          if $deepEqualsName(lhsValue, rhsValue) {
+        if deepEquals(lhsKey, rhsKey) {
+          if deepEquals(lhsValue, rhsValue) {
             found = true
             break
           } else {
@@ -2120,7 +2161,7 @@ func $deepEqualsName(_ lhs: Any?, _ rhs: Any?) -> Bool {
     return true
 
   case (let lhs as Double, let rhs as Double):
-    return $doubleEqualsName(lhs, rhs)
+    return doubleEquals(lhs, rhs)
 
   case (let lhsHashable, let rhsHashable) as (AnyHashable, AnyHashable):
     return lhsHashable == rhsHashable
@@ -2130,26 +2171,26 @@ func $deepEqualsName(_ lhs: Any?, _ rhs: Any?) -> Bool {
   }
 }
 
-func $deepHashName(value: Any?, hasher: inout Hasher) {
+static func deepHash(value: Any?, hasher: inout Hasher) {
   let cleanValue = nilOrValue(value) as Any?
   if let cleanValue = cleanValue {
     if let doubleValue = cleanValue as? Double {
-      $doubleHashName(doubleValue, &hasher)
+      doubleHash(doubleValue, &hasher)
     } else if let valueList = cleanValue as? [Any?] {
       for item in valueList {
-        $deepHashName(value: item, hasher: &hasher)
+        deepHash(value: item, hasher: &hasher)
       }
     } else if let valueList = cleanValue as? [Double] {
       for item in valueList {
-        $doubleHashName(item, &hasher)
+        doubleHash(item, &hasher)
       }
     } else if let valueDict = cleanValue as? [AnyHashable: Any?] {
       var result = 0
       for (key, value) in valueDict {
         var entryKeyHasher = Hasher()
-        $deepHashName(value: key, hasher: &entryKeyHasher)
+        deepHash(value: key, hasher: &entryKeyHasher)
         var entryValueHasher = Hasher()
-        $deepHashName(value: value, hasher: &entryValueHasher)
+        deepHash(value: value, hasher: &entryValueHasher)
         result = result &+ ((entryKeyHasher.finalize() &* 31) ^ entryValueHasher.finalize())
       }
       hasher.combine(result)
@@ -2386,6 +2427,17 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
   ''');
   }
 
+  void _writePigeonInternal(InternalSwiftOptions generatorOptions, Root root, Indent indent) {
+    indent.newln();
+    final String uniqueComponent = generatorOptions.fileSpecificClassNameComponent ?? '';
+    indent.writeScoped('enum ${uniqueComponent}PigeonInternal {', '}', () {
+      _writeIsNullish(generatorOptions, indent);
+      if (root.classes.isNotEmpty) {
+        _writeDeepEquals(generatorOptions, indent);
+      }
+    });
+  }
+
   @override
   void writeGeneralUtilities(
     InternalSwiftOptions generatorOptions,
@@ -2408,11 +2460,8 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
       _writeNumberWrapper(root, indent);
     }
 
-    _writeIsNullish(indent, useFfi: generatorOptions.useFfi);
+    _writePigeonInternal(generatorOptions, root, indent);
     _writeNilOrValue(indent);
-    if (root.classes.isNotEmpty) {
-      _writeDeepEquals(generatorOptions, indent);
-    }
   }
 
   @override

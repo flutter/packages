@@ -170,7 +170,7 @@ class MessageSearchRequest {
 
   @override
   String toString() {
-    return _toList().toString();
+    return 'MessageSearchRequest(query: $query, anInt: $anInt, aBool: $aBool)';
   }
 }
 
@@ -226,7 +226,7 @@ class MessageSearchReply {
 
   @override
   String toString() {
-    return _toList().toString();
+    return 'MessageSearchReply(result: $result, error: $error, state: $state)';
   }
 }
 
@@ -268,7 +268,7 @@ class MessageNested {
 
   @override
   String toString() {
-    return _toList().toString();
+    return 'MessageNested(request: $request)';
   }
 }
 

@@ -134,7 +134,7 @@ For detailed information on setup, prerequisites, and instructions on how to use
 1) Custom classes used by APIs are defined as classes with fields of the
    supported datatypes (see the supported Datatypes section).
 1) APIs should be defined as an `abstract class` with either `@HostApi()` or
-   `@FlutterApi()` as metadata.  `@HostApi()` being for procedures that are defined
+   `@FlutterApi()` as metadata. `@HostApi()` being for procedures that are defined
    on the host platform and the `@FlutterApi()` for procedures that are defined in Dart.
 1) Method declarations on the API classes should have arguments and a return
    value whose types are defined in the file, are supported datatypes, or are
@@ -183,7 +183,7 @@ For detailed information on setup, prerequisites, and instructions on how to use
 ### Calling into Flutter from the host platform
 
 Pigeon also supports calling in the opposite direction. The steps are similar
-but reversed.  For more information look at the annotation `@FlutterApi()` which
+but reversed. For more information look at the annotation `@FlutterApi()` which
 denotes APIs that live in Flutter but are invoked from the host platform.
 [Example](./example/README.md#FlutterApi_Example).
 

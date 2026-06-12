@@ -313,6 +313,23 @@ public class Messages {
       return pigeonDeepHashCode(fields);
     }
 
+    @Override
+    public String toString() {
+      return "MessageData{"
+          + "name="
+          + name
+          + ", "
+          + "messageDescription="
+          + messageDescription
+          + ", "
+          + "code="
+          + code
+          + ", "
+          + "data="
+          + data
+          + "}";
+    }
+
     public static final class Builder {
 
       private @Nullable String name;

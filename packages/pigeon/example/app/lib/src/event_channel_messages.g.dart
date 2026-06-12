@@ -111,7 +111,7 @@ class IntEvent extends PlatformEvent {
 
   @override
   String toString() {
-    return _toList().toString();
+    return 'IntEvent(data: $data)';
   }
 }
 
@@ -151,7 +151,7 @@ class StringEvent extends PlatformEvent {
 
   @override
   String toString() {
-    return _toList().toString();
+    return 'StringEvent(data: $data)';
   }
 }
 

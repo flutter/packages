@@ -1100,7 +1100,7 @@ class NIUnusedClass {
 
   @override
   String toString() {
-    return _toList().toString();
+    return 'NIUnusedClass(aField: $aField)';
   }
 }
 
@@ -1475,7 +1475,7 @@ class NIAllTypes {
 
   @override
   String toString() {
-    return _toList().toString();
+    return 'NIAllTypes(aBool: $aBool, anInt: $anInt, anInt64: $anInt64, aDouble: $aDouble, aByteArray: $aByteArray, a4ByteArray: $a4ByteArray, a8ByteArray: $a8ByteArray, aFloatArray: $aFloatArray, anEnum: $anEnum, anotherEnum: $anotherEnum, aString: $aString, anObject: $anObject, list: $list, stringList: $stringList, intList: $intList, doubleList: $doubleList, boolList: $boolList, enumList: $enumList, objectList: $objectList, listList: $listList, mapList: $mapList, map: $map, stringMap: $stringMap, intMap: $intMap, enumMap: $enumMap, objectMap: $objectMap, listMap: $listMap, mapMap: $mapMap)';
   }
 }
 
@@ -1910,7 +1910,7 @@ class NIAllNullableTypes {
 
   @override
   String toString() {
-    return _toList().toString();
+    return 'NIAllNullableTypes(aNullableBool: $aNullableBool, aNullableInt: $aNullableInt, aNullableInt64: $aNullableInt64, aNullableDouble: $aNullableDouble, aNullableByteArray: $aNullableByteArray, aNullable4ByteArray: $aNullable4ByteArray, aNullable8ByteArray: $aNullable8ByteArray, aNullableFloatArray: $aNullableFloatArray, aNullableEnum: $aNullableEnum, anotherNullableEnum: $anotherNullableEnum, aNullableString: $aNullableString, aNullableObject: $aNullableObject, allNullableTypes: $allNullableTypes, list: $list, stringList: $stringList, intList: $intList, doubleList: $doubleList, boolList: $boolList, enumList: $enumList, objectList: $objectList, listList: $listList, mapList: $mapList, recursiveClassList: $recursiveClassList, map: $map, stringMap: $stringMap, intMap: $intMap, enumMap: $enumMap, objectMap: $objectMap, listMap: $listMap, mapMap: $mapMap, recursiveClassMap: $recursiveClassMap)';
   }
 }
 
@@ -2312,7 +2312,7 @@ class NIAllNullableTypesWithoutRecursion {
 
   @override
   String toString() {
-    return _toList().toString();
+    return 'NIAllNullableTypesWithoutRecursion(aNullableBool: $aNullableBool, aNullableInt: $aNullableInt, aNullableInt64: $aNullableInt64, aNullableDouble: $aNullableDouble, aNullableByteArray: $aNullableByteArray, aNullable4ByteArray: $aNullable4ByteArray, aNullable8ByteArray: $aNullable8ByteArray, aNullableFloatArray: $aNullableFloatArray, aNullableEnum: $aNullableEnum, anotherNullableEnum: $anotherNullableEnum, aNullableString: $aNullableString, aNullableObject: $aNullableObject, list: $list, stringList: $stringList, intList: $intList, doubleList: $doubleList, boolList: $boolList, enumList: $enumList, objectList: $objectList, listList: $listList, mapList: $mapList, map: $map, stringMap: $stringMap, intMap: $intMap, enumMap: $enumMap, objectMap: $objectMap, listMap: $listMap, mapMap: $mapMap)';
   }
 }
 
@@ -2473,7 +2473,7 @@ class NIAllClassesWrapper {
 
   @override
   String toString() {
-    return _toList().toString();
+    return 'NIAllClassesWrapper(allNullableTypes: $allNullableTypes, allNullableTypesWithoutRecursion: $allNullableTypesWithoutRecursion, allTypes: $allTypes, classList: $classList, nullableClassList: $nullableClassList, classMap: $classMap, nullableClassMap: $nullableClassMap)';
   }
 }
 

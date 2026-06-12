@@ -135,7 +135,7 @@ class FlutterSearchRequest {
 
   @override
   String toString() {
-    return _toList().toString();
+    return 'FlutterSearchRequest(query: $query)';
   }
 }
 
@@ -177,7 +177,7 @@ class FlutterSearchReply {
 
   @override
   String toString() {
-    return _toList().toString();
+    return 'FlutterSearchReply(result: $result, error: $error)';
   }
 }
 
@@ -217,7 +217,7 @@ class FlutterSearchRequests {
 
   @override
   String toString() {
-    return _toList().toString();
+    return 'FlutterSearchRequests(requests: $requests)';
   }
 }
 
@@ -257,7 +257,7 @@ class FlutterSearchReplies {
 
   @override
   String toString() {
-    return _toList().toString();
+    return 'FlutterSearchReplies(replies: $replies)';
   }
 }
 

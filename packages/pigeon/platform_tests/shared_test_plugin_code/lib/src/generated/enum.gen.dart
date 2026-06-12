@@ -162,7 +162,7 @@ class DataWithEnum {
 
   @override
   String toString() {
-    return _toList().toString();
+    return 'DataWithEnum(state: $state)';
   }
 }
 

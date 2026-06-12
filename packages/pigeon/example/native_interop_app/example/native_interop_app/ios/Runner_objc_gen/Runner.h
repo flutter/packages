@@ -341,8 +341,8 @@ typedef SWIFT_ENUM(NSInteger, Code, closed){
 /// classes.
 SWIFT_CLASS("_TtC6Runner19ExampleHostApiSetup")
 SWIFT_AVAILABILITY(macos, introduced = 10.15)
-SWIFT_AVAILABILITY(ios, introduced = 13)
-@interface ExampleHostApiSetup : NSObject
+    SWIFT_AVAILABILITY(ios, introduced = 13) @interface ExampleHostApiSetup
+    : NSObject
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 + (ExampleHostApiSetup* _Nullable)getInstanceWithName:(NSString* _Nonnull)name
     SWIFT_WARN_UNUSED_RESULT;
@@ -362,7 +362,8 @@ SWIFT_AVAILABILITY(ios, introduced = 13)
 /// Objective-C.
 SWIFT_CLASS("_TtC6Runner17MessageDataBridge")
 SWIFT_AVAILABILITY(macos, introduced = 10.15)
-SWIFT_AVAILABILITY(ios, introduced = 13) @interface MessageDataBridge : NSObject
+    SWIFT_AVAILABILITY(ios, introduced = 13) @interface MessageDataBridge
+    : NSObject
 - (nonnull instancetype)
           initWithName:(NSString* _Nullable)name
     messageDescription:(NSString* _Nullable)messageDescription
@@ -382,7 +383,7 @@ SWIFT_AVAILABILITY(ios, introduced = 13) @interface MessageDataBridge : NSObject
 /// called from Swift.
 SWIFT_PROTOCOL("_TtP6Runner23MessageFlutterApiBridge_")
 SWIFT_AVAILABILITY(macos, introduced = 10.15)
-SWIFT_AVAILABILITY(ios, introduced = 13) @protocol MessageFlutterApiBridge
+    SWIFT_AVAILABILITY(ios, introduced = 13) @protocol MessageFlutterApiBridge
 - (NSString* _Nullable)flutterMethodWithAString:(NSString* _Nullable)aString
                                           error:(PigeonError* _Nonnull)error
     SWIFT_WARN_UNUSED_RESULT;
@@ -390,8 +391,8 @@ SWIFT_AVAILABILITY(ios, introduced = 13) @protocol MessageFlutterApiBridge
 
 SWIFT_CLASS("_TtC6Runner26MessageFlutterApiRegistrar")
 SWIFT_AVAILABILITY(macos, introduced = 10.15)
-SWIFT_AVAILABILITY(ios, introduced = 13)
-@interface MessageFlutterApiRegistrar : NSObject
+    SWIFT_AVAILABILITY(ios, introduced = 13)
+        @interface MessageFlutterApiRegistrar : NSObject
 + (void)registerInstanceWithApi:(id<MessageFlutterApiBridge> _Nonnull)api
                            name:(NSString* _Nonnull)name;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
@@ -420,8 +421,8 @@ SWIFT_CLASS("_TtC6Runner26MessagesPigeonInternalNull")
 @class NSData;
 SWIFT_CLASS("_TtC6Runner23MessagesPigeonTypedData")
 SWIFT_AVAILABILITY(macos, introduced = 10.15)
-SWIFT_AVAILABILITY(ios, introduced = 13)
-@interface MessagesPigeonTypedData : NSObject
+    SWIFT_AVAILABILITY(ios, introduced = 13) @interface MessagesPigeonTypedData
+    : NSObject
 @property(nonatomic, readonly, strong) NSData* _Nonnull data;
 @property(nonatomic, readonly) NSInteger type;
 - (nonnull instancetype)initWithData:(NSData* _Nonnull)data

@@ -211,16 +211,127 @@ enum NiTestsPigeonInternalNumberType: Int {
   }
 }
 
-private func isNullish(_ value: Any?) -> Bool {
-  guard let innerValue = value else {
-    return true
+enum NiTestsPigeonInternal {
+  static func isNullish(_ value: Any?) -> Bool {
+    guard let innerValue = value else {
+      return true
+    }
+
+    if case Optional<Any>.some(Optional<Any>.none) = value {
+      return true
+    }
+
+    return innerValue is NSNull || innerValue is NiTestsPigeonInternalNull
+  }
+  static func doubleEquals(_ lhs: Double, _ rhs: Double) -> Bool {
+    return (lhs.isNaN && rhs.isNaN) || lhs == rhs
   }
 
-  if case Optional<Any>.some(Optional<Any>.none) = value {
-    return true
+  static func doubleHash(_ value: Double, _ hasher: inout Hasher) {
+    if value.isNaN {
+      hasher.combine(0x7FF8_0000_0000_0000)
+    } else {
+      // Normalize -0.0 to 0.0
+      hasher.combine(value == 0 ? 0 : value)
+    }
   }
 
-  return innerValue is NSNull || innerValue is NiTestsPigeonInternalNull
+  static func deepEquals(_ lhs: Any?, _ rhs: Any?) -> Bool {
+    let cleanLhs = nilOrValue(lhs) as Any?
+    let cleanRhs = nilOrValue(rhs) as Any?
+    switch (cleanLhs, cleanRhs) {
+    case (nil, nil):
+      return true
+
+    case (nil, _), (_, nil):
+      return false
+
+    case (let lhs as AnyObject, let rhs as AnyObject) where lhs === rhs:
+      return true
+
+    case is (Void, Void):
+      return true
+
+    case (let lhsArray, let rhsArray) as ([Any?], [Any?]):
+      guard lhsArray.count == rhsArray.count else { return false }
+      for (index, element) in lhsArray.enumerated() {
+        if !deepEquals(element, rhsArray[index]) {
+          return false
+        }
+      }
+      return true
+
+    case (let lhsArray, let rhsArray) as ([Double], [Double]):
+      guard lhsArray.count == rhsArray.count else { return false }
+      for (index, element) in lhsArray.enumerated() {
+        if !doubleEquals(element, rhsArray[index]) {
+          return false
+        }
+      }
+      return true
+
+    case (let lhsDictionary, let rhsDictionary) as ([AnyHashable: Any?], [AnyHashable: Any?]):
+      guard lhsDictionary.count == rhsDictionary.count else { return false }
+      for (lhsKey, lhsValue) in lhsDictionary {
+        var found = false
+        for (rhsKey, rhsValue) in rhsDictionary {
+          if deepEquals(lhsKey, rhsKey) {
+            if deepEquals(lhsValue, rhsValue) {
+              found = true
+              break
+            } else {
+              return false
+            }
+          }
+        }
+        if !found { return false }
+      }
+      return true
+
+    case (let lhs as Double, let rhs as Double):
+      return doubleEquals(lhs, rhs)
+
+    case (let lhsHashable, let rhsHashable) as (AnyHashable, AnyHashable):
+      return lhsHashable == rhsHashable
+
+    default:
+      return false
+    }
+  }
+
+  static func deepHash(value: Any?, hasher: inout Hasher) {
+    let cleanValue = nilOrValue(value) as Any?
+    if let cleanValue = cleanValue {
+      if let doubleValue = cleanValue as? Double {
+        doubleHash(doubleValue, &hasher)
+      } else if let valueList = cleanValue as? [Any?] {
+        for item in valueList {
+          deepHash(value: item, hasher: &hasher)
+        }
+      } else if let valueList = cleanValue as? [Double] {
+        for item in valueList {
+          doubleHash(item, &hasher)
+        }
+      } else if let valueDict = cleanValue as? [AnyHashable: Any?] {
+        var result = 0
+        for (key, value) in valueDict {
+          var entryKeyHasher = Hasher()
+          deepHash(value: key, hasher: &entryKeyHasher)
+          var entryValueHasher = Hasher()
+          deepHash(value: value, hasher: &entryValueHasher)
+          result = result &+ ((entryKeyHasher.finalize() &* 31) ^ entryValueHasher.finalize())
+        }
+        hasher.combine(result)
+      } else if let hashableValue = cleanValue as? AnyHashable {
+        hasher.combine(hashableValue)
+      } else {
+        hasher.combine(String(describing: cleanValue))
+      }
+    } else {
+      hasher.combine(0)
+    }
+  }
+
 }
 
 private func nilOrValue<T>(_ value: Any?) -> T? {
@@ -228,116 +339,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
-private func doubleEqualsNiTests(_ lhs: Double, _ rhs: Double) -> Bool {
-  return (lhs.isNaN && rhs.isNaN) || lhs == rhs
-}
-
-private func doubleHashNiTests(_ value: Double, _ hasher: inout Hasher) {
-  if value.isNaN {
-    hasher.combine(0x7FF8_0000_0000_0000)
-  } else {
-    // Normalize -0.0 to 0.0
-    hasher.combine(value == 0 ? 0 : value)
-  }
-}
-
-func deepEqualsNiTests(_ lhs: Any?, _ rhs: Any?) -> Bool {
-  let cleanLhs = nilOrValue(lhs) as Any?
-  let cleanRhs = nilOrValue(rhs) as Any?
-  switch (cleanLhs, cleanRhs) {
-  case (nil, nil):
-    return true
-
-  case (nil, _), (_, nil):
-    return false
-
-  case (let lhs as AnyObject, let rhs as AnyObject) where lhs === rhs:
-    return true
-
-  case is (Void, Void):
-    return true
-
-  case (let lhsArray, let rhsArray) as ([Any?], [Any?]):
-    guard lhsArray.count == rhsArray.count else { return false }
-    for (index, element) in lhsArray.enumerated() {
-      if !deepEqualsNiTests(element, rhsArray[index]) {
-        return false
-      }
-    }
-    return true
-
-  case (let lhsArray, let rhsArray) as ([Double], [Double]):
-    guard lhsArray.count == rhsArray.count else { return false }
-    for (index, element) in lhsArray.enumerated() {
-      if !doubleEqualsNiTests(element, rhsArray[index]) {
-        return false
-      }
-    }
-    return true
-
-  case (let lhsDictionary, let rhsDictionary) as ([AnyHashable: Any?], [AnyHashable: Any?]):
-    guard lhsDictionary.count == rhsDictionary.count else { return false }
-    for (lhsKey, lhsValue) in lhsDictionary {
-      var found = false
-      for (rhsKey, rhsValue) in rhsDictionary {
-        if deepEqualsNiTests(lhsKey, rhsKey) {
-          if deepEqualsNiTests(lhsValue, rhsValue) {
-            found = true
-            break
-          } else {
-            return false
-          }
-        }
-      }
-      if !found { return false }
-    }
-    return true
-
-  case (let lhs as Double, let rhs as Double):
-    return doubleEqualsNiTests(lhs, rhs)
-
-  case (let lhsHashable, let rhsHashable) as (AnyHashable, AnyHashable):
-    return lhsHashable == rhsHashable
-
-  default:
-    return false
-  }
-}
-
-func deepHashNiTests(value: Any?, hasher: inout Hasher) {
-  let cleanValue = nilOrValue(value) as Any?
-  if let cleanValue = cleanValue {
-    if let doubleValue = cleanValue as? Double {
-      doubleHashNiTests(doubleValue, &hasher)
-    } else if let valueList = cleanValue as? [Any?] {
-      for item in valueList {
-        deepHashNiTests(value: item, hasher: &hasher)
-      }
-    } else if let valueList = cleanValue as? [Double] {
-      for item in valueList {
-        doubleHashNiTests(item, &hasher)
-      }
-    } else if let valueDict = cleanValue as? [AnyHashable: Any?] {
-      var result = 0
-      for (key, value) in valueDict {
-        var entryKeyHasher = Hasher()
-        deepHashNiTests(value: key, hasher: &entryKeyHasher)
-        var entryValueHasher = Hasher()
-        deepHashNiTests(value: value, hasher: &entryValueHasher)
-        result = result &+ ((entryKeyHasher.finalize() &* 31) ^ entryValueHasher.finalize())
-      }
-      hasher.combine(result)
-    } else if let hashableValue = cleanValue as? AnyHashable {
-      hasher.combine(hashableValue)
-    } else {
-      hasher.combine(String(describing: cleanValue))
-    }
-  } else {
-    hasher.combine(0)
-  }
-}
-
-@objc enum NIAnEnum: Int {
+@objc enum NIAnEnum: Int, CaseIterable {
   case one = 0
   case two = 1
   case three = 2
@@ -345,12 +347,12 @@ func deepHashNiTests(value: Any?, hasher: inout Hasher) {
   case fourHundredTwentyTwo = 4
 }
 
-@objc enum NIAnotherEnum: Int {
+@objc enum NIAnotherEnum: Int, CaseIterable {
   case justInCase = 0
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct NIUnusedClass: Hashable {
+struct NIUnusedClass: Hashable, CustomStringConvertible {
   var aField: Any? = nil
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -370,12 +372,16 @@ struct NIUnusedClass: Hashable {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return deepEqualsNiTests(lhs.aField, rhs.aField)
+    return NiTestsPigeonInternal.deepEquals(lhs.aField, rhs.aField)
   }
 
   func hash(into hasher: inout Hasher) {
     hasher.combine("NIUnusedClass")
-    deepHashNiTests(value: aField, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: aField, hasher: &hasher)
+  }
+
+  public var description: String {
+    return "NIUnusedClass(aField: \(String(describing: aField)))"
   }
 }
 
@@ -391,7 +397,7 @@ struct NIUnusedClass: Hashable {
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromSwift(_ pigeonVar_Class: NIUnusedClass?) -> NIUnusedClassBridge? {
-    if isNullish(pigeonVar_Class) {
+    if NiTestsPigeonInternal.isNullish(pigeonVar_Class) {
       return nil
     }
     return NIUnusedClassBridge(
@@ -409,7 +415,7 @@ struct NIUnusedClass: Hashable {
 /// A class containing all supported types.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-struct NIAllTypes: Hashable {
+struct NIAllTypes: Hashable, CustomStringConvertible {
   var aBool: Bool
   var anInt: Int64
   var anInt64: Int64
@@ -537,60 +543,71 @@ struct NIAllTypes: Hashable {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return deepEqualsNiTests(lhs.aBool, rhs.aBool) && deepEqualsNiTests(lhs.anInt, rhs.anInt)
-      && deepEqualsNiTests(lhs.anInt64, rhs.anInt64) && deepEqualsNiTests(lhs.aDouble, rhs.aDouble)
-      && deepEqualsNiTests(lhs.aByteArray, rhs.aByteArray)
-      && deepEqualsNiTests(lhs.a4ByteArray, rhs.a4ByteArray)
-      && deepEqualsNiTests(lhs.a8ByteArray, rhs.a8ByteArray)
-      && deepEqualsNiTests(lhs.aFloatArray, rhs.aFloatArray)
-      && deepEqualsNiTests(lhs.anEnum, rhs.anEnum)
-      && deepEqualsNiTests(lhs.anotherEnum, rhs.anotherEnum)
-      && deepEqualsNiTests(lhs.aString, rhs.aString)
-      && deepEqualsNiTests(lhs.anObject, rhs.anObject) && deepEqualsNiTests(lhs.list, rhs.list)
-      && deepEqualsNiTests(lhs.stringList, rhs.stringList)
-      && deepEqualsNiTests(lhs.intList, rhs.intList)
-      && deepEqualsNiTests(lhs.doubleList, rhs.doubleList)
-      && deepEqualsNiTests(lhs.boolList, rhs.boolList)
-      && deepEqualsNiTests(lhs.enumList, rhs.enumList)
-      && deepEqualsNiTests(lhs.objectList, rhs.objectList)
-      && deepEqualsNiTests(lhs.listList, rhs.listList)
-      && deepEqualsNiTests(lhs.mapList, rhs.mapList) && deepEqualsNiTests(lhs.map, rhs.map)
-      && deepEqualsNiTests(lhs.stringMap, rhs.stringMap)
-      && deepEqualsNiTests(lhs.intMap, rhs.intMap) && deepEqualsNiTests(lhs.enumMap, rhs.enumMap)
-      && deepEqualsNiTests(lhs.objectMap, rhs.objectMap)
-      && deepEqualsNiTests(lhs.listMap, rhs.listMap) && deepEqualsNiTests(lhs.mapMap, rhs.mapMap)
+    return NiTestsPigeonInternal.deepEquals(lhs.aBool, rhs.aBool)
+      && NiTestsPigeonInternal.deepEquals(lhs.anInt, rhs.anInt)
+      && NiTestsPigeonInternal.deepEquals(lhs.anInt64, rhs.anInt64)
+      && NiTestsPigeonInternal.deepEquals(lhs.aDouble, rhs.aDouble)
+      && NiTestsPigeonInternal.deepEquals(lhs.aByteArray, rhs.aByteArray)
+      && NiTestsPigeonInternal.deepEquals(lhs.a4ByteArray, rhs.a4ByteArray)
+      && NiTestsPigeonInternal.deepEquals(lhs.a8ByteArray, rhs.a8ByteArray)
+      && NiTestsPigeonInternal.deepEquals(lhs.aFloatArray, rhs.aFloatArray)
+      && NiTestsPigeonInternal.deepEquals(lhs.anEnum, rhs.anEnum)
+      && NiTestsPigeonInternal.deepEquals(lhs.anotherEnum, rhs.anotherEnum)
+      && NiTestsPigeonInternal.deepEquals(lhs.aString, rhs.aString)
+      && NiTestsPigeonInternal.deepEquals(lhs.anObject, rhs.anObject)
+      && NiTestsPigeonInternal.deepEquals(lhs.list, rhs.list)
+      && NiTestsPigeonInternal.deepEquals(lhs.stringList, rhs.stringList)
+      && NiTestsPigeonInternal.deepEquals(lhs.intList, rhs.intList)
+      && NiTestsPigeonInternal.deepEquals(lhs.doubleList, rhs.doubleList)
+      && NiTestsPigeonInternal.deepEquals(lhs.boolList, rhs.boolList)
+      && NiTestsPigeonInternal.deepEquals(lhs.enumList, rhs.enumList)
+      && NiTestsPigeonInternal.deepEquals(lhs.objectList, rhs.objectList)
+      && NiTestsPigeonInternal.deepEquals(lhs.listList, rhs.listList)
+      && NiTestsPigeonInternal.deepEquals(lhs.mapList, rhs.mapList)
+      && NiTestsPigeonInternal.deepEquals(lhs.map, rhs.map)
+      && NiTestsPigeonInternal.deepEquals(lhs.stringMap, rhs.stringMap)
+      && NiTestsPigeonInternal.deepEquals(lhs.intMap, rhs.intMap)
+      && NiTestsPigeonInternal.deepEquals(lhs.enumMap, rhs.enumMap)
+      && NiTestsPigeonInternal.deepEquals(lhs.objectMap, rhs.objectMap)
+      && NiTestsPigeonInternal.deepEquals(lhs.listMap, rhs.listMap)
+      && NiTestsPigeonInternal.deepEquals(lhs.mapMap, rhs.mapMap)
   }
 
   func hash(into hasher: inout Hasher) {
     hasher.combine("NIAllTypes")
-    deepHashNiTests(value: aBool, hasher: &hasher)
-    deepHashNiTests(value: anInt, hasher: &hasher)
-    deepHashNiTests(value: anInt64, hasher: &hasher)
-    deepHashNiTests(value: aDouble, hasher: &hasher)
-    deepHashNiTests(value: aByteArray, hasher: &hasher)
-    deepHashNiTests(value: a4ByteArray, hasher: &hasher)
-    deepHashNiTests(value: a8ByteArray, hasher: &hasher)
-    deepHashNiTests(value: aFloatArray, hasher: &hasher)
-    deepHashNiTests(value: anEnum, hasher: &hasher)
-    deepHashNiTests(value: anotherEnum, hasher: &hasher)
-    deepHashNiTests(value: aString, hasher: &hasher)
-    deepHashNiTests(value: anObject, hasher: &hasher)
-    deepHashNiTests(value: list, hasher: &hasher)
-    deepHashNiTests(value: stringList, hasher: &hasher)
-    deepHashNiTests(value: intList, hasher: &hasher)
-    deepHashNiTests(value: doubleList, hasher: &hasher)
-    deepHashNiTests(value: boolList, hasher: &hasher)
-    deepHashNiTests(value: enumList, hasher: &hasher)
-    deepHashNiTests(value: objectList, hasher: &hasher)
-    deepHashNiTests(value: listList, hasher: &hasher)
-    deepHashNiTests(value: mapList, hasher: &hasher)
-    deepHashNiTests(value: map, hasher: &hasher)
-    deepHashNiTests(value: stringMap, hasher: &hasher)
-    deepHashNiTests(value: intMap, hasher: &hasher)
-    deepHashNiTests(value: enumMap, hasher: &hasher)
-    deepHashNiTests(value: objectMap, hasher: &hasher)
-    deepHashNiTests(value: listMap, hasher: &hasher)
-    deepHashNiTests(value: mapMap, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: aBool, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: anInt, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: anInt64, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: aDouble, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: aByteArray, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: a4ByteArray, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: a8ByteArray, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: aFloatArray, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: anEnum, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: anotherEnum, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: aString, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: anObject, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: list, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: stringList, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: intList, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: doubleList, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: boolList, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: enumList, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: objectList, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: listList, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: mapList, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: map, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: stringMap, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: intMap, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: enumMap, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: objectMap, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: listMap, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: mapMap, hasher: &hasher)
+  }
+
+  public var description: String {
+    return
+      "NIAllTypes(aBool: \(String(describing: aBool)), anInt: \(String(describing: anInt)), anInt64: \(String(describing: anInt64)), aDouble: \(String(describing: aDouble)), aByteArray: \(String(describing: aByteArray)), a4ByteArray: \(String(describing: a4ByteArray)), a8ByteArray: \(String(describing: a8ByteArray)), aFloatArray: \(String(describing: aFloatArray)), anEnum: \(String(describing: anEnum)), anotherEnum: \(String(describing: anotherEnum)), aString: \(String(describing: aString)), anObject: \(String(describing: anObject)), list: \(String(describing: list)), stringList: \(String(describing: stringList)), intList: \(String(describing: intList)), doubleList: \(String(describing: doubleList)), boolList: \(String(describing: boolList)), enumList: \(String(describing: enumList)), objectList: \(String(describing: objectList)), listList: \(String(describing: listList)), mapList: \(String(describing: mapList)), map: \(String(describing: map)), stringMap: \(String(describing: stringMap)), intMap: \(String(describing: intMap)), enumMap: \(String(describing: enumMap)), objectMap: \(String(describing: objectMap)), listMap: \(String(describing: listMap)), mapMap: \(String(describing: mapMap)))"
   }
 }
 
@@ -689,7 +706,7 @@ struct NIAllTypes: Hashable {
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromSwift(_ pigeonVar_Class: NIAllTypes?) -> NIAllTypesBridge? {
-    if isNullish(pigeonVar_Class) {
+    if NiTestsPigeonInternal.isNullish(pigeonVar_Class) {
       return nil
     }
     return NIAllTypesBridge(
@@ -773,7 +790,7 @@ struct NIAllTypes: Hashable {
 /// A class containing all supported nullable types.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-class NIAllNullableTypes: Hashable {
+class NIAllNullableTypes: Hashable, CustomStringConvertible {
   init(
     aNullableBool: Bool? = nil,
     aNullableInt: Int64? = nil,
@@ -981,68 +998,77 @@ class NIAllNullableTypes: Hashable {
     if lhs === rhs {
       return true
     }
-    return deepEqualsNiTests(lhs.aNullableBool, rhs.aNullableBool)
-      && deepEqualsNiTests(lhs.aNullableInt, rhs.aNullableInt)
-      && deepEqualsNiTests(lhs.aNullableInt64, rhs.aNullableInt64)
-      && deepEqualsNiTests(lhs.aNullableDouble, rhs.aNullableDouble)
-      && deepEqualsNiTests(lhs.aNullableByteArray, rhs.aNullableByteArray)
-      && deepEqualsNiTests(lhs.aNullable4ByteArray, rhs.aNullable4ByteArray)
-      && deepEqualsNiTests(lhs.aNullable8ByteArray, rhs.aNullable8ByteArray)
-      && deepEqualsNiTests(lhs.aNullableFloatArray, rhs.aNullableFloatArray)
-      && deepEqualsNiTests(lhs.aNullableEnum, rhs.aNullableEnum)
-      && deepEqualsNiTests(lhs.anotherNullableEnum, rhs.anotherNullableEnum)
-      && deepEqualsNiTests(lhs.aNullableString, rhs.aNullableString)
-      && deepEqualsNiTests(lhs.aNullableObject, rhs.aNullableObject)
-      && deepEqualsNiTests(lhs.allNullableTypes, rhs.allNullableTypes)
-      && deepEqualsNiTests(lhs.list, rhs.list) && deepEqualsNiTests(lhs.stringList, rhs.stringList)
-      && deepEqualsNiTests(lhs.intList, rhs.intList)
-      && deepEqualsNiTests(lhs.doubleList, rhs.doubleList)
-      && deepEqualsNiTests(lhs.boolList, rhs.boolList)
-      && deepEqualsNiTests(lhs.enumList, rhs.enumList)
-      && deepEqualsNiTests(lhs.objectList, rhs.objectList)
-      && deepEqualsNiTests(lhs.listList, rhs.listList)
-      && deepEqualsNiTests(lhs.mapList, rhs.mapList)
-      && deepEqualsNiTests(lhs.recursiveClassList, rhs.recursiveClassList)
-      && deepEqualsNiTests(lhs.map, rhs.map) && deepEqualsNiTests(lhs.stringMap, rhs.stringMap)
-      && deepEqualsNiTests(lhs.intMap, rhs.intMap) && deepEqualsNiTests(lhs.enumMap, rhs.enumMap)
-      && deepEqualsNiTests(lhs.objectMap, rhs.objectMap)
-      && deepEqualsNiTests(lhs.listMap, rhs.listMap) && deepEqualsNiTests(lhs.mapMap, rhs.mapMap)
-      && deepEqualsNiTests(lhs.recursiveClassMap, rhs.recursiveClassMap)
+    return NiTestsPigeonInternal.deepEquals(lhs.aNullableBool, rhs.aNullableBool)
+      && NiTestsPigeonInternal.deepEquals(lhs.aNullableInt, rhs.aNullableInt)
+      && NiTestsPigeonInternal.deepEquals(lhs.aNullableInt64, rhs.aNullableInt64)
+      && NiTestsPigeonInternal.deepEquals(lhs.aNullableDouble, rhs.aNullableDouble)
+      && NiTestsPigeonInternal.deepEquals(lhs.aNullableByteArray, rhs.aNullableByteArray)
+      && NiTestsPigeonInternal.deepEquals(lhs.aNullable4ByteArray, rhs.aNullable4ByteArray)
+      && NiTestsPigeonInternal.deepEquals(lhs.aNullable8ByteArray, rhs.aNullable8ByteArray)
+      && NiTestsPigeonInternal.deepEquals(lhs.aNullableFloatArray, rhs.aNullableFloatArray)
+      && NiTestsPigeonInternal.deepEquals(lhs.aNullableEnum, rhs.aNullableEnum)
+      && NiTestsPigeonInternal.deepEquals(lhs.anotherNullableEnum, rhs.anotherNullableEnum)
+      && NiTestsPigeonInternal.deepEquals(lhs.aNullableString, rhs.aNullableString)
+      && NiTestsPigeonInternal.deepEquals(lhs.aNullableObject, rhs.aNullableObject)
+      && NiTestsPigeonInternal.deepEquals(lhs.allNullableTypes, rhs.allNullableTypes)
+      && NiTestsPigeonInternal.deepEquals(lhs.list, rhs.list)
+      && NiTestsPigeonInternal.deepEquals(lhs.stringList, rhs.stringList)
+      && NiTestsPigeonInternal.deepEquals(lhs.intList, rhs.intList)
+      && NiTestsPigeonInternal.deepEquals(lhs.doubleList, rhs.doubleList)
+      && NiTestsPigeonInternal.deepEquals(lhs.boolList, rhs.boolList)
+      && NiTestsPigeonInternal.deepEquals(lhs.enumList, rhs.enumList)
+      && NiTestsPigeonInternal.deepEquals(lhs.objectList, rhs.objectList)
+      && NiTestsPigeonInternal.deepEquals(lhs.listList, rhs.listList)
+      && NiTestsPigeonInternal.deepEquals(lhs.mapList, rhs.mapList)
+      && NiTestsPigeonInternal.deepEquals(lhs.recursiveClassList, rhs.recursiveClassList)
+      && NiTestsPigeonInternal.deepEquals(lhs.map, rhs.map)
+      && NiTestsPigeonInternal.deepEquals(lhs.stringMap, rhs.stringMap)
+      && NiTestsPigeonInternal.deepEquals(lhs.intMap, rhs.intMap)
+      && NiTestsPigeonInternal.deepEquals(lhs.enumMap, rhs.enumMap)
+      && NiTestsPigeonInternal.deepEquals(lhs.objectMap, rhs.objectMap)
+      && NiTestsPigeonInternal.deepEquals(lhs.listMap, rhs.listMap)
+      && NiTestsPigeonInternal.deepEquals(lhs.mapMap, rhs.mapMap)
+      && NiTestsPigeonInternal.deepEquals(lhs.recursiveClassMap, rhs.recursiveClassMap)
   }
 
   func hash(into hasher: inout Hasher) {
     hasher.combine("NIAllNullableTypes")
-    deepHashNiTests(value: aNullableBool, hasher: &hasher)
-    deepHashNiTests(value: aNullableInt, hasher: &hasher)
-    deepHashNiTests(value: aNullableInt64, hasher: &hasher)
-    deepHashNiTests(value: aNullableDouble, hasher: &hasher)
-    deepHashNiTests(value: aNullableByteArray, hasher: &hasher)
-    deepHashNiTests(value: aNullable4ByteArray, hasher: &hasher)
-    deepHashNiTests(value: aNullable8ByteArray, hasher: &hasher)
-    deepHashNiTests(value: aNullableFloatArray, hasher: &hasher)
-    deepHashNiTests(value: aNullableEnum, hasher: &hasher)
-    deepHashNiTests(value: anotherNullableEnum, hasher: &hasher)
-    deepHashNiTests(value: aNullableString, hasher: &hasher)
-    deepHashNiTests(value: aNullableObject, hasher: &hasher)
-    deepHashNiTests(value: allNullableTypes, hasher: &hasher)
-    deepHashNiTests(value: list, hasher: &hasher)
-    deepHashNiTests(value: stringList, hasher: &hasher)
-    deepHashNiTests(value: intList, hasher: &hasher)
-    deepHashNiTests(value: doubleList, hasher: &hasher)
-    deepHashNiTests(value: boolList, hasher: &hasher)
-    deepHashNiTests(value: enumList, hasher: &hasher)
-    deepHashNiTests(value: objectList, hasher: &hasher)
-    deepHashNiTests(value: listList, hasher: &hasher)
-    deepHashNiTests(value: mapList, hasher: &hasher)
-    deepHashNiTests(value: recursiveClassList, hasher: &hasher)
-    deepHashNiTests(value: map, hasher: &hasher)
-    deepHashNiTests(value: stringMap, hasher: &hasher)
-    deepHashNiTests(value: intMap, hasher: &hasher)
-    deepHashNiTests(value: enumMap, hasher: &hasher)
-    deepHashNiTests(value: objectMap, hasher: &hasher)
-    deepHashNiTests(value: listMap, hasher: &hasher)
-    deepHashNiTests(value: mapMap, hasher: &hasher)
-    deepHashNiTests(value: recursiveClassMap, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: aNullableBool, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: aNullableInt, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: aNullableInt64, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: aNullableDouble, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: aNullableByteArray, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: aNullable4ByteArray, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: aNullable8ByteArray, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: aNullableFloatArray, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: aNullableEnum, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: anotherNullableEnum, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: aNullableString, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: aNullableObject, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: allNullableTypes, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: list, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: stringList, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: intList, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: doubleList, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: boolList, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: enumList, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: objectList, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: listList, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: mapList, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: recursiveClassList, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: map, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: stringMap, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: intMap, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: enumMap, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: objectMap, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: listMap, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: mapMap, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: recursiveClassMap, hasher: &hasher)
+  }
+
+  public var description: String {
+    return
+      "NIAllNullableTypes(aNullableBool: \(String(describing: aNullableBool)), aNullableInt: \(String(describing: aNullableInt)), aNullableInt64: \(String(describing: aNullableInt64)), aNullableDouble: \(String(describing: aNullableDouble)), aNullableByteArray: \(String(describing: aNullableByteArray)), aNullable4ByteArray: \(String(describing: aNullable4ByteArray)), aNullable8ByteArray: \(String(describing: aNullable8ByteArray)), aNullableFloatArray: \(String(describing: aNullableFloatArray)), aNullableEnum: \(String(describing: aNullableEnum)), anotherNullableEnum: \(String(describing: anotherNullableEnum)), aNullableString: \(String(describing: aNullableString)), aNullableObject: \(String(describing: aNullableObject)), allNullableTypes: \(String(describing: allNullableTypes)), list: \(String(describing: list)), stringList: \(String(describing: stringList)), intList: \(String(describing: intList)), doubleList: \(String(describing: doubleList)), boolList: \(String(describing: boolList)), enumList: \(String(describing: enumList)), objectList: \(String(describing: objectList)), listList: \(String(describing: listList)), mapList: \(String(describing: mapList)), recursiveClassList: \(String(describing: recursiveClassList)), map: \(String(describing: map)), stringMap: \(String(describing: stringMap)), intMap: \(String(describing: intMap)), enumMap: \(String(describing: enumMap)), objectMap: \(String(describing: objectMap)), listMap: \(String(describing: listMap)), mapMap: \(String(describing: mapMap)), recursiveClassMap: \(String(describing: recursiveClassMap)))"
   }
 }
 
@@ -1150,29 +1176,29 @@ class NIAllNullableTypes: Hashable {
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromSwift(_ pigeonVar_Class: NIAllNullableTypes?) -> NIAllNullableTypesBridge? {
-    if isNullish(pigeonVar_Class) {
+    if NiTestsPigeonInternal.isNullish(pigeonVar_Class) {
       return nil
     }
     return NIAllNullableTypesBridge(
-      aNullableBool: isNullish(pigeonVar_Class!.aNullableBool)
+      aNullableBool: NiTestsPigeonInternal.isNullish(pigeonVar_Class!.aNullableBool)
         ? nil : NSNumber(value: pigeonVar_Class!.aNullableBool!),
-      aNullableInt: isNullish(pigeonVar_Class!.aNullableInt)
+      aNullableInt: NiTestsPigeonInternal.isNullish(pigeonVar_Class!.aNullableInt)
         ? nil : NSNumber(value: pigeonVar_Class!.aNullableInt!),
-      aNullableInt64: isNullish(pigeonVar_Class!.aNullableInt64)
+      aNullableInt64: NiTestsPigeonInternal.isNullish(pigeonVar_Class!.aNullableInt64)
         ? nil : NSNumber(value: pigeonVar_Class!.aNullableInt64!),
-      aNullableDouble: isNullish(pigeonVar_Class!.aNullableDouble)
+      aNullableDouble: NiTestsPigeonInternal.isNullish(pigeonVar_Class!.aNullableDouble)
         ? nil : NSNumber(value: pigeonVar_Class!.aNullableDouble!),
-      aNullableByteArray: isNullish(pigeonVar_Class!.aNullableByteArray)
+      aNullableByteArray: NiTestsPigeonInternal.isNullish(pigeonVar_Class!.aNullableByteArray)
         ? nil : NiTestsPigeonTypedData(pigeonVar_Class!.aNullableByteArray!),
-      aNullable4ByteArray: isNullish(pigeonVar_Class!.aNullable4ByteArray)
+      aNullable4ByteArray: NiTestsPigeonInternal.isNullish(pigeonVar_Class!.aNullable4ByteArray)
         ? nil : NiTestsPigeonTypedData(pigeonVar_Class!.aNullable4ByteArray!),
-      aNullable8ByteArray: isNullish(pigeonVar_Class!.aNullable8ByteArray)
+      aNullable8ByteArray: NiTestsPigeonInternal.isNullish(pigeonVar_Class!.aNullable8ByteArray)
         ? nil : NiTestsPigeonTypedData(pigeonVar_Class!.aNullable8ByteArray!),
-      aNullableFloatArray: isNullish(pigeonVar_Class!.aNullableFloatArray)
+      aNullableFloatArray: NiTestsPigeonInternal.isNullish(pigeonVar_Class!.aNullableFloatArray)
         ? nil : NiTestsPigeonTypedData(pigeonVar_Class!.aNullableFloatArray!),
-      aNullableEnum: isNullish(pigeonVar_Class!.aNullableEnum)
+      aNullableEnum: NiTestsPigeonInternal.isNullish(pigeonVar_Class!.aNullableEnum)
         ? nil : NSNumber(value: pigeonVar_Class!.aNullableEnum!.rawValue),
-      anotherNullableEnum: isNullish(pigeonVar_Class!.anotherNullableEnum)
+      anotherNullableEnum: NiTestsPigeonInternal.isNullish(pigeonVar_Class!.anotherNullableEnum)
         ? nil : NSNumber(value: pigeonVar_Class!.anotherNullableEnum!.rawValue),
       aNullableString: pigeonVar_Class!.aNullableString as NSString?,
       aNullableObject: _PigeonFfiCodec.writeValue(
@@ -1204,24 +1230,29 @@ class NIAllNullableTypes: Hashable {
   }
   func toSwift() -> NIAllNullableTypes {
     return NIAllNullableTypes(
-      aNullableBool: isNullish(aNullableBool) ? nil : aNullableBool!.boolValue,
-      aNullableInt: isNullish(aNullableInt) ? nil : aNullableInt!.int64Value,
-      aNullableInt64: isNullish(aNullableInt64) ? nil : aNullableInt64!.int64Value,
-      aNullableDouble: isNullish(aNullableDouble) ? nil : aNullableDouble!.doubleValue,
-      aNullableByteArray: isNullish(aNullableByteArray) ? nil : aNullableByteArray!.toUint8Array(),
-      aNullable4ByteArray: isNullish(aNullable4ByteArray)
+      aNullableBool: NiTestsPigeonInternal.isNullish(aNullableBool)
+        ? nil : aNullableBool!.boolValue,
+      aNullableInt: NiTestsPigeonInternal.isNullish(aNullableInt) ? nil : aNullableInt!.int64Value,
+      aNullableInt64: NiTestsPigeonInternal.isNullish(aNullableInt64)
+        ? nil : aNullableInt64!.int64Value,
+      aNullableDouble: NiTestsPigeonInternal.isNullish(aNullableDouble)
+        ? nil : aNullableDouble!.doubleValue,
+      aNullableByteArray: NiTestsPigeonInternal.isNullish(aNullableByteArray)
+        ? nil : aNullableByteArray!.toUint8Array(),
+      aNullable4ByteArray: NiTestsPigeonInternal.isNullish(aNullable4ByteArray)
         ? nil : aNullable4ByteArray!.toInt32Array(),
-      aNullable8ByteArray: isNullish(aNullable8ByteArray)
+      aNullable8ByteArray: NiTestsPigeonInternal.isNullish(aNullable8ByteArray)
         ? nil : aNullable8ByteArray!.toInt64Array(),
-      aNullableFloatArray: isNullish(aNullableFloatArray)
+      aNullableFloatArray: NiTestsPigeonInternal.isNullish(aNullableFloatArray)
         ? nil : aNullableFloatArray!.toFloat64Array(),
-      aNullableEnum: isNullish(aNullableEnum)
+      aNullableEnum: NiTestsPigeonInternal.isNullish(aNullableEnum)
         ? nil : NIAnEnum.init(rawValue: aNullableEnum!.intValue),
-      anotherNullableEnum: isNullish(anotherNullableEnum)
+      anotherNullableEnum: NiTestsPigeonInternal.isNullish(anotherNullableEnum)
         ? nil : NIAnotherEnum.init(rawValue: anotherNullableEnum!.intValue),
       aNullableString: aNullableString as String?,
       aNullableObject: _PigeonFfiCodec.readValue(value: aNullableObject),
-      allNullableTypes: isNullish(allNullableTypes) ? nil : allNullableTypes!.toSwift(),
+      allNullableTypes: NiTestsPigeonInternal.isNullish(allNullableTypes)
+        ? nil : allNullableTypes!.toSwift(),
       list: _PigeonFfiCodec.readValue(value: list as NSObject?) as? [Any?],
       stringList: _PigeonFfiCodec.readValue(value: stringList as NSObject?, type: "String")
         as? [String?],
@@ -1264,7 +1295,7 @@ class NIAllNullableTypes: Hashable {
 /// test Swift classes.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-struct NIAllNullableTypesWithoutRecursion: Hashable {
+struct NIAllNullableTypesWithoutRecursion: Hashable, CustomStringConvertible {
   var aNullableBool: Bool? = nil
   var aNullableInt: Int64? = nil
   var aNullableInt64: Int64? = nil
@@ -1394,62 +1425,71 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return deepEqualsNiTests(lhs.aNullableBool, rhs.aNullableBool)
-      && deepEqualsNiTests(lhs.aNullableInt, rhs.aNullableInt)
-      && deepEqualsNiTests(lhs.aNullableInt64, rhs.aNullableInt64)
-      && deepEqualsNiTests(lhs.aNullableDouble, rhs.aNullableDouble)
-      && deepEqualsNiTests(lhs.aNullableByteArray, rhs.aNullableByteArray)
-      && deepEqualsNiTests(lhs.aNullable4ByteArray, rhs.aNullable4ByteArray)
-      && deepEqualsNiTests(lhs.aNullable8ByteArray, rhs.aNullable8ByteArray)
-      && deepEqualsNiTests(lhs.aNullableFloatArray, rhs.aNullableFloatArray)
-      && deepEqualsNiTests(lhs.aNullableEnum, rhs.aNullableEnum)
-      && deepEqualsNiTests(lhs.anotherNullableEnum, rhs.anotherNullableEnum)
-      && deepEqualsNiTests(lhs.aNullableString, rhs.aNullableString)
-      && deepEqualsNiTests(lhs.aNullableObject, rhs.aNullableObject)
-      && deepEqualsNiTests(lhs.list, rhs.list) && deepEqualsNiTests(lhs.stringList, rhs.stringList)
-      && deepEqualsNiTests(lhs.intList, rhs.intList)
-      && deepEqualsNiTests(lhs.doubleList, rhs.doubleList)
-      && deepEqualsNiTests(lhs.boolList, rhs.boolList)
-      && deepEqualsNiTests(lhs.enumList, rhs.enumList)
-      && deepEqualsNiTests(lhs.objectList, rhs.objectList)
-      && deepEqualsNiTests(lhs.listList, rhs.listList)
-      && deepEqualsNiTests(lhs.mapList, rhs.mapList) && deepEqualsNiTests(lhs.map, rhs.map)
-      && deepEqualsNiTests(lhs.stringMap, rhs.stringMap)
-      && deepEqualsNiTests(lhs.intMap, rhs.intMap) && deepEqualsNiTests(lhs.enumMap, rhs.enumMap)
-      && deepEqualsNiTests(lhs.objectMap, rhs.objectMap)
-      && deepEqualsNiTests(lhs.listMap, rhs.listMap) && deepEqualsNiTests(lhs.mapMap, rhs.mapMap)
+    return NiTestsPigeonInternal.deepEquals(lhs.aNullableBool, rhs.aNullableBool)
+      && NiTestsPigeonInternal.deepEquals(lhs.aNullableInt, rhs.aNullableInt)
+      && NiTestsPigeonInternal.deepEquals(lhs.aNullableInt64, rhs.aNullableInt64)
+      && NiTestsPigeonInternal.deepEquals(lhs.aNullableDouble, rhs.aNullableDouble)
+      && NiTestsPigeonInternal.deepEquals(lhs.aNullableByteArray, rhs.aNullableByteArray)
+      && NiTestsPigeonInternal.deepEquals(lhs.aNullable4ByteArray, rhs.aNullable4ByteArray)
+      && NiTestsPigeonInternal.deepEquals(lhs.aNullable8ByteArray, rhs.aNullable8ByteArray)
+      && NiTestsPigeonInternal.deepEquals(lhs.aNullableFloatArray, rhs.aNullableFloatArray)
+      && NiTestsPigeonInternal.deepEquals(lhs.aNullableEnum, rhs.aNullableEnum)
+      && NiTestsPigeonInternal.deepEquals(lhs.anotherNullableEnum, rhs.anotherNullableEnum)
+      && NiTestsPigeonInternal.deepEquals(lhs.aNullableString, rhs.aNullableString)
+      && NiTestsPigeonInternal.deepEquals(lhs.aNullableObject, rhs.aNullableObject)
+      && NiTestsPigeonInternal.deepEquals(lhs.list, rhs.list)
+      && NiTestsPigeonInternal.deepEquals(lhs.stringList, rhs.stringList)
+      && NiTestsPigeonInternal.deepEquals(lhs.intList, rhs.intList)
+      && NiTestsPigeonInternal.deepEquals(lhs.doubleList, rhs.doubleList)
+      && NiTestsPigeonInternal.deepEquals(lhs.boolList, rhs.boolList)
+      && NiTestsPigeonInternal.deepEquals(lhs.enumList, rhs.enumList)
+      && NiTestsPigeonInternal.deepEquals(lhs.objectList, rhs.objectList)
+      && NiTestsPigeonInternal.deepEquals(lhs.listList, rhs.listList)
+      && NiTestsPigeonInternal.deepEquals(lhs.mapList, rhs.mapList)
+      && NiTestsPigeonInternal.deepEquals(lhs.map, rhs.map)
+      && NiTestsPigeonInternal.deepEquals(lhs.stringMap, rhs.stringMap)
+      && NiTestsPigeonInternal.deepEquals(lhs.intMap, rhs.intMap)
+      && NiTestsPigeonInternal.deepEquals(lhs.enumMap, rhs.enumMap)
+      && NiTestsPigeonInternal.deepEquals(lhs.objectMap, rhs.objectMap)
+      && NiTestsPigeonInternal.deepEquals(lhs.listMap, rhs.listMap)
+      && NiTestsPigeonInternal.deepEquals(lhs.mapMap, rhs.mapMap)
   }
 
   func hash(into hasher: inout Hasher) {
     hasher.combine("NIAllNullableTypesWithoutRecursion")
-    deepHashNiTests(value: aNullableBool, hasher: &hasher)
-    deepHashNiTests(value: aNullableInt, hasher: &hasher)
-    deepHashNiTests(value: aNullableInt64, hasher: &hasher)
-    deepHashNiTests(value: aNullableDouble, hasher: &hasher)
-    deepHashNiTests(value: aNullableByteArray, hasher: &hasher)
-    deepHashNiTests(value: aNullable4ByteArray, hasher: &hasher)
-    deepHashNiTests(value: aNullable8ByteArray, hasher: &hasher)
-    deepHashNiTests(value: aNullableFloatArray, hasher: &hasher)
-    deepHashNiTests(value: aNullableEnum, hasher: &hasher)
-    deepHashNiTests(value: anotherNullableEnum, hasher: &hasher)
-    deepHashNiTests(value: aNullableString, hasher: &hasher)
-    deepHashNiTests(value: aNullableObject, hasher: &hasher)
-    deepHashNiTests(value: list, hasher: &hasher)
-    deepHashNiTests(value: stringList, hasher: &hasher)
-    deepHashNiTests(value: intList, hasher: &hasher)
-    deepHashNiTests(value: doubleList, hasher: &hasher)
-    deepHashNiTests(value: boolList, hasher: &hasher)
-    deepHashNiTests(value: enumList, hasher: &hasher)
-    deepHashNiTests(value: objectList, hasher: &hasher)
-    deepHashNiTests(value: listList, hasher: &hasher)
-    deepHashNiTests(value: mapList, hasher: &hasher)
-    deepHashNiTests(value: map, hasher: &hasher)
-    deepHashNiTests(value: stringMap, hasher: &hasher)
-    deepHashNiTests(value: intMap, hasher: &hasher)
-    deepHashNiTests(value: enumMap, hasher: &hasher)
-    deepHashNiTests(value: objectMap, hasher: &hasher)
-    deepHashNiTests(value: listMap, hasher: &hasher)
-    deepHashNiTests(value: mapMap, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: aNullableBool, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: aNullableInt, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: aNullableInt64, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: aNullableDouble, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: aNullableByteArray, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: aNullable4ByteArray, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: aNullable8ByteArray, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: aNullableFloatArray, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: aNullableEnum, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: anotherNullableEnum, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: aNullableString, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: aNullableObject, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: list, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: stringList, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: intList, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: doubleList, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: boolList, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: enumList, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: objectList, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: listList, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: mapList, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: map, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: stringMap, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: intMap, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: enumMap, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: objectMap, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: listMap, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: mapMap, hasher: &hasher)
+  }
+
+  public var description: String {
+    return
+      "NIAllNullableTypesWithoutRecursion(aNullableBool: \(String(describing: aNullableBool)), aNullableInt: \(String(describing: aNullableInt)), aNullableInt64: \(String(describing: aNullableInt64)), aNullableDouble: \(String(describing: aNullableDouble)), aNullableByteArray: \(String(describing: aNullableByteArray)), aNullable4ByteArray: \(String(describing: aNullable4ByteArray)), aNullable8ByteArray: \(String(describing: aNullable8ByteArray)), aNullableFloatArray: \(String(describing: aNullableFloatArray)), aNullableEnum: \(String(describing: aNullableEnum)), anotherNullableEnum: \(String(describing: anotherNullableEnum)), aNullableString: \(String(describing: aNullableString)), aNullableObject: \(String(describing: aNullableObject)), list: \(String(describing: list)), stringList: \(String(describing: stringList)), intList: \(String(describing: intList)), doubleList: \(String(describing: doubleList)), boolList: \(String(describing: boolList)), enumList: \(String(describing: enumList)), objectList: \(String(describing: objectList)), listList: \(String(describing: listList)), mapList: \(String(describing: mapList)), map: \(String(describing: map)), stringMap: \(String(describing: stringMap)), intMap: \(String(describing: intMap)), enumMap: \(String(describing: enumMap)), objectMap: \(String(describing: objectMap)), listMap: \(String(describing: listMap)), mapMap: \(String(describing: mapMap)))"
   }
 }
 
@@ -1552,29 +1592,29 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
   static func fromSwift(_ pigeonVar_Class: NIAllNullableTypesWithoutRecursion?)
     -> NIAllNullableTypesWithoutRecursionBridge?
   {
-    if isNullish(pigeonVar_Class) {
+    if NiTestsPigeonInternal.isNullish(pigeonVar_Class) {
       return nil
     }
     return NIAllNullableTypesWithoutRecursionBridge(
-      aNullableBool: isNullish(pigeonVar_Class!.aNullableBool)
+      aNullableBool: NiTestsPigeonInternal.isNullish(pigeonVar_Class!.aNullableBool)
         ? nil : NSNumber(value: pigeonVar_Class!.aNullableBool!),
-      aNullableInt: isNullish(pigeonVar_Class!.aNullableInt)
+      aNullableInt: NiTestsPigeonInternal.isNullish(pigeonVar_Class!.aNullableInt)
         ? nil : NSNumber(value: pigeonVar_Class!.aNullableInt!),
-      aNullableInt64: isNullish(pigeonVar_Class!.aNullableInt64)
+      aNullableInt64: NiTestsPigeonInternal.isNullish(pigeonVar_Class!.aNullableInt64)
         ? nil : NSNumber(value: pigeonVar_Class!.aNullableInt64!),
-      aNullableDouble: isNullish(pigeonVar_Class!.aNullableDouble)
+      aNullableDouble: NiTestsPigeonInternal.isNullish(pigeonVar_Class!.aNullableDouble)
         ? nil : NSNumber(value: pigeonVar_Class!.aNullableDouble!),
-      aNullableByteArray: isNullish(pigeonVar_Class!.aNullableByteArray)
+      aNullableByteArray: NiTestsPigeonInternal.isNullish(pigeonVar_Class!.aNullableByteArray)
         ? nil : NiTestsPigeonTypedData(pigeonVar_Class!.aNullableByteArray!),
-      aNullable4ByteArray: isNullish(pigeonVar_Class!.aNullable4ByteArray)
+      aNullable4ByteArray: NiTestsPigeonInternal.isNullish(pigeonVar_Class!.aNullable4ByteArray)
         ? nil : NiTestsPigeonTypedData(pigeonVar_Class!.aNullable4ByteArray!),
-      aNullable8ByteArray: isNullish(pigeonVar_Class!.aNullable8ByteArray)
+      aNullable8ByteArray: NiTestsPigeonInternal.isNullish(pigeonVar_Class!.aNullable8ByteArray)
         ? nil : NiTestsPigeonTypedData(pigeonVar_Class!.aNullable8ByteArray!),
-      aNullableFloatArray: isNullish(pigeonVar_Class!.aNullableFloatArray)
+      aNullableFloatArray: NiTestsPigeonInternal.isNullish(pigeonVar_Class!.aNullableFloatArray)
         ? nil : NiTestsPigeonTypedData(pigeonVar_Class!.aNullableFloatArray!),
-      aNullableEnum: isNullish(pigeonVar_Class!.aNullableEnum)
+      aNullableEnum: NiTestsPigeonInternal.isNullish(pigeonVar_Class!.aNullableEnum)
         ? nil : NSNumber(value: pigeonVar_Class!.aNullableEnum!.rawValue),
-      anotherNullableEnum: isNullish(pigeonVar_Class!.anotherNullableEnum)
+      anotherNullableEnum: NiTestsPigeonInternal.isNullish(pigeonVar_Class!.anotherNullableEnum)
         ? nil : NSNumber(value: pigeonVar_Class!.anotherNullableEnum!.rawValue),
       aNullableString: pigeonVar_Class!.aNullableString as NSString?,
       aNullableObject: _PigeonFfiCodec.writeValue(
@@ -1601,20 +1641,24 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
   }
   func toSwift() -> NIAllNullableTypesWithoutRecursion {
     return NIAllNullableTypesWithoutRecursion(
-      aNullableBool: isNullish(aNullableBool) ? nil : aNullableBool!.boolValue,
-      aNullableInt: isNullish(aNullableInt) ? nil : aNullableInt!.int64Value,
-      aNullableInt64: isNullish(aNullableInt64) ? nil : aNullableInt64!.int64Value,
-      aNullableDouble: isNullish(aNullableDouble) ? nil : aNullableDouble!.doubleValue,
-      aNullableByteArray: isNullish(aNullableByteArray) ? nil : aNullableByteArray!.toUint8Array(),
-      aNullable4ByteArray: isNullish(aNullable4ByteArray)
+      aNullableBool: NiTestsPigeonInternal.isNullish(aNullableBool)
+        ? nil : aNullableBool!.boolValue,
+      aNullableInt: NiTestsPigeonInternal.isNullish(aNullableInt) ? nil : aNullableInt!.int64Value,
+      aNullableInt64: NiTestsPigeonInternal.isNullish(aNullableInt64)
+        ? nil : aNullableInt64!.int64Value,
+      aNullableDouble: NiTestsPigeonInternal.isNullish(aNullableDouble)
+        ? nil : aNullableDouble!.doubleValue,
+      aNullableByteArray: NiTestsPigeonInternal.isNullish(aNullableByteArray)
+        ? nil : aNullableByteArray!.toUint8Array(),
+      aNullable4ByteArray: NiTestsPigeonInternal.isNullish(aNullable4ByteArray)
         ? nil : aNullable4ByteArray!.toInt32Array(),
-      aNullable8ByteArray: isNullish(aNullable8ByteArray)
+      aNullable8ByteArray: NiTestsPigeonInternal.isNullish(aNullable8ByteArray)
         ? nil : aNullable8ByteArray!.toInt64Array(),
-      aNullableFloatArray: isNullish(aNullableFloatArray)
+      aNullableFloatArray: NiTestsPigeonInternal.isNullish(aNullableFloatArray)
         ? nil : aNullableFloatArray!.toFloat64Array(),
-      aNullableEnum: isNullish(aNullableEnum)
+      aNullableEnum: NiTestsPigeonInternal.isNullish(aNullableEnum)
         ? nil : NIAnEnum.init(rawValue: aNullableEnum!.intValue),
-      anotherNullableEnum: isNullish(anotherNullableEnum)
+      anotherNullableEnum: NiTestsPigeonInternal.isNullish(anotherNullableEnum)
         ? nil : NIAnotherEnum.init(rawValue: anotherNullableEnum!.intValue),
       aNullableString: aNullableString as String?,
       aNullableObject: _PigeonFfiCodec.readValue(value: aNullableObject),
@@ -1656,7 +1700,7 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
 /// than `NIAllTypes` when testing doesn't require both (ie. testing null classes).
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-struct NIAllClassesWrapper: Hashable {
+struct NIAllClassesWrapper: Hashable, CustomStringConvertible {
   var allNullableTypes: NIAllNullableTypes
   var allNullableTypesWithoutRecursion: NIAllNullableTypesWithoutRecursion? = nil
   var allTypes: NIAllTypes? = nil
@@ -1702,25 +1746,30 @@ struct NIAllClassesWrapper: Hashable {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return deepEqualsNiTests(lhs.allNullableTypes, rhs.allNullableTypes)
-      && deepEqualsNiTests(
+    return NiTestsPigeonInternal.deepEquals(lhs.allNullableTypes, rhs.allNullableTypes)
+      && NiTestsPigeonInternal.deepEquals(
         lhs.allNullableTypesWithoutRecursion, rhs.allNullableTypesWithoutRecursion)
-      && deepEqualsNiTests(lhs.allTypes, rhs.allTypes)
-      && deepEqualsNiTests(lhs.classList, rhs.classList)
-      && deepEqualsNiTests(lhs.nullableClassList, rhs.nullableClassList)
-      && deepEqualsNiTests(lhs.classMap, rhs.classMap)
-      && deepEqualsNiTests(lhs.nullableClassMap, rhs.nullableClassMap)
+      && NiTestsPigeonInternal.deepEquals(lhs.allTypes, rhs.allTypes)
+      && NiTestsPigeonInternal.deepEquals(lhs.classList, rhs.classList)
+      && NiTestsPigeonInternal.deepEquals(lhs.nullableClassList, rhs.nullableClassList)
+      && NiTestsPigeonInternal.deepEquals(lhs.classMap, rhs.classMap)
+      && NiTestsPigeonInternal.deepEquals(lhs.nullableClassMap, rhs.nullableClassMap)
   }
 
   func hash(into hasher: inout Hasher) {
     hasher.combine("NIAllClassesWrapper")
-    deepHashNiTests(value: allNullableTypes, hasher: &hasher)
-    deepHashNiTests(value: allNullableTypesWithoutRecursion, hasher: &hasher)
-    deepHashNiTests(value: allTypes, hasher: &hasher)
-    deepHashNiTests(value: classList, hasher: &hasher)
-    deepHashNiTests(value: nullableClassList, hasher: &hasher)
-    deepHashNiTests(value: classMap, hasher: &hasher)
-    deepHashNiTests(value: nullableClassMap, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: allNullableTypes, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: allNullableTypesWithoutRecursion, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: allTypes, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: classList, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: nullableClassList, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: classMap, hasher: &hasher)
+    NiTestsPigeonInternal.deepHash(value: nullableClassMap, hasher: &hasher)
+  }
+
+  public var description: String {
+    return
+      "NIAllClassesWrapper(allNullableTypes: \(String(describing: allNullableTypes)), allNullableTypesWithoutRecursion: \(String(describing: allNullableTypesWithoutRecursion)), allTypes: \(String(describing: allTypes)), classList: \(String(describing: classList)), nullableClassList: \(String(describing: nullableClassList)), classMap: \(String(describing: classMap)), nullableClassMap: \(String(describing: nullableClassMap)))"
   }
 }
 
@@ -1760,7 +1809,7 @@ struct NIAllClassesWrapper: Hashable {
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromSwift(_ pigeonVar_Class: NIAllClassesWrapper?) -> NIAllClassesWrapperBridge? {
-    if isNullish(pigeonVar_Class) {
+    if NiTestsPigeonInternal.isNullish(pigeonVar_Class) {
       return nil
     }
     return NIAllClassesWrapperBridge(
@@ -1780,9 +1829,9 @@ struct NIAllClassesWrapper: Hashable {
   func toSwift() -> NIAllClassesWrapper {
     return NIAllClassesWrapper(
       allNullableTypes: allNullableTypes.toSwift(),
-      allNullableTypesWithoutRecursion: isNullish(allNullableTypesWithoutRecursion)
-        ? nil : allNullableTypesWithoutRecursion!.toSwift(),
-      allTypes: isNullish(allTypes) ? nil : allTypes!.toSwift(),
+      allNullableTypesWithoutRecursion: NiTestsPigeonInternal.isNullish(
+        allNullableTypesWithoutRecursion) ? nil : allNullableTypesWithoutRecursion!.toSwift(),
+      allTypes: NiTestsPigeonInternal.isNullish(allTypes) ? nil : allTypes!.toSwift(),
       classList: _PigeonFfiCodec.readValue(value: classList as NSObject, type: "NIAllTypes")
         as! [NIAllTypes?],
       nullableClassList: _PigeonFfiCodec.readValue(
@@ -1803,7 +1852,7 @@ struct NIAllClassesWrapper: Hashable {
 @available(iOS 13, macOS 10.15, *)
 class _PigeonFfiCodec {
   static func readValue(value: NSObject?, type: String? = nil, type2: String? = nil) -> Any? {
-    if isNullish(value) {
+    if NiTestsPigeonInternal.isNullish(value) {
       return nil
     }
     if let typedData = value as? NiTestsPigeonTypedData {
@@ -1874,7 +1923,7 @@ class _PigeonFfiCodec {
   }
 
   static func writeValue(value: Any?, isObject: Bool = false) -> Any? {
-    if isNullish(value) {
+    if NiTestsPigeonInternal.isNullish(value) {
       return NiTestsPigeonInternalNull()
     }
     if let uint8Array = value as? [UInt8] {
@@ -1914,7 +1963,7 @@ class _PigeonFfiCodec {
       let res: NSMutableArray = NSMutableArray()
       for item in (value as! [Any]) {
         res.add(
-          isNullish(item)
+          NiTestsPigeonInternal.isNullish(item)
             ? NiTestsPigeonInternalNull() : writeValue(value: item, isObject: true) as! NSObject)
       }
       return res
@@ -1923,7 +1972,7 @@ class _PigeonFfiCodec {
       let res: NSMutableDictionary = NSMutableDictionary()
       for (key, value) in (value as! [AnyHashable: Any]) {
         res.setObject(
-          isNullish(key)
+          NiTestsPigeonInternal.isNullish(key)
             ? NiTestsPigeonInternalNull() : writeValue(value: value, isObject: true) as! NSObject,
           forKey: writeValue(value: key, isObject: true) as! NSCopying)
       }
@@ -2500,7 +2549,7 @@ protocol NIHostIntegrationCoreApi {
   {
     do {
       let res = try api!.echo(aUint8List.toUint8Array()!)
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res)
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -2518,7 +2567,7 @@ protocol NIHostIntegrationCoreApi {
   {
     do {
       let res = try api!.echo(aInt32List.toInt32Array()!)
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res)
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -2536,7 +2585,7 @@ protocol NIHostIntegrationCoreApi {
   {
     do {
       let res = try api!.echo(aInt64List.toInt64Array()!)
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res)
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -2554,7 +2603,7 @@ protocol NIHostIntegrationCoreApi {
   {
     do {
       let res = try api!.echo(aFloat64List.toFloat64Array()!)
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res)
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -3030,7 +3079,8 @@ protocol NIHostIntegrationCoreApi {
   {
     do {
       return try NIAllNullableTypesBridge.fromSwift(
-        api!.echoNullable(isNullish(everything) ? nil : everything!.toSwift()))
+        api!.echoNullable(NiTestsPigeonInternal.isNullish(everything) ? nil : everything!.toSwift())
+      )
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -3048,7 +3098,8 @@ protocol NIHostIntegrationCoreApi {
   ) -> NIAllNullableTypesWithoutRecursionBridge? {
     do {
       return try NIAllNullableTypesWithoutRecursionBridge.fromSwift(
-        api!.echoNullable(isNullish(everything) ? nil : everything!.toSwift()))
+        api!.echoNullable(NiTestsPigeonInternal.isNullish(everything) ? nil : everything!.toSwift())
+      )
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -3104,8 +3155,8 @@ protocol NIHostIntegrationCoreApi {
     do {
       return try NIAllNullableTypesBridge.fromSwift(
         api!.sendMultipleNullableTypes(
-          aBool: isNullish(aNullableBool) ? nil : aNullableBool!.boolValue,
-          anInt: isNullish(aNullableInt) ? nil : aNullableInt!.int64Value,
+          aBool: NiTestsPigeonInternal.isNullish(aNullableBool) ? nil : aNullableBool!.boolValue,
+          anInt: NiTestsPigeonInternal.isNullish(aNullableInt) ? nil : aNullableInt!.int64Value,
           aString: aNullableString as String?))!
     } catch let error as NiTestsError {
       wrappedError.code = error.code
@@ -3126,8 +3177,8 @@ protocol NIHostIntegrationCoreApi {
     do {
       return try NIAllNullableTypesWithoutRecursionBridge.fromSwift(
         api!.sendMultipleNullableTypesWithoutRecursion(
-          aBool: isNullish(aNullableBool) ? nil : aNullableBool!.boolValue,
-          anInt: isNullish(aNullableInt) ? nil : aNullableInt!.int64Value,
+          aBool: NiTestsPigeonInternal.isNullish(aNullableBool) ? nil : aNullableBool!.boolValue,
+          anInt: NiTestsPigeonInternal.isNullish(aNullableInt) ? nil : aNullableInt!.int64Value,
           aString: aNullableString as String?))!
     } catch let error as NiTestsError {
       wrappedError.code = error.code
@@ -3143,11 +3194,13 @@ protocol NIHostIntegrationCoreApi {
   /// Returns passed in int.
   @objc func echoNullableInt(aNullableInt: NSNumber?, wrappedError: NiTestsError) -> NSNumber? {
     do {
-      return try isNullish(
-        api!.echoNullable(isNullish(aNullableInt) ? nil : aNullableInt!.int64Value))
+      return try NiTestsPigeonInternal.isNullish(
+        api!.echoNullable(
+          NiTestsPigeonInternal.isNullish(aNullableInt) ? nil : aNullableInt!.int64Value))
         ? nil
         : NSNumber(
-          value: api!.echoNullable(isNullish(aNullableInt) ? nil : aNullableInt!.int64Value)!)
+          value: api!.echoNullable(
+            NiTestsPigeonInternal.isNullish(aNullableInt) ? nil : aNullableInt!.int64Value)!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -3163,12 +3216,13 @@ protocol NIHostIntegrationCoreApi {
   @objc func echoNullableDouble(aNullableDouble: NSNumber?, wrappedError: NiTestsError) -> NSNumber?
   {
     do {
-      return try isNullish(
-        api!.echoNullable(isNullish(aNullableDouble) ? nil : aNullableDouble!.doubleValue))
+      return try NiTestsPigeonInternal.isNullish(
+        api!.echoNullable(
+          NiTestsPigeonInternal.isNullish(aNullableDouble) ? nil : aNullableDouble!.doubleValue))
         ? nil
         : NSNumber(
-          value: api!.echoNullable(isNullish(aNullableDouble) ? nil : aNullableDouble!.doubleValue)!
-        )
+          value: api!.echoNullable(
+            NiTestsPigeonInternal.isNullish(aNullableDouble) ? nil : aNullableDouble!.doubleValue)!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -3183,11 +3237,13 @@ protocol NIHostIntegrationCoreApi {
   /// Returns the passed in boolean.
   @objc func echoNullableBool(aNullableBool: NSNumber?, wrappedError: NiTestsError) -> NSNumber? {
     do {
-      return try isNullish(
-        api!.echoNullable(isNullish(aNullableBool) ? nil : aNullableBool!.boolValue))
+      return try NiTestsPigeonInternal.isNullish(
+        api!.echoNullable(
+          NiTestsPigeonInternal.isNullish(aNullableBool) ? nil : aNullableBool!.boolValue))
         ? nil
         : NSNumber(
-          value: api!.echoNullable(isNullish(aNullableBool) ? nil : aNullableBool!.boolValue)!)
+          value: api!.echoNullable(
+            NiTestsPigeonInternal.isNullish(aNullableBool) ? nil : aNullableBool!.boolValue)!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -3221,8 +3277,9 @@ protocol NIHostIntegrationCoreApi {
   ) -> NiTestsPigeonTypedData? {
     do {
       let res = try api!.echoNullable(
-        isNullish(aNullableUint8List) ? nil : aNullableUint8List!.toUint8Array())
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
+        NiTestsPigeonInternal.isNullish(aNullableUint8List)
+          ? nil : aNullableUint8List!.toUint8Array())
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -3240,8 +3297,9 @@ protocol NIHostIntegrationCoreApi {
   ) -> NiTestsPigeonTypedData? {
     do {
       let res = try api!.echoNullable(
-        isNullish(aNullableInt32List) ? nil : aNullableInt32List!.toInt32Array())
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
+        NiTestsPigeonInternal.isNullish(aNullableInt32List)
+          ? nil : aNullableInt32List!.toInt32Array())
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -3259,8 +3317,9 @@ protocol NIHostIntegrationCoreApi {
   ) -> NiTestsPigeonTypedData? {
     do {
       let res = try api!.echoNullable(
-        isNullish(aNullableInt64List) ? nil : aNullableInt64List!.toInt64Array())
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
+        NiTestsPigeonInternal.isNullish(aNullableInt64List)
+          ? nil : aNullableInt64List!.toInt64Array())
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -3278,8 +3337,9 @@ protocol NIHostIntegrationCoreApi {
   ) -> NiTestsPigeonTypedData? {
     do {
       let res = try api!.echoNullable(
-        isNullish(aNullableFloat64List) ? nil : aNullableFloat64List!.toFloat64Array())
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
+        NiTestsPigeonInternal.isNullish(aNullableFloat64List)
+          ? nil : aNullableFloat64List!.toFloat64Array())
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -3598,8 +3658,9 @@ protocol NIHostIntegrationCoreApi {
   @objc func echoNullableEnum(anEnum: NSNumber?, wrappedError: NiTestsError) -> NSNumber? {
     do {
       let res = try api!.echoNullable(
-        isNullish(anEnum) ? nil : NIAnEnum.init(rawValue: anEnum!.intValue))?.rawValue
-      return isNullish(res) ? nil : NSNumber(value: res!)
+        NiTestsPigeonInternal.isNullish(anEnum) ? nil : NIAnEnum.init(rawValue: anEnum!.intValue))?
+        .rawValue
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -3616,9 +3677,9 @@ protocol NIHostIntegrationCoreApi {
   {
     do {
       let res = try api!.echoNullable(
-        isNullish(anotherEnum) ? nil : NIAnotherEnum.init(rawValue: anotherEnum!.intValue))?
-        .rawValue
-      return isNullish(res) ? nil : NSNumber(value: res!)
+        NiTestsPigeonInternal.isNullish(anotherEnum)
+          ? nil : NIAnotherEnum.init(rawValue: anotherEnum!.intValue))?.rawValue
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -3635,11 +3696,13 @@ protocol NIHostIntegrationCoreApi {
     -> NSNumber?
   {
     do {
-      return try isNullish(
-        api!.echoOptional(isNullish(aNullableInt) ? nil : aNullableInt!.int64Value))
+      return try NiTestsPigeonInternal.isNullish(
+        api!.echoOptional(
+          NiTestsPigeonInternal.isNullish(aNullableInt) ? nil : aNullableInt!.int64Value))
         ? nil
         : NSNumber(
-          value: api!.echoOptional(isNullish(aNullableInt) ? nil : aNullableInt!.int64Value)!)
+          value: api!.echoOptional(
+            NiTestsPigeonInternal.isNullish(aNullableInt) ? nil : aNullableInt!.int64Value)!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -3750,7 +3813,7 @@ protocol NIHostIntegrationCoreApi {
   {
     do {
       let res = try await api!.echoAsync(aUint8List.toUint8Array()!)
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res)
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -3768,7 +3831,7 @@ protocol NIHostIntegrationCoreApi {
   {
     do {
       let res = try await api!.echoAsync(aInt32List.toInt32Array()!)
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res)
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -3786,7 +3849,7 @@ protocol NIHostIntegrationCoreApi {
   {
     do {
       let res = try await api!.echoAsync(aInt64List.toInt64Array()!)
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res)
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -3804,7 +3867,7 @@ protocol NIHostIntegrationCoreApi {
   {
     do {
       let res = try await api!.echoAsync(aFloat64List.toFloat64Array()!)
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res)
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -4097,7 +4160,7 @@ protocol NIHostIntegrationCoreApi {
   ) async -> NIAllNullableTypesBridge? {
     do {
       return try await NIAllNullableTypesBridge.fromSwift(
-        api!.echoAsync(isNullish(everything) ? nil : everything!.toSwift()))
+        api!.echoAsync(NiTestsPigeonInternal.isNullish(everything) ? nil : everything!.toSwift()))
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -4115,7 +4178,7 @@ protocol NIHostIntegrationCoreApi {
   ) async -> NIAllNullableTypesWithoutRecursionBridge? {
     do {
       return try await NIAllNullableTypesWithoutRecursionBridge.fromSwift(
-        api!.echoAsync(isNullish(everything) ? nil : everything!.toSwift()))
+        api!.echoAsync(NiTestsPigeonInternal.isNullish(everything) ? nil : everything!.toSwift()))
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -4130,8 +4193,12 @@ protocol NIHostIntegrationCoreApi {
   /// Returns passed in int asynchronously.
   @objc func echoAsyncNullableInt(anInt: NSNumber?, wrappedError: NiTestsError) async -> NSNumber? {
     do {
-      return try await isNullish(api!.echoAsyncNullable(isNullish(anInt) ? nil : anInt!.int64Value))
-        ? nil : NSNumber(value: api!.echoAsyncNullable(isNullish(anInt) ? nil : anInt!.int64Value)!)
+      return try await NiTestsPigeonInternal.isNullish(
+        api!.echoAsyncNullable(NiTestsPigeonInternal.isNullish(anInt) ? nil : anInt!.int64Value))
+        ? nil
+        : NSNumber(
+          value: api!.echoAsyncNullable(
+            NiTestsPigeonInternal.isNullish(anInt) ? nil : anInt!.int64Value)!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -4148,10 +4215,13 @@ protocol NIHostIntegrationCoreApi {
     -> NSNumber?
   {
     do {
-      return try await isNullish(
-        api!.echoAsyncNullable(isNullish(aDouble) ? nil : aDouble!.doubleValue))
+      return try await NiTestsPigeonInternal.isNullish(
+        api!.echoAsyncNullable(
+          NiTestsPigeonInternal.isNullish(aDouble) ? nil : aDouble!.doubleValue))
         ? nil
-        : NSNumber(value: api!.echoAsyncNullable(isNullish(aDouble) ? nil : aDouble!.doubleValue)!)
+        : NSNumber(
+          value: api!.echoAsyncNullable(
+            NiTestsPigeonInternal.isNullish(aDouble) ? nil : aDouble!.doubleValue)!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -4167,8 +4237,12 @@ protocol NIHostIntegrationCoreApi {
   @objc func echoAsyncNullableBool(aBool: NSNumber?, wrappedError: NiTestsError) async -> NSNumber?
   {
     do {
-      return try await isNullish(api!.echoAsyncNullable(isNullish(aBool) ? nil : aBool!.boolValue))
-        ? nil : NSNumber(value: api!.echoAsyncNullable(isNullish(aBool) ? nil : aBool!.boolValue)!)
+      return try await NiTestsPigeonInternal.isNullish(
+        api!.echoAsyncNullable(NiTestsPigeonInternal.isNullish(aBool) ? nil : aBool!.boolValue))
+        ? nil
+        : NSNumber(
+          value: api!.echoAsyncNullable(
+            NiTestsPigeonInternal.isNullish(aBool) ? nil : aBool!.boolValue)!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -4203,8 +4277,8 @@ protocol NIHostIntegrationCoreApi {
   ) async -> NiTestsPigeonTypedData? {
     do {
       let res = try await api!.echoAsyncNullable(
-        isNullish(aUint8List) ? nil : aUint8List!.toUint8Array())
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
+        NiTestsPigeonInternal.isNullish(aUint8List) ? nil : aUint8List!.toUint8Array())
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -4222,8 +4296,8 @@ protocol NIHostIntegrationCoreApi {
   ) async -> NiTestsPigeonTypedData? {
     do {
       let res = try await api!.echoAsyncNullable(
-        isNullish(aInt32List) ? nil : aInt32List!.toInt32Array())
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
+        NiTestsPigeonInternal.isNullish(aInt32List) ? nil : aInt32List!.toInt32Array())
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -4241,8 +4315,8 @@ protocol NIHostIntegrationCoreApi {
   ) async -> NiTestsPigeonTypedData? {
     do {
       let res = try await api!.echoAsyncNullable(
-        isNullish(aInt64List) ? nil : aInt64List!.toInt64Array())
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
+        NiTestsPigeonInternal.isNullish(aInt64List) ? nil : aInt64List!.toInt64Array())
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -4260,8 +4334,8 @@ protocol NIHostIntegrationCoreApi {
   ) async -> NiTestsPigeonTypedData? {
     do {
       let res = try await api!.echoAsyncNullable(
-        isNullish(aFloat64List) ? nil : aFloat64List!.toFloat64Array())
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
+        NiTestsPigeonInternal.isNullish(aFloat64List) ? nil : aFloat64List!.toFloat64Array())
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -4461,8 +4535,9 @@ protocol NIHostIntegrationCoreApi {
   {
     do {
       let res = try await api!.echoAsyncNullable(
-        isNullish(anEnum) ? nil : NIAnEnum.init(rawValue: anEnum!.intValue))?.rawValue
-      return isNullish(res) ? nil : NSNumber(value: res!)
+        NiTestsPigeonInternal.isNullish(anEnum) ? nil : NIAnEnum.init(rawValue: anEnum!.intValue))?
+        .rawValue
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -4480,9 +4555,9 @@ protocol NIHostIntegrationCoreApi {
   {
     do {
       let res = try await api!.echoAsyncNullable(
-        isNullish(anotherEnum) ? nil : NIAnotherEnum.init(rawValue: anotherEnum!.intValue))?
-        .rawValue
-      return isNullish(res) ? nil : NSNumber(value: res!)
+        NiTestsPigeonInternal.isNullish(anotherEnum)
+          ? nil : NIAnotherEnum.init(rawValue: anotherEnum!.intValue))?.rawValue
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -4558,7 +4633,8 @@ protocol NIHostIntegrationCoreApi {
   ) -> NIAllNullableTypesBridge? {
     do {
       return try NIAllNullableTypesBridge.fromSwift(
-        api!.callFlutterEcho(isNullish(everything) ? nil : everything!.toSwift()))
+        api!.callFlutterEcho(
+          NiTestsPigeonInternal.isNullish(everything) ? nil : everything!.toSwift()))
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -4577,8 +4653,8 @@ protocol NIHostIntegrationCoreApi {
     do {
       return try NIAllNullableTypesBridge.fromSwift(
         api!.callFlutterSendMultipleNullableTypes(
-          aBool: isNullish(aNullableBool) ? nil : aNullableBool!.boolValue,
-          anInt: isNullish(aNullableInt) ? nil : aNullableInt!.int64Value,
+          aBool: NiTestsPigeonInternal.isNullish(aNullableBool) ? nil : aNullableBool!.boolValue,
+          anInt: NiTestsPigeonInternal.isNullish(aNullableInt) ? nil : aNullableInt!.int64Value,
           aString: aNullableString as String?))!
     } catch let error as NiTestsError {
       wrappedError.code = error.code
@@ -4596,7 +4672,8 @@ protocol NIHostIntegrationCoreApi {
   ) -> NIAllNullableTypesWithoutRecursionBridge? {
     do {
       return try NIAllNullableTypesWithoutRecursionBridge.fromSwift(
-        api!.callFlutterEcho(isNullish(everything) ? nil : everything!.toSwift()))
+        api!.callFlutterEcho(
+          NiTestsPigeonInternal.isNullish(everything) ? nil : everything!.toSwift()))
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -4615,8 +4692,8 @@ protocol NIHostIntegrationCoreApi {
     do {
       return try NIAllNullableTypesWithoutRecursionBridge.fromSwift(
         api!.callFlutterSendMultipleNullableTypesWithoutRecursion(
-          aBool: isNullish(aNullableBool) ? nil : aNullableBool!.boolValue,
-          anInt: isNullish(aNullableInt) ? nil : aNullableInt!.int64Value,
+          aBool: NiTestsPigeonInternal.isNullish(aNullableBool) ? nil : aNullableBool!.boolValue,
+          anInt: NiTestsPigeonInternal.isNullish(aNullableInt) ? nil : aNullableInt!.int64Value,
           aString: aNullableString as String?))!
     } catch let error as NiTestsError {
       wrappedError.code = error.code
@@ -4690,7 +4767,7 @@ protocol NIHostIntegrationCoreApi {
   {
     do {
       let res = try api!.callFlutterEcho(list.toUint8Array()!)
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res)
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -4707,7 +4784,7 @@ protocol NIHostIntegrationCoreApi {
   {
     do {
       let res = try api!.callFlutterEcho(list.toInt32Array()!)
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res)
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -4724,7 +4801,7 @@ protocol NIHostIntegrationCoreApi {
   {
     do {
       let res = try api!.callFlutterEcho(list.toInt64Array()!)
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res)
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -4741,7 +4818,7 @@ protocol NIHostIntegrationCoreApi {
   {
     do {
       let res = try api!.callFlutterEcho(list.toFloat64Array()!)
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res)
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -5058,9 +5135,13 @@ protocol NIHostIntegrationCoreApi {
   @objc func callFlutterEchoNullableBool(aBool: NSNumber?, wrappedError: NiTestsError) -> NSNumber?
   {
     do {
-      return try isNullish(api!.callFlutterEchoNullable(isNullish(aBool) ? nil : aBool!.boolValue))
+      return try NiTestsPigeonInternal.isNullish(
+        api!.callFlutterEchoNullable(
+          NiTestsPigeonInternal.isNullish(aBool) ? nil : aBool!.boolValue))
         ? nil
-        : NSNumber(value: api!.callFlutterEchoNullable(isNullish(aBool) ? nil : aBool!.boolValue)!)
+        : NSNumber(
+          value: api!.callFlutterEchoNullable(
+            NiTestsPigeonInternal.isNullish(aBool) ? nil : aBool!.boolValue)!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -5074,9 +5155,13 @@ protocol NIHostIntegrationCoreApi {
   }
   @objc func callFlutterEchoNullableInt(anInt: NSNumber?, wrappedError: NiTestsError) -> NSNumber? {
     do {
-      return try isNullish(api!.callFlutterEchoNullable(isNullish(anInt) ? nil : anInt!.int64Value))
+      return try NiTestsPigeonInternal.isNullish(
+        api!.callFlutterEchoNullable(
+          NiTestsPigeonInternal.isNullish(anInt) ? nil : anInt!.int64Value))
         ? nil
-        : NSNumber(value: api!.callFlutterEchoNullable(isNullish(anInt) ? nil : anInt!.int64Value)!)
+        : NSNumber(
+          value: api!.callFlutterEchoNullable(
+            NiTestsPigeonInternal.isNullish(anInt) ? nil : anInt!.int64Value)!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -5092,11 +5177,13 @@ protocol NIHostIntegrationCoreApi {
     -> NSNumber?
   {
     do {
-      return try isNullish(
-        api!.callFlutterEchoNullable(isNullish(aDouble) ? nil : aDouble!.doubleValue))
+      return try NiTestsPigeonInternal.isNullish(
+        api!.callFlutterEchoNullable(
+          NiTestsPigeonInternal.isNullish(aDouble) ? nil : aDouble!.doubleValue))
         ? nil
         : NSNumber(
-          value: api!.callFlutterEchoNullable(isNullish(aDouble) ? nil : aDouble!.doubleValue)!)
+          value: api!.callFlutterEchoNullable(
+            NiTestsPigeonInternal.isNullish(aDouble) ? nil : aDouble!.doubleValue)!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -5128,8 +5215,9 @@ protocol NIHostIntegrationCoreApi {
     list: NiTestsPigeonTypedData?, wrappedError: NiTestsError
   ) -> NiTestsPigeonTypedData? {
     do {
-      let res = try api!.callFlutterEchoNullable(isNullish(list) ? nil : list!.toUint8Array())
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
+      let res = try api!.callFlutterEchoNullable(
+        NiTestsPigeonInternal.isNullish(list) ? nil : list!.toUint8Array())
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -5145,8 +5233,9 @@ protocol NIHostIntegrationCoreApi {
     list: NiTestsPigeonTypedData?, wrappedError: NiTestsError
   ) -> NiTestsPigeonTypedData? {
     do {
-      let res = try api!.callFlutterEchoNullable(isNullish(list) ? nil : list!.toInt32Array())
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
+      let res = try api!.callFlutterEchoNullable(
+        NiTestsPigeonInternal.isNullish(list) ? nil : list!.toInt32Array())
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -5162,8 +5251,9 @@ protocol NIHostIntegrationCoreApi {
     list: NiTestsPigeonTypedData?, wrappedError: NiTestsError
   ) -> NiTestsPigeonTypedData? {
     do {
-      let res = try api!.callFlutterEchoNullable(isNullish(list) ? nil : list!.toInt64Array())
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
+      let res = try api!.callFlutterEchoNullable(
+        NiTestsPigeonInternal.isNullish(list) ? nil : list!.toInt64Array())
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -5179,8 +5269,9 @@ protocol NIHostIntegrationCoreApi {
     list: NiTestsPigeonTypedData?, wrappedError: NiTestsError
   ) -> NiTestsPigeonTypedData? {
     do {
-      let res = try api!.callFlutterEchoNullable(isNullish(list) ? nil : list!.toFloat64Array())
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
+      let res = try api!.callFlutterEchoNullable(
+        NiTestsPigeonInternal.isNullish(list) ? nil : list!.toFloat64Array())
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -5470,8 +5561,9 @@ protocol NIHostIntegrationCoreApi {
   {
     do {
       let res = try api!.callFlutterEchoNullable(
-        isNullish(anEnum) ? nil : NIAnEnum.init(rawValue: anEnum!.intValue))?.rawValue
-      return isNullish(res) ? nil : NSNumber(value: res!)
+        NiTestsPigeonInternal.isNullish(anEnum) ? nil : NIAnEnum.init(rawValue: anEnum!.intValue))?
+        .rawValue
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -5488,9 +5580,9 @@ protocol NIHostIntegrationCoreApi {
   {
     do {
       let res = try api!.callFlutterEchoNullable(
-        isNullish(anotherEnum) ? nil : NIAnotherEnum.init(rawValue: anotherEnum!.intValue))?
-        .rawValue
-      return isNullish(res) ? nil : NSNumber(value: res!)
+        NiTestsPigeonInternal.isNullish(anotherEnum)
+          ? nil : NIAnotherEnum.init(rawValue: anotherEnum!.intValue))?.rawValue
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -5539,7 +5631,7 @@ protocol NIHostIntegrationCoreApi {
     do {
       return try await NIAllNullableTypesBridge.fromSwift(
         api!.callFlutterEchoAsyncNullableNIAllNullableTypes(
-          everything: isNullish(everything) ? nil : everything!.toSwift()))
+          everything: NiTestsPigeonInternal.isNullish(everything) ? nil : everything!.toSwift()))
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -5557,7 +5649,7 @@ protocol NIHostIntegrationCoreApi {
     do {
       return try await NIAllNullableTypesWithoutRecursionBridge.fromSwift(
         api!.callFlutterEchoAsyncNullableNIAllNullableTypesWithoutRecursion(
-          everything: isNullish(everything) ? nil : everything!.toSwift()))
+          everything: NiTestsPigeonInternal.isNullish(everything) ? nil : everything!.toSwift()))
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -5634,7 +5726,7 @@ protocol NIHostIntegrationCoreApi {
   {
     do {
       let res = try await api!.callFlutterEchoAsyncUint8List(list: list.toUint8Array()!)
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res)
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -5651,7 +5743,7 @@ protocol NIHostIntegrationCoreApi {
   {
     do {
       let res = try await api!.callFlutterEchoAsyncInt32List(list: list.toInt32Array()!)
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res)
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -5668,7 +5760,7 @@ protocol NIHostIntegrationCoreApi {
   {
     do {
       let res = try await api!.callFlutterEchoAsyncInt64List(list: list.toInt64Array()!)
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res)
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -5685,7 +5777,7 @@ protocol NIHostIntegrationCoreApi {
   ) async -> NiTestsPigeonTypedData? {
     do {
       let res = try await api!.callFlutterEchoAsyncFloat64List(list: list.toFloat64Array()!)
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res)
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -5947,12 +6039,13 @@ protocol NIHostIntegrationCoreApi {
     -> NSNumber?
   {
     do {
-      return try await isNullish(
-        api!.callFlutterEchoAsyncNullableBool(aBool: isNullish(aBool) ? nil : aBool!.boolValue))
+      return try await NiTestsPigeonInternal.isNullish(
+        api!.callFlutterEchoAsyncNullableBool(
+          aBool: NiTestsPigeonInternal.isNullish(aBool) ? nil : aBool!.boolValue))
         ? nil
         : NSNumber(
           value: api!.callFlutterEchoAsyncNullableBool(
-            aBool: isNullish(aBool) ? nil : aBool!.boolValue)!)
+            aBool: NiTestsPigeonInternal.isNullish(aBool) ? nil : aBool!.boolValue)!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -5968,12 +6061,13 @@ protocol NIHostIntegrationCoreApi {
     -> NSNumber?
   {
     do {
-      return try await isNullish(
-        api!.callFlutterEchoAsyncNullableInt(anInt: isNullish(anInt) ? nil : anInt!.int64Value))
+      return try await NiTestsPigeonInternal.isNullish(
+        api!.callFlutterEchoAsyncNullableInt(
+          anInt: NiTestsPigeonInternal.isNullish(anInt) ? nil : anInt!.int64Value))
         ? nil
         : NSNumber(
           value: api!.callFlutterEchoAsyncNullableInt(
-            anInt: isNullish(anInt) ? nil : anInt!.int64Value)!)
+            anInt: NiTestsPigeonInternal.isNullish(anInt) ? nil : anInt!.int64Value)!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -5989,13 +6083,13 @@ protocol NIHostIntegrationCoreApi {
     async -> NSNumber?
   {
     do {
-      return try await isNullish(
+      return try await NiTestsPigeonInternal.isNullish(
         api!.callFlutterEchoAsyncNullableDouble(
-          aDouble: isNullish(aDouble) ? nil : aDouble!.doubleValue))
+          aDouble: NiTestsPigeonInternal.isNullish(aDouble) ? nil : aDouble!.doubleValue))
         ? nil
         : NSNumber(
           value: api!.callFlutterEchoAsyncNullableDouble(
-            aDouble: isNullish(aDouble) ? nil : aDouble!.doubleValue)!)
+            aDouble: NiTestsPigeonInternal.isNullish(aDouble) ? nil : aDouble!.doubleValue)!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -6029,8 +6123,8 @@ protocol NIHostIntegrationCoreApi {
   ) async -> NiTestsPigeonTypedData? {
     do {
       let res = try await api!.callFlutterEchoAsyncNullableUint8List(
-        list: isNullish(list) ? nil : list!.toUint8Array())
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
+        list: NiTestsPigeonInternal.isNullish(list) ? nil : list!.toUint8Array())
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -6047,8 +6141,8 @@ protocol NIHostIntegrationCoreApi {
   ) async -> NiTestsPigeonTypedData? {
     do {
       let res = try await api!.callFlutterEchoAsyncNullableInt32List(
-        list: isNullish(list) ? nil : list!.toInt32Array())
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
+        list: NiTestsPigeonInternal.isNullish(list) ? nil : list!.toInt32Array())
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -6065,8 +6159,8 @@ protocol NIHostIntegrationCoreApi {
   ) async -> NiTestsPigeonTypedData? {
     do {
       let res = try await api!.callFlutterEchoAsyncNullableInt64List(
-        list: isNullish(list) ? nil : list!.toInt64Array())
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
+        list: NiTestsPigeonInternal.isNullish(list) ? nil : list!.toInt64Array())
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -6083,8 +6177,8 @@ protocol NIHostIntegrationCoreApi {
   ) async -> NiTestsPigeonTypedData? {
     do {
       let res = try await api!.callFlutterEchoAsyncNullableFloat64List(
-        list: isNullish(list) ? nil : list!.toFloat64Array())
-      return isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
+        list: NiTestsPigeonInternal.isNullish(list) ? nil : list!.toFloat64Array())
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NiTestsPigeonTypedData(res!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -6329,8 +6423,9 @@ protocol NIHostIntegrationCoreApi {
   {
     do {
       let res = try await api!.callFlutterEchoAsyncNullableEnum(
-        anEnum: isNullish(anEnum) ? nil : NIAnEnum.init(rawValue: anEnum!.intValue))?.rawValue
-      return isNullish(res) ? nil : NSNumber(value: res!)
+        anEnum: NiTestsPigeonInternal.isNullish(anEnum)
+          ? nil : NIAnEnum.init(rawValue: anEnum!.intValue))?.rawValue
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -6347,9 +6442,9 @@ protocol NIHostIntegrationCoreApi {
   ) async -> NSNumber? {
     do {
       let res = try await api!.callFlutterEchoAnotherAsyncNullableEnum(
-        anotherEnum: isNullish(anotherEnum)
+        anotherEnum: NiTestsPigeonInternal.isNullish(anotherEnum)
           ? nil : NIAnotherEnum.init(rawValue: anotherEnum!.intValue))?.rawValue
-      return isNullish(res) ? nil : NSNumber(value: res!)
+      return NiTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -6732,9 +6827,11 @@ class NIFlutterIntegrationCoreApi {
   ) throws -> NIAllNullableTypes {
     let error = NiTestsError()
     let res = api!.sendMultipleNullableTypes(
-      aNullableBool: isNullish(aNullableBool) ? nil : NSNumber(value: aNullableBool!),
-      aNullableInt: isNullish(aNullableInt) ? nil : NSNumber(value: aNullableInt!),
-      aNullableString: aNullableString as NSString?, error: error)
+      aNullableBool: NiTestsPigeonInternal.isNullish(aNullableBool)
+        ? nil : NSNumber(value: aNullableBool!),
+      aNullableInt: NiTestsPigeonInternal.isNullish(aNullableInt)
+        ? nil : NSNumber(value: aNullableInt!), aNullableString: aNullableString as NSString?,
+      error: error)
     if error.code != nil {
       throw error
     }
@@ -6764,9 +6861,11 @@ class NIFlutterIntegrationCoreApi {
   ) throws -> NIAllNullableTypesWithoutRecursion {
     let error = NiTestsError()
     let res = api!.sendMultipleNullableTypesWithoutRecursion(
-      aNullableBool: isNullish(aNullableBool) ? nil : NSNumber(value: aNullableBool!),
-      aNullableInt: isNullish(aNullableInt) ? nil : NSNumber(value: aNullableInt!),
-      aNullableString: aNullableString as NSString?, error: error)
+      aNullableBool: NiTestsPigeonInternal.isNullish(aNullableBool)
+        ? nil : NSNumber(value: aNullableBool!),
+      aNullableInt: NiTestsPigeonInternal.isNullish(aNullableInt)
+        ? nil : NSNumber(value: aNullableInt!), aNullableString: aNullableString as NSString?,
+      error: error)
     if error.code != nil {
       throw error
     }
@@ -6818,7 +6917,8 @@ class NIFlutterIntegrationCoreApi {
   func echoUint8List(list: [UInt8]) throws -> [UInt8] {
     let error = NiTestsError()
     let res = api!.echoUint8List(
-      list: isNullish(list) ? nil : NiTestsPigeonTypedData(list), error: error)
+      list: NiTestsPigeonInternal.isNullish(list) ? nil : NiTestsPigeonTypedData(list), error: error
+    )
     if error.code != nil {
       throw error
     }
@@ -6829,7 +6929,8 @@ class NIFlutterIntegrationCoreApi {
   func echoInt32List(list: [Int32]) throws -> [Int32] {
     let error = NiTestsError()
     let res = api!.echoInt32List(
-      list: isNullish(list) ? nil : NiTestsPigeonTypedData(list), error: error)
+      list: NiTestsPigeonInternal.isNullish(list) ? nil : NiTestsPigeonTypedData(list), error: error
+    )
     if error.code != nil {
       throw error
     }
@@ -6840,7 +6941,8 @@ class NIFlutterIntegrationCoreApi {
   func echoInt64List(list: [Int64]) throws -> [Int64] {
     let error = NiTestsError()
     let res = api!.echoInt64List(
-      list: isNullish(list) ? nil : NiTestsPigeonTypedData(list), error: error)
+      list: NiTestsPigeonInternal.isNullish(list) ? nil : NiTestsPigeonTypedData(list), error: error
+    )
     if error.code != nil {
       throw error
     }
@@ -6851,7 +6953,8 @@ class NIFlutterIntegrationCoreApi {
   func echoFloat64List(list: [Float64]) throws -> [Float64] {
     let error = NiTestsError()
     let res = api!.echoFloat64List(
-      list: isNullish(list) ? nil : NiTestsPigeonTypedData(list), error: error)
+      list: NiTestsPigeonInternal.isNullish(list) ? nil : NiTestsPigeonTypedData(list), error: error
+    )
     if error.code != nil {
       throw error
     }
@@ -7049,7 +7152,7 @@ class NIFlutterIntegrationCoreApi {
   func echoNullableBool(aBool: Bool?) throws -> Bool? {
     let error = NiTestsError()
     let res = api!.echoNullableBool(
-      aBool: isNullish(aBool) ? nil : NSNumber(value: aBool!), error: error)
+      aBool: NiTestsPigeonInternal.isNullish(aBool) ? nil : NSNumber(value: aBool!), error: error)
     if error.code != nil {
       throw error
     }
@@ -7060,7 +7163,7 @@ class NIFlutterIntegrationCoreApi {
   func echoNullableInt(anInt: Int64?) throws -> Int64? {
     let error = NiTestsError()
     let res = api!.echoNullableInt(
-      anInt: isNullish(anInt) ? nil : NSNumber(value: anInt!), error: error)
+      anInt: NiTestsPigeonInternal.isNullish(anInt) ? nil : NSNumber(value: anInt!), error: error)
     if error.code != nil {
       throw error
     }
@@ -7071,7 +7174,8 @@ class NIFlutterIntegrationCoreApi {
   func echoNullableDouble(aDouble: Double?) throws -> Double? {
     let error = NiTestsError()
     let res = api!.echoNullableDouble(
-      aDouble: isNullish(aDouble) ? nil : NSNumber(value: aDouble!), error: error)
+      aDouble: NiTestsPigeonInternal.isNullish(aDouble) ? nil : NSNumber(value: aDouble!),
+      error: error)
     if error.code != nil {
       throw error
     }
@@ -7092,7 +7196,8 @@ class NIFlutterIntegrationCoreApi {
   func echoNullableUint8List(list: [UInt8]?) throws -> [UInt8]? {
     let error = NiTestsError()
     let res = api!.echoNullableUint8List(
-      list: isNullish(list) ? nil : NiTestsPigeonTypedData(list!), error: error)
+      list: NiTestsPigeonInternal.isNullish(list) ? nil : NiTestsPigeonTypedData(list!),
+      error: error)
     if error.code != nil {
       throw error
     }
@@ -7103,7 +7208,8 @@ class NIFlutterIntegrationCoreApi {
   func echoNullableInt32List(list: [Int32]?) throws -> [Int32]? {
     let error = NiTestsError()
     let res = api!.echoNullableInt32List(
-      list: isNullish(list) ? nil : NiTestsPigeonTypedData(list!), error: error)
+      list: NiTestsPigeonInternal.isNullish(list) ? nil : NiTestsPigeonTypedData(list!),
+      error: error)
     if error.code != nil {
       throw error
     }
@@ -7114,7 +7220,8 @@ class NIFlutterIntegrationCoreApi {
   func echoNullableInt64List(list: [Int64]?) throws -> [Int64]? {
     let error = NiTestsError()
     let res = api!.echoNullableInt64List(
-      list: isNullish(list) ? nil : NiTestsPigeonTypedData(list!), error: error)
+      list: NiTestsPigeonInternal.isNullish(list) ? nil : NiTestsPigeonTypedData(list!),
+      error: error)
     if error.code != nil {
       throw error
     }
@@ -7125,7 +7232,8 @@ class NIFlutterIntegrationCoreApi {
   func echoNullableFloat64List(list: [Float64]?) throws -> [Float64]? {
     let error = NiTestsError()
     let res = api!.echoNullableFloat64List(
-      list: isNullish(list) ? nil : NiTestsPigeonTypedData(list!), error: error)
+      list: NiTestsPigeonInternal.isNullish(list) ? nil : NiTestsPigeonTypedData(list!),
+      error: error)
     if error.code != nil {
       throw error
     }
@@ -7305,7 +7413,8 @@ class NIFlutterIntegrationCoreApi {
   func echoNullableEnum(anEnum: NIAnEnum?) throws -> NIAnEnum? {
     let error = NiTestsError()
     let res = api!.echoNullableEnum(
-      anEnum: isNullish(anEnum) ? nil : NSNumber(value: anEnum!.rawValue), error: error)
+      anEnum: NiTestsPigeonInternal.isNullish(anEnum) ? nil : NSNumber(value: anEnum!.rawValue),
+      error: error)
     if error.code != nil {
       throw error
     }
@@ -7316,8 +7425,8 @@ class NIFlutterIntegrationCoreApi {
   func echoAnotherNullableEnum(anotherEnum: NIAnotherEnum?) throws -> NIAnotherEnum? {
     let error = NiTestsError()
     let res = api!.echoAnotherNullableEnum(
-      anotherEnum: isNullish(anotherEnum) ? nil : NSNumber(value: anotherEnum!.rawValue),
-      error: error)
+      anotherEnum: NiTestsPigeonInternal.isNullish(anotherEnum)
+        ? nil : NSNumber(value: anotherEnum!.rawValue), error: error)
     if error.code != nil {
       throw error
     }
@@ -7418,7 +7527,8 @@ class NIFlutterIntegrationCoreApi {
   func echoAsyncUint8List(list: [UInt8]) async throws -> [UInt8] {
     let error = NiTestsError()
     let res = await api!.echoAsyncUint8List(
-      list: isNullish(list) ? nil : NiTestsPigeonTypedData(list), error: error)
+      list: NiTestsPigeonInternal.isNullish(list) ? nil : NiTestsPigeonTypedData(list), error: error
+    )
     if error.code != nil {
       throw error
     }
@@ -7428,7 +7538,8 @@ class NIFlutterIntegrationCoreApi {
   func echoAsyncInt32List(list: [Int32]) async throws -> [Int32] {
     let error = NiTestsError()
     let res = await api!.echoAsyncInt32List(
-      list: isNullish(list) ? nil : NiTestsPigeonTypedData(list), error: error)
+      list: NiTestsPigeonInternal.isNullish(list) ? nil : NiTestsPigeonTypedData(list), error: error
+    )
     if error.code != nil {
       throw error
     }
@@ -7438,7 +7549,8 @@ class NIFlutterIntegrationCoreApi {
   func echoAsyncInt64List(list: [Int64]) async throws -> [Int64] {
     let error = NiTestsError()
     let res = await api!.echoAsyncInt64List(
-      list: isNullish(list) ? nil : NiTestsPigeonTypedData(list), error: error)
+      list: NiTestsPigeonInternal.isNullish(list) ? nil : NiTestsPigeonTypedData(list), error: error
+    )
     if error.code != nil {
       throw error
     }
@@ -7448,7 +7560,8 @@ class NIFlutterIntegrationCoreApi {
   func echoAsyncFloat64List(list: [Float64]) async throws -> [Float64] {
     let error = NiTestsError()
     let res = await api!.echoAsyncFloat64List(
-      list: isNullish(list) ? nil : NiTestsPigeonTypedData(list), error: error)
+      list: NiTestsPigeonInternal.isNullish(list) ? nil : NiTestsPigeonTypedData(list), error: error
+    )
     if error.code != nil {
       throw error
     }
@@ -7598,7 +7711,7 @@ class NIFlutterIntegrationCoreApi {
   func echoAsyncNullableBool(aBool: Bool?) async throws -> Bool? {
     let error = NiTestsError()
     let res = await api!.echoAsyncNullableBool(
-      aBool: isNullish(aBool) ? nil : NSNumber(value: aBool!), error: error)
+      aBool: NiTestsPigeonInternal.isNullish(aBool) ? nil : NSNumber(value: aBool!), error: error)
     if error.code != nil {
       throw error
     }
@@ -7608,7 +7721,7 @@ class NIFlutterIntegrationCoreApi {
   func echoAsyncNullableInt(anInt: Int64?) async throws -> Int64? {
     let error = NiTestsError()
     let res = await api!.echoAsyncNullableInt(
-      anInt: isNullish(anInt) ? nil : NSNumber(value: anInt!), error: error)
+      anInt: NiTestsPigeonInternal.isNullish(anInt) ? nil : NSNumber(value: anInt!), error: error)
     if error.code != nil {
       throw error
     }
@@ -7618,7 +7731,8 @@ class NIFlutterIntegrationCoreApi {
   func echoAsyncNullableDouble(aDouble: Double?) async throws -> Double? {
     let error = NiTestsError()
     let res = await api!.echoAsyncNullableDouble(
-      aDouble: isNullish(aDouble) ? nil : NSNumber(value: aDouble!), error: error)
+      aDouble: NiTestsPigeonInternal.isNullish(aDouble) ? nil : NSNumber(value: aDouble!),
+      error: error)
     if error.code != nil {
       throw error
     }
@@ -7637,7 +7751,8 @@ class NIFlutterIntegrationCoreApi {
   func echoAsyncNullableUint8List(list: [UInt8]?) async throws -> [UInt8]? {
     let error = NiTestsError()
     let res = await api!.echoAsyncNullableUint8List(
-      list: isNullish(list) ? nil : NiTestsPigeonTypedData(list!), error: error)
+      list: NiTestsPigeonInternal.isNullish(list) ? nil : NiTestsPigeonTypedData(list!),
+      error: error)
     if error.code != nil {
       throw error
     }
@@ -7647,7 +7762,8 @@ class NIFlutterIntegrationCoreApi {
   func echoAsyncNullableInt32List(list: [Int32]?) async throws -> [Int32]? {
     let error = NiTestsError()
     let res = await api!.echoAsyncNullableInt32List(
-      list: isNullish(list) ? nil : NiTestsPigeonTypedData(list!), error: error)
+      list: NiTestsPigeonInternal.isNullish(list) ? nil : NiTestsPigeonTypedData(list!),
+      error: error)
     if error.code != nil {
       throw error
     }
@@ -7657,7 +7773,8 @@ class NIFlutterIntegrationCoreApi {
   func echoAsyncNullableInt64List(list: [Int64]?) async throws -> [Int64]? {
     let error = NiTestsError()
     let res = await api!.echoAsyncNullableInt64List(
-      list: isNullish(list) ? nil : NiTestsPigeonTypedData(list!), error: error)
+      list: NiTestsPigeonInternal.isNullish(list) ? nil : NiTestsPigeonTypedData(list!),
+      error: error)
     if error.code != nil {
       throw error
     }
@@ -7667,7 +7784,8 @@ class NIFlutterIntegrationCoreApi {
   func echoAsyncNullableFloat64List(list: [Float64]?) async throws -> [Float64]? {
     let error = NiTestsError()
     let res = await api!.echoAsyncNullableFloat64List(
-      list: isNullish(list) ? nil : NiTestsPigeonTypedData(list!), error: error)
+      list: NiTestsPigeonInternal.isNullish(list) ? nil : NiTestsPigeonTypedData(list!),
+      error: error)
     if error.code != nil {
       throw error
     }
@@ -7804,7 +7922,8 @@ class NIFlutterIntegrationCoreApi {
   func echoAsyncNullableEnum(anEnum: NIAnEnum?) async throws -> NIAnEnum? {
     let error = NiTestsError()
     let res = await api!.echoAsyncNullableEnum(
-      anEnum: isNullish(anEnum) ? nil : NSNumber(value: anEnum!.rawValue), error: error)
+      anEnum: NiTestsPigeonInternal.isNullish(anEnum) ? nil : NSNumber(value: anEnum!.rawValue),
+      error: error)
     if error.code != nil {
       throw error
     }
@@ -7814,8 +7933,8 @@ class NIFlutterIntegrationCoreApi {
   func echoAnotherAsyncNullableEnum(anotherEnum: NIAnotherEnum?) async throws -> NIAnotherEnum? {
     let error = NiTestsError()
     let res = await api!.echoAnotherAsyncNullableEnum(
-      anotherEnum: isNullish(anotherEnum) ? nil : NSNumber(value: anotherEnum!.rawValue),
-      error: error)
+      anotherEnum: NiTestsPigeonInternal.isNullish(anotherEnum)
+        ? nil : NSNumber(value: anotherEnum!.rawValue), error: error)
     if error.code != nil {
       throw error
     }

@@ -251,6 +251,10 @@ data class MessageData(
     result = 31 * result + MessagesPigeonUtils.deepHash(this.data)
     return result
   }
+
+  override fun toString(): String {
+    return "MessageData(name=$name, messageDescription=$messageDescription, code=$code, data=$data)"
+  }
 }
 
 val ExampleHostApiInstances: MutableMap<String, ExampleHostApiRegistrar> = mutableMapOf()

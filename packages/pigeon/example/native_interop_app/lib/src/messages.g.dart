@@ -629,7 +629,7 @@ class MessageData {
 
   @override
   String toString() {
-    return _toList().toString();
+    return 'MessageData(name: $name, messageDescription: $messageDescription, code: $code, data: $data)';
   }
 }
 

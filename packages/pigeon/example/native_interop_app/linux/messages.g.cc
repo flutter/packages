@@ -196,6 +196,108 @@ static guint G_GNUC_UNUSED flpigeon_deep_hash(FlValue* value) {
   }
   return 0;
 }
+static gchar* G_GNUC_UNUSED flpigeon_to_string(FlValue* value) {
+  if (value == nullptr) {
+    return g_strdup("null");
+  }
+  switch (fl_value_get_type(value)) {
+    case FL_VALUE_TYPE_NULL:
+      return g_strdup("null");
+    case FL_VALUE_TYPE_BOOL:
+      return g_strdup(fl_value_get_bool(value) ? "true" : "false");
+    case FL_VALUE_TYPE_INT:
+      return g_strdup_printf("%" G_GINT64_FORMAT, fl_value_get_int(value));
+    case FL_VALUE_TYPE_FLOAT:
+      return g_strdup_printf("%g", fl_value_get_float(value));
+    case FL_VALUE_TYPE_STRING:
+      return g_strdup_printf("\"%s\"", fl_value_get_string(value));
+    case FL_VALUE_TYPE_UINT8_LIST: {
+      GString* str = g_string_new("[");
+      size_t len = fl_value_get_length(value);
+      const uint8_t* data = fl_value_get_uint8_list(value);
+      for (size_t i = 0; i < len; i++) {
+        if (i > 0) {
+          g_string_append(str, ", ");
+        }
+        g_string_append_printf(str, "%d", data[i]);
+      }
+      g_string_append(str, "]");
+      return g_string_free(str, FALSE);
+    }
+    case FL_VALUE_TYPE_INT32_LIST: {
+      GString* str = g_string_new("[");
+      size_t len = fl_value_get_length(value);
+      const int32_t* data = fl_value_get_int32_list(value);
+      for (size_t i = 0; i < len; i++) {
+        if (i > 0) {
+          g_string_append(str, ", ");
+        }
+        g_string_append_printf(str, "%d", data[i]);
+      }
+      g_string_append(str, "]");
+      return g_string_free(str, FALSE);
+    }
+    case FL_VALUE_TYPE_INT64_LIST: {
+      GString* str = g_string_new("[");
+      size_t len = fl_value_get_length(value);
+      const int64_t* data = fl_value_get_int64_list(value);
+      for (size_t i = 0; i < len; i++) {
+        if (i > 0) {
+          g_string_append(str, ", ");
+        }
+        g_string_append_printf(str, "%" G_GINT64_FORMAT, data[i]);
+      }
+      g_string_append(str, "]");
+      return g_string_free(str, FALSE);
+    }
+    case FL_VALUE_TYPE_FLOAT_LIST: {
+      GString* str = g_string_new("[");
+      size_t len = fl_value_get_length(value);
+      const double* data = fl_value_get_float_list(value);
+      for (size_t i = 0; i < len; i++) {
+        if (i > 0) {
+          g_string_append(str, ", ");
+        }
+        g_string_append_printf(str, "%g", data[i]);
+      }
+      g_string_append(str, "]");
+      return g_string_free(str, FALSE);
+    }
+    case FL_VALUE_TYPE_LIST: {
+      GString* str = g_string_new("[");
+      size_t len = fl_value_get_length(value);
+      for (size_t i = 0; i < len; i++) {
+        if (i > 0) {
+          g_string_append(str, ", ");
+        }
+        gchar* item_str = flpigeon_to_string(fl_value_get_list_value(value, i));
+        g_string_append(str, item_str);
+        g_free(item_str);
+      }
+      g_string_append(str, "]");
+      return g_string_free(str, FALSE);
+    }
+    case FL_VALUE_TYPE_MAP: {
+      GString* str = g_string_new("{");
+      size_t len = fl_value_get_length(value);
+      for (size_t i = 0; i < len; i++) {
+        if (i > 0) {
+          g_string_append(str, ", ");
+        }
+        gchar* key_str = flpigeon_to_string(fl_value_get_map_key(value, i));
+        gchar* val_str = flpigeon_to_string(fl_value_get_map_value(value, i));
+        g_string_append_printf(str, "%s: %s", key_str, val_str);
+        g_free(key_str);
+        g_free(val_str);
+      }
+      g_string_append(str, "}");
+      return g_string_free(str, FALSE);
+    }
+    default:
+      return g_strdup("[custom]");
+  }
+  return g_strdup("null");
+}
 
 struct _PigeonExamplePackageMessageData {
   GObject parent_instance;
@@ -346,6 +448,36 @@ guint pigeon_example_package_message_data_hash(
   result = result * 31 + static_cast<guint>(self->code);
   result = result * 31 + flpigeon_deep_hash(self->data);
   return result;
+}
+
+gchar* pigeon_example_package_message_data_to_string(
+    PigeonExamplePackageMessageData* self) {
+  g_return_val_if_fail(PIGEON_EXAMPLE_PACKAGE_IS_MESSAGE_DATA(self), NULL);
+  GString* str = g_string_new("MessageData(");
+  g_string_append(str, "name: ");
+  if (self->name != nullptr) {
+    g_string_append_printf(str, "\"%s\"", self->name);
+  } else {
+    g_string_append(str, "null");
+  }
+  g_string_append(str, ", message_description: ");
+  if (self->message_description != nullptr) {
+    g_string_append_printf(str, "\"%s\"", self->message_description);
+  } else {
+    g_string_append(str, "null");
+  }
+  g_string_append(str, ", code: ");
+  g_string_append_printf(str, "%d", static_cast<int>(self->code));
+  g_string_append(str, ", data: ");
+  if (self->data != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->data);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
+  g_string_append(str, ")");
+  return g_string_free(str, FALSE);
 }
 
 struct _PigeonExamplePackageMessageCodec {

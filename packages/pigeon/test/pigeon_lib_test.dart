@@ -40,7 +40,7 @@ class _ValidatorGeneratorAdapter implements GeneratorAdapter {
 
 void main() {
   /// Creates a temporary file named [filename] then calls [callback] with a
-  /// [File] representing that temporary directory.  The file will be deleted
+  /// [File] representing that temporary directory. The file will be deleted
   /// after the [callback] is executed.
   void withTempFile(String filename, void Function(File) callback) {
     final Directory dir = Directory.systemTemp.createTempSync();
@@ -1837,6 +1837,29 @@ abstract class events {
         parseResult.errors[0].message,
         contains('Sealed class: "DataClass" must not contain fields.'),
       );
+    });
+
+    test('swift description field error', () async {
+      final completer = Completer<void>();
+      const code = '''
+class Foo {
+  String? description;
+}
+
+@HostApi()
+abstract class Api {
+  void method(Foo foo);
+}
+''';
+      withTempFile('foo.dart', (File input) async {
+        input.writeAsStringSync(code);
+        final int result = await Pigeon.runWithOptions(
+          PigeonOptions(input: input.path, swiftOut: 'Foo.swift', dartOut: 'foo.dart'),
+        );
+        expect(result, isNot(0));
+        completer.complete();
+      });
+      await completer.future;
     });
   });
 

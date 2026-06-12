@@ -248,6 +248,10 @@ data class NIUnusedClass(val aField: Any? = null) {
     result = 31 * result + NiTestsPigeonUtils.deepHash(this.aField)
     return result
   }
+
+  override fun toString(): String {
+    return "NIUnusedClass(aField=$aField)"
+  }
 }
 
 /**
@@ -449,6 +453,10 @@ data class NIAllTypes(
     result = 31 * result + NiTestsPigeonUtils.deepHash(this.listMap)
     result = 31 * result + NiTestsPigeonUtils.deepHash(this.mapMap)
     return result
+  }
+
+  override fun toString(): String {
+    return "NIAllTypes(aBool=$aBool, anInt=$anInt, anInt64=$anInt64, aDouble=$aDouble, aByteArray=${aByteArray.contentToString()}, a4ByteArray=${a4ByteArray.contentToString()}, a8ByteArray=${a8ByteArray.contentToString()}, aFloatArray=${aFloatArray.contentToString()}, anEnum=$anEnum, anotherEnum=$anotherEnum, aString=$aString, anObject=$anObject, list=$list, stringList=$stringList, intList=$intList, doubleList=$doubleList, boolList=$boolList, enumList=$enumList, objectList=$objectList, listList=$listList, mapList=$mapList, map=$map, stringMap=$stringMap, intMap=$intMap, enumMap=$enumMap, objectMap=$objectMap, listMap=$listMap, mapMap=$mapMap)"
   }
 }
 
@@ -670,6 +678,10 @@ data class NIAllNullableTypes(
     result = 31 * result + NiTestsPigeonUtils.deepHash(this.recursiveClassMap)
     return result
   }
+
+  override fun toString(): String {
+    return "NIAllNullableTypes(aNullableBool=$aNullableBool, aNullableInt=$aNullableInt, aNullableInt64=$aNullableInt64, aNullableDouble=$aNullableDouble, aNullableByteArray=${aNullableByteArray?.contentToString()}, aNullable4ByteArray=${aNullable4ByteArray?.contentToString()}, aNullable8ByteArray=${aNullable8ByteArray?.contentToString()}, aNullableFloatArray=${aNullableFloatArray?.contentToString()}, aNullableEnum=$aNullableEnum, anotherNullableEnum=$anotherNullableEnum, aNullableString=$aNullableString, aNullableObject=$aNullableObject, allNullableTypes=$allNullableTypes, list=$list, stringList=$stringList, intList=$intList, doubleList=$doubleList, boolList=$boolList, enumList=$enumList, objectList=$objectList, listList=$listList, mapList=$mapList, recursiveClassList=$recursiveClassList, map=$map, stringMap=$stringMap, intMap=$intMap, enumMap=$enumMap, objectMap=$objectMap, listMap=$listMap, mapMap=$mapMap, recursiveClassMap=$recursiveClassMap)"
+  }
 }
 
 /**
@@ -873,6 +885,10 @@ data class NIAllNullableTypesWithoutRecursion(
     result = 31 * result + NiTestsPigeonUtils.deepHash(this.mapMap)
     return result
   }
+
+  override fun toString(): String {
+    return "NIAllNullableTypesWithoutRecursion(aNullableBool=$aNullableBool, aNullableInt=$aNullableInt, aNullableInt64=$aNullableInt64, aNullableDouble=$aNullableDouble, aNullableByteArray=${aNullableByteArray?.contentToString()}, aNullable4ByteArray=${aNullable4ByteArray?.contentToString()}, aNullable8ByteArray=${aNullable8ByteArray?.contentToString()}, aNullableFloatArray=${aNullableFloatArray?.contentToString()}, aNullableEnum=$aNullableEnum, anotherNullableEnum=$anotherNullableEnum, aNullableString=$aNullableString, aNullableObject=$aNullableObject, list=$list, stringList=$stringList, intList=$intList, doubleList=$doubleList, boolList=$boolList, enumList=$enumList, objectList=$objectList, listList=$listList, mapList=$mapList, map=$map, stringMap=$stringMap, intMap=$intMap, enumMap=$enumMap, objectMap=$objectMap, listMap=$listMap, mapMap=$mapMap)"
+  }
 }
 
 /**
@@ -954,6 +970,10 @@ data class NIAllClassesWrapper(
     result = 31 * result + NiTestsPigeonUtils.deepHash(this.classMap)
     result = 31 * result + NiTestsPigeonUtils.deepHash(this.nullableClassMap)
     return result
+  }
+
+  override fun toString(): String {
+    return "NIAllClassesWrapper(allNullableTypes=$allNullableTypes, allNullableTypesWithoutRecursion=$allNullableTypesWithoutRecursion, allTypes=$allTypes, classList=$classList, nullableClassList=$nullableClassList, classMap=$classMap, nullableClassMap=$nullableClassMap)"
   }
 }
 

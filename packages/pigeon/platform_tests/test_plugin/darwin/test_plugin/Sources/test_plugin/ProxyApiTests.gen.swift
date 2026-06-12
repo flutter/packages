@@ -65,16 +65,18 @@ private func createConnectionError(withChannelName channelName: String) -> Proxy
     details: "")
 }
 
-private func isNullish(_ value: Any?) -> Bool {
-  guard let innerValue = value else {
-    return true
-  }
+enum ProxyApiTestsPigeonInternal {
+  static func isNullish(_ value: Any?) -> Bool {
+    guard let innerValue = value else {
+      return true
+    }
 
-  if case Optional<Any>.some(Optional<Any>.none) = value {
-    return true
-  }
+    if case Optional<Any>.some(Optional<Any>.none) = value {
+      return true
+    }
 
-  return innerValue is NSNull
+    return innerValue is NSNull
+  }
 }
 
 private func nilOrValue<T>(_ value: Any?) -> T? {
@@ -588,7 +590,7 @@ private class ProxyApiTestsPigeonInternalProxyApiCodecReaderWriter: FlutterStand
   }
 }
 
-enum ProxyApiTestEnum: Int {
+enum ProxyApiTestEnum: Int, CaseIterable {
   case one = 0
   case two = 1
   case three = 2

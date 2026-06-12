@@ -149,7 +149,7 @@ class NullFieldsSearchRequest {
 
   @override
   String toString() {
-    return _toList().toString();
+    return 'NullFieldsSearchRequest(query: $query, identifier: $identifier)';
   }
 }
 
@@ -207,7 +207,7 @@ class NullFieldsSearchReply {
 
   @override
   String toString() {
-    return _toList().toString();
+    return 'NullFieldsSearchReply(result: $result, error: $error, indices: $indices, request: $request, type: $type)';
   }
 }
 

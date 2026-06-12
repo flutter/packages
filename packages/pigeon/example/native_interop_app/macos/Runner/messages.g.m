@@ -195,6 +195,11 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   result = result * 31 + FLTPigeonDeepHash(self.data);
   return result;
 }
+- (NSString *)description {
+  return [NSString
+      stringWithFormat:@"PGNMessageData(name: %@, messageDescription: %@, code: %ld, data: %@)",
+                       self.name, self.messageDescription, (long)self.code, self.data];
+}
 @end
 
 @interface PGNMessagesPigeonCodecReader : FlutterStandardReader

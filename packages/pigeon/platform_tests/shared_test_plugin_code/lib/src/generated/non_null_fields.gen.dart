@@ -147,7 +147,7 @@ class NonNullFieldSearchRequest {
 
   @override
   String toString() {
-    return _toList().toString();
+    return 'NonNullFieldSearchRequest(query: $query)';
   }
 }
 
@@ -189,7 +189,7 @@ class ExtraData {
 
   @override
   String toString() {
-    return _toList().toString();
+    return 'ExtraData(detailA: $detailA, detailB: $detailB)';
   }
 }
 
@@ -253,7 +253,7 @@ class NonNullFieldSearchReply {
 
   @override
   String toString() {
-    return _toList().toString();
+    return 'NonNullFieldSearchReply(result: $result, error: $error, indices: $indices, extraData: $extraData, type: $type)';
   }
 }
 

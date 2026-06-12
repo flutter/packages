@@ -26891,6 +26891,25 @@ extension NIUnusedClass$$Methods on NIUnusedClass {
     return _hashCode$1(reference.pointer, _id_hashCode$1.pointer).integer;
   }
 
+  static final _id_toString$1 = NIUnusedClass._class.instanceMethodId(
+    r'toString',
+    r'()Ljava/lang/String;',
+  );
+
+  static final _toString$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun toString(): kotlin.String`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JString toString$1() {
+    return _toString$1(reference.pointer, _id_toString$1.pointer).object<jni$_.JString>();
+  }
+
   static final _id_component1 = NIUnusedClass._class.instanceMethodId(
     r'component1',
     r'()Ljava/lang/Object;',
@@ -26938,25 +26957,6 @@ extension NIUnusedClass$$Methods on NIUnusedClass {
   NIUnusedClass copy(jni$_.JObject? object) {
     final _$object = object?.reference ?? jni$_.jNullReference;
     return _copy(reference.pointer, _id_copy.pointer, _$object.pointer).object<NIUnusedClass>();
-  }
-
-  static final _id_toString$1 = NIUnusedClass._class.instanceMethodId(
-    r'toString',
-    r'()Ljava/lang/String;',
-  );
-
-  static final _toString$1 =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
-
-  /// from: `public fun toString(): kotlin.String`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString toString$1() {
-    return _toString$1(reference.pointer, _id_toString$1.pointer).object<jni$_.JString>();
   }
 }
 
@@ -27850,6 +27850,25 @@ extension NIAllTypes$$Methods on NIAllTypes {
     return _hashCode$1(reference.pointer, _id_hashCode$1.pointer).integer;
   }
 
+  static final _id_toString$1 = NIAllTypes._class.instanceMethodId(
+    r'toString',
+    r'()Ljava/lang/String;',
+  );
+
+  static final _toString$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun toString(): kotlin.String`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JString toString$1() {
+    return _toString$1(reference.pointer, _id_toString$1.pointer).object<jni$_.JString>();
+  }
+
   static final _id_component1 = NIAllTypes._class.instanceMethodId(r'component1', r'()Z');
 
   static final _component1 =
@@ -28568,25 +28587,6 @@ extension NIAllTypes$$Methods on NIAllTypes {
       _$map5.pointer,
       _$map6.pointer,
     ).object<NIAllTypes>();
-  }
-
-  static final _id_toString$1 = NIAllTypes._class.instanceMethodId(
-    r'toString',
-    r'()Ljava/lang/String;',
-  );
-
-  static final _toString$1 =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
-
-  /// from: `public fun toString(): kotlin.String`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString toString$1() {
-    return _toString$1(reference.pointer, _id_toString$1.pointer).object<jni$_.JString>();
   }
 }
 
@@ -29850,6 +29850,25 @@ extension NIAllNullableTypes$$Methods on NIAllNullableTypes {
     return _hashCode$1(reference.pointer, _id_hashCode$1.pointer).integer;
   }
 
+  static final _id_toString$1 = NIAllNullableTypes._class.instanceMethodId(
+    r'toString',
+    r'()Ljava/lang/String;',
+  );
+
+  static final _toString$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun toString(): kotlin.String`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JString toString$1() {
+    return _toString$1(reference.pointer, _id_toString$1.pointer).object<jni$_.JString>();
+  }
+
   static final _id_component1 = NIAllNullableTypes._class.instanceMethodId(
     r'component1',
     r'()Ljava/lang/Boolean;',
@@ -30669,25 +30688,6 @@ extension NIAllNullableTypes$$Methods on NIAllNullableTypes {
       _$map6.pointer,
       _$map7.pointer,
     ).object<NIAllNullableTypes>();
-  }
-
-  static final _id_toString$1 = NIAllNullableTypes._class.instanceMethodId(
-    r'toString',
-    r'()Ljava/lang/String;',
-  );
-
-  static final _toString$1 =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
-
-  /// from: `public fun toString(): kotlin.String`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString toString$1() {
-    return _toString$1(reference.pointer, _id_toString$1.pointer).object<jni$_.JString>();
   }
 }
 
@@ -31858,6 +31858,25 @@ extension NIAllNullableTypesWithoutRecursion$$Methods on NIAllNullableTypesWitho
     return _hashCode$1(reference.pointer, _id_hashCode$1.pointer).integer;
   }
 
+  static final _id_toString$1 = NIAllNullableTypesWithoutRecursion._class.instanceMethodId(
+    r'toString',
+    r'()Ljava/lang/String;',
+  );
+
+  static final _toString$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun toString(): kotlin.String`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JString toString$1() {
+    return _toString$1(reference.pointer, _id_toString$1.pointer).object<jni$_.JString>();
+  }
+
   static final _id_component1 = NIAllNullableTypesWithoutRecursion._class.instanceMethodId(
     r'component1',
     r'()Ljava/lang/Boolean;',
@@ -32612,25 +32631,6 @@ extension NIAllNullableTypesWithoutRecursion$$Methods on NIAllNullableTypesWitho
       _$map6.pointer,
     ).object<NIAllNullableTypesWithoutRecursion>();
   }
-
-  static final _id_toString$1 = NIAllNullableTypesWithoutRecursion._class.instanceMethodId(
-    r'toString',
-    r'()Ljava/lang/String;',
-  );
-
-  static final _toString$1 =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
-
-  /// from: `public fun toString(): kotlin.String`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString toString$1() {
-    return _toString$1(reference.pointer, _id_toString$1.pointer).object<jni$_.JString>();
-  }
 }
 
 final class $NIAllNullableTypesWithoutRecursion$Type$
@@ -33115,6 +33115,25 @@ extension NIAllClassesWrapper$$Methods on NIAllClassesWrapper {
     return _hashCode$1(reference.pointer, _id_hashCode$1.pointer).integer;
   }
 
+  static final _id_toString$1 = NIAllClassesWrapper._class.instanceMethodId(
+    r'toString',
+    r'()Ljava/lang/String;',
+  );
+
+  static final _toString$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun toString(): kotlin.String`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JString toString$1() {
+    return _toString$1(reference.pointer, _id_toString$1.pointer).object<jni$_.JString>();
+  }
+
   static final _id_component1 = NIAllClassesWrapper._class.instanceMethodId(
     r'component1',
     r'()Lcom/example/test_plugin/NIAllNullableTypes;',
@@ -33332,25 +33351,6 @@ extension NIAllClassesWrapper$$Methods on NIAllClassesWrapper {
       _$map.pointer,
       _$map1.pointer,
     ).object<NIAllClassesWrapper>();
-  }
-
-  static final _id_toString$1 = NIAllClassesWrapper._class.instanceMethodId(
-    r'toString',
-    r'()Ljava/lang/String;',
-  );
-
-  static final _toString$1 =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
-
-  /// from: `public fun toString(): kotlin.String`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString toString$1() {
-    return _toString$1(reference.pointer, _id_toString$1.pointer).object<jni$_.JString>();
   }
 }
 

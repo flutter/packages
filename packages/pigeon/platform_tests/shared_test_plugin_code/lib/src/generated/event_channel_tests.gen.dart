@@ -302,7 +302,7 @@ class EventAllNullableTypes {
 
   @override
   String toString() {
-    return _toList().toString();
+    return 'EventAllNullableTypes(aNullableBool: $aNullableBool, aNullableInt: $aNullableInt, aNullableInt64: $aNullableInt64, aNullableDouble: $aNullableDouble, aNullableByteArray: $aNullableByteArray, aNullable4ByteArray: $aNullable4ByteArray, aNullable8ByteArray: $aNullable8ByteArray, aNullableFloatArray: $aNullableFloatArray, aNullableEnum: $aNullableEnum, anotherNullableEnum: $anotherNullableEnum, aNullableString: $aNullableString, aNullableObject: $aNullableObject, allNullableTypes: $allNullableTypes, list: $list, stringList: $stringList, intList: $intList, doubleList: $doubleList, boolList: $boolList, enumList: $enumList, objectList: $objectList, listList: $listList, mapList: $mapList, recursiveClassList: $recursiveClassList, map: $map, stringMap: $stringMap, intMap: $intMap, enumMap: $enumMap, objectMap: $objectMap, listMap: $listMap, mapMap: $mapMap, recursiveClassMap: $recursiveClassMap)';
   }
 }
 
@@ -344,7 +344,7 @@ class IntEvent extends PlatformEvent {
 
   @override
   String toString() {
-    return _toList().toString();
+    return 'IntEvent(value: $value)';
   }
 }
 
@@ -384,7 +384,7 @@ class StringEvent extends PlatformEvent {
 
   @override
   String toString() {
-    return _toList().toString();
+    return 'StringEvent(value: $value)';
   }
 }
 
@@ -424,7 +424,7 @@ class BoolEvent extends PlatformEvent {
 
   @override
   String toString() {
-    return _toList().toString();
+    return 'BoolEvent(value: $value)';
   }
 }
 
@@ -464,7 +464,7 @@ class DoubleEvent extends PlatformEvent {
 
   @override
   String toString() {
-    return _toList().toString();
+    return 'DoubleEvent(value: $value)';
   }
 }
 
@@ -504,7 +504,7 @@ class ObjectsEvent extends PlatformEvent {
 
   @override
   String toString() {
-    return _toList().toString();
+    return 'ObjectsEvent(value: $value)';
   }
 }
 
@@ -544,7 +544,7 @@ class EnumEvent extends PlatformEvent {
 
   @override
   String toString() {
-    return _toList().toString();
+    return 'EnumEvent(value: $value)';
   }
 }
 
@@ -584,7 +584,7 @@ class ClassEvent extends PlatformEvent {
 
   @override
   String toString() {
-    return _toList().toString();
+    return 'ClassEvent(value: $value)';
   }
 }
 

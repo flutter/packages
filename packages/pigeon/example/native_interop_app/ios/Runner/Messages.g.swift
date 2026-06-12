@@ -204,16 +204,127 @@ enum MessagesPigeonInternalNumberType: Int {
   }
 }
 
-private func isNullish(_ value: Any?) -> Bool {
-  guard let innerValue = value else {
-    return true
+enum MessagesPigeonInternal {
+  static func isNullish(_ value: Any?) -> Bool {
+    guard let innerValue = value else {
+      return true
+    }
+
+    if case Optional<Any>.some(Optional<Any>.none) = value {
+      return true
+    }
+
+    return innerValue is NSNull || innerValue is MessagesPigeonInternalNull
+  }
+  static func doubleEquals(_ lhs: Double, _ rhs: Double) -> Bool {
+    return (lhs.isNaN && rhs.isNaN) || lhs == rhs
   }
 
-  if case Optional<Any>.some(Optional<Any>.none) = value {
-    return true
+  static func doubleHash(_ value: Double, _ hasher: inout Hasher) {
+    if value.isNaN {
+      hasher.combine(0x7FF8_0000_0000_0000)
+    } else {
+      // Normalize -0.0 to 0.0
+      hasher.combine(value == 0 ? 0 : value)
+    }
   }
 
-  return innerValue is NSNull || innerValue is MessagesPigeonInternalNull
+  static func deepEquals(_ lhs: Any?, _ rhs: Any?) -> Bool {
+    let cleanLhs = nilOrValue(lhs) as Any?
+    let cleanRhs = nilOrValue(rhs) as Any?
+    switch (cleanLhs, cleanRhs) {
+    case (nil, nil):
+      return true
+
+    case (nil, _), (_, nil):
+      return false
+
+    case (let lhs as AnyObject, let rhs as AnyObject) where lhs === rhs:
+      return true
+
+    case is (Void, Void):
+      return true
+
+    case (let lhsArray, let rhsArray) as ([Any?], [Any?]):
+      guard lhsArray.count == rhsArray.count else { return false }
+      for (index, element) in lhsArray.enumerated() {
+        if !deepEquals(element, rhsArray[index]) {
+          return false
+        }
+      }
+      return true
+
+    case (let lhsArray, let rhsArray) as ([Double], [Double]):
+      guard lhsArray.count == rhsArray.count else { return false }
+      for (index, element) in lhsArray.enumerated() {
+        if !doubleEquals(element, rhsArray[index]) {
+          return false
+        }
+      }
+      return true
+
+    case (let lhsDictionary, let rhsDictionary) as ([AnyHashable: Any?], [AnyHashable: Any?]):
+      guard lhsDictionary.count == rhsDictionary.count else { return false }
+      for (lhsKey, lhsValue) in lhsDictionary {
+        var found = false
+        for (rhsKey, rhsValue) in rhsDictionary {
+          if deepEquals(lhsKey, rhsKey) {
+            if deepEquals(lhsValue, rhsValue) {
+              found = true
+              break
+            } else {
+              return false
+            }
+          }
+        }
+        if !found { return false }
+      }
+      return true
+
+    case (let lhs as Double, let rhs as Double):
+      return doubleEquals(lhs, rhs)
+
+    case (let lhsHashable, let rhsHashable) as (AnyHashable, AnyHashable):
+      return lhsHashable == rhsHashable
+
+    default:
+      return false
+    }
+  }
+
+  static func deepHash(value: Any?, hasher: inout Hasher) {
+    let cleanValue = nilOrValue(value) as Any?
+    if let cleanValue = cleanValue {
+      if let doubleValue = cleanValue as? Double {
+        doubleHash(doubleValue, &hasher)
+      } else if let valueList = cleanValue as? [Any?] {
+        for item in valueList {
+          deepHash(value: item, hasher: &hasher)
+        }
+      } else if let valueList = cleanValue as? [Double] {
+        for item in valueList {
+          doubleHash(item, &hasher)
+        }
+      } else if let valueDict = cleanValue as? [AnyHashable: Any?] {
+        var result = 0
+        for (key, value) in valueDict {
+          var entryKeyHasher = Hasher()
+          deepHash(value: key, hasher: &entryKeyHasher)
+          var entryValueHasher = Hasher()
+          deepHash(value: value, hasher: &entryValueHasher)
+          result = result &+ ((entryKeyHasher.finalize() &* 31) ^ entryValueHasher.finalize())
+        }
+        hasher.combine(result)
+      } else if let hashableValue = cleanValue as? AnyHashable {
+        hasher.combine(hashableValue)
+      } else {
+        hasher.combine(String(describing: cleanValue))
+      }
+    } else {
+      hasher.combine(0)
+    }
+  }
+
 }
 
 private func nilOrValue<T>(_ value: Any?) -> T? {
@@ -221,122 +332,13 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
-private func doubleEqualsMessages(_ lhs: Double, _ rhs: Double) -> Bool {
-  return (lhs.isNaN && rhs.isNaN) || lhs == rhs
-}
-
-private func doubleHashMessages(_ value: Double, _ hasher: inout Hasher) {
-  if value.isNaN {
-    hasher.combine(0x7FF8_0000_0000_0000)
-  } else {
-    // Normalize -0.0 to 0.0
-    hasher.combine(value == 0 ? 0 : value)
-  }
-}
-
-func deepEqualsMessages(_ lhs: Any?, _ rhs: Any?) -> Bool {
-  let cleanLhs = nilOrValue(lhs) as Any?
-  let cleanRhs = nilOrValue(rhs) as Any?
-  switch (cleanLhs, cleanRhs) {
-  case (nil, nil):
-    return true
-
-  case (nil, _), (_, nil):
-    return false
-
-  case (let lhs as AnyObject, let rhs as AnyObject) where lhs === rhs:
-    return true
-
-  case is (Void, Void):
-    return true
-
-  case (let lhsArray, let rhsArray) as ([Any?], [Any?]):
-    guard lhsArray.count == rhsArray.count else { return false }
-    for (index, element) in lhsArray.enumerated() {
-      if !deepEqualsMessages(element, rhsArray[index]) {
-        return false
-      }
-    }
-    return true
-
-  case (let lhsArray, let rhsArray) as ([Double], [Double]):
-    guard lhsArray.count == rhsArray.count else { return false }
-    for (index, element) in lhsArray.enumerated() {
-      if !doubleEqualsMessages(element, rhsArray[index]) {
-        return false
-      }
-    }
-    return true
-
-  case (let lhsDictionary, let rhsDictionary) as ([AnyHashable: Any?], [AnyHashable: Any?]):
-    guard lhsDictionary.count == rhsDictionary.count else { return false }
-    for (lhsKey, lhsValue) in lhsDictionary {
-      var found = false
-      for (rhsKey, rhsValue) in rhsDictionary {
-        if deepEqualsMessages(lhsKey, rhsKey) {
-          if deepEqualsMessages(lhsValue, rhsValue) {
-            found = true
-            break
-          } else {
-            return false
-          }
-        }
-      }
-      if !found { return false }
-    }
-    return true
-
-  case (let lhs as Double, let rhs as Double):
-    return doubleEqualsMessages(lhs, rhs)
-
-  case (let lhsHashable, let rhsHashable) as (AnyHashable, AnyHashable):
-    return lhsHashable == rhsHashable
-
-  default:
-    return false
-  }
-}
-
-func deepHashMessages(value: Any?, hasher: inout Hasher) {
-  let cleanValue = nilOrValue(value) as Any?
-  if let cleanValue = cleanValue {
-    if let doubleValue = cleanValue as? Double {
-      doubleHashMessages(doubleValue, &hasher)
-    } else if let valueList = cleanValue as? [Any?] {
-      for item in valueList {
-        deepHashMessages(value: item, hasher: &hasher)
-      }
-    } else if let valueList = cleanValue as? [Double] {
-      for item in valueList {
-        doubleHashMessages(item, &hasher)
-      }
-    } else if let valueDict = cleanValue as? [AnyHashable: Any?] {
-      var result = 0
-      for (key, value) in valueDict {
-        var entryKeyHasher = Hasher()
-        deepHashMessages(value: key, hasher: &entryKeyHasher)
-        var entryValueHasher = Hasher()
-        deepHashMessages(value: value, hasher: &entryValueHasher)
-        result = result &+ ((entryKeyHasher.finalize() &* 31) ^ entryValueHasher.finalize())
-      }
-      hasher.combine(result)
-    } else if let hashableValue = cleanValue as? AnyHashable {
-      hasher.combine(hashableValue)
-    } else {
-      hasher.combine(String(describing: cleanValue))
-    }
-  } else {
-    hasher.combine(0)
-  }
-}
-
-@objc enum Code: Int {
+@objc enum Code: Int, CaseIterable {
   case one = 0
   case two = 1
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct MessageData: Hashable {
+struct MessageData: Hashable, CustomStringConvertible {
   var name: String? = nil
   var messageDescription: String? = nil
   var code: Code
@@ -368,17 +370,23 @@ struct MessageData: Hashable {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return deepEqualsMessages(lhs.name, rhs.name)
-      && deepEqualsMessages(lhs.messageDescription, rhs.messageDescription)
-      && deepEqualsMessages(lhs.code, rhs.code) && deepEqualsMessages(lhs.data, rhs.data)
+    return MessagesPigeonInternal.deepEquals(lhs.name, rhs.name)
+      && MessagesPigeonInternal.deepEquals(lhs.messageDescription, rhs.messageDescription)
+      && MessagesPigeonInternal.deepEquals(lhs.code, rhs.code)
+      && MessagesPigeonInternal.deepEquals(lhs.data, rhs.data)
   }
 
   func hash(into hasher: inout Hasher) {
     hasher.combine("MessageData")
-    deepHashMessages(value: name, hasher: &hasher)
-    deepHashMessages(value: messageDescription, hasher: &hasher)
-    deepHashMessages(value: code, hasher: &hasher)
-    deepHashMessages(value: data, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: name, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: messageDescription, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: code, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: data, hasher: &hasher)
+  }
+
+  public var description: String {
+    return
+      "MessageData(name: \(String(describing: name)), messageDescription: \(String(describing: messageDescription)), code: \(String(describing: code)), data: \(String(describing: data)))"
   }
 }
 
@@ -403,7 +411,7 @@ struct MessageData: Hashable {
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromSwift(_ pigeonVar_Class: MessageData?) -> MessageDataBridge? {
-    if isNullish(pigeonVar_Class) {
+    if MessagesPigeonInternal.isNullish(pigeonVar_Class) {
       return nil
     }
     return MessageDataBridge(
@@ -429,7 +437,7 @@ struct MessageData: Hashable {
 @available(iOS 13, macOS 10.15, *)
 class _PigeonFfiCodec {
   static func readValue(value: NSObject?, type: String? = nil, type2: String? = nil) -> Any? {
-    if isNullish(value) {
+    if MessagesPigeonInternal.isNullish(value) {
       return nil
     }
     if let typedData = value as? MessagesPigeonTypedData {
@@ -490,7 +498,7 @@ class _PigeonFfiCodec {
   }
 
   static func writeValue(value: Any?, isObject: Bool = false) -> Any? {
-    if isNullish(value) {
+    if MessagesPigeonInternal.isNullish(value) {
       return MessagesPigeonInternalNull()
     }
     if let uint8Array = value as? [UInt8] {
@@ -526,7 +534,7 @@ class _PigeonFfiCodec {
       let res: NSMutableArray = NSMutableArray()
       for item in (value as! [Any]) {
         res.add(
-          isNullish(item)
+          MessagesPigeonInternal.isNullish(item)
             ? MessagesPigeonInternalNull() : writeValue(value: item, isObject: true) as! NSObject)
       }
       return res
@@ -535,7 +543,7 @@ class _PigeonFfiCodec {
       let res: NSMutableDictionary = NSMutableDictionary()
       for (key, value) in (value as! [AnyHashable: Any]) {
         res.setObject(
-          isNullish(key)
+          MessagesPigeonInternal.isNullish(key)
             ? MessagesPigeonInternalNull() : writeValue(value: value, isObject: true) as! NSObject,
           forKey: writeValue(value: key, isObject: true) as! NSCopying)
       }

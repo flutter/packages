@@ -50,6 +50,9 @@ allowed_dependencies:
 
     ## Allowed by default:
 
+    # flutter/core-packages
+    - mustache_template
+
     # Dart-team-owned packages
     - analyzer
     - args
