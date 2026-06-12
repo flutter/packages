@@ -153,7 +153,8 @@ final class PHPickerSaveImageToPathOperation: Operation, @unchecked Sendable {
             [weak self] videoURL, error in
             guard let self = self else { return }
             if let error = error {
-                self.completeOperation(path: nil, error: error)
+                let pigeonError = PigeonError(code: "invalid_image", message: error.localizedDescription, details: nil)
+                self.completeOperation(path: nil, error: pigeonError)
                 return
             }
 
