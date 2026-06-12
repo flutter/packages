@@ -1,6 +1,5 @@
 plugins {
     id("com.android.application")
-    id("kotlin-android")
     id("dev.flutter.flutter-gradle-plugin")
 }
 
@@ -24,6 +23,12 @@ android {
     }
     lint {
         disable.add("InvalidPackage")
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
     }
 }
 

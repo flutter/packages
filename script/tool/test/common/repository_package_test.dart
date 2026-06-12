@@ -227,6 +227,16 @@ void main() {
       expect(package.requiresFlutter(), true);
     });
 
+    test('returns true for a dev dependency on other Flutter SDK packages', () async {
+      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
+      final File pubspecFile = package.pubspecFile;
+      final Pubspec pubspec = package.parsePubspec();
+      pubspec.devDependencies['flutter_test'] = SdkDependency('flutter');
+      pubspecFile.writeAsStringSync(pubspec.toString());
+
+      expect(package.requiresFlutter(), true);
+    });
+
     test('returns false for non-Flutter package', () async {
       final RepositoryPackage package = createFakePackage('a_package', packagesDir);
       expect(package.requiresFlutter(), false);

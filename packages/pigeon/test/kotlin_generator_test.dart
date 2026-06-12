@@ -1783,4 +1783,48 @@ void main() {
     expect(code, contains('override fun equals(other: Any?): Boolean {'));
     expect(code, contains('override fun hashCode(): Int {'));
   });
+
+  test('data class toString', () {
+    final classDefinition = Class(
+      name: 'Foobar',
+      fields: <NamedType>[
+        NamedType(
+          type: const TypeDeclaration(baseName: 'int', isNullable: true),
+          name: 'field1',
+        ),
+      ],
+    );
+    final root = Root(apis: <Api>[], classes: <Class>[classDefinition], enums: <Enum>[]);
+    final sink = StringBuffer();
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
+    const generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('override fun toString(): String {'));
+    expect(code, contains(r'return "Foobar(field1=$field1)"'));
+  });
+
+  test('data class toString multi-field', () {
+    final classDefinition = Class(
+      name: 'Foobar',
+      fields: <NamedType>[
+        NamedType(
+          type: const TypeDeclaration(baseName: 'int', isNullable: true),
+          name: 'field1',
+        ),
+        NamedType(
+          type: const TypeDeclaration(baseName: 'String', isNullable: true),
+          name: 'field2',
+        ),
+      ],
+    );
+    final root = Root(apis: <Api>[], classes: <Class>[classDefinition], enums: <Enum>[]);
+    final sink = StringBuffer();
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
+    const generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('override fun toString(): String {'));
+    expect(code, contains(r'return "Foobar(field1=$field1, field2=$field2)"'));
+  });
 }
