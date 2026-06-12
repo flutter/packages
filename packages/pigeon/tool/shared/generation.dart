@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io' show Platform;
+import 'dart:io' show File, Platform, Process, ProcessResult;
 
 import 'package:path/path.dart' as p;
 import 'package:pigeon/pigeon.dart';
@@ -345,28 +345,66 @@ Future<int> formatAllFiles({
     GeneratorLanguage.objc,
     GeneratorLanguage.swift,
   },
-}) {
+}) async {
   final dartCommand = Platform.isWindows ? 'dart.exe' : 'dart';
-  return runProcess(
+  final String? xcodeClangFormat = await _findXcodeClangFormat();
+  final useXcodeClangFormat = xcodeClangFormat != null;
+  final args = <String>[
+    'run',
+    'script/tool/bin/flutter_plugin_tools.dart',
+    'format',
+    '--packages=pigeon',
+    if (languages.contains(GeneratorLanguage.cpp) ||
+        languages.contains(GeneratorLanguage.gobject) ||
+        languages.contains(GeneratorLanguage.objc)) ...<String>[
+      '--clang-format',
+      if (useXcodeClangFormat) '--clang-format-path=$xcodeClangFormat',
+    ] else
+      '--no-clang-format',
+    if (languages.contains(GeneratorLanguage.java)) '--java' else '--no-java',
+    if (languages.contains(GeneratorLanguage.dart)) '--dart' else '--no-dart',
+    if (languages.contains(GeneratorLanguage.kotlin)) '--kotlin' else '--no-kotlin',
+    if (languages.contains(GeneratorLanguage.swift)) '--swift' else '--no-swift',
+  ];
+
+  int exitCode = await runProcess(
     dartCommand,
-    <String>[
-      'run',
-      'script/tool/bin/flutter_plugin_tools.dart',
-      'format',
-      '--packages=pigeon',
-      if (languages.contains(GeneratorLanguage.cpp) ||
-          languages.contains(GeneratorLanguage.gobject) ||
-          languages.contains(GeneratorLanguage.objc))
-        '--clang-format'
-      else
-        '--no-clang-format',
-      if (languages.contains(GeneratorLanguage.java)) '--java' else '--no-java',
-      if (languages.contains(GeneratorLanguage.dart)) '--dart' else '--no-dart',
-      if (languages.contains(GeneratorLanguage.kotlin)) '--kotlin' else '--no-kotlin',
-      if (languages.contains(GeneratorLanguage.swift)) '--swift' else '--no-swift',
-    ],
+    args,
     workingDirectory: repositoryRoot,
-    streamOutput: false,
     logFailure: true,
   );
+  if (exitCode != 0) {
+    return exitCode;
+  }
+
+  // Run a second time if formatting Objective-C files, because clang-format
+  // requires two passes to reach a stable state for Swift-generated ObjC headers
+  // due to complex macro wrapping.
+  if (languages.contains(GeneratorLanguage.objc)) {
+    exitCode = await runProcess(
+      dartCommand,
+      args,
+      workingDirectory: repositoryRoot,
+      logFailure: true,
+    );
+  }
+  return exitCode;
+}
+
+Future<String?> _findXcodeClangFormat() async {
+  if (!Platform.isMacOS) {
+    return null;
+  }
+  try {
+    final ProcessResult result = await Process.run('xcrun', <String>['-f', 'clang-format']);
+    if (result.exitCode == 0) {
+      final String path = result.stdout.toString().trim();
+      if (path.isNotEmpty && File(path).existsSync()) {
+        return path;
+      }
+    }
+  } catch (_) {
+    // Ignore errors and fall back.
+  }
+  return null;
 }
