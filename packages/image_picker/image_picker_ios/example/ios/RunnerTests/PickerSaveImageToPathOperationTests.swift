@@ -376,12 +376,9 @@ class PickerSaveImageToPathOperationTests: XCTestCase {
                 XCTAssertNil(savedPath)
                 XCTAssertNotNil(error)
 
-                if let pigeonError = error as? PigeonError {
-                    XCTAssertEqual(pigeonError.code, "invalid_video")
-                } else {
-                    XCTAssertTrue(error != nil)
-                }
-
+                 let pigeonError = error as? PigeonError
+                  XCTAssertNotNil(pigeonError)
+                  XCTAssertEqual(pigeonError?.code,"invalid_image")
                 errorExpectation.fulfill()
             }
 
