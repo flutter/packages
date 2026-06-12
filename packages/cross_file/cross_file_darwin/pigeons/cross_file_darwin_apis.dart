@@ -9,49 +9,18 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/cross_file_darwin_apis.g.dart',
-    swiftOut:
-        'darwin/cross_file_darwin/Sources/cross_file_darwin/CrossFileDarwinApis.g.swift',
+    swiftOut: 'darwin/cross_file_darwin/Sources/cross_file_darwin/CrossFileDarwinApis.g.swift',
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
 /// Api for getting access to file information.
-@HostApi()
-abstract class CrossFileDarwinApi {
-  /// In an app that has adopted App Sandbox, makes the resource pointed to by a
-  /// security-scoped URL available to the app.
-  bool startAccessingSecurityScopedResource(String url);
+@ProxyApi()
+abstract class AssetResourceManagerBytesListener {
+  AssetResourceManagerBytesListener();
 
-  /// In an app that adopts App Sandbox, revokes access to the resource pointed
-  /// to by a security-scoped URL.
-  void stopAccessingSecurityScopedResource(String url);
+  late final void Function(Uint8List bytes) onDataReceived;
 
-  /// Whether the native FileManager is able to read a specified file.
-  bool isReadableFile(String url);
-  //
-  // /// Date and time when the resource was last modified, if the information is
-  // /// available.
-  // ///
-  // /// Returns null if file doesn't exist or information is not available.
-  // @async
-  // int? lastModified(String identifier);
-  //
-  // /// The length of the data represented by this uri, in bytes.
-  // ///
-  // /// Returns null if file doesn't exist or information is not available.
-  // //Future<int?> length(String identifier);
-  //
-  // /// Reads the entire resource contents as a list of bytes.
-  // ///
-  // /// Platforms may throw an exception if there is an error opening or reading
-  // /// the resource.
-  // @async
-  // Uint8List readAsBytes(String identifier);
-  //
-  // /// The name of the resource represented by this object.
-  // ///
-  // /// The path is excluded from this value.
-  // ///
-  // /// Returns null if file doesn't exist or information is not available.
-  // @async
-  // String? name(String identifier);
+  late final void Function(String? error) onCompletion;
+
+  bool openRead(String localIdentifier);
 }
