@@ -204,10 +204,7 @@ class _FakeSharedPreferencesApi implements UserDefaultsApi {
   final Map<String, Object> items = <String, Object>{};
 
   @override
-  Future<bool> clear(
-    List<String?>? allowList,
-    SharedPreferencesPigeonOptions options,
-  ) async {
+  Future<bool> clear(List<String?>? allowList, SharedPreferencesPigeonOptions options) async {
     if (allowList != null) {
       items.removeWhere((String key, _) => allowList.contains(key));
     } else {
@@ -242,19 +239,12 @@ class _FakeSharedPreferencesApi implements UserDefaultsApi {
   }
 
   @override
-  Future<void> set(
-    String key,
-    Object value,
-    SharedPreferencesPigeonOptions options,
-  ) async {
+  Future<void> set(String key, Object value, SharedPreferencesPigeonOptions options) async {
     items[key] = value;
   }
 
   @override
-  Future<Object?> getValue(
-    String key,
-    SharedPreferencesPigeonOptions options,
-  ) async {
+  Future<Object?> getValue(String key, SharedPreferencesPigeonOptions options) async {
     return items[key];
   }
 

@@ -50,31 +50,24 @@ final class SurfaceTextureRotatedPreview extends StatefulWidget {
   State<StatefulWidget> createState() => _SurfaceTextureRotatedPreviewState();
 }
 
-final class _SurfaceTextureRotatedPreviewState
-    extends State<SurfaceTextureRotatedPreview> {
+final class _SurfaceTextureRotatedPreviewState extends State<SurfaceTextureRotatedPreview> {
   late StreamSubscription<DeviceOrientation> deviceOrientationSubscription;
   late int preappliedRotationQuarterTurns;
   late Future<int> defaultDisplayRotationQuarterTurns;
 
   Future<int> _getCurrentDefaultDisplayRotationQuarterTurns() async {
-    final int currentDefaultDisplayRotationQuarterTurns = await widget
-        .deviceOrientationManager
+    final int currentDefaultDisplayRotationQuarterTurns = await widget.deviceOrientationManager
         .getDefaultDisplayRotation();
-    return getQuarterTurnsFromSurfaceRotationConstant(
-      currentDefaultDisplayRotationQuarterTurns,
-    );
+    return getQuarterTurnsFromSurfaceRotationConstant(currentDefaultDisplayRotationQuarterTurns);
   }
 
   @override
   void initState() {
-    preappliedRotationQuarterTurns =
-        getPreAppliedQuarterTurnsRotationFromDeviceOrientation(
-          widget.initialDeviceOrientation,
-        );
+    preappliedRotationQuarterTurns = getPreAppliedQuarterTurnsRotationFromDeviceOrientation(
+      widget.initialDeviceOrientation,
+    );
     defaultDisplayRotationQuarterTurns = Future<int>.value(
-      getQuarterTurnsFromSurfaceRotationConstant(
-        widget.initialDefaultDisplayRotation,
-      ),
+      getQuarterTurnsFromSurfaceRotationConstant(widget.initialDefaultDisplayRotation),
     );
     deviceOrientationSubscription = widget.deviceOrientationStream.listen((
       DeviceOrientation event,
@@ -85,10 +78,10 @@ final class _SurfaceTextureRotatedPreviewState
       }
 
       setState(() {
-        preappliedRotationQuarterTurns =
-            getPreAppliedQuarterTurnsRotationFromDeviceOrientation(event);
-        defaultDisplayRotationQuarterTurns =
-            _getCurrentDefaultDisplayRotationQuarterTurns();
+        preappliedRotationQuarterTurns = getPreAppliedQuarterTurnsRotationFromDeviceOrientation(
+          event,
+        );
+        defaultDisplayRotationQuarterTurns = _getCurrentDefaultDisplayRotationQuarterTurns();
       });
     });
     super.initState();
@@ -114,10 +107,7 @@ final class _SurfaceTextureRotatedPreviewState
           final int rotationCorrection =
               currentDefaultDisplayRotation - preappliedRotationQuarterTurns;
 
-          return RotatedBox(
-            quarterTurns: rotationCorrection,
-            child: widget.child,
-          );
+          return RotatedBox(quarterTurns: rotationCorrection, child: widget.child);
         } else {
           return const SizedBox.shrink();
         }

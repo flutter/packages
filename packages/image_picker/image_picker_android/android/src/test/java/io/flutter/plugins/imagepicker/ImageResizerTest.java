@@ -74,25 +74,31 @@ public class ImageResizerTest {
 
   @Test
   public void onResizeImageIfNeeded_whenQualityIsMax_shouldNotResize_returnTheUnscaledFile() {
-    String outputFile = resizer.resizeImageIfNeeded(imageFile.getPath(), null, null, 100);
+    String outputFile =
+        resizer.resizeImageIfNeeded(imageFile.getPath(), null, null, /* imageQuality */ 100);
     assertThat(outputFile, equalTo(imageFile.getPath()));
   }
 
   @Test
   public void onResizeImageIfNeeded_whenQualityIsNotMax_shouldResize_returnResizedFile() {
-    String outputFile = resizer.resizeImageIfNeeded(imageFile.getPath(), null, null, 50);
+    String outputFile =
+        resizer.resizeImageIfNeeded(imageFile.getPath(), null, null, /* imageQuality */ 50);
     assertThat(outputFile, equalTo(externalDirectory.getPath() + "/scaled_pngImage.png"));
   }
 
   @Test
   public void onResizeImageIfNeeded_whenWidthIsNotNull_shouldResize_returnResizedFile() {
-    String outputFile = resizer.resizeImageIfNeeded(imageFile.getPath(), 50.0, null, 100);
+    String outputFile =
+        resizer.resizeImageIfNeeded(
+            imageFile.getPath(), /* maxWidth */ 50.0, /* maxHeight */ null, /* imageQuality */ 100);
     assertThat(outputFile, equalTo(externalDirectory.getPath() + "/scaled_pngImage.png"));
   }
 
   @Test
   public void onResizeImageIfNeeded_whenHeightIsNotNull_shouldResize_returnResizedFile() {
-    String outputFile = resizer.resizeImageIfNeeded(imageFile.getPath(), null, 50.0, 100);
+    String outputFile =
+        resizer.resizeImageIfNeeded(
+            imageFile.getPath(), /* maxWidth */ null, /* maxHeight */ 50.0, /* imageQuality */ 100);
     assertThat(outputFile, equalTo(externalDirectory.getPath() + "/scaled_pngImage.png"));
   }
 

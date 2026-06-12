@@ -17,62 +17,58 @@ void main() {
     late List<MethodCall> log;
 
     setUpAll(() {
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(SystemChannels.platform_views, (
-            MethodCall call,
-          ) async {
-            log.add(call);
-            if (call.method == 'resize') {
-              final Map<String, Object?> arguments =
-                  (call.arguments as Map<Object?, Object?>)
-                      .cast<String, Object?>();
-              return <String, Object?>{
-                'width': arguments['width'],
-                'height': arguments['height'],
-              };
-            }
-            return null;
-          });
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform_views,
+        (MethodCall call) async {
+          log.add(call);
+          if (call.method == 'resize') {
+            final Map<String, Object?> arguments = (call.arguments as Map<Object?, Object?>)
+                .cast<String, Object?>();
+            return <String, Object?>{'width': arguments['width'], 'height': arguments['height']};
+          }
+          return null;
+        },
+      );
     });
 
     tearDownAll(() {
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(SystemChannels.platform_views, null);
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform_views,
+        null,
+      );
     });
 
     setUp(() {
       log = <MethodCall>[];
     });
 
-    testWidgets(
-      'uses hybrid composition when background color is not 100% opaque',
-      (WidgetTester tester) async {
-        await tester.pumpWidget(
-          Builder(
-            builder: (BuildContext context) {
-              return SurfaceAndroidWebView().build(
-                context: context,
-                creationParams: CreationParams(
-                  backgroundColor: Colors.transparent,
-                  webSettings: WebSettings(
-                    userAgent: const WebSetting<String?>.absent(),
-                    hasNavigationDelegate: false,
-                  ),
+    testWidgets('uses hybrid composition when background color is not 100% opaque', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) {
+            return SurfaceAndroidWebView().build(
+              context: context,
+              creationParams: CreationParams(
+                backgroundColor: Colors.transparent,
+                webSettings: WebSettings(
+                  userAgent: const WebSetting<String?>.absent(),
+                  hasNavigationDelegate: false,
                 ),
-                javascriptChannelRegistry: JavascriptChannelRegistry(null),
-                webViewPlatformCallbacksHandler:
-                    TestWebViewPlatformCallbacksHandler(),
-              );
-            },
-          ),
-        );
-        await tester.pumpAndSettle();
+              ),
+              javascriptChannelRegistry: JavascriptChannelRegistry(null),
+              webViewPlatformCallbacksHandler: TestWebViewPlatformCallbacksHandler(),
+            );
+          },
+        ),
+      );
+      await tester.pumpAndSettle();
 
-        final MethodCall createMethodCall = log[0];
-        expect(createMethodCall.method, 'create');
-        expect(createMethodCall.arguments, containsPair('hybrid', true));
-      },
-    );
+      final MethodCall createMethodCall = log[0];
+      expect(createMethodCall.method, 'create');
+      expect(createMethodCall.arguments, containsPair('hybrid', true));
+    });
 
     testWidgets('default text direction is ltr', (WidgetTester tester) async {
       await tester.pumpWidget(
@@ -87,8 +83,7 @@ void main() {
                 ),
               ),
               javascriptChannelRegistry: JavascriptChannelRegistry(null),
-              webViewPlatformCallbacksHandler:
-                  TestWebViewPlatformCallbacksHandler(),
+              webViewPlatformCallbacksHandler: TestWebViewPlatformCallbacksHandler(),
             );
           },
         ),
@@ -99,22 +94,15 @@ void main() {
       expect(createMethodCall.method, 'create');
       expect(
         createMethodCall.arguments,
-        containsPair(
-          'direction',
-          AndroidViewController.kAndroidLayoutDirectionLtr,
-        ),
+        containsPair('direction', AndroidViewController.kAndroidLayoutDirectionLtr),
       );
     });
   });
 }
 
-class TestWebViewPlatformCallbacksHandler
-    implements WebViewPlatformCallbacksHandler {
+class TestWebViewPlatformCallbacksHandler implements WebViewPlatformCallbacksHandler {
   @override
-  FutureOr<bool> onNavigationRequest({
-    required String url,
-    required bool isForMainFrame,
-  }) {
+  FutureOr<bool> onNavigationRequest({required String url, required bool isForMainFrame}) {
     throw UnimplementedError();
   }
 

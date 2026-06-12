@@ -516,24 +516,12 @@ class PartJ {
   static TextTheme jacquardaBastarda9ChartedTextTheme([TextTheme? textTheme]) {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
-      displayLarge: jacquardaBastarda9Charted(
-        textStyle: textTheme.displayLarge,
-      ),
-      displayMedium: jacquardaBastarda9Charted(
-        textStyle: textTheme.displayMedium,
-      ),
-      displaySmall: jacquardaBastarda9Charted(
-        textStyle: textTheme.displaySmall,
-      ),
-      headlineLarge: jacquardaBastarda9Charted(
-        textStyle: textTheme.headlineLarge,
-      ),
-      headlineMedium: jacquardaBastarda9Charted(
-        textStyle: textTheme.headlineMedium,
-      ),
-      headlineSmall: jacquardaBastarda9Charted(
-        textStyle: textTheme.headlineSmall,
-      ),
+      displayLarge: jacquardaBastarda9Charted(textStyle: textTheme.displayLarge),
+      displayMedium: jacquardaBastarda9Charted(textStyle: textTheme.displayMedium),
+      displaySmall: jacquardaBastarda9Charted(textStyle: textTheme.displaySmall),
+      headlineLarge: jacquardaBastarda9Charted(textStyle: textTheme.headlineLarge),
+      headlineMedium: jacquardaBastarda9Charted(textStyle: textTheme.headlineMedium),
+      headlineSmall: jacquardaBastarda9Charted(textStyle: textTheme.headlineSmall),
       titleLarge: jacquardaBastarda9Charted(textStyle: textTheme.titleLarge),
       titleMedium: jacquardaBastarda9Charted(textStyle: textTheme.titleMedium),
       titleSmall: jacquardaBastarda9Charted(textStyle: textTheme.titleSmall),
@@ -706,9 +694,7 @@ class PartJ {
       displayMedium: jacquesFrancoisShadow(textStyle: textTheme.displayMedium),
       displaySmall: jacquesFrancoisShadow(textStyle: textTheme.displaySmall),
       headlineLarge: jacquesFrancoisShadow(textStyle: textTheme.headlineLarge),
-      headlineMedium: jacquesFrancoisShadow(
-        textStyle: textTheme.headlineMedium,
-      ),
+      headlineMedium: jacquesFrancoisShadow(textStyle: textTheme.headlineMedium),
       headlineSmall: jacquesFrancoisShadow(textStyle: textTheme.headlineSmall),
       titleLarge: jacquesFrancoisShadow(textStyle: textTheme.titleLarge),
       titleMedium: jacquesFrancoisShadow(textStyle: textTheme.titleMedium),

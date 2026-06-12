@@ -144,12 +144,12 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 
 @implementation PGNMessageData
 + (instancetype)makeWithName:(nullable NSString *)name
-                 description:(nullable NSString *)description
+          messageDescription:(nullable NSString *)messageDescription
                         code:(PGNCode)code
                         data:(NSDictionary<NSString *, NSString *> *)data {
   PGNMessageData *pigeonResult = [[PGNMessageData alloc] init];
   pigeonResult.name = name;
-  pigeonResult.description = description;
+  pigeonResult.messageDescription = messageDescription;
   pigeonResult.code = code;
   pigeonResult.data = data;
   return pigeonResult;
@@ -157,7 +157,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 + (PGNMessageData *)fromList:(NSArray<id> *)list {
   PGNMessageData *pigeonResult = [[PGNMessageData alloc] init];
   pigeonResult.name = GetNullableObjectAtIndex(list, 0);
-  pigeonResult.description = GetNullableObjectAtIndex(list, 1);
+  pigeonResult.messageDescription = GetNullableObjectAtIndex(list, 1);
   PGNCodeBox *boxedPGNCode = GetNullableObjectAtIndex(list, 2);
   pigeonResult.code = boxedPGNCode.value;
   pigeonResult.data = GetNullableObjectAtIndex(list, 3);
@@ -169,7 +169,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList {
   return @[
     self.name ?: [NSNull null],
-    self.description ?: [NSNull null],
+    self.messageDescription ?: [NSNull null],
     [[PGNCodeBox alloc] initWithValue:self.code],
     self.data ?: [NSNull null],
   ];
@@ -183,17 +183,22 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   }
   PGNMessageData *other = (PGNMessageData *)object;
   return FLTPigeonDeepEquals(self.name, other.name) &&
-         FLTPigeonDeepEquals(self.description, other.description) && self.code == other.code &&
-         FLTPigeonDeepEquals(self.data, other.data);
+         FLTPigeonDeepEquals(self.messageDescription, other.messageDescription) &&
+         self.code == other.code && FLTPigeonDeepEquals(self.data, other.data);
 }
 
 - (NSUInteger)hash {
   NSUInteger result = [self class].hash;
   result = result * 31 + FLTPigeonDeepHash(self.name);
-  result = result * 31 + FLTPigeonDeepHash(self.description);
+  result = result * 31 + FLTPigeonDeepHash(self.messageDescription);
   result = result * 31 + @(self.code).hash;
   result = result * 31 + FLTPigeonDeepHash(self.data);
   return result;
+}
+- (NSString *)description {
+  return [NSString
+      stringWithFormat:@"PGNMessageData(name: %@, messageDescription: %@, code: %ld, data: %@)",
+                       self.name, self.messageDescription, (long)self.code, self.data];
 }
 @end
 

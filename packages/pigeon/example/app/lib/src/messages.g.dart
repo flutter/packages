@@ -37,11 +37,7 @@ Object? _extractReplyValueOrThrow(
   return replyList.firstOrNull;
 }
 
-List<Object?> wrapResponse({
-  Object? result,
-  PlatformException? error,
-  bool empty = false,
-}) {
+List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
   }
@@ -63,9 +59,7 @@ bool _deepEquals(Object? a, Object? b) {
   }
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed.every(
-          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
-        );
+        a.indexed.every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
     if (a.length != b.length) {
@@ -117,23 +111,18 @@ int _deepHash(Object? value) {
 enum Code { one, two }
 
 class MessageData {
-  MessageData({
-    this.name,
-    this.description,
-    required this.code,
-    required this.data,
-  });
+  MessageData({this.name, this.messageDescription, required this.code, required this.data});
 
   String? name;
 
-  String? description;
+  String? messageDescription;
 
   Code code;
 
   Map<String, String> data;
 
   List<Object?> _toList() {
-    return <Object?>[name, description, code, data];
+    return <Object?>[name, messageDescription, code, data];
   }
 
   Object encode() {
@@ -144,7 +133,7 @@ class MessageData {
     result as List<Object?>;
     return MessageData(
       name: result[0] as String?,
-      description: result[1] as String?,
+      messageDescription: result[1] as String?,
       code: result[2]! as Code,
       data: (result[3]! as Map<Object?, Object?>).cast<String, String>(),
     );
@@ -160,7 +149,7 @@ class MessageData {
       return true;
     }
     return _deepEquals(name, other.name) &&
-        _deepEquals(description, other.description) &&
+        _deepEquals(messageDescription, other.messageDescription) &&
         _deepEquals(code, other.code) &&
         _deepEquals(data, other.data);
   }
@@ -168,6 +157,11 @@ class MessageData {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'MessageData(name: $name, messageDescription: $messageDescription, code: $code, data: $data)';
+  }
 }
 
 class _PigeonCodec extends StandardMessageCodec {
@@ -203,16 +197,14 @@ class _PigeonCodec extends StandardMessageCodec {
 }
 
 class ExampleHostApi {
-  /// Constructor for [ExampleHostApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
+  /// Constructor for [ExampleHostApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  ExampleHostApi({
-    BinaryMessenger? binaryMessenger,
-    String messageChannelSuffix = '',
-  }) : pigeonVar_binaryMessenger = binaryMessenger,
-       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
-           ? '.$messageChannelSuffix'
-           : '';
+  ExampleHostApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+    : pigeonVar_binaryMessenger = binaryMessenger,
+      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+          ? '.$messageChannelSuffix'
+          : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -246,9 +238,7 @@ class ExampleHostApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[a, b],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[a, b]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -267,9 +257,7 @@ class ExampleHostApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[message],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[message]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -291,9 +279,7 @@ abstract class MessageFlutterApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) {
-    messageChannelSuffix = messageChannelSuffix.isNotEmpty
-        ? '.$messageChannelSuffix'
-        : '';
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod$messageChannelSuffix',

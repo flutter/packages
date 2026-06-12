@@ -4,6 +4,8 @@ tasks:
     infra_step: true # Note infra steps failing prevents "always" from running.
   - name: analyze repo tools
     script: .ci/scripts/analyze_repo_tools.sh
+  - name: analyze flutter_goldens
+    script: .ci/scripts/analyze_flutter_goldens.sh
   - name: download Dart deps
     script: .ci/scripts/tool_runner.sh
     args: ["fetch-deps"]

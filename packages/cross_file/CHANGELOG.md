@@ -2,7 +2,7 @@
 
 * Adds a runnable `main` entry point and an additional `XFile.fromData`
   demonstration to the example.
-* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 0.3.5+2
 
