@@ -35,6 +35,10 @@
 // Generation counter for frame expectations. Incremented each time expectFrameWithTimeout: is called,
 // allowing previous timeouts to be invalidated when a new frame expectation starts.
 @property(nonatomic, assign) NSUInteger frameExpectationGeneration;
+// Diagnostic: consecutive copyPixelBuffer calls while paused. The selfRefresh
+// loop has no exit when paused with no incoming buffers, so a large count
+// means the display link is stuck on and the raster thread is churning.
+@property(nonatomic, assign) NSUInteger pausedRefreshCount;
 
 /// Ensures that the frame updater runs until a frame is rendered, regardless of play/pause state.
 - (void)expectFrame;
@@ -114,9 +118,15 @@
     if (weakSelf.frameExpectationGeneration != currentGeneration) {
       return;
     }
+    // Always clear the expectation when it expires, even if the player is
+    // playing right now. Leaving waitingForFrame set means a later pause keeps
+    // the display link running (updatePlayingState ORs it in), and a paused
+    // player never produces the buffer that would clear it — leaving the
+    // selfRefresh loop in copyPixelBuffer redrawing the scene every vsync
+    // indefinitely.
+    weakSelf.waitingForFrame = NO;
     if (!weakSelf.isPlaying) {
       weakSelf.displayLink.running = NO;
-      weakSelf.waitingForFrame = NO;
     }
   });
 }
@@ -205,6 +215,19 @@
 #pragma mark - FlutterTexture
 
 - (CVPixelBufferRef)copyPixelBuffer {
+  if (self.isPlaying) {
+    self.pausedRefreshCount = 0;
+  } else {
+    self.pausedRefreshCount++;
+    if (self.pausedRefreshCount % 600 == 0) {
+      NSLog(@"[VideoDiag] copyPixelBuffer churning while paused: %lu calls "
+            @"(texture %lld, waitingForFrame=%d, displayLink running=%d)",
+            (unsigned long)self.pausedRefreshCount,
+            self.frameUpdater.textureIdentifier, self.waitingForFrame,
+            self.displayLink.running);
+    }
+  }
+
   // If the difference between target time and current time is longer than this fraction of frame
   // duration then reset target time.
   const float resetThreshold = 0.5;
@@ -234,15 +257,16 @@
     }
   }
 
-  if (buffer) {
-    if (self.waitingForFrame) {
-      self.waitingForFrame = NO;
-    }
-    // If the display link was only running temporarily to pick up a new frame while the video was
-    // paused, stop it again.
-    if (!self.isPlaying && !self.waitingForFrame) {
-      self.displayLink.running = NO;
-    }
+  if (buffer && self.waitingForFrame) {
+    self.waitingForFrame = NO;
+  }
+  // Stop the display link whenever the player is paused with no pending frame
+  // expectation — not only when a buffer arrived. A paused player produces no
+  // new buffers, so a buffer-gated stop can never trigger and the selfRefresh
+  // loop below would keep the engine redrawing the last layer tree every
+  // vsync (e.g. after the seek race documented in seekTo:).
+  if (!self.isPlaying && !self.waitingForFrame) {
+    self.displayLink.running = NO;
   }
 
   // Calling textureFrameAvailable only from within displayLinkFired would require a non-trivial
