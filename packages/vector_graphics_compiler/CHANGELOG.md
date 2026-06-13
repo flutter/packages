@@ -35,7 +35,6 @@
 
 * Fixes HSL/HSLA color parsing for decimal percentage components (e.g. `hsl(270, 100%, 76.27%)`).
 
-
 ## 1.2.0
 
 * Adds support for percentage units in SVG shape attributes (rect, circle, ellipse, line).

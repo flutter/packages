@@ -1,3 +1,5 @@
+<?code-excerpt path-base="example"?>
+
 # vector_graphics_compiler
 
 A compiler for `package:vector_graphics`.
@@ -36,10 +38,11 @@ at build time using Flutter's [asset transformer](https://docs.flutter.dev/ui/as
 
 Declare your SVG asset with the transformer in `pubspec.yaml`:
 
+<?code-excerpt "pubspec.yaml (transformer-config)"?>
 ```yaml
 flutter:
   assets:
-    - path: assets/my_icon.svg
+    - path: assets/dart_logo.svg
       transformers:
         - package: vector_graphics_compiler
 ```
@@ -47,12 +50,15 @@ flutter:
 Load the pre-compiled asset with `AssetBytesLoader` from
 [`package:vector_graphics`](https://pub.dev/packages/vector_graphics):
 
+<?code-excerpt "lib/readme_excerpts.dart (asset-loader)"?>
 ```dart
-import 'package:vector_graphics/vector_graphics.dart';
+Widget buildIcon() {
+  return const VectorGraphic(
+    loader: AssetBytesLoader('assets/dart_logo.svg'),
+    semanticsLabel: 'Dart logo',
+  );
+}
 
-final Widget icon = VectorGraphic(
-  loader: AssetBytesLoader('assets/my_icon.svg'),
-);
 ```
 
 ## Commemoration
