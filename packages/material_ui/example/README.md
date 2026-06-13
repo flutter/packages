@@ -1,6 +1,12 @@
 # material_ui API Example Code
-This directory contains the example code that is referenced in the documentation
-in material_ui's source code.
+
+[`lib/main.dart`](lib/main.dart) is a small showcase app that demonstrates
+`material_ui`'s theming and a selection of commonly used components. It is the
+example shown on the package's [pub.dev](https://pub.dev) **Example** tab, and
+can be run from this directory with `flutter run`.
+
+The rest of this directory contains the API documentation code samples that are
+referenced from the documentation in material_ui's source code.
 
 These examples were originally located [in
 flutter/flutter](https://github.com/flutter/flutter/tree/master/examples/api)
