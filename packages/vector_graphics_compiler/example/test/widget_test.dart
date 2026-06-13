@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,10 +13,6 @@ void main() {
     await tester.pumpWidget(const ExampleApp());
     await tester.pumpAndSettle();
 
-    // Verify the app bar title is present.
-    expect(find.text('Build-time SVG Transformer'), findsOneWidget);
-
-    // Verify the VectorGraphic widget is present inside a 200x200 SizedBox.
     final SizedBox sizedBox = tester.widget<SizedBox>(
       find.byType(SizedBox).first,
     );

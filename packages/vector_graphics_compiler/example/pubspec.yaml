@@ -5,7 +5,7 @@ description: >
 publish_to: none
 
 environment:
-  sdk: ^3.9.0
+  sdk: ^3.10.0
 
 dependencies:
   flutter:
@@ -21,10 +21,14 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  vector_graphics_compiler:
+    path: ../
 
+# #docregion transformer-config
 flutter:
-  uses-material-design: true
   assets:
     - path: assets/dart_logo.svg
       transformers:
         - package: vector_graphics_compiler
+# #enddocregion transformer-config
+  uses-material-design: true
