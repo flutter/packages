@@ -363,6 +363,11 @@ class CameraService {
     }
   }
 
+  /// Used to check if browser has MediaStreamTrackProcessor capability
+  bool hasMediaStreamTrackProcessor() {
+    return jsUtil.hasProperty(window, 'MediaStreamTrackProcessor'.toJS);
+  }
+
   /// Used to check if browser has OffscreenCanvas capability
   bool hasPropertyOffScreenCanvas() {
     return jsUtil.hasProperty(window, 'OffscreenCanvas'.toJS);
@@ -396,22 +401,10 @@ class CameraService {
     }
     final ByteBuffer byteBuffer = imageData.data.toDart.buffer;
 
-    return CameraImageData(
-      format: const CameraImageFormat(
-        // TODO(TecHaxter): Introduce ImageFormatGroup.rgba8888 in
-        //                  package:camera_platform_interface.
-        //                  https://github.com/flutter/flutter/issues/151193
-        ImageFormatGroup.unknown,
-        raw: 'rgba8888',
-      ),
-      planes: <CameraImagePlane>[
-        CameraImagePlane(
-          bytes: byteBuffer.asUint8List(),
-          bytesPerRow: width * 4,
-        ),
-      ],
-      height: height,
+    return getCameraImageData(
+      bytes: byteBuffer.asUint8List(),
       width: width,
+      height: height,
     );
   }
 
@@ -474,5 +467,64 @@ class CameraService {
       height.toDouble(),
     );
     return context.getImageData(0, 0, width, height, settings);
+  }
+
+  /// Creates a [web.ReadableStreamDefaultReader] from a [web.MediaStreamTrack].
+  web.ReadableStreamDefaultReader getMediaStreamTrackReader(
+    web.MediaStreamTrack track, {
+    int maxBufferSize = 1,
+  }) {
+    final options = web.MediaStreamTrackProcessorInit(
+      track: track,
+      maxBufferSize: maxBufferSize,
+    );
+    final processor = web.MediaStreamTrackProcessor(options);
+    return processor.readable.getReader() as web.ReadableStreamDefaultReader;
+  }
+
+  /// Reads a video frame from the given [reader].
+  Future<web.VideoFrame> readVideoTrack(
+    web.ReadableStreamDefaultReader reader,
+  ) async {
+    final web.ReadableStreamReadResult readResult = await reader.read().toDart;
+    if (readResult.done) {
+      throw Exception('The track reader has been closed.');
+    }
+    final videoFrame = readResult.value as web.VideoFrame?;
+    if (videoFrame == null) {
+      throw Exception('Failed to read a video frame from the track reader.');
+    }
+    if (videoFrame.visibleRect == null) {
+      throw Exception('The video frame has a null visible rectangle.');
+    }
+    return videoFrame;
+  }
+
+  /// Converts a [web.VideoFrame] into a [CameraImageData], reusing previously
+  /// allocated buffers when possible.
+  CameraImageData getCameraImageData({
+    required int width,
+    required int height,
+    required Uint8List bytes,
+  }) {
+    final plane = CameraImagePlane(
+      bytes: bytes,
+      bytesPerRow: width * 4,
+      bytesPerPixel: 4,
+      width: width,
+      height: height,
+    );
+
+    // TODO(TecHaxter): Introduce ImageFormatGroup.rgba8888 in
+    //                  package:camera_platform_interface.
+    //                  https://github.com/flutter/flutter/issues/151193
+    const format = CameraImageFormat(ImageFormatGroup.unknown, raw: 'rgba8888');
+
+    return CameraImageData(
+      width: width,
+      height: height,
+      format: format,
+      planes: [plane],
+    );
   }
 }

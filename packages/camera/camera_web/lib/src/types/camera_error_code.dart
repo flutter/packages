@@ -83,6 +83,9 @@ class CameraErrorCode {
     'videoRecordingNotStarted',
   );
 
+  /// The camera has no video track
+  static const CameraErrorCode noVideoTrack = CameraErrorCode._('noVideoTrack');
+
   /// An unknown camera error.
   static const CameraErrorCode unknown = CameraErrorCode._('cameraUnknown');
 
