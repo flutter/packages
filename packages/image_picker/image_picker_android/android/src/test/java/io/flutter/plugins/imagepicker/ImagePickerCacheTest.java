@@ -105,14 +105,12 @@ public class ImagePickerCacheTest {
   public void imageCache_shouldBeAbleToSetAndGetQuality() {
     final int quality = 90;
     ImagePickerCache cache = new ImagePickerCache(mockActivity);
-    cache.saveDimensionWithOutputOptions(
-        new Messages.ImageSelectionOptions.Builder().setQuality((long) quality).build());
+    cache.saveDimensionWithOutputOptions(new ImageSelectionOptions(null, null, quality));
     Map<String, Object> resultMap = cache.getCacheMap();
     int imageQuality = (int) resultMap.get(ImagePickerCache.MAP_KEY_IMAGE_QUALITY);
     assertThat(imageQuality, equalTo(quality));
 
-    cache.saveDimensionWithOutputOptions(
-        new Messages.ImageSelectionOptions.Builder().setQuality((long) 100).build());
+    cache.saveDimensionWithOutputOptions(new ImageSelectionOptions(null, null, 100));
     Map<String, Object> resultMapWithDefaultQuality = cache.getCacheMap();
     int defaultImageQuality =
         (int) resultMapWithDefaultQuality.get(ImagePickerCache.MAP_KEY_IMAGE_QUALITY);

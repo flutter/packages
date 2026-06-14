@@ -194,7 +194,7 @@ class FlutterError(
     val code: String,
     override val message: String? = null,
     val details: Any? = null
-) : Throwable()
+) : RuntimeException()
 
 enum class AnEnum(val raw: Int) {
   ONE(0),
@@ -250,6 +250,10 @@ data class UnusedClass(val aField: Any? = null) {
     var result = javaClass.hashCode()
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.aField)
     return result
+  }
+
+  override fun toString(): String {
+    return "UnusedClass(aField=$aField)"
   }
 }
 
@@ -452,6 +456,10 @@ data class AllTypes(
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.listMap)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.mapMap)
     return result
+  }
+
+  override fun toString(): String {
+    return "AllTypes(aBool=$aBool, anInt=$anInt, anInt64=$anInt64, aDouble=$aDouble, aByteArray=${aByteArray.contentToString()}, a4ByteArray=${a4ByteArray.contentToString()}, a8ByteArray=${a8ByteArray.contentToString()}, aFloatArray=${aFloatArray.contentToString()}, anEnum=$anEnum, anotherEnum=$anotherEnum, aString=$aString, anObject=$anObject, list=$list, stringList=$stringList, intList=$intList, doubleList=$doubleList, boolList=$boolList, enumList=$enumList, objectList=$objectList, listList=$listList, mapList=$mapList, map=$map, stringMap=$stringMap, intMap=$intMap, enumMap=$enumMap, objectMap=$objectMap, listMap=$listMap, mapMap=$mapMap)"
   }
 }
 
@@ -673,6 +681,10 @@ data class AllNullableTypes(
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.recursiveClassMap)
     return result
   }
+
+  override fun toString(): String {
+    return "AllNullableTypes(aNullableBool=$aNullableBool, aNullableInt=$aNullableInt, aNullableInt64=$aNullableInt64, aNullableDouble=$aNullableDouble, aNullableByteArray=${aNullableByteArray?.contentToString()}, aNullable4ByteArray=${aNullable4ByteArray?.contentToString()}, aNullable8ByteArray=${aNullable8ByteArray?.contentToString()}, aNullableFloatArray=${aNullableFloatArray?.contentToString()}, aNullableEnum=$aNullableEnum, anotherNullableEnum=$anotherNullableEnum, aNullableString=$aNullableString, aNullableObject=$aNullableObject, allNullableTypes=$allNullableTypes, list=$list, stringList=$stringList, intList=$intList, doubleList=$doubleList, boolList=$boolList, enumList=$enumList, objectList=$objectList, listList=$listList, mapList=$mapList, recursiveClassList=$recursiveClassList, map=$map, stringMap=$stringMap, intMap=$intMap, enumMap=$enumMap, objectMap=$objectMap, listMap=$listMap, mapMap=$mapMap, recursiveClassMap=$recursiveClassMap)"
+  }
 }
 
 /**
@@ -876,6 +888,10 @@ data class AllNullableTypesWithoutRecursion(
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.mapMap)
     return result
   }
+
+  override fun toString(): String {
+    return "AllNullableTypesWithoutRecursion(aNullableBool=$aNullableBool, aNullableInt=$aNullableInt, aNullableInt64=$aNullableInt64, aNullableDouble=$aNullableDouble, aNullableByteArray=${aNullableByteArray?.contentToString()}, aNullable4ByteArray=${aNullable4ByteArray?.contentToString()}, aNullable8ByteArray=${aNullable8ByteArray?.contentToString()}, aNullableFloatArray=${aNullableFloatArray?.contentToString()}, aNullableEnum=$aNullableEnum, anotherNullableEnum=$anotherNullableEnum, aNullableString=$aNullableString, aNullableObject=$aNullableObject, list=$list, stringList=$stringList, intList=$intList, doubleList=$doubleList, boolList=$boolList, enumList=$enumList, objectList=$objectList, listList=$listList, mapList=$mapList, map=$map, stringMap=$stringMap, intMap=$intMap, enumMap=$enumMap, objectMap=$objectMap, listMap=$listMap, mapMap=$mapMap)"
+  }
 }
 
 /**
@@ -957,6 +973,10 @@ data class AllClassesWrapper(
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.nullableClassMap)
     return result
   }
+
+  override fun toString(): String {
+    return "AllClassesWrapper(allNullableTypes=$allNullableTypes, allNullableTypesWithoutRecursion=$allNullableTypesWithoutRecursion, allTypes=$allTypes, classList=$classList, nullableClassList=$nullableClassList, classMap=$classMap, nullableClassMap=$nullableClassMap)"
+  }
 }
 
 /**
@@ -993,6 +1013,10 @@ data class TestMessage(val testList: List<Any?>? = null) {
     var result = javaClass.hashCode()
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.testList)
     return result
+  }
+
+  override fun toString(): String {
+    return "TestMessage(testList=$testList)"
   }
 }
 
@@ -1099,6 +1123,14 @@ interface HostIntegrationCoreApi {
   fun echoObject(anObject: Any): Any
   /** Returns the passed list, to test serialization and deserialization. */
   fun echoList(list: List<Any?>): List<Any?>
+  /** Returns the passed list, to test serialization and deserialization. */
+  fun echoStringList(stringList: List<String?>): List<String?>
+  /** Returns the passed list, to test serialization and deserialization. */
+  fun echoIntList(intList: List<Long?>): List<Long?>
+  /** Returns the passed list, to test serialization and deserialization. */
+  fun echoDoubleList(doubleList: List<Double?>): List<Double?>
+  /** Returns the passed list, to test serialization and deserialization. */
+  fun echoBoolList(boolList: List<Boolean?>): List<Boolean?>
   /** Returns the passed list, to test serialization and deserialization. */
   fun echoEnumList(enumList: List<AnEnum?>): List<AnEnum?>
   /** Returns the passed list, to test serialization and deserialization. */
@@ -1808,6 +1840,94 @@ interface HostIntegrationCoreApi {
             val wrapped: List<Any?> =
                 try {
                   listOf(api.echoList(listArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoStringList$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val stringListArg = args[0] as List<String?>
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoStringList(stringListArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoIntList$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val intListArg = args[0] as List<Long?>
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoIntList(intListArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoDoubleList$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val doubleListArg = args[0] as List<Double?>
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoDoubleList(doubleListArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBoolList$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val boolListArg = args[0] as List<Boolean?>
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoBoolList(boolListArg))
                 } catch (exception: Throwable) {
                   CoreTestsPigeonUtils.wrapError(exception)
                 }

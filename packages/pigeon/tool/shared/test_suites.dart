@@ -17,8 +17,7 @@ import 'process_utils.dart';
 const int _noDeviceAvailableExitCode = 100;
 
 const String _testPluginName = 'test_plugin';
-const String _alternateLanguageTestPluginName =
-    'alternate_language_test_plugin';
+const String _alternateLanguageTestPluginName = 'alternate_language_test_plugin';
 const String _testPluginRelativePath = 'platform_tests/$_testPluginName';
 const String _alternateLanguageTestPluginRelativePath =
     'platform_tests/$_alternateLanguageTestPluginName';
@@ -146,10 +145,7 @@ Future<int> _runAndroidJavaUnitTests({bool ciMode = false}) async {
 }
 
 Future<int> _runAndroidJavaIntegrationTests({bool ciMode = false}) async {
-  return _runMobileIntegrationTests(
-    'Android',
-    _alternateLanguageTestPluginRelativePath,
-  );
+  return _runMobileIntegrationTests('Android', _alternateLanguageTestPluginRelativePath);
 }
 
 Future<int> _runAndroidJavaLint({bool ciMode = false}) async {
@@ -164,10 +160,7 @@ Future<int> _runAndroidKotlinUnitTests({bool ciMode = false}) async {
 }
 
 Future<int> _runAndroidKotlinLint({bool ciMode = false}) async {
-  return _runAndroidLint(
-    testPluginName: _testPluginName,
-    testPluginPath: _testPluginRelativePath,
-  );
+  return _runAndroidLint(testPluginName: _testPluginName, testPluginPath: _testPluginRelativePath);
 }
 
 Future<int> _runAndroidUnitTests(String testPluginPath) async {
@@ -209,10 +202,7 @@ Future<int> _runAndroidKotlinIntegrationTests({bool ciMode = false}) async {
   return _runMobileIntegrationTests('Android', _testPluginRelativePath);
 }
 
-Future<int> _runMobileIntegrationTests(
-  String platform,
-  String testPluginPath,
-) async {
+Future<int> _runMobileIntegrationTests(String platform, String testPluginPath) async {
   final String? device = await getDeviceForPlatform(platform.toLowerCase());
   if (device == null) {
     print(
@@ -255,11 +245,7 @@ Future<int> _analyzeFlutterUnitTests(String flutterUnitTestsPath) async {
     return generateTestCode;
   }
 
-  final int analyzeCode = await runFlutterCommand(
-    flutterUnitTestsPath,
-    'analyze',
-    <String>[],
-  );
+  final int analyzeCode = await runFlutterCommand(flutterUnitTestsPath, 'analyze', <String>[]);
   if (analyzeCode != 0) {
     return analyzeCode;
   }
@@ -277,11 +263,7 @@ Future<int> _runFlutterUnitTests({bool ciMode = false}) async {
     return analyzeCode;
   }
 
-  final int testCode = await runFlutterCommand(
-    flutterUnitTestsPath,
-    'test',
-    <String>[],
-  );
+  final int testCode = await runFlutterCommand(flutterUnitTestsPath, 'test', <String>[]);
   if (testCode != 0) {
     return testCode;
   }
@@ -359,8 +341,8 @@ Future<int> _runIOSPluginUnitTests(String testPluginPath) async {
 
   const deviceName = 'Pigeon-Test-iPhone';
   const deviceType = 'com.apple.CoreSimulator.SimDeviceType.iPhone-14';
-  const deviceRuntime = 'com.apple.CoreSimulator.SimRuntime.iOS-18-2';
-  const deviceOS = '18.2';
+  const deviceRuntime = 'com.apple.CoreSimulator.SimRuntime.iOS-26-2';
+  const deviceOS = '26.2';
   await _createSimulator(deviceName, deviceType, deviceRuntime);
   return runXcodeBuild(
     '$examplePath/ios',
@@ -370,11 +352,7 @@ Future<int> _runIOSPluginUnitTests(String testPluginPath) async {
   ).whenComplete(() => _deleteSimulator(deviceName));
 }
 
-Future<int> _createSimulator(
-  String deviceName,
-  String deviceType,
-  String deviceRuntime,
-) async {
+Future<int> _createSimulator(String deviceName, String deviceType, String deviceRuntime) async {
   // Delete any existing simulators with the same name until it fails. It will
   // fail once there are no simulators with the name. Having more than one may
   // cause issues when builds target the device.
@@ -391,11 +369,7 @@ Future<int> _createSimulator(
 }
 
 Future<int> _deleteSimulator(String deviceName) async {
-  return runProcess('xcrun', <String>[
-    'simctl',
-    'delete',
-    deviceName,
-  ], streamOutput: false);
+  return runProcess('xcrun', <String>['simctl', 'delete', deviceName], streamOutput: false);
 }
 
 Future<int> _runIOSSwiftIntegrationTests({bool ciMode = false}) async {
@@ -409,6 +383,15 @@ Future<int> _runLinuxUnitTests({bool ciMode = false}) async {
     return compileCode;
   }
 
+  // Depending on the Flutter version, the build output path may be different.
+  // To handle both master and stable, and to future-proof against the changes
+  // that will happen in https://github.com/flutter/flutter/issues/114349
+  // - Try arm64, to future-proof against arm64 support.
+  // - Try x64, to cover pre-arm64 support on arm64 hosts, as well as x64 hosts.
+  // TODO(gustl22): Remove all this when these tests no longer need to
+  // support a version of Flutter without
+  // https://github.com/flutter/flutter/issues/114349, and just construct the
+  // version of the path with the current architecture.
   const buildDirBase = '$examplePath/build/linux';
   const buildRelativeBinaryPath = 'debug/plugins/test_plugin/test_plugin_test';
   const arm64Path = '$buildDirBase/arm64/$buildRelativeBinaryPath';
@@ -456,8 +439,7 @@ Future<int> _runWindowsUnitTests({bool ciMode = false}) async {
   // https://github.com/flutter/flutter/issues/129807, and just construct the
   // version of the path with the current architecture.
   const buildDirBase = '$examplePath/build/windows';
-  const buildRelativeBinaryPath =
-      'plugins/test_plugin/Debug/test_plugin_test.exe';
+  const buildRelativeBinaryPath = 'plugins/test_plugin/Debug/test_plugin_test.exe';
   const arm64Path = '$buildDirBase/arm64/$buildRelativeBinaryPath';
   const x64Path = '$buildDirBase/x64/$buildRelativeBinaryPath';
   if (File(arm64Path).existsSync()) {

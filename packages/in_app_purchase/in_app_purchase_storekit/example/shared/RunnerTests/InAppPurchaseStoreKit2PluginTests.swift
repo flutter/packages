@@ -243,7 +243,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
       case .failure(let error):
         XCTAssertEqual(
           error.localizedDescription,
-          "The operation couldn’t be completed. (NSURLErrorDomain error -1009.)")
+          "The operation couldn’t be completed. (in_app_purchase_storekit.PigeonError error 1.)")
         expectation.fulfill()
       }
     }
@@ -545,6 +545,49 @@ final class InAppPurchase2PluginTests: XCTestCase {
     }
 
     await fulfillment(of: [expectation], timeout: 5)
+  }
+
+  func testDuplicatePurchaseFails() async throws {
+    let firstPurchaseExpectation = self.expectation(description: "First purchase should succeed")
+    let secondPurchaseExpectation = self.expectation(description: "Second purchase should fail")
+
+    plugin.purchase(id: "consumable", options: nil) { result in
+      switch result {
+      case .success:
+        firstPurchaseExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("First purchase should NOT fail. Failed with \(error)")
+      }
+    }
+    await fulfillment(of: [firstPurchaseExpectation], timeout: 5)
+
+    plugin.purchase(id: "consumable", options: nil) { result in
+      switch result {
+      case .success:
+        XCTFail("Second purchase should NOT succeed because a transaction is already pending.")
+      case .failure(let error as PigeonError):
+        XCTAssertEqual(error.code, "storekit_duplicate_product_object")
+        secondPurchaseExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("Unexpected error type: \(error)")
+      }
+    }
+    await fulfillment(of: [secondPurchaseExpectation], timeout: 5)
+  }
+  @available(iOS 16.0, macOS 15.0, *)
+  func testRedeemCodeSheetFailsGracefullyWhenNoWindow() {
+    let expectation = self.expectation(
+      description: "Should fail gracefully when without key window")
+
+    plugin.registrar = nil
+
+    plugin.presentOfferCodeRedeemSheet { result in
+      if case .failure = result {
+        expectation.fulfill()
+      }
+    }
+
+    waitForExpectations(timeout: 1.0)
   }
 
 }

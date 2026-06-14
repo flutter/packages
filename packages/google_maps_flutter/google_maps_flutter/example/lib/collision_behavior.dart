@@ -13,12 +13,8 @@ import 'place_advanced_marker.dart';
 /// Page demonstrating how to use AdvancedMarker's collision behavior.
 class AdvancedMarkerCollisionBehaviorPage extends GoogleMapExampleAppPage {
   /// Default constructor.
-  const AdvancedMarkerCollisionBehaviorPage({Key? key, required this.mapId})
-    : super(
-        const Icon(Icons.not_listed_location),
-        'Advanced marker collision behavior',
-        key: key,
-      );
+  const AdvancedMarkerCollisionBehaviorPage({super.key, required this.mapId})
+    : super(const Icon(Icons.not_listed_location), 'Advanced marker collision behavior');
 
   /// Map ID to use for the GoogleMap.
   final String? mapId;
@@ -35,12 +31,10 @@ class _CollisionBehaviorPageBody extends StatefulWidget {
   final String? mapId;
 
   @override
-  State<_CollisionBehaviorPageBody> createState() =>
-      _CollisionBehaviorPageBodyState();
+  State<_CollisionBehaviorPageBody> createState() => _CollisionBehaviorPageBodyState();
 }
 
-class _CollisionBehaviorPageBodyState
-    extends State<_CollisionBehaviorPageBody> {
+class _CollisionBehaviorPageBodyState extends State<_CollisionBehaviorPageBody> {
   static const LatLng center = LatLng(-33.86711, 151.1947171);
   static const double zoomOutLevel = 9;
   static const double zoomInLevel = 12;
@@ -78,10 +72,7 @@ class _CollisionBehaviorPageBodyState
           child: GoogleMap(
             mapId: widget.mapId,
             markerType: GoogleMapMarkerType.advancedMarker,
-            initialCameraPosition: const CameraPosition(
-              target: center,
-              zoom: zoomInLevel,
-            ),
+            initialCameraPosition: const CameraPosition(target: center, zoom: zoomInLevel),
             markers: Set<AdvancedMarker>.of(markers),
             tiltGesturesEnabled: false,
             zoomGesturesEnabled: false,

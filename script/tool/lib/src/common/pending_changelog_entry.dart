@@ -55,11 +55,7 @@ enum VersionChange {
 /// Represents a single entry in the pending changelog.
 class PendingChangelogEntry {
   /// Creates a new pending changelog entry.
-  PendingChangelogEntry({
-    required this.changelog,
-    required this.version,
-    required this.file,
-  });
+  PendingChangelogEntry({required this.changelog, required this.version, required this.file});
 
   /// Creates a PendingChangelogEntry from a YAML string.
   ///
@@ -67,9 +63,7 @@ class PendingChangelogEntry {
   factory PendingChangelogEntry.parse(String yamlContent, File file) {
     final dynamic yaml = loadYaml(yamlContent);
     if (yaml is! YamlMap) {
-      throw FormatException(
-        'Expected a YAML map, but found ${yaml.runtimeType}.',
-      );
+      throw FormatException('Expected a YAML map, but found ${yaml.runtimeType}.');
     }
 
     final dynamic changelogYaml = yaml['changelog'];
@@ -86,15 +80,10 @@ class PendingChangelogEntry {
     }
     final VersionChange version = VersionChange.values.firstWhere(
       (VersionChange e) => e.name == versionString,
-      orElse: () =>
-          throw FormatException('Invalid version type: $versionString'),
+      orElse: () => throw FormatException('Invalid version type: $versionString'),
     );
 
-    return PendingChangelogEntry(
-      changelog: changelog,
-      version: version,
-      file: file,
-    );
+    return PendingChangelogEntry(changelog: changelog, version: version, file: file);
   }
 
   /// The template file name used to draft a pending changelog file.

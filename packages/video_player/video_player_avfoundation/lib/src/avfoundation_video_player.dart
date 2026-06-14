@@ -8,7 +8,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
-import 'messages.g.dart';
+import 'video_player_instance_messages.g.dart';
+import 'video_player_plugin_messages.g.dart';
 
 /// The non-test implementation of `_apiProvider`.
 VideoPlayerInstanceApi _productionApiProvider(int playerId) {
@@ -21,8 +22,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   /// Creates a new AVFoundation-based video player implementation instance.
   AVFoundationVideoPlayer({
     @visibleForTesting AVFoundationVideoPlayerApi? pluginApi,
-    @visibleForTesting
-    VideoPlayerInstanceApi Function(int playerId)? playerApiProvider,
+    @visibleForTesting VideoPlayerInstanceApi Function(int playerId)? playerApiProvider,
   }) : _api = pluginApi ?? AVFoundationVideoPlayerApi(),
        _playerApiProvider = playerApiProvider ?? _productionApiProvider;
 
@@ -71,9 +71,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
       case DataSourceType.asset:
         final String? asset = dataSource.asset;
         if (asset == null) {
-          throw ArgumentError(
-            '"asset" must be non-null for an asset data source',
-          );
+          throw ArgumentError('"asset" must be non-null for an asset data source');
         }
         uri = await _api.getAssetUrl(asset, dataSource.package);
         if (uri == null) {
@@ -92,18 +90,13 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     if (uri == null) {
       throw ArgumentError('Unable to construct a video asset from $options');
     }
-    final pigeonCreationOptions = CreationOptions(
-      uri: uri,
-      httpHeaders: dataSource.httpHeaders,
-    );
+    final pigeonCreationOptions = CreationOptions(uri: uri, httpHeaders: dataSource.httpHeaders);
 
     final int playerId;
     final VideoPlayerViewState state;
     switch (viewType) {
       case VideoViewType.textureView:
-        final TexturePlayerIds ids = await _api.createForTextureView(
-          pigeonCreationOptions,
-        );
+        final TexturePlayerIds ids = await _api.createForTextureView(pigeonCreationOptions);
         playerId = ids.playerId;
         state = VideoPlayerTextureViewState(textureId: ids.textureId);
       case VideoViewType.platformView:
@@ -223,9 +216,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     final VideoPlayerViewState viewState = _playerWith(id: playerId).viewState;
 
     return switch (viewState) {
-      VideoPlayerTextureViewState(:final int textureId) => Texture(
-        textureId: textureId,
-      ),
+      VideoPlayerTextureViewState(:final int textureId) => Texture(textureId: textureId),
       VideoPlayerPlatformViewState() => _buildPlatformView(playerId),
     };
   }
@@ -252,11 +243,8 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
 /// An instance of a video player, corresponding to a single player ID in
 /// [AVFoundationVideoPlayer].
 class _PlayerInstance {
-  _PlayerInstance(
-    this._api,
-    this.viewState, {
-    required EventChannel eventChannel,
-  }) : _eventChannel = eventChannel;
+  _PlayerInstance(this._api, this.viewState, {required EventChannel eventChannel})
+    : _eventChannel = eventChannel;
 
   final VideoPlayerInstanceApi _api;
   final VideoPlayerViewState viewState;
@@ -283,11 +271,9 @@ class _PlayerInstance {
     return Duration(milliseconds: await _api.getPosition());
   }
 
-  Future<List<MediaSelectionAudioTrackData>> getAudioTracks() =>
-      _api.getAudioTracks();
+  Future<List<MediaSelectionAudioTrackData>> getAudioTracks() => _api.getAudioTracks();
 
-  Future<void> selectAudioTrack(int trackIndex) =>
-      _api.selectAudioTrack(trackIndex);
+  Future<void> selectAudioTrack(int trackIndex) => _api.selectAudioTrack(trackIndex);
 
   Stream<VideoEvent> get videoEvents {
     _eventSubscription ??= _eventChannel.receiveBroadcastStream().listen(
@@ -320,9 +306,7 @@ class _PlayerInstance {
       ),
       'completed' => VideoEvent(eventType: VideoEventType.completed),
       'bufferingUpdate' => VideoEvent(
-        buffered: (map['values'] as List<dynamic>)
-            .map<DurationRange>(_toDurationRange)
-            .toList(),
+        buffered: (map['values'] as List<dynamic>).map<DurationRange>(_toDurationRange).toList(),
         eventType: VideoEventType.bufferingUpdate,
       ),
       'bufferingStart' => VideoEvent(eventType: VideoEventType.bufferingStart),

@@ -10,8 +10,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'page.dart';
 
 class PlacePolygonPage extends GoogleMapExampleAppPage {
-  const PlacePolygonPage({Key? key})
-    : super(const Icon(Icons.linear_scale), 'Place polygon', key: key);
+  const PlacePolygonPage({super.key}) : super(const Icon(Icons.linear_scale), 'Place polygon');
 
   @override
   Widget build(BuildContext context) {
@@ -38,12 +37,7 @@ class PlacePolygonBodyState extends State<PlacePolygonBody> {
   // Values when toggling polygon color
   int strokeColorsIndex = 0;
   int fillColorsIndex = 0;
-  List<Color> colors = <Color>[
-    Colors.purple,
-    Colors.red,
-    Colors.green,
-    Colors.pink,
-  ];
+  List<Color> colors = <Color>[Colors.purple, Colors.red, Colors.green, Colors.pink];
 
   // Values when toggling polygon width
   int widthsIndex = 0;
@@ -148,9 +142,7 @@ class PlacePolygonBodyState extends State<PlacePolygonBody> {
   void _addHoles(PolygonId polygonId) {
     final Polygon polygon = polygons[polygonId]!;
     setState(() {
-      polygons[polygonId] = polygon.copyWith(
-        holesParam: _createHoles(polygonId),
-      );
+      polygons[polygonId] = polygon.copyWith(holesParam: _createHoles(polygonId));
     });
   }
 
@@ -193,15 +185,11 @@ class PlacePolygonBodyState extends State<PlacePolygonBody> {
                       children: <Widget>[
                         TextButton(onPressed: _add, child: const Text('add')),
                         TextButton(
-                          onPressed: (selectedId == null)
-                              ? null
-                              : () => _remove(selectedId),
+                          onPressed: (selectedId == null) ? null : () => _remove(selectedId),
                           child: const Text('remove'),
                         ),
                         TextButton(
-                          onPressed: (selectedId == null)
-                              ? null
-                              : () => _toggleVisible(selectedId),
+                          onPressed: (selectedId == null) ? null : () => _toggleVisible(selectedId),
                           child: const Text('toggle visible'),
                         ),
                         TextButton(
@@ -231,9 +219,7 @@ class PlacePolygonBodyState extends State<PlacePolygonBody> {
                           child: const Text('remove holes'),
                         ),
                         TextButton(
-                          onPressed: (selectedId == null)
-                              ? null
-                              : () => _changeWidth(selectedId),
+                          onPressed: (selectedId == null) ? null : () => _changeWidth(selectedId),
                           child: const Text('change stroke width'),
                         ),
                         TextButton(

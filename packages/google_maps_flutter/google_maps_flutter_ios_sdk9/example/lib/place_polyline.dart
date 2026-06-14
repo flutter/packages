@@ -12,8 +12,7 @@ import 'example_google_map.dart';
 import 'page.dart';
 
 class PlacePolylinePage extends GoogleMapExampleAppPage {
-  const PlacePolylinePage({Key? key})
-    : super(const Icon(Icons.linear_scale), 'Place polyline', key: key);
+  const PlacePolylinePage({super.key}) : super(const Icon(Icons.linear_scale), 'Place polyline');
 
   @override
   Widget build(BuildContext context) {
@@ -38,23 +37,14 @@ class PlacePolylineBodyState extends State<PlacePolylineBody> {
 
   // Values when toggling polyline color
   int colorsIndex = 0;
-  List<Color> colors = <Color>[
-    Colors.purple,
-    Colors.red,
-    Colors.green,
-    Colors.pink,
-  ];
+  List<Color> colors = <Color>[Colors.purple, Colors.red, Colors.green, Colors.pink];
 
   // Values when toggling polyline width
   int widthsIndex = 0;
   List<int> widths = <int>[10, 20, 5];
 
   int jointTypesIndex = 0;
-  List<JointType> jointTypes = <JointType>[
-    JointType.mitered,
-    JointType.bevel,
-    JointType.round,
-  ];
+  List<JointType> jointTypes = <JointType>[JointType.mitered, JointType.bevel, JointType.round];
 
   // Values when toggling polyline end cap type
   int endCapsIndex = 0;
@@ -133,36 +123,28 @@ class PlacePolylineBodyState extends State<PlacePolylineBody> {
   void _toggleGeodesic(PolylineId polylineId) {
     final Polyline polyline = polylines[polylineId]!;
     setState(() {
-      polylines[polylineId] = polyline.copyWith(
-        geodesicParam: !polyline.geodesic,
-      );
+      polylines[polylineId] = polyline.copyWith(geodesicParam: !polyline.geodesic);
     });
   }
 
   void _toggleVisible(PolylineId polylineId) {
     final Polyline polyline = polylines[polylineId]!;
     setState(() {
-      polylines[polylineId] = polyline.copyWith(
-        visibleParam: !polyline.visible,
-      );
+      polylines[polylineId] = polyline.copyWith(visibleParam: !polyline.visible);
     });
   }
 
   void _changeColor(PolylineId polylineId) {
     final Polyline polyline = polylines[polylineId]!;
     setState(() {
-      polylines[polylineId] = polyline.copyWith(
-        colorParam: colors[++colorsIndex % colors.length],
-      );
+      polylines[polylineId] = polyline.copyWith(colorParam: colors[++colorsIndex % colors.length]);
     });
   }
 
   void _changeWidth(PolylineId polylineId) {
     final Polyline polyline = polylines[polylineId]!;
     setState(() {
-      polylines[polylineId] = polyline.copyWith(
-        widthParam: widths[++widthsIndex % widths.length],
-      );
+      polylines[polylineId] = polyline.copyWith(widthParam: widths[++widthsIndex % widths.length]);
     });
   }
 
@@ -237,15 +219,11 @@ class PlacePolylineBodyState extends State<PlacePolylineBody> {
                       children: <Widget>[
                         TextButton(onPressed: _add, child: const Text('add')),
                         TextButton(
-                          onPressed: (selectedId == null)
-                              ? null
-                              : () => _remove(selectedId),
+                          onPressed: (selectedId == null) ? null : () => _remove(selectedId),
                           child: const Text('remove'),
                         ),
                         TextButton(
-                          onPressed: (selectedId == null)
-                              ? null
-                              : () => _toggleVisible(selectedId),
+                          onPressed: (selectedId == null) ? null : () => _toggleVisible(selectedId),
                           child: const Text('toggle visible'),
                         ),
                         TextButton(
@@ -259,15 +237,11 @@ class PlacePolylineBodyState extends State<PlacePolylineBody> {
                     Column(
                       children: <Widget>[
                         TextButton(
-                          onPressed: (selectedId == null)
-                              ? null
-                              : () => _changeWidth(selectedId),
+                          onPressed: (selectedId == null) ? null : () => _changeWidth(selectedId),
                           child: const Text('change width'),
                         ),
                         TextButton(
-                          onPressed: (selectedId == null)
-                              ? null
-                              : () => _changeColor(selectedId),
+                          onPressed: (selectedId == null) ? null : () => _changeColor(selectedId),
                           child: const Text('change color'),
                         ),
                         TextButton(
@@ -289,9 +263,7 @@ class PlacePolylineBodyState extends State<PlacePolylineBody> {
                           child: const Text('change joint type [Android only]'),
                         ),
                         TextButton(
-                          onPressed: (selectedId == null)
-                              ? null
-                              : () => _changePattern(selectedId),
+                          onPressed: (selectedId == null) ? null : () => _changePattern(selectedId),
                           child: const Text('change pattern'),
                         ),
                       ],

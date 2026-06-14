@@ -14,8 +14,7 @@ import 'example_google_map.dart';
 import 'page.dart';
 
 class TileOverlayPage extends GoogleMapExampleAppPage {
-  const TileOverlayPage({Key? key})
-    : super(const Icon(Icons.map), 'Tile overlay', key: key);
+  const TileOverlayPage({super.key}) : super(const Icon(Icons.map), 'Tile overlay');
 
   @override
   Widget build(BuildContext context) {
@@ -90,18 +89,9 @@ class TileOverlayBodyState extends State<TileOverlayBody> {
             ),
           ),
         ),
-        TextButton(
-          onPressed: _addTileOverlay,
-          child: const Text('Add tile overlay'),
-        ),
-        TextButton(
-          onPressed: _removeTileOverlay,
-          child: const Text('Remove tile overlay'),
-        ),
-        TextButton(
-          onPressed: _clearTileCache,
-          child: const Text('Clear tile cache'),
-        ),
+        TextButton(onPressed: _addTileOverlay, child: const Text('Add tile overlay')),
+        TextButton(onPressed: _removeTileOverlay, child: const Text('Remove tile overlay')),
+        TextButton(onPressed: _clearTileCache, child: const Text('Clear tile cache')),
       ],
     );
   }
@@ -125,22 +115,14 @@ class _DebugTileProvider implements TileProvider {
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
     final textSpan = TextSpan(text: '$x,$y', style: textStyle);
-    final textPainter = TextPainter(
-      text: textSpan,
-      textDirection: TextDirection.ltr,
-    );
+    final textPainter = TextPainter(text: textSpan, textDirection: TextDirection.ltr);
     textPainter.layout(maxWidth: width.toDouble());
     textPainter.paint(canvas, Offset.zero);
-    canvas.drawRect(
-      Rect.fromLTRB(0, 0, width.toDouble(), width.toDouble()),
-      boxPaint,
-    );
+    canvas.drawRect(Rect.fromLTRB(0, 0, width.toDouble(), width.toDouble()), boxPaint);
     final ui.Picture picture = recorder.endRecording();
     final Uint8List byteData = await picture
         .toImage(width, height)
-        .then(
-          (ui.Image image) => image.toByteData(format: ui.ImageByteFormat.png),
-        )
+        .then((ui.Image image) => image.toByteData(format: ui.ImageByteFormat.png))
         .then((ByteData? byteData) => byteData!.buffer.asUint8List());
     return Tile(width, height, byteData);
   }
