@@ -2776,11 +2776,6 @@ void main() {
   });
 
   group('Date TextInputFormatter', () {
-    final inputFormatters = <TextInputFormatter>[
-      FilteringTextInputFormatter.digitsOnly,
-      LengthLimitingTextInputFormatter(8),
-    ];
-
     DateTime? result;
 
     Widget buildApp(Widget child) {
@@ -2799,7 +2794,6 @@ void main() {
         lastDate: lastDate,
         initialEntryMode: DatePickerEntryMode.input,
         calendarDelegate: const _TestDateInputDelegate(),
-        inputFormatters: inputFormatters,
       );
     }
 
@@ -3026,5 +3020,13 @@ class _TestDateInputDelegate extends GregorianCalendarDelegate {
     }
 
     return null;
+  }
+
+  @override
+  List<TextInputFormatter>? keyboardInputFormatters(MaterialLocalizations localizations) {
+    return <TextInputFormatter>[
+      FilteringTextInputFormatter.digitsOnly,
+      LengthLimitingTextInputFormatter(8),
+    ];
   }
 }
