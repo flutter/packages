@@ -198,21 +198,29 @@ class ParentNode extends AttributedNode {
 
   @override
   AttributedNode applyAttributes(SvgAttributes newAttributes, {bool replace = false}) {
-    return ParentNode(attributes.applyParent(newAttributes), precalculatedTransform: transform)
-      .._children.addAll(_children);
+    return ParentNode(
+      attributes.applyParent(
+        newAttributes,
+        filterIdOverride: replace ? (newAttributes.filterId ?? attributes.filterId) : null,
+      ),
+      precalculatedTransform: transform,
+    ).._children.addAll(_children);
   }
 
   /// Create the paint required to draw a save layer, or `null` if none is
   /// required.
-  Paint? createLayerPaint() {
+  Paint? createLayerPaint({double? filterBlurX, double? filterBlurY}) {
     final double? layerOpacity = attributes.fill?.opacity ?? attributes.opacity;
     final bool needsLayer =
         (attributes.blendMode != null) ||
+        (filterBlurX != null || filterBlurY != null) ||
         (layerOpacity != null && layerOpacity != 1.0 && layerOpacity != 0.0);
 
     if (needsLayer) {
       return Paint(
         blendMode: attributes.blendMode,
+        filterBlurX: filterBlurX,
+        filterBlurY: filterBlurY,
         fill:
             attributes.fill?.toFill(Rect.largest, transform) ??
             Fill(color: Color.opaqueBlack.withOpacity(layerOpacity ?? 1.0)),
@@ -297,8 +305,13 @@ class TextPositionNode extends ParentNode {
 
   @override
   AttributedNode applyAttributes(SvgAttributes newAttributes, {bool replace = false}) {
-    return TextPositionNode(attributes.applyParent(newAttributes), reset: reset)
-      .._children.addAll(_children);
+    return TextPositionNode(
+      attributes.applyParent(
+        newAttributes,
+        filterIdOverride: replace ? (newAttributes.filterId ?? attributes.filterId) : null,
+      ),
+      reset: reset,
+    ).._children.addAll(_children);
   }
 }
 
@@ -433,7 +446,11 @@ class PathNode extends AttributedNode {
     return PathNode(
       path,
       replace
-          ? newAttributes.applyParent(attributes, transformOverride: transform)
+          ? newAttributes.applyParent(
+              attributes,
+              transformOverride: transform,
+              filterIdOverride: newAttributes.filterId ?? attributes.filterId,
+            )
           : attributes.applyParent(newAttributes),
     );
   }

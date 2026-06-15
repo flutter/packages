@@ -217,6 +217,8 @@ class MaskingOptimizer extends Visitor<_Result, Node> with ErrorOnUnResolvedNode
     final ResolvedPathNode? singleMaskPathNode = getSingleChild(maskNode.mask);
     final bool canOptimizeSingleMaskPath =
         singleMaskPathNode != null &&
+        singleMaskPathNode.paint.filterBlurX == null &&
+        singleMaskPathNode.paint.filterBlurY == null &&
         (maskNode.maskType != MaskType.alpha ||
             (singleMaskPathNode.paint.fill?.shader == null &&
                 singleMaskPathNode.paint.fill?.color.a == 255 &&
@@ -268,7 +270,9 @@ class MaskingOptimizer extends Visitor<_Result, Node> with ErrorOnUnResolvedNode
   _Result visitResolvedPath(ResolvedPathNode pathNode, Node data) {
     var result = _Result(pathNode);
 
-    if (pathNode.paint.stroke?.width != null) {
+    if (pathNode.paint.stroke?.width != null ||
+        pathNode.paint.filterBlurX != null ||
+        pathNode.paint.filterBlurY != null) {
       return _Result(pathNode, deleteMaskNode: false);
     }
 
@@ -305,10 +309,16 @@ class MaskingOptimizer extends Visitor<_Result, Node> with ErrorOnUnResolvedNode
   @override
   // ignore: library_private_types_in_public_api
   _Result visitSaveLayerNode(SaveLayerNode layerNode, Node data) {
+    if (layerNode.paint.filterBlurX != null || layerNode.paint.filterBlurY != null) {
+      return _Result(layerNode, deleteMaskNode: false);
+    }
     final newChildren = <Node>[];
     for (final Node child in layerNode.children) {
       final _Result childResult = child.accept(this, layerNode);
       newChildren.add(childResult.node);
+      if (!childResult.deleteMaskNode) {
+        return _Result(layerNode, deleteMaskNode: false);
+      }
     }
     final newLayerNode = SaveLayerNode(
       layerNode.attributes,
