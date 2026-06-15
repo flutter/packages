@@ -26,6 +26,8 @@ class AssetResourceReader {
             self.delegate?.onCompletion(reader: self, error: error?.localizedDescription)
           }
         }
+        
+        return true
       }
     }
 
