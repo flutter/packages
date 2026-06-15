@@ -90,7 +90,7 @@ void main() {
     });
 
     testWidgets('does not pop inactive StatefulShellRoute branches', (WidgetTester tester) async {
-      final List<String> pops = <String>[];
+      final pops = <String>[];
       StatefulNavigationShell? navigationShell;
       addTearDown(() async {
         await tester.pumpWidget(const SizedBox.shrink());
