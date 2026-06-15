@@ -7,6 +7,7 @@ package io.flutter.plugins.inapppurchase;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.ACTIVITY_UNAVAILABLE;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY;
 import static io.flutter.plugins.inapppurchase.TranslatorKt.fromBillingResponseCode;
+import static io.flutter.plugins.inapppurchase.TranslatorKt.fromInAppMessageResponseCode;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
@@ -45,6 +46,8 @@ import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.ConsumeParams;
 import com.android.billingclient.api.ConsumeResponseListener;
 import com.android.billingclient.api.GetBillingConfigParams;
+import com.android.billingclient.api.InAppMessageResponseListener;
+import com.android.billingclient.api.InAppMessageResult;
 import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.ProductDetailsResponseListener;
 import com.android.billingclient.api.Purchase;
@@ -86,6 +89,7 @@ public class MethodCallHandlerTest {
   TestResult<PlatformBillingResult> platformBillingResult = new TestResult<>();
   TestResult<PlatformProductDetailsResponse> platformProductDetailsResult = new TestResult<>();
   TestResult<PlatformPurchasesResponse> platformPurchasesResult = new TestResult<>();
+  TestResult<PlatformInAppMessageResult> platformInAppMessageResult = new TestResult<>();
 
   @Mock Activity activity;
   @Mock Context context;
@@ -485,6 +489,63 @@ public class MethodCallHandlerTest {
     // Assert that the async call returns an error result.
     assertTrue(platformBillingResult.called);
     Throwable error = platformBillingResult.result.exceptionOrNull();
+    assertTrue(error instanceof FlutterError);
+    FlutterError flutterError = (FlutterError) error;
+    assertEquals(ACTIVITY_UNAVAILABLE, flutterError.getCode());
+    assertTrue(
+        Objects.requireNonNull(flutterError.getMessage())
+            .contains("Not attempting to show dialog"));
+  }
+
+  @Test
+  public void showInAppMessagesSuccess() {
+    mockStartConnection();
+    ArgumentCaptor<InAppMessageResponseListener> listenerCaptor =
+        ArgumentCaptor.forClass(InAppMessageResponseListener.class);
+    BillingResult billingResult = buildBillingResult(BillingClient.BillingResponseCode.OK);
+    InAppMessageResult inAppMessageResult =
+        buildInAppMessageResult(
+            InAppMessageResult.InAppMessageResponseCode.SUBSCRIPTION_STATUS_UPDATED);
+
+    when(mockBillingClient.showInAppMessages(eq(activity), any(), listenerCaptor.capture()))
+        .thenReturn(billingResult);
+
+    methodChannelHandler.showInAppMessages(platformInAppMessageResult.asCallback());
+    listenerCaptor.getValue().onInAppMessageResponse(inAppMessageResult);
+
+    assertTrue(platformInAppMessageResult.called);
+
+    PlatformInAppMessageResult pigeonResult = platformInAppMessageResult.result.getOrNull();
+    assertNotNull(pigeonResult);
+    assertEquals(
+        pigeonResult.getResponseCode(),
+        fromInAppMessageResponseCode(inAppMessageResult.getResponseCode()));
+    assertEquals(pigeonResult.getPurchaseToken(), inAppMessageResult.getPurchaseToken());
+  }
+
+  @Test
+  public void showInAppMessages_serviceDisconnected() {
+    methodChannelHandler.showInAppMessages(platformInAppMessageResult.asCallback());
+
+    // Assert that the async call returns an error result.
+    assertTrue(platformInAppMessageResult.called);
+    Throwable error = platformInAppMessageResult.result.exceptionOrNull();
+    assertTrue(error instanceof FlutterError);
+    FlutterError flutterError = (FlutterError) error;
+    assertEquals("UNAVAILABLE", flutterError.getCode());
+    assertTrue(Objects.requireNonNull(flutterError.getMessage()).contains("BillingClient"));
+  }
+
+  @Test
+  public void showInAppMessages_NullActivity() {
+    mockStartConnection();
+    methodChannelHandler.setActivity(null);
+
+    methodChannelHandler.showInAppMessages(platformInAppMessageResult.asCallback());
+
+    // Assert that the async call returns an error result.
+    assertTrue(platformInAppMessageResult.called);
+    Throwable error = platformInAppMessageResult.result.exceptionOrNull();
     assertTrue(error instanceof FlutterError);
     FlutterError flutterError = (FlutterError) error;
     assertEquals(ACTIVITY_UNAVAILABLE, flutterError.getCode());
@@ -1126,6 +1187,10 @@ public class MethodCallHandlerTest {
         .setResponseCode(responseCode)
         .setDebugMessage("dummy debug message")
         .build();
+  }
+
+  private InAppMessageResult buildInAppMessageResult(int responseCode) {
+    return new InAppMessageResult(responseCode, "dummy purchase token");
   }
 
   private void assertResultsMatch(
