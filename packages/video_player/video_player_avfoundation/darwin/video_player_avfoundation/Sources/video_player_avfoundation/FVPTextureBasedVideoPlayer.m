@@ -145,6 +145,17 @@
   _displayLink.running = self.isPlaying || self.waitingForFrame;
 }
 
+- (void)stopWithError:(FlutterError *_Nullable *_Nonnull)error {
+  [super stopWithError:error];
+
+  // The base implementation clears isPlaying and drops the player item, but never recomputes the
+  // display link, so a player that was playing keeps its link running (and pumping
+  // textureFrameAvailable every vsync) after being stopped. Stop it here. A later loadAsset re-arms
+  // the link via expectFrame.
+  self.waitingForFrame = NO;
+  _displayLink.running = NO;
+}
+
 - (void)loadAsset:(NSURL *)url httpHeaders:(NSDictionary<NSString *,NSString *> *)httpHeaders {
     // Release the old pixel buffer
     CVBufferRelease(self.latestPixelBuffer);
@@ -215,6 +226,11 @@
 #pragma mark - FlutterTexture
 
 - (CVPixelBufferRef)copyPixelBuffer {
+  // The engine is compositing this texture, so it is being consumed. Reset the frame updater's
+  // unconsumed-frame counter that backs off the display link once the texture goes offscreen (see
+  // FVPFrameUpdater displayLinkFired).
+  self.frameUpdater.unconsumedFrameCount = 0;
+
   if (self.isPlaying) {
     self.pausedRefreshCount = 0;
   } else {

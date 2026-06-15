@@ -24,6 +24,11 @@ NS_ASSUME_NONNULL_BEGIN
 /// The time interval between screen refresh updates. Display link duration is in an undefined state
 /// until displayLinkFired is called at least once so it should not be used directly.
 @property(atomic) CFTimeInterval frameDuration;
+/// The number of consecutive display link ticks for which the engine has not pulled a pixel buffer.
+/// Reset to 0 by the player whenever copyPixelBuffer is called. When it grows large the texture is
+/// not being composited (e.g. the player scrolled offscreen) and displayLinkFired stops the display
+/// link so it stops forcing redundant platform-view recomposites on the raster thread.
+@property(atomic, assign) NSUInteger unconsumedFrameCount;
 
 /// Initializes a new instance of FVPFrameUpdater with the given Flutter texture registry.
 - (FVPFrameUpdater *)initWithRegistry:(NSObject<FlutterTextureRegistry> *)registry;
