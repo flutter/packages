@@ -620,4 +620,22 @@ void main() {
       ),
     ]);
   });
+
+  test('Does not optimize overdraw on blurred paths or across blurred siblings', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <filter id="blur">
+    <feGaussianBlur stdDeviation="5" />
+  </filter>
+  <rect x="0" y="0" width="100" height="100" fill="#1E1E2F" />
+  <circle cx="50" cy="50" r="30" fill="#FF3366" opacity="0.8" filter="url(#blur)" />
+  <rect x="10" y="10" width="80" height="80" fill="#FFFFFF" opacity="0.1" />
+</svg>
+''';
+    final VectorInstructions optimized = parse(svg);
+    final VectorInstructions unoptimized = parseWithoutOptimizers(svg);
+    expect(optimized.paints, unoptimized.paints);
+    expect(optimized.paths, unoptimized.paths);
+    expect(optimized.commands, unoptimized.commands);
+  });
 }

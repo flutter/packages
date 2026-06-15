@@ -397,7 +397,7 @@ class Paint {
   /// Creates a new collection of painting attributes.
   ///
   /// See [Paint].
-  const Paint({BlendMode? blendMode, this.stroke, this.fill})
+  const Paint({BlendMode? blendMode, this.stroke, this.fill, this.filterBlurX, this.filterBlurY})
     : blendMode = blendMode ?? BlendMode.srcOver;
 
   /// The Porter-Duff algorithm to use when compositing this painting object
@@ -418,15 +418,23 @@ class Paint {
   /// followed by stroke.
   final Fill? fill;
 
+  /// The Gaussian blur sigma X to apply to this paint, if any.
+  final double? filterBlurX;
+
+  /// The Gaussian blur sigma Y to apply to this paint, if any.
+  final double? filterBlurY;
+
   @override
-  int get hashCode => Object.hash(blendMode, stroke, fill);
+  int get hashCode => Object.hash(blendMode, stroke, fill, filterBlurX, filterBlurY);
 
   @override
   bool operator ==(Object other) {
     return other is Paint &&
         other.blendMode == blendMode &&
         other.stroke == stroke &&
-        other.fill == fill;
+        other.fill == fill &&
+        other.filterBlurX == filterBlurX &&
+        other.filterBlurY == filterBlurY;
   }
 
   /// Apply the bounds to the given paint.
@@ -443,6 +451,8 @@ class Paint {
       blendMode: blendMode,
       stroke: stroke,
       fill: Fill(color: fill!.color, shader: newShader),
+      filterBlurX: filterBlurX,
+      filterBlurY: filterBlurY,
     );
   }
 
@@ -455,6 +465,12 @@ class Paint {
     }
     if (fill != null) {
       buffer.write('${leading}fill: $fill');
+    }
+    if (filterBlurX != null) {
+      buffer.write('${leading}filterBlurX: $filterBlurX');
+    }
+    if (filterBlurY != null) {
+      buffer.write('${leading}filterBlurY: $filterBlurY');
     }
     buffer.write(')');
     return buffer.toString();
