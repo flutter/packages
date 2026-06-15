@@ -205,63 +205,59 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
     assert(start == null || start >= 0);
     assert(end == null || end >= (start ?? 0));
 
-    if (_tryGetAssetResource(identifier: params.uri) != null) {
-      final streamController = StreamController<Uint8List>();
-      var currentByteIndex = 0;
+    final streamController = StreamController<Uint8List>();
+    var currentByteIndex = 0;
 
-      final reader = AssetResourceReader(
-        onDataReceived: (_, Uint8List bytes) {
-          final int newByteIndex = currentByteIndex + bytes.length;
-          final int startOrZero = start ?? 0;
+    final reader = AssetResourceReader(
+      onDataReceived: (_, Uint8List bytes) {
+        final int newByteIndex = currentByteIndex + bytes.length;
+        final int startOrZero = start ?? 0;
 
-          if (end == null) {
-            if (currentByteIndex >= startOrZero) {
-              streamController.add(bytes);
-            } else {
-              if (newByteIndex > startOrZero) {
-                streamController.add(bytes.sublist(startOrZero - currentByteIndex));
-              }
-            }
+        if (end == null) {
+          if (currentByteIndex >= startOrZero) {
+            streamController.add(bytes);
           } else {
-            final int bytesLeftToRead = end - max(currentByteIndex, startOrZero);
-
-            if (bytesLeftToRead > 0) {
-              if (currentByteIndex >= startOrZero) {
-                streamController.add(bytes.sublist(0, min(bytesLeftToRead, bytes.length)));
-              } else if (newByteIndex > startOrZero) {
-                streamController.add(
-                  bytes.sublist(
-                    startOrZero - currentByteIndex,
-                    min(startOrZero - currentByteIndex + bytesLeftToRead, bytes.length),
-                  ),
-                );
-              }
+            if (newByteIndex > startOrZero) {
+              streamController.add(bytes.sublist(startOrZero - currentByteIndex));
             }
           }
+        } else {
+          final int bytesLeftToRead = end - max(currentByteIndex, startOrZero);
 
-          currentByteIndex = newByteIndex;
-        },
-        onCompletion: (_, String? error) {
-          if (error != null) {
-            streamController.addError(Exception(error));
+          if (bytesLeftToRead > 0) {
+            if (currentByteIndex >= startOrZero) {
+              streamController.add(bytes.sublist(0, min(bytesLeftToRead, bytes.length)));
+            } else if (newByteIndex > startOrZero) {
+              streamController.add(
+                bytes.sublist(
+                  startOrZero - currentByteIndex,
+                  min(startOrZero - currentByteIndex + bytesLeftToRead, bytes.length),
+                ),
+              );
+            }
           }
-
-          streamController.close();
-        },
-      );
-
-      reader.startRead(params.uri).then((bool canRead) {
-        if (!canRead) {
-          streamController.addError(
-            Exception('Failed to start reading bytes from asset with identifier: ${params.uri}'),
-          );
-          streamController.close();
         }
-      });
-      return streamController.stream;
-    }
 
-    throw Exception('Failed to retrieve PHAssetResource for asset with identifier: ${params.uri}');
+        currentByteIndex = newByteIndex;
+      },
+      onCompletion: (_, String? error) {
+        if (error != null) {
+          streamController.addError(Exception(error));
+        }
+
+        streamController.close();
+      },
+    );
+
+    reader.startRead(params.uri).then((bool canRead) {
+      if (!canRead) {
+        streamController.addError(
+          Exception('Failed to start reading bytes from asset with identifier: ${params.uri}'),
+        );
+        streamController.close();
+      }
+    });
+    return streamController.stream;
   }
 
   @override

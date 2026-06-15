@@ -29,6 +29,7 @@ void main() {
 
     final bytes = Uint8List.fromList(<int>[1, 2, 3]);
     reader.onDataReceived(reader, bytes);
+    reader.onCompletion(reader, null);
 
     expect(
       await stream.reduce(
