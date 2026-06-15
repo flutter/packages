@@ -27,8 +27,7 @@ import 'package:mockito/src/dummies.dart' as _i3;
 /// A class which mocks [CrossFileDarwinApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockCrossFileDarwinApi extends _i1.Mock
-    implements _i2.CrossFileDarwinApi {
+class MockCrossFileDarwinApi extends _i1.Mock implements _i2.CrossFileDarwinApi {
   MockCrossFileDarwinApi() {
     _i1.throwOnMissingStub(this);
   }

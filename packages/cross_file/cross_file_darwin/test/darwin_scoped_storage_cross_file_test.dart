@@ -15,9 +15,7 @@ import 'package:path/path.dart' as path;
 
 import 'darwin_scoped_storage_cross_file_test.mocks.dart';
 
-final File testFile = File(
-  path.join(Directory.current.path, 'test', 'test_file.txt'),
-);
+final File testFile = File(path.join(Directory.current.path, 'test', 'test_file.txt'));
 
 @GenerateMocks(<Type>[CrossFileDarwinApi])
 void main() {
@@ -100,9 +98,7 @@ void main() {
     final mockApi = MockCrossFileDarwinApi();
     final uri = testFile.uri.toString();
     const result = true;
-    when(
-      mockApi.startAccessingSecurityScopedResource(uri),
-    ).thenAnswer((_) async => result);
+    when(mockApi.startAccessingSecurityScopedResource(uri)).thenAnswer((_) async => result);
 
     final file = DarwinScopedStorageXFile(
       DarwinScopedStorageXFileCreationParams(uri: uri, api: mockApi),

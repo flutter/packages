@@ -23,9 +23,8 @@ sealed class DarwinScopedStorageXDirectoryCreationParams
 
   /// Constructs a [DarwinScopedStorageXDirectoryCreationParams] with a security
   /// scoped uri.
-  factory DarwinScopedStorageXDirectoryCreationParams.securityScoped({
-    required String uri,
-  }) => SecurityScopedDarwinScopedStorageXDirectoryCreationParams(uri: uri);
+  factory DarwinScopedStorageXDirectoryCreationParams.securityScoped({required String uri}) =>
+      SecurityScopedDarwinScopedStorageXDirectoryCreationParams(uri: uri);
 }
 
 /// Creation parameters for [SecurityScopedDarwinScopedStorageXDirectory].
@@ -33,17 +32,12 @@ sealed class DarwinScopedStorageXDirectoryCreationParams
 base class SecurityScopedDarwinScopedStorageXDirectoryCreationParams
     extends DarwinScopedStorageXDirectoryCreationParams {
   /// Constructs a [SecurityScopedDarwinScopedStorageXDirectoryCreationParams].
-  const SecurityScopedDarwinScopedStorageXDirectoryCreationParams({
-    required super.uri,
-  });
+  const SecurityScopedDarwinScopedStorageXDirectoryCreationParams({required super.uri});
 }
 
 /// Base implementation of [PlatformScopedStorageXDirectory] for iOS and macOS.
-sealed class DarwinScopedStorageXDirectory
-    extends PlatformScopedStorageXDirectory {
-  factory DarwinScopedStorageXDirectory(
-    PlatformScopedStorageXDirectoryCreationParams params,
-  ) {
+sealed class DarwinScopedStorageXDirectory extends PlatformScopedStorageXDirectory {
+  factory DarwinScopedStorageXDirectory(PlatformScopedStorageXDirectoryCreationParams params) {
     return SecurityScopedDarwinScopedStorageXDirectory(params);
   }
 
@@ -53,8 +47,7 @@ sealed class DarwinScopedStorageXDirectory
 
 /// Implementation of [DarwinScopedStorageXDirectory] for interacting with a
 /// security-scoped URL.
-base class SecurityScopedDarwinScopedStorageXDirectory
-    extends DarwinScopedStorageXDirectory
+base class SecurityScopedDarwinScopedStorageXDirectory extends DarwinScopedStorageXDirectory
     with SecurityScopedDarwinScopedStorageXDirectoryExtension {
   /// Constructs a [SecurityScopedDarwinScopedStorageXDirectory].
   SecurityScopedDarwinScopedStorageXDirectory(super.params) : super._() {
@@ -76,11 +69,8 @@ base class SecurityScopedDarwinScopedStorageXDirectory
   @override
   late final SecurityScopedDarwinScopedStorageXDirectoryCreationParams params =
       super.params is SecurityScopedDarwinScopedStorageXDirectoryCreationParams
-      ? super.params
-            as SecurityScopedDarwinScopedStorageXDirectoryCreationParams
-      : SecurityScopedDarwinScopedStorageXDirectoryCreationParams(
-          uri: super.params.uri,
-        );
+      ? super.params as SecurityScopedDarwinScopedStorageXDirectoryCreationParams
+      : SecurityScopedDarwinScopedStorageXDirectoryCreationParams(uri: super.params.uri);
 
   @override
   SecurityScopedDarwinScopedStorageXDirectoryExtension? get extension => this;
@@ -100,9 +90,7 @@ base class SecurityScopedDarwinScopedStorageXDirectory
           );
         case final File file:
           yield DarwinScopedStorageXFile(
-            DarwinScopedStorageXFileCreationParams.securityScoped(
-              uri: file.uri.toString(),
-            ),
+            DarwinScopedStorageXFileCreationParams.securityScoped(uri: file.uri.toString()),
           );
       }
     }
@@ -136,6 +124,4 @@ base class SecurityScopedDarwinScopedStorageXDirectory
 /// Provides platform specific features for
 /// [SecurityScopedDarwinScopedStorageXDirectory].
 mixin SecurityScopedDarwinScopedStorageXDirectoryExtension
-    implements
-        PlatformScopedStorageXDirectoryExtension,
-        SecurityScopedResource {}
+    implements PlatformScopedStorageXDirectoryExtension, SecurityScopedResource {}

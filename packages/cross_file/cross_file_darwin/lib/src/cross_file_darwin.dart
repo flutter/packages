@@ -15,9 +15,7 @@ base class CrossFileDarwin extends CrossFileIO {
   /// Registers this class as the default instance of [CrossFilePlatform].
   static void registerWith() {
     CrossFilePlatform.instance = CrossFileDarwin();
-    ffi.DynamicLibrary.open(
-      '/System/Library/Frameworks/Photos.framework/Photos',
-    );
+    ffi.DynamicLibrary.open('/System/Library/Frameworks/Photos.framework/Photos');
   }
 
   /// Whether the current implementation of `cross_file` is [CrossFileDarwin].

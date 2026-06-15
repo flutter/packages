@@ -207,7 +207,7 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
       final streamController = StreamController<Uint8List>();
       var currentByteIndex = 0;
 
-      final bytesListener = AssetResourceManagerBytesListener(
+      final bytesListener = AssetResourceReader(
         onDataReceived: (_, Uint8List bytes) {
           final int newByteIndex = currentByteIndex + bytes.length;
           final int startOrZero = start ?? 0;
@@ -335,13 +335,6 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
     if (_tryGetAsset(identifier: params.uri) case final PHAsset asset) {
       final NSArray resources = PHAssetResource.assetResourcesForAsset(asset);
       final ObjCObject? firstObject = resources.firstObject;
-
-      print('cfd: ${resources.count}');
-      for (var index = 0; index < resources.count; index++) {
-        final resource = PHAssetResource.as(resources.objectAtIndex(index));
-        print('cfd: ${resource.type}');
-        print('cfd: ${resource.contentType.preferredMIMEType}');
-      }
 
       if (firstObject != null) {
         return PHAssetResource.as(firstObject);

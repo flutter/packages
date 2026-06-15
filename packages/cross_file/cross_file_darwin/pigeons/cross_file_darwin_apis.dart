@@ -15,8 +15,8 @@ import 'package:pigeon/pigeon.dart';
 )
 /// Api for getting access to file information.
 @ProxyApi()
-abstract class AssetResourceManagerBytesListener {
-  AssetResourceManagerBytesListener();
+abstract class AssetResourceReader {
+  AssetResourceReader();
 
   late final void Function(Uint8List bytes) onDataReceived;
 

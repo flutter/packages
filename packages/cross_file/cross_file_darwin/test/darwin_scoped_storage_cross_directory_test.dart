@@ -15,9 +15,7 @@ import 'package:path/path.dart' as path;
 
 import 'darwin_scoped_storage_cross_directory_test.mocks.dart';
 
-final Directory testDirectory = Directory(
-  path.join(Directory.current.path, 'test'),
-);
+final Directory testDirectory = Directory(path.join(Directory.current.path, 'test'));
 
 @GenerateMocks(<Type>[CrossFileDarwinApi])
 void main() {
@@ -29,9 +27,7 @@ void main() {
 
   test('exists', () async {
     final directory = PlatformScopedStorageXDirectory(
-      PlatformScopedStorageXDirectoryCreationParams(
-        uri: testDirectory.uri.toString(),
-      ),
+      PlatformScopedStorageXDirectoryCreationParams(uri: testDirectory.uri.toString()),
     );
 
     expect(await directory.exists(), testDirectory.existsSync());
@@ -39,18 +35,14 @@ void main() {
 
   test('list', () async {
     final directory = PlatformScopedStorageXDirectory(
-      PlatformScopedStorageXDirectoryCreationParams(
-        uri: testDirectory.uri.toString(),
-      ),
+      PlatformScopedStorageXDirectoryCreationParams(uri: testDirectory.uri.toString()),
     );
 
     expect(
       (await directory.list(ListParams()).toList()).map(
         (PlatformXEntity entity) => entity.params.uri,
       ),
-      (await testDirectory.list().toList()).map(
-        (FileSystemEntity entity) => entity.uri.toString(),
-      ),
+      (await testDirectory.list().toList()).map((FileSystemEntity entity) => entity.uri.toString()),
     );
   });
 
@@ -71,9 +63,7 @@ void main() {
     final mockApi = MockCrossFileDarwinApi();
     final uri = testDirectory.uri.toString();
     const result = true;
-    when(
-      mockApi.startAccessingSecurityScopedResource(uri),
-    ).thenAnswer((_) async => result);
+    when(mockApi.startAccessingSecurityScopedResource(uri)).thenAnswer((_) async => result);
 
     final directory = DarwinScopedStorageXDirectory(
       DarwinScopedStorageXDirectoryCreationParams(uri: uri, api: mockApi),

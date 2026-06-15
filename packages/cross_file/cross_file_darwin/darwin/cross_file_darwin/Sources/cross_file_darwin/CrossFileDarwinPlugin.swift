@@ -11,6 +11,14 @@
 #endif
 
 public class CrossFileDarwinPlugin: NSObject, FlutterPlugin {
+  var proxyApiRegistrar: ProxyAPIRegistrar?
+
+  init(binaryMessenger: FlutterBinaryMessenger) {
+    proxyApiRegistrar = ProxyAPIRegistrar(
+      binaryMessenger: binaryMessenger)
+    proxyApiRegistrar?.setUp()
+  }
+
   public static func register(with registrar: FlutterPluginRegistrar) {
     #if os(iOS)
       let messenger = registrar.messenger()
@@ -18,6 +26,15 @@ public class CrossFileDarwinPlugin: NSObject, FlutterPlugin {
       let messenger = registrar.messenger
     #endif
 
-    CrossFileDarwinApiSetup.setUp(binaryMessenger: messenger, api: CrossFileDarwinApiImpl())
+    let plugin = CrossFileDarwinPlugin(binaryMessenger: messenger)
+
+    registrar.publish(plugin)
+  }
+
+  public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
+    proxyApiRegistrar?.ignoreCallsToDart = true
+    proxyApiRegistrar?.tearDown()
+    try? proxyApiRegistrar?.instanceManager.removeAllObjects()
+    proxyApiRegistrar = nil
   }
 }
