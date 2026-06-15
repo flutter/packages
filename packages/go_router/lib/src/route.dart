@@ -55,6 +55,7 @@ typedef NavigatorBuilder =
       RouteMatchList matchList,
       List<NavigatorObserver>? observers,
       String? restorationScopeId,
+      ValueListenable<bool>? navigatorActive,
     );
 
 /// Signature for function used in [RouteBase.onExit].
@@ -567,6 +568,7 @@ class ShellRouteContext {
     List<NavigatorObserver>? observers,
     bool notifyRootObserver,
     String? restorationScopeId,
+    ValueListenable<bool>? navigatorActive,
   ) {
     final effectiveObservers = <NavigatorObserver>[...?observers];
 
@@ -583,6 +585,7 @@ class ShellRouteContext {
       routeMatchList,
       effectiveObservers,
       restorationScopeId,
+      navigatorActive,
     );
   }
 }
@@ -731,6 +734,7 @@ class ShellRoute extends ShellRouteBase {
         observers,
         notifyRootObserver,
         restorationScopeId,
+        null,
       );
       return builder!(context, state, navigator);
     }
@@ -749,6 +753,7 @@ class ShellRoute extends ShellRouteBase {
         observers,
         notifyRootObserver,
         restorationScopeId,
+        null,
       );
       return pageBuilder!(context, state, navigator);
     }
@@ -1375,10 +1380,19 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
         branch.observers,
         route.notifyRootObserver,
         branch.restorationScopeId,
+        branchState.navigatorActive,
       );
     }
+    _updateActiveBranchNavigatorFlags();
 
     _cleanUpObsoleteBranches();
+  }
+
+  void _updateActiveBranchNavigatorFlags() {
+    for (var i = 0; i < route.branches.length; i++) {
+      final _StatefulShellBranchState? branchState = _branchState[route.branches[i]];
+      branchState?.navigatorActive.value = i == currentIndex;
+    }
   }
 
   void _preloadBranches() {
@@ -1398,15 +1412,17 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
         });
         assert(match != null);
 
+        final _StatefulShellBranchState branchState = _branchStateFor(branch, false);
+        branchState.navigatorActive.value = false;
         final Widget navigator = widget.shellRouteContext.navigatorBuilder(
           branch.navigatorKey,
           match!,
           matchList,
           branch.observers,
           branch.restorationScopeId,
+          branchState.navigatorActive,
         );
 
-        final _StatefulShellBranchState branchState = _branchStateFor(branch, false);
         branchState.location.value = matchList;
         branchState.navigator = navigator;
       }
@@ -1491,9 +1507,11 @@ class _StatefulShellBranchState {
 
   Widget? navigator;
   final _RestorableRouteMatchList location;
+  final ValueNotifier<bool> navigatorActive = ValueNotifier<bool>(false);
 
   void dispose() {
     location.dispose();
+    navigatorActive.dispose();
   }
 }
 
