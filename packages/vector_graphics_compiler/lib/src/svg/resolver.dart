@@ -3,12 +3,14 @@
 // found in the LICENSE file.
 
 import 'dart:typed_data';
+import 'package:meta/meta.dart';
 import '../geometry/basic_types.dart';
 import '../geometry/matrix.dart';
 import '../geometry/path.dart';
 import '../geometry/vertices.dart';
 import '../image/image_info.dart';
 import '../paint.dart';
+import '../util.dart';
 import 'constants.dart';
 import 'node.dart';
 import 'parser.dart';
@@ -18,7 +20,13 @@ import 'visitor.dart';
 /// single coordinate space, removing extra attributes, empty nodes, resolving
 /// references/masks/clips.
 class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
+  /// Creates a new [ResolvingVisitor].
+  ResolvingVisitor([this._filterResolver]);
+
+  final SvgFilter? Function(String)? _filterResolver;
   late Rect _bounds;
+  SvgFilterLayer? _currentLayer;
+  final Map<Gradient, Gradient> _blackenedGradients = <Gradient, Gradient>{};
 
   final Set<String> _activeMasks = <String>{};
   final Set<String> _activeDeferred = <String>{};
@@ -56,7 +64,12 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
       final AffineMatrix childTransform = maskNode.concatTransform(data);
       final Node mask = resolvedMask.accept(this, childTransform);
 
-      return ResolvedMaskNode(child: child, mask: mask, blendMode: maskNode.blendMode);
+      return ResolvedMaskNode(
+        child: child,
+        mask: mask,
+        blendMode: maskNode.blendMode,
+        maskType: resolvedMask.attributes.maskType,
+      );
     } finally {
       _activeMasks.remove(maskNode.maskId);
     }
@@ -66,11 +79,85 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
   Node visitParentNode(ParentNode parentNode, AffineMatrix data) {
     final AffineMatrix nextTransform = parentNode.concatTransform(data);
 
-    final Paint? saveLayerPaint = parentNode.createLayerPaint();
+    SvgFilter? filter;
+    final String? filterId = parentNode.attributes.filterId;
+    if (filterId != null && _filterResolver != null) {
+      filter = _filterResolver(filterId);
+    }
 
-    final Node result;
+    if (filter != null && filter.layers.isNotEmpty) {
+      if (filter.layers.length == 1) {
+        return _resolveParentNodeForLayer(parentNode, nextTransform, filter.layers.first);
+      }
+
+      final children = <Node>[];
+      for (final SvgFilterLayer layer in filter.layers) {
+        children.add(_resolveParentNodeForLayer(parentNode, nextTransform, layer));
+      }
+      return ParentNode(SvgAttributes.empty, children: children);
+    }
+
+    return _resolveParentNodeNoFilter(parentNode, nextTransform);
+  }
+
+  Node _resolveParentNodeForLayer(
+    ParentNode parentNode,
+    AffineMatrix nextTransform,
+    SvgFilterLayer layer,
+  ) {
+    final AffineMatrix layerTransform = (layer.dx == 0 && layer.dy == 0)
+        ? nextTransform
+        : nextTransform.translated(layer.dx, layer.dy);
+
+    final bool hasBlur = layer.sigmaX > 0 || layer.sigmaY > 0;
+
+    final SvgFilterLayer? previousLayer = _currentLayer;
+    _currentLayer = SvgFilterLayer(
+      isSourceAlpha: layer.isSourceAlpha || (previousLayer?.isSourceAlpha ?? false),
+      sigmaX: 0,
+      sigmaY: 0,
+      dx: 0,
+      dy: 0,
+    );
+
+    try {
+      final Paint? saveLayerPaint = parentNode.createLayerPaint(
+        filterBlurX: hasBlur ? layer.sigmaX * nextTransform.xScale : null,
+        filterBlurY: hasBlur ? layer.sigmaY * nextTransform.yScale : null,
+      );
+
+      final Node resolved;
+      if (saveLayerPaint == null) {
+        resolved = ParentNode(
+          SvgAttributes.empty,
+          precalculatedTransform: AffineMatrix.identity,
+          children: <Node>[
+            for (final Node child in parentNode.children)
+              child.applyAttributes(parentNode.attributes).accept(this, layerTransform),
+          ],
+        );
+      } else {
+        resolved = SaveLayerNode(
+          SvgAttributes.empty,
+          paint: saveLayerPaint,
+          children: <Node>[
+            for (final Node child in parentNode.children)
+              child
+                  .applyAttributes(parentNode.attributes.forSaveLayer())
+                  .accept(this, layerTransform),
+          ],
+        );
+      }
+      return resolved;
+    } finally {
+      _currentLayer = previousLayer;
+    }
+  }
+
+  Node _resolveParentNodeNoFilter(ParentNode parentNode, AffineMatrix nextTransform) {
+    final Paint? saveLayerPaint = parentNode.createLayerPaint();
     if (saveLayerPaint == null) {
-      result = ParentNode(
+      return ParentNode(
         SvgAttributes.empty,
         precalculatedTransform: AffineMatrix.identity,
         children: <Node>[
@@ -78,17 +165,15 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
             child.applyAttributes(parentNode.attributes).accept(this, nextTransform),
         ],
       );
-    } else {
-      result = SaveLayerNode(
-        SvgAttributes.empty,
-        paint: saveLayerPaint,
-        children: <Node>[
-          for (final Node child in parentNode.children)
-            child.applyAttributes(parentNode.attributes.forSaveLayer()).accept(this, nextTransform),
-        ],
-      );
     }
-    return result;
+    return SaveLayerNode(
+      SvgAttributes.empty,
+      paint: saveLayerPaint,
+      children: <Node>[
+        for (final Node child in parentNode.children)
+          child.applyAttributes(parentNode.attributes.forSaveLayer()).accept(this, nextTransform),
+      ],
+    );
   }
 
   @override
@@ -99,39 +184,194 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
         .withFillType(pathNode.attributes.fillRule ?? pathNode.path.fillType);
     final Rect originalBounds = pathNode.path.bounds();
     final Rect newBounds = transformedPath.bounds();
+    SvgFilter? filter;
+    final String? filterId = pathNode.attributes.filterId;
+    if (filterId != null && _filterResolver != null) {
+      filter = _filterResolver(filterId);
+    }
+
+    if (filter != null && filter.layers.isNotEmpty) {
+      final Paint? originalPaint = pathNode.computePaint(originalBounds, transform);
+      if (originalPaint == null) {
+        return Node.empty;
+      }
+
+      if (filter.layers.length == 1) {
+        return _resolvePathNodeForLayer(
+          pathNode,
+          originalPaint,
+          transform,
+          transformedPath,
+          newBounds,
+          filter.layers.first,
+        );
+      }
+
+      final children = <Node>[];
+      for (final SvgFilterLayer layer in filter.layers) {
+        children.add(
+          _resolvePathNodeForLayer(
+            pathNode,
+            originalPaint,
+            transform,
+            transformedPath,
+            newBounds,
+            layer,
+          ),
+        );
+      }
+      return ParentNode(SvgAttributes.empty, children: children);
+    }
+
+    if (_currentLayer != null &&
+        (_currentLayer!.isSourceAlpha || _currentLayer!.sigmaX > 0 || _currentLayer!.sigmaY > 0)) {
+      final Paint? originalPaint = pathNode.computePaint(originalBounds, transform);
+      if (originalPaint == null) {
+        return Node.empty;
+      }
+      return _resolvePathNodeForLayer(
+        pathNode,
+        originalPaint,
+        transform,
+        transformedPath,
+        newBounds,
+        _currentLayer!,
+      );
+    }
+
     final Paint? paint = pathNode.computePaint(originalBounds, transform);
     if (paint != null) {
-      if (pathNode.attributes.stroke?.dashArray != null) {
-        final children = <Node>[];
-        final parent = ParentNode(pathNode.attributes, children: children);
-        if (paint.fill != null) {
-          children.add(
-            ResolvedPathNode(
-              paint: Paint(blendMode: paint.blendMode, fill: paint.fill),
-              bounds: newBounds,
-              path: transformedPath,
-            ),
-          );
-        }
-        if (paint.stroke != null) {
-          children.add(
-            ResolvedPathNode(
-              paint: Paint(blendMode: paint.blendMode, stroke: paint.stroke),
-              bounds: newBounds,
-              path: transformedPath.dashed(pathNode.attributes.stroke!.dashArray!),
-            ),
-          );
-        }
-        return parent;
-      }
-      return ResolvedPathNode(paint: paint, bounds: newBounds, path: transformedPath);
+      return _resolvePathNode(pathNode, paint, transformedPath, newBounds);
     }
     return Node.empty;
+  }
+
+  Node _resolvePathNodeForLayer(
+    PathNode pathNode,
+    Paint originalPaint,
+    AffineMatrix transform,
+    Path transformedPath,
+    Rect newBounds,
+    SvgFilterLayer layer,
+  ) {
+    final Path layerPath = (layer.dx == 0 && layer.dy == 0)
+        ? transformedPath
+        : pathNode.path
+              .transformed(transform.translated(layer.dx, layer.dy))
+              .withFillType(pathNode.attributes.fillRule ?? pathNode.path.fillType);
+    final Rect layerBounds = (layer.dx == 0 && layer.dy == 0) ? newBounds : layerPath.bounds();
+
+    final Paint paint = _createLayerPaint(originalPaint, layer, transform);
+
+    return _resolvePathNode(pathNode, paint, layerPath, layerBounds);
+  }
+
+  Node _resolvePathNode(PathNode pathNode, Paint paint, Path transformedPath, Rect newBounds) {
+    if (pathNode.attributes.stroke?.dashArray != null) {
+      final children = <Node>[];
+      final parent = ParentNode(pathNode.attributes, children: children);
+      if (paint.fill != null) {
+        children.add(
+          ResolvedPathNode(
+            paint: Paint(
+              blendMode: paint.blendMode,
+              fill: paint.fill,
+              filterBlurX: paint.filterBlurX,
+              filterBlurY: paint.filterBlurY,
+            ),
+            bounds: newBounds,
+            path: transformedPath,
+          ),
+        );
+      }
+      if (paint.stroke != null) {
+        children.add(
+          ResolvedPathNode(
+            paint: Paint(
+              blendMode: paint.blendMode,
+              stroke: paint.stroke,
+              filterBlurX: paint.filterBlurX,
+              filterBlurY: paint.filterBlurY,
+            ),
+            bounds: newBounds,
+            path: transformedPath.dashed(pathNode.attributes.stroke!.dashArray!),
+          ),
+        );
+      }
+      return parent;
+    }
+    return ResolvedPathNode(paint: paint, bounds: newBounds, path: transformedPath);
   }
 
   @override
   Node visitTextPositionNode(TextPositionNode textPositionNode, AffineMatrix data) {
     final AffineMatrix nextTransform = textPositionNode.concatTransform(data);
+
+    SvgFilter? filter;
+    final String? filterId = textPositionNode.attributes.filterId;
+    if (filterId != null && _filterResolver != null) {
+      filter = _filterResolver(filterId);
+    }
+
+    if (filter != null && filter.layers.isNotEmpty) {
+      if (filter.layers.length == 1) {
+        final SvgFilterLayer layer = filter.layers.first;
+        final SvgFilterLayer? previousLayer = _currentLayer;
+        _currentLayer = SvgFilterLayer(
+          isSourceAlpha: layer.isSourceAlpha || (previousLayer?.isSourceAlpha ?? false),
+          sigmaX: layer.sigmaX,
+          sigmaY: layer.sigmaY,
+          dx: 0,
+          dy: 0,
+        );
+        try {
+          final AffineMatrix layerData = data.translated(layer.dx, layer.dy);
+          final AffineMatrix layerNextTransform = textPositionNode.concatTransform(layerData);
+
+          final resolvedChildren = <Node>[
+            for (final Node child in textPositionNode.children)
+              child.applyAttributes(textPositionNode.attributes).accept(this, layerNextTransform),
+          ];
+          return ResolvedTextPositionNode(
+            textPositionNode.computeTextPosition(_bounds, layerData),
+            resolvedChildren,
+          );
+        } finally {
+          _currentLayer = previousLayer;
+        }
+      }
+
+      final children = <Node>[];
+      final SvgFilterLayer? previousLayer = _currentLayer;
+      try {
+        for (final SvgFilterLayer layer in filter.layers) {
+          _currentLayer = SvgFilterLayer(
+            isSourceAlpha: layer.isSourceAlpha || (previousLayer?.isSourceAlpha ?? false),
+            sigmaX: layer.sigmaX,
+            sigmaY: layer.sigmaY,
+            dx: 0,
+            dy: 0,
+          );
+          final AffineMatrix layerData = data.translated(layer.dx, layer.dy);
+          final AffineMatrix layerNextTransform = textPositionNode.concatTransform(layerData);
+
+          final resolvedChildren = <Node>[
+            for (final Node child in textPositionNode.children)
+              child.applyAttributes(textPositionNode.attributes).accept(this, layerNextTransform),
+          ];
+
+          children.add(
+            ResolvedTextPositionNode(
+              textPositionNode.computeTextPosition(_bounds, layerData),
+              resolvedChildren,
+            ),
+          );
+        }
+        return ParentNode(SvgAttributes.empty, children: children);
+      } finally {
+        _currentLayer = previousLayer;
+      }
+    }
 
     return ResolvedTextPositionNode(textPositionNode.computeTextPosition(_bounds, data), <Node>[
       for (final Node child in textPositionNode.children)
@@ -141,13 +381,151 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
 
   @override
   Node visitTextNode(TextNode textNode, AffineMatrix data) {
+    if (_currentLayer != null &&
+        (_currentLayer!.isSourceAlpha || _currentLayer!.sigmaX > 0 || _currentLayer!.sigmaY > 0)) {
+      final Paint? originalPaint = textNode.computePaint(_bounds, data);
+      if (originalPaint == null) {
+        return Node.empty;
+      }
+      final TextConfig textConfig = textNode.computeTextConfig(_bounds, data);
+      if (textConfig.text.trim().isEmpty) {
+        return Node.empty;
+      }
+
+      final Paint paint = _createLayerPaint(originalPaint, _currentLayer!, data);
+
+      return ResolvedTextNode(textConfig: textConfig, paint: paint);
+    }
+
+    SvgFilter? filter;
+    final String? filterId = textNode.attributes.filterId;
+    if (filterId != null && _filterResolver != null) {
+      filter = _filterResolver(filterId);
+    }
+
+    if (filter != null && filter.layers.isNotEmpty) {
+      final Paint? originalPaint = textNode.computePaint(_bounds, data);
+      if (originalPaint == null) {
+        return Node.empty;
+      }
+      final TextConfig textConfig = textNode.computeTextConfig(_bounds, data);
+      if (textConfig.text.trim().isEmpty) {
+        return Node.empty;
+      }
+
+      if (filter.layers.length == 1) {
+        return _resolveTextNodeForLayer(
+          textNode,
+          originalPaint,
+          data,
+          textConfig,
+          filter.layers.first,
+        );
+      }
+
+      final children = <Node>[];
+      for (final SvgFilterLayer layer in filter.layers) {
+        children.add(_resolveTextNodeForLayer(textNode, originalPaint, data, textConfig, layer));
+      }
+      return ParentNode(SvgAttributes.empty, children: children);
+    }
+
     final Paint? paint = textNode.computePaint(_bounds, data);
     final TextConfig textConfig = textNode.computeTextConfig(_bounds, data);
-
     if (paint != null && textConfig.text.trim().isNotEmpty) {
       return ResolvedTextNode(textConfig: textConfig, paint: paint);
     }
     return Node.empty;
+  }
+
+  Node _resolveTextNodeForLayer(
+    TextNode textNode,
+    Paint originalPaint,
+    AffineMatrix data,
+    TextConfig textConfig,
+    SvgFilterLayer layer,
+  ) {
+    final AffineMatrix layerData = data.translated(layer.dx, layer.dy);
+    final TextConfig layerTextConfig = (layer.dx == 0 && layer.dy == 0)
+        ? textConfig
+        : textNode.computeTextConfig(_bounds, layerData);
+
+    final Paint paint = _createLayerPaint(originalPaint, layer, data);
+
+    return ResolvedTextNode(textConfig: layerTextConfig, paint: paint);
+  }
+  Gradient _blackenGradient(Gradient gradient) {
+    if (gradient.colors == null) {
+      return gradient;
+    }
+    if (_blackenedGradients.containsKey(gradient)) {
+      return _blackenedGradients[gradient]!;
+    }
+    final List<Color> colors =
+        gradient.colors!.map((Color c) => Color.fromARGB(c.a, 0, 0, 0)).toList();
+    final Gradient newGradient;
+    if (gradient is LinearGradient) {
+      newGradient = LinearGradient(
+        id: gradient.id,
+        from: gradient.from,
+        to: gradient.to,
+        colors: colors,
+        offsets: gradient.offsets,
+        tileMode: gradient.tileMode,
+        unitMode: gradient.unitMode,
+        transform: gradient.transform,
+      );
+    } else if (gradient is RadialGradient) {
+      newGradient = RadialGradient(
+        id: gradient.id,
+        center: gradient.center,
+        radius: gradient.radius,
+        colors: colors,
+        offsets: gradient.offsets,
+        tileMode: gradient.tileMode,
+        transform: gradient.transform,
+        focalPoint: gradient.focalPoint,
+        unitMode: gradient.unitMode,
+      );
+    } else {
+      newGradient = gradient;
+    }
+    _blackenedGradients[gradient] = newGradient;
+    return newGradient;
+  }
+
+  Paint _createLayerPaint(Paint originalPaint, SvgFilterLayer layer, [AffineMatrix transform = AffineMatrix.identity]) {
+    final bool hasBlur = layer.sigmaX > 0 || layer.sigmaY > 0;
+    final bool isSourceAlpha = layer.isSourceAlpha || (_currentLayer?.isSourceAlpha ?? false);
+    return Paint(
+      blendMode: originalPaint.blendMode,
+      fill: isSourceAlpha
+          ? (originalPaint.fill != null
+                ? Fill(
+                    color: Color.fromARGB(originalPaint.fill!.color.a, 0, 0, 0),
+                    shader: originalPaint.fill!.shader != null
+                        ? _blackenGradient(originalPaint.fill!.shader!)
+                        : null,
+                  )
+                : null)
+          : originalPaint.fill,
+      stroke: isSourceAlpha
+          ? (originalPaint.stroke != null
+                ? Stroke(
+                    color: Color.fromARGB(originalPaint.stroke!.color.a, 0, 0, 0),
+                    shader: originalPaint.stroke!.shader != null
+                        ? _blackenGradient(originalPaint.stroke!.shader!)
+                        : null,
+                    width: originalPaint.stroke!.width,
+                    cap: originalPaint.stroke!.cap,
+                    join: originalPaint.stroke!.join,
+                    miterLimit: originalPaint.stroke!.miterLimit,
+                  )
+                : null)
+          : originalPaint.stroke,
+      filterBlurX: hasBlur ? layer.sigmaX * transform.xScale : null,
+      filterBlurY: hasBlur ? layer.sigmaY * transform.yScale : null,
+    );
   }
 
   @override
@@ -443,7 +821,12 @@ class ResolvedClipNode extends Node {
 /// This should only be constructed from a [MaskNode] in a [ResolvingVisitor].
 class ResolvedMaskNode extends Node {
   /// Create a new [ResolvedMaskNode].
-  ResolvedMaskNode({required this.child, required this.mask, required this.blendMode});
+  ResolvedMaskNode({
+    required this.child,
+    required this.mask,
+    required this.blendMode,
+    this.maskType,
+  });
 
   /// The child to apply as a mask.
   final Node mask;
@@ -453,6 +836,9 @@ class ResolvedMaskNode extends Node {
 
   /// The blend mode to apply when saving a layer for the mask, if any.
   final BlendMode? blendMode;
+
+  /// The `mask-type` attribute of the mask, if any.
+  final String? maskType;
 
   @override
   S accept<S, V>(Visitor<S, V> visitor, V data) {
@@ -549,4 +935,67 @@ class ResolvedPatternNode extends Node {
   S accept<S, V>(Visitor<S, V> visitor, V data) {
     return visitor.visitResolvedPatternNode(this, data);
   }
+}
+
+/// Represents a layer in an SVG filter.
+@immutable
+class SvgFilterLayer {
+  /// Creates a new [SvgFilterLayer].
+  const SvgFilterLayer({
+    required this.isSourceAlpha,
+    required this.sigmaX,
+    required this.sigmaY,
+    required this.dx,
+    required this.dy,
+  });
+
+  /// Whether this layer is derived from the alpha channel of the source.
+  final bool isSourceAlpha;
+
+  /// The standard deviation along the X axis for the blur.
+  final double sigmaX;
+
+  /// The standard deviation along the Y axis for the blur.
+  final double sigmaY;
+
+  /// The horizontal offset.
+  final double dx;
+
+  /// The vertical offset.
+  final double dy;
+
+  /// Whether this layer has any visual effect (blur or offset).
+  bool get hasEffect => sigmaX > 0 || sigmaY > 0 || dx != 0 || dy != 0;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SvgFilterLayer &&
+          runtimeType == other.runtimeType &&
+          isSourceAlpha == other.isSourceAlpha &&
+          sigmaX == other.sigmaX &&
+          sigmaY == other.sigmaY &&
+          dx == other.dx &&
+          dy == other.dy;
+
+  @override
+  int get hashCode => Object.hash(isSourceAlpha, sigmaX, sigmaY, dx, dy);
+}
+
+/// Represents an SVG filter containing one or more layers.
+@immutable
+class SvgFilter {
+  /// Creates a new [SvgFilter] with the given [layers].
+  const SvgFilter(this.layers);
+
+  /// The layers of this filter, to be drawn sequentially.
+  final List<SvgFilterLayer> layers;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SvgFilter && runtimeType == other.runtimeType && listEquals(layers, other.layers);
+
+  @override
+  int get hashCode => Object.hashAll(layers);
 }

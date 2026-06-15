@@ -394,6 +394,15 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   }
 
   @override
+  void onPaintBlur(int paintId, double sigmaX, double sigmaY) {
+    final double clampedX = sigmaX < 0.0 ? 0.0 : sigmaX;
+    final double clampedY = sigmaY < 0.0 ? 0.0 : sigmaY;
+    if (clampedX > 0.0 || clampedY > 0.0) {
+      _paints[paintId].imageFilter = ImageFilter.blur(sigmaX: clampedX, sigmaY: clampedY);
+    }
+  }
+
+  @override
   void onPathClose() {
     _currentPath!.close();
   }

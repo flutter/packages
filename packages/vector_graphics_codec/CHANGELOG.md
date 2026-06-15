@@ -1,5 +1,6 @@
-## NEXT
+## 1.1.14
 
+* Adds support for SVG filters (blur, offset, feMerge) and mask-type=alpha.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 1.1.13

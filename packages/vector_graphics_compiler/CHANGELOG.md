@@ -1,3 +1,7 @@
+## 1.2.6
+
+* Adds support for SVG filters (blur, offset, feMerge) and mask-type=alpha.
+
 ## 1.2.5
 
 * Updates allowed version range of `xml` to include up to 7.0.1.

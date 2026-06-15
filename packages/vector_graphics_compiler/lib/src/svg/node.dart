@@ -203,15 +203,18 @@ class ParentNode extends AttributedNode {
 
   /// Create the paint required to draw a save layer, or `null` if none is
   /// required.
-  Paint? createLayerPaint() {
+  Paint? createLayerPaint({double? filterBlurX, double? filterBlurY}) {
     final double? fillOpacity = attributes.fill?.opacity;
     final bool needsLayer =
         (attributes.blendMode != null) ||
+        (filterBlurX != null || filterBlurY != null) ||
         (fillOpacity != null && fillOpacity != 1.0 && fillOpacity != 0.0);
 
     if (needsLayer) {
       return Paint(
         blendMode: attributes.blendMode,
+        filterBlurX: filterBlurX,
+        filterBlurY: filterBlurY,
         fill:
             attributes.fill?.toFill(Rect.largest, transform) ??
             Fill(color: Color.opaqueBlack.withOpacity(fillOpacity ?? 1.0)),
@@ -405,13 +408,24 @@ class PathNode extends AttributedNode {
   final Path path;
 
   /// Compute the paint used by this Path.
-  Paint? computePaint(Rect bounds, AffineMatrix transform) {
+  Paint? computePaint(
+    Rect bounds,
+    AffineMatrix transform, {
+    double? filterBlurX,
+    double? filterBlurY,
+  }) {
     final Stroke? stroke = attributes.stroke?.toStroke(bounds, transform);
     final Fill? fill = attributes.fill?.toFill(bounds, transform, defaultColor: Color.opaqueBlack);
     if (fill == null && stroke == null) {
       return null;
     }
-    return Paint(blendMode: attributes.blendMode, fill: fill, stroke: stroke);
+    return Paint(
+      blendMode: attributes.blendMode,
+      fill: fill,
+      stroke: stroke,
+      filterBlurX: filterBlurX,
+      filterBlurY: filterBlurY,
+    );
   }
 
   @override
@@ -479,13 +493,24 @@ class TextNode extends AttributedNode {
   final String text;
 
   /// Compute the [Paint] that this text node uses.
-  Paint? computePaint(Rect bounds, AffineMatrix transform) {
+  Paint? computePaint(
+    Rect bounds,
+    AffineMatrix transform, {
+    double? filterBlurX,
+    double? filterBlurY,
+  }) {
     final Fill? fill = attributes.fill?.toFill(bounds, transform, defaultColor: Color.opaqueBlack);
     final Stroke? stroke = attributes.stroke?.toStroke(bounds, transform);
     if (fill == null && stroke == null) {
       return null;
     }
-    return Paint(blendMode: attributes.blendMode, fill: fill, stroke: stroke);
+    return Paint(
+      blendMode: attributes.blendMode,
+      fill: fill,
+      stroke: stroke,
+      filterBlurX: filterBlurX,
+      filterBlurY: filterBlurY,
+    );
   }
 
   /// Compute the [TextConfig] that this text node uses.
