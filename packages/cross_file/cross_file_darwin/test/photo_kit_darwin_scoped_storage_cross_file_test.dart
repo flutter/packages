@@ -18,25 +18,52 @@ void main() {
     PigeonOverrides.pigeon_reset();
   });
 
-  test('PhotoKitDarwinScopedStorageXFile.openRead', () async {
-    final file = DarwinScopedStorageXFile(
-      DarwinScopedStorageXFileCreationParams.photoKit(localIdentifier: 'id'),
-    );
+  group('openRead', () {
+    test('null start and null end', () async {
+      final file = DarwinScopedStorageXFile(
+        DarwinScopedStorageXFileCreationParams.photoKit(localIdentifier: 'id'),
+      );
 
-    final MockAssetResourceReader reader = setUpReader();
+      final MockAssetResourceReader reader = setUpReader();
 
-    final Stream<Uint8List> stream = file.openRead();
+      final Stream<Uint8List> stream = file.openRead();
 
-    final bytes = Uint8List.fromList(<int>[1, 2, 3]);
-    reader.onDataReceived(reader, bytes);
-    reader.onCompletion(reader, null);
+      final bytes = Uint8List.fromList(<int>[1, 2, 3]);
+      reader.onDataReceived(reader, bytes);
+      reader.onCompletion(reader, null);
 
-    expect(
-      await stream.reduce(
-        (Uint8List first, Uint8List second) => Uint8List.fromList(<int>[...first, ...second]),
-      ),
-      bytes,
-    );
+      expect(
+        await stream.reduce(
+          (Uint8List first, Uint8List second) => Uint8List.fromList(<int>[...first, ...second]),
+        ),
+        bytes,
+      );
+    });
+
+    test('oijspio', () async {
+      final file = DarwinScopedStorageXFile(
+        DarwinScopedStorageXFileCreationParams.photoKit(localIdentifier: 'id'),
+      );
+
+      final MockAssetResourceReader reader = setUpReader();
+
+      final Stream<Uint8List> stream = file.openRead(2, 8);
+
+      final allBytes = Uint8List.fromList(<int>[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+      reader.onDataReceived(reader, allBytes.sublist(0, 2));
+      reader.onDataReceived(reader, allBytes.sublist(2, 4));
+      reader.onDataReceived(reader, allBytes.sublist(4, 6));
+      reader.onDataReceived(reader, allBytes.sublist(6, 8));
+      reader.onDataReceived(reader, allBytes.sublist(8, 10));
+      reader.onCompletion(reader, null);
+
+      expect(
+        await stream.reduce(
+          (Uint8List first, Uint8List second) => Uint8List.fromList(<int>[...first, ...second]),
+        ),
+        allBytes.sublist(2, 8),
+      );
+    });
   });
 }
 
