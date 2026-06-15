@@ -286,4 +286,56 @@ void main() {
       ),
     ]);
   });
+
+  test('Does not delete MaskNode when mask path, child path, or SaveLayerNode is blurred', () {
+    const svgBlurredMask = '''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <filter id="blur"><feGaussianBlur stdDeviation="5"/></filter>
+    <mask id="m"><circle cx="50" cy="50" r="30" fill="white" filter="url(#blur)"/></mask>
+  </defs>
+  <rect width="100" height="100" fill="blue" mask="url(#m)"/>
+</svg>
+''';
+    expect(
+      parse(svgBlurredMask).commands.where((DrawCommand c) => c.type == DrawCommandType.mask),
+      hasLength(1),
+    );
+
+    const svgBlurredChild = '''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <filter id="blur"><feGaussianBlur stdDeviation="5"/></filter>
+    <mask id="m"><circle cx="50" cy="50" r="30" fill="white"/></mask>
+  </defs>
+  <g mask="url(#m)">
+    <g opacity="0.5">
+      <rect width="100" height="100" fill="blue" filter="url(#blur)"/>
+    </g>
+  </g>
+</svg>
+''';
+    expect(
+      parse(svgBlurredChild).commands.where((DrawCommand c) => c.type == DrawCommandType.mask),
+      hasLength(1),
+    );
+
+    const svgBlurredGroup = '''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <filter id="blur"><feGaussianBlur stdDeviation="5"/></filter>
+    <mask id="m"><circle cx="50" cy="50" r="30" fill="white"/></mask>
+  </defs>
+  <g mask="url(#m)">
+    <g filter="url(#blur)">
+      <rect width="100" height="100" fill="blue"/>
+    </g>
+  </g>
+</svg>
+''';
+    expect(
+      parse(svgBlurredGroup).commands.where((DrawCommand c) => c.type == DrawCommandType.mask),
+      hasLength(1),
+    );
+  });
 }
