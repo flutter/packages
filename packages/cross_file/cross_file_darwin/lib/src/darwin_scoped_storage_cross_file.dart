@@ -198,6 +198,8 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
     return null;
   }
 
+  // TODO(bparrishMines): Implementation should be switched to use `ffigen`.
+  // Blocked by https://github.com/dart-lang/native/issues/3416.
   @override
   Stream<Uint8List> openRead([int? start, int? end]) {
     assert(start == null || start >= 0);
