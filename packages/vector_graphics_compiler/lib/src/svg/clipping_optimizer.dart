@@ -161,15 +161,17 @@ class ClippingOptimizer extends Visitor<_Result, Node> with ErrorOnUnResolvedNod
   // ignore: library_private_types_in_public_api
   _Result visitResolvedPath(ResolvedPathNode pathNode, Node data) {
     var result = _Result(pathNode);
-    var hasStrokeWidth = false;
+    var cannotOptimize = false;
     var deleteClipNode = true;
 
-    if (pathNode.paint.stroke?.width != null) {
-      hasStrokeWidth = true;
+    if (pathNode.paint.stroke?.width != null ||
+        pathNode.paint.filterBlurX != null ||
+        pathNode.paint.filterBlurY != null) {
+      cannotOptimize = true;
       result.deleteClipNode = false;
     }
 
-    if (clipsToApply.isNotEmpty && !hasStrokeWidth) {
+    if (clipsToApply.isNotEmpty && !cannotOptimize) {
       var newPathNode = pathNode;
       for (final Path clipPath in clipsToApply) {
         final ResolvedPathNode intersection = applyClip(newPathNode, clipPath);
@@ -205,11 +207,29 @@ class ClippingOptimizer extends Visitor<_Result, Node> with ErrorOnUnResolvedNod
   @override
   // ignore: library_private_types_in_public_api
   _Result visitSaveLayerNode(SaveLayerNode layerNode, Node data) {
+    final bool hasLayerBlur =
+        layerNode.paint.filterBlurX != null || layerNode.paint.filterBlurY != null;
+    final List<Path>? savedClips = hasLayerBlur && clipsToApply.isNotEmpty
+        ? List<Path>.of(clipsToApply)
+        : null;
+    if (savedClips != null) {
+      clipsToApply.clear();
+    }
+
     final newChildren = <Node>[];
+    var deleteClipNode = !hasLayerBlur;
     for (final Node child in layerNode.children) {
       final _Result childResult = child.accept(this, layerNode);
       newChildren.add(childResult.node);
+      if (!childResult.deleteClipNode) {
+        deleteClipNode = false;
+      }
     }
+
+    if (savedClips != null) {
+      clipsToApply.addAll(savedClips);
+    }
+
     final newLayerNode = SaveLayerNode(
       layerNode.attributes,
       paint: layerNode.paint,
@@ -219,6 +239,7 @@ class ClippingOptimizer extends Visitor<_Result, Node> with ErrorOnUnResolvedNod
     final result = _Result(newLayerNode);
     result.children = newChildren;
     result.childCount = newChildren.length;
+    result.deleteClipNode = deleteClipNode;
     return result;
   }
 

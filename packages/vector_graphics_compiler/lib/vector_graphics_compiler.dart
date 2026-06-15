@@ -176,6 +176,9 @@ Uint8List _encodeInstructions(VectorInstructions instructions, bool useHalfPreci
       final int? shaderId = shaderIds[fill.shader];
       final int fillId = codec.writeFill(buffer, fill.color.value, paint.blendMode.index, shaderId);
       fillIds[nextPaintId] = fillId;
+      if (paint.filterBlurX != null || paint.filterBlurY != null) {
+        codec.writePaintBlur(buffer, fillId, paint.filterBlurX ?? 0.0, paint.filterBlurY ?? 0.0);
+      }
     }
     if (stroke != null) {
       final int? shaderId = shaderIds[stroke.shader];
@@ -190,6 +193,9 @@ Uint8List _encodeInstructions(VectorInstructions instructions, bool useHalfPreci
         shaderId,
       );
       strokeIds[nextPaintId] = strokeId;
+      if (paint.filterBlurX != null || paint.filterBlurY != null) {
+        codec.writePaintBlur(buffer, strokeId, paint.filterBlurX ?? 0.0, paint.filterBlurY ?? 0.0);
+      }
     }
     nextPaintId += 1;
   }

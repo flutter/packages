@@ -43,15 +43,18 @@ class AffineMatrix {
   /// Translations can affect this value, so we have to track it.
   final double _m4_10;
 
+  /// The scale factor along the X axis, including rotation.
+  double get xScale => math.sqrt(a * a + c * c);
+
+  /// The scale factor along the Y axis, including rotation.
+  double get yScale => math.sqrt(b * b + d * d);
+
   /// Calculates the scale for a stroke width based on the average of the x- and
   /// y-axis scales of this matrix.
   double? scaleStrokeWidth(double? width) {
     if (width == null || (a == 1 && d == 1)) {
       return width;
     }
-
-    final double xScale = math.sqrt(a * a + c * c);
-    final double yScale = math.sqrt(b * b + d * d);
 
     return (xScale + yScale) / 2 * width;
   }

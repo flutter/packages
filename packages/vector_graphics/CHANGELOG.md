@@ -1,5 +1,6 @@
-## NEXT
+## 1.2.4
 
+* Adds support for SVG filters (, , , and ).
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 * Fixes deprecation lints.
 
