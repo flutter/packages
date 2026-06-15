@@ -54,10 +54,10 @@ class AssetResourceReaderAPIDelegate: PigeonApiDelegateAssetResourceReader {
     return reader
   }
 
-  func openRead(
+  func startRead(
     pigeonApi: PigeonApiAssetResourceReader, pigeonInstance: AssetResourceReader,
     localIdentifier: String
   ) throws -> Bool {
-    return pigeonInstance.openRead(localIdentifier: localIdentifier)
+    return pigeonInstance.startRead(localIdentifier: localIdentifier)
   }
 }

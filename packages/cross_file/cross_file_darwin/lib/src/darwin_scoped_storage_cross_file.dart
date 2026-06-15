@@ -207,7 +207,7 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
       final streamController = StreamController<Uint8List>();
       var currentByteIndex = 0;
 
-      final bytesListener = AssetResourceReader(
+      final reader = AssetResourceReader(
         onDataReceived: (_, Uint8List bytes) {
           final int newByteIndex = currentByteIndex + bytes.length;
           final int startOrZero = start ?? 0;
@@ -224,9 +224,6 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
             final int bytesLeftToRead = end - max(currentByteIndex, startOrZero);
 
             if (bytesLeftToRead > 0) {
-              // late final int bytesStart;
-              // late final int bytesEnd;
-
               if (currentByteIndex >= startOrZero) {
                 streamController.add(bytes.sublist(0, min(bytesLeftToRead, bytes.length)));
               } else if (newByteIndex > startOrZero) {
@@ -251,7 +248,7 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
         },
       );
 
-      bytesListener.openRead(params.uri).then((bool canRead) {
+      reader.startRead(params.uri).then((bool canRead) {
         if (!canRead) {
           streamController.addError(
             Exception('Failed to start reading bytes from asset with identifier: ${params.uri}'),
@@ -351,11 +348,7 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
 
     final Pointer<Uint8> uint8Pointer = data.bytes.cast<Uint8>();
     final Uint8List byteView = uint8Pointer.asTypedList(data.length);
-    final a = Uint8List.fromList(byteView);
-    print('extract: ${a[0]} ${a[1]} ${a[2]} ${a[3]} ${a[4]}');
-    print('extract: ${a[a.length - 1]}');
-    print('extract: ${a[a.length - 2]}');
-    return a;
+    return Uint8List.fromList(byteView);
   }
 }
 

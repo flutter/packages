@@ -4,10 +4,12 @@
 
 import Photos
 
+/// Class for handling an instance of asynchronously reading bytes from
+/// [PHAssetResourceManager.requestDataForAssetResource](https://developer.apple.com/documentation/photos/phassetresourcemanager/requestdata(for:options:datareceivedhandler:completionhandler:)?language=objc).
 class AssetResourceReader {
   var delegate: AssetResourceReaderDelegate?
 
-  func openRead(localIdentifier: String) -> Bool {
+  func startRead(localIdentifier: String) -> Bool {
     let assets = PHAsset.fetchAssets(withLocalIdentifiers: [localIdentifier], options: nil)
     if let asset = assets.firstObject {
       let resources = PHAssetResource.assetResources(for: asset)
@@ -36,6 +38,21 @@ class AssetResourceReader {
 }
 
 protocol AssetResourceReaderDelegate {
+  /// Provides the requested data.
+  ///
+  /// Called multiple times until all bytes are received.
+  ///
+  /// Corresponds to the `dataReceivedHandler` parameter for
+  /// `PHAssetResourceManager.requestDataForAssetResource`.
   func onDataReceived(reader: AssetResourceReader, bytes: Data)
+
+
+  /// Start reading bytes from the asset with the given identifier.
+  ///
+  /// Returns false if the resource for the identifier could not be accessed or
+  /// found. Returns true if the resource can be successfully accessed.
+  ///
+  /// Bytes are passed to `onDataReceived` and the request is completed when
+  /// `onCompletion` is called.
   func onCompletion(reader: AssetResourceReader, error: String?)
 }
