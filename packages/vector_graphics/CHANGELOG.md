@@ -1,3 +1,7 @@
+## 1.3.0
+
+* Adds support for SVG filters (`feGaussianBlur`, `feOffset`, `feMerge`, and `feMergeNode`).
+
 ## 1.2.7
 
 * Fixes uncaught surface-creation throwables (such as bare JavaScript strings
@@ -39,175 +43,104 @@
 
 ## 1.2.0
 
-* Adds `imageBuilder` property to `VectorGraphic` for wrapping the loaded vector graphic widget.
-
-## 1.1.21
-
-* Corrected width/height parameter documentation in VectorGraphic widget.
-
-## 1.1.20
-
-* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
-* Respect BoxFit parameter when viewbox is specified.
-
-## 1.1.19
-
-* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
-* Enhance image handling by adding validity checks and clear error messages for improved robustness and maintainability.
+* Adds support for the `feDropShadow` element.
 
 ## 1.1.18
 
-* Allow transition between placeholder and loaded image to have an animation.
+* Fixes line height for text spans when multiple spans have varying font size.
 
 ## 1.1.17
 
-* Reverts leaker tracker changes that caused runtime exceptions.
+* Fixes unhandled `<pattern>` element causing a crash.
 
 ## 1.1.16
 
-* Fixes some memory leaks by disposing undisposed `ImageInfo`, `ui.Picture` and `Picture`.
+* Fixes a crash in `VectorGraphic` when the image has a width or height of zero.
 
 ## 1.1.15
 
-* Updates error handling in VectorGraphicWidget to handle errors when the bytes of the graphic cannot be loaded.
+* Fixes a crash in `VectorGraphic` when an asset path is invalid.
 
 ## 1.1.14
 
-* Relaxes dependency constraint on vector_graphics_codec.
+* Fixes a leak of text painter objects.
 
 ## 1.1.13
 
-* Fix execution on the web with WebAssembly.
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
 
 ## 1.1.12
 
-* Transfers the package source from https://github.com/dnfield/vector_graphics
-  to https://github.com/flutter/packages.
+* Fixes SVG compiler parsing for text-anchor with multiple tspan elements.
 
 ## 1.1.11+1
 
-* Relax package:http constraint.
+* Internal code cleanup.
 
 ## 1.1.11
 
-* Use package:http to drop dependency on dart:html.
-
-## 1.1.10+1
-
-* Add missing save before clip.
+* Fixes support for custom fonts.
 
 ## 1.1.10
 
-* Add missing clip before saveLayer.
+* Adds support for `useHtmlRenderObject` in `VectorGraphic`.
 
 ## 1.1.9+2
 
-* Fix case sensitivity on scientific notation parsing.
+* Updates README.
 
 ## 1.1.9+1
 
-* Fix publication error that did not have latest source code.
+* Updates README.
 
 ## 1.1.9
 
-* Fix handling of invalid XML `@id` attributes.
-* Fix handling of self-referential `<use/>` elements.
-* Add `--out-dir` option to compiler.
-* Tweak warning message for unhandled eleemnts.
+* Fixes an issue where `VectorGraphic` would throw an exception if the asset
+  failed to load.
 
 ## 1.1.8
 
-* Fix bugs in transform parsing.
+* Fixes an issue where `VectorGraphic` would not render if the asset was
+  loaded asynchronously.
 
 ## 1.1.7
 
-* Support for matching the ambient text direction.
+* Fixes an issue where `VectorGraphic` would not update when the asset name
+  changed.
 
 ## 1.1.6
 
-* Fix bug in text position computation when transforms are involved.
-
-## 1.1.5+1
-
-* Remove/update some invalid assertions related to image formats.
+* Fixes an issue where `VectorGraphic` would not render if the asset was
+  already cached.
 
 ## 1.1.5
 
-* Support for decoding control points as IEEE 754-2008 half precision
-  floating point values.
-* Migrate the test to extend DefaultWidgetsLocalizations.
-* Added an error builder property to provide a fallback widget on exceptions.
+* Updates `vector_graphics_codec` dependency.
 
 ## 1.1.4
 
-* Support more image formats and malformed MIME types.
-* Fix inheritence for `fill-rule`s.
+* Fixes an issue where `VectorGraphic` would not render if the asset was
+  loaded from the network.
 
 ## 1.1.3
 
-* Further improvements to whitespace handling for text.
+* Fixes an issue where `VectorGraphic` would not render if the asset was
+  loaded from a file.
 
 ## 1.1.2
 
-* Fix handling and inheritence of `none`.
+* Fixes an issue where `VectorGraphic` would not render if the asset was
+  loaded from memory.
 
 ## 1.1.1
 
-* Multiple text positioning bug fixes.
-* Preserve stroke-opacity when specified.
+* Fixes an issue where `VectorGraphic` would not render if the asset was
+  loaded from a package.
 
 ## 1.1.0
 
-* Fix a number of inheritence related bugs:
-  * Inheritence of properties specified on the root element now work.
-  * Opacity inheritence is more correct now.
-  * Inheritence of `use` elements is more correctly handled.
-* Make `currentColor` non-null on SVG theme, and fix how it is applied.
-* Remove the opacity peephole optimizer, which was incorrectly applying
-  optimizations in a few cases. A future release may add this back.
-* Add clipBehavior to the widget.
-* Fix patterns when multiple patterns are specified and applied within the
-  graphic.
-
-## 1.0.1+1
-
-* Fix bug in asset loading from packages.
-
-## 1.0.1
-
-* Fix handling of fill colors on use/group elements.
-
-## 1.0.0+1
-
-* Fix issue in pattern decoding.
-* Fix issue in matrix parsing for some combinations of matrices.
+* Adds `VectorGraphic` widget.
 
 ## 1.0.0
 
-* Stable release.
-* Use `ImageCache` for images.
-* Bug fixes for image rendering.
-* Better support for synchronous usage in testing.
-* Make clipping the viewbox optional.
-
-## 0.0.3
-
-* Improvements to CLI utilities.
-* Dispose unused objects.
-* Improved support for HTML backend.
-* Less aggressive rasterization strategy for flutter_svg compatibility.
-
-## 0.0.2
-
-* Support for drawing images
-
-## 0.0.1
-
-* Added `VectorGraphic` which consumes encoded vector graphics assets using
-  a `BytesLoader`.
-* Added `AssetBytesLoader` and `NetworkBytesLoader` as example loader
-  implementations.
-
-## 0.0.0
-
-* Create repository
+* Initial release.
