@@ -5,6 +5,7 @@
 import 'dart:io';
 
 import 'package:test/test.dart';
+import '../templates/template.dart';
 import 'test_fixtures/test_templates.dart';
 
 void main() {
@@ -20,43 +21,50 @@ void main() {
       tempDir!.deleteSync(recursive: true);
     });
 
-    test('will generate a part file ending in _defaults.g.dart', () {
-      final template = ButtonTemplate(testPath());
-      template.generateFile(verbose: true);
+    for (final isM3E in <bool>[true, false]) {
+      TokenTemplate buttonTemplate() =>
+          isM3E ? M3EButtonTemplate(testPath()) : M3ButtonTemplate(testPath());
 
-      final file = File('${testPath()}/button_defaults.g.dart');
-      expect(file.existsSync(), isTrue);
-    });
+      String filePath() {
+        final fileName = 'button${isM3E ? '_expressive' : ''}_defaults.g.dart';
+        return '${testPath()}/$fileName';
+      }
 
-    test('will generate a file with the correct header text', () {
-      final template = ButtonTemplate(testPath());
-      template.generateFile();
+      group(isM3E ? 'M3E Template' : 'M3 Template', () {
+        test(
+          'will generate a part file ending in ${isM3E ? '_expressive' : ''}_defaults.g.dart',
+          () {
+            buttonTemplate().generateFile(verbose: true);
+            expect(File(filePath()).existsSync(), isTrue);
+          },
+        );
 
-      final file = File('${testPath()}/button_defaults.g.dart');
-      final String fileContents = file.readAsStringSync();
-      expect(fileContents, contains(_fileHeader));
-    });
+        test('will generate a file with the correct header text', () {
+          buttonTemplate().generateFile(verbose: true);
+          final String fileContents = File(filePath()).readAsStringSync();
+          expect(fileContents, contains(_fileHeader));
+        });
 
-    test('will generate a file with the expected contents', () {
-      final template = ButtonTemplate(testPath());
-      template.generateFile();
+        test('will generate a file with the expected contents', () {
+          buttonTemplate().generateFile(verbose: true);
+          final String fileContents = File(filePath()).readAsStringSync();
+          expect(
+            fileContents,
+            contains(isM3E ? _buttonExpressiveDefaultsClass : _buttonDefaultsClass),
+          );
+        });
 
-      final file = File('${testPath()}/button_defaults.g.dart');
-      final String fileContents = file.readAsStringSync();
-      expect(fileContents, contains(_buttonDefaultsClass));
-    });
+        test('will completely overwrite any previous code', () {
+          final file = File(filePath());
+          const randomText = 'Pre-existing random text.';
+          file.writeAsStringSync(randomText);
 
-    test('will completely overwrite any previous code', () {
-      final file = File('${testPath()}/button_defaults.g.dart');
-      const randomText = 'Pre-existing random text.';
-      file.writeAsStringSync(randomText);
-
-      final template = ButtonTemplate(testPath());
-      template.generateFile();
-      final String fileContents = file.readAsStringSync();
-      expect(fileContents, isNot(contains(randomText)));
-      expect(fileContents, contains(_buttonDefaultsClass));
-    });
+          buttonTemplate().generateFile(verbose: true);
+          final String fileContents = file.readAsStringSync();
+          expect(fileContents, isNot(contains(randomText)));
+        });
+      });
+    }
 
     test('will run dart format over the generated file', () {
       final template = UnformattedTemplate(testPath());
@@ -66,23 +74,18 @@ void main() {
       expect(file.readAsStringSync(), contains(formattedClass));
     });
 
-    test('materialLib path resolves correctly based on MaterialVersion', () {
-      final m3Template = TestM3Template();
-      final m3ExpressiveTemplate = TestM3ExpressiveTemplate();
-      const materialUiDir = 'packages/material_ui';
-      const generatedDir = 'lib/src/generated';
-
-      final bool hasPackageDir = Directory(materialUiDir).existsSync();
-      if (hasPackageDir) {
-        expect(m3Template.materialLib, '$materialUiDir/$generatedDir');
-        expect(
-          m3ExpressiveTemplate.materialLib,
-          '$materialUiDir/$generatedDir/material_3_expressive',
-        );
-      } else {
-        expect(m3Template.materialLib, generatedDir);
-        expect(m3ExpressiveTemplate.materialLib, '$generatedDir/material_3_expressive');
-      }
+    test('throws AssertionError if class name is not defined in generateContents', () {
+      final template = InvalidTemplate(testPath());
+      expect(
+        () => template.generateFile(),
+        throwsA(
+          isA<AssertionError>().having(
+            (AssertionError e) => e.message,
+            'message',
+            contains('Make sure you are utilizing the passed `className` parameter.'),
+          ),
+        ),
+      );
     });
   });
 }
@@ -97,6 +100,13 @@ const _fileHeader = '''
 //   packages/material_ui/tool/gen_defaults/bin/gen_defaults.dart.
 ''';
 
+const _buttonExpressiveDefaultsClass = '''
+class _ButtonExpressiveDefaults {
+  static const double height = 40.0;
+  static const double borderRadius = 8.0;
+}
+''';
+
 const _buttonDefaultsClass = '''
 class _ButtonDefaults {
   static const double height = 40.0;
@@ -105,7 +115,7 @@ class _ButtonDefaults {
 ''';
 
 const formattedClass = '''
-class UnformattedClass {
+class _UnformattedDefaults {
   final int x = 1;
   final String y = 'hello';
 }
