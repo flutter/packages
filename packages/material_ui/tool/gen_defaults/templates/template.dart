@@ -46,11 +46,7 @@ abstract class TokenTemplate {
 
   /// The regular expression used to verify that a template name is written with
   /// spaces and capitalized words (e.g., "Icon Button").
-  static final RegExp _classNameRegexp = RegExp(r'^[A-Z][a-zA-Z0-9]*( [A-Z][a-zA-Z0-9]*)*$');
-
-  /// Returns a regular expression used to verify that the generated contents
-  /// declare a class named [className].
-  static RegExp _classRegExp(String className) => RegExp('class\\s+$className\\b');
+  static final RegExp _nameRegExp = RegExp(r'^[A-Z][a-zA-Z0-9]*( [A-Z][a-zA-Z0-9]*)*$');
 
   /// The name of the template, which corresponds to the target file name.
   /// E.g., 'Icon Button' for generating 'icon_button_m3_defaults.g.dart'.
@@ -74,7 +70,7 @@ abstract class TokenTemplate {
   /// or `_M3EIconButtonDefaults`).
   String get _className {
     assert(
-      _classNameRegexp.hasMatch(name),
+      _nameRegExp.hasMatch(name),
       'The template name "$name" must use spaces and capitalized words (e.g., "Typography" or "Icon Button").',
     );
     final String camelName = name.replaceAll(' ', '');
@@ -83,6 +79,10 @@ abstract class TokenTemplate {
       _MaterialVersion.material3Expressive => '_M3E${camelName}Defaults',
     };
   }
+
+  /// The regular expression used to verify that the generated contents declare
+  /// the class.
+  RegExp get _classRegExp => RegExp('class\\s+$_className\\b');
 
   /// Returns the body of the generated file as a string.
   ///
@@ -116,7 +116,7 @@ abstract class TokenTemplate {
     }
     final String contents = generateContents(_className);
     assert(
-      contents.contains(_classRegExp(_className)) || contents.isEmpty,
+      contents.contains(_classRegExp),
       'The generated contents for "$name" must define the class "$_className". '
       'Make sure you are utilizing the passed `className` parameter.',
     );
