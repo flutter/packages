@@ -5,13 +5,13 @@
 import '../../templates/template.dart';
 import 'button_token_data.dart';
 
-class M3EButtonTemplate extends M3ETokenTemplate {
-  M3EButtonTemplate(this.customMaterialLib);
+class M3EIconButtonTemplate extends M3ETokenTemplate {
+  M3EIconButtonTemplate(this.customMaterialLib);
 
   final String customMaterialLib;
 
   @override
-  String get name => 'button';
+  String get name => 'Icon Button';
 
   @override
   String get materialLib => customMaterialLib;
@@ -27,13 +27,13 @@ class $className {
   }
 }
 
-class M3ButtonTemplate extends M3TokenTemplate {
-  M3ButtonTemplate(this.customMaterialLib);
+class M3IconButtonTemplate extends M3TokenTemplate {
+  M3IconButtonTemplate(this.customMaterialLib);
 
   final String customMaterialLib;
 
   @override
-  String get name => 'button';
+  String get name => 'Icon Button';
 
   @override
   String get materialLib => customMaterialLib;
@@ -55,7 +55,7 @@ class UnformattedTemplate extends M3TokenTemplate {
   final String customMaterialLib;
 
   @override
-  String get name => 'unformatted';
+  String get name => 'Unformatted';
 
   @override
   String get materialLib => customMaterialLib;
@@ -77,7 +77,7 @@ class InvalidTemplate extends M3TokenTemplate {
   final String customMaterialLib;
 
   @override
-  String get name => 'invalid';
+  String get name => 'Invalid';
 
   @override
   String get materialLib => customMaterialLib;
@@ -90,4 +90,19 @@ class _SomeOtherClassNameDefaults {
 }
 ''';
   }
+}
+
+class SnakeCaseNameTemplate extends M3TokenTemplate {
+  SnakeCaseNameTemplate(this.customMaterialLib);
+
+  final String customMaterialLib;
+
+  @override
+  String get name => 'snake_case_name';
+
+  @override
+  String get materialLib => customMaterialLib;
+
+  @override
+  String generateContents(String className) => '';
 }

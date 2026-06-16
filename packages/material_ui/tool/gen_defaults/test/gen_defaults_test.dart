@@ -23,16 +23,16 @@ void main() {
 
     for (final isM3E in <bool>[true, false]) {
       TokenTemplate buttonTemplate() =>
-          isM3E ? M3EButtonTemplate(testPath()) : M3ButtonTemplate(testPath());
+          isM3E ? M3EIconButtonTemplate(testPath()) : M3IconButtonTemplate(testPath());
 
       String filePath() {
-        final fileName = 'button${isM3E ? '_expressive' : ''}_defaults.g.dart';
+        final fileName = 'icon_button_m3${isM3E ? 'e' : ''}_defaults.g.dart';
         return '${testPath()}/$fileName';
       }
 
       group(isM3E ? 'M3E Template' : 'M3 Template', () {
         test(
-          'will generate a part file ending in ${isM3E ? '_expressive' : ''}_defaults.g.dart',
+          'will generate a part file ending in icon_button_m3${isM3E ? 'e' : ''}_defaults.g.dart',
           () {
             buttonTemplate().generateFile(verbose: true);
             expect(File(filePath()).existsSync(), isTrue);
@@ -70,7 +70,7 @@ void main() {
       final template = UnformattedTemplate(testPath());
       template.generateFile();
 
-      final file = File('${testPath()}/unformatted_defaults.g.dart');
+      final file = File('${testPath()}/unformatted_m3_defaults.g.dart');
       expect(file.readAsStringSync(), contains(formattedClass));
     });
 
@@ -83,6 +83,20 @@ void main() {
             (AssertionError e) => e.message,
             'message',
             contains('Make sure you are utilizing the passed `className` parameter.'),
+          ),
+        ),
+      );
+    });
+
+    test('throws AssertionError if name is not in Spaced / TitleCase', () {
+      final template = SnakeCaseNameTemplate(testPath());
+      expect(
+        () => template.generateFile(),
+        throwsA(
+          isA<AssertionError>().having(
+            (AssertionError e) => e.message,
+            'message',
+            contains('must use spaces and capitalized words'),
           ),
         ),
       );
@@ -101,14 +115,14 @@ const _fileHeader = '''
 ''';
 
 const _buttonExpressiveDefaultsClass = '''
-class _M3EButtonDefaults {
+class _M3EIconButtonDefaults {
   static const double height = 40.0;
   static const double borderRadius = 8.0;
 }
 ''';
 
 const _buttonDefaultsClass = '''
-class _M3ButtonDefaults {
+class _M3IconButtonDefaults {
   static const double height = 40.0;
   static const double borderRadius = 8.0;
 }

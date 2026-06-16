@@ -44,12 +44,16 @@ abstract class TokenTemplate {
 //   packages/material_ui/tool/gen_defaults/bin/gen_defaults.dart.
 ''';
 
+  /// The regular expression used to verify that a template name is written with
+  /// spaces and capitalized words (e.g., "Icon Button").
+  static final RegExp _classNameRegexp = RegExp(r'^[A-Z][a-zA-Z0-9]*( [A-Z][a-zA-Z0-9]*)*$');
+
   /// Returns a regular expression used to verify that the generated contents
   /// declare a class named [className].
   static RegExp _classRegExp(String className) => RegExp('class\\s+$className\\b');
 
   /// The name of the template, which corresponds to the target file name.
-  /// E.g., 'typography' for generating 'typography_defaults.g.dart'.
+  /// E.g., 'Icon Button' for generating 'icon_button_m3_defaults.g.dart'.
   String get name;
 
   /// The path to the library's directory where generated files are placed.
@@ -66,13 +70,17 @@ abstract class TokenTemplate {
   /// The Material version this template is for.
   _MaterialVersion get _version;
 
-  /// The name of the class that will be generated (e.g. `_ButtonDefaults` or `_ButtonExpressiveDefaults`).
+  /// The name of the class that will be generated (e.g. `_M3IconButtonDefaults`
+  /// or `_M3EIconButtonDefaults`).
   String get _className {
-    assert(name.length > 1);
-    final String capitalizedName = name[0].toUpperCase() + name.substring(1).toLowerCase();
+    assert(
+      _classNameRegexp.hasMatch(name),
+      'The template name "$name" must use spaces and capitalized words (e.g., "Typography" or "Icon Button").',
+    );
+    final String camelName = name.replaceAll(' ', '');
     return switch (_version) {
-      _MaterialVersion.material3 => '_M3${capitalizedName}Defaults',
-      _MaterialVersion.material3Expressive => '_M3E${capitalizedName}Defaults',
+      _MaterialVersion.material3 => '_M3${camelName}Defaults',
+      _MaterialVersion.material3Expressive => '_M3E${camelName}Defaults',
     };
   }
 
@@ -83,9 +91,10 @@ abstract class TokenTemplate {
 
   /// Generates the file under the target path [materialLib] and formats it.
   void generateFile({bool verbose = false}) {
+    final String snakeName = name.toLowerCase().replaceAll(' ', '_');
     final String outputFileName = switch (_version) {
-      _MaterialVersion.material3 => '${name}_defaults.g.dart',
-      _MaterialVersion.material3Expressive => '${name}_expressive_defaults.g.dart',
+      _MaterialVersion.material3 => '${snakeName}_m3_defaults.g.dart',
+      _MaterialVersion.material3Expressive => '${snakeName}_m3e_defaults.g.dart',
     };
     final fileName = '$materialLib/$outputFileName';
     if (verbose) {
