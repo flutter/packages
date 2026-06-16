@@ -71,8 +71,8 @@ abstract class TokenTemplate {
     assert(name.length > 1);
     final String capitalizedName = name[0].toUpperCase() + name.substring(1).toLowerCase();
     return switch (_version) {
-      _MaterialVersion.material3 => '_${capitalizedName}Defaults',
-      _MaterialVersion.material3Expressive => '_${capitalizedName}ExpressiveDefaults',
+      _MaterialVersion.material3 => '_M3${capitalizedName}Defaults',
+      _MaterialVersion.material3Expressive => '_M3E${capitalizedName}Defaults',
     };
   }
 

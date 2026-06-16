@@ -101,21 +101,21 @@ const _fileHeader = '''
 ''';
 
 const _buttonExpressiveDefaultsClass = '''
-class _ButtonExpressiveDefaults {
+class _M3EButtonDefaults {
   static const double height = 40.0;
   static const double borderRadius = 8.0;
 }
 ''';
 
 const _buttonDefaultsClass = '''
-class _ButtonDefaults {
+class _M3ButtonDefaults {
   static const double height = 40.0;
   static const double borderRadius = 8.0;
 }
 ''';
 
 const formattedClass = '''
-class _UnformattedDefaults {
+class _M3UnformattedDefaults {
   final int x = 1;
   final String y = 'hello';
 }
