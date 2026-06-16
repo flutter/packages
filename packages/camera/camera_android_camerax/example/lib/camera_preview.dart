@@ -21,22 +21,25 @@ class CameraPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('CAMILLE: Calling camera preview build');
     return controller.value.isInitialized
         ? ValueListenableBuilder<CameraValue>(
             valueListenable: controller,
             builder: (BuildContext context, Object? value, Widget? child) {
-              return AspectRatio(
-                aspectRatio: _isLandscape()
-                    ? controller.value.aspectRatio
-                    : (1 / controller.value.aspectRatio),
-                child: Stack(
-                  // fit: StackFit.expand,
-                  children: <Widget>[
-                    // _wrapInRotatedBox(child: controller.buildPreview()),
+              final Size mediaSize = MediaQuery.of(context).size;
+              print('--- REBUILD LOG ---');
+              print('MediaQuery size (UI state): $mediaSize');
+              print(
+                'Controller DeviceOrientation (Plugin state): ${controller.value.deviceOrientation}',
+              );
+              print('-------------------');
+              return Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
                     controller.buildPreview(),
                     child ?? Container(),
                   ],
-                ),
+                
               );
             },
             child: child,

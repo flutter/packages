@@ -586,6 +586,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       return const Text('None');
     } else {
       for (final CameraDescription cameraDescription in _cameras) {
+        print('CAMILLE: adding a toggle');
         toggles.add(
           SizedBox(
             width: 90.0,
