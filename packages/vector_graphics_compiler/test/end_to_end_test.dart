@@ -327,6 +327,218 @@ void main() {
       ]),
     ]);
   });
+
+  group('SVG Filter and Mask Gallery', () {
+    test('Classic Drop Shadow', () {
+      const svg = '''
+<!-- Feature: Classic Drop Shadow via feGaussianBlur, feOffset, and feMerge -->
+<svg width="400" height="200" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="drop-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <!-- 1. Blur the original graphic source alpha channel -->
+      <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="blur" />
+      <!-- 2. Shift the blurred shadow down and right -->
+      <feOffset in="blur" dx="5" dy="8" result="offsetBlur"/>
+      <!-- 3. Layer the original graphic on top of the shadow -->
+      <feMerge>
+        <feMergeNode in="offsetBlur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <rect x="50" y="40" width="300" height="100" rx="15" fill="#4F46E5" filter="url(#drop-shadow)" />
+</svg>
+''';
+      final Uint8List bytes = encodeSvg(
+        xml: svg,
+        debugName: 'drop-shadow',
+        enableClippingOptimizer: false,
+        enableMaskingOptimizer: false,
+        enableOverdrawOptimizer: false,
+      );
+      final listener = TestListener();
+      const codec = VectorGraphicsCodec();
+      codec.decode(bytes.buffer.asByteData(), listener);
+
+      final Iterable<OnPaintBlur> blurs = listener.commands.whereType<OnPaintBlur>().where(
+        (b) => b.sigmaX == 6.0 && b.sigmaY == 6.0,
+      );
+      expect(blurs.length, 1);
+    });
+
+    test('Glowing Neon Text Effect', () {
+      const svg = '''
+<!-- Feature: Glowing Neon Text Effect using multiple layered feGaussianBlur outputs -->
+<svg width="500" height="200" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="neon-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <!-- Blur the graphic significantly to create the wide background glow -->
+      <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur1" />
+      <!-- Create a sharper, more intense core glow -->
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur2" />
+      
+      <!-- Merge the layers: wide glow, sharp glow, then crisp original text -->
+      <feMerge>
+        <feMergeNode in="blur1" />
+        <feMergeNode in="blur2" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <rect width="100%" height="100%" fill="#0B0F19" />
+  <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="#FFF" stroke="#FF2E93" stroke-width="2" font-family="Courier New" font-size="64" font-weight="bold" filter="url(#neon-glow)">
+    OPEN 24/7
+  </text>
+</svg>
+''';
+      final Uint8List bytes = encodeSvg(
+        xml: svg,
+        debugName: 'neon-glow',
+        enableClippingOptimizer: false,
+        enableMaskingOptimizer: false,
+        enableOverdrawOptimizer: false,
+      );
+      final listener = TestListener();
+      const codec = VectorGraphicsCodec();
+      codec.decode(bytes.buffer.asByteData(), listener);
+
+      final Iterable<OnPaintBlur> blurs = listener.commands.whereType<OnPaintBlur>().where(
+        (b) => b.sigmaX == 4.0 && b.sigmaY == 4.0,
+      );
+      expect(blurs.length, 2); // fill and stroke of text
+    });
+
+    test('Smooth UI Background Gradient (Mesh Style)', () {
+      const svg = '''
+<!-- Feature: Smooth UI Background Gradient ("Mesh" Style) via high stdDeviation blur -->
+<svg width="600" height="400" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- High standard deviation blends the distinct shapes seamlessly -->
+    <filter id="heavy-blur">
+      <feGaussianBlur stdDeviation="80" />
+    </filter>
+  </defs>
+  
+  <!-- Base background color -->
+  <rect width="100%" height="100%" fill="#0F172A" />
+  
+  <!-- Blurring container holding the colored blobs -->
+  <g filter="url(#heavy-blur)">
+    <circle cx="150" cy="120" r="130" fill="#38BDF8" opacity="0.6" />
+    <circle cx="450" cy="280" r="160" fill="#EC4899" opacity="0.5" />
+    <circle cx="300" cy="200" r="110" fill="#6366F1" opacity="0.6" />
+  </g>
+</svg>
+''';
+      final Uint8List bytes = encodeSvg(
+        xml: svg,
+        debugName: 'heavy-blur',
+        enableClippingOptimizer: false,
+        enableMaskingOptimizer: false,
+        enableOverdrawOptimizer: false,
+      );
+      final listener = TestListener();
+      const codec = VectorGraphicsCodec();
+      codec.decode(bytes.buffer.asByteData(), listener);
+
+      final Iterable<OnPaintBlur> blurs = listener.commands.whereType<OnPaintBlur>().where(
+        (b) => b.sigmaX == 80.0 && b.sigmaY == 80.0,
+      );
+      expect(blurs.length, 1); // applied to the save layer of the group
+    });
+
+    test('Glassmorphism / Frosted Glass Panel', () {
+      const svg = '''
+<!-- Feature: Glassmorphism / Frosted Glass Panel overlay using clipped feGaussianBlur shapes -->
+<svg width="500" height="350" viewBox="0 0 500 350" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- A standard background blur filter -->
+    <filter id="glass-blur">
+      <feGaussianBlur stdDeviation="20" />
+    </filter>
+    
+    <!-- Clip path to match our UI card dimensions -->
+    <clipPath id="card-shape">
+      <rect x="100" y="75" width="300" height="200" rx="20" />
+    </clipPath>
+  </defs>
+
+  <!-- Colorful backdrop layer -->
+  <rect width="100%" height="100%" fill="#1E1E2F" />
+  <circle cx="160" cy="130" r="90" fill="#FF5E62" />
+  <circle cx="360" cy="220" r="100" fill="#FF9966" />
+
+  <!-- The Frosted Glass Card Technique -->
+  <!-- 1. Duplicate background layer clipped and heavily blurred -->
+  <g clip-path="url(#card-shape)">
+    <rect width="100%" height="100%" fill="#1E1E2F" />
+    <circle cx="160" cy="130" r="90" fill="#FF5E62" filter="url(#glass-blur)" />
+    <circle cx="360" cy="220" r="100" fill="#FF9966" filter="url(#glass-blur)" />
+    
+    <!-- 2. Semi-transparent white tint fill for the frosted appearance -->
+    <rect x="100" y="75" width="300" height="200" fill="#FFFFFF" opacity="0.07" />
+  </g>
+
+  <!-- 3. Crisp white border stroke overlaying the card to establish depth -->
+  <rect x="100" y="75" width="300" height="200" rx="20" fill="none" stroke="#FFFFFF" stroke-width="1.5" opacity="0.25" />
+</svg>
+''';
+      final Uint8List bytes = encodeSvg(
+        xml: svg,
+        debugName: 'glassmorphism',
+        enableClippingOptimizer: false,
+        enableMaskingOptimizer: false,
+        enableOverdrawOptimizer: false,
+      );
+      final listener = TestListener();
+      const codec = VectorGraphicsCodec();
+      codec.decode(bytes.buffer.asByteData(), listener);
+
+      final Iterable<OnPaintBlur> blurs = listener.commands.whereType<OnPaintBlur>().where(
+        (b) => b.sigmaX == 20.0 && b.sigmaY == 20.0,
+      );
+      expect(blurs.length, 2); // two blurred circles
+    });
+
+    test('Directional Motion Blur', () {
+      const svg = '''
+<!-- Feature: Directional Motion Blur using decoupled axes in stdDeviation="X Y" -->
+<svg width="500" height="150" viewBox="0 0 500 150" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- stdDeviation="Horizontal Vertical". Setting vertical to 0 creates a horizontal streak -->
+    <filter id="motion-blur-x" x="-50%" y="0%" width="200%" height="100%">
+      <feGaussianBlur stdDeviation="25 0" />
+    </filter>
+  </defs>
+
+  <rect width="100%" height="100%" fill="#111827" />
+
+  <!-- The trailing motion streak -->
+  <circle cx="300" cy="75" r="30" fill="#F59E0B" filter="url(#motion-blur-x)" opacity="0.8" />
+  
+  <!-- The crisp leading object -->
+  <circle cx="360" cy="75" r="30" fill="#F59E0B" />
+</svg>
+''';
+      final Uint8List bytes = encodeSvg(
+        xml: svg,
+        debugName: 'motion-blur',
+        enableClippingOptimizer: false,
+        enableMaskingOptimizer: false,
+        enableOverdrawOptimizer: false,
+      );
+      final listener = TestListener();
+      const codec = VectorGraphicsCodec();
+      codec.decode(bytes.buffer.asByteData(), listener);
+
+      final Iterable<OnPaintBlur> blurs = listener.commands.whereType<OnPaintBlur>().where(
+        (b) => b.sigmaX == 25.0 && b.sigmaY == 0.0,
+      );
+      expect(blurs.length, 1); // directional blur (25, 0)
+    });
+  });
 }
 
 class TestListener extends VectorGraphicsCodecListener {
@@ -381,6 +593,11 @@ class TestListener extends VectorGraphicsCodecListener {
         shaderId: shaderId,
       ),
     );
+  }
+
+  @override
+  void onPaintBlur(int paintId, double sigmaX, double sigmaY) {
+    commands.add(OnPaintBlur(paintId, sigmaX, sigmaY));
   }
 
   @override
@@ -1111,4 +1328,25 @@ bool _listEquals<E>(List<E>? left, List<E>? right) {
     }
   }
   return true;
+}
+
+@immutable
+class OnPaintBlur {
+  const OnPaintBlur(this.paintId, this.sigmaX, this.sigmaY);
+  final int paintId;
+  final double sigmaX;
+  final double sigmaY;
+
+  @override
+  int get hashCode => Object.hash(paintId, sigmaX, sigmaY);
+
+  @override
+  bool operator ==(Object other) =>
+      other is OnPaintBlur &&
+      other.paintId == paintId &&
+      other.sigmaX == sigmaX &&
+      other.sigmaY == sigmaY;
+
+  @override
+  String toString() => 'OnPaintBlur(paintId: $paintId, sigmaX: $sigmaX, sigmaY: $sigmaY)';
 }

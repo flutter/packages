@@ -164,7 +164,11 @@ class CommandBuilderVisitor extends Visitor<void, void> with ErrorOnUnResolvedNo
   void visitResolvedMaskNode(ResolvedMaskNode maskNode, void data) {
     _builder.addSaveLayer(Paint(blendMode: maskNode.blendMode, fill: const Fill()));
     maskNode.child.accept(this, data);
-    _builder.addMask();
+    if (maskNode.maskType == 'alpha') {
+      _builder.addSaveLayer(const Paint(blendMode: BlendMode.dstIn, fill: Fill()));
+    } else {
+      _builder.addMask();
+    }
     maskNode.mask.accept(this, data);
     _builder.restore();
     _builder.restore();
