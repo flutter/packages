@@ -61,7 +61,9 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
         return true; // Return true if maybePop handled the pop
       }
     }
-
+    if (currentConfiguration.matches.isEmpty) {
+      return false;
+    }
     // Fallback to onExit if maybePop did not handle the pop
     final GoRoute lastRoute = currentConfiguration.last.route;
     if (lastRoute.onExit != null && navigatorKey.currentContext != null) {
@@ -115,7 +117,9 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
       // Set state directly without canPop check
       states.add(navigatorKey.currentState!);
     }
-
+    if (currentConfiguration.matches.isEmpty) {
+      return states.reversed;
+    }
     RouteMatchBase walker = currentConfiguration.matches.last;
     while (walker is ShellRouteMatch) {
       final NavigatorState potentialCandidate = walker.navigatorKey.currentState!;
