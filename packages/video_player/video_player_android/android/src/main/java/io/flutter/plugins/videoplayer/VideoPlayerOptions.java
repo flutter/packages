@@ -4,18 +4,21 @@
 
 package io.flutter.plugins.videoplayer;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 public class VideoPlayerOptions {
   public boolean mixWithOthers;
 
   /**
    * The duration of the back buffer in milliseconds, used to configure ExoPlayer's load control.
    */
-  public Long backBufferDurationMs;
+  @Nullable public Long backBufferDurationMs;
 
   public VideoPlayerOptions() {}
 
   /** Copy constructor to ensure all options are reliably copied. */
-  public VideoPlayerOptions(VideoPlayerOptions other) {
+  public VideoPlayerOptions(@NonNull VideoPlayerOptions other) {
     this.mixWithOthers = other.mixWithOthers;
     this.backBufferDurationMs = other.backBufferDurationMs;
   }
