@@ -23,8 +23,8 @@ let package = Package(
     .target(
       name: "test_plugin",
       dependencies: [
-    .product(name: "FlutterFramework", package: "FlutterFramework")
-  ],
+        .product(name: "FlutterFramework", package: "FlutterFramework")
+      ],
       resources: []
     )
   ]

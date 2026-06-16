@@ -23,8 +23,8 @@ let package = Package(
     .target(
       name: "alternate_language_test_plugin",
       dependencies: [
-    .product(name: "FlutterFramework", package: "FlutterFramework")
-  ],
+        .product(name: "FlutterFramework", package: "FlutterFramework")
+      ],
       resources: [],
       cSettings: [
         .headerSearchPath("include/alternate_language_test_plugin")
