@@ -52,6 +52,10 @@ abstract class TokenTemplate {
   /// E.g., 'Icon Button' for generating 'icon_button_m3_defaults.g.dart'.
   String get name;
 
+  /// The path of the parent file relative to `lib/src`.
+  /// E.g., 'icon_button.dart' or 'buttons/icon_button.dart'.
+  String get parentFilePath;
+
   /// The path to the library's directory where generated files are placed.
   @visibleForTesting
   String get materialLib {
@@ -99,8 +103,12 @@ abstract class TokenTemplate {
     final fileName = '$materialLib/$outputFileName';
     if (verbose) {
       stdout.writeln('Generating file: $fileName');
-      stdout.writeln('Target parent file name: $name.dart');
+      stdout.writeln('Target parent file path: lib/src/$parentFilePath');
     }
+    assert(
+      !parentFilePath.startsWith('/') && !parentFilePath.startsWith('lib/'),
+      'parentFilePath must be relative to lib/src/ (e.g. "icon_button.dart").',
+    );
     final file = File(fileName);
     if (!file.existsSync()) {
       if (verbose) {
@@ -108,8 +116,6 @@ abstract class TokenTemplate {
       }
       file.createSync(recursive: true);
     }
-
-    final parentName = '$name.dart';
 
     if (verbose) {
       stdout.writeln('Generating contents...');
@@ -124,7 +130,7 @@ abstract class TokenTemplate {
     final buffer = StringBuffer();
     buffer.write(_copyrightHeader);
     buffer.write(_headerComment);
-    buffer.write("part of '../$parentName';\n\n");
+    buffer.write("part of '../$parentFilePath';\n\n");
     buffer.write(contents);
 
     if (verbose) {

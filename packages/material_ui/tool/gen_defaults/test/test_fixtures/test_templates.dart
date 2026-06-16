@@ -14,6 +14,9 @@ class M3EIconButtonTemplate extends M3ETokenTemplate {
   String get name => 'Icon Button';
 
   @override
+  String get parentFilePath => 'icon_button.dart';
+
+  @override
   String get materialLib => customMaterialLib;
 
   @override
@@ -34,6 +37,9 @@ class M3IconButtonTemplate extends M3TokenTemplate {
 
   @override
   String get name => 'Icon Button';
+
+  @override
+  String get parentFilePath => 'icon_button.dart';
 
   @override
   String get materialLib => customMaterialLib;
@@ -58,6 +64,9 @@ class UnformattedTemplate extends M3TokenTemplate {
   String get name => 'Unformatted';
 
   @override
+  String get parentFilePath => 'unformatted.dart';
+
+  @override
   String get materialLib => customMaterialLib;
 
   @override
@@ -80,6 +89,9 @@ class InvalidTemplate extends M3TokenTemplate {
   String get name => 'Invalid';
 
   @override
+  String get parentFilePath => 'invalid.dart';
+
+  @override
   String get materialLib => customMaterialLib;
 
   @override
@@ -99,6 +111,9 @@ class SnakeCaseNameTemplate extends M3TokenTemplate {
 
   @override
   String get name => 'snake_case_name';
+
+  @override
+  String get parentFilePath => 'snake_case_name.dart';
 
   @override
   String get materialLib => customMaterialLib;
