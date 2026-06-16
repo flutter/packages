@@ -1,7 +1,3 @@
-## 1.3.0
-
-* Updates minimum Flutter version to 3.41 and adds FlutterFramework dependency to SwiftPM plugins.
-
 ## 1.2.4
 
 * Adds support for UIScene lifecycle.

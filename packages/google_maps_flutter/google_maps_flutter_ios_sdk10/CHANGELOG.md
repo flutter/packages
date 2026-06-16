@@ -1,7 +1,3 @@
-## 2.19.0
-
-* Updates minimum Flutter version to 3.41 and adds FlutterFramework dependency to SwiftPM plugins.
-
 ## 2.18.4
 
 * Updates README to include setup information.

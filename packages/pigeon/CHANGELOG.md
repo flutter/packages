@@ -1,7 +1,3 @@
-## 27.2.0
-
-* Updates minimum Flutter version to 3.41 and adds FlutterFramework dependency to SwiftPM plugins.
-
 ## 27.1.0
 
 * [swift] Adds `CaseIterable` conformance to generated enums.

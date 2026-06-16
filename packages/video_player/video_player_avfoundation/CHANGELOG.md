@@ -1,7 +1,3 @@
-## 2.10.0
-
-* Updates minimum Flutter version to 3.41 and adds FlutterFramework dependency to SwiftPM plugins.
-
 ## 2.9.7
 
 * Forces tone-mapping to SDR on iOS to prevent washed-out HDR video playback.

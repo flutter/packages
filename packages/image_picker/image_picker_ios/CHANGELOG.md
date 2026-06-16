@@ -1,7 +1,3 @@
-## 0.8.14
-
-* Updates minimum Flutter version to 3.41 and adds FlutterFramework dependency to SwiftPM plugins.
-
 ## 0.8.13+6
 
 * Replaces deprecated `kUTTypeGIF` with `UTTypeGIF` to fix iOS 15+ deprecation warnings.

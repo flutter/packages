@@ -1,7 +1,3 @@
-## 0.4.11
-
-* Updates minimum Flutter version to 3.41 and adds FlutterFramework dependency to SwiftPM plugins.
-
 ## 0.4.10
 
 * Clarifies `completePurchase` usage and the consequences of unfinished transactions in the README and API docstrings.

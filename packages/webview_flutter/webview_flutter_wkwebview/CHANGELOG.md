@@ -1,7 +1,3 @@
-## 3.27.0
-
-* Updates minimum Flutter version to 3.41 and adds FlutterFramework dependency to SwiftPM plugins.
-
 ## 3.26.0
 
 * Adds new method for accessing a native `WKWebView` from a `FlutterPluginRegistrar`.

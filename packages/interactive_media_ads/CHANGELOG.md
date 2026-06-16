@@ -1,7 +1,3 @@
-## 0.3.1
-
-* Updates minimum Flutter version to 3.41 and adds FlutterFramework dependency to SwiftPM plugins.
-
 ## 0.3.0+16
 
 * Bumps the androidx group across 10 directories with 1 update.

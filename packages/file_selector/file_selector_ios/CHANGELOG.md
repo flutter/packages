@@ -1,7 +1,3 @@
-## 0.5.4
-
-* Updates minimum Flutter version to 3.41 and adds FlutterFramework dependency to SwiftPM plugins.
-
 ## 0.5.3+5
 
 * Improves compatibility with `UIScene`.

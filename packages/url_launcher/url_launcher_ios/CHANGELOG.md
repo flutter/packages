@@ -1,7 +1,3 @@
-## 6.5.0
-
-* Updates minimum Flutter version to 3.41 and adds FlutterFramework dependency to SwiftPM plugins.
-
 ## 6.4.1
 
 * Updates example app to current APIs.
