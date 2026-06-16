@@ -279,9 +279,9 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
             ShellRouteMatch match,
             RouteMatchList matchList,
             List<NavigatorObserver>? observers,
-            String? restorationScopeId,
+            String? restorationScopeId, {
             ValueListenable<bool>? navigatorActive,
-          ) {
+          }) {
             return PopScope(
               // Prevent ShellRoute from being popped, for example
               // by an iOS back gesture, when the route has active sub-routes.

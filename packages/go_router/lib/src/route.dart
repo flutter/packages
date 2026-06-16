@@ -54,9 +54,9 @@ typedef NavigatorBuilder =
       ShellRouteMatch match,
       RouteMatchList matchList,
       List<NavigatorObserver>? observers,
-      String? restorationScopeId,
+      String? restorationScopeId, {
       ValueListenable<bool>? navigatorActive,
-    );
+    });
 
 /// Signature for function used in [RouteBase.onExit].
 ///
@@ -567,9 +567,9 @@ class ShellRouteContext {
     BuildContext context,
     List<NavigatorObserver>? observers,
     bool notifyRootObserver,
-    String? restorationScopeId,
+    String? restorationScopeId, {
     ValueListenable<bool>? navigatorActive,
-  ) {
+  }) {
     final effectiveObservers = <NavigatorObserver>[...?observers];
 
     if (notifyRootObserver) {
@@ -585,7 +585,7 @@ class ShellRouteContext {
       routeMatchList,
       effectiveObservers,
       restorationScopeId,
-      navigatorActive,
+      navigatorActive: navigatorActive,
     );
   }
 }
@@ -734,7 +734,6 @@ class ShellRoute extends ShellRouteBase {
         observers,
         notifyRootObserver,
         restorationScopeId,
-        null,
       );
       return builder!(context, state, navigator);
     }
@@ -753,7 +752,6 @@ class ShellRoute extends ShellRouteBase {
         observers,
         notifyRootObserver,
         restorationScopeId,
-        null,
       );
       return pageBuilder!(context, state, navigator);
     }
@@ -1380,7 +1378,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
         branch.observers,
         route.notifyRootObserver,
         branch.restorationScopeId,
-        branchState.navigatorActive,
+        navigatorActive: branchState.navigatorActive,
       );
     }
     _updateActiveBranchNavigatorFlags();
@@ -1420,7 +1418,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
           matchList,
           branch.observers,
           branch.restorationScopeId,
-          branchState.navigatorActive,
+          navigatorActive: branchState.navigatorActive,
         );
 
         branchState.location.value = matchList;
