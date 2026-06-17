@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:cross_file_darwin/cross_file_darwin.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:mime/mime.dart' as mime;
@@ -29,7 +30,11 @@ class FileOpenScreen extends StatelessWidget {
               context: context,
               builder: (BuildContext context) =>
                   TextDisplay(filename: filename, fileContents: fileContents),
-            );
+            ).then((_) {
+              file
+                  .getExtension<SecurityScopedDarwinScopedStorageXFileExtension>()
+                  .stopAccessingSecurityScopedResource();
+            });
           }
         case _:
           debugPrint('File Uri: ${file.uri}');
