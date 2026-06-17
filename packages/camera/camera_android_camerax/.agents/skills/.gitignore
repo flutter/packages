@@ -3,6 +3,7 @@
 
 # Un-ignore specific checked-in skills
 # (Add specific contributor skills here as they are created)
+!check-readiness/
 
 # Keep essential configuration and docs
 !.gitignore

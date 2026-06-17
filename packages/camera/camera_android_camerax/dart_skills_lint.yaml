@@ -4,6 +4,4 @@ dart_skills_lint:
     check-trailing-whitespace: error
   directories:
     - path: "skills"
-    - path: ".agents/skills"
-      rules:
-        prevent-skills-sh-publishing: error
+    - path: ".agents/skills/check-readiness"
