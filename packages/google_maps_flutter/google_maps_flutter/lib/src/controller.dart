@@ -93,8 +93,20 @@ class GoogleMapController {
     );
     _streamSubscriptions.add(
       GoogleMapsFlutterPlatform.instance
+          .onPolylineEdited(mapId: mapId)
+          .listen((PolylineEditEvent e) => _googleMapState.onPolylineEdited(e.value, e.points)),
+    );
+    _streamSubscriptions.add(
+      GoogleMapsFlutterPlatform.instance
           .onPolygonTap(mapId: mapId)
           .listen((PolygonTapEvent e) => _googleMapState.onPolygonTap(e.value)),
+    );
+    _streamSubscriptions.add(
+      GoogleMapsFlutterPlatform.instance
+          .onPolygonEdited(mapId: mapId)
+          .listen(
+            (PolygonEditEvent e) => _googleMapState.onPolygonEdited(e.value, e.points, e.holes),
+          ),
     );
     _streamSubscriptions.add(
       GoogleMapsFlutterPlatform.instance

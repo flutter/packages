@@ -194,6 +194,37 @@ void main() {
     expect(map.polylineUpdates.last.polylinesToAdd.isEmpty, true);
   });
 
+  testWidgets('Setting editable triggers change', (WidgetTester tester) async {
+    const p1 = Polyline(polylineId: PolylineId('polyline_1'));
+    const p1Editable = Polyline(polylineId: PolylineId('polyline_1'), editable: true);
+
+    await tester.pumpWidget(_mapWithPolylines(<Polyline>{p1}));
+    await tester.pumpWidget(_mapWithPolylines(<Polyline>{p1Editable}));
+
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+    expect(map.polylineUpdates.last.polylinesToChange.length, 1);
+    expect(map.polylineUpdates.last.polylinesToChange.first.editable, equals(true));
+    expect(map.polylineUpdates.last.polylineIdsToRemove.isEmpty, true);
+    expect(map.polylineUpdates.last.polylinesToAdd.isEmpty, true);
+  });
+
+  testWidgets('Update onEdited does not trigger platform change', (WidgetTester tester) async {
+    var p1 = const Polyline(polylineId: PolylineId('polyline_1'), editable: true);
+    await tester.pumpWidget(_mapWithPolylines(<Polyline>{p1}));
+
+    p1 = Polyline(
+      polylineId: const PolylineId('polyline_1'),
+      editable: true,
+      onEdited: (List<LatLng> points) {},
+    );
+    await tester.pumpWidget(_mapWithPolylines(<Polyline>{p1}));
+
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+    expect(map.polylineUpdates.last.polylinesToChange.isEmpty, true);
+    expect(map.polylineUpdates.last.polylineIdsToRemove.isEmpty, true);
+    expect(map.polylineUpdates.last.polylinesToAdd.isEmpty, true);
+  });
+
   testWidgets('multi-update with delays', (WidgetTester tester) async {
     platform.simulatePlatformDelay = true;
 

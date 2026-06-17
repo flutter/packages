@@ -218,8 +218,18 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Stream<PolylineEditEvent> onPolylineEdited({required int mapId}) {
+    return mapEventStreamController.stream.whereType<PolylineEditEvent>();
+  }
+
+  @override
   Stream<PolygonTapEvent> onPolygonTap({required int mapId}) {
     return mapEventStreamController.stream.whereType<PolygonTapEvent>();
+  }
+
+  @override
+  Stream<PolygonEditEvent> onPolygonEdited({required int mapId}) {
+    return mapEventStreamController.stream.whereType<PolygonEditEvent>();
   }
 
   @override

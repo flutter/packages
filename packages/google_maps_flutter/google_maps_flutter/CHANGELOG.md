@@ -1,3 +1,7 @@
+## 2.18.0
+
+* Adds support for editable polylines and polygons on web.
+
 ## 2.17.1
 
 * Updates README to link to implementation packages for platform-specific
