@@ -1,6 +1,8 @@
 ---
 name: check-readiness
 description: Run this skill to check if the repository is ready for new work. Use this skill whenever the user asks to "check readiness", "see if we are ready to start work", or when starting a new task in the camera_android_camerax package.
+metadata:
+  internal: true
 ---
 # Check Readiness
 

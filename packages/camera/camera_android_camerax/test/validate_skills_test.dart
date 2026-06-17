@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:logging/logging.dart';
 
 void main() {
-  test('Validate Agent Skills', () async {
+  test('Validate Skills', () async {
     final Level oldLevel = Logger.root.level;
     Logger.root.level = Level.ALL;
     final StreamSubscription<LogRecord> subscription = Logger.root.onRecord.listen((record) {
