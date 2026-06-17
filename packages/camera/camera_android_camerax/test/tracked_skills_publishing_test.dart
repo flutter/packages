@@ -17,15 +17,15 @@ void main() {
     // to prevent accidental publishing.
 
     // 1. Get tracked files using git ls-files
-    final processResult = await Process.run('git', ['ls-files', '.agents/skills']);
+    final ProcessResult processResult = await Process.run('git', ['ls-files', '.agents/skills']);
     expect(processResult.exitCode, 0, reason: 'git ls-files should succeed');
 
     final output = processResult.stdout as String;
-    final lines = output.split('\n').where((line) => line.trim().isNotEmpty);
+    final Iterable<String> lines = output.split('\n').where((line) => line.trim().isNotEmpty);
 
     final trackedSkillDirs = <String>{};
     for (final line in lines) {
-      final parts = line.split('/');
+      final List<String> parts = line.split('/');
       // We look for files inside .agents/skills/<skill-name>/
       // parts[0] is .agents, parts[1] is skills
       if (parts.length >= 4 && parts[0] == '.agents' && parts[1] == 'skills') {
@@ -36,7 +36,7 @@ void main() {
     expect(trackedSkillDirs, isNotEmpty, reason: 'Should find at least one tracked skill');
 
     // 2. Parse configuration
-    final config = await ConfigParser.loadConfig();
+    final Configuration config = await ConfigParser.loadConfig();
     final session = ValidationSession(
       config: config,
       resolvedRules: <String, AnalysisSeverity>{},
@@ -52,7 +52,7 @@ void main() {
 
     for (final skillDir in trackedSkillDirs) {
       final expectedPath = '.agents/skills/$skillDir';
-      final resolvedRules = session.resolveRulesForPath(expectedPath);
+      final Map<String, AnalysisSeverity> resolvedRules = session.resolveRulesForPath(expectedPath);
 
       expect(
         resolvedRules.containsKey('prevent-skills-sh-publishing'),
