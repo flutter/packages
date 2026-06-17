@@ -186,7 +186,7 @@ void main() {
         test('anchor element is clicked', () async {
           final mockAnchor = html.document.createElement('a') as html.HTMLAnchorElement;
 
-          final testOverrides = XFileTestOverrides(createAnchorElement: (_, __) => mockAnchor);
+          final testOverrides = XFileTestOverrides(createAnchorElement: (_, _) => mockAnchor);
 
           final file = WebScopedStorageXFile(
             WebScopedStorageXFileCreationParams.fromBlob(testFile, testOverrides: testOverrides),

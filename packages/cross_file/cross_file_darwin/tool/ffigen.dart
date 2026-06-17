@@ -24,7 +24,6 @@ void main() {
     objectiveC: ObjectiveC(
       interfaces: Interfaces(
         include: (Declaration declaration) {
-          print('Apple: ${declaration.originalName}');
           return <String>{
             'NSFileManager',
             'NSObject',
