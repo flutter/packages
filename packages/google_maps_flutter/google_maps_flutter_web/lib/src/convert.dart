@@ -808,7 +808,8 @@ gmaps.PolygonOptions _polygonOptionsFromPolygon(gmaps.Map googleMap, Polygon pol
     ..visible = polygon.visible
     ..zIndex = polygon.zIndex
     ..geodesic = polygon.geodesic
-    ..clickable = polygon.consumeTapEvents;
+    ..clickable = polygon.consumeTapEvents
+    ..editable = polygon.editable;
 }
 
 List<gmaps.LatLng> _ensureHoleHasReverseWinding(
@@ -867,7 +868,8 @@ gmaps.PolylineOptions _polylineOptionsFromPolyline(gmaps.Map googleMap, Polyline
     ..visible = polyline.visible
     ..zIndex = polyline.zIndex
     ..geodesic = polyline.geodesic
-    ..clickable = polyline.consumeTapEvents;
+    ..clickable = polyline.consumeTapEvents
+    ..editable = polyline.editable;
   //  this.endCap = Cap.buttCap,
   //  this.jointType = JointType.mitered,
   //  this.patterns = const <PatternItem>[],

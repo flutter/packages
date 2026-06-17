@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:js_interop';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps/google_maps.dart' as gmaps;
@@ -135,6 +136,119 @@ void main() {
         }, throwsAssertionError);
       });
     });
+
+    group('onEdited', () {
+      late gmaps.Polygon editablePolygon;
+
+      setUp(() {
+        editablePolygon = gmaps.Polygon(
+          gmaps.PolygonOptions()
+            ..editable = true
+            ..paths = <JSArray<gmaps.LatLng>>[
+              <gmaps.LatLng>[gmaps.LatLng(0, 0), gmaps.LatLng(1, 0), gmaps.LatLng(1, 1)].toJS,
+              <gmaps.LatLng>[
+                gmaps.LatLng(0.1, 0.1),
+                gmaps.LatLng(0.2, 0.1),
+                gmaps.LatLng(0.2, 0.2),
+              ].toJS,
+            ].toJS,
+        );
+      });
+
+      testWidgets('fires onEdited on setAt with outer path and holes', (WidgetTester tester) async {
+        final completer = Completer<({List<gmaps.LatLng> outer, List<List<gmaps.LatLng>> holes})>();
+        PolygonController(
+          polygon: editablePolygon,
+          onEdited: (List<gmaps.LatLng> outer, List<List<gmaps.LatLng>> holes) {
+            if (!completer.isCompleted) {
+              completer.complete((outer: outer, holes: holes));
+            }
+          },
+        );
+
+        editablePolygon.paths.getAt(0).setAt(0, gmaps.LatLng(5, 5));
+
+        final ({List<gmaps.LatLng> outer, List<List<gmaps.LatLng>> holes}) result =
+            await completer.future;
+        expect(result.outer, hasLength(3));
+        expect(result.outer.first.lat, 5);
+        expect(result.outer.first.lng, 5);
+        expect(result.holes, hasLength(1));
+        expect(result.holes.first, hasLength(3));
+      });
+
+      testWidgets('fires onEdited when a hole path is mutated', (WidgetTester tester) async {
+        final completer = Completer<({List<gmaps.LatLng> outer, List<List<gmaps.LatLng>> holes})>();
+        PolygonController(
+          polygon: editablePolygon,
+          onEdited: (List<gmaps.LatLng> outer, List<List<gmaps.LatLng>> holes) {
+            if (!completer.isCompleted) {
+              completer.complete((outer: outer, holes: holes));
+            }
+          },
+        );
+
+        editablePolygon.paths.getAt(1).setAt(0, gmaps.LatLng(0.9, 0.9));
+
+        final ({List<gmaps.LatLng> outer, List<List<gmaps.LatLng>> holes}) result =
+            await completer.future;
+        expect(result.outer, hasLength(3));
+        expect(result.holes, hasLength(1));
+        expect(result.holes.first.first.lat, 0.9);
+        expect(result.holes.first.first.lng, 0.9);
+      });
+
+      testWidgets('fires onEdited on insertAt', (WidgetTester tester) async {
+        final completer = Completer<List<gmaps.LatLng>>();
+        PolygonController(
+          polygon: editablePolygon,
+          onEdited: (List<gmaps.LatLng> outer, List<List<gmaps.LatLng>> holes) {
+            if (!completer.isCompleted) {
+              completer.complete(outer);
+            }
+          },
+        );
+
+        editablePolygon.paths.getAt(0).insertAt(0, gmaps.LatLng(9, 9));
+
+        final List<gmaps.LatLng> result = await completer.future;
+        expect(result, hasLength(4));
+        expect(result.first.lat, 9);
+      });
+
+      testWidgets('fires onEdited on removeAt', (WidgetTester tester) async {
+        final completer = Completer<List<gmaps.LatLng>>();
+        PolygonController(
+          polygon: editablePolygon,
+          onEdited: (List<gmaps.LatLng> outer, List<List<gmaps.LatLng>> holes) {
+            if (!completer.isCompleted) {
+              completer.complete(outer);
+            }
+          },
+        );
+
+        editablePolygon.paths.getAt(0).removeAt(0);
+
+        final List<gmaps.LatLng> result = await completer.future;
+        expect(result, hasLength(2));
+      });
+
+      testWidgets('remove cancels onEdited subscriptions', (WidgetTester tester) async {
+        var callCount = 0;
+        final controller = PolygonController(
+          polygon: editablePolygon,
+          onEdited: (List<gmaps.LatLng> outer, List<List<gmaps.LatLng>> holes) {
+            callCount++;
+          },
+        );
+
+        controller.remove();
+        editablePolygon.paths.getAt(0).setAt(0, gmaps.LatLng(7, 7));
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+
+        expect(callCount, 0);
+      });
+    });
   });
 
   group('PolylineController', () {
@@ -186,6 +300,89 @@ void main() {
         expect(() {
           controller.update(options);
         }, throwsAssertionError);
+      });
+    });
+
+    group('onEdited', () {
+      late gmaps.Polyline editablePolyline;
+
+      setUp(() {
+        editablePolyline = gmaps.Polyline(
+          gmaps.PolylineOptions()
+            ..editable = true
+            ..path = <gmaps.LatLng>[gmaps.LatLng(0, 0), gmaps.LatLng(1, 1)].toJS,
+        );
+      });
+
+      testWidgets('fires onEdited on setAt with updated path', (WidgetTester tester) async {
+        final completer = Completer<List<gmaps.LatLng>>();
+        PolylineController(
+          polyline: editablePolyline,
+          onEdited: (List<gmaps.LatLng> path) {
+            if (!completer.isCompleted) {
+              completer.complete(path);
+            }
+          },
+        );
+
+        editablePolyline.path.setAt(0, gmaps.LatLng(2, 2));
+
+        final List<gmaps.LatLng> result = await completer.future;
+        expect(result, hasLength(2));
+        expect(result.first.lat, 2);
+        expect(result.first.lng, 2);
+      });
+
+      testWidgets('fires onEdited on insertAt with updated path', (WidgetTester tester) async {
+        final completer = Completer<List<gmaps.LatLng>>();
+        PolylineController(
+          polyline: editablePolyline,
+          onEdited: (List<gmaps.LatLng> path) {
+            if (!completer.isCompleted) {
+              completer.complete(path);
+            }
+          },
+        );
+
+        editablePolyline.path.insertAt(0, gmaps.LatLng(9, 9));
+
+        final List<gmaps.LatLng> result = await completer.future;
+        expect(result, hasLength(3));
+        expect(result.first.lat, 9);
+      });
+
+      testWidgets('fires onEdited on removeAt with updated path', (WidgetTester tester) async {
+        final completer = Completer<List<gmaps.LatLng>>();
+        PolylineController(
+          polyline: editablePolyline,
+          onEdited: (List<gmaps.LatLng> path) {
+            if (!completer.isCompleted) {
+              completer.complete(path);
+            }
+          },
+        );
+
+        editablePolyline.path.removeAt(0);
+
+        final List<gmaps.LatLng> result = await completer.future;
+        expect(result, hasLength(1));
+        expect(result.first.lat, 1);
+      });
+
+      testWidgets('remove cancels onEdited subscriptions', (WidgetTester tester) async {
+        var callCount = 0;
+        final controller = PolylineController(
+          polyline: editablePolyline,
+          onEdited: (List<gmaps.LatLng> path) {
+            callCount++;
+          },
+        );
+
+        controller.remove();
+        editablePolyline.path.setAt(0, gmaps.LatLng(3, 3));
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+
+        expect(callCount, 0);
       });
     });
   });
