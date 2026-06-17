@@ -19,7 +19,7 @@ void main() {
   });
 
   group('openRead', () {
-    test('null start and null end', () async {
+    test('correctly reads all bytes with null start and null end', () async {
       final file = DarwinScopedStorageXFile(
         DarwinScopedStorageXFileCreationParams.photoKit(localIdentifier: 'id'),
       );
@@ -40,28 +40,33 @@ void main() {
       );
     });
 
-    test('oijspio', () async {
+    test('correctly reads desired sublist', () async {
       final file = DarwinScopedStorageXFile(
         DarwinScopedStorageXFileCreationParams.photoKit(localIdentifier: 'id'),
       );
 
       final MockAssetResourceReader reader = setUpReader();
 
-      final Stream<Uint8List> stream = file.openRead(2, 8);
+      final bytes = Uint8List.fromList(<int>[0, 1, 2, 3, 4]);
+      final Stream<Uint8List> stream = file.openRead(1, 4);
 
-      final allBytes = Uint8List.fromList(<int>[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
-      reader.onDataReceived(reader, allBytes.sublist(0, 2));
-      reader.onDataReceived(reader, allBytes.sublist(2, 4));
-      reader.onDataReceived(reader, allBytes.sublist(4, 6));
-      reader.onDataReceived(reader, allBytes.sublist(6, 8));
-      reader.onDataReceived(reader, allBytes.sublist(8, 10));
+      // Ignore byte before desired sublist.
+      reader.onDataReceived(reader, Uint8List.fromList(<int>[bytes[0]]));
+      // Read byte at start of desired sublist.
+      reader.onDataReceived(reader, Uint8List.fromList(<int>[bytes[1]]));
+      // Read byte between start and end of desired sublist.
+      reader.onDataReceived(reader, Uint8List.fromList(<int>[bytes[2]]));
+      // Read byte at end of desire sublist
+      reader.onDataReceived(reader, Uint8List.fromList(<int>[bytes[3]]));
+      // Ignore byte after desired sublist.
+      reader.onDataReceived(reader, Uint8List.fromList(<int>[bytes[4]]));
       reader.onCompletion(reader, null);
 
       expect(
         await stream.reduce(
           (Uint8List first, Uint8List second) => Uint8List.fromList(<int>[...first, ...second]),
         ),
-        allBytes.sublist(2, 8),
+        bytes.sublist(1, 4),
       );
     });
   });
