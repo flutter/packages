@@ -754,7 +754,7 @@ private let hlsAudioTestURI =
       #expect(mockAsset.loadedTracksAsynchronously)
     }
   }
-  
+
   @Test func videoOutputIsConfiguredWithBT709ColorProperties() throws {
     let item = StubPlayerItem()
     let stubAVFactory = StubFVPAVFactory(player: nil, playerItem: item, pixelBufferSource: nil)
@@ -775,7 +775,7 @@ private let hlsAudioTestURI =
         == AVVideoTransferFunction_ITU_R_709_2)
     #expect(
       colorProperties[AVVideoYCbCrMatrixKey] as? String == AVVideoYCbCrMatrix_ITU_R_709_2)
-  }  
+  }
 
   // MARK: - Video Track Tests
 
@@ -933,7 +933,7 @@ private let hlsAudioTestURI =
 
     // Wait for player item to become ready
     let item = try #require(player.player.currentItem)
-    await waitForPlayerItemStatus(item, state: .readyToPlay)
+    try await waitForPlayerItemStatus(item, state: .readyToPlay)
 
     // Now test getVideoTracks
     await withCheckedContinuation { continuation in
@@ -964,7 +964,7 @@ private let hlsAudioTestURI =
 
     // Wait for player item to become ready
     let item = try #require(player.player.currentItem)
-    await waitForPlayerItemStatus(item, state: .readyToPlay)
+    try await waitForPlayerItemStatus(item, state: .readyToPlay)
 
     // Test setting a specific bitrate
     player.selectVideoTrack(withBitrate: 1_000_000, error: &error)
@@ -1007,20 +1007,35 @@ private let hlsAudioTestURI =
     return factory.playerItem(with: asset)
   }
 
-  private func waitForPlayerItemStatus(_ item: AVPlayerItem, state: AVPlayerItem.Status) async {
-    await withCheckedContinuation { continuation in
+  private func waitForPlayerItemStatus(_ item: AVPlayerItem, state: AVPlayerItem.Status)
+    async
+    throws
+  {
+    try await withCheckedThrowingContinuation { continuation in
       // Check whether it already has the desired status.
       if item.status == state {
         continuation.resume()
         return
       }
-      // If not, wait for that status.
+
+      if item.status == .failed {
+        continuation.resume(throwing: item.error ?? NSError(domain: "VideoPlayerTests", code: 1))
+        return
+      }
+
+      // If not, wait for that status. The observation token must be retained until the callback
+      // fires; otherwise KVO unregisters immediately and the continuation is never resumed.
       var observation: NSKeyValueObservation?
-      observation = item.observe(\.status, options: [.initial, .new]) {
-        [observation = observation] _, change in
-        if change.newValue == state {
+      observation = item.observe(\.status, options: [.initial, .new]) { observedItem, _ in
+        if observedItem.status == state {
           observation?.invalidate()
+          observation = nil
           continuation.resume()
+        } else if observedItem.status == .failed {
+          observation?.invalidate()
+          observation = nil
+          continuation.resume(
+            throwing: observedItem.error ?? NSError(domain: "VideoPlayerTests", code: 1))
         }
       }
     }

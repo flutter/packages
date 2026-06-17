@@ -207,23 +207,18 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<List<VideoTrack>> getVideoTracks(int playerId) async {
-    final NativeVideoTrackData nativeData = await _playerWith(
-      id: playerId,
-    ).getVideoTracks();
+    final NativeVideoTrackData nativeData = await _playerWith(id: playerId).getVideoTracks();
     final tracks = <VideoTrack>[];
 
     // Convert HLS variant tracks (iOS 15+)
     if (nativeData.mediaSelectionTracks != null) {
-      for (final MediaSelectionVideoTrackData track
-          in nativeData.mediaSelectionTracks!) {
+      for (final MediaSelectionVideoTrackData track in nativeData.mediaSelectionTracks!) {
         // Use bitrate as the track ID for HLS variants
         final trackId = 'variant_${track.bitrate ?? track.variantIndex}';
         // Generate label from resolution if not provided
         final String? label =
             track.label ??
-            (track.width != null && track.height != null
-                ? '${track.height}p'
-                : null);
+            (track.width != null && track.height != null ? '${track.height}p' : null);
         tracks.add(
           VideoTrack(
             id: trackId,
@@ -246,9 +241,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
         // Generate label from resolution if not provided
         final String? label =
             track.label ??
-            (track.width != null && track.height != null
-                ? '${track.height}p'
-                : null);
+            (track.width != null && track.height != null ? '${track.height}p' : null);
         tracks.add(
           VideoTrack(
             id: trackId,

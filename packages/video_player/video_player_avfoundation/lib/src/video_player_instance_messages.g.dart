@@ -188,16 +188,7 @@ class MediaSelectionVideoTrackData {
   bool isSelected;
 
   List<Object?> _toList() {
-    return <Object?>[
-      variantIndex,
-      label,
-      bitrate,
-      width,
-      height,
-      frameRate,
-      codec,
-      isSelected,
-    ];
+    return <Object?>[variantIndex, label, bitrate, width, height, frameRate, codec, isSelected];
   }
 
   Object encode() {
@@ -221,8 +212,7 @@ class MediaSelectionVideoTrackData {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! MediaSelectionVideoTrackData ||
-        other.runtimeType != runtimeType) {
+    if (other is! MediaSelectionVideoTrackData || other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -270,15 +260,7 @@ class AssetVideoTrackData {
   bool isSelected;
 
   List<Object?> _toList() {
-    return <Object?>[
-      trackId,
-      label,
-      width,
-      height,
-      frameRate,
-      codec,
-      isSelected,
-    ];
+    return <Object?>[trackId, label, width, height, frameRate, codec, isSelected];
   }
 
   Object encode() {
@@ -343,8 +325,7 @@ class NativeVideoTrackData {
     result as List<Object?>;
     return NativeVideoTrackData(
       assetTracks: (result[0] as List<Object?>?)?.cast<AssetVideoTrackData>(),
-      mediaSelectionTracks: (result[1] as List<Object?>?)
-          ?.cast<MediaSelectionVideoTrackData>(),
+      mediaSelectionTracks: (result[1] as List<Object?>?)?.cast<MediaSelectionVideoTrackData>(),
     );
   }
 
@@ -602,15 +583,9 @@ class VideoPlayerInstanceApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[bitrate],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[bitrate]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 }
