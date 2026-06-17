@@ -30,7 +30,7 @@ its size is known beforehand), so that case can be handled programmatically.
 
 ### Tests
 
-Tests for the web platform can be run with `flutter test -d chrome`.
+Tests for the web platform can be run with `flutter test --platform chrome`.
 
 [1]: https://pub.dev/packages/cross_file
 [2]: https://flutter.dev/to/endorsed-federated-plugin
