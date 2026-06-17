@@ -56,7 +56,7 @@ base class IOXFile extends PlatformXFile with IOXFileExtension {
   @override
   Future<int?> length() async {
     try {
-      return file.length();
+      return await file.length();
     } on FileSystemException {
       return null;
     }

@@ -46,13 +46,13 @@ Future<XFile> accessPlatformFeatures() async {
   }
 
   await file
-      .maybeGetExtension<DarwinScopedStorageXFileExtension>()
+      .maybeGetExtension<SecurityScopedDarwinScopedStorageXFileExtension>()
       ?.startAccessingSecurityScopedResource();
 
   debugPrint(await file.readAsString());
 
   await file
-      .maybeGetExtension<DarwinScopedStorageXFileExtension>()
+      .maybeGetExtension<SecurityScopedDarwinScopedStorageXFileExtension>()
       ?.stopAccessingSecurityScopedResource();
   // #enddocregion platform_features
 
