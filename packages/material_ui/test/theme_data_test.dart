@@ -24,6 +24,43 @@ void main() {
     expect(dawn.primaryColor, Color.lerp(dark.primaryColor, light.primaryColor, 0.25));
   });
 
+  test('ThemeData supports style variants', () {
+    expect(ThemeData().variant, StyleVariant.material3);
+    expect(
+      ThemeData(variant: StyleVariant.material3Expressive).variant,
+      StyleVariant.material3Expressive,
+    );
+    expect(
+      ThemeData.light(variant: StyleVariant.material3Expressive).variant,
+      StyleVariant.material3Expressive,
+    );
+    expect(
+      ThemeData.dark(variant: StyleVariant.material3Expressive).variant,
+      StyleVariant.material3Expressive,
+    );
+    expect(
+      ThemeData.fallback(variant: StyleVariant.material3Expressive).variant,
+      StyleVariant.material3Expressive,
+    );
+  });
+
+  test('ThemeData.copyWith supports style variants', () {
+    final theme = ThemeData();
+    final ThemeData expressiveTheme = theme.copyWith(variant: StyleVariant.material3Expressive);
+
+    expect(expressiveTheme.variant, StyleVariant.material3Expressive);
+    expect(expressiveTheme, isNot(theme));
+    expect(expressiveTheme.hashCode, isNot(theme.hashCode));
+  });
+
+  test('ThemeData.lerp switches style variants discretely', () {
+    final material3 = ThemeData(variant: StyleVariant.material3);
+    final expressive = ThemeData(variant: StyleVariant.material3Expressive);
+
+    expect(ThemeData.lerp(material3, expressive, 0.25).variant, StyleVariant.material3);
+    expect(ThemeData.lerp(material3, expressive, 0.75).variant, StyleVariant.material3Expressive);
+  });
+
   test('ThemeData objects with .styleFrom() members are equal', () {
     ThemeData createThemeData() {
       return ThemeData(
@@ -1290,6 +1327,7 @@ void main() {
       scrollbarTheme: const ScrollbarThemeData(radius: Radius.circular(10.0)),
       splashFactory: InkRipple.splashFactory,
       useMaterial3: false,
+      variant: StyleVariant.material3,
       visualDensity: VisualDensity.standard,
       // COLOR
       canvasColor: Colors.black,
@@ -1419,6 +1457,7 @@ void main() {
       scrollbarTheme: const ScrollbarThemeData(radius: Radius.circular(10.0)),
       splashFactory: InkRipple.splashFactory,
       useMaterial3: true,
+      variant: StyleVariant.material3Expressive,
       visualDensity: VisualDensity.standard,
       // COLOR
       canvasColor: Colors.white,
@@ -1523,6 +1562,7 @@ void main() {
       scrollbarTheme: otherTheme.scrollbarTheme,
       splashFactory: otherTheme.splashFactory,
       useMaterial3: otherTheme.useMaterial3,
+      variant: otherTheme.variant,
       visualDensity: otherTheme.visualDensity,
       // COLOR
       canvasColor: otherTheme.canvasColor,
@@ -1615,6 +1655,7 @@ void main() {
     expect(themeDataCopy.scrollbarTheme, equals(otherTheme.scrollbarTheme));
     expect(themeDataCopy.splashFactory, equals(otherTheme.splashFactory));
     expect(themeDataCopy.useMaterial3, equals(otherTheme.useMaterial3));
+    expect(themeDataCopy.variant, equals(otherTheme.variant));
     expect(themeDataCopy.visualDensity, equals(otherTheme.visualDensity));
     // COLOR
     expect(themeDataCopy.canvasColor, equals(otherTheme.canvasColor));
@@ -1761,8 +1802,9 @@ void main() {
       'platform',
       'scrollbarTheme',
       'splashFactory',
-      'visualDensity',
       'useMaterial3',
+      'variant',
+      'visualDensity',
       // COLOR
       'colorScheme',
       'primaryColor',
