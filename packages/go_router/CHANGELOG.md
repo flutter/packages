@@ -1,3 +1,7 @@
+## 17.4.0
+
+- Adds `maybePop` to `GoRouter`, `GoRouterDelegate`, and `GoRouterHelper`. This method mirrors [Navigator.maybePop] and [BackButton] by returning `false` instead of throwing when there is nothing to pop, and calls [GoRouter.restore] when a pop completes synchronously.
+
 ## 17.3.0
 
 - Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.

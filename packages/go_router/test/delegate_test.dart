@@ -442,6 +442,111 @@ void main() {
       expect(goRouter.routerDelegate.currentConfiguration.matches.length, 0);
       expect(goRouter.routerDelegate.canPop(), false);
     });
+
+    testWidgets('It should return false on screen A and true on screen B after push', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter goRouter = GoRouter(
+        initialLocation: '/a',
+        routes: <GoRoute>[
+          GoRoute(path: '/a', builder: (_, _) => const Text('Screen A')),
+          GoRoute(path: '/b', builder: (_, _) => const Text('Screen B')),
+        ],
+      );
+      addTearDown(goRouter.dispose);
+      await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Screen A'), findsOneWidget);
+      expect(goRouter.routerDelegate.canPop(), isFalse);
+
+      goRouter.push('/b');
+      await tester.pumpAndSettle();
+
+      expect(find.text('Screen B'), findsOneWidget);
+      expect(goRouter.routerDelegate.canPop(), isTrue);
+
+      goRouter.pop();
+      await tester.pumpAndSettle();
+
+      expect(find.text('Screen A'), findsOneWidget);
+      expect(goRouter.routerDelegate.canPop(), isFalse);
+      expect(goRouter.routerDelegate.currentConfiguration.matches.length, 1);
+      expect(goRouter.routerDelegate.currentConfiguration.uri.path, '/a');
+    });
+
+    testWidgets('It should check shell navigator when root navigator cannot pop', (
+      WidgetTester tester,
+    ) async {
+      final shellNavigatorKey = GlobalKey<NavigatorState>();
+      final GoRouter goRouter = GoRouter(
+        initialLocation: '/a',
+        routes: <RouteBase>[
+          ShellRoute(
+            navigatorKey: shellNavigatorKey,
+            builder: (_, _, Widget child) => child,
+            routes: <GoRoute>[
+              GoRoute(path: '/a', builder: (_, _) => const Text('Screen A')),
+              GoRoute(path: '/b', builder: (_, _) => const Text('Screen B')),
+            ],
+          ),
+        ],
+      );
+      addTearDown(goRouter.dispose);
+      await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
+      await tester.pumpAndSettle();
+
+      expect(goRouter.routerDelegate.canPop(), isFalse);
+      expect(goRouter.routerDelegate.navigatorKey.currentState?.canPop(), isFalse);
+
+      goRouter.push('/b');
+      await tester.pumpAndSettle();
+
+      expect(goRouter.routerDelegate.canPop(), isTrue);
+      expect(shellNavigatorKey.currentState?.canPop(), isTrue);
+      expect(goRouter.routerDelegate.navigatorKey.currentState?.canPop(), isFalse);
+
+      goRouter.pop();
+      await tester.pumpAndSettle();
+
+      expect(find.text('Screen A'), findsOneWidget);
+      expect(goRouter.routerDelegate.canPop(), isFalse);
+      expect(shellNavigatorKey.currentState?.canPop(), isFalse);
+    });
+  });
+
+  group('willHandlePopInternally', () {
+    testWidgets('does not remove route when page handles pop internally', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter goRouter = GoRouter(
+        initialLocation: '/',
+        routes: <GoRoute>[
+          GoRoute(
+            path: '/',
+            builder: (_, _) => const Text('Home'),
+            routes: <GoRoute>[
+              GoRoute(
+                path: 'internal',
+                pageBuilder: (_, _) => const _InternalPopPage(),
+              ),
+            ],
+          ),
+        ],
+      );
+      addTearDown(goRouter.dispose);
+      await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
+
+      goRouter.push('/internal');
+      await tester.pumpAndSettle();
+      expect(find.text('Internal'), findsOneWidget);
+
+      goRouter.pop();
+      await tester.pumpAndSettle();
+
+      expect(find.text('Internal'), findsOneWidget);
+      expect(find.text('Home'), findsNothing);
+    });
   });
 
   group('pushReplacement', () {
@@ -751,4 +856,46 @@ class DummyStatefulWidget extends StatefulWidget {
 class _DummyStatefulWidgetState extends State<DummyStatefulWidget> {
   @override
   Widget build(BuildContext context) => Container();
+}
+
+class _InternalPopPage extends Page<void> {
+  const _InternalPopPage();
+
+  @override
+  Route<void> createRoute(BuildContext context) => _InternalPopRoute(this);
+}
+
+class _InternalPopRoute extends PageRoute<void> {
+  _InternalPopRoute(_InternalPopPage page) : super(settings: page);
+
+  @override
+  Color? get barrierColor => null;
+
+  @override
+  String? get barrierLabel => null;
+
+  @override
+  bool get opaque => true;
+
+  @override
+  bool get maintainState => true;
+
+  @override
+  Duration get transitionDuration => Duration.zero;
+
+  @override
+  bool get willHandlePopInternally => true;
+
+  @override
+  // ignore: must_call_super
+  bool didPop(void result) => false;
+
+  @override
+  Widget buildPage(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+  ) {
+    return const Text('Internal');
+  }
 }
