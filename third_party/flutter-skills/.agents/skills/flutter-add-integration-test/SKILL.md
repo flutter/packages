@@ -41,7 +41,7 @@ Use the Dart/Flutter MCP server tools to interactively explore and manipulate th
 
 ## Test Authoring Guidelines
 
-Structure integration tests using the `flutter_test` API paradigm. 
+Structure integration tests using the `flutter_test` API paradigm.
 
 - Create a dedicated `integration_test/` directory at the project root.
 - Name all test files using the `<name>_test.dart` convention.
@@ -63,7 +63,7 @@ Execute tests using the `flutter drive` command. Require a host driver script lo
   `flutter drive --driver=test_driver/integration_test.dart --target=integration_test/app_test.dart -d chrome`
 - **If testing headless web:** Run with `-d web-server`.
 - **If testing on Android (Local):** Run `flutter drive --driver=test_driver/integration_test.dart --target=integration_test/app_test.dart`.
-- **If testing on Firebase Test Lab (Android):** 
+- **If testing on Firebase Test Lab (Android):**
   1. Build debug APK: `flutter build apk --debug`
   2. Build test APK: `./gradlew app:assembleAndroidTest`
   3. Upload both APKs to the Firebase Test Lab console.
