@@ -1,3 +1,7 @@
+## 6.3.1
+
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11. Adds FlutterFramework dependency to SwiftPM package manifest.
+
 ## 6.3.0
 
 * Adds UIScene compatibility.

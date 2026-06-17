@@ -1,3 +1,7 @@
+## 6.4.2
+
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11. Adds FlutterFramework dependency to SwiftPM package manifest.
+
 ## 6.4.1
 
 * Updates example app to current APIs.

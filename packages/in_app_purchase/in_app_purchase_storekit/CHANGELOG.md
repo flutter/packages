@@ -1,3 +1,7 @@
+## 0.4.10+1
+
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11. Adds FlutterFramework dependency to SwiftPM package manifest.
+
 ## 0.4.10
 
 * Clarifies `completePurchase` usage and the consequences of unfinished transactions in the README and API docstrings.

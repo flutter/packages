@@ -1,3 +1,7 @@
+## 3.26.1
+
+* Adds FlutterFramework dependency to SwiftPM package manifest.
+
 ## 3.26.0
 
 * Adds new method for accessing a native `WKWebView` from a `FlutterPluginRegistrar`.
@@ -105,7 +109,7 @@
 ## 3.18.6
 
 * Fixes `PlatformException` when calling `loadFlutterAsset` on macOS.
-* Updates native wrapper with methods handling `SecTust` and `SecCertificate`. 
+* Updates native wrapper with methods handling `SecTust` and `SecCertificate`.
 
 ## 3.18.5
 
@@ -129,7 +133,7 @@
 * Fixes bug that would allow the API wrapper to return `null` when a non-null value was required in
   a callback method.
 * Changes default method to enable JavaScript for web content to
-  `WKWebpagePreferences.allowsContentJavaScript`. 
+  `WKWebpagePreferences.allowsContentJavaScript`.
 
 ## 3.18.0
 
