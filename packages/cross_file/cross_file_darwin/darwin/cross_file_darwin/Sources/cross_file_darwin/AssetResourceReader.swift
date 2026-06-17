@@ -30,7 +30,7 @@ class AssetResourceReader {
             self.delegate?.onCompletion(reader: self, error: error?.localizedDescription)
           }
         }
-        
+
         return true
       }
     }
@@ -48,7 +48,6 @@ protocol AssetResourceReaderDelegate {
   /// Corresponds to the `dataReceivedHandler` parameter for
   /// `PHAssetResourceManager.requestDataForAssetResource`.
   func onDataReceived(reader: AssetResourceReader, bytes: Data)
-
 
   /// Start reading bytes from the asset with the given identifier.
   ///

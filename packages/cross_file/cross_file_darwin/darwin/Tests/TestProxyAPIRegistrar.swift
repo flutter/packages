@@ -4,6 +4,8 @@
 
 import XCTest
 
+@testable import cross_file_darwin
+
 #if os(iOS)
   import Flutter
 #elseif os(macOS)
@@ -12,16 +14,14 @@ import XCTest
   #error("Unsupported platform.")
 #endif
 
-@testable import cross_file_darwin
-
 class TestProxyApiRegistrar: ProxyAPIRegistrar {
   init() {
     super.init(
-        binaryMessenger: TestBinaryMessenger())
+      binaryMessenger: TestBinaryMessenger())
   }
 
   override func dispatchOnMainThread(
-      execute work: @escaping (@escaping (String, PigeonError) -> Void) -> Void
+    execute work: @escaping (@escaping (String, PigeonError) -> Void) -> Void
   ) {
     work { _, _ in }
   }

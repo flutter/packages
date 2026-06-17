@@ -91,8 +91,7 @@ abstract base class PlatformXFile extends PlatformXEntity {
   PlatformXFile.implementation(PlatformXFileCreationParams super.params);
 
   @override
-  PlatformXFileCreationParams get params =>
-      super.params as PlatformXFileCreationParams;
+  PlatformXFileCreationParams get params => super.params as PlatformXFileCreationParams;
 
   /// Date and time when the resource was last modified, if the information is
   /// available.

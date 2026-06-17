@@ -8,14 +8,11 @@ import 'android_library.g.dart';
 import 'android_scoped_storage_cross_file.dart';
 
 /// Implementation of [PlatformScopedStorageXDirectory] for iOS and macOS.
-base class AndroidScopedStorageXDirectory
-    extends PlatformScopedStorageXDirectory {
+base class AndroidScopedStorageXDirectory extends PlatformScopedStorageXDirectory {
   /// Constructs an [AndroidScopedStorageXDirectory].
   AndroidScopedStorageXDirectory(super.params) : super.implementation();
 
-  late final DocumentFile _documentFile = DocumentFile.fromTreeUri(
-    treeUri: params.uri,
-  );
+  late final DocumentFile _documentFile = DocumentFile.fromTreeUri(treeUri: params.uri);
 
   @override
   Future<bool> canRead() => _documentFile.canRead();
@@ -30,9 +27,7 @@ base class AndroidScopedStorageXDirectory
     for (final DocumentFile documentFile in await _documentFile.listFiles()) {
       final String uri = await documentFile.getUri();
       if (await documentFile.isFile()) {
-        yield AndroidScopedStorageXFile(
-          PlatformScopedStorageXFileCreationParams(uri: uri),
-        );
+        yield AndroidScopedStorageXFile(PlatformScopedStorageXFileCreationParams(uri: uri));
       } else if (await documentFile.isDirectory()) {
         yield AndroidScopedStorageXDirectory(
           PlatformScopedStorageXDirectoryCreationParams(uri: uri),

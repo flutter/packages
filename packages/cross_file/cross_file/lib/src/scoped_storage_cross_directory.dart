@@ -39,9 +39,7 @@ base class ScopedStorageXDirectory extends XDirectory {
   /// See [ScopedStorageXDirectory.fromCreationParams] for setting parameters
   /// for a specific platform.
   ScopedStorageXDirectory({required String uri})
-    : this.fromCreationParams(
-        PlatformScopedStorageXDirectoryCreationParams(uri: uri),
-      );
+    : this.fromCreationParams(PlatformScopedStorageXDirectoryCreationParams(uri: uri));
 
   /// Constructs a [ScopedStorageXDirectory].
   ///
@@ -68,21 +66,18 @@ base class ScopedStorageXDirectory extends XDirectory {
   /// final file = ScopedStorageXDirectory.fromCreationParams(params);
   /// ```
   /// {@endtemplate}
-  ScopedStorageXDirectory.fromCreationParams(
-    PlatformScopedStorageXDirectoryCreationParams params,
-  ) : this.fromPlatform(PlatformScopedStorageXDirectory(params));
+  ScopedStorageXDirectory.fromCreationParams(PlatformScopedStorageXDirectoryCreationParams params)
+    : this.fromPlatform(PlatformScopedStorageXDirectory(params));
 
   /// Constructs a [ScopedStorageXDirectory] from a specific platform
   /// implementation.
   @internal
-  const ScopedStorageXDirectory.fromPlatform(
-    PlatformScopedStorageXDirectory super.platform,
-  ) : super.fromPlatform();
+  const ScopedStorageXDirectory.fromPlatform(PlatformScopedStorageXDirectory super.platform)
+    : super.fromPlatform();
 
   @internal
   @override
-  PlatformScopedStorageXDirectory get platform =>
-      super.platform as PlatformScopedStorageXDirectory;
+  PlatformScopedStorageXDirectory get platform => super.platform as PlatformScopedStorageXDirectory;
 
   /// Whether the directory represented by this reference can be read.
   Future<bool> canRead() => platform.canRead();

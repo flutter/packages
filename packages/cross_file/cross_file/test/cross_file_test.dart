@@ -67,10 +67,7 @@ void main() {
       const message = 'Hello, World!';
       CrossFilePlatform.instance = TestCrossFilePlatform(
         onCreatePlatformXFile: (PlatformXFileCreationParams params) =>
-            TestXFile(
-              params,
-              onReadAsString: ({required Encoding encoding}) async => message,
-            ),
+            TestXFile(params, onReadAsString: ({required Encoding encoding}) async => message),
       );
 
       final file = XFile(uri: 'uri');

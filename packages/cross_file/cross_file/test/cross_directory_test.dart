@@ -30,10 +30,7 @@ void main() {
       ];
       CrossFilePlatform.instance = TestCrossFilePlatform(
         onCreatePlatformXDirectory: (PlatformXDirectoryCreationParams params) =>
-            TestXDirectory(
-              params,
-              onList: (ListParams params) => Stream.fromIterable(entities),
-            ),
+            TestXDirectory(params, onList: (ListParams params) => Stream.fromIterable(entities)),
       );
 
       final directory = XDirectory(uri: 'uri');

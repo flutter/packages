@@ -36,8 +36,7 @@ base class XFile extends XEntity {
   ///
   /// See [XFile.fromCreationParams] for setting parameters for a specific
   /// platform.
-  XFile({required String uri})
-    : this.fromCreationParams(PlatformXFileCreationParams(uri: uri));
+  XFile({required String uri}) : this.fromCreationParams(PlatformXFileCreationParams(uri: uri));
 
   /// Constructs a [XFile] from a [Uri].
   XFile.fromUri(Uri uri) : this(uri: uri.toString());
@@ -109,8 +108,7 @@ base class XFile extends XEntity {
   ///
   /// Platforms may throw an exception if there is an error opening or reading
   /// the resource.
-  Stream<Uint8List> openRead([int? start, int? end]) =>
-      platform.openRead(start, end);
+  Stream<Uint8List> openRead([int? start, int? end]) => platform.openRead(start, end);
 
   /// Reads the entire resource contents as a list of bytes.
   ///

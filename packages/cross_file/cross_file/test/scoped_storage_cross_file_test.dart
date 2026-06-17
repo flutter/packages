@@ -16,12 +16,8 @@ void main() {
     test('lastModified', () async {
       final lastModified = DateTime.now();
       CrossFilePlatform.instance = TestCrossFilePlatform(
-        onCreatePlatformScopedStorageXFile:
-            (PlatformScopedStorageXFileCreationParams params) =>
-                TestScopedStorageXFile(
-                  params,
-                  onLastModified: () async => lastModified,
-                ),
+        onCreatePlatformScopedStorageXFile: (PlatformScopedStorageXFileCreationParams params) =>
+            TestScopedStorageXFile(params, onLastModified: () async => lastModified),
       );
 
       final file = ScopedStorageXFile(uri: 'uri');
@@ -32,9 +28,8 @@ void main() {
     test('length', () async {
       const length = 42;
       CrossFilePlatform.instance = TestCrossFilePlatform(
-        onCreatePlatformScopedStorageXFile:
-            (PlatformScopedStorageXFileCreationParams params) =>
-                TestScopedStorageXFile(params, onLength: () async => length),
+        onCreatePlatformScopedStorageXFile: (PlatformScopedStorageXFileCreationParams params) =>
+            TestScopedStorageXFile(params, onLength: () async => length),
       );
 
       final file = ScopedStorageXFile(uri: 'uri');
@@ -47,12 +42,8 @@ void main() {
         Uint8List.fromList(<int>[5, 6]),
       ];
       CrossFilePlatform.instance = TestCrossFilePlatform(
-        onCreatePlatformScopedStorageXFile:
-            (PlatformScopedStorageXFileCreationParams params) =>
-                TestScopedStorageXFile(
-                  params,
-                  onOpenRead: () => Stream.fromIterable(data),
-                ),
+        onCreatePlatformScopedStorageXFile: (PlatformScopedStorageXFileCreationParams params) =>
+            TestScopedStorageXFile(params, onOpenRead: () => Stream.fromIterable(data)),
       );
 
       final file = ScopedStorageXFile(uri: 'uri');
@@ -63,12 +54,8 @@ void main() {
     test('readAsBytes', () async {
       final bytes = Uint8List.fromList(<int>[1, 2, 3]);
       CrossFilePlatform.instance = TestCrossFilePlatform(
-        onCreatePlatformScopedStorageXFile:
-            (PlatformScopedStorageXFileCreationParams params) =>
-                TestScopedStorageXFile(
-                  params,
-                  onReadAsBytes: () async => bytes,
-                ),
+        onCreatePlatformScopedStorageXFile: (PlatformScopedStorageXFileCreationParams params) =>
+            TestScopedStorageXFile(params, onReadAsBytes: () async => bytes),
       );
 
       final file = ScopedStorageXFile(uri: 'uri');
@@ -79,13 +66,11 @@ void main() {
     test('readAsString', () async {
       const message = 'Hello, World!';
       CrossFilePlatform.instance = TestCrossFilePlatform(
-        onCreatePlatformScopedStorageXFile:
-            (PlatformScopedStorageXFileCreationParams params) =>
-                TestScopedStorageXFile(
-                  params,
-                  onReadAsString: ({required Encoding encoding}) async =>
-                      message,
-                ),
+        onCreatePlatformScopedStorageXFile: (PlatformScopedStorageXFileCreationParams params) =>
+            TestScopedStorageXFile(
+              params,
+              onReadAsString: ({required Encoding encoding}) async => message,
+            ),
       );
 
       final file = ScopedStorageXFile(uri: 'uri');
@@ -96,9 +81,8 @@ void main() {
     test('exists', () async {
       const exists = true;
       CrossFilePlatform.instance = TestCrossFilePlatform(
-        onCreatePlatformScopedStorageXFile:
-            (PlatformScopedStorageXFileCreationParams params) =>
-                TestScopedStorageXFile(params, onExists: () async => exists),
+        onCreatePlatformScopedStorageXFile: (PlatformScopedStorageXFileCreationParams params) =>
+            TestScopedStorageXFile(params, onExists: () async => exists),
       );
 
       final file = ScopedStorageXFile(uri: 'uri');
@@ -109,9 +93,8 @@ void main() {
     test('name', () async {
       const name = 'name';
       CrossFilePlatform.instance = TestCrossFilePlatform(
-        onCreatePlatformScopedStorageXFile:
-            (PlatformScopedStorageXFileCreationParams params) =>
-                TestScopedStorageXFile(params, onName: () async => name),
+        onCreatePlatformScopedStorageXFile: (PlatformScopedStorageXFileCreationParams params) =>
+            TestScopedStorageXFile(params, onName: () async => name),
       );
 
       final file = ScopedStorageXFile(uri: 'uri');
@@ -122,9 +105,8 @@ void main() {
     test('canRead', () async {
       const canRead = false;
       CrossFilePlatform.instance = TestCrossFilePlatform(
-        onCreatePlatformScopedStorageXFile:
-            (PlatformScopedStorageXFileCreationParams params) =>
-                TestScopedStorageXFile(params, onCanRead: () async => canRead),
+        onCreatePlatformScopedStorageXFile: (PlatformScopedStorageXFileCreationParams params) =>
+            TestScopedStorageXFile(params, onCanRead: () async => canRead),
       );
 
       final file = ScopedStorageXFile(uri: 'uri');

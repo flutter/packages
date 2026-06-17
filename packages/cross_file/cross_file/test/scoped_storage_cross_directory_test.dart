@@ -15,10 +15,7 @@ void main() {
       CrossFilePlatform.instance = TestCrossFilePlatform(
         onCreatePlatformScopedStorageXDirectory:
             (PlatformScopedStorageXDirectoryCreationParams params) =>
-                TestScopedStorageXDirectory(
-                  params,
-                  onExists: () async => exists,
-                ),
+                TestScopedStorageXDirectory(params, onExists: () async => exists),
       );
 
       final directory = ScopedStorageXDirectory(uri: 'uri');
@@ -28,9 +25,7 @@ void main() {
 
     test('list', () async {
       final entities = <PlatformXEntity>[
-        TestScopedStorageXFile(
-          const PlatformScopedStorageXFileCreationParams(uri: 'uri1'),
-        ),
+        TestScopedStorageXFile(const PlatformScopedStorageXFileCreationParams(uri: 'uri1')),
         TestScopedStorageXDirectory(
           const PlatformScopedStorageXDirectoryCreationParams(uri: 'uri2'),
         ),
@@ -38,11 +33,10 @@ void main() {
       ];
       CrossFilePlatform.instance = TestCrossFilePlatform(
         onCreatePlatformScopedStorageXDirectory:
-            (PlatformScopedStorageXDirectoryCreationParams params) =>
-                TestScopedStorageXDirectory(
-                  params,
-                  onList: (ListParams params) => Stream.fromIterable(entities),
-                ),
+            (PlatformScopedStorageXDirectoryCreationParams params) => TestScopedStorageXDirectory(
+              params,
+              onList: (ListParams params) => Stream.fromIterable(entities),
+            ),
       );
 
       final directory = ScopedStorageXDirectory(uri: 'uri');
@@ -62,10 +56,7 @@ void main() {
       CrossFilePlatform.instance = TestCrossFilePlatform(
         onCreatePlatformScopedStorageXDirectory:
             (PlatformScopedStorageXDirectoryCreationParams params) =>
-                TestScopedStorageXDirectory(
-                  params,
-                  onCanRead: () async => canRead,
-                ),
+                TestScopedStorageXDirectory(params, onCanRead: () async => canRead),
       );
 
       final file = ScopedStorageXDirectory(uri: 'uri');

@@ -11,9 +11,7 @@ import 'package:pigeon/pigeon.dart';
     dartOut: 'lib/src/android_library.g.dart',
     kotlinOut:
         'android/src/main/kotlin/dev/flutter/packages/cross_file_android/proxies/AndroidLibrary.g.kt',
-    kotlinOptions: KotlinOptions(
-      package: 'dev.flutter.packages.cross_file_android.proxies',
-    ),
+    kotlinOptions: KotlinOptions(package: 'dev.flutter.packages.cross_file_android.proxies'),
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
@@ -70,11 +68,7 @@ abstract class DocumentFile {
 /// This class provides applications access to the content model.
 ///
 /// See https://developer.android.com/reference/kotlin/android/content/ContentResolver
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'android.content.ContentResolver',
-  ),
-)
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.content.ContentResolver'))
 abstract class ContentResolver {
   /// Helper field for accessing the `ContentResolver` from the current Android
   /// `Context`.
@@ -89,9 +83,7 @@ abstract class ContentResolver {
 /// stream of bytes.
 ///
 /// See https://developer.android.com/reference/java/io/InputStream.
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(fullClassName: 'java.io.InputStream'),
-)
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'java.io.InputStream'))
 abstract class InputStream {
   /// Reads some number of bytes from the input stream and stores them into the
   /// returns them.

@@ -9,9 +9,7 @@ import 'package:cross_file_platform_interface/cross_file_platform_interface.dart
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as path;
 
-final File testFile = File(
-  path.join(Directory.current.path, 'test', 'test_file.txt'),
-);
+final File testFile = File(path.join(Directory.current.path, 'test', 'test_file.txt'));
 
 void main() {
   group('IOXFile', () {
@@ -20,60 +18,43 @@ void main() {
     });
 
     test('lastModified', () async {
-      final file = PlatformXFile(
-        PlatformXFileCreationParams(uri: testFile.uri.toString()),
-      );
+      final file = PlatformXFile(PlatformXFileCreationParams(uri: testFile.uri.toString()));
 
       expect(await file.lastModified(), testFile.lastModifiedSync());
     });
 
     test('length', () async {
-      final file = PlatformXFile(
-        PlatformXFileCreationParams(uri: testFile.uri.toString()),
-      );
+      final file = PlatformXFile(PlatformXFileCreationParams(uri: testFile.uri.toString()));
 
       expect(await file.length(), await testFile.length());
     });
 
     test('openRead', () async {
-      final file = PlatformXFile(
-        PlatformXFileCreationParams(uri: testFile.uri.toString()),
-      );
+      final file = PlatformXFile(PlatformXFileCreationParams(uri: testFile.uri.toString()));
 
-      expect(
-        await file.openRead().toList(),
-        await testFile.openRead().toList(),
-      );
+      expect(await file.openRead().toList(), await testFile.openRead().toList());
     });
 
     test('readAsBytes', () async {
-      final file = PlatformXFile(
-        PlatformXFileCreationParams(uri: testFile.uri.toString()),
-      );
+      final file = PlatformXFile(PlatformXFileCreationParams(uri: testFile.uri.toString()));
 
       expect(await file.readAsBytes(), await testFile.readAsBytes());
     });
 
     test('readAsString', () async {
-      final file = PlatformXFile(
-        PlatformXFileCreationParams(uri: testFile.uri.toString()),
-      );
+      final file = PlatformXFile(PlatformXFileCreationParams(uri: testFile.uri.toString()));
 
       expect(await file.readAsString(), await testFile.readAsString());
     });
 
     test('exists', () async {
-      final file = PlatformXFile(
-        PlatformXFileCreationParams(uri: testFile.uri.toString()),
-      );
+      final file = PlatformXFile(PlatformXFileCreationParams(uri: testFile.uri.toString()));
 
       expect(await file.exists(), testFile.existsSync());
     });
 
     test('name', () async {
-      final file = PlatformXFile(
-        PlatformXFileCreationParams(uri: testFile.uri.toString()),
-      );
+      final file = PlatformXFile(PlatformXFileCreationParams(uri: testFile.uri.toString()));
 
       expect(await file.name(), 'test_file.txt');
     });

@@ -40,8 +40,7 @@ import 'platform_cross_entity.dart';
 /// }
 /// ```
 @immutable
-base class PlatformXDirectoryCreationParams
-    extends PlatformXEntityCreationParams {
+base class PlatformXDirectoryCreationParams extends PlatformXEntityCreationParams {
   /// Constructs a [PlatformXDirectoryCreationParams].
   const PlatformXDirectoryCreationParams({required super.uri});
 }
@@ -88,13 +87,10 @@ abstract base class PlatformXDirectory extends PlatformXEntity {
   /// Should only be used by platform implementations because they can't extend
   /// a class that only contains a factory constructor.
   @protected
-  PlatformXDirectory.implementation(
-    PlatformXDirectoryCreationParams super.params,
-  );
+  PlatformXDirectory.implementation(PlatformXDirectoryCreationParams super.params);
 
   @override
-  PlatformXDirectoryCreationParams get params =>
-      super.params as PlatformXDirectoryCreationParams;
+  PlatformXDirectoryCreationParams get params => super.params as PlatformXDirectoryCreationParams;
 
   /// Lists the sub-directories and files of this Directory.
   ///

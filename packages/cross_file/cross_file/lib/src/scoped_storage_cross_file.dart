@@ -38,9 +38,7 @@ base class ScopedStorageXFile extends XFile {
   /// See [ScopedStorageXFile.fromCreationParams] for setting parameters
   /// for a specific platform.
   ScopedStorageXFile({required String uri})
-    : this.fromCreationParams(
-        PlatformScopedStorageXFileCreationParams(uri: uri),
-      );
+    : this.fromCreationParams(PlatformScopedStorageXFileCreationParams(uri: uri));
 
   /// Constructs a [ScopedStorageXFile].
   ///
@@ -67,20 +65,17 @@ base class ScopedStorageXFile extends XFile {
   /// final file = ScopedStorageXFile.fromCreationParams(params);
   /// ```
   /// {@endtemplate}
-  ScopedStorageXFile.fromCreationParams(
-    PlatformScopedStorageXFileCreationParams params,
-  ) : this.fromPlatform(PlatformScopedStorageXFile(params));
+  ScopedStorageXFile.fromCreationParams(PlatformScopedStorageXFileCreationParams params)
+    : this.fromPlatform(PlatformScopedStorageXFile(params));
 
   /// Constructs a [ScopedStorageXFile] from a specific platform implementation.
   @internal
-  const ScopedStorageXFile.fromPlatform(
-    PlatformScopedStorageXFile super.platform,
-  ) : super.fromPlatform();
+  const ScopedStorageXFile.fromPlatform(PlatformScopedStorageXFile super.platform)
+    : super.fromPlatform();
 
   @internal
   @override
-  PlatformScopedStorageXFile get platform =>
-      super.platform as PlatformScopedStorageXFile;
+  PlatformScopedStorageXFile get platform => super.platform as PlatformScopedStorageXFile;
 
   /// Whether the resource represented by this reference can be read.
   Future<bool> canRead() => platform.canRead();

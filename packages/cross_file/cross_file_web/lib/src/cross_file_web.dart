@@ -15,8 +15,7 @@ base class CrossFileWeb extends CrossFilePlatform {
   }
 
   /// Whether the current implementation of `cross_file` is [CrossFileWeb].
-  static bool isCurrentImplementation() =>
-      CrossFilePlatform.instance.runtimeType == CrossFileWeb;
+  static bool isCurrentImplementation() => CrossFilePlatform.instance.runtimeType == CrossFileWeb;
 
   @override
   WebScopedStorageXFile createPlatformScopedStorageXFile(

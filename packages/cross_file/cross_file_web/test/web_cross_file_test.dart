@@ -17,13 +17,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:web/web.dart' as html;
 
 const String testFileStringContents = 'Hello, world! I ❤ ñ! 空手';
-final Uint8List testFileBytes = Uint8List.fromList(
-  utf8.encode(testFileStringContents),
-);
-final html.File testFile = html.File(
-  <JSUint8Array>[testFileBytes.toJS].toJS,
-  'hello.txt',
-);
+final Uint8List testFileBytes = Uint8List.fromList(utf8.encode(testFileStringContents));
+final html.File testFile = html.File(<JSUint8Array>[testFileBytes.toJS].toJS, 'hello.txt');
 final String testFileUrl = html.URL.createObjectURL(testFile as JSObject);
 
 void main() {
@@ -160,9 +155,7 @@ void main() {
 
           await file.download('');
 
-          final html.Element? container = html.document.querySelector(
-            '#$crossFileDomElementId',
-          );
+          final html.Element? container = html.document.querySelector('#$crossFileDomElementId');
 
           expect(container, isNotNull);
         });
@@ -174,9 +167,7 @@ void main() {
 
           await file.download('path');
 
-          final html.Element container = html.document.querySelector(
-            '#$crossFileDomElementId',
-          )!;
+          final html.Element container = html.document.querySelector('#$crossFileDomElementId')!;
 
           late html.HTMLAnchorElement element;
           for (var i = 0; i < container.childNodes.length; i++) {
@@ -193,18 +184,12 @@ void main() {
         });
 
         test('anchor element is clicked', () async {
-          final mockAnchor =
-              html.document.createElement('a') as html.HTMLAnchorElement;
+          final mockAnchor = html.document.createElement('a') as html.HTMLAnchorElement;
 
-          final testOverrides = XFileTestOverrides(
-            createAnchorElement: (_, __) => mockAnchor,
-          );
+          final testOverrides = XFileTestOverrides(createAnchorElement: (_, __) => mockAnchor);
 
           final file = WebScopedStorageXFile(
-            WebScopedStorageXFileCreationParams.fromBlob(
-              testFile,
-              testOverrides: testOverrides,
-            ),
+            WebScopedStorageXFileCreationParams.fromBlob(testFile, testOverrides: testOverrides),
           );
 
           var clicked = false;

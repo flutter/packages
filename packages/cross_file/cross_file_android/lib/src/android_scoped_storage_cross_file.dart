@@ -16,11 +16,11 @@ base class AndroidScopedStorageXFile extends PlatformScopedStorageXFile {
   /// Constructs an [AndroidScopedStorageXFile].
   AndroidScopedStorageXFile(super.params) : super.implementation();
 
-  late final android.DocumentFile _documentFile =
-      android.DocumentFile.fromSingleUri(singleUri: params.uri);
+  late final android.DocumentFile _documentFile = android.DocumentFile.fromSingleUri(
+    singleUri: params.uri,
+  );
 
-  late final android.ContentResolver _contentResolver =
-      android.ContentResolver.instance;
+  late final android.ContentResolver _contentResolver = android.ContentResolver.instance;
 
   /// Maximum number of bytes to read at a time from the native Android
   /// InputStream.
@@ -59,8 +59,7 @@ base class AndroidScopedStorageXFile extends PlatformScopedStorageXFile {
     int bytesToRead = (end ?? fileLength) - (start ?? 0);
     assert(bytesToRead >= 0);
 
-    final android.InputStream? inputStream = await _contentResolver
-        .openInputStream(params.uri);
+    final android.InputStream? inputStream = await _contentResolver.openInputStream(params.uri);
 
     if (inputStream case final android.InputStream inputStream) {
       if (start != null && start > 0) {
@@ -80,8 +79,7 @@ base class AndroidScopedStorageXFile extends PlatformScopedStorageXFile {
 
   @override
   Future<Uint8List> readAsBytes() async {
-    final android.InputStream? inputStream = await _contentResolver
-        .openInputStream(params.uri);
+    final android.InputStream? inputStream = await _contentResolver.openInputStream(params.uri);
     if (inputStream case final android.InputStream inputStream) {
       return inputStream.readAllBytes();
     }

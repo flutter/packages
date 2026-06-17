@@ -14,9 +14,7 @@ void main() {
 
         expect(
           await platform
-              .createPlatformXFile(
-                const PlatformXFileCreationParams(uri: 'test'),
-              )
+              .createPlatformXFile(const PlatformXFileCreationParams(uri: 'test'))
               .exists(),
           false,
         );
@@ -30,9 +28,7 @@ void main() {
 
         expect(
           await platform
-              .createPlatformXDirectory(
-                const PlatformXDirectoryCreationParams(uri: 'test'),
-              )
+              .createPlatformXDirectory(const PlatformXDirectoryCreationParams(uri: 'test'))
               .exists(),
           false,
         );
@@ -63,9 +59,7 @@ void main() {
         expect(
           await platform
               .createPlatformScopedStorageXDirectory(
-                const PlatformScopedStorageXDirectoryCreationParams(
-                  uri: 'test',
-                ),
+                const PlatformScopedStorageXDirectoryCreationParams(uri: 'test'),
               )
               .exists(),
           false,

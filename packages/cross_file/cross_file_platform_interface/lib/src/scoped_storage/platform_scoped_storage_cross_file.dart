@@ -38,8 +38,7 @@ import '../platform_cross_file.dart';
 /// }
 /// ```
 @immutable
-base class PlatformScopedStorageXFileCreationParams
-    extends PlatformXFileCreationParams {
+base class PlatformScopedStorageXFileCreationParams extends PlatformXFileCreationParams {
   /// Constructs a [PlatformScopedStorageXFileCreationParams].
   const PlatformScopedStorageXFileCreationParams({required super.uri});
 }
@@ -71,9 +70,7 @@ mixin PlatformScopedStorageXFileExtension implements PlatformXFileExtension {}
 /// scoped storage.
 abstract base class PlatformScopedStorageXFile extends PlatformXFile {
   /// Creates a new [PlatformScopedStorageXFile]
-  factory PlatformScopedStorageXFile(
-    PlatformScopedStorageXFileCreationParams params,
-  ) {
+  factory PlatformScopedStorageXFile(PlatformScopedStorageXFileCreationParams params) {
     assert(
       CrossFilePlatform.instance != null,
       'A platform implementation for `cross_file` has not been set. Please '
@@ -90,9 +87,8 @@ abstract base class PlatformScopedStorageXFile extends PlatformXFile {
   /// Should only be used by platform implementations because they can't extend
   /// a class that only contains a factory constructor.
   @protected
-  PlatformScopedStorageXFile.implementation(
-    PlatformScopedStorageXFileCreationParams super.params,
-  ) : super.implementation();
+  PlatformScopedStorageXFile.implementation(PlatformScopedStorageXFileCreationParams super.params)
+    : super.implementation();
 
   @override
   PlatformScopedStorageXFileCreationParams get params =>

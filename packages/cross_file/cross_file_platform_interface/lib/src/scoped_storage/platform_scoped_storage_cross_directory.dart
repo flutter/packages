@@ -38,8 +38,7 @@ import '../platform_cross_directory.dart';
 /// }
 /// ```
 @immutable
-base class PlatformScopedStorageXDirectoryCreationParams
-    extends PlatformXDirectoryCreationParams {
+base class PlatformScopedStorageXDirectoryCreationParams extends PlatformXDirectoryCreationParams {
   /// Constructs a [PlatformScopedStorageXDirectoryCreationParams].
   const PlatformScopedStorageXDirectoryCreationParams({required super.uri});
 }
@@ -65,16 +64,13 @@ base class PlatformScopedStorageXDirectoryCreationParams
 ///   Future<void> platformMethod();
 /// }
 /// ```
-mixin PlatformScopedStorageXDirectoryExtension
-    implements PlatformXDirectoryExtension {}
+mixin PlatformScopedStorageXDirectoryExtension implements PlatformXDirectoryExtension {}
 
 /// A reference to a directory (or folder) on the file system within a device's
 /// scoped storage.
 abstract base class PlatformScopedStorageXDirectory extends PlatformXDirectory {
   /// Creates a new [PlatformScopedStorageXDirectory]
-  factory PlatformScopedStorageXDirectory(
-    PlatformScopedStorageXDirectoryCreationParams params,
-  ) {
+  factory PlatformScopedStorageXDirectory(PlatformScopedStorageXDirectoryCreationParams params) {
     assert(
       CrossFilePlatform.instance != null,
       'A platform implementation for `cross_file` has not been set. Please '
@@ -82,9 +78,7 @@ abstract base class PlatformScopedStorageXDirectory extends PlatformXDirectory {
       '`CrossFilePlatform.instance` before use. For unit testing, '
       '`CrossFilePlatform.instance` can be set with your own test implementation.',
     );
-    return CrossFilePlatform.instance!.createPlatformScopedStorageXDirectory(
-      params,
-    );
+    return CrossFilePlatform.instance!.createPlatformScopedStorageXDirectory(params);
   }
 
   /// Used by the platform implementation to create a new

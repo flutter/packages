@@ -25,9 +25,7 @@ abstract base class CrossFilePlatform {
   }
 
   /// Creates a new [PlatformXDirectory].
-  PlatformXDirectory createPlatformXDirectory(
-    PlatformXDirectoryCreationParams params,
-  ) {
+  PlatformXDirectory createPlatformXDirectory(PlatformXDirectoryCreationParams params) {
     return _DefaultXDirectory(params);
   }
 
@@ -131,8 +129,7 @@ final class _DefaultScopedStorageXFile extends PlatformScopedStorageXFile {
 
 /// Implementation of [PlatformScopedStorageXDirectory} that represents a
 /// directory that does not exist.
-final class _DefaultScopedStorageXDirectory
-    extends PlatformScopedStorageXDirectory {
+final class _DefaultScopedStorageXDirectory extends PlatformScopedStorageXDirectory {
   _DefaultScopedStorageXDirectory(super.params) : super.implementation();
 
   @override

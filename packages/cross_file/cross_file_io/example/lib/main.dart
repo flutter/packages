@@ -68,10 +68,7 @@ class FileOpenScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Open a File'),
-        backgroundColor: Colors.blue,
-      ),
+      appBar: AppBar(title: const Text('Open a File'), backgroundColor: Colors.blue),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -102,11 +99,7 @@ class FileOpenScreen extends StatelessWidget {
 /// Widget that displays a text file in a dialog.
 class TextDisplay extends StatelessWidget {
   /// Default Constructor.
-  const TextDisplay({
-    super.key,
-    required this.filename,
-    required this.fileContents,
-  });
+  const TextDisplay({super.key, required this.filename, required this.fileContents});
 
   /// The name of the file.
   final String filename;
@@ -118,14 +111,9 @@ class TextDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(filename),
-      content: Scrollbar(
-        child: SingleChildScrollView(child: Text(fileContents)),
-      ),
+      content: Scrollbar(child: SingleChildScrollView(child: Text(fileContents))),
       actions: <Widget>[
-        TextButton(
-          child: const Text('Close'),
-          onPressed: () => Navigator.pop(context),
-        ),
+        TextButton(child: const Text('Close'), onPressed: () => Navigator.pop(context)),
       ],
     );
   }

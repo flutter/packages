@@ -17,13 +17,10 @@ base class IOXDirectoryCreationParams extends PlatformXDirectoryCreationParams {
     : this.fromDirectory(Directory.fromUri(Uri.parse(uri)));
 
   /// Constructs an [IOXDirectoryCreationParams] from a [Directory].
-  IOXDirectoryCreationParams.fromDirectory(this.directory)
-    : super(uri: directory.uri.toString());
+  IOXDirectoryCreationParams.fromDirectory(this.directory) : super(uri: directory.uri.toString());
 
   /// Constructs an [IOXDirectoryCreationParams] from a [PlatformXDirectoryCreationParams].
-  factory IOXDirectoryCreationParams.fromCreationParams(
-    PlatformXDirectoryCreationParams params,
-  ) {
+  factory IOXDirectoryCreationParams.fromCreationParams(PlatformXDirectoryCreationParams params) {
     return IOXDirectoryCreationParams(uri: params.uri);
   }
 
@@ -37,8 +34,7 @@ base class IOXDirectory extends PlatformXDirectory with IOXDirectoryExtension {
   IOXDirectory(super.params) : super.implementation();
 
   @override
-  late final IOXDirectoryCreationParams params =
-      super.params is IOXDirectoryCreationParams
+  late final IOXDirectoryCreationParams params = super.params is IOXDirectoryCreationParams
       ? super.params as IOXDirectoryCreationParams
       : IOXDirectoryCreationParams.fromCreationParams(super.params);
 
@@ -56,9 +52,7 @@ base class IOXDirectory extends PlatformXDirectory with IOXDirectoryExtension {
     await for (final FileSystemEntity entity in directory.list()) {
       switch (entity) {
         case final Directory directory:
-          yield IOXDirectory(
-            IOXDirectoryCreationParams.fromDirectory(directory),
-          );
+          yield IOXDirectory(IOXDirectoryCreationParams.fromDirectory(directory));
         case final File file:
           yield IOXFile(IOXFileCreationParams.fromFile(file));
       }

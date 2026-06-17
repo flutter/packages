@@ -25,11 +25,10 @@ void main() {
     when(mockDocumentFile.isDirectory()).thenAnswer((_) async => true);
 
     const uri = 'uri';
-    android.PigeonOverrides.documentFile_fromTreeUri =
-        ({required String treeUri}) {
-          expect(treeUri, uri);
-          return mockDocumentFile;
-        };
+    android.PigeonOverrides.documentFile_fromTreeUri = ({required String treeUri}) {
+      expect(treeUri, uri);
+      return mockDocumentFile;
+    };
 
     final directory = AndroidScopedStorageXDirectory(
       const PlatformScopedStorageXDirectoryCreationParams(uri: uri),
@@ -44,11 +43,10 @@ void main() {
     when(mockDocumentFile.canRead()).thenAnswer((_) async => canRead);
 
     const uri = 'uri';
-    android.PigeonOverrides.documentFile_fromTreeUri =
-        ({required String treeUri}) {
-          expect(treeUri, uri);
-          return mockDocumentFile;
-        };
+    android.PigeonOverrides.documentFile_fromTreeUri = ({required String treeUri}) {
+      expect(treeUri, uri);
+      return mockDocumentFile;
+    };
 
     final directory = AndroidScopedStorageXDirectory(
       const PlatformScopedStorageXDirectoryCreationParams(uri: uri),
@@ -68,17 +66,15 @@ void main() {
     when(mockDirectory.listFiles()).thenAnswer((_) async => files);
 
     const uri = 'uri';
-    android.PigeonOverrides.documentFile_fromTreeUri =
-        ({required String treeUri}) {
-          expect(treeUri, uri);
-          return mockDirectory;
-        };
+    android.PigeonOverrides.documentFile_fromTreeUri = ({required String treeUri}) {
+      expect(treeUri, uri);
+      return mockDirectory;
+    };
 
-    android.PigeonOverrides.documentFile_fromSingleUri =
-        ({required String singleUri}) {
-          expect(singleUri, fileUri);
-          return mockFile;
-        };
+    android.PigeonOverrides.documentFile_fromSingleUri = ({required String singleUri}) {
+      expect(singleUri, fileUri);
+      return mockFile;
+    };
 
     final dir = AndroidScopedStorageXDirectory(
       const PlatformScopedStorageXDirectoryCreationParams(uri: uri),

@@ -9,9 +9,7 @@ import 'package:cross_file_platform_interface/cross_file_platform_interface.dart
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as path;
 
-final Directory testDirectory = Directory(
-  path.join(Directory.current.path, 'test'),
-);
+final Directory testDirectory = Directory(path.join(Directory.current.path, 'test'));
 
 void main() {
   group('IOXFile', () {

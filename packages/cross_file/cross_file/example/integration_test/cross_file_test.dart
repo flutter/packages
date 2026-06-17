@@ -15,9 +15,7 @@ import 'package:path_provider/path_provider.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('Can read from file using dart:io implementation', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('Can read from file using dart:io implementation', (WidgetTester tester) async {
     final Directory dir = await getApplicationCacheDirectory();
 
     final xDir = XDirectory.fromPath(dir.path);
