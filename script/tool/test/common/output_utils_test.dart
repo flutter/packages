@@ -84,7 +84,7 @@ void main() {
 Future<String> _capturePrint(void Function() printFunction) async {
   final output = StringBuffer();
   final spec = ZoneSpecification(
-    print: (_, __, ___, String message) {
+    print: (_, _, _, String message) {
       output.write(message);
     },
   );

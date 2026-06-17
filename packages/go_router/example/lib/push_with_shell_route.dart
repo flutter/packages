@@ -38,7 +38,7 @@ class PushWithShellRouteExampleApp extends StatelessWidget {
           ),
           GoRoute(
             path: '/shell1',
-            pageBuilder: (_, __) =>
+            pageBuilder: (_, _) =>
                 const NoTransitionPage<void>(child: Center(child: Text('shell1 body'))),
           ),
         ],

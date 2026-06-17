@@ -164,12 +164,15 @@ class VersionAndChangelogValidator {
       pubspec: pubspec,
       ignorePlatformInterfaceBreaks: ignorePlatformInterfaceBreaks,
     );
-    // PR with post release label is going to sync changelog.md and pubspec.yaml
-    // change back to main branch. Proceed with regular version check.
-    final bool hasPostReleaseLabel = _prLabels.contains('override: post-release-${pubspec.name}');
+    // PR with override: skip-batch-release-repo-check-<package> label is going to sync
+    // changelog.md and pubspec.yaml changes back to main branch.
+    // Proceed with regular version check.
+    final bool shouldSkipBatchReleaseRepoCheck = _prLabels.contains(
+      'override: skip-batch-release-repo-check-${pubspec.name}',
+    );
     bool versionChanged;
 
-    if (usesBatchRelease && !hasPostReleaseLabel) {
+    if (usesBatchRelease && !shouldSkipBatchReleaseRepoCheck) {
       versionChanged = await _validatePendingChangeForBatchReleasePackage(
         package: package,
         changedFiles: _changedFiles,

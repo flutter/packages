@@ -46,7 +46,7 @@ void main() {
         rowCount: 2,
         rowBuilder: (_) => span,
         columnBuilder: (_) => span,
-        cellBuilder: (_, __) => cell,
+        cellBuilder: (_, _) => cell,
       );
       final delegate = tableView.delegate as TableCellBuilderDelegate;
       expect(delegate.pinnedRowCount, 0);
@@ -63,7 +63,7 @@ void main() {
       expect(
         () {
           tableView = TableView.builder(
-            cellBuilder: (_, __) => cell,
+            cellBuilder: (_, _) => cell,
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
             columnCount: 1,
@@ -82,7 +82,7 @@ void main() {
       expect(
         () {
           tableView = TableView.builder(
-            cellBuilder: (_, __) => cell,
+            cellBuilder: (_, _) => cell,
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
             columnCount: 1,
@@ -101,7 +101,7 @@ void main() {
       expect(
         () {
           tableView = TableView.builder(
-            cellBuilder: (_, __) => cell,
+            cellBuilder: (_, _) => cell,
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
             columnCount: 1,
@@ -119,7 +119,7 @@ void main() {
       expect(
         () {
           tableView = TableView.builder(
-            cellBuilder: (_, __) => cell,
+            cellBuilder: (_, _) => cell,
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
             columnCount: -1, // asserts
@@ -137,7 +137,7 @@ void main() {
       expect(
         () {
           tableView = TableView.builder(
-            cellBuilder: (_, __) => cell,
+            cellBuilder: (_, _) => cell,
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
             columnCount: 1,
@@ -156,7 +156,7 @@ void main() {
       expect(
         () {
           tableView = TableView.builder(
-            cellBuilder: (_, __) => cell,
+            cellBuilder: (_, _) => cell,
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
             columnCount: 1,

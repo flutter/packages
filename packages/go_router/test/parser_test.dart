@@ -32,15 +32,15 @@ void main() {
     final routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (_, __) => const Placeholder(),
-        routes: <GoRoute>[GoRoute(path: 'abc', builder: (_, __) => const Placeholder())],
+        builder: (_, _) => const Placeholder(),
+        routes: <GoRoute>[GoRoute(path: 'abc', builder: (_, _) => const Placeholder())],
       ),
     ];
     final GoRouteInformationParser parser = await createParser(
       tester,
       routes: routes,
       redirectLimit: 100,
-      redirect: (_, __) => null,
+      redirect: (_, _) => null,
     );
 
     final BuildContext context = tester.element(find.byType(Router<Object>));
@@ -78,15 +78,15 @@ void main() {
     final routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (_, __) => const Placeholder(),
-        routes: <GoRoute>[GoRoute(path: 'abc', builder: (_, __) => const Placeholder())],
+        builder: (_, _) => const Placeholder(),
+        routes: <GoRoute>[GoRoute(path: 'abc', builder: (_, _) => const Placeholder())],
       ),
     ];
     final GoRouteInformationParser parser = await createParser(
       tester,
       routes: routes,
       redirectLimit: 100,
-      redirect: (_, __) => null,
+      redirect: (_, _) => null,
     );
 
     final BuildContext context = tester.element(find.byType(Router<Object>));
@@ -104,15 +104,15 @@ void main() {
     final routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (_, __) => const Placeholder(),
-        routes: <GoRoute>[GoRoute(path: 'abc', builder: (_, __) => const Placeholder())],
+        builder: (_, _) => const Placeholder(),
+        routes: <GoRoute>[GoRoute(path: 'abc', builder: (_, _) => const Placeholder())],
       ),
     ];
     final GoRouteInformationParser parser = await createParser(
       tester,
       routes: routes,
       redirectLimit: 100,
-      redirect: (_, __) => null,
+      redirect: (_, _) => null,
     );
 
     final BuildContext context = tester.element(find.byType(Router<Object>));
@@ -134,12 +134,12 @@ void main() {
       const expectedQuery = 'abc=def';
       const expectedFragment = 'abc';
       const expectedUriString = '$expectedScheme://$expectedHost/?$expectedQuery#$expectedFragment';
-      final routes = <GoRoute>[GoRoute(path: '/', builder: (_, __) => const Placeholder())];
+      final routes = <GoRoute>[GoRoute(path: '/', builder: (_, _) => const Placeholder())];
       final GoRouteInformationParser parser = await createParser(
         tester,
         routes: routes,
         redirectLimit: 100,
-        redirect: (_, __) => null,
+        redirect: (_, _) => null,
       );
 
       final BuildContext context = tester.element(find.byType(Router<Object>));
@@ -174,15 +174,15 @@ void main() {
       final routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (_, __) => const Placeholder(),
-          routes: <GoRoute>[GoRoute(path: 'abc', builder: (_, __) => const Placeholder())],
+          builder: (_, _) => const Placeholder(),
+          routes: <GoRoute>[GoRoute(path: 'abc', builder: (_, _) => const Placeholder())],
         ),
       ];
       final GoRouteInformationParser parser = await createParser(
         tester,
         routes: routes,
         redirectLimit: 100,
-        redirect: (_, __) => null,
+        redirect: (_, _) => null,
       );
 
       final BuildContext context = tester.element(find.byType(Router<Object>));
@@ -215,8 +215,8 @@ void main() {
       final routes = <GoRoute>[
         GoRoute(
           path: '/',
-          builder: (_, __) => const Placeholder(),
-          routes: <GoRoute>[GoRoute(path: 'abc', builder: (_, __) => const Placeholder())],
+          builder: (_, _) => const Placeholder(),
+          routes: <GoRoute>[GoRoute(path: 'abc', builder: (_, _) => const Placeholder())],
         ),
       ];
       GoRouter.optionURLReflectsImperativeAPIs = true;
@@ -249,11 +249,11 @@ void main() {
     final routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (_, __) => const Placeholder(),
+        builder: (_, _) => const Placeholder(),
         routes: <GoRoute>[
-          GoRoute(path: 'abc', name: 'lowercase', builder: (_, __) => const Placeholder()),
-          GoRoute(path: 'efg', name: 'camelCase', builder: (_, __) => const Placeholder()),
-          GoRoute(path: 'hij', name: 'snake_case', builder: (_, __) => const Placeholder()),
+          GoRoute(path: 'abc', name: 'lowercase', builder: (_, _) => const Placeholder()),
+          GoRoute(path: 'efg', name: 'camelCase', builder: (_, _) => const Placeholder()),
+          GoRoute(path: 'hij', name: 'snake_case', builder: (_, _) => const Placeholder()),
         ],
       ),
     ];
@@ -261,7 +261,7 @@ void main() {
     final RouteConfiguration configuration = createRouteConfiguration(
       routes: routes,
       redirectLimit: 100,
-      topRedirect: (_, __) => null,
+      topRedirect: (_, _) => null,
       navigatorKey: GlobalKey<NavigatorState>(),
     );
 
@@ -288,9 +288,9 @@ void main() {
     final routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (_, __) => const Placeholder(),
+        builder: (_, _) => const Placeholder(),
         routes: <GoRoute>[
-          GoRoute(path: 'abc', name: 'routeName', builder: (_, __) => const Placeholder()),
+          GoRoute(path: 'abc', name: 'routeName', builder: (_, _) => const Placeholder()),
         ],
       ),
     ];
@@ -298,7 +298,7 @@ void main() {
     final RouteConfiguration configuration = createRouteConfiguration(
       routes: routes,
       redirectLimit: 100,
-      topRedirect: (_, __) => null,
+      topRedirect: (_, _) => null,
       navigatorKey: GlobalKey<NavigatorState>(),
     );
 
@@ -320,15 +320,15 @@ void main() {
     final routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (_, __) => const Placeholder(),
-        routes: <GoRoute>[GoRoute(path: 'abc', builder: (_, __) => const Placeholder())],
+        builder: (_, _) => const Placeholder(),
+        routes: <GoRoute>[GoRoute(path: 'abc', builder: (_, _) => const Placeholder())],
       ),
     ];
     final GoRouteInformationParser parser = await createParser(
       tester,
       routes: routes,
       redirectLimit: 100,
-      redirect: (_, __) => null,
+      redirect: (_, _) => null,
     );
 
     final BuildContext context = tester.element(find.byType(Router<Object>));
@@ -351,8 +351,8 @@ void main() {
     final routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (_, __) => const Placeholder(),
-        routes: <GoRoute>[GoRoute(path: 'abc', builder: (_, __) => const Placeholder())],
+        builder: (_, _) => const Placeholder(),
+        routes: <GoRoute>[GoRoute(path: 'abc', builder: (_, _) => const Placeholder())],
       ),
     ];
     final GoRouteInformationParser parser = await createParser(
@@ -376,9 +376,9 @@ void main() {
     final routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (_, __) => const Placeholder(),
+        builder: (_, _) => const Placeholder(),
         routes: <GoRoute>[
-          GoRoute(path: ':uid/family/:fid', builder: (_, __) => const Placeholder()),
+          GoRoute(path: ':uid/family/:fid', builder: (_, _) => const Placeholder()),
         ],
       ),
     ];
@@ -386,7 +386,7 @@ void main() {
       tester,
       routes: routes,
       redirectLimit: 100,
-      redirect: (_, __) => null,
+      redirect: (_, _) => null,
     );
 
     final BuildContext context = tester.element(find.byType(Router<Object>));
@@ -413,9 +413,9 @@ void main() {
     final routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (_, __) => const Placeholder(),
+        builder: (_, _) => const Placeholder(),
         routes: <GoRoute>[
-          GoRoute(path: ':uid/family/:fid', builder: (_, __) => const Placeholder()),
+          GoRoute(path: ':uid/family/:fid', builder: (_, _) => const Placeholder()),
         ],
       ),
     ];
@@ -451,13 +451,13 @@ void main() {
     final routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (_, __) => const Placeholder(),
+        builder: (_, _) => const Placeholder(),
         routes: <GoRoute>[
-          GoRoute(path: ':uid/family/:fid', builder: (_, __) => const Placeholder()),
+          GoRoute(path: ':uid/family/:fid', builder: (_, _) => const Placeholder()),
           GoRoute(
             path: 'redirect',
-            redirect: (_, __) => '/123/family/345',
-            builder: (_, __) => throw UnimplementedError(),
+            redirect: (_, _) => '/123/family/345',
+            builder: (_, _) => throw UnimplementedError(),
           ),
         ],
       ),
@@ -466,7 +466,7 @@ void main() {
       tester,
       routes: routes,
       redirectLimit: 100,
-      redirect: (_, __) => null,
+      redirect: (_, _) => null,
     );
 
     final BuildContext context = tester.element(find.byType(Router<Object>));
@@ -486,12 +486,12 @@ void main() {
   testWidgets('GoRouteInformationParser throws an exception when route is malformed', (
     WidgetTester tester,
   ) async {
-    final routes = <GoRoute>[GoRoute(path: '/abc', builder: (_, __) => const Placeholder())];
+    final routes = <GoRoute>[GoRoute(path: '/abc', builder: (_, _) => const Placeholder())];
     final GoRouteInformationParser parser = await createParser(
       tester,
       routes: routes,
       redirectLimit: 100,
-      redirect: (_, __) => null,
+      redirect: (_, _) => null,
     );
 
     final BuildContext context = tester.element(find.byType(Router<Object>));
@@ -509,14 +509,14 @@ void main() {
     final routes = <GoRoute>[
       GoRoute(
         path: '/abc',
-        builder: (_, __) => const Placeholder(),
+        builder: (_, _) => const Placeholder(),
         redirect: (BuildContext context, GoRouterState state) => state.uri.toString(),
       ),
     ];
     final GoRouteInformationParser parser = await createParser(
       tester,
       routes: routes,
-      redirect: (_, __) => null,
+      redirect: (_, _) => null,
     );
 
     final BuildContext context = tester.element(find.byType(Router<Object>));
@@ -555,7 +555,7 @@ void main() {
     final GoRouteInformationParser parser = await createParser(
       tester,
       routes: routes,
-      redirect: (_, __) => null,
+      redirect: (_, _) => null,
     );
 
     final BuildContext context = tester.element(find.byType(Router<Object>));
@@ -574,12 +574,12 @@ void main() {
   testWidgets('GoRouteInformationParser can handle path without leading slash', (
     WidgetTester tester,
   ) async {
-    final routes = <RouteBase>[GoRoute(path: '/abc', builder: (_, __) => const Placeholder())];
+    final routes = <RouteBase>[GoRoute(path: '/abc', builder: (_, _) => const Placeholder())];
     final GoRouteInformationParser parser = await createParser(
       tester,
       routes: routes,
       redirectLimit: 100,
-      redirect: (_, __) => null,
+      redirect: (_, _) => null,
     );
 
     final BuildContext context = tester.element(find.byType(Router<Object>));

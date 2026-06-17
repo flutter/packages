@@ -108,6 +108,11 @@ class IntEvent extends PlatformEvent {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'IntEvent(data: $data)';
+  }
 }
 
 class StringEvent extends PlatformEvent {
@@ -143,6 +148,11 @@ class StringEvent extends PlatformEvent {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'StringEvent(data: $data)';
+  }
 }
 
 class _PigeonCodec extends StandardMessageCodec {

@@ -251,7 +251,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     addDocumentationComments(indent, anEnum.documentationComments, _docCommentSpec);
     indent.write('enum class ${anEnum.name}(val raw: Int) ');
     indent.addScoped('{', '}', () {
-      enumerate(anEnum.members, (int index, final EnumMember member) {
+      enumerate(anEnum.members, (int index, EnumMember member) {
         addDocumentationComments(indent, member.documentationComments, _docCommentSpec);
         final String nameScreamingSnakeCase = toScreamingSnakeCase(member.name);
         indent.write('$nameScreamingSnakeCase($index)');
@@ -322,6 +322,13 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
         classDefinition,
         dartPackageName: dartPackageName,
       );
+      writeClassToString(
+        generatorOptions,
+        root,
+        indent,
+        classDefinition,
+        dartPackageName: dartPackageName,
+      );
     });
   }
 
@@ -363,6 +370,30 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
         indent.writeln('result = 31 * result + $utils.deepHash(this.${field.name})');
       }
       indent.writeln('return result');
+    });
+  }
+
+  /// Writes the `toString` method for a class.
+  void writeClassToString(
+    InternalKotlinOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Class classDefinition, {
+    required String dartPackageName,
+  }) {
+    indent.writeScoped('override fun toString(): String {', '}', () {
+      final Iterable<String> fieldStrings = classDefinition.fields.map((NamedType field) {
+        final String name = field.name;
+        if (field.type.baseName == 'Uint8List' ||
+            field.type.baseName == 'Int32List' ||
+            field.type.baseName == 'Int64List' ||
+            field.type.baseName == 'Float64List') {
+          final nullSafe = field.type.isNullable ? '?' : '';
+          return '$name=\${$name$nullSafe.contentToString()}';
+        }
+        return '$name=\$$name';
+      });
+      indent.writeln('return "${classDefinition.name}(${fieldStrings.join(', ')})"');
     });
   }
 
@@ -423,10 +454,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
       indent.write('fun fromList(${varNamePrefix}list: List<Any?>): $className ');
 
       indent.addScoped('{', '}', () {
-        enumerate(getFieldsInSerializationOrder(classDefinition), (
-          int index,
-          final NamedType field,
-        ) {
+        enumerate(getFieldsInSerializationOrder(classDefinition), (int index, NamedType field) {
           final listValue = '${varNamePrefix}list[$index]';
           indent.writeln('val ${field.name} = ${_cast(indent, listValue, type: field.type)}');
         });

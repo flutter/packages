@@ -16,8 +16,8 @@ Future<GoRouter> createGoRouter(WidgetTester tester) async {
   final goRouter = GoRouter(
     initialLocation: '/',
     routes: <GoRoute>[
-      GoRoute(path: '/', builder: (_, __) => const DummyStatefulWidget()),
-      GoRoute(path: '/error', builder: (_, __) => TestErrorScreen(TestFailure('Exception'))),
+      GoRoute(path: '/', builder: (_, _) => const DummyStatefulWidget()),
+      GoRoute(path: '/error', builder: (_, _) => TestErrorScreen(TestFailure('Exception'))),
     ],
   );
   await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
