@@ -364,6 +364,37 @@ void main() {
     expect(map.polygonUpdates.last.polygonsToAdd.isEmpty, true);
   });
 
+  testWidgets('Setting editable triggers change', (WidgetTester tester) async {
+    const p1 = Polygon(polygonId: PolygonId('polygon_1'));
+    const p1Editable = Polygon(polygonId: PolygonId('polygon_1'), editable: true);
+
+    await tester.pumpWidget(_mapWithPolygons(<Polygon>{p1}));
+    await tester.pumpWidget(_mapWithPolygons(<Polygon>{p1Editable}));
+
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+    expect(map.polygonUpdates.last.polygonsToChange.length, 1);
+    expect(map.polygonUpdates.last.polygonsToChange.first.editable, equals(true));
+    expect(map.polygonUpdates.last.polygonIdsToRemove.isEmpty, true);
+    expect(map.polygonUpdates.last.polygonsToAdd.isEmpty, true);
+  });
+
+  testWidgets('Update onEdited does not trigger platform change', (WidgetTester tester) async {
+    var p1 = const Polygon(polygonId: PolygonId('polygon_1'), editable: true);
+    await tester.pumpWidget(_mapWithPolygons(<Polygon>{p1}));
+
+    p1 = Polygon(
+      polygonId: const PolygonId('polygon_1'),
+      editable: true,
+      onEdited: (List<LatLng> points, List<List<LatLng>> holes) {},
+    );
+    await tester.pumpWidget(_mapWithPolygons(<Polygon>{p1}));
+
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+    expect(map.polygonUpdates.last.polygonsToChange.isEmpty, true);
+    expect(map.polygonUpdates.last.polygonIdsToRemove.isEmpty, true);
+    expect(map.polygonUpdates.last.polygonsToAdd.isEmpty, true);
+  });
+
   testWidgets('multi-update with delays', (WidgetTester tester) async {
     platform.simulatePlatformDelay = true;
 
