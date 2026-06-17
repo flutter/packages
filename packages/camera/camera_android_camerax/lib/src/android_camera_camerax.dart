@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:math' show Point;
+import 'dart:math' show Point, max, min;
 
 import 'package:async/async.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
@@ -17,14 +17,8 @@ import 'package:flutter/services.dart'
         PlatformException,
         PlatformViewsService,
         StandardMessageCodec;
-import 'package:flutter/widgets.dart'
-    show
-        AndroidViewSurface,
-        PlatformViewLink,
-        TextDirection,
-        Texture,
-        Widget,
-        visibleForTesting;
+import 'package:flutter/widgets.dart' hide AspectRatio;
+import 'package:flutter/widgets.dart' as widgets show AspectRatio;
 import 'package:stream_transform/stream_transform.dart';
 import 'camerax_library.dart';
 import 'rotated_preview_delegate.dart';
@@ -33,6 +27,8 @@ import 'rotated_preview_delegate.dart';
 class AndroidCameraCameraX extends CameraPlatform {
   /// Constructs an [AndroidCameraCameraX].
   AndroidCameraCameraX();
+
+  final Map<int, double> _cameraLandscapeAspectRatios = <int, double>{};
 
   /// Registers this class as the default instance of [CameraPlatform].
   static void registerWith() {
@@ -536,6 +532,10 @@ class AndroidCameraCameraX extends CameraPlatform {
       'CAMILLE: PREVIEW RESOLUTION INFO: ${previewResInfo!.resolution!.height} x ${previewResInfo!.resolution!.width}',
     );
     final ResolutionInfo previewResolutionInfo = previewResInfo!;
+    final double width = previewResolutionInfo.resolution.width.toDouble();
+    final double height = previewResolutionInfo.resolution.height.toDouble();
+    _cameraLandscapeAspectRatios[cameraId] =
+        max(width, height) / min(width, height);
 
     // Mark auto-focus, auto-exposure and setting points for focus & exposure
     // as available operations as CameraX does its best across devices to
@@ -1086,7 +1086,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Pass parameters to the platform side.
     const creationParams = <String, dynamic>{};
 
-    return PlatformViewLink(
+    final Widget platformViewLink = PlatformViewLink(
       viewType: viewType,
       surfaceFactory: (context, controller) {
         return AndroidViewSurface(
@@ -1108,6 +1108,26 @@ class AndroidCameraCameraX extends CameraPlatform {
           )
           ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
           ..create();
+      },
+    );
+
+    final double? landscapeAspectRatio = _cameraLandscapeAspectRatios[cameraId];
+    if (landscapeAspectRatio == null) {
+      return platformViewLink;
+    }
+
+    return Builder(
+      builder: (BuildContext context) {
+        final isPortrait =
+            MediaQuery.of(context).orientation == Orientation.portrait;
+        return Center(
+          child: widgets.AspectRatio(
+            aspectRatio: isPortrait
+                ? (1 / landscapeAspectRatio)
+                : landscapeAspectRatio,
+            child: platformViewLink,
+          ),
+        );
       },
     );
     // final Stream<DeviceOrientation> deviceOrientationStream =
