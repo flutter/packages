@@ -235,8 +235,18 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Stream<PolylineEditEvent> onPolylineEdited({required int mapId}) {
+    return _events(mapId).whereType<PolylineEditEvent>();
+  }
+
+  @override
   Stream<PolygonTapEvent> onPolygonTap({required int mapId}) {
     return _events(mapId).whereType<PolygonTapEvent>();
+  }
+
+  @override
+  Stream<PolygonEditEvent> onPolygonEdited({required int mapId}) {
+    return _events(mapId).whereType<PolygonEditEvent>();
   }
 
   @override

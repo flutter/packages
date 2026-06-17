@@ -1,3 +1,7 @@
+## 0.7.0
+
+* Adds support for editable polylines and polygons via the native Google Maps JavaScript API `editable` feature.
+
 ## 0.6.2+3
 
 * Updates README to include setup information.

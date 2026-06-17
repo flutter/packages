@@ -307,6 +307,130 @@ void main() {
       expect(polygon1Clickable, true);
       expect(polygon2Clickable, false);
     });
+
+    testWidgets('addPolygons forwards editable to the gmaps Polygon', (WidgetTester tester) async {
+      final polygons = <Polygon>{
+        const Polygon(
+          polygonId: PolygonId('editable'),
+          editable: true,
+          points: <LatLng>[LatLng(0, 0), LatLng(1, 0), LatLng(1, 1)],
+        ),
+        const Polygon(
+          polygonId: PolygonId('not-editable'),
+          points: <LatLng>[LatLng(0, 0), LatLng(1, 0), LatLng(1, 1)],
+        ),
+      };
+
+      controller.addPolygons(polygons);
+
+      final gmaps.Polygon editable = controller.polygons[const PolygonId('editable')]!.polygon!;
+      final gmaps.Polygon notEditable =
+          controller.polygons[const PolygonId('not-editable')]!.polygon!;
+
+      expect((editable.get('editable')! as JSBoolean).toDart, isTrue);
+      expect((notEditable.get('editable')! as JSBoolean).toDart, isFalse);
+    });
+
+    testWidgets('emits PolygonEditEvent with points and holes on edit', (
+      WidgetTester tester,
+    ) async {
+      controller.addPolygons(<Polygon>{
+        const Polygon(
+          polygonId: PolygonId('p'),
+          editable: true,
+          points: <LatLng>[LatLng(0, 0), LatLng(1, 0), LatLng(1, 1)],
+          holes: <List<LatLng>>[
+            <LatLng>[LatLng(0.1, 0.1), LatLng(0.2, 0.1), LatLng(0.2, 0.2)],
+          ],
+        ),
+      });
+
+      final Future<PolygonEditEvent> received = events.stream
+          .where((MapEvent<Object?> e) => e is PolygonEditEvent)
+          .cast<PolygonEditEvent>()
+          .first;
+      final gmaps.Polygon gmPolygon = controller.polygons[const PolygonId('p')]!.polygon!;
+      gmPolygon.paths.getAt(0).setAt(0, gmaps.LatLng(5, 5));
+
+      final PolygonEditEvent event = await received;
+      expect(event.value, const PolygonId('p'));
+      expect(event.points, hasLength(3));
+      expect(event.points.first, const LatLng(5, 5));
+      expect(event.holes, hasLength(1));
+      expect(event.holes.first, hasLength(3));
+    });
+
+    testWidgets('emits PolygonEditEvent reflecting hole mutations', (WidgetTester tester) async {
+      controller.addPolygons(<Polygon>{
+        const Polygon(
+          polygonId: PolygonId('p'),
+          editable: true,
+          points: <LatLng>[LatLng(0, 0), LatLng(1, 0), LatLng(1, 1)],
+          holes: <List<LatLng>>[
+            <LatLng>[LatLng(0.1, 0.1), LatLng(0.2, 0.1), LatLng(0.2, 0.2)],
+          ],
+        ),
+      });
+
+      final Future<PolygonEditEvent> received = events.stream
+          .where((MapEvent<Object?> e) => e is PolygonEditEvent)
+          .cast<PolygonEditEvent>()
+          .first;
+      final gmaps.Polygon gmPolygon = controller.polygons[const PolygonId('p')]!.polygon!;
+      gmPolygon.paths.getAt(1).setAt(0, gmaps.LatLng(0.9, 0.9));
+
+      final PolygonEditEvent event = await received;
+      expect(event.holes.first.first, const LatLng(0.9, 0.9));
+    });
+
+    testWidgets('does not emit PolygonEditEvent when not editable', (WidgetTester tester) async {
+      controller.addPolygons(<Polygon>{
+        const Polygon(
+          polygonId: PolygonId('p'),
+          points: <LatLng>[LatLng(0, 0), LatLng(1, 0), LatLng(1, 1)],
+        ),
+      });
+      PolygonEditEvent? captured;
+      final StreamSubscription<PolygonEditEvent> sub = events.stream
+          .where((MapEvent<Object?> e) => e is PolygonEditEvent)
+          .cast<PolygonEditEvent>()
+          .listen((PolygonEditEvent e) => captured = e);
+
+      final gmaps.Polygon gmPolygon = controller.polygons[const PolygonId('p')]!.polygon!;
+      gmPolygon.paths.getAt(0).setAt(0, gmaps.LatLng(5, 5));
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+
+      expect(captured, isNull);
+      await sub.cancel();
+    });
+
+    testWidgets('changePolygons rewires listeners when editable is toggled on', (
+      WidgetTester tester,
+    ) async {
+      controller.addPolygons(<Polygon>{
+        const Polygon(
+          polygonId: PolygonId('t'),
+          points: <LatLng>[LatLng(0, 0), LatLng(1, 0), LatLng(1, 1)],
+        ),
+      });
+      controller.changePolygons(<Polygon>{
+        const Polygon(
+          polygonId: PolygonId('t'),
+          editable: true,
+          points: <LatLng>[LatLng(0, 0), LatLng(1, 0), LatLng(1, 1)],
+        ),
+      });
+
+      final Future<PolygonEditEvent> received = events.stream
+          .where((MapEvent<Object?> e) => e is PolygonEditEvent)
+          .cast<PolygonEditEvent>()
+          .first;
+      final gmaps.Polygon gmPolygon = controller.polygons[const PolygonId('t')]!.polygon!;
+      gmPolygon.paths.getAt(0).setAt(0, gmaps.LatLng(7, 7));
+
+      final PolygonEditEvent event = await received;
+      expect(event.points.first, const LatLng(7, 7));
+    });
   });
 
   group('PolylinesController', () {
@@ -401,6 +525,97 @@ void main() {
 
       expect(polyline1Clickable, true);
       expect(polyline2Clickable, false);
+    });
+
+    testWidgets('addPolylines forwards editable to the gmaps Polyline', (
+      WidgetTester tester,
+    ) async {
+      final polylines = <Polyline>{
+        const Polyline(
+          polylineId: PolylineId('editable'),
+          editable: true,
+          points: <LatLng>[LatLng(0, 0), LatLng(1, 1)],
+        ),
+        const Polyline(
+          polylineId: PolylineId('not-editable'),
+          points: <LatLng>[LatLng(0, 0), LatLng(1, 1)],
+        ),
+      };
+
+      controller.addPolylines(polylines);
+
+      final gmaps.Polyline editable = controller.lines[const PolylineId('editable')]!.line!;
+      final gmaps.Polyline notEditable = controller.lines[const PolylineId('not-editable')]!.line!;
+
+      expect((editable.get('editable')! as JSBoolean).toDart, isTrue);
+      expect((notEditable.get('editable')! as JSBoolean).toDart, isFalse);
+    });
+
+    testWidgets('emits PolylineEditEvent on path mutation when editable', (
+      WidgetTester tester,
+    ) async {
+      controller.addPolylines(<Polyline>{
+        const Polyline(
+          polylineId: PolylineId('e'),
+          editable: true,
+          points: <LatLng>[LatLng(0, 0), LatLng(1, 1)],
+        ),
+      });
+
+      final Future<PolylineEditEvent> received = events.stream
+          .where((MapEvent<Object?> e) => e is PolylineEditEvent)
+          .cast<PolylineEditEvent>()
+          .first;
+      final gmaps.Polyline line = controller.lines[const PolylineId('e')]!.line!;
+      line.path.setAt(0, gmaps.LatLng(5, 5));
+
+      final PolylineEditEvent event = await received;
+      expect(event.value, const PolylineId('e'));
+      expect(event.points, hasLength(2));
+      expect(event.points.first, const LatLng(5, 5));
+    });
+
+    testWidgets('does not emit PolylineEditEvent when not editable', (WidgetTester tester) async {
+      controller.addPolylines(<Polyline>{
+        const Polyline(polylineId: PolylineId('n'), points: <LatLng>[LatLng(0, 0), LatLng(1, 1)]),
+      });
+      PolylineEditEvent? captured;
+      final StreamSubscription<PolylineEditEvent> sub = events.stream
+          .where((MapEvent<Object?> e) => e is PolylineEditEvent)
+          .cast<PolylineEditEvent>()
+          .listen((PolylineEditEvent e) => captured = e);
+
+      final gmaps.Polyline line = controller.lines[const PolylineId('n')]!.line!;
+      line.path.setAt(0, gmaps.LatLng(5, 5));
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+
+      expect(captured, isNull);
+      await sub.cancel();
+    });
+
+    testWidgets('changePolylines rewires listeners when editable is toggled on', (
+      WidgetTester tester,
+    ) async {
+      controller.addPolylines(<Polyline>{
+        const Polyline(polylineId: PolylineId('t'), points: <LatLng>[LatLng(0, 0), LatLng(1, 1)]),
+      });
+      controller.changePolylines(<Polyline>{
+        const Polyline(
+          polylineId: PolylineId('t'),
+          editable: true,
+          points: <LatLng>[LatLng(0, 0), LatLng(1, 1)],
+        ),
+      });
+
+      final Future<PolylineEditEvent> received = events.stream
+          .where((MapEvent<Object?> e) => e is PolylineEditEvent)
+          .cast<PolylineEditEvent>()
+          .first;
+      final gmaps.Polyline line = controller.lines[const PolylineId('t')]!.line!;
+      line.path.setAt(0, gmaps.LatLng(9, 9));
+
+      final PolylineEditEvent event = await received;
+      expect(event.points.first, const LatLng(9, 9));
     });
   });
 }

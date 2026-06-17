@@ -37,6 +37,11 @@ class PolylinesController extends GeometryController {
       onTap: () {
         _onPolylineTap(polyline.polylineId);
       },
+      onEdited: polyline.editable
+          ? (List<gmaps.LatLng> path) {
+              _onPolylineEdited(polyline.polylineId, path);
+            }
+          : null,
     );
     _polylineIdToController[polyline.polylineId] = controller;
   }
@@ -47,8 +52,10 @@ class PolylinesController extends GeometryController {
   }
 
   void _changePolyline(Polyline polyline) {
-    final PolylineController? polylineController = _polylineIdToController[polyline.polylineId];
-    polylineController?.update(_polylineOptionsFromPolyline(googleMap, polyline));
+    // Remove and recreate the controller to ensure edit listeners are
+    // properly set up when the editable property changes.
+    _removePolyline(polyline.polylineId);
+    _addPolyline(polyline);
   }
 
   /// Removes a set of [PolylineId]s from the cache.
@@ -70,5 +77,12 @@ class PolylinesController extends GeometryController {
     // Comment here: https://github.com/flutter/flutter/issues/64084
     _streamController.add(PolylineTapEvent(mapId, polylineId));
     return _polylineIdToController[polylineId]?.consumeTapEvents ?? false;
+  }
+
+  void _onPolylineEdited(PolylineId polylineId, List<gmaps.LatLng> path) {
+    final List<LatLng> points = path
+        .map((gmaps.LatLng p) => LatLng(p.lat.toDouble(), p.lng.toDouble()))
+        .toList();
+    _streamController.add(PolylineEditEvent(mapId, polylineId, points));
   }
 }
