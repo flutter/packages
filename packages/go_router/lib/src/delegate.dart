@@ -56,6 +56,9 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
   Future<bool> popRoute() async {
     final Iterable<NavigatorState> states = _findCurrentNavigators();
     for (final state in states) {
+      if (!state.mounted) {
+        continue;
+      }
       final bool didPop = await state.maybePop(); // Call maybePop() directly
       if (didPop) {
         return true; // Return true if maybePop handled the pop
@@ -110,6 +113,9 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
   Future<bool> maybePop<T extends Object?>([T? result]) async {
     final Iterable<NavigatorState> states = _findCurrentNavigators();
     for (final NavigatorState state in states) {
+      if (!state.mounted) {
+        continue;
+      }
       final bool didPop = await state.maybePop<T>(result);
       if (didPop) {
         return true;
