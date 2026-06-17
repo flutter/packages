@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import '../../templates/template.dart';
-import 'button_token_data.dart';
+import 'icon_button_token_data.dart';
 
 class M3EIconButtonTemplate extends M3ETokenTemplate {
   M3EIconButtonTemplate(this.customMaterialLib);
@@ -23,8 +23,8 @@ class M3EIconButtonTemplate extends M3ETokenTemplate {
   String generateContents(String className) {
     return '''
 class $className {
-  static const double height = ${TokenButton.height};
-  static const double borderRadius = ${TokenButton.borderRadius};
+  static const double height = ${TokenIconButton.height};
+  static const double borderRadius = ${TokenIconButton.borderRadius};
 }
 ''';
   }
@@ -48,8 +48,8 @@ class M3IconButtonTemplate extends M3TokenTemplate {
   String generateContents(String className) {
     return '''
 class $className {
-  static const double height = ${TokenButton.height};
-  static const double borderRadius = ${TokenButton.borderRadius};
+  static const double height = ${TokenIconButton.height};
+  static const double borderRadius = ${TokenIconButton.borderRadius};
 }
 ''';
   }
