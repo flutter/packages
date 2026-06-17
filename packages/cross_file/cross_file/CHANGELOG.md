@@ -1,6 +1,6 @@
 ## 0.4.0
 
-* Updates `cross_file` to a package separated federated plugin.
+* Updates `cross_file` to a package-separated federated plugin.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 0.3.5+2
