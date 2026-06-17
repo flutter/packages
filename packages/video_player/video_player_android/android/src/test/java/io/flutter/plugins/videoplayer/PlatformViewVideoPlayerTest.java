@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 package io.flutter.plugins.videoplayer;
 
 import static org.junit.Assert.assertEquals;
@@ -35,8 +39,6 @@ public final class PlatformViewVideoPlayerTest {
   @Before
   public void setUp() {
     fakeVideoAsset = new FakeVideoAsset(FAKE_ASSET_URL);
-    mockEvents = mock(VideoPlayerCallbacks.class);
-    mockExoPlayer = mock(ExoPlayer.class);
   }
 
   @OptIn(markerClass = UnstableApi.class)
