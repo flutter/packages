@@ -36,6 +36,8 @@ class Polyline implements MapsObject<Polyline> {
     this.width = 10,
     this.zIndex = 0,
     this.onTap,
+    this.editable = false,
+    this.onEdited,
   });
 
   /// Uniquely identifies a [Polyline].
@@ -114,6 +116,18 @@ class Polyline implements MapsObject<Polyline> {
   /// Callbacks to receive tap events for polyline placed on this map.
   final VoidCallback? onTap;
 
+  /// True if the user can edit this polyline by dragging its vertices.
+  ///
+  /// When true, the polyline renders with draggable vertex handles.
+  /// Currently only supported on web.
+  final bool editable;
+
+  /// Called when the user edits the polyline path by dragging vertices.
+  ///
+  /// The callback receives the updated list of [LatLng] points.
+  /// Only fires when [editable] is true. Currently only supported on web.
+  final void Function(List<LatLng> points)? onEdited;
+
   /// Creates a new [Polyline] object whose values are the same as this instance,
   /// unless overwritten by the specified parameters.
   Polyline copyWith({
@@ -129,6 +143,8 @@ class Polyline implements MapsObject<Polyline> {
     int? widthParam,
     int? zIndexParam,
     VoidCallback? onTapParam,
+    bool? editableParam,
+    void Function(List<LatLng> points)? onEditedParam,
   }) {
     return Polyline(
       polylineId: polylineId,
@@ -144,6 +160,8 @@ class Polyline implements MapsObject<Polyline> {
       width: widthParam ?? width,
       onTap: onTapParam ?? onTap,
       zIndex: zIndexParam ?? zIndex,
+      editable: editableParam ?? editable,
+      onEdited: onEditedParam ?? onEdited,
     );
   }
 
@@ -178,6 +196,7 @@ class Polyline implements MapsObject<Polyline> {
     addIfPresent('visible', visible);
     addIfPresent('width', width);
     addIfPresent('zIndex', zIndex);
+    addIfPresent('editable', editable);
 
     json['points'] = _pointsToJson();
 
@@ -206,7 +225,8 @@ class Polyline implements MapsObject<Polyline> {
         endCap == other.endCap &&
         visible == other.visible &&
         width == other.width &&
-        zIndex == other.zIndex;
+        zIndex == other.zIndex &&
+        editable == other.editable;
   }
 
   @override

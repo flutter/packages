@@ -1,5 +1,8 @@
-## NEXT
+## 2.16.0
 
+* Adds `editable` property and `onEdited` callback to `Polyline` and `Polygon`.
+* Adds `PolylineEditEvent` and `PolygonEditEvent` event types.
+* Adds `onPolylineEdited` and `onPolygonEdited` streams to platform interface.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 2.15.0

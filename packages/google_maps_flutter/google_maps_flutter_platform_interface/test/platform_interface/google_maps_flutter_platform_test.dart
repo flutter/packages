@@ -95,6 +95,20 @@ void main() {
       );
     });
 
+    test('onPolylineEdited() throws UnimplementedError', () {
+      expect(
+        () => BuildViewGoogleMapsFlutterPlatform().onPolylineEdited(mapId: 0),
+        throwsUnimplementedError,
+      );
+    });
+
+    test('onPolygonEdited() throws UnimplementedError', () {
+      expect(
+        () => BuildViewGoogleMapsFlutterPlatform().onPolygonEdited(mapId: 0),
+        throwsUnimplementedError,
+      );
+    });
+
     test('default implementation of `getStyleError` returns null', () async {
       final GoogleMapsFlutterPlatform platform = BuildViewGoogleMapsFlutterPlatform();
       expect(await platform.getStyleError(mapId: 0), null);
