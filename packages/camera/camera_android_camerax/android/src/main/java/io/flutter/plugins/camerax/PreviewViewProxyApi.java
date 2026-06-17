@@ -5,6 +5,7 @@
 package io.flutter.plugins.camerax;
 
 import androidx.annotation.NonNull;
+import androidx.camera.core.MeteringPointFactory;
 import androidx.camera.core.Preview;
 import androidx.camera.view.PreviewView;
 
@@ -49,4 +50,10 @@ class PreviewViewProxyApi extends PigeonApiPreviewView {
   public Preview.SurfaceProvider getSurfaceProvider(PreviewView pigeon_instance) {
     return pigeon_instance.getSurfaceProvider();
   }
+
+    @NonNull
+    @Override
+    public MeteringPointFactory getMeteringPointFactory(PreviewView pigeon_instance) {
+        return pigeon_instance.getMeteringPointFactory();
+    }
 }

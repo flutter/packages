@@ -1332,6 +1332,8 @@ abstract class PreviewView {
   SurfaceProvider getSurfaceProvider();
 
   void registerPreviewView();
+
+  MeteringPointFactory getMeteringPointFactory();
 }
 
 @ProxyApi(
