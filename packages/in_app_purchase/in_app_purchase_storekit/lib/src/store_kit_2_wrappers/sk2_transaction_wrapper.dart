@@ -170,8 +170,7 @@ extension on SK2TransactionMessage {
     );
   }
 
-  String _secondsToMillisecondsSinceEpochString(double date) =>
-      (date * 1000).round().toString();
+  String _secondsToMillisecondsSinceEpochString(double date) => (date * 1000).round().toString();
 }
 
 /// An observer that listens to all transactions created
