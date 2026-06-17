@@ -2,8 +2,7 @@
 
 * Fixes `linux-arm64` host support by selecting the Flutter engine
   artifact directory from `Abi.current()` instead of a hardcoded
-  `linux-x64`. The same fix applies to the tessellator loader.
-  Resolves flutter/flutter#158865.
+  `linux-x64`.
 
 ## 1.2.5
 
