@@ -3,25 +3,53 @@
 // found in the LICENSE file.
 
 import '../../templates/template.dart';
-import 'button_token_data.dart';
+import 'icon_button_token_data.dart';
 
-class ButtonTemplate extends M3ETokenTemplate {
-  ButtonTemplate(this.customMaterialLib);
+class M3EIconButtonTemplate extends M3ETokenTemplate {
+  M3EIconButtonTemplate(this.customMaterialLib);
 
   final String customMaterialLib;
 
   @override
-  String get name => 'button';
+  String get name => 'Icon Button';
+
+  @override
+  String get parentFilePath => 'icon_button.dart';
 
   @override
   String get materialLib => customMaterialLib;
 
   @override
-  String generateContents() {
+  String generateContents(String className) {
     return '''
-class _ButtonDefaults {
-  static const double height = ${TokenButton.height};
-  static const double borderRadius = ${TokenButton.borderRadius};
+class $className {
+  static const double height = ${TokenIconButton.height};
+  static const double borderRadius = ${TokenIconButton.borderRadius};
+}
+''';
+  }
+}
+
+class M3IconButtonTemplate extends M3TokenTemplate {
+  M3IconButtonTemplate(this.customMaterialLib);
+
+  final String customMaterialLib;
+
+  @override
+  String get name => 'Icon Button';
+
+  @override
+  String get parentFilePath => 'icon_button.dart';
+
+  @override
+  String get materialLib => customMaterialLib;
+
+  @override
+  String generateContents(String className) {
+    return '''
+class $className {
+  static const double height = ${TokenIconButton.height};
+  static const double borderRadius = ${TokenIconButton.borderRadius};
 }
 ''';
   }
@@ -33,15 +61,18 @@ class UnformattedTemplate extends M3TokenTemplate {
   final String customMaterialLib;
 
   @override
-  String get name => 'unformatted';
+  String get name => 'Unformatted';
+
+  @override
+  String get parentFilePath => 'unformatted.dart';
 
   @override
   String get materialLib => customMaterialLib;
 
   @override
-  String generateContents() {
+  String generateContents(String className) {
     return '''
-class   UnformattedClass   {
+class   $className   {
 final    int    x = 1  ;
   final String y   =   'hello' ;
 }
@@ -49,18 +80,44 @@ final    int    x = 1  ;
   }
 }
 
-class TestM3Template extends M3TokenTemplate {
-  @override
-  String get name => 'm3';
+class InvalidTemplate extends M3TokenTemplate {
+  InvalidTemplate(this.customMaterialLib);
+
+  final String customMaterialLib;
 
   @override
-  String generateContents() => '';
+  String get name => 'Invalid';
+
+  @override
+  String get parentFilePath => 'invalid.dart';
+
+  @override
+  String get materialLib => customMaterialLib;
+
+  @override
+  String generateContents(String className) {
+    return '''
+class _SomeOtherClassNameDefaults {
+  final int x = 1;
+}
+''';
+  }
 }
 
-class TestM3ExpressiveTemplate extends M3ETokenTemplate {
-  @override
-  String get name => 'm3e';
+class SnakeCaseNameTemplate extends M3TokenTemplate {
+  SnakeCaseNameTemplate(this.customMaterialLib);
+
+  final String customMaterialLib;
 
   @override
-  String generateContents() => '';
+  String get name => 'snake_case_name';
+
+  @override
+  String get parentFilePath => 'snake_case_name.dart';
+
+  @override
+  String get materialLib => customMaterialLib;
+
+  @override
+  String generateContents(String className) => '';
 }
