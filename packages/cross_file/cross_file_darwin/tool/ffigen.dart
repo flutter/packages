@@ -11,6 +11,10 @@ void main() {
   FfiGenerator(
     output: Output(
       dartFile: packageRoot.resolve('lib/src/ffi_bindings.g.dart'),
+      preamble:
+          '/// Copyright 2013 The Flutter Authors\n'
+          '/// Use of this source code is governed by a BSD-style license that can be\n'
+          '/// found in the LICENSE file.',
       objectiveCFile: packageRoot.resolve(
         'darwin/cross_file_darwin/Sources/cross_file_darwin_objc/ffi_bindings.g.m',
       ),
