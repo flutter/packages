@@ -1,0 +1,11 @@
+# Ignore everything by default
+*
+
+# Un-ignore specific checked-in skills
+# (Add specific contributor skills here as they are created)
+
+# Keep essential configuration and docs
+!.gitignore
+!README.md
+!ignore.json
+!flutter_skills_ignore.json
