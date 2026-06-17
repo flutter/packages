@@ -5,10 +5,12 @@
 import Photos
 
 /// Class for handling an instance of asynchronously reading bytes from
-/// [PHAssetResourceManager.requestDataForAssetResource](https://developer.apple.com/documentation/photos/phassetresourcemanager/requestdata(for:options:datareceivedhandler:completionhandler:)?language=objc).
+/// `PHAssetResourceManager.requestDataForAssetResource`.
 class AssetResourceReader {
+  /// Handles the bytes read.
   var delegate: AssetResourceReaderDelegate?
 
+  /// Begin reading bytes from PHAssetResource with `localIdentifier`.
   func startRead(localIdentifier: String) -> Bool {
     let assets = PHAsset.fetchAssets(withLocalIdentifiers: [localIdentifier], options: nil)
     if let asset = assets.firstObject {
@@ -37,6 +39,7 @@ class AssetResourceReader {
   }
 }
 
+/// Handles bytes read from calling `AssetResourceReader.startRead`.
 protocol AssetResourceReaderDelegate {
   /// Provides the requested data.
   ///

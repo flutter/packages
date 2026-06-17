@@ -14,7 +14,7 @@ import Testing
   #error("Unsupported platform.")
 #endif
 
-struct CrossFileDarwinApiTests {
+struct AssetResourceReaderTests {
   func createTempTestFile() throws -> URL {
     let fileManager = FileManager.default
     let tempDirectory = fileManager.temporaryDirectory
@@ -26,25 +26,11 @@ struct CrossFileDarwinApiTests {
     return fileURL
   }
 
-  @Test func startAccessingSecurityScopedResource() throws {
-    let testFileURL = try createTempTestFile()
+  @Test func pigeonDefaultConstructor() throws {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiAssetResourceReader(registrar)
 
-    let api = CrossFileDarwinApiImpl()
-    let canAccess = try api.startAccessingSecurityScopedResource(url: testFileURL.absoluteString)
-
-    // Only returns true on iOS.
-    #if os(iOS)
-      #expect(canAccess)
-    #endif
-
-    #expect(try String(contentsOf: testFileURL, encoding: .utf8) == "Hello, World!")
-  }
-
-  @Test func isReadableFile() throws {
-    let testFileURL = try createTempTestFile()
-
-    let api = CrossFileDarwinApiImpl()
-
-    #expect(try api.isReadableFile(url: testFileURL.absoluteString))
+    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api)
+    #expect(instance != nil)
   }
 }
