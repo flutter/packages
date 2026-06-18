@@ -192,7 +192,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
-enum Code: Int {
+enum Code: Int, CaseIterable {
   case one = 0
   case two = 1
 }
