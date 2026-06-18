@@ -193,7 +193,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
-enum AnEnum: Int {
+enum AnEnum: Int, CaseIterable {
   case one = 0
   case two = 1
   case three = 2
@@ -201,7 +201,7 @@ enum AnEnum: Int {
   case fourHundredTwentyTwo = 4
 }
 
-enum AnotherEnum: Int {
+enum AnotherEnum: Int, CaseIterable {
   case justInCase = 0
 }
 

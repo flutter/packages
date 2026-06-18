@@ -590,7 +590,7 @@ private class ProxyApiTestsPigeonInternalProxyApiCodecReaderWriter: FlutterStand
   }
 }
 
-enum ProxyApiTestEnum: Int {
+enum ProxyApiTestEnum: Int, CaseIterable {
   case one = 0
   case two = 1
   case three = 2
