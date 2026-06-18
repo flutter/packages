@@ -117,7 +117,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
       // Set state directly without canPop check
       states.add(navigatorKey.currentState!);
     }
-    if (currentConfiguration.matches.isEmpty) {
+    if (currentConfiguration.isEmpty) {
       return states.reversed;
     }
     RouteMatchBase walker = currentConfiguration.matches.last;
