@@ -19,7 +19,17 @@ git status --porcelain
 
 If this command outputs anything, the code WAS NOT ready to push. The developer must commit or stash their changes before you can proceed with the remaining validation steps. Do not continue if there are uncommitted changes.
 
-## 2. Format Code
+## 2. Check for Changed Packages
+
+Because `--run-on-changed-packages` defaults to checking the entire repository if zero packages have changed, you must verify that there are actually package changes to test. Command to run:
+
+```bash
+git diff --name-only origin/main...HEAD | grep '^packages/'
+```
+
+If this command outputs nothing, then no packages were modified in this branch. You can skip all remaining validation steps and proceed directly to the Final Review. If it outputs file paths, continue to the next step.
+
+## 3. Format Code
 
 Consistent code style is required for all pull requests. The repository uses auto-formatters (like `dart format`, `clang-format`, `ktfmt`) to enforce this. Command to run:
 
@@ -29,7 +39,7 @@ dart run script/tool/bin/flutter_plugin_tools.dart format --run-on-changed-packa
 
 If this command modifies any files, the code WAS NOT ready to push. Those changes must be committed before the developer can push.
 
-## 3. Static Analysis
+## 4. Static Analysis
 
 Static analysis catches potential bugs, type errors, and style violations without needing to run the code. All code must pass the analyzer without any warnings or errors. Command to run:
 
@@ -39,7 +49,7 @@ dart run script/tool/bin/flutter_plugin_tools.dart analyze --run-on-changed-pack
 
 If this command fails, the code WAS NOT ready to push. Those analyzer errors must be fixed and committed before the developer can push.
 
-## 4. Unit Tests
+## 5. Unit Tests
 
 Tests ensure that your changes do not break existing functionality and that new features work as expected. All unit tests must pass before code can be merged. Command to run:
 
@@ -49,7 +59,7 @@ dart run script/tool/bin/flutter_plugin_tools.dart dart-test --run-on-changed-pa
 
 If this command fails, the code WAS NOT ready to push. Those test errors must be fixed and committed before the developer can push.
 
-## 5. Publish Check (Version and CHANGELOG updates)
+## 6. Publish Check (Version and CHANGELOG updates)
 
 Any pull request that changes non-test code must increment the package version in `pubspec.yaml` and add a corresponding entry describing the change in `CHANGELOG.md`. Command to run:
 
@@ -64,7 +74,7 @@ dart run script/tool/bin/flutter_plugin_tools.dart update-release-info \
   --version=minimal --base-branch=origin/main --changelog="<description of your changes>"
 ```
 
-## 6. License Headers
+## 7. License Headers
 
 All source files in this repository must include the standard copyright and license header. Command to run:
 
@@ -74,7 +84,7 @@ dart run script/tool/bin/flutter_plugin_tools.dart license-check
 
 If this command fails, the code WAS NOT ready to push. Those license errors must be fixed and committed before the developer can push.
 
-## 7. Final Clean Working Tree Check
+## 8. Final Clean Working Tree Check
 
 Before pushing, ensure that all your fixes, formatting changes, and version bumps are committed. Command to run:
 
