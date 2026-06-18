@@ -24,7 +24,7 @@ If this command outputs anything, the code WAS NOT ready to push. The developer 
 Because `--run-on-changed-packages` defaults to checking the entire repository if zero packages have changed, you must verify that there are actually package changes to test. Command to run:
 
 ```bash
-git diff --name-only origin/main...HEAD | grep '^packages/'
+git diff --name-only main...HEAD | grep '^packages/'
 ```
 
 If this command outputs nothing, then no packages were modified in this branch. You can skip all remaining validation steps and proceed directly to the Final Review. If it outputs file paths, continue to the next step.
@@ -71,7 +71,7 @@ If this command fails, the code WAS NOT ready to push. The required version bump
 
 ```bash
 dart run script/tool/bin/flutter_plugin_tools.dart update-release-info \
-  --version=minimal --base-branch=origin/main --changelog="<description of your changes>"
+  --version=minimal --base-branch=main --changelog="<description of your changes>"
 ```
 
 ## 7. License Headers
