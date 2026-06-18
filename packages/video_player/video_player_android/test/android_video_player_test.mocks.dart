@@ -34,8 +34,7 @@ class _FakeNativeAudioTrackData_1 extends _i1.SmartFake implements _i2.NativeAud
     : super(parent, parentInvocation);
 }
 
-class _FakeNativeVideoTrackData_2 extends _i1.SmartFake
-    implements _i2.NativeVideoTrackData {
+class _FakeNativeVideoTrackData_2 extends _i1.SmartFake implements _i2.NativeVideoTrackData {
   _FakeNativeVideoTrackData_2(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -246,18 +245,11 @@ class MockVideoPlayerInstanceApi extends _i1.Mock implements _i2.VideoPlayerInst
       (super.noSuchMethod(
             Invocation.method(#getVideoTracks, []),
             returnValue: _i4.Future<_i2.NativeVideoTrackData>.value(
-              _FakeNativeVideoTrackData_2(
-                this,
-                Invocation.method(#getVideoTracks, []),
-              ),
+              _FakeNativeVideoTrackData_2(this, Invocation.method(#getVideoTracks, [])),
             ),
-            returnValueForMissingStub:
-                _i4.Future<_i2.NativeVideoTrackData>.value(
-                  _FakeNativeVideoTrackData_2(
-                    this,
-                    Invocation.method(#getVideoTracks, []),
-                  ),
-                ),
+            returnValueForMissingStub: _i4.Future<_i2.NativeVideoTrackData>.value(
+              _FakeNativeVideoTrackData_2(this, Invocation.method(#getVideoTracks, [])),
+            ),
           )
           as _i4.Future<_i2.NativeVideoTrackData>);
 

@@ -251,9 +251,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<List<VideoTrack>> getVideoTracks(int playerId) async {
-    final NativeVideoTrackData nativeData = await _playerWith(
-      id: playerId,
-    ).getVideoTracks();
+    final NativeVideoTrackData nativeData = await _playerWith(id: playerId).getVideoTracks();
     final tracks = <VideoTrack>[];
 
     // Convert ExoPlayer tracks to VideoTrack
@@ -264,9 +262,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
         // Generate label from resolution if not provided
         final String? label =
             track.label ??
-            (track.width != null && track.height != null
-                ? '${track.height}p'
-                : null);
+            (track.width != null && track.height != null ? '${track.height}p' : null);
         tracks.add(
           VideoTrack(
             id: trackId,

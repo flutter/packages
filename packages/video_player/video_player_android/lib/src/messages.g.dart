@@ -703,8 +703,7 @@ class NativeVideoTrackData {
   static NativeVideoTrackData decode(Object result) {
     result as List<Object?>;
     return NativeVideoTrackData(
-      exoPlayerTracks: (result[0] as List<Object?>?)
-          ?.cast<ExoPlayerVideoTrackData>(),
+      exoPlayerTracks: (result[0] as List<Object?>?)?.cast<ExoPlayerVideoTrackData>(),
     );
   }
 
@@ -1313,9 +1312,10 @@ class VideoPlayerInstanceApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[groupIndex, trackIndex],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      groupIndex,
+      trackIndex,
+    ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);

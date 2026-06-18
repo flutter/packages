@@ -847,11 +847,10 @@ void main() {
       });
 
       test('getVideoTracks returns empty list when no tracks', () async {
-        final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) =
-            setUpMockPlayer(playerId: 1);
-        when(
-          api.getVideoTracks(),
-        ).thenAnswer((_) async => NativeVideoTrackData());
+        final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) = setUpMockPlayer(
+          playerId: 1,
+        );
+        when(api.getVideoTracks()).thenAnswer((_) async => NativeVideoTrackData());
 
         final List<VideoTrack> tracks = await player.getVideoTracks(1);
 
@@ -859,8 +858,9 @@ void main() {
       });
 
       test('getVideoTracks converts native tracks to VideoTrack', () async {
-        final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) =
-            setUpMockPlayer(playerId: 1);
+        final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) = setUpMockPlayer(
+          playerId: 1,
+        );
         when(api.getVideoTracks()).thenAnswer(
           (_) async => NativeVideoTrackData(
             exoPlayerTracks: <ExoPlayerVideoTrackData>[
@@ -911,60 +911,56 @@ void main() {
         expect(tracks[1].height, 720);
       });
 
-      test(
-        'getVideoTracks generates label from resolution if not provided',
-        () async {
-          final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) =
-              setUpMockPlayer(playerId: 1);
-          when(api.getVideoTracks()).thenAnswer(
-            (_) async => NativeVideoTrackData(
-              exoPlayerTracks: <ExoPlayerVideoTrackData>[
-                ExoPlayerVideoTrackData(
-                  groupIndex: 0,
-                  trackIndex: 0,
-                  isSelected: true,
-                  width: 1920,
-                  height: 1080,
-                ),
-              ],
-            ),
-          );
+      test('getVideoTracks generates label from resolution if not provided', () async {
+        final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) = setUpMockPlayer(
+          playerId: 1,
+        );
+        when(api.getVideoTracks()).thenAnswer(
+          (_) async => NativeVideoTrackData(
+            exoPlayerTracks: <ExoPlayerVideoTrackData>[
+              ExoPlayerVideoTrackData(
+                groupIndex: 0,
+                trackIndex: 0,
+                isSelected: true,
+                width: 1920,
+                height: 1080,
+              ),
+            ],
+          ),
+        );
 
-          final List<VideoTrack> tracks = await player.getVideoTracks(1);
+        final List<VideoTrack> tracks = await player.getVideoTracks(1);
 
-          expect(tracks.length, 1);
-          expect(tracks[0].label, '1080p');
-        },
-      );
+        expect(tracks.length, 1);
+        expect(tracks[0].label, '1080p');
+      });
 
       test('getVideoTracks handles null exoPlayerTracks', () async {
-        final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) =
-            setUpMockPlayer(playerId: 1);
-        when(
-          api.getVideoTracks(),
-        ).thenAnswer((_) async => NativeVideoTrackData());
+        final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) = setUpMockPlayer(
+          playerId: 1,
+        );
+        when(api.getVideoTracks()).thenAnswer((_) async => NativeVideoTrackData());
 
         final List<VideoTrack> tracks = await player.getVideoTracks(1);
 
         expect(tracks, isEmpty);
       });
 
-      test(
-        'selectVideoTrack with null clears override (auto quality)',
-        () async {
-          final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) =
-              setUpMockPlayer(playerId: 1);
-          when(api.enableAutoVideoQuality()).thenAnswer((_) async {});
+      test('selectVideoTrack with null clears override (auto quality)', () async {
+        final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) = setUpMockPlayer(
+          playerId: 1,
+        );
+        when(api.enableAutoVideoQuality()).thenAnswer((_) async {});
 
-          await player.selectVideoTrack(1, null);
+        await player.selectVideoTrack(1, null);
 
-          verify(api.enableAutoVideoQuality());
-        },
-      );
+        verify(api.enableAutoVideoQuality());
+      });
 
       test('selectVideoTrack parses track id and calls API', () async {
-        final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) =
-            setUpMockPlayer(playerId: 1);
+        final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) = setUpMockPlayer(
+          playerId: 1,
+        );
         when(api.selectVideoTrack(0, 2)).thenAnswer((_) async {});
 
         const track = VideoTrack(id: '0_2', isSelected: false);
@@ -977,37 +973,29 @@ void main() {
         final (AndroidVideoPlayer player, _, _) = setUpMockPlayer(playerId: 1);
 
         const track = VideoTrack(id: 'invalid', isSelected: false);
-        expect(
-          () => player.selectVideoTrack(1, track),
-          throwsA(isA<ArgumentError>()),
-        );
+        expect(() => player.selectVideoTrack(1, track), throwsA(isA<ArgumentError>()));
       });
 
       test('selectVideoTrack throws on track id with too many parts', () async {
         final (AndroidVideoPlayer player, _, _) = setUpMockPlayer(playerId: 1);
 
         const track = VideoTrack(id: '1_2_3', isSelected: false);
-        expect(
-          () => player.selectVideoTrack(1, track),
-          throwsA(isA<ArgumentError>()),
-        );
+        expect(() => player.selectVideoTrack(1, track), throwsA(isA<ArgumentError>()));
       });
 
       test('selectVideoTrack throws on non-numeric track id parts', () async {
         final (AndroidVideoPlayer player, _, _) = setUpMockPlayer(playerId: 1);
 
         const track = VideoTrack(id: 'zero_2', isSelected: false);
-        expect(
-          () => player.selectVideoTrack(1, track),
-          throwsA(isA<ArgumentError>()),
-        );
+        expect(() => player.selectVideoTrack(1, track), throwsA(isA<ArgumentError>()));
       });
 
       testWidgets('selectVideoTrack logs when track change event times out', (
         WidgetTester tester,
       ) async {
-        final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) =
-            setUpMockPlayer(playerId: 1);
+        final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) = setUpMockPlayer(
+          playerId: 1,
+        );
         when(api.selectVideoTrack(0, 2)).thenAnswer((_) async {});
 
         const track = VideoTrack(id: '0_2', isSelected: false);
@@ -1047,120 +1035,105 @@ void main() {
         }
       });
 
-      test(
-        'concurrent selectVideoTrack calls do not clobber each other',
-        () async {
-          final (
-            AndroidVideoPlayer player,
-            _,
-            MockVideoPlayerInstanceApi api,
-            StreamController<PlatformVideoEvent> streamController,
-          ) = setUpMockPlayerWithStream(
-            playerId: 1,
-          );
+      test('concurrent selectVideoTrack calls do not clobber each other', () async {
+        final (
+          AndroidVideoPlayer player,
+          _,
+          MockVideoPlayerInstanceApi api,
+          StreamController<PlatformVideoEvent> streamController,
+        ) = setUpMockPlayerWithStream(
+          playerId: 1,
+        );
 
-          // Make call 1 fail fast so its `finally` runs while call 2 is still
-          // mid-flight. With the pre-fix code, that `finally` nulled the
-          // shared completer/expected-id fields, causing call 2 to also time
-          // out even though its matching event later arrives. With the fix,
-          // call 1's `finally` leaves call 2's state intact.
-          when(
-            api.selectVideoTrack(0, 1),
-          ).thenAnswer((_) async => throw StateError('boom'));
-          when(api.selectVideoTrack(0, 2)).thenAnswer((_) async {});
+        // Make call 1 fail fast so its `finally` runs while call 2 is still
+        // mid-flight. With the pre-fix code, that `finally` nulled the
+        // shared completer/expected-id fields, causing call 2 to also time
+        // out even though its matching event later arrives. With the fix,
+        // call 1's `finally` leaves call 2's state intact.
+        when(api.selectVideoTrack(0, 1)).thenAnswer((_) async => throw StateError('boom'));
+        when(api.selectVideoTrack(0, 2)).thenAnswer((_) async {});
 
-          const trackA = VideoTrack(id: '0_1', isSelected: false);
-          const trackB = VideoTrack(id: '0_2', isSelected: false);
+        const trackA = VideoTrack(id: '0_1', isSelected: false);
+        const trackB = VideoTrack(id: '0_2', isSelected: false);
 
-          // Start both calls before yielding to the event loop, and attach
-          // the error matcher to call 1 immediately so its StateError is not
-          // reported as an unhandled async error.
-          final Future<void> firstFuture = player.selectVideoTrack(1, trackA);
-          final Future<void> firstAssertion = expectLater(
-            firstFuture,
-            throwsA(isA<StateError>()),
-          );
-          final Future<void> secondFuture = player.selectVideoTrack(1, trackB);
+        // Start both calls before yielding to the event loop, and attach
+        // the error matcher to call 1 immediately so its StateError is not
+        // reported as an unhandled async error.
+        final Future<void> firstFuture = player.selectVideoTrack(1, trackA);
+        final Future<void> firstAssertion = expectLater(firstFuture, throwsA(isA<StateError>()));
+        final Future<void> secondFuture = player.selectVideoTrack(1, trackB);
 
-          // Let microtasks (the awaited API calls) settle so call 1's
-          // `finally` runs.
-          await Future<void>.delayed(Duration.zero);
+        // Let microtasks (the awaited API calls) settle so call 1's
+        // `finally` runs.
+        await Future<void>.delayed(Duration.zero);
 
-          // Deliver the matching event for call 2.
-          streamController.add(VideoTrackChangedEvent(selectedTrackId: '0_2'));
+        // Deliver the matching event for call 2.
+        streamController.add(VideoTrackChangedEvent(selectedTrackId: '0_2'));
 
-          // Call 2 should complete promptly on the matching event.
-          await secondFuture;
-          await firstAssertion;
+        // Call 2 should complete promptly on the matching event.
+        await secondFuture;
+        await firstAssertion;
 
-          verify(api.selectVideoTrack(0, 1));
-          verify(api.selectVideoTrack(0, 2));
-        },
-      );
+        verify(api.selectVideoTrack(0, 1));
+        verify(api.selectVideoTrack(0, 2));
+      });
 
-      test(
-        'selectVideoTrack(null) resolves without waiting for a track event',
-        () async {
-          final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) =
-              setUpMockPlayer(playerId: 1);
-          when(api.enableAutoVideoQuality()).thenAnswer((_) async {});
+      test('selectVideoTrack(null) resolves without waiting for a track event', () async {
+        final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) = setUpMockPlayer(
+          playerId: 1,
+        );
+        when(api.enableAutoVideoQuality()).thenAnswer((_) async {});
 
-          // Auto/adaptive selection must complete on its own (clearing the
-          // override), without depending on a VideoTrackChangedEvent. If it
-          // waited for an event, no event is delivered here so this would hang
-          // until the 5s fallback timeout.
-          await player
-              .selectVideoTrack(1, null)
-              .timeout(
-                const Duration(seconds: 1),
-                onTimeout: () => fail(
-                  'selectVideoTrack(null) should not wait for a track event',
-                ),
-              );
+        // Auto/adaptive selection must complete on its own (clearing the
+        // override), without depending on a VideoTrackChangedEvent. If it
+        // waited for an event, no event is delivered here so this would hang
+        // until the 5s fallback timeout.
+        await player
+            .selectVideoTrack(1, null)
+            .timeout(
+              const Duration(seconds: 1),
+              onTimeout: () => fail('selectVideoTrack(null) should not wait for a track event'),
+            );
 
-          verify(api.enableAutoVideoQuality());
-        },
-      );
+        verify(api.enableAutoVideoQuality());
+      });
 
-      test(
-        "selectVideoTrack(null) is not completed by a prior selection's event",
-        () async {
-          final (
-            AndroidVideoPlayer player,
-            _,
-            MockVideoPlayerInstanceApi api,
-            StreamController<PlatformVideoEvent> streamController,
-          ) = setUpMockPlayerWithStream(
-            playerId: 1,
-          );
+      test("selectVideoTrack(null) is not completed by a prior selection's event", () async {
+        final (
+          AndroidVideoPlayer player,
+          _,
+          MockVideoPlayerInstanceApi api,
+          StreamController<PlatformVideoEvent> streamController,
+        ) = setUpMockPlayerWithStream(
+          playerId: 1,
+        );
 
-          when(api.selectVideoTrack(0, 1)).thenAnswer((_) async {});
-          when(api.enableAutoVideoQuality()).thenAnswer((_) async {});
+        when(api.selectVideoTrack(0, 1)).thenAnswer((_) async {});
+        when(api.enableAutoVideoQuality()).thenAnswer((_) async {});
 
-          const trackA = VideoTrack(id: '0_1', isSelected: false);
+        const trackA = VideoTrack(id: '0_1', isSelected: false);
 
-          // Start an explicit selection that is still in flight (its event has
-          // not arrived yet) when we switch to auto.
-          var explicitCompleted = false;
-          unawaited(
-            player.selectVideoTrack(1, trackA).then((_) {
-              explicitCompleted = true;
-            }),
-          );
+        // Start an explicit selection that is still in flight (its event has
+        // not arrived yet) when we switch to auto.
+        var explicitCompleted = false;
+        unawaited(
+          player.selectVideoTrack(1, trackA).then((_) {
+            explicitCompleted = true;
+          }),
+        );
 
-          // Switch to auto. This resolves on its own.
-          await player.selectVideoTrack(1, null);
-          verify(api.enableAutoVideoQuality());
+        // Switch to auto. This resolves on its own.
+        await player.selectVideoTrack(1, null);
+        verify(api.enableAutoVideoQuality());
 
-          // Now deliver the stale event for the explicit ("0_1") selection.
-          // It must complete the explicit future only — never the auto call,
-          // which has already resolved and never registered a completer.
-          streamController.add(VideoTrackChangedEvent(selectedTrackId: '0_1'));
-          await Future<void>.delayed(Duration.zero);
+        // Now deliver the stale event for the explicit ("0_1") selection.
+        // It must complete the explicit future only — never the auto call,
+        // which has already resolved and never registered a completer.
+        streamController.add(VideoTrackChangedEvent(selectedTrackId: '0_1'));
+        await Future<void>.delayed(Duration.zero);
 
-          expect(explicitCompleted, isTrue);
-        },
-      );
+        expect(explicitCompleted, isTrue);
+      });
     });
   });
 }
