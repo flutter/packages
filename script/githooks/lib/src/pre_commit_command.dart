@@ -121,8 +121,12 @@ class PreCommitCommand extends Command<bool> {
     ], workingDirectory: repoRoot.path);
 
     if (formatResult.exitCode != 0) {
-      if (formatResult.stdout.toString().isNotEmpty) print(formatResult.stdout);
-      if (formatResult.stderr.toString().isNotEmpty) print(formatResult.stderr);
+      if (formatResult.stdout.toString().isNotEmpty) {
+        print(formatResult.stdout);
+      }
+      if (formatResult.stderr.toString().isNotEmpty) {
+        print(formatResult.stderr);
+      }
       print(
         '❌ Formatting issues found. Please run "dart run script/tool/bin/flutter_plugin_tools.dart format $packageArgs" to fix them.',
       );

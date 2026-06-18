@@ -76,7 +76,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     },
   );
 
-  /// Handles retrieving media orientation for a device.
+  /// Handles retrieving media orientation for a device.f
   late final DeviceOrientationManager deviceOrientationManager = DeviceOrientationManager(
     onDeviceOrientationChanged: (_, String orientation) {
       final DeviceOrientation deviceOrientation = _deserializeDeviceOrientation(orientation);
