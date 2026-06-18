@@ -16,7 +16,7 @@ When adding a new remote skill, you must follow this exact structure and process
 
 3. **License Requirement:** You **must** download and retain the original `LICENSE` file from the remote repository and place it directly inside the `third_party/<repo-name>` subfolder.
 
-4. **Symlinking:** Once installed, symlink the newly downloaded skill into the appropriate project's `.agents/skills` directory using a relative symlink.
+4. **Symlinking:** Once installed, symlink the newly downloaded skill into the appropriate plugin's `.agents/skills` directory using a relative symlink.
    ```bash
    cd packages/<plugin-name>/.agents/skills
    ln -s ../../../../../third_party/<repo-name>/.agents/skills/<skill-name> <skill-name>
