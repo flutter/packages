@@ -1,0 +1,2 @@
+coverage_exceptions:
+  - example_package_that_fails_coverage # TODO(camsim99): determine if this is needed
