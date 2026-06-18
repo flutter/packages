@@ -108,10 +108,14 @@ Before declaring the task complete, verify the final requirements for creating a
 Do NOT penalize or block the developer for administrative checklist items that are unverifiable by an agent (e.g., signing the CLA, reading the Contributor Guide).
 
 **Action to take:**
-Provide the developer with a brief summary of what you verified automatically. Then, provide them with this short checklist of items they will need to handle when opening their Pull Request:
+First, explicitly state the final verdict to the user at the very beginning of your response using a large heading:
+
+- If ANY step failed: Start your response with a clear "# NO, you are not ready to push." followed by a summary of what failed and what needs to be fixed.
+- If ALL steps passed: Start your response with a clear "# YES, you are ready to push!"
+
+Then, provide the developer with a brief summary of what you verified automatically. If the code is ready to push, provide them with this short checklist of items they will need to handle when opening their pull request:
+
 - Ensure the PR title starts with the package name in brackets (e.g., `[camera_android] Fix crash`).
 - Ensure the PR description links to at least one issue that is being fixed.
 - Ensure they have signed the CLA.
 - Ensure the branch is up to date with the main branch and has no merge conflicts.
-
-Once all of the automated checks pass and you have provided this final summary and checklist to the user, the code is ready to push!
