@@ -149,11 +149,14 @@ void main() {
 
       group('XFile download', () {
         test('creates a DOM container', () async {
+          final mockAnchor = html.document.createElement('a') as html.HTMLAnchorElement;
+          final testOverrides = XFileTestOverrides(createAnchorElement: (_, _) => mockAnchor);
+
           final file = WebScopedStorageXFile(
-            WebScopedStorageXFileCreationParams.fromBlob(testFile),
+            WebScopedStorageXFileCreationParams.fromBlob(testFile, testOverrides: testOverrides),
           );
 
-          await file.download('');
+          await file.download();
 
           final html.Element? container = html.document.querySelector('#$crossFileDomElementId');
 
@@ -161,26 +164,36 @@ void main() {
         });
 
         test('create anchor element', () async {
+          final mockAnchor = html.document.createElement('a') as html.HTMLAnchorElement;
+          late final String setHref;
+          late final String? setDownload;
+          final testOverrides = XFileTestOverrides(
+            createAnchorElement: (String href, String? suggestedName) {
+              setHref = href;
+              setDownload = suggestedName;
+              return mockAnchor;
+            },
+          );
+
           final file = WebScopedStorageXFile(
-            WebScopedStorageXFileCreationParams.fromBlob(testFile),
+            WebScopedStorageXFileCreationParams.fromBlob(testFile, testOverrides: testOverrides),
           );
 
           await file.download('path');
 
           final html.Element container = html.document.querySelector('#$crossFileDomElementId')!;
 
-          late html.HTMLAnchorElement element;
+          // Find anchor element.
+          late final html.HTMLAnchorElement element;
           for (var i = 0; i < container.childNodes.length; i++) {
-            final html.Element test = container.children.item(i)!;
-            if (test.tagName == 'A') {
-              element = test as html.HTMLAnchorElement;
-              break;
-            }
+            element = container.children.item(i)! as html.HTMLAnchorElement;
           }
 
-          // if element is not found, the `firstWhere` call will throw StateError.
-          expect(element.href, file.params.uri);
-          expect(element.download, 'path');
+          // If element is not found, the `firstWhere` call will throw StateError.
+          expect(element, mockAnchor);
+          expect(element.tagName, 'A');
+          expect(setHref, file.params.uri);
+          expect(setDownload, 'path');
         });
 
         test('anchor element is clicked', () async {
