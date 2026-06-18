@@ -47,7 +47,7 @@ bool _deepEquals(Object? a, Object? b) {
 /// Pigeon equivalent of MapType
 enum PlatformMapType { none, normal, satellite, terrain, hybrid }
 
-/// Pigeon equivalent of MarkerCollisionBehavior.
+/// Pigeon equivalent of the MarkerCollisionBehavior enum.
 enum PlatformMarkerCollisionBehavior {
   requiredDisplay,
   optionalAndHidesLowerPriority,
@@ -2340,6 +2340,52 @@ class PlatformBitmapPinConfig {
   int get hashCode => Object.hashAll(_toList());
 }
 
+/// Controls marker update animation behavior for properties that the native iOS
+/// SDK implicitly animates.
+class PlatformMarkerUpdateAnimationConfiguration {
+  PlatformMarkerUpdateAnimationConfiguration({
+    required this.positionAnimationsEnabled,
+    required this.rotationAnimationsEnabled,
+  });
+
+  bool positionAnimationsEnabled;
+
+  bool rotationAnimationsEnabled;
+
+  List<Object?> _toList() {
+    return <Object?>[positionAnimationsEnabled, rotationAnimationsEnabled];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static PlatformMarkerUpdateAnimationConfiguration decode(Object result) {
+    result as List<Object?>;
+    return PlatformMarkerUpdateAnimationConfiguration(
+      positionAnimationsEnabled: result[0]! as bool,
+      rotationAnimationsEnabled: result[1]! as bool,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PlatformMarkerUpdateAnimationConfiguration ||
+        other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -2494,6 +2540,9 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformBitmapPinConfig) {
       buffer.putUint8(177);
       writeValue(buffer, value.encode());
+    } else if (value is PlatformMarkerUpdateAnimationConfiguration) {
+      buffer.putUint8(178);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -2606,6 +2655,10 @@ class _PigeonCodec extends StandardMessageCodec {
         return PlatformBitmapBytesMap.decode(readValue(buffer)!);
       case 177:
         return PlatformBitmapPinConfig.decode(readValue(buffer)!);
+      case 178:
+        return PlatformMarkerUpdateAnimationConfiguration.decode(
+          readValue(buffer)!,
+        );
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -2667,6 +2720,34 @@ class MapsApi {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[configuration]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Sets the marker update animation configuration.
+  Future<void> setMarkerUpdateAnimationConfiguration(
+    PlatformMarkerUpdateAnimationConfiguration configuration,
+  ) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.setMarkerUpdateAnimationConfiguration$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[configuration],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
