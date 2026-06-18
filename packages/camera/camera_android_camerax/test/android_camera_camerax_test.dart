@@ -2280,7 +2280,7 @@ void main() {
         );
 
         // Verify recording is started.
-        expect(camera.pendingRecording, equals(mockPendingRecordingWithAudio));
+        expect(camera.pendingRecordingg, equals(mockPendingRecordingWithAudio));
         expect(camera.recording, mockRecording);
       },
     );
@@ -2369,7 +2369,7 @@ void main() {
           camera.videoCapture!,
         ]),
       );
-      expect(camera.pendingRecording, equals(mockPendingRecording));
+      expect(camera.pendingRecordingg, equals(mockPendingRecording));
       expect(camera.recording, mockRecording);
 
       await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
