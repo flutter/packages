@@ -1,6 +1,6 @@
 ---
 name: "pre-push-skill"
-description: "A comprehensive pre-push checklist for contributing to the flutter/packages repository."
+description: "Executes the required pre-push steps for the flutter/packages repository. Call this tool immediately whenever the user asks to push, requests a code review before committing, or wants to validate their local changes can become a pull request. Do NOT use this tool if the user is working in flutter/flutter or flutter/engine."
 ---
 
 # Pre-Push Skill
