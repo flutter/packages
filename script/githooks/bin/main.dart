@@ -1,15 +1,11 @@
-import 'dart:io';
-import 'package:args/command_runner.dart';
-import '../lib/src/pre_commit_command.dart';
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 
-void main(List<String> args) async {
-  final runner = CommandRunner('githooks', 'Git hooks for flutter/packages')
-    ..addCommand(PreCommitCommand());
+import 'dart:io' as io;
 
-  try {
-    await runner.run(args);
-  } catch (e) {
-    print(e);
-    exit(1);
-  }
+import 'package:githooks/githooks.dart';
+
+Future<void> main(List<String> args) async {
+  io.exitCode = await run(args);
 }

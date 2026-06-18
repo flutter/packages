@@ -1,40 +1,51 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 import 'package:args/command_runner.dart';
 
-class PreCommitCommand extends Command {
+/// The command that implements the pre-commit githook
+class PreCommitCommand extends Command<bool> {
   @override
   final String name = 'pre-commit';
 
   @override
-  final String description = 'Runs pre-commit checks like format and analyze.';
+  final String description = 'Checks to run before a "git commit"';
 
   @override
-  Future<void> run() async {
-    // 1. Get the list of staged files
-    final diffResult = await Process.run('git', ['diff', '--cached', '--name-only', '--diff-filter=ACM']);
+  Future<bool> run() async {
+    // Find changed Dart files.
+    final ProcessResult diffResult = await Process.run('git', [
+      'diff',
+      '--cached',
+      '--name-only',
+      '--diff-filter=ACM',
+    ]);
     if (diffResult.exitCode != 0) {
       print('Failed to get staged files.');
       exit(1);
     }
 
-    // Filter for Dart files
-    final stagedDartFiles = (diffResult.stdout as String)
+    final List<String> stagedDartFiles = (diffResult.stdout as String)
         .split('\n')
         .map((file) => file.trim())
         .where((file) => file.endsWith('.dart'))
         .toList();
 
     if (stagedDartFiles.isEmpty) {
-      // No Dart files are being committed; exit cleanly
-      return;
+      // No Dart files are being committed.
+      return true;
     }
 
     print('🔍 Running pre-commit checks on staged Dart files...');
-    bool hasError = false;
+    var hasError = false;
 
-    // 2. Code Formatting Check
+    // Check formatting.
     print('Checking formatting...');
-    final formatResult = await Process.run('dart', [
+    final ProcessResult formatResult = await Process.run('dart', [
       'format',
       '--output=none',
       '--set-exit-if-changed',
@@ -44,15 +55,17 @@ class PreCommitCommand extends Command {
     if (formatResult.exitCode != 0) {
       print('❌ Formatting issues found in the following files:');
       print((formatResult.stdout as String).trim());
-      print('👉 Please run "dart format" on these files to fix them.');
+      print(
+        '👉 Please run "dart format" on these files to fix them.',
+      );
       hasError = true;
     } else {
       print('✅ Formatting looks good.');
     }
 
-    // 3. Static Analysis Check
+    // Run static analysis.
     print('Running static analysis...');
-    final analyzeResult = await Process.run('dart', [
+    final ProcessResult analyzeResult = await Process.run('dart', [
       'analyze',
       '--fatal-infos',
       ...stagedDartFiles,
@@ -66,10 +79,6 @@ class PreCommitCommand extends Command {
       print('✅ Static analysis looks good.');
     }
 
-    // 4. Final Verdict
-    if (hasError) {
-      print('🚨 Pre-commit checks failed. Please fix the above errors and try committing again.');
-      exit(1);
-    }
+    return !hasError;
   }
 }

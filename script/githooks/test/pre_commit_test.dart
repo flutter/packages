@@ -1,6 +1,7 @@
 import 'dart:io';
-import 'package:test/test.dart';
+
 import 'package:path/path.dart' as p;
+import 'package:test/test.dart';
 
 void main() {
   group('pre-commit hook', () {
@@ -14,7 +15,7 @@ void main() {
       await Process.run('git', ['config', 'user.email', 'test@example.com'], workingDirectory: tempDir.path);
       await Process.run('git', ['config', 'user.name', 'Test User'], workingDirectory: tempDir.path);
 
-      var repoRoot = Directory.current;
+      Directory repoRoot = Directory.current;
       while (repoRoot.path != '/' && !Directory(p.join(repoRoot.path, '.git')).existsSync()) {
         repoRoot = repoRoot.parent;
       }
@@ -44,7 +45,7 @@ void main() {
 
       await Process.run('git', ['add', 'test_file.dart'], workingDirectory: tempDir.path);
 
-      final result = await runHook();
+      final ProcessResult result = await runHook();
       expect(result.exitCode, 0);
       final output = '${result.stdout}${result.stderr}';
       expect(output, contains('Formatting looks good.'));
@@ -61,10 +62,10 @@ void main(){
 
       await Process.run('git', ['add', 'test_file.dart'], workingDirectory: tempDir.path);
 
-      final result = await runHook();
+      final ProcessResult result = await runHook();
       expect(result.exitCode, 1);
       final output = '${result.stdout}${result.stderr}';
-      expect(output, contains('Formatting issues found'));
+      expect(output, contains('Formatting issues found in the following files:'));
     });
 
     test('fails on analysis error', () async {
@@ -77,7 +78,7 @@ void main() {
 
       await Process.run('git', ['add', 'test_file.dart'], workingDirectory: tempDir.path);
 
-      final result = await runHook();
+      final ProcessResult result = await runHook();
       expect(result.exitCode, 1);
       final output = '${result.stdout}${result.stderr}';
       expect(output, contains('Static analysis errors found'));
@@ -89,7 +90,7 @@ void main() {
 
       await Process.run('git', ['add', 'README.md'], workingDirectory: tempDir.path);
 
-      final result = await runHook();
+      final ProcessResult result = await runHook();
       expect(result.exitCode, 0);
       final output = '${result.stdout}${result.stderr}';
       expect(output, isNot(contains('Checking formatting...')));
