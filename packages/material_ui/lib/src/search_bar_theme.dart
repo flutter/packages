@@ -51,7 +51,8 @@ class SearchBarThemeData with Diagnosticable {
     this.hintStyle,
     this.constraints,
     this.textCapitalization,
-  });
+    this.variant,
+  }) : assert(variant != .material3Expressive, 'Only material3 is supported.');
 
   /// Overrides the default value of the [SearchBar.elevation].
   final WidgetStateProperty<double?>? elevation;
@@ -89,6 +90,9 @@ class SearchBarThemeData with Diagnosticable {
   /// Overrides the value of [SearchBar.textCapitalization].
   final TextCapitalization? textCapitalization;
 
+  /// The style variant of Material Design used by [SearchBar].
+  final StyleVariant? variant;
+
   /// Creates a copy of this object but with the given fields replaced with the
   /// new values.
   SearchBarThemeData copyWith({
@@ -104,6 +108,7 @@ class SearchBarThemeData with Diagnosticable {
     WidgetStateProperty<TextStyle?>? hintStyle,
     BoxConstraints? constraints,
     TextCapitalization? textCapitalization,
+    StyleVariant? variant,
   }) {
     return SearchBarThemeData(
       elevation: elevation ?? this.elevation,
@@ -118,6 +123,7 @@ class SearchBarThemeData with Diagnosticable {
       hintStyle: hintStyle ?? this.hintStyle,
       constraints: constraints ?? this.constraints,
       textCapitalization: textCapitalization ?? this.textCapitalization,
+      variant: variant ?? this.variant,
     );
   }
 
@@ -171,6 +177,7 @@ class SearchBarThemeData with Diagnosticable {
       ),
       constraints: BoxConstraints.lerp(a?.constraints, b?.constraints, t),
       textCapitalization: t < 0.5 ? a?.textCapitalization : b?.textCapitalization,
+      variant: t < 0.5 ? a?.variant : b?.variant,
     );
   }
 
@@ -188,6 +195,7 @@ class SearchBarThemeData with Diagnosticable {
     hintStyle,
     constraints,
     textCapitalization,
+    variant,
   );
 
   @override
@@ -210,7 +218,8 @@ class SearchBarThemeData with Diagnosticable {
         other.textStyle == textStyle &&
         other.hintStyle == hintStyle &&
         other.constraints == constraints &&
-        other.textCapitalization == textCapitalization;
+        other.textCapitalization == textCapitalization &&
+        other.variant == variant;
   }
 
   @override
@@ -284,6 +293,7 @@ class SearchBarThemeData with Diagnosticable {
         defaultValue: null,
       ),
     );
+    properties.add(EnumProperty<StyleVariant>('variant', variant, defaultValue: null));
   }
 }
 

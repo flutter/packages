@@ -57,7 +57,8 @@ class ProgressIndicatorThemeData with Diagnosticable {
     )
     this.year2023,
     this.controller,
-  });
+    this.variant,
+  }) : assert(variant != .material3Expressive, 'Only material3 is supported.');
 
   /// The color of the [ProgressIndicator]'s indicator.
   ///
@@ -152,6 +153,9 @@ class ProgressIndicatorThemeData with Diagnosticable {
   /// manage its own internal [AnimationController].
   final AnimationController? controller;
 
+  /// The style variant of Material Design used by progress indicators.
+  final StyleVariant? variant;
+
   /// Creates a copy of this object but with the given fields replaced with the
   /// new values.
   ProgressIndicatorThemeData copyWith({
@@ -171,6 +175,7 @@ class ProgressIndicatorThemeData with Diagnosticable {
     EdgeInsetsGeometry? circularTrackPadding,
     bool? year2023,
     AnimationController? controller,
+    StyleVariant? variant,
   }) {
     return ProgressIndicatorThemeData(
       color: color ?? this.color,
@@ -189,6 +194,7 @@ class ProgressIndicatorThemeData with Diagnosticable {
       circularTrackPadding: circularTrackPadding ?? this.circularTrackPadding,
       year2023: year2023 ?? this.year2023,
       controller: controller ?? this.controller,
+      variant: variant ?? this.variant,
     );
   }
 
@@ -224,6 +230,7 @@ class ProgressIndicatorThemeData with Diagnosticable {
       ),
       year2023: t < 0.5 ? a?.year2023 : b?.year2023,
       controller: t < 0.5 ? a?.controller : b?.controller,
+      variant: t < 0.5 ? a?.variant : b?.variant,
     );
   }
 
@@ -245,6 +252,7 @@ class ProgressIndicatorThemeData with Diagnosticable {
     circularTrackPadding,
     year2023,
     controller,
+    variant,
   );
 
   @override
@@ -271,7 +279,8 @@ class ProgressIndicatorThemeData with Diagnosticable {
         other.trackGap == trackGap &&
         other.circularTrackPadding == circularTrackPadding &&
         other.year2023 == year2023 &&
-        other.controller == controller;
+        other.controller == controller &&
+        other.variant == variant;
   }
 
   @override
@@ -307,6 +316,7 @@ class ProgressIndicatorThemeData with Diagnosticable {
     properties.add(
       DiagnosticsProperty<AnimationController>('controller', controller, defaultValue: null),
     );
+    properties.add(EnumProperty<StyleVariant>('variant', variant, defaultValue: null));
   }
 }
 

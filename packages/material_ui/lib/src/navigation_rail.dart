@@ -444,8 +444,11 @@ class _NavigationRailState extends State<NavigationRail> with TickerProviderStat
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
     final NavigationRailThemeData navigationRailTheme = NavigationRailTheme.of(context);
-    final NavigationRailThemeData defaults = Theme.of(context).useMaterial3
+    final StyleVariant effectiveVariant = navigationRailTheme.variant ?? theme.variant;
+    assert(effectiveVariant != .material3Expressive, 'Only material3 is supported.');
+    final NavigationRailThemeData defaults = theme.useMaterial3
         ? _NavigationRailDefaultsM3(context)
         : _NavigationRailDefaultsM2(context);
     final MaterialLocalizations localizations = MaterialLocalizations.of(context);
@@ -489,7 +492,7 @@ class _NavigationRailState extends State<NavigationRail> with TickerProviderStat
     // For backwards compatibility, in M2 the opacity of the unselected icons needs
     // to be set to the default if it isn't in the given theme. This can be removed
     // when Material 3 is the default.
-    final IconThemeData effectiveUnselectedIconTheme = Theme.of(context).useMaterial3
+    final IconThemeData effectiveUnselectedIconTheme = theme.useMaterial3
         ? unselectedIconTheme
         : unselectedIconTheme.copyWith(
             opacity: unselectedIconTheme.opacity ?? defaults.unselectedIconTheme!.opacity,

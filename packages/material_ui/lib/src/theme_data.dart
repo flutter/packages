@@ -396,6 +396,7 @@ class ThemeData with Diagnosticable {
     extensions ??= <ThemeExtension<dynamic>>[];
     adaptations ??= <Adaptation<Object>>[];
     variant ??= StyleVariant.material3;
+    assert(variant != .material3Expressive, 'Only material3 is supported.');
     // TODO(bleroux): Clean this up once the type of `inputDecorationTheme` is changed to `InputDecorationThemeData`
     if (inputDecorationTheme != null) {
       if (inputDecorationTheme is InputDecorationTheme) {
@@ -819,7 +820,8 @@ class ThemeData with Diagnosticable {
       'This feature was deprecated after v3.28.0-1.0.pre.',
     )
     required this.indicatorColor,
-  }) : // DEPRECATED (newest deprecations at the bottom)
+  }) : assert(variant != .material3Expressive, 'Only material3 is supported.'),
+       // DEPRECATED (newest deprecations at the bottom)
        // should not be `required`, use getter pattern to avoid breakages.
        _buttonBarTheme = buttonBarTheme,
        assert(buttonBarTheme != null);
@@ -1161,7 +1163,7 @@ class ThemeData with Diagnosticable {
   ///   * [Material 3 specification](https://m3.material.io/).
   final bool useMaterial3;
 
-  /// The Material style variant used by Material components.
+  /// The style variant of Material Design used by Material components.
   ///
   /// Defaults to [StyleVariant.material3].
   final StyleVariant variant;

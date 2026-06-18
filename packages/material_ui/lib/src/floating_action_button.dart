@@ -491,6 +491,8 @@ class FloatingActionButton extends StatelessWidget {
     final FloatingActionButtonThemeData floatingActionButtonTheme = FloatingActionButtonTheme.of(
       context,
     );
+    final StyleVariant effectiveVariant = floatingActionButtonTheme.variant ?? theme.variant;
+    assert(effectiveVariant != .material3Expressive, 'Only material3 is supported.');
     final FloatingActionButtonThemeData defaults = theme.useMaterial3
         ? _FABDefaultsM3(context, _floatingActionButtonType, child != null)
         : _FABDefaultsM2(context, _floatingActionButtonType, child != null);

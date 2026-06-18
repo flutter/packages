@@ -275,9 +275,12 @@ class NavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
     final NavigationBarThemeData defaults = _defaultsFor(context);
 
     final NavigationBarThemeData navigationBarTheme = NavigationBarTheme.of(context);
+    final StyleVariant effectiveVariant = navigationBarTheme.variant ?? theme.variant;
+    assert(effectiveVariant != .material3Expressive, 'Only material3 is supported.');
     final double effectiveHeight = height ?? navigationBarTheme.height ?? defaults.height!;
     final NavigationDestinationLabelBehavior effectiveLabelBehavior =
         labelBehavior ?? navigationBarTheme.labelBehavior ?? defaults.labelBehavior!;

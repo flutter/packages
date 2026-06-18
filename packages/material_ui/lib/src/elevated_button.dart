@@ -392,6 +392,8 @@ class ElevatedButton extends ButtonStyleButton {
   @override
   ButtonStyle defaultStyleOf(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    final StyleVariant effectiveVariant = ElevatedButtonTheme.of(context).variant ?? theme.variant;
+    assert(effectiveVariant != .material3Expressive, 'Only material3 is supported.');
     final ColorScheme colorScheme = theme.colorScheme;
     final ButtonStyle buttonStyle = theme.useMaterial3
         ? _ElevatedButtonDefaultsM3(context)

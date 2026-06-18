@@ -53,7 +53,8 @@ class SearchViewThemeData with Diagnosticable {
     this.headerTextStyle,
     this.headerHintStyle,
     this.dividerColor,
-  });
+    this.variant,
+  }) : assert(variant != .material3Expressive, 'Only material3 is supported.');
 
   /// Overrides the default value of the [SearchAnchor.viewBackgroundColor].
   final Color? backgroundColor;
@@ -93,6 +94,9 @@ class SearchViewThemeData with Diagnosticable {
 
   /// Overrides the value of the divider color for [SearchAnchor.dividerColor].
   final Color? dividerColor;
+    
+  /// The style variant of Material Design used by search views.
+  final StyleVariant? variant;
 
   /// Creates a copy of this object but with the given fields replaced with the
   /// new values.
@@ -110,6 +114,7 @@ class SearchViewThemeData with Diagnosticable {
     EdgeInsetsGeometry? barPadding,
     bool? shrinkWrap,
     Color? dividerColor,
+    StyleVariant? variant,
   }) {
     return SearchViewThemeData(
       backgroundColor: backgroundColor ?? this.backgroundColor,
@@ -125,6 +130,7 @@ class SearchViewThemeData with Diagnosticable {
       barPadding: barPadding ?? this.barPadding,
       shrinkWrap: shrinkWrap ?? this.shrinkWrap,
       dividerColor: dividerColor ?? this.dividerColor,
+      variant: variant ?? this.variant,
     );
   }
 
@@ -147,6 +153,7 @@ class SearchViewThemeData with Diagnosticable {
       barPadding: EdgeInsetsGeometry.lerp(a?.barPadding, b?.barPadding, t),
       shrinkWrap: t < 0.5 ? a?.shrinkWrap : b?.shrinkWrap,
       dividerColor: Color.lerp(a?.dividerColor, b?.dividerColor, t),
+      variant: t < 0.5 ? a?.variant : b?.variant,
     );
   }
 
@@ -165,6 +172,7 @@ class SearchViewThemeData with Diagnosticable {
     barPadding,
     shrinkWrap,
     dividerColor,
+    variant,
   );
 
   @override
@@ -188,7 +196,8 @@ class SearchViewThemeData with Diagnosticable {
         other.padding == padding &&
         other.barPadding == barPadding &&
         other.shrinkWrap == shrinkWrap &&
-        other.dividerColor == dividerColor;
+        other.dividerColor == dividerColor &&
+        other.variant == variant;
   }
 
   @override
@@ -221,6 +230,7 @@ class SearchViewThemeData with Diagnosticable {
     );
     properties.add(DiagnosticsProperty<bool?>('shrinkWrap', shrinkWrap, defaultValue: null));
     properties.add(DiagnosticsProperty<Color?>('dividerColor', dividerColor, defaultValue: null));
+    properties.add(EnumProperty<StyleVariant>('variant', variant, defaultValue: null));
   }
 
   // Special case because BorderSide.lerp() doesn't support null arguments

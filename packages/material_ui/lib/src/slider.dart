@@ -831,6 +831,8 @@ class _SliderState extends State<Slider> with TickerProviderStateMixin {
   Widget _buildMaterialSlider(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     SliderThemeData sliderTheme = SliderTheme.of(context);
+    final StyleVariant effectiveVariant = sliderTheme.variant ?? theme.variant;
+    assert(effectiveVariant != .material3Expressive, 'Only material3 is supported.');
     final bool year2023 = widget.year2023 ?? sliderTheme.year2023 ?? true;
     final SliderThemeData defaults = switch (theme.useMaterial3) {
       true => year2023 ? _SliderDefaultsM3Year2023(context) : _SliderDefaultsM3(context),

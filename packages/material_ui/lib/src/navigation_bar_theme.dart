@@ -52,7 +52,8 @@ class NavigationBarThemeData with Diagnosticable {
     this.labelBehavior,
     this.overlayColor,
     this.labelPadding,
-  });
+    this.variant,
+  }) : assert(variant != .material3Expressive, 'Only material3 is supported.');
 
   /// Overrides the default value of [NavigationBar.height].
   final double? height;
@@ -97,6 +98,9 @@ class NavigationBarThemeData with Diagnosticable {
   /// Overrides the default value of [NavigationBar.labelPadding].
   final EdgeInsetsGeometry? labelPadding;
 
+  /// The style variant of Material Design used by [NavigationBar].
+  final StyleVariant? variant;
+
   /// Creates a copy of this object with the given fields replaced with the
   /// new values.
   NavigationBarThemeData copyWith({
@@ -112,6 +116,7 @@ class NavigationBarThemeData with Diagnosticable {
     NavigationDestinationLabelBehavior? labelBehavior,
     WidgetStateProperty<Color?>? overlayColor,
     EdgeInsetsGeometry? labelPadding,
+    StyleVariant? variant,
   }) {
     return NavigationBarThemeData(
       height: height ?? this.height,
@@ -126,6 +131,7 @@ class NavigationBarThemeData with Diagnosticable {
       labelBehavior: labelBehavior ?? this.labelBehavior,
       overlayColor: overlayColor ?? this.overlayColor,
       labelPadding: labelPadding ?? this.labelPadding,
+      variant: variant ?? this.variant,
     );
   }
 
@@ -170,6 +176,7 @@ class NavigationBarThemeData with Diagnosticable {
         Color.lerp,
       ),
       labelPadding: EdgeInsetsGeometry.lerp(a?.labelPadding, b?.labelPadding, t),
+      variant: t < 0.5 ? a?.variant : b?.variant,
     );
   }
 
@@ -187,6 +194,7 @@ class NavigationBarThemeData with Diagnosticable {
     labelBehavior,
     overlayColor,
     labelPadding,
+    variant,
   );
 
   @override
@@ -209,7 +217,8 @@ class NavigationBarThemeData with Diagnosticable {
         other.iconTheme == iconTheme &&
         other.labelBehavior == labelBehavior &&
         other.overlayColor == overlayColor &&
-        other.labelPadding == labelPadding;
+        other.labelPadding == labelPadding &&
+        other.variant == variant;
   }
 
   @override
@@ -255,6 +264,7 @@ class NavigationBarThemeData with Diagnosticable {
     properties.add(
       DiagnosticsProperty<EdgeInsetsGeometry>('labelPadding', labelPadding, defaultValue: null),
     );
+    properties.add(EnumProperty<StyleVariant>('variant', variant, defaultValue: null));
   }
 }
 

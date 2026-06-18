@@ -430,13 +430,16 @@ class FilledButton extends ButtonStyleButton {
   /// [ButtonStyle.padding] is reduced from 24 to 16.
   @override
   ButtonStyle defaultStyleOf(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final StyleVariant effectiveVariant = FilledButtonTheme.of(context).variant ?? theme.variant;
+    assert(effectiveVariant != .material3Expressive, 'Only material3 is supported.');
     final ButtonStyle buttonStyle = switch (_variant) {
       _FilledButtonVariant.filled => _FilledButtonDefaultsM3(context),
       _FilledButtonVariant.tonal => _FilledTonalButtonDefaultsM3(context),
     };
 
     if (_addPadding) {
-      final bool useMaterial3 = Theme.of(context).useMaterial3;
+      final bool useMaterial3 = theme.useMaterial3;
       final double defaultFontSize =
           buttonStyle.textStyle?.resolve(const <WidgetState>{})?.fontSize ?? 14.0;
       final double effectiveTextScale =

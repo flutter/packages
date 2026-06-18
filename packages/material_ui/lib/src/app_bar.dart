@@ -906,6 +906,8 @@ class _AppBarState extends State<AppBar> {
     final ThemeData theme = Theme.of(context);
     final IconButtonThemeData iconButtonTheme = IconButtonTheme.of(context);
     final AppBarThemeData appBarTheme = AppBarTheme.of(context);
+    final StyleVariant effectiveVariant = appBarTheme.variant ?? theme.variant;
+    assert(effectiveVariant != .material3Expressive, 'Only material3 is supported.');
     final AppBarThemeData defaults = theme.useMaterial3
         ? _AppBarDefaultsM3(context)
         : _AppBarDefaultsM2(context);

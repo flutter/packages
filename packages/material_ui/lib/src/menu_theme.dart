@@ -37,7 +37,8 @@ import 'theme.dart';
 @immutable
 class MenuThemeData with Diagnosticable {
   /// Creates a const set of properties used to configure [MenuTheme].
-  const MenuThemeData({this.style, this.submenuIcon});
+  const MenuThemeData({this.style, this.submenuIcon, this.variant})
+    : assert(variant != .material3Expressive, 'Only material3 is supported.');
 
   /// The [MenuStyle] of a [SubmenuButton] menu.
   ///
@@ -53,6 +54,9 @@ class MenuThemeData with Diagnosticable {
   ///  * [WidgetState.focused].
   final WidgetStateProperty<Widget?>? submenuIcon;
 
+  /// The style variant of Material Design used by menus.
+  final StyleVariant? variant;
+
   /// Linearly interpolate between two menu button themes.
   static MenuThemeData? lerp(MenuThemeData? a, MenuThemeData? b, double t) {
     if (identical(a, b)) {
@@ -61,11 +65,12 @@ class MenuThemeData with Diagnosticable {
     return MenuThemeData(
       style: MenuStyle.lerp(a?.style, b?.style, t),
       submenuIcon: t < 0.5 ? a?.submenuIcon : b?.submenuIcon,
+      variant: t < 0.5 ? a?.variant : b?.variant,
     );
   }
 
   @override
-  int get hashCode => Object.hash(style, submenuIcon);
+  int get hashCode => Object.hash(style, submenuIcon, variant);
 
   @override
   bool operator ==(Object other) {
@@ -75,7 +80,10 @@ class MenuThemeData with Diagnosticable {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is MenuThemeData && other.style == style && other.submenuIcon == submenuIcon;
+    return other is MenuThemeData &&
+        other.style == style &&
+        other.submenuIcon == submenuIcon &&
+        other.variant == variant;
   }
 
   @override
@@ -89,6 +97,7 @@ class MenuThemeData with Diagnosticable {
         defaultValue: null,
       ),
     );
+    properties.add(EnumProperty<StyleVariant>('variant', variant, defaultValue: null));
   }
 }
 

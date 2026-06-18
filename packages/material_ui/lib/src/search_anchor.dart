@@ -568,6 +568,11 @@ class _SearchAnchorState extends State<SearchAnchor> {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final SearchViewThemeData viewTheme = SearchViewTheme.of(context);
+    final StyleVariant effectiveVariant = viewTheme.variant ?? theme.variant;
+    assert(effectiveVariant != .material3Expressive, 'Only material3 is supported.');
+
     return AnimatedOpacity(
       key: _anchorKey,
       opacity: _getOpacity(),
@@ -1661,8 +1666,11 @@ class _SearchBarState extends State<SearchBar> {
   @override
   Widget build(BuildContext context) {
     final TextDirection textDirection = Directionality.of(context);
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
     final SearchBarThemeData searchBarTheme = SearchBarTheme.of(context);
+    final StyleVariant effectiveVariant = searchBarTheme.variant ?? theme.variant;
+    assert(effectiveVariant != .material3Expressive, 'Only material3 is supported.');
     final SearchBarThemeData defaults = _SearchBarDefaultsM3(context);
 
     T? resolve<T>(

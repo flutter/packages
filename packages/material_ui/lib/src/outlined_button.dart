@@ -348,6 +348,8 @@ class OutlinedButton extends ButtonStyleButton {
   @override
   ButtonStyle defaultStyleOf(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    final StyleVariant effectiveVariant = OutlinedButtonTheme.of(context).variant ?? theme.variant;
+    assert(effectiveVariant != .material3Expressive, 'Only material3 is supported.');
     final ColorScheme colorScheme = theme.colorScheme;
     final ButtonStyle buttonStyle = theme.useMaterial3
         ? _OutlinedButtonDefaultsM3(context)

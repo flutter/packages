@@ -54,7 +54,8 @@ class NavigationRailThemeData with Diagnosticable {
     this.indicatorShape,
     this.minWidth,
     this.minExtendedWidth,
-  });
+    this.variant,
+  }) : assert(variant != .material3Expressive, 'Only material3 is supported.');
 
   /// Color to be used for the [NavigationRail]'s background.
   final Color? backgroundColor;
@@ -105,6 +106,9 @@ class NavigationRailThemeData with Diagnosticable {
   /// is extended.
   final double? minExtendedWidth;
 
+  /// The style variant of Material Design used by [NavigationRail].
+  final StyleVariant? variant;
+
   /// Creates a copy of this object with the given fields replaced with the
   /// new values.
   NavigationRailThemeData copyWith({
@@ -121,6 +125,7 @@ class NavigationRailThemeData with Diagnosticable {
     ShapeBorder? indicatorShape,
     double? minWidth,
     double? minExtendedWidth,
+    StyleVariant? variant,
   }) {
     return NavigationRailThemeData(
       backgroundColor: backgroundColor ?? this.backgroundColor,
@@ -136,6 +141,7 @@ class NavigationRailThemeData with Diagnosticable {
       indicatorShape: indicatorShape ?? this.indicatorShape,
       minWidth: minWidth ?? this.minWidth,
       minExtendedWidth: minExtendedWidth ?? this.minExtendedWidth,
+      variant: variant ?? this.variant,
     );
   }
 
@@ -178,6 +184,7 @@ class NavigationRailThemeData with Diagnosticable {
       indicatorShape: ShapeBorder.lerp(a?.indicatorShape, b?.indicatorShape, t),
       minWidth: lerpDouble(a?.minWidth, b?.minWidth, t),
       minExtendedWidth: lerpDouble(a?.minExtendedWidth, b?.minExtendedWidth, t),
+      variant: t < 0.5 ? a?.variant : b?.variant,
     );
   }
 
@@ -196,6 +203,7 @@ class NavigationRailThemeData with Diagnosticable {
     indicatorShape,
     minWidth,
     minExtendedWidth,
+    variant,
   );
 
   @override
@@ -219,7 +227,8 @@ class NavigationRailThemeData with Diagnosticable {
         other.indicatorColor == indicatorColor &&
         other.indicatorShape == indicatorShape &&
         other.minWidth == minWidth &&
-        other.minExtendedWidth == minExtendedWidth;
+        other.minExtendedWidth == minExtendedWidth &&
+        other.variant == variant;
   }
 
   @override
@@ -290,6 +299,7 @@ class NavigationRailThemeData with Diagnosticable {
         defaultValue: defaultData.minExtendedWidth,
       ),
     );
+    properties.add(EnumProperty<StyleVariant>('variant', variant, defaultValue: null));
   }
 }
 

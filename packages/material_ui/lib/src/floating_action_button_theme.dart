@@ -64,7 +64,11 @@ class FloatingActionButtonThemeData with Diagnosticable {
     this.extendedPadding,
     this.extendedTextStyle,
     this.mouseCursor,
-  });
+    this.variant,
+  }) : assert(variant != .material3Expressive, 'Only material3 is supported.');
+
+  /// The style variant of Material Design used by [FloatingActionButton].
+  final StyleVariant? variant;
 
   /// Color to be used for the unselected, enabled [FloatingActionButton]'s
   /// foreground.
@@ -171,6 +175,7 @@ class FloatingActionButtonThemeData with Diagnosticable {
     EdgeInsetsGeometry? extendedPadding,
     TextStyle? extendedTextStyle,
     WidgetStateProperty<MouseCursor?>? mouseCursor,
+    StyleVariant? variant,
   }) {
     return FloatingActionButtonThemeData(
       foregroundColor: foregroundColor ?? this.foregroundColor,
@@ -194,6 +199,7 @@ class FloatingActionButtonThemeData with Diagnosticable {
       extendedPadding: extendedPadding ?? this.extendedPadding,
       extendedTextStyle: extendedTextStyle ?? this.extendedTextStyle,
       mouseCursor: mouseCursor ?? this.mouseCursor,
+      variant: variant ?? this.variant,
     );
   }
 
@@ -248,6 +254,7 @@ class FloatingActionButtonThemeData with Diagnosticable {
       extendedPadding: EdgeInsetsGeometry.lerp(a?.extendedPadding, b?.extendedPadding, t),
       extendedTextStyle: TextStyle.lerp(a?.extendedTextStyle, b?.extendedTextStyle, t),
       mouseCursor: t < 0.5 ? a?.mouseCursor : b?.mouseCursor,
+      variant: t < 0.5 ? a?.variant : b?.variant,
     );
   }
 
@@ -272,7 +279,7 @@ class FloatingActionButtonThemeData with Diagnosticable {
     extendedSizeConstraints,
     extendedIconLabelSpacing,
     extendedPadding,
-    Object.hash(extendedTextStyle, mouseCursor),
+    Object.hash(extendedTextStyle, mouseCursor, variant),
   );
 
   @override
@@ -304,7 +311,8 @@ class FloatingActionButtonThemeData with Diagnosticable {
         other.extendedIconLabelSpacing == extendedIconLabelSpacing &&
         other.extendedPadding == extendedPadding &&
         other.extendedTextStyle == extendedTextStyle &&
-        other.mouseCursor == mouseCursor;
+        other.mouseCursor == mouseCursor &&
+        other.variant == variant;
   }
 
   @override
@@ -368,6 +376,7 @@ class FloatingActionButtonThemeData with Diagnosticable {
         defaultValue: null,
       ),
     );
+    properties.add(EnumProperty<StyleVariant>('variant', variant, defaultValue: null));
   }
 }
 

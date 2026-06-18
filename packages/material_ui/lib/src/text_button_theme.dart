@@ -39,7 +39,8 @@ class TextButtonThemeData with Diagnosticable {
   /// Creates a [TextButtonThemeData].
   ///
   /// The [style] may be null.
-  const TextButtonThemeData({this.style});
+  const TextButtonThemeData({this.style, this.variant})
+    : assert(variant != .material3Expressive, 'Only material3 is supported.');
 
   /// Overrides for [TextButton]'s default style.
   ///
@@ -50,16 +51,22 @@ class TextButtonThemeData with Diagnosticable {
   /// If [style] is null, then this theme doesn't override anything.
   final ButtonStyle? style;
 
+  /// The style variant of Material Design used by [TextButton].
+  final StyleVariant? variant;
+
   /// Linearly interpolate between two text button themes.
   static TextButtonThemeData? lerp(TextButtonThemeData? a, TextButtonThemeData? b, double t) {
     if (identical(a, b)) {
       return a;
     }
-    return TextButtonThemeData(style: ButtonStyle.lerp(a?.style, b?.style, t));
+    return TextButtonThemeData(
+      style: ButtonStyle.lerp(a?.style, b?.style, t),
+      variant: t < 0.5 ? a?.variant : b?.variant,
+    );
   }
 
   @override
-  int get hashCode => style.hashCode;
+  int get hashCode => Object.hash(style, variant);
 
   @override
   bool operator ==(Object other) {
@@ -69,13 +76,14 @@ class TextButtonThemeData with Diagnosticable {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is TextButtonThemeData && other.style == style;
+    return other is TextButtonThemeData && other.style == style && other.variant == variant;
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<ButtonStyle>('style', style, defaultValue: null));
+    properties.add(EnumProperty<StyleVariant>('variant', variant, defaultValue: null));
   }
 }
 
