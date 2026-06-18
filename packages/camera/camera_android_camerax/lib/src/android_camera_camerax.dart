@@ -59,7 +59,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// The [PendingRecording] instance used to create an active [Recording].
   @visibleForTesting
-  PendingRecording? pendingRecordingg;
+  PendingRecording? pendingRecording;
 
   /// The [Recording] instance representing the current recording.
   @visibleForTesting
@@ -1120,21 +1120,21 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
 
     videoOutputPath = await systemServicesManager.getTempFilePath(videoPrefix, '.mp4');
-    pendingRecordingg = await recorder!.prepareRecording(videoOutputPath!);
+    pendingRecording = await recorder!.prepareRecording(videoOutputPath!);
 
     if (options.enablePersistentRecording) {
-      pendingRecordingg = await pendingRecordingg?.asPersistentRecording();
+      pendingRecording = await pendingRecording?.asPersistentRecording();
     }
 
     // Enable/disable recording audio as requested. If enabling audio is requested
     // and permission was not granted when the camera was created, then recording
     // audio will be disabled to respect the denied permission.
-    pendingRecordingg = await pendingRecordingg!.withAudioEnabled(
+    pendingRecording = await pendingRecording!.withAudioEnabled(
       /* initialMuted */
       !enableRecordingAudio,
     );
 
-    recording = await pendingRecordingg!.start(_videoRecordingEventListener);
+    recording = await pendingRecording!.start(_videoRecordingEventListener);
 
     if (streamCallback != null) {
       onStreamedFrameAvailable(options.cameraId).listen(streamCallback);
@@ -1170,7 +1170,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       event = await videoRecordingEventStreamQueue.next;
     }
     recording = null;
-    pendingRecordingg = null;
+    pendingRecording = null;
 
     if (videoOutputPath == null) {
       // Handle any errors with finalizing video recording.
