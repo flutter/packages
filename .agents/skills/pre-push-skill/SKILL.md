@@ -92,5 +92,6 @@ Provide the developer with a brief summary of what you verified automatically. T
 - Ensure the PR title starts with the package name in brackets (e.g., `[camera_android] Fix crash`).
 - Ensure the PR description links to at least one issue that is being fixed.
 - Ensure they have signed the CLA.
+- Ensure the branch is up to date with the main branch and has no merge conflicts.
 
 Once all of the automated checks pass and you have provided this final summary and checklist to the user, the code is ready to push!
