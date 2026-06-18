@@ -7,8 +7,26 @@
 import 'dart:io';
 import 'package:args/command_runner.dart';
 
-/// The command that implements the pre-commit githook
+/// The command that implements the pre-commit githook.
 class PreCommitCommand extends Command<bool> {
+  /// Creates a [PreCommitCommand].
+  PreCommitCommand({
+    Future<ProcessResult> Function(
+      String executable,
+      List<String> arguments, {
+      String? workingDirectory,
+    })?
+    processRunner,
+  }) : processRunner = processRunner ?? Process.run;
+
+  /// The process runner injected for testing.
+  final Future<ProcessResult> Function(
+    String executable,
+    List<String> arguments, {
+    String? workingDirectory,
+  })
+  processRunner;
+
   @override
   final String name = 'pre-commit';
 
@@ -17,46 +35,35 @@ class PreCommitCommand extends Command<bool> {
 
   @override
   Future<bool> run() async {
-    // Find changed Dart files.
-    final ProcessResult diffResult = await Process.run('git', [
-      'diff',
-      '--cached',
-      '--name-only',
-      '--diff-filter=ACM',
-    ]);
-    if (diffResult.exitCode != 0) {
-      print('Failed to get staged files.');
-      exit(1);
+    // Find the repo root where the plugin tool is located.
+    Directory repoRoot = Directory.current;
+    while (repoRoot.path != '/' && !Directory('${repoRoot.path}/.git').existsSync()) {
+      repoRoot = repoRoot.parent;
     }
 
-    final List<String> stagedDartFiles = (diffResult.stdout as String)
-        .split('\n')
-        .map((file) => file.trim())
-        .where((file) => file.endsWith('.dart'))
-        .toList();
-
-    if (stagedDartFiles.isEmpty) {
-      // No Dart files are being committed.
-      return true;
+    if (repoRoot.path == '/') {
+      print('❌ Could not find .git directory.');
+      return false;
     }
 
-    print('🔍 Running pre-commit checks on staged Dart files...');
+    final toolScript = '${repoRoot.path}/script/tool/bin/flutter_plugin_tools.dart';
+
+    print('🔍 Running pre-commit checks on changed packages using flutter_plugin_tools...');
     var hasError = false;
 
     // Check formatting.
     print('Checking formatting...');
-    final ProcessResult formatResult = await Process.run('dart', [
+    final ProcessResult formatResult = await processRunner('dart', [
+      'run',
+      toolScript,
       'format',
-      '--output=none',
-      '--set-exit-if-changed',
-      ...stagedDartFiles,
-    ]);
+      '--run-on-changed-packages',
+      '--fail-on-change',
+    ], workingDirectory: repoRoot.path);
 
     if (formatResult.exitCode != 0) {
-      print('❌ Formatting issues found in the following files:');
-      print((formatResult.stdout as String).trim());
       print(
-        '👉 Please run "dart format" on these files to fix them.',
+        '❌ Formatting issues found. Please run "dart run script/tool/bin/flutter_plugin_tools.dart format --run-on-changed-packages" to fix them.',
       );
       hasError = true;
     } else {
@@ -65,15 +72,16 @@ class PreCommitCommand extends Command<bool> {
 
     // Run static analysis.
     print('Running static analysis...');
-    final ProcessResult analyzeResult = await Process.run('dart', [
+    final ProcessResult analyzeResult = await processRunner('dart', [
+      'run',
+      toolScript,
       'analyze',
+      '--run-on-changed-packages',
       '--fatal-infos',
-      ...stagedDartFiles,
-    ]);
+    ], workingDirectory: repoRoot.path);
 
     if (analyzeResult.exitCode != 0) {
-      print('❌ Static analysis errors found:');
-      print((analyzeResult.stdout as String).trim());
+      print('❌ Static analysis errors found. Please fix the errors listed above.');
       hasError = true;
     } else {
       print('✅ Static analysis looks good.');

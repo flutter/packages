@@ -1,99 +1,54 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'dart:io';
 
-import 'package:path/path.dart' as p;
+import 'package:githooks/src/pre_commit_command.dart';
 import 'package:test/test.dart';
 
 void main() {
   group('pre-commit hook', () {
-    late Directory tempDir;
-    late String githooksPath;
+    test('passes when both format and analyze succeed', () async {
+      final command = PreCommitCommand(
+        processRunner:
+            (String executable, List<String> arguments, {String? workingDirectory}) async {
+              return ProcessResult(0, 0, 'Success', '');
+            },
+      );
 
-    setUp(() async {
-      tempDir = await Directory.systemTemp.createTemp('pre_commit_test_');
-
-      await Process.run('git', ['init'], workingDirectory: tempDir.path);
-      await Process.run('git', ['config', 'user.email', 'test@example.com'], workingDirectory: tempDir.path);
-      await Process.run('git', ['config', 'user.name', 'Test User'], workingDirectory: tempDir.path);
-
-      Directory repoRoot = Directory.current;
-      while (repoRoot.path != '/' && !Directory(p.join(repoRoot.path, '.git')).existsSync()) {
-        repoRoot = repoRoot.parent;
-      }
-
-      githooksPath = p.join(repoRoot.path, 'script', 'githooks');
-      
-      // Set the hooksPath to the actual githooks directory
-      await Process.run('git', ['config', 'core.hooksPath', githooksPath], workingDirectory: tempDir.path);
+      final bool result = await command.run();
+      expect(result, isTrue);
     });
 
-    tearDown(() async {
-      await tempDir.delete(recursive: true);
+    test('fails when formatting fails', () async {
+      final command = PreCommitCommand(
+        processRunner:
+            (String executable, List<String> arguments, {String? workingDirectory}) async {
+              if (arguments.contains('format')) {
+                return ProcessResult(0, 1, 'bad_file.dart', '');
+              }
+              return ProcessResult(0, 0, 'Success', '');
+            },
+      );
+
+      final bool result = await command.run();
+      expect(result, isFalse);
     });
 
-    Future<ProcessResult> runHook() async {
-      // Actually run git commit to trigger the hook!
-      return Process.run('git', ['commit', '-m', 'test'], workingDirectory: tempDir.path);
-    }
+    test('fails when analysis fails', () async {
+      final command = PreCommitCommand(
+        processRunner:
+            (String executable, List<String> arguments, {String? workingDirectory}) async {
+              if (arguments.contains('analyze')) {
+                return ProcessResult(0, 1, 'error in file.dart', '');
+              }
+              return ProcessResult(0, 0, 'Success', '');
+            },
+      );
 
-    test('passes on a clean commit', () async {
-      final file = File(p.join(tempDir.path, 'test_file.dart'));
-      await file.writeAsString('''
-void main() {
-  print('Hello, world!');
-}
-''');
-
-      await Process.run('git', ['add', 'test_file.dart'], workingDirectory: tempDir.path);
-
-      final ProcessResult result = await runHook();
-      expect(result.exitCode, 0);
-      final output = '${result.stdout}${result.stderr}';
-      expect(output, contains('Formatting looks good.'));
-      expect(output, contains('Static analysis looks good.'));
-    });
-
-    test('fails on formatting error', () async {
-      final file = File(p.join(tempDir.path, 'test_file.dart'));
-      await file.writeAsString('''
-void main(){
-  print('Hello, world!');
-}
-''');
-
-      await Process.run('git', ['add', 'test_file.dart'], workingDirectory: tempDir.path);
-
-      final ProcessResult result = await runHook();
-      expect(result.exitCode, 1);
-      final output = '${result.stdout}${result.stderr}';
-      expect(output, contains('Formatting issues found in the following files:'));
-    });
-
-    test('fails on analysis error', () async {
-      final file = File(p.join(tempDir.path, 'test_file.dart'));
-      await file.writeAsString('''
-void main() {
-  print('Hello, world!')
-}
-''');
-
-      await Process.run('git', ['add', 'test_file.dart'], workingDirectory: tempDir.path);
-
-      final ProcessResult result = await runHook();
-      expect(result.exitCode, 1);
-      final output = '${result.stdout}${result.stderr}';
-      expect(output, contains('Static analysis errors found'));
-    });
-
-    test('ignores non-dart files', () async {
-      final file = File(p.join(tempDir.path, 'README.md'));
-      await file.writeAsString('# Hello');
-
-      await Process.run('git', ['add', 'README.md'], workingDirectory: tempDir.path);
-
-      final ProcessResult result = await runHook();
-      expect(result.exitCode, 0);
-      final output = '${result.stdout}${result.stderr}';
-      expect(output, isNot(contains('Checking formatting...')));
+      final bool result = await command.run();
+      expect(result, isFalse);
     });
   });
 }
