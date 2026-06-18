@@ -6,6 +6,7 @@
 
 import 'dart:io';
 import 'package:args/command_runner.dart';
+import 'package:path/path.dart' as p;
 
 /// The command that implements the pre-commit githook.
 class PreCommitCommand extends Command<bool> {
@@ -33,11 +34,26 @@ class PreCommitCommand extends Command<bool> {
   @override
   final String description = 'Checks to run before a "git commit"';
 
+  String? _findPackageName(String filePath, String repoRoot) {
+    Directory currentDir = File(p.join(repoRoot, filePath)).parent;
+    while (p.isWithin(repoRoot, currentDir.path) || p.equals(repoRoot, currentDir.path)) {
+      final String dirName = p.basename(currentDir.path);
+      if (dirName != 'example' && File(p.join(currentDir.path, 'pubspec.yaml')).existsSync()) {
+        return dirName;
+      }
+      if (p.equals(repoRoot, currentDir.path)) {
+        break;
+      }
+      currentDir = currentDir.parent;
+    }
+    return null;
+  }
+
   @override
   Future<bool> run() async {
     // Find the repo root where the plugin tool is located.
     Directory repoRoot = Directory.current;
-    while (repoRoot.path != '/' && !Directory('${repoRoot.path}/.git').existsSync()) {
+    while (repoRoot.path != '/' && !Directory(p.join(repoRoot.path, '.git')).existsSync()) {
       repoRoot = repoRoot.parent;
     }
 
@@ -46,9 +62,52 @@ class PreCommitCommand extends Command<bool> {
       return false;
     }
 
-    final toolScript = '${repoRoot.path}/script/tool/bin/flutter_plugin_tools.dart';
+    final ProcessResult diffResult = await processRunner('git', [
+      'diff',
+      '--cached',
+      '--name-only',
+      '--diff-filter=ACM',
+    ], workingDirectory: repoRoot.path);
 
-    print('🔍 Running pre-commit checks on changed packages using flutter_plugin_tools...');
+    if (diffResult.exitCode != 0) {
+      print('❌ Failed to get staged files');
+      return false;
+    }
+
+    final List<String> stagedFiles = (diffResult.stdout as String)
+        .split('\n')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
+
+    if (stagedFiles.isEmpty) {
+      return true; // No files changed.
+    }
+
+    final Set<String> targetPackages = {};
+    for (final file in stagedFiles) {
+      final String? packageName = _findPackageName(file, repoRoot.path);
+      if (packageName != null) {
+        targetPackages.add(packageName);
+      }
+    }
+
+    if (targetPackages.isEmpty) {
+      return true; // None of the changed files are part of a package we care about.
+    }
+
+    final String toolScript = p.join(
+      repoRoot.path,
+      'script',
+      'tool',
+      'bin',
+      'flutter_plugin_tools.dart',
+    );
+    final packageArgs = '--packages=${targetPackages.join(',')}';
+
+    print(
+      '🔍 Running pre-commit checks on ${targetPackages.length} packages: ${targetPackages.join(', ')}',
+    );
     var hasError = false;
 
     // Check formatting.
@@ -57,13 +116,15 @@ class PreCommitCommand extends Command<bool> {
       'run',
       toolScript,
       'format',
-      '--run-on-changed-packages',
+      packageArgs,
       '--fail-on-change',
     ], workingDirectory: repoRoot.path);
 
     if (formatResult.exitCode != 0) {
+      if (formatResult.stdout.toString().isNotEmpty) print(formatResult.stdout);
+      if (formatResult.stderr.toString().isNotEmpty) print(formatResult.stderr);
       print(
-        '❌ Formatting issues found. Please run "dart run script/tool/bin/flutter_plugin_tools.dart format --run-on-changed-packages" to fix them.',
+        '❌ Formatting issues found. Please run "dart run script/tool/bin/flutter_plugin_tools.dart format $packageArgs" to fix them.',
       );
       hasError = true;
     } else {
@@ -76,11 +137,12 @@ class PreCommitCommand extends Command<bool> {
       'run',
       toolScript,
       'analyze',
-      '--run-on-changed-packages',
-      '--fatal-infos',
+      packageArgs,
     ], workingDirectory: repoRoot.path);
 
     if (analyzeResult.exitCode != 0) {
+      if (analyzeResult.stdout.toString().isNotEmpty) print(analyzeResult.stdout);
+      if (analyzeResult.stderr.toString().isNotEmpty) print(analyzeResult.stderr);
       print('❌ Static analysis errors found. Please fix the errors listed above.');
       hasError = true;
     } else {
