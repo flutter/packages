@@ -6,7 +6,41 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+class _NavigationRailThemeDataWithExpressiveVariant extends NavigationRailThemeData {
+  const _NavigationRailThemeDataWithExpressiveVariant();
+
+  @override
+  StyleVariant? get variant => .material3Expressive;
+}
+
+Matcher get _throwsUnsupportedStyleVariantAssertion {
+  return isA<AssertionError>().having(
+    (AssertionError error) => error.message,
+    'message',
+    'Only material3 is supported.',
+  );
+}
+
 void main() {
+  testWidgets('NavigationRail asserts on unsupported style variants', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: NavigationRailTheme(
+          data: const _NavigationRailThemeDataWithExpressiveVariant(),
+          child: NavigationRail(
+            selectedIndex: 0,
+            destinations: const <NavigationRailDestination>[
+              NavigationRailDestination(icon: Icon(Icons.home), label: Text('Home')),
+              NavigationRailDestination(icon: Icon(Icons.settings), label: Text('Settings')),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    expect(tester.takeException(), _throwsUnsupportedStyleVariantAssertion);
+  });
+
   test('copyWith, ==, hashCode basics', () {
     expect(const NavigationRailThemeData(), const NavigationRailThemeData().copyWith());
     expect(

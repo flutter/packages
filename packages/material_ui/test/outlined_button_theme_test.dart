@@ -5,6 +5,21 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+class _OutlinedButtonThemeDataWithExpressiveVariant extends OutlinedButtonThemeData {
+  const _OutlinedButtonThemeDataWithExpressiveVariant();
+
+  @override
+  StyleVariant? get variant => .material3Expressive;
+}
+
+Matcher get _throwsUnsupportedStyleVariantAssertion {
+  return isA<AssertionError>().having(
+    (AssertionError error) => error.message,
+    'message',
+    'Only material3 is supported.',
+  );
+}
+
 void main() {
   TextStyle iconStyle(WidgetTester tester, IconData icon) {
     final RichText iconRichText = tester.widget<RichText>(
@@ -17,6 +32,19 @@ void main() {
     expect(OutlinedButtonThemeData.lerp(null, null, 0), null);
     const data = OutlinedButtonThemeData();
     expect(identical(OutlinedButtonThemeData.lerp(data, data, 0.5), data), true);
+  });
+
+  testWidgets('OutlinedButton asserts on unsupported style variants', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: OutlinedButtonTheme(
+          data: const _OutlinedButtonThemeDataWithExpressiveVariant(),
+          child: OutlinedButton(onPressed: () {}, child: const Text('Button')),
+        ),
+      ),
+    );
+
+    expect(tester.takeException(), _throwsUnsupportedStyleVariantAssertion);
   });
 
   testWidgets('Material3: Passing no OutlinedButtonTheme returns defaults', (

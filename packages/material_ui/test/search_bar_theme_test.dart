@@ -6,6 +6,21 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+class _SearchBarThemeDataWithExpressiveVariant extends SearchBarThemeData {
+  const _SearchBarThemeDataWithExpressiveVariant();
+
+  @override
+  StyleVariant? get variant => .material3Expressive;
+}
+
+Matcher get _throwsUnsupportedStyleVariantAssertion {
+  return isA<AssertionError>().having(
+    (AssertionError error) => error.message,
+    'message',
+    'Only material3 is supported.',
+  );
+}
+
 void main() {
   test('SearchBarThemeData copyWith, ==, hashCode basics', () {
     expect(const SearchBarThemeData(), const SearchBarThemeData().copyWith());
@@ -16,6 +31,16 @@ void main() {
     expect(SearchBarThemeData.lerp(null, null, 0), null);
     const data = SearchBarThemeData();
     expect(identical(SearchBarThemeData.lerp(data, data, 0.5), data), true);
+  });
+
+  testWidgets('SearchBar asserts on unsupported style variants', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: SearchBarTheme(data: _SearchBarThemeDataWithExpressiveVariant(), child: SearchBar()),
+      ),
+    );
+
+    expect(tester.takeException(), _throwsUnsupportedStyleVariantAssertion);
   });
 
   test('SearchBarThemeData defaults', () {

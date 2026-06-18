@@ -7,6 +7,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+class _IconButtonThemeDataWithExpressiveVariant extends IconButtonThemeData {
+  const _IconButtonThemeDataWithExpressiveVariant();
+
+  @override
+  StyleVariant? get variant => .material3Expressive;
+}
+
 void main() {
   RenderObject getOverlayColor(WidgetTester tester) {
     return tester.allRenderObjects.firstWhere(
@@ -18,6 +25,28 @@ void main() {
     expect(IconButtonThemeData.lerp(null, null, 0), null);
     const data = IconButtonThemeData();
     expect(identical(IconButtonThemeData.lerp(data, data, 0.5), data), true);
+  });
+
+  testWidgets('IconButton asserts on unsupported style variants', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: IconButtonTheme(
+            data: _IconButtonThemeDataWithExpressiveVariant(),
+            child: IconButton(onPressed: null, icon: Icon(Icons.ac_unit)),
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      tester.takeException(),
+      isA<AssertionError>().having(
+        (AssertionError error) => error.message,
+        'message',
+        'Only material3 is supported.',
+      ),
+    );
   });
 
   testWidgets('Passing no IconButtonTheme returns defaults', (WidgetTester tester) async {

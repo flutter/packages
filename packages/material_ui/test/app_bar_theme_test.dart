@@ -8,6 +8,21 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+class _AppBarThemeDataWithExpressiveVariant extends AppBarThemeData {
+  const _AppBarThemeDataWithExpressiveVariant();
+
+  @override
+  StyleVariant? get variant => .material3Expressive;
+}
+
+Matcher get _throwsUnsupportedStyleVariantAssertion {
+  return isA<AssertionError>().having(
+    (AssertionError error) => error.message,
+    'message',
+    'Only material3 is supported.',
+  );
+}
+
 void main() {
   const appBarTheme = AppBarThemeData(
     backgroundColor: Color(0xff00ff00),
@@ -53,6 +68,19 @@ void main() {
   test('AppBarTheme lerp special cases', () {
     const data = AppBarTheme();
     expect(identical(AppBarTheme.lerp(data, data, 0.5), data), true);
+  });
+
+  testWidgets('AppBar asserts on unsupported style variants', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: AppBarTheme(
+          data: const _AppBarThemeDataWithExpressiveVariant(),
+          child: AppBar(title: const Text('Title')),
+        ),
+      ),
+    );
+
+    expect(tester.takeException(), _throwsUnsupportedStyleVariantAssertion);
   });
 
   testWidgets('Material2 - Passing no AppBarTheme returns defaults', (WidgetTester tester) async {

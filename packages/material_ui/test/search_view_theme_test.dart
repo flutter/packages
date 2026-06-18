@@ -6,6 +6,21 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+class _SearchViewThemeDataWithExpressiveVariant extends SearchViewThemeData {
+  const _SearchViewThemeDataWithExpressiveVariant();
+
+  @override
+  StyleVariant? get variant => .material3Expressive;
+}
+
+Matcher get _throwsUnsupportedStyleVariantAssertion {
+  return isA<AssertionError>().having(
+    (AssertionError error) => error.message,
+    'message',
+    'Only material3 is supported.',
+  );
+}
+
 void main() {
   test('SearchViewThemeData copyWith, ==, hashCode basics', () {
     expect(const SearchViewThemeData(), const SearchViewThemeData().copyWith());
@@ -16,6 +31,26 @@ void main() {
     expect(SearchViewThemeData.lerp(null, null, 0), null);
     const data = SearchViewThemeData();
     expect(identical(SearchViewThemeData.lerp(data, data, 0.5), data), true);
+  });
+
+  testWidgets('SearchAnchor asserts on unsupported style variants', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: SearchViewTheme(
+          data: const _SearchViewThemeDataWithExpressiveVariant(),
+          child: SearchAnchor(
+            builder: (BuildContext context, SearchController controller) {
+              return TextButton(onPressed: controller.openView, child: const Text('Search'));
+            },
+            suggestionsBuilder: (BuildContext context, SearchController controller) {
+              return <Widget>[];
+            },
+          ),
+        ),
+      ),
+    );
+
+    expect(tester.takeException(), _throwsUnsupportedStyleVariantAssertion);
   });
 
   test('SearchViewThemeData defaults', () {

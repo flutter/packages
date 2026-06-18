@@ -5,6 +5,21 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+class _TextButtonThemeDataWithExpressiveVariant extends TextButtonThemeData {
+  const _TextButtonThemeDataWithExpressiveVariant();
+
+  @override
+  StyleVariant? get variant => .material3Expressive;
+}
+
+Matcher get _throwsUnsupportedStyleVariantAssertion {
+  return isA<AssertionError>().having(
+    (AssertionError error) => error.message,
+    'message',
+    'Only material3 is supported.',
+  );
+}
+
 void main() {
   TextStyle iconStyle(WidgetTester tester, IconData icon) {
     final RichText iconRichText = tester.widget<RichText>(
@@ -17,6 +32,19 @@ void main() {
     expect(TextButtonThemeData.lerp(null, null, 0), null);
     const data = TextButtonThemeData();
     expect(identical(TextButtonThemeData.lerp(data, data, 0.5), data), true);
+  });
+
+  testWidgets('TextButton asserts on unsupported style variants', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: TextButtonTheme(
+          data: const _TextButtonThemeDataWithExpressiveVariant(),
+          child: TextButton(onPressed: () {}, child: const Text('Button')),
+        ),
+      ),
+    );
+
+    expect(tester.takeException(), _throwsUnsupportedStyleVariantAssertion);
   });
 
   testWidgets('Material3: Passing no TextButtonTheme returns defaults', (

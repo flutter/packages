@@ -7,6 +7,21 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+class _FloatingActionButtonThemeDataWithExpressiveVariant extends FloatingActionButtonThemeData {
+  const _FloatingActionButtonThemeDataWithExpressiveVariant();
+
+  @override
+  StyleVariant? get variant => .material3Expressive;
+}
+
+Matcher get _throwsUnsupportedStyleVariantAssertion {
+  return isA<AssertionError>().having(
+    (AssertionError error) => error.message,
+    'message',
+    'Only material3 is supported.',
+  );
+}
+
 void main() {
   test('FloatingActionButtonThemeData copyWith, ==, hashCode basics', () {
     expect(const FloatingActionButtonThemeData(), const FloatingActionButtonThemeData().copyWith());
@@ -20,6 +35,21 @@ void main() {
     expect(FloatingActionButtonThemeData.lerp(null, null, 0), null);
     const data = FloatingActionButtonThemeData();
     expect(identical(FloatingActionButtonThemeData.lerp(data, data, 0.5), data), true);
+  });
+
+  testWidgets('FloatingActionButton asserts on unsupported style variants', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: FloatingActionButtonTheme(
+          data: const _FloatingActionButtonThemeDataWithExpressiveVariant(),
+          child: FloatingActionButton(onPressed: () {}),
+        ),
+      ),
+    );
+
+    expect(tester.takeException(), _throwsUnsupportedStyleVariantAssertion);
   });
 
   testWidgets(

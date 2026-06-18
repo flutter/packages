@@ -5,6 +5,21 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+class _FilledButtonThemeDataWithExpressiveVariant extends FilledButtonThemeData {
+  const _FilledButtonThemeDataWithExpressiveVariant();
+
+  @override
+  StyleVariant? get variant => .material3Expressive;
+}
+
+Matcher get _throwsUnsupportedStyleVariantAssertion {
+  return isA<AssertionError>().having(
+    (AssertionError error) => error.message,
+    'message',
+    'Only material3 is supported.',
+  );
+}
+
 void main() {
   TextStyle iconStyle(WidgetTester tester, IconData icon) {
     final RichText iconRichText = tester.widget<RichText>(
@@ -17,6 +32,19 @@ void main() {
     expect(FilledButtonThemeData.lerp(null, null, 0), null);
     const data = FilledButtonThemeData();
     expect(identical(FilledButtonThemeData.lerp(data, data, 0.5), data), true);
+  });
+
+  testWidgets('FilledButton asserts on unsupported style variants', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: FilledButtonTheme(
+          data: const _FilledButtonThemeDataWithExpressiveVariant(),
+          child: FilledButton(onPressed: () {}, child: const Text('Button')),
+        ),
+      ),
+    );
+
+    expect(tester.takeException(), _throwsUnsupportedStyleVariantAssertion);
   });
 
   testWidgets('Passing no FilledButtonTheme returns defaults', (WidgetTester tester) async {
