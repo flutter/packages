@@ -4,7 +4,12 @@
 
 import 'dart:io';
 
-import 'package:dart_skills_lint/dart_skills_lint.dart';
+// ignore: implementation_imports
+import 'package:dart_skills_lint/src/config_parser.dart';
+// ignore: implementation_imports
+import 'package:dart_skills_lint/src/models/analysis_severity.dart';
+// ignore: implementation_imports
+import 'package:dart_skills_lint/src/validation_session.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

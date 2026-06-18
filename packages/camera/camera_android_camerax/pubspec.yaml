@@ -29,9 +29,9 @@ dev_dependencies:
   build_runner: ^2.2.0
   dart_skills_lint:
     git:
-      url: https://github.com/reidbaker/skills.git
+      url: https://github.com/flutter/skills.git
       path: tool/dart_skills_lint
-      ref: b8584b28aad66efa3308738e2257999675e52ba5
+      ref: 8f85e82be6da429980f7cfe84f2f214a06cbfee1
   flutter_test:
     sdk: flutter
   leak_tracker_flutter_testing: any
