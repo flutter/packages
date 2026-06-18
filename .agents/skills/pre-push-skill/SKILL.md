@@ -7,9 +7,19 @@ description: "A comprehensive pre-push checklist for contributing to the flutter
 
 This skill provides a fully automated pre-push validation script and a mental checklist for developers attempting to push code changes to any of the packages in the flutter/packages repository. It directly answers the question: **"Am I ready to push?"**
 
-Follow the steps below before pushing any committed code upstream via `git push` to a package or finishing your task. If any step fails, continue with the following steps to provide a comprehensive list of required fixes for the user.
+Follow the steps below before pushing any current code changes can be pushed upstream via `git push` to a package or finishing your task. If any step fails, continue with the following steps to provide a comprehensive list of required fixes for the user.
 
-## 1. Format Code
+## 1. Initial Clean Working Tree Check
+
+Because the tooling natively relies on `git diff` to determine which packages have changed, it **completely ignores uncommitted changes**. You must ensure the working tree is clean before running any checks. Command to run:
+
+```bash
+git status --porcelain
+```
+
+If this command outputs anything, the code WAS NOT ready to push. The developer must commit or stash their changes before you can proceed with the remaining validation steps. Do not continue if there are uncommitted changes.
+
+## 2. Format Code
 
 Consistent code style is required for all pull requests. The repository uses auto-formatters (like `dart format`, `clang-format`, `ktfmt`) to enforce this. Command to run:
 
@@ -17,9 +27,9 @@ Consistent code style is required for all pull requests. The repository uses aut
 dart run script/tool/bin/flutter_plugin_tools.dart format --run-on-changed-packages
 ```
 
-If this command modifies any files, the code WAS NOT ready to push. You must commit those changes before proceeding to ensure your working tree is clean.
+If this command modifies any files, the code WAS NOT ready to push. Those changes must be committed before the developer can push.
 
-## 2. Static Analysis
+## 3. Static Analysis
 
 Static analysis catches potential bugs, type errors, and style violations without needing to run the code. All code must pass the analyzer without any warnings or errors. Command to run:
 
@@ -27,9 +37,9 @@ Static analysis catches potential bugs, type errors, and style violations withou
 dart run script/tool/bin/flutter_plugin_tools.dart analyze --run-on-changed-packages
 ```
 
-If this command fails, the code WAS NOT ready to push. You must fix the analyzer errors and commit those changes before proceeding.
+If this command fails, the code WAS NOT ready to push. Those analyzer errors must be fixed and committed before the developer can push.
 
-## 3. Unit Tests
+## 4. Unit Tests
 
 Tests ensure that your changes do not break existing functionality and that new features work as expected. All unit tests must pass before code can be merged. Command to run:
 
@@ -37,9 +47,9 @@ Tests ensure that your changes do not break existing functionality and that new 
 dart run script/tool/bin/flutter_plugin_tools.dart dart-test --run-on-changed-packages
 ```
 
-If this command fails, the code WAS NOT ready to push. You must note that the errors must be fixed and offer guidance to resolve them.
+If this command fails, the code WAS NOT ready to push. Those test errors must be fixed and committed before the developer can push.
 
-## 4. Publish Check (Versioing and CHANGELOG updates)
+## 5. Publish Check (Version and CHANGELOG updates)
 
 Any pull request that changes non-test code must increment the package version in `pubspec.yaml` and add a corresponding entry describing the change in `CHANGELOG.md`. Command to run:
 
@@ -47,14 +57,14 @@ Any pull request that changes non-test code must increment the package version i
 dart run script/tool/bin/flutter_plugin_tools.dart publish-check --run-on-changed-packages
 ```
 
-If this command fails, the code WAS NOT ready to push. You can automatically generate the required bumps by running:
+If this command fails, the code WAS NOT ready to push. The required version bump and changelog entry must be made and committed before the developer can push. This can be done automatically by running:
 
 ```bash
 dart run script/tool/bin/flutter_plugin_tools.dart update-release-info \
   --version=minimal --base-branch=origin/main --changelog="<description of your changes>"
 ```
 
-## 5. License Headers
+## 6. License Headers
 
 All source files in this repository must include the standard copyright and license header. Command to run:
 
@@ -62,9 +72,9 @@ All source files in this repository must include the standard copyright and lice
 dart run script/tool/bin/flutter_plugin_tools.dart license-check
 ```
 
-If this command fails, the code WAS NOT ready to push. Based on the output, you can offer guidance on fixing the errors.
+If this command fails, the code WAS NOT ready to push. Those license errors must be fixed and committed before the developer can push.
 
-## 6. Final Clean Working Tree Check
+## 7. Final Clean Working Tree Check
 
 Before pushing, ensure that all your fixes, formatting changes, and version bumps are committed. Command to run:
 
@@ -72,7 +82,7 @@ Before pushing, ensure that all your fixes, formatting changes, and version bump
 git status --porcelain
 ```
 
-If this command fails, the code WAS NOT ready to push. Prompt the user to ensure these changes were intended to be left uncommitted before pushing.
+If this command outputs anything, the code WAS NOT ready to push. The changes must be cleaned up before the developer can push.
 
 ---
 

@@ -24,6 +24,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     CameraPlatform.instance = AndroidCameraCameraX();
   }
 
+  int whatever = 3;
+
   /// The [ProcessCameraProvider] instance used to access camera functionality.
   @visibleForTesting
   ProcessCameraProvider? processCameraProvider;
