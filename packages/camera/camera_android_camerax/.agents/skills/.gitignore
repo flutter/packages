@@ -4,6 +4,14 @@
 # Un-ignore specific checked-in skills
 # (Add specific contributor skills here as they are created)
 !check-readiness/
+!check-readiness/**
+!dart-add-unit-test
+!dart-collect-coverage
+!dart-generate-test-mocks
+!dart-run-static-analysis
+!flutter-add-integration-test
+!grill-me
+!receiving-code-review
 
 # Keep essential configuration and docs
 !.gitignore
