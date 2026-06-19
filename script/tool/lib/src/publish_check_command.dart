@@ -195,6 +195,8 @@ class PublishCheckCommand extends PackageLoopingCommand {
 
     final output = outputBuffer.toString();
 
+    // TODO(reidbaker): Remove this custom error handling for gitignored files
+    // once https://github.com/dart-lang/pub/issues/4841 is resolved.
     if (await process.exitCode == 65 && _onlyPubignoreWarnings(output, package)) {
       print('Ignoring warning about gitignored files because they are in .pubignore.');
       return true;
