@@ -258,6 +258,70 @@ void main() {
       expect(output, isNot(contains(contains('ERROR:'))));
     });
 
+    test('pass when gitignored files are covered by .pubignore', () async {
+      final RepositoryPackage package = createFakePlugin('d', packagesDir);
+      final File pubignoreFile = package.directory.childFile('.pubignore');
+      pubignoreFile.writeAsStringSync('.agents/\n');
+
+      final MockProcess process = MockProcess(
+        exitCode: 65,
+        stderr:
+            'Package has 1 warning.\n'
+            'Files that are checked in while gitignored:\n'
+            '  .agents/skills/something.md\n',
+      );
+      processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
+        FakeProcessInfo(process, <String>['pub', 'publish']),
+      ];
+
+      final List<String> output = await runCapturingPrint(runner, <String>['publish-check']);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Ignoring warning about gitignored files because they are in .pubignore.'),
+        ]),
+      );
+    });
+
+    test('fail when gitignored files are NOT covered by .pubignore', () async {
+      final RepositoryPackage package = createFakePlugin('d', packagesDir);
+      final File pubignoreFile = package.directory.childFile('.pubignore');
+      pubignoreFile.writeAsStringSync('.agents/\n');
+
+      final MockProcess process = MockProcess(
+        exitCode: 65,
+        stderr:
+            'Package has 1 warning.\n'
+            'Files that are checked in while gitignored:\n'
+            '  other_folder/skills/something.md\n',
+      );
+      processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
+        FakeProcessInfo(process, <String>['pub', 'publish']),
+      ];
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['publish-check'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        isNot(
+          contains(
+            contains('Ignoring warning about gitignored files because they are in .pubignore.'),
+          ),
+        ),
+      );
+    });
+
     test(
       'runs validation even for packages that are already published and reports failure',
       () async {
