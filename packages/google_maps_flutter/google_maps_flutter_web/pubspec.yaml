@@ -31,6 +31,9 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+dependency_overrides:
+  google_maps_flutter_platform_interface:
+    path: ../google_maps_flutter_platform_interface
 
 topics:
   - google-maps

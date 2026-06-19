@@ -34,3 +34,5 @@ dependency_overrides:
   # if we need to make a breaking change to google_maps_flutter_web.
   google_maps_flutter_web:
     path: ../..
+  google_maps_flutter_platform_interface:
+    path: ../../../google_maps_flutter_platform_interface
