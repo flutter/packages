@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../../../script"
+		},
+		{
+			"path": "../../../third_party"
+		}
+	],
+	"settings": {}
+}
