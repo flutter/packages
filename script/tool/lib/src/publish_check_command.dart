@@ -190,18 +190,101 @@ class PublishCheckCommand extends PackageLoopingCommand {
       return true;
     }
 
-    if (!getBoolArg(_allowPrereleaseFlag)) {
-      return false;
-    }
-
     await stdOutCompleter.future;
     await stdInCompleter.future;
 
     final output = outputBuffer.toString();
+
+    if (await process.exitCode == 65 && _onlyPubignoreWarnings(output, package)) {
+      print('Ignoring warning about gitignored files because they are in .pubignore.');
+      return true;
+    }
+
+    if (!getBoolArg(_allowPrereleaseFlag)) {
+      return false;
+    }
+
     return output.contains('Package has 1 warning') &&
         output.contains(
           'Packages with an SDK constraint on a pre-release of the Dart SDK should themselves be published as a pre-release version.',
         );
+  }
+
+  bool _onlyPubignoreWarnings(String output, RepositoryPackage package) {
+    if (!output.contains('Files that are checked in while gitignored:')) {
+      return false;
+    }
+
+    final RegExp warningCountRegex = RegExp(r'Package has (\d+) warning');
+    final Match? match = warningCountRegex.firstMatch(output);
+    if (match != null) {
+      final int count = int.parse(match.group(1)!);
+      if (count > 1) {
+        return false;
+      }
+    }
+
+    final List<String> lines = output.split('\n');
+    bool inFilesSection = false;
+    final List<String> gitignoredFiles = <String>[];
+
+    for (final String line in lines) {
+      if (line.trim() == 'Files that are checked in while gitignored:') {
+        inFilesSection = true;
+        continue;
+      }
+      if (inFilesSection) {
+        if (line.trim().isEmpty) {
+          continue;
+        }
+        if (line.startsWith('  ') && !line.startsWith('   ')) {
+          gitignoredFiles.add(line.trim());
+        } else if (!line.startsWith(' ')) {
+          inFilesSection = false;
+        }
+      }
+    }
+
+    if (gitignoredFiles.isEmpty) {
+      return false;
+    }
+
+    final io.File pubignoreFile = package.directory.childFile('.pubignore');
+    if (!pubignoreFile.existsSync()) {
+      return false;
+    }
+
+    final List<String> pubignoreLines = pubignoreFile
+        .readAsLinesSync()
+        .map((String line) => line.trim())
+        .where((String line) => line.isNotEmpty && !line.startsWith('#'))
+        .toList();
+
+    for (final String file in gitignoredFiles) {
+      bool isIgnored = false;
+      for (final String ignoreRule in pubignoreLines) {
+        String rule = ignoreRule;
+        if (rule.startsWith('/')) {
+          rule = rule.substring(1);
+        }
+        if (rule.endsWith('/')) {
+          if (file.startsWith(rule)) {
+            isIgnored = true;
+            break;
+          }
+        } else {
+          if (file == rule || file.startsWith('$rule/')) {
+            isIgnored = true;
+            break;
+          }
+        }
+      }
+      if (!isIgnored) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   /// Returns true if the package has been explicitly marked as not for
