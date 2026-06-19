@@ -8,11 +8,9 @@ import 'package:check_readiness/check_readiness.dart';
 import 'package:path/path.dart' as p;
 
 Future<void> main(List<String> args) async {
-  // Determine the workspace root. Assuming bin/check.dart is located in:
-  // packages/camera/camera_android_camerax/.agents/skills/check-readiness/bin/check.dart
-  // We need to point to packages/camera/camera_android_camerax/
-  final String currentPath = p.dirname(Platform.script.toFilePath());
-  final String workspaceRoot = p.normalize(p.join(currentPath, '..', '..', '..', '..'));
+  // Since this tool is executed via `dart run` from the package root,
+  // the current directory is the workspace root.
+  final String workspaceRoot = Directory.current.path;
 
   final checker = ReadinessChecker();
   final bool isReady = await checker.checkReadiness(workspaceRoot);

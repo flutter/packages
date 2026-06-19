@@ -82,10 +82,17 @@ class ReadinessChecker {
 
   Future<bool> _checkGitState(String workspaceRoot) async {
     _log('2. Checking git state...');
-    final ProcessResult result = await _processManager.run(
-      ['git', 'status', '--porcelain'],
-      workingDirectory: workspaceRoot,
-    );
+    final ProcessResult result;
+    try {
+      result = await _processManager.run(
+        ['git', 'status', '--porcelain'],
+        workingDirectory: workspaceRoot,
+      );
+    } on ProcessException catch (e) {
+      _log('Error: Failed to run git status. Is git installed and on the PATH?');
+      _log(e.toString());
+      return false;
+    }
     if (result.exitCode != 0) {
       _log('Error: Failed to run git status.');
       return false;
