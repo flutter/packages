@@ -442,6 +442,91 @@ void main() {
       });
     });
 
+    group('--analyze-skills-for', () {
+      test('fails if an invalid package is provided', () async {
+        createFakePlugin('foo', packagesDir);
+        final File configFile = packagesDir.childFile('skills_config.yaml');
+        configFile.writeAsStringSync('- non_existent_package');
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+          runner,
+          <String>['analyze', '--analyze-skills-for', configFile.path],
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+              'The following packages passed to --analyze-skills-for are not valid packages: non_existent_package',
+            ),
+          ]),
+        );
+      });
+
+      test('fails if configured package has no dart files in .agents/skills', () async {
+        createFakePlugin('foo', packagesDir);
+        final File configFile = packagesDir.childFile('skills_config.yaml');
+        configFile.writeAsStringSync('- foo');
+
+        // Note: we purposely do not create any .dart files in .agents/skills
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+          runner,
+          <String>['analyze', '--analyze-skills-for', configFile.path],
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+              'Configured to analyze skills for foo, but no Dart code was found in .agents/skills.',
+            ),
+          ]),
+        );
+      });
+
+      test('analyzes .agents/skills when dart files are present', () async {
+        final RepositoryPackage plugin = createFakePlugin('foo', packagesDir);
+        final File configFile = packagesDir.childFile('skills_config.yaml');
+        configFile.writeAsStringSync('- foo');
+
+        plugin.directory
+            .childDirectory('.agents')
+            .childDirectory('skills')
+            .childFile('test.dart')
+            .createSync(recursive: true);
+
+        await runCapturingPrint(runner, <String>[
+          'analyze',
+          '--analyze-skills-for',
+          configFile.path,
+        ]);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall('flutter', const <String>['pub', 'get'], plugin.path),
+            ProcessCall('dart', const <String>['analyze', '--fatal-infos'], plugin.path),
+            ProcessCall('dart', const <String>[
+              'analyze',
+              '--fatal-infos',
+              '.agents/skills',
+            ], plugin.path),
+          ]),
+        );
+      });
+    });
+
     test('skips if requested if "pub get" fails in the resolver', () async {
       final RepositoryPackage plugin = createFakePlugin('foo', packagesDir);
 

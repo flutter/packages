@@ -5,7 +5,7 @@
 import 'dart:io';
 
 import 'package:check_readiness/check_readiness.dart';
-import 'package:path/path.dart' as p;
+
 
 Future<void> main(List<String> args) async {
   // Since this tool is executed via `dart run` from the package root,

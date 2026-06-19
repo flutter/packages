@@ -38,6 +38,13 @@ class AnalyzeCommand extends PackageLoopingCommand {
           'of allowed directories.',
       defaultsTo: <String>[],
     );
+    argParser.addMultiOption(
+      _analyzeSkillsFlag,
+      help:
+          'A list of packages, or YAML files containing a list of packages, '
+          'that should have their .agents/skills and skills directories explicitly analyzed.',
+      defaultsTo: <String>[],
+    );
     argParser.addOption(
       _analysisSdk,
       valueHelp: 'dart-sdk',
@@ -85,6 +92,7 @@ class AnalyzeCommand extends PackageLoopingCommand {
 
   static const String _dartFlag = 'dart';
   static const String _customAnalysisFlag = 'custom-analysis';
+  static const String _analyzeSkillsFlag = 'analyze-skills-for';
   static const String _downgradeFlag = 'downgrade';
   static const String _libOnlyFlag = 'lib-only';
   static const String _analysisSdk = 'analysis-sdk';
@@ -95,6 +103,7 @@ class AnalyzeCommand extends PackageLoopingCommand {
   late String _dartBinaryPath;
 
   Set<String> _allowedCustomAnalysisDirectories = const <String>{};
+  Set<String> _packagesWithSkills = const <String>{};
 
   @override
   final String name = 'analyze';
@@ -170,6 +179,34 @@ class AnalyzeCommand extends PackageLoopingCommand {
   @override
   Future<void> initializeRun() async {
     _allowedCustomAnalysisDirectories = getYamlListArg(_customAnalysisFlag);
+    _packagesWithSkills = getYamlListArg(_analyzeSkillsFlag);
+
+    // Validate that all packages in _packagesWithSkills are valid packages.
+    final allPackages = <String>{};
+    for (final dir in <Directory>[
+      packagesDir,
+      if (thirdPartyPackagesDir.existsSync()) thirdPartyPackagesDir,
+    ]) {
+      for (final FileSystemEntity entity in dir.listSync(followLinks: false)) {
+        if (isPackage(entity)) {
+          allPackages.add(entity.basename);
+        } else if (entity is Directory) {
+          for (final FileSystemEntity subdir in entity.listSync(followLinks: false)) {
+            if (isPackage(subdir)) {
+              allPackages.add(subdir.basename);
+            }
+          }
+        }
+      }
+    }
+
+    final Set<String> invalidPackages = _packagesWithSkills.difference(allPackages);
+    if (invalidPackages.isNotEmpty) {
+      printError(
+        'The following packages passed to --$_analyzeSkillsFlag are not valid packages: ${invalidPackages.join(', ')}',
+      );
+      throw ToolExit(1);
+    }
 
     // Use the Dart SDK override if one was passed in.
     final dartSdk = argResults![_analysisSdk] as String?;
@@ -305,15 +342,70 @@ class AnalyzeCommand extends PackageLoopingCommand {
     if (_hasUnexpectedAnalysisOptions(package)) {
       return PackageResult.fail(<String>['Unexpected local analysis options']);
     }
-    final int exitCode = await processRunner.runAndStream(_dartBinaryPath, <String>[
-      'analyze',
-      '--fatal-infos',
-      if (libOnly) 'lib',
-    ], workingDir: package.directory);
+    final analyzeArgs = <String>['analyze', '--fatal-infos'];
+
+    if (libOnly) {
+      analyzeArgs.add('lib');
+    }
+
+    var analyzeAgentsSkills = false;
+    if (!libOnly && _packagesWithSkills.contains(package.directory.basename)) {
+      final List<String> skillsErrors = _validateAgentsSkillsDirectory(package);
+      if (skillsErrors.isNotEmpty) {
+        return PackageResult.fail(skillsErrors);
+      }
+      analyzeAgentsSkills = true;
+    }
+
+    int exitCode = await processRunner.runAndStream(
+      _dartBinaryPath,
+      analyzeArgs,
+      workingDir: package.directory,
+    );
+
+    if (analyzeAgentsSkills) {
+      final int skillsExitCode = await processRunner.runAndStream(_dartBinaryPath, <String>[
+        'analyze',
+        '--fatal-infos',
+        '.agents/skills',
+      ], workingDir: package.directory);
+      if (skillsExitCode != 0) {
+        exitCode = skillsExitCode;
+      }
+    }
+
     if (exitCode != 0) {
       return PackageResult.fail();
     }
     return PackageResult.success();
+  }
+
+  /// Validates that `.agents/skills` contains Dart code if configured for skills analysis.
+  ///
+  /// Returns a list of error strings if the package is configured for skills analysis
+  /// but no Dart code was found. Returns an empty list on success.
+  List<String> _validateAgentsSkillsDirectory(RepositoryPackage package) {
+    bool hasDartFiles(Directory dir) {
+      if (!dir.existsSync()) {
+        return false;
+      }
+      return dir
+          .listSync(recursive: true)
+          .any((FileSystemEntity entity) => entity is File && entity.path.endsWith('.dart'));
+    }
+
+    final Directory agentsSkillsDir = package.directory
+        .childDirectory('.agents')
+        .childDirectory('skills');
+
+    if (!hasDartFiles(agentsSkillsDir)) {
+      printError(
+        'Configured to analyze skills for ${package.directory.basename}, but no Dart code was found in .agents/skills.',
+      );
+      return <String>['No Dart code found in .agents/skills'];
+    }
+
+    return <String>[];
   }
 
   Future<bool> _runPubCommand(RepositoryPackage package, String command) async {
