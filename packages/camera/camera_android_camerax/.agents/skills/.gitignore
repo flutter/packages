@@ -4,7 +4,9 @@
 # Un-ignore specific checked-in skills
 # (Add specific contributor skills here as they are created)
 !check-readiness/
-!check-readiness/**
+!check-readiness/SKILL.md
+!check-readiness/scripts/
+!check-readiness/scripts/check.sh
 
 # Keep essential configuration and docs
 !.gitignore
