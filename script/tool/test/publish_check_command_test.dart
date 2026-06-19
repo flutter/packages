@@ -265,7 +265,7 @@ void main() {
         final File pubignoreFile = package.directory.childFile('.pubignore');
         pubignoreFile.writeAsStringSync('.agents/\n');
 
-        final MockProcess process = MockProcess(
+        final process = MockProcess(
           exitCode: 65,
           stderr:
               'Package has 1 warning.\n'
@@ -292,7 +292,7 @@ void main() {
         final File pubignoreFile = package.directory.childFile('.pubignore');
         pubignoreFile.writeAsStringSync('.agents/\n');
 
-        final MockProcess process = MockProcess(
+        final process = MockProcess(
           exitCode: 65,
           stderr:
               'Package has 1 warning.\n'

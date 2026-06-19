@@ -217,7 +217,7 @@ class PublishCheckCommand extends PackageLoopingCommand {
       return false;
     }
 
-    final RegExp warningCountRegex = RegExp(r'Package has (\d+) warning');
+    final warningCountRegex = RegExp(r'Package has (\d+) warning');
     final Match? match = warningCountRegex.firstMatch(output);
     if (match != null) {
       final int count = int.parse(match.group(1)!);
@@ -227,10 +227,10 @@ class PublishCheckCommand extends PackageLoopingCommand {
     }
 
     final List<String> lines = output.split('\n');
-    bool inFilesSection = false;
-    final List<String> gitignoredFiles = <String>[];
+    var inFilesSection = false;
+    final gitignoredFiles = <String>[];
 
-    for (final String line in lines) {
+    for (final line in lines) {
       if (line.trim() == 'Files that are checked in while gitignored:') {
         inFilesSection = true;
         continue;
@@ -262,10 +262,10 @@ class PublishCheckCommand extends PackageLoopingCommand {
         .where((String line) => line.isNotEmpty && !line.startsWith('#'))
         .toList();
 
-    for (final String file in gitignoredFiles) {
-      bool isIgnored = false;
-      for (final String ignoreRule in pubignoreLines) {
-        String rule = ignoreRule;
+    for (final file in gitignoredFiles) {
+      var isIgnored = false;
+      for (final ignoreRule in pubignoreLines) {
+        var rule = ignoreRule;
         if (rule.startsWith('/')) {
           rule = rule.substring(1);
         }
