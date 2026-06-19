@@ -87,19 +87,26 @@
 }
 
 - (void)updateAnimationValidatingMarker:(MarkerUpdateAnimationValidatingMarker *)marker
-              positionAnimationsEnabled:(BOOL)positionAnimationsEnabled
-              rotationAnimationsEnabled:(BOOL)rotationAnimationsEnabled {
+     markerUpdateAnimationConfiguration:
+         (FGMPlatformMarkerUpdateAnimationConfiguration *)markerUpdateAnimationConfiguration {
   [FGMMarkerController updateMarker:marker
                       fromPlatformMarker:[self platformMarkerWithCollisionBehavior:nil]
                              withMapView:[MarkerControllerTests mapView]
                            assetProvider:[[TestAssetProvider alloc] init]
                              screenScale:1
+      markerUpdateAnimationConfiguration:markerUpdateAnimationConfiguration
+               usingOpacityForVisibility:NO];
+}
+
+- (void)updateAnimationValidatingMarker:(MarkerUpdateAnimationValidatingMarker *)marker
+              positionAnimationsEnabled:(BOOL)positionAnimationsEnabled
+              rotationAnimationsEnabled:(BOOL)rotationAnimationsEnabled {
+  [self updateAnimationValidatingMarker:marker
       markerUpdateAnimationConfiguration:
           [self markerUpdateAnimationConfigurationWithPositionAnimationsEnabled:
                     positionAnimationsEnabled
                                                       rotationAnimationsEnabled:
-                                                          rotationAnimationsEnabled]
-               usingOpacityForVisibility:NO];
+                                                          rotationAnimationsEnabled]];
 }
 
 - (void)testSetsMarkerNumericProperties {
@@ -329,6 +336,19 @@
                  @"Position animation should be enabled by default.");
   XCTAssertFalse(marker.wereActionsDisabledWhenSettingRotation,
                  @"Rotation animation should be enabled by default.");
+}
+
+- (void)testUpdateMarkerDoesNotDisablePositionOrRotationAnimationWithNilConfiguration {
+  MarkerUpdateAnimationValidatingMarker *marker =
+      [[MarkerUpdateAnimationValidatingMarker alloc] init];
+  [self updateAnimationValidatingMarker:marker markerUpdateAnimationConfiguration:nil];
+
+  XCTAssertTrue(marker.hasSetPosition);
+  XCTAssertTrue(marker.hasSetRotation);
+  XCTAssertFalse(marker.wereActionsDisabledWhenSettingPosition,
+                 @"Nil animation configuration should leave position animation enabled.");
+  XCTAssertFalse(marker.wereActionsDisabledWhenSettingRotation,
+                 @"Nil animation configuration should leave rotation animation enabled.");
 }
 
 - (void)testUpdateMarkerDisablesPositionAndRotationAnimation {

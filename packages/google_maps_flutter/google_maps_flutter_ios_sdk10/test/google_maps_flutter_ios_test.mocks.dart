@@ -82,9 +82,7 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
     _i2.PlatformMarkerUpdateAnimationConfiguration? configuration,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#setMarkerUpdateAnimationConfiguration, [
-              configuration,
-            ]),
+            Invocation.method(#setMarkerUpdateAnimationConfiguration, [configuration]),
             returnValue: _i4.Future<void>.value(),
             returnValueForMissingStub: _i4.Future<void>.value(),
           )
