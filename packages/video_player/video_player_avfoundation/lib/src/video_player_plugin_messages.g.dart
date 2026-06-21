@@ -141,6 +141,7 @@ class CreationOptions {
 
   Map<String, String> httpHeaders;
 
+  /// Caps forward buffering (in ms); null uses AVPlayer's automatic buffering.
   int? forwardBufferDurationMs;
 
   List<Object?> _toList() {
@@ -169,7 +170,9 @@ class CreationOptions {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(uri, other.uri) && _deepEquals(httpHeaders, other.httpHeaders);
+    return _deepEquals(uri, other.uri) &&
+        _deepEquals(httpHeaders, other.httpHeaders) &&
+        _deepEquals(forwardBufferDurationMs, other.forwardBufferDurationMs);
   }
 
   @override

@@ -252,7 +252,13 @@ class PlatformVideoViewCreationParams {
 }
 
 class CreationOptions {
-  CreationOptions({required this.uri, this.formatHint, required this.httpHeaders, this.userAgent, this.forwardBufferDurationMs});
+  CreationOptions({
+    required this.uri,
+    this.formatHint,
+    required this.httpHeaders,
+    this.userAgent,
+    this.forwardBufferDurationMs,
+  });
 
   String uri;
 
@@ -262,6 +268,7 @@ class CreationOptions {
 
   String? userAgent;
 
+  /// Caps forward buffering (in ms); null uses ExoPlayer's default (~50s).
   int? forwardBufferDurationMs;
 
   List<Object?> _toList() {
