@@ -282,7 +282,8 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
     // nil leaves AVPlayer's automatic (aggressive) buffering; a value (seconds)
     // limits read-ahead to save bandwidth.
     if let forwardBufferDurationMs = options.forwardBufferDurationMs {
-      item.preferredForwardBufferDuration = Double(forwardBufferDurationMs) / 1000.0
+      // Clamp to >= 0; a negative preferredForwardBufferDuration raises an exception.
+      item.preferredForwardBufferDuration = max(0.0, Double(forwardBufferDurationMs) / 1000.0)
     }
     return item
   }

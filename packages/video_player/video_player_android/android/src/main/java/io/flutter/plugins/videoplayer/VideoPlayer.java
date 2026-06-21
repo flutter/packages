@@ -101,7 +101,7 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
     if (forwardBufferDurationMs == null) {
       return null;
     }
-    int bufferMs = (int) Math.max(1L, forwardBufferDurationMs);
+    int bufferMs = (int) Math.min((long) Integer.MAX_VALUE, Math.max(1L, forwardBufferDurationMs));
     int bufferForPlaybackMs = Math.min(2_500, bufferMs);
     int bufferForPlaybackAfterRebufferMs = Math.min(5_000, bufferMs);
     return new DefaultLoadControl.Builder()

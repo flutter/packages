@@ -463,7 +463,10 @@ class VideoPlayerOptions {
     this.allowBackgroundPlayback = false,
     this.webOptions,
     this.forwardBufferDuration,
-  });
+  }) : assert(
+         forwardBufferDuration == null || !forwardBufferDuration.isNegative,
+         'forwardBufferDuration must be non-negative.',
+       );
 
   /// Set this to true to keep playing video in background, when app goes in background.
   /// The default value is false.
