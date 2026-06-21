@@ -50,7 +50,8 @@ public class PlatformViewVideoPlayer extends VideoPlayer {
       @NonNull Context context,
       @NonNull VideoPlayerCallbacks events,
       @NonNull VideoAsset asset,
-      @NonNull VideoPlayerOptions options) {
+      @NonNull VideoPlayerOptions options,
+      @Nullable Long forwardBufferDurationMs) {
     return new PlatformViewVideoPlayer(
         events,
         asset.getMediaItem(),
@@ -62,6 +63,11 @@ public class PlatformViewVideoPlayer extends VideoPlayer {
               new ExoPlayer.Builder(context)
                   .setTrackSelector(trackSelector)
                   .setMediaSourceFactory(asset.getMediaSourceFactory(context));
+          androidx.media3.exoplayer.LoadControl loadControl =
+              VideoPlayer.cappedLoadControl(forwardBufferDurationMs);
+          if (loadControl != null) {
+            builder.setLoadControl(loadControl);
+          }
           return builder.build();
         });
   }

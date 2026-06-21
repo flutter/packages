@@ -26,6 +26,9 @@ class CreationOptions {
 
   String uri;
   Map<String, String> httpHeaders;
+
+  /// Caps forward buffering (in ms); null uses AVPlayer's automatic buffering.
+  int? forwardBufferDurationMs;
 }
 
 class TexturePlayerIds {

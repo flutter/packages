@@ -252,7 +252,7 @@ class PlatformVideoViewCreationParams {
 }
 
 class CreationOptions {
-  CreationOptions({required this.uri, this.formatHint, required this.httpHeaders, this.userAgent});
+  CreationOptions({required this.uri, this.formatHint, required this.httpHeaders, this.userAgent, this.forwardBufferDurationMs});
 
   String uri;
 
@@ -262,8 +262,10 @@ class CreationOptions {
 
   String? userAgent;
 
+  int? forwardBufferDurationMs;
+
   List<Object?> _toList() {
-    return <Object?>[uri, formatHint, httpHeaders, userAgent];
+    return <Object?>[uri, formatHint, httpHeaders, userAgent, forwardBufferDurationMs];
   }
 
   Object encode() {
@@ -277,6 +279,7 @@ class CreationOptions {
       formatHint: result[1] as PlatformVideoFormat?,
       httpHeaders: (result[2] as Map<Object?, Object?>?)!.cast<String, String>(),
       userAgent: result[3] as String?,
+      forwardBufferDurationMs: result[4] as int?,
     );
   }
 

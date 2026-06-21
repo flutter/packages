@@ -1,5 +1,8 @@
-## NEXT
+## 6.8.0
 
+* Adds `forwardBufferDuration` to `VideoPlayerOptions` and `VideoCreationOptions`,
+  allowing apps to cap how far ahead of the playhead the player buffers from the
+  network.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 6.7.0

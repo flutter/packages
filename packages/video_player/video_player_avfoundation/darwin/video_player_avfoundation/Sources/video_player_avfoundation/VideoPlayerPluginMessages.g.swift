@@ -214,21 +214,25 @@ struct PlatformVideoViewCreationParams: Hashable {
 struct CreationOptions: Hashable {
   var uri: String
   var httpHeaders: [String: String]
+  var forwardBufferDurationMs: Int64? = nil
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> CreationOptions? {
     let uri = pigeonVar_list[0] as! String
     let httpHeaders = pigeonVar_list[1] as! [String: String]
+    let forwardBufferDurationMs: Int64? = nilOrValue(pigeonVar_list[2])
 
     return CreationOptions(
       uri: uri,
-      httpHeaders: httpHeaders
+      httpHeaders: httpHeaders,
+      forwardBufferDurationMs: forwardBufferDurationMs
     )
   }
   func toList() -> [Any?] {
     return [
       uri,
       httpHeaders,
+      forwardBufferDurationMs,
     ]
   }
   static func == (lhs: CreationOptions, rhs: CreationOptions) -> Bool {
@@ -237,12 +241,14 @@ struct CreationOptions: Hashable {
     }
     return deepEqualsVideoPlayerPluginMessages(lhs.uri, rhs.uri)
       && deepEqualsVideoPlayerPluginMessages(lhs.httpHeaders, rhs.httpHeaders)
+      && deepEqualsVideoPlayerPluginMessages(lhs.forwardBufferDurationMs, rhs.forwardBufferDurationMs)
   }
 
   func hash(into hasher: inout Hasher) {
     hasher.combine("CreationOptions")
     deepHashVideoPlayerPluginMessages(value: uri, hasher: &hasher)
     deepHashVideoPlayerPluginMessages(value: httpHeaders, hasher: &hasher)
+    deepHashVideoPlayerPluginMessages(value: forwardBufferDurationMs, hasher: &hasher)
   }
 }
 

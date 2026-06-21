@@ -1,5 +1,9 @@
-## NEXT
+## 2.12.0
 
+* Adds `VideoPlayerOptions.forwardBufferDuration` to cap how far ahead of the
+  playhead the player buffers from the network, reducing wasted bandwidth when a
+  video is abandoned or seeked away. Defaults to the platform's automatic
+  buffering when unset.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 2.11.1

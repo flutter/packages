@@ -1,3 +1,8 @@
+## 2.10.0
+
+* Adds support for `VideoPlayerOptions.forwardBufferDuration`, capping ExoPlayer's
+  forward buffering via `DefaultLoadControl` (default behavior is unchanged when null).
+
 ## 2.9.6
 
 * Migrates to Built-in Kotlin to support AGP 9.

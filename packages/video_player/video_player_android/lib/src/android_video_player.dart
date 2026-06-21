@@ -103,6 +103,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
       httpHeaders: httpHeaders,
       userAgent: userAgent,
       formatHint: formatHint,
+      forwardBufferDurationMs: options.forwardBufferDuration?.inMilliseconds,
     );
 
     final int playerId;

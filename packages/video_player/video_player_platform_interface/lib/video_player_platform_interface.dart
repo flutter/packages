@@ -462,11 +462,21 @@ class VideoPlayerOptions {
     this.mixWithOthers = false,
     this.allowBackgroundPlayback = false,
     this.webOptions,
+    this.forwardBufferDuration,
   });
 
   /// Set this to true to keep playing video in background, when app goes in background.
   /// The default value is false.
   final bool allowBackgroundPlayback;
+
+  /// Caps how far ahead of the playhead the player buffers from the network.
+  ///
+  /// When null (the default) the platform's automatic buffering is used, which
+  /// can read far ahead (ExoPlayer ~50s; AVPlayer may fetch most of the file).
+  /// Setting a small value (e.g. 10-15s) avoids wasting bandwidth when a user
+  /// abandons or seeks away, at the cost of a higher re-buffer risk on jittery
+  /// networks. Applied at player creation. Has no effect on the web platform.
+  final Duration? forwardBufferDuration;
 
   /// Set this to true to mix the video players audio with other audio sources.
   /// The default value is false
@@ -576,13 +586,22 @@ class VideoViewOptions {
 @immutable
 class VideoCreationOptions {
   /// Constructs an instance of [VideoCreationOptions].
-  const VideoCreationOptions({required this.dataSource, required this.viewType});
+  const VideoCreationOptions({
+    required this.dataSource,
+    required this.viewType,
+    this.forwardBufferDuration,
+  });
 
   /// The data source used to create the player.
   final DataSource dataSource;
 
   /// The type of view to be used for displaying the video player
   final VideoViewType viewType;
+
+  /// Caps how far ahead of the playhead the player buffers from the network.
+  ///
+  /// See [VideoPlayerOptions.forwardBufferDuration]. Null uses platform default.
+  final Duration? forwardBufferDuration;
 }
 
 /// Represents an audio track in a video with its metadata.
