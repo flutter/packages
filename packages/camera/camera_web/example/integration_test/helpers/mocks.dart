@@ -161,6 +161,43 @@ class MockMediaRecorder {
   web.RecordingState state = 'inactive';
 }
 
+/// A mock of [web.MediaStreamTrackProcessor]
+@JSExport()
+class MockReadableStreamDefaultReader {
+  /// Releases the lock on the readable stream.
+  JSFunction releaseLock = () {}.toJS;
+}
+
+/// A mock of [web.VideoFrame]
+@JSExport()
+class MockVideoFrame {
+  MockVideoFrame({required this.width, required this.height, required this.bufferSize}) {
+    visibleRect = web.DOMRectReadOnly(0, 0, width.toDouble(), height.toDouble());
+    allocationSize = (web.VideoFrameCopyToOptions options) {
+      return bufferSize;
+    }.toJS;
+    copyTo = (JSAny? destination, web.VideoFrameCopyToOptions options) {
+      return Future<JSArray<web.PlaneLayout>>.value(JSArray<web.PlaneLayout>()).toJS;
+    }.toJS;
+  }
+
+  final int width;
+  final int height;
+  final int bufferSize;
+
+  /// Rrepresents the visible rectangle of the video frame.
+  late web.DOMRectReadOnly visibleRect;
+
+  /// Returns the size of the video frame in bytes.
+  late JSFunction allocationSize;
+
+  /// Copies the video frame to the given destination.
+  late JSFunction copyTo;
+
+  /// Closes the video frame.
+  JSFunction close = () {}.toJS;
+}
+
 /// A fake [MediaStream] that returns the provided [_videoTracks].
 @JSExport()
 class FakeMediaStream {

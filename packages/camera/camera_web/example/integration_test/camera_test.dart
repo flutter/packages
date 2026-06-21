@@ -59,6 +59,8 @@ void main() {
       ).thenAnswer((_) => Future<MediaStream>.value(mediaStream));
 
       when(cameraService.hasPropertyOffScreenCanvas()).thenAnswer((_) => true);
+
+      when(cameraService.hasMediaStreamTrackProcessor()).thenAnswer((_) => true);
     });
 
     group('initialize', () {
@@ -1278,55 +1280,85 @@ void main() {
     });
     group('cameraFrameStream', () {
       testWidgets('Target cameraStreamFPS is 60', (WidgetTester tester) async {
-        final camera = Camera(
-          textureId: textureId,
-          cameraService: cameraService,
-        );
+        final camera = Camera(textureId: textureId, cameraService: cameraService);
         expect(camera.cameraStreamFPS, equals(60));
       });
+
       testWidgets('CameraImageData bytes is a multiple of 4 '
-          'regardless of OffscreenCanvas support', (WidgetTester tester) async {
-        final VideoElement videoElement = getVideoElementWithBlankStream(
-          const Size(10, 10),
+          'when browser has MediaStreamTrackProcessor capability', (WidgetTester tester) async {
+        final mockVideoFrame = MockVideoFrame(width: 10, height: 10, bufferSize: 32);
+
+        when(
+          cameraService.getMediaStreamTrackReader(any, maxBufferSize: anyNamed('maxBufferSize')),
+        ).thenReturn(
+          createJSInteropWrapper(MockReadableStreamDefaultReader()) as ReadableStreamDefaultReader,
         );
-        final camera = Camera(
-          textureId: textureId,
-          cameraService: cameraService,
-        )..videoElement = videoElement;
+        when(cameraService.readVideoTrack(any)).thenAnswer(
+          (_) => Future<VideoFrame>.value(createJSInteropWrapper(mockVideoFrame) as VideoFrame),
+        );
+        when(
+          cameraService.getCameraImageData(
+            width: anyNamed('width'),
+            height: anyNamed('height'),
+            bytes: anyNamed('bytes'),
+          ),
+        ).thenReturn(
+          CameraImageData(
+            format: const CameraImageFormat(ImageFormatGroup.unknown, raw: 0),
+            planes: <CameraImagePlane>[
+              CameraImagePlane(
+                bytes: Uint8List(mockVideoFrame.bufferSize),
+                bytesPerRow: mockVideoFrame.width * 4,
+              ),
+            ],
+            height: mockVideoFrame.height,
+            width: mockVideoFrame.width,
+          ),
+        );
+
+        final camera = Camera(textureId: textureId, cameraService: cameraService);
+
+        await camera.initialize();
+        await camera.play();
+
+        final CameraImageData cameraImageData = await camera.cameraFrameStream().first.timeout(
+          const Duration(seconds: 5),
+        );
+
+        expect(cameraImageData.width, equals(mockVideoFrame.width));
+        expect(cameraImageData.height, equals(mockVideoFrame.height));
+        expect(cameraImageData.planes.first.bytes.length, equals(mockVideoFrame.bufferSize));
+        expect(cameraImageData.planes.first.bytes.length % 4, equals(0));
+      });
+
+      testWidgets('CameraImageData bytes is a multiple of 4 '
+          'when browser does not have MediaStreamTrackProcessor capability, '
+          'regardless of OffscreenCanvas support', (WidgetTester tester) async {
+        final VideoElement videoElement = getVideoElementWithBlankStream(const Size(10, 10));
+        final camera = Camera(textureId: textureId, cameraService: cameraService)
+          ..videoElement = videoElement;
+
+        when(cameraService.hasMediaStreamTrackProcessor()).thenReturn(false);
 
         for (final supportsOffscreenCanvas in <bool>[true, false]) {
-          when(
-            cameraService.hasPropertyOffScreenCanvas(),
-          ).thenReturn(supportsOffscreenCanvas);
+          when(cameraService.hasPropertyOffScreenCanvas()).thenReturn(supportsOffscreenCanvas);
 
           when(cameraService.takeFrame(videoElement)).thenAnswer(
             (_) => CameraImageData(
               format: const CameraImageFormat(ImageFormatGroup.unknown, raw: 0),
               planes: <CameraImagePlane>[
-                CameraImagePlane(
-                  bytes: Uint8List(32),
-                  bytesPerRow: videoElement.width * 4,
-                ),
+                CameraImagePlane(bytes: Uint8List(32), bytesPerRow: videoElement.width * 4),
               ],
-              height: 10,
-              width: 10,
+              height: videoElement.height,
+              width: videoElement.width,
             ),
           );
 
-          final CameraImageData cameraImageData = await camera
-              .cameraFrameStream()
-              .first;
+          final CameraImageData cameraImageData = await camera.cameraFrameStream().first;
 
-          expect(
-            cameraImageData,
-            equals(
-              isA<CameraImageData>().having(
-                (CameraImageData e) => e.planes.first.bytes.length % 4,
-                'bytes',
-                equals(0),
-              ),
-            ),
-          );
+          expect(cameraImageData.width, equals(videoElement.width));
+          expect(cameraImageData.height, equals(videoElement.height));
+          expect(cameraImageData.planes.first.bytes.length % 4, equals(0));
         }
       });
     });
