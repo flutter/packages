@@ -105,6 +105,29 @@ class PreCommitCommand extends Command<bool> {
     );
     final packageArgs = '--packages=${targetPackages.join(',')}';
 
+    // Determine which toolchains are needed based on file extensions
+    final bool hasDart = stagedFiles.any((f) => f.endsWith('.dart'));
+    final bool hasClang = stagedFiles.any(
+      (f) =>
+          f.endsWith('.c') ||
+          f.endsWith('.cc') ||
+          f.endsWith('.cpp') ||
+          f.endsWith('.h') ||
+          f.endsWith('.m') ||
+          f.endsWith('.mm'),
+    );
+    final bool hasJava = stagedFiles.any((f) => f.endsWith('.java'));
+    final bool hasKotlin = stagedFiles.any((f) => f.endsWith('.kt'));
+    final bool hasSwift = stagedFiles.any((f) => f.endsWith('.swift'));
+
+    final formatFlags = [
+      if (!hasDart) '--no-dart',
+      if (!hasClang) '--no-clang-format',
+      if (!hasJava) '--no-java',
+      if (!hasKotlin) '--no-kotlin',
+      if (!hasSwift) '--no-swift',
+    ];
+
     print(
       '🔍 Running pre-commit checks on ${targetPackages.length} packages: ${targetPackages.join(', ')}',
     );
@@ -118,6 +141,7 @@ class PreCommitCommand extends Command<bool> {
       'format',
       packageArgs,
       '--fail-on-change',
+      ...formatFlags,
     ], workingDirectory: repoRoot.path);
 
     if (formatResult.exitCode != 0) {
@@ -145,8 +169,12 @@ class PreCommitCommand extends Command<bool> {
     ], workingDirectory: repoRoot.path);
 
     if (analyzeResult.exitCode != 0) {
-      if (analyzeResult.stdout.toString().isNotEmpty) print(analyzeResult.stdout);
-      if (analyzeResult.stderr.toString().isNotEmpty) print(analyzeResult.stderr);
+      if (analyzeResult.stdout.toString().isNotEmpty) {
+        print(analyzeResult.stdout);
+      }
+      if (analyzeResult.stderr.toString().isNotEmpty) {
+        print(analyzeResult.stderr);
+      }
       print('❌ Static analysis errors found. Please fix the errors listed above.');
       hasError = true;
     } else {
