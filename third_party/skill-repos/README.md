@@ -1,6 +1,6 @@
 # Third-Party Agent Skills
 
-To comply with third-party code policies, all remotely managed agent skills (installed via `npx skills`) must be isolated in this `third_party/` directory before being symlinked to specific project `.agents/skills` directories.
+To comply with third-party code policies, all remotely managed agent skills (installed via `npx skills`) must be isolated in this `third_party/skill-repos/` directory before being symlinked to specific project `.agents/skills` directories.
 
 ## Rules for Adding New Remote Skills
 
