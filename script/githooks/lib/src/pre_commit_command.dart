@@ -124,7 +124,7 @@ class PreCommitCommand extends Command<bool> {
     final List<String> dartFiles = stagedFiles.where((f) => f.endsWith('.dart')).toList();
 
     print(
-      '🔍 Running pre-commit checks on ${targetPackages.length} packages: ${targetPackages.join(', ')}',
+      '🏃 Running pre-commit checks on ${targetPackages.length} packages: ${targetPackages.join(', ')}',
     );
     var hasError = false;
 
