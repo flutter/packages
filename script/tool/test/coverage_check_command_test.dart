@@ -150,6 +150,36 @@ end_of_record
       expect(output, contains(contains('Ran for 1 package(s)')));
     });
 
+    test('calculates coverage correctly across multiple files', () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin1',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
+
+      final Directory coverageDir = plugin.directory.childDirectory('coverage');
+      coverageDir.createSync();
+      coverageDir.childFile('lcov.info').writeAsStringSync('''
+SF:lib/file1.dart
+DA:1,1
+DA:2,0
+LF:2
+LH:1
+end_of_record
+SF:lib/file2.dart
+DA:1,1
+DA:2,1
+DA:3,1
+LF:3
+LH:3
+end_of_record
+'''); // Total LF: 5, LH: 4 => 80.0% coverage. 80.0 >= 50.0 so it should pass.
+
+      final List<String> output = await runCapturingPrint(runner, <String>['coverage-check']);
+
+      expect(output, contains(contains('Ran for 1 package(s)')));
+    });
+
     test('fails when test command fails', () async {
       createFakePlugin('plugin1', packagesDir, extraFiles: <String>['test/empty_test.dart']);
       
@@ -191,6 +221,9 @@ end_of_record
       expect(
         output,
         containsAllInOrder(<Matcher>[
+          contains(
+            'Coverage file not found at ${packagesDir.childDirectory('plugin1').childDirectory('coverage').childFile('lcov.info').path}.',
+          ),
           contains('Failed to run tests or parse coverage on HEAD'),
         ]),
       );

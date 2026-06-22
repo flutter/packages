@@ -110,6 +110,7 @@ class CoverageCheckCommand extends PackageLoopingCommand {
 
     final File lcovFile = package.directory.childDirectory('coverage').childFile('lcov.info');
     if (!lcovFile.existsSync()) {
+      print('Coverage file not found at ${lcovFile.path}.');
       return null;
     }
 
