@@ -129,7 +129,7 @@ class PreCommitCommand extends Command<bool> {
     var hasError = false;
 
     // Check formatting.
-    print('Checking formatting...');
+    stdout.write('Checking formatting...');
 
     // Format Dart files instantly using dart format directly
     if (dartFiles.isNotEmpty) {
@@ -140,6 +140,9 @@ class PreCommitCommand extends Command<bool> {
       ], workingDirectory: repoRoot.path);
 
       if (dartFormatResult.exitCode != 0) {
+        if (!hasError) {
+          stdout.write('\x1B[2K\r');
+        }
         if (dartFormatResult.stdout.toString().isNotEmpty) {
           print(dartFormatResult.stdout);
         }
@@ -172,6 +175,9 @@ class PreCommitCommand extends Command<bool> {
       ], workingDirectory: repoRoot.path);
 
       if (nativeFormatResult.exitCode != 0) {
+        if (!hasError) {
+          stdout.write('\x1B[2K\r');
+        }
         if (nativeFormatResult.stdout.toString().isNotEmpty) {
           print(nativeFormatResult.stdout);
         }
@@ -186,11 +192,12 @@ class PreCommitCommand extends Command<bool> {
     }
 
     if (!hasError) {
-      print('✅ Formatting looks good.');
+      stdout.write('\x1B[2K\r✅ Formatting looks good.\n');
     }
 
     // Run static analysis directly on staged files
-    print('Running static analysis...');
+    var analyzeHasError = false;
+    stdout.write('Running static analysis...');
     if (dartFiles.isNotEmpty) {
       final ProcessResult analyzeResult = await processRunner('dart', [
         'analyze',
@@ -199,6 +206,9 @@ class PreCommitCommand extends Command<bool> {
       ], workingDirectory: repoRoot.path);
 
       if (analyzeResult.exitCode != 0) {
+        if (!analyzeHasError) {
+          stdout.write('\x1B[2K\r');
+        }
         if (analyzeResult.stdout.toString().isNotEmpty) {
           print(analyzeResult.stdout);
         }
@@ -206,14 +216,17 @@ class PreCommitCommand extends Command<bool> {
           print(analyzeResult.stderr);
         }
         print('❌ Static analysis errors found.');
+        analyzeHasError = true;
         hasError = true;
       }
     }
 
+    if (!analyzeHasError) {
+      stdout.write('\x1B[2K\r✅ Static analysis looks good.\n');
+    }
+
     if (hasError) {
       print('❌ Please fix the errors listed above.');
-    } else {
-      print('✅ Static analysis looks good.');
     }
 
     return !hasError;
