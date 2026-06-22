@@ -135,6 +135,7 @@ targets:
 
   - name: Linux coverage_checks
     recipe: packages/packages
+    bringup: true
     timeout: 60
     properties:
       add_recipes_cq: "true"
