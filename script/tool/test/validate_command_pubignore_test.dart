@@ -24,7 +24,8 @@ void main() {
         RecordingProcessRunner processRunner,
         RecordingProcessRunner gitProcessRunner,
         GitDir gitDir,
-      }) mocks = configureBaseCommandMocks(platform: mockPlatform);
+      })
+      mocks = configureBaseCommandMocks(platform: mockPlatform);
       packagesDir = mocks.packagesDir;
       final Directory repoRoot = packagesDir.parent;
       setToolConfig(repoRoot, minDartVersion: '1.0.0');

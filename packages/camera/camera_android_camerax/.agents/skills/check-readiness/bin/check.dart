@@ -6,7 +6,6 @@ import 'dart:io';
 
 import 'package:check_readiness/check_readiness.dart';
 
-
 Future<void> main(List<String> args) async {
   // Since this tool is executed via `dart run` from the package root,
   // the current directory is the workspace root.
