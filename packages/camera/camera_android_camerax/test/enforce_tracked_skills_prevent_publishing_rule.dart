@@ -5,6 +5,7 @@
 import 'dart:io';
 
 import 'package:dart_skills_lint/dart_skills_lint.dart';
+import 'package:path/path.dart' as p;
 
 /// A custom lint rule that enforces that all skills tracked in version control
 /// have the `prevent-skills-sh-publishing` rule enabled in `dart_skills_lint.yaml`.
@@ -21,7 +22,10 @@ class EnforceTrackedSkillsPreventPublishingRule extends SkillRule {
   @override
   Future<List<ValidationError>> validate(SkillContext context) async {
     try {
-      final ProcessResult topLevelResult = await Process.run('git', ['rev-parse', '--show-toplevel']);
+      final ProcessResult topLevelResult = await Process.run('git', [
+        'rev-parse',
+        '--show-toplevel',
+      ]);
       if (topLevelResult.exitCode == 0) {
         final String repoRoot = (topLevelResult.stdout as String).trim();
         final String resolvedPath = context.directory.resolveSymbolicLinksSync();
@@ -62,9 +66,9 @@ class EnforceTrackedSkillsPreventPublishingRule extends SkillRule {
     var pathFound = false;
     AnalysisSeverity? configuredSeverity;
 
-    final String normalizedContextPath = context.directory.absolute.path;
+    final String normalizedContextPath = p.canonicalize(context.directory.absolute.path);
     for (final LintTargetConfig skillConfig in config.individualSkillConfigs) {
-      final String normalizedConfigPath = File(skillConfig.path).absolute.path;
+      final String normalizedConfigPath = p.canonicalize(File(skillConfig.path).absolute.path);
       if (normalizedConfigPath == normalizedContextPath) {
         pathFound = true;
         configuredSeverity = skillConfig.rules['prevent-skills-sh-publishing'];
@@ -111,14 +115,24 @@ class EnforceTrackedSkillsPreventPublishingRule extends SkillRule {
     final buffer = StringBuffer();
 
     if (!pathFound) {
-      buffer.writeln('The skill at "$relativePath" is tracked in git, but is missing from dart_skills_lint.yaml.');
-      buffer.writeln('Please add it under `individual_skills:` with the `prevent-skills-sh-publishing` rule set to `error`:');
+      buffer.writeln(
+        'The skill at "$relativePath" is tracked in git, but is missing from dart_skills_lint.yaml.',
+      );
+      buffer.writeln(
+        'Please add it under `individual_skills:` with the `prevent-skills-sh-publishing` rule set to `error`:',
+      );
     } else if (configuredSeverity == null) {
-      buffer.writeln('The skill at "$relativePath" is listed in dart_skills_lint.yaml, but the `prevent-skills-sh-publishing` rule is missing.');
+      buffer.writeln(
+        'The skill at "$relativePath" is listed in dart_skills_lint.yaml, but the `prevent-skills-sh-publishing` rule is missing.',
+      );
       buffer.writeln('Please add it to the `rules` section for this skill:');
     } else {
-      buffer.writeln('The skill at "$relativePath" has the `prevent-skills-sh-publishing` rule configured as `${configuredSeverity.name}`.');
-      buffer.writeln('Tracked skills strictly require this rule to be set to `error` to prevent accidental publishing.');
+      buffer.writeln(
+        'The skill at "$relativePath" has the `prevent-skills-sh-publishing` rule configured as `${configuredSeverity.name}`.',
+      );
+      buffer.writeln(
+        'Tracked skills strictly require this rule to be set to `error` to prevent accidental publishing.',
+      );
       buffer.writeln();
       buffer.writeln('Please update dart_skills_lint.yaml:');
     }
