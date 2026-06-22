@@ -108,7 +108,6 @@ class PreCommitCommand extends Command<bool> {
     final packageArgs = '--packages=${targetPackages.join(',')}';
 
     // Determine which toolchains are needed based on file extensions
-    final bool hasDart = stagedFiles.any((f) => f.endsWith('.dart'));
     final bool hasClang = stagedFiles.any(
       (f) =>
           f.endsWith('.c') ||
@@ -122,13 +121,7 @@ class PreCommitCommand extends Command<bool> {
     final bool hasKotlin = stagedFiles.any((f) => f.endsWith('.kt'));
     final bool hasSwift = stagedFiles.any((f) => f.endsWith('.swift'));
 
-    final formatFlags = [
-      if (!hasDart) '--no-dart',
-      if (!hasClang) '--no-clang-format',
-      if (!hasJava) '--no-java',
-      if (!hasKotlin) '--no-kotlin',
-      if (!hasSwift) '--no-swift',
-    ];
+    final List<String> dartFiles = stagedFiles.where((f) => f.endsWith('.dart')).toList();
 
     print(
       '🔍 Running pre-commit checks on ${targetPackages.length} packages: ${targetPackages.join(', ')}',
@@ -137,37 +130,73 @@ class PreCommitCommand extends Command<bool> {
 
     // Check formatting.
     print('Checking formatting...');
-    final ProcessResult formatResult = await processRunner('dart', [
-      'run',
-      toolScript,
-      'format',
-      packageArgs,
-      '--fail-on-change',
-      ...formatFlags,
-    ], workingDirectory: repoRoot.path);
 
-    if (formatResult.exitCode != 0) {
-      if (formatResult.stdout.toString().isNotEmpty) {
-        print(formatResult.stdout);
+    // Format Dart files instantly using dart format directly
+    if (dartFiles.isNotEmpty) {
+      final ProcessResult dartFormatResult = await processRunner('dart', [
+        'format',
+        '--set-exit-if-changed',
+        ...dartFiles,
+      ], workingDirectory: repoRoot.path);
+
+      if (dartFormatResult.exitCode != 0) {
+        if (dartFormatResult.stdout.toString().isNotEmpty) {
+          print(dartFormatResult.stdout);
+        }
+        if (dartFormatResult.stderr.toString().isNotEmpty) {
+          print(dartFormatResult.stderr);
+        }
+        print('❌ Formatting issues found in Dart files. Please run "dart format" to fix them.');
+        hasError = true;
       }
-      if (formatResult.stderr.toString().isNotEmpty) {
-        print(formatResult.stderr);
+    }
+
+    // Format native files using flutter_plugin_tools
+    final bool needsNativeFormat = hasClang || hasJava || hasKotlin || hasSwift;
+    if (needsNativeFormat) {
+      final nativeFormatFlags = [
+        '--no-dart',
+        if (!hasClang) '--no-clang-format',
+        if (!hasJava) '--no-java',
+        if (!hasKotlin) '--no-kotlin',
+        if (!hasSwift) '--no-swift',
+      ];
+
+      final ProcessResult nativeFormatResult = await processRunner('dart', [
+        'run',
+        toolScript,
+        'format',
+        packageArgs,
+        '--fail-on-change',
+        ...nativeFormatFlags,
+      ], workingDirectory: repoRoot.path);
+
+      if (nativeFormatResult.exitCode != 0) {
+        if (nativeFormatResult.stdout.toString().isNotEmpty) {
+          print(nativeFormatResult.stdout);
+        }
+        if (nativeFormatResult.stderr.toString().isNotEmpty) {
+          print(nativeFormatResult.stderr);
+        }
+        print(
+          '❌ Formatting issues found in native files. Please run "dart run script/tool/bin/flutter_plugin_tools.dart format $packageArgs" to fix them.',
+        );
+        hasError = true;
       }
-      print(
-        '❌ Formatting issues found. Please run "dart run script/tool/bin/flutter_plugin_tools.dart format $packageArgs" to fix them.',
-      );
-      hasError = true;
-    } else {
+    }
+
+    if (!hasError) {
       print('✅ Formatting looks good.');
     }
 
-    // Run static analysis.
+    // Run static analysis directly on staged files
     print('Running static analysis...');
-    for (final packageDir in targetPackageDirs) {
+    if (dartFiles.isNotEmpty) {
       final ProcessResult analyzeResult = await processRunner('dart', [
         'analyze',
         '--fatal-infos',
-      ], workingDirectory: packageDir);
+        ...dartFiles,
+      ], workingDirectory: repoRoot.path);
 
       if (analyzeResult.exitCode != 0) {
         if (analyzeResult.stdout.toString().isNotEmpty) {
@@ -176,7 +205,7 @@ class PreCommitCommand extends Command<bool> {
         if (analyzeResult.stderr.toString().isNotEmpty) {
           print(analyzeResult.stderr);
         }
-        print('❌ Static analysis errors found in ${p.basename(packageDir)}.');
+        print('❌ Static analysis errors found.');
         hasError = true;
       }
     }
