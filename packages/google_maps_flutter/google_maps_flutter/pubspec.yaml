@@ -33,12 +33,6 @@ dev_dependencies:
   plugin_platform_interface: ^2.1.7
   stream_transform: ^2.0.0
 
-dependency_overrides:
-  google_maps_flutter_platform_interface:
-    path: ../google_maps_flutter_platform_interface
-  google_maps_flutter_web:
-    path: ../google_maps_flutter_web
-
 topics:
   - google-maps
   - google-maps-flutter
