@@ -37,6 +37,7 @@ dev_dependencies:
   leak_tracker_flutter_testing: any
   logging: ^1.2.0
   mockito: ^5.4.4
+  path: ^1.8.0
   pigeon: ^26.1.4
 
 topics:
