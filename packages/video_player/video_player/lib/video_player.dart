@@ -20,6 +20,7 @@ export 'package:video_player_platform_interface/video_player_platform_interface.
         DataSourceType,
         DurationRange,
         VideoFormat,
+        VideoPlayerAndroidOptions,
         VideoPlayerOptions,
         VideoPlayerWebOptions,
         VideoPlayerWebOptionsControls,
@@ -560,6 +561,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     final creationOptions = platform_interface.VideoCreationOptions(
       dataSource: dataSourceDescription,
       viewType: viewType,
+      androidOptions: videoPlayerOptions?.androidOptions,
     );
 
     if (videoPlayerOptions?.mixWithOthers != null) {

@@ -307,8 +307,32 @@ void main() {
       expect(creationOptions.uri, uri);
       expect(creationOptions.formatHint, PlatformVideoFormat.dash);
       expect(creationOptions.httpHeaders, <String, String>{});
+      expect(creationOptions.enableDecoderFallback, false);
       expect(playerId, newPlayerId);
       expect(player.buildViewWithOptions(VideoViewOptions(playerId: playerId!)), isA<Texture>());
+    });
+
+    test('createWithOptions passes Android decoder fallback option', () async {
+      final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) = setUpMockPlayer(
+        playerId: 1,
+        textureId: 100,
+      );
+      const newPlayerId = 2;
+      when(
+        api.createForTextureView(any),
+      ).thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 100));
+
+      await player.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(sourceType: DataSourceType.network, uri: 'https://example.com'),
+          viewType: VideoViewType.textureView,
+          androidOptions: const VideoPlayerAndroidOptions(enableDecoderFallback: true),
+        ),
+      );
+
+      final VerificationResult verification = verify(api.createForTextureView(captureAny));
+      final creationOptions = verification.captured[0] as CreationOptions;
+      expect(creationOptions.enableDecoderFallback, true);
     });
 
     test('createWithOptions with network passes headers', () async {

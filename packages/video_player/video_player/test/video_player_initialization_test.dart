@@ -73,4 +73,20 @@ void main() {
       reason: 'view type must be passed to the platform',
     );
   });
+
+  test('Android options are applied', () async {
+    const expected = VideoPlayerAndroidOptions(enableDecoderFallback: true);
+
+    final controller = VideoPlayerController.networkUrl(
+      Uri.parse('https://127.0.0.1'),
+      videoPlayerOptions: VideoPlayerOptions(androidOptions: expected),
+    );
+    await controller.initialize();
+
+    expect(
+      fakeVideoPlayerPlatform.androidOptions[controller.playerId],
+      expected,
+      reason: 'Android options must be passed to the platform',
+    );
+  });
 }

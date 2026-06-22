@@ -1,5 +1,6 @@
-## NEXT
+## 6.8.0
 
+* Adds `VideoPlayerAndroidOptions` for Android-specific player configuration.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 6.7.0

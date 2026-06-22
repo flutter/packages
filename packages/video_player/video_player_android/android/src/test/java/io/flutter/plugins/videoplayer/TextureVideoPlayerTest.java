@@ -5,18 +5,25 @@
 package io.flutter.plugins.videoplayer;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import android.content.Context;
 import android.view.Surface;
+import androidx.annotation.OptIn;
 import androidx.media3.common.AudioAttributes;
 import androidx.media3.common.C;
 import androidx.media3.common.PlaybackParameters;
 import androidx.media3.common.Player;
 import androidx.media3.common.VideoSize;
+import androidx.media3.common.util.UnstableApi;
+import androidx.media3.exoplayer.DefaultRenderersFactory;
 import androidx.media3.exoplayer.ExoPlayer;
+import androidx.test.core.app.ApplicationProvider;
 import io.flutter.plugins.videoplayer.texture.TextureVideoPlayer;
 import io.flutter.view.TextureRegistry;
+import java.lang.reflect.Field;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -65,6 +72,29 @@ public final class TextureVideoPlayerTest {
   private TextureVideoPlayer createVideoPlayer(VideoPlayerOptions options) {
     return new TextureVideoPlayer(
         mockEvents, mockProducer, fakeVideoAsset.getMediaItem(), options, () -> mockExoPlayer);
+  }
+
+  private boolean getEnableDecoderFallback(DefaultRenderersFactory renderersFactory)
+      throws Exception {
+    final Field field = DefaultRenderersFactory.class.getDeclaredField("enableDecoderFallback");
+    field.setAccessible(true);
+    return field.getBoolean(renderersFactory);
+  }
+
+  @OptIn(markerClass = UnstableApi.class)
+  @Test
+  public void createExoPlayerEnablesDecoderFallbackWhenSet() throws Exception {
+    final Context context = ApplicationProvider.getApplicationContext();
+    final DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(context);
+    final VideoPlayerOptions options = new VideoPlayerOptions();
+    options.enableDecoderFallback = true;
+
+    final ExoPlayer exoPlayer =
+        TextureVideoPlayer.createExoPlayer(context, fakeVideoAsset, options, renderersFactory);
+
+    assertTrue(getEnableDecoderFallback(renderersFactory));
+
+    exoPlayer.release();
   }
 
   @Test

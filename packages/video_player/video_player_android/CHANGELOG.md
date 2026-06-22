@@ -1,3 +1,7 @@
+## 2.10.0
+
+* Adds support for enabling ExoPlayer decoder fallback.
+
 ## 2.9.6
 
 * Migrates to Built-in Kotlin to support AGP 9.

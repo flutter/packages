@@ -461,6 +461,7 @@ class VideoPlayerOptions {
   VideoPlayerOptions({
     this.mixWithOthers = false,
     this.allowBackgroundPlayback = false,
+    this.androidOptions,
     this.webOptions,
   });
 
@@ -475,8 +476,27 @@ class VideoPlayerOptions {
   /// currently no way to implement this feature in this platform).
   final bool mixWithOthers;
 
+  /// Android-specific player options.
+  final VideoPlayerAndroidOptions? androidOptions;
+
   /// Additional web controls
   final VideoPlayerWebOptions? webOptions;
+}
+
+/// [VideoPlayerAndroidOptions] can be optionally used to set additional
+/// Android settings.
+@immutable
+class VideoPlayerAndroidOptions {
+  /// [VideoPlayerAndroidOptions] can be optionally used to set additional
+  /// Android settings.
+  const VideoPlayerAndroidOptions({this.enableDecoderFallback = false});
+
+  /// Whether ExoPlayer should try other decoders if the first decoder fails to
+  /// initialize.
+  ///
+  /// This does not force software decoding. ExoPlayer will still use the
+  /// default decoder selection unless decoder initialization fails.
+  final bool enableDecoderFallback;
 }
 
 /// [VideoPlayerWebOptions] can be optionally used to set additional web settings
@@ -576,13 +596,20 @@ class VideoViewOptions {
 @immutable
 class VideoCreationOptions {
   /// Constructs an instance of [VideoCreationOptions].
-  const VideoCreationOptions({required this.dataSource, required this.viewType});
+  const VideoCreationOptions({
+    required this.dataSource,
+    required this.viewType,
+    this.androidOptions,
+  });
 
   /// The data source used to create the player.
   final DataSource dataSource;
 
   /// The type of view to be used for displaying the video player
   final VideoViewType viewType;
+
+  /// Android-specific player options.
+  final VideoPlayerAndroidOptions? androidOptions;
 }
 
 /// Represents an audio track in a video with its metadata.

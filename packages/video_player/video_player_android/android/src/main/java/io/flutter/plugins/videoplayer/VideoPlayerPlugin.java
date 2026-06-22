@@ -92,7 +92,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
             flutterState.applicationContext,
             VideoPlayerEventCallbacks.bindTo(flutterState.binaryMessenger, streamInstance),
             videoAsset,
-            sharedOptions);
+            optionsFromCreationOptions(options));
 
     registerPlayerInstance(videoPlayer, id);
     return id;
@@ -112,7 +112,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
             VideoPlayerEventCallbacks.bindTo(flutterState.binaryMessenger, streamInstance),
             handle,
             videoAsset,
-            sharedOptions);
+            optionsFromCreationOptions(options));
 
     registerPlayerInstance(videoPlayer, id);
     return new TexturePlayerIds(id, handle.id());
@@ -143,6 +143,13 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
       return VideoAsset.fromRemoteUrl(
           uri, streamingFormat, options.getHttpHeaders(), options.getUserAgent());
     }
+  }
+
+  private @NonNull VideoPlayerOptions optionsFromCreationOptions(@NonNull CreationOptions options) {
+    VideoPlayerOptions videoPlayerOptions = new VideoPlayerOptions();
+    videoPlayerOptions.mixWithOthers = sharedOptions.mixWithOthers;
+    videoPlayerOptions.enableDecoderFallback = options.getEnableDecoderFallback();
+    return videoPlayerOptions;
   }
 
   private void registerPlayerInstance(VideoPlayer player, long id) {
