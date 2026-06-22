@@ -15,6 +15,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
+import 'debug.dart';
 import 'theme.dart';
 
 // Examples can assume:
@@ -65,7 +66,7 @@ class FloatingActionButtonThemeData with Diagnosticable {
     this.extendedTextStyle,
     this.mouseCursor,
     this.variant,
-  }) : assert(variant != .material3Expressive, 'Only material3 is supported.');
+  }) : assert(variant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
 
   /// The style variant of Material Design used by [FloatingActionButton].
   final StyleVariant? variant;

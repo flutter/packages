@@ -11,6 +11,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
+import 'debug.dart';
 import 'theme.dart';
 
 // Examples can assume:
@@ -415,7 +416,7 @@ class AppBarThemeData with Diagnosticable {
          color == null || backgroundColor == null,
          'The color and backgroundColor parameters mean the same thing. Only specify one.',
        ),
-       assert(variant != .material3Expressive, 'Only material3 is supported.');
+       assert(variant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
 
   /// Overrides the default value of [AppBar.backgroundColor].
   final Color? backgroundColor;

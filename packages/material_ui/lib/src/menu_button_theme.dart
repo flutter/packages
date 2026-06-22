@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'button_style.dart';
+import 'debug.dart';
 import 'menu_anchor.dart';
 import 'theme.dart';
 
@@ -54,7 +55,7 @@ class MenuButtonThemeData with Diagnosticable {
   ///
   /// The [style] may be null.
   const MenuButtonThemeData({this.style, this.variant})
-    : assert(variant != .material3Expressive, 'Only material3 is supported.');
+    : assert(variant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
 
   /// Overrides for [SubmenuButton] and [MenuItemButton]'s default style.
   ///

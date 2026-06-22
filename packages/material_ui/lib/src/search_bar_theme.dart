@@ -12,6 +12,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
+import 'debug.dart';
 import 'theme.dart';
 
 // Examples can assume:
@@ -52,7 +53,7 @@ class SearchBarThemeData with Diagnosticable {
     this.constraints,
     this.textCapitalization,
     this.variant,
-  }) : assert(variant != .material3Expressive, 'Only material3 is supported.');
+  }) : assert(variant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
 
   /// Overrides the default value of the [SearchBar.elevation].
   final WidgetStateProperty<double?>? elevation;

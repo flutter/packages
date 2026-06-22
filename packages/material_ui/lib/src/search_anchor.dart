@@ -19,6 +19,7 @@ import 'button_style.dart';
 import 'color_scheme.dart';
 import 'colors.dart';
 import 'constants.dart';
+import 'debug.dart';
 import 'divider.dart';
 import 'divider_theme.dart';
 import 'icon_button.dart';
@@ -571,7 +572,7 @@ class _SearchAnchorState extends State<SearchAnchor> {
     final ThemeData theme = Theme.of(context);
     final SearchViewThemeData viewTheme = SearchViewTheme.of(context);
     final StyleVariant effectiveVariant = viewTheme.variant ?? theme.variant;
-    assert(effectiveVariant != .material3Expressive, 'Only material3 is supported.');
+    assert(effectiveVariant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
 
     return AnimatedOpacity(
       key: _anchorKey,
@@ -1670,7 +1671,7 @@ class _SearchBarState extends State<SearchBar> {
     final ColorScheme colorScheme = theme.colorScheme;
     final SearchBarThemeData searchBarTheme = SearchBarTheme.of(context);
     final StyleVariant effectiveVariant = searchBarTheme.variant ?? theme.variant;
-    assert(effectiveVariant != .material3Expressive, 'Only material3 is supported.');
+    assert(effectiveVariant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
     final SearchBarThemeData defaults = _SearchBarDefaultsM3(context);
 
     T? resolve<T>(

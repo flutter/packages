@@ -11,6 +11,7 @@ import 'dart:ui' show lerpDouble;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
+import 'debug.dart';
 import 'theme.dart';
 
 // Examples can assume:
@@ -58,7 +59,7 @@ class ProgressIndicatorThemeData with Diagnosticable {
     this.year2023,
     this.controller,
     this.variant,
-  }) : assert(variant != .material3Expressive, 'Only material3 is supported.');
+  }) : assert(variant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
 
   /// The color of the [ProgressIndicator]'s indicator.
   ///

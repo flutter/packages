@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
+import 'debug.dart';
 import 'navigation_bar.dart';
 import 'theme.dart';
 
@@ -53,7 +54,7 @@ class NavigationBarThemeData with Diagnosticable {
     this.overlayColor,
     this.labelPadding,
     this.variant,
-  }) : assert(variant != .material3Expressive, 'Only material3 is supported.');
+  }) : assert(variant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
 
   /// Overrides the default value of [NavigationBar.height].
   final double? height;

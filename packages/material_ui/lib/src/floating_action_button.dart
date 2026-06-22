@@ -15,6 +15,7 @@ import 'package:flutter/widgets.dart';
 
 import 'button.dart';
 import 'color_scheme.dart';
+import 'debug.dart';
 import 'floating_action_button_theme.dart';
 import 'scaffold.dart';
 import 'text_theme.dart';
@@ -492,7 +493,7 @@ class FloatingActionButton extends StatelessWidget {
       context,
     );
     final StyleVariant effectiveVariant = floatingActionButtonTheme.variant ?? theme.variant;
-    assert(effectiveVariant != .material3Expressive, 'Only material3 is supported.');
+    assert(effectiveVariant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
     final FloatingActionButtonThemeData defaults = theme.useMaterial3
         ? _FABDefaultsM3(context, _floatingActionButtonType, child != null)
         : _FABDefaultsM2(context, _floatingActionButtonType, child != null);

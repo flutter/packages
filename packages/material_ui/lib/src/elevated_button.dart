@@ -18,6 +18,7 @@ import 'button_style_button.dart';
 import 'color_scheme.dart';
 import 'colors.dart';
 import 'constants.dart';
+import 'debug.dart';
 import 'elevated_button_theme.dart';
 import 'ink_ripple.dart';
 import 'ink_well.dart';
@@ -393,7 +394,7 @@ class ElevatedButton extends ButtonStyleButton {
   ButtonStyle defaultStyleOf(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final StyleVariant effectiveVariant = ElevatedButtonTheme.of(context).variant ?? theme.variant;
-    assert(effectiveVariant != .material3Expressive, 'Only material3 is supported.');
+    assert(effectiveVariant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
     final ColorScheme colorScheme = theme.colorScheme;
     final ButtonStyle buttonStyle = theme.useMaterial3
         ? _ElevatedButtonDefaultsM3(context)

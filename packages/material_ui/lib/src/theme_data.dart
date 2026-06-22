@@ -29,6 +29,7 @@ import 'colors.dart';
 import 'constants.dart';
 import 'data_table_theme.dart';
 import 'date_picker_theme.dart';
+import 'debug.dart';
 import 'dialog_theme.dart';
 import 'divider_theme.dart';
 import 'drawer_theme.dart';
@@ -396,7 +397,7 @@ class ThemeData with Diagnosticable {
     extensions ??= <ThemeExtension<dynamic>>[];
     adaptations ??= <Adaptation<Object>>[];
     variant ??= StyleVariant.material3;
-    assert(variant != .material3Expressive, 'Only material3 is supported.');
+    assert(variant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
     // TODO(bleroux): Clean this up once the type of `inputDecorationTheme` is changed to `InputDecorationThemeData`
     if (inputDecorationTheme != null) {
       if (inputDecorationTheme is InputDecorationTheme) {
@@ -820,7 +821,7 @@ class ThemeData with Diagnosticable {
       'This feature was deprecated after v3.28.0-1.0.pre.',
     )
     required this.indicatorColor,
-  }) : assert(variant != .material3Expressive, 'Only material3 is supported.'),
+  }) : assert(variant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage),
        // DEPRECATED (newest deprecations at the bottom)
        // should not be `required`, use getter pattern to avoid breakages.
        _buttonBarTheme = buttonBarTheme,

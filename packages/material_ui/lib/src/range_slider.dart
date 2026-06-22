@@ -654,7 +654,7 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
     final ThemeData theme = Theme.of(context);
     SliderThemeData sliderTheme = SliderTheme.of(context);
     final StyleVariant effectiveVariant = sliderTheme.variant ?? theme.variant;
-    assert(effectiveVariant != .material3Expressive, 'Only material3 is supported.');
+    assert(effectiveVariant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
     final bool year2023 = widget.year2023 ?? sliderTheme.year2023 ?? true;
     final SliderThemeData defaults = theme.useMaterial3 && !year2023
         ? _RangeSliderDefaultsM3(context)

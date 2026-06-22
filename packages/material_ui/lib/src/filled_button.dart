@@ -19,6 +19,7 @@ import 'button_style_button.dart';
 import 'color_scheme.dart';
 import 'colors.dart';
 import 'constants.dart';
+import 'debug.dart';
 import 'filled_button_theme.dart';
 import 'ink_well.dart';
 import 'material_state.dart';
@@ -432,7 +433,7 @@ class FilledButton extends ButtonStyleButton {
   ButtonStyle defaultStyleOf(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final StyleVariant effectiveVariant = FilledButtonTheme.of(context).variant ?? theme.variant;
-    assert(effectiveVariant != .material3Expressive, 'Only material3 is supported.');
+    assert(effectiveVariant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
     final ButtonStyle buttonStyle = switch (_variant) {
       _FilledButtonVariant.filled => _FilledButtonDefaultsM3(context),
       _FilledButtonVariant.tonal => _FilledTonalButtonDefaultsM3(context),

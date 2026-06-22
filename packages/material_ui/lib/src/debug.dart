@@ -11,6 +11,10 @@ import 'scaffold.dart' show Scaffold, ScaffoldMessenger;
 // Examples can assume:
 // late BuildContext context;
 
+/// The assertion message used while Material components do not yet support
+/// Material 3 Expressive.
+const String kUnsupportedStyleVariantAssertionMessage = 'Only material3 is supported.';
+
 /// Asserts that the given context has a [Material] ancestor within the closest
 /// [LookupBoundary].
 ///

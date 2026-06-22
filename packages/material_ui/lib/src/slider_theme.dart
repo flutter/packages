@@ -14,6 +14,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
 import 'colors.dart';
+import 'debug.dart';
 import 'range_slider_parts.dart';
 import 'slider.dart';
 import 'slider_parts.dart';
@@ -319,7 +320,7 @@ class SliderThemeData with Diagnosticable {
     )
     this.year2023,
     this.variant,
-  }) : assert(variant != .material3Expressive, 'Only material3 is supported.');
+  }) : assert(variant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
 
   /// Generates a SliderThemeData from three main colors.
   ///
@@ -659,7 +660,7 @@ class SliderThemeData with Diagnosticable {
     'This feature was deprecated after v3.27.0-0.2.pre.',
   )
   final bool? year2023;
-    
+
   /// The style variant of Material Design used by sliders.
   final StyleVariant? variant;
 

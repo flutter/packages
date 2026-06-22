@@ -8,6 +8,7 @@ library;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
+import 'debug.dart';
 import 'menu_anchor.dart';
 import 'menu_style.dart';
 import 'theme.dart';
@@ -38,7 +39,7 @@ import 'theme.dart';
 class MenuThemeData with Diagnosticable {
   /// Creates a const set of properties used to configure [MenuTheme].
   const MenuThemeData({this.style, this.submenuIcon, this.variant})
-    : assert(variant != .material3Expressive, 'Only material3 is supported.');
+    : assert(variant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
 
   /// The [MenuStyle] of a [SubmenuButton] menu.
   ///

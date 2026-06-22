@@ -12,6 +12,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
+import 'debug.dart';
 import 'theme.dart';
 
 // Examples can assume:
@@ -54,7 +55,7 @@ class SearchViewThemeData with Diagnosticable {
     this.headerHintStyle,
     this.dividerColor,
     this.variant,
-  }) : assert(variant != .material3Expressive, 'Only material3 is supported.');
+  }) : assert(variant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
 
   /// Overrides the default value of the [SearchAnchor.viewBackgroundColor].
   final Color? backgroundColor;
@@ -94,7 +95,7 @@ class SearchViewThemeData with Diagnosticable {
 
   /// Overrides the value of the divider color for [SearchAnchor.dividerColor].
   final Color? dividerColor;
-    
+
   /// The style variant of Material Design used by search views.
   final StyleVariant? variant;
 

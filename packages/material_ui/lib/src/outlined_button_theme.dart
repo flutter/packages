@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'button_style.dart';
+import 'debug.dart';
 import 'theme.dart';
 
 // Examples can assume:
@@ -40,7 +41,7 @@ class OutlinedButtonThemeData with Diagnosticable {
   ///
   /// The [style] may be null.
   const OutlinedButtonThemeData({this.style, this.variant})
-    : assert(variant != .material3Expressive, 'Only material3 is supported.');
+    : assert(variant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
 
   /// Overrides for [OutlinedButton]'s default style.
   ///

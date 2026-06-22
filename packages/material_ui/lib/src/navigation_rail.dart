@@ -13,6 +13,7 @@ import 'dart:ui';
 import 'package:flutter/widgets.dart';
 
 import 'color_scheme.dart';
+import 'debug.dart';
 import 'ink_well.dart';
 import 'material.dart';
 import 'material_localizations.dart';
@@ -447,7 +448,7 @@ class _NavigationRailState extends State<NavigationRail> with TickerProviderStat
     final ThemeData theme = Theme.of(context);
     final NavigationRailThemeData navigationRailTheme = NavigationRailTheme.of(context);
     final StyleVariant effectiveVariant = navigationRailTheme.variant ?? theme.variant;
-    assert(effectiveVariant != .material3Expressive, 'Only material3 is supported.');
+    assert(effectiveVariant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
     final NavigationRailThemeData defaults = theme.useMaterial3
         ? _NavigationRailDefaultsM3(context)
         : _NavigationRailDefaultsM2(context);

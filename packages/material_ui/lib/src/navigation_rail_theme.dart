@@ -11,6 +11,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
+import 'debug.dart';
 import 'navigation_rail.dart';
 import 'theme.dart';
 
@@ -55,7 +56,7 @@ class NavigationRailThemeData with Diagnosticable {
     this.minWidth,
     this.minExtendedWidth,
     this.variant,
-  }) : assert(variant != .material3Expressive, 'Only material3 is supported.');
+  }) : assert(variant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
 
   /// Color to be used for the [NavigationRail]'s background.
   final Color? backgroundColor;
