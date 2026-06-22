@@ -1,3 +1,7 @@
+## 0.7.2+2
+
+* Updates `ResolutionPreset.max` to allow CameraX high-resolution still capture sizes on Android.
+
 ## 0.7.2+1
 
 * Migrates to Built-in Kotlin to support AGP 9.
