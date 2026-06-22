@@ -41,18 +41,19 @@ void main() {
 
     setUp(() {
       domHelper = DomHelper();
-      input = (document.createElement('input') as HTMLInputElement)
-        ..type = 'file';
+      input = (document.createElement('input') as HTMLInputElement)..type = 'file';
     });
 
     group('getFiles', () {
-      final mockFile1 = File(<JSAny>['123456'.toJS].toJS, 'file1.txt');
-      final mockFile2 = File(<JSAny>[].toJS, 'file2.txt');
+      final mockFile1 = File(
+        <JSAny>['123456'.toJS].toJS,
+        'file1.txt',
+        FilePropertyBag(type: 'text/plain'),
+      );
+      final mockFile2 = File(<JSAny>[].toJS, 'file2.txt', FilePropertyBag(type: 'text/plain'));
 
       testWidgets('works', (_) async {
-        final Future<List<XFile>> futureFiles = domHelper.getFiles(
-          input: input,
-        );
+        final Future<List<XFile>> futureFiles = domHelper.getFiles(input: input);
 
         setFilesAndTriggerChange(<File>[mockFile1, mockFile2]);
 
@@ -61,20 +62,20 @@ void main() {
         expect(files.length, 2);
 
         expect(files[0].name, 'file1.txt');
+        expect(files[0].mimeType, 'text/plain');
         expect(await files[0].length(), 6);
         expect(await files[0].readAsString(), '123456');
         expect(await files[0].lastModified(), isNotNull);
 
         expect(files[1].name, 'file2.txt');
+        expect(files[1].mimeType, 'text/plain');
         expect(await files[1].length(), 0);
         expect(await files[1].readAsString(), '');
         expect(await files[1].lastModified(), isNotNull);
       });
 
       testWidgets('"cancel" returns an empty selection', (_) async {
-        final Future<List<XFile>> futureFiles = domHelper.getFiles(
-          input: input,
-        );
+        final Future<List<XFile>> futureFiles = domHelper.getFiles(input: input);
 
         setFilesAndTriggerCancel(<File>[mockFile1, mockFile2]);
 
@@ -117,18 +118,13 @@ void main() {
           input: input,
         );
 
-        expect(
-          input.isConnected,
-          true,
-          reason: 'input must be injected into the DOM',
-        );
+        expect(input.isConnected, true, reason: 'input must be injected into the DOM');
         expect(input.accept, accept);
         expect(input.multiple, multiple);
         expect(
           await wasClicked,
           true,
-          reason:
-              'The <input /> should be clicked otherwise no dialog will be shown',
+          reason: 'The <input /> should be clicked otherwise no dialog will be shown',
         );
 
         setFilesAndTriggerChange(<File>[]);

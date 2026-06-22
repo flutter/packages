@@ -42,8 +42,7 @@ const String kDoNotLandWarning = 'DO NOT MERGE';
 const String kWebWasmFlag = 'wasm';
 
 /// The URL to provide in printed messages to point users to tool documentation.
-const String toolDocsUrl =
-    'https://github.com/flutter/packages/blob/main/script/tool/README.md';
+const String toolDocsUrl = 'https://github.com/flutter/packages/blob/main/script/tool/README.md';
 
 /// Target platforms supported by Flutter.
 // ignore: public_member_api_docs
@@ -108,8 +107,7 @@ final Map<Version, Version> _dartSdkForFlutterSdk = <Version, Version>{
 
 /// Returns the version of the Dart SDK that shipped with the given Flutter
 /// SDK.
-Version? getDartSdkForFlutterSdk(Version flutterVersion) =>
-    _dartSdkForFlutterSdk[flutterVersion];
+Version? getDartSdkForFlutterSdk(Version flutterVersion) => _dartSdkForFlutterSdk[flutterVersion];
 
 /// Returns whether the given directory is a Dart package.
 bool isPackage(FileSystemEntity entity) {

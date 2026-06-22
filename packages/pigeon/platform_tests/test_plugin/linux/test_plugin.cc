@@ -128,6 +128,30 @@ static CoreTestsPigeonTestHostIntegrationCoreApiEchoListResponse* echo_list(
       a_list);
 }
 
+static CoreTestsPigeonTestHostIntegrationCoreApiEchoStringListResponse*
+echo_string_list(FlValue* string_list, gpointer user_data) {
+  return core_tests_pigeon_test_host_integration_core_api_echo_string_list_response_new(
+      string_list);
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiEchoIntListResponse*
+echo_int_list(FlValue* int_list, gpointer user_data) {
+  return core_tests_pigeon_test_host_integration_core_api_echo_int_list_response_new(
+      int_list);
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiEchoDoubleListResponse*
+echo_double_list(FlValue* double_list, gpointer user_data) {
+  return core_tests_pigeon_test_host_integration_core_api_echo_double_list_response_new(
+      double_list);
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiEchoBoolListResponse*
+echo_bool_list(FlValue* bool_list, gpointer user_data) {
+  return core_tests_pigeon_test_host_integration_core_api_echo_bool_list_response_new(
+      bool_list);
+}
+
 static CoreTestsPigeonTestHostIntegrationCoreApiEchoEnumListResponse*
 echo_enum_list(FlValue* enum_list, gpointer user_data) {
   return core_tests_pigeon_test_host_integration_core_api_echo_enum_list_response_new(
@@ -3228,6 +3252,10 @@ static CoreTestsPigeonTestHostIntegrationCoreApiVTable host_core_api_vtable = {
     .echo_uint8_list = echo_uint8_list,
     .echo_object = echo_object,
     .echo_list = echo_list,
+    .echo_string_list = echo_string_list,
+    .echo_int_list = echo_int_list,
+    .echo_double_list = echo_double_list,
+    .echo_bool_list = echo_bool_list,
     .echo_enum_list = echo_enum_list,
     .echo_class_list = echo_class_list,
     .echo_non_null_enum_list = echo_non_null_enum_list,

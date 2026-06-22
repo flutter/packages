@@ -1,7 +1,11 @@
 ## 0.7.3
 
-* Support video encoding bitrate
-* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+* Supports video encoding bitrate.
+
+## 0.7.2+1
+
+* Migrates to Built-in Kotlin to support AGP 9.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 0.7.2
 
