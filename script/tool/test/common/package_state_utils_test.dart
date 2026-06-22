@@ -98,6 +98,25 @@ void main() {
       expect(state.hasChangelogChange, true);
     });
 
+    test('does not require version or changelog change for .agents changes', () async {
+      final RepositoryPackage package = createFakePlugin('a_plugin', packagesDir);
+
+      const changedFiles = <String>[
+        'packages/a_plugin/.agents/skills/check-readiness/bin/check.dart',
+        'packages/a_plugin/.agents/skills/check-readiness/pubspec.yaml',
+      ];
+
+      final PackageChangeState state = await checkPackageChangeState(
+        package,
+        changedPaths: changedFiles,
+        relativePackagePath: 'packages/a_plugin/',
+      );
+
+      expect(state.hasChanges, true);
+      expect(state.needsVersionChange, false);
+      expect(state.needsChangelogChange, false);
+    });
+
     test('only considers a root "tool" folder to be special', () async {
       final RepositoryPackage package = createFakePlugin('a_plugin', packagesDir);
 
