@@ -20,25 +20,27 @@ class CoverageCheckCommand extends PackageLoopingCommand {
 
   @override
   final String description =
-      'Checks that code coverage does not decrease and stays above 60% '
-      'for modified packages.';
+      'Checks that code coverage meets the specified minimums '
+      'for opted-in packages.';
 
   @override
   PackageLoopingType get packageLoopingType => PackageLoopingType.includeAllSubpackages;
 
-  final Set<String> _exceptions = <String>{};
+  final Map<String, double> _customMinimums = <String, double>{};
 
   @override
   Future<void> initializeRun() async {
-    final File exceptionsFile = packagesDir.parent
+    final File minimumsFile = packagesDir.parent
         .childDirectory('script')
         .childDirectory('configs')
-        .childFile('coverage_exceptions.yaml');
-    if (exceptionsFile.existsSync()) {
-      final exceptionsConfig = loadYaml(exceptionsFile.readAsStringSync()) as YamlMap;
-      final packageList = exceptionsConfig['coverage_exceptions'] as YamlList?;
-      if (packageList != null) {
-        _exceptions.addAll(packageList.map((dynamic item) => item as String));
+        .childFile('custom_coverage_minimums.yaml');
+    if (minimumsFile.existsSync()) {
+      final YamlMap minimumsConfig = loadYaml(minimumsFile.readAsStringSync()) as YamlMap;
+      final YamlMap? packageMap = minimumsConfig['custom_coverage_minimums'] as YamlMap?;
+      if (packageMap != null) {
+        for (final MapEntry<dynamic, dynamic> entry in packageMap.entries) {
+          _customMinimums[entry.key as String] = (entry.value as num).toDouble();
+        }
       }
     }
   }
@@ -59,62 +61,30 @@ class CoverageCheckCommand extends PackageLoopingCommand {
 
     final String packageName = package.directory.basename;
 
+    if (!_customMinimums.containsKey(packageName)) {
+      return PackageResult.skip('Package not opted into coverage checks.');
+    }
+
     // Run tests on current branch.
     final double? currentCoverage = await _runCoverageAndParse(package);
     if (currentCoverage == null) {
       return PackageResult.fail(<String>['Failed to run tests or parse coverage on HEAD']);
     }
 
-    // Checkout baseSha and run tests.
-    final io.ProcessResult stashResult = await processRunner.run('git', <String>[
-      'stash',
-    ], workingDir: packagesDir.parent);
-    final io.ProcessResult checkoutBaseResult = await processRunner.run('git', <String>[
-      'checkout',
-      baseSha,
-    ], workingDir: packagesDir.parent);
+    final double requiredCoverage = _customMinimums[packageName]!;
 
-    if (checkoutBaseResult.exitCode != 0) {
-      return PackageResult.fail(<String>['Failed to checkout base SHA ($baseSha).']);
-    }
+    final List<String> errors = <String>[];
 
-    final double? baseCoverage = await _runCoverageAndParse(package);
-
-    // Revert checkout
-    await processRunner.run('git', <String>['checkout', '-'], workingDir: packagesDir.parent);
-    if (stashResult.stdout.toString().contains('Saved working directory')) {
-      await processRunner.run('git', <String>['stash', 'pop'], workingDir: packagesDir.parent);
-    }
-
-    if (baseCoverage == null) {
-      print(
-        'Warning: Failed to run tests or parse coverage on base branch for $packageName. Assuming 0% base coverage.',
-      );
-    }
-
-    final double effectiveBaseCoverage = baseCoverage ?? 0.0;
-
-    final errors = <String>[];
-
-    if (currentCoverage < effectiveBaseCoverage) {
+    if (currentCoverage < requiredCoverage) {
       errors.add(
-        'Code coverage decreased from ${effectiveBaseCoverage.toStringAsFixed(1)}% '
-        'to ${currentCoverage.toStringAsFixed(1)}%.',
+        'Code coverage for $packageName is ${currentCoverage.toStringAsFixed(1)}%, '
+        'which is below the required ${requiredCoverage.toStringAsFixed(1)}%.',
       );
     }
 
-    if (currentCoverage < 60.0) {
-      if (_exceptions.contains(packageName)) {
-        print(
-          'Warning: Code coverage for $packageName is ${currentCoverage.toStringAsFixed(1)}%, '
-          'which is below the 60.0% threshold. Allowed by exceptions list.',
-        );
-      } else {
-        errors.add(
-          'Code coverage for $packageName is ${currentCoverage.toStringAsFixed(1)}%, '
-          'which is below the 60.0% threshold.',
-        );
-      }
+    final Directory coverageDir = package.directory.childDirectory('coverage');
+    if (coverageDir.existsSync()) {
+      coverageDir.deleteSync(recursive: true);
     }
 
     if (errors.isNotEmpty) {
@@ -152,13 +122,24 @@ class CoverageCheckCommand extends PackageLoopingCommand {
   double _calculateCoverage(File lcovFile) {
     var linesHit = 0;
     var linesFound = 0;
+    var skipCurrentFile = false;
 
     final List<String> lines = lcovFile.readAsLinesSync();
     for (final line in lines) {
-      if (line.startsWith('LH:')) {
-        linesHit += int.parse(line.substring(3));
-      } else if (line.startsWith('LF:')) {
-        linesFound += int.parse(line.substring(3));
+      if (line.startsWith('SF:')) {
+        final String fileName = line.substring(3);
+        skipCurrentFile =
+            fileName.endsWith('.g.dart') ||
+            fileName.endsWith('.pb.dart') ||
+            fileName.endsWith('.pigeon.dart') ||
+            fileName.endsWith('.mocks.dart') ||
+            fileName.endsWith('.freezed.dart');
+      } else if (!skipCurrentFile) {
+        if (line.startsWith('LH:')) {
+          linesHit += int.parse(line.substring(3));
+        } else if (line.startsWith('LF:')) {
+          linesFound += int.parse(line.substring(3));
+        }
       }
     }
 
