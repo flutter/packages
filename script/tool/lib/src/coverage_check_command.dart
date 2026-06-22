@@ -35,8 +35,8 @@ class CoverageCheckCommand extends PackageLoopingCommand {
         .childDirectory('configs')
         .childFile('custom_coverage_minimums.yaml');
     if (minimumsFile.existsSync()) {
-      final YamlMap minimumsConfig = loadYaml(minimumsFile.readAsStringSync()) as YamlMap;
-      final YamlMap? packageMap = minimumsConfig['custom_coverage_minimums'] as YamlMap?;
+      final minimumsConfig = loadYaml(minimumsFile.readAsStringSync()) as YamlMap;
+      final packageMap = minimumsConfig['custom_coverage_minimums'] as YamlMap?;
       if (packageMap != null) {
         for (final MapEntry<dynamic, dynamic> entry in packageMap.entries) {
           _customMinimums[entry.key as String] = (entry.value as num).toDouble();
@@ -47,7 +47,7 @@ class CoverageCheckCommand extends PackageLoopingCommand {
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
-    // Only run for first-party packages (in the 'packages/' directory).
+    // Only run for first-party packages.
     if (!package.directory.path.contains(
           '${packagesDir.fileSystem.path.separator}packages${packagesDir.fileSystem.path.separator}',
         ) &&
@@ -73,7 +73,7 @@ class CoverageCheckCommand extends PackageLoopingCommand {
 
     final double requiredCoverage = _customMinimums[packageName]!;
 
-    final List<String> errors = <String>[];
+    final errors = <String>[];
 
     if (currentCoverage < requiredCoverage) {
       errors.add(
@@ -95,13 +95,10 @@ class CoverageCheckCommand extends PackageLoopingCommand {
   }
 
   Future<double?> _runCoverageAndParse(RepositoryPackage package) async {
-    final bool isFlutter = package.requiresFlutter();
-    final executable = isFlutter ? 'flutter' : 'dart';
-
     final args = <String>['test', '--coverage'];
 
     final io.ProcessResult result = await processRunner.run(
-      executable,
+      'flutter',
       args,
       workingDir: package.directory,
     );
@@ -128,6 +125,7 @@ class CoverageCheckCommand extends PackageLoopingCommand {
     for (final line in lines) {
       if (line.startsWith('SF:')) {
         final String fileName = line.substring(3);
+        // Skip checking coverage of generated files.
         skipCurrentFile =
             fileName.endsWith('.g.dart') ||
             fileName.endsWith('.pb.dart') ||
