@@ -42,16 +42,18 @@ void main() {
     });
 
     test('fails when formatting fails', () async {
+      final List<List<String>> executedArguments = [];
       final command = PreCommitCommand(
         processRunner:
             (String executable, List<String> arguments, {String? workingDirectory}) async {
+              executedArguments.add(arguments);
               if (executable == 'git') {
                 if (arguments.contains('--show-toplevel')) {
                   return ProcessResult(0, 0, '/fake/repo/root\n', '');
                 }
                 return ProcessResult(0, 0, 'script/githooks/lib/githooks.dart\n', '');
               }
-              if (arguments.contains('format')) {
+              if (arguments.isNotEmpty && arguments[0] == 'format') {
                 return ProcessResult(0, 1, 'bad_file.dart', '');
               }
               return ProcessResult(0, 0, 'Success', '');
@@ -60,19 +62,28 @@ void main() {
 
       final bool result = await command.run();
       expect(result, isFalse);
+
+      expect(
+        executedArguments,
+        anyElement(
+          equals(['format', '--set-exit-if-changed', 'script/githooks/lib/githooks.dart']),
+        ),
+      );
     });
 
     test('fails when analysis fails', () async {
+      final List<List<String>> executedArguments = [];
       final command = PreCommitCommand(
         processRunner:
             (String executable, List<String> arguments, {String? workingDirectory}) async {
+              executedArguments.add(arguments);
               if (executable == 'git') {
                 if (arguments.contains('--show-toplevel')) {
                   return ProcessResult(0, 0, '/fake/repo/root\n', '');
                 }
                 return ProcessResult(0, 0, 'script/githooks/lib/githooks.dart\n', '');
               }
-              if (arguments.contains('analyze')) {
+              if (arguments.isNotEmpty && arguments[0] == 'analyze') {
                 return ProcessResult(0, 1, 'error in file.dart', '');
               }
               return ProcessResult(0, 0, 'Success', '');
@@ -81,6 +92,11 @@ void main() {
 
       final bool result = await command.run();
       expect(result, isFalse);
+
+      expect(
+        executedArguments,
+        anyElement(equals(['analyze', '--fatal-infos', 'script/githooks/lib/githooks.dart'])),
+      );
     });
 
     test('ignores non-dart files', () async {
