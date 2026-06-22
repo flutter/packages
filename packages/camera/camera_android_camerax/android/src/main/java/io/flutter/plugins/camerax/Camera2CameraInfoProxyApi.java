@@ -16,7 +16,7 @@ import androidx.camera.core.CameraInfo;
 /**
  * ProxyApi implementation for {@link Camera2CameraInfo}. This class may handle instantiating native
  * object instances that are attached to a Dart instance or handle method calls on the associated
- * native class or an instance of that class.
+ * native class or an instance of that class.f
  */
 @OptIn(markerClass = ExperimentalCamera2Interop.class)
 class Camera2CameraInfoProxyApi extends PigeonApiCamera2CameraInfo {
