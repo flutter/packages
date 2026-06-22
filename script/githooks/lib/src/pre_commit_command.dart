@@ -144,7 +144,7 @@ class PreCommitCommand extends Command<bool> {
 
       if (dartFormatResult.exitCode != 0) {
         if (!hasError) {
-          stdout.write(stdout.supportsAnsiEscapes ? r'\x1B[2K\r' : r'\n');
+          stdout.write(stdout.supportsAnsiEscapes ? '\x1B[2K\r' : '\n');
         }
         if (dartFormatResult.stdout.toString().isNotEmpty) {
           print(dartFormatResult.stdout);
@@ -197,8 +197,8 @@ class PreCommitCommand extends Command<bool> {
     if (!hasError) {
       stdout.write(
         stdout.supportsAnsiEscapes
-            ? r'\x1B[2K\r✅ Formatting looks good.\n'
-            : r'✅ Formatting looks good.\n',
+            ? '\x1B[2K\r✅ Formatting looks good.\n'
+            : '✅ Formatting looks good.\n',
       );
     }
 
