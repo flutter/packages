@@ -233,6 +233,14 @@ class RepositoryPackage {
     }
 
     final String relativePath = p.relative(directory.path, from: enclosingPackage.directory.path);
+    final List<String> segments = p.split(relativePath);
+    final List<String> candidatePaths = <String>[];
+    for (int i = 1; i <= segments.length; i++) {
+      final String prefix = p.posix.joinAll(segments.sublist(0, i));
+      candidatePaths.add(prefix);
+      candidatePaths.add('$prefix/');
+    }
+
     final List<String> ignoreLines = pubignoreFile.readAsLinesSync();
 
     for (final line in ignoreLines) {
@@ -252,12 +260,10 @@ class RepositoryPackage {
 
       try {
         final globExact = Glob(pattern);
-        if (globExact.matches(relativePath) || globExact.matches('$relativePath/')) {
-          return true;
-        }
-        if (!isAnchored) {
-          final globNested = Glob('**/$pattern');
-          if (globNested.matches(relativePath) || globNested.matches('$relativePath/')) {
+        final globNested = isAnchored ? null : Glob('**/$pattern');
+        for (final String candidate in candidatePaths) {
+          if (globExact.matches(candidate) ||
+              (globNested != null && globNested.matches(candidate))) {
             return true;
           }
         }

@@ -196,7 +196,7 @@ void main() {
       expect(subPackage.isPubIgnored, false);
     });
 
-    test('returns true if the package is in an ignored directory', () async {
+    test('returns true if the package is in an ignored directory (with trailing slash)', () async {
       final RepositoryPackage package = createFakePackage('a_package', packagesDir);
       package.directory.childFile('.pubignore').writeAsStringSync('.agents/');
 
@@ -205,6 +205,19 @@ void main() {
 
       expect(subPackage.isPubIgnored, true);
     });
+
+    test(
+      'returns true if the package is in an ignored directory (without trailing slash)',
+      () async {
+        final RepositoryPackage package = createFakePackage('a_package', packagesDir);
+        package.directory.childFile('.pubignore').writeAsStringSync('.agents');
+
+        final Directory agentsDir = package.directory.childDirectory('.agents')..createSync();
+        final RepositoryPackage subPackage = createFakePackage('sub_package', agentsDir);
+
+        expect(subPackage.isPubIgnored, true);
+      },
+    );
 
     test('returns true if a deeply nested package is in an ignored directory', () async {
       final RepositoryPackage package = createFakePackage('a_package', packagesDir);
