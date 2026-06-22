@@ -9,7 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:logging/logging.dart';
 
-import 'enforce_tracked_skills_internal_rule.dart';
+import 'enforce_tracked_skills_prevent_publishing_rule.dart';
 
 void main() {
   test('Validate Skills', () async {
@@ -23,7 +23,7 @@ void main() {
       final Configuration config = await ConfigParser.loadConfig();
       final bool isValid = await validateSkills(
         config: config,
-        customRules: [EnforceTrackedSkillsInternalRule()],
+        customRules: [EnforceTrackedSkillsPreventPublishingRule()],
       );
       expect(isValid, isTrue, reason: 'Skills validation failed. See above for details.');
     } finally {

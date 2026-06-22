@@ -1,15 +1,2 @@
-# Ignore everything by default
-*
-
-# Un-ignore specific checked-in skills
-# (Add specific contributor skills here as they are created)
-!check-readiness/
-!check-readiness/SKILL.md
-!check-readiness/scripts/
-!check-readiness/scripts/check.sh
-
-# Keep essential configuration and docs
-!.gitignore
-!README.md
-!ignore.json
-!flutter_skills_ignore.json
+# Ignore skills under evaluation.
+skill-creator
