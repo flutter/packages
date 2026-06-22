@@ -34,12 +34,12 @@ class PreCommitCommand extends Command<bool> {
   @override
   final String description = 'Checks to run before a "git commit"';
 
-  String? _findPackageName(String filePath, String repoRoot) {
+  String? _findPackagePath(String filePath, String repoRoot) {
     Directory currentDir = File(p.join(repoRoot, filePath)).parent;
     while (p.isWithin(repoRoot, currentDir.path) || p.equals(repoRoot, currentDir.path)) {
       final String dirName = p.basename(currentDir.path);
       if (dirName != 'example' && File(p.join(currentDir.path, 'pubspec.yaml')).existsSync()) {
-        return dirName;
+        return currentDir.path;
       }
       if (p.equals(repoRoot, currentDir.path)) {
         break;
@@ -84,17 +84,19 @@ class PreCommitCommand extends Command<bool> {
       return true; // No files changed.
     }
 
-    final Set<String> targetPackages = {};
+    final Set<String> targetPackageDirs = {};
     for (final file in stagedFiles) {
-      final String? packageName = _findPackageName(file, repoRoot.path);
-      if (packageName != null) {
-        targetPackages.add(packageName);
+      final String? packageDir = _findPackagePath(file, repoRoot.path);
+      if (packageDir != null) {
+        targetPackageDirs.add(packageDir);
       }
     }
 
-    if (targetPackages.isEmpty) {
+    if (targetPackageDirs.isEmpty) {
       return true; // None of the changed files are part of a package we care about.
     }
+
+    final Set<String> targetPackages = targetPackageDirs.map((dir) => p.basename(dir)).toSet();
 
     final String toolScript = p.join(
       repoRoot.path,
@@ -161,22 +163,26 @@ class PreCommitCommand extends Command<bool> {
 
     // Run static analysis.
     print('Running static analysis...');
-    final ProcessResult analyzeResult = await processRunner('dart', [
-      'run',
-      toolScript,
-      'analyze',
-      packageArgs,
-    ], workingDirectory: repoRoot.path);
+    for (final packageDir in targetPackageDirs) {
+      final ProcessResult analyzeResult = await processRunner('dart', [
+        'analyze',
+        '--fatal-infos',
+      ], workingDirectory: packageDir);
 
-    if (analyzeResult.exitCode != 0) {
-      if (analyzeResult.stdout.toString().isNotEmpty) {
-        print(analyzeResult.stdout);
+      if (analyzeResult.exitCode != 0) {
+        if (analyzeResult.stdout.toString().isNotEmpty) {
+          print(analyzeResult.stdout);
+        }
+        if (analyzeResult.stderr.toString().isNotEmpty) {
+          print(analyzeResult.stderr);
+        }
+        print('❌ Static analysis errors found in ${p.basename(packageDir)}.');
+        hasError = true;
       }
-      if (analyzeResult.stderr.toString().isNotEmpty) {
-        print(analyzeResult.stderr);
-      }
-      print('❌ Static analysis errors found. Please fix the errors listed above.');
-      hasError = true;
+    }
+
+    if (hasError) {
+      print('❌ Please fix the errors listed above.');
     } else {
       print('✅ Static analysis looks good.');
     }
