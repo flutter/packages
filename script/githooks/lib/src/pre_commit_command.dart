@@ -54,10 +54,12 @@ class PreCommitCommand extends Command<bool> {
     // Find the repo root where the plugin tool is located.
     Directory repoRoot = Directory.current;
     while (repoRoot.path != repoRoot.parent.path &&
-        !Directory(p.join(repoRoot.path, '.git')).existsSync()) {
+        !(Directory(p.join(repoRoot.path, '.git')).existsSync() ||
+            File(p.join(repoRoot.path, '.git')).existsSync())) {
       repoRoot = repoRoot.parent;
     }
-    if (!Directory(p.join(repoRoot.path, '.git')).existsSync()) {
+    if (!(Directory(p.join(repoRoot.path, '.git')).existsSync() ||
+        File(p.join(repoRoot.path, '.git')).existsSync())) {
       print('❌ Could not find .git directory.');
       return false;
     }
@@ -117,6 +119,7 @@ class PreCommitCommand extends Command<bool> {
           f.endsWith('.cc') ||
           f.endsWith('.cpp') ||
           f.endsWith('.h') ||
+          f.endsWith('.hpp') ||
           f.endsWith('.m') ||
           f.endsWith('.mm'),
     );
@@ -179,7 +182,7 @@ class PreCommitCommand extends Command<bool> {
 
       if (nativeFormatResult.exitCode != 0) {
         if (!hasError) {
-          stdout.write('\x1B[2K\r');
+          stdout.write(stdout.supportsAnsiEscapes ? '\x1B[2K\r' : '\n');
         }
         if (nativeFormatResult.stdout.toString().isNotEmpty) {
           print(nativeFormatResult.stdout);
@@ -214,7 +217,7 @@ class PreCommitCommand extends Command<bool> {
 
       if (analyzeResult.exitCode != 0) {
         if (!analyzeHasError) {
-          stdout.write('\x1B[2K\r');
+          stdout.write(stdout.supportsAnsiEscapes ? '\x1B[2K\r' : '\n');
         }
         if (analyzeResult.stdout.toString().isNotEmpty) {
           print(analyzeResult.stdout);
@@ -229,7 +232,11 @@ class PreCommitCommand extends Command<bool> {
     }
 
     if (!analyzeHasError) {
-      stdout.write('\x1B[2K\r✅ Static analysis looks good.\n');
+      stdout.write(
+        stdout.supportsAnsiEscapes
+            ? '\x1B[2K\r✅ Static analysis looks good.\n'
+            : '✅ Static analysis looks good.\n',
+      );
     }
 
     if (hasError) {

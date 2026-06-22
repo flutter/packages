@@ -110,5 +110,29 @@ void main() {
       expect(executedArguments.any((args) => args.contains('format')), isFalse);
       expect(executedArguments.any((args) => args.contains('analyze')), isFalse);
     });
+    test('runs native formatter when native files are staged', () async {
+      final List<List<String>> executedArguments = [];
+      final command = PreCommitCommand(
+        processRunner:
+            (String executable, List<String> arguments, {String? workingDirectory}) async {
+              executedArguments.add(arguments);
+              if (executable == 'git') {
+                return ProcessResult(0, 0, 'packages/pkg/ios/Classes/Foo.m\n', '');
+              }
+              return ProcessResult(0, 0, 'Success', '');
+            },
+      );
+
+      final bool result = await command.run();
+      expect(result, isTrue);
+
+      expect(
+        executedArguments.any(
+          (args) =>
+              args.contains('format') && args.contains('--no-dart') && args.contains('--no-java'),
+        ),
+        isTrue,
+      );
+    });
   });
 }
