@@ -62,6 +62,7 @@ class PreCommitCommand extends Command<bool> {
       return false;
     }
 
+    // Get all staged files that are added, copied, or modified.
     final ProcessResult diffResult = await processRunner('git', [
       'diff',
       '--cached',
@@ -81,7 +82,8 @@ class PreCommitCommand extends Command<bool> {
         .toList();
 
     if (stagedFiles.isEmpty) {
-      return true; // No files changed.
+      // No files changed.
+      return true;
     }
 
     final Set<String> targetPackageDirs = {};
@@ -93,7 +95,8 @@ class PreCommitCommand extends Command<bool> {
     }
 
     if (targetPackageDirs.isEmpty) {
-      return true; // None of the changed files are part of a package we care about.
+      // None of the changed files are part of a package we care about.
+      return true;
     }
 
     final Set<String> targetPackages = targetPackageDirs.map((dir) => p.basename(dir)).toSet();
@@ -107,7 +110,7 @@ class PreCommitCommand extends Command<bool> {
     );
     final packageArgs = '--packages=${targetPackages.join(',')}';
 
-    // Determine which toolchains are needed based on file extensions
+    // Determine which toolchains are needed based on file extensions to avoid uneccessary slowdown.
     final bool hasClang = stagedFiles.any(
       (f) =>
           f.endsWith('.c') ||
@@ -131,7 +134,7 @@ class PreCommitCommand extends Command<bool> {
     // Check formatting.
     stdout.write('Checking formatting...');
 
-    // Format Dart files instantly using dart format directly
+    // Format staged Dart files.
     if (dartFiles.isNotEmpty) {
       final ProcessResult dartFormatResult = await processRunner('dart', [
         'format',
@@ -154,7 +157,7 @@ class PreCommitCommand extends Command<bool> {
       }
     }
 
-    // Format native files using flutter_plugin_tools
+    // Format staged native files.
     final bool needsNativeFormat = hasClang || hasJava || hasKotlin || hasSwift;
     if (needsNativeFormat) {
       final nativeFormatFlags = [
@@ -195,7 +198,7 @@ class PreCommitCommand extends Command<bool> {
       stdout.write('\x1B[2K\r✅ Formatting looks good.\n');
     }
 
-    // Run static analysis directly on staged files
+    // Run static analysis on staged files.
     var analyzeHasError = false;
     stdout.write('Running static analysis...');
     if (dartFiles.isNotEmpty) {
