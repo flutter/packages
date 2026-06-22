@@ -5,6 +5,7 @@
 /// @docImport 'color_scheme.dart';
 library;
 
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:collection/collection.dart';
@@ -159,6 +160,10 @@ class CarouselView extends StatefulWidget {
     this.onTap,
     this.enableSplash = true,
     this.infinite = false,
+    this.autoPlay = false,
+    this.autoPlayInterval = const Duration(seconds: 4),
+    this.autoPlayAnimationDuration = const Duration(milliseconds: 800),
+    this.autoPlayCurve = Curves.fastOutSlowIn,
     required double this.itemExtent,
     required this.children,
     this.onIndexChanged,
@@ -225,6 +230,10 @@ class CarouselView extends StatefulWidget {
     this.onTap,
     this.enableSplash = true,
     this.infinite = false,
+    this.autoPlay = false,
+    this.autoPlayInterval = const Duration(seconds: 4),
+    this.autoPlayAnimationDuration = const Duration(milliseconds: 800),
+    this.autoPlayCurve = Curves.fastOutSlowIn,
     required List<int> this.flexWeights,
     required this.children,
     this.onIndexChanged,
@@ -279,6 +288,10 @@ class CarouselView extends StatefulWidget {
     this.itemCount,
     this.onIndexChanged,
     this.infinite = false,
+    this.autoPlay = false,
+    this.autoPlayInterval = const Duration(seconds: 4),
+    this.autoPlayAnimationDuration = const Duration(milliseconds: 800),
+    this.autoPlayCurve = Curves.fastOutSlowIn,
   }) : consumeMaxWeight = true,
        flexWeights = null,
        children = const <Widget>[];
@@ -343,6 +356,10 @@ class CarouselView extends StatefulWidget {
     this.itemCount,
     this.onIndexChanged,
     this.infinite = false,
+    this.autoPlay = false,
+    this.autoPlayInterval = const Duration(seconds: 4),
+    this.autoPlayAnimationDuration = const Duration(milliseconds: 800),
+    this.autoPlayCurve = Curves.fastOutSlowIn,
   }) : itemExtent = null,
        children = const <Widget>[];
 
@@ -534,6 +551,47 @@ class CarouselView extends StatefulWidget {
   /// Defaults to false.
   final bool infinite;
 
+  /// Whether the carousel should automatically scroll to the next item.
+  ///
+  /// If true, the carousel will automatically advance to the next item
+  /// at a regular interval defined by [autoPlayInterval].
+  ///
+  /// The automatic scrolling pauses when the user interacts with the
+  /// carousel (e.g., while dragging), and the timer restarts only when the
+  /// interaction ends.
+  ///
+  /// Defaults to false.
+  final bool autoPlay;
+
+  /// The duration between automatic scroll animations.
+  ///
+  /// This interval is measured from the end of the previous automatic scroll
+  /// animation (or the end of a user interaction) to the start of the next
+  /// automatic scroll animation.
+  ///
+  /// Only effective when [autoPlay] is true.
+  ///
+  /// Defaults to 4 seconds.
+  final Duration autoPlayInterval;
+
+  /// The duration of the automatic scroll animation.
+  ///
+  /// This determines how long it takes for the carousel to animate to the
+  /// next item once the [autoPlayInterval] has elapsed.
+  ///
+  /// Only effective when [autoPlay] is true.
+  ///
+  /// Defaults to 800 milliseconds.
+  final Duration autoPlayAnimationDuration;
+
+  /// The animation curve used to transition to the next item when [autoPlay]
+  /// is enabled.
+  ///
+  /// Only effective when [autoPlay] is true.
+  ///
+  /// Defaults to [Curves.fastOutSlowIn].
+  final Curve autoPlayCurve;
+
   @override
   State<CarouselView> createState() => _CarouselViewState();
 }
@@ -545,6 +603,8 @@ class _CarouselViewState extends State<CarouselView> {
   CarouselController? _internalController;
   CarouselController get _controller => widget.controller ?? _internalController!;
   late int _lastReportedLeadingItem;
+  Timer? _autoPlayTimer;
+  bool _isInteractionPaused = false;
 
   @override
   void initState() {
@@ -556,6 +616,9 @@ class _CarouselViewState extends State<CarouselView> {
     _lastReportedLeadingItem = _getInitialLeadingItem();
     _controller._attach(this);
     _controller.addListener(_handleScroll);
+    if (widget.autoPlay) {
+      _startAutoPlayTimer();
+    }
   }
 
   @override
@@ -584,14 +647,92 @@ class _CarouselViewState extends State<CarouselView> {
     if (widget.consumeMaxWeight != oldWidget.consumeMaxWeight) {
       (_controller.position as _CarouselPosition).consumeMaxWeight = _consumeMaxWeight;
     }
+    if (widget.autoPlay != oldWidget.autoPlay ||
+        widget.autoPlayInterval != oldWidget.autoPlayInterval) {
+      if (widget.autoPlay) {
+        _startAutoPlayTimer();
+      } else {
+        _stopAutoPlayTimer();
+      }
+    }
   }
 
   @override
   void dispose() {
+    _stopAutoPlayTimer();
     _controller.removeListener(_handleScroll);
     _controller._detach(this);
     _internalController?.dispose();
     super.dispose();
+  }
+
+  void _startAutoPlayTimer() {
+    _stopAutoPlayTimer();
+    if (!widget.autoPlay) {
+      return;
+    }
+    _autoPlayTimer = Timer.periodic(widget.autoPlayInterval, _handleAutoPlayTimerTick);
+  }
+
+  void _stopAutoPlayTimer() {
+    _autoPlayTimer?.cancel();
+    _autoPlayTimer = null;
+  }
+
+  void _handleAutoPlayTimerTick(Timer timer) {
+    if (_isInteractionPaused || !_controller.hasClients) {
+      return;
+    }
+
+    if (!widget.infinite) {
+      final double maxScrollExtent = _controller.position.maxScrollExtent;
+      if (_controller.offset >= maxScrollExtent - precisionErrorTolerance) {
+        _controller.animateToItem(
+          0,
+          duration: widget.autoPlayAnimationDuration,
+          curve: widget.autoPlayCurve,
+        );
+        return;
+      }
+    }
+
+    final int? itemCount = _controller._getItemCount();
+    final position = _controller.position as _CarouselPosition;
+    final int shiftCount = position
+        .getItemFromPixels(position.pixels, position.viewportDimension)
+        .round();
+
+    int nextIndex = shiftCount + 1;
+    if (_flexWeights != null && !widget.consumeMaxWeight) {
+      final int maxWeightIndex = _flexWeights!.indexOf(_flexWeights!.reduce(math.max));
+      nextIndex += maxWeightIndex;
+    }
+
+    if (widget.infinite && itemCount != null && itemCount > 0) {
+      nextIndex = nextIndex % itemCount;
+    }
+
+    _controller.animateToItem(
+      nextIndex,
+      duration: widget.autoPlayAnimationDuration,
+      curve: widget.autoPlayCurve,
+    );
+  }
+
+  bool _handleScrollNotification(ScrollNotification notification) {
+    if (!widget.autoPlay) {
+      return false;
+    }
+    if (notification is ScrollStartNotification && notification.dragDetails != null) {
+      _isInteractionPaused = true;
+    } else if (notification is ScrollEndNotification) {
+      if (_isInteractionPaused) {
+        _isInteractionPaused = false;
+        // Restart timer to ensure a full interval waits after user stops interacting
+        _startAutoPlayTimer();
+      }
+    }
+    return false;
   }
 
   void _handleScroll() {
@@ -748,14 +889,17 @@ class _CarouselViewState extends State<CarouselView> {
         _itemExtent = widget.itemExtent == null
             ? null
             : clampDouble(widget.itemExtent!, 0, mainAxisExtent);
-        return CustomScrollView(
-          scrollDirection: widget.scrollDirection,
-          reverse: widget.reverse,
-          controller: _controller,
-          physics: physics,
-          clipBehavior: Clip.antiAlias,
-          scrollCacheExtent: const ScrollCacheExtent.viewport(0.0),
-          slivers: <Widget>[_buildSliverCarousel(theme)],
+        return NotificationListener<ScrollNotification>(
+          onNotification: _handleScrollNotification,
+          child: CustomScrollView(
+            scrollDirection: widget.scrollDirection,
+            reverse: widget.reverse,
+            controller: _controller,
+            physics: physics,
+            clipBehavior: Clip.antiAlias,
+            scrollCacheExtent: const ScrollCacheExtent.viewport(0.0),
+            slivers: <Widget>[_buildSliverCarousel(theme)],
+          ),
         );
       },
     );
@@ -2009,7 +2153,10 @@ class CarouselController extends ScrollController {
     if (!hasFlexWeights) {
       final double targetInFirstCycle = index * _carouselState!._itemExtent!;
       if (!_carouselState!.widget.infinite) {
-        return targetInFirstCycle;
+        return math.min(
+          math.max(targetInFirstCycle, position.minScrollExtent),
+          position.maxScrollExtent,
+        );
       }
       return _adjustForInfiniteCycle(position, targetInFirstCycle);
     }
@@ -2031,7 +2178,10 @@ class CarouselController extends ScrollController {
 
     final double targetInFirstCycle = dimension * (weights.first / totalWeight) * leadingIndex;
     if (!carouselState.widget.infinite) {
-      return targetInFirstCycle;
+      return math.min(
+        math.max(targetInFirstCycle, position.minScrollExtent),
+        position.maxScrollExtent,
+      );
     }
     return _adjustForInfiniteCycle(position, targetInFirstCycle);
   }
