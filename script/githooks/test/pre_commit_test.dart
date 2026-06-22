@@ -10,10 +10,15 @@ import 'package:test/test.dart';
 void main() {
   group('pre-commit hook', () {
     test('passes when both format and analyze succeed', () async {
+      final List<List<String>> executedArguments = [];
       final command = PreCommitCommand(
         processRunner:
             (String executable, List<String> arguments, {String? workingDirectory}) async {
+              executedArguments.add(arguments);
               if (executable == 'git') {
+                if (arguments.contains('--show-toplevel')) {
+                  return ProcessResult(0, 0, '/fake/repo/root\n', '');
+                }
                 return ProcessResult(0, 0, 'script/githooks/lib/githooks.dart\n', '');
               }
               return ProcessResult(0, 0, 'Success', '');
@@ -22,6 +27,18 @@ void main() {
 
       final bool result = await command.run();
       expect(result, isTrue);
+
+      // Verify the exact arguments passed to format and analyze
+      expect(
+        executedArguments,
+        anyElement(
+          equals(['format', '--set-exit-if-changed', 'script/githooks/lib/githooks.dart']),
+        ),
+      );
+      expect(
+        executedArguments,
+        anyElement(equals(['analyze', '--fatal-infos', 'script/githooks/lib/githooks.dart'])),
+      );
     });
 
     test('fails when formatting fails', () async {
@@ -29,6 +46,9 @@ void main() {
         processRunner:
             (String executable, List<String> arguments, {String? workingDirectory}) async {
               if (executable == 'git') {
+                if (arguments.contains('--show-toplevel')) {
+                  return ProcessResult(0, 0, '/fake/repo/root\n', '');
+                }
                 return ProcessResult(0, 0, 'script/githooks/lib/githooks.dart\n', '');
               }
               if (arguments.contains('format')) {
@@ -47,6 +67,9 @@ void main() {
         processRunner:
             (String executable, List<String> arguments, {String? workingDirectory}) async {
               if (executable == 'git') {
+                if (arguments.contains('--show-toplevel')) {
+                  return ProcessResult(0, 0, '/fake/repo/root\n', '');
+                }
                 return ProcessResult(0, 0, 'script/githooks/lib/githooks.dart\n', '');
               }
               if (arguments.contains('analyze')) {
@@ -61,10 +84,15 @@ void main() {
     });
 
     test('ignores non-dart files', () async {
+      final List<List<String>> executedArguments = [];
       final command = PreCommitCommand(
         processRunner:
             (String executable, List<String> arguments, {String? workingDirectory}) async {
+              executedArguments.add(arguments);
               if (executable == 'git') {
+                if (arguments.contains('--show-toplevel')) {
+                  return ProcessResult(0, 0, '/fake/repo/root\n', '');
+                }
                 return ProcessResult(0, 0, 'README.md\n', '');
               }
               return ProcessResult(0, 0, 'Success', '');
@@ -73,6 +101,10 @@ void main() {
 
       final bool result = await command.run();
       expect(result, isTrue);
+
+      // Verify that dart format and analyze were NEVER called.
+      expect(executedArguments.any((args) => args.contains('format')), isFalse);
+      expect(executedArguments.any((args) => args.contains('analyze')), isFalse);
     });
   });
 }
