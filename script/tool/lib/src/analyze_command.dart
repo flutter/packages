@@ -390,7 +390,7 @@ class AnalyzeCommand extends PackageLoopingCommand {
         return false;
       }
       return dir
-          .listSync(recursive: true, followLinks: true)
+          .listSync(recursive: true)
           .any((FileSystemEntity entity) => entity is File && entity.path.endsWith('.dart'));
     }
 
