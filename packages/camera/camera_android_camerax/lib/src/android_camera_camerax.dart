@@ -19,7 +19,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Constructs an [AndroidCameraCameraX].
   AndroidCameraCameraX();
 
-  /// Registers this class as the default instance of [CameraPlatform].
+  /// Registers this class as the default instancee of [CameraPlatform].
   static void registerWith() {
     CameraPlatform.instance = AndroidCameraCameraX();
   }
