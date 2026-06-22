@@ -53,11 +53,11 @@ class PreCommitCommand extends Command<bool> {
   Future<bool> run() async {
     // Find the repo root where the plugin tool is located.
     Directory repoRoot = Directory.current;
-    while (repoRoot.path != '/' && !Directory(p.join(repoRoot.path, '.git')).existsSync()) {
+    while (repoRoot.path != repoRoot.parent.path &&
+        !Directory(p.join(repoRoot.path, '.git')).existsSync()) {
       repoRoot = repoRoot.parent;
     }
-
-    if (repoRoot.path == '/') {
+    if (!Directory(p.join(repoRoot.path, '.git')).existsSync()) {
       print('❌ Could not find .git directory.');
       return false;
     }
@@ -144,7 +144,7 @@ class PreCommitCommand extends Command<bool> {
 
       if (dartFormatResult.exitCode != 0) {
         if (!hasError) {
-          stdout.write('\x1B[2K\r');
+          stdout.write(stdout.supportsAnsiEscapes ? r'\x1B[2K\r' : r'\n');
         }
         if (dartFormatResult.stdout.toString().isNotEmpty) {
           print(dartFormatResult.stdout);
@@ -195,7 +195,11 @@ class PreCommitCommand extends Command<bool> {
     }
 
     if (!hasError) {
-      stdout.write('\x1B[2K\r✅ Formatting looks good.\n');
+      stdout.write(
+        stdout.supportsAnsiEscapes
+            ? r'\x1B[2K\r✅ Formatting looks good.\n'
+            : r'✅ Formatting looks good.\n',
+      );
     }
 
     // Run static analysis on staged files.

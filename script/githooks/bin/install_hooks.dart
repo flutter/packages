@@ -9,11 +9,11 @@ import 'package:path/path.dart' as p;
 
 void main() async {
   Directory repoRoot = Directory.current;
-  while (repoRoot.path != '/' && !Directory(p.join(repoRoot.path, '.git')).existsSync()) {
+  while (repoRoot.path != repoRoot.parent.path &&
+      !Directory(p.join(repoRoot.path, '.git')).existsSync()) {
     repoRoot = repoRoot.parent;
   }
-
-  if (repoRoot.path == '/') {
+  if (!Directory(p.join(repoRoot.path, '.git')).existsSync()) {
     print('❌ Could not find .git directory.');
     exit(1);
   }
