@@ -15,12 +15,15 @@ let package = Package(
   products: [
     .library(name: "cross-file-darwin", targets: ["cross_file_darwin"])
   ],
-  dependencies: [],
+  dependencies: [
+    .package(name: "FlutterFramework", path: "../FlutterFramework")
+  ],
   targets: [
     .target(
       name: "cross_file_darwin",
       dependencies: [
-        "cross_file_darwin_objc"
+        "cross_file_darwin_objc",
+        .product(name: "FlutterFramework", package: "FlutterFramework"),
       ],
       resources: [
         .process("Resources")
