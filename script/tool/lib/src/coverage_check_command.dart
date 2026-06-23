@@ -35,11 +35,17 @@ class CoverageCheckCommand extends PackageLoopingCommand {
         .childDirectory('configs')
         .childFile('custom_coverage_minimums.yaml');
     if (minimumsFile.existsSync()) {
-      final minimumsConfig = loadYaml(minimumsFile.readAsStringSync()) as YamlMap;
-      final packageMap = minimumsConfig['custom_coverage_minimums'] as YamlMap?;
-      if (packageMap != null) {
-        for (final MapEntry<dynamic, dynamic> entry in packageMap.entries) {
-          _customMinimums[entry.key as String] = (entry.value as num).toDouble();
+      final Object? yaml = loadYaml(minimumsFile.readAsStringSync());
+      if (yaml is YamlMap) {
+        final Object? packageMap = yaml['custom_coverage_minimums'];
+        if (packageMap is YamlMap) {
+          for (final MapEntry<dynamic, dynamic> entry in packageMap.entries) {
+            final Object? key = entry.key;
+            final Object? value = entry.value;
+            if (key is String && value is num) {
+              _customMinimums[key] = value.toDouble();
+            }
+          }
         }
       }
     }
