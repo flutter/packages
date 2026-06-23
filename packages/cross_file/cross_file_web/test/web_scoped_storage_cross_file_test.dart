@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@TestOn('chrome') // Uses web-only Flutter SDK
-library;
-
 import 'dart:convert';
 import 'dart:js_interop';
 import 'dart:typed_data';
