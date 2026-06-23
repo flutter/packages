@@ -138,7 +138,6 @@ targets:
     bringup: true
     timeout: 60
     properties:
-      add_recipes_cq: "true"
       target_file: coverage_checks.yaml
       channel: master
       version_file: flutter_master.version
