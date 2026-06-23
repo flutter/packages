@@ -54,10 +54,8 @@ class CoverageCheckCommand extends PackageLoopingCommand {
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
     // Only run for first-party packages.
-    if (!package.directory.path.contains(
-          '${packagesDir.fileSystem.path.separator}packages${packagesDir.fileSystem.path.separator}',
-        ) &&
-        !package.directory.path.endsWith('${packagesDir.fileSystem.path.separator}packages')) {
+    final List<String> pathComponents = package.directory.fileSystem.path.split(package.path);
+    if (pathComponents.contains('third_party')) {
       return PackageResult.skip('Not a first-party package.');
     }
 
@@ -71,30 +69,23 @@ class CoverageCheckCommand extends PackageLoopingCommand {
       return PackageResult.skip('Package not opted into coverage checks.');
     }
 
-    // Run tests on current branch.
+    // Collect code coverage for the package.
     final double? currentCoverage = await _runCoverageAndParse(package);
     if (currentCoverage == null) {
-      return PackageResult.fail(<String>['Failed to run tests or parse coverage on HEAD']);
+      return PackageResult.fail(<String>['Failed to run tests or parse coverage']);
     }
-
     final double requiredCoverage = _customMinimums[packageName]!;
 
-    final errors = <String>[];
-
-    if (currentCoverage < requiredCoverage) {
-      errors.add(
-        'Code coverage for $packageName is ${currentCoverage.toStringAsFixed(1)}%, '
-        'which is below the required ${requiredCoverage.toStringAsFixed(1)}%.',
-      );
-    }
-
+    // Delete generated lcov.info.
     final Directory coverageDir = package.directory.childDirectory('coverage');
     if (coverageDir.existsSync()) {
       coverageDir.deleteSync(recursive: true);
     }
 
-    if (errors.isNotEmpty) {
-      return PackageResult.fail(errors);
+    if (currentCoverage < requiredCoverage) {
+      return PackageResult.fail(<String>[
+        'Code coverage for $packageName is ${currentCoverage.toStringAsFixed(1)}%, which is below the required ${requiredCoverage.toStringAsFixed(1)}%.',
+      ]);
     }
 
     return PackageResult.success();
@@ -123,6 +114,8 @@ class CoverageCheckCommand extends PackageLoopingCommand {
     return _calculateCoverage(lcovFile);
   }
 
+  /// Calculates code coverage for non-generated code files by finding
+  /// the percentage of covered lines of code over the total lines of code.
   double _calculateCoverage(File lcovFile) {
     var linesHit = 0;
     var linesFound = 0;
@@ -132,19 +125,15 @@ class CoverageCheckCommand extends PackageLoopingCommand {
     for (final line in lines) {
       if (line.startsWith('SF:')) {
         final String fileName = line.substring(3);
-        // Skip checking coverage of generated files.
-        skipCurrentFile =
-            fileName.endsWith('.g.dart') ||
-            fileName.endsWith('.pb.dart') ||
-            fileName.endsWith('.pigeon.dart') ||
-            fileName.endsWith('.mocks.dart') ||
-            fileName.endsWith('.freezed.dart');
-      } else if (!skipCurrentFile) {
+        skipCurrentFile = _isGeneratedFile(fileName);
+      }
+      if (!skipCurrentFile) {
         if (line.startsWith('LH:')) {
           linesHit += int.parse(line.substring(3));
         } else if (line.startsWith('LF:')) {
           linesFound += int.parse(line.substring(3));
         }
+      
       }
     }
 
@@ -153,4 +142,12 @@ class CoverageCheckCommand extends PackageLoopingCommand {
     }
     return (linesHit / linesFound) * 100.0;
   }
+}
+
+bool _isGeneratedFile(String fileName) {
+  return fileName.endsWith('.g.dart') ||
+      fileName.endsWith('.pb.dart') ||
+      fileName.endsWith('.pigeon.dart') ||
+      fileName.endsWith('.mocks.dart') ||
+      fileName.endsWith('.freezed.dart');
 }

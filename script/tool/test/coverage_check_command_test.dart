@@ -5,7 +5,6 @@
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
-import 'package:flutter_plugin_tools/src/common/plugin_utils.dart';
 import 'package:flutter_plugin_tools/src/coverage_check_command.dart';
 import 'package:git/git.dart';
 import 'package:platform/platform.dart';
@@ -200,7 +199,7 @@ end_of_record
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('Failed to run tests or parse coverage on HEAD'),
+          contains('Failed to run tests or parse coverage'),
         ]),
       );
     });
@@ -224,7 +223,7 @@ end_of_record
           contains(
             'Coverage file not found at ${packagesDir.childDirectory('plugin1').childDirectory('coverage').childFile('lcov.info').path}.',
           ),
-          contains('Failed to run tests or parse coverage on HEAD'),
+          contains('Failed to run tests or parse coverage'),
         ]),
       );
     });
