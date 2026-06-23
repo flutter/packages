@@ -16,10 +16,21 @@ dependencies:
   mime: ^2.0.0
 
 dev_dependencies:
+  cross_file_platform_interface:
+    git:
+      url: https://github.com/bparrishMines/packages
+      ref: new_crossfile
+      path: packages/cross_file/cross_file_platform_interface
+  cross_file_web:
+    git:
+      url: https://github.com/bparrishMines/packages
+      ref: new_crossfile
+      path: packages/cross_file/cross_file_web
   flutter_test:
     sdk: flutter
   integration_test:
     sdk: flutter
+  web: ">=0.5.1 <2.0.0"
 
 dependency_overrides:
   # TODO(bparrishMines): This should be moved to dependencies. This is currently placed here because
