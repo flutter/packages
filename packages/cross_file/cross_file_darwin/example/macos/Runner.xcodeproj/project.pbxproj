@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -27,7 +27,7 @@
 		33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F42044A3C60003C045 /* MainMenu.xib */; };
 		33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* MainFlutterWindow.swift */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
-		8FF93F622FEB188300F3D52F /* CrossFileDarwinTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FF93F612FEB188300F3D52F /* CrossFileDarwinTests.swift */; };
+		8FF93F642FEB191200F3D52F /* CrossFileDarwinTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FF93F632FEB191200F3D52F /* CrossFileDarwinTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,7 +81,7 @@
 		78E0A7A72DC9AD7400C4905E /* FlutterGeneratedPluginSwiftPackage */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = FlutterGeneratedPluginSwiftPackage; path = ephemeral/Packages/FlutterGeneratedPluginSwiftPackage; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		8FF93F602FE2F63800F3D52F /* RunnerTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RunnerTests-Bridging-Header.h"; sourceTree = "<group>"; };
-		8FF93F612FEB188300F3D52F /* CrossFileDarwinTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossFileDarwinTests.swift; sourceTree = "<group>"; };
+		8FF93F632FEB191200F3D52F /* CrossFileDarwinTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CrossFileDarwinTests.swift; path = ../../darwin/Tests/CrossFileDarwinTests.swift; sourceTree = SOURCE_ROOT; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -107,7 +107,7 @@
 		331C80D6294CF71000263BE5 /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
-				8FF93F612FEB188300F3D52F /* CrossFileDarwinTests.swift */,
+				8FF93F632FEB191200F3D52F /* CrossFileDarwinTests.swift */,
 				8FF93F602FE2F63800F3D52F /* RunnerTests-Bridging-Header.h */,
 			);
 			path = RunnerTests;
@@ -353,7 +353,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8FF93F622FEB188300F3D52F /* CrossFileDarwinTests.swift in Sources */,
+				8FF93F642FEB191200F3D52F /* CrossFileDarwinTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
