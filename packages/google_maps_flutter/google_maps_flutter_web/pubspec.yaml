@@ -23,7 +23,7 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
   google_maps: ^8.1.0
-  google_maps_flutter_platform_interface: ^2.15.0
+  google_maps_flutter_platform_interface: ^2.15.1
   sanitize_html: ^2.0.0
   stream_transform: ^2.0.0
   web: ^1.0.0
