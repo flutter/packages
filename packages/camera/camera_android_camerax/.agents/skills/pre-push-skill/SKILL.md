@@ -49,8 +49,8 @@ git merge-base --is-ancestor origin/main HEAD
 If this command fails (exits with a non-zero code),
 the branch is behind `origin/main`.
 The code is NOT ready to push.
-The developer must pull the latest changes from `main`
-and resolve any merge conflicts before proceeding.
+The latest changes from `main` must be pulled first,
+and then merge conflicts must be resolved.
 
 ## 4. Unit Tests
 
@@ -60,6 +60,7 @@ All unit tests must pass before code can be merged.
 Command to run:
 
 ```bash
+cd $(git rev-parse --show-toplevel)
 dart run script/tool/bin/flutter_plugin_tools.dart \
   dart-test --packages camera_android_camerax
 ```
@@ -77,8 +78,9 @@ and add a corresponding entry describing the change in `CHANGELOG.md`.
 Command to run:
 
 ```bash
+cd $(git rev-parse --show-toplevel)
 dart run script/tool/bin/flutter_plugin_tools.dart \
-  publish-check --pacakges camera_android_camerax
+  publish-check --packages camera_android_camerax
 ```
 
 If this command fails, the code WAS NOT ready to push.
@@ -92,12 +94,12 @@ the standard copyright and license header.
 Command to run:
 
 ```bash
+cd $(git rev-parse --show-toplevel)
 dart run script/tool/bin/flutter_plugin_tools.dart license-check --packages camera_android_camerax
 ```
 
 If this command fails, the code WAS NOT ready to push.
 Those license errors must be fixed and committed before code is pushed.
-
 
 ## 6. Non-mechanical Steps
 
@@ -105,7 +107,6 @@ Before declaring the task complete,
 verify the requirements for creating a pull request
 in the flutter/packages repository are met:
 
-**What you MUST verify automatically:**
 - **Documentation:** Check if the modified or newly added public APIs
   include Dart doc comments (`///`). If not, the code IS NOT ready to
   be pushed.
@@ -129,7 +130,7 @@ at the very beginning of your response using a large heading:
 - If ALL steps passed: Start your response with a clear
   "# YES, you are ready to push!"
 
-Then, provide the developer with a brief summary
+Then, provide the user with a brief summary
 of what you verified automatically.
 For example, in the case of failure,
 if unit tests are failing, point to the exact tests and the exact errors.
