@@ -2,19 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.1
 
 import 'color_role.dart';
 import 'shape_struct.dart';
+import 'typescale.dart';
+import 'typescale_struct.dart';
 
 class TokenPlainTooltip {
-  /// md.comp.plain-tooltip.container.color
-  static const TokenColorRole containerColor = TokenColorRole.inverseSurface;
-
-  /// md.comp.plain-tooltip.supporting-text.color
-  static const TokenColorRole supportingTextColor =
-      TokenColorRole.inverseOnSurface;
-
   /// md.comp.plain-tooltip.container.shape
   static const ShapeStruct containerShape = ShapeStruct(
     family: 'SHAPE_FAMILY_ROUNDED_CORNERS',
@@ -25,20 +20,51 @@ class TokenPlainTooltip {
   );
 
   /// md.comp.plain-tooltip.supporting-text.type
-  static const double supportingTextTypeFontSize = 12.00;
+  static const TypescaleStruct supportingTextType = TokenTypescale.bodySmall;
+}
 
-  /// md.comp.plain-tooltip.supporting-text.type
-  static const double supportingTextTypeFontWeight = 400;
+class TokenPlainTooltipDark {
+  /// md.comp.plain-tooltip.container.color
+  static const TokenColorRole containerColor = TokenColorRole.inverseSurface;
+}
 
-  /// md.comp.plain-tooltip.supporting-text.type
-  static const double supportingTextTypeLineHeight = 16.00;
+class TokenPlainTooltipDarkDefault {
+  /// md.comp.plain-tooltip.supporting-text.color
+  static const TokenColorRole supportingTextColor =
+      TokenColorRole.inverseOnSurface;
+}
 
-  /// md.comp.plain-tooltip.supporting-text.type
-  static const double supportingTextTypeLetterSpacing = 0.40;
+class TokenPlainTooltipDarkHighContrast {
+  /// md.comp.plain-tooltip.supporting-text.color
+  static const TokenColorRole supportingTextColor =
+      TokenColorRole.inverseOnSurface;
+}
 
-  /// md.comp.plain-tooltip.supporting-text.type
-  static const String supportingTextTypeFontFamily = 'Roboto';
+class TokenPlainTooltipDarkMediumContrast {
+  /// md.comp.plain-tooltip.supporting-text.color
+  static const TokenColorRole supportingTextColor =
+      TokenColorRole.inverseOnSurface;
+}
 
-  /// md.comp.plain-tooltip.supporting-text.font
-  static const String supportingTextFont = 'Roboto';
+class TokenPlainTooltipLight {
+  /// md.comp.plain-tooltip.container.color
+  static const TokenColorRole containerColor = TokenColorRole.inverseSurface;
+}
+
+class TokenPlainTooltipLightDefault {
+  /// md.comp.plain-tooltip.supporting-text.color
+  static const TokenColorRole supportingTextColor =
+      TokenColorRole.inverseOnSurface;
+}
+
+class TokenPlainTooltipLightHighContrast {
+  /// md.comp.plain-tooltip.supporting-text.color
+  static const TokenColorRole supportingTextColor =
+      TokenColorRole.inverseOnSurface;
+}
+
+class TokenPlainTooltipLightMediumContrast {
+  /// md.comp.plain-tooltip.supporting-text.color
+  static const TokenColorRole supportingTextColor =
+      TokenColorRole.inverseOnSurface;
 }

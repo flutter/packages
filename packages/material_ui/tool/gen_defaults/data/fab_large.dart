@@ -2,17 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.1
 
 import 'shape_struct.dart';
 
 class TokenFabLarge {
-  /// md.comp.fab.large.container.width
-  static const double containerWidth = 96.00;
-
-  /// md.comp.fab.large.icon.size
-  static const double iconSize = 36.00;
-
   /// md.comp.fab.large.container.height
   static const double containerHeight = 96.00;
 
@@ -24,4 +18,10 @@ class TokenFabLarge {
     bottomLeft: 28.00,
     bottomRight: 28.00,
   );
+
+  /// md.comp.fab.large.container.width
+  static const double containerWidth = 96.00;
+
+  /// md.comp.fab.large.icon.size
+  static const double iconSize = 36.00;
 }

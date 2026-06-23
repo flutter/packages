@@ -2,22 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.1
 
 import 'shape_struct.dart';
+import 'typescale.dart';
+import 'typescale_struct.dart';
 
 class TokenExtendedFabLarge {
-  /// md.comp.extended-fab.large.leading-space
-  static const double leadingSpace = 28.00;
-
-  /// md.comp.extended-fab.large.icon.size
-  static const double iconSize = 36.00;
-
-  /// md.comp.extended-fab.large.trailing-space
-  static const double trailingSpace = 28.00;
-
-  /// md.comp.extended-fab.large.icon-label-space
-  static const double iconLabelSpace = 16.00;
+  /// md.comp.extended-fab.large.container.height
+  static const double containerHeight = 96.00;
 
   /// md.comp.extended-fab.large.container.shape
   static const ShapeStruct containerShape = ShapeStruct(
@@ -28,21 +21,18 @@ class TokenExtendedFabLarge {
     bottomRight: 28.00,
   );
 
-  /// md.comp.extended-fab.large.label-text
-  static const double labelTextFontSize = 24.00;
+  /// md.comp.extended-fab.large.icon-label-space
+  static const double iconLabelSpace = 16.00;
+
+  /// md.comp.extended-fab.large.icon.size
+  static const double iconSize = 36.00;
 
   /// md.comp.extended-fab.large.label-text
-  static const double labelTextFontWeight = 400;
+  static const TypescaleStruct labelText = TokenTypescale.headlineSmall;
 
-  /// md.comp.extended-fab.large.label-text
-  static const double labelTextLineHeight = 32.00;
+  /// md.comp.extended-fab.large.leading-space
+  static const double leadingSpace = 28.00;
 
-  /// md.comp.extended-fab.large.label-text
-  static const double labelTextLetterSpacing = 0.00;
-
-  /// md.comp.extended-fab.large.label-text
-  static const String labelTextFontFamily = 'Roboto';
-
-  /// md.comp.extended-fab.large.container.height
-  static const double containerHeight = 96.00;
+  /// md.comp.extended-fab.large.trailing-space
+  static const double trailingSpace = 28.00;
 }

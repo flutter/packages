@@ -2,44 +2,19 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.1
 
 import 'color_role.dart';
 import 'shape_struct.dart';
+import 'typescale.dart';
+import 'typescale_struct.dart';
 
 class TokenDateInputModal {
-  /// md.comp.date-input.modal.header.headline.color
-  static const TokenColorRole headerHeadlineColor =
-      TokenColorRole.onSurfaceVariant;
+  /// md.comp.date-input.modal.container.elevation
+  static const double containerElevation = 6.00;
 
-  /// md.comp.date-input.modal.container.width
-  static const double containerWidth = 328.00;
-
-  /// md.comp.date-input.modal.header.supporting-text.font
-  static const String headerSupportingTextFont = 'Roboto';
-
-  /// md.comp.date-input.modal.header.supporting-text.color
-  static const TokenColorRole headerSupportingTextColor =
-      TokenColorRole.onSurfaceVariant;
-
-  /// md.comp.date-input.modal.container.color
-  static const TokenColorRole containerColor =
-      TokenColorRole.surfaceContainerHigh;
-
-  /// md.comp.date-input.modal.header.headline.type
-  static const double headerHeadlineTypeFontSize = 32.00;
-
-  /// md.comp.date-input.modal.header.headline.type
-  static const double headerHeadlineTypeFontWeight = 400;
-
-  /// md.comp.date-input.modal.header.headline.type
-  static const double headerHeadlineTypeLineHeight = 40.00;
-
-  /// md.comp.date-input.modal.header.headline.type
-  static const double headerHeadlineTypeLetterSpacing = 0.00;
-
-  /// md.comp.date-input.modal.header.headline.type
-  static const String headerHeadlineTypeFontFamily = 'Roboto';
+  /// md.comp.date-input.modal.container.height
+  static const double containerHeight = 512.00;
 
   /// md.comp.date-input.modal.container.shape
   static const ShapeStruct containerShape = ShapeStruct(
@@ -50,33 +25,92 @@ class TokenDateInputModal {
     bottomRight: 28.00,
   );
 
-  /// md.comp.date-input.modal.header.supporting-text.type
-  static const double headerSupportingTextTypeFontSize = 14.00;
-
-  /// md.comp.date-input.modal.header.supporting-text.type
-  static const double headerSupportingTextTypeFontWeight = 500;
-
-  /// md.comp.date-input.modal.header.supporting-text.type
-  static const double headerSupportingTextTypeLineHeight = 20.00;
-
-  /// md.comp.date-input.modal.header.supporting-text.type
-  static const double headerSupportingTextTypeLetterSpacing = 0.10;
-
-  /// md.comp.date-input.modal.header.supporting-text.type
-  static const String headerSupportingTextTypeFontFamily = 'Roboto';
-
-  /// md.comp.date-input.modal.header.container.width
-  static const double headerContainerWidth = 328.00;
-
-  /// md.comp.date-input.modal.header.headline.font
-  static const String headerHeadlineFont = 'Roboto';
+  /// md.comp.date-input.modal.container.width
+  static const double containerWidth = 328.00;
 
   /// md.comp.date-input.modal.header.container.height
   static const double headerContainerHeight = 120.00;
 
-  /// md.comp.date-input.modal.container.elevation
-  static const double containerElevation = 6.00;
+  /// md.comp.date-input.modal.header.container.width
+  static const double headerContainerWidth = 328.00;
 
-  /// md.comp.date-input.modal.container.height
-  static const double containerHeight = 512.00;
+  /// md.comp.date-input.modal.header.headline.type
+  static const TypescaleStruct headerHeadlineType =
+      TokenTypescale.headlineLarge;
+
+  /// md.comp.date-input.modal.header.supporting-text.type
+  static const TypescaleStruct headerSupportingTextType =
+      TokenTypescale.titleSmall;
+}
+
+class TokenDateInputModalDark {
+  /// md.comp.date-input.modal.container.color
+  static const TokenColorRole containerColor =
+      TokenColorRole.surfaceContainerHigh;
+}
+
+class TokenDateInputModalDarkDefault {
+  /// md.comp.date-input.modal.header.headline.color
+  static const TokenColorRole headerHeadlineColor =
+      TokenColorRole.onSurfaceVariant;
+
+  /// md.comp.date-input.modal.header.supporting-text.color
+  static const TokenColorRole headerSupportingTextColor =
+      TokenColorRole.onSurfaceVariant;
+}
+
+class TokenDateInputModalDarkHighContrast {
+  /// md.comp.date-input.modal.header.headline.color
+  static const TokenColorRole headerHeadlineColor =
+      TokenColorRole.onSurfaceVariant;
+
+  /// md.comp.date-input.modal.header.supporting-text.color
+  static const TokenColorRole headerSupportingTextColor =
+      TokenColorRole.onSurfaceVariant;
+}
+
+class TokenDateInputModalDarkMediumContrast {
+  /// md.comp.date-input.modal.header.headline.color
+  static const TokenColorRole headerHeadlineColor =
+      TokenColorRole.onSurfaceVariant;
+
+  /// md.comp.date-input.modal.header.supporting-text.color
+  static const TokenColorRole headerSupportingTextColor =
+      TokenColorRole.onSurfaceVariant;
+}
+
+class TokenDateInputModalLight {
+  /// md.comp.date-input.modal.container.color
+  static const TokenColorRole containerColor =
+      TokenColorRole.surfaceContainerHigh;
+}
+
+class TokenDateInputModalLightDefault {
+  /// md.comp.date-input.modal.header.headline.color
+  static const TokenColorRole headerHeadlineColor =
+      TokenColorRole.onSurfaceVariant;
+
+  /// md.comp.date-input.modal.header.supporting-text.color
+  static const TokenColorRole headerSupportingTextColor =
+      TokenColorRole.onSurfaceVariant;
+}
+
+class TokenDateInputModalLightHighContrast {
+  /// md.comp.date-input.modal.header.headline.color
+  static const TokenColorRole headerHeadlineColor =
+      TokenColorRole.onSurfaceVariant;
+
+  /// md.comp.date-input.modal.header.supporting-text.color
+  static const TokenColorRole headerSupportingTextColor =
+      TokenColorRole.onSurfaceVariant;
+}
+
+class TokenDateInputModalLightMediumContrast {
+  /// md.comp.date-input.modal.header.headline.color
+  static const TokenColorRole headerHeadlineColor =
+      TokenColorRole.onSurfaceVariant;
+
+  /// md.comp.date-input.modal.header.supporting-text.color
+  static const TokenColorRole headerSupportingTextColor =
+      TokenColorRole.onSurfaceVariant;
 }
