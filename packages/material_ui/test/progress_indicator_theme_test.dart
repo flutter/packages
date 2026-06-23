@@ -23,7 +23,7 @@ Matcher get _throwsUnsupportedStyleVariantAssertion {
   return isA<AssertionError>().having(
     (AssertionError error) => error.message,
     'message',
-    'Only material3 is supported. See https://github.com/orgs/flutter/projects/250 to track support for material3Expressive.',
+    kUnsupportedStyleVariantAssertionMessage,
   );
 }
 
