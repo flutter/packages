@@ -90,7 +90,11 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     if (uri == null) {
       throw ArgumentError('Unable to construct a video asset from $options');
     }
-    final pigeonCreationOptions = CreationOptions(uri: uri, httpHeaders: dataSource.httpHeaders);
+    final pigeonCreationOptions = CreationOptions(
+      uri: uri,
+      httpHeaders: dataSource.httpHeaders,
+      forwardBufferDurationMs: options.forwardBufferDuration?.inMilliseconds,
+    );
 
     final int playerId;
     final VideoPlayerViewState state;

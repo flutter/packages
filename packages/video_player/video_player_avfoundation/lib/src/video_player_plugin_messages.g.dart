@@ -135,14 +135,17 @@ class PlatformVideoViewCreationParams {
 }
 
 class CreationOptions {
-  CreationOptions({required this.uri, required this.httpHeaders});
+  CreationOptions({required this.uri, required this.httpHeaders, this.forwardBufferDurationMs});
 
   String uri;
 
   Map<String, String> httpHeaders;
 
+  /// Caps forward buffering (in ms); null uses AVPlayer's automatic buffering.
+  int? forwardBufferDurationMs;
+
   List<Object?> _toList() {
-    return <Object?>[uri, httpHeaders];
+    return <Object?>[uri, httpHeaders, forwardBufferDurationMs];
   }
 
   Object encode() {
@@ -154,6 +157,7 @@ class CreationOptions {
     return CreationOptions(
       uri: result[0]! as String,
       httpHeaders: (result[1]! as Map<Object?, Object?>).cast<String, String>(),
+      forwardBufferDurationMs: result[2] as int?,
     );
   }
 
@@ -166,7 +170,9 @@ class CreationOptions {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(uri, other.uri) && _deepEquals(httpHeaders, other.httpHeaders);
+    return _deepEquals(uri, other.uri) &&
+        _deepEquals(httpHeaders, other.httpHeaders) &&
+        _deepEquals(forwardBufferDurationMs, other.forwardBufferDurationMs);
   }
 
   @override

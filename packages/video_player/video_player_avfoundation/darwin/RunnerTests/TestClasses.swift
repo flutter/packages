@@ -74,6 +74,7 @@ final class TestAsset: NSObject, FVPAVAsset {
 final class StubPlayerItem: NSObject, FVPAVPlayerItem {
   let asset: FVPAVAsset
   var videoComposition: AVVideoComposition?
+  var preferredForwardBufferDuration: TimeInterval = 0
 
   init(asset: FVPAVAsset = TestAsset()) {
     self.asset = asset

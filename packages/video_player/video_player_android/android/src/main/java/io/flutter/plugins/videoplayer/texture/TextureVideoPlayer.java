@@ -49,7 +49,8 @@ public final class TextureVideoPlayer extends VideoPlayer implements SurfaceProd
       @NonNull VideoPlayerCallbacks events,
       @NonNull SurfaceProducer surfaceProducer,
       @NonNull VideoAsset asset,
-      @NonNull VideoPlayerOptions options) {
+      @NonNull VideoPlayerOptions options,
+      @Nullable Long forwardBufferDurationMs) {
     return new TextureVideoPlayer(
         events,
         surfaceProducer,
@@ -62,6 +63,11 @@ public final class TextureVideoPlayer extends VideoPlayer implements SurfaceProd
               new ExoPlayer.Builder(context)
                   .setTrackSelector(trackSelector)
                   .setMediaSourceFactory(asset.getMediaSourceFactory(context));
+          androidx.media3.exoplayer.LoadControl loadControl =
+              VideoPlayer.cappedLoadControl(forwardBufferDurationMs);
+          if (loadControl != null) {
+            builder.setLoadControl(loadControl);
+          }
           return builder.build();
         });
   }

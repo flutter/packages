@@ -1,3 +1,8 @@
+## 2.10.0
+
+* Adds support for `VideoPlayerOptions.forwardBufferDuration`, setting
+  `AVPlayerItem.preferredForwardBufferDuration` (default behavior is unchanged when null).
+
 ## 2.9.7
 
 * Forces tone-mapping to SDR on iOS to prevent washed-out HDR video playback.

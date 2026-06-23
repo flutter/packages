@@ -777,6 +777,30 @@ private let hlsAudioTestURI =
       colorProperties[AVVideoYCbCrMatrixKey] as? String == AVVideoYCbCrMatrix_ITU_R_709_2)
   }
 
+  @Test func forwardBufferDurationIsAppliedToPlayerItem() throws {
+    let stubPlayerItem = StubPlayerItem()
+    let videoPlayerPlugin = try createInitializedPlugin(
+      avFactory: StubFVPAVFactory(playerItem: stubPlayerItem))
+
+    _ = try videoPlayerPlugin.createTexturePlayer(
+      options: CreationOptions(
+        uri: mp4TestURI, httpHeaders: [:], forwardBufferDurationMs: 10000))
+
+    #expect(stubPlayerItem.preferredForwardBufferDuration == 10.0)
+  }
+
+  @Test func forwardBufferDurationDefaultsToUnset() throws {
+    let stubPlayerItem = StubPlayerItem()
+    let videoPlayerPlugin = try createInitializedPlugin(
+      avFactory: StubFVPAVFactory(playerItem: stubPlayerItem))
+
+    _ = try videoPlayerPlugin.createTexturePlayer(
+      options: CreationOptions(uri: mp4TestURI, httpHeaders: [:]))
+
+    // Untouched when the option is null (AVPlayer's automatic buffering).
+    #expect(stubPlayerItem.preferredForwardBufferDuration == 0)
+  }
+
   // MARK: - Helper Methods
 
   /// Creates a plugin with the given dependencies, and default stubs for any that aren't provided,

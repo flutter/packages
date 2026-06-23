@@ -72,6 +72,9 @@ class CreationOptions {
   PlatformVideoFormat? formatHint;
   Map<String, String> httpHeaders;
   String? userAgent;
+
+  /// Caps forward buffering (in ms); null uses ExoPlayer's default (~50s).
+  int? forwardBufferDurationMs;
 }
 
 class TexturePlayerIds {

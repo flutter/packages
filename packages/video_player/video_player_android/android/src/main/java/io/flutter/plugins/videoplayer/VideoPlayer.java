@@ -18,7 +18,9 @@ import androidx.media3.common.TrackGroup;
 import androidx.media3.common.TrackSelectionOverride;
 import androidx.media3.common.Tracks;
 import androidx.media3.common.util.UnstableApi;
+import androidx.media3.exoplayer.DefaultLoadControl;
 import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.exoplayer.LoadControl;
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector;
 import io.flutter.view.TextureRegistry.SurfaceProducer;
 import java.util.ArrayList;
@@ -83,6 +85,29 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
 
   public void setDisposeHandler(@Nullable DisposeHandler handler) {
     disposeHandler = handler;
+  }
+
+  /**
+   * Builds a {@link LoadControl} that caps forward buffering at {@code forwardBufferDurationMs}, or
+   * returns null to keep ExoPlayer's default (~50s).
+   *
+   * <p>Backs {@code VideoPlayerOptions.forwardBufferDuration} so abandoned/seek-away playback
+   * doesn't keep downloading. Playback-start thresholds are clamped so they never exceed the cap (a
+   * requirement of {@link DefaultLoadControl}).
+   */
+  @UnstableApi
+  @Nullable
+  public static LoadControl cappedLoadControl(@Nullable Long forwardBufferDurationMs) {
+    if (forwardBufferDurationMs == null) {
+      return null;
+    }
+    int bufferMs = (int) Math.min((long) Integer.MAX_VALUE, Math.max(1L, forwardBufferDurationMs));
+    int bufferForPlaybackMs = Math.min(2_500, bufferMs);
+    int bufferForPlaybackAfterRebufferMs = Math.min(5_000, bufferMs);
+    return new DefaultLoadControl.Builder()
+        .setBufferDurationsMs(
+            bufferMs, bufferMs, bufferForPlaybackMs, bufferForPlaybackAfterRebufferMs)
+        .build();
   }
 
   @NonNull

@@ -24,7 +24,10 @@ import androidx.media3.common.Player;
 import androidx.media3.common.TrackGroup;
 import androidx.media3.common.TrackSelectionOverride;
 import androidx.media3.common.Tracks;
+import androidx.media3.common.util.UnstableApi;
+import androidx.media3.exoplayer.DefaultLoadControl;
 import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.exoplayer.LoadControl;
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector;
 import com.google.common.collect.ImmutableList;
 import io.flutter.plugins.videoplayer.platformview.PlatformViewExoPlayerEventListener;
@@ -89,6 +92,29 @@ public final class VideoPlayerTest {
   @Before
   public void setUp() {
     fakeVideoAsset = new FakeVideoAsset(FAKE_ASSET_URL);
+  }
+
+  @Test
+  @UnstableApi
+  public void cappedLoadControlReturnsNullForNullDuration() {
+    assertNull(VideoPlayer.cappedLoadControl(null));
+  }
+
+  @Test
+  @UnstableApi
+  public void cappedLoadControlReturnsLoadControlForDuration() {
+    LoadControl loadControl = VideoPlayer.cappedLoadControl(10_000L);
+    assertNotNull(loadControl);
+    assertTrue(loadControl instanceof DefaultLoadControl);
+  }
+
+  @Test
+  @UnstableApi
+  public void cappedLoadControlClampsThresholdsForSmallDuration() {
+    // A 1s cap is smaller than the default playback-start thresholds (2.5s/5s).
+    // DefaultLoadControl.build() throws if those exceed the buffer duration, so a
+    // successful build proves the thresholds were clamped to the cap.
+    assertNotNull(VideoPlayer.cappedLoadControl(1_000L));
   }
 
   private VideoPlayer createVideoPlayer() {

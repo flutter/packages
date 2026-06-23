@@ -212,6 +212,51 @@ void main() {
       expect(player.buildViewWithOptions(VideoViewOptions(playerId: playerId!)), isA<Texture>());
     });
 
+    test('createWithOptions passes forwardBufferDuration in ms', () async {
+      final (AVFoundationVideoPlayer player, MockAVFoundationVideoPlayerApi api, _) =
+          setUpMockPlayer(playerId: 1, textureId: 101);
+      when(
+        api.createForTextureView(any),
+      ).thenAnswer((_) async => TexturePlayerIds(playerId: 2, textureId: 102));
+
+      await player.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'https://example.com',
+          ),
+          viewType: VideoViewType.textureView,
+          forwardBufferDuration: const Duration(seconds: 10),
+        ),
+      );
+
+      final VerificationResult verification = verify(api.createForTextureView(captureAny));
+      final creationOptions = verification.captured[0] as CreationOptions;
+      expect(creationOptions.forwardBufferDurationMs, 10000);
+    });
+
+    test('createWithOptions defaults forwardBufferDuration to null', () async {
+      final (AVFoundationVideoPlayer player, MockAVFoundationVideoPlayerApi api, _) =
+          setUpMockPlayer(playerId: 1, textureId: 101);
+      when(
+        api.createForTextureView(any),
+      ).thenAnswer((_) async => TexturePlayerIds(playerId: 2, textureId: 102));
+
+      await player.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'https://example.com',
+          ),
+          viewType: VideoViewType.textureView,
+        ),
+      );
+
+      final VerificationResult verification = verify(api.createForTextureView(captureAny));
+      final creationOptions = verification.captured[0] as CreationOptions;
+      expect(creationOptions.forwardBufferDurationMs, isNull);
+    });
+
     test('createWithOptions with network passes headers', () async {
       final (AVFoundationVideoPlayer player, MockAVFoundationVideoPlayerApi api, _) =
           setUpMockPlayer(playerId: 1, textureId: 101);

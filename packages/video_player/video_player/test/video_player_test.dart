@@ -1754,6 +1754,33 @@ void main() {
         expect(controller.videoPlayerOptions!.mixWithOthers, true);
       });
 
+      test('forwardBufferDuration is passed to the platform', () async {
+        final controller = VideoPlayerController.networkUrl(
+          _localhostUri,
+          videoPlayerOptions: VideoPlayerOptions(
+            forwardBufferDuration: const Duration(seconds: 10),
+          ),
+        );
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+        expect(
+          fakeVideoPlayerPlatform.creationOptions.last.forwardBufferDuration,
+          const Duration(seconds: 10),
+        );
+      });
+
+      test('forwardBufferDuration defaults to null', () async {
+        final controller = VideoPlayerController.networkUrl(_localhostUri);
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+        expect(
+          fakeVideoPlayerPlatform.creationOptions.last.forwardBufferDuration,
+          isNull,
+        );
+      });
+
       test('true allowBackgroundPlayback continues playback', () async {
         final controller = VideoPlayerController.networkUrl(
           _localhostUri,
@@ -1899,6 +1926,7 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   List<String> calls = <String>[];
   List<DataSource> dataSources = <DataSource>[];
   List<VideoViewType> viewTypes = <VideoViewType>[];
+  List<VideoCreationOptions> creationOptions = <VideoCreationOptions>[];
   final Map<int, StreamController<VideoEvent>> streams = <int, StreamController<VideoEvent>>{};
   bool forceInitError = false;
   int nextPlayerId = 0;
@@ -1943,6 +1971,7 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
     }
     dataSources.add(options.dataSource);
     viewTypes.add(options.viewType);
+    creationOptions.add(options);
     return nextPlayerId++;
   }
 
