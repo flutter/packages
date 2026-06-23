@@ -10,9 +10,9 @@ import 'package:yaml/yaml.dart';
 import 'common/package_looping_command.dart';
 import 'common/repository_package.dart';
 
-/// A command to run coverage checks on changed packages.
+/// A command to run code coverage checks on changed packages.
 class CoverageCheckCommand extends PackageLoopingCommand {
-  /// Creates an instance of the coverage check command.
+  /// Creates a coverage check command instance.
   CoverageCheckCommand(super.packagesDir, {super.processRunner, super.platform, super.gitDir});
 
   @override
@@ -92,11 +92,12 @@ class CoverageCheckCommand extends PackageLoopingCommand {
   }
 
   Future<double?> _runCoverageAndParse(RepositoryPackage package) async {
-    final args = <String>['test', '--coverage'];
-
     final io.ProcessResult result = await processRunner.run(
       'flutter',
-      args,
+      <String>[
+      'test',
+      '--coverage',
+    ],
       workingDir: package.directory,
     );
 
@@ -133,7 +134,6 @@ class CoverageCheckCommand extends PackageLoopingCommand {
         } else if (line.startsWith('LF:')) {
           linesFound += int.parse(line.substring(3));
         }
-      
       }
     }
 
@@ -147,7 +147,5 @@ class CoverageCheckCommand extends PackageLoopingCommand {
 bool _isGeneratedFile(String fileName) {
   return fileName.endsWith('.g.dart') ||
       fileName.endsWith('.pb.dart') ||
-      fileName.endsWith('.pigeon.dart') ||
-      fileName.endsWith('.mocks.dart') ||
-      fileName.endsWith('.freezed.dart');
+      fileName.endsWith('.mocks.dart');
 }

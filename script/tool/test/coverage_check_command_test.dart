@@ -35,7 +35,7 @@ void main() {
 
       runner = CommandRunner<void>('coverage_test', 'Test for CoverageCheckCommand');
       runner.addCommand(command);
-      
+
       final File minimumsFile = packagesDir.parent
           .childDirectory('script')
           .childDirectory('configs')
@@ -49,10 +49,14 @@ custom_coverage_minimums:
     });
 
     test('skips packages not in custom minimums', () async {
-      createFakePlugin('unlisted_plugin', packagesDir, extraFiles: <String>['test/empty_test.dart']);
-      
+      createFakePlugin(
+        'unlisted_plugin',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
+
       final List<String> output = await runCapturingPrint(runner, <String>['coverage-check']);
-      
+
       expect(
         output,
         containsAllInOrder(<Matcher>[
@@ -62,9 +66,31 @@ custom_coverage_minimums:
       expect(processRunner.recordedCalls, isEmpty);
     });
 
+    test('skips third-party packages', () async {
+      createFakePlugin(
+        'plugin1',
+        packagesDir.parent.childDirectory('third_party').childDirectory('packages'),
+        extraFiles: <String>['test/empty_test.dart'],
+      );
+
+      final List<String> output = await runCapturingPrint(runner, <String>['coverage-check']);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('SKIPPING: Not a first-party package.'),
+        ]),
+      );
+      expect(processRunner.recordedCalls, isEmpty);
+    });
+
     test('passes when coverage meets minimum', () async {
-      final RepositoryPackage plugin = createFakePlugin('plugin1', packagesDir, extraFiles: <String>['test/empty_test.dart']);
-      
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin1',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
+
       final Directory coverageDir = plugin.directory.childDirectory('coverage');
       coverageDir.createSync();
       coverageDir.childFile('lcov.info').writeAsStringSync('''
@@ -77,7 +103,7 @@ end_of_record
 ''');
 
       final List<String> output = await runCapturingPrint(runner, <String>['coverage-check']);
-      
+
       expect(
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[
@@ -89,8 +115,12 @@ end_of_record
     });
 
     test('fails when coverage is below minimum', () async {
-      final RepositoryPackage plugin = createFakePlugin('plugin1', packagesDir, extraFiles: <String>['test/empty_test.dart']);
-      
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin1',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
+
       final Directory coverageDir = plugin.directory.childDirectory('coverage');
       coverageDir.createSync();
       coverageDir.childFile('lcov.info').writeAsStringSync('''
@@ -123,8 +153,12 @@ end_of_record
     });
 
     test('ignores generated files when calculating coverage', () async {
-      final RepositoryPackage plugin = createFakePlugin('plugin1', packagesDir, extraFiles: <String>['test/empty_test.dart']);
-      
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin1',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
+
       final Directory coverageDir = plugin.directory.childDirectory('coverage');
       coverageDir.createSync();
       coverageDir.childFile('lcov.info').writeAsStringSync('''
@@ -145,7 +179,7 @@ end_of_record
 ''');
 
       final List<String> output = await runCapturingPrint(runner, <String>['coverage-check']);
-      
+
       expect(output, contains(contains('Ran for 1 package(s)')));
     });
 
@@ -181,7 +215,7 @@ end_of_record
 
     test('fails when test command fails', () async {
       createFakePlugin('plugin1', packagesDir, extraFiles: <String>['test/empty_test.dart']);
-      
+
       processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(exitCode: 1), <String>['test', '--coverage']),
       ];
@@ -198,15 +232,13 @@ end_of_record
       expect(commandError, isA<ToolExit>());
       expect(
         output,
-        containsAllInOrder(<Matcher>[
-          contains('Failed to run tests or parse coverage'),
-        ]),
+        containsAllInOrder(<Matcher>[contains('Failed to run tests or parse coverage')]),
       );
     });
 
     test('fails when lcov.info is missing', () async {
       createFakePlugin('plugin1', packagesDir, extraFiles: <String>['test/empty_test.dart']);
-      
+
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
