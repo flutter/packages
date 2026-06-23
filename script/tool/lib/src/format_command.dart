@@ -94,9 +94,6 @@ class FormatCommand extends PackageLoopingCommand {
 
   @override
   Future<void> initializeRun() async {
-    final String javaFormatterPath = await _downloadJavaFormatterIfNecessary();
-    final String kotlinFormatterPath = await _downloadKotlinFormatterIfNecessary();
-
     // All but Dart is formatted here rather than in runForPackage because
     // running the formatters separately for each package is an order of
     // magnitude slower, due to the startup overhead of the formatters.
@@ -106,10 +103,10 @@ class FormatCommand extends PackageLoopingCommand {
     // formatter isn't running in the context of the package.
     final Iterable<String> files = await _getFilteredFilePaths(getFiles(), relativeTo: packagesDir);
     if (getBoolArg(_javaArg)) {
-      await _formatJava(files, javaFormatterPath);
+      await _formatJava(files);
     }
     if (getBoolArg(_kotlinArg)) {
-      await _formatKotlin(files, kotlinFormatterPath);
+      await _formatKotlin(files);
     }
     if (getBoolArg(_clangFormatArg)) {
       await _formatCppAndObjectiveC(files);
@@ -269,9 +266,10 @@ class FormatCommand extends PackageLoopingCommand {
     throw ToolExit(_exitDependencyMissing);
   }
 
-  Future<void> _formatJava(Iterable<String> files, String formatterPath) async {
+  Future<void> _formatJava(Iterable<String> files) async {
     final Iterable<String> javaFiles = _getPathsWithExtensions(files, <String>{'.java'});
     if (javaFiles.isNotEmpty) {
+      final String formatterPath = await _downloadJavaFormatterIfNecessary();
       final String java = getStringArg(_javaPathArg);
       if (!await _hasDependency(java)) {
         printError(
@@ -294,9 +292,10 @@ class FormatCommand extends PackageLoopingCommand {
     }
   }
 
-  Future<void> _formatKotlin(Iterable<String> files, String formatterPath) async {
+  Future<void> _formatKotlin(Iterable<String> files) async {
     final Iterable<String> kotlinFiles = _getPathsWithExtensions(files, <String>{'.kt'});
     if (kotlinFiles.isNotEmpty) {
+      final String formatterPath = await _downloadKotlinFormatterIfNecessary();
       final String java = getStringArg(_javaPathArg);
       if (!await _hasDependency(java)) {
         printError(
@@ -394,8 +393,16 @@ class FormatCommand extends PackageLoopingCommand {
     const handFormattedExtension = '.dart';
     const handFormattedPragma = '// This file is hand-formatted.';
 
+    final bool useCustomFiles = argResults!.wasParsed('custom-files');
+
     return files
         .where((File file) {
+          if (useCustomFiles) {
+            final String repoRelativePath = getRelativePosixPath(file, from: rootDir);
+            if (!changedFiles.contains(repoRelativePath)) {
+              return false;
+            }
+          }
           // See comment above near [handFormattedPragma].
           return path.extension(file.path) != handFormattedExtension ||
               !file.readAsLinesSync().contains(handFormattedPragma);

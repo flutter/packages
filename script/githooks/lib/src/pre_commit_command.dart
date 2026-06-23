@@ -112,22 +112,7 @@ class PreCommitCommand extends Command<bool> {
     );
     final packageArgs = '--packages=${targetPackages.join(',')}';
 
-    // Determine which toolchains are needed based on file extensions to avoid uneccessary slowdown.
-    final bool hasClang = stagedFiles.any(
-      (f) =>
-          f.endsWith('.c') ||
-          f.endsWith('.cc') ||
-          f.endsWith('.cpp') ||
-          f.endsWith('.h') ||
-          f.endsWith('.hpp') ||
-          f.endsWith('.m') ||
-          f.endsWith('.mm'),
-    );
-    final bool hasJava = stagedFiles.any((f) => f.endsWith('.java'));
-    final bool hasKotlin = stagedFiles.any((f) => f.endsWith('.kt'));
-    final bool hasSwift = stagedFiles.any((f) => f.endsWith('.swift'));
-
-    final List<String> dartFiles = stagedFiles.where((f) => f.endsWith('.dart')).toList();
+    final String customFilesArg = '--custom-files=${stagedFiles.join(',')}';
 
     print(
       '🏃 Running pre-commit checks on ${targetPackages.length} packages: ${targetPackages.join(', ')}',
@@ -136,65 +121,26 @@ class PreCommitCommand extends Command<bool> {
 
     // Check formatting.
     stdout.write('Checking formatting...');
+    final ProcessResult formatResult = await processRunner('dart', [
+      'run',
+      toolScript,
+      'format',
+      customFilesArg,
+      '--fail-on-change',
+    ], workingDirectory: repoRoot.path);
 
-    // Format staged Dart files.
-    if (dartFiles.isNotEmpty) {
-      final ProcessResult dartFormatResult = await processRunner('dart', [
-        'format',
-        '--set-exit-if-changed',
-        ...dartFiles,
-      ], workingDirectory: repoRoot.path);
-
-      if (dartFormatResult.exitCode != 0) {
-        if (!hasError) {
-          stdout.write(stdout.supportsAnsiEscapes ? '\x1B[2K\r' : '\n');
-        }
-        if (dartFormatResult.stdout.toString().isNotEmpty) {
-          print(dartFormatResult.stdout);
-        }
-        if (dartFormatResult.stderr.toString().isNotEmpty) {
-          print(dartFormatResult.stderr);
-        }
-        print('❌ Formatting issues found in Dart files. Please run "dart format" to fix them.');
-        hasError = true;
+    if (formatResult.exitCode != 0) {
+      if (!hasError) {
+        stdout.write(stdout.supportsAnsiEscapes ? '\x1B[2K\r' : '\n');
       }
-    }
-
-    // Format staged native files.
-    final bool needsNativeFormat = hasClang || hasJava || hasKotlin || hasSwift;
-    if (needsNativeFormat) {
-      final nativeFormatFlags = [
-        '--no-dart',
-        if (!hasClang) '--no-clang-format',
-        if (!hasJava) '--no-java',
-        if (!hasKotlin) '--no-kotlin',
-        if (!hasSwift) '--no-swift',
-      ];
-
-      final ProcessResult nativeFormatResult = await processRunner('dart', [
-        'run',
-        toolScript,
-        'format',
-        packageArgs,
-        '--fail-on-change',
-        ...nativeFormatFlags,
-      ], workingDirectory: repoRoot.path);
-
-      if (nativeFormatResult.exitCode != 0) {
-        if (!hasError) {
-          stdout.write(stdout.supportsAnsiEscapes ? '\x1B[2K\r' : '\n');
-        }
-        if (nativeFormatResult.stdout.toString().isNotEmpty) {
-          print(nativeFormatResult.stdout);
-        }
-        if (nativeFormatResult.stderr.toString().isNotEmpty) {
-          print(nativeFormatResult.stderr);
-        }
-        print(
-          '❌ Formatting issues found in native files. Please run "dart run script/tool/bin/flutter_plugin_tools.dart format $packageArgs" to fix them.',
-        );
-        hasError = true;
+      if (formatResult.stdout.toString().isNotEmpty) {
+        print(formatResult.stdout);
       }
+      if (formatResult.stderr.toString().isNotEmpty) {
+        print(formatResult.stderr);
+      }
+      print('❌ Formatting issues found. Please run "dart run script/tool/bin/flutter_plugin_tools.dart format $customFilesArg" to fix them.');
+      hasError = true;
     }
 
     if (!hasError) {
@@ -208,27 +154,27 @@ class PreCommitCommand extends Command<bool> {
     // Run static analysis on staged files.
     var analyzeHasError = false;
     stdout.write('Running static analysis...');
-    if (dartFiles.isNotEmpty) {
-      final ProcessResult analyzeResult = await processRunner('dart', [
-        'analyze',
-        '--fatal-infos',
-        ...dartFiles,
-      ], workingDirectory: repoRoot.path);
+    final ProcessResult analyzeResult = await processRunner('dart', [
+      'run',
+      toolScript,
+      'analyze',
+      customFilesArg,
+      '--dart',
+    ], workingDirectory: repoRoot.path);
 
-      if (analyzeResult.exitCode != 0) {
-        if (!analyzeHasError) {
-          stdout.write(stdout.supportsAnsiEscapes ? '\x1B[2K\r' : '\n');
-        }
-        if (analyzeResult.stdout.toString().isNotEmpty) {
-          print(analyzeResult.stdout);
-        }
-        if (analyzeResult.stderr.toString().isNotEmpty) {
-          print(analyzeResult.stderr);
-        }
-        print('❌ Static analysis errors found.');
-        analyzeHasError = true;
-        hasError = true;
+    if (analyzeResult.exitCode != 0) {
+      if (!analyzeHasError) {
+        stdout.write(stdout.supportsAnsiEscapes ? '\x1B[2K\r' : '\n');
       }
+      if (analyzeResult.stdout.toString().isNotEmpty) {
+        print(analyzeResult.stdout);
+      }
+      if (analyzeResult.stderr.toString().isNotEmpty) {
+        print(analyzeResult.stderr);
+      }
+      print('❌ Static analysis errors found.');
+      analyzeHasError = true;
+      hasError = true;
     }
 
     if (!analyzeHasError) {
