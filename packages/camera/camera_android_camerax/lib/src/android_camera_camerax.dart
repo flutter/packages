@@ -413,7 +413,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     );
 
     // Configure VideoCapture and Recorder instances.
-    recorder = Recorder(qualitySelector: presetQualitySelector);
+    recorder = Recorder(
+      qualitySelector: presetQualitySelector,
+      targetVideoEncodingBitRate: mediaSettings?.videoBitrate,
+    );
     videoCapture = VideoCapture.withOutput(videoOutput: recorder!, targetFpsRange: _targetFpsRange);
 
     // Retrieve info required for correcting the rotation of the camera preview

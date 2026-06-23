@@ -530,8 +530,10 @@ void main() {
           }) {
             return mockImageCapture;
           };
+      int? recorderTargetVideoEncodingBitRate;
       PigeonOverrides.recorder_new =
           ({int? aspectRatio, int? targetVideoEncodingBitRate, QualitySelector? qualitySelector}) {
+            recorderTargetVideoEncodingBitRate = targetVideoEncodingBitRate;
             return mockRecorder;
           };
       PigeonOverrides.videoCapture_withOutput =
@@ -658,6 +660,7 @@ void main() {
 
       // Verify the camera's Recorder and VideoCapture instances are instantiated properly.
       expect(camera.recorder, equals(mockRecorder));
+      expect(recorderTargetVideoEncodingBitRate, equals(200000));
       expect(camera.videoCapture, equals(mockVideoCapture));
 
       // Verify the camera's Preview instance has its surface provider set.
