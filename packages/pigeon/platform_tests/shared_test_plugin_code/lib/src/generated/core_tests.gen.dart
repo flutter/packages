@@ -146,6 +146,11 @@ class UnusedClass {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'UnusedClass(aField: $aField)';
+  }
 }
 
 /// A class containing all supported types.
@@ -350,6 +355,11 @@ class AllTypes {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'AllTypes(aBool: $aBool, anInt: $anInt, anInt64: $anInt64, aDouble: $aDouble, aByteArray: $aByteArray, a4ByteArray: $a4ByteArray, a8ByteArray: $a8ByteArray, aFloatArray: $aFloatArray, anEnum: $anEnum, anotherEnum: $anotherEnum, aString: $aString, anObject: $anObject, list: $list, stringList: $stringList, intList: $intList, doubleList: $doubleList, boolList: $boolList, enumList: $enumList, objectList: $objectList, listList: $listList, mapList: $mapList, map: $map, stringMap: $stringMap, intMap: $intMap, enumMap: $enumMap, objectMap: $objectMap, listMap: $listMap, mapMap: $mapMap)';
+  }
 }
 
 /// A class containing all supported nullable types.
@@ -572,6 +582,11 @@ class AllNullableTypes {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'AllNullableTypes(aNullableBool: $aNullableBool, aNullableInt: $aNullableInt, aNullableInt64: $aNullableInt64, aNullableDouble: $aNullableDouble, aNullableByteArray: $aNullableByteArray, aNullable4ByteArray: $aNullable4ByteArray, aNullable8ByteArray: $aNullable8ByteArray, aNullableFloatArray: $aNullableFloatArray, aNullableEnum: $aNullableEnum, anotherNullableEnum: $anotherNullableEnum, aNullableString: $aNullableString, aNullableObject: $aNullableObject, allNullableTypes: $allNullableTypes, list: $list, stringList: $stringList, intList: $intList, doubleList: $doubleList, boolList: $boolList, enumList: $enumList, objectList: $objectList, listList: $listList, mapList: $mapList, recursiveClassList: $recursiveClassList, map: $map, stringMap: $stringMap, intMap: $intMap, enumMap: $enumMap, objectMap: $objectMap, listMap: $listMap, mapMap: $mapMap, recursiveClassMap: $recursiveClassMap)';
+  }
 }
 
 /// The primary purpose for this class is to ensure coverage of Swift structs
@@ -778,6 +793,11 @@ class AllNullableTypesWithoutRecursion {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'AllNullableTypesWithoutRecursion(aNullableBool: $aNullableBool, aNullableInt: $aNullableInt, aNullableInt64: $aNullableInt64, aNullableDouble: $aNullableDouble, aNullableByteArray: $aNullableByteArray, aNullable4ByteArray: $aNullable4ByteArray, aNullable8ByteArray: $aNullable8ByteArray, aNullableFloatArray: $aNullableFloatArray, aNullableEnum: $aNullableEnum, anotherNullableEnum: $anotherNullableEnum, aNullableString: $aNullableString, aNullableObject: $aNullableObject, list: $list, stringList: $stringList, intList: $intList, doubleList: $doubleList, boolList: $boolList, enumList: $enumList, objectList: $objectList, listList: $listList, mapList: $mapList, map: $map, stringMap: $stringMap, intMap: $intMap, enumMap: $enumMap, objectMap: $objectMap, listMap: $listMap, mapMap: $mapMap)';
+  }
 }
 
 /// A class for testing nested class handling.
@@ -861,6 +881,11 @@ class AllClassesWrapper {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'AllClassesWrapper(allNullableTypes: $allNullableTypes, allNullableTypesWithoutRecursion: $allNullableTypesWithoutRecursion, allTypes: $allTypes, classList: $classList, nullableClassList: $nullableClassList, classMap: $classMap, nullableClassMap: $nullableClassMap)';
+  }
 }
 
 /// A data class containing a List, used in unit tests.
@@ -897,6 +922,11 @@ class TestMessage {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'TestMessage(testList: $testList)';
+  }
 }
 
 class _PigeonCodec extends StandardMessageCodec {
@@ -965,8 +995,8 @@ class _PigeonCodec extends StandardMessageCodec {
 /// The core interface that each host language plugin must implement in
 /// platform_test integration tests.
 class HostIntegrationCoreApi {
-  /// Constructor for [HostIntegrationCoreApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
+  /// Constructor for [HostIntegrationCoreApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   HostIntegrationCoreApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
     : pigeonVar_binaryMessenger = binaryMessenger,
@@ -1208,6 +1238,86 @@ class HostIntegrationCoreApi {
       isNullValid: false,
     );
     return pigeonVar_replyValue! as List<Object?>;
+  }
+
+  /// Returns the passed list, to test serialization and deserialization.
+  Future<List<String?>> echoStringList(List<String?> stringList) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoStringList$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[stringList]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return (pigeonVar_replyValue! as List<Object?>).cast<String?>();
+  }
+
+  /// Returns the passed list, to test serialization and deserialization.
+  Future<List<int?>> echoIntList(List<int?> intList) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoIntList$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[intList]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return (pigeonVar_replyValue! as List<Object?>).cast<int?>();
+  }
+
+  /// Returns the passed list, to test serialization and deserialization.
+  Future<List<double?>> echoDoubleList(List<double?> doubleList) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoDoubleList$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[doubleList]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return (pigeonVar_replyValue! as List<Object?>).cast<double?>();
+  }
+
+  /// Returns the passed list, to test serialization and deserialization.
+  Future<List<bool?>> echoBoolList(List<bool?> boolList) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBoolList$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[boolList]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return (pigeonVar_replyValue! as List<Object?>).cast<bool?>();
   }
 
   /// Returns the passed list, to test serialization and deserialization.
@@ -5619,8 +5729,8 @@ abstract class FlutterIntegrationCoreApi {
 
 /// An API that can be implemented for minimal, compile-only tests.
 class HostTrivialApi {
-  /// Constructor for [HostTrivialApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
+  /// Constructor for [HostTrivialApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   HostTrivialApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
     : pigeonVar_binaryMessenger = binaryMessenger,
@@ -5650,8 +5760,8 @@ class HostTrivialApi {
 
 /// A simple API implemented in some unit tests.
 class HostSmallApi {
-  /// Constructor for [HostSmallApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
+  /// Constructor for [HostSmallApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   HostSmallApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
     : pigeonVar_binaryMessenger = binaryMessenger,

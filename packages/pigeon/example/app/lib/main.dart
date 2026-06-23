@@ -78,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final message = MessageData(
       code: Code.one,
       data: <String, String>{'header': 'this is a header'},
-      description: 'uri text',
+      messageDescription: 'uri text',
     );
     try {
       return _api.sendMessage(message);
