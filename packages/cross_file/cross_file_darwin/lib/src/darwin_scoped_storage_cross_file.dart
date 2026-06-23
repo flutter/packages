@@ -14,7 +14,6 @@ import 'package:flutter/foundation.dart';
 import 'package:objective_c/objective_c.dart';
 import 'package:path/path.dart' as path;
 
-import 'cross_file_darwin_apis.g.dart';
 import 'ffi_bindings.g.dart';
 import 'security_scoped_resource.dart';
 
@@ -198,18 +197,28 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
     return null;
   }
 
-  // TODO(bparrishMines): Implementation should be switched to use `ffigen`.
-  // Blocked by https://github.com/dart-lang/native/issues/3416.
   @override
   Stream<Uint8List> openRead([int? start, int? end]) {
     assert(start == null || start >= 0);
     assert(end == null || end >= (start ?? 0));
 
     final streamController = StreamController<Uint8List>();
+
+    final PHAssetResource? resource = _tryGetAssetResource(identifier: params.uri);
+    if (resource == null) {
+      streamController.addError(
+        Exception('Failed to start reading bytes from asset with identifier: ${params.uri}'),
+      );
+      streamController.close();
+      return streamController.stream;
+    }
+
     var currentByteIndex = 0;
 
-    final reader = AssetResourceReader(
-      onDataReceived: (_, Uint8List bytes) {
+    void dataReceivedHandler(NSData data) {
+      final Uint8List bytes = _extractBytesToUint8List(data);
+
+      runOnPlatformThread(() {
         final int newByteIndex = currentByteIndex + bytes.length;
         final int startOrZero = start ?? 0;
 
@@ -239,24 +248,25 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
         }
 
         currentByteIndex = newByteIndex;
-      },
-      onCompletion: (_, String? error) {
+      });
+    }
+
+    void completionHandler(NSError? error) {
+      runOnPlatformThread(() {
         if (error != null) {
-          streamController.addError(Exception(error));
+          streamController.addError(Exception(error.localizedDescription.toDartString()));
         }
 
-        streamController.close();
-      },
+        return streamController.close();
+      });
+    }
+
+    PHAssetResourceManager.defaultManager().requestDataForAssetResource(
+      resource,
+      dataReceivedHandler: ObjCBlock_ffiVoid_NSData.blocking(dataReceivedHandler),
+      completionHandler: ObjCBlock_ffiVoid_NSError.blocking(completionHandler),
     );
 
-    reader.startRead(params.uri).then((bool canRead) {
-      if (!canRead) {
-        streamController.addError(
-          Exception('Failed to start reading bytes from asset with identifier: ${params.uri}'),
-        );
-        streamController.close();
-      }
-    });
     return streamController.stream;
   }
 
