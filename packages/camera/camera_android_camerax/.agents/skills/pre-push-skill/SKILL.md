@@ -25,7 +25,8 @@ You must verify that there are actually changed files to test.
 Command to run:
 
 ```bash
-git diff --name-only main...HEAD | grep '^packages/camera/camera_android_camerax'
+git fetch origin main
+git diff --name-only origin/main...HEAD | grep '^packages/camera/camera_android_camerax'
 ```
 
 If this command outputs nothing,
@@ -42,7 +43,6 @@ is an ancestor of your current `HEAD`.
 Command to run:
 
 ```bash
-git fetch origin main
 git merge-base --is-ancestor origin/main HEAD
 ```
 
@@ -101,7 +101,7 @@ dart run script/tool/bin/flutter_plugin_tools.dart license-check --packages came
 If this command fails, the code WAS NOT ready to push.
 Those license errors must be fixed and committed before code is pushed.
 
-## 6. Non-mechanical Steps
+## 7. Check for Required Documentation and Tests
 
 Before declaring the task complete,
 verify the requirements for creating a pull request
