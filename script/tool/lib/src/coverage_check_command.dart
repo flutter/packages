@@ -7,6 +7,8 @@ import 'dart:io' as io;
 import 'package:file/file.dart';
 import 'package:yaml/yaml.dart';
 
+import 'common/core.dart';
+import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/repository_package.dart';
 
@@ -21,7 +23,7 @@ class CoverageCheckCommand extends PackageLoopingCommand {
   @override
   final String description =
       'Checks that code coverage meets the specified minimums '
-      'for opted-in packages.';
+      'for opted-in packages as specified in `script/configs/custom_coverage_minimums.yaml`.';
 
   @override
   PackageLoopingType get packageLoopingType => PackageLoopingType.includeAllSubpackages;
@@ -34,17 +36,20 @@ class CoverageCheckCommand extends PackageLoopingCommand {
         .childDirectory('script')
         .childDirectory('configs')
         .childFile('custom_coverage_minimums.yaml');
-    if (minimumsFile.existsSync()) {
-      final Object? yaml = loadYaml(minimumsFile.readAsStringSync());
-      if (yaml is YamlMap) {
-        final Object? packageMap = yaml['custom_coverage_minimums'];
-        if (packageMap is YamlMap) {
-          for (final MapEntry<dynamic, dynamic> entry in packageMap.entries) {
-            final Object? key = entry.key;
-            final Object? value = entry.value;
-            if (key is String && value is num) {
-              _customMinimums[key] = value.toDouble();
-            }
+    if (!minimumsFile.existsSync()) {
+      printError('The custom_coverage_minimums.yaml file is missing.');
+      throw ToolExit(1);
+    }
+
+    final Object? yaml = loadYaml(minimumsFile.readAsStringSync());
+    if (yaml is YamlMap) {
+      final Object? packageMap = yaml['custom_coverage_minimums'];
+      if (packageMap is YamlMap) {
+        for (final MapEntry<dynamic, dynamic> entry in packageMap.entries) {
+          final Object? key = entry.key;
+          final Object? value = entry.value;
+          if (key is String && value is num) {
+            _customMinimums[key] = value.toDouble();
           }
         }
       }
@@ -76,12 +81,6 @@ class CoverageCheckCommand extends PackageLoopingCommand {
     }
     final double requiredCoverage = _customMinimums[packageName]!;
 
-    // Delete generated lcov.info.
-    final Directory coverageDir = package.directory.childDirectory('coverage');
-    if (coverageDir.existsSync()) {
-      coverageDir.deleteSync(recursive: true);
-    }
-
     if (currentCoverage < requiredCoverage) {
       return PackageResult.fail(<String>[
         'Code coverage for $packageName is ${currentCoverage.toStringAsFixed(1)}%, which is below the required ${requiredCoverage.toStringAsFixed(1)}%.',
@@ -112,7 +111,15 @@ class CoverageCheckCommand extends PackageLoopingCommand {
       return null;
     }
 
-    return _calculateCoverage(lcovFile);
+    final double calculatedCoverage = _calculateCoverage(lcovFile);
+
+    // Delete generated lcov.info.
+    final Directory coverageDir = package.directory.childDirectory('coverage');
+    if (coverageDir.existsSync()) {
+      coverageDir.deleteSync(recursive: true);
+    }
+
+    return calculatedCoverage;
   }
 
   /// Calculates code coverage for non-generated code files by finding

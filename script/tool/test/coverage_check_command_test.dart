@@ -48,6 +48,31 @@ custom_coverage_minimums:
 ''');
     });
 
+    test('fails if custom_coverage_minimums.yaml is missing', () async {
+      final File minimumsFile = packagesDir.parent
+          .childDirectory('script')
+          .childDirectory('configs')
+          .childFile('custom_coverage_minimums.yaml');
+      minimumsFile.deleteSync();
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['coverage-check'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('The custom_coverage_minimums.yaml file is missing.'),
+        ]),
+      );
+    });
+
     test('skips packages not in custom minimums', () async {
       createFakePlugin(
         'unlisted_plugin',
