@@ -1854,7 +1854,12 @@ abstract class Api {
       withTempFile('foo.dart', (File input) async {
         input.writeAsStringSync(code);
         final int result = await Pigeon.runWithOptions(
-          PigeonOptions(input: input.path, swiftOut: 'Foo.swift', dartOut: 'foo.dart'),
+          PigeonOptions(
+            input: input.path,
+            swiftOut: '${input.parent.path}/Foo.swift',
+            dartOut: '${input.parent.path}/foo.dart',
+            dartPackageName: 'foo_package',
+          ),
         );
         expect(result, isNot(0));
         completer.complete();

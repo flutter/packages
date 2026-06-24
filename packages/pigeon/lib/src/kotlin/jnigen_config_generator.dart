@@ -45,7 +45,9 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
     final indent = Indent();
     indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
+    indent.writeln('// ignore_for_file: depend_on_referenced_packages');
     indent.newln();
+    indent.writeln("import 'dart:io';");
     indent.writeln("import 'package:jnigen/jnigen.dart';");
     indent.writeln("import 'package:logging/logging.dart';");
 
@@ -67,6 +69,7 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
 
     indent.writeln('');
     indent.writeScoped('void main() async {', '}', () {
+      indent.writeln("  Directory.current = Platform.script.resolve('.').toFilePath();");
       indent.writeScoped('await generateJniBindings(', ');', () {
         indent.writeScoped('Config(', '),', () {
           indent.format('''

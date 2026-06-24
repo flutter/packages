@@ -513,7 +513,7 @@ class FfigenConfigGeneratorAdapter implements GeneratorAdapter {
       appDirectory: options.swiftOptions?.appDirectory ?? options.appDirectory,
       dartOutPath: options.dartOptions?.dartOut,
       apiName: 'Swift FFI',
-      requiredDeps: const <String>['ffi', 'objective_c', 'ffigen'],
+      requiredDeps: const <String>['ffi', 'objective_c'],
     );
   }
 }
@@ -687,7 +687,7 @@ class JnigenConfigGeneratorAdapter implements GeneratorAdapter {
       appDirectory: options.kotlinOptions?.appDirectory ?? options.appDirectory,
       dartOutPath: options.dartOptions?.dartOut,
       apiName: 'Kotlin JNI',
-      requiredDeps: const <String>['jni', 'jnigen'],
+      requiredDeps: const <String>['jni'],
     );
   }
 }

@@ -903,11 +903,8 @@ ${_argParser.usage}''';
   static Future<int> _runFfigen(String swiftAppDir, String dartExecutable) async {
     final String configFile = path.join(swiftAppDir, 'ffigen_config.dart');
     if (File(configFile).existsSync()) {
-      print('FFI Multi-step: Running ffigen in $swiftAppDir...');
-      final ProcessResult ffigenResult = await Process.run(dartExecutable, [
-        'run',
-        'ffigen_config.dart',
-      ], workingDirectory: swiftAppDir);
+      print('FFI Multi-step: Running ffigen for $configFile...');
+      final ProcessResult ffigenResult = await Process.run(dartExecutable, ['run', configFile]);
       if (ffigenResult.exitCode != 0) {
         print('Error running ffigen: ${ffigenResult.stderr}');
         return 1;
@@ -964,13 +961,12 @@ ${_argParser.usage}''';
     String dartExecutable,
     Map<String, String> env,
   ) async {
-    print('JNI Multi-step: Running JNIgen in $appDir...');
-    final ProcessResult jnigenResult = await Process.run(
-      dartExecutable,
-      ['run', 'jnigen_config.dart'],
-      workingDirectory: appDir,
-      environment: env,
-    );
+    final String configFile = path.join(appDir, 'jnigen_config.dart');
+    print('JNI Multi-step: Running JNIgen for $configFile...');
+    final ProcessResult jnigenResult = await Process.run(dartExecutable, [
+      'run',
+      configFile,
+    ], environment: env);
     if (jnigenResult.exitCode != 0) {
       print('''
 

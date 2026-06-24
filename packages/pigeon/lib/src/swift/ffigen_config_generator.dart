@@ -49,9 +49,11 @@ class FfigenConfigGenerator extends Generator<InternalFfigenConfigOptions> {
     final indent = Indent();
     indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
-    indent.writeln('// ignore_for_file: avoid_print');
+    indent.writeln('// ignore_for_file: avoid_print, depend_on_referenced_packages');
     indent.newln();
     indent.format('''
+import 'dart:io';
+
 import 'package:ffigen/ffigen.dart' as fg;
 import 'package:pub_semver/pub_semver.dart';
 import 'package:swift2objc/swift2objc.dart';
@@ -83,6 +85,7 @@ import 'package:swiftgen/swiftgen.dart';
         : 'Runner';
 
     indent.writeScoped('Future<void> main(List<String> args) async {', '}', () {
+      indent.writeln("  Directory.current = Platform.script.resolve('.').toFilePath();");
       indent.format('''
   final Uri sdk;
   if (args.isNotEmpty) {
