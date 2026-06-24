@@ -296,7 +296,7 @@ typedef CupertinoMenuAnimationStatusChangedCallback = void Function(AnimationSta
 ///
 /// ## Usage
 // TODO(dkwingsmt): Replace the following block with a blue example container
-// when it's supported.  https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// This example demonstrates a simple [CupertinoMenuAnchor] that wraps
 /// a button.
@@ -306,7 +306,7 @@ typedef CupertinoMenuAnimationStatusChangedCallback = void Function(AnimationSta
 // TODO(dkwingsmt): End of the blue example container.
 ///
 // TODO(dkwingsmt): Replace the following block with a blue example container
-// when it's supported.  https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// This example demonstrates a [CupertinoMenuAnchor] that wraps a button and
 /// shows a menu with three [CupertinoMenuItem]s and one [CupertinoMenuDivider].

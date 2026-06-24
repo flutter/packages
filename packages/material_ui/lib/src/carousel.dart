@@ -52,7 +52,7 @@ import 'theme.dart';
 /// one integer in the array.
 ///
 // TODO(dkwingsmt): Replace the following block with a blue example container
-// when it's supported.  https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 // TODO(dkwingsmt): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -113,7 +113,7 @@ import 'theme.dart';
 /// property controls the minimum allowable size for these compressed items.
 ///
 // TODO(dkwingsmt): Replace the following block with a blue example container
-// when it's supported.  https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// Here is an example to show different carousel layouts that [CarouselView]
 /// and [CarouselView.weighted] can build.
