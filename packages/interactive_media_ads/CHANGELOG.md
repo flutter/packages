@@ -1,3 +1,7 @@
+## 0.3.0+17
+
+* Adds FlutterFramework dependency to SwiftPM package manifest.
+
 ## 0.3.0+16
 
 * Bumps the androidx group across 10 directories with 1 update.
@@ -275,7 +279,7 @@
 
 * Adds support for pausing and resuming Ad playback. See `AdsManager.pause` and `AdsManager.resume`.
 * Adds support to skip an Ad. See `AdsManager.skip` and `AdsManager.discardAdBreak`.
-* **Breaking Change** To keep platform consistency, Android no longer continues playing an Ad 
+* **Breaking Change** To keep platform consistency, Android no longer continues playing an Ad
   whenever it returns from an Ad click. Call `AdsManager.resume` to resume Ad playback.
 
 ## 0.1.2+6

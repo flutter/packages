@@ -1,3 +1,7 @@
+## 0.8.13+7
+
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11. Adds FlutterFramework dependency to SwiftPM package manifest.
+
 ## 0.8.13+6
 
 * Replaces deprecated `kUTTypeGIF` with `UTTypeGIF` to fix iOS 15+ deprecation warnings.

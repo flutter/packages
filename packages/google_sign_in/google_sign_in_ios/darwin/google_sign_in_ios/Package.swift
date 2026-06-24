@@ -16,15 +16,17 @@ let package = Package(
     .library(name: "google-sign-in-ios", targets: ["google_sign_in_ios"])
   ],
   dependencies: [
+    .package(name: "FlutterFramework", path: "../FlutterFramework"),
     .package(
       url: "https://github.com/google/GoogleSignIn-iOS.git",
-      from: "9.0.0")
+      from: "9.0.0"),
   ],
   targets: [
     .target(
       name: "google_sign_in_ios",
       dependencies: [
-        .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS")
+        .product(name: "FlutterFramework", package: "FlutterFramework"),
+        .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS"),
       ],
       resources: [
         .process("Resources")

@@ -1,3 +1,7 @@
+## 2.18.6
+
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11. Adds FlutterFramework dependency to SwiftPM package manifest.
+
 ## 2.18.5
 
 * Corrects the README header.

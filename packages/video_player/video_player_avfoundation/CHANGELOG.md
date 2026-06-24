@@ -1,3 +1,7 @@
+## 2.9.8
+
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11. Adds FlutterFramework dependency to SwiftPM package manifest.
+
 ## 2.9.7
 
 * Forces tone-mapping to SDR on iOS to prevent washed-out HDR video playback.

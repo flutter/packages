@@ -16,12 +16,15 @@ let package = Package(
   products: [
     .library(name: "in-app-purchase-storekit", targets: ["in_app_purchase_storekit"])
   ],
-  dependencies: [],
+  dependencies: [
+    .package(name: "FlutterFramework", path: "../FlutterFramework")
+  ],
   targets: [
     .target(
       name: "in_app_purchase_storekit",
       dependencies: [
-        "in_app_purchase_storekit_objc"
+        .product(name: "FlutterFramework", package: "FlutterFramework"),
+        "in_app_purchase_storekit_objc",
       ],
       resources: [
         .process("Resources/PrivacyInfo.xcprivacy")

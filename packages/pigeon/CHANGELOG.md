@@ -1,3 +1,7 @@
+## NEXT
+
+* Adds FlutterFramework dependency to SwiftPM package manifest of platform tests.
+
 ## 27.1.0
 
 * [swift] Adds `CaseIterable` conformance to generated enums.

@@ -1,5 +1,6 @@
-## NEXT
+## 0.10.1+2
 
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11. Adds FlutterFramework dependency to SwiftPM package manifest.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 0.10.1+1

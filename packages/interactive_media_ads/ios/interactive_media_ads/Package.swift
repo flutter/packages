@@ -16,18 +16,20 @@ let package = Package(
     .library(name: "interactive-media-ads", targets: ["interactive_media_ads"])
   ],
   dependencies: [
+    .package(name: "FlutterFramework", path: "../FlutterFramework"),
     .package(
       url: "https://github.com/googleads/swift-package-manager-google-interactive-media-ads-ios",
       // 3.28.10 requires iOS 15+.
-      "3.23.0"..<"3.28.10")
+      "3.23.0"..<"3.28.10"),
   ],
   targets: [
     .target(
       name: "interactive_media_ads",
       dependencies: [
+        .product(name: "FlutterFramework", package: "FlutterFramework"),
         .product(
           name: "GoogleInteractiveMediaAds",
-          package: "swift-package-manager-google-interactive-media-ads-ios")
+          package: "swift-package-manager-google-interactive-media-ads-ios"),
       ],
       resources: [
         .process("Resources")

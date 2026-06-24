@@ -16,11 +16,15 @@ let package = Package(
   products: [
     .library(name: "alternate-language-test-plugin", targets: ["alternate_language_test_plugin"])
   ],
-  dependencies: [],
+  dependencies: [
+    .package(name: "FlutterFramework", path: "../FlutterFramework")
+  ],
   targets: [
     .target(
       name: "alternate_language_test_plugin",
-      dependencies: [],
+      dependencies: [
+        .product(name: "FlutterFramework", package: "FlutterFramework")
+      ],
       resources: [],
       cSettings: [
         .headerSearchPath("include/alternate_language_test_plugin")
