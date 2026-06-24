@@ -51,7 +51,10 @@ import 'theme.dart';
 /// [CarouselView.weighted] is used, then set the [flexWeights] to only have
 /// one integer in the array.
 ///
-/// {@tool snippet}
+// TODO(dkwingsmt): Replace the following block with a blue example container
+// when it's supported.  https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(dkwingsmt): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
 ///
 /// This code snippet shows how to get a vertical full-screen carousel by using
 /// [itemExtent] in [CarouselView].
@@ -82,7 +85,8 @@ import 'theme.dart';
 ///   ),
 /// ),
 /// ```
-/// {@end-tool}
+///
+// TODO(dkwingsmt): End of the blue example container.
 ///
 /// In [CarouselView.weighted], weights are relative proportions. For example,
 /// if the layout weights is `[3, 2, 1]`, it means the first visible item occupies
@@ -108,7 +112,9 @@ import 'theme.dart';
 /// visible items may be slightly compressed during scrolling. The [shrinkExtent]
 /// property controls the minimum allowable size for these compressed items.
 ///
-/// {@tool dartpad}
+// TODO(dkwingsmt): Replace the following block with a blue example container
+// when it's supported.  https://github.com/dart-lang/dartdoc/issues/4243
+///
 /// Here is an example to show different carousel layouts that [CarouselView]
 /// and [CarouselView.weighted] can build.
 ///
@@ -120,9 +126,13 @@ import 'theme.dart';
 ///
 /// This key-driven behavior is dictated by the [ScrollBehavior.pointerAxisModifiers],
 /// while [ScrollBehavior.dragDevices] manages what devices can drag a scrollable.
+//
+// TODO(dkwingsmt): Replace the example with a dartpad block when it's
+// supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
-/// ** See code in examples/api/lib/material/carousel/carousel.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/carousel/carousel.0.dart}
+///
+// TODO(dkwingsmt): End of the blue example container.
 ///
 /// See also:
 ///
