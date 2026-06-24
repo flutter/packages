@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async' show unawaited;
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
@@ -1078,7 +1079,7 @@ void main() {
       };
       await tester.pumpWidget(MaterialApp(routes: routes));
 
-      Navigator.pushNamed(rootKey.currentContext!, '/scaffold');
+      unawaited(Navigator.pushNamed(rootKey.currentContext!, '/scaffold'));
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));
 
@@ -1122,7 +1123,7 @@ void main() {
         ),
       );
 
-      tester.state<NavigatorState>(find.byType(Navigator)).push(routeBuilder());
+      unawaited(tester.state<NavigatorState>(find.byType(Navigator)).push(routeBuilder()));
 
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));
