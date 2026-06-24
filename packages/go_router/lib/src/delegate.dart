@@ -137,7 +137,13 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
       assert(!popped);
       return popped;
     }
-    final RouteBase routeBase = match.route;
+
+    var leafMatch = match;
+    while (leafMatch is ShellRouteMatch) {
+      leafMatch = leafMatch.matches.last;
+    }
+
+    final RouteBase routeBase = leafMatch.route;
     if (routeBase is! GoRoute || routeBase.onExit == null) {
       route.didPop(result);
       _completeRouteMatch(result, match);
@@ -150,7 +156,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
     scheduleMicrotask(() async {
       final bool onExitResult = await routeBase.onExit!(
         navigatorKey.currentContext!,
-        match.buildState(_configuration, currentConfiguration),
+        leafMatch.buildState(_configuration, currentConfiguration),
       );
       if (onExitResult) {
         _completeRouteMatch(result, match);
