@@ -1242,6 +1242,26 @@ PlatformMarkerType _platformMarkerTypeFromMarkerType(MarkerType markerType) {
   };
 }
 
+PlatformMapColorScheme? _platformMapColorSchemeFromMapColorScheme(MapColorScheme? colorScheme) {
+  if (colorScheme == null) {
+    return null;
+  }
+  switch (colorScheme) {
+    case MapColorScheme.light:
+      return PlatformMapColorScheme.light;
+    case MapColorScheme.dark:
+      return PlatformMapColorScheme.dark;
+    case MapColorScheme.followSystem:
+      return PlatformMapColorScheme.followSystem;
+    // The enum comes from a different package, which could get a new value at
+    // any time, so provide a fallback that ensures this won't break when used
+    // with a version that contains new values.
+    // ignore: no_default_cases, unreachable_switch_default
+    default:
+      throw UnimplementedError('MapColorScheme "$colorScheme" has not been implemented');
+  }
+}
+
 PlatformMapConfiguration _platformMapConfigurationFromMapConfiguration(MapConfiguration config) {
   return PlatformMapConfiguration(
     compassEnabled: config.compassEnabled,
@@ -1267,6 +1287,7 @@ PlatformMapConfiguration _platformMapConfigurationFromMapConfiguration(MapConfig
     markerType: _platformMarkerTypeFromMarkerType(config.markerType ?? MarkerType.marker),
     mapId: config.mapId,
     style: config.style,
+    colorScheme: _platformMapColorSchemeFromMapColorScheme(config.colorScheme),
   );
 }
 

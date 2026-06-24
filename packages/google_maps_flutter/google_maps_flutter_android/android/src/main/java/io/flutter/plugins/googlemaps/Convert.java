@@ -577,6 +577,18 @@ class Convert {
     if (style != null) {
       sink.setMapStyle(style);
     }
+    final PlatformMapColorScheme colorScheme = config.getColorScheme();
+    if (colorScheme != null) {
+      sink.setMapColorScheme(toMapColorScheme(colorScheme));
+    }
+  }
+
+  static int toMapColorScheme(@NonNull PlatformMapColorScheme colorScheme) {
+    return switch (colorScheme) {
+      case LIGHT -> com.google.android.gms.maps.model.MapColorScheme.LIGHT;
+      case DARK -> com.google.android.gms.maps.model.MapColorScheme.DARK;
+      case FOLLOW_SYSTEM -> com.google.android.gms.maps.model.MapColorScheme.FOLLOW_SYSTEM;
+    };
   }
 
   /** Set the options in the given object to marker options sink. */

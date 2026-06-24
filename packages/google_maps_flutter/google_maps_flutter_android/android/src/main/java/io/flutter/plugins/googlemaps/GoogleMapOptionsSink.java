@@ -64,4 +64,6 @@ interface GoogleMapOptionsSink {
   void setInitialGroundOverlays(@NonNull List<PlatformGroundOverlay> initialGroundOverlays);
 
   void setMapStyle(@Nullable String style);
+
+  void setMapColorScheme(@Nullable Integer colorScheme);
 }
