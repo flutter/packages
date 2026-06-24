@@ -35,6 +35,7 @@ class _MapClickBodyState extends State<_MapClickBody> {
   GoogleMapController? mapController;
   LatLng? _lastTap;
   LatLng? _lastLongPress;
+  String? _lastPointOfInterestPlaceId;
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +50,11 @@ class _MapClickBodyState extends State<_MapClickBody> {
       onLongPress: (LatLng pos) {
         setState(() {
           _lastLongPress = pos;
+        });
+      },
+      onPointOfInterestTap: (PointOfInterestId pointOfInterestId) {
+        setState(() {
+          _lastPointOfInterestPlaceId = pointOfInterestId.value;
         });
       },
     );
@@ -71,6 +77,17 @@ class _MapClickBodyState extends State<_MapClickBody> {
       columnChildren.add(
         Center(
           child: Text(_lastLongPress != null ? 'Long pressed' : '', textAlign: TextAlign.center),
+        ),
+      );
+      final lastPointOfInterestTap =
+          'Point of interest place ID:\n${_lastPointOfInterestPlaceId ?? ""}\n';
+      columnChildren.add(Center(child: Text(lastPointOfInterestTap, textAlign: TextAlign.center)));
+      columnChildren.add(
+        Center(
+          child: Text(
+            _lastPointOfInterestPlaceId != null ? 'Point of interest tapped' : '',
+            textAlign: TextAlign.center,
+          ),
         ),
       );
     }

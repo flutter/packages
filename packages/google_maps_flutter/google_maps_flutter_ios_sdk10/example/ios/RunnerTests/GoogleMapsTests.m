@@ -27,6 +27,35 @@
 
 @end
 
+// Records messages sent through a FlutterBinaryMessenger.
+@interface CapturingBinaryMessenger : NSObject <FlutterBinaryMessenger>
+@property(nonatomic, copy, nullable) NSString *lastChannel;
+@property(nonatomic, strong, nullable) NSData *lastMessage;
+@end
+
+@implementation CapturingBinaryMessenger
+- (void)sendOnChannel:(NSString *)channel message:(NSData *)message {
+  self.lastChannel = channel;
+  self.lastMessage = message;
+}
+- (void)sendOnChannel:(NSString *)channel
+              message:(NSData *)message
+          binaryReply:(FlutterBinaryReply)reply {
+  self.lastChannel = channel;
+  self.lastMessage = message;
+  if (reply) {
+    reply(nil);
+  }
+}
+- (void)cleanUpConnection:(FlutterBinaryMessengerConnection)connection {
+}
+- (FlutterBinaryMessengerConnection)setMessageHandlerOnChannel:(nonnull NSString *)channel
+                                          binaryMessageHandler:
+                                              (FlutterBinaryMessageHandler _Nullable)handler {
+  return 0;
+}
+@end
+
 // No-op implementation of FlutterBinaryMessenger.
 @interface StubBinaryMessenger : NSObject <FlutterBinaryMessenger>
 @end
@@ -187,6 +216,59 @@
   XCTAssertTrue(mockTransactionWrapper.commitCalled);
   XCTAssertEqual(mockTransactionWrapper.animationDuration,
                  [durationMilliseconds doubleValue] / 1000);
+}
+
+- (void)testDidTapPOIForwardsPlaceId {
+  CGRect frame = CGRectMake(0, 0, 100, 100);
+  GMSMapViewOptions *mapViewOptions = [[GMSMapViewOptions alloc] init];
+  mapViewOptions.frame = frame;
+  mapViewOptions.camera = [[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0];
+
+  PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc] initWithOptions:mapViewOptions];
+
+  CapturingBinaryMessenger *binaryMessenger = [[CapturingBinaryMessenger alloc] init];
+  FGMGoogleMapController *controller =
+      [[FGMGoogleMapController alloc] initWithMapView:mapView
+                                       viewIdentifier:0
+                                   creationParameters:[self emptyCreationParameters]
+                                        assetProvider:[[TestAssetProvider alloc] init]
+                                      binaryMessenger:binaryMessenger];
+
+  [controller mapView:mapView
+      didTapPOIWithPlaceID:@"place-123"
+                      name:@"Test Place"
+                  location:CLLocationCoordinate2DMake(0, 0)];
+
+  XCTAssertTrue([binaryMessenger.lastChannel containsString:@"onPointOfInterestTap"]);
+  NSObject<FlutterMessageCodec> *codec = FGMGetGoogleMapsFlutterPigeonMessagesCodec();
+  NSArray *args = [codec decode:binaryMessenger.lastMessage];
+  XCTAssertEqual(args.count, 1);
+  XCTAssertEqualObjects(args[0], @"place-123");
+}
+
+- (void)testDidTapPOINilPlaceIdDoesNotForward {
+  CGRect frame = CGRectMake(0, 0, 100, 100);
+  GMSMapViewOptions *mapViewOptions = [[GMSMapViewOptions alloc] init];
+  mapViewOptions.frame = frame;
+  mapViewOptions.camera = [[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0];
+
+  PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc] initWithOptions:mapViewOptions];
+
+  CapturingBinaryMessenger *binaryMessenger = [[CapturingBinaryMessenger alloc] init];
+  FGMGoogleMapController *controller =
+      [[FGMGoogleMapController alloc] initWithMapView:mapView
+                                       viewIdentifier:0
+                                   creationParameters:[self emptyCreationParameters]
+                                        assetProvider:[[TestAssetProvider alloc] init]
+                                      binaryMessenger:binaryMessenger];
+
+  [controller mapView:mapView
+      didTapPOIWithPlaceID:nil
+                      name:@"Test Place"
+                  location:CLLocationCoordinate2DMake(0, 0)];
+
+  XCTAssertNil(binaryMessenger.lastChannel);
+  XCTAssertNil(binaryMessenger.lastMessage);
 }
 
 - (void)testInspectorAPICameraPosition {

@@ -50,6 +50,7 @@ void main() {
       main_file.MinMaxZoomPreference;
       main_file.PatternItem;
       main_file.PinConfig;
+      main_file.PointOfInterestId;
       main_file.Polygon;
       main_file.PolygonId;
       main_file.Polyline;
