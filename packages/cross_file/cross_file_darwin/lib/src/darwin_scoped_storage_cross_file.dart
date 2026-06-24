@@ -6,7 +6,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
-import 'dart:math';
 import 'dart:ui';
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
@@ -14,6 +13,7 @@ import 'package:flutter/foundation.dart';
 import 'package:objective_c/objective_c.dart';
 import 'package:path/path.dart' as path;
 
+import 'byte_range_filter.dart';
 import 'ffi_bindings.g.dart';
 import 'security_scoped_resource.dart';
 
@@ -204,6 +204,8 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
 
     final streamController = StreamController<Uint8List>();
 
+    final filter = ByteRangeFilter(start: 0, end: end);
+
     final PHAssetResource? resource = _tryGetAssetResource(identifier: params.uri);
     if (resource == null) {
       streamController.addError(
@@ -213,41 +215,14 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
       return streamController.stream;
     }
 
-    var currentByteIndex = 0;
-
     void dataReceivedHandler(NSData data) {
       final Uint8List bytes = _extractBytesToUint8List(data);
 
       runOnPlatformThread(() {
-        final int newByteIndex = currentByteIndex + bytes.length;
-        final int startOrZero = start ?? 0;
-
-        if (end == null) {
-          if (currentByteIndex >= startOrZero) {
-            streamController.add(bytes);
-          } else {
-            if (newByteIndex > startOrZero) {
-              streamController.add(bytes.sublist(startOrZero - currentByteIndex));
-            }
-          }
-        } else {
-          final int bytesLeftToRead = end - max(currentByteIndex, startOrZero);
-
-          if (bytesLeftToRead > 0) {
-            if (currentByteIndex >= startOrZero) {
-              streamController.add(bytes.sublist(0, min(bytesLeftToRead, bytes.length)));
-            } else if (newByteIndex > startOrZero) {
-              streamController.add(
-                bytes.sublist(
-                  startOrZero - currentByteIndex,
-                  min(startOrZero - currentByteIndex + bytesLeftToRead, bytes.length),
-                ),
-              );
-            }
-          }
+        final Uint8List inRangeBytes = filter.addBytes(bytes);
+        if (inRangeBytes.isNotEmpty) {
+          streamController.add(inRangeBytes);
         }
-
-        currentByteIndex = newByteIndex;
       });
     }
 
