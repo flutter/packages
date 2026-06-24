@@ -50,6 +50,9 @@ allowed_dependencies:
 
     ## Allowed by default:
 
+    # flutter/core-packages
+    - mustache_template
+
     # Dart-team-owned packages
     - analyzer
     - args
@@ -58,6 +61,7 @@ allowed_dependencies:
     - build_config
     - build_runner
     - build_test
+    - clock
     - code_builder
     - collection
     - convert
@@ -109,9 +113,11 @@ allowed_dependencies:
     # Google-owned packages
     - _discoveryapis_commons
     - adaptive_navigation
+    - dart_skills_lint
     - googleapis
     - googleapis_auth
     - json_annotation
+    - material_color_utilities
     - protobuf
     - quiver
     - sanitize_html

@@ -132,6 +132,11 @@ class FlutterSearchRequest {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'FlutterSearchRequest(query: $query)';
+  }
 }
 
 class FlutterSearchReply {
@@ -169,6 +174,11 @@ class FlutterSearchReply {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'FlutterSearchReply(result: $result, error: $error)';
+  }
 }
 
 class FlutterSearchRequests {
@@ -204,6 +214,11 @@ class FlutterSearchRequests {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'FlutterSearchRequests(requests: $requests)';
+  }
 }
 
 class FlutterSearchReplies {
@@ -239,6 +254,11 @@ class FlutterSearchReplies {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'FlutterSearchReplies(replies: $replies)';
+  }
 }
 
 class _PigeonCodec extends StandardMessageCodec {
@@ -283,8 +303,8 @@ class _PigeonCodec extends StandardMessageCodec {
 }
 
 class Api {
-  /// Constructor for [Api].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
+  /// Constructor for [Api]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   Api({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
     : pigeonVar_binaryMessenger = binaryMessenger,
