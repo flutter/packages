@@ -1,4 +1,4 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -60,11 +60,7 @@ class ReadinessChecker {
     await for (final FileSystemEntity entity
         in agentsDir.list(recursive: true, followLinks: false)) {
       if (entity is Link) {
-        final String targetPath = await entity.target();
-        // Resolve target relative to the link's directory
-        final String resolvedTargetPath =
-            p.isAbsolute(targetPath) ? targetPath : p.join(entity.parent.path, targetPath);
-        if (_fileSystem.typeSync(resolvedTargetPath) == FileSystemEntityType.notFound) {
+        if (_fileSystem.typeSync(entity.path) == FileSystemEntityType.notFound) {
           brokenLinks.add(entity.path);
         }
       }
