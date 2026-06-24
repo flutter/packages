@@ -1,9 +1,13 @@
 ---
 name: "pre-push-skill"
-description: "Executes the required pre-push steps for the flutter/packages repository. Call this tool immediately whenever the user asks to push, asks if we/you are ready to push, or wants to validate their local changes can become a pull request."
+description: "Executes the required pre-push steps for the flutter/packages repository. Call this tool immediately whenever the user asks to push, asks if the user/you are ready to push, or wants to validate their local changes are ready to become a pull request."
 ---
 
 # Pre-Push Skill Checks to Verify
+
+## Prerequisites
+
+- `gh` (GitHub CLI) must be installed and authenticated. If not in your PATH, check common locations like `/opt/homebrew/bin/gh` on macOS or `C:\Program Files\GitHub CLI\gh.exe` on Windows.
 
 ## 1. Initial Clean Working Tree Check
 
@@ -31,8 +35,12 @@ git diff --name-only origin/main...HEAD | grep '^packages/camera/camera_android_
 
 If this command outputs nothing,
 then no relevant files were modified in this branch.
-There is no code to push,
-and you can skip all remaining validation steps.
+There is no code to push for camera_android_camerax,
+and you can skip all remaining validation steps and
+jump to "Take Action" where you will
+inform the user that this skill is for working on
+the camera_android_camerax repo and not ready for
+work on other packages.
 
 ## 3. Check Merge Conflicts
 
@@ -43,6 +51,7 @@ is an ancestor of your current `HEAD`.
 Command to run:
 
 ```bash
+git fetch origin main
 git merge-base --is-ancestor origin/main HEAD
 ```
 
@@ -52,7 +61,7 @@ The code is NOT ready to push.
 The latest changes from `main` must be pulled first,
 and then merge conflicts must be resolved.
 
-## 4. Unit Tests
+## 4. Check Unit Tests Pass
 
 Tests ensure that your changes do not break existing functionality
 and that new features work as expected.
@@ -69,6 +78,7 @@ If this command fails, the code is likely not ready to push.
 The tests might have been failing prior to any changes being made,
 so prompt the user to review all found errors
 and fix the newly introduced failures before pushing any code.
+Then, move on to the next verification step.
 
 ## 5. Publish Check (Version and CHANGELOG updates)
 
@@ -87,7 +97,7 @@ If this command fails, the code WAS NOT ready to push.
 The required version bump and changelog entry must be made
 and committed before code can be pushed.
 
-## 6. License Headers
+## 6. Check License Headers
 
 All source files in this repository must include
 the standard copyright and license header.
@@ -101,24 +111,25 @@ dart run script/tool/bin/flutter_plugin_tools.dart license-check --packages came
 If this command fails, the code WAS NOT ready to push.
 Those license errors must be fixed and committed before code is pushed.
 
-## 7. Check for Required Documentation and Tests
+## 7. Check for Required Documentation
 
-Before declaring the task complete,
-verify the requirements for creating a pull request
-in the flutter/packages repository are met:
+Check if the modified or newly added public APIs
+include Dart doc comments (`///`). If not, the code IS NOT ready to
+be pushed.
 
-- **Documentation:** Check if the modified or newly added public APIs
-  include Dart doc comments (`///`). If not, the code IS NOT ready to
-  be pushed.
-- **Tests:** Virtually all changes required a test.
-  See [Test Documentation](https://github.com/flutter/flutter/blob/master/docs/ecosystem/testing/Plugin-Tests.md).
-  Evaluate the change against that testing rubric.
-  Based on the rubric, if the change requires a test,
-  give the user a quote from the testing documentation
-  on what type of test is required for their changes.
-  Beyond the rubric, if you think the change does not meet
-  the documented quality bar, tell the user
-  and only push if they approve the test coverage.
+## 8. Check for Added Tests
+
+Virtually all changes require a test.
+See [Test Documentation](https://github.com/flutter/flutter/blob/master/docs/ecosystem/testing/Plugin-Tests.md).
+Evaluate the change against that testing rubric.
+
+Based on the rubric, if the change requires a test,
+give the user a quote from the testing documentation
+on what type of test is required for their changes.
+Beyond the rubric, if you think the change does not meet
+the documented quality bar, tell the user
+that the code is ready to push only if
+they approve the test coverage.
 
 # Take Action
 First, explicitly state the final verdict to the user
@@ -132,12 +143,32 @@ at the very beginning of your response using a large heading:
 
 Then, provide the user with a brief summary
 of what you verified automatically.
-For example, in the case of failure,
-if unit tests are failing, point to the exact tests and the exact errors.
 For example, in the case of success, if all tests passed,
-communicate that the code is ready to push
-because unit tests passed, the licenses look good,
-and all required publishing steps have been completed.
+communicate:
+
+# YES, you are ready to push!
+[x] Initial Clean Working Tree
+[x] Check for Changed Files
+[x] Check Merge Conflicts
+[x] Check Unit Tests Pass
+[x] Check Publish Check (Version and CHANGELOG updates)
+[x] Check License Headers
+[x] Check for Required Documentation
+[x] Check for Added Tests
+
+If for some reason you had to skip a check or it partially failed but you still think the code is ready to push then call out the skipped work like this: 
+
+# YES, you are ready to push!
+Unit tests failing for <path to failing test> but failure appears unrelated to the work being pushed.
+Publish check failed but the PR is exempt.
+[x] Initial Clean Working Tree
+[x] Check for Changed Files
+[x] Check Merge Conflicts
+[ ] Check Unit Tests Pass
+[ ] Check Publish Check (Version and CHANGELOG updates)
+[x] Check License Headers
+[x] Check for Required Documentation
+[x] Check for Added Tests
 
 If the code is ready to push,
 provide them with the command to create the PR:
@@ -153,4 +184,5 @@ where
   or `[camera_android, camera_android_camerax] Fix crash`
   if both `camera_android` and `camera_android_camerax` were modified).
 - BODY is the PR description that should contain a link
-  to at least one issue that is being fixed.
+  to at least one issue that is being fixed. This description should
+  follow the ../../../../../../.github/PULL_REQUEST_TEMPLATE.md template.
