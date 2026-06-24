@@ -1539,115 +1539,184 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     final ffiApiRegistrarName = 'ffi_bridge.${api.name}Setup';
     indent.newln();
     indent.writeScoped('class $dartApiName {', '}', () {
-      indent.format('''
-  $dartApiName._withRegistrar({$jniApiRegistrarName? jniApi, $ffiApiRegistrarName? ffiApi}) : _jniApi = jniApi, _ffiApi = ffiApi;
-
-  /// Returns instance of $dartApiName with specified [channelName] if one has been registered.
-  static $dartApiName? getInstance({String channelName = defaultInstanceName}) {
-  late $dartApiName res;
-    if (Platform.isAndroid) {
-      final $jniApiRegistrarName? link =
-          $jniApiRegistrarName().getInstance(channelName.toJString());
-      if (link == null) {
-        _throwNoInstanceError(channelName);
+      final List<String> constructorParams = [];
+      final List<String> constructorInitializers = [];
+      final List<String> fields = [];
+      if (generatorOptions.useJni) {
+        constructorParams.add('$jniApiRegistrarName? jniApi');
+        constructorInitializers.add('_jniApi = jniApi');
+        fields.add('late final $jniApiRegistrarName? _jniApi;');
       }
-      res = $dartApiName._withRegistrar(jniApi: link);
-    } else if (Platform.isIOS || Platform.isMacOS) {
-      final $ffiApiRegistrarName? link =
-          $ffiApiRegistrarName.getInstanceWithName(NSString(channelName));
-      if (link == null) {
-        _throwNoInstanceError(channelName);
+      if (generatorOptions.useFfi) {
+        constructorParams.add('$ffiApiRegistrarName? ffiApi');
+        constructorInitializers.add('_ffiApi = ffiApi');
+        fields.add('late final $ffiApiRegistrarName? _ffiApi;');
       }
-      res = $dartApiName._withRegistrar(ffiApi: link);
-    }
-    return res;
-  }
 
-  late final $jniApiRegistrarName? _jniApi;
-  late final $ffiApiRegistrarName? _ffiApi;
-''');
+      final constructorSignature = constructorParams.isEmpty
+          ? ''
+          : '{${constructorParams.join(', ')}}';
+      final constructorInitializerList = constructorInitializers.isEmpty
+          ? ''
+          : ' : ${constructorInitializers.join(', ')}';
+      indent.writeln(
+        '$dartApiName._withRegistrar($constructorSignature)$constructorInitializerList;',
+      );
+
+      indent.newln();
+
+      indent.writeln(
+        '/// Returns instance of $dartApiName with specified [channelName] if one has been registered.',
+      );
+      indent.writeScoped(
+        'static $dartApiName? getInstance({String channelName = defaultInstanceName}) {',
+        '}',
+        () {
+          indent.writeln('late $dartApiName res;');
+          var isFirst = true;
+          if (generatorOptions.useJni) {
+            indent.writeScoped('if (Platform.isAndroid) {', '}', () {
+              indent.writeln('final $jniApiRegistrarName? link =');
+              indent.writeln('    $jniApiRegistrarName().getInstance(channelName.toJString());');
+              indent.writeScoped('if (link == null) {', '}', () {
+                indent.writeln('_throwNoInstanceError(channelName);');
+              });
+              indent.writeln('res = $dartApiName._withRegistrar(jniApi: link);');
+            }, addTrailingNewline: false);
+            isFirst = false;
+          }
+          if (generatorOptions.useFfi) {
+            final elseStr = isFirst ? '' : ' else';
+            indent.addScoped('$elseStr if (Platform.isIOS || Platform.isMacOS) {', '}', () {
+              indent.writeln('final $ffiApiRegistrarName? link =');
+              indent.writeln(
+                '    $ffiApiRegistrarName.getInstanceWithName(NSString(channelName));',
+              );
+              indent.writeScoped('if (link == null) {', '}', () {
+                indent.writeln('_throwNoInstanceError(channelName);');
+              });
+              indent.writeln('res = $dartApiName._withRegistrar(ffiApi: link);');
+            }, addTrailingNewline: false);
+            isFirst = false;
+          }
+          if (!isFirst) {
+            indent.addScoped(' else {', '}', () {
+              indent.writeln(
+                "throw UnsupportedError('Native Interop is not supported on this platform. Use ${api.name} instead.');",
+              );
+            });
+          } else {
+            indent.writeln(
+              "throw UnsupportedError('Native Interop is not supported on this platform. Use ${api.name} instead.');",
+            );
+          }
+          indent.writeln('return res;');
+        },
+      );
+      indent.newln();
+
+      fields.forEach(indent.writeln);
+
+      indent.newln();
+
       for (final Method method in api.methods) {
         indent.writeScoped(
           '${method.isAsynchronous ? 'Future<' : ''}${addGenericTypes(method.returnType)}${method.isAsynchronous ? '>' : ''} ${method.name}(${_getMethodParameterSignature(method.parameters)}) ${method.isAsynchronous ? 'async ' : ''}{',
           '}',
           () {
-            indent.writeScoped('try {', '}', () {
-              indent.writeScoped('if (_jniApi != null) {', '}', () {
-                final _JniType returnType = _JniType.fromTypeDeclaration(method.returnType);
-                final methodCallReturnString =
-                    returnType.type.baseName == 'void' && method.isAsynchronous
-                    ? ''
-                    : (!returnType.nonNullableNeedsUnwrapping &&
-                          !method.returnType.isNullable &&
-                          !method.isAsynchronous)
-                    ? 'return '
-                    : 'final ${returnType.getJniCallReturnType(method.isAsynchronous)} res = ';
-                indent.writeln(
-                  '$methodCallReturnString${method.isAsynchronous ? 'await ' : ''}_jniApi.${method.name}(${_getJniMethodCallArguments(method.parameters)});',
-                );
-                if ((method.returnType.isNullable ||
-                        method.isAsynchronous ||
-                        returnType.nonNullableNeedsUnwrapping) &&
-                    returnType.type.baseName != 'void') {
+            void writeBody() {
+              var isFirstBranch = true;
+              if (generatorOptions.useJni) {
+                indent.writeScoped('if (_jniApi != null) {', '}', () {
+                  final _JniType returnType = _JniType.fromTypeDeclaration(method.returnType);
+                  final methodCallReturnString =
+                      returnType.type.baseName == 'void' && method.isAsynchronous
+                      ? ''
+                      : (!returnType.nonNullableNeedsUnwrapping &&
+                            !method.returnType.isNullable &&
+                            !method.isAsynchronous)
+                      ? 'return '
+                      : 'final ${returnType.getJniCallReturnType(method.isAsynchronous)} res = ';
                   indent.writeln(
-                    'final ${returnType.getDartReturnType(method.isAsynchronous)} dartTypeRes = ${returnType.getToDartCall(method.returnType, varName: 'res', forceConversion: method.isAsynchronous)};',
+                    '$methodCallReturnString${method.isAsynchronous ? 'await ' : ''}_jniApi.${method.name}(${_getJniMethodCallArguments(method.parameters)});',
                   );
-                  indent.writeln('return dartTypeRes;');
-                }
-              }, addTrailingNewline: false);
-              indent.addScoped(' else if (_ffiApi != null) {', '}', () {
-                final _FfiType returnType = _FfiType.fromTypeDeclaration(method.returnType);
-                final methodCallReturnString = returnType.type.isVoid || method.isAsynchronous
-                    ? ''
-                    : 'final ${returnType.getFfiCallReturnType(forceNullable: true)} res = ';
-                indent.writeln('final error = ffi_bridge.${generatorOptions.ffiErrorClassName}();');
-                final forceRes =
-                    !returnType.type.isNullable &&
-                        (returnType.type.baseName == 'int' ||
-                            returnType.type.baseName == 'double' ||
-                            returnType.type.baseName == 'String' ||
-                            returnType.type.baseName == 'bool')
-                    ? '!'
-                    : '';
-                if (method.isAsynchronous) {
-                  indent.format('''
-                    final Completer<${method.returnType.getFullName()}> completer = Completer<${method.returnType.getFullName()}>();
-                    _ffiApi.${_getFfiMethodCallName(method)}(
-                      ${method.parameters.isEmpty ? '' : '${_getFfiMethodCallArguments(method.parameters)},\nwrappedError: '}error,
-                      completionHandler: ffi_bridge.ObjCBlock_ffiVoid${method.returnType.isVoid ? '' : '_${returnType.getFfiCallReturnType(withPrefix: false, asyncBlockMethod: true).replaceAll('?', '')}'}.listener(
-                        (${method.returnType.isVoid ? '' : '${returnType.getFfiCallReturnType(forceNullable: true)} res'}) {
-                          if (error.code != null) {
-                            completer.completeError(_wrapFfiError(error));
-                          } else {
-                            completer.complete(${method.returnType.isVoid ? '' : returnType.getToDartCall(method.returnType, varName: 'res$forceRes', forceConversion: true)});
-                          }
-                        },
-                      ),
-                    );
-                    return await completer.future;
-                    ''');
-                } else {
-                  indent.writeln(
-                    '$methodCallReturnString _ffiApi.${_getFfiMethodCallName(method)}(${_getFfiMethodCallArguments(method.parameters)}${method.parameters.isEmpty ? '' : ', wrappedError: '}error);',
-                  );
-                  indent.writeln('_throwIfFfiError(error);');
-                  if (!returnType.type.isVoid) {
+                  if ((method.returnType.isNullable ||
+                          method.isAsynchronous ||
+                          returnType.nonNullableNeedsUnwrapping) &&
+                      returnType.type.baseName != 'void') {
                     indent.writeln(
-                      'final ${returnType.getDartReturnType(method.isAsynchronous)} dartTypeRes = ${returnType.getToDartCall(method.returnType, varName: 'res$forceRes')};',
+                      'final ${returnType.getDartReturnType(method.isAsynchronous)} dartTypeRes = ${returnType.getToDartCall(method.returnType, varName: 'res', forceConversion: method.isAsynchronous)};',
                     );
                     indent.writeln('return dartTypeRes;');
-                  } else {
-                    indent.writeln('return;');
                   }
-                }
-              }, addTrailingNewline: false);
+                }, addTrailingNewline: false);
+                isFirstBranch = false;
+              }
+              if (generatorOptions.useFfi) {
+                final elseStr = isFirstBranch ? '' : ' else';
+                indent.addScoped('$elseStr if (_ffiApi != null) {', '}', () {
+                  final _FfiType returnType = _FfiType.fromTypeDeclaration(method.returnType);
+                  final methodCallReturnString = returnType.type.isVoid || method.isAsynchronous
+                      ? ''
+                      : 'final ${returnType.getFfiCallReturnType(forceNullable: true)} res = ';
+                  indent.writeln(
+                    'final error = ffi_bridge.${generatorOptions.ffiErrorClassName}();',
+                  );
+                  final forceRes =
+                      !returnType.type.isNullable &&
+                          (returnType.type.baseName == 'int' ||
+                              returnType.type.baseName == 'double' ||
+                              returnType.type.baseName == 'String' ||
+                              returnType.type.baseName == 'bool')
+                      ? '!'
+                      : '';
+                  if (method.isAsynchronous) {
+                    indent.format('''
+final Completer<${method.returnType.getFullName()}> completer = Completer<${method.returnType.getFullName()}>();
+_ffiApi.${_getFfiMethodCallName(method)}(
+  ${method.parameters.isEmpty ? '' : '${_getFfiMethodCallArguments(method.parameters)},\nwrappedError: '}error,
+  completionHandler: ffi_bridge.ObjCBlock_ffiVoid${method.returnType.isVoid ? '' : '_${returnType.getFfiCallReturnType(withPrefix: false, asyncBlockMethod: true).replaceAll('?', '')}'}.listener(
+    (${method.returnType.isVoid ? '' : '${returnType.getFfiCallReturnType(forceNullable: true)} res'}) {
+      if (error.code != null) {
+        completer.completeError(_wrapFfiError(error));
+      } else {
+        completer.complete(${method.returnType.isVoid ? '' : returnType.getToDartCall(method.returnType, varName: 'res$forceRes', forceConversion: true)});
+      }
+    },
+  ),
+);
+return ${generatorOptions.useJni ? 'await ' : ''}completer.future;
+''');
+                  } else {
+                    indent.writeln(
+                      '$methodCallReturnString _ffiApi.${_getFfiMethodCallName(method)}(${_getFfiMethodCallArguments(method.parameters)}${method.parameters.isEmpty ? '' : ', wrappedError: '}error);',
+                    );
+                    indent.writeln('_throwIfFfiError(error);');
+                    if (!returnType.type.isVoid) {
+                      indent.writeln(
+                        'final ${returnType.getDartReturnType(method.isAsynchronous)} dartTypeRes = ${returnType.getToDartCall(method.returnType, varName: 'res$forceRes')};',
+                      );
+                      indent.writeln('return dartTypeRes;');
+                    } else {
+                      indent.writeln('return;');
+                    }
+                  }
+                }, addTrailingNewline: false);
+                isFirstBranch = false;
+              }
               indent.addScoped(' else {', '}', () {
                 indent.writeln("throw Exception('No JNI or FFI api available');");
               });
-            }, addTrailingNewline: false);
-            indent.addScoped(' on JThrowable catch (e) {', '}', () {
-              indent.writeln('throw _wrapJniException(e);');
-            });
+            }
+
+            if (generatorOptions.useJni) {
+              indent.writeScoped('try {', '}', writeBody, addTrailingNewline: false);
+              indent.addScoped(' on JThrowable catch (e) {', '}', () {
+                indent.writeln('throw _wrapJniException(e);');
+              });
+            } else {
+              writeBody();
+            }
           },
         );
         indent.newln();
@@ -1834,6 +1903,15 @@ ${api.name}({
 ''');
 
       if (usesNativeInterop(generatorOptions)) {
+        final List<String> platforms = [];
+        if (generatorOptions.useJni) {
+          platforms.add('Platform.isAndroid');
+        }
+        if (generatorOptions.useFfi) {
+          platforms.add('Platform.isIOS');
+          platforms.add('Platform.isMacOS');
+        }
+        final String platformsCondition = platforms.join(' || ');
         indent.format('''
   /// Creates an instance of [${api.name}] that requests an instance of
   /// [${api.name}ForNativeInterop] from the host platform with a matching instance name
@@ -1846,7 +1924,7 @@ ${api.name}({
   }) {
     ${api.name}ForNativeInterop? nativeInteropApi;
     String nativeInteropApiInstanceName = '';
-    if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
+    if ($platformsCondition) {
       if (messageChannelSuffix.isEmpty) {
         nativeInteropApi = ${api.name}ForNativeInterop.getInstance();
       } else {
@@ -1854,6 +1932,9 @@ ${api.name}({
         nativeInteropApi = ${api.name}ForNativeInterop.getInstance(
             channelName: messageChannelSuffix);
       }
+    } else {
+      throw UnsupportedError(
+          'Native Interop is not supported on this platform. Use the default constructor of ${api.name} instead.');
     }
     if (nativeInteropApi == null) {
       throw ArgumentError(

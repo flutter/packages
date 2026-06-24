@@ -691,6 +691,10 @@ class ExampleHostApiForNativeInterop {
         _throwNoInstanceError(channelName);
       }
       res = ExampleHostApiForNativeInterop._withRegistrar(ffiApi: link);
+    } else {
+      throw UnsupportedError(
+        'Native Interop is not supported on this platform. Use ExampleHostApi instead.',
+      );
     }
     return res;
   }
@@ -800,6 +804,10 @@ class ExampleHostApi {
           channelName: messageChannelSuffix,
         );
       }
+    } else {
+      throw UnsupportedError(
+        'Native Interop is not supported on this platform. Use the default constructor of ExampleHostApi instead.',
+      );
     }
     if (nativeInteropApi == null) {
       throw ArgumentError(

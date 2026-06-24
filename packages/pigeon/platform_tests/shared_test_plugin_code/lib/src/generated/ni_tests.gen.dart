@@ -2563,6 +2563,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
         _throwNoInstanceError(channelName);
       }
       res = NIHostIntegrationCoreApiForNativeInterop._withRegistrar(ffiApi: link);
+    } else {
+      throw UnsupportedError(
+        'Native Interop is not supported on this platform. Use NIHostIntegrationCoreApi instead.',
+      );
     }
     return res;
   }
@@ -9034,6 +9038,10 @@ class NIHostIntegrationCoreApi {
           channelName: messageChannelSuffix,
         );
       }
+    } else {
+      throw UnsupportedError(
+        'Native Interop is not supported on this platform. Use the default constructor of NIHostIntegrationCoreApi instead.',
+      );
     }
     if (nativeInteropApi == null) {
       throw ArgumentError(
