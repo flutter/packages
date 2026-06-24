@@ -653,12 +653,16 @@ class _TreeViewState<T> extends State<TreeView<T>>
         _unpackActiveNodes(depth: depth + 1, nodes: node.children, parent: node);
       }
     }
+    if (depth == 0) {
+      setState(() {
+        _treeRowBuilderDelegate.rowCount = _activeNodes.length;
+      });
+    }
   }
 
   final Map<TreeViewNode<T>, _AnimationRecord> _currentAnimationForParent =
       <TreeViewNode<T>, _AnimationRecord>{};
-  final Map<UniqueKey, TreeViewNodesAnimation> _activeAnimations =
-      <UniqueKey, TreeViewNodesAnimation>{};
+  Map<UniqueKey, TreeViewNodesAnimation> _activeAnimations = <UniqueKey, TreeViewNodesAnimation>{};
 
   void _setTreeRowBuilderDelegate() {
     _treeRowBuilderDelegate = TreeRowBuilderDelegate(
@@ -689,6 +693,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
   @override
   void initState() {
     super.initState();
+    _setTreeRowBuilderDelegate();
     _unpackActiveNodes();
     assert(
       widget.controller?._state == null,
@@ -698,7 +703,6 @@ class _TreeViewState<T> extends State<TreeView<T>>
     );
     _treeController = widget.controller ?? TreeViewController();
     _treeController!._state = this;
-    _setTreeRowBuilderDelegate();
   }
 
   @override
@@ -733,8 +737,14 @@ class _TreeViewState<T> extends State<TreeView<T>>
     assert(_treeController != null);
     assert(_treeController!._state != null);
     _unpackActiveNodes();
-    _treeRowBuilderDelegate.dispose();
-    _setTreeRowBuilderDelegate();
+    if (oldWidget.addAutomaticKeepAlives != widget.addAutomaticKeepAlives ||
+        oldWidget.treeNodeBuilder != widget.treeNodeBuilder ||
+        oldWidget.treeRowBuilder != widget.treeRowBuilder ||
+        oldWidget.addRepaintBoundaries != widget.addRepaintBoundaries ||
+        oldWidget.toggleAnimationStyle != widget.toggleAnimationStyle) {
+      _treeRowBuilderDelegate.dispose();
+      _setTreeRowBuilderDelegate();
+    }
   }
 
   @override
@@ -866,7 +876,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
     // The indexes of various child node animations can change constantly based
     // on more nodes being expanded or collapsed. Compile the indexes and their
     // animations keys each time we build with an updated active node list.
-    _activeAnimations.clear();
+    _activeAnimations = <UniqueKey, TreeViewNodesAnimation>{};
     for (final TreeViewNode<T> node in _currentAnimationForParent.keys) {
       final _AnimationRecord animationRecord = _currentAnimationForParent[node]!;
       final int leadingChildIndex = _activeNodes.indexOf(node) + 1;
@@ -977,7 +987,7 @@ class _TreeView extends TwoDimensionalScrollView {
     super.dragStartBehavior,
     super.keyboardDismissBehavior,
     super.clipBehavior,
-    required super.delegate,
+    required TreeRowBuilderDelegate super.delegate,
     required this.activeAnimations,
     required this.rowDepths,
     required this.indentation,
