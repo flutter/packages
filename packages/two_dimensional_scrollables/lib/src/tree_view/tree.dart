@@ -618,6 +618,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
     with TickerProviderStateMixin, TreeViewStateMixin<T> {
   TreeViewController get controller => _treeController!;
   TreeViewController? _treeController;
+  late TreeRowBuilderDelegate _treeRowBuilderDelegate;
 
   // The flat representation of the tree, omitting nodes that are not active.
   final List<TreeViewNode<T>> _activeNodes = <TreeViewNode<T>>[];
@@ -659,8 +660,35 @@ class _TreeViewState<T> extends State<TreeView<T>>
   final Map<UniqueKey, TreeViewNodesAnimation> _activeAnimations =
       <UniqueKey, TreeViewNodesAnimation>{};
 
+  void _setTreeRowBuilderDelegate() {
+    _treeRowBuilderDelegate = TreeRowBuilderDelegate(
+      nodeBuilder: (BuildContext context, ChildVicinity vicinity) {
+        vicinity = vicinity as TreeVicinity;
+        final TreeViewNode<T> node = _activeNodes[vicinity.row];
+        assert(vicinity.depth == node.depth);
+        Widget child = widget.treeNodeBuilder(
+          context,
+          node,
+          widget.toggleAnimationStyle ?? TreeView.defaultToggleAnimationStyle,
+        );
+
+        if (widget.addRepaintBoundaries) {
+          child = RepaintBoundary(child: child);
+        }
+
+        return child;
+      },
+      rowBuilder: (TreeVicinity vicinity) {
+        return widget.treeRowBuilder(_activeNodes[vicinity.row]);
+      },
+      rowCount: _activeNodes.length,
+      addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
+    );
+  }
+
   @override
   void initState() {
+    super.initState();
     _unpackActiveNodes();
     assert(
       widget.controller?._state == null,
@@ -670,7 +698,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
     );
     _treeController = widget.controller ?? TreeViewController();
     _treeController!._state = this;
-    super.initState();
+    _setTreeRowBuilderDelegate();
   }
 
   @override
@@ -705,6 +733,8 @@ class _TreeViewState<T> extends State<TreeView<T>>
     assert(_treeController != null);
     assert(_treeController!._state != null);
     _unpackActiveNodes();
+    _treeRowBuilderDelegate.dispose();
+    _setTreeRowBuilderDelegate();
   }
 
   @override
@@ -714,6 +744,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
       record.animation.dispose();
       record.controller.dispose();
     }
+    _treeRowBuilderDelegate.dispose();
     super.dispose();
   }
 
@@ -729,29 +760,9 @@ class _TreeViewState<T> extends State<TreeView<T>>
       dragStartBehavior: widget.dragStartBehavior,
       keyboardDismissBehavior: widget.keyboardDismissBehavior,
       clipBehavior: widget.clipBehavior,
-      rowCount: _activeNodes.length,
+      delegate: _treeRowBuilderDelegate,
       activeAnimations: _activeAnimations,
       rowDepths: _rowDepths,
-      nodeBuilder: (BuildContext context, ChildVicinity vicinity) {
-        vicinity = vicinity as TreeVicinity;
-        final TreeViewNode<T> node = _activeNodes[vicinity.row];
-        assert(vicinity.depth == node.depth);
-        Widget child = widget.treeNodeBuilder(
-          context,
-          node,
-          widget.toggleAnimationStyle ?? TreeView.defaultToggleAnimationStyle,
-        );
-
-        if (widget.addRepaintBoundaries) {
-          child = RepaintBoundary(child: child);
-        }
-
-        return child;
-      },
-      rowBuilder: (TreeVicinity vicinity) {
-        return widget.treeRowBuilder(_activeNodes[vicinity.row]);
-      },
-      addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
       indentation: widget.indentation.value,
       alignment: widget.alignment,
     );
@@ -955,119 +966,8 @@ class _TreeViewState<T> extends State<TreeView<T>>
   }
 }
 
-class _TreeView extends StatefulWidget {
-  const _TreeView({
-    this.primary,
-    this.mainAxis = Axis.vertical,
-    this.horizontalDetails = const ScrollableDetails.horizontal(),
-    this.verticalDetails = const ScrollableDetails.vertical(),
-    this.cacheExtent,
-    this.diagonalDragBehavior = DiagonalDragBehavior.none,
-    this.dragStartBehavior = DragStartBehavior.start,
-    this.keyboardDismissBehavior,
-    this.clipBehavior = Clip.hardEdge,
-    required this.nodeBuilder,
-    required this.rowBuilder,
-    required this.activeAnimations,
-    required this.rowDepths,
-    required this.indentation,
-    required this.alignment,
-    required this.rowCount,
-    this.addAutomaticKeepAlives = true,
-  });
-
-  final bool? primary;
-
-  final Axis mainAxis;
-
-  final ScrollableDetails horizontalDetails;
-
-  final ScrollableDetails verticalDetails;
-
-  final double? cacheExtent;
-
-  final DiagonalDragBehavior diagonalDragBehavior;
-
-  final DragStartBehavior dragStartBehavior;
-
-  final ScrollViewKeyboardDismissBehavior? keyboardDismissBehavior;
-
-  final Clip clipBehavior;
-
-  final TwoDimensionalIndexedWidgetBuilder nodeBuilder;
-  final TreeVicinityToRowBuilder rowBuilder;
-  final Map<UniqueKey, TreeViewNodesAnimation> activeAnimations;
-  final Map<int, int> rowDepths;
-  final double indentation;
-  final AlignmentGeometry alignment;
-  final int rowCount;
-  final bool addAutomaticKeepAlives;
-
-  @override
-  State<_TreeView> createState() => __TreeViewState();
-}
-
-class __TreeViewState extends State<_TreeView> {
-  late TreeRowBuilderDelegate _delegate;
-
-  @override
-  void initState() {
-    super.initState();
-    _delegate = TreeRowBuilderDelegate(
-      nodeBuilder: widget.nodeBuilder,
-      rowBuilder: widget.rowBuilder,
-      rowCount: widget.rowCount,
-      addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
-    );
-  }
-
-  @override
-  void didUpdateWidget(_TreeView oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (oldWidget.nodeBuilder != widget.nodeBuilder ||
-        oldWidget.rowBuilder != widget.rowBuilder ||
-        oldWidget.rowCount != widget.rowCount ||
-        oldWidget.addAutomaticKeepAlives != widget.addAutomaticKeepAlives) {
-      _delegate.dispose();
-      _delegate = TreeRowBuilderDelegate(
-        nodeBuilder: widget.nodeBuilder,
-        rowBuilder: widget.rowBuilder,
-        rowCount: widget.rowCount,
-        addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
-      );
-    }
-  }
-
-  @override
-  void dispose() {
-    _delegate.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return _TreeViewWidget(
-      primary: widget.primary,
-      mainAxis: widget.mainAxis,
-      horizontalDetails: widget.horizontalDetails,
-      verticalDetails: widget.verticalDetails,
-      cacheExtent: widget.cacheExtent,
-      diagonalDragBehavior: widget.diagonalDragBehavior,
-      dragStartBehavior: widget.dragStartBehavior,
-      keyboardDismissBehavior: widget.keyboardDismissBehavior,
-      clipBehavior: widget.clipBehavior,
-      delegate: _delegate,
-      activeAnimations: widget.activeAnimations,
-      rowDepths: widget.rowDepths,
-      indentation: widget.indentation,
-      alignment: widget.alignment,
-    );
-  }
-}
-
-class _TreeViewWidget extends TwoDimensionalScrollView {
-  _TreeViewWidget({
+class _TreeView extends TwoDimensionalScrollView {
+  _TreeView({
     super.primary,
     super.mainAxis,
     super.horizontalDetails,
