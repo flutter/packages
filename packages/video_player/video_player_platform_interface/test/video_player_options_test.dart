@@ -14,4 +14,12 @@ void main() {
     final options = VideoPlayerOptions();
     expect(options.mixWithOthers, false);
   });
+  test('VideoPlayerOptions androidOptions defaults to null', () {
+    final options = VideoPlayerOptions();
+    expect(options.androidOptions, isNull);
+  });
+  test('VideoPlayerAndroidOptions enableDecoderFallback defaults to false', () {
+    const options = VideoPlayerAndroidOptions();
+    expect(options.enableDecoderFallback, false);
+  });
 }

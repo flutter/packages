@@ -103,6 +103,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
       httpHeaders: httpHeaders,
       userAgent: userAgent,
       formatHint: formatHint,
+      enableDecoderFallback: options.androidOptions?.enableDecoderFallback ?? false,
     );
 
     final int playerId;

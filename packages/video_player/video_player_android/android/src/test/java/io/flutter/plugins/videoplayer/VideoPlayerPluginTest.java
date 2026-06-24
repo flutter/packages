@@ -81,7 +81,8 @@ public class VideoPlayerPluginTest {
               "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
               null,
               new HashMap<>(),
-              null);
+              null,
+              false);
 
       final long playerId = plugin.createForPlatformView(options);
 
@@ -103,12 +104,63 @@ public class VideoPlayerPluginTest {
               "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
               null,
               new HashMap<>(),
-              null);
+              null,
+              false);
 
       final TexturePlayerIds ids = plugin.createForTextureView(options);
 
       final LongSparseArray<VideoPlayer> videoPlayers = getVideoPlayers();
       assertTrue(videoPlayers.get(ids.getPlayerId()) instanceof TextureVideoPlayer);
+    }
+  }
+
+  @Test
+  public void passesDecoderFallbackOptionToPlatformViewVideoPlayer() {
+    try (MockedStatic<PlatformViewVideoPlayer> mockedPlatformViewVideoPlayerStatic =
+        mockStatic(PlatformViewVideoPlayer.class)) {
+      mockedPlatformViewVideoPlayerStatic
+          .when(() -> PlatformViewVideoPlayer.create(any(), any(), any(), any()))
+          .thenAnswer(
+              invocation -> {
+                final VideoPlayerOptions playerOptions = invocation.getArgument(3);
+                assertTrue(playerOptions.enableDecoderFallback);
+                return mock(PlatformViewVideoPlayer.class);
+              });
+
+      final CreationOptions options =
+          new CreationOptions(
+              "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
+              null,
+              new HashMap<>(),
+              null,
+              true);
+
+      plugin.createForPlatformView(options);
+    }
+  }
+
+  @Test
+  public void passesDecoderFallbackOptionToTextureVideoPlayer() {
+    try (MockedStatic<TextureVideoPlayer> mockedTextureVideoPlayerStatic =
+        mockStatic(TextureVideoPlayer.class)) {
+      mockedTextureVideoPlayerStatic
+          .when(() -> TextureVideoPlayer.create(any(), any(), any(), any(), any()))
+          .thenAnswer(
+              invocation -> {
+                final VideoPlayerOptions playerOptions = invocation.getArgument(4);
+                assertTrue(playerOptions.enableDecoderFallback);
+                return mock(TextureVideoPlayer.class);
+              });
+
+      final CreationOptions options =
+          new CreationOptions(
+              "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
+              null,
+              new HashMap<>(),
+              null,
+              true);
+
+      plugin.createForTextureView(options);
     }
   }
 }

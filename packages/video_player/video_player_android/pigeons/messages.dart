@@ -67,11 +67,16 @@ class PlatformVideoViewCreationParams {
 }
 
 class CreationOptions {
-  CreationOptions({required this.uri, required this.httpHeaders});
+  CreationOptions({
+    required this.uri,
+    required this.httpHeaders,
+    required this.enableDecoderFallback,
+  });
   String uri;
   PlatformVideoFormat? formatHint;
   Map<String, String> httpHeaders;
   String? userAgent;
+  bool enableDecoderFallback;
 }
 
 class TexturePlayerIds {
