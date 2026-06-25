@@ -172,6 +172,8 @@ void main() {
   }, variant: TargetPlatformVariant.all());
 
   testWidgets('Radio semantics', (WidgetTester tester) async {
+    final SemanticsHandle handle = tester.ensureSemantics();
+
     await tester.pumpWidget(
       CupertinoApp(
         home: Center(child: CupertinoRadio<int>(value: 1, groupValue: 2, onChanged: (int? i) {})),
@@ -251,9 +253,13 @@ void main() {
         isInMutuallyExclusiveGroup: true,
       ),
     );
+
+    handle.dispose();
   });
 
   testWidgets('has semantic events', (WidgetTester tester) async {
+    final SemanticsHandle handle = tester.ensureSemantics();
+
     final Key key = UniqueKey();
     dynamic semanticEvent;
     int? radioValue = 2;
@@ -290,6 +296,7 @@ void main() {
     });
     expect(object.debugSemantics!.getSemanticsData().hasAction(SemanticsAction.tap), true);
 
+    handle.dispose();
     tester.binding.defaultBinaryMessenger.setMockDecodedMessageHandler<dynamic>(
       SystemChannels.accessibility,
       null,
