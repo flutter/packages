@@ -34,30 +34,20 @@ class PreCommitCommand extends Command<bool> {
   @override
   final String description = 'Checks to run before a "git commit"';
 
-
+  /// Runs a pre-commit check for correct formatting and static analysis.
+  ///
+  /// It will check for any staged changes and run the plugin tool format and analyze commands on them.
+  /// If any of the commands fail, it will return false; otherwise, it will return true.
   @override
   Future<bool> run() async {
-    final ProcessResult rootResult = await processRunner('git', <String>[
-      'rev-parse',
-      '--show-toplevel',
-    ], workingDirectory: Directory.current.path);
-
-    if (rootResult.exitCode != 0) {
-      print('❌ Could not find git repository.');
+    final Directory? repoRoot = await _findRepoRoot();
+    if (repoRoot == null) {
+      print('Could not find git repository.');
       return false;
     }
 
-    final repoRoot = Directory((rootResult.stdout as String).trim());
-
-    // Check if there are any staged changes first to exit early.
-    final ProcessResult diffResult = await processRunner('git', <String>[
-      'diff',
-      '--cached',
-      '--name-only',
-    ], workingDirectory: repoRoot.path);
-
-    if (diffResult.exitCode == 0 && (diffResult.stdout as String).trim().isEmpty) {
-      print('✅ No staged changes to check.');
+    if (!await _hasStagedChanges(repoRoot)) {
+      print('No staged changes to check.');
       return true;
     }
 
@@ -69,9 +59,57 @@ class PreCommitCommand extends Command<bool> {
       'flutter_plugin_tools.dart',
     );
 
-    print('Checking staged changes (format and static analysis)...');
+    print('Running pre-commit format and static analysis checks for staged changes...');
 
-    // Run format first so analyze runs on the final formatted code.
+    // Check format.
+    final bool formatPassed = await _checkFormatting(repoRoot, toolScript);
+    if (!formatPassed) {
+      return false;
+    }
+
+    // Check static analysis if format passed.
+    return _checkStaticAnalysis(repoRoot, toolScript);
+  }
+
+  /// Finds the repository root directory using git.
+  ///
+  /// Returns null if git fails or if the directory is not a git repository.
+  Future<Directory?> _findRepoRoot() async {
+    final ProcessResult rootResult = await processRunner('git', <String>[
+      'rev-parse',
+      '--show-toplevel',
+    ], workingDirectory: Directory.current.path);
+
+    if (rootResult.exitCode != 0) {
+      return null;
+    }
+    return Directory((rootResult.stdout as String).trim());
+  }
+
+  /// Checks if there are any staged changes in the repository.
+  Future<bool> _hasStagedChanges(Directory repoRoot) async {
+    final ProcessResult diffResult = await processRunner('git', <String>[
+      'diff',
+      '--cached',
+      '--name-only',
+    ], workingDirectory: repoRoot.path);
+
+    if (diffResult.exitCode != 0) {
+      print('Failed to check staged changes.');
+      if (diffResult.stderr.toString().isNotEmpty) {
+        print(diffResult.stderr);
+      }
+      // If we cannot determine the diff, abort pre-commit check.
+      return false;
+    }
+
+    return (diffResult.stdout as String).trim().isNotEmpty;
+  }
+
+  /// Runs the formatting check on staged files.
+  ///
+  /// Returns true if all staged files are correctly formatted.
+  Future<bool> _checkFormatting(Directory repoRoot, String toolScript) async {
     final ProcessResult formatResult = await processRunner('dart', [
       'run',
       toolScript,
@@ -80,9 +118,6 @@ class PreCommitCommand extends Command<bool> {
       '--fail-on-change',
     ], workingDirectory: repoRoot.path);
 
-    var hasError = false;
-
-    // Report formatting results.
     if (formatResult.exitCode != 0) {
       if (formatResult.stdout.toString().isNotEmpty) {
         print(formatResult.stdout);
@@ -93,40 +128,37 @@ class PreCommitCommand extends Command<bool> {
       print(
         'Formatting issues found. Please run "dart run script/tool/bin/flutter_plugin_tools.dart format --run-on-staged-packages" to fix them.',
       );
-      hasError = true;
-    } else {
-      print('Formatting looks good!');
+      return false;
     }
 
-    // Only run static analysis if formatting passed, to ensure we analyze the final formatted code.
-    if (!hasError) {
-      final ProcessResult analyzeResult = await processRunner('dart', [
-        'run',
-        toolScript,
-        'analyze',
-        '--run-on-staged-packages',
-        '--dart',
-      ], workingDirectory: repoRoot.path);
+    print('Formatting looks good!');
+    return true;
+  }
 
-      // Report static analysis results.
-      if (analyzeResult.exitCode != 0) {
-        if (analyzeResult.stdout.toString().isNotEmpty) {
-          print(analyzeResult.stdout);
-        }
-        if (analyzeResult.stderr.toString().isNotEmpty) {
-          print(analyzeResult.stderr);
-        }
-        print('Static analysis errors found.');
-        hasError = true;
-      } else {
-        print('Static analysis looks good!');
+  /// Runs the static analysis check on staged files.
+  ///
+  /// Returns true if all staged files pass analysis.
+  Future<bool> _checkStaticAnalysis(Directory repoRoot, String toolScript) async {
+    final ProcessResult analyzeResult = await processRunner('dart', [
+      'run',
+      toolScript,
+      'analyze',
+      '--run-on-staged-packages',
+      '--dart',
+    ], workingDirectory: repoRoot.path);
+
+    if (analyzeResult.exitCode != 0) {
+      if (analyzeResult.stdout.toString().isNotEmpty) {
+        print(analyzeResult.stdout);
       }
-    }
-
-    if (hasError) {
+      if (analyzeResult.stderr.toString().isNotEmpty) {
+        print(analyzeResult.stderr);
+      }
       print('Static analysis failed. Please fix the errors listed above.');
+      return false;
     }
 
-    return !hasError;
+    print('Static analysis looks good!');
+    return true;
   }
 }
