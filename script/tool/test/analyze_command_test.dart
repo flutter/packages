@@ -481,7 +481,7 @@ dev_dependencies:
         );
       });
 
-      test('runs dart_code_linter if present in dependencies', () async {
+      test('does not run dart_code_linter if present in dependencies', () async {
         final RepositoryPackage package = createFakePackage('a_package', packagesDir, isFlutter: true);
         package.pubspecFile.writeAsStringSync('''
 name: a_package
@@ -502,18 +502,6 @@ dependencies:
           orderedEquals(<ProcessCall>[
             ProcessCall('flutter', const <String>['pub', 'get'], package.path),
             ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
-            ProcessCall(
-              'flutter',
-              const <String>[
-                'pub',
-                'run',
-                'dart_code_linter:metrics',
-                'analyze',
-                'lib',
-                '--set-exit-on-violation-level=warning',
-              ],
-              package.path,
-            ),
           ]),
         );
       });

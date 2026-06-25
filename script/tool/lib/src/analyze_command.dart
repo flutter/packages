@@ -323,8 +323,7 @@ class AnalyzeCommand extends PackageLoopingCommand {
 
     final Pubspec pubspec = package.parsePubspec();
     for (final runner in customCheckRunners) {
-      final bool hasDependency = pubspec.devDependencies.containsKey(runner.dependencyName) ||
-          pubspec.dependencies.containsKey(runner.dependencyName);
+      final bool hasDependency = pubspec.devDependencies.containsKey(runner.dependencyName);
       if (hasDependency) {
         final PackageResult result = await runner.run(package);
         if (result.state == RunState.failed) {
