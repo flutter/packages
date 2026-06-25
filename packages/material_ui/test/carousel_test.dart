@@ -3007,6 +3007,7 @@ void main() {
     expect(material.color, Colors.amber);
     expect(material.elevation, 10.0);
     expect(material.shape, const StadiumBorder());
+    expect(find.byKey(key), findsOneWidget);
   });
 
   testWidgets('CarouselView.weightedBuilder items customization', (WidgetTester tester) async {
@@ -3051,6 +3052,7 @@ void main() {
     expect(material.color, Colors.amber);
     expect(material.elevation, 10.0);
     expect(material.shape, const StadiumBorder());
+    expect(find.byKey(key), findsOneWidget);
   });
 }
 
