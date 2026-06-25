@@ -447,10 +447,10 @@ void main() {
         final RepositoryPackage package = createFakePackage('a_package', packagesDir, isFlutter: true);
         _writeFakePubspecWithLinter(package, inDevDependencies: true);
 
-        _mockStandardFlutterAndDartProcesses(processRunner, extraFlutterCalls: [
+        _mockStandardFlutterAndDartProcesses(processRunner, extraDartCalls: [
           FakeProcessInfo(
             MockProcess(),
-            <String>['pub', 'run', 'dart_code_linter:metrics'],
+            <String>['run', 'dart_code_linter:metrics'],
           ),
         ]);
 
@@ -462,9 +462,8 @@ void main() {
             ProcessCall('flutter', const <String>['pub', 'get'], package.path),
             ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
             ProcessCall(
-              'flutter',
+              'dart',
               const <String>[
-                'pub',
                 'run',
                 'dart_code_linter:metrics',
                 'analyze',
@@ -563,10 +562,10 @@ void main() {
         final RepositoryPackage package = createFakePackage('a_package', packagesDir, isFlutter: true);
         _writeFakePubspecWithLinter(package, inDevDependencies: true);
 
-        _mockStandardFlutterAndDartProcesses(processRunner, extraFlutterCalls: [
+        _mockStandardFlutterAndDartProcesses(processRunner, extraDartCalls: [
           FakeProcessInfo(
             MockProcess(exitCode: 1),
-            <String>['pub', 'run', 'dart_code_linter:metrics'],
+            <String>['run', 'dart_code_linter:metrics'],
           ),
         ]);
 
@@ -1696,6 +1695,7 @@ ${inDevDependencies ? 'dev_dependencies:\n  dart_code_linter: 4.1.5' : ''}
 void _mockStandardFlutterAndDartProcesses(
   RecordingProcessRunner processRunner, {
   List<FakeProcessInfo> extraFlutterCalls = const <FakeProcessInfo>[],
+  List<FakeProcessInfo> extraDartCalls = const <FakeProcessInfo>[],
 }) {
   processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
     FakeProcessInfo(
@@ -1709,5 +1709,6 @@ void _mockStandardFlutterAndDartProcesses(
       MockProcess(),
       const <String>['analyze'],
     ),
+    ...extraDartCalls,
   ];
 }
