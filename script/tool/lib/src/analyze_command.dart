@@ -314,6 +314,10 @@ class AnalyzeCommand extends PackageLoopingCommand {
       return PackageResult.fail();
     }
 
+    return _runDartCodeLinterForPackage(package);
+  }
+
+  Future<PackageResult> _runDartCodeLinterForPackage(RepositoryPackage package) async {
     final Pubspec pubspec = package.parsePubspec();
     final bool hasLinter = pubspec.devDependencies.containsKey('dart_code_linter') ||
         pubspec.dependencies.containsKey('dart_code_linter');

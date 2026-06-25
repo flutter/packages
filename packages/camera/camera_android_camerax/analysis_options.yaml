@@ -10,7 +10,7 @@ analyzer:
     - macos/**
     - linux/**
 
-
 dart_code_linter:
   metrics:
     cyclomatic-complexity: 15
+

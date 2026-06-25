@@ -442,6 +442,139 @@ void main() {
       });
     });
 
+    group('dart_code_linter', () {
+      test('runs dart_code_linter if present in dev_dependencies', () async {
+        final RepositoryPackage package = createFakePackage('a_package', packagesDir, isFlutter: true);
+        package.pubspecFile.writeAsStringSync('''
+name: a_package
+version: 0.0.1
+environment:
+  sdk: ">=2.14.0 <4.0.0"
+  flutter: ">=2.5.0"
+dependencies:
+  flutter:
+    sdk: flutter
+dev_dependencies:
+  dart_code_linter: 4.1.5
+''');
+
+        await runCapturingPrint(runner, <String>['analyze']);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall('flutter', const <String>['pub', 'get'], package.path),
+            ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
+            ProcessCall(
+              'flutter',
+              const <String>[
+                'pub',
+                'run',
+                'dart_code_linter:metrics',
+                'analyze',
+                'lib',
+                '--set-exit-on-violation-level=warning',
+              ],
+              package.path,
+            ),
+          ]),
+        );
+      });
+
+      test('runs dart_code_linter if present in dependencies', () async {
+        final RepositoryPackage package = createFakePackage('a_package', packagesDir, isFlutter: true);
+        package.pubspecFile.writeAsStringSync('''
+name: a_package
+version: 0.0.1
+environment:
+  sdk: ">=2.14.0 <4.0.0"
+  flutter: ">=2.5.0"
+dependencies:
+  flutter:
+    sdk: flutter
+  dart_code_linter: 4.1.5
+''');
+
+        await runCapturingPrint(runner, <String>['analyze']);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall('flutter', const <String>['pub', 'get'], package.path),
+            ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
+            ProcessCall(
+              'flutter',
+              const <String>[
+                'pub',
+                'run',
+                'dart_code_linter:metrics',
+                'analyze',
+                'lib',
+                '--set-exit-on-violation-level=warning',
+              ],
+              package.path,
+            ),
+          ]),
+        );
+      });
+
+      test('does not run dart_code_linter if not present', () async {
+        final RepositoryPackage package = createFakePackage('a_package', packagesDir, isFlutter: true);
+
+        await runCapturingPrint(runner, <String>['analyze']);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall('flutter', const <String>['pub', 'get'], package.path),
+            ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
+          ]),
+        );
+      });
+
+      test('fails if dart_code_linter analysis fails', () async {
+        final RepositoryPackage package = createFakePackage('a_package', packagesDir, isFlutter: true);
+        package.pubspecFile.writeAsStringSync('''
+name: a_package
+version: 0.0.1
+environment:
+  sdk: ">=2.14.0 <4.0.0"
+  flutter: ">=2.5.0"
+dependencies:
+  flutter:
+    sdk: flutter
+dev_dependencies:
+  dart_code_linter: 4.1.5
+''');
+
+        // Simulate linter failure.
+        processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(exitCode: 0)), // flutter pub get
+          FakeProcessInfo(MockProcess(exitCode: 1)), // flutter pub run dart_code_linter:metrics...
+        ];
+        processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(exitCode: 0)), // dart analyze
+        ];
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+          runner,
+          <String>['analyze'],
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Metrics violations found (e.g. cyclomatic complexity).'),
+          ]),
+        );
+      });
+    });
+
     test('skips if requested if "pub get" fails in the resolver', () async {
       final RepositoryPackage plugin = createFakePlugin('foo', packagesDir);
 
