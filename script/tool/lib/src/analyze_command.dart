@@ -314,14 +314,22 @@ class AnalyzeCommand extends PackageLoopingCommand {
       return PackageResult.fail();
     }
 
-    final List<Future<PackageResult> Function(RepositoryPackage)> customCheckRunners = [
-      _runDartCodeLinterForPackage,
+    final List<_CustomLinter> customCheckRunners = [
+      _CustomLinter(
+        dependencyName: 'dart_code_linter',
+        run: _runDartCodeLinterForPackage,
+      ),
     ];
 
+    final Pubspec pubspec = package.parsePubspec();
     for (final runner in customCheckRunners) {
-      final PackageResult result = await runner(package);
-      if (result.state == RunState.failed) {
-        return result;
+      final bool hasDependency = pubspec.devDependencies.containsKey(runner.dependencyName) ||
+          pubspec.dependencies.containsKey(runner.dependencyName);
+      if (hasDependency) {
+        final PackageResult result = await runner.run(package);
+        if (result.state == RunState.failed) {
+          return result;
+        }
       }
     }
 
@@ -329,26 +337,21 @@ class AnalyzeCommand extends PackageLoopingCommand {
   }
 
   Future<PackageResult> _runDartCodeLinterForPackage(RepositoryPackage package) async {
-    final Pubspec pubspec = package.parsePubspec();
-    final bool hasLinter = pubspec.devDependencies.containsKey('dart_code_linter') ||
-        pubspec.dependencies.containsKey('dart_code_linter');
-    if (hasLinter) {
-      print('Running dart_code_linter:metrics analysis...');
-      final int linterExitCode = await processRunner.runAndStream(
-        flutterCommand,
-        <String>[
-          'pub',
-          'run',
-          'dart_code_linter:metrics',
-          'analyze',
-          'lib',
-          '--set-exit-on-violation-level=warning',
-        ],
-        workingDir: package.directory,
-      );
-      if (linterExitCode != 0) {
-        return PackageResult.fail(<String>['Metrics violations found (e.g. cyclomatic complexity).']);
-      }
+    print('Running dart_code_linter:metrics analysis...');
+    final int linterExitCode = await processRunner.runAndStream(
+      flutterCommand,
+      <String>[
+        'pub',
+        'run',
+        'dart_code_linter:metrics',
+        'analyze',
+        'lib',
+        '--set-exit-on-violation-level=warning',
+      ],
+      workingDir: package.directory,
+    );
+    if (linterExitCode != 0) {
+      return PackageResult.fail(<String>['Metrics violations found (e.g. cyclomatic complexity).']);
     }
 
     return PackageResult.success();
@@ -474,4 +477,14 @@ class AnalyzeCommand extends PackageLoopingCommand {
     }
     return errors.isEmpty ? PackageResult.success() : PackageResult.fail(errors);
   }
+}
+
+class _CustomLinter {
+  const _CustomLinter({
+    required this.dependencyName,
+    required this.run,
+  });
+
+  final String dependencyName;
+  final Future<PackageResult> Function(RepositoryPackage) run;
 }
