@@ -69,7 +69,7 @@ class PreCommitCommand extends Command<bool> {
       'flutter_plugin_tools.dart',
     );
 
-    print('Checking staged changes...');
+    print('Checking staged changes (format and static analysis)...');
 
     // Run format first so analyze runs on the final formatted code.
     final ProcessResult formatResult = await processRunner('dart', [
