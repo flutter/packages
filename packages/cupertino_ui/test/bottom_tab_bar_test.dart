@@ -2,17 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@Skip(
-  'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
-)
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../image_data.dart';
-import '../widgets/semantics_tester.dart';
+import 'image_data.dart';
 
 Future<void> pumpWidgetWithBoilerplate(WidgetTester tester, Widget widget) async {
   await tester.pumpWidget(
@@ -530,7 +526,7 @@ Future<void> main() async {
   });
 
   testWidgets('tabs announce semantics', (WidgetTester tester) async {
-    final semantics = SemanticsTester(tester);
+    final SemanticsHandle handle = tester.ensureSemantics();
 
     await pumpWidgetWithBoilerplate(
       tester,
@@ -552,21 +548,26 @@ Future<void> main() async {
     );
 
     expect(
-      semantics,
-      includesNodeWith(
+      tester.getSemantics(find.text('Tab 1')),
+      isSemantics(
         label: 'Tab 1',
         hint: 'Tab 1 of 2',
-        flags: <SemanticsFlag>[SemanticsFlag.hasSelectedState, SemanticsFlag.isSelected],
+        isSelected: true,
         textDirection: TextDirection.ltr,
       ),
     );
 
     expect(
-      semantics,
-      includesNodeWith(label: 'Tab 2', hint: 'Tab 2 of 2', textDirection: TextDirection.ltr),
+      tester.getSemantics(find.text('Tab 2')),
+      isSemantics(
+        label: 'Tab 2',
+        hint: 'Tab 2 of 2',
+        isSelected: false,
+        textDirection: TextDirection.ltr,
+      ),
     );
 
-    semantics.dispose();
+    handle.dispose();
   });
 
   testWidgets('Label of items should be nullable', (WidgetTester tester) async {
@@ -709,7 +710,7 @@ Future<void> main() async {
   testWidgets('CupertinoTabBar item semanticsLabel overrides label for accessibility', (
     WidgetTester tester,
   ) async {
-    final semantics = SemanticsTester(tester);
+    final SemanticsHandle handle = tester.ensureSemantics();
 
     await pumpWidgetWithBoilerplate(
       tester,
@@ -733,21 +734,26 @@ Future<void> main() async {
 
     // Tab A should use the custom semanticsLabel
     expect(
-      semantics,
-      includesNodeWith(
+      tester.getSemantics(find.text('A')),
+      isSemantics(
         label: 'Custom A label',
         hint: 'Tab 1 of 2',
-        flags: <SemanticsFlag>[SemanticsFlag.hasSelectedState, SemanticsFlag.isSelected],
+        isSelected: true,
         textDirection: TextDirection.ltr,
       ),
     );
 
     // Tab B should use the default label since no semanticsLabel is provided
     expect(
-      semantics,
-      includesNodeWith(label: 'B', hint: 'Tab 2 of 2', textDirection: TextDirection.ltr),
+      tester.getSemantics(find.text('B')),
+      isSemantics(
+        label: 'B',
+        hint: 'Tab 2 of 2',
+        isSelected: false,
+        textDirection: TextDirection.ltr,
+      ),
     );
 
-    semantics.dispose();
+    handle.dispose();
   });
 }
