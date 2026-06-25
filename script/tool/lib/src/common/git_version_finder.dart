@@ -48,6 +48,23 @@ class GitVersionFinder {
     return changedFiles.toList();
   }
 
+  /// Get a list of all the staged files.
+  Future<List<String>> getStagedFiles() async {
+    final io.ProcessResult changedFilesCommand = await baseGitDir.runCommand(<String>[
+      'diff',
+      '--cached',
+      '--name-only',
+      '--diff-filter=ACM',
+    ]);
+    final changedFilesStdout = changedFilesCommand.stdout.toString();
+    if (changedFilesStdout.isEmpty) {
+      return <String>[];
+    }
+    final List<String> changedFiles = changedFilesStdout.split('\n')
+      ..removeWhere((String element) => element.isEmpty);
+    return changedFiles.toList();
+  }
+
   /// Get a list of all the changed files.
   Future<List<String>> getDiffContents({
     String? targetPath,

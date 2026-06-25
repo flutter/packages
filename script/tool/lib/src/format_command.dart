@@ -393,11 +393,14 @@ class FormatCommand extends PackageLoopingCommand {
     const handFormattedExtension = '.dart';
     const handFormattedPragma = '// This file is hand-formatted.';
 
-    final bool useCustomFiles = argResults!.wasParsed('custom-files');
+    final bool useDiff = getBoolArg('run-on-staged-packages') ||
+        getBoolArg('run-on-dirty-packages') ||
+        getBoolArg('run-on-changed-packages') ||
+        getBoolArg('packages-for-branch');
 
     return files
         .where((File file) {
-          if (useCustomFiles) {
+          if (useDiff) {
             final String repoRelativePath = getRelativePosixPath(file, from: rootDir);
             if (!changedFiles.contains(repoRelativePath)) {
               return false;

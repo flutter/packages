@@ -34,74 +34,20 @@ class PreCommitCommand extends Command<bool> {
   @override
   final String description = 'Checks to run before a "git commit"';
 
-  String? _findPackagePath(String filePath, String repoRoot) {
-    Directory currentDir = File(p.join(repoRoot, filePath)).parent;
-    while (p.isWithin(repoRoot, currentDir.path) || p.equals(repoRoot, currentDir.path)) {
-      final String dirName = p.basename(currentDir.path);
-      if (dirName != 'example' && File(p.join(currentDir.path, 'pubspec.yaml')).existsSync()) {
-        return currentDir.path;
-      }
-      if (p.equals(repoRoot, currentDir.path)) {
-        break;
-      }
-      currentDir = currentDir.parent;
-    }
-    return null;
-  }
 
   @override
   Future<bool> run() async {
-    // Find the repo root where the plugin tool is located.
-    Directory repoRoot = Directory.current;
-    while (repoRoot.path != repoRoot.parent.path &&
-        !(Directory(p.join(repoRoot.path, '.git')).existsSync() ||
-            File(p.join(repoRoot.path, '.git')).existsSync())) {
-      repoRoot = repoRoot.parent;
-    }
-    if (!(Directory(p.join(repoRoot.path, '.git')).existsSync() ||
-        File(p.join(repoRoot.path, '.git')).existsSync())) {
-      print('❌ Could not find .git directory.');
+    final ProcessResult rootResult = await processRunner('git', <String>[
+      'rev-parse',
+      '--show-toplevel',
+    ], workingDirectory: Directory.current.path);
+
+    if (rootResult.exitCode != 0) {
+      print('❌ Could not find git repository.');
       return false;
     }
 
-    // Get all staged files that are added, copied, or modified.
-    final ProcessResult diffResult = await processRunner('git', [
-      'diff',
-      '--cached',
-      '--name-only',
-      '--diff-filter=ACM',
-    ], workingDirectory: repoRoot.path);
-
-    if (diffResult.exitCode != 0) {
-      print('❌ Failed to get staged files');
-      return false;
-    }
-
-    final List<String> stagedFiles = (diffResult.stdout as String)
-        .split('\n')
-        .map((e) => e.trim())
-        .where((e) => e.isNotEmpty)
-        .toList();
-
-    if (stagedFiles.isEmpty) {
-      // No files changed.
-      return true;
-    }
-
-    final Set<String> targetPackageDirs = {};
-    for (final file in stagedFiles) {
-      final String? packageDir = _findPackagePath(file, repoRoot.path);
-      if (packageDir != null) {
-        targetPackageDirs.add(packageDir);
-      }
-    }
-
-    if (targetPackageDirs.isEmpty) {
-      // None of the changed files are part of a package we care about.
-      return true;
-    }
-
-    final Set<String> targetPackages = targetPackageDirs.map((dir) => p.basename(dir)).toSet();
+    final repoRoot = Directory((rootResult.stdout as String).trim());
 
     final String toolScript = p.join(
       repoRoot.path,
@@ -110,13 +56,7 @@ class PreCommitCommand extends Command<bool> {
       'bin',
       'flutter_plugin_tools.dart',
     );
-    final packageArgs = '--packages=${targetPackages.join(',')}';
 
-    final String customFilesArg = '--custom-files=${stagedFiles.join(',')}';
-
-    print(
-      '🏃 Running pre-commit checks on ${targetPackages.length} packages: ${targetPackages.join(', ')}',
-    );
     var hasError = false;
 
     // Check formatting.
@@ -125,25 +65,23 @@ class PreCommitCommand extends Command<bool> {
       'run',
       toolScript,
       'format',
-      customFilesArg,
+      '--run-on-staged-packages',
       '--fail-on-change',
     ], workingDirectory: repoRoot.path);
 
     if (formatResult.exitCode != 0) {
-      if (!hasError) {
-        stdout.write(stdout.supportsAnsiEscapes ? '\x1B[2K\r' : '\n');
-      }
+      stdout.write(stdout.supportsAnsiEscapes ? '\x1B[2K\r' : '\n');
       if (formatResult.stdout.toString().isNotEmpty) {
         print(formatResult.stdout);
       }
       if (formatResult.stderr.toString().isNotEmpty) {
         print(formatResult.stderr);
       }
-      print('❌ Formatting issues found. Please run "dart run script/tool/bin/flutter_plugin_tools.dart format $customFilesArg" to fix them.');
+      print(
+        'Formatting issues found. Please run "dart run script/tool/bin/flutter_plugin_tools.dart format --run-on-staged-packages" to fix them.',
+      );
       hasError = true;
-    }
-
-    if (!hasError) {
+    } else {
       stdout.write(
         stdout.supportsAnsiEscapes
             ? '\x1B[2K\r✅ Formatting looks good.\n'
@@ -152,20 +90,17 @@ class PreCommitCommand extends Command<bool> {
     }
 
     // Run static analysis on staged files.
-    var analyzeHasError = false;
     stdout.write('Running static analysis...');
     final ProcessResult analyzeResult = await processRunner('dart', [
       'run',
       toolScript,
       'analyze',
-      customFilesArg,
+      '--run-on-staged-packages',
       '--dart',
     ], workingDirectory: repoRoot.path);
 
     if (analyzeResult.exitCode != 0) {
-      if (!analyzeHasError) {
-        stdout.write(stdout.supportsAnsiEscapes ? '\x1B[2K\r' : '\n');
-      }
+      stdout.write(stdout.supportsAnsiEscapes ? '\x1B[2K\r' : '\n');
       if (analyzeResult.stdout.toString().isNotEmpty) {
         print(analyzeResult.stdout);
       }
@@ -173,11 +108,8 @@ class PreCommitCommand extends Command<bool> {
         print(analyzeResult.stderr);
       }
       print('❌ Static analysis errors found.');
-      analyzeHasError = true;
       hasError = true;
-    }
-
-    if (!analyzeHasError) {
+    } else {
       stdout.write(
         stdout.supportsAnsiEscapes
             ? '\x1B[2K\r✅ Static analysis looks good.\n'

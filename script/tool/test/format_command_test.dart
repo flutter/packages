@@ -21,6 +21,7 @@ void main() {
   late MockPlatform mockPlatform;
   late Directory packagesDir;
   late RecordingProcessRunner processRunner;
+  late RecordingProcessRunner gitProcessRunner;
   late FormatCommand analyzeCommand;
   late CommandRunner<void> runner;
   late String javaFormatPath;
@@ -29,7 +30,7 @@ void main() {
   setUp(() {
     mockPlatform = MockPlatform();
     final GitDir gitDir;
-    (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) = configureBaseCommandMocks(
+    (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) = configureBaseCommandMocks(
       platform: mockPlatform,
     );
     analyzeCommand = FormatCommand(
@@ -176,6 +177,68 @@ void main() {
       expect(
         output,
         containsAllInOrder(<Matcher>[contains('Failed to format Dart files: exit code 1.')]),
+      );
+    });
+
+    test('formats only uncommitted files when --run-on-dirty-packages is used', () async {
+      const files = <String>['lib/a.dart', 'lib/src/b.dart', 'lib/src/c.dart'];
+      final RepositoryPackage plugin = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+        extraFiles: files,
+        dartConstraint: _dartConstraint,
+      );
+      fakePubGet(plugin);
+
+      // Mock git diff to return only lib/a.dart (called three times)
+      const changedFilePath = 'packages/a_plugin/lib/a.dart';
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: changedFilePath)),
+        FakeProcessInfo(MockProcess(stdout: changedFilePath)),
+        FakeProcessInfo(MockProcess(stdout: changedFilePath)),
+      ];
+
+      await runCapturingPrint(runner, <String>[
+        'format',
+        '--run-on-dirty-packages',
+      ]);
+
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall('dart', const <String>['format', 'lib/a.dart'], plugin.path),
+        ]),
+      );
+    });
+
+    test('formats only staged files when --run-on-staged-packages is used', () async {
+      const files = <String>['lib/a.dart', 'lib/src/b.dart', 'lib/src/c.dart'];
+      final RepositoryPackage plugin = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+        extraFiles: files,
+        dartConstraint: _dartConstraint,
+      );
+      fakePubGet(plugin);
+
+      // Mock git diff --cached to return only lib/src/b.dart (called three times)
+      const stagedFilePath = 'packages/a_plugin/lib/src/b.dart';
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: stagedFilePath)),
+        FakeProcessInfo(MockProcess(stdout: stagedFilePath)),
+        FakeProcessInfo(MockProcess(stdout: stagedFilePath)),
+      ];
+
+      await runCapturingPrint(runner, <String>[
+        'format',
+        '--run-on-staged-packages',
+      ]);
+
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall('dart', const <String>['format', 'lib/src/b.dart'], plugin.path),
+        ]),
       );
     });
 

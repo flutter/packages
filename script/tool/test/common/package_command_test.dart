@@ -1018,6 +1018,55 @@ packages/b_package/lib/src/foo.dart
         expect(command.plugins, unorderedEquals(<String>[packageA.path]));
       });
     });
+
+    group('test run-on-staged-packages', () {
+      test('no packages should be tested if there are no changes.', () async {
+        createFakePackage('a_package', packagesDir);
+        await runCapturingPrint(runner, <String>['sample', '--run-on-staged-packages']);
+
+        expect(command.plugins, unorderedEquals(<String>[]));
+      });
+
+      test('Only changed packages should be tested.', () async {
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'packages/a_package/lib/a_package.dart')),
+        ];
+        final RepositoryPackage packageA = createFakePackage('a_package', packagesDir);
+        createFakePlugin('b_package', packagesDir);
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'sample',
+          '--run-on-staged-packages',
+        ]);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for all packages that have staged changes'),
+          ]),
+        );
+
+        expect(command.plugins, unorderedEquals(<String>[packageA.path]));
+      });
+
+      test('multiple packages changed should test all the changed packages', () async {
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+            MockProcess(
+              stdout: '''
+packages/a_package/lib/a_package.dart
+packages/b_package/lib/src/foo.dart
+''',
+            ),
+          ),
+        ];
+        final RepositoryPackage packageA = createFakePackage('a_package', packagesDir);
+        final RepositoryPackage packageB = createFakePackage('b_package', packagesDir);
+        createFakePackage('c_package', packagesDir);
+        await runCapturingPrint(runner, <String>['sample', '--run-on-staged-packages']);
+
+        expect(command.plugins, unorderedEquals(<String>[packageA.path, packageB.path]));
+      });
+    });
   });
 
   group('--packages-for-branch', () {

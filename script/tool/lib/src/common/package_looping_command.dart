@@ -296,9 +296,14 @@ abstract class PackageLoopingCommand extends PackageCommand {
     final runStart = DateTime.now();
 
     // Populate the list of changed files for subclasses to use.
-    if (argResults!.wasParsed('custom-files')) {
-      baseSha = 'HEAD'; // Since custom-files explicitly lists the files, baseSha doesn't strictly apply, but we need to set it to something.
-      changedFiles = getStringListArg('custom-files');
+    if (getBoolArg('run-on-staged-packages')) {
+      baseSha = 'HEAD';
+      final GitVersionFinder gitVersionFinder = GitVersionFinder(await gitDir, baseSha: baseSha);
+      changedFiles = await gitVersionFinder.getStagedFiles();
+    } else if (getBoolArg('run-on-dirty-packages')) {
+      baseSha = 'HEAD';
+      final GitVersionFinder gitVersionFinder = GitVersionFinder(await gitDir, baseSha: baseSha);
+      changedFiles = await gitVersionFinder.getChangedFiles(includeUncommitted: true);
     } else {
       final GitVersionFinder gitVersionFinder = await retrieveVersionFinder();
       baseSha = await gitVersionFinder.getBaseSha();

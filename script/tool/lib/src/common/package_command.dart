@@ -158,16 +158,15 @@ abstract class PackageCommand extends Command<void> {
           'Currently only logs per-package timing for multi-package commands, '
           'but more information may be added in the future.',
     );
-    argParser.addMultiOption(
-      _customFilesArg,
-      help: 'A list of custom files to run the command on.',
-      hide: true,
+    argParser.addFlag(
+      _runOnStagedPackagesArg,
+      help: 'Run the command on all packages with staged changes.',
     );
   }
 
   // Package selection.
   static const String _packagesArg = 'packages';
-  static const String _customFilesArg = 'custom-files';
+  static const String _runOnStagedPackagesArg = 'run-on-staged-packages';
   static const String _packagesForBranchArg = 'packages-for-branch';
   static const String _currentPackageArg = 'current-package';
   static const String _pluginsLegacyAliasArg = 'plugins';
@@ -393,7 +392,7 @@ abstract class PackageCommand extends Command<void> {
       _runOnDirtyPackagesArg,
       _packagesForBranchArg,
       _currentPackageArg,
-      _customFilesArg,
+      _runOnStagedPackagesArg,
     };
     if (packageSelectionFlags.where((String flag) => argResults!.wasParsed(flag)).length > 1) {
       printError(
@@ -412,6 +411,7 @@ abstract class PackageCommand extends Command<void> {
         !(getBoolArg(_exactMatchOnlyArg) ||
             argResults!.wasParsed(_runOnChangedPackagesArg) ||
             argResults!.wasParsed(_runOnDirtyPackagesArg) ||
+            argResults!.wasParsed(_runOnStagedPackagesArg) ||
             argResults!.wasParsed(_packagesForBranchArg));
 
     var packages = Set<String>.from(getStringListArg(_packagesArg));
@@ -489,9 +489,12 @@ abstract class PackageCommand extends Command<void> {
         throw ToolExit(exitInvalidArguments);
       }
       packages = <String>{currentPackageName};
-    } else if (argResults!.wasParsed(_customFilesArg)) {
-      final List<String> customFiles = getStringListArg(_customFilesArg);
-      packages = _getChangedPackageNames(customFiles);
+    } else if (getBoolArg(_runOnStagedPackagesArg)) {
+      final gitVersionFinder = GitVersionFinder(await gitDir, baseSha: 'HEAD');
+      print('Running for all packages that have staged changes\n');
+      packages = _getChangedPackageNames(
+        await gitVersionFinder.getStagedFiles(),
+      );
       if (packages.isEmpty) {
         return;
       }
