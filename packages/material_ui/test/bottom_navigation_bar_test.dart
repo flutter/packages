@@ -17,6 +17,7 @@ import 'package:vector_math/vector_math_64.dart' show Vector3;
 
 import 'feedback_tester.dart';
 import 'semantics_tester.dart';
+import 'utils/finders.dart';
 
 void main() {
   testWidgets('BottomNavigationBar callback test', (WidgetTester tester) async {
@@ -1713,15 +1714,15 @@ void main() {
 
     expect(find.text('A'), findsOneWidget);
     await tester.longPress(find.text('A'));
-    expect(find.byTooltip('A tooltip'), findsOneWidget);
+    expect(findByTooltip('A tooltip'), findsOneWidget);
 
     expect(find.text('B'), findsOneWidget);
     await tester.longPress(find.text('B'));
-    expect(find.byTooltip('B'), findsNothing);
+    expect(findByTooltip('B'), findsNothing);
 
     expect(find.text('C'), findsOneWidget);
     await tester.longPress(find.text('C'));
-    expect(find.byTooltip('C'), findsNothing);
+    expect(findByTooltip('C'), findsNothing);
   });
 
   testWidgets('BottomNavigationBar limits width of tiles with long labels', (
