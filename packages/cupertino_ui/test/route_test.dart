@@ -2,11 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: only_throw_errors, unawaited_futures
-
 @TestOn('!chrome')
 library;
 
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:cupertino_ui/cupertino_ui.dart';
@@ -2549,12 +2548,14 @@ void main() {
       );
       final BuildContext context = tester.element(find.text('Test'));
 
-      showCupertinoDialog<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return const Placeholder();
-        },
-        anchorPoint: const Offset(1000, 0),
+      unawaited(
+        showCupertinoDialog<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return const Placeholder();
+          },
+          anchorPoint: const Offset(1000, 0),
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -2587,11 +2588,13 @@ void main() {
       );
       final BuildContext context = tester.element(find.text('Test'));
 
-      showCupertinoDialog<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return const Placeholder();
-        },
+      unawaited(
+        showCupertinoDialog<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return const Placeholder();
+          },
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -2624,11 +2627,13 @@ void main() {
       );
       final BuildContext context = tester.element(find.text('Test'));
 
-      showCupertinoDialog<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return const Placeholder();
-        },
+      unawaited(
+        showCupertinoDialog<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return const Placeholder();
+          },
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -2663,12 +2668,14 @@ void main() {
       );
 
       final BuildContext context = tester.element(find.text('Test'));
-      showCupertinoModalPopup<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return const Placeholder();
-        },
-        anchorPoint: const Offset(1000, 0),
+      unawaited(
+        showCupertinoModalPopup<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return const Placeholder();
+          },
+          anchorPoint: const Offset(1000, 0),
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -2701,11 +2708,13 @@ void main() {
       );
 
       final BuildContext context = tester.element(find.text('Test'));
-      showCupertinoModalPopup<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return const Placeholder();
-        },
+      unawaited(
+        showCupertinoModalPopup<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return const Placeholder();
+          },
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -2738,11 +2747,13 @@ void main() {
       );
 
       final BuildContext context = tester.element(find.text('Test'));
-      showCupertinoModalPopup<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return const Placeholder();
-        },
+      unawaited(
+        showCupertinoModalPopup<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return const Placeholder();
+          },
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -3127,10 +3138,12 @@ void main() {
     await tester.pump();
     expect(focusNode.hasFocus, true);
 
-    showCupertinoModalPopup<void>(
-      context: navigatorKey.currentContext!,
-      requestFocus: true,
-      builder: (BuildContext context) => const Text('popup'),
+    unawaited(
+      showCupertinoModalPopup<void>(
+        context: navigatorKey.currentContext!,
+        requestFocus: true,
+        builder: (BuildContext context) => const Text('popup'),
+      ),
     );
     await tester.pumpAndSettle();
     expect(FocusScope.of(tester.element(find.text('popup'))).hasFocus, true);
@@ -3140,10 +3153,12 @@ void main() {
     await tester.pumpAndSettle();
     expect(focusNode.hasFocus, true);
 
-    showCupertinoModalPopup<void>(
-      context: navigatorKey.currentContext!,
-      requestFocus: false,
-      builder: (BuildContext context) => const Text('popup'),
+    unawaited(
+      showCupertinoModalPopup<void>(
+        context: navigatorKey.currentContext!,
+        requestFocus: false,
+        builder: (BuildContext context) => const Text('popup'),
+      ),
     );
     await tester.pumpAndSettle();
     expect(FocusScope.of(tester.element(find.text('popup'))).hasFocus, false);
@@ -3164,10 +3179,12 @@ void main() {
     await tester.pump();
     expect(focusNode.hasFocus, true);
 
-    showCupertinoDialog<void>(
-      context: navigatorKey.currentContext!,
-      requestFocus: true,
-      builder: (BuildContext context) => const Text('dialog'),
+    unawaited(
+      showCupertinoDialog<void>(
+        context: navigatorKey.currentContext!,
+        requestFocus: true,
+        builder: (BuildContext context) => const Text('dialog'),
+      ),
     );
     await tester.pumpAndSettle();
     expect(FocusScope.of(tester.element(find.text('dialog'))).hasFocus, true);
@@ -3177,10 +3194,12 @@ void main() {
     await tester.pumpAndSettle();
     expect(focusNode.hasFocus, true);
 
-    showCupertinoDialog<void>(
-      context: navigatorKey.currentContext!,
-      requestFocus: false,
-      builder: (BuildContext context) => const Text('dialog'),
+    unawaited(
+      showCupertinoDialog<void>(
+        context: navigatorKey.currentContext!,
+        requestFocus: false,
+        builder: (BuildContext context) => const Text('dialog'),
+      ),
     );
     await tester.pumpAndSettle();
     expect(FocusScope.of(tester.element(find.text('dialog'))).hasFocus, false);
