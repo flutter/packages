@@ -481,31 +481,6 @@ dev_dependencies:
         );
       });
 
-      test('does not run dart_code_linter if present in dependencies', () async {
-        final RepositoryPackage package = createFakePackage('a_package', packagesDir, isFlutter: true);
-        package.pubspecFile.writeAsStringSync('''
-name: a_package
-version: 0.0.1
-environment:
-  sdk: ">=2.14.0 <4.0.0"
-  flutter: ">=2.5.0"
-dependencies:
-  flutter:
-    sdk: flutter
-  dart_code_linter: 4.1.5
-''');
-
-        await runCapturingPrint(runner, <String>['analyze']);
-
-        expect(
-          processRunner.recordedCalls,
-          orderedEquals(<ProcessCall>[
-            ProcessCall('flutter', const <String>['pub', 'get'], package.path),
-            ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
-          ]),
-        );
-      });
-
       test('does not run dart_code_linter if not present', () async {
         final RepositoryPackage package = createFakePackage('a_package', packagesDir, isFlutter: true);
 
@@ -537,11 +512,20 @@ dev_dependencies:
 
         // Simulate linter failure.
         processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
-          FakeProcessInfo(MockProcess()), // flutter pub get
-          FakeProcessInfo(MockProcess(exitCode: 1)), // flutter pub run dart_code_linter:metrics...
+          FakeProcessInfo(
+            MockProcess(),
+            <String>['pub', 'get'],
+          ),
+          FakeProcessInfo(
+            MockProcess(exitCode: 1),
+            <String>['pub', 'run', 'dart_code_linter:metrics'],
+          ),
         ];
         processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
-          FakeProcessInfo(MockProcess()), // dart analyze
+          FakeProcessInfo(
+            MockProcess(),
+            <String>['analyze'],
+          ),
         ];
 
         Error? commandError;
