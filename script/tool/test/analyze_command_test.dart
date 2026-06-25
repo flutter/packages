@@ -557,6 +557,26 @@ void main() {
         );
         expect(output, contains('Running dart_code_linter:metrics analysis...'));
       });
+      test('skips dart_code_linter if lib/ does not exist', () async {
+        final RepositoryPackage package = createFakePackage('a_package', packagesDir, isFlutter: true);
+        _writeFakePubspecWithLinter(package, inDevDependencies: true);
+        package.libDirectory.deleteSync(recursive: true);
+
+        _mockStandardFlutterAndDartProcesses(processRunner);
+
+        final List<String> output = await runCapturingPrint(runner, <String>['analyze']);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall('flutter', const <String>['pub', 'get'], package.path),
+            ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
+          ]),
+        );
+        final String combinedOutput = output.join('\n').toLowerCase();
+        expect(combinedOutput, isNot(contains('dart_code_linter')));
+        expect(combinedOutput, isNot(contains('metrics')));
+      });
 
       test('fails if dart_code_linter analysis fails', () async {
         final RepositoryPackage package = createFakePackage('a_package', packagesDir, isFlutter: true);

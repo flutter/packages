@@ -339,6 +339,9 @@ class AnalyzeCommand extends PackageLoopingCommand {
   ///
   /// Assumes `dart_code_linter` is present in `dev_dependencies`.
   Future<PackageResult> _runDartCodeLinterForPackage(RepositoryPackage package) async {
+    if (!package.libDirectory.existsSync()) {
+      return PackageResult.success();
+    }
     print('Running dart_code_linter:metrics analysis...');
     final int linterExitCode = await processRunner.runAndStream(
       _dartBinaryPath,
