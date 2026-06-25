@@ -458,7 +458,25 @@ dev_dependencies:
   dart_code_linter: 4.1.5
 ''');
 
-        await runCapturingPrint(runner, <String>['analyze']);
+        // Explicitly mock all calls.
+        processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+            MockProcess(),
+            <String>['pub', 'get'],
+          ),
+          FakeProcessInfo(
+            MockProcess(),
+            <String>['pub', 'run', 'dart_code_linter:metrics'],
+          ),
+        ];
+        processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+            MockProcess(),
+            <String>['analyze'],
+          ),
+        ];
+
+        final List<String> output = await runCapturingPrint(runner, <String>['analyze']);
 
         expect(
           processRunner.recordedCalls,
@@ -479,12 +497,38 @@ dev_dependencies:
             ),
           ]),
         );
+        expect(output, contains('Running dart_code_linter:metrics analysis...'));
       });
 
-      test('does not run dart_code_linter if not present', () async {
+      test('does not run dart_code_linter if present in dependencies', () async {
         final RepositoryPackage package = createFakePackage('a_package', packagesDir, isFlutter: true);
+        package.pubspecFile.writeAsStringSync('''
+name: a_package
+version: 0.0.1
+environment:
+  sdk: ">=2.14.0 <4.0.0"
+  flutter: ">=2.5.0"
+dependencies:
+  flutter:
+    sdk: flutter
+  dart_code_linter: 4.1.5
+''');
 
-        await runCapturingPrint(runner, <String>['analyze']);
+        // Explicitly mock all calls.
+        processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+            MockProcess(),
+            <String>['pub', 'get'],
+          ),
+        ];
+        processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+            MockProcess(),
+            <String>['analyze'],
+          ),
+        ];
+
+        final List<String> output = await runCapturingPrint(runner, <String>['analyze']);
 
         expect(
           processRunner.recordedCalls,
@@ -493,6 +537,36 @@ dev_dependencies:
             ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
           ]),
         );
+        expect(output, isNot(contains('Running dart_code_linter:metrics analysis...')));
+      });
+
+      test('does not run dart_code_linter if not present', () async {
+        final RepositoryPackage package = createFakePackage('a_package', packagesDir, isFlutter: true);
+
+        // Explicitly mock all calls.
+        processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+            MockProcess(),
+            <String>['pub', 'get'],
+          ),
+        ];
+        processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+            MockProcess(),
+            <String>['analyze'],
+          ),
+        ];
+
+        final List<String> output = await runCapturingPrint(runner, <String>['analyze']);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall('flutter', const <String>['pub', 'get'], package.path),
+            ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
+          ]),
+        );
+        expect(output, isNot(contains('Running dart_code_linter:metrics analysis...')));
       });
 
       test('fails if dart_code_linter analysis fails', () async {
