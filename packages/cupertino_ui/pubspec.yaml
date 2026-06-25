@@ -1,6 +1,6 @@
 name: cupertino_ui
 description: The official Flutter Cupertino Design Library, implementing the iOS design system.
-version: 0.0.2
+version: 0.0.2 # When updating version, also update the following files: dartdoc_options.yaml
 publish_to: none
 repository: https://github.com/flutter/packages/tree/main/packages/cupertino_ui
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A%20cupertino%22

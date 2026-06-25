@@ -1,0 +1,4 @@
+dartdoc:
+  linkToSource:
+    root: '.'
+    uriTemplate: 'https://github.com/flutter/packages/blob/cupertino_ui-v0.0.2/packages/cupertino_ui/%f%#L%l%'
