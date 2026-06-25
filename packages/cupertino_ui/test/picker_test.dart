@@ -131,69 +131,66 @@ void main() {
     final controller = FixedExtentScrollController(initialItem: 1);
     addTearDown(controller.dispose);
 
-    try {
-      await tester.pumpWidget(
-        CupertinoApp(
-          home: SizedBox.square(
-            dimension: 300.0,
-            child: CupertinoPicker(
-              scrollController: controller,
-              itemExtent: 50.0,
-              onSelectedItemChanged: (_) {},
-              children: const <Widget>[
-                Text('0'),
-                // Item at index 1 is excluded from semantics (simulating a disabled item).
-                ExcludeSemantics(child: Text('1')),
-                Text('2'),
-              ],
-            ),
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: SizedBox.square(
+          dimension: 300.0,
+          child: CupertinoPicker(
+            scrollController: controller,
+            itemExtent: 50.0,
+            onSelectedItemChanged: (_) {},
+            children: const <Widget>[
+              Text('0'),
+              // Item at index 1 is excluded from semantics (simulating a disabled item).
+              ExcludeSemantics(child: Text('1')),
+              Text('2'),
+            ],
           ),
         ),
-      );
+      ),
+    );
 
-      // When the current item (index 1) has an empty label due to ExcludeSemantics,
-      // the picker should not have any value or actions set.
-      expect(
-        tester.getSemantics(
-          find.byWidgetPredicate(
-            (Widget widget) => widget.runtimeType.toString() == '_CupertinoPickerSemantics',
-          ),
+    // When the current item (index 1) has an empty label due to ExcludeSemantics,
+    // the picker should not have any value or actions set.
+    expect(
+      tester.getSemantics(
+        find.byWidgetPredicate(
+          (Widget widget) => widget.runtimeType.toString() == '_CupertinoPickerSemantics',
         ),
-        isSemantics(value: '', hasIncreaseAction: false, hasDecreaseAction: false),
-      );
+      ),
+      isSemantics(value: '', hasIncreaseAction: false, hasDecreaseAction: false),
+    );
 
-      // Scroll to item 0 which has a valid label.
-      controller.jumpToItem(0);
-      await tester.pumpAndSettle();
+    // Scroll to item 0 which has a valid label.
+    controller.jumpToItem(0);
+    await tester.pumpAndSettle();
 
-      // Now the picker should have value '0' but no increase action
-      // because the next item (1) has an empty label.
-      expect(
-        tester.getSemantics(
-          find.byWidgetPredicate(
-            (Widget widget) => widget.runtimeType.toString() == '_CupertinoPickerSemantics',
-          ),
+    // Now the picker should have value '0' but no increase action
+    // because the next item (1) has an empty label.
+    expect(
+      tester.getSemantics(
+        find.byWidgetPredicate(
+          (Widget widget) => widget.runtimeType.toString() == '_CupertinoPickerSemantics',
         ),
-        isSemantics(value: '0', hasIncreaseAction: false, hasDecreaseAction: false),
-      );
+      ),
+      isSemantics(value: '0', hasIncreaseAction: false, hasDecreaseAction: false),
+    );
 
-      // Scroll to item 2 which has a valid label.
-      controller.jumpToItem(2);
-      await tester.pumpAndSettle();
+    // Scroll to item 2 which has a valid label.
+    controller.jumpToItem(2);
+    await tester.pumpAndSettle();
 
-      // Now the picker should have value '2' but no decrease action
-      // because the previous item (1) has an empty label.
-      expect(
-        tester.getSemantics(
-          find.byWidgetPredicate(
-            (Widget widget) => widget.runtimeType.toString() == '_CupertinoPickerSemantics',
-          ),
+    // Now the picker should have value '2' but no decrease action
+    // because the previous item (1) has an empty label.
+    expect(
+      tester.getSemantics(
+        find.byWidgetPredicate(
+          (Widget widget) => widget.runtimeType.toString() == '_CupertinoPickerSemantics',
         ),
-        isSemantics(value: '2', hasDecreaseAction: false, hasIncreaseAction: false),
-      );
-    } finally {
-      handle.dispose();
-    }
+      ),
+      isSemantics(value: '2', hasDecreaseAction: false, hasIncreaseAction: false),
+    );
+    handle.dispose();
   });
 
   group('layout', () {
