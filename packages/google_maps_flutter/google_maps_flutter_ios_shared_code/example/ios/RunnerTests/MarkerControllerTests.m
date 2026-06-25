@@ -4,6 +4,7 @@
 
 @import google_maps_flutter_ios;
 @import GoogleMaps;
+@import QuartzCore;
 @import XCTest;
 
 #import "TestUtils/PartiallyMockedMapView.h"
@@ -14,6 +15,15 @@
 @interface PropertyOrderValidatingAdvancedMarker : GMSAdvancedMarker {
 }
 @property(nonatomic) BOOL hasSetMap;
+@end
+
+/// A GMSMarker that records whether animated property updates disable implicit animations.
+@interface MarkerUpdateAnimationValidatingMarker : GMSMarker {
+}
+@property(nonatomic) BOOL hasSetPosition;
+@property(nonatomic) BOOL hasSetRotation;
+@property(nonatomic) BOOL wereActionsDisabledWhenSettingPosition;
+@property(nonatomic) BOOL wereActionsDisabledWhenSettingRotation;
 @end
 
 @interface MarkerControllerTests : XCTestCase
@@ -44,6 +54,59 @@
 
 - (FGMPlatformBitmap *)placeholderBitmap {
   return [FGMPlatformBitmap makeWithBitmap:[FGMPlatformBitmapDefaultMarker makeWithHue:@0]];
+}
+
+- (FGMPlatformMarker *)platformMarkerWithCollisionBehavior:
+    (FGMPlatformMarkerCollisionBehaviorBox *)collisionBehavior {
+  return [FGMPlatformMarker
+          makeWithAlpha:1.0
+                 anchor:[FGMPlatformPoint makeWithX:0 y:0]
+       consumeTapEvents:YES
+              draggable:YES
+                   flat:YES
+                   icon:[self placeholderBitmap]
+             infoWindow:[FGMPlatformInfoWindow makeWithTitle:@"info title"
+                                                     snippet:@"info snippet"
+                                                      anchor:[FGMPlatformPoint makeWithX:0 y:0]]
+               position:[FGMPlatformLatLng makeWithLatitude:0 longitude:0]
+               rotation:0
+                visible:YES
+                 zIndex:0
+               markerId:@"marker"
+       clusterManagerId:nil
+      collisionBehavior:collisionBehavior];
+}
+
+- (FGMPlatformMarkerUpdateAnimationConfiguration *)
+    markerUpdateAnimationConfigurationWithPositionAnimationsEnabled:(BOOL)positionAnimationsEnabled
+                                          rotationAnimationsEnabled:
+                                              (BOOL)rotationAnimationsEnabled {
+  return [FGMPlatformMarkerUpdateAnimationConfiguration
+      makeWithPositionAnimationsEnabled:positionAnimationsEnabled
+              rotationAnimationsEnabled:rotationAnimationsEnabled];
+}
+
+- (void)updateAnimationValidatingMarker:(MarkerUpdateAnimationValidatingMarker *)marker
+     markerUpdateAnimationConfiguration:
+         (FGMPlatformMarkerUpdateAnimationConfiguration *)markerUpdateAnimationConfiguration {
+  [FGMMarkerController updateMarker:marker
+                      fromPlatformMarker:[self platformMarkerWithCollisionBehavior:nil]
+                             withMapView:[MarkerControllerTests mapView]
+                           assetProvider:[[TestAssetProvider alloc] init]
+                             screenScale:1
+      markerUpdateAnimationConfiguration:markerUpdateAnimationConfiguration
+               usingOpacityForVisibility:NO];
+}
+
+- (void)updateAnimationValidatingMarker:(MarkerUpdateAnimationValidatingMarker *)marker
+              positionAnimationsEnabled:(BOOL)positionAnimationsEnabled
+              rotationAnimationsEnabled:(BOOL)rotationAnimationsEnabled {
+  [self updateAnimationValidatingMarker:marker
+      markerUpdateAnimationConfiguration:
+          [self markerUpdateAnimationConfigurationWithPositionAnimationsEnabled:
+                    positionAnimationsEnabled
+                                                      rotationAnimationsEnabled:
+                                                          rotationAnimationsEnabled]];
 }
 
 - (void)testSetsMarkerNumericProperties {
@@ -248,32 +311,89 @@
       [[FGMPlatformMarkerCollisionBehaviorBox alloc]
           initWithValue:FGMPlatformMarkerCollisionBehaviorRequiredAndHidesOptional];
   [FGMMarkerController updateMarker:marker
-                 fromPlatformMarker:[FGMPlatformMarker
-                                            makeWithAlpha:1.0
-                                                   anchor:[FGMPlatformPoint makeWithX:0 y:0]
-                                         consumeTapEvents:YES
-                                                draggable:YES
-                                                     flat:YES
-                                                     icon:[self placeholderBitmap]
-                                               infoWindow:[FGMPlatformInfoWindow
-                                                              makeWithTitle:@"info title"
-                                                                    snippet:@"info snippet"
-                                                                     anchor:[FGMPlatformPoint
-                                                                                makeWithX:0
-                                                                                        y:0]]
-                                                 position:[FGMPlatformLatLng makeWithLatitude:0
-                                                                                    longitude:0]
-                                                 rotation:0
-                                                  visible:YES
-                                                   zIndex:0
-                                                 markerId:@"marker"
-                                         clusterManagerId:nil
-                                        collisionBehavior:collisionBehavior]
-                        withMapView:[MarkerControllerTests mapView]
-                      assetProvider:[[TestAssetProvider alloc] init]
-                        screenScale:1
-          usingOpacityForVisibility:NO];
+                      fromPlatformMarker:[self
+                                             platformMarkerWithCollisionBehavior:collisionBehavior]
+                             withMapView:[MarkerControllerTests mapView]
+                           assetProvider:[[TestAssetProvider alloc] init]
+                             screenScale:1
+      markerUpdateAnimationConfiguration:
+          [self markerUpdateAnimationConfigurationWithPositionAnimationsEnabled:YES
+                                                      rotationAnimationsEnabled:YES]
+               usingOpacityForVisibility:NO];
   XCTAssertTrue(marker.hasSetMap);
+}
+
+- (void)testUpdateMarkerDoesNotDisablePositionOrRotationAnimationByDefault {
+  MarkerUpdateAnimationValidatingMarker *marker =
+      [[MarkerUpdateAnimationValidatingMarker alloc] init];
+  [self updateAnimationValidatingMarker:marker
+              positionAnimationsEnabled:YES
+              rotationAnimationsEnabled:YES];
+
+  XCTAssertTrue(marker.hasSetPosition);
+  XCTAssertTrue(marker.hasSetRotation);
+  XCTAssertFalse(marker.wereActionsDisabledWhenSettingPosition,
+                 @"Position animation should be enabled by default.");
+  XCTAssertFalse(marker.wereActionsDisabledWhenSettingRotation,
+                 @"Rotation animation should be enabled by default.");
+}
+
+- (void)testUpdateMarkerDoesNotDisablePositionOrRotationAnimationWithNilConfiguration {
+  MarkerUpdateAnimationValidatingMarker *marker =
+      [[MarkerUpdateAnimationValidatingMarker alloc] init];
+  [self updateAnimationValidatingMarker:marker markerUpdateAnimationConfiguration:nil];
+
+  XCTAssertTrue(marker.hasSetPosition);
+  XCTAssertTrue(marker.hasSetRotation);
+  XCTAssertFalse(marker.wereActionsDisabledWhenSettingPosition,
+                 @"Nil animation configuration should leave position animation enabled.");
+  XCTAssertFalse(marker.wereActionsDisabledWhenSettingRotation,
+                 @"Nil animation configuration should leave rotation animation enabled.");
+}
+
+- (void)testUpdateMarkerDisablesPositionAndRotationAnimation {
+  MarkerUpdateAnimationValidatingMarker *marker =
+      [[MarkerUpdateAnimationValidatingMarker alloc] init];
+  [self updateAnimationValidatingMarker:marker
+              positionAnimationsEnabled:NO
+              rotationAnimationsEnabled:NO];
+
+  XCTAssertTrue(marker.hasSetPosition);
+  XCTAssertTrue(marker.hasSetRotation);
+  XCTAssertTrue(marker.wereActionsDisabledWhenSettingPosition,
+                @"Position animation should be disabled.");
+  XCTAssertTrue(marker.wereActionsDisabledWhenSettingRotation,
+                @"Rotation animation should be disabled.");
+}
+
+- (void)testUpdateMarkerDisablesOnlyPositionAnimation {
+  MarkerUpdateAnimationValidatingMarker *marker =
+      [[MarkerUpdateAnimationValidatingMarker alloc] init];
+  [self updateAnimationValidatingMarker:marker
+              positionAnimationsEnabled:NO
+              rotationAnimationsEnabled:YES];
+
+  XCTAssertTrue(marker.hasSetPosition);
+  XCTAssertTrue(marker.hasSetRotation);
+  XCTAssertTrue(marker.wereActionsDisabledWhenSettingPosition,
+                @"Position animation should be disabled.");
+  XCTAssertFalse(marker.wereActionsDisabledWhenSettingRotation,
+                 @"Rotation animation should be enabled.");
+}
+
+- (void)testUpdateMarkerDisablesOnlyRotationAnimation {
+  MarkerUpdateAnimationValidatingMarker *marker =
+      [[MarkerUpdateAnimationValidatingMarker alloc] init];
+  [self updateAnimationValidatingMarker:marker
+              positionAnimationsEnabled:YES
+              rotationAnimationsEnabled:NO];
+
+  XCTAssertTrue(marker.hasSetPosition);
+  XCTAssertTrue(marker.hasSetRotation);
+  XCTAssertFalse(marker.wereActionsDisabledWhenSettingPosition,
+                 @"Position animation should be enabled.");
+  XCTAssertTrue(marker.wereActionsDisabledWhenSettingRotation,
+                @"Rotation animation should be disabled.");
 }
 
 - (void)testAssetProviderIsRetained {
@@ -292,6 +412,22 @@
   }
   XCTAssertNotNil(markerController);
   XCTAssertNotNil(weakAssetProvider, @"AssetProvider should be retained by the marker controller");
+}
+
+@end
+
+@implementation MarkerUpdateAnimationValidatingMarker
+
+- (void)setPosition:(CLLocationCoordinate2D)position {
+  self.wereActionsDisabledWhenSettingPosition = [CATransaction disableActions];
+  self.hasSetPosition = YES;
+  super.position = position;
+}
+
+- (void)setRotation:(CLLocationDegrees)rotation {
+  self.wereActionsDisabledWhenSettingRotation = [CATransaction disableActions];
+  self.hasSetRotation = YES;
+  super.rotation = rotation;
 }
 
 @end
