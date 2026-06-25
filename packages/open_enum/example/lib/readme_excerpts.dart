@@ -29,14 +29,15 @@ void handleRole(UserRole role) {
     // Any unhandled values (like a newly added 'guest') will safely fall through!
   }
 }
+
 // #enddocregion SwitchStatement
 
 // #docregion SwitchExpression
 String getLabel(UserRole role) => switch (role) {
-      UserRole.admin => 'Administrator',
-      UserRole.member => 'Member',
-      _ => 'Other', // Required by compiler, safe against future additions
-    };
+  UserRole.admin => 'Administrator',
+  UserRole.member => 'Member',
+  _ => 'Other', // Required by compiler, safe against future additions
+};
 // #enddocregion SwitchExpression
 
 void usageExamples() {

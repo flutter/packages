@@ -29,13 +29,9 @@ class User {
 
     // Safely deserialize to the open enum, falling back to 'unknown' if the
     // server sent a value we don't recognize yet.
-    final UserRole role =
-        UserRole.values.byNameOrNull(roleStr) ?? UserRole.unknown;
+    final UserRole role = UserRole.values.byNameOrNull(roleStr) ?? UserRole.unknown;
 
-    return User(
-      username: json['username'] as String,
-      role: role,
-    );
+    return User(username: json['username'] as String, role: role);
   }
 
   final String username;
@@ -109,7 +105,6 @@ void _processUserDashboard(User user) {
     default:
       // This catches 'unknown' (which represents the new 'moderator' role we don't
       // know how to handle yet). The app continues running perfectly!
-      print(
-          '   [Dashboard] Unrecognized/unsupported role. Defaulting to safe guest-view.');
+      print('   [Dashboard] Unrecognized/unsupported role. Defaulting to safe guest-view.');
   }
 }
