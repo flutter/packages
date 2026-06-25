@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@Skip(
-  'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
-)
 // This file is run as part of a reduced test set in CI on Mac and Windows
 // machines.
 @Tags(<String>['reduced-test-set'])
@@ -14,8 +11,6 @@ import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import '../widgets/semantics_tester.dart';
 
 int count = 0;
 
@@ -1078,7 +1073,7 @@ void main() {
   });
 
   testWidgets('CupertinoSliverNavigationBar has semantics', (WidgetTester tester) async {
-    final semantics = SemanticsTester(tester);
+    final SemanticsHandle handle = tester.ensureSemantics();
 
     await tester.pumpWidget(
       const CupertinoApp(
@@ -1093,19 +1088,15 @@ void main() {
     );
 
     expect(
-      semantics.nodesWith(
-        label: 'Large Title',
-        flags: <SemanticsFlag>[SemanticsFlag.isHeader],
-        textDirection: TextDirection.ltr,
-      ),
-      hasLength(1),
+      tester.getSemantics(find.text('Large Title')),
+      isSemantics(label: 'Large Title', isHeader: true, textDirection: TextDirection.ltr),
     );
 
-    semantics.dispose();
+    handle.dispose();
   });
 
   testWidgets('CupertinoNavigationBar has semantics', (WidgetTester tester) async {
-    final semantics = SemanticsTester(tester);
+    final SemanticsHandle handle = tester.ensureSemantics();
 
     await tester.pumpWidget(
       CupertinoApp(
@@ -1117,19 +1108,15 @@ void main() {
     );
 
     expect(
-      semantics.nodesWith(
-        label: 'Fixed Title',
-        flags: <SemanticsFlag>[SemanticsFlag.isHeader],
-        textDirection: TextDirection.ltr,
-      ),
-      hasLength(1),
+      tester.getSemantics(find.text('Fixed Title')),
+      isSemantics(label: 'Fixed Title', isHeader: true, textDirection: TextDirection.ltr),
     );
 
-    semantics.dispose();
+    handle.dispose();
   });
 
   testWidgets('Large CupertinoNavigationBar has semantics', (WidgetTester tester) async {
-    final semantics = SemanticsTester(tester);
+    final SemanticsHandle handle = tester.ensureSemantics();
 
     await tester.pumpWidget(
       CupertinoApp(
@@ -1141,15 +1128,11 @@ void main() {
     );
 
     expect(
-      semantics.nodesWith(
-        label: 'Fixed Title',
-        flags: <SemanticsFlag>[SemanticsFlag.isHeader],
-        textDirection: TextDirection.ltr,
-      ),
-      hasLength(1),
+      tester.getSemantics(find.text('Fixed Title')),
+      isSemantics(label: 'Fixed Title', isHeader: true, textDirection: TextDirection.ltr),
     );
 
-    semantics.dispose();
+    handle.dispose();
   });
 
   testWidgets('Border can be overridden in sliver nav bar', (WidgetTester tester) async {
