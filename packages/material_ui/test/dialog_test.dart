@@ -2,18 +2,17 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@Skip(
-  'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
-)
+import 'dart:async' show unawaited;
 import 'dart:ui';
 
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import '../widgets/semantics_tester.dart';
+import 'package:material_ui/material_ui.dart';
+
+import 'semantics_tester.dart';
 
 MaterialApp _buildAppWithDialog(
   Widget dialog, {
@@ -525,16 +524,18 @@ void main() {
 
     final BuildContext context = tester.element(find.text('Go'));
 
-    showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          width: 100.0,
-          height: 100.0,
-          alignment: Alignment.center,
-          child: const Text('Dialog1'),
-        );
-      },
+    unawaited(
+      showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            width: 100.0,
+            height: 100.0,
+            alignment: Alignment.center,
+            child: const Text('Dialog1'),
+          );
+        },
+      ),
     );
 
     await tester.pumpAndSettle(const Duration(seconds: 1));
@@ -546,17 +547,19 @@ void main() {
     await tester.pumpAndSettle(const Duration(seconds: 1));
     expect(find.text('Dialog1'), findsNothing);
 
-    showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return Container(
-          width: 100.0,
-          height: 100.0,
-          alignment: Alignment.center,
-          child: const Text('Dialog2'),
-        );
-      },
+    unawaited(
+      showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Container(
+            width: 100.0,
+            height: 100.0,
+            alignment: Alignment.center,
+            child: const Text('Dialog2'),
+          );
+        },
+      ),
     );
 
     await tester.pumpAndSettle(const Duration(seconds: 1));
@@ -574,23 +577,27 @@ void main() {
     final BuildContext context = tester.element(find.text('Test'));
 
     // Test default barrier color
-    showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return const Text('Dialog');
-      },
+    unawaited(
+      showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return const Text('Dialog');
+        },
+      ),
     );
     await tester.pumpAndSettle();
     expect(tester.widget<ModalBarrier>(find.byType(ModalBarrier).last).color, Colors.black54);
 
     // Dismiss it and test a custom barrier color
     await tester.tapAt(const Offset(10.0, 10.0));
-    showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return const Text('Dialog');
-      },
-      barrierColor: Colors.pink,
+    unawaited(
+      showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return const Text('Dialog');
+        },
+        barrierColor: Colors.pink,
+      ),
     );
     await tester.pumpAndSettle();
     expect(tester.widget<ModalBarrier>(find.byType(ModalBarrier).last).color, Colors.pink);
@@ -612,11 +619,13 @@ void main() {
     final BuildContext context = tester.element(find.text(buttonText));
 
     const alertText = 'A button in an overlay alert';
-    showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return const AlertDialog(title: Text(alertText));
-      },
+    unawaited(
+      showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return const AlertDialog(title: Text(alertText));
+        },
+      ),
     );
 
     await tester.pumpAndSettle(const Duration(seconds: 1));
@@ -1562,20 +1571,22 @@ void main() {
       ),
     );
 
-    showDialog<void>(
-      context: outerContext,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        routeContext = context;
-        return Dialog(
-          child: Builder(
-            builder: (BuildContext context) {
-              dialogContext = context;
-              return const Placeholder();
-            },
-          ),
-        );
-      },
+    unawaited(
+      showDialog<void>(
+        context: outerContext,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          routeContext = context;
+          return Dialog(
+            child: Builder(
+              builder: (BuildContext context) {
+                dialogContext = context;
+                return const Placeholder();
+              },
+            ),
+          );
+        },
+      ),
     );
 
     await tester.pump();
@@ -2226,11 +2237,13 @@ void main() {
     final BuildContext context = tester.element(find.text('Test'));
 
     // By default it should honor the safe area
-    showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return const Placeholder();
-      },
+    unawaited(
+      showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return const Placeholder();
+        },
+      ),
     );
     await tester.pumpAndSettle();
     expect(tester.getTopLeft(find.byType(Placeholder)), const Offset(20.0, 20.0));
@@ -2238,12 +2251,14 @@ void main() {
 
     // Dismiss it and test with useSafeArea off
     await tester.tapAt(const Offset(10.0, 10.0));
-    showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return const Placeholder();
-      },
-      useSafeArea: false,
+    unawaited(
+      showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return const Placeholder();
+        },
+        useSafeArea: false,
+      ),
     );
     await tester.pumpAndSettle();
     // Should take up the whole screen
@@ -2339,11 +2354,13 @@ void main() {
 
     Object? error;
     try {
-      showDialog<void>(
-        context: context,
-        builder: (BuildContext innerContext) {
-          return const AlertDialog(title: Text('Title'));
-        },
+      unawaited(
+        showDialog<void>(
+          context: context,
+          builder: (BuildContext innerContext) {
+            return const AlertDialog(title: Text('Title'));
+          },
+        ),
       );
     } catch (exception) {
       error = exception;
@@ -2382,12 +2399,14 @@ void main() {
       );
       final BuildContext context = tester.element(find.text('Test'));
 
-      showDialog<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return const Placeholder();
-        },
-        anchorPoint: const Offset(1000, 0),
+      unawaited(
+        showDialog<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return const Placeholder();
+          },
+          anchorPoint: const Offset(1000, 0),
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -2420,11 +2439,13 @@ void main() {
       );
       final BuildContext context = tester.element(find.text('Test'));
 
-      showDialog<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return const Placeholder();
-        },
+      unawaited(
+        showDialog<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return const Placeholder();
+          },
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -2457,11 +2478,13 @@ void main() {
       );
       final BuildContext context = tester.element(find.text('Test'));
 
-      showDialog<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return const Placeholder();
-        },
+      unawaited(
+        showDialog<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return const Placeholder();
+          },
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -2822,16 +2845,18 @@ void main() {
 
     final BuildContext context = tester.element(find.text('Go'));
 
-    showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          width: 100.0,
-          height: 100.0,
-          alignment: Alignment.center,
-          child: const Text('Dialog1'),
-        );
-      },
+    unawaited(
+      showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            width: 100.0,
+            height: 100.0,
+            alignment: Alignment.center,
+            child: const Text('Dialog1'),
+          );
+        },
+      ),
     );
 
     await tester.pumpAndSettle(const Duration(seconds: 1));
@@ -2843,16 +2868,18 @@ void main() {
     await tester.pumpAndSettle(const Duration(seconds: 1));
     expect(find.text('Dialog1'), findsNothing);
 
-    showAdaptiveDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          width: 100.0,
-          height: 100.0,
-          alignment: Alignment.center,
-          child: const Text('Dialog2'),
-        );
-      },
+    unawaited(
+      showAdaptiveDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            width: 100.0,
+            height: 100.0,
+            alignment: Alignment.center,
+            child: const Text('Dialog2'),
+          );
+        },
+      ),
     );
 
     await tester.pumpAndSettle(const Duration(seconds: 1));
@@ -2876,17 +2903,19 @@ void main() {
       ),
     );
     final BuildContext context = tester.element(find.text('Go'));
-    showAdaptiveDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          width: 100.0,
-          height: 100.0,
-          alignment: Alignment.center,
-          child: const Text('Dialog1'),
-        );
-      },
-      animationStyle: animationStyle,
+    unawaited(
+      showAdaptiveDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            width: 100.0,
+            height: 100.0,
+            alignment: Alignment.center,
+            child: const Text('Dialog1'),
+          );
+        },
+        animationStyle: animationStyle,
+      ),
     );
 
     await tester.pumpAndSettle(const Duration(seconds: 1));
@@ -3001,10 +3030,12 @@ void main() {
 
     // Bring up dialog.
     final NavigatorState navigator = Navigator.of(savedContext);
-    navigator.push(
-      DialogRoute<void>(
-        context: savedContext,
-        builder: (BuildContext context) => const Text(dialogText),
+    unawaited(
+      navigator.push(
+        DialogRoute<void>(
+          context: savedContext,
+          builder: (BuildContext context) => const Text(dialogText),
+        ),
       ),
     );
     await tester.pump();
@@ -3022,11 +3053,13 @@ void main() {
     expect(getTextFieldFocusNode()?.hasFocus, true);
 
     // Bring up dialog again with requestFocus to false.
-    navigator.push(
-      ModalBottomSheetRoute<void>(
-        requestFocus: false,
-        isScrollControlled: false,
-        builder: (BuildContext context) => const Text(dialogText),
+    unawaited(
+      navigator.push(
+        ModalBottomSheetRoute<void>(
+          requestFocus: false,
+          isScrollControlled: false,
+          builder: (BuildContext context) => const Text(dialogText),
+        ),
       ),
     );
     await tester.pump();
@@ -3050,10 +3083,12 @@ void main() {
     await tester.pump();
     expect(focusNode.hasFocus, true);
 
-    showDialog<void>(
-      context: navigatorKey.currentContext!,
-      requestFocus: true,
-      builder: (BuildContext context) => const Text('dialog'),
+    unawaited(
+      showDialog<void>(
+        context: navigatorKey.currentContext!,
+        requestFocus: true,
+        builder: (BuildContext context) => const Text('dialog'),
+      ),
     );
     await tester.pumpAndSettle();
     expect(FocusScope.of(tester.element(find.text('dialog'))).hasFocus, true);
@@ -3063,10 +3098,12 @@ void main() {
     await tester.pumpAndSettle();
     expect(focusNode.hasFocus, true);
 
-    showDialog<void>(
-      context: navigatorKey.currentContext!,
-      requestFocus: false,
-      builder: (BuildContext context) => const Text('dialog'),
+    unawaited(
+      showDialog<void>(
+        context: navigatorKey.currentContext!,
+        requestFocus: false,
+        builder: (BuildContext context) => const Text('dialog'),
+      ),
     );
     await tester.pumpAndSettle();
     expect(FocusScope.of(tester.element(find.text('dialog'))).hasFocus, false);
