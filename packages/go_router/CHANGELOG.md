@@ -1,9 +1,3 @@
-## 17.3.1
-
-- Fixes `popRoute()` crashing with `Bad state: No element` when
-  `currentConfiguration` is empty (e.g. during app startup before
-  the first route resolves).
-
 ## 17.3.0
 
 - Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
