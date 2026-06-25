@@ -1567,11 +1567,11 @@ void main() {
           if (paintColor.value == color.value) {
             return true;
           }
-          throw '''
+          fail('''
   For a rect with an expected left-side position: $dx (drawn at ${rect.left}):
               Expected a rect with color: $color,
               And drew a rect with color: $paintColor.
-          ''';
+          ''');
         });
       }
 
@@ -1649,10 +1649,10 @@ void main() {
               final bool isOnScreen = rect.left >= 0 && rect.right <= 600.0;
 
               if (isOnScreen) {
-                throw '''
+                fail('''
     Expected: no visible rects on-screen.
     Found: $rect.
-        ''';
+        ''');
               }
             }
             return true;
