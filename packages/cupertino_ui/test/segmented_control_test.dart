@@ -836,13 +836,13 @@ void main() {
       ),
     );
 
-    // Assert parent role
+    // Assert parent role.
     final SemanticsNode segmentedControlNode = tester.getSemantics(
       find.byType(CupertinoSegmentedControl<int>),
     );
     expect(segmentedControlNode.role, ui.SemanticsRole.radioGroup);
 
-    // Assert Child 1 (selected)
+    // Assert Child 1 (selected).
     expect(
       find.semantics.byLabel('Child 1'),
       isSemantics(
@@ -857,7 +857,7 @@ void main() {
       ),
     );
 
-    // Assert Child 2 (unselected)
+    // Assert Child 2 (unselected).
     expect(
       find.semantics.byLabel('Child 2'),
       isSemantics(
@@ -876,7 +876,7 @@ void main() {
     await tester.tap(find.text('Child 2'));
     await tester.pump();
 
-    // Assert Child 1 (now unselected)
+    // Assert Child 1 (now unselected).
     expect(
       find.semantics.byLabel('Child 1'),
       isSemantics(
@@ -891,7 +891,7 @@ void main() {
       ),
     );
 
-    // Assert Child 2 (now selected and focused)
+    // Assert Child 2 (now selected and focused).
     expect(
       find.semantics.byLabel('Child 2'),
       isSemantics(
