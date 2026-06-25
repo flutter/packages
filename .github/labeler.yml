@@ -119,6 +119,11 @@
     - any-glob-to-any-file:
       - packages/metrics_center/**/*
 
+'p: open_enum':
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/open_enum/**/*
+
 'p: path_parsing':
   - changed-files:
     - any-glob-to-any-file:

@@ -1,0 +1,17 @@
+name: open_enum
+description: A lightweight, pure-Dart library for defining open/non-exhaustive enums using extension types, preventing breaking changes when adding new values.
+repository: https://github.com/flutter/packages/tree/main/packages/open_enum
+issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+open_enum%22
+version: 0.1.0
+
+environment:
+  sdk: ^3.10.0
+
+dev_dependencies:
+  test: ^1.24.0
+
+topics:
+  - utility
+  - enum
+  - type-safety
+  - api-evolution

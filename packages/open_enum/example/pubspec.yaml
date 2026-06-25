@@ -1,0 +1,10 @@
+name: open_enum_example
+description: An example of using the open_enum package.
+publish_to: none
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  open_enum:
+    path: ../
