@@ -314,7 +314,18 @@ class AnalyzeCommand extends PackageLoopingCommand {
       return PackageResult.fail();
     }
 
-    return _runDartCodeLinterForPackage(package);
+    final List<Future<PackageResult> Function(RepositoryPackage)> customCheckRunners = [
+      _runDartCodeLinterForPackage,
+    ];
+
+    for (final runner in customCheckRunners) {
+      final PackageResult result = await runner(package);
+      if (result.state == RunState.failed) {
+        return result;
+      }
+    }
+
+    return PackageResult.success();
   }
 
   Future<PackageResult> _runDartCodeLinterForPackage(RepositoryPackage package) async {
