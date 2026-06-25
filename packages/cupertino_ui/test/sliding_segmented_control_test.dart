@@ -994,6 +994,11 @@ void main() {
     await tester.pump();
 
     expect(
+      tester.getSemantics(find.byType(CupertinoSlidingSegmentedControl<int>)).role,
+      SemanticsRole.radioGroup,
+    );
+
+    expect(
       tester.getSemantics(find.text('Child 1')),
       isSemantics(
         label: 'Child 1',
