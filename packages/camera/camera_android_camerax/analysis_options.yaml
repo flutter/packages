@@ -9,8 +9,7 @@ analyzer:
     - windows/**
     - macos/**
     - linux/**
-#   plugins:
-#     - dart_code_linter
+
 
 dart_code_linter:
   metrics:
