@@ -231,12 +231,12 @@ void main() {
       },
     );
 
-    tester.state<NavigatorState>(find.byType(Navigator)).push(route2);
+    unawaited(tester.state<NavigatorState>(find.byType(Navigator)).push(route2));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
 
-    tester.state<NavigatorState>(find.byType(Navigator)).push(route3);
+    unawaited(tester.state<NavigatorState>(find.byType(Navigator)).push(route3));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
