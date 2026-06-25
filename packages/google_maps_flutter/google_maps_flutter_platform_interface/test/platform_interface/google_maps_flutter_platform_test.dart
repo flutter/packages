@@ -95,17 +95,17 @@ void main() {
       );
     });
 
-    test('onPolylineEdited() throws UnimplementedError', () {
+    test('onPolylineEdited() returns an empty stream by default', () {
       expect(
-        () => BuildViewGoogleMapsFlutterPlatform().onPolylineEdited(mapId: 0),
-        throwsUnimplementedError,
+        BuildViewGoogleMapsFlutterPlatform().onPolylineEdited(mapId: 0),
+        emitsDone,
       );
     });
 
-    test('onPolygonEdited() throws UnimplementedError', () {
+    test('onPolygonEdited() returns an empty stream by default', () {
       expect(
-        () => BuildViewGoogleMapsFlutterPlatform().onPolygonEdited(mapId: 0),
-        throwsUnimplementedError,
+        BuildViewGoogleMapsFlutterPlatform().onPolygonEdited(mapId: 0),
+        emitsDone,
       );
     });
 
