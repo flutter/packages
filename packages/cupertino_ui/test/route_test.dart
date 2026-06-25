@@ -2,9 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@Skip(
-  'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
-)
+// ignore_for_file: only_throw_errors, unawaited_futures
+
 @TestOn('!chrome')
 library;
 
@@ -14,8 +13,6 @@ import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import '../widgets/semantics_tester.dart';
 
 void main() {
   late MockNavigatorObserver navigatorObserver;
@@ -2045,7 +2042,8 @@ void main() {
     WidgetTester tester,
   ) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-    final semantics = SemanticsTester(tester);
+    final SemanticsHandle handle = tester.ensureSemantics();
+
     await tester.pumpWidget(
       CupertinoApp(
         home: Navigator(
@@ -2072,24 +2070,18 @@ void main() {
     await tester.tap(find.text('tap'));
     await tester.pumpAndSettle();
 
-    expect(
-      semantics,
-      isNot(
-        includesNodeWith(
-          actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
-          label: 'Dismiss',
-        ),
-      ),
-    );
+    expect(find.semantics.byLabel('Dismiss'), findsNothing);
+
     debugDefaultTargetPlatformOverride = null;
-    semantics.dispose();
+    handle.dispose();
   });
 
   testWidgets('showCupertinoModalPopup allows for semantics dismiss when set', (
     WidgetTester tester,
   ) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-    final semantics = SemanticsTester(tester);
+    final SemanticsHandle handle = tester.ensureSemantics();
+
     await tester.pumpWidget(
       CupertinoApp(
         home: Navigator(
@@ -2118,14 +2110,12 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(
-      semantics,
-      includesNodeWith(
-        actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.dismiss],
-        label: 'Dismiss',
-      ),
+      find.semantics.byLabel('Dismiss'),
+      isSemantics(label: 'Dismiss', hasTapAction: true, hasDismissAction: true),
     );
+
     debugDefaultTargetPlatformOverride = null;
-    semantics.dispose();
+    handle.dispose();
   });
 
   testWidgets('showCupertinoModalPopup passes RouteSettings to PopupRoute', (
