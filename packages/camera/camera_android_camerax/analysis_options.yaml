@@ -4,6 +4,11 @@ analyzer:
   exclude:
     - build/**
     - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
 #   plugins:
 #     - dart_code_linter
 
