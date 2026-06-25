@@ -2,16 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@Skip(
-  'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
-)
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import '../widgets/semantics_tester.dart';
 
 /// A [CustomPainter] that calls a callback when it paints.
 class TestCallbackPainter extends CustomPainter {
@@ -73,7 +68,7 @@ void main() {
   });
 
   testWidgets('Picker semantics', (WidgetTester tester) async {
-    final semantics = SemanticsTester(tester);
+    final SemanticsHandle handle = tester.ensureSemantics();
 
     await tester.pumpWidget(
       CupertinoApp(
@@ -90,11 +85,16 @@ void main() {
       ),
     );
     expect(
-      semantics,
-      includesNodeWith(
+      tester.getSemantics(
+        find.byWidgetPredicate(
+          (Widget widget) => widget.runtimeType.toString() == '_CupertinoPickerSemantics',
+        ),
+      ),
+      isSemantics(
         value: '0',
         increasedValue: '1',
-        actions: <SemanticsAction>[SemanticsAction.increase],
+        hasIncreaseAction: true,
+        hasDecreaseAction: false,
       ),
     );
 
@@ -105,15 +105,21 @@ void main() {
     hourListController.jumpToItem(11);
     await tester.pumpAndSettle();
     expect(
-      semantics,
-      includesNodeWith(
+      tester.getSemantics(
+        find.byWidgetPredicate(
+          (Widget widget) => widget.runtimeType.toString() == '_CupertinoPickerSemantics',
+        ),
+      ),
+      isSemantics(
         value: '11',
         increasedValue: '12',
         decreasedValue: '10',
-        actions: <SemanticsAction>[SemanticsAction.increase, SemanticsAction.decrease],
+        hasIncreaseAction: true,
+        hasDecreaseAction: true,
       ),
     );
-    semantics.dispose();
+
+    handle.dispose();
   });
 
   testWidgets('Picker semantics excludes current item with empty label', (
@@ -121,67 +127,73 @@ void main() {
   ) async {
     // When the current item has an empty label (e.g., wrapped with ExcludeSemantics),
     // the picker should not set any value, increasedValue, decreasedValue, or actions.
-    final semantics = SemanticsTester(tester);
+    final SemanticsHandle handle = tester.ensureSemantics();
     final controller = FixedExtentScrollController(initialItem: 1);
     addTearDown(controller.dispose);
 
-    await tester.pumpWidget(
-      CupertinoApp(
-        home: SizedBox.square(
-          dimension: 300.0,
-          child: CupertinoPicker(
-            scrollController: controller,
-            itemExtent: 50.0,
-            onSelectedItemChanged: (_) {},
-            children: const <Widget>[
-              Text('0'),
-              // Item at index 1 is excluded from semantics (simulating a disabled item).
-              ExcludeSemantics(child: Text('1')),
-              Text('2'),
-            ],
+    try {
+      await tester.pumpWidget(
+        CupertinoApp(
+          home: SizedBox.square(
+            dimension: 300.0,
+            child: CupertinoPicker(
+              scrollController: controller,
+              itemExtent: 50.0,
+              onSelectedItemChanged: (_) {},
+              children: const <Widget>[
+                Text('0'),
+                // Item at index 1 is excluded from semantics (simulating a disabled item).
+                ExcludeSemantics(child: Text('1')),
+                Text('2'),
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    // When the current item (index 1) has an empty label due to ExcludeSemantics,
-    // the picker should not have any value or actions set.
-    expect(semantics, isNot(includesNodeWith(value: '1')));
-    // Also verify that no increase/decrease actions are set for this item.
-    expect(
-      semantics,
-      isNot(includesNodeWith(actions: <SemanticsAction>[SemanticsAction.increase])),
-    );
-    expect(
-      semantics,
-      isNot(includesNodeWith(actions: <SemanticsAction>[SemanticsAction.decrease])),
-    );
+      // When the current item (index 1) has an empty label due to ExcludeSemantics,
+      // the picker should not have any value or actions set.
+      expect(
+        tester.getSemantics(
+          find.byWidgetPredicate(
+            (Widget widget) => widget.runtimeType.toString() == '_CupertinoPickerSemantics',
+          ),
+        ),
+        isSemantics(value: '', hasIncreaseAction: false, hasDecreaseAction: false),
+      );
 
-    // Scroll to item 0 which has a valid label.
-    controller.jumpToItem(0);
-    await tester.pumpAndSettle();
+      // Scroll to item 0 which has a valid label.
+      controller.jumpToItem(0);
+      await tester.pumpAndSettle();
 
-    // Now the picker should have value '0' but no increase action
-    // because the next item (1) has an empty label.
-    expect(semantics, includesNodeWith(value: '0'));
-    expect(
-      semantics,
-      isNot(includesNodeWith(value: '0', actions: <SemanticsAction>[SemanticsAction.increase])),
-    );
+      // Now the picker should have value '0' but no increase action
+      // because the next item (1) has an empty label.
+      expect(
+        tester.getSemantics(
+          find.byWidgetPredicate(
+            (Widget widget) => widget.runtimeType.toString() == '_CupertinoPickerSemantics',
+          ),
+        ),
+        isSemantics(value: '0', hasIncreaseAction: false, hasDecreaseAction: false),
+      );
 
-    // Scroll to item 2 which has a valid label.
-    controller.jumpToItem(2);
-    await tester.pumpAndSettle();
+      // Scroll to item 2 which has a valid label.
+      controller.jumpToItem(2);
+      await tester.pumpAndSettle();
 
-    // Now the picker should have value '2' but no decrease action
-    // because the previous item (1) has an empty label.
-    expect(semantics, includesNodeWith(value: '2'));
-    expect(
-      semantics,
-      isNot(includesNodeWith(value: '2', actions: <SemanticsAction>[SemanticsAction.decrease])),
-    );
-
-    semantics.dispose();
+      // Now the picker should have value '2' but no decrease action
+      // because the previous item (1) has an empty label.
+      expect(
+        tester.getSemantics(
+          find.byWidgetPredicate(
+            (Widget widget) => widget.runtimeType.toString() == '_CupertinoPickerSemantics',
+          ),
+        ),
+        isSemantics(value: '2', hasDecreaseAction: false, hasIncreaseAction: false),
+      );
+    } finally {
+      handle.dispose();
+    }
   });
 
   group('layout', () {
