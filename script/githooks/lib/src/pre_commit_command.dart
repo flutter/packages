@@ -49,6 +49,18 @@ class PreCommitCommand extends Command<bool> {
 
     final repoRoot = Directory((rootResult.stdout as String).trim());
 
+    // Check if there are any staged changes first to exit early.
+    final ProcessResult diffResult = await processRunner('git', <String>[
+      'diff',
+      '--cached',
+      '--name-only',
+    ], workingDirectory: repoRoot.path);
+
+    if (diffResult.exitCode == 0 && (diffResult.stdout as String).trim().isEmpty) {
+      print('✅ No staged changes to check.');
+      return true;
+    }
+
     final String toolScript = p.join(
       repoRoot.path,
       'script',
@@ -57,10 +69,9 @@ class PreCommitCommand extends Command<bool> {
       'flutter_plugin_tools.dart',
     );
 
-    var hasError = false;
+    print('Checking staged changes...');
 
-    // Check formatting.
-    stdout.write('Checking formatting...');
+    // Run format first so analyze runs on the final formatted code.
     final ProcessResult formatResult = await processRunner('dart', [
       'run',
       toolScript,
@@ -69,8 +80,10 @@ class PreCommitCommand extends Command<bool> {
       '--fail-on-change',
     ], workingDirectory: repoRoot.path);
 
+    var hasError = false;
+
+    // Report formatting results.
     if (formatResult.exitCode != 0) {
-      stdout.write(stdout.supportsAnsiEscapes ? '\x1B[2K\r' : '\n');
       if (formatResult.stdout.toString().isNotEmpty) {
         print(formatResult.stdout);
       }
@@ -82,43 +95,36 @@ class PreCommitCommand extends Command<bool> {
       );
       hasError = true;
     } else {
-      stdout.write(
-        stdout.supportsAnsiEscapes
-            ? '\x1B[2K\r✅ Formatting looks good.\n'
-            : '✅ Formatting looks good.\n',
-      );
+      print('Formatting looks good!');
     }
 
-    // Run static analysis on staged files.
-    stdout.write('Running static analysis...');
-    final ProcessResult analyzeResult = await processRunner('dart', [
-      'run',
-      toolScript,
-      'analyze',
-      '--run-on-staged-packages',
-      '--dart',
-    ], workingDirectory: repoRoot.path);
+    // Only run static analysis if formatting passed, to ensure we analyze the final formatted code.
+    if (!hasError) {
+      final ProcessResult analyzeResult = await processRunner('dart', [
+        'run',
+        toolScript,
+        'analyze',
+        '--run-on-staged-packages',
+        '--dart',
+      ], workingDirectory: repoRoot.path);
 
-    if (analyzeResult.exitCode != 0) {
-      stdout.write(stdout.supportsAnsiEscapes ? '\x1B[2K\r' : '\n');
-      if (analyzeResult.stdout.toString().isNotEmpty) {
-        print(analyzeResult.stdout);
+      // Report static analysis results.
+      if (analyzeResult.exitCode != 0) {
+        if (analyzeResult.stdout.toString().isNotEmpty) {
+          print(analyzeResult.stdout);
+        }
+        if (analyzeResult.stderr.toString().isNotEmpty) {
+          print(analyzeResult.stderr);
+        }
+        print('Static analysis errors found.');
+        hasError = true;
+      } else {
+        print('Static analysis looks good!');
       }
-      if (analyzeResult.stderr.toString().isNotEmpty) {
-        print(analyzeResult.stderr);
-      }
-      print('❌ Static analysis errors found.');
-      hasError = true;
-    } else {
-      stdout.write(
-        stdout.supportsAnsiEscapes
-            ? '\x1B[2K\r✅ Static analysis looks good.\n'
-            : '✅ Static analysis looks good.\n',
-      );
     }
 
     if (hasError) {
-      print('❌ Please fix the errors listed above.');
+      print('Static analysis failed. Please fix the errors listed above.');
     }
 
     return !hasError;

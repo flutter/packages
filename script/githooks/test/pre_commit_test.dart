@@ -70,6 +70,11 @@ void main() {
           equals(['run', toolScript, 'format', '--run-on-staged-packages', '--fail-on-change']),
         ),
       );
+      // Verify that static analysis was skipped because formatting failed
+      expect(
+        executedArguments.any((args) => args.contains('analyze')),
+        isFalse,
+      );
     });
 
     test('fails when analysis fails', () async {
@@ -98,6 +103,49 @@ void main() {
         executedArguments,
         anyElement(equals(['run', toolScript, 'analyze', '--run-on-staged-packages', '--dart'])),
       );
+    });
+
+    test('exits early with success if there are no staged changes', () async {
+      final List<List<String>> executedArguments = [];
+      final command = PreCommitCommand(
+        processRunner:
+            (String executable, List<String> arguments, {String? workingDirectory}) async {
+              executedArguments.add(arguments);
+              if (executable == 'git') {
+                if (arguments.contains('rev-parse')) {
+                  return ProcessResult(0, 0, '/mock/repo/root\n', '');
+                }
+                if (arguments.contains('diff')) {
+                  return ProcessResult(0, 0, '', '');
+                }
+              }
+              return ProcessResult(0, 0, 'Success', '');
+            },
+      );
+
+      final bool result = await command.run();
+      expect(result, isTrue);
+
+      // Verify that no format or analyze commands were run
+      expect(
+        executedArguments.any((args) => args.contains('format') || args.contains('analyze')),
+        isFalse,
+      );
+    });
+
+    test('fails when git root cannot be found', () async {
+      final command = PreCommitCommand(
+        processRunner:
+            (String executable, List<String> arguments, {String? workingDirectory}) async {
+              if (executable == 'git' && arguments.contains('rev-parse')) {
+                return ProcessResult(0, 1, '', 'Not a git repository');
+              }
+              return ProcessResult(0, 0, 'Success', '');
+            },
+      );
+
+      final bool result = await command.run();
+      expect(result, isFalse);
     });
   });
 }
