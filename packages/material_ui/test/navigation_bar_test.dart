@@ -14,7 +14,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'utils/finders.dart';
+import 'finders.dart';
 
 void main() {
   testWidgets('Navigation bar updates destinations when tapped', (WidgetTester tester) async {

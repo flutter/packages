@@ -16,8 +16,8 @@ import 'package:material_ui/material_ui.dart';
 import 'package:vector_math/vector_math_64.dart' show Vector3;
 
 import 'feedback_tester.dart';
+import 'finders.dart';
 import 'semantics_tester.dart';
-import 'utils/finders.dart';
 
 void main() {
   testWidgets('BottomNavigationBar callback test', (WidgetTester tester) async {
