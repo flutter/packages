@@ -2,17 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@Skip(
-  'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
-)
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../widgets/clipboard_utils.dart';
-import '../widgets/text_selection_toolbar_utils.dart';
+import 'clipboard_utils.dart';
 import 'live_text_utils.dart';
+import 'text_selection_toolbar_utils.dart';
 
 void main() {
   final mockClipboard = MockClipboard();
