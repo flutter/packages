@@ -493,7 +493,9 @@ void main() {
             ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
           ]),
         );
-        expect(output, isNot(contains('Running dart_code_linter:metrics analysis...')));
+        final String combinedOutput = output.join('\n').toLowerCase();
+        expect(combinedOutput, isNot(contains('dart_code_linter')));
+        expect(combinedOutput, isNot(contains('metrics')));
       });
 
       test('does not run dart_code_linter if not present', () async {
@@ -510,7 +512,9 @@ void main() {
             ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
           ]),
         );
-        expect(output, isNot(contains('Running dart_code_linter:metrics analysis...')));
+        final String combinedOutput = output.join('\n').toLowerCase();
+        expect(combinedOutput, isNot(contains('dart_code_linter')));
+        expect(combinedOutput, isNot(contains('metrics')));
       });
 
       test('fails if dart_code_linter analysis fails', () async {
