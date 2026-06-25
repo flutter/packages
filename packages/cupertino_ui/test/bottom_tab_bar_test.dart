@@ -553,6 +553,7 @@ Future<void> main() async {
         label: 'Tab 1',
         hint: 'Tab 1 of 2',
         isSelected: true,
+        hasSelectedState: true,
         textDirection: TextDirection.ltr,
       ),
     );
@@ -563,6 +564,7 @@ Future<void> main() async {
         label: 'Tab 2',
         hint: 'Tab 2 of 2',
         isSelected: false,
+        hasSelectedState: true,
         textDirection: TextDirection.ltr,
       ),
     );
@@ -739,6 +741,7 @@ Future<void> main() async {
         label: 'Custom A label',
         hint: 'Tab 1 of 2',
         isSelected: true,
+        hasSelectedState: true,
         textDirection: TextDirection.ltr,
       ),
     );
@@ -750,6 +753,7 @@ Future<void> main() async {
         label: 'B',
         hint: 'Tab 2 of 2',
         isSelected: false,
+        hasSelectedState: true,
         textDirection: TextDirection.ltr,
       ),
     );
