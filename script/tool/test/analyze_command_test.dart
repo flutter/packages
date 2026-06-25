@@ -549,11 +549,11 @@ dev_dependencies:
 
         // Simulate linter failure.
         processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
-          FakeProcessInfo(MockProcess(exitCode: 0)), // flutter pub get
+          FakeProcessInfo(MockProcess()), // flutter pub get
           FakeProcessInfo(MockProcess(exitCode: 1)), // flutter pub run dart_code_linter:metrics...
         ];
         processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
-          FakeProcessInfo(MockProcess(exitCode: 0)), // dart analyze
+          FakeProcessInfo(MockProcess()), // dart analyze
         ];
 
         Error? commandError;

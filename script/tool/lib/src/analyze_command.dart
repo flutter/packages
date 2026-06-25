@@ -314,7 +314,7 @@ class AnalyzeCommand extends PackageLoopingCommand {
       return PackageResult.fail();
     }
 
-    final List<_CustomLinter> customCheckRunners = [
+    final customCheckRunners = <_CustomLinter>[
       _CustomLinter(
         dependencyName: 'dart_code_linter',
         run: _runDartCodeLinterForPackage,
