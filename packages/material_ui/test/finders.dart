@@ -30,7 +30,6 @@ Finder findByTooltip(Pattern message, {bool skipOffstage = true}) {
     // 2. Tooltip.message and Tooltip.richMessage are empty, since in this
     //    case no RawTooltip is created.
     if (widget is Tooltip) {
-      //if (widget.runtimeType == 'Tooltip') {
       final String tooltipMessage = widget.message ?? widget.richMessage!.toPlainText();
       if ((widget.excludeFromSemantics ?? false) || tooltipMessage.isEmpty) {
         return message is RegExp ? message.hasMatch(tooltipMessage) : tooltipMessage == message;
