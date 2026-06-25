@@ -517,6 +517,48 @@ void main() {
         expect(combinedOutput, isNot(contains('metrics')));
       });
 
+      test('runs dart_code_linter using dart for pure Dart packages', () async {
+        final RepositoryPackage package = createFakePackage('a_package', packagesDir, isFlutter: false);
+        _writeFakePubspecWithLinter(package, inDevDependencies: true, includeFlutter: false);
+
+        processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+            MockProcess(),
+            <String>['pub', 'get'],
+          ),
+          FakeProcessInfo(
+            MockProcess(),
+            <String>['analyze'],
+          ),
+          FakeProcessInfo(
+            MockProcess(),
+            <String>['run', 'dart_code_linter:metrics'],
+          ),
+        ];
+
+        final List<String> output = await runCapturingPrint(runner, <String>['analyze']);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall('dart', const <String>['pub', 'get'], package.path),
+            ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
+            ProcessCall(
+              'dart',
+              const <String>[
+                'run',
+                'dart_code_linter:metrics',
+                'analyze',
+                'lib',
+                '--set-exit-on-violation-level=warning',
+              ],
+              package.path,
+            ),
+          ]),
+        );
+        expect(output, contains('Running dart_code_linter:metrics analysis...'));
+      });
+
       test('fails if dart_code_linter analysis fails', () async {
         final RepositoryPackage package = createFakePackage('a_package', packagesDir, isFlutter: true);
         _writeFakePubspecWithLinter(package, inDevDependencies: true);
@@ -541,7 +583,7 @@ void main() {
         expect(
           output,
           containsAllInOrder(<Matcher>[
-            contains('Metrics violations found (e.g. cyclomatic complexity).'),
+            contains('Metrics violations found. See the package\'s local "analysis_options.yaml" for configured thresholds.'),
           ]),
         );
       });
@@ -1636,16 +1678,16 @@ void _writeFakePubspecWithLinter(
   RepositoryPackage package, {
   bool inDevDependencies = false,
   bool inDependencies = false,
+  bool includeFlutter = true,
 }) {
   package.pubspecFile.writeAsStringSync('''
 name: ${package.directory.basename}
 version: 0.0.1
 environment:
   sdk: ">=2.14.0 <4.0.0"
-  flutter: ">=2.5.0"
+  ${includeFlutter ? 'flutter: ">=2.5.0"' : ''}
 dependencies:
-  flutter:
-    sdk: flutter
+  ${includeFlutter ? 'flutter:\n    sdk: flutter' : ''}
 ${inDependencies ? '  dart_code_linter: 4.1.5' : ''}
 ${inDevDependencies ? 'dev_dependencies:\n  dart_code_linter: 4.1.5' : ''}
 ''');

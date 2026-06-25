@@ -335,12 +335,17 @@ class AnalyzeCommand extends PackageLoopingCommand {
     return PackageResult.success();
   }
 
+  /// Runs the `dart_code_linter` metrics analyzer on the package.
+  ///
+  /// Assumes `dart_code_linter` is present in `dev_dependencies`.
   Future<PackageResult> _runDartCodeLinterForPackage(RepositoryPackage package) async {
     print('Running dart_code_linter:metrics analysis...');
+    final bool isFlutter = package.requiresFlutter();
+    final String sdkCommand = isFlutter ? flutterCommand : _dartBinaryPath;
     final int linterExitCode = await processRunner.runAndStream(
-      flutterCommand,
+      sdkCommand,
       <String>[
-        'pub',
+        if (isFlutter) 'pub',
         'run',
         'dart_code_linter:metrics',
         'analyze',
@@ -350,7 +355,9 @@ class AnalyzeCommand extends PackageLoopingCommand {
       workingDir: package.directory,
     );
     if (linterExitCode != 0) {
-      return PackageResult.fail(<String>['Metrics violations found (e.g. cyclomatic complexity).']);
+      return PackageResult.fail(<String>[
+        'Metrics violations found. See the package\'s local "analysis_options.yaml" for configured thresholds.'
+      ]);
     }
 
     return PackageResult.success();
@@ -478,12 +485,19 @@ class AnalyzeCommand extends PackageLoopingCommand {
   }
 }
 
+/// Represents a custom linter check that is executed during package analysis.
 class _CustomLinter {
   const _CustomLinter({
     required this.dependencyName,
     required this.run,
   });
 
+  /// The name of the package dependency that triggers this custom check.
+  ///
+  /// The check is only executed if this dependency is listed in the package's
+  /// `dev_dependencies`.
   final String dependencyName;
+
+  /// The runner function that executes the custom check.
   final Future<PackageResult> Function(RepositoryPackage) run;
 }
