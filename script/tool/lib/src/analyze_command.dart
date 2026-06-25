@@ -313,6 +313,29 @@ class AnalyzeCommand extends PackageLoopingCommand {
     if (exitCode != 0) {
       return PackageResult.fail();
     }
+
+    final Pubspec pubspec = package.parsePubspec();
+    final bool hasLinter = pubspec.devDependencies.containsKey('dart_code_linter') ||
+        pubspec.dependencies.containsKey('dart_code_linter');
+    if (hasLinter) {
+      print('Running dart_code_linter:metrics analysis...');
+      final int linterExitCode = await processRunner.runAndStream(
+        flutterCommand,
+        <String>[
+          'pub',
+          'run',
+          'dart_code_linter:metrics',
+          'analyze',
+          'lib',
+          '--set-exit-on-violation-level=warning',
+        ],
+        workingDir: package.directory,
+      );
+      if (linterExitCode != 0) {
+        return PackageResult.fail(<String>['Metrics violations found (e.g. cyclomatic complexity).']);
+      }
+    }
+
     return PackageResult.success();
   }
 

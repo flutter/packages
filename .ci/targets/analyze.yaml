@@ -15,9 +15,6 @@ tasks:
     # DO NOT change the custom-analysis argument here without changing the Dart repo.
     # See the comment in script/configs/custom_analysis.yaml for details.
     args: ["analyze", "--custom-analysis=script/configs/custom_analysis.yaml"]
-  - name: camerax complexity check
-    script: .ci/scripts/analyze_camerax_complexity.sh
-
     # Re-run analysis with path-based dependencies to ensure that publishing
     # the changes won't break analysis of other packages in the respository
     # that depend on it.
