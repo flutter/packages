@@ -7,6 +7,7 @@
 @Tags(<String>['reduced-test-set'])
 library;
 
+import 'dart:async';
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -53,15 +54,17 @@ void main() {
       const CupertinoApp(home: CupertinoNavigationBar(middle: Text('Title'))),
     );
 
-    tester
-        .state<NavigatorState>(find.byType(Navigator))
-        .push(
-          CupertinoPageRoute<void>(
-            builder: (BuildContext context) {
-              return const CupertinoNavigationBar(middle: Text('Page 2'));
-            },
+    unawaited(
+      tester
+          .state<NavigatorState>(find.byType(Navigator))
+          .push(
+            CupertinoPageRoute<void>(
+              builder: (BuildContext context) {
+                return const CupertinoNavigationBar(middle: Text('Page 2'));
+              },
+            ),
           ),
-        );
+    );
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
@@ -75,15 +78,17 @@ void main() {
       const CupertinoApp(home: CupertinoNavigationBar.large(largeTitle: Text('Title'))),
     );
 
-    tester
-        .state<NavigatorState>(find.byType(Navigator))
-        .push(
-          CupertinoPageRoute<void>(
-            builder: (BuildContext context) {
-              return const CupertinoNavigationBar.large(largeTitle: Text('Page 2'));
-            },
+    unawaited(
+      tester
+          .state<NavigatorState>(find.byType(Navigator))
+          .push(
+            CupertinoPageRoute<void>(
+              builder: (BuildContext context) {
+                return const CupertinoNavigationBar.large(largeTitle: Text('Page 2'));
+              },
+            ),
           ),
-        );
+    );
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
@@ -227,11 +232,13 @@ void main() {
         home: const CupertinoNavigationBar(middle: Text('Page 1')),
       ),
     );
-    navigator.currentState!.push<void>(
-      CupertinoPageRoute<void>(
-        builder: (BuildContext context) {
-          return const CupertinoNavigationBar(middle: Text('Page 2'));
-        },
+    unawaited(
+      navigator.currentState!.push<void>(
+        CupertinoPageRoute<void>(
+          builder: (BuildContext context) {
+            return const CupertinoNavigationBar(middle: Text('Page 2'));
+          },
+        ),
       ),
     );
     await tester.pumpAndSettle();
@@ -799,15 +806,17 @@ void main() {
 
     expect(find.byType(CupertinoButton), findsNothing);
 
-    tester
-        .state<NavigatorState>(find.byType(Navigator))
-        .push(
-          CupertinoPageRoute<void>(
-            builder: (BuildContext context) {
-              return const CupertinoNavigationBar(middle: Text('Page 2'));
-            },
+    unawaited(
+      tester
+          .state<NavigatorState>(find.byType(Navigator))
+          .push(
+            CupertinoPageRoute<void>(
+              builder: (BuildContext context) {
+                return const CupertinoNavigationBar(middle: Text('Page 2'));
+              },
+            ),
           ),
-        );
+    );
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
@@ -815,16 +824,18 @@ void main() {
     expect(find.byType(CupertinoButton), findsOneWidget);
     expect(find.text(String.fromCharCode(CupertinoIcons.back.codePoint)), findsOneWidget);
 
-    tester
-        .state<NavigatorState>(find.byType(Navigator))
-        .push(
-          CupertinoPageRoute<void>(
-            fullscreenDialog: true,
-            builder: (BuildContext context) {
-              return const CupertinoNavigationBar(middle: Text('Dialog page'));
-            },
+    unawaited(
+      tester
+          .state<NavigatorState>(find.byType(Navigator))
+          .push(
+            CupertinoPageRoute<void>(
+              fullscreenDialog: true,
+              builder: (BuildContext context) {
+                return const CupertinoNavigationBar(middle: Text('Dialog page'));
+              },
+            ),
           ),
-        );
+    );
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
@@ -856,18 +867,20 @@ void main() {
 
     expect(find.byType(CupertinoButton), findsNothing);
 
-    tester
-        .state<NavigatorState>(find.byType(Navigator))
-        .push(
-          CupertinoSheetRoute<void>(
-            builder: (BuildContext context) {
-              return const CupertinoPageScaffold(
-                navigationBar: CupertinoNavigationBar(middle: Text('Page 2')),
-                child: Placeholder(),
-              );
-            },
+    unawaited(
+      tester
+          .state<NavigatorState>(find.byType(Navigator))
+          .push(
+            CupertinoSheetRoute<void>(
+              builder: (BuildContext context) {
+                return const CupertinoPageScaffold(
+                  navigationBar: CupertinoNavigationBar(middle: Text('Page 2')),
+                  child: Placeholder(),
+                );
+              },
+            ),
           ),
-        );
+    );
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
@@ -876,19 +889,21 @@ void main() {
     expect(find.byType(CupertinoButton), findsNothing);
     expect(find.text(String.fromCharCode(CupertinoIcons.back.codePoint)), findsNothing);
 
-    tester
-        .state<NavigatorState>(find.byType(Navigator))
-        .push(
-          CupertinoSheetRoute<void>(
-            builder: (BuildContext context) {
-              return const CupertinoPageScaffold(
-                child: CustomScrollView(
-                  slivers: <Widget>[CupertinoSliverNavigationBar(largeTitle: Text('Page 3'))],
-                ),
-              );
-            },
+    unawaited(
+      tester
+          .state<NavigatorState>(find.byType(Navigator))
+          .push(
+            CupertinoSheetRoute<void>(
+              builder: (BuildContext context) {
+                return const CupertinoPageScaffold(
+                  child: CustomScrollView(
+                    slivers: <Widget>[CupertinoSliverNavigationBar(largeTitle: Text('Page 3'))],
+                  ),
+                );
+              },
+            ),
           ),
-        );
+    );
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
@@ -901,36 +916,40 @@ void main() {
   testWidgets('Long back label turns into "back"', (WidgetTester tester) async {
     await tester.pumpWidget(const CupertinoApp(home: Placeholder()));
 
-    tester
-        .state<NavigatorState>(find.byType(Navigator))
-        .push(
-          CupertinoPageRoute<void>(
-            builder: (BuildContext context) {
-              return const CupertinoPageScaffold(
-                navigationBar: CupertinoNavigationBar(previousPageTitle: '012345678901'),
-                child: Placeholder(),
-              );
-            },
+    unawaited(
+      tester
+          .state<NavigatorState>(find.byType(Navigator))
+          .push(
+            CupertinoPageRoute<void>(
+              builder: (BuildContext context) {
+                return const CupertinoPageScaffold(
+                  navigationBar: CupertinoNavigationBar(previousPageTitle: '012345678901'),
+                  child: Placeholder(),
+                );
+              },
+            ),
           ),
-        );
+    );
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
 
     expect(find.widgetWithText(CupertinoButton, '012345678901'), findsOneWidget);
 
-    tester
-        .state<NavigatorState>(find.byType(Navigator))
-        .push(
-          CupertinoPageRoute<void>(
-            builder: (BuildContext context) {
-              return const CupertinoPageScaffold(
-                navigationBar: CupertinoNavigationBar(previousPageTitle: '0123456789012'),
-                child: Placeholder(),
-              );
-            },
+    unawaited(
+      tester
+          .state<NavigatorState>(find.byType(Navigator))
+          .push(
+            CupertinoPageRoute<void>(
+              builder: (BuildContext context) {
+                return const CupertinoPageScaffold(
+                  navigationBar: CupertinoNavigationBar(previousPageTitle: '0123456789012'),
+                  child: Placeholder(),
+                );
+              },
+            ),
           ),
-        );
+    );
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
@@ -1601,33 +1620,37 @@ void main() {
       'show previous page title when possible', (WidgetTester tester) async {
     await tester.pumpWidget(const CupertinoApp(home: Placeholder()));
 
-    tester
-        .state<NavigatorState>(find.byType(Navigator))
-        .push(
-          CupertinoPageRoute<void>(
-            title: 'An iPod',
-            builder: (BuildContext context) {
-              return const CupertinoPageScaffold(
-                navigationBar: CupertinoNavigationBar(),
-                child: Placeholder(),
-              );
-            },
+    unawaited(
+      tester
+          .state<NavigatorState>(find.byType(Navigator))
+          .push(
+            CupertinoPageRoute<void>(
+              title: 'An iPod',
+              builder: (BuildContext context) {
+                return const CupertinoPageScaffold(
+                  navigationBar: CupertinoNavigationBar(),
+                  child: Placeholder(),
+                );
+              },
+            ),
           ),
-        );
+    );
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
 
-    tester
-        .state<NavigatorState>(find.byType(Navigator))
-        .push(
-          CupertinoPageRoute<void>(
-            title: 'A Phone',
-            builder: (BuildContext context) {
-              return const CupertinoNavigationBarBackButton();
-            },
+    unawaited(
+      tester
+          .state<NavigatorState>(find.byType(Navigator))
+          .push(
+            CupertinoPageRoute<void>(
+              title: 'A Phone',
+              builder: (BuildContext context) {
+                return const CupertinoNavigationBarBackButton();
+              },
+            ),
           ),
-        );
+    );
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
@@ -1641,38 +1664,42 @@ void main() {
     var backPressed = false;
     await tester.pumpWidget(const CupertinoApp(home: Placeholder()));
 
-    tester
-        .state<NavigatorState>(find.byType(Navigator))
-        .push(
-          CupertinoPageRoute<void>(
-            title: 'An iPod',
-            builder: (BuildContext context) {
-              return const CupertinoPageScaffold(
-                navigationBar: CupertinoNavigationBar(),
-                child: Placeholder(),
-              );
-            },
+    unawaited(
+      tester
+          .state<NavigatorState>(find.byType(Navigator))
+          .push(
+            CupertinoPageRoute<void>(
+              title: 'An iPod',
+              builder: (BuildContext context) {
+                return const CupertinoPageScaffold(
+                  navigationBar: CupertinoNavigationBar(),
+                  child: Placeholder(),
+                );
+              },
+            ),
           ),
-        );
+    );
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
 
-    tester
-        .state<NavigatorState>(find.byType(Navigator))
-        .push(
-          CupertinoPageRoute<void>(
-            title: 'A Phone',
-            builder: (BuildContext context) {
-              return CupertinoPageScaffold(
-                navigationBar: CupertinoNavigationBar(
-                  leading: CupertinoNavigationBarBackButton(onPressed: () => backPressed = true),
-                ),
-                child: const Placeholder(),
-              );
-            },
+    unawaited(
+      tester
+          .state<NavigatorState>(find.byType(Navigator))
+          .push(
+            CupertinoPageRoute<void>(
+              title: 'A Phone',
+              builder: (BuildContext context) {
+                return CupertinoPageScaffold(
+                  navigationBar: CupertinoNavigationBar(
+                    leading: CupertinoNavigationBarBackButton(onPressed: () => backPressed = true),
+                  ),
+                  child: const Placeholder(),
+                );
+              },
+            ),
           ),
-        );
+    );
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
@@ -2078,18 +2105,20 @@ void main() {
       ),
     );
 
-    tester
-        .state<NavigatorState>(find.byType(Navigator))
-        .push(
-          CupertinoPageRoute<void>(
-            builder: (BuildContext context) {
-              return const CupertinoPageScaffold(
-                navigationBar: CupertinoNavigationBar(middle: Text('Page 2'), border: null),
-                child: Placeholder(),
-              );
-            },
+    unawaited(
+      tester
+          .state<NavigatorState>(find.byType(Navigator))
+          .push(
+            CupertinoPageRoute<void>(
+              builder: (BuildContext context) {
+                return const CupertinoPageScaffold(
+                  navigationBar: CupertinoNavigationBar(middle: Text('Page 2'), border: null),
+                  child: Placeholder(),
+                );
+              },
+            ),
           ),
-        );
+    );
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
