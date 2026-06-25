@@ -487,11 +487,16 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
     public boolean onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
       if (requestCode == REQUEST_CODE_AUTHORIZE) {
         if (pendingAuthorizationCallback != null) {
+          // Clear the pending callback before completing it so a re-delivered result (e.g. after a
+          // configuration change or process death) cannot complete the same reply twice.
+          Function1<? super Result<? extends AuthorizeResult>, Unit> callback =
+              pendingAuthorizationCallback;
+          pendingAuthorizationCallback = null;
           try {
             AuthorizationResult authorizationResult =
                 authorizationClientFactory.create(context).getAuthorizationResultFromIntent(data);
             ResultUtilsKt.completeWithValue(
-                pendingAuthorizationCallback,
+                callback,
                 new PlatformAuthorizationResult(
                     authorizationResult.getAccessToken(),
                     authorizationResult.getServerAuthCode(),
@@ -499,10 +504,9 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
             return true;
           } catch (ApiException e) {
             ResultUtilsKt.completeWithValue(
-                pendingAuthorizationCallback,
+                callback,
                 new AuthorizeFailure(AuthorizeFailureType.API_EXCEPTION, e.getMessage(), null));
           }
-          pendingAuthorizationCallback = null;
         } else {
           Log.e("google_sign_in", "Unexpected authorization result callback");
         }

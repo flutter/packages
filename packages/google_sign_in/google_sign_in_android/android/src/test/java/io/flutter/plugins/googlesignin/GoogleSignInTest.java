@@ -5,6 +5,7 @@
 package io.flutter.plugins.googlesignin;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -990,6 +991,57 @@ public class GoogleSignInTest {
     plugin.onActivityResult(GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE, 0, null);
 
     assertTrue(callbackCalled[0]);
+  }
+
+  // Regression test for https://github.com/flutter/flutter/issues/188062
+  // A re-delivered authorization activity result for REQUEST_CODE_AUTHORIZE (e.g. after a
+  // configuration change or process death) must not resolve the same callback twice, which would
+  // throw IllegalStateException ("Reply already submitted") on the real Pigeon reply.
+  @Test
+  public void authorize_ignoresDuplicateActivityResult() {
+    final List<String> scopes = new ArrayList<>(Arrays.asList("scope1", "scope1"));
+    PlatformAuthorizationRequest params =
+        new PlatformAuthorizationRequest(scopes, null, null, null);
+
+    final String accessToken = "accessToken";
+    final String serverAuthCode = "serverAuthCode";
+    when(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask);
+    AuthorizationResult successResult =
+        mockSuccessAuthorizationResult(serverAuthCode, accessToken, scopes);
+    try {
+      when(mockAuthorizationClient.getAuthorizationResultFromIntent(any()))
+          .thenReturn(successResult);
+    } catch (ApiException e) {
+      fail();
+    }
+
+    plugin.setActivity(mockActivity);
+    final int[] callbackCount = new int[] {0};
+    plugin.authorize(
+        params,
+        true,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCount[0] += 1;
+              return null;
+            }));
+
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<OnSuccessListener<AuthorizationResult>> callbackCaptor =
+        ArgumentCaptor.forClass(OnSuccessListener.class);
+    verify(mockAuthorizationTask).addOnSuccessListener(callbackCaptor.capture());
+    callbackCaptor.getValue().onSuccess(mockResolutionAuthorizationResult(mockAuthorizationIntent));
+
+    // The first delivery resolves the authorization and is consumed.
+    boolean firstHandled =
+        plugin.onActivityResult(GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE, 0, null);
+    // A duplicate/re-delivered result for the same request code must be ignored, not re-resolved.
+    boolean secondHandled =
+        plugin.onActivityResult(GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE, 0, null);
+
+    assertTrue(firstHandled);
+    assertFalse(secondHandled);
+    assertEquals(1, callbackCount[0]);
   }
 
   @Test

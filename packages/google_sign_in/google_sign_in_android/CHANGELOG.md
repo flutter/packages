@@ -1,3 +1,9 @@
+## 7.2.14
+
+* Fixes an `IllegalStateException` ("Reply already submitted") crash when an authorization activity
+  result for `REQUEST_CODE_AUTHORIZE` is delivered more than once (for example after a configuration
+  change or process death), by clearing the pending callback before resolving it.
+
 ## 7.2.13
 
 * Bumps com.google.android.gms:play-services-auth from 21.5.1 to 21.6.0.
