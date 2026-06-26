@@ -200,9 +200,9 @@ PaintPattern uniqueRipplePattern(Offset expectedCenter, double expectedRadius) {
     if (offsetsAreClose(center, expectedCenter) && radiiAreClose(radius, expectedRadius)) {
       return true;
     }
-    throw '''
+    throw Exception('''
               Expected: center == $expectedCenter, radius == $expectedRadius
-              Found: center == $center radius == $radius''';
+              Found: center == $center radius == $radius''');
   });
 }
 
