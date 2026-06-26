@@ -405,4 +405,12 @@ public class DataClassMethodsTest {
     assertEquals(a, b);
     assertEquals(a.hashCode(), b.hashCode());
   }
+
+  @Test
+  public void testConstants() {
+    assertEquals("stringConstantValue", CoreTests.aStringConstant);
+    assertEquals(Long.valueOf(42L), CoreTests.anIntConstant);
+    assertEquals(Double.valueOf(3.14), CoreTests.aDoubleConstant);
+    assertEquals(Boolean.TRUE, CoreTests.aBoolConstant);
+  }
 }

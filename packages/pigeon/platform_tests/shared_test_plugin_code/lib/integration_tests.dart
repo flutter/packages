@@ -2795,6 +2795,13 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     await completer1.future;
     await completer2.future;
   }, skip: !eventChannelSupported.contains(targetGenerator));
+
+  testWidgets('constants are generated correctly', (WidgetTester _) async {
+    expect(aStringConstant, 'stringConstantValue');
+    expect(anIntConstant, 42);
+    expect(aDoubleConstant, 3.14);
+    expect(aBoolConstant, true);
+  });
 }
 
 class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {

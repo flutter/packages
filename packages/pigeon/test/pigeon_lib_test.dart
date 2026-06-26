@@ -1769,4 +1769,118 @@ abstract class Api {
       await completer.future;
     });
   });
+
+  group('constants parsing', () {
+    test('valid constants', () {
+      const code = '''
+const String myString = 'hello';
+const int myInt = 42;
+const double myDouble = 3.14;
+const bool myBool = true;
+const int myNegativeInt = -10;
+const double myNegativeDouble = -2.5;
+const String myAdjacentString = 'hello ' 'world';
+''';
+      final ParseResults parseResult = parseSource(code);
+      expect(parseResult.errors, isEmpty);
+      expect(parseResult.root.constants.length, 7);
+
+      final Constant myString = parseResult.root.constants[0];
+      expect(myString.name, 'myString');
+      expect(myString.type.baseName, 'String');
+      expect(myString.value, 'hello');
+
+      final Constant myInt = parseResult.root.constants[1];
+      expect(myInt.name, 'myInt');
+      expect(myInt.type.baseName, 'int');
+      expect(myInt.value, 42);
+
+      final Constant myDouble = parseResult.root.constants[2];
+      expect(myDouble.name, 'myDouble');
+      expect(myDouble.type.baseName, 'double');
+      expect(myDouble.value, 3.14);
+
+      final Constant myBool = parseResult.root.constants[3];
+      expect(myBool.name, 'myBool');
+      expect(myBool.type.baseName, 'bool');
+      expect(myBool.value, true);
+
+      final Constant myNegativeInt = parseResult.root.constants[4];
+      expect(myNegativeInt.name, 'myNegativeInt');
+      expect(myNegativeInt.type.baseName, 'int');
+      expect(myNegativeInt.value, -10);
+
+      final Constant myNegativeDouble = parseResult.root.constants[5];
+      expect(myNegativeDouble.name, 'myNegativeDouble');
+      expect(myNegativeDouble.type.baseName, 'double');
+      expect(myNegativeDouble.value, -2.5);
+
+      final Constant myAdjacentString = parseResult.root.constants[6];
+      expect(myAdjacentString.name, 'myAdjacentString');
+      expect(myAdjacentString.type.baseName, 'String');
+      expect(myAdjacentString.value, 'hello world');
+    });
+
+    test('missing type annotation error', () {
+      const code = '''
+const myConst = 42;
+''';
+      final ParseResults parseResult = parseSource(code);
+      expect(parseResult.errors, isNotEmpty);
+      expect(
+        parseResult.errors[0].message,
+        contains('Top-level constants must have an explicit type annotation.'),
+      );
+    });
+
+    test('unsupported constant type error', () {
+      const code = '''
+const List<int> myConst = 42;
+''';
+      final ParseResults parseResult = parseSource(code);
+      expect(parseResult.errors, isNotEmpty);
+      expect(
+        parseResult.errors[0].message,
+        contains(
+          'Unsupported constant type: "List". Only String, int, double, and bool are supported.',
+        ),
+      );
+    });
+
+    test('constant value type mismatch error', () {
+      const code = '''
+const String myConst = 42;
+''';
+      final ParseResults parseResult = parseSource(code);
+      expect(parseResult.errors, isNotEmpty);
+      expect(
+        parseResult.errors[0].message,
+        contains('Constant "myConst" type is String but value is int.'),
+      );
+    });
+
+    test('unsupported expression type error', () {
+      const code = '''
+const int myConst = 1 + 2;
+''';
+      final ParseResults parseResult = parseSource(code);
+      expect(parseResult.errors, isNotEmpty);
+      expect(
+        parseResult.errors[0].message,
+        contains('Unsupported expression type BinaryExpressionImpl for constant initializer.'),
+      );
+    });
+
+    test('string interpolation error', () {
+      const code = r'''
+const String myConst = 'hello ${1 + 2}';
+''';
+      final ParseResults parseResult = parseSource(code);
+      expect(parseResult.errors, isNotEmpty);
+      expect(
+        parseResult.errors[0].message,
+        contains('String interpolation is not supported in Pigeon constants.'),
+      );
+    });
+  });
 }

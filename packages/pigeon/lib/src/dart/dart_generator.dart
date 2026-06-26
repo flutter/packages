@@ -187,6 +187,33 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
   }
 
   @override
+  void writeConstants(
+    InternalDartOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    if (root.constants.isEmpty) {
+      return;
+    }
+    indent.newln();
+    for (final Constant constant in root.constants) {
+      addDocumentationComments(indent, constant.documentationComments, docCommentSpec);
+      final String formattedValue = _formatValue(constant.type.baseName, constant.value);
+      indent.writeln('const ${constant.type.baseName} ${constant.name} = $formattedValue;');
+    }
+  }
+
+  String _formatValue(String type, Object value) {
+    if (type == 'String') {
+      final String escaped = escapeStringSingleQuotes(value.toString());
+      return "'$escaped'";
+    } else {
+      return value.toString();
+    }
+  }
+
+  @override
   void writeEnum(
     InternalDartOptions generatorOptions,
     Root root,

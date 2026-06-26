@@ -383,4 +383,12 @@ struct DataClassMethodsTests {
 
     #expect(hashA == hashB)
   }
+
+  @Test
+  func testConstants() {
+    #expect(aStringConstant == "stringConstantValue")
+    #expect(anIntConstant == 42)
+    #expect(aDoubleConstant == 3.14)
+    #expect(aBoolConstant == true)
+  }
 }
