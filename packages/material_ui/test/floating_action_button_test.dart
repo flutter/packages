@@ -8,6 +8,7 @@
 @TestOn('!chrome')
 library;
 
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -503,17 +504,19 @@ void main() {
         ),
       ),
     );
-    Navigator.push(
-      theContext,
-      PageRouteBuilder<void>(
-        pageBuilder:
-            (
-              BuildContext context,
-              Animation<double> animation,
-              Animation<double> secondaryAnimation,
-            ) {
-              return const Placeholder();
-            },
+    unawaited(
+      Navigator.push(
+        theContext,
+        PageRouteBuilder<void>(
+          pageBuilder:
+              (
+                BuildContext context,
+                Animation<double> animation,
+                Animation<double> secondaryAnimation,
+              ) {
+                return const Placeholder();
+              },
+        ),
       ),
     );
     await tester
@@ -535,17 +538,19 @@ void main() {
         ),
       ),
     );
-    Navigator.push(
-      theContext,
-      PageRouteBuilder<void>(
-        pageBuilder:
-            (
-              BuildContext context,
-              Animation<double> animation,
-              Animation<double> secondaryAnimation,
-            ) {
-              return const Placeholder();
-            },
+    unawaited(
+      Navigator.push(
+        theContext,
+        PageRouteBuilder<void>(
+          pageBuilder:
+              (
+                BuildContext context,
+                Animation<double> animation,
+                Animation<double> secondaryAnimation,
+              ) {
+                return const Placeholder();
+              },
+        ),
       ),
     );
     await tester.pump();
@@ -567,17 +572,19 @@ void main() {
         ),
       ),
     );
-    Navigator.push(
-      theContext,
-      PageRouteBuilder<void>(
-        pageBuilder:
-            (
-              BuildContext context,
-              Animation<double> animation,
-              Animation<double> secondaryAnimation,
-            ) {
-              return const Placeholder();
-            },
+    unawaited(
+      Navigator.push(
+        theContext,
+        PageRouteBuilder<void>(
+          pageBuilder:
+              (
+                BuildContext context,
+                Animation<double> animation,
+                Animation<double> secondaryAnimation,
+              ) {
+                return const Placeholder();
+              },
+        ),
       ),
     );
     await tester.pump();
