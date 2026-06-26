@@ -38,12 +38,12 @@ To define an open enum, create an extension type wrapping a `String` (or any oth
 
 <?code-excerpt "readme_excerpts.dart (Definition)"?>
 ```dart
-extension type const UserRole(String name) implements OpenEnum<String> {
-  static const UserRole admin = UserRole('admin');
-  static const UserRole member = UserRole('member');
+extension type const UserRole._(String name) implements OpenEnum<String> {
+  static const UserRole admin = UserRole._('admin');
+  static const UserRole member = UserRole._('member');
 
   // We can add this in a minor update without breaking any consumer switches!
-  static const UserRole guest = UserRole('guest');
+  static const UserRole guest = UserRole._('guest');
 
   // Provide a list of known values, just like standard enums.
   static const List<UserRole> values = [admin, member, guest];
@@ -107,3 +107,51 @@ final UserRole roleByName = UserRole.values.byName('admin');
 // Returns null if the name is not found (safer alternative)
 final UserRole? safeRole = UserRole.values.byNameOrNull('super-user');
 ```
+
+### 3. Open Enums with both Index and Name (`OpenEnumRecord`)
+
+If you want your open enum to natively support both integer `index` and string `name` properties without writing any manual lookup or index mapping boilerplate, you can wrap a named record `({int index, String name})` and implement `OpenEnumRecord`:
+
+<?code-excerpt "readme_excerpts.dart (DefinitionRecord)"?>
+```dart
+extension type const UserRoleRecord._(({int index, String name}) data) implements OpenEnumRecord {
+  static const UserRoleRecord admin = UserRoleRecord._((index: 0, name: 'admin'));
+  static const UserRoleRecord member = UserRoleRecord._((index: 1, name: 'member'));
+  static const UserRoleRecord guest = UserRoleRecord._((index: 2, name: 'guest'));
+
+  static const List<UserRoleRecord> values = [admin, member, guest];
+}
+```
+
+By using `OpenEnumRecord`, you automatically get:
+- `.index` and `.name` properties natively on every instance.
+- `.byIndex(int index)` lookup on collections.
+- `.byName(String name)` and `.byNameOrNull(String name)` lookup on collections.
+
+
+
+---
+
+## Limitations & Common Patterns
+
+Due to the static resolution and erasure of Dart **Extension Types**, there are a few standard `enum` features that require slightly different patterns.
+
+### 1. Implementing `.index`
+
+Standard enums have an automatic `index` getter. For `open_enum` types, you can easily implement this by looking up the index of `this` within the `values` list:
+
+<?code-excerpt "readme_excerpts.dart (IndexAndStringification)"?>
+```dart
+  /// Returns the index of this value in [values] list, matching standard enum `.index`.
+  int get index => values.indexOf(this);
+
+  /// Custom string representation (since extension types cannot override `toString()`).
+  String get label => 'UserRole.$name';
+```
+
+### 2. Custom Stringification (`toString()`)
+
+Extension types compile down to their underlying representation. Consequently, calling `toString()` on them at runtime will output the raw value (e.g., `'admin'`), not `'UserRole.admin'`. 
+
+To support descriptive stringification, define a custom getter (like `label` or `asString`) as shown above.
+

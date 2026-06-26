@@ -8,14 +8,13 @@
 import 'dart:convert';
 import 'package:open_enum/open_enum.dart';
 
-/// Define our open enum for User Roles.
-extension type const UserRole(String name) implements OpenEnum<String> {
-  static const UserRole admin = UserRole('admin');
-  static const UserRole member = UserRole('member');
-  static const UserRole guest = UserRole('guest');
+extension type const UserRole._(({int index, String name}) data) implements OpenEnumRecord {
+  static const UserRole admin = UserRole._((index: 0, name: 'admin'));
+  static const UserRole member = UserRole._((index: 1, name: 'member'));
+  static const UserRole guest = UserRole._((index: 2, name: 'guest'));
 
   /// A fallback role used when we encounter a value we don't recognize yet.
-  static const UserRole unknown = UserRole('unknown');
+  static const UserRole unknown = UserRole._((index: -1, name: 'unknown'));
 
   static const List<UserRole> values = [admin, member, guest, unknown];
 }
@@ -27,8 +26,8 @@ class User {
   factory User.fromJson(Map<String, dynamic> json) {
     final String roleStr = json['role'] as String;
 
-    // Safely deserialize to the open enum, falling back to 'unknown' if the
-    // server sent a value we don't recognize yet.
+    // Safely deserialize to the open enum using OpenEnumRecord's byNameOrNull helper,
+    // falling back to 'unknown' if the server sent a value we don't recognize yet.
     final UserRole role = UserRole.values.byNameOrNull(roleStr) ?? UserRole.unknown;
 
     return User(username: json['username'] as String, role: role);
@@ -42,7 +41,7 @@ class User {
 }
 
 void main() {
-  print('--- Simulating API Client with Open Enums ---\n');
+  print('--- Simulating API Client with Open Enums (OpenEnumRecord) ---\n');
 
   // 1. Simulating a response payload representing users with currently known roles.
   const String currentPayload = '''
@@ -60,7 +59,8 @@ void main() {
       .toList();
 
   for (final User user in currentUsers) {
-    print('   Parsed user: $user');
+    // Print the user, natively showcasing name and index values
+    print('   Parsed user: ${user.username} (role: ${user.role.name}, index: ${user.role.index})');
     _processUserDashboard(user);
   }
 
@@ -85,7 +85,7 @@ void main() {
       .toList();
 
   for (final User user in futureUsers) {
-    print('   Parsed user: $user');
+    print('   Parsed user: ${user.username} (role: ${user.role.name}, index: ${user.role.index})');
     _processUserDashboard(user);
   }
 }
