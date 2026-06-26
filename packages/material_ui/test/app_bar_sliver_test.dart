@@ -2,15 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@Skip(
-  'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
-)
-import 'package:material_ui/material_ui.dart';
+import 'dart:async' show unawaited;
+
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
-import '../widgets/semantics_tester.dart';
 import 'app_bar_utils.dart';
+import 'semantics_tester.dart';
 
 Widget buildSliverAppBarApp({
   bool floating = false,
@@ -71,22 +70,24 @@ void main() {
               return Center(
                 child: FilledButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (BuildContext context) {
-                          return Scaffold(
-                            body: CustomScrollView(
-                              primary: true,
-                              slivers: <Widget>[
-                                const SliverAppBar.large(title: Text(title)),
-                                SliverToBoxAdapter(
-                                  child: Container(height: 1200, color: Colors.orange[400]),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
+                    unawaited(
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (BuildContext context) {
+                            return Scaffold(
+                              body: CustomScrollView(
+                                primary: true,
+                                slivers: <Widget>[
+                                  const SliverAppBar.large(title: Text(title)),
+                                  SliverToBoxAdapter(
+                                    child: Container(height: 1200, color: Colors.orange[400]),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     );
                   },
