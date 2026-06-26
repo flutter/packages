@@ -393,10 +393,7 @@ class FormatCommand extends PackageLoopingCommand {
     const handFormattedExtension = '.dart';
     const handFormattedPragma = '// This file is hand-formatted.';
 
-    final bool useDiff = getBoolArg('run-on-staged-packages') ||
-        getBoolArg('run-on-dirty-packages') ||
-        getBoolArg('run-on-changed-packages') ||
-        getBoolArg('packages-for-branch');
+    final bool useDiff = getBoolArg('run-on-staged-packages');
 
     return files
         .where((File file) {

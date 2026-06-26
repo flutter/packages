@@ -37,7 +37,7 @@ class PreCommitCommand extends Command<bool> {
 
   /// Runs a pre-commit check for correct formatting and static analysis.
   ///
-  /// It will check for any staged changes and run the plugin tool format and analyze commands on them.
+  /// It runs the plugin tool format and analyze commands on all packages that have staged changes.
   /// If any of the commands fail, it will return false; otherwise, it will return true.
   @override
   Future<bool> run() async {
@@ -47,7 +47,11 @@ class PreCommitCommand extends Command<bool> {
       return false;
     }
 
-    if (!await _hasStagedPackages(repoRoot)) {
+    final bool? hasStaged = await _hasStagedPackages(repoRoot);
+    if (hasStaged == null) {
+      return false;
+    }
+    if (!hasStaged) {
       print('No staged package changes to check.');
       return true;
     }
@@ -90,8 +94,9 @@ class PreCommitCommand extends Command<bool> {
   /// Checks if there are any staged package changes in the repository.
   ///
   /// Returns true if at least one staged file is located within a package directory
-  /// (under packages/ or third_party/packages/).
-  Future<bool> _hasStagedPackages(Directory repoRoot) async {
+  /// (under packages/ or third_party/packages/), false if there are none, or null
+  /// if the git command fails.
+  Future<bool?> _hasStagedPackages(Directory repoRoot) async {
     final ProcessResult diffResult = await processRunner('git', <String>[
       'diff',
       '--cached',
@@ -103,8 +108,8 @@ class PreCommitCommand extends Command<bool> {
       if (diffResult.stderr.toString().isNotEmpty) {
         print(diffResult.stderr);
       }
-      // If we cannot determine the diff, abort pre-commit check.
-      return false;
+      // If we cannot determine the diff, abort pre-commit check by returning null.
+      return null;
     }
 
     final stdoutStr = diffResult.stdout as String;
@@ -120,7 +125,7 @@ class PreCommitCommand extends Command<bool> {
 
   /// Runs the formatting check on staged files.
   ///
-  /// Returns true if all staged files are correctly formatted.
+  /// Returns true if all staged files are correctly formatted or false otherwise.
   Future<bool> _checkFormatting(Directory repoRoot, String toolScript) async {
     final ProcessResult formatResult = await processRunner('dart', [
       'run',
@@ -149,7 +154,7 @@ class PreCommitCommand extends Command<bool> {
 
   /// Runs the static analysis check on staged files.
   ///
-  /// Returns true if all staged files pass analysis.
+  /// Returns true if all staged files pass analysis or false otherwise.
   Future<bool> _checkStaticAnalysis(Directory repoRoot, String toolScript) async {
     final ProcessResult analyzeResult = await processRunner('dart', [
       'run',

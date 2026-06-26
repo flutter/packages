@@ -8,6 +8,9 @@ import 'package:githooks/src/pre_commit_command.dart';
 import 'package:test/test.dart';
 
 void main() {
+  const repoRoot = '/mock/repo/root';
+  const toolScript = '$repoRoot/script/tool/bin/flutter_plugin_tools.dart';
+
   group('pre-commit hook', () {
     test('passes when both format and analyze succeed', () async {
       final List<List<String>> executedArguments = [];
@@ -17,7 +20,7 @@ void main() {
               executedArguments.add(arguments);
               if (executable == 'git') {
                 if (arguments.contains('rev-parse')) {
-                  return ProcessResult(0, 0, '/mock/repo/root\n', '');
+                  return ProcessResult(0, 0, '$repoRoot\n', '');
                 }
                 if (arguments.contains('diff')) {
                   return ProcessResult(0, 0, 'packages/a_plugin/lib/a.dart\n', '');
@@ -29,9 +32,6 @@ void main() {
 
       final bool result = await command.run();
       expect(result, isTrue);
-
-      const repoRoot = '/mock/repo/root';
-      const toolScript = '$repoRoot/script/tool/bin/flutter_plugin_tools.dart';
 
       // Verify the exact arguments passed to format and analyze
       expect(
@@ -54,7 +54,7 @@ void main() {
               executedArguments.add(arguments);
               if (executable == 'git') {
                 if (arguments.contains('rev-parse')) {
-                  return ProcessResult(0, 0, '/mock/repo/root\n', '');
+                  return ProcessResult(0, 0, '$repoRoot\n', '');
                 }
                 if (arguments.contains('diff')) {
                   return ProcessResult(0, 0, 'packages/a_plugin/lib/a.dart\n', '');
@@ -69,9 +69,6 @@ void main() {
 
       final bool result = await command.run();
       expect(result, isFalse);
-
-      const repoRoot = '/mock/repo/root';
-      const toolScript = '$repoRoot/script/tool/bin/flutter_plugin_tools.dart';
 
       expect(
         executedArguments,
@@ -94,7 +91,7 @@ void main() {
               executedArguments.add(arguments);
               if (executable == 'git') {
                 if (arguments.contains('rev-parse')) {
-                  return ProcessResult(0, 0, '/mock/repo/root\n', '');
+                  return ProcessResult(0, 0, '$repoRoot\n', '');
                 }
                 if (arguments.contains('diff')) {
                   return ProcessResult(0, 0, 'packages/a_plugin/lib/a.dart\n', '');
@@ -110,9 +107,6 @@ void main() {
       final bool result = await command.run();
       expect(result, isFalse);
 
-      const repoRoot = '/mock/repo/root';
-      const toolScript = '$repoRoot/script/tool/bin/flutter_plugin_tools.dart';
-
       expect(
         executedArguments,
         anyElement(equals(['run', toolScript, 'analyze', '--run-on-staged-packages', '--dart'])),
@@ -127,7 +121,7 @@ void main() {
               executedArguments.add(arguments);
               if (executable == 'git') {
                 if (arguments.contains('rev-parse')) {
-                  return ProcessResult(0, 0, '/mock/repo/root\n', '');
+                  return ProcessResult(0, 0, '$repoRoot\n', '');
                 }
                 if (arguments.contains('diff')) {
                   return ProcessResult(0, 0, 'script/githooks/test/pre_commit_test.dart\n', '');
@@ -155,7 +149,7 @@ void main() {
               executedArguments.add(arguments);
               if (executable == 'git') {
                 if (arguments.contains('rev-parse')) {
-                  return ProcessResult(0, 0, '/mock/repo/root\n', '');
+                  return ProcessResult(0, 0, '$repoRoot\n', '');
                 }
                 if (arguments.contains('diff')) {
                   return ProcessResult(0, 0, '', '');
@@ -173,6 +167,26 @@ void main() {
         executedArguments.any((args) => args.contains('format') || args.contains('analyze')),
         isFalse,
       );
+    });
+
+    test('fails when checking staged packages fails', () async {
+      final command = PreCommitCommand(
+        processRunner:
+            (String executable, List<String> arguments, {String? workingDirectory}) async {
+              if (executable == 'git') {
+                if (arguments.contains('rev-parse')) {
+                  return ProcessResult(0, 0, '$repoRoot\n', '');
+                }
+                if (arguments.contains('diff')) {
+                  return ProcessResult(0, 1, '', 'Git diff failed');
+                }
+              }
+              return ProcessResult(0, 0, 'Success', '');
+            },
+      );
+
+      final bool result = await command.run();
+      expect(result, isFalse);
     });
 
     test('fails when git root cannot be found', () async {

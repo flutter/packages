@@ -16,7 +16,7 @@ void main() async {
   }
   if (!(Directory(p.join(repoRoot.path, '.git')).existsSync() ||
       File(p.join(repoRoot.path, '.git')).existsSync())) {
-    print('❌ Could not find .git directory.');
+    print('Installation failed because .git directory could not be found.');
     exit(1);
   }
 
@@ -26,9 +26,9 @@ void main() async {
     'script/githooks',
   ], workingDirectory: repoRoot.path);
   if (result.exitCode == 0) {
-    print('✅ Git hooks installed successfully!');
+    print('Git hooks installed successfully!');
   } else {
-    print('❌ Failed to install Git hooks: ${result.stderr}');
+    print('Failed to install Git hooks: ${result.stderr}');
     exit(1);
   }
 }

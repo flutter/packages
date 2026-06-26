@@ -180,37 +180,6 @@ void main() {
       );
     });
 
-    test('formats only uncommitted files when --run-on-dirty-packages is used', () async {
-      const files = <String>['lib/a.dart', 'lib/src/b.dart', 'lib/src/c.dart'];
-      final RepositoryPackage plugin = createFakePlugin(
-        'a_plugin',
-        packagesDir,
-        extraFiles: files,
-        dartConstraint: _dartConstraint,
-      );
-      fakePubGet(plugin);
-
-      // Mock git diff to return only lib/a.dart (called three times)
-      const changedFilePath = 'packages/a_plugin/lib/a.dart';
-      gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(stdout: changedFilePath)),
-        FakeProcessInfo(MockProcess(stdout: changedFilePath)),
-        FakeProcessInfo(MockProcess(stdout: changedFilePath)),
-      ];
-
-      await runCapturingPrint(runner, <String>[
-        'format',
-        '--run-on-dirty-packages',
-      ]);
-
-      expect(
-        processRunner.recordedCalls,
-        orderedEquals(<ProcessCall>[
-          ProcessCall('dart', const <String>['format', 'lib/a.dart'], plugin.path),
-        ]),
-      );
-    });
-
     test('formats only staged files when --run-on-staged-packages is used', () async {
       const files = <String>['lib/a.dart', 'lib/src/b.dart', 'lib/src/c.dart'];
       final RepositoryPackage plugin = createFakePlugin(
@@ -223,11 +192,10 @@ void main() {
 
       // Mock git diff --cached to return only lib/src/b.dart (called three times)
       const stagedFilePath = 'packages/a_plugin/lib/src/b.dart';
-      gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(stdout: stagedFilePath)),
-        FakeProcessInfo(MockProcess(stdout: stagedFilePath)),
-        FakeProcessInfo(MockProcess(stdout: stagedFilePath)),
-      ];
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] = List<FakeProcessInfo>.generate(
+        3,
+        (_) => FakeProcessInfo(MockProcess(stdout: stagedFilePath)),
+      );
 
       await runCapturingPrint(runner, <String>[
         'format',
@@ -238,6 +206,62 @@ void main() {
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[
           ProcessCall('dart', const <String>['format', 'lib/src/b.dart'], plugin.path),
+        ]),
+      );
+    });
+
+    test('skips formatting when there are no staged packages', () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+        dartConstraint: _dartConstraint,
+      );
+      fakePubGet(plugin);
+
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] = List<FakeProcessInfo>.generate(
+        3,
+        (_) => FakeProcessInfo(MockProcess(stdout: '')),
+      );
+
+      await runCapturingPrint(runner, <String>['format', '--run-on-staged-packages']);
+
+      expect(processRunner.recordedCalls, isEmpty);
+    });
+
+    test('formats only staged files across multiple packages', () async {
+      final RepositoryPackage pluginA = createFakePlugin(
+        'plugin_a',
+        packagesDir,
+        extraFiles: <String>['lib/a.dart', 'lib/src/unused_a.dart'],
+        dartConstraint: _dartConstraint,
+      );
+      fakePubGet(pluginA);
+
+      final RepositoryPackage pluginB = createFakePlugin(
+        'plugin_b',
+        packagesDir,
+        extraFiles: <String>['lib/b.dart', 'lib/src/unused_b.dart'],
+        dartConstraint: _dartConstraint,
+      );
+      fakePubGet(pluginB);
+
+      // Mock git diff to return both staged files (called three times)
+      const stagedFiles = 'packages/plugin_a/lib/a.dart\npackages/plugin_b/lib/b.dart\n';
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] = List<FakeProcessInfo>.generate(
+        3,
+        (_) => FakeProcessInfo(MockProcess(stdout: stagedFiles)),
+      );
+
+      await runCapturingPrint(runner, <String>[
+        'format',
+        '--run-on-staged-packages',
+      ]);
+
+      expect(
+        processRunner.recordedCalls,
+        unorderedEquals(<ProcessCall>[
+          ProcessCall('dart', const <String>['format', 'lib/a.dart'], pluginA.path),
+          ProcessCall('dart', const <String>['format', 'lib/b.dart'], pluginB.path),
         ]),
       );
     });
