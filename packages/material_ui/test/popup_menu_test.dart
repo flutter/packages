@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
@@ -3722,11 +3723,13 @@ void main() {
     final BuildContext context = tester.element(find.text('Go'));
     const exampleSetting = RouteSettings(name: 'simple');
 
-    showMenu<void>(
+    unawaited(
+      showMenu<void>(
       context: context,
       position: RelativeRect.fill,
       items: const <PopupMenuItem<void>>[PopupMenuItem<void>(child: Text('foo'))],
       routeSettings: exampleSetting,
+      ),
     );
 
     await tester.pumpAndSettle();
