@@ -1,0 +1,10 @@
+dart_skills_lint:
+  rules:
+    check-relative-paths: error
+    check-trailing-whitespace: error
+  directories:
+    - path: "skills"
+  individual_skills:
+    - path: ".agents/skills/check-readiness"
+      rules:
+        prevent-skills-sh-publishing: error
