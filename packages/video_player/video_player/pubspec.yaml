@@ -28,7 +28,7 @@ dependencies:
   html: ^0.15.0
   video_player_android: ^2.10.0
   video_player_avfoundation: ^2.9.0
-  video_player_platform_interface: ^6.8.0
+  video_player_platform_interface: ^6.9.0
   video_player_web: ^2.1.0
 
 dev_dependencies:
