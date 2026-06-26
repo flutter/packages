@@ -4,6 +4,7 @@
 
 // ignore_for_file: avoid_print
 
+import 'dart:convert';
 import 'dart:io';
 import 'package:args/command_runner.dart';
 import 'package:path/path.dart' as p;
@@ -46,8 +47,8 @@ class PreCommitCommand extends Command<bool> {
       return false;
     }
 
-    if (!await _hasStagedChanges(repoRoot)) {
-      print('No staged changes to check.');
+    if (!await _hasStagedPackages(repoRoot)) {
+      print('No staged package changes to check.');
       return true;
     }
 
@@ -86,8 +87,11 @@ class PreCommitCommand extends Command<bool> {
     return Directory((rootResult.stdout as String).trim());
   }
 
-  /// Checks if there are any staged changes in the repository.
-  Future<bool> _hasStagedChanges(Directory repoRoot) async {
+  /// Checks if there are any staged package changes in the repository.
+  ///
+  /// Returns true if at least one staged file is located within a package directory
+  /// (under packages/ or third_party/packages/).
+  Future<bool> _hasStagedPackages(Directory repoRoot) async {
     final ProcessResult diffResult = await processRunner('git', <String>[
       'diff',
       '--cached',
@@ -103,7 +107,15 @@ class PreCommitCommand extends Command<bool> {
       return false;
     }
 
-    return (diffResult.stdout as String).trim().isNotEmpty;
+    final stdoutStr = diffResult.stdout as String;
+    if (stdoutStr.trim().isEmpty) {
+      return false;
+    }
+
+    final List<String> lines = LineSplitter.split(stdoutStr).toList();
+    return lines.any((String path) =>
+        path.startsWith('packages/') ||
+        path.startsWith('third_party/packages/'));
   }
 
   /// Runs the formatting check on staged files.
@@ -131,12 +143,7 @@ class PreCommitCommand extends Command<bool> {
       return false;
     }
 
-    final stdoutStr = formatResult.stdout.toString();
-    if (stdoutStr.contains('Ran for 0 package(s)')) {
-      print('Formatting skipped (no staged packages).');
-    } else {
-      print('Formatting looks good!');
-    }
+    print('Formatting looks good!');
     return true;
   }
 
@@ -163,12 +170,7 @@ class PreCommitCommand extends Command<bool> {
       return false;
     }
 
-    final String stdoutStr = analyzeResult.stdout.toString();
-    if (stdoutStr.contains('Ran for 0 package(s)')) {
-      print('Static analysis skipped (no staged packages).');
-    } else {
-      print('Static analysis looks good!');
-    }
+    print('Static analysis looks good!');
     return true;
   }
 }

@@ -15,8 +15,13 @@ void main() {
         processRunner:
             (String executable, List<String> arguments, {String? workingDirectory}) async {
               executedArguments.add(arguments);
-              if (executable == 'git' && arguments.contains('rev-parse')) {
-                return ProcessResult(0, 0, '/mock/repo/root\n', '');
+              if (executable == 'git') {
+                if (arguments.contains('rev-parse')) {
+                  return ProcessResult(0, 0, '/mock/repo/root\n', '');
+                }
+                if (arguments.contains('diff')) {
+                  return ProcessResult(0, 0, 'packages/a_plugin/lib/a.dart\n', '');
+                }
               }
               return ProcessResult(0, 0, 'Success', '');
             },
@@ -47,8 +52,13 @@ void main() {
         processRunner:
             (String executable, List<String> arguments, {String? workingDirectory}) async {
               executedArguments.add(arguments);
-              if (executable == 'git' && arguments.contains('rev-parse')) {
-                return ProcessResult(0, 0, '/mock/repo/root\n', '');
+              if (executable == 'git') {
+                if (arguments.contains('rev-parse')) {
+                  return ProcessResult(0, 0, '/mock/repo/root\n', '');
+                }
+                if (arguments.contains('diff')) {
+                  return ProcessResult(0, 0, 'packages/a_plugin/lib/a.dart\n', '');
+                }
               }
               if (arguments.isNotEmpty && arguments.length > 2 && arguments[2] == 'format') {
                 return ProcessResult(0, 1, 'bad_file.dart', '');
@@ -82,8 +92,13 @@ void main() {
         processRunner:
             (String executable, List<String> arguments, {String? workingDirectory}) async {
               executedArguments.add(arguments);
-              if (executable == 'git' && arguments.contains('rev-parse')) {
-                return ProcessResult(0, 0, '/mock/repo/root\n', '');
+              if (executable == 'git') {
+                if (arguments.contains('rev-parse')) {
+                  return ProcessResult(0, 0, '/mock/repo/root\n', '');
+                }
+                if (arguments.contains('diff')) {
+                  return ProcessResult(0, 0, 'packages/a_plugin/lib/a.dart\n', '');
+                }
               }
               if (arguments.isNotEmpty && arguments.length > 2 && arguments[2] == 'analyze') {
                 return ProcessResult(0, 1, 'error in file.dart', '');
@@ -104,7 +119,35 @@ void main() {
       );
     });
 
-    test('exits early with success if there are no staged changes', () async {
+    test('exits early with success if there are no staged packages', () async {
+      final List<List<String>> executedArguments = [];
+      final command = PreCommitCommand(
+        processRunner:
+            (String executable, List<String> arguments, {String? workingDirectory}) async {
+              executedArguments.add(arguments);
+              if (executable == 'git') {
+                if (arguments.contains('rev-parse')) {
+                  return ProcessResult(0, 0, '/mock/repo/root\n', '');
+                }
+                if (arguments.contains('diff')) {
+                  return ProcessResult(0, 0, 'script/githooks/test/pre_commit_test.dart\n', '');
+                }
+              }
+              return ProcessResult(0, 0, 'Success', '');
+            },
+      );
+
+      final bool result = await command.run();
+      expect(result, isTrue);
+
+      // Verify that no format or analyze commands were run
+      expect(
+        executedArguments.any((args) => args.contains('format') || args.contains('analyze')),
+        isFalse,
+      );
+    });
+
+    test('exits early with success if there are no staged changes at all', () async {
       final List<List<String>> executedArguments = [];
       final command = PreCommitCommand(
         processRunner:
