@@ -3725,10 +3725,10 @@ void main() {
 
     unawaited(
       showMenu<void>(
-      context: context,
-      position: RelativeRect.fill,
-      items: const <PopupMenuItem<void>>[PopupMenuItem<void>(child: Text('foo'))],
-      routeSettings: exampleSetting,
+        context: context,
+        position: RelativeRect.fill,
+        items: const <PopupMenuItem<void>>[PopupMenuItem<void>(child: Text('foo'))],
+        routeSettings: exampleSetting,
       ),
     );
 
