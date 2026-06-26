@@ -2,20 +2,18 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@Skip(
-  'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
-)
+import 'dart:async' show unawaited;
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart' show DragStartBehavior;
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:leak_tracker_flutter_testing/leak_tracker_flutter_testing.dart';
+import 'package:material_ui/material_ui.dart';
 
-import '../widgets/semantics_tester.dart';
+import 'semantics_tester.dart';
 
 // From bottom_sheet.dart.
 const Duration _bottomSheetExitDuration = Duration(milliseconds: 200);
@@ -1081,7 +1079,7 @@ void main() {
       };
       await tester.pumpWidget(MaterialApp(routes: routes));
 
-      Navigator.pushNamed(rootKey.currentContext!, '/scaffold');
+      unawaited(Navigator.pushNamed(rootKey.currentContext!, '/scaffold'));
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));
 
@@ -1125,7 +1123,7 @@ void main() {
         ),
       );
 
-      tester.state<NavigatorState>(find.byType(Navigator)).push(routeBuilder());
+      unawaited(tester.state<NavigatorState>(find.byType(Navigator)).push(routeBuilder()));
 
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));

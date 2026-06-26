@@ -2,17 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@Skip(
-  'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
-)
+import 'dart:async' show unawaited;
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
-import '../widgets/semantics_tester.dart';
+import 'semantics_tester.dart';
 
 void main() {
   // Pumps and ensures that the BottomSheet animates non-linearly.
@@ -75,12 +73,14 @@ void main() {
 
     // Bring up bottom sheet.
     var showBottomSheetThenCalled = false;
-    showModalBottomSheet<void>(
-      context: savedContext,
-      builder: (BuildContext context) => const Text('BottomSheet'),
-    ).then<void>((void value) {
-      showBottomSheetThenCalled = true;
-    });
+    unawaited(
+      showModalBottomSheet<void>(
+        context: savedContext,
+        builder: (BuildContext context) => const Text('BottomSheet'),
+      ).then<void>((void value) {
+        showBottomSheetThenCalled = true;
+      }),
+    );
     await tester.pumpAndSettle();
     expect(find.text('BottomSheet'), findsOneWidget);
     expect(showBottomSheetThenCalled, isFalse);
@@ -112,14 +112,16 @@ void main() {
     expect(showBottomSheetThenCalled, isFalse);
     expect(find.text('BottomSheet'), findsNothing);
 
-    scaffoldKey.currentState!
-        .showBottomSheet((BuildContext context) {
-          return const SizedBox(height: 200.0, child: Text('BottomSheet'));
-        })
-        .closed
-        .whenComplete(() {
-          showBottomSheetThenCalled = true;
-        });
+    unawaited(
+      scaffoldKey.currentState!
+          .showBottomSheet((BuildContext context) {
+            return const SizedBox(height: 200.0, child: Text('BottomSheet'));
+          })
+          .closed
+          .whenComplete(() {
+            showBottomSheetThenCalled = true;
+          }),
+    );
 
     await tester.pumpAndSettle();
     expect(showBottomSheetThenCalled, isFalse);
@@ -151,14 +153,16 @@ void main() {
     expect(showBottomSheetThenCalled, isFalse);
     expect(find.text('BottomSheet'), findsNothing);
 
-    scaffoldKey.currentState!
-        .showBottomSheet((BuildContext context) {
-          return const SizedBox(height: 200.0, child: Text('BottomSheet'));
-        }, enableDrag: false)
-        .closed
-        .whenComplete(() {
-          showBottomSheetThenCalled = true;
-        });
+    unawaited(
+      scaffoldKey.currentState!
+          .showBottomSheet((BuildContext context) {
+            return const SizedBox(height: 200.0, child: Text('BottomSheet'));
+          }, enableDrag: false)
+          .closed
+          .whenComplete(() {
+            showBottomSheetThenCalled = true;
+          }),
+    );
 
     await tester.pumpAndSettle();
     expect(showBottomSheetThenCalled, isFalse);
@@ -190,14 +194,16 @@ void main() {
     expect(showBottomSheetThenCalled, isFalse);
     expect(find.text('BottomSheet'), findsNothing);
 
-    scaffoldKey.currentState!
-        .showBottomSheet((BuildContext context) {
-          return const SizedBox(height: 200.0, child: Text('BottomSheet'));
-        }, enableDrag: true)
-        .closed
-        .whenComplete(() {
-          showBottomSheetThenCalled = true;
-        });
+    unawaited(
+      scaffoldKey.currentState!
+          .showBottomSheet((BuildContext context) {
+            return const SizedBox(height: 200.0, child: Text('BottomSheet'));
+          }, enableDrag: true)
+          .closed
+          .whenComplete(() {
+            showBottomSheetThenCalled = true;
+          }),
+    );
 
     await tester.pumpAndSettle();
     expect(showBottomSheetThenCalled, isFalse);
@@ -261,13 +267,15 @@ void main() {
     );
 
     var numBuilderCalls = 0;
-    showModalBottomSheet<void>(
-      context: savedContext,
-      isDismissible: false,
-      builder: (BuildContext context) {
-        numBuilderCalls++;
-        return const Text('BottomSheet');
-      },
+    unawaited(
+      showModalBottomSheet<void>(
+        context: savedContext,
+        isDismissible: false,
+        builder: (BuildContext context) {
+          numBuilderCalls++;
+          return const Text('BottomSheet');
+        },
+      ),
     );
 
     await tester.pumpAndSettle();
@@ -297,12 +305,14 @@ void main() {
     expect(find.text('BottomSheet'), findsNothing);
 
     var showBottomSheetThenCalled = false;
-    showModalBottomSheet<void>(
-      context: savedContext,
-      builder: (BuildContext context) => const Text('BottomSheet'),
-    ).then<void>((void value) {
-      showBottomSheetThenCalled = true;
-    });
+    unawaited(
+      showModalBottomSheet<void>(
+        context: savedContext,
+        builder: (BuildContext context) => const Text('BottomSheet'),
+      ).then<void>((void value) {
+        showBottomSheetThenCalled = true;
+      }),
+    );
 
     await tester.pumpAndSettle();
     expect(find.text('BottomSheet'), findsOneWidget);
@@ -335,12 +345,14 @@ void main() {
     expect(find.text('BottomSheet'), findsNothing);
 
     var showBottomSheetThenCalled = false;
-    showModalBottomSheet<void>(
-      context: savedContext,
-      builder: (BuildContext context) => const Text('BottomSheet'),
-    ).then<void>((void value) {
-      showBottomSheetThenCalled = true;
-    });
+    unawaited(
+      showModalBottomSheet<void>(
+        context: savedContext,
+        builder: (BuildContext context) => const Text('BottomSheet'),
+      ).then<void>((void value) {
+        showBottomSheetThenCalled = true;
+      }),
+    );
 
     await tester.pumpAndSettle();
     expect(find.text('BottomSheet'), findsOneWidget);
@@ -373,12 +385,14 @@ void main() {
     expect(find.text('BottomSheet'), findsNothing);
 
     var showBottomSheetThenCalled = false;
-    showModalBottomSheet<void>(
-      context: savedContext,
-      builder: (BuildContext context) => const Text('BottomSheet'),
-    ).then<void>((void value) {
-      showBottomSheetThenCalled = true;
-    });
+    unawaited(
+      showModalBottomSheet<void>(
+        context: savedContext,
+        builder: (BuildContext context) => const Text('BottomSheet'),
+      ).then<void>((void value) {
+        showBottomSheetThenCalled = true;
+      }),
+    );
 
     await tester.pumpAndSettle();
     expect(find.text('BottomSheet'), findsOneWidget);
@@ -408,9 +422,11 @@ void main() {
     await tester.pump();
     expect(find.text('BottomSheet'), findsNothing);
 
-    showModalBottomSheet<void>(
-      context: savedContext,
-      builder: (BuildContext context) => const Text('BottomSheet'),
+    unawaited(
+      showModalBottomSheet<void>(
+        context: savedContext,
+        builder: (BuildContext context) => const Text('BottomSheet'),
+      ),
     );
     await tester.pump();
 
@@ -442,9 +458,11 @@ void main() {
     expect(find.text('BottomSheet'), findsNothing);
 
     final BuildContext homeContext = tester.element(find.text('Test'));
-    showModalBottomSheet<void>(
-      context: homeContext,
-      builder: (BuildContext context) => const Text('BottomSheet'),
+    unawaited(
+      showModalBottomSheet<void>(
+        context: homeContext,
+        builder: (BuildContext context) => const Text('BottomSheet'),
+      ),
     );
     await tester.pump();
 
@@ -472,13 +490,15 @@ void main() {
       expect(find.text('BottomSheet'), findsNothing);
 
       var showBottomSheetThenCalled = false;
-      showModalBottomSheet<void>(
-        context: savedContext,
-        builder: (BuildContext context) => const Text('BottomSheet'),
-        isDismissible: false,
-      ).then<void>((void value) {
-        showBottomSheetThenCalled = true;
-      });
+      unawaited(
+        showModalBottomSheet<void>(
+          context: savedContext,
+          builder: (BuildContext context) => const Text('BottomSheet'),
+          isDismissible: false,
+        ).then<void>((void value) {
+          showBottomSheetThenCalled = true;
+        }),
+      );
 
       await tester.pumpAndSettle();
       expect(find.text('BottomSheet'), findsOneWidget);
@@ -512,13 +532,15 @@ void main() {
     expect(find.text('BottomSheet'), findsNothing);
 
     var showBottomSheetThenCalled = false;
-    showModalBottomSheet<void>(
-      context: savedContext,
-      isDismissible: false,
-      builder: (BuildContext context) => const Text('BottomSheet'),
-    ).then<void>((void value) {
-      showBottomSheetThenCalled = true;
-    });
+    unawaited(
+      showModalBottomSheet<void>(
+        context: savedContext,
+        isDismissible: false,
+        builder: (BuildContext context) => const Text('BottomSheet'),
+      ).then<void>((void value) {
+        showBottomSheetThenCalled = true;
+      }),
+    );
 
     await tester.pumpAndSettle();
     expect(find.text('BottomSheet'), findsOneWidget);
@@ -551,14 +573,16 @@ void main() {
     expect(find.text('BottomSheet'), findsNothing);
 
     var showBottomSheetThenCalled = false;
-    showModalBottomSheet<void>(
-      context: savedContext,
-      isDismissible: false,
-      enableDrag: false,
-      builder: (BuildContext context) => const Text('BottomSheet'),
-    ).then<void>((void value) {
-      showBottomSheetThenCalled = true;
-    });
+    unawaited(
+      showModalBottomSheet<void>(
+        context: savedContext,
+        isDismissible: false,
+        enableDrag: false,
+        builder: (BuildContext context) => const Text('BottomSheet'),
+      ).then<void>((void value) {
+        showBottomSheetThenCalled = true;
+      }),
+    );
 
     await tester.pumpAndSettle();
     expect(find.text('BottomSheet'), findsOneWidget);
@@ -591,13 +615,15 @@ void main() {
     expect(find.text('BottomSheet'), findsNothing);
 
     var showBottomSheetThenCalled = false;
-    showModalBottomSheet<void>(
-      context: savedContext,
-      isDismissible: false,
-      builder: (BuildContext context) => const Text('BottomSheet'),
-    ).then<void>((void value) {
-      showBottomSheetThenCalled = true;
-    });
+    unawaited(
+      showModalBottomSheet<void>(
+        context: savedContext,
+        isDismissible: false,
+        builder: (BuildContext context) => const Text('BottomSheet'),
+      ).then<void>((void value) {
+        showBottomSheetThenCalled = true;
+      }),
+    );
 
     await tester.pumpAndSettle();
     expect(find.text('BottomSheet'), findsOneWidget);
@@ -625,13 +651,15 @@ void main() {
     );
 
     var numBuilderCalls = 0;
-    showModalBottomSheet<void>(
-      context: savedContext,
-      isDismissible: false,
-      builder: (BuildContext context) {
-        numBuilderCalls++;
-        return const Text('BottomSheet');
-      },
+    unawaited(
+      showModalBottomSheet<void>(
+        context: savedContext,
+        isDismissible: false,
+        builder: (BuildContext context) {
+          numBuilderCalls++;
+          return const Text('BottomSheet');
+        },
+      ),
     );
 
     await tester.pumpAndSettle();
@@ -661,14 +689,16 @@ void main() {
     expect(showBottomSheetThenCalled, isFalse);
     expect(find.text('BottomSheet'), findsNothing);
 
-    scaffoldKey.currentState!
-        .showBottomSheet((BuildContext context) {
-          return Container(margin: const EdgeInsets.all(40.0), child: const Text('BottomSheet'));
-        })
-        .closed
-        .whenComplete(() {
-          showBottomSheetThenCalled = true;
-        });
+    unawaited(
+      scaffoldKey.currentState!
+          .showBottomSheet((BuildContext context) {
+            return Container(margin: const EdgeInsets.all(40.0), child: const Text('BottomSheet'));
+          })
+          .closed
+          .whenComplete(() {
+            showBottomSheetThenCalled = true;
+          }),
+    );
 
     expect(showBottomSheetThenCalled, isFalse);
     expect(find.text('BottomSheet'), findsNothing);
@@ -770,12 +800,14 @@ void main() {
       ),
     );
 
-    showModalBottomSheet<void>(
-      context: outerContext,
-      builder: (BuildContext context) {
-        innerContext = context;
-        return Container();
-      },
+    unawaited(
+      showModalBottomSheet<void>(
+        context: outerContext,
+        builder: (BuildContext context) {
+          innerContext = context;
+          return Container();
+        },
+      ),
     );
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
@@ -823,12 +855,14 @@ void main() {
     );
 
     // Without a SafeArea (useSafeArea is false by default)
-    showModalBottomSheet<void>(
-      context: outerContext,
-      builder: (BuildContext context) {
-        innerContext = context;
-        return Container();
-      },
+    unawaited(
+      showModalBottomSheet<void>(
+        context: outerContext,
+        builder: (BuildContext context) {
+          innerContext = context;
+          return Container();
+        },
+      ),
     );
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
@@ -838,13 +872,15 @@ void main() {
     expect(find.byType(SafeArea), findsNothing);
 
     // With a SafeArea
-    showModalBottomSheet<void>(
-      context: outerContext,
-      useSafeArea: true,
-      builder: (BuildContext context) {
-        innerContext = context;
-        return Container();
-      },
+    unawaited(
+      showModalBottomSheet<void>(
+        context: outerContext,
+        useSafeArea: true,
+        builder: (BuildContext context) {
+          innerContext = context;
+          return Container();
+        },
+      ),
     );
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
@@ -876,11 +912,13 @@ void main() {
       ),
     );
 
-    showModalBottomSheet<void>(
-      context: scaffoldKey.currentContext!,
-      builder: (BuildContext context) {
-        return const Text('BottomSheet');
-      },
+    unawaited(
+      showModalBottomSheet<void>(
+        context: scaffoldKey.currentContext!,
+        builder: (BuildContext context) {
+          return const Text('BottomSheet');
+        },
+      ),
     );
 
     await tester.pump(); // bottom sheet show animation starts
@@ -953,16 +991,18 @@ void main() {
       ),
     );
 
-    showModalBottomSheet<void>(
-      context: scaffoldKey.currentContext!,
-      backgroundColor: color,
-      barrierColor: barrierColor,
-      elevation: elevation,
-      shape: shape,
-      clipBehavior: clipBehavior,
-      builder: (BuildContext context) {
-        return const Text('BottomSheet');
-      },
+    unawaited(
+      showModalBottomSheet<void>(
+        context: scaffoldKey.currentContext!,
+        backgroundColor: color,
+        barrierColor: barrierColor,
+        elevation: elevation,
+        shape: shape,
+        clipBehavior: clipBehavior,
+        builder: (BuildContext context) {
+          return const Text('BottomSheet');
+        },
+      ),
     );
 
     await tester.pump();
@@ -1054,16 +1094,21 @@ void main() {
       ),
     );
 
-    showModalBottomSheet<void>(
-      context: scaffoldKey.currentContext!,
-      builder: (BuildContext context) {
-        return DraggableScrollableSheet(
-          expand: false,
-          builder: (_, ScrollController controller) {
-            return SingleChildScrollView(controller: controller, child: const Text('BottomSheet'));
-          },
-        );
-      },
+    unawaited(
+      showModalBottomSheet<void>(
+        context: scaffoldKey.currentContext!,
+        builder: (BuildContext context) {
+          return DraggableScrollableSheet(
+            expand: false,
+            builder: (_, ScrollController controller) {
+              return SingleChildScrollView(
+                controller: controller,
+                child: const Text('BottomSheet'),
+              );
+            },
+          );
+        },
+      ),
     );
 
     await tester.pump(); // bottom sheet show animation starts
@@ -1140,16 +1185,21 @@ void main() {
       ),
     );
 
-    showModalBottomSheet<void>(
-      context: scaffoldKey.currentContext!,
-      builder: (BuildContext context) {
-        return DraggableScrollableSheet(
-          expand: false,
-          builder: (_, ScrollController controller) {
-            return SingleChildScrollView(controller: controller, child: const Text('BottomSheet'));
-          },
-        );
-      },
+    unawaited(
+      showModalBottomSheet<void>(
+        context: scaffoldKey.currentContext!,
+        builder: (BuildContext context) {
+          return DraggableScrollableSheet(
+            expand: false,
+            builder: (_, ScrollController controller) {
+              return SingleChildScrollView(
+                controller: controller,
+                child: const Text('BottomSheet'),
+              );
+            },
+          );
+        },
+      ),
     );
 
     await tester.pump(); // bottom sheet show animation starts
@@ -1226,12 +1276,14 @@ void main() {
       ),
     );
 
-    showModalBottomSheet<void>(
-      context: scaffoldKey.currentContext!,
-      showDragHandle: true,
-      builder: (BuildContext context) {
-        return const Text('BottomSheet');
-      },
+    unawaited(
+      showModalBottomSheet<void>(
+        context: scaffoldKey.currentContext!,
+        showDragHandle: true,
+        builder: (BuildContext context) {
+          return const Text('BottomSheet');
+        },
+      ),
     );
 
     await tester.pump(); // bottom sheet show animation starts
@@ -1367,12 +1419,14 @@ void main() {
     var scaffoldKey = GlobalKey<ScaffoldState>();
     await tester.pumpWidget(buildScaffold(scaffoldKey));
 
-    showModalBottomSheet<void>(
-      context: scaffoldKey.currentContext!,
-      showDragHandle: true,
-      builder: (BuildContext context) {
-        return const Text('BottomSheet');
-      },
+    unawaited(
+      showModalBottomSheet<void>(
+        context: scaffoldKey.currentContext!,
+        showDragHandle: true,
+        builder: (BuildContext context) {
+          return const Text('BottomSheet');
+        },
+      ),
     );
 
     await checkDragHandleAndColors();
@@ -1407,12 +1461,14 @@ void main() {
     final scaffoldKey = GlobalKey<ScaffoldState>();
     await tester.pumpWidget(buildScaffold(scaffoldKey, dragHandleSize: smallerDragHandleSize));
 
-    showModalBottomSheet<void>(
-      context: scaffoldKey.currentContext!,
-      showDragHandle: true,
-      builder: (BuildContext context) {
-        return const Text('BottomSheet');
-      },
+    unawaited(
+      showModalBottomSheet<void>(
+        context: scaffoldKey.currentContext!,
+        showDragHandle: true,
+        builder: (BuildContext context) {
+          return const Text('BottomSheet');
+        },
+      ),
     );
 
     await tester.pump(); // Bottom sheet show animation starts.
@@ -1440,12 +1496,14 @@ void main() {
     final scaffoldKey = GlobalKey<ScaffoldState>();
     await tester.pumpWidget(buildScaffold(scaffoldKey, dragHandleSize: extendedDragHandleSize));
 
-    showModalBottomSheet<void>(
-      context: scaffoldKey.currentContext!,
-      showDragHandle: true,
-      builder: (BuildContext context) {
-        return const Text('BottomSheet');
-      },
+    unawaited(
+      showModalBottomSheet<void>(
+        context: scaffoldKey.currentContext!,
+        showDragHandle: true,
+        builder: (BuildContext context) {
+          return const Text('BottomSheet');
+        },
+      ),
     );
 
     await tester.pump(); // Bottom sheet show animation starts.
@@ -1535,13 +1593,15 @@ void main() {
 
     late RouteSettings retrievedRouteSettings;
 
-    showModalBottomSheet<void>(
-      context: scaffoldKey.currentContext!,
-      routeSettings: routeSettings,
-      builder: (BuildContext context) {
-        retrievedRouteSettings = ModalRoute.settingsOf(context)!;
-        return const Text('BottomSheet');
-      },
+    unawaited(
+      showModalBottomSheet<void>(
+        context: scaffoldKey.currentContext!,
+        routeSettings: routeSettings,
+        builder: (BuildContext context) {
+          retrievedRouteSettings = ModalRoute.settingsOf(context)!;
+          return const Text('BottomSheet');
+        },
+      ),
     );
 
     await tester.pump();
@@ -2010,10 +2070,12 @@ void main() {
 
     // Bring up bottom sheet.
     final NavigatorState navigator = Navigator.of(savedContext);
-    navigator.push(
-      ModalBottomSheetRoute<void>(
-        isScrollControlled: false,
-        builder: (BuildContext context) => Container(),
+    unawaited(
+      navigator.push(
+        ModalBottomSheetRoute<void>(
+          isScrollControlled: false,
+          builder: (BuildContext context) => Container(),
+        ),
       ),
     );
     await tester.pumpAndSettle();
@@ -2045,12 +2107,14 @@ void main() {
       );
 
       final BuildContext context = tester.element(find.text('Test'));
-      showModalBottomSheet<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return const Placeholder();
-        },
-        anchorPoint: const Offset(1000, 0),
+      unawaited(
+        showModalBottomSheet<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return const Placeholder();
+          },
+          anchorPoint: const Offset(1000, 0),
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -2083,11 +2147,13 @@ void main() {
       );
 
       final BuildContext context = tester.element(find.text('Test'));
-      showModalBottomSheet<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return const Placeholder();
-        },
+      unawaited(
+        showModalBottomSheet<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return const Placeholder();
+          },
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -2120,11 +2186,13 @@ void main() {
       );
 
       final BuildContext context = tester.element(find.text('Test'));
-      showModalBottomSheet<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return const Placeholder();
-        },
+      unawaited(
+        showModalBottomSheet<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return const Placeholder();
+          },
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -2515,12 +2583,14 @@ void main() {
         ),
       );
 
-      showModalBottomSheet<void>(
-        barrierLabel: 'custom label',
-        context: scaffoldKey.currentContext!,
-        builder: (BuildContext context) {
-          return const Text('BottomSheet');
-        },
+      unawaited(
+        showModalBottomSheet<void>(
+          barrierLabel: 'custom label',
+          context: scaffoldKey.currentContext!,
+          builder: (BuildContext context) {
+            return const Text('BottomSheet');
+          },
+        ),
       );
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));
@@ -2542,11 +2612,13 @@ void main() {
           ),
         );
 
-        showModalBottomSheet<void>(
-          context: scaffoldKey.currentContext!,
-          builder: (BuildContext context) {
-            return const Text('BottomSheet');
-          },
+        unawaited(
+          showModalBottomSheet<void>(
+            context: scaffoldKey.currentContext!,
+            builder: (BuildContext context) {
+              return const Text('BottomSheet');
+            },
+          ),
         );
         await tester.pump();
         await tester.pump(const Duration(seconds: 1));
@@ -2851,10 +2923,12 @@ void main() {
 
       // Bring up bottom sheet.
       final NavigatorState navigator = Navigator.of(savedContext);
-      navigator.push(
-        ModalBottomSheetRoute<void>(
-          isScrollControlled: false,
-          builder: (BuildContext context) => Container(),
+      unawaited(
+        navigator.push(
+          ModalBottomSheetRoute<void>(
+            isScrollControlled: false,
+            builder: (BuildContext context) => Container(),
+          ),
         ),
       );
       await tester.pump();
@@ -2872,11 +2946,13 @@ void main() {
       expect(getTextFieldFocusNode()?.hasFocus, true);
 
       // Bring up bottom sheet again with requestFocus to false.
-      navigator.push(
-        ModalBottomSheetRoute<void>(
-          requestFocus: false,
-          isScrollControlled: false,
-          builder: (BuildContext context) => Container(),
+      unawaited(
+        navigator.push(
+          ModalBottomSheetRoute<void>(
+            requestFocus: false,
+            isScrollControlled: false,
+            builder: (BuildContext context) => Container(),
+          ),
         ),
       );
       await tester.pump();
@@ -2901,10 +2977,12 @@ void main() {
     await tester.pump();
     expect(focusNode.hasFocus, true);
 
-    showModalBottomSheet<void>(
-      context: navigatorKey.currentContext!,
-      requestFocus: true,
-      builder: (BuildContext context) => const Text('BottomSheet'),
+    unawaited(
+      showModalBottomSheet<void>(
+        context: navigatorKey.currentContext!,
+        requestFocus: true,
+        builder: (BuildContext context) => const Text('BottomSheet'),
+      ),
     );
     await tester.pumpAndSettle();
     expect(FocusScope.of(tester.element(find.text('BottomSheet'))).hasFocus, true);
@@ -2914,10 +2992,12 @@ void main() {
     await tester.pumpAndSettle();
     expect(focusNode.hasFocus, true);
 
-    showModalBottomSheet<void>(
-      context: navigatorKey.currentContext!,
-      requestFocus: false,
-      builder: (BuildContext context) => const Text('BottomSheet'),
+    unawaited(
+      showModalBottomSheet<void>(
+        context: navigatorKey.currentContext!,
+        requestFocus: false,
+        builder: (BuildContext context) => const Text('BottomSheet'),
+      ),
     );
     await tester.pumpAndSettle();
     expect(FocusScope.of(tester.element(find.text('BottomSheet'))).hasFocus, false);
@@ -3015,12 +3095,14 @@ void main() {
 
     await tester.pump();
 
-    showModalBottomSheet<void>(
-      context: savedContext,
-      builder: (BuildContext context) => Container(
-        height: 200,
-        color: Colors.blue,
-        child: const Center(child: Text('Modal Bottom Sheet')),
+    unawaited(
+      showModalBottomSheet<void>(
+        context: savedContext,
+        builder: (BuildContext context) => Container(
+          height: 200,
+          color: Colors.blue,
+          child: const Center(child: Text('Modal Bottom Sheet')),
+        ),
       ),
     );
 

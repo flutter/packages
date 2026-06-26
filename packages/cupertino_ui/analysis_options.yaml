@@ -6,3 +6,10 @@ analyzer:
     # TODO(justinmc): Remove the following exclusion when cross-imports are
     # fixed. See https://github.com/flutter/flutter/issues/177028.
     - "temporarily_disabled_tests/**"
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
