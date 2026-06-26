@@ -74,3 +74,23 @@ extension type const UserRoleRecord._(({int index, String name}) data) implement
   static const List<UserRoleRecord> values = [admin, member, guest];
 }
 // #enddocregion DefinitionRecord
+
+// #docregion Bitmask
+extension type const Permission._(int value) implements OpenEnum<int> {
+  static const Permission read = Permission._(1 << 0);
+  static const Permission write = Permission._(1 << 1);
+  static const Permission execute = Permission._(1 << 2);
+
+  Permission operator |(Permission other) => Permission._(value | other.value);
+  Permission operator &(Permission other) => Permission._(value & other.value);
+  bool has(Permission other) => (value & other.value) == other.value;
+}
+// #enddocregion Bitmask
+
+// #docregion BitmaskUsage
+void bitmaskUsage() {
+  final Permission rw = Permission.read | Permission.write;
+  print(rw.has(Permission.read)); // true
+  print(rw.has(Permission.execute)); // false
+}
+// #enddocregion BitmaskUsage

@@ -2,6 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: use_named_constants
+
+import 'dart:convert';
+
 import 'package:open_enum/open_enum.dart';
 import 'package:test/test.dart';
 
@@ -107,6 +111,58 @@ void main() {
 
       expect(handle(StringEnum.one), 'matched one');
       expect(handle(newlyAddedValue), 'matched fallback');
+    });
+  });
+
+  group('Standard Enum-like Contracts', () {
+    test('equality and hashCode contracts behave correctly', () {
+      // String enums comparison
+      expect(StringEnum.one == const StringEnum._('one'), isTrue);
+      expect(StringEnum.one == StringEnum.two, isFalse);
+      expect(StringEnum.one.hashCode == const StringEnum._('one').hashCode, isTrue);
+
+      // Record enums comparison
+      expect(RecordEnum.zero == const RecordEnum._((index: 0, name: 'zero')), isTrue);
+      expect(RecordEnum.zero == RecordEnum.one, isFalse);
+      expect(
+        RecordEnum.zero.hashCode == const RecordEnum._((index: 0, name: 'zero')).hashCode,
+        isTrue,
+      );
+    });
+
+    test('identical works for constant instances', () {
+      expect(identical(StringEnum.one, const StringEnum._('one')), isTrue);
+      expect(identical(RecordEnum.zero, const RecordEnum._((index: 0, name: 'zero'))), isTrue);
+    });
+
+    test('behaves correctly in Sets and Maps', () {
+      final set = <StringEnum>{StringEnum.one, StringEnum.two};
+      expect(set.contains(const StringEnum._('one')), isTrue);
+      expect(set.contains(const StringEnum._('three')), isFalse);
+
+      final map = <RecordEnum, String>{RecordEnum.zero: 'Zero Value'};
+      expect(map[const RecordEnum._((index: 0, name: 'zero'))], 'Zero Value');
+      expect(map[RecordEnum.one], isNull);
+    });
+  });
+
+  group('JSON Serialization and Deserialization', () {
+    test('natively serializes to primitive JSON representations', () {
+      expect(jsonEncode(StringEnum.one), '"one"');
+      expect(jsonEncode(IntEnum.zero), '0');
+
+      // Record open enums require calling .toJson() explicitly because Records
+      // are erased at runtime and cannot invoke extension type getters via dynamic dispatch.
+      expect(jsonEncode(RecordEnum.zero.toJson()), '{"index":0,"name":"zero"}');
+    });
+
+    test('deserializes safely and supports runtime lookups', () {
+      const payload = '{"role": "one"}';
+      final data = jsonDecode(payload) as Map<String, dynamic>;
+      final roleStr = data['role'] as String;
+
+      final StringEnum? role = StringEnum.values.byNameOrNull(roleStr);
+      expect(role, StringEnum.one);
     });
   });
 }

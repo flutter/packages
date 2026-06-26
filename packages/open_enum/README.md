@@ -30,11 +30,14 @@ dependencies:
 
 ---
 
-## Usage
+## Basic Usage
 
 ### 1. Defining an Open Enum (String-based)
 
-To define an open enum, create an extension type wrapping a `String` (or any other type) and implement `OpenEnum<T>`:
+To define an open enum, create an extension type wrapping a `String` (or any other type) and implement `OpenEnum<T>`. 
+
+> [!TIP]
+> Use a private constructor (`UserRole._`) to prevent consumers outside your package from constructing arbitrary new instances of your enum. This keeps the enum set strictly closed to your declared constants.
 
 <?code-excerpt "readme_excerpts.dart (Definition)"?>
 ```dart
@@ -47,6 +50,12 @@ extension type const UserRole._(String name) implements OpenEnum<String> {
 
   // Provide a list of known values, just like standard enums.
   static const List<UserRole> values = [admin, member, guest];
+
+  /// Returns the index of this value in [values] list, matching standard enum `.index`.
+  int get index => values.indexOf(this);
+
+  /// Custom string representation (since extension types cannot override `toString()`).
+  String get label => 'UserRole.$name';
 }
 ```
 
@@ -65,29 +74,27 @@ void handleRole(UserRole role) {
     // Any unhandled values (like a newly added 'guest') will safely fall through!
   }
 }
+
 ```
 
 > [!NOTE]
 > If a consumer uses a **switch expression**, Dart always requires a default/wildcard case (`_`) because expressions must always evaluate to a value. This naturally protects them from new additions:
->
-> <?code-excerpt "readme_excerpts.dart (SwitchExpression)"?>
-> ```dart
-> String getLabel(UserRole role) => switch (role) {
->       UserRole.admin => 'Administrator',
->       UserRole.member => 'Member',
->       _ => 'Other', // Required by compiler, safe against future additions
->     };
-> ```
 
----
+<?code-excerpt "readme_excerpts.dart (SwitchExpression)"?>
+```dart
+String getLabel(UserRole role) => switch (role) {
+  UserRole.admin => 'Administrator',
+  UserRole.member => 'Member',
+  _ => 'Other', // Required by compiler, safe against future additions
+};
+```
 
-## Helper Utilities
+### 3. Lookup Utilities & Deserialization
 
-The `open_enum` library provides convenient extensions on `Iterable` collections of open enums to mirror the standard Dart enum developer experience.
+The `open_enum` library provides convenient extensions on `Iterable` collections of open enums to handle parsing and deserialization:
 
-### Looking up by Representation Value
-
-Use `.byValue()` to look up an element by its underlying representation value (e.g., `String` or `int`):
+#### Looking up by Representation Value
+Use `.byValue()` to look up an element by its underlying representation value:
 
 <?code-excerpt "readme_excerpts.dart (ByValue)"?>
 ```dart
@@ -95,9 +102,8 @@ final UserRole? role = UserRole.values.byValue('admin'); // Returns UserRole.adm
 final UserRole? invalid = UserRole.values.byValue('super-user'); // Returns null
 ```
 
-### Looking up by String Name
-
-For string-represented enums, we provide `.byName()` and `.byNameOrNull()` to perfectly match the standard Dart `enum` API:
+#### Looking up by String Name
+For string-represented enums, `.byName()` and `.byNameOrNull()` perfectly match standard Dart `enum` behavior:
 
 <?code-excerpt "readme_excerpts.dart (ByName)"?>
 ```dart
@@ -108,9 +114,13 @@ final UserRole roleByName = UserRole.values.byName('admin');
 final UserRole? safeRole = UserRole.values.byNameOrNull('super-user');
 ```
 
-### 3. Open Enums with both Index and Name (`OpenEnumRecord`)
+---
 
-If you want your open enum to natively support both integer `index` and string `name` properties without writing any manual lookup or index mapping boilerplate, you can wrap a named record `({int index, String name})` and implement `OpenEnumRecord`:
+## Advanced Patterns
+
+### 1. Open Enums with both Index and Name (`OpenEnumRecord`)
+
+If you want your open enum to natively support both integer `index` and string `name` properties without writing any manual lookup boilerplate, implement `OpenEnumRecord` by wrapping a named record `({int index, String name})`:
 
 <?code-excerpt "readme_excerpts.dart (DefinitionRecord)"?>
 ```dart
@@ -128,30 +138,51 @@ By using `OpenEnumRecord`, you automatically get:
 - `.byIndex(int index)` lookup on collections.
 - `.byName(String name)` and `.byNameOrNull(String name)` lookup on collections.
 
+> [!IMPORTANT]
+> Because Record types are completely erased at runtime, standard tools like `jsonEncode` cannot reflect on them to find custom methods. To serialize an `OpenEnumRecord`, you must call `.toJson()` explicitly:
+> ```dart
+> final json = jsonEncode(role.toJson()); // Produces {"index":0,"name":"admin"}
+> ```
 
+### 2. Type-Safe Bitmask / Flag Enums
+
+Standard Dart enums cannot be combined using bitwise operations (`|`, `&`). With `open_enum`, you can define type-safe flags wrapping an `int` representation that compile down to zero-cost integers at runtime:
+
+<?code-excerpt "readme_excerpts.dart (Bitmask)"?>
+```dart
+extension type const Permission._(int value) implements OpenEnum<int> {
+  static const Permission read = Permission._(1 << 0);
+  static const Permission write = Permission._(1 << 1);
+  static const Permission execute = Permission._(1 << 2);
+
+  Permission operator |(Permission other) => Permission._(value | other.value);
+  Permission operator &(Permission other) => Permission._(value & other.value);
+  bool has(Permission other) => (value & other.value) == other.value;
+}
+```
+
+This lets consumers combine and check flags cleanly:
+
+<?code-excerpt "readme_excerpts.dart (BitmaskUsage)"?>
+```dart
+void bitmaskUsage() {
+  final Permission rw = Permission.read | Permission.write;
+  print(rw.has(Permission.read)); // true
+  print(rw.has(Permission.execute)); // false
+}
+```
 
 ---
 
-## Limitations & Common Patterns
+## Benefits & Trade-offs (Drawbacks)
 
-Due to the static resolution and erasure of Dart **Extension Types**, there are a few standard `enum` features that require slightly different patterns.
+### Benefits
+* **API Evolution Safety:** You can add new options to your enum at any time in a minor update. Existing consumers' `switch` statements will continue compiling and running without breaking.
+* **Zero Runtime Cost:** Because they are built on Dart extension types, these types compile down to their representation (e.g. `String` or `int`) at runtime, preventing heap object allocation overhead.
+* **Native JSON Serialization:** They natively serialize to JSON out-of-the-box using standard tools like `jsonEncode` (since they resolve to their wrapped primitives at runtime).
+* **Closed-Set Guarantees:** By using private constructors (`MyEnum._`), you prevent consumers from creating arbitrary invalid instances of your enum.
 
-### 1. Implementing `.index`
-
-Standard enums have an automatic `index` getter. For `open_enum` types, you can easily implement this by looking up the index of `this` within the `values` list:
-
-<?code-excerpt "readme_excerpts.dart (IndexAndStringification)"?>
-```dart
-  /// Returns the index of this value in [values] list, matching standard enum `.index`.
-  int get index => values.indexOf(this);
-
-  /// Custom string representation (since extension types cannot override `toString()`).
-  String get label => 'UserRole.$name';
-```
-
-### 2. Custom Stringification (`toString()`)
-
-Extension types compile down to their underlying representation. Consequently, calling `toString()` on them at runtime will output the raw value (e.g., `'admin'`), not `'UserRole.admin'`. 
-
-To support descriptive stringification, define a custom getter (like `label` or `asString`) as shown above.
-
+### Trade-offs & Drawbacks
+* **Opt-Out of Exhaustiveness Warnings:** Because enums are open, the compiler *cannot* warn you if you forget to handle a new enum case in a `switch` statement. If you *want* compile-time errors when cases are added, you should use standard Dart `enum`s.
+* **Manual `values` Bookkeeping:** Dart cannot reflect on classes or extension types at AOT runtime. You must manually define and maintain the `static const List<T> values` list.
+* **Custom `toString()` Limitations:** Extension types cannot override `Object.toString()`. Calling `toString()` at runtime returns the wrapped primitive (e.g., `'admin'`). To print detailed types (like `'UserRole.admin'`), you must define a custom getter like `label`.

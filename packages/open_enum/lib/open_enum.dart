@@ -87,6 +87,9 @@ extension type const OpenEnumRecord._(({int index, String name}) data)
 
   /// The string name representation of the enum value.
   String get name => value.name;
+
+  /// Converts the record representation to a JSON-compatible map.
+  Map<String, dynamic> toJson() => <String, dynamic>{'index': index, 'name': name};
 }
 
 /// Helper extensions for collections of [OpenEnumRecord] values.
