@@ -8,7 +8,6 @@
 #define MAXIMUM_FRAME_WAIT_IN_SECONDS 0.2
 #define MAXIMUM_ASSET_LOAD_WAIT_IN_SECONDS 1.0
 
-
 @interface FVPTextureBasedVideoPlayer ()
 // The updater that drives callbacks to the engine to indicate that a new frame is ready.
 @property(nonatomic) FVPFrameUpdater *frameUpdater;
@@ -67,7 +66,10 @@
     _frameUpdater = frameUpdater;
     _displayLink = displayLink;
     _frameUpdater.displayLink = _displayLink;
-    _selfRefresh = true;
+    // Default to the self-refresh loop (re-arm textureFrameAvailable from copyPixelBuffer). Once the
+    // item is ready and its content frame rate is known, configureForReadyToPlayItem: switches to
+    // driving the display link at that rate and turns this off.
+    _selfRefresh = YES;
 
     // This is to fix 2 bugs: 1. blank video for encrypted video streams on iOS 16
     // (https://github.com/flutter/flutter/issues/111457) and 2. swapped width and height for some
@@ -135,6 +137,37 @@
 
 - (BOOL)shouldApplyVideoCompositionForTransform {
   return YES;
+}
+
+- (void)configureForReadyToPlayItem:(AVPlayerItem *)item {
+  [super configureForReadyToPlayItem:item];
+
+  // Read the video track's content frame rate.
+  float nominalFrameRate = 0;
+  for (AVPlayerItemTrack *track in item.tracks) {
+    AVAssetTrack *assetTrack = track.assetTrack;
+    if (assetTrack && [assetTrack.mediaType isEqualToString:AVMediaTypeVideo]) {
+      nominalFrameRate = assetTrack.nominalFrameRate;
+      break;
+    }
+  }
+  if (nominalFrameRate <= 0) {
+    // Unknown content rate (e.g. some HLS streams): keep the upstream self-refresh behavior, which
+    // updates the texture every vsync.
+    return;
+  }
+
+  // Drive the texture at the video's content rate instead of every vsync. On a ProMotion display a
+  // 30 fps video then composites ~30x/s rather than 120x/s, cutting GPU/raster cost ~4x while at
+  // rest on a playing video. The display link becomes the sole driver, so the copyPixelBuffer
+  // self-refresh loop (which would otherwise re-arm every vsync) is turned off.
+  CFTimeInterval contentFrameDuration = 1.0 / nominalFrameRate;
+  self.frameUpdater.contentFrameDuration = contentFrameDuration;
+  self.frameUpdater.frameDuration = contentFrameDuration;
+  self.selfRefresh = NO;
+  if ([self.displayLink respondsToSelector:@selector(setPreferredFrameRate:)]) {
+    self.displayLink.preferredFrameRate = nominalFrameRate;
+  }
 }
 
 - (void)updatePlayingState {

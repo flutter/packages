@@ -43,6 +43,11 @@ NS_ASSUME_NONNULL_BEGIN
 /// Updates the playing state of the video player.
 - (void)updatePlayingState;
 
+/// Called when the player item reaches AVPlayerItemStatusReadyToPlay, on the initial load and after
+/// each asset reload, once track metadata (dimensions, frame rate) is available. Subclasses override
+/// to configure rate-dependent behavior. The base implementation does nothing.
+- (void)configureForReadyToPlayItem:(AVPlayerItem *)item;
+
 /// Loads a new video asset with the specified URL and HTTP headers.
 /// @param url The URL of the video asset to load.
 /// @param httpHeaders HTTP headers to include with the request.

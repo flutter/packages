@@ -44,6 +44,8 @@ API_AVAILABLE(ios(4.0), macos(14.0))
 
 @implementation FVPCADisplayLink
 
+@synthesize preferredFrameRate = _preferredFrameRate;
+
 - (instancetype)initWithRegistrar:(id<FlutterPluginRegistrar>)registrar
                          callback:(void (^)(void))callback {
   self = [super init];
@@ -63,6 +65,18 @@ API_AVAILABLE(ios(4.0), macos(14.0))
     _displayLink.paused = YES;
   }
   return self;
+}
+
+- (void)setPreferredFrameRate:(float)preferredFrameRate {
+  _preferredFrameRate = preferredFrameRate;
+  // A zero/negative rate restores the system default (the display's maximum). A positive rate pins
+  // the link to that rate on variable-refresh-rate displays.
+  if (@available(iOS 15.0, macOS 12.0, *)) {
+    self.displayLink.preferredFrameRateRange =
+        preferredFrameRate > 0
+            ? CAFrameRateRangeMake(preferredFrameRate, preferredFrameRate, preferredFrameRate)
+            : CAFrameRateRangeDefault;
+  }
 }
 
 - (void)dealloc {

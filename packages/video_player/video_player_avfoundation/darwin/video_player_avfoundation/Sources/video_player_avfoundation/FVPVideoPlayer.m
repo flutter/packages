@@ -312,6 +312,10 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   }
 }
 
+- (void)configureForReadyToPlayItem:(AVPlayerItem *)item {
+  // No-op by default; texture-based players override to drive the display link at the content rate.
+}
+
 - (void)reportStatusForPlayerItem:(AVPlayerItem *)item {
   NSAssert(self.eventListener,
            @"reportStatusForPlayerItem was called when the event listener was not set.");
@@ -326,6 +330,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
         if (_videoOutput) {
           [item addOutput:_videoOutput];
         }
+        [self configureForReadyToPlayItem:item];
         if (_loadingNewAsset) {
           [self finishLoadingNewAsset];
         } else {

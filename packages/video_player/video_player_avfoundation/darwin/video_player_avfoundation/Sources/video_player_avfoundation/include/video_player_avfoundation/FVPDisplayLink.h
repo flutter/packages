@@ -21,6 +21,15 @@
 /// The time interval between screen refresh updates.
 @property(nonatomic, readonly) CFTimeInterval duration;
 
+@optional
+/// The preferred rate, in Hz, at which the display link should fire.
+///
+/// 0 (the default) means the system default, typically the display's maximum refresh rate. On
+/// variable-refresh-rate displays (e.g. ProMotion), setting this to a video's content frame rate
+/// throttles callbacks toward that rate so the engine doesn't recomposite the texture every vsync.
+/// Optional: implementations that can't vary their rate may ignore it.
+@property(nonatomic, assign) float preferredFrameRate;
+
 @end
 
 // An implementation of FVPDisplayLink using CADisplayLink.

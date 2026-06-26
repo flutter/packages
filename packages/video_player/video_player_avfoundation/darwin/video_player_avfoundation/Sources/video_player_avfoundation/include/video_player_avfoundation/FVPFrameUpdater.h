@@ -24,6 +24,11 @@ NS_ASSUME_NONNULL_BEGIN
 /// The time interval between screen refresh updates. Display link duration is in an undefined state
 /// until displayLinkFired is called at least once so it should not be used directly.
 @property(atomic) CFTimeInterval frameDuration;
+/// The interval between video frames at the asset's content rate (1 / nominalFrameRate), or 0 if
+/// the content rate is unknown. When set, displayLinkFired uses it as frameDuration instead of the
+/// CADisplayLink's duration, which on ProMotion reports the 120 Hz nominal interval even when the
+/// link is throttled to the content rate — the mismatch otherwise breaks copyPixelBuffer's sampling.
+@property(atomic) CFTimeInterval contentFrameDuration;
 /// The number of consecutive display link ticks for which the engine has not pulled a pixel buffer.
 /// Reset to 0 by the player whenever copyPixelBuffer is called. When it grows large the texture is
 /// not being composited (e.g. the player scrolled offscreen) and displayLinkFired stops the display

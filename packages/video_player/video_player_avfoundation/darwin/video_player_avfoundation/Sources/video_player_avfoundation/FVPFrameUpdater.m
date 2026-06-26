@@ -19,7 +19,11 @@ static const NSUInteger kFVPMaxUnconsumedFrames = 120;
 }
 
 - (void)displayLinkFired {
-  self.frameDuration = _displayLink.duration;
+  // Prefer the asset's content frame interval when known. The CADisplayLink's own duration reports
+  // the display's nominal max-rate interval (e.g. 8.3 ms at 120 Hz) even when the link is throttled
+  // to the content rate, so using it directly would make copyPixelBuffer's targetTime sampling drift.
+  CFTimeInterval contentDuration = self.contentFrameDuration;
+  self.frameDuration = contentDuration > 0 ? contentDuration : _displayLink.duration;
 
   // The display link keeps running as long as the player believes it should (isPlaying ||
   // waitingForFrame), but the player has no signal for whether the texture is actually onscreen. An
