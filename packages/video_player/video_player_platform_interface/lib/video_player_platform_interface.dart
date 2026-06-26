@@ -500,6 +500,9 @@ class VideoPlayerOptions {
   final VideoPlayerWebOptions? webOptions;
 
   /// ** Android only **. Sets ExoPlayer's back buffer duration in milliseconds.
+  /// 
+  /// This is not possible on iOS because AVPlayer does not provide a way to
+  /// configure the back buffer duration.
   final int? backBufferDurationMs;
 }
 
