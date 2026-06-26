@@ -131,7 +131,12 @@ class PreCommitCommand extends Command<bool> {
       return false;
     }
 
-    print('Formatting looks good!');
+    final stdoutStr = formatResult.stdout.toString();
+    if (stdoutStr.contains('Ran for 0 package(s)')) {
+      print('Formatting skipped (no staged packages).');
+    } else {
+      print('Formatting looks good!');
+    }
     return true;
   }
 
@@ -158,7 +163,12 @@ class PreCommitCommand extends Command<bool> {
       return false;
     }
 
-    print('Static analysis looks good!');
+    final String stdoutStr = analyzeResult.stdout.toString();
+    if (stdoutStr.contains('Ran for 0 package(s)')) {
+      print('Static analysis skipped (no staged packages).');
+    } else {
+      print('Static analysis looks good!');
+    }
     return true;
   }
 }
