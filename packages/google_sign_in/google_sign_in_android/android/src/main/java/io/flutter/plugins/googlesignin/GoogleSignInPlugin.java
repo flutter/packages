@@ -288,6 +288,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
                               googleIdTokenCredential.getFamilyName(),
                               googleIdTokenCredential.getGivenName(),
                               googleIdTokenCredential.getEmail(),
+                              googleIdTokenCredential.getUniqueId(),
                               googleIdTokenCredential.getIdToken(),
                               profilePictureUri == null ? null : profilePictureUri.toString())));
                 } else {
