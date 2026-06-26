@@ -60,7 +60,7 @@ void main() {
                   return ProcessResult(0, 0, 'packages/a_plugin/lib/a.dart\n', '');
                 }
               }
-              if (arguments.isNotEmpty && arguments.length > 2 && arguments[2] == 'format') {
+              if (arguments.contains('format')) {
                 return ProcessResult(0, 1, 'bad_file.dart', '');
               }
               return ProcessResult(0, 0, 'Success', '');
@@ -97,7 +97,7 @@ void main() {
                   return ProcessResult(0, 0, 'packages/a_plugin/lib/a.dart\n', '');
                 }
               }
-              if (arguments.isNotEmpty && arguments.length > 2 && arguments[2] == 'analyze') {
+              if (arguments.contains('analyze')) {
                 return ProcessResult(0, 1, 'error in file.dart', '');
               }
               return ProcessResult(0, 0, 'Success', '');
