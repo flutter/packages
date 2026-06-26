@@ -286,22 +286,10 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
   AuthenticationResults _authenticationResultFromPlatformCredential(
     PlatformGoogleIdTokenCredential credential,
   ) {
-    // GoogleIdTokenCredential's ID field is documented to return the
-    // email address, not what the other platform SDKs call an ID.
-    // The account ID returned by other platform SDKs and the legacy
-    // Google Sign In for Android SDK is no longer directly exposed, so it
-    // need to be extracted from the token. See
-    // https://stackoverflow.com/a/78064720.
-    // The ID should always be availabe from the token, but if for some reason
-    // it can't be extracted, use the email address instead as a reasonable
-    // fallback method of identifying the account.
-    final String email = credential.email;
-    final String userId = credential.uniqueId;
-
     return AuthenticationResults(
       user: GoogleSignInUserData(
-        email: email,
-        id: userId,
+        email: credential.email,
+        id: credential.uniqueId,
         displayName: credential.displayName,
         photoUrl: credential.profilePictureUri,
       ),
