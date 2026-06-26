@@ -5,7 +5,6 @@
 import 'dart:io';
 
 import 'package:githooks/src/pre_commit_command.dart';
-import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
 void main() {
@@ -26,8 +25,8 @@ void main() {
       final bool result = await command.run();
       expect(result, isTrue);
 
-      const String repoRoot = '/mock/repo/root';
-      final String toolScript = '$repoRoot/script/tool/bin/flutter_plugin_tools.dart';
+      const repoRoot = '/mock/repo/root';
+      const toolScript = '$repoRoot/script/tool/bin/flutter_plugin_tools.dart';
 
       // Verify the exact arguments passed to format and analyze
       expect(
@@ -61,8 +60,8 @@ void main() {
       final bool result = await command.run();
       expect(result, isFalse);
 
-      const String repoRoot = '/mock/repo/root';
-      final String toolScript = '$repoRoot/script/tool/bin/flutter_plugin_tools.dart';
+      const repoRoot = '/mock/repo/root';
+      const toolScript = '$repoRoot/script/tool/bin/flutter_plugin_tools.dart';
 
       expect(
         executedArguments,
@@ -96,8 +95,8 @@ void main() {
       final bool result = await command.run();
       expect(result, isFalse);
 
-      const String repoRoot = '/mock/repo/root';
-      final String toolScript = '$repoRoot/script/tool/bin/flutter_plugin_tools.dart';
+      const repoRoot = '/mock/repo/root';
+      const toolScript = '$repoRoot/script/tool/bin/flutter_plugin_tools.dart';
 
       expect(
         executedArguments,
