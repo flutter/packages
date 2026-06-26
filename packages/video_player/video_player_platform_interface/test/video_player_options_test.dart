@@ -14,4 +14,8 @@ void main() {
     final options = VideoPlayerOptions();
     expect(options.mixWithOthers, false);
   });
+  test('VideoPlayerOptions preventsDisplaySleepDuringVideoPlayback defaults to true', () {
+    final options = VideoPlayerOptions();
+    expect(options.preventsDisplaySleepDuringVideoPlayback, true);
+  });
 }
