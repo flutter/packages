@@ -12699,7 +12699,7 @@ void main() {
       // Cursor move doesn't trigger a toolbar initially.
       _expectNoMaterialToolbar();
 
-      await gesture.moveBy(const Offset(100, 0));
+      await gesture.moveTo(textOffsetToPosition(tester, 30));
       await tester.pump();
 
       // The selection is now moved with the drag.
@@ -12708,7 +12708,7 @@ void main() {
       _expectNoMaterialToolbar();
 
       // The selection is moved on a backwards drag.
-      await gesture.moveBy(const Offset(-200, 0));
+      await gesture.moveTo(textOffsetToPosition(tester, 10));
       await tester.pump();
 
       // The selection is now moved with the drag.
@@ -12716,7 +12716,7 @@ void main() {
       // Still no toolbar.
       _expectNoMaterialToolbar();
 
-      await gesture.moveBy(const Offset(-100, 0));
+      await gesture.moveTo(textOffsetToPosition(tester, 0));
       await tester.pump();
 
       // The selection is now moved with the drag.
