@@ -13,6 +13,7 @@
 @Tags(<String>['reduced-test-set', 'no-shuffle'])
 library;
 
+import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' as ui show BoxHeightStyle, BoxWidthStyle, SemanticsInputType;
 
@@ -10522,7 +10523,7 @@ void main() {
       expect(controller.selection, const TextSelection(baseOffset: 8, extentOffset: 12));
 
       // The toolbar shows up.
-      expectMaterialToolbarForPartialSelection();
+      _expectMaterialToolbarForPartialSelection();
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.android,
@@ -10712,7 +10713,7 @@ void main() {
     // Toolbar should re-appear after a drag.
     await gesture.up();
     await tester.pump();
-    expectMaterialToolbarForPartialSelection();
+    _expectMaterialToolbarForPartialSelection();
   });
 
   group('Triple tap/click', () {
@@ -10981,7 +10982,7 @@ void main() {
         await tester.tapAt(textfieldStart + const Offset(50.0, 9.0));
         await tester.pump();
         expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 7));
-        expectMaterialToolbarForPartialSelection();
+        _expectMaterialToolbarForPartialSelection();
 
         await tester.tapAt(textfieldStart + const Offset(50.0, 9.0));
         await tester.pumpAndSettle();
@@ -10997,7 +10998,7 @@ void main() {
         await tester.tapAt(textfieldStart + const Offset(100.0, 9.0));
         await tester.pump();
         expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 7));
-        expectMaterialToolbarForPartialSelection();
+        _expectMaterialToolbarForPartialSelection();
 
         // Third tap shows the toolbar and selects the paragraph.
         await tester.tapAt(textfieldStart + const Offset(100.0, 9.0));
@@ -11015,7 +11016,7 @@ void main() {
         await tester.tapAt(textfieldStart + const Offset(150.0, 9.0));
         await tester.pump();
         expect(controller.selection, const TextSelection(baseOffset: 8, extentOffset: 12));
-        expectMaterialToolbarForPartialSelection();
+        _expectMaterialToolbarForPartialSelection();
 
         // Third tap selects the paragraph and shows the toolbar.
         await tester.tapAt(textfieldStart + const Offset(150.0, 9.0));
@@ -11927,7 +11928,7 @@ void main() {
       expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 7));
 
       // The toolbar shows up.
-      expectMaterialToolbarForPartialSelection();
+      _expectMaterialToolbarForPartialSelection();
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.android,
@@ -12273,7 +12274,7 @@ void main() {
       expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 7));
 
       // The toolbar shows up.
-      expectMaterialToolbarForPartialSelection();
+      _expectMaterialToolbarForPartialSelection();
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.android,
@@ -12464,10 +12465,12 @@ void main() {
       // Scroll to the end so the selection is no longer visible. This should
       // hide the toolbar, but schedule it to be shown once the selection is
       // visible again.
-      scrollController.animateTo(
-        500.0,
-        duration: const Duration(milliseconds: 100),
-        curve: Curves.linear,
+      unawaited(
+        scrollController.animateTo(
+          500.0,
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.linear,
+        ),
       );
       await tester.pumpAndSettle();
       expect(contextMenuButtonFinder, findsNothing);
@@ -12476,10 +12479,12 @@ void main() {
 
       // Scroll to the beginning where the selection is in view
       // and the toolbar should show again.
-      scrollController.animateTo(
-        0.0,
-        duration: const Duration(milliseconds: 100),
-        curve: Curves.linear,
+      unawaited(
+        scrollController.animateTo(
+          0.0,
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.linear,
+        ),
       );
       await tester.pumpAndSettle();
       expect(
@@ -12509,10 +12514,12 @@ void main() {
       // Scroll to the end so the selection is no longer visible. This should
       // hide the toolbar, but schedule it to be shown once the selection is
       // visible again.
-      scrollController.animateTo(
-        500.0,
-        duration: const Duration(milliseconds: 100),
-        curve: Curves.linear,
+      unawaited(
+        scrollController.animateTo(
+          500.0,
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.linear,
+        ),
       );
       await tester.pumpAndSettle();
       expect(contextMenuButtonFinder, findsNothing);
@@ -12528,10 +12535,12 @@ void main() {
 
       // Scroll to the beginning where the selection was previously
       // and the toolbar should not show because it was invalidated.
-      scrollController.animateTo(
-        0.0,
-        duration: const Duration(milliseconds: 100),
-        curve: Curves.linear,
+      unawaited(
+        scrollController.animateTo(
+          0.0,
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.linear,
+        ),
       );
       await tester.pumpAndSettle();
       expect(contextMenuButtonFinder, findsNothing);
@@ -12592,20 +12601,24 @@ void main() {
       );
 
       // Scroll down, the TextField should no longer be in the viewport.
-      scrollController.animateTo(
-        scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 100),
-        curve: Curves.linear,
+      unawaited(
+        scrollController.animateTo(
+          scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.linear,
+        ),
       );
       await tester.pumpAndSettle();
       expect(find.byType(TextField), findsNothing);
       expect(contextMenuButtonFinder, findsNothing);
 
       // Scroll back up so the TextField is inside the viewport.
-      scrollController.animateTo(
-        0.0,
-        duration: const Duration(milliseconds: 100),
-        curve: Curves.linear,
+      unawaited(
+        scrollController.animateTo(
+          0.0,
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.linear,
+        ),
       );
       await tester.pumpAndSettle();
       expect(find.byType(TextField), findsOneWidget);
@@ -12717,7 +12730,7 @@ void main() {
       // The selection isn't affected by the gesture lift.
       expect(controller.selection, const TextSelection(baseOffset: 23, extentOffset: 0));
       // The toolbar now shows up.
-      expectMaterialToolbarForPartialSelection();
+      _expectMaterialToolbarForPartialSelection();
     },
     variant: TargetPlatformVariant.all(
       excluding: <TargetPlatform>{TargetPlatform.iOS, TargetPlatform.macOS},
@@ -19596,7 +19609,7 @@ void _expectNoMaterialToolbar() {
 
 // Check that the Material text selection toolbars show the expected buttons
 // when the content is partially selected.
-void expectMaterialToolbarForPartialSelection() {
+void _expectMaterialToolbarForPartialSelection() {
   if (isContextMenuProvidedByPlatform) {
     _expectNoMaterialToolbar();
     return;
