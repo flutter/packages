@@ -2,6 +2,15 @@
 # default of enabling unawaited_futures. Please do NOT add more changes
 # here without consulting with #hackers-ecosystem on Discord.
 
+analyzer:
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
 include: ../../analysis_options.yaml
 
 linter:

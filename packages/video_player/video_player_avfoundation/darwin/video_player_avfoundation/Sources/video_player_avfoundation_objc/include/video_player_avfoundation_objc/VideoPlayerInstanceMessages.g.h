@@ -14,6 +14,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class FVPMediaSelectionAudioTrackData;
+@class FVPMediaSelectionVideoTrackData;
+@class FVPAssetVideoTrackData;
+@class FVPNativeVideoTrackData;
 
 /// Raw audio track data from AVMediaSelectionOption (for HLS streams).
 @interface FVPMediaSelectionAudioTrackData : NSObject
@@ -29,6 +32,60 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, copy, nullable) NSString *languageCode;
 @property(nonatomic, assign) BOOL isSelected;
 @property(nonatomic, copy, nullable) NSString *commonMetadataTitle;
+@end
+
+/// Video track data from AVAssetVariant (HLS variants) for iOS 15+.
+@interface FVPMediaSelectionVideoTrackData : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithVariantIndex:(NSInteger)variantIndex
+                               label:(nullable NSString *)label
+                             bitrate:(nullable NSNumber *)bitrate
+                               width:(nullable NSNumber *)width
+                              height:(nullable NSNumber *)height
+                           frameRate:(nullable NSNumber *)frameRate
+                               codec:(nullable NSString *)codec
+                          isSelected:(BOOL)isSelected;
+@property(nonatomic, assign) NSInteger variantIndex;
+@property(nonatomic, copy, nullable) NSString *label;
+@property(nonatomic, strong, nullable) NSNumber *bitrate;
+@property(nonatomic, strong, nullable) NSNumber *width;
+@property(nonatomic, strong, nullable) NSNumber *height;
+@property(nonatomic, strong, nullable) NSNumber *frameRate;
+@property(nonatomic, copy, nullable) NSString *codec;
+@property(nonatomic, assign) BOOL isSelected;
+@end
+
+/// Video track data from AVAssetTrack (regular videos).
+@interface FVPAssetVideoTrackData : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithTrackId:(NSInteger)trackId
+                          label:(nullable NSString *)label
+                          width:(nullable NSNumber *)width
+                         height:(nullable NSNumber *)height
+                      frameRate:(nullable NSNumber *)frameRate
+                          codec:(nullable NSString *)codec
+                     isSelected:(BOOL)isSelected;
+@property(nonatomic, assign) NSInteger trackId;
+@property(nonatomic, copy, nullable) NSString *label;
+@property(nonatomic, strong, nullable) NSNumber *width;
+@property(nonatomic, strong, nullable) NSNumber *height;
+@property(nonatomic, strong, nullable) NSNumber *frameRate;
+@property(nonatomic, copy, nullable) NSString *codec;
+@property(nonatomic, assign) BOOL isSelected;
+@end
+
+/// Container for video track data from iOS.
+@interface FVPNativeVideoTrackData : NSObject
++ (instancetype)makeWithAssetTracks:(nullable NSArray<FVPAssetVideoTrackData *> *)assetTracks
+               mediaSelectionTracks:
+                   (nullable NSArray<FVPMediaSelectionVideoTrackData *> *)mediaSelectionTracks;
+/// Asset-based tracks (for regular videos)
+@property(nonatomic, copy, nullable) NSArray<FVPAssetVideoTrackData *> *assetTracks;
+/// Media selection tracks (for HLS variants on iOS 15+)
+@property(nonatomic, copy, nullable)
+    NSArray<FVPMediaSelectionVideoTrackData *> *mediaSelectionTracks;
 @end
 
 /// The codec used by all APIs.
@@ -49,6 +106,13 @@ NSObject<FlutterMessageCodec> *FVPGetVideoPlayerInstanceMessagesCodec(void);
     (FlutterError *_Nullable *_Nonnull)error;
 - (void)selectAudioTrackAtIndex:(NSInteger)trackIndex
                           error:(FlutterError *_Nullable *_Nonnull)error;
+/// Gets the available video tracks for the video.
+- (void)getVideoTracks:(void (^)(FVPNativeVideoTrackData *_Nullable,
+                                 FlutterError *_Nullable))completion;
+/// Selects a video track by setting preferredPeakBitRate.
+/// Pass 0 to enable auto quality selection.
+- (void)selectVideoTrackWithBitrate:(NSInteger)bitrate
+                              error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
 extern void SetUpFVPVideoPlayerInstanceApi(id<FlutterBinaryMessenger> binaryMessenger,

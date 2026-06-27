@@ -123,6 +123,24 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList;
 @end
 
+@interface FVPMediaSelectionVideoTrackData ()
++ (FVPMediaSelectionVideoTrackData *)fromList:(NSArray<id> *)list;
++ (nullable FVPMediaSelectionVideoTrackData *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
+@interface FVPAssetVideoTrackData ()
++ (FVPAssetVideoTrackData *)fromList:(NSArray<id> *)list;
++ (nullable FVPAssetVideoTrackData *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
+@interface FVPNativeVideoTrackData ()
++ (FVPNativeVideoTrackData *)fromList:(NSArray<id> *)list;
++ (nullable FVPNativeVideoTrackData *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
 @implementation FVPMediaSelectionAudioTrackData
 + (instancetype)makeWithIndex:(NSInteger)index
                   displayName:(nullable NSString *)displayName
@@ -183,6 +201,198 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
+@implementation FVPMediaSelectionVideoTrackData
++ (instancetype)makeWithVariantIndex:(NSInteger)variantIndex
+                               label:(nullable NSString *)label
+                             bitrate:(nullable NSNumber *)bitrate
+                               width:(nullable NSNumber *)width
+                              height:(nullable NSNumber *)height
+                           frameRate:(nullable NSNumber *)frameRate
+                               codec:(nullable NSString *)codec
+                          isSelected:(BOOL)isSelected {
+  FVPMediaSelectionVideoTrackData *pigeonResult = [[FVPMediaSelectionVideoTrackData alloc] init];
+  pigeonResult.variantIndex = variantIndex;
+  pigeonResult.label = label;
+  pigeonResult.bitrate = bitrate;
+  pigeonResult.width = width;
+  pigeonResult.height = height;
+  pigeonResult.frameRate = frameRate;
+  pigeonResult.codec = codec;
+  pigeonResult.isSelected = isSelected;
+  return pigeonResult;
+}
++ (FVPMediaSelectionVideoTrackData *)fromList:(NSArray<id> *)list {
+  FVPMediaSelectionVideoTrackData *pigeonResult = [[FVPMediaSelectionVideoTrackData alloc] init];
+  pigeonResult.variantIndex = [GetNullableObjectAtIndex(list, 0) integerValue];
+  pigeonResult.label = GetNullableObjectAtIndex(list, 1);
+  pigeonResult.bitrate = GetNullableObjectAtIndex(list, 2);
+  pigeonResult.width = GetNullableObjectAtIndex(list, 3);
+  pigeonResult.height = GetNullableObjectAtIndex(list, 4);
+  pigeonResult.frameRate = GetNullableObjectAtIndex(list, 5);
+  pigeonResult.codec = GetNullableObjectAtIndex(list, 6);
+  pigeonResult.isSelected = [GetNullableObjectAtIndex(list, 7) boolValue];
+  return pigeonResult;
+}
++ (nullable FVPMediaSelectionVideoTrackData *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FVPMediaSelectionVideoTrackData fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    @(self.variantIndex),
+    self.label ?: [NSNull null],
+    self.bitrate ?: [NSNull null],
+    self.width ?: [NSNull null],
+    self.height ?: [NSNull null],
+    self.frameRate ?: [NSNull null],
+    self.codec ?: [NSNull null],
+    @(self.isSelected),
+  ];
+}
+- (BOOL)isEqual:(id)object {
+  if (self == object) {
+    return YES;
+  }
+  if (![object isKindOfClass:[self class]]) {
+    return NO;
+  }
+  FVPMediaSelectionVideoTrackData *other = (FVPMediaSelectionVideoTrackData *)object;
+  return self.variantIndex == other.variantIndex && FLTPigeonDeepEquals(self.label, other.label) &&
+         FLTPigeonDeepEquals(self.bitrate, other.bitrate) &&
+         FLTPigeonDeepEquals(self.width, other.width) &&
+         FLTPigeonDeepEquals(self.height, other.height) &&
+         FLTPigeonDeepEquals(self.frameRate, other.frameRate) &&
+         FLTPigeonDeepEquals(self.codec, other.codec) && self.isSelected == other.isSelected;
+}
+
+- (NSUInteger)hash {
+  NSUInteger result = [self class].hash;
+  result = result * 31 + @(self.variantIndex).hash;
+  result = result * 31 + FLTPigeonDeepHash(self.label);
+  result = result * 31 + FLTPigeonDeepHash(self.bitrate);
+  result = result * 31 + FLTPigeonDeepHash(self.width);
+  result = result * 31 + FLTPigeonDeepHash(self.height);
+  result = result * 31 + FLTPigeonDeepHash(self.frameRate);
+  result = result * 31 + FLTPigeonDeepHash(self.codec);
+  result = result * 31 + @(self.isSelected).hash;
+  return result;
+}
+@end
+
+@implementation FVPAssetVideoTrackData
++ (instancetype)makeWithTrackId:(NSInteger)trackId
+                          label:(nullable NSString *)label
+                          width:(nullable NSNumber *)width
+                         height:(nullable NSNumber *)height
+                      frameRate:(nullable NSNumber *)frameRate
+                          codec:(nullable NSString *)codec
+                     isSelected:(BOOL)isSelected {
+  FVPAssetVideoTrackData *pigeonResult = [[FVPAssetVideoTrackData alloc] init];
+  pigeonResult.trackId = trackId;
+  pigeonResult.label = label;
+  pigeonResult.width = width;
+  pigeonResult.height = height;
+  pigeonResult.frameRate = frameRate;
+  pigeonResult.codec = codec;
+  pigeonResult.isSelected = isSelected;
+  return pigeonResult;
+}
++ (FVPAssetVideoTrackData *)fromList:(NSArray<id> *)list {
+  FVPAssetVideoTrackData *pigeonResult = [[FVPAssetVideoTrackData alloc] init];
+  pigeonResult.trackId = [GetNullableObjectAtIndex(list, 0) integerValue];
+  pigeonResult.label = GetNullableObjectAtIndex(list, 1);
+  pigeonResult.width = GetNullableObjectAtIndex(list, 2);
+  pigeonResult.height = GetNullableObjectAtIndex(list, 3);
+  pigeonResult.frameRate = GetNullableObjectAtIndex(list, 4);
+  pigeonResult.codec = GetNullableObjectAtIndex(list, 5);
+  pigeonResult.isSelected = [GetNullableObjectAtIndex(list, 6) boolValue];
+  return pigeonResult;
+}
++ (nullable FVPAssetVideoTrackData *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FVPAssetVideoTrackData fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    @(self.trackId),
+    self.label ?: [NSNull null],
+    self.width ?: [NSNull null],
+    self.height ?: [NSNull null],
+    self.frameRate ?: [NSNull null],
+    self.codec ?: [NSNull null],
+    @(self.isSelected),
+  ];
+}
+- (BOOL)isEqual:(id)object {
+  if (self == object) {
+    return YES;
+  }
+  if (![object isKindOfClass:[self class]]) {
+    return NO;
+  }
+  FVPAssetVideoTrackData *other = (FVPAssetVideoTrackData *)object;
+  return self.trackId == other.trackId && FLTPigeonDeepEquals(self.label, other.label) &&
+         FLTPigeonDeepEquals(self.width, other.width) &&
+         FLTPigeonDeepEquals(self.height, other.height) &&
+         FLTPigeonDeepEquals(self.frameRate, other.frameRate) &&
+         FLTPigeonDeepEquals(self.codec, other.codec) && self.isSelected == other.isSelected;
+}
+
+- (NSUInteger)hash {
+  NSUInteger result = [self class].hash;
+  result = result * 31 + @(self.trackId).hash;
+  result = result * 31 + FLTPigeonDeepHash(self.label);
+  result = result * 31 + FLTPigeonDeepHash(self.width);
+  result = result * 31 + FLTPigeonDeepHash(self.height);
+  result = result * 31 + FLTPigeonDeepHash(self.frameRate);
+  result = result * 31 + FLTPigeonDeepHash(self.codec);
+  result = result * 31 + @(self.isSelected).hash;
+  return result;
+}
+@end
+
+@implementation FVPNativeVideoTrackData
++ (instancetype)makeWithAssetTracks:(nullable NSArray<FVPAssetVideoTrackData *> *)assetTracks
+               mediaSelectionTracks:
+                   (nullable NSArray<FVPMediaSelectionVideoTrackData *> *)mediaSelectionTracks {
+  FVPNativeVideoTrackData *pigeonResult = [[FVPNativeVideoTrackData alloc] init];
+  pigeonResult.assetTracks = assetTracks;
+  pigeonResult.mediaSelectionTracks = mediaSelectionTracks;
+  return pigeonResult;
+}
++ (FVPNativeVideoTrackData *)fromList:(NSArray<id> *)list {
+  FVPNativeVideoTrackData *pigeonResult = [[FVPNativeVideoTrackData alloc] init];
+  pigeonResult.assetTracks = GetNullableObjectAtIndex(list, 0);
+  pigeonResult.mediaSelectionTracks = GetNullableObjectAtIndex(list, 1);
+  return pigeonResult;
+}
++ (nullable FVPNativeVideoTrackData *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FVPNativeVideoTrackData fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    self.assetTracks ?: [NSNull null],
+    self.mediaSelectionTracks ?: [NSNull null],
+  ];
+}
+- (BOOL)isEqual:(id)object {
+  if (self == object) {
+    return YES;
+  }
+  if (![object isKindOfClass:[self class]]) {
+    return NO;
+  }
+  FVPNativeVideoTrackData *other = (FVPNativeVideoTrackData *)object;
+  return FLTPigeonDeepEquals(self.assetTracks, other.assetTracks) &&
+         FLTPigeonDeepEquals(self.mediaSelectionTracks, other.mediaSelectionTracks);
+}
+
+- (NSUInteger)hash {
+  NSUInteger result = [self class].hash;
+  result = result * 31 + FLTPigeonDeepHash(self.assetTracks);
+  result = result * 31 + FLTPigeonDeepHash(self.mediaSelectionTracks);
+  return result;
+}
+@end
+
 @interface FVPVideoPlayerInstanceMessagesPigeonCodecReader : FlutterStandardReader
 @end
 @implementation FVPVideoPlayerInstanceMessagesPigeonCodecReader
@@ -190,6 +400,12 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   switch (type) {
     case 129:
       return [FVPMediaSelectionAudioTrackData fromList:[self readValue]];
+    case 130:
+      return [FVPMediaSelectionVideoTrackData fromList:[self readValue]];
+    case 131:
+      return [FVPAssetVideoTrackData fromList:[self readValue]];
+    case 132:
+      return [FVPNativeVideoTrackData fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
@@ -202,6 +418,15 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (void)writeValue:(id)value {
   if ([value isKindOfClass:[FVPMediaSelectionAudioTrackData class]]) {
     [self writeByte:129];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FVPMediaSelectionVideoTrackData class]]) {
+    [self writeByte:130];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FVPAssetVideoTrackData class]]) {
+    [self writeByte:131];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FVPNativeVideoTrackData class]]) {
+    [self writeByte:132];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -461,6 +686,55 @@ void SetUpFVPVideoPlayerInstanceApiWithSuffix(id<FlutterBinaryMessenger> binaryM
         NSInteger arg_trackIndex = [GetNullableObjectAtIndex(args, 0) integerValue];
         FlutterError *error;
         [api selectAudioTrackAtIndex:arg_trackIndex error:&error];
+        callback(wrapResult(nil, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Gets the available video tracks for the video.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.video_player_avfoundation."
+                                                   @"VideoPlayerInstanceApi.getVideoTracks",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FVPGetVideoPlayerInstanceMessagesCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getVideoTracks:)],
+                @"FVPVideoPlayerInstanceApi api (%@) doesn't respond to @selector(getVideoTracks:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        [api getVideoTracks:^(FVPNativeVideoTrackData *_Nullable output,
+                              FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Selects a video track by setting preferredPeakBitRate.
+  /// Pass 0 to enable auto quality selection.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.video_player_avfoundation."
+                                                   @"VideoPlayerInstanceApi.selectVideoTrack",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FVPGetVideoPlayerInstanceMessagesCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(selectVideoTrackWithBitrate:error:)],
+                @"FVPVideoPlayerInstanceApi api (%@) doesn't respond to "
+                @"@selector(selectVideoTrackWithBitrate:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        NSInteger arg_bitrate = [GetNullableObjectAtIndex(args, 0) integerValue];
+        FlutterError *error;
+        [api selectVideoTrackWithBitrate:arg_bitrate error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
