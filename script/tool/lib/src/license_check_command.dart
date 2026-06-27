@@ -9,6 +9,7 @@ import 'package:git/git.dart';
 import 'package:path/path.dart' as p;
 
 import 'common/core.dart';
+import 'common/file_utils.dart';
 import 'common/output_utils.dart';
 import 'common/package_command.dart';
 
@@ -68,24 +69,8 @@ const Set<String> _unannotatedFileThirdPartyDirectories = <String>{
 // When adding license regexes here, include the copyright info to ensure that
 // any new additions are flagged for added scrutiny in review.
 final List<RegExp> _thirdPartyLicenseBlockRegexes = <RegExp>[
-  // Third-party code used in url_launcher_web.
-  RegExp(
-    r'^// Copyright 2017 Workiva Inc\..*'
-    r'^// Licensed under the Apache License, Version 2\.0',
-    multiLine: true,
-    dotAll: true,
-  ),
   // Third-party code used in google_maps_flutter_web.
-  RegExp(
-    r'^// The MIT License [^C]+ Copyright \(c\) 2008 Krasimir Tsonev',
-    multiLine: true,
-  ),
-  // bsdiff in flutter/packages.
-  RegExp(
-    r'// Copyright 2003-2005 Colin Percival\. All rights reserved\.\n'
-    r'// Use of this source code is governed by a BSD-style license that can be\n'
-    r'// found in the LICENSE file\.\n',
-  ),
+  RegExp(r'^// The MIT License [^C]+ Copyright \(c\) 2008 Krasimir Tsonev', multiLine: true),
   // packages/third_party/mustache_template.
   RegExp(
     r'Copyright \(c\) 2013, Greg Lowe\n'
@@ -149,17 +134,15 @@ class LicenseCheckCommand extends PackageCommand {
   List<String> get aliases => <String>['check-license'];
 
   @override
-  final String description =
-      'Ensures that all code files have copyright/license blocks.';
+  final String description = 'Ensures that all code files have copyright/license blocks.';
 
   @override
   Future<void> run() async {
     // Create a set of absolute paths to submodule directories, with trailing
     // separator, to do prefix matching with to test directory inclusion.
-    final Iterable<String> submodulePaths = (await _getSubmoduleDirectories())
-        .map(
-          (Directory dir) => '${dir.absolute.path}${platform.pathSeparator}',
-        );
+    final Iterable<String> submodulePaths = (await _getSubmoduleDirectories()).map(
+      (Directory dir) => '${dir.absolute.path}${platform.pathSeparator}',
+    );
 
     final Iterable<File> allFiles = (await _getAllCheckedInFiles()).where(
       (File file) => !submodulePaths.any(file.absolute.path.startsWith),
@@ -167,19 +150,16 @@ class LicenseCheckCommand extends PackageCommand {
 
     final Iterable<File> codeFiles = allFiles.where(
       (File file) =>
-          _codeFileExtensions.contains(p.extension(file.path)) &&
-          !_shouldIgnoreFile(file),
+          _codeFileExtensions.contains(p.extension(file.path)) && !_shouldIgnoreFile(file),
     );
     final Iterable<File> firstPartyLicenseFiles = allFiles.where(
-      (File file) =>
-          path.basename(file.basename) == 'LICENSE' && !_isThirdParty(file),
+      (File file) => path.basename(file.basename) == 'LICENSE' && !_isThirdParty(file),
     );
 
-    final List<File> licenseFileFailures = await _checkLicenseFiles(
-      firstPartyLicenseFiles,
+    final List<File> licenseFileFailures = await _checkLicenseFiles(firstPartyLicenseFiles);
+    final Map<_LicenseFailureType, List<File>> codeFileFailures = await _checkCodeLicenses(
+      codeFiles,
     );
-    final Map<_LicenseFailureType, List<File>> codeFileFailures =
-        await _checkCodeLicenses(codeFiles);
 
     var passed = true;
 
@@ -187,9 +167,7 @@ class LicenseCheckCommand extends PackageCommand {
 
     if (licenseFileFailures.isNotEmpty) {
       passed = false;
-      printError(
-        'The following LICENSE files do not follow the expected format:',
-      );
+      printError('The following LICENSE files do not follow the expected format:');
       for (final file in licenseFileFailures) {
         printError('  ${_repoRelativePath(file)}');
       }
@@ -202,8 +180,7 @@ class LicenseCheckCommand extends PackageCommand {
     if (codeFileFailures[_LicenseFailureType.incorrectFirstParty]!.isNotEmpty) {
       passed = false;
       printError('The license block for these files is missing or incorrect:');
-      for (final File file
-          in codeFileFailures[_LicenseFailureType.incorrectFirstParty]!) {
+      for (final File file in codeFileFailures[_LicenseFailureType.incorrectFirstParty]!) {
         printError('  ${_repoRelativePath(file)}');
       }
       printError(
@@ -215,11 +192,8 @@ class LicenseCheckCommand extends PackageCommand {
 
     if (codeFileFailures[_LicenseFailureType.unknownThirdParty]!.isNotEmpty) {
       passed = false;
-      printError(
-        'No recognized license was found for the following third-party files:',
-      );
-      for (final File file
-          in codeFileFailures[_LicenseFailureType.unknownThirdParty]!) {
+      printError('No recognized license was found for the following third-party files:');
+      for (final File file in codeFileFailures[_LicenseFailureType.unknownThirdParty]!) {
         printError('  ${_repoRelativePath(file)}');
       }
       print(
@@ -237,11 +211,7 @@ class LicenseCheckCommand extends PackageCommand {
   }
 
   // Creates the expected copyright+license block for first-party code.
-  String _generateLicenseBlock(
-    String comment, {
-    String prefix = '',
-    String suffix = '',
-  }) {
+  String _generateLicenseBlock(String comment, {String prefix = '', String suffix = ''}) {
     return '$prefix${comment}Copyright 2013 The Flutter Authors\n'
         '${comment}Use of this source code is governed by a BSD-style license that can be\n'
         '${comment}found in the LICENSE file.$suffix\n';
@@ -249,9 +219,7 @@ class LicenseCheckCommand extends PackageCommand {
 
   /// Checks all license blocks for [codeFiles], returning any that fail
   /// validation.
-  Future<Map<_LicenseFailureType, List<File>>> _checkCodeLicenses(
-    Iterable<File> codeFiles,
-  ) async {
+  Future<Map<_LicenseFailureType, List<File>>> _checkCodeLicenses(Iterable<File> codeFiles) async {
     final incorrectFirstPartyFiles = <File>[];
     final unrecognizedThirdPartyFiles = <File>[];
 
@@ -293,9 +261,7 @@ class LicenseCheckCommand extends PackageCommand {
       if (_isThirdParty(file)) {
         // Third-party directories allow either known third-party licenses, our
         // the first-party license, as there may be local additions.
-        if (!_thirdPartyLicenseBlockRegexes.any(
-              (RegExp regex) => regex.hasMatch(content),
-            ) &&
+        if (!_thirdPartyLicenseBlockRegexes.any((RegExp regex) => regex.hasMatch(content)) &&
             !content.contains(firstPartyLicense)) {
           unrecognizedThirdPartyFiles.add(file);
         }
@@ -356,29 +322,24 @@ class LicenseCheckCommand extends PackageCommand {
 
   Future<Iterable<File>> _getAllCheckedInFiles() async {
     final GitDir git = await gitDir;
-    final ProcessResult result = await git.runCommand(<String>[
-      'ls-files',
-    ], throwOnError: false);
+    final ProcessResult result = await git.runCommand(<String>['ls-files'], throwOnError: false);
     if (result.exitCode != 0) {
       printError('Unable to get list of files under source control');
       throw ToolExit(_exitListFilesFailed);
     }
-    final Directory repoRoot = packagesDir.parent;
     return (result.stdout as String)
         .trim()
         .split('\n')
         .where((String path) => path.isNotEmpty)
-        .map((String path) => repoRoot.childFile(path))
+        .map((String path) => rootDir.childFile(path))
         // Filter out symbolic links to avoid checking files multiple times.
-        .where((File f) => !repoRoot.fileSystem.isLinkSync(f.path));
+        .where((File f) => !rootDir.fileSystem.isLinkSync(f.path));
   }
 
   // Returns the directories containing mapped submodules, if any.
   Future<Iterable<Directory>> _getSubmoduleDirectories() async {
     final submodulePaths = <Directory>[];
-    final Directory repoRoot = packagesDir.fileSystem.directory(
-      (await gitDir).path,
-    );
+    final Directory repoRoot = packagesDir.fileSystem.directory((await gitDir).path);
     final File submoduleSpec = repoRoot.childFile('.gitmodules');
     if (submoduleSpec.existsSync()) {
       final pathLine = RegExp(r'path\s*=\s*(.*)');
@@ -393,11 +354,7 @@ class LicenseCheckCommand extends PackageCommand {
   }
 
   String _repoRelativePath(File file) {
-    return p.posix.joinAll(
-      path.split(
-        path.relative(file.absolute.path, from: packagesDir.parent.path),
-      ),
-    );
+    return relativePosixPath(file, from: rootDir, platformContext: path);
   }
 }
 

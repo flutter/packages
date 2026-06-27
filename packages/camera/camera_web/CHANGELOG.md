@@ -1,11 +1,13 @@
-## NEXT
+## 0.3.5+4
 
-* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+* Fixes a `TypeError` in `availableCameras()` caused by browsers (e.g. Firefox) returning
+  an invalid `facingMode` capability value instead of the expected `DOMString` sequence.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 0.3.5+3
 
 * Fixes camera initialization failure on Safari by fixing a null check operator error using
-  a nullable getter and null safe practices.
+  a nullable getter and null-safe practices.
 
 ## 0.3.5+2
 

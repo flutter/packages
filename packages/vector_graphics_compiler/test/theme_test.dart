@@ -14,19 +14,13 @@ void main() {
       test('sets currentColor', () {
         const currentColor = Color(0xFFB0E3BE);
 
-        expect(
-          SvgTheme(currentColor: currentColor).currentColor,
-          equals(currentColor),
-        );
+        expect(SvgTheme(currentColor: currentColor).currentColor, equals(currentColor));
       });
 
       test('sets fontSize', () {
         const fontSize = 14.0;
 
-        expect(
-          SvgTheme(currentColor: Color(0xFFB0E3BE)).fontSize,
-          equals(fontSize),
-        );
+        expect(SvgTheme(currentColor: Color(0xFFB0E3BE)).fontSize, equals(fontSize));
       });
 
       test('sets fontSize to 14 '
@@ -37,10 +31,7 @@ void main() {
       test('sets xHeight', () {
         const xHeight = 8.0;
 
-        expect(
-          SvgTheme(fontSize: 26.0, xHeight: xHeight).xHeight,
-          equals(xHeight),
-        );
+        expect(SvgTheme(fontSize: 26.0, xHeight: xHeight).xHeight, equals(xHeight));
       });
 
       test('sets xHeight as fontSize divided by 2 '

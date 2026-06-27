@@ -10,11 +10,7 @@ import 'utility.dart';
 
 void main() {
   const gitRevision = 'ca799fa8b2254d09664b78ee80c43b434788d112';
-  final simplePoint = FlutterEngineMetricPoint(
-    'BM_ParagraphLongLayout',
-    287235,
-    gitRevision,
-  );
+  final simplePoint = FlutterEngineMetricPoint('BM_ParagraphLongLayout', 287235, gitRevision);
 
   test('FlutterEngineMetricPoint works.', () {
     expect(simplePoint.value, equals(287235));
@@ -40,20 +36,15 @@ void main() {
 
   final Map<String, dynamic>? credentialsJson = getTestGcpCredentialsJson();
 
-  test(
-    'FlutterDestination integration test with update.',
-    () async {
-      final FlutterDestination dst =
-          await FlutterDestination.makeFromCredentialsJson(
-            credentialsJson!,
-            isTesting: true,
-          );
-      await dst.update(
-        <FlutterEngineMetricPoint>[simplePoint],
-        DateTime.fromMillisecondsSinceEpoch(123),
-        'test',
-      );
-    },
-    skip: credentialsJson == null,
-  );
+  test('FlutterDestination integration test with update.', () async {
+    final FlutterDestination dst = await FlutterDestination.makeFromCredentialsJson(
+      credentialsJson!,
+      isTesting: true,
+    );
+    await dst.update(
+      <FlutterEngineMetricPoint>[simplePoint],
+      DateTime.fromMillisecondsSinceEpoch(123),
+      'test',
+    );
+  }, skip: credentialsJson == null);
 }

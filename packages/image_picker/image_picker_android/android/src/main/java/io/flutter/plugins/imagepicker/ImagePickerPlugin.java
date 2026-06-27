@@ -18,17 +18,11 @@ import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.embedding.engine.plugins.lifecycle.FlutterLifecycleAdapter;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugins.imagepicker.Messages.CacheRetrievalResult;
-import io.flutter.plugins.imagepicker.Messages.FlutterError;
-import io.flutter.plugins.imagepicker.Messages.GeneralOptions;
-import io.flutter.plugins.imagepicker.Messages.ImagePickerApi;
-import io.flutter.plugins.imagepicker.Messages.ImageSelectionOptions;
-import io.flutter.plugins.imagepicker.Messages.MediaSelectionOptions;
-import io.flutter.plugins.imagepicker.Messages.Result;
-import io.flutter.plugins.imagepicker.Messages.SourceCamera;
-import io.flutter.plugins.imagepicker.Messages.SourceSpecification;
-import io.flutter.plugins.imagepicker.Messages.VideoSelectionOptions;
 import java.util.List;
+import kotlin.Result;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
+import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("deprecation")
 public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePickerApi {
@@ -64,22 +58,22 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
     }
 
     @Override
-    public void onActivityCreated(Activity activity, Bundle savedInstanceState) {}
+    public void onActivityCreated(@NonNull Activity activity, Bundle savedInstanceState) {}
 
     @Override
-    public void onActivityStarted(Activity activity) {}
+    public void onActivityStarted(@NonNull Activity activity) {}
 
     @Override
-    public void onActivityResumed(Activity activity) {}
+    public void onActivityResumed(@NonNull Activity activity) {}
 
     @Override
-    public void onActivityPaused(Activity activity) {}
+    public void onActivityPaused(@NonNull Activity activity) {}
 
     @Override
-    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {}
+    public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle outState) {}
 
     @Override
-    public void onActivityDestroyed(Activity activity) {
+    public void onActivityDestroyed(@NonNull Activity activity) {
       if (thisActivity == activity && activity.getApplicationContext() != null) {
         ((Application) activity.getApplicationContext())
             .unregisterActivityLifecycleCallbacks(
@@ -88,7 +82,7 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
     }
 
     @Override
-    public void onActivityStopped(Activity activity) {
+    public void onActivityStopped(@NonNull Activity activity) {
       if (thisActivity == activity) {
         activityState.getDelegate().saveStateBeforeResult();
       }
@@ -123,7 +117,7 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
       this.messenger = messenger;
 
       delegate = constructDelegate(activity);
-      ImagePickerApi.setUp(messenger, handler);
+      ImagePickerApi.Companion.setUp(messenger, handler);
       observer = new LifeCycleObserver(activity);
 
       // V2 embedding setup for activity listeners.
@@ -151,7 +145,7 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
         lifecycle = null;
       }
 
-      ImagePickerApi.setUp(messenger, null);
+      ImagePickerApi.Companion.setUp(messenger, null);
 
       if (application != null) {
         application.unregisterActivityLifecycleCallbacks(observer);
@@ -281,10 +275,14 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
       @NonNull SourceSpecification source,
       @NonNull ImageSelectionOptions options,
       @NonNull GeneralOptions generalOptions,
-      @NonNull Result<List<String>> result) {
+      @NonNull
+          Function1<
+                  ? super @NotNull Result<? extends @NotNull List<@NotNull String>>, @NotNull Unit>
+              callback) {
     ImagePickerDelegate delegate = getImagePickerDelegate();
     if (delegate == null) {
-      result.error(
+      ResultUtilsKt.completeWithError(
+          callback,
           new FlutterError(
               "no_activity", "image_picker plugin requires a foreground activity.", null));
       return;
@@ -295,14 +293,14 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
       int limit = ImagePickerUtils.getLimitFromOption(generalOptions);
 
       delegate.chooseMultiImageFromGallery(
-          options, generalOptions.getUsePhotoPicker(), limit, result);
+          options, generalOptions.getUsePhotoPicker(), limit, callback);
     } else {
       switch (source.getType()) {
         case GALLERY:
-          delegate.chooseImageFromGallery(options, generalOptions.getUsePhotoPicker(), result);
+          delegate.chooseImageFromGallery(options, generalOptions.getUsePhotoPicker(), callback);
           break;
         case CAMERA:
-          delegate.takeImageWithCamera(options, result);
+          delegate.takeImageWithCamera(options, callback);
           break;
       }
     }
@@ -312,15 +310,19 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
   public void pickMedia(
       @NonNull MediaSelectionOptions mediaSelectionOptions,
       @NonNull GeneralOptions generalOptions,
-      @NonNull Result<List<String>> result) {
+      @NonNull
+          Function1<
+                  ? super @NotNull Result<? extends @NotNull List<@NotNull String>>, @NotNull Unit>
+              callback) {
     ImagePickerDelegate delegate = getImagePickerDelegate();
     if (delegate == null) {
-      result.error(
+      ResultUtilsKt.completeWithError(
+          callback,
           new FlutterError(
               "no_activity", "image_picker plugin requires a foreground activity.", null));
       return;
     }
-    delegate.chooseMediaFromGallery(mediaSelectionOptions, generalOptions, result);
+    delegate.chooseMediaFromGallery(mediaSelectionOptions, generalOptions, callback);
   }
 
   @Override
@@ -328,10 +330,14 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
       @NonNull SourceSpecification source,
       @NonNull VideoSelectionOptions options,
       @NonNull GeneralOptions generalOptions,
-      @NonNull Result<List<String>> result) {
+      @NonNull
+          Function1<
+                  ? super @NotNull Result<? extends @NotNull List<@NotNull String>>, @NotNull Unit>
+              callback) {
     ImagePickerDelegate delegate = getImagePickerDelegate();
     if (delegate == null) {
-      result.error(
+      ResultUtilsKt.completeWithError(
+          callback,
           new FlutterError(
               "no_activity", "image_picker plugin requires a foreground activity.", null));
       return;
@@ -341,14 +347,14 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
     if (generalOptions.getAllowMultiple()) {
       int limit = ImagePickerUtils.getLimitFromOption(generalOptions);
       delegate.chooseMultiVideoFromGallery(
-          options, generalOptions.getUsePhotoPicker(), limit, result);
+          options, generalOptions.getUsePhotoPicker(), limit, callback);
     } else {
       switch (source.getType()) {
         case GALLERY:
-          delegate.chooseVideoFromGallery(options, generalOptions.getUsePhotoPicker(), result);
+          delegate.chooseVideoFromGallery(options, generalOptions.getUsePhotoPicker(), callback);
           break;
         case CAMERA:
-          delegate.takeVideoWithCamera(options, result);
+          delegate.takeVideoWithCamera(options, callback);
           break;
       }
     }

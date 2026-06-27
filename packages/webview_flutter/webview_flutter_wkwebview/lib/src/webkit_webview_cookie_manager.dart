@@ -7,8 +7,7 @@ import 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
 import 'common/web_kit.g.dart';
 
 /// Object specifying creation parameters for a [WebKitWebViewCookieManager].
-class WebKitWebViewCookieManagerCreationParams
-    extends PlatformWebViewCookieManagerCreationParams {
+class WebKitWebViewCookieManagerCreationParams extends PlatformWebViewCookieManagerCreationParams {
   /// Constructs a [WebKitWebViewCookieManagerCreationParams].
   WebKitWebViewCookieManagerCreationParams();
 
@@ -21,8 +20,7 @@ class WebKitWebViewCookieManagerCreationParams
   );
 
   /// Manages stored data for [WKWebView]s.
-  late final WKWebsiteDataStore _websiteDataStore =
-      WKWebsiteDataStore.defaultDataStore;
+  late final WKWebsiteDataStore _websiteDataStore = WKWebsiteDataStore.defaultDataStore;
 }
 
 /// An implementation of [PlatformWebViewCookieManager] with the WebKit api.
@@ -50,9 +48,7 @@ class WebKitWebViewCookieManager extends PlatformWebViewCookieManager {
   @override
   Future<void> setCookie(WebViewCookie cookie) {
     if (!_isValidPath(cookie.path)) {
-      throw ArgumentError(
-        'The path property for the provided cookie was not given a legal value.',
-      );
+      throw ArgumentError('The path property for the provided cookie was not given a legal value.');
     }
 
     return _webkitParams._websiteDataStore.httpCookieStore.setCookie(
@@ -72,5 +68,40 @@ class WebKitWebViewCookieManager extends PlatformWebViewCookieManager {
     return !path.codeUnits.any((int char) {
       return (char < 0x20 || char > 0x3A) && (char < 0x3C || char > 0x7E);
     });
+  }
+
+  @override
+  Future<List<WebViewCookie>> getCookies(Uri url) async {
+    final List<HTTPCookie> httpCookies = await _webkitParams._websiteDataStore.httpCookieStore
+        .getAllCookies();
+
+    final Iterable<Future<WebViewCookie?>> webviewCookies = httpCookies.map((cookie) async {
+      final Map<HttpCookiePropertyKey, Object>? props = await cookie.getProperties();
+
+      if (props == null) {
+        return null;
+      }
+
+      final domain = props[HttpCookiePropertyKey.domain].toString();
+
+      // Follow RFC 6265 guideline for domain matching
+      var cookieDomain = domain;
+      if (domain.startsWith('.')) {
+        cookieDomain = cookieDomain.substring(1);
+      }
+
+      if (url.host != cookieDomain && !url.host.endsWith('.$cookieDomain')) {
+        return null;
+      }
+
+      return WebViewCookie(
+        name: props[HttpCookiePropertyKey.name].toString(),
+        value: props[HttpCookiePropertyKey.value].toString(),
+        domain: domain,
+        path: props[HttpCookiePropertyKey.path].toString(),
+      );
+    });
+
+    return (await Future.wait(webviewCookies)).nonNulls.toList();
   }
 }

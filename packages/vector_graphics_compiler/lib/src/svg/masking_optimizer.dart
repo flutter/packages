@@ -85,9 +85,7 @@ Path toVectorGraphicsPath(path_ops.Path path) {
       case path_ops.PathVerb.quadTo:
         final double cpX = points[index++];
         final double cpY = points[index++];
-        newCommands.add(
-          CubicToCommand(cpX, cpY, cpX, cpY, points[index++], points[index++]),
-        );
+        newCommands.add(CubicToCommand(cpX, cpY, cpX, cpY, points[index++], points[index++]));
       case path_ops.PathVerb.cubicTo:
         newCommands.add(
           CubicToCommand(
@@ -104,10 +102,7 @@ Path toVectorGraphicsPath(path_ops.Path path) {
     }
   }
 
-  final newPath = Path(
-    commands: newCommands,
-    fillType: toVectorGraphicsFillType(path.fillType),
-  );
+  final newPath = Path(commands: newCommands, fillType: toVectorGraphicsFillType(path.fillType));
 
   return newPath;
 }
@@ -128,8 +123,7 @@ ResolvedPathNode? getSingleChild(Node node) {
 /// there are multiple path nodes in a mask or cases where
 /// the intersection of the mask and the path results in
 /// Path.commands being empty.
-class MaskingOptimizer extends Visitor<_Result, Node>
-    with ErrorOnUnResolvedNode<_Result, Node> {
+class MaskingOptimizer extends Visitor<_Result, Node> with ErrorOnUnResolvedNode<_Result, Node> {
   /// List of masks to add.
   final List<ResolvedPathNode> masksToApply = <ResolvedPathNode>[];
 
@@ -140,10 +134,7 @@ class MaskingOptimizer extends Visitor<_Result, Node>
   }
 
   /// Applies mask to a path node, and returns resulting path node.
-  ResolvedPathNode applyMask(
-    ResolvedPathNode pathNode,
-    ResolvedPathNode maskPathNode,
-  ) {
+  ResolvedPathNode applyMask(ResolvedPathNode pathNode, ResolvedPathNode maskPathNode) {
     final path_ops.Path maskPathOpsPath = toPathOpsPath(maskPathNode.path);
     final path_ops.Path pathPathOpsPath = toPathOpsPath(pathNode.path);
     final path_ops.Path intersection = pathPathOpsPath.applyOp(
@@ -257,10 +248,7 @@ class MaskingOptimizer extends Visitor<_Result, Node>
   // ignore: library_private_types_in_public_api
   _Result visitResolvedClipNode(ResolvedClipNode clipNode, Node data) {
     final _Result childResult = clipNode.child.accept(this, clipNode);
-    final newClipNode = ResolvedClipNode(
-      clips: clipNode.clips,
-      child: childResult.node,
-    );
+    final newClipNode = ResolvedClipNode(clips: clipNode.clips, child: childResult.node);
     final result = _Result(newClipNode);
     result.children.add(childResult.node);
 
@@ -279,10 +267,7 @@ class MaskingOptimizer extends Visitor<_Result, Node>
     if (masksToApply.isNotEmpty) {
       var newPathNode = pathNode;
       for (final ResolvedPathNode maskPathNode in masksToApply) {
-        final ResolvedPathNode intersection = applyMask(
-          newPathNode,
-          maskPathNode,
-        );
+        final ResolvedPathNode intersection = applyMask(newPathNode, maskPathNode);
         if (intersection.path.commands.isNotEmpty) {
           newPathNode = intersection;
         } else {
@@ -304,10 +289,7 @@ class MaskingOptimizer extends Visitor<_Result, Node>
 
   @override
   // ignore: library_private_types_in_public_api
-  _Result visitResolvedVerticesNode(
-    ResolvedVerticesNode verticesNode,
-    Node data,
-  ) {
+  _Result visitResolvedVerticesNode(ResolvedVerticesNode verticesNode, Node data) {
     final result = _Result(verticesNode);
     return result;
   }
@@ -355,10 +337,7 @@ class MaskingOptimizer extends Visitor<_Result, Node>
 
   @override
   // ignore: library_private_types_in_public_api
-  _Result visitResolvedImageNode(
-    ResolvedImageNode resolvedImageNode,
-    Node data,
-  ) {
+  _Result visitResolvedImageNode(ResolvedImageNode resolvedImageNode, Node data) {
     final result = _Result(resolvedImageNode, deleteMaskNode: false);
 
     return result;
@@ -372,14 +351,10 @@ class MaskingOptimizer extends Visitor<_Result, Node>
 
   @override
   // ignore: library_private_types_in_public_api
-  _Result visitResolvedTextPositionNode(
-    ResolvedTextPositionNode textPositionNode,
-    void data,
-  ) {
+  _Result visitResolvedTextPositionNode(ResolvedTextPositionNode textPositionNode, void data) {
     return _Result(
       ResolvedTextPositionNode(textPositionNode.textPosition, <Node>[
-        for (final Node child in textPositionNode.children)
-          child.accept(this, data).node,
+        for (final Node child in textPositionNode.children) child.accept(this, data).node,
       ]),
     );
   }

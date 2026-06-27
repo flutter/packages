@@ -50,9 +50,7 @@ bool _deepEquals(Object? a, Object? b) {
   }
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed.every(
-          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
-        );
+        a.indexed.every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
     if (a.length != b.length) {
@@ -134,6 +132,11 @@ class FlutterSearchRequest {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'FlutterSearchRequest(query: $query)';
+  }
 }
 
 class FlutterSearchReply {
@@ -153,10 +156,7 @@ class FlutterSearchReply {
 
   static FlutterSearchReply decode(Object result) {
     result as List<Object?>;
-    return FlutterSearchReply(
-      result: result[0] as String?,
-      error: result[1] as String?,
-    );
+    return FlutterSearchReply(result: result[0] as String?, error: result[1] as String?);
   }
 
   @override
@@ -174,6 +174,11 @@ class FlutterSearchReply {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'FlutterSearchReply(result: $result, error: $error)';
+  }
 }
 
 class FlutterSearchRequests {
@@ -209,6 +214,11 @@ class FlutterSearchRequests {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'FlutterSearchRequests(requests: $requests)';
+  }
 }
 
 class FlutterSearchReplies {
@@ -244,6 +254,11 @@ class FlutterSearchReplies {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'FlutterSearchReplies(replies: $replies)';
+  }
 }
 
 class _PigeonCodec extends StandardMessageCodec {
@@ -288,8 +303,8 @@ class _PigeonCodec extends StandardMessageCodec {
 }
 
 class Api {
-  /// Constructor for [Api].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
+  /// Constructor for [Api]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   Api({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
     : pigeonVar_binaryMessenger = binaryMessenger,
@@ -310,9 +325,7 @@ class Api {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[request],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[request]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -331,9 +344,7 @@ class Api {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[request],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[request]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -352,9 +363,7 @@ class Api {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[requests],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[requests]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -373,9 +382,7 @@ class Api {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[value],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[value]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(

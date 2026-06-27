@@ -11,8 +11,7 @@ import 'dart:ui' as _i5;
 
 import 'package:flutter/services.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:shared_test_plugin_code/src/generated/primitive.gen.dart'
-    as _i6;
+import 'package:shared_test_plugin_code/src/generated/primitive.gen.dart' as _i6;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -83,8 +82,7 @@ class MockBinaryMessenger extends _i1.Mock implements _i2.BinaryMessenger {
 /// A class which mocks [PrimitiveFlutterApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockPrimitiveFlutterApi extends _i1.Mock
-    implements _i6.PrimitiveFlutterApi {
+class MockPrimitiveFlutterApi extends _i1.Mock implements _i6.PrimitiveFlutterApi {
   MockPrimitiveFlutterApi() {
     _i1.throwOnMissingStub(this);
   }
@@ -122,8 +120,7 @@ class MockPrimitiveFlutterApi extends _i1.Mock
         returnValue: 0.0,
       ) as double);
   @override
-  Map<Object?, Object?> aMap(Map<Object?, Object?>? value) =>
-      (super.noSuchMethod(
+  Map<Object?, Object?> aMap(Map<Object?, Object?>? value) => (super.noSuchMethod(
         Invocation.method(
           #aMap,
           [value],
@@ -155,8 +152,7 @@ class MockPrimitiveFlutterApi extends _i1.Mock
         returnValue: <bool?>[],
       ) as List<bool?>);
   @override
-  Map<String?, int?> aStringIntMap(Map<String?, int?>? value) =>
-      (super.noSuchMethod(
+  Map<String?, int?> aStringIntMap(Map<String?, int?>? value) => (super.noSuchMethod(
         Invocation.method(
           #aStringIntMap,
           [value],

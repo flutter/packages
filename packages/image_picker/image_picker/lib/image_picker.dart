@@ -85,10 +85,7 @@ class ImagePicker {
       requestFullMetadata: requestFullMetadata,
     );
 
-    return platform.getImageFromSource(
-      source: source,
-      options: imagePickerOptions,
-    );
+    return platform.getImageFromSource(source: source, options: imagePickerOptions);
   }
 
   /// Returns a [List<XFile>] object wrapping the images that were picked.
@@ -141,10 +138,7 @@ class ImagePicker {
     );
 
     return platform.getMultiImageWithOptions(
-      options: MultiImagePickerOptions.createAndValidate(
-        imageOptions: imageOptions,
-        limit: limit,
-      ),
+      options: MultiImagePickerOptions.createAndValidate(imageOptions: imageOptions, limit: limit),
     );
   }
 
@@ -270,8 +264,8 @@ class ImagePicker {
   /// The [source] argument controls where the video comes from. This can
   /// be either [ImageSource.camera] or [ImageSource.gallery].
   ///
-  /// The [maxDuration] argument specifies the maximum duration of the captured video. If no [maxDuration] is specified,
-  /// the maximum duration will be infinite.
+  /// The [maxDuration] argument specifies the maximum duration of the captured video when recording from the camera ([ImageSource.camera]),
+  /// and is ignored for [ImageSource.gallery]. If no [maxDuration] is specified, the maximum duration will be infinite.
   ///
   /// Use `preferredCameraDevice` to specify the camera to use when the `source` is [ImageSource.camera].
   /// The `preferredCameraDevice` is ignored when `source` is [ImageSource.gallery]. It is also ignored if the chosen camera is not supported on the device.
