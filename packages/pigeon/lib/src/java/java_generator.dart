@@ -215,7 +215,8 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
     indent.newln();
     for (final Constant constant in root.constants) {
       addDocumentationComments(indent, constant.documentationComments, _docCommentSpec);
-      final String javaType = _javaTypeForBuiltinDartType(constant.type) ?? 'Object';
+      final String javaType =
+          _javaTypeForBuiltinDartType(constant.type, primitive: true) ?? 'Object';
       final String formattedValue = _formatJavaValue(constant.type.baseName, constant.value);
       indent.writeln('public static final $javaType ${constant.name} = $formattedValue;');
     }
@@ -1418,7 +1419,16 @@ String _javaTypeForBuiltinGenericDartType(TypeDeclaration type, int numberTypeAr
   }
 }
 
-String? _javaTypeForBuiltinDartType(TypeDeclaration type) {
+String? _javaTypeForBuiltinDartType(TypeDeclaration type, {bool primitive = false}) {
+  if (primitive) {
+    if (type.baseName == 'bool') {
+      return 'boolean';
+    } else if (type.baseName == 'int') {
+      return 'long';
+    } else if (type.baseName == 'double') {
+      return 'double';
+    }
+  }
   const javaTypeForDartTypeMap = <String, String>{
     'bool': 'Boolean',
     'int': 'Long',

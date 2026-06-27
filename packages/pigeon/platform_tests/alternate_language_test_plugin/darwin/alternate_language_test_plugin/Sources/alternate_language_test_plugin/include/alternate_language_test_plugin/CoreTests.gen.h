@@ -15,6 +15,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 static NSString *const FLTaStringConstant = @"stringConstantValue";
+static NSString *const FLTaStringConstantWithEscapes = @"string\\\\$ConstantValue";
 static const NSInteger FLTanIntConstant = 42;
 static const double FLTaDoubleConstant = 3.14;
 static const BOOL FLTaBoolConstant = YES;

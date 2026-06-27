@@ -16,6 +16,7 @@ import Foundation
 #endif
 
 public let aStringConstant: String = "stringConstantValue"
+public let aStringConstantWithEscapes: String = "string\\\\$ConstantValue"
 public let anIntConstant: Int64 = 42
 public let aDoubleConstant: Double = 3.14
 public let aBoolConstant: Bool = true

@@ -1615,10 +1615,10 @@ void main() {
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
     generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
-    final code = sink.toString();
+    final String code = sink.toString();
     expect(code, contains('public static final String stringConst = "hello";'));
-    expect(code, contains('public static final Long intConst = 42L;'));
-    expect(code, contains('public static final Double doubleConst = 3.14;'));
-    expect(code, contains('public static final Boolean boolConst = true;'));
+    expect(code, contains('public static final long intConst = 42L;'));
+    expect(code, contains('public static final double doubleConst = 3.14;'));
+    expect(code, contains('public static final boolean boolConst = true;'));
   });
 }

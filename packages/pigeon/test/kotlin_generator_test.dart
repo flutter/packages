@@ -1854,6 +1854,16 @@ void main() {
           type: const TypeDeclaration(baseName: 'bool', isNullable: false),
           value: true,
         ),
+        Constant(
+          name: 'stringWithBackslashDollar',
+          type: const TypeDeclaration(baseName: 'String', isNullable: false),
+          value: r'\$',
+        ),
+        Constant(
+          name: 'stringWithTwoBackslashesDollar',
+          type: const TypeDeclaration(baseName: 'String', isNullable: false),
+          value: r'\\$',
+        ),
       ],
     );
     final sink = StringBuffer();
@@ -1865,5 +1875,7 @@ void main() {
     expect(code, contains('const val intConst: Long = 42L'));
     expect(code, contains('const val doubleConst: Double = 3.14'));
     expect(code, contains('const val boolConst: Boolean = true'));
+    expect(code, contains(r'const val stringWithBackslashDollar: String = "\\\$"'));
+    expect(code, contains(r'const val stringWithTwoBackslashesDollar: String = "\\\\\$"'));
   });
 }

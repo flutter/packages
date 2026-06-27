@@ -32,9 +32,10 @@ import java.util.Map;
 public class CoreTests {
 
   public static final String aStringConstant = "stringConstantValue";
-  public static final Long anIntConstant = 42L;
-  public static final Double aDoubleConstant = 3.14;
-  public static final Boolean aBoolConstant = true;
+  public static final String aStringConstantWithEscapes = "string\\\\$ConstantValue";
+  public static final long anIntConstant = 42L;
+  public static final double aDoubleConstant = 3.14;
+  public static final boolean aBoolConstant = true;
 
   static boolean pigeonDoubleEquals(double a, double b) {
     // Normalize -0.0 to 0.0 and handle NaN equality.

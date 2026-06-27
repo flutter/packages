@@ -409,8 +409,9 @@ public class DataClassMethodsTest {
   @Test
   public void testConstants() {
     assertEquals("stringConstantValue", CoreTests.aStringConstant);
-    assertEquals(Long.valueOf(42L), CoreTests.anIntConstant);
-    assertEquals(Double.valueOf(3.14), CoreTests.aDoubleConstant);
-    assertEquals(Boolean.TRUE, CoreTests.aBoolConstant);
+    assertEquals("string\\\\$ConstantValue", CoreTests.aStringConstantWithEscapes);
+    assertEquals(42L, CoreTests.anIntConstant);
+    assertEquals(3.14, CoreTests.aDoubleConstant, 0.0001);
+    assertTrue(CoreTests.aBoolConstant);
   }
 }

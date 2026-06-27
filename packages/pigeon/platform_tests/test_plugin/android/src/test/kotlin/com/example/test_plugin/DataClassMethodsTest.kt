@@ -307,6 +307,7 @@ internal class DataClassMethodsTest {
   @Test
   fun testConstants() {
     assertEquals("stringConstantValue", aStringConstant)
+    assertEquals("string\\\\\$ConstantValue", aStringConstantWithEscapes)
     assertEquals(42L, anIntConstant)
     assertEquals(3.14, aDoubleConstant, 0.0)
     assertEquals(true, aBoolConstant)

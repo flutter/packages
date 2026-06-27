@@ -1450,9 +1450,13 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           continue;
         }
 
-        final Object? value = _evaluateExpression(initializer);
+        Object? value = _evaluateExpression(initializer);
         if (value == null) {
           continue;
+        }
+
+        if (_getNamedTypeQualifiedName(typeAnnotation) == 'double' && value is num) {
+          value = value.toDouble();
         }
 
         final type = TypeDeclaration(

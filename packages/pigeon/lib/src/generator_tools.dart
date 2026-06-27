@@ -878,8 +878,7 @@ String escapeStringDoubleQuotes(String value) {
       .replaceAll('\\', r'\\') // ignore: use_raw_strings
       .replaceAll('"', r'\"')
       .replaceAll('\n', r'\n')
-      .replaceAll('\r', r'\r')
-      .replaceAll(r'$', r'\$');
+      .replaceAll('\r', r'\r');
 }
 
 /// Escapes special characters in a string for use in single-quoted string literals.

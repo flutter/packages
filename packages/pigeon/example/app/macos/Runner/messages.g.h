@@ -13,6 +13,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+static NSString *const PGNaStringConstant = @"stringConstantValue";
+static const NSInteger PGNanIntConstant = 42;
+static const double PGNaDoubleConstant = 3.14;
+static const BOOL PGNaBoolConstant = YES;
+
 typedef NS_ENUM(NSUInteger, PGNCode) {
   PGNCodeOne = 0,
   PGNCodeTwo = 1,
