@@ -37,11 +37,9 @@ class PolylinesController extends GeometryController {
       onTap: () {
         _onPolylineTap(polyline.polylineId);
       },
-      onEdited: polyline.editable
-          ? (List<gmaps.LatLng> path) {
-              _onPolylineEdited(polyline.polylineId, path);
-            }
-          : null,
+      onEdited: (List<gmaps.LatLng> path) {
+        _onPolylineEdited(polyline.polylineId, path);
+      },
     );
     _polylineIdToController[polyline.polylineId] = controller;
   }
@@ -52,10 +50,8 @@ class PolylinesController extends GeometryController {
   }
 
   void _changePolyline(Polyline polyline) {
-    // Remove and recreate the controller to ensure edit listeners are
-    // properly set up when the editable property changes.
-    _removePolyline(polyline.polylineId);
-    _addPolyline(polyline);
+    final PolylineController? polylineController = _polylineIdToController[polyline.polylineId];
+    polylineController?.update(_polylineOptionsFromPolyline(googleMap, polyline));
   }
 
   /// Removes a set of [PolylineId]s from the cache.

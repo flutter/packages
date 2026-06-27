@@ -13,7 +13,8 @@ class PolylineController {
     VoidCallback? onTap,
     void Function(List<gmaps.LatLng> path)? onEdited,
   }) : _polyline = polyline,
-       _consumeTapEvents = consumeTapEvents {
+       _consumeTapEvents = consumeTapEvents,
+       _onEdited = onEdited {
     if (onTap != null) {
       _subscriptions.add(
         polyline.onClick.listen((gmaps.PolyMouseEvent event) {
@@ -21,16 +22,20 @@ class PolylineController {
         }),
       );
     }
-    if (onEdited != null) {
-      _listenToPathEdits(polyline, onEdited);
-    }
+    _listenToPathEdits();
   }
 
   gmaps.Polyline? _polyline;
 
   final bool _consumeTapEvents;
 
+  final void Function(List<gmaps.LatLng> path)? _onEdited;
+
   final List<StreamSubscription<dynamic>> _subscriptions = <StreamSubscription<dynamic>>[];
+
+  // Subscriptions to the path's edit events. Recreated whenever the underlying
+  // path is replaced (e.g. after [update]).
+  final List<StreamSubscription<dynamic>> _editSubscriptions = <StreamSubscription<dynamic>>[];
 
   /// Returns the wrapped [gmaps.Polyline]. Only used for testing.
   @visibleForTesting
@@ -48,17 +53,35 @@ class PolylineController {
     return points;
   }
 
-  void _listenToPathEdits(
-    gmaps.Polyline polyline,
-    void Function(List<gmaps.LatLng> path) onEdited,
-  ) {
-    void emitCurrentPath() {
-      onEdited(_readPath(polyline));
+  // (Re)subscribes to the wrapped polyline's path edit events.
+  //
+  // Setting options on a [gmaps.Polyline] replaces its path, so this must run
+  // again after every [update] to keep listening to the current path. The edit
+  // listeners are always attached; [emitCurrentPath] only propagates events
+  // while the polyline is editable, so programmatic updates to a non-editable
+  // polyline are ignored.
+  void _listenToPathEdits() {
+    for (final StreamSubscription<dynamic> sub in _editSubscriptions) {
+      sub.cancel();
+    }
+    _editSubscriptions.clear();
+
+    final gmaps.Polyline? polyline = _polyline;
+    if (_onEdited == null || polyline == null) {
+      return;
     }
 
-    _subscriptions.add(polyline.path.onSetAt.listen((_) => emitCurrentPath()));
-    _subscriptions.add(polyline.path.onInsertAt.listen((_) => emitCurrentPath()));
-    _subscriptions.add(polyline.path.onRemoveAt.listen((_) => emitCurrentPath()));
+    void emitCurrentPath() {
+      final editable = polyline.get('editable') as JSBoolean?;
+      if (editable == null || !editable.toDart) {
+        return;
+      }
+      _onEdited(_readPath(polyline));
+    }
+
+    _editSubscriptions.add(polyline.path.onSetAt.listen((_) => emitCurrentPath()));
+    _editSubscriptions.add(polyline.path.onInsertAt.listen((_) => emitCurrentPath()));
+    _editSubscriptions.add(polyline.path.onRemoveAt.listen((_) => emitCurrentPath()));
   }
 
   /// Updates the options of the wrapped [gmaps.Polyline] object.
@@ -67,6 +90,8 @@ class PolylineController {
   void update(gmaps.PolylineOptions options) {
     assert(_polyline != null, 'Cannot `update` Polyline after calling `remove`.');
     _polyline!.options = options;
+    // Setting options replaces the native path, so re-subscribe to the new one.
+    _listenToPathEdits();
   }
 
   /// Disposes of the currently wrapped [gmaps.Polyline].
@@ -79,6 +104,10 @@ class PolylineController {
         sub.cancel();
       }
       _subscriptions.clear();
+      for (final StreamSubscription<dynamic> sub in _editSubscriptions) {
+        sub.cancel();
+      }
+      _editSubscriptions.clear();
     }
   }
 }

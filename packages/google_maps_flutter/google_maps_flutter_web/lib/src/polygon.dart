@@ -13,7 +13,8 @@ class PolygonController {
     VoidCallback? onTap,
     void Function(List<gmaps.LatLng> points, List<List<gmaps.LatLng>> holes)? onEdited,
   }) : _polygon = polygon,
-       _consumeTapEvents = consumeTapEvents {
+       _consumeTapEvents = consumeTapEvents,
+       _onEdited = onEdited {
     if (onTap != null) {
       _subscriptions.add(
         polygon.onClick.listen((gmaps.PolyMouseEvent event) {
@@ -21,16 +22,20 @@ class PolygonController {
         }),
       );
     }
-    if (onEdited != null) {
-      _listenToPathEdits(polygon, onEdited);
-    }
+    _listenToPathEdits();
   }
 
   gmaps.Polygon? _polygon;
 
   final bool _consumeTapEvents;
 
+  final void Function(List<gmaps.LatLng> points, List<List<gmaps.LatLng>> holes)? _onEdited;
+
   final List<StreamSubscription<dynamic>> _subscriptions = <StreamSubscription<dynamic>>[];
+
+  // Subscriptions to the paths' edit events. Recreated whenever the underlying
+  // paths are replaced (e.g. after [update]).
+  final List<StreamSubscription<dynamic>> _editSubscriptions = <StreamSubscription<dynamic>>[];
 
   /// Returns the wrapped [gmaps.Polygon]. Only used for testing.
   @visibleForTesting
@@ -47,11 +52,29 @@ class PolygonController {
     return points;
   }
 
-  void _listenToPathEdits(
-    gmaps.Polygon polygon,
-    void Function(List<gmaps.LatLng> points, List<List<gmaps.LatLng>> holes) onEdited,
-  ) {
+  // (Re)subscribes to the wrapped polygon's path edit events.
+  //
+  // Setting options on a [gmaps.Polygon] replaces its paths, so this must run
+  // again after every [update] to keep listening to the current paths. The edit
+  // listeners are always attached; [emitCurrentPaths] only propagates events
+  // while the polygon is editable, so programmatic updates to a non-editable
+  // polygon are ignored.
+  void _listenToPathEdits() {
+    for (final StreamSubscription<dynamic> sub in _editSubscriptions) {
+      sub.cancel();
+    }
+    _editSubscriptions.clear();
+
+    final gmaps.Polygon? polygon = _polygon;
+    if (_onEdited == null || polygon == null) {
+      return;
+    }
+
     void emitCurrentPaths() {
+      final editable = polygon.get('editable') as JSBoolean?;
+      if (editable == null || !editable.toDart) {
+        return;
+      }
       final gmaps.MVCArray<gmaps.MVCArray<gmaps.LatLng>> allPaths = polygon.paths;
       final List<gmaps.LatLng> outerPath = allPaths.length.toInt() > 0
           ? _readMvcPath(allPaths.getAt(0))
@@ -60,16 +83,16 @@ class PolygonController {
       for (var i = 1; i < allPaths.length.toInt(); i++) {
         holes.add(_readMvcPath(allPaths.getAt(i)));
       }
-      onEdited(outerPath, holes);
+      _onEdited(outerPath, holes);
     }
 
     // Listen on all paths (outer boundary + holes).
     final gmaps.MVCArray<gmaps.MVCArray<gmaps.LatLng>> allPaths = polygon.paths;
     for (var i = 0; i < allPaths.length.toInt(); i++) {
       final gmaps.MVCArray<gmaps.LatLng> path = allPaths.getAt(i);
-      _subscriptions.add(path.onSetAt.listen((_) => emitCurrentPaths()));
-      _subscriptions.add(path.onInsertAt.listen((_) => emitCurrentPaths()));
-      _subscriptions.add(path.onRemoveAt.listen((_) => emitCurrentPaths()));
+      _editSubscriptions.add(path.onSetAt.listen((_) => emitCurrentPaths()));
+      _editSubscriptions.add(path.onInsertAt.listen((_) => emitCurrentPaths()));
+      _editSubscriptions.add(path.onRemoveAt.listen((_) => emitCurrentPaths()));
     }
   }
 
@@ -79,6 +102,8 @@ class PolygonController {
   void update(gmaps.PolygonOptions options) {
     assert(_polygon != null, 'Cannot `update` Polygon after calling `remove`.');
     _polygon!.options = options;
+    // Setting options replaces the native paths, so re-subscribe to them.
+    _listenToPathEdits();
   }
 
   /// Disposes of the currently wrapped [gmaps.Polygon].
@@ -91,6 +116,10 @@ class PolygonController {
         sub.cancel();
       }
       _subscriptions.clear();
+      for (final StreamSubscription<dynamic> sub in _editSubscriptions) {
+        sub.cancel();
+      }
+      _editSubscriptions.clear();
     }
   }
 }

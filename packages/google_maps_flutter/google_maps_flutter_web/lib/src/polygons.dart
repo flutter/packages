@@ -37,11 +37,9 @@ class PolygonsController extends GeometryController {
       onTap: () {
         _onPolygonTap(polygon.polygonId);
       },
-      onEdited: polygon.editable
-          ? (List<gmaps.LatLng> path, List<List<gmaps.LatLng>> holes) {
-              _onPolygonEdited(polygon.polygonId, path, holes);
-            }
-          : null,
+      onEdited: (List<gmaps.LatLng> path, List<List<gmaps.LatLng>> holes) {
+        _onPolygonEdited(polygon.polygonId, path, holes);
+      },
     );
     _polygonIdToController[polygon.polygonId] = controller;
   }
@@ -52,10 +50,8 @@ class PolygonsController extends GeometryController {
   }
 
   void _changePolygon(Polygon polygon) {
-    // Remove and recreate the controller to ensure edit listeners are
-    // properly set up when the editable property changes.
-    _removePolygon(polygon.polygonId);
-    _addPolygon(polygon);
+    final PolygonController? polygonController = _polygonIdToController[polygon.polygonId];
+    polygonController?.update(_polygonOptionsFromPolygon(googleMap, polygon));
   }
 
   /// Removes a set of [PolygonId]s from the cache.
