@@ -588,4 +588,22 @@ class VideoPlayerInstanceApi {
 
     _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
+
+  Future<void> setPreventsDisplaySleepDuringVideoPlayback(
+    bool preventsDisplaySleepDuringVideoPlayback,
+  ) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.video_player_avfoundation.VideoPlayerInstanceApi.setPreventsDisplaySleepDuringVideoPlayback$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      preventsDisplaySleepDuringVideoPlayback,
+    ]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+  }
 }

@@ -661,7 +661,8 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   }
 }
 
-- (void)setPreventsDisplaySleepDuringVideoPlayback:(BOOL)preventsDisplaySleepDuringVideoPlayback error:(FlutterError *_Nullable *_Nonnull)error {
+- (void)setPreventsDisplaySleepDuringVideoPlayback:(BOOL)preventsDisplaySleepDuringVideoPlayback
+                                             error:(FlutterError *_Nullable *_Nonnull)error {
   if (@available(iOS 12.0, macOS 10.14, *)) {
     self.player.preventsDisplaySleepDuringVideoPlayback = preventsDisplaySleepDuringVideoPlayback;
   }

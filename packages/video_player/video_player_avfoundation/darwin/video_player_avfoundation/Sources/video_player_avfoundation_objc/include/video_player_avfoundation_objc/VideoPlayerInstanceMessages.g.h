@@ -113,6 +113,8 @@ NSObject<FlutterMessageCodec> *FVPGetVideoPlayerInstanceMessagesCodec(void);
 /// Pass 0 to enable auto quality selection.
 - (void)selectVideoTrackWithBitrate:(NSInteger)bitrate
                               error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)setPreventsDisplaySleepDuringVideoPlayback:(BOOL)preventsDisplaySleepDuringVideoPlayback
+                                             error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
 extern void SetUpFVPVideoPlayerInstanceApi(id<FlutterBinaryMessenger> binaryMessenger,

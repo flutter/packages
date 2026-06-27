@@ -176,9 +176,9 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     int playerId,
     bool preventsDisplaySleepDuringVideoPlayback,
   ) {
-    return _playerWith(id: playerId).setPreventsDisplaySleepDuringVideoPlayback(
-      preventsDisplaySleepDuringVideoPlayback,
-    );
+    return _playerWith(
+      id: playerId,
+    ).setPreventsDisplaySleepDuringVideoPlayback(preventsDisplaySleepDuringVideoPlayback);
   }
 
   @override
@@ -353,9 +353,7 @@ class _PlayerInstance {
 
   Future<void> setPreventsDisplaySleepDuringVideoPlayback(
     bool preventsDisplaySleepDuringVideoPlayback,
-  ) => _api.setPreventsDisplaySleepDuringVideoPlayback(
-    preventsDisplaySleepDuringVideoPlayback,
-  );
+  ) => _api.setPreventsDisplaySleepDuringVideoPlayback(preventsDisplaySleepDuringVideoPlayback);
 
   Future<void> seekTo(Duration position) {
     return _api.seekTo(position.inMilliseconds);
