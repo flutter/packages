@@ -1279,87 +1279,152 @@ void main() {
       });
     });
     group('cameraFrameStream', () {
-      testWidgets('Target cameraStreamFPS is 60', (WidgetTester tester) async {
-        final camera = Camera(textureId: textureId, cameraService: cameraService);
-        expect(camera.cameraStreamFPS, equals(60));
-      });
-
-      testWidgets('CameraImageData bytes is a multiple of 4 '
-          'when browser has MediaStreamTrackProcessor capability', (WidgetTester tester) async {
-        final mockVideoFrame = MockVideoFrame(width: 10, height: 10, bufferSize: 32);
-
-        when(
-          cameraService.getMediaStreamTrackReader(any, maxBufferSize: anyNamed('maxBufferSize')),
-        ).thenReturn(
-          createJSInteropWrapper(MockReadableStreamDefaultReader()) as ReadableStreamDefaultReader,
-        );
-        when(cameraService.readVideoTrack(any)).thenAnswer(
-          (_) => Future<VideoFrame>.value(createJSInteropWrapper(mockVideoFrame) as VideoFrame),
-        );
-        when(
-          cameraService.getCameraImageData(
-            width: anyNamed('width'),
-            height: anyNamed('height'),
-            bytes: anyNamed('bytes'),
-          ),
-        ).thenReturn(
-          CameraImageData(
-            format: const CameraImageFormat(ImageFormatGroup.unknown, raw: 0),
-            planes: <CameraImagePlane>[
-              CameraImagePlane(
-                bytes: Uint8List(mockVideoFrame.bufferSize),
-                bytesPerRow: mockVideoFrame.width * 4,
-              ),
-            ],
-            height: mockVideoFrame.height,
-            width: mockVideoFrame.width,
-          ),
-        );
+      Future<void> expectCameraFrameStreamError(Exception exception) async {
+        final errors = <Object?>[];
+        final done = Completer<void>();
 
         final camera = Camera(textureId: textureId, cameraService: cameraService);
 
         await camera.initialize();
         await camera.play();
 
-        final CameraImageData cameraImageData = await camera.cameraFrameStream().first.timeout(
-          const Duration(seconds: 5),
+        camera.cameraFrameStream().listen(
+          (_) => fail('Unexpected data event'),
+          onError: errors.add,
+          onDone: () => done.complete(),
         );
 
-        expect(cameraImageData.width, equals(mockVideoFrame.width));
-        expect(cameraImageData.height, equals(mockVideoFrame.height));
-        expect(cameraImageData.planes.first.bytes.length, equals(mockVideoFrame.bufferSize));
-        expect(cameraImageData.planes.first.bytes.length % 4, equals(0));
-      });
+        await done.future.timeout(const Duration(seconds: 5));
 
-      testWidgets('CameraImageData bytes is a multiple of 4 '
-          'when browser does not have MediaStreamTrackProcessor capability, '
-          'regardless of OffscreenCanvas support', (WidgetTester tester) async {
-        final VideoElement videoElement = getVideoElementWithBlankStream(const Size(10, 10));
-        final camera = Camera(textureId: textureId, cameraService: cameraService)
-          ..videoElement = videoElement;
+        expect(errors, hasLength(1));
+        expect(errors.first, equals(exception));
+      }
 
-        when(cameraService.hasMediaStreamTrackProcessor()).thenReturn(false);
+      group('MediaStreamTrackProcessor is supported', () {
+        final mockVideoFrame = MockVideoFrame(width: 10, height: 10, bufferSize: 32);
 
-        for (final supportsOffscreenCanvas in <bool>[true, false]) {
-          when(cameraService.hasPropertyOffScreenCanvas()).thenReturn(supportsOffscreenCanvas);
-
-          when(cameraService.takeFrame(videoElement)).thenAnswer(
-            (_) => CameraImageData(
+        setUp(() {
+          when(
+            cameraService.getMediaStreamTrackReader(any, maxBufferSize: anyNamed('maxBufferSize')),
+          ).thenReturn(
+            createJSInteropWrapper(MockReadableStreamDefaultReader())
+                as ReadableStreamDefaultReader,
+          );
+          when(cameraService.readVideoTrack(any)).thenAnswer(
+            (_) => Future<VideoFrame>.value(createJSInteropWrapper(mockVideoFrame) as VideoFrame),
+          );
+          when(
+            cameraService.getCameraImageData(
+              width: anyNamed('width'),
+              height: anyNamed('height'),
+              bytes: anyNamed('bytes'),
+            ),
+          ).thenReturn(
+            CameraImageData(
               format: const CameraImageFormat(ImageFormatGroup.unknown, raw: 0),
               planes: <CameraImagePlane>[
-                CameraImagePlane(bytes: Uint8List(32), bytesPerRow: videoElement.width * 4),
+                CameraImagePlane(
+                  bytes: Uint8List(mockVideoFrame.bufferSize),
+                  bytesPerRow: mockVideoFrame.width * 4,
+                ),
               ],
-              height: videoElement.height,
-              width: videoElement.width,
+              height: mockVideoFrame.height,
+              width: mockVideoFrame.width,
             ),
           );
+        });
 
-          final CameraImageData cameraImageData = await camera.cameraFrameStream().first;
+        testWidgets('CameraImageData bytes is multiple of 4 ', (WidgetTester tester) async {
+          final camera = Camera(textureId: textureId, cameraService: cameraService);
 
-          expect(cameraImageData.width, equals(videoElement.width));
-          expect(cameraImageData.height, equals(videoElement.height));
+          await camera.initialize();
+          await camera.play();
+
+          final CameraImageData cameraImageData = await camera.cameraFrameStream().first.timeout(
+            const Duration(seconds: 5),
+          );
+
+          expect(cameraImageData.width, equals(mockVideoFrame.width));
+          expect(cameraImageData.height, equals(mockVideoFrame.height));
+          expect(cameraImageData.planes.first.bytes.length, equals(mockVideoFrame.bufferSize));
           expect(cameraImageData.planes.first.bytes.length % 4, equals(0));
-        }
+        });
+
+        group('emits and closes stream', () {
+          testWidgets('when readVideoTrack throws error', (WidgetTester tester) async {
+            final exception = Exception('readVideoTrack failure');
+
+            when(
+              cameraService.readVideoTrack(any),
+            ).thenAnswer((_) => Future<VideoFrame>.error(exception));
+
+            await expectCameraFrameStreamError(exception);
+          });
+
+          testWidgets('when getCameraImageData throws error', (WidgetTester tester) async {
+            final exception = Exception('getCameraImageData failure');
+
+            when(
+              cameraService.getCameraImageData(
+                width: anyNamed('width'),
+                height: anyNamed('height'),
+                bytes: anyNamed('bytes'),
+              ),
+            ).thenThrow(exception);
+
+            await expectCameraFrameStreamError(exception);
+          });
+        });
+      });
+
+      group('MediaStreamTrackProcessor is NOT supported', () {
+        setUp(() {
+          when(cameraService.hasMediaStreamTrackProcessor()).thenReturn(false);
+        });
+
+        testWidgets('Target cameraStreamFPS is 60', (WidgetTester tester) async {
+          final camera = Camera(textureId: textureId, cameraService: cameraService);
+
+          expect(camera.cameraStreamFPS, equals(60));
+        });
+
+        testWidgets('CameraImageData bytes is multiple of 4 '
+            'regardless of OffscreenCanvas support', (WidgetTester tester) async {
+          final VideoElement videoElement = getVideoElementWithBlankStream(const Size(10, 10));
+          final camera = Camera(textureId: textureId, cameraService: cameraService)
+            ..videoElement = videoElement;
+
+          for (final supportsOffscreenCanvas in <bool>[true, false]) {
+            when(cameraService.hasPropertyOffScreenCanvas()).thenReturn(supportsOffscreenCanvas);
+
+            when(cameraService.takeFrame(videoElement)).thenAnswer(
+              (_) => CameraImageData(
+                format: const CameraImageFormat(ImageFormatGroup.unknown, raw: 0),
+                planes: <CameraImagePlane>[
+                  CameraImagePlane(bytes: Uint8List(32), bytesPerRow: videoElement.width * 4),
+                ],
+                height: videoElement.height,
+                width: videoElement.width,
+              ),
+            );
+
+            final CameraImageData cameraImageData = await camera.cameraFrameStream().first;
+
+            expect(cameraImageData.width, equals(videoElement.width));
+            expect(cameraImageData.height, equals(videoElement.height));
+            expect(cameraImageData.planes.first.bytes.length % 4, equals(0));
+          }
+        });
+
+        testWidgets('emits and closes stream when takeFrame throws error', (
+          WidgetTester tester,
+        ) async {
+          final exception = Exception('takeFrame failure');
+
+          when(cameraService.takeFrame(any)).thenThrow(exception);
+
+          await expectCameraFrameStreamError(exception);
+        });
       });
     });
   });
