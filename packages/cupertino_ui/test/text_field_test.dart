@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@Skip(
-  'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
-)
 // reduced-test-set:
 //   This file is run as part of a reduced test set in CI on Mac and Windows
 //   machines.
@@ -26,11 +23,10 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../widgets/clipboard_utils.dart';
-import '../widgets/semantics_tester.dart';
-import '../widgets/text_selection_toolbar_utils.dart';
+import 'clipboard_utils.dart';
 import 'editable_text_utils.dart';
 import 'live_text_utils.dart';
+import 'text_selection_toolbar_utils.dart';
 
 class MockTextSelectionControls extends TextSelectionControls {
   @override
@@ -537,65 +533,36 @@ void main() {
   testWidgets('Activates the text field when receives semantics focus on desktops', (
     WidgetTester tester,
   ) async {
-    final semantics = SemanticsTester(tester);
+    final SemanticsHandle handle = tester.ensureSemantics();
     final SemanticsOwner semanticsOwner = tester.binding.pipelineOwner.semanticsOwner!;
     final focusNode = FocusNode();
     addTearDown(focusNode.dispose);
     await tester.pumpWidget(CupertinoApp(home: CupertinoTextField(focusNode: focusNode)));
+
+    final SemanticsNode node = tester.getSemantics(find.byType(CupertinoTextField));
     expect(
-      semantics,
-      hasSemantics(
-        TestSemantics.root(
-          children: <TestSemantics>[
-            TestSemantics(
-              id: 1,
-              textDirection: TextDirection.ltr,
-              children: <TestSemantics>[
-                TestSemantics(
-                  id: 2,
-                  children: <TestSemantics>[
-                    TestSemantics(
-                      id: 3,
-                      flags: <SemanticsFlag>[SemanticsFlag.scopesRoute],
-                      children: <TestSemantics>[
-                        TestSemantics(
-                          id: 4,
-                          inputType: ui.SemanticsInputType.text,
-                          flags: <SemanticsFlag>[
-                            SemanticsFlag.isTextField,
-                            SemanticsFlag.isFocusable,
-                            SemanticsFlag.hasEnabledState,
-                            SemanticsFlag.isEnabled,
-                          ],
-                          actions: <SemanticsAction>[
-                            SemanticsAction.tap,
-                            SemanticsAction.focus,
-                            SemanticsAction.didGainAccessibilityFocus,
-                            SemanticsAction.didLoseAccessibilityFocus,
-                          ],
-                          textDirection: TextDirection.ltr,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-        ignoreRect: true,
-        ignoreTransform: true,
+      node,
+      isSemantics(
+        inputType: ui.SemanticsInputType.text,
+        isTextField: true,
+        isFocusable: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        hasDidGainAccessibilityFocusAction: true,
+        hasDidLoseAccessibilityFocusAction: true,
       ),
     );
 
     expect(focusNode.hasFocus, isFalse);
-    semanticsOwner.performAction(4, SemanticsAction.didGainAccessibilityFocus);
+    semanticsOwner.performAction(node.id, SemanticsAction.didGainAccessibilityFocus);
     await tester.pumpAndSettle();
     expect(focusNode.hasFocus, isTrue);
-    semanticsOwner.performAction(4, SemanticsAction.didLoseAccessibilityFocus);
+    semanticsOwner.performAction(node.id, SemanticsAction.didLoseAccessibilityFocus);
     await tester.pumpAndSettle();
     expect(focusNode.hasFocus, isFalse);
-    semantics.dispose();
+    handle.dispose();
   }, variant: TargetPlatformVariant.desktop());
 
   testWidgets('takes available space horizontally and takes intrinsic space vertically no-strut', (
@@ -2353,20 +2320,18 @@ void main() {
   });
 
   testWidgets('Readonly text field does not have tap action', (WidgetTester tester) async {
-    final semantics = SemanticsTester(tester);
+    final SemanticsHandle handle = tester.ensureSemantics();
 
     await tester.pumpWidget(
       const CupertinoApp(home: Center(child: CupertinoTextField(maxLength: 10, readOnly: true))),
     );
 
     expect(
-      semantics,
-      isNot(
-        includesNodeWith(actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus]),
-      ),
+      tester.getSemantics(find.byType(CupertinoTextField)),
+      isSemantics(hasTapAction: false, hasFocusAction: true),
     );
 
-    semantics.dispose();
+    handle.dispose();
   });
 
   testWidgets(
@@ -10472,136 +10437,84 @@ void main() {
   testWidgets('when enabled listens to onFocus events and gains focus', (
     WidgetTester tester,
   ) async {
-    final semantics = SemanticsTester(tester);
+    final SemanticsHandle handle = tester.ensureSemantics();
     final SemanticsOwner semanticsOwner = tester.binding.pipelineOwner.semanticsOwner!;
     final focusNode = FocusNode();
     addTearDown(focusNode.dispose);
     await tester.pumpWidget(CupertinoApp(home: CupertinoTextField(focusNode: focusNode)));
+
+    final SemanticsNode node = tester.getSemantics(find.byType(CupertinoTextField));
+    final bool isDesktop =
+        defaultTargetPlatform == TargetPlatform.linux ||
+        defaultTargetPlatform == TargetPlatform.windows ||
+        defaultTargetPlatform == TargetPlatform.macOS;
+
     expect(
-      semantics,
-      hasSemantics(
-        TestSemantics.root(
-          children: <TestSemantics>[
-            TestSemantics(
-              id: 1,
-              children: <TestSemantics>[
-                TestSemantics(
-                  id: 2,
-                  children: <TestSemantics>[
-                    TestSemantics(
-                      id: 3,
-                      flags: <SemanticsFlag>[SemanticsFlag.scopesRoute],
-                      children: <TestSemantics>[
-                        TestSemantics(
-                          id: 4,
-                          inputType: ui.SemanticsInputType.text,
-                          flags: <SemanticsFlag>[
-                            SemanticsFlag.isTextField,
-                            SemanticsFlag.isFocusable,
-                            SemanticsFlag.hasEnabledState,
-                            SemanticsFlag.isEnabled,
-                          ],
-                          actions: <SemanticsAction>[
-                            SemanticsAction.tap,
-                            SemanticsAction.focus,
-                            if (defaultTargetPlatform == TargetPlatform.linux ||
-                                defaultTargetPlatform == TargetPlatform.windows ||
-                                defaultTargetPlatform == TargetPlatform.macOS) ...<SemanticsAction>[
-                              SemanticsAction.didGainAccessibilityFocus,
-                              SemanticsAction.didLoseAccessibilityFocus,
-                            ],
-                            // TODO(gspencergoog): also test for the presence of SemanticsAction.focus when
-                            // this iOS issue is addressed: https://github.com/flutter/flutter/issues/150030
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-        ignoreRect: true,
-        ignoreTransform: true,
+      node,
+      isSemantics(
+        inputType: ui.SemanticsInputType.text,
+        isTextField: true,
+        isFocusable: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        hasDidGainAccessibilityFocusAction: isDesktop,
+        hasDidLoseAccessibilityFocusAction: isDesktop,
       ),
     );
 
     expect(focusNode.hasFocus, isFalse);
-    semanticsOwner.performAction(4, SemanticsAction.focus);
+    semanticsOwner.performAction(node.id, SemanticsAction.focus);
     await tester.pumpAndSettle();
     expect(focusNode.hasFocus, isTrue);
-    semantics.dispose();
+    handle.dispose();
   }, variant: TargetPlatformVariant.all());
 
   testWidgets('when disabled does not listen to onFocus events or gain focus', (
     WidgetTester tester,
   ) async {
-    final semantics = SemanticsTester(tester);
+    final SemanticsHandle handle = tester.ensureSemantics();
     final SemanticsOwner semanticsOwner = tester.binding.pipelineOwner.semanticsOwner!;
     final focusNode = FocusNode();
     addTearDown(focusNode.dispose);
     await tester.pumpWidget(
       CupertinoApp(home: CupertinoTextField(focusNode: focusNode, enabled: false)),
     );
+
+    final SemanticsNode node = tester.getSemantics(find.byType(CupertinoTextField));
+    final bool isDesktop =
+        defaultTargetPlatform == TargetPlatform.linux ||
+        defaultTargetPlatform == TargetPlatform.windows ||
+        defaultTargetPlatform == TargetPlatform.macOS;
+
     expect(
-      semantics,
-      hasSemantics(
-        TestSemantics.root(
-          children: <TestSemantics>[
-            TestSemantics(
-              id: 1,
-              textDirection: TextDirection.ltr,
-              children: <TestSemantics>[
-                TestSemantics(
-                  id: 2,
-                  children: <TestSemantics>[
-                    TestSemantics(
-                      id: 3,
-                      flags: <SemanticsFlag>[SemanticsFlag.scopesRoute],
-                      children: <TestSemantics>[
-                        TestSemantics(
-                          id: 4,
-                          inputType: ui.SemanticsInputType.text,
-                          flags: <SemanticsFlag>[
-                            SemanticsFlag.isTextField,
-                            SemanticsFlag.isFocusable,
-                            SemanticsFlag.hasEnabledState,
-                            SemanticsFlag.isReadOnly,
-                          ],
-                          actions: <SemanticsAction>[
-                            if (defaultTargetPlatform == TargetPlatform.linux ||
-                                defaultTargetPlatform == TargetPlatform.windows ||
-                                defaultTargetPlatform == TargetPlatform.macOS) ...<SemanticsAction>[
-                              SemanticsAction.didGainAccessibilityFocus,
-                              SemanticsAction.didLoseAccessibilityFocus,
-                            ],
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-        ignoreRect: true,
-        ignoreTransform: true,
+      node,
+      isSemantics(
+        inputType: ui.SemanticsInputType.text,
+        isTextField: true,
+        isFocusable: true,
+        hasEnabledState: true,
+        isEnabled: false,
+        isReadOnly: true,
+        hasTapAction: false,
+        hasFocusAction: false,
+        hasDidGainAccessibilityFocusAction: isDesktop,
+        hasDidLoseAccessibilityFocusAction: isDesktop,
       ),
     );
 
     expect(focusNode.hasFocus, isFalse);
-    semanticsOwner.performAction(4, SemanticsAction.focus);
+    semanticsOwner.performAction(node.id, SemanticsAction.focus);
     await tester.pumpAndSettle();
     expect(focusNode.hasFocus, isFalse);
-    semantics.dispose();
+    handle.dispose();
   }, variant: TargetPlatformVariant.all());
 
   testWidgets('when receives SemanticsAction.focus while already focused, shows keyboard', (
     WidgetTester tester,
   ) async {
-    final semantics = SemanticsTester(tester);
+    final SemanticsHandle handle = tester.ensureSemantics();
     final SemanticsOwner semanticsOwner = tester.binding.pipelineOwner.semanticsOwner!;
     final focusNode = FocusNode();
     addTearDown(focusNode.dispose);
@@ -10609,20 +10522,22 @@ void main() {
     focusNode.requestFocus();
     await tester.pumpAndSettle();
 
+    final SemanticsNode node = tester.getSemantics(find.byType(CupertinoTextField));
+
     tester.testTextInput.log.clear();
     expect(focusNode.hasFocus, isTrue);
-    semanticsOwner.performAction(4, SemanticsAction.focus);
+    semanticsOwner.performAction(node.id, SemanticsAction.focus);
     await tester.pumpAndSettle();
     expect(focusNode.hasFocus, isTrue);
     expect(tester.testTextInput.log.single.method, 'TextInput.show');
 
-    semantics.dispose();
+    handle.dispose();
   }, variant: TargetPlatformVariant.all());
 
   testWidgets(
     'when receives SemanticsAction.focus while focused but read-only, does not show keyboard',
     (WidgetTester tester) async {
-      final semantics = SemanticsTester(tester);
+      final SemanticsHandle handle = tester.ensureSemantics();
       final SemanticsOwner semanticsOwner = tester.binding.pipelineOwner.semanticsOwner!;
       final focusNode = FocusNode();
       addTearDown(focusNode.dispose);
@@ -10632,14 +10547,16 @@ void main() {
       focusNode.requestFocus();
       await tester.pumpAndSettle();
 
+      final SemanticsNode node = tester.getSemantics(find.byType(CupertinoTextField));
+
       tester.testTextInput.log.clear();
       expect(focusNode.hasFocus, isTrue);
-      semanticsOwner.performAction(4, SemanticsAction.focus);
+      semanticsOwner.performAction(node.id, SemanticsAction.focus);
       await tester.pumpAndSettle();
       expect(focusNode.hasFocus, isTrue);
       expect(tester.testTextInput.log, isEmpty);
 
-      semantics.dispose();
+      handle.dispose();
     },
     variant: TargetPlatformVariant.all(),
   );
