@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@Skip(
-  'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
-)
 // reduced-test-set:
 //   This file is run as part of a reduced test set in CI on Mac and Windows
 //   machines.
@@ -14,26 +11,29 @@
 // https://github.com/flutter/flutter/issues/122950
 // Fails with "flutter test --test-randomize-ordering-seed=20230318"
 @Tags(<String>['reduced-test-set', 'no-shuffle'])
+// TODO(188666): Fix web test failures and re-enable. See also:
+// https://github.com/flutter/flutter/issues/71604.
+@TestOn('!chrome')
 library;
 
+import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' as ui show BoxHeightStyle, BoxWidthStyle, SemanticsInputType;
 
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
-import '../widgets/clipboard_utils.dart';
-import '../widgets/feedback_tester.dart';
-import '../widgets/semantics_tester.dart';
-import '../widgets/text_selection_toolbar_utils.dart';
+import 'clipboard_utils.dart';
 import 'editable_text_utils.dart';
+import 'feedback_tester.dart';
 import 'live_text_utils.dart';
 import 'process_text_utils.dart';
+import 'semantics_tester.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -251,7 +251,7 @@ void main() {
       );
 
       // Initially, the menu is not shown and there is no selection.
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
       expect(controller.selection, const TextSelection(baseOffset: -1, extentOffset: -1));
 
       final Offset midBlah1 = textOffsetToPosition(tester, 2);
@@ -276,7 +276,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(controller.text, 'blah1 blah2');
       expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 5));
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
 
       // Paste it at the end.
       await gesture.down(textOffsetToPosition(tester, controller.text.length));
@@ -308,7 +308,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(controller.text, ' blah2blah1');
       expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 0));
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{TargetPlatform.macOS}),
     // [intended] only applies to platforms where we supply the context menu.
@@ -326,7 +326,7 @@ void main() {
       );
 
       // Initially, the menu is not shown and there is no selection.
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
       expect(controller.selection, const TextSelection(baseOffset: -1, extentOffset: -1));
 
       final Offset midBlah1 = textOffsetToPosition(tester, 2);
@@ -382,7 +382,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(controller.text, 'blah1 blah2');
       expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 5));
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
 
       // Paste it at the end.
       gesture = await tester.startGesture(
@@ -449,7 +449,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(controller.text, ' blah2blah1');
       expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 0));
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.linux,
@@ -10128,7 +10128,7 @@ void main() {
     );
 
     // But don't trigger the toolbar.
-    expectNoCupertinoToolbar();
+    _expectNoCupertinoToolbar();
   }, variant: const TargetPlatformVariant(<TargetPlatform>{TargetPlatform.iOS}));
 
   testWidgets(
@@ -10186,7 +10186,7 @@ void main() {
       expect(controller.selection, const TextSelection.collapsed(offset: 3));
 
       // But don't trigger the toolbar.
-      expectNoMaterialToolbar();
+      _expectNoMaterialToolbar();
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.android,
@@ -10226,10 +10226,10 @@ void main() {
 
       // Toolbar shows on mobile only.
       if (isTargetPlatformMobile) {
-        expectCupertinoToolbarForCollapsedSelection();
+        _expectCupertinoToolbarForCollapsedSelection();
       } else {
         // After a tap, macOS does not show a selection toolbar for a collapsed selection.
-        expectNoCupertinoToolbar();
+        _expectNoCupertinoToolbar();
       }
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
@@ -10275,7 +10275,7 @@ void main() {
     // at the end of the word 'Bonaventure|'.
     expect(controller.selection.isCollapsed, true);
     expect(controller.selection.baseOffset, 35);
-    expectNoCupertinoToolbar();
+    _expectNoCupertinoToolbar();
 
     await tester.tapAt(vPos);
     await tester.pumpAndSettle(const Duration(milliseconds: 500));
@@ -10283,14 +10283,14 @@ void main() {
     // the selection has not changed we toggle the toolbar.
     expect(controller.selection.isCollapsed, true);
     expect(controller.selection.baseOffset, 35);
-    expectCupertinoToolbarForCollapsedSelection();
+    _expectCupertinoToolbarForCollapsedSelection();
 
     // Tap the 'v' position again to hide the toolbar.
     await tester.tapAt(vPos);
     await tester.pumpAndSettle();
     expect(controller.selection.isCollapsed, true);
     expect(controller.selection.baseOffset, 35);
-    expectNoCupertinoToolbar();
+    _expectNoCupertinoToolbar();
 
     // Long press at the end of the first line to move the cursor to the end of the first line
     // where the word wrap is. Since there is a word wrap here, and the direction of the text is LTR,
@@ -10301,7 +10301,7 @@ void main() {
     expect(controller.selection.isCollapsed, true);
     expect(controller.selection.baseOffset, 46);
     expect(controller.selection.affinity, TextAffinity.upstream);
-    expectCupertinoToolbarForCollapsedSelection();
+    _expectCupertinoToolbarForCollapsedSelection();
 
     // Tap at the same position to toggle the toolbar.
     await tester.tapAt(endPos);
@@ -10309,7 +10309,7 @@ void main() {
     expect(controller.selection.isCollapsed, true);
     expect(controller.selection.baseOffset, 46);
     expect(controller.selection.affinity, TextAffinity.upstream);
-    expectNoCupertinoToolbar();
+    _expectNoCupertinoToolbar();
 
     // Tap at the beginning of the second line to move the cursor to the front of the first word on the
     // second line, where the word wrap is. Since there is a word wrap here, and the direction of the text is LTR,
@@ -10319,7 +10319,7 @@ void main() {
     expect(controller.selection.isCollapsed, true);
     expect(controller.selection.baseOffset, 46);
     expect(controller.selection.affinity, TextAffinity.downstream);
-    expectNoCupertinoToolbar();
+    _expectNoCupertinoToolbar();
   }, variant: const TargetPlatformVariant(<TargetPlatform>{TargetPlatform.iOS}));
 
   testWidgets('Tapping on a non-collapsed selection toggles the toolbar and retains the selection', (
@@ -10363,26 +10363,26 @@ void main() {
     expect(controller.selection, const TextSelection(baseOffset: 24, extentOffset: 35));
 
     // The toolbar shows up.
-    expectCupertinoToolbarForPartialSelection();
+    _expectCupertinoToolbarForPartialSelection();
 
     // Tap the selected word to hide the toolbar and retain the selection.
     await tester.tapAt(vPos);
     await tester.pumpAndSettle();
     expect(controller.selection, const TextSelection(baseOffset: 24, extentOffset: 35));
-    expectNoCupertinoToolbar();
+    _expectNoCupertinoToolbar();
 
     // Tap the selected word to show the toolbar and retain the selection.
     await tester.tapAt(vPos);
     await tester.pumpAndSettle();
     expect(controller.selection, const TextSelection(baseOffset: 24, extentOffset: 35));
-    expectCupertinoToolbarForPartialSelection();
+    _expectCupertinoToolbarForPartialSelection();
 
     // Tap past the selected word to move the cursor and hide the toolbar.
     await tester.tapAt(ePos);
     await tester.pumpAndSettle();
     expect(controller.selection.isCollapsed, true);
     expect(controller.selection.baseOffset, 35);
-    expectNoCupertinoToolbar();
+    _expectNoCupertinoToolbar();
   }, variant: const TargetPlatformVariant(<TargetPlatform>{TargetPlatform.iOS}));
 
   testWidgets('double tap selects word and first tap of double tap moves cursor (iOS)', (
@@ -10421,7 +10421,7 @@ void main() {
     expect(controller.selection, const TextSelection(baseOffset: 8, extentOffset: 12));
 
     // The toolbar shows up.
-    expectCupertinoToolbarForPartialSelection();
+    _expectCupertinoToolbarForPartialSelection();
   }, variant: const TargetPlatformVariant(<TargetPlatform>{TargetPlatform.iOS}));
 
   testWidgets('iOS selectWordEdge works correctly', (WidgetTester tester) async {
@@ -10486,7 +10486,7 @@ void main() {
       expect(controller.selection, const TextSelection.collapsed(offset: 35));
 
       // Selected text shows no toolbar.
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.iOS,
@@ -10526,7 +10526,7 @@ void main() {
       expect(controller.selection, const TextSelection(baseOffset: 8, extentOffset: 12));
 
       // The toolbar shows up.
-      expectMaterialToolbarForPartialSelection();
+      _expectMaterialToolbarForPartialSelection();
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.android,
@@ -10709,14 +10709,14 @@ void main() {
     await tester.pumpAndSettle();
 
     // Toolbar should be hidden during a drag.
-    expectNoMaterialToolbar();
+    _expectNoMaterialToolbar();
     expect(controller.selection.baseOffset, testValue.indexOf('d'));
     expect(controller.selection.extentOffset, testValue.indexOf('i') + 1);
 
     // Toolbar should re-appear after a drag.
     await gesture.up();
     await tester.pump();
-    expectMaterialToolbarForPartialSelection();
+    _expectMaterialToolbarForPartialSelection();
   });
 
   group('Triple tap/click', () {
@@ -10985,7 +10985,7 @@ void main() {
         await tester.tapAt(textfieldStart + const Offset(50.0, 9.0));
         await tester.pump();
         expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 7));
-        expectMaterialToolbarForPartialSelection();
+        _expectMaterialToolbarForPartialSelection();
 
         await tester.tapAt(textfieldStart + const Offset(50.0, 9.0));
         await tester.pumpAndSettle();
@@ -10996,36 +10996,36 @@ void main() {
         // First tap hides the toolbar and moves the selection.
         expect(controller.selection.isCollapsed, true);
         expect(controller.selection.baseOffset, 6);
-        expectNoMaterialToolbar();
+        _expectNoMaterialToolbar();
         // Second tap shows the toolbar and selects the word.
         await tester.tapAt(textfieldStart + const Offset(100.0, 9.0));
         await tester.pump();
         expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 7));
-        expectMaterialToolbarForPartialSelection();
+        _expectMaterialToolbarForPartialSelection();
 
         // Third tap shows the toolbar and selects the paragraph.
         await tester.tapAt(textfieldStart + const Offset(100.0, 9.0));
         await tester.pumpAndSettle();
         expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 35));
-        expectMaterialToolbarForFullSelection();
+        _expectMaterialToolbarForFullSelection();
 
         await tester.tapAt(textfieldStart + const Offset(150.0, 9.0));
         await tester.pump(const Duration(milliseconds: 50));
         // First tap moved the cursor and hid the toolbar.
         expect(controller.selection.isCollapsed, true);
         expect(controller.selection.baseOffset, 9);
-        expectNoMaterialToolbar();
+        _expectNoMaterialToolbar();
         // Second tap selects the word.
         await tester.tapAt(textfieldStart + const Offset(150.0, 9.0));
         await tester.pump();
         expect(controller.selection, const TextSelection(baseOffset: 8, extentOffset: 12));
-        expectMaterialToolbarForPartialSelection();
+        _expectMaterialToolbarForPartialSelection();
 
         // Third tap selects the paragraph and shows the toolbar.
         await tester.tapAt(textfieldStart + const Offset(150.0, 9.0));
         await tester.pumpAndSettle();
         expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 35));
-        expectMaterialToolbarForFullSelection();
+        _expectMaterialToolbarForFullSelection();
       },
       variant: const TargetPlatformVariant(<TargetPlatform>{
         TargetPlatform.android,
@@ -11055,7 +11055,7 @@ void main() {
       await tester.tapAt(textfieldStart + const Offset(50.0, 9.0));
       await tester.pump();
       expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 7));
-      expectCupertinoToolbarForPartialSelection();
+      _expectCupertinoToolbarForPartialSelection();
 
       await tester.tapAt(textfieldStart + const Offset(50.0, 9.0));
       await tester.pumpAndSettle(kDoubleTapTimeout);
@@ -11065,18 +11065,18 @@ void main() {
       await tester.pump(const Duration(milliseconds: 50));
       // First tap hides the toolbar and retains the selection.
       expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 36));
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
       // Second tap shows the toolbar and selects the word.
       await tester.tapAt(textfieldStart + const Offset(100.0, 9.0));
       await tester.pump();
       expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 7));
-      expectCupertinoToolbarForPartialSelection();
+      _expectCupertinoToolbarForPartialSelection();
 
       // Third tap shows the toolbar and selects the paragraph.
       await tester.tapAt(textfieldStart + const Offset(100.0, 9.0));
       await tester.pumpAndSettle(kDoubleTapTimeout);
       expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 36));
-      expectCupertinoToolbarForPartialSelection();
+      _expectCupertinoToolbarForPartialSelection();
 
       await tester.tapAt(textfieldStart + const Offset(150.0, 50.0));
       await tester.pump(const Duration(milliseconds: 50));
@@ -11085,18 +11085,18 @@ void main() {
         controller.selection,
         const TextSelection.collapsed(offset: 50, affinity: TextAffinity.upstream),
       );
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
       // Second tap selects the word.
       await tester.tapAt(textfieldStart + const Offset(150.0, 50.0));
       await tester.pump();
       expect(controller.selection, const TextSelection(baseOffset: 44, extentOffset: 50));
-      expectCupertinoToolbarForPartialSelection();
+      _expectCupertinoToolbarForPartialSelection();
 
       // Third tap selects the paragraph and shows the toolbar.
       await tester.tapAt(textfieldStart + const Offset(150.0, 50.0));
       await tester.pumpAndSettle();
       expect(controller.selection, const TextSelection(baseOffset: 36, extentOffset: 66));
-      expectCupertinoToolbarForPartialSelection();
+      _expectCupertinoToolbarForPartialSelection();
     }, variant: const TargetPlatformVariant(<TargetPlatform>{TargetPlatform.iOS}));
 
     testWidgets('triple click chains work', (WidgetTester tester) async {
@@ -11931,7 +11931,7 @@ void main() {
       expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 7));
 
       // The toolbar shows up.
-      expectMaterialToolbarForPartialSelection();
+      _expectMaterialToolbarForPartialSelection();
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.android,
@@ -12122,7 +12122,7 @@ void main() {
       expect(controller.selection, const TextSelection(baseOffset: 8, extentOffset: 12));
 
       // The toolbar shows up.
-      expectCupertinoToolbarForPartialSelection();
+      _expectCupertinoToolbarForPartialSelection();
 
       await gesture.up();
       await tester.pump();
@@ -12131,7 +12131,7 @@ void main() {
       expect(controller.selection, const TextSelection(baseOffset: 8, extentOffset: 12));
 
       // The toolbar is still showing.
-      expectCupertinoToolbarForPartialSelection();
+      _expectCupertinoToolbarForPartialSelection();
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.iOS,
@@ -12182,7 +12182,7 @@ void main() {
       expect(controller.selection.baseOffset, isTargetPlatformMobile ? 7 : 6);
 
       // No toolbar.
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.iOS,
@@ -12216,7 +12216,7 @@ void main() {
       // Collapsed cursor for iOS long press.
       expect(controller.selection, const TextSelection.collapsed(offset: 3));
 
-      expectCupertinoToolbarForCollapsedSelection();
+      _expectCupertinoToolbarForCollapsedSelection();
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.iOS,
@@ -12247,7 +12247,7 @@ void main() {
       expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 7));
 
       // The toolbar shows up.
-      expectCupertinoToolbarForPartialSelection();
+      _expectCupertinoToolbarForPartialSelection();
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.iOS,
@@ -12277,7 +12277,7 @@ void main() {
       expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 7));
 
       // The toolbar shows up.
-      expectMaterialToolbarForPartialSelection();
+      _expectMaterialToolbarForPartialSelection();
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.android,
@@ -12468,10 +12468,12 @@ void main() {
       // Scroll to the end so the selection is no longer visible. This should
       // hide the toolbar, but schedule it to be shown once the selection is
       // visible again.
-      scrollController.animateTo(
-        500.0,
-        duration: const Duration(milliseconds: 100),
-        curve: Curves.linear,
+      unawaited(
+        scrollController.animateTo(
+          500.0,
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.linear,
+        ),
       );
       await tester.pumpAndSettle();
       expect(contextMenuButtonFinder, findsNothing);
@@ -12480,10 +12482,12 @@ void main() {
 
       // Scroll to the beginning where the selection is in view
       // and the toolbar should show again.
-      scrollController.animateTo(
-        0.0,
-        duration: const Duration(milliseconds: 100),
-        curve: Curves.linear,
+      unawaited(
+        scrollController.animateTo(
+          0.0,
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.linear,
+        ),
       );
       await tester.pumpAndSettle();
       expect(
@@ -12513,10 +12517,12 @@ void main() {
       // Scroll to the end so the selection is no longer visible. This should
       // hide the toolbar, but schedule it to be shown once the selection is
       // visible again.
-      scrollController.animateTo(
-        500.0,
-        duration: const Duration(milliseconds: 100),
-        curve: Curves.linear,
+      unawaited(
+        scrollController.animateTo(
+          500.0,
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.linear,
+        ),
       );
       await tester.pumpAndSettle();
       expect(contextMenuButtonFinder, findsNothing);
@@ -12532,10 +12538,12 @@ void main() {
 
       // Scroll to the beginning where the selection was previously
       // and the toolbar should not show because it was invalidated.
-      scrollController.animateTo(
-        0.0,
-        duration: const Duration(milliseconds: 100),
-        curve: Curves.linear,
+      unawaited(
+        scrollController.animateTo(
+          0.0,
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.linear,
+        ),
       );
       await tester.pumpAndSettle();
       expect(contextMenuButtonFinder, findsNothing);
@@ -12596,20 +12604,24 @@ void main() {
       );
 
       // Scroll down, the TextField should no longer be in the viewport.
-      scrollController.animateTo(
-        scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 100),
-        curve: Curves.linear,
+      unawaited(
+        scrollController.animateTo(
+          scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.linear,
+        ),
       );
       await tester.pumpAndSettle();
       expect(find.byType(TextField), findsNothing);
       expect(contextMenuButtonFinder, findsNothing);
 
       // Scroll back up so the TextField is inside the viewport.
-      scrollController.animateTo(
-        0.0,
-        duration: const Duration(milliseconds: 100),
-        curve: Curves.linear,
+      unawaited(
+        scrollController.animateTo(
+          0.0,
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.linear,
+        ),
       );
       await tester.pumpAndSettle();
       expect(find.byType(TextField), findsOneWidget);
@@ -12660,7 +12672,7 @@ void main() {
       expect(controller.selection.baseOffset, 6);
 
       // The toolbar from the long press is now dismissed by the second tap.
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.iOS,
@@ -12688,7 +12700,7 @@ void main() {
       // Long press selects the word at the long presses position.
       expect(controller.selection, const TextSelection(baseOffset: 13, extentOffset: 23));
       // Cursor move doesn't trigger a toolbar initially.
-      expectNoMaterialToolbar();
+      _expectNoMaterialToolbar();
 
       await gesture.moveBy(const Offset(100, 0));
       await tester.pump();
@@ -12696,7 +12708,7 @@ void main() {
       // The selection is now moved with the drag.
       expect(controller.selection, const TextSelection(baseOffset: 13, extentOffset: 35));
       // Still no toolbar.
-      expectNoMaterialToolbar();
+      _expectNoMaterialToolbar();
 
       // The selection is moved on a backwards drag.
       await gesture.moveBy(const Offset(-200, 0));
@@ -12705,7 +12717,7 @@ void main() {
       // The selection is now moved with the drag.
       expect(controller.selection, const TextSelection(baseOffset: 23, extentOffset: 8));
       // Still no toolbar.
-      expectNoMaterialToolbar();
+      _expectNoMaterialToolbar();
 
       await gesture.moveBy(const Offset(-100, 0));
       await tester.pump();
@@ -12713,7 +12725,7 @@ void main() {
       // The selection is now moved with the drag.
       expect(controller.selection, const TextSelection(baseOffset: 23, extentOffset: 0));
       // Still no toolbar.
-      expectNoMaterialToolbar();
+      _expectNoMaterialToolbar();
 
       await gesture.up();
       await tester.pumpAndSettle();
@@ -12721,7 +12733,7 @@ void main() {
       // The selection isn't affected by the gesture lift.
       expect(controller.selection, const TextSelection(baseOffset: 23, extentOffset: 0));
       // The toolbar now shows up.
-      expectMaterialToolbarForPartialSelection();
+      _expectMaterialToolbarForPartialSelection();
     },
     variant: TargetPlatformVariant.all(
       excluding: <TargetPlatform>{TargetPlatform.iOS, TargetPlatform.macOS},
@@ -12755,7 +12767,7 @@ void main() {
       // Long press on iOS shows collapsed selection cursor.
       expect(controller.selection, const TextSelection.collapsed(offset: 3));
       // Cursor move doesn't trigger a toolbar initially.
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
 
       await gesture.moveBy(const Offset(50, 0));
       await tester.pump();
@@ -12763,7 +12775,7 @@ void main() {
       // The selection position is now moved with the drag.
       expect(controller.selection, const TextSelection.collapsed(offset: 6));
       // Still no toolbar.
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
 
       await gesture.moveBy(const Offset(50, 0));
       await tester.pump();
@@ -12771,7 +12783,7 @@ void main() {
       // The selection position is now moved with the drag.
       expect(controller.selection, const TextSelection.collapsed(offset: 9));
       // Still no toolbar.
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
 
       await gesture.up();
       await tester.pumpAndSettle();
@@ -12779,7 +12791,7 @@ void main() {
       // The selection isn't affected by the gesture lift.
       expect(controller.selection, const TextSelection.collapsed(offset: 9));
       // The toolbar now shows up.
-      expectCupertinoToolbarForCollapsedSelection();
+      _expectCupertinoToolbarForCollapsedSelection();
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.iOS,
@@ -12811,7 +12823,7 @@ void main() {
       // Long press on iOS shows collapsed selection cursor.
       expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 7));
       // Cursor move doesn't trigger a toolbar initially.
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
 
       await gesture.moveBy(const Offset(100, 0));
       await tester.pump();
@@ -12819,7 +12831,7 @@ void main() {
       // The selection position is now moved with the drag.
       expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 12));
       // Still no toolbar.
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
 
       await gesture.moveBy(const Offset(100, 0));
       await tester.pump();
@@ -12827,7 +12839,7 @@ void main() {
       // The selection position is now moved with the drag.
       expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 23));
       // Still no toolbar.
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
 
       await gesture.up();
       await tester.pumpAndSettle();
@@ -12835,7 +12847,7 @@ void main() {
       // The selection isn't affected by the gesture lift.
       expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 23));
       // The toolbar now shows up.
-      expectCupertinoToolbarForPartialSelection();
+      _expectCupertinoToolbarForPartialSelection();
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.iOS,
@@ -12878,7 +12890,7 @@ void main() {
         controller.selection,
         const TextSelection(baseOffset: 0, extentOffset: 7, affinity: TextAffinity.upstream),
       );
-      expectNoMaterialToolbar();
+      _expectNoMaterialToolbar();
 
       await gesture.moveBy(const Offset(900, 5));
       // To the edge of the screen basically.
@@ -12894,7 +12906,7 @@ void main() {
         controller.selection,
         const TextSelection(baseOffset: 0, extentOffset: 66, affinity: TextAffinity.upstream),
       ); // We're at the edge now.
-      expectNoMaterialToolbar();
+      _expectNoMaterialToolbar();
 
       await gesture.up();
       await tester.pumpAndSettle();
@@ -12905,7 +12917,7 @@ void main() {
         const TextSelection(baseOffset: 0, extentOffset: 66, affinity: TextAffinity.upstream),
       );
       // The toolbar now shows up.
-      expectMaterialToolbarForFullSelection();
+      _expectMaterialToolbarForFullSelection();
 
       lastCharEndpoint = renderEditable.getEndpointsForSelection(
         const TextSelection.collapsed(offset: 66), // Last character's position.
@@ -12965,7 +12977,7 @@ void main() {
         controller.selection,
         const TextSelection(baseOffset: 0, extentOffset: 7, affinity: TextAffinity.upstream),
       );
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
 
       await gesture.moveBy(const Offset(900, 5));
       // To the edge of the screen basically.
@@ -12981,7 +12993,7 @@ void main() {
         controller.selection,
         const TextSelection(baseOffset: 0, extentOffset: 66, affinity: TextAffinity.upstream),
       ); // We're at the edge now.
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
 
       await gesture.up();
       await tester.pumpAndSettle();
@@ -12992,7 +13004,7 @@ void main() {
         const TextSelection(baseOffset: 0, extentOffset: 66, affinity: TextAffinity.upstream),
       );
       // The toolbar now shows up.
-      expectCupertinoToolbarForFullSelection();
+      _expectCupertinoToolbarForFullSelection();
 
       lastCharEndpoint = renderEditable.getEndpointsForSelection(
         const TextSelection.collapsed(offset: 66), // Last character's position.
@@ -13053,7 +13065,7 @@ void main() {
         controller.selection,
         const TextSelection.collapsed(offset: 19, affinity: TextAffinity.upstream),
       );
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
 
       await gesture.moveBy(const Offset(600, 0));
       // To the edge of the screen basically.
@@ -13069,7 +13081,7 @@ void main() {
         controller.selection,
         const TextSelection.collapsed(offset: 66, affinity: TextAffinity.upstream),
       ); // We're at the edge now.
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
 
       await gesture.up();
       await tester.pumpAndSettle();
@@ -13080,7 +13092,7 @@ void main() {
         const TextSelection.collapsed(offset: 66, affinity: TextAffinity.upstream),
       );
       // The toolbar now shows up.
-      expectCupertinoToolbarForCollapsedSelection();
+      _expectCupertinoToolbarForCollapsedSelection();
 
       lastCharEndpoint = renderEditable.getEndpointsForSelection(
         const TextSelection.collapsed(offset: 66), // Last character's position.
@@ -13140,7 +13152,7 @@ void main() {
       controller.selection,
       const TextSelection(baseOffset: 19, extentOffset: 66),
     ); // We're at the edge now.
-    expectNoCupertinoToolbar();
+    _expectNoCupertinoToolbar();
 
     await gesture.up();
     await tester.pumpAndSettle();
@@ -13469,7 +13481,7 @@ void main() {
       expect(controller.selection, const TextSelection.collapsed(offset: 6));
 
       // The toolbar shows up.
-      expectCupertinoToolbarForCollapsedSelection();
+      _expectCupertinoToolbarForCollapsedSelection();
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.iOS,
@@ -13522,7 +13534,7 @@ void main() {
 
       // Double tap selection.
       expect(controller.selection, const TextSelection(baseOffset: 8, extentOffset: 12));
-      expectCupertinoToolbarForPartialSelection();
+      _expectCupertinoToolbarForPartialSelection();
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.iOS,
@@ -13569,7 +13581,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(controller.selection, const TextSelection(baseOffset: 8, extentOffset: 12));
     // The text selection toolbar isn't shown on Mac without a right click.
-    expectNoCupertinoToolbar();
+    _expectNoCupertinoToolbar();
   }, variant: TargetPlatformVariant.desktop());
 
   testWidgets('double tap chains work', (WidgetTester tester) async {
@@ -13596,14 +13608,14 @@ void main() {
     await tester.tapAt(textfieldStart + const Offset(50.0, 9.0));
     await tester.pumpAndSettle();
     expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 7));
-    expectCupertinoToolbarForPartialSelection();
+    _expectCupertinoToolbarForPartialSelection();
 
     // Double tap selecting the same word somewhere else is fine.
     await tester.tapAt(textfieldStart + const Offset(100.0, 9.0));
     await tester.pump(const Duration(milliseconds: 50));
     // First tap hides the toolbar and retains the selection.
     expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 7));
-    expectNoCupertinoToolbar();
+    _expectNoCupertinoToolbar();
 
     // Second tap shows the toolbar and retains the selection.
     await tester.tapAt(textfieldStart + const Offset(100.0, 9.0));
@@ -13611,7 +13623,7 @@ void main() {
     // tap is not detected as a triple tap.
     await tester.pumpAndSettle(kDoubleTapTimeout);
     expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 7));
-    expectCupertinoToolbarForPartialSelection();
+    _expectCupertinoToolbarForPartialSelection();
 
     await tester.tapAt(textfieldStart + const Offset(150.0, 9.0));
     await tester.pump(const Duration(milliseconds: 50));
@@ -13620,11 +13632,11 @@ void main() {
       controller.selection,
       const TextSelection.collapsed(offset: 12, affinity: TextAffinity.upstream),
     );
-    expectNoCupertinoToolbar();
+    _expectNoCupertinoToolbar();
     await tester.tapAt(textfieldStart + const Offset(150.0, 9.0));
     await tester.pumpAndSettle();
     expect(controller.selection, const TextSelection(baseOffset: 8, extentOffset: 12));
-    expectCupertinoToolbarForPartialSelection();
+    _expectCupertinoToolbarForPartialSelection();
   }, variant: const TargetPlatformVariant(<TargetPlatform>{TargetPlatform.iOS}));
 
   testWidgets(
@@ -13663,7 +13675,7 @@ void main() {
       // tap is not detected as a triple tap.
       await tester.pumpAndSettle(kDoubleTapTimeout);
       expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 7));
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
 
       // Double tap selecting the same word somewhere else is fine.
       await gesture.down(textFieldStart + const Offset(100.0, 9.0));
@@ -13679,7 +13691,7 @@ void main() {
       // tap is not detected as a triple tap.
       await tester.pumpAndSettle(kDoubleTapTimeout);
       expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 7));
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
 
       await gesture.down(textFieldStart + const Offset(150.0, 9.0));
       await tester.pump();
@@ -13692,7 +13704,7 @@ void main() {
       await gesture.up();
       await tester.pumpAndSettle();
       expect(controller.selection, const TextSelection(baseOffset: 8, extentOffset: 12));
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.macOS,
@@ -13940,7 +13952,7 @@ void main() {
 
       // We don't want this gesture to select any word on Android.
       expect(controller.selection, const TextSelection.collapsed(offset: -1));
-      expectNoMaterialToolbar();
+      _expectNoMaterialToolbar();
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.android,
@@ -13988,7 +14000,7 @@ void main() {
 
       // We don't want this gesture to select any word on Android.
       expect(controller.selection, const TextSelection.collapsed(offset: 9));
-      expectNoMaterialToolbar();
+      _expectNoMaterialToolbar();
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.linux,
@@ -14035,7 +14047,7 @@ void main() {
 
     await gesture.up();
     await tester.pumpAndSettle();
-    expectCupertinoToolbarForPartialSelection();
+    _expectCupertinoToolbarForPartialSelection();
   }, variant: const TargetPlatformVariant(<TargetPlatform>{TargetPlatform.iOS}));
 
   testWidgets('tap on non-force-press-supported devices work', (WidgetTester tester) async {
@@ -14084,7 +14096,7 @@ void main() {
 
     await tester.pump();
     // Single taps shouldn't trigger the toolbar.
-    expectNoCupertinoToolbar();
+    _expectNoCupertinoToolbar();
 
     // TODO(gspencergoog): Add in TargetPlatform.macOS in the line below when we figure out what global state is leaking.
     // https://github.com/flutter/flutter/issues/43445
@@ -16750,7 +16762,7 @@ void main() {
       );
 
       // Initially, the menu is not shown and there is no selection.
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
       expect(controller.selection, const TextSelection(baseOffset: -1, extentOffset: -1));
 
       final Offset midBlah1 = textOffsetToPosition(tester, 2);
@@ -16827,7 +16839,7 @@ void main() {
       );
 
       // Initially, the menu is not shown and there is no selection.
-      expectNoMaterialToolbar();
+      _expectNoMaterialToolbar();
       expect(controller.selection, const TextSelection(baseOffset: -1, extentOffset: -1));
 
       final Offset secondBlah = textOffsetToPosition(tester, 8);
@@ -16889,7 +16901,7 @@ void main() {
       );
 
       // Initially, the menu is not shown and there is no selection.
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
       expect(controller.selection, const TextSelection(baseOffset: -1, extentOffset: -1));
 
       final Offset firstBlah = textOffsetToPosition(tester, 5);
@@ -16902,7 +16914,7 @@ void main() {
       await tester.tapAt(firstBlah, kind: PointerDeviceKind.mouse, buttons: kSecondaryMouseButton);
       await tester.pumpAndSettle();
       expect(controller.selection, const TextSelection.collapsed(offset: 5));
-      expectCupertinoToolbarForCollapsedSelection();
+      _expectCupertinoToolbarForCollapsedSelection();
 
       // Press select all.
       await tester.tap(find.text('Select All'), kind: PointerDeviceKind.mouse);
@@ -19487,4 +19499,169 @@ TextEditingController _textEditingController({String text = ''}) {
   final result = TextEditingController(text: text);
   addTearDown(result.dispose);
   return result;
+}
+
+void _expectNoCupertinoToolbar() {
+  expect(find.byType(CupertinoButton), findsNothing);
+}
+
+// Check that the Cupertino text selection toolbars show the expected buttons
+// when the content is partially selected.
+void _expectCupertinoToolbarForPartialSelection() {
+  if (isContextMenuProvidedByPlatform) {
+    _expectNoCupertinoToolbar();
+    return;
+  }
+
+  switch (defaultTargetPlatform) {
+    case TargetPlatform.android:
+      expect(find.byType(CupertinoButton), findsNWidgets(5));
+      expect(find.text('Cut'), findsOneWidget);
+      expect(find.text('Copy'), findsOneWidget);
+      expect(find.text('Paste'), findsOneWidget);
+      expect(find.text('Share...'), findsOneWidget);
+      expect(find.text('Select All'), findsOneWidget);
+    case TargetPlatform.iOS:
+      expect(find.byType(CupertinoButton), findsNWidgets(6));
+      expect(find.text('Cut'), findsOneWidget);
+      expect(find.text('Copy'), findsOneWidget);
+      expect(find.text('Paste'), findsOneWidget);
+      expect(find.text('Share...'), findsOneWidget);
+      expect(find.text('Look Up'), findsOneWidget);
+      expect(find.text('Search Web'), findsOneWidget);
+    case TargetPlatform.macOS:
+      expect(find.byType(CupertinoButton), findsNWidgets(3));
+      expect(find.text('Cut'), findsOneWidget);
+      expect(find.text('Copy'), findsOneWidget);
+      expect(find.text('Paste'), findsOneWidget);
+    case TargetPlatform.fuchsia:
+    case TargetPlatform.linux:
+    case TargetPlatform.windows:
+      expect(find.byType(CupertinoButton), findsNWidgets(4));
+      expect(find.text('Cut'), findsOneWidget);
+      expect(find.text('Copy'), findsOneWidget);
+      expect(find.text('Paste'), findsOneWidget);
+      expect(find.text('Select All'), findsOneWidget);
+  }
+}
+
+// Check that the Cupertino text selection toolbar shows the expected buttons
+// when the content is fully selected.
+void _expectCupertinoToolbarForFullSelection() {
+  if (isContextMenuProvidedByPlatform) {
+    _expectNoCupertinoToolbar();
+    return;
+  }
+
+  switch (defaultTargetPlatform) {
+    case TargetPlatform.android:
+      expect(find.byType(CupertinoButton), findsNWidgets(4));
+      expect(find.text('Cut'), findsOneWidget);
+      expect(find.text('Copy'), findsOneWidget);
+      expect(find.text('Paste'), findsOneWidget);
+      expect(find.text('Share...'), findsOneWidget);
+    case TargetPlatform.iOS:
+      expect(find.byType(CupertinoButton), findsNWidgets(6));
+      expect(find.text('Cut'), findsOneWidget);
+      expect(find.text('Copy'), findsOneWidget);
+      expect(find.text('Paste'), findsOneWidget);
+      expect(find.text('Share...'), findsOneWidget);
+      expect(find.text('Look Up'), findsOneWidget);
+      expect(find.text('Search Web'), findsOneWidget);
+    case TargetPlatform.fuchsia:
+    case TargetPlatform.linux:
+    case TargetPlatform.macOS:
+    case TargetPlatform.windows:
+      expect(find.byType(CupertinoButton), findsNWidgets(3));
+      expect(find.text('Cut'), findsOneWidget);
+      expect(find.text('Copy'), findsOneWidget);
+      expect(find.text('Paste'), findsOneWidget);
+  }
+}
+
+// Check that the Cupertino text selection toolbar is correct for a collapsed selection.
+void _expectCupertinoToolbarForCollapsedSelection() {
+  if (isContextMenuProvidedByPlatform) {
+    _expectNoCupertinoToolbar();
+    return;
+  }
+
+  switch (defaultTargetPlatform) {
+    case TargetPlatform.android:
+      expect(find.byType(CupertinoButton), findsNWidgets(4));
+      expect(find.text('Cut'), findsOneWidget);
+      expect(find.text('Copy'), findsOneWidget);
+      expect(find.text('Paste'), findsOneWidget);
+      expect(find.text('Share...'), findsOneWidget);
+    case TargetPlatform.iOS:
+      expect(find.byType(CupertinoButton), findsNWidgets(2));
+      expect(find.text('Paste'), findsOneWidget);
+      expect(find.text('Select All'), findsOneWidget);
+    case TargetPlatform.fuchsia:
+    case TargetPlatform.linux:
+    case TargetPlatform.windows:
+    case TargetPlatform.macOS:
+      expect(find.byType(CupertinoButton), findsNWidgets(1));
+      expect(find.text('Paste'), findsOneWidget);
+  }
+}
+
+void _expectNoMaterialToolbar() {
+  expect(find.byType(TextButton), findsNothing);
+}
+
+// Check that the Material text selection toolbars show the expected buttons
+// when the content is partially selected.
+void _expectMaterialToolbarForPartialSelection() {
+  if (isContextMenuProvidedByPlatform) {
+    _expectNoMaterialToolbar();
+    return;
+  }
+
+  switch (defaultTargetPlatform) {
+    case TargetPlatform.android:
+      expect(find.byType(TextButton), findsNWidgets(5));
+      expect(find.text('Cut'), findsOneWidget);
+      expect(find.text('Copy'), findsOneWidget);
+      expect(find.text('Paste'), findsOneWidget);
+      expect(find.text('Share'), findsOneWidget);
+      expect(find.text('Select all'), findsOneWidget);
+    case TargetPlatform.iOS:
+    case TargetPlatform.macOS:
+    case TargetPlatform.fuchsia:
+    case TargetPlatform.linux:
+    case TargetPlatform.windows:
+      expect(find.byType(TextButton), findsNWidgets(4));
+      expect(find.text('Cut'), findsOneWidget);
+      expect(find.text('Copy'), findsOneWidget);
+      expect(find.text('Paste'), findsOneWidget);
+      expect(find.text('Select all'), findsOneWidget);
+  }
+}
+
+// Check that the Material text selection toolbar shows the expected buttons
+// when the content is fully selected.
+void _expectMaterialToolbarForFullSelection() {
+  if (isContextMenuProvidedByPlatform) {
+    _expectNoMaterialToolbar();
+    return;
+  }
+
+  switch (defaultTargetPlatform) {
+    case TargetPlatform.android:
+      expect(find.byType(TextButton), findsNWidgets(4));
+      expect(find.text('Cut'), findsOneWidget);
+      expect(find.text('Copy'), findsOneWidget);
+      expect(find.text('Paste'), findsOneWidget);
+      expect(find.text('Share'), findsOneWidget);
+    case TargetPlatform.iOS:
+    case TargetPlatform.fuchsia:
+    case TargetPlatform.linux:
+    case TargetPlatform.macOS:
+    case TargetPlatform.windows:
+      expect(find.byType(TextButton), findsNWidgets(3));
+      expect(find.text('Cut'), findsOneWidget);
+      expect(find.text('Copy'), findsOneWidget);
+      expect(find.text('Paste'), findsOneWidget);
+  }
 }
