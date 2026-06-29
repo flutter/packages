@@ -1615,7 +1615,7 @@ void main() {
     const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
     const generator = JavaGenerator();
     generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, contains('public static final String stringConst = "hello";'));
     expect(code, contains('public static final long intConst = 42L;'));
     expect(code, contains('public static final double doubleConst = 3.14;'));

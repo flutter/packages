@@ -155,7 +155,8 @@ TEST(SerializationTests, StreamOutputFullSnapshot) {
 
 TEST(ConstantTests, VerifyConstants) {
   EXPECT_EQ(std::string(aStringConstant), "stringConstantValue");
-  EXPECT_EQ(std::string(aStringConstantWithEscapes), "string\\\\$ConstantValue");
+  EXPECT_EQ(std::string(aStringConstantWithEscapes),
+            "string\\\\$ConstantValue");
   EXPECT_EQ(anIntConstant, 42);
   EXPECT_DOUBLE_EQ(aDoubleConstant, 3.14);
   EXPECT_EQ(aBoolConstant, true);

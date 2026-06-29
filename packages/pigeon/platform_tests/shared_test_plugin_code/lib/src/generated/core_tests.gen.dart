@@ -14,7 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
 const String aStringConstant = 'stringConstantValue';
-const String aStringConstantWithEscapes = 'string\\\\\$ConstantValue';
+const String aStringConstantWithEscapes = r'string\\$ConstantValue';
 const int anIntConstant = 42;
 const double aDoubleConstant = 3.14;
 const bool aBoolConstant = true;

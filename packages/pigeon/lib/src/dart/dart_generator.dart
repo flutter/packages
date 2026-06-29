@@ -206,11 +206,50 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
 
   String _formatValue(String type, Object value) {
     if (type == 'String') {
-      final String escaped = escapeStringSingleQuotes(value.toString());
-      return "'$escaped'";
+      return _makeDartStringLiteral(value.toString());
     } else {
       return value.toString();
     }
+  }
+
+  String _makeDartStringLiteral(String valStr) {
+    final bool hasSpecial =
+        // ignore: use_raw_strings
+        valStr.contains('\\') ||
+        valStr.contains(r'$') ||
+        // ignore: use_raw_strings
+        valStr.contains('\n') ||
+        // ignore: use_raw_strings
+        valStr.contains('\r');
+
+    if (!hasSpecial) {
+      if (!valStr.contains("'")) {
+        return "'$valStr'";
+      }
+      if (!valStr.contains('"')) {
+        return '"$valStr"';
+      }
+      return "r'''$valStr'''";
+    }
+
+    if (!valStr.contains('\n') && !valStr.contains('\r')) {
+      if (!valStr.contains("'")) {
+        return "r'$valStr'";
+      }
+      if (!valStr.contains('"')) {
+        return 'r"$valStr"';
+      }
+    }
+
+    if (!valStr.contains("'''")) {
+      return "r'''$valStr'''";
+    }
+    if (!valStr.contains('"""')) {
+      return 'r"""$valStr"""';
+    }
+
+    final String escaped = escapeStringSingleQuotes(valStr);
+    return "'$escaped'";
   }
 
   @override
