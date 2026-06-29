@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@Skip(
-  'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
-)
 // This file is run as part of a reduced test set in CI on Mac and Windows
 // machines.
 @Tags(<String>['reduced-test-set'])
@@ -12,14 +9,14 @@ library;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
-import '../widgets/feedback_tester.dart';
-import '../test/semantics_tester.dart';
+import 'feedback_tester.dart';
+import 'semantics_tester.dart';
 
 Finder findRenderChipElement() {
   return find.byElementPredicate((Element e) => '${e.renderObject.runtimeType}' == '_RenderChip');
@@ -203,9 +200,9 @@ PaintPattern uniqueRipplePattern(Offset expectedCenter, double expectedRadius) {
     if (offsetsAreClose(center, expectedCenter) && radiiAreClose(radius, expectedRadius)) {
       return true;
     }
-    throw '''
+    throw Exception('''
               Expected: center == $expectedCenter, radius == $expectedRadius
-              Found: center == $center radius == $radius''';
+              Found: center == $center radius == $radius''');
   });
 }
 
