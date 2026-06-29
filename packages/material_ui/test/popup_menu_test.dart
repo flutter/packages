@@ -2,18 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@Skip(
-  'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
-)
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
-import '../widgets/feedback_tester.dart';
-import '../widgets/semantics_tester.dart';
+import 'feedback_tester.dart';
+import 'semantics_tester.dart';
 
 void main() {
   testWidgets('Navigator.push works within a PopupMenuButton', (WidgetTester tester) async {
@@ -3725,11 +3723,13 @@ void main() {
     final BuildContext context = tester.element(find.text('Go'));
     const exampleSetting = RouteSettings(name: 'simple');
 
-    showMenu<void>(
-      context: context,
-      position: RelativeRect.fill,
-      items: const <PopupMenuItem<void>>[PopupMenuItem<void>(child: Text('foo'))],
-      routeSettings: exampleSetting,
+    unawaited(
+      showMenu<void>(
+        context: context,
+        position: RelativeRect.fill,
+        items: const <PopupMenuItem<void>>[PopupMenuItem<void>(child: Text('foo'))],
+        routeSettings: exampleSetting,
+      ),
     );
 
     await tester.pumpAndSettle();
