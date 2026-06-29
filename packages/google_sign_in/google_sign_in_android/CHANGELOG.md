@@ -1,3 +1,7 @@
+## 7.2.14
+
+* Uses Google Identity APIs to extract the user ID from the ID token.
+
 ## 7.2.13
 
 * Bumps com.google.android.gms:play-services-auth from 21.5.1 to 21.6.0.
