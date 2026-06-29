@@ -66,8 +66,8 @@ class PaintRecorder extends CustomPainter {
   bool shouldRepaint(PaintRecorder oldDelegate) => false;
 }
 
-class FakeView extends TestFlutterView {
-  FakeView(ui.FlutterView view, {this.viewId = 100})
+class _FakeView extends TestFlutterView {
+  _FakeView(ui.FlutterView view)
     : super(
         view: view,
         platformDispatcher: view.platformDispatcher as TestPlatformDispatcher,
@@ -75,7 +75,7 @@ class FakeView extends TestFlutterView {
       );
 
   @override
-  final int viewId;
+  int get viewId => 100;
 
   @override
   void render(ui.Scene scene, {ui.Size? size}) {
@@ -1243,7 +1243,7 @@ void main() {
                 builder: (BuildContext context) {
                   outsideView = Material.maybeOf(context);
                   return View(
-                    view: FakeView(tester.view),
+                    view: _FakeView(tester.view),
                     child: Builder(
                       builder: (BuildContext context) {
                         insideView = Material.maybeOf(context);
