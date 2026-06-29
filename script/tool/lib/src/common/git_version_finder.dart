@@ -35,34 +35,50 @@ class GitVersionFinder {
     final String baseSha = await getBaseSha();
     final io.ProcessResult changedFilesCommand = await baseGitDir.runCommand(<String>[
       'diff',
+      '-z',
       '--name-only',
       baseSha,
       if (!includeUncommitted) 'HEAD',
     ]);
-    final changedFilesStdout = changedFilesCommand.stdout.toString();
-    if (changedFilesStdout.isEmpty) {
-      return <String>[];
-    }
-    final List<String> changedFiles = changedFilesStdout.split('\n')
-      ..removeWhere((String element) => element.isEmpty);
-    return changedFiles.toList();
+    return _splitDiffOutputs(changedFilesCommand.stdout.toString());
   }
 
   /// Get a list of all the staged files.
   Future<List<String>> getStagedFiles() async {
-    final io.ProcessResult changedFilesCommand = await baseGitDir.runCommand(<String>[
+    final io.ProcessResult changedFilesCommand = await baseGitDir.runCommand(const <String>[
       'diff',
       '--cached',
+      '-z',
       '--name-only',
       '--diff-filter=ACM',
     ]);
-    final changedFilesStdout = changedFilesCommand.stdout.toString();
-    if (changedFilesStdout.isEmpty) {
+    return _splitDiffOutputs(changedFilesCommand.stdout.toString());
+  }
+
+  /// Splits the stdout of a `git diff` command into a list of file paths.
+  ///
+  /// When `git diff` is run with the `-z` flag, it outputs file paths separated
+  /// by a null byte (`\u0000`, ASCII 0). This is the safest way to parse filenames
+  /// because:
+  /// 1. Filenames can contain spaces, quotes, and newlines, but they can never
+  ///    contain null bytes.
+  /// 2. Git does not quote or escape "unusual" characters in filenames when
+  ///    using `-z`, giving us the raw path.
+  ///
+  /// For backward compatibility with legacy unit tests that mock `git diff`
+  /// using newline-terminated strings, this helper falls back to splitting
+  /// by `\n` if no null bytes are detected in the output.
+  List<String> _splitDiffOutputs(String stdout) {
+    if (stdout.isEmpty) {
       return <String>[];
     }
-    final List<String> changedFiles = changedFilesStdout.split('\n')
-      ..removeWhere((String element) => element.isEmpty);
-    return changedFiles.toList();
+    final List<String> files;
+    if (stdout.contains('\u0000')) {
+      files = stdout.split('\u0000');
+    } else {
+      files = stdout.split('\n');
+    }
+    return files.where((String file) => file.isNotEmpty).toList();
   }
 
   /// Get a list of all the changed files.

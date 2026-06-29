@@ -4,7 +4,6 @@
 
 // ignore_for_file: avoid_print
 
-import 'dart:convert';
 import 'dart:io';
 import 'package:args/command_runner.dart';
 import 'package:path/path.dart' as p;
@@ -33,7 +32,8 @@ class PreCommitCommand extends Command<bool> {
   final String name = 'pre-commit';
 
   @override
-  final String description = 'Checks to run before a "git commit"';
+  final String description =
+      'Runs formatting and static analysis checks on staged changes before a "git commit"';
 
   /// Runs a pre-commit check for correct formatting and static analysis.
   ///
@@ -67,13 +67,12 @@ class PreCommitCommand extends Command<bool> {
     print('Running pre-commit format and static analysis checks for staged changes...');
 
     // Check format.
-    final bool formatPassed = await _checkFormatting(repoRoot, toolScript);
+    final bool formatPassed = await _executeCheckFormatting(repoRoot, toolScript);
     if (!formatPassed) {
       return false;
     }
 
-    // Check static analysis if format passed.
-    return _checkStaticAnalysis(repoRoot, toolScript);
+    return _executeCheckStaticAnalysis(repoRoot, toolScript);
   }
 
   /// Finds the repository root directory using git.
@@ -100,6 +99,7 @@ class PreCommitCommand extends Command<bool> {
     final ProcessResult diffResult = await processRunner('git', <String>[
       'diff',
       '--cached',
+      '-z',
       '--name-only',
     ], workingDirectory: repoRoot.path);
 
@@ -113,20 +113,21 @@ class PreCommitCommand extends Command<bool> {
     }
 
     final stdoutStr = diffResult.stdout as String;
-    if (stdoutStr.trim().isEmpty) {
+    if (stdoutStr.isEmpty) {
       return false;
     }
 
-    final List<String> lines = LineSplitter.split(stdoutStr).toList();
-    return lines.any((String path) =>
-        path.startsWith('packages/') ||
-        path.startsWith('third_party/packages/'));
+    final List<String> lines = stdoutStr.split('\u0000')
+      ..removeWhere((String element) => element.isEmpty);
+    return lines.any(
+      (String path) => path.startsWith('packages/') || path.startsWith('third_party/packages/'),
+    );
   }
 
   /// Runs the formatting check on staged files.
   ///
   /// Returns true if all staged files are correctly formatted or false otherwise.
-  Future<bool> _checkFormatting(Directory repoRoot, String toolScript) async {
+  Future<bool> _executeCheckFormatting(Directory repoRoot, String toolScript) async {
     final ProcessResult formatResult = await processRunner('dart', [
       'run',
       toolScript,
@@ -136,15 +137,11 @@ class PreCommitCommand extends Command<bool> {
     ], workingDirectory: repoRoot.path);
 
     if (formatResult.exitCode != 0) {
-      if (formatResult.stdout.toString().isNotEmpty) {
-        print(formatResult.stdout);
-      }
-      if (formatResult.stderr.toString().isNotEmpty) {
-        print(formatResult.stderr);
-      }
-      print(
-        'Formatting issues found. Please run "dart run script/tool/bin/flutter_plugin_tools.dart format --run-on-staged-packages" to fix them.',
-      );
+      print('''
+Formatting check failed.
+To fix formatting automatically, run:
+  dart run script/tool/bin/flutter_plugin_tools.dart format --run-on-staged-packages
+To bypass this check, commit with --no-verify.''');
       return false;
     }
 
@@ -155,7 +152,7 @@ class PreCommitCommand extends Command<bool> {
   /// Runs the static analysis check on staged files.
   ///
   /// Returns true if all staged files pass analysis or false otherwise.
-  Future<bool> _checkStaticAnalysis(Directory repoRoot, String toolScript) async {
+  Future<bool> _executeCheckStaticAnalysis(Directory repoRoot, String toolScript) async {
     final ProcessResult analyzeResult = await processRunner('dart', [
       'run',
       toolScript,
@@ -165,13 +162,11 @@ class PreCommitCommand extends Command<bool> {
     ], workingDirectory: repoRoot.path);
 
     if (analyzeResult.exitCode != 0) {
-      if (analyzeResult.stdout.toString().isNotEmpty) {
-        print(analyzeResult.stdout);
-      }
-      if (analyzeResult.stderr.toString().isNotEmpty) {
-        print(analyzeResult.stderr);
-      }
-      print('Static analysis failed. Please fix the errors listed above.');
+      print('''
+Static analysis check failed.
+To view and fix analysis errors, run:
+  dart run script/tool/bin/flutter_plugin_tools.dart analyze --run-on-staged-packages --dart
+To bypass this check, commit with --no-verify.''');
       return false;
     }
 

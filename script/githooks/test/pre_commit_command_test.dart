@@ -23,7 +23,7 @@ void main() {
                   return ProcessResult(0, 0, '$repoRoot\n', '');
                 }
                 if (arguments.contains('diff')) {
-                  return ProcessResult(0, 0, 'packages/a_plugin/lib/a.dart\n', '');
+                  return ProcessResult(0, 0, 'packages/a_plugin/lib/a.dart\u0000', '');
                 }
               }
               return ProcessResult(0, 0, 'Success', '');
@@ -57,7 +57,7 @@ void main() {
                   return ProcessResult(0, 0, '$repoRoot\n', '');
                 }
                 if (arguments.contains('diff')) {
-                  return ProcessResult(0, 0, 'packages/a_plugin/lib/a.dart\n', '');
+                  return ProcessResult(0, 0, 'packages/a_plugin/lib/a.dart\u0000', '');
                 }
               }
               if (arguments.contains('format')) {
@@ -77,10 +77,7 @@ void main() {
         ),
       );
       // Verify that static analysis was skipped because formatting failed
-      expect(
-        executedArguments.any((args) => args.contains('analyze')),
-        isFalse,
-      );
+      expect(executedArguments.any((args) => args.contains('analyze')), isFalse);
     });
 
     test('fails when analysis fails', () async {
@@ -94,7 +91,7 @@ void main() {
                   return ProcessResult(0, 0, '$repoRoot\n', '');
                 }
                 if (arguments.contains('diff')) {
-                  return ProcessResult(0, 0, 'packages/a_plugin/lib/a.dart\n', '');
+                  return ProcessResult(0, 0, 'packages/a_plugin/lib/a.dart\u0000', '');
                 }
               }
               if (arguments.contains('analyze')) {
@@ -124,7 +121,12 @@ void main() {
                   return ProcessResult(0, 0, '$repoRoot\n', '');
                 }
                 if (arguments.contains('diff')) {
-                  return ProcessResult(0, 0, 'script/githooks/test/pre_commit_test.dart\n', '');
+                  return ProcessResult(
+                    0,
+                    0,
+                    'script/githooks/test/pre_commit_command_test.dart\u0000',
+                    '',
+                  );
                 }
               }
               return ProcessResult(0, 0, 'Success', '');

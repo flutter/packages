@@ -12,6 +12,7 @@ import 'package:pub_semver/pub_semver.dart';
 
 import 'common/core.dart';
 import 'common/output_utils.dart';
+import 'common/package_command.dart' show PackageCommand;
 import 'common/package_looping_command.dart';
 import 'common/pub_utils.dart';
 import 'common/repository_package.dart';
@@ -393,7 +394,7 @@ class FormatCommand extends PackageLoopingCommand {
     const handFormattedExtension = '.dart';
     const handFormattedPragma = '// This file is hand-formatted.';
 
-    final bool useDiff = getBoolArg('run-on-staged-packages');
+    final bool useDiff = getBoolArg(PackageCommand.runOnStagedPackagesArg);
 
     return files
         .where((File file) {
