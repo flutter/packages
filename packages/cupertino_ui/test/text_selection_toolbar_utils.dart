@@ -3,7 +3,10 @@
 // found in the LICENSE file.
 
 import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import 'editable_text_utils.dart';
 
 Finder findCupertinoOverflowNextButton() {
   return find.byWidgetPredicate((Widget widget) {
@@ -22,4 +25,109 @@ Finder findCupertinoOverflowBackButton() {
 Future<void> tapCupertinoOverflowNextButton(WidgetTester tester) async {
   await tester.tapAt(tester.getCenter(findCupertinoOverflowNextButton()));
   await tester.pumpAndSettle();
+}
+
+void expectNoCupertinoToolbar() {
+  expect(find.byType(CupertinoButton), findsNothing);
+}
+
+// Check that the Cupertino text selection toolbars show the expected buttons
+// when the content is partially selected.
+void expectCupertinoToolbarForPartialSelection() {
+  if (isContextMenuProvidedByPlatform) {
+    expectNoCupertinoToolbar();
+    return;
+  }
+
+  switch (defaultTargetPlatform) {
+    case TargetPlatform.android:
+      expect(find.byType(CupertinoButton), findsNWidgets(5));
+      expect(find.text('Cut'), findsOneWidget);
+      expect(find.text('Copy'), findsOneWidget);
+      expect(find.text('Paste'), findsOneWidget);
+      expect(find.text('Share...'), findsOneWidget);
+      expect(find.text('Select All'), findsOneWidget);
+    case TargetPlatform.iOS:
+      expect(find.byType(CupertinoButton), findsNWidgets(6));
+      expect(find.text('Cut'), findsOneWidget);
+      expect(find.text('Copy'), findsOneWidget);
+      expect(find.text('Paste'), findsOneWidget);
+      expect(find.text('Share...'), findsOneWidget);
+      expect(find.text('Look Up'), findsOneWidget);
+      expect(find.text('Search Web'), findsOneWidget);
+    case TargetPlatform.macOS:
+      expect(find.byType(CupertinoButton), findsNWidgets(3));
+      expect(find.text('Cut'), findsOneWidget);
+      expect(find.text('Copy'), findsOneWidget);
+      expect(find.text('Paste'), findsOneWidget);
+    case TargetPlatform.fuchsia:
+    case TargetPlatform.linux:
+    case TargetPlatform.windows:
+      expect(find.byType(CupertinoButton), findsNWidgets(4));
+      expect(find.text('Cut'), findsOneWidget);
+      expect(find.text('Copy'), findsOneWidget);
+      expect(find.text('Paste'), findsOneWidget);
+      expect(find.text('Select All'), findsOneWidget);
+  }
+}
+
+// Check that the Cupertino text selection toolbar shows the expected buttons
+// when the content is fully selected.
+void expectCupertinoToolbarForFullSelection() {
+  if (isContextMenuProvidedByPlatform) {
+    expectNoCupertinoToolbar();
+    return;
+  }
+
+  switch (defaultTargetPlatform) {
+    case TargetPlatform.android:
+      expect(find.byType(CupertinoButton), findsNWidgets(4));
+      expect(find.text('Cut'), findsOneWidget);
+      expect(find.text('Copy'), findsOneWidget);
+      expect(find.text('Paste'), findsOneWidget);
+      expect(find.text('Share...'), findsOneWidget);
+    case TargetPlatform.iOS:
+      expect(find.byType(CupertinoButton), findsNWidgets(6));
+      expect(find.text('Cut'), findsOneWidget);
+      expect(find.text('Copy'), findsOneWidget);
+      expect(find.text('Paste'), findsOneWidget);
+      expect(find.text('Share...'), findsOneWidget);
+      expect(find.text('Look Up'), findsOneWidget);
+      expect(find.text('Search Web'), findsOneWidget);
+    case TargetPlatform.fuchsia:
+    case TargetPlatform.linux:
+    case TargetPlatform.macOS:
+    case TargetPlatform.windows:
+      expect(find.byType(CupertinoButton), findsNWidgets(3));
+      expect(find.text('Cut'), findsOneWidget);
+      expect(find.text('Copy'), findsOneWidget);
+      expect(find.text('Paste'), findsOneWidget);
+  }
+}
+
+// Check that the Cupertino text selection toolbar is correct for a collapsed selection.
+void expectCupertinoToolbarForCollapsedSelection() {
+  if (isContextMenuProvidedByPlatform) {
+    expectNoCupertinoToolbar();
+    return;
+  }
+
+  switch (defaultTargetPlatform) {
+    case TargetPlatform.android:
+      expect(find.byType(CupertinoButton), findsNWidgets(4));
+      expect(find.text('Cut'), findsOneWidget);
+      expect(find.text('Copy'), findsOneWidget);
+      expect(find.text('Paste'), findsOneWidget);
+      expect(find.text('Share...'), findsOneWidget);
+    case TargetPlatform.iOS:
+      expect(find.byType(CupertinoButton), findsNWidgets(2));
+      expect(find.text('Paste'), findsOneWidget);
+      expect(find.text('Select All'), findsOneWidget);
+    case TargetPlatform.fuchsia:
+    case TargetPlatform.linux:
+    case TargetPlatform.windows:
+    case TargetPlatform.macOS:
+      expect(find.byType(CupertinoButton), findsNWidgets(1));
+      expect(find.text('Paste'), findsOneWidget);
+  }
 }
