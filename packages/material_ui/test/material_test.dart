@@ -7,7 +7,7 @@
 @Tags(<String>['reduced-test-set'])
 library;
 
-import 'dart:ui' as ui;
+import 'dart:ui' show Scene, SemanticsUpdate;
 
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -67,25 +67,21 @@ class PaintRecorder extends CustomPainter {
 }
 
 class _FakeView extends TestFlutterView {
-  _FakeView(ui.FlutterView view)
-    : super(
-        view: view,
-        platformDispatcher: view.platformDispatcher as TestPlatformDispatcher,
-        display: view.display as TestDisplay,
-      );
+  _FakeView(TestFlutterView view)
+    : super(view: view, platformDispatcher: view.platformDispatcher, display: view.display);
 
   @override
   int get viewId => 100;
 
   @override
-  void render(ui.Scene scene, {ui.Size? size}) {
+  void render(Scene scene, {Size? size}) {
     // Do not render the scene in the engine. The engine only observes one
     // instance of FlutterView, and the framework should not render more than
     // one Scene per frame.
   }
 
   @override
-  void updateSemantics(ui.SemanticsUpdate update) {
+  void updateSemantics(SemanticsUpdate update) {
     // Do not send updates for this fake view to the engine's primary view.
   }
 }
