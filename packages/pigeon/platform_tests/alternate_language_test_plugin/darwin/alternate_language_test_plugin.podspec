@@ -17,7 +17,7 @@ A plugin to test Pigeon generation for secondary languages (e.g., Java, Objectiv
   s.public_header_files = 'alternate_language_test_plugin/Sources/alternate_language_test_plugin/include/**/*.h'
   s.ios.dependency 'Flutter'
   s.osx.dependency 'FlutterMacOS'
-  s.ios.deployment_target = '12.0'
+  s.ios.deployment_target = '15.0'
   s.osx.deployment_target = '10.14'
   s.xcconfig = {
     'LIBRARY_SEARCH_PATHS' => '$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/ $(SDKROOT)/usr/lib/swift',
