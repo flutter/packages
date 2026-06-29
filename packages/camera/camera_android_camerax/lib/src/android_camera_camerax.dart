@@ -273,13 +273,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The preset resolution selector for the camera.
   ResolutionSelector? _presetResolutionSelector;
 
-  /// The resolution selector used for still image capture.
-  ///
-  /// For [ResolutionPreset.max], this may differ from [_presetResolutionSelector]
-  /// to allow CameraX high-resolution still capture sizes without affecting
-  /// preview or image analysis resolution selection.
-  ResolutionSelector? _imageCaptureResolutionSelector;
-
   /// The configured target FPS range for the camera.
   CameraIntegerRange? _targetFpsRange;
 
@@ -391,10 +384,6 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Determine ResolutionSelector and QualitySelector based on
     // resolutionPreset for camera UseCases.
     _presetResolutionSelector = _getResolutionSelectorFromPreset(mediaSettings?.resolutionPreset);
-    _imageCaptureResolutionSelector = _getImageCaptureResolutionSelectorFromPreset(
-      mediaSettings?.resolutionPreset,
-      _presetResolutionSelector,
-    );
 
     final int? targetFps = mediaSettings?.fps;
     if (targetFps != null) {
@@ -418,7 +407,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Configure ImageCapture instance.
     imageCapture = ImageCapture(
-      resolutionSelector: _imageCaptureResolutionSelector,
+      resolutionSelector: _presetResolutionSelector,
       /* use CameraX default target rotation */ targetRotation: await deviceOrientationManager
           .getDefaultDisplayRotation(),
     );
@@ -1529,7 +1518,11 @@ class AndroidCameraCameraX extends CameraPlatform {
       case ResolutionPreset.max:
         // Automatically set strategy to choose highest available.
         resolutionStrategy = ResolutionStrategy.highestAvailableStrategy;
-        return ResolutionSelector(resolutionStrategy: resolutionStrategy);
+        return ResolutionSelector(
+          resolutionStrategy: resolutionStrategy,
+          allowedResolutionMode:
+              ResolutionSelectorAllowedResolutionMode.preferHigherResolutionOverCaptureRate,
+        );
       case null:
         // If no preset is specified, default to CameraX's default behavior
         // for each UseCase.
@@ -1551,29 +1544,6 @@ class AndroidCameraCameraX extends CameraPlatform {
       resolutionStrategy: resolutionStrategy,
       resolutionFilter: resolutionFilter,
       aspectRatioStrategy: aspectRatioStrategy,
-    );
-  }
-
-  /// Returns the [ResolutionSelector] used for still image capture.
-  ///
-  /// For [ResolutionPreset.max], this allows CameraX to prefer higher still
-  /// capture resolution over capture rate so that Camera2 high-resolution JPEG
-  /// output sizes can be selected.
-  ResolutionSelector? _getImageCaptureResolutionSelectorFromPreset(
-    ResolutionPreset? preset,
-    ResolutionSelector? presetResolutionSelector,
-  ) {
-    if (preset != ResolutionPreset.max) {
-      return presetResolutionSelector;
-    }
-
-    return ResolutionSelector(
-      resolutionStrategy:
-          presetResolutionSelector?.resolutionStrategy ??
-          ResolutionStrategy.highestAvailableStrategy,
-      resolutionFilter: presetResolutionSelector?.resolutionFilter,
-      allowedResolutionMode:
-          ResolutionSelectorAllowedResolutionMode.preferHigherResolutionOverCaptureRate,
     );
   }
 

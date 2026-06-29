@@ -138,7 +138,7 @@ class PigeonOverrides {
   static ResolutionSelector Function({
     ResolutionFilter? resolutionFilter,
     ResolutionStrategy? resolutionStrategy,
-    ResolutionSelectorAllowedResolutionMode? allowedResolutionMode,
+    int? allowedResolutionMode,
     AspectRatioStrategy? aspectRatioStrategy,
   })?
   resolutionSelector_new;
@@ -887,21 +887,6 @@ enum ResolutionStrategyFallbackRule {
   unknown,
 }
 
-/// Allowed resolution mode for [ResolutionSelector].
-///
-/// See
-/// https://developer.android.com/reference/kotlin/androidx/camera/core/resolutionselector/ResolutionSelector#PREFER_CAPTURE_RATE_OVER_HIGHER_RESOLUTION().
-enum ResolutionSelectorAllowedResolutionMode {
-  /// CameraX prefers capture rate over higher resolution.
-  preferCaptureRateOverHigherResolution,
-
-  /// CameraX prefers higher resolution over capture rate.
-  preferHigherResolutionOverCaptureRate,
-
-  /// The value is not recognized by the wrapper.
-  unknown,
-}
-
 /// Fallback rule for choosing the aspect ratio when the preferred aspect ratio
 /// is not available.
 ///
@@ -990,14 +975,11 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is ResolutionStrategyFallbackRule) {
       buffer.putUint8(137);
       writeValue(buffer, value.index);
-    } else if (value is ResolutionSelectorAllowedResolutionMode) {
+    } else if (value is AspectRatioStrategyFallbackRule) {
       buffer.putUint8(138);
       writeValue(buffer, value.index);
-    } else if (value is AspectRatioStrategyFallbackRule) {
-      buffer.putUint8(139);
-      writeValue(buffer, value.index);
     } else if (value is CameraStateErrorCode) {
-      buffer.putUint8(140);
+      buffer.putUint8(139);
       writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
@@ -1036,11 +1018,8 @@ class _PigeonCodec extends StandardMessageCodec {
         return value == null ? null : ResolutionStrategyFallbackRule.values[value];
       case 138:
         final value = readValue(buffer) as int?;
-        return value == null ? null : ResolutionSelectorAllowedResolutionMode.values[value];
-      case 139:
-        final value = readValue(buffer) as int?;
         return value == null ? null : AspectRatioStrategyFallbackRule.values[value];
-      case 140:
+      case 139:
         final value = readValue(buffer) as int?;
         return value == null ? null : CameraStateErrorCode.values[value];
       default:
@@ -4486,7 +4465,7 @@ class ResolutionSelector extends PigeonInternalProxyApiBaseClass {
     PigeonInstanceManager? pigeon_instanceManager,
     ResolutionFilter? resolutionFilter,
     ResolutionStrategy? resolutionStrategy,
-    ResolutionSelectorAllowedResolutionMode? allowedResolutionMode,
+    int? allowedResolutionMode,
     AspectRatioStrategy? aspectRatioStrategy,
   }) {
     if (PigeonOverrides.resolutionSelector_new != null) {
@@ -4563,7 +4542,9 @@ class ResolutionSelector extends PigeonInternalProxyApiBaseClass {
   final ResolutionStrategy? resolutionStrategy;
 
   /// The allowed resolution mode for the `UseCase`.
-  final ResolutionSelectorAllowedResolutionMode? allowedResolutionMode;
+  ///
+  /// See [ResolutionSelectorAllowedResolutionMode].
+  final int? allowedResolutionMode;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
@@ -4572,7 +4553,7 @@ class ResolutionSelector extends PigeonInternalProxyApiBaseClass {
     ResolutionSelector Function(
       ResolutionFilter? resolutionFilter,
       ResolutionStrategy? resolutionStrategy,
-      ResolutionSelectorAllowedResolutionMode? allowedResolutionMode,
+      int? allowedResolutionMode,
     )?
     pigeon_newInstance,
   }) {
@@ -4594,8 +4575,7 @@ class ResolutionSelector extends PigeonInternalProxyApiBaseClass {
           final int arg_pigeon_instanceIdentifier = args[0]! as int;
           final ResolutionFilter? arg_resolutionFilter = args[1] as ResolutionFilter?;
           final ResolutionStrategy? arg_resolutionStrategy = args[2] as ResolutionStrategy?;
-          final ResolutionSelectorAllowedResolutionMode? arg_allowedResolutionMode =
-              args[3] as ResolutionSelectorAllowedResolutionMode?;
+          final int? arg_allowedResolutionMode = args[3] as int?;
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
               pigeon_newInstance?.call(

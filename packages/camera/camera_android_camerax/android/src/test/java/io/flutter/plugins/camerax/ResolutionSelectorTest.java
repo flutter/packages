@@ -46,7 +46,7 @@ public class ResolutionSelectorTest {
         api.pigeon_defaultConstructor(
             null,
             ResolutionStrategy.HIGHEST_AVAILABLE_STRATEGY,
-            ResolutionSelectorAllowedResolutionMode.PREFER_HIGHER_RESOLUTION_OVER_CAPTURE_RATE,
+            (long) ResolutionSelector.PREFER_HIGHER_RESOLUTION_OVER_CAPTURE_RATE,
             null);
 
     assertEquals(
@@ -64,7 +64,7 @@ public class ResolutionSelectorTest {
         api.pigeon_defaultConstructor(
             null,
             ResolutionStrategy.HIGHEST_AVAILABLE_STRATEGY,
-            ResolutionSelectorAllowedResolutionMode.PREFER_CAPTURE_RATE_OVER_HIGHER_RESOLUTION,
+            (long) ResolutionSelector.PREFER_CAPTURE_RATE_OVER_HIGHER_RESOLUTION,
             null);
 
     assertEquals(
@@ -84,8 +84,8 @@ public class ResolutionSelectorTest {
             .build();
 
     assertEquals(
-        ResolutionSelectorAllowedResolutionMode.PREFER_HIGHER_RESOLUTION_OVER_CAPTURE_RATE,
-        api.allowedResolutionMode(instance));
+        (long) ResolutionSelector.PREFER_HIGHER_RESOLUTION_OVER_CAPTURE_RATE,
+        api.allowedResolutionMode(instance).longValue());
   }
 
   @Test

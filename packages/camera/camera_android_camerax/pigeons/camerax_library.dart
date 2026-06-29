@@ -604,21 +604,6 @@ abstract class ResolutionStrategy {
   ResolutionStrategyFallbackRule getFallbackRule();
 }
 
-/// Allowed resolution mode for [ResolutionSelector].
-///
-/// See
-/// https://developer.android.com/reference/kotlin/androidx/camera/core/resolutionselector/ResolutionSelector#PREFER_CAPTURE_RATE_OVER_HIGHER_RESOLUTION().
-enum ResolutionSelectorAllowedResolutionMode {
-  /// CameraX prefers capture rate over higher resolution.
-  preferCaptureRateOverHigherResolution,
-
-  /// CameraX prefers higher resolution over capture rate.
-  preferHigherResolutionOverCaptureRate,
-
-  /// The value is not recognized by the wrapper.
-  unknown,
-}
-
 /// A set of requirements and priorities used to select a resolution for the
 /// `UseCase`.
 ///
@@ -638,7 +623,9 @@ abstract class ResolutionSelector {
   late final ResolutionStrategy? resolutionStrategy;
 
   /// The allowed resolution mode for the `UseCase`.
-  late final ResolutionSelectorAllowedResolutionMode? allowedResolutionMode;
+  ///
+  /// See [ResolutionSelectorAllowedResolutionMode].
+  late final int? allowedResolutionMode;
 
   /// Returns the specified `AspectRatioStrategy`, or
   /// `AspectRatioStrategy.ratio_4_3FallbackAutoStrategy` if none is specified

@@ -838,7 +838,7 @@ private class CameraXLibraryPigeonProxyApiBaseCodec(val registrar: CameraXLibrar
   }
 
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
-    if (value is Boolean || value is ByteArray || value is Double || value is DoubleArray || value is FloatArray || value is Int || value is IntArray || value is List<*> || value is Long || value is LongArray || value is Map<*, *> || value is String || value is InfoSupportedHardwareLevel || value is AspectRatio || value is CameraStateType || value is LiveDataSupportedType || value is VideoQuality || value is MeteringMode || value is LensFacing || value is CameraXFlashMode || value is ResolutionStrategyFallbackRule || value is ResolutionSelectorAllowedResolutionMode || value is AspectRatioStrategyFallbackRule || value is CameraStateErrorCode || value == null) {
+    if (value is Boolean || value is ByteArray || value is Double || value is DoubleArray || value is FloatArray || value is Int || value is IntArray || value is List<*> || value is Long || value is LongArray || value is Map<*, *> || value is String || value is InfoSupportedHardwareLevel || value is AspectRatio || value is CameraStateType || value is LiveDataSupportedType || value is VideoQuality || value is MeteringMode || value is LensFacing || value is CameraXFlashMode || value is ResolutionStrategyFallbackRule || value is AspectRatioStrategyFallbackRule || value is CameraStateErrorCode || value == null) {
       super.writeValue(stream, value)
       return
     }
@@ -1493,27 +1493,6 @@ enum class ResolutionStrategyFallbackRule(val raw: Int) {
 }
 
 /**
- * Allowed resolution mode for [ResolutionSelector].
- *
- * See
- * https://developer.android.com/reference/kotlin/androidx/camera/core/resolutionselector/ResolutionSelector#PREFER_CAPTURE_RATE_OVER_HIGHER_RESOLUTION().
- */
-enum class ResolutionSelectorAllowedResolutionMode(val raw: Int) {
-  /** CameraX prefers capture rate over higher resolution. */
-  PREFER_CAPTURE_RATE_OVER_HIGHER_RESOLUTION(0),
-  /** CameraX prefers higher resolution over capture rate. */
-  PREFER_HIGHER_RESOLUTION_OVER_CAPTURE_RATE(1),
-  /** The value is not recognized by the wrapper. */
-  UNKNOWN(2);
-
-  companion object {
-    fun ofRaw(raw: Int): ResolutionSelectorAllowedResolutionMode? {
-      return values().firstOrNull { it.raw == raw }
-    }
-  }
-}
-
-/**
  * Fallback rule for choosing the aspect ratio when the preferred aspect ratio
  * is not available.
  *
@@ -1637,15 +1616,10 @@ private open class CameraXLibraryPigeonCodec : StandardMessageCodec() {
       }
       138.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          ResolutionSelectorAllowedResolutionMode.ofRaw(it.toInt())
-        }
-      }
-      139.toByte() -> {
-        return (readValue(buffer) as Long?)?.let {
           AspectRatioStrategyFallbackRule.ofRaw(it.toInt())
         }
       }
-      140.toByte() -> {
+      139.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
           CameraStateErrorCode.ofRaw(it.toInt())
         }
@@ -1691,16 +1665,12 @@ private open class CameraXLibraryPigeonCodec : StandardMessageCodec() {
         stream.write(137)
         writeValue(stream, value.raw.toLong())
       }
-      is ResolutionSelectorAllowedResolutionMode -> {
+      is AspectRatioStrategyFallbackRule -> {
         stream.write(138)
         writeValue(stream, value.raw.toLong())
       }
-      is AspectRatioStrategyFallbackRule -> {
-        stream.write(139)
-        writeValue(stream, value.raw.toLong())
-      }
       is CameraStateErrorCode -> {
-        stream.write(140)
+        stream.write(139)
         writeValue(stream, value.raw.toLong())
       }
       else -> super.writeValue(stream, value)
@@ -4152,7 +4122,7 @@ abstract class PigeonApiResolutionStrategy(open val pigeonRegistrar: CameraXLibr
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiResolutionSelector(open val pigeonRegistrar: CameraXLibraryPigeonProxyApiRegistrar) {
-  abstract fun pigeon_defaultConstructor(resolutionFilter: androidx.camera.core.resolutionselector.ResolutionFilter?, resolutionStrategy: androidx.camera.core.resolutionselector.ResolutionStrategy?, allowedResolutionMode: ResolutionSelectorAllowedResolutionMode?, aspectRatioStrategy: androidx.camera.core.resolutionselector.AspectRatioStrategy?): androidx.camera.core.resolutionselector.ResolutionSelector
+  abstract fun pigeon_defaultConstructor(resolutionFilter: androidx.camera.core.resolutionselector.ResolutionFilter?, resolutionStrategy: androidx.camera.core.resolutionselector.ResolutionStrategy?, allowedResolutionMode: Long?, aspectRatioStrategy: androidx.camera.core.resolutionselector.AspectRatioStrategy?): androidx.camera.core.resolutionselector.ResolutionSelector
 
   /** The resolution filter to output the final desired sizes list. */
   abstract fun resolutionFilter(pigeon_instance: androidx.camera.core.resolutionselector.ResolutionSelector): androidx.camera.core.resolutionselector.ResolutionFilter?
@@ -4160,8 +4130,12 @@ abstract class PigeonApiResolutionSelector(open val pigeonRegistrar: CameraXLibr
   /** The resolution selection strategy for the `UseCase`. */
   abstract fun resolutionStrategy(pigeon_instance: androidx.camera.core.resolutionselector.ResolutionSelector): androidx.camera.core.resolutionselector.ResolutionStrategy?
 
-  /** The allowed resolution mode for the `UseCase`. */
-  abstract fun allowedResolutionMode(pigeon_instance: androidx.camera.core.resolutionselector.ResolutionSelector): ResolutionSelectorAllowedResolutionMode?
+  /**
+   * The allowed resolution mode for the `UseCase`.
+   *
+   * See [ResolutionSelectorAllowedResolutionMode].
+   */
+  abstract fun allowedResolutionMode(pigeon_instance: androidx.camera.core.resolutionselector.ResolutionSelector): Long?
 
   /**
    * Returns the specified `AspectRatioStrategy`, or
@@ -4182,7 +4156,7 @@ abstract class PigeonApiResolutionSelector(open val pigeonRegistrar: CameraXLibr
             val pigeon_identifierArg = args[0] as Long
             val resolutionFilterArg = args[1] as androidx.camera.core.resolutionselector.ResolutionFilter?
             val resolutionStrategyArg = args[2] as androidx.camera.core.resolutionselector.ResolutionStrategy?
-            val allowedResolutionModeArg = args[3] as ResolutionSelectorAllowedResolutionMode?
+            val allowedResolutionModeArg = args[3] as Long?
             val aspectRatioStrategyArg = args[4] as androidx.camera.core.resolutionselector.AspectRatioStrategy?
             val wrapped: List<Any?> = try {
               api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(resolutionFilterArg,resolutionStrategyArg,allowedResolutionModeArg,aspectRatioStrategyArg), pigeon_identifierArg)
