@@ -2,16 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@Skip(
-  'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
-)
+import 'dart:async';
 import 'dart:ui';
 
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
-import '../widgets/feedback_tester.dart';
+import 'feedback_tester.dart';
 
 void main() {
   late DateTime firstDate;
@@ -1210,12 +1208,14 @@ void main() {
       await tester.tap(find.text('Go'));
       expect(buttonContext, isNotNull);
 
-      showDateRangePicker(
-        context: buttonContext,
-        initialDateRange: initialDateRange,
-        firstDate: firstDate,
-        lastDate: lastDate,
-        initialEntryMode: DatePickerEntryMode.input,
+      unawaited(
+        showDateRangePicker(
+          context: buttonContext,
+          initialDateRange: initialDateRange,
+          firstDate: firstDate,
+          lastDate: lastDate,
+          initialEntryMode: DatePickerEntryMode.input,
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -1406,11 +1406,13 @@ void main() {
       );
 
       final BuildContext context = tester.element(find.text('Test'));
-      showDateRangePicker(
-        context: context,
-        firstDate: DateTime(2018),
-        lastDate: DateTime(2030),
-        anchorPoint: const Offset(1000, 0),
+      unawaited(
+        showDateRangePicker(
+          context: context,
+          firstDate: DateTime(2018),
+          lastDate: DateTime(2030),
+          anchorPoint: const Offset(1000, 0),
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -1443,11 +1445,13 @@ void main() {
       );
 
       final BuildContext context = tester.element(find.text('Test'));
-      showDateRangePicker(
-        context: context,
-        firstDate: DateTime(2018),
-        lastDate: DateTime(2030),
-        anchorPoint: const Offset(1000, 0),
+      unawaited(
+        showDateRangePicker(
+          context: context,
+          firstDate: DateTime(2018),
+          lastDate: DateTime(2030),
+          anchorPoint: const Offset(1000, 0),
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -1480,7 +1484,9 @@ void main() {
       );
 
       final BuildContext context = tester.element(find.text('Test'));
-      showDateRangePicker(context: context, firstDate: DateTime(2018), lastDate: DateTime(2030));
+      unawaited(
+        showDateRangePicker(context: context, firstDate: DateTime(2018), lastDate: DateTime(2030)),
+      );
       await tester.pumpAndSettle();
 
       // By default it should place the dialog on the left screen
@@ -1536,22 +1542,26 @@ void main() {
 
       if (keyboardType == null) {
         // If no keyboardType, expect the default.
-        showDateRangePicker(
-          context: buttonContext,
-          initialDateRange: initialDateRange,
-          firstDate: firstDate,
-          lastDate: lastDate,
-          initialEntryMode: DatePickerEntryMode.input,
+        unawaited(
+          showDateRangePicker(
+            context: buttonContext,
+            initialDateRange: initialDateRange,
+            firstDate: firstDate,
+            lastDate: lastDate,
+            initialEntryMode: DatePickerEntryMode.input,
+          ),
         );
       } else {
         // If there is a keyboardType, expect it to be passed through.
-        showDateRangePicker(
-          context: buttonContext,
-          initialDateRange: initialDateRange,
-          firstDate: firstDate,
-          lastDate: lastDate,
-          initialEntryMode: DatePickerEntryMode.input,
-          keyboardType: keyboardType,
+        unawaited(
+          showDateRangePicker(
+            context: buttonContext,
+            initialDateRange: initialDateRange,
+            firstDate: firstDate,
+            lastDate: lastDate,
+            initialEntryMode: DatePickerEntryMode.input,
+            keyboardType: keyboardType,
+          ),
         );
       }
       await tester.pumpAndSettle();
