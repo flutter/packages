@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@Skip(
-  'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
-)
 @TestOn('!chrome')
 library;
 
@@ -12,13 +9,13 @@ import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/gestures.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:vector_math/vector_math_64.dart' show Matrix3;
 
-import '../widgets/semantics_tester.dart';
 import 'data_table_test_utils.dart';
+import 'semantics_tester.dart';
 
 void main() {
   testWidgets('DataTable control test', (WidgetTester tester) async {
