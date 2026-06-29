@@ -2,20 +2,19 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@Skip(
-  'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
-)
 // This file is run as part of a reduced test set in CI on Mac and Windows
 // machines.
 @Tags(<String>['reduced-test-set'])
 library;
 
-import 'package:material_ui/material_ui.dart';
+import 'dart:ui' as ui;
+
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:leak_tracker_flutter_testing/leak_tracker_flutter_testing.dart';
-import '../widgets/multi_view_testing.dart';
+import 'package:material_ui/material_ui.dart';
+
 import 'test_border.dart' show TestBorder;
 
 class NotifyMaterial extends StatelessWidget {
@@ -65,6 +64,30 @@ class PaintRecorder extends CustomPainter {
 
   @override
   bool shouldRepaint(PaintRecorder oldDelegate) => false;
+}
+
+class FakeView extends TestFlutterView {
+  FakeView(ui.FlutterView view, {this.viewId = 100})
+    : super(
+        view: view,
+        platformDispatcher: view.platformDispatcher as TestPlatformDispatcher,
+        display: view.display as TestDisplay,
+      );
+
+  @override
+  final int viewId;
+
+  @override
+  void render(ui.Scene scene, {ui.Size? size}) {
+    // Do not render the scene in the engine. The engine only observes one
+    // instance of FlutterView, and the framework should not render more than
+    // one Scene per frame.
+  }
+
+  @override
+  void updateSemantics(ui.SemanticsUpdate update) {
+    // Do not send updates for this fake view to the engine's primary view.
+  }
 }
 
 class ElevationColor {
