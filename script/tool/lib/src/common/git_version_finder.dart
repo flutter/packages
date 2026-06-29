@@ -58,16 +58,9 @@ class GitVersionFinder {
   /// Splits the stdout of a `git diff` command into a list of file paths.
   ///
   /// When `git diff` is run with the `-z` flag, it outputs file paths separated
-  /// by a null byte (`\u0000`, ASCII 0). This is the safest way to parse filenames
-  /// because:
-  /// 1. Filenames can contain spaces, quotes, and newlines, but they can never
-  ///    contain null bytes.
-  /// 2. Git does not quote or escape "unusual" characters in filenames when
-  ///    using `-z`, giving us the raw path.
-  ///
-  /// For backward compatibility with legacy unit tests that mock `git diff`
-  /// using newline-terminated strings, this helper falls back to splitting
-  /// by `\n` if no null bytes are detected in the output.
+  /// by a null byte (`\u0000`, ASCII 0). Otherwise, it outputs file paths
+  /// separated by newlines. This method accounts for that by checking for
+  /// null bytes and falling back to splitting by newlines if none are found.
   List<String> _splitDiffOutputs(String stdout) {
     if (stdout.isEmpty) {
       return <String>[];

@@ -18,10 +18,10 @@ dart script/githooks/bin/install_hooks.dart
 
 ### pre-commit
 
-The `pre-commit` hook runs automatically when you run `git commit` and performs the following on any staged changes:
+The `pre-commit` hook runs automatically when you run `git commit` and performs the following checks on any staged changes:
 
-1. **Formatting**: It runs `flutter_plugin_tools format --run-on-staged-packages` to verify that all staged files in the targeted packages are correctly formatted.
-2. **Static Analysis**: If formatting passes, it runs `flutter_plugin_tools analyze --run-on-staged-packages --dart` to run static analysis on the staged packages.
+1. **Formatting**: It runs `dart run script/tool/bin/flutter_plugin_tools.dart format --run-on-staged-packages` to verify that all staged files in the targeted packages are correctly formatted.
+2. **Static Analysis**: If formatting passes, it runs `dart run script/tool/bin/flutter_plugin_tools.dart analyze --run-on-staged-packages --dart` to run static analysis on the staged packages.
 
 If either check fails, it aborts the commit. To bypass the hook (for a WIP commit, for example), you can use the `--no-verify` flag:
 
