@@ -2,21 +2,20 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@Skip(
-  'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
-)
 // This file is run as part of a reduced test set in CI on Mac and Windows
 // machines.
 @Tags(<String>['reduced-test-set'])
 library;
 
+import 'dart:async';
 import 'dart:ui';
 
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import '../widgets/clipboard_utils.dart';
+import 'package:material_ui/material_ui.dart';
+
+import 'clipboard_utils.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -2191,12 +2190,14 @@ void main() {
       );
 
       final BuildContext context = tester.element(find.text('Test'));
-      showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(2018),
-        lastDate: DateTime(2030),
-        anchorPoint: const Offset(1000, 0),
+      unawaited(
+        showDatePicker(
+          context: context,
+          initialDate: DateTime.now(),
+          firstDate: DateTime(2018),
+          lastDate: DateTime(2030),
+          anchorPoint: const Offset(1000, 0),
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -2229,11 +2230,13 @@ void main() {
       );
 
       final BuildContext context = tester.element(find.text('Test'));
-      showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(2018),
-        lastDate: DateTime(2030),
+      unawaited(
+        showDatePicker(
+          context: context,
+          initialDate: DateTime.now(),
+          firstDate: DateTime(2018),
+          lastDate: DateTime(2030),
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -2266,11 +2269,13 @@ void main() {
       );
 
       final BuildContext context = tester.element(find.text('Test'));
-      showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(2018),
-        lastDate: DateTime(2030),
+      unawaited(
+        showDatePicker(
+          context: context,
+          initialDate: DateTime.now(),
+          firstDate: DateTime(2018),
+          lastDate: DateTime(2030),
+        ),
       );
       await tester.pumpAndSettle();
 
