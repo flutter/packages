@@ -1754,15 +1754,15 @@ void main() {
     final SemanticsNode buttonOne = tester.semantics.find(
       find.descendant(of: sheetFinder, matching: find.bySemanticsLabel('One')),
     );
-    expect(buttonOne, isSemantics(isButton: true, isFocusable: true));
+    expect(buttonOne, isSemantics(isButton: true, isFocusable: true, hasTapAction: true, hasFocusAction: true));
     final SemanticsNode buttonTwo = tester.semantics.find(
       find.descendant(of: sheetFinder, matching: find.bySemanticsLabel('Two')),
     );
-    expect(buttonTwo, isSemantics(isButton: true, isFocusable: true));
+    expect(buttonTwo, isSemantics(isButton: true, isFocusable: true, hasTapAction: true, hasFocusAction: true));
     final SemanticsNode buttonCancel = tester.semantics.find(
       find.descendant(of: sheetFinder, matching: find.bySemanticsLabel('Cancel')),
     );
-    expect(buttonCancel, isSemantics(isButton: true, isFocusable: true));
+    expect(buttonCancel, isSemantics(isButton: true, isFocusable: true, hasTapAction: true, hasFocusAction: true));
   });
 
   testWidgets('Conflicting scrollbars are not applied by ScrollBehavior to CupertinoActionSheet', (
