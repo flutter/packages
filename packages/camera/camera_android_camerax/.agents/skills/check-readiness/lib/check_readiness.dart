@@ -6,7 +6,6 @@ import 'dart:io';
 
 import 'package:file/file.dart';
 import 'package:file/local.dart';
-import 'package:path/path.dart' as p;
 import 'package:process/process.dart';
 
 /// Checks if the environment is ready for new work.
@@ -49,7 +48,8 @@ class ReadinessChecker {
 
   Future<bool> _checkSymlinks(String workspaceRoot) async {
     _log('1. Checking skill symlinks...');
-    final Directory agentsDir = _fileSystem.directory(p.join(workspaceRoot, '.agents', 'skills'));
+    final Directory agentsDir =
+        _fileSystem.directory(_fileSystem.path.join(workspaceRoot, '.agents', 'skills'));
     if (!agentsDir.existsSync()) {
       // If it doesn't exist, there are no broken symlinks.
       _log('All symlinks resolve correctly.');
