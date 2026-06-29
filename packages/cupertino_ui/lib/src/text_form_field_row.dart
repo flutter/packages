@@ -48,7 +48,11 @@ import 'text_field.dart';
 /// [CupertinoTextField] class and [CupertinoTextField.borderless],
 /// the constructor.
 ///
-/// {@tool snippet}
+// TODO(dkwingsmt): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(dkwingsmt): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
+///
 ///
 /// Creates a [CupertinoTextFormFieldRow] with a leading text and validator
 /// function.
@@ -71,14 +75,18 @@ import 'text_field.dart';
 ///   },
 /// )
 /// ```
-/// {@end-tool}
 ///
-/// {@tool dartpad}
+// TODO(dkwingsmt): End of the blue example container.
+///
+// TODO(dkwingsmt): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+///
 /// This example shows how to move the focus to the next field when the user
 /// presses the SPACE key.
 ///
-/// ** See code in examples/api/lib/cupertino/text_form_field_row/cupertino_text_form_field_row.1.dart **
-/// {@end-tool}
+/// {@example /example/lib/text_form_field_row/cupertino_text_form_field_row.1.dart}
+///
+// TODO(dkwingsmt): End of the blue example container.
 class CupertinoTextFormFieldRow extends FormField<String> {
   /// Creates a [CupertinoFormRow] containing a [FormField] that wraps
   /// a [CupertinoTextField].

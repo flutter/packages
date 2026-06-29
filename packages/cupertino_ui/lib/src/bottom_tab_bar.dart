@@ -46,11 +46,14 @@ const Color _kDefaultTabBarInactiveColor = CupertinoColors.inactiveGray;
 /// this behavior, wrap each of the `navigationBar`'s components inside a
 /// [MediaQuery] with the desired [TextScaler].
 ///
-/// {@tool dartpad}
+// TODO(dkwingsmt): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+///
 /// This example shows a [CupertinoTabBar] placed in a [CupertinoTabScaffold].
 ///
-/// ** See code in examples/api/lib/cupertino/bottom_tab_bar/cupertino_tab_bar.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/bottom_tab_bar/cupertino_tab_bar.0.dart}
+///
+// TODO(dkwingsmt): End of the blue example container.
 ///
 /// See also:
 ///

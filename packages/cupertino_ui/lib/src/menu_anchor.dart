@@ -295,19 +295,25 @@ typedef CupertinoMenuAnimationStatusChangedCallback = void Function(AnimationSta
 /// invoked every time the [AnimationStatus] of the menu animation changes.
 ///
 /// ## Usage
-/// {@tool sample}
+// TODO(dkwingsmt): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+///
 /// This example demonstrates a simple [CupertinoMenuAnchor] that wraps
 /// a button.
 ///
-/// ** See code in examples/api/lib/cupertino/menu_anchor/menu_anchor.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/menu_anchor/menu_anchor.0.dart}
 ///
-/// {@tool dartpad}
+// TODO(dkwingsmt): End of the blue example container.
+///
+// TODO(dkwingsmt): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+///
 /// This example demonstrates a [CupertinoMenuAnchor] that wraps a button and
 /// shows a menu with three [CupertinoMenuItem]s and one [CupertinoMenuDivider].
 ///
-/// ** See code in examples/api/lib/cupertino/menu_anchor/menu_anchor.1.dart **
-/// {@end-tool}
+/// {@example /example/lib/menu_anchor/menu_anchor.1.dart}
+///
+// TODO(dkwingsmt): End of the blue example container.
 ///
 /// See also:
 ///
@@ -1695,19 +1701,25 @@ class _CupertinoDividerPainter extends CustomPainter {
 /// will perform a destructive action, and will color the text of the menu item
 /// [CupertinoColors.systemRed].
 ///
-/// {@tool sample}
+// TODO(dkwingsmt): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+///
 /// This example demonstrates a simple [CupertinoMenuAnchor] that wraps
 /// a button.
 ///
-/// ** See code in examples/api/lib/cupertino/menu_anchor/menu_anchor.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/menu_anchor/menu_anchor.0.dart}
 ///
-/// {@tool dartpad}
+// TODO(dkwingsmt): End of the blue example container.
+///
+// TODO(dkwingsmt): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+///
 /// This example demonstrates a [CupertinoMenuAnchor] that wraps a button and
 /// shows a menu with three [CupertinoMenuItem]s and one [CupertinoMenuDivider].
 ///
-/// ** See code in examples/api/lib/cupertino/menu_anchor/menu_anchor.1.dart **
-/// {@end-tool}
+/// {@example /example/lib/menu_anchor/menu_anchor.1.dart}
+///
+// TODO(dkwingsmt): End of the blue example container.
 ///
 /// See also:
 /// * [CupertinoMenuAnchor], a Cupertino-style widget that shows a menu of

@@ -661,7 +661,11 @@ abstract final class CupertinoColors {
 /// [CupertinoDynamicColor.resolve] against its own [BuildContext], on a best-effort
 /// basis.
 ///
-/// {@tool snippet}
+// TODO(dkwingsmt): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(dkwingsmt): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
+///
 /// By default a [CupertinoButton] has no background color. The following sample
 /// code shows how to build a [CupertinoButton] that appears white in light mode,
 /// and changes automatically to black in dark mode.
@@ -677,7 +681,8 @@ abstract final class CupertinoColors {
 ///   child: child,
 /// )
 /// ```
-/// {@end-tool}
+///
+// TODO(dkwingsmt): End of the blue example container.
 ///
 /// ### Using a [CupertinoDynamicColor] from a [CupertinoTheme]
 ///
@@ -686,7 +691,11 @@ abstract final class CupertinoColors {
 /// implicitly resolves all the colors used in the retrieved [CupertinoThemeData],
 /// before returning it.
 ///
-/// {@tool snippet}
+// TODO(dkwingsmt): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(dkwingsmt): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
+///
 /// The following code sample creates a [Container] with the `primaryColor` of the
 /// current theme. If `primaryColor` is a [CupertinoDynamicColor], the container
 /// will be adaptive, thanks to [CupertinoTheme.of]: it will switch to `primaryColor`'s
@@ -701,7 +710,8 @@ abstract final class CupertinoColors {
 ///   color: CupertinoTheme.of(context).primaryColor,
 /// )
 /// ```
-/// {@end-tool}
+///
+// TODO(dkwingsmt): End of the blue example container.
 ///
 /// ### Manually Resolving a [CupertinoDynamicColor]
 ///
@@ -712,7 +722,11 @@ abstract final class CupertinoColors {
 /// the colors used in the [Border] have to be resolved manually before being passed
 /// to [CupertinoNavigationBar]'s constructor.
 ///
-/// {@tool snippet}
+// TODO(dkwingsmt): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(dkwingsmt): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
+///
 ///
 /// The following code samples demonstrate two cases where you have to manually
 /// resolve a [CupertinoDynamicColor].
@@ -735,7 +749,8 @@ abstract final class CupertinoColors {
 ///   color: CupertinoDynamicColor.resolve(CupertinoColors.systemBlue, context),
 /// )
 /// ```
-/// {@end-tool}
+///
+// TODO(dkwingsmt): End of the blue example container.
 ///
 /// See also:
 ///

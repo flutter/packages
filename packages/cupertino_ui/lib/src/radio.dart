@@ -70,7 +70,9 @@ const List<double> _kDisabledDarkGradientOpacities = <double>[0.08, 0.14];
 /// [RadioGroup.groupValue], and the [CupertinoRadio] under it with matching
 /// [value] will be selected.
 ///
-/// {@tool dartpad}
+// TODO(dkwingsmt): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+///
 /// Here is an example of CupertinoRadio widgets wrapped in CupertinoListTiles.
 ///
 /// The currently selected character is passed into `RadioGroup.groupValue`, which is
@@ -83,8 +85,9 @@ const List<double> _kDisabledDarkGradientOpacities = <double>[0.08, 0.14];
 /// This causes the buttons to rebuild with the updated `RadioGroup.groupValue`, and
 /// therefore the selection of the second button.
 ///
-/// ** See code in examples/api/lib/cupertino/radio/cupertino_radio.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/radio/cupertino_radio.0.dart}
+///
+// TODO(dkwingsmt): End of the blue example container.
 ///
 /// See also:
 ///
@@ -174,12 +177,15 @@ class CupertinoRadio<T> extends StatefulWidget {
 
   /// {@macro flutter.widget.RawRadio.toggleable}
   ///
-  /// {@tool dartpad}
+  // TODO(dkwingsmt): Replace the following block with a blue example container
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  ///
   /// This example shows how to enable deselecting a radio button by setting the
   /// [toggleable] attribute.
   ///
-  /// ** See code in examples/api/lib/cupertino/radio/cupertino_radio.toggleable.0.dart **
-  /// {@end-tool}
+  /// {@example /example/lib/radio/cupertino_radio.toggleable.0.dart}
+  ///
+  // TODO(dkwingsmt): End of the blue example container.
   final bool toggleable;
 
   /// Controls whether the radio displays in a checkbox style or the default iOS

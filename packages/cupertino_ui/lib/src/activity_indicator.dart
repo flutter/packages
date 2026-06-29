@@ -21,11 +21,14 @@ const Color _kActiveTickColor = CupertinoDynamicColor.withBrightness(
 ///
 /// {@youtube 560 315 https://www.youtube.com/watch?v=AENVH-ZqKDQ}
 ///
-/// {@tool dartpad}
+// TODO(dkwingsmt): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+///
 /// This example shows how [CupertinoActivityIndicator] can be customized.
 ///
-/// ** See code in examples/api/lib/cupertino/activity_indicator/cupertino_activity_indicator.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/activity_indicator/cupertino_activity_indicator.0.dart}
+///
+// TODO(dkwingsmt): End of the blue example container.
 ///
 /// See also:
 ///
@@ -201,11 +204,14 @@ class _CupertinoActivityIndicatorPainter extends CustomPainter {
 /// The [CupertinoLinearActivityIndicator] is a linear progress bar that
 /// displays a colored bar to indicate the progress of an ongoing task.
 ///
-/// {@tool dartpad}
+// TODO(dkwingsmt): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+///
 /// This example shows how [CupertinoLinearActivityIndicator] can be customized.
 ///
-/// ** See code in examples/api/lib/cupertino/activity_indicator/cupertino_linear_activity_indicator.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/activity_indicator/cupertino_linear_activity_indicator.0.dart}
+///
+// TODO(dkwingsmt): End of the blue example container.
 ///
 /// See also:
 ///

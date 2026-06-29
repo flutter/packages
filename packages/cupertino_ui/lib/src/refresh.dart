@@ -266,13 +266,16 @@ typedef RefreshCallback = Future<void> Function();
 /// sliver such as [CupertinoSliverNavigationBar] and your main scrollable
 /// content's sliver.
 ///
-/// {@tool dartpad}
+// TODO(dkwingsmt): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+///
 /// When the user scrolls past [refreshTriggerPullDistance],
 /// this sample shows the default iOS pull to refresh indicator for 1 second and
 /// adds a new item to the top of the list view.
 ///
-/// ** See code in examples/api/lib/cupertino/refresh/cupertino_sliver_refresh_control.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/refresh/cupertino_sliver_refresh_control.0.dart}
+///
+// TODO(dkwingsmt): End of the blue example container.
 ///
 /// See also:
 ///

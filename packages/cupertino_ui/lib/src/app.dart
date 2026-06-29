@@ -67,7 +67,11 @@ import 'theme.dart';
 ///  * The San Francisco font family is unavailable on Android and can result
 ///    in undefined font behavior.
 ///
-/// {@tool snippet}
+// TODO(dkwingsmt): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(dkwingsmt): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
+///
 /// This example shows how to create a [CupertinoApp] that disables the "debug"
 /// banner with a [home] route that will be displayed when the app is launched.
 ///
@@ -84,9 +88,14 @@ import 'theme.dart';
 ///   debugShowCheckedModeBanner: false,
 /// )
 /// ```
-/// {@end-tool}
 ///
-/// {@tool snippet}
+// TODO(dkwingsmt): End of the blue example container.
+///
+// TODO(dkwingsmt): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(dkwingsmt): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
+///
 /// This example shows how to create a [CupertinoApp] that uses the [routes]
 /// `Map` to define the "home" route and an "about" route.
 ///
@@ -112,9 +121,14 @@ import 'theme.dart';
 ///   },
 /// )
 /// ```
-/// {@end-tool}
 ///
-/// {@tool snippet}
+// TODO(dkwingsmt): End of the blue example container.
+///
+// TODO(dkwingsmt): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(dkwingsmt): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
+///
 /// This example shows how to create a [CupertinoApp] that defines a [theme] that
 /// will be used for Cupertino widgets in the app.
 ///
@@ -134,7 +148,8 @@ import 'theme.dart';
 ///   ),
 /// )
 /// ```
-/// {@end-tool}
+///
+// TODO(dkwingsmt): End of the blue example container.
 ///
 /// See also:
 ///
@@ -357,7 +372,11 @@ class CupertinoApp extends StatefulWidget {
   final bool debugShowCheckedModeBanner;
 
   /// {@macro flutter.widgets.widgetsApp.shortcuts}
-  /// {@tool snippet}
+  // TODO(dkwingsmt): Replace the following block with a blue example container
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // TODO(dkwingsmt): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// This example shows how to add a single shortcut for
   /// [LogicalKeyboardKey.select] to the default shortcuts without needing to
   /// add your own [Shortcuts] widget.
@@ -380,12 +399,17 @@ class CupertinoApp extends StatefulWidget {
   ///   );
   /// }
   /// ```
-  /// {@end-tool}
+  ///
+  // TODO(dkwingsmt): End of the blue example container.
   /// {@macro flutter.widgets.widgetsApp.shortcuts.seeAlso}
   final Map<ShortcutActivator, Intent>? shortcuts;
 
   /// {@macro flutter.widgets.widgetsApp.actions}
-  /// {@tool snippet}
+  // TODO(dkwingsmt): Replace the following block with a blue example container
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // TODO(dkwingsmt): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// This example shows how to add a single action handling an
   /// [ActivateAction] to the default actions without needing to
   /// add your own [Actions] widget.
@@ -413,7 +437,8 @@ class CupertinoApp extends StatefulWidget {
   ///   );
   /// }
   /// ```
-  /// {@end-tool}
+  ///
+  // TODO(dkwingsmt): End of the blue example container.
   /// {@macro flutter.widgets.widgetsApp.actions.seeAlso}
   final Map<Type, Action<Intent>>? actions;
 

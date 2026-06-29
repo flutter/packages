@@ -161,20 +161,26 @@ enum CupertinoListSectionType {
 ///
 /// {@macro flutter.material.Material.clipBehavior}
 ///
-/// {@tool dartpad}
+// TODO(dkwingsmt): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+///
 /// Creates a base [CupertinoListSection] containing [CupertinoListTile]s with
 /// `leading`, `title`, `additionalInfo` and `trailing` widgets.
 ///
-/// ** See code in examples/api/lib/cupertino/list_section/list_section_base.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/list_section/list_section_base.0.dart}
 ///
-/// {@tool dartpad}
+// TODO(dkwingsmt): End of the blue example container.
+///
+// TODO(dkwingsmt): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+///
 /// Creates an "Inset Grouped" [CupertinoListSection] containing
 /// notched [CupertinoListTile]s with `leading`, `title`, `additionalInfo` and
 /// `trailing` widgets.
 ///
-/// ** See code in examples/api/lib/cupertino/list_section/list_section_inset.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/list_section/list_section_inset.0.dart}
+///
+// TODO(dkwingsmt): End of the blue example container.
 ///
 /// See also:
 ///

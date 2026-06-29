@@ -213,13 +213,16 @@ bool _isInAccessibilityMode(BuildContext context) {
 /// Typically passed as the child widget to [showDialog], which displays the
 /// dialog.
 ///
-/// {@tool dartpad}
+// TODO(dkwingsmt): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+///
 /// This sample shows how to use a [CupertinoAlertDialog].
 ///	The [CupertinoAlertDialog] shows an alert with a set of two choices
 /// when [CupertinoButton] is pressed.
 ///
-/// ** See code in examples/api/lib/cupertino/dialog/cupertino_alert_dialog.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/dialog/cupertino_alert_dialog.0.dart}
+///
+// TODO(dkwingsmt): End of the blue example container.
 ///
 /// See also:
 ///
@@ -517,13 +520,16 @@ class _CupertinoAlertDialogState extends State<CupertinoAlertDialog> {
 /// which is useful for more complicated layouts, such as rendering divider gaps
 /// in [CupertinoAlertDialog] or rendering custom surface colors.
 ///
-/// {@tool dartpad}
+// TODO(dkwingsmt): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+///
 /// This sample shows how to use a [CupertinoPopupSurface]. The [CupertinoPopupSurface]
 /// shows a modal popup from the bottom of the screen.
 /// Toggle the switch to configure its surface color.
 ///
-/// ** See code in examples/api/lib/cupertino/dialog/cupertino_popup_surface.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/dialog/cupertino_popup_surface.0.dart}
+///
+// TODO(dkwingsmt): End of the blue example container.
 ///
 /// See also:
 ///
@@ -1052,13 +1058,16 @@ class _ActionSheetGestureDetector extends StatelessWidget {
 /// [showCupertinoModalPopup], which displays the action sheet by sliding it up
 /// from the bottom of the screen.
 ///
-/// {@tool dartpad}
+// TODO(dkwingsmt): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+///
 /// This sample shows how to use a [CupertinoActionSheet].
 ///	The [CupertinoActionSheet] shows a modal popup that slides in from the
 /// bottom when [CupertinoButton] is pressed.
 ///
-/// ** See code in examples/api/lib/cupertino/dialog/cupertino_action_sheet.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/dialog/cupertino_action_sheet.0.dart}
+///
+// TODO(dkwingsmt): End of the blue example container.
 ///
 /// See also:
 ///
