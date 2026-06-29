@@ -7,6 +7,7 @@
 @Tags(<String>['reduced-test-set'])
 library;
 
+import 'dart:async' show unawaited;
 import 'dart:math';
 import 'dart:ui';
 
@@ -570,16 +571,18 @@ void main() {
 
     final BuildContext context = tester.element(find.text('Go'));
 
-    showCupertinoDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          width: 100.0,
-          height: 100.0,
-          alignment: Alignment.center,
-          child: const Text('Dialog'),
-        );
-      },
+    unawaited(
+      showCupertinoDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            width: 100.0,
+            height: 100.0,
+            alignment: Alignment.center,
+            child: const Text('Dialog'),
+          );
+        },
+      ),
     );
 
     await tester.pumpAndSettle(const Duration(seconds: 1));
@@ -597,17 +600,19 @@ void main() {
 
     final BuildContext context = tester.element(find.text('Go'));
 
-    showCupertinoDialog<void>(
-      context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return Container(
-          width: 100.0,
-          height: 100.0,
-          alignment: Alignment.center,
-          child: const Text('Dialog'),
-        );
-      },
+    unawaited(
+      showCupertinoDialog<void>(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return Container(
+            width: 100.0,
+            height: 100.0,
+            alignment: Alignment.center,
+            child: const Text('Dialog'),
+          );
+        },
+      ),
     );
 
     await tester.pumpAndSettle(const Duration(seconds: 1));
@@ -1868,12 +1873,14 @@ void main() {
       );
 
       final BuildContext context = tester.element(find.text('Test'));
-      showCupertinoDialog<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return const Placeholder();
-        },
-        anchorPoint: const Offset(1000, 0),
+      unawaited(
+        showCupertinoDialog<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return const Placeholder();
+          },
+          anchorPoint: const Offset(1000, 0),
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -1906,11 +1913,13 @@ void main() {
       );
 
       final BuildContext context = tester.element(find.text('Test'));
-      showCupertinoDialog<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return const Placeholder();
-        },
+      unawaited(
+        showCupertinoDialog<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return const Placeholder();
+          },
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -1943,11 +1952,13 @@ void main() {
       );
 
       final BuildContext context = tester.element(find.text('Test'));
-      showCupertinoDialog<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return const Placeholder();
-        },
+      unawaited(
+        showCupertinoDialog<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return const Placeholder();
+          },
+        ),
       );
       await tester.pumpAndSettle();
 
