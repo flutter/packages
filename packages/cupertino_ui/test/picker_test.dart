@@ -4,7 +4,6 @@
 
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -51,11 +50,14 @@ void main() {
       ),
     );
 
-    final RenderParagraph paragraph = tester.renderObject(find.text('1'));
+    final RichText richText = tester.widget<RichText>(
+      find.descendant(of: find.text('1'), matching: find.byType(RichText)),
+    );
+    final textSpan = richText.text as TextSpan;
 
-    expect(paragraph.text.style!.color, isSameColorAs(CupertinoColors.black));
+    expect(textSpan.style!.color, isSameColorAs(CupertinoColors.black));
     expect(
-      paragraph.text.style!.copyWith(color: CupertinoColors.black),
+      textSpan.style!.copyWith(color: CupertinoColors.black),
       const TextStyle(
         inherit: false,
         fontFamily: 'CupertinoSystemDisplay',
@@ -736,23 +738,29 @@ void main() {
 
     // CupertinoPicker with light theme.
     await tester.pumpWidget(buildCupertinoPicker(Brightness.light));
-    RenderParagraph paragraph = tester.renderObject(find.text('1'));
+    final RichText richTextLight = tester.widget<RichText>(
+      find.descendant(of: find.text('1'), matching: find.byType(RichText)),
+    );
+    final textSpanLight = richTextLight.text as TextSpan;
     final Color expectedLight = CupertinoColors.label.resolveFrom(
       tester.element(find.byType(CupertinoPicker)),
     );
-    expect(paragraph.text.style!.color, expectedLight);
+    expect(textSpanLight.style!.color, expectedLight);
     // Text style should not return unresolved color.
-    expect(paragraph.text.style!.color.toString().contains('UNRESOLVED'), isFalse);
+    expect(textSpanLight.style!.color.toString().contains('UNRESOLVED'), isFalse);
 
     // CupertinoPicker with dark theme.
     await tester.pumpWidget(buildCupertinoPicker(Brightness.dark));
-    paragraph = tester.renderObject(find.text('1'));
+    final RichText richTextDark = tester.widget<RichText>(
+      find.descendant(of: find.text('1'), matching: find.byType(RichText)),
+    );
+    final textSpanDark = richTextDark.text as TextSpan;
     final Color expectedDark = CupertinoColors.label.resolveFrom(
       tester.element(find.byType(CupertinoPicker)),
     );
-    expect(paragraph.text.style!.color, expectedDark);
+    expect(textSpanDark.style!.color, expectedDark);
     // Text style should not return unresolved color.
-    expect(paragraph.text.style!.color.toString().contains('UNRESOLVED'), isFalse);
+    expect(textSpanDark.style!.color.toString().contains('UNRESOLVED'), isFalse);
   });
 
   group('CupertinoPickerDefaultSelectionOverlay', () {
