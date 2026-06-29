@@ -1697,13 +1697,7 @@ void main() {
       ),
     );
 
-    expect(
-      find.semantics.byPredicate(
-        (SemanticsNode semantics) =>
-            semantics.label == 'Custom label' && semantics.hasFlag(SemanticsFlag.namesRoute),
-      ),
-      findsNothing,
-    );
+    expect(find.semantics.byLabel('Custom label'), findsNothing);
   });
 
   testWidgets('showCupertinoDialog - custom barrierColor', (WidgetTester tester) async {
