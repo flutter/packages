@@ -142,16 +142,40 @@
 - (void)configureForReadyToPlayItem:(AVPlayerItem *)item {
   [super configureForReadyToPlayItem:item];
 
-  // Read the video track's content frame rate.
-  float nominalFrameRate = 0;
+  // Find the video track, then read its content frame rate asynchronously. Querying
+  // nominalFrameRate synchronously blocks the main thread while AVFoundation loads the property,
+  // which for HTTP(S) assets is a network-bound stall ("Main thread blocked by synchronous property
+  // query on not-yet-loaded property (NominalFrameRate)"). Until the rate loads the display link
+  // keeps the upstream every-vsync behavior; it switches to the content rate once known.
+  AVAssetTrack *videoTrack = nil;
   for (AVPlayerItemTrack *track in item.tracks) {
     AVAssetTrack *assetTrack = track.assetTrack;
     if (assetTrack && [assetTrack.mediaType isEqualToString:AVMediaTypeVideo]) {
-      nominalFrameRate = assetTrack.nominalFrameRate;
+      videoTrack = assetTrack;
       break;
     }
   }
-  if (nominalFrameRate <= 0) {
+  if (videoTrack == nil) {
+    return;
+  }
+
+  __weak FVPTextureBasedVideoPlayer *weakSelf = self;
+  [videoTrack
+      loadValuesAsynchronouslyForKeys:@[ @"nominalFrameRate" ]
+                    completionHandler:^{
+                      float nominalFrameRate = 0;
+                      if ([videoTrack statusOfValueForKey:@"nominalFrameRate"
+                                                    error:nil] == AVKeyValueStatusLoaded) {
+                        nominalFrameRate = videoTrack.nominalFrameRate;
+                      }
+                      dispatch_async(dispatch_get_main_queue(), ^{
+                        [weakSelf applyContentFrameRate:nominalFrameRate];
+                      });
+                    }];
+}
+
+- (void)applyContentFrameRate:(float)nominalFrameRate {
+  if (self.disposed || nominalFrameRate <= 0) {
     // Unknown content rate (e.g. some HLS streams): keep the upstream self-refresh behavior, which
     // updates the texture every vsync.
     return;
