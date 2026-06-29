@@ -472,7 +472,11 @@ class VideoPlayerOptions {
     this.allowBackgroundPlayback = false,
     this.preventsDisplaySleepDuringVideoPlayback = true,
     this.webOptions,
-  });
+    this.backBufferDurationMs,
+  }) : assert(
+         backBufferDurationMs == null || backBufferDurationMs > 0,
+         'backBufferDurationMs must be greater than zero',
+       );
 
   /// Set this to true to keep playing video in background, when app goes in background.
   /// The default value is false.
@@ -494,6 +498,12 @@ class VideoPlayerOptions {
 
   /// Additional web controls
   final VideoPlayerWebOptions? webOptions;
+
+  /// ** Android only **. Sets ExoPlayer's back buffer duration in milliseconds.
+  /// 
+  /// This is not possible on iOS because AVPlayer does not provide a way to
+  /// configure the back buffer duration.
+  final int? backBufferDurationMs;
 }
 
 /// [VideoPlayerWebOptions] can be optionally used to set additional web settings
@@ -593,13 +603,20 @@ class VideoViewOptions {
 @immutable
 class VideoCreationOptions {
   /// Constructs an instance of [VideoCreationOptions].
-  const VideoCreationOptions({required this.dataSource, required this.viewType});
+  const VideoCreationOptions({
+    required this.dataSource,
+    required this.viewType,
+    this.videoPlayerOptions,
+  });
 
   /// The data source used to create the player.
   final DataSource dataSource;
 
   /// The type of view to be used for displaying the video player
   final VideoViewType viewType;
+
+  /// Additional configuration options for the video player.
+  final VideoPlayerOptions? videoPlayerOptions;
 }
 
 /// Represents an audio track in a video with its metadata.

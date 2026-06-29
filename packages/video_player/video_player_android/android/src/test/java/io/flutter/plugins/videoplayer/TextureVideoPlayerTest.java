@@ -25,6 +25,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
+import org.mockito.MockedConstruction;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
@@ -199,5 +200,31 @@ public final class TextureVideoPlayerTest {
     InOrder inOrder = inOrder(mockExoPlayer, mockProducer);
     inOrder.verify(mockExoPlayer).release();
     inOrder.verify(mockProducer).release();
+  }
+
+  @Test
+  public void create_withBackBufferDuration_setsLoadControl() {
+    android.content.Context mockContext = mock(android.content.Context.class);
+    VideoPlayerOptions options = new VideoPlayerOptions();
+    options.backBufferDurationMs = 20000L;
+
+    try (MockedConstruction<ExoPlayer.Builder> mockedBuilder =
+        mockConstruction(
+            ExoPlayer.Builder.class,
+            (mock, context) -> {
+              when(mock.setLoadControl(any())).thenReturn(mock);
+              when(mock.setTrackSelector(any())).thenReturn(mock);
+              when(mock.setMediaSourceFactory(any())).thenReturn(mock);
+              when(mock.build()).thenReturn(mockExoPlayer);
+            })) {
+
+      TextureVideoPlayer player =
+          TextureVideoPlayer.create(mockContext, mockEvents, mockProducer, fakeVideoAsset, options);
+
+      assertEquals(1, mockedBuilder.constructed().size());
+      ExoPlayer.Builder builderMock = mockedBuilder.constructed().get(0);
+      verify(builderMock).setLoadControl(any());
+      player.dispose();
+    }
   }
 }

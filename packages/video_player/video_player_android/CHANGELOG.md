@@ -1,3 +1,7 @@
+## 2.10.0
+
+* Adds `backBufferDurationMs` to `CreationOptions` to configure ExoPlayer `DefaultLoadControl` back buffer duration.
+
 ## 2.9.7
 
 * Fixes a [bug](https://github.com/flutter/flutter/issues/184241) where the video freezes after returning from a full-screen transition on Android.
