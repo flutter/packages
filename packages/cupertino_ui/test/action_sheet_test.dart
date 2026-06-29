@@ -1722,6 +1722,9 @@ void main() {
   }, skip: isBrowser); // https://github.com/flutter/flutter/issues/56001
 
   testWidgets('Action sheet semantics', (WidgetTester tester) async {
+    final SemanticsHandle semanticsHandle = tester.ensureSemantics();
+    addTearDown(semanticsHandle.dispose);
+
     await tester.pumpWidget(
       createAppWithButtonThatLaunchesActionSheet(
         CupertinoActionSheet(
@@ -1754,15 +1757,24 @@ void main() {
     final SemanticsNode buttonOne = tester.semantics.find(
       find.descendant(of: sheetFinder, matching: find.bySemanticsLabel('One')),
     );
-    expect(buttonOne, isSemantics(isButton: true, isFocusable: true, hasTapAction: true, hasFocusAction: true));
+    expect(
+      buttonOne,
+      isSemantics(isButton: true, isFocusable: true, hasTapAction: true, hasFocusAction: true),
+    );
     final SemanticsNode buttonTwo = tester.semantics.find(
       find.descendant(of: sheetFinder, matching: find.bySemanticsLabel('Two')),
     );
-    expect(buttonTwo, isSemantics(isButton: true, isFocusable: true, hasTapAction: true, hasFocusAction: true));
+    expect(
+      buttonTwo,
+      isSemantics(isButton: true, isFocusable: true, hasTapAction: true, hasFocusAction: true),
+    );
     final SemanticsNode buttonCancel = tester.semantics.find(
       find.descendant(of: sheetFinder, matching: find.bySemanticsLabel('Cancel')),
     );
-    expect(buttonCancel, isSemantics(isButton: true, isFocusable: true, hasTapAction: true, hasFocusAction: true));
+    expect(
+      buttonCancel,
+      isSemantics(isButton: true, isFocusable: true, hasTapAction: true, hasFocusAction: true),
+    );
   });
 
   testWidgets('Conflicting scrollbars are not applied by ScrollBehavior to CupertinoActionSheet', (
