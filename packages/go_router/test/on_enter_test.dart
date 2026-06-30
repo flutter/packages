@@ -810,6 +810,58 @@ void main() {
       expect(find.text('Start'), findsOneWidget);
     });
 
+    // Regression test for https://github.com/flutter/flutter/issues/179370.
+    // A SYNCHRONOUS onEnter that returns `Block.then(() => router.go(...))`
+    // on the initial route must still run the `then` callback so the
+    // navigation redirect occurs. Previously the sync path resolved the
+    // SynchronousFuture inline, causing the deferred microtask to run
+    // before the Router had finished the initial navigation, which broke
+    // the redirect that the user added the `async` keyword to work around.
+    testWidgets(
+      'Synchronous onEnter Block.then(router.go) redirects from initial route',
+      (WidgetTester tester) async {
+        router = GoRouter(
+          initialLocation: '/dashboard',
+          // Note: deliberately NOT marked `async`.
+          onEnter:
+              (
+                BuildContext context,
+                GoRouterState current,
+                GoRouterState next,
+                GoRouter goRouter,
+              ) {
+                // Mirrors the exact predicate from #179370: the user keys
+                // off `current.uri.path`, which on the initial parse equals
+                // `nextState.uri.path` because the router has no committed
+                // configuration yet.
+                if (current.uri.path == '/dashboard') {
+                  return Block.then(() => goRouter.go('/login'));
+                }
+                return const Allow();
+              },
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/dashboard',
+              builder: (_, __) =>
+                  const Scaffold(body: Center(child: Text('Dashboard'))),
+            ),
+            GoRoute(
+              path: '/login',
+              builder: (_, __) =>
+                  const Scaffold(body: Center(child: Text('Login'))),
+            ),
+          ],
+        );
+
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pumpAndSettle();
+
+        expect(router.state.uri.path, equals('/login'));
+        expect(find.text('Login'), findsOneWidget);
+        expect(find.text('Dashboard'), findsNothing);
+      },
+    );
+
     testWidgets('Should call onException when exceptions thrown in onEnter callback', (
       WidgetTester tester,
     ) async {
