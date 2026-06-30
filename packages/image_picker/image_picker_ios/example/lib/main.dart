@@ -71,11 +71,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _onImageButtonPressed(
-    ImageSource source, {
-    required BuildContext context,
-    bool allowMultiple = false,
-    bool isMedia = false,
-  }) async {
+      ImageSource source, {
+        required BuildContext context,
+        bool allowMultiple = false,
+        bool isMedia = false,
+      }) async {
     if (_controller != null) {
       await _controller!.setVolume(0.0);
     }
@@ -98,11 +98,11 @@ class _MyHomePageState extends State<MyHomePage> {
         }
       } else if (allowMultiple) {
         await _displayPickImageDialog(context, true, (
-          double? maxWidth,
-          double? maxHeight,
-          int? quality,
-          int? limit,
-        ) async {
+            double? maxWidth,
+            double? maxHeight,
+            int? quality,
+            int? limit,
+            ) async {
           try {
             final imageOptions = ImageOptions(
               maxWidth: maxWidth,
@@ -111,15 +111,15 @@ class _MyHomePageState extends State<MyHomePage> {
             );
             final List<XFile> pickedFileList = isMedia
                 ? await _picker.getMedia(
-                    options: MediaOptions(
-                      allowMultiple: allowMultiple,
-                      imageOptions: imageOptions,
-                      limit: limit,
-                    ),
-                  )
+              options: MediaOptions(
+                allowMultiple: allowMultiple,
+                imageOptions: imageOptions,
+                limit: limit,
+              ),
+            )
                 : await _picker.getMultiImageWithOptions(
-                    options: MultiImagePickerOptions(imageOptions: imageOptions, limit: limit),
-                  );
+              options: MultiImagePickerOptions(imageOptions: imageOptions, limit: limit),
+            );
             if (pickedFileList.isNotEmpty && context.mounted) {
               _showPickedSnackBar(context, pickedFileList);
             }
@@ -134,11 +134,11 @@ class _MyHomePageState extends State<MyHomePage> {
         });
       } else if (isMedia) {
         await _displayPickImageDialog(context, false, (
-          double? maxWidth,
-          double? maxHeight,
-          int? quality,
-          int? limit,
-        ) async {
+            double? maxWidth,
+            double? maxHeight,
+            int? quality,
+            int? limit,
+            ) async {
           try {
             final pickedFileList = <XFile>[];
             final XFile? media = _firstOrNull(
@@ -166,11 +166,11 @@ class _MyHomePageState extends State<MyHomePage> {
         });
       } else {
         await _displayPickImageDialog(context, false, (
-          double? maxWidth,
-          double? maxHeight,
-          int? quality,
-          int? limit,
-        ) async {
+            double? maxWidth,
+            double? maxHeight,
+            int? quality,
+            int? limit,
+            ) async {
           try {
             final XFile? pickedFile = await _picker.getImageFromSource(
               source: source,
@@ -246,11 +246,11 @@ class _MyHomePageState extends State<MyHomePage> {
               label: 'image_picker_example_picked_image',
               child: mime == null || mime.startsWith('image/')
                   ? Image.file(
-                      File(image.path),
-                      errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                        return const Center(child: Text('This image type is not supported'));
-                      },
-                    )
+                File(image.path),
+                errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                  return const Center(child: Text('This image type is not supported'));
+                },
+              )
                   : _buildInlineVideoPlayer(index),
             );
           },
@@ -417,10 +417,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _displayPickImageDialog(
-    BuildContext context,
-    bool isMulti,
-    OnPickImageCallback onPick,
-  ) async {
+      BuildContext context,
+      bool isMulti,
+      OnPickImageCallback onPick,
+      ) async {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -494,7 +494,7 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 typedef OnPickImageCallback =
-    void Function(double? maxWidth, double? maxHeight, int? quality, int? limit);
+void Function(double? maxWidth, double? maxHeight, int? quality, int? limit);
 
 class AspectRatioVideo extends StatefulWidget {
   const AspectRatioVideo(this.controller, {super.key});
