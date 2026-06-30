@@ -2,27 +2,24 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@Skip(
-  'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
-)
 // This file is run as part of a reduced test set in CI on Mac and Windows
 // machines.
 @Tags(<String>['reduced-test-set'])
 @TestOn('!chrome')
 library;
 
+import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
-import '../widgets/feedback_tester.dart';
-import '../widgets/semantics_tester.dart';
+import 'feedback_tester.dart';
+import 'semantics_tester.dart';
 
 void main() {
   const okString = 'OK';
@@ -216,64 +213,6 @@ void main() {
     final labels00To23 = List<String>.generate(24, (int index) {
       return index == 0 ? '00' : index.toString();
     });
-    final inner0To23 = List<bool>.generate(24, (int index) => index >= 12);
-
-    final CustomPaint dialPaint = tester.widget(findDialPaint);
-    final dynamic dialPainter = dialPaint.painter;
-    // ignore: avoid_dynamic_calls
-    final primaryLabels = dialPainter.primaryLabels as List<dynamic>;
-    // ignore: avoid_dynamic_calls
-    expect(primaryLabels.map<String>((dynamic tp) => tp.painter.text.text as String), labels00To23);
-    // ignore: avoid_dynamic_calls
-    expect(primaryLabels.map<bool>((dynamic tp) => tp.inner as bool), inner0To23);
-
-    // ignore: avoid_dynamic_calls
-    final selectedLabels = dialPainter.selectedLabels as List<dynamic>;
-    expect(
-      // ignore: avoid_dynamic_calls
-      selectedLabels.map<String>((dynamic tp) => tp.painter.text.text as String),
-      labels00To23,
-    );
-    // ignore: avoid_dynamic_calls
-    expect(selectedLabels.map<bool>((dynamic tp) => tp.inner as bool), inner0To23);
-  });
-
-  // Regression test for https://github.com/flutter/flutter/issues/164860
-  testWidgets('Material3 - formats 24-hour numbers correctly in Farsi', (
-    WidgetTester tester,
-  ) async {
-    await mediaQueryBoilerplate(
-      tester,
-      locale: const Locale('fa', 'IR'),
-      materialType: MaterialType.material3,
-    );
-
-    final labels00To23 = <String>[
-      '۰',
-      '۱',
-      '۲',
-      '۳',
-      '۴',
-      '۵',
-      '۶',
-      '۷',
-      '۸',
-      '۹',
-      '۱۰',
-      '۱۱',
-      '۱۲',
-      '۱۳',
-      '۱۴',
-      '۱۵',
-      '۱۶',
-      '۱۷',
-      '۱۸',
-      '۱۹',
-      '۲۰',
-      '۲۱',
-      '۲۲',
-      '۲۳',
-    ];
     final inner0To23 = List<bool>.generate(24, (int index) => index >= 12);
 
     final CustomPaint dialPaint = tester.widget(findDialPaint);
@@ -1286,10 +1225,12 @@ void main() {
           );
           final BuildContext context = tester.element(find.text('Test'));
 
-          showTimePicker(
-            context: context,
-            initialTime: const TimeOfDay(hour: 7, minute: 0),
-            anchorPoint: const Offset(1000, 0),
+          unawaited(
+            showTimePicker(
+              context: context,
+              initialTime: const TimeOfDay(hour: 7, minute: 0),
+              anchorPoint: const Offset(1000, 0),
+            ),
           );
 
           await tester.pumpAndSettle();
@@ -1323,7 +1264,9 @@ void main() {
           final BuildContext context = tester.element(find.text('Test'));
 
           // By default it should place the dialog on the right screen
-          showTimePicker(context: context, initialTime: const TimeOfDay(hour: 7, minute: 0));
+          unawaited(
+            showTimePicker(context: context, initialTime: const TimeOfDay(hour: 7, minute: 0)),
+          );
 
           await tester.pumpAndSettle();
           expect(tester.getTopLeft(find.byType(TimePickerDialog)), const Offset(410, 0));
@@ -1355,7 +1298,9 @@ void main() {
           final BuildContext context = tester.element(find.text('Test'));
 
           // By default it should place the dialog on the left screen
-          showTimePicker(context: context, initialTime: const TimeOfDay(hour: 7, minute: 0));
+          unawaited(
+            showTimePicker(context: context, initialTime: const TimeOfDay(hour: 7, minute: 0)),
+          );
 
           await tester.pumpAndSettle();
           expect(tester.getTopLeft(find.byType(TimePickerDialog)), Offset.zero);
@@ -1531,39 +1476,6 @@ void main() {
           await expectLater(
             find.byType(Dialog),
             matchesGoldenFile('m3_time_picker.dialog.separator.alignment.png'),
-          );
-        },
-      );
-
-      testWidgets(
-        'TimePicker dialog displays centered separator between hour and minute inputs for non-english locale',
-        (WidgetTester tester) async {
-          tester.view.physicalSize = const Size(400, 800);
-          tester.view.devicePixelRatio = 1.0;
-          addTearDown(tester.view.reset);
-
-          await tester.pumpWidget(
-            const MaterialApp(
-              localizationsDelegates: <LocalizationsDelegate<dynamic>>[
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-              ],
-              supportedLocales: <Locale>[Locale('en'), Locale('es')],
-              locale: Locale('es'),
-              home: Material(
-                child: TimePickerDialog(
-                  initialTime: TimeOfDay(hour: 12, minute: 0),
-                  initialEntryMode: TimePickerEntryMode.input,
-                ),
-              ),
-            ),
-          );
-          await tester.pumpAndSettle();
-
-          await expectLater(
-            find.byType(Dialog),
-            matchesGoldenFile('time_picker.dialog.separator.alignment.non_english_locale.png'),
           );
         },
       );
@@ -2541,59 +2453,6 @@ void main() {
     expect(tester.getSize(findBorderPainter().first), const Size(96.0, 70.0));
   });
 
-  // Regression test for https://github.com/flutter/flutter/issues/162229.
-  testWidgets(
-    'Time picker spacing between time control and day period control for locales using "a h:mm" pattern',
-    (WidgetTester tester) async {
-      addTearDown(tester.view.reset);
-
-      final Finder amMaterialFinder = find.descendant(
-        of: find.byWidgetPredicate((Widget w) => '${w.runtimeType}' == '_AmPmButton').first,
-        matching: find.byType(Material),
-      );
-      final Finder timeControlFinder = find
-          .ancestor(of: find.text('7'), matching: find.byType(Row))
-          .first;
-
-      // Render in portrait mode.
-      tester.view.physicalSize = const Size(800, 800.5);
-      tester.view.devicePixelRatio = 1;
-      await mediaQueryBoilerplate(
-        tester,
-        materialType: MaterialType.material3,
-        locale: const Locale('ko', 'KR'),
-      );
-
-      const dayPeriodPortraitGap = 12.0; // From Material spec.
-      expect(
-        tester.getBottomLeft(timeControlFinder).dx - tester.getBottomRight(amMaterialFinder).dx,
-        dayPeriodPortraitGap,
-      );
-
-      // Dismiss the dialog.
-      final MaterialLocalizations materialLocalizations = MaterialLocalizations.of(
-        tester.element(find.byType(TextButton).first),
-      );
-      await tester.tap(find.text(materialLocalizations.okButtonLabel));
-      await tester.pumpAndSettle();
-
-      // Render in landscape mode.
-      tester.view.physicalSize = const Size(800.5, 800);
-      tester.view.devicePixelRatio = 1;
-      await mediaQueryBoilerplate(
-        tester,
-        materialType: MaterialType.material3,
-        locale: const Locale('ko', 'KR'),
-      );
-
-      const dayPeriodLandscapeGap = 16.0; // From Material spec.
-      expect(
-        tester.getTopLeft(timeControlFinder).dy - tester.getBottomLeft(amMaterialFinder).dy,
-        dayPeriodLandscapeGap,
-      );
-    },
-  );
-
   testWidgets('AM/PM buttons have correct selected/checked semantics for platform variant', (
     WidgetTester tester,
   ) async {
@@ -2695,56 +2554,40 @@ Future<void> mediaQueryBoilerplate(
   bool tapButton = true,
   required MaterialType materialType,
   Orientation? orientation,
-  Locale locale = const Locale('en', 'US'),
 }) async {
   await tester.pumpWidget(
-    Theme(
-      data: ThemeData(useMaterial3: materialType == MaterialType.material3),
-      child: Localizations(
-        locale: locale,
-        delegates: const <LocalizationsDelegate<dynamic>>[
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-        ],
-        child: MediaQuery(
+    MaterialApp(
+      theme: ThemeData(useMaterial3: materialType == MaterialType.material3),
+      builder: (BuildContext context, Widget? child) {
+        return MediaQuery(
           data: MediaQueryData(
             alwaysUse24HourFormat: alwaysUse24HourFormat,
             textScaler: textScaler,
             accessibleNavigation: accessibleNavigation,
             size: tester.view.physicalSize / tester.view.devicePixelRatio,
           ),
-          child: Material(
-            child: Center(
-              child: Directionality(
-                textDirection: TextDirection.ltr,
-                child: Navigator(
-                  onGenerateRoute: (RouteSettings settings) {
-                    return MaterialPageRoute<void>(
-                      builder: (BuildContext context) {
-                        return TextButton(
-                          onPressed: () {
-                            showTimePicker(
-                              context: context,
-                              initialTime: initialTime,
-                              initialEntryMode: entryMode,
-                              helpText: helpText,
-                              hourLabelText: hourLabelText,
-                              minuteLabelText: minuteLabelText,
-                              errorInvalidText: errorInvalidText,
-                              onEntryModeChanged: onEntryModeChange,
-                              orientation: orientation,
-                            );
-                          },
-                          child: const Text('X'),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
-            ),
-          ),
-        ),
+          child: child!,
+        );
+      },
+      home: Builder(
+        builder: (BuildContext context) {
+          return TextButton(
+            onPressed: () {
+              showTimePicker(
+                context: context,
+                initialTime: initialTime,
+                initialEntryMode: entryMode,
+                helpText: helpText,
+                hourLabelText: hourLabelText,
+                minuteLabelText: minuteLabelText,
+                errorInvalidText: errorInvalidText,
+                onEntryModeChanged: onEntryModeChange,
+                orientation: orientation,
+              );
+            },
+            child: const Text('X'),
+          );
+        },
       ),
     ),
   );
@@ -2893,7 +2736,6 @@ Future<Offset?> startPicker(
     MaterialApp(
       theme: theme ?? ThemeData(useMaterial3: materialType == MaterialType.material3),
       restorationScopeId: 'app',
-      locale: const Locale('en', 'US'),
       home: _TimePickerLauncher(
         onChanged: onChanged,
         entryMode: entryMode,
