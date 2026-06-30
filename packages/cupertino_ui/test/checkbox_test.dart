@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@Skip(
-  'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
-)
 // reduced-test-set:
 //   This file is run as part of a reduced test set in CI on Mac and Windows
 //   machines.
@@ -17,8 +14,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import '../widgets/semantics_tester.dart';
 
 void main() {
   setUp(() {
@@ -206,7 +201,6 @@ void main() {
   });
 
   testWidgets('has semantics for tristate', (WidgetTester tester) async {
-    final semantics = SemanticsTester(tester);
     await tester.pumpWidget(
       CupertinoApp(
         home: CupertinoCheckbox(tristate: true, value: null, onChanged: (bool? newValue) {}),
@@ -214,17 +208,16 @@ void main() {
     );
 
     expect(
-      semantics.nodesWith(
-        flags: <SemanticsFlag>[
-          SemanticsFlag.hasCheckedState,
-          SemanticsFlag.hasEnabledState,
-          SemanticsFlag.isEnabled,
-          SemanticsFlag.isFocusable,
-          SemanticsFlag.isCheckStateMixed,
-        ],
-        actions: <SemanticsAction>[SemanticsAction.focus, SemanticsAction.tap],
+      tester.getSemantics(find.byType(CupertinoCheckbox)),
+      matchesSemantics(
+        hasCheckedState: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        isFocusable: true,
+        isCheckStateMixed: true,
+        hasFocusAction: true,
+        hasTapAction: true,
       ),
-      hasLength(1),
     );
 
     await tester.pumpWidget(
@@ -234,17 +227,16 @@ void main() {
     );
 
     expect(
-      semantics.nodesWith(
-        flags: <SemanticsFlag>[
-          SemanticsFlag.hasCheckedState,
-          SemanticsFlag.hasEnabledState,
-          SemanticsFlag.isEnabled,
-          SemanticsFlag.isChecked,
-          SemanticsFlag.isFocusable,
-        ],
-        actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
+      tester.getSemantics(find.byType(CupertinoCheckbox)),
+      matchesSemantics(
+        hasCheckedState: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        isChecked: true,
+        isFocusable: true,
+        hasTapAction: true,
+        hasFocusAction: true,
       ),
-      hasLength(1),
     );
 
     await tester.pumpWidget(
@@ -254,19 +246,16 @@ void main() {
     );
 
     expect(
-      semantics.nodesWith(
-        flags: <SemanticsFlag>[
-          SemanticsFlag.hasCheckedState,
-          SemanticsFlag.hasEnabledState,
-          SemanticsFlag.isEnabled,
-          SemanticsFlag.isFocusable,
-        ],
-        actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
+      tester.getSemantics(find.byType(CupertinoCheckbox)),
+      matchesSemantics(
+        hasCheckedState: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        isFocusable: true,
+        hasTapAction: true,
+        hasFocusAction: true,
       ),
-      hasLength(1),
     );
-
-    semantics.dispose();
   });
 
   testWidgets('has semantic events', (WidgetTester tester) async {
@@ -278,7 +267,6 @@ void main() {
         semanticEvent = message;
       },
     );
-    final semanticsTester = SemanticsTester(tester);
 
     await tester.pumpWidget(
       CupertinoApp(
@@ -312,7 +300,6 @@ void main() {
       SystemChannels.accessibility,
       null,
     );
-    semanticsTester.dispose();
   });
 
   testWidgets('Checkbox can configure a semantic label', (WidgetTester tester) async {
