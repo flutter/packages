@@ -3,10 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:cupertino_ui/cupertino_ui.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'editable_text_utils.dart';
 
 Finder findCupertinoOverflowNextButton() {
   return find.byWidgetPredicate((Widget widget) {
