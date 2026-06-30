@@ -112,20 +112,16 @@ class ReadinessChecker {
 
   Future<bool> _checkFlutterAndDart() async {
     _log('3. Checking Flutter and Dart...');
-    if (!_canRunCommand('flutter')) {
+    if (!_processManager.canRun('flutter')) {
       _log("Error: 'flutter' is not on the PATH.");
       return false;
     }
-    if (!_canRunCommand('dart')) {
+    if (!_processManager.canRun('dart')) {
       _log("Error: 'dart' is not on the PATH.");
       return false;
     }
     _log('Flutter and Dart are on the PATH.');
     return true;
-  }
-
-  bool _canRunCommand(String command) {
-    return _processManager.canRun(command);
   }
 
   Future<bool> _checkDependencies(String workspaceRoot) async {
