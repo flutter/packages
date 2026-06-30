@@ -552,6 +552,7 @@ void main() {
         hasFocusAction: true,
         hasDidGainAccessibilityFocusAction: true,
         hasDidLoseAccessibilityFocusAction: true,
+        textDirection: TextDirection.ltr,
       ),
     );
 
@@ -10461,6 +10462,8 @@ void main() {
         hasFocusAction: true,
         hasDidGainAccessibilityFocusAction: isDesktop,
         hasDidLoseAccessibilityFocusAction: isDesktop,
+        // TODO(gspencergoog): also test for the presence of SemanticsAction.focus when
+        // this iOS issue is addressed: https://github.com/flutter/flutter/issues/150030
       ),
     );
 
