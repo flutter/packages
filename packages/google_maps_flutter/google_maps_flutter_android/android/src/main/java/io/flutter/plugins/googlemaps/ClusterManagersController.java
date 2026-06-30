@@ -5,6 +5,9 @@
 package io.flutter.plugins.googlemaps;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.SystemClock;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -53,6 +56,25 @@ class ClusterManagersController
   @Nullable
   private ClusterManagersController.OnClusterItemRendered<MarkerBuilder>
       clusterItemRenderedListener;
+
+  // ─── Throttle de re-clustering para updates de posição em alta frequência ──
+  //
+  // Marcadores animados (motoristas) emitem updates de posição a ~15fps. A
+  // posição do marcador VISÍVEL já é atualizada direto pelo `MarkerController`
+  // (ver `MarkersController.changeMarkers`); aqui só precisamos manter o índice
+  // espacial em sincronia e re-agregar. Rodar `cluster()` por tick re-executa o
+  // algoritmo da frota inteira (raster sustentado).
+  //
+  // NÃO usamos debounce (esperar a movimentação pausar): a frota se move em
+  // tempo real, então uma pausa raramente acontece e o agrupamento/contagem
+  // ficaria desatualizado. Usamos THROTTLE: garante um `cluster()` no máximo a
+  // cada [CLUSTER_THROTTLE_MS] mesmo em movimento contínuo — contagem fresca
+  // (~3x/s) e custo cortado de ~15 para ~3 reclusters/s. O `onCameraIdle`
+  // natural continua reclusterizando normalmente.
+  private final Handler clusterThrottleHandler = new Handler(Looper.getMainLooper());
+  private final HashMap<String, Runnable> pendingClusterRunnables = new HashMap<>();
+  private final HashMap<String, Long> lastClusterAtMs = new HashMap<>();
+  private static final long CLUSTER_THROTTLE_MS = 300;
 
   ClusterManagersController(
       @NonNull MapsCallbackApi flutterApi,
@@ -156,6 +178,11 @@ class ClusterManagersController
     if (clusterManager == null) {
       return;
     }
+    final Runnable pending = pendingClusterRunnables.remove(clusterManagerId);
+    if (pending != null) {
+      clusterThrottleHandler.removeCallbacks(pending);
+    }
+    lastClusterAtMs.remove(clusterManagerId);
     initListenersForClusterManager(clusterManager, null, null, null);
     clusterManager.clearItems();
     clusterManager.cluster();
@@ -180,6 +207,59 @@ class ClusterManagersController
     }
   }
 
+  /**
+   * Adds items to the ClusterManager's spatial index WITHOUT triggering an
+   * immediate {@code cluster()}.
+   *
+   * <p>For high-frequency position updates of animated markers, the visible
+   * marker is already moved directly by its {@code MarkerController}; only the
+   * algorithm's spatial index needs to stay in sync here. Pair this with
+   * {@link #scheduleClusterThrottled} so re-aggregation runs at most once per
+   * throttle interval instead of once per animation frame.
+   */
+  public void addItemsSilently(String clusterManagerId, @NonNull List<MarkerBuilder> items) {
+    ClusterManager<MarkerBuilder> clusterManager = clusterManagerIdToManager.get(clusterManagerId);
+    if (clusterManager != null) {
+      clusterManager.addItems(items);
+    }
+  }
+
+  /**
+   * Schedules a throttled {@code cluster()} for the given cluster manager.
+   *
+   * <p>Guarantees re-aggregation runs at most once per {@link #CLUSTER_THROTTLE_MS}
+   * even while markers keep moving continuously. The first call after an idle
+   * period clusters almost immediately (responsive); subsequent calls during
+   * continuous movement are capped to the throttle interval. This keeps cluster
+   * grouping/counts fresh without paying the per-frame clustering cost.
+   */
+  public void scheduleClusterThrottled(@NonNull String clusterManagerId) {
+    final ClusterManager<MarkerBuilder> clusterManager =
+        clusterManagerIdToManager.get(clusterManagerId);
+    if (clusterManager == null) {
+      return;
+    }
+    // A run is already queued; it will reconcile the latest positions.
+    if (pendingClusterRunnables.containsKey(clusterManagerId)) {
+      return;
+    }
+    final long now = SystemClock.uptimeMillis();
+    final Long last = lastClusterAtMs.get(clusterManagerId);
+    final long elapsed = (last == null) ? CLUSTER_THROTTLE_MS : (now - last);
+    final long delay = Math.max(0, CLUSTER_THROTTLE_MS - elapsed);
+    final Runnable runnable =
+        () -> {
+          pendingClusterRunnables.remove(clusterManagerId);
+          // O manager pode ter sido removido enquanto o callback estava pendente.
+          if (clusterManagerIdToManager.containsValue(clusterManager)) {
+            lastClusterAtMs.put(clusterManagerId, SystemClock.uptimeMillis());
+            clusterManager.cluster();
+          }
+        };
+    pendingClusterRunnables.put(clusterManagerId, runnable);
+    clusterThrottleHandler.postDelayed(runnable, delay);
+  }
+
   /** Removes item from the ClusterManager it belongs to. */
   public void removeItem(MarkerBuilder item) {
     ClusterManager<MarkerBuilder> clusterManager =
@@ -196,6 +276,23 @@ class ClusterManagersController
     if (clusterManager != null) {
       clusterManager.removeItems(items);
       clusterManager.cluster();
+    }
+  }
+
+  /**
+   * Removes an item from the ClusterManager's spatial index without triggering a recluster.
+   *
+   * <p>This MUST be called BEFORE the item's position is mutated. The underlying {@code QuadTree}
+   * locates entries by their current {@code getPosition()}, so removing after mutation would search
+   * at the new coordinates and miss the stale entry at the old coordinates.
+   *
+   * <p>Callers are expected to re-add the item (via {@link #addItem} or {@link #addItems}) after
+   * mutating its position, which will also trigger {@code cluster()}.
+   */
+  public void removeItemSilently(@NonNull String clusterManagerId, @NonNull MarkerBuilder item) {
+    ClusterManager<MarkerBuilder> clusterManager = clusterManagerIdToManager.get(clusterManagerId);
+    if (clusterManager != null) {
+      clusterManager.removeItem(item);
     }
   }
 

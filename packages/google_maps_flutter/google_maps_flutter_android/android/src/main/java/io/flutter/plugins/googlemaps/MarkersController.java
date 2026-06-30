@@ -88,9 +88,9 @@ class MarkersController {
   }
 
   void changeMarkers(@NonNull List<PlatformMarker> markersToChange) {
-    // Collect markers that need cluster manager changes for batch processing
     Map<String, List<MarkerBuilder>> markersToAddByCluster = new HashMap<>();
     Map<String, List<MarkerBuilder>> markersToRemoveByCluster = new HashMap<>();
+    Map<String, List<MarkerBuilder>> markersToReaddByCluster = new HashMap<>();
 
     for (PlatformMarker markerToChange : markersToChange) {
       String markerId = markerToChange.getMarkerId();
@@ -102,16 +102,13 @@ class MarkersController {
       String clusterManagerId = markerToChange.getClusterManagerId();
       String oldClusterManagerId = markerBuilder.clusterManagerId();
 
-      // If the cluster ID on the updated marker has changed, collect for batch processing
       if (!(Objects.equals(clusterManagerId, oldClusterManagerId))) {
-        // Remove from old cluster manager
         if (oldClusterManagerId != null) {
           markersToRemoveByCluster
               .computeIfAbsent(oldClusterManagerId, k -> new ArrayList<>())
               .add(markerBuilder);
         }
 
-        // Prepare new marker for addition
         MarkerBuilder newMarkerBuilder = new MarkerBuilder(markerId, clusterManagerId, markerType);
         Convert.interpretMarkerOptions(
             markerToChange,
@@ -126,11 +123,9 @@ class MarkersController {
               .computeIfAbsent(clusterManagerId, k -> new ArrayList<>())
               .add(newMarkerBuilder);
         } else {
-          // Add to map immediately if not clustered
           addMarkerToCollection(markerId, newMarkerBuilder);
         }
 
-        // Clean up old marker controller if it's not clustered
         if (oldClusterManagerId == null) {
           MarkerController oldController = markerIdToController.remove(markerId);
           if (oldController != null && markerCollection != null) {
@@ -139,7 +134,8 @@ class MarkersController {
           }
         }
       } else {
-        // Update existing marker in place
+        LatLng oldPosition = markerBuilder.getPosition();
+
         Convert.interpretMarkerOptions(
             markerToChange, markerBuilder, assetManager, density, bitmapDescriptorFactoryWrapper);
         MarkerController markerController = markerIdToController.get(markerId);
@@ -151,17 +147,36 @@ class MarkersController {
               density,
               bitmapDescriptorFactoryWrapper);
         }
+
+        if (clusterManagerId != null && !markerBuilder.getPosition().equals(oldPosition)) {
+          LatLng newPosition = markerBuilder.getPosition();
+          // Temporarily restore old position so QuadTree removal finds the
+          // stale entry at the original coordinates.
+          markerBuilder.setPosition(oldPosition);
+          clusterManagersController.removeItemSilently(clusterManagerId, markerBuilder);
+          markerBuilder.setPosition(newPosition);
+          markersToReaddByCluster
+              .computeIfAbsent(clusterManagerId, k -> new ArrayList<>())
+              .add(markerBuilder);
+        }
       }
     }
 
-    // Batch remove from cluster managers
     for (Map.Entry<String, List<MarkerBuilder>> entry : markersToRemoveByCluster.entrySet()) {
       clusterManagersController.removeItems(entry.getKey(), entry.getValue());
     }
 
-    // Batch add to cluster managers
     for (Map.Entry<String, List<MarkerBuilder>> entry : markersToAddByCluster.entrySet()) {
       clusterManagersController.addItems(entry.getKey(), entry.getValue());
+    }
+
+    // Re-add por mudança de POSIÇÃO (caminho quente de marcadores animados): o
+    // marcador visível já foi movido acima via MarkerController, então aqui só
+    // sincronizamos o índice espacial sem clusterizar e agendamos um único
+    // cluster() com debounce. Evita re-clustering da frota a cada frame de lerp.
+    for (Map.Entry<String, List<MarkerBuilder>> entry : markersToReaddByCluster.entrySet()) {
+      clusterManagersController.addItemsSilently(entry.getKey(), entry.getValue());
+      clusterManagersController.scheduleClusterThrottled(entry.getKey());
     }
   }
 
@@ -381,23 +396,29 @@ class MarkersController {
     String clusterManagerId = marker.getClusterManagerId();
     String oldClusterManagerId = markerBuilder.clusterManagerId();
 
-    // If the cluster ID on the updated marker has changed, the marker needs to
-    // be removed and re-added to update its cluster manager state.
     if (!(Objects.equals(clusterManagerId, oldClusterManagerId))) {
       removeMarker(markerId);
       addMarker(marker);
       return;
     }
 
-    // Update marker builder.
+    LatLng oldPosition = markerBuilder.getPosition();
+
     Convert.interpretMarkerOptions(
         marker, markerBuilder, assetManager, density, bitmapDescriptorFactoryWrapper);
 
-    // Update existing marker on map.
     MarkerController markerController = markerIdToController.get(markerId);
     if (markerController != null) {
       Convert.interpretMarkerOptions(
           marker, markerController, assetManager, density, bitmapDescriptorFactoryWrapper);
+    }
+
+    if (clusterManagerId != null && !markerBuilder.getPosition().equals(oldPosition)) {
+      LatLng newPosition = markerBuilder.getPosition();
+      markerBuilder.setPosition(oldPosition);
+      clusterManagersController.removeItemSilently(clusterManagerId, markerBuilder);
+      markerBuilder.setPosition(newPosition);
+      clusterManagersController.addItem(markerBuilder);
     }
   }
 }
