@@ -47,7 +47,7 @@ android {
     }
 
     dependencies {
-        implementation("androidx.core:core:1.18.0")
+        implementation("androidx.core:core:1.19.0")
         implementation("androidx.annotation:annotation:1.10.0")
         implementation("androidx.exifinterface:exifinterface:1.4.2")
         implementation("androidx.activity:activity:1.12.4")
