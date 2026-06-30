@@ -5,6 +5,7 @@
 import 'dart:io' as io;
 
 import 'package:file/file.dart';
+import 'package:yaml/yaml.dart';
 
 import 'common/core.dart';
 import 'common/file_filters.dart';
@@ -16,7 +17,6 @@ import 'common/plugin_utils.dart';
 import 'common/pub_utils.dart';
 import 'common/repository_package.dart';
 import 'common/xcode.dart';
-import 'package:yaml/yaml.dart';
 
 /// A command to run Dart analysis on packages.
 class AnalyzeCommand extends PackageLoopingCommand {
@@ -316,10 +316,7 @@ class AnalyzeCommand extends PackageLoopingCommand {
     }
 
     final customCheckRunners = <_CustomLinter>[
-      _CustomLinter(
-        dependencyName: 'dart_code_linter',
-        run: _runDartCodeLinterForPackage,
-      ),
+      _CustomLinter(dependencyName: 'dart_code_linter', run: _runDartCodeLinterForPackage),
     ];
 
     final Pubspec pubspec = package.parsePubspec();
@@ -371,24 +368,18 @@ class AnalyzeCommand extends PackageLoopingCommand {
       return PackageResult.success();
     }
     print('Running dart_code_linter:metrics analysis...');
-    final int linterExitCode = await processRunner.runAndStream(
-      _dartBinaryPath,
-      <String>[
-        'run',
-        'dart_code_linter:metrics',
-        'analyze',
-        'lib',
-        '--set-exit-on-violation-level=warning',
-      ],
-      workingDir: package.directory,
-    );
+    final int linterExitCode = await processRunner.runAndStream(_dartBinaryPath, <String>[
+      'run',
+      'dart_code_linter:metrics',
+      'analyze',
+      'lib',
+      '--set-exit-on-violation-level=warning',
+    ], workingDir: package.directory);
     if (linterExitCode != 0) {
       final int? threshold = _getLinterThreshold(package);
-      final String thresholdMessage = threshold != null
-          ? ' (configured threshold: $threshold)'
-          : '';
+      final thresholdMessage = threshold != null ? ' (configured threshold: $threshold)' : '';
       return PackageResult.fail(<String>[
-        'Metrics violations found$thresholdMessage. See the package\'s local "analysis_options.yaml" for configured thresholds.'
+        'Metrics violations found$thresholdMessage. See the package\'s local "analysis_options.yaml" for configured thresholds.',
       ]);
     }
 
@@ -519,10 +510,7 @@ class AnalyzeCommand extends PackageLoopingCommand {
 
 /// Represents a custom linter check that is executed during package analysis.
 class _CustomLinter {
-  const _CustomLinter({
-    required this.dependencyName,
-    required this.run,
-  });
+  const _CustomLinter({required this.dependencyName, required this.run});
 
   /// The name of the package dependency that triggers this custom check.
   ///

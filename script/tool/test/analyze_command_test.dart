@@ -444,15 +444,19 @@ void main() {
 
     group('dart_code_linter', () {
       test('runs dart_code_linter if present in dev_dependencies', () async {
-        final RepositoryPackage package = createFakePackage('a_package', packagesDir, isFlutter: true);
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          isFlutter: true,
+        );
         _writeFakePubspecWithLinter(package, inDevDependencies: true);
 
-        _mockCallsForFlutterAnalyze(processRunner, extraDartCalls: [
-          FakeProcessInfo(
-            MockProcess(),
-            <String>['run', 'dart_code_linter:metrics'],
-          ),
-        ]);
+        _mockCallsForFlutterAnalyze(
+          processRunner,
+          extraDartCalls: [
+            FakeProcessInfo(MockProcess(), <String>['run', 'dart_code_linter:metrics']),
+          ],
+        );
 
         final List<String> output = await runCapturingPrint(runner, <String>['analyze']);
 
@@ -461,24 +465,24 @@ void main() {
           orderedEquals(<ProcessCall>[
             ProcessCall('flutter', const <String>['pub', 'get'], package.path),
             ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
-            ProcessCall(
-              'dart',
-              const <String>[
-                'run',
-                'dart_code_linter:metrics',
-                'analyze',
-                'lib',
-                '--set-exit-on-violation-level=warning',
-              ],
-              package.path,
-            ),
+            ProcessCall('dart', const <String>[
+              'run',
+              'dart_code_linter:metrics',
+              'analyze',
+              'lib',
+              '--set-exit-on-violation-level=warning',
+            ], package.path),
           ]),
         );
         expect(output, contains('Running dart_code_linter:metrics analysis...'));
       });
 
       test('does not run dart_code_linter if present in dependencies', () async {
-        final RepositoryPackage package = createFakePackage('a_package', packagesDir, isFlutter: true);
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          isFlutter: true,
+        );
         _writeFakePubspecWithLinter(package, inDependencies: true);
 
         _mockCallsForFlutterAnalyze(processRunner);
@@ -498,7 +502,11 @@ void main() {
       });
 
       test('does not run dart_code_linter if not present', () async {
-        final RepositoryPackage package = createFakePackage('a_package', packagesDir, isFlutter: true);
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          isFlutter: true,
+        );
 
         _mockCallsForFlutterAnalyze(processRunner);
 
@@ -517,22 +525,13 @@ void main() {
       });
 
       test('runs dart_code_linter using dart for pure Dart packages', () async {
-        final RepositoryPackage package = createFakePackage('a_package', packagesDir, isFlutter: false);
+        final RepositoryPackage package = createFakePackage('a_package', packagesDir);
         _writeFakePubspecWithLinter(package, inDevDependencies: true, includeFlutter: false);
 
         processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
-          FakeProcessInfo(
-            MockProcess(),
-            <String>['pub', 'get'],
-          ),
-          FakeProcessInfo(
-            MockProcess(),
-            <String>['analyze'],
-          ),
-          FakeProcessInfo(
-            MockProcess(),
-            <String>['run', 'dart_code_linter:metrics'],
-          ),
+          FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
+          FakeProcessInfo(MockProcess(), <String>['analyze']),
+          FakeProcessInfo(MockProcess(), <String>['run', 'dart_code_linter:metrics']),
         ];
 
         final List<String> output = await runCapturingPrint(runner, <String>['analyze']);
@@ -542,23 +541,23 @@ void main() {
           orderedEquals(<ProcessCall>[
             ProcessCall('dart', const <String>['pub', 'get'], package.path),
             ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
-            ProcessCall(
-              'dart',
-              const <String>[
-                'run',
-                'dart_code_linter:metrics',
-                'analyze',
-                'lib',
-                '--set-exit-on-violation-level=warning',
-              ],
-              package.path,
-            ),
+            ProcessCall('dart', const <String>[
+              'run',
+              'dart_code_linter:metrics',
+              'analyze',
+              'lib',
+              '--set-exit-on-violation-level=warning',
+            ], package.path),
           ]),
         );
         expect(output, contains('Running dart_code_linter:metrics analysis...'));
       });
       test('skips dart_code_linter if lib/ does not exist', () async {
-        final RepositoryPackage package = createFakePackage('a_package', packagesDir, isFlutter: true);
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          isFlutter: true,
+        );
         _writeFakePubspecWithLinter(package, inDevDependencies: true);
         package.libDirectory.deleteSync(recursive: true);
 
@@ -579,15 +578,19 @@ void main() {
       });
 
       test('fails if dart_code_linter analysis fails', () async {
-        final RepositoryPackage package = createFakePackage('a_package', packagesDir, isFlutter: true);
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          isFlutter: true,
+        );
         _writeFakePubspecWithLinter(package, inDevDependencies: true);
 
-        _mockCallsForFlutterAnalyze(processRunner, extraDartCalls: [
-          FakeProcessInfo(
-            MockProcess(exitCode: 1),
-            <String>['run', 'dart_code_linter:metrics'],
-          ),
-        ]);
+        _mockCallsForFlutterAnalyze(
+          processRunner,
+          extraDartCalls: [
+            FakeProcessInfo(MockProcess(exitCode: 1), <String>['run', 'dart_code_linter:metrics']),
+          ],
+        );
 
         Error? commandError;
         final List<String> output = await runCapturingPrint(
@@ -602,13 +605,19 @@ void main() {
         expect(
           output,
           containsAllInOrder(<Matcher>[
-            contains('Metrics violations found. See the package\'s local "analysis_options.yaml" for configured thresholds.'),
+            contains(
+              'Metrics violations found. See the package\'s local "analysis_options.yaml" for configured thresholds.',
+            ),
           ]),
         );
       });
 
       test('fails with threshold if analysis_options.yaml defines one', () async {
-        final RepositoryPackage package = createFakePackage('a_package', packagesDir, isFlutter: true);
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          isFlutter: true,
+        );
         _writeFakePubspecWithLinter(package, inDevDependencies: true);
         package.directory.childFile('analysis_options.yaml').writeAsStringSync('''
 dart_code_linter:
@@ -616,12 +625,12 @@ dart_code_linter:
     cyclomatic-complexity: 15
 ''');
 
-        _mockCallsForFlutterAnalyze(processRunner, extraDartCalls: [
-          FakeProcessInfo(
-            MockProcess(exitCode: 1),
-            <String>['run', 'dart_code_linter:metrics'],
-          ),
-        ]);
+        _mockCallsForFlutterAnalyze(
+          processRunner,
+          extraDartCalls: [
+            FakeProcessInfo(MockProcess(exitCode: 1), <String>['run', 'dart_code_linter:metrics']),
+          ],
+        );
 
         Error? commandError;
         final List<String> output = await runCapturingPrint(
@@ -636,7 +645,9 @@ dart_code_linter:
         expect(
           output,
           containsAllInOrder(<Matcher>[
-            contains('Metrics violations found (configured threshold: 15). See the package\'s local "analysis_options.yaml" for configured thresholds.'),
+            contains(
+              'Metrics violations found (configured threshold: 15). See the package\'s local "analysis_options.yaml" for configured thresholds.',
+            ),
           ]),
         );
       });
@@ -1752,17 +1763,11 @@ void _mockCallsForFlutterAnalyze(
   List<FakeProcessInfo> extraDartCalls = const <FakeProcessInfo>[],
 }) {
   processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
-    FakeProcessInfo(
-      MockProcess(),
-      const <String>['pub', 'get'],
-    ),
+    FakeProcessInfo(MockProcess(), const <String>['pub', 'get']),
     ...extraFlutterCalls,
   ];
   processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
-    FakeProcessInfo(
-      MockProcess(),
-      const <String>['analyze'],
-    ),
+    FakeProcessInfo(MockProcess(), const <String>['analyze']),
     ...extraDartCalls,
   ];
 }
