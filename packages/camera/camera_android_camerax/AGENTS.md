@@ -46,8 +46,7 @@ dart run build_runner build -d
 
 ## Running Tests
 
-All changes you make require at least a unit test in the respective language where you make changes (Dart or Android/Java). Furthermore, all tests must pass after you make changes (Dart unit tests, Android native unit tests, Flutter integration tests).
-Details on running each of these below.
+When you make a change, add a test if you can (either a Dart unit test, Android native unit test, or Flutter integration tests). Regardless of if tests are added or not, all tests must pass after you make changes. How to run the tests:
 
 ### Dart Unit Tests
 Dart unit tests are located in [test/](./test/).
