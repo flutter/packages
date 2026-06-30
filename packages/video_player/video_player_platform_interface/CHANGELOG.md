@@ -1,5 +1,9 @@
-## NEXT
+## 6.8.0
 
+* Adds `preventsDisplaySleepDuringVideoPlayback` to `VideoPlayerOptions` and
+  `setPreventsDisplaySleepDuringVideoPlayback` to `VideoPlayerPlatform`. The
+  default implementation is a no-op so platforms that do not support
+  controlling display sleep silently fall back to their default behavior.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 6.7.0
