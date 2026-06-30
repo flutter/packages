@@ -67,6 +67,16 @@ extension GoRouterHelper on BuildContext {
   /// Returns `true` if there is more than 1 page on the stack.
   bool canPop() => GoRouter.of(this).canPop();
 
+  /// Pop the top page off the Navigator's page stack if possible.
+  ///
+  /// Returns `true` if a route was popped and `false` otherwise. This method
+  /// does not throw if there is nothing to pop.
+  ///
+  /// See also:
+  /// * [pop], which throws if there is nothing to pop.
+  /// * [canPop], which can be used to check whether a pop is possible.
+  Future<bool> maybePop<T extends Object?>([T? result]) => GoRouter.of(this).maybePop<T>(result);
+
   /// Pop the top page off the Navigator's page stack by calling
   /// [Navigator.pop].
   void pop<T extends Object?>([T? result]) => GoRouter.of(this).pop(result);

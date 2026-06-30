@@ -552,6 +552,10 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   ///
   /// Ensure that the `value` of `routeInformationProvider` is synced
   ///  with `routerDelegate.currentConfiguration`.
+  ///
+  /// See also:
+  /// * [maybePop], which returns `false` instead of throwing if there is
+  ///   nothing to pop.
   void pop<T extends Object?>([T? result]) {
     assert(() {
       log('popping ${routerDelegate.currentConfiguration.uri}');
@@ -564,6 +568,25 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     if (!identical(routerDelegate.currentConfiguration, configBeforePop)) {
       restore(routerDelegate.currentConfiguration);
     }
+  }
+
+  /// Pop the top-most route off the current screen if possible.
+  ///
+  /// This method calls [NavigatorState.maybePop] on the underlying navigators,
+  /// similar to [BackButton]. It returns `true` if a route was popped and
+  /// `false` otherwise. Unlike [pop], this method does not throw if there is
+  /// nothing to pop.
+  ///
+  /// When a pop completes synchronously, this method also calls [restore] to
+  /// keep the [routeInformationProvider] in sync with
+  /// [GoRouterDelegate.currentConfiguration].
+  Future<bool> maybePop<T extends Object?>([T? result]) async {
+    final RouteMatchList configBeforePop = routerDelegate.currentConfiguration;
+    final bool didPop = await routerDelegate.maybePop<T>(result);
+    if (didPop && !identical(routerDelegate.currentConfiguration, configBeforePop)) {
+      restore(routerDelegate.currentConfiguration);
+    }
+    return didPop;
   }
 
   /// Refresh the route.
