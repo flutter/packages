@@ -13,6 +13,6 @@ void main() {
     await tester.pumpWidget(const MyApp());
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('Hello from'), findsOneWidget);
+    expect(find.textContaining('Called doSomething() successfully!'), findsOneWidget);
   });
 }

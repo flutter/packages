@@ -72,11 +72,17 @@ Future<int> generateExamplePigeons() async {
     suppressVersion: true,
   );
   success += await runPigeon(
-    input: './example/native_interop_app/pigeons/messages.dart',
+    input: './example/native_interop_app/pigeons/native_interop_example.dart',
     appDirectory: './example/native_interop_app',
     swiftAppDirectory: './example/native_interop_app',
     basePath: './example/native_interop_app',
     suppressVersion: true,
+    dartOut: 'lib/src/native_interop_example.g.dart',
+    kotlinOut:
+        'android/app/src/main/kotlin/dev/flutter/pigeon_example_app/NativeInteropExample.g.kt',
+    kotlinPackage: 'dev.flutter.pigeon_example_app',
+    swiftOut: 'ios/Runner/NativeInteropExample.g.swift',
+    copyrightHeader: 'pigeons/copyright.txt',
   );
   return success;
 }

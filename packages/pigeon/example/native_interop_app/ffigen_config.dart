@@ -20,17 +20,14 @@ Future<void> main(List<String> args) async {
   }
 
   final classes = <String>[
-    'MessagesPigeonInternalNull',
-    'MessagesPigeonTypedData',
-    'MessagesNumberWrapper',
-    'ExampleHostApi',
-    'ExampleHostApiSetup',
-    'MessageFlutterApiBridge',
-    'MessageFlutterApiRegistrar',
-    'MessageDataBridge',
+    'NativeInteropExamplePigeonInternalNull',
+    'NativeInteropExamplePigeonTypedData',
+    'NativeInteropExampleNumberWrapper',
+    'NativeInteropExampleApi',
+    'NativeInteropExampleApiSetup',
     'PigeonError',
   ];
-  final enums = <String>['Code', 'MessagesPigeonInternalNumberType'];
+  final enums = <String>['NativeInteropExamplePigeonInternalNumberType'];
   var targetTriple = '';
   if (targetTriple.isEmpty) {
     targetTriple = sdk.path.toLowerCase().contains('macosx')
@@ -41,14 +38,16 @@ Future<void> main(List<String> args) async {
   await SwiftGenerator(
     target: Target(triple: targetTriple, sdk: sdk),
     inputs: <SwiftGenInput>[
-      ObjCCompatibleSwiftFileInput(files: <Uri>[Uri.file('ios/Runner/Messages.g.swift')]),
+      ObjCCompatibleSwiftFileInput(
+        files: <Uri>[Uri.file('ios/Runner/NativeInteropExample.g.swift')],
+      ),
     ],
     include: (Declaration d) => classes.contains(d.name) || enums.contains(d.name),
     output: Output(
       module: 'Runner',
       // Path is relative to appDirectory.
-      dartFile: Uri.file('lib/src/messages.g.ffi.dart'),
-      objectiveCFile: Uri.file('ios/Runner_objc_gen/Messages.g.m'),
+      dartFile: Uri.file('lib/src/native_interop_example.g.ffi.dart'),
+      objectiveCFile: Uri.file('ios/Runner_objc_gen/NativeInteropExample.g.m'),
       preamble: '''
   // Copyright 2013 The Flutter Authors
   // Use of this source code is governed by a BSD-style license that can be
@@ -79,8 +78,5 @@ Future<void> main(List<String> args) async {
         ),
       ),
     ),
-  ).generate(
-    logger: null,
-    tempDirectory: Uri.directory('./example/native_interop_app/ios/Runner_objc_gen'),
-  );
+  ).generate(logger: null, tempDirectory: Uri.directory('ios/Runner_objc_gen'));
 }

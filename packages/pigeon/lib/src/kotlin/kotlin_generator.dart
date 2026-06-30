@@ -99,7 +99,7 @@ class KotlinOptions {
       includeErrorClass: map['includeErrorClass'] as bool? ?? true,
       fileSpecificClassNameComponent: map['fileSpecificClassNameComponent'] as String?,
       useGeneratedAnnotation: map['useGeneratedAnnotation'] as bool? ?? false,
-      jniClassPaths: (map['jniClassPaths'] as List<Object>?)?.cast<String>(),
+      jniClassPaths: (map['jniClassPaths'] as List<dynamic>?)?.cast<String>(),
     );
   }
 

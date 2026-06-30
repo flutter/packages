@@ -198,7 +198,7 @@ ${hasAsyncFlutterApi ? '''
     ),
   ).generate(
     logger: null,
-    tempDirectory: Uri.directory('$objcDir'),
+    tempDirectory: Uri.directory('${path.relative(objcDir, from: generatorOptions.exampleAppDirectory ?? './')}'),
   );
       ''');
     });

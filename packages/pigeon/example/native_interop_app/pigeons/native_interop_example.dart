@@ -13,7 +13,7 @@ import 'package:pigeon/pigeon.dart';
       // Optional: Paths to search for compiled local classes (primarily needed for standalone Apps)
       jniClassPaths: <String>['build/app/tmp/kotlin-classes/release'],
     ),
-    swiftOptions: SwiftOptions(useFfi: true, ffiModuleName: 'my_plugin'),
+    swiftOptions: SwiftOptions(useFfi: true, ffiModuleName: 'Runner'),
   ),
 )
 // #enddocregion config

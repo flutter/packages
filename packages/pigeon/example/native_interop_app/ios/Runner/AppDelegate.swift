@@ -5,23 +5,9 @@
 import Flutter
 import UIKit
 
-private class PigeonApiImplementation: ExampleHostApi {
-  func determineHostLanguage() throws -> String {
-    return "Swift"
-  }
-
-  func add(_ a: Int64, to b: Int64) throws -> Int64 {
-    if a < 0 || b < 0 {
-      throw PigeonError(code: "code", message: "message", details: "details")
-    }
-    return a + b
-  }
-
-  func sendMessage(message: MessageData) async throws -> Bool {
-    if message.code == Code.one {
-      throw PigeonError(code: "code", message: "message", details: "details")
-    }
-    return true
+private class PigeonApiImplementation: NativeInteropExampleApi {
+  func doSomething() throws {
+    // Do nothing
   }
 }
 
@@ -45,7 +31,7 @@ private class PigeonApiImplementation: ExampleHostApi {
     super.awakeFromNib()
 
     let api = PigeonApiImplementation()
-    ExampleHostApiSetup.register(api: api)
+    NativeInteropExampleApiSetup.register(api: api)
 
   }
 }

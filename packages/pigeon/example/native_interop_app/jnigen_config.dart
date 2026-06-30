@@ -15,7 +15,7 @@ void main() async {
       outputConfig: OutputConfig(
         dartConfig: DartCodeOutputConfig(
           // Path is relative to appDirectory.
-          path: Uri.file('lib/src/messages.g.jni.dart'),
+          path: Uri.file('lib/src/native_interop_example.g.jni.dart'),
           structure: OutputStructure.singleFile,
         ),
       ),
@@ -24,12 +24,8 @@ void main() async {
 
       classes: [
         'dev.flutter.pigeon_example_app.FlutterError',
-        'dev.flutter.pigeon_example_app.ExampleHostApi',
-        'dev.flutter.pigeon_example_app.ExampleHostApiRegistrar',
-        'dev.flutter.pigeon_example_app.MessageFlutterApi',
-        'dev.flutter.pigeon_example_app.MessageFlutterApiRegistrar',
-        'dev.flutter.pigeon_example_app.MessageData',
-        'dev.flutter.pigeon_example_app.Code',
+        'dev.flutter.pigeon_example_app.NativeInteropExampleApi',
+        'dev.flutter.pigeon_example_app.NativeInteropExampleApiRegistrar',
       ],
     ),
   );

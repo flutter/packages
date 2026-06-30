@@ -9,18 +9,10 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'src/messages.g.dart';
-
-class _ExampleFlutterApi implements MessageFlutterApi {
-  @override
-  String flutterMethod(String? aString) {
-    return aString ?? '';
-  }
-}
+import 'src/native_interop_example.g.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  MessageFlutterApi.setUp(_ExampleFlutterApi());
   runApp(const MyApp());
 }
 
@@ -50,54 +42,24 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final ExampleHostApi _hostApi = (Platform.isAndroid || Platform.isIOS || Platform.isMacOS)
-      ? ExampleHostApi.createWithNativeInteropApi()
-      : ExampleHostApi();
+  final NativeInteropExampleApi _api = (Platform.isAndroid || Platform.isIOS || Platform.isMacOS)
+      ? NativeInteropExampleApi.createWithNativeInteropApi()
+      : NativeInteropExampleApi();
   String? _hostCallResult;
-
-  final ExampleHostApi _api = (Platform.isAndroid || Platform.isIOS || Platform.isMacOS)
-      ? ExampleHostApi.createWithNativeInteropApi()
-      : ExampleHostApi();
-
-  /// Calls host method `add` with provided arguments.
-  Future<int> add(int a, int b) async {
-    try {
-      return await _api.add(a, b);
-    } catch (e) {
-      // handle error.
-      return 0;
-    }
-  }
-
-  /// Sends message through host api using `MessageData` class
-  /// and api `sendMessage` method.
-  Future<bool> sendMessage(String messageText) {
-    final message = MessageData(
-      code: Code.one,
-      data: <String, String>{'header': 'this is a header'},
-      messageDescription: 'uri text',
-    );
-    try {
-      return _api.sendMessage(message);
-    } catch (e) {
-      // handle error.
-      return Future<bool>(() => true);
-    }
-  }
 
   @override
   void initState() {
     super.initState();
-    _hostApi
-        .determineHostLanguage()
-        .then((String response) {
+    _api
+        .doSomething()
+        .then((_) {
           setState(() {
-            _hostCallResult = 'Hello from $response!';
+            _hostCallResult = 'Called doSomething() successfully!';
           });
         })
         .onError<PlatformException>((PlatformException error, StackTrace _) {
           setState(() {
-            _hostCallResult = 'Failed to get host language: ${error.message}';
+            _hostCallResult = 'Failed to call doSomething(): ${error.message}';
           });
         });
   }
