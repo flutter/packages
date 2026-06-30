@@ -1722,9 +1722,6 @@ void main() {
   }, skip: isBrowser); // https://github.com/flutter/flutter/issues/56001
 
   testWidgets('Action sheet semantics', (WidgetTester tester) async {
-    final SemanticsHandle semanticsHandle = tester.ensureSemantics();
-    addTearDown(semanticsHandle.dispose);
-
     await tester.pumpWidget(
       createAppWithButtonThatLaunchesActionSheet(
         CupertinoActionSheet(
