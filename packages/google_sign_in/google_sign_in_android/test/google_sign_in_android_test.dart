@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:convert';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_sign_in_android/google_sign_in_android.dart';
 import 'package:google_sign_in_android/src/messages.g.dart';
@@ -19,13 +17,7 @@ const GoogleSignInUserData _testUser = GoogleSignInUserData(
   photoUrl: 'https://lh5.googleusercontent.com/photo.jpg',
   displayName: 'John Doe',
 );
-final AuthenticationTokenData _testAuthnToken = AuthenticationTokenData(
-  // This is just real enough to test the id-from-idToken extraction logic, with
-  // the middle (payload) section having an actual base-64 encoded JSON
-  // dictionary with only the "sub":"id" entry needed by the plugin code.
-  idToken:
-      'header.${base64UrlEncode(JsonUtf8Encoder().convert(<String, Object>{'sub': _testUser.id}))}.signatune',
-);
+const AuthenticationTokenData _testAuthnToken = AuthenticationTokenData(idToken: 'fakeToken');
 
 @GenerateNiceMocks(<MockSpec<Object>>[MockSpec<GoogleSignInApi>()])
 void main() {
@@ -40,7 +32,7 @@ void main() {
 
     provideDummy<GetCredentialResult>(
       GetCredentialSuccess(
-        credential: PlatformGoogleIdTokenCredential(email: '', idToken: ''),
+        credential: PlatformGoogleIdTokenCredential(email: '', uniqueId: '', idToken: ''),
       ),
     );
     provideDummy<AuthorizeResult>(PlatformAuthorizationResult(grantedScopes: <String>[]));
@@ -113,6 +105,7 @@ void main() {
             displayName: _testUser.displayName,
             profilePictureUri: _testUser.photoUrl,
             email: _testUser.email,
+            uniqueId: _testUser.id,
             idToken: _testAuthnToken.idToken!,
           ),
         ),
@@ -242,6 +235,7 @@ void main() {
             displayName: _testUser.displayName,
             profilePictureUri: _testUser.photoUrl,
             email: _testUser.email,
+            uniqueId: _testUser.id,
             idToken: _testAuthnToken.idToken!,
           ),
         ),
@@ -859,6 +853,7 @@ void main() {
             displayName: _testUser.displayName,
             profilePictureUri: _testUser.photoUrl,
             email: _testUser.email,
+            uniqueId: _testUser.id,
             idToken: _testAuthnToken.idToken!,
           ),
         ),

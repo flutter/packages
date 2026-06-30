@@ -188,11 +188,13 @@ public class GoogleSignInTest {
     final String givenName = "Jane";
     final String familyName = "User";
     final String email = "someEmail";
+    final String uniqueId = "someAccountId";
     final String idToken = "idToken";
     when(mockGoogleCredential.getDisplayName()).thenReturn(displayName);
     when(mockGoogleCredential.getGivenName()).thenReturn(givenName);
     when(mockGoogleCredential.getFamilyName()).thenReturn(familyName);
     when(mockGoogleCredential.getEmail()).thenReturn(email);
+    when(mockGoogleCredential.getUniqueId()).thenReturn(uniqueId);
     when(mockGoogleCredential.getIdToken()).thenReturn(idToken);
 
     final Boolean[] callbackCalled = new Boolean[1];
@@ -739,8 +741,6 @@ public class GoogleSignInTest {
     PlatformAuthorizationRequest params =
         new PlatformAuthorizationRequest(scopes, null, null, null);
 
-    final String accessToken = "accessToken";
-    final String serverAuthCode = "serverAuthCode";
     when(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask);
 
     plugin.authorize(
@@ -773,8 +773,6 @@ public class GoogleSignInTest {
     PlatformAuthorizationRequest params =
         new PlatformAuthorizationRequest(scopes, hostedDomain, accountEmail, serverClientId);
 
-    final String accessToken = "accessToken";
-    final String serverAuthCode = "serverAuthCode";
     when(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask);
 
     plugin.authorize(
