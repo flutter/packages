@@ -5531,6 +5531,108 @@ void main() {
       verifyNoMoreInteractions(camera.camera);
     },
   );
+
+  test(
+    'createCameraWithSettings passes video bitrate to Recorder',
+        () async {
+      final camera = AndroidCameraCameraX();
+      const CameraLensDirection testLensDirection = CameraLensDirection.back;
+      const testSensorOrientation = 90;
+      const testCameraDescription = CameraDescription(
+        name: 'cameraName',
+        lensDirection: testLensDirection,
+        sensorOrientation: testSensorOrientation,
+      );
+      const testVideoBitrate = 5000000;
+
+      int? capturedVideoBitrate;
+
+      final mockProcessCameraProvider = MockProcessCameraProvider();
+      final mockCamera = MockCamera();
+      final mockCameraInfo = MockCameraInfo();
+
+      when(mockProcessCameraProvider.bindToLifecycle(any, any))
+          .thenAnswer((_) async => mockCamera);
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(mockCameraInfo.getCameraState())
+          .thenAnswer((_) async => MockLiveCameraState());
+
+      setUpOverridesForTestingUseCaseConfiguration(mockProcessCameraProvider);
+
+      PigeonOverrides.recorder_new = ({
+        int? aspectRatio,
+        int? targetVideoEncodingBitRate,
+        QualitySelector? qualitySelector,
+      }) {
+        capturedVideoBitrate = targetVideoEncodingBitRate;
+        final mockRecorder = MockRecorder();
+        when(mockRecorder.getQualitySelector())
+            .thenAnswer((_) async => qualitySelector ?? MockQualitySelector());
+        return mockRecorder;
+      };
+
+      camera.processCameraProvider = mockProcessCameraProvider;
+
+      await camera.createCameraWithSettings(
+        testCameraDescription,
+        const MediaSettings(
+          videoBitrate: testVideoBitrate,
+          enableAudio: true,
+        ),
+      );
+
+      expect(capturedVideoBitrate, equals(testVideoBitrate));
+    },
+  );
+
+  test(
+    'createCameraWithSettings passes null video bitrate when not specified',
+        () async {
+      final camera = AndroidCameraCameraX();
+      const CameraLensDirection testLensDirection = CameraLensDirection.back;
+      const testSensorOrientation = 90;
+      const testCameraDescription = CameraDescription(
+        name: 'cameraName',
+        lensDirection: testLensDirection,
+        sensorOrientation: testSensorOrientation,
+      );
+
+      int? capturedVideoBitrate;
+
+      final mockProcessCameraProvider = MockProcessCameraProvider();
+      final mockCamera = MockCamera();
+      final mockCameraInfo = MockCameraInfo();
+
+      when(mockProcessCameraProvider.bindToLifecycle(any, any))
+          .thenAnswer((_) async => mockCamera);
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(mockCameraInfo.getCameraState())
+          .thenAnswer((_) async => MockLiveCameraState());
+
+      setUpOverridesForTestingUseCaseConfiguration(mockProcessCameraProvider);
+
+      PigeonOverrides.recorder_new = ({
+        int? aspectRatio,
+        int? targetVideoEncodingBitRate,
+        QualitySelector? qualitySelector,
+      }) {
+        capturedVideoBitrate = targetVideoEncodingBitRate;
+        final mockRecorder = MockRecorder();
+        when(mockRecorder.getQualitySelector())
+            .thenAnswer((_) async => qualitySelector ?? MockQualitySelector());
+        return mockRecorder;
+      };
+
+      camera.processCameraProvider = mockProcessCameraProvider;
+
+      await camera.createCameraWithSettings(
+        testCameraDescription,
+        const MediaSettings(enableAudio: true),
+      );
+
+      expect(capturedVideoBitrate, isNull);
+    },
+  );
 }
 
 class TestMeteringPoint extends MeteringPoint {

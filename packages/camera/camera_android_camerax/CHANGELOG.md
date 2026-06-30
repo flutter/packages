@@ -1,3 +1,7 @@
+## 0.7.3
+
+* Supports video encoding bitrate.
+
 ## 0.7.2+1
 
 * Migrates to Built-in Kotlin to support AGP 9.
