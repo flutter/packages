@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes onExit ignored for GoRoute nested inside ShellRoute
+version: patch

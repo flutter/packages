@@ -15,12 +15,15 @@ let package = Package(
   products: [
     .library(name: "video-player-avfoundation", targets: ["video_player_avfoundation"])
   ],
-  dependencies: [],
+  dependencies: [
+    .package(name: "FlutterFramework", path: "../FlutterFramework")
+  ],
   targets: [
     .target(
       name: "video_player_avfoundation",
       dependencies: [
-        "video_player_avfoundation_objc"
+        "video_player_avfoundation_objc",
+        .product(name: "FlutterFramework", package: "FlutterFramework"),
       ],
       resources: [
         .process("Resources")
