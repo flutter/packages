@@ -125,9 +125,6 @@ class ReadinessChecker {
   }
 
   bool _canRunCommand(String command) {
-    // A simple check using ProcessManager's canRun
-    // NOTE: ProcessManager.canRun exists if we use process package > certain version
-    // Let's implement a safe check
     return _processManager.canRun(command);
   }
 

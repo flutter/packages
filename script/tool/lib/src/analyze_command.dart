@@ -324,14 +324,11 @@ class AnalyzeCommand extends PackageLoopingCommand {
       }
     }
 
-    final errors = <String>[];
-    if (mainExitCode != 0) {
-      errors.add('Main package analysis failed');
-    }
-    if (skillsExitCode != 0) {
-      errors.add('Skills analysis failed');
-    }
-    errors.addAll(skillsErrors);
+    final errors = <String>[
+      if (mainExitCode != 0) 'Main package analysis failed',
+      if (skillsExitCode != 0) 'Skills analysis failed',
+      ...skillsErrors,
+    ];
 
     if (errors.isNotEmpty) {
       return PackageResult.fail(errors);
