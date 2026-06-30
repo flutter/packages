@@ -24,6 +24,9 @@ class XFile extends XFileBase {
   /// [length] is ignored; the parameter exists only to match the web version of
   /// the constructor.
   ///
+  /// [mimeType] is not inferred from [path] and is only available if explicitly
+  /// passed to the constructor.
+  ///
   // ignore: use_super_parameters
   XFile(
     String path, {
@@ -39,6 +42,9 @@ class XFile extends XFileBase {
        super(path);
 
   /// Construct an CrossFile from its data
+  ///
+  /// [mimeType] is not inferred from [path] and is only available if explicitly
+  /// passed to the constructor.
   ///
   /// [name] is ignored; the parameter exists only to match the web version of
   /// the constructor.

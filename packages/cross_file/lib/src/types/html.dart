@@ -26,6 +26,9 @@ class XFile extends XFileBase {
   ///
   /// `name` needs to be passed from the outside, since it's only available
   /// while handling [html.File]s (when the ObjectUrl is created).
+  ///
+  /// [mimeType] is not inferred from [path] and is only available if explicitly
+  /// passed to the constructor.
   // ignore: use_super_parameters
   XFile(
     String path, {
@@ -47,6 +50,9 @@ class XFile extends XFileBase {
   }
 
   /// Construct an CrossFile from its data
+  ///
+  /// [mimeType] is not inferred from [path] and is only available if explicitly
+  /// passed to the constructor.
   XFile.fromData(
     Uint8List bytes, {
     String? mimeType,

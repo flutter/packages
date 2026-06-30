@@ -23,6 +23,9 @@ final String fileContent = await file.readAsString();
 print('Content of the file: $fileContent');
 ```
 
+The `mimeType` property is not inferred from the file path or contents. It is
+only available if provided when the `XFile` was created.
+
 You will find links to the API docs on the [pub page](https://pub.dev/packages/cross_file).
 
 ## Web Limitations

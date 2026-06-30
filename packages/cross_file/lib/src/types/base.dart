@@ -45,7 +45,10 @@ abstract class XFileBase {
     throw UnimplementedError('.name has not been implemented.');
   }
 
-  /// For web, it may be necessary for a file to know its MIME type.
+  /// The MIME type of the file.
+  ///
+  /// The value is not inferred from the file contents or path. It is only
+  /// available if provided when the [XFile] was created.
   String? get mimeType {
     throw UnimplementedError('.mimeType has not been implemented.');
   }
