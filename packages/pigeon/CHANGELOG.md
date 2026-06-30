@@ -1,3 +1,7 @@
+## 27.1.1
+
+* Fixes validation bug where empty classes without `sealed` keyword were not correctly flagged with an error.
+
 ## 27.1.0
 
 * [swift] Adds `CaseIterable` conformance to generated enums.

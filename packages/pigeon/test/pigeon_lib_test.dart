@@ -215,6 +215,23 @@ abstract class Api {
     expect(results.errors[0].message, contains('dynamic'));
   });
 
+  test('empty class error', () {
+    const source = '''
+class EmptyClass {}
+
+@HostApi()
+abstract class Api {
+  void foo(EmptyClass empty);
+}
+''';
+    final ParseResults results = parseSource(source);
+    expect(results.errors, hasLength(1));
+    expect(
+      results.errors[0].message,
+      contains('Class: "EmptyClass" must contain fields or be sealed.'),
+    );
+  });
+
   test('Only allow one api annotation', () {
     const source = '''
 @HostApi()
@@ -1703,7 +1720,9 @@ abstract class EventChannelApi {
   group('sealed inheritance validation', () {
     test('super class must be sealed', () {
       const code = '''
-class DataClass {}
+class DataClass {
+  int? someField;
+}
 class ChildClass extends DataClass {
   ChildClass(this.input);
   int input;

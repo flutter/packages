@@ -619,6 +619,25 @@ List<Error> _validateAst(Root root, String source) {
         ),
       );
     }
+    if (classDefinition.isSealed) {
+      if (classDefinition.fields.isNotEmpty) {
+        result.add(
+          Error(message: 'Sealed class: "${classDefinition.name}" must not contain fields.'),
+        );
+      }
+    }
+    if (classDefinition.fields.isEmpty && !classDefinition.isSealed) {
+      result.add(
+        Error(message: 'Class: "${classDefinition.name}" must contain fields or be sealed.'),
+      );
+    }
+    if (classDefinition.superClass != null) {
+      if (!classDefinition.superClass!.isSealed) {
+        result.add(
+          Error(message: 'Child class: "${classDefinition.name}" must extend a sealed class.'),
+        );
+      }
+    }
     for (final NamedType field in getFieldsInSerializationOrder(classDefinition)) {
       final String? matchingPrefix = _findMatchingPrefixOrNull(
         field.name,
@@ -643,26 +662,6 @@ List<Error> _validateAst(Root root, String source) {
             lineNumber: _calculateLineNumberNullable(source, field.offset),
           ),
         );
-      }
-      if (classDefinition.isSealed) {
-        if (classDefinition.fields.isNotEmpty) {
-          result.add(
-            Error(
-              message: 'Sealed class: "${classDefinition.name}" must not contain fields.',
-              lineNumber: _calculateLineNumberNullable(source, field.offset),
-            ),
-          );
-        }
-      }
-      if (classDefinition.superClass != null) {
-        if (!classDefinition.superClass!.isSealed) {
-          result.add(
-            Error(
-              message: 'Child class: "${classDefinition.name}" must extend a sealed class.',
-              lineNumber: _calculateLineNumberNullable(source, field.offset),
-            ),
-          );
-        }
       }
     }
   }
@@ -1805,22 +1804,21 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               lineNumber: calculateLineNumber(source, node.offset),
             ),
           );
-        } else {
-          final dart_ast.TypeArgumentList? typeArguments = type.typeArguments;
-          final String name = node.fields.variables[0].name.lexeme;
-          final field = NamedType(
-            type: TypeDeclaration(
-              baseName: _getNamedTypeQualifiedName(type),
-              isNullable: type.question != null,
-              typeArguments: _typeAnnotationsToTypeArguments(typeArguments),
-            ),
-            name: name,
-            offset: node.offset,
-            defaultValue: _currentClassDefaultValues[name],
-            documentationComments: _documentationCommentsParser(node.documentationComment?.tokens),
-          );
-          _currentClass!.fields.add(field);
         }
+        final dart_ast.TypeArgumentList? typeArguments = type.typeArguments;
+        final String name = node.fields.variables[0].name.lexeme;
+        final field = NamedType(
+          type: TypeDeclaration(
+            baseName: _getNamedTypeQualifiedName(type),
+            isNullable: type.question != null,
+            typeArguments: _typeAnnotationsToTypeArguments(typeArguments),
+          ),
+          name: name,
+          offset: node.offset,
+          defaultValue: _currentClassDefaultValues[name],
+          documentationComments: _documentationCommentsParser(node.documentationComment?.tokens),
+        );
+        _currentClass!.fields.add(field);
       } else {
         _errors.add(
           Error(
@@ -1969,23 +1967,22 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             lineNumber: calculateLineNumber(source, node.offset),
           ),
         );
-      } else {
-        final dart_ast.TypeArgumentList? typeArguments = type.typeArguments;
-        (_currentApi as AstProxyApi?)!.fields.add(
-          ApiField(
-            type: TypeDeclaration(
-              baseName: _getNamedTypeQualifiedName(type),
-              isNullable: type.question != null,
-              typeArguments: _typeAnnotationsToTypeArguments(typeArguments),
-            ),
-            name: node.fields.variables[0].name.lexeme,
-            isAttached: _hasMetadata(node.metadata, 'attached') || isStatic,
-            isStatic: isStatic,
-            offset: node.offset,
-            documentationComments: _documentationCommentsParser(node.documentationComment?.tokens),
-          ),
-        );
       }
+      final dart_ast.TypeArgumentList? typeArguments = type.typeArguments;
+      (_currentApi as AstProxyApi?)!.fields.add(
+        ApiField(
+          type: TypeDeclaration(
+            baseName: _getNamedTypeQualifiedName(type),
+            isNullable: type.question != null,
+            typeArguments: _typeAnnotationsToTypeArguments(typeArguments),
+          ),
+          name: node.fields.variables[0].name.lexeme,
+          isAttached: _hasMetadata(node.metadata, 'attached') || isStatic,
+          isStatic: isStatic,
+          offset: node.offset,
+          documentationComments: _documentationCommentsParser(node.documentationComment?.tokens),
+        ),
+      );
     }
   }
 }
