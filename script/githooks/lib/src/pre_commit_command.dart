@@ -47,14 +47,14 @@ class PreCommitCommand extends Command<bool> {
       return false;
     }
 
-    final bool? hasStaged = await _hasStagedPackages(repoRoot);
-    if (hasStaged == null) {
-      return false;
-    }
-    if (!hasStaged) {
-      print('No staged package changes to check.');
-      return true;
-    }
+    // final bool? hasStaged = await _hasStagedPackages(repoRoot);
+    // if (hasStaged == null) {
+    //   return false;
+    // }
+    // if (!hasStaged) {
+    //   print('No staged package changes to check.');
+    //   return true;
+    // }
 
     final String toolScript = p.join(
       repoRoot.path,
