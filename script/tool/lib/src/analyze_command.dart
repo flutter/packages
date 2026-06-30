@@ -324,7 +324,7 @@ class AnalyzeCommand extends PackageLoopingCommand {
       }
     }
 
-    final List<String> errors = <String>[];
+    final errors = <String>[];
     if (mainExitCode != 0) {
       errors.add('Main package analysis failed');
     }
