@@ -526,8 +526,6 @@ Future<void> main() async {
   });
 
   testWidgets('tabs announce semantics', (WidgetTester tester) async {
-    final SemanticsHandle handle = tester.ensureSemantics();
-
     await pumpWidgetWithBoilerplate(
       tester,
       MediaQuery(
@@ -568,8 +566,6 @@ Future<void> main() async {
         textDirection: TextDirection.ltr,
       ),
     );
-
-    handle.dispose();
   });
 
   testWidgets('Label of items should be nullable', (WidgetTester tester) async {
@@ -712,8 +708,6 @@ Future<void> main() async {
   testWidgets('CupertinoTabBar item semanticsLabel overrides label for accessibility', (
     WidgetTester tester,
   ) async {
-    final SemanticsHandle handle = tester.ensureSemantics();
-
     await pumpWidgetWithBoilerplate(
       tester,
       MediaQuery(
@@ -757,7 +751,5 @@ Future<void> main() async {
         textDirection: TextDirection.ltr,
       ),
     );
-
-    handle.dispose();
   });
 }
