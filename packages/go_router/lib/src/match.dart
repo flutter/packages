@@ -231,9 +231,10 @@ abstract class RouteMatchBase with Diagnosticable {
     assert(uriPathToCompare.startsWith(newMatchedLocationToCompare));
     assert(remainingLocation.isNotEmpty);
 
-    final String childRestLoc = uri.path.substring(
-      newMatchedLocation.length + (newMatchedLocation == '/' ? 0 : 1),
-    );
+    final int offset =
+        newMatchedLocation.length + (newMatchedLocation == '/' ? 0 : 1);
+    final String childRestLoc =
+        offset >= uri.path.length ? '' : uri.path.substring(offset);
 
     Map<GlobalKey<NavigatorState>?, List<RouteMatchBase>>? subRouteMatches;
     for (final RouteBase subRoute in route.routes) {

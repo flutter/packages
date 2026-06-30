@@ -86,6 +86,63 @@ void main() {
       expect(matches2.length, 1);
       expect(matches1.first.pageKey, matches2.first.pageKey);
     });
+
+    test('ShellRoute with empty child path does not throw RangeError', () {
+      // Regression test for https://github.com/flutter/flutter/issues/185948
+      // When state restoration produces an URI whose path does not start
+      // with the matched route path, the substring offset in
+      // _matchByNavigatorKeyForGoRoute must not exceed uri.path.length.
+      final route = ShellRoute(
+        builder: _shellBuilder,
+        routes: <RouteBase>[
+          GoRoute(
+            path: '/a',
+            builder: _builder,
+            routes: <RouteBase>[
+              GoRoute(path: 'b', builder: _builder),
+            ],
+          ),
+        ],
+      );
+      final pathParameters = <String, String>{};
+      expect(
+        () => RouteMatchBase.match(
+          route: route,
+          pathParameters: pathParameters,
+          uri: Uri.parse('/'),
+          rootNavigatorKey: GlobalKey<NavigatorState>(),
+        ),
+        returnsNormally,
+      );
+    });
+
+    test('nested route with path shorter than matchedLocation does not throw', () {
+      // Regression test for https://github.com/flutter/flutter/issues/185948
+      // When newMatchedLocation is longer than uri.path, the offset
+      // computation in _matchByNavigatorKeyForGoRoute must be clamped.
+      final route = ShellRoute(
+        builder: _shellBuilder,
+        routes: <RouteBase>[
+          GoRoute(
+            path: '',
+            builder: _builder,
+            routes: <RouteBase>[
+              GoRoute(path: '', builder: _builder),
+            ],
+          ),
+        ],
+      );
+      final pathParameters = <String, String>{};
+      expect(
+        () => RouteMatchBase.match(
+          route: route,
+          pathParameters: pathParameters,
+          uri: Uri.parse('/'),
+          rootNavigatorKey: GlobalKey<NavigatorState>(),
+        ),
+        returnsNormally,
+      );
+    });
   });
 
   test('complex parentNavigatorKey works', () {
