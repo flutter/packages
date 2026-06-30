@@ -288,6 +288,19 @@ enum class PlatformMarkerType(val raw: Int) {
   }
 }
 
+/** Pigeon equivalent of MapColorScheme. */
+enum class PlatformMapColorScheme(val raw: Int) {
+  LIGHT(0),
+  DARK(1),
+  FOLLOW_SYSTEM(2);
+
+  companion object {
+    fun ofRaw(raw: Int): PlatformMapColorScheme? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
 /** Pigeon equivalent of [MapBitmapScaling]. */
 enum class PlatformMapBitmapScaling(val raw: Int) {
   AUTO(0),
@@ -2107,7 +2120,8 @@ data class PlatformMapConfiguration(
     val liteModeEnabled: Boolean? = null,
     val markerType: PlatformMarkerType,
     val mapId: String? = null,
-    val style: String? = null
+    val style: String? = null,
+    val colorScheme: PlatformMapColorScheme? = null
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformMapConfiguration {
@@ -2132,6 +2146,7 @@ data class PlatformMapConfiguration(
       val markerType = pigeonVar_list[18] as PlatformMarkerType
       val mapId = pigeonVar_list[19] as String?
       val style = pigeonVar_list[20] as String?
+      val colorScheme = pigeonVar_list[21] as PlatformMapColorScheme?
       return PlatformMapConfiguration(
           compassEnabled,
           cameraTargetBounds,
@@ -2153,7 +2168,8 @@ data class PlatformMapConfiguration(
           liteModeEnabled,
           markerType,
           mapId,
-          style)
+          style,
+          colorScheme)
     }
   }
 
@@ -2180,6 +2196,7 @@ data class PlatformMapConfiguration(
         markerType,
         mapId,
         style,
+        colorScheme,
     )
   }
 
@@ -2212,7 +2229,8 @@ data class PlatformMapConfiguration(
         MessagesPigeonUtils.deepEquals(this.liteModeEnabled, other.liteModeEnabled) &&
         MessagesPigeonUtils.deepEquals(this.markerType, other.markerType) &&
         MessagesPigeonUtils.deepEquals(this.mapId, other.mapId) &&
-        MessagesPigeonUtils.deepEquals(this.style, other.style)
+        MessagesPigeonUtils.deepEquals(this.style, other.style) &&
+        MessagesPigeonUtils.deepEquals(this.colorScheme, other.colorScheme)
   }
 
   override fun hashCode(): Int {
@@ -2238,6 +2256,7 @@ data class PlatformMapConfiguration(
     result = 31 * result + MessagesPigeonUtils.deepHash(this.markerType)
     result = 31 * result + MessagesPigeonUtils.deepHash(this.mapId)
     result = 31 * result + MessagesPigeonUtils.deepHash(this.style)
+    result = 31 * result + MessagesPigeonUtils.deepHash(this.colorScheme)
     return result
   }
 }
@@ -2810,148 +2829,151 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
         return (readValue(buffer) as Long?)?.let { PlatformMarkerType.ofRaw(it.toInt()) }
       }
       136.toByte() -> {
-        return (readValue(buffer) as Long?)?.let { PlatformMapBitmapScaling.ofRaw(it.toInt()) }
+        return (readValue(buffer) as Long?)?.let { PlatformMapColorScheme.ofRaw(it.toInt()) }
       }
       137.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { PlatformCameraPosition.fromList(it) }
+        return (readValue(buffer) as Long?)?.let { PlatformMapBitmapScaling.ofRaw(it.toInt()) }
       }
       138.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { PlatformCameraUpdate.fromList(it) }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformCameraPosition.fromList(it) }
       }
       139.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformCameraUpdate.fromList(it) }
+      }
+      140.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
           PlatformCameraUpdateNewCameraPosition.fromList(it)
         }
       }
-      140.toByte() -> {
+      141.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
           PlatformCameraUpdateNewLatLng.fromList(it)
         }
       }
-      141.toByte() -> {
+      142.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
           PlatformCameraUpdateNewLatLngBounds.fromList(it)
         }
       }
-      142.toByte() -> {
+      143.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
           PlatformCameraUpdateNewLatLngZoom.fromList(it)
         }
       }
-      143.toByte() -> {
+      144.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformCameraUpdateScrollBy.fromList(it) }
       }
-      144.toByte() -> {
+      145.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformCameraUpdateZoomBy.fromList(it) }
       }
-      145.toByte() -> {
+      146.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformCameraUpdateZoom.fromList(it) }
       }
-      146.toByte() -> {
+      147.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformCameraUpdateZoomTo.fromList(it) }
       }
-      147.toByte() -> {
+      148.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformCircle.fromList(it) }
       }
-      148.toByte() -> {
+      149.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformHeatmap.fromList(it) }
       }
-      149.toByte() -> {
+      150.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformHeatmapGradient.fromList(it) }
       }
-      150.toByte() -> {
+      151.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformWeightedLatLng.fromList(it) }
       }
-      151.toByte() -> {
+      152.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformClusterManager.fromList(it) }
       }
-      152.toByte() -> {
+      153.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformDoublePair.fromList(it) }
       }
-      153.toByte() -> {
+      154.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformColor.fromList(it) }
       }
-      154.toByte() -> {
+      155.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformInfoWindow.fromList(it) }
       }
-      155.toByte() -> {
+      156.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformMarker.fromList(it) }
       }
-      156.toByte() -> {
+      157.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformPolygon.fromList(it) }
       }
-      157.toByte() -> {
+      158.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformPolyline.fromList(it) }
       }
-      158.toByte() -> {
+      159.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformCap.fromList(it) }
       }
-      159.toByte() -> {
+      160.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformPatternItem.fromList(it) }
       }
-      160.toByte() -> {
+      161.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformTile.fromList(it) }
       }
-      161.toByte() -> {
+      162.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformTileOverlay.fromList(it) }
       }
-      162.toByte() -> {
+      163.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformEdgeInsets.fromList(it) }
       }
-      163.toByte() -> {
+      164.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformLatLng.fromList(it) }
       }
-      164.toByte() -> {
+      165.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformLatLngBounds.fromList(it) }
       }
-      165.toByte() -> {
+      166.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformCluster.fromList(it) }
       }
-      166.toByte() -> {
+      167.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformGroundOverlay.fromList(it) }
       }
-      167.toByte() -> {
+      168.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformCameraTargetBounds.fromList(it) }
       }
-      168.toByte() -> {
+      169.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
           PlatformMapViewCreationParams.fromList(it)
         }
       }
-      169.toByte() -> {
+      170.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformMapConfiguration.fromList(it) }
       }
-      170.toByte() -> {
+      171.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformPoint.fromList(it) }
       }
-      171.toByte() -> {
+      172.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformTileLayer.fromList(it) }
       }
-      172.toByte() -> {
+      173.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformZoomRange.fromList(it) }
       }
-      173.toByte() -> {
+      174.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformBitmap.fromList(it) }
       }
-      174.toByte() -> {
+      175.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformBitmapDefaultMarker.fromList(it) }
       }
-      175.toByte() -> {
+      176.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformBitmapBytes.fromList(it) }
       }
-      176.toByte() -> {
+      177.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformBitmapAsset.fromList(it) }
       }
-      177.toByte() -> {
+      178.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformBitmapAssetImage.fromList(it) }
       }
-      178.toByte() -> {
+      179.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformBitmapAssetMap.fromList(it) }
       }
-      179.toByte() -> {
+      180.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformBitmapBytesMap.fromList(it) }
       }
-      180.toByte() -> {
+      181.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformBitmapPinConfig.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
@@ -2988,184 +3010,188 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
         stream.write(135)
         writeValue(stream, value.raw.toLong())
       }
-      is PlatformMapBitmapScaling -> {
+      is PlatformMapColorScheme -> {
         stream.write(136)
         writeValue(stream, value.raw.toLong())
       }
-      is PlatformCameraPosition -> {
+      is PlatformMapBitmapScaling -> {
         stream.write(137)
-        writeValue(stream, value.toList())
+        writeValue(stream, value.raw.toLong())
       }
-      is PlatformCameraUpdate -> {
+      is PlatformCameraPosition -> {
         stream.write(138)
         writeValue(stream, value.toList())
       }
-      is PlatformCameraUpdateNewCameraPosition -> {
+      is PlatformCameraUpdate -> {
         stream.write(139)
         writeValue(stream, value.toList())
       }
-      is PlatformCameraUpdateNewLatLng -> {
+      is PlatformCameraUpdateNewCameraPosition -> {
         stream.write(140)
         writeValue(stream, value.toList())
       }
-      is PlatformCameraUpdateNewLatLngBounds -> {
+      is PlatformCameraUpdateNewLatLng -> {
         stream.write(141)
         writeValue(stream, value.toList())
       }
-      is PlatformCameraUpdateNewLatLngZoom -> {
+      is PlatformCameraUpdateNewLatLngBounds -> {
         stream.write(142)
         writeValue(stream, value.toList())
       }
-      is PlatformCameraUpdateScrollBy -> {
+      is PlatformCameraUpdateNewLatLngZoom -> {
         stream.write(143)
         writeValue(stream, value.toList())
       }
-      is PlatformCameraUpdateZoomBy -> {
+      is PlatformCameraUpdateScrollBy -> {
         stream.write(144)
         writeValue(stream, value.toList())
       }
-      is PlatformCameraUpdateZoom -> {
+      is PlatformCameraUpdateZoomBy -> {
         stream.write(145)
         writeValue(stream, value.toList())
       }
-      is PlatformCameraUpdateZoomTo -> {
+      is PlatformCameraUpdateZoom -> {
         stream.write(146)
         writeValue(stream, value.toList())
       }
-      is PlatformCircle -> {
+      is PlatformCameraUpdateZoomTo -> {
         stream.write(147)
         writeValue(stream, value.toList())
       }
-      is PlatformHeatmap -> {
+      is PlatformCircle -> {
         stream.write(148)
         writeValue(stream, value.toList())
       }
-      is PlatformHeatmapGradient -> {
+      is PlatformHeatmap -> {
         stream.write(149)
         writeValue(stream, value.toList())
       }
-      is PlatformWeightedLatLng -> {
+      is PlatformHeatmapGradient -> {
         stream.write(150)
         writeValue(stream, value.toList())
       }
-      is PlatformClusterManager -> {
+      is PlatformWeightedLatLng -> {
         stream.write(151)
         writeValue(stream, value.toList())
       }
-      is PlatformDoublePair -> {
+      is PlatformClusterManager -> {
         stream.write(152)
         writeValue(stream, value.toList())
       }
-      is PlatformColor -> {
+      is PlatformDoublePair -> {
         stream.write(153)
         writeValue(stream, value.toList())
       }
-      is PlatformInfoWindow -> {
+      is PlatformColor -> {
         stream.write(154)
         writeValue(stream, value.toList())
       }
-      is PlatformMarker -> {
+      is PlatformInfoWindow -> {
         stream.write(155)
         writeValue(stream, value.toList())
       }
-      is PlatformPolygon -> {
+      is PlatformMarker -> {
         stream.write(156)
         writeValue(stream, value.toList())
       }
-      is PlatformPolyline -> {
+      is PlatformPolygon -> {
         stream.write(157)
         writeValue(stream, value.toList())
       }
-      is PlatformCap -> {
+      is PlatformPolyline -> {
         stream.write(158)
         writeValue(stream, value.toList())
       }
-      is PlatformPatternItem -> {
+      is PlatformCap -> {
         stream.write(159)
         writeValue(stream, value.toList())
       }
-      is PlatformTile -> {
+      is PlatformPatternItem -> {
         stream.write(160)
         writeValue(stream, value.toList())
       }
-      is PlatformTileOverlay -> {
+      is PlatformTile -> {
         stream.write(161)
         writeValue(stream, value.toList())
       }
-      is PlatformEdgeInsets -> {
+      is PlatformTileOverlay -> {
         stream.write(162)
         writeValue(stream, value.toList())
       }
-      is PlatformLatLng -> {
+      is PlatformEdgeInsets -> {
         stream.write(163)
         writeValue(stream, value.toList())
       }
-      is PlatformLatLngBounds -> {
+      is PlatformLatLng -> {
         stream.write(164)
         writeValue(stream, value.toList())
       }
-      is PlatformCluster -> {
+      is PlatformLatLngBounds -> {
         stream.write(165)
         writeValue(stream, value.toList())
       }
-      is PlatformGroundOverlay -> {
+      is PlatformCluster -> {
         stream.write(166)
         writeValue(stream, value.toList())
       }
-      is PlatformCameraTargetBounds -> {
+      is PlatformGroundOverlay -> {
         stream.write(167)
         writeValue(stream, value.toList())
       }
-      is PlatformMapViewCreationParams -> {
+      is PlatformCameraTargetBounds -> {
         stream.write(168)
         writeValue(stream, value.toList())
       }
-      is PlatformMapConfiguration -> {
+      is PlatformMapViewCreationParams -> {
         stream.write(169)
         writeValue(stream, value.toList())
       }
-      is PlatformPoint -> {
+      is PlatformMapConfiguration -> {
         stream.write(170)
         writeValue(stream, value.toList())
       }
-      is PlatformTileLayer -> {
+      is PlatformPoint -> {
         stream.write(171)
         writeValue(stream, value.toList())
       }
-      is PlatformZoomRange -> {
+      is PlatformTileLayer -> {
         stream.write(172)
         writeValue(stream, value.toList())
       }
-      is PlatformBitmap -> {
+      is PlatformZoomRange -> {
         stream.write(173)
         writeValue(stream, value.toList())
       }
-      is PlatformBitmapDefaultMarker -> {
+      is PlatformBitmap -> {
         stream.write(174)
         writeValue(stream, value.toList())
       }
-      is PlatformBitmapBytes -> {
+      is PlatformBitmapDefaultMarker -> {
         stream.write(175)
         writeValue(stream, value.toList())
       }
-      is PlatformBitmapAsset -> {
+      is PlatformBitmapBytes -> {
         stream.write(176)
         writeValue(stream, value.toList())
       }
-      is PlatformBitmapAssetImage -> {
+      is PlatformBitmapAsset -> {
         stream.write(177)
         writeValue(stream, value.toList())
       }
-      is PlatformBitmapAssetMap -> {
+      is PlatformBitmapAssetImage -> {
         stream.write(178)
         writeValue(stream, value.toList())
       }
-      is PlatformBitmapBytesMap -> {
+      is PlatformBitmapAssetMap -> {
         stream.write(179)
         writeValue(stream, value.toList())
       }
-      is PlatformBitmapPinConfig -> {
+      is PlatformBitmapBytesMap -> {
         stream.write(180)
+        writeValue(stream, value.toList())
+      }
+      is PlatformBitmapPinConfig -> {
+        stream.write(181)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)

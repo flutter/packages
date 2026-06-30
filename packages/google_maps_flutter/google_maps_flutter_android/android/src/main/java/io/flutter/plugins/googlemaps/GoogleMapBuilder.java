@@ -32,6 +32,7 @@ class GoogleMapBuilder implements GoogleMapOptionsSink {
   private List<PlatformGroundOverlay> initialGroundOverlays;
   private Rect padding = new Rect(0, 0, 0, 0);
   private @Nullable String style;
+  private @Nullable Integer mapColorScheme;
 
   GoogleMapController build(
       int id,
@@ -59,6 +60,7 @@ class GoogleMapBuilder implements GoogleMapOptionsSink {
     controller.setInitialTileOverlays(initialTileOverlays);
     controller.setInitialGroundOverlays(initialGroundOverlays);
     controller.setMapStyle(style);
+    controller.setMapColorScheme(mapColorScheme);
     return controller;
   }
 
@@ -208,5 +210,10 @@ class GoogleMapBuilder implements GoogleMapOptionsSink {
   @Override
   public void setMapStyle(@Nullable String style) {
     this.style = style;
+  }
+
+  @Override
+  public void setMapColorScheme(@Nullable Integer colorScheme) {
+    this.mapColorScheme = colorScheme;
   }
 }

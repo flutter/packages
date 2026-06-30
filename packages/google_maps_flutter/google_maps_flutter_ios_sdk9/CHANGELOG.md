@@ -1,3 +1,7 @@
+## 2.19.0
+
+* Adds `colorScheme` support for cloud-based maps styling brightness.
+
 ## 2.18.6
 
 * Fixes a potential compilation issue in tile downscaling.

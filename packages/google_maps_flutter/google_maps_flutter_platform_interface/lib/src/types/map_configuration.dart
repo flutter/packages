@@ -143,7 +143,10 @@ class MapConfiguration {
   /// used.
   final MarkerType? markerType;
 
-  /// Preferred color scheme for the cloud-styled map. Web only.
+  /// Preferred color scheme for the map.
+  ///
+  /// The map must use a cloud-based map style (via [mapId]) for the color
+  /// scheme to affect the base map tiles.
   ///
   /// See https://developers.google.com/maps/documentation/javascript/mapcolorscheme for more details.
   final MapColorScheme? colorScheme;

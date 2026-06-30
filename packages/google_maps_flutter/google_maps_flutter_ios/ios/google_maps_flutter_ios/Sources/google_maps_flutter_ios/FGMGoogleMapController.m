@@ -478,6 +478,20 @@
   self.mapView.settings.myLocationButton = enabled;
 }
 
+- (void)setColorScheme:(FGMPlatformMapColorScheme)colorScheme {
+  switch (colorScheme) {
+    case FGMPlatformMapColorSchemeLight:
+      self.mapView.overrideUserInterfaceStyle = UIUserInterfaceStyleLight;
+      break;
+    case FGMPlatformMapColorSchemeDark:
+      self.mapView.overrideUserInterfaceStyle = UIUserInterfaceStyleDark;
+      break;
+    case FGMPlatformMapColorSchemeFollowSystem:
+      self.mapView.overrideUserInterfaceStyle = UIUserInterfaceStyleUnspecified;
+      break;
+  }
+}
+
 /// Sets the map style, returing any error string as well as storing that error in `mapStyle` for
 /// later access.
 - (NSString *)setMapStyle:(NSString *)mapStyle {
@@ -636,6 +650,10 @@
   NSString *style = config.style;
   if (style) {
     [self setMapStyle:style];
+  }
+  FGMPlatformMapColorSchemeBox *colorScheme = config.colorScheme;
+  if (colorScheme) {
+    [self setColorScheme:colorScheme.value];
   }
 }
 

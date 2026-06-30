@@ -402,10 +402,15 @@ class GoogleMap extends StatefulWidget {
   /// may result in unexpected behavior.
   final GoogleMapMarkerType markerType;
 
-  /// Color scheme for the cloud-style map. Web only.
+  /// Color scheme for the map.
   ///
-  /// The colorScheme option can only be set when the map is initialized;
-  /// setting this option after the map is created will have no effect.
+  /// On Android and iOS, the color scheme can be updated after the map is
+  /// created. On web, the value is applied only at map creation; later
+  /// changes have no effect.
+  ///
+  /// The map must use a cloud-based map style (via [mapId]) for the
+  /// color scheme to affect the base map tiles; otherwise the effect is
+  /// limited to map UI chrome.
   ///
   /// See https://developers.google.com/maps/documentation/javascript/mapcolorscheme for more details.
   final MapColorScheme? colorScheme;

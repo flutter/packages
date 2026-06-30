@@ -1,5 +1,6 @@
-## NEXT
+## 2.15.1
 
+* Updates `colorScheme` doc comment to reflect Android and iOS support.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 2.15.0
