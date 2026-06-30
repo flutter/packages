@@ -1,3 +1,9 @@
+## 27.1.1
+
+* Reports a clear error when an input file uses an enhanced enum (one with a
+  constructor, fields, methods, or arguments on its values), instead of
+  silently generating incorrect output.
+
 ## 27.1.0
 
 * [swift] Adds `CaseIterable` conformance to generated enums.
