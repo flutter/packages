@@ -330,7 +330,7 @@ bool _isTransitionable(BuildContext context) {
 /// this behavior, wrap each of the `navigationBar`'s components inside a
 /// [MediaQuery] with the desired [TextScaler].
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// This example shows a [CupertinoNavigationBar] placed in a [CupertinoPageScaffold].
@@ -339,9 +339,9 @@ bool _isTransitionable(BuildContext context) {
 ///
 /// {@example /example/lib/nav_bar/cupertino_navigation_bar.0.dart}
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the @dartpad directive.
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// This example shows the resulting layout from [CupertinoNavigationBar.large]
@@ -350,7 +350,7 @@ bool _isTransitionable(BuildContext context) {
 ///
 /// {@example /example/lib/nav_bar/cupertino_navigation_bar.2.dart}
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///
@@ -626,7 +626,7 @@ class CupertinoNavigationBar extends StatefulWidget implements ObstructingPrefer
   /// Only widgets that implement [PreferredSizeWidget] can be used at the
   /// bottom of a navigation bar.
   ///
-  // TODO(dkwingsmt): Replace the following block with a blue example container
+  // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
   ///
   /// This example shows a [CupertinoSearchTextField] at the bottom of a
@@ -634,7 +634,7 @@ class CupertinoNavigationBar extends StatefulWidget implements ObstructingPrefer
   ///
   /// {@example /example/lib/nav_bar/cupertino_navigation_bar.1.dart}
   ///
-  // TODO(dkwingsmt): End of the blue example container.
+  // TODO(framework): End of the @dartpad directive.
   ///
   /// See also:
   ///
@@ -935,23 +935,23 @@ class _CupertinoNavigationBarState extends State<CupertinoNavigationBar> {
 /// user scrolls, but it will also stretch when the user over-scrolls if the
 /// [stretch] value is `true`. Defaults to `false`.
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// This example shows [CupertinoSliverNavigationBar] in action inside a [CustomScrollView].
 ///
 /// {@example /example/lib/nav_bar/cupertino_sliver_nav_bar.0.dart}
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the @dartpad directive.
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// To add a widget to the bottom of the nav bar, wrap it with [PreferredSize] and provide its fully extended size.
 ///
 /// {@example /example/lib/nav_bar/cupertino_sliver_nav_bar.2.dart}
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///
@@ -1015,7 +1015,7 @@ class CupertinoSliverNavigationBar extends StatefulWidget {
   /// If [automaticallyImplyTitle] is false, then the [largeTitle] argument is
   /// required.
   ///
-  // TODO(dkwingsmt): Replace the following block with a blue example container
+  // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
   ///
   /// This example demonstrates how to use a
@@ -1023,7 +1023,7 @@ class CupertinoSliverNavigationBar extends StatefulWidget {
   ///
   /// {@example /example/lib/nav_bar/cupertino_sliver_nav_bar.1.dart}
   ///
-  // TODO(dkwingsmt): End of the blue example container.
+  // TODO(framework): End of the @dartpad directive.
   const CupertinoSliverNavigationBar.search({
     super.key,
     required Widget this.searchField,

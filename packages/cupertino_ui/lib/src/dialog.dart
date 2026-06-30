@@ -213,7 +213,7 @@ bool _isInAccessibilityMode(BuildContext context) {
 /// Typically passed as the child widget to [showDialog], which displays the
 /// dialog.
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// This sample shows how to use a [CupertinoAlertDialog].
@@ -222,7 +222,7 @@ bool _isInAccessibilityMode(BuildContext context) {
 ///
 /// {@example /example/lib/dialog/cupertino_alert_dialog.0.dart}
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///
@@ -520,7 +520,7 @@ class _CupertinoAlertDialogState extends State<CupertinoAlertDialog> {
 /// which is useful for more complicated layouts, such as rendering divider gaps
 /// in [CupertinoAlertDialog] or rendering custom surface colors.
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// This sample shows how to use a [CupertinoPopupSurface]. The [CupertinoPopupSurface]
@@ -529,7 +529,7 @@ class _CupertinoAlertDialogState extends State<CupertinoAlertDialog> {
 ///
 /// {@example /example/lib/dialog/cupertino_popup_surface.0.dart}
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///
@@ -888,7 +888,7 @@ abstract class _SlideTarget {
 // Recognizes sliding taps and thereupon interacts with
 // `_SlideTarget`s.
 //
-// TODO(dkwingsmt): It should recompute hit testing when the app is updated,
+// TODO(framework): It should recompute hit testing when the app is updated,
 // or better, share code with `MouseTracker`.
 // https://github.com/flutter/flutter/issues/155266
 class _TargetSelectionGestureRecognizer extends GestureRecognizer {
@@ -1058,7 +1058,7 @@ class _ActionSheetGestureDetector extends StatelessWidget {
 /// [showCupertinoModalPopup], which displays the action sheet by sliding it up
 /// from the bottom of the screen.
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// This sample shows how to use a [CupertinoActionSheet].
@@ -1067,7 +1067,7 @@ class _ActionSheetGestureDetector extends StatelessWidget {
 ///
 /// {@example /example/lib/dialog/cupertino_action_sheet.0.dart}
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///

@@ -1294,7 +1294,7 @@ class CupertinoModalPopupRoute<T> extends PopupRoute<T> {
 ///
 /// For more information about state restoration, see [RestorationManager].
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// This sample demonstrates how to create a restorable Cupertino modal route.
@@ -1306,7 +1306,7 @@ class CupertinoModalPopupRoute<T> extends PopupRoute<T> {
 ///
 /// {@example /example/lib/route/show_cupertino_modal_popup.0.dart}
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///
@@ -1390,7 +1390,7 @@ Widget _buildCupertinoDialogTransitions(
 ///
 /// For more information about state restoration, see [RestorationManager].
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// This sample demonstrates how to create a restorable Cupertino dialog. This is
@@ -1402,7 +1402,7 @@ Widget _buildCupertinoDialogTransitions(
 ///
 /// {@example /example/lib/route/show_cupertino_dialog.0.dart}
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///

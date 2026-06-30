@@ -77,7 +77,7 @@ const CupertinoDynamicColor _kOffLabelColor = CupertinoDynamicColor.withBrightne
 /// callback and rebuild the switch with a new [value] to update the visual
 /// appearance of the switch.
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// This example shows a toggleable [CupertinoSwitch]. When the thumb slides to
@@ -85,11 +85,11 @@ const CupertinoDynamicColor _kOffLabelColor = CupertinoDynamicColor.withBrightne
 ///
 /// {@example /example/lib/switch/cupertino_switch.0.dart}
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the @dartpad directive.
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a blue example container
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-// TODO(dkwingsmt): Add unit tests to this code snippet.
+// TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
 ///
@@ -110,7 +110,7 @@ const CupertinoDynamicColor _kOffLabelColor = CupertinoDynamicColor.withBrightne
 /// )
 /// ```
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the blue example container.
 ///
 /// See also:
 ///
@@ -305,9 +305,9 @@ class CupertinoSwitch extends StatefulWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  // TODO(dkwingsmt): Replace the following block with a blue example container
+  // TODO(framework): Replace the following block with a blue example container
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-  // TODO(dkwingsmt): Add unit tests to this code snippet.
+  // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
   /// This example resolves the [trackOutlineColor] based on the current
@@ -327,7 +327,7 @@ class CupertinoSwitch extends StatefulWidget {
   /// )
   /// ```
   ///
-  // TODO(dkwingsmt): End of the blue example container.
+  // TODO(framework): End of the blue example container.
   ///
   /// The [CupertinoSwitch] track has no outline by default.
   final WidgetStateProperty<Color?>? trackOutlineColor;
@@ -340,9 +340,9 @@ class CupertinoSwitch extends StatefulWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  // TODO(dkwingsmt): Replace the following block with a blue example container
+  // TODO(framework): Replace the following block with a blue example container
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-  // TODO(dkwingsmt): Add unit tests to this code snippet.
+  // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
   /// This example resolves the [trackOutlineWidth] based on the current
@@ -362,7 +362,7 @@ class CupertinoSwitch extends StatefulWidget {
   /// )
   /// ```
   ///
-  // TODO(dkwingsmt): End of the blue example container.
+  // TODO(framework): End of the blue example container.
   ///
   /// Since a [CupertinoSwitch] has no track outline by default, this parameter
   /// is set only if [trackOutlineColor] is provided.
@@ -378,9 +378,9 @@ class CupertinoSwitch extends StatefulWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  // TODO(dkwingsmt): Replace the following block with a blue example container
+  // TODO(framework): Replace the following block with a blue example container
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-  // TODO(dkwingsmt): Add unit tests to this code snippet.
+  // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
   /// This example resolves the [thumbIcon] based on the current
@@ -400,7 +400,7 @@ class CupertinoSwitch extends StatefulWidget {
   /// )
   /// ```
   ///
-  // TODO(dkwingsmt): End of the blue example container.
+  // TODO(framework): End of the blue example container.
   ///
   /// If null, then the [CupertinoSwitch] does not have any icons on the thumb.
   final WidgetStateProperty<Icon?>? thumbIcon;
@@ -414,9 +414,9 @@ class CupertinoSwitch extends StatefulWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  // TODO(dkwingsmt): Replace the following block with a blue example container
+  // TODO(framework): Replace the following block with a blue example container
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-  // TODO(dkwingsmt): Add unit tests to this code snippet.
+  // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
   /// This example resolves the [mouseCursor] based on the current
@@ -436,7 +436,7 @@ class CupertinoSwitch extends StatefulWidget {
   /// )
   /// ```
   ///
-  // TODO(dkwingsmt): End of the blue example container.
+  // TODO(framework): End of the blue example container.
   ///
   /// If null, then [MouseCursor.defer] is used when the switch is disabled.
   /// When the switch is enabled, [SystemMouseCursors.click] is used on Web, and

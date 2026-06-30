@@ -73,14 +73,14 @@ const List<double> _kDisabledDarkGradientOpacities = <double>[0.08, 0.14];
 ///     [kMinInteractiveDimensionCupertino] pixels to meet accessibility
 ///     guidelines.
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// This example shows a toggleable [CupertinoCheckbox].
 ///
 /// {@example /example/lib/checkbox/cupertino_checkbox.0.dart}
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///
@@ -205,9 +205,9 @@ class CupertinoCheckbox extends StatefulWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  // TODO(dkwingsmt): Replace the following block with a blue example container
+  // TODO(framework): Replace the following block with a blue example container
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-  // TODO(dkwingsmt): Add unit tests to this code snippet.
+  // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
   /// This example resolves the [fillColor] based on the current [WidgetState]
@@ -227,7 +227,7 @@ class CupertinoCheckbox extends StatefulWidget {
   /// )
   /// ```
   ///
-  // TODO(dkwingsmt): End of the blue example container.
+  // TODO(framework): End of the blue example container.
   /// {@endtemplate}
   ///
   /// If [fillColor] resolves to null for the requested state, then the fill color

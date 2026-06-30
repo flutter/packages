@@ -266,7 +266,7 @@ typedef RefreshCallback = Future<void> Function();
 /// sliver such as [CupertinoSliverNavigationBar] and your main scrollable
 /// content's sliver.
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// When the user scrolls past [refreshTriggerPullDistance],
@@ -275,7 +275,7 @@ typedef RefreshCallback = Future<void> Function();
 ///
 /// {@example /example/lib/refresh/cupertino_sliver_refresh_control.0.dart}
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///

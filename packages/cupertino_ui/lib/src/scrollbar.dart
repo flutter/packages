@@ -43,7 +43,7 @@ const double _kScrollbarCrossAxisMargin = 3.0;
 /// animate from [thickness] and [radius] to [thicknessWhileDragging] and
 /// [radiusWhileDragging], respectively.
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// This sample shows a [CupertinoScrollbar] that fades in and out of view as scrolling occurs.
@@ -54,9 +54,9 @@ const double _kScrollbarCrossAxisMargin = 3.0;
 ///
 /// {@example /example/lib/scrollbar/cupertino_scrollbar.0.dart}
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the @dartpad directive.
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// When [thumbVisibility] is true, the scrollbar thumb will remain visible without the
@@ -65,7 +65,7 @@ const double _kScrollbarCrossAxisMargin = 3.0;
 ///
 /// {@example /example/lib/scrollbar/cupertino_scrollbar.1.dart}
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///

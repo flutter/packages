@@ -158,7 +158,7 @@ typedef _GetSheetDragged = bool Function();
 /// Returns a [Future] that resolves to the value (if any) that was passed to
 /// [Navigator.pop] when the sheet was closed.
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// This example shows how to navigate to use [showCupertinoSheet] to display a
@@ -166,7 +166,7 @@ typedef _GetSheetDragged = bool Function();
 ///
 /// {@example /example/lib/sheet/cupertino_sheet.1.dart}
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///
@@ -611,7 +611,7 @@ class _StretchDragControllerProvider extends InheritedWidget {
 /// scrollable area within the sheet, this parameter can be ignored. See below
 /// for an example.
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// This example shows how to navigate to [CupertinoSheetRoute] by using it the
@@ -619,9 +619,9 @@ class _StretchDragControllerProvider extends InheritedWidget {
 ///
 /// {@example /example/lib/sheet/cupertino_sheet.0.dart}
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the @dartpad directive.
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// This example shows how to show a Cupertino Sheet with nested navigation manually
@@ -629,16 +629,16 @@ class _StretchDragControllerProvider extends InheritedWidget {
 ///
 /// {@example /example/lib/sheet/cupertino_sheet.2.dart}
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the @dartpad directive.
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// This example shows how to show a Cupertino Sheet with scrollable content.
 ///
 /// {@example /example/lib/sheet/cupertino_sheet.3.dart}
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///   * [showCupertinoSheet], which is a convenience method for pushing a
@@ -679,14 +679,14 @@ class CupertinoSheetRoute<T> extends PageRoute<T> with _CupertinoSheetRouteTrans
   /// then when a downward drag is applied to the scrollable area while the content
   /// is scrolled to the top, the drag to dismiss behavior of the sheet will be triggered.
   ///
-  // TODO(dkwingsmt): Replace the following block with a blue example container
+  // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
   ///
   /// This example shows how to show a Cupertino Sheet with scrollable content.
   ///
   /// {@example /example/lib/sheet/cupertino_sheet.3.dart}
   ///
-  // TODO(dkwingsmt): End of the blue example container.
+  // TODO(framework): End of the @dartpad directive.
   final ScrollableWidgetBuilder? scrollableBuilder;
 
   ScrollableWidgetBuilder get _effectiveBuilder {

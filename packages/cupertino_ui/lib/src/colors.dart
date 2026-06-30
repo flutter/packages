@@ -661,9 +661,9 @@ abstract final class CupertinoColors {
 /// [CupertinoDynamicColor.resolve] against its own [BuildContext], on a best-effort
 /// basis.
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a blue example container
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-// TODO(dkwingsmt): Add unit tests to this code snippet.
+// TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
 /// By default a [CupertinoButton] has no background color. The following sample
@@ -682,7 +682,7 @@ abstract final class CupertinoColors {
 /// )
 /// ```
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the blue example container.
 ///
 /// ### Using a [CupertinoDynamicColor] from a [CupertinoTheme]
 ///
@@ -691,9 +691,9 @@ abstract final class CupertinoColors {
 /// implicitly resolves all the colors used in the retrieved [CupertinoThemeData],
 /// before returning it.
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a blue example container
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-// TODO(dkwingsmt): Add unit tests to this code snippet.
+// TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
 /// The following code sample creates a [Container] with the `primaryColor` of the
@@ -711,7 +711,7 @@ abstract final class CupertinoColors {
 /// )
 /// ```
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the blue example container.
 ///
 /// ### Manually Resolving a [CupertinoDynamicColor]
 ///
@@ -722,9 +722,9 @@ abstract final class CupertinoColors {
 /// the colors used in the [Border] have to be resolved manually before being passed
 /// to [CupertinoNavigationBar]'s constructor.
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a blue example container
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-// TODO(dkwingsmt): Add unit tests to this code snippet.
+// TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
 ///
@@ -750,7 +750,7 @@ abstract final class CupertinoColors {
 /// )
 /// ```
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the blue example container.
 ///
 /// See also:
 ///

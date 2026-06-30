@@ -96,7 +96,7 @@ enum _ContextMenuLocation { center, left, right }
 /// background or by calling `Navigator.pop(context)`. Unlike [PopupRoute], it can
 /// also be closed by swiping downwards.
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// This sample shows a very simple [CupertinoContextMenu] for the Flutter logo.
@@ -104,9 +104,9 @@ enum _ContextMenuLocation { center, left, right }
 ///
 /// {@example /example/lib/context_menu/cupertino_context_menu.0.dart}
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the @dartpad directive.
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// This sample shows a similar CupertinoContextMenu, this time using [builder]
@@ -114,7 +114,7 @@ enum _ContextMenuLocation { center, left, right }
 ///
 /// {@example /example/lib/context_menu/cupertino_context_menu.1.dart}
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///
@@ -148,9 +148,9 @@ class CupertinoContextMenu extends StatefulWidget {
   /// Exposes the default border radius for matching iOS 16.0 behavior. This
   /// value was eyeballed from the iOS simulator running iOS 16.0.
   ///
-  // TODO(dkwingsmt): Replace the following block with a blue example container
+  // TODO(framework): Replace the following block with a blue example container
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-  // TODO(dkwingsmt): Add unit tests to this code snippet.
+  // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
   ///
@@ -216,7 +216,7 @@ class CupertinoContextMenu extends StatefulWidget {
   /// ```
   ///
   ///
-  // TODO(dkwingsmt): End of the blue example container.
+  // TODO(framework): End of the blue example container.
   static const double kOpenBorderRadius = _previewBorderRadiusRatio;
 
   /// Exposes the final box shadow of the opening animation of the child widget
@@ -259,9 +259,9 @@ class CupertinoContextMenu extends StatefulWidget {
   /// the widget from 0 to [animationOpensAt], and the second stage for when the
   /// widget fully opens up to the menu, from [animationOpensAt] to 1.
   ///
-  // TODO(dkwingsmt): Replace the following block with a blue example container
+  // TODO(framework): Replace the following block with a blue example container
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-  // TODO(dkwingsmt): Add unit tests to this code snippet.
+  // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
   ///
@@ -330,9 +330,9 @@ class CupertinoContextMenu extends StatefulWidget {
   /// ```
   ///
   ///
-  // TODO(dkwingsmt): End of the blue example container.
+  // TODO(framework): End of the blue example container.
   ///
-  // TODO(dkwingsmt): Replace the following block with a blue example container
+  // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
   ///
   /// Additionally below is an example of a real world use case for [builder].
@@ -347,7 +347,7 @@ class CupertinoContextMenu extends StatefulWidget {
   ///
   /// {@example /example/lib/context_menu/cupertino_context_menu.1.dart}
   ///
-  // TODO(dkwingsmt): End of the blue example container.
+  // TODO(framework): End of the @dartpad directive.
   final CupertinoContextMenuBuilder builder;
 
   // TODO(mitchgoodwin): deprecate [child] with builder refactor https://github.com/flutter/flutter/issues/116306

@@ -295,7 +295,7 @@ typedef CupertinoMenuAnimationStatusChangedCallback = void Function(AnimationSta
 /// invoked every time the [AnimationStatus] of the menu animation changes.
 ///
 /// ## Usage
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// This example demonstrates a simple [CupertinoMenuAnchor] that wraps
@@ -303,9 +303,9 @@ typedef CupertinoMenuAnimationStatusChangedCallback = void Function(AnimationSta
 ///
 /// {@example /example/lib/menu_anchor/menu_anchor.0.dart}
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the @dartpad directive.
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// This example demonstrates a [CupertinoMenuAnchor] that wraps a button and
@@ -313,7 +313,7 @@ typedef CupertinoMenuAnimationStatusChangedCallback = void Function(AnimationSta
 ///
 /// {@example /example/lib/menu_anchor/menu_anchor.1.dart}
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///
@@ -1701,7 +1701,7 @@ class _CupertinoDividerPainter extends CustomPainter {
 /// will perform a destructive action, and will color the text of the menu item
 /// [CupertinoColors.systemRed].
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// This example demonstrates a simple [CupertinoMenuAnchor] that wraps
@@ -1709,9 +1709,9 @@ class _CupertinoDividerPainter extends CustomPainter {
 ///
 /// {@example /example/lib/menu_anchor/menu_anchor.0.dart}
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the @dartpad directive.
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// This example demonstrates a [CupertinoMenuAnchor] that wraps a button and
@@ -1719,7 +1719,7 @@ class _CupertinoDividerPainter extends CustomPainter {
 ///
 /// {@example /example/lib/menu_anchor/menu_anchor.1.dart}
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 /// * [CupertinoMenuAnchor], a Cupertino-style widget that shows a menu of

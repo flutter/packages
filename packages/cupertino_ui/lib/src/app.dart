@@ -67,9 +67,9 @@ import 'theme.dart';
 ///  * The San Francisco font family is unavailable on Android and can result
 ///    in undefined font behavior.
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a blue example container
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-// TODO(dkwingsmt): Add unit tests to this code snippet.
+// TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
 /// This example shows how to create a [CupertinoApp] that disables the "debug"
@@ -89,11 +89,11 @@ import 'theme.dart';
 /// )
 /// ```
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the blue example container.
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a blue example container
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-// TODO(dkwingsmt): Add unit tests to this code snippet.
+// TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
 /// This example shows how to create a [CupertinoApp] that uses the [routes]
@@ -122,11 +122,11 @@ import 'theme.dart';
 /// )
 /// ```
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the blue example container.
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a blue example container
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-// TODO(dkwingsmt): Add unit tests to this code snippet.
+// TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
 /// This example shows how to create a [CupertinoApp] that defines a [theme] that
@@ -149,7 +149,7 @@ import 'theme.dart';
 /// )
 /// ```
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the blue example container.
 ///
 /// See also:
 ///
@@ -372,9 +372,9 @@ class CupertinoApp extends StatefulWidget {
   final bool debugShowCheckedModeBanner;
 
   /// {@macro flutter.widgets.widgetsApp.shortcuts}
-  // TODO(dkwingsmt): Replace the following block with a blue example container
+  // TODO(framework): Replace the following block with a blue example container
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-  // TODO(dkwingsmt): Add unit tests to this code snippet.
+  // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
   /// This example shows how to add a single shortcut for
@@ -400,14 +400,14 @@ class CupertinoApp extends StatefulWidget {
   /// }
   /// ```
   ///
-  // TODO(dkwingsmt): End of the blue example container.
+  // TODO(framework): End of the blue example container.
   /// {@macro flutter.widgets.widgetsApp.shortcuts.seeAlso}
   final Map<ShortcutActivator, Intent>? shortcuts;
 
   /// {@macro flutter.widgets.widgetsApp.actions}
-  // TODO(dkwingsmt): Replace the following block with a blue example container
+  // TODO(framework): Replace the following block with a blue example container
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-  // TODO(dkwingsmt): Add unit tests to this code snippet.
+  // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
   /// This example shows how to add a single action handling an
@@ -438,7 +438,7 @@ class CupertinoApp extends StatefulWidget {
   /// }
   /// ```
   ///
-  // TODO(dkwingsmt): End of the blue example container.
+  // TODO(framework): End of the blue example container.
   /// {@macro flutter.widgets.widgetsApp.actions.seeAlso}
   final Map<Type, Action<Intent>>? actions;
 

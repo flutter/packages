@@ -58,7 +58,7 @@ enum _CupertinoButtonStyle {
 /// with the [CupertinoThemeData.primaryColor] (or
 /// [CupertinoThemeData.primaryContrastingColor] if the button is disabled).
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// This sample shows produces an enabled and disabled [CupertinoButton] and
@@ -66,7 +66,7 @@ enum _CupertinoButtonStyle {
 ///
 /// {@example /example/lib/button/cupertino_button.0.dart}
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///

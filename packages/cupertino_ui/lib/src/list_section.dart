@@ -161,7 +161,7 @@ enum CupertinoListSectionType {
 ///
 /// {@macro flutter.material.Material.clipBehavior}
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// Creates a base [CupertinoListSection] containing [CupertinoListTile]s with
@@ -169,9 +169,9 @@ enum CupertinoListSectionType {
 ///
 /// {@example /example/lib/list_section/list_section_base.0.dart}
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the @dartpad directive.
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// Creates an "Inset Grouped" [CupertinoListSection] containing
@@ -180,7 +180,7 @@ enum CupertinoListSectionType {
 ///
 /// {@example /example/lib/list_section/list_section_inset.0.dart}
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///

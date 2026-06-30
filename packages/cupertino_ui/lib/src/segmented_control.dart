@@ -70,7 +70,7 @@ const Duration _kFadeDuration = Duration(milliseconds: 165);
 /// [disabledChildren]. If the child is not present in the [Set], it is enabled
 /// by default.
 ///
-// TODO(dkwingsmt): Replace the following block with a blue example container
+// TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// This example shows a [CupertinoSegmentedControl] with an enum type.
@@ -84,7 +84,7 @@ const Duration _kFadeDuration = Duration(milliseconds: 165);
 ///
 /// {@example /example/lib/segmented_control/cupertino_segmented_control.0.dart}
 ///
-// TODO(dkwingsmt): End of the blue example container.
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///
