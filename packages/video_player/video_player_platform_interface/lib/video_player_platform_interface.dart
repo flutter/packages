@@ -474,8 +474,8 @@ class VideoPlayerOptions {
     this.webOptions,
     this.backBufferDurationMs,
   }) : assert(
-         backBufferDurationMs == null || backBufferDurationMs > 0,
-         'backBufferDurationMs must be greater than zero',
+         backBufferDurationMs == null || backBufferDurationMs >= 0,
+         'backBufferDurationMs must be zero or greater',
        );
 
   /// Set this to true to keep playing video in background, when app goes in background.
