@@ -60,6 +60,7 @@ class RecorderProxyApi extends PigeonApiRecorder {
   @NonNull
   @Override
   public PendingRecording prepareRecording(Recorder pigeonInstance, @NonNull String path) {
+    validateOutputPath(path);
     final File temporaryCaptureFile = openTempFile(path);
     final FileOutputOptions fileOutputOptions =
         new FileOutputOptions.Builder(temporaryCaptureFile).build();
@@ -70,12 +71,31 @@ class RecorderProxyApi extends PigeonApiRecorder {
     return pendingRecording;
   }
 
+  private void validateOutputPath(@NonNull String path) {
+    File file = new File(path);
+    if (file.isDirectory()) {
+      throw new GeneratedCameraXLibrary.FlutterError(
+          "IOError", "The output path is a directory: " + path, null);
+    }
+    File parent = file.getParentFile();
+    if (parent != null && !parent.exists()) {
+      throw new GeneratedCameraXLibrary.FlutterError(
+          "IOError", "The parent directory does not exist: " + parent.getAbsolutePath(), null);
+    }
+
+    String lowerPath = path.toLowerCase(Locale.ROOT);
+    if (!lowerPath.endsWith(".mp4")) {
+      throw new GeneratedCameraXLibrary.FlutterError(
+          "IOError", "Invalid video extension. Supported: .mp4", null);
+    }
+  }
+
   @NonNull
   File openTempFile(@NonNull String path) {
     try {
       return new File(path);
     } catch (NullPointerException | SecurityException e) {
-      throw new RuntimeException(e);
+      throw new GeneratedCameraXLibrary.FlutterError("IOError", e.getMessage(), null);
     }
   }
 

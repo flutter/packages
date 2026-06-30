@@ -295,13 +295,13 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     let expectation = expectation(description: "Call completed")
 
     var startVideoRecordingCalled = false
-    mockCamera.startVideoRecordingStub = { completion, messenger in
+    mockCamera.startVideoRecordingStub = { path, completion, messenger in
       XCTAssertNotNil(messenger)
       completion(.success(()))
       startVideoRecordingCalled = true
     }
 
-    cameraPlugin.startVideoRecording(enableStream: true) { result in
+    cameraPlugin.startVideoRecording(enableStream: true, videoOutputPath: nil) { result in
       let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
@@ -316,13 +316,13 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     let expectation = expectation(description: "Call completed")
 
     var startVideoRecordingCalled = false
-    mockCamera.startVideoRecordingStub = { completion, messenger in
+    mockCamera.startVideoRecordingStub = { path, completion, messenger in
       XCTAssertNil(messenger)
       completion(.success(()))
       startVideoRecordingCalled = true
     }
 
-    cameraPlugin.startVideoRecording(enableStream: false) { result in
+    cameraPlugin.startVideoRecording(enableStream: false, videoOutputPath: nil) { result in
       let _ = self.assertSuccess(result)
       expectation.fulfill()
     }

@@ -315,9 +315,23 @@ class CameraController extends ValueNotifier<CameraValue> {
   ///
   /// The video is returned as a [XFile] after calling [stopVideoRecording].
   /// Throws a [CameraException] if the capture fails.
-  Future<void> startVideoRecording({void Function(CameraImageData image)? streamCallback}) async {
+  Future<void> startVideoRecording({
+    void Function(CameraImageData image)? streamCallback,
+    String? videoOutputPath,
+  }) async {
+    if (videoOutputPath != null) {
+      final String lowerPath = videoOutputPath.toLowerCase();
+      if (!lowerPath.endsWith('.mp4')) {
+        throw CameraException('InvalidFilePath', 'Invalid video extension. Supported: .mp4');
+      }
+    }
+
     await CameraPlatform.instance.startVideoCapturing(
-      VideoCaptureOptions(_cameraId, streamCallback: streamCallback),
+      VideoCaptureOptions(
+        _cameraId,
+        streamCallback: streamCallback,
+        videoOutputPath: videoOutputPath,
+      ),
     );
     value = value.copyWith(
       isRecordingVideo: true,

@@ -22,6 +22,7 @@ import 'package:mockito/src/dummies.dart' as _i3;
 // ignore_for_file: unnecessary_parenthesis
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
+// ignore_for_file: invalid_use_of_internal_member
 
 /// A class which mocks [CameraApi].
 ///
@@ -150,9 +151,9 @@ class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
           as _i4.Future<void>);
 
   @override
-  _i4.Future<void> startVideoRecording(bool? enableStream) =>
+  _i4.Future<void> startVideoRecording(bool? enableStream, String? videoOutputPath) =>
       (super.noSuchMethod(
-            Invocation.method(#startVideoRecording, [enableStream]),
+            Invocation.method(#startVideoRecording, [enableStream, videoOutputPath]),
             returnValue: _i4.Future<void>.value(),
             returnValueForMissingStub: _i4.Future<void>.value(),
           )

@@ -2384,6 +2384,81 @@ void main() {
       verifyNoMoreInteractions(mockPendingRecording);
     });
 
+    test('startVideoCapturing uses the provided videoOutputPath if available', () async {
+      // Set up mocks and constants.
+      final camera = AndroidCameraCameraX();
+      final mockPendingRecording = MockPendingRecording();
+      final mockRecording = MockRecording();
+      final mockCamera = MockCamera();
+      final mockCameraInfo = MockCameraInfo();
+      final mockCamera2CameraInfo = MockCamera2CameraInfo();
+      const videoOutputPath = '/test/custom/path.mp4';
+
+      // Set directly for test versus calling createCamera.
+      camera.processCameraProvider = MockProcessCameraProvider();
+      camera.recorder = MockRecorder();
+      camera.videoCapture = MockVideoCapture();
+      camera.cameraSelector = MockCameraSelector();
+      camera.cameraInfo = MockCameraInfo();
+      camera.imageAnalysis = MockImageAnalysis();
+      camera.enableRecordingAudio = false;
+
+      // Ignore setting target rotation for this test; tested separately.
+      camera.captureOrientationLocked = true;
+
+      // Tell plugin to create detached Observer when camera info updated.
+      GenericsPigeonOverrides.observerNew =
+          <T>({required void Function(Observer<T>, T) onChanged}) {
+            return Observer<T>.detached(onChanged: onChanged);
+          };
+
+      PigeonOverrides.camera2CameraInfo_from = ({required dynamic cameraInfo}) =>
+          mockCamera2CameraInfo;
+      PigeonOverrides.videoRecordEventListener_new =
+          ({required void Function(VideoRecordEventListener, VideoRecordEvent) onEvent}) {
+            return VideoRecordEventListener.pigeon_detached(onEvent: onEvent);
+          };
+      PigeonOverrides.cameraCharacteristics_infoSupportedHardwareLevel =
+          MockCameraCharacteristicsKey();
+
+      // Mock method calls.
+      when(
+        camera.recorder!.prepareRecording(videoOutputPath),
+      ).thenAnswer((_) async => mockPendingRecording);
+      when(
+        mockPendingRecording.withAudioEnabled(any),
+      ).thenAnswer((_) async => mockPendingRecording);
+      when(
+        mockPendingRecording.asPersistentRecording(),
+      ).thenAnswer((_) async => mockPendingRecording);
+      when(mockPendingRecording.start(any)).thenAnswer((_) async => mockRecording);
+      when(
+        camera.processCameraProvider!.isBound(camera.videoCapture!),
+      ).thenAnswer((_) async => false);
+      when(
+        camera.processCameraProvider!.bindToLifecycle(camera.cameraSelector!, <UseCase>[
+          camera.videoCapture!,
+        ]),
+      ).thenAnswer((_) async => mockCamera);
+      when(mockCamera.getCameraInfo()).thenAnswer((_) => Future<CameraInfo>.value(mockCameraInfo));
+      when(mockCameraInfo.getCameraState()).thenAnswer((_) async => MockLiveCameraState());
+      when(
+        mockCamera2CameraInfo.getCameraCharacteristic(any),
+      ).thenAnswer((_) async => InfoSupportedHardwareLevel.limited);
+
+      // Simulate video recording being started so startVideoRecording completes.
+      AndroidCameraCameraX.videoRecordingEventStreamController.add(
+        VideoRecordEventStart.pigeon_detached(),
+      );
+
+      await camera.startVideoCapturing(
+        const VideoCaptureOptions(1, videoOutputPath: videoOutputPath),
+      );
+
+      verify(camera.recorder!.prepareRecording(videoOutputPath)).called(1);
+      expect(camera.videoOutputPath, videoOutputPath);
+    });
+
     test('startVideoCapturing called with stream options starts image streaming', () async {
       // Set up mocks and constants.
       final camera = AndroidCameraCameraX();

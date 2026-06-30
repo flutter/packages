@@ -869,8 +869,9 @@ class Camera
             dartMessenger.error(flutterResult, errorCode, errorMessage, null));
   }
 
-  public void startVideoRecording(@Nullable EventChannel imageStreamChannel) {
-    prepareRecording();
+  public void startVideoRecording(
+      @Nullable EventChannel imageStreamChannel, @Nullable String videoOutputPath) {
+    prepareRecording(videoOutputPath);
 
     if (imageStreamChannel != null) {
       setStreamHandler(imageStreamChannel);
@@ -1296,13 +1297,19 @@ class Camera
   }
 
   @VisibleForTesting
-  void prepareRecording() {
-    final File outputDir = applicationContext.getCacheDir();
-    try {
-      captureFile = File.createTempFile("REC", ".mp4", outputDir);
-    } catch (IOException | SecurityException e) {
-      throw new Messages.FlutterError("cannotCreateFile", e.getMessage(), null);
+  void prepareRecording(@Nullable String videoOutputPath) {
+    if (videoOutputPath != null) {
+      validateOutputPath(videoOutputPath);
+      captureFile = new File(videoOutputPath);
+    } else {
+      final File outputDir = applicationContext.getCacheDir();
+      try {
+        captureFile = File.createTempFile("REC", ".mp4", outputDir);
+      } catch (IOException | SecurityException e) {
+        throw new Messages.FlutterError("cannotCreateFile", e.getMessage(), null);
+      }
     }
+
     try {
       prepareMediaRecorder(captureFile.getAbsolutePath());
     } catch (IOException e) {
@@ -1315,6 +1322,23 @@ class Camera
         cameraFeatureFactory.createAutoFocusFeature(cameraProperties, true));
     // Update camera features with the desired fps range
     setFpsCameraFeatureForRecording(cameraProperties);
+  }
+
+  private void validateOutputPath(String path) {
+    File file = new File(path);
+    if (file.isDirectory()) {
+      throw new Messages.FlutterError("IOError", "The output path is a directory: " + path, null);
+    }
+    File parent = file.getParentFile();
+    if (parent != null && !parent.exists()) {
+      throw new Messages.FlutterError(
+          "IOError", "The parent directory does not exist: " + parent.getAbsolutePath(), null);
+    }
+
+    String lowerPath = path.toLowerCase(Locale.ROOT);
+    if (!lowerPath.endsWith(".mp4")) {
+      throw new Messages.FlutterError("IOError", "Invalid video extension. Supported: .mp4", null);
+    }
   }
 
   private void setStreamHandler(EventChannel imageStreamChannel) {

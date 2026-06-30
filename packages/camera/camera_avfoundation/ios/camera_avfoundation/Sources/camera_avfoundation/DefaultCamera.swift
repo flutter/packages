@@ -504,6 +504,7 @@ final class DefaultCamera: NSObject, Camera {
   }
 
   func startVideoRecording(
+    videoOutputPath: String?,
     completion: @escaping (Result<Void, any Error>) -> Void,
     messengerForStreaming messenger: FlutterBinaryMessenger?
   ) {
@@ -519,27 +520,38 @@ final class DefaultCamera: NSObject, Camera {
 
     if let messenger = messenger {
       startImageStream(with: messenger) { [weak self] error in
-        self?.setUpVideoRecording(completion: completion)
+        self?.setUpVideoRecording(videoOutputPath: videoOutputPath, completion: completion)
       }
       return
     }
 
-    setUpVideoRecording(completion: completion)
+    setUpVideoRecording(videoOutputPath: videoOutputPath, completion: completion)
   }
 
   /// Main logic to setup the video recording.
-  private func setUpVideoRecording(completion: @escaping (Result<Void, any Error>) -> Void) {
-    let videoRecordingPath: String
-    do {
-      videoRecordingPath = try getTemporaryFilePath(
-        withExtension: "mp4",
-        subfolder: "videos",
-        prefix: "REC_")
-      self.videoRecordingPath = videoRecordingPath
-    } catch let error as NSError {
-      completion(.failure(DefaultCamera.pigeonErrorFromNSError(error)))
-      return
+  private func setUpVideoRecording(
+    videoOutputPath: String?, completion: @escaping (Result<Void, any Error>) -> Void
+  ) {
+    if let videoOutputPath = videoOutputPath {
+      do {
+        try validateOutputPath(videoOutputPath)
+      } catch {
+        completion(.failure(error))
+        return
+      }
+      videoRecordingPath = videoOutputPath
+    } else {
+      do {
+        videoRecordingPath = try getTemporaryFilePath(
+          withExtension: "mp4",
+          subfolder: "videos",
+          prefix: "REC_")
+      } catch let error as NSError {
+        completion(.failure(DefaultCamera.pigeonErrorFromNSError(error)))
+        return
+      }
     }
+    self.videoRecordingPath = videoRecordingPath
 
     guard setupWriter(forPath: videoRecordingPath) else {
       completion(
@@ -574,6 +586,34 @@ final class DefaultCamera: NSObject, Camera {
     outputForOffsetAdjusting = captureVideoOutput.avOutput
     lastAppendedVideoSampleTime = CMTime.negativeInfinity
     completion(.success(()))
+  }
+
+  private func validateOutputPath(_ path: String) throws {
+    var isDir: ObjCBool = false
+    if FileManager.default.fileExists(atPath: path, isDirectory: &isDir), isDir.boolValue {
+      throw PigeonError(code: "IOError", message: "Path is a directory: \(path)", details: nil)
+    }
+    let parentPath = (path as NSString).deletingLastPathComponent
+    if !parentPath.isEmpty && !FileManager.default.fileExists(atPath: parentPath) {
+      throw PigeonError(
+        code: "IOError", message: "Parent directory does not exist: \(parentPath)", details: nil)
+    }
+
+    let lowerPath = path.lowercased()
+    let validExtensions = [".mp4"]
+    if !validExtensions.contains(where: { lowerPath.hasSuffix($0) }) {
+      throw PigeonError(
+        code: "IOError",
+        message: "Invalid video extension. Supported: \(validExtensions.joined(separator: ", "))",
+        details: nil)
+    }
+
+    // AVAssetWriter will fail to initialize if a file already exists at the destination path.
+    // Delete any existing file to ensure consistent behavior with Android (which overwrites
+    // automatically) and prevent recording failures when reusing a custom path.
+    if FileManager.default.fileExists(atPath: path) {
+      try FileManager.default.removeItem(atPath: path)
+    }
   }
 
   private func setupWriter(forPath path: String) -> Bool {

@@ -1,3 +1,7 @@
+## 0.7.3
+
+* Adds support for custom video output path in video recording.
+
 ## 0.7.2+1
 
 * Migrates to Built-in Kotlin to support AGP 9.
