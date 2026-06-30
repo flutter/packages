@@ -1,32 +1,63 @@
-# AGENTS.md: Project One Shot Guide for flutter/packages
+# Agent Guide for camera_android_camerax
 
-This document provides context, behavioral guidelines, and core commands for AI agents contributing to the `flutter/packages` repository as part of **Project One Shot**. 
+This document provides context, architectural details, and core workflows for contributing to the `camera_android_camerax` package.
 
-Your goal is to autonomously solve complex engineering issues in a single, high-quality execution pass, requiring human intervention *only* during the initial planning phase and the final code review.
+For general repository-wide guidelines (including environment setup, versioning, formatting, and general testing patterns), refer to the main [AGENTS.md](../../../AGENTS.md).
 
-## 1. Agent Persona & Communication Protocol
+## 1. Architectural Overview
 
-To achieve a "one-shot" resolution, you must act as a world-class, deeply skeptical software engineer. 
-- **Zero Fluff ("No Bullshit"):** Never praise questions, validate premises, or use conversational pleasantries. Output concise, markdown-formatted responses.
-- **Be Direct & Critical:** If a human's proposed plan is flawed or introduces unnecessary complexity, state so immediately. Lead with the strongest counterargument.
-- **Skeptical Verification:** When writing or reviewing tests, act as a deeply skeptical engineer. Actively look for ways the test could generate a false positive or pass when the underlying feature is broken.
+The `camera_android_camerax` package is the Android platform implementation of the `camera` plugin, using the **Android Jetpack CameraX** library.
 
-## 2. The One-Shot Workflow
+### ProxyApi Binding System
+This plugin utilizes **Pigeon's ProxyApi** to bind Dart objects directly to native Android CameraX Java/Kotlin objects.
+- **Pigeon Definition**: The API surfaces are defined in [pigeons/camerax_library.dart](file:///Users/camillesimon/packages/packages/camera/camera_android_camerax/pigeons/camerax_library.dart).
+- **Generated Code**:
+  - Dart proxy classes: [lib/src/camerax_library.g.dart](file:///Users/camillesimon/packages/packages/camera/camera_android_camerax/lib/src/camerax_library.g.dart)
+  - Kotlin proxy classes: [android/src/main/java/io/flutter/plugins/camerax/CameraXLibrary.g.kt](file:///Users/camillesimon/packages/packages/camera/camera_android_camerax/android/src/main/java/io/flutter/plugins/camerax/CameraXLibrary.g.kt)
+- **Plugin Entry Point**: [lib/src/android_camera_camerax.dart](file:///Users/camillesimon/packages/packages/camera/camera_android_camerax/lib/src/android_camera_camerax.dart) implements `CameraPlatform` using the generated proxy classes.
 
-You must operate in three distinct phases. **Do not move to the next phase until the requirements of the current phase are met.**
+## 2. Code Generation
 
-1. **Phase A: Planning:** Analyze the issue and generate a highly specific `implementation_plan.md` containing code pointers, exact files to modify, and a robust testing strategy. **Wait for human approval.**
-2. **Phase B: Execution:** Implement the code strictly according to the approved plan. Do not introduce unrequired code complexity or unpinned dependency version bumps.
-3. **Phase C: Validation:** Autonomously run the Core Tooling validation checks (see below). Do not declare your work "done" or request human review until all checks pass with zero failures.
+When you modify the Pigeon API definition or any mocked files, you must regenerate the respective code.
 
-## 3. Environment Setup
-
-The primary tool for this repository is `flutter_plugin_tools.dart`. Before running commands, ensure you define the repository root:
-
+### Regenerating Pigeon Bindings
+If you modify [pigeons/camerax_library.dart](file:///Users/camillesimon/packages/packages/camera/camera_android_camerax/pigeons/camerax_library.dart), run:
 ```bash
-# Define an environment variable for the repository root.
-export REPO_ROOT=$(pwd)
+# Run from this directory
+dart run pigeon --input pigeons/camerax_library.dart
+```
 
-# Verify setup
-echo "Repository root directory: $REPO_ROOT"
-dart pub get -C $REPO_ROOT/script/tool
+### Regenerating Mockito Mocks
+Tests in this package use `mockito` for mocking. If you add new classes to mock or modify existing mocked classes, run:
+```bash
+# Run from this directory
+dart run build_runner build -d
+```
+
+## 3. Running Tests
+
+All changes must pass all three levels of tests: Dart unit tests, Android native unit tests, and integration tests.
+
+### Dart Unit Tests
+Dart unit tests are located in [test/](./test/).
+To run them from this directory:
+```bash
+dart run ../../../script/tool/bin/flutter_plugin_tools.dart dart-test --packages=camera_android_camerax
+```
+
+### Android Native Unit Tests
+Android unit tests are located in [android/src/test/](./android/src/test/) and run using Robolectric.
+To run them from this directory:
+```bash
+# From this directory
+dart run ../../../script/tool/bin/flutter_plugin_tools.dart native-test --android --packages=camera_android_camerax
+```
+
+### Integration Tests
+Integration tests are located in [example/integration_test/integration_test.dart](./example/integration_test/integration_test.dart).
+
+#### Running Integration Tests
+With an emulator or physical device connected, run from this directory:
+```bash
+dart run ../../../script/tool/bin/flutter_plugin_tools.dart integration-test --android --packages=camera_android_camerax
+```
