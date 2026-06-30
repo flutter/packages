@@ -55,8 +55,6 @@ dart run ../../../script/tool/bin/flutter_plugin_tools.dart native-test --androi
 
 ### Integration Tests
 Integration tests are located in [example/integration_test/integration_test.dart](./example/integration_test/integration_test.dart).
-
-#### Running Integration Tests
 With an emulator or physical device connected, run from this directory:
 ```bash
 dart run ../../../script/tool/bin/flutter_plugin_tools.dart integration-test --android --packages=camera_android_camerax
