@@ -683,9 +683,6 @@ void main() {
   });
 
   testWidgets('Has semantic annotations', (WidgetTester tester) async {
-    final SemanticsHandle semanticsHandle = tester.ensureSemantics();
-    addTearDown(semanticsHandle.dispose);
-
     await tester.pumpWidget(
       const CupertinoApp(
         home: CupertinoAlertDialog(
@@ -1664,9 +1661,6 @@ void main() {
   });
 
   testWidgets('showCupertinoDialog - custom barrierLabel', (WidgetTester tester) async {
-    final SemanticsHandle semanticsHandle = tester.ensureSemantics();
-    addTearDown(semanticsHandle.dispose);
-
     await tester.pumpWidget(
       CupertinoApp(
         home: Builder(
