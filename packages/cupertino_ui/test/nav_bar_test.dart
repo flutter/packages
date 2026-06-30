@@ -1092,8 +1092,6 @@ void main() {
   });
 
   testWidgets('CupertinoSliverNavigationBar has semantics', (WidgetTester tester) async {
-    final SemanticsHandle handle = tester.ensureSemantics();
-
     await tester.pumpWidget(
       const CupertinoApp(
         home: CupertinoPageScaffold(
@@ -1110,13 +1108,9 @@ void main() {
       tester.getSemantics(find.text('Large Title')),
       isSemantics(label: 'Large Title', isHeader: true, textDirection: TextDirection.ltr),
     );
-
-    handle.dispose();
   });
 
   testWidgets('CupertinoNavigationBar has semantics', (WidgetTester tester) async {
-    final SemanticsHandle handle = tester.ensureSemantics();
-
     await tester.pumpWidget(
       CupertinoApp(
         home: CupertinoPageScaffold(
@@ -1130,13 +1124,9 @@ void main() {
       tester.getSemantics(find.text('Fixed Title')),
       isSemantics(label: 'Fixed Title', isHeader: true, textDirection: TextDirection.ltr),
     );
-
-    handle.dispose();
   });
 
   testWidgets('Large CupertinoNavigationBar has semantics', (WidgetTester tester) async {
-    final SemanticsHandle handle = tester.ensureSemantics();
-
     await tester.pumpWidget(
       CupertinoApp(
         home: CupertinoPageScaffold(
@@ -1150,8 +1140,6 @@ void main() {
       tester.getSemantics(find.text('Fixed Title')),
       isSemantics(label: 'Fixed Title', isHeader: true, textDirection: TextDirection.ltr),
     );
-
-    handle.dispose();
   });
 
   testWidgets('Border can be overridden in sliver nav bar', (WidgetTester tester) async {
