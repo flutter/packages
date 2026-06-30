@@ -1739,38 +1739,50 @@ void main() {
     await tester.tap(find.text('Go'));
     await tester.pumpAndSettle();
 
-    final Finder sheetFinder = find.bySemanticsLabel('Alert');
     final SemanticsNode sheet = tester.semantics.find(find.bySemanticsLabel('Alert'));
     expect(sheet.role, SemanticsRole.dialog);
-    expect(sheet, isSemantics(label: 'Alert', namesRoute: true, scopesRoute: true));
     expect(
-      find.descendant(of: sheetFinder, matching: find.bySemanticsLabel('The title')),
-      findsOneWidget,
-    );
-    expect(
-      find.descendant(of: sheetFinder, matching: find.bySemanticsLabel('The message')),
-      findsOneWidget,
-    );
-    final SemanticsNode buttonOne = tester.semantics.find(
-      find.descendant(of: sheetFinder, matching: find.bySemanticsLabel('One')),
-    );
-    expect(
-      buttonOne,
-      isSemantics(isButton: true, isFocusable: true, hasTapAction: true, hasFocusAction: true),
-    );
-    final SemanticsNode buttonTwo = tester.semantics.find(
-      find.descendant(of: sheetFinder, matching: find.bySemanticsLabel('Two')),
-    );
-    expect(
-      buttonTwo,
-      isSemantics(isButton: true, isFocusable: true, hasTapAction: true, hasFocusAction: true),
-    );
-    final SemanticsNode buttonCancel = tester.semantics.find(
-      find.descendant(of: sheetFinder, matching: find.bySemanticsLabel('Cancel')),
-    );
-    expect(
-      buttonCancel,
-      isSemantics(isButton: true, isFocusable: true, hasTapAction: true, hasFocusAction: true),
+      sheet,
+      isSemantics(
+        label: 'Alert',
+        namesRoute: true,
+        scopesRoute: true,
+        children: <Matcher>[
+          isSemantics(
+            hasImplicitScrolling: true,
+            children: <Matcher>[
+              isSemantics(label: 'The title'),
+              isSemantics(label: 'The message'),
+            ],
+          ),
+          isSemantics(
+            hasImplicitScrolling: true,
+            children: <Matcher>[
+              isSemantics(
+                label: 'One',
+                isButton: true,
+                isFocusable: true,
+                hasTapAction: true,
+                hasFocusAction: true,
+              ),
+              isSemantics(
+                label: 'Two',
+                isButton: true,
+                isFocusable: true,
+                hasTapAction: true,
+                hasFocusAction: true,
+              ),
+            ],
+          ),
+          isSemantics(
+            label: 'Cancel',
+            isButton: true,
+            isFocusable: true,
+            hasTapAction: true,
+            hasFocusAction: true,
+          ),
+        ],
+      ),
     );
   });
 
