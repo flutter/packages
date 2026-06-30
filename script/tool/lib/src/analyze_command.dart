@@ -16,6 +16,7 @@ import 'common/plugin_utils.dart';
 import 'common/pub_utils.dart';
 import 'common/repository_package.dart';
 import 'common/xcode.dart';
+import 'package:yaml/yaml.dart';
 
 /// A command to run Dart analysis on packages.
 class AnalyzeCommand extends PackageLoopingCommand {
@@ -335,6 +336,33 @@ class AnalyzeCommand extends PackageLoopingCommand {
     return PackageResult.success();
   }
 
+  /// Retrieves the configured cyclomatic complexity threshold from the local
+  /// `analysis_options.yaml` if it exists and is configured.
+  int? _getLinterThreshold(RepositoryPackage package) {
+    final File optionsFile = package.directory.childFile('analysis_options.yaml');
+    if (!optionsFile.existsSync()) {
+      return null;
+    }
+    try {
+      final Object? yaml = loadYaml(optionsFile.readAsStringSync());
+      if (yaml is YamlMap) {
+        final Object? linter = yaml['dart_code_linter'];
+        if (linter is YamlMap) {
+          final Object? metrics = linter['metrics'];
+          if (metrics is YamlMap) {
+            final Object? complexity = metrics['cyclomatic-complexity'];
+            if (complexity is int) {
+              return complexity;
+            }
+          }
+        }
+      }
+    } catch (_) {
+      // Ignore errors parsing invalid/incomplete files.
+    }
+    return null;
+  }
+
   /// Runs the `dart_code_linter` metrics analyzer on the package.
   ///
   /// Assumes `dart_code_linter` is present in `dev_dependencies`.
@@ -355,8 +383,12 @@ class AnalyzeCommand extends PackageLoopingCommand {
       workingDir: package.directory,
     );
     if (linterExitCode != 0) {
+      final int? threshold = _getLinterThreshold(package);
+      final String thresholdMessage = threshold != null
+          ? ' (configured threshold: $threshold)'
+          : '';
       return PackageResult.fail(<String>[
-        'Metrics violations found. See the package\'s local "analysis_options.yaml" for configured thresholds.'
+        'Metrics violations found$thresholdMessage. See the package\'s local "analysis_options.yaml" for configured thresholds.'
       ]);
     }
 
