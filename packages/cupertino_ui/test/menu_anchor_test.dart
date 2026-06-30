@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@Skip(
-  'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
-)
 import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
@@ -15,8 +12,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import '../widgets/semantics_tester.dart';
 
 void main() {
   late MenuController controller;
@@ -3193,7 +3188,7 @@ void main() {
             controller: controller,
             menuChildren: <Widget>[
               CupertinoMenuItem(key: Tag.a.key, onPressed: () {}, child: Text(Tag.a.text)),
-              DebugCupertinoMenuEntry(hasLeading: hasLeading),
+              DebugCupertinoMenuEntry(hasLeadingValue: hasLeading),
             ],
           ),
         );
@@ -6401,7 +6396,6 @@ void main() {
       // [intended] Web inserts overlay contents as a sibling to the anchor rather than a child.
       skip: kIsWeb,
       (WidgetTester tester) async {
-        final semantics = SemanticsTester(tester);
         await tester.pumpWidget(
           App(
             CupertinoMenuAnchor(
@@ -6420,90 +6414,36 @@ void main() {
         await tester.tap(find.byType(AnchorButton));
         await tester.pumpAndSettle();
 
+        final SemanticsNode anchor = tester.semantics.find(find.byType(AnchorButton));
         expect(
-          semantics,
-          hasSemantics(
-            ignoreId: true,
-            ignoreTransform: true,
-            ignoreRect: true,
-            TestSemantics.root(
-              children: <TestSemantics>[
-                TestSemantics(
-                  id: 1,
-                  textDirection: TextDirection.ltr,
-                  children: <TestSemantics>[
-                    TestSemantics(
-                      id: 2,
-                      children: <TestSemantics>[
-                        TestSemantics(
-                          id: 3,
-                          flags: <SemanticsFlag>[SemanticsFlag.scopesRoute],
-                          children: <TestSemantics>[
-                            TestSemantics(
-                              id: 4,
-                              flags: <SemanticsFlag>[
-                                SemanticsFlag.isButton,
-                                SemanticsFlag.isFocusable,
-                              ],
-                              actions: <SemanticsAction>[
-                                SemanticsAction.tap,
-                                SemanticsAction.focus,
-                              ],
-                              label: 'anchor',
-                              textDirection: TextDirection.ltr,
-                              children: <TestSemantics>[
-                                TestSemantics(
-                                  id: 5,
-                                  children: <TestSemantics>[
-                                    TestSemantics(
-                                      id: 6,
-                                      children: <TestSemantics>[
-                                        TestSemantics(
-                                          id: 7,
-                                          flags: <SemanticsFlag>[SemanticsFlag.scopesRoute],
-                                          children: <TestSemantics>[
-                                            TestSemantics(
-                                              id: 8,
-                                              flags: <SemanticsFlag>[
-                                                SemanticsFlag.hasImplicitScrolling,
-                                              ],
-                                              children: <TestSemantics>[
-                                                TestSemantics(
-                                                  id: 9,
-                                                  flags: <SemanticsFlag>[
-                                                    SemanticsFlag.hasEnabledState,
-                                                    SemanticsFlag.isEnabled,
-                                                    SemanticsFlag.isFocusable,
-                                                  ],
-                                                  actions: <SemanticsAction>[
-                                                    SemanticsAction.tap,
-                                                    SemanticsAction.dismiss,
-                                                    SemanticsAction.focus,
-                                                  ],
-                                                  label: 'a',
-                                                  textDirection: TextDirection.ltr,
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
+          anchor,
+          isSemantics(
+            label: 'anchor',
+            textDirection: TextDirection.ltr,
+            isButton: true,
+            isFocusable: true,
+            hasTapAction: true,
+            hasFocusAction: true,
           ),
         );
-        semantics.dispose();
+
+        final SemanticsNode menuItem = tester.semantics.find(
+          find.widgetWithText(CupertinoMenuItem, Tag.a.text),
+        );
+        expect(
+          menuItem,
+          isSemantics(
+            label: Tag.a.text,
+            textDirection: TextDirection.ltr,
+            hasEnabledState: true,
+            isEnabled: true,
+            isFocusable: true,
+            hasTapAction: true,
+            hasDismissAction: true,
+            hasFocusAction: true,
+          ),
+        );
+        expect(menuItem.parent, isSemantics(hasImplicitScrolling: true));
       },
     );
 
@@ -6512,7 +6452,6 @@ void main() {
       // [intended] Web inserts overlay contents as a sibling to the anchor rather than a child.
       skip: !kIsWeb,
       (WidgetTester tester) async {
-        final semantics = SemanticsTester(tester);
         await tester.pumpWidget(
           App(
             CupertinoMenuAnchor(
@@ -6531,86 +6470,36 @@ void main() {
         await tester.tap(find.byType(AnchorButton));
         await tester.pumpAndSettle();
 
+        final SemanticsNode anchor = tester.semantics.find(find.byType(AnchorButton));
         expect(
-          semantics,
-          hasSemantics(
-            ignoreId: true,
-            ignoreTransform: true,
-            ignoreRect: true,
-            TestSemantics.root(
-              children: <TestSemantics>[
-                TestSemantics(
-                  id: 1,
-                  textDirection: TextDirection.ltr,
-                  children: <TestSemantics>[
-                    TestSemantics(
-                      id: 2,
-                      children: <TestSemantics>[
-                        TestSemantics(
-                          id: 3,
-                          flags: <SemanticsFlag>[SemanticsFlag.scopesRoute],
-                          children: <TestSemantics>[
-                            TestSemantics(
-                              id: 4,
-                              flags: <SemanticsFlag>[
-                                SemanticsFlag.isButton,
-                                SemanticsFlag.isFocusable,
-                              ],
-                              actions: <SemanticsAction>[
-                                SemanticsAction.tap,
-                                SemanticsAction.focus,
-                              ],
-                              label: 'anchor',
-                              textDirection: TextDirection.ltr,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    TestSemantics(
-                      id: 5,
-                      children: <TestSemantics>[
-                        TestSemantics(
-                          id: 6,
-                          children: <TestSemantics>[
-                            TestSemantics(
-                              id: 7,
-                              flags: <SemanticsFlag>[SemanticsFlag.scopesRoute],
-                              children: <TestSemantics>[
-                                TestSemantics(
-                                  id: 8,
-                                  flags: <SemanticsFlag>[SemanticsFlag.hasImplicitScrolling],
-                                  children: <TestSemantics>[
-                                    TestSemantics(
-                                      id: 9,
-                                      flags: <SemanticsFlag>[
-                                        SemanticsFlag.hasEnabledState,
-                                        SemanticsFlag.isEnabled,
-                                        SemanticsFlag.isFocusable,
-                                      ],
-                                      actions: <SemanticsAction>[
-                                        SemanticsAction.tap,
-                                        SemanticsAction.dismiss,
-                                        SemanticsAction.focus,
-                                      ],
-                                      label: 'a',
-                                      textDirection: TextDirection.ltr,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
+          anchor,
+          isSemantics(
+            label: 'anchor',
+            textDirection: TextDirection.ltr,
+            isButton: true,
+            isFocusable: true,
+            hasTapAction: true,
+            hasFocusAction: true,
           ),
         );
-        semantics.dispose();
+
+        final SemanticsNode menuItem = tester.semantics.find(
+          find.widgetWithText(CupertinoMenuItem, Tag.a.text),
+        );
+        expect(
+          menuItem,
+          isSemantics(
+            label: Tag.a.text,
+            textDirection: TextDirection.ltr,
+            hasEnabledState: true,
+            isEnabled: true,
+            isFocusable: true,
+            hasTapAction: true,
+            hasDismissAction: true,
+            hasFocusAction: true,
+          ),
+        );
+        expect(menuItem.parent, isSemantics(hasImplicitScrolling: true));
       },
     );
   });
@@ -6643,17 +6532,16 @@ abstract class Tag {
 }
 
 class NestedTag extends Tag {
-  const NestedTag(String name, {Tag? prefix, this.level = 0})
+  const NestedTag(String name, {this.prefix, this.level = 0})
     : assert(
         // Limit the nesting level to prevent stack overflow.
         level < 9,
         'NestedTag.level must be less than 9 (was $level).',
       ),
-      _name = name,
-      _prefix = prefix;
+      _name = name;
 
   final String _name;
-  final Tag? _prefix;
+  final Tag? prefix;
 
   @override
   final int level;
@@ -6664,10 +6552,11 @@ class NestedTag extends Tag {
 
   @override
   String get text {
-    if (level == 0 || _prefix == null) {
+    final Tag? prefix = this.prefix;
+    if (level == 0 || prefix == null) {
       return _name;
     }
-    return '${_prefix.text}.$_name';
+    return '${prefix.text}.$_name';
   }
 
   Key get key => ValueKey<String>('${text}_Key');
@@ -6862,16 +6751,16 @@ enum DynamicTypeStyle {
 class DebugCupertinoMenuEntry extends StatelessWidget implements CupertinoMenuEntry {
   const DebugCupertinoMenuEntry({
     super.key,
-    bool hasLeading = false,
+    this.hasLeadingValue = false,
     this.isDivider = false,
     this.child,
-  }) : _hasLeading = hasLeading;
+  });
 
-  final bool _hasLeading;
+  final bool hasLeadingValue;
 
   @override
   bool hasLeading(BuildContext context) {
-    return _hasLeading;
+    return hasLeadingValue;
   }
 
   @override
