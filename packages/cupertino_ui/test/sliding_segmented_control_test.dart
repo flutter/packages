@@ -941,8 +941,6 @@ void main() {
   });
 
   testWidgets('Segmented control semantics', (WidgetTester tester) async {
-    final SemanticsHandle handle = tester.ensureSemantics();
-
     const children = <int, Widget>{0: Text('Child 1'), 1: Text('Child 2')};
 
     await tester.pumpWidget(
@@ -1026,8 +1024,6 @@ void main() {
         hasFocusAction: true,
       ),
     );
-
-    handle.dispose();
   });
 
   testWidgets('Non-centered taps work on smaller widgets', (WidgetTester tester) async {
