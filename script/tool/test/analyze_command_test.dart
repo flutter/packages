@@ -517,6 +517,40 @@ void main() {
           ]),
         );
       });
+
+      test('fails with both main and skills failures listed if both fail', () async {
+        final RepositoryPackage plugin = createFakePlugin('foo', packagesDir);
+        plugin.ciConfigFile.writeAsStringSync('analyze_skills: true');
+
+        plugin.directory
+            .childDirectory('.agents')
+            .childDirectory('skills')
+            .childFile('test.dart')
+            .createSync(recursive: true);
+
+        // Mock both dart analyze runs to fail (exit code 1)
+        processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(exitCode: 1), <String>['analyze']), // main package
+          FakeProcessInfo(MockProcess(exitCode: 1), <String>['analyze']), // skills package
+        ];
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+          runner,
+          <String>['analyze'],
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
+
+        expect(commandError, isA<ToolExit>());
+        final String joinedOutput = output.join('\n');
+        expect(joinedOutput, contains('The following packages had errors:'));
+        expect(
+          joinedOutput,
+          contains('  foo:\n    Main package analysis failed\n    Skills analysis failed'),
+        );
+      });
     });
 
     test('skips if requested if "pub get" fails in the resolver', () async {
