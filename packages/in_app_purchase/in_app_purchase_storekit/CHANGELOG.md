@@ -1,3 +1,11 @@
+## 0.4.11
+
+* Adds latestTransaction to SK2Transaction wrapper and InAppPurchaseStoreKitPlatformAddition.
+
+## 0.4.10+1
+
+* Fixes SK2Transaction to expose the real purchased quantity instead of defaulting to 1.
+
 ## 0.4.10
 
 * Clarifies `completePurchase` usage and the consequences of unfinished transactions in the README and API docstrings.

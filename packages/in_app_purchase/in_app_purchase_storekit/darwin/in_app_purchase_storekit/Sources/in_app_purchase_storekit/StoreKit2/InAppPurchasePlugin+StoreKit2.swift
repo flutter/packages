@@ -418,6 +418,29 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     }
   }
 
+  func latestTransaction(
+    productId: String, completion: @escaping (Result<SK2TransactionMessage?, Error>) -> Void
+  ) {
+    Task {
+      let verificationResult = await Transaction.latest(for: productId)
+      guard let verificationResult = verificationResult else {
+        completion(.success(nil))
+        return
+      }
+      let transaction: Transaction
+      switch verificationResult {
+      case .verified(let verifiedTransaction):
+        transaction = verifiedTransaction
+      case .unverified(let unverifiedTransaction, _):
+        transaction = unverifiedTransaction
+      }
+      completion(
+        .success(
+          transaction.convertToPigeon(
+            receipt: verificationResult.jwsRepresentation, status: .purchased)))
+    }
+  }
+
   /// This Task listens  to Transation.updates as shown here
   /// https://developer.apple.com/documentation/storekit/transaction/3851206-updates
   /// This function should be called as soon as the app starts to avoid missing any Transactions done outside of the app.

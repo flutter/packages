@@ -261,6 +261,9 @@ abstract class InAppPurchase2API {
 
   @async
   void presentOfferCodeRedeemSheet();
+
+  @async
+  SK2TransactionMessage? latestTransaction(String productId);
 }
 
 @FlutterApi()

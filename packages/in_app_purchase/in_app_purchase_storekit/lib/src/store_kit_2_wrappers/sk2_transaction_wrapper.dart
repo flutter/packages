@@ -116,6 +116,14 @@ class SK2Transaction {
   static Future<void> restorePurchases() async {
     await hostApi2.restorePurchases();
   }
+
+  /// A wrapper around [Transaction.latest(for:)]
+  /// https://developer.apple.com/documentation/storekit/transaction-latest_for__
+  /// Gets the customer's most recent transaction for an In-App Purchase.
+  static Future<SK2Transaction?> latestTransaction(String productId) async {
+    final SK2TransactionMessage? msg = await hostApi2.latestTransaction(productId);
+    return msg?.convertFromPigeon();
+  }
 }
 
 extension on SK2TransactionMessage {
@@ -126,6 +134,7 @@ extension on SK2TransactionMessage {
       productId: productId,
       purchaseDate: purchaseDate ?? '',
       expirationDate: expirationDate,
+      quantity: purchasedQuantity,
       appAccountToken: appAccountToken,
       receiptData: receiptData,
       jsonRepresentation: jsonRepresentation,

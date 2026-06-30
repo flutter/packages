@@ -18,6 +18,13 @@ class InAppPurchaseStoreKitPlatformAddition extends InAppPurchasePlatformAdditio
     return AppStore().sync();
   }
 
+  /// Gets the customer's most recent transaction for a product.
+  ///
+  /// This is only supported when StoreKit 2 is enabled.
+  Future<SK2Transaction?> latestTransaction(String productId) {
+    return SK2Transaction.latestTransaction(productId);
+  }
+
   /// Present Code Redemption Sheet.
   ///
   /// Available on devices running iOS 14 and iPadOS 14 and later.
