@@ -1225,11 +1225,13 @@ void main() {
           );
           final BuildContext context = tester.element(find.text('Test'));
 
-          unawaited(showTimePicker(
-            context: context,
-            initialTime: const TimeOfDay(hour: 7, minute: 0),
-            anchorPoint: const Offset(1000, 0),
-          ));
+          unawaited(
+            showTimePicker(
+              context: context,
+              initialTime: const TimeOfDay(hour: 7, minute: 0),
+              anchorPoint: const Offset(1000, 0),
+            ),
+          );
 
           await tester.pumpAndSettle();
           // Should take the right side of the screen
@@ -1262,7 +1264,9 @@ void main() {
           final BuildContext context = tester.element(find.text('Test'));
 
           // By default it should place the dialog on the right screen
-          unawaited(showTimePicker(context: context, initialTime: const TimeOfDay(hour: 7, minute: 0)));
+          unawaited(
+            showTimePicker(context: context, initialTime: const TimeOfDay(hour: 7, minute: 0)),
+          );
 
           await tester.pumpAndSettle();
           expect(tester.getTopLeft(find.byType(TimePickerDialog)), const Offset(410, 0));
@@ -1294,7 +1298,9 @@ void main() {
           final BuildContext context = tester.element(find.text('Test'));
 
           // By default it should place the dialog on the left screen
-          unawaited(showTimePicker(context: context, initialTime: const TimeOfDay(hour: 7, minute: 0)));
+          unawaited(
+            showTimePicker(context: context, initialTime: const TimeOfDay(hour: 7, minute: 0)),
+          );
 
           await tester.pumpAndSettle();
           expect(tester.getTopLeft(find.byType(TimePickerDialog)), Offset.zero);
@@ -1450,7 +1456,7 @@ void main() {
             find.byType(Dialog),
             matchesGoldenFile('m2_time_picker.dialog.separator.alignment.png'),
           );
-        }
+        },
       );
 
       testWidgets(
