@@ -29,21 +29,28 @@ class ReadinessChecker {
   Future<bool> checkReadiness(String workspaceRoot) async {
     _log('Checking if environment is ready for new work...');
 
+    var isReady = true;
+
     if (!await _checkSymlinks(workspaceRoot)) {
-      return false;
+      isReady = false;
     }
     if (!await _checkGitState(workspaceRoot)) {
-      return false;
-    }
-    if (!await _checkFlutterAndDart()) {
-      return false;
-    }
-    if (!await _checkDependencies(workspaceRoot)) {
-      return false;
+      isReady = false;
     }
 
-    _log('Environment is fully ready!');
-    return true;
+    final bool hasTools = await _checkFlutterAndDart();
+    if (!hasTools) {
+      isReady = false;
+    } else {
+      if (!await _checkDependencies(workspaceRoot)) {
+        isReady = false;
+      }
+    }
+
+    if (isReady) {
+      _log('Environment is fully ready!');
+    }
+    return isReady;
   }
 
   Future<bool> _checkSymlinks(String workspaceRoot) async {

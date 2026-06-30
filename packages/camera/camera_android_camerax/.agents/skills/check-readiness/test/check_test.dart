@@ -156,6 +156,25 @@ void main() {
     expect(printLogs, contains('Error: Failed to resolve dependencies.'));
   });
 
+  test('does not return early and reports multiple failures if git is dirty and tools are missing',
+      () async {
+    fileSystem
+        .directory(fileSystem.path.join(workspaceRoot, '.agents', 'skills'))
+        .createSync(recursive: true);
+
+    // Git returns dirty
+    processManager.runMock['git status --porcelain'] = ProcessResult(0, 0, ' M file.txt\n', '');
+    // Flutter is missing
+    processManager.canRunMock['flutter'] = false;
+
+    final bool result = await runChecker();
+    expect(result, isFalse);
+
+    // Both errors should be printed
+    expect(printLogs.any((line) => line.contains('Git working directory is not clean')), isTrue);
+    expect(printLogs.any((line) => line.contains("'flutter' is not on the PATH")), isTrue);
+  });
+
   group('Windows style', () {
     late MemoryFileSystem winFileSystem;
     late ReadinessChecker winChecker;
