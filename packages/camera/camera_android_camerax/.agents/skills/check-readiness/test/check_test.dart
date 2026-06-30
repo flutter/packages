@@ -5,13 +5,17 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:io' as io;
 
 import 'package:check_readiness/check_readiness.dart';
 import 'package:file/memory.dart';
 import 'package:file/src/interface/directory.dart';
 import 'package:file/src/interface/link.dart';
+import 'package:path/path.dart' as p;
 import 'package:process/process.dart';
 import 'package:test/test.dart';
+
+import '../tool/check.dart';
 
 class FakeProcessManager implements ProcessManager {
   final Map<String, bool> canRunMock = {};
@@ -180,6 +184,32 @@ void main() {
       expect(result, isFalse);
       expect(printLogs.any((line) => line.contains('Found broken symlinks in .agents/skills:')),
           isTrue);
+    });
+  });
+
+  group('findPackageDir', () {
+    test('correctly resolves package root from check.dart path', () {
+      final String scriptPath = p.joinAll(<String>[
+        'repo',
+        'packages',
+        'camera',
+        'camera_android_camerax',
+        '.agents',
+        'skills',
+        'check-readiness',
+        'tool',
+        'check.dart',
+      ]);
+      final scriptUri = Uri.file(scriptPath);
+      final io.Directory resolved = findPackageDir(scriptUri);
+
+      final String expectedPath = p.joinAll(<String>[
+        'repo',
+        'packages',
+        'camera',
+        'camera_android_camerax',
+      ]);
+      expect(resolved.path, expectedPath);
     });
   });
 }

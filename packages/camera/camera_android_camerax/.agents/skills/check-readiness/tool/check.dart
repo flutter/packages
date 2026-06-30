@@ -7,26 +7,19 @@ import 'dart:io';
 import 'package:check_readiness/check_readiness.dart';
 import 'package:path/path.dart' as p;
 
+/// Resolves the package root directory from the script URI.
+Directory findPackageDir(Uri scriptUri) {
+  final scriptDir = Directory(p.dirname(scriptUri.toFilePath()));
+  // The script is at: .agents/skills/check-readiness/tool/check.dart
+  // Going up 4 levels to get the camera_android_camerax package root.
+  return scriptDir.parent.parent.parent.parent;
+}
+
 Future<void> main(List<String> args) async {
-  // Locate the repository root by walking up from this script's path.
-  var repoRoot = Directory(p.dirname(Platform.script.toFilePath()));
-  var rootFound = false;
-  while (repoRoot.path != repoRoot.parent.path) {
-    if (Directory(p.join(repoRoot.path, 'packages')).existsSync() &&
-        Directory(p.join(repoRoot.path, 'script')).existsSync()) {
-      rootFound = true;
-      break;
-    }
-    repoRoot = repoRoot.parent;
-  }
-  if (!rootFound) {
-    stderr.writeln(
-        'Error: Could not locate repository root. This script must be run inside a valid packages repository.');
-    exit(1);
-  }
-  final String workspaceRoot = repoRoot.path;
+  final Directory packageDir = findPackageDir(Platform.script);
+  final String packageRoot = packageDir.path;
 
   final checker = ReadinessChecker();
-  final bool isReady = await checker.checkReadiness(workspaceRoot);
+  final bool isReady = await checker.checkReadiness(packageRoot);
   exitCode = isReady ? 0 : 1;
 }
