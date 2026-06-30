@@ -54,7 +54,7 @@ enum PlatformFocusMode { auto, locked }
 enum PlatformImageFileFormat { jpeg, heif }
 
 // Pigeon version of the subset of ImageFormatGroup supported on iOS.
-enum PlatformImageFormatGroup { bgra8888, yuv420 }
+enum PlatformImageFormatGroup { bgra8888, yuv420, rgba8888 }
 
 // Pigeon version of ResolutionPreset.
 enum PlatformResolutionPreset { low, medium, high, veryHigh, ultraHigh, max }

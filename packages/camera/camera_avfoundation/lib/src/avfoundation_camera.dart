@@ -534,6 +534,8 @@ class AVFoundationCamera extends CameraPlatform {
         return PlatformImageFormatGroup.bgra8888;
       case ImageFormatGroup.yuv420:
         return PlatformImageFormatGroup.yuv420;
+      case ImageFormatGroup.rgba8888:
+        return PlatformImageFormatGroup.rgba8888;
       case ImageFormatGroup.jpeg:
       case ImageFormatGroup.nv21:
       // Fall through.

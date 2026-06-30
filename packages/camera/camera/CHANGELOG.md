@@ -1,5 +1,6 @@
-## NEXT
+## 0.12.1
 
+* Adds support for `ImageFormatGroup.rgba8888` image format.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 0.12.0+1

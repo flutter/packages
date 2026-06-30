@@ -89,6 +89,9 @@ ImageFormatGroup _asImageFormatGroup(dynamic rawFormat) {
       // android.graphics.ImageFormat.JPEG
       case 256:
         return ImageFormatGroup.jpeg;
+      // android.graphics.PixelFormat.RGBA_8888
+      case 1:
+        return ImageFormatGroup.rgba8888;
     }
   }
 
@@ -100,6 +103,9 @@ ImageFormatGroup _asImageFormatGroup(dynamic rawFormat) {
       // kCVPixelFormatType_32BGRA
       case 1111970369:
         return ImageFormatGroup.bgra8888;
+      // kCVPixelFormatType_32RGBA
+      case 1380401729:
+        return ImageFormatGroup.rgba8888;
     }
   }
 

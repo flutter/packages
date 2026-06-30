@@ -35,6 +35,9 @@ ImageFormatGroup _imageFormatGroupFromPlatformImageFormat(int data) {
 
     case 1111970369: // kCVPixelFormatType_32BGRA
       return ImageFormatGroup.bgra8888;
+
+    case 1380401729: // kCVPixelFormatType_32RGBA
+      return ImageFormatGroup.rgba8888;
   }
 
   return ImageFormatGroup.unknown;

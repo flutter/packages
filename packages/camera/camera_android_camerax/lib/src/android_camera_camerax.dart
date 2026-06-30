@@ -11,6 +11,7 @@ import 'package:flutter/foundation.dart' show Uint8List;
 import 'package:flutter/services.dart' show DeviceOrientation, PlatformException;
 import 'package:flutter/widgets.dart' show Texture, Widget, visibleForTesting;
 import 'package:stream_transform/stream_transform.dart';
+
 import 'camerax_library.dart';
 import 'rotated_preview_delegate.dart';
 
@@ -177,6 +178,11 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// See https://developer.android.com/reference/android/graphics/ImageFormat#JPEG.
   static const int imageProxyFormatJpeg = 256;
 
+  /// Constant representing the RGBA_8888 image format used by ImageProxy.
+  ///
+  /// See https://developer.android.com/reference/android/graphics/PixelFormat#RGBA_8888.
+  static const int imageProxyFormatRgba8888 = 1;
+
   /// Constant representing the YUV 420 image format used for configuring ImageAnalysis.
   ///
   /// See https://developer.android.com/reference/androidx/camera/core/ImageAnalysis#OUTPUT_IMAGE_FORMAT_YUV_420_888()
@@ -186,6 +192,11 @@ class AndroidCameraCameraX extends CameraPlatform {
   ///
   /// See https://developer.android.com/reference/androidx/camera/core/ImageAnalysis#OUTPUT_IMAGE_FORMAT_NV21().
   static const int imageAnalysisOutputImageFormatNv21 = 3;
+
+  /// Constant representing the RGBA_8888 image format used for configuring ImageAnalysis.
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/core/ImageAnalysis#OUTPUT_IMAGE_FORMAT_RGBA_8888()
+  static const int imageAnalysisOutputImageFormatRgba8888 = 2;
 
   /// Error code indicating a [ZoomState] was requested, but one has not been
   /// set for the camera in use.
@@ -438,8 +449,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   ///  * Retrieves information about the camera and sends a [CameraInitializedEvent].
   ///
   /// [imageFormatGroup] is used to specify the image format used for image
-  /// streaming, but CameraX currently only supports YUV_420_888 (the CameraX default),
-  /// NV21, and RGBA (not supported by Flutter).
+  /// streaming. CameraX currently supports YUV_420_888 (the CameraX default),
+  /// NV21, and RGBA8888.
   @override
   Future<void> initializeCamera(
     int cameraId, {
@@ -1371,6 +1382,8 @@ class AndroidCameraCameraX extends CameraPlatform {
         return imageAnalysisOutputImageFormatYuv420_888;
       case ImageFormatGroup.nv21:
         return imageAnalysisOutputImageFormatNv21;
+      case ImageFormatGroup.rgba8888:
+        return imageAnalysisOutputImageFormatRgba8888;
     }
 
     return null;
@@ -1387,6 +1400,8 @@ class AndroidCameraCameraX extends CameraPlatform {
         return ImageFormatGroup.nv21;
       case imageProxyFormatJpeg: // android.graphics.ImageFormat.JPEG
         return ImageFormatGroup.jpeg;
+      case imageProxyFormatRgba8888: // android.graphics.PixelFormat.RGBA_8888
+        return ImageFormatGroup.rgba8888;
     }
 
     return ImageFormatGroup.unknown;

@@ -1710,30 +1710,32 @@ void main() {
       final int? cameraXImageFormat = switch (imageFormatGroup) {
         ImageFormatGroup.yuv420 => AndroidCameraCameraX.imageAnalysisOutputImageFormatYuv420_888,
         ImageFormatGroup.nv21 => AndroidCameraCameraX.imageAnalysisOutputImageFormatNv21,
-        _ => null,
-      };
-      // Tell plugin to create mock/detached objects for testing createCamera
-      // as needed.
-      int? imageAnalysisOutputImageFormat;
-      setUpOverridesForTestingUseCaseConfiguration(
-        mockProcessCameraProvider,
-        newImageAnalysis:
-            ({
-              ResolutionSelector? resolutionSelector,
-              int? targetRotation,
-              CameraIntegerRange? targetFpsRange,
-              int? outputImageFormat,
-            }) {
-              imageAnalysisOutputImageFormat = outputImageFormat;
-              return mockImageAnalysis;
-            },
-        newPreview:
-            ({
-              ResolutionSelector? resolutionSelector,
-              int? targetRotation,
-              CameraIntegerRange? targetFpsRange,
-            }) => mockPreview,
-      );
+        ImageFormatGroup.rgba8888 =>
+            AndroidCameraCameraX.imageAnalysisOutputImageFormatRgba8888,
+          _ => null,
+        };
+        // Tell plugin to create mock/detached objects for testing createCamera
+        // as needed.
+        int? imageAnalysisOutputImageFormat;
+        setUpOverridesForTestingUseCaseConfiguration(
+          mockProcessCameraProvider,
+          newImageAnalysis:
+              ({
+                ResolutionSelector? resolutionSelector,
+                int? targetRotation,
+                CameraIntegerRange? targetFpsRange,
+                int? outputImageFormat,
+              }) {
+                imageAnalysisOutputImageFormat = outputImageFormat;
+                return mockImageAnalysis;
+              },
+          newPreview:
+              ({
+                ResolutionSelector? resolutionSelector,
+                int? targetRotation,
+                CameraIntegerRange? targetFpsRange,
+              }) => mockPreview,
+        );
 
       // Create and initialize camera.
       await camera.createCameraWithSettings(
