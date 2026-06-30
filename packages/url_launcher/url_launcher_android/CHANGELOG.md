@@ -1,3 +1,9 @@
+## NEXT
+
+* Supports `intent://` URIs in `launchUrl` and `canLaunchUrl` by parsing them
+  with `Intent.parseUri`, preserving the action, data URI, and package encoded
+  in the URI rather than silently replacing the action with `ACTION_VIEW`.
+
 ## 6.3.32
 
 * Bumps the androidx group across 10 directories with 1 update.
