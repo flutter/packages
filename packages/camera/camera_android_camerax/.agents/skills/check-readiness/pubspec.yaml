@@ -6,11 +6,12 @@ publish_to: none
 environment:
   sdk: ^3.0.0
 
-dev_dependencies:
-  build_runner: ^2.15.0
-  mockito: ^5.7.0
-  test: ^1.24.0
 dependencies:
   file: ^7.0.1
   path: ^1.9.1
   process: ^5.0.5
+
+dev_dependencies:
+  build_runner: ^2.15.0
+  mockito: ^5.7.0
+  test: ^1.24.0

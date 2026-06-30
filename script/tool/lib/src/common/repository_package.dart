@@ -202,9 +202,6 @@ class RepositoryPackage {
   }
 
   /// Returns the package that this package is a part of, if any.
-  ///
-  /// Currently this is limited to checking up two directories, since that
-  /// covers all the example structures currently used.
   RepositoryPackage? getEnclosingPackage() {
     Directory current = directory.parent;
     while (current.path != current.parent.path) {
