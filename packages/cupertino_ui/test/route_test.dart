@@ -2071,8 +2071,6 @@ void main() {
     WidgetTester tester,
   ) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-    final SemanticsHandle handle = tester.ensureSemantics();
-
     await tester.pumpWidget(
       CupertinoApp(
         home: Navigator(
@@ -2102,14 +2100,12 @@ void main() {
     expect(find.semantics.byLabel('Dismiss'), findsNothing);
 
     debugDefaultTargetPlatformOverride = null;
-    handle.dispose();
   });
 
   testWidgets('showCupertinoModalPopup allows for semantics dismiss when set', (
     WidgetTester tester,
   ) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-    final SemanticsHandle handle = tester.ensureSemantics();
 
     await tester.pumpWidget(
       CupertinoApp(
@@ -2144,7 +2140,6 @@ void main() {
     );
 
     debugDefaultTargetPlatformOverride = null;
-    handle.dispose();
   });
 
   testWidgets('showCupertinoModalPopup passes RouteSettings to PopupRoute', (
