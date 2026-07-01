@@ -96,7 +96,7 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
     // extension where only JSON is allowed.
     return (json.decode(json.encode(await extensions[name]!(arguments)))
             as Map<String, dynamic>)['enabled']
-        as String;
+        .toString();
   }
 
   int rebuildCount = 0;
