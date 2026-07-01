@@ -1,5 +1,8 @@
-## NEXT
+## 2.12.0
 
+* Adds video quality selection support for HLS/DASH adaptive streams via
+  `getVideoTracks()`, `selectVideoTrack()`, and
+  `isVideoTrackSupportAvailable()` methods.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 2.11.1
