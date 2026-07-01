@@ -147,12 +147,15 @@ class _CupertinoTextFieldSelectionGestureDetectorBuilder
 ///
 /// {@macro flutter.widgets.EditableText.onChanged}
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This example shows how to set the initial value of the [CupertinoTextField] using
 /// a [controller] that already contains some text.
 ///
-/// ** See code in examples/api/lib/cupertino/text_field/cupertino_text_field.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/text_field/cupertino_text_field.0.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// The [controller] can also control the selection and composing region (and to
 /// observe changes to the text, selection, and composing region).
@@ -834,11 +837,16 @@ class CupertinoTextField extends StatefulWidget {
   ///
   /// {@macro flutter.widgets.magnifier.intro}
   ///
-  /// {@tool dartpad}
+  // TODO(framework): Replace the following block with a blue example container
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// This sample demonstrates how to customize the magnifier that this text field uses.
   ///
-  /// ** See code in examples/api/lib/widgets/text_magnifier/text_magnifier.0.dart **
-  /// {@end-tool}
+  /// {@example example/lib/magnifier/text_magnifier.0.dart}
+  ///
+  // TODO(framework): End of the blue example container.
   final TextMagnifierConfiguration? magnifierConfiguration;
 
   /// {@macro flutter.widgets.EditableText.spellCheckConfiguration}
