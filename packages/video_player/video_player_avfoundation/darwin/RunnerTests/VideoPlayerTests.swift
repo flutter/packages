@@ -376,6 +376,26 @@ private let hlsAudioTestURI =
     #expect((inspectableAVPlayer.afterTolerance?.intValue ?? 0) > 0)
   }
 
+  @Test func setPreventsDisplaySleepDuringVideoPlayback() {
+    let stubAVFactory = StubFVPAVFactory(player: AVPlayer())
+    let player = FVPVideoPlayer(
+      playerItem: StubPlayerItem(),
+      avFactory: stubAVFactory,
+      viewProvider: StubViewProvider())
+    let listener = StubEventListener()
+    player.eventListener = listener
+
+    var error: FlutterError?
+    // The setter should update the underlying AVPlayer in both directions.
+    player.setPreventsDisplaySleepDuringVideoPlayback(false, error: &error)
+    #expect(error == nil)
+    #expect(player.player.preventsDisplaySleepDuringVideoPlayback == false)
+
+    player.setPreventsDisplaySleepDuringVideoPlayback(true, error: &error)
+    #expect(error == nil)
+    #expect(player.player.preventsDisplaySleepDuringVideoPlayback == true)
+  }
+
   /// Sanity checks a video player playing the given URL with the actual AVPlayer. This is essentially
   /// a mini integration test of the player component.
   ///

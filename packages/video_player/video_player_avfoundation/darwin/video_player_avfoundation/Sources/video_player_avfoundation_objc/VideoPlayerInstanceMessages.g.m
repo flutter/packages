@@ -741,4 +741,32 @@ void SetUpFVPVideoPlayerInstanceApiWithSuffix(id<FlutterBinaryMessenger> binaryM
       [channel setMessageHandler:nil];
     }
   }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.video_player_avfoundation."
+                                                   @"VideoPlayerInstanceApi."
+                                                   @"setPreventsDisplaySleepDuringVideoPlayback",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FVPGetVideoPlayerInstanceMessagesCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(setPreventsDisplaySleepDuringVideoPlayback:
+                                                                                       error:)],
+                @"FVPVideoPlayerInstanceApi api (%@) doesn't respond to "
+                @"@selector(setPreventsDisplaySleepDuringVideoPlayback:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        BOOL arg_preventsDisplaySleepDuringVideoPlayback =
+            [GetNullableObjectAtIndex(args, 0) boolValue];
+        FlutterError *error;
+        [api setPreventsDisplaySleepDuringVideoPlayback:arg_preventsDisplaySleepDuringVideoPlayback
+                                                  error:&error];
+        callback(wrapResult(nil, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
 }
