@@ -26,6 +26,8 @@ class CoverageCheckCommand extends PackageLoopingCommand {
       'Checks that code coverage meets the specified minimums '
       'for opted-in packages as specified in `script/configs/custom_coverage_minimums.yaml`.';
 
+  // TODO(camsim99): Determine how to ensure test/ subdirectories are covered by this check:
+  // https://github.com/flutter/flutter/issues/188880.
   @override
   PackageLoopingType get packageLoopingType => PackageLoopingType.includeAllSubpackages;
 
