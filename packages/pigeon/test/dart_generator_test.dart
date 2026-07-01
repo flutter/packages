@@ -2027,4 +2027,47 @@ name: foobar
     expect(code, contains('String toString() {'));
     expect(code, contains(r"return 'Foobar(field1: $field1)';"));
   });
+
+  test('gen constants', () {
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[],
+      enums: <Enum>[],
+      constants: <Constant>[
+        Constant(
+          name: 'stringConst',
+          type: const TypeDeclaration(baseName: 'String', isNullable: false),
+          value: 'hello',
+        ),
+        Constant(
+          name: 'intConst',
+          type: const TypeDeclaration(baseName: 'int', isNullable: false),
+          value: 42,
+        ),
+        Constant(
+          name: 'doubleConst',
+          type: const TypeDeclaration(baseName: 'double', isNullable: false),
+          value: 3.14,
+        ),
+        Constant(
+          name: 'boolConst',
+          type: const TypeDeclaration(baseName: 'bool', isNullable: false),
+          value: true,
+        ),
+      ],
+    );
+    final sink = StringBuffer();
+    const generator = DartGenerator();
+    generator.generate(
+      const InternalDartOptions(ignoreLints: false),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+    expect(code, contains("const String stringConst = 'hello';"));
+    expect(code, contains('const int intConst = 42;'));
+    expect(code, contains('const double doubleConst = 3.14;'));
+    expect(code, contains('const bool boolConst = true;'));
+  });
 }

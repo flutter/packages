@@ -253,4 +253,12 @@
   XCTAssertEqual(a.hash, b.hash);
 }
 
+- (void)testConstants {
+  XCTAssertEqualObjects(FLTaStringConstant, @"stringConstantValue");
+  XCTAssertEqualObjects(FLTaStringConstantWithEscapes, @"string\\\\$ConstantValue");
+  XCTAssertEqual(FLTanIntConstant, 42);
+  XCTAssertEqual(FLTaDoubleConstant, 3.14);
+  XCTAssertEqual(FLTaBoolConstant, YES);
+}
+
 @end

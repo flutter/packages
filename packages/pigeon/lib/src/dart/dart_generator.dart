@@ -187,6 +187,72 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
   }
 
   @override
+  void writeConstants(
+    InternalDartOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    if (root.constants.isEmpty) {
+      return;
+    }
+    indent.newln();
+    for (final Constant constant in root.constants) {
+      addDocumentationComments(indent, constant.documentationComments, docCommentSpec);
+      final String formattedValue = _formatValue(constant.type.baseName, constant.value);
+      indent.writeln('const ${constant.type.baseName} ${constant.name} = $formattedValue;');
+    }
+  }
+
+  String _formatValue(String type, Object value) {
+    if (type == 'String') {
+      return _makeDartStringLiteral(value.toString());
+    } else {
+      return value.toString();
+    }
+  }
+
+  String _makeDartStringLiteral(String valStr) {
+    final bool hasSpecial =
+        // ignore: use_raw_strings
+        valStr.contains('\\') ||
+        valStr.contains(r'$') ||
+        // ignore: use_raw_strings
+        valStr.contains('\n') ||
+        // ignore: use_raw_strings
+        valStr.contains('\r');
+
+    if (!hasSpecial) {
+      if (!valStr.contains("'")) {
+        return "'$valStr'";
+      }
+      if (!valStr.contains('"')) {
+        return '"$valStr"';
+      }
+      return "r'''$valStr'''";
+    }
+
+    if (!valStr.contains('\n') && !valStr.contains('\r')) {
+      if (!valStr.contains("'")) {
+        return "r'$valStr'";
+      }
+      if (!valStr.contains('"')) {
+        return 'r"$valStr"';
+      }
+    }
+
+    if (!valStr.contains("'''")) {
+      return "r'''$valStr'''";
+    }
+    if (!valStr.contains('"""')) {
+      return 'r"""$valStr"""';
+    }
+
+    final String escaped = escapeStringSingleQuotes(valStr);
+    return "'$escaped'";
+  }
+
+  @override
   void writeEnum(
     InternalDartOptions generatorOptions,
     Root root,

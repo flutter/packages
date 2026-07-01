@@ -785,6 +785,38 @@ class EnumMember extends Node {
   }
 }
 
+/// Represents a constant.
+class Constant extends Node {
+  /// Parametric constructor for [Constant].
+  Constant({
+    required this.name,
+    required this.type,
+    required this.value,
+    this.offset,
+    this.documentationComments = const <String>[],
+  });
+
+  /// The name of the constant.
+  final String name;
+
+  /// The type of the constant.
+  final TypeDeclaration type;
+
+  /// The value of the constant.
+  final Object value;
+
+  /// The offset in the source file where the constant appears.
+  final int? offset;
+
+  /// List of documentation comments, separated by line.
+  final List<String> documentationComments;
+
+  @override
+  String toString() {
+    return '(Constant name:$name type:$type value:$value documentationComments:$documentationComments)';
+  }
+}
+
 /// Top-level node for the AST.
 class Root extends Node {
   /// Parametric constructor for [Root].
@@ -792,6 +824,7 @@ class Root extends Node {
     required this.classes,
     required this.apis,
     required this.enums,
+    this.constants = const <Constant>[],
     this.containsHostApi = false,
     this.containsFlutterApi = false,
     this.containsProxyApi = false,
@@ -800,7 +833,7 @@ class Root extends Node {
 
   /// Factory function for generating an empty root, usually used when early errors are encountered.
   factory Root.makeEmpty() {
-    return Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    return Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[], constants: <Constant>[]);
   }
 
   /// All the classes contained in the AST.
@@ -811,6 +844,9 @@ class Root extends Node {
 
   /// All of the enums contained in the AST.
   List<Enum> enums;
+
+  /// All of the constants contained in the AST.
+  List<Constant> constants;
 
   /// Whether the root has any Host API definitions.
   bool containsHostApi;
@@ -833,6 +869,6 @@ class Root extends Node {
 
   @override
   String toString() {
-    return '(Root classes:$classes apis:$apis enums:$enums)';
+    return '(Root classes:$classes apis:$apis enums:$enums constants:$constants)';
   }
 }

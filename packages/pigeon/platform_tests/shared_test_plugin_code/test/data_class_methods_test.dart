@@ -199,5 +199,13 @@ void main() {
         'AllTypes(aBool: true, anInt: 42, anInt64: 3000000000, aDouble: 3.14159, aByteArray: [1, 2, 3], a4ByteArray: [4, 5, 6], a8ByteArray: [7, 8, 9], aFloatArray: [2.71828, 3.14159], anEnum: AnEnum.fortyTwo, anotherEnum: AnotherEnum.justInCase, aString: Hello host!, anObject: 1, list: [Thing 1, 2, true, 3.14, null], stringList: [Thing 1, 2, true, 3.14], intList: [1, 2, 3, 4], doubleList: [1.0, 2.99999, 3.0, 3.14], boolList: [true, false, true, false], enumList: [AnEnum.one, AnEnum.two, AnEnum.three, AnEnum.fortyTwo, AnEnum.fourHundredTwentyTwo], objectList: [Thing 1, 2, true, 3.14], listList: [[Thing 1, 2, true, 3.14], [Thing 1, 2, true, 3.14], [1, 2, 3, 4], [1.0, 2.99999, 3.0, 3.14], [true, false, true, false], [AnEnum.one, AnEnum.two, AnEnum.three, AnEnum.fortyTwo, AnEnum.fourHundredTwentyTwo]], mapList: [{a: 1, b: 2.0, c: three, d: false}, {a: 1, b: 2.0, c: three, d: false}, {0.0: 0.0, 1.1: 2.0, 3.0: 0.3, -0.4: -0.2}, {0: 0, 1: 1, 2: 3, 4: -1}, {0: true, 1: false, 2: true}, {AnEnum.one: AnEnum.one, AnEnum.two: AnEnum.two, AnEnum.three: AnEnum.three, AnEnum.fortyTwo: AnEnum.fortyTwo}], map: {a: 1, b: 2.0, c: three, d: false}, stringMap: {a: 1, b: 2.0, c: three, d: false}, intMap: {0: 0, 1: 1, 2: 3, 4: -1}, enumMap: {AnEnum.one: AnEnum.one, AnEnum.two: AnEnum.two, AnEnum.three: AnEnum.three, AnEnum.fortyTwo: AnEnum.fortyTwo}, objectMap: {a: 1, b: 2.0, c: three, d: false}, listMap: {0: [Thing 1, 2, true, 3.14], 1: [Thing 1, 2, true, 3.14], 2: [1.0, 2.99999, 3.0, 3.14], 4: [1, 2, 3, 4], 5: [true, false, true, false], 6: [AnEnum.one, AnEnum.two, AnEnum.three, AnEnum.fortyTwo, AnEnum.fourHundredTwentyTwo]}, mapMap: {0: {a: 1, b: 2.0, c: three, d: false}, 1: {a: 1, b: 2.0, c: three, d: false}, 2: {0.0: 0.0, 1.1: 2.0, 3.0: 0.3, -0.4: -0.2}, 4: {0: 0, 1: 1, 2: 3, 4: -1}, 5: {0: true, 1: false, 2: true}, 6: {AnEnum.one: AnEnum.one, AnEnum.two: AnEnum.two, AnEnum.three: AnEnum.three, AnEnum.fortyTwo: AnEnum.fortyTwo}})',
       );
     });
+
+    test('constants', () {
+      expect(aStringConstant, 'stringConstantValue');
+      expect(aStringConstantWithEscapes, r'string\\$ConstantValue');
+      expect(anIntConstant, 42);
+      expect(aDoubleConstant, 3.14);
+      expect(aBoolConstant, true);
+    });
   });
 }

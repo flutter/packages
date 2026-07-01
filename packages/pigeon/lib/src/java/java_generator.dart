@@ -200,9 +200,37 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
     }
     indent.writeln('public class ${generatorOptions.className!} {');
     indent.inc();
-    _writeNumberHelpers(indent);
-    _writeDeepEquals(indent);
-    _writeDeepHashCode(indent);
+  }
+
+  @override
+  void writeConstants(
+    InternalJavaOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    if (root.constants.isEmpty) {
+      return;
+    }
+    indent.newln();
+    for (final Constant constant in root.constants) {
+      addDocumentationComments(indent, constant.documentationComments, _docCommentSpec);
+      final String javaType =
+          _javaTypeForBuiltinDartType(constant.type, primitive: true) ?? 'Object';
+      final String formattedValue = _formatJavaValue(constant.type.baseName, constant.value);
+      indent.writeln('public static final $javaType ${constant.name} = $formattedValue;');
+    }
+  }
+
+  String _formatJavaValue(String type, Object value) {
+    if (type == 'String') {
+      final String escaped = escapeStringDoubleQuotes(value.toString());
+      return '"$escaped"';
+    } else if (type == 'int') {
+      return '${value}L';
+    } else {
+      return value.toString();
+    }
   }
 
   @override
@@ -1323,6 +1351,10 @@ protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
     required String dartPackageName,
   }) {
     indent.newln();
+    _writeNumberHelpers(indent);
+    _writeDeepEquals(indent);
+    _writeDeepHashCode(indent);
+    indent.newln();
     _writeErrorClass(indent);
     if (root.containsHostApi) {
       indent.newln();
@@ -1387,7 +1419,16 @@ String _javaTypeForBuiltinGenericDartType(TypeDeclaration type, int numberTypeAr
   }
 }
 
-String? _javaTypeForBuiltinDartType(TypeDeclaration type) {
+String? _javaTypeForBuiltinDartType(TypeDeclaration type, {bool primitive = false}) {
+  if (primitive) {
+    if (type.baseName == 'bool') {
+      return 'boolean';
+    } else if (type.baseName == 'int') {
+      return 'long';
+    } else if (type.baseName == 'double') {
+      return 'double';
+    }
+  }
   const javaTypeForDartTypeMap = <String, String>{
     'bool': 'Boolean',
     'int': 'Long',

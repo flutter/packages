@@ -1094,6 +1094,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   final List<Api> _apis = <Api>[];
   final List<Enum> _enums = <Enum>[];
   final List<Class> _classes = <Class>[];
+  final List<Constant> _constants = <Constant>[];
   final List<Error> _errors = <Error>[];
 
   /// Input file location.
@@ -1157,6 +1158,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       apis: _apis,
       classes: _classes,
       enums: referencedEnums,
+      constants: _constants,
       containsHostApi: containsHostApi,
       containsFlutterApi: containsFlutterApi,
       containsProxyApi: containsProxyApi,
@@ -1215,6 +1217,66 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     }
     final List<Error> validateErrors = _validateAst(completeRoot, source);
     totalErrors.addAll(validateErrors);
+
+    for (final Constant constant in _constants) {
+      if (constant.type.baseName != 'String' &&
+          constant.type.baseName != 'int' &&
+          constant.type.baseName != 'double' &&
+          constant.type.baseName != 'bool') {
+        totalErrors.add(
+          Error(
+            message:
+                'Unsupported constant type: "${constant.type.baseName}". Only String, int, double, and bool are supported.',
+            lineNumber: constant.offset != null
+                ? calculateLineNumber(source, constant.offset!)
+                : null,
+          ),
+        );
+      }
+      if (constant.type.baseName == 'String' && constant.value is! String) {
+        totalErrors.add(
+          Error(
+            message:
+                'Constant "${constant.name}" type is String but value is ${constant.value.runtimeType}.',
+            lineNumber: constant.offset != null
+                ? calculateLineNumber(source, constant.offset!)
+                : null,
+          ),
+        );
+      } else if (constant.type.baseName == 'int' && constant.value is! int) {
+        totalErrors.add(
+          Error(
+            message:
+                'Constant "${constant.name}" type is int but value is ${constant.value.runtimeType}.',
+            lineNumber: constant.offset != null
+                ? calculateLineNumber(source, constant.offset!)
+                : null,
+          ),
+        );
+      } else if (constant.type.baseName == 'double' &&
+          constant.value is! double &&
+          constant.value is! int) {
+        totalErrors.add(
+          Error(
+            message:
+                'Constant "${constant.name}" type is double but value is ${constant.value.runtimeType}.',
+            lineNumber: constant.offset != null
+                ? calculateLineNumber(source, constant.offset!)
+                : null,
+          ),
+        );
+      } else if (constant.type.baseName == 'bool' && constant.value is! bool) {
+        totalErrors.add(
+          Error(
+            message:
+                'Constant "${constant.name}" type is bool but value is ${constant.value.runtimeType}.',
+            lineNumber: constant.offset != null
+                ? calculateLineNumber(source, constant.offset!)
+                : null,
+          ),
+        );
+      }
+    }
 
     return ParseResults(
       root: totalErrors.isEmpty
@@ -1352,6 +1414,133 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       );
     }
     return null;
+  }
+
+  @override
+  Object? visitTopLevelVariableDeclaration(dart_ast.TopLevelVariableDeclaration node) {
+    if (node.variables.isConst) {
+      final dart_ast.TypeAnnotation? typeAnnotation = node.variables.type;
+      if (typeAnnotation == null) {
+        _errors.add(
+          Error(
+            message: 'Top-level constants must have an explicit type annotation.',
+            lineNumber: calculateLineNumber(source, node.offset),
+          ),
+        );
+        return null;
+      }
+      if (typeAnnotation is! dart_ast.NamedType) {
+        _errors.add(
+          Error(
+            message: 'Top-level constants must have a named type annotation.',
+            lineNumber: calculateLineNumber(source, node.offset),
+          ),
+        );
+        return null;
+      }
+      for (final dart_ast.VariableDeclaration variable in node.variables.variables) {
+        final dart_ast.Expression? initializer = variable.initializer;
+        if (initializer == null) {
+          _errors.add(
+            Error(
+              message: 'Top-level constant "${variable.name.lexeme}" must have an initializer.',
+              lineNumber: calculateLineNumber(source, variable.offset),
+            ),
+          );
+          continue;
+        }
+
+        Object? value = _evaluateExpression(initializer);
+        if (value == null) {
+          continue;
+        }
+
+        if (_getNamedTypeQualifiedName(typeAnnotation) == 'double' && value is num) {
+          value = value.toDouble();
+        }
+
+        final type = TypeDeclaration(
+          baseName: _getNamedTypeQualifiedName(typeAnnotation),
+          isNullable: typeAnnotation.question != null,
+          typeArguments: _typeAnnotationsToTypeArguments(typeAnnotation.typeArguments),
+        );
+
+        _constants.add(
+          Constant(
+            name: variable.name.lexeme,
+            type: type,
+            value: value,
+            offset: variable.offset,
+            documentationComments: _documentationCommentsParser(node.documentationComment?.tokens),
+          ),
+        );
+      }
+    }
+    node.visitChildren(this);
+    return null;
+  }
+
+  Object? _evaluateExpression(dart_ast.Expression expression) {
+    if (expression is dart_ast.SimpleStringLiteral) {
+      return expression.value;
+    } else if (expression is dart_ast.IntegerLiteral) {
+      return expression.value!;
+    } else if (expression is dart_ast.DoubleLiteral) {
+      return expression.value;
+    } else if (expression is dart_ast.BooleanLiteral) {
+      return expression.value;
+    } else if (expression is dart_ast.PrefixExpression) {
+      final Object? operandValue = _evaluateExpression(expression.operand);
+      if (operandValue == null) {
+        return null;
+      }
+      final String operator = expression.operator.lexeme;
+      if (operator == '-') {
+        if (operandValue is int) {
+          return -operandValue;
+        } else if (operandValue is double) {
+          return -operandValue;
+        }
+      } else if (operator == '!') {
+        if (operandValue is bool) {
+          return !operandValue;
+        }
+      }
+      _errors.add(
+        Error(
+          message: 'Unsupported prefix operator "$operator" on type "${operandValue.runtimeType}".',
+          lineNumber: calculateLineNumber(source, expression.offset),
+        ),
+      );
+      return null;
+    } else if (expression is dart_ast.AdjacentStrings) {
+      final buffer = StringBuffer();
+      for (final dart_ast.StringLiteral literal in expression.strings) {
+        final Object? val = _evaluateExpression(literal);
+        if (val is! String) {
+          return null;
+        }
+        buffer.write(val);
+      }
+      return buffer.toString();
+    } else if (expression is dart_ast.StringInterpolation) {
+      _errors.add(
+        Error(
+          message: 'String interpolation is not supported in Pigeon constants.',
+          lineNumber: calculateLineNumber(source, expression.offset),
+        ),
+      );
+      return null;
+    } else {
+      _errors.add(
+        Error(
+          message:
+              'Unsupported expression type ${expression.runtimeType} for constant initializer.',
+          lineNumber: calculateLineNumber(source, expression.offset),
+        ),
+      );
+      return null;
+    }
   }
 
   @override

@@ -15,7 +15,7 @@ import 'generator.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '27.1.0';
+const String pigeonVersion = '27.2.0';
 
 /// Default plugin package name.
 const String defaultPluginPackageName = 'dev.flutter.pigeon';
@@ -870,4 +870,23 @@ bool isCollectionType(TypeDeclaration type) {
       !type.isEnum &&
       !type.isProxyApi &&
       (type.baseName.contains('List') || type.baseName == 'Map');
+}
+
+/// Escapes special characters in a string for use in double-quoted string literals.
+String escapeStringDoubleQuotes(String value) {
+  return value
+      .replaceAll('\\', r'\\') // ignore: use_raw_strings
+      .replaceAll('"', r'\"')
+      .replaceAll('\n', r'\n')
+      .replaceAll('\r', r'\r');
+}
+
+/// Escapes special characters in a string for use in single-quoted string literals.
+String escapeStringSingleQuotes(String value) {
+  return value
+      .replaceAll('\\', r'\\') // ignore: use_raw_strings
+      .replaceAll("'", r"\'")
+      .replaceAll('\n', r'\n')
+      .replaceAll('\r', r'\r')
+      .replaceAll(r'$', r'\$');
 }

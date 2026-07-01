@@ -30,6 +30,13 @@ import java.util.Map;
 /** Generated class from Pigeon. */
 @SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression", "serial"})
 public class CoreTests {
+
+  public static final String aStringConstant = "stringConstantValue";
+  public static final String aStringConstantWithEscapes = "string\\\\$ConstantValue";
+  public static final long anIntConstant = 42L;
+  public static final double aDoubleConstant = 3.14;
+  public static final boolean aBoolConstant = true;
+
   static boolean pigeonDoubleEquals(double a, double b) {
     // Normalize -0.0 to 0.0 and handle NaN equality.
     return (a == 0.0 ? 0.0 : a) == (b == 0.0 ? 0.0 : b) || (Double.isNaN(a) && Double.isNaN(b));

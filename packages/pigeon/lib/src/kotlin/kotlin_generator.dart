@@ -240,6 +240,36 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
   }
 
   @override
+  void writeConstants(
+    InternalKotlinOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    if (root.constants.isEmpty) {
+      return;
+    }
+    indent.newln();
+    for (final Constant constant in root.constants) {
+      addDocumentationComments(indent, constant.documentationComments, _docCommentSpec);
+      final String kotlinType = _kotlinTypeForBuiltinDartType(constant.type) ?? 'Any';
+      final String formattedValue = _formatKotlinValue(constant.type.baseName, constant.value);
+      indent.writeln('const val ${constant.name}: $kotlinType = $formattedValue');
+    }
+  }
+
+  String _formatKotlinValue(String type, Object value) {
+    if (type == 'String') {
+      final String escaped = escapeStringDoubleQuotes(value.toString()).replaceAll(r'$', r'\$');
+      return '"$escaped"';
+    } else if (type == 'int') {
+      return '${value}L';
+    } else {
+      return value.toString();
+    }
+  }
+
+  @override
   void writeEnum(
     InternalKotlinOptions generatorOptions,
     Root root,

@@ -3548,4 +3548,51 @@ void main() {
     expect(code, contains('- (NSString *)description {'));
     expect(code, contains('return [NSString stringWithFormat:@"ABCFoo()"];'));
   });
+
+  test('gen constants', () {
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[],
+      enums: <Enum>[],
+      constants: <Constant>[
+        Constant(
+          name: 'stringConst',
+          type: const TypeDeclaration(baseName: 'String', isNullable: false),
+          value: 'hello',
+        ),
+        Constant(
+          name: 'intConst',
+          type: const TypeDeclaration(baseName: 'int', isNullable: false),
+          value: 42,
+        ),
+        Constant(
+          name: 'doubleConst',
+          type: const TypeDeclaration(baseName: 'double', isNullable: false),
+          value: 3.14,
+        ),
+        Constant(
+          name: 'boolConst',
+          type: const TypeDeclaration(baseName: 'bool', isNullable: false),
+          value: true,
+        ),
+      ],
+    );
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions = OutputFileOptions<InternalObjcOptions>(
+      fileType: FileType.header,
+      languageOptions: const InternalObjcOptions(
+        prefix: 'ABC',
+        objcHeaderOut: '',
+        objcSourceOut: '',
+        headerIncludePath: '',
+      ),
+    );
+    generator.generate(generatorOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('static NSString *const ABCstringConst = @"hello";'));
+    expect(code, contains('static const NSInteger ABCintConst = 42;'));
+    expect(code, contains('static const double ABCdoubleConst = 3.14;'));
+    expect(code, contains('static const BOOL ABCboolConst = YES;'));
+  });
 }

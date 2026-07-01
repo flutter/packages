@@ -16,6 +16,12 @@ import io.flutter.plugin.common.StandardMessageCodec
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 
+const val aStringConstant: String = "stringConstantValue"
+const val aStringConstantWithEscapes: String = "string\\\\\$ConstantValue"
+const val anIntConstant: Long = 42L
+const val aDoubleConstant: Double = 3.14
+const val aBoolConstant: Boolean = true
+
 private object CoreTestsPigeonUtils {
 
   fun createConnectionError(channelName: String): FlutterError {

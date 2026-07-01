@@ -224,6 +224,34 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
   }
 
   @override
+  void writeConstants(
+    InternalSwiftOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    if (root.constants.isEmpty) {
+      return;
+    }
+    indent.newln();
+    for (final Constant constant in root.constants) {
+      addDocumentationComments(indent, constant.documentationComments, _docCommentSpec);
+      final String swiftType = _swiftTypeForDartType(constant.type);
+      final String formattedValue = _formatSwiftValue(constant.type.baseName, constant.value);
+      indent.writeln('public let ${constant.name}: $swiftType = $formattedValue');
+    }
+  }
+
+  String _formatSwiftValue(String type, Object value) {
+    if (type == 'String') {
+      final String escaped = escapeStringDoubleQuotes(value.toString());
+      return '"$escaped"';
+    } else {
+      return value.toString();
+    }
+  }
+
+  @override
   void writeEnum(
     InternalSwiftOptions generatorOptions,
     Root root,

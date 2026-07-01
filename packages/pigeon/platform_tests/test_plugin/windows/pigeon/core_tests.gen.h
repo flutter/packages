@@ -23,6 +23,13 @@ class CoreTestsTest;
 
 // Generated class from Pigeon.
 
+inline constexpr const char* aStringConstant = "stringConstantValue";
+inline constexpr const char* aStringConstantWithEscapes =
+    "string\\\\$ConstantValue";
+inline constexpr int64_t anIntConstant = 42;
+inline constexpr double aDoubleConstant = 3.14;
+inline constexpr bool aBoolConstant = true;
+
 class FlutterError {
  public:
   explicit FlutterError(const std::string& code) : code_(code) {}
