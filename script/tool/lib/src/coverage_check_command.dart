@@ -82,7 +82,7 @@ class CoverageCheckCommand extends PackageLoopingCommand {
     } on NoLinesFoundException {
       return PackageResult.fail(<String>[
         'No instrumented Dart lines were found in the coverage report for $packageName.',
-        'If this package contains no code to cover, please remove it from '
+        'If this package contains no code to cover, please remove it from ',
             'script/configs/custom_coverage_minimums.yaml.',
       ]);
     }
