@@ -68,7 +68,7 @@ import 'theme.dart';
 ///    in undefined font behavior.
 ///
 // TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -92,7 +92,7 @@ import 'theme.dart';
 // TODO(framework): End of the blue example container.
 ///
 // TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -125,7 +125,7 @@ import 'theme.dart';
 // TODO(framework): End of the blue example container.
 ///
 // TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -373,7 +373,7 @@ class CupertinoApp extends StatefulWidget {
 
   /// {@macro flutter.widgets.widgetsApp.shortcuts}
   // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -406,7 +406,7 @@ class CupertinoApp extends StatefulWidget {
 
   /// {@macro flutter.widgets.widgetsApp.actions}
   // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///

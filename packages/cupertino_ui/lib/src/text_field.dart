@@ -838,7 +838,7 @@ class CupertinoTextField extends StatefulWidget {
   /// {@macro flutter.widgets.magnifier.intro}
   ///
   // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
