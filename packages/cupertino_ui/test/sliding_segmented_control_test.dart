@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@Skip(
-  'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
-)
 // reduced-test-set:
 //   This file is run as part of a reduced test set in CI on Mac and Windows
 //   machines.
@@ -19,8 +16,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import '../widgets/semantics_tester.dart';
 
 RenderBox getRenderSegmentedControl(WidgetTester tester) {
   return tester.allRenderObjects.firstWhere((RenderObject currentObject) {
@@ -946,7 +941,6 @@ void main() {
   });
 
   testWidgets('Segmented control semantics', (WidgetTester tester) async {
-    final semantics = SemanticsTester(tester);
     const children = <int, Widget>{0: Text('Child 1'), 1: Text('Child 2')};
 
     await tester.pumpWidget(
@@ -962,42 +956,35 @@ void main() {
     );
 
     expect(
-      semantics,
-      hasSemantics(
-        TestSemantics.root(
-          children: <TestSemantics>[
-            TestSemantics.rootChild(
-              role: SemanticsRole.radioGroup,
-              children: <TestSemantics>[
-                TestSemantics(
-                  label: 'Child 1',
-                  flags: <SemanticsFlag>[
-                    SemanticsFlag.isButton,
-                    SemanticsFlag.isInMutuallyExclusiveGroup,
-                    SemanticsFlag.hasSelectedState,
-                    SemanticsFlag.isSelected,
-                    SemanticsFlag.isFocusable,
-                  ],
-                  actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
-                ),
-                TestSemantics(
-                  label: 'Child 2',
-                  flags: <SemanticsFlag>[
-                    SemanticsFlag.isButton,
-                    SemanticsFlag.isInMutuallyExclusiveGroup,
-                    // Declares that it is selectable, but not currently selected.
-                    SemanticsFlag.hasSelectedState,
-                    SemanticsFlag.isFocusable,
-                  ],
-                  actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
-                ),
-              ],
-            ),
-          ],
-        ),
-        ignoreId: true,
-        ignoreRect: true,
-        ignoreTransform: true,
+      tester.getSemantics(find.byType(CupertinoSlidingSegmentedControl<int>)).role,
+      SemanticsRole.radioGroup,
+    );
+
+    expect(
+      tester.getSemantics(find.text('Child 1')),
+      isSemantics(
+        label: 'Child 1',
+        isButton: true,
+        isInMutuallyExclusiveGroup: true,
+        hasSelectedState: true,
+        isSelected: true,
+        isFocusable: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+      ),
+    );
+
+    expect(
+      tester.getSemantics(find.text('Child 2')),
+      isSemantics(
+        label: 'Child 2',
+        isButton: true,
+        isInMutuallyExclusiveGroup: true,
+        hasSelectedState: true,
+        isSelected: false,
+        isFocusable: true,
+        hasTapAction: true,
+        hasFocusAction: true,
       ),
     );
 
@@ -1005,47 +992,38 @@ void main() {
     await tester.pump();
 
     expect(
-      semantics,
-      hasSemantics(
-        TestSemantics.root(
-          children: <TestSemantics>[
-            TestSemantics.rootChild(
-              role: SemanticsRole.radioGroup,
-              children: <TestSemantics>[
-                TestSemantics(
-                  label: 'Child 1',
-                  flags: <SemanticsFlag>[
-                    SemanticsFlag.isButton,
-                    SemanticsFlag.isInMutuallyExclusiveGroup,
-                    // Declares that it is selectable, but not currently selected.
-                    SemanticsFlag.hasSelectedState,
-                    SemanticsFlag.isFocusable,
-                  ],
-                  actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
-                ),
-                TestSemantics(
-                  label: 'Child 2',
-                  flags: <SemanticsFlag>[
-                    SemanticsFlag.isButton,
-                    SemanticsFlag.isInMutuallyExclusiveGroup,
-                    SemanticsFlag.hasSelectedState,
-                    SemanticsFlag.isSelected,
-                    SemanticsFlag.isFocusable,
-                    SemanticsFlag.isFocused,
-                  ],
-                  actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
-                ),
-              ],
-            ),
-          ],
-        ),
-        ignoreId: true,
-        ignoreRect: true,
-        ignoreTransform: true,
+      tester.getSemantics(find.byType(CupertinoSlidingSegmentedControl<int>)).role,
+      SemanticsRole.radioGroup,
+    );
+
+    expect(
+      tester.getSemantics(find.text('Child 1')),
+      isSemantics(
+        label: 'Child 1',
+        isButton: true,
+        isInMutuallyExclusiveGroup: true,
+        hasSelectedState: true,
+        isSelected: false,
+        isFocusable: true,
+        hasTapAction: true,
+        hasFocusAction: true,
       ),
     );
 
-    semantics.dispose();
+    expect(
+      tester.getSemantics(find.text('Child 2')),
+      isSemantics(
+        label: 'Child 2',
+        isButton: true,
+        isInMutuallyExclusiveGroup: true,
+        hasSelectedState: true,
+        isSelected: true,
+        isFocusable: true,
+        isFocused: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+      ),
+    );
   });
 
   testWidgets('Non-centered taps work on smaller widgets', (WidgetTester tester) async {

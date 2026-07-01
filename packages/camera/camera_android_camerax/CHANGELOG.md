@@ -1,6 +1,10 @@
-## 0.7.2+2
+## 0.7.3+1
 
 * Updates `ResolutionPreset.max` to allow CameraX high-resolution still capture sizes on Android.
+
+## 0.7.3
+
+* Fixes `videoBitrate` configuration being ignored during video recording.
 
 ## 0.7.2+1
 

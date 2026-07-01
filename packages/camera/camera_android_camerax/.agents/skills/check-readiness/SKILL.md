@@ -9,9 +9,9 @@ metadata:
 This skill verifies that the local environment is properly configured and clean before starting new work in the `camera_android_camerax` package.
 
 ## Instructions
-Run the bundled verification script ([scripts/check.sh](scripts/check.sh)) to perform the automated environment checks:
+Run the bundled verification script ([tool/check.dart](tool/check.dart)) to perform the automated environment checks:
 ```bash
-bash .agents/skills/check-readiness/scripts/check.sh
+dart run .agents/skills/check-readiness/tool/check.dart
 ```
 
 ### Handling the Results

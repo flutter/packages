@@ -2,20 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@Skip(
-  'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
-)
 @TestOn('!chrome')
 library;
 
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import '../widgets/semantics_tester.dart';
 
 void main() {
   late MockNavigatorObserver navigatorObserver;
@@ -27,19 +23,21 @@ void main() {
   testWidgets('Middle auto-populates with title', (WidgetTester tester) async {
     await tester.pumpWidget(const CupertinoApp(home: Placeholder()));
 
-    tester
-        .state<NavigatorState>(find.byType(Navigator))
-        .push(
-          CupertinoPageRoute<void>(
-            title: 'An iPod',
-            builder: (BuildContext context) {
-              return const CupertinoPageScaffold(
-                navigationBar: CupertinoNavigationBar(),
-                child: Placeholder(),
-              );
-            },
+    unawaited(
+      tester
+          .state<NavigatorState>(find.byType(Navigator))
+          .push(
+            CupertinoPageRoute<void>(
+              title: 'An iPod',
+              builder: (BuildContext context) {
+                return const CupertinoPageScaffold(
+                  navigationBar: CupertinoNavigationBar(),
+                  child: Placeholder(),
+                );
+              },
+            ),
           ),
-        );
+    );
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
@@ -58,18 +56,20 @@ void main() {
     addTearDown(tester.view.reset);
     await tester.pumpWidget(const CupertinoApp(home: Placeholder()));
 
-    tester
-        .state<NavigatorState>(find.byType(Navigator))
-        .push(
-          CupertinoPageRoute<void>(
-            title: 'An iPod',
-            builder: (BuildContext context) {
-              return const CupertinoPageScaffold(
-                child: CustomScrollView(slivers: <Widget>[CupertinoSliverNavigationBar()]),
-              );
-            },
+    unawaited(
+      tester
+          .state<NavigatorState>(find.byType(Navigator))
+          .push(
+            CupertinoPageRoute<void>(
+              title: 'An iPod',
+              builder: (BuildContext context) {
+                return const CupertinoPageScaffold(
+                  child: CustomScrollView(slivers: <Widget>[CupertinoSliverNavigationBar()]),
+                );
+              },
+            ),
           ),
-        );
+    );
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
@@ -110,36 +110,40 @@ void main() {
   ) async {
     await tester.pumpWidget(const CupertinoApp(home: Placeholder()));
 
-    tester
-        .state<NavigatorState>(find.byType(Navigator))
-        .push(
-          CupertinoPageRoute<void>(
-            title: 'An iPod',
-            builder: (BuildContext context) {
-              return const CupertinoPageScaffold(
-                navigationBar: CupertinoNavigationBar(),
-                child: Placeholder(),
-              );
-            },
+    unawaited(
+      tester
+          .state<NavigatorState>(find.byType(Navigator))
+          .push(
+            CupertinoPageRoute<void>(
+              title: 'An iPod',
+              builder: (BuildContext context) {
+                return const CupertinoPageScaffold(
+                  navigationBar: CupertinoNavigationBar(),
+                  child: Placeholder(),
+                );
+              },
+            ),
           ),
-        );
+    );
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
 
-    tester
-        .state<NavigatorState>(find.byType(Navigator))
-        .push(
-          CupertinoPageRoute<void>(
-            title: 'A Phone',
-            builder: (BuildContext context) {
-              return const CupertinoPageScaffold(
-                navigationBar: CupertinoNavigationBar(),
-                child: Placeholder(),
-              );
-            },
+    unawaited(
+      tester
+          .state<NavigatorState>(find.byType(Navigator))
+          .push(
+            CupertinoPageRoute<void>(
+              title: 'A Phone',
+              builder: (BuildContext context) {
+                return const CupertinoPageScaffold(
+                  navigationBar: CupertinoNavigationBar(),
+                  child: Placeholder(),
+                );
+              },
+            ),
           ),
-        );
+    );
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
@@ -160,36 +164,40 @@ void main() {
   testWidgets('Previous title is correct on first transition frame', (WidgetTester tester) async {
     await tester.pumpWidget(const CupertinoApp(home: Placeholder()));
 
-    tester
-        .state<NavigatorState>(find.byType(Navigator))
-        .push(
-          CupertinoPageRoute<void>(
-            title: 'An iPod',
-            builder: (BuildContext context) {
-              return const CupertinoPageScaffold(
-                navigationBar: CupertinoNavigationBar(),
-                child: Placeholder(),
-              );
-            },
+    unawaited(
+      tester
+          .state<NavigatorState>(find.byType(Navigator))
+          .push(
+            CupertinoPageRoute<void>(
+              title: 'An iPod',
+              builder: (BuildContext context) {
+                return const CupertinoPageScaffold(
+                  navigationBar: CupertinoNavigationBar(),
+                  child: Placeholder(),
+                );
+              },
+            ),
           ),
-        );
+    );
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
 
-    tester
-        .state<NavigatorState>(find.byType(Navigator))
-        .push(
-          CupertinoPageRoute<void>(
-            title: 'A Phone',
-            builder: (BuildContext context) {
-              return const CupertinoPageScaffold(
-                navigationBar: CupertinoNavigationBar(),
-                child: Placeholder(),
-              );
-            },
+    unawaited(
+      tester
+          .state<NavigatorState>(find.byType(Navigator))
+          .push(
+            CupertinoPageRoute<void>(
+              title: 'A Phone',
+              builder: (BuildContext context) {
+                return const CupertinoPageScaffold(
+                  navigationBar: CupertinoNavigationBar(),
+                  child: Placeholder(),
+                );
+              },
+            ),
           ),
-        );
+    );
 
     // Trigger the route push
     await tester.pump();
@@ -223,12 +231,12 @@ void main() {
       },
     );
 
-    tester.state<NavigatorState>(find.byType(Navigator)).push(route2);
+    unawaited(tester.state<NavigatorState>(find.byType(Navigator)).push(route2));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
 
-    tester.state<NavigatorState>(find.byType(Navigator)).push(route3);
+    unawaited(tester.state<NavigatorState>(find.byType(Navigator)).push(route3));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
@@ -370,12 +378,14 @@ void main() {
     // Use the navigator to push a route instead of tapping the 'push' button.
     // The topmost route (the one that's animating away), ignores input while
     // the pop is underway because route.navigator.userGestureInProgress.
-    Navigator.push<void>(
-      scaffoldKey.currentContext!,
-      CupertinoPageRoute<void>(
-        builder: (BuildContext context) {
-          return const CupertinoPageScaffold(child: Center(child: Text('route')));
-        },
+    unawaited(
+      Navigator.push<void>(
+        scaffoldKey.currentContext!,
+        CupertinoPageRoute<void>(
+          builder: (BuildContext context) {
+            return const CupertinoPageScaffold(child: Center(child: Text('route')));
+          },
+        ),
       ),
     );
 
@@ -602,12 +612,14 @@ void main() {
 
     // Programmatically push and observe that Page 3 was pushed as if there were
     // no back gesture.
-    Navigator.push<void>(
-      scaffoldKey.currentContext!,
-      CupertinoPageRoute<void>(
-        builder: (BuildContext context) {
-          return const CupertinoPageScaffold(child: Center(child: Text('Page 3')));
-        },
+    unawaited(
+      Navigator.push<void>(
+        scaffoldKey.currentContext!,
+        CupertinoPageRoute<void>(
+          builder: (BuildContext context) {
+            return const CupertinoPageScaffold(child: Center(child: Text('Page 3')));
+          },
+        ),
       ),
     );
     await tester.pumpAndSettle();
@@ -686,12 +698,14 @@ void main() {
 
     // Programmatically push and observe that Page 3 was pushed as if there were
     // no back gesture.
-    Navigator.push<void>(
-      scaffoldKey.currentContext!,
-      CupertinoPageRoute<void>(
-        builder: (BuildContext context) {
-          return const CupertinoPageScaffold(child: Center(child: Text('Page 3')));
-        },
+    unawaited(
+      Navigator.push<void>(
+        scaffoldKey.currentContext!,
+        CupertinoPageRoute<void>(
+          builder: (BuildContext context) {
+            return const CupertinoPageScaffold(child: Center(child: Text('Page 3')));
+          },
+        ),
       ),
     );
     await tester.pumpAndSettle();
@@ -1228,7 +1242,7 @@ void main() {
       },
     );
 
-    tester.state<NavigatorState>(find.byType(Navigator)).push(route2);
+    unawaited(tester.state<NavigatorState>(find.byType(Navigator)).push(route2));
     // The whole transition is 500ms based on CupertinoPageRoute.transitionDuration.
     // Break it up into small chunks.
     //
@@ -1284,7 +1298,7 @@ void main() {
       },
     );
 
-    tester.state<NavigatorState>(find.byType(Navigator)).push(route2);
+    unawaited(tester.state<NavigatorState>(find.byType(Navigator)).push(route2));
 
     await tester.pumpAndSettle();
 
@@ -1351,7 +1365,7 @@ void main() {
       },
     );
 
-    tester.state<NavigatorState>(find.byType(Navigator)).push(route2);
+    unawaited(tester.state<NavigatorState>(find.byType(Navigator)).push(route2));
 
     await tester.pumpAndSettle();
 
@@ -1395,7 +1409,7 @@ void main() {
       },
     );
 
-    navigatorKey.currentState!.push(route2);
+    unawaited(navigatorKey.currentState!.push(route2));
     await tester.pumpAndSettle();
     expect(navigatorObserver.invocations.removeLast(), NavigatorInvocation.didPush);
 
@@ -1447,7 +1461,7 @@ void main() {
       ),
     );
 
-    tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+    unawaited(tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next'));
 
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
@@ -1486,7 +1500,7 @@ void main() {
       ),
     );
 
-    tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+    unawaited(tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next'));
 
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
@@ -1526,9 +1540,11 @@ void main() {
     ) async {
       await tester.pumpWidget(const CupertinoApp(home: SizedBox.expand()));
 
-      tester
-          .state<NavigatorState>(find.byType(Navigator))
-          .push(buildRoute(fullscreenDialog: false));
+      unawaited(
+        tester
+            .state<NavigatorState>(find.byType(Navigator))
+            .push(buildRoute(fullscreenDialog: false)),
+      );
       await tester.pumpAndSettle();
 
       expect(
@@ -1542,7 +1558,11 @@ void main() {
     ) async {
       await tester.pumpWidget(const CupertinoApp(home: SizedBox.expand()));
 
-      tester.state<NavigatorState>(find.byType(Navigator)).push(buildRoute(fullscreenDialog: true));
+      unawaited(
+        tester
+            .state<NavigatorState>(find.byType(Navigator))
+            .push(buildRoute(fullscreenDialog: true)),
+      );
       await tester.pumpAndSettle();
 
       expect(tester.widget<ModalBarrier>(find.byType(ModalBarrier).last).color, isNull);
@@ -1571,19 +1591,21 @@ void main() {
           if (paintColor.value == color.value) {
             return true;
           }
-          throw '''
+          fail('''
   For a rect with an expected left-side position: $dx (drawn at ${rect.left}):
               Expected a rect with color: $color,
               And drew a rect with color: $paintColor.
-          ''';
+          ''');
         });
       }
 
       await tester.pumpWidget(const CupertinoApp(home: SizedBox.expand()));
 
-      tester
-          .state<NavigatorState>(find.byType(Navigator))
-          .push(buildRoute(fullscreenDialog: false));
+      unawaited(
+        tester
+            .state<NavigatorState>(find.byType(Navigator))
+            .push(buildRoute(fullscreenDialog: false)),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 1));
 
@@ -1653,10 +1675,10 @@ void main() {
               final bool isOnScreen = rect.left >= 0 && rect.right <= 600.0;
 
               if (isOnScreen) {
-                throw '''
+                fail('''
     Expected: no visible rects on-screen.
     Found: $rect.
-        ''';
+        ''');
               }
             }
             return true;
@@ -1665,9 +1687,11 @@ void main() {
 
         await tester.pumpWidget(const CupertinoApp(home: SizedBox.expand()));
 
-        tester
-            .state<NavigatorState>(find.byType(Navigator))
-            .push(buildRoute(fullscreenDialog: true));
+        unawaited(
+          tester
+              .state<NavigatorState>(find.byType(Navigator))
+              .push(buildRoute(fullscreenDialog: true)),
+        );
         await tester.pump();
 
         final RenderBox box = tester.firstRenderObject<RenderBox>(find.byType(CustomPaint));
@@ -1778,22 +1802,24 @@ void main() {
     expect(homeTapCount, 1);
     expect(pageTapCount, 0);
 
-    Navigator.push<void>(
-      homeScaffoldKey.currentContext!,
-      CupertinoPageRoute<void>(
-        builder: (BuildContext context) {
-          return CupertinoPageScaffold(
-            key: pageScaffoldKey,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: GestureDetector(
-                onTap: () {
-                  pageTapCount += 1;
-                },
+    unawaited(
+      Navigator.push<void>(
+        homeScaffoldKey.currentContext!,
+        CupertinoPageRoute<void>(
+          builder: (BuildContext context) {
+            return CupertinoPageScaffold(
+              key: pageScaffoldKey,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: GestureDetector(
+                  onTap: () {
+                    pageTapCount += 1;
+                  },
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
 
@@ -1897,7 +1923,7 @@ void main() {
     var box = tester.renderObject(find.byKey(container)) as RenderBox;
     final double initialPosition = box.localToGlobal(Offset.zero).dx;
 
-    navigator.currentState!.pushNamed('/page2');
+    unawaited(navigator.currentState!.pushNamed('/page2'));
     await tester.pumpAndSettle();
     box = tester.renderObject(find.byKey(container)) as RenderBox;
     final double finalPosition = box.localToGlobal(Offset.zero).dx;
@@ -2045,7 +2071,6 @@ void main() {
     WidgetTester tester,
   ) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-    final semantics = SemanticsTester(tester);
     await tester.pumpWidget(
       CupertinoApp(
         home: Navigator(
@@ -2072,24 +2097,16 @@ void main() {
     await tester.tap(find.text('tap'));
     await tester.pumpAndSettle();
 
-    expect(
-      semantics,
-      isNot(
-        includesNodeWith(
-          actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
-          label: 'Dismiss',
-        ),
-      ),
-    );
+    expect(find.semantics.byLabel('Dismiss'), findsNothing);
+
     debugDefaultTargetPlatformOverride = null;
-    semantics.dispose();
   });
 
   testWidgets('showCupertinoModalPopup allows for semantics dismiss when set', (
     WidgetTester tester,
   ) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-    final semantics = SemanticsTester(tester);
+
     await tester.pumpWidget(
       CupertinoApp(
         home: Navigator(
@@ -2118,14 +2135,11 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(
-      semantics,
-      includesNodeWith(
-        actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.dismiss],
-        label: 'Dismiss',
-      ),
+      find.semantics.byLabel('Dismiss'),
+      isSemantics(label: 'Dismiss', hasTapAction: true, hasDismissAction: true),
     );
+
     debugDefaultTargetPlatformOverride = null;
-    semantics.dispose();
   });
 
   testWidgets('showCupertinoModalPopup passes RouteSettings to PopupRoute', (
@@ -2559,12 +2573,14 @@ void main() {
       );
       final BuildContext context = tester.element(find.text('Test'));
 
-      showCupertinoDialog<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return const Placeholder();
-        },
-        anchorPoint: const Offset(1000, 0),
+      unawaited(
+        showCupertinoDialog<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return const Placeholder();
+          },
+          anchorPoint: const Offset(1000, 0),
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -2597,11 +2613,13 @@ void main() {
       );
       final BuildContext context = tester.element(find.text('Test'));
 
-      showCupertinoDialog<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return const Placeholder();
-        },
+      unawaited(
+        showCupertinoDialog<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return const Placeholder();
+          },
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -2634,11 +2652,13 @@ void main() {
       );
       final BuildContext context = tester.element(find.text('Test'));
 
-      showCupertinoDialog<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return const Placeholder();
-        },
+      unawaited(
+        showCupertinoDialog<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return const Placeholder();
+          },
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -2673,12 +2693,14 @@ void main() {
       );
 
       final BuildContext context = tester.element(find.text('Test'));
-      showCupertinoModalPopup<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return const Placeholder();
-        },
-        anchorPoint: const Offset(1000, 0),
+      unawaited(
+        showCupertinoModalPopup<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return const Placeholder();
+          },
+          anchorPoint: const Offset(1000, 0),
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -2711,11 +2733,13 @@ void main() {
       );
 
       final BuildContext context = tester.element(find.text('Test'));
-      showCupertinoModalPopup<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return const Placeholder();
-        },
+      unawaited(
+        showCupertinoModalPopup<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return const Placeholder();
+          },
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -2748,11 +2772,13 @@ void main() {
       );
 
       final BuildContext context = tester.element(find.text('Test'));
-      showCupertinoModalPopup<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return const Placeholder();
-        },
+      unawaited(
+        showCupertinoModalPopup<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return const Placeholder();
+          },
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -2905,7 +2931,7 @@ void main() {
 
     final double pageTitleDX = tester.getTopLeft(find.text('Page 1')).dx;
 
-    tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+    unawaited(tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
 
@@ -2954,10 +2980,12 @@ void main() {
 
       // Bring up dialog.
       final NavigatorState navigator = Navigator.of(savedContext);
-      navigator.push(
-        CupertinoDialogRoute<void>(
-          context: savedContext,
-          builder: (BuildContext context) => const Text(dialogText),
+      unawaited(
+        navigator.push(
+          CupertinoDialogRoute<void>(
+            context: savedContext,
+            builder: (BuildContext context) => const Text(dialogText),
+          ),
         ),
       );
       await tester.pump();
@@ -2975,11 +3003,13 @@ void main() {
       expect(getCupertinoTextFieldFocusNode()?.hasFocus, true);
 
       // Bring up dialog again with requestFocus to false.
-      navigator.push(
-        CupertinoDialogRoute<void>(
-          context: savedContext,
-          requestFocus: false,
-          builder: (BuildContext context) => const Text(dialogText),
+      unawaited(
+        navigator.push(
+          CupertinoDialogRoute<void>(
+            context: savedContext,
+            requestFocus: false,
+            builder: (BuildContext context) => const Text(dialogText),
+          ),
         ),
       );
       await tester.pump();
@@ -3028,8 +3058,10 @@ void main() {
 
       // Bring up popup.
       final NavigatorState navigator = Navigator.of(savedContext);
-      navigator.push(
-        CupertinoModalPopupRoute<void>(builder: (BuildContext context) => const Text(dialogText)),
+      unawaited(
+        navigator.push(
+          CupertinoModalPopupRoute<void>(builder: (BuildContext context) => const Text(dialogText)),
+        ),
       );
       await tester.pump();
 
@@ -3046,10 +3078,12 @@ void main() {
       expect(getCupertinoTextFieldFocusNode()?.hasFocus, true);
 
       // Bring up popup again with requestFocus to false.
-      navigator.push(
-        CupertinoModalPopupRoute<void>(
-          requestFocus: false,
-          builder: (BuildContext context) => const Text(dialogText),
+      unawaited(
+        navigator.push(
+          CupertinoModalPopupRoute<void>(
+            requestFocus: false,
+            builder: (BuildContext context) => const Text(dialogText),
+          ),
         ),
       );
       await tester.pump();
@@ -3082,11 +3116,13 @@ void main() {
 
       // Navigate to page two with text.
       final NavigatorState navigator = Navigator.of(savedContext);
-      navigator.push(
-        CupertinoPageRoute<void>(
-          builder: (BuildContext context) {
-            return const Text(pageTwoText);
-          },
+      unawaited(
+        navigator.push(
+          CupertinoPageRoute<void>(
+            builder: (BuildContext context) {
+              return const Text(pageTwoText);
+            },
+          ),
         ),
       );
       await tester.pump();
@@ -3103,12 +3139,14 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100)); // Advance route transition animation.
 
       // Navigate to page two again with requestFocus set to false.
-      navigator.push(
-        CupertinoPageRoute<void>(
-          requestFocus: false,
-          builder: (BuildContext context) {
-            return const Text(pageTwoText);
-          },
+      unawaited(
+        navigator.push(
+          CupertinoPageRoute<void>(
+            requestFocus: false,
+            builder: (BuildContext context) {
+              return const Text(pageTwoText);
+            },
+          ),
         ),
       );
       await tester.pump();
@@ -3137,10 +3175,12 @@ void main() {
     await tester.pump();
     expect(focusNode.hasFocus, true);
 
-    showCupertinoModalPopup<void>(
-      context: navigatorKey.currentContext!,
-      requestFocus: true,
-      builder: (BuildContext context) => const Text('popup'),
+    unawaited(
+      showCupertinoModalPopup<void>(
+        context: navigatorKey.currentContext!,
+        requestFocus: true,
+        builder: (BuildContext context) => const Text('popup'),
+      ),
     );
     await tester.pumpAndSettle();
     expect(FocusScope.of(tester.element(find.text('popup'))).hasFocus, true);
@@ -3150,10 +3190,12 @@ void main() {
     await tester.pumpAndSettle();
     expect(focusNode.hasFocus, true);
 
-    showCupertinoModalPopup<void>(
-      context: navigatorKey.currentContext!,
-      requestFocus: false,
-      builder: (BuildContext context) => const Text('popup'),
+    unawaited(
+      showCupertinoModalPopup<void>(
+        context: navigatorKey.currentContext!,
+        requestFocus: false,
+        builder: (BuildContext context) => const Text('popup'),
+      ),
     );
     await tester.pumpAndSettle();
     expect(FocusScope.of(tester.element(find.text('popup'))).hasFocus, false);
@@ -3174,10 +3216,12 @@ void main() {
     await tester.pump();
     expect(focusNode.hasFocus, true);
 
-    showCupertinoDialog<void>(
-      context: navigatorKey.currentContext!,
-      requestFocus: true,
-      builder: (BuildContext context) => const Text('dialog'),
+    unawaited(
+      showCupertinoDialog<void>(
+        context: navigatorKey.currentContext!,
+        requestFocus: true,
+        builder: (BuildContext context) => const Text('dialog'),
+      ),
     );
     await tester.pumpAndSettle();
     expect(FocusScope.of(tester.element(find.text('dialog'))).hasFocus, true);
@@ -3187,10 +3231,12 @@ void main() {
     await tester.pumpAndSettle();
     expect(focusNode.hasFocus, true);
 
-    showCupertinoDialog<void>(
-      context: navigatorKey.currentContext!,
-      requestFocus: false,
-      builder: (BuildContext context) => const Text('dialog'),
+    unawaited(
+      showCupertinoDialog<void>(
+        context: navigatorKey.currentContext!,
+        requestFocus: false,
+        builder: (BuildContext context) => const Text('dialog'),
+      ),
     );
     await tester.pumpAndSettle();
     expect(FocusScope.of(tester.element(find.text('dialog'))).hasFocus, false);

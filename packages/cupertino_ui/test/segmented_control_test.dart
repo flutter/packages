@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@Skip(
-  'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
-)
 // This file is run as part of a reduced test set in CI on Mac and Windows
 // machines.
 @Tags(<String>['reduced-test-set'])
@@ -18,8 +15,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import '../widgets/semantics_tester.dart';
 
 RenderBox getRenderSegmentedControl(WidgetTester tester) {
   return tester.allRenderObjects.firstWhere((RenderObject currentObject) {
@@ -813,8 +808,6 @@ void main() {
   });
 
   testWidgets('Segmented control semantics', (WidgetTester tester) async {
-    final semantics = SemanticsTester(tester);
-
     final children = <int, Widget>{};
     children[0] = const Text('Child 1');
     children[1] = const Text('Child 2');
@@ -841,91 +834,76 @@ void main() {
       ),
     );
 
+    // Assert parent role.
+    final SemanticsNode segmentedControlNode = tester.getSemantics(
+      find.byType(CupertinoSegmentedControl<int>),
+    );
+    expect(segmentedControlNode.role, ui.SemanticsRole.radioGroup);
+
+    // Assert Child 1 (selected).
     expect(
-      semantics,
-      hasSemantics(
-        TestSemantics.root(
-          children: <TestSemantics>[
-            TestSemantics.rootChild(
-              role: SemanticsRole.radioGroup,
-              children: <TestSemantics>[
-                TestSemantics(
-                  label: 'Child 1',
-                  flags: <SemanticsFlag>[
-                    SemanticsFlag.isButton,
-                    SemanticsFlag.isInMutuallyExclusiveGroup,
-                    SemanticsFlag.hasSelectedState,
-                    SemanticsFlag.isSelected,
-                    SemanticsFlag.isFocusable,
-                  ],
-                  actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
-                ),
-                TestSemantics(
-                  label: 'Child 2',
-                  flags: <SemanticsFlag>[
-                    SemanticsFlag.isButton,
-                    SemanticsFlag.isInMutuallyExclusiveGroup,
-                    // Declares that it is selectable, but not currently selected.
-                    SemanticsFlag.hasSelectedState,
-                    SemanticsFlag.isFocusable,
-                  ],
-                  actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
-                ),
-              ],
-            ),
-          ],
-        ),
-        ignoreId: true,
-        ignoreRect: true,
-        ignoreTransform: true,
+      find.semantics.byLabel('Child 1'),
+      isSemantics(
+        label: 'Child 1',
+        isButton: true,
+        isInMutuallyExclusiveGroup: true,
+        hasSelectedState: true,
+        isSelected: true,
+        isFocusable: true,
+        hasTapAction: true,
+        hasFocusAction: true,
       ),
     );
 
+    // Assert Child 2 (unselected).
+    expect(
+      find.semantics.byLabel('Child 2'),
+      isSemantics(
+        label: 'Child 2',
+        isButton: true,
+        isInMutuallyExclusiveGroup: true,
+        hasSelectedState: true,
+        isSelected: false,
+        isFocusable: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+      ),
+    );
+
+    // Tap Child 2
     await tester.tap(find.text('Child 2'));
     await tester.pump();
 
+    // Assert Child 1 (now unselected).
     expect(
-      semantics,
-      hasSemantics(
-        TestSemantics.root(
-          children: <TestSemantics>[
-            TestSemantics.rootChild(
-              role: SemanticsRole.radioGroup,
-              children: <TestSemantics>[
-                TestSemantics(
-                  label: 'Child 1',
-                  flags: <SemanticsFlag>[
-                    SemanticsFlag.isButton,
-                    SemanticsFlag.isInMutuallyExclusiveGroup,
-                    // Declares that it is selectable, but not currently selected.
-                    SemanticsFlag.hasSelectedState,
-                    SemanticsFlag.isFocusable,
-                  ],
-                  actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
-                ),
-                TestSemantics(
-                  label: 'Child 2',
-                  flags: <SemanticsFlag>[
-                    SemanticsFlag.isButton,
-                    SemanticsFlag.isInMutuallyExclusiveGroup,
-                    SemanticsFlag.hasSelectedState,
-                    SemanticsFlag.isSelected,
-                    SemanticsFlag.isFocusable,
-                    SemanticsFlag.isFocused,
-                  ],
-                  actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
-                ),
-              ],
-            ),
-          ],
-        ),
-        ignoreId: true,
-        ignoreRect: true,
-        ignoreTransform: true,
+      find.semantics.byLabel('Child 1'),
+      isSemantics(
+        label: 'Child 1',
+        isButton: true,
+        isInMutuallyExclusiveGroup: true,
+        hasSelectedState: true,
+        isSelected: false,
+        isFocusable: true,
+        hasTapAction: true,
+        hasFocusAction: true,
       ),
     );
 
-    semantics.dispose();
+    // Assert Child 2 (now selected and focused).
+    expect(
+      find.semantics.byLabel('Child 2'),
+      isSemantics(
+        label: 'Child 2',
+        isButton: true,
+        isInMutuallyExclusiveGroup: true,
+        hasSelectedState: true,
+        isSelected: true,
+        isFocusable: true,
+        isFocused: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+      ),
+    );
   });
 
   testWidgets('Non-centered taps work on smaller widgets', (WidgetTester tester) async {
