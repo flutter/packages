@@ -113,6 +113,7 @@ allowed_dependencies:
     # Google-owned packages
     - _discoveryapis_commons
     - adaptive_navigation
+    - dart_skills_lint
     - googleapis
     - googleapis_auth
     - json_annotation

@@ -23,6 +23,13 @@ print('- Content: ${await file.readAsString()}');
 
 You will find links to the API docs on the [pub page](https://pub.dev/packages/cross_file).
 
+## MIME types
+
+On web, `mimeType` reflects browser-provided file metadata when available.
+Native implementations do not infer MIME types from file paths or contents.
+On native platforms, `mimeType` returns the value explicitly passed to the
+`XFile` constructor or `XFile.fromData`, if any.
+
 ## Web Limitations
 
 `XFile` on the web platform is backed by [Blob](https://api.dart.dev/be/180361/dart-html/Blob-class.html)

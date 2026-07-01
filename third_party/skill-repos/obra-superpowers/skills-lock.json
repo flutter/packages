@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "receiving-code-review": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "skillPath": "skills/receiving-code-review/SKILL.md",
+      "computedHash": "3f56080356c62e4f74a183d7371686babc661e41a952dc67a97c2c76fe8a9329"
+    }
+  }
+}

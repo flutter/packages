@@ -319,6 +319,8 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
   late bool testTransactionFail;
   late int testTransactionCancel;
   late List<SK2Transaction> finishedTransactions;
+  List<SK2TransactionMessage> transactionsList = <SK2TransactionMessage>[];
+  List<SK2TransactionMessage> unfinishedTransactionsList = <SK2TransactionMessage>[];
 
   PlatformException? queryProductException;
   bool isListenerRegistered = false;
@@ -348,6 +350,28 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
     eligibleWinBackOffers = <String, Set<String>>{};
     eligibleIntroductoryOffers = <String, bool>{};
     simulatedPurchaseResult = SK2ProductPurchaseResultMessage.success;
+    transactionsList = <SK2TransactionMessage>[
+      SK2TransactionMessage(
+        id: 123,
+        originalId: 123,
+        productId: 'product_id',
+        purchaseDate: '12-12',
+        purchasedQuantity: 2,
+        status: SK2PurchaseStatusMessage.purchased,
+      ),
+    ];
+    unfinishedTransactionsList = <SK2TransactionMessage>[
+      SK2TransactionMessage(
+        id: 123,
+        originalId: 123,
+        productId: 'product_id',
+        purchaseDate: '12-12',
+        receiptData: 'fake_jws_representation',
+        appAccountToken: 'fake_app_account_token',
+        purchasedQuantity: 3,
+        status: SK2PurchaseStatusMessage.purchased,
+      ),
+    ];
   }
 
   SK2TransactionMessage createRestoredTransaction(
@@ -449,30 +473,12 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
 
   @override
   Future<List<SK2TransactionMessage>> transactions() {
-    return Future<List<SK2TransactionMessage>>.value(<SK2TransactionMessage>[
-      SK2TransactionMessage(
-        id: 123,
-        originalId: 123,
-        productId: 'product_id',
-        purchaseDate: '12-12',
-        status: SK2PurchaseStatusMessage.purchased,
-      ),
-    ]);
+    return Future<List<SK2TransactionMessage>>.value(transactionsList);
   }
 
   @override
   Future<List<SK2TransactionMessage>> unfinishedTransactions() {
-    return Future<List<SK2TransactionMessage>>.value(<SK2TransactionMessage>[
-      SK2TransactionMessage(
-        id: 123,
-        originalId: 123,
-        productId: 'product_id',
-        purchaseDate: '12-12',
-        receiptData: 'fake_jws_representation',
-        appAccountToken: 'fake_app_account_token',
-        status: SK2PurchaseStatusMessage.purchased,
-      ),
-    ]);
+    return Future<List<SK2TransactionMessage>>.value(unfinishedTransactionsList);
   }
 
   @override
