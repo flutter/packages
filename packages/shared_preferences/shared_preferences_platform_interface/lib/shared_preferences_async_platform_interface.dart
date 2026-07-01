@@ -38,40 +38,40 @@ abstract base class SharedPreferencesAsyncPlatform {
   /// Stores the int [value] associated with the [key].
   Future<void> setInt(String key, int value, SharedPreferencesOptions options);
 
-  /// Stores the List<String> [value] associated with the [key].
+  /// Stores the `List<String>` [value] associated with the [key].
   Future<void> setStringList(
     String key,
     List<String> value,
     SharedPreferencesOptions options,
   );
 
-  /// Retrieves the String [value] associated with the [key], if any.
+  /// Retrieves the `String` [value] associated with the [key], if any.
   ///
   /// Throws a [TypeError] if the returned type is not a String.
   /// May return null for unsupported types.
   Future<String?> getString(String key, SharedPreferencesOptions options);
 
-  /// Retrieves the bool [value] associated with the [key], if any.
+  /// Retrieves the `bool` [value] associated with the [key], if any.
   ///
   /// Throws a [TypeError] if the returned type is not a bool.
   /// May return null for unsupported types.
   Future<bool?> getBool(String key, SharedPreferencesOptions options);
 
-  /// Retrieves the double [value] associated with the [key], if any.
+  /// Retrieves the `double` [value] associated with the [key], if any.
   ///
   /// Throws a [TypeError] if the returned type is not a double.
   /// May return null for unsupported types.
   Future<double?> getDouble(String key, SharedPreferencesOptions options);
 
-  /// Retrieves the int [value] associated with the [key], if any.
+  /// Retrieves the `int` [value] associated with the [key], if any.
   ///
   /// Throws a [TypeError] if the returned type is not an int.
   /// May return null for unsupported types.
   Future<int?> getInt(String key, SharedPreferencesOptions options);
 
-  /// Retrieves the List<String> [value] associated with the [key], if any.
+  /// Retrieves the `List<String>` [value] associated with the [key], if any.
   ///
-  /// Throws a [TypeError] if the returned type is not a List<String>.
+  /// Throws a [TypeError] if the returned type is not a `List<String>`.
   /// May return null for unsupported types.
   Future<List<String>?> getStringList(
     String key,

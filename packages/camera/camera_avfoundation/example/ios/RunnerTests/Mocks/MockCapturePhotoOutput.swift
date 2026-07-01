@@ -6,7 +6,7 @@ import AVFoundation
 
 @testable import camera_avfoundation
 
-/// Mock implementation of `FLTCapturePhotoOutput` protocol which allows injecting a custom
+/// Mock implementation of `CapturePhotoOutput` protocol which allows injecting a custom
 /// implementation.
 final class MockCapturePhotoOutput: NSObject, CapturePhotoOutput {
   var avOutput = AVCapturePhotoOutput()

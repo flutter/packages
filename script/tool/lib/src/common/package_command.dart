@@ -253,27 +253,27 @@ abstract class PackageCommand extends Command<void> {
     return gitDir;
   }
 
-  /// Convenience accessor for boolean arguments.
+  /// Convenience accessor for `bool` arguments.
   bool getBoolArg(String key) {
     return (argResults![key] as bool?) ?? false;
   }
 
-  /// Convenience accessor for boolean arguments.
+  /// Convenience accessor for nullable `bool` arguments.
   bool? getNullableBoolArg(String key) {
     return argResults![key] as bool?;
   }
 
-  /// Convenience accessor for String arguments.
+  /// Convenience accessor for `String` arguments.
   String getStringArg(String key) {
     return (argResults![key] as String?) ?? '';
   }
 
-  /// Convenience accessor for String arguments.
+  /// Convenience accessor for nullable `String` arguments.
   String? getNullableStringArg(String key) {
     return argResults![key] as String?;
   }
 
-  /// Convenience accessor for List<String> arguments.
+  /// Convenience accessor for `List<String>` arguments.
   List<String> getStringListArg(String key) {
     // Clone the list so that if a caller modifies the result it won't change
     // the actual arguments list for future queries.

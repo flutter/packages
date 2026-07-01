@@ -1,3 +1,7 @@
+## 3.24.2
+
+* Fixes dartdoc comments that accidentally used HTML.
+
 ## 3.24.1
 
 * Updates platform views on iOS to only have a weak reference to the native view. This is a

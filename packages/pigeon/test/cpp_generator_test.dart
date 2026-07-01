@@ -124,7 +124,7 @@ void main() {
         contains(
           RegExp(
             r'void Api::SetUp\(\s*'
-            r'flutter::BinaryMessenger\* binary_messenger,\s*'
+            r'::flutter::BinaryMessenger\* binary_messenger,\s*'
             r'Api\* api\s*\)',
           ),
         ),
@@ -309,12 +309,12 @@ void main() {
           contains('  const std::string& code() const { return code_; }'),
           contains('  const std::string& message() const { return message_; }'),
           contains(
-            '  const flutter::EncodableValue& details() const { return details_; }',
+            '  const ::flutter::EncodableValue& details() const { return details_; }',
           ),
           contains(' private:'),
           contains('  std::string code_;'),
           contains('  std::string message_;'),
-          contains('  flutter::EncodableValue details_;'),
+          contains('  ::flutter::EncodableValue details_;'),
         ]),
       );
     }
@@ -567,6 +567,8 @@ void main() {
 #include <flutter/encodable_value.h>
 #include <flutter/standard_message_codec.h>
 
+#include <cmath>
+#include <limits>
 #include <map>
 #include <optional>
 #include <string>
@@ -1174,13 +1176,13 @@ void main() {
       expect(
         code,
         contains(
-          'ErrorOr<std::optional<flutter::EncodableList>> ReturnNullableList()',
+          'ErrorOr<std::optional<::flutter::EncodableList>> ReturnNullableList()',
         ),
       );
       expect(
         code,
         contains(
-          'ErrorOr<std::optional<flutter::EncodableMap>> ReturnNullableMap()',
+          'ErrorOr<std::optional<::flutter::EncodableMap>> ReturnNullableMap()',
         ),
       );
       expect(
@@ -1297,8 +1299,8 @@ void main() {
       expect(code, contains('ErrorOr<bool> ReturnBool()'));
       expect(code, contains('ErrorOr<int64_t> ReturnInt()'));
       expect(code, contains('ErrorOr<std::string> ReturnString()'));
-      expect(code, contains('ErrorOr<flutter::EncodableList> ReturnList()'));
-      expect(code, contains('ErrorOr<flutter::EncodableMap> ReturnMap()'));
+      expect(code, contains('ErrorOr<::flutter::EncodableList> ReturnList()'));
+      expect(code, contains('ErrorOr<::flutter::EncodableMap> ReturnMap()'));
       expect(code, contains('ErrorOr<ReturnData> ReturnDataClass()'));
     }
   });
@@ -1415,10 +1417,10 @@ void main() {
             r'const bool\* a_bool,\s*'
             r'const int64_t\* an_int,\s*'
             r'const std::string\* a_string,\s*'
-            r'const flutter::EncodableList\* a_list,\s*'
-            r'const flutter::EncodableMap\* a_map,\s*'
+            r'const ::flutter::EncodableList\* a_list,\s*'
+            r'const ::flutter::EncodableMap\* a_map,\s*'
             r'const ParameterObject\* an_object,\s*'
-            r'const flutter::EncodableValue\* a_generic_object\s*\)',
+            r'const ::flutter::EncodableValue\* a_generic_object\s*\)',
           ),
         ),
       );
@@ -1611,10 +1613,10 @@ void main() {
             r'bool a_bool,\s*'
             r'int64_t an_int,\s*'
             r'const std::string& a_string,\s*'
-            r'const flutter::EncodableList& a_list,\s*'
-            r'const flutter::EncodableMap& a_map,\s*'
+            r'const ::flutter::EncodableList& a_list,\s*'
+            r'const ::flutter::EncodableMap& a_map,\s*'
             r'const ParameterObject& an_object,\s*'
-            r'const flutter::EncodableValue& a_generic_object\s*\)',
+            r'const ::flutter::EncodableValue& a_generic_object\s*\)',
           ),
         ),
       );
@@ -1813,10 +1815,10 @@ void main() {
             // Nullable strings use std::string* rather than std::string_view*
             // since there's no implicit conversion for pointer types.
             r'const std::string\* a_string,\s*'
-            r'const flutter::EncodableList\* a_list,\s*'
-            r'const flutter::EncodableMap\* a_map,\s*'
+            r'const ::flutter::EncodableList\* a_list,\s*'
+            r'const ::flutter::EncodableMap\* a_map,\s*'
             r'const ParameterObject\* an_object,\s*'
-            r'const flutter::EncodableValue\* a_generic_object,',
+            r'const ::flutter::EncodableValue\* a_generic_object,',
           ),
         ),
       );
@@ -2001,10 +2003,10 @@ void main() {
             // nullable strings.
             r'const std::string& a_string,\s*'
             // Non-POD types use const references.
-            r'const flutter::EncodableList& a_list,\s*'
-            r'const flutter::EncodableMap& a_map,\s*'
+            r'const ::flutter::EncodableList& a_list,\s*'
+            r'const ::flutter::EncodableMap& a_map,\s*'
             r'const ParameterObject& an_object,\s*'
-            r'const flutter::EncodableValue& a_generic_object,\s*',
+            r'const ::flutter::EncodableValue& a_generic_object,\s*',
           ),
         ),
       );
@@ -2313,7 +2315,7 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final code = sink.toString();
-    expect(code, contains(' : public flutter::StandardCodecSerializer'));
+    expect(code, contains(' : public ::flutter::StandardCodecSerializer'));
   });
 
   test('Does not send unwrapped EncodableLists', () {
@@ -2613,5 +2615,171 @@ void main() {
       ),
     );
     expect(code, contains('channel.Send'));
+  });
+
+  test('data class equality', () {
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[
+        Class(
+          name: 'Foo',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'int', isNullable: false),
+              name: 'bar',
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
+    {
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.header,
+        languageOptions: const InternalCppOptions(
+          cppHeaderOut: '',
+          cppSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('bool operator==(const Foo& other) const;'));
+    }
+    {
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.source,
+        languageOptions: const InternalCppOptions(
+          cppHeaderOut: '',
+          cppSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('bool Foo::operator==(const Foo& other) const {'));
+    }
+  });
+
+  test('data class equality with pointers', () {
+    final nested = Class(
+      name: 'Nested',
+      fields: <NamedType>[
+        NamedType(
+          type: const TypeDeclaration(baseName: 'int', isNullable: false),
+          name: 'data',
+        ),
+      ],
+    );
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[
+        Class(
+          name: 'Foo',
+          fields: <NamedType>[
+            NamedType(
+              type: TypeDeclaration(
+                baseName: 'Nested',
+                isNullable: true,
+                associatedClass: nested,
+              ),
+              name: 'nested',
+            ),
+          ],
+        ),
+        nested,
+      ],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const generator = CppGenerator();
+    final generatorOptions = OutputFileOptions<InternalCppOptions>(
+      fileType: FileType.source,
+      languageOptions: const InternalCppOptions(
+        cppHeaderOut: '',
+        cppSourceOut: '',
+        headerIncludePath: '',
+      ),
+    );
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+    expect(code, contains('bool Foo::operator==(const Foo& other) const {'));
+  });
+
+  test('data classes implement Hash', () {
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[
+        Class(
+          name: 'Input',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'int', isNullable: false),
+              name: 'field1',
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
+    {
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.header,
+        languageOptions: const InternalCppOptions(
+          headerIncludePath: 'foo.h',
+          cppHeaderOut: '',
+          cppSourceOut: '',
+        ),
+      );
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('size_t Hash() const;'));
+    }
+    {
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.source,
+        languageOptions: const InternalCppOptions(
+          headerIncludePath: 'foo.h',
+          cppHeaderOut: '',
+          cppSourceOut: '',
+        ),
+      );
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('size_t Input::Hash() const {'));
+    }
   });
 }

@@ -38,9 +38,13 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     required super.childManager,
     super.cacheExtent,
     super.clipBehavior,
+    AlignmentGeometry alignment = Alignment.topLeft,
+    TextDirection? textDirection,
   }) : _activeAnimations = activeAnimations,
        _rowDepths = rowDepths,
        _indentation = indentation,
+       _alignment = alignment,
+       _textDirection = textDirection,
        assert(indentation >= 0),
        assert(
          verticalAxisDirection == AxisDirection.down &&
@@ -55,6 +59,30 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
   set delegate(TreeRowDelegateMixin value) {
     super.delegate = value;
   }
+
+  /// The alignment of the tree within the viewport when there is extra space.
+  AlignmentGeometry get alignment => _alignment;
+  AlignmentGeometry _alignment;
+  set alignment(AlignmentGeometry value) {
+    if (_alignment == value) {
+      return;
+    }
+    _alignment = value;
+    markNeedsLayout();
+  }
+
+  /// The text direction with which to resolve [alignment].
+  TextDirection? get textDirection => _textDirection;
+  TextDirection? _textDirection;
+  set textDirection(TextDirection? value) {
+    if (_textDirection == value) {
+      return;
+    }
+    _textDirection = value;
+    markNeedsLayout();
+  }
+
+  double _vAlignmentOffset = 0.0;
 
   /// The currently active [TreeViewNode] animations.
   ///
@@ -348,6 +376,19 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       _updateFirstAndLastVisibleRow();
     }
 
+    final Alignment resolvedAlignment = alignment.resolve(textDirection);
+    _vAlignmentOffset = 0.0;
+    if (_rowMetrics.isNotEmpty) {
+      final double totalHeight =
+          _rowMetrics[_rowMetrics.length - 1]!.trailingOffset;
+      if (totalHeight < viewportDimension.height) {
+        _vAlignmentOffset =
+            (viewportDimension.height - totalHeight) *
+            (resolvedAlignment.y + 1.0) /
+            2.0;
+      }
+    }
+
     if (_firstRow == null) {
       assert(_lastRow == null);
       return;
@@ -356,7 +397,9 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
 
     _Span rowSpan;
     double rowOffset =
-        -verticalOffset.pixels + _rowMetrics[_firstRow!]!.leadingOffset;
+        -verticalOffset.pixels +
+        _rowMetrics[_firstRow!]!.leadingOffset +
+        _vAlignmentOffset;
     for (int row = _firstRow!; row <= _lastRow!; row++) {
       rowSpan = _rowMetrics[row]!;
       final double rowHeight = rowSpan.extent;
@@ -489,11 +532,11 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       final double trailingOffset =
           _rowMetrics[segment.trailingIndex]!.trailingOffset;
       final rect = Rect.fromPoints(
-        Offset(0.0, leadingOffset - verticalOffset.pixels),
+        Offset(0.0, leadingOffset - verticalOffset.pixels + _vAlignmentOffset),
         Offset(
           viewportDimension.width,
           math.min(
-            trailingOffset - verticalOffset.pixels,
+            trailingOffset - verticalOffset.pixels + _vAlignmentOffset,
             viewportDimension.height,
           ),
         ),
@@ -545,12 +588,14 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
           );
           // Decoration rects cover the whole row from the left and right
           // edge of the viewport.
-          return Rect.fromPoints(
-            Offset(0.0, parentData.layoutOffset!.dy),
-            Offset(
-              viewportDimension.width,
-              rowSpan.trailingOffset - verticalOffset.pixels,
-            ),
+          return Rect.fromLTRB(
+            0.0,
+            parentData.paintOffset!.dy -
+                (consumePadding ? rowSpan.configuration.padding.leading : 0.0),
+            viewportDimension.width,
+            parentData.paintOffset!.dy +
+                child.size.height +
+                (consumePadding ? rowSpan.configuration.padding.trailing : 0.0),
           );
         }
 
@@ -577,6 +622,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
         canvas: context.canvas,
         rect: rect,
         axisDirection: horizontalAxisDirection,
+        crossAxisDirection: verticalAxisDirection,
       );
       decoration.paint(paintingDetails);
     });
@@ -598,6 +644,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
         canvas: context.canvas,
         rect: rect,
         axisDirection: horizontalAxisDirection,
+        crossAxisDirection: verticalAxisDirection,
       );
       decoration.paint(paintingDetails);
     });

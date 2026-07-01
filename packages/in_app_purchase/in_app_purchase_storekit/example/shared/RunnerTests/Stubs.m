@@ -607,9 +607,11 @@
   }
 }
 
-// TODO(stuartmorgan): Make this NSObject<FlutterSceneLifeCycleDelegate> once
-// FlutterSceneLifeCycleDelegate has reached stable.
-- (void)addSceneDelegate:(nonnull NSObject *)delegate {
+- (void)addSceneDelegate:(nonnull NSObject<FlutterSceneLifeCycleDelegate> *)delegate {
+}
+
+- (nullable NSObject *)valuePublishedByPlugin:(nonnull NSString *)pluginKey {
+  return nil;
 }
 
 @end

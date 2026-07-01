@@ -9,10 +9,10 @@ void main() {
   group('isRepoLevelNonCodeImpactingFile', () {
     test('returns true for known non-code files', () {
       expect(isRepoLevelNonCodeImpactingFile('AUTHORS'), isTrue);
-      expect(isRepoLevelNonCodeImpactingFile('CODEOWNERS'), isTrue);
       expect(isRepoLevelNonCodeImpactingFile('CONTRIBUTING.md'), isTrue);
       expect(isRepoLevelNonCodeImpactingFile('LICENSE'), isTrue);
       expect(isRepoLevelNonCodeImpactingFile('README.md'), isTrue);
+      expect(isRepoLevelNonCodeImpactingFile('SUGGESTED_REVIEWERS.md'), isTrue);
       expect(isRepoLevelNonCodeImpactingFile('AGENTS.md'), isTrue);
       expect(
         isRepoLevelNonCodeImpactingFile('.github/PULL_REQUEST_TEMPLATE.md'),

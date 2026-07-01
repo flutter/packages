@@ -26,11 +26,167 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /** Generated class from Pigeon. */
 @SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression", "serial"})
 public class CoreTests {
+  static boolean pigeonDoubleEquals(double a, double b) {
+    // Normalize -0.0 to 0.0 and handle NaN equality.
+    return (a == 0.0 ? 0.0 : a) == (b == 0.0 ? 0.0 : b) || (Double.isNaN(a) && Double.isNaN(b));
+  }
+
+  static boolean pigeonFloatEquals(float a, float b) {
+    // Normalize -0.0 to 0.0 and handle NaN equality.
+    return (a == 0.0f ? 0.0f : a) == (b == 0.0f ? 0.0f : b) || (Float.isNaN(a) && Float.isNaN(b));
+  }
+
+  static int pigeonDoubleHashCode(double d) {
+    // Normalize -0.0 to 0.0 and handle NaN to ensure consistent hash codes.
+    if (d == 0.0) {
+      d = 0.0;
+    }
+    long bits = Double.doubleToLongBits(d);
+    return (int) (bits ^ (bits >>> 32));
+  }
+
+  static int pigeonFloatHashCode(float f) {
+    // Normalize -0.0 to 0.0 and handle NaN to ensure consistent hash codes.
+    if (f == 0.0f) {
+      f = 0.0f;
+    }
+    return Float.floatToIntBits(f);
+  }
+
+  static boolean pigeonDeepEquals(Object a, Object b) {
+    if (a == b) {
+      return true;
+    }
+    if (a == null || b == null) {
+      return false;
+    }
+    if (a instanceof byte[] && b instanceof byte[]) {
+      return Arrays.equals((byte[]) a, (byte[]) b);
+    }
+    if (a instanceof int[] && b instanceof int[]) {
+      return Arrays.equals((int[]) a, (int[]) b);
+    }
+    if (a instanceof long[] && b instanceof long[]) {
+      return Arrays.equals((long[]) a, (long[]) b);
+    }
+    if (a instanceof double[] && b instanceof double[]) {
+      double[] da = (double[]) a;
+      double[] db = (double[]) b;
+      if (da.length != db.length) {
+        return false;
+      }
+      for (int i = 0; i < da.length; i++) {
+        if (!pigeonDoubleEquals(da[i], db[i])) {
+          return false;
+        }
+      }
+      return true;
+    }
+    if (a instanceof List && b instanceof List) {
+      List<?> listA = (List<?>) a;
+      List<?> listB = (List<?>) b;
+      if (listA.size() != listB.size()) {
+        return false;
+      }
+      for (int i = 0; i < listA.size(); i++) {
+        if (!pigeonDeepEquals(listA.get(i), listB.get(i))) {
+          return false;
+        }
+      }
+      return true;
+    }
+    if (a instanceof Map && b instanceof Map) {
+      Map<?, ?> mapA = (Map<?, ?>) a;
+      Map<?, ?> mapB = (Map<?, ?>) b;
+      if (mapA.size() != mapB.size()) {
+        return false;
+      }
+      for (Map.Entry<?, ?> entryA : mapA.entrySet()) {
+        Object keyA = entryA.getKey();
+        Object valueA = entryA.getValue();
+        boolean found = false;
+        for (Map.Entry<?, ?> entryB : mapB.entrySet()) {
+          Object keyB = entryB.getKey();
+          if (pigeonDeepEquals(keyA, keyB)) {
+            Object valueB = entryB.getValue();
+            if (pigeonDeepEquals(valueA, valueB)) {
+              found = true;
+              break;
+            } else {
+              return false;
+            }
+          }
+        }
+        if (!found) {
+          return false;
+        }
+      }
+      return true;
+    }
+    if (a instanceof Double && b instanceof Double) {
+      return pigeonDoubleEquals((double) a, (double) b);
+    }
+    if (a instanceof Float && b instanceof Float) {
+      return pigeonFloatEquals((float) a, (float) b);
+    }
+    return a.equals(b);
+  }
+
+  static int pigeonDeepHashCode(Object value) {
+    if (value == null) {
+      return 0;
+    }
+    if (value instanceof byte[]) {
+      return Arrays.hashCode((byte[]) value);
+    }
+    if (value instanceof int[]) {
+      return Arrays.hashCode((int[]) value);
+    }
+    if (value instanceof long[]) {
+      return Arrays.hashCode((long[]) value);
+    }
+    if (value instanceof double[]) {
+      double[] da = (double[]) value;
+      int result = 1;
+      for (double d : da) {
+        result = 31 * result + pigeonDoubleHashCode(d);
+      }
+      return result;
+    }
+    if (value instanceof List) {
+      int result = 1;
+      for (Object item : (List<?>) value) {
+        result = 31 * result + pigeonDeepHashCode(item);
+      }
+      return result;
+    }
+    if (value instanceof Map) {
+      int result = 0;
+      for (Map.Entry<?, ?> entry : ((Map<?, ?>) value).entrySet()) {
+        result +=
+            ((pigeonDeepHashCode(entry.getKey()) * 31) ^ pigeonDeepHashCode(entry.getValue()));
+      }
+      return result;
+    }
+    if (value instanceof Object[]) {
+      int result = 1;
+      for (Object item : (Object[]) value) {
+        result = 31 * result + pigeonDeepHashCode(item);
+      }
+      return result;
+    }
+    if (value instanceof Double) {
+      return pigeonDoubleHashCode((double) value);
+    }
+    if (value instanceof Float) {
+      return pigeonFloatHashCode((float) value);
+    }
+    return value.hashCode();
+  }
 
   /** Error class for passing custom error details to Flutter via a thrown PlatformException. */
   public static class FlutterError extends RuntimeException {
@@ -120,12 +276,13 @@ public class CoreTests {
         return false;
       }
       UnusedClass that = (UnusedClass) o;
-      return Objects.equals(aField, that.aField);
+      return pigeonDeepEquals(aField, that.aField);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(aField);
+      Object[] fields = new Object[] {getClass(), aField};
+      return pigeonDeepHashCode(fields);
     }
 
     public static final class Builder {
@@ -542,69 +699,71 @@ public class CoreTests {
         return false;
       }
       AllTypes that = (AllTypes) o;
-      return aBool.equals(that.aBool)
-          && anInt.equals(that.anInt)
-          && anInt64.equals(that.anInt64)
-          && aDouble.equals(that.aDouble)
-          && Arrays.equals(aByteArray, that.aByteArray)
-          && Arrays.equals(a4ByteArray, that.a4ByteArray)
-          && Arrays.equals(a8ByteArray, that.a8ByteArray)
-          && Arrays.equals(aFloatArray, that.aFloatArray)
-          && anEnum.equals(that.anEnum)
-          && anotherEnum.equals(that.anotherEnum)
-          && aString.equals(that.aString)
-          && anObject.equals(that.anObject)
-          && list.equals(that.list)
-          && stringList.equals(that.stringList)
-          && intList.equals(that.intList)
-          && doubleList.equals(that.doubleList)
-          && boolList.equals(that.boolList)
-          && enumList.equals(that.enumList)
-          && objectList.equals(that.objectList)
-          && listList.equals(that.listList)
-          && mapList.equals(that.mapList)
-          && map.equals(that.map)
-          && stringMap.equals(that.stringMap)
-          && intMap.equals(that.intMap)
-          && enumMap.equals(that.enumMap)
-          && objectMap.equals(that.objectMap)
-          && listMap.equals(that.listMap)
-          && mapMap.equals(that.mapMap);
+      return pigeonDeepEquals(aBool, that.aBool)
+          && pigeonDeepEquals(anInt, that.anInt)
+          && pigeonDeepEquals(anInt64, that.anInt64)
+          && pigeonDeepEquals(aDouble, that.aDouble)
+          && pigeonDeepEquals(aByteArray, that.aByteArray)
+          && pigeonDeepEquals(a4ByteArray, that.a4ByteArray)
+          && pigeonDeepEquals(a8ByteArray, that.a8ByteArray)
+          && pigeonDeepEquals(aFloatArray, that.aFloatArray)
+          && pigeonDeepEquals(anEnum, that.anEnum)
+          && pigeonDeepEquals(anotherEnum, that.anotherEnum)
+          && pigeonDeepEquals(aString, that.aString)
+          && pigeonDeepEquals(anObject, that.anObject)
+          && pigeonDeepEquals(list, that.list)
+          && pigeonDeepEquals(stringList, that.stringList)
+          && pigeonDeepEquals(intList, that.intList)
+          && pigeonDeepEquals(doubleList, that.doubleList)
+          && pigeonDeepEquals(boolList, that.boolList)
+          && pigeonDeepEquals(enumList, that.enumList)
+          && pigeonDeepEquals(objectList, that.objectList)
+          && pigeonDeepEquals(listList, that.listList)
+          && pigeonDeepEquals(mapList, that.mapList)
+          && pigeonDeepEquals(map, that.map)
+          && pigeonDeepEquals(stringMap, that.stringMap)
+          && pigeonDeepEquals(intMap, that.intMap)
+          && pigeonDeepEquals(enumMap, that.enumMap)
+          && pigeonDeepEquals(objectMap, that.objectMap)
+          && pigeonDeepEquals(listMap, that.listMap)
+          && pigeonDeepEquals(mapMap, that.mapMap);
     }
 
     @Override
     public int hashCode() {
-      int pigeonVar_result =
-          Objects.hash(
-              aBool,
-              anInt,
-              anInt64,
-              aDouble,
-              anEnum,
-              anotherEnum,
-              aString,
-              anObject,
-              list,
-              stringList,
-              intList,
-              doubleList,
-              boolList,
-              enumList,
-              objectList,
-              listList,
-              mapList,
-              map,
-              stringMap,
-              intMap,
-              enumMap,
-              objectMap,
-              listMap,
-              mapMap);
-      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aByteArray);
-      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(a4ByteArray);
-      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(a8ByteArray);
-      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aFloatArray);
-      return pigeonVar_result;
+      Object[] fields =
+          new Object[] {
+            getClass(),
+            aBool,
+            anInt,
+            anInt64,
+            aDouble,
+            aByteArray,
+            a4ByteArray,
+            a8ByteArray,
+            aFloatArray,
+            anEnum,
+            anotherEnum,
+            aString,
+            anObject,
+            list,
+            stringList,
+            intList,
+            doubleList,
+            boolList,
+            enumList,
+            objectList,
+            listList,
+            mapList,
+            map,
+            stringMap,
+            intMap,
+            enumMap,
+            objectMap,
+            listMap,
+            mapMap
+          };
+      return pigeonDeepHashCode(fields);
     }
 
     public static final class Builder {
@@ -1288,75 +1447,77 @@ public class CoreTests {
         return false;
       }
       AllNullableTypes that = (AllNullableTypes) o;
-      return Objects.equals(aNullableBool, that.aNullableBool)
-          && Objects.equals(aNullableInt, that.aNullableInt)
-          && Objects.equals(aNullableInt64, that.aNullableInt64)
-          && Objects.equals(aNullableDouble, that.aNullableDouble)
-          && Arrays.equals(aNullableByteArray, that.aNullableByteArray)
-          && Arrays.equals(aNullable4ByteArray, that.aNullable4ByteArray)
-          && Arrays.equals(aNullable8ByteArray, that.aNullable8ByteArray)
-          && Arrays.equals(aNullableFloatArray, that.aNullableFloatArray)
-          && Objects.equals(aNullableEnum, that.aNullableEnum)
-          && Objects.equals(anotherNullableEnum, that.anotherNullableEnum)
-          && Objects.equals(aNullableString, that.aNullableString)
-          && Objects.equals(aNullableObject, that.aNullableObject)
-          && Objects.equals(allNullableTypes, that.allNullableTypes)
-          && Objects.equals(list, that.list)
-          && Objects.equals(stringList, that.stringList)
-          && Objects.equals(intList, that.intList)
-          && Objects.equals(doubleList, that.doubleList)
-          && Objects.equals(boolList, that.boolList)
-          && Objects.equals(enumList, that.enumList)
-          && Objects.equals(objectList, that.objectList)
-          && Objects.equals(listList, that.listList)
-          && Objects.equals(mapList, that.mapList)
-          && Objects.equals(recursiveClassList, that.recursiveClassList)
-          && Objects.equals(map, that.map)
-          && Objects.equals(stringMap, that.stringMap)
-          && Objects.equals(intMap, that.intMap)
-          && Objects.equals(enumMap, that.enumMap)
-          && Objects.equals(objectMap, that.objectMap)
-          && Objects.equals(listMap, that.listMap)
-          && Objects.equals(mapMap, that.mapMap)
-          && Objects.equals(recursiveClassMap, that.recursiveClassMap);
+      return pigeonDeepEquals(aNullableBool, that.aNullableBool)
+          && pigeonDeepEquals(aNullableInt, that.aNullableInt)
+          && pigeonDeepEquals(aNullableInt64, that.aNullableInt64)
+          && pigeonDeepEquals(aNullableDouble, that.aNullableDouble)
+          && pigeonDeepEquals(aNullableByteArray, that.aNullableByteArray)
+          && pigeonDeepEquals(aNullable4ByteArray, that.aNullable4ByteArray)
+          && pigeonDeepEquals(aNullable8ByteArray, that.aNullable8ByteArray)
+          && pigeonDeepEquals(aNullableFloatArray, that.aNullableFloatArray)
+          && pigeonDeepEquals(aNullableEnum, that.aNullableEnum)
+          && pigeonDeepEquals(anotherNullableEnum, that.anotherNullableEnum)
+          && pigeonDeepEquals(aNullableString, that.aNullableString)
+          && pigeonDeepEquals(aNullableObject, that.aNullableObject)
+          && pigeonDeepEquals(allNullableTypes, that.allNullableTypes)
+          && pigeonDeepEquals(list, that.list)
+          && pigeonDeepEquals(stringList, that.stringList)
+          && pigeonDeepEquals(intList, that.intList)
+          && pigeonDeepEquals(doubleList, that.doubleList)
+          && pigeonDeepEquals(boolList, that.boolList)
+          && pigeonDeepEquals(enumList, that.enumList)
+          && pigeonDeepEquals(objectList, that.objectList)
+          && pigeonDeepEquals(listList, that.listList)
+          && pigeonDeepEquals(mapList, that.mapList)
+          && pigeonDeepEquals(recursiveClassList, that.recursiveClassList)
+          && pigeonDeepEquals(map, that.map)
+          && pigeonDeepEquals(stringMap, that.stringMap)
+          && pigeonDeepEquals(intMap, that.intMap)
+          && pigeonDeepEquals(enumMap, that.enumMap)
+          && pigeonDeepEquals(objectMap, that.objectMap)
+          && pigeonDeepEquals(listMap, that.listMap)
+          && pigeonDeepEquals(mapMap, that.mapMap)
+          && pigeonDeepEquals(recursiveClassMap, that.recursiveClassMap);
     }
 
     @Override
     public int hashCode() {
-      int pigeonVar_result =
-          Objects.hash(
-              aNullableBool,
-              aNullableInt,
-              aNullableInt64,
-              aNullableDouble,
-              aNullableEnum,
-              anotherNullableEnum,
-              aNullableString,
-              aNullableObject,
-              allNullableTypes,
-              list,
-              stringList,
-              intList,
-              doubleList,
-              boolList,
-              enumList,
-              objectList,
-              listList,
-              mapList,
-              recursiveClassList,
-              map,
-              stringMap,
-              intMap,
-              enumMap,
-              objectMap,
-              listMap,
-              mapMap,
-              recursiveClassMap);
-      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aNullableByteArray);
-      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aNullable4ByteArray);
-      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aNullable8ByteArray);
-      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aNullableFloatArray);
-      return pigeonVar_result;
+      Object[] fields =
+          new Object[] {
+            getClass(),
+            aNullableBool,
+            aNullableInt,
+            aNullableInt64,
+            aNullableDouble,
+            aNullableByteArray,
+            aNullable4ByteArray,
+            aNullable8ByteArray,
+            aNullableFloatArray,
+            aNullableEnum,
+            anotherNullableEnum,
+            aNullableString,
+            aNullableObject,
+            allNullableTypes,
+            list,
+            stringList,
+            intList,
+            doubleList,
+            boolList,
+            enumList,
+            objectList,
+            listList,
+            mapList,
+            recursiveClassList,
+            map,
+            stringMap,
+            intMap,
+            enumMap,
+            objectMap,
+            listMap,
+            mapMap,
+            recursiveClassMap
+          };
+      return pigeonDeepHashCode(fields);
     }
 
     public static final class Builder {
@@ -2048,69 +2209,71 @@ public class CoreTests {
         return false;
       }
       AllNullableTypesWithoutRecursion that = (AllNullableTypesWithoutRecursion) o;
-      return Objects.equals(aNullableBool, that.aNullableBool)
-          && Objects.equals(aNullableInt, that.aNullableInt)
-          && Objects.equals(aNullableInt64, that.aNullableInt64)
-          && Objects.equals(aNullableDouble, that.aNullableDouble)
-          && Arrays.equals(aNullableByteArray, that.aNullableByteArray)
-          && Arrays.equals(aNullable4ByteArray, that.aNullable4ByteArray)
-          && Arrays.equals(aNullable8ByteArray, that.aNullable8ByteArray)
-          && Arrays.equals(aNullableFloatArray, that.aNullableFloatArray)
-          && Objects.equals(aNullableEnum, that.aNullableEnum)
-          && Objects.equals(anotherNullableEnum, that.anotherNullableEnum)
-          && Objects.equals(aNullableString, that.aNullableString)
-          && Objects.equals(aNullableObject, that.aNullableObject)
-          && Objects.equals(list, that.list)
-          && Objects.equals(stringList, that.stringList)
-          && Objects.equals(intList, that.intList)
-          && Objects.equals(doubleList, that.doubleList)
-          && Objects.equals(boolList, that.boolList)
-          && Objects.equals(enumList, that.enumList)
-          && Objects.equals(objectList, that.objectList)
-          && Objects.equals(listList, that.listList)
-          && Objects.equals(mapList, that.mapList)
-          && Objects.equals(map, that.map)
-          && Objects.equals(stringMap, that.stringMap)
-          && Objects.equals(intMap, that.intMap)
-          && Objects.equals(enumMap, that.enumMap)
-          && Objects.equals(objectMap, that.objectMap)
-          && Objects.equals(listMap, that.listMap)
-          && Objects.equals(mapMap, that.mapMap);
+      return pigeonDeepEquals(aNullableBool, that.aNullableBool)
+          && pigeonDeepEquals(aNullableInt, that.aNullableInt)
+          && pigeonDeepEquals(aNullableInt64, that.aNullableInt64)
+          && pigeonDeepEquals(aNullableDouble, that.aNullableDouble)
+          && pigeonDeepEquals(aNullableByteArray, that.aNullableByteArray)
+          && pigeonDeepEquals(aNullable4ByteArray, that.aNullable4ByteArray)
+          && pigeonDeepEquals(aNullable8ByteArray, that.aNullable8ByteArray)
+          && pigeonDeepEquals(aNullableFloatArray, that.aNullableFloatArray)
+          && pigeonDeepEquals(aNullableEnum, that.aNullableEnum)
+          && pigeonDeepEquals(anotherNullableEnum, that.anotherNullableEnum)
+          && pigeonDeepEquals(aNullableString, that.aNullableString)
+          && pigeonDeepEquals(aNullableObject, that.aNullableObject)
+          && pigeonDeepEquals(list, that.list)
+          && pigeonDeepEquals(stringList, that.stringList)
+          && pigeonDeepEquals(intList, that.intList)
+          && pigeonDeepEquals(doubleList, that.doubleList)
+          && pigeonDeepEquals(boolList, that.boolList)
+          && pigeonDeepEquals(enumList, that.enumList)
+          && pigeonDeepEquals(objectList, that.objectList)
+          && pigeonDeepEquals(listList, that.listList)
+          && pigeonDeepEquals(mapList, that.mapList)
+          && pigeonDeepEquals(map, that.map)
+          && pigeonDeepEquals(stringMap, that.stringMap)
+          && pigeonDeepEquals(intMap, that.intMap)
+          && pigeonDeepEquals(enumMap, that.enumMap)
+          && pigeonDeepEquals(objectMap, that.objectMap)
+          && pigeonDeepEquals(listMap, that.listMap)
+          && pigeonDeepEquals(mapMap, that.mapMap);
     }
 
     @Override
     public int hashCode() {
-      int pigeonVar_result =
-          Objects.hash(
-              aNullableBool,
-              aNullableInt,
-              aNullableInt64,
-              aNullableDouble,
-              aNullableEnum,
-              anotherNullableEnum,
-              aNullableString,
-              aNullableObject,
-              list,
-              stringList,
-              intList,
-              doubleList,
-              boolList,
-              enumList,
-              objectList,
-              listList,
-              mapList,
-              map,
-              stringMap,
-              intMap,
-              enumMap,
-              objectMap,
-              listMap,
-              mapMap);
-      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aNullableByteArray);
-      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aNullable4ByteArray);
-      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aNullable8ByteArray);
-      pigeonVar_result = 31 * pigeonVar_result + Arrays.hashCode(aNullableFloatArray);
-      return pigeonVar_result;
+      Object[] fields =
+          new Object[] {
+            getClass(),
+            aNullableBool,
+            aNullableInt,
+            aNullableInt64,
+            aNullableDouble,
+            aNullableByteArray,
+            aNullable4ByteArray,
+            aNullable8ByteArray,
+            aNullableFloatArray,
+            aNullableEnum,
+            anotherNullableEnum,
+            aNullableString,
+            aNullableObject,
+            list,
+            stringList,
+            intList,
+            doubleList,
+            boolList,
+            enumList,
+            objectList,
+            listList,
+            mapList,
+            map,
+            stringMap,
+            intMap,
+            enumMap,
+            objectMap,
+            listMap,
+            mapMap
+          };
+      return pigeonDeepHashCode(fields);
     }
 
     public static final class Builder {
@@ -2573,25 +2736,30 @@ public class CoreTests {
         return false;
       }
       AllClassesWrapper that = (AllClassesWrapper) o;
-      return allNullableTypes.equals(that.allNullableTypes)
-          && Objects.equals(allNullableTypesWithoutRecursion, that.allNullableTypesWithoutRecursion)
-          && Objects.equals(allTypes, that.allTypes)
-          && classList.equals(that.classList)
-          && Objects.equals(nullableClassList, that.nullableClassList)
-          && classMap.equals(that.classMap)
-          && Objects.equals(nullableClassMap, that.nullableClassMap);
+      return pigeonDeepEquals(allNullableTypes, that.allNullableTypes)
+          && pigeonDeepEquals(
+              allNullableTypesWithoutRecursion, that.allNullableTypesWithoutRecursion)
+          && pigeonDeepEquals(allTypes, that.allTypes)
+          && pigeonDeepEquals(classList, that.classList)
+          && pigeonDeepEquals(nullableClassList, that.nullableClassList)
+          && pigeonDeepEquals(classMap, that.classMap)
+          && pigeonDeepEquals(nullableClassMap, that.nullableClassMap);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(
-          allNullableTypes,
-          allNullableTypesWithoutRecursion,
-          allTypes,
-          classList,
-          nullableClassList,
-          classMap,
-          nullableClassMap);
+      Object[] fields =
+          new Object[] {
+            getClass(),
+            allNullableTypes,
+            allNullableTypesWithoutRecursion,
+            allTypes,
+            classList,
+            nullableClassList,
+            classMap,
+            nullableClassMap
+          };
+      return pigeonDeepHashCode(fields);
     }
 
     public static final class Builder {
@@ -2728,12 +2896,13 @@ public class CoreTests {
         return false;
       }
       TestMessage that = (TestMessage) o;
-      return Objects.equals(testList, that.testList);
+      return pigeonDeepEquals(testList, that.testList);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(testList);
+      Object[] fields = new Object[] {getClass(), testList};
+      return pigeonDeepHashCode(fields);
     }
 
     public static final class Builder {
@@ -2959,6 +3128,15 @@ public class CoreTests {
     /** Returns passed in int. */
     @NonNull
     Long echoRequiredInt(@NonNull Long anInt);
+    /** Returns the result of platform-side equality check. */
+    @NonNull
+    Boolean areAllNullableTypesEqual(@NonNull AllNullableTypes a, @NonNull AllNullableTypes b);
+    /** Returns the platform-side hash code for the given object. */
+    @NonNull
+    Long getAllNullableTypesHash(@NonNull AllNullableTypes value);
+    /** Returns the platform-side hash code for the given object. */
+    @NonNull
+    Long getAllNullableTypesWithoutRecursionHash(@NonNull AllNullableTypesWithoutRecursion value);
     /** Returns the passed object, to test serialization and deserialization. */
     @Nullable
     AllNullableTypes echoAllNullableTypes(@Nullable AllNullableTypes everything);
@@ -4110,6 +4288,83 @@ public class CoreTests {
                 Long anIntArg = (Long) args.get(0);
                 try {
                   Long output = api.echoRequiredInt(anIntArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.areAllNullableTypesEqual"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                AllNullableTypes aArg = (AllNullableTypes) args.get(0);
+                AllNullableTypes bArg = (AllNullableTypes) args.get(1);
+                try {
+                  Boolean output = api.areAllNullableTypesEqual(aArg, bArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.getAllNullableTypesHash"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                AllNullableTypes valueArg = (AllNullableTypes) args.get(0);
+                try {
+                  Long output = api.getAllNullableTypesHash(valueArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.getAllNullableTypesWithoutRecursionHash"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                AllNullableTypesWithoutRecursion valueArg =
+                    (AllNullableTypesWithoutRecursion) args.get(0);
+                try {
+                  Long output = api.getAllNullableTypesWithoutRecursionHash(valueArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);

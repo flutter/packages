@@ -201,6 +201,23 @@
   return @(anInt);
 }
 
+- (nullable NSNumber *)areAllNullableTypesEqualA:(FLTAllNullableTypes *)a
+                                               b:(FLTAllNullableTypes *)b
+                                           error:(FlutterError *_Nullable *_Nonnull)error {
+  return @([a isEqual:b]);
+}
+
+- (nullable NSNumber *)getAllNullableTypesHashValue:(FLTAllNullableTypes *)value
+                                              error:(FlutterError *_Nullable *_Nonnull)error {
+  return @([value hash]);
+}
+
+- (nullable NSNumber *)
+    getAllNullableTypesWithoutRecursionHashValue:(FLTAllNullableTypesWithoutRecursion *)value
+                                           error:(FlutterError *_Nullable *_Nonnull)error {
+  return @([value hash]);
+}
+
 - (nullable NSString *)extractNestedNullableStringFrom:(FLTAllClassesWrapper *)wrapper
                                                  error:(FlutterError *_Nullable *_Nonnull)error {
   return wrapper.allNullableTypes.aNullableString;

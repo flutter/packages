@@ -7,7 +7,7 @@ import XCTest
 
 @testable import camera_avfoundation
 
-/// Includes test cases related to resolution presets setting operations for FLTCam class.
+/// Includes test cases related to resolution presets setting operations for Camera class.
 final class CameraSessionPresetsTests: XCTestCase {
   func testResolutionPresetWithBestFormat_mustUpdateCaptureSessionPreset() {
     let expectedPreset = AVCaptureSession.Preset.inputPriority

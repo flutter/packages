@@ -6,7 +6,7 @@ import AVFoundation
 
 @testable import camera_avfoundation
 
-/// Mock implementation of `FLTCameraDeviceDiscoverer` protocol which allows injecting a custom
+/// Mock implementation of `CameraDeviceDiscoverer` protocol which allows injecting a custom
 /// implementation for session discovery.
 final class MockCameraDeviceDiscoverer: NSObject, CameraDeviceDiscoverer {
   var discoverySessionStub:

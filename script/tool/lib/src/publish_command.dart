@@ -39,7 +39,7 @@ class _RemoteInfo {
 ///
 /// 1. Checks for any modified files in git and refuses to publish if there's an
 ///    issue.
-/// 2. Tags the release with the format <package-name>-v<package-version>.
+/// 2. Tags the release with the format `<package-name>-v<package-version>`.
 /// 3. Pushes the release to a remote.
 ///
 /// Both 2 and 3 are optional, see `plugin_tools help publish` for full

@@ -1,3 +1,7 @@
+## 0.8.13+15
+
+* Updates build files from Groovy to Kotlin.
+
 ## 0.8.13+14
 
 * Bumps androidx.activity:activity from 1.12.2 to 1.12.4.

@@ -3664,7 +3664,7 @@ void main() {
         cameraController.value = cameraController.value.copyWith(
           isPreviewPaused: false,
           deviceOrientation: DeviceOrientation.portraitUp,
-          lockedCaptureOrientation: Optional<DeviceOrientation>.of(
+          lockedCaptureOrientation: const Optional<DeviceOrientation>.of(
             DeviceOrientation.landscapeRight,
           ),
         );

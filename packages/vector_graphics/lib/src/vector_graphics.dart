@@ -155,11 +155,11 @@ class VectorGraphic extends StatefulWidget {
   final BytesLoader loader;
 
   /// If specified, the width to use for the vector graphic. If unspecified,
-  /// the vector graphic will take the width of its parent.
+  /// the vector graphic will take the width of the graphic.
   final double? width;
 
   /// If specified, the height to use for the vector graphic. If unspecified,
-  /// the vector graphic will take the height of its parent.
+  /// the vector graphic will take the height of the graphic.
   final double? height;
 
   /// How to inscribe the picture into the space allocated during layout.

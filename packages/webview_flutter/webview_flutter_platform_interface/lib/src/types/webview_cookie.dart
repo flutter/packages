@@ -38,4 +38,9 @@ class WebViewCookie {
   /// Its value should match "path-value" in RFC6265bis:
   /// https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-rfc6265bis-02#section-4.1.1
   final String path;
+
+  @override
+  String toString() {
+    return 'WebViewCookie{name: $name, value: $value, domain: $domain, path: $path}';
+  }
 }

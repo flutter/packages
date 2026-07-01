@@ -13,6 +13,97 @@
 @import Flutter;
 #endif
 
+static BOOL __attribute__((unused)) FLTPigeonDeepEquals(id _Nullable a, id _Nullable b) {
+  if (a == b) {
+    return YES;
+  }
+  if (a == nil) {
+    return b == [NSNull null];
+  }
+  if (b == nil) {
+    return a == [NSNull null];
+  }
+  if ([a isKindOfClass:[NSNumber class]] && [b isKindOfClass:[NSNumber class]]) {
+    return
+        [a isEqual:b] || (isnan([(NSNumber *)a doubleValue]) && isnan([(NSNumber *)b doubleValue]));
+  }
+  if ([a isKindOfClass:[NSArray class]] && [b isKindOfClass:[NSArray class]]) {
+    NSArray *arrayA = (NSArray *)a;
+    NSArray *arrayB = (NSArray *)b;
+    if (arrayA.count != arrayB.count) {
+      return NO;
+    }
+    for (NSUInteger i = 0; i < arrayA.count; i++) {
+      if (!FLTPigeonDeepEquals(arrayA[i], arrayB[i])) {
+        return NO;
+      }
+    }
+    return YES;
+  }
+  if ([a isKindOfClass:[NSDictionary class]] && [b isKindOfClass:[NSDictionary class]]) {
+    NSDictionary *dictA = (NSDictionary *)a;
+    NSDictionary *dictB = (NSDictionary *)b;
+    if (dictA.count != dictB.count) {
+      return NO;
+    }
+    for (id keyA in dictA) {
+      id valueA = dictA[keyA];
+      BOOL found = NO;
+      for (id keyB in dictB) {
+        if (FLTPigeonDeepEquals(keyA, keyB)) {
+          id valueB = dictB[keyB];
+          if (FLTPigeonDeepEquals(valueA, valueB)) {
+            found = YES;
+            break;
+          } else {
+            return NO;
+          }
+        }
+      }
+      if (!found) {
+        return NO;
+      }
+    }
+    return YES;
+  }
+  return [a isEqual:b];
+}
+
+static NSUInteger __attribute__((unused)) FLTPigeonDeepHash(id _Nullable value) {
+  if (value == nil || value == (id)[NSNull null]) {
+    return 0;
+  }
+  if ([value isKindOfClass:[NSNumber class]]) {
+    NSNumber *n = (NSNumber *)value;
+    double d = n.doubleValue;
+    if (isnan(d)) {
+      // Normalize NaN to a consistent hash.
+      return (NSUInteger)0x7FF8000000000000;
+    }
+    if (d == 0.0) {
+      // Normalize -0.0 to 0.0 so they have the same hash code.
+      d = 0.0;
+    }
+    return @(d).hash;
+  }
+  if ([value isKindOfClass:[NSArray class]]) {
+    NSUInteger result = 1;
+    for (id item in (NSArray *)value) {
+      result = result * 31 + FLTPigeonDeepHash(item);
+    }
+    return result;
+  }
+  if ([value isKindOfClass:[NSDictionary class]]) {
+    NSUInteger result = 0;
+    NSDictionary *dict = (NSDictionary *)value;
+    for (id key in dict) {
+      result += ((FLTPigeonDeepHash(key) * 31) ^ FLTPigeonDeepHash(dict[key]));
+    }
+    return result;
+  }
+  return [value hash];
+}
+
 static NSArray<id> *wrapResult(id result, FlutterError *error) {
   if (error) {
     return @[
@@ -110,6 +201,22 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   return @[
     self.aField ?: [NSNull null],
   ];
+}
+- (BOOL)isEqual:(id)object {
+  if (self == object) {
+    return YES;
+  }
+  if (![object isKindOfClass:[self class]]) {
+    return NO;
+  }
+  FLTUnusedClass *other = (FLTUnusedClass *)object;
+  return FLTPigeonDeepEquals(self.aField, other.aField);
+}
+
+- (NSUInteger)hash {
+  NSUInteger result = [self class].hash;
+  result = result * 31 + FLTPigeonDeepHash(self.aField);
+  return result;
 }
 @end
 
@@ -241,6 +348,74 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     self.listMap ?: [NSNull null],
     self.mapMap ?: [NSNull null],
   ];
+}
+- (BOOL)isEqual:(id)object {
+  if (self == object) {
+    return YES;
+  }
+  if (![object isKindOfClass:[self class]]) {
+    return NO;
+  }
+  FLTAllTypes *other = (FLTAllTypes *)object;
+  return self.aBool == other.aBool && self.anInt == other.anInt && self.anInt64 == other.anInt64 &&
+         (self.aDouble == other.aDouble || (isnan(self.aDouble) && isnan(other.aDouble))) &&
+         FLTPigeonDeepEquals(self.aByteArray, other.aByteArray) &&
+         FLTPigeonDeepEquals(self.a4ByteArray, other.a4ByteArray) &&
+         FLTPigeonDeepEquals(self.a8ByteArray, other.a8ByteArray) &&
+         FLTPigeonDeepEquals(self.aFloatArray, other.aFloatArray) && self.anEnum == other.anEnum &&
+         self.anotherEnum == other.anotherEnum &&
+         FLTPigeonDeepEquals(self.aString, other.aString) &&
+         FLTPigeonDeepEquals(self.anObject, other.anObject) &&
+         FLTPigeonDeepEquals(self.list, other.list) &&
+         FLTPigeonDeepEquals(self.stringList, other.stringList) &&
+         FLTPigeonDeepEquals(self.intList, other.intList) &&
+         FLTPigeonDeepEquals(self.doubleList, other.doubleList) &&
+         FLTPigeonDeepEquals(self.boolList, other.boolList) &&
+         FLTPigeonDeepEquals(self.enumList, other.enumList) &&
+         FLTPigeonDeepEquals(self.objectList, other.objectList) &&
+         FLTPigeonDeepEquals(self.listList, other.listList) &&
+         FLTPigeonDeepEquals(self.mapList, other.mapList) &&
+         FLTPigeonDeepEquals(self.map, other.map) &&
+         FLTPigeonDeepEquals(self.stringMap, other.stringMap) &&
+         FLTPigeonDeepEquals(self.intMap, other.intMap) &&
+         FLTPigeonDeepEquals(self.enumMap, other.enumMap) &&
+         FLTPigeonDeepEquals(self.objectMap, other.objectMap) &&
+         FLTPigeonDeepEquals(self.listMap, other.listMap) &&
+         FLTPigeonDeepEquals(self.mapMap, other.mapMap);
+}
+
+- (NSUInteger)hash {
+  NSUInteger result = [self class].hash;
+  result = result * 31 + @(self.aBool).hash;
+  result = result * 31 + @(self.anInt).hash;
+  result = result * 31 + @(self.anInt64).hash;
+  result =
+      result * 31 + (isnan(self.aDouble) ? (NSUInteger)0x7FF8000000000000 : @(self.aDouble).hash);
+  result = result * 31 + FLTPigeonDeepHash(self.aByteArray);
+  result = result * 31 + FLTPigeonDeepHash(self.a4ByteArray);
+  result = result * 31 + FLTPigeonDeepHash(self.a8ByteArray);
+  result = result * 31 + FLTPigeonDeepHash(self.aFloatArray);
+  result = result * 31 + @(self.anEnum).hash;
+  result = result * 31 + @(self.anotherEnum).hash;
+  result = result * 31 + FLTPigeonDeepHash(self.aString);
+  result = result * 31 + FLTPigeonDeepHash(self.anObject);
+  result = result * 31 + FLTPigeonDeepHash(self.list);
+  result = result * 31 + FLTPigeonDeepHash(self.stringList);
+  result = result * 31 + FLTPigeonDeepHash(self.intList);
+  result = result * 31 + FLTPigeonDeepHash(self.doubleList);
+  result = result * 31 + FLTPigeonDeepHash(self.boolList);
+  result = result * 31 + FLTPigeonDeepHash(self.enumList);
+  result = result * 31 + FLTPigeonDeepHash(self.objectList);
+  result = result * 31 + FLTPigeonDeepHash(self.listList);
+  result = result * 31 + FLTPigeonDeepHash(self.mapList);
+  result = result * 31 + FLTPigeonDeepHash(self.map);
+  result = result * 31 + FLTPigeonDeepHash(self.stringMap);
+  result = result * 31 + FLTPigeonDeepHash(self.intMap);
+  result = result * 31 + FLTPigeonDeepHash(self.enumMap);
+  result = result * 31 + FLTPigeonDeepHash(self.objectMap);
+  result = result * 31 + FLTPigeonDeepHash(self.listMap);
+  result = result * 31 + FLTPigeonDeepHash(self.mapMap);
+  return result;
 }
 @end
 
@@ -385,6 +560,82 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     self.recursiveClassMap ?: [NSNull null],
   ];
 }
+- (BOOL)isEqual:(id)object {
+  if (self == object) {
+    return YES;
+  }
+  if (![object isKindOfClass:[self class]]) {
+    return NO;
+  }
+  FLTAllNullableTypes *other = (FLTAllNullableTypes *)object;
+  return FLTPigeonDeepEquals(self.aNullableBool, other.aNullableBool) &&
+         FLTPigeonDeepEquals(self.aNullableInt, other.aNullableInt) &&
+         FLTPigeonDeepEquals(self.aNullableInt64, other.aNullableInt64) &&
+         FLTPigeonDeepEquals(self.aNullableDouble, other.aNullableDouble) &&
+         FLTPigeonDeepEquals(self.aNullableByteArray, other.aNullableByteArray) &&
+         FLTPigeonDeepEquals(self.aNullable4ByteArray, other.aNullable4ByteArray) &&
+         FLTPigeonDeepEquals(self.aNullable8ByteArray, other.aNullable8ByteArray) &&
+         FLTPigeonDeepEquals(self.aNullableFloatArray, other.aNullableFloatArray) &&
+         FLTPigeonDeepEquals(self.aNullableEnum, other.aNullableEnum) &&
+         FLTPigeonDeepEquals(self.anotherNullableEnum, other.anotherNullableEnum) &&
+         FLTPigeonDeepEquals(self.aNullableString, other.aNullableString) &&
+         FLTPigeonDeepEquals(self.aNullableObject, other.aNullableObject) &&
+         FLTPigeonDeepEquals(self.allNullableTypes, other.allNullableTypes) &&
+         FLTPigeonDeepEquals(self.list, other.list) &&
+         FLTPigeonDeepEquals(self.stringList, other.stringList) &&
+         FLTPigeonDeepEquals(self.intList, other.intList) &&
+         FLTPigeonDeepEquals(self.doubleList, other.doubleList) &&
+         FLTPigeonDeepEquals(self.boolList, other.boolList) &&
+         FLTPigeonDeepEquals(self.enumList, other.enumList) &&
+         FLTPigeonDeepEquals(self.objectList, other.objectList) &&
+         FLTPigeonDeepEquals(self.listList, other.listList) &&
+         FLTPigeonDeepEquals(self.mapList, other.mapList) &&
+         FLTPigeonDeepEquals(self.recursiveClassList, other.recursiveClassList) &&
+         FLTPigeonDeepEquals(self.map, other.map) &&
+         FLTPigeonDeepEquals(self.stringMap, other.stringMap) &&
+         FLTPigeonDeepEquals(self.intMap, other.intMap) &&
+         FLTPigeonDeepEquals(self.enumMap, other.enumMap) &&
+         FLTPigeonDeepEquals(self.objectMap, other.objectMap) &&
+         FLTPigeonDeepEquals(self.listMap, other.listMap) &&
+         FLTPigeonDeepEquals(self.mapMap, other.mapMap) &&
+         FLTPigeonDeepEquals(self.recursiveClassMap, other.recursiveClassMap);
+}
+
+- (NSUInteger)hash {
+  NSUInteger result = [self class].hash;
+  result = result * 31 + FLTPigeonDeepHash(self.aNullableBool);
+  result = result * 31 + FLTPigeonDeepHash(self.aNullableInt);
+  result = result * 31 + FLTPigeonDeepHash(self.aNullableInt64);
+  result = result * 31 + FLTPigeonDeepHash(self.aNullableDouble);
+  result = result * 31 + FLTPigeonDeepHash(self.aNullableByteArray);
+  result = result * 31 + FLTPigeonDeepHash(self.aNullable4ByteArray);
+  result = result * 31 + FLTPigeonDeepHash(self.aNullable8ByteArray);
+  result = result * 31 + FLTPigeonDeepHash(self.aNullableFloatArray);
+  result = result * 31 + FLTPigeonDeepHash(self.aNullableEnum);
+  result = result * 31 + FLTPigeonDeepHash(self.anotherNullableEnum);
+  result = result * 31 + FLTPigeonDeepHash(self.aNullableString);
+  result = result * 31 + FLTPigeonDeepHash(self.aNullableObject);
+  result = result * 31 + FLTPigeonDeepHash(self.allNullableTypes);
+  result = result * 31 + FLTPigeonDeepHash(self.list);
+  result = result * 31 + FLTPigeonDeepHash(self.stringList);
+  result = result * 31 + FLTPigeonDeepHash(self.intList);
+  result = result * 31 + FLTPigeonDeepHash(self.doubleList);
+  result = result * 31 + FLTPigeonDeepHash(self.boolList);
+  result = result * 31 + FLTPigeonDeepHash(self.enumList);
+  result = result * 31 + FLTPigeonDeepHash(self.objectList);
+  result = result * 31 + FLTPigeonDeepHash(self.listList);
+  result = result * 31 + FLTPigeonDeepHash(self.mapList);
+  result = result * 31 + FLTPigeonDeepHash(self.recursiveClassList);
+  result = result * 31 + FLTPigeonDeepHash(self.map);
+  result = result * 31 + FLTPigeonDeepHash(self.stringMap);
+  result = result * 31 + FLTPigeonDeepHash(self.intMap);
+  result = result * 31 + FLTPigeonDeepHash(self.enumMap);
+  result = result * 31 + FLTPigeonDeepHash(self.objectMap);
+  result = result * 31 + FLTPigeonDeepHash(self.listMap);
+  result = result * 31 + FLTPigeonDeepHash(self.mapMap);
+  result = result * 31 + FLTPigeonDeepHash(self.recursiveClassMap);
+  return result;
+}
 @end
 
 @implementation FLTAllNullableTypesWithoutRecursion
@@ -517,6 +768,76 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     self.mapMap ?: [NSNull null],
   ];
 }
+- (BOOL)isEqual:(id)object {
+  if (self == object) {
+    return YES;
+  }
+  if (![object isKindOfClass:[self class]]) {
+    return NO;
+  }
+  FLTAllNullableTypesWithoutRecursion *other = (FLTAllNullableTypesWithoutRecursion *)object;
+  return FLTPigeonDeepEquals(self.aNullableBool, other.aNullableBool) &&
+         FLTPigeonDeepEquals(self.aNullableInt, other.aNullableInt) &&
+         FLTPigeonDeepEquals(self.aNullableInt64, other.aNullableInt64) &&
+         FLTPigeonDeepEquals(self.aNullableDouble, other.aNullableDouble) &&
+         FLTPigeonDeepEquals(self.aNullableByteArray, other.aNullableByteArray) &&
+         FLTPigeonDeepEquals(self.aNullable4ByteArray, other.aNullable4ByteArray) &&
+         FLTPigeonDeepEquals(self.aNullable8ByteArray, other.aNullable8ByteArray) &&
+         FLTPigeonDeepEquals(self.aNullableFloatArray, other.aNullableFloatArray) &&
+         FLTPigeonDeepEquals(self.aNullableEnum, other.aNullableEnum) &&
+         FLTPigeonDeepEquals(self.anotherNullableEnum, other.anotherNullableEnum) &&
+         FLTPigeonDeepEquals(self.aNullableString, other.aNullableString) &&
+         FLTPigeonDeepEquals(self.aNullableObject, other.aNullableObject) &&
+         FLTPigeonDeepEquals(self.list, other.list) &&
+         FLTPigeonDeepEquals(self.stringList, other.stringList) &&
+         FLTPigeonDeepEquals(self.intList, other.intList) &&
+         FLTPigeonDeepEquals(self.doubleList, other.doubleList) &&
+         FLTPigeonDeepEquals(self.boolList, other.boolList) &&
+         FLTPigeonDeepEquals(self.enumList, other.enumList) &&
+         FLTPigeonDeepEquals(self.objectList, other.objectList) &&
+         FLTPigeonDeepEquals(self.listList, other.listList) &&
+         FLTPigeonDeepEquals(self.mapList, other.mapList) &&
+         FLTPigeonDeepEquals(self.map, other.map) &&
+         FLTPigeonDeepEquals(self.stringMap, other.stringMap) &&
+         FLTPigeonDeepEquals(self.intMap, other.intMap) &&
+         FLTPigeonDeepEquals(self.enumMap, other.enumMap) &&
+         FLTPigeonDeepEquals(self.objectMap, other.objectMap) &&
+         FLTPigeonDeepEquals(self.listMap, other.listMap) &&
+         FLTPigeonDeepEquals(self.mapMap, other.mapMap);
+}
+
+- (NSUInteger)hash {
+  NSUInteger result = [self class].hash;
+  result = result * 31 + FLTPigeonDeepHash(self.aNullableBool);
+  result = result * 31 + FLTPigeonDeepHash(self.aNullableInt);
+  result = result * 31 + FLTPigeonDeepHash(self.aNullableInt64);
+  result = result * 31 + FLTPigeonDeepHash(self.aNullableDouble);
+  result = result * 31 + FLTPigeonDeepHash(self.aNullableByteArray);
+  result = result * 31 + FLTPigeonDeepHash(self.aNullable4ByteArray);
+  result = result * 31 + FLTPigeonDeepHash(self.aNullable8ByteArray);
+  result = result * 31 + FLTPigeonDeepHash(self.aNullableFloatArray);
+  result = result * 31 + FLTPigeonDeepHash(self.aNullableEnum);
+  result = result * 31 + FLTPigeonDeepHash(self.anotherNullableEnum);
+  result = result * 31 + FLTPigeonDeepHash(self.aNullableString);
+  result = result * 31 + FLTPigeonDeepHash(self.aNullableObject);
+  result = result * 31 + FLTPigeonDeepHash(self.list);
+  result = result * 31 + FLTPigeonDeepHash(self.stringList);
+  result = result * 31 + FLTPigeonDeepHash(self.intList);
+  result = result * 31 + FLTPigeonDeepHash(self.doubleList);
+  result = result * 31 + FLTPigeonDeepHash(self.boolList);
+  result = result * 31 + FLTPigeonDeepHash(self.enumList);
+  result = result * 31 + FLTPigeonDeepHash(self.objectList);
+  result = result * 31 + FLTPigeonDeepHash(self.listList);
+  result = result * 31 + FLTPigeonDeepHash(self.mapList);
+  result = result * 31 + FLTPigeonDeepHash(self.map);
+  result = result * 31 + FLTPigeonDeepHash(self.stringMap);
+  result = result * 31 + FLTPigeonDeepHash(self.intMap);
+  result = result * 31 + FLTPigeonDeepHash(self.enumMap);
+  result = result * 31 + FLTPigeonDeepHash(self.objectMap);
+  result = result * 31 + FLTPigeonDeepHash(self.listMap);
+  result = result * 31 + FLTPigeonDeepHash(self.mapMap);
+  return result;
+}
 @end
 
 @implementation FLTAllClassesWrapper
@@ -567,6 +888,35 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     self.nullableClassMap ?: [NSNull null],
   ];
 }
+- (BOOL)isEqual:(id)object {
+  if (self == object) {
+    return YES;
+  }
+  if (![object isKindOfClass:[self class]]) {
+    return NO;
+  }
+  FLTAllClassesWrapper *other = (FLTAllClassesWrapper *)object;
+  return FLTPigeonDeepEquals(self.allNullableTypes, other.allNullableTypes) &&
+         FLTPigeonDeepEquals(self.allNullableTypesWithoutRecursion,
+                             other.allNullableTypesWithoutRecursion) &&
+         FLTPigeonDeepEquals(self.allTypes, other.allTypes) &&
+         FLTPigeonDeepEquals(self.classList, other.classList) &&
+         FLTPigeonDeepEquals(self.nullableClassList, other.nullableClassList) &&
+         FLTPigeonDeepEquals(self.classMap, other.classMap) &&
+         FLTPigeonDeepEquals(self.nullableClassMap, other.nullableClassMap);
+}
+
+- (NSUInteger)hash {
+  NSUInteger result = [self class].hash;
+  result = result * 31 + FLTPigeonDeepHash(self.allNullableTypes);
+  result = result * 31 + FLTPigeonDeepHash(self.allNullableTypesWithoutRecursion);
+  result = result * 31 + FLTPigeonDeepHash(self.allTypes);
+  result = result * 31 + FLTPigeonDeepHash(self.classList);
+  result = result * 31 + FLTPigeonDeepHash(self.nullableClassList);
+  result = result * 31 + FLTPigeonDeepHash(self.classMap);
+  result = result * 31 + FLTPigeonDeepHash(self.nullableClassMap);
+  return result;
+}
 @end
 
 @implementation FLTTestMessage
@@ -587,6 +937,22 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   return @[
     self.testList ?: [NSNull null],
   ];
+}
+- (BOOL)isEqual:(id)object {
+  if (self == object) {
+    return YES;
+  }
+  if (![object isKindOfClass:[self class]]) {
+    return NO;
+  }
+  FLTTestMessage *other = (FLTTestMessage *)object;
+  return FLTPigeonDeepEquals(self.testList, other.testList);
+}
+
+- (NSUInteger)hash {
+  NSUInteger result = [self class].hash;
+  result = result * 31 + FLTPigeonDeepHash(self.testList);
+  return result;
 }
 @end
 
@@ -1468,6 +1834,88 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
         NSInteger arg_anInt = [GetNullableObjectAtIndex(args, 0) integerValue];
         FlutterError *error;
         NSNumber *output = [api echoRequiredInt:arg_anInt error:&error];
+        callback(wrapResult(output, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Returns the result of platform-side equality check.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString
+                            stringWithFormat:@"%@%@",
+                                             @"dev.flutter.pigeon.pigeon_integration_tests."
+                                             @"HostIntegrationCoreApi.areAllNullableTypesEqual",
+                                             messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(areAllNullableTypesEqualA:b:error:)],
+                @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(areAllNullableTypesEqualA:b:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        FLTAllNullableTypes *arg_a = GetNullableObjectAtIndex(args, 0);
+        FLTAllNullableTypes *arg_b = GetNullableObjectAtIndex(args, 1);
+        FlutterError *error;
+        NSNumber *output = [api areAllNullableTypesEqualA:arg_a b:arg_b error:&error];
+        callback(wrapResult(output, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Returns the platform-side hash code for the given object.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString
+                            stringWithFormat:@"%@%@",
+                                             @"dev.flutter.pigeon.pigeon_integration_tests."
+                                             @"HostIntegrationCoreApi.getAllNullableTypesHash",
+                                             messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getAllNullableTypesHashValue:error:)],
+                @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(getAllNullableTypesHashValue:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        FLTAllNullableTypes *arg_value = GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        NSNumber *output = [api getAllNullableTypesHashValue:arg_value error:&error];
+        callback(wrapResult(output, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Returns the platform-side hash code for the given object.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString
+                            stringWithFormat:
+                                @"%@%@",
+                                @"dev.flutter.pigeon.pigeon_integration_tests."
+                                @"HostIntegrationCoreApi.getAllNullableTypesWithoutRecursionHash",
+                                messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getAllNullableTypesWithoutRecursionHashValue:
+                                                                                         error:)],
+                @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(getAllNullableTypesWithoutRecursionHashValue:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        FLTAllNullableTypesWithoutRecursion *arg_value = GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        NSNumber *output = [api getAllNullableTypesWithoutRecursionHashValue:arg_value
+                                                                       error:&error];
         callback(wrapResult(output, error));
       }];
     } else {

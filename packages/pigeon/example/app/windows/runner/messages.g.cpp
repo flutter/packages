@@ -13,16 +13,18 @@
 #include <flutter/encodable_value.h>
 #include <flutter/standard_message_codec.h>
 
+#include <cmath>
+#include <limits>
 #include <map>
 #include <optional>
 #include <string>
 
 namespace pigeon_example {
-using flutter::BasicMessageChannel;
-using flutter::CustomEncodableValue;
-using flutter::EncodableList;
-using flutter::EncodableMap;
-using flutter::EncodableValue;
+using ::flutter::BasicMessageChannel;
+using ::flutter::CustomEncodableValue;
+using ::flutter::EncodableList;
+using ::flutter::EncodableMap;
+using ::flutter::EncodableValue;
 
 FlutterError CreateConnectionError(const std::string channel_name) {
   return FlutterError(
@@ -31,6 +33,212 @@ FlutterError CreateConnectionError(const std::string channel_name) {
       EncodableValue(""));
 }
 
+namespace {
+template <typename T>
+bool PigeonInternalDeepEquals(const T& a, const T& b);
+
+bool PigeonInternalDeepEquals(const double& a, const double& b);
+
+template <typename T>
+bool PigeonInternalDeepEquals(const std::vector<T>& a, const std::vector<T>& b);
+
+template <typename K, typename V>
+bool PigeonInternalDeepEquals(const std::map<K, V>& a, const std::map<K, V>& b);
+
+template <typename T>
+bool PigeonInternalDeepEquals(const std::optional<T>& a,
+                              const std::optional<T>& b);
+
+template <typename T>
+bool PigeonInternalDeepEquals(const std::unique_ptr<T>& a,
+                              const std::unique_ptr<T>& b);
+
+bool PigeonInternalDeepEquals(const ::flutter::EncodableValue& a,
+                              const ::flutter::EncodableValue& b);
+
+template <typename T>
+bool PigeonInternalDeepEquals(const T& a, const T& b) {
+  return a == b;
+}
+
+template <typename T>
+bool PigeonInternalDeepEquals(const std::vector<T>& a,
+                              const std::vector<T>& b) {
+  if (a.size() != b.size()) {
+    return false;
+  }
+  for (size_t i = 0; i < a.size(); ++i) {
+    if (!PigeonInternalDeepEquals(a[i], b[i])) {
+      return false;
+    }
+  }
+  return true;
+}
+
+template <typename K, typename V>
+bool PigeonInternalDeepEquals(const std::map<K, V>& a,
+                              const std::map<K, V>& b) {
+  if (a.size() != b.size()) {
+    return false;
+  }
+  for (const auto& kv : a) {
+    bool found = false;
+    for (const auto& b_kv : b) {
+      if (PigeonInternalDeepEquals(kv.first, b_kv.first)) {
+        if (PigeonInternalDeepEquals(kv.second, b_kv.second)) {
+          found = true;
+          break;
+        } else {
+          return false;
+        }
+      }
+    }
+    if (!found) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool PigeonInternalDeepEquals(const double& a, const double& b) {
+  // Normalize -0.0 to 0.0 and handle NaN equality.
+  return (a == b) || (std::isnan(a) && std::isnan(b));
+}
+
+template <typename T>
+bool PigeonInternalDeepEquals(const std::optional<T>& a,
+                              const std::optional<T>& b) {
+  if (!a && !b) {
+    return true;
+  }
+  if (!a || !b) {
+    return false;
+  }
+  return PigeonInternalDeepEquals(*a, *b);
+}
+
+template <typename T>
+bool PigeonInternalDeepEquals(const std::unique_ptr<T>& a,
+                              const std::unique_ptr<T>& b) {
+  if (a.get() == b.get()) {
+    return true;
+  }
+  if (!a || !b) {
+    return false;
+  }
+  return PigeonInternalDeepEquals(*a, *b);
+}
+
+bool PigeonInternalDeepEquals(const ::flutter::EncodableValue& a,
+                              const ::flutter::EncodableValue& b) {
+  if (a.index() != b.index()) {
+    return false;
+  }
+  if (const double* da = std::get_if<double>(&a)) {
+    return PigeonInternalDeepEquals(*da, std::get<double>(b));
+  } else if (const ::flutter::EncodableList* la =
+                 std::get_if<::flutter::EncodableList>(&a)) {
+    return PigeonInternalDeepEquals(*la, std::get<::flutter::EncodableList>(b));
+  } else if (const ::flutter::EncodableMap* ma =
+                 std::get_if<::flutter::EncodableMap>(&a)) {
+    return PigeonInternalDeepEquals(*ma, std::get<::flutter::EncodableMap>(b));
+  }
+  return a == b;
+}
+
+template <typename T>
+size_t PigeonInternalDeepHash(const T& v);
+
+size_t PigeonInternalDeepHash(const double& v);
+
+template <typename T>
+size_t PigeonInternalDeepHash(const std::vector<T>& v);
+
+template <typename K, typename V>
+size_t PigeonInternalDeepHash(const std::map<K, V>& v);
+
+template <typename T>
+size_t PigeonInternalDeepHash(const std::optional<T>& v);
+
+template <typename T>
+size_t PigeonInternalDeepHash(const std::unique_ptr<T>& v);
+
+size_t PigeonInternalDeepHash(const ::flutter::EncodableValue& v);
+
+template <typename T>
+size_t PigeonInternalDeepHash(const T& v) {
+  return std::hash<T>()(v);
+}
+
+template <typename T>
+size_t PigeonInternalDeepHash(const std::vector<T>& v) {
+  size_t result = 1;
+  for (const auto& item : v) {
+    result = result * 31 + PigeonInternalDeepHash(item);
+  }
+  return result;
+}
+
+template <typename K, typename V>
+size_t PigeonInternalDeepHash(const std::map<K, V>& v) {
+  size_t result = 0;
+  for (const auto& kv : v) {
+    result += ((PigeonInternalDeepHash(kv.first) * 31) ^
+               PigeonInternalDeepHash(kv.second));
+  }
+  return result;
+}
+
+size_t PigeonInternalDeepHash(const double& v) {
+  if (std::isnan(v)) {
+    // Normalize NaN to a consistent hash.
+    return std::hash<double>()(std::numeric_limits<double>::quiet_NaN());
+  }
+  if (v == 0.0) {
+    // Normalize -0.0 to 0.0 so they have the same hash code.
+    return std::hash<double>()(0.0);
+  }
+  return std::hash<double>()(v);
+}
+
+template <typename T>
+size_t PigeonInternalDeepHash(const std::optional<T>& v) {
+  return v ? PigeonInternalDeepHash(*v) : 0;
+}
+
+template <typename T>
+size_t PigeonInternalDeepHash(const std::unique_ptr<T>& v) {
+  return v ? PigeonInternalDeepHash(*v) : 0;
+}
+
+size_t PigeonInternalDeepHash(const ::flutter::EncodableValue& v) {
+  size_t result = v.index();
+  if (const double* dv = std::get_if<double>(&v)) {
+    result = result * 31 + PigeonInternalDeepHash(*dv);
+  } else if (const ::flutter::EncodableList* lv =
+                 std::get_if<::flutter::EncodableList>(&v)) {
+    result = result * 31 + PigeonInternalDeepHash(*lv);
+  } else if (const ::flutter::EncodableMap* mv =
+                 std::get_if<::flutter::EncodableMap>(&v)) {
+    result = result * 31 + PigeonInternalDeepHash(*mv);
+  } else {
+    std::visit(
+        [&result](const auto& val) {
+          using T = std::decay_t<decltype(val)>;
+          if constexpr (!std::is_same_v<T, double> &&
+                        !std::is_same_v<T, ::flutter::EncodableList> &&
+                        !std::is_same_v<T, ::flutter::EncodableMap> &&
+                        !std::is_same_v<T, std::monostate> &&
+                        !std::is_same_v<T, ::flutter::CustomEncodableValue>) {
+            result = result * 31 + PigeonInternalDeepHash(val);
+          }
+        },
+        v);
+  }
+  return result;
+}
+
+}  // namespace
 // MessageData
 
 MessageData::MessageData(const Code& code, const EncodableMap& data)
@@ -102,10 +310,32 @@ MessageData MessageData::FromEncodableList(const EncodableList& list) {
   return decoded;
 }
 
+bool MessageData::operator==(const MessageData& other) const {
+  return PigeonInternalDeepEquals(name_, other.name_) &&
+         PigeonInternalDeepEquals(description_, other.description_) &&
+         PigeonInternalDeepEquals(code_, other.code_) &&
+         PigeonInternalDeepEquals(data_, other.data_);
+}
+
+bool MessageData::operator!=(const MessageData& other) const {
+  return !(*this == other);
+}
+
+size_t MessageData::Hash() const {
+  size_t result = 1;
+  result = result * 31 + PigeonInternalDeepHash(name_);
+  result = result * 31 + PigeonInternalDeepHash(description_);
+  result = result * 31 + PigeonInternalDeepHash(code_);
+  result = result * 31 + PigeonInternalDeepHash(data_);
+  return result;
+}
+
+size_t PigeonInternalDeepHash(const MessageData& v) { return v.Hash(); }
+
 PigeonInternalCodecSerializer::PigeonInternalCodecSerializer() {}
 
 EncodableValue PigeonInternalCodecSerializer::ReadValueOfType(
-    uint8_t type, flutter::ByteStreamReader* stream) const {
+    uint8_t type, ::flutter::ByteStreamReader* stream) const {
   switch (type) {
     case 129: {
       const auto& encodable_enum_arg = ReadValue(stream);
@@ -120,12 +350,12 @@ EncodableValue PigeonInternalCodecSerializer::ReadValueOfType(
           std::get<EncodableList>(ReadValue(stream))));
     }
     default:
-      return flutter::StandardCodecSerializer::ReadValueOfType(type, stream);
+      return ::flutter::StandardCodecSerializer::ReadValueOfType(type, stream);
   }
 }
 
 void PigeonInternalCodecSerializer::WriteValue(
-    const EncodableValue& value, flutter::ByteStreamWriter* stream) const {
+    const EncodableValue& value, ::flutter::ByteStreamWriter* stream) const {
   if (const CustomEncodableValue* custom_value =
           std::get_if<CustomEncodableValue>(&value)) {
     if (custom_value->type() == typeid(Code)) {
@@ -144,23 +374,23 @@ void PigeonInternalCodecSerializer::WriteValue(
       return;
     }
   }
-  flutter::StandardCodecSerializer::WriteValue(value, stream);
+  ::flutter::StandardCodecSerializer::WriteValue(value, stream);
 }
 
 /// The codec used by ExampleHostApi.
-const flutter::StandardMessageCodec& ExampleHostApi::GetCodec() {
-  return flutter::StandardMessageCodec::GetInstance(
+const ::flutter::StandardMessageCodec& ExampleHostApi::GetCodec() {
+  return ::flutter::StandardMessageCodec::GetInstance(
       &PigeonInternalCodecSerializer::GetInstance());
 }
 
 // Sets up an instance of `ExampleHostApi` to handle messages through the
 // `binary_messenger`.
-void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
+void ExampleHostApi::SetUp(::flutter::BinaryMessenger* binary_messenger,
                            ExampleHostApi* api) {
   ExampleHostApi::SetUp(binary_messenger, api, "");
 }
 
-void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
+void ExampleHostApi::SetUp(::flutter::BinaryMessenger* binary_messenger,
                            ExampleHostApi* api,
                            const std::string& message_channel_suffix) {
   const std::string prepended_suffix =
@@ -176,7 +406,7 @@ void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     if (api != nullptr) {
       channel.SetMessageHandler(
           [api](const EncodableValue& message,
-                const flutter::MessageReply<EncodableValue>& reply) {
+                const ::flutter::MessageReply<EncodableValue>& reply) {
             try {
               ErrorOr<std::string> output = api->GetHostLanguage();
               if (output.has_error()) {
@@ -203,7 +433,7 @@ void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     if (api != nullptr) {
       channel.SetMessageHandler(
           [api](const EncodableValue& message,
-                const flutter::MessageReply<EncodableValue>& reply) {
+                const ::flutter::MessageReply<EncodableValue>& reply) {
             try {
               const auto& args = std::get<EncodableList>(message);
               const auto& encodable_a_arg = args.at(0);
@@ -243,7 +473,7 @@ void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     if (api != nullptr) {
       channel.SetMessageHandler(
           [api](const EncodableValue& message,
-                const flutter::MessageReply<EncodableValue>& reply) {
+                const ::flutter::MessageReply<EncodableValue>& reply) {
             try {
               const auto& args = std::get<EncodableList>(message);
               const auto& encodable_message_arg = args.at(0);
@@ -287,18 +517,20 @@ EncodableValue ExampleHostApi::WrapError(const FlutterError& error) {
 
 // Generated class from Pigeon that represents Flutter messages that can be
 // called from C++.
-MessageFlutterApi::MessageFlutterApi(flutter::BinaryMessenger* binary_messenger)
+MessageFlutterApi::MessageFlutterApi(
+    ::flutter::BinaryMessenger* binary_messenger)
     : binary_messenger_(binary_messenger), message_channel_suffix_("") {}
 
-MessageFlutterApi::MessageFlutterApi(flutter::BinaryMessenger* binary_messenger,
-                                     const std::string& message_channel_suffix)
+MessageFlutterApi::MessageFlutterApi(
+    ::flutter::BinaryMessenger* binary_messenger,
+    const std::string& message_channel_suffix)
     : binary_messenger_(binary_messenger),
       message_channel_suffix_(message_channel_suffix.length() > 0
                                   ? std::string(".") + message_channel_suffix
                                   : "") {}
 
-const flutter::StandardMessageCodec& MessageFlutterApi::GetCodec() {
-  return flutter::StandardMessageCodec::GetInstance(
+const ::flutter::StandardMessageCodec& MessageFlutterApi::GetCodec() {
+  return ::flutter::StandardMessageCodec::GetInstance(
       &PigeonInternalCodecSerializer::GetInstance());
 }
 

@@ -6,6 +6,197 @@
 
 #include "messages.g.h"
 
+#include <string.h>
+
+#include <cmath>
+static guint G_GNUC_UNUSED flpigeon_hash_double(double v) {
+  if (std::isnan(v)) {
+    return static_cast<guint>(0x7FF80000);
+  }
+  if (v == 0.0) {
+    v = 0.0;
+  }
+  union {
+    double d;
+    uint64_t u;
+  } u;
+  u.d = v;
+  return static_cast<guint>(u.u ^ (u.u >> 32));
+}
+static gboolean G_GNUC_UNUSED flpigeon_equals_double(double a, double b) {
+  return (a == b) || (std::isnan(a) && std::isnan(b));
+}
+static gboolean G_GNUC_UNUSED flpigeon_deep_equals(FlValue* a, FlValue* b) {
+  if (a == b) {
+    return TRUE;
+  }
+  if (a == nullptr || b == nullptr) {
+    return FALSE;
+  }
+  if (fl_value_get_type(a) != fl_value_get_type(b)) {
+    return FALSE;
+  }
+  switch (fl_value_get_type(a)) {
+    case FL_VALUE_TYPE_NULL:
+      return TRUE;
+    case FL_VALUE_TYPE_BOOL:
+      return fl_value_get_bool(a) == fl_value_get_bool(b);
+    case FL_VALUE_TYPE_INT:
+      return fl_value_get_int(a) == fl_value_get_int(b);
+    case FL_VALUE_TYPE_FLOAT: {
+      return flpigeon_equals_double(fl_value_get_float(a),
+                                    fl_value_get_float(b));
+    }
+    case FL_VALUE_TYPE_STRING:
+      return g_strcmp0(fl_value_get_string(a), fl_value_get_string(b)) == 0;
+    case FL_VALUE_TYPE_UINT8_LIST:
+      return fl_value_get_length(a) == fl_value_get_length(b) &&
+             memcmp(fl_value_get_uint8_list(a), fl_value_get_uint8_list(b),
+                    fl_value_get_length(a)) == 0;
+    case FL_VALUE_TYPE_INT32_LIST:
+      return fl_value_get_length(a) == fl_value_get_length(b) &&
+             memcmp(fl_value_get_int32_list(a), fl_value_get_int32_list(b),
+                    fl_value_get_length(a) * sizeof(int32_t)) == 0;
+    case FL_VALUE_TYPE_INT64_LIST:
+      return fl_value_get_length(a) == fl_value_get_length(b) &&
+             memcmp(fl_value_get_int64_list(a), fl_value_get_int64_list(b),
+                    fl_value_get_length(a) * sizeof(int64_t)) == 0;
+    case FL_VALUE_TYPE_FLOAT_LIST: {
+      size_t len = fl_value_get_length(a);
+      if (len != fl_value_get_length(b)) {
+        return FALSE;
+      }
+      const double* a_data = fl_value_get_float_list(a);
+      const double* b_data = fl_value_get_float_list(b);
+      for (size_t i = 0; i < len; i++) {
+        if (!flpigeon_equals_double(a_data[i], b_data[i])) {
+          return FALSE;
+        }
+      }
+      return TRUE;
+    }
+    case FL_VALUE_TYPE_LIST: {
+      size_t len = fl_value_get_length(a);
+      if (len != fl_value_get_length(b)) {
+        return FALSE;
+      }
+      for (size_t i = 0; i < len; i++) {
+        if (!flpigeon_deep_equals(fl_value_get_list_value(a, i),
+                                  fl_value_get_list_value(b, i))) {
+          return FALSE;
+        }
+      }
+      return TRUE;
+    }
+    case FL_VALUE_TYPE_MAP: {
+      size_t len = fl_value_get_length(a);
+      if (len != fl_value_get_length(b)) {
+        return FALSE;
+      }
+      for (size_t i = 0; i < len; i++) {
+        FlValue* key = fl_value_get_map_key(a, i);
+        FlValue* val = fl_value_get_map_value(a, i);
+        gboolean found = FALSE;
+        for (size_t j = 0; j < len; j++) {
+          FlValue* b_key = fl_value_get_map_key(b, j);
+          if (flpigeon_deep_equals(key, b_key)) {
+            FlValue* b_val = fl_value_get_map_value(b, j);
+            if (flpigeon_deep_equals(val, b_val)) {
+              found = TRUE;
+              break;
+            } else {
+              return FALSE;
+            }
+          }
+        }
+        if (!found) {
+          return FALSE;
+        }
+      }
+      return TRUE;
+    }
+    default:
+      return FALSE;
+  }
+  return FALSE;
+}
+static guint G_GNUC_UNUSED flpigeon_deep_hash(FlValue* value) {
+  if (value == nullptr) {
+    return 0;
+  }
+  switch (fl_value_get_type(value)) {
+    case FL_VALUE_TYPE_NULL:
+      return 0;
+    case FL_VALUE_TYPE_BOOL:
+      return fl_value_get_bool(value) ? 1231 : 1237;
+    case FL_VALUE_TYPE_INT: {
+      int64_t v = fl_value_get_int(value);
+      return static_cast<guint>(v ^ (v >> 32));
+    }
+    case FL_VALUE_TYPE_FLOAT:
+      return flpigeon_hash_double(fl_value_get_float(value));
+    case FL_VALUE_TYPE_STRING:
+      return g_str_hash(fl_value_get_string(value));
+    case FL_VALUE_TYPE_UINT8_LIST: {
+      guint result = 1;
+      size_t len = fl_value_get_length(value);
+      const uint8_t* data = fl_value_get_uint8_list(value);
+      for (size_t i = 0; i < len; i++) {
+        result = result * 31 + data[i];
+      }
+      return result;
+    }
+    case FL_VALUE_TYPE_INT32_LIST: {
+      guint result = 1;
+      size_t len = fl_value_get_length(value);
+      const int32_t* data = fl_value_get_int32_list(value);
+      for (size_t i = 0; i < len; i++) {
+        result = result * 31 + static_cast<guint>(data[i]);
+      }
+      return result;
+    }
+    case FL_VALUE_TYPE_INT64_LIST: {
+      guint result = 1;
+      size_t len = fl_value_get_length(value);
+      const int64_t* data = fl_value_get_int64_list(value);
+      for (size_t i = 0; i < len; i++) {
+        result = result * 31 + static_cast<guint>(data[i] ^ (data[i] >> 32));
+      }
+      return result;
+    }
+    case FL_VALUE_TYPE_FLOAT_LIST: {
+      guint result = 1;
+      size_t len = fl_value_get_length(value);
+      const double* data = fl_value_get_float_list(value);
+      for (size_t i = 0; i < len; i++) {
+        result = result * 31 + flpigeon_hash_double(data[i]);
+      }
+      return result;
+    }
+    case FL_VALUE_TYPE_LIST: {
+      guint result = 1;
+      size_t len = fl_value_get_length(value);
+      for (size_t i = 0; i < len; i++) {
+        result =
+            result * 31 + flpigeon_deep_hash(fl_value_get_list_value(value, i));
+      }
+      return result;
+    }
+    case FL_VALUE_TYPE_MAP: {
+      guint result = 0;
+      size_t len = fl_value_get_length(value);
+      for (size_t i = 0; i < len; i++) {
+        result += ((flpigeon_deep_hash(fl_value_get_map_key(value, i)) * 31) ^
+                   flpigeon_deep_hash(fl_value_get_map_value(value, i)));
+      }
+      return result;
+    }
+    default:
+      return static_cast<guint>(fl_value_get_type(value));
+  }
+  return 0;
+}
+
 struct _PigeonExamplePackageMessageData {
   GObject parent_instance;
 
@@ -117,6 +308,41 @@ pigeon_example_package_message_data_new_from_list(FlValue* values) {
   FlValue* value3 = fl_value_get_list_value(values, 3);
   FlValue* data = value3;
   return pigeon_example_package_message_data_new(name, description, code, data);
+}
+
+gboolean pigeon_example_package_message_data_equals(
+    PigeonExamplePackageMessageData* a, PigeonExamplePackageMessageData* b) {
+  if (a == b) {
+    return TRUE;
+  }
+  if (a == nullptr || b == nullptr) {
+    return FALSE;
+  }
+  if (g_strcmp0(a->name, b->name) != 0) {
+    return FALSE;
+  }
+  if (g_strcmp0(a->description, b->description) != 0) {
+    return FALSE;
+  }
+  if (a->code != b->code) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->data, b->data)) {
+    return FALSE;
+  }
+  return TRUE;
+}
+
+guint pigeon_example_package_message_data_hash(
+    PigeonExamplePackageMessageData* self) {
+  g_return_val_if_fail(PIGEON_EXAMPLE_PACKAGE_IS_MESSAGE_DATA(self), 0);
+  guint result = 0;
+  result = result * 31 + (self->name != nullptr ? g_str_hash(self->name) : 0);
+  result = result * 31 +
+           (self->description != nullptr ? g_str_hash(self->description) : 0);
+  result = result * 31 + static_cast<guint>(self->code);
+  result = result * 31 + flpigeon_deep_hash(self->data);
+  return result;
 }
 
 struct _PigeonExamplePackageMessageCodec {

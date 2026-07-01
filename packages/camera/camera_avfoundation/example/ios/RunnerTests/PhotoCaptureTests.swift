@@ -7,7 +7,7 @@ import XCTest
 
 @testable import camera_avfoundation
 
-/// Includes test cases related to photo capture operations for FLTCam class.
+/// Includes test cases related to photo capture operations for Camera class.
 final class PhotoCaptureTests: XCTestCase {
   private func createCam(with captureSessionQueue: DispatchQueue) -> DefaultCamera {
     let configuration = CameraTestUtils.createTestCameraConfiguration()
@@ -36,7 +36,7 @@ final class PhotoCaptureTests: XCTestCase {
     }
     cam.capturePhotoOutput = mockOutput
 
-    // `FLTCam::captureToFile` runs on capture session queue.
+    // `Camera.captureToFile` runs on capture session queue.
     captureSessionQueue.async {
       cam.captureToFile { result in
         switch result {
@@ -73,7 +73,7 @@ final class PhotoCaptureTests: XCTestCase {
     }
     cam.capturePhotoOutput = mockOutput
 
-    // `FLTCam::captureToFile` runs on capture session queue.
+    // `Camera.captureToFile` runs on capture session queue.
     captureSessionQueue.async {
       cam.captureToFile { result in
         switch result {
@@ -112,7 +112,7 @@ final class PhotoCaptureTests: XCTestCase {
     }
     cam.capturePhotoOutput = mockOutput
 
-    // `FLTCam::captureToFile` runs on capture session queue.
+    // `Camera.captureToFile` runs on capture session queue.
     captureSessionQueue.async {
       cam.captureToFile { result in
         if let filePath = self.assertSuccess(result) {
@@ -148,7 +148,7 @@ final class PhotoCaptureTests: XCTestCase {
     }
     cam.capturePhotoOutput = mockOutput
 
-    // `FLTCam::captureToFile` runs on capture session queue.
+    // `Camera.captureToFile` runs on capture session queue.
     captureSessionQueue.async {
       cam.captureToFile { result in
         if let filePath = self.assertSuccess(result) {
@@ -198,7 +198,7 @@ final class PhotoCaptureTests: XCTestCase {
     }
     cam.capturePhotoOutput = mockOutput
 
-    // `FLTCam::captureToFile` runs on capture session queue.
+    // `Camera.captureToFile` runs on capture session queue.
     captureSessionQueue.async {
       cam.setFlashMode(.torch) { _ in }
       cam.captureToFile { result in

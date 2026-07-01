@@ -15,7 +15,7 @@ class MockMultipleArityHostApi: MultipleArityHostApi {
 
 @MainActor
 struct MultipleArityTests {
-  var codec = FlutterStandardMessageCodec.sharedInstance()
+  let codec = FlutterStandardMessageCodec.sharedInstance()
 
   @Test
   func simpleHost() async throws {

@@ -66,7 +66,46 @@ typedef ClosedCallback<S> = void Function(S data);
 /// `T` refers to the type of data returned by the route when the container
 /// is closed. This value can be accessed in the `onClosed` function.
 ///
-// TODO(goderbauer): Add example animations and sample code.
+/// The following example shows an [OpenContainer] that transforms a blue
+/// container widget into a full screen page using the Material container
+/// transform animation. When the user taps the closed widget, the container
+/// expands and morphs into the destination page defined in [openBuilder],
+/// while the original widget from [closedBuilder] fades out during the
+/// transition.
+///
+/// ```dart
+/// OpenContainer(
+///   transitionDuration: const Duration(milliseconds: 500),
+///   transitionType: ContainerTransitionType.fadeThrough,
+///   openBuilder: (context, action) {
+///     return Scaffold(
+///       appBar: AppBar(title: const Text('Details Page')),
+///       body: const Center(
+///         child: Text(
+///           'This page opened with Container Transform animation',
+///           style: TextStyle(fontSize: 18),
+///           textAlign: TextAlign.center,
+///         ),
+///       ),
+///     );
+///   },
+///   closedBuilder: (context, action) {
+///     return Container(
+///       width: 200,
+///       height: 120,
+///       alignment: Alignment.center,
+///       decoration: BoxDecoration(
+///         color: Colors.blue,
+///         borderRadius: BorderRadius.circular(16),
+///       ),
+///       child: const Text(
+///         'Open Details',
+///         style: TextStyle(color: Colors.white, fontSize: 18),
+///       ),
+///     );
+///   },
+/// ),
+/// ```
 ///
 /// See also:
 ///

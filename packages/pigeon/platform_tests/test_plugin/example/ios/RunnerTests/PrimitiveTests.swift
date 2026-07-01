@@ -21,7 +21,7 @@ class MockPrimitiveHostApi: PrimitiveHostApi {
 
 @MainActor
 struct PrimitiveTests {
-  var codec = FlutterStandardMessageCodec.sharedInstance()
+  let codec = FlutterStandardMessageCodec.sharedInstance()
 
   @Test
   func intPrimitiveHost() async throws {

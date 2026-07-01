@@ -14,4 +14,15 @@ class NonNullFieldsTests {
     val request = NonNullFieldSearchRequest("hello")
     assertEquals("hello", request.query)
   }
+
+  @Test
+  fun testEquality() {
+    val request1 = NonNullFieldSearchRequest("hello")
+    val request2 = NonNullFieldSearchRequest("hello")
+    val request3 = NonNullFieldSearchRequest("world")
+
+    assertEquals(request1, request2)
+    assert(request1 != request3)
+    assertEquals(request1.hashCode(), request2.hashCode())
+  }
 }

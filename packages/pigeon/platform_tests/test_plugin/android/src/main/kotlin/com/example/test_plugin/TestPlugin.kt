@@ -53,6 +53,20 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     return everything
   }
 
+  override fun areAllNullableTypesEqual(a: AllNullableTypes, b: AllNullableTypes): Boolean {
+    return a == b
+  }
+
+  override fun getAllNullableTypesHash(value: AllNullableTypes): Long {
+    return value.hashCode().toLong()
+  }
+
+  override fun getAllNullableTypesWithoutRecursionHash(
+      value: AllNullableTypesWithoutRecursion
+  ): Long {
+    return value.hashCode().toLong()
+  }
+
   override fun echoAllNullableTypesWithoutRecursion(
       everything: AllNullableTypesWithoutRecursion?
   ): AllNullableTypesWithoutRecursion? {

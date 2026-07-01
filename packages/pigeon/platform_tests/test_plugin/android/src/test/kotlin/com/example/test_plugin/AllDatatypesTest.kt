@@ -227,4 +227,69 @@ internal class AllDatatypesTest {
     val withDifferentMapInList = AllNullableTypes(list = matchingMapInList)
     assertEquals(withMapInList, withDifferentMapInList)
   }
+
+  @Test
+  fun `equality method correctly identifies NaN matches`() {
+    val withNaN = AllNullableTypes(aNullableDouble = Double.NaN)
+    val withAnotherNaN = AllNullableTypes(aNullableDouble = Double.NaN)
+    assertEquals(withNaN, withAnotherNaN)
+    assertEquals(withNaN.hashCode(), withAnotherNaN.hashCode())
+  }
+
+  @Test
+  fun `cross-type equality returns false`() {
+    val a = AllNullableTypes(aNullableInt = 1)
+    val b = AllNullableTypesWithoutRecursion(aNullableInt = 1)
+    assertNotEquals(a, b)
+    assertNotEquals(b, a)
+  }
+
+  @Test
+  fun `byteArray equality`() {
+    val a = AllNullableTypes(aNullableByteArray = byteArrayOf(1, 2, 3))
+    val b = AllNullableTypes(aNullableByteArray = byteArrayOf(1, 2, 3))
+    assertEquals(a, b)
+    assertEquals(a.hashCode(), b.hashCode())
+  }
+
+  @Test
+  fun `zero equality`() {
+    val a = AllNullableTypes(aNullableDouble = 0.0)
+    val b = AllNullableTypes(aNullableDouble = -0.0)
+    // In many platforms, 0.0 and -0.0 are treated as equal.
+    assertEquals(a, b)
+    assertEquals(a.hashCode(), b.hashCode())
+  }
+
+  @Test
+  fun `zero map key equality`() {
+    val a = AllNullableTypes(map = mapOf(0.0 to "a"))
+    val b = AllNullableTypes(map = mapOf(-0.0 to "a"))
+    assertEquals(a, b)
+    assertEquals(a.hashCode(), b.hashCode())
+  }
+
+  @Test
+  fun `nested NaN equality`() {
+    val a = AllNullableTypes(doubleList = listOf(Double.NaN))
+    val b = AllNullableTypes(doubleList = listOf(Double.NaN))
+    assertEquals(a, b)
+    assertEquals(a.hashCode(), b.hashCode())
+  }
+
+  @Test
+  fun `nested zero list equality`() {
+    val a = AllNullableTypes(doubleList = listOf(0.0))
+    val b = AllNullableTypes(doubleList = listOf(-0.0))
+    assertEquals(a, b)
+    assertEquals(a.hashCode(), b.hashCode())
+  }
+
+  @Test
+  fun `nested zero array equality`() {
+    val a = AllNullableTypes(aNullableFloatArray = doubleArrayOf(0.0))
+    val b = AllNullableTypes(aNullableFloatArray = doubleArrayOf(-0.0))
+    assertEquals(a, b)
+    assertEquals(a.hashCode(), b.hashCode())
+  }
 }
