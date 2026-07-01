@@ -60,7 +60,9 @@ enum StretchMode {
 /// [FlexibleSpaceBar.createSettings], to convey sizing information down to the
 /// [FlexibleSpaceBar].
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This sample application demonstrates the different features of the
 /// [FlexibleSpaceBar] when used in a [SliverAppBar]. This app bar is configured
 /// to stretch into the overscroll space, and uses the
@@ -68,8 +70,9 @@ enum StretchMode {
 /// `zoomBackground`. The app bar also makes use of [CollapseMode.parallax] by
 /// default.
 ///
-/// ** See code in examples/api/lib/material/flexible_space_bar/flexible_space_bar.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/flexible_space_bar/flexible_space_bar.0.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///

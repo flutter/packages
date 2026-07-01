@@ -52,11 +52,14 @@ import 'theme_data.dart';
 /// If [onPressed] and [onLongPress] callbacks are null, then the
 /// button will be disabled.
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This sample produces an enabled and a disabled ElevatedButton.
 ///
-/// ** See code in examples/api/lib/material/elevated_button/elevated_button.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/elevated_button/elevated_button.0.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///

@@ -30,14 +30,18 @@ enum DayPeriod {
 /// minute or using [DateTime] object.
 /// Hours are specified between 0 and 23, as in a 24-hour clock.
 ///
-/// {@tool snippet}
+// TODO(framework): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
 ///
 /// ```dart
 /// TimeOfDay now = TimeOfDay.now();
 /// const TimeOfDay releaseTime = TimeOfDay(hour: 15, minute: 0); // 3:00pm
 /// TimeOfDay roomBooked = TimeOfDay.fromDateTime(DateTime.parse('2018-10-20 16:30:04Z')); // 4:30pm
 /// ```
-/// {@end-tool}
+///
+// TODO(framework): End of the blue example container.
 ///
 /// See also:
 ///

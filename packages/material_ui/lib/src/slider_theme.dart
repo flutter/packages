@@ -66,7 +66,10 @@ class SliderTheme extends InheritedTheme {
   /// Defaults to the ambient [ThemeData.sliderTheme] if there is no
   /// [SliderTheme] in the given build context.
   ///
-  /// {@tool snippet}
+  // TODO(framework): Replace the following block with a blue example container
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
   ///
   /// ```dart
   /// class Launch extends StatefulWidget {
@@ -91,7 +94,8 @@ class SliderTheme extends InheritedTheme {
   ///   }
   /// }
   /// ```
-  /// {@end-tool}
+  ///
+  // TODO(framework): End of the blue example container.
   ///
   /// See also:
   ///
@@ -250,7 +254,10 @@ class SliderThemeData with Diagnosticable {
   /// [copyWith] on the one you get from [SliderTheme.of], or create an
   /// entirely new one with [SliderThemeData.fromPrimaryColors].
   ///
-  /// {@tool snippet}
+  // TODO(framework): Replace the following block with a blue example container
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
   ///
   /// ```dart
   /// class Blissful extends StatefulWidget {
@@ -275,7 +282,8 @@ class SliderThemeData with Diagnosticable {
   ///   }
   /// }
   /// ```
-  /// {@end-tool}
+  ///
+  // TODO(framework): End of the blue example container.
   const SliderThemeData({
     this.trackHeight,
     this.activeTrackColor,

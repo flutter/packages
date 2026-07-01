@@ -78,20 +78,26 @@ enum SliderInteraction {
 ///
 /// {@youtube 560 315 https://www.youtube.com/watch?v=ufb4gIPDmEs}
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This example showcases non-discrete and discrete [Slider]s.
 /// The [Slider]s will show the updated ![Material 3 Design appearance](https://m3.material.io/components/sliders/overview)
 /// when setting the [Slider.year2023] flag to false.
 ///
-/// ** See code in examples/api/lib/material/slider/slider.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/slider/slider.0.dart}
 ///
-/// {@tool dartpad}
+// TODO(framework): End of the @dartpad directive.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This example shows a [Slider] widget using the [Slider.secondaryTrackValue]
 /// to show a secondary track in the slider.
 ///
-/// ** See code in examples/api/lib/material/slider/slider.1.dart **
-/// {@end-tool}
+/// {@example /example/lib/slider/slider.1.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// A slider can be used to select from either a continuous or a discrete set of
 /// values. The default is to use a continuous range of values from [min] to
@@ -290,7 +296,10 @@ class Slider extends StatefulWidget {
   /// [StatefulWidget] using the [State.setState] method, so that the parent
   /// gets rebuilt; for example:
   ///
-  /// {@tool snippet}
+  // TODO(framework): Replace the following block with a blue example container
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
   ///
   /// ```dart
   /// Slider(
@@ -306,7 +315,8 @@ class Slider extends StatefulWidget {
   ///   },
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  // TODO(framework): End of the blue example container.
   ///
   /// See also:
   ///
@@ -325,7 +335,10 @@ class Slider extends StatefulWidget {
   /// The value passed will be the last [value] that the slider had before the
   /// change began.
   ///
-  /// {@tool snippet}
+  // TODO(framework): Replace the following block with a blue example container
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
   ///
   /// ```dart
   /// Slider(
@@ -344,7 +357,8 @@ class Slider extends StatefulWidget {
   ///   },
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  // TODO(framework): End of the blue example container.
   ///
   /// See also:
   ///
@@ -358,7 +372,10 @@ class Slider extends StatefulWidget {
   /// [onChanged] for that), but rather to know when the user has completed
   /// selecting a new [value] by ending a drag or a click.
   ///
-  /// {@tool snippet}
+  // TODO(framework): Replace the following block with a blue example container
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
   ///
   /// ```dart
   /// Slider(
@@ -377,7 +394,8 @@ class Slider extends StatefulWidget {
   ///   },
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  // TODO(framework): End of the blue example container.
   ///
   /// See also:
   ///
@@ -521,7 +539,10 @@ class Slider extends StatefulWidget {
   /// This is used by accessibility frameworks like TalkBack on Android to
   /// inform users what the currently selected value is with more context.
   ///
-  /// {@tool snippet}
+  // TODO(framework): Replace the following block with a blue example container
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
   ///
   /// In the example below, a slider for currency values is configured to
   /// announce a value with a currency label.
@@ -542,7 +563,8 @@ class Slider extends StatefulWidget {
   ///   }
   ///  )
   /// ```
-  /// {@end-tool}
+  ///
+  // TODO(framework): End of the blue example container.
   ///
   /// Ignored if this slider is created with [Slider.adaptive]
   final SemanticFormatterCallback? semanticFormatterCallback;

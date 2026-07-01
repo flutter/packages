@@ -94,11 +94,14 @@ enum _ScaffoldSlot {
 /// Scaffolds, set a new scope by instantiating a new ScaffoldMessenger in
 /// between the levels of nesting.
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// Here is an example of showing a [SnackBar] when the user presses a button.
 ///
-/// ** See code in examples/api/lib/material/scaffold/scaffold_messenger.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/scaffold/scaffold_messenger.0.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///
@@ -121,12 +124,15 @@ class ScaffoldMessenger extends StatefulWidget {
   /// The state from the closest instance of this class that encloses the given
   /// context.
   ///
-  /// {@tool dartpad}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  ///
   /// Typical usage of the [ScaffoldMessenger.of] function is to call it in
   /// response to a user gesture or an application state change.
   ///
-  /// ** See code in examples/api/lib/material/scaffold/scaffold_messenger.of.0.dart **
-  /// {@end-tool}
+  /// {@example /example/lib/scaffold/scaffold_messenger.of.0.dart}
+  ///
+  // TODO(framework): End of the @dartpad directive.
   ///
   /// A less elegant but more expedient solution is to assign a [GlobalKey] to the
   /// [ScaffoldMessenger], then use the `key.currentState` property to obtain the
@@ -134,7 +140,9 @@ class ScaffoldMessenger extends StatefulWidget {
   /// function. The [MaterialApp.scaffoldMessengerKey] refers to the root
   /// ScaffoldMessenger that is provided by default.
   ///
-  /// {@tool dartpad}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  ///
   /// Sometimes [SnackBar]s are produced by code that doesn't have ready access
   /// to a valid [BuildContext]. One such example of this is when you show a
   /// SnackBar from a method outside of the `build` function. In these
@@ -142,8 +150,9 @@ class ScaffoldMessenger extends StatefulWidget {
   /// example shows a key being used to obtain the [ScaffoldMessengerState]
   /// provided by the [MaterialApp].
   ///
-  /// ** See code in examples/api/lib/material/scaffold/scaffold_messenger.of.1.dart **
-  /// {@end-tool}
+  /// {@example /example/lib/scaffold/scaffold_messenger.of.1.dart}
+  ///
+  // TODO(framework): End of the @dartpad directive.
   ///
   /// If there is no [ScaffoldMessenger] in scope, then this will assert in
   /// debug mode, and throw an exception in release mode.
@@ -266,11 +275,14 @@ class ScaffoldMessengerState extends State<ScaffoldMessenger> with TickerProvide
   /// See [ScaffoldMessenger.of] for information about how to obtain the
   /// [ScaffoldMessengerState].
   ///
-  /// {@tool dartpad}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  ///
   /// Here is an example of showing a [SnackBar] when the user presses a button.
   ///
-  /// ** See code in examples/api/lib/material/scaffold/scaffold_messenger_state.show_snack_bar.0.dart **
-  /// {@end-tool}
+  /// {@example /example/lib/scaffold/scaffold_messenger_state.show_snack_bar.0.dart}
+  ///
+  // TODO(framework): End of the @dartpad directive.
   ///
   /// ## Relative positioning of floating SnackBars
   ///
@@ -282,17 +294,23 @@ class ScaffoldMessengerState extends State<ScaffoldMessenger> with TickerProvide
   /// In this case, consider constraining the size of these widgets to allow room for
   /// the SnackBar to be visible.
   ///
-  /// {@tool dartpad}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  ///
   /// Here is an example showing how to display a [SnackBar] with [showSnackBar]
   ///
-  /// ** See code in examples/api/lib/material/scaffold/scaffold_messenger_state.show_snack_bar.0.dart **
-  /// {@end-tool}
+  /// {@example /example/lib/scaffold/scaffold_messenger_state.show_snack_bar.0.dart}
   ///
-  /// {@tool dartpad}
+  // TODO(framework): End of the @dartpad directive.
+  ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  ///
   /// Here is an example showing that a floating [SnackBar] appears above [Scaffold.floatingActionButton].
   ///
-  /// ** See code in examples/api/lib/material/scaffold/scaffold_messenger_state.show_snack_bar.1.dart **
-  /// {@end-tool}
+  /// {@example /example/lib/scaffold/scaffold_messenger_state.show_snack_bar.1.dart}
+  ///
+  // TODO(framework): End of the @dartpad directive.
   ///
   /// If [AnimationStyle.duration] is provided in the [snackBarAnimationStyle]
   /// parameter, it will be used to override the snackbar show animation duration.
@@ -304,12 +322,15 @@ class ScaffoldMessengerState extends State<ScaffoldMessenger> with TickerProvide
   ///
   /// To disable the snackbar animation, use [AnimationStyle.noAnimation].
   ///
-  /// {@tool dartpad}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  ///
   /// This sample showcases how to override [SnackBar] show and hide animation
   /// duration using [AnimationStyle] in [ScaffoldMessengerState.showSnackBar].
   ///
-  /// ** See code in examples/api/lib/material/scaffold/scaffold_messenger_state.show_snack_bar.2.dart **
-  /// {@end-tool}
+  /// {@example /example/lib/scaffold/scaffold_messenger_state.show_snack_bar.2.dart}
+  ///
+  // TODO(framework): End of the @dartpad directive.
   ///
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showSnackBar(
     SnackBar snackBar, {
@@ -491,11 +512,14 @@ class ScaffoldMessengerState extends State<ScaffoldMessenger> with TickerProvide
   /// See [ScaffoldMessenger.of] for information about how to obtain the
   /// [ScaffoldMessengerState].
   ///
-  /// {@tool dartpad}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  ///
   /// Here is an example of showing a [MaterialBanner] when the user presses a button.
   ///
-  /// ** See code in examples/api/lib/material/scaffold/scaffold_messenger_state.show_material_banner.0.dart **
-  /// {@end-tool}
+  /// {@example /example/lib/scaffold/scaffold_messenger_state.show_material_banner.0.dart}
+  ///
+  // TODO(framework): End of the @dartpad directive.
   ScaffoldFeatureController<MaterialBanner, MaterialBannerClosedReason> showMaterialBanner(
     MaterialBanner materialBanner,
   ) {
@@ -1551,16 +1575,21 @@ class _FloatingActionButtonTransitionState extends State<_FloatingActionButtonTr
 /// [ScaffoldState] for the current [BuildContext] via [Scaffold.of] and use the
 /// [ScaffoldState.showBottomSheet] function.
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This example shows a [Scaffold] with a [body] and [FloatingActionButton].
 /// The [body] is a [Text] placed in a [Center] in order to center the text
 /// within the [Scaffold]. The [FloatingActionButton] is connected to a
 /// callback that increments a counter.
 ///
-/// ** See code in examples/api/lib/material/scaffold/scaffold.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/scaffold/scaffold.0.dart}
 ///
-/// {@tool dartpad}
+// TODO(framework): End of the @dartpad directive.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This example shows a [Scaffold] with a blueGrey [backgroundColor], [body]
 /// and [FloatingActionButton]. The [body] is a [Text] placed in a [Center] in
 /// order to center the text within the [Scaffold]. The [FloatingActionButton]
@@ -1568,10 +1597,13 @@ class _FloatingActionButtonTransitionState extends State<_FloatingActionButtonTr
 ///
 /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/scaffold_background_color.png)
 ///
-/// ** See code in examples/api/lib/material/scaffold/scaffold.1.dart **
-/// {@end-tool}
+/// {@example /example/lib/scaffold/scaffold.1.dart}
 ///
-/// {@tool dartpad}
+// TODO(framework): End of the @dartpad directive.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This example shows a [Scaffold] with an [AppBar], a [BottomAppBar] and a
 /// [FloatingActionButton]. The [body] is a [Text] placed in a [Center] in order
 /// to center the text within the [Scaffold]. The [FloatingActionButton] is
@@ -1581,8 +1613,9 @@ class _FloatingActionButtonTransitionState extends State<_FloatingActionButtonTr
 ///
 /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/scaffold_bottom_app_bar.png)
 ///
-/// ** See code in examples/api/lib/material/scaffold/scaffold.2.dart **
-/// {@end-tool}
+/// {@example /example/lib/scaffold/scaffold.2.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// ## Scaffold layout, the keyboard, and display "notches"
 ///
@@ -1633,7 +1666,11 @@ class _FloatingActionButtonTransitionState extends State<_FloatingActionButtonTr
 /// better to add a listener to the [TabController] that updates the
 /// AppBar
 ///
-/// {@tool snippet}
+// TODO(framework): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
+///
 /// Add a listener to the app's tab controller so that the [AppBar] title of the
 /// app's one and only scaffold is reset each time a new tab is selected.
 ///
@@ -1647,7 +1684,8 @@ class _FloatingActionButtonTransitionState extends State<_FloatingActionButtonTr
 ///   }
 /// })
 /// ```
-/// {@end-tool}
+///
+// TODO(framework): End of the blue example container.
 ///
 /// Although there are some use cases, like a presentation app that
 /// shows embedded flutter content, where nested scaffolds are
@@ -1832,14 +1870,17 @@ class Scaffold extends StatefulWidget {
   /// To close the drawer, use either [ScaffoldState.closeDrawer], [Navigator.pop]
   /// or press the escape key on the keyboard.
   ///
-  /// {@tool dartpad}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  ///
   /// To disable the drawer edge swipe on mobile, set the
   /// [Scaffold.drawerEnableOpenDragGesture] to false. Then, use
   /// [ScaffoldState.openDrawer] to open the drawer and [Navigator.pop] to close
   /// it.
   ///
-  /// ** See code in examples/api/lib/material/scaffold/scaffold.drawer.0.dart **
-  /// {@end-tool}
+  /// {@example /example/lib/scaffold/scaffold.drawer.0.dart}
+  ///
+  // TODO(framework): End of the @dartpad directive.
   final Widget? drawer;
 
   /// Optional callback that is called when the [Scaffold.drawer] is opened or closed.
@@ -1856,14 +1897,17 @@ class Scaffold extends StatefulWidget {
   /// To close the drawer, use either [ScaffoldState.closeEndDrawer], [Navigator.pop]
   /// or press the escape key on the keyboard.
   ///
-  /// {@tool dartpad}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  ///
   /// To disable the drawer edge swipe, set the
   /// [Scaffold.endDrawerEnableOpenDragGesture] to false. Then, use
   /// [ScaffoldState.openEndDrawer] to open the drawer and [Navigator.pop] to
   /// close it.
   ///
-  /// ** See code in examples/api/lib/material/scaffold/scaffold.end_drawer.0.dart **
-  /// {@end-tool}
+  /// {@example /example/lib/scaffold/scaffold.end_drawer.0.dart}
+  ///
+  // TODO(framework): End of the @dartpad directive.
   final Widget? endDrawer;
 
   /// Optional callback that is called when the [Scaffold.endDrawer] is opened or closed.
@@ -2010,14 +2054,19 @@ class Scaffold extends StatefulWidget {
   ///
   /// This method can be expensive (it walks the element tree).
   ///
-  /// {@tool dartpad}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  ///
   /// Typical usage of the [Scaffold.of] function is to call it from within the
   /// `build` method of a child of a [Scaffold].
   ///
-  /// ** See code in examples/api/lib/material/scaffold/scaffold.of.0.dart **
-  /// {@end-tool}
+  /// {@example /example/lib/scaffold/scaffold.of.0.dart}
   ///
-  /// {@tool dartpad}
+  // TODO(framework): End of the @dartpad directive.
+  ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  ///
   /// When the [Scaffold] is actually created in the same `build` function, the
   /// `context` argument to the `build` function can't be used to find the
   /// [Scaffold] (since it's "above" the widget being returned in the widget
@@ -2025,8 +2074,9 @@ class Scaffold extends StatefulWidget {
   /// to provide a new scope with a [BuildContext] that is "under" the
   /// [Scaffold]:
   ///
-  /// ** See code in examples/api/lib/material/scaffold/scaffold.of.1.dart **
-  /// {@end-tool}
+  /// {@example /example/lib/scaffold/scaffold.of.1.dart}
+  ///
+  // TODO(framework): End of the @dartpad directive.
   ///
   /// A more efficient solution is to split your build function into several
   /// widgets. This introduces a new context from which you can obtain the
@@ -2612,13 +2662,16 @@ class ScaffoldState extends State<Scaffold>
   /// of the app. Modal bottom sheets can be created and displayed with the
   /// [showModalBottomSheet] function.
   ///
-  /// {@tool dartpad}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  ///
   /// This example demonstrates how to use [showBottomSheet] to display a
   /// bottom sheet when a user taps a button. It also demonstrates how to
   /// close a bottom sheet using the Navigator.
   ///
-  /// ** See code in examples/api/lib/material/scaffold/scaffold_state.show_bottom_sheet.0.dart **
-  /// {@end-tool}
+  /// {@example /example/lib/scaffold/scaffold_state.show_bottom_sheet.0.dart}
+  ///
+  // TODO(framework): End of the @dartpad directive.
   ///
   /// The [sheetAnimationStyle] parameter is used to override the bottom sheet
   /// animation duration and reverse animation duration.
@@ -2633,12 +2686,15 @@ class ScaffoldState extends State<Scaffold>
   ///
   /// To disable the bottom sheet animation, use [AnimationStyle.noAnimation].
   ///
-  /// {@tool dartpad}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  ///
   /// This sample showcases how to override the [showBottomSheet] animation
   /// duration and reverse animation duration using [AnimationStyle].
   ///
-  /// ** See code in examples/api/lib/material/scaffold/scaffold_state.show_bottom_sheet.1.dart **
-  /// {@end-tool}
+  /// {@example /example/lib/scaffold/scaffold_state.show_bottom_sheet.1.dart}
+  ///
+  // TODO(framework): End of the @dartpad directive.
   /// See also:
   ///
   ///  * [BottomSheet], which becomes the parent of the widget returned by the

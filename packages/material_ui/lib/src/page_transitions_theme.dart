@@ -428,11 +428,14 @@ class _FadeForwardsPageTransition extends StatelessWidget {
 /// transition animation that looks like the default page transition
 /// used on Android U.
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This example shows the default page transition on Android.
 ///
-/// ** See code in examples/api/lib/material/page_transitions_theme/page_transitions_theme.3.dart **
-/// {@end-tool}
+/// {@example /example/lib/page_transitions_theme/page_transitions_theme.3.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///
@@ -607,12 +610,15 @@ class ZoomPageTransitionsBuilder extends PageTransitionsBuilder {
   /// while the route animation plays may appear frozen - unless they are a hero
   /// animation or something that is drawn in a separate overlay.
   ///
-  /// {@tool dartpad}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  ///
   /// This example shows a [MaterialApp] that disables snapshotting for the zoom
   /// transitions on Android.
   ///
-  /// ** See code in examples/api/lib/material/page_transitions_theme/page_transitions_theme.1.dart **
-  /// {@end-tool}
+  /// {@example /example/lib/page_transitions_theme/page_transitions_theme.1.dart}
+  ///
+  // TODO(framework): End of the @dartpad directive.
   ///
   /// See also:
   ///
@@ -730,11 +736,14 @@ class ZoomPageTransitionsBuilder extends PageTransitionsBuilder {
 /// If a builder with a matching platform is not found, then the
 /// [ZoomPageTransitionsBuilder] is used.
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This example shows a [MaterialApp] that defines a custom [PageTransitionsTheme].
 ///
-/// ** See code in examples/api/lib/material/page_transitions_theme/page_transitions_theme.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/page_transitions_theme/page_transitions_theme.0.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///

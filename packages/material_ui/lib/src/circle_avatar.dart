@@ -29,7 +29,10 @@ import 'theme.dart';
 /// The [onForegroundImageError] parameter must be null if the [foregroundImage]
 /// is null.
 ///
-/// {@tool snippet}
+// TODO(framework): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
 ///
 /// If the avatar is to have an image, the image should be specified in the
 /// [backgroundImage] property:
@@ -39,11 +42,15 @@ import 'theme.dart';
 ///   backgroundImage: NetworkImage(userAvatarUrl),
 /// )
 /// ```
-/// {@end-tool}
+///
+// TODO(framework): End of the blue example container.
 ///
 /// The image will be cropped to have a circle shape.
 ///
-/// {@tool snippet}
+// TODO(framework): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
 ///
 /// If the avatar is to just have the user's initials, they are typically
 /// provided using a [Text] widget as the [child] and a [backgroundColor]:
@@ -54,7 +61,8 @@ import 'theme.dart';
 ///   child: const Text('AH'),
 /// )
 /// ```
-/// {@end-tool}
+///
+// TODO(framework): End of the blue example container.
 ///
 /// See also:
 ///
