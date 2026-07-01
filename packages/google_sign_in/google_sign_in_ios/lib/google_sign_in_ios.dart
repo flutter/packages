@@ -160,7 +160,15 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
     // if the authentication isn't associated with an existing sign-in user
     // run the authentication flow first.
     if (userId == null) {
-      SignInResult result = await _api.restorePreviousSignIn();
+      SignInResult result;
+      try {
+        result = await _api.restorePreviousSignIn();
+      } on Exception {
+        // This can throw if the token has expired or been revoked.
+        // e.g. PlatformException(org.openid.appauth.oauth_token: -10, invalid_grant: Token has been expired or revoked.)
+        result = SignInResult(error: SignInFailure(type: .unknown));
+      }
+
       final SignInSuccess? success = result.success;
       if (success == null) {
         // There's no existing sign-in to use, so return the results of the
