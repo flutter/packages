@@ -1,7 +1,6 @@
 ## 0.5.2
 
-* Adds support for passing `obfuscatedProfileId` through
-  `GooglePlayPurchaseParam`.
+* Adds support for passing `obfuscatedProfileId` through `GooglePlayPurchaseParam`.
 
 ## 0.5.1
 
