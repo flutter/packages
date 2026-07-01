@@ -30,10 +30,12 @@ class ExampleApp extends StatelessWidget {
           child: SizedBox(
             width: 200,
             height: 200,
+            // #docregion asset-loader
             child: VectorGraphic(
               loader: AssetBytesLoader('assets/dart_logo.svg'),
               semanticsLabel: 'Dart logo',
             ),
+            // #enddocregion asset-loader
           ),
         ),
       ),
