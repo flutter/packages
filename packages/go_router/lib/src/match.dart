@@ -322,6 +322,7 @@ class RouteMatch extends RouteMatchBase {
       path: route.path,
       extra: matches.extra,
       topRoute: matches.lastOrNull?.route,
+      metadata: matches._routeMetadataFor(this),
     );
   }
 }
@@ -364,7 +365,11 @@ class ShellRouteMatch extends RouteMatchBase {
   final ValueKey<String> pageKey;
 
   @override
-  GoRouterState buildState(RouteConfiguration configuration, RouteMatchList matches) {
+  GoRouterState buildState(
+    RouteConfiguration configuration,
+    RouteMatchList matches,
+  ) {
+    final Map<String, dynamic> metadata = matches._routeMetadataFor(this);
     // The route related data is stored in the leaf route match.
     final RouteMatch leafMatch = _lastLeaf;
     if (leafMatch is ImperativeRouteMatch) {
@@ -379,6 +384,7 @@ class ShellRouteMatch extends RouteMatchBase {
       pageKey: pageKey,
       extra: matches.extra,
       topRoute: matches.lastOrNull?.route,
+      metadata: metadata,
     );
   }
 
@@ -448,8 +454,23 @@ class ImperativeRouteMatch extends RouteMatch {
   }
 
   @override
-  GoRouterState buildState(RouteConfiguration configuration, RouteMatchList matches) {
-    return super.buildState(configuration, this.matches);
+  GoRouterState buildState(
+    RouteConfiguration configuration,
+    RouteMatchList matches,
+  ) {
+    return GoRouterState(
+      configuration,
+      uri: this.matches.uri,
+      matchedLocation: matchedLocation,
+      fullPath: this.matches.fullPath,
+      pathParameters: this.matches.pathParameters,
+      pageKey: pageKey,
+      name: route.name,
+      path: route.path,
+      extra: this.matches.extra,
+      topRoute: this.matches.lastOrNull?.route,
+      metadata: this.matches.topRouteMetadata,
+    );
   }
 
   @override
@@ -742,6 +763,84 @@ class RouteMatchList with Diagnosticable {
       return true;
     });
     return result;
+  }
+
+  Map<String, dynamic> _routeMetadataFor(RouteMatchBase target) {
+    return _metadataForRouteMatch(
+          matches: matches,
+          target: target,
+          inheritedMetadata: const <String, dynamic>{},
+        ) ??
+        const <String, dynamic>{};
+  }
+
+  /// Returns merged metadata for the currently matched top route.
+  ///
+  /// For imperative matches, this resolves metadata from the imperative match's
+  /// own match list.
+  @meta.internal
+  Map<String, dynamic> get topRouteMetadata {
+    final RouteMatchBase? target = _lastRouteMatchOrNull(matches);
+    if (target == null) {
+      return const <String, dynamic>{};
+    }
+    if (target is ImperativeRouteMatch) {
+      return target.matches.topRouteMetadata;
+    }
+    return _routeMetadataFor(target);
+  }
+
+  static RouteMatchBase? _lastRouteMatchOrNull(List<RouteMatchBase> matches) {
+    if (matches.isEmpty) {
+      return null;
+    }
+    RouteMatchBase current = matches.last;
+    while (current is ShellRouteMatch && current.matches.isNotEmpty) {
+      current = current.matches.last;
+    }
+    return current;
+  }
+
+  static Map<String, dynamic>? _metadataForRouteMatch({
+    required List<RouteMatchBase> matches,
+    required RouteMatchBase target,
+    required Map<String, dynamic> inheritedMetadata,
+  }) {
+    var currentInheritedMetadata = inheritedMetadata;
+    for (final match in matches) {
+      final Map<String, dynamic> currentMetadata = _mergeMetadata(
+        currentInheritedMetadata,
+        match.route.metadata,
+      );
+      if (identical(match, target)) {
+        return currentMetadata;
+      }
+      if (match is ShellRouteMatch) {
+        final Map<String, dynamic>? childMetadata = _metadataForRouteMatch(
+          matches: match.matches,
+          target: target,
+          inheritedMetadata: currentMetadata,
+        );
+        if (childMetadata != null) {
+          return childMetadata;
+        }
+      }
+      currentInheritedMetadata = currentMetadata;
+    }
+    return null;
+  }
+
+  static Map<String, dynamic> _mergeMetadata(
+    Map<String, dynamic> parentMetadata,
+    Map<String, dynamic>? currentMetadata,
+  ) {
+    if (currentMetadata == null || currentMetadata.isEmpty) {
+      return parentMetadata;
+    }
+    if (parentMetadata.isEmpty) {
+      return Map<String, dynamic>.of(currentMetadata);
+    }
+    return <String, dynamic>{...parentMetadata, ...currentMetadata};
   }
 
   /// Traverse route matches in this match list in preorder until visitor

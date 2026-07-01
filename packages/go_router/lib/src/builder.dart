@@ -388,6 +388,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
       error: matchList.error,
       pageKey: ValueKey<String>('${matchList.uri}(error)'),
       topRoute: matchList.lastOrNull?.route,
+      metadata: matchList.topRouteMetadata,
     );
   }
 

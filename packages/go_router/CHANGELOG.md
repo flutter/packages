@@ -1,3 +1,7 @@
+## 17.4.0
+
+- Adds route `metadata` support, including inheritance/override behavior and exposure on `GoRouterState`.
+
 ## 17.3.0
 
 - Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.

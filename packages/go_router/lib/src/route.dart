@@ -151,7 +151,12 @@ typedef ExitCallback = FutureOr<bool> Function(BuildContext context, GoRouterSta
 /// See [main.dart](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/main.dart)
 @immutable
 abstract class RouteBase with Diagnosticable {
-  const RouteBase._({this.redirect, required this.routes, required this.parentNavigatorKey});
+  const RouteBase._({
+    this.redirect,
+    this.metadata,
+    required this.routes,
+    required this.parentNavigatorKey,
+  });
 
   /// An optional redirect function for this route.
   ///
@@ -219,6 +224,17 @@ abstract class RouteBase with Diagnosticable {
   /// Navigator instead of the nearest ShellRoute ancestor.
   final GlobalKey<NavigatorState>? parentNavigatorKey;
 
+  /// Application-defined metadata associated with this route.
+  ///
+  /// This can be used to attach static information that is useful while
+  /// building the matched page, such as analytics labels, page titles,
+  /// permissions, or feature flags. The merged metadata for the current match
+  /// is available from [GoRouterState.metadata].
+  ///
+  /// Metadata is inherited from parent routes and child route values override
+  /// parent values with the same key.
+  final Map<String, dynamic>? metadata;
+
   /// Builds a lists containing the provided routes along with all their
   /// descendant [routes].
   static Iterable<RouteBase> routesRecursively(Iterable<RouteBase> routes) {
@@ -263,6 +279,7 @@ class GoRoute extends RouteBase {
     this.pageBuilder,
     super.parentNavigatorKey,
     super.redirect,
+    super.metadata,
     this.onExit,
     this.caseSensitive = true,
     super.routes = const <RouteBase>[],
@@ -476,6 +493,7 @@ abstract class ShellRouteBase extends RouteBase {
     super.redirect,
     required super.routes,
     required super.parentNavigatorKey,
+    super.metadata,
     this.notifyRootObserver = true,
   }) : super._();
 
@@ -690,6 +708,7 @@ class ShellRoute extends ShellRouteBase {
     this.pageBuilder,
     super.notifyRootObserver,
     this.observers,
+    super.metadata,
     required super.routes,
     super.parentNavigatorKey,
     GlobalKey<NavigatorState>? navigatorKey,
@@ -867,6 +886,7 @@ class StatefulShellRoute extends ShellRouteBase {
     super.notifyRootObserver,
     required this.navigatorContainerBuilder,
     super.parentNavigatorKey,
+    super.metadata,
     this.restorationScopeId,
     GlobalKey<StatefulNavigationShellState>? key,
   }) : assert(branches.isNotEmpty),
