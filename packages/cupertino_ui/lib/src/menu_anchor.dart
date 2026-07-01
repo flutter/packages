@@ -295,15 +295,15 @@ typedef CupertinoMenuAnimationStatusChangedCallback = void Function(AnimationSta
 /// invoked every time the [AnimationStatus] of the menu animation changes.
 ///
 /// ## Usage
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+// TODO(framework): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// This example demonstrates a simple [CupertinoMenuAnchor] that wraps
 /// a button.
 ///
 /// {@example /example/lib/menu_anchor/menu_anchor.0.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+// TODO(framework): End of the blue example container.
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
@@ -1701,15 +1701,15 @@ class _CupertinoDividerPainter extends CustomPainter {
 /// will perform a destructive action, and will color the text of the menu item
 /// [CupertinoColors.systemRed].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+// TODO(framework): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
 ///
 /// This example demonstrates a simple [CupertinoMenuAnchor] that wraps
 /// a button.
 ///
 /// {@example /example/lib/menu_anchor/menu_anchor.0.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+// TODO(framework): End of the blue example container.
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
