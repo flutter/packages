@@ -844,7 +844,7 @@ class CupertinoTextField extends StatefulWidget {
   ///
   /// This sample demonstrates how to customize the magnifier that this text field uses.
   ///
-  /// ** See code in examples/api/lib/widgets/text_magnifier/text_magnifier.0.dart **
+  /// {@example example/lib/magnifier/text_magnifier.0.dart}
   ///
   // TODO(framework): End of the blue example container.
   final TextMagnifierConfiguration? magnifierConfiguration;
