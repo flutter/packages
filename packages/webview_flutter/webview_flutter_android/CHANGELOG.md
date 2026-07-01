@@ -1,3 +1,6 @@
+## 4.14.0
+* Adds support for configuring Web Authentication in `AndroidWebViewController` with `setWebAuthenticationSupport` to enable Passkey and other related Authentication.
+
 ## 4.13.0
 
 * Adds new method for accessing a native `WebView` from a `FlutterPluginBinding`.

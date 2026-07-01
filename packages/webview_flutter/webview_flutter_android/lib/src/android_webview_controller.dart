@@ -789,9 +789,46 @@ class AndroidWebViewController extends PlatformWebViewController {
   /// See [WebViewFeatureType] for available feature constants.
   Future<bool> isWebViewFeatureSupported(WebViewFeatureType featureType) {
     final String feature = switch (featureType) {
+      WebViewFeatureType.paymentRequest =>
+        WebViewFeatureConstants.paymentRequest,
+      WebViewFeatureType.webAuthentication =>
+        WebViewFeatureConstants.webAuthentication,
       WebViewFeatureType.paymentRequest => WebViewFeatureConstants.paymentRequest,
     };
     return android_webview.WebViewFeature.isFeatureSupported(feature);
+  }
+
+  /// Sets the WebAuthentication support level for this WebView.
+  ///
+  /// This method configures which contexts can use WebAuthn APIs in the WebView.
+  /// Callers should check [isWebViewFeatureSupported] before calling this
+  /// method.
+  ///
+  /// **Parameters:**
+  /// * [support] - The desired WebAuthentication support level:
+  ///   - [WebAuthenticationSupport.none]: Disables all WebAuthn requests
+  ///   - [WebAuthenticationSupport.forApp]: Allows WebAuthn for the embedded app
+  ///   - [WebAuthenticationSupport.forBrowser]: Allows WebAuthn for any website
+  ///
+  /// **Example:**
+  /// ```dart
+  /// final isSupported = await controller
+  ///     .isWebViewFeatureSupported(WebViewFeatureType.webAuthentication);
+  /// if (isSupported) {
+  ///   await controller.setWebAuthenticationSupport(
+  ///     WebAuthenticationSupport.forApp,
+  ///   );
+  /// }
+  /// ```
+  ///
+  /// See https://developer.android.com/reference/androidx/webkit/WebSettingsCompat#setWebAuthenticationSupport.
+  Future<void> setWebAuthenticationSupport(
+    WebAuthenticationSupport support,
+  ) async {
+    await android_webview.WebSettingsCompat.setWebAuthenticationSupport(
+      _webView.settings,
+      support.value,
+    );
   }
 
   /// Sets whether the WebView should enable the Payment Request API.
@@ -960,6 +997,41 @@ enum WebViewFeatureType {
   ///
   /// This feature covers [WebSettingsCompat.setPaymentRequestEnabled].
   paymentRequest,
+
+  /// Feature for isFeatureSupported.
+  ///
+  /// This feature covers [WebSettingsCompat.setWebAuthenticationSupport].
+  webAuthentication,
+}
+
+/// Support levels for [android_webview.WebSettingsCompat.setWebAuthenticationSupport].
+///
+/// This enum provides a type-safe way to specify the WebAuthentication support
+/// level for a WebView.
+///
+/// See https://developer.android.com/reference/androidx/webkit/WebSettingsCompat#setWebAuthenticationSupport.
+enum WebAuthenticationSupport {
+  /// Disables WebAuthn requests from WebView.
+  ///
+  /// No WebAuthn APIs are available to web content in the WebView.
+  none(0),
+
+  /// Allows WebAuthn requests for the embedded app.
+  ///
+  /// WebAuthn is available for Relying Party IDs that are registered for the
+  /// embedding application.
+  forApp(1),
+
+  /// Allows WebAuthn calls for any website.
+  ///
+  /// WebAuthn is available for any Relying Party ID. This is the typical
+  /// configuration for a browser-like experience.
+  forBrowser(2);
+
+  const WebAuthenticationSupport(this.value);
+
+  /// The platform integer expected by `WebSettingsCompat`.
+  final int value;
 }
 
 /// Parameters received when the `WebView` should show a file selector.

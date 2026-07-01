@@ -84,6 +84,34 @@ Add intent filters to your AndroidManifest.xml to discover and invoke Android pa
 </queries>
 ```
 
+## Enable Web Authentication in WebView
+
+WebAuthentication (WebAuthn) can be configured by calling
+`AndroidWebViewController.setWebAuthenticationSupport` after checking
+`AndroidWebViewController.isWebViewFeatureSupported`.
+
+The WebAuthentication support level can be set to one of three values:
+- **[WebAuthenticationSupport.none]**: Disables all WebAuthn requests
+- **[WebAuthenticationSupport.forApp]**: Allows WebAuthn for the embedded application (default)
+- **[WebAuthenticationSupport.forBrowser]**: Allows WebAuthn for any website (browser-like behavior)
+
+<?code-excerpt "example/lib/readme_excerpts.dart (web_authentication_example)"?>
+```dart
+final bool webAuthenticationSupported = await androidController
+    .isWebViewFeatureSupported(WebViewFeatureType.webAuthentication);
+
+if (webAuthenticationSupported) {
+  // Enable WebAuthn for the embedded app
+  await androidController.setWebAuthenticationSupport(
+    WebAuthenticationSupport.forApp,
+  );
+  // Or for browser-like behavior supporting any website:
+  // await androidController.setWebAuthenticationSupport(
+  //   WebAuthenticationSupport.forBrowser,
+  // );
+}
+```
+
 ## Fullscreen Video
 
 To display a video as fullscreen, an app must manually handle the notification that the current page
