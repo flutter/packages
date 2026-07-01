@@ -1,3 +1,8 @@
+## 27.1.1
+
+* [dart] Adds usage documentation to generated event channel methods, and
+  emits the user's documentation comments on them.
+
 ## 27.1.0
 
 * [swift] Adds `CaseIterable` conformance to generated enums.

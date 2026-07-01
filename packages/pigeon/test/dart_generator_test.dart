@@ -79,6 +79,46 @@ void main() {
     expect(code, contains('  two,'));
   });
 
+  test('gen event channel api with usage docs on the generated method', () {
+    final api = AstEventChannelApi(
+      name: 'EventApi',
+      methods: <Method>[
+        Method(
+          name: 'streamEvents',
+          location: ApiLocation.host,
+          returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+          parameters: <Parameter>[],
+          documentationComments: <String>[' An example event stream.'],
+        ),
+      ],
+    );
+    final root = Root(apis: <Api>[api], classes: <Class>[], enums: <Enum>[]);
+    final sink = StringBuffer();
+    const generator = DartGenerator();
+    generator.generate(
+      const InternalDartOptions(ignoreLints: false),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+    expect(code, contains('Stream<int> streamEvents('));
+    // The user's own documentation comments are emitted.
+    expect(code, contains('/// An example event stream.'));
+    // The generated usage documentation explains the channel-owning and
+    // broadcast semantics.
+    expect(
+      code,
+      contains('/// Returns a broadcast [Stream] of events from the `streamEvents` event channel.'),
+    );
+    expect(code, contains('not be called multiple times for the same `instanceName`'));
+    // The usage documentation is attached directly above the generated method.
+    expect(
+      code.indexOf('not be called multiple times'),
+      lessThan(code.indexOf('Stream<int> streamEvents(')),
+    );
+  });
+
   test('gen one host api', () {
     final root = Root(
       apis: <Api>[
