@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@Skip(
-  'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
-)
 // reduced-test-set:
 //   This file is run as part of a reduced test set in CI on Mac and Windows
 //   machines.
@@ -26,9 +23,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../widgets/clipboard_utils.dart';
-import '../widgets/semantics_tester.dart';
-import '../widgets/text_selection_toolbar_utils.dart';
+import 'clipboard_utils.dart';
 import 'editable_text_utils.dart';
 import 'live_text_utils.dart';
 
@@ -537,65 +532,35 @@ void main() {
   testWidgets('Activates the text field when receives semantics focus on desktops', (
     WidgetTester tester,
   ) async {
-    final semantics = SemanticsTester(tester);
     final SemanticsOwner semanticsOwner = tester.binding.pipelineOwner.semanticsOwner!;
     final focusNode = FocusNode();
     addTearDown(focusNode.dispose);
     await tester.pumpWidget(CupertinoApp(home: CupertinoTextField(focusNode: focusNode)));
+
+    final SemanticsNode node = tester.getSemantics(find.byType(CupertinoTextField));
     expect(
-      semantics,
-      hasSemantics(
-        TestSemantics.root(
-          children: <TestSemantics>[
-            TestSemantics(
-              id: 1,
-              textDirection: TextDirection.ltr,
-              children: <TestSemantics>[
-                TestSemantics(
-                  id: 2,
-                  children: <TestSemantics>[
-                    TestSemantics(
-                      id: 3,
-                      flags: <SemanticsFlag>[SemanticsFlag.scopesRoute],
-                      children: <TestSemantics>[
-                        TestSemantics(
-                          id: 4,
-                          inputType: ui.SemanticsInputType.text,
-                          flags: <SemanticsFlag>[
-                            SemanticsFlag.isTextField,
-                            SemanticsFlag.isFocusable,
-                            SemanticsFlag.hasEnabledState,
-                            SemanticsFlag.isEnabled,
-                          ],
-                          actions: <SemanticsAction>[
-                            SemanticsAction.tap,
-                            SemanticsAction.focus,
-                            SemanticsAction.didGainAccessibilityFocus,
-                            SemanticsAction.didLoseAccessibilityFocus,
-                          ],
-                          textDirection: TextDirection.ltr,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-        ignoreRect: true,
-        ignoreTransform: true,
+      node,
+      isSemantics(
+        inputType: ui.SemanticsInputType.text,
+        isTextField: true,
+        isFocusable: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        hasDidGainAccessibilityFocusAction: true,
+        hasDidLoseAccessibilityFocusAction: true,
+        textDirection: TextDirection.ltr,
       ),
     );
 
     expect(focusNode.hasFocus, isFalse);
-    semanticsOwner.performAction(4, SemanticsAction.didGainAccessibilityFocus);
+    semanticsOwner.performAction(node.id, SemanticsAction.didGainAccessibilityFocus);
     await tester.pumpAndSettle();
     expect(focusNode.hasFocus, isTrue);
-    semanticsOwner.performAction(4, SemanticsAction.didLoseAccessibilityFocus);
+    semanticsOwner.performAction(node.id, SemanticsAction.didLoseAccessibilityFocus);
     await tester.pumpAndSettle();
     expect(focusNode.hasFocus, isFalse);
-    semantics.dispose();
   }, variant: TargetPlatformVariant.desktop());
 
   testWidgets('takes available space horizontally and takes intrinsic space vertically no-strut', (
@@ -1977,10 +1942,10 @@ void main() {
 
       // Toolbar shows on mobile.
       if (isTargetPlatformIOS) {
-        expectCupertinoToolbarForCollapsedSelection();
+        _expectCupertinoToolbarForCollapsedSelection();
       } else {
         // After a tap, macOS does not show a selection toolbar for a collapsed selection.
-        expectNoCupertinoToolbar();
+        _expectNoCupertinoToolbar();
       }
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
@@ -2033,7 +1998,7 @@ void main() {
     // the selection has not changed we toggle the toolbar.
     expect(controller.selection.isCollapsed, true);
     expect(controller.selection.baseOffset, 35);
-    expectCupertinoToolbarForCollapsedSelection();
+    _expectCupertinoToolbarForCollapsedSelection();
 
     // Tap the 'v' position again to hide the toolbar.
     await tester.tapAt(vPos);
@@ -2051,7 +2016,7 @@ void main() {
     expect(controller.selection.isCollapsed, true);
     expect(controller.selection.baseOffset, 46);
     expect(controller.selection.affinity, TextAffinity.upstream);
-    expectCupertinoToolbarForCollapsedSelection();
+    _expectCupertinoToolbarForCollapsedSelection();
 
     // Tap at the same position to toggle the toolbar.
     await tester.tapAt(endPos);
@@ -2059,7 +2024,7 @@ void main() {
     expect(controller.selection.isCollapsed, true);
     expect(controller.selection.baseOffset, 46);
     expect(controller.selection.affinity, TextAffinity.upstream);
-    expectNoCupertinoToolbar();
+    _expectNoCupertinoToolbar();
 
     // Tap at the beginning of the second line to move the cursor to the front of the first word on the
     // second line, where the word wrap is. Since there is a word wrap here, and the direction of the text is LTR,
@@ -2069,7 +2034,7 @@ void main() {
     expect(controller.selection.isCollapsed, true);
     expect(controller.selection.baseOffset, 46);
     expect(controller.selection.affinity, TextAffinity.downstream);
-    expectNoCupertinoToolbar();
+    _expectNoCupertinoToolbar();
   }, variant: const TargetPlatformVariant(<TargetPlatform>{TargetPlatform.iOS}));
 
   testWidgets('Tapping on a non-collapsed selection toggles the toolbar and retains the selection', (
@@ -2109,7 +2074,7 @@ void main() {
     // Second tap selects the word around the cursor.
     expect(controller.selection, const TextSelection(baseOffset: 24, extentOffset: 35));
 
-    expectCupertinoToolbarForPartialSelection();
+    _expectCupertinoToolbarForPartialSelection();
 
     // Tap the selected word to hide the toolbar and retain the selection.
     await tester.tapAt(vPos);
@@ -2122,7 +2087,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(controller.selection, const TextSelection(baseOffset: 24, extentOffset: 35));
 
-    expectCupertinoToolbarForPartialSelection();
+    _expectCupertinoToolbarForPartialSelection();
 
     // Tap past the selected word to move the cursor and hide the toolbar.
     await tester.tapAt(ePos);
@@ -2167,7 +2132,7 @@ void main() {
       expect(controller.selection, const TextSelection(baseOffset: 8, extentOffset: 12));
 
       // The toolbar now shows up.
-      expectCupertinoToolbarForPartialSelection();
+      _expectCupertinoToolbarForPartialSelection();
 
       // Tap somewhere else to move the cursor.
       await tester.tapAt(textOffsetToPosition(tester, index));
@@ -2208,7 +2173,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 7));
 
-      expectCupertinoToolbarForPartialSelection();
+      _expectCupertinoToolbarForPartialSelection();
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.iOS,
@@ -2346,27 +2311,21 @@ void main() {
     // Toolbar should re-appear after a drag.
     await gesture.up();
     await tester.pump();
-    expectCupertinoToolbarForPartialSelection();
+    _expectCupertinoToolbarForPartialSelection();
 
     // Skip the magnifier hide animation, so it can release resources.
     await tester.pump(const Duration(milliseconds: 150));
   });
 
   testWidgets('Readonly text field does not have tap action', (WidgetTester tester) async {
-    final semantics = SemanticsTester(tester);
-
     await tester.pumpWidget(
       const CupertinoApp(home: Center(child: CupertinoTextField(maxLength: 10, readOnly: true))),
     );
 
     expect(
-      semantics,
-      isNot(
-        includesNodeWith(actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus]),
-      ),
+      tester.getSemantics(find.byType(CupertinoTextField)),
+      isSemantics(hasTapAction: false, hasFocusAction: true),
     );
-
-    semantics.dispose();
   });
 
   testWidgets(
@@ -2401,7 +2360,7 @@ void main() {
       // Second tap selects the word around the cursor.
       expect(controller.selection, const TextSelection(baseOffset: 8, extentOffset: 12));
 
-      expectCupertinoToolbarForPartialSelection();
+      _expectCupertinoToolbarForPartialSelection();
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.iOS,
@@ -2430,14 +2389,14 @@ void main() {
 
     expect(controller.selection, const TextSelection(baseOffset: 8, extentOffset: 12));
 
-    expectCupertinoToolbarForPartialSelection();
+    _expectCupertinoToolbarForPartialSelection();
 
     await gesture.up();
     await tester.pump();
 
     // Still selected.
     expect(controller.selection, const TextSelection(baseOffset: 8, extentOffset: 12));
-    expectCupertinoToolbarForPartialSelection();
+    _expectCupertinoToolbarForPartialSelection();
   }, variant: TargetPlatformVariant.all());
 
   testWidgets(
@@ -2692,14 +2651,14 @@ void main() {
     expect(controller.selection, const TextSelection(baseOffset: 35, extentOffset: 35));
 
     // The selection menu is not present.
-    expectNoCupertinoToolbar();
+    _expectNoCupertinoToolbar();
 
     await gesture.up();
     await tester.pump();
 
     // Still nothing selected and no selection menu.
     expect(controller.selection, const TextSelection(baseOffset: 35, extentOffset: 35));
-    expectNoCupertinoToolbar();
+    _expectNoCupertinoToolbar();
   });
 
   testWidgets('A read-only obscured CupertinoTextField is not selectable', (
@@ -2729,14 +2688,14 @@ void main() {
     expect(controller.selection, const TextSelection(baseOffset: 35, extentOffset: 35));
 
     // The selection menu is not present.
-    expectNoCupertinoToolbar();
+    _expectNoCupertinoToolbar();
 
     await gesture.up();
     await tester.pump();
 
     // Still nothing selected and no selection menu.
     expect(controller.selection, const TextSelection.collapsed(offset: 35));
-    expectNoCupertinoToolbar();
+    _expectNoCupertinoToolbar();
   });
 
   testWidgets('An obscured CupertinoTextField is selectable by default', (
@@ -2846,7 +2805,7 @@ void main() {
         const TextSelection(baseOffset: 0, extentOffset: 7, affinity: TextAffinity.upstream),
       );
 
-      expectCupertinoToolbarForPartialSelection();
+      _expectCupertinoToolbarForPartialSelection();
     },
     variant: TargetPlatformVariant.all(
       excluding: <TargetPlatform>{TargetPlatform.iOS, TargetPlatform.macOS},
@@ -2878,7 +2837,7 @@ void main() {
         const TextSelection.collapsed(offset: 3, affinity: TextAffinity.upstream),
       );
 
-      expectCupertinoToolbarForCollapsedSelection();
+      _expectCupertinoToolbarForCollapsedSelection();
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.iOS,
@@ -2905,7 +2864,7 @@ void main() {
       await tester.longPressAt(ePos);
       await tester.pumpAndSettle(const Duration(milliseconds: 50));
 
-      expectCupertinoToolbarForCollapsedSelection();
+      _expectCupertinoToolbarForCollapsedSelection();
 
       expect(controller.selection.isCollapsed, isTrue);
       expect(controller.selection.baseOffset, 6);
@@ -2922,7 +2881,7 @@ void main() {
       expect(controller.selection.baseOffset, 6);
 
       // The toolbar from the long press is now dismissed by the second tap.
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.iOS,
@@ -2954,7 +2913,7 @@ void main() {
         const TextSelection(baseOffset: 0, extentOffset: 7, affinity: TextAffinity.upstream),
       );
       // Toolbar only shows up on long press up.
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
 
       await gesture.moveBy(const Offset(100, 0));
       await tester.pump();
@@ -2964,7 +2923,7 @@ void main() {
         controller.selection,
         const TextSelection(baseOffset: 0, extentOffset: 12, affinity: TextAffinity.upstream),
       );
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
 
       await gesture.moveBy(const Offset(200, 0));
       await tester.pump();
@@ -2974,7 +2933,7 @@ void main() {
         controller.selection,
         const TextSelection(baseOffset: 0, extentOffset: 23, affinity: TextAffinity.upstream),
       );
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
 
       await gesture.up();
       await tester.pumpAndSettle();
@@ -2986,7 +2945,7 @@ void main() {
       );
 
       // The toolbar now shows up.
-      expectCupertinoToolbarForPartialSelection();
+      _expectCupertinoToolbarForPartialSelection();
     },
     variant: TargetPlatformVariant.all(
       excluding: <TargetPlatform>{TargetPlatform.iOS, TargetPlatform.macOS},
@@ -3020,7 +2979,7 @@ void main() {
         const TextSelection.collapsed(offset: 3, affinity: TextAffinity.upstream),
       );
       // Toolbar only shows up on long press up.
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
 
       await gesture.moveBy(const Offset(50, 0));
       await tester.pump();
@@ -3030,7 +2989,7 @@ void main() {
         controller.selection,
         const TextSelection.collapsed(offset: 6, affinity: TextAffinity.upstream),
       );
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
 
       await gesture.moveBy(const Offset(50, 0));
       await tester.pump();
@@ -3040,7 +2999,7 @@ void main() {
         controller.selection,
         const TextSelection.collapsed(offset: 9, affinity: TextAffinity.upstream),
       );
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
 
       await gesture.up();
       await tester.pumpAndSettle();
@@ -3051,7 +3010,7 @@ void main() {
         const TextSelection.collapsed(offset: 9, affinity: TextAffinity.upstream),
       );
       // The toolbar now shows up.
-      expectCupertinoToolbarForCollapsedSelection();
+      _expectCupertinoToolbarForCollapsedSelection();
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.iOS,
@@ -3120,7 +3079,7 @@ void main() {
       );
 
       // The toolbar now shows up.
-      expectCupertinoToolbarForFullSelection();
+      _expectCupertinoToolbarForFullSelection();
 
       lastCharEndpoint = renderEditable.getEndpointsForSelection(
         const TextSelection.collapsed(offset: 66), // Last character's position.
@@ -3213,7 +3172,7 @@ void main() {
         const TextSelection.collapsed(offset: 66, affinity: TextAffinity.upstream),
       );
       // The toolbar now shows up.
-      expectCupertinoToolbarForCollapsedSelection();
+      _expectCupertinoToolbarForCollapsedSelection();
 
       lastCharEndpoint = renderEditable.getEndpointsForSelection(
         const TextSelection.collapsed(offset: 66), // Last character's position.
@@ -3268,7 +3227,7 @@ void main() {
       expect(controller.selection, const TextSelection.collapsed(offset: 6));
 
       // Long press toolbar.
-      expectCupertinoToolbarForCollapsedSelection();
+      _expectCupertinoToolbarForCollapsedSelection();
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.iOS,
@@ -3304,7 +3263,7 @@ void main() {
 
       expect(controller.selection.isCollapsed, isTrue);
       expect(controller.selection.baseOffset, 3);
-      expectCupertinoToolbarForCollapsedSelection();
+      _expectCupertinoToolbarForCollapsedSelection();
 
       await tester.tapAt(pPos);
       await tester.pump(const Duration(milliseconds: 50));
@@ -3319,7 +3278,7 @@ void main() {
 
       // Double tap selection.
       expect(controller.selection, const TextSelection(baseOffset: 8, extentOffset: 12));
-      expectCupertinoToolbarForPartialSelection();
+      _expectCupertinoToolbarForPartialSelection();
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.iOS,
@@ -3347,7 +3306,7 @@ void main() {
     await tester.tapAt(textFieldStart + const Offset(50.0, 5.0));
     await tester.pumpAndSettle();
     expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 7));
-    expectCupertinoToolbarForPartialSelection();
+    _expectCupertinoToolbarForPartialSelection();
 
     // Double tap selecting the same word somewhere else is fine.
     await tester.tapAt(textFieldStart + const Offset(100.0, 5.0));
@@ -3361,7 +3320,7 @@ void main() {
     // tap is not detected as a triple tap.
     await tester.pumpAndSettle(kDoubleTapTimeout);
     expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 7));
-    expectCupertinoToolbarForPartialSelection();
+    _expectCupertinoToolbarForPartialSelection();
 
     await tester.tapAt(textFieldStart + const Offset(150.0, 5.0));
     await tester.pump(const Duration(milliseconds: 50));
@@ -3374,7 +3333,7 @@ void main() {
     await tester.tapAt(textFieldStart + const Offset(150.0, 5.0));
     await tester.pumpAndSettle();
     expect(controller.selection, const TextSelection(baseOffset: 8, extentOffset: 12));
-    expectCupertinoToolbarForPartialSelection();
+    _expectCupertinoToolbarForPartialSelection();
   }, variant: const TargetPlatformVariant(<TargetPlatform>{TargetPlatform.iOS}));
 
   group('Triple tap/click', () {
@@ -3651,7 +3610,7 @@ void main() {
         await tester.tapAt(textfieldStart + const Offset(50.0, 9.0));
         await tester.pump();
         expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 7));
-        expectCupertinoToolbarForPartialSelection();
+        _expectCupertinoToolbarForPartialSelection();
 
         await tester.tapAt(textfieldStart + const Offset(50.0, 9.0));
         await tester.pumpAndSettle();
@@ -3662,19 +3621,19 @@ void main() {
         // First tap hides the toolbar and moves the selection.
         expect(controller.selection.isCollapsed, true);
         expect(controller.selection.baseOffset, 6);
-        expectNoCupertinoToolbar();
+        _expectNoCupertinoToolbar();
 
         // Second tap shows the toolbar and selects the word.
         await tester.tapAt(textfieldStart + const Offset(100.0, 9.0));
         await tester.pump();
         expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 7));
-        expectCupertinoToolbarForPartialSelection();
+        _expectCupertinoToolbarForPartialSelection();
 
         // Third tap shows the toolbar and selects the paragraph.
         await tester.tapAt(textfieldStart + const Offset(100.0, 9.0));
         await tester.pumpAndSettle();
         expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 35));
-        expectCupertinoToolbarForFullSelection();
+        _expectCupertinoToolbarForFullSelection();
 
         await tester.tapAt(textfieldStart + const Offset(150.0, 9.0));
         await tester.pump(const Duration(milliseconds: 50));
@@ -3686,13 +3645,13 @@ void main() {
         await tester.tapAt(textfieldStart + const Offset(150.0, 9.0));
         await tester.pump();
         expect(controller.selection, const TextSelection(baseOffset: 8, extentOffset: 12));
-        expectCupertinoToolbarForPartialSelection();
+        _expectCupertinoToolbarForPartialSelection();
 
         // Third tap selects the paragraph and shows the toolbar.
         await tester.tapAt(textfieldStart + const Offset(150.0, 9.0));
         await tester.pumpAndSettle();
         expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 35));
-        expectCupertinoToolbarForFullSelection();
+        _expectCupertinoToolbarForFullSelection();
       },
       variant: const TargetPlatformVariant(<TargetPlatform>{
         TargetPlatform.android,
@@ -3723,7 +3682,7 @@ void main() {
       await tester.tapAt(textfieldStart + const Offset(50.0, 9.0));
       await tester.pump();
       expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 7));
-      expectCupertinoToolbarForPartialSelection();
+      _expectCupertinoToolbarForPartialSelection();
 
       await tester.tapAt(textfieldStart + const Offset(50.0, 9.0));
       await tester.pumpAndSettle(kDoubleTapTimeout);
@@ -3740,13 +3699,13 @@ void main() {
       await tester.tapAt(textfieldStart + const Offset(100.0, 9.0));
       await tester.pump();
       expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 7));
-      expectCupertinoToolbarForPartialSelection();
+      _expectCupertinoToolbarForPartialSelection();
 
       // Third tap shows the toolbar and selects the paragraph.
       await tester.tapAt(textfieldStart + const Offset(100.0, 9.0));
       await tester.pumpAndSettle(kDoubleTapTimeout);
       expect(controller.selection, const TextSelection(baseOffset: 0, extentOffset: 36));
-      expectCupertinoToolbarForPartialSelection();
+      _expectCupertinoToolbarForPartialSelection();
 
       await tester.tapAt(textfieldStart + const Offset(150.0, 25.0));
       await tester.pump(const Duration(milliseconds: 50));
@@ -3761,13 +3720,13 @@ void main() {
       await tester.tapAt(textfieldStart + const Offset(150.0, 25.0));
       await tester.pump();
       expect(controller.selection, const TextSelection(baseOffset: 44, extentOffset: 50));
-      expectCupertinoToolbarForPartialSelection();
+      _expectCupertinoToolbarForPartialSelection();
 
       // Third tap selects the paragraph and shows the toolbar.
       await tester.tapAt(textfieldStart + const Offset(150.0, 25.0));
       await tester.pumpAndSettle();
       expect(controller.selection, const TextSelection(baseOffset: 36, extentOffset: 66));
-      expectCupertinoToolbarForPartialSelection();
+      _expectCupertinoToolbarForPartialSelection();
     }, variant: const TargetPlatformVariant(<TargetPlatform>{TargetPlatform.iOS}));
 
     testWidgets('triple click chains work', (WidgetTester tester) async {
@@ -4620,7 +4579,7 @@ void main() {
     await gesture.up();
     await tester.pumpAndSettle();
     // Shows toolbar.
-    expectCupertinoToolbarForPartialSelection();
+    _expectCupertinoToolbarForPartialSelection();
   });
 
   testWidgets(
@@ -8933,7 +8892,7 @@ void main() {
       );
 
       // Initially, the menu is not shown and there is no selection.
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
       expect(controller.selection, const TextSelection(baseOffset: -1, extentOffset: -1));
 
       final Offset secondBlah = textOffsetToPosition(tester, 8);
@@ -8996,7 +8955,7 @@ void main() {
       );
 
       // Initially, the menu is not shown and there is no selection.
-      expectNoCupertinoToolbar();
+      _expectNoCupertinoToolbar();
       expect(controller.selection, const TextSelection(baseOffset: -1, extentOffset: -1));
 
       final Offset firstBlah = textOffsetToPosition(tester, 5);
@@ -9009,7 +8968,7 @@ void main() {
       await tester.tapAt(firstBlah, kind: PointerDeviceKind.mouse, buttons: kSecondaryMouseButton);
       await tester.pumpAndSettle();
       expect(controller.selection, const TextSelection.collapsed(offset: 5));
-      expectCupertinoToolbarForCollapsedSelection();
+      _expectCupertinoToolbarForCollapsedSelection();
 
       // Press select all.
       await tester.tap(find.text('Select All'), kind: PointerDeviceKind.mouse);
@@ -10472,136 +10431,81 @@ void main() {
   testWidgets('when enabled listens to onFocus events and gains focus', (
     WidgetTester tester,
   ) async {
-    final semantics = SemanticsTester(tester);
     final SemanticsOwner semanticsOwner = tester.binding.pipelineOwner.semanticsOwner!;
     final focusNode = FocusNode();
     addTearDown(focusNode.dispose);
     await tester.pumpWidget(CupertinoApp(home: CupertinoTextField(focusNode: focusNode)));
+
+    final SemanticsNode node = tester.getSemantics(find.byType(CupertinoTextField));
+    final bool isDesktop =
+        defaultTargetPlatform == TargetPlatform.linux ||
+        defaultTargetPlatform == TargetPlatform.windows ||
+        defaultTargetPlatform == TargetPlatform.macOS;
+
     expect(
-      semantics,
-      hasSemantics(
-        TestSemantics.root(
-          children: <TestSemantics>[
-            TestSemantics(
-              id: 1,
-              children: <TestSemantics>[
-                TestSemantics(
-                  id: 2,
-                  children: <TestSemantics>[
-                    TestSemantics(
-                      id: 3,
-                      flags: <SemanticsFlag>[SemanticsFlag.scopesRoute],
-                      children: <TestSemantics>[
-                        TestSemantics(
-                          id: 4,
-                          inputType: ui.SemanticsInputType.text,
-                          flags: <SemanticsFlag>[
-                            SemanticsFlag.isTextField,
-                            SemanticsFlag.isFocusable,
-                            SemanticsFlag.hasEnabledState,
-                            SemanticsFlag.isEnabled,
-                          ],
-                          actions: <SemanticsAction>[
-                            SemanticsAction.tap,
-                            SemanticsAction.focus,
-                            if (defaultTargetPlatform == TargetPlatform.linux ||
-                                defaultTargetPlatform == TargetPlatform.windows ||
-                                defaultTargetPlatform == TargetPlatform.macOS) ...<SemanticsAction>[
-                              SemanticsAction.didGainAccessibilityFocus,
-                              SemanticsAction.didLoseAccessibilityFocus,
-                            ],
-                            // TODO(gspencergoog): also test for the presence of SemanticsAction.focus when
-                            // this iOS issue is addressed: https://github.com/flutter/flutter/issues/150030
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-        ignoreRect: true,
-        ignoreTransform: true,
+      node,
+      isSemantics(
+        inputType: ui.SemanticsInputType.text,
+        isTextField: true,
+        isFocusable: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        hasDidGainAccessibilityFocusAction: isDesktop,
+        hasDidLoseAccessibilityFocusAction: isDesktop,
+        // TODO(gspencergoog): also test for the presence of SemanticsAction.focus when
+        // this iOS issue is addressed: https://github.com/flutter/flutter/issues/150030
       ),
     );
 
     expect(focusNode.hasFocus, isFalse);
-    semanticsOwner.performAction(4, SemanticsAction.focus);
+    semanticsOwner.performAction(node.id, SemanticsAction.focus);
     await tester.pumpAndSettle();
     expect(focusNode.hasFocus, isTrue);
-    semantics.dispose();
   }, variant: TargetPlatformVariant.all());
 
   testWidgets('when disabled does not listen to onFocus events or gain focus', (
     WidgetTester tester,
   ) async {
-    final semantics = SemanticsTester(tester);
     final SemanticsOwner semanticsOwner = tester.binding.pipelineOwner.semanticsOwner!;
     final focusNode = FocusNode();
     addTearDown(focusNode.dispose);
     await tester.pumpWidget(
       CupertinoApp(home: CupertinoTextField(focusNode: focusNode, enabled: false)),
     );
+
+    final SemanticsNode node = tester.getSemantics(find.byType(CupertinoTextField));
+    final bool isDesktop =
+        defaultTargetPlatform == TargetPlatform.linux ||
+        defaultTargetPlatform == TargetPlatform.windows ||
+        defaultTargetPlatform == TargetPlatform.macOS;
+
     expect(
-      semantics,
-      hasSemantics(
-        TestSemantics.root(
-          children: <TestSemantics>[
-            TestSemantics(
-              id: 1,
-              textDirection: TextDirection.ltr,
-              children: <TestSemantics>[
-                TestSemantics(
-                  id: 2,
-                  children: <TestSemantics>[
-                    TestSemantics(
-                      id: 3,
-                      flags: <SemanticsFlag>[SemanticsFlag.scopesRoute],
-                      children: <TestSemantics>[
-                        TestSemantics(
-                          id: 4,
-                          inputType: ui.SemanticsInputType.text,
-                          flags: <SemanticsFlag>[
-                            SemanticsFlag.isTextField,
-                            SemanticsFlag.isFocusable,
-                            SemanticsFlag.hasEnabledState,
-                            SemanticsFlag.isReadOnly,
-                          ],
-                          actions: <SemanticsAction>[
-                            if (defaultTargetPlatform == TargetPlatform.linux ||
-                                defaultTargetPlatform == TargetPlatform.windows ||
-                                defaultTargetPlatform == TargetPlatform.macOS) ...<SemanticsAction>[
-                              SemanticsAction.didGainAccessibilityFocus,
-                              SemanticsAction.didLoseAccessibilityFocus,
-                            ],
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-        ignoreRect: true,
-        ignoreTransform: true,
+      node,
+      isSemantics(
+        inputType: ui.SemanticsInputType.text,
+        isTextField: true,
+        isFocusable: true,
+        hasEnabledState: true,
+        isEnabled: false,
+        isReadOnly: true,
+        hasTapAction: false,
+        hasFocusAction: false,
+        hasDidGainAccessibilityFocusAction: isDesktop,
+        hasDidLoseAccessibilityFocusAction: isDesktop,
       ),
     );
 
     expect(focusNode.hasFocus, isFalse);
-    semanticsOwner.performAction(4, SemanticsAction.focus);
+    semanticsOwner.performAction(node.id, SemanticsAction.focus);
     await tester.pumpAndSettle();
     expect(focusNode.hasFocus, isFalse);
-    semantics.dispose();
   }, variant: TargetPlatformVariant.all());
 
   testWidgets('when receives SemanticsAction.focus while already focused, shows keyboard', (
     WidgetTester tester,
   ) async {
-    final semantics = SemanticsTester(tester);
     final SemanticsOwner semanticsOwner = tester.binding.pipelineOwner.semanticsOwner!;
     final focusNode = FocusNode();
     addTearDown(focusNode.dispose);
@@ -10609,20 +10513,19 @@ void main() {
     focusNode.requestFocus();
     await tester.pumpAndSettle();
 
+    final SemanticsNode node = tester.getSemantics(find.byType(CupertinoTextField));
+
     tester.testTextInput.log.clear();
     expect(focusNode.hasFocus, isTrue);
-    semanticsOwner.performAction(4, SemanticsAction.focus);
+    semanticsOwner.performAction(node.id, SemanticsAction.focus);
     await tester.pumpAndSettle();
     expect(focusNode.hasFocus, isTrue);
     expect(tester.testTextInput.log.single.method, 'TextInput.show');
-
-    semantics.dispose();
   }, variant: TargetPlatformVariant.all());
 
   testWidgets(
     'when receives SemanticsAction.focus while focused but read-only, does not show keyboard',
     (WidgetTester tester) async {
-      final semantics = SemanticsTester(tester);
       final SemanticsOwner semanticsOwner = tester.binding.pipelineOwner.semanticsOwner!;
       final focusNode = FocusNode();
       addTearDown(focusNode.dispose);
@@ -10632,14 +10535,14 @@ void main() {
       focusNode.requestFocus();
       await tester.pumpAndSettle();
 
+      final SemanticsNode node = tester.getSemantics(find.byType(CupertinoTextField));
+
       tester.testTextInput.log.clear();
       expect(focusNode.hasFocus, isTrue);
-      semanticsOwner.performAction(4, SemanticsAction.focus);
+      semanticsOwner.performAction(node.id, SemanticsAction.focus);
       await tester.pumpAndSettle();
       expect(focusNode.hasFocus, isTrue);
       expect(tester.testTextInput.log, isEmpty);
-
-      semantics.dispose();
     },
     variant: TargetPlatformVariant.all(),
   );
@@ -10861,4 +10764,109 @@ void main() {
     final EditableText editableText = tester.widget(find.byType(EditableText));
     expect(editableText.enableInlinePrediction, true);
   });
+}
+
+void _expectNoCupertinoToolbar() {
+  expect(find.byType(CupertinoButton), findsNothing);
+}
+
+// Check that the Cupertino text selection toolbars show the expected buttons
+// when the content is partially selected.
+void _expectCupertinoToolbarForPartialSelection() {
+  if (isContextMenuProvidedByPlatform) {
+    _expectNoCupertinoToolbar();
+    return;
+  }
+
+  switch (defaultTargetPlatform) {
+    case TargetPlatform.android:
+      expect(find.byType(CupertinoButton), findsNWidgets(5));
+      expect(find.text('Cut'), findsOneWidget);
+      expect(find.text('Copy'), findsOneWidget);
+      expect(find.text('Paste'), findsOneWidget);
+      expect(find.text('Share...'), findsOneWidget);
+      expect(find.text('Select All'), findsOneWidget);
+    case TargetPlatform.iOS:
+      expect(find.byType(CupertinoButton), findsNWidgets(6));
+      expect(find.text('Cut'), findsOneWidget);
+      expect(find.text('Copy'), findsOneWidget);
+      expect(find.text('Paste'), findsOneWidget);
+      expect(find.text('Share...'), findsOneWidget);
+      expect(find.text('Look Up'), findsOneWidget);
+      expect(find.text('Search Web'), findsOneWidget);
+    case TargetPlatform.macOS:
+      expect(find.byType(CupertinoButton), findsNWidgets(3));
+      expect(find.text('Cut'), findsOneWidget);
+      expect(find.text('Copy'), findsOneWidget);
+      expect(find.text('Paste'), findsOneWidget);
+    case TargetPlatform.fuchsia:
+    case TargetPlatform.linux:
+    case TargetPlatform.windows:
+      expect(find.byType(CupertinoButton), findsNWidgets(4));
+      expect(find.text('Cut'), findsOneWidget);
+      expect(find.text('Copy'), findsOneWidget);
+      expect(find.text('Paste'), findsOneWidget);
+      expect(find.text('Select All'), findsOneWidget);
+  }
+}
+
+// Check that the Cupertino text selection toolbar shows the expected buttons
+// when the content is fully selected.
+void _expectCupertinoToolbarForFullSelection() {
+  if (isContextMenuProvidedByPlatform) {
+    _expectNoCupertinoToolbar();
+    return;
+  }
+
+  switch (defaultTargetPlatform) {
+    case TargetPlatform.android:
+      expect(find.byType(CupertinoButton), findsNWidgets(4));
+      expect(find.text('Cut'), findsOneWidget);
+      expect(find.text('Copy'), findsOneWidget);
+      expect(find.text('Paste'), findsOneWidget);
+      expect(find.text('Share...'), findsOneWidget);
+    case TargetPlatform.iOS:
+      expect(find.byType(CupertinoButton), findsNWidgets(6));
+      expect(find.text('Cut'), findsOneWidget);
+      expect(find.text('Copy'), findsOneWidget);
+      expect(find.text('Paste'), findsOneWidget);
+      expect(find.text('Share...'), findsOneWidget);
+      expect(find.text('Look Up'), findsOneWidget);
+      expect(find.text('Search Web'), findsOneWidget);
+    case TargetPlatform.fuchsia:
+    case TargetPlatform.linux:
+    case TargetPlatform.macOS:
+    case TargetPlatform.windows:
+      expect(find.byType(CupertinoButton), findsNWidgets(3));
+      expect(find.text('Cut'), findsOneWidget);
+      expect(find.text('Copy'), findsOneWidget);
+      expect(find.text('Paste'), findsOneWidget);
+  }
+}
+
+// Check that the Cupertino text selection toolbar is correct for a collapsed selection.
+void _expectCupertinoToolbarForCollapsedSelection() {
+  if (isContextMenuProvidedByPlatform) {
+    _expectNoCupertinoToolbar();
+    return;
+  }
+
+  switch (defaultTargetPlatform) {
+    case TargetPlatform.android:
+      expect(find.byType(CupertinoButton), findsNWidgets(4));
+      expect(find.text('Cut'), findsOneWidget);
+      expect(find.text('Copy'), findsOneWidget);
+      expect(find.text('Paste'), findsOneWidget);
+      expect(find.text('Share...'), findsOneWidget);
+    case TargetPlatform.iOS:
+      expect(find.byType(CupertinoButton), findsNWidgets(2));
+      expect(find.text('Paste'), findsOneWidget);
+      expect(find.text('Select All'), findsOneWidget);
+    case TargetPlatform.fuchsia:
+    case TargetPlatform.linux:
+    case TargetPlatform.windows:
+    case TargetPlatform.macOS:
+      expect(find.byType(CupertinoButton), findsNWidgets(1));
+      expect(find.text('Paste'), findsOneWidget);
+  }
 }
