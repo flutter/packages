@@ -8,8 +8,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'image_data.dart';
-
 Future<void> pumpWidgetWithBoilerplate(WidgetTester tester, Widget widget) async {
   await tester.pumpWidget(
     Localizations(
@@ -29,11 +27,8 @@ Future<void> main() async {
       () => pumpWidgetWithBoilerplate(
         tester,
         CupertinoTabBar(
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-              label: 'Tab 1',
-            ),
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 1'),
           ],
         ),
       ),
@@ -53,15 +48,9 @@ Future<void> main() async {
       MediaQuery(
         data: const MediaQueryData(),
         child: CupertinoTabBar(
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-              label: 'Tab 1',
-            ),
-            BottomNavigationBarItem(
-              icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-              label: 'Tab 2',
-            ),
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 1'),
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 2'),
           ],
           currentIndex: 1,
           activeColor: const Color(0xFF123456),
@@ -87,15 +76,9 @@ Future<void> main() async {
       MediaQuery(
         data: const MediaQueryData(),
         child: CupertinoTabBar(
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-              label: 'Tab 1',
-            ),
-            BottomNavigationBarItem(
-              icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-              label: 'Tab 2',
-            ),
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 1'),
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 2'),
           ],
           currentIndex: 1,
         ),
@@ -122,15 +105,9 @@ Future<void> main() async {
       MediaQuery(
         data: const MediaQueryData(),
         child: CupertinoTabBar(
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-              label: 'Tab 1',
-            ),
-            BottomNavigationBarItem(
-              icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-              label: 'Tab 2',
-            ),
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 1'),
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 2'),
           ],
           currentIndex: 1,
           activeColor: dynamicActiveColor,
@@ -163,15 +140,9 @@ Future<void> main() async {
       MediaQuery(
         data: const MediaQueryData(platformBrightness: Brightness.dark),
         child: CupertinoTabBar(
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-              label: 'Tab 1',
-            ),
-            BottomNavigationBarItem(
-              icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-              label: 'Tab 2',
-            ),
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 1'),
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 2'),
           ],
           currentIndex: 1,
           activeColor: dynamicActiveColor,
@@ -199,15 +170,9 @@ Future<void> main() async {
     await tester.pumpWidget(
       CupertinoApp(
         home: CupertinoTabBar(
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-              label: 'Tab 1',
-            ),
-            BottomNavigationBarItem(
-              icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-              label: 'Tab 2',
-            ),
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 1'),
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 2'),
           ],
           currentIndex: 1,
         ),
@@ -228,15 +193,9 @@ Future<void> main() async {
       CupertinoApp(
         theme: const CupertinoThemeData(brightness: Brightness.dark),
         home: CupertinoTabBar(
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-              label: 'Tab 1',
-            ),
-            BottomNavigationBarItem(
-              icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-              label: 'Tab 2',
-            ),
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 1'),
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 2'),
           ],
           currentIndex: 1,
         ),
@@ -256,22 +215,16 @@ Future<void> main() async {
   });
 
   testWidgets('Use active icon', (WidgetTester tester) async {
-    final activeIcon = MemoryImage(Uint8List.fromList(kBlueSquarePng));
-    final inactiveIcon = MemoryImage(Uint8List.fromList(kTransparentImage));
-
     await pumpWidgetWithBoilerplate(
       tester,
       MediaQuery(
         data: const MediaQueryData(),
         child: CupertinoTabBar(
-          items: <BottomNavigationBarItem>[
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 1'),
             BottomNavigationBarItem(
-              icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-              label: 'Tab 1',
-            ),
-            BottomNavigationBarItem(
-              icon: ImageIcon(inactiveIcon),
-              activeIcon: ImageIcon(activeIcon),
+              icon: Icon(CupertinoIcons.heart),
+              activeIcon: Icon(CupertinoIcons.heart_fill),
               label: 'Tab 2',
             ),
           ],
@@ -282,28 +235,20 @@ Future<void> main() async {
       ),
     );
 
-    final Image image = tester.widget(
-      find.descendant(
-        of: find.widgetWithText(GestureDetector, 'Tab 2'),
-        matching: find.byType(Image),
-      ),
-    );
+    expect(find.byIcon(CupertinoIcons.heart_fill), findsOneWidget);
+    expect(find.byIcon(CupertinoIcons.heart), findsNothing);
 
-    expect(image.color, const Color(0xFF123456));
-    expect(image.image, activeIcon);
+    final IconThemeData iconTheme = IconTheme.of(
+      tester.element(find.byIcon(CupertinoIcons.heart_fill)),
+    );
+    expect(iconTheme.color, const Color(0xFF123456));
   });
 
   testWidgets('Adjusts height to account for bottom padding', (WidgetTester tester) async {
     final tabBar = CupertinoTabBar(
-      items: <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-          label: 'Aka',
-        ),
-        BottomNavigationBarItem(
-          icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-          label: 'Shiro',
-        ),
+      items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Aka'),
+        BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Shiro'),
       ],
     );
 
@@ -343,15 +288,9 @@ Future<void> main() async {
     const tabBarHeight = 56.0;
     final tabBar = CupertinoTabBar(
       height: tabBarHeight,
-      items: <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-          label: 'Aka',
-        ),
-        BottomNavigationBarItem(
-          icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-          label: 'Shiro',
-        ),
+      items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Aka'),
+        BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Shiro'),
       ],
     );
 
@@ -393,15 +332,9 @@ Future<void> main() async {
     const tabBarHeight = 56.0;
     final tabBar = CupertinoTabBar(
       height: tabBarHeight,
-      items: <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-          label: 'Aka',
-        ),
-        BottomNavigationBarItem(
-          icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-          label: 'Shiro',
-        ),
+      items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Aka'),
+        BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Shiro'),
       ],
     );
 
@@ -453,15 +386,9 @@ Future<void> main() async {
       MediaQuery(
         data: const MediaQueryData(),
         child: CupertinoTabBar(
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-              label: 'Tab 1',
-            ),
-            BottomNavigationBarItem(
-              icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-              label: 'Tab 2',
-            ),
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 1'),
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 2'),
           ],
         ),
       ),
@@ -474,15 +401,9 @@ Future<void> main() async {
       MediaQuery(
         data: const MediaQueryData(),
         child: CupertinoTabBar(
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-              label: 'Tab 1',
-            ),
-            BottomNavigationBarItem(
-              icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-              label: 'Tab 2',
-            ),
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 1'),
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 2'),
           ],
           backgroundColor: const Color(0xFFFFFFFF), // Opaque white.
         ),
@@ -500,15 +421,9 @@ Future<void> main() async {
       MediaQuery(
         data: const MediaQueryData(),
         child: CupertinoTabBar(
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-              label: 'Tab 1',
-            ),
-            BottomNavigationBarItem(
-              icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-              label: 'Tab 2',
-            ),
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 1'),
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 2'),
           ],
           currentIndex: 1,
           onTap: (int tab) {
@@ -531,15 +446,9 @@ Future<void> main() async {
       MediaQuery(
         data: const MediaQueryData(),
         child: CupertinoTabBar(
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-              label: 'Tab 1',
-            ),
-            BottomNavigationBarItem(
-              icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-              label: 'Tab 2',
-            ),
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 1'),
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 2'),
           ],
         ),
       ),
@@ -569,7 +478,6 @@ Future<void> main() async {
   });
 
   testWidgets('Label of items should be nullable', (WidgetTester tester) async {
-    final iconProvider = MemoryImage(Uint8List.fromList(kTransparentImage));
     final itemsTapped = <int>[];
 
     await pumpWidgetWithBoilerplate(
@@ -577,12 +485,9 @@ Future<void> main() async {
       MediaQuery(
         data: const MediaQueryData(),
         child: CupertinoTabBar(
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-              label: 'Tab 1',
-            ),
-            BottomNavigationBarItem(icon: ImageIcon(iconProvider)),
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 1'),
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.circle)),
           ],
           onTap: (int index) => itemsTapped.add(index),
         ),
@@ -591,11 +496,7 @@ Future<void> main() async {
 
     expect(find.text('Tab 1'), findsOneWidget);
 
-    final Finder finder = find.byWidgetPredicate(
-      (Widget widget) => widget is Image && widget.image == iconProvider,
-    );
-
-    await tester.tap(finder);
+    await tester.tap(find.byIcon(CupertinoIcons.circle));
     expect(itemsTapped, <int>[1]);
   });
 
@@ -605,15 +506,9 @@ Future<void> main() async {
       MediaQuery(
         data: const MediaQueryData(),
         child: CupertinoTabBar(
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-              label: 'Tab 1',
-            ),
-            BottomNavigationBarItem(
-              icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-              label: 'Tab 2',
-            ),
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 1'),
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 2'),
           ],
         ),
       ),
@@ -628,15 +523,9 @@ Future<void> main() async {
       MediaQuery(
         data: const MediaQueryData(),
         child: CupertinoTabBar(
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-              label: 'Tab 1',
-            ),
-            BottomNavigationBarItem(
-              icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-              label: 'Tab 2',
-            ),
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 1'),
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 2'),
           ],
           backgroundColor: const Color(0xFFFFFFFF), // Opaque white.
           border: null,
@@ -713,16 +602,13 @@ Future<void> main() async {
       MediaQuery(
         data: const MediaQueryData(),
         child: CupertinoTabBar(
-          items: <BottomNavigationBarItem>[
+          items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
+              icon: Icon(CupertinoIcons.search),
               label: 'A',
               semanticsLabel: 'Custom A label',
             ),
-            BottomNavigationBarItem(
-              icon: ImageIcon(MemoryImage(Uint8List.fromList(kTransparentImage))),
-              label: 'B',
-            ),
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'B'),
           ],
         ),
       ),
