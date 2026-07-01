@@ -50,15 +50,12 @@ flutter:
 Load the pre-compiled asset with `AssetBytesLoader` from
 [`package:vector_graphics`](https://pub.dev/packages/vector_graphics):
 
-<?code-excerpt "lib/readme_excerpts.dart (asset-loader)"?>
+<?code-excerpt "lib/main.dart (asset-loader)"?>
 ```dart
-Widget buildIcon() {
-  return const VectorGraphic(
-    loader: AssetBytesLoader('assets/dart_logo.svg'),
-    semanticsLabel: 'Dart logo',
-  );
-}
-
+child: VectorGraphic(
+  loader: AssetBytesLoader('assets/dart_logo.svg'),
+  semanticsLabel: 'Dart logo',
+),
 ```
 
 ## Commemoration
