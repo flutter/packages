@@ -696,26 +696,31 @@ void main() {
       ),
     );
 
-    final Finder dialogFinder = find.bySemanticsLabel('Alert');
     final SemanticsNode dialog = tester.semantics.find(find.bySemanticsLabel('Alert'));
     expect(dialog.role, SemanticsRole.alertDialog);
-    expect(dialog, isSemantics(namesRoute: true, scopesRoute: true));
     expect(
-      find.descendant(of: dialogFinder, matching: find.bySemanticsLabel('The Title')),
-      findsOneWidget,
+      dialog,
+      isSemantics(
+        namesRoute: true,
+        scopesRoute: true,
+        children: <Matcher>[
+          isSemantics(
+            hasImplicitScrolling: true,
+            children: <Matcher>[
+              isSemantics(label: 'The Title'),
+              isSemantics(label: 'Content'),
+            ],
+          ),
+          isSemantics(
+            hasImplicitScrolling: true,
+            children: <Matcher>[
+              isSemantics(label: 'Cancel', isButton: true),
+              isSemantics(label: 'OK', isButton: true),
+            ],
+          ),
+        ],
+      ),
     );
-    expect(
-      find.descendant(of: dialogFinder, matching: find.bySemanticsLabel('Content')),
-      findsOneWidget,
-    );
-    final SemanticsNode buttonOK = tester.semantics.find(
-      find.descendant(of: dialogFinder, matching: find.bySemanticsLabel('OK')),
-    );
-    expect(buttonOK, isSemantics(isButton: true));
-    final SemanticsNode buttonCancel = tester.semantics.find(
-      find.descendant(of: dialogFinder, matching: find.bySemanticsLabel('Cancel')),
-    );
-    expect(buttonCancel, isSemantics(isButton: true));
   });
 
   testWidgets('Dialog default action style', (WidgetTester tester) async {
