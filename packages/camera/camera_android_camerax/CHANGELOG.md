@@ -1,7 +1,3 @@
-## 0.7.3+1
-
-* Fix dart_code_linter build issue with package:file downgrade.
-
 ## 0.7.3
 
 * Fixes `videoBitrate` configuration being ignored during video recording.

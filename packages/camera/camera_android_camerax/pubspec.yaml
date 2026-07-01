@@ -2,7 +2,7 @@ name: camera_android_camerax
 description: Android implementation of the camera plugin using the CameraX library.
 repository: https://github.com/flutter/packages/tree/main/packages/camera/camera_android_camerax
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+camera%22
-version: 0.7.3+1
+version: 0.7.3
 
 environment:
   sdk: ^3.12.0
@@ -33,7 +33,6 @@ dev_dependencies:
       url: https://github.com/flutter/skills.git
       path: tool/dart_skills_lint
       ref: 8f85e82be6da429980f7cfe84f2f214a06cbfee1
-  file: ^7.0.0
   flutter_test:
     sdk: flutter
   leak_tracker_flutter_testing: any
