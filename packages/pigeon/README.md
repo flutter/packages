@@ -79,8 +79,41 @@ the threading model for handling HostApi methods can be selected with the
 
 ### Multi-Instance Support
 
-Host and Flutter APIs now support the ability to provide a unique message channel suffix string
+Host and Flutter APIs support the ability to provide a unique message channel suffix string
 to the api to allow for multiple instances to be created and operate in parallel.
+
+### Communication Options: MethodChannels vs. Native Interop
+
+Pigeon supports two distinct models for communication between Dart and native code:
+
+1. **MethodChannels (Message-Passing)**: The standard Flutter communication model. It serializes data into binary buffers via `StandardMessageCodec` and transmits them asynchronously over platform channels.
+2. **Native Interop (Direct FFI & JNI)**: A direct, memory-bound function call model utilizing Dart FFI (for Swift/Objective-C on iOS/macOS) and JNI (for Kotlin/Java on Android).
+
+#### Quick Comparison
+
+| Feature | MethodChannels | Native Interop |
+| :--- | :--- | :--- |
+| **Communication Mechanism** | Asynchronous message passing over platform channels | Direct memory-bound function calls (Dart FFI / JNI) |
+| **Platform Support** | All supported platforms (Android, iOS, macOS, Windows, Linux) | Android, iOS, and macOS only (Windows and Linux not supported) |
+| **Serialization Overhead** | High (data is serialized/deserialized to/from binary) | Low/Zero (uses direct memory sharing or native references) |
+| **Latency** | Higher (requires message loop scheduling) | Extremely low (direct execution) |
+| **Synchronous Host Calls** | Not supported (always asynchronous) | Fully supported (true synchronous execution) |
+| **Setup Complexity** | Simple (out-of-the-box Flutter capability) | Complex (requires external tools like `jnigen` and `ffigen`) |
+| **Code Generation Steps** | Single-step (running Pigeon generates everything) | Multi-step (requires running Pigeon, then running generated config scripts) |
+
+#### When to Choose Which Model
+
+- **Choose MethodChannels if**:
+  - Your plugin targets Windows or Linux (Native Interop is not supported on these platforms).
+  - Your plugin primarily passes simple data objects or has low-frequency communication.
+  - You want a simpler setup with no external dependencies or additional command-line tools.
+  - Your data classes contain many nested fields or custom collections where conversion overhead might offset performance gains.
+- **Choose Native Interop if**:
+  - Your plugin targets only Android, iOS, and/or macOS.
+  - Your plugin handles high-frequency messaging, large typed arrays (e.g., image processing, sensor data streams), or latency-sensitive communication where serialization overhead is a bottleneck.
+  - You need true synchronous execution for platform APIs on the host thread.
+
+For detailed information on setup, prerequisites, and instructions on how to use Native Interop, see the [Native Interop Guide](./native_interop_guide.md).
 
 ## Usage
 

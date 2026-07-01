@@ -8,3 +8,4 @@
 # Including these makes it easier to review code generation changes.
 !ProxyApiTestClass.swift
 !EventChannelTests.gen.swift
+!NiTests.gen.swift

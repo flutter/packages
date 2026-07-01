@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io' show Platform;
+import 'dart:io' show File, Platform, Process, ProcessResult;
 
 import 'package:path/path.dart' as p;
 import 'package:pigeon/pigeon.dart';
@@ -29,6 +29,12 @@ const Map<String, Set<GeneratorLanguage>> _unsupportedFiles = <String, Set<Gener
     GeneratorLanguage.objc,
   },
   'proxy_api_tests': <GeneratorLanguage>{
+    GeneratorLanguage.cpp,
+    GeneratorLanguage.gobject,
+    GeneratorLanguage.java,
+    GeneratorLanguage.objc,
+  },
+  'ni_tests': <GeneratorLanguage>{
     GeneratorLanguage.cpp,
     GeneratorLanguage.gobject,
     GeneratorLanguage.java,
@@ -65,6 +71,19 @@ Future<int> generateExamplePigeons() async {
     basePath: './example/app',
     suppressVersion: true,
   );
+  success += await runPigeon(
+    input: './example/native_interop_app/pigeons/native_interop_example.dart',
+    appDirectory: './example/native_interop_app',
+    swiftAppDirectory: './example/native_interop_app',
+    basePath: './example/native_interop_app',
+    suppressVersion: true,
+    dartOut: 'lib/src/native_interop_example.g.dart',
+    kotlinOut:
+        'android/app/src/main/kotlin/dev/flutter/pigeon_example_app/NativeInteropExample.g.kt',
+    kotlinPackage: 'dev.flutter.pigeon_example_app',
+    swiftOut: 'ios/Runner/NativeInteropExample.g.swift',
+    copyrightHeader: 'pigeons/copyright.txt',
+  );
   return success;
 }
 
@@ -84,6 +103,7 @@ Future<int> generateTestPigeons({required String baseDir, bool includeOverflow =
     'nullable_returns',
     'primitive',
     'proxy_api_tests',
+    'ni_tests',
   };
 
   const testPluginName = 'test_plugin';
@@ -111,6 +131,7 @@ Future<int> generateTestPigeons({required String baseDir, bool includeOverflow =
     // Generate the default language test plugin output.
     int generateCode = await runPigeon(
       input: './pigeons/$input.dart',
+      appDirectory: '$outputBase/example/',
       dartOut: '$sharedDartOutputBase/lib/src/generated/$input.gen.dart',
       dartTestOut: input == 'message' ? '$sharedDartOutputBase/test/test_message.gen.dart' : null,
       dartPackageName: 'pigeon_integration_tests',
@@ -121,6 +142,7 @@ Future<int> generateTestPigeons({required String baseDir, bool includeOverflow =
           : '$outputBase/android/src/main/kotlin/com/example/test_plugin/$pascalCaseName.gen.kt',
       kotlinPackage: 'com.example.test_plugin',
       kotlinErrorClassName: kotlinErrorName,
+      kotlinUseJni: input == 'ni_tests',
       kotlinIncludeErrorClass: input != 'primitive',
       // iOS/macOS
       swiftOut: skipLanguages.contains(GeneratorLanguage.swift)
@@ -128,6 +150,8 @@ Future<int> generateTestPigeons({required String baseDir, bool includeOverflow =
           : '$outputBase/darwin/$testPluginName/Sources/$testPluginName/$pascalCaseName.gen.swift',
       swiftErrorClassName: swiftErrorClassName,
       swiftIncludeErrorClass: input != 'primitive',
+      swiftUseFfi: input == 'ni_tests',
+      swiftAppDirectory: '$outputBase/example',
       // Linux
       gobjectHeaderOut: skipLanguages.contains(GeneratorLanguage.gobject)
           ? null
@@ -206,14 +230,19 @@ Future<int> generateTestPigeons({required String baseDir, bool includeOverflow =
 
 Future<int> runPigeon({
   required String input,
+  String? appDirectory,
   String? kotlinOut,
   String? kotlinPackage,
   String? kotlinErrorClassName,
+  bool kotlinUseJni = false,
   bool kotlinIncludeErrorClass = true,
+  String kotlinAppDirectory = '',
   bool kotlinUseGeneratedAnnotation = false,
   bool swiftIncludeErrorClass = true,
   String? swiftOut,
   String? swiftErrorClassName,
+  bool swiftUseFfi = false,
+  String swiftAppDirectory = '',
   String? cppHeaderOut,
   String? cppSourceOut,
   String? cppNamespace,
@@ -264,6 +293,7 @@ Future<int> runPigeon({
   final int result = await Pigeon.runWithOptions(
     PigeonOptions(
       input: input,
+      appDirectory: appDirectory,
       copyrightHeader: copyrightHeader,
       dartOut: dartOut,
       dartTestOut: dartTestOut,
@@ -281,6 +311,7 @@ Future<int> runPigeon({
         package: kotlinPackage,
         errorClassName: kotlinErrorClassName,
         includeErrorClass: kotlinIncludeErrorClass,
+        useJni: kotlinUseJni,
         useGeneratedAnnotation: kotlinUseGeneratedAnnotation,
       ),
       objcHeaderOut: objcHeaderOut,
@@ -290,6 +321,8 @@ Future<int> runPigeon({
       swiftOptions: SwiftOptions(
         errorClassName: swiftErrorClassName,
         includeErrorClass: swiftIncludeErrorClass,
+        useFfi: swiftUseFfi,
+        appDirectory: swiftAppDirectory,
       ),
       basePath: basePath,
       dartPackageName: dartPackageName,
@@ -318,28 +351,66 @@ Future<int> formatAllFiles({
     GeneratorLanguage.objc,
     GeneratorLanguage.swift,
   },
-}) {
+}) async {
   final dartCommand = Platform.isWindows ? 'dart.exe' : 'dart';
-  return runProcess(
+  final String? xcodeClangFormat = await _findXcodeClangFormat();
+  final useXcodeClangFormat = xcodeClangFormat != null;
+  final args = <String>[
+    'run',
+    'script/tool/bin/flutter_plugin_tools.dart',
+    'format',
+    '--packages=pigeon',
+    if (languages.contains(GeneratorLanguage.cpp) ||
+        languages.contains(GeneratorLanguage.gobject) ||
+        languages.contains(GeneratorLanguage.objc)) ...<String>[
+      '--clang-format',
+      if (useXcodeClangFormat) '--clang-format-path=$xcodeClangFormat',
+    ] else
+      '--no-clang-format',
+    if (languages.contains(GeneratorLanguage.java)) '--java' else '--no-java',
+    if (languages.contains(GeneratorLanguage.dart)) '--dart' else '--no-dart',
+    if (languages.contains(GeneratorLanguage.kotlin)) '--kotlin' else '--no-kotlin',
+    if (languages.contains(GeneratorLanguage.swift)) '--swift' else '--no-swift',
+  ];
+
+  int exitCode = await runProcess(
     dartCommand,
-    <String>[
-      'run',
-      'script/tool/bin/flutter_plugin_tools.dart',
-      'format',
-      '--packages=pigeon',
-      if (languages.contains(GeneratorLanguage.cpp) ||
-          languages.contains(GeneratorLanguage.gobject) ||
-          languages.contains(GeneratorLanguage.objc))
-        '--clang-format'
-      else
-        '--no-clang-format',
-      if (languages.contains(GeneratorLanguage.java)) '--java' else '--no-java',
-      if (languages.contains(GeneratorLanguage.dart)) '--dart' else '--no-dart',
-      if (languages.contains(GeneratorLanguage.kotlin)) '--kotlin' else '--no-kotlin',
-      if (languages.contains(GeneratorLanguage.swift)) '--swift' else '--no-swift',
-    ],
+    args,
     workingDirectory: repositoryRoot,
-    streamOutput: false,
     logFailure: true,
   );
+  if (exitCode != 0) {
+    return exitCode;
+  }
+
+  // Run a second time if formatting Objective-C files, because clang-format
+  // requires two passes to reach a stable state for Swift-generated ObjC headers
+  // due to complex macro wrapping.
+  if (languages.contains(GeneratorLanguage.objc)) {
+    exitCode = await runProcess(
+      dartCommand,
+      args,
+      workingDirectory: repositoryRoot,
+      logFailure: true,
+    );
+  }
+  return exitCode;
+}
+
+Future<String?> _findXcodeClangFormat() async {
+  if (!Platform.isMacOS) {
+    return null;
+  }
+  try {
+    final ProcessResult result = await Process.run('xcrun', <String>['-f', 'clang-format']);
+    if (result.exitCode == 0) {
+      final String path = result.stdout.toString().trim();
+      if (path.isNotEmpty && File(path).existsSync()) {
+        return path;
+      }
+    }
+  } catch (_) {
+    // Ignore errors and fall back.
+  }
+  return null;
 }

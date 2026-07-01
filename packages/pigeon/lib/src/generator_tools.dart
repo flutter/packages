@@ -15,7 +15,7 @@ import 'generator.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '27.1.0';
+const String pigeonVersion = '27.2.0';
 
 /// Default plugin package name.
 const String defaultPluginPackageName = 'dev.flutter.pigeon';
@@ -404,14 +404,14 @@ void addLines(Indent indent, Iterable<String> lines, {String? linePrefix}) {
 ///
 /// In other words, whenever there is a conflict over the value of a key path,
 /// [modification]'s value for that key path is selected.
-Map<String, Object> mergeMaps(Map<String, Object> base, Map<String, Object> modification) {
+Map<String, Object> mergePigeonMaps(Map<String, Object> base, Map<String, Object> modification) {
   final result = <String, Object>{};
   for (final MapEntry<String, Object> entry in modification.entries) {
     if (base.containsKey(entry.key)) {
       final Object entryValue = entry.value;
       if (entryValue is Map<String, Object>) {
         assert(base[entry.key] is Map<String, Object>);
-        result[entry.key] = mergeMaps((base[entry.key] as Map<String, Object>?)!, entryValue);
+        result[entry.key] = mergePigeonMaps((base[entry.key] as Map<String, Object>?)!, entryValue);
       } else {
         result[entry.key] = entry.value;
       }
@@ -549,25 +549,26 @@ Map<TypeDeclaration, List<int>> getReferencedTypes(List<Api> apis, List<Class> c
   final Set<String> referencedTypeNames = references.map.keys
       .map((TypeDeclaration e) => e.baseName)
       .toSet();
-  final classesToCheck = List<String>.from(referencedTypeNames);
+  final classesToCheck = Set<String>.from(referencedTypeNames);
   while (classesToCheck.isNotEmpty) {
-    final String next = classesToCheck.removeLast();
+    final String next = classesToCheck.last;
     final Class aClass = classes.firstWhere(
       (Class x) => x.name == next,
       orElse: () => Class(name: '', fields: <NamedType>[]),
     );
     for (final NamedType field in aClass.fields) {
+      references.add(field.type, field.offset);
       if (_isUnseenCustomType(field.type, referencedTypeNames)) {
-        references.add(field.type, field.offset);
         classesToCheck.add(field.type.baseName);
       }
       for (final TypeDeclaration typeArg in field.type.typeArguments) {
+        references.add(typeArg, field.offset);
         if (_isUnseenCustomType(typeArg, referencedTypeNames)) {
-          references.add(typeArg, field.offset);
           classesToCheck.add(typeArg.baseName);
         }
       }
     }
+    classesToCheck.remove(next);
   }
   return references.map;
 }
@@ -734,7 +735,7 @@ Iterable<NamedType> getFieldsInSerializationOrder(Class classDefinition) {
 
 /// Crawls up the path of [dartFilePath] until it finds a pubspec.yaml in a
 /// parent directory and returns its path.
-String? _findPubspecPath(String dartFilePath) {
+String? findPubspecPath(String dartFilePath) {
   try {
     Directory dir = File(dartFilePath).parent;
     String? pubspecPath;
@@ -746,12 +747,12 @@ String? _findPubspecPath(String dartFilePath) {
             .where((String path) => path.endsWith('pubspec.yaml'));
         if (pubspecPaths.isNotEmpty) {
           pubspecPath = pubspecPaths.first;
-        } else {
-          dir = dir.parent;
         }
-      } else {
+      }
+      if (dir.path == dir.parent.path) {
         break;
       }
+      dir = dir.parent;
     }
     return pubspecPath;
   } catch (ex) {
@@ -762,7 +763,7 @@ String? _findPubspecPath(String dartFilePath) {
 /// Given the path of a Dart file, [mainDartFile], the name of the package will
 /// be deduced by locating and parsing its associated pubspec.yaml.
 String? deducePackageName(String mainDartFile) {
-  final String? pubspecPath = _findPubspecPath(mainDartFile);
+  final String? pubspecPath = findPubspecPath(mainDartFile);
   if (pubspecPath == null) {
     return null;
   }
@@ -871,3 +872,46 @@ bool isCollectionType(TypeDeclaration type) {
       !type.isProxyApi &&
       (type.baseName.contains('List') || type.baseName == 'Map');
 }
+
+/// Wraps provided [toWrap] with [start] and [end] if [wrap] is true.
+String wrapConditionally(String toWrap, String start, String end, bool wrap) {
+  return wrap ? '$start$toWrap$end' : toWrap;
+}
+
+/// Compares [TypeDeclaration]s by how generic they are.
+///
+/// Generic-ness is approximated by counting the number of "Objects" and "?" in the
+/// type name, with "Object" being strongly weighted and "?" less so.
+int compareTypeDeclarationGenericness(TypeDeclaration a, TypeDeclaration b) {
+  return _calculateGenericScore(a, 0).compareTo(_calculateGenericScore(b, 0));
+}
+
+int _calculateGenericScore(TypeDeclaration type, int depth) {
+  var score = 0;
+
+  if (type.baseName == 'Object') {
+    score += 10000 >> depth;
+  }
+  if (type.isNullable) {
+    score += 1000 >> depth;
+  }
+
+  // Handle untyped collections by scoring their implicit 'Object?' arguments
+  if (type.typeArguments.isEmpty) {
+    if (type.baseName == 'List') {
+      score += 11000 >> (depth + 1);
+    }
+    if (type.baseName == 'Map') {
+      score += 22000 >> (depth + 1);
+    }
+  }
+
+  for (final TypeDeclaration arg in type.typeArguments) {
+    score += _calculateGenericScore(arg, depth + 1);
+  }
+  return score;
+}
+
+/// Alias for [compareTypeDeclarationGenericness] to maintain compatibility.
+const int Function(TypeDeclaration, TypeDeclaration) sortByObjectCount =
+    compareTypeDeclarationGenericness;

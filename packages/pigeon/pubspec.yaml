@@ -2,7 +2,7 @@ name: pigeon
 description: Code generator tool to make communication between Flutter and the host platform type-safe and easier.
 repository: https://github.com/flutter/packages/tree/main/packages/pigeon
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+pigeon%22
-version: 27.1.0 # This must match the version in lib/src/generator_tools.dart
+version: 27.2.0 # This must match the version in lib/src/generator_tools.dart
 
 environment:
   sdk: ^3.10.0
@@ -13,14 +13,86 @@ dependencies:
   code_builder: ^4.10.0
   collection: ^1.15.0
   dart_style: ^3.0.0
+  ffi: 
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/ffi
+      ref: 27890daeab690209603a979c7fbb54b22a3c878f
+  ffigen: 
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/ffigen
+      ref: 27890daeab690209603a979c7fbb54b22a3c878f
   graphs: ^2.3.1
+  jni: 
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/jni
+      ref: 27890daeab690209603a979c7fbb54b22a3c878f
+  jnigen: 
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/jnigen
+      ref: 27890daeab690209603a979c7fbb54b22a3c878f
   meta: ^1.9.0
+  objective_c: 
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/objective_c
+      ref: 27890daeab690209603a979c7fbb54b22a3c878f
   path: ^1.8.0
   pub_semver: ^2.1.4
+  swift2objc: 
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/swift2objc
+      ref: 27890daeab690209603a979c7fbb54b22a3c878f
+  swiftgen: 
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/swiftgen
+      ref: 27890daeab690209603a979c7fbb54b22a3c878f
   yaml: ^3.1.1
 
 dev_dependencies:
   test: ^1.11.1
+
+dependency_overrides:
+  ffi: 
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/ffi
+      ref: 27890daeab690209603a979c7fbb54b22a3c878f
+  ffigen: 
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/ffigen
+      ref: 27890daeab690209603a979c7fbb54b22a3c878f
+  jni: 
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/jni
+      ref: 27890daeab690209603a979c7fbb54b22a3c878f
+  jnigen: 
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/jnigen
+      ref: 27890daeab690209603a979c7fbb54b22a3c878f
+  objective_c: 
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/objective_c
+      ref: 27890daeab690209603a979c7fbb54b22a3c878f
+  swift2objc: 
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/swift2objc
+      ref: 27890daeab690209603a979c7fbb54b22a3c878f
+  swiftgen: 
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/swiftgen
+      ref: 27890daeab690209603a979c7fbb54b22a3c878f
 
 topics:
   - codegen

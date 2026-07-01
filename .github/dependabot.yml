@@ -50,6 +50,7 @@ updates:
       - /packages/path_provider/path_provider/example/android/app
       - /packages/path_provider/path_provider_android/example/android/app
       - /packages/pigeon/example/app/android/app
+      - /packages/pigeon/example/native_interop_app/android/app
       - /packages/pigeon/platform_tests/test_plugin/example/android/app
       - /packages/pigeon/platform_tests/alternate_language_test_plugin/example/android/app
       - /packages/quick_actions/quick_actions_android/example/android/app

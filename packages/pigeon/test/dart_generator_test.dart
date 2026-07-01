@@ -76,7 +76,7 @@ void main() {
     final code = sink.toString();
     expect(code, contains('enum Foobar'));
     expect(code, contains('  one,'));
-    expect(code, contains('  two,'));
+    expect(code, contains('  two;'));
   });
 
   test('gen one host api', () {
@@ -2026,5 +2026,82 @@ name: foobar
     final code = sink.toString();
     expect(code, contains('String toString() {'));
     expect(code, contains(r"return 'Foobar(field1: $field1)';"));
+  });
+
+  test('native interop host api unsupported error - getInstance', () {
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'doSomething',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration(baseName: 'void', isNullable: false),
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const generator = DartGenerator();
+    generator.generate(
+      const InternalDartOptions(
+        ignoreLints: false,
+        useFfi: true,
+        useJni: true,
+        dartOut: 'lib/foo.dart',
+      ),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+
+    expect(code, contains('Native Interop is not supported on this platform. Use Api instead.'));
+  });
+
+  test('native interop host api unsupported error - createWithNativeInteropApi', () {
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'doSomething',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration(baseName: 'void', isNullable: false),
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const generator = DartGenerator();
+    generator.generate(
+      const InternalDartOptions(
+        ignoreLints: false,
+        useFfi: true,
+        useJni: true,
+        dartOut: 'lib/foo.dart',
+      ),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+
+    expect(
+      code,
+      contains(
+        'Native Interop is not supported on this platform. Use the default constructor of Api instead.',
+      ),
+    );
   });
 }

@@ -65,7 +65,7 @@ void main() {
       '2': <String, Object>{'1': '1', '2': '2', '3': '3'},
       '3': '3',
     };
-    expect(_equalMaps(expected, mergeMaps(source, modification)), isTrue);
+    expect(_equalMaps(expected, mergePigeonMaps(source, modification)), isTrue);
   });
 
   test('get codec types from all classes and enums', () {
@@ -465,5 +465,78 @@ void myMethod() {
   print('hello');
 }
 ''');
+  });
+
+  group('compareTypeDeclarationGenericness', () {
+    const object = TypeDeclaration(baseName: 'Object', isNullable: false);
+    const nullableObject = TypeDeclaration(baseName: 'Object', isNullable: true);
+    const listObject = TypeDeclaration(
+      baseName: 'List',
+      isNullable: false,
+      typeArguments: <TypeDeclaration>[object],
+    );
+    const untypedList = TypeDeclaration(baseName: 'List', isNullable: false);
+
+    const string = TypeDeclaration(baseName: 'String', isNullable: false);
+    const listString = TypeDeclaration(
+      baseName: 'List',
+      isNullable: false,
+      typeArguments: <TypeDeclaration>[string],
+    );
+    const mapObjectObject = TypeDeclaration(
+      baseName: 'Map',
+      isNullable: false,
+      typeArguments: <TypeDeclaration>[object, object],
+    );
+    const untypedMap = TypeDeclaration(baseName: 'Map', isNullable: false);
+
+    const listListObject = TypeDeclaration(
+      baseName: 'List',
+      isNullable: false,
+      typeArguments: <TypeDeclaration>[listObject],
+    );
+
+    const listListNullableObject = TypeDeclaration(
+      baseName: 'List',
+      isNullable: false,
+      typeArguments: <TypeDeclaration>[
+        TypeDeclaration(
+          baseName: 'List',
+          isNullable: false,
+          typeArguments: <TypeDeclaration>[nullableObject],
+        ),
+      ],
+    );
+
+    test('Object? is more generic than List<Object>', () {
+      expect(compareTypeDeclarationGenericness(nullableObject, listObject), 1);
+    });
+
+    test('Object is less generic than Object?', () {
+      expect(compareTypeDeclarationGenericness(object, nullableObject), -1);
+    });
+
+    test('Untyped List defaults to List<Object?> which is more generic than List<Object>', () {
+      expect(compareTypeDeclarationGenericness(untypedList, listObject), 1);
+    });
+
+    test('List<Object> is more generic than List<String>', () {
+      expect(compareTypeDeclarationGenericness(listObject, listString), 1);
+    });
+
+    test('Map<Object, Object> is more generic than List<Object>', () {
+      expect(compareTypeDeclarationGenericness(mapObjectObject, listObject), 1);
+    });
+
+    test(
+      'Untyped Map defaults to Map<Object?, Object?> which is more generic than Map<Object, Object>',
+      () {
+        expect(compareTypeDeclarationGenericness(untypedMap, mapObjectObject), 1);
+      },
+    );
+
+    test('List<List<Object?>> is more generic than List<List<Object>>', () {
+      expect(compareTypeDeclarationGenericness(listListNullableObject, listListObject), 1);
+    });
   });
 }

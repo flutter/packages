@@ -17,11 +17,17 @@ let package = Package(
     .library(name: "test-plugin", targets: ["test_plugin"])
   ],
   dependencies: [],
+  // #docregion spm-targets
   targets: [
     .target(
-      name: "test_plugin",
+      name: "test_plugin_objc_gen",
       dependencies: [],
-      resources: []
-    )
+      publicHeadersPath: "."
+    ),
+    .target(
+      name: "test_plugin",
+      dependencies: ["test_plugin_objc_gen"]
+    ),
   ]
+  // #enddocregion spm-targets
 )
