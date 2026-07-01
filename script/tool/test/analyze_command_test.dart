@@ -315,7 +315,7 @@ void main() {
     });
 
     group('verifies analysis settings', () {
-      test('fails analysis_options.yaml', () async {
+      test('fails for unexpected analysis_options.yaml', () async {
         createFakePlugin('foo', packagesDir, extraFiles: <String>['analysis_options.yaml']);
 
         Error? commandError;
@@ -331,7 +331,9 @@ void main() {
         expect(
           output,
           containsAllInOrder(<Matcher>[
-            contains('Found an extra analysis_options.yaml at /packages/foo/analysis_options.yaml'),
+            contains(
+              'Found an unexpected analysis_options.yaml at /packages/foo/analysis_options.yaml',
+            ),
             contains(
               '  foo:\n'
               '    Unexpected local analysis options',
@@ -340,7 +342,7 @@ void main() {
         );
       });
 
-      test('fails .analysis_options', () async {
+      test('fails on .analysis_options', () async {
         createFakePlugin('foo', packagesDir, extraFiles: <String>['.analysis_options']);
 
         Error? commandError;
@@ -356,29 +358,13 @@ void main() {
         expect(
           output,
           containsAllInOrder(<Matcher>[
-            contains('Found an extra analysis_options.yaml at /packages/foo/.analysis_options'),
+            contains(
+              'Found an unexpected analysis_options.yaml at /packages/foo/.analysis_options',
+            ),
             contains(
               '  foo:\n'
               '    Unexpected local analysis options',
             ),
-          ]),
-        );
-      });
-
-      test('takes an allow list', () async {
-        final RepositoryPackage plugin = createFakePlugin(
-          'foo',
-          packagesDir,
-          extraFiles: <String>['analysis_options.yaml'],
-        );
-
-        await runCapturingPrint(runner, <String>['analyze', '--custom-analysis', 'foo']);
-
-        expect(
-          processRunner.recordedCalls,
-          orderedEquals(<ProcessCall>[
-            ProcessCall('flutter', const <String>['pub', 'get'], plugin.path),
-            ProcessCall('dart', const <String>['analyze', '--fatal-infos'], plugin.path),
           ]),
         );
       });
@@ -389,6 +375,7 @@ void main() {
           packagesDir,
           extraFiles: <String>['analysis_options.yaml'],
         );
+        plugin.ciConfigFile.writeAsStringSync('allow_custom_analysis_options: true');
         final RepositoryPackage includingPackage = createFakePlugin('bar', packagesDir);
         // Simulate the local state of having built 'bar' if it includes 'foo'.
         includingPackage.directory
@@ -397,19 +384,18 @@ void main() {
             .childLink('.symlinks')
             .createSync(plugin.directory.path, recursive: true);
 
-        await runCapturingPrint(runner, <String>['analyze', '--custom-analysis', 'foo']);
+        await runCapturingPrint(runner, <String>['analyze']);
       });
 
-      test('takes an allow config file', () async {
+      test('allows analysis options when configured', () async {
         final RepositoryPackage plugin = createFakePlugin(
           'foo',
           packagesDir,
           extraFiles: <String>['analysis_options.yaml'],
         );
-        final File allowFile = packagesDir.childFile('custom.yaml');
-        allowFile.writeAsStringSync('- foo');
+        plugin.ciConfigFile.writeAsStringSync('allow_custom_analysis_options: true');
 
-        await runCapturingPrint(runner, <String>['analyze', '--custom-analysis', allowFile.path]);
+        await runCapturingPrint(runner, <String>['analyze']);
 
         expect(
           processRunner.recordedCalls,
@@ -417,27 +403,6 @@ void main() {
             ProcessCall('flutter', const <String>['pub', 'get'], plugin.path),
             ProcessCall('dart', const <String>['analyze', '--fatal-infos'], plugin.path),
           ]),
-        );
-      });
-
-      test('allows an empty config file', () async {
-        createFakePlugin('foo', packagesDir, extraFiles: <String>['analysis_options.yaml']);
-        final File allowFile = packagesDir.childFile('custom.yaml');
-        allowFile.createSync();
-
-        await expectLater(
-          () => runCapturingPrint(runner, <String>['analyze', '--custom-analysis', allowFile.path]),
-          throwsA(isA<ToolExit>()),
-        );
-      });
-
-      // See: https://github.com/flutter/flutter/issues/78994
-      test('takes an empty allow list', () async {
-        createFakePlugin('foo', packagesDir, extraFiles: <String>['analysis_options.yaml']);
-
-        await expectLater(
-          () => runCapturingPrint(runner, <String>['analyze', '--custom-analysis', '']),
-          throwsA(isA<ToolExit>()),
         );
       });
     });
@@ -667,13 +632,10 @@ void main() {
     // modify the script above, as it is run from source, but out-of-repo.
     // Contact stuartmorgan or devoncarew for assistance.
     test('Dart repo analyze command works', () async {
-      final RepositoryPackage plugin = createFakePlugin(
-        'foo',
-        packagesDir,
-        extraFiles: <String>['analysis_options.yaml'],
-      );
+      final RepositoryPackage plugin = createFakePlugin('foo', packagesDir);
       final File allowFile = packagesDir.childFile('custom.yaml');
-      allowFile.writeAsStringSync('- foo');
+      // Intentionally do not create the file; this ensures that removing the legacy file from this
+      // repository won't break the other callers.
 
       await runCapturingPrint(runner, <String>[
         // DO NOT change this call; see comment above.

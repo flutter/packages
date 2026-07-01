@@ -15,8 +15,7 @@ set -e
 # since only the packages changed by 'make-deps-path-based' need to be
 # re-checked.
 .ci/scripts/tool_runner.sh analyze --lib-only \
-    --skip-if-not-supporting-flutter-version="$CHANNEL" \
-    --custom-analysis=script/configs/custom_analysis.yaml
+    --skip-if-not-supporting-flutter-version="$CHANNEL"
 
 # Restore the tree to a clean state, to avoid accidental issues if
 # other script steps are added to the enclosing task.
