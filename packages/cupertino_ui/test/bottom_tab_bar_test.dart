@@ -50,7 +50,7 @@ Future<void> main() async {
         child: CupertinoTabBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 1'),
-            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 2'),
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.settings), label: 'Tab 2'),
           ],
           currentIndex: 1,
           activeColor: const Color(0xFF123456),
@@ -78,7 +78,7 @@ Future<void> main() async {
         child: CupertinoTabBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 1'),
-            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 2'),
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.settings), label: 'Tab 2'),
           ],
           currentIndex: 1,
         ),
@@ -107,7 +107,7 @@ Future<void> main() async {
         child: CupertinoTabBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 1'),
-            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 2'),
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.settings), label: 'Tab 2'),
           ],
           currentIndex: 1,
           activeColor: dynamicActiveColor,
@@ -142,7 +142,7 @@ Future<void> main() async {
         child: CupertinoTabBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 1'),
-            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 2'),
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.settings), label: 'Tab 2'),
           ],
           currentIndex: 1,
           activeColor: dynamicActiveColor,
@@ -172,7 +172,7 @@ Future<void> main() async {
         home: CupertinoTabBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 1'),
-            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 2'),
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.settings), label: 'Tab 2'),
           ],
           currentIndex: 1,
         ),
@@ -195,7 +195,7 @@ Future<void> main() async {
         home: CupertinoTabBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 1'),
-            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 2'),
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.settings), label: 'Tab 2'),
           ],
           currentIndex: 1,
         ),
@@ -248,7 +248,7 @@ Future<void> main() async {
     final tabBar = CupertinoTabBar(
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Aka'),
-        BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Shiro'),
+        BottomNavigationBarItem(icon: Icon(CupertinoIcons.settings), label: 'Shiro'),
       ],
     );
 
@@ -290,7 +290,7 @@ Future<void> main() async {
       height: tabBarHeight,
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Aka'),
-        BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Shiro'),
+        BottomNavigationBarItem(icon: Icon(CupertinoIcons.settings), label: 'Shiro'),
       ],
     );
 
@@ -334,7 +334,7 @@ Future<void> main() async {
       height: tabBarHeight,
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Aka'),
-        BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Shiro'),
+        BottomNavigationBarItem(icon: Icon(CupertinoIcons.settings), label: 'Shiro'),
       ],
     );
 
@@ -388,7 +388,7 @@ Future<void> main() async {
         child: CupertinoTabBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 1'),
-            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 2'),
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.settings), label: 'Tab 2'),
           ],
         ),
       ),
@@ -403,7 +403,7 @@ Future<void> main() async {
         child: CupertinoTabBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 1'),
-            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 2'),
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.settings), label: 'Tab 2'),
           ],
           backgroundColor: const Color(0xFFFFFFFF), // Opaque white.
         ),
@@ -423,7 +423,7 @@ Future<void> main() async {
         child: CupertinoTabBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 1'),
-            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 2'),
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.settings), label: 'Tab 2'),
           ],
           currentIndex: 1,
           onTap: (int tab) {
@@ -448,7 +448,7 @@ Future<void> main() async {
         child: CupertinoTabBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 1'),
-            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 2'),
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.settings), label: 'Tab 2'),
           ],
         ),
       ),
@@ -508,7 +508,7 @@ Future<void> main() async {
         child: CupertinoTabBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 1'),
-            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 2'),
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.settings), label: 'Tab 2'),
           ],
         ),
       ),
@@ -525,7 +525,7 @@ Future<void> main() async {
         child: CupertinoTabBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 1'),
-            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Tab 2'),
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.settings), label: 'Tab 2'),
           ],
           backgroundColor: const Color(0xFFFFFFFF), // Opaque white.
           border: null,
@@ -608,7 +608,7 @@ Future<void> main() async {
               label: 'A',
               semanticsLabel: 'Custom A label',
             ),
-            BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'B'),
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.settings), label: 'B'),
           ],
         ),
       ),
