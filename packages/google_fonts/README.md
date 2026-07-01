@@ -42,9 +42,7 @@ To use `GoogleFonts` with an existing `TextStyle`:
 ```dart
 Text(
   'This is Google Fonts',
-  style: GoogleFonts.lato(
-    textStyle: const TextStyle(color: Colors.blue, letterSpacing: .5),
-  ),
+  style: GoogleFonts.lato(textStyle: const TextStyle(color: Colors.blue, letterSpacing: .5)),
 ),
 ```
 
@@ -54,9 +52,7 @@ or
 ```dart
 Text(
   'This is Google Fonts',
-  style: GoogleFonts.lato(
-    textStyle: Theme.of(context).textTheme.headlineMedium,
-  ),
+  style: GoogleFonts.lato(textStyle: Theme.of(context).textTheme.headlineMedium),
 ),
 ```
 
@@ -96,10 +92,9 @@ class MyApp extends StatelessWidget {
 ThemeData _buildTheme(Brightness brightness) {
   final baseTheme = ThemeData(brightness: brightness);
 
-  return baseTheme.copyWith(
-    textTheme: GoogleFonts.latoTextTheme(baseTheme.textTheme),
-  );
+  return baseTheme.copyWith(textTheme: GoogleFonts.latoTextTheme(baseTheme.textTheme));
 }
+
 ```
 
 Or, if you want a `TextTheme` where a couple of styles should use a different font:
@@ -111,9 +106,9 @@ final TextTheme textTheme = Theme.of(context).textTheme;
 return MaterialApp(
   // ···
   theme: ThemeData(
-    textTheme: GoogleFonts.latoTextTheme(textTheme).copyWith(
-      bodyMedium: GoogleFonts.oswald(textStyle: textTheme.bodyMedium),
-    ),
+    textTheme: GoogleFonts.latoTextTheme(
+      textTheme,
+    ).copyWith(bodyMedium: GoogleFonts.oswald(textStyle: textTheme.bodyMedium)),
   ),
   // ···
 );

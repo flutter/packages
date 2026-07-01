@@ -4,7 +4,7 @@ on:
   push:
     branches:
       # As packages opt into batched releases, they need to be added here
-      - 'release-go_router'
+      - 'release-go_router-*'
 
 jobs:
   create_sync_pr:
@@ -15,7 +15,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           fetch-depth: 0 # Fetch history to allow branch comparison
 
@@ -35,10 +35,15 @@ jobs:
             exit 0
           fi
 
-          # 3. Create the PR directly
+          # 3. Extract package name for label
+          BRANCH_NAME="${{ github.ref_name }}"
+          TEMP="${BRANCH_NAME#release-}"
+          PACKAGE_NAME="${TEMP%-*}"
+
+          # 4. Create the PR directly
           gh pr create \
             --base "main" \
             --head "${{ github.ref_name }}" \
             --title "Sync ${{ github.ref_name }} to main" \
             --body "This automated PR syncs the changes from the release branch ${{ github.ref_name }} back to the main branch." \
-            --label "post-${{ github.ref_name }}"
+            --label "override: skip-batch-release-repo-check-${PACKAGE_NAME}"

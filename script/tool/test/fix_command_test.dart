@@ -21,8 +21,9 @@ void main() {
   setUp(() {
     mockPlatform = MockPlatform();
     final GitDir gitDir;
-    (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
-        configureBaseCommandMocks(platform: mockPlatform);
+    (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) = configureBaseCommandMocks(
+      platform: mockPlatform,
+    );
     final command = FixCommand(
       packagesDir,
       processRunner: processRunner,
@@ -44,15 +45,9 @@ void main() {
       processRunner.recordedCalls,
       orderedEquals(<ProcessCall>[
         ProcessCall('dart', const <String>['fix', '--apply'], package.path),
-        ProcessCall('dart', const <String>[
-          'fix',
-          '--apply',
-        ], package.getExamples().first.path),
+        ProcessCall('dart', const <String>['fix', '--apply'], package.getExamples().first.path),
         ProcessCall('dart', const <String>['fix', '--apply'], plugin.path),
-        ProcessCall('dart', const <String>[
-          'fix',
-          '--apply',
-        ], plugin.getExamples().first.path),
+        ProcessCall('dart', const <String>['fix', '--apply'], plugin.getExamples().first.path),
       ]),
     );
   });
@@ -74,11 +69,6 @@ void main() {
     );
 
     expect(commandError, isA<ToolExit>());
-    expect(
-      output,
-      containsAllInOrder(<Matcher>[
-        contains('Unable to automatically fix package.'),
-      ]),
-    );
+    expect(output, containsAllInOrder(<Matcher>[contains('Unable to automatically fix package.')]));
   });
 }

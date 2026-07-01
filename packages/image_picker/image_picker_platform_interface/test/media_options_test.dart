@@ -8,34 +8,21 @@ import 'package:image_picker_platform_interface/src/types/types.dart';
 void main() {
   group('MediaOptions', () {
     test('createAndValidate does not throw when allowMultiple is true', () {
-      expect(
-        () => MediaOptions.createAndValidate(allowMultiple: true),
-        returnsNormally,
-      );
+      expect(() => MediaOptions.createAndValidate(allowMultiple: true), returnsNormally);
     });
     test('createAndValidate does not throw when allowMultiple is false', () {
-      expect(
-        () => MediaOptions.createAndValidate(allowMultiple: false),
-        returnsNormally,
-      );
+      expect(() => MediaOptions.createAndValidate(allowMultiple: false), returnsNormally);
     });
 
     test('createAndValidate does not throw error for correct limit', () {
-      expect(
-        () => MediaOptions.createAndValidate(allowMultiple: true, limit: 2),
-        returnsNormally,
-      );
+      expect(() => MediaOptions.createAndValidate(allowMultiple: true, limit: 2), returnsNormally);
     });
 
     test('createAndValidate throws error for too small limit', () {
       final Matcher throwsLimitArgumentError = throwsA(
         isA<ArgumentError>()
             .having((ArgumentError error) => error.name, 'name', 'limit')
-            .having(
-              (ArgumentError error) => error.message,
-              'message',
-              'cannot be lower than 2',
-            ),
+            .having((ArgumentError error) => error.message, 'message', 'cannot be lower than 2'),
       );
 
       expect(
@@ -52,14 +39,11 @@ void main() {
       );
     });
 
-    test(
-      'createAndValidate throw error when allowMultiple is false and has limit',
-      () {
-        expect(
-          () => MediaOptions.createAndValidate(allowMultiple: false, limit: 2),
-          throwsArgumentError,
-        );
-      },
-    );
+    test('createAndValidate throw error when allowMultiple is false and has limit', () {
+      expect(
+        () => MediaOptions.createAndValidate(allowMultiple: false, limit: 2),
+        throwsArgumentError,
+      );
+    });
   });
 }

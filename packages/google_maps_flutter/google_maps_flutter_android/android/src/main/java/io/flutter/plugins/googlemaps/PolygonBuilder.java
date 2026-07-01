@@ -55,8 +55,8 @@ class PolygonBuilder implements PolygonOptionsSink {
   }
 
   @Override
-  public void setGeodesic(boolean geodisc) {
-    polygonOptions.geodesic(geodisc);
+  public void setGeodesic(boolean geodesic) {
+    polygonOptions.geodesic(geodesic);
   }
 
   @Override

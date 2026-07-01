@@ -203,10 +203,7 @@ class FadeThroughTransition extends StatelessWidget {
       animation: animation,
       child: ColoredBox(
         color: fillColor ?? Theme.of(context).canvasColor,
-        child: _ZoomedFadeInFadeOut(
-          animation: ReverseAnimation(secondaryAnimation),
-          child: child,
-        ),
+        child: _ZoomedFadeInFadeOut(animation: ReverseAnimation(secondaryAnimation), child: child),
       ),
     );
   }
@@ -222,14 +219,12 @@ class _ZoomedFadeInFadeOut extends StatelessWidget {
   Widget build(BuildContext context) {
     return DualTransitionBuilder(
       animation: animation,
-      forwardBuilder:
-          (BuildContext context, Animation<double> animation, Widget? child) {
-            return _ZoomedFadeIn(animation: animation, child: child);
-          },
-      reverseBuilder:
-          (BuildContext context, Animation<double> animation, Widget? child) {
-            return _FadeOut(animation: animation, child: child);
-          },
+      forwardBuilder: (BuildContext context, Animation<double> animation, Widget? child) {
+        return _ZoomedFadeIn(animation: animation, child: child);
+      },
+      reverseBuilder: (BuildContext context, Animation<double> animation, Widget? child) {
+        return _FadeOut(animation: animation, child: child);
+      },
       child: child,
     );
   }
@@ -241,26 +236,17 @@ class _ZoomedFadeIn extends StatelessWidget {
   final Widget? child;
   final Animation<double> animation;
 
-  static final CurveTween _inCurve = CurveTween(
-    curve: const Cubic(0.0, 0.0, 0.2, 1.0),
-  );
-  static final TweenSequence<double> _scaleIn =
-      TweenSequence<double>(<TweenSequenceItem<double>>[
-        TweenSequenceItem<double>(
-          tween: ConstantTween<double>(0.92),
-          weight: 6 / 20,
-        ),
-        TweenSequenceItem<double>(
-          tween: Tween<double>(begin: 0.92, end: 1.0).chain(_inCurve),
-          weight: 14 / 20,
-        ),
-      ]);
+  static final CurveTween _inCurve = CurveTween(curve: const Cubic(0.0, 0.0, 0.2, 1.0));
+  static final TweenSequence<double> _scaleIn = TweenSequence<double>(<TweenSequenceItem<double>>[
+    TweenSequenceItem<double>(tween: ConstantTween<double>(0.92), weight: 6 / 20),
+    TweenSequenceItem<double>(
+      tween: Tween<double>(begin: 0.92, end: 1.0).chain(_inCurve),
+      weight: 14 / 20,
+    ),
+  ]);
   static final TweenSequence<double> _fadeInOpacity =
       TweenSequence<double>(<TweenSequenceItem<double>>[
-        TweenSequenceItem<double>(
-          tween: ConstantTween<double>(0.0),
-          weight: 6 / 20,
-        ),
+        TweenSequenceItem<double>(tween: ConstantTween<double>(0.0), weight: 6 / 20),
         TweenSequenceItem<double>(
           tween: Tween<double>(begin: 0.0, end: 1.0).chain(_inCurve),
           weight: 14 / 20,
@@ -282,26 +268,18 @@ class _FadeOut extends StatelessWidget {
   final Widget? child;
   final Animation<double> animation;
 
-  static final CurveTween _outCurve = CurveTween(
-    curve: const Cubic(0.4, 0.0, 1.0, 1.0),
-  );
+  static final CurveTween _outCurve = CurveTween(curve: const Cubic(0.4, 0.0, 1.0, 1.0));
   static final TweenSequence<double> _fadeOutOpacity =
       TweenSequence<double>(<TweenSequenceItem<double>>[
         TweenSequenceItem<double>(
           tween: Tween<double>(begin: 1.0, end: 0.0).chain(_outCurve),
           weight: 6 / 20,
         ),
-        TweenSequenceItem<double>(
-          tween: ConstantTween<double>(0.0),
-          weight: 14 / 20,
-        ),
+        TweenSequenceItem<double>(tween: ConstantTween<double>(0.0), weight: 14 / 20),
       ]);
 
   @override
   Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _fadeOutOpacity.animate(animation),
-      child: child,
-    );
+    return FadeTransition(opacity: _fadeOutOpacity.animate(animation), child: child);
   }
 }

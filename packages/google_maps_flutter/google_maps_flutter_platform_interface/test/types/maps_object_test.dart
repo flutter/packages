@@ -20,11 +20,7 @@ void main() {
     const object3 = TestMapsObject(id3);
     expect(
       keyByMapsObjectId(<TestMapsObject>{object1, object2, object3}),
-      <MapsObjectId<TestMapsObject>, TestMapsObject>{
-        id1: object1,
-        id2: object2,
-        id3: object3,
-      },
+      <MapsObjectId<TestMapsObject>, TestMapsObject>{id1: object1, id2: object2, id3: object3},
     );
   });
 

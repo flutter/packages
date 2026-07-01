@@ -58,7 +58,8 @@ public class WebViewProxyApi extends PigeonApiWebView {
     @Override
     public void dispose() {}
 
-    // TODO(bparrishMines): This should be removed once https://github.com/flutter/engine/pull/40771 makes it to stable.
+    // TODO(bparrishMines): This should be removed once https://github.com/flutter/engine/pull/40771
+    // makes it to stable.
     // Temporary fix for https://github.com/flutter/flutter/issues/92165. The FlutterView is setting
     // setImportantForAutofill(IMPORTANT_FOR_AUTOFILL_YES_EXCLUDE_DESCENDANTS) which prevents this
     // view from automatically being traversed for autofill.

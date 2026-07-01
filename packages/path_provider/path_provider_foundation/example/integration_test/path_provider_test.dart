@@ -29,12 +29,11 @@ void main() {
     testWidgets('getTemporaryDirectory', (WidgetTester tester) async {
       final PathProviderPlatform provider = PathProviderPlatform.instance;
       final String? result = await provider.getTemporaryPath();
-      _verifySampleFile(result, 'temporaryDirectory');
+      // getTemporaryPath does not guarantee that the returned directory exists.
+      _verifySampleFile(result, 'temporaryDirectory', createDirectory: true);
     });
 
-    testWidgets('getApplicationDocumentsDirectory', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('getApplicationDocumentsDirectory', (WidgetTester tester) async {
       final PathProviderPlatform provider = PathProviderPlatform.instance;
       final String? result = await provider.getApplicationDocumentsPath();
       if (Platform.isMacOS) {
@@ -90,12 +89,10 @@ void main() {
   // NSString, etc.) that aren't available in an actual unit test. For these
   // tests, the platform is stubbed out.
   group('unit', () {
-    final platformVariants = ValueVariant<FakePlatformProvider>(
-      <FakePlatformProvider>{
-        FakePlatformProvider(isIOS: true),
-        FakePlatformProvider(isMacOS: true),
-      },
-    );
+    final platformVariants = ValueVariant<FakePlatformProvider>(<FakePlatformProvider>{
+      FakePlatformProvider(isIOS: true),
+      FakePlatformProvider(isMacOS: true),
+    });
 
     // These tests use the actual filesystem, since an injectable filesystem
     // would add a runtime dependency to the package, so everything is contained
@@ -160,12 +157,7 @@ void main() {
         platform: FakePlatformProvider(isIOS: true),
       );
 
-      final String applicationSupportPath = p.join(
-        testRoot.path,
-        'application',
-        'support',
-        'path',
-      );
+      final String applicationSupportPath = p.join(testRoot.path, 'application', 'support', 'path');
       when(
         mockFfiLib.NSSearchPathForDirectoriesInDomains(
           NSSearchPathDirectory.NSApplicationSupportDirectory,
@@ -186,12 +178,7 @@ void main() {
         platform: FakePlatformProvider(isMacOS: true),
       );
 
-      final String applicationSupportPath = p.join(
-        testRoot.path,
-        'application',
-        'support',
-        'path',
-      );
+      final String applicationSupportPath = p.join(testRoot.path, 'application', 'support', 'path');
       when(
         mockFfiLib.NSSearchPathForDirectoriesInDomains(
           NSSearchPathDirectory.NSApplicationSupportDirectory,
@@ -203,41 +190,29 @@ void main() {
       final String? path = await pathProvider.getApplicationSupportPath();
 
       // On macOS, the bundle ID should be appended to the path.
-      expect(
-        path,
-        '$applicationSupportPath/dev.flutter.plugins.pathProviderExample',
-      );
+      expect(path, '$applicationSupportPath/dev.flutter.plugins.pathProviderExample');
     });
 
-    testWidgets(
-      'getApplicationSupportPath creates the directory if necessary',
-      (_) async {
-        final mockFfiLib = MockFoundationFFI();
-        final pathProvider = PathProviderFoundation(
-          ffiLib: mockFfiLib,
-          platform: platformVariants.currentValue,
-        );
+    testWidgets('getApplicationSupportPath creates the directory if necessary', (_) async {
+      final mockFfiLib = MockFoundationFFI();
+      final pathProvider = PathProviderFoundation(
+        ffiLib: mockFfiLib,
+        platform: platformVariants.currentValue,
+      );
 
-        final String applicationSupportPath = p.join(
-          testRoot.path,
-          'application',
-          'support',
-          'path',
-        );
-        when(
-          mockFfiLib.NSSearchPathForDirectoriesInDomains(
-            NSSearchPathDirectory.NSApplicationSupportDirectory,
-            NSSearchPathDomainMask.NSUserDomainMask,
-            true,
-          ),
-        ).thenReturn(_arrayWithString(applicationSupportPath));
+      final String applicationSupportPath = p.join(testRoot.path, 'application', 'support', 'path');
+      when(
+        mockFfiLib.NSSearchPathForDirectoriesInDomains(
+          NSSearchPathDirectory.NSApplicationSupportDirectory,
+          NSSearchPathDomainMask.NSUserDomainMask,
+          true,
+        ),
+      ).thenReturn(_arrayWithString(applicationSupportPath));
 
-        final String? path = await pathProvider.getApplicationSupportPath();
+      final String? path = await pathProvider.getApplicationSupportPath();
 
-        expect(Directory(path!).existsSync(), isTrue);
-      },
-      variant: platformVariants,
-    );
+      expect(Directory(path!).existsSync(), isTrue);
+    }, variant: platformVariants);
 
     testWidgets('getLibraryPath', (_) async {
       final mockFfiLib = MockFoundationFFI();
@@ -293,12 +268,7 @@ void main() {
         platform: FakePlatformProvider(isIOS: true),
       );
 
-      final String applicationCachePath = p.join(
-        testRoot.path,
-        'application',
-        'cache',
-        'path',
-      );
+      final String applicationCachePath = p.join(testRoot.path, 'application', 'cache', 'path');
       when(
         mockFfiLib.NSSearchPathForDirectoriesInDomains(
           NSSearchPathDirectory.NSCachesDirectory,
@@ -319,12 +289,7 @@ void main() {
         platform: FakePlatformProvider(isMacOS: true),
       );
 
-      final String applicationCachePath = p.join(
-        testRoot.path,
-        'application',
-        'cache',
-        'path',
-      );
+      final String applicationCachePath = p.join(testRoot.path, 'application', 'cache', 'path');
       when(
         mockFfiLib.NSSearchPathForDirectoriesInDomains(
           NSSearchPathDirectory.NSCachesDirectory,
@@ -336,41 +301,29 @@ void main() {
       final String? path = await pathProvider.getApplicationCachePath();
 
       // On macOS, the bundle ID should be appended to the path.
-      expect(
-        path,
-        '$applicationCachePath/dev.flutter.plugins.pathProviderExample',
-      );
+      expect(path, '$applicationCachePath/dev.flutter.plugins.pathProviderExample');
     });
 
-    testWidgets(
-      'getApplicationCachePath creates the directory if necessary',
-      (_) async {
-        final mockFfiLib = MockFoundationFFI();
-        final pathProvider = PathProviderFoundation(
-          ffiLib: mockFfiLib,
-          platform: platformVariants.currentValue,
-        );
+    testWidgets('getApplicationCachePath creates the directory if necessary', (_) async {
+      final mockFfiLib = MockFoundationFFI();
+      final pathProvider = PathProviderFoundation(
+        ffiLib: mockFfiLib,
+        platform: platformVariants.currentValue,
+      );
 
-        final String applicationCachePath = p.join(
-          testRoot.path,
-          'application',
-          'cache',
-          'path',
-        );
-        when(
-          mockFfiLib.NSSearchPathForDirectoriesInDomains(
-            NSSearchPathDirectory.NSCachesDirectory,
-            NSSearchPathDomainMask.NSUserDomainMask,
-            true,
-          ),
-        ).thenReturn(_arrayWithString(applicationCachePath));
+      final String applicationCachePath = p.join(testRoot.path, 'application', 'cache', 'path');
+      when(
+        mockFfiLib.NSSearchPathForDirectoriesInDomains(
+          NSSearchPathDirectory.NSCachesDirectory,
+          NSSearchPathDomainMask.NSUserDomainMask,
+          true,
+        ),
+      ).thenReturn(_arrayWithString(applicationCachePath));
 
-        final String? path = await pathProvider.getApplicationCachePath();
+      final String? path = await pathProvider.getApplicationCachePath();
 
-        expect(Directory(path!).existsSync(), isTrue);
-      },
-      variant: platformVariants,
-    );
+      expect(Directory(path!).existsSync(), isTrue);
+    }, variant: platformVariants);
 
     testWidgets('getDownloadsPath', (_) async {
       final mockFfiLib = MockFoundationFFI();
@@ -422,7 +375,7 @@ NSArray _arrayWithString(String s) {
 /// contents when necessary.
 ///
 /// If [createDirectory] is true, the directory will be created if missing.
-void _verifySampleFile(String? directoryPath, String name) {
+void _verifySampleFile(String? directoryPath, String name, {bool createDirectory = false}) {
   expect(directoryPath, isNotNull);
   if (directoryPath == null) {
     return;
@@ -435,6 +388,10 @@ void _verifySampleFile(String? directoryPath, String name) {
     expect(file.existsSync(), isFalse);
   }
 
+  if (createDirectory && !directory.existsSync()) {
+    directory.createSync(recursive: true);
+  }
+
   file.writeAsStringSync('Hello world!');
   expect(file.readAsStringSync(), 'Hello world!');
   expect(directory.listSync(), isNotEmpty);
@@ -443,8 +400,7 @@ void _verifySampleFile(String? directoryPath, String name) {
 
 /// Fake implementation of PathProviderPlatformProvider.
 class FakePlatformProvider implements PathProviderPlatformProvider {
-  FakePlatformProvider({this.isIOS = false, this.isMacOS = false})
-    : assert(isIOS != isMacOS);
+  FakePlatformProvider({this.isIOS = false, this.isMacOS = false}) : assert(isIOS != isMacOS);
   @override
   bool isIOS;
 

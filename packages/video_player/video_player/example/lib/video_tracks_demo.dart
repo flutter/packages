@@ -125,9 +125,7 @@ class _VideoTracksDemoState extends State<VideoTracksDemo> {
       return;
     }
 
-    final ScaffoldMessengerState scaffoldMessenger = ScaffoldMessenger.of(
-      context,
-    );
+    final ScaffoldMessengerState scaffoldMessenger = ScaffoldMessenger.of(context);
 
     try {
       await controller.selectVideoTrack(track);
@@ -150,9 +148,7 @@ class _VideoTracksDemoState extends State<VideoTracksDemo> {
       if (!mounted) {
         return;
       }
-      scaffoldMessenger.showSnackBar(
-        SnackBar(content: Text('Failed to select video track: $e')),
-      );
+      scaffoldMessenger.showSnackBar(SnackBar(content: Text('Failed to select video track: $e')));
     }
   }
 
@@ -229,12 +225,8 @@ class _VideoTracksDemoState extends State<VideoTracksDemo> {
             child: DropdownMenu<int>(
               initialSelection: _selectedVideoIndex,
               label: const Text('Select Video'),
-              inputDecorationTheme: const InputDecorationTheme(
-                border: OutlineInputBorder(),
-              ),
-              dropdownMenuEntries: _sampleVideos.indexed.map((
-                (int, String) record,
-              ) {
+              inputDecorationTheme: const InputDecorationTheme(border: OutlineInputBorder()),
+              dropdownMenuEntries: _sampleVideos.indexed.map(((int, String) record) {
                 final (index, url) = record;
                 final label = url.contains('.m3u8')
                     ? 'HLS Stream ${index + 1}'
@@ -291,10 +283,7 @@ class _VideoTracksDemoState extends State<VideoTracksDemo> {
               ),
             ),
             const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _initializeVideo,
-              child: const Text('Retry'),
-            ),
+            ElevatedButton(onPressed: _initializeVideo, child: const Text('Retry')),
           ],
         ),
       );
@@ -305,10 +294,7 @@ class _VideoTracksDemoState extends State<VideoTracksDemo> {
       return Stack(
         alignment: Alignment.center,
         children: <Widget>[
-          AspectRatio(
-            aspectRatio: controller!.value.aspectRatio,
-            child: VideoPlayer(controller),
-          ),
+          AspectRatio(aspectRatio: controller!.value.aspectRatio, child: VideoPlayer(controller)),
           _buildPlayPauseButton(),
           Positioned(
             bottom: 0,
@@ -332,10 +318,7 @@ class _VideoTracksDemoState extends State<VideoTracksDemo> {
     }
 
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.black54,
-        borderRadius: BorderRadius.circular(30),
-      ),
+      decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(30)),
       child: IconButton(
         iconSize: 48,
         color: Colors.white,
@@ -375,18 +358,11 @@ class _VideoTracksDemoState extends State<VideoTracksDemo> {
             child: ListTile(
               leading: CircleAvatar(
                 backgroundColor: _isAutoQuality ? Colors.blue : Colors.grey,
-                child: Icon(
-                  _isAutoQuality ? Icons.check : Icons.auto_awesome,
-                  color: Colors.white,
-                ),
+                child: Icon(_isAutoQuality ? Icons.check : Icons.auto_awesome, color: Colors.white),
               ),
               title: Text(
                 'Automatic Quality',
-                style: TextStyle(
-                  fontWeight: _isAutoQuality
-                      ? FontWeight.bold
-                      : FontWeight.normal,
-                ),
+                style: TextStyle(fontWeight: _isAutoQuality ? FontWeight.bold : FontWeight.normal),
               ),
               subtitle: const Text('Let the player choose the best quality'),
               trailing: _isAutoQuality
@@ -408,8 +384,7 @@ class _VideoTracksDemoState extends State<VideoTracksDemo> {
                 ),
               ),
             )
-          else if (_error != null &&
-              (_controller?.value.isInitialized ?? false))
+          else if (_error != null && (_controller?.value.isInitialized ?? false))
             Expanded(
               child: Center(
                 child: Text(
@@ -446,9 +421,7 @@ class _VideoTracksDemoState extends State<VideoTracksDemo> {
         ),
         title: Text(
           _getTrackLabel(track),
-          style: TextStyle(
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          ),
+          style: TextStyle(fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

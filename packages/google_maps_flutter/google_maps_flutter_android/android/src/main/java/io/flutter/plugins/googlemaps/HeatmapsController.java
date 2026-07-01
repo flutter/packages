@@ -18,6 +18,7 @@ import java.util.Map;
 public class HeatmapsController {
   /** Mapping from Heatmap ID to HeatmapController. */
   private final Map<String, HeatmapController> heatmapIdToController;
+
   /** The GoogleMap to which the heatmaps are added. */
   private GoogleMap googleMap;
 
@@ -32,8 +33,8 @@ public class HeatmapsController {
   }
 
   /** Adds heatmaps to the map. */
-  void addHeatmaps(@NonNull List<Messages.PlatformHeatmap> heatmapsToAdd) {
-    for (Messages.PlatformHeatmap heatmapToAdd : heatmapsToAdd) {
+  void addHeatmaps(@NonNull List<PlatformHeatmap> heatmapsToAdd) {
+    for (PlatformHeatmap heatmapToAdd : heatmapsToAdd) {
       HeatmapBuilder heatmapBuilder = new HeatmapBuilder();
       String heatmapId = Convert.interpretHeatmapOptions(heatmapToAdd, heatmapBuilder);
       HeatmapTileProvider options = buildHeatmap(heatmapBuilder);
@@ -42,8 +43,8 @@ public class HeatmapsController {
   }
 
   /** Updates the given heatmaps on the map. */
-  void changeHeatmaps(@NonNull List<Messages.PlatformHeatmap> heatmapsToChange) {
-    for (Messages.PlatformHeatmap heatmapToChange : heatmapsToChange) {
+  void changeHeatmaps(@NonNull List<PlatformHeatmap> heatmapsToChange) {
+    for (PlatformHeatmap heatmapToChange : heatmapsToChange) {
       String heatmapId = heatmapToChange.getHeatmapId();
       HeatmapController heatmapController = heatmapIdToController.get(heatmapId);
       if (heatmapController != null) {

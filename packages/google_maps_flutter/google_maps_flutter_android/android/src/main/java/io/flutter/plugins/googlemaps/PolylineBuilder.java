@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.googlemaps;
 
+import androidx.annotation.NonNull;
 import com.google.android.gms.maps.model.Cap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PatternItem;
@@ -11,7 +12,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.util.List;
 
 class PolylineBuilder implements PolylineOptionsSink {
-  private final PolylineOptions polylineOptions;
+  private final @NonNull PolylineOptions polylineOptions;
   private boolean consumeTapEvents;
   private final float density;
 
@@ -60,8 +61,8 @@ class PolylineBuilder implements PolylineOptionsSink {
   }
 
   @Override
-  public void setGeodesic(boolean geodisc) {
-    polylineOptions.geodesic(geodisc);
+  public void setGeodesic(boolean geodesic) {
+    polylineOptions.geodesic(geodesic);
   }
 
   @Override

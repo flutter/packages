@@ -178,10 +178,7 @@ class CameraController extends ValueNotifier<CameraValue> {
     ImageFormatGroup? imageFormatGroup,
   }) => CameraController.withSettings(
     cameraDescription,
-    mediaSettings: MediaSettings(
-      resolutionPreset: resolutionPreset,
-      enableAudio: enableAudio,
-    ),
+    mediaSettings: MediaSettings(resolutionPreset: resolutionPreset, enableAudio: enableAudio),
     imageFormatGroup: imageFormatGroup,
   );
 
@@ -212,8 +209,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   bool _isDisposed = false;
   StreamSubscription<CameraImageData>? _imageStreamSubscription;
   FutureOr<bool>? _initCalled;
-  StreamSubscription<DeviceOrientationChangedEvent>?
-  _deviceOrientationSubscription;
+  StreamSubscription<DeviceOrientationChangedEvent>? _deviceOrientationSubscription;
 
   /// The camera identifier with which the controller is associated.
   int get cameraId => _cameraId;
@@ -224,16 +220,13 @@ class CameraController extends ValueNotifier<CameraValue> {
   Future<void> _initializeWithDescription(CameraDescription description) async {
     final initializeCompleter = Completer<CameraInitializedEvent>();
 
-    _deviceOrientationSubscription = CameraPlatform.instance
-        .onDeviceOrientationChanged()
-        .listen((DeviceOrientationChangedEvent event) {
-          value = value.copyWith(deviceOrientation: event.orientation);
-        });
+    _deviceOrientationSubscription = CameraPlatform.instance.onDeviceOrientationChanged().listen((
+      DeviceOrientationChangedEvent event,
+    ) {
+      value = value.copyWith(deviceOrientation: event.orientation);
+    });
 
-    _cameraId = await CameraPlatform.instance.createCameraWithSettings(
-      description,
-      mediaSettings,
-    );
+    _cameraId = await CameraPlatform.instance.createCameraWithSettings(description, mediaSettings);
 
     unawaited(
       CameraPlatform.instance.onCameraInitialized(_cameraId).first.then((
@@ -252,8 +245,7 @@ class CameraController extends ValueNotifier<CameraValue> {
       isInitialized: true,
       description: description,
       previewSize: await initializeCompleter.future.then(
-        (CameraInitializedEvent event) =>
-            Size(event.previewWidth, event.previewHeight),
+        (CameraInitializedEvent event) => Size(event.previewWidth, event.previewHeight),
       ),
       exposureMode: await initializeCompleter.future.then(
         (CameraInitializedEvent event) => event.exposureMode,
@@ -318,14 +310,12 @@ class CameraController extends ValueNotifier<CameraValue> {
   }
 
   /// Start streaming images from platform camera.
-  Future<void> startImageStream(
-    void Function(CameraImageData image) onAvailable,
-  ) async {
-    _imageStreamSubscription = CameraPlatform.instance
-        .onStreamedFrameAvailable(_cameraId)
-        .listen((CameraImageData imageData) {
-          onAvailable(imageData);
-        });
+  Future<void> startImageStream(void Function(CameraImageData image) onAvailable) async {
+    _imageStreamSubscription = CameraPlatform.instance.onStreamedFrameAvailable(_cameraId).listen((
+      CameraImageData imageData,
+    ) {
+      onAvailable(imageData);
+    });
     value = value.copyWith(isStreamingImages: true);
   }
 
@@ -340,9 +330,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   ///
   /// The video is returned as a [XFile] after calling [stopVideoRecording].
   /// Throws a [CameraException] if the capture fails.
-  Future<void> startVideoRecording({
-    void Function(CameraImageData image)? streamCallback,
-  }) async {
+  Future<void> startVideoRecording({void Function(CameraImageData image)? streamCallback}) async {
     await CameraPlatform.instance.startVideoCapturing(
       VideoCaptureOptions(_cameraId, streamCallback: streamCallback),
     );
@@ -364,9 +352,7 @@ class CameraController extends ValueNotifier<CameraValue> {
       await stopImageStream();
     }
 
-    final XFile file = await CameraPlatform.instance.stopVideoRecording(
-      _cameraId,
-    );
+    final XFile file = await CameraPlatform.instance.stopVideoRecording(_cameraId);
     value = value.copyWith(
       isRecordingVideo: false,
       recordingOrientation: const Optional<DeviceOrientation>.absent(),
@@ -416,8 +402,7 @@ class CameraController extends ValueNotifier<CameraValue> {
     ]);
 
     // Round to the closest step if needed
-    final double stepSize = await CameraPlatform.instance
-        .getExposureOffsetStepSize(_cameraId);
+    final double stepSize = await CameraPlatform.instance.getExposureOffsetStepSize(_cameraId);
     if (stepSize > 0) {
       final double inv = 1.0 / stepSize;
       double roundedOffset = (offset * inv).roundToDouble() / inv;
@@ -436,23 +421,16 @@ class CameraController extends ValueNotifier<CameraValue> {
   ///
   /// If [orientation] is omitted, the current device orientation is used.
   Future<void> lockCaptureOrientation() async {
-    await CameraPlatform.instance.lockCaptureOrientation(
-      _cameraId,
-      value.deviceOrientation,
-    );
+    await CameraPlatform.instance.lockCaptureOrientation(_cameraId, value.deviceOrientation);
     value = value.copyWith(
-      lockedCaptureOrientation: Optional<DeviceOrientation>.of(
-        value.deviceOrientation,
-      ),
+      lockedCaptureOrientation: Optional<DeviceOrientation>.of(value.deviceOrientation),
     );
   }
 
   /// Unlocks the capture orientation.
   Future<void> unlockCaptureOrientation() async {
     await CameraPlatform.instance.unlockCaptureOrientation(_cameraId);
-    value = value.copyWith(
-      lockedCaptureOrientation: const Optional<DeviceOrientation>.absent(),
-    );
+    value = value.copyWith(lockedCaptureOrientation: const Optional<DeviceOrientation>.absent());
   }
 
   /// Sets the focus mode for taking pictures.
@@ -559,9 +537,7 @@ class Optional<T> extends IterableBase<T> {
   ///
   /// The transformer must not return `null`. If it does, an [ArgumentError] is thrown.
   Optional<S> transform<S>(S Function(T? value) transformer) {
-    return _value == null
-        ? Optional<S>.absent()
-        : Optional<S>.of(transformer(_value));
+    return _value == null ? Optional<S>.absent() : Optional<S>.of(transformer(_value));
   }
 
   /// Transforms the Optional value.
@@ -570,14 +546,11 @@ class Optional<T> extends IterableBase<T> {
   ///
   /// Returns [absent()] if the transformer returns `null`.
   Optional<S> transformNullable<S>(S? Function(T? value) transformer) {
-    return _value == null
-        ? Optional<S>.absent()
-        : Optional<S>.fromNullable(transformer(_value));
+    return _value == null ? Optional<S>.absent() : Optional<S>.fromNullable(transformer(_value));
   }
 
   @override
-  Iterator<T> get iterator =>
-      isPresent ? <T>[_value as T].iterator : Iterable<T>.empty().iterator;
+  Iterator<T> get iterator => isPresent ? <T>[_value as T].iterator : Iterable<T>.empty().iterator;
 
   /// Delegates to the underlying [value] hashCode.
   @override
@@ -589,8 +562,6 @@ class Optional<T> extends IterableBase<T> {
 
   @override
   String toString() {
-    return _value == null
-        ? 'Optional { absent }'
-        : 'Optional { value: $_value }';
+    return _value == null ? 'Optional { absent }' : 'Optional { value: $_value }';
   }
 }

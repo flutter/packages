@@ -1,0 +1,15 @@
+# This example's build output is used as a golden reference for the builder
+# output. Since we want the output to default to what the default formatter
+# would use, rather than the custom line length used in this repository, use
+# 80 for this example so it matches.
+analyzer:
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
+formatter:
+  page_width: 80

@@ -3,6 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
+import 'package:path/path.dart' as p;
+import 'package:yaml/yaml.dart';
 
 /// Returns a [File] created by appending all but the last item in [components]
 /// to [base] as subdirectories, then appending the last as a file.
@@ -21,13 +23,42 @@ File childFileWithSubcomponents(Directory base, List<String> components) {
 /// Example:
 ///   childFileWithSubcomponents(rootDir, ['foo', 'bar'])
 /// creates a File representing /rootDir/foo/bar/.
-Directory childDirectoryWithSubcomponents(
-  Directory base,
-  List<String> components,
-) {
+Directory childDirectoryWithSubcomponents(Directory base, List<String> components) {
   var dir = base;
   for (final directoryName in components) {
     dir = dir.childDirectory(directoryName);
   }
   return dir;
+}
+
+/// Returns the relative path from [from] to [entity] using [platformContext]
+/// as the path context, but always formatting the result as a POSIX path
+/// (using forward slashes).
+///
+/// This is useful for generating paths that will be used in configuration
+/// files or command lines that expect POSIX paths, even when running on a
+/// platform that uses a different path separator, or for display.
+String relativePosixPath(
+  FileSystemEntity entity, {
+  required Directory from,
+  required p.Context platformContext,
+}) => p.posix.joinAll(
+  platformContext.split(platformContext.relative(entity.absolute.path, from: from.path)),
+);
+
+/// Loads the file at [filename], which must contain a YAML list of strings.
+///
+/// If the file is not found, returns null.
+List<String>? loadYamlList(File file) {
+  if (!file.existsSync()) {
+    return null;
+  }
+  final String contents = file.readAsStringSync();
+  final Object? yaml = loadYaml(contents);
+  // Treat an empty or comment-only file as an empty list, to avoid requiring
+  // adding an explicit empty list entry to the YAML when no entries are needed.
+  if (yaml == null) {
+    return [];
+  }
+  return (yaml as YamlList).toList().cast<String>();
 }

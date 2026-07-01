@@ -23,8 +23,7 @@ import 'package:mockito/src/dummies.dart' as _i3;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeAuthResultDetails_0 extends _i1.SmartFake
-    implements _i2.AuthResultDetails {
+class _FakeAuthResultDetails_0 extends _i1.SmartFake implements _i2.AuthResultDetails {
   _FakeAuthResultDetails_0(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -68,9 +67,7 @@ class MockLocalAuthApi extends _i1.Mock implements _i2.LocalAuthApi {
   _i4.Future<List<_i2.AuthBiometric>> getEnrolledBiometrics() =>
       (super.noSuchMethod(
             Invocation.method(#getEnrolledBiometrics, []),
-            returnValue: _i4.Future<List<_i2.AuthBiometric>>.value(
-              <_i2.AuthBiometric>[],
-            ),
+            returnValue: _i4.Future<List<_i2.AuthBiometric>>.value(<_i2.AuthBiometric>[]),
           )
           as _i4.Future<List<_i2.AuthBiometric>>);
 
@@ -82,10 +79,7 @@ class MockLocalAuthApi extends _i1.Mock implements _i2.LocalAuthApi {
       (super.noSuchMethod(
             Invocation.method(#authenticate, [options, strings]),
             returnValue: _i4.Future<_i2.AuthResultDetails>.value(
-              _FakeAuthResultDetails_0(
-                this,
-                Invocation.method(#authenticate, [options, strings]),
-              ),
+              _FakeAuthResultDetails_0(this, Invocation.method(#authenticate, [options, strings])),
             ),
           )
           as _i4.Future<_i2.AuthResultDetails>);

@@ -7,7 +7,6 @@ package com.example.alternate_language_test_plugin;
 import static org.junit.Assert.*;
 
 import com.example.alternate_language_test_plugin.NonNullFields.NonNullFieldSearchRequest;
-import java.lang.IllegalStateException;
 import org.junit.Test;
 
 public class NonNullFieldsTest {

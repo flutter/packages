@@ -7,6 +7,8 @@ package io.flutter.plugins.videoplayer;
 import static androidx.media3.common.Player.REPEAT_MODE_ALL;
 import static androidx.media3.common.Player.REPEAT_MODE_OFF;
 
+import android.os.Handler;
+import android.os.Looper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.media3.common.AudioAttributes;
@@ -37,6 +39,9 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
   @UnstableApi @Nullable protected DefaultTrackSelector trackSelector;
 
+  private final Handler mainHandler = new Handler(Looper.getMainLooper());
+  private boolean isDisposed = false;
+
   /** A closure-compatible signature since {@link java.util.function.Supplier} is API level 24. */
   public interface ExoPlayerProvider {
     /**
@@ -55,8 +60,10 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
 
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
   @UnstableApi
-  // Error thrown for this-escape warning on JDK 21+ due to https://bugs.openjdk.org/browse/JDK-8015831.
-  // Keeping behavior as-is and addressing the warning could cause a regression: https://github.com/flutter/packages/pull/10193
+  // Error thrown for this-escape warning on JDK 21+ due to
+  // https://bugs.openjdk.org/browse/JDK-8015831.
+  // Keeping behavior as-is and addressing the warning could cause a regression:
+  // https://github.com/flutter/packages/pull/10193
   @SuppressWarnings("this-escape")
   public VideoPlayer(
       @NonNull VideoPlayerCallbacks events,
@@ -357,8 +364,9 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
     Format currentFormat = exoPlayer.getVideoFormat();
     Format newFormat = trackGroup.getFormat((int) trackIndex);
     boolean dimensionsChanged =
-        currentFormat != null
-            && (currentFormat.width != newFormat.width || currentFormat.height != newFormat.height);
+        currentFormat == null
+            || currentFormat.width != newFormat.width
+            || currentFormat.height != newFormat.height;
 
     // When video dimensions change, we need to force a complete renderer reset to avoid
     // surface rendering issues. We do this by temporarily disabling the video track type,
@@ -378,7 +386,8 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
     // - ExoPlayer TrackSelection documentation:
     //   https://developer.android.com/media/media3/exoplayer/track-selection
     // - DefaultTrackSelector.setParameters() for track type disabling:
-    //   https://developer.android.com/reference/androidx/media3/exoplayer/trackselection/DefaultTrackSelector.Parameters.Builder#setTrackTypeDisabled(int,boolean)
+    //
+    // https://developer.android.com/reference/androidx/media3/exoplayer/trackselection/DefaultTrackSelector.Parameters.Builder#setTrackTypeDisabled(int,boolean)
     // - This approach is necessary because ExoPlayer doesn't provide a direct API to force
     //   a renderer reset when dimensions change. Disabling and re-enabling the track type
     //   is the recommended way to ensure proper resource cleanup and reinitialization.
@@ -407,28 +416,29 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
       // between responsiveness and ensuring complete resource cleanup. Shorter delays (e.g.,
       // 50-100ms) were found to still cause glitches on some devices, while longer delays
       // would unnecessarily impact user experience.
-      new android.os.Handler(android.os.Looper.getMainLooper())
-          .postDelayed(
-              () -> {
-                // Guard against player disposal during the delay
-                if (trackSelector == null) {
-                  return;
-                }
+      mainHandler.postDelayed(
+          () -> {
+            // Guard against player disposal during the delay. The isDisposed flag
+            // is the authoritative check; the trackSelector null-check is kept for
+            // safety even though it is set in the constructor.
+            if (isDisposed || trackSelector == null) {
+              return;
+            }
 
-                trackSelector.setParameters(
-                    trackSelector
-                        .buildUponParameters()
-                        .setTrackTypeDisabled(C.TRACK_TYPE_VIDEO, false)
-                        .setOverrideForType(override)
-                        .build());
+            trackSelector.setParameters(
+                trackSelector
+                    .buildUponParameters()
+                    .setTrackTypeDisabled(C.TRACK_TYPE_VIDEO, false)
+                    .setOverrideForType(override)
+                    .build());
 
-                // Restore playback state
-                exoPlayer.seekTo(currentPosition);
-                if (wasPlaying) {
-                  exoPlayer.play();
-                }
-              },
-              150);
+            // Restore playback state
+            exoPlayer.seekTo(currentPosition);
+            if (wasPlaying) {
+              exoPlayer.play();
+            }
+          },
+          150);
       return;
     }
 
@@ -438,6 +448,8 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
   }
 
   public void dispose() {
+    isDisposed = true;
+    mainHandler.removeCallbacksAndMessages(null);
     if (disposeHandler != null) {
       disposeHandler.onDispose();
     }

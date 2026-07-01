@@ -15,11 +15,11 @@ void main() {
     final router = GoRouter(
       initialLocation: '/',
       routes: <GoRoute>[
-        GoRoute(path: '/', name: 'home', builder: (_, __) => const Text('A')),
+        GoRoute(path: '/', name: 'home', builder: (_, _) => const Text('A')),
         GoRoute(
           path: '/second',
           name: 'second',
-          builder: (_, __) => Text('B', key: innerKey),
+          builder: (_, _) => Text('B', key: innerKey),
         ),
       ],
       requestFocus: false,

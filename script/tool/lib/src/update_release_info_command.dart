@@ -45,15 +45,9 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
       _versionTypeFlag,
       mandatory: true,
       help: 'The version change level',
-      allowed: <String>[
-        _versionNext,
-        _versionMinimal,
-        _versionBugfix,
-        _versionMinor,
-      ],
+      allowed: <String>[_versionNext, _versionMinimal, _versionBugfix, _versionMinor],
       allowedHelp: <String, String>{
-        _versionNext:
-            'No version change; just adds a NEXT entry to the changelog.',
+        _versionNext: 'No version change; just adds a NEXT entry to the changelog.',
         _versionBugfix: 'Increments the bugfix version.',
         _versionMinor: 'Increments the minor version.',
         _versionMinimal:
@@ -113,8 +107,7 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
     final Version? version = package.parsePubspec().version;
-    final bool isBatchRelease =
-        package.parseCIConfig()?.isBatchRelease ?? false;
+    final bool isBatchRelease = package.parseCIConfig()?.isBatchRelease ?? false;
     if (isBatchRelease && (version?.isPreRelease ?? false)) {
       return PackageResult.fail(<String>[
         'This command does not support batch releases packages with pre-release versions.',
@@ -126,15 +119,9 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
 
     // If the change type is `minimal` determine what changes, if any, are
     // needed.
-    if (versionChange == null &&
-        getStringArg(_versionTypeFlag) == _versionMinimal) {
-      final Directory gitRoot = packagesDir.fileSystem.directory(
-        (await gitDir).path,
-      );
-      final String relativePackagePath = getRelativePosixPath(
-        package.directory,
-        from: gitRoot,
-      );
+    if (versionChange == null && getStringArg(_versionTypeFlag) == _versionMinimal) {
+      final Directory gitRoot = packagesDir.fileSystem.directory((await gitDir).path);
+      final String relativePackagePath = getRelativePosixPath(package.directory, from: gitRoot);
       final PackageChangeState state = await checkPackageChangeState(
         package,
         changedPaths: changedFiles,
@@ -153,19 +140,13 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
     }
 
     if (isBatchRelease) {
-      return _createPendingBatchChangelog(
-        package,
-        versionChange: versionChange,
-      );
+      return _createPendingBatchChangelog(package, versionChange: versionChange);
     }
 
     return _updatePubspecAndChangelog(package, versionChange: versionChange);
   }
 
-  _ChangelogUpdateOutcome _updateChangelog(
-    RepositoryPackage package,
-    String version,
-  ) {
+  _ChangelogUpdateOutcome _updateChangelog(RepositoryPackage package, String version) {
     if (!package.changelogFile.existsSync()) {
       printError('${indentation}Missing CHANGELOG.md.');
       return _ChangelogUpdateOutcome.failed;
@@ -255,10 +236,7 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
 
   /// Updates the version in [package]'s pubspec according to [type], returning
   /// the new version, or null if there was an error updating the version.
-  Version? _updatePubspecVersion(
-    RepositoryPackage package,
-    _VersionIncrementType type,
-  ) {
+  Version? _updatePubspecVersion(RepositoryPackage package, _VersionIncrementType type) {
     final Pubspec pubspec = package.parsePubspec();
     final Version? currentVersion = pubspec.version;
     if (currentVersion == null) {
@@ -289,15 +267,8 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
       case _VersionIncrementType.bugfix:
         return version.nextPatch;
       case _VersionIncrementType.build:
-        final buildNumber = version.build.isEmpty
-            ? 0
-            : version.build.first as int;
-        return Version(
-          version.major,
-          version.minor,
-          version.patch,
-          build: '${buildNumber + 1}',
-        );
+        final buildNumber = version.build.isEmpty ? 0 : version.build.first as int;
+        return Version(version.major, version.minor, version.patch, build: '${buildNumber + 1}');
     }
   }
 
@@ -311,14 +282,9 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
   }) async {
     String nextVersionString;
     if (versionChange != null) {
-      final Version? updatedVersion = _updatePubspecVersion(
-        package,
-        versionChange,
-      );
+      final Version? updatedVersion = _updatePubspecVersion(package, versionChange);
       if (updatedVersion == null) {
-        return PackageResult.fail(<String>[
-          'Could not determine current version.',
-        ]);
+        return PackageResult.fail(<String>['Could not determine current version.']);
       }
       nextVersionString = updatedVersion.toString();
       print('${indentation}Incremented version to $nextVersionString.');
@@ -326,10 +292,7 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
       nextVersionString = 'NEXT';
     }
 
-    final _ChangelogUpdateOutcome updateOutcome = _updateChangelog(
-      package,
-      nextVersionString,
-    );
+    final _ChangelogUpdateOutcome updateOutcome = _updateChangelog(package, nextVersionString);
     switch (updateOutcome) {
       case _ChangelogUpdateOutcome.addedSection:
         print('${indentation}Added a $nextVersionString section.');

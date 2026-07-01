@@ -88,7 +88,8 @@ class PreviewProxyApi extends PigeonApiPreview {
       return;
     }
     throw new IllegalStateException(
-        "releaseFlutterSurfaceTexture() cannot be called if the flutterSurfaceProducer for the camera preview has not yet been initialized.");
+        "releaseFlutterSurfaceTexture() cannot be called if the flutterSurfaceProducer for the"
+            + " camera preview has not yet been initialized.");
   }
 
   @Override
@@ -98,7 +99,8 @@ class PreviewProxyApi extends PigeonApiPreview {
       return surfaceProducer.handlesCropAndRotation();
     }
     throw new IllegalStateException(
-        "surfaceProducerHandlesCropAndRotation() cannot be called if the flutterSurfaceProducer for the camera preview has not yet been initialized.");
+        "surfaceProducerHandlesCropAndRotation() cannot be called if the flutterSurfaceProducer for"
+            + " the camera preview has not yet been initialized.");
   }
 
   @Nullable

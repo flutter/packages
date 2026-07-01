@@ -53,8 +53,8 @@
 /* Begin PBXFileReference section */
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
-		3300E9FA2F69AA5200842B27 /* TestClasses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TestClasses.swift; path = ../../../darwin/RunnerTests/TestClasses.swift; sourceTree = "<group>"; };
-		3300E9FB2F69AA5200842B27 /* VideoPlayerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VideoPlayerTests.swift; path = ../../../darwin/RunnerTests/VideoPlayerTests.swift; sourceTree = "<group>"; };
+		3300E9FA2F69AA5200842B27 /* TestClasses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TestClasses.swift; path = ../../darwin/RunnerTests/TestClasses.swift; sourceTree = SOURCE_ROOT; };
+		3300E9FB2F69AA5200842B27 /* VideoPlayerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VideoPlayerTests.swift; path = ../../darwin/RunnerTests/VideoPlayerTests.swift; sourceTree = SOURCE_ROOT; };
 		3300EA022F69AA9500842B27 /* RunnerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3300EA152F69AB0B00842B27 /* VideoPlayerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerUITests.swift; sourceTree = "<group>"; };
 		331C8081294A63A400263BE5 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };

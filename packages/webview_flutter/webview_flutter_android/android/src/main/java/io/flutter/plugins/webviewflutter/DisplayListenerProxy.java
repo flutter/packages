@@ -6,6 +6,7 @@ package io.flutter.plugins.webviewflutter;
 
 import static android.hardware.display.DisplayManager.DisplayListener;
 
+import android.annotation.SuppressLint;
 import android.hardware.display.DisplayManager;
 import android.os.Build;
 import android.util.Log;
@@ -107,6 +108,7 @@ class DisplayListenerProxy {
     }
   }
 
+  @SuppressLint("SoonBlockedPrivateApi")
   @SuppressWarnings({"unchecked", "PrivateApi"})
   private static ArrayList<DisplayListener> yoinkDisplayListeners(DisplayManager displayManager) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {

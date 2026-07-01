@@ -12,11 +12,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   testWidgets('Cupertino Icon Test', (WidgetTester tester) async {
     // #docregion CupertinoIcon
-    const icon = Icon(
-      CupertinoIcons.heart_fill,
-      color: Colors.pink,
-      size: 24.0,
-    );
+    const icon = Icon(CupertinoIcons.heart_fill, color: Colors.pink, size: 24.0);
     // #enddocregion CupertinoIcon
 
     await tester.pumpWidget(const MaterialApp(home: Scaffold(body: icon)));

@@ -309,7 +309,8 @@ public class WebViewTest {
         webView.getWebChromeClient() instanceof WebChromeClientProxyApi.WebChromeClientImpl);
   }
 
-  // This test verifies that WebView.destroy() is called when the Dart instance is garbage collected.
+  // This test verifies that WebView.destroy() is called when the Dart instance is garbage
+  // collected.
   // This requires adding
   //
   // ```

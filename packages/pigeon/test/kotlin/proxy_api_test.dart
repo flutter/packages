@@ -15,18 +15,13 @@ void main() {
         apis: <Api>[
           AstProxyApi(
             name: 'Api',
-            kotlinOptions: const KotlinProxyApiOptions(
-              fullClassName: 'my.library.Api',
-            ),
+            kotlinOptions: const KotlinProxyApiOptions(fullClassName: 'my.library.Api'),
             constructors: <Constructor>[
               Constructor(
                 name: 'name',
                 parameters: <Parameter>[
                   Parameter(
-                    type: const TypeDeclaration(
-                      baseName: 'Input',
-                      isNullable: false,
-                    ),
+                    type: const TypeDeclaration(baseName: 'Input', isNullable: false),
                     name: 'input',
                   ),
                 ],
@@ -44,17 +39,11 @@ void main() {
                 location: ApiLocation.host,
                 parameters: <Parameter>[
                   Parameter(
-                    type: const TypeDeclaration(
-                      baseName: 'Input',
-                      isNullable: false,
-                    ),
+                    type: const TypeDeclaration(baseName: 'Input', isNullable: false),
                     name: 'input',
                   ),
                 ],
-                returnType: const TypeDeclaration(
-                  baseName: 'String',
-                  isNullable: false,
-                ),
+                returnType: const TypeDeclaration(baseName: 'String', isNullable: false),
               ),
               Method(
                 name: 'doSomethingElse',
@@ -62,17 +51,11 @@ void main() {
                 isRequired: false,
                 parameters: <Parameter>[
                   Parameter(
-                    type: const TypeDeclaration(
-                      baseName: 'Input',
-                      isNullable: false,
-                    ),
+                    type: const TypeDeclaration(baseName: 'Input', isNullable: false),
                     name: 'input',
                   ),
                 ],
-                returnType: const TypeDeclaration(
-                  baseName: 'String',
-                  isNullable: false,
-                ),
+                returnType: const TypeDeclaration(baseName: 'String', isNullable: false),
               ),
             ],
           ),
@@ -83,10 +66,7 @@ void main() {
       final sink = StringBuffer();
       const generator = KotlinGenerator();
       generator.generate(
-        const InternalKotlinOptions(
-          fileSpecificClassNameComponent: 'MyFile',
-          kotlinOut: '',
-        ),
+        const InternalKotlinOptions(fileSpecificClassNameComponent: 'MyFile', kotlinOut: ''),
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -123,10 +103,7 @@ void main() {
       );
 
       // Constructors
-      expect(
-        collapsedCode,
-        contains(r'abstract fun name(someField: Long, input: Input)'),
-      );
+      expect(collapsedCode, contains(r'abstract fun name(someField: Long, input: Input)'));
       expect(
         collapsedCode,
         contains(
@@ -135,25 +112,15 @@ void main() {
       );
 
       // Field
-      expect(
-        code,
-        contains(
-          'abstract fun someField(pigeon_instance: my.library.Api): Long',
-        ),
-      );
+      expect(code, contains('abstract fun someField(pigeon_instance: my.library.Api): Long'));
 
       // Dart -> Host method
-      expect(
-        collapsedCode,
-        contains('api.doSomething(pigeon_instanceArg, inputArg)'),
-      );
+      expect(collapsedCode, contains('api.doSomething(pigeon_instanceArg, inputArg)'));
 
       // Host -> Dart method
       expect(
         code,
-        contains(
-          r'fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiApi?)',
-        ),
+        contains(r'fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiApi?)'),
       );
       expect(
         code,
@@ -199,10 +166,7 @@ void main() {
         );
         final code = sink.toString();
         final String collapsedCode = _collapseNewlineAndIndentation(code);
-        expect(
-          collapsedCode,
-          contains('fun pigeon_getPigeonApiApi2(): PigeonApiApi2'),
-        );
+        expect(collapsedCode, contains('fun pigeon_getPigeonApiApi2(): PigeonApiApi2'));
       });
 
       test('implements', () {
@@ -220,11 +184,7 @@ void main() {
               fields: <ApiField>[],
               methods: <Method>[],
               interfaces: <TypeDeclaration>{
-                TypeDeclaration(
-                  baseName: api2.name,
-                  isNullable: false,
-                  associatedProxyApi: api2,
-                ),
+                TypeDeclaration(baseName: api2.name, isNullable: false, associatedProxyApi: api2),
               },
             ),
             api2,
@@ -265,16 +225,8 @@ void main() {
               fields: <ApiField>[],
               methods: <Method>[],
               interfaces: <TypeDeclaration>{
-                TypeDeclaration(
-                  baseName: api2.name,
-                  isNullable: false,
-                  associatedProxyApi: api2,
-                ),
-                TypeDeclaration(
-                  baseName: api3.name,
-                  isNullable: false,
-                  associatedProxyApi: api3,
-                ),
+                TypeDeclaration(baseName: api2.name, isNullable: false, associatedProxyApi: api2),
+                TypeDeclaration(baseName: api3.name, isNullable: false, associatedProxyApi: api3),
               },
             ),
             api2,
@@ -303,9 +255,7 @@ void main() {
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
-              constructors: <Constructor>[
-                Constructor(name: '', parameters: <Parameter>[]),
-              ],
+              constructors: <Constructor>[Constructor(name: '', parameters: <Parameter>[])],
               fields: <ApiField>[],
               methods: <Method>[],
             ),
@@ -329,10 +279,7 @@ void main() {
             'abstract class PigeonApiApi(open val pigeonRegistrar: PigeonProxyApiRegistrar) ',
           ),
         );
-        expect(
-          collapsedCode,
-          contains('abstract fun pigeon_defaultConstructor(): Api'),
-        );
+        expect(collapsedCode, contains('abstract fun pigeon_defaultConstructor(): Api'));
         expect(
           collapsedCode,
           contains(
@@ -361,10 +308,7 @@ void main() {
                   name: 'name',
                   parameters: <Parameter>[
                     Parameter(
-                      type: const TypeDeclaration(
-                        isNullable: false,
-                        baseName: 'int',
-                      ),
+                      type: const TypeDeclaration(isNullable: false, baseName: 'int'),
                       name: 'validType',
                     ),
                     Parameter(
@@ -376,17 +320,11 @@ void main() {
                       name: 'enumType',
                     ),
                     Parameter(
-                      type: const TypeDeclaration(
-                        isNullable: false,
-                        baseName: 'Api2',
-                      ),
+                      type: const TypeDeclaration(isNullable: false, baseName: 'Api2'),
                       name: 'proxyApiType',
                     ),
                     Parameter(
-                      type: const TypeDeclaration(
-                        isNullable: true,
-                        baseName: 'int',
-                      ),
+                      type: const TypeDeclaration(isNullable: true, baseName: 'int'),
                       name: 'nullableValidType',
                     ),
                     Parameter(
@@ -398,10 +336,7 @@ void main() {
                       name: 'nullableEnumType',
                     ),
                     Parameter(
-                      type: const TypeDeclaration(
-                        isNullable: true,
-                        baseName: 'Api2',
-                      ),
+                      type: const TypeDeclaration(isNullable: true, baseName: 'Api2'),
                       name: 'nullableProxyApiType',
                     ),
                   ],
@@ -477,10 +412,7 @@ void main() {
         final sink = StringBuffer();
         const generator = KotlinGenerator();
         generator.generate(
-          const InternalKotlinOptions(
-            errorClassName: 'TestError',
-            kotlinOut: '',
-          ),
+          const InternalKotlinOptions(errorClassName: 'TestError', kotlinOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -496,48 +428,39 @@ void main() {
         );
       });
 
-      test(
-        'host platform constructor calls new instance error for required callbacks',
-        () {
-          final root = Root(
-            apis: <Api>[
-              AstProxyApi(
-                name: 'Api',
-                constructors: <Constructor>[],
-                fields: <ApiField>[],
-                methods: <Method>[
-                  Method(
-                    name: 'aCallbackMethod',
-                    returnType: const TypeDeclaration.voidDeclaration(),
-                    parameters: <Parameter>[],
-                    location: ApiLocation.flutter,
-                  ),
-                ],
-              ),
-            ],
-            classes: <Class>[],
-            enums: <Enum>[],
-          );
-          final sink = StringBuffer();
-          const generator = KotlinGenerator();
-          generator.generate(
-            const InternalKotlinOptions(
-              errorClassName: 'TestError',
-              kotlinOut: '',
+      test('host platform constructor calls new instance error for required callbacks', () {
+        final root = Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              constructors: <Constructor>[],
+              fields: <ApiField>[],
+              methods: <Method>[
+                Method(
+                  name: 'aCallbackMethod',
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                  parameters: <Parameter>[],
+                  location: ApiLocation.flutter,
+                ),
+              ],
             ),
-            root,
-            sink,
-            dartPackageName: DEFAULT_PACKAGE_NAME,
-          );
-          final code = sink.toString();
-          final String collapsedCode = _collapseNewlineAndIndentation(code);
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final sink = StringBuffer();
+        const generator = KotlinGenerator();
+        generator.generate(
+          const InternalKotlinOptions(errorClassName: 'TestError', kotlinOut: ''),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final code = sink.toString();
+        final String collapsedCode = _collapseNewlineAndIndentation(code);
 
-          expect(
-            collapsedCode,
-            contains(r'Result.failure( TestError("new-instance-error"'),
-          );
-        },
-      );
+        expect(collapsedCode, contains(r'Result.failure( TestError("new-instance-error"'));
+      });
     });
 
     group('Fields', () {
@@ -550,15 +473,10 @@ void main() {
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
-              constructors: <Constructor>[
-                Constructor(name: 'name', parameters: <Parameter>[]),
-              ],
+              constructors: <Constructor>[Constructor(name: 'name', parameters: <Parameter>[])],
               fields: <ApiField>[
                 ApiField(
-                  type: const TypeDeclaration(
-                    isNullable: false,
-                    baseName: 'int',
-                  ),
+                  type: const TypeDeclaration(isNullable: false, baseName: 'int'),
                   name: 'validType',
                 ),
                 ApiField(
@@ -570,17 +488,11 @@ void main() {
                   name: 'enumType',
                 ),
                 ApiField(
-                  type: const TypeDeclaration(
-                    isNullable: false,
-                    baseName: 'Api2',
-                  ),
+                  type: const TypeDeclaration(isNullable: false, baseName: 'Api2'),
                   name: 'proxyApiType',
                 ),
                 ApiField(
-                  type: const TypeDeclaration(
-                    isNullable: true,
-                    baseName: 'int',
-                  ),
+                  type: const TypeDeclaration(isNullable: true, baseName: 'int'),
                   name: 'nullableValidType',
                 ),
                 ApiField(
@@ -592,10 +504,7 @@ void main() {
                   name: 'nullableEnumType',
                 ),
                 ApiField(
-                  type: const TypeDeclaration(
-                    isNullable: true,
-                    baseName: 'Api2',
-                  ),
+                  type: const TypeDeclaration(isNullable: true, baseName: 'Api2'),
                   name: 'nullableProxyApiType',
                 ),
               ],
@@ -645,36 +554,12 @@ void main() {
             'nullableEnumTypeArg, nullableProxyApiTypeArg))',
           ),
         );
-        expect(
-          code,
-          contains(r'abstract fun validType(pigeon_instance: Api): Long'),
-        );
-        expect(
-          code,
-          contains(r'abstract fun enumType(pigeon_instance: Api): AnEnum'),
-        );
-        expect(
-          code,
-          contains(r'abstract fun proxyApiType(pigeon_instance: Api): Api2'),
-        );
-        expect(
-          code,
-          contains(
-            r'abstract fun nullableValidType(pigeon_instance: Api): Long?',
-          ),
-        );
-        expect(
-          code,
-          contains(
-            r'abstract fun nullableEnumType(pigeon_instance: Api): AnEnum?',
-          ),
-        );
-        expect(
-          code,
-          contains(
-            r'abstract fun nullableProxyApiType(pigeon_instance: Api): Api2?',
-          ),
-        );
+        expect(code, contains(r'abstract fun validType(pigeon_instance: Api): Long'));
+        expect(code, contains(r'abstract fun enumType(pigeon_instance: Api): AnEnum'));
+        expect(code, contains(r'abstract fun proxyApiType(pigeon_instance: Api): Api2'));
+        expect(code, contains(r'abstract fun nullableValidType(pigeon_instance: Api): Long?'));
+        expect(code, contains(r'abstract fun nullableEnumType(pigeon_instance: Api): AnEnum?'));
+        expect(code, contains(r'abstract fun nullableProxyApiType(pigeon_instance: Api): Api2?'));
       });
 
       test('attached field', () {
@@ -716,10 +601,7 @@ void main() {
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
         final code = sink.toString();
-        expect(
-          code,
-          contains(r'abstract fun aField(pigeon_instance: Api): Api2'),
-        );
+        expect(code, contains(r'abstract fun aField(pigeon_instance: Api): Api2'));
         expect(
           code,
           contains(
@@ -796,10 +678,7 @@ void main() {
                   location: ApiLocation.host,
                   parameters: <Parameter>[
                     Parameter(
-                      type: const TypeDeclaration(
-                        isNullable: false,
-                        baseName: 'int',
-                      ),
+                      type: const TypeDeclaration(isNullable: false, baseName: 'int'),
                       name: 'validType',
                     ),
                     Parameter(
@@ -811,17 +690,11 @@ void main() {
                       name: 'enumType',
                     ),
                     Parameter(
-                      type: const TypeDeclaration(
-                        isNullable: false,
-                        baseName: 'Api2',
-                      ),
+                      type: const TypeDeclaration(isNullable: false, baseName: 'Api2'),
                       name: 'proxyApiType',
                     ),
                     Parameter(
-                      type: const TypeDeclaration(
-                        isNullable: true,
-                        baseName: 'int',
-                      ),
+                      type: const TypeDeclaration(isNullable: true, baseName: 'int'),
                       name: 'nullableValidType',
                     ),
                     Parameter(
@@ -833,10 +706,7 @@ void main() {
                       name: 'nullableEnumType',
                     ),
                     Parameter(
-                      type: const TypeDeclaration(
-                        isNullable: true,
-                        baseName: 'Api2',
-                      ),
+                      type: const TypeDeclaration(isNullable: true, baseName: 'Api2'),
                       name: 'nullableProxyApiType',
                     ),
                   ],
@@ -936,10 +806,7 @@ void main() {
                   location: ApiLocation.flutter,
                   parameters: <Parameter>[
                     Parameter(
-                      type: const TypeDeclaration(
-                        isNullable: false,
-                        baseName: 'int',
-                      ),
+                      type: const TypeDeclaration(isNullable: false, baseName: 'int'),
                       name: 'validType',
                     ),
                     Parameter(
@@ -951,17 +818,11 @@ void main() {
                       name: 'enumType',
                     ),
                     Parameter(
-                      type: const TypeDeclaration(
-                        isNullable: false,
-                        baseName: 'Api2',
-                      ),
+                      type: const TypeDeclaration(isNullable: false, baseName: 'Api2'),
                       name: 'proxyApiType',
                     ),
                     Parameter(
-                      type: const TypeDeclaration(
-                        isNullable: true,
-                        baseName: 'int',
-                      ),
+                      type: const TypeDeclaration(isNullable: true, baseName: 'int'),
                       name: 'nullableValidType',
                     ),
                     Parameter(
@@ -973,10 +834,7 @@ void main() {
                       name: 'nullableEnumType',
                     ),
                     Parameter(
-                      type: const TypeDeclaration(
-                        isNullable: true,
-                        baseName: 'Api2',
-                      ),
+                      type: const TypeDeclaration(isNullable: true, baseName: 'Api2'),
                       name: 'nullableProxyApiType',
                     ),
                   ],
@@ -1019,57 +877,41 @@ void main() {
     });
 
     group('InstanceManager', () {
-      test(
-        'InstanceManager passes runnable field and not a new runnable instance',
-        () {
-          final root = Root(
-            apis: <Api>[
-              AstProxyApi(
-                name: 'Api',
-                constructors: <Constructor>[],
-                fields: <ApiField>[],
-                methods: <Method>[],
-              ),
-            ],
-            classes: <Class>[],
-            enums: <Enum>[],
-          );
-          final sink = StringBuffer();
-          const generator = KotlinGenerator();
-          generator.generate(
-            const InternalKotlinOptions(kotlinOut: ''),
-            root,
-            sink,
-            dartPackageName: DEFAULT_PACKAGE_NAME,
-          );
-          final code = sink.toString();
-          final String collapsedCode = _collapseNewlineAndIndentation(code);
+      test('InstanceManager passes runnable field and not a new runnable instance', () {
+        final root = Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              constructors: <Constructor>[],
+              fields: <ApiField>[],
+              methods: <Method>[],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final sink = StringBuffer();
+        const generator = KotlinGenerator();
+        generator.generate(
+          const InternalKotlinOptions(kotlinOut: ''),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final code = sink.toString();
+        final String collapsedCode = _collapseNewlineAndIndentation(code);
 
-          expect(
-            code,
-            contains(
-              'handler.removeCallbacks(releaseAllFinalizedInstancesRunnable)',
-            ),
-          );
-          expect(
-            code,
-            contains(
-              'handler.postDelayed(releaseAllFinalizedInstancesRunnable',
-            ),
-          );
+        expect(code, contains('handler.removeCallbacks(releaseAllFinalizedInstancesRunnable)'));
+        expect(code, contains('handler.postDelayed(releaseAllFinalizedInstancesRunnable'));
 
-          expect(
-            collapsedCode,
-            contains(
-              'private val releaseAllFinalizedInstancesRunnable = Runnable { this.releaseAllFinalizedInstances() }',
-            ),
-          );
-          expect(
-            'this.releaseAllFinalizedInstances()'.allMatches(code).length,
-            1,
-          );
-        },
-      );
+        expect(
+          collapsedCode,
+          contains(
+            'private val releaseAllFinalizedInstancesRunnable = Runnable { this.releaseAllFinalizedInstances() }',
+          ),
+        );
+        expect('this.releaseAllFinalizedInstances()'.allMatches(code).length, 1);
+      });
 
       test('InstanceManager.getInstance specifies nonnull type', () {
         final root = Root(
@@ -1095,10 +937,7 @@ void main() {
         final code = sink.toString();
         final String collapsedCode = _collapseNewlineAndIndentation(code);
 
-        expect(
-          collapsedCode,
-          contains('fun <T : Any> getInstance(identifier: Long): T?'),
-        );
+        expect(collapsedCode, contains('fun <T : Any> getInstance(identifier: Long): T?'));
       });
     });
   });

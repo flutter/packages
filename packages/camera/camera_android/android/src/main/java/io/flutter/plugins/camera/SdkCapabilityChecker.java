@@ -18,7 +18,8 @@ public class SdkCapabilityChecker {
 
   @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.P)
   public static boolean supportsDistortionCorrection() {
-    // See https://developer.android.com/reference/android/hardware/camera2/CameraCharacteristics#DISTORTION_CORRECTION_AVAILABLE_MODES
+    // See
+    // https://developer.android.com/reference/android/hardware/camera2/CameraCharacteristics#DISTORTION_CORRECTION_AVAILABLE_MODES
     return SDK_VERSION >= Build.VERSION_CODES.P;
   }
 
@@ -36,13 +37,15 @@ public class SdkCapabilityChecker {
 
   @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.P)
   public static boolean supportsSessionConfiguration() {
-    // See https://developer.android.com/reference/android/hardware/camera2/params/SessionConfiguration
+    // See
+    // https://developer.android.com/reference/android/hardware/camera2/params/SessionConfiguration
     return SDK_VERSION >= Build.VERSION_CODES.P;
   }
 
   @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.R)
   public static boolean supportsZoomRatio() {
-    // See https://developer.android.com/reference/android/hardware/camera2/CaptureRequest#CONTROL_ZOOM_RATIO
+    // See
+    // https://developer.android.com/reference/android/hardware/camera2/CaptureRequest#CONTROL_ZOOM_RATIO
     return SDK_VERSION >= Build.VERSION_CODES.R;
   }
 }

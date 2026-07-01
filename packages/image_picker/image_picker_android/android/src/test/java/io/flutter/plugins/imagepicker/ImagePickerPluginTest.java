@@ -23,60 +23,37 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.embedding.engine.plugins.lifecycle.HiddenLifecycleReference;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugins.imagepicker.Messages.FlutterError;
-import io.flutter.plugins.imagepicker.Messages.GeneralOptions;
-import io.flutter.plugins.imagepicker.Messages.ImageSelectionOptions;
-import io.flutter.plugins.imagepicker.Messages.MediaSelectionOptions;
-import io.flutter.plugins.imagepicker.Messages.SourceSpecification;
-import io.flutter.plugins.imagepicker.Messages.VideoSelectionOptions;
-import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 public class ImagePickerPluginTest {
   private static final ImageSelectionOptions DEFAULT_IMAGE_OPTIONS =
-      new ImageSelectionOptions.Builder().setQuality((long) 100).build();
-  private static final VideoSelectionOptions DEFAULT_VIDEO_OPTIONS =
-      new VideoSelectionOptions.Builder().build();
+      new ImageSelectionOptions(/* maxWidth */ null, /* maxHeight */ null, /* quality */ 100);
+  private static final VideoSelectionOptions DEFAULT_VIDEO_OPTIONS = new VideoSelectionOptions();
   private static final MediaSelectionOptions DEFAULT_MEDIA_OPTIONS =
-      new MediaSelectionOptions.Builder().setImageSelectionOptions(DEFAULT_IMAGE_OPTIONS).build();
+      new MediaSelectionOptions(DEFAULT_IMAGE_OPTIONS);
   private static final GeneralOptions GENERAL_OPTIONS_ALLOW_MULTIPLE_USE_PHOTO_PICKER =
-      new GeneralOptions.Builder().setUsePhotoPicker(true).setAllowMultiple(true).build();
+      new GeneralOptions(/* allowMultiple */ true, /* usePhotoPicker */ true, /* limit */ null);
   private static final GeneralOptions GENERAL_OPTIONS_DONT_ALLOW_MULTIPLE_USE_PHOTO_PICKER =
-      new GeneralOptions.Builder().setUsePhotoPicker(true).setAllowMultiple(false).build();
+      new GeneralOptions(/* allowMultiple */ false, /* usePhotoPicker */ true, /* limit */ null);
   private static final GeneralOptions GENERAL_OPTIONS_DONT_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER =
-      new GeneralOptions.Builder().setUsePhotoPicker(false).setAllowMultiple(false).build();
+      new GeneralOptions(/* allowMultiple */ false, /* usePhotoPicker */ false, /* limit */ null);
   private static final GeneralOptions GENERAL_OPTIONS_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER =
-      new GeneralOptions.Builder().setUsePhotoPicker(false).setAllowMultiple(true).build();
+      new GeneralOptions(/* allowMultiple */ true, /* usePhotoPicker */ false, /* limit */ null);
   private static final GeneralOptions
       GENERAL_OPTIONS_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER_WITH_LIMIT =
-          new GeneralOptions.Builder()
-              .setUsePhotoPicker(false)
-              .setAllowMultiple(true)
-              .setLimit((long) 5)
-              .build();
+          new GeneralOptions(/* allowMultiple */ true, /* usePhotoPicker */ false, /* limit */ 5L);
   private static final GeneralOptions GENERAL_OPTIONS_ALLOW_MULTIPLE_USE_PHOTO_PICKER_WITH_LIMIT =
-      new GeneralOptions.Builder()
-          .setUsePhotoPicker(true)
-          .setAllowMultiple(true)
-          .setLimit((long) 5)
-          .build();
+      new GeneralOptions(/* allowMultiple */ true, /* usePhotoPicker */ true, /* limit */ 5L);
   private static final SourceSpecification SOURCE_GALLERY =
-      new SourceSpecification.Builder().setType(Messages.SourceType.GALLERY).build();
+      new SourceSpecification(SourceType.GALLERY, null);
   private static final SourceSpecification SOURCE_CAMERA_FRONT =
-      new SourceSpecification.Builder()
-          .setType(Messages.SourceType.CAMERA)
-          .setCamera(Messages.SourceCamera.FRONT)
-          .build();
+      new SourceSpecification(SourceType.CAMERA, SourceCamera.FRONT);
   private static final SourceSpecification SOURCE_CAMERA_REAR =
-      new SourceSpecification.Builder()
-          .setType(Messages.SourceType.CAMERA)
-          .setCamera(Messages.SourceCamera.REAR)
-          .build();
+      new SourceSpecification(SourceType.CAMERA, SourceCamera.REAR);
 
   @Mock ActivityPluginBinding mockActivityBinding;
   @Mock FlutterPluginBinding mockPluginBinding;
@@ -84,7 +61,6 @@ public class ImagePickerPluginTest {
   @Mock Activity mockActivity;
   @Mock Application mockApplication;
   @Mock ImagePickerDelegate mockImagePickerDelegate;
-  @Mock Messages.Result<List<String>> mockResult;
 
   ImagePickerPlugin plugin;
 
@@ -107,17 +83,22 @@ public class ImagePickerPluginTest {
   public void pickImages_whenActivityIsNull_finishesWithForegroundActivityRequiredError() {
     ImagePickerPlugin imagePickerPluginWithNullActivity =
         new ImagePickerPlugin(mockImagePickerDelegate, null);
+    final Boolean[] callbackCalled = new Boolean[1];
     imagePickerPluginWithNullActivity.pickImages(
         SOURCE_GALLERY,
         DEFAULT_IMAGE_OPTIONS,
         GENERAL_OPTIONS_ALLOW_MULTIPLE_USE_PHOTO_PICKER,
-        mockResult);
-
-    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
-    verify(mockResult).error(errorCaptor.capture());
-    assertEquals("no_activity", errorCaptor.getValue().code);
-    assertEquals(
-        "image_picker plugin requires a foreground activity.", errorCaptor.getValue().getMessage());
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              assertTrue(reply.isFailure());
+              FlutterError error = (FlutterError) reply.exceptionOrNull();
+              assertEquals("no_activity", error.getCode());
+              assertEquals(
+                  "image_picker plugin requires a foreground activity.", error.getMessage());
+              return null;
+            }));
+    assertTrue(callbackCalled[0]);
     verifyNoInteractions(mockImagePickerDelegate);
   }
 
@@ -125,17 +106,22 @@ public class ImagePickerPluginTest {
   public void pickVideos_whenActivityIsNull_finishesWithForegroundActivityRequiredError() {
     ImagePickerPlugin imagePickerPluginWithNullActivity =
         new ImagePickerPlugin(mockImagePickerDelegate, null);
+    final Boolean[] callbackCalled = new Boolean[1];
     imagePickerPluginWithNullActivity.pickVideos(
         SOURCE_CAMERA_REAR,
         DEFAULT_VIDEO_OPTIONS,
         GENERAL_OPTIONS_DONT_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER,
-        mockResult);
-
-    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
-    verify(mockResult).error(errorCaptor.capture());
-    assertEquals("no_activity", errorCaptor.getValue().code);
-    assertEquals(
-        "image_picker plugin requires a foreground activity.", errorCaptor.getValue().getMessage());
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              assertTrue(reply.isFailure());
+              FlutterError error = (FlutterError) reply.exceptionOrNull();
+              assertEquals("no_activity", error.getCode());
+              assertEquals(
+                  "image_picker plugin requires a foreground activity.", error.getMessage());
+              return null;
+            }));
+    assertTrue(callbackCalled[0]);
     verifyNoInteractions(mockImagePickerDelegate);
   }
 
@@ -146,7 +132,7 @@ public class ImagePickerPluginTest {
     FlutterError error =
         assertThrows(FlutterError.class, imagePickerPluginWithNullActivity::retrieveLostResults);
     assertEquals("image_picker plugin requires a foreground activity.", error.getMessage());
-    assertEquals("no_activity", error.code);
+    assertEquals("no_activity", error.getCode());
     verifyNoInteractions(mockImagePickerDelegate);
   }
 
@@ -156,9 +142,8 @@ public class ImagePickerPluginTest {
         SOURCE_GALLERY,
         DEFAULT_IMAGE_OPTIONS,
         GENERAL_OPTIONS_DONT_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER,
-        mockResult);
+        ResultCompat.asCompatCallback(reply -> null));
     verify(mockImagePickerDelegate).chooseImageFromGallery(any(), eq(false), any());
-    verifyNoInteractions(mockResult);
   }
 
   @Test
@@ -167,9 +152,8 @@ public class ImagePickerPluginTest {
         SOURCE_GALLERY,
         DEFAULT_IMAGE_OPTIONS,
         GENERAL_OPTIONS_DONT_ALLOW_MULTIPLE_USE_PHOTO_PICKER,
-        mockResult);
+        ResultCompat.asCompatCallback(reply -> null));
     verify(mockImagePickerDelegate).chooseImageFromGallery(any(), eq(true), any());
-    verifyNoInteractions(mockResult);
   }
 
   @Test
@@ -178,10 +162,9 @@ public class ImagePickerPluginTest {
         SOURCE_GALLERY,
         DEFAULT_IMAGE_OPTIONS,
         GENERAL_OPTIONS_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER,
-        mockResult);
+        ResultCompat.asCompatCallback(reply -> null));
     verify(mockImagePickerDelegate)
         .chooseMultiImageFromGallery(any(), eq(false), eq(Integer.MAX_VALUE), any());
-    verifyNoInteractions(mockResult);
   }
 
   @Test
@@ -190,10 +173,9 @@ public class ImagePickerPluginTest {
         SOURCE_GALLERY,
         DEFAULT_IMAGE_OPTIONS,
         GENERAL_OPTIONS_ALLOW_MULTIPLE_USE_PHOTO_PICKER,
-        mockResult);
+        ResultCompat.asCompatCallback(reply -> null));
     verify(mockImagePickerDelegate)
         .chooseMultiImageFromGallery(any(), eq(true), eq(Integer.MAX_VALUE), any());
-    verifyNoInteractions(mockResult);
   }
 
   @Test
@@ -202,9 +184,8 @@ public class ImagePickerPluginTest {
         SOURCE_GALLERY,
         DEFAULT_IMAGE_OPTIONS,
         GENERAL_OPTIONS_ALLOW_MULTIPLE_USE_PHOTO_PICKER_WITH_LIMIT,
-        mockResult);
+        ResultCompat.asCompatCallback(reply -> null));
     verify(mockImagePickerDelegate).chooseMultiImageFromGallery(any(), eq(true), eq(5), any());
-    verifyNoInteractions(mockResult);
   }
 
   @Test
@@ -213,39 +194,36 @@ public class ImagePickerPluginTest {
         SOURCE_GALLERY,
         DEFAULT_IMAGE_OPTIONS,
         GENERAL_OPTIONS_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER_WITH_LIMIT,
-        mockResult);
+        ResultCompat.asCompatCallback(reply -> null));
     verify(mockImagePickerDelegate).chooseMultiImageFromGallery(any(), eq(false), eq(5), any());
-    verifyNoInteractions(mockResult);
   }
 
   @Test
   public void pickMedia_invokesChooseMediaFromGallery() {
-    MediaSelectionOptions mediaSelectionOptions =
-        new MediaSelectionOptions.Builder().setImageSelectionOptions(DEFAULT_IMAGE_OPTIONS).build();
+    MediaSelectionOptions mediaSelectionOptions = new MediaSelectionOptions(DEFAULT_IMAGE_OPTIONS);
     plugin.pickMedia(
         mediaSelectionOptions,
         GENERAL_OPTIONS_DONT_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER,
-        mockResult);
+        ResultCompat.asCompatCallback(reply -> null));
     verify(mockImagePickerDelegate)
         .chooseMediaFromGallery(
             eq(mediaSelectionOptions),
             eq(GENERAL_OPTIONS_DONT_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER),
             any());
-    verifyNoInteractions(mockResult);
   }
 
   @Test
   public void pickMedia_usingPhotoPicker_invokesChooseMediaFromGallery() {
-    MediaSelectionOptions mediaSelectionOptions =
-        new MediaSelectionOptions.Builder().setImageSelectionOptions(DEFAULT_IMAGE_OPTIONS).build();
+    MediaSelectionOptions mediaSelectionOptions = new MediaSelectionOptions(DEFAULT_IMAGE_OPTIONS);
     plugin.pickMedia(
-        mediaSelectionOptions, GENERAL_OPTIONS_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER, mockResult);
+        mediaSelectionOptions,
+        GENERAL_OPTIONS_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER,
+        ResultCompat.asCompatCallback(reply -> null));
     verify(mockImagePickerDelegate)
         .chooseMediaFromGallery(
             eq(mediaSelectionOptions),
             eq(GENERAL_OPTIONS_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER),
             any());
-    verifyNoInteractions(mockResult);
   }
 
   @Test
@@ -254,9 +232,8 @@ public class ImagePickerPluginTest {
         SOURCE_CAMERA_REAR,
         DEFAULT_IMAGE_OPTIONS,
         GENERAL_OPTIONS_DONT_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER,
-        mockResult);
+        ResultCompat.asCompatCallback(reply -> null));
     verify(mockImagePickerDelegate).takeImageWithCamera(any(), any());
-    verifyNoInteractions(mockResult);
   }
 
   @Test
@@ -265,7 +242,7 @@ public class ImagePickerPluginTest {
         SOURCE_CAMERA_REAR,
         DEFAULT_IMAGE_OPTIONS,
         GENERAL_OPTIONS_DONT_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER,
-        mockResult);
+        ResultCompat.asCompatCallback(reply -> null));
     verify(mockImagePickerDelegate).setCameraDevice(eq(ImagePickerDelegate.CameraDevice.REAR));
   }
 
@@ -275,7 +252,7 @@ public class ImagePickerPluginTest {
         SOURCE_CAMERA_FRONT,
         DEFAULT_IMAGE_OPTIONS,
         GENERAL_OPTIONS_DONT_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER,
-        mockResult);
+        ResultCompat.asCompatCallback(reply -> null));
     verify(mockImagePickerDelegate).setCameraDevice(eq(ImagePickerDelegate.CameraDevice.FRONT));
   }
 
@@ -285,7 +262,7 @@ public class ImagePickerPluginTest {
         SOURCE_CAMERA_REAR,
         DEFAULT_VIDEO_OPTIONS,
         GENERAL_OPTIONS_DONT_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER,
-        mockResult);
+        ResultCompat.asCompatCallback(reply -> null));
     verify(mockImagePickerDelegate).setCameraDevice(eq(ImagePickerDelegate.CameraDevice.REAR));
   }
 
@@ -295,7 +272,7 @@ public class ImagePickerPluginTest {
         SOURCE_CAMERA_FRONT,
         DEFAULT_VIDEO_OPTIONS,
         GENERAL_OPTIONS_DONT_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER,
-        mockResult);
+        ResultCompat.asCompatCallback(reply -> null));
     verify(mockImagePickerDelegate).setCameraDevice(eq(ImagePickerDelegate.CameraDevice.FRONT));
   }
 
@@ -305,10 +282,9 @@ public class ImagePickerPluginTest {
         SOURCE_GALLERY,
         DEFAULT_VIDEO_OPTIONS,
         GENERAL_OPTIONS_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER,
-        mockResult);
+        ResultCompat.asCompatCallback(reply -> null));
     verify(mockImagePickerDelegate)
         .chooseMultiVideoFromGallery(any(), eq(false), eq(Integer.MAX_VALUE), any());
-    verifyNoInteractions(mockResult);
   }
 
   @Test
@@ -317,10 +293,9 @@ public class ImagePickerPluginTest {
         SOURCE_GALLERY,
         DEFAULT_VIDEO_OPTIONS,
         GENERAL_OPTIONS_ALLOW_MULTIPLE_USE_PHOTO_PICKER,
-        mockResult);
+        ResultCompat.asCompatCallback(reply -> null));
     verify(mockImagePickerDelegate)
         .chooseMultiVideoFromGallery(any(), eq(true), eq(Integer.MAX_VALUE), any());
-    verifyNoInteractions(mockResult);
   }
 
   @Test
@@ -329,9 +304,8 @@ public class ImagePickerPluginTest {
         SOURCE_GALLERY,
         DEFAULT_VIDEO_OPTIONS,
         GENERAL_OPTIONS_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER_WITH_LIMIT,
-        mockResult);
+        ResultCompat.asCompatCallback(reply -> null));
     verify(mockImagePickerDelegate).chooseMultiVideoFromGallery(any(), eq(false), eq(5), any());
-    verifyNoInteractions(mockResult);
   }
 
   @Test

@@ -64,8 +64,8 @@ class FileUtils {
       String uuid = UUID.randomUUID().toString();
       File targetDirectory = new File(context.getCacheDir(), uuid);
       targetDirectory.mkdir();
-      // TODO(SynSzakala) according to the docs, `deleteOnExit` does not work reliably on Android; we should preferably
-      //  just clear the picked files after the app startup.
+      // TODO(SynSzakala) according to the docs, `deleteOnExit` does not work reliably on Android;
+      // we should preferably just clear the picked files after the app startup.
       targetDirectory.deleteOnExit();
       String fileName = getImageName(context, uri);
       String extension = getImageExtension(context, uri);
@@ -102,7 +102,9 @@ class FileUtils {
     }
   }
 
-  /** @return extension of image with dot, or null if it's empty. */
+  /**
+   * @return extension of image with dot, or null if it's empty.
+   */
   private static String getImageExtension(Context context, Uri uriImage) {
     String extension;
 
@@ -126,7 +128,8 @@ class FileUtils {
     return "." + sanitizeFilename(extension);
   }
 
-  // From https://developer.android.com/privacy-and-security/risks/untrustworthy-contentprovider-provided-filename#sanitize-provided-filenames.
+  // From
+  // https://developer.android.com/privacy-and-security/risks/untrustworthy-contentprovider-provided-filename#sanitize-provided-filenames.
   protected static @Nullable String sanitizeFilename(@Nullable String displayName) {
     if (displayName == null) {
       return null;
@@ -160,7 +163,9 @@ class FileUtils {
     return f;
   }
 
-  /** @return name of the image provided by ContentResolver; this may be null. */
+  /**
+   * @return name of the image provided by ContentResolver; this may be null.
+   */
   private static String getImageName(Context context, Uri uriImage) {
     try (Cursor cursor = queryImageName(context, uriImage)) {
       if (cursor == null || !cursor.moveToFirst() || cursor.getColumnCount() < 1) return null;

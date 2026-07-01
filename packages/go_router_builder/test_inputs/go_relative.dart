@@ -9,26 +9,19 @@ mixin $Route2 {}
 mixin $RelativeRoute {}
 mixin $InnerRelativeRoute {}
 
-const TypedRelativeGoRoute<RelativeRoute> relativeRoute =
-    TypedRelativeGoRoute<RelativeRoute>(
-      path: 'relative-route',
-      routes: <TypedRoute<RouteData>>[
-        TypedRelativeGoRoute<InnerRelativeRoute>(path: 'inner-relative-route'),
-      ],
-    );
+const TypedRelativeGoRoute<RelativeRoute> relativeRoute = TypedRelativeGoRoute<RelativeRoute>(
+  path: 'relative-route',
+  routes: <TypedRoute<RouteData>>[
+    TypedRelativeGoRoute<InnerRelativeRoute>(path: 'inner-relative-route'),
+  ],
+);
 
-@TypedGoRoute<Route1>(
-  path: 'route-1',
-  routes: <TypedRoute<RouteData>>[relativeRoute],
-)
+@TypedGoRoute<Route1>(path: 'route-1', routes: <TypedRoute<RouteData>>[relativeRoute])
 class Route1 extends GoRouteData with $Route1 {
   const Route1();
 }
 
-@TypedGoRoute<Route2>(
-  path: 'route-2',
-  routes: <TypedRoute<RouteData>>[relativeRoute],
-)
+@TypedGoRoute<Route2>(path: 'route-2', routes: <TypedRoute<RouteData>>[relativeRoute])
 class Route2 extends GoRouteData with $Route2 {
   const Route2();
 }

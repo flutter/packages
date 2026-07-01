@@ -10,12 +10,7 @@ void main() {
     WebViewCookie cookie;
     Map<String, String> serializedCookie;
     // Test serialization
-    cookie = const WebViewCookie(
-      name: 'foo',
-      value: 'bar',
-      domain: 'example.com',
-      path: '/test',
-    );
+    cookie = const WebViewCookie(name: 'foo', value: 'bar', domain: 'example.com', path: '/test');
     serializedCookie = cookie.toJson();
     expect(serializedCookie['name'], 'foo');
     expect(serializedCookie['value'], 'bar');

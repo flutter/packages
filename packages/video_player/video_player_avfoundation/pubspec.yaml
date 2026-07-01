@@ -2,7 +2,7 @@ name: video_player_avfoundation
 description: iOS and macOS implementation of the video_player plugin.
 repository: https://github.com/flutter/packages/tree/main/packages/video_player/video_player_avfoundation
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+video_player%22
-version: 2.9.4
+version: 2.10.0
 
 environment:
   sdk: ^3.10.0
@@ -14,30 +14,26 @@ flutter:
     platforms:
       ios:
         dartPluginClass: AVFoundationVideoPlayer
-        pluginClass: FVPVideoPlayerPlugin
+        pluginClass: VideoPlayerPlugin
         sharedDarwinSource: true
       macos:
         dartPluginClass: AVFoundationVideoPlayer
-        pluginClass: FVPVideoPlayerPlugin
+        pluginClass: VideoPlayerPlugin
         sharedDarwinSource: true
 
 dependencies:
   flutter:
     sdk: flutter
-  video_player_platform_interface: ^6.6.0
+  meta: ^1.10.0
+  video_player_platform_interface: ^6.7.0
 
 dev_dependencies:
   build_runner: ^2.3.3
   flutter_test:
     sdk: flutter
   mockito: ^5.4.4
-  pigeon: ^26.1.7
+  pigeon: ^26.3.4
 
 topics:
   - video
   - video-player
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
-dependency_overrides:
-  video_player_platform_interface:
-    { path: ../../../packages/video_player/video_player_platform_interface }

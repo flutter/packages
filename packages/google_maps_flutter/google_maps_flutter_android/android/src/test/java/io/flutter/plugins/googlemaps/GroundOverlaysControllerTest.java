@@ -45,25 +45,28 @@ public class GroundOverlaysControllerTest {
   private final String base64Image = TestImageUtils.generateBase64Image();
 
   @NonNull
-  private Messages.PlatformGroundOverlay.Builder defaultGroundOverlayBuilder() {
+  private PlatformGroundOverlay createGroundOverlay(String overlayId, double transparency) {
     byte[] bmpData = Base64.decode(base64Image, Base64.DEFAULT);
 
-    return new Messages.PlatformGroundOverlay.Builder()
-        .setImage(
-            new Messages.PlatformBitmap.Builder()
-                .setBitmap(
-                    new Messages.PlatformBitmapBytesMap.Builder()
-                        .setBitmapScaling(Messages.PlatformMapBitmapScaling.AUTO)
-                        .setImagePixelRatio(2.0)
-                        .setByteData(bmpData)
-                        .setWidth(100.0)
-                        .build())
-                .build())
-        .setBearing(1.0)
-        .setZIndex(1L)
-        .setVisible(true)
-        .setTransparency(1.0)
-        .setClickable(true);
+    return new PlatformGroundOverlay(
+        overlayId,
+        new PlatformBitmap(
+            new PlatformBitmapBytesMap(
+                bmpData,
+                PlatformMapBitmapScaling.AUTO,
+                /* imagePixelRatio */ 2.0,
+                /* width */ 100.0, /* height */
+                null)),
+        /* position */ null,
+        /* bounds */ null,
+        /* width */ null,
+        /* height */ null,
+        /* anchor */ null,
+        transparency,
+        /* bearing */ 1.0,
+        /* zIndex */ 1L,
+        /* visible */ true,
+        /* clickable */ true);
   }
 
   @Before
@@ -71,8 +74,7 @@ public class GroundOverlaysControllerTest {
     mockCloseable = MockitoAnnotations.openMocks(this);
     Context context = ApplicationProvider.getApplicationContext();
     AssetManager assetManager = context.getAssets();
-    Messages.MapsCallbackApi flutterApi =
-        spy(new Messages.MapsCallbackApi(mock(BinaryMessenger.class)));
+    MapsCallbackApi flutterApi = spy(new MapsCallbackApi(mock(BinaryMessenger.class), ""));
     controller =
         spy(
             new GroundOverlaysController(
@@ -97,21 +99,13 @@ public class GroundOverlaysControllerTest {
     when(googleMap.addGroundOverlay(any(GroundOverlayOptions.class))).thenReturn(groundOverlay);
 
     controller.addGroundOverlays(
-        Collections.singletonList(
-            defaultGroundOverlayBuilder()
-                .setGroundOverlayId(googleGroundOverlayId)
-                .setTransparency((double) transparency)
-                .build()));
+        Collections.singletonList(createGroundOverlay(googleGroundOverlayId, transparency)));
     Mockito.verify(googleMap, times(1))
         .addGroundOverlay(Mockito.argThat(argument -> argument.getTransparency() == transparency));
 
     final float newTransparency = 0.2f;
     controller.changeGroundOverlays(
-        Collections.singletonList(
-            defaultGroundOverlayBuilder()
-                .setGroundOverlayId(googleGroundOverlayId)
-                .setTransparency((double) newTransparency)
-                .build()));
+        Collections.singletonList(createGroundOverlay(googleGroundOverlayId, newTransparency)));
     Mockito.verify(groundOverlay, times(1)).setTransparency(newTransparency);
 
     controller.removeGroundOverlays(Collections.singletonList(googleGroundOverlayId));

@@ -17,6 +17,7 @@ class VideoRecordEventListenerProxyApi extends PigeonApiVideoRecordEventListener
   VideoRecordEventListenerProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);
   }
+
   /**
    * Implementation of {@link VideoRecordEventListener} that passes arguments of callback methods to
    * Dart.

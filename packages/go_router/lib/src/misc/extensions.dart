@@ -23,8 +23,7 @@ extension GoRouterHelper on BuildContext {
   );
 
   /// Navigate to a location.
-  void go(String location, {Object? extra}) =>
-      GoRouter.of(this).go(location, extra: extra);
+  void go(String location, {Object? extra}) => GoRouter.of(this).go(location, extra: extra);
 
   /// Navigate to a named route.
   void goNamed(

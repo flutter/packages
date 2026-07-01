@@ -20,10 +20,7 @@ void main() {
     expect(results.length, greaterThan(4));
     // And the calls should all be different. This works since each fake call
     // returns a different result.
-    expect(
-      results.map((XFile? file) => file?.path).toSet().length,
-      results.length,
-    );
+    expect(results.map((XFile? file) => file?.path).toSet().length, results.length);
   });
 
   test('sanity check getLostData', () async {

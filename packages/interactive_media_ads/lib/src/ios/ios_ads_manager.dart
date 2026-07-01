@@ -20,9 +20,7 @@ class IOSAdsManager extends PlatformAdsManager {
       super(
         adCuePoints: List<Duration>.unmodifiable(
           manager.adCuePoints.map((double seconds) {
-            return Duration(
-              milliseconds: (seconds * Duration.millisecondsPerSecond).round(),
-            );
+            return Duration(milliseconds: (seconds * Duration.millisecondsPerSecond).round());
           }),
         ),
       );
@@ -55,8 +53,7 @@ class IOSAdsManager extends PlatformAdsManager {
 
   @override
   Future<void> setAdsManagerDelegate(PlatformAdsManagerDelegate delegate) {
-    final IOSAdsManagerDelegate platformDelegate =
-        delegate is IOSAdsManagerDelegate
+    final IOSAdsManagerDelegate platformDelegate = delegate is IOSAdsManagerDelegate
         ? delegate
         : IOSAdsManagerDelegate(delegate.params);
     _delegate = platformDelegate;

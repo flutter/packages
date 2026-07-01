@@ -11,8 +11,7 @@ import 'package:path_provider_windows/src/guid.dart';
 
 void main() {
   test('has correct byte representation', () async {
-    final Pointer<GUID> guid = calloc<GUID>()
-      ..ref.parse('{00112233-4455-6677-8899-aabbccddeeff}');
+    final Pointer<GUID> guid = calloc<GUID>()..ref.parse('{00112233-4455-6677-8899-aabbccddeeff}');
     final data = ByteData(16)
       ..setInt32(0, guid.ref.data1, Endian.little)
       ..setInt16(4, guid.ref.data2, Endian.little)
@@ -39,10 +38,8 @@ void main() {
   });
 
   test('handles alternate forms', () async {
-    final Pointer<GUID> guid1 = calloc<GUID>()
-      ..ref.parse('{00112233-4455-6677-8899-aabbccddeeff}');
-    final Pointer<GUID> guid2 = calloc<GUID>()
-      ..ref.parse('00112233445566778899AABBCCDDEEFF');
+    final Pointer<GUID> guid1 = calloc<GUID>()..ref.parse('{00112233-4455-6677-8899-aabbccddeeff}');
+    final Pointer<GUID> guid2 = calloc<GUID>()..ref.parse('00112233445566778899AABBCCDDEEFF');
 
     expect(guid1.ref.data1, guid2.ref.data1);
     expect(guid1.ref.data2, guid2.ref.data2);

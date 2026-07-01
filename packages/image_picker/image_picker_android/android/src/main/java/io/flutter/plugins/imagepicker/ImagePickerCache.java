@@ -75,7 +75,7 @@ class ImagePickerCache {
     prefs.edit().putString(SHARED_PREFERENCE_TYPE_KEY, type).apply();
   }
 
-  void saveDimensionWithOutputOptions(Messages.ImageSelectionOptions options) {
+  void saveDimensionWithOutputOptions(ImageSelectionOptions options) {
     final SharedPreferences prefs =
         context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
     SharedPreferences.Editor editor = prefs.edit();
@@ -87,7 +87,7 @@ class ImagePickerCache {
       editor.putLong(
           SHARED_PREFERENCE_MAX_HEIGHT_KEY, Double.doubleToRawLongBits(options.getMaxHeight()));
     }
-    editor.putInt(SHARED_PREFERENCE_IMAGE_QUALITY_KEY, options.getQuality().intValue());
+    editor.putInt(SHARED_PREFERENCE_IMAGE_QUALITY_KEY, (int) options.getQuality());
     editor.apply();
   }
 
@@ -146,13 +146,12 @@ class ImagePickerCache {
     }
 
     if (prefs.contains(SHARED_PREFERENCE_ERROR_CODE_KEY)) {
-      final Messages.CacheRetrievalError.Builder error = new Messages.CacheRetrievalError.Builder();
-      error.setCode(prefs.getString(SHARED_PREFERENCE_ERROR_CODE_KEY, ""));
+      final CacheRetrievalError error =
+          new CacheRetrievalError(
+              prefs.getString(SHARED_PREFERENCE_ERROR_CODE_KEY, ""),
+              prefs.getString(SHARED_PREFERENCE_ERROR_MESSAGE_KEY, null));
       hasData = true;
-      if (prefs.contains(SHARED_PREFERENCE_ERROR_MESSAGE_KEY)) {
-        error.setMessage(prefs.getString(SHARED_PREFERENCE_ERROR_MESSAGE_KEY, ""));
-      }
-      resultMap.put(MAP_KEY_ERROR, error.build());
+      resultMap.put(MAP_KEY_ERROR, error);
     }
 
     if (hasData) {
@@ -161,8 +160,8 @@ class ImagePickerCache {
         resultMap.put(
             MAP_KEY_TYPE,
             typeValue.equals(MAP_TYPE_VALUE_VIDEO)
-                ? Messages.CacheRetrievalType.VIDEO
-                : Messages.CacheRetrievalType.IMAGE);
+                ? CacheRetrievalType.VIDEO
+                : CacheRetrievalType.IMAGE);
       }
       if (prefs.contains(SHARED_PREFERENCE_MAX_WIDTH_KEY)) {
         final long maxWidthValue = prefs.getLong(SHARED_PREFERENCE_MAX_WIDTH_KEY, 0);

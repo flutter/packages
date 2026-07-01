@@ -111,6 +111,7 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
    */
   @Nullable
   private String findSelectedAudioTrackId(@NonNull Tracks tracks) {
+    // Keep this ID format in sync with android_video_player.dart::_parseAndroidTrackId.
     int groupIndex = 0;
     for (Tracks.Group group : tracks.getGroups()) {
       if (group.getType() == C.TRACK_TYPE_AUDIO && group.isSelected()) {
@@ -134,6 +135,7 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
    */
   @Nullable
   private String findSelectedVideoTrackId(@NonNull Tracks tracks) {
+    // Keep this ID format in sync with android_video_player.dart::_parseAndroidTrackId.
     int groupIndex = 0;
     for (Tracks.Group group : tracks.getGroups()) {
       if (group.getType() == C.TRACK_TYPE_VIDEO && group.isSelected()) {

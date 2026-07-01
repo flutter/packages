@@ -10,8 +10,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'page.dart';
 
 class HeatmapPage extends GoogleMapExampleAppPage {
-  const HeatmapPage({Key? key})
-    : super(const Icon(Icons.map), 'Heatmaps', key: key);
+  const HeatmapPage({super.key}) : super(const Icon(Icons.map), 'Heatmaps');
 
   @override
   Widget build(BuildContext context) {
@@ -95,10 +94,7 @@ class HeatmapBodyState extends State<HeatmapBody> {
             width: 350.0,
             height: 300.0,
             child: GoogleMap(
-              initialCameraPosition: const CameraPosition(
-                target: sanFrancisco,
-                zoom: 13,
-              ),
+              initialCameraPosition: const CameraPosition(target: sanFrancisco, zoom: 13),
               heatmaps: <Heatmap>{
                 Heatmap(
                   heatmapId: const HeatmapId('test'),
@@ -127,15 +123,11 @@ class HeatmapBodyState extends State<HeatmapBody> {
                     Column(
                       children: <Widget>[
                         TextButton(
-                          onPressed: disabledPoints.isNotEmpty
-                              ? _addPoint
-                              : null,
+                          onPressed: disabledPoints.isNotEmpty ? _addPoint : null,
                           child: const Text('Add point'),
                         ),
                         TextButton(
-                          onPressed: enabledPoints.isNotEmpty
-                              ? _removePoint
-                              : null,
+                          onPressed: enabledPoints.isNotEmpty ? _removePoint : null,
                           child: const Text('Remove point'),
                         ),
                       ],

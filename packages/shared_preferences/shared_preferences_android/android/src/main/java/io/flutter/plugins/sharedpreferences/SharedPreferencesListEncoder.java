@@ -15,6 +15,7 @@ public interface SharedPreferencesListEncoder {
   /** Converts list to String for storing in shared preferences. */
   @NonNull
   String encode(@NonNull List<String> list);
+
   /** Converts stored String representing List<String> to List. */
   @NonNull
   List<String> decode(@NonNull String listString);

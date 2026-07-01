@@ -4,11 +4,12 @@
 
 package io.flutter.plugins.googlemaps;
 
+import androidx.annotation.NonNull;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 
 class CircleBuilder implements CircleOptionsSink {
-  private final CircleOptions circleOptions;
+  private final @NonNull CircleOptions circleOptions;
   private final float density;
   private boolean consumeTapEvents;
 

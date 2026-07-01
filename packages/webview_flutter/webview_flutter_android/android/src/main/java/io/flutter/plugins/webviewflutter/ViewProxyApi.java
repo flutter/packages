@@ -6,6 +6,10 @@ package io.flutter.plugins.webviewflutter;
 
 import android.view.View;
 import androidx.annotation.NonNull;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import java.util.List;
 
 /**
  * Flutter API implementation for `View`.
@@ -66,5 +70,56 @@ public class ViewProxyApi extends PigeonApiView {
       case UNKNOWN:
         throw getPigeonRegistrar().createUnknownEnumException(OverScrollMode.UNKNOWN);
     }
+  }
+
+  @Override
+  public void setInsetListenerToSetInsetsToZero(
+      @NonNull View pigeon_instance, @NonNull List<? extends WindowInsetsType> types) {
+    if (types.isEmpty()) {
+      ViewCompat.setOnApplyWindowInsetsListener(
+          pigeon_instance, (view, windowInsets) -> windowInsets);
+      return;
+    }
+
+    int typeMaskAccumulator = 0;
+    for (WindowInsetsType type : types) {
+      switch (type) {
+        case SYSTEM_BARS:
+          typeMaskAccumulator |= WindowInsetsCompat.Type.systemBars();
+          break;
+        case DISPLAY_CUTOUT:
+          typeMaskAccumulator |= WindowInsetsCompat.Type.displayCutout();
+          break;
+        case CAPTION_BAR:
+          typeMaskAccumulator |= WindowInsetsCompat.Type.captionBar();
+          break;
+        case IME:
+          typeMaskAccumulator |= WindowInsetsCompat.Type.ime();
+          break;
+        case MANDATORY_SYSTEM_GESTURES:
+          typeMaskAccumulator |= WindowInsetsCompat.Type.mandatorySystemGestures();
+          break;
+        case NAVIGATION_BARS:
+          typeMaskAccumulator |= WindowInsetsCompat.Type.navigationBars();
+          break;
+        case STATUS_BARS:
+          typeMaskAccumulator |= WindowInsetsCompat.Type.statusBars();
+          break;
+        case SYSTEM_GESTURES:
+          typeMaskAccumulator |= WindowInsetsCompat.Type.systemGestures();
+          break;
+        case TAPPABLE_ELEMENT:
+          typeMaskAccumulator |= WindowInsetsCompat.Type.tappableElement();
+          break;
+      }
+    }
+    final int insetsTypeMask = typeMaskAccumulator;
+
+    ViewCompat.setOnApplyWindowInsetsListener(
+        pigeon_instance,
+        (view, windowInsets) ->
+            new WindowInsetsCompat.Builder(windowInsets)
+                .setInsets(insetsTypeMask, Insets.NONE)
+                .build());
   }
 }

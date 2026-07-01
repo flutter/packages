@@ -20,9 +20,7 @@ abstract class PointerInterceptorPlatform extends PlatformInterface {
 
   static set instance(PointerInterceptorPlatform? instance) {
     if (instance == null) {
-      throw AssertionError(
-        'Platform interfaces can only be set to a non-null instance',
-      );
+      throw AssertionError('Platform interfaces can only be set to a non-null instance');
     }
 
     PlatformInterface.verify(instance, _token);

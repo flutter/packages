@@ -19,9 +19,7 @@ import 'package:path/path.dart' as p;
 // that references `go_router`, and running `dart fix --compare-to-golden`
 // on the temp directory.
 Future<void> main(List<String> args) async {
-  final Directory goRouterPackageRoot = File.fromUri(
-    Platform.script,
-  ).parent.parent;
+  final Directory goRouterPackageRoot = File.fromUri(Platform.script).parent.parent;
 
   final Directory testTempDir = await Directory.systemTemp.createTemp();
 
@@ -34,10 +32,7 @@ Future<void> main(List<String> args) async {
   // Copy the test_fixes folder to the temporary testFixesTargetDir.
   //
   // This also creates the proper pubspec.yaml in the temp directory.
-  await _prepareTemplate(
-    packageRoot: goRouterPackageRoot,
-    testTempDir: testTempDir,
-  );
+  await _prepareTemplate(packageRoot: goRouterPackageRoot, testTempDir: testTempDir);
 
   // Run dart pub get in the temp directory to set it up.
   final int pubGetStatusCode = await _runProcess('dart', <String>[
@@ -98,11 +93,7 @@ Future<Process> _streamOutput(Future<Process> processFuture) async {
   return process;
 }
 
-Future<int> _runProcess(
-  String command,
-  List<String> arguments, {
-  String? workingDirectory,
-}) async {
+Future<int> _runProcess(String command, List<String> arguments, {String? workingDirectory}) async {
   final Process process = await _streamOutput(
     Process.start(command, arguments, workingDirectory: workingDirectory),
   );

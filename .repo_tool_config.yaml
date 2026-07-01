@@ -1,0 +1,130 @@
+# Repo-specific configuration for the flutter_plugin_tools repository tooling.
+
+repo_name: flutter/packages
+
+# The minimum Flutter version that can be used as the minimum SDK constraint
+# by packages in this repository. For example, if this is set to 3.22.0, then a
+# package can have a minimum SDK version of 3.32.0, 3.35.0, 3.38.0, etc., but
+# not 3.29.0.
+#
+# The major and minor version here should match the lowest version analyzed
+# in legacy version analysis (.ci.yaml analyze_legacy).
+min_flutter: '3.38.0'
+
+# The list of external packages that are allowed as dependencies.
+# All entries here must have an explanation for why they are here. See
+# https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#Dependencies
+allowed_dependencies:
+  # Dependencies that are only allowed if pinned. This should be used for the
+  # rare case of a dependency on a package that we have no influence over.
+  # A pin can be either an exact version, or a range with an explicit, inclusive
+  # max version, which must a version that already exists, not a future version.
+  pinned:
+    # Test-only dependency, so does not impact package clients, and
+    # has limited impact so could be easily removed if there are
+    # ever maintenance issues in the future.
+    - lcov_parser
+
+    # This should be removed; see
+    # https://github.com/flutter/flutter/issues/130897
+    - provider
+
+    # Used by vector_graphics_compiler, as a production, user-facing dependency.
+    # This is allowed only with pinned dependencies, so that any changes can be
+    # audited before passing them on to clients as transitive updates, to mitigate
+    # the risk of the package being compromised.
+    - xml
+
+  # Dependencies that can be unpinned. Package should only ever be added here if
+  # we fully trust the package's development and publishing process.
+  unpinned:
+    ## Explicit allowances
+
+    # Owned by individual Flutter Team members.
+    # Ideally we would not do this at all, since there's no clear plan for what
+    # would happen if the individuals left the Flutter Team, and the
+    # repositories may or may not meet Flutter's security standards. Be
+    # extremely cautious about adding to this list.
+    - build_verify
+    - google_maps
+
+    ## Allowed by default:
+
+    # flutter/core-packages
+    - mustache_template
+
+    # Dart-team-owned packages
+    - analyzer
+    - args
+    - async
+    - build
+    - build_config
+    - build_runner
+    - build_test
+    - clock
+    - code_builder
+    - collection
+    - convert
+    - crypto
+    - dart_style
+    - devtools_app_shared
+    - devtools_extensions
+    - fake_async
+    - ffi
+    - ffigen
+    - file
+    - file_testing
+    - gcloud
+    - graphs
+    - html
+    - http
+    - intl
+    - io
+    - js
+    - jni
+    - jni_flutter
+    - jnigen
+    - json_serializable
+    - leak_tracker
+    - leak_tracker_flutter_testing
+    - lints
+    - logging
+    - markdown
+    - meta
+    - mime
+    - mockito
+    - objective_c
+    - path
+    - package_config
+    - platform
+    - process
+    - pub_semver
+    - shelf
+    - shelf_static
+    - source_gen
+    - stream_transform
+    - test
+    - test_api
+    - vm_service
+    - wasm
+    - web
+    - yaml
+
+    # Google-owned packages
+    - _discoveryapis_commons
+    - adaptive_navigation
+    - dart_skills_lint
+    - googleapis
+    - googleapis_auth
+    - json_annotation
+    - material_color_utilities
+    - protobuf
+    - quiver
+    - sanitize_html
+    - source_helper
+    - vector_math
+    - webkit_inspection_protocol
+
+package_labels:
+  google_maps_flutter: maps
+  webview_flutter: webview

@@ -24,8 +24,7 @@ class WindowsKnownFolder {
 
   /// The file system directory that contains administrative tools for all users
   /// of the computer.
-  static String get CommonAdminTools =>
-      '{D0384E7D-BAC3-4797-8F14-CBA229B392B5}';
+  static String get CommonAdminTools => '{D0384E7D-BAC3-4797-8F14-CBA229B392B5}';
 
   /// The file system directory that contains the directories for the common
   /// program groups that appear on the Start menu for all users. A typical path
@@ -54,12 +53,10 @@ class WindowsKnownFolder {
 
   /// The virtual folder that represents Network Connections, that contains
   /// network and dial-up connections.
-  static String get ConnectionsFolder =>
-      '{6F0CD92B-2E97-45D1-88FF-B0D186B8DEDD}';
+  static String get ConnectionsFolder => '{6F0CD92B-2E97-45D1-88FF-B0D186B8DEDD}';
 
   /// The virtual folder that contains icons for the Control Panel applications.
-  static String get ControlPanelFolder =>
-      '{82A74AEB-AEB4-465C-A014-D097EE346D63}';
+  static String get ControlPanelFolder => '{82A74AEB-AEB4-465C-A014-D097EE346D63}';
 
   /// The file system directory that serves as a common repository for Internet
   /// cookies. A typical path is C:\Documents and Settings\username\Cookies.
@@ -144,19 +141,16 @@ class WindowsKnownFolder {
 
   /// The common Program Files folder. A typical path is C:\Program
   /// Files\Common.
-  static String get ProgramFilesCommon =>
-      '{F7F1ED05-9F6D-47A2-AAAE-29D317C6F066}';
+  static String get ProgramFilesCommon => '{F7F1ED05-9F6D-47A2-AAAE-29D317C6F066}';
 
   /// On 64-bit systems, a link to the common Program Files folder. A typical path is
   /// C:\Program Files\Common Files.
-  static String get ProgramFilesCommonX64 =>
-      '{6365D5A7-0F0D-45e5-87F6-0DA56B6A4F7D}';
+  static String get ProgramFilesCommonX64 => '{6365D5A7-0F0D-45e5-87F6-0DA56B6A4F7D}';
 
   /// On 64-bit systems, a link to the 32-bit common Program Files folder. A
   /// typical path is C:\Program Files (x86)\Common Files. On 32-bit systems, a
   /// link to the Common Program Files folder.
-  static String get ProgramFilesCommonX86 =>
-      '{DE974D24-D9C6-4D3E-BF91-F4455120B917}';
+  static String get ProgramFilesCommonX86 => '{DE974D24-D9C6-4D3E-BF91-F4455120B917}';
 
   /// On 64-bit systems, a link to the Program Files folder. A typical path is
   /// C:\Program Files.
@@ -201,8 +195,7 @@ class WindowsKnownFolder {
   static String get Recent => '{AE50C081-EBD2-438A-8655-8A092E34987A}';
 
   /// The virtual folder that contains the objects in the user's Recycle Bin.
-  static String get RecycleBinFolder =>
-      '{B7534046-3ECB-4C18-BE4E-64CD4CB7D6AC}';
+  static String get RecycleBinFolder => '{B7534046-3ECB-4C18-BE4E-64CD4CB7D6AC}';
 
   /// The file system directory that contains resource data. A typical path is
   /// C:\Windows\Resources.

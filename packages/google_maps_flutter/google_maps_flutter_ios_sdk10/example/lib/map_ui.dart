@@ -17,8 +17,7 @@ final LatLngBounds sydneyBounds = LatLngBounds(
 );
 
 class MapUiPage extends GoogleMapExampleAppPage {
-  const MapUiPage({Key? key})
-    : super(const Icon(Icons.map), 'User interface', key: key);
+  const MapUiPage({super.key}) : super(const Icon(Icons.map), 'User interface');
 
   @override
   Widget build(BuildContext context) {
@@ -85,9 +84,7 @@ class MapUiBodyState extends State<MapUiBody> {
   Widget _latLngBoundsToggler() {
     return TextButton(
       child: Text(
-        _cameraTargetBounds.bounds == null
-            ? 'bound camera target'
-            : 'release camera target',
+        _cameraTargetBounds.bounds == null ? 'bound camera target' : 'release camera target',
       ),
       onPressed: () {
         setState(() {
@@ -101,9 +98,7 @@ class MapUiBodyState extends State<MapUiBody> {
 
   Widget _zoomBoundsToggler() {
     return TextButton(
-      child: Text(
-        _minMaxZoomPreference.minZoom == null ? 'bound zoom' : 'release zoom',
-      ),
+      child: Text(_minMaxZoomPreference.minZoom == null ? 'bound zoom' : 'release zoom'),
       onPressed: () {
         setState(() {
           _minMaxZoomPreference = _minMaxZoomPreference.minZoom == null
@@ -115,8 +110,7 @@ class MapUiBodyState extends State<MapUiBody> {
   }
 
   Widget _mapTypeCycler() {
-    final MapType nextType =
-        MapType.values[(_mapType.index + 1) % MapType.values.length];
+    final MapType nextType = MapType.values[(_mapType.index + 1) % MapType.values.length];
     return TextButton(
       child: Text('change map type to $nextType'),
       onPressed: () {
@@ -173,9 +167,7 @@ class MapUiBodyState extends State<MapUiBody> {
 
   Widget _zoomControlsToggler() {
     return TextButton(
-      child: Text(
-        '${_zoomControlsEnabled ? 'disable' : 'enable'} zoom controls',
-      ),
+      child: Text('${_zoomControlsEnabled ? 'disable' : 'enable'} zoom controls'),
       onPressed: () {
         setState(() {
           _zoomControlsEnabled = !_zoomControlsEnabled;
@@ -197,9 +189,7 @@ class MapUiBodyState extends State<MapUiBody> {
 
   Widget _myLocationToggler() {
     return TextButton(
-      child: Text(
-        '${_myLocationEnabled ? 'disable' : 'enable'} my location marker',
-      ),
+      child: Text('${_myLocationEnabled ? 'disable' : 'enable'} my location marker'),
       onPressed: () {
         setState(() {
           _myLocationEnabled = !_myLocationEnabled;
@@ -210,9 +200,7 @@ class MapUiBodyState extends State<MapUiBody> {
 
   Widget _myLocationButtonToggler() {
     return TextButton(
-      child: Text(
-        '${_myLocationButtonEnabled ? 'disable' : 'enable'} my location button',
-      ),
+      child: Text('${_myLocationButtonEnabled ? 'disable' : 'enable'} my location button'),
       onPressed: () {
         setState(() {
           _myLocationButtonEnabled = !_myLocationButtonEnabled;
@@ -241,9 +229,7 @@ class MapUiBodyState extends State<MapUiBody> {
       child: Text('${_nightMode ? 'disable' : 'enable'} night mode'),
       onPressed: () async {
         _nightMode = !_nightMode;
-        final String style = _nightMode
-            ? await _getFileData('assets/night_mode.json')
-            : '';
+        final String style = _nightMode ? await _getFileData('assets/night_mode.json') : '';
         setState(() {
           _mapStyle = style;
         });
@@ -276,9 +262,7 @@ class MapUiBodyState extends State<MapUiBody> {
     final columnChildren = <Widget>[
       Padding(
         padding: const EdgeInsets.all(10.0),
-        child: Center(
-          child: SizedBox(width: 300.0, height: 200.0, child: googleMap),
-        ),
+        child: Center(child: SizedBox(width: 300.0, height: 200.0, child: googleMap)),
       ),
     ];
 
@@ -314,10 +298,7 @@ class MapUiBodyState extends State<MapUiBody> {
         ),
       );
     }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: columnChildren,
-    );
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: columnChildren);
   }
 
   void _updateCameraPosition(CameraPosition position) {

@@ -5,8 +5,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
 
-import 'package:interactive_media_ads/src/ios/interactive_media_ads.g.dart'
-    as _i2;
+import 'package:interactive_media_ads/src/ios/interactive_media_ads.g.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -24,15 +23,13 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: subtype_of_sealed_class
 // ignore_for_file: invalid_use_of_internal_member
 
-class _FakePigeonInstanceManager_0 extends _i1.SmartFake
-    implements _i2.PigeonInstanceManager {
+class _FakePigeonInstanceManager_0 extends _i1.SmartFake implements _i2.PigeonInstanceManager {
   _FakePigeonInstanceManager_0(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
 class _FakeIMASettings_1 extends _i1.SmartFake implements _i2.IMASettings {
-  _FakeIMASettings_1(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakeIMASettings_1(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
 }
 
 /// A class which mocks [IMASettings].
@@ -166,10 +163,7 @@ class MockIMASettings extends _i1.Mock implements _i2.IMASettings {
   _i2.IMASettings pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeIMASettings_1(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
+            returnValue: _FakeIMASettings_1(this, Invocation.method(#pigeon_copy, [])),
             returnValueForMissingStub: _FakeIMASettings_1(
               this,
               Invocation.method(#pigeon_copy, []),

@@ -21,10 +21,7 @@ base class IOSContentProgressProvider extends PlatformContentProgressProvider {
   late final ima.IMAContentPlayhead contentPlayhead = ima.IMAContentPlayhead();
 
   @override
-  Future<void> setProgress({
-    required Duration progress,
-    required Duration duration,
-  }) async {
+  Future<void> setProgress({required Duration progress, required Duration duration}) async {
     return contentPlayhead.setCurrentTime(progress.inSeconds.toDouble());
   }
 }

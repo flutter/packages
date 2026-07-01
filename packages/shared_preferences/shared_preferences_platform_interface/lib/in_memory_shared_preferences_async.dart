@@ -10,8 +10,7 @@ import 'types.dart';
 /// Stores data in memory.
 ///
 /// Data does not persist across application restarts. This is useful in unit tests.
-base class InMemorySharedPreferencesAsync
-    extends SharedPreferencesAsyncPlatform {
+base class InMemorySharedPreferencesAsync extends SharedPreferencesAsyncPlatform {
   /// Instantiates an empty in-memory preferences store.
   InMemorySharedPreferencesAsync.empty() : _data = <String, Object>{};
 
@@ -43,54 +42,33 @@ base class InMemorySharedPreferencesAsync
     final PreferencesFilters filter = parameters.filter;
     final preferences = Map<String, Object>.from(_data);
     preferences.removeWhere(
-      (String key, _) =>
-          filter.allowList != null && !filter.allowList!.contains(key),
+      (String key, _) => filter.allowList != null && !filter.allowList!.contains(key),
     );
     return preferences;
   }
 
-  Future<bool> _setValue(
-    String key,
-    Object value,
-    SharedPreferencesOptions options,
-  ) async {
+  Future<bool> _setValue(String key, Object value, SharedPreferencesOptions options) async {
     _data[key] = value;
     return true;
   }
 
   @override
-  Future<bool> setString(
-    String key,
-    String value,
-    SharedPreferencesOptions options,
-  ) async {
+  Future<bool> setString(String key, String value, SharedPreferencesOptions options) async {
     return _setValue(key, value, options);
   }
 
   @override
-  Future<bool> setInt(
-    String key,
-    int value,
-    SharedPreferencesOptions options,
-  ) async {
+  Future<bool> setInt(String key, int value, SharedPreferencesOptions options) async {
     return _setValue(key, value, options);
   }
 
   @override
-  Future<bool> setDouble(
-    String key,
-    double value,
-    SharedPreferencesOptions options,
-  ) async {
+  Future<bool> setDouble(String key, double value, SharedPreferencesOptions options) async {
     return _setValue(key, value, options);
   }
 
   @override
-  Future<bool> setBool(
-    String key,
-    bool value,
-    SharedPreferencesOptions options,
-  ) async {
+  Future<bool> setBool(String key, bool value, SharedPreferencesOptions options) async {
     return _setValue(key, value, options);
   }
 
@@ -104,10 +82,7 @@ base class InMemorySharedPreferencesAsync
   }
 
   @override
-  Future<String?> getString(
-    String key,
-    SharedPreferencesOptions options,
-  ) async {
+  Future<String?> getString(String key, SharedPreferencesOptions options) async {
     return _data[key] as String?;
   }
 
@@ -117,10 +92,7 @@ base class InMemorySharedPreferencesAsync
   }
 
   @override
-  Future<double?> getDouble(
-    String key,
-    SharedPreferencesOptions options,
-  ) async {
+  Future<double?> getDouble(String key, SharedPreferencesOptions options) async {
     return _data[key] as double?;
   }
 
@@ -130,10 +102,7 @@ base class InMemorySharedPreferencesAsync
   }
 
   @override
-  Future<List<String>?> getStringList(
-    String key,
-    SharedPreferencesOptions options,
-  ) async {
+  Future<List<String>?> getStringList(String key, SharedPreferencesOptions options) async {
     final data = _data[key] as List<Object>?;
     return data?.cast<String>();
   }
@@ -145,9 +114,7 @@ base class InMemorySharedPreferencesAsync
   ) async {
     final Set<String> keys = _data.keys.toSet();
     if (parameters.filter.allowList != null) {
-      keys.retainWhere(
-        (String element) => parameters.filter.allowList!.contains(element),
-      );
+      keys.retainWhere((String element) => parameters.filter.allowList!.contains(element));
     }
 
     return keys;

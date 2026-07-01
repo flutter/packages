@@ -26,18 +26,14 @@ void main() {
   String testPath(String subdir) => path.join(testRootPath(), subdir);
 
   setUp(() {
-    xdg.xdgProcessRunner = FakeProcessRunner(
-      <String, String>{},
-      canRunExecutable: false,
-    );
+    xdg.xdgProcessRunner = FakeProcessRunner(<String, String>{}, canRunExecutable: false);
     tmpDir = Directory.systemTemp.createTempSync('xdg_test');
     fakeEnv.clear();
     fakeEnv['HOME'] = testRootPath();
     fakeEnv['XDG_CACHE_HOME'] = testPath('.test_cache');
     fakeEnv['XDG_CONFIG_DIRS'] = testPath('etc/test_xdg');
     fakeEnv['XDG_CONFIG_HOME'] = testPath('.test_config');
-    fakeEnv['XDG_DATA_DIRS'] =
-        '${testPath('usr/local/test_share')}:${testPath('usr/test_share')}';
+    fakeEnv['XDG_DATA_DIRS'] = '${testPath('usr/local/test_share')}:${testPath('usr/test_share')}';
     fakeEnv['XDG_DATA_HOME'] = testPath('.local/test_share');
     fakeEnv['XDG_RUNTIME_DIR'] = testPath('.local/test_runtime');
     fakeEnv['XDG_STATE_HOME'] = testPath('.local/test_state');
@@ -46,9 +42,7 @@ void main() {
     Directory(fakeEnv['XDG_DATA_HOME']!).createSync(recursive: true);
     Directory(fakeEnv['XDG_RUNTIME_DIR']!).createSync(recursive: true);
     Directory(fakeEnv['XDG_STATE_HOME']!).createSync(recursive: true);
-    File(
-      path.join(fakeEnv['XDG_CONFIG_HOME']!, 'user-dirs.dirs'),
-    ).writeAsStringSync(r'''
+    File(path.join(fakeEnv['XDG_CONFIG_HOME']!, 'user-dirs.dirs')).writeAsStringSync(r'''
 XDG_DESKTOP_DIR="$HOME/Desktop"
 XDG_DOCUMENTS_DIR="$HOME/Documents"
 XDG_DOWNLOAD_DIR="$HOME/Downloads"
@@ -125,10 +119,7 @@ XDG_VIDEOS_DIR="$HOME/Videos"
   });
 
   test('Returns null when xdg-user-dir executable is not present', () {
-    xdg.xdgProcessRunner = FakeProcessRunner(
-      <String, String>{},
-      canRunExecutable: false,
-    );
+    xdg.xdgProcessRunner = FakeProcessRunner(<String, String>{}, canRunExecutable: false);
     expect(
       xdg.getUserDirectory('DESKTOP'),
       isNull,

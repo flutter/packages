@@ -61,6 +61,10 @@
 		8FF1FEBD2D37201300A5E400 /* ScriptMessageProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FF1FE912D37201300A5E400 /* ScriptMessageProxyAPITests.swift */; };
 		8FF1FEBE2D37201300A5E400 /* FrameInfoProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FF1FE862D37201300A5E400 /* FrameInfoProxyAPITests.swift */; };
 		8FF1FEBF2D37201300A5E400 /* HTTPCookieProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FF1FE882D37201300A5E400 /* HTTPCookieProxyAPITests.swift */; };
+		8FFBB0682FA1019E00F6659D /* PlatformViewImplTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFBB0652FA1019E00F6659D /* PlatformViewImplTests.swift */; };
+		8FFBB0692FA1019E00F6659D /* ColorProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFBB0642FA1019E00F6659D /* ColorProxyAPITests.swift */; };
+		8FFBB06A2FA1019E00F6659D /* ProxyAPIRegistrarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFBB0662FA1019E00F6659D /* ProxyAPIRegistrarTests.swift */; };
+		8FFBB06B2FA1019E00F6659D /* WebViewFlutterPluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFBB0672FA1019E00F6659D /* WebViewFlutterPluginTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -148,6 +152,10 @@
 		8FF1FEA02D37201300A5E400 /* WebViewConfigurationProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WebViewConfigurationProxyAPITests.swift; path = ../../darwin/Tests/WebViewConfigurationProxyAPITests.swift; sourceTree = SOURCE_ROOT; };
 		8FF1FEA12D37201300A5E400 /* WebViewProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WebViewProxyAPITests.swift; path = ../../darwin/Tests/WebViewProxyAPITests.swift; sourceTree = SOURCE_ROOT; };
 		8FF1FEC02D37201500A5E400 /* RunnerTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RunnerTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		8FFBB0642FA1019E00F6659D /* ColorProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ColorProxyAPITests.swift; path = ../../darwin/Tests/ColorProxyAPITests.swift; sourceTree = SOURCE_ROOT; };
+		8FFBB0652FA1019E00F6659D /* PlatformViewImplTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PlatformViewImplTests.swift; path = ../../darwin/Tests/PlatformViewImplTests.swift; sourceTree = SOURCE_ROOT; };
+		8FFBB0662FA1019E00F6659D /* ProxyAPIRegistrarTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProxyAPIRegistrarTests.swift; path = ../../darwin/Tests/ProxyAPIRegistrarTests.swift; sourceTree = SOURCE_ROOT; };
+		8FFBB0672FA1019E00F6659D /* WebViewFlutterPluginTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WebViewFlutterPluginTests.swift; path = ../../darwin/Tests/WebViewFlutterPluginTests.swift; sourceTree = SOURCE_ROOT; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -173,6 +181,10 @@
 		331C80D6294CF71000263BE5 /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
+				8FFBB0642FA1019E00F6659D /* ColorProxyAPITests.swift */,
+				8FFBB0652FA1019E00F6659D /* PlatformViewImplTests.swift */,
+				8FFBB0662FA1019E00F6659D /* ProxyAPIRegistrarTests.swift */,
+				8FFBB0672FA1019E00F6659D /* WebViewFlutterPluginTests.swift */,
 				8FEC64912DA303E200C48569 /* GetTrustResultResponseProxyAPITests.swift */,
 				8FEC64922DA303E200C48569 /* SecCertificateProxyAPITests.swift */,
 				8FEC64932DA303E200C48569 /* SecTrustProxyAPITests.swift */,
@@ -373,7 +385,7 @@
 			);
 			mainGroup = 33CC10E42044A3C60003C045;
 			packageReferences = (
-				781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "FlutterGeneratedPluginSwiftPackage" */,
+				781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage" */,
 			);
 			productRefGroup = 33CC10EE2044A3C60003C045 /* Products */;
 			projectDirPath = "";
@@ -477,6 +489,10 @@
 				8FF1FEB52D37201300A5E400 /* WebsiteDataStoreProxyAPITests.swift in Sources */,
 				8FF1FEB62D37201300A5E400 /* PreferencesProxyAPITests.swift in Sources */,
 				8FF1FEB72D37201300A5E400 /* URLCredentialProxyAPITests.swift in Sources */,
+				8FFBB0682FA1019E00F6659D /* PlatformViewImplTests.swift in Sources */,
+				8FFBB0692FA1019E00F6659D /* ColorProxyAPITests.swift in Sources */,
+				8FFBB06A2FA1019E00F6659D /* ProxyAPIRegistrarTests.swift in Sources */,
+				8FFBB06B2FA1019E00F6659D /* WebViewFlutterPluginTests.swift in Sources */,
 				8FF1FEB82D37201300A5E400 /* URLRequestProxyAPITests.swift in Sources */,
 				8FF1FEB92D37201300A5E400 /* UserScriptProxyAPITests.swift in Sources */,
 				8FF1FEBA2D37201300A5E400 /* ScriptMessageHandlerProxyAPITests.swift in Sources */,
@@ -848,7 +864,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "FlutterGeneratedPluginSwiftPackage" */ = {
+		781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage;
 		};

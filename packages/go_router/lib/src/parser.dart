@@ -24,10 +24,7 @@ import 'state.dart';
 /// The returned [RouteMatchList] is used as parsed result for the
 /// [GoRouterDelegate].
 typedef ParserExceptionHandler =
-    RouteMatchList Function(
-      BuildContext context,
-      RouteMatchList routeMatchList,
-    );
+    RouteMatchList Function(BuildContext context, RouteMatchList routeMatchList);
 
 /// The function signature for navigation callbacks in [_OnEnterHandler].
 typedef NavigationCallback = Future<RouteMatchList> Function();
@@ -94,9 +91,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       incomingUri = routeInformation.uri;
     } else if (raw is! RouteInformationState) {
       // Restoration/back-forward: decode the stored match list and treat as restore.
-      final RouteMatchList decoded = _routeMatchListCodec.decode(
-        raw as Map<Object?, Object?>,
-      );
+      final RouteMatchList decoded = _routeMatchListCodec.decode(raw as Map<Object?, Object?>);
       infoState = RouteInformationState.restore(base: decoded);
       incomingUri = decoded.uri;
     } else {
@@ -111,61 +106,22 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     );
 
     // ALL navigation types now go through onEnter, and if allowed,
-    // legacy top-level redirect runs, then route-level redirects.
+    // redirect() handles both top-level and route-level redirects.
     return _onEnterHandler.handleTopOnEnter(
       context: context,
       routeInformation: effectiveRoute,
       infoState: infoState,
       onCanEnter: () {
-        // Compose legacy top-level redirect here (one shared cycle/history).
         final RouteMatchList initialMatches = configuration.findMatch(
           effectiveRoute.uri,
           extra: infoState.extra,
         );
-        final redirectHistory = <RouteMatchList>[];
-
-        final FutureOr<RouteMatchList> afterLegacy = configuration
-            .applyTopLegacyRedirect(
-              context,
-              initialMatches,
-              redirectHistory: redirectHistory,
-            );
-
-        if (afterLegacy is RouteMatchList) {
-          return _navigate(
-            effectiveRoute,
-            context,
-            infoState,
-            startingMatches: afterLegacy,
-            preSharedHistory: redirectHistory,
-          );
-        }
-        return afterLegacy.then((RouteMatchList ml) {
-          if (!context.mounted) {
-            return _lastMatchList ??
-                _OnEnterHandler._errorRouteMatchList(
-                  effectiveRoute.uri,
-                  GoException(
-                    'Navigation aborted because the router context was disposed.',
-                  ),
-                  extra: infoState.extra,
-                );
-          }
-          return _navigate(
-            effectiveRoute,
-            context,
-            infoState,
-            startingMatches: ml,
-            preSharedHistory: redirectHistory,
-          );
-        });
+        return _navigate(effectiveRoute, context, infoState, startingMatches: initialMatches);
       },
       onCanNotEnter: () {
         // If blocked, stay on the current route by restoring the last known good configuration.
         if (router.routerDelegate.currentConfiguration.isNotEmpty) {
-          return SynchronousFuture<RouteMatchList>(
-            router.routerDelegate.currentConfiguration,
-          );
+          return SynchronousFuture<RouteMatchList>(router.routerDelegate.currentConfiguration);
         }
 
         if (_lastMatchList != null) {
@@ -198,51 +154,42 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     BuildContext context,
     RouteInfoState infoState, {
     FutureOr<RouteMatchList>? startingMatches,
-    List<RouteMatchList>? preSharedHistory,
   }) {
     // If we weren't given matches, compute them here. The URI has already been
     // normalized at the parser entry point.
     final FutureOr<RouteMatchList> baseMatches =
-        startingMatches ??
-        configuration.findMatch(routeInformation.uri, extra: infoState.extra);
+        startingMatches ?? configuration.findMatch(routeInformation.uri, extra: infoState.extra);
 
-    // History may be shared with the legacy step done in onEnter.
-    final List<RouteMatchList> redirectHistory =
-        preSharedHistory ?? <RouteMatchList>[];
+    final redirectHistory = <RouteMatchList>[];
 
-    FutureOr<RouteMatchList> afterRouteLevel(FutureOr<RouteMatchList> base) {
+    // redirect() handles both top-level and route-level redirects.
+    FutureOr<RouteMatchList> applyRedirects(FutureOr<RouteMatchList> base) {
       if (base is RouteMatchList) {
-        return configuration.redirect(
-          context,
-          base,
-          redirectHistory: redirectHistory,
-        );
+        return configuration.redirect(context, base, redirectHistory: redirectHistory);
       }
       return base.then<RouteMatchList>((RouteMatchList ml) {
         if (!context.mounted) {
           return ml;
         }
-        final FutureOr<RouteMatchList> step = configuration.redirect(
-          context,
-          ml,
-          redirectHistory: redirectHistory,
-        );
-        return step;
+        return configuration.redirect(context, ml, redirectHistory: redirectHistory);
       });
     }
 
-    // Only route-level redirects from here on out.
-    final FutureOr<RouteMatchList> redirected = afterRouteLevel(baseMatches);
+    final FutureOr<RouteMatchList> redirected = applyRedirects(baseMatches);
 
     return debugParserFuture =
-        (redirected is RouteMatchList
-                ? SynchronousFuture<RouteMatchList>(redirected)
-                : redirected)
+        (redirected is RouteMatchList ? SynchronousFuture<RouteMatchList>(redirected) : redirected)
             .then((RouteMatchList matchList) {
+              // Guard against context disposal during async redirects.
+              if (!context.mounted) {
+                return _lastMatchList ??
+                    _OnEnterHandler._errorRouteMatchList(
+                      routeInformation.uri,
+                      GoException('Navigation aborted because the router context was disposed.'),
+                      extra: infoState.extra,
+                    );
+              }
               if (matchList.isError && onParserException != null) {
-                if (!context.mounted) {
-                  return matchList;
-                }
                 return onParserException!(context, matchList);
               }
 
@@ -272,13 +219,9 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   }
 
   @override
-  Future<RouteMatchList> parseRouteInformation(
-    RouteInformation routeInformation,
-  ) {
+  Future<RouteMatchList> parseRouteInformation(RouteInformation routeInformation) {
     // Not used in go_router; instruct users to use parseRouteInformationWithDependencies.
-    throw UnimplementedError(
-      'Use parseRouteInformationWithDependencies instead',
-    );
+    throw UnimplementedError('Use parseRouteInformationWithDependencies instead');
   }
 
   @override
@@ -366,9 +309,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   /// Returns a unique [ValueKey<String>] for a new route.
   ValueKey<String> _getUniqueValueKey() {
     return ValueKey<String>(
-      String.fromCharCodes(
-        List<int>.generate(32, (_) => _random.nextInt(33) + 89),
-      ),
+      String.fromCharCodes(List<int>.generate(32, (_) => _random.nextInt(33) + 89)),
     );
   }
 }
@@ -446,8 +387,11 @@ class _OnEnterHandler {
 
     // Check if the redirection history exceeds the configured limit.
     // `routeInformation` has already been normalized by the parser entrypoint.
-    final RouteMatchList? redirectionErrorMatchList =
-        _redirectionErrorMatchList(context, routeInformation.uri, infoState);
+    final RouteMatchList? redirectionErrorMatchList = _redirectionErrorMatchList(
+      context,
+      routeInformation.uri,
+      infoState,
+    );
 
     if (redirectionErrorMatchList != null) {
       // Return immediately if the redirection limit is exceeded.
@@ -461,13 +405,10 @@ class _OnEnterHandler {
     );
 
     // Build the next navigation state.
-    final GoRouterState nextState = _buildTopLevelGoRouterState(
-      incomingMatches,
-    );
+    final GoRouterState nextState = _buildTopLevelGoRouterState(incomingMatches);
 
     // Get the current state from the router delegate.
-    final RouteMatchList currentMatchList =
-        _router.routerDelegate.currentConfiguration;
+    final RouteMatchList currentMatchList = _router.routerDelegate.currentConfiguration;
     final GoRouterState currentState = currentMatchList.isNotEmpty
         ? _buildTopLevelGoRouterState(currentMatchList)
         : nextState;
@@ -475,12 +416,7 @@ class _OnEnterHandler {
     // Execute the onEnter callback in a try-catch to capture synchronous exceptions.
     Future<OnEnterResult> onEnterResultFuture;
     try {
-      final FutureOr<OnEnterResult> result = topOnEnter(
-        context,
-        currentState,
-        nextState,
-        _router,
-      );
+      final FutureOr<OnEnterResult> result = topOnEnter(context, currentState, nextState, _router);
       // Convert FutureOr to Future
       onEnterResultFuture = result is OnEnterResult
           ? SynchronousFuture<OnEnterResult>(result)
@@ -494,8 +430,7 @@ class _OnEnterHandler {
 
       _resetRedirectionHistory();
 
-      final bool canHandleException =
-          _onParserException != null && context.mounted;
+      final bool canHandleException = _onParserException != null && context.mounted;
       final RouteMatchList handledMatchList = canHandleException
           ? _onParserException(context, errorMatchList)
           : errorMatchList;
@@ -514,9 +449,7 @@ class _OnEnterHandler {
           _resetRedirectionHistory(); // reset after committed navigation
         } else {
           // Block: check if this is a hard stop or chaining block
-          log(
-            'onEnter blocked navigation from ${currentState.uri} to ${nextState.uri}',
-          );
+          log('onEnter blocked navigation from ${currentState.uri} to ${nextState.uri}');
           matchList = await onCanNotEnter();
 
           // Treat `Block.stop()` as the explicit hard stop.
@@ -529,20 +462,28 @@ class _OnEnterHandler {
         }
 
         if (callback != null) {
-          try {
-            await Future<void>.sync(callback);
-          } catch (error, stack) {
-            // Log error but don't crash - navigation already committed
-            log('Error in then callback: $error');
-            FlutterError.reportError(
-              FlutterErrorDetails(
-                exception: error,
-                stack: stack,
-                library: 'go_router',
-                context: ErrorDescription('while executing then callback'),
-              ),
-            );
-          }
+          // Defer the callback to a microtask so that router.go() (or
+          // similar) inside it does not trigger a re-entrant
+          // _processRouteInformation while the current parse is still
+          // in-flight. Without this, Flutter's Router mints a new
+          // transaction token for the re-entrant parse and silently
+          // discards the result due to token churn.
+          scheduleMicrotask(() async {
+            try {
+              await callback();
+            } catch (error, stack) {
+              // Log error but don't crash - navigation already committed
+              log('Error in then callback: $error');
+              FlutterError.reportError(
+                FlutterErrorDetails(
+                  exception: error,
+                  stack: stack,
+                  library: 'go_router',
+                  context: ErrorDescription('while executing then callback'),
+                ),
+              );
+            }
+          });
         }
 
         return matchList;
@@ -629,9 +570,7 @@ class _OnEnterHandler {
   ) {
     _redirectionHistory.add(redirectedUri);
     if (_redirectionHistory.length > _configuration.redirectLimit) {
-      final String formattedHistory = _formatOnEnterRedirectionHistory(
-        _redirectionHistory,
-      );
+      final String formattedHistory = _formatOnEnterRedirectionHistory(_redirectionHistory);
       final RouteMatchList errorMatchList = _errorRouteMatchList(
         redirectedUri,
         GoException('Too many onEnter calls detected: $formattedHistory'),
@@ -659,11 +598,7 @@ class _OnEnterHandler {
   /// Creates an error [RouteMatchList] for the given [uri] and [exception].
   ///
   /// This is used to encapsulate errors encountered during redirection or parsing.
-  static RouteMatchList _errorRouteMatchList(
-    Uri uri,
-    GoException exception, {
-    Object? extra,
-  }) {
+  static RouteMatchList _errorRouteMatchList(Uri uri, GoException exception, {Object? extra}) {
     return RouteMatchList(
       matches: const <RouteMatch>[],
       extra: extra,

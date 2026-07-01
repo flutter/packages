@@ -73,9 +73,9 @@ class AssetBytesLoader extends BytesLoader {
 
   @override
   Future<ByteData> loadBytes(BuildContext? context) {
-    return _resolveBundle(context).load(
-      packageName == null ? assetName : 'packages/$packageName/$assetName',
-    );
+    return _resolveBundle(
+      context,
+    ).load(packageName == null ? assetName : 'packages/$packageName/$assetName');
   }
 
   @override
@@ -91,11 +91,7 @@ class AssetBytesLoader extends BytesLoader {
 
   @override
   Object cacheKey(BuildContext? context) {
-    return _AssetByteLoaderCacheKey(
-      assetName,
-      packageName,
-      _resolveBundle(context),
-    );
+    return _AssetByteLoaderCacheKey(assetName, packageName, _resolveBundle(context));
   }
 
   @override
@@ -108,11 +104,7 @@ class AssetBytesLoader extends BytesLoader {
 // value of `DefaultAssetBundle.of(context)`.
 @immutable
 class _AssetByteLoaderCacheKey {
-  const _AssetByteLoaderCacheKey(
-    this.assetName,
-    this.packageName,
-    this.assetBundle,
-  );
+  const _AssetByteLoaderCacheKey(this.assetName, this.packageName, this.assetBundle);
 
   final String assetName;
   final String? packageName;
@@ -163,9 +155,7 @@ class NetworkBytesLoader extends BytesLoader {
 
   @override
   bool operator ==(Object other) {
-    return other is NetworkBytesLoader &&
-        other.headers == headers &&
-        other.url == url;
+    return other is NetworkBytesLoader && other.headers == headers && other.url == url;
   }
 
   @override

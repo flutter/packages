@@ -17,9 +17,7 @@ VideoPlayerInstanceApi _productionApiProvider(int playerId) {
 }
 
 /// The non-test implementation of `_videoEventStreamProvider`.
-Stream<PlatformVideoEvent> _productionVideoEventStreamProvider(
-  String streamIdentifier,
-) {
+Stream<PlatformVideoEvent> _productionVideoEventStreamProvider(String streamIdentifier) {
   return pigeon.videoEvents(instanceName: streamIdentifier);
 }
 
@@ -29,14 +27,11 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   /// Creates a new Android video player implementation instance.
   AndroidVideoPlayer({
     @visibleForTesting AndroidVideoPlayerApi? pluginApi,
-    @visibleForTesting
-    VideoPlayerInstanceApi Function(int playerId)? playerApiProvider,
-    Stream<PlatformVideoEvent> Function(String streamIdentifier)?
-    videoEventStreamProvider,
+    @visibleForTesting VideoPlayerInstanceApi Function(int playerId)? playerApiProvider,
+    Stream<PlatformVideoEvent> Function(String streamIdentifier)? videoEventStreamProvider,
   }) : _api = pluginApi ?? AndroidVideoPlayerApi(),
        _playerApiProvider = playerApiProvider ?? _productionApiProvider,
-       _videoEventStreamProvider =
-           videoEventStreamProvider ?? _productionVideoEventStreamProvider;
+       _videoEventStreamProvider = videoEventStreamProvider ?? _productionVideoEventStreamProvider;
 
   final AndroidVideoPlayerApi _api;
   // A method to create VideoPlayerInstanceApi instances, which can be
@@ -44,8 +39,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   final VideoPlayerInstanceApi Function(int playerId) _playerApiProvider;
   // A method to create video event stream instances, which can be
   // overridden for testing.
-  final Stream<PlatformVideoEvent> Function(String streamIdentifier)
-  _videoEventStreamProvider;
+  final Stream<PlatformVideoEvent> Function(String streamIdentifier) _videoEventStreamProvider;
 
   final Map<int, _PlayerInstance> _players = <int, _PlayerInstance>{};
 
@@ -90,14 +84,9 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
       case DataSourceType.asset:
         final String? asset = dataSource.asset;
         if (asset == null) {
-          throw ArgumentError(
-            '"asset" must be non-null for an asset data source',
-          );
+          throw ArgumentError('"asset" must be non-null for an asset data source');
         }
-        final String key = await _api.getLookupKeyForAsset(
-          asset,
-          dataSource.package,
-        );
+        final String key = await _api.getLookupKeyForAsset(asset, dataSource.package);
         uri = 'asset:///$key';
       case DataSourceType.network:
         uri = dataSource.uri;
@@ -120,9 +109,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     final VideoPlayerViewState state;
     switch (options.viewType) {
       case VideoViewType.textureView:
-        final TexturePlayerIds ids = await _api.createForTextureView(
-          pigeonCreationOptions,
-        );
+        final TexturePlayerIds ids = await _api.createForTextureView(pigeonCreationOptions);
         playerId = ids.playerId;
         state = VideoPlayerTextureViewState(textureId: ids.textureId);
       case VideoViewType.platformView:
@@ -213,9 +200,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     final VideoPlayerViewState viewState = _playerWith(id: playerId).viewState;
 
     return switch (viewState) {
-      VideoPlayerTextureViewState(:final int textureId) => Texture(
-        textureId: textureId,
-      ),
+      VideoPlayerTextureViewState(:final int textureId) => Texture(textureId: textureId),
       VideoPlayerPlatformViewState() => PlatformViewPlayer(playerId: playerId),
     };
   }
@@ -227,9 +212,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<List<VideoAudioTrack>> getAudioTracks(int playerId) async {
-    final NativeAudioTrackData nativeData = await _playerWith(
-      id: playerId,
-    ).getAudioTracks();
+    final NativeAudioTrackData nativeData = await _playerWith(id: playerId).getAudioTracks();
     final tracks = <VideoAudioTrack>[];
 
     // Convert ExoPlayer tracks to VideoAudioTrack
@@ -268,9 +251,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<List<VideoTrack>> getVideoTracks(int playerId) async {
-    final NativeVideoTrackData nativeData = await _playerWith(
-      id: playerId,
-    ).getVideoTracks();
+    final NativeVideoTrackData nativeData = await _playerWith(id: playerId).getVideoTracks();
     final tracks = <VideoTrack>[];
 
     // Convert ExoPlayer tracks to VideoTrack
@@ -281,9 +262,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
         // Generate label from resolution if not provided
         final String? label =
             track.label ??
-            (track.width != null && track.height != null
-                ? '${track.height}p'
-                : null);
+            (track.width != null && track.height != null ? '${track.height}p' : null);
         tracks.add(
           VideoTrack(
             id: trackId,
@@ -318,9 +297,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     return player ?? (throw StateError('No active player with ID $id.'));
   }
 
-  PlatformVideoFormat? _platformVideoFormatFromVideoFormat(
-    VideoFormat? format,
-  ) {
+  PlatformVideoFormat? _platformVideoFormatFromVideoFormat(VideoFormat? format) {
     return switch (format) {
       VideoFormat.dash => PlatformVideoFormat.dash,
       VideoFormat.hls => PlatformVideoFormat.hls,
@@ -353,8 +330,7 @@ class _PlayerInstance {
   }
 
   final VideoPlayerInstanceApi _api;
-  final StreamController<VideoEvent> _eventStreamController =
-      StreamController<VideoEvent>();
+  final StreamController<VideoEvent> _eventStreamController = StreamController<VideoEvent>();
   late final StreamSubscription<dynamic> _eventSubscription;
   bool _isDisposed = false;
   Timer? _bufferPollingTimer;
@@ -438,56 +414,76 @@ class _PlayerInstance {
   }
 
   Future<void> selectVideoTrack(VideoTrack? track) async {
-    // Create a completer to wait for the track selection to complete
-    _videoTrackSelectionCompleter = Completer<void>();
-
     if (track == null) {
-      // Auto quality - use dedicated method
-      _expectedVideoTrackId = null;
-      try {
-        await _api.enableAutoVideoQuality();
-
-        // Wait for the onTracksChanged event from ExoPlayer with a timeout
-        await _videoTrackSelectionCompleter!.future.timeout(
-          const Duration(seconds: 5),
-          onTimeout: () {
-            // If we timeout, just continue - the track may still have been selected
-          },
-        );
-      } finally {
-        _videoTrackSelectionCompleter = null;
-        _expectedVideoTrackId = null;
-      }
+      // Auto/adaptive quality. Clearing the override has no single
+      // deterministic "selected track" to wait for, and the resulting
+      // VideoTrackChangedEvent reports whatever concrete track the adaptive
+      // selector happens to pick. Waiting for "the next" event would race with
+      // events still in flight from a prior selectVideoTrack(track) call and
+      // complete this future on the wrong event. So just clear the override
+      // and return.
+      await _api.enableAutoVideoQuality();
       return;
     }
 
-    // Extract groupIndex and trackIndex from the track id
-    final List<String> parts = track.id.split('_');
-    if (parts.length != 2) {
-      throw ArgumentError(
-        'Invalid track id format: "${track.id}". Expected format: "groupIndex_trackIndex"',
-      );
-    }
-
-    final int groupIndex = int.parse(parts[0]);
-    final int trackIndex = int.parse(parts[1]);
-
-    _expectedVideoTrackId = track.id;
+    // Explicit selection. Wait for the ExoPlayer event reporting this exact
+    // track id. Use local variables for the per-call state, then publish them
+    // to the shared fields. The cleanup in `finally` only resets the shared
+    // fields if they still reference *this* call's state — so a newer
+    // concurrent selectVideoTrack call isn't clobbered when an older one
+    // returns.
+    final completer = Completer<void>();
+    final String expectedId = track.id;
+    _videoTrackSelectionCompleter = completer;
+    _expectedVideoTrackId = expectedId;
 
     try {
+      final (int groupIndex, int trackIndex) = _parseAndroidTrackId(track.id);
       await _api.selectVideoTrack(groupIndex, trackIndex);
 
       // Wait for the onTracksChanged event from ExoPlayer with a timeout
-      await _videoTrackSelectionCompleter!.future.timeout(
+      await completer.future.timeout(
         const Duration(seconds: 5),
         onTimeout: () {
-          // If we timeout, just continue - the track may still have been selected
+          debugPrint(
+            'Timed out waiting for video track selection event for track '
+            '"$expectedId".',
+          );
         },
       );
     } finally {
-      _videoTrackSelectionCompleter = null;
-      _expectedVideoTrackId = null;
+      if (identical(_videoTrackSelectionCompleter, completer)) {
+        _videoTrackSelectionCompleter = null;
+      }
+      if (_expectedVideoTrackId == expectedId) {
+        _expectedVideoTrackId = null;
+      }
     }
+  }
+
+  // Keep this parser in sync with the Android ID emitters in
+  // ExoPlayerEventListener.findSelectedVideoTrackId and
+  // ExoPlayerEventListener.findSelectedAudioTrackId. Android track IDs use
+  // the "{groupIndex}_{trackIndex}" format.
+  (int, int) _parseAndroidTrackId(String trackId) {
+    final List<String> parts = trackId.split('_');
+    if (parts.length != 2) {
+      throw ArgumentError(
+        'Invalid track id format: "$trackId". Expected format: '
+        '"groupIndex_trackIndex"',
+      );
+    }
+
+    final int? groupIndex = int.tryParse(parts[0]);
+    final int? trackIndex = int.tryParse(parts[1]);
+    if (groupIndex == null || trackIndex == null) {
+      throw ArgumentError(
+        'Invalid track id format: "$trackId". Expected numeric groupIndex '
+        'and trackIndex in "groupIndex_trackIndex".',
+      );
+    }
+
+    return (groupIndex, trackIndex);
   }
 
   Future<void> dispose() async {
@@ -502,9 +498,7 @@ class _PlayerInstance {
 
       _eventStreamController.add(
         VideoEvent(
-          eventType: buffering
-              ? VideoEventType.bufferingStart
-              : VideoEventType.bufferingEnd,
+          eventType: buffering ? VideoEventType.bufferingStart : VideoEventType.bufferingEnd,
         ),
       );
       // Trigger an extra buffer position check, so that clients have an
@@ -545,9 +539,7 @@ class _PlayerInstance {
 
         // Start polling for buffer position, since there is no buffer position
         // event to listen to.
-        _bufferPollingTimer = Timer.periodic(const Duration(seconds: 1), (
-          Timer timer,
-        ) async {
+        _bufferPollingTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) async {
           final int position = await _api.getBufferedPosition();
           if (!_isDisposed) {
             _updateBufferPosition(position);
@@ -555,10 +547,7 @@ class _PlayerInstance {
         });
       case IsPlayingStateEvent _:
         _eventStreamController.add(
-          VideoEvent(
-            eventType: VideoEventType.isPlayingStateUpdate,
-            isPlaying: event.isPlaying,
-          ),
+          VideoEvent(eventType: VideoEventType.isPlayingStateUpdate, isPlaying: event.isPlaying),
         );
       case PlaybackStateChangeEvent _:
         switch (event.state) {
@@ -574,9 +563,7 @@ class _PlayerInstance {
             // should be synchronous with the state change.
             break;
           case PlatformPlaybackState.ended:
-            _eventStreamController.add(
-              VideoEvent(eventType: VideoEventType.completed),
-            );
+            _eventStreamController.add(VideoEvent(eventType: VideoEventType.completed));
           case PlatformPlaybackState.unknown:
             // Ignore unknown states. This isn't an error since the media
             // framework could add new states in the future.
@@ -589,22 +576,21 @@ class _PlayerInstance {
       case AudioTrackChangedEvent _:
         // Complete the audio track selection completer if it exists
         // This signals that the track selection has completed
-        if (_audioTrackSelectionCompleter != null &&
-            !_audioTrackSelectionCompleter!.isCompleted) {
+        if (_audioTrackSelectionCompleter != null && !_audioTrackSelectionCompleter!.isCompleted) {
           _audioTrackSelectionCompleter!.complete();
         }
       case VideoTrackChangedEvent _:
         // Complete the video track selection completer only if:
-        // 1. A completer exists (we're waiting for a selection)
+        // 1. A completer exists (we're waiting for an explicit selection)
         // 2. The completer hasn't already completed
-        // 3. The selected track ID matches what we're expecting (or we're expecting null for auto)
+        // 3. The reported track ID matches the one we're waiting for, so an
+        //    event from an unrelated/earlier selection can't complete us.
+        // Auto/adaptive selections (selectVideoTrack(null)) don't register a
+        // completer, so they are never matched here.
         if (_videoTrackSelectionCompleter != null &&
-            !_videoTrackSelectionCompleter!.isCompleted) {
-          // Complete if the track ID matches our expectation, or if we expected null (auto mode)
-          if (_expectedVideoTrackId == null ||
-              event.selectedTrackId == _expectedVideoTrackId) {
-            _videoTrackSelectionCompleter!.complete();
-          }
+            !_videoTrackSelectionCompleter!.isCompleted &&
+            event.selectedTrackId == _expectedVideoTrackId) {
+          _videoTrackSelectionCompleter!.complete();
         }
     }
   }
@@ -612,9 +598,7 @@ class _PlayerInstance {
   // Turns a single buffer position, which is what ExoPlayer reports, into the
   // DurationRange array expected by [VideoEventType.bufferingUpdate].
   List<DurationRange> _bufferRangeForPosition(int milliseconds) {
-    return <DurationRange>[
-      DurationRange(Duration.zero, Duration(milliseconds: milliseconds)),
-    ];
+    return <DurationRange>[DurationRange(Duration.zero, Duration(milliseconds: milliseconds))];
   }
 }
 

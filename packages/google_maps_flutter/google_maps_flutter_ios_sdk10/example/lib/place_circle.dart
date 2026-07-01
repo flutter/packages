@@ -11,8 +11,7 @@ import 'example_google_map.dart';
 import 'page.dart';
 
 class PlaceCirclePage extends GoogleMapExampleAppPage {
-  const PlaceCirclePage({Key? key})
-    : super(const Icon(Icons.linear_scale), 'Place circle', key: key);
+  const PlaceCirclePage({super.key}) : super(const Icon(Icons.linear_scale), 'Place circle');
 
   @override
   Widget build(BuildContext context) {
@@ -38,12 +37,7 @@ class PlaceCircleBodyState extends State<PlaceCircleBody> {
   // Values when toggling circle color
   int fillColorsIndex = 0;
   int strokeColorsIndex = 0;
-  List<Color> colors = <Color>[
-    Colors.purple,
-    Colors.red,
-    Colors.green,
-    Colors.pink,
-  ];
+  List<Color> colors = <Color>[Colors.purple, Colors.red, Colors.green, Colors.pink];
 
   // Values when toggling circle stroke width
   int widthsIndex = 0;
@@ -133,9 +127,7 @@ class PlaceCircleBodyState extends State<PlaceCircleBody> {
   void _changeStrokeWidth(CircleId circleId) {
     final Circle circle = circles[circleId]!;
     setState(() {
-      circles[circleId] = circle.copyWith(
-        strokeWidthParam: widths[++widthsIndex % widths.length],
-      );
+      circles[circleId] = circle.copyWith(strokeWidthParam: widths[++widthsIndex % widths.length]);
     });
   }
 
@@ -171,15 +163,11 @@ class PlaceCircleBodyState extends State<PlaceCircleBody> {
                       children: <Widget>[
                         TextButton(onPressed: _add, child: const Text('add')),
                         TextButton(
-                          onPressed: (selectedId == null)
-                              ? null
-                              : () => _remove(selectedId),
+                          onPressed: (selectedId == null) ? null : () => _remove(selectedId),
                           child: const Text('remove'),
                         ),
                         TextButton(
-                          onPressed: (selectedId == null)
-                              ? null
-                              : () => _toggleVisible(selectedId),
+                          onPressed: (selectedId == null) ? null : () => _toggleVisible(selectedId),
                           child: const Text('toggle visible'),
                         ),
                       ],

@@ -20,9 +20,9 @@ void main() {
     gitDirCommands = <List<String>?>[];
     gitDiffResponse = '';
     gitDir = MockGitDir();
-    when(
-      gitDir.runCommand(any, throwOnError: anyNamed('throwOnError')),
-    ).thenAnswer((Invocation invocation) {
+    when(gitDir.runCommand(any, throwOnError: anyNamed('throwOnError'))).thenAnswer((
+      Invocation invocation,
+    ) {
       final arguments = invocation.positionalArguments[0]! as List<String>;
       gitDirCommands.add(arguments);
       String? gitStdOut;
@@ -31,9 +31,7 @@ void main() {
       } else if (arguments[0] == 'merge-base') {
         gitStdOut = mergeBaseResponse;
       }
-      return Future<ProcessResult>.value(
-        ProcessResult(0, 0, gitStdOut ?? '', ''),
-      );
+      return Future<ProcessResult>.value(ProcessResult(0, 0, gitStdOut ?? '', ''));
     });
   });
 
@@ -72,14 +70,7 @@ file2/file2.cc
         'HEAD',
       ], throwOnError: false),
     );
-    verify(
-      gitDir.runCommand(<String>[
-        'diff',
-        '--name-only',
-        mergeBaseResponse,
-        'HEAD',
-      ]),
-    );
+    verify(gitDir.runCommand(<String>['diff', '--name-only', mergeBaseResponse, 'HEAD']));
   });
 
   test('uses correct base branch to find base sha if specified', () async {
@@ -99,14 +90,7 @@ file2/file2.cc
         'HEAD',
       ], throwOnError: false),
     );
-    verify(
-      gitDir.runCommand(<String>[
-        'diff',
-        '--name-only',
-        mergeBaseResponse,
-        'HEAD',
-      ]),
-    );
+    verify(gitDir.runCommand(<String>['diff', '--name-only', mergeBaseResponse, 'HEAD']));
   });
 
   test('use correct base sha if specified', () async {
@@ -117,9 +101,7 @@ file2/file2.cc
 ''';
     final finder = GitVersionFinder(gitDir, baseSha: customBaseSha);
     await finder.getChangedFiles();
-    verify(
-      gitDir.runCommand(<String>['diff', '--name-only', customBaseSha, 'HEAD']),
-    );
+    verify(gitDir.runCommand(<String>['diff', '--name-only', customBaseSha, 'HEAD']));
   });
 
   test('include uncommitted files if requested', () async {

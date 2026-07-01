@@ -28,6 +28,18 @@ bool useHtmlRenderObject() {
     image = picture.toImageSync(1, 1);
     _cachedUseHtmlRenderObject = false;
   } on UnsupportedError catch (_) {
+    // The original HTML renderer does not implement toImageSync.
+    _cachedUseHtmlRenderObject = true;
+  } on StateError catch (_) {
+    // CanvasKit on Mobile Safari (iOS 18.7) throws "Unable to convert
+    // read pixels from SkImage" when readPixels fails at runtime.
+    // See https://github.com/flutter/flutter/issues/186333.
+    _cachedUseHtmlRenderObject = true;
+  } on NoSuchMethodError catch (_) {
+    // Same renderer/browser combination as the StateError case also
+    // surfaces a "Null check operator used on a null value" thrown
+    // from canvaskit.js wasm internals via Surface.createOrUpdateSurface.
+    // See https://github.com/flutter/flutter/issues/186333.
     _cachedUseHtmlRenderObject = true;
   } finally {
     image?.dispose();

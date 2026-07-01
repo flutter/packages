@@ -13,9 +13,7 @@ let package = Package(
     .iOS(.v15)
   ],
   products: [
-    .library(
-      name: "google-maps-flutter-ios-sdk9", type: .static, targets: ["google_maps_flutter_ios_sdk9"]
-    )
+    .library(name: "google-maps-flutter-ios-sdk9", targets: ["google_maps_flutter_ios_sdk9"])
   ],
   dependencies: [
     .package(url: "https://github.com/googlemaps/ios-maps-sdk", "9.0.0"..<"10.0.0"),

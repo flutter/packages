@@ -40,4 +40,23 @@ void main() {
     );
     expect(find.text('2'), findsOne);
   });
+
+  testWidgets('It should modify the custom fields when tapped', (tester) async {
+    await tester.pumpWidget(App());
+
+    expect(find.text('customField:'), findsOne);
+    expect(find.text('customFieldWithDefaultValue:'), findsOne);
+
+    expect(find.text('default,0'), findsOne);
+
+    await tester.tap(find.text('customField:'));
+    await tester.pumpAndSettle();
+    expect(find.text('-,1'), findsOne);
+    expect(find.text('default,0'), findsOne);
+
+    await tester.tap(find.text('customFieldWithDefaultValue:'));
+    await tester.pumpAndSettle();
+    expect(find.text('-,1'), findsOne);
+    expect(find.text('default-,1'), findsOne);
+  });
 }

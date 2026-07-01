@@ -37,71 +37,40 @@ void main() {
 
   setUp(() {
     mockPlatform = MockPlatform();
-    (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) =
-        configureBaseCommandMocks(platform: mockPlatform);
+    (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) = configureBaseCommandMocks(
+      platform: mockPlatform,
+    );
     thirdPartyPackagesDir = packagesDir.parent
         .childDirectory('third_party')
         .childDirectory('packages');
 
     command = configureCommand();
-    runner = CommandRunner<void>(
-      'common_command',
-      'Test for common functionality',
-    );
+    runner = CommandRunner<void>('common_command', 'Test for common functionality');
     runner.addCommand(command);
   });
 
   group('plugin iteration', () {
     test('all plugins from file system', () async {
-      final RepositoryPackage plugin1 = createFakePlugin(
-        'plugin1',
-        packagesDir,
-      );
-      final RepositoryPackage plugin2 = createFakePlugin(
-        'plugin2',
-        packagesDir,
-      );
+      final RepositoryPackage plugin1 = createFakePlugin('plugin1', packagesDir);
+      final RepositoryPackage plugin2 = createFakePlugin('plugin2', packagesDir);
       await runCapturingPrint(runner, <String>['sample']);
-      expect(
-        command.plugins,
-        unorderedEquals(<String>[plugin1.path, plugin2.path]),
-      );
+      expect(command.plugins, unorderedEquals(<String>[plugin1.path, plugin2.path]));
     });
 
     test('includes both plugins and packages', () async {
-      final RepositoryPackage plugin1 = createFakePlugin(
-        'plugin1',
-        packagesDir,
-      );
-      final RepositoryPackage plugin2 = createFakePlugin(
-        'plugin2',
-        packagesDir,
-      );
-      final RepositoryPackage package3 = createFakePackage(
-        'package3',
-        packagesDir,
-      );
-      final RepositoryPackage package4 = createFakePackage(
-        'package4',
-        packagesDir,
-      );
+      final RepositoryPackage plugin1 = createFakePlugin('plugin1', packagesDir);
+      final RepositoryPackage plugin2 = createFakePlugin('plugin2', packagesDir);
+      final RepositoryPackage package3 = createFakePackage('package3', packagesDir);
+      final RepositoryPackage package4 = createFakePackage('package4', packagesDir);
       await runCapturingPrint(runner, <String>['sample']);
       expect(
         command.plugins,
-        unorderedEquals(<String>[
-          plugin1.path,
-          plugin2.path,
-          package3.path,
-          package4.path,
-        ]),
+        unorderedEquals(<String>[plugin1.path, plugin2.path, package3.path, package4.path]),
       );
     });
 
     test('includes packages without source', () async {
-      final RepositoryPackage package = createFakePackage(
-        'package',
-        packagesDir,
-      );
+      final RepositoryPackage package = createFakePackage('package', packagesDir);
       package.libDirectory.deleteSync(recursive: true);
 
       await runCapturingPrint(runner, <String>['sample']);
@@ -109,73 +78,34 @@ void main() {
     });
 
     test('all plugins includes third_party/packages', () async {
-      final RepositoryPackage plugin1 = createFakePlugin(
-        'plugin1',
-        packagesDir,
-      );
-      final RepositoryPackage plugin2 = createFakePlugin(
-        'plugin2',
-        packagesDir,
-      );
-      final RepositoryPackage plugin3 = createFakePlugin(
-        'plugin3',
-        thirdPartyPackagesDir,
-      );
+      final RepositoryPackage plugin1 = createFakePlugin('plugin1', packagesDir);
+      final RepositoryPackage plugin2 = createFakePlugin('plugin2', packagesDir);
+      final RepositoryPackage plugin3 = createFakePlugin('plugin3', thirdPartyPackagesDir);
       await runCapturingPrint(runner, <String>['sample']);
-      expect(
-        command.plugins,
-        unorderedEquals(<String>[plugin1.path, plugin2.path, plugin3.path]),
-      );
+      expect(command.plugins, unorderedEquals(<String>[plugin1.path, plugin2.path, plugin3.path]));
     });
 
     test('--packages limits packages', () async {
-      final RepositoryPackage plugin1 = createFakePlugin(
-        'plugin1',
-        packagesDir,
-      );
+      final RepositoryPackage plugin1 = createFakePlugin('plugin1', packagesDir);
       createFakePlugin('plugin2', packagesDir);
       createFakePackage('package3', packagesDir);
-      final RepositoryPackage package4 = createFakePackage(
-        'package4',
-        packagesDir,
-      );
-      await runCapturingPrint(runner, <String>[
-        'sample',
-        '--packages=plugin1,package4',
-      ]);
-      expect(
-        command.plugins,
-        unorderedEquals(<String>[plugin1.path, package4.path]),
-      );
+      final RepositoryPackage package4 = createFakePackage('package4', packagesDir);
+      await runCapturingPrint(runner, <String>['sample', '--packages=plugin1,package4']);
+      expect(command.plugins, unorderedEquals(<String>[plugin1.path, package4.path]));
     });
 
     test('--plugins acts as an alias to --packages', () async {
-      final RepositoryPackage plugin1 = createFakePlugin(
-        'plugin1',
-        packagesDir,
-      );
+      final RepositoryPackage plugin1 = createFakePlugin('plugin1', packagesDir);
       createFakePlugin('plugin2', packagesDir);
       createFakePackage('package3', packagesDir);
-      final RepositoryPackage package4 = createFakePackage(
-        'package4',
-        packagesDir,
-      );
-      await runCapturingPrint(runner, <String>[
-        'sample',
-        '--plugins=plugin1,package4',
-      ]);
-      expect(
-        command.plugins,
-        unorderedEquals(<String>[plugin1.path, package4.path]),
-      );
+      final RepositoryPackage package4 = createFakePackage('package4', packagesDir);
+      await runCapturingPrint(runner, <String>['sample', '--plugins=plugin1,package4']);
+      expect(command.plugins, unorderedEquals(<String>[plugin1.path, package4.path]));
     });
 
     test('exclude packages when packages flag is specified', () async {
       createFakePlugin('plugin1', packagesDir);
-      final RepositoryPackage plugin2 = createFakePlugin(
-        'plugin2',
-        packagesDir,
-      );
+      final RepositoryPackage plugin2 = createFakePlugin('plugin2', packagesDir);
       await runCapturingPrint(runner, <String>[
         'sample',
         '--packages=plugin1,plugin2',
@@ -187,19 +117,13 @@ void main() {
     test("exclude packages when packages flag isn't specified", () async {
       createFakePlugin('plugin1', packagesDir);
       createFakePlugin('plugin2', packagesDir);
-      await runCapturingPrint(runner, <String>[
-        'sample',
-        '--exclude=plugin1,plugin2',
-      ]);
+      await runCapturingPrint(runner, <String>['sample', '--exclude=plugin1,plugin2']);
       expect(command.plugins, unorderedEquals(<String>[]));
     });
 
     test('exclude federated plugins when packages flag is specified', () async {
       createFakePlugin('plugin1', packagesDir.childDirectory('federated'));
-      final RepositoryPackage plugin2 = createFakePlugin(
-        'plugin2',
-        packagesDir,
-      );
+      final RepositoryPackage plugin2 = createFakePlugin('plugin2', packagesDir);
       await runCapturingPrint(runner, <String>[
         'sample',
         '--packages=federated/plugin1,plugin2',
@@ -208,22 +132,16 @@ void main() {
       expect(command.plugins, unorderedEquals(<String>[plugin2.path]));
     });
 
-    test(
-      'exclude entire federated plugins when packages flag is specified',
-      () async {
-        createFakePlugin('plugin1', packagesDir.childDirectory('federated'));
-        final RepositoryPackage plugin2 = createFakePlugin(
-          'plugin2',
-          packagesDir,
-        );
-        await runCapturingPrint(runner, <String>[
-          'sample',
-          '--packages=federated/plugin1,plugin2',
-          '--exclude=federated',
-        ]);
-        expect(command.plugins, unorderedEquals(<String>[plugin2.path]));
-      },
-    );
+    test('exclude entire federated plugins when packages flag is specified', () async {
+      createFakePlugin('plugin1', packagesDir.childDirectory('federated'));
+      final RepositoryPackage plugin2 = createFakePlugin('plugin2', packagesDir);
+      await runCapturingPrint(runner, <String>[
+        'sample',
+        '--packages=federated/plugin1,plugin2',
+        '--exclude=federated',
+      ]);
+      expect(command.plugins, unorderedEquals(<String>[plugin2.path]));
+    });
 
     test('exclude accepts config files', () async {
       createFakePlugin('plugin1', packagesDir);
@@ -239,10 +157,7 @@ void main() {
     });
 
     test('exclude accepts empty config files', () async {
-      final RepositoryPackage plugin1 = createFakePlugin(
-        'plugin1',
-        packagesDir,
-      );
+      final RepositoryPackage plugin1 = createFakePlugin('plugin1', packagesDir);
       final File configFile1 = packagesDir.childFile('exclude1.yaml');
       configFile1.createSync();
       final File configFile2 = packagesDir.childFile('exclude2.yaml');
@@ -259,10 +174,7 @@ void main() {
     });
 
     test('filter-packages-to accepts config files', () async {
-      final RepositoryPackage plugin1 = createFakePlugin(
-        'plugin1',
-        packagesDir,
-      );
+      final RepositoryPackage plugin1 = createFakePlugin('plugin1', packagesDir);
       createFakePlugin('plugin2', packagesDir);
       final File configFile = packagesDir.childFile('exclude.yaml');
       configFile.writeAsStringSync('- plugin1');
@@ -278,18 +190,12 @@ void main() {
     test('explicitly specifying the plugin (group) name of a federated plugin '
         'should include all plugins in the group', () async {
       final Directory pluginGroup = packagesDir.childDirectory('plugin1');
-      final RepositoryPackage appFacingPackage = createFakePlugin(
-        'plugin1',
-        pluginGroup,
-      );
+      final RepositoryPackage appFacingPackage = createFakePlugin('plugin1', pluginGroup);
       final RepositoryPackage platformInterfacePackage = createFakePlugin(
         'plugin1_platform_interface',
         pluginGroup,
       );
-      final RepositoryPackage implementationPackage = createFakePlugin(
-        'plugin1_web',
-        pluginGroup,
-      );
+      final RepositoryPackage implementationPackage = createFakePlugin('plugin1_web', pluginGroup);
 
       await runCapturingPrint(runner, <String>['sample', '--packages=plugin1']);
 
@@ -306,10 +212,7 @@ void main() {
     test('specifying the app-facing package of a federated plugin with '
         '--exact-match-only should only include only that package', () async {
       final Directory pluginGroup = packagesDir.childDirectory('plugin1');
-      final RepositoryPackage appFacingPackage = createFakePlugin(
-        'plugin1',
-        pluginGroup,
-      );
+      final RepositoryPackage appFacingPackage = createFakePlugin('plugin1', pluginGroup);
       createFakePlugin('plugin1_platform_interface', pluginGroup);
       createFakePlugin('plugin1_web', pluginGroup);
 
@@ -324,21 +227,17 @@ void main() {
 
     test('specifying the app-facing package of a federated plugin using its '
         'fully qualified name should include only that package', () async {
-      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-          <FakeProcessInfo>[
-            FakeProcessInfo(
-              MockProcess(
-                stdout: '''
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(
+          MockProcess(
+            stdout: '''
 packages/plugin1/plugin1/plugin1.dart
 ''',
-              ),
-            ),
-          ];
+          ),
+        ),
+      ];
       final Directory pluginGroup = packagesDir.childDirectory('plugin1');
-      final RepositoryPackage appFacingPackage = createFakePlugin(
-        'plugin1',
-        pluginGroup,
-      );
+      final RepositoryPackage appFacingPackage = createFakePlugin('plugin1', pluginGroup);
       createFakePlugin('plugin1_platform_interface', pluginGroup);
       createFakePlugin('plugin1_web', pluginGroup);
 
@@ -353,16 +252,15 @@ packages/plugin1/plugin1/plugin1.dart
 
     test('specifying a package of a federated plugin by its name should '
         'include only that package', () async {
-      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-          <FakeProcessInfo>[
-            FakeProcessInfo(
-              MockProcess(
-                stdout: '''
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(
+          MockProcess(
+            stdout: '''
 packages/plugin1/plugin1/plugin1.dart
 ''',
-              ),
-            ),
-          ];
+          ),
+        ),
+      ];
       final Directory pluginGroup = packagesDir.childDirectory('plugin1');
 
       createFakePlugin('plugin1', pluginGroup);
@@ -378,26 +276,15 @@ packages/plugin1/plugin1/plugin1.dart
         '--packages=plugin1_platform_interface',
       ]);
 
-      expect(
-        command.plugins,
-        unorderedEquals(<String>[platformInterfacePackage.path]),
-      );
+      expect(command.plugins, unorderedEquals(<String>[platformInterfacePackage.path]));
     });
 
     test('returns subpackages after the enclosing package', () async {
-      final SamplePackageCommand localCommand = configureCommand(
-        includeSubpackages: true,
-      );
-      final localRunner = CommandRunner<void>(
-        'common_command',
-        'subpackage testing',
-      );
+      final SamplePackageCommand localCommand = configureCommand(includeSubpackages: true);
+      final localRunner = CommandRunner<void>('common_command', 'subpackage testing');
       localRunner.addCommand(localCommand);
 
-      final RepositoryPackage package = createFakePackage(
-        'apackage',
-        packagesDir,
-      );
+      final RepositoryPackage package = createFakePackage('apackage', packagesDir);
 
       await runCapturingPrint(localRunner, <String>['sample']);
       expect(
@@ -407,31 +294,22 @@ packages/plugin1/plugin1/plugin1.dart
     });
 
     group('conflicting package selection', () {
-      test(
-        'does not allow --packages with --run-on-changed-packages',
-        () async {
-          Error? commandError;
-          final List<String> output = await runCapturingPrint(
-            runner,
-            <String>[
-              'sample',
-              '--run-on-changed-packages',
-              '--packages=plugin1',
-            ],
-            errorHandler: (Error e) {
-              commandError = e;
-            },
-          );
+      test('does not allow --packages with --run-on-changed-packages', () async {
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+          runner,
+          <String>['sample', '--run-on-changed-packages', '--packages=plugin1'],
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
 
-          expect(commandError, isA<ToolExit>());
-          expect(
-            output,
-            containsAllInOrder(<Matcher>[
-              contains('Only one of the package selection arguments'),
-            ]),
-          );
-        },
-      );
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[contains('Only one of the package selection arguments')]),
+        );
+      });
 
       test('does not allow --packages with --packages-for-branch', () async {
         Error? commandError;
@@ -446,9 +324,7 @@ packages/plugin1/plugin1/plugin1.dart
         expect(commandError, isA<ToolExit>());
         expect(
           output,
-          containsAllInOrder(<Matcher>[
-            contains('Only one of the package selection arguments'),
-          ]),
+          containsAllInOrder(<Matcher>[contains('Only one of the package selection arguments')]),
         );
       });
 
@@ -465,33 +341,26 @@ packages/plugin1/plugin1/plugin1.dart
         expect(commandError, isA<ToolExit>());
         expect(
           output,
-          containsAllInOrder(<Matcher>[
-            contains('Only one of the package selection arguments'),
-          ]),
+          containsAllInOrder(<Matcher>[contains('Only one of the package selection arguments')]),
         );
       });
 
-      test(
-        'does not allow --run-on-changed-packages with --packages-for-branch',
-        () async {
-          Error? commandError;
-          final List<String> output = await runCapturingPrint(
-            runner,
-            <String>['sample', '--packages-for-branch', '--packages=plugin1'],
-            errorHandler: (Error e) {
-              commandError = e;
-            },
-          );
+      test('does not allow --run-on-changed-packages with --packages-for-branch', () async {
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+          runner,
+          <String>['sample', '--packages-for-branch', '--packages=plugin1'],
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
 
-          expect(commandError, isA<ToolExit>());
-          expect(
-            output,
-            containsAllInOrder(<Matcher>[
-              contains('Only one of the package selection arguments'),
-            ]),
-          );
-        },
-      );
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[contains('Only one of the package selection arguments')]),
+        );
+      });
     });
 
     group('current-package', () {
@@ -544,190 +413,113 @@ packages/plugin1/plugin1/plugin1.dart
       });
 
       test('runs on a package when run from the package directory', () async {
-        final RepositoryPackage package = createFakePlugin(
-          'a_package',
-          packagesDir,
-        );
+        final RepositoryPackage package = createFakePlugin('a_package', packagesDir);
         createFakePlugin('another_package', packagesDir);
         packagesDir.fileSystem.currentDirectory = package.directory;
 
-        await runCapturingPrint(runner, <String>[
-          'sample',
-          '--current-package',
-        ]);
+        await runCapturingPrint(runner, <String>['sample', '--current-package']);
 
         expect(command.plugins, unorderedEquals(<String>[package.path]));
       });
 
-      test(
-        'runs on a package when run from the third_party/packages directory',
-        () async {
-          final RepositoryPackage package = createFakePlugin(
-            'a_package',
-            thirdPartyPackagesDir,
-          );
-          createFakePlugin('another_package', thirdPartyPackagesDir);
-          packagesDir.fileSystem.currentDirectory = package.directory;
+      test('runs on a package when run from the third_party/packages directory', () async {
+        final RepositoryPackage package = createFakePlugin('a_package', thirdPartyPackagesDir);
+        createFakePlugin('another_package', thirdPartyPackagesDir);
+        packagesDir.fileSystem.currentDirectory = package.directory;
 
-          await runCapturingPrint(runner, <String>[
-            'sample',
-            '--current-package',
-          ]);
+        await runCapturingPrint(runner, <String>['sample', '--current-package']);
 
-          expect(command.plugins, unorderedEquals(<String>[package.path]));
-        },
-      );
+        expect(command.plugins, unorderedEquals(<String>[package.path]));
+      });
 
       test('runs only app-facing package of a federated plugin', () async {
         const pluginName = 'foo';
         final Directory groupDir = packagesDir.childDirectory(pluginName);
-        final RepositoryPackage package = createFakePlugin(
-          pluginName,
-          groupDir,
-        );
+        final RepositoryPackage package = createFakePlugin(pluginName, groupDir);
         createFakePlugin('${pluginName}_someplatform', groupDir);
         createFakePackage('${pluginName}_platform_interface', groupDir);
         packagesDir.fileSystem.currentDirectory = package.directory;
 
-        await runCapturingPrint(runner, <String>[
-          'sample',
-          '--current-package',
-        ]);
+        await runCapturingPrint(runner, <String>['sample', '--current-package']);
 
         expect(command.plugins, unorderedEquals(<String>[package.path]));
       });
 
-      test(
-        'runs on a package when run from a package example directory',
-        () async {
-          final RepositoryPackage package = createFakePlugin(
-            'a_package',
-            packagesDir,
-            examples: <String>['a', 'b', 'c'],
-          );
-          createFakePlugin('another_package', packagesDir);
-          packagesDir.fileSystem.currentDirectory = package
-              .getExamples()
-              .first
-              .directory;
+      test('runs on a package when run from a package example directory', () async {
+        final RepositoryPackage package = createFakePlugin(
+          'a_package',
+          packagesDir,
+          examples: <String>['a', 'b', 'c'],
+        );
+        createFakePlugin('another_package', packagesDir);
+        packagesDir.fileSystem.currentDirectory = package.getExamples().first.directory;
 
-          await runCapturingPrint(runner, <String>[
-            'sample',
-            '--current-package',
-          ]);
+        await runCapturingPrint(runner, <String>['sample', '--current-package']);
 
-          expect(command.plugins, unorderedEquals(<String>[package.path]));
-        },
-      );
+        expect(command.plugins, unorderedEquals(<String>[package.path]));
+      });
 
-      test(
-        'runs on a package group when run from the group directory',
-        () async {
-          final Directory pluginGroup = packagesDir.childDirectory('a_plugin');
-          final RepositoryPackage plugin1 = createFakePlugin(
-            'a_plugin_foo',
-            pluginGroup,
-          );
-          final RepositoryPackage plugin2 = createFakePlugin(
-            'a_plugin_bar',
-            pluginGroup,
-          );
-          createFakePlugin('unrelated_plugin', packagesDir);
-          packagesDir.fileSystem.currentDirectory = pluginGroup;
+      test('runs on a package group when run from the group directory', () async {
+        final Directory pluginGroup = packagesDir.childDirectory('a_plugin');
+        final RepositoryPackage plugin1 = createFakePlugin('a_plugin_foo', pluginGroup);
+        final RepositoryPackage plugin2 = createFakePlugin('a_plugin_bar', pluginGroup);
+        createFakePlugin('unrelated_plugin', packagesDir);
+        packagesDir.fileSystem.currentDirectory = pluginGroup;
 
-          await runCapturingPrint(runner, <String>[
-            'sample',
-            '--current-package',
-          ]);
+        await runCapturingPrint(runner, <String>['sample', '--current-package']);
 
-          expect(
-            command.plugins,
-            unorderedEquals(<String>[plugin1.path, plugin2.path]),
-          );
-        },
-      );
+        expect(command.plugins, unorderedEquals(<String>[plugin1.path, plugin2.path]));
+      });
     });
 
     group('test run-on-changed-packages', () {
       test('all plugins should be tested if there are no changes.', () async {
-        final RepositoryPackage plugin1 = createFakePlugin(
-          'plugin1',
-          packagesDir,
-        );
-        final RepositoryPackage plugin2 = createFakePlugin(
-          'plugin2',
-          packagesDir,
-        );
+        final RepositoryPackage plugin1 = createFakePlugin('plugin1', packagesDir);
+        final RepositoryPackage plugin2 = createFakePlugin('plugin2', packagesDir);
         await runCapturingPrint(runner, <String>[
           'sample',
           '--base-sha=main',
           '--run-on-changed-packages',
         ]);
 
-        expect(
-          command.plugins,
-          unorderedEquals(<String>[plugin1.path, plugin2.path]),
-        );
+        expect(command.plugins, unorderedEquals(<String>[plugin1.path, plugin2.path]));
       });
 
-      test(
-        'all plugins should be tested if there are no plugin related changes.',
-        () async {
-          gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-              <FakeProcessInfo>[
-                FakeProcessInfo(MockProcess(stdout: 'AUTHORS')),
-              ];
-          final RepositoryPackage plugin1 = createFakePlugin(
-            'plugin1',
-            packagesDir,
-          );
-          final RepositoryPackage plugin2 = createFakePlugin(
-            'plugin2',
-            packagesDir,
-          );
-          await runCapturingPrint(runner, <String>[
-            'sample',
-            '--base-sha=main',
-            '--run-on-changed-packages',
-          ]);
+      test('all plugins should be tested if there are no plugin related changes.', () async {
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'AUTHORS')),
+        ];
+        final RepositoryPackage plugin1 = createFakePlugin('plugin1', packagesDir);
+        final RepositoryPackage plugin2 = createFakePlugin('plugin2', packagesDir);
+        await runCapturingPrint(runner, <String>[
+          'sample',
+          '--base-sha=main',
+          '--run-on-changed-packages',
+        ]);
 
-          expect(
-            command.plugins,
-            unorderedEquals(<String>[plugin1.path, plugin2.path]),
-          );
-        },
-      );
+        expect(command.plugins, unorderedEquals(<String>[plugin1.path, plugin2.path]));
+      });
 
       test('all plugins should be tested if .ci.yaml changes', () async {
-        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-            <FakeProcessInfo>[
-              FakeProcessInfo(
-                MockProcess(
-                  stdout: '''
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+            MockProcess(
+              stdout: '''
 .ci.yaml
 packages/plugin1/CHANGELOG
 ''',
-                ),
-              ),
-            ];
-        final RepositoryPackage plugin1 = createFakePlugin(
-          'plugin1',
-          packagesDir,
-        );
-        final RepositoryPackage plugin2 = createFakePlugin(
-          'plugin2',
-          packagesDir,
-        );
+            ),
+          ),
+        ];
+        final RepositoryPackage plugin1 = createFakePlugin('plugin1', packagesDir);
+        final RepositoryPackage plugin2 = createFakePlugin('plugin2', packagesDir);
         final List<String> output = await runCapturingPrint(runner, <String>[
           'sample',
           '--base-sha=main',
           '--run-on-changed-packages',
         ]);
 
-        expect(
-          command.plugins,
-          unorderedEquals(<String>[plugin1.path, plugin2.path]),
-        );
+        expect(command.plugins, unorderedEquals(<String>[plugin1.path, plugin2.path]));
         expect(
           output,
           containsAllInOrder(<Matcher>[
@@ -739,191 +531,135 @@ packages/plugin1/CHANGELOG
         );
       });
 
-      test(
-        'all plugins should be tested if anything in .ci/ changes',
-        () async {
-          gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-              <FakeProcessInfo>[
-                FakeProcessInfo(
-                  MockProcess(
-                    stdout: '''
+      test('all plugins should be tested if anything in .ci/ changes', () async {
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+            MockProcess(
+              stdout: '''
 .ci/Dockerfile
 packages/plugin1/CHANGELOG
 ''',
-                  ),
-                ),
-              ];
-          final RepositoryPackage plugin1 = createFakePlugin(
-            'plugin1',
-            packagesDir,
-          );
-          final RepositoryPackage plugin2 = createFakePlugin(
-            'plugin2',
-            packagesDir,
-          );
-          final List<String> output = await runCapturingPrint(runner, <String>[
-            'sample',
-            '--base-sha=main',
-            '--run-on-changed-packages',
-          ]);
+            ),
+          ),
+        ];
+        final RepositoryPackage plugin1 = createFakePlugin('plugin1', packagesDir);
+        final RepositoryPackage plugin2 = createFakePlugin('plugin2', packagesDir);
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'sample',
+          '--base-sha=main',
+          '--run-on-changed-packages',
+        ]);
 
-          expect(
-            command.plugins,
-            unorderedEquals(<String>[plugin1.path, plugin2.path]),
-          );
-          expect(
-            output,
-            containsAllInOrder(<Matcher>[
-              contains(
-                'Running for all packages, since a file has changed '
-                'that could affect the entire repository.',
-              ),
-            ]),
-          );
-        },
-      );
+        expect(command.plugins, unorderedEquals(<String>[plugin1.path, plugin2.path]));
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+              'Running for all packages, since a file has changed '
+              'that could affect the entire repository.',
+            ),
+          ]),
+        );
+      });
 
-      test(
-        'all plugins should be tested if anything in script/ changes.',
-        () async {
-          gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-              <FakeProcessInfo>[
-                FakeProcessInfo(
-                  MockProcess(
-                    stdout: '''
+      test('all plugins should be tested if anything in script/ changes.', () async {
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+            MockProcess(
+              stdout: '''
 script/tool/bin/flutter_plugin_tools.dart
 packages/plugin1/CHANGELOG
 ''',
-                  ),
-                ),
-              ];
-          final RepositoryPackage plugin1 = createFakePlugin(
-            'plugin1',
-            packagesDir,
-          );
-          final RepositoryPackage plugin2 = createFakePlugin(
-            'plugin2',
-            packagesDir,
-          );
-          final List<String> output = await runCapturingPrint(runner, <String>[
-            'sample',
-            '--base-sha=main',
-            '--run-on-changed-packages',
-          ]);
+            ),
+          ),
+        ];
+        final RepositoryPackage plugin1 = createFakePlugin('plugin1', packagesDir);
+        final RepositoryPackage plugin2 = createFakePlugin('plugin2', packagesDir);
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'sample',
+          '--base-sha=main',
+          '--run-on-changed-packages',
+        ]);
 
-          expect(
-            command.plugins,
-            unorderedEquals(<String>[plugin1.path, plugin2.path]),
-          );
-          expect(
-            output,
-            containsAllInOrder(<Matcher>[
-              contains(
-                'Running for all packages, since a file has changed '
-                'that could affect the entire repository.',
-              ),
-            ]),
-          );
-        },
-      );
+        expect(command.plugins, unorderedEquals(<String>[plugin1.path, plugin2.path]));
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+              'Running for all packages, since a file has changed '
+              'that could affect the entire repository.',
+            ),
+          ]),
+        );
+      });
 
-      test(
-        'all plugins should be tested if the root analysis options change.',
-        () async {
-          gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-              <FakeProcessInfo>[
-                FakeProcessInfo(
-                  MockProcess(
-                    stdout: '''
+      test('all plugins should be tested if the root analysis options change.', () async {
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+            MockProcess(
+              stdout: '''
 analysis_options.yaml
 packages/plugin1/CHANGELOG
 ''',
-                  ),
-                ),
-              ];
-          final RepositoryPackage plugin1 = createFakePlugin(
-            'plugin1',
-            packagesDir,
-          );
-          final RepositoryPackage plugin2 = createFakePlugin(
-            'plugin2',
-            packagesDir,
-          );
-          final List<String> output = await runCapturingPrint(runner, <String>[
-            'sample',
-            '--base-sha=main',
-            '--run-on-changed-packages',
-          ]);
+            ),
+          ),
+        ];
+        final RepositoryPackage plugin1 = createFakePlugin('plugin1', packagesDir);
+        final RepositoryPackage plugin2 = createFakePlugin('plugin2', packagesDir);
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'sample',
+          '--base-sha=main',
+          '--run-on-changed-packages',
+        ]);
 
-          expect(
-            command.plugins,
-            unorderedEquals(<String>[plugin1.path, plugin2.path]),
-          );
-          expect(
-            output,
-            containsAllInOrder(<Matcher>[
-              contains(
-                'Running for all packages, since a file has changed '
-                'that could affect the entire repository.',
-              ),
-            ]),
-          );
-        },
-      );
+        expect(command.plugins, unorderedEquals(<String>[plugin1.path, plugin2.path]));
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+              'Running for all packages, since a file has changed '
+              'that could affect the entire repository.',
+            ),
+          ]),
+        );
+      });
 
-      test(
-        'all plugins should be tested if formatting options change.',
-        () async {
-          gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-              <FakeProcessInfo>[
-                FakeProcessInfo(
-                  MockProcess(
-                    stdout: '''
+      test('all plugins should be tested if formatting options change.', () async {
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+            MockProcess(
+              stdout: '''
 .clang-format
 packages/plugin1/CHANGELOG
 ''',
-                  ),
-                ),
-              ];
-          final RepositoryPackage plugin1 = createFakePlugin(
-            'plugin1',
-            packagesDir,
-          );
-          final RepositoryPackage plugin2 = createFakePlugin(
-            'plugin2',
-            packagesDir,
-          );
-          final List<String> output = await runCapturingPrint(runner, <String>[
-            'sample',
-            '--base-sha=main',
-            '--run-on-changed-packages',
-          ]);
+            ),
+          ),
+        ];
+        final RepositoryPackage plugin1 = createFakePlugin('plugin1', packagesDir);
+        final RepositoryPackage plugin2 = createFakePlugin('plugin2', packagesDir);
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'sample',
+          '--base-sha=main',
+          '--run-on-changed-packages',
+        ]);
 
-          expect(
-            command.plugins,
-            unorderedEquals(<String>[plugin1.path, plugin2.path]),
-          );
-          expect(
-            output,
-            containsAllInOrder(<Matcher>[
-              contains(
-                'Running for all packages, since a file has changed '
-                'that could affect the entire repository.',
-              ),
-            ]),
-          );
-        },
-      );
+        expect(command.plugins, unorderedEquals(<String>[plugin1.path, plugin2.path]));
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+              'Running for all packages, since a file has changed '
+              'that could affect the entire repository.',
+            ),
+          ]),
+        );
+      });
 
       test('Only changed plugin should be tested.', () async {
-        gitProcessRunner
-            .mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: 'packages/plugin1/plugin1.dart')),
         ];
-        final RepositoryPackage plugin1 = createFakePlugin(
-          'plugin1',
-          packagesDir,
-        );
+        final RepositoryPackage plugin1 = createFakePlugin('plugin1', packagesDir);
         createFakePlugin('plugin2', packagesDir);
         final List<String> output = await runCapturingPrint(runner, <String>[
           'sample',
@@ -934,95 +670,72 @@ packages/plugin1/CHANGELOG
         expect(
           output,
           containsAllInOrder(<Matcher>[
-            contains(
-              'Running for all packages that have diffs relative to "main"',
-            ),
+            contains('Running for all packages that have diffs relative to "main"'),
           ]),
         );
 
         expect(command.plugins, unorderedEquals(<String>[plugin1.path]));
       });
 
-      test(
-        'multiple files in one plugin should also test the plugin',
-        () async {
-          gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-              <FakeProcessInfo>[
-                FakeProcessInfo(
-                  MockProcess(
-                    stdout: '''
+      test('multiple files in one plugin should also test the plugin', () async {
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+            MockProcess(
+              stdout: '''
 packages/plugin1/plugin1.dart
 packages/plugin1/ios/plugin1.m
 ''',
-                  ),
-                ),
-              ];
-          final RepositoryPackage plugin1 = createFakePlugin(
-            'plugin1',
-            packagesDir,
-          );
-          createFakePlugin('plugin2', packagesDir);
-          await runCapturingPrint(runner, <String>[
-            'sample',
-            '--base-sha=main',
-            '--run-on-changed-packages',
-          ]);
+            ),
+          ),
+        ];
+        final RepositoryPackage plugin1 = createFakePlugin('plugin1', packagesDir);
+        createFakePlugin('plugin2', packagesDir);
+        await runCapturingPrint(runner, <String>[
+          'sample',
+          '--base-sha=main',
+          '--run-on-changed-packages',
+        ]);
 
-          expect(command.plugins, unorderedEquals(<String>[plugin1.path]));
-        },
-      );
+        expect(command.plugins, unorderedEquals(<String>[plugin1.path]));
+      });
 
-      test(
-        'multiple plugins changed should test all the changed plugins',
-        () async {
-          gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-              <FakeProcessInfo>[
-                FakeProcessInfo(
-                  MockProcess(
-                    stdout: '''
+      test('multiple plugins changed should test all the changed plugins', () async {
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+            MockProcess(
+              stdout: '''
 packages/plugin1/plugin1.dart
 packages/plugin2/ios/plugin2.m
 ''',
-                  ),
-                ),
-              ];
-          final RepositoryPackage plugin1 = createFakePlugin(
-            'plugin1',
-            packagesDir,
-          );
-          final RepositoryPackage plugin2 = createFakePlugin(
-            'plugin2',
-            packagesDir,
-          );
-          createFakePlugin('plugin3', packagesDir);
-          await runCapturingPrint(runner, <String>[
-            'sample',
-            '--base-sha=main',
-            '--run-on-changed-packages',
-          ]);
+            ),
+          ),
+        ];
+        final RepositoryPackage plugin1 = createFakePlugin('plugin1', packagesDir);
+        final RepositoryPackage plugin2 = createFakePlugin('plugin2', packagesDir);
+        createFakePlugin('plugin3', packagesDir);
+        await runCapturingPrint(runner, <String>[
+          'sample',
+          '--base-sha=main',
+          '--run-on-changed-packages',
+        ]);
 
-          expect(
-            command.plugins,
-            unorderedEquals(<String>[plugin1.path, plugin2.path]),
-          );
-        },
-      );
+        expect(command.plugins, unorderedEquals(<String>[plugin1.path, plugin2.path]));
+      });
 
       test(
         'multiple plugins inside the same plugin group changed should output the plugin group name',
         () async {
-          gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-              <FakeProcessInfo>[
-                FakeProcessInfo(
-                  MockProcess(
-                    stdout: '''
+          gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+            FakeProcessInfo(
+              MockProcess(
+                stdout: '''
 packages/plugin1/plugin1/plugin1.dart
 packages/plugin1/plugin1_platform_interface/plugin1_platform_interface.dart
 packages/plugin1/plugin1_web/plugin1_web.dart
 ''',
-                  ),
-                ),
-              ];
+              ),
+            ),
+          ];
           final RepositoryPackage plugin1 = createFakePlugin(
             'plugin1',
             packagesDir.childDirectory('plugin1'),
@@ -1039,54 +752,43 @@ packages/plugin1/plugin1_web/plugin1_web.dart
         },
       );
 
-      test(
-        'changing one plugin in a federated group should only include that plugin',
-        () async {
-          gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-              <FakeProcessInfo>[
-                FakeProcessInfo(
-                  MockProcess(
-                    stdout: '''
+      test('changing one plugin in a federated group should only include that plugin', () async {
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+            MockProcess(
+              stdout: '''
 packages/plugin1/plugin1/plugin1.dart
 ''',
-                  ),
-                ),
-              ];
-          final RepositoryPackage plugin1 = createFakePlugin(
-            'plugin1',
-            packagesDir.childDirectory('plugin1'),
-          );
-          createFakePlugin(
-            'plugin1_platform_interface',
-            packagesDir.childDirectory('plugin1'),
-          );
-          createFakePlugin(
-            'plugin1_web',
-            packagesDir.childDirectory('plugin1'),
-          );
-          await runCapturingPrint(runner, <String>[
-            'sample',
-            '--base-sha=main',
-            '--run-on-changed-packages',
-          ]);
+            ),
+          ),
+        ];
+        final RepositoryPackage plugin1 = createFakePlugin(
+          'plugin1',
+          packagesDir.childDirectory('plugin1'),
+        );
+        createFakePlugin('plugin1_platform_interface', packagesDir.childDirectory('plugin1'));
+        createFakePlugin('plugin1_web', packagesDir.childDirectory('plugin1'));
+        await runCapturingPrint(runner, <String>[
+          'sample',
+          '--base-sha=main',
+          '--run-on-changed-packages',
+        ]);
 
-          expect(command.plugins, unorderedEquals(<String>[plugin1.path]));
-        },
-      );
+        expect(command.plugins, unorderedEquals(<String>[plugin1.path]));
+      });
 
       test('honors --exclude flag', () async {
-        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-            <FakeProcessInfo>[
-              FakeProcessInfo(
-                MockProcess(
-                  stdout: '''
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+            MockProcess(
+              stdout: '''
 packages/plugin1/plugin1.dart
 packages/plugin2/ios/plugin2.m
 packages/plugin3/plugin3.dart
 ''',
-                ),
-              ),
-            ];
+            ),
+          ),
+        ];
         final RepositoryPackage plugin1 = createFakePlugin(
           'plugin1',
           packagesDir.childDirectory('plugin1'),
@@ -1104,18 +806,17 @@ packages/plugin3/plugin3.dart
       });
 
       test('honors --filter-packages-to flag', () async {
-        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-            <FakeProcessInfo>[
-              FakeProcessInfo(
-                MockProcess(
-                  stdout: '''
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+            MockProcess(
+              stdout: '''
 packages/plugin1/plugin1.dart
 packages/plugin2/ios/plugin2.m
 packages/plugin3/plugin3.dart
 ''',
-                ),
-              ),
-            ];
+            ),
+          ),
+        ];
         final RepositoryPackage plugin1 = createFakePlugin(
           'plugin1',
           packagesDir.childDirectory('plugin1'),
@@ -1134,16 +835,15 @@ packages/plugin3/plugin3.dart
 
       test('honors --filter-packages-to flag when a file is changed that makes '
           'all packages potentially changed', () async {
-        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-            <FakeProcessInfo>[
-              FakeProcessInfo(
-                MockProcess(
-                  stdout: '''
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+            MockProcess(
+              stdout: '''
 .ci.yaml
 ''',
-                ),
-              ),
-            ];
+            ),
+          ),
+        ];
         final RepositoryPackage plugin1 = createFakePlugin(
           'plugin1',
           packagesDir.childDirectory('plugin1'),
@@ -1161,31 +861,21 @@ packages/plugin3/plugin3.dart
       });
 
       test('--filter-packages-to handles federated plugin groups', () async {
-        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-            <FakeProcessInfo>[
-              FakeProcessInfo(
-                MockProcess(
-                  stdout: '''
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+            MockProcess(
+              stdout: '''
 packages/a_plugin/a_plugin/lib/foo.dart
 packages/a_plugin/a_plugin_impl/lib/foo.dart
 packages/a_plugin/a_plugin_platform_interface/lib/foo.dart
 ''',
-                ),
-              ),
-            ];
+            ),
+          ),
+        ];
         final Directory groupDir = packagesDir.childDirectory('a_plugin');
-        final RepositoryPackage plugin1 = createFakePlugin(
-          'a_plugin',
-          groupDir,
-        );
-        final RepositoryPackage plugin2 = createFakePlugin(
-          'a_plugin_impl',
-          groupDir,
-        );
-        final RepositoryPackage plugin3 = createFakePlugin(
-          'a_plugin_platform_interface',
-          groupDir,
-        );
+        final RepositoryPackage plugin1 = createFakePlugin('a_plugin', groupDir);
+        final RepositoryPackage plugin2 = createFakePlugin('a_plugin_impl', groupDir);
+        final RepositoryPackage plugin3 = createFakePlugin('a_plugin_platform_interface', groupDir);
         await runCapturingPrint(runner, <String>[
           'sample',
           '--filter-packages-to=a_plugin',
@@ -1200,16 +890,15 @@ packages/a_plugin/a_plugin_platform_interface/lib/foo.dart
       });
 
       test('--filter-packages-to and --exclude work together', () async {
-        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-            <FakeProcessInfo>[
-              FakeProcessInfo(
-                MockProcess(
-                  stdout: '''
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+            MockProcess(
+              stdout: '''
 .ci.yaml
 ''',
-                ),
-              ),
-            ];
+            ),
+          ),
+        ];
         final RepositoryPackage plugin1 = createFakePlugin(
           'plugin1',
           packagesDir.childDirectory('plugin1'),
@@ -1231,69 +920,46 @@ packages/a_plugin/a_plugin_platform_interface/lib/foo.dart
     group('test run-on-dirty-packages', () {
       test('no packages should be tested if there are no changes.', () async {
         createFakePackage('a_package', packagesDir);
-        await runCapturingPrint(runner, <String>[
-          'sample',
-          '--run-on-dirty-packages',
-        ]);
+        await runCapturingPrint(runner, <String>['sample', '--run-on-dirty-packages']);
 
         expect(command.plugins, unorderedEquals(<String>[]));
       });
 
-      test(
-        'no packages should be tested if there are no plugin related changes.',
-        () async {
-          gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-              <FakeProcessInfo>[
-                FakeProcessInfo(MockProcess(stdout: 'AUTHORS')),
-              ];
-          createFakePackage('a_package', packagesDir);
-          await runCapturingPrint(runner, <String>[
-            'sample',
-            '--run-on-dirty-packages',
-          ]);
+      test('no packages should be tested if there are no plugin related changes.', () async {
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'AUTHORS')),
+        ];
+        createFakePackage('a_package', packagesDir);
+        await runCapturingPrint(runner, <String>['sample', '--run-on-dirty-packages']);
 
-          expect(command.plugins, unorderedEquals(<String>[]));
-        },
-      );
+        expect(command.plugins, unorderedEquals(<String>[]));
+      });
 
-      test(
-        'no packages should be tested even if special repo files change.',
-        () async {
-          gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-              <FakeProcessInfo>[
-                FakeProcessInfo(
-                  MockProcess(
-                    stdout: '''
+      test('no packages should be tested even if special repo files change.', () async {
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+            MockProcess(
+              stdout: '''
 .ci.yaml
 .ci/Dockerfile
 .clang-format
 analysis_options.yaml
 script/tool/bin/flutter_plugin_tools.dart
 ''',
-                  ),
-                ),
-              ];
-          createFakePackage('a_package', packagesDir);
-          await runCapturingPrint(runner, <String>[
-            'sample',
-            '--run-on-dirty-packages',
-          ]);
+            ),
+          ),
+        ];
+        createFakePackage('a_package', packagesDir);
+        await runCapturingPrint(runner, <String>['sample', '--run-on-dirty-packages']);
 
-          expect(command.plugins, unorderedEquals(<String>[]));
-        },
-      );
+        expect(command.plugins, unorderedEquals(<String>[]));
+      });
 
       test('Only changed packages should be tested.', () async {
-        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-            <FakeProcessInfo>[
-              FakeProcessInfo(
-                MockProcess(stdout: 'packages/a_package/lib/a_package.dart'),
-              ),
-            ];
-        final RepositoryPackage packageA = createFakePackage(
-          'a_package',
-          packagesDir,
-        );
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'packages/a_package/lib/a_package.dart')),
+        ];
+        final RepositoryPackage packageA = createFakePackage('a_package', packagesDir);
         createFakePlugin('b_package', packagesDir);
         final List<String> output = await runCapturingPrint(runner, <String>[
           'sample',
@@ -1310,57 +976,37 @@ script/tool/bin/flutter_plugin_tools.dart
         expect(command.plugins, unorderedEquals(<String>[packageA.path]));
       });
 
-      test(
-        'multiple packages changed should test all the changed packages',
-        () async {
-          gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-              <FakeProcessInfo>[
-                FakeProcessInfo(
-                  MockProcess(
-                    stdout: '''
+      test('multiple packages changed should test all the changed packages', () async {
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+            MockProcess(
+              stdout: '''
 packages/a_package/lib/a_package.dart
 packages/b_package/lib/src/foo.dart
 ''',
-                  ),
-                ),
-              ];
-          final RepositoryPackage packageA = createFakePackage(
-            'a_package',
-            packagesDir,
-          );
-          final RepositoryPackage packageB = createFakePackage(
-            'b_package',
-            packagesDir,
-          );
-          createFakePackage('c_package', packagesDir);
-          await runCapturingPrint(runner, <String>[
-            'sample',
-            '--run-on-dirty-packages',
-          ]);
+            ),
+          ),
+        ];
+        final RepositoryPackage packageA = createFakePackage('a_package', packagesDir);
+        final RepositoryPackage packageB = createFakePackage('b_package', packagesDir);
+        createFakePackage('c_package', packagesDir);
+        await runCapturingPrint(runner, <String>['sample', '--run-on-dirty-packages']);
 
-          expect(
-            command.plugins,
-            unorderedEquals(<String>[packageA.path, packageB.path]),
-          );
-        },
-      );
+        expect(command.plugins, unorderedEquals(<String>[packageA.path, packageB.path]));
+      });
 
       test('honors --exclude flag', () async {
-        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-            <FakeProcessInfo>[
-              FakeProcessInfo(
-                MockProcess(
-                  stdout: '''
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+            MockProcess(
+              stdout: '''
 packages/a_package/lib/a_package.dart
 packages/b_package/lib/src/foo.dart
 ''',
-                ),
-              ),
-            ];
-        final RepositoryPackage packageA = createFakePackage(
-          'a_package',
-          packagesDir,
-        );
+            ),
+          ),
+        ];
+        final RepositoryPackage packageA = createFakePackage('a_package', packagesDir);
         createFakePackage('b_package', packagesDir);
         createFakePackage('c_package', packagesDir);
         await runCapturingPrint(runner, <String>[
@@ -1375,116 +1021,20 @@ packages/b_package/lib/src/foo.dart
   });
 
   group('--packages-for-branch', () {
-    test(
-      'only tests changed packages relative to the merge base on a branch',
-      () async {
-        gitProcessRunner
-            .mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
-          FakeProcessInfo(MockProcess(stdout: 'packages/plugin1/plugin1.dart')),
-        ];
-        gitProcessRunner.mockProcessesForExecutable['git-rev-parse'] =
-            <FakeProcessInfo>[FakeProcessInfo(MockProcess(stdout: 'a-branch'))];
-        gitProcessRunner
-            .mockProcessesForExecutable['git-merge-base'] = <FakeProcessInfo>[
-          FakeProcessInfo(MockProcess(exitCode: 1), <String>['--is-ancestor']),
-          FakeProcessInfo(MockProcess(stdout: 'abc123'), <String>[
-            '--fork-point',
-          ]), // finding merge base
-        ];
-        final RepositoryPackage plugin1 = createFakePlugin(
-          'plugin1',
-          packagesDir,
-        );
-        createFakePlugin('plugin2', packagesDir);
-
-        final List<String> output = await runCapturingPrint(runner, <String>[
-          'sample',
-          '--packages-for-branch',
-        ]);
-
-        expect(command.plugins, unorderedEquals(<String>[plugin1.path]));
-        expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains('--packages-for-branch: running on branch "a-branch"'),
-            contains(
-              'Running for all packages that have diffs relative to "abc123"',
-            ),
-          ]),
-        );
-        // Ensure that it's diffing against the merge-base.
-        expect(
-          gitProcessRunner.recordedCalls,
-          contains(
-            const ProcessCall('git-diff', <String>[
-              '--name-only',
-              'abc123',
-              'HEAD',
-            ], null),
-          ),
-        );
-      },
-    );
-
-    test(
-      'only tests changed packages relative to the previous commit on main',
-      () async {
-        gitProcessRunner
-            .mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
-          FakeProcessInfo(MockProcess(stdout: 'packages/plugin1/plugin1.dart')),
-        ];
-        gitProcessRunner.mockProcessesForExecutable['git-rev-parse'] =
-            <FakeProcessInfo>[FakeProcessInfo(MockProcess(stdout: 'main'))];
-        final RepositoryPackage plugin1 = createFakePlugin(
-          'plugin1',
-          packagesDir,
-        );
-        createFakePlugin('plugin2', packagesDir);
-
-        final List<String> output = await runCapturingPrint(runner, <String>[
-          'sample',
-          '--packages-for-branch',
-        ]);
-
-        expect(command.plugins, unorderedEquals(<String>[plugin1.path]));
-        expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains('--packages-for-branch: running on default branch.'),
-            contains(
-              '--packages-for-branch: using parent commit as the diff base',
-            ),
-            contains(
-              'Running for all packages that have diffs relative to "HEAD~"',
-            ),
-          ]),
-        );
-        // Ensure that it's diffing against the prior commit.
-        expect(
-          gitProcessRunner.recordedCalls,
-          contains(
-            const ProcessCall('git-diff', <String>[
-              '--name-only',
-              'HEAD~',
-              'HEAD',
-            ], null),
-          ),
-        );
-      },
-    );
-
-    test('only tests changed packages relative to the previous commit if '
-        'running on a specific hash from main', () async {
-      gitProcessRunner
-          .mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+    test('only tests changed packages relative to the merge base on a branch', () async {
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: 'packages/plugin1/plugin1.dart')),
       ];
-      gitProcessRunner.mockProcessesForExecutable['git-rev-parse'] =
-          <FakeProcessInfo>[FakeProcessInfo(MockProcess(stdout: 'HEAD'))];
-      final RepositoryPackage plugin1 = createFakePlugin(
-        'plugin1',
-        packagesDir,
-      );
+      gitProcessRunner.mockProcessesForExecutable['git-rev-parse'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'a-branch')),
+      ];
+      gitProcessRunner.mockProcessesForExecutable['git-merge-base'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['--is-ancestor']),
+        FakeProcessInfo(MockProcess(stdout: 'abc123'), <String>[
+          '--fork-point',
+        ]), // finding merge base
+      ];
+      final RepositoryPackage plugin1 = createFakePlugin('plugin1', packagesDir);
       createFakePlugin('plugin2', packagesDir);
 
       final List<String> output = await runCapturingPrint(runner, <String>[
@@ -1496,55 +1046,101 @@ packages/b_package/lib/src/foo.dart
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains(
-            '--packages-for-branch: running on a commit from default branch.',
-          ),
-          contains(
-            '--packages-for-branch: using parent commit as the diff base',
-          ),
-          contains(
-            'Running for all packages that have diffs relative to "HEAD~"',
-          ),
+          contains('--packages-for-branch: running on branch "a-branch"'),
+          contains('Running for all packages that have diffs relative to "abc123"'),
+        ]),
+      );
+      // Ensure that it's diffing against the merge-base.
+      expect(
+        gitProcessRunner.recordedCalls,
+        contains(const ProcessCall('git-diff', <String>['--name-only', 'abc123', 'HEAD'], null)),
+      );
+    });
+
+    test('only tests changed packages relative to the previous commit on main', () async {
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'packages/plugin1/plugin1.dart')),
+      ];
+      gitProcessRunner.mockProcessesForExecutable['git-rev-parse'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'main')),
+      ];
+      final RepositoryPackage plugin1 = createFakePlugin('plugin1', packagesDir);
+      createFakePlugin('plugin2', packagesDir);
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'sample',
+        '--packages-for-branch',
+      ]);
+
+      expect(command.plugins, unorderedEquals(<String>[plugin1.path]));
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('--packages-for-branch: running on default branch.'),
+          contains('--packages-for-branch: using parent commit as the diff base'),
+          contains('Running for all packages that have diffs relative to "HEAD~"'),
         ]),
       );
       // Ensure that it's diffing against the prior commit.
       expect(
         gitProcessRunner.recordedCalls,
-        contains(
-          const ProcessCall('git-diff', <String>[
-            '--name-only',
-            'HEAD~',
-            'HEAD',
-          ], null),
-        ),
+        contains(const ProcessCall('git-diff', <String>['--name-only', 'HEAD~', 'HEAD'], null)),
+      );
+    });
+
+    test('only tests changed packages relative to the previous commit if '
+        'running on a specific hash from main', () async {
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'packages/plugin1/plugin1.dart')),
+      ];
+      gitProcessRunner.mockProcessesForExecutable['git-rev-parse'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'HEAD')),
+      ];
+      final RepositoryPackage plugin1 = createFakePlugin('plugin1', packagesDir);
+      createFakePlugin('plugin2', packagesDir);
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'sample',
+        '--packages-for-branch',
+      ]);
+
+      expect(command.plugins, unorderedEquals(<String>[plugin1.path]));
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('--packages-for-branch: running on a commit from default branch.'),
+          contains('--packages-for-branch: using parent commit as the diff base'),
+          contains('Running for all packages that have diffs relative to "HEAD~"'),
+        ]),
+      );
+      // Ensure that it's diffing against the prior commit.
+      expect(
+        gitProcessRunner.recordedCalls,
+        contains(const ProcessCall('git-diff', <String>['--name-only', 'HEAD~', 'HEAD'], null)),
       );
     });
 
     test('only tests changed packages relative to the previous commit if '
         'running on a specific hash from origin/main', () async {
-      gitProcessRunner
-          .mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: 'packages/plugin1/plugin1.dart')),
       ];
-      gitProcessRunner.mockProcessesForExecutable['git-rev-parse'] =
-          <FakeProcessInfo>[FakeProcessInfo(MockProcess(stdout: 'HEAD'))];
-      gitProcessRunner.mockProcessesForExecutable['git-merge-base'] =
-          <FakeProcessInfo>[
-            FakeProcessInfo(MockProcess(exitCode: 128), <String>[
-              '--is-ancestor',
-              'HEAD',
-              'main',
-            ]), // Fail with a non-1 exit code for 'main'
-            FakeProcessInfo(MockProcess(), <String>[
-              '--is-ancestor',
-              'HEAD',
-              'origin/main',
-            ]), // Succeed for the variant.
-          ];
-      final RepositoryPackage plugin1 = createFakePlugin(
-        'plugin1',
-        packagesDir,
-      );
+      gitProcessRunner.mockProcessesForExecutable['git-rev-parse'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'HEAD')),
+      ];
+      gitProcessRunner.mockProcessesForExecutable['git-merge-base'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 128), <String>[
+          '--is-ancestor',
+          'HEAD',
+          'main',
+        ]), // Fail with a non-1 exit code for 'main'
+        FakeProcessInfo(MockProcess(), <String>[
+          '--is-ancestor',
+          'HEAD',
+          'origin/main',
+        ]), // Succeed for the variant.
+      ];
+      final RepositoryPackage plugin1 = createFakePlugin('plugin1', packagesDir);
       createFakePlugin('plugin2', packagesDir);
 
       final List<String> output = await runCapturingPrint(runner, <String>[
@@ -1556,84 +1152,56 @@ packages/b_package/lib/src/foo.dart
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains(
-            '--packages-for-branch: running on a commit from default branch.',
-          ),
-          contains(
-            '--packages-for-branch: using parent commit as the diff base',
-          ),
-          contains(
-            'Running for all packages that have diffs relative to "HEAD~"',
-          ),
+          contains('--packages-for-branch: running on a commit from default branch.'),
+          contains('--packages-for-branch: using parent commit as the diff base'),
+          contains('Running for all packages that have diffs relative to "HEAD~"'),
         ]),
       );
       // Ensure that it's diffing against the prior commit.
       expect(
         gitProcessRunner.recordedCalls,
-        contains(
-          const ProcessCall('git-diff', <String>[
-            '--name-only',
-            'HEAD~',
-            'HEAD',
-          ], null),
-        ),
+        contains(const ProcessCall('git-diff', <String>['--name-only', 'HEAD~', 'HEAD'], null)),
       );
     });
 
-    test(
-      'only tests changed packages relative to the previous commit on master',
-      () async {
-        gitProcessRunner
-            .mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
-          FakeProcessInfo(MockProcess(stdout: 'packages/plugin1/plugin1.dart')),
-        ];
-        gitProcessRunner.mockProcessesForExecutable['git-rev-parse'] =
-            <FakeProcessInfo>[FakeProcessInfo(MockProcess(stdout: 'master'))];
-        final RepositoryPackage plugin1 = createFakePlugin(
-          'plugin1',
-          packagesDir,
-        );
-        createFakePlugin('plugin2', packagesDir);
-
-        final List<String> output = await runCapturingPrint(runner, <String>[
-          'sample',
-          '--packages-for-branch',
-        ]);
-
-        expect(command.plugins, unorderedEquals(<String>[plugin1.path]));
-        expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains('--packages-for-branch: running on default branch.'),
-            contains(
-              '--packages-for-branch: using parent commit as the diff base',
-            ),
-            contains(
-              'Running for all packages that have diffs relative to "HEAD~"',
-            ),
-          ]),
-        );
-        // Ensure that it's diffing against the prior commit.
-        expect(
-          gitProcessRunner.recordedCalls,
-          contains(
-            const ProcessCall('git-diff', <String>[
-              '--name-only',
-              'HEAD~',
-              'HEAD',
-            ], null),
-          ),
-        );
-      },
-    );
-
-    test('throws if getting the branch fails', () async {
-      gitProcessRunner
-          .mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+    test('only tests changed packages relative to the previous commit on master', () async {
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: 'packages/plugin1/plugin1.dart')),
       ];
-      gitProcessRunner.mockProcessesForExecutable['git-rev-parse'] =
-          <FakeProcessInfo>[FakeProcessInfo(MockProcess(exitCode: 1))];
+      gitProcessRunner.mockProcessesForExecutable['git-rev-parse'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'master')),
+      ];
+      final RepositoryPackage plugin1 = createFakePlugin('plugin1', packagesDir);
+      createFakePlugin('plugin2', packagesDir);
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'sample',
+        '--packages-for-branch',
+      ]);
+
+      expect(command.plugins, unorderedEquals(<String>[plugin1.path]));
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('--packages-for-branch: running on default branch.'),
+          contains('--packages-for-branch: using parent commit as the diff base'),
+          contains('Running for all packages that have diffs relative to "HEAD~"'),
+        ]),
+      );
+      // Ensure that it's diffing against the prior commit.
+      expect(
+        gitProcessRunner.recordedCalls,
+        contains(const ProcessCall('git-diff', <String>['--name-only', 'HEAD~', 'HEAD'], null)),
+      );
+    });
+
+    test('throws if getting the branch fails', () async {
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'packages/plugin1/plugin1.dart')),
+      ];
+      gitProcessRunner.mockProcessesForExecutable['git-rev-parse'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1)),
+      ];
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
@@ -1645,10 +1213,7 @@ packages/b_package/lib/src/foo.dart
       );
 
       expect(commandError, isA<ToolExit>());
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[contains('Unable to determine branch')]),
-      );
+      expect(output, containsAllInOrder(<Matcher>[contains('Unable to determine branch')]));
     });
   });
 
@@ -1674,10 +1239,7 @@ packages/b_package/lib/src/foo.dart
 
       for (var i = 0; i < expectedShards.length; ++i) {
         final SamplePackageCommand localCommand = configureCommand();
-        final localRunner = CommandRunner<void>(
-          'common_command',
-          'Shard testing',
-        );
+        final localRunner = CommandRunner<void>('common_command', 'Shard testing');
         localRunner.addCommand(localCommand);
 
         await runCapturingPrint(localRunner, <String>[
@@ -1688,58 +1250,48 @@ packages/b_package/lib/src/foo.dart
         expect(
           localCommand.plugins,
           unorderedEquals(
-            expectedShards[i]
-                .map((RepositoryPackage package) => package.path)
-                .toList(),
+            expectedShards[i].map((RepositoryPackage package) => package.path).toList(),
           ),
         );
       }
     });
 
-    test(
-      'distributes as evenly as possible when not evenly divisible',
-      () async {
-        final expectedShards = <List<RepositoryPackage>>[
-          <RepositoryPackage>[
-            createFakePackage('package1', packagesDir),
-            createFakePackage('package2', packagesDir),
-            createFakePackage('package3', packagesDir),
-          ],
-          <RepositoryPackage>[
-            createFakePackage('package4', packagesDir),
-            createFakePackage('package5', packagesDir),
-            createFakePackage('package6', packagesDir),
-          ],
-          <RepositoryPackage>[
-            createFakePackage('package7', packagesDir),
-            createFakePackage('package8', packagesDir),
-          ],
-        ];
+    test('distributes as evenly as possible when not evenly divisible', () async {
+      final expectedShards = <List<RepositoryPackage>>[
+        <RepositoryPackage>[
+          createFakePackage('package1', packagesDir),
+          createFakePackage('package2', packagesDir),
+          createFakePackage('package3', packagesDir),
+        ],
+        <RepositoryPackage>[
+          createFakePackage('package4', packagesDir),
+          createFakePackage('package5', packagesDir),
+          createFakePackage('package6', packagesDir),
+        ],
+        <RepositoryPackage>[
+          createFakePackage('package7', packagesDir),
+          createFakePackage('package8', packagesDir),
+        ],
+      ];
 
-        for (var i = 0; i < expectedShards.length; ++i) {
-          final SamplePackageCommand localCommand = configureCommand();
-          final localRunner = CommandRunner<void>(
-            'common_command',
-            'Shard testing',
-          );
-          localRunner.addCommand(localCommand);
+      for (var i = 0; i < expectedShards.length; ++i) {
+        final SamplePackageCommand localCommand = configureCommand();
+        final localRunner = CommandRunner<void>('common_command', 'Shard testing');
+        localRunner.addCommand(localCommand);
 
-          await runCapturingPrint(localRunner, <String>[
-            'sample',
-            '--shardIndex=$i',
-            '--shardCount=3',
-          ]);
-          expect(
-            localCommand.plugins,
-            unorderedEquals(
-              expectedShards[i]
-                  .map((RepositoryPackage package) => package.path)
-                  .toList(),
-            ),
-          );
-        }
-      },
-    );
+        await runCapturingPrint(localRunner, <String>[
+          'sample',
+          '--shardIndex=$i',
+          '--shardCount=3',
+        ]);
+        expect(
+          localCommand.plugins,
+          unorderedEquals(
+            expectedShards[i].map((RepositoryPackage package) => package.path).toList(),
+          ),
+        );
+      }
+    });
 
     // In CI (which is the use case for sharding) we often want to run muliple
     // commands on the same set of packages, but the exclusion lists for those
@@ -1769,10 +1321,7 @@ packages/b_package/lib/src/foo.dart
 
       for (var i = 0; i < expectedShards.length; ++i) {
         final SamplePackageCommand localCommand = configureCommand();
-        final localRunner = CommandRunner<void>(
-          'common_command',
-          'Shard testing',
-        );
+        final localRunner = CommandRunner<void>('common_command', 'Shard testing');
         localRunner.addCommand(localCommand);
 
         await runCapturingPrint(localRunner, <String>[
@@ -1784,9 +1333,7 @@ packages/b_package/lib/src/foo.dart
         expect(
           localCommand.plugins,
           unorderedEquals(
-            expectedShards[i]
-                .map((RepositoryPackage package) => package.path)
-                .toList(),
+            expectedShards[i].map((RepositoryPackage package) => package.path).toList(),
           ),
         );
       }

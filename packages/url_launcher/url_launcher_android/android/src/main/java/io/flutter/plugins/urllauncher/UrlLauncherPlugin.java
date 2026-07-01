@@ -23,7 +23,7 @@ public final class UrlLauncherPlugin implements FlutterPlugin, ActivityAware {
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
     urlLauncher = new UrlLauncher(binding.getApplicationContext());
-    Messages.UrlLauncherApi.setUp(binding.getBinaryMessenger(), urlLauncher);
+    UrlLauncherApi.Companion.setUp(binding.getBinaryMessenger(), urlLauncher);
   }
 
   @Override
@@ -33,7 +33,7 @@ public final class UrlLauncherPlugin implements FlutterPlugin, ActivityAware {
       return;
     }
 
-    Messages.UrlLauncherApi.setUp(binding.getBinaryMessenger(), null);
+    UrlLauncherApi.Companion.setUp(binding.getBinaryMessenger(), null);
     urlLauncher = null;
   }
 

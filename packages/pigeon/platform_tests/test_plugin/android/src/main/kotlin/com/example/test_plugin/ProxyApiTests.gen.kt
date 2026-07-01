@@ -50,7 +50,7 @@ class ProxyApiTestsError(
     val code: String,
     override val message: String? = null,
     val details: Any? = null
-) : Throwable()
+) : RuntimeException()
 /**
  * Maintains instances used to communicate with the corresponding objects in Dart.
  *

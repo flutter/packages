@@ -77,12 +77,9 @@ class AdUnitConfiguration {
          if (isFullWidthResponsive != null)
            AdUnitParams.FULL_WIDTH_RESPONSIVE: isFullWidthResponsive.toString(),
          if (matchedContentUiType != null)
-           AdUnitParams.MATCHED_CONTENT_UI_TYPE: matchedContentUiType
-               .toString(),
-         if (columnsNum != null)
-           AdUnitParams.MATCHED_CONTENT_COLUMNS_NUM: columnsNum.toString(),
-         if (rowsNum != null)
-           AdUnitParams.MATCHED_CONTENT_ROWS_NUM: rowsNum.toString(),
+           AdUnitParams.MATCHED_CONTENT_UI_TYPE: matchedContentUiType.toString(),
+         if (columnsNum != null) AdUnitParams.MATCHED_CONTENT_COLUMNS_NUM: columnsNum.toString(),
+         if (rowsNum != null) AdUnitParams.MATCHED_CONTENT_ROWS_NUM: rowsNum.toString(),
          if (isAdTest != null && isAdTest) AdUnitParams.AD_TEST: 'on',
        };
 

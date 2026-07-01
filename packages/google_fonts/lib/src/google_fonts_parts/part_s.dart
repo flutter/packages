@@ -9404,19 +9404,11 @@ class PartS {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
       displayLarge: sofiaSansExtraCondensed(textStyle: textTheme.displayLarge),
-      displayMedium: sofiaSansExtraCondensed(
-        textStyle: textTheme.displayMedium,
-      ),
+      displayMedium: sofiaSansExtraCondensed(textStyle: textTheme.displayMedium),
       displaySmall: sofiaSansExtraCondensed(textStyle: textTheme.displaySmall),
-      headlineLarge: sofiaSansExtraCondensed(
-        textStyle: textTheme.headlineLarge,
-      ),
-      headlineMedium: sofiaSansExtraCondensed(
-        textStyle: textTheme.headlineMedium,
-      ),
-      headlineSmall: sofiaSansExtraCondensed(
-        textStyle: textTheme.headlineSmall,
-      ),
+      headlineLarge: sofiaSansExtraCondensed(textStyle: textTheme.headlineLarge),
+      headlineMedium: sofiaSansExtraCondensed(textStyle: textTheme.headlineMedium),
+      headlineSmall: sofiaSansExtraCondensed(textStyle: textTheme.headlineSmall),
       titleLarge: sofiaSansExtraCondensed(textStyle: textTheme.titleLarge),
       titleMedium: sofiaSansExtraCondensed(textStyle: textTheme.titleMedium),
       titleSmall: sofiaSansExtraCondensed(textStyle: textTheme.titleSmall),
@@ -9621,9 +9613,7 @@ class PartS {
       displayMedium: sofiaSansSemiCondensed(textStyle: textTheme.displayMedium),
       displaySmall: sofiaSansSemiCondensed(textStyle: textTheme.displaySmall),
       headlineLarge: sofiaSansSemiCondensed(textStyle: textTheme.headlineLarge),
-      headlineMedium: sofiaSansSemiCondensed(
-        textStyle: textTheme.headlineMedium,
-      ),
+      headlineMedium: sofiaSansSemiCondensed(textStyle: textTheme.headlineMedium),
       headlineSmall: sofiaSansSemiCondensed(textStyle: textTheme.headlineSmall),
       titleLarge: sofiaSansSemiCondensed(textStyle: textTheme.titleLarge),
       titleMedium: sofiaSansSemiCondensed(textStyle: textTheme.titleMedium),
@@ -11777,24 +11767,12 @@ class PartS {
   static TextTheme specialGothicCondensedOneTextTheme([TextTheme? textTheme]) {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
-      displayLarge: specialGothicCondensedOne(
-        textStyle: textTheme.displayLarge,
-      ),
-      displayMedium: specialGothicCondensedOne(
-        textStyle: textTheme.displayMedium,
-      ),
-      displaySmall: specialGothicCondensedOne(
-        textStyle: textTheme.displaySmall,
-      ),
-      headlineLarge: specialGothicCondensedOne(
-        textStyle: textTheme.headlineLarge,
-      ),
-      headlineMedium: specialGothicCondensedOne(
-        textStyle: textTheme.headlineMedium,
-      ),
-      headlineSmall: specialGothicCondensedOne(
-        textStyle: textTheme.headlineSmall,
-      ),
+      displayLarge: specialGothicCondensedOne(textStyle: textTheme.displayLarge),
+      displayMedium: specialGothicCondensedOne(textStyle: textTheme.displayMedium),
+      displaySmall: specialGothicCondensedOne(textStyle: textTheme.displaySmall),
+      headlineLarge: specialGothicCondensedOne(textStyle: textTheme.headlineLarge),
+      headlineMedium: specialGothicCondensedOne(textStyle: textTheme.headlineMedium),
+      headlineSmall: specialGothicCondensedOne(textStyle: textTheme.headlineSmall),
       titleLarge: specialGothicCondensedOne(textStyle: textTheme.titleLarge),
       titleMedium: specialGothicCondensedOne(textStyle: textTheme.titleMedium),
       titleSmall: specialGothicCondensedOne(textStyle: textTheme.titleSmall),
@@ -11877,19 +11855,11 @@ class PartS {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
       displayLarge: specialGothicExpandedOne(textStyle: textTheme.displayLarge),
-      displayMedium: specialGothicExpandedOne(
-        textStyle: textTheme.displayMedium,
-      ),
+      displayMedium: specialGothicExpandedOne(textStyle: textTheme.displayMedium),
       displaySmall: specialGothicExpandedOne(textStyle: textTheme.displaySmall),
-      headlineLarge: specialGothicExpandedOne(
-        textStyle: textTheme.headlineLarge,
-      ),
-      headlineMedium: specialGothicExpandedOne(
-        textStyle: textTheme.headlineMedium,
-      ),
-      headlineSmall: specialGothicExpandedOne(
-        textStyle: textTheme.headlineSmall,
-      ),
+      headlineLarge: specialGothicExpandedOne(textStyle: textTheme.headlineLarge),
+      headlineMedium: specialGothicExpandedOne(textStyle: textTheme.headlineMedium),
+      headlineSmall: specialGothicExpandedOne(textStyle: textTheme.headlineSmall),
       titleLarge: specialGothicExpandedOne(textStyle: textTheme.titleLarge),
       titleMedium: specialGothicExpandedOne(textStyle: textTheme.titleMedium),
       titleSmall: specialGothicExpandedOne(textStyle: textTheme.titleSmall),

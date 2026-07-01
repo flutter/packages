@@ -11,35 +11,27 @@ void main() {
 
   group('$ClusterManager', () {
     test('constructor defaults', () {
-      const manager = ClusterManager(
-        clusterManagerId: ClusterManagerId('1234'),
-      );
+      const manager = ClusterManager(clusterManagerId: ClusterManagerId('1234'));
 
       expect(manager.clusterManagerId, const ClusterManagerId('1234'));
     });
 
     test('toJson', () {
-      const manager = ClusterManager(
-        clusterManagerId: ClusterManagerId('1234'),
-      );
+      const manager = ClusterManager(clusterManagerId: ClusterManagerId('1234'));
 
       final json = manager.toJson() as Map<String, Object>;
 
       expect(json, <String, Object>{'clusterManagerId': '1234'});
     });
     test('clone', () {
-      const manager = ClusterManager(
-        clusterManagerId: ClusterManagerId('1234'),
-      );
+      const manager = ClusterManager(clusterManagerId: ClusterManagerId('1234'));
       final ClusterManager clone = manager.clone();
 
       expect(identical(clone, manager), isFalse);
       expect(clone, equals(manager));
     });
     test('copyWith', () {
-      const manager = ClusterManager(
-        clusterManagerId: ClusterManagerId('1234'),
-      );
+      const manager = ClusterManager(clusterManagerId: ClusterManagerId('1234'));
       final log = <String>[];
 
       final ClusterManager copy = manager.copyWith(

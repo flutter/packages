@@ -30,14 +30,7 @@ class ColumnsAndRows extends StatelessWidget {
       children: <Widget>[
         Row(children: <Widget>[ImageWithText()]),
         Row(children: <Widget>[ImageWithText(), ImageWithText()]),
-        Row(
-          children: <Widget>[
-            ImageWithText(),
-            ImageWithText(),
-            ImageWithText(),
-            ImageWithText(),
-          ],
-        ),
+        Row(children: <Widget>[ImageWithText(), ImageWithText(), ImageWithText(), ImageWithText()]),
         Row(
           children: <Widget>[
             ImageWithText(),

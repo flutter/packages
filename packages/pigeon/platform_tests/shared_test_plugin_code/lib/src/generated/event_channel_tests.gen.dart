@@ -25,9 +25,7 @@ bool _deepEquals(Object? a, Object? b) {
   }
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed.every(
-          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
-        );
+        a.indexed.every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
     if (a.length != b.length) {
@@ -243,19 +241,14 @@ class EventAllNullableTypes {
       objectList: result[19] as List<Object?>?,
       listList: (result[20] as List<Object?>?)?.cast<List<Object?>?>(),
       mapList: (result[21] as List<Object?>?)?.cast<Map<Object?, Object?>?>(),
-      recursiveClassList: (result[22] as List<Object?>?)
-          ?.cast<EventAllNullableTypes?>(),
+      recursiveClassList: (result[22] as List<Object?>?)?.cast<EventAllNullableTypes?>(),
       map: result[23] as Map<Object?, Object?>?,
-      stringMap: (result[24] as Map<Object?, Object?>?)
-          ?.cast<String?, String?>(),
+      stringMap: (result[24] as Map<Object?, Object?>?)?.cast<String?, String?>(),
       intMap: (result[25] as Map<Object?, Object?>?)?.cast<int?, int?>(),
-      enumMap: (result[26] as Map<Object?, Object?>?)
-          ?.cast<EventEnum?, EventEnum?>(),
+      enumMap: (result[26] as Map<Object?, Object?>?)?.cast<EventEnum?, EventEnum?>(),
       objectMap: result[27] as Map<Object?, Object?>?,
-      listMap: (result[28] as Map<Object?, Object?>?)
-          ?.cast<int?, List<Object?>?>(),
-      mapMap: (result[29] as Map<Object?, Object?>?)
-          ?.cast<int?, Map<Object?, Object?>?>(),
+      listMap: (result[28] as Map<Object?, Object?>?)?.cast<int?, List<Object?>?>(),
+      mapMap: (result[29] as Map<Object?, Object?>?)?.cast<int?, Map<Object?, Object?>?>(),
       recursiveClassMap: (result[30] as Map<Object?, Object?>?)
           ?.cast<int?, EventAllNullableTypes?>(),
     );
@@ -306,6 +299,11 @@ class EventAllNullableTypes {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'EventAllNullableTypes(aNullableBool: $aNullableBool, aNullableInt: $aNullableInt, aNullableInt64: $aNullableInt64, aNullableDouble: $aNullableDouble, aNullableByteArray: $aNullableByteArray, aNullable4ByteArray: $aNullable4ByteArray, aNullable8ByteArray: $aNullable8ByteArray, aNullableFloatArray: $aNullableFloatArray, aNullableEnum: $aNullableEnum, anotherNullableEnum: $anotherNullableEnum, aNullableString: $aNullableString, aNullableObject: $aNullableObject, allNullableTypes: $allNullableTypes, list: $list, stringList: $stringList, intList: $intList, doubleList: $doubleList, boolList: $boolList, enumList: $enumList, objectList: $objectList, listList: $listList, mapList: $mapList, recursiveClassList: $recursiveClassList, map: $map, stringMap: $stringMap, intMap: $intMap, enumMap: $enumMap, objectMap: $objectMap, listMap: $listMap, mapMap: $mapMap, recursiveClassMap: $recursiveClassMap)';
+  }
 }
 
 sealed class PlatformEvent {}
@@ -343,6 +341,11 @@ class IntEvent extends PlatformEvent {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'IntEvent(value: $value)';
+  }
 }
 
 class StringEvent extends PlatformEvent {
@@ -378,6 +381,11 @@ class StringEvent extends PlatformEvent {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'StringEvent(value: $value)';
+  }
 }
 
 class BoolEvent extends PlatformEvent {
@@ -413,6 +421,11 @@ class BoolEvent extends PlatformEvent {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'BoolEvent(value: $value)';
+  }
 }
 
 class DoubleEvent extends PlatformEvent {
@@ -448,6 +461,11 @@ class DoubleEvent extends PlatformEvent {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'DoubleEvent(value: $value)';
+  }
 }
 
 class ObjectsEvent extends PlatformEvent {
@@ -483,6 +501,11 @@ class ObjectsEvent extends PlatformEvent {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'ObjectsEvent(value: $value)';
+  }
 }
 
 class EnumEvent extends PlatformEvent {
@@ -518,6 +541,11 @@ class EnumEvent extends PlatformEvent {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'EnumEvent(value: $value)';
+  }
 }
 
 class ClassEvent extends PlatformEvent {
@@ -553,6 +581,11 @@ class ClassEvent extends PlatformEvent {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'ClassEvent(value: $value)';
+  }
 }
 
 class _PigeonCodec extends StandardMessageCodec {
@@ -628,9 +661,7 @@ class _PigeonCodec extends StandardMessageCodec {
   }
 }
 
-const StandardMethodCodec pigeonMethodCodec = StandardMethodCodec(
-  _PigeonCodec(),
-);
+const StandardMethodCodec pigeonMethodCodec = StandardMethodCodec(_PigeonCodec());
 
 Stream<int> streamInts({String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
@@ -666,9 +697,7 @@ Stream<int> streamConsistentNumbers({String instanceName = ''}) {
     'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamConsistentNumbers$instanceName',
     pigeonMethodCodec,
   );
-  return streamConsistentNumbersChannel.receiveBroadcastStream().map((
-    dynamic event,
-  ) {
+  return streamConsistentNumbersChannel.receiveBroadcastStream().map((dynamic event) {
     return event as int;
   });
 }

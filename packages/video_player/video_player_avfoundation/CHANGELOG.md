@@ -1,7 +1,19 @@
-## NEXT
+## 2.10.0
 
 * Implements `getVideoTracks()` and `selectVideoTrack()` methods for video track (quality) selection using AVFoundation.
 * Video track selection requires iOS 15+ / macOS 12+ for HLS streams.
+
+## 2.9.7
+
+* Forces tone-mapping to SDR on iOS to prevent washed-out HDR video playback.
+
+## 2.9.6
+
+* Adds a Swift version to fix a potential build issue when using CocoaPods.
+
+## 2.9.5
+
+* Converts portions of the native code to Swift for improved maintainability.
 
 ## 2.9.4
 

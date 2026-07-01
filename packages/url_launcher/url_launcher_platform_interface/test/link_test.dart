@@ -52,9 +52,7 @@ void main() {
 
 class _RouteInformationParser extends RouteInformationParser<RouteInformation> {
   @override
-  Future<RouteInformation> parseRouteInformation(
-    RouteInformation routeInformation,
-  ) {
+  Future<RouteInformation> parseRouteInformation(RouteInformation routeInformation) {
     return SynchronousFuture<RouteInformation>(routeInformation);
   }
 
@@ -64,8 +62,7 @@ class _RouteInformationParser extends RouteInformationParser<RouteInformation> {
   }
 }
 
-class _RouteDelegate extends RouterDelegate<RouteInformation>
-    with ChangeNotifier {
+class _RouteDelegate extends RouterDelegate<RouteInformation> with ChangeNotifier {
   final Queue<RouteInformation> _history = Queue<RouteInformation>();
 
   @override

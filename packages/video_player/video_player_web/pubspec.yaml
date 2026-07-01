@@ -5,8 +5,8 @@ issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+
 version: 2.4.0
 
 environment:
-  sdk: ^3.9.0
-  flutter: ">=3.35.0"
+  sdk: ^3.10.0
+  flutter: ">=3.38.0"
 
 flutter:
   plugin:
@@ -22,7 +22,7 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
   video_player_platform_interface: ^6.4.0
-  web: ">=0.5.1 <2.0.0"
+  web: ^1.0.0
 
 dev_dependencies:
   flutter_test:
@@ -31,7 +31,3 @@ dev_dependencies:
 topics:
   - video
   - video-player
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
-dependency_overrides:
-  video_player_platform_interface: {path: ../../../packages/video_player/video_player_platform_interface}

@@ -20,8 +20,7 @@ void main() {
 
   setUp(() {
     final GitDir gitDir;
-    (:packagesDir, processRunner: _, :gitProcessRunner, :gitDir) =
-        configureBaseCommandMocks();
+    (:packagesDir, processRunner: _, :gitProcessRunner, :gitDir) = configureBaseCommandMocks();
     thirdPartyPackagesDir = packagesDir.parent
         .childDirectory('third_party')
         .childDirectory('packages');
@@ -46,8 +45,7 @@ void main() {
     final int dependenciesStartIndex = lines.indexOf('dependencies:');
     assert(dependenciesStartIndex != -1);
     lines.insertAll(dependenciesStartIndex + 1, <String>[
-      for (final String dependency in dependencies)
-        '  $dependency: $constraint',
+      for (final String dependency in dependencies) '  $dependency: $constraint',
     ]);
     package.pubspecFile.writeAsStringSync(lines.join('\n'));
   }
@@ -104,42 +102,26 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
   Map<String, String> getDependencyOverrides(RepositoryPackage package) {
     final Pubspec pubspec = package.parsePubspec();
     return pubspec.dependencyOverrides.map(
-      (String name, Dependency dep) => MapEntry<String, String>(
-        name,
-        (dep is PathDependency) ? dep.path : dep.toString(),
-      ),
+      (String name, Dependency dep) =>
+          MapEntry<String, String>(name, (dep is PathDependency) ? dep.path : dep.toString()),
     );
   }
 
   test('no-ops for no plugins', () async {
     createFakePackage('foo', packagesDir, isFlutter: true);
-    final RepositoryPackage packageBar = createFakePackage(
-      'bar',
-      packagesDir,
-      isFlutter: true,
-    );
+    final RepositoryPackage packageBar = createFakePackage('bar', packagesDir, isFlutter: true);
     addDependencies(packageBar, <String>['foo']);
-    final String originalPubspecContents = packageBar.pubspecFile
-        .readAsStringSync();
+    final String originalPubspecContents = packageBar.pubspecFile.readAsStringSync();
 
-    final List<String> output = await runCapturingPrint(runner, <String>[
-      'make-deps-path-based',
-    ]);
+    final List<String> output = await runCapturingPrint(runner, <String>['make-deps-path-based']);
 
-    expect(
-      output,
-      containsAllInOrder(<Matcher>[contains('No target dependencies')]),
-    );
+    expect(output, containsAllInOrder(<Matcher>[contains('No target dependencies')]));
     // The 'foo' reference should not have been modified.
     expect(packageBar.pubspecFile.readAsStringSync(), originalPubspecContents);
   });
 
   test('includes explanatory comment', () async {
-    final RepositoryPackage packageA = createFakePackage(
-      'package_a',
-      packagesDir,
-      isFlutter: true,
-    );
+    final RepositoryPackage packageA = createFakePackage('package_a', packagesDir, isFlutter: true);
     createFakePackage('package_b', packagesDir, isFlutter: true);
 
     addDependencies(packageA, <String>['package_b']);
@@ -160,32 +142,15 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
   });
 
   test('rewrites "dependencies" references', () async {
-    final RepositoryPackage simplePackage = createFakePackage(
-      'foo',
-      packagesDir,
-      isFlutter: true,
-    );
+    final RepositoryPackage simplePackage = createFakePackage('foo', packagesDir, isFlutter: true);
     final Directory pluginGroup = packagesDir.childDirectory('bar');
 
     createFakePackage('bar_platform_interface', pluginGroup, isFlutter: true);
-    final RepositoryPackage pluginImplementation = createFakePlugin(
-      'bar_android',
-      pluginGroup,
-    );
-    final RepositoryPackage pluginAppFacing = createFakePlugin(
-      'bar',
-      pluginGroup,
-    );
+    final RepositoryPackage pluginImplementation = createFakePlugin('bar_android', pluginGroup);
+    final RepositoryPackage pluginAppFacing = createFakePlugin('bar', pluginGroup);
 
-    addDependencies(simplePackage, <String>[
-      'bar',
-      'bar_android',
-      'bar_platform_interface',
-    ]);
-    addDependencies(pluginAppFacing, <String>[
-      'bar_platform_interface',
-      'bar_android',
-    ]);
+    addDependencies(simplePackage, <String>['bar', 'bar_android', 'bar_platform_interface']);
+    addDependencies(pluginAppFacing, <String>['bar_platform_interface', 'bar_android']);
     addDependencies(pluginImplementation, <String>['bar_platform_interface']);
 
     final List<String> output = await runCapturingPrint(runner, <String>[
@@ -202,16 +167,9 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
         '  Modified packages/foo/pubspec.yaml',
       ]),
     );
-    expect(
-      output,
-      isNot(
-        contains('  Modified packages/bar/bar_platform_interface/pubspec.yaml'),
-      ),
-    );
+    expect(output, isNot(contains('  Modified packages/bar/bar_platform_interface/pubspec.yaml')));
 
-    final Map<String, String?> simplePackageOverrides = getDependencyOverrides(
-      simplePackage,
-    );
+    final Map<String, String?> simplePackageOverrides = getDependencyOverrides(simplePackage);
     expect(simplePackageOverrides.length, 2);
     expect(simplePackageOverrides['bar'], '../../packages/bar/bar');
     expect(
@@ -219,8 +177,7 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
       '../../packages/bar/bar_platform_interface',
     );
 
-    final Map<String, String?> appFacingPackageOverrides =
-        getDependencyOverrides(pluginAppFacing);
+    final Map<String, String?> appFacingPackageOverrides = getDependencyOverrides(pluginAppFacing);
     expect(appFacingPackageOverrides.length, 1);
     expect(
       appFacingPackageOverrides['bar_platform_interface'],
@@ -230,10 +187,7 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
 
   test('rewrites "dev_dependencies" references', () async {
     createFakePackage('foo', packagesDir);
-    final RepositoryPackage builderPackage = createFakePackage(
-      'foo_builder',
-      packagesDir,
-    );
+    final RepositoryPackage builderPackage = createFakePackage('foo_builder', packagesDir);
 
     addDevDependenciesSection(builderPackage, <String>['foo']);
 
@@ -250,9 +204,7 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
       ]),
     );
 
-    final Map<String, String?> overrides = getDependencyOverrides(
-      builderPackage,
-    );
+    final Map<String, String?> overrides = getDependencyOverrides(builderPackage);
     expect(overrides.length, 1);
     expect(overrides['foo'], '../../packages/foo');
   });
@@ -260,19 +212,10 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
   test('rewrites examples when rewriting the main package', () async {
     final Directory pluginGroup = packagesDir.childDirectory('bar');
     createFakePackage('bar_platform_interface', pluginGroup, isFlutter: true);
-    final RepositoryPackage pluginImplementation = createFakePlugin(
-      'bar_android',
-      pluginGroup,
-    );
-    final RepositoryPackage pluginAppFacing = createFakePlugin(
-      'bar',
-      pluginGroup,
-    );
+    final RepositoryPackage pluginImplementation = createFakePlugin('bar_android', pluginGroup);
+    final RepositoryPackage pluginAppFacing = createFakePlugin('bar', pluginGroup);
 
-    addDependencies(pluginAppFacing, <String>[
-      'bar_platform_interface',
-      'bar_android',
-    ]);
+    addDependencies(pluginAppFacing, <String>['bar_platform_interface', 'bar_android']);
     addDependencies(pluginImplementation, <String>['bar_platform_interface']);
 
     await runCapturingPrint(runner, <String>[
@@ -284,70 +227,42 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
       pluginAppFacing.getExamples().first,
     );
     expect(exampleOverrides.length, 1);
-    expect(
-      exampleOverrides['bar_android'],
-      '../../../../packages/bar/bar_android',
-    );
+    expect(exampleOverrides['bar_android'], '../../../../packages/bar/bar_android');
   });
 
-  test(
-    'example overrides include both local and main-package dependencies',
-    () async {
-      final Directory pluginGroup = packagesDir.childDirectory('bar');
-      createFakePackage('bar_platform_interface', pluginGroup, isFlutter: true);
-      createFakePlugin('bar_android', pluginGroup);
-      final RepositoryPackage pluginAppFacing = createFakePlugin(
-        'bar',
-        pluginGroup,
-      );
-      createFakePackage('another_package', packagesDir);
+  test('example overrides include both local and main-package dependencies', () async {
+    final Directory pluginGroup = packagesDir.childDirectory('bar');
+    createFakePackage('bar_platform_interface', pluginGroup, isFlutter: true);
+    createFakePlugin('bar_android', pluginGroup);
+    final RepositoryPackage pluginAppFacing = createFakePlugin('bar', pluginGroup);
+    createFakePackage('another_package', packagesDir);
 
-      addDependencies(pluginAppFacing, <String>[
-        'bar_platform_interface',
-        'bar_android',
-      ]);
-      addDependencies(pluginAppFacing.getExamples().first, <String>[
-        'another_package',
-      ]);
+    addDependencies(pluginAppFacing, <String>['bar_platform_interface', 'bar_android']);
+    addDependencies(pluginAppFacing.getExamples().first, <String>['another_package']);
 
-      await runCapturingPrint(runner, <String>[
-        'make-deps-path-based',
-        '--target-dependencies=bar_android,another_package',
-      ]);
+    await runCapturingPrint(runner, <String>[
+      'make-deps-path-based',
+      '--target-dependencies=bar_android,another_package',
+    ]);
 
-      final Map<String, String?> exampleOverrides = getDependencyOverrides(
-        pluginAppFacing.getExamples().first,
-      );
-      expect(exampleOverrides.length, 2);
-      expect(
-        exampleOverrides['another_package'],
-        '../../../../packages/another_package',
-      );
-      expect(
-        exampleOverrides['bar_android'],
-        '../../../../packages/bar/bar_android',
-      );
-    },
-  );
+    final Map<String, String?> exampleOverrides = getDependencyOverrides(
+      pluginAppFacing.getExamples().first,
+    );
+    expect(exampleOverrides.length, 2);
+    expect(exampleOverrides['another_package'], '../../../../packages/another_package');
+    expect(exampleOverrides['bar_android'], '../../../../packages/bar/bar_android');
+  });
 
-  test(
-    'does not rewrite path-based dependencies that are already path based',
-    () async {
-      final RepositoryPackage package = createFakePlugin('foo', packagesDir);
-      final RepositoryPackage example = package.getExamples().first;
-      addPathDependencies(example, <String>['foo'], relativePathBase: '../');
+  test('does not rewrite path-based dependencies that are already path based', () async {
+    final RepositoryPackage package = createFakePlugin('foo', packagesDir);
+    final RepositoryPackage example = package.getExamples().first;
+    addPathDependencies(example, <String>['foo'], relativePathBase: '../');
 
-      await runCapturingPrint(runner, <String>[
-        'make-deps-path-based',
-        '--target-dependencies=foo',
-      ]);
+    await runCapturingPrint(runner, <String>['make-deps-path-based', '--target-dependencies=foo']);
 
-      final Map<String, String?> exampleOverrides = getDependencyOverrides(
-        example,
-      );
-      expect(exampleOverrides.length, 0);
-    },
-  );
+    final Map<String, String?> exampleOverrides = getDependencyOverrides(example);
+    expect(exampleOverrides.length, 0);
+  });
 
   test(
     'alphabetizes overrides from different sections to avoid lint warnings in analysis',
@@ -355,10 +270,7 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
       createFakePackage('a', packagesDir);
       createFakePackage('b', packagesDir);
       createFakePackage('c', packagesDir);
-      final RepositoryPackage targetPackage = createFakePackage(
-        'target',
-        packagesDir,
-      );
+      final RepositoryPackage targetPackage = createFakePackage('target', packagesDir);
 
       addDependencies(targetPackage, <String>['a', 'c']);
       addDevDependenciesSection(targetPackage, <String>['b']);
@@ -380,23 +292,14 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
       // expanded style output.
       expect(
         targetPackage.pubspecFile.readAsStringSync(),
-        matches(
-          RegExp(
-            r'dependency_overrides:.*a:.*b:.*c:.*',
-            multiLine: true,
-            dotAll: true,
-          ),
-        ),
+        matches(RegExp(r'dependency_overrides:.*a:.*b:.*c:.*', multiLine: true, dotAll: true)),
       );
     },
   );
 
   test('finds third_party packages', () async {
     createFakePackage('bar', thirdPartyPackagesDir, isFlutter: true);
-    final RepositoryPackage firstPartyPackge = createFakePlugin(
-      'foo',
-      packagesDir,
-    );
+    final RepositoryPackage firstPartyPackge = createFakePlugin('foo', packagesDir);
 
     addDependencies(firstPartyPackge, <String>['bar']);
 
@@ -413,88 +316,58 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
       ]),
     );
 
-    final Map<String, String?> simplePackageOverrides = getDependencyOverrides(
-      firstPartyPackge,
-    );
+    final Map<String, String?> simplePackageOverrides = getDependencyOverrides(firstPartyPackge);
     expect(simplePackageOverrides.length, 1);
     expect(simplePackageOverrides['bar'], '../../third_party/packages/bar');
   });
 
-  test(
-    'handles third_party target package references in third_party',
-    () async {
-      createFakePackage('bar', thirdPartyPackagesDir, isFlutter: true);
-      final RepositoryPackage otherThirdPartyPackge = createFakePlugin(
-        'foo',
-        thirdPartyPackagesDir,
-      );
+  test('handles third_party target package references in third_party', () async {
+    createFakePackage('bar', thirdPartyPackagesDir, isFlutter: true);
+    final RepositoryPackage otherThirdPartyPackge = createFakePlugin('foo', thirdPartyPackagesDir);
 
-      addDependencies(otherThirdPartyPackge, <String>['bar']);
+    addDependencies(otherThirdPartyPackge, <String>['bar']);
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'make-deps-path-based',
-        '--target-dependencies=bar',
-      ]);
+    final List<String> output = await runCapturingPrint(runner, <String>[
+      'make-deps-path-based',
+      '--target-dependencies=bar',
+    ]);
 
-      expect(
-        output,
-        containsAll(<String>[
-          'Rewriting references to: bar...',
-          '  Modified third_party/packages/foo/pubspec.yaml',
-        ]),
-      );
+    expect(
+      output,
+      containsAll(<String>[
+        'Rewriting references to: bar...',
+        '  Modified third_party/packages/foo/pubspec.yaml',
+      ]),
+    );
 
-      final Map<String, String?> simplePackageOverrides =
-          getDependencyOverrides(otherThirdPartyPackge);
-      expect(simplePackageOverrides.length, 1);
-      expect(
-        simplePackageOverrides['bar'],
-        '../../../third_party/packages/bar',
-      );
-    },
-  );
+    final Map<String, String?> simplePackageOverrides = getDependencyOverrides(
+      otherThirdPartyPackge,
+    );
+    expect(simplePackageOverrides.length, 1);
+    expect(simplePackageOverrides['bar'], '../../../third_party/packages/bar');
+  });
 
   // This test case ensures that running CI using this command on an interim
   // PR that itself used this command won't fail on the rewrite step.
   test('running a second time no-ops without failing', () async {
-    final RepositoryPackage simplePackage = createFakePackage(
-      'foo',
-      packagesDir,
-      isFlutter: true,
-    );
+    final RepositoryPackage simplePackage = createFakePackage('foo', packagesDir, isFlutter: true);
     final Directory pluginGroup = packagesDir.childDirectory('bar');
 
     createFakePackage('bar_platform_interface', pluginGroup, isFlutter: true);
-    final RepositoryPackage pluginImplementation = createFakePlugin(
-      'bar_android',
-      pluginGroup,
-    );
-    final RepositoryPackage pluginAppFacing = createFakePlugin(
-      'bar',
-      pluginGroup,
-    );
+    final RepositoryPackage pluginImplementation = createFakePlugin('bar_android', pluginGroup);
+    final RepositoryPackage pluginAppFacing = createFakePlugin('bar', pluginGroup);
 
-    addDependencies(simplePackage, <String>[
-      'bar',
-      'bar_android',
-      'bar_platform_interface',
-    ]);
-    addDependencies(pluginAppFacing, <String>[
-      'bar_platform_interface',
-      'bar_android',
-    ]);
+    addDependencies(simplePackage, <String>['bar', 'bar_android', 'bar_platform_interface']);
+    addDependencies(pluginAppFacing, <String>['bar_platform_interface', 'bar_android']);
     addDependencies(pluginImplementation, <String>['bar_platform_interface']);
 
     await runCapturingPrint(runner, <String>[
       'make-deps-path-based',
       '--target-dependencies=bar,bar_platform_interface',
     ]);
-    final String simplePackageUpdatedContent = simplePackage.pubspecFile
-        .readAsStringSync();
-    final String appFacingPackageUpdatedContent = pluginAppFacing.pubspecFile
-        .readAsStringSync();
-    final String implementationPackageUpdatedContent = pluginImplementation
-        .pubspecFile
+    final String simplePackageUpdatedContent = simplePackage.pubspecFile.readAsStringSync();
+    final String appFacingPackageUpdatedContent = pluginAppFacing.pubspecFile.readAsStringSync();
+    final String implementationPackageUpdatedContent = pluginImplementation.pubspecFile
         .readAsStringSync();
     final List<String> output = await runCapturingPrint(runner, <String>[
       'make-deps-path-based',
@@ -510,14 +383,8 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
         '  Modified packages/foo/pubspec.yaml',
       ]),
     );
-    expect(
-      simplePackage.pubspecFile.readAsStringSync(),
-      simplePackageUpdatedContent,
-    );
-    expect(
-      pluginAppFacing.pubspecFile.readAsStringSync(),
-      appFacingPackageUpdatedContent,
-    );
+    expect(simplePackage.pubspecFile.readAsStringSync(), simplePackageUpdatedContent);
+    expect(pluginAppFacing.pubspecFile.readAsStringSync(), appFacingPackageUpdatedContent);
     expect(
       pluginImplementation.pubspecFile.readAsStringSync(),
       implementationPackageUpdatedContent,
@@ -525,32 +392,15 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
   });
 
   test('sorts with existing overrides', () async {
-    final RepositoryPackage simplePackage = createFakePackage(
-      'foo',
-      packagesDir,
-      isFlutter: true,
-    );
+    final RepositoryPackage simplePackage = createFakePackage('foo', packagesDir, isFlutter: true);
     final Directory pluginGroup = packagesDir.childDirectory('bar');
 
     createFakePackage('bar_platform_interface', pluginGroup, isFlutter: true);
-    final RepositoryPackage pluginImplementation = createFakePlugin(
-      'bar_android',
-      pluginGroup,
-    );
-    final RepositoryPackage pluginAppFacing = createFakePlugin(
-      'bar',
-      pluginGroup,
-    );
+    final RepositoryPackage pluginImplementation = createFakePlugin('bar_android', pluginGroup);
+    final RepositoryPackage pluginAppFacing = createFakePlugin('bar', pluginGroup);
 
-    addDependencies(simplePackage, <String>[
-      'bar',
-      'bar_android',
-      'bar_platform_interface',
-    ]);
-    addDependencies(pluginAppFacing, <String>[
-      'bar_platform_interface',
-      'bar_android',
-    ]);
+    addDependencies(simplePackage, <String>['bar', 'bar_android', 'bar_platform_interface']);
+    addDependencies(pluginAppFacing, <String>['bar_platform_interface', 'bar_android']);
     addDependencies(pluginImplementation, <String>['bar_platform_interface']);
     addDependencyOverridesSection(simplePackage, <String>[
       'bar_android',
@@ -560,8 +410,7 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
       'make-deps-path-based',
       '--target-dependencies=bar,bar_platform_interface',
     ]);
-    final String simplePackageUpdatedContent = simplePackage.pubspecFile
-        .readAsStringSync();
+    final String simplePackageUpdatedContent = simplePackage.pubspecFile.readAsStringSync();
 
     expect(
       simplePackageUpdatedContent.split('\n'),
@@ -580,27 +429,20 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
       final String changedFileOutput = <File>[
         package.pubspecFile,
       ].map((File file) => file.path).join('\n');
-      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-          <FakeProcessInfo>[
-            FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
-          ];
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
+      ];
       // Simulate no change to the version in the interface's pubspec.yaml.
-      gitProcessRunner.mockProcessesForExecutable['git-show'] =
-          <FakeProcessInfo>[
-            FakeProcessInfo(
-              MockProcess(stdout: package.pubspecFile.readAsStringSync()),
-            ),
-          ];
+      gitProcessRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: package.pubspecFile.readAsStringSync())),
+      ];
 
       final List<String> output = await runCapturingPrint(runner, <String>[
         'make-deps-path-based',
         '--target-dependencies-with-non-breaking-updates',
       ]);
 
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[contains('No target dependencies')]),
-      );
+      expect(output, containsAllInOrder(<Matcher>[contains('No target dependencies')]));
     });
 
     test('no-ops for no deleted packages', () async {
@@ -608,10 +450,9 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
         // A change for a file that's not on disk simulates a deletion.
         packagesDir.childDirectory('foo').childFile('pubspec.yaml'),
       ].map((File file) => file.path).join('\n');
-      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-          <FakeProcessInfo>[
-            FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
-          ];
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
+      ];
 
       final List<String> output = await runCapturingPrint(runner, <String>[
         'make-deps-path-based',
@@ -629,150 +470,106 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
 
     test('includes bugfix version changes as targets', () async {
       const newVersion = '1.0.1';
-      final RepositoryPackage package = createFakePackage(
-        'foo',
-        packagesDir,
-        version: newVersion,
-      );
+      final RepositoryPackage package = createFakePackage('foo', packagesDir, version: newVersion);
 
       final File pubspecFile = package.pubspecFile;
-      final String changedFileOutput = <File>[
-        pubspecFile,
-      ].map((File file) => file.path).join('\n');
-      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-          <FakeProcessInfo>[
-            FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
-          ];
-      final String gitPubspecContents = pubspecFile
-          .readAsStringSync()
-          .replaceAll(newVersion, '1.0.0');
+      final String changedFileOutput = <File>[pubspecFile].map((File file) => file.path).join('\n');
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
+      ];
+      final String gitPubspecContents = pubspecFile.readAsStringSync().replaceAll(
+        newVersion,
+        '1.0.0',
+      );
       // Simulate no change to the version in the interface's pubspec.yaml.
-      gitProcessRunner.mockProcessesForExecutable['git-show'] =
-          <FakeProcessInfo>[
-            FakeProcessInfo(MockProcess(stdout: gitPubspecContents)),
-          ];
+      gitProcessRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: gitPubspecContents)),
+      ];
 
       final List<String> output = await runCapturingPrint(runner, <String>[
         'make-deps-path-based',
         '--target-dependencies-with-non-breaking-updates',
       ]);
 
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('Rewriting references to: foo...'),
-        ]),
-      );
+      expect(output, containsAllInOrder(<Matcher>[contains('Rewriting references to: foo...')]));
     });
 
     test('includes minor version changes to 1.0+ as targets', () async {
       const newVersion = '1.1.0';
-      final RepositoryPackage package = createFakePackage(
-        'foo',
-        packagesDir,
-        version: newVersion,
-      );
+      final RepositoryPackage package = createFakePackage('foo', packagesDir, version: newVersion);
 
       final File pubspecFile = package.pubspecFile;
-      final String changedFileOutput = <File>[
-        pubspecFile,
-      ].map((File file) => file.path).join('\n');
-      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-          <FakeProcessInfo>[
-            FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
-          ];
-      final String gitPubspecContents = pubspecFile
-          .readAsStringSync()
-          .replaceAll(newVersion, '1.0.0');
+      final String changedFileOutput = <File>[pubspecFile].map((File file) => file.path).join('\n');
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
+      ];
+      final String gitPubspecContents = pubspecFile.readAsStringSync().replaceAll(
+        newVersion,
+        '1.0.0',
+      );
       // Simulate no change to the version in the interface's pubspec.yaml.
-      gitProcessRunner.mockProcessesForExecutable['git-show'] =
-          <FakeProcessInfo>[
-            FakeProcessInfo(MockProcess(stdout: gitPubspecContents)),
-          ];
+      gitProcessRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: gitPubspecContents)),
+      ];
 
       final List<String> output = await runCapturingPrint(runner, <String>[
         'make-deps-path-based',
         '--target-dependencies-with-non-breaking-updates',
       ]);
 
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('Rewriting references to: foo...'),
-        ]),
-      );
+      expect(output, containsAllInOrder(<Matcher>[contains('Rewriting references to: foo...')]));
     });
 
     test('does not include major version changes as targets', () async {
       const newVersion = '2.0.0';
-      final RepositoryPackage package = createFakePackage(
-        'foo',
-        packagesDir,
-        version: newVersion,
-      );
+      final RepositoryPackage package = createFakePackage('foo', packagesDir, version: newVersion);
 
       final File pubspecFile = package.pubspecFile;
-      final String changedFileOutput = <File>[
-        pubspecFile,
-      ].map((File file) => file.path).join('\n');
-      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-          <FakeProcessInfo>[
-            FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
-          ];
-      final String gitPubspecContents = pubspecFile
-          .readAsStringSync()
-          .replaceAll(newVersion, '1.0.0');
+      final String changedFileOutput = <File>[pubspecFile].map((File file) => file.path).join('\n');
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
+      ];
+      final String gitPubspecContents = pubspecFile.readAsStringSync().replaceAll(
+        newVersion,
+        '1.0.0',
+      );
       // Simulate no change to the version in the interface's pubspec.yaml.
-      gitProcessRunner.mockProcessesForExecutable['git-show'] =
-          <FakeProcessInfo>[
-            FakeProcessInfo(MockProcess(stdout: gitPubspecContents)),
-          ];
+      gitProcessRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: gitPubspecContents)),
+      ];
 
       final List<String> output = await runCapturingPrint(runner, <String>[
         'make-deps-path-based',
         '--target-dependencies-with-non-breaking-updates',
       ]);
 
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[contains('No target dependencies')]),
-      );
+      expect(output, containsAllInOrder(<Matcher>[contains('No target dependencies')]));
     });
 
     test('does not include minor version changes to 0.x as targets', () async {
       const newVersion = '0.8.0';
-      final RepositoryPackage package = createFakePackage(
-        'foo',
-        packagesDir,
-        version: newVersion,
-      );
+      final RepositoryPackage package = createFakePackage('foo', packagesDir, version: newVersion);
 
       final File pubspecFile = package.pubspecFile;
-      final String changedFileOutput = <File>[
-        pubspecFile,
-      ].map((File file) => file.path).join('\n');
-      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-          <FakeProcessInfo>[
-            FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
-          ];
-      final String gitPubspecContents = pubspecFile
-          .readAsStringSync()
-          .replaceAll(newVersion, '0.7.0');
+      final String changedFileOutput = <File>[pubspecFile].map((File file) => file.path).join('\n');
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
+      ];
+      final String gitPubspecContents = pubspecFile.readAsStringSync().replaceAll(
+        newVersion,
+        '0.7.0',
+      );
       // Simulate no change to the version in the interface's pubspec.yaml.
-      gitProcessRunner.mockProcessesForExecutable['git-show'] =
-          <FakeProcessInfo>[
-            FakeProcessInfo(MockProcess(stdout: gitPubspecContents)),
-          ];
+      gitProcessRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: gitPubspecContents)),
+      ];
 
       final List<String> output = await runCapturingPrint(runner, <String>[
         'make-deps-path-based',
         '--target-dependencies-with-non-breaking-updates',
       ]);
 
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[contains('No target dependencies')]),
-      );
+      expect(output, containsAllInOrder(<Matcher>[contains('No target dependencies')]));
     });
 
     test('does not update references with an older major version', () async {
@@ -782,31 +579,23 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
         packagesDir,
         version: newVersion,
       );
-      final RepositoryPackage referencingPackage = createFakePackage(
-        'bar',
-        packagesDir,
-      );
+      final RepositoryPackage referencingPackage = createFakePackage('bar', packagesDir);
 
       // For a dependency on ^1.0.0, the 2.0.0->2.0.1 update should not apply.
-      addDependencies(referencingPackage, <String>[
-        'foo',
-      ], constraint: '^1.0.0');
+      addDependencies(referencingPackage, <String>['foo'], constraint: '^1.0.0');
 
       final File pubspecFile = targetPackage.pubspecFile;
-      final String changedFileOutput = <File>[
-        pubspecFile,
-      ].map((File file) => file.path).join('\n');
-      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-          <FakeProcessInfo>[
-            FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
-          ];
-      final String gitPubspecContents = pubspecFile
-          .readAsStringSync()
-          .replaceAll(newVersion, '2.0.0');
-      gitProcessRunner.mockProcessesForExecutable['git-show'] =
-          <FakeProcessInfo>[
-            FakeProcessInfo(MockProcess(stdout: gitPubspecContents)),
-          ];
+      final String changedFileOutput = <File>[pubspecFile].map((File file) => file.path).join('\n');
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
+      ];
+      final String gitPubspecContents = pubspecFile.readAsStringSync().replaceAll(
+        newVersion,
+        '2.0.0',
+      );
+      gitProcessRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: gitPubspecContents)),
+      ];
 
       final List<String> output = await runCapturingPrint(runner, <String>[
         'make-deps-path-based',
@@ -815,10 +604,7 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
 
       final Pubspec referencingPubspec = referencingPackage.parsePubspec();
 
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[contains('Rewriting references to: foo')]),
-      );
+      expect(output, containsAllInOrder(<Matcher>[contains('Rewriting references to: foo')]));
       expect(referencingPubspec.dependencyOverrides.isEmpty, true);
     });
 
@@ -829,31 +615,23 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
         packagesDir,
         version: newVersion,
       );
-      final RepositoryPackage referencingPackage = createFakePackage(
-        'bar',
-        packagesDir,
-      );
+      final RepositoryPackage referencingPackage = createFakePackage('bar', packagesDir);
 
       // For a dependency on ^1.0.0, the 2.0.0->2.0.1 update should not apply.
-      addDependencies(referencingPackage, <String>[
-        'foo',
-      ], constraint: '^2.0.0');
+      addDependencies(referencingPackage, <String>['foo'], constraint: '^2.0.0');
 
       final File pubspecFile = targetPackage.pubspecFile;
-      final String changedFileOutput = <File>[
-        pubspecFile,
-      ].map((File file) => file.path).join('\n');
-      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-          <FakeProcessInfo>[
-            FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
-          ];
-      final String gitPubspecContents = pubspecFile
-          .readAsStringSync()
-          .replaceAll(newVersion, '2.0.0');
-      gitProcessRunner.mockProcessesForExecutable['git-show'] =
-          <FakeProcessInfo>[
-            FakeProcessInfo(MockProcess(stdout: gitPubspecContents)),
-          ];
+      final String changedFileOutput = <File>[pubspecFile].map((File file) => file.path).join('\n');
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
+      ];
+      final String gitPubspecContents = pubspecFile.readAsStringSync().replaceAll(
+        newVersion,
+        '2.0.0',
+      );
+      gitProcessRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: gitPubspecContents)),
+      ];
 
       final List<String> output = await runCapturingPrint(runner, <String>[
         'make-deps-path-based',
@@ -862,14 +640,8 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
 
       final Pubspec referencingPubspec = referencingPackage.parsePubspec();
 
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[contains('Rewriting references to: foo')]),
-      );
-      expect(
-        referencingPubspec.dependencyOverrides['foo'] is PathDependency,
-        true,
-      );
+      expect(output, containsAllInOrder(<Matcher>[contains('Rewriting references to: foo')]));
+      expect(referencingPubspec.dependencyOverrides['foo'] is PathDependency, true);
     });
 
     test('skips anything outside of the packages directory', () async {
@@ -883,20 +655,17 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
 
       // Simulate a minor version change so it would be a target.
       final File pubspecFile = package.pubspecFile;
-      final String changedFileOutput = <File>[
-        pubspecFile,
-      ].map((File file) => file.path).join('\n');
-      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-          <FakeProcessInfo>[
-            FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
-          ];
-      final String gitPubspecContents = pubspecFile
-          .readAsStringSync()
-          .replaceAll(newVersion, '1.0.0');
-      gitProcessRunner.mockProcessesForExecutable['git-show'] =
-          <FakeProcessInfo>[
-            FakeProcessInfo(MockProcess(stdout: gitPubspecContents)),
-          ];
+      final String changedFileOutput = <File>[pubspecFile].map((File file) => file.path).join('\n');
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
+      ];
+      final String gitPubspecContents = pubspecFile.readAsStringSync().replaceAll(
+        newVersion,
+        '1.0.0',
+      );
+      gitProcessRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: gitPubspecContents)),
+      ];
 
       final List<String> output = await runCapturingPrint(runner, <String>[
         'make-deps-path-based',
@@ -906,9 +675,7 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains(
-            'Skipping /tool/flutter_plugin_tools/pubspec.yaml; not in packages directory.',
-          ),
+          contains('Skipping /tool/flutter_plugin_tools/pubspec.yaml; not in packages directory.'),
           contains('No target dependencies'),
         ]),
       );

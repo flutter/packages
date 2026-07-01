@@ -15,6 +15,8 @@ import static org.mockito.Mockito.when;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.test.core.app.ApplicationProvider;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.AdvancedMarkerOptions;
@@ -24,13 +26,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.collections.MarkerManager;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
-import io.flutter.plugins.googlemaps.Messages.PlatformMarkerCollisionBehavior;
-import io.flutter.plugins.googlemaps.Messages.PlatformMarkerType;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -57,28 +57,20 @@ public class MarkersControllerTest {
 
   @Mock private Convert.BitmapDescriptorFactoryWrapper bitmapDescriptorFactoryWrapper;
 
-  private static Messages.PlatformMarker.Builder defaultMarkerBuilder() {
+  private static PlatformMarkerBuilder defaultMarkerBuilder() {
     Bitmap fakeBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
     fakeBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
     byte[] byteArray = byteArrayOutputStream.toByteArray();
-    Messages.PlatformBitmap icon =
-        new Messages.PlatformBitmap.Builder()
-            .setBitmap(
-                new Messages.PlatformBitmapBytesMap.Builder()
-                    .setByteData(byteArray)
-                    .setImagePixelRatio(1.0)
-                    .setBitmapScaling(Messages.PlatformMapBitmapScaling.NONE)
-                    .build())
-            .build();
-    Messages.PlatformDoublePair anchor =
-        new Messages.PlatformDoublePair.Builder().setX(0.5).setY(0.0).build();
-    Messages.PlatformInfoWindow infoWindow =
-        new Messages.PlatformInfoWindow.Builder().setAnchor(anchor).build();
-    return new Messages.PlatformMarker.Builder()
-        .setPosition(
-            new Messages.PlatformLatLng.Builder().setLatitude(0.0).setLongitude(0.0).build())
-        .setAnchor(new Messages.PlatformDoublePair.Builder().setX(0.0).setY(0.0).build())
+    PlatformBitmap icon =
+        new PlatformBitmap(
+            new PlatformBitmapBytesMap(
+                byteArray, PlatformMapBitmapScaling.NONE, /* imagePixelRatio */ 1.0, null, null));
+    PlatformDoublePair anchor = new PlatformDoublePair(0.5, 0.0);
+    PlatformInfoWindow infoWindow = new PlatformInfoWindow(null, null, anchor);
+    return new PlatformMarkerBuilder()
+        .setPosition(new PlatformLatLng(0.0, 0.0))
+        .setAnchor(new PlatformDoublePair(0.0, 0.0))
         .setFlat(false)
         .setDraggable(false)
         .setVisible(true)
@@ -96,7 +88,7 @@ public class MarkersControllerTest {
     mocksClosable = MockitoAnnotations.openMocks(this);
     assetManager = ApplicationProvider.getApplicationContext().getAssets();
     context = ApplicationProvider.getApplicationContext();
-    flutterApi = spy(new MapsCallbackApi(mock(BinaryMessenger.class)));
+    flutterApi = spy(new MapsCallbackApi(mock(BinaryMessenger.class), ""));
     clusterManagersController =
         spy(new ClusterManagersController(flutterApi, context, PlatformMarkerType.MARKER));
     controller =
@@ -130,7 +122,7 @@ public class MarkersControllerTest {
 
     final LatLng latLng = new LatLng(1.1, 2.2);
 
-    final List<Messages.PlatformMarker> markers =
+    final List<PlatformMarker> markers =
         Collections.singletonList(defaultMarkerBuilder().setMarkerId(googleMarkerId).build());
     controller.addMarkers(markers);
     controller.onMarkerDragStart(googleMarkerId, latLng);
@@ -150,7 +142,7 @@ public class MarkersControllerTest {
 
     final LatLng latLng = new LatLng(1.1, 2.2);
 
-    final List<Messages.PlatformMarker> markers =
+    final List<PlatformMarker> markers =
         Collections.singletonList(defaultMarkerBuilder().setMarkerId(googleMarkerId).build());
     controller.addMarkers(markers);
     controller.onMarkerDragEnd(googleMarkerId, latLng);
@@ -170,7 +162,7 @@ public class MarkersControllerTest {
 
     final LatLng latLng = new LatLng(1.1, 2.2);
 
-    final List<Messages.PlatformMarker> markers =
+    final List<PlatformMarker> markers =
         Collections.singletonList(defaultMarkerBuilder().setMarkerId(googleMarkerId).build());
 
     controller.addMarkers(markers);
@@ -180,13 +172,12 @@ public class MarkersControllerTest {
         .onMarkerDrag(eq(googleMarkerId), eq(Convert.latLngToPigeon(latLng)), any());
   }
 
-  @Test(expected = IllegalStateException.class)
+  @Test(expected = NullPointerException.class)
   public void controller_AddMarkerThrowsErrorIfMarkerIdIsNull() {
-    final List<Messages.PlatformMarker> markers =
-        Collections.singletonList(defaultMarkerBuilder().build());
+    final List<PlatformMarker> markers = Collections.singletonList(defaultMarkerBuilder().build());
     try {
       controller.addMarkers(markers);
-    } catch (IllegalStateException e) {
+    } catch (NullPointerException e) {
       assertEquals("markerId was null", e.getMessage());
       throw e;
     }
@@ -199,12 +190,11 @@ public class MarkersControllerTest {
     final String googleMarkerId = "abc123";
     final String clusterManagerId = "cm123";
 
-    final Messages.PlatformMarker.Builder builder = defaultMarkerBuilder();
+    final PlatformMarkerBuilder builder = defaultMarkerBuilder();
     builder
         .setMarkerId(googleMarkerId)
         .setClusterManagerId(clusterManagerId)
-        .setPosition(
-            new Messages.PlatformLatLng.Builder().setLatitude(1.1).setLongitude(2.2).build());
+        .setPosition(new PlatformLatLng(1.1, 2.2));
 
     when(marker.getId()).thenReturn(googleMarkerId);
 
@@ -230,15 +220,12 @@ public class MarkersControllerTest {
     // clusterManagersController calls onClusterItemRendered with created marker.
     controller.onClusterItemRendered(addedMarkerBuilder[0], marker);
 
-    // Change marker to test that markerController is created and the marker can be updated
+    // Change marker to test that markerController is created and the marker can be
+    // updated
     final LatLng latLng2 = new LatLng(3.3, 4.4);
 
-    builder.setPosition(
-        new Messages.PlatformLatLng.Builder()
-            .setLatitude(latLng2.latitude)
-            .setLongitude(latLng2.longitude)
-            .build());
-    final List<Messages.PlatformMarker> updatedMarkers = Collections.singletonList(builder.build());
+    builder.setPosition(new PlatformLatLng(latLng2.latitude, latLng2.longitude));
+    final List<PlatformMarker> updatedMarkers = Collections.singletonList(builder.build());
 
     controller.changeMarkers(updatedMarkers);
     Mockito.verify(marker, times(1)).setPosition(latLng2);
@@ -250,9 +237,11 @@ public class MarkersControllerTest {
         .removeItems(
             eq(clusterManagerId),
             Mockito.argThat(
-                markerBuilders ->
-                    markerBuilders.size() == 1
-                        && markerBuilders.get(0).clusterManagerId().equals(clusterManagerId)));
+                PlatformMarkerBuilders ->
+                    PlatformMarkerBuilders.size() == 1
+                        && PlatformMarkerBuilders.get(0)
+                            .clusterManagerId()
+                            .equals(clusterManagerId)));
   }
 
   @Test
@@ -267,7 +256,7 @@ public class MarkersControllerTest {
     when(marker.getId()).thenReturn(googleMarkerId);
     when(googleMap.addMarker(any(MarkerOptions.class))).thenReturn(marker);
 
-    final Messages.PlatformMarker.Builder builder = defaultMarkerBuilder();
+    final PlatformMarkerBuilder builder = defaultMarkerBuilder();
     builder.setMarkerId(googleMarkerId);
     controller.addMarkers(Collections.singletonList(builder.build()));
 
@@ -278,7 +267,7 @@ public class MarkersControllerTest {
 
     final float alpha = 0.1f;
 
-    final List<Messages.PlatformMarker> markerUpdates =
+    final List<PlatformMarker> markerUpdates =
         Collections.singletonList(builder.setAlpha((double) alpha).build());
     controller.changeMarkers(markerUpdates);
     Mockito.verify(marker, times(1)).setAlpha(alpha);
@@ -292,8 +281,8 @@ public class MarkersControllerTest {
   }
 
   @Test
-  public void markerBuilder_setCollisionBehavior() {
-    Messages.PlatformMarker platformMarker = defaultMarkerBuilder().setMarkerId("1").build();
+  public void PlatformMarkerBuilder_setCollisionBehavior() {
+    PlatformMarker platformMarker = defaultMarkerBuilder().setMarkerId("1").build();
     MarkerBuilder markerBuilder = new MarkerBuilder("m_1", "1", PlatformMarkerType.ADVANCED_MARKER);
 
     // Default collision behavior of an AdvancedMarker
@@ -332,17 +321,13 @@ public class MarkersControllerTest {
     final String clusterManagerId = "cm123";
 
     // Create multiple markers with the same cluster manager
-    final List<Messages.PlatformMarker> markers = new ArrayList<>();
+    final List<PlatformMarker> markers = new ArrayList<>();
     for (int i = 0; i < 5; i++) {
-      final Messages.PlatformMarker.Builder builder = defaultMarkerBuilder();
+      final PlatformMarkerBuilder builder = defaultMarkerBuilder();
       builder
           .setMarkerId("marker" + i)
           .setClusterManagerId(clusterManagerId)
-          .setPosition(
-              new Messages.PlatformLatLng.Builder()
-                  .setLatitude(1.0 + i)
-                  .setLongitude(2.0 + i)
-                  .build());
+          .setPosition(new PlatformLatLng(1.0 + i, 2.0 + i));
       markers.add(builder.build());
     }
 
@@ -354,10 +339,9 @@ public class MarkersControllerTest {
         .addItems(
             eq(clusterManagerId),
             Mockito.argThat(
-                markerBuilders ->
-                    markerBuilders.size() == 5
-                        && markerBuilders
-                            .stream()
+                PlatformMarkerBuilders ->
+                    PlatformMarkerBuilders.size() == 5
+                        && PlatformMarkerBuilders.stream()
                             .allMatch(mb -> mb.clusterManagerId().equals(clusterManagerId))));
 
     // Verify addItem is never called (we're using batch operation)
@@ -369,20 +353,16 @@ public class MarkersControllerTest {
     final String clusterManagerId = "cm123";
 
     // First add markers
-    final List<Messages.PlatformMarker> markers = new ArrayList<>();
+    final List<PlatformMarker> markers = new ArrayList<>();
     final List<String> markerIds = new ArrayList<>();
     for (int i = 0; i < 5; i++) {
       String markerId = "marker" + i;
       markerIds.add(markerId);
-      final Messages.PlatformMarker.Builder builder = defaultMarkerBuilder();
+      final PlatformMarkerBuilder builder = defaultMarkerBuilder();
       builder
           .setMarkerId(markerId)
           .setClusterManagerId(clusterManagerId)
-          .setPosition(
-              new Messages.PlatformLatLng.Builder()
-                  .setLatitude(1.0 + i)
-                  .setLongitude(2.0 + i)
-                  .build());
+          .setPosition(new PlatformLatLng(1.0 + i, 2.0 + i));
       markers.add(builder.build());
     }
 
@@ -396,10 +376,9 @@ public class MarkersControllerTest {
         .removeItems(
             eq(clusterManagerId),
             Mockito.argThat(
-                markerBuilders ->
-                    markerBuilders.size() == 5
-                        && markerBuilders
-                            .stream()
+                PlatformMarkerBuilders ->
+                    PlatformMarkerBuilders.size() == 5
+                        && PlatformMarkerBuilders.stream()
                             .allMatch(mb -> mb.clusterManagerId().equals(clusterManagerId))));
 
     // Verify removeItem is never called (we're using batch operation)
@@ -412,17 +391,13 @@ public class MarkersControllerTest {
     final String clusterManagerId2 = "cm456";
 
     // First add markers to cluster manager 1
-    final List<Messages.PlatformMarker> initialMarkers = new ArrayList<>();
+    final List<PlatformMarker> initialMarkers = new ArrayList<>();
     for (int i = 0; i < 5; i++) {
-      final Messages.PlatformMarker.Builder builder = defaultMarkerBuilder();
+      final PlatformMarkerBuilder builder = defaultMarkerBuilder();
       builder
           .setMarkerId("marker" + i)
           .setClusterManagerId(clusterManagerId1)
-          .setPosition(
-              new Messages.PlatformLatLng.Builder()
-                  .setLatitude(1.0 + i)
-                  .setLongitude(2.0 + i)
-                  .build());
+          .setPosition(new PlatformLatLng(1.0 + i, 2.0 + i));
       initialMarkers.add(builder.build());
     }
     controller.addMarkers(initialMarkers);
@@ -431,41 +406,37 @@ public class MarkersControllerTest {
     Mockito.reset(clusterManagersController);
 
     // Now change all markers to cluster manager 2
-    final List<Messages.PlatformMarker> changedMarkers = new ArrayList<>();
+    final List<PlatformMarker> changedMarkers = new ArrayList<>();
     for (int i = 0; i < 5; i++) {
-      final Messages.PlatformMarker.Builder builder = defaultMarkerBuilder();
+      final PlatformMarkerBuilder builder = defaultMarkerBuilder();
       builder
           .setMarkerId("marker" + i)
           .setClusterManagerId(clusterManagerId2) // Different cluster manager
-          .setPosition(
-              new Messages.PlatformLatLng.Builder()
-                  .setLatitude(3.0 + i)
-                  .setLongitude(4.0 + i)
-                  .build());
+          .setPosition(new PlatformLatLng(3.0 + i, 4.0 + i));
       changedMarkers.add(builder.build());
     }
     controller.changeMarkers(changedMarkers);
 
-    // Verify removeItems is called exactly once for cluster manager 1 with all 5 markers
+    // Verify removeItems is called exactly once for cluster manager 1 with all 5
+    // markers
     Mockito.verify(clusterManagersController, times(1))
         .removeItems(
             eq(clusterManagerId1),
             Mockito.argThat(
-                markerBuilders ->
-                    markerBuilders.size() == 5
-                        && markerBuilders
-                            .stream()
+                PlatformMarkerBuilders ->
+                    PlatformMarkerBuilders.size() == 5
+                        && PlatformMarkerBuilders.stream()
                             .allMatch(mb -> mb.clusterManagerId().equals(clusterManagerId1))));
 
-    // Verify addItems is called exactly once for cluster manager 2 with all 5 markers
+    // Verify addItems is called exactly once for cluster manager 2 with all 5
+    // markers
     Mockito.verify(clusterManagersController, times(1))
         .addItems(
             eq(clusterManagerId2),
             Mockito.argThat(
-                markerBuilders ->
-                    markerBuilders.size() == 5
-                        && markerBuilders
-                            .stream()
+                PlatformMarkerBuilders ->
+                    PlatformMarkerBuilders.size() == 5
+                        && PlatformMarkerBuilders.stream()
                             .allMatch(mb -> mb.clusterManagerId().equals(clusterManagerId2))));
 
     // Verify individual operations are never called (we're using batch operations)
@@ -482,15 +453,14 @@ public class MarkersControllerTest {
     when(marker.getId()).thenReturn(markerId);
 
     // Add a clustered marker
-    final Messages.PlatformMarker.Builder builder = defaultMarkerBuilder();
+    final PlatformMarkerBuilder builder = defaultMarkerBuilder();
     builder
         .setMarkerId(markerId)
         .setClusterManagerId(clusterManagerId)
-        .setPosition(
-            new Messages.PlatformLatLng.Builder().setLatitude(1.0).setLongitude(2.0).build());
+        .setPosition(new PlatformLatLng(1.0, 2.0));
     controller.addMarkers(Collections.singletonList(builder.build()));
 
-    // Capture the MarkerBuilder passed to addItems
+    // Capture the PlatformMarkerBuilder passed to addItems
     @SuppressWarnings("unchecked")
     ArgumentCaptor<List<MarkerBuilder>> captor = ArgumentCaptor.forClass(List.class);
     Mockito.verify(clusterManagersController).addItems(eq(clusterManagerId), captor.capture());
@@ -504,11 +474,7 @@ public class MarkersControllerTest {
 
     // Change marker in place (same clusterManagerId)
     final LatLng newLatLng = new LatLng(3.0, 4.0);
-    builder.setPosition(
-        new Messages.PlatformLatLng.Builder()
-            .setLatitude(newLatLng.latitude)
-            .setLongitude(newLatLng.longitude)
-            .build());
+    builder.setPosition(new PlatformLatLng(newLatLng.latitude, newLatLng.longitude));
     controller.changeMarkers(Collections.singletonList(builder.build()));
 
     // In-place update: marker position is updated directly
@@ -516,5 +482,113 @@ public class MarkersControllerTest {
     // No re-clustering needed
     Mockito.verify(clusterManagersController, times(0)).addItems(any(), any());
     Mockito.verify(clusterManagersController, times(0)).removeItems(any(), any());
+  }
+
+  // Remove this if builders are added to the Kotlin generator; see discussion in
+  // https://github.com/flutter/flutter/issues/158287
+  private static final class PlatformMarkerBuilder {
+    private @Nullable Double alpha;
+    private @Nullable PlatformDoublePair anchor;
+    private @Nullable Boolean consumeTapEvents;
+    private @Nullable Boolean draggable;
+    private @Nullable Boolean flat;
+    private @Nullable PlatformBitmap icon;
+    private @Nullable PlatformInfoWindow infoWindow;
+    private @Nullable PlatformLatLng position;
+    private @Nullable Double rotation;
+    private @Nullable Boolean visible;
+    private @Nullable Double zIndex;
+    private @Nullable String markerId;
+    private @Nullable String clusterManagerId;
+    private @Nullable PlatformMarkerCollisionBehavior collisionBehavior;
+
+    public @NonNull PlatformMarkerBuilder setAlpha(@NonNull Double setterArg) {
+      this.alpha = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMarkerBuilder setAnchor(@NonNull PlatformDoublePair setterArg) {
+      this.anchor = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMarkerBuilder setConsumeTapEvents(@NonNull Boolean setterArg) {
+      this.consumeTapEvents = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMarkerBuilder setDraggable(@NonNull Boolean setterArg) {
+      this.draggable = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMarkerBuilder setFlat(@NonNull Boolean setterArg) {
+      this.flat = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMarkerBuilder setIcon(@NonNull PlatformBitmap setterArg) {
+      this.icon = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMarkerBuilder setInfoWindow(@NonNull PlatformInfoWindow setterArg) {
+      this.infoWindow = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMarkerBuilder setPosition(@NonNull PlatformLatLng setterArg) {
+      this.position = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMarkerBuilder setRotation(@NonNull Double setterArg) {
+      this.rotation = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMarkerBuilder setVisible(@NonNull Boolean setterArg) {
+      this.visible = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMarkerBuilder setZIndex(@NonNull Double setterArg) {
+      this.zIndex = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMarkerBuilder setMarkerId(@NonNull String setterArg) {
+      this.markerId = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMarkerBuilder setClusterManagerId(@Nullable String setterArg) {
+      this.clusterManagerId = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMarkerBuilder setCollisionBehavior(
+        @NonNull PlatformMarkerCollisionBehavior setterArg) {
+      this.collisionBehavior = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMarker build() {
+      return new PlatformMarker(
+          Objects.requireNonNull(alpha),
+          Objects.requireNonNull(anchor),
+          Objects.requireNonNull(consumeTapEvents),
+          Objects.requireNonNull(draggable),
+          Objects.requireNonNull(flat),
+          Objects.requireNonNull(icon),
+          Objects.requireNonNull(infoWindow),
+          Objects.requireNonNull(position),
+          Objects.requireNonNull(rotation),
+          Objects.requireNonNull(visible),
+          Objects.requireNonNull(zIndex),
+          Objects.requireNonNull(markerId),
+          clusterManagerId,
+          Objects.requireNonNull(collisionBehavior));
+    }
   }
 }

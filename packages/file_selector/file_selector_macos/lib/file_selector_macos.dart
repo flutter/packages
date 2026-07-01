@@ -98,15 +98,9 @@ class FileSelectorMacOS extends FileSelectorPlatform {
   }
 
   @override
-  Future<String?> getDirectoryPath({
-    String? initialDirectory,
-    String? confirmButtonText,
-  }) async {
+  Future<String?> getDirectoryPath({String? initialDirectory, String? confirmButtonText}) async {
     return getDirectoryPathWithOptions(
-      FileDialogOptions(
-        initialDirectory: initialDirectory,
-        confirmButtonText: confirmButtonText,
-      ),
+      FileDialogOptions(initialDirectory: initialDirectory, confirmButtonText: confirmButtonText),
     );
   }
 
@@ -133,17 +127,12 @@ class FileSelectorMacOS extends FileSelectorPlatform {
     String? confirmButtonText,
   }) async {
     return getDirectoryPathsWithOptions(
-      FileDialogOptions(
-        initialDirectory: initialDirectory,
-        confirmButtonText: confirmButtonText,
-      ),
+      FileDialogOptions(initialDirectory: initialDirectory, confirmButtonText: confirmButtonText),
     );
   }
 
   @override
-  Future<List<String>> getDirectoryPathsWithOptions(
-    FileDialogOptions options,
-  ) async {
+  Future<List<String>> getDirectoryPathsWithOptions(FileDialogOptions options) async {
     final List<String?> paths = await _hostApi.displayOpenPanel(
       OpenPanelOptions(
         allowsMultipleSelection: true,

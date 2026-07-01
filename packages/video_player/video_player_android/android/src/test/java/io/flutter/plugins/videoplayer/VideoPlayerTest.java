@@ -41,6 +41,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.shadows.ShadowLooper;
 
 /**
  * Unit tests for {@link VideoPlayer}.
@@ -893,6 +894,109 @@ public final class VideoPlayerTest {
     verify(mockTrackSelector, atLeastOnce()).buildUponParameters();
     verify(mockBuilder, atLeastOnce()).build();
     verify(mockTrackSelector, atLeastOnce()).setParameters(mockParameters);
+
+    videoPlayer.dispose();
+  }
+
+  @Test
+  public void testSelectVideoTrack_disposeDuringDimensionChangeDelayDoesNotCrash() {
+    // Regression test: disposing the player during the 150ms postDelayed
+    // dimension-change workaround used to call seekTo()/play() on a released
+    // ExoPlayer, throwing IllegalStateException. After the fix, dispose()
+    // cancels the pending callback (and sets isDisposed) so the runnable
+    // becomes a no-op.
+    DefaultTrackSelector mockTrackSelector = mock(DefaultTrackSelector.class);
+    DefaultTrackSelector.Parameters mockParameters = mock(DefaultTrackSelector.Parameters.class);
+    DefaultTrackSelector.Parameters.Builder mockBuilder =
+        mock(DefaultTrackSelector.Parameters.Builder.class);
+
+    Tracks mockTracks = mock(Tracks.class);
+    Tracks.Group mockVideoGroup = mock(Tracks.Group.class);
+
+    // Current playing format: 720p. New selected track: 1080p — triggers the
+    // dimension-change branch that posts the delayed re-enable callback.
+    Format currentFormat = new Format.Builder().setId("cur").setWidth(1280).setHeight(720).build();
+    Format newFormat = new Format.Builder().setId("new").setWidth(1920).setHeight(1080).build();
+
+    TrackGroup trackGroup = new TrackGroup(newFormat);
+    setGroupLength(mockVideoGroup, 1);
+    when(mockVideoGroup.getType()).thenReturn(C.TRACK_TYPE_VIDEO);
+    when(mockVideoGroup.getMediaTrackGroup()).thenReturn(trackGroup);
+
+    ImmutableList<Tracks.Group> groups = ImmutableList.of(mockVideoGroup);
+    when(mockTracks.getGroups()).thenReturn(groups);
+
+    when(mockExoPlayer.getTrackSelector()).thenReturn(mockTrackSelector);
+    when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
+    when(mockExoPlayer.getVideoFormat()).thenReturn(currentFormat);
+    when(mockExoPlayer.isPlaying()).thenReturn(true);
+    when(mockExoPlayer.getCurrentPosition()).thenReturn(1234L);
+    when(mockTrackSelector.buildUponParameters()).thenReturn(mockBuilder);
+    when(mockBuilder.setOverrideForType(any(TrackSelectionOverride.class))).thenReturn(mockBuilder);
+    when(mockBuilder.setTrackTypeDisabled(anyInt(), anyBoolean())).thenReturn(mockBuilder);
+    when(mockBuilder.build()).thenReturn(mockParameters);
+
+    VideoPlayer videoPlayer = createVideoPlayer();
+
+    // Schedule the delayed renderer-reset callback.
+    videoPlayer.selectVideoTrack(0, 0);
+
+    // Simulate the player being disposed before the 150ms timer fires.
+    videoPlayer.dispose();
+
+    // Releasing the player makes further calls on it throw — model that on
+    // the mock so a stray seekTo/play after dispose would surface.
+    doThrow(new IllegalStateException("Player released")).when(mockExoPlayer).seekTo(anyLong());
+    doThrow(new IllegalStateException("Player released")).when(mockExoPlayer).play();
+
+    // Advance the main looper past the 150ms delay. Without the fix this
+    // throws IllegalStateException; with the fix the callback is cancelled.
+    ShadowLooper.shadowMainLooper().idleFor(200, java.util.concurrent.TimeUnit.MILLISECONDS);
+
+    verify(mockExoPlayer, never()).seekTo(anyLong());
+    verify(mockExoPlayer, never()).play();
+  }
+
+  @Test
+  public void testSelectVideoTrack_nullCurrentFormatStillUsesRendererResetWorkaround() {
+    DefaultTrackSelector mockTrackSelector = mock(DefaultTrackSelector.class);
+    DefaultTrackSelector.Parameters mockParameters = mock(DefaultTrackSelector.Parameters.class);
+    DefaultTrackSelector.Parameters.Builder mockBuilder =
+        mock(DefaultTrackSelector.Parameters.Builder.class);
+
+    Tracks mockTracks = mock(Tracks.class);
+    Tracks.Group mockVideoGroup = mock(Tracks.Group.class);
+
+    Format newFormat = new Format.Builder().setId("new").setWidth(1920).setHeight(1080).build();
+
+    TrackGroup trackGroup = new TrackGroup(newFormat);
+    setGroupLength(mockVideoGroup, 1);
+    when(mockVideoGroup.getType()).thenReturn(C.TRACK_TYPE_VIDEO);
+    when(mockVideoGroup.getMediaTrackGroup()).thenReturn(trackGroup);
+
+    ImmutableList<Tracks.Group> groups = ImmutableList.of(mockVideoGroup);
+    when(mockTracks.getGroups()).thenReturn(groups);
+
+    when(mockExoPlayer.getTrackSelector()).thenReturn(mockTrackSelector);
+    when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
+    when(mockExoPlayer.getVideoFormat()).thenReturn(null);
+    when(mockExoPlayer.isPlaying()).thenReturn(false);
+    when(mockExoPlayer.getCurrentPosition()).thenReturn(1234L);
+    when(mockTrackSelector.buildUponParameters()).thenReturn(mockBuilder);
+    when(mockBuilder.setOverrideForType(any(TrackSelectionOverride.class))).thenReturn(mockBuilder);
+    when(mockBuilder.setTrackTypeDisabled(anyInt(), anyBoolean())).thenReturn(mockBuilder);
+    when(mockBuilder.build()).thenReturn(mockParameters);
+
+    VideoPlayer videoPlayer = createVideoPlayer();
+
+    videoPlayer.selectVideoTrack(0, 0);
+
+    verify(mockBuilder).setTrackTypeDisabled(C.TRACK_TYPE_VIDEO, true);
+
+    ShadowLooper.shadowMainLooper().idleFor(200, java.util.concurrent.TimeUnit.MILLISECONDS);
+
+    verify(mockBuilder).setTrackTypeDisabled(C.TRACK_TYPE_VIDEO, false);
+    verify(mockBuilder, atLeastOnce()).setOverrideForType(any(TrackSelectionOverride.class));
 
     videoPlayer.dispose();
   }
