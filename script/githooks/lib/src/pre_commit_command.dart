@@ -47,14 +47,18 @@ class PreCommitCommand extends Command<bool> {
       return false;
     }
 
-    // final bool? hasStaged = await _hasStagedPackages(repoRoot);
-    // if (hasStaged == null) {
-    //   return false;
-    // }
-    // if (!hasStaged) {
-    //   print('No staged package changes to check.');
-    //   return true;
-    // }
+    // Skips check if there are no staged package changes because this
+    // makes a ~5s difference in runtime.
+    // TODO(camsim99): Investigate why the plugins tool adds overhead:
+    // https://github.com/flutter/flutter/issues/188870.
+    final bool? hasStaged = await _hasStagedPackages(repoRoot);
+    if (hasStaged == null) {
+      return false;
+    }
+    if (!hasStaged) {
+      print('No staged package changes to check.');
+      return true;
+    }
 
     final String toolScript = p.join(
       repoRoot.path,
