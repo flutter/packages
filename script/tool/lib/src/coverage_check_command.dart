@@ -5,6 +5,7 @@
 import 'dart:io' as io;
 
 import 'package:file/file.dart';
+import 'package:meta/meta.dart';
 import 'package:yaml/yaml.dart';
 
 import 'common/core.dart';
@@ -75,7 +76,17 @@ class CoverageCheckCommand extends PackageLoopingCommand {
     }
 
     // Collect code coverage for the package.
-    final double? currentCoverage = await _runCoverageAndParse(package);
+    double? currentCoverage;
+    try {
+      currentCoverage = await _runCoverageAndParse(package);
+    } on NoLinesFoundException {
+      return PackageResult.fail(<String>[
+        'No instrumented Dart lines were found in the coverage report for $packageName.',
+        'If this package contains no code to cover, please remove it from '
+            'script/configs/custom_coverage_minimums.yaml.',
+      ]);
+    }
+
     if (currentCoverage == null) {
       return PackageResult.fail(<String>['Failed to run tests or parse coverage']);
     }
@@ -91,40 +102,36 @@ class CoverageCheckCommand extends PackageLoopingCommand {
   }
 
   Future<double?> _runCoverageAndParse(RepositoryPackage package) async {
-    final io.ProcessResult result = await processRunner.run(
-      'flutter',
-      <String>[
-      'test',
-      '--coverage',
-    ],
-      workingDir: package.directory,
-    );
-
-    if (result.exitCode != 0) {
-      print('Test failed for ${package.directory.basename}:\n${result.stdout}\n${result.stderr}');
-      return null;
-    }
-
-    final File lcovFile = package.directory.childDirectory('coverage').childFile('lcov.info');
-    if (!lcovFile.existsSync()) {
-      print('Coverage file not found at ${lcovFile.path}.');
-      return null;
-    }
-
-    final double calculatedCoverage = _calculateCoverage(lcovFile);
-
-    // Delete generated lcov.info.
     final Directory coverageDir = package.directory.childDirectory('coverage');
-    if (coverageDir.existsSync()) {
-      coverageDir.deleteSync(recursive: true);
-    }
+    try {
+      final io.ProcessResult result = await processRunner.run('flutter', <String>[
+        'test',
+        '--coverage',
+      ], workingDir: package.directory);
 
-    return calculatedCoverage;
+      if (result.exitCode != 0) {
+        print('Test failed for ${package.directory.basename}:\n${result.stdout}\n${result.stderr}');
+        return null;
+      }
+
+      final File lcovFile = coverageDir.childFile('lcov.info');
+      if (!lcovFile.existsSync()) {
+        print('Coverage file not found at ${lcovFile.path}.');
+        return null;
+      }
+
+      return calculateCoverage(lcovFile);
+    } finally {
+      if (coverageDir.existsSync()) {
+        coverageDir.deleteSync(recursive: true);
+      }
+    }
   }
 
   /// Calculates code coverage for non-generated code files by finding
   /// the percentage of covered lines of code over the total lines of code.
-  double _calculateCoverage(File lcovFile) {
+  @visibleForTesting
+  double calculateCoverage(File lcovFile) {
     var linesHit = 0;
     var linesFound = 0;
     var skipCurrentFile = false;
@@ -145,10 +152,16 @@ class CoverageCheckCommand extends PackageLoopingCommand {
     }
 
     if (linesFound == 0) {
-      return 100.0;
+      throw const NoLinesFoundException();
     }
     return (linesHit / linesFound) * 100.0;
   }
+}
+
+/// Exception thrown when no instrumented lines are found in the coverage report.
+class NoLinesFoundException implements Exception {
+  /// Creates a new [NoLinesFoundException].
+  const NoLinesFoundException();
 }
 
 bool _isGeneratedFile(String fileName) {

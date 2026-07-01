@@ -4,5 +4,4 @@
 # command. If a package drops below its listed threshold, the check
 # will fail.
 custom_coverage_minimums:
-  camera_android: 30.0
   camera_android_camerax: 18.3

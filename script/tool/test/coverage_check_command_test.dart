@@ -19,6 +19,7 @@ void main() {
     late Directory packagesDir;
     late CommandRunner<void> runner;
     late RecordingProcessRunner processRunner;
+    late CoverageCheckCommand command;
 
     setUp(() {
       mockPlatform = MockPlatform();
@@ -26,7 +27,7 @@ void main() {
       (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) = configureBaseCommandMocks(
         platform: mockPlatform,
       );
-      final command = CoverageCheckCommand(
+      command = CoverageCheckCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,
@@ -102,9 +103,7 @@ custom_coverage_minimums:
 
       expect(
         output,
-        containsAllInOrder(<Matcher>[
-          contains('SKIPPING: Not a first-party package.'),
-        ]),
+        containsAllInOrder(<Matcher>[contains('SKIPPING: Not a first-party package.')]),
       );
       expect(processRunner.recordedCalls, isEmpty);
     });
@@ -175,6 +174,7 @@ end_of_record
           contains('Code coverage for plugin1 is 25.0%, which is below the required 50.0%.'),
         ]),
       );
+      expect(coverageDir.existsSync(), isFalse);
     });
 
     test('ignores generated files when calculating coverage', () async {
@@ -206,6 +206,45 @@ end_of_record
       final List<String> output = await runCapturingPrint(runner, <String>['coverage-check']);
 
       expect(output, contains(contains('Ran for 1 package(s)')));
+    });
+
+    test('fails with clear message when no instrumented lines are found', () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin1',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
+
+      final Directory coverageDir = plugin.directory.childDirectory('coverage');
+      coverageDir.createSync();
+      coverageDir.childFile('lcov.info').writeAsStringSync('''
+SF:lib/plugin1.g.dart
+DA:1,0
+LF:1
+LH:0
+end_of_record
+''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['coverage-check'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        contains(
+          contains('No instrumented Dart lines were found in the coverage report for plugin1.'),
+        ),
+      );
+      expect(
+        output,
+        contains(contains('If this package contains no code to cover, please remove it from')),
+      );
     });
 
     test('calculates coverage correctly across multiple files', () async {
@@ -283,6 +322,103 @@ end_of_record
           contains('Failed to run tests or parse coverage'),
         ]),
       );
+    });
+
+    group('calculateCoverage', () {
+      late File tempLcovFile;
+
+      setUp(() {
+        tempLcovFile = packagesDir.parent.childFile('temp_lcov.info');
+      });
+
+      tearDown(() {
+        if (tempLcovFile.existsSync()) {
+          tempLcovFile.deleteSync();
+        }
+      });
+
+      test('calculates 100% coverage correctly', () {
+        tempLcovFile.writeAsStringSync('''
+SF:lib/foo.dart
+DA:1,1
+DA:2,1
+LF:2
+LH:2
+end_of_record
+''');
+        expect(command.calculateCoverage(tempLcovFile), 100.0);
+      });
+
+      test('calculates partial coverage correctly', () {
+        tempLcovFile.writeAsStringSync('''
+SF:lib/foo.dart
+DA:1,1
+DA:2,0
+LF:2
+LH:1
+end_of_record
+''');
+        expect(command.calculateCoverage(tempLcovFile), 50.0);
+      });
+
+      test('calculates partial coverage across multiple files correctly', () {
+        tempLcovFile.writeAsStringSync('''
+SF:lib/foo.dart
+DA:1,1
+DA:2,0
+LF:2
+LH:1
+end_of_record
+SF:lib/bar.dart
+DA:1,1
+DA:2,1
+DA:3,0
+LF:3
+LH:2
+end_of_record
+''');
+        expect(command.calculateCoverage(tempLcovFile), 60.0);
+      });
+
+      test('throws NoLinesFoundException when no lines are found', () {
+        tempLcovFile.writeAsStringSync('''
+SF:lib/foo.g.dart
+DA:1,0
+LF:1
+LH:0
+end_of_record
+''');
+        expect(
+          () => command.calculateCoverage(tempLcovFile),
+          throwsA(isA<NoLinesFoundException>()),
+        );
+      });
+
+      test('ignores multiple types of generated files', () {
+        tempLcovFile.writeAsStringSync('''
+SF:lib/foo.dart
+DA:1,1
+LF:1
+LH:1
+end_of_record
+SF:lib/foo.g.dart
+DA:1,0
+LF:1
+LH:0
+end_of_record
+SF:lib/foo.mocks.dart
+DA:1,0
+LF:1
+LH:0
+end_of_record
+SF:lib/foo.pb.dart
+DA:1,0
+LF:1
+LH:0
+end_of_record
+''');
+        expect(command.calculateCoverage(tempLcovFile), 100.0);
+      });
     });
   });
 }
