@@ -1,0 +1,16 @@
+include: ../../../analysis_options.yaml
+
+analyzer:
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
+
+dart_code_linter:
+  metrics:
+    cyclomatic-complexity: 15
+

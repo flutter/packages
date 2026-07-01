@@ -5,6 +5,7 @@
 import 'dart:io' as io;
 
 import 'package:file/file.dart';
+import 'package:yaml/yaml.dart';
 
 import 'common/core.dart';
 import 'common/file_filters.dart';
@@ -330,10 +331,75 @@ class AnalyzeCommand extends PackageLoopingCommand {
       ...skillsErrors,
     ];
 
-    if (errors.isNotEmpty) {
-      return PackageResult.fail(errors);
+    final customCheckRunners = <_CustomLinter>[
+      _CustomLinter(dependencyName: 'dart_code_linter', run: _runDartCodeLinterForPackage),
+    ];
+
+    // Skip custom linters during downgrade as metrics are redundant and vulnerable to dependency issues.
+    if (!getBoolArg(_downgradeFlag)) {
+      final Pubspec pubspec = package.parsePubspec();
+      for (final runner in customCheckRunners) {
+        final bool hasDependency = pubspec.devDependencies.containsKey(runner.dependencyName);
+        if (hasDependency) {
+          errors.addAll(await runner.run(package));
+        }
+      }
     }
-    return PackageResult.success();
+
+    return errors.isEmpty ? PackageResult.success() : PackageResult.fail(errors);
+  }
+
+  /// Retrieves the configured cyclomatic complexity threshold from the local
+  /// `analysis_options.yaml` if it exists and is configured.
+  int? _getLinterThreshold(RepositoryPackage package) {
+    final File optionsFile = package.directory.childFile('analysis_options.yaml');
+    if (!optionsFile.existsSync()) {
+      return null;
+    }
+    try {
+      final Object? yaml = loadYaml(optionsFile.readAsStringSync());
+      if (yaml is YamlMap) {
+        final Object? linter = yaml['dart_code_linter'];
+        if (linter is YamlMap) {
+          final Object? metrics = linter['metrics'];
+          if (metrics is YamlMap) {
+            final Object? complexity = metrics['cyclomatic-complexity'];
+            if (complexity is int) {
+              return complexity;
+            }
+          }
+        }
+      }
+    } catch (_) {
+      // Ignore errors parsing invalid/incomplete files.
+    }
+    return null;
+  }
+
+  /// Runs the `dart_code_linter` metrics analyzer on the package.
+  ///
+  /// Assumes `dart_code_linter` is present in `dev_dependencies`.
+  Future<List<String>> _runDartCodeLinterForPackage(RepositoryPackage package) async {
+    if (!package.libDirectory.existsSync()) {
+      return <String>[];
+    }
+    print('Running dart_code_linter:metrics analysis...');
+    final int linterExitCode = await processRunner.runAndStream(_dartBinaryPath, <String>[
+      'run',
+      'dart_code_linter:metrics',
+      'analyze',
+      'lib',
+      '--set-exit-on-violation-level=warning',
+    ], workingDir: package.directory);
+    if (linterExitCode != 0) {
+      final int? threshold = _getLinterThreshold(package);
+      final thresholdMessage = threshold != null ? ' (configured threshold: $threshold)' : '';
+      return <String>[
+        'Metrics violations found$thresholdMessage. See the package\'s local "analysis_options.yaml" for configured thresholds.',
+      ];
+    }
+
+    return <String>[];
   }
 
   /// Validates that `.agents/skills` contains Dart code if configured for skills analysis.
@@ -484,4 +550,18 @@ class AnalyzeCommand extends PackageLoopingCommand {
     }
     return errors.isEmpty ? PackageResult.success() : PackageResult.fail(errors);
   }
+}
+
+/// Represents a custom linter check that is executed during package analysis.
+class _CustomLinter {
+  const _CustomLinter({required this.dependencyName, required this.run});
+
+  /// The name of the package dependency that triggers this custom check.
+  ///
+  /// The check is only executed if this dependency is listed in the package's
+  /// `dev_dependencies`.
+  final String dependencyName;
+
+  /// The runner function that executes the custom check.
+  final Future<List<String>> Function(RepositoryPackage) run;
 }
