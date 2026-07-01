@@ -331,10 +331,6 @@ class AnalyzeCommand extends PackageLoopingCommand {
       ...skillsErrors,
     ];
 
-    if (errors.isNotEmpty) {
-      return PackageResult.fail(errors);
-    }
-
     final customCheckRunners = <_CustomLinter>[
       _CustomLinter(dependencyName: 'dart_code_linter', run: _runDartCodeLinterForPackage),
     ];

@@ -763,6 +763,56 @@ dart_code_linter:
           contains('  foo:\n    Main package analysis failed\n    Skills analysis failed'),
         );
       });
+
+      test('fails with main, skills, and linter failures listed if all fail', () async {
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          isFlutter: true,
+        );
+        _writeFakePubspecWithLinter(package, inDevDependencies: true);
+        package.ciConfigFile.writeAsStringSync('analyze_skills: true');
+
+        package.directory
+            .childDirectory('.agents')
+            .childDirectory('skills')
+            .childFile('test.dart')
+            .createSync(recursive: true);
+
+        processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
+        ];
+        processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(exitCode: 1), <String>['analyze']), // main package
+          FakeProcessInfo(MockProcess(exitCode: 1), <String>['analyze']), // skills package
+          FakeProcessInfo(MockProcess(exitCode: 1), <String>[
+            'run',
+            'dart_code_linter:metrics',
+          ]), // custom linter
+        ];
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+          runner,
+          <String>['analyze', '--custom-analysis', 'a_package'],
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
+
+        expect(commandError, isA<ToolExit>());
+        final String joinedOutput = output.join('\n');
+        expect(joinedOutput, contains('The following packages had errors:'));
+        expect(
+          joinedOutput,
+          contains(
+            '  a_package:\n'
+            '    Main package analysis failed\n'
+            '    Skills analysis failed\n'
+            '    Metrics violations found. See the package\'s local "analysis_options.yaml" for configured thresholds.',
+          ),
+        );
+      });
     });
 
     test('skips if requested if "pub get" fails in the resolver', () async {
