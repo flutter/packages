@@ -497,6 +497,66 @@ void main() {
           expect(capturedOptions!.cameraControl, isTrue);
         });
 
+        testWidgets('translates mapTypeControlEnabled option', (WidgetTester tester) async {
+          gmaps.MapOptions? capturedOptions;
+          controller = createController(
+            mapConfiguration: const MapConfiguration(
+              mapTypeControlEnabled: true,
+            ),
+          );
+          controller.debugSetOverrides(
+            createMap: (_, gmaps.MapOptions options) {
+              capturedOptions = options;
+              return map;
+            },
+          );
+
+          controller.init();
+
+          expect(capturedOptions, isNotNull);
+          expect(capturedOptions!.mapTypeControl, isTrue);
+        });
+
+        testWidgets('translates fullscreenControlEnabled option', (WidgetTester tester) async {
+          gmaps.MapOptions? capturedOptions;
+          controller = createController(
+            mapConfiguration: const MapConfiguration(
+              fullscreenControlEnabled: true,
+            ),
+          );
+          controller.debugSetOverrides(
+            createMap: (_, gmaps.MapOptions options) {
+              capturedOptions = options;
+              return map;
+            },
+          );
+
+          controller.init();
+
+          expect(capturedOptions, isNotNull);
+          expect(capturedOptions!.fullscreenControl, isTrue);
+        });
+
+        testWidgets('translates streetViewControlEnabled option', (WidgetTester tester) async {
+          gmaps.MapOptions? capturedOptions;
+          controller = createController(
+            mapConfiguration: const MapConfiguration(
+              streetViewControlEnabled: true,
+            ),
+          );
+          controller.debugSetOverrides(
+            createMap: (_, gmaps.MapOptions options) {
+              capturedOptions = options;
+              return map;
+            },
+          );
+
+          controller.init();
+
+          expect(capturedOptions, isNotNull);
+          expect(capturedOptions!.streetViewControl, isTrue);
+        });
+
         testWidgets('translates webCameraControlPosition option', (WidgetTester tester) async {
           gmaps.MapOptions? capturedOptions;
           controller = createController(

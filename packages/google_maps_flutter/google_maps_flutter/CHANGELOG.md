@@ -1,3 +1,7 @@
+## 2.17.2
+
+* Add support for mapTypeControlEnabled, fullscreenControlEnabled, streetViewControlEnabled on web.
+
 ## 2.17.1
 
 * Updates README to link to implementation packages for platform-specific
