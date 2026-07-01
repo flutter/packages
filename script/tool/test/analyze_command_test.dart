@@ -552,6 +552,7 @@ void main() {
         );
         expect(output, contains('Running dart_code_linter:metrics analysis...'));
       });
+
       test('skips dart_code_linter if lib/ does not exist', () async {
         final RepositoryPackage package = createFakePackage(
           'a_package',
@@ -649,6 +650,117 @@ dart_code_linter:
               'Metrics violations found (configured threshold: 15). See the package\'s local "analysis_options.yaml" for configured thresholds.',
             ),
           ]),
+        );
+      });
+    });
+
+    group('skills analysis via ci_config.yaml', () {
+      test('fails if package configuration has no dart files in .agents/skills', () async {
+        final RepositoryPackage plugin = createFakePlugin('foo', packagesDir);
+        plugin.ciConfigFile.writeAsStringSync('analyze_skills: true');
+
+        // Note: we purposely do not create any .dart files in .agents/skills
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+          runner,
+          <String>['analyze'],
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+              'Configured to analyze skills for foo, but no Dart code was found in .agents/skills.',
+            ),
+          ]),
+        );
+      });
+
+      test(
+        'analyzes .agents/skills when dart files are present and analyze_skills is true',
+        () async {
+          final RepositoryPackage plugin = createFakePlugin('foo', packagesDir);
+          plugin.ciConfigFile.writeAsStringSync('analyze_skills: true');
+
+          plugin.directory
+              .childDirectory('.agents')
+              .childDirectory('skills')
+              .childFile('test.dart')
+              .createSync(recursive: true);
+
+          await runCapturingPrint(runner, <String>['analyze']);
+
+          expect(
+            processRunner.recordedCalls,
+            orderedEquals(<ProcessCall>[
+              ProcessCall('flutter', const <String>['pub', 'get'], plugin.path),
+              ProcessCall('dart', const <String>['analyze', '--fatal-infos'], plugin.path),
+              ProcessCall('dart', const <String>[
+                'analyze',
+                '--fatal-infos',
+                '.agents/skills',
+              ], plugin.path),
+            ]),
+          );
+        },
+      );
+
+      test('does not analyze .agents/skills when analyze_skills is false/omitted', () async {
+        final RepositoryPackage plugin = createFakePlugin('foo', packagesDir);
+
+        plugin.directory
+            .childDirectory('.agents')
+            .childDirectory('skills')
+            .childFile('test.dart')
+            .createSync(recursive: true);
+
+        await runCapturingPrint(runner, <String>['analyze']);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall('flutter', const <String>['pub', 'get'], plugin.path),
+            ProcessCall('dart', const <String>['analyze', '--fatal-infos'], plugin.path),
+          ]),
+        );
+      });
+
+      test('fails with both main and skills failures listed if both fail', () async {
+        final RepositoryPackage plugin = createFakePlugin('foo', packagesDir);
+        plugin.ciConfigFile.writeAsStringSync('analyze_skills: true');
+
+        plugin.directory
+            .childDirectory('.agents')
+            .childDirectory('skills')
+            .childFile('test.dart')
+            .createSync(recursive: true);
+
+        // Mock both dart analyze runs to fail (exit code 1)
+        processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(exitCode: 1), <String>['analyze']), // main package
+          FakeProcessInfo(MockProcess(exitCode: 1), <String>['analyze']), // skills package
+        ];
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+          runner,
+          <String>['analyze'],
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
+
+        expect(commandError, isA<ToolExit>());
+        final String joinedOutput = output.join('\n');
+        expect(joinedOutput, contains('The following packages had errors:'));
+        expect(
+          joinedOutput,
+          contains('  foo:\n    Main package analysis failed\n    Skills analysis failed'),
         );
       });
     });

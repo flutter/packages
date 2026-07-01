@@ -24,6 +24,9 @@ class XFile extends XFileBase {
   /// [length] is ignored; the parameter exists only to match the web version of
   /// the constructor.
   ///
+  /// [mimeType] is not inferred from [path]. The [mimeType] property returns the
+  /// value explicitly provided here, if any.
+  ///
   // ignore: use_super_parameters
   XFile(
     String path, {
@@ -42,6 +45,8 @@ class XFile extends XFileBase {
   ///
   /// [name] is ignored; the parameter exists only to match the web version of
   /// the constructor.
+  ///
+  /// The [mimeType] property returns the value explicitly provided here, if any.
   XFile.fromData(
     Uint8List bytes, {
     String? mimeType,
