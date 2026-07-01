@@ -67,7 +67,11 @@ abstract class MarkerController<T, O> {
   /// Updates the options of the wrapped marker object.
   ///
   /// This cannot be called after [remove].
-  void update(O options, {web.HTMLElement? newInfoWindowContent});
+  void update(
+    O options, {
+    bool isContentUpdateRequired = true,
+    web.HTMLElement? newInfoWindowContent,
+  });
 
   /// Initializes the listener for the wrapped marker object.
   void addMarkerListener({
@@ -193,7 +197,11 @@ class LegacyMarkerController extends MarkerController<gmaps.Marker, gmaps.Marker
   }
 
   @override
-  void update(gmaps.MarkerOptions options, {web.HTMLElement? newInfoWindowContent}) {
+  void update(
+    gmaps.MarkerOptions options, {
+    bool isContentUpdateRequired = true,
+    web.HTMLElement? newInfoWindowContent,
+  }) {
     assert(_marker != null, 'Cannot `update` Marker after calling `remove`.');
     _marker!.options = options;
 
@@ -302,12 +310,18 @@ class AdvancedMarkerController
   }
 
   @override
-  void update(gmaps.AdvancedMarkerElementOptions options, {web.HTMLElement? newInfoWindowContent}) {
+  void update(
+    gmaps.AdvancedMarkerElementOptions options, {
+    bool isContentUpdateRequired = true,
+    web.HTMLElement? newInfoWindowContent,
+  }) {
     assert(_marker != null, 'Cannot `update` Marker after calling `remove`.');
 
     final gmaps.AdvancedMarkerElement marker = _marker!;
     marker.collisionBehavior = options.collisionBehavior;
-    marker.content = options.content;
+    if (isContentUpdateRequired) {
+      marker.content = options.content;
+    }
     marker.gmpDraggable = options.gmpDraggable;
     marker.position = options.position;
     marker.title = options.title ?? '';
