@@ -335,11 +335,14 @@ class AnalyzeCommand extends PackageLoopingCommand {
       _CustomLinter(dependencyName: 'dart_code_linter', run: _runDartCodeLinterForPackage),
     ];
 
-    final Pubspec pubspec = package.parsePubspec();
-    for (final runner in customCheckRunners) {
-      final bool hasDependency = pubspec.devDependencies.containsKey(runner.dependencyName);
-      if (hasDependency) {
-        errors.addAll(await runner.run(package));
+    // Skip custom linters during downgrade as metrics are redundant and vulnerable to dependency issues.
+    if (!getBoolArg(_downgradeFlag)) {
+      final Pubspec pubspec = package.parsePubspec();
+      for (final runner in customCheckRunners) {
+        final bool hasDependency = pubspec.devDependencies.containsKey(runner.dependencyName);
+        if (hasDependency) {
+          errors.addAll(await runner.run(package));
+        }
       }
     }
 

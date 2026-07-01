@@ -477,6 +477,40 @@ void main() {
         expect(output, contains('Running dart_code_linter:metrics analysis...'));
       });
 
+      test('does not run dart_code_linter when --downgrade is specified', () async {
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          isFlutter: true,
+        );
+        _writeFakePubspecWithLinter(package, inDevDependencies: true);
+
+        processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(), <String>['pub', 'downgrade']),
+          FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
+        ];
+        processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(), <String>['analyze', '--fatal-infos']),
+        ];
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'analyze',
+          '--downgrade',
+        ]);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall('flutter', const <String>['pub', 'downgrade'], package.path),
+            ProcessCall('flutter', const <String>['pub', 'get'], package.path),
+            ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
+          ]),
+        );
+        final String combinedOutput = output.join('\n').toLowerCase();
+        expect(combinedOutput, isNot(contains('dart_code_linter')));
+        expect(combinedOutput, isNot(contains('metrics')));
+      });
+
       test('does not run dart_code_linter if present in dependencies', () async {
         final RepositoryPackage package = createFakePackage(
           'a_package',
