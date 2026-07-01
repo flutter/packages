@@ -14,6 +14,21 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+class _NavigationBarThemeDataWithExpressiveVariant extends NavigationBarThemeData {
+  const _NavigationBarThemeDataWithExpressiveVariant();
+
+  @override
+  StyleVariant? get variant => .material3Expressive;
+}
+
+Matcher get _throwsUnsupportedStyleVariantAssertion {
+  return isA<AssertionError>().having(
+    (AssertionError error) => error.message,
+    'message',
+    kUnsupportedStyleVariantAssertionMessage,
+  );
+}
+
 void main() {
   test('copyWith, ==, hashCode basics', () {
     expect(const NavigationBarThemeData(), const NavigationBarThemeData().copyWith());
@@ -27,6 +42,24 @@ void main() {
     expect(NavigationBarThemeData.lerp(null, null, 0), null);
     const data = NavigationBarThemeData();
     expect(identical(NavigationBarThemeData.lerp(data, data, 0.5), data), true);
+  });
+
+  testWidgets('NavigationBar asserts on unsupported style variants', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: NavigationBarTheme(
+          data: const _NavigationBarThemeDataWithExpressiveVariant(),
+          child: NavigationBar(
+            destinations: const <Widget>[
+              NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
+              NavigationDestination(icon: Icon(Icons.settings), label: 'Settings'),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    expect(tester.takeException(), _throwsUnsupportedStyleVariantAssertion);
   });
 
   testWidgets('Default debugFillProperties', (WidgetTester tester) async {

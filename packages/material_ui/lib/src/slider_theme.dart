@@ -14,6 +14,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
 import 'colors.dart';
+import 'debug.dart';
 import 'range_slider_parts.dart';
 import 'slider.dart';
 import 'slider_parts.dart';
@@ -318,7 +319,8 @@ class SliderThemeData with Diagnosticable {
       'This feature was deprecated after v3.27.0-0.2.pre.',
     )
     this.year2023,
-  });
+    this.variant,
+  }) : assert(variant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
 
   /// Generates a SliderThemeData from three main colors.
   ///
@@ -659,6 +661,9 @@ class SliderThemeData with Diagnosticable {
   )
   final bool? year2023;
 
+  /// The style variant of Material Design used by sliders.
+  final StyleVariant? variant;
+
   /// Creates a copy of this object but with the given fields replaced with the
   /// new values.
   SliderThemeData copyWith({
@@ -698,6 +703,7 @@ class SliderThemeData with Diagnosticable {
     WidgetStateProperty<Size?>? thumbSize,
     double? trackGap,
     bool? year2023,
+    StyleVariant? variant,
   }) {
     return SliderThemeData(
       trackHeight: trackHeight ?? this.trackHeight,
@@ -738,6 +744,7 @@ class SliderThemeData with Diagnosticable {
       thumbSize: thumbSize ?? this.thumbSize,
       trackGap: trackGap ?? this.trackGap,
       year2023: year2023 ?? this.year2023,
+      variant: variant ?? this.variant,
     );
   }
 
@@ -821,6 +828,7 @@ class SliderThemeData with Diagnosticable {
       thumbSize: WidgetStateProperty.lerp<Size?>(a.thumbSize, b.thumbSize, t, Size.lerp),
       trackGap: lerpDouble(a.trackGap, b.trackGap, t),
       year2023: t < 0.5 ? a.year2023 : b.year2023,
+      variant: t < 0.5 ? a.variant : b.variant,
     );
   }
 
@@ -862,6 +870,7 @@ class SliderThemeData with Diagnosticable {
       thumbSize,
       trackGap,
       year2023,
+      variant,
     ),
   );
 
@@ -909,7 +918,8 @@ class SliderThemeData with Diagnosticable {
         other.padding == padding &&
         other.thumbSize == thumbSize &&
         other.trackGap == trackGap &&
-        other.year2023 == year2023;
+        other.year2023 == year2023 &&
+        other.variant == variant;
   }
 
   @override
@@ -1144,6 +1154,7 @@ class SliderThemeData with Diagnosticable {
     properties.add(
       DiagnosticsProperty<bool>('year2023', year2023, defaultValue: defaultData.year2023),
     );
+    properties.add(EnumProperty<StyleVariant>('variant', variant, defaultValue: null));
   }
 }
 

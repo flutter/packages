@@ -5,6 +5,21 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+class _ElevatedButtonThemeDataWithExpressiveVariant extends ElevatedButtonThemeData {
+  const _ElevatedButtonThemeDataWithExpressiveVariant();
+
+  @override
+  StyleVariant? get variant => .material3Expressive;
+}
+
+Matcher get _throwsUnsupportedStyleVariantAssertion {
+  return isA<AssertionError>().having(
+    (AssertionError error) => error.message,
+    'message',
+    kUnsupportedStyleVariantAssertionMessage,
+  );
+}
+
 void main() {
   TextStyle iconStyle(WidgetTester tester, IconData icon) {
     final RichText iconRichText = tester.widget<RichText>(
@@ -17,6 +32,19 @@ void main() {
     expect(ElevatedButtonThemeData.lerp(null, null, 0), null);
     const data = ElevatedButtonThemeData();
     expect(identical(ElevatedButtonThemeData.lerp(data, data, 0.5), data), true);
+  });
+
+  testWidgets('ElevatedButton asserts on unsupported style variants', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ElevatedButtonTheme(
+          data: const _ElevatedButtonThemeDataWithExpressiveVariant(),
+          child: ElevatedButton(onPressed: () {}, child: const Text('Button')),
+        ),
+      ),
+    );
+
+    expect(tester.takeException(), _throwsUnsupportedStyleVariantAssertion);
   });
 
   testWidgets('Material3: Passing no ElevatedButtonTheme returns defaults', (

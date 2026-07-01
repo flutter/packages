@@ -14,6 +14,7 @@ import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
 
 import 'color_scheme.dart';
+import 'debug.dart';
 import 'material.dart';
 import 'progress_indicator_theme.dart';
 import 'theme.dart';
@@ -647,6 +648,10 @@ class _LinearProgressIndicatorState extends State<LinearProgressIndicator>
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final ProgressIndicatorThemeData indicatorTheme = ProgressIndicatorTheme.of(context);
+    final StyleVariant effectiveVariant = indicatorTheme.variant ?? theme.variant;
+    assert(effectiveVariant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
     final TextDirection textDirection = Directionality.of(context);
 
     if (widget._effectiveValue != null) {
@@ -1126,9 +1131,12 @@ class _CircularProgressIndicatorState extends State<CircularProgressIndicator>
     double offsetValue,
     double rotationValue,
   ) {
+    final ThemeData theme = Theme.of(context);
     final ProgressIndicatorThemeData indicatorTheme = ProgressIndicatorTheme.of(context);
+    final StyleVariant effectiveVariant = indicatorTheme.variant ?? theme.variant;
+    assert(effectiveVariant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
     final bool year2023 = widget.year2023 ?? indicatorTheme.year2023 ?? true;
-    final ProgressIndicatorThemeData defaults = switch (Theme.of(context).useMaterial3) {
+    final ProgressIndicatorThemeData defaults = switch (theme.useMaterial3) {
       true =>
         year2023
             ? _CircularProgressIndicatorDefaultsM3Year2023(

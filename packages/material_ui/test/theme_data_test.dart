@@ -24,6 +24,106 @@ void main() {
     expect(dawn.primaryColor, Color.lerp(dark.primaryColor, light.primaryColor, 0.25));
   });
 
+  test('ThemeData defaults to Material 3 style variant', () {
+    expect(ThemeData().variant, StyleVariant.material3);
+    expect(ThemeData.light().variant, StyleVariant.material3);
+    expect(ThemeData.dark().variant, StyleVariant.material3);
+    expect(ThemeData.fallback().variant, StyleVariant.material3);
+  });
+
+  test('ThemeData asserts on unsupported style variants', () {
+    Matcher throwsUnsupportedStyleVariantAssertion() {
+      return throwsA(
+        isA<AssertionError>().having(
+          (AssertionError error) => error.message,
+          'message',
+          kUnsupportedStyleVariantAssertionMessage,
+        ),
+      );
+    }
+
+    expect(
+      () => ThemeData(variant: .material3Expressive),
+      throwsUnsupportedStyleVariantAssertion(),
+    );
+    expect(
+      () => ThemeData.light(variant: .material3Expressive),
+      throwsUnsupportedStyleVariantAssertion(),
+    );
+    expect(
+      () => ThemeData.dark(variant: .material3Expressive),
+      throwsUnsupportedStyleVariantAssertion(),
+    );
+    expect(
+      () => ThemeData.fallback(variant: .material3Expressive),
+      throwsUnsupportedStyleVariantAssertion(),
+    );
+    expect(
+      () => ThemeData.from(colorScheme: const ColorScheme.light(), variant: .material3Expressive),
+      throwsUnsupportedStyleVariantAssertion(),
+    );
+  });
+
+  test('ThemeData.copyWith asserts on unsupported style variants', () {
+    final theme = ThemeData();
+
+    expect(
+      () => theme.copyWith(variant: .material3Expressive),
+      throwsA(
+        isA<AssertionError>().having(
+          (AssertionError error) => error.message,
+          'message',
+          kUnsupportedStyleVariantAssertionMessage,
+        ),
+      ),
+    );
+  });
+
+  test('component theme data asserts on unsupported style variants', () {
+    Matcher throwsUnsupportedStyleVariantAssertion() {
+      return throwsA(
+        isA<AssertionError>().having(
+          (AssertionError error) => error.message,
+          'message',
+          kUnsupportedStyleVariantAssertionMessage,
+        ),
+      );
+    }
+
+    final constructors = <ThemeData Function()>[
+      () => ThemeData(appBarTheme: AppBarThemeData(variant: .material3Expressive)),
+      () => ThemeData(elevatedButtonTheme: ElevatedButtonThemeData(variant: .material3Expressive)),
+      () => ThemeData(filledButtonTheme: FilledButtonThemeData(variant: .material3Expressive)),
+      () => ThemeData(
+        floatingActionButtonTheme: FloatingActionButtonThemeData(variant: .material3Expressive),
+      ),
+      () => ThemeData(iconButtonTheme: IconButtonThemeData(variant: .material3Expressive)),
+      () => ThemeData(menuButtonTheme: MenuButtonThemeData(variant: .material3Expressive)),
+      () => ThemeData(menuTheme: MenuThemeData(variant: .material3Expressive)),
+      () => ThemeData(navigationBarTheme: NavigationBarThemeData(variant: .material3Expressive)),
+      () => ThemeData(navigationRailTheme: NavigationRailThemeData(variant: .material3Expressive)),
+      () => ThemeData(outlinedButtonTheme: OutlinedButtonThemeData(variant: .material3Expressive)),
+      () => ThemeData(
+        progressIndicatorTheme: ProgressIndicatorThemeData(variant: .material3Expressive),
+      ),
+      () => ThemeData(searchBarTheme: SearchBarThemeData(variant: .material3Expressive)),
+      () => ThemeData(searchViewTheme: SearchViewThemeData(variant: .material3Expressive)),
+      () => ThemeData(sliderTheme: SliderThemeData(variant: .material3Expressive)),
+      () => ThemeData(textButtonTheme: TextButtonThemeData(variant: .material3Expressive)),
+    ];
+
+    for (final constructor in constructors) {
+      expect(constructor, throwsUnsupportedStyleVariantAssertion());
+    }
+  });
+
+  test('ThemeData.lerp preserves style variants', () {
+    final material3 = ThemeData(variant: StyleVariant.material3);
+
+    expect(ThemeData.lerp(material3, material3, 0.25).variant, StyleVariant.material3);
+    expect(ThemeData.lerp(material3, material3, 0.75).variant, StyleVariant.material3);
+  });
+
   test('ThemeData objects with .styleFrom() members are equal', () {
     ThemeData createThemeData() {
       return ThemeData(
@@ -1290,6 +1390,7 @@ void main() {
       scrollbarTheme: const ScrollbarThemeData(radius: Radius.circular(10.0)),
       splashFactory: InkRipple.splashFactory,
       useMaterial3: false,
+      variant: StyleVariant.material3,
       visualDensity: VisualDensity.standard,
       // COLOR
       canvasColor: Colors.black,
@@ -1419,6 +1520,7 @@ void main() {
       scrollbarTheme: const ScrollbarThemeData(radius: Radius.circular(10.0)),
       splashFactory: InkRipple.splashFactory,
       useMaterial3: true,
+      variant: StyleVariant.material3,
       visualDensity: VisualDensity.standard,
       // COLOR
       canvasColor: Colors.white,
@@ -1523,6 +1625,7 @@ void main() {
       scrollbarTheme: otherTheme.scrollbarTheme,
       splashFactory: otherTheme.splashFactory,
       useMaterial3: otherTheme.useMaterial3,
+      variant: otherTheme.variant,
       visualDensity: otherTheme.visualDensity,
       // COLOR
       canvasColor: otherTheme.canvasColor,
@@ -1615,6 +1718,7 @@ void main() {
     expect(themeDataCopy.scrollbarTheme, equals(otherTheme.scrollbarTheme));
     expect(themeDataCopy.splashFactory, equals(otherTheme.splashFactory));
     expect(themeDataCopy.useMaterial3, equals(otherTheme.useMaterial3));
+    expect(themeDataCopy.variant, equals(otherTheme.variant));
     expect(themeDataCopy.visualDensity, equals(otherTheme.visualDensity));
     // COLOR
     expect(themeDataCopy.canvasColor, equals(otherTheme.canvasColor));
@@ -1761,8 +1865,9 @@ void main() {
       'platform',
       'scrollbarTheme',
       'splashFactory',
-      'visualDensity',
       'useMaterial3',
+      'variant',
+      'visualDensity',
       // COLOR
       'colorScheme',
       'primaryColor',

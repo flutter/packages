@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'button_style.dart';
+import 'debug.dart';
 import 'theme.dart';
 
 // Examples can assume:
@@ -39,7 +40,8 @@ class FilledButtonThemeData with Diagnosticable {
   /// Creates an [FilledButtonThemeData].
   ///
   /// The [style] may be null.
-  const FilledButtonThemeData({this.style});
+  const FilledButtonThemeData({this.style, this.variant})
+    : assert(variant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
 
   /// Overrides for [FilledButton]'s default style.
   ///
@@ -50,16 +52,22 @@ class FilledButtonThemeData with Diagnosticable {
   /// If [style] is null, then this theme doesn't override anything.
   final ButtonStyle? style;
 
+  /// The style variant of Material Design used by [FilledButton].
+  final StyleVariant? variant;
+
   /// Linearly interpolate between two filled button themes.
   static FilledButtonThemeData? lerp(FilledButtonThemeData? a, FilledButtonThemeData? b, double t) {
     if (identical(a, b)) {
       return a;
     }
-    return FilledButtonThemeData(style: ButtonStyle.lerp(a?.style, b?.style, t));
+    return FilledButtonThemeData(
+      style: ButtonStyle.lerp(a?.style, b?.style, t),
+      variant: t < 0.5 ? a?.variant : b?.variant,
+    );
   }
 
   @override
-  int get hashCode => style.hashCode;
+  int get hashCode => Object.hash(style, variant);
 
   @override
   bool operator ==(Object other) {
@@ -69,13 +77,14 @@ class FilledButtonThemeData with Diagnosticable {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is FilledButtonThemeData && other.style == style;
+    return other is FilledButtonThemeData && other.style == style && other.variant == variant;
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<ButtonStyle>('style', style, defaultValue: null));
+    properties.add(EnumProperty<StyleVariant>('variant', variant, defaultValue: null));
   }
 }
 

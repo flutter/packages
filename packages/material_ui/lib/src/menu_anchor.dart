@@ -26,6 +26,7 @@ import 'checkbox.dart';
 import 'color_scheme.dart';
 import 'colors.dart';
 import 'constants.dart';
+import 'debug.dart';
 import 'icons.dart';
 import 'ink_well.dart';
 import 'material.dart';
@@ -665,6 +666,11 @@ class _MenuAnchorState extends State<MenuAnchor> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final MenuThemeData menuTheme = MenuTheme.of(context);
+    final StyleVariant effectiveVariant = menuTheme.variant ?? theme.variant;
+    assert(effectiveVariant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
+
     final Widget child = _MenuAnchorScope(
       state: this,
       animationStatus: _animationController.status,
@@ -1228,6 +1234,11 @@ class _MenuItemButtonState extends State<MenuItemButton> {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final MenuButtonThemeData menuButtonTheme = MenuButtonTheme.of(context);
+    final StyleVariant effectiveVariant = menuButtonTheme.variant ?? theme.variant;
+    assert(effectiveVariant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
+
     // Since we don't want to use the theme style or default style from the
     // TextButton, we merge the styles, merging them in the right order when
     // each type of style exists. Each "*StyleOf" function is only called once.
@@ -2108,6 +2119,11 @@ class _SubmenuButtonState extends State<SubmenuButton> {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final MenuButtonThemeData menuButtonTheme = MenuButtonTheme.of(context);
+    final StyleVariant effectiveVariant = menuButtonTheme.variant ?? theme.variant;
+    assert(effectiveVariant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
+
     Offset menuPaddingOffset = widget.alignmentOffset ?? Offset.zero;
     final EdgeInsets menuPadding = _computeMenuPadding(context);
     final Axis orientation = _parent?._orientation ?? Axis.vertical;
