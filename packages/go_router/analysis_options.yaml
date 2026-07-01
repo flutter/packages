@@ -9,3 +9,10 @@ analyzer:
   exclude:
     # This directory deliberately has errors, to test `fix`.
     - "test_fixes/**"
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
