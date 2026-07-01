@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'button_style.dart';
+import 'debug.dart';
 import 'menu_anchor.dart';
 import 'theme.dart';
 
@@ -53,7 +54,8 @@ class MenuButtonThemeData with Diagnosticable {
   /// Creates a [MenuButtonThemeData].
   ///
   /// The [style] may be null.
-  const MenuButtonThemeData({this.style});
+  const MenuButtonThemeData({this.style, this.variant})
+    : assert(variant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
 
   /// Overrides for [SubmenuButton] and [MenuItemButton]'s default style.
   ///
@@ -64,16 +66,22 @@ class MenuButtonThemeData with Diagnosticable {
   /// If [style] is null, then this theme doesn't override anything.
   final ButtonStyle? style;
 
+  /// The style variant of Material Design used by menu buttons.
+  final StyleVariant? variant;
+
   /// Linearly interpolate between two menu button themes.
   static MenuButtonThemeData? lerp(MenuButtonThemeData? a, MenuButtonThemeData? b, double t) {
     if (identical(a, b)) {
       return a;
     }
-    return MenuButtonThemeData(style: ButtonStyle.lerp(a?.style, b?.style, t));
+    return MenuButtonThemeData(
+      style: ButtonStyle.lerp(a?.style, b?.style, t),
+      variant: t < 0.5 ? a?.variant : b?.variant,
+    );
   }
 
   @override
-  int get hashCode => style.hashCode;
+  int get hashCode => Object.hash(style, variant);
 
   @override
   bool operator ==(Object other) {
@@ -83,13 +91,14 @@ class MenuButtonThemeData with Diagnosticable {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is MenuButtonThemeData && other.style == style;
+    return other is MenuButtonThemeData && other.style == style && other.variant == variant;
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<ButtonStyle>('style', style, defaultValue: null));
+    properties.add(EnumProperty<StyleVariant>('variant', variant, defaultValue: null));
   }
 }
 

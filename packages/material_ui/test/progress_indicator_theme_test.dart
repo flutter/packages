@@ -12,6 +12,21 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+class _ProgressIndicatorThemeDataWithExpressiveVariant extends ProgressIndicatorThemeData {
+  const _ProgressIndicatorThemeDataWithExpressiveVariant();
+
+  @override
+  StyleVariant? get variant => .material3Expressive;
+}
+
+Matcher get _throwsUnsupportedStyleVariantAssertion {
+  return isA<AssertionError>().having(
+    (AssertionError error) => error.message,
+    'message',
+    kUnsupportedStyleVariantAssertionMessage,
+  );
+}
+
 void main() {
   test('ProgressIndicatorThemeData copyWith, ==, hashCode, basics', () {
     expect(const ProgressIndicatorThemeData(), const ProgressIndicatorThemeData().copyWith());
@@ -25,6 +40,36 @@ void main() {
     expect(ProgressIndicatorThemeData.lerp(null, null, 0), null);
     const data = ProgressIndicatorThemeData();
     expect(identical(ProgressIndicatorThemeData.lerp(data, data, 0.5), data), true);
+  });
+
+  testWidgets('LinearProgressIndicator asserts on unsupported style variants', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: ProgressIndicatorTheme(
+          data: _ProgressIndicatorThemeDataWithExpressiveVariant(),
+          child: LinearProgressIndicator(),
+        ),
+      ),
+    );
+
+    expect(tester.takeException(), _throwsUnsupportedStyleVariantAssertion);
+  });
+
+  testWidgets('CircularProgressIndicator asserts on unsupported style variants', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: ProgressIndicatorTheme(
+          data: _ProgressIndicatorThemeDataWithExpressiveVariant(),
+          child: CircularProgressIndicator(),
+        ),
+      ),
+    );
+
+    expect(tester.takeException(), _throwsUnsupportedStyleVariantAssertion);
   });
 
   testWidgets('ProgressIndicatorThemeData implements debugFillProperties', (

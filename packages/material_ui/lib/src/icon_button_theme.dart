@@ -39,7 +39,7 @@ class IconButtonThemeData with Diagnosticable {
   /// Creates a [IconButtonThemeData].
   ///
   /// The [style] may be null.
-  const IconButtonThemeData({this.style});
+  const IconButtonThemeData({this.style, this.variant});
 
   /// Overrides for [IconButton]'s default style if [ThemeData.useMaterial3]
   /// is set to true.
@@ -50,16 +50,22 @@ class IconButtonThemeData with Diagnosticable {
   /// If [style] is null, then this theme doesn't override anything.
   final ButtonStyle? style;
 
+  /// The style variant of Material Design used by [IconButton].
+  final StyleVariant? variant;
+
   /// Linearly interpolate between two icon button themes.
   static IconButtonThemeData? lerp(IconButtonThemeData? a, IconButtonThemeData? b, double t) {
     if (identical(a, b)) {
       return a;
     }
-    return IconButtonThemeData(style: ButtonStyle.lerp(a?.style, b?.style, t));
+    return IconButtonThemeData(
+      style: ButtonStyle.lerp(a?.style, b?.style, t),
+      variant: t < 0.5 ? a?.variant : b?.variant,
+    );
   }
 
   @override
-  int get hashCode => style.hashCode;
+  int get hashCode => Object.hash(style, variant);
 
   @override
   bool operator ==(Object other) {
@@ -69,13 +75,14 @@ class IconButtonThemeData with Diagnosticable {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is IconButtonThemeData && other.style == style;
+    return other is IconButtonThemeData && other.style == style && other.variant == variant;
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<ButtonStyle>('style', style, defaultValue: null));
+    properties.add(EnumProperty<StyleVariant>('variant', variant, defaultValue: null));
   }
 }
 

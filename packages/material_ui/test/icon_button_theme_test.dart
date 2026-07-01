@@ -20,6 +20,30 @@ void main() {
     expect(identical(IconButtonThemeData.lerp(data, data, 0.5), data), true);
   });
 
+  test('IconButtonThemeData supports Material 3 Expressive variant', () {
+    const data = IconButtonThemeData(variant: StyleVariant.material3Expressive);
+
+    expect(data.variant, StyleVariant.material3Expressive);
+  });
+
+  testWidgets('IconButton supports Material 3 Expressive style variants', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(useMaterial3: true),
+        home: const Scaffold(
+          body: IconButtonTheme(
+            data: IconButtonThemeData(variant: StyleVariant.material3Expressive),
+            child: IconButton(onPressed: null, icon: Icon(Icons.ac_unit)),
+          ),
+        ),
+      ),
+    );
+
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Passing no IconButtonTheme returns defaults', (WidgetTester tester) async {
     const colorScheme = ColorScheme.light();
     await tester.pumpWidget(

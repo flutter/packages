@@ -7,6 +7,21 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+class _MenuThemeDataWithExpressiveVariant extends MenuThemeData {
+  const _MenuThemeDataWithExpressiveVariant();
+
+  @override
+  StyleVariant? get variant => .material3Expressive;
+}
+
+Matcher get _throwsUnsupportedStyleVariantAssertion {
+  return isA<AssertionError>().having(
+    (AssertionError error) => error.message,
+    'message',
+    kUnsupportedStyleVariantAssertionMessage,
+  );
+}
+
 void main() {
   void onPressed(TestMenu item) {}
 
@@ -58,6 +73,24 @@ void main() {
     const menuThemeData = MenuThemeData();
     expect(menuThemeData.style, isNull);
     expect(menuThemeData.submenuIcon, isNull);
+  });
+
+  testWidgets('MenuAnchor asserts on unsupported style variants', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MenuTheme(
+          data: const _MenuThemeDataWithExpressiveVariant(),
+          child: MenuAnchor(
+            menuChildren: <Widget>[MenuItemButton(onPressed: () {}, child: const Text('Item'))],
+            builder: (BuildContext context, MenuController controller, Widget? child) {
+              return TextButton(onPressed: controller.open, child: const Text('Open'));
+            },
+          ),
+        ),
+      ),
+    );
+
+    expect(tester.takeException(), _throwsUnsupportedStyleVariantAssertion);
   });
 
   testWidgets('Default MenuThemeData debugFillProperties', (WidgetTester tester) async {

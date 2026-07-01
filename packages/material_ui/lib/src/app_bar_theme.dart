@@ -11,6 +11,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
+import 'debug.dart';
 import 'theme.dart';
 
 // Examples can assume:
@@ -410,10 +411,12 @@ class AppBarThemeData with Diagnosticable {
     this.titleTextStyle,
     this.systemOverlayStyle,
     this.actionsPadding,
+    this.variant,
   }) : assert(
          color == null || backgroundColor == null,
          'The color and backgroundColor parameters mean the same thing. Only specify one.',
-       );
+       ),
+       assert(variant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
 
   /// Overrides the default value of [AppBar.backgroundColor].
   final Color? backgroundColor;
@@ -466,6 +469,9 @@ class AppBarThemeData with Diagnosticable {
   /// Overrides the default value of [AppBar.actionsPadding].
   final EdgeInsetsGeometry? actionsPadding;
 
+  /// The style variant of Material Design used by [AppBar].
+  final StyleVariant? variant;
+
   /// Creates a copy of this object but with the given fields replaced with the
   /// new values.
   AppBarThemeData copyWith({
@@ -491,6 +497,7 @@ class AppBarThemeData with Diagnosticable {
     TextStyle? titleTextStyle,
     SystemUiOverlayStyle? systemOverlayStyle,
     EdgeInsetsGeometry? actionsPadding,
+    StyleVariant? variant,
   }) {
     return AppBarThemeData(
       backgroundColor: backgroundColor ?? color ?? this.backgroundColor,
@@ -510,6 +517,7 @@ class AppBarThemeData with Diagnosticable {
       titleTextStyle: titleTextStyle ?? this.titleTextStyle,
       systemOverlayStyle: systemOverlayStyle ?? this.systemOverlayStyle,
       actionsPadding: actionsPadding ?? this.actionsPadding,
+      variant: variant ?? this.variant,
     );
   }
 
@@ -538,6 +546,7 @@ class AppBarThemeData with Diagnosticable {
       titleTextStyle: TextStyle.lerp(a.titleTextStyle, b.titleTextStyle, t),
       systemOverlayStyle: t < 0.5 ? a.systemOverlayStyle : b.systemOverlayStyle,
       actionsPadding: EdgeInsetsGeometry.lerp(a.actionsPadding, b.actionsPadding, t),
+      variant: t < 0.5 ? a.variant : b.variant,
     );
   }
 
@@ -560,6 +569,7 @@ class AppBarThemeData with Diagnosticable {
     titleTextStyle,
     systemOverlayStyle,
     actionsPadding,
+    variant,
   );
 
   @override
@@ -587,7 +597,8 @@ class AppBarThemeData with Diagnosticable {
         other.toolbarTextStyle == toolbarTextStyle &&
         other.titleTextStyle == titleTextStyle &&
         other.systemOverlayStyle == systemOverlayStyle &&
-        other.actionsPadding == actionsPadding;
+        other.actionsPadding == actionsPadding &&
+        other.variant == variant;
   }
 
   @override
@@ -633,5 +644,6 @@ class AppBarThemeData with Diagnosticable {
         defaultValue: null,
       ),
     );
+    properties.add(EnumProperty<StyleVariant>('variant', variant, defaultValue: null));
   }
 }

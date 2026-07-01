@@ -7,6 +7,21 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+class _SliderThemeDataWithExpressiveVariant extends SliderThemeData {
+  const _SliderThemeDataWithExpressiveVariant();
+
+  @override
+  StyleVariant? get variant => .material3Expressive;
+}
+
+Matcher get _throwsUnsupportedStyleVariantAssertion {
+  return isA<AssertionError>().having(
+    (AssertionError error) => error.message,
+    'message',
+    kUnsupportedStyleVariantAssertionMessage,
+  );
+}
+
 void main() {
   test('SliderThemeData copyWith, ==, hashCode basics', () {
     expect(const SliderThemeData(), const SliderThemeData().copyWith());
@@ -16,6 +31,34 @@ void main() {
   test('SliderThemeData lerp special cases', () {
     const data = SliderThemeData();
     expect(identical(SliderThemeData.lerp(data, data, 0.5), data), true);
+  });
+
+  testWidgets('RangeSlider asserts on unsupported style variants', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: SliderTheme(
+          data: const _SliderThemeDataWithExpressiveVariant(),
+          child: Material(
+            child: RangeSlider(values: const RangeValues(0.25, 0.75), onChanged: (_) {}),
+          ),
+        ),
+      ),
+    );
+
+    expect(tester.takeException(), _throwsUnsupportedStyleVariantAssertion);
+  });
+
+  testWidgets('Slider asserts on unsupported style variants', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: SliderTheme(
+          data: const _SliderThemeDataWithExpressiveVariant(),
+          child: Material(child: Slider(value: 0.5, onChanged: (_) {})),
+        ),
+      ),
+    );
+
+    expect(tester.takeException(), _throwsUnsupportedStyleVariantAssertion);
   });
 
   testWidgets('Default SliderThemeData debugFillProperties', (WidgetTester tester) async {

@@ -18,6 +18,7 @@ import 'button_style_button.dart';
 import 'color_scheme.dart';
 import 'colors.dart';
 import 'constants.dart';
+import 'debug.dart';
 import 'ink_ripple.dart';
 import 'ink_well.dart';
 import 'material_state.dart';
@@ -378,6 +379,8 @@ class TextButton extends ButtonStyleButton {
   @override
   ButtonStyle defaultStyleOf(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    final StyleVariant effectiveVariant = TextButtonTheme.of(context).variant ?? theme.variant;
+    assert(effectiveVariant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
     final ColorScheme colorScheme = theme.colorScheme;
     final ButtonStyle buttonStyle = theme.useMaterial3
         ? _TextButtonDefaultsM3(context)

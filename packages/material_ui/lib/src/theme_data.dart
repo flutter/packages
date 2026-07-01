@@ -29,6 +29,7 @@ import 'colors.dart';
 import 'constants.dart';
 import 'data_table_theme.dart';
 import 'date_picker_theme.dart';
+import 'debug.dart';
 import 'dialog_theme.dart';
 import 'divider_theme.dart';
 import 'drawer_theme.dart';
@@ -182,6 +183,15 @@ enum MaterialTapTargetSize {
   shrinkWrap,
 }
 
+/// Defines the Material Design style variant used by Material components.
+enum StyleVariant {
+  /// The Material Design 3 style variant.
+  material3,
+
+  /// The Material Design 3 Expressive style variant.
+  material3Expressive,
+}
+
 /// Defines the configuration of the overall visual [Theme] for a [MaterialApp]
 /// or a widget subtree within the app.
 ///
@@ -282,6 +292,7 @@ class ThemeData with Diagnosticable {
     InteractiveInkFeatureFactory? splashFactory,
     bool? useMaterial3,
     bool? useSystemColors,
+    StyleVariant? variant,
     VisualDensity? visualDensity,
     // COLOR
     ColorScheme? colorScheme,
@@ -385,6 +396,8 @@ class ThemeData with Diagnosticable {
     cupertinoOverrideTheme = cupertinoOverrideTheme?.noDefault();
     extensions ??= <ThemeExtension<dynamic>>[];
     adaptations ??= <Adaptation<Object>>[];
+    variant ??= StyleVariant.material3;
+    assert(variant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
     // TODO(bleroux): Clean this up once the type of `inputDecorationTheme` is changed to `InputDecorationThemeData`
     if (inputDecorationTheme != null) {
       if (inputDecorationTheme is InputDecorationTheme) {
@@ -605,6 +618,7 @@ class ThemeData with Diagnosticable {
       scrollbarTheme: scrollbarTheme,
       splashFactory: splashFactory,
       useMaterial3: useMaterial3,
+      variant: variant,
       visualDensity: visualDensity,
       // COLOR
       canvasColor: canvasColor,
@@ -715,6 +729,7 @@ class ThemeData with Diagnosticable {
     required this.scrollbarTheme,
     required this.splashFactory,
     required this.useMaterial3,
+    required this.variant,
     required this.visualDensity,
     // COLOR
     required this.colorScheme,
@@ -806,7 +821,8 @@ class ThemeData with Diagnosticable {
       'This feature was deprecated after v3.28.0-1.0.pre.',
     )
     required this.indicatorColor,
-  }) : // DEPRECATED (newest deprecations at the bottom)
+  }) : assert(variant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage),
+       // DEPRECATED (newest deprecations at the bottom)
        // should not be `required`, use getter pattern to avoid breakages.
        _buttonBarTheme = buttonBarTheme,
        assert(buttonBarTheme != null);
@@ -841,6 +857,7 @@ class ThemeData with Diagnosticable {
     required ColorScheme colorScheme,
     TextTheme? textTheme,
     bool? useMaterial3,
+    StyleVariant? variant,
   }) {
     final isDark = colorScheme.brightness == Brightness.dark;
 
@@ -861,6 +878,7 @@ class ThemeData with Diagnosticable {
       textTheme: textTheme,
       applyElevationOverlayColor: isDark,
       useMaterial3: useMaterial3,
+      variant: variant,
     );
   }
 
@@ -868,15 +886,15 @@ class ThemeData with Diagnosticable {
   ///
   /// This theme does not contain text geometry. Instead, it is expected that
   /// this theme is localized using text geometry using [ThemeData.localize].
-  factory ThemeData.light({bool? useMaterial3}) =>
-      ThemeData(brightness: Brightness.light, useMaterial3: useMaterial3);
+  factory ThemeData.light({bool? useMaterial3, StyleVariant? variant}) =>
+      ThemeData(brightness: Brightness.light, useMaterial3: useMaterial3, variant: variant);
 
   /// A default dark theme.
   ///
   /// This theme does not contain text geometry. Instead, it is expected that
   /// this theme is localized using text geometry using [ThemeData.localize].
-  factory ThemeData.dark({bool? useMaterial3}) =>
-      ThemeData(brightness: Brightness.dark, useMaterial3: useMaterial3);
+  factory ThemeData.dark({bool? useMaterial3, StyleVariant? variant}) =>
+      ThemeData(brightness: Brightness.dark, useMaterial3: useMaterial3, variant: variant);
 
   /// The default color theme. Same as [ThemeData.light].
   ///
@@ -887,7 +905,8 @@ class ThemeData with Diagnosticable {
   ///
   /// Most applications would use [Theme.of], which provides correct localized
   /// text geometry.
-  factory ThemeData.fallback({bool? useMaterial3}) => ThemeData.light(useMaterial3: useMaterial3);
+  factory ThemeData.fallback({bool? useMaterial3, StyleVariant? variant}) =>
+      ThemeData.light(useMaterial3: useMaterial3, variant: variant);
 
   /// Used to obtain a particular [Adaptation] from [adaptationMap].
   ///
@@ -1144,6 +1163,11 @@ class ThemeData with Diagnosticable {
   ///
   ///   * [Material 3 specification](https://m3.material.io/).
   final bool useMaterial3;
+
+  /// The style variant of Material Design used by Material components.
+  ///
+  /// Defaults to [StyleVariant.material3].
+  final StyleVariant variant;
 
   /// The density value for specifying the compactness of various UI components.
   ///
@@ -1498,6 +1522,7 @@ class ThemeData with Diagnosticable {
     TargetPlatform? platform,
     ScrollbarThemeData? scrollbarTheme,
     InteractiveInkFeatureFactory? splashFactory,
+    StyleVariant? variant,
     VisualDensity? visualDensity,
     // COLOR
     ColorScheme? colorScheme,
@@ -1634,6 +1659,7 @@ class ThemeData with Diagnosticable {
       // When deprecated useMaterial3 removed, maintain `this.useMaterial3` here
       // for == evaluation.
       useMaterial3: useMaterial3 ?? this.useMaterial3,
+      variant: variant ?? this.variant,
       visualDensity: visualDensity ?? this.visualDensity,
       // COLOR
       canvasColor: canvasColor ?? this.canvasColor,
@@ -1959,6 +1985,7 @@ class ThemeData with Diagnosticable {
       scrollbarTheme: ScrollbarThemeData.lerp(a.scrollbarTheme, b.scrollbarTheme, t),
       splashFactory: t < 0.5 ? a.splashFactory : b.splashFactory,
       useMaterial3: t < 0.5 ? a.useMaterial3 : b.useMaterial3,
+      variant: t < 0.5 ? a.variant : b.variant,
       visualDensity: VisualDensity.lerp(a.visualDensity, b.visualDensity, t),
       // COLOR
       canvasColor: Color.lerp(a.canvasColor, b.canvasColor, t)!,
@@ -2107,6 +2134,7 @@ class ThemeData with Diagnosticable {
         other.scrollbarTheme == scrollbarTheme &&
         other.splashFactory == splashFactory &&
         other.useMaterial3 == useMaterial3 &&
+        other.variant == variant &&
         other.visualDensity == visualDensity &&
         // COLOR
         other.canvasColor == canvasColor &&
@@ -2207,6 +2235,7 @@ class ThemeData with Diagnosticable {
       scrollbarTheme,
       splashFactory,
       useMaterial3,
+      variant,
       visualDensity,
       // COLOR
       canvasColor,
@@ -2378,6 +2407,14 @@ class ThemeData with Diagnosticable {
         'useMaterial3',
         useMaterial3,
         defaultValue: defaultData.useMaterial3,
+        level: DiagnosticLevel.debug,
+      ),
+    );
+    properties.add(
+      EnumProperty<StyleVariant>(
+        'variant',
+        variant,
+        defaultValue: defaultData.variant,
         level: DiagnosticLevel.debug,
       ),
     );
