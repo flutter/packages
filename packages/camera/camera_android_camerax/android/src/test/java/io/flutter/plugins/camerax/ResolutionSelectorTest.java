@@ -28,11 +28,64 @@ public class ResolutionSelectorTest {
     final AspectRatioStrategy aspectRatioStrategy = mock(AspectRatioStrategy.class);
 
     final ResolutionSelector instance =
-        api.pigeon_defaultConstructor(resolutionFilter, resolutionStrategy, aspectRatioStrategy);
+        api.pigeon_defaultConstructor(
+            resolutionFilter, resolutionStrategy, null, aspectRatioStrategy);
 
     assertEquals(instance.getResolutionFilter(), resolutionFilter);
     assertEquals(instance.getResolutionStrategy(), resolutionStrategy);
     assertEquals(instance.getAspectRatioStrategy(), aspectRatioStrategy);
+  }
+
+  @Test
+  public void
+      pigeon_defaultConstructor_setsPreferHigherResolutionOverCaptureRateWhenRequested() {
+    final PigeonApiResolutionSelector api =
+        new TestProxyApiRegistrar().getPigeonApiResolutionSelector();
+
+    final ResolutionSelector instance =
+        api.pigeon_defaultConstructor(
+            null,
+            ResolutionStrategy.HIGHEST_AVAILABLE_STRATEGY,
+            (long) ResolutionSelector.PREFER_HIGHER_RESOLUTION_OVER_CAPTURE_RATE,
+            null);
+
+    assertEquals(
+        ResolutionSelector.PREFER_HIGHER_RESOLUTION_OVER_CAPTURE_RATE,
+        instance.getAllowedResolutionMode());
+  }
+
+  @Test
+  public void
+      pigeon_defaultConstructor_setsPreferCaptureRateOverHigherResolutionWhenRequested() {
+    final PigeonApiResolutionSelector api =
+        new TestProxyApiRegistrar().getPigeonApiResolutionSelector();
+
+    final ResolutionSelector instance =
+        api.pigeon_defaultConstructor(
+            null,
+            ResolutionStrategy.HIGHEST_AVAILABLE_STRATEGY,
+            (long) ResolutionSelector.PREFER_CAPTURE_RATE_OVER_HIGHER_RESOLUTION,
+            null);
+
+    assertEquals(
+        ResolutionSelector.PREFER_CAPTURE_RATE_OVER_HIGHER_RESOLUTION,
+        instance.getAllowedResolutionMode());
+  }
+
+  @Test
+  public void allowedResolutionMode_returnsExpectedAllowedResolutionMode() {
+    final PigeonApiResolutionSelector api =
+        new TestProxyApiRegistrar().getPigeonApiResolutionSelector();
+
+    final ResolutionSelector instance =
+        new ResolutionSelector.Builder()
+            .setAllowedResolutionMode(
+                ResolutionSelector.PREFER_HIGHER_RESOLUTION_OVER_CAPTURE_RATE)
+            .build();
+
+    assertEquals(
+        (long) ResolutionSelector.PREFER_HIGHER_RESOLUTION_OVER_CAPTURE_RATE,
+        api.allowedResolutionMode(instance).longValue());
   }
 
   @Test
