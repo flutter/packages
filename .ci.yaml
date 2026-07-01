@@ -133,6 +133,15 @@ targets:
           {"dependency": "open_jdk", "version": "version:21"}
         ]
 
+  - name: Linux coverage_checks
+    recipe: packages/packages
+    bringup: true
+    timeout: 60
+    properties:
+      target_file: coverage_checks.yaml
+      channel: master
+      version_file: flutter_master.version
+
   - name: Linux dart_unit_test_shard_1 master
     recipe: packages/packages
     timeout: 60
