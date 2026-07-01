@@ -96,7 +96,7 @@ abstract class PackageCommand extends Command<void> {
           'Cannot be combined with $_packagesArg.\n',
     );
     argParser.addFlag(
-      _runOnDirtyPackagesArg,
+      runOnDirtyPackagesArg,
       negatable: false,
       help:
           'Run the command on packages with changes that have not been committed.\n'
@@ -158,6 +158,10 @@ abstract class PackageCommand extends Command<void> {
           'Currently only logs per-package timing for multi-package commands, '
           'but more information may be added in the future.',
     );
+    argParser.addFlag(
+      runOnStagedPackagesArg,
+      help: 'Run the command on all packages with staged changes.',
+    );
   }
 
   // Package selection.
@@ -166,10 +170,16 @@ abstract class PackageCommand extends Command<void> {
   static const String _currentPackageArg = 'current-package';
   static const String _pluginsLegacyAliasArg = 'plugins';
   static const String _runOnChangedPackagesArg = 'run-on-changed-packages';
-  static const String _runOnDirtyPackagesArg = 'run-on-dirty-packages';
   static const String _exactMatchOnlyArg = 'exact-match-only';
   static const String _excludeArg = 'exclude';
   static const String _filterPackagesArg = 'filter-packages-to';
+
+  /// Package selection flag for packages with staged changes.
+  static const String runOnStagedPackagesArg = 'run-on-staged-packages';
+
+  /// Package selection flag for packages with any changes (staged or not).
+  static const String runOnDirtyPackagesArg = 'run-on-dirty-packages';
+
   // Diff base selection.
   static const String _baseBranchArg = 'base-branch';
   static const String _baseShaArg = 'base-sha';
@@ -384,9 +394,10 @@ abstract class PackageCommand extends Command<void> {
     final packageSelectionFlags = <String>{
       _packagesArg,
       _runOnChangedPackagesArg,
-      _runOnDirtyPackagesArg,
+      runOnDirtyPackagesArg,
       _packagesForBranchArg,
       _currentPackageArg,
+      runOnStagedPackagesArg,
     };
     if (packageSelectionFlags.where((String flag) => argResults!.wasParsed(flag)).length > 1) {
       printError(
@@ -404,7 +415,8 @@ abstract class PackageCommand extends Command<void> {
     final bool allowGroupMatching =
         !(getBoolArg(_exactMatchOnlyArg) ||
             argResults!.wasParsed(_runOnChangedPackagesArg) ||
-            argResults!.wasParsed(_runOnDirtyPackagesArg) ||
+            argResults!.wasParsed(runOnDirtyPackagesArg) ||
+            argResults!.wasParsed(runOnStagedPackagesArg) ||
             argResults!.wasParsed(_packagesForBranchArg));
 
     var packages = Set<String>.from(getStringListArg(_packagesArg));
@@ -458,7 +470,7 @@ abstract class PackageCommand extends Command<void> {
         print('Running for all packages that have diffs relative to "$baseSha"\n');
         packages = _getChangedPackageNames(changedFiles);
       }
-    } else if (getBoolArg(_runOnDirtyPackagesArg)) {
+    } else if (getBoolArg(runOnDirtyPackagesArg)) {
       final gitVersionFinder = GitVersionFinder(await gitDir, baseSha: 'HEAD');
       print('Running for all packages that have uncommitted changes\n');
       // _changesRequireFullTest is deliberately not used here, as this flag is
@@ -482,6 +494,15 @@ abstract class PackageCommand extends Command<void> {
         throw ToolExit(exitInvalidArguments);
       }
       packages = <String>{currentPackageName};
+    } else if (getBoolArg(runOnStagedPackagesArg)) {
+      final gitVersionFinder = GitVersionFinder(await gitDir, baseSha: 'HEAD');
+      print('Running for all packages that have staged changes\n');
+      packages = _getChangedPackageNames(
+        await gitVersionFinder.getStagedFiles(),
+      );
+      if (packages.isEmpty) {
+        return;
+      }
     }
 
     final Set<String> excludedPackageNames = getExcludedPackageNames();
