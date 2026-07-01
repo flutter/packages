@@ -320,17 +320,15 @@ class AnalyzeCommand extends PackageLoopingCommand {
     ];
 
     final Pubspec pubspec = package.parsePubspec();
+    final errors = <String>[];
     for (final runner in customCheckRunners) {
       final bool hasDependency = pubspec.devDependencies.containsKey(runner.dependencyName);
       if (hasDependency) {
-        final PackageResult result = await runner.run(package);
-        if (result.state == RunState.failed) {
-          return result;
-        }
+        errors.addAll(await runner.run(package));
       }
     }
 
-    return PackageResult.success();
+    return errors.isEmpty ? PackageResult.success() : PackageResult.fail(errors);
   }
 
   /// Retrieves the configured cyclomatic complexity threshold from the local
@@ -363,9 +361,9 @@ class AnalyzeCommand extends PackageLoopingCommand {
   /// Runs the `dart_code_linter` metrics analyzer on the package.
   ///
   /// Assumes `dart_code_linter` is present in `dev_dependencies`.
-  Future<PackageResult> _runDartCodeLinterForPackage(RepositoryPackage package) async {
+  Future<List<String>> _runDartCodeLinterForPackage(RepositoryPackage package) async {
     if (!package.libDirectory.existsSync()) {
-      return PackageResult.success();
+      return <String>[];
     }
     print('Running dart_code_linter:metrics analysis...');
     final int linterExitCode = await processRunner.runAndStream(_dartBinaryPath, <String>[
@@ -378,12 +376,12 @@ class AnalyzeCommand extends PackageLoopingCommand {
     if (linterExitCode != 0) {
       final int? threshold = _getLinterThreshold(package);
       final thresholdMessage = threshold != null ? ' (configured threshold: $threshold)' : '';
-      return PackageResult.fail(<String>[
+      return <String>[
         'Metrics violations found$thresholdMessage. See the package\'s local "analysis_options.yaml" for configured thresholds.',
-      ]);
+      ];
     }
 
-    return PackageResult.success();
+    return <String>[];
   }
 
   Future<bool> _runPubCommand(RepositoryPackage package, String command) async {
@@ -519,5 +517,5 @@ class _CustomLinter {
   final String dependencyName;
 
   /// The runner function that executes the custom check.
-  final Future<PackageResult> Function(RepositoryPackage) run;
+  final Future<List<String>> Function(RepositoryPackage) run;
 }
