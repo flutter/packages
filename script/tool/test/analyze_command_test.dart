@@ -442,6 +442,252 @@ void main() {
       });
     });
 
+    group('dart_code_linter', () {
+      test('runs dart_code_linter if present in dev_dependencies', () async {
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          isFlutter: true,
+        );
+        _writeFakePubspecWithLinter(package, inDevDependencies: true);
+
+        _mockCallsForFlutterAnalyze(
+          processRunner,
+          extraDartCalls: [
+            FakeProcessInfo(MockProcess(), <String>['run', 'dart_code_linter:metrics']),
+          ],
+        );
+
+        final List<String> output = await runCapturingPrint(runner, <String>['analyze']);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall('flutter', const <String>['pub', 'get'], package.path),
+            ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
+            ProcessCall('dart', const <String>[
+              'run',
+              'dart_code_linter:metrics',
+              'analyze',
+              'lib',
+              '--set-exit-on-violation-level=warning',
+            ], package.path),
+          ]),
+        );
+        expect(output, contains('Running dart_code_linter:metrics analysis...'));
+      });
+
+      test('does not run dart_code_linter when --downgrade is specified', () async {
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          isFlutter: true,
+        );
+        _writeFakePubspecWithLinter(package, inDevDependencies: true);
+
+        processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(), <String>['pub', 'downgrade']),
+          FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
+        ];
+        processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(), <String>['analyze', '--fatal-infos']),
+        ];
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'analyze',
+          '--downgrade',
+        ]);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall('flutter', const <String>['pub', 'downgrade'], package.path),
+            ProcessCall('flutter', const <String>['pub', 'get'], package.path),
+            ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
+          ]),
+        );
+        final String combinedOutput = output.join('\n').toLowerCase();
+        expect(combinedOutput, isNot(contains('dart_code_linter')));
+        expect(combinedOutput, isNot(contains('metrics')));
+      });
+
+      test('does not run dart_code_linter if present in dependencies', () async {
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          isFlutter: true,
+        );
+        _writeFakePubspecWithLinter(package, inDependencies: true);
+
+        _mockCallsForFlutterAnalyze(processRunner);
+
+        final List<String> output = await runCapturingPrint(runner, <String>['analyze']);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall('flutter', const <String>['pub', 'get'], package.path),
+            ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
+          ]),
+        );
+        final String combinedOutput = output.join('\n').toLowerCase();
+        expect(combinedOutput, isNot(contains('dart_code_linter')));
+        expect(combinedOutput, isNot(contains('metrics')));
+      });
+
+      test('does not run dart_code_linter if not present', () async {
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          isFlutter: true,
+        );
+
+        _mockCallsForFlutterAnalyze(processRunner);
+
+        final List<String> output = await runCapturingPrint(runner, <String>['analyze']);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall('flutter', const <String>['pub', 'get'], package.path),
+            ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
+          ]),
+        );
+        final String combinedOutput = output.join('\n').toLowerCase();
+        expect(combinedOutput, isNot(contains('dart_code_linter')));
+        expect(combinedOutput, isNot(contains('metrics')));
+      });
+
+      test('runs dart_code_linter using dart for pure Dart packages', () async {
+        final RepositoryPackage package = createFakePackage('a_package', packagesDir);
+        _writeFakePubspecWithLinter(package, inDevDependencies: true, includeFlutter: false);
+
+        processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
+          FakeProcessInfo(MockProcess(), <String>['analyze']),
+          FakeProcessInfo(MockProcess(), <String>['run', 'dart_code_linter:metrics']),
+        ];
+
+        final List<String> output = await runCapturingPrint(runner, <String>['analyze']);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall('dart', const <String>['pub', 'get'], package.path),
+            ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
+            ProcessCall('dart', const <String>[
+              'run',
+              'dart_code_linter:metrics',
+              'analyze',
+              'lib',
+              '--set-exit-on-violation-level=warning',
+            ], package.path),
+          ]),
+        );
+        expect(output, contains('Running dart_code_linter:metrics analysis...'));
+      });
+
+      test('skips dart_code_linter if lib/ does not exist', () async {
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          isFlutter: true,
+        );
+        _writeFakePubspecWithLinter(package, inDevDependencies: true);
+        package.libDirectory.deleteSync(recursive: true);
+
+        _mockCallsForFlutterAnalyze(processRunner);
+
+        final List<String> output = await runCapturingPrint(runner, <String>['analyze']);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall('flutter', const <String>['pub', 'get'], package.path),
+            ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
+          ]),
+        );
+        final String combinedOutput = output.join('\n').toLowerCase();
+        expect(combinedOutput, isNot(contains('dart_code_linter')));
+        expect(combinedOutput, isNot(contains('metrics')));
+      });
+
+      test('fails if dart_code_linter analysis fails', () async {
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          isFlutter: true,
+        );
+        _writeFakePubspecWithLinter(package, inDevDependencies: true);
+
+        _mockCallsForFlutterAnalyze(
+          processRunner,
+          extraDartCalls: [
+            FakeProcessInfo(MockProcess(exitCode: 1), <String>['run', 'dart_code_linter:metrics']),
+          ],
+        );
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+          runner,
+          <String>['analyze'],
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+              'Metrics violations found. See the package\'s local "analysis_options.yaml" for configured thresholds.',
+            ),
+          ]),
+        );
+      });
+
+      test('fails with threshold if analysis_options.yaml defines one', () async {
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          isFlutter: true,
+        );
+        _writeFakePubspecWithLinter(package, inDevDependencies: true);
+        package.directory.childFile('analysis_options.yaml').writeAsStringSync('''
+dart_code_linter:
+  metrics:
+    cyclomatic-complexity: 15
+''');
+
+        _mockCallsForFlutterAnalyze(
+          processRunner,
+          extraDartCalls: [
+            FakeProcessInfo(MockProcess(exitCode: 1), <String>['run', 'dart_code_linter:metrics']),
+          ],
+        );
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+          runner,
+          <String>['analyze', '--custom-analysis', 'a_package'],
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+              'Metrics violations found (configured threshold: 15). See the package\'s local "analysis_options.yaml" for configured thresholds.',
+            ),
+          ]),
+        );
+      });
+    });
+
     group('skills analysis via ci_config.yaml', () {
       test('fails if package configuration has no dart files in .agents/skills', () async {
         final RepositoryPackage plugin = createFakePlugin('foo', packagesDir);
@@ -551,6 +797,59 @@ void main() {
           contains('  foo:\n    Main package analysis failed\n    Skills analysis failed'),
         );
       });
+
+      test(
+        'fails with package analysis, skills analysis, and custom linter violations listed if all fail',
+        () async {
+          final RepositoryPackage package = createFakePackage(
+            'a_package',
+            packagesDir,
+            isFlutter: true,
+          );
+          _writeFakePubspecWithLinter(package, inDevDependencies: true);
+          package.ciConfigFile.writeAsStringSync('analyze_skills: true');
+
+          package.directory
+              .childDirectory('.agents')
+              .childDirectory('skills')
+              .childFile('test.dart')
+              .createSync(recursive: true);
+
+          processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
+            FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
+          ];
+          processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+            FakeProcessInfo(MockProcess(exitCode: 1), <String>['analyze']), // main package
+            FakeProcessInfo(MockProcess(exitCode: 1), <String>['analyze']), // skills package
+            FakeProcessInfo(MockProcess(exitCode: 1), <String>[
+              'run',
+              'dart_code_linter:metrics',
+            ]), // custom linter
+          ];
+
+          Error? commandError;
+          final List<String> output = await runCapturingPrint(
+            runner,
+            <String>['analyze', '--custom-analysis', 'a_package'],
+            errorHandler: (Error e) {
+              commandError = e;
+            },
+          );
+
+          expect(commandError, isA<ToolExit>());
+          final String joinedOutput = output.join('\n');
+          expect(joinedOutput, contains('The following packages had errors:'));
+          expect(
+            joinedOutput,
+            contains(
+              '  a_package:\n'
+              '    Main package analysis failed\n'
+              '    Skills analysis failed\n'
+              '    Metrics violations found. See the package\'s local "analysis_options.yaml" for configured thresholds.',
+            ),
+          );
+        },
+      );
     });
 
     test('skips if requested if "pub get" fails in the resolver', () async {
@@ -1636,4 +1935,38 @@ packages/package_a/lib/foo.dart
       });
     });
   });
+}
+
+void _writeFakePubspecWithLinter(
+  RepositoryPackage package, {
+  bool inDevDependencies = false,
+  bool inDependencies = false,
+  bool includeFlutter = true,
+}) {
+  package.pubspecFile.writeAsStringSync('''
+name: ${package.directory.basename}
+version: 0.0.1
+environment:
+  sdk: ">=2.14.0 <4.0.0"
+  ${includeFlutter ? 'flutter: ">=2.5.0"' : ''}
+dependencies:
+  ${includeFlutter ? 'flutter:\n    sdk: flutter' : ''}
+${inDependencies ? '  dart_code_linter: 4.1.5' : ''}
+${inDevDependencies ? 'dev_dependencies:\n  dart_code_linter: 4.1.5' : ''}
+''');
+}
+
+void _mockCallsForFlutterAnalyze(
+  RecordingProcessRunner processRunner, {
+  List<FakeProcessInfo> extraFlutterCalls = const <FakeProcessInfo>[],
+  List<FakeProcessInfo> extraDartCalls = const <FakeProcessInfo>[],
+}) {
+  processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
+    FakeProcessInfo(MockProcess(), const <String>['pub', 'get']),
+    ...extraFlutterCalls,
+  ];
+  processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+    FakeProcessInfo(MockProcess(), const <String>['analyze']),
+    ...extraDartCalls,
+  ];
 }

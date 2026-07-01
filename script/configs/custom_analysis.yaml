@@ -34,3 +34,6 @@
 - rfw/example
 # Disables docs requirements, as it is test code.
 - web_benchmarks/testing/test_app
+# Uses custom analysis to enable the cyclomatic complexity linter plugin.
+- camera/camera_android_camerax
+
