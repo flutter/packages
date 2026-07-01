@@ -1,6 +1,21 @@
+## 0.4.10+1
+
+* Fixes SK2Transaction to expose the real purchased quantity instead of defaulting to 1.
+
+## 0.4.10
+
+* Clarifies `completePurchase` usage and the consequences of unfinished transactions in the README and API docstrings.
+* Prevents duplicate purchase attempts in StoreKit 2 by throwing a `storekit_duplicate_product_object` error when a product already has an unfinished transaction.
+
+## 0.4.9
+
+* Add support for offer codes in StoreKit 2.
+* Updates minimum supported SDK version to Flutter 3.38.
+
 ## 0.4.8+1
 
 * Fixes StoreKit 2 purchase flow to send cancelled/pending/unverified results to `purchaseStream`.
+
 ## 0.4.8
 
 * Fixes an issue causing StoreKit2 purchases to be reported as `restored` and left in an

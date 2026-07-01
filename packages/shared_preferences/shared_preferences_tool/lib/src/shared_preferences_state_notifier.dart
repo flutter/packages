@@ -10,13 +10,11 @@ import 'shared_preferences_state.dart';
 import 'shared_preferences_tool_eval.dart';
 
 /// A [ValueNotifier] that manages the state of the shared preferences tool.
-class SharedPreferencesStateNotifier
-    extends ValueNotifier<SharedPreferencesState> {
+class SharedPreferencesStateNotifier extends ValueNotifier<SharedPreferencesState> {
   /// Default constructor that takes an instance of [SharedPreferencesToolEval].
   ///
   /// You don't need to call this constructor directly. Use [SharedPreferencesStateNotifierProvider] instead.
-  SharedPreferencesStateNotifier(this._eval)
-    : super(const SharedPreferencesState());
+  SharedPreferencesStateNotifier(this._eval) : super(const SharedPreferencesState());
 
   final SharedPreferencesToolEval _eval;
 
@@ -31,10 +29,7 @@ class SharedPreferencesStateNotifier
   ///
   /// If this is called when data already exists, it will update the list of keys.
   Future<void> fetchAllKeys() async {
-    value = value.copyWith(
-      selectedKey: null,
-      allKeys: const AsyncState<List<String>>.loading(),
-    );
+    value = value.copyWith(selectedKey: null, allKeys: const AsyncState<List<String>>.loading());
 
     try {
       final KeysResult allKeys = await _eval.fetchAllKeys();
@@ -49,13 +44,9 @@ class SharedPreferencesStateNotifier
             key,
       ];
 
-      value = value.copyWith(
-        allKeys: AsyncState<List<String>>.data(_keysForSelectedApi),
-      );
+      value = value.copyWith(allKeys: AsyncState<List<String>>.data(_keysForSelectedApi));
     } catch (error, stackTrace) {
-      value = value.copyWith(
-        allKeys: AsyncState<List<String>>.error(error, stackTrace),
-      );
+      value = value.copyWith(allKeys: AsyncState<List<String>>.error(error, stackTrace));
     }
   }
 
@@ -71,10 +62,7 @@ class SharedPreferencesStateNotifier
     );
 
     try {
-      final SharedPreferencesData keyValue = await _eval.fetchValue(
-        key,
-        _legacyApi,
-      );
+      final SharedPreferencesData keyValue = await _eval.fetchValue(key, _legacyApi);
       value = value.copyWith(
         selectedKey: SelectedSharedPreferencesKey(
           key: key,
@@ -149,9 +137,7 @@ class SharedPreferencesStateNotifier
   void selectApi({required bool legacyApi}) {
     value = value.copyWith(
       legacyApi: legacyApi,
-      allKeys: AsyncState<List<String>>.data(
-        legacyApi ? _legacyKeys : _asyncKeys,
-      ),
+      allKeys: AsyncState<List<String>>.data(legacyApi ? _legacyKeys : _asyncKeys),
     );
   }
 }

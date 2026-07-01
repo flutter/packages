@@ -39,15 +39,11 @@ Future<void> loadWebSdk({
   // If TrustedTypes are available, prepare a trusted URL.
   web.TrustedScriptURL? trustedUrl;
   if (web.window.nullableTrustedTypes != null) {
-    web.console.debug(
-      'TrustedTypes available. Creating policy: $trustedTypePolicyName'.toJS,
-    );
+    web.console.debug('TrustedTypes available. Creating policy: $trustedTypePolicyName'.toJS);
     try {
       final web.TrustedTypePolicy policy = web.window.trustedTypes.createPolicy(
         trustedTypePolicyName,
-        web.TrustedTypePolicyOptions(
-          createScriptURL: ((JSString url) => _url).toJS,
-        ),
+        web.TrustedTypePolicyOptions(createScriptURL: ((JSString url) => _url).toJS),
       );
       trustedUrl = policy.createScriptURLNoArgs(_url);
     } catch (e) {
@@ -84,15 +80,12 @@ String? _getNonce({String? suppliedNonce, web.Window? window}) {
   }
 
   final web.Window currentWindow = window ?? web.window;
-  final web.NodeList elements = currentWindow.document.querySelectorAll(
-    'script',
-  );
+  final web.NodeList elements = currentWindow.document.querySelectorAll('script');
 
   for (var i = 0; i < elements.length; i++) {
     if (elements.item(i) case final web.HTMLScriptElement element) {
       // Chrome may return an empty string instead of null.
-      final String nonce =
-          element.nullableNonce ?? element.getAttribute('nonce') ?? '';
+      final String nonce = element.nullableNonce ?? element.getAttribute('nonce') ?? '';
       if (nonce.isNotEmpty) {
         return nonce;
       }

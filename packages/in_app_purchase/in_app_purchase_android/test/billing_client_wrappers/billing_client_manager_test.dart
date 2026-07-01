@@ -23,18 +23,15 @@ void main() {
     WidgetsFlutterBinding.ensureInitialized();
     mockApi = MockInAppPurchaseApi();
     when(mockApi.startConnection(any, any, any)).thenAnswer(
-      (_) async => PlatformBillingResult(
-        responseCode: PlatformBillingResponse.ok,
-        debugMessage: '',
-      ),
+      (_) async =>
+          PlatformBillingResult(responseCode: PlatformBillingResponse.ok, debugMessage: ''),
     );
     manager = BillingClientManager(
       billingClientFactory:
           (
             PurchasesUpdatedListener listener,
             UserSelectedAlternativeBillingListener? alternativeBillingListener,
-          ) =>
-              BillingClient(listener, alternativeBillingListener, api: mockApi),
+          ) => BillingClient(listener, alternativeBillingListener, api: mockApi),
     );
   });
 
@@ -47,10 +44,7 @@ void main() {
       final connectedCompleter = Completer<void>();
       when(mockApi.startConnection(any, any, any)).thenAnswer((_) async {
         connectedCompleter.complete();
-        return PlatformBillingResult(
-          responseCode: PlatformBillingResponse.ok,
-          debugMessage: '',
-        );
+        return PlatformBillingResult(responseCode: PlatformBillingResponse.ok, debugMessage: '');
       });
 
       final calledCompleter1 = Completer<void>();
@@ -62,9 +56,7 @@ void main() {
         }),
       );
       unawaited(
-        manager.runWithClientNonRetryable(
-          (BillingClient _) async => calledCompleter2.complete(),
-        ),
+        manager.runWithClientNonRetryable((BillingClient _) async => calledCompleter2.complete()),
       );
       expect(calledCompleter1.isCompleted, equals(false));
       expect(calledCompleter1.isCompleted, equals(false));
@@ -73,97 +65,71 @@ void main() {
       await expectLater(calledCompleter2.future, completes);
     });
 
-    test(
-      're-connects when client sends onBillingServiceDisconnected',
-      () async {
-        // Ensures all asynchronous connected code finishes.
-        await manager.runWithClientNonRetryable((_) async {});
+    test('re-connects when client sends onBillingServiceDisconnected', () async {
+      // Ensures all asynchronous connected code finishes.
+      await manager.runWithClientNonRetryable((_) async {});
 
-        manager.client.hostCallbackHandler.onBillingServiceDisconnected(0);
-        verify(mockApi.startConnection(any, any, any)).called(2);
-      },
-    );
+      manager.client.hostCallbackHandler.onBillingServiceDisconnected(0);
+      verify(mockApi.startConnection(any, any, any)).called(2);
+    });
 
-    test(
-      're-connects when host calls reconnectWithBillingChoiceMode',
-      () async {
-        // Ensures all asynchronous connected code finishes.
-        await manager.runWithClientNonRetryable((_) async {});
+    test('re-connects when host calls reconnectWithBillingChoiceMode', () async {
+      // Ensures all asynchronous connected code finishes.
+      await manager.runWithClientNonRetryable((_) async {});
 
-        await manager.reconnectWithBillingChoiceMode(
-          BillingChoiceMode.alternativeBillingOnly,
+      await manager.reconnectWithBillingChoiceMode(BillingChoiceMode.alternativeBillingOnly);
+      // Verify that connection was ended.
+      verify(mockApi.endConnection()).called(1);
+
+      clearInteractions(mockApi);
+
+      /// Fake the disconnect that we would expect from a endConnectionCall.
+      manager.client.hostCallbackHandler.onBillingServiceDisconnected(0);
+      // Verify that after connection ended reconnect was called.
+      final VerificationResult result = verify(mockApi.startConnection(any, captureAny, any));
+      expect(result.captured.single, PlatformBillingChoiceMode.alternativeBillingOnly);
+    });
+
+    test('re-connects when host calls reconnectWithPendingPurchasesParams', () async {
+      // Ensures all asynchronous connected code finishes.
+      await manager.runWithClientNonRetryable((_) async {});
+
+      await manager.reconnectWithPendingPurchasesParams(
+        const PendingPurchasesParamsWrapper(enablePrepaidPlans: true),
+      );
+      // Verify that connection was ended.
+      verify(mockApi.endConnection()).called(1);
+
+      clearInteractions(mockApi);
+
+      /// Fake the disconnect that we would expect from a endConnectionCall.
+      manager.client.hostCallbackHandler.onBillingServiceDisconnected(0);
+      // Verify that after connection ended reconnect was called.
+      final VerificationResult result = verify(mockApi.startConnection(any, any, captureAny));
+      expect(
+        result.captured.single,
+        isA<PlatformPendingPurchasesParams>().having(
+          (PlatformPendingPurchasesParams params) => params.enablePrepaidPlans,
+          'enablePrepaidPlans',
+          true,
+        ),
+      );
+    });
+
+    test('re-connects when operation returns BillingResponse.serviceDisconnected', () async {
+      clearInteractions(mockApi);
+
+      var timesCalled = 0;
+      final BillingResultWrapper result = await manager.runWithClient((BillingClient _) async {
+        timesCalled++;
+        return BillingResultWrapper(
+          responseCode: timesCalled == 1 ? BillingResponse.serviceDisconnected : BillingResponse.ok,
         );
-        // Verify that connection was ended.
-        verify(mockApi.endConnection()).called(1);
-
-        clearInteractions(mockApi);
-
-        /// Fake the disconnect that we would expect from a endConnectionCall.
-        manager.client.hostCallbackHandler.onBillingServiceDisconnected(0);
-        // Verify that after connection ended reconnect was called.
-        final VerificationResult result = verify(
-          mockApi.startConnection(any, captureAny, any),
-        );
-        expect(
-          result.captured.single,
-          PlatformBillingChoiceMode.alternativeBillingOnly,
-        );
-      },
-    );
-
-    test(
-      're-connects when host calls reconnectWithPendingPurchasesParams',
-      () async {
-        // Ensures all asynchronous connected code finishes.
-        await manager.runWithClientNonRetryable((_) async {});
-
-        await manager.reconnectWithPendingPurchasesParams(
-          const PendingPurchasesParamsWrapper(enablePrepaidPlans: true),
-        );
-        // Verify that connection was ended.
-        verify(mockApi.endConnection()).called(1);
-
-        clearInteractions(mockApi);
-
-        /// Fake the disconnect that we would expect from a endConnectionCall.
-        manager.client.hostCallbackHandler.onBillingServiceDisconnected(0);
-        // Verify that after connection ended reconnect was called.
-        final VerificationResult result = verify(
-          mockApi.startConnection(any, any, captureAny),
-        );
-        expect(
-          result.captured.single,
-          isA<PlatformPendingPurchasesParams>().having(
-            (PlatformPendingPurchasesParams params) =>
-                params.enablePrepaidPlans,
-            'enablePrepaidPlans',
-            true,
-          ),
-        );
-      },
-    );
-
-    test(
-      're-connects when operation returns BillingResponse.serviceDisconnected',
-      () async {
-        clearInteractions(mockApi);
-
-        var timesCalled = 0;
-        final BillingResultWrapper result = await manager.runWithClient((
-          BillingClient _,
-        ) async {
-          timesCalled++;
-          return BillingResultWrapper(
-            responseCode: timesCalled == 1
-                ? BillingResponse.serviceDisconnected
-                : BillingResponse.ok,
-          );
-        });
-        verify(mockApi.startConnection(any, any, any)).called(1);
-        expect(timesCalled, equals(2));
-        expect(result.responseCode, equals(BillingResponse.ok));
-      },
-    );
+      });
+      verify(mockApi.startConnection(any, any, any)).called(1);
+      expect(timesCalled, equals(2));
+      expect(result.responseCode, equals(BillingResponse.ok));
+    });
 
     test('does not re-connect when disposed', () {
       clearInteractions(mockApi);
@@ -172,33 +138,29 @@ void main() {
       verify(mockApi.endConnection()).called(1);
     });
 
-    test(
-      'Emits UserChoiceDetailsWrapper when onUserChoiceAlternativeBilling is called',
-      () async {
-        // Ensures all asynchronous connected code finishes.
-        await manager.runWithClientNonRetryable((_) async {});
+    test('Emits UserChoiceDetailsWrapper when onUserChoiceAlternativeBilling is called', () async {
+      // Ensures all asynchronous connected code finishes.
+      await manager.runWithClientNonRetryable((_) async {});
 
-        const expected = UserChoiceDetailsWrapper(
-          originalExternalTransactionId: 'TransactionId',
-          externalTransactionToken: 'TransactionToken',
-          products: <UserChoiceDetailsProductWrapper>[
-            UserChoiceDetailsProductWrapper(
-              id: 'id1',
-              offerToken: 'offerToken1',
-              productType: ProductType.inapp,
-            ),
-            UserChoiceDetailsProductWrapper(
-              id: 'id2',
-              offerToken: 'offerToken2',
-              productType: ProductType.inapp,
-            ),
-          ],
-        );
-        final Future<UserChoiceDetailsWrapper> detailsFuture =
-            manager.userChoiceDetailsStream.first;
-        manager.onUserChoiceAlternativeBilling(expected);
-        expect(await detailsFuture, expected);
-      },
-    );
+      const expected = UserChoiceDetailsWrapper(
+        originalExternalTransactionId: 'TransactionId',
+        externalTransactionToken: 'TransactionToken',
+        products: <UserChoiceDetailsProductWrapper>[
+          UserChoiceDetailsProductWrapper(
+            id: 'id1',
+            offerToken: 'offerToken1',
+            productType: ProductType.inapp,
+          ),
+          UserChoiceDetailsProductWrapper(
+            id: 'id2',
+            offerToken: 'offerToken2',
+            productType: ProductType.inapp,
+          ),
+        ],
+      );
+      final Future<UserChoiceDetailsWrapper> detailsFuture = manager.userChoiceDetailsStream.first;
+      manager.onUserChoiceAlternativeBilling(expected);
+      expect(await detailsFuture, expected);
+    });
   });
 }

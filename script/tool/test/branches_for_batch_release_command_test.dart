@@ -20,31 +20,23 @@ void main() {
   late RecordingProcessRunner gitProcessRunner;
   late CommandRunner<void> runner;
 
-  void createPendingChangelogFile(
-    RepositoryPackage package,
-    String name,
-    String content,
-  ) {
+  void createPendingChangelogFile(RepositoryPackage package, String name, String content) {
     final File pendingChangelog =
         package.directory.childDirectory('pending_changelogs').childFile(name)
           ..createSync(recursive: true);
     pendingChangelog.writeAsStringSync(content);
   }
 
-  Future<List<String>> runBatchCommand({
-    void Function(Error error)? errorHandler,
-  }) => runCapturingPrint(runner, <String>[
-    'branches-for-batch-release',
-    '--packages=a_package',
-    '--branch=release-branch',
-    '--remote=origin',
-  ], errorHandler: errorHandler);
+  Future<List<String>> runBatchCommand({void Function(Error error)? errorHandler}) =>
+      runCapturingPrint(runner, <String>[
+        'branches-for-batch-release',
+        '--packages=a_package',
+        '--branch=release-branch',
+        '--remote=origin',
+      ], errorHandler: errorHandler);
 
   RepositoryPackage createTestPackage() {
-    final RepositoryPackage package = createFakePackage(
-      'a_package',
-      packagesDir,
-    );
+    final RepositoryPackage package = createFakePackage('a_package', packagesDir);
 
     package.changelogFile.writeAsStringSync('''
 ## 1.0.0
@@ -74,10 +66,7 @@ version: 1.0.0
 
     return <ProcessCall>[
       ProcessCall('git-branch', <String>['release-a_package-$version'], null),
-      ProcessCall('git-push', <String>[
-        'origin',
-        'release-a_package-$version',
-      ], null),
+      ProcessCall('git-push', <String>['origin', 'release-a_package-$version'], null),
       const ProcessCall('git-checkout', <String>['-b', 'release-branch'], null),
       ProcessCall('git-rm', rmFiles, null),
       const ProcessCall('git-add', <String>[
@@ -95,8 +84,9 @@ version: 1.0.0
   setUp(() {
     mockPlatform = MockPlatform();
     final GitDir gitDir;
-    (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) =
-        configureBaseCommandMocks(platform: mockPlatform);
+    (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) = configureBaseCommandMocks(
+      platform: mockPlatform,
+    );
     final command = BranchesForBatchReleaseCommand(
       packagesDir,
       processRunner: processRunner,
@@ -132,17 +122,11 @@ version: minor
         ]),
       );
 
-      expect(
-        package.pubspecFile.readAsStringSync(),
-        contains('version: 1.1.0'),
-      );
+      expect(package.pubspecFile.readAsStringSync(), contains('version: 1.1.0'));
       final String changelogContent = package.changelogFile.readAsStringSync();
       expect(changelogContent, startsWith('## 1.1.0'));
       expect(changelogContent, contains('A new feature'));
-      expect(
-        gitProcessRunner.recordedCalls,
-        orderedEquals(getExpectedGitCalls('1.1.0')),
-      );
+      expect(gitProcessRunner.recordedCalls, orderedEquals(getExpectedGitCalls('1.1.0')));
     });
 
     test('can bump major', () async {
@@ -166,17 +150,11 @@ version: major
         ]),
       );
 
-      expect(
-        package.pubspecFile.readAsStringSync(),
-        contains('version: 2.0.0'),
-      );
+      expect(package.pubspecFile.readAsStringSync(), contains('version: 2.0.0'));
       final String changelogContent = package.changelogFile.readAsStringSync();
       expect(changelogContent, startsWith('## 2.0.0'));
       expect(changelogContent, contains('A new feature'));
-      expect(
-        gitProcessRunner.recordedCalls,
-        orderedEquals(getExpectedGitCalls('2.0.0')),
-      );
+      expect(gitProcessRunner.recordedCalls, orderedEquals(getExpectedGitCalls('2.0.0')));
     });
 
     test('can bump patch', () async {
@@ -200,17 +178,11 @@ version: patch
         ]),
       );
 
-      expect(
-        package.pubspecFile.readAsStringSync(),
-        contains('version: 1.0.1'),
-      );
+      expect(package.pubspecFile.readAsStringSync(), contains('version: 1.0.1'));
       final String changelogContent = package.changelogFile.readAsStringSync();
       expect(changelogContent, startsWith('## 1.0.1'));
       expect(changelogContent, contains('A new feature'));
-      expect(
-        gitProcessRunner.recordedCalls,
-        orderedEquals(getExpectedGitCalls('1.0.1')),
-      );
+      expect(gitProcessRunner.recordedCalls, orderedEquals(getExpectedGitCalls('1.0.1')));
     });
 
     test('merges multiple changelogs, minor and major', () async {
@@ -238,10 +210,7 @@ version: major
         ]),
       );
 
-      expect(
-        package.pubspecFile.readAsStringSync(),
-        contains('version: 2.0.0'),
-      );
+      expect(package.pubspecFile.readAsStringSync(), contains('version: 2.0.0'));
       final String changelogContent = package.changelogFile.readAsStringSync();
       expect(changelogContent, startsWith('## 2.0.0'));
       expect(changelogContent, contains('A new feature'));
@@ -277,10 +246,7 @@ version: patch
         ]),
       );
 
-      expect(
-        package.pubspecFile.readAsStringSync(),
-        contains('version: 1.1.0'),
-      );
+      expect(package.pubspecFile.readAsStringSync(), contains('version: 1.1.0'));
       final String changelogContent = package.changelogFile.readAsStringSync();
       expect(changelogContent, startsWith('## 1.1.0'));
       expect(changelogContent, contains('A new feature'));
@@ -316,10 +282,7 @@ version: patch
         ]),
       );
 
-      expect(
-        package.pubspecFile.readAsStringSync(),
-        contains('version: 2.0.0'),
-      );
+      expect(package.pubspecFile.readAsStringSync(), contains('version: 2.0.0'));
       final String changelogContent = package.changelogFile.readAsStringSync();
       expect(changelogContent, startsWith('## 2.0.0'));
       expect(changelogContent, contains('A breaking change'));
@@ -359,10 +322,7 @@ version: patch
         ]),
       );
 
-      expect(
-        package.pubspecFile.readAsStringSync(),
-        contains('version: 2.0.0'),
-      );
+      expect(package.pubspecFile.readAsStringSync(), contains('version: 2.0.0'));
       final String changelogContent = package.changelogFile.readAsStringSync();
       expect(changelogContent, startsWith('## 2.0.0'));
       expect(changelogContent, contains('A new feature'));
@@ -370,9 +330,7 @@ version: patch
       expect(changelogContent, contains('A bug fix'));
       expect(
         gitProcessRunner.recordedCalls,
-        orderedEquals(
-          getExpectedGitCalls('2.0.0', includesB: true, includesC: true),
-        ),
+        orderedEquals(getExpectedGitCalls('2.0.0', includesB: true, includesC: true)),
       );
     });
 
@@ -401,10 +359,7 @@ version: minor
         ]),
       );
 
-      expect(
-        package.pubspecFile.readAsStringSync(),
-        contains('version: 1.1.0'),
-      );
+      expect(package.pubspecFile.readAsStringSync(), contains('version: 1.1.0'));
       final String changelogContent = package.changelogFile.readAsStringSync();
       expect(changelogContent, startsWith('## 1.1.0'));
       expect(changelogContent, contains('A new feature'));
@@ -440,10 +395,7 @@ version: skip
         ]),
       );
 
-      expect(
-        package.pubspecFile.readAsStringSync(),
-        contains('version: 1.1.0'),
-      );
+      expect(package.pubspecFile.readAsStringSync(), contains('version: 1.1.0'));
       final String changelogContent = package.changelogFile.readAsStringSync();
       expect(changelogContent, startsWith('## 1.1.0'));
       expect(changelogContent, contains('A new feature'));
@@ -473,10 +425,7 @@ version: skip
           'No version change specified in pending changelogs for a_package.',
         ]),
       );
-      expect(
-        package.pubspecFile.readAsStringSync(),
-        contains('version: 1.0.0'),
-      );
+      expect(package.pubspecFile.readAsStringSync(), contains('version: 1.0.0'));
       expect(package.changelogFile.readAsStringSync(), startsWith('## 1.0.0'));
       expect(gitProcessRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
     });
@@ -495,10 +444,7 @@ version: skip
           'No pending changelogs found for a_package.',
         ]),
       );
-      expect(
-        package.pubspecFile.readAsStringSync(),
-        contains('version: 1.0.0'),
-      );
+      expect(package.pubspecFile.readAsStringSync(), contains('version: 1.0.0'));
       expect(package.changelogFile.readAsStringSync(), startsWith('## 1.0.0'));
       expect(gitProcessRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
     });
@@ -550,10 +496,9 @@ A new feature
 changelog: A new feature
 version: major
 ''');
-      gitProcessRunner.mockProcessesForExecutable['git-checkout'] =
-          <FakeProcessInfo>[
-            FakeProcessInfo(MockProcess(stderr: 'error', exitCode: 1)),
-          ];
+      gitProcessRunner.mockProcessesForExecutable['git-checkout'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stderr: 'error', exitCode: 1)),
+      ];
       final List<String> output = await runBatchCommand(
         errorHandler: (Error e) {
           expect(e, isA<ToolExit>());
@@ -561,10 +506,7 @@ version: major
         },
       );
 
-      expect(
-        output.last,
-        contains('Failed to create branch release-branch: error'),
-      );
+      expect(output.last, contains('Failed to create branch release-branch: error'));
     });
 
     test('throw when git-rm fails', () async {
@@ -588,9 +530,7 @@ version: major
 
       expect(
         output.last,
-        contains(
-          'Failed to rm /packages/a_package/pending_changelogs/a.yaml: error',
-        ),
+        contains('Failed to rm /packages/a_package/pending_changelogs/a.yaml: error'),
       );
     });
 
@@ -603,10 +543,9 @@ version: major
 changelog: A new feature
 version: major
 ''');
-      gitProcessRunner.mockProcessesForExecutable['git-add'] =
-          <FakeProcessInfo>[
-            FakeProcessInfo(MockProcess(stderr: 'error', exitCode: 1)),
-          ];
+      gitProcessRunner.mockProcessesForExecutable['git-add'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stderr: 'error', exitCode: 1)),
+      ];
       final List<String> output = await runBatchCommand(
         errorHandler: (Error e) {
           expect(e, isA<ToolExit>());
@@ -626,10 +565,9 @@ version: major
 changelog: A new feature
 version: major
 ''');
-      gitProcessRunner.mockProcessesForExecutable['git-commit'] =
-          <FakeProcessInfo>[
-            FakeProcessInfo(MockProcess(stderr: 'error', exitCode: 1)),
-          ];
+      gitProcessRunner.mockProcessesForExecutable['git-commit'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stderr: 'error', exitCode: 1)),
+      ];
       final List<String> output = await runBatchCommand(
         errorHandler: (Error e) {
           expect(e, isA<ToolExit>());
@@ -649,10 +587,9 @@ version: major
 changelog: A new feature
 version: major
 ''');
-      gitProcessRunner.mockProcessesForExecutable['git-push'] =
-          <FakeProcessInfo>[
-            FakeProcessInfo(MockProcess(stderr: 'error', exitCode: 1)),
-          ];
+      gitProcessRunner.mockProcessesForExecutable['git-push'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stderr: 'error', exitCode: 1)),
+      ];
       final List<String> output = await runBatchCommand(
         errorHandler: (Error e) {
           expect(e, isA<ToolExit>());
@@ -660,17 +597,11 @@ version: major
         },
       );
 
-      expect(
-        output.last,
-        contains('Failed to push to release-a_package-2.0.0: error'),
-      );
+      expect(output.last, contains('Failed to push to release-a_package-2.0.0: error'));
     });
 
     test('throws for pre-1.0.0 packages', () async {
-      final RepositoryPackage package = createFakePackage(
-        'a_package',
-        packagesDir,
-      );
+      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
 
       addTearDown(() {
         package.directory.deleteSync(recursive: true);

@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 group = "io.flutter.plugins.inapppurchase"
 version = "1.0-SNAPSHOT"
 
@@ -25,12 +23,11 @@ allprojects {
 
 plugins {
     id("com.android.library")
-    id("kotlin-android")
 }
 
 kotlin {
     compilerOptions {
-        jvmTarget = JvmTarget.fromTarget(JavaVersion.VERSION_17.toString())
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
     }
 }
 
@@ -75,8 +72,8 @@ android {
 }
 
 dependencies {
-    implementation("androidx.annotation:annotation:1.9.1")
-    implementation("com.android.billingclient:billing:7.1.1")
+    implementation("androidx.annotation:annotation:1.10.0")
+    implementation("com.android.billingclient:billing:8.0.0")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.json:json:20251224")
     testImplementation("org.mockito:mockito-core:5.23.0")

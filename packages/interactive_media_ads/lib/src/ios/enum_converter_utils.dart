@@ -31,8 +31,7 @@ AdEventType toInterfaceEventType(ima.AdEventType type) {
     ima.AdEventType.adPeriodStarted => AdEventType.adPeriodStarted,
     ima.AdEventType.cuepointsChanged => AdEventType.cuepointsChanged,
     ima.AdEventType.firstQuartile => AdEventType.firstQuartile,
-    ima.AdEventType.iconFallbackImageClosed =>
-      AdEventType.iconFallbackImageClosed,
+    ima.AdEventType.iconFallbackImageClosed => AdEventType.iconFallbackImageClosed,
     ima.AdEventType.iconTapped => AdEventType.iconTapped,
     ima.AdEventType.log => AdEventType.log,
     ima.AdEventType.midpoint => AdEventType.midpoint,
@@ -51,15 +50,13 @@ AdEventType toInterfaceEventType(ima.AdEventType type) {
 /// Converts [ima.AdErrorCode] to [AdErrorCode].
 AdErrorCode toInterfaceErrorCode(ima.AdErrorCode code) {
   return switch (code) {
-    ima.AdErrorCode.companionAdLoadingFailed =>
-      AdErrorCode.companionAdLoadingFailed,
+    ima.AdErrorCode.companionAdLoadingFailed => AdErrorCode.companionAdLoadingFailed,
     ima.AdErrorCode.failedToRequestAds => AdErrorCode.failedToRequestAds,
     ima.AdErrorCode.invalidArguments => AdErrorCode.invalidArguments,
     ima.AdErrorCode.unknownError => AdErrorCode.unknownError,
     ima.AdErrorCode.vastAssetNotFound => AdErrorCode.vastAssetNotFound,
     ima.AdErrorCode.vastEmptyResponse => AdErrorCode.vastEmptyResponse,
-    ima.AdErrorCode.vastLinearAssetMismatch =>
-      AdErrorCode.vastLinearAssetMismatch,
+    ima.AdErrorCode.vastLinearAssetMismatch => AdErrorCode.vastLinearAssetMismatch,
     ima.AdErrorCode.vastLoadTimeout => AdErrorCode.vastLoadTimeout,
     ima.AdErrorCode.vastMalformedResponse => AdErrorCode.vastMalformedResponse,
     ima.AdErrorCode.vastMediaLoadTimeout => AdErrorCode.vastMediaLoadTimeout,
@@ -68,16 +65,12 @@ AdErrorCode toInterfaceErrorCode(ima.AdErrorCode code) {
     ima.AdErrorCode.videoPlayError => AdErrorCode.videoPlayError,
     ima.AdErrorCode.adslotNotVisible => AdErrorCode.adslotNotVisible,
     ima.AdErrorCode.apiError => AdErrorCode.apiError,
-    ima.AdErrorCode.contentPlayheadMissing =>
-      AdErrorCode.contentPlayheadMissing,
+    ima.AdErrorCode.contentPlayheadMissing => AdErrorCode.contentPlayheadMissing,
     ima.AdErrorCode.failedLoadingAd => AdErrorCode.failedLoadingAd,
     ima.AdErrorCode.osRuntimeTooOld => AdErrorCode.osRuntimeTooOld,
-    ima.AdErrorCode.playlistMalformedResponse =>
-      AdErrorCode.playlistMalformedResponse,
-    ima.AdErrorCode.requiredListenersNotAdded =>
-      AdErrorCode.requiredListenersNotAdded,
-    ima.AdErrorCode.streamInitializationFailed =>
-      AdErrorCode.streamInitializationFailed,
+    ima.AdErrorCode.playlistMalformedResponse => AdErrorCode.playlistMalformedResponse,
+    ima.AdErrorCode.requiredListenersNotAdded => AdErrorCode.requiredListenersNotAdded,
+    ima.AdErrorCode.streamInitializationFailed => AdErrorCode.streamInitializationFailed,
     ima.AdErrorCode.vastInvalidUrl => AdErrorCode.vastInvalidUrl,
     ima.AdErrorCode.videoElementUsed => AdErrorCode.videoElementUsed,
     ima.AdErrorCode.videoElementRequired => AdErrorCode.videoElementRequired,

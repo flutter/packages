@@ -206,11 +206,7 @@ which is passed as the last argument to the builder function. Example:
 ```dart
 StatefulShellRoute.indexedStack(
   builder:
-      (
-        BuildContext context,
-        GoRouterState state,
-        StatefulNavigationShell navigationShell,
-      ) {
+      (BuildContext context, GoRouterState state, StatefulNavigationShell navigationShell) {
         // Return the widget that implements the custom shell (in this case
         // using a BottomNavigationBar). The StatefulNavigationShell is passed
         // to be able access the state of the shell and to navigate to other
@@ -249,6 +245,7 @@ Widget build(BuildContext context) {
     ),
   );
 }
+
 ```
 
 For a complete example, see the [Stateful Nested 

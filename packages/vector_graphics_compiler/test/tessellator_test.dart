@@ -25,8 +25,9 @@ void main() {
     Node resolvedNode = node.accept(ResolvingVisitor(), AffineMatrix.identity);
     resolvedNode = resolvedNode.accept(Tessellator(), null);
 
-    final ResolvedVerticesNode verticesNode =
-        queryChildren<ResolvedVerticesNode>(resolvedNode).single;
+    final ResolvedVerticesNode verticesNode = queryChildren<ResolvedVerticesNode>(
+      resolvedNode,
+    ).single;
 
     expect(verticesNode.bounds, const Rect.fromLTWH(0, 0, 10, 10));
     expect(verticesNode.vertices.vertices, <double>[

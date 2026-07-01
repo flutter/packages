@@ -20,19 +20,11 @@ void main() {
     <rect x="0" y="0" width="10" height="10" />
     <rect x="5" y="5" width="10" height="10" />
 </svg>''');
-    final Node resolvedNode = node.accept(
-      ResolvingVisitor(),
-      AffineMatrix.identity,
-    );
-    final List<ResolvedPathNode> nodes = queryChildren<ResolvedPathNode>(
-      resolvedNode,
-    );
+    final Node resolvedNode = node.accept(ResolvingVisitor(), AffineMatrix.identity);
+    final List<ResolvedPathNode> nodes = queryChildren<ResolvedPathNode>(resolvedNode);
 
     expect(nodes.length, 2);
-    expect(
-      nodes.first.paint,
-      const Paint(fill: Fill(color: Color(0xFFFF0000))),
-    );
+    expect(nodes.first.paint, const Paint(fill: Fill(color: Color(0xFFFF0000))));
     expect(nodes.last.paint, const Paint(fill: Fill(color: Color(0xFFFF0000))));
   });
 
@@ -44,26 +36,16 @@ void main() {
     <rect x="50" y="50" width="100" height="100" />
   </g>
 </svg>''');
-    final Node resolvedNode = node.accept(
-      ResolvingVisitor(),
-      AffineMatrix.identity,
-    );
-    final List<ResolvedPathNode> nodes = queryChildren<ResolvedPathNode>(
-      resolvedNode,
-    );
-    final SaveLayerNode saveLayerNode = queryChildren<SaveLayerNode>(
-      resolvedNode,
-    ).single;
+    final Node resolvedNode = node.accept(ResolvingVisitor(), AffineMatrix.identity);
+    final List<ResolvedPathNode> nodes = queryChildren<ResolvedPathNode>(resolvedNode);
+    final SaveLayerNode saveLayerNode = queryChildren<SaveLayerNode>(resolvedNode).single;
 
     expect(saveLayerNode.paint.fill!.color, const Color(0x7FFF0000));
 
     expect(nodes.length, 2);
 
     // Opacity is not inherited since it is applied in a saveLayer.
-    expect(
-      nodes.first.paint,
-      const Paint(fill: Fill(color: Color(0xFFFF0000))),
-    );
+    expect(nodes.first.paint, const Paint(fill: Fill(color: Color(0xFFFF0000))));
     expect(nodes.last.paint, const Paint(fill: Fill(color: Color(0xFFFF0000))));
   });
 
@@ -75,13 +57,8 @@ void main() {
     <rect x="0" y="0" width="10" height="10" fill="white" />
   </g>
 </svg>''');
-    final Node resolvedNode = node.accept(
-      ResolvingVisitor(),
-      AffineMatrix.identity,
-    );
-    final List<ResolvedPathNode> nodes = queryChildren<ResolvedPathNode>(
-      resolvedNode,
-    );
+    final Node resolvedNode = node.accept(ResolvingVisitor(), AffineMatrix.identity);
+    final List<ResolvedPathNode> nodes = queryChildren<ResolvedPathNode>(resolvedNode);
 
     expect(nodes.length, 1);
 
@@ -107,13 +84,8 @@ void main() {
   <svg viewBox="0 0 200 200">
     <text></text>
   </svg>''');
-    final Node resolvedNode = node.accept(
-      ResolvingVisitor(),
-      AffineMatrix.identity,
-    );
-    final List<ResolvedTextNode> nodes = queryChildren<ResolvedTextNode>(
-      resolvedNode,
-    );
+    final Node resolvedNode = node.accept(ResolvingVisitor(), AffineMatrix.identity);
+    final List<ResolvedTextNode> nodes = queryChildren<ResolvedTextNode>(resolvedNode);
 
     expect(nodes, isEmpty);
   });
@@ -126,13 +98,8 @@ void main() {
   </g>
 </svg>''');
 
-    final Node resolvedNode = node.accept(
-      ResolvingVisitor(),
-      AffineMatrix.identity,
-    );
-    final List<ResolvedMaskNode> nodes = queryChildren<ResolvedMaskNode>(
-      resolvedNode,
-    );
+    final Node resolvedNode = node.accept(ResolvingVisitor(), AffineMatrix.identity);
+    final List<ResolvedMaskNode> nodes = queryChildren<ResolvedMaskNode>(resolvedNode);
 
     expect(nodes, isEmpty);
   });
@@ -140,11 +107,7 @@ void main() {
   test('visitChildren on clips and masks', () {
     final clip = ResolvedClipNode(clips: <Path>[], child: Node.empty);
 
-    final mask = ResolvedMaskNode(
-      child: Node.empty,
-      mask: Node.empty,
-      blendMode: BlendMode.color,
-    );
+    final mask = ResolvedMaskNode(child: Node.empty, mask: Node.empty, blendMode: BlendMode.color);
 
     var visitCount = 0;
     clip.visitChildren((Node child) {
@@ -166,16 +129,8 @@ void main() {
     xmlns:xlink="http://www.w3.org/1999/xlink">
     <image xlink:href="data:image/png;base64,iVBO" transform="scale(1 -1) translate(50, -50)" x="0" y="0" width="50" height="50"/>
 </svg>''');
-    final Node resolvedNode = node.accept(
-      ResolvingVisitor(),
-      AffineMatrix.identity,
-    );
-    final ResolvedImageNode imageNode = queryChildren<ResolvedImageNode>(
-      resolvedNode,
-    ).single;
-    expect(
-      imageNode.transform,
-      const AffineMatrix(1.0, 0.0, 0.0, -1.0, 50.0, 50.0),
-    );
+    final Node resolvedNode = node.accept(ResolvingVisitor(), AffineMatrix.identity);
+    final ResolvedImageNode imageNode = queryChildren<ResolvedImageNode>(resolvedNode).single;
+    expect(imageNode.transform, const AffineMatrix(1.0, 0.0, 0.0, -1.0, 50.0, 50.0));
   });
 }

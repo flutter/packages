@@ -10,8 +10,7 @@ import 'src/messages.g.dart';
 /// An implementation of [FileSelectorPlatform] for iOS.
 class FileSelectorIOS extends FileSelectorPlatform {
   /// Creates a new plugin implementation instance.
-  FileSelectorIOS({@visibleForTesting FileSelectorApi? api})
-    : _hostApi = api ?? FileSelectorApi();
+  FileSelectorIOS({@visibleForTesting FileSelectorApi? api}) : _hostApi = api ?? FileSelectorApi();
 
   final FileSelectorApi _hostApi;
 
@@ -27,9 +26,7 @@ class FileSelectorIOS extends FileSelectorPlatform {
     String? confirmButtonText,
   }) async {
     final List<String> path = await _hostApi.openFile(
-      FileSelectorConfig(
-        utis: _allowedUtiListFromTypeGroups(acceptedTypeGroups),
-      ),
+      FileSelectorConfig(utis: _allowedUtiListFromTypeGroups(acceptedTypeGroups)),
     );
     return path.isEmpty ? null : XFile(path.first);
   }

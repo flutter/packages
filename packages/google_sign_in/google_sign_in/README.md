@@ -32,9 +32,7 @@ authentication process:
 ```dart
 final GoogleSignIn signIn = GoogleSignIn.instance;
 unawaited(
-  signIn.initialize(clientId: clientId, serverClientId: serverClientId).then((
-    _,
-  ) {
+  signIn.initialize(clientId: clientId, serverClientId: serverClientId).then((_) {
     signIn.authenticationEvents
         .listen(_handleAuthenticationEvent)
         .onError(_handleAuthenticationError);
@@ -83,12 +81,9 @@ you can silently request an access token for those scopes:
 
 <?code-excerpt "example/lib/main.dart (CheckAuthorization)" plaster="none"?>
 ```dart
-const List<String> scopes = <String>[
-  'https://www.googleapis.com/auth/contacts.readonly',
-];
+const List<String> scopes = <String>['https://www.googleapis.com/auth/contacts.readonly'];
     final GoogleSignInAccount? user = // ...
-    final GoogleSignInClientAuthorization? authorization = await user
-        ?.authorizationClient
+    final GoogleSignInClientAuthorization? authorization = await user?.authorizationClient
         .authorizationForScopes(scopes);
 ```
 
@@ -103,8 +98,7 @@ this request **must be initiated from a user interaction** like a button press.
 
 <?code-excerpt "example/lib/main.dart (RequestScopes)"?>
 ```dart
-final GoogleSignInClientAuthorization authorization = await user
-    .authorizationClient
+final GoogleSignInClientAuthorization authorization = await user.authorizationClient
     .authorizeScopes(scopes);
 ```
 
@@ -127,8 +121,7 @@ request a server auth code to send to the server:
 
 <?code-excerpt "example/lib/main.dart (RequestServerAuth)"?>
 ```dart
-final GoogleSignInServerAuthorization? serverAuth = await user
-    .authorizationClient
+final GoogleSignInServerAuthorization? serverAuth = await user.authorizationClient
     .authorizeServer(scopes);
 ```
 

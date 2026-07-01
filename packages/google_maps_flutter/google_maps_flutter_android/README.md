@@ -13,7 +13,18 @@ your app when you do, so you do not need to add it to your `pubspec.yaml`.
 However, if you `import` this package to use any of its APIs directly, you
 should add it to your `pubspec.yaml` as usual.
 
-## Display Mode
+## Setup
+
+Specify your API key in the application manifest `android/app/src/main/AndroidManifest.xml`:
+
+```xml
+<manifest ...
+  <application ...
+    <meta-data android:name="com.google.android.geo.API_KEY"
+              android:value="YOUR KEY HERE"/>
+```
+
+### Display Mode
 
 This plugin supports two different [platform view display modes][3]. The default
 display mode is subject to change in the future, and will not be considered a
@@ -27,24 +38,24 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 
 void main() {
   // Require Hybrid Composition mode on Android.
-  final GoogleMapsFlutterPlatform mapsImplementation =
-      GoogleMapsFlutterPlatform.instance;
+  final GoogleMapsFlutterPlatform mapsImplementation = GoogleMapsFlutterPlatform.instance;
   if (mapsImplementation is GoogleMapsFlutterAndroid) {
     // Force Hybrid Composition mode.
     mapsImplementation.useAndroidViewSurface = true;
   }
   // ···
 }
+
 ```
 
-### Texture Layer Hybrid Composition
+#### Texture Layer Hybrid Composition
 
 This is the current default mode and corresponds to `useAndroidViewSurface = false`.
 This mode is more performant than Hybrid Composition and we recommend that you use this mode.
 
-### Hybrid Composition
+#### Hybrid Composition
 
-This mode is available for backwards compatability and corresponds to `useAndroidViewSurface = true`.
+This mode is available for backwards compatibility and corresponds to `useAndroidViewSurface = true`.
 We do not recommend its use as it is less performant than Texture Layer Hybrid Composition and
 certain flutter rendering effects are not supported.
 

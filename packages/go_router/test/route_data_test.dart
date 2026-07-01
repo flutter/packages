@@ -13,24 +13,21 @@ class _GoRouteDataBuild extends GoRouteData {
   const _GoRouteDataBuild();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const SizedBox(key: Key('build'));
+  Widget build(BuildContext context, GoRouterState state) => const SizedBox(key: Key('build'));
 }
 
 class _RelativeGoRouteDataBuild extends RelativeGoRouteData {
   const _RelativeGoRouteDataBuild();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const SizedBox(key: Key('build'));
+  Widget build(BuildContext context, GoRouterState state) => const SizedBox(key: Key('build'));
 }
 
 class _ShellRouteDataRedirectPage extends ShellRouteData {
   const _ShellRouteDataRedirectPage();
 
   @override
-  FutureOr<String> redirect(BuildContext context, GoRouterState state) =>
-      '/build-page';
+  FutureOr<String> redirect(BuildContext context, GoRouterState state) => '/build-page';
 }
 
 class _ShellRouteDataBuilder extends ShellRouteData {
@@ -73,10 +70,7 @@ final GoRoute _relativeGoRouteDataBuild = RelativeGoRouteData.$route(
 final ShellRoute _shellRouteDataBuilder = ShellRouteData.$route(
   factory: (GoRouterState state) => const _ShellRouteDataBuilder(),
   routes: <RouteBase>[
-    GoRouteData.$route(
-      path: '/child',
-      factory: (GoRouterState state) => const _GoRouteDataBuild(),
-    ),
+    GoRouteData.$route(path: '/child', factory: (GoRouterState state) => const _GoRouteDataBuild()),
   ],
 );
 
@@ -100,21 +94,17 @@ class _ShellRouteDataPageBuilder extends ShellRouteData {
   const _ShellRouteDataPageBuilder();
 
   @override
-  Page<void> pageBuilder(
-    BuildContext context,
-    GoRouterState state,
-    Widget navigator,
-  ) => MaterialPage<void>(
-    child: SizedBox(key: const Key('page-builder'), child: navigator),
-  );
+  Page<void> pageBuilder(BuildContext context, GoRouterState state, Widget navigator) =>
+      MaterialPage<void>(
+        child: SizedBox(key: const Key('page-builder'), child: navigator),
+      );
 }
 
 class _StatefulShellRouteDataRedirectPage extends StatefulShellRouteData {
   const _StatefulShellRouteDataRedirectPage();
 
   @override
-  FutureOr<String> redirect(BuildContext context, GoRouterState state) =>
-      '/build-page';
+  FutureOr<String> redirect(BuildContext context, GoRouterState state) => '/build-page';
 }
 
 final GoRoute _goRouteDataBuildPage = GoRouteData.$route(
@@ -130,10 +120,7 @@ final GoRoute _relativeGoRouteDataBuildPage = RelativeGoRouteData.$route(
 final ShellRoute _shellRouteDataPageBuilder = ShellRouteData.$route(
   factory: (GoRouterState state) => const _ShellRouteDataPageBuilder(),
   routes: <RouteBase>[
-    GoRouteData.$route(
-      path: '/child',
-      factory: (GoRouterState state) => const _GoRouteDataBuild(),
-    ),
+    GoRouteData.$route(path: '/child', factory: (GoRouterState state) => const _GoRouteDataBuild()),
   ],
 );
 
@@ -156,27 +143,23 @@ class _StatefulShellRouteDataBuilder extends StatefulShellRouteData {
   const _StatefulShellRouteDataBuilder();
 
   @override
-  Widget builder(
-    BuildContext context,
-    GoRouterState state,
-    StatefulNavigationShell navigator,
-  ) => SizedBox(key: const Key('builder'), child: navigator);
+  Widget builder(BuildContext context, GoRouterState state, StatefulNavigationShell navigator) =>
+      SizedBox(key: const Key('builder'), child: navigator);
 }
 
-final StatefulShellRoute _statefulShellRouteDataBuilder =
-    StatefulShellRouteData.$route(
-      factory: (GoRouterState state) => const _StatefulShellRouteDataBuilder(),
-      branches: <StatefulShellBranch>[
-        StatefulShellBranchData.$branch(
-          routes: <RouteBase>[
-            GoRouteData.$route(
-              path: '/child',
-              factory: (GoRouterState state) => const _GoRouteDataBuild(),
-            ),
-          ],
+final StatefulShellRoute _statefulShellRouteDataBuilder = StatefulShellRouteData.$route(
+  factory: (GoRouterState state) => const _StatefulShellRouteDataBuilder(),
+  branches: <StatefulShellBranch>[
+    StatefulShellBranchData.$branch(
+      routes: <RouteBase>[
+        GoRouteData.$route(
+          path: '/child',
+          factory: (GoRouterState state) => const _GoRouteDataBuild(),
         ),
       ],
-    );
+    ),
+  ],
+);
 
 class _StatefulShellRouteDataPageBuilder extends StatefulShellRouteData {
   const _StatefulShellRouteDataPageBuilder();
@@ -191,36 +174,32 @@ class _StatefulShellRouteDataPageBuilder extends StatefulShellRouteData {
   );
 }
 
-final StatefulShellRoute _statefulShellRouteDataPageBuilder =
-    StatefulShellRouteData.$route(
-      factory: (GoRouterState state) =>
-          const _StatefulShellRouteDataPageBuilder(),
-      branches: <StatefulShellBranch>[
-        StatefulShellBranchData.$branch(
-          routes: <RouteBase>[
-            GoRouteData.$route(
-              path: '/child',
-              factory: (GoRouterState state) => const _GoRouteDataBuild(),
-            ),
-          ],
+final StatefulShellRoute _statefulShellRouteDataPageBuilder = StatefulShellRouteData.$route(
+  factory: (GoRouterState state) => const _StatefulShellRouteDataPageBuilder(),
+  branches: <StatefulShellBranch>[
+    StatefulShellBranchData.$branch(
+      routes: <RouteBase>[
+        GoRouteData.$route(
+          path: '/child',
+          factory: (GoRouterState state) => const _GoRouteDataBuild(),
         ),
       ],
-    );
+    ),
+  ],
+);
 
 class _GoRouteDataRedirectPage extends GoRouteData {
   const _GoRouteDataRedirectPage();
 
   @override
-  FutureOr<String> redirect(BuildContext context, GoRouterState state) =>
-      '/build-page';
+  FutureOr<String> redirect(BuildContext context, GoRouterState state) => '/build-page';
 }
 
 class _RelativeGoRouteDataRedirectPage extends RelativeGoRouteData {
   const _RelativeGoRouteDataRedirectPage();
 
   @override
-  FutureOr<String> redirect(BuildContext context, GoRouterState state) =>
-      '/build-page';
+  FutureOr<String> redirect(BuildContext context, GoRouterState state) => '/build-page';
 }
 
 final GoRoute _goRouteDataRedirect = GoRouteData.$route(
@@ -275,65 +254,52 @@ void main() {
       expect(find.byKey(const Key('buildPage')), findsNothing);
     });
 
-    testWidgets(
-      'It should build the page from the overridden buildPage method',
-      (WidgetTester tester) async {
-        final goRouter = GoRouter(
-          initialLocation: '/build-page',
-          routes: _routes,
-        );
-        addTearDown(goRouter.dispose);
-        await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
-        expect(find.byKey(const Key('build')), findsNothing);
-        expect(find.byKey(const Key('buildPage')), findsOneWidget);
-      },
-    );
-
-    testWidgets(
-      'It should build a go route with the default case sensitivity',
-      (WidgetTester tester) async {
-        final GoRoute routeWithDefaultCaseSensitivity = GoRouteData.$route(
-          path: '/path',
-          factory: (GoRouterState state) => const _GoRouteDataBuild(),
-        );
-
-        expect(routeWithDefaultCaseSensitivity.caseSensitive, true);
-      },
-    );
-
-    testWidgets(
-      'It should build a go route with the overridden case sensitivity',
-      (WidgetTester tester) async {
-        final GoRoute routeWithDefaultCaseSensitivity = GoRouteData.$route(
-          path: '/path',
-          caseSensitive: false,
-          factory: (GoRouterState state) => const _GoRouteDataBuild(),
-        );
-
-        expect(routeWithDefaultCaseSensitivity.caseSensitive, false);
-      },
-    );
-
-    testWidgets('It should throw because there is no code generated', (
+    testWidgets('It should build the page from the overridden buildPage method', (
       WidgetTester tester,
     ) async {
+      final goRouter = GoRouter(initialLocation: '/build-page', routes: _routes);
+      addTearDown(goRouter.dispose);
+      await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
+      expect(find.byKey(const Key('build')), findsNothing);
+      expect(find.byKey(const Key('buildPage')), findsOneWidget);
+    });
+
+    testWidgets('It should build a go route with the default case sensitivity', (
+      WidgetTester tester,
+    ) async {
+      final GoRoute routeWithDefaultCaseSensitivity = GoRouteData.$route(
+        path: '/path',
+        factory: (GoRouterState state) => const _GoRouteDataBuild(),
+      );
+
+      expect(routeWithDefaultCaseSensitivity.caseSensitive, true);
+    });
+
+    testWidgets('It should build a go route with the overridden case sensitivity', (
+      WidgetTester tester,
+    ) async {
+      final GoRoute routeWithDefaultCaseSensitivity = GoRouteData.$route(
+        path: '/path',
+        caseSensitive: false,
+        factory: (GoRouterState state) => const _GoRouteDataBuild(),
+      );
+
+      expect(routeWithDefaultCaseSensitivity.caseSensitive, false);
+    });
+
+    testWidgets('It should throw because there is no code generated', (WidgetTester tester) async {
       final errors = <FlutterErrorDetails>[];
 
-      FlutterError.onError = (FlutterErrorDetails details) =>
-          errors.add(details);
+      FlutterError.onError = (FlutterErrorDetails details) => errors.add(details);
 
       const errorText = 'Should be generated';
 
-      Future<void> expectUnimplementedError(
-        void Function(BuildContext) onTap,
-      ) async {
+      Future<void> expectUnimplementedError(void Function(BuildContext) onTap) async {
         await tester.pumpWidget(
           MaterialApp(
             home: Builder(
-              builder: (BuildContext context) => GestureDetector(
-                child: const Text('Tap'),
-                onTap: () => onTap(context),
-              ),
+              builder: (BuildContext context) =>
+                  GestureDetector(child: const Text('Tap'), onTap: () => onTap(context)),
             ),
           ),
         );
@@ -373,79 +339,59 @@ void main() {
     testWidgets('It should build the page from the overridden build method', (
       WidgetTester tester,
     ) async {
-      final goRouter = GoRouter(
-        initialLocation: '/build',
-        routes: _relativeRoutes,
-      );
+      final goRouter = GoRouter(initialLocation: '/build', routes: _relativeRoutes);
       addTearDown(goRouter.dispose);
       await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
       expect(find.byKey(const Key('build')), findsOneWidget);
       expect(find.byKey(const Key('buildPage')), findsNothing);
     });
 
-    testWidgets(
-      'It should build the page from the overridden buildPage method',
-      (WidgetTester tester) async {
-        final goRouter = GoRouter(
-          initialLocation: '/build-page',
-          routes: _relativeRoutes,
-        );
-        addTearDown(goRouter.dispose);
-        await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
-        expect(find.byKey(const Key('build')), findsNothing);
-        expect(find.byKey(const Key('buildPage')), findsOneWidget);
-      },
-    );
-
-    testWidgets(
-      'It should build a go route with the default case sensitivity',
-      (WidgetTester tester) async {
-        final GoRoute routeWithDefaultCaseSensitivity =
-            RelativeGoRouteData.$route(
-              path: 'path',
-              factory: (GoRouterState state) =>
-                  const _RelativeGoRouteDataBuild(),
-            );
-
-        expect(routeWithDefaultCaseSensitivity.caseSensitive, true);
-      },
-    );
-
-    testWidgets(
-      'It should build a go route with the overridden case sensitivity',
-      (WidgetTester tester) async {
-        final GoRoute routeWithDefaultCaseSensitivity =
-            RelativeGoRouteData.$route(
-              path: 'path',
-              caseSensitive: false,
-              factory: (GoRouterState state) =>
-                  const _RelativeGoRouteDataBuild(),
-            );
-
-        expect(routeWithDefaultCaseSensitivity.caseSensitive, false);
-      },
-    );
-
-    testWidgets('It should throw because there is no code generated', (
+    testWidgets('It should build the page from the overridden buildPage method', (
       WidgetTester tester,
     ) async {
+      final goRouter = GoRouter(initialLocation: '/build-page', routes: _relativeRoutes);
+      addTearDown(goRouter.dispose);
+      await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
+      expect(find.byKey(const Key('build')), findsNothing);
+      expect(find.byKey(const Key('buildPage')), findsOneWidget);
+    });
+
+    testWidgets('It should build a go route with the default case sensitivity', (
+      WidgetTester tester,
+    ) async {
+      final GoRoute routeWithDefaultCaseSensitivity = RelativeGoRouteData.$route(
+        path: 'path',
+        factory: (GoRouterState state) => const _RelativeGoRouteDataBuild(),
+      );
+
+      expect(routeWithDefaultCaseSensitivity.caseSensitive, true);
+    });
+
+    testWidgets('It should build a go route with the overridden case sensitivity', (
+      WidgetTester tester,
+    ) async {
+      final GoRoute routeWithDefaultCaseSensitivity = RelativeGoRouteData.$route(
+        path: 'path',
+        caseSensitive: false,
+        factory: (GoRouterState state) => const _RelativeGoRouteDataBuild(),
+      );
+
+      expect(routeWithDefaultCaseSensitivity.caseSensitive, false);
+    });
+
+    testWidgets('It should throw because there is no code generated', (WidgetTester tester) async {
       final errors = <FlutterErrorDetails>[];
 
-      FlutterError.onError = (FlutterErrorDetails details) =>
-          errors.add(details);
+      FlutterError.onError = (FlutterErrorDetails details) => errors.add(details);
 
       const errorText = 'Should be generated';
 
-      Future<void> expectUnimplementedError(
-        void Function(BuildContext) onTap,
-      ) async {
+      Future<void> expectUnimplementedError(void Function(BuildContext) onTap) async {
         await tester.pumpWidget(
           MaterialApp(
             home: Builder(
-              builder: (BuildContext context) => GestureDetector(
-                child: const Text('Tap'),
-                onTap: () => onTap(context),
-              ),
+              builder: (BuildContext context) =>
+                  GestureDetector(child: const Text('Tap'), onTap: () => onTap(context)),
             ),
           ),
         );
@@ -509,13 +455,11 @@ void main() {
         initialLocation: '/child/test',
         routes: <RouteBase>[
           ShellRouteData.$route(
-            factory: (GoRouterState state) =>
-                const _ShellRouteDataWithKey(Key('under-shell')),
+            factory: (GoRouterState state) => const _ShellRouteDataWithKey(Key('under-shell')),
             routes: <RouteBase>[
               GoRouteData.$route(
                 path: '/child',
-                factory: (GoRouterState state) =>
-                    const _GoRouteDataBuildWithKey(Key('under')),
+                factory: (GoRouterState state) => const _GoRouteDataBuildWithKey(Key('under')),
                 routes: <RouteBase>[
                   ShellRouteData.$route(
                     factory: (GoRouterState state) =>
@@ -555,19 +499,18 @@ void main() {
       expect(find.byKey(const Key('above')), findsNothing);
     });
 
-    testWidgets(
-      'It should build the page from the overridden buildPage method',
-      (WidgetTester tester) async {
-        final goRouter = GoRouter(
-          initialLocation: '/child',
-          routes: <RouteBase>[_shellRouteDataPageBuilder],
-        );
-        addTearDown(goRouter.dispose);
-        await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
-        expect(find.byKey(const Key('builder')), findsNothing);
-        expect(find.byKey(const Key('page-builder')), findsOneWidget);
-      },
-    );
+    testWidgets('It should build the page from the overridden buildPage method', (
+      WidgetTester tester,
+    ) async {
+      final goRouter = GoRouter(
+        initialLocation: '/child',
+        routes: <RouteBase>[_shellRouteDataPageBuilder],
+      );
+      addTearDown(goRouter.dispose);
+      await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
+      expect(find.byKey(const Key('builder')), findsNothing);
+      expect(find.byKey(const Key('page-builder')), findsOneWidget);
+    });
 
     testWidgets('It should redirect using the overridden redirect method', (
       WidgetTester tester,
@@ -597,26 +540,24 @@ void main() {
       expect(find.byKey(const Key('page-builder')), findsNothing);
     });
 
-    testWidgets(
-      'It should build the page from the overridden buildPage method',
-      (WidgetTester tester) async {
-        final goRouter = GoRouter(
-          initialLocation: '/child',
-          routes: <RouteBase>[_statefulShellRouteDataPageBuilder],
-        );
-        addTearDown(goRouter.dispose);
-        await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
-        expect(find.byKey(const Key('builder')), findsNothing);
-        expect(find.byKey(const Key('page-builder')), findsOneWidget);
-      },
-    );
+    testWidgets('It should build the page from the overridden buildPage method', (
+      WidgetTester tester,
+    ) async {
+      final goRouter = GoRouter(
+        initialLocation: '/child',
+        routes: <RouteBase>[_statefulShellRouteDataPageBuilder],
+      );
+      addTearDown(goRouter.dispose);
+      await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
+      expect(find.byKey(const Key('builder')), findsNothing);
+      expect(find.byKey(const Key('page-builder')), findsOneWidget);
+    });
 
     test('Can assign parent navigator key', () {
       final key = GlobalKey<NavigatorState>();
       final StatefulShellRoute route = StatefulShellRouteData.$route(
         parentNavigatorKey: key,
-        factory: (GoRouterState state) =>
-            const _StatefulShellRouteDataPageBuilder(),
+        factory: (GoRouterState state) => const _StatefulShellRouteDataPageBuilder(),
         branches: <StatefulShellBranch>[
           StatefulShellBranchData.$branch(
             routes: <RouteBase>[
@@ -657,43 +598,38 @@ void main() {
     expect(find.byKey(const Key('buildPage')), findsOneWidget);
   });
 
-  testWidgets(
-    'It should redirect using the overridden StatefulShellRoute redirect method',
-    (WidgetTester tester) async {
-      final goRouter = GoRouter(
-        initialLocation: '/child',
-        routes: <RouteBase>[
-          _goRouteDataBuildPage,
-          StatefulShellRouteData.$route(
-            factory: (GoRouterState state) =>
-                const _StatefulShellRouteDataRedirectPage(),
-            branches: <StatefulShellBranch>[
-              StatefulShellBranchData.$branch(
-                routes: <GoRoute>[
-                  GoRouteData.$route(
-                    path: '/child',
-                    factory: (GoRouterState state) => const _GoRouteDataBuild(),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      );
-      addTearDown(goRouter.dispose);
-      await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
-      expect(find.byKey(const Key('build')), findsNothing);
-      expect(find.byKey(const Key('buildPage')), findsOneWidget);
-    },
-  );
+  testWidgets('It should redirect using the overridden StatefulShellRoute redirect method', (
+    WidgetTester tester,
+  ) async {
+    final goRouter = GoRouter(
+      initialLocation: '/child',
+      routes: <RouteBase>[
+        _goRouteDataBuildPage,
+        StatefulShellRouteData.$route(
+          factory: (GoRouterState state) => const _StatefulShellRouteDataRedirectPage(),
+          branches: <StatefulShellBranch>[
+            StatefulShellBranchData.$branch(
+              routes: <GoRoute>[
+                GoRouteData.$route(
+                  path: '/child',
+                  factory: (GoRouterState state) => const _GoRouteDataBuild(),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+    addTearDown(goRouter.dispose);
+    await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
+    expect(find.byKey(const Key('build')), findsNothing);
+    expect(find.byKey(const Key('buildPage')), findsOneWidget);
+  });
 
   testWidgets('It should redirect using the overridden redirect method', (
     WidgetTester tester,
   ) async {
-    final goRouter = GoRouter(
-      initialLocation: '/redirect-with-state',
-      routes: _routes,
-    );
+    final goRouter = GoRouter(initialLocation: '/redirect-with-state', routes: _routes);
     addTearDown(goRouter.dispose);
     await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
     expect(find.byKey(const Key('build')), findsNothing);
@@ -714,11 +650,7 @@ void main() {
       name: 'name',
       caseSensitive: false,
       routes: <TypedRoute<RouteData>>[
-        TypedGoRoute<GoRouteData>(
-          path: 'sub-path',
-          name: 'subName',
-          caseSensitive: false,
-        ),
+        TypedGoRoute<GoRouteData>(path: 'sub-path', name: 'subName', caseSensitive: false),
       ],
     );
 
@@ -729,38 +661,21 @@ void main() {
     expect(
       typedGoRoute.routes.single,
       isA<TypedGoRoute<GoRouteData>>()
-          .having(
-            (TypedGoRoute<GoRouteData> route) => route.path,
-            'path',
-            'sub-path',
-          )
-          .having(
-            (TypedGoRoute<GoRouteData> route) => route.name,
-            'name',
-            'subName',
-          )
-          .having(
-            (TypedGoRoute<GoRouteData> route) => route.caseSensitive,
-            'caseSensitive',
-            false,
-          ),
+          .having((TypedGoRoute<GoRouteData> route) => route.path, 'path', 'sub-path')
+          .having((TypedGoRoute<GoRouteData> route) => route.name, 'name', 'subName')
+          .having((TypedGoRoute<GoRouteData> route) => route.caseSensitive, 'caseSensitive', false),
     );
   });
 
   test('CustomParameterCodec with required parameters', () {
-    const customParameterCodec = CustomParameterCodec(
-      encode: toBase64,
-      decode: fromBase64,
-    );
+    const customParameterCodec = CustomParameterCodec(encode: toBase64, decode: fromBase64);
 
     expect(customParameterCodec.encode, toBase64);
     expect(customParameterCodec.decode, fromBase64);
   });
 
   test('TypedRelativeGoRoute with default parameters', () {
-    const typedGoRoute = TypedRelativeGoRoute<RelativeGoRouteData>(
-      path: 'path',
-    );
+    const typedGoRoute = TypedRelativeGoRoute<RelativeGoRouteData>(path: 'path');
 
     expect(typedGoRoute.path, 'path');
     expect(typedGoRoute.caseSensitive, true);
@@ -772,10 +687,7 @@ void main() {
       path: 'path',
       caseSensitive: false,
       routes: <TypedRoute<RouteData>>[
-        TypedRelativeGoRoute<RelativeGoRouteData>(
-          path: 'sub-path',
-          caseSensitive: false,
-        ),
+        TypedRelativeGoRoute<RelativeGoRouteData>(path: 'sub-path', caseSensitive: false),
       ],
     );
 
@@ -791,8 +703,7 @@ void main() {
             'sub-path',
           )
           .having(
-            (TypedRelativeGoRoute<RelativeGoRouteData> route) =>
-                route.caseSensitive,
+            (TypedRelativeGoRoute<RelativeGoRouteData> route) => route.caseSensitive,
             'caseSensitive',
             false,
           ),
@@ -800,9 +711,7 @@ void main() {
   });
 
   test('TypedQueryParameter stores the name', () {
-    const TypedQueryParameter<dynamic> parameter = TypedQueryParameter(
-      name: 'customName',
-    );
+    const TypedQueryParameter<dynamic> parameter = TypedQueryParameter(name: 'customName');
 
     expect(parameter.name, 'customName');
   });

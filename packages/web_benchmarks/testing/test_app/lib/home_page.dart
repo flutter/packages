@@ -49,10 +49,7 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   const Text('You have pushed the button this many times:'),
-                  Text(
-                    '$_counter',
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
+                  Text('$_counter', style: Theme.of(context).textTheme.headlineMedium),
                 ],
               );
             } else {
@@ -65,10 +62,7 @@ class _HomePageState extends State<HomePage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Text(
-                          'Line $index',
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ),
+                        Text('Line $index', style: Theme.of(context).textTheme.headlineSmall),
                         Expanded(child: Container()),
                         const Icon(Icons.camera),
                         const Icon(Icons.face),

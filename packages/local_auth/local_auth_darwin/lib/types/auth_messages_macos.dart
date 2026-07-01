@@ -28,8 +28,7 @@ class MacOSAuthMessages extends AuthMessages {
   Map<String, String> get args {
     return <String, String>{
       'okButton': cancelButton ?? macOSCancelButton,
-      if (localizedFallbackTitle != null)
-        'localizedFallbackTitle': localizedFallbackTitle!,
+      if (localizedFallbackTitle != null) 'localizedFallbackTitle': localizedFallbackTitle!,
     };
   }
 
@@ -42,8 +41,7 @@ class MacOSAuthMessages extends AuthMessages {
           localizedFallbackTitle == other.localizedFallbackTitle;
 
   @override
-  int get hashCode =>
-      Object.hash(super.hashCode, cancelButton, localizedFallbackTitle);
+  int get hashCode => Object.hash(super.hashCode, cancelButton, localizedFallbackTitle);
 }
 
 // Default Strings for MacOSAuthMessages plugin. Currently supports English.

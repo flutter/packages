@@ -30,20 +30,14 @@ const List<String> _kNonNumericalValueSubResults = <String>[
 
 // Context has some keys such as 'host_name' which need to be ignored
 // so that we can group series together
-const List<String> _kContextIgnoreKeys = <String>[
-  'host_name',
-  'load_avg',
-  'caches',
-];
+const List<String> _kContextIgnoreKeys = <String>['host_name', 'load_avg', 'caches'];
 
 // ignore: avoid_classes_with_only_static_members
 /// Parse the json result of https://github.com/google/benchmark.
 class GoogleBenchmarkParser {
   /// Given a Google benchmark json output, parse its content into a list of [MetricPoint].
   static Future<List<MetricPoint>> parse(String jsonFileName) async {
-    final jsonResult =
-        jsonDecode(File(jsonFileName).readAsStringSync())
-            as Map<String, dynamic>;
+    final jsonResult = jsonDecode(File(jsonFileName).readAsStringSync()) as Map<String, dynamic>;
 
     final rawContext = jsonResult['context'] as Map<String, dynamic>;
     final Map<String, String> context = rawContext.map<String, String>(
@@ -65,8 +59,7 @@ void _parseAnItem(
 ) {
   final name = item[kNameKey] as String;
   final timeUnitMap = <String, String>{
-    if (item.containsKey(_kTimeUnitKey))
-      kUnitKey: item[_kTimeUnitKey] as String,
+    if (item.containsKey(_kTimeUnitKey)) kUnitKey: item[_kTimeUnitKey] as String,
   };
   for (final String subResult in item.keys) {
     if (!_kNonNumericalValueSubResults.contains(subResult)) {
@@ -81,17 +74,13 @@ void _parseAnItem(
         rethrow;
       }
 
-      final double? value = rawValue is int
-          ? rawValue.toDouble()
-          : rawValue as double?;
+      final double? value = rawValue is int ? rawValue.toDouble() : rawValue as double?;
       points.add(
         MetricPoint(
           value,
           <String, String?>{kNameKey: name, kSubResultKey: subResult}
             ..addAll(context)
-            ..addAll(
-              subResult.endsWith('time') ? timeUnitMap : <String, String>{},
-            ),
+            ..addAll(subResult.endsWith('time') ? timeUnitMap : <String, String>{}),
         ),
       );
     }

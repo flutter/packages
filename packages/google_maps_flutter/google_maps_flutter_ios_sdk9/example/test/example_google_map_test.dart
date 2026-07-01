@@ -107,17 +107,12 @@ void main() {
     const p1 = Polygon(polygonId: PolygonId('polygon_1'));
     const p2 = Polygon(polygonId: PolygonId('polygon_2'));
     const p3 = Polygon(polygonId: PolygonId('polygon_3'), strokeWidth: 1);
-    const p3updated = Polygon(
-      polygonId: PolygonId('polygon_3'),
-      strokeWidth: 2,
-    );
+    const p3updated = Polygon(polygonId: PolygonId('polygon_3'), strokeWidth: 2);
 
     // First remove one and add another, then update the new one.
     await tester.pumpWidget(_mapWithObjects(polygons: <Polygon>{p1, p2}));
     await tester.pumpWidget(_mapWithObjects(polygons: <Polygon>{p1, p3}));
-    await tester.pumpWidget(
-      _mapWithObjects(polygons: <Polygon>{p1, p3updated}),
-    );
+    await tester.pumpWidget(_mapWithObjects(polygons: <Polygon>{p1, p3updated}));
 
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
@@ -149,9 +144,7 @@ void main() {
     // First remove one and add another, then update the new one.
     await tester.pumpWidget(_mapWithObjects(polylines: <Polyline>{p1, p2}));
     await tester.pumpWidget(_mapWithObjects(polylines: <Polyline>{p1, p3}));
-    await tester.pumpWidget(
-      _mapWithObjects(polylines: <Polyline>{p1, p3updated}),
-    );
+    await tester.pumpWidget(_mapWithObjects(polylines: <Polyline>{p1, p3updated}));
 
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
@@ -163,9 +156,7 @@ void main() {
 
     expect(map.polylineUpdates[1].polylinesToChange.isEmpty, true);
     expect(map.polylineUpdates[1].polylinesToAdd, <Polyline>{p3});
-    expect(map.polylineUpdates[1].polylineIdsToRemove, <PolylineId>{
-      p2.polylineId,
-    });
+    expect(map.polylineUpdates[1].polylineIdsToRemove, <PolylineId>{p2.polylineId});
 
     expect(map.polylineUpdates[2].polylinesToChange, <Polyline>{p3updated});
     expect(map.polylineUpdates[2].polylinesToAdd.isEmpty, true);

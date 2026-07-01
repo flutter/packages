@@ -81,8 +81,7 @@ class _MyAppState extends State<MyApp> {
         appGroupIdentifier: 'group.flutter.appGroupTest',
       );
     } catch (exception) {
-      containerDirectory =
-          'Failed to get app group container directory: $exception';
+      containerDirectory = 'Failed to get app group container directory: $exception';
     }
 
     try {

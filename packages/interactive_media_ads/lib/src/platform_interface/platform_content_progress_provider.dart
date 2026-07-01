@@ -50,9 +50,7 @@ base class PlatformContentProgressProviderCreationParams {
 /// Provides updates required to enable triggering ads at configured cue points.
 abstract class PlatformContentProgressProvider {
   /// Creates a new [PlatformContentProgressProvider].
-  factory PlatformContentProgressProvider(
-    PlatformContentProgressProviderCreationParams params,
-  ) {
+  factory PlatformContentProgressProvider(PlatformContentProgressProviderCreationParams params) {
     assert(
       InteractiveMediaAdsPlatform.instance != null,
       'A platform implementation for `interactive_media_ads` has not been set. '
@@ -61,9 +59,8 @@ abstract class PlatformContentProgressProvider {
       'unit testing, `InteractiveMediaAdsPlatform.instance` can be set with '
       'your own test implementation.',
     );
-    final PlatformContentProgressProvider implementation =
-        InteractiveMediaAdsPlatform.instance!
-            .createPlatformContentProgressProvider(params);
+    final PlatformContentProgressProvider implementation = InteractiveMediaAdsPlatform.instance!
+        .createPlatformContentProgressProvider(params);
     return implementation;
   }
 
@@ -79,8 +76,5 @@ abstract class PlatformContentProgressProvider {
   final PlatformContentProgressProviderCreationParams params;
 
   /// Sends an update on the progress of the content video.
-  Future<void> setProgress({
-    required Duration progress,
-    required Duration duration,
-  });
+  Future<void> setProgress({required Duration progress, required Duration duration});
 }

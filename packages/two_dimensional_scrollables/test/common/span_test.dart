@@ -12,9 +12,7 @@ void main() {
     test('FixedSpanExtent', () {
       var extent = const FixedSpanExtent(150);
       expect(
-        extent.calculateExtent(
-          const SpanExtentDelegate(precedingExtent: 0, viewportExtent: 0),
-        ),
+        extent.calculateExtent(const SpanExtentDelegate(precedingExtent: 0, viewportExtent: 0)),
         150,
       );
       expect(
@@ -41,9 +39,7 @@ void main() {
     test('FractionalSpanExtent', () {
       var extent = const FractionalSpanExtent(0.5);
       expect(
-        extent.calculateExtent(
-          const SpanExtentDelegate(precedingExtent: 0, viewportExtent: 0),
-        ),
+        extent.calculateExtent(const SpanExtentDelegate(precedingExtent: 0, viewportExtent: 0)),
         0.0,
       );
       expect(
@@ -70,9 +66,7 @@ void main() {
     test('RemainingSpanExtent', () {
       const extent = RemainingSpanExtent();
       expect(
-        extent.calculateExtent(
-          const SpanExtentDelegate(precedingExtent: 0, viewportExtent: 0),
-        ),
+        extent.calculateExtent(const SpanExtentDelegate(precedingExtent: 0, viewportExtent: 0)),
         0.0,
       );
       expect(
@@ -84,17 +78,14 @@ void main() {
     });
 
     test('CombiningSpanExtent', () {
-      final extent = CombiningSpanExtent(
-        const FixedSpanExtent(100),
-        const RemainingSpanExtent(),
-        (double a, double b) {
-          return a + b;
-        },
-      );
+      final extent = CombiningSpanExtent(const FixedSpanExtent(100), const RemainingSpanExtent(), (
+        double a,
+        double b,
+      ) {
+        return a + b;
+      });
       expect(
-        extent.calculateExtent(
-          const SpanExtentDelegate(precedingExtent: 0, viewportExtent: 0),
-        ),
+        extent.calculateExtent(const SpanExtentDelegate(precedingExtent: 0, viewportExtent: 0)),
         100,
       );
       expect(
@@ -108,9 +99,7 @@ void main() {
     test('MaxSpanExtent', () {
       const extent = MaxSpanExtent(FixedSpanExtent(100), RemainingSpanExtent());
       expect(
-        extent.calculateExtent(
-          const SpanExtentDelegate(precedingExtent: 0, viewportExtent: 0),
-        ),
+        extent.calculateExtent(const SpanExtentDelegate(precedingExtent: 0, viewportExtent: 0)),
         100,
       );
       expect(
@@ -124,9 +113,7 @@ void main() {
     test('MinSpanExtent', () {
       const extent = MinSpanExtent(FixedSpanExtent(100), RemainingSpanExtent());
       expect(
-        extent.calculateExtent(
-          const SpanExtentDelegate(precedingExtent: 0, viewportExtent: 0),
-        ),
+        extent.calculateExtent(const SpanExtentDelegate(precedingExtent: 0, viewportExtent: 0)),
         0,
       );
       expect(

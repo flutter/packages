@@ -1,0 +1,30 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:cupertino_ui_examples/button/cupertino_button.0.dart'
+    as example;
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  testWidgets('Has 4 CupertinoButton variants', (WidgetTester tester) async {
+    await tester.pumpWidget(const example.CupertinoButtonApp());
+
+    expect(find.byType(CupertinoButton), findsNWidgets(4));
+    expect(
+      find.ancestor(
+        of: find.text('Enabled'),
+        matching: find.byType(CupertinoButton),
+      ),
+      findsNWidgets(2),
+    );
+    expect(
+      find.ancestor(
+        of: find.text('Disabled'),
+        matching: find.byType(CupertinoButton),
+      ),
+      findsNWidgets(2),
+    );
+  });
+}

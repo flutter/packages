@@ -71,6 +71,7 @@ void didChangeAppLifecycleState(AppLifecycleState state) {
     _initializeCameraController(cameraController.description);
   }
 }
+
 ```
 
 ### Handling camera access permissions

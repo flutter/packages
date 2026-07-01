@@ -48,6 +48,7 @@ final class UrlLauncher implements UrlLauncherApi {
     this.intentResolver = intentResolver;
   }
 
+  @SuppressWarnings("QueryPermissionsNeeded")
   UrlLauncher(@NonNull Context context) {
     this(
         context,

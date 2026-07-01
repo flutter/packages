@@ -8203,9 +8203,7 @@ class PartB {
       displayMedium: bitcountGridDoubleInk(textStyle: textTheme.displayMedium),
       displaySmall: bitcountGridDoubleInk(textStyle: textTheme.displaySmall),
       headlineLarge: bitcountGridDoubleInk(textStyle: textTheme.headlineLarge),
-      headlineMedium: bitcountGridDoubleInk(
-        textStyle: textTheme.headlineMedium,
-      ),
+      headlineMedium: bitcountGridDoubleInk(textStyle: textTheme.headlineMedium),
       headlineSmall: bitcountGridDoubleInk(textStyle: textTheme.headlineSmall),
       titleLarge: bitcountGridDoubleInk(textStyle: textTheme.titleLarge),
       titleMedium: bitcountGridDoubleInk(textStyle: textTheme.titleMedium),
@@ -8491,9 +8489,7 @@ class PartB {
       displayMedium: bitcountGridSingleInk(textStyle: textTheme.displayMedium),
       displaySmall: bitcountGridSingleInk(textStyle: textTheme.displaySmall),
       headlineLarge: bitcountGridSingleInk(textStyle: textTheme.headlineLarge),
-      headlineMedium: bitcountGridSingleInk(
-        textStyle: textTheme.headlineMedium,
-      ),
+      headlineMedium: bitcountGridSingleInk(textStyle: textTheme.headlineMedium),
       headlineSmall: bitcountGridSingleInk(textStyle: textTheme.headlineSmall),
       titleLarge: bitcountGridSingleInk(textStyle: textTheme.titleLarge),
       titleMedium: bitcountGridSingleInk(textStyle: textTheme.titleMedium),
@@ -8922,9 +8918,7 @@ class PartB {
       displayMedium: bitcountPropDoubleInk(textStyle: textTheme.displayMedium),
       displaySmall: bitcountPropDoubleInk(textStyle: textTheme.displaySmall),
       headlineLarge: bitcountPropDoubleInk(textStyle: textTheme.headlineLarge),
-      headlineMedium: bitcountPropDoubleInk(
-        textStyle: textTheme.headlineMedium,
-      ),
+      headlineMedium: bitcountPropDoubleInk(textStyle: textTheme.headlineMedium),
       headlineSmall: bitcountPropDoubleInk(textStyle: textTheme.headlineSmall),
       titleLarge: bitcountPropDoubleInk(textStyle: textTheme.titleLarge),
       titleMedium: bitcountPropDoubleInk(textStyle: textTheme.titleMedium),
@@ -9210,9 +9204,7 @@ class PartB {
       displayMedium: bitcountPropSingleInk(textStyle: textTheme.displayMedium),
       displaySmall: bitcountPropSingleInk(textStyle: textTheme.displaySmall),
       headlineLarge: bitcountPropSingleInk(textStyle: textTheme.headlineLarge),
-      headlineMedium: bitcountPropSingleInk(
-        textStyle: textTheme.headlineMedium,
-      ),
+      headlineMedium: bitcountPropSingleInk(textStyle: textTheme.headlineMedium),
       headlineSmall: bitcountPropSingleInk(textStyle: textTheme.headlineSmall),
       titleLarge: bitcountPropSingleInk(textStyle: textTheme.titleLarge),
       titleMedium: bitcountPropSingleInk(textStyle: textTheme.titleMedium),

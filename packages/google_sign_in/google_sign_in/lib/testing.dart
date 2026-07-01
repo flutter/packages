@@ -42,10 +42,7 @@ class FakeSignInBackend {
         // do nothing
         return null;
       case 'getTokens':
-        return <String, String?>{
-          'idToken': user.idToken,
-          'accessToken': user.accessToken,
-        };
+        return <String, String?>{'idToken': user.idToken, 'accessToken': user.accessToken};
       case 'signIn':
         return user._asMap;
       case 'signInSilently':

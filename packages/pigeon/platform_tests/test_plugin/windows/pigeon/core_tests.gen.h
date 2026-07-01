@@ -14,6 +14,7 @@
 
 #include <map>
 #include <optional>
+#include <ostream>
 #include <string>
 
 namespace core_tests_pigeontest {
@@ -93,6 +94,8 @@ class UnusedClass {
   /// Returns a hash code value for the object. This method is supported for the
   /// benefit of hash tables.
   size_t Hash() const;
+  /// Stream output operator for formatted string representation.
+  friend std::ostream& operator<<(std::ostream& os, const UnusedClass& obj);
 
  private:
   static UnusedClass FromEncodableList(const ::flutter::EncodableList& list);
@@ -227,6 +230,8 @@ class AllTypes {
   /// Returns a hash code value for the object. This method is supported for the
   /// benefit of hash tables.
   size_t Hash() const;
+  /// Stream output operator for formatted string representation.
+  friend std::ostream& operator<<(std::ostream& os, const AllTypes& obj);
 
  private:
   static AllTypes FromEncodableList(const ::flutter::EncodableList& list);
@@ -442,6 +447,9 @@ class AllNullableTypes {
   /// Returns a hash code value for the object. This method is supported for the
   /// benefit of hash tables.
   size_t Hash() const;
+  /// Stream output operator for formatted string representation.
+  friend std::ostream& operator<<(std::ostream& os,
+                                  const AllNullableTypes& obj);
 
  private:
   static AllNullableTypes FromEncodableList(
@@ -643,6 +651,9 @@ class AllNullableTypesWithoutRecursion {
   /// Returns a hash code value for the object. This method is supported for the
   /// benefit of hash tables.
   size_t Hash() const;
+  /// Stream output operator for formatted string representation.
+  friend std::ostream& operator<<(std::ostream& os,
+                                  const AllNullableTypesWithoutRecursion& obj);
 
  private:
   static AllNullableTypesWithoutRecursion FromEncodableList(
@@ -748,6 +759,9 @@ class AllClassesWrapper {
   /// Returns a hash code value for the object. This method is supported for the
   /// benefit of hash tables.
   size_t Hash() const;
+  /// Stream output operator for formatted string representation.
+  friend std::ostream& operator<<(std::ostream& os,
+                                  const AllClassesWrapper& obj);
 
  private:
   static AllClassesWrapper FromEncodableList(
@@ -790,6 +804,8 @@ class TestMessage {
   /// Returns a hash code value for the object. This method is supported for the
   /// benefit of hash tables.
   size_t Hash() const;
+  /// Stream output operator for formatted string representation.
+  friend std::ostream& operator<<(std::ostream& os, const TestMessage& obj);
 
  private:
   static TestMessage FromEncodableList(const ::flutter::EncodableList& list);
@@ -860,6 +876,18 @@ class HostIntegrationCoreApi {
   // Returns the passed list, to test serialization and deserialization.
   virtual ErrorOr<::flutter::EncodableList> EchoList(
       const ::flutter::EncodableList& list) = 0;
+  // Returns the passed list, to test serialization and deserialization.
+  virtual ErrorOr<::flutter::EncodableList> EchoStringList(
+      const ::flutter::EncodableList& string_list) = 0;
+  // Returns the passed list, to test serialization and deserialization.
+  virtual ErrorOr<::flutter::EncodableList> EchoIntList(
+      const ::flutter::EncodableList& int_list) = 0;
+  // Returns the passed list, to test serialization and deserialization.
+  virtual ErrorOr<::flutter::EncodableList> EchoDoubleList(
+      const ::flutter::EncodableList& double_list) = 0;
+  // Returns the passed list, to test serialization and deserialization.
+  virtual ErrorOr<::flutter::EncodableList> EchoBoolList(
+      const ::flutter::EncodableList& bool_list) = 0;
   // Returns the passed list, to test serialization and deserialization.
   virtual ErrorOr<::flutter::EncodableList> EchoEnumList(
       const ::flutter::EncodableList& enum_list) = 0;

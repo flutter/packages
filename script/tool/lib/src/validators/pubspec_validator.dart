@@ -13,6 +13,7 @@ import '../common/file_utils.dart';
 import '../common/output_utils.dart';
 import '../common/plugin_utils.dart';
 import '../common/repository_package.dart';
+import '../common/tool_config.dart';
 
 // Section order for plugins. Because the 'flutter' section is critical
 // information for plugins, and usually small, it goes near the top unlike in
@@ -64,20 +65,23 @@ class PubspecValidator {
     required AllowPackageLists allowedPackages,
     required void Function(String) warningLogger,
     required Directory repoRoot,
-    required String minMinFlutterVersion,
+    Version? minMinFlutterVersion,
+    Version? minMinDartVersion,
   }) : _path = path,
        _indentation = indentation,
        _allowedPackages = allowedPackages,
        _logWarning = warningLogger,
        _repoRoot = repoRoot,
-       _minMinFlutterVersion = minMinFlutterVersion;
+       _minMinFlutterVersion = minMinFlutterVersion,
+       _minMinDartVersion = minMinDartVersion;
 
   final path.Context _path;
   final String _indentation;
   final AllowPackageLists _allowedPackages;
   final void Function(String) _logWarning;
   final Directory _repoRoot;
-  final String _minMinFlutterVersion;
+  final Version? _minMinFlutterVersion;
+  final Version? _minMinDartVersion;
 
   /// Validates that the pubspec of a package follows repository conventions,
   /// returning a list of errors.
@@ -98,9 +102,7 @@ class PubspecValidator {
 
     final List<String> pubspecLines = contents.split('\n');
     final bool isPlugin = pubspec.flutter?.containsKey('plugin') ?? false;
-    final List<String> sectionOrder = isPlugin
-        ? _majorPluginSections
-        : _majorPackageSections;
+    final List<String> sectionOrder = isPlugin ? _majorPluginSections : _majorPackageSections;
     bool passing = _checkSectionOrder(pubspecLines, sectionOrder);
     if (!passing) {
       printError(
@@ -111,32 +113,20 @@ class PubspecValidator {
       printError('$listIndentation${sectionOrder.join('\n$listIndentation')}');
     }
 
-    final String? minVersionError = _checkForMinimumVersionError(
-      pubspec,
-      package,
-      minMinFlutterVersion: _minMinFlutterVersion.isEmpty
-          ? null
-          : Version.parse(_minMinFlutterVersion),
-    );
+    final String? minVersionError = _checkForMinimumVersionError(pubspec, package);
     if (minVersionError != null) {
       printError('$_indentation$minVersionError');
       passing = false;
     }
 
     if (isPlugin) {
-      final String? implementsError = _checkForImplementsError(
-        pubspec,
-        package: package,
-      );
+      final String? implementsError = _checkForImplementsError(pubspec, package: package);
       if (implementsError != null) {
         printError('$_indentation$implementsError');
         passing = false;
       }
 
-      final String? defaultPackageError = _checkForDefaultPackageError(
-        pubspec,
-        package: package,
-      );
+      final String? defaultPackageError = _checkForDefaultPackageError(pubspec, package: package);
       if (defaultPackageError != null) {
         printError('$_indentation$defaultPackageError');
         passing = false;
@@ -146,10 +136,7 @@ class PubspecValidator {
     final String? dependenciesError = _checkDependencies(pubspec);
     if (dependenciesError != null) {
       printError(
-        dependenciesError
-            .split('\n')
-            .map((String line) => '$_indentation$line')
-            .join('\n'),
+        dependenciesError.split('\n').map((String line) => '$_indentation$line').join('\n'),
       );
       passing = false;
     }
@@ -187,10 +174,7 @@ class PubspecValidator {
       // the app-facing package, since they are unlisted, and are expected to
       // have short descriptions.
       if (!package.isPlatformInterface && !package.isPlatformImplementation) {
-        final String? descriptionError = _checkDescription(
-          pubspec,
-          package: package,
-        );
+        final String? descriptionError = _checkDescription(pubspec, package: package);
         if (descriptionError != null) {
           printError('$_indentation$descriptionError');
           passing = false;
@@ -198,15 +182,10 @@ class PubspecValidator {
       }
     }
 
-    return passing
-        ? <String>[]
-        : ['pubspec.yaml failed validation, see above for details'];
+    return passing ? <String>[] : ['pubspec.yaml failed validation, see above for details'];
   }
 
-  bool _checkSectionOrder(
-    List<String> pubspecLines,
-    List<String> sectionOrder,
-  ) {
+  bool _checkSectionOrder(List<String> pubspecLines, List<String> sectionOrder) {
     var previousSectionIndex = 0;
     for (final line in pubspecLines) {
       final int index = sectionOrder.indexOf(line);
@@ -229,31 +208,26 @@ class PubspecValidator {
     if (pubspec.repository == null) {
       errorMessages.add('Missing "repository"');
     } else {
+      final String repoName = getRepositoryName(_repoRoot);
       final String relativePackagePath = relativePosixPath(
         package.directory,
         from: _repoRoot,
         platformContext: _path,
       );
       if (!pubspec.repository!.path.endsWith(relativePackagePath)) {
-        errorMessages.add(
-          'The "repository" link should end with the package path.',
-        );
+        errorMessages.add('The "repository" link should end with the package path.');
       }
 
-      if (!pubspec.repository!.toString().startsWith(
-        'https://github.com/flutter/packages/tree/main',
-      )) {
+      if (!pubspec.repository!.toString().startsWith('https://github.com/$repoName/tree/main')) {
         errorMessages.add(
           'The "repository" link should start with the repository\'s '
-          'main tree: "https://github.com/flutter/packages/tree/main".',
+          'main tree: "https://github.com/$repoName/tree/main".',
         );
       }
     }
 
     if (pubspec.homepage != null) {
-      errorMessages.add(
-        'Found a "homepage" entry; only "repository" should be used.',
-      );
+      errorMessages.add('Found a "homepage" entry; only "repository" should be used.');
     }
 
     return errorMessages;
@@ -261,10 +235,7 @@ class PubspecValidator {
 
   // Validates the "description" field for a package, returning an error
   // string if there are any issues.
-  String? _checkDescription(
-    Pubspec pubspec, {
-    required RepositoryPackage package,
-  }) {
+  String? _checkDescription(Pubspec pubspec, {required RepositoryPackage package}) {
     final String? description = pubspec.description;
     if (description == null) {
       return 'Missing "description"';
@@ -282,10 +253,7 @@ class PubspecValidator {
   }
 
   bool _checkIssueLink(Pubspec pubspec) {
-    return pubspec.issueTracker?.toString().startsWith(
-          _expectedIssueLinkFormat,
-        ) ??
-        false;
+    return pubspec.issueTracker?.toString().startsWith(_expectedIssueLinkFormat) ?? false;
   }
 
   // Validates the "topics" keyword for a plugin, returning an error
@@ -314,9 +282,7 @@ class PubspecValidator {
     final expectedTopicFormat = RegExp(r'^[a-z](?:-?[a-z0-9]+)*$');
     final Iterable<String> invalidTopics = topics.where(
       (String topic) =>
-          !expectedTopicFormat.hasMatch(topic) ||
-          topic.length < 2 ||
-          topic.length > 32,
+          !expectedTopicFormat.hasMatch(topic) || topic.length < 2 || topic.length > 32,
     );
     if (invalidTopics.isNotEmpty) {
       return 'Invalid topic(s): ${invalidTopics.join(', ')} in "topics" section. '
@@ -331,10 +297,7 @@ class PubspecValidator {
   // string if there are any issues.
   //
   // Should only be called on plugin packages.
-  String? _checkForImplementsError(
-    Pubspec pubspec, {
-    required RepositoryPackage package,
-  }) {
+  String? _checkForImplementsError(Pubspec pubspec, {required RepositoryPackage package}) {
     if (_isImplementationPackage(package)) {
       final pluginSection = pubspec.flutter!['plugin'] as YamlMap;
       final implements = pluginSection['implements'] as String?;
@@ -353,10 +316,7 @@ class PubspecValidator {
   // string if there are any issues.
   //
   // Should only be called on plugin packages.
-  String? _checkForDefaultPackageError(
-    Pubspec pubspec, {
-    required RepositoryPackage package,
-  }) {
+  String? _checkForDefaultPackageError(Pubspec pubspec, {required RepositoryPackage package}) {
     final pluginSection = pubspec.flutter!['plugin'] as YamlMap;
     final platforms = pluginSection['platforms'] as YamlMap?;
     if (platforms == null) {
@@ -419,57 +379,35 @@ class PubspecValidator {
   /// (if provided).
   ///
   /// Returns an error string if validation fails.
-  String? _checkForMinimumVersionError(
-    Pubspec pubspec,
-    RepositoryPackage package, {
-    Version? minMinFlutterVersion,
-  }) {
-    String unknownDartVersionError(Version flutterVersion) {
-      return 'Dart SDK version for Flutter SDK version '
-          '$flutterVersion is unknown. '
-          'Please update the map for getDartSdkForFlutterSdk with the '
-          'corresponding Dart version.';
-    }
-
-    Version? minMinDartVersion;
-    if (minMinFlutterVersion != null) {
-      minMinDartVersion = getDartSdkForFlutterSdk(minMinFlutterVersion);
-      if (minMinDartVersion == null) {
-        return unknownDartVersionError(minMinFlutterVersion);
-      }
-    }
-
-    final Version? dartConstraintMin = _minimumForConstraint(
-      pubspec.environment['sdk'],
-    );
-    final Version? flutterConstraintMin = _minimumForConstraint(
-      pubspec.environment['flutter'],
-    );
+  String? _checkForMinimumVersionError(Pubspec pubspec, RepositoryPackage package) {
+    final Version? dartConstraintMin = _minimumForConstraint(pubspec.environment['sdk']);
+    final Version? flutterConstraintMin = _minimumForConstraint(pubspec.environment['flutter']);
 
     // Validate the Flutter constraint, if any.
-    if (flutterConstraintMin != null && minMinFlutterVersion != null) {
-      if (flutterConstraintMin < minMinFlutterVersion) {
+    if (flutterConstraintMin != null && _minMinFlutterVersion != null) {
+      if (flutterConstraintMin < _minMinFlutterVersion) {
         return 'Minimum allowed Flutter version $flutterConstraintMin is less '
-            'than $minMinFlutterVersion';
+            'than $_minMinFlutterVersion';
       }
     }
 
     // Validate the Dart constraint, if any.
     if (dartConstraintMin != null) {
       // Ensure that it satisfies the minimum.
-      if (minMinDartVersion != null) {
-        if (dartConstraintMin < minMinDartVersion) {
-          return 'Minimum allowed Dart version $dartConstraintMin is less than $minMinDartVersion';
+      if (_minMinDartVersion != null) {
+        if (dartConstraintMin < _minMinDartVersion) {
+          return 'Minimum allowed Dart version $dartConstraintMin is less than $_minMinDartVersion';
         }
       }
 
       // Ensure that if there is also a Flutter constraint, they are consistent.
       if (flutterConstraintMin != null) {
-        final Version? dartVersionForFlutterMinimum = getDartSdkForFlutterSdk(
-          flutterConstraintMin,
-        );
+        final Version? dartVersionForFlutterMinimum = getDartSdkForFlutterSdk(flutterConstraintMin);
         if (dartVersionForFlutterMinimum == null) {
-          return unknownDartVersionError(flutterConstraintMin);
+          return 'Dart SDK version for Flutter SDK version '
+              '$flutterConstraintMin is unknown. '
+              'Please update the map for getDartSdkForFlutterSdk with the '
+              'corresponding Dart version.';
         }
         if (dartVersionForFlutterMinimum != dartConstraintMin) {
           return 'The minimum Dart version is $dartConstraintMin, but the '
@@ -559,12 +497,10 @@ Please move them to dev_dependencies.
     if (dependency is PathDependency || dependency is SdkDependency) {
       return true;
     }
-    if (_allowedPackages.local.contains(name) ||
-        _allowedPackages.unpinned.contains(name)) {
+    if (_allowedPackages.local.contains(name) || _allowedPackages.unpinned.contains(name)) {
       return true;
     }
-    if (dependency is HostedDependency &&
-        _allowedPackages.pinned.contains(name)) {
+    if (dependency is HostedDependency && _allowedPackages.pinned.contains(name)) {
       final VersionConstraint constraint = dependency.version;
       if (constraint is VersionRange &&
           constraint.min != null &&

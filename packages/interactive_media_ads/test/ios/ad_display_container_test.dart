@@ -31,15 +31,10 @@ void main() {
   group('IOSAdDisplayContainer', () {
     testWidgets('build with key', (WidgetTester tester) async {
       final container = IOSAdDisplayContainer(
-        IOSAdDisplayContainerCreationParams(
-          key: const Key('testKey'),
-          onContainerAdded: (_) {},
-        ),
+        IOSAdDisplayContainerCreationParams(key: const Key('testKey'), onContainerAdded: (_) {}),
       );
 
-      await tester.pumpWidget(
-        Builder(builder: (BuildContext context) => container.build(context)),
-      );
+      await tester.pumpWidget(Builder(builder: (BuildContext context) => container.build(context)));
 
       expect(find.byType(UiKitView), findsOneWidget);
       expect(find.byKey(const Key('testKey')), findsOneWidget);
@@ -73,9 +68,7 @@ void main() {
         ),
       );
 
-      await tester.pumpWidget(
-        Builder(builder: (BuildContext context) => container.build(context)),
-      );
+      await tester.pumpWidget(Builder(builder: (BuildContext context) => container.build(context)));
 
       final view = find.byType(UiKitView).evaluate().single.widget as UiKitView;
       view.onPlatformViewCreated!.call(0);
@@ -89,9 +82,7 @@ void main() {
       expect(onContainerAddedCompleter.isCompleted, isTrue);
     });
 
-    testWidgets('AdDisplayContainer ads CompanionAdSlots', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('AdDisplayContainer ads CompanionAdSlots', (WidgetTester tester) async {
       final mockCompanionAdSlot = MockIMACompanionAdSlot();
       late final void Function(UIViewController, bool) viewDidAppearCallback;
       final addedAdSlotsCompleter = Completer<List<IMACompanionAdSlot>?>();
@@ -140,9 +131,7 @@ void main() {
         ),
       );
 
-      await tester.pumpWidget(
-        Builder(builder: (BuildContext context) => container.build(context)),
-      );
+      await tester.pumpWidget(Builder(builder: (BuildContext context) => container.build(context)));
 
       final view = find.byType(UiKitView).evaluate().single.widget as UiKitView;
       view.onPlatformViewCreated!.call(0);
@@ -152,9 +141,7 @@ void main() {
 
       await onContainerAddedCompleter.future;
 
-      expect(await addedAdSlotsCompleter.future, <IMACompanionAdSlot>[
-        mockCompanionAdSlot,
-      ]);
+      expect(await addedAdSlotsCompleter.future, <IMACompanionAdSlot>[mockCompanionAdSlot]);
     });
   });
 }

@@ -29,9 +29,7 @@ class WebKitWebViewPlatform extends WebViewPlatform {
   }
 
   @override
-  WebKitWebViewWidget createPlatformWebViewWidget(
-    PlatformWebViewWidgetCreationParams params,
-  ) {
+  WebKitWebViewWidget createPlatformWebViewWidget(PlatformWebViewWidgetCreationParams params) {
     return WebKitWebViewWidget(params);
   }
 

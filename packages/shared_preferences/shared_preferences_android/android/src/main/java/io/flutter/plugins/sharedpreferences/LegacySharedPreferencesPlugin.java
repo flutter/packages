@@ -13,7 +13,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugins.sharedpreferences.Messages.SharedPreferencesApi;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -56,7 +55,7 @@ public class LegacySharedPreferencesPlugin implements FlutterPlugin, SharedPrefe
   private void setUp(@NonNull BinaryMessenger messenger, @NonNull Context context) {
     preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
     try {
-      SharedPreferencesApi.setUp(messenger, this);
+      SharedPreferencesApi.Companion.setUp(messenger, this);
     } catch (Exception ex) {
       Log.e(TAG, "Received exception while setting up SharedPreferencesPlugin", ex);
     }
@@ -69,16 +68,16 @@ public class LegacySharedPreferencesPlugin implements FlutterPlugin, SharedPrefe
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPlugin.FlutterPluginBinding binding) {
-    SharedPreferencesApi.setUp(binding.getBinaryMessenger(), null);
+    SharedPreferencesApi.Companion.setUp(binding.getBinaryMessenger(), null);
   }
 
   @Override
-  public @NonNull Boolean setBool(@NonNull String key, @NonNull Boolean value) {
+  public boolean setBool(@NonNull String key, boolean value) {
     return preferences.edit().putBoolean(key, value).commit();
   }
 
   @Override
-  public @NonNull Boolean setString(@NonNull String key, @NonNull String value) {
+  public boolean setString(@NonNull String key, @NonNull String value) {
     // TODO (tarrinneal): Move this string prefix checking logic to dart code and make it an
     // Argument Error.
     if (value.startsWith(LIST_IDENTIFIER)
@@ -92,23 +91,23 @@ public class LegacySharedPreferencesPlugin implements FlutterPlugin, SharedPrefe
   }
 
   @Override
-  public @NonNull Boolean setInt(@NonNull String key, @NonNull Long value) {
+  public boolean setInt(@NonNull String key, long value) {
     return preferences.edit().putLong(key, value).commit();
   }
 
   @Override
-  public @NonNull Boolean setDouble(@NonNull String key, @NonNull Double value) {
+  public boolean setDouble(@NonNull String key, double value) {
     String doubleValueStr = Double.toString(value);
     return preferences.edit().putString(key, DOUBLE_PREFIX + doubleValueStr).commit();
   }
 
   @Override
-  public @NonNull Boolean remove(@NonNull String key) {
+  public boolean remove(@NonNull String key) {
     return preferences.edit().remove(key).commit();
   }
 
   @Override
-  public @NonNull Boolean setEncodedStringList(@NonNull String key, @NonNull String value)
+  public boolean setEncodedStringList(@NonNull String key, @NonNull String value)
       throws RuntimeException {
     return preferences.edit().putString(key, value).commit();
   }
@@ -116,7 +115,7 @@ public class LegacySharedPreferencesPlugin implements FlutterPlugin, SharedPrefe
   // Deprecated, for testing purposes only.
   @Deprecated
   @Override
-  public @NonNull Boolean setDeprecatedStringList(@NonNull String key, @NonNull List<String> value)
+  public boolean setDeprecatedStringList(@NonNull String key, @NonNull List<String> value)
       throws RuntimeException {
     return preferences.edit().putString(key, LIST_IDENTIFIER + listEncoder.encode(value)).commit();
   }
@@ -129,7 +128,7 @@ public class LegacySharedPreferencesPlugin implements FlutterPlugin, SharedPrefe
   }
 
   @Override
-  public @NonNull Boolean clear(@NonNull String prefix, @Nullable List<String> allowList)
+  public boolean clear(@NonNull String prefix, @Nullable List<String> allowList)
       throws RuntimeException {
     SharedPreferences.Editor clearEditor = preferences.edit();
     Map<String, ?> allPrefs = preferences.getAll();

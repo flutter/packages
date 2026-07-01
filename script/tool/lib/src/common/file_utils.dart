@@ -4,6 +4,7 @@
 
 import 'package:file/file.dart';
 import 'package:path/path.dart' as p;
+import 'package:yaml/yaml.dart';
 
 /// Returns a [File] created by appending all but the last item in [components]
 /// to [base] as subdirectories, then appending the last as a file.
@@ -22,10 +23,7 @@ File childFileWithSubcomponents(Directory base, List<String> components) {
 /// Example:
 ///   childFileWithSubcomponents(rootDir, ['foo', 'bar'])
 /// creates a File representing /rootDir/foo/bar/.
-Directory childDirectoryWithSubcomponents(
-  Directory base,
-  List<String> components,
-) {
+Directory childDirectoryWithSubcomponents(Directory base, List<String> components) {
   var dir = base;
   for (final directoryName in components) {
     dir = dir.childDirectory(directoryName);
@@ -45,7 +43,22 @@ String relativePosixPath(
   required Directory from,
   required p.Context platformContext,
 }) => p.posix.joinAll(
-  platformContext.split(
-    platformContext.relative(entity.absolute.path, from: from.path),
-  ),
+  platformContext.split(platformContext.relative(entity.absolute.path, from: from.path)),
 );
+
+/// Loads the file at [filename], which must contain a YAML list of strings.
+///
+/// If the file is not found, returns null.
+List<String>? loadYamlList(File file) {
+  if (!file.existsSync()) {
+    return null;
+  }
+  final String contents = file.readAsStringSync();
+  final Object? yaml = loadYaml(contents);
+  // Treat an empty or comment-only file as an empty list, to avoid requiring
+  // adding an explicit empty list entry to the YAML when no entries are needed.
+  if (yaml == null) {
+    return [];
+  }
+  return (yaml as YamlList).toList().cast<String>();
+}

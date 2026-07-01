@@ -37,10 +37,7 @@ class Color {
   /// Each part is represented by an integer from 0..255.
   const Color.fromARGB(int a, int r, int g, int b)
     : value =
-          (((a & 0xff) << 24) |
-              ((r & 0xff) << 16) |
-              ((g & 0xff) << 8) |
-              ((b & 0xff) << 0)) &
+          (((a & 0xff) << 24) | ((r & 0xff) << 16) | ((g & 0xff) << 8) | ((b & 0xff) << 0)) &
           0xFFFFFFFF;
 
   /// Fully opaque black.
@@ -470,14 +467,8 @@ class Paint {
 @immutable
 class Stroke {
   /// Creates a new collection of stroking properties.
-  const Stroke({
-    Color? color,
-    this.shader,
-    this.cap,
-    this.join,
-    this.miterLimit,
-    this.width,
-  }) : color = color ?? Color.opaqueBlack;
+  const Stroke({Color? color, this.shader, this.cap, this.join, this.miterLimit, this.width})
+    : color = color ?? Color.opaqueBlack;
 
   /// The color to use for this stroke.
   ///
@@ -507,15 +498,8 @@ class Stroke {
   final double? width;
 
   @override
-  int get hashCode => Object.hash(
-    PaintingStyle.stroke,
-    color,
-    shader,
-    cap,
-    join,
-    miterLimit,
-    width,
-  );
+  int get hashCode =>
+      Object.hash(PaintingStyle.stroke, color, shader, cap, join, miterLimit, width);
 
   @override
   bool operator ==(Object other) {
@@ -1233,14 +1217,7 @@ enum TileMode {
 @immutable
 class TextPosition {
   /// See [TextPosition].
-  const TextPosition({
-    this.x,
-    this.y,
-    this.dx,
-    this.dy,
-    this.reset = false,
-    this.transform,
-  });
+  const TextPosition({this.x, this.y, this.dx, this.dy, this.reset = false, this.transform});
 
   /// The horizontal axis coordinate for the current text position.
   ///

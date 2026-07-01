@@ -4,3 +4,5 @@ tasks:
     infra_step: true # Note infra steps failing prevents "always" from running.
   - name: tool unit tests
     script: .ci/scripts/plugin_tools_tests.sh
+  - name: flutter_goldens unit tests
+    script: .ci/scripts/flutter_goldens_tests.sh

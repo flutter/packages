@@ -7,17 +7,13 @@ import 'dart:async' as _i4;
 import 'dart:typed_data' as _i5;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:webview_flutter_platform_interface/src/legacy/types/javascript_channel.dart'
-    as _i7;
-import 'package:webview_flutter_platform_interface/src/legacy/types/types.dart'
-    as _i8;
+import 'package:webview_flutter_platform_interface/src/legacy/types/javascript_channel.dart' as _i7;
+import 'package:webview_flutter_platform_interface/src/legacy/types/types.dart' as _i8;
 import 'package:webview_flutter_platform_interface/src/webview_flutter_platform_interface_legacy.dart'
     as _i6;
-import 'package:webview_flutter_wkwebview/src/common/platform_webview.dart'
-    as _i3;
+import 'package:webview_flutter_wkwebview/src/common/platform_webview.dart' as _i3;
 import 'package:webview_flutter_wkwebview/src/common/web_kit.g.dart' as _i2;
-import 'package:webview_flutter_wkwebview/src/legacy/web_kit_webview_widget.dart'
-    as _i9;
+import 'package:webview_flutter_wkwebview/src/legacy/web_kit_webview_widget.dart' as _i9;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -34,32 +30,26 @@ import 'package:webview_flutter_wkwebview/src/legacy/web_kit_webview_widget.dart
 // ignore_for_file: subtype_of_sealed_class
 // ignore_for_file: invalid_use_of_internal_member
 
-class _FakePigeonInstanceManager_0 extends _i1.SmartFake
-    implements _i2.PigeonInstanceManager {
+class _FakePigeonInstanceManager_0 extends _i1.SmartFake implements _i2.PigeonInstanceManager {
   _FakePigeonInstanceManager_0(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
 class _FakeUIScrollView_1 extends _i1.SmartFake implements _i2.UIScrollView {
-  _FakeUIScrollView_1(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakeUIScrollView_1(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
 }
 
 class _FakeURLRequest_2 extends _i1.SmartFake implements _i2.URLRequest {
-  _FakeURLRequest_2(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakeURLRequest_2(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
 }
 
 class _FakeAuthenticationChallengeResponse_3 extends _i1.SmartFake
     implements _i2.AuthenticationChallengeResponse {
-  _FakeAuthenticationChallengeResponse_3(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(parent, parentInvocation);
+  _FakeAuthenticationChallengeResponse_3(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
-class _FakeWKNavigationDelegate_4 extends _i1.SmartFake
-    implements _i2.WKNavigationDelegate {
+class _FakeWKNavigationDelegate_4 extends _i1.SmartFake implements _i2.WKNavigationDelegate {
   _FakeWKNavigationDelegate_4(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -69,49 +59,41 @@ class _FakeWKPreferences_5 extends _i1.SmartFake implements _i2.WKPreferences {
     : super(parent, parentInvocation);
 }
 
-class _FakeWKScriptMessageHandler_6 extends _i1.SmartFake
-    implements _i2.WKScriptMessageHandler {
+class _FakeWKScriptMessageHandler_6 extends _i1.SmartFake implements _i2.WKScriptMessageHandler {
   _FakeWKScriptMessageHandler_6(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
 class _FakeWKWebView_7 extends _i1.SmartFake implements _i2.WKWebView {
-  _FakeWKWebView_7(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakeWKWebView_7(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
 }
 
-class _FakeWKWebViewConfiguration_8 extends _i1.SmartFake
-    implements _i2.WKWebViewConfiguration {
+class _FakeWKWebViewConfiguration_8 extends _i1.SmartFake implements _i2.WKWebViewConfiguration {
   _FakeWKWebViewConfiguration_8(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeUIViewWKWebView_9 extends _i1.SmartFake
-    implements _i2.UIViewWKWebView {
+class _FakeUIViewWKWebView_9 extends _i1.SmartFake implements _i2.UIViewWKWebView {
   _FakeUIViewWKWebView_9(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeWKUserContentController_10 extends _i1.SmartFake
-    implements _i2.WKUserContentController {
+class _FakeWKUserContentController_10 extends _i1.SmartFake implements _i2.WKUserContentController {
   _FakeWKUserContentController_10(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeWKWebsiteDataStore_11 extends _i1.SmartFake
-    implements _i2.WKWebsiteDataStore {
+class _FakeWKWebsiteDataStore_11 extends _i1.SmartFake implements _i2.WKWebsiteDataStore {
   _FakeWKWebsiteDataStore_11(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeWKWebpagePreferences_12 extends _i1.SmartFake
-    implements _i2.WKWebpagePreferences {
+class _FakeWKWebpagePreferences_12 extends _i1.SmartFake implements _i2.WKWebpagePreferences {
   _FakeWKWebpagePreferences_12(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeWKHTTPCookieStore_13 extends _i1.SmartFake
-    implements _i2.WKHTTPCookieStore {
+class _FakeWKHTTPCookieStore_13 extends _i1.SmartFake implements _i2.WKHTTPCookieStore {
   _FakeWKHTTPCookieStore_13(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -121,8 +103,7 @@ class _FakeWKUIDelegate_14 extends _i1.SmartFake implements _i2.WKUIDelegate {
     : super(parent, parentInvocation);
 }
 
-class _FakePlatformWebView_15 extends _i1.SmartFake
-    implements _i3.PlatformWebView {
+class _FakePlatformWebView_15 extends _i1.SmartFake implements _i3.PlatformWebView {
   _FakePlatformWebView_15(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -248,10 +229,7 @@ class MockUIScrollView extends _i1.Mock implements _i2.UIScrollView {
   _i2.UIScrollView pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeUIScrollView_1(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
+            returnValue: _FakeUIScrollView_1(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.UIScrollView);
 
@@ -317,10 +295,7 @@ class MockURLRequest extends _i1.Mock implements _i2.URLRequest {
 
   @override
   _i4.Future<String?> getUrl() =>
-      (super.noSuchMethod(
-            Invocation.method(#getUrl, []),
-            returnValue: _i4.Future<String?>.value(),
-          )
+      (super.noSuchMethod(Invocation.method(#getUrl, []), returnValue: _i4.Future<String?>.value())
           as _i4.Future<String?>);
 
   @override
@@ -378,10 +353,7 @@ class MockURLRequest extends _i1.Mock implements _i2.URLRequest {
   _i2.URLRequest pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeURLRequest_2(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
+            returnValue: _FakeURLRequest_2(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.URLRequest);
 
@@ -411,8 +383,7 @@ class MockURLRequest extends _i1.Mock implements _i2.URLRequest {
 /// A class which mocks [WKNavigationDelegate].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockWKNavigationDelegate extends _i1.Mock
-    implements _i2.WKNavigationDelegate {
+class MockWKNavigationDelegate extends _i1.Mock implements _i2.WKNavigationDelegate {
   MockWKNavigationDelegate() {
     _i1.throwOnMissingStub(this);
   }
@@ -431,9 +402,7 @@ class MockWKNavigationDelegate extends _i1.Mock
                   _i2.WKNavigationDelegate pigeon_instance,
                   _i2.WKWebView webView,
                   _i2.WKNavigationAction navigationAction,
-                ) => _i4.Future<_i2.NavigationActionPolicy>.value(
-                  _i2.NavigationActionPolicy.allow,
-                ),
+                ) => _i4.Future<_i2.NavigationActionPolicy>.value(_i2.NavigationActionPolicy.allow),
           )
           as _i4.Future<_i2.NavigationActionPolicy> Function(
             _i2.WKNavigationDelegate,
@@ -507,10 +476,7 @@ class MockWKNavigationDelegate extends _i1.Mock
   _i2.WKNavigationDelegate pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeWKNavigationDelegate_4(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
+            returnValue: _FakeWKNavigationDelegate_4(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.WKNavigationDelegate);
 
@@ -568,9 +534,7 @@ class MockWKPreferences extends _i1.Mock implements _i2.WKPreferences {
   @override
   _i4.Future<void> setJavaScriptCanOpenWindowsAutomatically(bool? enabled) =>
       (super.noSuchMethod(
-            Invocation.method(#setJavaScriptCanOpenWindowsAutomatically, [
-              enabled,
-            ]),
+            Invocation.method(#setJavaScriptCanOpenWindowsAutomatically, [enabled]),
             returnValue: _i4.Future<void>.value(),
             returnValueForMissingStub: _i4.Future<void>.value(),
           )
@@ -580,10 +544,7 @@ class MockWKPreferences extends _i1.Mock implements _i2.WKPreferences {
   _i2.WKPreferences pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeWKPreferences_5(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
+            returnValue: _FakeWKPreferences_5(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.WKPreferences);
 
@@ -613,18 +574,13 @@ class MockWKPreferences extends _i1.Mock implements _i2.WKPreferences {
 /// A class which mocks [WKScriptMessageHandler].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockWKScriptMessageHandler extends _i1.Mock
-    implements _i2.WKScriptMessageHandler {
+class MockWKScriptMessageHandler extends _i1.Mock implements _i2.WKScriptMessageHandler {
   MockWKScriptMessageHandler() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  void Function(
-    _i2.WKScriptMessageHandler,
-    _i2.WKUserContentController,
-    _i2.WKScriptMessage,
-  )
+  void Function(_i2.WKScriptMessageHandler, _i2.WKUserContentController, _i2.WKScriptMessage)
   get didReceiveScriptMessage =>
       (super.noSuchMethod(
             Invocation.getter(#didReceiveScriptMessage),
@@ -656,10 +612,7 @@ class MockWKScriptMessageHandler extends _i1.Mock
   _i2.WKScriptMessageHandler pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeWKScriptMessageHandler_6(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
+            returnValue: _FakeWKScriptMessageHandler_6(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.WKScriptMessageHandler);
 
@@ -709,10 +662,7 @@ class MockWKWebView extends _i1.Mock implements _i2.WKWebView {
   _i2.WKWebView pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeWKWebView_7(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
+            returnValue: _FakeWKWebView_7(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.WKWebView);
 
@@ -751,10 +701,7 @@ class MockUIViewWKWebView extends _i1.Mock implements _i2.UIViewWKWebView {
   _i2.WKWebViewConfiguration get configuration =>
       (super.noSuchMethod(
             Invocation.getter(#configuration),
-            returnValue: _FakeWKWebViewConfiguration_8(
-              this,
-              Invocation.getter(#configuration),
-            ),
+            returnValue: _FakeWKWebViewConfiguration_8(this, Invocation.getter(#configuration)),
           )
           as _i2.WKWebViewConfiguration);
 
@@ -762,10 +709,7 @@ class MockUIViewWKWebView extends _i1.Mock implements _i2.UIViewWKWebView {
   _i2.UIScrollView get scrollView =>
       (super.noSuchMethod(
             Invocation.getter(#scrollView),
-            returnValue: _FakeUIScrollView_1(
-              this,
-              Invocation.getter(#scrollView),
-            ),
+            returnValue: _FakeUIScrollView_1(this, Invocation.getter(#scrollView)),
           )
           as _i2.UIScrollView);
 
@@ -795,10 +739,7 @@ class MockUIViewWKWebView extends _i1.Mock implements _i2.UIViewWKWebView {
   _i2.UIScrollView pigeonVar_scrollView() =>
       (super.noSuchMethod(
             Invocation.method(#pigeonVar_scrollView, []),
-            returnValue: _FakeUIScrollView_1(
-              this,
-              Invocation.method(#pigeonVar_scrollView, []),
-            ),
+            returnValue: _FakeUIScrollView_1(this, Invocation.method(#pigeonVar_scrollView, [])),
           )
           as _i2.UIScrollView);
 
@@ -822,10 +763,7 @@ class MockUIViewWKWebView extends _i1.Mock implements _i2.UIViewWKWebView {
 
   @override
   _i4.Future<String?> getUrl() =>
-      (super.noSuchMethod(
-            Invocation.method(#getUrl, []),
-            returnValue: _i4.Future<String?>.value(),
-          )
+      (super.noSuchMethod(Invocation.method(#getUrl, []), returnValue: _i4.Future<String?>.value())
           as _i4.Future<String?>);
 
   @override
@@ -979,10 +917,7 @@ class MockUIViewWKWebView extends _i1.Mock implements _i2.UIViewWKWebView {
   _i2.UIViewWKWebView pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeUIViewWKWebView_9(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
+            returnValue: _FakeUIViewWKWebView_9(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.UIViewWKWebView);
 
@@ -1030,8 +965,7 @@ class MockUIViewWKWebView extends _i1.Mock implements _i2.UIViewWKWebView {
 /// A class which mocks [WKWebViewConfiguration].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockWKWebViewConfiguration extends _i1.Mock
-    implements _i2.WKWebViewConfiguration {
+class MockWKWebViewConfiguration extends _i1.Mock implements _i2.WKWebViewConfiguration {
   MockWKWebViewConfiguration() {
     _i1.throwOnMissingStub(this);
   }
@@ -1048,9 +982,7 @@ class MockWKWebViewConfiguration extends _i1.Mock
           as _i2.PigeonInstanceManager);
 
   @override
-  _i4.Future<void> setUserContentController(
-    _i2.WKUserContentController? controller,
-  ) =>
+  _i4.Future<void> setUserContentController(_i2.WKUserContentController? controller) =>
       (super.noSuchMethod(
             Invocation.method(#setUserContentController, [controller]),
             returnValue: _i4.Future<void>.value(),
@@ -1085,10 +1017,7 @@ class MockWKWebViewConfiguration extends _i1.Mock
       (super.noSuchMethod(
             Invocation.method(#getWebsiteDataStore, []),
             returnValue: _i4.Future<_i2.WKWebsiteDataStore>.value(
-              _FakeWKWebsiteDataStore_11(
-                this,
-                Invocation.method(#getWebsiteDataStore, []),
-              ),
+              _FakeWKWebsiteDataStore_11(this, Invocation.method(#getWebsiteDataStore, [])),
             ),
           )
           as _i4.Future<_i2.WKWebsiteDataStore>);
@@ -1107,10 +1036,7 @@ class MockWKWebViewConfiguration extends _i1.Mock
       (super.noSuchMethod(
             Invocation.method(#getPreferences, []),
             returnValue: _i4.Future<_i2.WKPreferences>.value(
-              _FakeWKPreferences_5(
-                this,
-                Invocation.method(#getPreferences, []),
-              ),
+              _FakeWKPreferences_5(this, Invocation.method(#getPreferences, [])),
             ),
           )
           as _i4.Future<_i2.WKPreferences>);
@@ -1134,13 +1060,9 @@ class MockWKWebViewConfiguration extends _i1.Mock
           as _i4.Future<void>);
 
   @override
-  _i4.Future<void> setMediaTypesRequiringUserActionForPlayback(
-    _i2.AudiovisualMediaType? type,
-  ) =>
+  _i4.Future<void> setMediaTypesRequiringUserActionForPlayback(_i2.AudiovisualMediaType? type) =>
       (super.noSuchMethod(
-            Invocation.method(#setMediaTypesRequiringUserActionForPlayback, [
-              type,
-            ]),
+            Invocation.method(#setMediaTypesRequiringUserActionForPlayback, [type]),
             returnValue: _i4.Future<void>.value(),
             returnValueForMissingStub: _i4.Future<void>.value(),
           )
@@ -1163,10 +1085,7 @@ class MockWKWebViewConfiguration extends _i1.Mock
   _i2.WKWebViewConfiguration pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeWKWebViewConfiguration_8(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
+            returnValue: _FakeWKWebViewConfiguration_8(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.WKWebViewConfiguration);
 
@@ -1196,8 +1115,7 @@ class MockWKWebViewConfiguration extends _i1.Mock
 /// A class which mocks [WKWebsiteDataStore].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockWKWebsiteDataStore extends _i1.Mock
-    implements _i2.WKWebsiteDataStore {
+class MockWKWebsiteDataStore extends _i1.Mock implements _i2.WKWebsiteDataStore {
   MockWKWebsiteDataStore() {
     _i1.throwOnMissingStub(this);
   }
@@ -1206,10 +1124,7 @@ class MockWKWebsiteDataStore extends _i1.Mock
   _i2.WKHTTPCookieStore get httpCookieStore =>
       (super.noSuchMethod(
             Invocation.getter(#httpCookieStore),
-            returnValue: _FakeWKHTTPCookieStore_13(
-              this,
-              Invocation.getter(#httpCookieStore),
-            ),
+            returnValue: _FakeWKHTTPCookieStore_13(this, Invocation.getter(#httpCookieStore)),
           )
           as _i2.WKHTTPCookieStore);
 
@@ -1241,10 +1156,7 @@ class MockWKWebsiteDataStore extends _i1.Mock
     double? modificationTimeInSecondsSinceEpoch,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#removeDataOfTypes, [
-              dataTypes,
-              modificationTimeInSecondsSinceEpoch,
-            ]),
+            Invocation.method(#removeDataOfTypes, [dataTypes, modificationTimeInSecondsSinceEpoch]),
             returnValue: _i4.Future<bool>.value(false),
           )
           as _i4.Future<bool>);
@@ -1253,10 +1165,7 @@ class MockWKWebsiteDataStore extends _i1.Mock
   _i2.WKWebsiteDataStore pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeWKWebsiteDataStore_11(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
+            returnValue: _FakeWKWebsiteDataStore_11(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.WKWebsiteDataStore);
 
@@ -1309,9 +1218,7 @@ class MockWKUIDelegate extends _i1.Mock implements _i2.WKUIDelegate {
                   _i2.WKSecurityOrigin origin,
                   _i2.WKFrameInfo frame,
                   _i2.MediaCaptureType type,
-                ) => _i4.Future<_i2.PermissionDecision>.value(
-                  _i2.PermissionDecision.deny,
-                ),
+                ) => _i4.Future<_i2.PermissionDecision>.value(_i2.PermissionDecision.deny),
           )
           as _i4.Future<_i2.PermissionDecision> Function(
             _i2.WKUIDelegate,
@@ -1322,12 +1229,7 @@ class MockWKUIDelegate extends _i1.Mock implements _i2.WKUIDelegate {
           ));
 
   @override
-  _i4.Future<bool> Function(
-    _i2.WKUIDelegate,
-    _i2.WKWebView,
-    String,
-    _i2.WKFrameInfo,
-  )
+  _i4.Future<bool> Function(_i2.WKUIDelegate, _i2.WKWebView, String, _i2.WKFrameInfo)
   get runJavaScriptConfirmPanel =>
       (super.noSuchMethod(
             Invocation.getter(#runJavaScriptConfirmPanel),
@@ -1339,12 +1241,7 @@ class MockWKUIDelegate extends _i1.Mock implements _i2.WKUIDelegate {
                   _i2.WKFrameInfo frame,
                 ) => _i4.Future<bool>.value(false),
           )
-          as _i4.Future<bool> Function(
-            _i2.WKUIDelegate,
-            _i2.WKWebView,
-            String,
-            _i2.WKFrameInfo,
-          ));
+          as _i4.Future<bool> Function(_i2.WKUIDelegate, _i2.WKWebView, String, _i2.WKFrameInfo));
 
   @override
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
@@ -1361,10 +1258,7 @@ class MockWKUIDelegate extends _i1.Mock implements _i2.WKUIDelegate {
   _i2.WKUIDelegate pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeWKUIDelegate_14(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
+            returnValue: _FakeWKUIDelegate_14(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.WKUIDelegate);
 
@@ -1394,8 +1288,7 @@ class MockWKUIDelegate extends _i1.Mock implements _i2.WKUIDelegate {
 /// A class which mocks [WKUserContentController].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockWKUserContentController extends _i1.Mock
-    implements _i2.WKUserContentController {
+class MockWKUserContentController extends _i1.Mock implements _i2.WKUserContentController {
   MockWKUserContentController() {
     _i1.throwOnMissingStub(this);
   }
@@ -1412,10 +1305,7 @@ class MockWKUserContentController extends _i1.Mock
           as _i2.PigeonInstanceManager);
 
   @override
-  _i4.Future<void> addScriptMessageHandler(
-    _i2.WKScriptMessageHandler? handler,
-    String? name,
-  ) =>
+  _i4.Future<void> addScriptMessageHandler(_i2.WKScriptMessageHandler? handler, String? name) =>
       (super.noSuchMethod(
             Invocation.method(#addScriptMessageHandler, [handler, name]),
             returnValue: _i4.Future<void>.value(),
@@ -1463,10 +1353,7 @@ class MockWKUserContentController extends _i1.Mock
   _i2.WKUserContentController pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeWKUserContentController_10(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
+            returnValue: _FakeWKUserContentController_10(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.WKUserContentController);
 
@@ -1496,8 +1383,7 @@ class MockWKUserContentController extends _i1.Mock
 /// A class which mocks [JavascriptChannelRegistry].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockJavascriptChannelRegistry extends _i1.Mock
-    implements _i6.JavascriptChannelRegistry {
+class MockJavascriptChannelRegistry extends _i1.Mock implements _i6.JavascriptChannelRegistry {
   MockJavascriptChannelRegistry() {
     _i1.throwOnMissingStub(this);
   }
@@ -1511,18 +1397,16 @@ class MockJavascriptChannelRegistry extends _i1.Mock
           as Map<String, _i7.JavascriptChannel>);
 
   @override
-  void onJavascriptChannelMessage(String? channel, String? message) =>
-      super.noSuchMethod(
-        Invocation.method(#onJavascriptChannelMessage, [channel, message]),
-        returnValueForMissingStub: null,
-      );
+  void onJavascriptChannelMessage(String? channel, String? message) => super.noSuchMethod(
+    Invocation.method(#onJavascriptChannelMessage, [channel, message]),
+    returnValueForMissingStub: null,
+  );
 
   @override
-  void updateJavascriptChannelsFromSet(Set<_i7.JavascriptChannel>? channels) =>
-      super.noSuchMethod(
-        Invocation.method(#updateJavascriptChannelsFromSet, [channels]),
-        returnValueForMissingStub: null,
-      );
+  void updateJavascriptChannelsFromSet(Set<_i7.JavascriptChannel>? channels) => super.noSuchMethod(
+    Invocation.method(#updateJavascriptChannelsFromSet, [channels]),
+    returnValueForMissingStub: null,
+  );
 }
 
 /// A class which mocks [WebViewPlatformCallbacksHandler].
@@ -1535,10 +1419,7 @@ class MockWebViewPlatformCallbacksHandler extends _i1.Mock
   }
 
   @override
-  _i4.FutureOr<bool> onNavigationRequest({
-    required String? url,
-    required bool? isForMainFrame,
-  }) =>
+  _i4.FutureOr<bool> onNavigationRequest({required String? url, required bool? isForMainFrame}) =>
       (super.noSuchMethod(
             Invocation.method(#onNavigationRequest, [], {
               #url: url,
@@ -1549,10 +1430,8 @@ class MockWebViewPlatformCallbacksHandler extends _i1.Mock
           as _i4.FutureOr<bool>);
 
   @override
-  void onPageStarted(String? url) => super.noSuchMethod(
-    Invocation.method(#onPageStarted, [url]),
-    returnValueForMissingStub: null,
-  );
+  void onPageStarted(String? url) =>
+      super.noSuchMethod(Invocation.method(#onPageStarted, [url]), returnValueForMissingStub: null);
 
   @override
   void onPageFinished(String? url) => super.noSuchMethod(
@@ -1576,8 +1455,7 @@ class MockWebViewPlatformCallbacksHandler extends _i1.Mock
 /// A class which mocks [WebViewWidgetProxy].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockWebViewWidgetProxy extends _i1.Mock
-    implements _i9.WebViewWidgetProxy {
+class MockWebViewWidgetProxy extends _i1.Mock implements _i9.WebViewWidgetProxy {
   MockWebViewWidgetProxy() {
     _i1.throwOnMissingStub(this);
   }
@@ -1585,22 +1463,13 @@ class MockWebViewWidgetProxy extends _i1.Mock
   @override
   _i3.PlatformWebView createWebView(
     _i2.WKWebViewConfiguration? configuration, {
-    void Function(String, _i2.NSObject, Map<_i2.KeyValueChangeKey, Object?>)?
-    observeValue,
+    void Function(String, _i2.NSObject, Map<_i2.KeyValueChangeKey, Object?>)? observeValue,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(
-              #createWebView,
-              [configuration],
-              {#observeValue: observeValue},
-            ),
+            Invocation.method(#createWebView, [configuration], {#observeValue: observeValue}),
             returnValue: _FakePlatformWebView_15(
               this,
-              Invocation.method(
-                #createWebView,
-                [configuration],
-                {#observeValue: observeValue},
-              ),
+              Invocation.method(#createWebView, [configuration], {#observeValue: observeValue}),
             ),
           )
           as _i3.PlatformWebView);
@@ -1649,36 +1518,28 @@ class MockWebViewWidgetProxy extends _i1.Mock
     onCreateWebView,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(#createUIDelgate, [], {
-              #onCreateWebView: onCreateWebView,
-            }),
+            Invocation.method(#createUIDelgate, [], {#onCreateWebView: onCreateWebView}),
             returnValue: _FakeWKUIDelegate_14(
               this,
-              Invocation.method(#createUIDelgate, [], {
-                #onCreateWebView: onCreateWebView,
-              }),
+              Invocation.method(#createUIDelgate, [], {#onCreateWebView: onCreateWebView}),
             ),
           )
           as _i2.WKUIDelegate);
 
   @override
   _i2.WKNavigationDelegate createNavigationDelegate({
-    void Function(_i2.WKNavigationDelegate, _i2.WKWebView, String?)?
-    didFinishNavigation,
-    void Function(_i2.WKNavigationDelegate, _i2.WKWebView, String?)?
-    didStartProvisionalNavigation,
+    void Function(_i2.WKNavigationDelegate, _i2.WKWebView, String?)? didFinishNavigation,
+    void Function(_i2.WKNavigationDelegate, _i2.WKWebView, String?)? didStartProvisionalNavigation,
     required _i4.Future<_i2.NavigationActionPolicy> Function(
       _i2.WKNavigationDelegate,
       _i2.WKWebView,
       _i2.WKNavigationAction,
     )?
     decidePolicyForNavigationAction,
-    void Function(_i2.WKNavigationDelegate, _i2.WKWebView, _i2.NSError)?
-    didFailNavigation,
+    void Function(_i2.WKNavigationDelegate, _i2.WKWebView, _i2.NSError)? didFailNavigation,
     void Function(_i2.WKNavigationDelegate, _i2.WKWebView, _i2.NSError)?
     didFailProvisionalNavigation,
-    void Function(_i2.WKNavigationDelegate, _i2.WKWebView)?
-    webViewWebContentProcessDidTerminate,
+    void Function(_i2.WKNavigationDelegate, _i2.WKWebView)? webViewWebContentProcessDidTerminate,
     required _i4.Future<_i2.NavigationResponsePolicy> Function(
       _i2.WKNavigationDelegate,
       _i2.WKWebView,
@@ -1699,28 +1560,21 @@ class MockWebViewWidgetProxy extends _i1.Mock
               #decidePolicyForNavigationAction: decidePolicyForNavigationAction,
               #didFailNavigation: didFailNavigation,
               #didFailProvisionalNavigation: didFailProvisionalNavigation,
-              #webViewWebContentProcessDidTerminate:
-                  webViewWebContentProcessDidTerminate,
-              #decidePolicyForNavigationResponse:
-                  decidePolicyForNavigationResponse,
-              #didReceiveAuthenticationChallenge:
-                  didReceiveAuthenticationChallenge,
+              #webViewWebContentProcessDidTerminate: webViewWebContentProcessDidTerminate,
+              #decidePolicyForNavigationResponse: decidePolicyForNavigationResponse,
+              #didReceiveAuthenticationChallenge: didReceiveAuthenticationChallenge,
             }),
             returnValue: _FakeWKNavigationDelegate_4(
               this,
               Invocation.method(#createNavigationDelegate, [], {
                 #didFinishNavigation: didFinishNavigation,
                 #didStartProvisionalNavigation: didStartProvisionalNavigation,
-                #decidePolicyForNavigationAction:
-                    decidePolicyForNavigationAction,
+                #decidePolicyForNavigationAction: decidePolicyForNavigationAction,
                 #didFailNavigation: didFailNavigation,
                 #didFailProvisionalNavigation: didFailProvisionalNavigation,
-                #webViewWebContentProcessDidTerminate:
-                    webViewWebContentProcessDidTerminate,
-                #decidePolicyForNavigationResponse:
-                    decidePolicyForNavigationResponse,
-                #didReceiveAuthenticationChallenge:
-                    didReceiveAuthenticationChallenge,
+                #webViewWebContentProcessDidTerminate: webViewWebContentProcessDidTerminate,
+                #decidePolicyForNavigationResponse: decidePolicyForNavigationResponse,
+                #didReceiveAuthenticationChallenge: didReceiveAuthenticationChallenge,
               }),
             ),
           )
@@ -1730,8 +1584,7 @@ class MockWebViewWidgetProxy extends _i1.Mock
 /// A class which mocks [WKWebpagePreferences].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockWKWebpagePreferences extends _i1.Mock
-    implements _i2.WKWebpagePreferences {
+class MockWKWebpagePreferences extends _i1.Mock implements _i2.WKWebpagePreferences {
   MockWKWebpagePreferences() {
     _i1.throwOnMissingStub(this);
   }
@@ -1760,10 +1613,7 @@ class MockWKWebpagePreferences extends _i1.Mock
   _i2.WKWebpagePreferences pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeWKWebpagePreferences_12(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
+            returnValue: _FakeWKWebpagePreferences_12(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.WKWebpagePreferences);
 

@@ -5,19 +5,53 @@ local development.
 
 ## Getting Started
 
-Set up:
+There are two ways to use this tool. You can either run it locally from the
+`flutter/packages` repository, or you can install it globally using
+`dart pub global activate`.
+
+If you are developing in `flutter/packages`, you should **always** use the local
+method, as only the checked in version is expected to work correctly with the
+current state of the repository.
+
+If you are developing in `flutter/core-packages` or another repository using
+this tool, and don't have `flutter/packages` cloned locally (or don't keep it
+up to date), you can use the global method.
+
+For simplicity, the setup instructions below assume you set up an `fpt` alias to
+your preferred method (e.g., in `~/.bashrc` or `~/.zshrc`), and all examples
+in this README use that alias. If you choose not to create an alias, or use
+a different name for your alias, adjust the examples accordingly.
+
+**Note:** Regardless of which setup method you use, many commands require the
+Flutter-bundled version of Dart to be the first `dart` in the path.
+
+### Local Method
+
+Set up the local package to be runnable:
 
 ```sh
-dart pub get -C script/tool
+dart pub get -C "/path/to/flutter/packages/"script/tool
 ```
 
-Run:
+Add an alias (recommended):
 
 ```sh
-dart run script/tool/bin/flutter_plugin_tools.dart <args>
+alias fpt='dart run "/path/to/flutter/packages/"script/tool/bin/flutter_plugin_tools.dart'
 ```
 
-Many commands require the Flutter-bundled version of Dart to be the first `dart` in the path.
+### Global Method
+
+Activate the tool globally:
+
+```sh
+dart pub global activate flutter_plugin_tools
+```
+
+Add an alias (recommended):
+
+```sh
+alias fpt='dart pub global run flutter_plugin_tools'
+```
 
 ## Commands
 
@@ -32,53 +66,60 @@ command is targetting. An package name can be any of:
 - A combination federated_plugin_name/package_name (e.g.,
   `path_provider/path_provider` for the app-facing package).
 
-The examples below assume they are being run from the repository root, but
-the script works from anywhere. If you develop in flutter/packages frequently,
-it may be useful to make an alias for
-`dart run /absolute/path/to/script/tool/bin/flutter_plugin_tools.dart` so that
-you can easily run commands from within packages. For that use case there is
-also a `--current-package` flag as an alternative to `--packages`, to target the
-current working directory's package (or enclosing package; it can be used from
-anywhere within a package).
+An alternative to `--packages` is the `--current-package` flag, which causes
+the script to target the current working directory's package (or enclosing
+package; it can be used from anywhere within a package).
 
 ### Format Code
 
 ```sh
-dart run script/tool/bin/flutter_plugin_tools.dart format --packages package_name
+fpt format --packages package_name
 ```
 
 The `flutter/packages` repository uses clang version `15.0.0` . Newer versions of clang may format code differently.
 
-### Run the Static Analysis
+### Run Static Analysis
 
 To analyze only Dart code:
 
 ```sh
-dart run script/tool/bin/flutter_plugin_tools.dart analyze --packages package_name
+fpt analyze --packages package_name
 ```
 
 To include native code, include the relevant platform flag(s). For example:
 
 ```sh
 # Analyze Dart and Android Java/Kotlin code:
-dart run script/tool/bin/flutter_plugin_tools.dart analyze --android --packages package_name
+fpt analyze --android --packages package_name
 # Analyze Dart and iOS+macOS Objective-C/Swift code:
-dart run script/tool/bin/flutter_plugin_tools.dart analyze --ios --macos --packages package_name
+fpt analyze --ios --macos --packages package_name
 ```
 
 Dart analysis can be excluded with `--no-dart`.
 
+### Run General Validation
+
+To check that changes follow team standards and best practices, run:
+
+```sh
+fpt validate --check-for-missing-changes --packages package_name
+```
+
+If you are making changes that fall under a CHANGELOG and/or version change
+exemption you can omit the `--check-for-missing-changes` flag to skip those
+checks.
+
 ### Run Dart Unit Tests
 
 ```sh
-dart run script/tool/bin/flutter_plugin_tools.dart test --packages package_name
+fpt test --packages package_name
 ```
 
 ### Run Dart Integration Tests
 
 ```sh
-dart run script/tool/bin/flutter_plugin_tools.dart build-examples --apk --packages package_name
-dart run script/tool/bin/flutter_plugin_tools.dart drive-examples --android --packages package_name
+fpt build-examples --apk --packages package_name
+fpt drive-examples --android --packages package_name
 ```
 
 Replace `--apk`/`--android` with the platform you want to test against
@@ -94,21 +135,21 @@ Examples:
 
 ```sh
 # Run just unit tests for iOS and Android:
-dart run script/tool/bin/flutter_plugin_tools.dart native-test --ios --android --no-integration --packages package_name
+fpt native-test --ios --android --no-integration --packages package_name
 # Run all tests for macOS:
-dart run script/tool/bin/flutter_plugin_tools.dart native-test --macos --packages package_name
+fpt native-test --macos --packages package_name
 # Run all tests for Windows:
-dart run script/tool/bin/flutter_plugin_tools.dart native-test --windows --packages package_name
+fpt native-test --windows --packages package_name
 ```
 
 ### Update README.md from Example Sources
 
 ```sh
 # Update all .md files for all packages:
-dart run script/tool/bin/flutter_plugin_tools.dart update-excerpts
+fpt update-excerpts
 
 # Update the .md files only for one package:
-dart run script/tool/bin/flutter_plugin_tools.dart update-excerpts --packages package_name
+fpt update-excerpts --packages package_name
 ```
 
 _See also: https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#readme-code_
@@ -124,7 +165,7 @@ For instance, if you add a new analysis option that requires production
 code changes across many packages:
 
 ```sh
-dart run script/tool/bin/flutter_plugin_tools.dart update-release-info \
+fpt update-release-info \
   --version=minimal \
   --base-branch=upstream/main \
   --changelog="Fixes violations of new analysis option some_new_option."
@@ -152,9 +193,7 @@ For instance, to updated to version 3.0.0 of `some_package` in every package
 that depends on it:
 
 ```sh
-dart run script/tool/bin/flutter_plugin_tools.dart update-dependency \
-  --pub-package=some_package \
-  --version=3.0.0 \
+fpt update-dependency --pub-package=some_package --version=3.0.0
 ```
 
 If a `--version` is not provided, the latest version from pub will be used.
@@ -175,12 +214,12 @@ before using `publish`.
 ```sh
 cd <path_to_repo>
 git checkout <commit_hash_to_publish>
-dart run script/tool/bin/flutter_plugin_tools.dart publish --packages <package>
+fpt publish --packages <package>
 ```
 
 By default the tool tries to push tags to the `upstream` remote, but some
-additional settings can be configured. Run `dart run script/tool/bin/flutter_plugin_tools.dart
-publish --help` for more usage information.
+additional settings can be configured. Run `fpt publish --help` for more
+usage information.
 
 The tool wraps `pub publish` for pushing the package to pub, and then will
 automatically use git to try to create and push tags. It has some additional
@@ -189,3 +228,25 @@ _everything_, including untracked or uncommitted files in version control.
 `publish` will first check the status of the local
 directory and refuse to publish if there are any mismatched files with version
 control present.
+
+## Configuration
+
+The `.repo_tool_config.yaml` file at the root of the repository contains
+configuration for this tool, to support using the same script in multiple
+repositories.
+
+The following sections are supported:
+
+- `repo_name` (**required**): The name of the repository
+  (e.g., `flutter/packages`).
+- `min_flutter` or `min_dart`: The minimum SDK version
+  that packages in the repository are allowed to support.
+- `allowed_dependencies`, containing one or both of:
+  - `pinned`: A list of package names that are allowed as `pubspec.yaml`
+    dependencies as long as they are pinned to an exact version.
+  - `unpinned`: A list of package names that are allowed as `pubspec.yaml`
+    dependencies without a specific version constraint (or with a broad
+    constraint).
+- `package_labels`: A map from a package name to the label to use for that
+  package's issue link query. This is only needed for packages that use a
+  label other than `p: <package_name>`.

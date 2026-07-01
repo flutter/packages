@@ -48,17 +48,14 @@ class _DataPanelState extends State<DataPanel> {
           error: value.error,
           stackTrace: value.stackTrace,
         ),
-        AsyncStateData<SharedPreferencesData>(
-          data: final SharedPreferencesData data,
-        ) =>
-          Column(
-            children: <Widget>[
-              _Header(currentValue: currentValue, data: data),
-              Expanded(
-                child: _Content(data: data, setCurrentValue: _setCurrentValue),
-              ),
-            ],
-          ),
+        AsyncStateData<SharedPreferencesData>(data: final SharedPreferencesData data) => Column(
+          children: <Widget>[
+            _Header(currentValue: currentValue, data: data),
+            Expanded(
+              child: _Content(data: data, setCurrentValue: _setCurrentValue),
+            ),
+          ],
+        ),
       },
     );
   }
@@ -75,8 +72,7 @@ class _Header extends StatelessWidget {
     final bool editing = SharedPreferencesStateProvider.editingOf(context);
     // it is safe to assume that the selected key is not null
     // because the header is only shown when a key is selected
-    final String selectedKey =
-        SharedPreferencesStateProvider.requireSelectedKeyOf(context).key;
+    final String selectedKey = SharedPreferencesStateProvider.requireSelectedKeyOf(context).key;
 
     return AreaPaneHeader(
       roundedTopBorder: false,
@@ -93,8 +89,7 @@ class _Header extends StatelessWidget {
           ),
           if (currentValue case final String currentValue?
               when currentValue != data.valueAsString &&
-                  (data is SharedPreferencesDataString ||
-                      currentValue.isNotEmpty)) ...<Widget>[
+                  (data is SharedPreferencesDataString || currentValue.isNotEmpty)) ...<Widget>[
             const SizedBox(width: denseRowSpacing),
             DevToolsButton(
               onPressed: () async {
@@ -120,18 +115,15 @@ class _Header extends StatelessWidget {
                   context.sharedPreferencesStateNotifier;
               showDialog<void>(
                 context: context,
-                builder: (BuildContext context) => _ConfirmRemoveDialog(
-                  selectedKey: selectedKey,
-                  notifier: notifier,
-                ),
+                builder: (BuildContext context) =>
+                    _ConfirmRemoveDialog(selectedKey: selectedKey, notifier: notifier),
               );
             },
             label: 'Remove',
           ),
           const SizedBox(width: denseRowSpacing),
           DevToolsButton(
-            onPressed: () =>
-                context.sharedPreferencesStateNotifier.startEditing(),
+            onPressed: () => context.sharedPreferencesStateNotifier.startEditing(),
             label: 'Edit',
           ),
         ],
@@ -141,10 +133,7 @@ class _Header extends StatelessWidget {
 }
 
 class _ConfirmRemoveDialog extends StatelessWidget {
-  const _ConfirmRemoveDialog({
-    required this.selectedKey,
-    required this.notifier,
-  });
+  const _ConfirmRemoveDialog({required this.selectedKey, required this.notifier});
 
   final String selectedKey;
   final SharedPreferencesStateNotifier notifier;
@@ -201,11 +190,10 @@ class _Content extends StatelessWidget {
                     initialValue: state.value,
                     setCurrentValue: setCurrentValue,
                   ),
-                  final SharedPreferencesDataStringList state =>
-                    _EditStringList(
-                      initialData: state.value,
-                      onChanged: setCurrentValue,
-                    ),
+                  final SharedPreferencesDataStringList state => _EditStringList(
+                    initialData: state.value,
+                    onChanged: setCurrentValue,
+                  ),
                   _ => TextFormField(
                     autofocus: true,
                     initialValue: data.valueAsString,
@@ -214,9 +202,7 @@ class _Content extends StatelessWidget {
                         FilteringTextInputFormatter.allow(RegExp(r'^-?\d*')),
                       ],
                       SharedPreferencesDataDouble() => <TextInputFormatter>[
-                        FilteringTextInputFormatter.allow(
-                          RegExp(r'^-?\d*\.?\d*'),
-                        ),
+                        FilteringTextInputFormatter.allow(RegExp(r'^-?\d*\.?\d*')),
                       ],
                       _ => <TextInputFormatter>[],
                     },
@@ -233,10 +219,7 @@ class _Content extends StatelessWidget {
 }
 
 class _EditBoolean extends StatelessWidget {
-  const _EditBoolean({
-    required this.setCurrentValue,
-    required this.initialValue,
-  });
+  const _EditBoolean({required this.setCurrentValue, required this.initialValue});
 
   final ValueChanged<String> setCurrentValue;
   final bool initialValue;
@@ -278,9 +261,7 @@ class _EditStringListState extends State<_EditStringList> {
   }
 
   void _updateValue() {
-    widget.onChanged(
-      jsonEncode(<String>[for (final (_, String value) in _currentList) value]),
-    );
+    widget.onChanged(jsonEncode(<String>[for (final (_, String value) in _currentList) value]));
   }
 
   @override
@@ -297,8 +278,7 @@ class _EditStringListState extends State<_EditStringList> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        for (final (int index, (int keyValue, String str))
-            in _currentList.indexed) ...<Widget>[
+        for (final (int index, (int keyValue, String str)) in _currentList.indexed) ...<Widget>[
           if (index > 0) const SizedBox(height: largeSpacing),
           _AddListElement(onPressed: () => _addElementAt(index)),
           Padding(

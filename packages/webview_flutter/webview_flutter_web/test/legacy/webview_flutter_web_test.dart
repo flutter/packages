@@ -60,10 +60,7 @@ void main() {
         // Run
         controller.loadHtmlString('test html');
         // Verify
-        expect(
-          fakeIFrame.src,
-          'data:text/html;charset=utf-8,${Uri.encodeFull('test html')}',
-        );
+        expect(fakeIFrame.src, 'data:text/html;charset=utf-8,${Uri.encodeFull('test html')}');
       });
 
       test('loadHtmlString escapes "#" correctly', () {
@@ -86,67 +83,58 @@ void main() {
         // Run & Verify
         expect(
           () async => controller.loadRequest(
-            WebViewRequest(
-              uri: Uri.parse('flutter.dev'),
-              method: WebViewRequestMethod.get,
-            ),
+            WebViewRequest(uri: Uri.parse('flutter.dev'), method: WebViewRequestMethod.get),
           ),
           throwsA(const TypeMatcher<ArgumentError>()),
         );
       });
 
-      test(
-        'loadRequest makes request and loads response into iframe',
-        () async {
-          // Setup
-          final fakeIFrame = web.HTMLIFrameElement();
-          final controller = WebWebViewPlatformController(fakeIFrame);
+      test('loadRequest makes request and loads response into iframe', () async {
+        // Setup
+        final fakeIFrame = web.HTMLIFrameElement();
+        final controller = WebWebViewPlatformController(fakeIFrame);
 
-          final fakeResponse = web.Response(
-            'test data'.toJS,
-            <String, Object>{
-                  'headers': <String, Object>{'content-type': 'text/plain'},
-                }.jsify()!
-                as web.ResponseInit,
-          );
+        final fakeResponse = web.Response(
+          'test data'.toJS,
+          <String, Object>{
+                'headers': <String, Object>{'content-type': 'text/plain'},
+              }.jsify()!
+              as web.ResponseInit,
+        );
 
-          final mockHttpRequestFactory = MockHttpRequestFactory();
-          when(
-            mockHttpRequestFactory.request(
-              any,
-              method: anyNamed('method'),
-              requestHeaders: anyNamed('requestHeaders'),
-              sendData: anyNamed('sendData'),
-            ),
-          ).thenAnswer((_) => Future<web.Response>.value(fakeResponse));
+        final mockHttpRequestFactory = MockHttpRequestFactory();
+        when(
+          mockHttpRequestFactory.request(
+            any,
+            method: anyNamed('method'),
+            requestHeaders: anyNamed('requestHeaders'),
+            sendData: anyNamed('sendData'),
+          ),
+        ).thenAnswer((_) => Future<web.Response>.value(fakeResponse));
 
-          controller.httpRequestFactory = mockHttpRequestFactory;
+        controller.httpRequestFactory = mockHttpRequestFactory;
 
-          // Run
-          await controller.loadRequest(
-            WebViewRequest(
-              uri: Uri.parse('https://flutter.dev'),
-              method: WebViewRequestMethod.post,
-              body: Uint8List.fromList('test body'.codeUnits),
-              headers: <String, String>{'Foo': 'Bar'},
-            ),
-          );
-          // Verify
-          verify(
-            mockHttpRequestFactory.request(
-              'https://flutter.dev',
-              method: 'post',
-              requestHeaders: <String, String>{'Foo': 'Bar'},
-              sendData: Uint8List.fromList('test body'.codeUnits),
-            ),
-          );
+        // Run
+        await controller.loadRequest(
+          WebViewRequest(
+            uri: Uri.parse('https://flutter.dev'),
+            method: WebViewRequestMethod.post,
+            body: Uint8List.fromList('test body'.codeUnits),
+            headers: <String, String>{'Foo': 'Bar'},
+          ),
+        );
+        // Verify
+        verify(
+          mockHttpRequestFactory.request(
+            'https://flutter.dev',
+            method: 'post',
+            requestHeaders: <String, String>{'Foo': 'Bar'},
+            sendData: Uint8List.fromList('test body'.codeUnits),
+          ),
+        );
 
-          expect(
-            fakeIFrame.src,
-            'data:;charset=utf-8,${Uri.encodeFull('test data')}',
-          );
-        },
-      );
+        expect(fakeIFrame.src, 'data:;charset=utf-8,${Uri.encodeFull('test data')}');
+      });
 
       test('loadRequest escapes "#" correctly', () async {
         // Setup

@@ -20,10 +20,8 @@ void main() {
 
       final benchmarkResults = BenchmarkResults.parse(data);
       expect(benchmarkResults.scores.length, 2);
-      final List<BenchmarkScore> fooBenchmarks =
-          benchmarkResults.scores['foo']!;
-      final List<BenchmarkScore> barBenchmarks =
-          benchmarkResults.scores['bar']!;
+      final List<BenchmarkScore> fooBenchmarks = benchmarkResults.scores['foo']!;
+      final List<BenchmarkScore> barBenchmarks = benchmarkResults.scores['bar']!;
       expect(fooBenchmarks.length, 2);
       expect(fooBenchmarks[0].metric, 'foo.bar');
       expect(fooBenchmarks[0].value, 12.34);
@@ -40,11 +38,7 @@ void main() {
     });
 
     test('$BenchmarkScore', () {
-      final data = <String, Object?>{
-        'metric': 'foo',
-        'value': 1.234,
-        'delta': -0.4,
-      };
+      final data = <String, Object?>{'metric': 'foo', 'value': 1.234, 'delta': -0.4};
 
       final score = BenchmarkScore.parse(data);
       expect(score.metric, 'foo');

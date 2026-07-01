@@ -83,8 +83,7 @@ class ShellRouteConfig extends RouteBaseConfig {
       '${restorationScopeId == null ? '' : 'restorationScopeId: $restorationScopeId,'}';
 
   @override
-  String get factorConstructorParameters =>
-      'factory: $_extensionName._fromState,';
+  String get factorConstructorParameters => 'factory: $_extensionName._fromState,';
 
   @override
   String get routeDataClassName => 'ShellRouteData';
@@ -128,8 +127,7 @@ extension $_extensionName on $_className {
       '${navigatorContainerBuilder == null ? '' : 'navigatorContainerBuilder: $navigatorContainerBuilder,'}';
 
   @override
-  String get factorConstructorParameters =>
-      'factory: $_extensionName._fromState,';
+  String get factorConstructorParameters => 'factory: $_extensionName._fromState,';
 
   @override
   String get routeDataClassName => 'StatefulShellRouteData';
@@ -190,9 +188,7 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
 mixin _GoRouteMixin on RouteBaseConfig {
   String get _basePathForLocation;
 
-  late final Set<String> _pathParams = pathParametersFromPattern(
-    _basePathForLocation,
-  );
+  late final Set<String> _pathParams = pathParametersFromPattern(_basePathForLocation);
 
   // construct path bits using parent bits
   // if there are any queryParam objects, add in the `queryParam` bits
@@ -226,17 +222,13 @@ mixin _GoRouteMixin on RouteBaseConfig {
   /// The definition of the mixin to be generated.
   String get _mixinDefinition;
 
-  FormalParameterElement? get _extraParam =>
-      _ctor.formalParameters.singleWhereOrNull(
-        (FormalParameterElement element) => element.isExtraField,
-      );
+  FormalParameterElement? get _extraParam => _ctor.formalParameters.singleWhereOrNull(
+    (FormalParameterElement element) => element.isExtraField,
+  );
 
   String get _fromStateConstructor {
     final buffer = StringBuffer('=>');
-    if (_ctor.isConst &&
-        _ctorParams.isEmpty &&
-        _ctorQueryParams.isEmpty &&
-        _extraParam == null) {
+    if (_ctor.isConst && _ctorParams.isEmpty && _ctorQueryParams.isEmpty && _extraParam == null) {
       buffer.writeln('const ');
     }
 
@@ -254,9 +246,7 @@ mixin _GoRouteMixin on RouteBaseConfig {
   }
 
   String get _castedSelf {
-    if (_pathParams.isEmpty &&
-        _ctorQueryParams.isEmpty &&
-        _extraParam == null) {
+    if (_pathParams.isEmpty && _ctorQueryParams.isEmpty && _extraParam == null) {
       return '';
     }
 
@@ -273,14 +263,8 @@ mixin _GoRouteMixin on RouteBaseConfig {
         );
       }
     }
-    final List<ElementAnnotation>? metadata = _fieldMetadata(
-      element.displayName,
-    );
-    final String fromStateExpression = decodeParameter(
-      element,
-      _pathParams,
-      metadata,
-    );
+    final List<ElementAnnotation>? metadata = _fieldMetadata(element.displayName);
+    final String fromStateExpression = decodeParameter(element, _pathParams, metadata);
 
     if (element.isPositional) {
       return '$fromStateExpression,';
@@ -343,17 +327,16 @@ mixin _GoRouteMixin on RouteBaseConfig {
     return buffer.toString();
   }
 
-  late final List<FormalParameterElement> _ctorParams = _ctor.formalParameters
-      .where((FormalParameterElement element) {
-        if (_pathParams.contains(element.displayName)) {
-          return true;
-        }
-        return false;
-      })
-      .toList();
+  late final List<FormalParameterElement> _ctorParams = _ctor.formalParameters.where((
+    FormalParameterElement element,
+  ) {
+    if (_pathParams.contains(element.displayName)) {
+      return true;
+    }
+    return false;
+  }).toList();
 
-  late final List<FormalParameterElement> _ctorQueryParams = _ctor
-      .formalParameters
+  late final List<FormalParameterElement> _ctorQueryParams = _ctor.formalParameters
       .where(
         (FormalParameterElement element) =>
             !_pathParams.contains(element.displayName) && !element.isExtraField,
@@ -364,34 +347,24 @@ mixin _GoRouteMixin on RouteBaseConfig {
     final ConstructorElement? ctor = routeDataClass.unnamedConstructor;
 
     if (ctor == null) {
-      throw InvalidGenerationSourceError(
-        'Missing default constructor',
-        element: routeDataClass,
-      );
+      throw InvalidGenerationSourceError('Missing default constructor', element: routeDataClass);
     }
     return ctor;
   }
 
   @override
-  Iterable<String> classDeclarations() => <String>[
-    _mixinDefinition,
-    ..._enumDeclarations(),
-  ];
+  Iterable<String> classDeclarations() => <String>[_mixinDefinition, ..._enumDeclarations()];
 
   /// Returns code representing the constant maps that contain the `enum` to
   /// [String] mapping for each referenced enum.
   Iterable<String> _enumDeclarations() {
     final enumParamTypes = <InterfaceType>{};
 
-    for (final ctorParam in <FormalParameterElement>[
-      ..._ctorParams,
-      ..._ctorQueryParams,
-    ]) {
+    for (final ctorParam in <FormalParameterElement>[..._ctorParams, ..._ctorQueryParams]) {
       DartType potentialEnumType = ctorParam.type;
       if (potentialEnumType is ParameterizedType &&
           (ctorParam.type as ParameterizedType).typeArguments.isNotEmpty) {
-        potentialEnumType =
-            (ctorParam.type as ParameterizedType).typeArguments.first;
+        potentialEnumType = (ctorParam.type as ParameterizedType).typeArguments.first;
       }
 
       if (potentialEnumType.isEnum) {
@@ -443,8 +416,7 @@ class GoRouteConfig extends RouteBaseConfig with _GoRouteMixin {
     RouteBaseConfig? config = this;
     while (config != null) {
       if (config
-          case GoRouteConfig(:final String path) ||
-              RelativeGoRouteConfig(:final String path)) {
+          case GoRouteConfig(:final String path) || RelativeGoRouteConfig(:final String path)) {
         pathSegments.add(path);
       }
       config = config.parent;
@@ -459,10 +431,9 @@ class GoRouteConfig extends RouteBaseConfig with _GoRouteMixin {
   @override
   String get _mixinDefinition {
     final bool hasMixin =
-        getNodeDeclaration<ClassDeclaration>(routeDataClass)
-            ?.withClause
-            ?.mixinTypes
-            .any((NamedType e) => e.name.toString() == _mixinName) ??
+        getNodeDeclaration<ClassDeclaration>(
+          routeDataClass,
+        )?.withClause?.mixinTypes.any((NamedType e) => e.name.toString() == _mixinName) ??
         false;
 
     if (!hasMixin) {
@@ -534,10 +505,9 @@ class RelativeGoRouteConfig extends RouteBaseConfig with _GoRouteMixin {
   @override
   String get _mixinDefinition {
     final bool hasMixin =
-        getNodeDeclaration<ClassDeclaration>(routeDataClass)
-            ?.withClause
-            ?.mixinTypes
-            .any((NamedType e) => e.name.toString() == _mixinName) ??
+        getNodeDeclaration<ClassDeclaration>(
+          routeDataClass,
+        )?.withClause?.mixinTypes.any((NamedType e) => e.name.toString() == _mixinName) ??
         false;
 
     if (!hasMixin) {
@@ -591,10 +561,7 @@ abstract class RouteBaseConfig {
   RouteBaseConfig._({required this.routeDataClass, required this.parent});
 
   /// Creates a new [RouteBaseConfig] represented the annotation data in [reader].
-  factory RouteBaseConfig.fromAnnotation(
-    ConstantReader reader,
-    InterfaceElement element,
-  ) {
+  factory RouteBaseConfig.fromAnnotation(ConstantReader reader, InterfaceElement element) {
     final definition = RouteBaseConfig._fromAnnotation(reader, element, null);
 
     if (element != definition.routeDataClass) {
@@ -625,8 +592,7 @@ abstract class RouteBaseConfig {
       );
     }
 
-    final bool isRelative =
-        isAncestorRelative || typeName == 'TypedRelativeGoRoute';
+    final bool isRelative = isAncestorRelative || typeName == 'TypedRelativeGoRoute';
 
     final DartType typeParamType = type.typeArguments.single;
     if (typeParamType is! InterfaceType) {
@@ -646,18 +612,12 @@ abstract class RouteBaseConfig {
         value = ShellRouteConfig._(
           routeDataClass: classElement,
           parent: parent,
-          navigatorKey: _generateParameterGetterCode(
-            classElement,
-            parameterName: r'$navigatorKey',
-          ),
+          navigatorKey: _generateParameterGetterCode(classElement, parameterName: r'$navigatorKey'),
           parentNavigatorKey: _generateParameterGetterCode(
             classElement,
             parameterName: r'$parentNavigatorKey',
           ),
-          observers: _generateParameterGetterCode(
-            classElement,
-            parameterName: r'$observers',
-          ),
+          observers: _generateParameterGetterCode(classElement, parameterName: r'$observers'),
           restorationScopeId: _generateParameterGetterCode(
             classElement,
             parameterName: r'$restorationScopeId',
@@ -684,10 +644,7 @@ abstract class RouteBaseConfig {
         value = StatefulShellBranchConfig._(
           routeDataClass: classElement,
           parent: parent,
-          navigatorKey: _generateParameterGetterCode(
-            classElement,
-            parameterName: r'$navigatorKey',
-          ),
+          navigatorKey: _generateParameterGetterCode(classElement, parameterName: r'$navigatorKey'),
           restorationScopeId: _generateParameterGetterCode(
             classElement,
             parameterName: r'$restorationScopeId',
@@ -696,14 +653,8 @@ abstract class RouteBaseConfig {
             classElement,
             parameterName: r'$initialLocation',
           ),
-          observers: _generateParameterGetterCode(
-            classElement,
-            parameterName: r'$observers',
-          ),
-          preload: _generateParameterGetterCode(
-            classElement,
-            parameterName: r'$preload',
-          ),
+          observers: _generateParameterGetterCode(classElement, parameterName: r'$observers'),
+          preload: _generateParameterGetterCode(classElement, parameterName: r'$preload'),
         );
       case 'TypedGoRoute':
         final ConstantReader pathValue = reader.read('path');
@@ -782,8 +733,7 @@ abstract class RouteBaseConfig {
   final RouteBaseConfig? parent;
 
   static String _generateChildrenGetterName(String name) {
-    return (name == 'TypedStatefulShellRoute' ||
-            name == 'StatefulShellRouteData')
+    return (name == 'TypedStatefulShellRoute' || name == 'StatefulShellRouteData')
         ? 'branches'
         : 'routes';
   }
@@ -797,9 +747,7 @@ abstract class RouteBaseConfig {
           if (!element.isStatic || element.displayName != parameterName) {
             return false;
           }
-          if (parameterName.toLowerCase().contains(
-            RegExp('navigatorKey | observers'),
-          )) {
+          if (parameterName.toLowerCase().contains(RegExp('navigatorKey | observers'))) {
             final DartType type = element.type;
             if (type is! ParameterizedType) {
               return false;
@@ -809,8 +757,7 @@ abstract class RouteBaseConfig {
               return false;
             }
             final DartType typeArgument = typeArguments.single;
-            if (withoutNullability(typeArgument.getDisplayString()) !=
-                'NavigatorState') {
+            if (withoutNullability(typeArgument.getDisplayString()) != 'NavigatorState') {
               return false;
             }
           }
@@ -836,10 +783,8 @@ abstract class RouteBaseConfig {
   }
 
   /// Generates all of the members that correspond to `this`.
-  InfoIterable generateMembers() => InfoIterable._(
-    members: _generateMembers().toList(),
-    routeGetterName: _routeGetterName,
-  );
+  InfoIterable generateMembers() =>
+      InfoIterable._(members: _generateMembers().toList(), routeGetterName: _routeGetterName);
 
   Iterable<String> _generateMembers() sync* {
     final items = <String>[_rootDefinition()];
@@ -853,9 +798,7 @@ abstract class RouteBaseConfig {
     yield* items
         .expand(
           (String e) => helperNames.entries
-              .where(
-                (MapEntry<String, String> element) => e.contains(element.key),
-              )
+              .where((MapEntry<String, String> element) => e.contains(element.key))
               .map((MapEntry<String, String> e) => e.value),
         )
         .toSet();
@@ -897,8 +840,7 @@ $routeDataClassName.$dataConvertionFunctionName(
 ''';
   }
 
-  PropertyAccessorElement? _field(String name) =>
-      routeDataClass.getGetter(name);
+  PropertyAccessorElement? _field(String name) => routeDataClass.getGetter(name);
 
   List<ElementAnnotation>? _fieldMetadata(String name) => routeDataClass.fields
       .firstWhereOrNull((FieldElement element) => element.displayName == name)

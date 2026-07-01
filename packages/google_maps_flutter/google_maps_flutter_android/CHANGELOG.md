@@ -1,3 +1,20 @@
+## 2.19.12
+
+* Bumps the androidx group across 10 directories with 1 update.
+
+## 2.19.11
+
+* Migrates to Built-in Kotlin to support AGP 9.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
+## 2.19.10
+
+* Updates README to include setup information.
+
+## 2.19.9
+
+* Adds attribution ID for Google Maps SDK usage.
+
 ## 2.19.8
 
 * Updates internal implementation to use Kotlin Pigeon.

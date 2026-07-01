@@ -12,15 +12,10 @@ class AboutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: BackButton(
-          onPressed: () => context.canPop() ? context.pop() : context.go('/'),
-        ),
+        leading: BackButton(onPressed: () => context.canPop() ? context.pop() : context.go('/')),
       ),
       body: Center(
-        child: Text(
-          'This is a sample app.',
-          style: Theme.of(context).textTheme.displaySmall,
-        ),
+        child: Text('This is a sample app.', style: Theme.of(context).textTheme.displaySmall),
       ),
     );
   }

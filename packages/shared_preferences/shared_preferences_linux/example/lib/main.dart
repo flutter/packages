@@ -17,10 +17,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: 'SharedPreferences Demo',
-      home: SharedPreferencesDemo(),
-    );
+    return const MaterialApp(title: 'SharedPreferences Demo', home: SharedPreferencesDemo());
   }
 }
 
@@ -32,10 +29,8 @@ class SharedPreferencesDemo extends StatefulWidget {
 }
 
 class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
-  final SharedPreferencesAsyncPlatform? _prefs =
-      SharedPreferencesAsyncPlatform.instance;
-  final SharedPreferencesLinuxOptions options =
-      const SharedPreferencesLinuxOptions();
+  final SharedPreferencesAsyncPlatform? _prefs = SharedPreferencesAsyncPlatform.instance;
+  final SharedPreferencesLinuxOptions options = const SharedPreferencesLinuxOptions();
   static const String _counterKey = 'counter';
   late Future<int> _counter;
 

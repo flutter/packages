@@ -69,24 +69,19 @@ void main() {
 
     // Verify image dimensions are as expected
     expect(video, isNotNull);
-    return assertExpectedDimensions(
-      expectedSize,
-      Size(video.height, video.width),
-    );
+    return assertExpectedDimensions(expectedSize, Size(video.height, video.width));
   }
 
   testWidgets(
     'Capture specific video resolutions',
     (WidgetTester tester) async {
-      final List<CameraDescription> cameras = await CameraPlatform.instance
-          .availableCameras();
+      final List<CameraDescription> cameras = await CameraPlatform.instance.availableCameras();
       if (cameras.isEmpty) {
         return;
       }
       for (final cameraDescription in cameras) {
         var previousPresetExactlySupported = true;
-        for (final MapEntry<ResolutionPreset, Size> preset
-            in presetExpectedSizes.entries) {
+        for (final MapEntry<ResolutionPreset, Size> preset in presetExpectedSizes.entries) {
           final controller = CameraController(
             cameraDescription,
             mediaSettings: MediaSettings(resolutionPreset: preset.key),
@@ -111,8 +106,7 @@ void main() {
   );
 
   testWidgets('Pause and resume video recording', (WidgetTester tester) async {
-    final List<CameraDescription> cameras = await CameraPlatform.instance
-        .availableCameras();
+    final List<CameraDescription> cameras = await CameraPlatform.instance.availableCameras();
     if (cameras.isEmpty) {
       return;
     }
@@ -146,8 +140,7 @@ void main() {
     sleep(const Duration(milliseconds: 500));
 
     final XFile file = await controller.stopVideoRecording();
-    final int recordingTime =
-        DateTime.now().millisecondsSinceEpoch - recordingStart;
+    final int recordingTime = DateTime.now().millisecondsSinceEpoch - recordingStart;
 
     final videoFile = File(file.path);
     final videoController = VideoPlayerController.file(videoFile);
@@ -159,8 +152,7 @@ void main() {
   });
 
   testWidgets('Set description while recording', (WidgetTester tester) async {
-    final List<CameraDescription> cameras = await CameraPlatform.instance
-        .availableCameras();
+    final List<CameraDescription> cameras = await CameraPlatform.instance.availableCameras();
     if (cameras.length < 2) {
       return;
     }
@@ -196,8 +188,7 @@ void main() {
   });
 
   testWidgets('Set description', (WidgetTester tester) async {
-    final List<CameraDescription> cameras = await CameraPlatform.instance
-        .availableCameras();
+    final List<CameraDescription> cameras = await CameraPlatform.instance.availableCameras();
     if (cameras.length < 2) {
       return;
     }
@@ -211,8 +202,7 @@ void main() {
   });
 
   testWidgets('image streaming', (WidgetTester tester) async {
-    final List<CameraDescription> cameras = await CameraPlatform.instance
-        .availableCameras();
+    final List<CameraDescription> cameras = await CameraPlatform.instance.availableCameras();
     if (cameras.isEmpty) {
       return;
     }
@@ -241,8 +231,7 @@ void main() {
   });
 
   testWidgets('recording with image stream', (WidgetTester tester) async {
-    final List<CameraDescription> cameras = await CameraPlatform.instance
-        .availableCameras();
+    final List<CameraDescription> cameras = await CameraPlatform.instance.availableCameras();
     if (cameras.isEmpty) {
       return;
     }
@@ -279,14 +268,12 @@ void main() {
 
   group('Camera settings', () {
     Future<CameraDescription> getCamera() async {
-      final List<CameraDescription> cameras = await CameraPlatform.instance
-          .availableCameras();
+      final List<CameraDescription> cameras = await CameraPlatform.instance.availableCameras();
       expect(cameras.isNotEmpty, equals(true));
 
       // Prefer back camera, as it allows more customizations.
       final CameraDescription cameraDescription = cameras.firstWhere(
-        (CameraDescription description) =>
-            description.lensDirection == CameraLensDirection.back,
+        (CameraDescription description) => description.lensDirection == CameraLensDirection.back,
         orElse: () => cameras.first,
       );
       return cameraDescription;
@@ -315,10 +302,7 @@ void main() {
       for (final fps in <int>[10, 30]) {
         final controller = CameraController(
           cameraDescription,
-          mediaSettings: MediaSettings(
-            resolutionPreset: ResolutionPreset.medium,
-            fps: fps,
-          ),
+          mediaSettings: MediaSettings(resolutionPreset: ResolutionPreset.medium, fps: fps),
         );
 
         await startRecording(controller);

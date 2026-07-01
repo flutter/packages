@@ -251,14 +251,14 @@ public class Messages {
       this.name = setterArg;
     }
 
-    private @Nullable String description;
+    private @Nullable String messageDescription;
 
-    public @Nullable String getDescription() {
-      return description;
+    public @Nullable String getMessageDescription() {
+      return messageDescription;
     }
 
-    public void setDescription(@Nullable String setterArg) {
-      this.description = setterArg;
+    public void setMessageDescription(@Nullable String setterArg) {
+      this.messageDescription = setterArg;
     }
 
     private @NonNull Code code;
@@ -300,15 +300,32 @@ public class Messages {
       }
       MessageData that = (MessageData) o;
       return pigeonDeepEquals(name, that.name)
-          && pigeonDeepEquals(description, that.description)
+          && pigeonDeepEquals(messageDescription, that.messageDescription)
           && pigeonDeepEquals(code, that.code)
           && pigeonDeepEquals(data, that.data);
     }
 
     @Override
     public int hashCode() {
-      Object[] fields = new Object[] {getClass(), name, description, code, data};
+      Object[] fields = new Object[] {getClass(), name, messageDescription, code, data};
       return pigeonDeepHashCode(fields);
+    }
+
+    @Override
+    public String toString() {
+      return "MessageData{"
+          + "name="
+          + name
+          + ", "
+          + "messageDescription="
+          + messageDescription
+          + ", "
+          + "code="
+          + code
+          + ", "
+          + "data="
+          + data
+          + "}";
     }
 
     public static final class Builder {
@@ -321,11 +338,11 @@ public class Messages {
         return this;
       }
 
-      private @Nullable String description;
+      private @Nullable String messageDescription;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setDescription(@Nullable String setterArg) {
-        this.description = setterArg;
+      public @NonNull Builder setMessageDescription(@Nullable String setterArg) {
+        this.messageDescription = setterArg;
         return this;
       }
 
@@ -348,7 +365,7 @@ public class Messages {
       public @NonNull MessageData build() {
         MessageData pigeonReturn = new MessageData();
         pigeonReturn.setName(name);
-        pigeonReturn.setDescription(description);
+        pigeonReturn.setMessageDescription(messageDescription);
         pigeonReturn.setCode(code);
         pigeonReturn.setData(data);
         return pigeonReturn;
@@ -359,7 +376,7 @@ public class Messages {
     ArrayList<Object> toList() {
       ArrayList<Object> toListResult = new ArrayList<>(4);
       toListResult.add(name);
-      toListResult.add(description);
+      toListResult.add(messageDescription);
       toListResult.add(code);
       toListResult.add(data);
       return toListResult;
@@ -369,8 +386,8 @@ public class Messages {
       MessageData pigeonResult = new MessageData();
       Object name = pigeonVar_list.get(0);
       pigeonResult.setName((String) name);
-      Object description = pigeonVar_list.get(1);
-      pigeonResult.setDescription((String) description);
+      Object messageDescription = pigeonVar_list.get(1);
+      pigeonResult.setMessageDescription((String) messageDescription);
       Object code = pigeonVar_list.get(2);
       pigeonResult.setCode((Code) code);
       Object data = pigeonVar_list.get(3);

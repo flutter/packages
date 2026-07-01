@@ -27,8 +27,7 @@ class SharedPreferences {
 
   static Completer<SharedPreferences>? _completer;
 
-  static SharedPreferencesStorePlatform get _store =>
-      SharedPreferencesStorePlatform.instance;
+  static SharedPreferencesStorePlatform get _store => SharedPreferencesStorePlatform.instance;
 
   /// Sets the prefix that is attached to all keys for all shared preferences
   /// read or written via this class.
@@ -81,8 +80,7 @@ class SharedPreferences {
       final completer = Completer<SharedPreferences>();
       _completer = completer;
       try {
-        final Map<String, Object> preferencesMap =
-            await _getSharedPreferencesMap();
+        final Map<String, Object> preferencesMap = await _getSharedPreferencesMap();
         completer.complete(SharedPreferences._(preferencesMap));
       } catch (e) {
         // If there's an error, explicitly return the future with an error.
@@ -149,8 +147,7 @@ class SharedPreferences {
   /// Saves a double [value] to persistent storage in the background.
   ///
   /// Android doesn't support storing doubles, so it will be stored as a float.
-  Future<bool> setDouble(String key, double value) =>
-      _setValue('Double', key, value);
+  Future<bool> setDouble(String key, double value) => _setValue('Double', key, value);
 
   /// Saves a string [value] to persistent storage in the background.
   ///
@@ -160,12 +157,10 @@ class SharedPreferences {
   /// - 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu'
   /// - 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBCaWdJbnRlZ2Vy'
   /// - 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu'
-  Future<bool> setString(String key, String value) =>
-      _setValue('String', key, value);
+  Future<bool> setString(String key, String value) => _setValue('String', key, value);
 
   /// Saves a list of strings [value] to persistent storage in the background.
-  Future<bool> setStringList(String key, List<String> value) =>
-      _setValue('StringList', key, value);
+  Future<bool> setStringList(String key, List<String> value) => _setValue('StringList', key, value);
 
   /// Removes an entry from persistent storage.
   Future<bool> remove(String key) {
@@ -221,8 +216,7 @@ Either update the implementation to support setPrefix, or do not call setPrefix.
   /// Use this method to observe modifications that were made in native code
   /// (without using the plugin) while the app is running.
   Future<void> reload() async {
-    final Map<String, Object> preferences =
-        await SharedPreferences._getSharedPreferencesMap();
+    final Map<String, Object> preferences = await SharedPreferences._getSharedPreferencesMap();
     _preferenceCache.clear();
     _preferenceCache.addAll(preferences);
   }
@@ -270,18 +264,14 @@ Either update the implementation to support setPrefix, or do not call setPrefix.
   /// If the singleton instance has been initialized already, it is nullified.
   @visibleForTesting
   static void setMockInitialValues(Map<String, Object> values) {
-    final Map<String, Object> newValues = values.map<String, Object>((
-      String key,
-      Object value,
-    ) {
+    final Map<String, Object> newValues = values.map<String, Object>((String key, Object value) {
       var newKey = key;
       if (!key.startsWith(_prefix)) {
         newKey = '$_prefix$key';
       }
       return MapEntry<String, Object>(newKey, value);
     });
-    SharedPreferencesStorePlatform.instance =
-        InMemorySharedPreferencesStore.withData(newValues);
+    SharedPreferencesStorePlatform.instance = InMemorySharedPreferencesStore.withData(newValues);
     _completer = null;
   }
 }
@@ -290,5 +280,4 @@ Either update the implementation to support setPrefix, or do not call setPrefix.
 // when running `flutter run -d chrome`.
 // Check this discussion for more info: https://github.com/flutter/packages/pull/6749/files/6eb1b4fdce1eba107294770d581713658ff971e9#discussion_r1755375409
 // ignore: unused_element
-final bool _fieldToKeepDevtoolsExtensionReachable =
-    fieldToKeepDevtoolsExtensionLibraryAlive;
+final bool _fieldToKeepDevtoolsExtensionReachable = fieldToKeepDevtoolsExtensionLibraryAlive;

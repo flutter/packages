@@ -7,8 +7,7 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    kotlinOut:
-        'android/src/main/kotlin/io/flutter/plugins/urllauncher/Messages.kt',
+    kotlinOut: 'android/src/main/kotlin/io/flutter/plugins/urllauncher/Messages.kt',
     kotlinOptions: KotlinOptions(package: 'io.flutter.plugins.urllauncher'),
     copyrightHeader: 'pigeons/copyright.txt',
   ),
@@ -40,11 +39,7 @@ abstract class UrlLauncherApi {
   bool canLaunchUrl(String url);
 
   /// Opens the URL externally, returning true if successful.
-  bool launchUrl(
-    String url,
-    Map<String, String> headers,
-    bool requireNonBrowser,
-  );
+  bool launchUrl(String url, Map<String, String> headers, bool requireNonBrowser);
 
   /// Opens the URL in an in-app Custom Tab or WebView, returning true if it
   /// opens successfully.

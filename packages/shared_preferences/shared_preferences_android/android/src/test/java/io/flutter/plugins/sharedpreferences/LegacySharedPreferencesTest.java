@@ -127,7 +127,7 @@ public class LegacySharedPreferencesTest {
   @Test
   public void setInt() {
     final String key = "Counter";
-    final Long value = 0L;
+    final long value = 0L;
     plugin.setInt(key, value);
     Map<String, Object> flutterData = plugin.getAll("", null);
     assertEquals(flutterData.get(key), value);
@@ -230,7 +230,8 @@ public class LegacySharedPreferencesTest {
     }
 
     @Override
-    public @NonNull SharedPreferences.Editor putString(@NonNull String key, @NonNull String value) {
+    public @NonNull SharedPreferences.Editor putString(
+        @NonNull String key, @Nullable String value) {
       sharedPrefData.put(key, value);
       return this;
     }
@@ -330,12 +331,12 @@ public class LegacySharedPreferencesTest {
     }
 
     @Override
-    public @NonNull String getString(@NonNull String key, @NonNull String defValue) {
+    public @NonNull String getString(@NonNull String key, @Nullable String defValue) {
       throw new UnsupportedOperationException("This method is not implemented for testing");
     }
 
     @Override
-    public @NonNull Set<String> getStringSet(@NonNull String key, @NonNull Set<String> defValues) {
+    public @NonNull Set<String> getStringSet(@NonNull String key, @Nullable Set<String> defValues) {
       throw new UnsupportedOperationException("This method is not implemented for testing");
     }
 

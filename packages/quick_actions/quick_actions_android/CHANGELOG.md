@@ -1,3 +1,12 @@
+## 1.0.32
+
+* Bumps the androidx group across 10 directories with 1 update.
+
+## 1.0.31
+
+* Migrates to Built-in Kotlin to support AGP 9.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
 ## 1.0.30
 
 * Updates internal implementation to use Kotlin Pigeon.

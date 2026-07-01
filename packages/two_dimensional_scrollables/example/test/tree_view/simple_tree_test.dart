@@ -7,15 +7,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:two_dimensional_examples/tree_view/simple_tree.dart';
 
 void main() {
-  testWidgets('Example builds and can be interacted with', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('Example builds and can be interacted with', (WidgetTester tester) async {
     await tester.pumpWidget(const MaterialApp(home: TreeExample()));
     await tester.pumpAndSettle();
-    expect(
-      find.text("It's supercalifragilisticexpialidocious"),
-      findsOneWidget,
-    );
+    expect(find.text("It's supercalifragilisticexpialidocious"), findsOneWidget);
     expect(find.text('Um-dittle-ittl-um-dittle-I'), findsNothing);
     await tester.tap(find.byType(Icon).last);
     await tester.pumpAndSettle();
@@ -40,8 +35,7 @@ void main() {
 
     state.treeController.expandAll();
     await tester.pumpAndSettle();
-    horizontalPosition =
-        (tester.state(horizontalScrollable) as ScrollableState).position;
+    horizontalPosition = (tester.state(horizontalScrollable) as ScrollableState).position;
     // Expanding all of the node increased the max extent.
     expect(horizontalPosition.maxScrollExtent, 502.0);
     expect(horizontalPosition.pixels, 0.0);

@@ -140,11 +140,7 @@ void main() {
       const radius = HeatmapRadius.fromPixels(10);
       const heatmap1 = Heatmap(heatmapId: id, data: data, radius: radius);
       const heatmap2 = Heatmap(heatmapId: id, data: data, radius: radius);
-      const heatmap3 = Heatmap(
-        heatmapId: id,
-        data: data,
-        radius: HeatmapRadius.fromPixels(20),
-      );
+      const heatmap3 = Heatmap(heatmapId: id, data: data, radius: HeatmapRadius.fromPixels(20));
 
       expect(heatmap1, heatmap2);
       expect(heatmap1, isNot(heatmap3));
@@ -221,9 +217,7 @@ void main() {
 
   group('$HeatmapGradient', () {
     test('constructor defaults', () {
-      const colors = <HeatmapGradientColor>[
-        HeatmapGradientColor(Colors.red, 0.0),
-      ];
+      const colors = <HeatmapGradientColor>[HeatmapGradientColor(Colors.red, 0.0)];
       const gradient = HeatmapGradient(colors);
 
       expect(gradient.colors, colors);
@@ -231,9 +225,7 @@ void main() {
     });
 
     test('construct with values', () {
-      const colors = <HeatmapGradientColor>[
-        HeatmapGradientColor(Colors.red, 0.0),
-      ];
+      const colors = <HeatmapGradientColor>[HeatmapGradientColor(Colors.red, 0.0)];
       const colorMapSize = 512;
       const gradient = HeatmapGradient(colors, colorMapSize: colorMapSize);
 
@@ -246,9 +238,7 @@ void main() {
         HeatmapGradientColor(Colors.red, 0.0),
       ]);
 
-      const colors = <HeatmapGradientColor>[
-        HeatmapGradientColor(Colors.blue, 0.0),
-      ];
+      const colors = <HeatmapGradientColor>[HeatmapGradientColor(Colors.blue, 0.0)];
       const colorMapSize = 512;
       final HeatmapGradient gradient2 = gradient1.copyWith(
         colorsParam: colors,
@@ -269,27 +259,19 @@ void main() {
     });
 
     test('toJson', () {
-      const colors = <HeatmapGradientColor>[
-        HeatmapGradientColor(Colors.red, 0.0),
-      ];
+      const colors = <HeatmapGradientColor>[HeatmapGradientColor(Colors.red, 0.0)];
       const colorMapSize = 512;
       const gradient = HeatmapGradient(colors, colorMapSize: colorMapSize);
 
       expect(gradient.toJson(), <String, Object?>{
-        'colors': colors
-            .map((HeatmapGradientColor e) => e.color.toARGB32())
-            .toList(),
-        'startPoints': colors
-            .map((HeatmapGradientColor e) => e.startPoint)
-            .toList(),
+        'colors': colors.map((HeatmapGradientColor e) => e.color.toARGB32()).toList(),
+        'startPoints': colors.map((HeatmapGradientColor e) => e.startPoint).toList(),
         'colorMapSize': colorMapSize,
       });
     });
 
     test('==', () {
-      const colors = <HeatmapGradientColor>[
-        HeatmapGradientColor(Colors.red, 0.0),
-      ];
+      const colors = <HeatmapGradientColor>[HeatmapGradientColor(Colors.red, 0.0)];
       const gradient1 = HeatmapGradient(colors);
       const gradient2 = HeatmapGradient(colors);
       const gradient3 = HeatmapGradient(<HeatmapGradientColor>[
@@ -301,9 +283,7 @@ void main() {
     });
 
     test('hashCode', () {
-      const colors = <HeatmapGradientColor>[
-        HeatmapGradientColor(Colors.red, 0.0),
-      ];
+      const colors = <HeatmapGradientColor>[HeatmapGradientColor(Colors.red, 0.0)];
       const colorMapSize = 512;
       const gradient = HeatmapGradient(colors, colorMapSize: colorMapSize);
 
@@ -354,10 +334,7 @@ void main() {
     test('hashCode', () {
       const gradientColor = HeatmapGradientColor(Colors.red, 0.0);
 
-      expect(
-        gradientColor.hashCode,
-        Object.hash(gradientColor.color, gradientColor.startPoint),
-      );
+      expect(gradientColor.hashCode, Object.hash(gradientColor.color, gradientColor.startPoint));
     });
 
     test('toString', () {

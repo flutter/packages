@@ -33,9 +33,7 @@ import 'platform_interface/platform_interface.dart';
 class ImaSettings {
   /// Creates an [ImaSettings].
   ImaSettings({String? language})
-    : this.fromPlatformCreationParams(
-        PlatformImaSettingsCreationParams(language: language),
-      );
+    : this.fromPlatformCreationParams(PlatformImaSettingsCreationParams(language: language));
 
   /// Constructs an [ImaSettings] from creation params for a specific platform.
   ///
@@ -64,9 +62,8 @@ class ImaSettings {
   /// );
   /// ```
   /// {@endtemplate}
-  ImaSettings.fromPlatformCreationParams(
-    PlatformImaSettingsCreationParams params,
-  ) : this.fromPlatform(PlatformImaSettings(params));
+  ImaSettings.fromPlatformCreationParams(PlatformImaSettingsCreationParams params)
+    : this.fromPlatform(PlatformImaSettings(params));
 
   /// Constructs an [ImaSettings] from a specific platform implementation.
   const ImaSettings.fromPlatform(this.platform);
@@ -141,8 +138,7 @@ class ImaSettings {
   }
 
   @override
-  bool operator ==(Object other) =>
-      other is ImaSettings && other.platform == platform;
+  bool operator ==(Object other) => other is ImaSettings && other.platform == platform;
 
   @override
   int get hashCode => platform.hashCode;
