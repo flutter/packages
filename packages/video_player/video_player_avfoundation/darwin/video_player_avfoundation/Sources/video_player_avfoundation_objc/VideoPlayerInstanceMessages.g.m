@@ -751,11 +751,11 @@ void SetUpFVPVideoPlayerInstanceApiWithSuffix(id<FlutterBinaryMessenger> binaryM
         binaryMessenger:binaryMessenger
                   codec:FVPGetVideoPlayerInstanceMessagesCodec()];
     if (api) {
-      NSCAssert(
-          [api respondsToSelector:@selector(setPreventsDisplaySleepDuringVideoPlayback:error:)],
-          @"FVPVideoPlayerInstanceApi api (%@) doesn't respond to "
-          @"@selector(setPreventsDisplaySleepDuringVideoPlayback:error:)",
-          api);
+      NSCAssert([api respondsToSelector:@selector(setPreventsDisplaySleepDuringVideoPlayback:
+                                                                                       error:)],
+                @"FVPVideoPlayerInstanceApi api (%@) doesn't respond to "
+                @"@selector(setPreventsDisplaySleepDuringVideoPlayback:error:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         BOOL arg_preventsDisplaySleepDuringVideoPlayback =
