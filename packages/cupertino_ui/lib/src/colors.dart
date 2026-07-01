@@ -662,7 +662,7 @@ abstract final class CupertinoColors {
 /// basis.
 ///
 // TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -692,7 +692,7 @@ abstract final class CupertinoColors {
 /// before returning it.
 ///
 // TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -723,7 +723,7 @@ abstract final class CupertinoColors {
 /// to [CupertinoNavigationBar]'s constructor.
 ///
 // TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///

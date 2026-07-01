@@ -22,7 +22,7 @@ const Color _kActiveTickColor = CupertinoDynamicColor.withBrightness(
 /// {@youtube 560 315 https://www.youtube.com/watch?v=AENVH-ZqKDQ}
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// This example shows how [CupertinoActivityIndicator] can be customized.
 ///
@@ -205,7 +205,7 @@ class _CupertinoActivityIndicatorPainter extends CustomPainter {
 /// displays a colored bar to indicate the progress of an ongoing task.
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// This example shows how [CupertinoLinearActivityIndicator] can be customized.
 ///

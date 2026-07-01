@@ -53,7 +53,7 @@ const double _kVelocityThreshold = 1.0;
 /// slider with a new [value] to update the visual appearance of the slider.
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// This example shows how to show the current slider value as it changes.
 ///
@@ -141,7 +141,7 @@ class CupertinoSlider extends StatefulWidget {
   /// change began.
   ///
   // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -178,7 +178,7 @@ class CupertinoSlider extends StatefulWidget {
   /// selecting a new [value] by ending a drag.
   ///
   // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///

@@ -15,7 +15,7 @@ import 'theme.dart';
 /// finger may be blocking the point of interest, like a selection handle.
 ///
 // TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -227,7 +227,7 @@ class _CupertinoTextMagnifierState extends State<CupertinoTextMagnifier>
 /// finger may be blocking the point of interest, like a selection handle.
 ///
 // TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///

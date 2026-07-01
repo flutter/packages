@@ -23,7 +23,7 @@ import 'theme.dart';
 /// its [CupertinoTabBar].
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// This samples shows how [CupertinoTabController] can be used to switch tabs in
 /// [CupertinoTabScaffold].
@@ -109,7 +109,7 @@ class CupertinoTabController extends ChangeNotifier {
 /// its ancestor.
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// A sample code implementing a typical iOS information architecture with tabs.
 ///

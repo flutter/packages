@@ -341,7 +341,7 @@ class _SegmentSeparatorState extends State<_SegmentSeparator>
 /// segmented control's colors from its defaults.
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// This example shows a [CupertinoSlidingSegmentedControl] with an enum type.
 ///
@@ -428,7 +428,7 @@ class CupertinoSlidingSegmentedControl<T extends Object> extends StatefulWidget 
   /// the parent gets rebuilt; for example:
   ///
   // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -509,7 +509,7 @@ class CupertinoSlidingSegmentedControl<T extends Object> extends StatefulWidget 
   /// Defaults to false.
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   ///
   /// This example shows a [CupertinoSlidingSegmentedControl] with [isMomentary] set
   /// to true, providing feedback to the user when the segment is selected with a

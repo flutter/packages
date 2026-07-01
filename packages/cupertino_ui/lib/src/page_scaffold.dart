@@ -26,7 +26,7 @@ import 'theme.dart';
 /// a [ScrollView] to the enclosing [PrimaryScrollController].
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// This example shows a [CupertinoPageScaffold] with a [Center] as a [child].
 /// The [CupertinoButton] is connected to a callback that increments a counter.

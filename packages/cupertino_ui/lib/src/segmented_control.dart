@@ -71,7 +71,7 @@ const Duration _kFadeDuration = Duration(milliseconds: 165);
 /// by default.
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// This example shows a [CupertinoSegmentedControl] with an enum type.
 ///

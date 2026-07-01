@@ -74,7 +74,7 @@ const List<double> _kDisabledDarkGradientOpacities = <double>[0.08, 0.14];
 ///     guidelines.
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// This example shows a toggleable [CupertinoCheckbox].
 ///
@@ -206,7 +206,7 @@ class CupertinoCheckbox extends StatefulWidget {
   ///  * [WidgetState.disabled].
   ///
   // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///

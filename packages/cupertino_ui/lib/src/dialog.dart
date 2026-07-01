@@ -214,7 +214,7 @@ bool _isInAccessibilityMode(BuildContext context) {
 /// dialog.
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// This sample shows how to use a [CupertinoAlertDialog].
 ///	The [CupertinoAlertDialog] shows an alert with a set of two choices
@@ -521,7 +521,7 @@ class _CupertinoAlertDialogState extends State<CupertinoAlertDialog> {
 /// in [CupertinoAlertDialog] or rendering custom surface colors.
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// This sample shows how to use a [CupertinoPopupSurface]. The [CupertinoPopupSurface]
 /// shows a modal popup from the bottom of the screen.
@@ -1059,7 +1059,7 @@ class _ActionSheetGestureDetector extends StatelessWidget {
 /// from the bottom of the screen.
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// This sample shows how to use a [CupertinoActionSheet].
 ///	The [CupertinoActionSheet] shows a modal popup that slides in from the

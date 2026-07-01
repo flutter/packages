@@ -49,7 +49,7 @@ import 'text_field.dart';
 /// the constructor.
 ///
 // TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -79,7 +79,7 @@ import 'text_field.dart';
 // TODO(framework): End of the blue example container.
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// This example shows how to move the focus to the next field when the user
 /// presses the SPACE key.

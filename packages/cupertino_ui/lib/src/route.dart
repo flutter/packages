@@ -1295,7 +1295,7 @@ class CupertinoModalPopupRoute<T> extends PopupRoute<T> {
 /// For more information about state restoration, see [RestorationManager].
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// This sample demonstrates how to create a restorable Cupertino modal route.
 /// This is accomplished by enabling state restoration by specifying
@@ -1391,7 +1391,7 @@ Widget _buildCupertinoDialogTransitions(
 /// For more information about state restoration, see [RestorationManager].
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// This sample demonstrates how to create a restorable Cupertino dialog. This is
 /// accomplished by enabling state restoration by specifying

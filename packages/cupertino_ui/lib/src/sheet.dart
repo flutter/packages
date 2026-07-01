@@ -159,7 +159,7 @@ typedef _GetSheetDragged = bool Function();
 /// [Navigator.pop] when the sheet was closed.
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// This example shows how to navigate to use [showCupertinoSheet] to display a
 /// Cupertino sheet widget with nested navigation.
@@ -612,7 +612,7 @@ class _StretchDragControllerProvider extends InheritedWidget {
 /// for an example.
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// This example shows how to navigate to [CupertinoSheetRoute] by using it the
 /// same as a regular route.
@@ -622,7 +622,7 @@ class _StretchDragControllerProvider extends InheritedWidget {
 // TODO(framework): End of the @dartpad directive.
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// This example shows how to show a Cupertino Sheet with nested navigation manually
 /// set up in order to enable restorable state.
@@ -632,7 +632,7 @@ class _StretchDragControllerProvider extends InheritedWidget {
 // TODO(framework): End of the @dartpad directive.
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// This example shows how to show a Cupertino Sheet with scrollable content.
 ///
@@ -680,7 +680,7 @@ class CupertinoSheetRoute<T> extends PageRoute<T> with _CupertinoSheetRouteTrans
   /// is scrolled to the top, the drag to dismiss behavior of the sheet will be triggered.
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   ///
   /// This example shows how to show a Cupertino Sheet with scrollable content.
   ///

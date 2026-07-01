@@ -162,7 +162,7 @@ enum CupertinoListSectionType {
 /// {@macro flutter.material.Material.clipBehavior}
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// Creates a base [CupertinoListSection] containing [CupertinoListTile]s with
 /// `leading`, `title`, `additionalInfo` and `trailing` widgets.
@@ -172,7 +172,7 @@ enum CupertinoListSectionType {
 // TODO(framework): End of the @dartpad directive.
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// Creates an "Inset Grouped" [CupertinoListSection] containing
 /// notched [CupertinoListTile]s with `leading`, `title`, `additionalInfo` and

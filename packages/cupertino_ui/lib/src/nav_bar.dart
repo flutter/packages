@@ -331,7 +331,7 @@ bool _isTransitionable(BuildContext context) {
 /// [MediaQuery] with the desired [TextScaler].
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// This example shows a [CupertinoNavigationBar] placed in a [CupertinoPageScaffold].
 /// Since [backgroundColor]'s opacity is not 1.0, there is a blur effect and
@@ -342,7 +342,7 @@ bool _isTransitionable(BuildContext context) {
 // TODO(framework): End of the @dartpad directive.
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// This example shows the resulting layout from [CupertinoNavigationBar.large]
 /// constructor, showing a large title similar to the expanded state of
@@ -627,7 +627,7 @@ class CupertinoNavigationBar extends StatefulWidget implements ObstructingPrefer
   /// bottom of a navigation bar.
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   ///
   /// This example shows a [CupertinoSearchTextField] at the bottom of a
   /// [CupertinoNavigationBar].
@@ -936,7 +936,7 @@ class _CupertinoNavigationBarState extends State<CupertinoNavigationBar> {
 /// [stretch] value is `true`. Defaults to `false`.
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// This example shows [CupertinoSliverNavigationBar] in action inside a [CustomScrollView].
 ///
@@ -945,7 +945,7 @@ class _CupertinoNavigationBarState extends State<CupertinoNavigationBar> {
 // TODO(framework): End of the @dartpad directive.
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// To add a widget to the bottom of the nav bar, wrap it with [PreferredSize] and provide its fully extended size.
 ///
@@ -1016,7 +1016,7 @@ class CupertinoSliverNavigationBar extends StatefulWidget {
   /// required.
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   ///
   /// This example demonstrates how to use a
   /// [CupertinoSliverNavigationBar.search] to manage a search view.

@@ -79,7 +79,7 @@ enum _CupertinoListTileType { base, notched }
 /// in the trailing widget.
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// This example uses a [ListView] to demonstrate different configurations of
 /// [CupertinoListTile]s.

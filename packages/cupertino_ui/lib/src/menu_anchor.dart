@@ -296,7 +296,7 @@ typedef CupertinoMenuAnimationStatusChangedCallback = void Function(AnimationSta
 ///
 /// ## Usage
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// This example demonstrates a simple [CupertinoMenuAnchor] that wraps
 /// a button.
@@ -306,7 +306,7 @@ typedef CupertinoMenuAnimationStatusChangedCallback = void Function(AnimationSta
 // TODO(framework): End of the @dartpad directive.
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// This example demonstrates a [CupertinoMenuAnchor] that wraps a button and
 /// shows a menu with three [CupertinoMenuItem]s and one [CupertinoMenuDivider].
@@ -1702,7 +1702,7 @@ class _CupertinoDividerPainter extends CustomPainter {
 /// [CupertinoColors.systemRed].
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// This example demonstrates a simple [CupertinoMenuAnchor] that wraps
 /// a button.
@@ -1712,7 +1712,7 @@ class _CupertinoDividerPainter extends CustomPainter {
 // TODO(framework): End of the @dartpad directive.
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// This example demonstrates a [CupertinoMenuAnchor] that wraps a button and
 /// shows a menu with three [CupertinoMenuItem]s and one [CupertinoMenuDivider].

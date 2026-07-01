@@ -44,7 +44,7 @@ const double _kScrollbarCrossAxisMargin = 3.0;
 /// [radiusWhileDragging], respectively.
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// This sample shows a [CupertinoScrollbar] that fades in and out of view as scrolling occurs.
 /// The scrollbar will fade into view as the user scrolls, and fade out when scrolling stops.
@@ -57,7 +57,7 @@ const double _kScrollbarCrossAxisMargin = 3.0;
 // TODO(framework): End of the @dartpad directive.
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// When [thumbVisibility] is true, the scrollbar thumb will remain visible without the
 /// fade animation. This requires that a [ScrollController] is provided to controller,

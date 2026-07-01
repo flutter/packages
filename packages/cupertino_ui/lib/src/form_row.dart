@@ -37,7 +37,7 @@ const EdgeInsetsGeometry _kDefaultPadding = EdgeInsetsDirectional.fromSTEB(20.0,
 /// medium-weighted font.
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// Creates a [CupertinoFormSection] containing a [CupertinoFormRow] with [prefix],
 /// [child], [helper] and [error] specified.

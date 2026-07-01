@@ -60,7 +60,7 @@ enum ExpansionTileTransitionMode {
 /// or collapses the tile to reveal or hide the [child].
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// This example shows how to use [CupertinoExpansionTile] with different transition modes.
 ///

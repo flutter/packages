@@ -39,7 +39,7 @@ const double _kMaxPrefixIconSize = 30.0;
 /// a [controller] that already contains some text such as:
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// This examples shows how to provide initial text to a [CupertinoSearchTextField]
 /// using the [controller] property.
@@ -53,7 +53,7 @@ const double _kMaxPrefixIconSize = 30.0;
 /// field changes or is submitted by the keyboard:
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 ///
 /// This examples shows how to be notified of field changes or submitted text from
 /// a [CupertinoSearchTextField].
