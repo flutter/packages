@@ -1,3 +1,7 @@
+## 0.6.2+4
+
+* Fix AdvancedMarker anchor handling on web.
+
 ## 0.6.2+3
 
 * Updates README to include setup information.
