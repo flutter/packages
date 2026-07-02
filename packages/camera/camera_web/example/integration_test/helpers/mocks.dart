@@ -164,6 +164,9 @@ class MockMediaRecorder {
 /// A mock of [web.MediaStreamTrackProcessor]
 @JSExport()
 class MockReadableStreamDefaultReader {
+  /// `JSPromise<web.ReadableStreamReadResult> Function()`
+  late JSFunction read;
+
   /// Releases the lock on the readable stream.
   JSFunction releaseLock = () {}.toJS;
 }
@@ -171,7 +174,12 @@ class MockReadableStreamDefaultReader {
 /// A mock of [web.VideoFrame]
 @JSExport()
 class MockVideoFrame {
-  MockVideoFrame({required this.width, required this.height, required this.bufferSize}) {
+  MockVideoFrame({
+    required this.width,
+    required this.height,
+    required this.bufferSize,
+    this.format = 'rgba8888',
+  }) {
     visibleRect = web.DOMRectReadOnly(0, 0, width.toDouble(), height.toDouble());
     allocationSize = (web.VideoFrameCopyToOptions options) {
       return bufferSize;
@@ -184,6 +192,7 @@ class MockVideoFrame {
   final int width;
   final int height;
   final int bufferSize;
+  final web.VideoPixelFormat format;
 
   /// Rrepresents the visible rectangle of the video frame.
   late web.DOMRectReadOnly visibleRect;

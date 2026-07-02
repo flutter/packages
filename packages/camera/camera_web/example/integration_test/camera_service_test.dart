@@ -795,53 +795,226 @@ void main() {
       });
     });
 
-    group('camera image stream', () {
+    group('hasMediaStreamTrackProcessor', () {
       setUp(() {
-        cameraService = cameraService..jsUtil = jsUtil;
+        cameraService.jsUtil = jsUtil;
       });
-      testWidgets('returns true if broswer has OffscreenCanvas '
+
+      testWidgets('returns true if broswer has MediaStreamTrackProcessor '
+          'otherwise false', (WidgetTester widgetTester) async {
+        for (final supportsMediaStreamTrackProcessor in <bool>[true, false]) {
+          when(
+            jsUtil.hasProperty(window, 'MediaStreamTrackProcessor'.toJS),
+          ).thenReturn(supportsMediaStreamTrackProcessor);
+
+          final bool hasMediaStreamTrackProcessor = cameraService.hasMediaStreamTrackProcessor();
+
+          expect(
+            hasMediaStreamTrackProcessor,
+            supportsMediaStreamTrackProcessor ? isTrue : isFalse,
+          );
+        }
+      });
+    });
+
+    group('getMediaStreamVideoTrack', () {
+      testWidgets('returns the first video track when tracks exist in the stream', (
+        WidgetTester widgetTester,
+      ) async {
+        final web.MediaStream mockStream = getVideoElementWithBlankStream(
+          const Size(10, 10),
+        ).captureStream();
+
+        final web.MediaStreamTrack track = cameraService.getMediaStreamVideoTrack(mockStream);
+
+        expect(track, isNotNull);
+      });
+
+      testWidgets('throw CameraWebException when no video tracks are found', (
+        WidgetTester widgetTester,
+      ) async {
+        final mockStream = createJSInteropWrapper(FakeMediaStream([])) as web.MediaStream;
+
+        expect(
+          () => cameraService.getMediaStreamVideoTrack(mockStream, cameraId: 42),
+          throwsA(
+            isA<CameraWebException>().having((e) => e.code, 'code', CameraErrorCode.noVideoTrack),
+          ),
+        );
+      });
+    });
+
+    group('getMediaStreamTrackReader', () {
+      testWidgets('returns ReadableStreamDefaultReader of MediaStreamTrack', (
+        WidgetTester tester,
+      ) async {
+        final web.MediaStreamTrack mediaStreamTrack = getVideoElementWithBlankStream(
+          const Size(10, 10),
+        ).captureStream().getTracks().toDart.first;
+
+        final web.ReadableStreamDefaultReader readableStreamDefaultReader = cameraService
+            .getMediaStreamTrackReader(mediaStreamTrack);
+
+        expect(
+          readableStreamDefaultReader.read().toDart,
+          isA<Future<web.ReadableStreamReadResult>>(),
+        );
+        mediaStreamTrack.stop();
+      });
+    });
+
+    group('readVideoTrack', () {
+      web.ReadableStreamDefaultReader mockMediaTrackReader({
+        MockVideoFrame? mockFrame,
+        bool done = false,
+      }) {
+        final mockReader = MockReadableStreamDefaultReader();
+        mockReader.read = (() => Future.value(
+          web.ReadableStreamReadResult(
+            done: done,
+            value: mockFrame == null ? null : createJSInteropWrapper(mockFrame) as JSAny,
+          ),
+        ).toJS).toJS;
+        return createJSInteropWrapper(mockReader) as web.ReadableStreamDefaultReader;
+      }
+
+      testWidgets('returns VideoFrame from ReadableStreamDefaultReader', (
+        WidgetTester widgetTester,
+      ) async {
+        final mockFrame = MockVideoFrame(width: 10, height: 10, bufferSize: 32);
+        final web.ReadableStreamDefaultReader mockReader = mockMediaTrackReader(
+          mockFrame: mockFrame,
+        );
+
+        final web.VideoFrame videoFrame = await cameraService.readVideoTrack(mockReader);
+
+        expect(videoFrame.visibleRect, equals(mockFrame.visibleRect));
+        expect(
+          videoFrame.allocationSize(web.VideoFrameCopyToOptions()),
+          equals(mockFrame.bufferSize),
+        );
+        expect(videoFrame.format, equals(mockFrame.format));
+      });
+
+      void expectReadVideoFrameException({
+        required web.ReadableStreamDefaultReader reader,
+        required CameraErrorCode errorCode,
+      }) {
+        expect(
+          () => cameraService.readVideoTrack(reader),
+          throwsA(
+            isA<CameraWebException>().having((CameraWebException e) => e.code, 'code', errorCode),
+          ),
+        );
+      }
+
+      testWidgets('throws CameraWebException if the video track reader is closed', (
+        WidgetTester tester,
+      ) async {
+        final web.ReadableStreamDefaultReader mockReader = mockMediaTrackReader(done: true);
+
+        expectReadVideoFrameException(
+          reader: mockReader,
+          errorCode: CameraErrorCode.videoTrackReaderClosed,
+        );
+      });
+
+      testWidgets('throws CameraWebException if the video track reader is not initialized', (
+        WidgetTester tester,
+      ) async {
+        final web.ReadableStreamDefaultReader mockReader = mockMediaTrackReader();
+
+        expectReadVideoFrameException(
+          reader: mockReader,
+          errorCode: CameraErrorCode.videoTrackReaderNotInitialized,
+        );
+      });
+    });
+
+    group('getCameraImageData', () {
+      testWidgets('returns CameraImageData with valid planes', (WidgetTester tester) async {
+        const mockWidth = 2;
+        const mockHeight = 2;
+        final mockBytes = Uint8List(mockWidth * mockHeight * 4);
+
+        final CameraImageData cameraImageData = cameraService.getCameraImageData(
+          width: mockWidth,
+          height: mockHeight,
+          bytes: mockBytes,
+        );
+
+        expect(cameraImageData.width, equals(mockWidth));
+        expect(cameraImageData.height, equals(mockHeight));
+
+        expect(cameraImageData.format.group, equals(ImageFormatGroup.unknown));
+        expect(cameraImageData.format.raw, equals('rgba8888'));
+
+        expect(cameraImageData.planes.length, equals(1));
+        final CameraImagePlane plane = cameraImageData.planes.first;
+
+        expect(plane.width, equals(mockWidth));
+        expect(plane.height, equals(mockHeight));
+        expect(plane.bytesPerPixel, equals(4));
+        expect(plane.bytesPerRow, equals(mockWidth * 4));
+        expect(plane.bytes, equals(mockBytes));
+      });
+    });
+
+    group('hasPropertyOffScreenCanvas', () {
+      setUp(() {
+        cameraService.jsUtil = jsUtil;
+      });
+      testWidgets('hasPropertyOffScreenCanvas returns true if broswer has OffscreenCanvas '
           'otherwise false', (WidgetTester widgetTester) async {
         for (final supportsOffscreenCanvas in <bool>[true, false]) {
           when(
             jsUtil.hasProperty(window, 'OffscreenCanvas'.toJS),
           ).thenReturn(supportsOffscreenCanvas);
-          final bool hasOffScreenCanvas = cameraService
-              .hasPropertyOffScreenCanvas();
-          expect(
-            hasOffScreenCanvas,
-            supportsOffscreenCanvas ? isTrue : isFalse,
-          );
+          final bool hasOffScreenCanvas = cameraService.hasPropertyOffScreenCanvas();
+          expect(hasOffScreenCanvas, supportsOffscreenCanvas ? isTrue : isFalse);
         }
       });
+    });
+
+    group('takeFrame', () {
       testWidgets('returns Camera Image of Size '
           'when videoElement is of Size '
-          'regardless of OffscreenCanvas support', (
-        WidgetTester widgetTester,
-      ) async {
+          'regardless of OffscreenCanvas support', (WidgetTester widgetTester) async {
         const size = Size(10, 10);
         final completer = Completer<void>();
-        final web.VideoElement videoElement =
-            getVideoElementWithBlankStream(size)
-              ..onLoadedMetadata.listen((_) {
-                completer.complete();
-              })
-              ..load();
+        final web.VideoElement videoElement = getVideoElementWithBlankStream(size)
+          ..onLoadedMetadata.listen((_) {
+            completer.complete();
+          })
+          ..load();
         await completer.future;
+
         for (final supportsOffscreenCanvas in <bool>[true, false]) {
           when(
             jsUtil.hasProperty(window, 'OffscreenCanvas'.toJS),
           ).thenReturn(supportsOffscreenCanvas);
-          final CameraImageData cameraImageData = cameraService.takeFrame(
-            videoElement,
-          );
-          expect(
-            size,
-            Size(
-              cameraImageData.width.toDouble(),
-              cameraImageData.height.toDouble(),
-            ),
-          );
+
+          final CameraImageData cameraImageData = cameraService.takeFrame(videoElement);
+
+          expect(size, Size(cameraImageData.width.toDouble(), cameraImageData.height.toDouble()));
         }
+      });
+
+      testWidgets('throws CameraWebException when video element not loaded', (
+        WidgetTester widgetTester,
+      ) async {
+        final web.VideoElement videoElement = getVideoElementWithBlankStream(const Size(10, 10));
+
+        expect(
+          () => cameraService.takeFrame(videoElement),
+          throwsA(
+            isA<CameraWebException>().having(
+              (CameraWebException e) => e.code,
+              'code',
+              CameraErrorCode.cameraFrameDimensionsZero,
+            ),
+          ),
+        );
       });
     });
   });
