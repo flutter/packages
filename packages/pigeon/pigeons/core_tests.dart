@@ -4,7 +4,7 @@
 
 import 'package:pigeon/pigeon.dart';
 
-part 'core_tests_apis.dart';
+part 'core_tests_small_apis.dart';
 
 enum AnEnum { one, two, three, fortyTwo, fourHundredTwentyTwo }
 
