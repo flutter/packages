@@ -290,19 +290,64 @@ class MockCameraService extends _i1.Mock implements _i8.CameraService {
           as bool);
 
   @override
-  _i5.CameraImageData takeFrame(_i7.HTMLVideoElement? videoElement) =>
+  _i5.CameraImageData takeFrame(
+    _i7.HTMLVideoElement? videoElement, {
+    int? cameraId = 0,
+  }) =>
       (super.noSuchMethod(
-            Invocation.method(#takeFrame, [videoElement]),
+            Invocation.method(
+              #takeFrame,
+              [videoElement],
+              {#cameraId: cameraId},
+            ),
             returnValue: _FakeCameraImageData_3(
               this,
-              Invocation.method(#takeFrame, [videoElement]),
+              Invocation.method(
+                #takeFrame,
+                [videoElement],
+                {#cameraId: cameraId},
+              ),
             ),
             returnValueForMissingStub: _FakeCameraImageData_3(
               this,
-              Invocation.method(#takeFrame, [videoElement]),
+              Invocation.method(
+                #takeFrame,
+                [videoElement],
+                {#cameraId: cameraId},
+              ),
             ),
           )
           as _i5.CameraImageData);
+
+  @override
+  _i7.MediaStreamTrack getMediaStreamVideoTrack(
+    _i7.MediaStream? mediaStream, {
+    int? cameraId = 0,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(
+              #getMediaStreamVideoTrack,
+              [mediaStream],
+              {#cameraId: cameraId},
+            ),
+            returnValue: _i12.dummyValue<_i7.MediaStreamTrack>(
+              this,
+              Invocation.method(
+                #getMediaStreamVideoTrack,
+                [mediaStream],
+                {#cameraId: cameraId},
+              ),
+            ),
+            returnValueForMissingStub: _i12.dummyValue<_i7.MediaStreamTrack>(
+              this,
+              Invocation.method(
+                #getMediaStreamVideoTrack,
+                [mediaStream],
+                {#cameraId: cameraId},
+              ),
+            ),
+          )
+          as _i7.MediaStreamTrack);
 
   @override
   _i7.ReadableStreamDefaultReader getMediaStreamTrackReader(
@@ -337,20 +382,29 @@ class MockCameraService extends _i1.Mock implements _i8.CameraService {
 
   @override
   _i6.Future<_i7.VideoFrame> readVideoTrack(
-    _i7.ReadableStreamDefaultReader? reader,
-  ) =>
+    _i7.ReadableStreamDefaultReader? reader, {
+    int? cameraId = 0,
+  }) =>
       (super.noSuchMethod(
-            Invocation.method(#readVideoTrack, [reader]),
+            Invocation.method(#readVideoTrack, [reader], {#cameraId: cameraId}),
             returnValue: _i6.Future<_i7.VideoFrame>.value(
               _i12.dummyValue<_i7.VideoFrame>(
                 this,
-                Invocation.method(#readVideoTrack, [reader]),
+                Invocation.method(
+                  #readVideoTrack,
+                  [reader],
+                  {#cameraId: cameraId},
+                ),
               ),
             ),
             returnValueForMissingStub: _i6.Future<_i7.VideoFrame>.value(
               _i12.dummyValue<_i7.VideoFrame>(
                 this,
-                Invocation.method(#readVideoTrack, [reader]),
+                Invocation.method(
+                  #readVideoTrack,
+                  [reader],
+                  {#cameraId: cameraId},
+                ),
               ),
             ),
           )
@@ -581,6 +635,15 @@ class MockCamera extends _i1.Mock implements _i10.Camera {
                 ),
           )
           as _i6.StreamController<_i5.VideoRecordedEvent>);
+
+  @override
+  bool get canUseMediaStreamTrackProcessor =>
+      (super.noSuchMethod(
+            Invocation.getter(#canUseMediaStreamTrackProcessor),
+            returnValue: false,
+            returnValueForMissingStub: false,
+          )
+          as bool);
 
   @override
   bool get canUseOffscreenCanvas =>

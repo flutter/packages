@@ -1301,16 +1301,21 @@ void main() {
       }
 
       group('MediaStreamTrackProcessor is supported', () {
+        final mockMediaStreamTrack =
+            createJSInteropWrapper(MockMediaStreamTrack()) as MediaStreamTrack;
         final mockVideoFrame = MockVideoFrame(width: 10, height: 10, bufferSize: 32);
 
         setUp(() {
+          when(
+            cameraService.getMediaStreamVideoTrack(any, cameraId: anyNamed('cameraId')),
+          ).thenReturn(mockMediaStreamTrack);
           when(
             cameraService.getMediaStreamTrackReader(any, maxBufferSize: anyNamed('maxBufferSize')),
           ).thenReturn(
             createJSInteropWrapper(MockReadableStreamDefaultReader())
                 as ReadableStreamDefaultReader,
           );
-          when(cameraService.readVideoTrack(any)).thenAnswer(
+          when(cameraService.readVideoTrack(any, cameraId: anyNamed('cameraId'))).thenAnswer(
             (_) => Future<VideoFrame>.value(createJSInteropWrapper(mockVideoFrame) as VideoFrame),
           );
           when(
@@ -1397,7 +1402,7 @@ void main() {
           for (final supportsOffscreenCanvas in <bool>[true, false]) {
             when(cameraService.hasPropertyOffScreenCanvas()).thenReturn(supportsOffscreenCanvas);
 
-            when(cameraService.takeFrame(videoElement)).thenAnswer(
+            when(cameraService.takeFrame(videoElement, cameraId: anyNamed('cameraId'))).thenAnswer(
               (_) => CameraImageData(
                 format: const CameraImageFormat(ImageFormatGroup.unknown, raw: 0),
                 planes: <CameraImagePlane>[
@@ -1421,7 +1426,7 @@ void main() {
         ) async {
           final exception = Exception('takeFrame failure');
 
-          when(cameraService.takeFrame(any)).thenThrow(exception);
+          when(cameraService.takeFrame(any, cameraId: anyNamed('cameraId'))).thenThrow(exception);
 
           await expectCameraFrameStreamError(exception);
         });
