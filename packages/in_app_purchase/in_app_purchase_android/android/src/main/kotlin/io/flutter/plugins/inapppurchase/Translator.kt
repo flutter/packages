@@ -8,6 +8,7 @@ import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingConfig
 import com.android.billingclient.api.BillingFlowParams
 import com.android.billingclient.api.BillingResult
+import com.android.billingclient.api.InAppMessageResult
 import com.android.billingclient.api.PendingPurchasesParams
 import com.android.billingclient.api.ProductDetails
 import com.android.billingclient.api.ProductDetails.InstallmentPlanDetails
@@ -331,4 +332,22 @@ fun toReplacementMode(replacementMode: PlatformReplacementMode): Int {
     PlatformReplacementMode.UNKNOWN_REPLACEMENT_MODE ->
         BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.UNKNOWN_REPLACEMENT_MODE
   }
+}
+
+fun fromInAppMessageResult(inAppMessageResult: InAppMessageResult): PlatformInAppMessageResult {
+  return PlatformInAppMessageResult(
+      responseCode = fromInAppMessageResponseCode(inAppMessageResult.responseCode),
+      purchaseToken = inAppMessageResult.purchaseToken)
+}
+
+fun fromInAppMessageResponseCode(
+    @InAppMessageResult.InAppMessageResponseCode inAppMessageResponseCode: Int
+): PlatformInAppMessageResponse {
+  when (inAppMessageResponseCode) {
+    InAppMessageResult.InAppMessageResponseCode.SUBSCRIPTION_STATUS_UPDATED ->
+        return PlatformInAppMessageResponse.SUBSCRIPTION_STATUS_UPDATED
+    InAppMessageResult.InAppMessageResponseCode.NO_ACTION_NEEDED ->
+        return PlatformInAppMessageResponse.NO_ACTION_NEEDED
+  }
+  return PlatformInAppMessageResponse.NO_ACTION_NEEDED
 }

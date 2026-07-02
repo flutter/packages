@@ -30,10 +30,7 @@ const bool skipOnIosFor154676 = true;
 Future<void> main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  final HttpServer server = await HttpServer.bind(
-    InternetAddress.loopbackIPv4,
-    0,
-  );
+  final HttpServer server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
   unawaited(
     server.forEach((HttpRequest request) {
       if (request.uri.path == '/hello.txt') {
@@ -79,26 +76,22 @@ Future<void> main() async {
     expect(currentUrl, primaryUrl);
   });
 
-  testWidgets(
-    'withWeakRefenceTo allows encapsulating class to be garbage collected',
-    (WidgetTester tester) async {
-      final gcCompleter = Completer<int>();
-      final instanceManager = PigeonInstanceManager(
-        onWeakReferenceRemoved: gcCompleter.complete,
-      );
+  testWidgets('withWeakRefenceTo allows encapsulating class to be garbage collected', (
+    WidgetTester tester,
+  ) async {
+    final gcCompleter = Completer<int>();
+    final instanceManager = PigeonInstanceManager(onWeakReferenceRemoved: gcCompleter.complete);
 
-      ClassWithCallbackClass? instance = ClassWithCallbackClass();
-      instanceManager.addDartCreatedInstance(instance.callbackClass);
-      instance = null;
+    ClassWithCallbackClass? instance = ClassWithCallbackClass();
+    instanceManager.addDartCreatedInstance(instance.callbackClass);
+    instance = null;
 
-      // Force garbage collection.
-      await forceGC();
+    // Force garbage collection.
+    await forceGC();
 
-      final int gcIdentifier = await gcCompleter.future;
-      expect(gcIdentifier, 0);
-    },
-    timeout: const Timeout(Duration(seconds: 10)),
-  );
+    final int gcIdentifier = await gcCompleter.future;
+    expect(gcIdentifier, 0);
+  }, timeout: const Timeout(Duration(seconds: 10)));
 
   testWidgets('loadUrl', (WidgetTester tester) async {
     final controllerCompleter = Completer<WebViewController>();
@@ -194,8 +187,7 @@ Future<void> main() async {
         child: WebView(
           key: GlobalKey(),
           // This is the data URL for: '<!DOCTYPE html>'
-          initialUrl:
-              'data:text/html;charset=utf-8;base64,PCFET0NUWVBFIGh0bWw+',
+          initialUrl: 'data:text/html;charset=utf-8;base64,PCFET0NUWVBFIGh0bWw+',
           onWebViewCreated: (WebViewController controller) {
             controllerCompleter.complete(controller);
           },
@@ -353,8 +345,7 @@ Future<void> main() async {
               textDirection: TextDirection.ltr,
               child: WebView(
                 key: GlobalKey(),
-                initialUrl:
-                    'data:text/html;charset=utf-8;base64,$videoTestBase64',
+                initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
                 onWebViewCreated: (WebViewController controller) {
                   controllerCompleter.complete(controller);
                 },
@@ -362,17 +353,14 @@ Future<void> main() async {
                 onPageFinished: (String url) {
                   pageLoaded.complete(null);
                 },
-                initialMediaPlaybackPolicy:
-                    AutoMediaPlaybackPolicy.always_allow,
+                initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
               ),
             ),
           );
           WebViewController controller = await controllerCompleter.future;
           await pageLoaded.future;
 
-          String isPaused = await controller.runJavascriptReturningResult(
-            'isPaused();',
-          );
+          String isPaused = await controller.runJavascriptReturningResult('isPaused();');
           expect(isPaused, _webviewBool(false));
 
           controllerCompleter = Completer<WebViewController>();
@@ -384,8 +372,7 @@ Future<void> main() async {
               textDirection: TextDirection.ltr,
               child: WebView(
                 key: GlobalKey(),
-                initialUrl:
-                    'data:text/html;charset=utf-8;base64,$videoTestBase64',
+                initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
                 onWebViewCreated: (WebViewController controller) {
                   controllerCompleter.complete(controller);
                 },
@@ -400,9 +387,7 @@ Future<void> main() async {
           controller = await controllerCompleter.future;
           await pageLoaded.future;
 
-          isPaused = await controller.runJavascriptReturningResult(
-            'isPaused();',
-          );
+          isPaused = await controller.runJavascriptReturningResult('isPaused();');
           expect(isPaused, _webviewBool(true));
         },
         // Flakes on iOS: https://github.com/flutter/flutter/issues/164632
@@ -422,8 +407,7 @@ Future<void> main() async {
               textDirection: TextDirection.ltr,
               child: WebView(
                 key: key,
-                initialUrl:
-                    'data:text/html;charset=utf-8;base64,$videoTestBase64',
+                initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
                 onWebViewCreated: (WebViewController controller) {
                   controllerCompleter.complete(controller);
                 },
@@ -431,17 +415,14 @@ Future<void> main() async {
                 onPageFinished: (String url) {
                   pageLoaded.complete(null);
                 },
-                initialMediaPlaybackPolicy:
-                    AutoMediaPlaybackPolicy.always_allow,
+                initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
               ),
             ),
           );
           final WebViewController controller = await controllerCompleter.future;
           await pageLoaded.future;
 
-          String isPaused = await controller.runJavascriptReturningResult(
-            'isPaused();',
-          );
+          String isPaused = await controller.runJavascriptReturningResult('isPaused();');
           expect(isPaused, _webviewBool(false));
 
           pageLoaded = Completer<void>();
@@ -451,8 +432,7 @@ Future<void> main() async {
               textDirection: TextDirection.ltr,
               child: WebView(
                 key: key,
-                initialUrl:
-                    'data:text/html;charset=utf-8;base64,$videoTestBase64',
+                initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
                 onWebViewCreated: (WebViewController controller) {
                   controllerCompleter.complete(controller);
                 },
@@ -468,9 +448,7 @@ Future<void> main() async {
 
           await pageLoaded.future;
 
-          isPaused = await controller.runJavascriptReturningResult(
-            'isPaused();',
-          );
+          isPaused = await controller.runJavascriptReturningResult('isPaused();');
           expect(isPaused, _webviewBool(false));
         },
         // Flakes on iOS: https://github.com/flutter/flutter/issues/164632
@@ -489,8 +467,7 @@ Future<void> main() async {
           Directionality(
             textDirection: TextDirection.ltr,
             child: WebView(
-              initialUrl:
-                  'data:text/html;charset=utf-8;base64,$videoTestBase64',
+              initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
               onWebViewCreated: (WebViewController controller) {
                 controllerCompleter.complete(controller);
               },
@@ -524,65 +501,58 @@ Future<void> main() async {
         // Makes sure we get the correct event that indicates the video is actually playing.
         await videoPlaying.future;
 
-        final String fullScreen = await controller.runJavascriptReturningResult(
-          'isFullScreen();',
-        );
+        final String fullScreen = await controller.runJavascriptReturningResult('isFullScreen();');
         expect(fullScreen, _webviewBool(false));
       }, skip: Platform.isMacOS || skipOnIosFor154676);
 
-      testWidgets(
-        'Video plays full screen when allowsInlineMediaPlayback is false',
-        (WidgetTester tester) async {
-          final String videoTestBase64 = await getTestVideoBase64();
-          final controllerCompleter = Completer<WebViewController>();
-          final pageLoaded = Completer<void>();
-          final videoPlaying = Completer<void>();
+      testWidgets('Video plays full screen when allowsInlineMediaPlayback is false', (
+        WidgetTester tester,
+      ) async {
+        final String videoTestBase64 = await getTestVideoBase64();
+        final controllerCompleter = Completer<WebViewController>();
+        final pageLoaded = Completer<void>();
+        final videoPlaying = Completer<void>();
 
-          await tester.pumpWidget(
-            Directionality(
-              textDirection: TextDirection.ltr,
-              child: WebView(
-                initialUrl:
-                    'data:text/html;charset=utf-8;base64,$videoTestBase64',
-                onWebViewCreated: (WebViewController controller) {
-                  controllerCompleter.complete(controller);
-                },
-                javascriptMode: JavascriptMode.unrestricted,
-                javascriptChannels: <JavascriptChannel>{
-                  JavascriptChannel(
-                    name: 'VideoTestTime',
-                    onMessageReceived: (JavascriptMessage message) {
-                      final double currentTime = double.parse(message.message);
-                      // Let it play for at least 1 second to make sure the related video's properties are set.
-                      if (currentTime > 1 && !videoPlaying.isCompleted) {
-                        videoPlaying.complete(null);
-                      }
-                    },
-                  ),
-                },
-                onPageFinished: (String url) {
-                  pageLoaded.complete(null);
-                },
-                initialMediaPlaybackPolicy:
-                    AutoMediaPlaybackPolicy.always_allow,
-              ),
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: WebView(
+              initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
+              onWebViewCreated: (WebViewController controller) {
+                controllerCompleter.complete(controller);
+              },
+              javascriptMode: JavascriptMode.unrestricted,
+              javascriptChannels: <JavascriptChannel>{
+                JavascriptChannel(
+                  name: 'VideoTestTime',
+                  onMessageReceived: (JavascriptMessage message) {
+                    final double currentTime = double.parse(message.message);
+                    // Let it play for at least 1 second to make sure the related video's properties are set.
+                    if (currentTime > 1 && !videoPlaying.isCompleted) {
+                      videoPlaying.complete(null);
+                    }
+                  },
+                ),
+              },
+              onPageFinished: (String url) {
+                pageLoaded.complete(null);
+              },
+              initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
             ),
-          );
-          final WebViewController controller = await controllerCompleter.future;
-          await pageLoaded.future;
+          ),
+        );
+        final WebViewController controller = await controllerCompleter.future;
+        await pageLoaded.future;
 
-          // Pump once to trigger the video play.
-          await tester.pump();
+        // Pump once to trigger the video play.
+        await tester.pump();
 
-          // Makes sure we get the correct event that indicates the video is actually playing.
-          await videoPlaying.future;
+        // Makes sure we get the correct event that indicates the video is actually playing.
+        await videoPlaying.future;
 
-          final String fullScreen = await controller
-              .runJavascriptReturningResult('isFullScreen();');
-          expect(fullScreen, _webviewBool(true));
-        },
-        skip: Platform.isMacOS || skipOnIosFor154676,
-      );
+        final String fullScreen = await controller.runJavascriptReturningResult('isFullScreen();');
+        expect(fullScreen, _webviewBool(true));
+      }, skip: Platform.isMacOS || skipOnIosFor154676);
     },
     // allowsInlineMediaPlayback has no effect on macOS.
     skip: Platform.isMacOS,
@@ -593,12 +563,8 @@ Future<void> main() async {
     () {
       late String audioTestBase64;
       setUpAll(() async {
-        final ByteData audioData = await rootBundle.load(
-          'assets/sample_audio.ogg',
-        );
-        final String base64AudioData = base64Encode(
-          Uint8List.view(audioData.buffer),
-        );
+        final ByteData audioData = await rootBundle.load('assets/sample_audio.ogg');
+        final String base64AudioData = base64Encode(Uint8List.view(audioData.buffer));
         final audioTest =
             '''
         <!DOCTYPE html><html>
@@ -634,8 +600,7 @@ Future<void> main() async {
             textDirection: TextDirection.ltr,
             child: WebView(
               key: GlobalKey(),
-              initialUrl:
-                  'data:text/html;charset=utf-8;base64,$audioTestBase64',
+              initialUrl: 'data:text/html;charset=utf-8;base64,$audioTestBase64',
               onWebViewCreated: (WebViewController controller) {
                 controllerCompleter.complete(controller);
               },
@@ -654,9 +619,7 @@ Future<void> main() async {
         await pageStarted.future;
         await pageLoaded.future;
 
-        String isPaused = await controller.runJavascriptReturningResult(
-          'isPaused();',
-        );
+        String isPaused = await controller.runJavascriptReturningResult('isPaused();');
         expect(isPaused, _webviewBool(false));
 
         controllerCompleter = Completer<WebViewController>();
@@ -669,8 +632,7 @@ Future<void> main() async {
             textDirection: TextDirection.ltr,
             child: WebView(
               key: GlobalKey(),
-              initialUrl:
-                  'data:text/html;charset=utf-8;base64,$audioTestBase64',
+              initialUrl: 'data:text/html;charset=utf-8;base64,$audioTestBase64',
               onWebViewCreated: (WebViewController controller) {
                 controllerCompleter.complete(controller);
               },
@@ -693,9 +655,7 @@ Future<void> main() async {
         expect(isPaused, _webviewBool(true));
       });
 
-      testWidgets('Changes to initialMediaPlaybackPolicy are ignored', (
-        WidgetTester tester,
-      ) async {
+      testWidgets('Changes to initialMediaPlaybackPolicy are ignored', (WidgetTester tester) async {
         final controllerCompleter = Completer<WebViewController>();
         var pageStarted = Completer<void>();
         var pageLoaded = Completer<void>();
@@ -706,8 +666,7 @@ Future<void> main() async {
             textDirection: TextDirection.ltr,
             child: WebView(
               key: key,
-              initialUrl:
-                  'data:text/html;charset=utf-8;base64,$audioTestBase64',
+              initialUrl: 'data:text/html;charset=utf-8;base64,$audioTestBase64',
               onWebViewCreated: (WebViewController controller) {
                 controllerCompleter.complete(controller);
               },
@@ -726,9 +685,7 @@ Future<void> main() async {
         await pageStarted.future;
         await pageLoaded.future;
 
-        String isPaused = await controller.runJavascriptReturningResult(
-          'isPaused();',
-        );
+        String isPaused = await controller.runJavascriptReturningResult('isPaused();');
         expect(isPaused, _webviewBool(false));
 
         pageStarted = Completer<void>();
@@ -739,8 +696,7 @@ Future<void> main() async {
             textDirection: TextDirection.ltr,
             child: WebView(
               key: key,
-              initialUrl:
-                  'data:text/html;charset=utf-8;base64,$audioTestBase64',
+              initialUrl: 'data:text/html;charset=utf-8;base64,$audioTestBase64',
               onWebViewCreated: (WebViewController controller) {
                 controllerCompleter.complete(controller);
               },
@@ -778,9 +734,7 @@ Future<void> main() async {
         </body>
         </html>
       ''';
-    final String getTitleTestBase64 = base64Encode(
-      const Utf8Encoder().convert(getTitleTest),
-    );
+    final String getTitleTestBase64 = base64Encode(const Utf8Encoder().convert(getTitleTest));
     final pageStarted = Completer<void>();
     final pageLoaded = Completer<void>();
     final controllerCompleter = Completer<WebViewController>();
@@ -854,8 +808,7 @@ Future<void> main() async {
           Directionality(
             textDirection: TextDirection.ltr,
             child: WebView(
-              initialUrl:
-                  'data:text/html;charset=utf-8;base64,$scrollTestPageBase64',
+              initialUrl: 'data:text/html;charset=utf-8;base64,$scrollTestPageBase64',
               onWebViewCreated: (WebViewController controller) {
                 controllerCompleter.complete(controller);
               },
@@ -964,16 +917,11 @@ Future<void> main() async {
         expect(error.failingUrl, isNull);
       } else if (Platform.isAndroid) {
         expect(error.errorType, isNotNull);
-        expect(
-          error.failingUrl?.startsWith('https://www.notawebsite..com'),
-          isTrue,
-        );
+        expect(error.failingUrl?.startsWith('https://www.notawebsite..com'), isTrue);
       }
     });
 
-    testWidgets('onWebResourceError is not called with valid url', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('onWebResourceError is not called with valid url', (WidgetTester tester) async {
       final errorCompleter = Completer<WebResourceError>();
       final pageFinishCompleter = Completer<void>();
 
@@ -982,8 +930,7 @@ Future<void> main() async {
           textDirection: TextDirection.ltr,
           child: WebView(
             key: GlobalKey(),
-            initialUrl:
-                'data:text/html;charset=utf-8;base64,PCFET0NUWVBFIGh0bWw+',
+            initialUrl: 'data:text/html;charset=utf-8;base64,PCFET0NUWVBFIGh0bWw+',
             onWebResourceError: (WebResourceError error) {
               errorCompleter.complete(error);
             },
@@ -996,9 +943,7 @@ Future<void> main() async {
       await pageFinishCompleter.future;
     });
 
-    testWidgets('onWebResourceError only called for main frame', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('onWebResourceError only called for main frame', (WidgetTester tester) async {
       const iframeTest = '''
         <!DOCTYPE html>
         <html>
@@ -1010,9 +955,7 @@ Future<void> main() async {
         </body>
         </html>
        ''';
-      final String iframeTestBase64 = base64Encode(
-        const Utf8Encoder().convert(iframeTest),
-      );
+      final String iframeTestBase64 = base64Encode(const Utf8Encoder().convert(iframeTest));
 
       final errorCompleter = Completer<WebResourceError>();
       final pageFinishCompleter = Completer<void>();
@@ -1060,17 +1003,12 @@ Future<void> main() async {
 
       await pageLoads.stream.first; // Wait for initial page load.
       final WebViewController controller = await controllerCompleter.future;
-      await controller.runJavascript(
-        'location.href = "https://www.youtube.com/"',
-      );
+      await controller.runJavascript('location.href = "https://www.youtube.com/"');
 
       // There should never be any second page load, since our new URL is
       // blocked. Still wait for a potential page change for some time in order
       // to give the test a chance to fail.
-      await pageLoads.stream.first.timeout(
-        const Duration(milliseconds: 500),
-        onTimeout: () => '',
-      );
+      await pageLoads.stream.first.timeout(const Duration(milliseconds: 500), onTimeout: () => '');
       final String? currentUrl = await controller.currentUrl();
       expect(currentUrl, isNot(contains('youtube.com')));
     });
@@ -1111,9 +1049,7 @@ Future<void> main() async {
     });
   });
 
-  testWidgets('launches with gestureNavigationEnabled on iOS', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('launches with gestureNavigationEnabled on iOS', (WidgetTester tester) async {
     final controllerCompleter = Completer<WebViewController>();
     await tester.pumpWidget(
       Directionality(
@@ -1137,9 +1073,7 @@ Future<void> main() async {
     expect(currentUrl, primaryUrl);
   });
 
-  testWidgets('target _blank opens in same window', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('target _blank opens in same window', (WidgetTester tester) async {
     final controllerCompleter = Completer<WebViewController>();
     final pageLoaded = Completer<void>();
     await tester.pumpWidget(
@@ -1215,11 +1149,7 @@ Future<String> _getUserAgent(WebViewController controller) async {
 }
 
 class ResizableWebView extends StatefulWidget {
-  const ResizableWebView({
-    super.key,
-    required this.onResize,
-    required this.onPageFinished,
-  });
+  const ResizableWebView({super.key, required this.onResize, required this.onPageFinished});
 
   final JavascriptMessageHandler onResize;
   final VoidCallback onPageFinished;
@@ -1251,9 +1181,7 @@ class ResizableWebViewState extends State<ResizableWebView> {
 
   @override
   Widget build(BuildContext context) {
-    final String resizeTestBase64 = base64Encode(
-      const Utf8Encoder().convert(resizePage),
-    );
+    final String resizeTestBase64 = base64Encode(const Utf8Encoder().convert(resizePage));
     return Directionality(
       textDirection: TextDirection.ltr,
       child: Column(
@@ -1262,13 +1190,9 @@ class ResizableWebViewState extends State<ResizableWebView> {
             width: webViewWidth,
             height: webViewHeight,
             child: WebView(
-              initialUrl:
-                  'data:text/html;charset=utf-8;base64,$resizeTestBase64',
+              initialUrl: 'data:text/html;charset=utf-8;base64,$resizeTestBase64',
               javascriptChannels: <JavascriptChannel>{
-                JavascriptChannel(
-                  name: 'Resize',
-                  onMessageReceived: widget.onResize,
-                ),
+                JavascriptChannel(name: 'Resize', onMessageReceived: widget.onResize),
               },
               onPageFinished: (_) => widget.onPageFinished(),
               javascriptMode: JavascriptMode.unrestricted,
@@ -1305,9 +1229,7 @@ class CopyableObjectWithCallback extends PigeonInternalProxyApiBaseClass {
 class ClassWithCallbackClass {
   ClassWithCallbackClass() {
     callbackClass = CopyableObjectWithCallback(
-      withWeakReferenceTo(this, (
-        WeakReference<ClassWithCallbackClass> weakReference,
-      ) {
+      withWeakReferenceTo(this, (WeakReference<ClassWithCallbackClass> weakReference) {
         return () {
           // Weak reference to `this` in callback.
           // ignore: unnecessary_statements

@@ -36,9 +36,8 @@ class Ad {
   /// The companions for the current ad while using DAI.
   ///
   /// Returns an empty list in any other scenario.
-  List<CompanionAd> get companionAds => List<CompanionAd>.unmodifiable(
-    platform.companionAds.map(CompanionAd.fromPlatform),
-  );
+  List<CompanionAd> get companionAds =>
+      List<CompanionAd>.unmodifiable(platform.companionAds.map(CompanionAd.fromPlatform));
 
   /// The content type of the currently selected creative, or null if no
   /// creative is selected or the content type is unavailable.
@@ -85,9 +84,8 @@ class Ad {
   Set<AdUIElement> get uiElements => platform.uiElements;
 
   /// The list of all universal ad IDs for this ad.
-  List<UniversalAdId> get universalAdIds => List<UniversalAdId>.unmodifiable(
-    platform.universalAdIds.map(UniversalAdId.fromPlatform),
-  );
+  List<UniversalAdId> get universalAdIds =>
+      List<UniversalAdId>.unmodifiable(platform.universalAdIds.map(UniversalAdId.fromPlatform));
 
   /// The VAST bitrate in Kbps of the selected creative.
   int get vastMediaBitrate => platform.vastMediaBitrate;

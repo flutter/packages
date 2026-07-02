@@ -14,14 +14,9 @@ import 'src/button_configuration_column.dart';
 final GoogleSignInPlatform _platform = GoogleSignInPlatform.instance;
 
 Future<void> main() async {
-  await _platform.init(
-    const InitParameters(clientId: 'your-client_id.apps.googleusercontent.com'),
-  );
+  await _platform.init(const InitParameters(clientId: 'your-client_id.apps.googleusercontent.com'));
   runApp(
-    const MaterialApp(
-      title: 'Sign in with Google button Tester',
-      home: ButtonConfiguratorDemo(),
-    ),
+    const MaterialApp(title: 'Sign in with Google button Tester', home: ButtonConfiguratorDemo()),
   );
 }
 
@@ -71,14 +66,10 @@ class _ButtonConfiguratorState extends State<ButtonConfiguratorDemo> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              if (_userData == null)
-                renderButton(configuration: _buttonConfiguration),
+              if (_userData == null) renderButton(configuration: _buttonConfiguration),
               if (_userData != null) ...<Widget>[
                 Text('Hello, ${_userData!.displayName}!'),
-                ElevatedButton(
-                  onPressed: _handleSignOut,
-                  child: const Text('SIGN OUT'),
-                ),
+                ElevatedButton(onPressed: _handleSignOut, child: const Text('SIGN OUT')),
               ],
             ],
           ),
@@ -95,10 +86,7 @@ class _ButtonConfiguratorState extends State<ButtonConfiguratorDemo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Sign in with Google button Tester')),
-      body: ConstrainedBox(
-        constraints: const BoxConstraints.expand(),
-        child: _buildBody(),
-      ),
+      body: ConstrainedBox(constraints: const BoxConstraints.expand(), child: _buildBody()),
     );
   }
 }

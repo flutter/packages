@@ -17,7 +17,7 @@ void main() {
 
     group('openFile', () {
       testWidgets('works', (WidgetTester _) async {
-        final XFile mockFile = createXFile('1001', 'identity.png');
+        final XFile mockFile = createXFile('1001', 'identity.png', mimeType: 'image/png');
 
         final mockDomHelper = MockDomHelper(
           files: <XFile>[mockFile],
@@ -33,20 +33,17 @@ void main() {
           webWildCards: <String>['image/*'],
         );
 
-        final XFile? file = await plugin.openFile(
-          acceptedTypeGroups: <XTypeGroup>[typeGroup],
-        );
+        final XFile? file = await plugin.openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
 
         expect(file, isNotNull);
         expect(file!.name, mockFile.name);
+        expect(file.mimeType, 'image/png');
         expect(await file.length(), 4);
         expect(await file.readAsString(), '1001');
         expect(await file.lastModified(), isNotNull);
       });
 
-      testWidgets('returns null when getFiles returns an empty list', (
-        WidgetTester _,
-      ) async {
+      testWidgets('returns null when getFiles returns an empty list', (WidgetTester _) async {
         // Simulate returning an empty list of files from the DomHelper...
         final mockDomHelper = MockDomHelper(files: <XFile>[]);
 
@@ -71,10 +68,7 @@ void main() {
 
         final plugin = FileSelectorWeb(domHelper: mockDomHelper);
 
-        const typeGroup = XTypeGroup(
-          label: 'files',
-          extensions: <String>['.txt'],
-        );
+        const typeGroup = XTypeGroup(label: 'files', extensions: <String>['.txt']);
 
         final List<XFile> files = await plugin.openFiles(
           acceptedTypeGroups: <XTypeGroup>[typeGroup],
@@ -123,21 +117,13 @@ class MockDomHelper implements DomHelper {
     bool multiple = false,
     HTMLInputElement? input,
   }) {
-    expect(
-      accept,
-      _expectedAccept,
-      reason: 'Expected "accept" value does not match.',
-    );
-    expect(
-      multiple,
-      _expectedMultiple,
-      reason: 'Expected "multiple" value does not match.',
-    );
+    expect(accept, _expectedAccept, reason: 'Expected "accept" value does not match.');
+    expect(multiple, _expectedMultiple, reason: 'Expected "multiple" value does not match.');
     return Future<List<XFile>>.value(_files);
   }
 }
 
-XFile createXFile(String content, String name) {
+XFile createXFile(String content, String name, {String mimeType = 'text/plain'}) {
   final data = Uint8List.fromList(content.codeUnits);
-  return XFile.fromData(data, name: name, lastModified: DateTime.now());
+  return XFile.fromData(data, name: name, lastModified: DateTime.now(), mimeType: mimeType);
 }

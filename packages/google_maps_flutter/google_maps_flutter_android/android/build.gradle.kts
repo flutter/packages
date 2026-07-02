@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 group = "io.flutter.plugins.googlemaps"
 version = "1.0-SNAPSHOT"
 
@@ -25,12 +23,11 @@ allprojects {
 
 plugins {
     id("com.android.library")
-    id("kotlin-android")
 }
 
 kotlin {
     compilerOptions {
-        jvmTarget = JvmTarget.fromTarget(JavaVersion.VERSION_17.toString())
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
     }
 }
 
@@ -50,7 +47,7 @@ android {
     }
 
     dependencies {
-        implementation("androidx.annotation:annotation:1.9.1")
+        implementation("androidx.annotation:annotation:1.10.0")
         implementation("com.google.android.gms:play-services-maps:20.0.0")
         implementation("com.google.maps.android:android-maps-utils:4.1.0")
         androidTestImplementation("androidx.test:runner:1.7.0")

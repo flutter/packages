@@ -5,8 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
-import 'package:google_sign_in_web/google_sign_in_web.dart'
-    show GoogleSignInPlugin;
+import 'package:google_sign_in_web/google_sign_in_web.dart' show GoogleSignInPlugin;
 import 'package:google_sign_in_web/src/flexible_size_html_element_view.dart';
 import 'package:google_sign_in_web/src/gis_client.dart';
 import 'package:google_sign_in_web/web_only.dart' as web;
@@ -47,27 +46,19 @@ void main() {
         debugOverrideLoader: true,
         debugOverrideGisSdkClient: mockGis,
       );
-      await GoogleSignInPlatform.instance.init(
-        const InitParameters(clientId: 'does-not-matter'),
-      );
+      await GoogleSignInPlatform.instance.init(const InitParameters(clientId: 'does-not-matter'));
     });
 
     testWidgets('renderButton returns successfully', (WidgetTester _) async {
-      when(
-        mockGis.renderButton(any, any),
-      ).thenAnswer((_) => Future<void>.value());
+      when(mockGis.renderButton(any, any)).thenAnswer((_) => Future<void>.value());
 
       final Widget button = web.renderButton();
 
       expect(button, isNotNull);
     });
 
-    testWidgets('renderButton shows loading then renders button', (
-      WidgetTester tester,
-    ) async {
-      await tester.pumpWidget(
-        MaterialApp(home: Scaffold(body: web.renderButton())),
-      );
+    testWidgets('renderButton shows loading then renders button', (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(home: Scaffold(body: web.renderButton())));
 
       expect(find.text('Getting ready'), findsOneWidget);
 

@@ -24,8 +24,7 @@ class GetMultipleDirectoriesPage extends StatelessWidget {
     if (context.mounted) {
       await showDialog<void>(
         context: context,
-        builder: (BuildContext context) =>
-            TextDisplay(directoryPaths.join('\n')),
+        builder: (BuildContext context) => TextDisplay(directoryPaths.join('\n')),
       );
     }
   }
@@ -43,9 +42,7 @@ class GetMultipleDirectoriesPage extends StatelessWidget {
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
               ),
-              child: const Text(
-                'Press to ask user to choose multiple directories',
-              ),
+              child: const Text('Press to ask user to choose multiple directories'),
               onPressed: () => _getDirectoryPaths(context),
             ),
           ],
@@ -67,14 +64,9 @@ class TextDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Selected Directories'),
-      content: Scrollbar(
-        child: SingleChildScrollView(child: Text(directoriesPaths)),
-      ),
+      content: Scrollbar(child: SingleChildScrollView(child: Text(directoriesPaths))),
       actions: <Widget>[
-        TextButton(
-          child: const Text('Close'),
-          onPressed: () => Navigator.pop(context),
-        ),
+        TextButton(child: const Text('Close'), onPressed: () => Navigator.pop(context)),
       ],
     );
   }

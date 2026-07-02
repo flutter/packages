@@ -30,9 +30,7 @@ ExpectConfigValueFn createExpectConfigValue(JSObject config) {
     } else if (matcher is List) {
       final List<Object?> old = matcher;
       matcher = isA<JSAny?>().having(
-        (JSAny? p0) => (p0 as JSArray<JSAny>?)?.toDart
-            .map((JSAny? e) => e.dartify())
-            .toList(),
+        (JSAny? p0) => (p0 as JSArray<JSAny>?)?.toDart.map((JSAny? e) => e.dartify()).toList(),
         'Array with matching values',
         old,
       );
@@ -44,11 +42,8 @@ ExpectConfigValueFn createExpectConfigValue(JSObject config) {
 /// A matcher that checks if: value typeof [thing] == true (in JS).
 ///
 /// See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof
-Matcher isAJs(String thing) => isA<JSAny?>().having(
-  (JSAny? p0) => p0.typeofEquals(thing),
-  'typeof "$thing"',
-  isTrue,
-);
+Matcher isAJs(String thing) =>
+    isA<JSAny?>().having((JSAny? p0) => p0.typeofEquals(thing), 'typeof "$thing"', isTrue);
 
 /// Installs mock-gis.js in the page.
 /// Returns a future that completes when the 'load' event of the script fires.
@@ -73,11 +68,7 @@ Future<void> installGisMock() {
 Future<TokenResponse> fakeAuthZWithScopes(List<String> scopes) {
   final controller = StreamController<TokenResponse>();
   final TokenClient client = oauth2.initTokenClient(
-    TokenClientConfig(
-      client_id: 'for-tests',
-      callback: controller.add,
-      scope: scopes,
-    ),
+    TokenClientConfig(client_id: 'for-tests', callback: controller.add, scope: scopes),
   );
   setMockTokenResponse(client, 'some-non-null-auth-token-value');
   client.requestAccessToken();
@@ -112,17 +103,11 @@ void setMockCredentialResponse([String value = 'default_value']) {
 
 /// Sets a mock moment notification in `google.accounts.id`.
 void setMockMomentNotification(String momentType, String reason) {
-  _getGoogleAccountsId().setMockMomentNotification(
-    momentType.toJS,
-    reason.toJS,
-  );
+  _getGoogleAccountsId().setMockMomentNotification(momentType.toJS, reason.toJS);
 }
 
 GoogleAccountsId _getGoogleAccountsId() {
-  return _getDeepProperty<GoogleAccountsId>(
-    web.window as JSObject,
-    'google.accounts.id',
-  );
+  return _getDeepProperty<GoogleAccountsId>(web.window as JSObject, 'google.accounts.id');
 }
 
 // Attempts to retrieve a deeply nested property from a jsObject (or die tryin')

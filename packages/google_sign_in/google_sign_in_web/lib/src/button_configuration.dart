@@ -5,9 +5,7 @@
 import 'package:google_identity_services_web/id.dart' as id;
 
 /// Converts user-facing `GisButtonConfiguration` into the JS-Interop `id.GsiButtonConfiguration`.
-id.GsiButtonConfiguration? convertButtonConfiguration(
-  GSIButtonConfiguration? config,
-) {
+id.GsiButtonConfiguration? convertButtonConfiguration(GSIButtonConfiguration? config) {
   if (config == null) {
     return null;
   }
@@ -93,11 +91,10 @@ enum GSIButtonType {
   icon,
 }
 
-const Map<GSIButtonType, id.ButtonType> _idType =
-    <GSIButtonType, id.ButtonType>{
-      GSIButtonType.icon: id.ButtonType.icon,
-      GSIButtonType.standard: id.ButtonType.standard,
-    };
+const Map<GSIButtonType, id.ButtonType> _idType = <GSIButtonType, id.ButtonType>{
+  GSIButtonType.icon: id.ButtonType.icon,
+  GSIButtonType.standard: id.ButtonType.standard,
+};
 
 /// The theme of the button to be rendered.
 ///
@@ -114,12 +111,11 @@ enum GSIButtonTheme {
   filledBlack,
 }
 
-const Map<GSIButtonTheme, id.ButtonTheme> _idTheme =
-    <GSIButtonTheme, id.ButtonTheme>{
-      GSIButtonTheme.outline: id.ButtonTheme.outline,
-      GSIButtonTheme.filledBlue: id.ButtonTheme.filled_blue,
-      GSIButtonTheme.filledBlack: id.ButtonTheme.filled_black,
-    };
+const Map<GSIButtonTheme, id.ButtonTheme> _idTheme = <GSIButtonTheme, id.ButtonTheme>{
+  GSIButtonTheme.outline: id.ButtonTheme.outline,
+  GSIButtonTheme.filledBlue: id.ButtonTheme.filled_blue,
+  GSIButtonTheme.filledBlack: id.ButtonTheme.filled_black,
+};
 
 /// The size of the button to be rendered.
 ///
@@ -136,12 +132,11 @@ enum GSIButtonSize {
   small,
 }
 
-const Map<GSIButtonSize, id.ButtonSize> _idSize =
-    <GSIButtonSize, id.ButtonSize>{
-      GSIButtonSize.large: id.ButtonSize.large,
-      GSIButtonSize.medium: id.ButtonSize.medium,
-      GSIButtonSize.small: id.ButtonSize.small,
-    };
+const Map<GSIButtonSize, id.ButtonSize> _idSize = <GSIButtonSize, id.ButtonSize>{
+  GSIButtonSize.large: id.ButtonSize.large,
+  GSIButtonSize.medium: id.ButtonSize.medium,
+  GSIButtonSize.small: id.ButtonSize.small,
+};
 
 /// The button text.
 ///
@@ -161,13 +156,12 @@ enum GSIButtonText {
   signin,
 }
 
-const Map<GSIButtonText, id.ButtonText> _idText =
-    <GSIButtonText, id.ButtonText>{
-      GSIButtonText.signinWith: id.ButtonText.signin_with,
-      GSIButtonText.signupWith: id.ButtonText.signup_with,
-      GSIButtonText.continueWith: id.ButtonText.continue_with,
-      GSIButtonText.signin: id.ButtonText.signin,
-    };
+const Map<GSIButtonText, id.ButtonText> _idText = <GSIButtonText, id.ButtonText>{
+  GSIButtonText.signinWith: id.ButtonText.signin_with,
+  GSIButtonText.signupWith: id.ButtonText.signup_with,
+  GSIButtonText.continueWith: id.ButtonText.continue_with,
+  GSIButtonText.signin: id.ButtonText.signin,
+};
 
 /// The button shape.
 ///
@@ -182,11 +176,10 @@ enum GSIButtonShape {
   // Does this need circle and square?
 }
 
-const Map<GSIButtonShape, id.ButtonShape> _idShape =
-    <GSIButtonShape, id.ButtonShape>{
-      GSIButtonShape.rectangular: id.ButtonShape.rectangular,
-      GSIButtonShape.pill: id.ButtonShape.pill,
-    };
+const Map<GSIButtonShape, id.ButtonShape> _idShape = <GSIButtonShape, id.ButtonShape>{
+  GSIButtonShape.rectangular: id.ButtonShape.rectangular,
+  GSIButtonShape.pill: id.ButtonShape.pill,
+};
 
 /// The alignment of the Google logo. The default value is left. This attribute only applies to the standard button type.
 ///

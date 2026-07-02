@@ -34,8 +34,7 @@ void main() {
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
     expect(map.polylineUpdates.last.polylinesToAdd.length, 1);
 
-    final Polyline initializedPolyline =
-        map.polylineUpdates.last.polylinesToAdd.first;
+    final Polyline initializedPolyline = map.polylineUpdates.last.polylinesToAdd.first;
     expect(initializedPolyline, equals(p1));
     expect(map.polylineUpdates.last.polylineIdsToRemove.isEmpty, true);
     expect(map.polylineUpdates.last.polylinesToChange.isEmpty, true);
@@ -51,8 +50,7 @@ void main() {
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
     expect(map.polylineUpdates.last.polylinesToAdd.length, 1);
 
-    final Polyline addedPolyline =
-        map.polylineUpdates.last.polylinesToAdd.first;
+    final Polyline addedPolyline = map.polylineUpdates.last.polylinesToAdd.first;
     expect(addedPolyline, equals(p2));
 
     expect(map.polylineUpdates.last.polylineIdsToRemove.isEmpty, true);
@@ -68,10 +66,7 @@ void main() {
 
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
     expect(map.polylineUpdates.last.polylineIdsToRemove.length, 1);
-    expect(
-      map.polylineUpdates.last.polylineIdsToRemove.first,
-      equals(p1.polylineId),
-    );
+    expect(map.polylineUpdates.last.polylineIdsToRemove.first, equals(p1.polylineId));
 
     expect(map.polylineUpdates.last.polylinesToChange.isEmpty, true);
     expect(map.polylineUpdates.last.polylinesToAdd.isEmpty, true);
@@ -109,10 +104,7 @@ void main() {
 
   testWidgets('Mutate a polyline', (WidgetTester tester) async {
     final points = <LatLng>[const LatLng(0.0, 0.0)];
-    final p1 = Polyline(
-      polylineId: const PolylineId('polyline_1'),
-      points: points,
-    );
+    final p1 = Polyline(polylineId: const PolylineId('polyline_1'), points: points);
     await tester.pumpWidget(_mapWithPolylines(<Polyline>{p1}));
 
     p1.points.add(const LatLng(1.0, 1.0));
@@ -165,10 +157,7 @@ void main() {
 
     expect(map.polylineUpdates.last.polylinesToChange.first, equals(p2));
     expect(map.polylineUpdates.last.polylinesToAdd.first, equals(p1));
-    expect(
-      map.polylineUpdates.last.polylineIdsToRemove.first,
-      equals(p3.polylineId),
-    );
+    expect(map.polylineUpdates.last.polylineIdsToRemove.first, equals(p3.polylineId));
   });
 
   testWidgets('Partial Update', (WidgetTester tester) async {
@@ -228,9 +217,7 @@ void main() {
 
     expect(map.polylineUpdates[1].polylinesToChange.isEmpty, true);
     expect(map.polylineUpdates[1].polylinesToAdd, <Polyline>{p3});
-    expect(map.polylineUpdates[1].polylineIdsToRemove, <PolylineId>{
-      p2.polylineId,
-    });
+    expect(map.polylineUpdates[1].polylineIdsToRemove, <PolylineId>{p2.polylineId});
 
     expect(map.polylineUpdates[2].polylinesToChange, <Polyline>{p3updated});
     expect(map.polylineUpdates[2].polylinesToAdd.isEmpty, true);

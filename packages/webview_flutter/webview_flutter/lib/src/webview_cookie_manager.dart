@@ -33,9 +33,7 @@ class WebViewCookieManager {
   /// See [WebViewCookieManager.fromPlatformCreationParams] for setting
   /// parameters for a specific platform.
   WebViewCookieManager()
-    : this.fromPlatformCreationParams(
-        const PlatformWebViewCookieManagerCreationParams(),
-      );
+    : this.fromPlatformCreationParams(const PlatformWebViewCookieManagerCreationParams());
 
   /// Constructs a [WebViewCookieManager] from creation params for a specific
   /// platform.
@@ -66,9 +64,8 @@ class WebViewCookieManager {
   /// );
   /// ```
   /// {@endtemplate}
-  WebViewCookieManager.fromPlatformCreationParams(
-    PlatformWebViewCookieManagerCreationParams params,
-  ) : this.fromPlatform(PlatformWebViewCookieManager(params));
+  WebViewCookieManager.fromPlatformCreationParams(PlatformWebViewCookieManagerCreationParams params)
+    : this.fromPlatform(PlatformWebViewCookieManager(params));
 
   /// Constructs a [WebViewCookieManager] from a specific platform
   /// implementation.
@@ -86,4 +83,11 @@ class WebViewCookieManager {
   ///
   /// This is a no op on iOS versions below 11.
   Future<void> setCookie(WebViewCookie cookie) => platform.setCookie(cookie);
+
+  /// Gets a list of existing cookie for specified domain from all
+  /// WebView instances of the application.
+  ///
+  /// Each platform can have different url requirements. Please check individual
+  /// platform implementation for details
+  Future<List<WebViewCookie>> getCookies({required Uri domain}) => platform.getCookies(domain);
 }

@@ -55,18 +55,9 @@ void main() {
     });
 
     test('allowsAny returns false if anything is set', () {
-      const extensionOnly = XTypeGroup(
-        label: 'extensions',
-        extensions: <String>['txt'],
-      );
-      const mimeOnly = XTypeGroup(
-        label: 'mime',
-        mimeTypes: <String>['text/plain'],
-      );
-      const utiOnly = XTypeGroup(
-        label: 'utis',
-        uniformTypeIdentifiers: <String>['public.text'],
-      );
+      const extensionOnly = XTypeGroup(label: 'extensions', extensions: <String>['txt']);
+      const mimeOnly = XTypeGroup(label: 'mime', mimeTypes: <String>['text/plain']);
+      const utiOnly = XTypeGroup(label: 'utis', uniformTypeIdentifiers: <String>['public.text']);
       const webOnly = XTypeGroup(label: 'web', webWildCards: <String>['.txt']);
 
       expect(extensionOnly.allowsAny, false);
@@ -83,17 +74,12 @@ void main() {
         expect(group.uniformTypeIdentifiers, uniformTypeIdentifiers);
       });
 
-      test(
-        'passing only uniformTypeIdentifiers should fill uniformTypeIdentifiers',
-        () {
-          const uniformTypeIdentifiers = <String>['public.plain-text'];
-          const group = XTypeGroup(
-            uniformTypeIdentifiers: uniformTypeIdentifiers,
-          );
+      test('passing only uniformTypeIdentifiers should fill uniformTypeIdentifiers', () {
+        const uniformTypeIdentifiers = <String>['public.plain-text'];
+        const group = XTypeGroup(uniformTypeIdentifiers: uniformTypeIdentifiers);
 
-          expect(group.uniformTypeIdentifiers, uniformTypeIdentifiers);
-        },
-      );
+        expect(group.uniformTypeIdentifiers, uniformTypeIdentifiers);
+      });
 
       test('macUTIs getter return macUTIs value passed in constructor', () {
         const uniformTypeIdentifiers = <String>['public.plain-text'];
@@ -102,17 +88,12 @@ void main() {
         expect(group.macUTIs, uniformTypeIdentifiers);
       });
 
-      test(
-        'macUTIs getter returns uniformTypeIdentifiers value passed in constructor',
-        () {
-          const uniformTypeIdentifiers = <String>['public.plain-text'];
-          const group = XTypeGroup(
-            uniformTypeIdentifiers: uniformTypeIdentifiers,
-          );
+      test('macUTIs getter returns uniformTypeIdentifiers value passed in constructor', () {
+        const uniformTypeIdentifiers = <String>['public.plain-text'];
+        const group = XTypeGroup(uniformTypeIdentifiers: uniformTypeIdentifiers);
 
-          expect(group.macUTIs, uniformTypeIdentifiers);
-        },
-      );
+        expect(group.macUTIs, uniformTypeIdentifiers);
+      });
 
       test('passing both uniformTypeIdentifiers and macUTIs should throw', () {
         expect(
@@ -124,8 +105,7 @@ void main() {
             predicate(
               (Object? e) =>
                   e is AssertionError &&
-                  e.message ==
-                      'Only one of uniformTypeIdentifiers or macUTIs can be non-null',
+                  e.message == 'Only one of uniformTypeIdentifiers or macUTIs can be non-null',
             ),
           ),
         );

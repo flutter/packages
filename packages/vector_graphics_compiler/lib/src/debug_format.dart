@@ -14,10 +14,7 @@ import 'paint.dart';
 Uint8List dumpToDebugFormat(Uint8List bytes) {
   const codec = VectorGraphicsCodec();
   final listener = _DebugVectorGraphicsListener();
-  final DecodeResponse response = codec.decode(
-    bytes.buffer.asByteData(),
-    listener,
-  );
+  final DecodeResponse response = codec.decode(bytes.buffer.asByteData(), listener);
   if (!response.complete) {
     codec.decode(bytes.buffer.asByteData(), listener, response: response);
   }
@@ -60,9 +57,7 @@ class _DebugVectorGraphicsListener extends VectorGraphicsCodecListener {
 
   @override
   void onDrawText(int textId, int? fillId, int? strokeId, int? patternId) {
-    buffer.writeln(
-      'DrawText: id:$textId (fill: $fillId, stroke: $strokeId, pattern: $patternId)',
-    );
+    buffer.writeln('DrawText: id:$textId (fill: $fillId, stroke: $strokeId, pattern: $patternId)');
   }
 
   @override
@@ -71,15 +66,8 @@ class _DebugVectorGraphicsListener extends VectorGraphicsCodecListener {
   }
 
   @override
-  void onImage(
-    int imageId,
-    int format,
-    Uint8List data, {
-    VectorGraphicsErrorListener? onError,
-  }) {
-    buffer.writeln(
-      'StoreImage: id:$imageId (format:$format, byteLength:${data.lengthInBytes}',
-    );
+  void onImage(int imageId, int format, Uint8List data, {VectorGraphicsErrorListener? onError}) {
+    buffer.writeln('StoreImage: id:$imageId (format:$format, byteLength:${data.lengthInBytes}');
   }
 
   @override
@@ -139,14 +127,7 @@ class _DebugVectorGraphicsListener extends VectorGraphicsCodecListener {
   }
 
   @override
-  void onPathCubicTo(
-    double x1,
-    double y1,
-    double x2,
-    double y2,
-    double x3,
-    double y3,
-  ) {
+  void onPathCubicTo(double x1, double y1, double x2, double y2, double x3, double y3) {
     buffer.writeln('  cubicTo(($x1, $y1), ($x2, $y2), ($x3, $y3)');
   }
 
@@ -167,9 +148,7 @@ class _DebugVectorGraphicsListener extends VectorGraphicsCodecListener {
 
   @override
   void onPathStart(int id, int fillType) {
-    buffer.writeln(
-      'PathStart: id:$id ${fillType == 0 ? 'nonZero' : 'evenOdd'}',
-    );
+    buffer.writeln('PathStart: id:$id ${fillType == 0 ? 'nonZero' : 'evenOdd'}');
   }
 
   @override

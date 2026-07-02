@@ -23,17 +23,13 @@ void main() {
   group('ProductDetailsResponseWrapper', () {
     test('toProductDetails() should return correct Product object', () {
       const ProductDetailsWrapper wrapper = dummyOneTimeProductDetails;
-      final GooglePlayProductDetails product =
-          GooglePlayProductDetails.fromProductDetails(
-            dummyOneTimeProductDetails,
-          ).first;
+      final GooglePlayProductDetails product = GooglePlayProductDetails.fromProductDetails(
+        dummyOneTimeProductDetails,
+      ).first;
       expect(product.title, wrapper.title);
       expect(product.description, wrapper.description);
       expect(product.id, wrapper.productId);
-      expect(
-        product.price,
-        wrapper.oneTimePurchaseOfferDetails?.formattedPrice,
-      );
+      expect(product.price, wrapper.oneTimePurchaseOfferDetails?.formattedPrice);
       expect(product.productDetails, wrapper);
     });
   });
@@ -120,10 +116,7 @@ void main() {
           ),
         ],
       );
-      expect(
-        firstProductDetailsInstance == secondProductDetailsInstance,
-        isTrue,
-      );
+      expect(firstProductDetailsInstance == secondProductDetailsInstance, isTrue);
     });
 
     test('operator == of BillingResultWrapper works fine', () {

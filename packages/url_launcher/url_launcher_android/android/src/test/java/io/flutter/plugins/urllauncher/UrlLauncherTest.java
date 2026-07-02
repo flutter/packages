@@ -10,7 +10,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -214,7 +213,7 @@ public class UrlLauncherTest {
             new BrowserOptions(false));
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
-    verify(activity).startActivity(intentCaptor.capture(), isNull());
+    verify(activity).startActivity(intentCaptor.capture(), any());
     assertTrue(result);
     assertEquals(Intent.ACTION_VIEW, intentCaptor.getValue().getAction());
     assertNull(intentCaptor.getValue().getComponent());
@@ -235,7 +234,7 @@ public class UrlLauncherTest {
             url, true, new WebViewOptions(false, false, headers), new BrowserOptions(false));
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
-    verify(activity).startActivity(intentCaptor.capture(), isNull());
+    verify(activity).startActivity(intentCaptor.capture(), any());
     assertTrue(result);
     assertEquals(Intent.ACTION_VIEW, intentCaptor.getValue().getAction());
     assertNull(intentCaptor.getValue().getComponent());
@@ -257,7 +256,7 @@ public class UrlLauncherTest {
             url, true, new WebViewOptions(false, false, headers), new BrowserOptions(true));
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
-    verify(activity).startActivity(intentCaptor.capture(), isNull());
+    verify(activity).startActivity(intentCaptor.capture(), any());
     assertTrue(result);
     assertEquals(Intent.ACTION_VIEW, intentCaptor.getValue().getAction());
     assertNull(intentCaptor.getValue().getComponent());
@@ -279,7 +278,7 @@ public class UrlLauncherTest {
             url, true, new WebViewOptions(false, false, headers), new BrowserOptions(false));
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
-    verify(activity).startActivity(intentCaptor.capture(), isNull());
+    verify(activity).startActivity(intentCaptor.capture(), any());
     assertTrue(result);
     assertEquals(Intent.ACTION_VIEW, intentCaptor.getValue().getAction());
     assertNull(intentCaptor.getValue().getComponent());
@@ -296,7 +295,7 @@ public class UrlLauncherTest {
     String url = "https://flutter.dev";
     doThrow(new ActivityNotFoundException())
         .when(activity)
-        .startActivity(any(), isNull()); // for custom tabs intent
+        .startActivity(any(), any()); // for custom tabs intent
 
     boolean result =
         api.openUrlInApp(
@@ -399,7 +398,7 @@ public class UrlLauncherTest {
         new BrowserOptions(showTitle));
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
-    verify(activity).startActivity(intentCaptor.capture(), isNull());
+    verify(activity).startActivity(intentCaptor.capture(), any());
 
     assertEquals(
         CustomTabsIntent.SHOW_PAGE_TITLE,
@@ -430,7 +429,7 @@ public class UrlLauncherTest {
     api.setActivity(activity);
     doThrow(new ActivityNotFoundException())
         .when(activity)
-        .startActivity(any(), isNull()); // for custom tabs intent
+        .startActivity(any(), any()); // for custom tabs intent
     doThrow(new ActivityNotFoundException())
         .when(activity)
         .startActivity(any()); // for webview intent

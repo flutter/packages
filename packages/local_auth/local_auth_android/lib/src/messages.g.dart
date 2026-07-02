@@ -40,9 +40,7 @@ Object? _extractReplyValueOrThrow(
 bool _deepEquals(Object? a, Object? b) {
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed.every(
-          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
-        );
+        a.indexed.every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
     return a.length == b.length &&
@@ -190,10 +188,7 @@ class AuthResult {
 
   static AuthResult decode(Object result) {
     result as List<Object?>;
-    return AuthResult(
-      code: result[0]! as AuthResultCode,
-      errorMessage: result[1] as String?,
-    );
+    return AuthResult(code: result[0]! as AuthResultCode, errorMessage: result[1] as String?);
   }
 
   @override
@@ -312,13 +307,11 @@ class LocalAuthApi {
   /// Constructor for [LocalAuthApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  LocalAuthApi({
-    BinaryMessenger? binaryMessenger,
-    String messageChannelSuffix = '',
-  }) : pigeonVar_binaryMessenger = binaryMessenger,
-       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
-           ? '.$messageChannelSuffix'
-           : '';
+  LocalAuthApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+    : pigeonVar_binaryMessenger = binaryMessenger,
+      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+          ? '.$messageChannelSuffix'
+          : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -415,10 +408,7 @@ class LocalAuthApi {
 
   /// Attempts to authenticate the user with the provided [options], and using
   /// [strings] for any UI.
-  Future<AuthResult> authenticate(
-    AuthOptions options,
-    AuthStrings strings,
-  ) async {
+  Future<AuthResult> authenticate(AuthOptions options, AuthStrings strings) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.local_auth_android.LocalAuthApi.authenticate$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -426,9 +416,10 @@ class LocalAuthApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[options, strings],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      options,
+      strings,
+    ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(

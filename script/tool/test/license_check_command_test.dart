@@ -26,19 +26,13 @@ void main() {
     setUp(() {
       platform = MockPlatformWithSeparator();
       final GitDir gitDir;
-      (:packagesDir, processRunner: _, :gitProcessRunner, :gitDir) =
-          configureBaseCommandMocks(platform: platform);
+      (:packagesDir, processRunner: _, :gitProcessRunner, :gitDir) = configureBaseCommandMocks(
+        platform: platform,
+      );
       root = packagesDir.parent;
 
-      final command = LicenseCheckCommand(
-        packagesDir,
-        platform: platform,
-        gitDir: gitDir,
-      );
-      runner = CommandRunner<void>(
-        'license_test',
-        'Test for $LicenseCheckCommand',
-      );
+      final command = LicenseCheckCommand(packagesDir, platform: platform, gitDir: gitDir);
+      runner = CommandRunner<void>('license_test', 'Test for $LicenseCheckCommand');
       runner.addCommand(command);
     });
 
@@ -74,16 +68,12 @@ void main() {
       final String fileList = root
           .listSync(recursive: true, followLinks: false)
           .whereType<File>()
-          .map(
-            (File f) =>
-                relativePosixPath(f, from: root, platformContext: p.posix),
-          )
+          .map((File f) => relativePosixPath(f, from: root, platformContext: p.posix))
           .join('\n');
 
-      gitProcessRunner.mockProcessesForExecutable['git-ls-files'] =
-          <FakeProcessInfo>[
-            FakeProcessInfo(MockProcess(stdout: '$fileList\n')),
-          ];
+      gitProcessRunner.mockProcessesForExecutable['git-ls-files'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: '$fileList\n')),
+      ];
     }
 
     test('looks at only expected extensions', () async {
@@ -122,9 +112,7 @@ void main() {
       );
 
       extensions.forEach((String fileExtension, bool shouldCheck) {
-        final Matcher logLineMatcher = contains(
-          'Checking $filenameBase.$fileExtension',
-        );
+        final Matcher logLineMatcher = contains('Checking $filenameBase.$fileExtension');
         expect(output, shouldCheck ? logLineMatcher : isNot(logLineMatcher));
       });
     });
@@ -150,9 +138,7 @@ void main() {
       }
       mockGitFilesListWithAllFiles(root);
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'license-check',
-      ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['license-check']);
 
       for (final name in ignoredFiles) {
         expect(output, isNot(contains('Checking $name')));
@@ -178,9 +164,7 @@ void main() {
         root.childFile(filePath).createSync(recursive: true);
       }
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'license-check',
-      ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['license-check']);
 
       for (final filePath in submoduleFiles) {
         expect(output, isNot(contains('Checking $filePath')));
@@ -190,9 +174,8 @@ void main() {
     test('ignores files that are not checked in', () async {
       mockGitFilesListWithAllFiles(root);
       // Add files after creating the mock output from created files.
-      final Directory packageDir = root.childDirectory(
-        'FlutterGeneratedPluginSwiftPackage',
-      )..createSync();
+      final Directory packageDir = root.childDirectory('FlutterGeneratedPluginSwiftPackage')
+        ..createSync();
       packageDir.childFile('Package.swift').createSync();
       packageDir
           .childDirectory('Sources')
@@ -200,14 +183,9 @@ void main() {
           .childFile('FlutterGeneratedPluginSwiftPackage.swift')
           .createSync(recursive: true);
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'license-check',
-      ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['license-check']);
 
-      expect(
-        output,
-        isNot(contains('Checking FlutterGeneratedPluginSwiftPackage')),
-      );
+      expect(output, isNot(contains('Checking FlutterGeneratedPluginSwiftPackage')));
     });
 
     test('passes if all checked files have license blocks', () async {
@@ -218,9 +196,7 @@ void main() {
       notChecked.createSync();
       mockGitFilesListWithAllFiles(root);
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'license-check',
-      ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['license-check']);
 
       // Sanity check that the test did actually check a file.
       expect(
@@ -238,9 +214,7 @@ void main() {
       writeLicense(checked, useCrlf: true);
       mockGitFilesListWithAllFiles(root);
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'license-check',
-      ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['license-check']);
 
       // Sanity check that the test did actually check a file.
       expect(
@@ -264,9 +238,7 @@ void main() {
       writeLicense(fileC, comment: '', prefix: '<!-- ', suffix: ' -->');
       mockGitFilesListWithAllFiles(root);
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'license-check',
-      ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['license-check']);
 
       // Sanity check that the test did actually check the files.
       expect(
@@ -305,9 +277,7 @@ void main() {
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains(
-            'The license block for these files is missing or incorrect:',
-          ),
+          contains('The license block for these files is missing or incorrect:'),
           contains('  bad.cc'),
           contains('  bad.h'),
         ]),
@@ -339,9 +309,7 @@ void main() {
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains(
-            'The license block for these files is missing or incorrect:',
-          ),
+          contains('The license block for these files is missing or incorrect:'),
           contains('  bad.cc'),
         ]),
       );
@@ -372,9 +340,7 @@ void main() {
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains(
-            'The license block for these files is missing or incorrect:',
-          ),
+          contains('The license block for these files is missing or incorrect:'),
           contains('  bad.cc'),
         ]),
       );
@@ -382,85 +348,69 @@ void main() {
       expect(output, isNot(contains(contains('All files passed validation!'))));
     });
 
-    test(
-      'fails if any checked files are using the older boilerplate format',
-      () async {
-        final File good = root.childFile('good.cc');
-        good.createSync();
-        writeLicense(good);
-        final File bad = root.childFile('bad.cc');
-        bad.createSync();
-        bad.writeAsStringSync('''
+    test('fails if any checked files are using the older boilerplate format', () async {
+      final File good = root.childFile('good.cc');
+      good.createSync();
+      writeLicense(good);
+      final File bad = root.childFile('bad.cc');
+      bad.createSync();
+      bad.writeAsStringSync('''
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 ''');
 
-        mockGitFilesListWithAllFiles(root);
+      mockGitFilesListWithAllFiles(root);
 
-        Error? commandError;
-        final List<String> output = await runCapturingPrint(
-          runner,
-          <String>['license-check'],
-          errorHandler: (Error e) {
-            commandError = e;
-          },
-        );
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['license-check'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
-        expect(commandError, isA<ToolExit>());
-        // Failure should give information about the problematic files.
-        expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains(
-              'The license block for these files is missing or incorrect:',
-            ),
-            contains('  bad.cc'),
-          ]),
-        );
-        // Failure shouldn't print the success message.
-        expect(
-          output,
-          isNot(contains(contains('All files passed validation!'))),
-        );
-      },
-    );
+      expect(commandError, isA<ToolExit>());
+      // Failure should give information about the problematic files.
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('The license block for these files is missing or incorrect:'),
+          contains('  bad.cc'),
+        ]),
+      );
+      // Failure shouldn't print the success message.
+      expect(output, isNot(contains(contains('All files passed validation!'))));
+    });
 
-    test(
-      'fails if any third-party code is not in a third_party directory',
-      () async {
-        final File thirdPartyFile = root.childFile('third_party.cc');
-        thirdPartyFile.createSync();
-        writeLicense(thirdPartyFile, copyright: 'Copyright 2017 Someone Else');
-        mockGitFilesListWithAllFiles(root);
+    test('fails if any third-party code is not in a third_party directory', () async {
+      final File thirdPartyFile = root.childFile('third_party.cc');
+      thirdPartyFile.createSync();
+      writeLicense(thirdPartyFile, copyright: 'Copyright 2017 Someone Else');
+      mockGitFilesListWithAllFiles(root);
 
-        Error? commandError;
-        final List<String> output = await runCapturingPrint(
-          runner,
-          <String>['license-check'],
-          errorHandler: (Error e) {
-            commandError = e;
-          },
-        );
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['license-check'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
-        expect(commandError, isA<ToolExit>());
-        // Failure should give information about the problematic files.
-        expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains(
-              'The license block for these files is missing or incorrect:',
-            ),
-            contains('  third_party.cc'),
-          ]),
-        );
-        // Failure shouldn't print the success message.
-        expect(
-          output,
-          isNot(contains(contains('All files passed validation!'))),
-        );
-      },
-    );
+      expect(commandError, isA<ToolExit>());
+      // Failure should give information about the problematic files.
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('The license block for these files is missing or incorrect:'),
+          contains('  third_party.cc'),
+        ]),
+      );
+      // Failure shouldn't print the success message.
+      expect(output, isNot(contains(contains('All files passed validation!'))));
+    });
 
     test('succeeds for third-party code in a third_party directory', () async {
       final File thirdPartyLicenseFile = root
@@ -474,12 +424,13 @@ void main() {
         comment: '',
         copyright: 'Copyright (c) 2018 Dan Field\n',
         license: <String>[
-          'Permission is hereby granted, free of charge, to any person obtaining a copy\n'
-              'of this software and associated documentation files (the "Software"), to deal\n'
-              'in the Software without restriction, including without limitation the rights\n'
-              'to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n'
-              'copies of the Software, and to permit persons to whom the Software is\n'
-              'furnished to do so, subject to the following conditions:',
+          '''
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:''',
         ],
       );
       // Create an empty code file; this package should redirect to the LICENSE
@@ -494,17 +445,13 @@ void main() {
       thirdPartyCodeFile.writeAsStringSync('main() {}');
       mockGitFilesListWithAllFiles(root);
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'license-check',
-      ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['license-check']);
 
       // Sanity check that the test did actually check the file.
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains(
-            'Checking third_party/packages/path_parsing/lib/path_parsing.dart',
-          ),
+          contains('Checking third_party/packages/path_parsing/lib/path_parsing.dart'),
           contains('All files passed validation!'),
         ]),
       );
@@ -521,9 +468,7 @@ void main() {
       writeLicense(firstPartyFileInThirdParty);
       mockGitFilesListWithAllFiles(root);
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'license-check',
-      ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['license-check']);
 
       // Sanity check that the test did actually check the file.
       expect(
@@ -564,9 +509,7 @@ void main() {
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains(
-            'No recognized license was found for the following third-party files:',
-          ),
+          contains('No recognized license was found for the following third-party files:'),
           contains('  third_party/bad.cc'),
         ]),
       );
@@ -574,86 +517,51 @@ void main() {
       expect(output, isNot(contains(contains('All files passed validation!'))));
     });
 
-    test(
-      'Apache is not recognized for new authors without validation changes',
-      () async {
-        final File good = root.childFile('good.cc');
-        good.createSync();
-        writeLicense(good);
-        final File bad = root.childDirectory('third_party').childFile('bad.cc');
-        bad.createSync(recursive: true);
-        writeLicense(
-          bad,
-          copyright: 'Copyright 2017 Some New Authors.',
-          license: <String>[
-            'Licensed under the Apache License, Version 2.0 (the "License");',
-            'you may not use this file except in compliance with the License.',
-          ],
-        );
-        mockGitFilesListWithAllFiles(root);
-
-        Error? commandError;
-        final List<String> output = await runCapturingPrint(
-          runner,
-          <String>['license-check'],
-          errorHandler: (Error e) {
-            commandError = e;
-          },
-        );
-
-        expect(commandError, isA<ToolExit>());
-        // Failure should give information about the problematic files.
-        expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains(
-              'No recognized license was found for the following third-party files:',
-            ),
-            contains('  third_party/bad.cc'),
-          ]),
-        );
-        // Failure shouldn't print the success message.
-        expect(
-          output,
-          isNot(contains(contains('All files passed validation!'))),
-        );
-      },
-    );
-
-    test(
-      'passes if all first-party LICENSE files are correctly formatted',
-      () async {
-        final File license = root.childFile('LICENSE');
-        license.createSync();
-        license.writeAsStringSync(_correctLicenseFileText);
-        mockGitFilesListWithAllFiles(root);
-
-        final List<String> output = await runCapturingPrint(runner, <String>[
-          'license-check',
-        ]);
-
-        // Sanity check that the test did actually check the file.
-        expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains('Checking LICENSE'),
-            contains('All files passed validation!'),
-          ]),
-        );
-      },
-    );
-
-    test('passes correct LICENSE files on Windows', () async {
-      final File license = root.childFile('LICENSE');
-      license.createSync();
-      license.writeAsStringSync(
-        _correctLicenseFileText.replaceAll('\n', '\r\n'),
+    test('Apache is not recognized for new authors without validation changes', () async {
+      final File good = root.childFile('good.cc');
+      good.createSync();
+      writeLicense(good);
+      final File bad = root.childDirectory('third_party').childFile('bad.cc');
+      bad.createSync(recursive: true);
+      writeLicense(
+        bad,
+        copyright: 'Copyright 2017 Some New Authors.',
+        license: <String>[
+          'Licensed under the Apache License, Version 2.0 (the "License");',
+          'you may not use this file except in compliance with the License.',
+        ],
       );
       mockGitFilesListWithAllFiles(root);
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'license-check',
-      ]);
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['license-check'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
+
+      expect(commandError, isA<ToolExit>());
+      // Failure should give information about the problematic files.
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('No recognized license was found for the following third-party files:'),
+          contains('  third_party/bad.cc'),
+        ]),
+      );
+      // Failure shouldn't print the success message.
+      expect(output, isNot(contains(contains('All files passed validation!'))));
+    });
+
+    test('passes if all first-party LICENSE files are correctly formatted', () async {
+      final File license = root.childFile('LICENSE');
+      license.createSync();
+      license.writeAsStringSync(_correctLicenseFileText);
+      mockGitFilesListWithAllFiles(root);
+
+      final List<String> output = await runCapturingPrint(runner, <String>['license-check']);
 
       // Sanity check that the test did actually check the file.
       expect(
@@ -665,42 +573,50 @@ void main() {
       );
     });
 
-    test(
-      'fails if any first-party LICENSE files are incorrectly formatted',
-      () async {
-        final File license = root.childFile('LICENSE');
-        license.createSync();
-        license.writeAsStringSync(_incorrectLicenseFileText);
-        mockGitFilesListWithAllFiles(root);
+    test('passes correct LICENSE files on Windows', () async {
+      final File license = root.childFile('LICENSE');
+      license.createSync();
+      license.writeAsStringSync(_correctLicenseFileText.replaceAll('\n', '\r\n'));
+      mockGitFilesListWithAllFiles(root);
 
-        Error? commandError;
-        final List<String> output = await runCapturingPrint(
-          runner,
-          <String>['license-check'],
-          errorHandler: (Error e) {
-            commandError = e;
-          },
-        );
+      final List<String> output = await runCapturingPrint(runner, <String>['license-check']);
 
-        expect(commandError, isA<ToolExit>());
-        expect(
-          output,
-          isNot(contains(contains('All files passed validation!'))),
-        );
-      },
-    );
+      // Sanity check that the test did actually check the file.
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Checking LICENSE'),
+          contains('All files passed validation!'),
+        ]),
+      );
+    });
+
+    test('fails if any first-party LICENSE files are incorrectly formatted', () async {
+      final File license = root.childFile('LICENSE');
+      license.createSync();
+      license.writeAsStringSync(_incorrectLicenseFileText);
+      mockGitFilesListWithAllFiles(root);
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['license-check'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
+
+      expect(commandError, isA<ToolExit>());
+      expect(output, isNot(contains(contains('All files passed validation!'))));
+    });
 
     test('ignores third-party LICENSE format', () async {
-      final File license = root
-          .childDirectory('third_party')
-          .childFile('LICENSE');
+      final File license = root.childDirectory('third_party').childFile('LICENSE');
       license.createSync(recursive: true);
       license.writeAsStringSync(_incorrectLicenseFileText);
       mockGitFilesListWithAllFiles(root);
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'license-check',
-      ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['license-check']);
 
       // The file shouldn't be checked.
       expect(output, isNot(contains(contains('Checking third_party/LICENSE'))));
@@ -708,10 +624,7 @@ void main() {
 
     test('outputs all errors at the end', () async {
       root.childFile('bad.cc').createSync();
-      root
-          .childDirectory('third_party')
-          .childFile('bad.cc')
-          .createSync(recursive: true);
+      root.childDirectory('third_party').childFile('bad.cc').createSync(recursive: true);
       final File license = root.childFile('LICENSE');
       license.createSync();
       license.writeAsStringSync(_incorrectLicenseFileText);
@@ -733,17 +646,11 @@ void main() {
           contains('Checking LICENSE'),
           contains('Checking bad.cc'),
           contains('Checking third_party/bad.cc'),
-          contains(
-            'The following LICENSE files do not follow the expected format:',
-          ),
+          contains('The following LICENSE files do not follow the expected format:'),
           contains('  LICENSE'),
-          contains(
-            'The license block for these files is missing or incorrect:',
-          ),
+          contains('The license block for these files is missing or incorrect:'),
           contains('  bad.cc'),
-          contains(
-            'No recognized license was found for the following third-party files:',
-          ),
+          contains('No recognized license was found for the following third-party files:'),
           contains('  third_party/bad.cc'),
         ]),
       );
@@ -754,9 +661,7 @@ void main() {
       checked.createSync();
       writeLicense(checked, prefix: '// swift-tools-version: 5.9\n');
       mockGitFilesListWithAllFiles(root);
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'license-check',
-      ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['license-check']);
 
       // Sanity check that the test did actually check a file.
       expect(

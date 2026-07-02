@@ -37,17 +37,11 @@ abstract class UserDefaultsApi {
   void clear(List<String>? allowList, SharedPreferencesPigeonOptions options);
 
   /// Gets all properties from shared preferences data set with matching prefix.
-  Map<String, Object> getAll(
-    List<String>? allowList,
-    SharedPreferencesPigeonOptions options,
-  );
+  Map<String, Object> getAll(List<String>? allowList, SharedPreferencesPigeonOptions options);
 
   /// Gets individual value stored with [key], if any.
   Object? getValue(String key, SharedPreferencesPigeonOptions options);
 
   /// Gets all properties from shared preferences data set with matching prefix.
-  List<String> getKeys(
-    List<String>? allowList,
-    SharedPreferencesPigeonOptions options,
-  );
+  List<String> getKeys(List<String>? allowList, SharedPreferencesPigeonOptions options);
 }

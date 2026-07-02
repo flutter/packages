@@ -45,22 +45,16 @@ class RepoInfoValidator {
   }) {
     final entries = <String, List<String>>{};
     final namePattern = RegExp(r'\[(.*?)\]\(');
-    for (final String line
-        in repoRoot.childFile('README.md').readAsLinesSync()) {
+    for (final String line in repoRoot.childFile('README.md').readAsLinesSync()) {
       // Find all the table entries, skipping the header.
-      if (line.startsWith('|') &&
-          !line.startsWith('| Package') &&
-          !line.startsWith('|-')) {
+      if (line.startsWith('|') && !line.startsWith('| Package') && !line.startsWith('|-')) {
         final List<String> cells = line
             .split('|')
             .map((String s) => s.trim())
             .where((String s) => s.isNotEmpty)
             .toList();
         // Extract the name, removing any markdown escaping.
-        final String? name = namePattern
-            .firstMatch(cells[0])
-            ?.group(1)
-            ?.replaceAll(r'\_', '_');
+        final String? name = namePattern.firstMatch(cells[0])?.group(1)?.replaceAll(r'\_', '_');
         if (name == null) {
           printError('Unexpected README table line:\n  $line');
           throw ToolExit(_exitBadTableEntry);
@@ -82,14 +76,9 @@ class RepoInfoValidator {
     final entries = <String>{};
     // Validate the match rules rather than the label itself, as the labels
     // don't always correspond 1:1 to packages and package names.
-    final packageGlobPattern = RegExp(
-      r'^\s*-\s*(?:third_party/)?packages/([^*]*)/',
-    );
+    final packageGlobPattern = RegExp(r'^\s*-\s*(?:third_party/)?packages/([^*]*)/');
     for (final String line
-        in repoRoot
-            .childDirectory('.github')
-            .childFile('labeler.yml')
-            .readAsLinesSync()) {
+        in repoRoot.childDirectory('.github').childFile('labeler.yml').readAsLinesSync()) {
       final RegExpMatch? match = packageGlobPattern.firstMatch(line);
       if (match == null) {
         continue;
@@ -155,17 +144,11 @@ class RepoInfoValidator {
       for (final String cell in cells) {
         final RegExpMatch? match = mdLinkPattern.firstMatch(cell);
         if (match == null) {
-          printError(
-            '${_indentation}Invalid repo root README.md table entry: "$cell"',
-          );
+          printError('${_indentation}Invalid repo root README.md table entry: "$cell"');
           errors.add('Invalid root README.md table entry');
         } else {
-          final String encodedIssueTag = Uri.encodeComponent(
-            _issueTagForPackage(packageName),
-          );
-          final String encodedPRTag = Uri.encodeComponent(
-            _prTagForPackage(packageName),
-          );
+          final String encodedIssueTag = Uri.encodeComponent(_issueTagForPackage(packageName));
+          final String encodedPRTag = Uri.encodeComponent(_prTagForPackage(packageName));
           final String anchor = match.group(1)!;
           final String target = match.group(2)!;
 
@@ -193,9 +176,7 @@ class RepoInfoValidator {
               packageLink.hasMatch(anchor) ||
               issueTagLink.hasMatch(anchor) ||
               prTagLink.hasMatch(anchor))) {
-            printError(
-              '${_indentation}Incorrect anchor in root README.md table: "$anchor"',
-            );
+            printError('${_indentation}Incorrect anchor in root README.md table: "$anchor"');
             errors.add('Incorrect anchor in root README.md table');
           }
 
@@ -203,23 +184,17 @@ class RepoInfoValidator {
           // - a relative link to the in-repo package
           // - a pub.dev link to the package
           // - a github label link to the package's label
-          final pubDevLink = RegExp(
-            '^https://pub.dev/packages/$packageName(?:/score)?\$',
-          );
+          final pubDevLink = RegExp('^https://pub.dev/packages/$packageName(?:/score)?\$');
           final gitHubIssueLink = RegExp(
             '^https://github.com/flutter/flutter/labels/$encodedIssueTag\$',
           );
-          final gitHubPRLink = RegExp(
-            '^https://github.com/$repoName/labels/$encodedPRTag\$',
-          );
+          final gitHubPRLink = RegExp('^https://github.com/$repoName/labels/$encodedPRTag\$');
           if (!(target == './packages/$packageName/' ||
               target == './third_party/packages/$packageName/' ||
               pubDevLink.hasMatch(target) ||
               gitHubIssueLink.hasMatch(target) ||
               gitHubPRLink.hasMatch(target))) {
-            printError(
-              '${_indentation}Incorrect link in root README.md table: "$target"',
-            );
+            printError('${_indentation}Incorrect link in root README.md table: "$target"');
             errors.add('Incorrect link in root README.md table');
           }
         }
@@ -231,26 +206,17 @@ class RepoInfoValidator {
   String _prTagForPackage(String packageName) => 'p: $packageName';
 
   String _issueTagForPackage(String packageName) {
-    final Map<String, String> customLabels = getNonStandardPackageLabels(
-      _repoRoot,
-    );
+    final Map<String, String> customLabels = getNonStandardPackageLabels(_repoRoot);
     final String packageLabelName = customLabels[packageName] ?? packageName;
     return 'p: $packageLabelName';
   }
 
-  Future<List<String>> _validateFilesBasedOnReleaseStrategy(
-    RepositoryPackage package,
-  ) async {
+  Future<List<String>> _validateFilesBasedOnReleaseStrategy(RepositoryPackage package) async {
     final errors = <String>[];
-    final bool isBatchRelease =
-        package.parseCIConfig()?.isBatchRelease ?? false;
+    final bool isBatchRelease = package.parseCIConfig()?.isBatchRelease ?? false;
     final String packageName = package.directory.basename;
-    final Directory repoRoot = package.directory.fileSystem.directory(
-      _gitDir.path,
-    );
-    final Directory workflowDir = repoRoot
-        .childDirectory('.github')
-        .childDirectory('workflows');
+    final Directory repoRoot = package.directory.fileSystem.directory(_gitDir.path);
+    final Directory workflowDir = repoRoot.childDirectory('.github').childDirectory('workflows');
 
     errors.addAll(
       _validateSpecificBatchWorkflow(
@@ -285,8 +251,7 @@ class RepoInfoValidator {
       ),
     );
 
-    if (isBatchRelease &&
-        (package.parsePubspec().version?.isPreRelease ?? false)) {
+    if (isBatchRelease && (package.parsePubspec().version?.isPreRelease ?? false)) {
       errors.add(
         'Batch release packages must not have a pre-release version.\n'
         'See https://github.com/flutter/flutter/blob/master/docs/ecosystem/release/README.md#batch-release',
@@ -302,9 +267,7 @@ class RepoInfoValidator {
     required bool isBatchRelease,
   }) {
     final errors = <String>[];
-    final File batchWorkflowFile = workflowDir.childFile(
-      '${packageName}_batch.yml',
-    );
+    final File batchWorkflowFile = workflowDir.childFile('${packageName}_batch.yml');
     if (isBatchRelease) {
       if (!batchWorkflowFile.existsSync()) {
         errors.add(
@@ -331,14 +294,11 @@ class RepoInfoValidator {
               for (final Object? step in steps) {
                 if (step is YamlMap &&
                     step['uses'] is String &&
-                    (step['uses'] as String).startsWith(
-                      'peter-evans/repository-dispatch',
-                    )) {
+                    (step['uses'] as String).startsWith('peter-evans/repository-dispatch')) {
                   final withArgs = step['with'] as YamlMap?;
                   if (withArgs != null &&
                       withArgs['event-type'] == 'batch-release-pr' &&
-                      withArgs['client-payload'] ==
-                          '{"package": "$packageName"}') {
+                      withArgs['client-payload'] == '{"package": "$packageName"}') {
                     foundDispatch = true;
                   }
                 }
@@ -359,9 +319,7 @@ class RepoInfoValidator {
       }
     } else {
       if (batchWorkflowFile.existsSync()) {
-        errors.add(
-          'Unexpected batch workflow file: .github/workflows/${packageName}_batch.yml\n',
-        );
+        errors.add('Unexpected batch workflow file: .github/workflows/${packageName}_batch.yml\n');
       }
     }
     return errors;

@@ -32,9 +32,7 @@ void main() {
     setUp(() {
       events = StreamController<MapEvent<Object?>>();
 
-      clusterManagersController = ClusterManagersController<gmaps.Marker>(
-        stream: events,
-      );
+      clusterManagersController = ClusterManagersController<gmaps.Marker>(stream: events);
       controller = LegacyMarkersController(
         stream: events,
         clusterManagersController: clusterManagersController,
@@ -77,11 +75,7 @@ void main() {
 
       // Update the marker with draggable and position
       final updatedMarkers = <Marker>{
-        const Marker(
-          markerId: MarkerId('1'),
-          draggable: true,
-          position: LatLng(42, 54),
-        ),
+        const Marker(markerId: MarkerId('1'), draggable: true, position: LatLng(42, 54)),
       };
       await controller.changeMarkers(updatedMarkers);
       expect(controller.markers.length, 1);
@@ -96,43 +90,38 @@ void main() {
       expect(position.lng, equals(54));
     });
 
-    testWidgets(
-      'changeMarkers resets marker position if not passed when updating!',
-      (WidgetTester tester) async {
-        gmaps.Marker? marker;
-        gmaps.LatLng? position;
+    testWidgets('changeMarkers resets marker position if not passed when updating!', (
+      WidgetTester tester,
+    ) async {
+      gmaps.Marker? marker;
+      gmaps.LatLng? position;
 
-        final markers = <Marker>{
-          const Marker(markerId: MarkerId('1'), position: LatLng(42, 54)),
-        };
-        await controller.addMarkers(markers);
+      final markers = <Marker>{const Marker(markerId: MarkerId('1'), position: LatLng(42, 54))};
+      await controller.addMarkers(markers);
 
-        marker = controller.markers[const MarkerId('1')]?.marker;
-        expect(marker, isNotNull);
-        expect(marker!.draggable, isFalse);
+      marker = controller.markers[const MarkerId('1')]?.marker;
+      expect(marker, isNotNull);
+      expect(marker!.draggable, isFalse);
 
-        position = marker.position;
-        expect(position, isNotNull);
-        expect(position!.lat, equals(42));
-        expect(position.lng, equals(54));
+      position = marker.position;
+      expect(position, isNotNull);
+      expect(position!.lat, equals(42));
+      expect(position.lng, equals(54));
 
-        // Update the marker without position
-        final updatedMarkers = <Marker>{
-          const Marker(markerId: MarkerId('1'), draggable: true),
-        };
-        await controller.changeMarkers(updatedMarkers);
-        expect(controller.markers.length, 1);
+      // Update the marker without position
+      final updatedMarkers = <Marker>{const Marker(markerId: MarkerId('1'), draggable: true)};
+      await controller.changeMarkers(updatedMarkers);
+      expect(controller.markers.length, 1);
 
-        marker = controller.markers[const MarkerId('1')]?.marker;
-        expect(marker, isNotNull);
-        expect(marker!.draggable, isTrue);
+      marker = controller.markers[const MarkerId('1')]?.marker;
+      expect(marker, isNotNull);
+      expect(marker!.draggable, isTrue);
 
-        position = marker.position;
-        expect(position, isNotNull);
-        expect(position!.lat, equals(0));
-        expect(position.lng, equals(0));
-      },
-    );
+      position = marker.position;
+      expect(position, isNotNull);
+      expect(position!.lat, equals(0));
+      expect(position.lng, equals(0));
+    });
 
     testWidgets('removeMarkers', (WidgetTester tester) async {
       final markers = <Marker>{
@@ -146,10 +135,7 @@ void main() {
       expect(controller.markers.length, 3);
 
       // Remove some markers...
-      final markerIdsToRemove = <MarkerId>{
-        const MarkerId('1'),
-        const MarkerId('3'),
-      };
+      final markerIdsToRemove = <MarkerId>{const MarkerId('1'), const MarkerId('3')};
 
       controller.removeMarkers(markerIdsToRemove);
 
@@ -181,9 +167,7 @@ void main() {
     });
 
     // https://github.com/flutter/flutter/issues/67380
-    testWidgets('only single InfoWindow is visible', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('only single InfoWindow is visible', (WidgetTester tester) async {
       final markers = <Marker>{
         const Marker(
           markerId: MarkerId('1'),
@@ -210,9 +194,7 @@ void main() {
       expect(controller.markers[const MarkerId('2')]?.infoWindowShown, isTrue);
     });
 
-    testWidgets('markers with custom asset icon work', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('markers with custom asset icon work', (WidgetTester tester) async {
       final markers = <Marker>{
         Marker(
           markerId: const MarkerId('1'),
@@ -223,8 +205,7 @@ void main() {
       await controller.addMarkers(markers);
 
       expect(controller.markers.length, 1);
-      final icon =
-          controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
+      final icon = controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
       expect(icon, isNotNull);
 
       final String assetUrl = icon!.url;
@@ -240,9 +221,7 @@ void main() {
       expect(scaledSize.height, 48);
     });
 
-    testWidgets('markers with custom asset icon and pixelratio work', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('markers with custom asset icon and pixelratio work', (WidgetTester tester) async {
       final markers = <Marker>{
         Marker(
           markerId: const MarkerId('1'),
@@ -253,8 +232,7 @@ void main() {
       await controller.addMarkers(markers);
 
       expect(controller.markers.length, 1);
-      final icon =
-          controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
+      final icon = controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
       expect(icon, isNotNull);
 
       final String assetUrl = icon!.url;
@@ -288,8 +266,7 @@ void main() {
       await controller.addMarkers(markers);
 
       expect(controller.markers.length, 1);
-      final icon =
-          controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
+      final icon = controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
       expect(icon, isNotNull);
 
       final String assetUrl = icon!.url;
@@ -306,24 +283,18 @@ void main() {
       expect(scaledSize.height, 64);
     });
 
-    testWidgets('markers with missing asset icon should not set size', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('markers with missing asset icon should not set size', (WidgetTester tester) async {
       final markers = <Marker>{
         Marker(
           markerId: const MarkerId('1'),
-          icon: AssetMapBitmap(
-            'assets/broken_asset_name.png',
-            imagePixelRatio: 2.0,
-          ),
+          icon: AssetMapBitmap('assets/broken_asset_name.png', imagePixelRatio: 2.0),
         ),
       };
 
       await controller.addMarkers(markers);
 
       expect(controller.markers.length, 1);
-      final icon =
-          controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
+      final icon = controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
       expect(icon, isNotNull);
 
       final String assetUrl = icon!.url;
@@ -335,25 +306,19 @@ void main() {
     });
 
     // https://github.com/flutter/flutter/issues/66622
-    testWidgets('markers with custom bitmap icon work', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('markers with custom bitmap icon work', (WidgetTester tester) async {
       final Uint8List bytes = const Base64Decoder().convert(iconImageBase64);
       final markers = <Marker>{
         Marker(
           markerId: const MarkerId('1'),
-          icon: BytesMapBitmap(
-            bytes,
-            imagePixelRatio: tester.view.devicePixelRatio,
-          ),
+          icon: BytesMapBitmap(bytes, imagePixelRatio: tester.view.devicePixelRatio),
         ),
       };
 
       await controller.addMarkers(markers);
 
       expect(controller.markers.length, 1);
-      final icon =
-          controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
+      final icon = controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
       expect(icon, isNotNull);
 
       final String blobUrl = icon!.url;
@@ -363,8 +328,7 @@ void main() {
       expect(
         response.bodyBytes,
         bytes,
-        reason:
-            'Bytes from the Icon blob must match bytes used to create Marker',
+        reason: 'Bytes from the Icon blob must match bytes used to create Marker',
       );
 
       final gmaps.Size size = icon.size!;
@@ -380,22 +344,16 @@ void main() {
       expect(scaledSize.height, expectedSize);
     });
 
-    testWidgets('markers with custom bitmap icon and pixelratio work', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('markers with custom bitmap icon and pixelratio work', (WidgetTester tester) async {
       final Uint8List bytes = const Base64Decoder().convert(iconImageBase64);
       final markers = <Marker>{
-        Marker(
-          markerId: const MarkerId('1'),
-          icon: BytesMapBitmap(bytes, imagePixelRatio: 1),
-        ),
+        Marker(markerId: const MarkerId('1'), icon: BytesMapBitmap(bytes, imagePixelRatio: 1)),
       };
 
       await controller.addMarkers(markers);
 
       expect(controller.markers.length, 1);
-      final icon =
-          controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
+      final icon = controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
       expect(icon, isNotNull);
 
       final gmaps.Size size = icon!.size!;
@@ -411,22 +369,16 @@ void main() {
     });
 
     // https://github.com/flutter/flutter/issues/73789
-    testWidgets('markers with custom bitmap icon pass size to sdk', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('markers with custom bitmap icon pass size to sdk', (WidgetTester tester) async {
       final Uint8List bytes = const Base64Decoder().convert(iconImageBase64);
       final markers = <Marker>{
-        Marker(
-          markerId: const MarkerId('1'),
-          icon: BytesMapBitmap(bytes, width: 20, height: 30),
-        ),
+        Marker(markerId: const MarkerId('1'), icon: BytesMapBitmap(bytes, width: 20, height: 30)),
       };
 
       await controller.addMarkers(markers);
 
       expect(controller.markers.length, 1);
-      final icon =
-          controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
+      final icon = controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
       expect(icon, isNotNull);
 
       final gmaps.Size size = icon!.size!;
@@ -439,9 +391,7 @@ void main() {
     });
 
     // https://github.com/flutter/flutter/issues/67854
-    testWidgets('InfoWindow snippet can have links', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('InfoWindow snippet can have links', (WidgetTester tester) async {
       final markers = <Marker>{
         const Marker(
           markerId: MarkerId('1'),
@@ -455,19 +405,12 @@ void main() {
       await controller.addMarkers(markers);
 
       expect(controller.markers.length, 1);
-      final content =
-          controller.markers[const MarkerId('1')]?.infoWindow?.content
-              as HTMLElement?;
+      final content = controller.markers[const MarkerId('1')]?.infoWindow?.content as HTMLElement?;
       expect(content, isNotNull);
 
       final String innerHtml = (content!.innerHTML as JSString).toDart;
       expect(innerHtml, contains('title for test'));
-      expect(
-        innerHtml,
-        contains(
-          '<a href="https://www.google.com">Go to Google &gt;&gt;&gt;</a>',
-        ),
-      );
+      expect(innerHtml, contains('<a href="https://www.google.com">Go to Google &gt;&gt;&gt;</a>'));
     });
 
     // https://github.com/flutter/flutter/issues/67289
@@ -475,19 +418,14 @@ void main() {
       final markers = <Marker>{
         const Marker(
           markerId: MarkerId('1'),
-          infoWindow: InfoWindow(
-            title: 'title for test',
-            snippet: 'some snippet',
-          ),
+          infoWindow: InfoWindow(title: 'title for test', snippet: 'some snippet'),
         ),
       };
 
       await controller.addMarkers(markers);
 
       expect(controller.markers.length, 1);
-      final content =
-          controller.markers[const MarkerId('1')]?.infoWindow?.content
-              as HTMLElement?;
+      final content = controller.markers[const MarkerId('1')]?.infoWindow?.content as HTMLElement?;
 
       content?.click();
 
@@ -517,11 +455,9 @@ void main() {
       await controller.addMarkers(markers);
       expect(controller.markers.length, 2);
 
-      final icon1 =
-          controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
+      final icon1 = controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
       expect(icon1, isNotNull);
-      final icon2 =
-          controller.markers[const MarkerId('2')]?.marker?.icon as gmaps.Icon?;
+      final icon2 = controller.markers[const MarkerId('2')]?.marker?.icon as gmaps.Icon?;
       expect(icon2, isNotNull);
 
       expect(icon1!.anchor, isNotNull);
@@ -532,9 +468,7 @@ void main() {
       expect(icon2.anchor!.y, height * anchorOffset.dy);
     });
 
-    testWidgets('interpret correct zIndex in convertsion', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('interpret correct zIndex in convertsion', (WidgetTester tester) async {
       const markerId = MarkerId('1');
 
       final markers = <Marker>{const Marker(markerId: markerId, zIndexInt: 4)};

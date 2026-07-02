@@ -8,10 +8,8 @@ import 'dart:async' as _i2;
 import 'package:devtools_app_shared/service.dart' as _i6;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i5;
-import 'package:shared_preferences_tool/src/shared_preferences_state.dart'
-    as _i4;
-import 'package:shared_preferences_tool/src/shared_preferences_tool_eval.dart'
-    as _i3;
+import 'package:shared_preferences_tool/src/shared_preferences_state.dart' as _i4;
+import 'package:shared_preferences_tool/src/shared_preferences_tool_eval.dart' as _i3;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -27,28 +25,26 @@ import 'package:shared_preferences_tool/src/shared_preferences_tool_eval.dart'
 // ignore_for_file: subtype_of_sealed_class
 
 class _FakeCompleter_0<T> extends _i1.SmartFake implements _i2.Completer<T> {
-  _FakeCompleter_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakeCompleter_0(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
 }
 
 /// A class which mocks [SharedPreferencesToolEval].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockSharedPreferencesToolEval extends _i1.Mock
-    implements _i3.SharedPreferencesToolEval {
+class MockSharedPreferencesToolEval extends _i1.Mock implements _i3.SharedPreferencesToolEval {
   @override
-  _i2.Future<({List<String> asyncKeys, List<String> legacyKeys})>
-  fetchAllKeys() =>
+  _i2.Future<({List<String> asyncKeys, List<String> legacyKeys})> fetchAllKeys() =>
       (super.noSuchMethod(
             Invocation.method(#fetchAllKeys, []),
-            returnValue:
-                _i2.Future<
-                  ({List<String> asyncKeys, List<String> legacyKeys})
-                >.value((asyncKeys: <String>[], legacyKeys: <String>[])),
+            returnValue: _i2.Future<({List<String> asyncKeys, List<String> legacyKeys})>.value((
+              asyncKeys: <String>[],
+              legacyKeys: <String>[],
+            )),
             returnValueForMissingStub:
-                _i2.Future<
-                  ({List<String> asyncKeys, List<String> legacyKeys})
-                >.value((asyncKeys: <String>[], legacyKeys: <String>[])),
+                _i2.Future<({List<String> asyncKeys, List<String> legacyKeys})>.value((
+                  asyncKeys: <String>[],
+                  legacyKeys: <String>[],
+                )),
           )
           as _i2.Future<({List<String> asyncKeys, List<String> legacyKeys})>);
 
@@ -62,22 +58,17 @@ class MockSharedPreferencesToolEval extends _i1.Mock
                 Invocation.method(#fetchValue, [key, legacy]),
               ),
             ),
-            returnValueForMissingStub:
-                _i2.Future<_i4.SharedPreferencesData>.value(
-                  _i5.dummyValue<_i4.SharedPreferencesData>(
-                    this,
-                    Invocation.method(#fetchValue, [key, legacy]),
-                  ),
-                ),
+            returnValueForMissingStub: _i2.Future<_i4.SharedPreferencesData>.value(
+              _i5.dummyValue<_i4.SharedPreferencesData>(
+                this,
+                Invocation.method(#fetchValue, [key, legacy]),
+              ),
+            ),
           )
           as _i2.Future<_i4.SharedPreferencesData>);
 
   @override
-  _i2.Future<void> changeValue(
-    String? key,
-    _i4.SharedPreferencesData? value,
-    bool? legacy,
-  ) =>
+  _i2.Future<void> changeValue(String? key, _i4.SharedPreferencesData? value, bool? legacy) =>
       (super.noSuchMethod(
             Invocation.method(#changeValue, [key, value, legacy]),
             returnValue: _i2.Future<void>.value(),
@@ -95,10 +86,8 @@ class MockSharedPreferencesToolEval extends _i1.Mock
           as _i2.Future<void>);
 
   @override
-  void dispose() => super.noSuchMethod(
-    Invocation.method(#dispose, []),
-    returnValueForMissingStub: null,
-  );
+  void dispose() =>
+      super.noSuchMethod(Invocation.method(#dispose, []), returnValueForMissingStub: null);
 }
 
 /// A class which mocks [ConnectedApp].
@@ -109,10 +98,7 @@ class MockConnectedApp extends _i1.Mock implements _i6.ConnectedApp {
   _i2.Completer<bool> get initialized =>
       (super.noSuchMethod(
             Invocation.getter(#initialized),
-            returnValue: _FakeCompleter_0<bool>(
-              this,
-              Invocation.getter(#initialized),
-            ),
+            returnValue: _FakeCompleter_0<bool>(this, Invocation.getter(#initialized)),
             returnValueForMissingStub: _FakeCompleter_0<bool>(
               this,
               Invocation.getter(#initialized),
@@ -139,10 +125,7 @@ class MockConnectedApp extends _i1.Mock implements _i6.ConnectedApp {
   String get operatingSystem =>
       (super.noSuchMethod(
             Invocation.getter(#operatingSystem),
-            returnValue: _i5.dummyValue<String>(
-              this,
-              Invocation.getter(#operatingSystem),
-            ),
+            returnValue: _i5.dummyValue<String>(this, Invocation.getter(#operatingSystem)),
             returnValueForMissingStub: _i5.dummyValue<String>(
               this,
               Invocation.getter(#operatingSystem),

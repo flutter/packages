@@ -50,18 +50,14 @@ class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
             returnValue: _i4.Future<List<_i2.PlatformCameraDescription>>.value(
               <_i2.PlatformCameraDescription>[],
             ),
-            returnValueForMissingStub:
-                _i4.Future<List<_i2.PlatformCameraDescription>>.value(
-                  <_i2.PlatformCameraDescription>[],
-                ),
+            returnValueForMissingStub: _i4.Future<List<_i2.PlatformCameraDescription>>.value(
+              <_i2.PlatformCameraDescription>[],
+            ),
           )
           as _i4.Future<List<_i2.PlatformCameraDescription>>);
 
   @override
-  _i4.Future<int> create(
-    String? cameraName,
-    _i2.PlatformMediaSettings? settings,
-  ) =>
+  _i4.Future<int> create(String? cameraName, _i2.PlatformMediaSettings? settings) =>
       (super.noSuchMethod(
             Invocation.method(#create, [cameraName, settings]),
             returnValue: _i4.Future<int>.value(0),
@@ -70,10 +66,7 @@ class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
           as _i4.Future<int>);
 
   @override
-  _i4.Future<void> initialize(
-    int? cameraId,
-    _i2.PlatformImageFormatGroup? imageFormat,
-  ) =>
+  _i4.Future<void> initialize(int? cameraId, _i2.PlatformImageFormatGroup? imageFormat) =>
       (super.noSuchMethod(
             Invocation.method(#initialize, [cameraId, imageFormat]),
             returnValue: _i4.Future<void>.value(),
@@ -118,9 +111,7 @@ class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
           as _i4.Future<void>);
 
   @override
-  _i4.Future<void> lockCaptureOrientation(
-    _i2.PlatformDeviceOrientation? orientation,
-  ) =>
+  _i4.Future<void> lockCaptureOrientation(_i2.PlatformDeviceOrientation? orientation) =>
       (super.noSuchMethod(
             Invocation.method(#lockCaptureOrientation, [orientation]),
             returnValue: _i4.Future<void>.value(),
@@ -173,16 +164,10 @@ class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
       (super.noSuchMethod(
             Invocation.method(#stopVideoRecording, []),
             returnValue: _i4.Future<String>.value(
-              _i3.dummyValue<String>(
-                this,
-                Invocation.method(#stopVideoRecording, []),
-              ),
+              _i3.dummyValue<String>(this, Invocation.method(#stopVideoRecording, [])),
             ),
             returnValueForMissingStub: _i4.Future<String>.value(
-              _i3.dummyValue<String>(
-                this,
-                Invocation.method(#stopVideoRecording, []),
-              ),
+              _i3.dummyValue<String>(this, Invocation.method(#stopVideoRecording, [])),
             ),
           )
           as _i4.Future<String>);
@@ -305,9 +290,7 @@ class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
           as _i4.Future<void>);
 
   @override
-  _i4.Future<void> setVideoStabilizationMode(
-    _i2.PlatformVideoStabilizationMode? mode,
-  ) =>
+  _i4.Future<void> setVideoStabilizationMode(_i2.PlatformVideoStabilizationMode? mode) =>
       (super.noSuchMethod(
             Invocation.method(#setVideoStabilizationMode, [mode]),
             returnValue: _i4.Future<void>.value(),
@@ -316,9 +299,7 @@ class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
           as _i4.Future<void>);
 
   @override
-  _i4.Future<bool> isVideoStabilizationModeSupported(
-    _i2.PlatformVideoStabilizationMode? mode,
-  ) =>
+  _i4.Future<bool> isVideoStabilizationModeSupported(_i2.PlatformVideoStabilizationMode? mode) =>
       (super.noSuchMethod(
             Invocation.method(#isVideoStabilizationModeSupported, [mode]),
             returnValue: _i4.Future<bool>.value(false),

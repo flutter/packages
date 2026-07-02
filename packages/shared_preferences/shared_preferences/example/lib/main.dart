@@ -37,13 +37,12 @@ class SharedPreferencesDemo extends StatefulWidget {
 }
 
 class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
-  final Future<SharedPreferencesWithCache> _prefs =
-      SharedPreferencesWithCache.create(
-        cacheOptions: const SharedPreferencesWithCacheOptions(
-          // This cache will only accept the key 'counter'.
-          allowList: <String>{'counter'},
-        ),
-      );
+  final Future<SharedPreferencesWithCache> _prefs = SharedPreferencesWithCache.create(
+    cacheOptions: const SharedPreferencesWithCacheOptions(
+      // This cache will only accept the key 'counter'.
+      allowList: <String>{'counter'},
+    ),
+  );
   late Future<int> _counter;
   int _externalCounter = 0;
 
@@ -136,10 +135,7 @@ class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
 
 /// Waits for the [initialized] future to complete before rendering [builder].
 class _WaitForInitialization extends StatelessWidget {
-  const _WaitForInitialization({
-    required this.initialized,
-    required this.builder,
-  });
+  const _WaitForInitialization({required this.initialized, required this.builder});
 
   final Future<void> initialized;
   final WidgetBuilder builder;

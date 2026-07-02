@@ -40,16 +40,14 @@ class ListCommand extends PackageCommand {
           print(entry.package.path);
         }
       case _example:
-        final Stream<RepositoryPackage> examples = getTargetPackages()
-            .expand<RepositoryPackage>(
-              (PackageEnumerationEntry entry) => entry.package.getExamples(),
-            );
+        final Stream<RepositoryPackage> examples = getTargetPackages().expand<RepositoryPackage>(
+          (PackageEnumerationEntry entry) => entry.package.getExamples(),
+        );
         await for (final RepositoryPackage package in examples) {
           print(package.path);
         }
       case _allPackage:
-        await for (final PackageEnumerationEntry entry
-            in getTargetPackagesAndSubpackages()) {
+        await for (final PackageEnumerationEntry entry in getTargetPackagesAndSubpackages()) {
           print(entry.package.path);
         }
       case _file:

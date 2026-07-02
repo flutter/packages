@@ -35,17 +35,11 @@ class Sk2PurchaseParam extends PurchaseParam {
   }) {
     switch (offer.type) {
       case SK2SubscriptionOfferType.winBack:
-        return Sk2PurchaseParam(
-          productDetails: productDetails,
-          winBackOfferId: offer.id,
-        );
+        return Sk2PurchaseParam(productDetails: productDetails, winBackOfferId: offer.id);
       case SK2SubscriptionOfferType.promotional:
         return Sk2PurchaseParam(
           productDetails: productDetails,
-          promotionalOffer: SK2PromotionalOffer(
-            offerId: offer.id ?? '',
-            signature: signature!,
-          ),
+          promotionalOffer: SK2PromotionalOffer(offerId: offer.id ?? '', signature: signature!),
         );
       case SK2SubscriptionOfferType.introductory:
         return Sk2PurchaseParam(productDetails: productDetails);

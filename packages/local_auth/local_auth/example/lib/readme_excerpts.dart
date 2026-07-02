@@ -51,8 +51,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> checkSupport() async {
     // #docregion CanCheck
     final bool canAuthenticateWithBiometrics = await auth.canCheckBiometrics;
-    final bool canAuthenticate =
-        canAuthenticateWithBiometrics || await auth.isDeviceSupported();
+    final bool canAuthenticate = canAuthenticateWithBiometrics || await auth.isDeviceSupported();
     // #enddocregion CanCheck
 
     print('Can authenticate: $canAuthenticate');
@@ -61,8 +60,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> getEnrolledBiometrics() async {
     // #docregion Enrolled
-    final List<BiometricType> availableBiometrics = await auth
-        .getAvailableBiometrics();
+    final List<BiometricType> availableBiometrics = await auth.getAvailableBiometrics();
 
     if (availableBiometrics.isNotEmpty) {
       // Some biometrics are enrolled.

@@ -5,8 +5,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
 
-import 'package:interactive_media_ads/src/android/interactive_media_ads.g.dart'
-    as _i2;
+import 'package:interactive_media_ads/src/android/interactive_media_ads.g.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -24,14 +23,12 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: subtype_of_sealed_class
 // ignore_for_file: invalid_use_of_internal_member
 
-class _FakePigeonInstanceManager_0 extends _i1.SmartFake
-    implements _i2.PigeonInstanceManager {
+class _FakePigeonInstanceManager_0 extends _i1.SmartFake implements _i2.PigeonInstanceManager {
   _FakePigeonInstanceManager_0(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeContentProgressProvider_1 extends _i1.SmartFake
-    implements _i2.ContentProgressProvider {
+class _FakeContentProgressProvider_1 extends _i1.SmartFake implements _i2.ContentProgressProvider {
   _FakeContentProgressProvider_1(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -39,8 +36,7 @@ class _FakeContentProgressProvider_1 extends _i1.SmartFake
 /// A class which mocks [ContentProgressProvider].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockContentProgressProvider extends _i1.Mock
-    implements _i2.ContentProgressProvider {
+class MockContentProgressProvider extends _i1.Mock implements _i2.ContentProgressProvider {
   @override
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
       (super.noSuchMethod(
@@ -69,10 +65,7 @@ class MockContentProgressProvider extends _i1.Mock
   _i2.ContentProgressProvider pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeContentProgressProvider_1(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
+            returnValue: _FakeContentProgressProvider_1(this, Invocation.method(#pigeon_copy, [])),
             returnValueForMissingStub: _FakeContentProgressProvider_1(
               this,
               Invocation.method(#pigeon_copy, []),

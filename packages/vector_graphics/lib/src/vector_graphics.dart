@@ -49,8 +49,7 @@ typedef VectorGraphicsErrorWidget =
 
 /// The signature that [VectorGraphic.imageBuilder] uses to wrap the
 /// successfully loaded vector graphic widget.
-typedef VectorGraphicsImageWidget =
-    Widget Function(BuildContext context, Widget child);
+typedef VectorGraphicsImageWidget = Widget Function(BuildContext context, Widget child);
 
 /// A vector graphic/flutter_svg compatibility shim.
 VectorGraphic createCompatVectorGraphic({
@@ -300,12 +299,7 @@ class _PictureData {
 
 @immutable
 class _PictureKey {
-  const _PictureKey(
-    this.cacheKey,
-    this.locale,
-    this.textDirection,
-    this.clipViewbox,
-  );
+  const _PictureKey(this.cacheKey, this.locale, this.textDirection, this.clipViewbox);
 
   final Object cacheKey;
   final Locale? locale;
@@ -331,8 +325,7 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
   Locale? locale;
   TextDirection? textDirection;
 
-  static final Map<_PictureKey, _PictureData> _livePictureCache =
-      <_PictureKey, _PictureData>{};
+  static final Map<_PictureKey, _PictureData> _livePictureCache = <_PictureKey, _PictureData>{};
   static final Map<_PictureKey, Future<_PictureData>> _pendingPictures =
       <_PictureKey, Future<_PictureData>>{};
 
@@ -370,11 +363,7 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
     }
   }
 
-  Future<_PictureData> _loadPicture(
-    BuildContext context,
-    _PictureKey key,
-    BytesLoader loader,
-  ) {
+  Future<_PictureData> _loadPicture(BuildContext context, _PictureKey key, BytesLoader loader) {
     if (_pendingPictures.containsKey(key)) {
       return _pendingPictures[key]!;
     }
@@ -413,12 +402,7 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
   Future<void> _loadAssetBytes() async {
     // First check if we have an avilable picture and use this immediately.
     final Object loaderKey = widget.loader.cacheKey(context);
-    final key = _PictureKey(
-      loaderKey,
-      locale,
-      textDirection,
-      widget.clipViewbox,
-    );
+    final key = _PictureKey(loaderKey, locale, textDirection, widget.clipViewbox);
     final _PictureData? data = _livePictureCache[key];
     if (data != null) {
       data.count += 1;
@@ -478,10 +462,7 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
 
       var scale = 1.0;
       if (width != null && height != null) {
-        scale = math.min(
-          pictureInfo.size.width / width,
-          pictureInfo.size.height / height,
-        );
+        scale = math.min(pictureInfo.size.width / width, pictureInfo.size.height / height);
       }
 
       if (_webRenderObject) {
@@ -535,11 +516,7 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
         child = widget.imageBuilder!(context, child);
       }
     } else if (_error != null && widget.errorBuilder != null) {
-      child = widget.errorBuilder!(
-        context,
-        _error!,
-        _stackTrace ?? StackTrace.empty,
-      );
+      child = widget.errorBuilder!(context, _error!, _stackTrace ?? StackTrace.empty);
     } else {
       child =
           widget.placeholderBuilder?.call(context) ??
@@ -596,10 +573,7 @@ class _RawVectorGraphicWidget extends SingleChildRenderObjectWidget {
   }
 
   @override
-  void updateRenderObject(
-    BuildContext context,
-    covariant RenderVectorGraphic renderObject,
-  ) {
+  void updateRenderObject(BuildContext context, covariant RenderVectorGraphic renderObject) {
     renderObject
       ..pictureInfo = pictureInfo
       ..assetKey = assetKey
@@ -629,10 +603,7 @@ class _RawWebVectorGraphicWidget extends SingleChildRenderObjectWidget {
   }
 
   @override
-  void updateRenderObject(
-    BuildContext context,
-    covariant RenderWebVectorGraphic renderObject,
-  ) {
+  void updateRenderObject(BuildContext context, covariant RenderWebVectorGraphic renderObject) {
     renderObject
       ..pictureInfo = pictureInfo
       ..assetKey = assetKey
@@ -660,10 +631,7 @@ class _RawPictureVectorGraphicWidget extends SingleChildRenderObjectWidget {
   }
 
   @override
-  void updateRenderObject(
-    BuildContext context,
-    covariant RenderPictureVectorGraphic renderObject,
-  ) {
+  void updateRenderObject(BuildContext context, covariant RenderPictureVectorGraphic renderObject) {
     renderObject
       ..pictureInfo = pictureInfo
       ..colorFilter = colorFilter
@@ -700,9 +668,7 @@ class VectorGraphicUtilities {
       // ignore: invalid_use_of_visible_for_testing_member
       return Future.wait(debugGetPendingDecodeTasks);
     }
-    throw UnsupportedError(
-      'This method is only for use in tests in debug mode for tests.',
-    );
+    throw UnsupportedError('This method is only for use in tests in debug mode for tests.');
   }
 
   /// Load the [PictureInfo] from a given [loader].

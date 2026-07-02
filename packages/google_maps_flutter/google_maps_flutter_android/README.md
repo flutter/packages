@@ -38,8 +38,7 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 
 void main() {
   // Require Hybrid Composition mode on Android.
-  final GoogleMapsFlutterPlatform mapsImplementation =
-      GoogleMapsFlutterPlatform.instance;
+  final GoogleMapsFlutterPlatform mapsImplementation = GoogleMapsFlutterPlatform.instance;
   if (mapsImplementation is GoogleMapsFlutterAndroid) {
     // Force Hybrid Composition mode.
     mapsImplementation.useAndroidViewSurface = true;

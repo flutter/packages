@@ -1,3 +1,11 @@
+## 0.14.2
+
+* Ensures that pub commands use `flutter` or `dart` depending on whether the
+  package requires Flutter for analysis and publishing, to support
+  non-Flutter-based repositories.
+* Adds `--skip-if-not-supporting-dart-version` to support package constraints
+  via Dart versions rather than Flutter versions.
+
 ## 0.14.1
 
 * Adds `min_dart` as an alternative to `min_flutter` in tool configuration.

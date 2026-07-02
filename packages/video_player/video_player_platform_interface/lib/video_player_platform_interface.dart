@@ -119,10 +119,17 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
 
   /// Sets whether the video should continue to play in the background.
   Future<void> setAllowBackgroundPlayback(bool allowBackgroundPlayback) {
-    throw UnimplementedError(
-      'setAllowBackgroundPlayback() has not been implemented.',
-    );
+    throw UnimplementedError('setAllowBackgroundPlayback() has not been implemented.');
   }
+
+  /// Sets whether the screen is prevented from sleeping during video playback.
+  ///
+  /// The default implementation is a no-op, so platforms that do not support
+  /// controlling display sleep will silently use their default behavior.
+  Future<void> setPreventsDisplaySleepDuringVideoPlayback(
+    int playerId,
+    bool preventsDisplaySleepDuringVideoPlayback,
+  ) async {}
 
   /// Sets additional options on web.
   Future<void> setWebOptions(int playerId, VideoPlayerWebOptions options) {
@@ -352,14 +359,8 @@ class VideoEvent {
   }
 
   @override
-  int get hashCode => Object.hash(
-    eventType,
-    duration,
-    size,
-    rotationCorrection,
-    buffered,
-    isPlaying,
-  );
+  int get hashCode =>
+      Object.hash(eventType, duration, size, rotationCorrection, buffered, isPlaying);
 }
 
 /// Type of the event.
@@ -444,8 +445,7 @@ class DurationRange {
   }
 
   @override
-  String toString() =>
-      '${objectRuntimeType(this, 'DurationRange')}(start: $start, end: $end)';
+  String toString() => '${objectRuntimeType(this, 'DurationRange')}(start: $start, end: $end)';
 
   @override
   bool operator ==(Object other) =>
@@ -470,6 +470,7 @@ class VideoPlayerOptions {
   VideoPlayerOptions({
     this.mixWithOthers = false,
     this.allowBackgroundPlayback = false,
+    this.preventsDisplaySleepDuringVideoPlayback = true,
     this.webOptions,
   });
 
@@ -483,6 +484,13 @@ class VideoPlayerOptions {
   /// Note: This option will be silently ignored in the web platform (there is
   /// currently no way to implement this feature in this platform).
   final bool mixWithOthers;
+
+  /// Whether the screen is prevented from sleeping during video playback.
+  ///
+  /// Defaults to `true`.
+  ///
+  /// This option may not be supported on all platforms.
+  final bool preventsDisplaySleepDuringVideoPlayback;
 
   /// Additional web controls
   final VideoPlayerWebOptions? webOptions;
@@ -585,10 +593,7 @@ class VideoViewOptions {
 @immutable
 class VideoCreationOptions {
   /// Constructs an instance of [VideoCreationOptions].
-  const VideoCreationOptions({
-    required this.dataSource,
-    required this.viewType,
-  });
+  const VideoCreationOptions({required this.dataSource, required this.viewType});
 
   /// The data source used to create the player.
   final DataSource dataSource;
@@ -664,16 +669,8 @@ class VideoAudioTrack {
   }
 
   @override
-  int get hashCode => Object.hash(
-    id,
-    label,
-    language,
-    isSelected,
-    bitrate,
-    sampleRate,
-    channelCount,
-    codec,
-  );
+  int get hashCode =>
+      Object.hash(id, label, language, isSelected, bitrate, sampleRate, channelCount, codec);
 
   @override
   String toString() =>
@@ -763,16 +760,7 @@ class VideoTrack {
   }
 
   @override
-  int get hashCode => Object.hash(
-    id,
-    isSelected,
-    label,
-    bitrate,
-    width,
-    height,
-    frameRate,
-    codec,
-  );
+  int get hashCode => Object.hash(id, isSelected, label, bitrate, width, height, frameRate, codec);
 
   @override
   String toString() =>

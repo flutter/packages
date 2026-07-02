@@ -17,9 +17,7 @@ class PathProviderFoundation extends PathProviderPlatform {
   PathProviderFoundation({
     @visibleForTesting PathProviderPlatformProvider? platform,
     @visibleForTesting FoundationFFI? ffiLib,
-    @visibleForTesting
-    NSURL? Function(NSString)?
-    containerURLForSecurityApplicationGroupIdentifier,
+    @visibleForTesting NSURL? Function(NSString)? containerURLForSecurityApplicationGroupIdentifier,
   }) : _platformProvider = platform ?? PathProviderPlatformProvider(),
        _ffiLib = ffiLib ?? _lib,
        _containerURLForSecurityApplicationGroupIdentifier =
@@ -28,8 +26,7 @@ class PathProviderFoundation extends PathProviderPlatform {
 
   final PathProviderPlatformProvider _platformProvider;
   final FoundationFFI _ffiLib;
-  final NSURL? Function(NSString)
-  _containerURLForSecurityApplicationGroupIdentifier;
+  final NSURL? Function(NSString) _containerURLForSecurityApplicationGroupIdentifier;
 
   /// Registers this class as the default instance of [PathProviderPlatform].
   static void registerWith() {
@@ -43,9 +40,7 @@ class PathProviderFoundation extends PathProviderPlatform {
 
   @override
   Future<String?> getApplicationSupportPath() async {
-    final String? path = _getDirectoryPath(
-      NSSearchPathDirectory.NSApplicationSupportDirectory,
-    );
+    final String? path = _getDirectoryPath(NSSearchPathDirectory.NSApplicationSupportDirectory);
     if (path != null) {
       // Ensure the directory exists before returning it, for consistency with
       // other platforms.
@@ -66,9 +61,7 @@ class PathProviderFoundation extends PathProviderPlatform {
 
   @override
   Future<String?> getApplicationCachePath() async {
-    final String? path = _getDirectoryPath(
-      NSSearchPathDirectory.NSCachesDirectory,
-    );
+    final String? path = _getDirectoryPath(NSSearchPathDirectory.NSCachesDirectory);
     if (path != null) {
       // Ensure the directory exists before returning it, for consistency with
       // other platforms.
@@ -79,25 +72,17 @@ class PathProviderFoundation extends PathProviderPlatform {
 
   @override
   Future<String?> getExternalStoragePath() async {
-    throw UnsupportedError(
-      'getExternalStoragePath is not supported on this platform',
-    );
+    throw UnsupportedError('getExternalStoragePath is not supported on this platform');
   }
 
   @override
   Future<List<String>?> getExternalCachePaths() async {
-    throw UnsupportedError(
-      'getExternalCachePaths is not supported on this platform',
-    );
+    throw UnsupportedError('getExternalCachePaths is not supported on this platform');
   }
 
   @override
-  Future<List<String>?> getExternalStoragePaths({
-    StorageDirectory? type,
-  }) async {
-    throw UnsupportedError(
-      'getExternalStoragePaths is not supported on this platform',
-    );
+  Future<List<String>?> getExternalStoragePaths({StorageDirectory? type}) async {
+    throw UnsupportedError('getExternalStoragePaths is not supported on this platform');
   }
 
   @override
@@ -109,9 +94,7 @@ class PathProviderFoundation extends PathProviderPlatform {
   /// This is only supported for iOS.
   Future<String?> getContainerPath({required String appGroupIdentifier}) async {
     if (!_platformProvider.isIOS) {
-      throw UnsupportedError(
-        'getContainerPath is not supported on this platform',
-      );
+      throw UnsupportedError('getContainerPath is not supported on this platform');
     }
     return _containerURLForSecurityApplicationGroupIdentifier(
       NSString(appGroupIdentifier),
@@ -128,13 +111,10 @@ class PathProviderFoundation extends PathProviderPlatform {
       // plugin.
       if (directory == NSSearchPathDirectory.NSApplicationSupportDirectory ||
           directory == NSSearchPathDirectory.NSCachesDirectory) {
-        final NSString? bundleIdentifier =
-            NSBundle.getMainBundle().bundleIdentifier;
+        final NSString? bundleIdentifier = NSBundle.getMainBundle().bundleIdentifier;
         if (bundleIdentifier != null) {
           final NSURL basePathURL = NSURL.fileURLWithPath(path);
-          path = basePathURL.URLByAppendingPathComponent(
-            bundleIdentifier,
-          )?.path;
+          path = basePathURL.URLByAppendingPathComponent(bundleIdentifier)?.path;
         }
       }
     }
@@ -165,13 +145,12 @@ class PathProviderPlatformProvider {
 
 NSURL? _sharedNSFileManagerContainerURLForSecurityApplicationGroupIdentifier(
   NSString groupIdentifier,
-) => NSFileManager.getDefaultManager()
-    .containerURLForSecurityApplicationGroupIdentifier(groupIdentifier);
+) => NSFileManager.getDefaultManager().containerURLForSecurityApplicationGroupIdentifier(
+  groupIdentifier,
+);
 
 final ffi.DynamicLibrary _dylib = () {
-  return ffi.DynamicLibrary.open(
-    '/System/Library/Frameworks/Foundation.framework/Foundation',
-  );
+  return ffi.DynamicLibrary.open('/System/Library/Frameworks/Foundation.framework/Foundation');
 }();
 
 /// The bindings to the native functions in [_dylib].

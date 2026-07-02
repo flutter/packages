@@ -74,34 +74,32 @@ class AsciiConstants {
 
   /// Returns the segment type corresponding to the letter constant [lookahead].
   static SvgPathSegType mapLetterToSegmentType(int lookahead) {
-    return AsciiConstants.letterToSegmentType[lookahead] ??
-        SvgPathSegType.unknown;
+    return AsciiConstants.letterToSegmentType[lookahead] ?? SvgPathSegType.unknown;
   }
 
   /// Map to go from ASCII constant to [SvgPathSegType]
-  static const Map<int, SvgPathSegType> letterToSegmentType =
-      <int, SvgPathSegType>{
-        upperZ: SvgPathSegType.close,
-        lowerZ: SvgPathSegType.close,
-        upperM: SvgPathSegType.moveToAbs,
-        lowerM: SvgPathSegType.moveToRel,
-        upperL: SvgPathSegType.lineToAbs,
-        lowerL: SvgPathSegType.lineToRel,
-        upperC: SvgPathSegType.cubicToAbs,
-        lowerC: SvgPathSegType.cubicToRel,
-        upperQ: SvgPathSegType.quadToAbs,
-        lowerQ: SvgPathSegType.quadToRel,
-        upperA: SvgPathSegType.arcToAbs,
-        lowerA: SvgPathSegType.arcToRel,
-        upperH: SvgPathSegType.lineToHorizontalAbs,
-        lowerH: SvgPathSegType.lineToHorizontalRel,
-        upperV: SvgPathSegType.lineToVerticalAbs,
-        lowerV: SvgPathSegType.lineToVerticalRel,
-        upperS: SvgPathSegType.smoothCubicToAbs,
-        lowerS: SvgPathSegType.smoothCubicToRel,
-        upperT: SvgPathSegType.smoothQuadToAbs,
-        lowerT: SvgPathSegType.smoothQuadToRel,
-      };
+  static const Map<int, SvgPathSegType> letterToSegmentType = <int, SvgPathSegType>{
+    upperZ: SvgPathSegType.close,
+    lowerZ: SvgPathSegType.close,
+    upperM: SvgPathSegType.moveToAbs,
+    lowerM: SvgPathSegType.moveToRel,
+    upperL: SvgPathSegType.lineToAbs,
+    lowerL: SvgPathSegType.lineToRel,
+    upperC: SvgPathSegType.cubicToAbs,
+    lowerC: SvgPathSegType.cubicToRel,
+    upperQ: SvgPathSegType.quadToAbs,
+    lowerQ: SvgPathSegType.quadToRel,
+    upperA: SvgPathSegType.arcToAbs,
+    lowerA: SvgPathSegType.arcToRel,
+    upperH: SvgPathSegType.lineToHorizontalAbs,
+    lowerH: SvgPathSegType.lineToHorizontalRel,
+    upperV: SvgPathSegType.lineToVerticalAbs,
+    lowerV: SvgPathSegType.lineToVerticalRel,
+    upperS: SvgPathSegType.smoothCubicToAbs,
+    lowerS: SvgPathSegType.smoothCubicToRel,
+    upperT: SvgPathSegType.smoothQuadToAbs,
+    lowerT: SvgPathSegType.smoothQuadToRel,
+  };
 
   /// `\t` (horizontal tab).
   static const int slashT = 9;

@@ -19,9 +19,7 @@ import 'package:googleapis_auth/googleapis_auth.dart' as auth show AuthClient;
 const List<String> scopes = <String>[PeopleServiceApi.contactsReadonlyScope];
 
 void main() {
-  runApp(
-    const MaterialApp(title: 'Google Sign In + googleapis', home: SignInDemo()),
-  );
+  runApp(const MaterialApp(title: 'Google Sign In + googleapis', home: SignInDemo()));
 }
 
 /// The main widget of this demo.
@@ -90,9 +88,7 @@ class SignInDemoState extends State<SignInDemo> {
   }
 
   Future<void> _checkAuthorization() async {
-    _updateAuthorization(
-      await _currentUser?.authorizationClient.authorizationForScopes(scopes),
-    );
+    _updateAuthorization(await _currentUser?.authorizationClient.authorizationForScopes(scopes));
   }
 
   Future<void> _requestAuthorization() async {
@@ -103,9 +99,7 @@ class SignInDemoState extends State<SignInDemo> {
     );
   }
 
-  Future<void> _handleGetContact(
-    GoogleSignInClientAuthorization authorization,
-  ) async {
+  Future<void> _handleGetContact(GoogleSignInClientAuthorization authorization) async {
     if (!mounted) {
       return;
     }
@@ -120,13 +114,13 @@ class SignInDemoState extends State<SignInDemo> {
     // Prepare a People Service authenticated client.
     final peopleApi = PeopleServiceApi(client);
     // Retrieve a list of connected contacts' names.
-    final ListConnectionsResponse response = await peopleApi.people.connections
-        .list('people/me', personFields: 'names');
+    final ListConnectionsResponse response = await peopleApi.people.connections.list(
+      'people/me',
+      personFields: 'names',
+    );
     // #enddocregion CreateAPIClient
 
-    final String? firstNamedContactName = _pickFirstNamedContact(
-      response.connections,
-    );
+    final String? firstNamedContactName = _pickFirstNamedContact(response.connections);
 
     if (mounted) {
       setState(() {
@@ -188,26 +182,17 @@ class SignInDemoState extends State<SignInDemo> {
                   child: const Text('LOAD CONTACTS'),
                 ),
               ],
-              ElevatedButton(
-                onPressed: _handleSignOut,
-                child: const Text('SIGN OUT'),
-              ),
+              ElevatedButton(onPressed: _handleSignOut, child: const Text('SIGN OUT')),
             ] else ...<Widget>[
               const Text('You are not currently signed in.'),
-              ElevatedButton(
-                onPressed: _handleSignIn,
-                child: const Text('SIGN IN'),
-              ),
+              ElevatedButton(onPressed: _handleSignIn, child: const Text('SIGN IN')),
             ],
           ];
         } else {
           children = <Widget>[const CircularProgressIndicator()];
         }
 
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: children,
-        );
+        return Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: children);
       },
     );
   }
@@ -216,10 +201,7 @@ class SignInDemoState extends State<SignInDemo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Google Sign In + googleapis')),
-      body: ConstrainedBox(
-        constraints: const BoxConstraints.expand(),
-        child: _buildBody(),
-      ),
+      body: ConstrainedBox(constraints: const BoxConstraints.expand(), child: _buildBody()),
     );
   }
 }

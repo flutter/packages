@@ -1,0 +1,39 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'package:material_ui/material_ui.dart';
+
+/// Flutter code sample for [InputDecoration].
+
+void main() => runApp(const InputDecorationExampleApp());
+
+class InputDecorationExampleApp extends StatelessWidget {
+  const InputDecorationExampleApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('InputDecoration Sample')),
+        body: const InputDecorationExample(),
+      ),
+    );
+  }
+}
+
+class InputDecorationExample extends StatelessWidget {
+  const InputDecorationExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      initialValue: 'abc',
+      decoration: const InputDecoration(
+        prefix: Text('Prefix'),
+        suffix: Text('Suffix'),
+        border: OutlineInputBorder(),
+      ),
+    );
+  }
+}

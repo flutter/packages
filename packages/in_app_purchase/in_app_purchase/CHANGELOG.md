@@ -1,10 +1,16 @@
-## NEXT
+## 3.3.0
 
+* Updates `in_app_purchase_android` dependency to `^0.5.0`.
+
+## 3.2.4
+
+* Bump org.json:json from 20251224 to 20260522 in example.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 * Updates README to reflect currently supported OS versions for the latest
   versions of the endorsed platform implementations.
   * Applications built with older versions of Flutter will continue to
     use compatible versions of the platform implementations.
+* Clarifies `completePurchase` usage and the consequences of unfinished transactions in the README and docstrings.
 
 ## 3.2.3
 * Updates minimum `in_app_purchase_storekit` version to 0.4.0.

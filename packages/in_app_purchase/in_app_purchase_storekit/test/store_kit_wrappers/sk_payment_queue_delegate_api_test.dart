@@ -26,14 +26,9 @@ void main() {
       await queue.setDelegate(testDelegate);
 
       final arguments = <String, dynamic>{
-        'storefront': <String, String>{
-          'countryCode': 'USA',
-          'identifier': 'unique_identifier',
-        },
+        'storefront': <String, String>{'countryCode': 'USA', 'identifier': 'unique_identifier'},
         'transaction': <String, dynamic>{
-          'payment': <String, dynamic>{
-            'productIdentifier': 'product_identifier',
-          },
+          'payment': <String, dynamic>{'productIdentifier': 'product_identifier'},
         },
       };
 
@@ -81,9 +76,7 @@ void main() {
         MethodCall('restoreCompletedTransactionsFailed', arguments),
       );
 
-      expect(testObserver.log, <Matcher>{
-        equals('restoreCompletedTransactionsFailed'),
-      });
+      expect(testObserver.log, <Matcher>{equals('restoreCompletedTransactionsFailed')});
     },
   );
 }
@@ -92,16 +85,12 @@ class TestTransactionObserverWrapper extends SKTransactionObserverWrapper {
   final List<String> log = <String>[];
 
   @override
-  void updatedTransactions({
-    required List<SKPaymentTransactionWrapper> transactions,
-  }) {
+  void updatedTransactions({required List<SKPaymentTransactionWrapper> transactions}) {
     log.add('updatedTransactions');
   }
 
   @override
-  void removedTransactions({
-    required List<SKPaymentTransactionWrapper> transactions,
-  }) {
+  void removedTransactions({required List<SKPaymentTransactionWrapper> transactions}) {
     log.add('removedTransactions');
   }
 

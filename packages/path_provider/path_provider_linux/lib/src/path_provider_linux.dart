@@ -40,9 +40,7 @@ class PathProviderLinux extends PathProviderPlatform {
   @override
   Future<String?> getTemporaryPath() {
     final String environmentTmpDir = _environment['TMPDIR'] ?? '';
-    return Future<String?>.value(
-      environmentTmpDir.isEmpty ? '/tmp' : environmentTmpDir,
-    );
+    return Future<String?>.value(environmentTmpDir.isEmpty ? '/tmp' : environmentTmpDir);
   }
 
   @override
@@ -54,9 +52,7 @@ class PathProviderLinux extends PathProviderPlatform {
 
     // This plugin originally used the executable name as a directory.
     // Use that if it exists for backwards compatibility.
-    final legacyDirectory = Directory(
-      path.join(xdg.dataHome.path, await _getExecutableName()),
-    );
+    final legacyDirectory = Directory(path.join(xdg.dataHome.path, await _getExecutableName()));
     if (legacyDirectory.existsSync()) {
       return legacyDirectory.path;
     }
@@ -74,9 +70,21 @@ class PathProviderLinux extends PathProviderPlatform {
   @override
   Future<String?> getApplicationCachePath() async {
     final directory = Directory(path.join(xdg.cacheHome.path, await _getId()));
-    if (!directory.existsSync()) {
-      await directory.create(recursive: true);
+    if (directory.existsSync()) {
+      return directory.path;
     }
+
+    // Unlike for the application support path, the plugin didn't intentionally
+    // use the executable name as a directory for cache path in the past.
+    // However, it *unintentionally* did use it depending on which packages are
+    // installed, so fall back to it anyway.
+    // See: https://github.com/flutter/flutter/issues/186834
+    final legacyDirectory = Directory(path.join(xdg.cacheHome.path, await _getExecutableName()));
+    if (legacyDirectory.existsSync()) {
+      return legacyDirectory.path;
+    }
+
+    await directory.create(recursive: true);
     return directory.path;
   }
 

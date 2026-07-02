@@ -5,8 +5,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
 
-import 'package:google_maps_flutter_platform_interface/src/types/types.dart'
-    as _i2;
+import 'package:google_maps_flutter_platform_interface/src/types/types.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -25,8 +24,7 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: invalid_use_of_internal_member
 
 class _FakeTile_0 extends _i1.SmartFake implements _i2.Tile {
-  _FakeTile_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakeTile_0(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
 }
 
 /// A class which mocks [TileProvider].

@@ -7,6 +7,7 @@ package io.flutter.plugins.inapppurchase;
 import static io.flutter.plugins.inapppurchase.TranslatorKt.fromAlternativeBillingOnlyReportingDetails;
 import static io.flutter.plugins.inapppurchase.TranslatorKt.fromBillingConfig;
 import static io.flutter.plugins.inapppurchase.TranslatorKt.fromBillingResult;
+import static io.flutter.plugins.inapppurchase.TranslatorKt.fromInAppMessageResult;
 import static io.flutter.plugins.inapppurchase.TranslatorKt.fromProductDetailsList;
 import static io.flutter.plugins.inapppurchase.TranslatorKt.fromPurchasesList;
 import static io.flutter.plugins.inapppurchase.TranslatorKt.fromUnfetchedProductList;
@@ -31,6 +32,7 @@ import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.ConsumeParams;
 import com.android.billingclient.api.ConsumeResponseListener;
 import com.android.billingclient.api.GetBillingConfigParams;
+import com.android.billingclient.api.InAppMessageParams;
 import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.QueryProductDetailsParams;
 import com.android.billingclient.api.QueryPurchasesParams;
@@ -40,6 +42,7 @@ import java.util.List;
 import kotlin.Result;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
+import org.jetbrains.annotations.NotNull;
 
 /** Handles method channel for the plugin. */
 class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, InAppPurchaseApi {
@@ -166,6 +169,33 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
     try {
       billingClient.isAlternativeBillingOnlyAvailableAsync(
           billingResult -> ResultCompat.success(fromBillingResult(billingResult), callback));
+    } catch (RuntimeException e) {
+      ResultUtilsKt.completeWithError(
+          callback, new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));
+    }
+  }
+
+  @Override
+  public void showInAppMessages(
+      @NotNull
+          Function1<? super @NotNull Result<@NotNull PlatformInAppMessageResult>, @NotNull Unit>
+              callback) {
+    if (billingClient == null) {
+      ResultUtilsKt.completeWithError(callback, getNullBillingClientError());
+      return;
+    }
+    if (activity == null) {
+      ResultUtilsKt.completeWithError(
+          callback, new FlutterError(ACTIVITY_UNAVAILABLE, "Not attempting to show dialog", null));
+      return;
+    }
+    try {
+      InAppMessageParams params =
+          InAppMessageParams.newBuilder().addAllInAppMessageCategoriesToShow().build();
+      billingClient.showInAppMessages(
+          activity,
+          params,
+          billingResult -> ResultCompat.success(fromInAppMessageResult(billingResult), callback));
     } catch (RuntimeException e) {
       ResultUtilsKt.completeWithError(
           callback, new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));

@@ -28,8 +28,10 @@ import 'package:googleapis_auth/googleapis_auth.dart' as auth show AuthClient;
     // Prepare a People Service authenticated client.
     final peopleApi = PeopleServiceApi(client);
     // Retrieve a list of connected contacts' names.
-    final ListConnectionsResponse response = await peopleApi.people.connections
-        .list('people/me', personFields: 'names');
+    final ListConnectionsResponse response = await peopleApi.people.connections.list(
+      'people/me',
+      personFields: 'names',
+    );
 ```
 
 ## Example

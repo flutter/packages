@@ -1,5 +1,17 @@
-## NEXT
+## 1.2.6
 
+* Fixes `linux-arm64` host support by selecting the Flutter engine
+  artifact directory from `Abi.current()` instead of a hardcoded
+  `linux-x64`.
+
+## 1.2.5
+
+* Updates allowed version range of `xml` to include up to 7.0.1.
+
+## 1.2.4
+
+* Fix Stack Overflow crashes caused by circular references (masks, patterns, deferred nodes, and clip paths).
+* Prevent CPU/Memory Denial of Service (DoS) resource exhaustion from exponential DAG reference expansions (Billion Laughs SVG exploits) by enforcing a strict, cumulative reference expansion safety limit of 1,000.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 1.2.3

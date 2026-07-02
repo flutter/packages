@@ -10,8 +10,7 @@ import '../../billing_client_wrappers.dart';
 ///
 /// This usually indicates a serious underlining code issue in the plugin.
 @visibleForTesting
-const String kInvalidBillingConfigErrorMessage =
-    'Invalid billing config map from method channel.';
+const String kInvalidBillingConfigErrorMessage = 'Invalid billing config map from method channel.';
 
 /// Params containing the response code and the debug message from the Play Billing API response.
 @immutable

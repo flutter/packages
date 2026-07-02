@@ -11,25 +11,20 @@ import '../common/web_kit.g.dart';
 class WKWebViewCookieManager extends WebViewCookieManagerPlatform {
   /// Constructs a [WKWebViewCookieManager].
   WKWebViewCookieManager({WKWebsiteDataStore? websiteDataStore})
-    : websiteDataStore =
-          websiteDataStore ?? WKWebsiteDataStore.defaultDataStore;
+    : websiteDataStore = websiteDataStore ?? WKWebsiteDataStore.defaultDataStore;
 
   /// Manages stored data for [WKWebView]s.
   final WKWebsiteDataStore websiteDataStore;
 
   @override
   Future<bool> clearCookies() async {
-    return websiteDataStore.removeDataOfTypes(<WebsiteDataType>[
-      WebsiteDataType.cookies,
-    ], 0);
+    return websiteDataStore.removeDataOfTypes(<WebsiteDataType>[WebsiteDataType.cookies], 0);
   }
 
   @override
   Future<void> setCookie(WebViewCookie cookie) {
     if (!_isValidPath(cookie.path)) {
-      throw ArgumentError(
-        'The path property for the provided cookie was not given a legal value.',
-      );
+      throw ArgumentError('The path property for the provided cookie was not given a legal value.');
     }
 
     return websiteDataStore.httpCookieStore.setCookie(

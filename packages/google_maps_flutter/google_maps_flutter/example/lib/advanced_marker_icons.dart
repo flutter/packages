@@ -32,8 +32,7 @@ class _AdvancedMarkerIconsBody extends StatefulWidget {
   final String? mapId;
 
   @override
-  State<_AdvancedMarkerIconsBody> createState() =>
-      _AdvancedMarkerIconsBodyState();
+  State<_AdvancedMarkerIconsBody> createState() => _AdvancedMarkerIconsBodyState();
 }
 
 class _AdvancedMarkerIconsBodyState extends State<_AdvancedMarkerIconsBody> {
@@ -50,10 +49,7 @@ class _AdvancedMarkerIconsBodyState extends State<_AdvancedMarkerIconsBody> {
           child: GoogleMap(
             mapId: widget.mapId,
             markerType: GoogleMapMarkerType.advancedMarker,
-            initialCameraPosition: const CameraPosition(
-              target: _kMapCenter,
-              zoom: 7.0,
-            ),
+            initialCameraPosition: const CameraPosition(target: _kMapCenter, zoom: 7.0),
             markers: _markers,
             onMapCreated: (GoogleMapController controller) {
               setState(() {
@@ -72,29 +68,22 @@ class _AdvancedMarkerIconsBodyState extends State<_AdvancedMarkerIconsBody> {
                       const ImageConfiguration(size: Size(12, 12)),
                       'assets/red_square.png',
                     );
-                    final AssetMapBitmap largeAsset =
-                        await BitmapDescriptor.asset(
-                          const ImageConfiguration(size: Size(36, 36)),
-                          'assets/red_square.png',
-                        );
+                    final AssetMapBitmap largeAsset = await BitmapDescriptor.asset(
+                      const ImageConfiguration(size: Size(36, 36)),
+                      'assets/red_square.png',
+                    );
 
                     setState(() {
                       _markers.addAll(<AdvancedMarker>[
                         // Default icon
                         AdvancedMarker(
                           markerId: const MarkerId('1'),
-                          position: LatLng(
-                            _kMapCenter.latitude + 1,
-                            _kMapCenter.longitude + 1,
-                          ),
+                          position: LatLng(_kMapCenter.latitude + 1, _kMapCenter.longitude + 1),
                         ),
                         // Custom pin colors
                         AdvancedMarker(
                           markerId: const MarkerId('2'),
-                          position: LatLng(
-                            _kMapCenter.latitude - 1,
-                            _kMapCenter.longitude - 1,
-                          ),
+                          position: LatLng(_kMapCenter.latitude - 1, _kMapCenter.longitude - 1),
                           icon: BitmapDescriptor.pinConfig(
                             borderColor: Colors.red,
                             backgroundColor: Colors.black,
@@ -104,26 +93,17 @@ class _AdvancedMarkerIconsBodyState extends State<_AdvancedMarkerIconsBody> {
                         // Pin with text
                         AdvancedMarker(
                           markerId: const MarkerId('3'),
-                          position: LatLng(
-                            _kMapCenter.latitude - 1,
-                            _kMapCenter.longitude + 1,
-                          ),
+                          position: LatLng(_kMapCenter.latitude - 1, _kMapCenter.longitude + 1),
                           icon: BitmapDescriptor.pinConfig(
                             borderColor: Colors.blue,
                             backgroundColor: Colors.white,
-                            glyph: const TextGlyph(
-                              text: 'Hi!',
-                              textColor: Colors.blue,
-                            ),
+                            glyph: const TextGlyph(text: 'Hi!', textColor: Colors.blue),
                           ),
                         ),
                         // Pin with bitmap
                         AdvancedMarker(
                           markerId: const MarkerId('4'),
-                          position: LatLng(
-                            _kMapCenter.latitude + 1,
-                            _kMapCenter.longitude - 1,
-                          ),
+                          position: LatLng(_kMapCenter.latitude + 1, _kMapCenter.longitude - 1),
                           icon: BitmapDescriptor.pinConfig(
                             borderColor: Colors.red,
                             backgroundColor: Colors.white,
@@ -133,10 +113,7 @@ class _AdvancedMarkerIconsBodyState extends State<_AdvancedMarkerIconsBody> {
                         // Custom marker icon
                         AdvancedMarker(
                           markerId: const MarkerId('5'),
-                          position: LatLng(
-                            _kMapCenter.latitude,
-                            _kMapCenter.longitude,
-                          ),
+                          position: LatLng(_kMapCenter.latitude, _kMapCenter.longitude),
                           icon: largeAsset,
                         ),
                       ]);

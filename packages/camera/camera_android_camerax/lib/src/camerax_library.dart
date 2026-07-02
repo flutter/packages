@@ -166,10 +166,7 @@ class LiveData<T> extends camerax.LiveData {
   @override
   // ignore: non_constant_identifier_names
   LiveData<T> pigeon_copy() {
-    return LiveData<T>.detached(
-      type: type,
-      pigeon_binaryMessenger: pigeon_binaryMessenger,
-    );
+    return LiveData<T>.detached(type: type, pigeon_binaryMessenger: pigeon_binaryMessenger);
   }
 }
 
@@ -185,10 +182,7 @@ class Observer<T> extends camerax.Observer {
     if (GenericsPigeonOverrides.observerNew != null) {
       return GenericsPigeonOverrides.observerNew!(onChanged: onChanged);
     }
-    return Observer<T>.pigeonNew(
-      pigeon_binaryMessenger: binaryMessenger,
-      onChanged: onChanged,
-    );
+    return Observer<T>.pigeonNew(pigeon_binaryMessenger: binaryMessenger, onChanged: onChanged);
   }
 
   /// Constructs an [Observer].

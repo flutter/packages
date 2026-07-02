@@ -78,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final message = MessageData(
       code: Code.one,
       data: <String, String>{'header': 'this is a header'},
-      description: 'uri text',
+      messageDescription: 'uri text',
     );
     try {
       return _api.sendMessage(message);
@@ -140,14 +140,13 @@ class _MyHomePageState extends State<MyHomePage> {
             if (Platform.isAndroid || Platform.isIOS)
               StreamBuilder<String>(
                 stream: getEventStream(),
-                builder:
-                    (BuildContext context, AsyncSnapshot<String> snapshot) {
-                      if (snapshot.hasData) {
-                        return Text(snapshot.data ?? '');
-                      } else {
-                        return const CircularProgressIndicator();
-                      }
-                    },
+                builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                  if (snapshot.hasData) {
+                    return Text(snapshot.data ?? '');
+                  } else {
+                    return const CircularProgressIndicator();
+                  }
+                },
               )
             else
               const Text('event channels are not supported on this platform'),

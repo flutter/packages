@@ -3,19 +3,12 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'package:flutter/widgets.dart'
-    show Directionality, SizedBox, TextDirection;
+import 'package:flutter/widgets.dart' show Directionality, SizedBox, TextDirection;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps/google_maps.dart' as gmaps;
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart'
-    show
-        CameraPosition,
-        LatLng,
-        MapConfiguration,
-        MapEvent,
-        MapWidgetConfiguration;
-import 'package:google_maps_flutter_web/google_maps_flutter_web.dart'
-    show GoogleMapController;
+    show CameraPosition, LatLng, MapConfiguration, MapEvent, MapWidgetConfiguration;
+import 'package:google_maps_flutter_web/google_maps_flutter_web.dart' show GoogleMapController;
 import 'package:integration_test/integration_test.dart';
 
 void main() {
@@ -26,9 +19,7 @@ void main() {
     textDirection: TextDirection.ltr,
   );
 
-  testWidgets('cloud mapId present => mapId set & styles omitted', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('cloud mapId present => mapId set & styles omitted', (WidgetTester tester) async {
     const testMapConfig = MapConfiguration(mapId: 'test-cloud-map-id');
 
     await tester.pumpWidget(
@@ -125,9 +116,7 @@ void main() {
     controller.dispose();
   });
 
-  testWidgets('empty cloud mapId is treated as no mapId', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('empty cloud mapId is treated as no mapId', (WidgetTester tester) async {
     await tester.pumpWidget(
       const Directionality(textDirection: TextDirection.ltr, child: SizedBox()),
     );

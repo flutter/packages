@@ -25,10 +25,7 @@ import 'package:yaml/yaml.dart';
 /// tests using `flutter test`. This should not be called when running a test
 /// using `flutter run`, as in that environment, the [goldenFileComparator] is a
 /// [TrivialComparator].
-Future<void> testExecutable(
-  FutureOr<void> Function() testMain, {
-  String? namePrefix,
-}) async {
+Future<void> testExecutable(FutureOr<void> Function() testMain, {String? namePrefix}) async {
   assert(
     goldenFileComparator is LocalFileComparator,
     'The flutter_goldens package should be used from a flutter_test_config.dart '
@@ -64,11 +61,7 @@ abstract class FlutterGoldenFileComparator extends GoldenFileComparator {
   /// [basedir] will also contain any diffs from failed tests, or goldens
   /// generated from newly introduced tests.
   @visibleForTesting
-  FlutterGoldenFileComparator(
-    this.basedir, {
-    required this.fs,
-    this.namePrefix,
-  });
+  FlutterGoldenFileComparator(this.basedir, {required this.fs, this.namePrefix});
 
   /// The directory to which golden file URIs will be resolved in [compare] and
   /// [update].
@@ -100,9 +93,7 @@ abstract class FlutterGoldenFileComparator extends GoldenFileComparator {
   }) {
     final Directory comparisonRoot = switch (suffix) {
       null =>
-        fs
-            .directory(fs.path.fromUri(defaultComparator.basedir))
-            .childDirectory('skia_goldens'),
+        fs.directory(fs.path.fromUri(defaultComparator.basedir)).childDirectory('skia_goldens'),
       _ => fs.systemTempDirectory.createTempSync(suffix),
     };
     return comparisonRoot;
@@ -111,9 +102,7 @@ abstract class FlutterGoldenFileComparator extends GoldenFileComparator {
   /// Returns the golden [File] identified by the given [Uri].
   @protected
   File getGoldenFile(Uri uri) {
-    final File goldenFile = fs
-        .directory(fs.path.fromUri(basedir))
-        .childFile(fs.path.fromUri(uri));
+    final File goldenFile = fs.directory(fs.path.fromUri(basedir)).childFile(fs.path.fromUri(uri));
 
     return goldenFile;
   }
@@ -145,12 +134,7 @@ abstract class FlutterGoldenFileComparator extends GoldenFileComparator {
 class FlutterSkippingFileComparator extends FlutterGoldenFileComparator {
   /// Creates a [FlutterSkippingFileComparator] that will skip tests that
   /// are not in the right environment for golden file testing.
-  FlutterSkippingFileComparator(
-    super.basedir,
-    this.reason, {
-    super.namePrefix,
-    required super.fs,
-  });
+  FlutterSkippingFileComparator(super.basedir, this.reason, {super.namePrefix, required super.fs});
 
   /// Describes the reason for using the [FlutterSkippingFileComparator].
   final String reason;
@@ -164,12 +148,7 @@ class FlutterSkippingFileComparator extends FlutterGoldenFileComparator {
     required FileSystem fs,
   }) {
     final Uri basedir = localFileComparator.basedir;
-    return FlutterSkippingFileComparator(
-      basedir,
-      reason,
-      namePrefix: namePrefix,
-      fs: fs,
-    );
+    return FlutterSkippingFileComparator(basedir, reason, namePrefix: namePrefix, fs: fs);
   }
 
   @override

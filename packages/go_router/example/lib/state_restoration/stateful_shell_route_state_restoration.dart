@@ -24,11 +24,7 @@ class _AppState extends State<App> {
       StatefulShellRoute.indexedStack(
         restorationScopeId: 'appShell',
         pageBuilder:
-            (
-              BuildContext context,
-              GoRouterState state,
-              StatefulNavigationShell navigationShell,
-            ) {
+            (BuildContext context, GoRouterState state, StatefulNavigationShell navigationShell) {
               return MaterialPage<void>(
                 restorationId: 'appShellPage',
                 child: AppShell(navigationShell: navigationShell),
@@ -89,10 +85,7 @@ class AppShell extends StatelessWidget {
         },
         destinations: const <NavigationDestination>[
           NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
-          NavigationDestination(
-            icon: Icon(Icons.account_circle),
-            label: 'Profile',
-          ),
+          NavigationDestination(icon: Icon(Icons.account_circle), label: 'Profile'),
         ],
       ),
     );

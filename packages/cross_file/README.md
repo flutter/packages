@@ -10,20 +10,25 @@ access the file and its metadata.
 
 Example:
 
-<?code-excerpt "example/lib/readme_excerpts.dart (Instantiate)"?>
+<?code-excerpt "example/lib/main.dart (Instantiate)"?>
 ```dart
 final file = XFile('assets/hello.txt');
 
-print('File information:');
+print('XFile from disk:');
 print('- Path: ${file.path}');
 print('- Name: ${file.name}');
-print('- MIME type: ${file.mimeType}');
-
-final String fileContent = await file.readAsString();
-print('Content of the file: $fileContent');
+print('- Length: ${await file.length()} bytes');
+print('- Content: ${await file.readAsString()}');
 ```
 
 You will find links to the API docs on the [pub page](https://pub.dev/packages/cross_file).
+
+## MIME types
+
+On web, `mimeType` reflects browser-provided file metadata when available.
+Native implementations do not infer MIME types from file paths or contents.
+On native platforms, `mimeType` returns the value explicitly passed to the
+`XFile` constructor or `XFile.fromData`, if any.
 
 ## Web Limitations
 

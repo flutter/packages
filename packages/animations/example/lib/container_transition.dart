@@ -49,15 +49,12 @@ class OpenContainerTransformDemo extends StatefulWidget {
   }
 }
 
-class _OpenContainerTransformDemoState
-    extends State<OpenContainerTransformDemo> {
+class _OpenContainerTransformDemoState extends State<OpenContainerTransformDemo> {
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
 
   void _showMarkedAsDoneSnackbar(bool? isMarkedAsDone) {
     if (isMarkedAsDone ?? false) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Marked as done!')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Marked as done!')));
     }
   }
 
@@ -73,10 +70,7 @@ class _OpenContainerTransformDemoState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(
-                    'Fade mode',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
+                  Text('Fade mode', style: Theme.of(context).textTheme.bodySmall),
                   const SizedBox(height: 12),
                   ToggleButtons(
                     borderRadius: BorderRadius.circular(2.0),
@@ -152,10 +146,7 @@ class _OpenContainerTransformDemoState
                 child: _OpenContainerWrapper(
                   transitionType: _transitionType,
                   closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                    return _SmallerCard(
-                      openContainer: openContainer,
-                      subtitle: 'Secondary text',
-                    );
+                    return _SmallerCard(openContainer: openContainer, subtitle: 'Secondary text');
                   },
                   onClosed: _showMarkedAsDoneSnackbar,
                 ),
@@ -165,10 +156,7 @@ class _OpenContainerTransformDemoState
                 child: _OpenContainerWrapper(
                   transitionType: _transitionType,
                   closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                    return _SmallerCard(
-                      openContainer: openContainer,
-                      subtitle: 'Secondary text',
-                    );
+                    return _SmallerCard(openContainer: openContainer, subtitle: 'Secondary text');
                   },
                   onClosed: _showMarkedAsDoneSnackbar,
                 ),
@@ -182,10 +170,7 @@ class _OpenContainerTransformDemoState
                 child: _OpenContainerWrapper(
                   transitionType: _transitionType,
                   closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                    return _SmallerCard(
-                      openContainer: openContainer,
-                      subtitle: 'Secondary',
-                    );
+                    return _SmallerCard(openContainer: openContainer, subtitle: 'Secondary');
                   },
                   onClosed: _showMarkedAsDoneSnackbar,
                 ),
@@ -195,10 +180,7 @@ class _OpenContainerTransformDemoState
                 child: _OpenContainerWrapper(
                   transitionType: _transitionType,
                   closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                    return _SmallerCard(
-                      openContainer: openContainer,
-                      subtitle: 'Secondary',
-                    );
+                    return _SmallerCard(openContainer: openContainer, subtitle: 'Secondary');
                   },
                   onClosed: _showMarkedAsDoneSnackbar,
                 ),
@@ -208,10 +190,7 @@ class _OpenContainerTransformDemoState
                 child: _OpenContainerWrapper(
                   transitionType: _transitionType,
                   closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                    return _SmallerCard(
-                      openContainer: openContainer,
-                      subtitle: 'Secondary',
-                    );
+                    return _SmallerCard(openContainer: openContainer, subtitle: 'Secondary');
                   },
                   onClosed: _showMarkedAsDoneSnackbar,
                 ),
@@ -255,12 +234,7 @@ class _OpenContainerTransformDemoState
           return SizedBox(
             height: _fabDimension,
             width: _fabDimension,
-            child: Center(
-              child: Icon(
-                Icons.add,
-                color: Theme.of(context).colorScheme.onSecondary,
-              ),
-            ),
+            child: Center(child: Icon(Icons.add, color: Theme.of(context).colorScheme.onSecondary)),
           );
         },
       ),
@@ -309,27 +283,16 @@ class _ExampleCard extends StatelessWidget {
           Expanded(
             child: ColoredBox(
               color: Colors.black38,
-              child: Center(
-                child: Image.asset('assets/placeholder_image.png', width: 100),
-              ),
+              child: Center(child: Image.asset('assets/placeholder_image.png', width: 100)),
             ),
           ),
-          const ListTile(
-            title: Text('Title'),
-            subtitle: Text('Secondary text'),
-          ),
+          const ListTile(title: Text('Title'), subtitle: Text('Secondary text')),
           Padding(
-            padding: const EdgeInsets.only(
-              left: 16.0,
-              right: 16.0,
-              bottom: 16.0,
-            ),
+            padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
             child: Text(
               'Lorem ipsum dolor sit amet, consectetur '
               'adipiscing elit, sed do eiusmod tempor.',
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium!.copyWith(color: Colors.black54),
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.black54),
             ),
           ),
         ],
@@ -355,9 +318,7 @@ class _SmallerCard extends StatelessWidget {
           Container(
             color: Colors.black38,
             height: 150,
-            child: Center(
-              child: Image.asset('assets/placeholder_image.png', width: 80),
-            ),
+            child: Center(child: Image.asset('assets/placeholder_image.png', width: 80)),
           ),
           Expanded(
             child: Padding(
@@ -397,9 +358,7 @@ class _ExampleSingleTile extends StatelessWidget {
             color: Colors.black38,
             height: height,
             width: height,
-            child: Center(
-              child: Image.asset('assets/placeholder_image.png', width: 60),
-            ),
+            child: Center(child: Image.asset('assets/placeholder_image.png', width: 60)),
           ),
           Expanded(
             child: Padding(
@@ -425,12 +384,7 @@ class _ExampleSingleTile extends StatelessWidget {
 }
 
 class _InkWellOverlay extends StatelessWidget {
-  const _InkWellOverlay({
-    this.openContainer,
-    this.height,
-    this.constraints,
-    this.child,
-  });
+  const _InkWellOverlay({this.openContainer, this.height, this.constraints, this.child});
 
   final VoidCallback? openContainer;
   final double? height;
@@ -461,11 +415,7 @@ class _CustomShadowExampleCard extends StatelessWidget {
       },
       closedElevation: 0.0,
       closedShadows: const <BoxShadow>[
-        BoxShadow(
-          color: Colors.blue,
-          blurRadius: 15.0,
-          offset: Offset(0.0, 5.0),
-        ),
+        BoxShadow(color: Colors.blue, blurRadius: 15.0, offset: Offset(0.0, 5.0)),
       ],
       openShadows: const <BoxShadow>[
         BoxShadow(
@@ -528,10 +478,9 @@ class _DetailsPage extends StatelessWidget {
               children: <Widget>[
                 Text(
                   'Title',
-                  style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                    color: Colors.black54,
-                    fontSize: 30.0,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.headlineSmall!.copyWith(color: Colors.black54, fontSize: 30.0),
                 ),
                 const SizedBox(height: 10),
                 Text(

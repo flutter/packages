@@ -100,66 +100,42 @@ void main() {
 
       test('rgb(256.9, 0, 256) clamps RGB to 255', () {
         expect(
-          parser.parseColor(
-            'rgb(256.9, 0, 256)',
-            attributeName: 'foo',
-            id: null,
-          ),
+          parser.parseColor('rgb(256.9, 0, 256)', attributeName: 'foo', id: null),
           const Color.fromARGB(255, 255, 0, 255),
         );
       });
 
       test('rgb(-50, 300, -100) clamps negative to 0 and >255 to 255', () {
         expect(
-          parser.parseColor(
-            'rgb(-50, 300, -100)',
-            attributeName: 'foo',
-            id: null,
-          ),
+          parser.parseColor('rgb(-50, 300, -100)', attributeName: 'foo', id: null),
           const Color.fromARGB(255, 0, 255, 0),
         );
       });
 
       test('rgb(120%, -10%, 200%) clamps percentages', () {
         expect(
-          parser.parseColor(
-            'rgb(120%, -10%, 200%)',
-            attributeName: 'foo',
-            id: null,
-          ),
+          parser.parseColor('rgb(120%, -10%, 200%)', attributeName: 'foo', id: null),
           const Color.fromARGB(255, 255, 0, 255),
         );
       });
 
       test('rgb(255, 0, 255, -0.5) negative alpha clamps to 0', () {
         expect(
-          parser.parseColor(
-            'rgb(255, 0, 255, -0.5)',
-            attributeName: 'foo',
-            id: null,
-          ),
+          parser.parseColor('rgb(255, 0, 255, -0.5)', attributeName: 'foo', id: null),
           const Color.fromARGB(0, 255, 0, 255),
         );
       });
 
       test('rgb(128, 128, 128, 2.5) alpha > 1 clamps to 1', () {
         expect(
-          parser.parseColor(
-            'rgb(128, 128, 128, 2.5)',
-            attributeName: 'foo',
-            id: null,
-          ),
+          parser.parseColor('rgb(128, 128, 128, 2.5)', attributeName: 'foo', id: null),
           const Color.fromARGB(255, 128, 128, 128),
         );
       });
 
       test('rgb(999 -50 300 / 150%) clamps all values', () {
         expect(
-          parser.parseColor(
-            'rgb(999 -50 300 / 150%)',
-            attributeName: 'foo',
-            id: null,
-          ),
+          parser.parseColor('rgb(999 -50 300 / 150%)', attributeName: 'foo', id: null),
           const Color.fromARGB(255, 255, 0, 255),
         );
       });
@@ -224,204 +200,120 @@ void main() {
 
     test('hsl with integer percentages', () {
       expect(
-        parser.parseColor(
-          'hsl(270, 100%, 76%)',
-          attributeName: 'fill',
-          id: null,
-        ),
+        parser.parseColor('hsl(270, 100%, 76%)', attributeName: 'fill', id: null),
         const Color.fromARGB(255, 194, 133, 255),
       );
     });
 
     test('hsl with decimal lightness percentage (issue #185833)', () {
       expect(
-        parser.parseColor(
-          'hsl(270, 100%, 76.2745098039%)',
-          attributeName: 'fill',
-          id: null,
-        ),
+        parser.parseColor('hsl(270, 100%, 76.2745098039%)', attributeName: 'fill', id: null),
         const Color.fromARGB(255, 194, 134, 255),
       );
     });
 
     test('hsl with modern space-separated syntax', () {
       expect(
-        parser.parseColor(
-          'hsl(270 100% 76.2745098039%)',
-          attributeName: 'fill',
-          id: null,
-        ),
+        parser.parseColor('hsl(270 100% 76.2745098039%)', attributeName: 'fill', id: null),
         const Color.fromARGB(255, 194, 134, 255),
       );
     });
 
     test('hsla with modern space-separated syntax and decimal alpha', () {
       expect(
-        parser.parseColor(
-          'hsla(270 100% 76.2745098039% / 0.5)',
-          attributeName: 'fill',
-          id: null,
-        ),
+        parser.parseColor('hsla(270 100% 76.2745098039% / 0.5)', attributeName: 'fill', id: null),
         const Color.fromARGB(128, 194, 134, 255),
       );
     });
 
     test('hsla with modern space-separated syntax and percentage alpha', () {
       expect(
-        parser.parseColor(
-          'hsla(270 100% 76.2745098039% / 50%)',
-          attributeName: 'fill',
-          id: null,
-        ),
+        parser.parseColor('hsla(270 100% 76.2745098039% / 50%)', attributeName: 'fill', id: null),
         const Color.fromARGB(128, 194, 134, 255),
       );
     });
 
     test('hsla with integer percentages and decimal alpha', () {
       expect(
-        parser.parseColor(
-          'hsla(270, 100%, 76%, 0.5)',
-          attributeName: 'fill',
-          id: null,
-        ),
+        parser.parseColor('hsla(270, 100%, 76%, 0.5)', attributeName: 'fill', id: null),
         const Color.fromARGB(128, 194, 133, 255),
       );
     });
 
     test('hsla with integer percentages and alpha 1', () {
       expect(
-        parser.parseColor(
-          'hsla(270, 100%, 76%, 1)',
-          attributeName: 'fill',
-          id: null,
-        ),
+        parser.parseColor('hsla(270, 100%, 76%, 1)', attributeName: 'fill', id: null),
         const Color.fromARGB(255, 194, 133, 255),
       );
     });
 
     test('hsla with decimal lightness percentage and decimal alpha', () {
       expect(
-        parser.parseColor(
-          'hsla(270, 100%, 76.2745098039%, 0.5)',
-          attributeName: 'fill',
-          id: null,
-        ),
+        parser.parseColor('hsla(270, 100%, 76.2745098039%, 0.5)', attributeName: 'fill', id: null),
         const Color.fromARGB(128, 194, 134, 255),
       );
     });
 
     test('hsl saturation and lightness clamp to percentages', () {
       expect(
-        parser.parseColor(
-          'hsl(270, 150%, 76%)',
-          attributeName: 'fill',
-          id: null,
-        ),
+        parser.parseColor('hsl(270, 150%, 76%)', attributeName: 'fill', id: null),
         const Color.fromARGB(255, 194, 133, 255),
       );
       expect(
-        parser.parseColor(
-          'hsl(270, -10%, 76%)',
-          attributeName: 'fill',
-          id: null,
-        ),
+        parser.parseColor('hsl(270, -10%, 76%)', attributeName: 'fill', id: null),
         const Color.fromARGB(255, 194, 194, 194),
       );
       expect(
-        parser.parseColor(
-          'hsl(270, 100%, -10%)',
-          attributeName: 'fill',
-          id: null,
-        ),
+        parser.parseColor('hsl(270, 100%, -10%)', attributeName: 'fill', id: null),
         Color.opaqueBlack,
       );
       expect(
-        parser.parseColor(
-          'hsl(270, 100%, 150%)',
-          attributeName: 'fill',
-          id: null,
-        ),
+        parser.parseColor('hsl(270, 100%, 150%)', attributeName: 'fill', id: null),
         const Color.fromARGB(255, 255, 255, 255),
       );
     });
 
     test('hsla alpha accepts boundary values', () {
       expect(
-        parser.parseColor(
-          'hsla(270, 100%, 76%, 0)',
-          attributeName: 'fill',
-          id: null,
-        ),
+        parser.parseColor('hsla(270, 100%, 76%, 0)', attributeName: 'fill', id: null),
         const Color.fromARGB(0, 194, 133, 255),
       );
       expect(
-        parser.parseColor(
-          'hsla(270, 100%, 76%, 0%)',
-          attributeName: 'fill',
-          id: null,
-        ),
+        parser.parseColor('hsla(270, 100%, 76%, 0%)', attributeName: 'fill', id: null),
         const Color.fromARGB(0, 194, 133, 255),
       );
       expect(
-        parser.parseColor(
-          'hsla(270, 100%, 76%, 1)',
-          attributeName: 'fill',
-          id: null,
-        ),
+        parser.parseColor('hsla(270, 100%, 76%, 1)', attributeName: 'fill', id: null),
         const Color.fromARGB(255, 194, 133, 255),
       );
       expect(
-        parser.parseColor(
-          'hsla(270, 100%, 76%, 100%)',
-          attributeName: 'fill',
-          id: null,
-        ),
+        parser.parseColor('hsla(270, 100%, 76%, 100%)', attributeName: 'fill', id: null),
         const Color.fromARGB(255, 194, 133, 255),
       );
       expect(
-        parser.parseColor(
-          'hsla(270, 100%, 76%, 50%)',
-          attributeName: 'fill',
-          id: null,
-        ),
+        parser.parseColor('hsla(270, 100%, 76%, 50%)', attributeName: 'fill', id: null),
         const Color.fromARGB(128, 194, 133, 255),
       );
     });
 
     test('hsla alpha clamps to 0', () {
       expect(
-        parser.parseColor(
-          'hsla(270, 100%, 76%, -0.5)',
-          attributeName: 'fill',
-          id: null,
-        ),
+        parser.parseColor('hsla(270, 100%, 76%, -0.5)', attributeName: 'fill', id: null),
         const Color.fromARGB(0, 194, 133, 255),
       );
       expect(
-        parser.parseColor(
-          'hsla(270, 100%, 76%, -10%)',
-          attributeName: 'fill',
-          id: null,
-        ),
+        parser.parseColor('hsla(270, 100%, 76%, -10%)', attributeName: 'fill', id: null),
         const Color.fromARGB(0, 194, 133, 255),
       );
     });
 
     test('hsla alpha clamps to 255', () {
       expect(
-        parser.parseColor(
-          'hsla(270, 100%, 76%, 2)',
-          attributeName: 'fill',
-          id: null,
-        ),
+        parser.parseColor('hsla(270, 100%, 76%, 2)', attributeName: 'fill', id: null),
         const Color.fromARGB(255, 194, 133, 255),
       );
       expect(
-        parser.parseColor(
-          'hsla(270, 100%, 76%, 150%)',
-          attributeName: 'fill',
-          id: null,
-        ),
+        parser.parseColor('hsla(270, 100%, 76%, 150%)', attributeName: 'fill', id: null),
         const Color.fromARGB(255, 194, 133, 255),
       );
     });
@@ -443,10 +335,7 @@ void main() {
     final VectorInstructions instructions = parser.parse();
 
     // TestMapper just always returns this color.
-    expect(
-      instructions.paints.single.fill!.color,
-      const Color.fromARGB(255, 255, 0, 255),
-    );
+    expect(instructions.paints.single.fill!.color, const Color.fromARGB(255, 255, 0, 255));
 
     // TestMapper should have gotten the ID/element name/attribute name from the rect.
     expect(mapper.lastId, 'rect1');
@@ -479,10 +368,7 @@ void main() {
     final AffineMatrix expected = AffineMatrix.identity
         .translated(0.338957, 0.010104)
         .scaled(0.869768, 1.000000);
-    expect(
-      parseTransform('translate(0.338957,0.010104),scale(0.869768,1.000000)'),
-      expected,
-    );
+    expect(parseTransform('translate(0.338957,0.010104),scale(0.869768,1.000000)'), expected);
   });
 
   test('SVG Transform parser tests', () {
@@ -491,37 +377,19 @@ void main() {
 
     expect(parseTransform('skewX(60)'), AffineMatrix.identity.xSkewed(60.0));
     expect(parseTransform('skewY(60)'), AffineMatrix.identity.ySkewed(60.0));
-    expect(
-      parseTransform('translate(10,0.0)'),
-      AffineMatrix.identity.translated(10.0, 0.0),
-    );
+    expect(parseTransform('translate(10,0.0)'), AffineMatrix.identity.translated(10.0, 0.0));
 
-    expect(
-      parseTransform('scale(10)'),
-      AffineMatrix.identity.scaled(10.0, 10.0),
-    );
-    expect(
-      parseTransform('scale(10, 15)'),
-      AffineMatrix.identity.scaled(10.0, 15.0),
-    );
+    expect(parseTransform('scale(10)'), AffineMatrix.identity.scaled(10.0, 10.0));
+    expect(parseTransform('scale(10, 15)'), AffineMatrix.identity.scaled(10.0, 15.0));
 
-    expect(
-      parseTransform('rotate(20)'),
-      AffineMatrix.identity.rotated(radians(20.0)),
-    );
+    expect(parseTransform('rotate(20)'), AffineMatrix.identity.rotated(radians(20.0)));
     expect(
       parseTransform('rotate(20, 30)'),
-      AffineMatrix.identity
-          .translated(30.0, 30.0)
-          .rotated(radians(20.0))
-          .translated(-30.0, -30.0),
+      AffineMatrix.identity.translated(30.0, 30.0).rotated(radians(20.0)).translated(-30.0, -30.0),
     );
     expect(
       parseTransform('rotate(20, 30, 40)'),
-      AffineMatrix.identity
-          .translated(30.0, 40.0)
-          .rotated(radians(20.0))
-          .translated(-30.0, -40.0),
+      AffineMatrix.identity.translated(30.0, 40.0).rotated(radians(20.0)).translated(-30.0, -40.0),
     );
 
     expect(
@@ -557,19 +425,10 @@ void main() {
       transform: AffineMatrix.identity,
     );
     expect(parsePatternUnitToDouble('25.0', 'width'), 25.0);
-    expect(
-      parsePatternUnitToDouble('0.25', 'width', viewBox: viewportNode),
-      25.0,
-    );
-    expect(
-      parsePatternUnitToDouble('25%', 'width', viewBox: viewportNode),
-      25.0,
-    );
+    expect(parsePatternUnitToDouble('0.25', 'width', viewBox: viewportNode), 25.0);
+    expect(parsePatternUnitToDouble('25%', 'width', viewBox: viewportNode), 25.0);
     expect(parsePatternUnitToDouble('25', 'width'), 25.0);
-    expect(
-      parsePatternUnitToDouble('0.1%', 'height', viewBox: viewportNode),
-      1.0,
-    );
+    expect(parsePatternUnitToDouble('0.1%', 'height', viewBox: viewportNode), 1.0);
   });
 
   test('Point conversion', () {
@@ -589,10 +448,7 @@ void main() {
   });
 
   test('Parse a transform with a missing space', () {
-    expect(
-      parseTransform('translate(0-70)'),
-      AffineMatrix.identity.translated(0, -70),
-    );
+    expect(parseTransform('translate(0-70)'), AffineMatrix.identity.translated(0, -70));
   });
 
   test('Parse a transform with doubled periods', () {
@@ -618,12 +474,7 @@ class TestColorMapper extends ColorMapper {
   late Color lastColor;
 
   @override
-  Color substitute(
-    String? id,
-    String elementName,
-    String attributeName,
-    Color color,
-  ) {
+  Color substitute(String? id, String elementName, String attributeName, Color color) {
     lastId = id;
     lastElementName = elementName;
     lastAttributeName = attributeName;

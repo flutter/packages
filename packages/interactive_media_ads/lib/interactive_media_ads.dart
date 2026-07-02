@@ -8,8 +8,7 @@ export 'src/ads_loader.dart';
 export 'src/ads_manager_delegate.dart';
 export 'src/ads_rendering_settings.dart';
 export 'src/ads_request.dart';
-export 'src/android/android_interactive_media_ads.dart'
-    show AndroidInteractiveMediaAds;
+export 'src/android/android_interactive_media_ads.dart' show AndroidInteractiveMediaAds;
 export 'src/companion_ad_slot.dart';
 export 'src/content_progress_provider.dart';
 export 'src/ima_settings.dart';

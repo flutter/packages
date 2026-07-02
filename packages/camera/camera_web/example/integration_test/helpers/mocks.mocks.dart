@@ -7,8 +7,7 @@ import 'dart:async' as _i5;
 import 'dart:js_interop' as _i13;
 import 'dart:ui' as _i4;
 
-import 'package:camera_platform_interface/camera_platform_interface.dart'
-    as _i7;
+import 'package:camera_platform_interface/camera_platform_interface.dart' as _i7;
 import 'package:camera_web/src/camera.dart' as _i10;
 import 'package:camera_web/src/camera_service.dart' as _i8;
 import 'package:camera_web/src/shims/dart_js_util.dart' as _i2;
@@ -35,19 +34,16 @@ import 'mocks.dart' as _i9;
 // ignore_for_file: subtype_of_sealed_class
 
 class _FakeJsUtil_0 extends _i1.SmartFake implements _i2.JsUtil {
-  _FakeJsUtil_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakeJsUtil_0(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
 }
 
-class _FakeZoomLevelCapability_1 extends _i1.SmartFake
-    implements _i3.ZoomLevelCapability {
+class _FakeZoomLevelCapability_1 extends _i1.SmartFake implements _i3.ZoomLevelCapability {
   _FakeZoomLevelCapability_1(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
 class _FakeSize_2 extends _i1.SmartFake implements _i4.Size {
-  _FakeSize_2(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakeSize_2(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
 }
 
 class _FakeCameraOptions_3 extends _i1.SmartFake implements _i3.CameraOptions {
@@ -55,8 +51,7 @@ class _FakeCameraOptions_3 extends _i1.SmartFake implements _i3.CameraOptions {
     : super(parent, parentInvocation);
 }
 
-class _FakeStreamController_4<T> extends _i1.SmartFake
-    implements _i5.StreamController<T> {
+class _FakeStreamController_4<T> extends _i1.SmartFake implements _i5.StreamController<T> {
   _FakeStreamController_4(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -68,18 +63,15 @@ class _FakeEventStreamProvider_5<T extends _i6.Event> extends _i1.SmartFake
 }
 
 class _FakeXFile_6 extends _i1.SmartFake implements _i7.XFile {
-  _FakeXFile_6(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakeXFile_6(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
 }
 
-class _FakeAudioConstraints_7 extends _i1.SmartFake
-    implements _i3.AudioConstraints {
+class _FakeAudioConstraints_7 extends _i1.SmartFake implements _i3.AudioConstraints {
   _FakeAudioConstraints_7(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeVideoConstraints_8 extends _i1.SmartFake
-    implements _i3.VideoConstraints {
+class _FakeVideoConstraints_8 extends _i1.SmartFake implements _i3.VideoConstraints {
   _FakeVideoConstraints_8(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -98,28 +90,21 @@ class MockCameraService extends _i1.Mock implements _i8.CameraService {
           as _i6.Window);
 
   @override
-  set window(_i6.Window? _window) => super.noSuchMethod(
-    Invocation.setter(#window, _window),
-    returnValueForMissingStub: null,
-  );
+  set window(_i6.Window? _window) =>
+      super.noSuchMethod(Invocation.setter(#window, _window), returnValueForMissingStub: null);
 
   @override
   _i2.JsUtil get jsUtil =>
       (super.noSuchMethod(
             Invocation.getter(#jsUtil),
             returnValue: _FakeJsUtil_0(this, Invocation.getter(#jsUtil)),
-            returnValueForMissingStub: _FakeJsUtil_0(
-              this,
-              Invocation.getter(#jsUtil),
-            ),
+            returnValueForMissingStub: _FakeJsUtil_0(this, Invocation.getter(#jsUtil)),
           )
           as _i2.JsUtil);
 
   @override
-  set jsUtil(_i2.JsUtil? _jsUtil) => super.noSuchMethod(
-    Invocation.setter(#jsUtil, _jsUtil),
-    returnValueForMissingStub: null,
-  );
+  set jsUtil(_i2.JsUtil? _jsUtil) =>
+      super.noSuchMethod(Invocation.setter(#jsUtil, _jsUtil), returnValueForMissingStub: null);
 
   @override
   _i5.Future<_i6.MediaStream> getMediaStreamForOptions(
@@ -127,15 +112,8 @@ class MockCameraService extends _i1.Mock implements _i8.CameraService {
     int? cameraId = 0,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(
-              #getMediaStreamForOptions,
-              [options],
-              {#cameraId: cameraId},
-            ),
-            returnValue: _i9.getMediaStreamForOptionsShim(
-              options,
-              cameraId: cameraId,
-            ),
+            Invocation.method(#getMediaStreamForOptions, [options], {#cameraId: cameraId}),
+            returnValue: _i9.getMediaStreamForOptionsShim(options, cameraId: cameraId),
             returnValueForMissingStub: _i9.getMediaStreamForOptionsShim(
               options,
               cameraId: cameraId,
@@ -144,9 +122,7 @@ class MockCameraService extends _i1.Mock implements _i8.CameraService {
           as _i5.Future<_i6.MediaStream>);
 
   @override
-  _i3.ZoomLevelCapability getZoomLevelCapabilityForCamera(
-    _i10.Camera? camera,
-  ) =>
+  _i3.ZoomLevelCapability getZoomLevelCapabilityForCamera(_i10.Camera? camera) =>
       (super.noSuchMethod(
             Invocation.method(#getZoomLevelCapabilityForCamera, [camera]),
             returnValue: _FakeZoomLevelCapability_1(
@@ -202,62 +178,42 @@ class MockCameraService extends _i1.Mock implements _i8.CameraService {
           as _i4.Size);
 
   @override
-  int mapResolutionPresetToVideoBitrate(
-    _i7.ResolutionPreset? resolutionPreset,
-  ) =>
+  int mapResolutionPresetToVideoBitrate(_i7.ResolutionPreset? resolutionPreset) =>
       (super.noSuchMethod(
-            Invocation.method(#mapResolutionPresetToVideoBitrate, [
-              resolutionPreset,
-            ]),
+            Invocation.method(#mapResolutionPresetToVideoBitrate, [resolutionPreset]),
             returnValue: 0,
             returnValueForMissingStub: 0,
           )
           as int);
 
   @override
-  int mapResolutionPresetToAudioBitrate(
-    _i7.ResolutionPreset? resolutionPreset,
-  ) =>
+  int mapResolutionPresetToAudioBitrate(_i7.ResolutionPreset? resolutionPreset) =>
       (super.noSuchMethod(
-            Invocation.method(#mapResolutionPresetToAudioBitrate, [
-              resolutionPreset,
-            ]),
+            Invocation.method(#mapResolutionPresetToAudioBitrate, [resolutionPreset]),
             returnValue: 0,
             returnValueForMissingStub: 0,
           )
           as int);
 
   @override
-  String mapDeviceOrientationToOrientationType(
-    _i11.DeviceOrientation? deviceOrientation,
-  ) =>
+  String mapDeviceOrientationToOrientationType(_i11.DeviceOrientation? deviceOrientation) =>
       (super.noSuchMethod(
-            Invocation.method(#mapDeviceOrientationToOrientationType, [
-              deviceOrientation,
-            ]),
+            Invocation.method(#mapDeviceOrientationToOrientationType, [deviceOrientation]),
             returnValue: _i12.dummyValue<String>(
               this,
-              Invocation.method(#mapDeviceOrientationToOrientationType, [
-                deviceOrientation,
-              ]),
+              Invocation.method(#mapDeviceOrientationToOrientationType, [deviceOrientation]),
             ),
             returnValueForMissingStub: _i12.dummyValue<String>(
               this,
-              Invocation.method(#mapDeviceOrientationToOrientationType, [
-                deviceOrientation,
-              ]),
+              Invocation.method(#mapDeviceOrientationToOrientationType, [deviceOrientation]),
             ),
           )
           as String);
 
   @override
-  _i11.DeviceOrientation mapOrientationTypeToDeviceOrientation(
-    String? orientationType,
-  ) =>
+  _i11.DeviceOrientation mapOrientationTypeToDeviceOrientation(String? orientationType) =>
       (super.noSuchMethod(
-            Invocation.method(#mapOrientationTypeToDeviceOrientation, [
-              orientationType,
-            ]),
+            Invocation.method(#mapOrientationTypeToDeviceOrientation, [orientationType]),
             returnValue: _i11.DeviceOrientation.portraitUp,
             returnValueForMissingStub: _i11.DeviceOrientation.portraitUp,
           )
@@ -303,14 +259,8 @@ class MockCamera extends _i1.Mock implements _i10.Camera {
   _i3.CameraOptions get options =>
       (super.noSuchMethod(
             Invocation.getter(#options),
-            returnValue: _FakeCameraOptions_3(
-              this,
-              Invocation.getter(#options),
-            ),
-            returnValueForMissingStub: _FakeCameraOptions_3(
-              this,
-              Invocation.getter(#options),
-            ),
+            returnValue: _FakeCameraOptions_3(this, Invocation.getter(#options)),
+            returnValueForMissingStub: _FakeCameraOptions_3(this, Invocation.getter(#options)),
           )
           as _i3.CameraOptions);
 
@@ -354,10 +304,8 @@ class MockCamera extends _i1.Mock implements _i10.Camera {
   );
 
   @override
-  set stream(_i6.MediaStream? _stream) => super.noSuchMethod(
-    Invocation.setter(#stream, _stream),
-    returnValueForMissingStub: null,
-  );
+  set stream(_i6.MediaStream? _stream) =>
+      super.noSuchMethod(Invocation.setter(#stream, _stream), returnValueForMissingStub: null);
 
   @override
   _i5.StreamController<_i6.MediaStreamTrack> get onEndedController =>
@@ -367,11 +315,10 @@ class MockCamera extends _i1.Mock implements _i10.Camera {
               this,
               Invocation.getter(#onEndedController),
             ),
-            returnValueForMissingStub:
-                _FakeStreamController_4<_i6.MediaStreamTrack>(
-                  this,
-                  Invocation.getter(#onEndedController),
-                ),
+            returnValueForMissingStub: _FakeStreamController_4<_i6.MediaStreamTrack>(
+              this,
+              Invocation.getter(#onEndedController),
+            ),
           )
           as _i5.StreamController<_i6.MediaStreamTrack>);
 
@@ -394,10 +341,7 @@ class MockCamera extends _i1.Mock implements _i10.Camera {
   set mediaRecorderOnErrorProvider(
     _i6.EventStreamProvider<_i6.Event>? _mediaRecorderOnErrorProvider,
   ) => super.noSuchMethod(
-    Invocation.setter(
-      #mediaRecorderOnErrorProvider,
-      _mediaRecorderOnErrorProvider,
-    ),
+    Invocation.setter(#mediaRecorderOnErrorProvider, _mediaRecorderOnErrorProvider),
     returnValueForMissingStub: null,
   );
 
@@ -432,10 +376,8 @@ class MockCamera extends _i1.Mock implements _i10.Camera {
           as _i6.Window);
 
   @override
-  set window(_i6.Window? _window) => super.noSuchMethod(
-    Invocation.setter(#window, _window),
-    returnValueForMissingStub: null,
-  );
+  set window(_i6.Window? _window) =>
+      super.noSuchMethod(Invocation.setter(#window, _window), returnValueForMissingStub: null);
 
   @override
   set mediaRecorder(_i6.MediaRecorder? _mediaRecorder) => super.noSuchMethod(
@@ -453,11 +395,10 @@ class MockCamera extends _i1.Mock implements _i10.Camera {
           as bool Function(String));
 
   @override
-  set isVideoTypeSupported(bool Function(String)? _isVideoTypeSupported) =>
-      super.noSuchMethod(
-        Invocation.setter(#isVideoTypeSupported, _isVideoTypeSupported),
-        returnValueForMissingStub: null,
-      );
+  set isVideoTypeSupported(bool Function(String)? _isVideoTypeSupported) => super.noSuchMethod(
+    Invocation.setter(#isVideoTypeSupported, _isVideoTypeSupported),
+    returnValueForMissingStub: null,
+  );
 
   @override
   _i6.Blob Function(List<_i6.Blob>, String) get blobBuilder =>
@@ -469,11 +410,10 @@ class MockCamera extends _i1.Mock implements _i10.Camera {
           as _i6.Blob Function(List<_i6.Blob>, String));
 
   @override
-  set blobBuilder(_i6.Blob Function(List<_i6.Blob>, String)? _blobBuilder) =>
-      super.noSuchMethod(
-        Invocation.setter(#blobBuilder, _blobBuilder),
-        returnValueForMissingStub: null,
-      );
+  set blobBuilder(_i6.Blob Function(List<_i6.Blob>, String)? _blobBuilder) => super.noSuchMethod(
+    Invocation.setter(#blobBuilder, _blobBuilder),
+    returnValueForMissingStub: null,
+  );
 
   @override
   _i5.StreamController<_i7.VideoRecordedEvent> get videoRecorderController =>
@@ -483,11 +423,10 @@ class MockCamera extends _i1.Mock implements _i10.Camera {
               this,
               Invocation.getter(#videoRecorderController),
             ),
-            returnValueForMissingStub:
-                _FakeStreamController_4<_i7.VideoRecordedEvent>(
-                  this,
-                  Invocation.getter(#videoRecorderController),
-                ),
+            returnValueForMissingStub: _FakeStreamController_4<_i7.VideoRecordedEvent>(
+              this,
+              Invocation.getter(#videoRecorderController),
+            ),
           )
           as _i5.StreamController<_i7.VideoRecordedEvent>);
 
@@ -514,8 +453,7 @@ class MockCamera extends _i1.Mock implements _i10.Camera {
       (super.noSuchMethod(
             Invocation.getter(#onVideoRecordedEvent),
             returnValue: _i5.Stream<_i7.VideoRecordedEvent>.empty(),
-            returnValueForMissingStub:
-                _i5.Stream<_i7.VideoRecordedEvent>.empty(),
+            returnValueForMissingStub: _i5.Stream<_i7.VideoRecordedEvent>.empty(),
           )
           as _i5.Stream<_i7.VideoRecordedEvent>);
 
@@ -538,16 +476,11 @@ class MockCamera extends _i1.Mock implements _i10.Camera {
           as _i5.Future<void>);
 
   @override
-  void pause() => super.noSuchMethod(
-    Invocation.method(#pause, []),
-    returnValueForMissingStub: null,
-  );
+  void pause() =>
+      super.noSuchMethod(Invocation.method(#pause, []), returnValueForMissingStub: null);
 
   @override
-  void stop() => super.noSuchMethod(
-    Invocation.method(#stop, []),
-    returnValueForMissingStub: null,
-  );
+  void stop() => super.noSuchMethod(Invocation.method(#stop, []), returnValueForMissingStub: null);
 
   @override
   _i5.Future<_i7.XFile> takePicture() =>
@@ -566,22 +499,14 @@ class MockCamera extends _i1.Mock implements _i10.Camera {
   _i4.Size getVideoSize() =>
       (super.noSuchMethod(
             Invocation.method(#getVideoSize, []),
-            returnValue: _FakeSize_2(
-              this,
-              Invocation.method(#getVideoSize, []),
-            ),
-            returnValueForMissingStub: _FakeSize_2(
-              this,
-              Invocation.method(#getVideoSize, []),
-            ),
+            returnValue: _FakeSize_2(this, Invocation.method(#getVideoSize, [])),
+            returnValueForMissingStub: _FakeSize_2(this, Invocation.method(#getVideoSize, [])),
           )
           as _i4.Size);
 
   @override
-  void setFlashMode(_i7.FlashMode? mode) => super.noSuchMethod(
-    Invocation.method(#setFlashMode, [mode]),
-    returnValueForMissingStub: null,
-  );
+  void setFlashMode(_i7.FlashMode? mode) =>
+      super.noSuchMethod(Invocation.method(#setFlashMode, [mode]), returnValueForMissingStub: null);
 
   @override
   double getMaxZoomLevel() =>
@@ -602,19 +527,14 @@ class MockCamera extends _i1.Mock implements _i10.Camera {
           as double);
 
   @override
-  void setZoomLevel(double? zoom) => super.noSuchMethod(
-    Invocation.method(#setZoomLevel, [zoom]),
-    returnValueForMissingStub: null,
-  );
+  void setZoomLevel(double? zoom) =>
+      super.noSuchMethod(Invocation.method(#setZoomLevel, [zoom]), returnValueForMissingStub: null);
 
   @override
   String getViewType() =>
       (super.noSuchMethod(
             Invocation.method(#getViewType, []),
-            returnValue: _i12.dummyValue<String>(
-              this,
-              Invocation.method(#getViewType, []),
-            ),
+            returnValue: _i12.dummyValue<String>(this, Invocation.method(#getViewType, [])),
             returnValueForMissingStub: _i12.dummyValue<String>(
               this,
               Invocation.method(#getViewType, []),
@@ -681,14 +601,8 @@ class MockCameraOptions extends _i1.Mock implements _i3.CameraOptions {
   _i3.AudioConstraints get audio =>
       (super.noSuchMethod(
             Invocation.getter(#audio),
-            returnValue: _FakeAudioConstraints_7(
-              this,
-              Invocation.getter(#audio),
-            ),
-            returnValueForMissingStub: _FakeAudioConstraints_7(
-              this,
-              Invocation.getter(#audio),
-            ),
+            returnValue: _FakeAudioConstraints_7(this, Invocation.getter(#audio)),
+            returnValueForMissingStub: _FakeAudioConstraints_7(this, Invocation.getter(#audio)),
           )
           as _i3.AudioConstraints);
 
@@ -696,14 +610,8 @@ class MockCameraOptions extends _i1.Mock implements _i3.CameraOptions {
   _i3.VideoConstraints get video =>
       (super.noSuchMethod(
             Invocation.getter(#video),
-            returnValue: _FakeVideoConstraints_8(
-              this,
-              Invocation.getter(#video),
-            ),
-            returnValueForMissingStub: _FakeVideoConstraints_8(
-              this,
-              Invocation.getter(#video),
-            ),
+            returnValue: _FakeVideoConstraints_8(this, Invocation.getter(#video)),
+            returnValueForMissingStub: _FakeVideoConstraints_8(this, Invocation.getter(#video)),
           )
           as _i3.VideoConstraints);
 

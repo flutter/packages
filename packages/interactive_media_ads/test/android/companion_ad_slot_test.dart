@@ -4,8 +4,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:interactive_media_ads/src/android/android_companion_ad_slot.dart';
-import 'package:interactive_media_ads/src/android/interactive_media_ads.g.dart'
-    as ima;
+import 'package:interactive_media_ads/src/android/interactive_media_ads.g.dart' as ima;
 import 'package:interactive_media_ads/src/platform_interface/companion_ad_slot_size.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -31,9 +30,7 @@ void main() {
         return frameLayout;
       };
       final mockFactory = MockImaSdkFactory();
-      when(
-        mockFactory.createCompanionAdSlot(),
-      ).thenAnswer((_) async => mockCompanionAdSlot);
+      when(mockFactory.createCompanionAdSlot()).thenAnswer((_) async => mockCompanionAdSlot);
       ima.PigeonOverrides.imaSdkFactory_instance = mockFactory;
       final params = AndroidCompanionAdSlotCreationParams(
         size: CompanionAdSlotSize.fixed(width: 300, height: 400),
@@ -48,18 +45,12 @@ void main() {
 
     test('AndroidCompanionAdSlot receives onClick', () async {
       final mockCompanionAdSlot = MockCompanionAdSlot();
-      ima.PigeonOverrides.frameLayout_new = () =>
-          ima.FrameLayout.pigeon_detached();
+      ima.PigeonOverrides.frameLayout_new = () => ima.FrameLayout.pigeon_detached();
       final mockFactory = MockImaSdkFactory();
-      when(
-        mockFactory.createCompanionAdSlot(),
-      ).thenAnswer((_) async => mockCompanionAdSlot);
+      when(mockFactory.createCompanionAdSlot()).thenAnswer((_) async => mockCompanionAdSlot);
       ima.PigeonOverrides.imaSdkFactory_instance = mockFactory;
       ima.PigeonOverrides.companionAdSlotClickListener_new =
-          ({
-            required void Function(ima.CompanionAdSlotClickListener)
-            onCompanionAdClick,
-          }) {
+          ({required void Function(ima.CompanionAdSlotClickListener) onCompanionAdClick}) {
             return ima.CompanionAdSlotClickListener.pigeon_detached(
               onCompanionAdClick: onCompanionAdClick,
             );
@@ -73,9 +64,7 @@ void main() {
       await adSlot.getNativeCompanionAdSlot();
 
       final clickListener =
-          verify(
-                mockCompanionAdSlot.addClickListener(captureAny),
-              ).captured.single
+          verify(mockCompanionAdSlot.addClickListener(captureAny)).captured.single
               as ima.CompanionAdSlotClickListener;
 
       clickListener.onCompanionAdClick(clickListener);

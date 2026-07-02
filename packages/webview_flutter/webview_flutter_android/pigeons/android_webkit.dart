@@ -8,8 +8,7 @@ import 'package:pigeon/pigeon.dart';
   PigeonOptions(
     copyrightHeader: 'pigeons/copyright.txt',
     dartOut: 'lib/src/android_webkit.g.dart',
-    kotlinOut:
-        'android/src/main/java/io/flutter/plugins/webviewflutter/AndroidWebkitLibrary.g.kt',
+    kotlinOut: 'android/src/main/java/io/flutter/plugins/webviewflutter/AndroidWebkitLibrary.g.kt',
     kotlinOptions: KotlinOptions(
       package: 'io.flutter.plugins.webviewflutter',
       errorClassName: 'AndroidWebKitError',
@@ -182,11 +181,7 @@ enum WindowInsetsType {
 /// Encompasses parameters to the `WebViewClient.shouldInterceptRequest` method.
 ///
 /// See https://developer.android.com/reference/android/webkit/WebResourceRequest.
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'android.webkit.WebResourceRequest',
-  ),
-)
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.webkit.WebResourceRequest'))
 abstract class WebResourceRequest {
   /// The URL for which the resource request was made.
   late String url;
@@ -210,11 +205,7 @@ abstract class WebResourceRequest {
 /// Encapsulates a resource response.
 ///
 /// See https://developer.android.com/reference/android/webkit/WebResourceResponse.
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'android.webkit.WebResourceResponse',
-  ),
-)
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.webkit.WebResourceResponse'))
 abstract class WebResourceResponse {
   /// The resource response's status code.
   late int statusCode;
@@ -224,11 +215,7 @@ abstract class WebResourceResponse {
 /// resources.
 ///
 /// See https://developer.android.com/reference/android/webkit/WebResourceError.
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'android.webkit.WebResourceError',
-  ),
-)
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.webkit.WebResourceError'))
 abstract class WebResourceError {
   /// The error code of the error.
   late int errorCode;
@@ -242,9 +229,7 @@ abstract class WebResourceError {
 ///
 /// See https://developer.android.com/reference/androidx/webkit/WebResourceErrorCompat.
 @ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'androidx.webkit.WebResourceErrorCompat',
-  ),
+  kotlinOptions: KotlinProxyApiOptions(fullClassName: 'androidx.webkit.WebResourceErrorCompat'),
 )
 abstract class WebResourceErrorCompat {
   /// The error code of the error.
@@ -266,11 +251,7 @@ abstract class WebViewPoint {
 /// Represents a JavaScript console message from WebCore.
 ///
 /// See https://developer.android.com/reference/android/webkit/ConsoleMessage
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'android.webkit.ConsoleMessage',
-  ),
-)
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.webkit.ConsoleMessage'))
 abstract class ConsoleMessage {
   late int lineNumber;
   late String message;
@@ -281,11 +262,7 @@ abstract class ConsoleMessage {
 /// Manages the cookies used by an application's `WebView` instances.
 ///
 /// See https://developer.android.com/reference/android/webkit/CookieManager.
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'android.webkit.CookieManager',
-  ),
-)
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.webkit.CookieManager'))
 abstract class CookieManager {
   @static
   late CookieManager instance;
@@ -313,16 +290,13 @@ abstract class CookieManager {
 /// A View that displays web pages.
 ///
 /// See https://developer.android.com/reference/android/webkit/WebView.
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.webkit.WebView'),
-)
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.webkit.WebView'))
 abstract class WebView extends View {
   WebView();
 
   /// This is called in response to an internal scroll in this view (i.e., the
   /// view scrolled its own contents).
-  late void Function(int left, int top, int oldLeft, int oldTop)?
-  onScrollChanged;
+  late void Function(int left, int top, int oldLeft, int oldTop)? onScrollChanged;
 
   /// The WebSettings object used to control the settings for this WebView.
   @attached
@@ -408,11 +382,7 @@ abstract class WebView extends View {
 /// Manages settings state for a `WebView`.
 ///
 /// See https://developer.android.com/reference/android/webkit/WebSettings.
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'android.webkit.WebSettings',
-  ),
-)
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.webkit.WebSettings'))
 abstract class WebSettings {
   /// Sets whether the DOM storage API is enabled.
   void setDomStorageEnabled(bool flag);
@@ -489,11 +459,7 @@ abstract class JavaScriptChannel {
 /// Receives various notifications and requests from a `WebView`.
 ///
 /// See https://developer.android.com/reference/android/webkit/WebViewClient.
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'android.webkit.WebViewClient',
-  ),
-)
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.webkit.WebViewClient'))
 abstract class WebViewClient {
   WebViewClient();
 
@@ -505,56 +471,36 @@ abstract class WebViewClient {
 
   /// Notify the host application that an HTTP error has been received from the
   /// server while loading a resource.
-  late void Function(
-    WebView webView,
-    WebResourceRequest request,
-    WebResourceResponse response,
-  )?
+  late void Function(WebView webView, WebResourceRequest request, WebResourceResponse response)?
   onReceivedHttpError;
 
   /// Report web resource loading error to the host application.
-  late void Function(
-    WebView webView,
-    WebResourceRequest request,
-    WebResourceError error,
-  )?
+  late void Function(WebView webView, WebResourceRequest request, WebResourceError error)?
   onReceivedRequestError;
 
   /// Report web resource loading error to the host application.
-  late void Function(
-    WebView webView,
-    WebResourceRequest request,
-    WebResourceErrorCompat error,
-  )?
+  late void Function(WebView webView, WebResourceRequest request, WebResourceErrorCompat error)?
   onReceivedRequestErrorCompat;
 
   /// Give the host application a chance to take control when a URL is about to
   /// be loaded in the current WebView.
-  late void Function(WebView webView, WebResourceRequest request)?
-  requestLoading;
+  late void Function(WebView webView, WebResourceRequest request)? requestLoading;
 
   /// Give the host application a chance to take control when a URL is about to
   /// be loaded in the current WebView.
   late void Function(WebView webView, String url)? urlLoading;
 
   /// Notify the host application to update its visited links database.
-  late void Function(WebView webView, String url, bool isReload)?
-  doUpdateVisitedHistory;
+  late void Function(WebView webView, String url, bool isReload)? doUpdateVisitedHistory;
 
   /// Notifies the host application that the WebView received an HTTP
   /// authentication request.
-  late void Function(
-    WebView webView,
-    HttpAuthHandler handler,
-    String host,
-    String realm,
-  )?
+  late void Function(WebView webView, HttpAuthHandler handler, String host, String realm)?
   onReceivedHttpAuthRequest;
 
   /// Ask the host application if the browser should resend data as the
   /// requested page was a result of a POST.
-  void Function(WebView view, AndroidMessage dontResend, AndroidMessage resend)?
-  onFormResubmission;
+  void Function(WebView view, AndroidMessage dontResend, AndroidMessage resend)? onFormResubmission;
 
   /// Notify the host application that the WebView will load the resource
   /// specified by the given url.
@@ -565,18 +511,15 @@ abstract class WebViewClient {
   void Function(WebView view, String url)? onPageCommitVisible;
 
   /// Notify the host application to handle a SSL client certificate request.
-  void Function(WebView view, ClientCertRequest request)?
-  onReceivedClientCertRequest;
+  void Function(WebView view, ClientCertRequest request)? onReceivedClientCertRequest;
 
   /// Notify the host application that a request to automatically log in the
   /// user has been processed.
-  void Function(WebView view, String realm, String? account, String args)?
-  onReceivedLoginRequest;
+  void Function(WebView view, String realm, String? account, String args)? onReceivedLoginRequest;
 
   /// Notifies the host application that an SSL error occurred while loading a
   /// resource.
-  void Function(WebView view, SslErrorHandler handler, SslError error)?
-  onReceivedSslError;
+  void Function(WebView view, SslErrorHandler handler, SslError error)? onReceivedSslError;
 
   /// Notify the host application that the scale applied to the WebView has
   /// changed.
@@ -600,11 +543,7 @@ abstract class WebViewClient {
 /// Handles notifications that a file should be downloaded.
 ///
 /// See https://developer.android.com/reference/android/webkit/DownloadListener.
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'android.webkit.DownloadListener',
-  ),
-)
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.webkit.DownloadListener'))
 abstract class DownloadListener {
   DownloadListener();
 
@@ -625,8 +564,7 @@ abstract class DownloadListener {
 /// See https://developer.android.com/reference/android/webkit/WebChromeClient.
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
-    fullClassName:
-        'io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl',
+    fullClassName: 'io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl',
   ),
 )
 abstract class WebChromeClient {
@@ -637,8 +575,7 @@ abstract class WebChromeClient {
 
   /// Tell the client to show a file chooser.
   @async
-  late List<String> Function(WebView webView, FileChooserParams params)
-  onShowFileChooser;
+  late List<String> Function(WebView webView, FileChooserParams params) onShowFileChooser;
 
   /// Notify the host application that web content is requesting permission to
   /// access the specified resources and the permission currently isn't granted
@@ -679,12 +616,7 @@ abstract class WebChromeClient {
   /// Notify the host application that the web page wants to display a
   /// JavaScript `prompt()` dialog.
   @async
-  late String? Function(
-    WebView webView,
-    String url,
-    String message,
-    String defaultValue,
-  )?
+  late String? Function(WebView webView, String url, String message, String defaultValue)?
   onJsPrompt;
 
   /// Sets the required synchronous return value for the Java method,
@@ -797,11 +729,7 @@ abstract class FlutterAssetManager {
 /// WebView.
 ///
 /// See https://developer.android.com/reference/android/webkit/WebStorage.
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'android.webkit.WebStorage',
-  ),
-)
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.webkit.WebStorage'))
 abstract class WebStorage {
   @static
   late WebStorage instance;
@@ -836,11 +764,7 @@ abstract class FileChooserParams {
 /// requests access to protected resources.
 ///
 /// See https://developer.android.com/reference/android/webkit/PermissionRequest.
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'android.webkit.PermissionRequest',
-  ),
-)
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.webkit.PermissionRequest'))
 abstract class PermissionRequest {
   late List<String> resources;
 
@@ -870,9 +794,7 @@ abstract class CustomViewCallback {
 /// components.
 ///
 /// See https://developer.android.com/reference/android/view/View.
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.view.View'),
-)
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.view.View'))
 abstract class View {
   /// Set the scrolled position of your view.
   void scrollTo(int x, int y);
@@ -922,11 +844,7 @@ abstract class GeolocationPermissionsCallback {
 /// Represents a request for HTTP authentication.
 ///
 /// See https://developer.android.com/reference/android/webkit/HttpAuthHandler.
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'android.webkit.HttpAuthHandler',
-  ),
-)
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.webkit.HttpAuthHandler'))
 abstract class HttpAuthHandler {
   /// Gets whether the credentials stored for the current host (i.e. the host
   /// for which `WebViewClient.onReceivedHttpAuthRequest` was called) are
@@ -945,9 +863,7 @@ abstract class HttpAuthHandler {
 /// can be sent to a `Handler`.
 ///
 /// See https://developer.android.com/reference/android/os/Message.
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.os.Message'),
-)
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.os.Message'))
 abstract class AndroidMessage {
   /// Sends this message to the Android native `Handler` specified by
   /// getTarget().
@@ -960,11 +876,7 @@ abstract class AndroidMessage {
 /// can be sent to a `Handler`.
 ///
 /// See https://developer.android.com/reference/android/webkit/ClientCertRequest.
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'android.webkit.ClientCertRequest',
-  ),
-)
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.webkit.ClientCertRequest'))
 abstract class ClientCertRequest {
   /// Cancel this request.
   void cancel();
@@ -982,11 +894,7 @@ abstract class ClientCertRequest {
 /// private key interfaces.
 ///
 /// See https://developer.android.com/reference/java/security/PrivateKey.
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'java.security.PrivateKey',
-  ),
-)
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'java.security.PrivateKey'))
 abstract class PrivateKey {}
 
 /// Abstract class for X.509 certificates.
@@ -995,21 +903,13 @@ abstract class PrivateKey {}
 /// certificate.
 ///
 /// See https://developer.android.com/reference/java/security/cert/X509Certificate.
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'java.security.cert.X509Certificate',
-  ),
-)
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'java.security.cert.X509Certificate'))
 abstract class X509Certificate extends Certificate {}
 
 /// Represents a request for handling an SSL error.
 ///
 /// See https://developer.android.com/reference/android/webkit/SslErrorHandler.
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'android.webkit.SslErrorHandler',
-  ),
-)
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.webkit.SslErrorHandler'))
 abstract class SslErrorHandler {
   /// Instructs the WebView that encountered the SSL certificate error to
   /// terminate communication with the server.
@@ -1024,11 +924,7 @@ abstract class SslErrorHandler {
 /// certificate.
 ///
 /// See https://developer.android.com/reference/android/net/http/SslError.
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'android.net.http.SslError',
-  ),
-)
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.net.http.SslError'))
 abstract class SslError {
   /// Gets the SSL certificate associated with this object.
   late SslCertificate certificate;
@@ -1050,9 +946,7 @@ abstract class SslError {
 /// the most specific organization (O)
 /// the most specific organizational unit (OU)
 @ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'android.net.http.SslCertificate.DName',
-  ),
+  kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.net.http.SslCertificate.DName'),
 )
 abstract class SslCertificateDName {
   /// The most specific Common-name (CN) component of this name.
@@ -1071,11 +965,7 @@ abstract class SslCertificateDName {
 /// SSL certificate info (certificate details) class.
 ///
 /// See https://developer.android.com/reference/android/net/http/SslCertificate.
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'android.net.http.SslCertificate',
-  ),
-)
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.net.http.SslCertificate'))
 abstract class SslCertificate {
   /// Issued-by distinguished name or null if none has been set.
   SslCertificateDName? getIssuedBy();
@@ -1101,11 +991,7 @@ abstract class SslCertificate {
 /// Abstract class for managing a variety of identity certificates.
 ///
 /// See https://developer.android.com/reference/java/security/cert/Certificate.
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'java.security.cert.Certificate',
-  ),
-)
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'java.security.cert.Certificate'))
 abstract class Certificate {
   /// The encoded form of this certificate.
   Uint8List getEncoded();
@@ -1114,11 +1000,7 @@ abstract class Certificate {
 /// Compatibility version of `WebSettings`.
 ///
 /// See https://developer.android.com/reference/kotlin/androidx/webkit/WebSettingsCompat.
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'androidx.webkit.WebSettingsCompat',
-  ),
-)
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'androidx.webkit.WebSettingsCompat'))
 abstract class WebSettingsCompat {
   @static
   void setPaymentRequestEnabled(WebSettings webSettings, bool enabled);
@@ -1127,11 +1009,7 @@ abstract class WebSettingsCompat {
 /// Utility class for checking which WebView Support Library features are supported on the device.
 ///
 /// See https://developer.android.com/reference/kotlin/androidx/webkit/WebViewFeature.
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'androidx.webkit.WebViewFeature',
-  ),
-)
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'androidx.webkit.WebViewFeature'))
 abstract class WebViewFeature {
   @static
   bool isFeatureSupported(String feature);

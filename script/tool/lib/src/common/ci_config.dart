@@ -7,7 +7,11 @@ import 'package:yaml/yaml.dart';
 /// A class representing the parsed content of a `ci_config.yaml` file.
 class CIConfig {
   /// Creates a [CIConfig] from a parsed YAML map.
-  CIConfig._({required this.isBatchRelease, required this.requiresExcerpts});
+  CIConfig._({
+    required this.isBatchRelease,
+    required this.requiresExcerpts,
+    required this.analyzeSkills,
+  });
 
   /// Parses a [CIConfig] from a YAML string.
   ///
@@ -30,9 +34,12 @@ class CIConfig {
     // excerpts.
     final requiresExcerpts = loaded['exempt_from_excerpts'] != true;
 
+    final analyzeSkills = loaded['analyze_skills'] == true;
+
     return CIConfig._(
       isBatchRelease: isBatchRelease,
       requiresExcerpts: requiresExcerpts,
+      analyzeSkills: analyzeSkills,
     );
   }
 
@@ -41,6 +48,7 @@ class CIConfig {
       'batch': <bool>{true, false},
     },
     'exempt_from_excerpts': <bool>{true, false},
+    'analyze_skills': <bool>{true, false},
   };
 
   /// Returns true if the package is configured for batch release.
@@ -48,6 +56,9 @@ class CIConfig {
 
   /// Returns true if the package is configured to require excerpts.
   final bool requiresExcerpts;
+
+  /// Returns true if the package has its agent skills analyzed.
+  final bool analyzeSkills;
 
   static void _checkCIConfigEntries(
     YamlMap config, {

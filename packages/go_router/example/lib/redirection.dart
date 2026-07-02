@@ -36,19 +36,13 @@ class LoginInfo extends ChangeNotifier {
 /// Provides login information to its descendants.
 class LoginInfoProvider extends InheritedNotifier<LoginInfo> {
   /// Creates a [LoginInfoProvider].
-  const LoginInfoProvider({
-    super.key,
-    required super.notifier,
-    required super.child,
-  });
+  const LoginInfoProvider({super.key, required super.notifier, required super.child});
 
   /// Returns the [LoginInfo] from the closest [LoginInfoProvider] ancestor.
   static LoginInfo of(BuildContext context, {bool listen = true}) {
     final LoginInfoProvider? result = listen
         ? context.dependOnInheritedWidgetOfExactType<LoginInfoProvider>()
-        : context
-                  .getElementForInheritedWidgetOfExactType<LoginInfoProvider>()
-                  ?.widget
+        : context.getElementForInheritedWidgetOfExactType<LoginInfoProvider>()?.widget
               as LoginInfoProvider?;
     assert(result != null, 'No LoginInfoProvider found in context');
     return result!.notifier!;
@@ -82,13 +76,11 @@ class App extends StatelessWidget {
     routes: <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (BuildContext context, GoRouterState state) =>
-            const HomeScreen(),
+        builder: (BuildContext context, GoRouterState state) => const HomeScreen(),
       ),
       GoRoute(
         path: '/login',
-        builder: (BuildContext context, GoRouterState state) =>
-            const LoginScreen(),
+        builder: (BuildContext context, GoRouterState state) => const LoginScreen(),
       ),
     ],
 

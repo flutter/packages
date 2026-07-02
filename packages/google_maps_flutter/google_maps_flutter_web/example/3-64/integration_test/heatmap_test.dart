@@ -80,10 +80,7 @@ void main() {
       };
       controller.addHeatmaps(heatmaps);
 
-      expect(
-        controller.heatmaps[const HeatmapId('1')]!.heatmap!.data.array.toDart,
-        hasLength(0),
-      );
+      expect(controller.heatmaps[const HeatmapId('1')]!.heatmap!.data.array.toDart, hasLength(0));
 
       final updatedHeatmaps = <Heatmap>{
         const Heatmap(
@@ -95,10 +92,7 @@ void main() {
       controller.changeHeatmaps(updatedHeatmaps);
 
       expect(controller.heatmaps.length, 1);
-      expect(
-        controller.heatmaps[const HeatmapId('1')]!.heatmap!.data.array.toDart,
-        hasLength(1),
-      );
+      expect(controller.heatmaps[const HeatmapId('1')]!.heatmap!.data.array.toDart, hasLength(1));
     });
 
     testWidgets('removeHeatmaps', (WidgetTester tester) async {
@@ -124,10 +118,7 @@ void main() {
 
       expect(controller.heatmaps.length, 3);
 
-      final heatmapIdsToRemove = <HeatmapId>{
-        const HeatmapId('1'),
-        const HeatmapId('3'),
-      };
+      final heatmapIdsToRemove = <HeatmapId>{const HeatmapId('1'), const HeatmapId('3')};
 
       controller.removeHeatmaps(heatmapIdsToRemove);
 
@@ -151,8 +142,7 @@ void main() {
 
       controller.addHeatmaps(heatmaps);
 
-      final visualization.HeatmapLayer heatmap =
-          controller.heatmaps.values.first.heatmap!;
+      final visualization.HeatmapLayer heatmap = controller.heatmaps.values.first.heatmap!;
 
       expect(
         (heatmap.get('gradient')! as JSArray<JSString>).toDart.map(

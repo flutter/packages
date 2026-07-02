@@ -19,27 +19,21 @@ void main() {
     log = <MethodCall>[];
   });
 
-  test(
-    'DefaultLocalAuthPlatform is registered as the default platform implementation',
-    () async {
-      expect(
-        LocalAuthPlatform.instance,
-        const TypeMatcher<DefaultLocalAuthPlatform>(),
-      );
-    },
-  );
+  test('DefaultLocalAuthPlatform is registered as the default platform implementation', () async {
+    expect(LocalAuthPlatform.instance, const TypeMatcher<DefaultLocalAuthPlatform>());
+  });
 
   test('getAvailableBiometrics', () async {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(channel, (MethodCall methodCall) {
-          log.add(methodCall);
-          return Future<dynamic>.value(<String>[]);
-        });
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+      channel,
+      (MethodCall methodCall) {
+        log.add(methodCall);
+        return Future<dynamic>.value(<String>[]);
+      },
+    );
     localAuthentication = DefaultLocalAuthPlatform();
     await localAuthentication.getEnrolledBiometrics();
-    expect(log, <Matcher>[
-      isMethodCall('getAvailableBiometrics', arguments: null),
-    ]);
+    expect(log, <Matcher>[isMethodCall('getAvailableBiometrics', arguments: null)]);
   });
 
   test('deviceSupportsBiometrics handles special sentinal value', () async {
@@ -48,43 +42,40 @@ void main() {
     // existing unendorsed implementations, used 'undefined' as a special
     // return value from `getAvailableBiometrics` to indicate that nothing was
     // enrolled, but that the hardware does support biometrics.
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(channel, (MethodCall methodCall) {
-          log.add(methodCall);
-          return Future<dynamic>.value(<String>['undefined']);
-        });
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+      channel,
+      (MethodCall methodCall) {
+        log.add(methodCall);
+        return Future<dynamic>.value(<String>['undefined']);
+      },
+    );
 
     localAuthentication = DefaultLocalAuthPlatform();
-    final bool supportsBiometrics = await localAuthentication
-        .deviceSupportsBiometrics();
+    final bool supportsBiometrics = await localAuthentication.deviceSupportsBiometrics();
     expect(supportsBiometrics, true);
-    expect(log, <Matcher>[
-      isMethodCall('getAvailableBiometrics', arguments: null),
-    ]);
+    expect(log, <Matcher>[isMethodCall('getAvailableBiometrics', arguments: null)]);
   });
 
   group('Boolean returning methods', () {
     setUp(() {
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(channel, (MethodCall methodCall) {
-            log.add(methodCall);
-            return Future<dynamic>.value(true);
-          });
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+        channel,
+        (MethodCall methodCall) {
+          log.add(methodCall);
+          return Future<dynamic>.value(true);
+        },
+      );
       localAuthentication = DefaultLocalAuthPlatform();
     });
 
     test('isDeviceSupported', () async {
       await localAuthentication.isDeviceSupported();
-      expect(log, <Matcher>[
-        isMethodCall('isDeviceSupported', arguments: null),
-      ]);
+      expect(log, <Matcher>[isMethodCall('isDeviceSupported', arguments: null)]);
     });
 
     test('stopAuthentication', () async {
       await localAuthentication.stopAuthentication();
-      expect(log, <Matcher>[
-        isMethodCall('stopAuthentication', arguments: null),
-      ]);
+      expect(log, <Matcher>[isMethodCall('stopAuthentication', arguments: null)]);
     });
 
     group('authenticate with device auth fail over', () {
@@ -112,10 +103,7 @@ void main() {
         await localAuthentication.authenticate(
           authMessages: <AuthMessages>[],
           localizedReason: 'Insecure',
-          options: const AuthenticationOptions(
-            sensitiveTransaction: false,
-            biometricOnly: true,
-          ),
+          options: const AuthenticationOptions(sensitiveTransaction: false, biometricOnly: true),
         );
         expect(log, <Matcher>[
           isMethodCall(
@@ -172,28 +160,25 @@ void main() {
         ]);
       });
 
-      test(
-        'legacy useErrorDialogs is passed for backward compatibility.',
-        () async {
-          await localAuthentication.authenticate(
-            authMessages: <AuthMessages>[],
-            localizedReason: 'Insecure',
-            options: const AuthenticationOptions(useErrorDialogs: false),
-          );
-          expect(log, <Matcher>[
-            isMethodCall(
-              'authenticate',
-              arguments: <String, dynamic>{
-                'localizedReason': 'Insecure',
-                'useErrorDialogs': false,
-                'stickyAuth': false,
-                'sensitiveTransaction': true,
-                'biometricOnly': false,
-              },
-            ),
-          ]);
-        },
-      );
+      test('legacy useErrorDialogs is passed for backward compatibility.', () async {
+        await localAuthentication.authenticate(
+          authMessages: <AuthMessages>[],
+          localizedReason: 'Insecure',
+          options: const AuthenticationOptions(useErrorDialogs: false),
+        );
+        expect(log, <Matcher>[
+          isMethodCall(
+            'authenticate',
+            arguments: <String, dynamic>{
+              'localizedReason': 'Insecure',
+              'useErrorDialogs': false,
+              'stickyAuth': false,
+              'sensitiveTransaction': true,
+              'biometricOnly': false,
+            },
+          ),
+        ]);
+      });
     });
   });
 }
