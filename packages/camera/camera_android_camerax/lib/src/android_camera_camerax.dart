@@ -635,9 +635,12 @@ class AndroidCameraCameraX extends CameraPlatform {
       case FocusMode.auto:
         // Determine auto-focus point to restore, if any. We do not restore
         // default auto-focus point if set previously to lock focus.
-        final MeteringPoint? unLockedFocusPoint = _defaultFocusPointLocked
+        final List<MeteringPoint> possibleCurrentAfPoints =
+            currentFocusMeteringAction?.meteringPointsAf ?? [];
+        final MeteringPoint? unLockedFocusPoint =
+            _defaultFocusPointLocked || possibleCurrentAfPoints.isEmpty
             ? null
-            : currentFocusMeteringAction!.meteringPointsAf.first;
+            : possibleCurrentAfPoints.first;
         _defaultFocusPointLocked = false;
         autoFocusPoint = unLockedFocusPoint;
         disableAutoCancel = false;

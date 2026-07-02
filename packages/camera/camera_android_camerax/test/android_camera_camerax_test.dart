@@ -4971,6 +4971,44 @@ void main() {
   );
 
   test(
+    'setFocusMode does not throw when setting auto-focus mode and the current focus and metering action has no auto-focus point',
+    () async {
+      final camera = AndroidCameraCameraX();
+      const cameraId = 11;
+      final mockCameraControl = MockCameraControl();
+      final FocusMeteringResult mockFocusMeteringResult = MockFocusMeteringResult();
+      final mockCamera2CameraControl = MockCamera2CameraControl();
+      const point = Point<double>(0.1, 0.2);
+
+      // Set directly for test versus calling createCamera.
+      camera.cameraInfo = MockCameraInfo();
+      camera.cameraControl = mockCameraControl;
+
+      when(
+        mockCamera2CameraControl.addCaptureRequestOptions(any),
+      ).thenAnswer((_) async => Future.value());
+
+      setUpOverridesForSettingFocusandExposurePoints(mockCameraControl, mockCamera2CameraControl);
+
+      // Make setting focus and metering action successful for test.
+      when(mockFocusMeteringResult.isFocusSuccessful).thenReturn(true);
+      when(
+        mockCameraControl.startFocusAndMetering(any),
+      ).thenAnswer((_) async => Future.value(mockFocusMeteringResult));
+
+      // Lock focus while an auto-focus point exists, then clear it, leaving a
+      // non-null action whose auto-focus point list is empty.
+      await camera.setExposurePoint(cameraId, point);
+      await camera.setFocusPoint(cameraId, point);
+      await camera.setFocusMode(cameraId, FocusMode.locked);
+      await camera.setFocusPoint(cameraId, null);
+
+      // Switching back to auto-focus must not throw.
+      await expectLater(camera.setFocusMode(cameraId, FocusMode.auto), completes);
+    },
+  );
+
+  test(
     'setFocusMode starts expected focus and metering action with previously set auto-focus point if setting locked focus mode and current focus and metering action has auto-focus point',
     () async {
       final camera = AndroidCameraCameraX();
