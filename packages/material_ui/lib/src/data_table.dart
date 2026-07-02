@@ -408,7 +408,9 @@ class DataCell {
 ///    multiple pages.
 ///  * [CustomScrollView], for greater control over scrolling effects.
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This sample shows how to display a [DataTable] with three columns: name, age, and
 /// role. The columns are defined by three [DataColumn] objects. The table
 /// contains three rows of data for three example users, the data for which
@@ -416,16 +418,20 @@ class DataCell {
 ///
 /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/data_table.png)
 ///
-/// ** See code in examples/api/lib/material/data_table/data_table.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/data_table/data_table.0.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This sample shows how to display a [DataTable] with alternate colors per
 /// row, and a custom color for when the row is selected.
 ///
-/// ** See code in examples/api/lib/material/data_table/data_table.1.dart **
-/// {@end-tool}
+/// {@example /example/lib/data_table/data_table.1.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// [DataTable] can be sorted on the basis of any column in [columns] in
 /// ascending or descending order. If [sortColumnIndex] is non-null, then the

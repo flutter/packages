@@ -38,22 +38,28 @@ import 'theme.dart';
 /// If the [key] is a [PageStorageKey], the [initialFirstRowIndex] is persisted
 /// to [PageStorage].
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 ///
 /// This sample shows how to display a [DataTable] with three columns: name,
 /// age, and role. The columns are defined by three [DataColumn] objects. The
 /// table contains three rows of data for three example users, the data for
 /// which is defined by three [DataRow] objects.
 ///
-/// ** See code in examples/api/lib/material/paginated_data_table/paginated_data_table.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/paginated_data_table/paginated_data_table.0.dart}
 ///
-/// {@tool dartpad}
+// TODO(framework): End of the @dartpad directive.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 ///
 /// This example shows how paginated data tables can supported sorted data.
 ///
-/// ** See code in examples/api/lib/material/paginated_data_table/paginated_data_table.1.dart **
-/// {@end-tool}
+/// {@example /example/lib/paginated_data_table/paginated_data_table.1.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///

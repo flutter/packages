@@ -118,7 +118,11 @@ enum ThemeMode {
 /// If [home], [routes], [onGenerateRoute], and [onUnknownRoute] are all null,
 /// and [builder] is not null, then no [Navigator] is created.
 ///
-/// {@tool snippet}
+// TODO(framework): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
+///
 /// This example shows how to create a [MaterialApp] that disables the "debug"
 /// banner with a [home] route that will be displayed when the app is launched.
 ///
@@ -134,9 +138,14 @@ enum ThemeMode {
 ///   debugShowCheckedModeBanner: false,
 /// )
 /// ```
-/// {@end-tool}
 ///
-/// {@tool snippet}
+// TODO(framework): End of the blue example container.
+///
+// TODO(framework): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
+///
 /// This example shows how to create a [MaterialApp] that uses the [routes]
 /// `Map` to define the "home" route and an "about" route.
 ///
@@ -160,9 +169,14 @@ enum ThemeMode {
 ///    },
 /// )
 /// ```
-/// {@end-tool}
 ///
-/// {@tool snippet}
+// TODO(framework): End of the blue example container.
+///
+// TODO(framework): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
+///
 /// This example shows how to create a [MaterialApp] that defines a [theme] that
 /// will be used for material widgets in the app.
 ///
@@ -181,7 +195,8 @@ enum ThemeMode {
 ///   ),
 /// )
 /// ```
-/// {@end-tool}
+///
+// TODO(framework): End of the blue example container.
 ///
 /// ## Troubleshooting
 ///
@@ -679,7 +694,11 @@ class MaterialApp extends StatefulWidget {
   final bool debugShowCheckedModeBanner;
 
   /// {@macro flutter.widgets.widgetsApp.shortcuts}
-  /// {@tool snippet}
+  // TODO(framework): Replace the following block with a blue example container
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// This example shows how to add a single shortcut for
   /// [LogicalKeyboardKey.select] to the default shortcuts without needing to
   /// add your own [Shortcuts] widget.
@@ -702,12 +721,17 @@ class MaterialApp extends StatefulWidget {
   ///   );
   /// }
   /// ```
-  /// {@end-tool}
+  ///
+  // TODO(framework): End of the blue example container.
   /// {@macro flutter.widgets.widgetsApp.shortcuts.seeAlso}
   final Map<ShortcutActivator, Intent>? shortcuts;
 
   /// {@macro flutter.widgets.widgetsApp.actions}
-  /// {@tool snippet}
+  // TODO(framework): Replace the following block with a blue example container
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// This example shows how to add a single action handling an
   /// [ActivateAction] to the default actions without needing to
   /// add your own [Actions] widget.
@@ -735,7 +759,8 @@ class MaterialApp extends StatefulWidget {
   ///   );
   /// }
   /// ```
-  /// {@end-tool}
+  ///
+  // TODO(framework): End of the blue example container.
   /// {@macro flutter.widgets.widgetsApp.actions.seeAlso}
   final Map<Type, Action<Intent>>? actions;
 
@@ -791,12 +816,15 @@ class MaterialApp extends StatefulWidget {
   ///
   /// To disable the theme animation, use [AnimationStyle.noAnimation].
   ///
-  /// {@tool dartpad}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  ///
   /// This sample showcases how to override the theme animation curve and
   /// duration in the [MaterialApp] widget using [AnimationStyle].
   ///
-  /// ** See code in examples/api/lib/material/app/app.0.dart **
-  /// {@end-tool}
+  /// {@example /example/lib/app/app.0.dart}
+  ///
+  // TODO(framework): End of the @dartpad directive.
   final AnimationStyle? themeAnimationStyle;
 
   @override

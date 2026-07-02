@@ -96,21 +96,27 @@ const Duration _kBaseSettleDuration = Duration(milliseconds: 246);
 /// [NavigationDrawerDestination] widgets and/or customized widgets like headlines
 /// and dividers.
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This example shows how to create a [Scaffold] that contains an [AppBar] and
 /// a [Drawer]. A user taps the "menu" icon in the [AppBar] to open the
 /// [Drawer]. The [Drawer] displays four items: A header and three menu items.
 /// The [Drawer] displays the four items using a [ListView], which allows the
 /// user to scroll through the items if need be.
 ///
-/// ** See code in examples/api/lib/material/drawer/drawer.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/drawer/drawer.0.dart}
 ///
-/// {@tool dartpad}
+// TODO(framework): End of the @dartpad directive.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This example shows how to migrate the above [Drawer] to a [NavigationDrawer].
 ///
-/// ** See code in examples/api/lib/material/navigation_drawer/navigation_drawer.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/navigation_drawer/navigation_drawer.0.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// An open drawer may be closed with a swipe to close gesture, pressing the
 /// escape key, by tapping the scrim, or by calling pop route function such as
@@ -416,12 +422,17 @@ class DrawerController extends StatefulWidget {
   /// The closest instance of [DrawerController] that encloses the given
   /// context, or null if none is found.
   ///
-  /// {@tool snippet} Typical usage is as follows:
+  // TODO(framework): Replace the following block with a blue example container
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  /// Typical usage is as follows:
   ///
   /// ```dart
   /// DrawerController? controller = DrawerController.maybeOf(context);
   /// ```
-  /// {@end-tool}
+  ///
+  // TODO(framework): End of the blue example container.
   ///
   /// Calling this method will create a dependency on the closest
   /// [DrawerController] in the [context], if there is one.
@@ -443,12 +454,17 @@ class DrawerController extends StatefulWidget {
   /// Calling this method will create a dependency on the closest
   /// [DrawerController] in the [context].
   ///
-  /// {@tool snippet} Typical usage is as follows:
+  // TODO(framework): Replace the following block with a blue example container
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  /// Typical usage is as follows:
   ///
   /// ```dart
   /// DrawerController controller = DrawerController.of(context);
   /// ```
-  /// {@end-tool}
+  ///
+  // TODO(framework): End of the blue example container.
   static DrawerController of(BuildContext context) {
     final DrawerController? controller = maybeOf(context);
     assert(() {

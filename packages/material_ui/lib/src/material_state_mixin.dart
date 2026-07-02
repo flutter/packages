@@ -19,7 +19,11 @@ import 'package:flutter/widgets.dart';
 /// to manage the set of active [WidgetState]s, and the calling of [setState]
 /// as necessary.
 ///
-/// {@tool snippet}
+// TODO(framework): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
+///
 /// This example shows how to write a [StatefulWidget] that uses the
 /// [MaterialStateMixin] class to watch [WidgetState] values.
 ///
@@ -47,7 +51,8 @@ import 'package:flutter/widgets.dart';
 ///   }
 /// }
 /// ```
-/// {@end-tool}
+///
+// TODO(framework): End of the blue example container.
 @optionalTypeArgs
 mixin MaterialStateMixin<T extends StatefulWidget> on State<T> {
   /// Managed set of active [WidgetState] values; designed to be passed to
@@ -71,7 +76,11 @@ mixin MaterialStateMixin<T extends StatefulWidget> on State<T> {
   /// If supplied, the [onChanged] function is only called when child widgets
   /// report events that make changes to the current set of [WidgetState]s.
   ///
-  /// {@tool snippet}
+  // TODO(framework): Replace the following block with a blue example container
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// This example shows how to use the [updateMaterialState] callback factory
   /// in other widgets, including the optional [onChanged] callback.
   ///
@@ -105,7 +114,8 @@ mixin MaterialStateMixin<T extends StatefulWidget> on State<T> {
   ///   }
   /// }
   /// ```
-  /// {@end-tool}
+  ///
+  // TODO(framework): End of the blue example container.
   @protected
   ValueChanged<bool> updateMaterialState(WidgetState key, {ValueChanged<bool>? onChanged}) {
     return (bool value) {

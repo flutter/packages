@@ -40,21 +40,27 @@ enum _CheckboxType { material, adaptive }
 ///
 /// Requires one of its ancestors to be a [Material] widget.
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This example shows how you can override the default theme of
 /// a [Checkbox] with a [WidgetStateProperty].
 /// In this example, the checkbox's color will be `Colors.blue` when the [Checkbox]
 /// is being pressed, hovered, or focused. Otherwise, the checkbox's color will
 /// be `Colors.red`.
 ///
-/// ** See code in examples/api/lib/material/checkbox/checkbox.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/checkbox/checkbox.0.dart}
 ///
-/// {@tool dartpad}
+// TODO(framework): End of the @dartpad directive.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This example shows what the checkbox error state looks like.
 ///
-/// ** See code in examples/api/lib/material/checkbox/checkbox.1.dart **
-/// {@end-tool}
+/// {@example /example/lib/checkbox/checkbox.1.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///
@@ -215,7 +221,11 @@ class Checkbox extends StatefulWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  /// {@tool snippet}
+  // TODO(framework): Replace the following block with a blue example container
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// This example resolves the [fillColor] based on the current [WidgetState]
   /// of the [Checkbox], providing a different [Color] when it is
   /// [WidgetState.disabled].
@@ -232,7 +242,8 @@ class Checkbox extends StatefulWidget {
   ///   })
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  // TODO(framework): End of the blue example container.
   /// {@endtemplate}
   ///
   /// If null, then the value of [activeColor] is used in the selected
