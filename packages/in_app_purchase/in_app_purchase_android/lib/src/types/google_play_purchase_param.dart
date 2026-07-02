@@ -12,9 +12,18 @@ class GooglePlayPurchaseParam extends PurchaseParam {
   GooglePlayPurchaseParam({
     required super.productDetails,
     super.applicationUserName,
+    this.obfuscatedProfileId,
     this.changeSubscriptionParam,
     this.offerToken,
   });
+
+  /// The obfuscated profile id specified when making a purchase.
+  ///
+  /// This is passed to Google Play as the obfuscated profile id. It should be
+  /// an obfuscated identifier that is uniquely associated with the user's
+  /// profile in your app, and must not contain personally identifiable
+  /// information.
+  final String? obfuscatedProfileId;
 
   /// The 'changeSubscriptionParam' containing information for upgrading or
   /// downgrading an existing subscription.
