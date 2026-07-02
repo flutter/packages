@@ -15,6 +15,7 @@ flutter:
       ios:
         pluginClass: CameraPlugin
         dartPluginClass: AVFoundationCamera
+        sharedDarwinSource: true
 
 dependencies:
   camera_platform_interface: ^2.12.0
