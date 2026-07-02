@@ -619,6 +619,7 @@ void main() {
           isFlutter: true,
         );
         _writeFakePubspecWithLinter(package, inDevDependencies: true);
+        package.ciConfigFile.writeAsStringSync('allow_custom_analysis_options: true');
         package.directory.childFile('analysis_options.yaml').writeAsStringSync('''
 dart_code_linter:
   metrics:
@@ -635,7 +636,7 @@ dart_code_linter:
         Error? commandError;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>['analyze', '--custom-analysis', 'a_package'],
+          <String>['analyze'],
           errorHandler: (Error e) {
             commandError = e;
           },
@@ -795,7 +796,7 @@ dart_code_linter:
           Error? commandError;
           final List<String> output = await runCapturingPrint(
             runner,
-            <String>['analyze', '--custom-analysis', 'a_package'],
+            <String>['analyze'],
             errorHandler: (Error e) {
               commandError = e;
             },
