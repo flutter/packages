@@ -8,6 +8,7 @@
 
 ## 2.9.6
 
+* Fixes a [bug](https://github.com/flutter/flutter/issues/176575) where some videos report an incorrect duration when initialized without a video duration.
 * Migrates to Built-in Kotlin to support AGP 9.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
