@@ -376,11 +376,13 @@ class CameraService {
   }
 
   /// Returns frame at a specific time using video element
-  CameraImageData takeFrame(web.VideoElement videoElement) {
+  CameraImageData takeFrame(web.VideoElement videoElement, {int cameraId = 0}) {
     final int width = videoElement.videoWidth;
     final int height = videoElement.videoHeight;
     if (width == 0 || height == 0) {
-      throw Exception(
+      throw CameraWebException(
+        cameraId,
+        CameraErrorCode.cameraFrameDimensionsZero,
         'Computed dimensions are zero: width=$width, height=$height',
       );
     }
@@ -403,11 +405,7 @@ class CameraService {
     }
     final ByteBuffer byteBuffer = imageData.data.toDart.buffer;
 
-    return getCameraImageData(
-      bytes: byteBuffer.asUint8List(),
-      width: width,
-      height: height,
-    );
+    return getCameraImageData(bytes: byteBuffer.asUint8List(), width: width, height: height);
   }
 
   /// Used by [_takeOffscreenCanvasFrame] to cache the offscreen canvas
@@ -424,17 +422,13 @@ class CameraService {
     required WebTweakImageDataSettings settings,
   }) {
     _offscreenCanvas ??= web.OffscreenCanvas(width, height);
-    if (_offscreenCanvas!.width != width ||
-        _offscreenCanvas!.height != height) {
+    if (_offscreenCanvas!.width != width || _offscreenCanvas!.height != height) {
       _offscreenCanvas!
         ..width = width
         ..height = height;
     }
     _offscreenCanvasContext ??=
-        _offscreenCanvas!.getContext(
-              '2d',
-              <String, Object?>{'willReadFrequently': true}.jsify(),
-            )!
+        _offscreenCanvas!.getContext('2d', <String, Object?>{'willReadFrequently': true}.jsify())!
             as web.OffscreenCanvasRenderingContext2D;
 
     _offscreenCanvasContext!.drawImage(videoElement, 0, 0);
@@ -461,14 +455,23 @@ class CameraService {
     }
     final web.CanvasRenderingContext2D context = _canvasElement!.context2D;
 
-    context.drawImageScaled(
-      videoElement,
-      0,
-      0,
-      width.toDouble(),
-      height.toDouble(),
-    );
+    context.drawImageScaled(videoElement, 0, 0, width.toDouble(), height.toDouble());
     return context.getImageData(0, 0, width, height, settings);
+  }
+
+  /// Returns the first video track from the given [mediaStream].
+  ///
+  /// Throws a [CameraWebException] if the media stream is null or no video tracks are found.
+  web.MediaStreamTrack getMediaStreamVideoTrack(web.MediaStream mediaStream, {int cameraId = 0}) {
+    final List<web.MediaStreamTrack> tracks = mediaStream.getVideoTracks().toDart;
+    if (tracks.isEmpty) {
+      throw CameraWebException(
+        cameraId,
+        CameraErrorCode.noVideoTrack,
+        'No video track found in the media stream.',
+      );
+    }
+    return tracks.first;
   }
 
   /// Creates a [web.ReadableStreamDefaultReader] from a [web.MediaStreamTrack].
@@ -476,28 +479,31 @@ class CameraService {
     web.MediaStreamTrack track, {
     int maxBufferSize = 1,
   }) {
-    final options = web.MediaStreamTrackProcessorInit(
-      track: track,
-      maxBufferSize: maxBufferSize,
-    );
+    final options = web.MediaStreamTrackProcessorInit(track: track, maxBufferSize: maxBufferSize);
     final processor = web.MediaStreamTrackProcessor(options);
     return processor.readable.getReader() as web.ReadableStreamDefaultReader;
   }
 
   /// Reads a video frame from the given [reader].
   Future<web.VideoFrame> readVideoTrack(
-    web.ReadableStreamDefaultReader reader,
-  ) async {
+    web.ReadableStreamDefaultReader reader, {
+    int cameraId = 0,
+  }) async {
     final web.ReadableStreamReadResult readResult = await reader.read().toDart;
     if (readResult.done) {
-      throw Exception('The track reader has been closed.');
+      throw CameraWebException(
+        cameraId,
+        CameraErrorCode.videoTrackReaderClosed,
+        'The track reader has been closed.',
+      );
     }
     final videoFrame = readResult.value as web.VideoFrame?;
-    if (videoFrame == null) {
-      throw Exception('Failed to read a video frame from the track reader.');
-    }
-    if (videoFrame.visibleRect == null) {
-      throw Exception('The video frame has a null visible rectangle.');
+    if (videoFrame == null || videoFrame.visibleRect == null) {
+      throw CameraWebException(
+        cameraId,
+        CameraErrorCode.videoTrackReaderNotInitialized,
+        'Failed to read a video frame from the track reader.',
+      );
     }
     return videoFrame;
   }
@@ -522,11 +528,6 @@ class CameraService {
     //                  https://github.com/flutter/flutter/issues/151193
     const format = CameraImageFormat(ImageFormatGroup.unknown, raw: 'rgba8888');
 
-    return CameraImageData(
-      width: width,
-      height: height,
-      format: format,
-      planes: [plane],
-    );
+    return CameraImageData(width: width, height: height, format: format, planes: [plane]);
   }
 }

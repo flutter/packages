@@ -52,7 +52,8 @@ class Camera {
     ({int? audioBitrate, int? videoBitrate})? recorderOptions,
   }) : recorderOptions = recorderOptions ?? (audioBitrate: null, videoBitrate: null),
        _cameraService = cameraService,
-       canUseOffscreenCanvas = cameraService.hasPropertyOffScreenCanvas();
+       canUseOffscreenCanvas = cameraService.hasPropertyOffScreenCanvas(),
+       canUseMediaStreamTrackProcessor = cameraService.hasMediaStreamTrackProcessor();
 
   /// The texture id used to register the camera view.
   final int textureId;
@@ -159,34 +160,16 @@ class Camera {
   final StreamController<VideoRecordedEvent> videoRecorderController =
       StreamController<VideoRecordedEvent>.broadcast();
 
+  /// Used to check if media stream track processor is supported.
+  @visibleForTesting
+  final bool canUseMediaStreamTrackProcessor;
+
   /// Used to check if allowed to paint canvas off screen
   @visibleForTesting
   final bool canUseOffscreenCanvas;
 
   /// The tolerance for the camera streaming frame time.
   int get _frameTimeToleranceMs => 1000 / cameraStreamFPS ~/ 2;
-
-  /// The first video track of the camera stream. Throws [CameraWebException]
-  /// if the camera stream is not initialized or does not contain a video track.
-  web.MediaStreamTrack get _videoTrack {
-    if (stream == null) {
-      throw CameraWebException(
-        textureId,
-        CameraErrorCode.notStarted,
-        'The camera has not been initialized or started.',
-      );
-    }
-    final List<web.MediaStreamTrack> videoTracks = stream!.getVideoTracks().toDart;
-
-    if (videoTracks.isEmpty) {
-      throw CameraWebException(
-        textureId,
-        CameraErrorCode.noVideoTrack,
-        'The camera stream does not contain a video track.',
-      );
-    }
-    return videoTracks.first;
-  }
 
   /// Initializes the camera stream displayed in the [videoElement].
   /// Registers the camera view with [textureId] under [_getViewType] type.
@@ -650,11 +633,11 @@ class Camera {
 
     _cameraFrameStreamController = StreamController<CameraImageData>.broadcast(
       onListen: () {
-        if (_cameraService.hasMediaStreamTrackProcessor()) {
-          _triggerMediaStreamTrackProcessorLoop(_videoTrack);
-          return;
+        if (canUseMediaStreamTrackProcessor && stream != null) {
+          _triggerMediaStreamTrackProcessorLoop(stream!);
+        } else {
+          _triggerAnimationFramesLoop(_addCameraImageDataEvent, fps: cameraStreamFPS);
         }
-        _triggerAnimationFramesLoop(_addCameraImageDataEvent, fps: cameraStreamFPS);
       },
     );
 
@@ -701,7 +684,7 @@ class Camera {
   /// Used to trigger add event of camera image data in camera frame stream
   void _addCameraImageDataEvent() {
     try {
-      final CameraImageData image = _cameraService.takeFrame(videoElement);
+      final CameraImageData image = _cameraService.takeFrame(videoElement, cameraId: textureId);
       _cameraFrameStreamController?.add(image);
     } catch (e) {
       _cameraFrameStreamController?.addError(e);
@@ -712,8 +695,10 @@ class Camera {
   /// Uses [MediaStreamTrackProcessor] to read [web.VideoFrame] from the given
   /// [track] and convert them to [CameraImageData]. The converted
   /// [CameraImageData] is emitted to the [_cameraFrameStreamController].
-  Future<void> _triggerMediaStreamTrackProcessorLoop(web.MediaStreamTrack track) async {
-    final web.ReadableStreamDefaultReader reader = _cameraService.getMediaStreamTrackReader(track);
+  Future<void> _triggerMediaStreamTrackProcessorLoop(web.MediaStream stream) async {
+    final web.ReadableStreamDefaultReader reader = _cameraService.getMediaStreamTrackReader(
+      _cameraService.getMediaStreamVideoTrack(stream, cameraId: textureId),
+    );
     final holder = VideoFrameBufferHolder();
 
     try {
