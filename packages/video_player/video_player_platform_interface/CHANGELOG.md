@@ -1,6 +1,6 @@
 ## 6.9.0
 
-* Adds `backBufferDurationMs` to `VideoPlayerOptions` to support configuring ExoPlayer back buffer duration on Android.
+* Adds `backBufferDurationMs` to `VideoPlayerOptions` to support configuring the back buffer duration.
 
 ## 6.8.0
 
