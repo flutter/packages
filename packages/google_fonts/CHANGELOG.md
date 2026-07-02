@@ -1,3 +1,7 @@
+## 8.2.0
+
+- Extract the class `Config` to its own file and rename it `GoogleFontsConfig`. The `Config` name will be deprecated in a future release.
+
 ## 8.1.0
 
 - Adds the ability to supply a custom HTTP client to `GoogleFonts.config`.
