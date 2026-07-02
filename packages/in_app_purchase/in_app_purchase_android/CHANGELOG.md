@@ -1,3 +1,7 @@
+## NEXT
+
+* Adds support for passing an obfuscated profile ID in GooglePlayPurchaseParam.
+
 ## 0.5.1
 
 * Adds support to overlay billing related messages. See `InAppPurchaseAndroidPlatformAddition.showInAppMessages`.
