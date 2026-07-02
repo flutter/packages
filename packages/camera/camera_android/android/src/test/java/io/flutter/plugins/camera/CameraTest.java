@@ -1386,13 +1386,11 @@ public class CameraTest {
   }
 
   @Test
-  public void setJpegImageQuality_shouldSetQualityOnFeature() {
-    JpegQualityFeature mockJpegQualityFeature =
-        mockCameraFeatureFactory.createJpegQualityFeature(mockCameraProperties);
-
+  public void setJpegImageQuality_shouldSetJpegQualityOnCaptureRequestBuilder() {
     camera.setJpegImageQuality(75L);
+    camera.updateBuilderSettings(mockPreviewRequestBuilder);
 
-    verify(mockJpegQualityFeature, times(1)).setValue(75);
+    verify(mockPreviewRequestBuilder, times(1)).set(CaptureRequest.JPEG_QUALITY, (byte) 75);
   }
 
   @Test
@@ -1542,7 +1540,7 @@ public class CameraTest {
 
     @Override
     public JpegQualityFeature createJpegQualityFeature(@NonNull CameraProperties cameraProperties) {
-      return mock(JpegQualityFeature.class);
+      return new JpegQualityFeature(cameraProperties);
     }
   }
 }

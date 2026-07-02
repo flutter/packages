@@ -1091,8 +1091,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Recreate ImageCapture with the requested JPEG quality.
     // Preserve locked orientation if set, otherwise use default display rotation.
     final int targetRotation =
-        _lockedCaptureOrientation ??
-        await deviceOrientationManager.getDefaultDisplayRotation();
+        _lockedCaptureOrientation ?? await deviceOrientationManager.getDefaultDisplayRotation();
     imageCapture = ImageCapture(
       resolutionSelector: _presetResolutionSelector,
       targetRotation: targetRotation,

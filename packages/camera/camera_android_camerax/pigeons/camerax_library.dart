@@ -533,11 +533,7 @@ enum CameraXFlashMode {
 /// See https://developer.android.com/reference/kotlin/androidx/camera/core/ImageCapture.
 @ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'androidx.camera.core.ImageCapture'))
 abstract class ImageCapture extends UseCase {
-  ImageCapture(
-    int? targetRotation,
-    CameraXFlashMode? flashMode,
-    int? jpegQuality,
-  );
+  ImageCapture(int? targetRotation, CameraXFlashMode? flashMode, int? jpegQuality);
 
   late final ResolutionSelector? resolutionSelector;
 
