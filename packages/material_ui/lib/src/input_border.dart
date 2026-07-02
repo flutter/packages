@@ -589,12 +589,15 @@ class OutlineInputBorder extends InputBorder {
 /// The input decorator's "container" is the optionally filled area above the
 /// decorator's helper, error, and counter.
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This sample shows how to use [ShapedInputBorder] with different
 /// [ShapeBorder] implementations.
 ///
-/// ** See code in examples/api/lib/material/shaped_input_border/shaped_input_border.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/shaped_input_border/shaped_input_border.0.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///

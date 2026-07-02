@@ -126,6 +126,7 @@ extension on SK2TransactionMessage {
       productId: productId,
       purchaseDate: purchaseDate ?? '',
       expirationDate: expirationDate,
+      quantity: purchasedQuantity,
       appAccountToken: appAccountToken,
       receiptData: receiptData,
       jsonRepresentation: jsonRepresentation,

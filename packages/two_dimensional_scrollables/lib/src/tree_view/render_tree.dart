@@ -182,13 +182,19 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
         row = childAfter(row);
         continue;
       }
-      final Rect rowRect = parentData.paintOffset! & Size(viewportDimension.width, row.size.height);
+      final Offset paintOffset = parentData.paintOffset!;
+      final rowRect = Rect.fromLTRB(
+        math.min(0.0, paintOffset.dx),
+        paintOffset.dy,
+        math.max(viewportDimension.width, paintOffset.dx + row.size.width),
+        paintOffset.dy + row.size.height,
+      );
       if (rowRect.contains(position)) {
         result.addWithPaintOffset(
-          offset: parentData.paintOffset,
+          offset: paintOffset,
           position: position,
           hitTest: (BoxHitTestResult result, Offset transformed) {
-            assert(transformed == position - parentData.paintOffset!);
+            assert(transformed == position - paintOffset);
             return row!.hitTest(result, position: transformed);
           },
         );

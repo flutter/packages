@@ -21,7 +21,11 @@ import 'package:flutter/widgets.dart';
 ///   cupertino_icons: ^1.0.0
 /// ```
 ///
-/// {@tool snippet}
+// TODO(framework): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
+///
 ///
 /// This example shows how to create a [Row] of Cupertino [Icon]s in different colors and
 /// sizes. The first [Icon] uses a [Icon.semanticLabel] to announce in accessibility
@@ -52,7 +56,8 @@ import 'package:flutter/widgets.dart';
 ///   ],
 /// )
 /// ```
-/// {@end-tool}
+///
+// TODO(framework): End of the blue example container.
 ///
 /// For versions 0.1.3 and below, see this [glyph map](https://raw.githubusercontent.com/flutter/packages/main/third_party/packages/cupertino_icons/map.png).
 ///

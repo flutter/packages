@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
@@ -287,55 +286,16 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
   AuthenticationResults _authenticationResultFromPlatformCredential(
     PlatformGoogleIdTokenCredential credential,
   ) {
-    // GoogleIdTokenCredential's ID field is documented to return the
-    // email address, not what the other platform SDKs call an ID.
-    // The account ID returned by other platform SDKs and the legacy
-    // Google Sign In for Android SDK is no longer directly exposed, so it
-    // need to be extracted from the token. See
-    // https://stackoverflow.com/a/78064720.
-    // The ID should always be availabe from the token, but if for some reason
-    // it can't be extracted, use the email address instead as a reasonable
-    // fallback method of identifying the account.
-    final String email = credential.email;
-    final String userId = _idFromIdToken(credential.idToken) ?? email;
-
     return AuthenticationResults(
       user: GoogleSignInUserData(
-        email: email,
-        id: userId,
+        email: credential.email,
+        id: credential.uniqueId,
         displayName: credential.displayName,
         photoUrl: credential.profilePictureUri,
       ),
       authenticationTokens: AuthenticationTokenData(idToken: credential.idToken),
     );
   }
-}
-
-/// A codec that can encode/decode JWT payloads.
-///
-/// See https://www.rfc-editor.org/rfc/rfc7519#section-3
-final Codec<Object?, String> _jwtCodec = json.fuse(utf8).fuse(base64);
-
-/// Extracts the user ID from an idToken.
-///
-/// See https://stackoverflow.com/a/78064720
-String? _idFromIdToken(String idToken) {
-  final jwtTokenRegexp = RegExp(
-    r'^(?<header>[^\.\s]+)\.(?<payload>[^\.\s]+)\.(?<signature>[^\.\s]+)$',
-  );
-  final RegExpMatch? match = jwtTokenRegexp.firstMatch(idToken);
-  final String? payload = match?.namedGroup('payload');
-  if (payload != null) {
-    try {
-      final contents = _jwtCodec.decode(base64.normalize(payload)) as Map<String, Object?>?;
-      if (contents != null) {
-        return contents['sub'] as String?;
-      }
-    } catch (_) {
-      return null;
-    }
-  }
-  return null;
 }
 
 /// Options specific to authentication with the lightweight authentication
