@@ -30,14 +30,12 @@ class AnalyzeCommand extends PackageLoopingCommand {
     argParser.addFlag(platformMacOS, help: "Runs 'xcodebuild analyze' on macOS code");
 
     // Dart options.
+    // TODO(stuartmorgan): Remove this entirely once the flutter/flutter and dart-lang repo scripts
+    // that run flutter/packages analysis have been updated not to pass it.
     argParser.addMultiOption(
-      _customAnalysisFlag,
-      help:
-          'Directories (comma separated) that are allowed to have their own '
-          'analysis options.\n\n'
-          'Alternately, a list of one or more YAML files that contain a list '
-          'of allowed directories.',
-      defaultsTo: <String>[],
+      'custom-analysis',
+      help: 'Ignored; exists for legacy compatibility only.',
+      hide: true,
     );
     argParser.addOption(
       _analysisSdk,
@@ -85,7 +83,6 @@ class AnalyzeCommand extends PackageLoopingCommand {
   }
 
   static const String _dartFlag = 'dart';
-  static const String _customAnalysisFlag = 'custom-analysis';
   static const String _downgradeFlag = 'downgrade';
   static const String _libOnlyFlag = 'lib-only';
   static const String _analysisSdk = 'analysis-sdk';
@@ -95,8 +92,6 @@ class AnalyzeCommand extends PackageLoopingCommand {
 
   late String _dartBinaryPath;
 
-  Set<String> _allowedCustomAnalysisDirectories = const <String>{};
-
   @override
   final String name = 'analyze';
 
@@ -105,8 +100,8 @@ class AnalyzeCommand extends PackageLoopingCommand {
       'Analyzes all packages using dart analyze.\n\n'
       'This command requires "dart" and "flutter" to be in your path.';
 
-  /// Checks that there are no unexpected analysis_options.yaml files.
-  bool _hasUnexpectedAnalysisOptions(RepositoryPackage package) {
+  /// Checks that there are no package-local analysis_options.yaml files.
+  bool _hasLocalAnalysisOptions(RepositoryPackage package) {
     final List<FileSystemEntity> files = package.directory.listSync(
       recursive: true,
       followLinks: false,
@@ -121,19 +116,12 @@ class AnalyzeCommand extends PackageLoopingCommand {
         continue;
       }
 
-      final bool allowed = _allowedCustomAnalysisDirectories.any(
-        (String directory) =>
-            directory.isNotEmpty &&
-            path.isWithin(packagesDir.childDirectory(directory).path, file.path),
-      );
-      if (allowed) {
-        continue;
-      }
-
-      printError('Found an extra analysis_options.yaml at ${file.absolute.path}.');
+      printError('Found an unexpected analysis_options.yaml at ${file.absolute.path}.');
       printError(
-        'If this was deliberate, pass the package to the analyze command '
-        'with the --$_customAnalysisFlag flag and try again.',
+        'If this is an intentional exception to the general repository guidance against having '
+        'custom analysis_options.yaml files, add a ci_config.yaml to this package that '
+        'sets "allow_custom_analysis_options: true", with a comment explaining why an exception '
+        'is needed.',
       );
       return true;
     }
@@ -170,8 +158,6 @@ class AnalyzeCommand extends PackageLoopingCommand {
 
   @override
   Future<void> initializeRun() async {
-    _allowedCustomAnalysisDirectories = getYamlListArg(_customAnalysisFlag);
-
     // Use the Dart SDK override if one was passed in.
     final dartSdk = argResults![_analysisSdk] as String?;
     _dartBinaryPath = dartSdk == null ? 'dart' : path.join(dartSdk, 'bin', 'dart');
@@ -303,7 +289,10 @@ class AnalyzeCommand extends PackageLoopingCommand {
       }
     }
 
-    if (_hasUnexpectedAnalysisOptions(package)) {
+    // Require an explicit opt-in to use custom analysis options, since it's very easy to
+    // accidentally introduce them to the repo (e.g., with 'flutter create').
+    if (!(package.parseCIConfig()?.allowCustomAnalysisOptions ?? false) &&
+        _hasLocalAnalysisOptions(package)) {
       return PackageResult.fail(<String>['Unexpected local analysis options']);
     }
     final int mainExitCode = await processRunner.runAndStream(_dartBinaryPath, <String>[
