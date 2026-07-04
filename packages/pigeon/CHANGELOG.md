@@ -1,3 +1,7 @@
+## 27.1.0
+
+* [swift] Adds `CaseIterable` conformance to generated enums.
+
 ## 27.0.0
 
 * **Breaking Change** Overrides `toString` (or equivalent) methods on generated data classes
