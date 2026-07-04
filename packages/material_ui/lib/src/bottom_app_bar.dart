@@ -27,7 +27,11 @@ import 'theme.dart';
 ///
 /// Typically used with a [Scaffold] and a [FloatingActionButton].
 ///
-/// {@tool snippet}
+// TODO(framework): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
+///
 /// ```dart
 /// Scaffold(
 ///   bottomNavigationBar: BottomAppBar(
@@ -37,24 +41,31 @@ import 'theme.dart';
 ///   floatingActionButton: const FloatingActionButton(onPressed: null),
 /// )
 /// ```
-/// {@end-tool}
 ///
-/// {@tool dartpad}
+// TODO(framework): End of the blue example container.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This example shows the [BottomAppBar], which can be configured to have a notch using the
 /// [BottomAppBar.shape] property. This also includes an optional [FloatingActionButton], which illustrates
 /// the [FloatingActionButtonLocation]s in relation to the [BottomAppBar].
 ///
-/// ** See code in examples/api/lib/material/bottom_app_bar/bottom_app_bar.1.dart **
-/// {@end-tool}
+/// {@example /example/lib/bottom_app_bar/bottom_app_bar.1.dart}
 ///
-/// {@tool dartpad}
+// TODO(framework): End of the @dartpad directive.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This example shows Material 3 [BottomAppBar] with its expected look and behaviors.
 ///
 /// This also includes an optional [FloatingActionButton], which illustrates
 /// the [FloatingActionButtonLocation.endContained].
 ///
-/// ** See code in examples/api/lib/material/bottom_app_bar/bottom_app_bar.2.dart **
-/// {@end-tool}
+/// {@example /example/lib/bottom_app_bar/bottom_app_bar.2.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///

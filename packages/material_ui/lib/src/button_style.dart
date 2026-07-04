@@ -146,11 +146,14 @@ typedef ButtonLayerBuilder =
 /// | Outlined     | [OutlinedButton]        |
 /// | Text         | [TextButton]            |
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This sample shows how to create each of the Material 3 button types with Flutter.
 ///
-/// ** See code in examples/api/lib/material/button_style/button_style.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/button_style/button_style.0.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///

@@ -203,7 +203,11 @@ enum ListTileTitleAlignment {
 /// ancestor. In this case, one can wrap a [Material] widget around the
 /// [ListTile], e.g.:
 ///
-/// {@tool snippet}
+// TODO(framework): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
+///
 /// ```dart
 /// const ColoredBox(
 ///   color: Colors.green,
@@ -215,7 +219,8 @@ enum ListTileTitleAlignment {
 ///   ),
 /// )
 /// ```
-/// {@end-tool}
+///
+// TODO(framework): End of the blue example container.
 ///
 /// ## Performance considerations when wrapping [ListTile] with [Material]
 ///
@@ -227,46 +232,65 @@ enum ListTileTitleAlignment {
 /// [selectedTileColor], [focusColor], and [hoverColor] as these colors
 /// are not drawn by the list tile itself but by the material widget ancestor.
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This example showcases how [ListTile] needs to be wrapped in a [Material]
 /// widget to animate colors.
 ///
-/// ** See code in examples/api/lib/material/list_tile/list_tile.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/list_tile/list_tile.0.dart}
 ///
-/// {@tool dartpad}
+// TODO(framework): End of the @dartpad directive.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This example uses a [ListView] to demonstrate different configurations of
 /// [ListTile]s in [Card]s.
 ///
 /// ![Different variations of ListTile](https://flutter.github.io/assets-for-api-docs/assets/material/list_tile.png)
 ///
-/// ** See code in examples/api/lib/material/list_tile/list_tile.1.dart **
-/// {@end-tool}
+/// {@example /example/lib/list_tile/list_tile.1.dart}
 ///
-/// {@tool dartpad}
+// TODO(framework): End of the @dartpad directive.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This sample shows the creation of a [ListTile] using [ThemeData.useMaterial3] flag,
 /// as described in: https://m3.material.io/components/lists/overview.
 ///
-/// ** See code in examples/api/lib/material/list_tile/list_tile.2.dart **
-/// {@end-tool}
+/// {@example /example/lib/list_tile/list_tile.2.dart}
 ///
-/// {@tool dartpad}
+// TODO(framework): End of the @dartpad directive.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This sample shows [ListTile]'s [textColor] and [iconColor] can use
 /// [WidgetStateColor] color to change the color of the text and icon
 /// when the [ListTile] is enabled, selected, or disabled.
 ///
-/// ** See code in examples/api/lib/material/list_tile/list_tile.3.dart **
-/// {@end-tool}
+/// {@example /example/lib/list_tile/list_tile.3.dart}
 ///
-/// {@tool dartpad}
+// TODO(framework): End of the @dartpad directive.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This sample shows [ListTile.titleAlignment] can be used to configure the
 /// [leading] and [trailing] widgets alignment relative to the [title] and
 /// [subtitle] widgets.
 ///
-/// ** See code in examples/api/lib/material/list_tile/list_tile.4.dart **
-/// {@end-tool}
+/// {@example /example/lib/list_tile/list_tile.4.dart}
 ///
-/// {@tool snippet}
+// TODO(framework): End of the @dartpad directive.
+///
+// TODO(framework): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
+///
 /// To use a [ListTile] within a [Row], it needs to be wrapped in an
 /// [Expanded] widget. [ListTile] requires fixed width constraints,
 /// whereas a [Row] does not constrain its children.
@@ -289,8 +313,12 @@ enum ListTileTitleAlignment {
 ///   ],
 /// )
 /// ```
-/// {@end-tool}
-/// {@tool snippet}
+///
+// TODO(framework): End of the blue example container.
+// TODO(framework): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
 ///
 /// Tiles can be much more elaborate. Here is a tile which can be tapped, but
 /// which is disabled when the `_act` variable is not 2. When the tile is
@@ -305,7 +333,8 @@ enum ListTileTitleAlignment {
 ///   onTap: () { /* react to the tile being tapped */ }
 /// )
 /// ```
-/// {@end-tool}
+///
+// TODO(framework): End of the blue example container.
 ///
 /// To be accessible, tappable [leading] and [trailing] widgets have to
 /// be at least 48x48 in size. However, to adhere to the Material spec,
@@ -319,7 +348,10 @@ enum ListTileTitleAlignment {
 /// that are large enough, but it is up to the developer to ensure that
 /// their widgets follow the Material spec.
 ///
-/// {@tool snippet}
+// TODO(framework): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
 ///
 /// Here is an example of a one-line, non-[dense] ListTile with a
 /// tappable leading widget that adheres to accessibility requirements and
@@ -343,7 +375,8 @@ enum ListTileTitleAlignment {
 ///   dense: false,
 /// )
 /// ```
-/// {@end-tool}
+///
+// TODO(framework): End of the blue example container.
 ///
 /// ## The ListTile layout isn't exactly what I want
 ///
@@ -351,20 +384,26 @@ enum ListTileTitleAlignment {
 /// you're looking for, it's easy to create custom list items with a
 /// combination of other widgets, such as [Row]s and [Column]s.
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// Here is an example of a custom list item that resembles a YouTube-related
 /// video list item created with [Expanded] and [Container] widgets.
 ///
-/// ** See code in examples/api/lib/material/list_tile/custom_list_item.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/list_tile/custom_list_item.0.dart}
 ///
-/// {@tool dartpad}
+// TODO(framework): End of the @dartpad directive.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// Here is an example of an article list item with multiline titles and
 /// subtitles. It utilizes [Row]s and [Column]s, as well as [Expanded] and
 /// [AspectRatio] widgets to organize its layout.
 ///
-/// ** See code in examples/api/lib/material/list_tile/custom_list_item.1.dart **
-/// {@end-tool}
+/// {@example /example/lib/list_tile/custom_list_item.1.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///
@@ -660,13 +699,16 @@ class ListTile extends StatelessWidget {
   /// By default the selected color is the theme's primary color. The selected color
   /// can be overridden with a [ListTileTheme].
   ///
-  /// {@tool dartpad}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  ///
   /// Here is an example of using a [StatefulWidget] to keep track of the
   /// selected index, and using that to set the [selected] property on the
   /// corresponding [ListTile].
   ///
-  /// ** See code in examples/api/lib/material/list_tile/list_tile.selected.0.dart **
-  /// {@end-tool}
+  /// {@example /example/lib/list_tile/list_tile.selected.0.dart}
+  ///
+  // TODO(framework): End of the @dartpad directive.
   final bool selected;
 
   /// The color for the tile's [Material] when it has the input focus.

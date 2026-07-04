@@ -102,14 +102,17 @@ class Adaptation<T> {
   /// uses an empty [SwitchThemeData] if a matching adaptation is not found, for
   /// the sake of backwards compatibility.
   ///
-  /// {@tool dartpad}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  ///
   /// This sample shows how to create and use subclasses of [Adaptation] that
   /// define adaptive [SwitchThemeData]s. The [adapt] method in this example is
   /// overridden to only customize cupertino-style switches, but it can also be
   /// used to customize any other platforms.
   ///
-  /// ** See code in examples/api/lib/material/switch/switch.4.dart **
-  /// {@end-tool}
+  /// {@example /example/lib/switch/switch.4.dart}
+  ///
+  // TODO(framework): End of the @dartpad directive.
   T adapt(ThemeData theme, T defaultValue) => defaultValue;
 }
 
@@ -122,12 +125,15 @@ class Adaptation<T> {
 /// [lerp] methods. The latter will ensure smooth transitions of properties when
 /// switching themes.
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This sample shows how to create and use a subclass of [ThemeExtension] that
 /// defines two colors.
 ///
-/// ** See code in examples/api/lib/material/theme/theme_extension.1.dart **
-/// {@end-tool}
+/// {@example /example/lib/theme/theme_extension.1.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 abstract class ThemeExtension<T extends ThemeExtension<T>> {
   /// Enable const constructor for subclasses.
   const ThemeExtension();
@@ -202,7 +208,9 @@ enum MaterialTapTargetSize {
 /// for the subtree that appears below the new [Theme], or insert a widget
 /// that creates a new BuildContext, like [Builder].
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This example demonstrates how a typical [MaterialApp] specifies
 /// and uses a custom [Theme]. The theme's [ColorScheme] is based on a
 /// single "seed" color and configures itself to match the platform's
@@ -210,8 +218,9 @@ enum MaterialTapTargetSize {
 /// default configuration of [FloatingActionButton] to show how to
 /// customize the appearance a class of components.
 ///
-/// ** See code in examples/api/lib/material/theme_data/theme_data.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/theme_data/theme_data.0.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See <https://material.io/design/color/> for
 /// more discussion on how to pick the right colors.
@@ -823,7 +832,11 @@ class ThemeData with Diagnosticable {
   /// forward we will be converting all the widget implementations to only use
   /// colors or colors derived from those in [ColorScheme].
   ///
-  /// {@tool snippet}
+  // TODO(framework): Replace the following block with a blue example container
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// This example will set up an application to use the baseline Material
   /// Design light and dark themes.
   ///
@@ -833,7 +846,8 @@ class ThemeData with Diagnosticable {
   ///   darkTheme: ThemeData.from(colorScheme: const ColorScheme.dark()),
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  // TODO(framework): End of the blue example container.
   ///
   /// See <https://material.io/design/color/> for
   /// more discussion on how to pick the right colors.
@@ -973,12 +987,15 @@ class ThemeData with Diagnosticable {
   ///
   /// To obtain an extension, use [extension].
   ///
-  /// {@tool dartpad}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  ///
   /// This sample shows how to create and use a subclass of [ThemeExtension] that
   /// defines two colors.
   ///
-  /// ** See code in examples/api/lib/material/theme/theme_extension.1.dart **
-  /// {@end-tool}
+  /// {@example /example/lib/theme/theme_extension.1.dart}
+  ///
+  // TODO(framework): End of the @dartpad directive.
   ///
   /// See also:
   ///
