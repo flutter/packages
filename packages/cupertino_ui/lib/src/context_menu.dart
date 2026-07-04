@@ -96,19 +96,25 @@ enum _ContextMenuLocation { center, left, right }
 /// background or by calling `Navigator.pop(context)`. Unlike [PopupRoute], it can
 /// also be closed by swiping downwards.
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This sample shows a very simple [CupertinoContextMenu] for the Flutter logo.
 /// Long press on it to open.
 ///
-/// ** See code in examples/api/lib/cupertino/context_menu/cupertino_context_menu.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/context_menu/cupertino_context_menu.0.dart}
 ///
-/// {@tool dartpad}
+// TODO(framework): End of the @dartpad directive.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This sample shows a similar CupertinoContextMenu, this time using [builder]
 /// to add a border radius to the widget.
 ///
-/// ** See code in examples/api/lib/cupertino/context_menu/cupertino_context_menu.1.dart **
-/// {@end-tool}
+/// {@example /example/lib/context_menu/cupertino_context_menu.1.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///
@@ -142,7 +148,11 @@ class CupertinoContextMenu extends StatefulWidget {
   /// Exposes the default border radius for matching iOS 16.0 behavior. This
   /// value was eyeballed from the iOS simulator running iOS 16.0.
   ///
-  /// {@tool snippet}
+  // TODO(framework): Replace the following block with a blue example container
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   ///
   /// Below is example code in order to match the default border radius for an
   /// iOS 16.0 open preview.
@@ -205,7 +215,8 @@ class CupertinoContextMenu extends StatefulWidget {
   /// )
   /// ```
   ///
-  /// {@end-tool}
+  ///
+  // TODO(framework): End of the blue example container.
   static const double kOpenBorderRadius = _previewBorderRadiusRatio;
 
   /// Exposes the final box shadow of the opening animation of the child widget
@@ -248,7 +259,11 @@ class CupertinoContextMenu extends StatefulWidget {
   /// the widget from 0 to [animationOpensAt], and the second stage for when the
   /// widget fully opens up to the menu, from [animationOpensAt] to 1.
   ///
-  /// {@tool snippet}
+  // TODO(framework): Replace the following block with a blue example container
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   ///
   /// Below is an example of using [builder] to show an image tile setup to be
   /// opened in the default way to match a native iOS 16.0 app. The behavior
@@ -314,9 +329,12 @@ class CupertinoContextMenu extends StatefulWidget {
   /// )
   /// ```
   ///
-  /// {@end-tool}
   ///
-  /// {@tool dartpad}
+  // TODO(framework): End of the blue example container.
+  ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  ///
   /// Additionally below is an example of a real world use case for [builder].
   ///
   /// If a widget is passed to the [child] parameter with properties that
@@ -327,8 +345,9 @@ class CupertinoContextMenu extends StatefulWidget {
   /// like [CupertinoContextMenu.kEndBoxShadow], to match the native iOS
   /// animation as close as desired.
   ///
-  /// ** See code in examples/api/lib/cupertino/context_menu/cupertino_context_menu.1.dart **
-  /// {@end-tool}
+  /// {@example /example/lib/context_menu/cupertino_context_menu.1.dart}
+  ///
+  // TODO(framework): End of the @dartpad directive.
   final CupertinoContextMenuBuilder builder;
 
   // TODO(mitchgoodwin): deprecate [child] with builder refactor https://github.com/flutter/flutter/issues/116306

@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:cross_file/cross_file.dart';
-import 'package:cross_file_example/readme_excerpts.dart';
+import 'package:cross_file_example/main.dart';
 import 'package:test/test.dart';
 
 const bool kIsWeb = bool.fromEnvironment('dart.library.js_interop');
@@ -20,4 +20,12 @@ void main() {
     final String fileContent = await xFile.readAsString();
     expect(fileContent, allOf(isNotNull, isNotEmpty));
   }, skip: kIsWeb);
+
+  test('instantiateXFileFromData constructs from bytes', () async {
+    // Ensure that the snippet code runs successfully on every platform.
+    final XFile xFile = await instantiateXFileFromData();
+    expect(xFile.mimeType, 'text/plain');
+    expect(await xFile.length(), 6);
+    expect(await xFile.readAsString(), 'Hello!');
+  });
 }

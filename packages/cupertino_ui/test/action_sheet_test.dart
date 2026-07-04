@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@Skip(
-  'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
-)
 // This file is run as part of a reduced test set in CI on Mac and Windows
 // machines.
 @Tags(<String>['reduced-test-set'])
@@ -18,8 +15,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_test/flutter_test.dart';
-
-import '../widgets/semantics_tester.dart';
 
 void main() {
   testWidgets('Overall appearance is correct for the light theme', (WidgetTester tester) async {
@@ -1727,8 +1722,6 @@ void main() {
   }, skip: isBrowser); // https://github.com/flutter/flutter/issues/56001
 
   testWidgets('Action sheet semantics', (WidgetTester tester) async {
-    final semantics = SemanticsTester(tester);
-
     await tester.pumpWidget(
       createAppWithButtonThatLaunchesActionSheet(
         CupertinoActionSheet(
@@ -1746,74 +1739,51 @@ void main() {
     await tester.tap(find.text('Go'));
     await tester.pumpAndSettle();
 
+    final SemanticsNode sheet = tester.semantics.find(find.bySemanticsLabel('Alert'));
+    expect(sheet.role, SemanticsRole.dialog);
     expect(
-      semantics,
-      hasSemantics(
-        TestSemantics.root(
-          children: <TestSemantics>[
-            TestSemantics(
-              children: <TestSemantics>[
-                TestSemantics(
-                  children: <TestSemantics>[
-                    TestSemantics(
-                      flags: <SemanticsFlag>[SemanticsFlag.scopesRoute, SemanticsFlag.namesRoute],
-                      label: 'Alert',
-                      role: SemanticsRole.dialog,
-                      children: <TestSemantics>[
-                        TestSemantics(
-                          flags: <SemanticsFlag>[SemanticsFlag.hasImplicitScrolling],
-                          children: <TestSemantics>[
-                            TestSemantics(label: 'The title'),
-                            TestSemantics(label: 'The message'),
-                          ],
-                        ),
-                        TestSemantics(
-                          flags: <SemanticsFlag>[SemanticsFlag.hasImplicitScrolling],
-                          children: <TestSemantics>[
-                            TestSemantics(
-                              flags: <SemanticsFlag>[
-                                SemanticsFlag.isButton,
-                                SemanticsFlag.isFocusable,
-                              ],
-                              actions: <SemanticsAction>[
-                                SemanticsAction.tap,
-                                SemanticsAction.focus,
-                              ],
-                              label: 'One',
-                            ),
-                            TestSemantics(
-                              flags: <SemanticsFlag>[
-                                SemanticsFlag.isButton,
-                                SemanticsFlag.isFocusable,
-                              ],
-                              actions: <SemanticsAction>[
-                                SemanticsAction.tap,
-                                SemanticsAction.focus,
-                              ],
-                              label: 'Two',
-                            ),
-                          ],
-                        ),
-                        TestSemantics(
-                          flags: <SemanticsFlag>[SemanticsFlag.isButton, SemanticsFlag.isFocusable],
-                          actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
-                          label: 'Cancel',
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-        ignoreId: true,
-        ignoreRect: true,
-        ignoreTransform: true,
+      sheet,
+      isSemantics(
+        label: 'Alert',
+        namesRoute: true,
+        scopesRoute: true,
+        children: <Matcher>[
+          isSemantics(
+            hasImplicitScrolling: true,
+            children: <Matcher>[
+              isSemantics(label: 'The title'),
+              isSemantics(label: 'The message'),
+            ],
+          ),
+          isSemantics(
+            hasImplicitScrolling: true,
+            children: <Matcher>[
+              isSemantics(
+                label: 'One',
+                isButton: true,
+                isFocusable: true,
+                hasTapAction: true,
+                hasFocusAction: true,
+              ),
+              isSemantics(
+                label: 'Two',
+                isButton: true,
+                isFocusable: true,
+                hasTapAction: true,
+                hasFocusAction: true,
+              ),
+            ],
+          ),
+          isSemantics(
+            label: 'Cancel',
+            isButton: true,
+            isFocusable: true,
+            hasTapAction: true,
+            hasFocusAction: true,
+          ),
+        ],
       ),
     );
-
-    semantics.dispose();
   });
 
   testWidgets('Conflicting scrollbars are not applied by ScrollBehavior to CupertinoActionSheet', (

@@ -53,11 +53,14 @@ import 'theme_data.dart';
 /// appearance of its outline, both the [ButtonStyle.shape] and
 /// [ButtonStyle.side] properties must be specified.
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// Here is an example of a basic [OutlinedButton].
 ///
-/// ** See code in examples/api/lib/material/outlined_button/outlined_button.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/outlined_button/outlined_button.0.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// The static [styleFrom] method is a convenient way to create a
 /// outlined button [ButtonStyle] from simple values.

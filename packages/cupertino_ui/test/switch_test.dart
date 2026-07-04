@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@Skip(
-  'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
-)
 // This file is run as part of a reduced test set in CI on Mac and Windows
 // machines.
 @Tags(<String>['reduced-test-set'])
@@ -20,7 +17,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../widgets/semantics_tester.dart';
 import 'list_tile_tester.dart';
 
 void main() {
@@ -1425,8 +1421,6 @@ void main() {
         semanticEvent = message;
       },
     );
-    final semanticsTester = SemanticsTester(tester);
-
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.ltr,
@@ -1457,7 +1451,6 @@ void main() {
     });
     expect(object.debugSemantics!.getSemanticsData().hasAction(SemanticsAction.tap), true);
 
-    semanticsTester.dispose();
     tester.binding.defaultBinaryMessenger.setMockDecodedMessageHandler<dynamic>(
       SystemChannels.accessibility,
       null,
@@ -1475,8 +1468,6 @@ void main() {
         semanticEvent = message;
       },
     );
-    final semanticsTester = SemanticsTester(tester);
-
     await tester.pumpWidget(
       CupertinoApp(
         home: StatefulBuilder(
@@ -1510,7 +1501,6 @@ void main() {
     });
     expect(object.debugSemantics!.getSemanticsData().hasAction(SemanticsAction.tap), true);
 
-    semanticsTester.dispose();
     tester.binding.defaultBinaryMessenger.setMockDecodedMessageHandler<dynamic>(
       SystemChannels.accessibility,
       null,
