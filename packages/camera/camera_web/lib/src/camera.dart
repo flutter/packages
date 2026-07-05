@@ -606,12 +606,33 @@ class Camera {
   StreamController<CameraImageData>? _cameraFrameStreamController;
 
   /// Whether the camera frame stream is initialized.
-  bool get _isCameraFrameStreamInitialized =>
+  bool _isCameraFrameStreamInitialized() =>
       _cameraFrameStreamController != null && !_cameraFrameStreamController!.isClosed;
 
   /// Whether the camera is currently streaming frames.
-  bool get _isCameraFrameStreaming =>
-      _isCameraFrameStreamInitialized && _cameraFrameStreamController!.hasListener;
+  bool _isCameraFrameStreaming() =>
+      _isCameraFrameStreamInitialized() && _cameraFrameStreamController!.hasListener;
+
+  /// Used for safely emitting camera frame stream event
+  void _safelyEmitCamereFrameStreamEvent(CameraImageData data) {
+    if (_isCameraFrameStreamInitialized()) {
+      _cameraFrameStreamController!.add(data);
+    }
+  }
+
+  /// Used for safely closing camera frame stream event
+  void _safelyCloseCamereFrameStream() {
+    if (_isCameraFrameStreamInitialized()) {
+      _cameraFrameStreamController!.close();
+    }
+  }
+
+  /// Used for safely emitting camera frame stream error
+  void _safelyEmitCamereFrameStreamError(Object error) {
+    if (_isCameraFrameStreamInitialized()) {
+      _cameraFrameStreamController!.addError(error);
+    }
+  }
 
   // TODO(TecHaxter): Introduce FPS in CameraImageStreamOptions of
   //                  package:camera_platform_interface.
@@ -627,16 +648,22 @@ class Camera {
   ///
   /// To stop listening to new animation frames close all listening streams.
   Stream<CameraImageData> cameraFrameStream({CameraImageStreamOptions? options}) {
-    if (_isCameraFrameStreamInitialized) {
+    if (_isCameraFrameStreamInitialized()) {
       return _cameraFrameStreamController!.stream;
     }
 
     _cameraFrameStreamController = StreamController<CameraImageData>.broadcast(
       onListen: () {
         if (canUseMediaStreamTrackProcessor && stream != null) {
-          _triggerMediaStreamTrackProcessorLoop(stream!);
+          _triggerVideoStreamTrackProcessorLoop(
+            stream!,
+            onImageAvailable: _safelyEmitCamereFrameStreamEvent,
+            shouldContinue: _isCameraFrameStreaming,
+            onClose: _safelyCloseCamereFrameStream,
+            onError: _safelyEmitCamereFrameStreamError,
+          );
         } else {
-          _triggerAnimationFramesLoop(_addCameraImageDataEvent, fps: cameraStreamFPS);
+          _triggerAnimationFramesLoop(_getAndEmitFrameFromVideoElement, fps: cameraStreamFPS);
         }
       },
     );
@@ -681,64 +708,87 @@ class Camera {
     };
   }
 
-  /// Used to trigger add event of camera image data in camera frame stream
-  void _addCameraImageDataEvent() {
+  /// Used to capture [videoElement] and and handle camera frame stream accordingly
+  void _getAndEmitFrameFromVideoElement() {
     try {
       final CameraImageData image = _cameraService.takeFrame(videoElement, cameraId: textureId);
-      _cameraFrameStreamController?.add(image);
+      _safelyEmitCamereFrameStreamEvent(image);
     } catch (e) {
-      _cameraFrameStreamController?.addError(e);
-      _cameraFrameStreamController?.close();
+      _safelyEmitCamereFrameStreamError(e);
+      _safelyCloseCamereFrameStream();
     }
   }
 
   /// Uses [MediaStreamTrackProcessor] to read [web.VideoFrame] from the given
-  /// [track] and convert them to [CameraImageData]. The converted
+  /// [stream] and convert them to [CameraImageData]. The converted
   /// [CameraImageData] is emitted to the [_cameraFrameStreamController].
-  Future<void> _triggerMediaStreamTrackProcessorLoop(web.MediaStream stream) async {
-    final web.ReadableStreamDefaultReader reader = _cameraService.getMediaStreamTrackReader(
-      _cameraService.getMediaStreamVideoTrack(stream, cameraId: textureId),
-    );
-    final holder = VideoFrameBufferHolder();
+  Future<void> _triggerVideoStreamTrackProcessorLoop(
+    web.MediaStream stream, {
+    required bool Function() shouldContinue,
+    required void Function(CameraImageData) onImageAvailable,
+    required void Function() onClose,
+    required void Function(Object) onError,
+  }) async {
+    web.ReadableStreamDefaultReader? reader;
+    VideoFrameBufferHolder? holder;
+    bool isNonFatal(Object e) =>
+        e is CameraWebException &&
+        [
+          CameraErrorCode.videoTrackReaderClosed,
+          CameraErrorCode.missingPlaneLayout,
+          CameraErrorCode.unableToCloneFrame,
+        ].contains(e.code);
 
     try {
-      while (_isCameraFrameStreaming) {
-        final web.VideoFrame videoFrame = await _cameraService.readVideoTrack(reader);
+      reader = _cameraService.getMediaStreamTrackReader(
+        _cameraService.getMediaStreamVideoTrack(stream, cameraId: textureId),
+      );
+      holder = VideoFrameBufferHolder();
+
+      while (shouldContinue()) {
+        final web.VideoFrame videoFrame = await _cameraService.readVideoTrack(
+          reader,
+          cameraId: textureId,
+        );
 
         try {
-          await _copyVideoFrameToBuffer(videoFrame, holder);
+          final int requiredSize = videoFrame.allocationSize(holder.copyOptions);
+          holder.ensureBufferSize(requiredSize);
+          final int stride = await _cameraService.copyVideoFrameToBufferAndGetStride(
+            videoFrame,
+            destination: holder.reusableJSBuffer!,
+            copyOptions: holder.copyOptions,
+            cameraId: textureId,
+          );
+
+          if (!shouldContinue()) {
+            break;
+          }
           final CameraImageData imageData = _cameraService.getCameraImageData(
             width: videoFrame.visibleRect!.width.toInt(),
             height: videoFrame.visibleRect!.height.toInt(),
+            bytesPerRow: stride,
             bytes: holder.reusableDartView!,
           );
 
-          _cameraFrameStreamController?.add(imageData);
+          onImageAvailable(imageData);
         } catch (e) {
+          if (isNonFatal(e)) {
+            continue;
+          }
           rethrow;
         } finally {
           videoFrame.close();
         }
       }
     } catch (e) {
-      _cameraFrameStreamController?.addError(e);
-      await _cameraFrameStreamController?.close();
+      if (!isNonFatal(e)) {
+        onError(e);
+      }
     } finally {
-      reader.releaseLock();
-      holder.dispose();
+      onClose();
+      reader?.releaseLock();
+      holder?.dispose();
     }
-  }
-
-  /// Copies the given [videoFrame] to the reusable buffer in [holder].
-  /// Ensures that the reusable buffer is of the required size before copying.
-  /// The copied video frame is then converted to [CameraImageData] and emitted
-  /// to the [_cameraFrameStreamController] by the caller.
-  Future<void> _copyVideoFrameToBuffer(
-    web.VideoFrame videoFrame,
-    VideoFrameBufferHolder holder,
-  ) async {
-    final int requiredSize = videoFrame.allocationSize(holder.copyOptions);
-    holder.ensureBufferSize(requiredSize);
-    await videoFrame.copyTo(holder.reusableJSBuffer!, holder.copyOptions).toDart;
   }
 }

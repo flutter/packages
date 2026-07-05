@@ -36,70 +36,76 @@ class CameraService {
 
     try {
       return await mediaDevices.getUserMedia(options.toMediaStreamConstraints()).toDart;
-    } on web.DOMException catch (e) {
-      switch (e.name) {
-        case 'NotFoundError':
-        case 'DevicesNotFoundError':
-          throw CameraWebException(
-            cameraId,
-            CameraErrorCode.notFound,
-            'No camera found for the given camera options.',
-          );
-        case 'NotReadableError':
-        case 'TrackStartError':
-          throw CameraWebException(
-            cameraId,
-            CameraErrorCode.notReadable,
-            'The camera is not readable due to a hardware error '
-            'that prevented access to the device.',
-          );
-        case 'OverconstrainedError':
-        case 'ConstraintNotSatisfiedError':
-          throw CameraWebException(
-            cameraId,
-            CameraErrorCode.overconstrained,
-            'The camera options are impossible to satisfy.',
-          );
-        case 'NotAllowedError':
-        case 'PermissionDeniedError':
-          throw CameraWebException(
-            cameraId,
-            CameraErrorCode.permissionDenied,
-            'The camera cannot be used or the permission '
-            'to access the camera is not granted.',
-          );
-        case 'TypeError':
-          throw CameraWebException(
-            cameraId,
-            CameraErrorCode.type,
-            'The camera options are incorrect or attempted '
-            'to access the media input from an insecure context.',
-          );
-        case 'AbortError':
-          throw CameraWebException(
-            cameraId,
-            CameraErrorCode.abort,
-            'Some problem occurred that prevented the camera from being used.',
-          );
-        case 'SecurityError':
-          throw CameraWebException(
-            cameraId,
-            CameraErrorCode.security,
-            'The user media support is disabled in the current browser.',
-          );
-        default:
-          throw CameraWebException(
-            cameraId,
-            CameraErrorCode.unknown,
-            'An unknown error occurred when fetching the camera stream.',
-          );
+    } catch (e) {
+      final web.DOMException? domException = e.asDOMException;
+      if (domException != null) {
+        throw _domExceptionToCameraWebException(domException, cameraId: cameraId);
       }
-    } catch (_) {
       throw CameraWebException(
         cameraId,
         CameraErrorCode.unknown,
         'An unknown error occurred when fetching the camera stream.',
       );
+    }
+  }
+
+  CameraWebException _domExceptionToCameraWebException(web.DOMException e, {int cameraId = 0}) {
+    switch (e.name) {
+      case 'NotFoundError':
+      case 'DevicesNotFoundError':
+        return CameraWebException(
+          cameraId,
+          CameraErrorCode.notFound,
+          'No camera found for the given camera options.',
+        );
+      case 'NotReadableError':
+      case 'TrackStartError':
+        return CameraWebException(
+          cameraId,
+          CameraErrorCode.notReadable,
+          'The camera is not readable due to a hardware error '
+          'that prevented access to the device.',
+        );
+      case 'OverconstrainedError':
+      case 'ConstraintNotSatisfiedError':
+        return CameraWebException(
+          cameraId,
+          CameraErrorCode.overconstrained,
+          'The camera options are impossible to satisfy.',
+        );
+      case 'NotAllowedError':
+      case 'PermissionDeniedError':
+        return CameraWebException(
+          cameraId,
+          CameraErrorCode.permissionDenied,
+          'The camera cannot be used or the permission '
+          'to access the camera is not granted.',
+        );
+      case 'TypeError':
+        return CameraWebException(
+          cameraId,
+          CameraErrorCode.type,
+          'The camera options are incorrect or attempted '
+          'to access the media input from an insecure context.',
+        );
+      case 'AbortError':
+        return CameraWebException(
+          cameraId,
+          CameraErrorCode.abort,
+          'Some problem occurred that prevented the camera from being used.',
+        );
+      case 'SecurityError':
+        return CameraWebException(
+          cameraId,
+          CameraErrorCode.security,
+          'The user media support is disabled in the current browser.',
+        );
+      default:
+        return CameraWebException(
+          cameraId,
+          CameraErrorCode.unknown,
+          'An unknown error occurred when fetching the camera stream.',
+        );
     }
   }
 
@@ -391,6 +397,7 @@ class CameraService {
     if (hasPropertyOffScreenCanvas()) {
       imageData = _takeOffscreenCanvasFrame(
         videoElement,
+        cameraId: cameraId,
         width: width,
         height: height,
         settings: imageDataSettings,
@@ -405,7 +412,12 @@ class CameraService {
     }
     final ByteBuffer byteBuffer = imageData.data.toDart.buffer;
 
-    return getCameraImageData(bytes: byteBuffer.asUint8List(), width: width, height: height);
+    return getCameraImageData(
+      bytes: byteBuffer.asUint8List(),
+      width: width,
+      height: height,
+      bytesPerRow: width * 4,
+    );
   }
 
   /// Used by [_takeOffscreenCanvasFrame] to cache the offscreen canvas
@@ -417,6 +429,7 @@ class CameraService {
   /// Takes a video frame using `OffscreenCanvas` for better performance
   web.ImageData _takeOffscreenCanvasFrame(
     web.VideoElement videoElement, {
+    int cameraId = 0,
     required int width,
     required int height,
     required WebTweakImageDataSettings settings,
@@ -427,9 +440,11 @@ class CameraService {
         ..width = width
         ..height = height;
     }
-    _offscreenCanvasContext ??=
-        _offscreenCanvas!.getContext('2d', <String, Object?>{'willReadFrequently': true}.jsify())!
-            as web.OffscreenCanvasRenderingContext2D;
+    _offscreenCanvasContext ??= _wasmCompatible(
+      _offscreenCanvas!.getContext('2d', <String, Object?>{'willReadFrequently': true}.jsify()),
+      (jsObj) => jsObj.isA<web.OffscreenCanvasRenderingContext2D>(),
+      cameraId: cameraId,
+    );
 
     _offscreenCanvasContext!.drawImage(videoElement, 0, 0);
     return _offscreenCanvasContext!.getImageData(0, 0, width, height, settings);
@@ -477,19 +492,43 @@ class CameraService {
   /// Creates a [web.ReadableStreamDefaultReader] from a [web.MediaStreamTrack].
   web.ReadableStreamDefaultReader getMediaStreamTrackReader(
     web.MediaStreamTrack track, {
+    int cameraId = 0,
     int maxBufferSize = 1,
   }) {
-    final options = web.MediaStreamTrackProcessorInit(track: track, maxBufferSize: maxBufferSize);
-    final processor = web.MediaStreamTrackProcessor(options);
-    return processor.readable.getReader() as web.ReadableStreamDefaultReader;
+    try {
+      final options = web.MediaStreamTrackProcessorInit(track: track, maxBufferSize: maxBufferSize);
+      final processor = web.MediaStreamTrackProcessor(options);
+      return _wasmCompatible(
+        processor.readable.getReader(),
+        (jsObj) => jsObj.isA<web.ReadableStreamDefaultReader>(),
+        cameraId: cameraId,
+      );
+    } catch (e) {
+      final web.DOMException? domException = e.asDOMException;
+      if (domException != null) {
+        throw _domExceptionToCameraWebException(domException, cameraId: cameraId);
+      }
+      rethrow;
+    }
   }
 
-  /// Reads a video frame from the given [reader].
+  /// Reads [web.VideoFrame] from the given [reader]
   Future<web.VideoFrame> readVideoTrack(
     web.ReadableStreamDefaultReader reader, {
     int cameraId = 0,
   }) async {
-    final web.ReadableStreamReadResult readResult = await reader.read().toDart;
+    final web.ReadableStreamReadResult readResult;
+
+    try {
+      readResult = await reader.read().toDart;
+    } catch (e) {
+      final web.DOMException? domException = e.asDOMException;
+      if (domException != null) {
+        throw _domExceptionToCameraWebException(domException, cameraId: cameraId);
+      }
+      rethrow;
+    }
+
     if (readResult.done) {
       throw CameraWebException(
         cameraId,
@@ -497,8 +536,13 @@ class CameraService {
         'The track reader has been closed.',
       );
     }
-    final videoFrame = readResult.value as web.VideoFrame?;
-    if (videoFrame == null || videoFrame.visibleRect == null) {
+
+    final web.VideoFrame videoFrame = _wasmCompatible(
+      readResult.value,
+      (jsObj) => jsObj.isA<web.VideoFrame>(),
+      cameraId: cameraId,
+    );
+    if (videoFrame.visibleRect == null) {
       throw CameraWebException(
         cameraId,
         CameraErrorCode.videoTrackReaderNotInitialized,
@@ -508,16 +552,57 @@ class CameraService {
     return videoFrame;
   }
 
-  /// Converts a [web.VideoFrame] into a [CameraImageData], reusing previously
-  /// allocated buffers when possible.
+  /// Copies the given [videoFrame] to the memory
+  /// Returns the exact `stride` (bytes per row) determined by the browser.
+  ///
+  /// Throws a [CameraWebException] if the browser fails to provide layout metadata.
+  Future<int> copyVideoFrameToBufferAndGetStride(
+    web.VideoFrame videoFrame, {
+    int cameraId = 0,
+    required JSUint8Array destination,
+    required web.VideoFrameCopyToOptions copyOptions,
+  }) async {
+    try {
+      final List<web.PlaneLayout> planes =
+          (await videoFrame.copyTo(destination, copyOptions).toDart).toDart;
+
+      if (planes.isEmpty) {
+        throw CameraWebException(
+          cameraId,
+          CameraErrorCode.missingPlaneLayout,
+          'Failed to extract frame layout: Browser returned 0 planes during copyTo.',
+        );
+      }
+      return planes[0].stride;
+    } on RangeError catch (e) {
+      throw CameraWebException(
+        cameraId,
+        CameraErrorCode.missingPlaneLayout,
+        'Failed to extract frame layout: ${e.name}',
+      );
+    } catch (e) {
+      final web.DOMException? domException = e.asDOMException;
+      if (domException != null) {
+        throw CameraWebException(
+          cameraId,
+          CameraErrorCode.unableToCloneFrame,
+          'Dropped corrupted frame (${domException.name})',
+        );
+      }
+      rethrow;
+    }
+  }
+
+  /// Constructs a [CameraImageData] using raw data
   CameraImageData getCameraImageData({
     required int width,
     required int height,
     required Uint8List bytes,
+    required int bytesPerRow,
   }) {
     final plane = CameraImagePlane(
       bytes: bytes,
-      bytesPerRow: width * 4,
+      bytesPerRow: bytesPerRow,
       bytesPerPixel: 4,
       width: width,
       height: height,
@@ -529,5 +614,22 @@ class CameraService {
     const format = CameraImageFormat(ImageFormatGroup.unknown, raw: 'rgba8888');
 
     return CameraImageData(width: width, height: height, format: format, planes: [plane]);
+  }
+
+  /// Performs wasm compatibility checks on [JSAny] to return [T]
+  T _wasmCompatible<T extends JSAny>(
+    JSAny? raw,
+    bool Function(JSAny) checkType, {
+    int cameraId = 0,
+  }) {
+    // Use the callback to perform the compile-time bound check
+    if (raw == null || !checkType(raw)) {
+      throw CameraWebException(
+        cameraId,
+        CameraErrorCode.notReadable,
+        'Failed to initialize $T: Browser returned an invalid type.',
+      );
+    }
+    return raw as T;
   }
 }

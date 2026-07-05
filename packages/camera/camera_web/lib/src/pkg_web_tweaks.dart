@@ -67,8 +67,7 @@ extension type WebTweakMediaTrackConstraints._(JSObject _) implements JSObject {
   external factory WebTweakMediaTrackConstraints({JSAny zoom, ConstrainBoolean torch});
 }
 
-extension type WebTweakImageDataSettings._(JSObject _)
-    implements ImageDataSettings {
+extension type WebTweakImageDataSettings._(JSObject _) implements ImageDataSettings {
   external factory WebTweakImageDataSettings({
     PredefinedColorSpace colorSpace,
     WebTweakPredefinedFormat? format,
@@ -81,3 +80,16 @@ extension type WebTweakImageDataSettings._(JSObject _)
 }
 
 typedef WebTweakPredefinedFormat = String;
+
+/// An extension to safely parse Wasm-compatible DOMExceptions.
+extension WasmExceptionParsing on Object {
+  /// Safely checks if the thrown object is a [web.DOMException] across
+  /// both Dart2JS and Dart2Wasm boundaries.
+  DOMException? get asDOMException {
+    final error = this;
+    if (error is JSAny && error.isA<DOMException>()) {
+      return error as DOMException;
+    }
+    return null;
+  }
+}
