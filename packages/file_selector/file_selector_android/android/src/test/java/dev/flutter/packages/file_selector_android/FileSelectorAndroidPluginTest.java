@@ -245,7 +245,7 @@ public class FileSelectorAndroidPluginTest {
               mockObjectFactory,
               (version) -> Build.VERSION.SDK_INT >= version);
 
-      final Boolean[] callbackCalled = new Boolean[1];
+      final boolean[] callbackCalled = new boolean[1];
       final Throwable[] failure = new Throwable[1];
       fileSelectorApi.openFiles(
           null,
@@ -313,7 +313,7 @@ public class FileSelectorAndroidPluginTest {
               mockObjectFactory,
               (version) -> Build.VERSION.SDK_INT >= version);
 
-      final Boolean[] callbackCalled = new Boolean[1];
+      final boolean[] callbackCalled = new boolean[1];
       final Throwable[] failure = new Throwable[1];
       fileSelectorApi.openFile(
           null,
