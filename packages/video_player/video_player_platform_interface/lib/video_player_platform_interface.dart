@@ -122,6 +122,15 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('setAllowBackgroundPlayback() has not been implemented.');
   }
 
+  /// Sets whether the screen is prevented from sleeping during video playback.
+  ///
+  /// The default implementation is a no-op, so platforms that do not support
+  /// controlling display sleep will silently use their default behavior.
+  Future<void> setPreventsDisplaySleepDuringVideoPlayback(
+    int playerId,
+    bool preventsDisplaySleepDuringVideoPlayback,
+  ) async {}
+
   /// Sets additional options on web.
   Future<void> setWebOptions(int playerId, VideoPlayerWebOptions options) {
     throw UnimplementedError('setWebOptions() has not been implemented.');
@@ -461,6 +470,7 @@ class VideoPlayerOptions {
   VideoPlayerOptions({
     this.mixWithOthers = false,
     this.allowBackgroundPlayback = false,
+    this.preventsDisplaySleepDuringVideoPlayback = true,
     this.webOptions,
   });
 
@@ -474,6 +484,13 @@ class VideoPlayerOptions {
   /// Note: This option will be silently ignored in the web platform (there is
   /// currently no way to implement this feature in this platform).
   final bool mixWithOthers;
+
+  /// Whether the screen is prevented from sleeping during video playback.
+  ///
+  /// Defaults to `true`.
+  ///
+  /// This option may not be supported on all platforms.
+  final bool preventsDisplaySleepDuringVideoPlayback;
 
   /// Additional web controls
   final VideoPlayerWebOptions? webOptions;

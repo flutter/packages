@@ -237,7 +237,10 @@ class TextTheme with Diagnosticable {
   /// the typography styles in the Material Design specification, as a starting
   /// point.
   ///
-  /// {@tool snippet}
+  // TODO(framework): Replace the following block with a blue example container
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
   ///
   /// ```dart
   /// /// A Widget that sets the ambient theme's title text color for its
@@ -264,7 +267,8 @@ class TextTheme with Diagnosticable {
   ///   }
   /// }
   /// ```
-  /// {@end-tool}
+  ///
+  // TODO(framework): End of the blue example container.
   ///
   /// See also:
   ///
@@ -325,7 +329,10 @@ class TextTheme with Diagnosticable {
   /// [TextTheme] has only some fields defined, and you want to define the rest
   /// by merging it with a default theme.
   ///
-  /// {@tool snippet}
+  // TODO(framework): Replace the following block with a blue example container
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
   ///
   /// ```dart
   /// /// A Widget that sets the ambient theme's title text color for its
@@ -350,7 +357,8 @@ class TextTheme with Diagnosticable {
   ///   }
   /// }
   /// ```
-  /// {@end-tool}
+  ///
+  // TODO(framework): End of the blue example container.
   ///
   /// See also:
   ///

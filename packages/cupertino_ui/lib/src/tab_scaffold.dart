@@ -22,12 +22,15 @@ import 'theme.dart';
 /// [CupertinoTabController] controls, as well as the currently selected tab item of
 /// its [CupertinoTabBar].
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This samples shows how [CupertinoTabController] can be used to switch tabs in
 /// [CupertinoTabScaffold].
 ///
-/// ** See code in examples/api/lib/cupertino/tab_scaffold/cupertino_tab_controller.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/tab_scaffold/cupertino_tab_controller.0.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///
@@ -105,11 +108,14 @@ class CupertinoTabController extends ChangeNotifier {
 /// (via [State.setState], for instance) from its descendant rather than from
 /// its ancestor.
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// A sample code implementing a typical iOS information architecture with tabs.
 ///
-/// ** See code in examples/api/lib/cupertino/tab_scaffold/cupertino_tab_scaffold.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/tab_scaffold/cupertino_tab_scaffold.0.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// To push a route above all tabs instead of inside the currently selected one
 /// (such as when showing a dialog on top of this scaffold), use

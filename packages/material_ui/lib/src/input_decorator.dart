@@ -2702,7 +2702,9 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
 /// to describe their decoration. (In fact, this class is merely the
 /// configuration of an [InputDecorator], which does all the heavy lifting.)
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This sample shows how to style a `TextField` using an `InputDecorator`. The
 /// TextField displays a "send message" icon to the left of the input area,
 /// which is surrounded by a border an all sides. It displays the `hintText`
@@ -2711,53 +2713,69 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
 ///
 /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/input_decoration.png)
 ///
-/// ** See code in examples/api/lib/material/input_decorator/input_decoration.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/input_decorator/input_decoration.0.dart}
 ///
-/// {@tool dartpad}
+// TODO(framework): End of the @dartpad directive.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This sample shows how to style a "collapsed" `TextField` using an
 /// `InputDecorator`. The collapsed `TextField` surrounds the hint text and
 /// input area with a border, but does not add padding around them.
 ///
 /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/input_decoration_collapsed.png)
 ///
-/// ** See code in examples/api/lib/material/input_decorator/input_decoration.1.dart **
-/// {@end-tool}
+/// {@example /example/lib/input_decorator/input_decoration.1.dart}
 ///
-/// {@tool dartpad}
+// TODO(framework): End of the @dartpad directive.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This sample shows how to create a `TextField` with hint text, a red border
 /// on all sides, and an error message. To display a red border and error
 /// message, provide `errorText` to the [InputDecoration] constructor.
 ///
 /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/input_decoration_error.png)
 ///
-/// ** See code in examples/api/lib/material/input_decorator/input_decoration.2.dart **
-/// {@end-tool}
+/// {@example /example/lib/input_decorator/input_decoration.2.dart}
 ///
-/// {@tool dartpad}
+// TODO(framework): End of the @dartpad directive.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This sample shows how to style a `TextField` with a round border and
 /// additional text before and after the input area. It displays "Prefix" before
 /// the input area, and "Suffix" after the input area.
 ///
 /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/input_decoration_prefix_suffix.png)
 ///
-/// ** See code in examples/api/lib/material/input_decorator/input_decoration.3.dart **
-/// {@end-tool}
+/// {@example /example/lib/input_decorator/input_decoration.3.dart}
 ///
-/// {@tool dartpad}
+// TODO(framework): End of the @dartpad directive.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This sample shows how to style a `TextField` with a prefixIcon that changes color
 /// based on the `WidgetState`. The color defaults to gray and is green while focused.
 ///
-/// ** See code in examples/api/lib/material/input_decorator/input_decoration.widget_state.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/input_decorator/input_decoration.widget_state.0.dart}
 ///
-/// {@tool dartpad}
+// TODO(framework): End of the @dartpad directive.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This sample shows how to style a `TextField` with a prefixIcon that changes color
 /// based on the `WidgetState` through the use of `ThemeData`. The color defaults
 /// to gray, be blue while focused and red if in an error state.
 ///
-/// ** See code in examples/api/lib/material/input_decorator/input_decoration.widget_state.1.dart **
-/// {@end-tool}
+/// {@example /example/lib/input_decorator/input_decoration.widget_state.1.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///
@@ -2993,12 +3011,15 @@ class InputDecoration {
   /// This can be used, for example, to add multiple [TextStyle]'s to a label that would
   /// otherwise be specified using [labelText], which only takes one [TextStyle].
   ///
-  /// {@tool dartpad}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  ///
   /// This example shows a `TextField` with a [Text.rich] widget as the [label].
   /// The widget contains multiple [Text] widgets with different [TextStyle]'s.
   ///
-  /// ** See code in examples/api/lib/material/input_decorator/input_decoration.label.0.dart **
-  /// {@end-tool}
+  /// {@example /example/lib/input_decorator/input_decoration.label.0.dart}
+  ///
+  // TODO(framework): End of the @dartpad directive.
   ///
   /// Only one of [label] and [labelText] can be specified.
   final Widget? label;
@@ -3029,7 +3050,9 @@ class InputDecoration {
   /// of [InputDecoration] that changes the color of the label to the
   /// [InputDecoration.errorStyle] color or [ColorScheme.error].
   ///
-  /// {@tool dartpad}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  ///
   /// It's possible to override the label style for just the error state, or
   /// just the default state, or both.
   ///
@@ -3037,8 +3060,9 @@ class InputDecoration {
   /// which resolves to a text style whose color depends on the decorator's
   /// error state.
   ///
-  /// ** See code in examples/api/lib/material/input_decorator/input_decoration.label_style_error.0.dart **
-  /// {@end-tool}
+  /// {@example /example/lib/input_decorator/input_decoration.label_style_error.0.dart}
+  ///
+  // TODO(framework): End of the @dartpad directive.
   /// {@endtemplate}
   final TextStyle? labelStyle;
 
@@ -3062,7 +3086,9 @@ class InputDecoration {
   /// When the input field receives focus, the font size of [InputDecoration.label] is
   /// scaled down by 75%.
   ///
-  /// {@tool dartpad}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  ///
   /// It's possible to override the label style for just the error state, or
   /// just the default state, or both.
   ///
@@ -3070,8 +3096,9 @@ class InputDecoration {
   /// [WidgetStateProperty] which resolves to a text style whose color depends
   /// on the decorator's error state.
   ///
-  /// ** See code in examples/api/lib/material/input_decorator/input_decoration.floating_label_style_error.0.dart **
-  /// {@end-tool}
+  /// {@example /example/lib/input_decorator/input_decoration.floating_label_style_error.0.dart}
+  ///
+  // TODO(framework): End of the @dartpad directive.
   /// {@endtemplate}
   final TextStyle? floatingLabelStyle;
 
@@ -3081,12 +3108,15 @@ class InputDecoration {
   /// the same location as [error]. If a non-null [error] or [errorText] value is
   /// specified then the [helper] is not shown.
   ///
-  /// {@tool dartpad}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  ///
   /// This example shows a `TextField` with a [Text.rich] widget as the [helper].
   /// The widget contains [Text] and [Icon] widgets with different styles.
   ///
-  /// ** See code in examples/api/lib/material/input_decorator/input_decoration.helper.0.dart **
-  /// {@end-tool}
+  /// {@example /example/lib/input_decorator/input_decoration.helper.0.dart}
+  ///
+  // TODO(framework): End of the @dartpad directive.
   ///
   /// Only one of [helper] and [helperText] can be specified.
   final Widget? helper;
@@ -3384,12 +3414,15 @@ class InputDecoration {
   /// The prefix icon alignment can be changed using [Align] with a fixed `widthFactor` and
   /// `heightFactor`.
   ///
-  /// {@tool dartpad}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  ///
   /// This example shows how the prefix icon alignment can be changed using [Align] with
   /// a fixed `widthFactor` and `heightFactor`.
   ///
-  /// ** See code in examples/api/lib/material/input_decorator/input_decoration.prefix_icon.0.dart **
-  /// {@end-tool}
+  /// {@example /example/lib/input_decorator/input_decoration.prefix_icon.0.dart}
+  ///
+  // TODO(framework): End of the @dartpad directive.
   ///
   /// See also:
   ///
@@ -3411,7 +3444,9 @@ class InputDecoration {
   /// setting [isDense] to true and setting the constraints' minimum height
   /// and width to a value lower than the minimum tappable size.
   ///
-  /// {@tool dartpad}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  ///
   /// This example shows the differences between two `TextField` widgets when
   /// [prefixIconConstraints] is set to the default value and when one is not.
   ///
@@ -3421,8 +3456,9 @@ class InputDecoration {
   /// If null, [BoxConstraints] with a minimum width and height of 48px is
   /// used.
   ///
-  /// ** See code in examples/api/lib/material/input_decorator/input_decoration.prefix_icon_constraints.0.dart **
-  /// {@end-tool}
+  /// {@example /example/lib/input_decorator/input_decoration.prefix_icon_constraints.0.dart}
+  ///
+  // TODO(framework): End of the @dartpad directive.
   final BoxConstraints? prefixIconConstraints;
 
   /// Optional widget to place on the line before the input.
@@ -3507,12 +3543,15 @@ class InputDecoration {
   /// The suffix icon alignment can be changed using [Align] with a fixed `widthFactor` and
   /// `heightFactor`.
   ///
-  /// {@tool dartpad}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  ///
   /// This example shows how the suffix icon alignment can be changed using [Align] with
   /// a fixed `widthFactor` and `heightFactor`.
   ///
-  /// ** See code in examples/api/lib/material/input_decorator/input_decoration.suffix_icon.0.dart **
-  /// {@end-tool}
+  /// {@example /example/lib/input_decorator/input_decoration.suffix_icon.0.dart}
+  ///
+  // TODO(framework): End of the @dartpad directive.
   ///
   /// See also:
   ///
@@ -3589,7 +3628,9 @@ class InputDecoration {
   /// If null, a [BoxConstraints] with a minimum width and height of 48px is
   /// used.
   ///
-  /// {@tool dartpad}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  ///
   /// This example shows the differences between two `TextField` widgets when
   /// [suffixIconConstraints] is set to the default value and when one is not.
   ///
@@ -3599,8 +3640,9 @@ class InputDecoration {
   /// If null, [BoxConstraints] with a minimum width and height of 48px is
   /// used.
   ///
-  /// ** See code in examples/api/lib/material/input_decorator/input_decoration.suffix_icon_constraints.0.dart **
-  /// {@end-tool}
+  /// {@example /example/lib/input_decorator/input_decoration.suffix_icon_constraints.0.dart}
+  ///
+  // TODO(framework): End of the @dartpad directive.
   final BoxConstraints? suffixIconConstraints;
 
   /// Optional text to place below the line as a character count.
