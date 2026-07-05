@@ -938,6 +938,62 @@ void main() {
       });
     });
 
+    group('copyVideoFrameToBufferAndGetStride', () {
+      web.VideoFrame stubVideoFrameCopyTo(JSPromise<JSArray<web.PlaneLayout>> Function() result) {
+        final mockFrame = MockVideoFrame(width: 10, height: 10, bufferSize: 32);
+        mockFrame.copyTo = (JSAny? destination, web.VideoFrameCopyToOptions options) => result();
+        return createJSInteropWrapper(mockFrame) as web.VideoFrame;
+      }
+
+      testWidgets('returns first plane stride', (WidgetTester tester) async {
+        const expectedStride = 640;
+        final web.VideoFrame videoFrame = stubVideoFrameCopyTo(
+          () => Future<JSArray<web.PlaneLayout>>.value(
+            JSArray<web.PlaneLayout>()..add(web.PlaneLayout(offset: 0, stride: expectedStride)),
+          ).toJS,
+        );
+
+        final int stride = await cameraService.copyVideoFrameToBufferAndGetStride(
+          videoFrame,
+          destination: JSUint8Array.withLength(100),
+          copyOptions: web.VideoFrameCopyToOptions(),
+        );
+
+        expect(stride, expectedStride);
+      });
+
+      void expectCameraWebException(web.VideoFrame videoFrame, CameraErrorCode code) {
+        expect(
+          () => cameraService.copyVideoFrameToBufferAndGetStride(
+            videoFrame,
+            destination: JSUint8Array.withLength(100),
+            copyOptions: web.VideoFrameCopyToOptions(),
+          ),
+          throwsA(isA<CameraWebException>().having((CameraWebException e) => e.code, 'code', code)),
+        );
+      }
+
+      testWidgets('throws missingPlaneLayout when browser returns no planes', (
+        WidgetTester tester,
+      ) async {
+        final web.VideoFrame videoFrame = stubVideoFrameCopyTo(
+          () => Future<JSArray<web.PlaneLayout>>.value(JSArray<web.PlaneLayout>()).toJS,
+        );
+
+        expectCameraWebException(videoFrame, CameraErrorCode.missingPlaneLayout);
+      });
+
+      testWidgets('throws unableToCloneFrame when DOMException occurs', (
+        WidgetTester tester,
+      ) async {
+        final web.VideoFrame videoFrame = stubVideoFrameCopyTo(
+          () => throw web.DOMException('Frame is corrupted', 'InvalidStateError'),
+        );
+
+        expectCameraWebException(videoFrame, CameraErrorCode.unableToCloneFrame);
+      });
+    });
+
     group('getCameraImageData', () {
       testWidgets('returns CameraImageData with valid planes', (WidgetTester tester) async {
         const mockWidth = 2;

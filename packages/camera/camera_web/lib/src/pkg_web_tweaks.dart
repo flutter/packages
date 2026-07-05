@@ -80,16 +80,3 @@ extension type WebTweakImageDataSettings._(JSObject _) implements ImageDataSetti
 }
 
 typedef WebTweakPredefinedFormat = String;
-
-/// An extension to safely parse Wasm-compatible DOMExceptions.
-extension WasmExceptionParsing on Object {
-  /// Safely checks if the thrown object is a [web.DOMException] across
-  /// both Dart2JS and Dart2Wasm boundaries.
-  DOMException? get asDOMException {
-    final error = this;
-    if (error is JSAny && error.isA<DOMException>()) {
-      return error as DOMException;
-    }
-    return null;
-  }
-}

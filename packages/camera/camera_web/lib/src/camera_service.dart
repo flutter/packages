@@ -37,7 +37,7 @@ class CameraService {
     try {
       return await mediaDevices.getUserMedia(options.toMediaStreamConstraints()).toDart;
     } catch (e) {
-      final web.DOMException? domException = e.asDOMException;
+      final web.DOMException? domException = asDOMException(e);
       if (domException != null) {
         throw _domExceptionToCameraWebException(domException, cameraId: cameraId);
       }
@@ -509,7 +509,7 @@ class CameraService {
       final processor = web.MediaStreamTrackProcessor(options);
       return _wasmCompatible(processor.readable.getReader(), isReaderType, cameraId: cameraId);
     } catch (e) {
-      final web.DOMException? domException = e.asDOMException;
+      final web.DOMException? domException = asDOMException(e);
       if (domException != null) {
         throw _domExceptionToCameraWebException(domException, cameraId: cameraId);
       }
@@ -531,7 +531,7 @@ class CameraService {
     try {
       readResult = await reader.read().toDart;
     } catch (e) {
-      final web.DOMException? domException = e.asDOMException;
+      final web.DOMException? domException = asDOMException(e);
       if (domException != null) {
         throw _domExceptionToCameraWebException(domException, cameraId: cameraId);
       }
@@ -583,14 +583,8 @@ class CameraService {
         );
       }
       return planes[0].stride;
-    } on RangeError catch (e) {
-      throw CameraWebException(
-        cameraId,
-        CameraErrorCode.missingPlaneLayout,
-        'Failed to extract frame layout: ${e.name}',
-      );
     } catch (e) {
-      final web.DOMException? domException = e.asDOMException;
+      final web.DOMException? domException = asDOMException(e);
       if (domException != null) {
         throw CameraWebException(
           cameraId,
@@ -641,4 +635,9 @@ class CameraService {
     }
     return raw as T;
   }
+
+  /// Used to return [web.DOMException] if provided object is of the type
+  @visibleForTesting
+  web.DOMException? Function(Object) asDOMException = (error) =>
+      error.isA<web.DOMException>() ? error as web.DOMException : null;
 }

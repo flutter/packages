@@ -186,7 +186,7 @@ class MockVideoFrame {
     }.toJS;
     copyTo = (JSAny? destination, web.VideoFrameCopyToOptions options) {
       return Future<JSArray<web.PlaneLayout>>.value(JSArray<web.PlaneLayout>()).toJS;
-    }.toJS;
+    };
   }
 
   final int width;
@@ -201,7 +201,7 @@ class MockVideoFrame {
   late JSFunction allocationSize;
 
   /// Copies the video frame to the given destination.
-  late JSFunction copyTo;
+  late JSPromise<JSArray<web.PlaneLayout>> Function(JSAny?, web.VideoFrameCopyToOptions) copyTo;
 
   /// Closes the video frame.
   JSFunction close = () {}.toJS;
