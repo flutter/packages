@@ -81,6 +81,12 @@ class CameraErrorCode {
     'cameraFrameDimensionsZero',
   );
 
+  /// The camera frame has missing plane layout
+  static const CameraErrorCode unableToCloneFrame = CameraErrorCode._('unableToCloneFrame');
+
+  /// The camera frame has missing plane layout
+  static const CameraErrorCode missingPlaneLayout = CameraErrorCode._('missingPlaneLayout');
+
   /// An unknown camera error.
   static const CameraErrorCode unknown = CameraErrorCode._('cameraUnknown');
 
