@@ -987,13 +987,16 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
   bool get _isDisposedOrNotInitialized => _isDisposed || !value.isInitialized;
 
-  /// Gets the available video tracks (quality variants) for the video.
+  /// Gets the available video tracks for the video.
   ///
-  /// Returns a list of [VideoTrack] objects representing the available
-  /// video quality variants. For HLS/DASH adaptive streams, this returns the
-  /// different quality levels (resolution/bitrate variants) available.
-  /// For non-adaptive videos (MP4, MOV, etc.), this returns an empty list
-  /// as they have a single fixed quality that cannot be switched.
+  /// The returned list contains a [VideoTrack] for each track available
+  /// for selection.
+  ///
+  /// For adaptive streams such as HLS or DASH, these often correspond to
+  /// different quality levels with different resolutions or bitrates.
+  /// For non-adaptive videos (MP4, MOV, etc.), platform implementations may
+  /// return one or more tracks, or an empty list, depending on the asset and
+  /// the metadata available.
   ///
   /// Note: On iOS 13-14, this returns an empty list as the AVAssetVariant API
   /// requires iOS 15+. On web, this throws an [UnimplementedError].
@@ -1011,10 +1014,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         .toList();
   }
 
-  /// Selects which video track (quality variant) is chosen for playback.
+  /// Selects which video track is chosen for playback.
   ///
-  /// Pass a [VideoTrack] to select a specific quality.
-  /// Pass `null` to enable automatic quality selection (adaptive streaming).
+  /// Pass a [VideoTrack] to select a specific track.
+  /// Pass `null` to clear any manual selection and allow automatic selection.
   ///
   /// On iOS, this sets `preferredPeakBitRate` on the AVPlayerItem.
   /// On Android, this uses ExoPlayer's track selection override.
@@ -1042,7 +1045,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     await _videoPlayerPlatform.selectVideoTrack(_playerId, platformTrack);
   }
 
-  /// Returns whether video track selection is supported on this platform.
+  /// Whether video track selection is supported on this platform.
   ///
   /// Use this to check before calling [getVideoTracks] or [selectVideoTrack]
   /// to avoid [UnimplementedError] exceptions on unsupported platforms.
@@ -1442,7 +1445,7 @@ class ClosedCaption extends StatelessWidget {
   }
 }
 
-/// Represents a video track (quality variant) in a video with its metadata.
+/// Represents a video track in a video with its metadata.
 ///
 /// For HLS/DASH adaptive streams, each [VideoTrack] represents a different
 /// quality level (e.g., 1080p, 720p, 480p). For non-adaptive videos, platform
