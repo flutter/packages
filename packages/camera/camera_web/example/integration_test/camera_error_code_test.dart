@@ -105,6 +105,14 @@ void main() {
         );
       });
 
+      testWidgets('missingPlaneLayout', (WidgetTester tester) async {
+        expect(CameraErrorCode.missingPlaneLayout.toString(), equals('missingPlaneLayout'));
+      });
+
+      testWidgets('unableToCloneFrame', (WidgetTester tester) async {
+        expect(CameraErrorCode.unableToCloneFrame.toString(), equals('unableToCloneFrame'));
+      });
+
       testWidgets('unknown', (WidgetTester tester) async {
         expect(CameraErrorCode.unknown.toString(), equals('cameraUnknown'));
       });

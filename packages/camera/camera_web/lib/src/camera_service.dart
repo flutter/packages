@@ -426,6 +426,11 @@ class CameraService {
   /// Used by [_takeOffscreenCanvasFrame] to cache the offscreen canvas context
   web.OffscreenCanvasRenderingContext2D? _offscreenCanvasContext;
 
+  /// Used to check object type equality agains [web.OffscreenCanvasRenderingContext2D]
+  @visibleForTesting
+  bool Function(JSAny) isOffscreenCanvasContextType = (jsObj) =>
+      jsObj.isA<web.OffscreenCanvasRenderingContext2D>();
+
   /// Takes a video frame using `OffscreenCanvas` for better performance
   web.ImageData _takeOffscreenCanvasFrame(
     web.VideoElement videoElement, {
@@ -442,7 +447,7 @@ class CameraService {
     }
     _offscreenCanvasContext ??= _wasmCompatible(
       _offscreenCanvas!.getContext('2d', <String, Object?>{'willReadFrequently': true}.jsify()),
-      (jsObj) => jsObj.isA<web.OffscreenCanvasRenderingContext2D>(),
+      isOffscreenCanvasContextType,
       cameraId: cameraId,
     );
 
@@ -489,6 +494,10 @@ class CameraService {
     return tracks.first;
   }
 
+  /// Used to check object type equality agains [web.ReadableStreamDefaultReader]
+  @visibleForTesting
+  bool Function(JSAny) isReaderType = (jsObj) => jsObj.isA<web.ReadableStreamDefaultReader>();
+
   /// Creates a [web.ReadableStreamDefaultReader] from a [web.MediaStreamTrack].
   web.ReadableStreamDefaultReader getMediaStreamTrackReader(
     web.MediaStreamTrack track, {
@@ -498,11 +507,7 @@ class CameraService {
     try {
       final options = web.MediaStreamTrackProcessorInit(track: track, maxBufferSize: maxBufferSize);
       final processor = web.MediaStreamTrackProcessor(options);
-      return _wasmCompatible(
-        processor.readable.getReader(),
-        (jsObj) => jsObj.isA<web.ReadableStreamDefaultReader>(),
-        cameraId: cameraId,
-      );
+      return _wasmCompatible(processor.readable.getReader(), isReaderType, cameraId: cameraId);
     } catch (e) {
       final web.DOMException? domException = e.asDOMException;
       if (domException != null) {
@@ -511,6 +516,10 @@ class CameraService {
       rethrow;
     }
   }
+
+  /// Used to check object type equality agains [web.VideoFrame]
+  @visibleForTesting
+  bool Function(JSAny) isVideoFrameType = (jsObj) => jsObj.isA<web.VideoFrame>();
 
   /// Reads [web.VideoFrame] from the given [reader]
   Future<web.VideoFrame> readVideoTrack(
@@ -539,7 +548,7 @@ class CameraService {
 
     final web.VideoFrame videoFrame = _wasmCompatible(
       readResult.value,
-      (jsObj) => jsObj.isA<web.VideoFrame>(),
+      isVideoFrameType,
       cameraId: cameraId,
     );
     if (videoFrame.visibleRect == null) {

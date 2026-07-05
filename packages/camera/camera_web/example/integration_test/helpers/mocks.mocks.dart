@@ -4,8 +4,8 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i6;
-import 'dart:js_interop' as _i14;
-import 'dart:typed_data' as _i13;
+import 'dart:js_interop' as _i13;
+import 'dart:typed_data' as _i14;
 import 'dart:ui' as _i4;
 
 import 'package:camera_platform_interface/camera_platform_interface.dart'
@@ -352,20 +352,21 @@ class MockCameraService extends _i1.Mock implements _i8.CameraService {
   @override
   _i7.ReadableStreamDefaultReader getMediaStreamTrackReader(
     _i7.MediaStreamTrack? track, {
+    int? cameraId = 0,
     int? maxBufferSize = 1,
   }) =>
       (super.noSuchMethod(
             Invocation.method(
               #getMediaStreamTrackReader,
               [track],
-              {#maxBufferSize: maxBufferSize},
+              {#cameraId: cameraId, #maxBufferSize: maxBufferSize},
             ),
             returnValue: _i12.dummyValue<_i7.ReadableStreamDefaultReader>(
               this,
               Invocation.method(
                 #getMediaStreamTrackReader,
                 [track],
-                {#maxBufferSize: maxBufferSize},
+                {#cameraId: cameraId, #maxBufferSize: maxBufferSize},
               ),
             ),
             returnValueForMissingStub: _i12
@@ -374,7 +375,7 @@ class MockCameraService extends _i1.Mock implements _i8.CameraService {
                   Invocation.method(
                     #getMediaStreamTrackReader,
                     [track],
-                    {#maxBufferSize: maxBufferSize},
+                    {#cameraId: cameraId, #maxBufferSize: maxBufferSize},
                   ),
                 ),
           )
@@ -411,16 +412,40 @@ class MockCameraService extends _i1.Mock implements _i8.CameraService {
           as _i6.Future<_i7.VideoFrame>);
 
   @override
+  _i6.Future<int> copyVideoFrameToBufferAndGetStride(
+    _i7.VideoFrame? videoFrame, {
+    int? cameraId = 0,
+    required _i13.JSUint8Array? destination,
+    required _i7.VideoFrameCopyToOptions? copyOptions,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(
+              #copyVideoFrameToBufferAndGetStride,
+              [videoFrame],
+              {
+                #cameraId: cameraId,
+                #destination: destination,
+                #copyOptions: copyOptions,
+              },
+            ),
+            returnValue: _i6.Future<int>.value(0),
+            returnValueForMissingStub: _i6.Future<int>.value(0),
+          )
+          as _i6.Future<int>);
+
+  @override
   _i5.CameraImageData getCameraImageData({
     required int? width,
     required int? height,
-    required _i13.Uint8List? bytes,
+    required _i14.Uint8List? bytes,
+    required int? bytesPerRow,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#getCameraImageData, [], {
               #width: width,
               #height: height,
               #bytes: bytes,
+              #bytesPerRow: bytesPerRow,
             }),
             returnValue: _FakeCameraImageData_3(
               this,
@@ -428,6 +453,7 @@ class MockCameraService extends _i1.Mock implements _i8.CameraService {
                 #width: width,
                 #height: height,
                 #bytes: bytes,
+                #bytesPerRow: bytesPerRow,
               }),
             ),
             returnValueForMissingStub: _FakeCameraImageData_3(
@@ -436,6 +462,7 @@ class MockCameraService extends _i1.Mock implements _i8.CameraService {
                 #width: width,
                 #height: height,
                 #bytes: bytes,
+                #bytesPerRow: bytesPerRow,
               }),
             ),
           )
@@ -447,7 +474,7 @@ class MockCameraService extends _i1.Mock implements _i8.CameraService {
 /// See the documentation for Mockito's code generation for more information.
 class MockJsUtil extends _i1.Mock implements _i2.JsUtil {
   @override
-  bool hasProperty(_i14.JSObject? o, _i14.JSAny? name) =>
+  bool hasProperty(_i13.JSObject? o, _i13.JSAny? name) =>
       (super.noSuchMethod(
             Invocation.method(#hasProperty, [o, name]),
             returnValue: false,
@@ -456,12 +483,12 @@ class MockJsUtil extends _i1.Mock implements _i2.JsUtil {
           as bool);
 
   @override
-  _i14.JSAny? getProperty(_i14.JSObject? o, _i14.JSAny? name) =>
+  _i13.JSAny? getProperty(_i13.JSObject? o, _i13.JSAny? name) =>
       (super.noSuchMethod(
             Invocation.method(#getProperty, [o, name]),
             returnValueForMissingStub: null,
           )
-          as _i14.JSAny?);
+          as _i13.JSAny?);
 }
 
 /// A class which mocks [Camera].

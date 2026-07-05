@@ -864,6 +864,10 @@ void main() {
     });
 
     group('readVideoTrack', () {
+      setUp(() {
+        cameraService.isVideoFrameType = (_) => true;
+      });
+
       web.ReadableStreamDefaultReader mockMediaTrackReader({
         MockVideoFrame? mockFrame,
         bool done = false,
@@ -922,7 +926,10 @@ void main() {
       testWidgets('throws CameraWebException if the video track reader is not initialized', (
         WidgetTester tester,
       ) async {
-        final web.ReadableStreamDefaultReader mockReader = mockMediaTrackReader();
+        final mockFrame = MockVideoFrame(width: 0, height: 0, bufferSize: 0)..visibleRect = null;
+        final web.ReadableStreamDefaultReader mockReader = mockMediaTrackReader(
+          mockFrame: mockFrame,
+        );
 
         expectReadVideoFrameException(
           reader: mockReader,
@@ -941,6 +948,7 @@ void main() {
           width: mockWidth,
           height: mockHeight,
           bytes: mockBytes,
+          bytesPerRow: mockWidth * 4,
         );
 
         expect(cameraImageData.width, equals(mockWidth));

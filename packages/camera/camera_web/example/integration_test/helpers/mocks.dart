@@ -195,7 +195,7 @@ class MockVideoFrame {
   final web.VideoPixelFormat format;
 
   /// Rrepresents the visible rectangle of the video frame.
-  late web.DOMRectReadOnly visibleRect;
+  late web.DOMRectReadOnly? visibleRect;
 
   /// Returns the size of the video frame in bytes.
   late JSFunction allocationSize;

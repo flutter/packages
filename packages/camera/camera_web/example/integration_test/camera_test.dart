@@ -1310,7 +1310,11 @@ void main() {
             cameraService.getMediaStreamVideoTrack(any, cameraId: anyNamed('cameraId')),
           ).thenReturn(mockMediaStreamTrack);
           when(
-            cameraService.getMediaStreamTrackReader(any, maxBufferSize: anyNamed('maxBufferSize')),
+            cameraService.getMediaStreamTrackReader(
+              any,
+              maxBufferSize: anyNamed('maxBufferSize'),
+              cameraId: anyNamed('cameraId'),
+            ),
           ).thenReturn(
             createJSInteropWrapper(MockReadableStreamDefaultReader())
                 as ReadableStreamDefaultReader,
@@ -1319,10 +1323,19 @@ void main() {
             (_) => Future<VideoFrame>.value(createJSInteropWrapper(mockVideoFrame) as VideoFrame),
           );
           when(
+            cameraService.copyVideoFrameToBufferAndGetStride(
+              any,
+              cameraId: anyNamed('cameraId'),
+              copyOptions: anyNamed('copyOptions'),
+              destination: anyNamed('destination'),
+            ),
+          ).thenAnswer((_) => Future.value(mockVideoFrame.width * 4));
+          when(
             cameraService.getCameraImageData(
               width: anyNamed('width'),
               height: anyNamed('height'),
               bytes: anyNamed('bytes'),
+              bytesPerRow: anyNamed('bytesPerRow'),
             ),
           ).thenReturn(
             CameraImageData(
@@ -1360,7 +1373,7 @@ void main() {
             final exception = Exception('readVideoTrack failure');
 
             when(
-              cameraService.readVideoTrack(any),
+              cameraService.readVideoTrack(any, cameraId: anyNamed('cameraId')),
             ).thenAnswer((_) => Future<VideoFrame>.error(exception));
 
             await expectCameraFrameStreamError(exception);
@@ -1374,6 +1387,7 @@ void main() {
                 width: anyNamed('width'),
                 height: anyNamed('height'),
                 bytes: anyNamed('bytes'),
+                bytesPerRow: anyNamed('bytesPerRow'),
               ),
             ).thenThrow(exception);
 
