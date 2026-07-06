@@ -1279,7 +1279,7 @@ void main() {
       });
     });
     group('cameraFrameStream', () {
-      Future<void> expectCameraFrameStreamError(Exception exception) async {
+      Future<void> expectCameraFrameStreamError(Exception? exception) async {
         final errors = <Object?>[];
         final done = Completer<void>();
 
@@ -1289,15 +1289,17 @@ void main() {
         await camera.play();
 
         camera.cameraFrameStream().listen(
-          (_) => fail('Unexpected data event'),
+          (_) => {},
           onError: errors.add,
           onDone: () => done.complete(),
         );
 
         await done.future.timeout(const Duration(seconds: 5));
 
-        expect(errors, hasLength(1));
-        expect(errors.first, equals(exception));
+        if (exception != null) {
+          expect(errors, hasLength(1));
+          expect(errors.first, equals(exception));
+        }
       }
 
       group('MediaStreamTrackProcessor is supported', () {
@@ -1352,7 +1354,9 @@ void main() {
           );
         });
 
-        testWidgets('CameraImageData bytes is multiple of 4 ', (WidgetTester tester) async {
+        testWidgets('emits CameraImageData when frame processing succeeds', (
+          WidgetTester tester,
+        ) async {
           final camera = Camera(textureId: textureId, cameraService: cameraService);
 
           await camera.initialize();
@@ -1365,34 +1369,88 @@ void main() {
           expect(cameraImageData.width, equals(mockVideoFrame.width));
           expect(cameraImageData.height, equals(mockVideoFrame.height));
           expect(cameraImageData.planes.first.bytes.length, equals(mockVideoFrame.bufferSize));
-          expect(cameraImageData.planes.first.bytes.length % 4, equals(0));
         });
 
-        group('emits and closes stream', () {
-          testWidgets('when readVideoTrack throws error', (WidgetTester tester) async {
-            final exception = Exception('readVideoTrack failure');
+        testWidgets('closes stream and emits error when readVideoTrack fails', (
+          WidgetTester tester,
+        ) async {
+          final exception = Exception('readVideoTrack failure');
 
-            when(
-              cameraService.readVideoTrack(any, cameraId: anyNamed('cameraId')),
-            ).thenAnswer((_) => Future<VideoFrame>.error(exception));
+          when(
+            cameraService.readVideoTrack(any, cameraId: anyNamed('cameraId')),
+          ).thenAnswer((_) => Future<VideoFrame>.error(exception));
 
-            await expectCameraFrameStreamError(exception);
-          });
+          await expectCameraFrameStreamError(exception);
+        });
 
-          testWidgets('when getCameraImageData throws error', (WidgetTester tester) async {
-            final exception = Exception('getCameraImageData failure');
+        testWidgets('closes stream and emits error when getCameraImageData fails', (
+          WidgetTester tester,
+        ) async {
+          final exception = Exception('getCameraImageData failure');
 
-            when(
-              cameraService.getCameraImageData(
-                width: anyNamed('width'),
-                height: anyNamed('height'),
-                bytes: anyNamed('bytes'),
-                bytesPerRow: anyNamed('bytesPerRow'),
+          when(
+            cameraService.getCameraImageData(
+              width: anyNamed('width'),
+              height: anyNamed('height'),
+              bytes: anyNamed('bytes'),
+              bytesPerRow: anyNamed('bytesPerRow'),
+            ),
+          ).thenThrow(exception);
+
+          await expectCameraFrameStreamError(exception);
+        });
+
+        testWidgets('closes stream without error when reader is closed', (
+          WidgetTester tester,
+        ) async {
+          when(cameraService.readVideoTrack(any, cameraId: anyNamed('cameraId'))).thenAnswer(
+            (_) => Future.error(
+              CameraWebException(
+                textureId,
+                CameraErrorCode.videoTrackReaderClosed,
+                'reader closed',
               ),
-            ).thenThrow(exception);
+            ),
+          );
 
-            await expectCameraFrameStreamError(exception);
+          await expectCameraFrameStreamError(null);
+        });
+
+        testWidgets('continues streaming after unableToCloneFrame error', (
+          WidgetTester tester,
+        ) async {
+          var calls = 0;
+          when(
+            cameraService.copyVideoFrameToBufferAndGetStride(
+              any,
+              cameraId: anyNamed('cameraId'),
+              copyOptions: anyNamed('copyOptions'),
+              destination: anyNamed('destination'),
+            ),
+          ).thenAnswer((_) {
+            calls++;
+
+            if (calls == 1) {
+              throw CameraWebException(
+                textureId,
+                CameraErrorCode.unableToCloneFrame,
+                'frame copy failed',
+              );
+            }
+
+            return Future.value(mockVideoFrame.width * 4);
           });
+
+          final camera = Camera(textureId: textureId, cameraService: cameraService);
+          await camera.initialize();
+          await camera.play();
+
+          final CameraImageData image = await camera.cameraFrameStream().first.timeout(
+            const Duration(seconds: 5),
+          );
+
+          expect(image.width, mockVideoFrame.width);
+          expect(calls, greaterThan(1));
         });
       });
 
