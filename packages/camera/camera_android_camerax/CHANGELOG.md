@@ -1,3 +1,7 @@
+## 0.7.4
+
+* Adds `setJpegImageQuality` for controlling JPEG compression quality.
+
 ## 0.7.3
 
 * Fixes `videoBitrate` configuration being ignored during video recording.
