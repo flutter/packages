@@ -6,6 +6,9 @@ import 'dart:io';
 
 import 'package:meta/meta.dart';
 
+import '../data/color_role.dart';
+import '../data/shape_struct.dart';
+
 enum _MaterialVersion { material3, material3Expressive }
 
 /// A template for generating Material 3 component defaults.
@@ -70,8 +73,8 @@ abstract class TokenTemplate {
   /// The Material version this template is for.
   _MaterialVersion get _version;
 
-  /// The name of the class that will be generated (e.g. `_M3IconButtonDefaults`
-  /// or `_M3EIconButtonDefaults`).
+  /// The name of the class that will be generated (e.g. `_IconButtonDefaultsM3`
+  /// or `_IconButtonDefaultsM3E`).
   String get _className {
     assert(
       _nameRegExp.hasMatch(name),
@@ -79,8 +82,8 @@ abstract class TokenTemplate {
     );
     final String camelName = name.replaceAll(' ', '');
     return switch (_version) {
-      _MaterialVersion.material3 => '_M3${camelName}Defaults',
-      _MaterialVersion.material3Expressive => '_M3E${camelName}Defaults',
+      _MaterialVersion.material3 => '_${camelName}DefaultsM3',
+      _MaterialVersion.material3Expressive => '_${camelName}DefaultsM3E',
     };
   }
 
@@ -92,6 +95,58 @@ abstract class TokenTemplate {
   ///
   /// The [className] parameter must be used to declare the class.
   String generateContents(String className);
+
+  /// Generates a Dart number literal for token values.
+  String number(num value) => value.toString();
+
+  /// Generates a [ColorScheme] color expression for the given token.
+  String color(TokenColorRole role, String prefix) => '$prefix.${role.name}';
+
+  /// Generates a color expression with opacity applied.
+  String colorWithOpacity(TokenColorRole role, double opacity, String prefix) {
+    if (opacity == 1.0) {
+      return color(role, prefix);
+    }
+    return '${color(role, prefix)}.withOpacity(${number(opacity)})';
+  }
+
+  /// Generates an [OutlinedBorder] expression for a shape token.
+  ///
+  /// Currently supports:
+  ///   - `SHAPE_FAMILY_ROUNDED_CORNERS`, which maps to
+  ///     [RoundedRectangleBorder].
+  ///   - `SHAPE_FAMILY_CIRCULAR`, which maps to [StadiumBorder].
+  String shape(ShapeStruct shape, [String prefix = 'const ']) {
+    switch (shape.family) {
+      case 'SHAPE_FAMILY_ROUNDED_CORNERS':
+        final double topLeft = shape.topLeft;
+        final double topRight = shape.topRight;
+        final double bottomLeft = shape.bottomLeft;
+        final double bottomRight = shape.bottomRight;
+        if (topLeft == topRight && topLeft == bottomLeft && topLeft == bottomRight) {
+          if (topLeft == 0) {
+            return '${prefix}RoundedRectangleBorder()';
+          }
+          return '${prefix}RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(${number(topLeft)})))';
+        }
+        if (topLeft == topRight && bottomLeft == bottomRight) {
+          return '${prefix}RoundedRectangleBorder(borderRadius: BorderRadius.vertical('
+              '${topLeft > 0 ? 'top: Radius.circular(${number(topLeft)})' : ''}'
+              '${topLeft > 0 && bottomLeft > 0 ? ', ' : ''}'
+              '${bottomLeft > 0 ? 'bottom: Radius.circular(${number(bottomLeft)})' : ''}'
+              '))';
+        }
+        return '${prefix}RoundedRectangleBorder(borderRadius: '
+            'BorderRadius.only('
+            'topLeft: Radius.circular(${number(topLeft)}), '
+            'topRight: Radius.circular(${number(topRight)}), '
+            'bottomLeft: Radius.circular(${number(bottomLeft)}), '
+            'bottomRight: Radius.circular(${number(bottomRight)})))';
+      case 'SHAPE_FAMILY_CIRCULAR':
+        return '${prefix}StadiumBorder()';
+    }
+    throw UnsupportedError('Unsupported shape family type: ${shape.family}');
+  }
 
   /// Generates the file under the target path [materialLib] and formats it.
   void generateFile({bool verbose = false}) {
