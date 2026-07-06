@@ -1,8 +1,10 @@
-## NEXT
+## 0.14.3
 
 * Deprecates the `--custom-analysis` argument to `analyze`, which is now
   ignored, in favor of `allow_custom_analysis_options: true` in package-level
   `ci_config.yaml` files.
+* Adds `--run-on-staged-packages` argument to support running commands only
+  on packages with staged changes.
 
 ## 0.14.2
 
