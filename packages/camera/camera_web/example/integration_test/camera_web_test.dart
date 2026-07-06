@@ -2035,6 +2035,60 @@ void main() {
       });
     });
 
+    group('onStreamedFrameAvailable', () {
+      testWidgets('returns cameraFrameStream', (WidgetTester tester) async {
+        final camera = MockCamera();
+        const stream = Stream<CameraImageData>.empty();
+
+        when(camera.cameraFrameStream()).thenAnswer((_) => stream);
+
+        (CameraPlatform.instance as CameraPlugin).cameras[cameraId] = camera;
+
+        expect(CameraPlatform.instance.onStreamedFrameAvailable(cameraId), same(stream));
+
+        verify(camera.cameraFrameStream()).called(1);
+      });
+
+      group('throws PlatformException', () {
+        testWidgets('with notFound error if the camera does not exist', (
+          WidgetTester tester,
+        ) async {
+          expect(
+            () => CameraPlatform.instance.onStreamedFrameAvailable(cameraId),
+            throwsA(
+              isA<PlatformException>().having(
+                (PlatformException e) => e.code,
+                'code',
+                CameraErrorCode.notFound.toString(),
+              ),
+            ),
+          );
+        });
+
+        testWidgets('when cameraFrameStream throws CameraWebException', (
+          WidgetTester tester,
+        ) async {
+          final camera = MockCamera();
+          final exception = CameraWebException(cameraId, CameraErrorCode.notStarted, 'description');
+
+          when(camera.cameraFrameStream()).thenThrow(exception);
+
+          (CameraPlatform.instance as CameraPlugin).cameras[cameraId] = camera;
+
+          expect(
+            () => CameraPlatform.instance.onStreamedFrameAvailable(cameraId),
+            throwsA(
+              isA<PlatformException>().having(
+                (PlatformException e) => e.code,
+                'code',
+                exception.code.toString(),
+              ),
+            ),
+          );
+        });
+      });
+    });
+
     group('events', () {
       late MockCamera camera;
       late MockVideoElement mockVideoElement;
