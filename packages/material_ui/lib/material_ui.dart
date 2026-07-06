@@ -96,6 +96,7 @@ export 'src/flexible_space_bar.dart';
 export 'src/floating_action_button.dart';
 export 'src/floating_action_button_location.dart';
 export 'src/floating_action_button_theme.dart';
+export 'src/global_material_localizations.dart';
 export 'src/grid_tile.dart';
 export 'src/grid_tile_bar.dart';
 export 'src/icon_button.dart';

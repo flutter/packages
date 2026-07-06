@@ -8,10 +8,12 @@
 
 import 'dart:collection';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart' as intl;
 
-import '../material_localizations.dart';
+import '../src/global_material_localizations.dart';
+import '../src/time.dart';
+import '../src/typography.dart';
 
 // The classes defined here encode all of the translations found in the
 // `flutter_localizations/lib/src/l10n/*.arb` files.

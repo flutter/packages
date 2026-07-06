@@ -5,14 +5,17 @@
 /// @docImport 'package:intl/intl.dart';
 library;
 
+import 'package:cupertino_ui/cupertino_ui.dart' show GlobalCupertinoLocalizations;
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_localizations/flutter_localizations.dart' show GlobalWidgetsLocalizations;
+import 'package:flutter_localizations/src/utils/date_localizations.dart'; //ignore: implementation_imports
 import 'package:intl/intl.dart' as intl;
 
-import 'cupertino_localizations.dart';
-import 'l10n/generated_material_localizations.dart';
-import 'utils/date_localizations.dart' as util;
-import 'widgets_localizations.dart';
+import '../l10n/generated_material_localizations.dart';
+import 'material_localizations.dart';
+import 'time.dart';
+import 'typography.dart';
 
 // Examples can assume:
 // import 'package:flutter_localizations/flutter_localizations.dart';
@@ -732,7 +735,7 @@ class _MaterialLocalizationsDelegate extends LocalizationsDelegate<MaterialLocal
   Future<MaterialLocalizations> load(Locale locale) {
     assert(isSupported(locale));
     return _loadedTranslations.putIfAbsent(locale, () {
-      util.loadDateIntlDataIfNotLoaded();
+      loadDateIntlDataIfNotLoaded();
 
       final String localeName = intl.Intl.canonicalizedLocale(locale.toString());
       assert(
