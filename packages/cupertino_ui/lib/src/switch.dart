@@ -77,15 +77,16 @@ const CupertinoDynamicColor _kOffLabelColor = CupertinoDynamicColor.withBrightne
 /// callback and rebuild the switch with a new [value] to update the visual
 /// appearance of the switch.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows a toggleable [CupertinoSwitch]. When the thumb slides to
 /// the other side of the track, the switch is toggled between on/off.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@example /example/lib/switch/cupertino_switch.0.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 // TODO(framework): Replace the following block with a blue example container
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243

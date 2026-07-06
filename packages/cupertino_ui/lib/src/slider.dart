@@ -52,14 +52,15 @@ const double _kVelocityThreshold = 1.0;
 /// that use a slider will listen for the [onChanged] callback and rebuild the
 /// slider with a new [value] to update the visual appearance of the slider.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows how to show the current slider value as it changes.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@example /example/lib/slider/cupertino_slider.0.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// See also:
 ///

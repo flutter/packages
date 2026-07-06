@@ -190,15 +190,16 @@ class Step {
 /// to this widget based on some logic triggered by the three callbacks that it
 /// provides.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// An example the shows how to use the [Stepper], and the [Stepper] UI
 /// appearance.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@example /example/lib/stepper/stepper.0.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -302,8 +303,7 @@ class Stepper extends StatefulWidget {
   /// [ControlsDetails.currentStep] value within the callback can change the text
   /// of the continue or cancel button depending on which step users are at.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// Creates a stepper control with custom buttons.
   ///
@@ -344,9 +344,11 @@ class Stepper extends StatefulWidget {
   ///   );
   /// }
   /// ```
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@example /example/lib/stepper/stepper.controls_builder.0.dart}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// </callout-box>
   final ControlsWidgetBuilder? controlsBuilder;
 
   /// The elevation of this stepper's [Material] when [type] is [StepperType.horizontal].
@@ -1047,14 +1049,15 @@ class _TrianglePainter extends CustomPainter {
 /// )
 /// ```
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// An example that uses [StepStyle] to customize the appearance of each [Step] in a [Stepper].
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@example /example/lib/stepper/step_style.0.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 
 @immutable
 class StepStyle with Diagnosticable {

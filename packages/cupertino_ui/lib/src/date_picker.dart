@@ -230,8 +230,7 @@ enum _PickerColumnType {
 /// full screen width. Content texts are shown with
 /// [CupertinoTextThemeData.dateTimePickerTextStyle].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample shows how to implement CupertinoDatePicker with different picker modes.
 /// We can provide initial dateTime value for the picker to display. When user changes
@@ -239,9 +238,11 @@ enum _PickerColumnType {
 ///
 /// CupertinoDatePicker can be displayed directly on a screen or in a popup.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@example /example/lib/date_picker/cupertino_date_picker.0.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -2173,14 +2174,15 @@ enum CupertinoTimerPickerMode {
 /// provides more space than it needs, the picker will position itself according
 /// to its [alignment] property.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows a [CupertinoTimerPicker] that returns a countdown duration.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@example /example/lib/date_picker/cupertino_timer_picker.0.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// See also:
 ///

@@ -44,15 +44,16 @@ import 'tooltip.dart';
 ///
 /// Defaults to [IconAlignment.start].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample demonstrates how to use `iconAlignment` to align the button icon to the start
 /// or the end of the button.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@example /example/lib/icon_alignment/icon_alignment.0.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// {@endtemplate}
 enum IconAlignment {

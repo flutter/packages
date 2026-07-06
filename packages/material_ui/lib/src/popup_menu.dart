@@ -1303,44 +1303,48 @@ typedef PopupMenuItemBuilder<T> = List<PopupMenuEntry<T>> Function(BuildContext 
 /// Use the sample below for an example of migrating from [PopupMenuButton] to
 /// [MenuAnchor].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows a menu with three items, selecting between an enum's
 /// values and setting a `selectedMenu` field based on the selection.
 ///
-/// {@example /example/lib/popup_menu/popup_menu.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@example /example/lib/popup_menu/popup_menu.0.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to migrate the above to a [MenuAnchor].
 ///
-/// {@example /example/lib/menu_anchor/menu_anchor.2.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@example /example/lib/menu_anchor/menu_anchor.2.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This sample shows the creation of a popup menu, as described in:
 /// https://m3.material.io/components/menus/overview
 ///
-/// {@example /example/lib/popup_menu/popup_menu.1.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@example /example/lib/popup_menu/popup_menu.1.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This sample showcases how to override the [PopupMenuButton] animation
 /// curves and duration using [AnimationStyle].
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@example /example/lib/popup_menu/popup_menu.2.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// See also:
 ///

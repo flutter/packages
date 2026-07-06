@@ -31,14 +31,15 @@ import 'theme.dart';
 /// contains a [MaterialLocalizations] delegate; using the [MaterialApp] widget
 /// ensures that such an ancestor is present.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows how to make a screen selectable.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@example /example/lib/selection_area/selection_area.0.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -82,15 +83,16 @@ class SelectionArea extends StatefulWidget {
   /// If not provided, will build a default menu based on the ambient
   /// [ThemeData.platform].
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This example shows how to build a custom context menu for any selected
   /// content in a SelectionArea.
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@example /example/lib/context_menu/selectable_region_toolbar_builder.0.dart}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// </callout-box>
   ///
   /// See also:
   ///

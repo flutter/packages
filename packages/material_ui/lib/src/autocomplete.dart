@@ -14,58 +14,63 @@ import 'theme.dart';
 ///
 /// {@youtube 560 315 https://www.youtube.com/watch?v=-Nny8kzW380}
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows how to create a very basic Autocomplete widget using the
 /// default UI.
 ///
-/// {@example /example/lib/autocomplete/autocomplete.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@example /example/lib/autocomplete/autocomplete.0.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to create an Autocomplete widget with a custom type.
 /// Try searching with text from the name or email field.
 ///
-/// {@example /example/lib/autocomplete/autocomplete.1.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@example /example/lib/autocomplete/autocomplete.1.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to create an Autocomplete widget whose options are
 /// fetched over the network.
 ///
-/// {@example /example/lib/autocomplete/autocomplete.2.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@example /example/lib/autocomplete/autocomplete.2.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to create an Autocomplete widget whose options are
 /// fetched over the network. It uses debouncing to wait to perform the network
 /// request until after the user finishes typing.
 ///
-/// {@example /example/lib/autocomplete/autocomplete.3.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@example /example/lib/autocomplete/autocomplete.3.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to create an Autocomplete widget whose options are
 /// fetched over the network. It includes both debouncing and error handling, so
 /// that failed network requests show an error to the user and can be recovered
 /// from. Try toggling the network Switch widget to simulate going offline.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@example /example/lib/autocomplete/autocomplete.4.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// See also:
 ///

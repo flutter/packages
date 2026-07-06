@@ -61,17 +61,18 @@ enum _IconButtonVariant { standard, filled, filledTonal, outlined }
 /// requirements in the Material Design specification. The [alignment] controls
 /// how the icon itself is positioned within the hit region.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample shows an [IconButton] that uses the Material icon "volume_up" to
 /// increase the volume.
 ///
 /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/icon_button.png)
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@example /example/lib/icon_button/icon_button.0.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// ### Icon sizes
 ///
@@ -116,8 +117,7 @@ enum _IconButtonVariant { standard, filled, filledTonal, outlined }
 /// the underlying [Material] along with the splash and highlight
 /// [InkResponse] contributed by descendant widgets.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// In this sample the icon button's background color is defined with an [Ink]
 /// widget whose child is an [IconButton]. The icon button's filled background
@@ -126,9 +126,11 @@ enum _IconButtonVariant { standard, filled, filledTonal, outlined }
 ///
 /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/icon_button_background.png)
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@example /example/lib/icon_button/icon_button.1.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// Material Design 3 introduced new types (standard and contained) of [IconButton]s.
 /// The default [IconButton] is the standard type. To create a filled icon button,
@@ -154,26 +156,28 @@ enum _IconButtonVariant { standard, filled, filledTonal, outlined }
 /// the [IconButton.visualDensity] is set to [VisualDensity.compact]. Users can
 /// customize it by using [IconButtonTheme], [IconButton.style] or [IconButton.visualDensity].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample shows creation of [IconButton] widgets for standard, filled,
 /// filled tonal and outlined types, as described in: https://m3.material.io/components/icon-buttons/overview
 ///
-/// {@example /example/lib/icon_button/icon_button.2.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@example /example/lib/icon_button/icon_button.2.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This sample shows creation of [IconButton] widgets with toggle feature for
 /// standard, filled, filled tonal and outlined types, as described
 /// in: https://m3.material.io/components/icon-buttons/overview
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@example /example/lib/icon_button/icon_button.3.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// See also:
 ///

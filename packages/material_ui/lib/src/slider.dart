@@ -78,26 +78,28 @@ enum SliderInteraction {
 ///
 /// {@youtube 560 315 https://www.youtube.com/watch?v=ufb4gIPDmEs}
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example showcases non-discrete and discrete [Slider]s.
 /// The [Slider]s will show the updated ![Material 3 Design appearance](https://m3.material.io/components/sliders/overview)
 /// when setting the [Slider.year2023] flag to false.
 ///
-/// {@example /example/lib/slider/slider.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@example /example/lib/slider/slider.0.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows a [Slider] widget using the [Slider.secondaryTrackValue]
 /// to show a secondary track in the slider.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@example /example/lib/slider/slider.1.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// A slider can be used to select from either a continuous or a discrete set of
 /// values. The default is to use a continuous range of values from [min] to

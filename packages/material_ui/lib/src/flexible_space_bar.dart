@@ -60,8 +60,7 @@ enum StretchMode {
 /// [FlexibleSpaceBar.createSettings], to convey sizing information down to the
 /// [FlexibleSpaceBar].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample application demonstrates the different features of the
 /// [FlexibleSpaceBar] when used in a [SliverAppBar]. This app bar is configured
@@ -70,9 +69,11 @@ enum StretchMode {
 /// `zoomBackground`. The app bar also makes use of [CollapseMode.parallax] by
 /// default.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@example /example/lib/flexible_space_bar/flexible_space_bar.0.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// See also:
 ///

@@ -101,16 +101,17 @@ class DropdownMenuEntry<T> {
   /// To control the text that appears in the text field for a selected item,
   /// set the [label] property to a descriptive string.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This sample shows how to override the default label [Text]
   /// widget with one that forces the menu entry to appear on one line
   /// by specifying [Text.maxLines] and [Text.overflow].
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@example /example/lib/dropdown_menu/dropdown_menu_entry_label_widget.0.dart}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// </callout-box>
   final Widget? labelWidget;
 
   /// An optional icon to display before the label.
@@ -164,14 +165,15 @@ enum DropdownMenuCloseBehavior {
 ///
 /// The menu can be scrollable if not all items in the list are displayed at once.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample shows how to display outlined [DropdownMenu] and filled [DropdownMenu].
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@example /example/lib/dropdown_menu/dropdown_menu.0.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -248,15 +250,16 @@ class DropdownMenu<T> extends StatefulWidget {
   ///
   /// Defaults to true.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This sample demonstrates how the [enabled] and [requestFocusOnTap] properties
   /// affect the textfield's hover cursor.
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@example /example/lib/dropdown_menu/dropdown_menu.2.dart}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// </callout-box>
   final bool enabled;
 
   /// Determine the width of the [DropdownMenu].
@@ -523,15 +526,16 @@ class DropdownMenu<T> extends StatefulWidget {
   ///
   /// Set this to true or false explicitly to override the default behavior.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This sample demonstrates how the [enabled] and [requestFocusOnTap] properties
   /// affect the textfield's hover cursor.
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@example /example/lib/dropdown_menu/dropdown_menu.2.dart}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// </callout-box>
   final bool? requestFocusOnTap;
 
   /// Determines if the dropdown menu behaves as a 'select' component.

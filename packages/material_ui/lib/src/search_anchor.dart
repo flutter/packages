@@ -86,44 +86,48 @@ typedef ViewBuilder = Widget Function(Iterable<Widget> suggestions);
 /// is in full-screen mode, changing the window size, such as rotating a mobile
 /// device from portrait mode to landscape mode, will not close the search view.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows how to use an IconButton to open a search view in a [SearchAnchor].
 /// It also shows how to use [SearchController] to open or close the search view route.
 ///
-/// {@example /example/lib/search_anchor/search_anchor.2.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@example /example/lib/search_anchor/search_anchor.2.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to set up a floating (or pinned) AppBar with a
 /// [SearchAnchor] for a title.
 ///
-/// {@example /example/lib/search_anchor/search_anchor.1.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@example /example/lib/search_anchor/search_anchor.1.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to fetch the search suggestions from a remote API.
 ///
-/// {@example /example/lib/search_anchor/search_anchor.3.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@example /example/lib/search_anchor/search_anchor.3.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example demonstrates fetching the search suggestions asynchronously and
 /// debouncing network calls.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@example /example/lib/search_anchor/search_anchor.4.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -174,15 +178,16 @@ class SearchAnchor extends StatefulWidget {
   /// All the barX parameters are used to customize the anchor. Similarly, all the
   /// viewX parameters are used to override the view's defaults.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This example shows how to use a [SearchAnchor.bar] which uses a default search
   /// bar to open a search view route.
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@example /example/lib/search_anchor/search_anchor.0.dart}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// </callout-box>
   factory SearchAnchor.bar({
     Widget? barLeading,
     Iterable<Widget>? barTrailing,
@@ -1402,16 +1407,17 @@ class SearchController extends TextEditingController {
 /// These actions can represent additional modes of searching (like voice search),
 /// a separate high-level action (such as current location) or an overflow menu.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example demonstrates how to use a [SearchBar] as the return value of the
 /// [SearchAnchor.builder] property. The [SearchBar] also includes a leading search
 /// icon and a trailing action to toggle the brightness.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@example /example/lib/search_anchor/search_bar.0.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// See also:
 ///

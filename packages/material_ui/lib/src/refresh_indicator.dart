@@ -87,33 +87,36 @@ enum _IndicatorType { material, adaptive, noSpinner }
 ///
 /// The trigger mode is configured by [RefreshIndicator.triggerMode].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows how [RefreshIndicator] can be triggered in different ways.
 ///
-/// {@example /example/lib/refresh_indicator/refresh_indicator.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@example /example/lib/refresh_indicator/refresh_indicator.0.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to trigger [RefreshIndicator] in a nested scroll view using
 /// the [notificationPredicate] property.
 ///
-/// {@example /example/lib/refresh_indicator/refresh_indicator.1.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@example /example/lib/refresh_indicator/refresh_indicator.1.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to use [RefreshIndicator] without the spinner.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@example /example/lib/refresh_indicator/refresh_indicator.2.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// ## Troubleshooting
 ///

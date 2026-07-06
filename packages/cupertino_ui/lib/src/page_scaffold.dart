@@ -25,16 +25,17 @@ import 'theme.dart';
 /// encloses the [ScrollView]. The [ScrollView.primary] flag is used to connect
 /// a [ScrollView] to the enclosing [PrimaryScrollController].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows a [CupertinoPageScaffold] with a [Center] as a [child].
 /// The [CupertinoButton] is connected to a callback that increments a counter.
 /// The [backgroundColor] can be changed.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@example /example/lib/page_scaffold/cupertino_page_scaffold.0.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// See also:
 ///

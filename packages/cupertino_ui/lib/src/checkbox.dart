@@ -73,14 +73,15 @@ const List<double> _kDisabledDarkGradientOpacities = <double>[0.08, 0.14];
 ///     [kMinInteractiveDimensionCupertino] pixels to meet accessibility
 ///     guidelines.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows a toggleable [CupertinoCheckbox].
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@example /example/lib/checkbox/cupertino_checkbox.0.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// See also:
 ///

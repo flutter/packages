@@ -467,8 +467,7 @@ abstract class FloatingActionButtonLocation {
 /// You can create your own subclass of [StandardFabLocation]
 /// to implement a custom [FloatingActionButtonLocation].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This is an example of a user-defined [FloatingActionButtonLocation].
 ///
@@ -482,9 +481,11 @@ abstract class FloatingActionButtonLocation {
 /// [FloatingActionButtonLocation] slightly different from
 /// [FloatingActionButtonLocation.endFloat].
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@example /example/lib/floating_action_button_location/standard_fab_location.0.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 abstract class StandardFabLocation extends FloatingActionButtonLocation {
   /// Abstract const constructor. This constructor enables subclasses to provide
@@ -945,15 +946,16 @@ abstract class FloatingActionButtonAnimator {
   /// does not animate on entrance and exit when [FloatingActionButtonLocation] is shown
   /// or hidden and when transitioning between [FloatingActionButtonLocation]s.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This sample showcases how to override [FloatingActionButton] entrance and exit animations
   /// using [FloatingActionButtonAnimator.noAnimation] in [Scaffold.floatingActionButtonAnimator].
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@example /example/lib/scaffold/scaffold.floating_action_button_animator.0.dart}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// </callout-box>
   static const FloatingActionButtonAnimator noAnimation = _NoAnimationFabMotionAnimator();
 
   @override

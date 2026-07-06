@@ -45,15 +45,16 @@ enum _ChipVariant { flat, elevated }
 ///
 /// Requires one of its ancestors to be a [Material] widget.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows how to create an [ActionChip] with a leading icon.
 /// The icon is updated when the [ActionChip] is pressed.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@example /example/lib/action_chip/action_chip.0.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// ## Material Design 3
 ///

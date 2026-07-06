@@ -50,15 +50,16 @@ const Curve _kCupertinoPickerTapToScrollCurve = Curves.easeInOut;
 ///
 /// By default, descendent texts are shown with [CupertinoTextThemeData.pickerTextStyle].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows a [CupertinoPicker] that displays a list of fruits on a wheel for
 /// selection.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@example /example/lib/picker/cupertino_picker.0.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// See also:
 ///

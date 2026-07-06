@@ -305,15 +305,16 @@ typedef CupertinoMenuAnimationStatusChangedCallback = void Function(AnimationSta
 ///
 // TODO(framework): End of the blue example container.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example demonstrates a [CupertinoMenuAnchor] that wraps a button and
 /// shows a menu with three [CupertinoMenuItem]s and one [CupertinoMenuDivider].
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@example /example/lib/menu_anchor/menu_anchor.1.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -1711,15 +1712,16 @@ class _CupertinoDividerPainter extends CustomPainter {
 ///
 // TODO(framework): End of the blue example container.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example demonstrates a [CupertinoMenuAnchor] that wraps a button and
 /// shows a menu with three [CupertinoMenuItem]s and one [CupertinoMenuDivider].
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@example /example/lib/menu_anchor/menu_anchor.1.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// See also:
 /// * [CupertinoMenuAnchor], a Cupertino-style widget that shows a menu of
