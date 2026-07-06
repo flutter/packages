@@ -148,14 +148,18 @@ class PopupMenuDivider extends PopupMenuEntry<Never> {
 
   /// {@macro flutter.material.Divider.color}
   ///
-  /// {@tool snippet}
+  // TODO(framework): Replace the following block with a blue example container
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
   ///
   /// ```dart
   /// const PopupMenuDivider(
   ///   color: Colors.deepOrange,
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  // TODO(framework): End of the blue example container.
   final Color? color;
 
   @override
@@ -241,7 +245,10 @@ class _RenderMenuItem extends RenderShiftedBox {
 /// [PopupMenuItem] is [kMinInteractiveDimension] pixels high. If you use a widget
 /// with a different height, it must be specified in the [height] property.
 ///
-/// {@tool snippet}
+// TODO(framework): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
 ///
 /// Here, a [Text] widget is used with a popup menu item. The `Menu` type
 /// is an enum, not shown here.
@@ -252,7 +259,8 @@ class _RenderMenuItem extends RenderShiftedBox {
 ///   child: Text('Item 1'),
 /// )
 /// ```
-/// {@end-tool}
+///
+// TODO(framework): End of the blue example container.
 ///
 /// See the example at [PopupMenuButton] for how this example could be used in a
 /// complete menu, and see the example at [CheckedPopupMenuItem] for one way to
@@ -494,7 +502,10 @@ class PopupMenuItemState<T, W extends PopupMenuItem<T>> extends State<W> {
 /// layout uses [ListTile]; the checkmark is an [Icons.done] icon, shown in the
 /// [ListTile.leading] position.
 ///
-/// {@tool snippet}
+// TODO(framework): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
 ///
 /// Suppose a `Commands` enum exists that lists the possible commands from a
 /// particular popup menu, including `Commands.heroAndScholar` and
@@ -531,7 +542,8 @@ class PopupMenuItemState<T, W extends PopupMenuItem<T>> extends State<W> {
 ///   ],
 /// )
 /// ```
-/// {@end-tool}
+///
+// TODO(framework): End of the blue example container.
 ///
 /// In particular, observe how the second menu item uses a [ListTile] with a
 /// blank [Icon] in the [ListTile.leading] position to get the same alignment as
@@ -1291,32 +1303,44 @@ typedef PopupMenuItemBuilder<T> = List<PopupMenuEntry<T>> Function(BuildContext 
 /// Use the sample below for an example of migrating from [PopupMenuButton] to
 /// [MenuAnchor].
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This example shows a menu with three items, selecting between an enum's
 /// values and setting a `selectedMenu` field based on the selection.
 ///
-/// ** See code in examples/api/lib/material/popup_menu/popup_menu.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/popup_menu/popup_menu.0.dart}
 ///
-/// {@tool dartpad}
+// TODO(framework): End of the @dartpad directive.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This example shows how to migrate the above to a [MenuAnchor].
 ///
-/// ** See code in examples/api/lib/material/menu_anchor/menu_anchor.2.dart **
-/// {@end-tool}
+/// {@example /example/lib/menu_anchor/menu_anchor.2.dart}
 ///
-/// {@tool dartpad}
+// TODO(framework): End of the @dartpad directive.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This sample shows the creation of a popup menu, as described in:
 /// https://m3.material.io/components/menus/overview
 ///
-/// ** See code in examples/api/lib/material/popup_menu/popup_menu.1.dart **
-/// {@end-tool}
+/// {@example /example/lib/popup_menu/popup_menu.1.dart}
 ///
-/// {@tool dartpad}
+// TODO(framework): End of the @dartpad directive.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This sample showcases how to override the [PopupMenuButton] animation
 /// curves and duration using [AnimationStyle].
 ///
-/// ** See code in examples/api/lib/material/popup_menu/popup_menu.2.dart **
-/// {@end-tool}
+/// {@example /example/lib/popup_menu/popup_menu.2.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///

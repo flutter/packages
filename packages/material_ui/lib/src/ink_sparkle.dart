@@ -43,7 +43,10 @@ import 'material.dart';
 ///
 /// When the ripple is removed, [onRemoved] will be called.
 ///
-/// {@tool snippet}
+// TODO(framework): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
 ///
 /// For typical use, pass the [InkSparkle.splashFactory] to the `splashFactory`
 /// parameter of a button style or [ThemeData].
@@ -55,7 +58,8 @@ import 'material.dart';
 ///   onPressed: () { },
 /// )
 /// ```
-/// {@end-tool}
+///
+// TODO(framework): End of the blue example container.
 class InkSparkle extends InteractiveInkFeature {
   /// Begin a sparkly ripple effect, centered at [position] relative to
   /// [referenceBox].
