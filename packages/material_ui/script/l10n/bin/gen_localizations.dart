@@ -2,13 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// This program generates getMaterialTranslation(), getCupertinoTranslation(),
-// and getWidgetsTranslation() functions that look up the translations provided by
-// the arb files. The returned value is a generated instance of a
-// GlobalMaterialLocalizations, GlobalCupertinoLocalizations, or
-// GlobalWidgetsLocalizations object that corresponds to a single locale.
+// This program generates getMaterialTranslation() and getCupertinoTranslation()
+// functions that look up the translations provided by the arb files. The
+// returned value is a generated instance of a GlobalMaterialLocalizations or
+// GlobalCupertinoLocalizations object that corresponds to a single locale.
 //
-// The *.arb files are in packages/flutter_localizations/lib/src/l10n.
+// The *.arb files are in packages/material_ui/lib/l10n and packages/cupertino_ui/lib/l10n.
 //
 // The arb (JSON) format files must contain a single map indexed by locale.
 // Each map value is itself a map with resource identifier keys and localized
@@ -40,8 +39,9 @@
 // ```
 //
 // If the data looks good, use the `-w` or `--overwrite` option to overwrite the
-// generated_material_localizations.dart, generated_cupertino_localizations.dart,
-// and generated_widgets_localizations.dart files in packages/flutter_localizations/lib/src/l10n/:
+// generated_material_localizations.dart and
+// generated_cupertino_localizations.dart files in
+// packages/flutter_localizations/lib/l10n/:
 //
 // ```
 // dart dev/tools/localization/bin/gen_localizations.dart --overwrite
@@ -53,7 +53,6 @@ import 'package:path/path.dart' as path;
 
 import '../gen_cupertino_localizations.dart';
 import '../gen_material_localizations.dart';
-import '../gen_widgets_localizations.dart';
 import '../localizations_utils.dart';
 import '../localizations_validator.dart';
 import 'encode_kn_arb_files.dart';
@@ -546,15 +545,14 @@ void main(List<String> rawArgs) {
   // is the 2nd command line argument, lc is a language code and cc is the country
   // code. In most cases both codes are just two characters.
 
-  final directory = Directory(path.join('packages', 'flutter_localizations', 'lib', 'src', 'l10n'));
-  final widgetsFilenameRE = RegExp(r'widgets_(\w+)\.arb$');
+  final materialDirectory = Directory(path.join('packages', 'material_ui', 'lib', 'l10n'));
+  final cupertinoDirectory = Directory(path.join('packages', 'cupertino_ui', 'lib', 'l10n'));
   final materialFilenameRE = RegExp(r'material_(\w+)\.arb$');
   final cupertinoFilenameRE = RegExp(r'cupertino_(\w+)\.arb$');
 
   try {
-    validateEnglishLocalizations(File(path.join(directory.path, 'widgets_en.arb')));
-    validateEnglishLocalizations(File(path.join(directory.path, 'material_en.arb')));
-    validateEnglishLocalizations(File(path.join(directory.path, 'cupertino_en.arb')));
+    validateEnglishLocalizations(File(path.join(materialDirectory.path, 'material_en.arb')));
+    validateEnglishLocalizations(File(path.join(cupertinoDirectory.path, 'cupertino_en.arb')));
   } on ValidationError catch (exception) {
     exitWithError('$exception');
   }
@@ -566,16 +564,10 @@ void main(List<String> rawArgs) {
     // generating localizations. This prevents a subset of Emacs users from
     // crashing when opening up the Flutter source code.
     // See https://github.com/flutter/flutter/issues/36704 for more context.
-    encodeKnArbFiles(directory);
+    encodeKnArbFiles(materialDirectory, cupertinoDirectory);
   }
 
   precacheLanguageAndRegionTags();
-
-  // Maps of locales to resource key/value pairs for Widgets ARBs.
-  final widgetsLocaleToResources = <LocaleInfo, Map<String, String>>{};
-  // Maps of locales to resource key/attributes pairs for Widgets ARBs.
-  // https://github.com/googlei18n/app-resource-bundle/wiki/ApplicationResourceBundleSpecification#resource-attributes
-  final widgetsLocaleToResourceAttributes = <LocaleInfo, Map<String, dynamic>>{};
 
   // Maps of locales to resource key/value pairs for Material ARBs.
   final materialLocaleToResources = <LocaleInfo, Map<String, String>>{};
@@ -590,30 +582,19 @@ void main(List<String> rawArgs) {
   final cupertinoLocaleToResourceAttributes = <LocaleInfo, Map<String, dynamic>>{};
 
   loadMatchingArbsIntoBundleMaps(
-    directory: directory,
-    filenamePattern: widgetsFilenameRE,
-    localeToResources: widgetsLocaleToResources,
-    localeToResourceAttributes: widgetsLocaleToResourceAttributes,
-  );
-  loadMatchingArbsIntoBundleMaps(
-    directory: directory,
+    directory: materialDirectory,
     filenamePattern: materialFilenameRE,
     localeToResources: materialLocaleToResources,
     localeToResourceAttributes: materialLocaleToResourceAttributes,
   );
   loadMatchingArbsIntoBundleMaps(
-    directory: directory,
+    directory: cupertinoDirectory,
     filenamePattern: cupertinoFilenameRE,
     localeToResources: cupertinoLocaleToResources,
     localeToResourceAttributes: cupertinoLocaleToResourceAttributes,
   );
 
   try {
-    validateLocalizations(
-      widgetsLocaleToResources,
-      widgetsLocaleToResourceAttributes,
-      removeUndefined: options.removeUndefined,
-    );
     validateLocalizations(
       materialLocaleToResources,
       materialLocaleToResourceAttributes,
@@ -628,28 +609,10 @@ void main(List<String> rawArgs) {
     exitWithError('$exception');
   }
   if (options.removeUndefined) {
-    removeUndefinedLocalizations(widgetsLocaleToResources);
     removeUndefinedLocalizations(materialLocaleToResources);
     removeUndefinedLocalizations(cupertinoLocaleToResources);
   }
 
-  final String? widgetsLocalizations = options.writeToFile || !options.cupertinoOnly
-      ? generateArbBasedLocalizationSubclasses(
-          localeToResources: widgetsLocaleToResources,
-          localeToResourceAttributes: widgetsLocaleToResourceAttributes,
-          generatedClassPrefix: 'WidgetsLocalization',
-          baseClass: 'GlobalWidgetsLocalizations',
-          generateHeader: generateWidgetsHeader,
-          generateConstructor: generateWidgetsConstructor,
-          generateConstructorForCountrySubClass: generateWidgetsConstructorForCountrySubclass,
-          factoryName: widgetsFactoryName,
-          factoryDeclaration: widgetsFactoryDeclaration,
-          callsFactoryWithConst: true,
-          factoryArguments: widgetsFactoryArguments,
-          supportedLanguagesConstant: widgetsSupportedLanguagesConstant,
-          supportedLanguagesDocMacro: widgetsSupportedLanguagesDocMacro,
-        )
-      : null;
   final String? materialLocalizations = options.writeToFile || !options.cupertinoOnly
       ? generateArbBasedLocalizationSubclasses(
           localeToResources: materialLocaleToResources,
@@ -684,16 +647,12 @@ void main(List<String> rawArgs) {
       : null;
 
   if (options.writeToFile) {
-    final widgetsLocalizationsFile = File(
-      path.join(directory.path, 'generated_widgets_localizations.dart'),
-    );
-    widgetsLocalizationsFile.writeAsStringSync(widgetsLocalizations!, flush: true);
     final materialLocalizationsFile = File(
-      path.join(directory.path, 'generated_material_localizations.dart'),
+      path.join(materialDirectory.path, 'generated_material_localizations.dart'),
     );
     materialLocalizationsFile.writeAsStringSync(materialLocalizations!, flush: true);
     final cupertinoLocalizationsFile = File(
-      path.join(directory.path, 'generated_cupertino_localizations.dart'),
+      path.join(cupertinoDirectory.path, 'generated_cupertino_localizations.dart'),
     );
     cupertinoLocalizationsFile.writeAsStringSync(cupertinoLocalizations!, flush: true);
   } else {
@@ -701,10 +660,7 @@ void main(List<String> rawArgs) {
       stdout.write(cupertinoLocalizations);
     } else if (options.materialOnly) {
       stdout.write(materialLocalizations);
-    } else if (options.widgetsOnly) {
-      stdout.write(widgetsLocalizations);
     } else {
-      stdout.write(widgetsLocalizations);
       stdout.write(materialLocalizations);
       stdout.write(cupertinoLocalizations);
     }

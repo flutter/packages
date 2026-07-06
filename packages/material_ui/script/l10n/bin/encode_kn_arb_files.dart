@@ -70,24 +70,19 @@ void _rewriteBundle(File file, Map<String, dynamic> bundle) {
   file.writeAsStringSync(contents.toString());
 }
 
-void encodeKnArbFiles(Directory directory) {
-  final widgetsArbFile = File(path.join(directory.path, 'widgets_kn.arb'));
-  final materialArbFile = File(path.join(directory.path, 'material_kn.arb'));
-  final cupertinoArbFile = File(path.join(directory.path, 'cupertino_kn.arb'));
+void encodeKnArbFiles(Directory materialDirectory, Directory cupertinoDirectory) {
+  final materialArbFile = File(path.join(materialDirectory.path, 'material_kn.arb'));
+  final cupertinoArbFile = File(path.join(cupertinoDirectory.path, 'cupertino_kn.arb'));
 
-  final Map<String, dynamic> widgetsBundle = _loadBundle(widgetsArbFile);
   final Map<String, dynamic> materialBundle = _loadBundle(materialArbFile);
   final Map<String, dynamic> cupertinoBundle = _loadBundle(cupertinoArbFile);
 
-  _encodeBundleTranslations(widgetsBundle);
   _encodeBundleTranslations(materialBundle);
   _encodeBundleTranslations(cupertinoBundle);
 
-  _checkEncodedTranslations(widgetsBundle, _loadBundle(widgetsArbFile));
   _checkEncodedTranslations(materialBundle, _loadBundle(materialArbFile));
   _checkEncodedTranslations(cupertinoBundle, _loadBundle(cupertinoArbFile));
 
-  _rewriteBundle(widgetsArbFile, widgetsBundle);
   _rewriteBundle(materialArbFile, materialBundle);
   _rewriteBundle(cupertinoArbFile, cupertinoBundle);
 }
