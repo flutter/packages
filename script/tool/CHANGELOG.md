@@ -1,7 +1,7 @@
 ## 0.14.3
 
 * Adds `coverage-check` command to ensure opted-in packages meet the minimum
-  coverage threshold as defined in `script/configs/custom_coverage_minimums.yaml`.
+  code coverage threshold as defined in `script/configs/custom_coverage_minimums.yaml`.
 
 ## 0.14.2
 
