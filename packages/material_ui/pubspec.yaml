@@ -28,6 +28,7 @@ dependencies:
   vector_math: ^2.2.0
 
 dev_dependencies:
+  args: ^2.7.0
   file: ^7.0.1
   flutter_goldens:
     path: ../../script/flutter_goldens
@@ -35,6 +36,8 @@ dev_dependencies:
     sdk: flutter
   # To track memory leaks.
   leak_tracker_flutter_testing: ^3.0.10
+  meta: ^1.18.3
+  path: ^1.9.1
   platform: ^3.1.6
 
 topics:
