@@ -12,8 +12,7 @@
 
 import 'package:args/args.dart';
 
-// TODO(elliette): Import template files.
-// import '../templates/x_template.dart';
+import '../templates/app_bar_template.dart';
 
 Future<void> main(List<String> args) async {
   // Parse arguments
@@ -23,6 +22,5 @@ Future<void> main(List<String> args) async {
   // TODO(elliette): Add token logger when verbose flag is used.
   // ignore: unused_local_variable
   final verbose = argResults['verbose'] as bool;
-  // TODO(elliette): Invoke template generators.
-  // const XTemplate().generateFile(verbose: verbose);
+  const AppBarTemplate().generateFile(verbose: verbose);
 }

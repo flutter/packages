@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:test/test.dart';
 import '../data/color_role.dart';
 import '../data/shape_struct.dart';
+import '../templates/app_bar_template.dart';
 import '../templates/template.dart';
 import 'test_fixtures/test_templates.dart';
 
@@ -145,6 +146,16 @@ void main() {
           ),
         ),
       );
+    test('AppBarTemplateM3 emits M3 AppBar defaults from app bar tokens', () {
+      final String contents = const AppBarTemplateM3().generateContents('_AppBarDefaultsM3');
+      expect(contents, contains('class _AppBarDefaultsM3 extends AppBarThemeData'));
+      expect(contents, contains('scrolledUnderElevation: 3.0'));
+      expect(contents, contains('toolbarHeight: 64.0'));
+      expect(contents, contains('Color? get backgroundColor => _colors.surface'));
+      expect(contents, contains('Color? get foregroundColor => _colors.onSurface'));
+      expect(contents, contains('color: _colors.onSurfaceVariant'));
+      expect(contents, contains('static const double expandedHeight = 112.0'));
+      expect(contents, contains('static const double expandedHeight = 152.0'));
     });
     test('will run dart format over the generated file', () {
       final template = UnformattedTemplate(testPath());
