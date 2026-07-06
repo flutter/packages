@@ -43,6 +43,7 @@ export 'src/dialog.dart';
 export 'src/expansion_tile.dart';
 export 'src/form_row.dart';
 export 'src/form_section.dart';
+export 'src/global_cupertino_localizations.dart';
 export 'src/icon_theme_data.dart';
 export 'src/icons.dart';
 export 'src/interface_level.dart';

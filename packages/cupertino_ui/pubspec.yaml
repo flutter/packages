@@ -16,6 +16,9 @@ dependencies:
   collection: ^1.19.1
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
 
 dev_dependencies:
   clock: ^1.1.2

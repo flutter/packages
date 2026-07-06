@@ -8,10 +8,10 @@
 
 import 'dart:collection';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart' as intl;
 
-import '../cupertino_localizations.dart';
+import '../src/global_cupertino_localizations.dart';
 
 // The classes defined here encode all of the translations found in the
 // `flutter_localizations/lib/src/l10n/*.arb` files.
