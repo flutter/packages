@@ -1,4 +1,4 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,7 +8,7 @@
 // replaced by JSON escapes. This is done because some of those strings
 // contain characters that can crash Emacs on Linux. There is more information
 // here: https://github.com/flutter/flutter/issues/36704 and in the README
-// in flutter_localizations/packages/lib/src/l10n.
+// in flutter_localizations/packages/lib/src/l10n in the Flutter SDK.
 //
 // This utility is run by `gen_localizations.dart` if --overwrite is passed
 // in as an option.
@@ -16,9 +16,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:path/path.dart' as path;
+import 'package:l10n/localizations_utils.dart';
 
-import '../localizations_utils.dart';
+import 'package:path/path.dart' as path;
 
 Map<String, dynamic> _loadBundle(File file) {
   if (!FileSystemEntity.isFileSync(file.path)) {
@@ -70,24 +70,19 @@ void _rewriteBundle(File file, Map<String, dynamic> bundle) {
   file.writeAsStringSync(contents.toString());
 }
 
-void encodeKnArbFiles(Directory directory) {
-  final widgetsArbFile = File(path.join(directory.path, 'widgets_kn.arb'));
-  final materialArbFile = File(path.join(directory.path, 'material_kn.arb'));
-  final cupertinoArbFile = File(path.join(directory.path, 'cupertino_kn.arb'));
+void encodeKnArbFiles(Directory materialDirectory, Directory cupertinoDirectory) {
+  final materialArbFile = File(path.join(materialDirectory.path, 'material_kn.arb'));
+  final cupertinoArbFile = File(path.join(cupertinoDirectory.path, 'cupertino_kn.arb'));
 
-  final Map<String, dynamic> widgetsBundle = _loadBundle(widgetsArbFile);
   final Map<String, dynamic> materialBundle = _loadBundle(materialArbFile);
   final Map<String, dynamic> cupertinoBundle = _loadBundle(cupertinoArbFile);
 
-  _encodeBundleTranslations(widgetsBundle);
   _encodeBundleTranslations(materialBundle);
   _encodeBundleTranslations(cupertinoBundle);
 
-  _checkEncodedTranslations(widgetsBundle, _loadBundle(widgetsArbFile));
   _checkEncodedTranslations(materialBundle, _loadBundle(materialArbFile));
   _checkEncodedTranslations(cupertinoBundle, _loadBundle(cupertinoArbFile));
 
-  _rewriteBundle(widgetsArbFile, widgetsBundle);
   _rewriteBundle(materialArbFile, materialBundle);
   _rewriteBundle(cupertinoArbFile, cupertinoBundle);
 }

@@ -1,17 +1,16 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as path;
 
-import '../test_utils.dart';
+import 'test_utils.dart';
 
 final String rootDirectoryPath = Directory.current.path;
 
@@ -187,7 +186,7 @@ void main() {
       expect(localizations.copyButtonLabel, copyButtonLabelNo);
       expect(localizations.cutButtonLabel, cutButtonLabelNo);
     }
-  });
+  }, skip: isBrowser); // No file i/o on web.
 
   // Regression test for https://github.com/flutter/flutter/issues/36704.
   testWidgets('kn arb file should be properly Unicode escaped', (WidgetTester tester) async {
@@ -212,7 +211,7 @@ void main() {
     } else {
       expect(file.readAsStringSync(), encodedArbFile);
     }
-  });
+  }, skip: isBrowser); // No file i/o on web.
 
   // Regression test for https://github.com/flutter/flutter/issues/110451.
   testWidgets('Finnish translation for tab label', (WidgetTester tester) async {

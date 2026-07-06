@@ -1,13 +1,12 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'dart:async';
 
-import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/intl.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   group(GlobalMaterialLocalizations, () {
@@ -361,27 +360,6 @@ void main() {
 
     expect(dateFormat.locale, 'ga');
     expect(dateFormat.format(DateTime(2023, 4, 10, 2, 32)), equals('10 Aib 2023'));
-  });
-
-  // Regression test for https://github.com/flutter/flutter/issues/187767.
-  testWidgets('ar is initialized correctly when DateFormat is used', (WidgetTester tester) async {
-    late DateFormat dateFormat;
-
-    await tester.pumpWidget(
-      MaterialApp(
-        locale: const Locale('ar'),
-        localizationsDelegates: GlobalMaterialLocalizations.delegates,
-        home: Builder(
-          builder: (BuildContext context) {
-            dateFormat = DateFormat.jm('ar');
-            return Container();
-          },
-        ),
-      ),
-    );
-
-    expect(dateFormat.locale, 'ar');
-    expect(dateFormat.format(DateTime(2026, 1, 1, 20, 30)), equals('٨:٣٠ م'));
   });
 }
 

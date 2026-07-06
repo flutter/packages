@@ -1,4 +1,4 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,16 +15,18 @@
 // Run this program from the root of the git repository.
 //
 // ```
-// dart dev/tools/localization/bin/gen_missing_localizations.dart
+// dart script/l10n/bin/gen_missing_localizations.dart
 // ```
 
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:l10n/localizations_utils.dart';
+import 'package:l10n/localizations_validator.dart';
+
 import 'package:path/path.dart' as path;
 
-import '../localizations_utils.dart';
-import '../localizations_validator.dart';
+// ignore_for_file: avoid_print
 
 Future<void> main(List<String> rawArgs) async {
   var removeUndefined = false;
@@ -33,16 +35,16 @@ Future<void> main(List<String> rawArgs) async {
   }
   checkCwdIsRepoRoot('gen_missing_localizations');
 
-  final String localizationPath = path.join(
-    'packages',
-    'flutter_localizations',
-    'lib',
-    'src',
-    'l10n',
+  updateMissingResources(
+    path.join('packages', 'material_ui', 'lib', 'src', 'l10n'),
+    'material',
+    removeUndefined: removeUndefined,
   );
-  updateMissingResources(localizationPath, 'material', removeUndefined: removeUndefined);
-  updateMissingResources(localizationPath, 'cupertino', removeUndefined: removeUndefined);
-  updateMissingResources(localizationPath, 'widgets', removeUndefined: removeUndefined);
+  updateMissingResources(
+    path.join('packages', 'cupertino_ui', 'lib', 'src', 'l10n'),
+    'cupertino',
+    removeUndefined: removeUndefined,
+  );
 }
 
 Map<String, dynamic> loadBundle(File file) {

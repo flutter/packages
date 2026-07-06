@@ -1,21 +1,22 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 /// @docImport 'package:intl/intl.dart';
 library;
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_localizations/flutter_localizations.dart' show GlobalWidgetsLocalizations;
+import 'package:flutter_localizations/src/utils/date_localizations.dart'; //ignore: implementation_imports
 import 'package:intl/intl.dart' as intl;
 
 import 'l10n/generated_cupertino_localizations.dart';
-import 'utils/date_localizations.dart' as util;
-import 'widgets_localizations.dart';
+import 'localizations.dart';
 
 // Examples can assume:
 // import 'package:flutter_localizations/flutter_localizations.dart';
-// import 'package:flutter/cupertino.dart';
+// import 'package:cupertino_ui/cupertino_ui.dart';
 
 /// Implementation of localized strings for Cupertino widgets using the `intl`
 /// package for date and time formatting.
@@ -61,26 +62,17 @@ abstract class GlobalCupertinoLocalizations implements CupertinoLocalizations {
   /// The remaining '*Format' arguments uses the intl package to provide
   /// [DateFormat] configurations for the `localeName`.
   const GlobalCupertinoLocalizations({
-    required String localeName,
-    required intl.DateFormat fullYearFormat,
-    required intl.DateFormat dayFormat,
-    required intl.DateFormat weekdayFormat,
-    required intl.DateFormat mediumDateFormat,
-    required intl.DateFormat singleDigitHourFormat,
-    required intl.DateFormat singleDigitMinuteFormat,
-    required intl.DateFormat doubleDigitMinuteFormat,
-    required intl.DateFormat singleDigitSecondFormat,
-    required intl.NumberFormat decimalFormat,
-  }) : _localeName = localeName,
-       _fullYearFormat = fullYearFormat,
-       _dayFormat = dayFormat,
-       _weekdayFormat = weekdayFormat,
-       _mediumDateFormat = mediumDateFormat,
-       _singleDigitHourFormat = singleDigitHourFormat,
-       _singleDigitMinuteFormat = singleDigitMinuteFormat,
-       _doubleDigitMinuteFormat = doubleDigitMinuteFormat,
-       _singleDigitSecondFormat = singleDigitSecondFormat,
-       _decimalFormat = decimalFormat;
+    required this._localeName,
+    required this._fullYearFormat,
+    required this._dayFormat,
+    required this._weekdayFormat,
+    required this._mediumDateFormat,
+    required this._singleDigitHourFormat,
+    required this._singleDigitMinuteFormat,
+    required this._doubleDigitMinuteFormat,
+    required this._singleDigitSecondFormat,
+    required this._decimalFormat,
+  });
 
   final String _localeName;
   final intl.DateFormat _fullYearFormat;
@@ -509,7 +501,7 @@ class _GlobalCupertinoLocalizationsDelegate extends LocalizationsDelegate<Cupert
   Future<CupertinoLocalizations> load(Locale locale) {
     assert(isSupported(locale));
     return _loadedTranslations.putIfAbsent(locale, () {
-      util.loadDateIntlDataIfNotLoaded();
+      loadDateIntlDataIfNotLoaded();
 
       final String localeName = intl.Intl.canonicalizedLocale(locale.toString());
       assert(

@@ -1,24 +1,24 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // This file has been automatically generated. Please do not edit it manually.
 // To regenerate the file, use:
-// dart dev/tools/localization/bin/gen_localizations.dart --overwrite
+// dart script/l10n/bin/gen_localizations.dart --overwrite
 
 import 'dart:collection';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart' as intl;
 
-import '../cupertino_localizations.dart';
+import '../global_cupertino_localizations.dart';
 
 // The classes defined here encode all of the translations found in the
-// `flutter_localizations/lib/src/l10n/*.arb` files.
+// `cupertino_ui/lib/src/l10n/*.arb` files.
 //
 // These classes are constructed by the [getCupertinoTranslation] method at the
 // bottom of this file, and used by the [_GlobalCupertinoLocalizationsDelegate.load]
-// method defined in `flutter_localizations/lib/src/cupertino_localizations.dart`.
+// method defined in `packages/cupertino_ui/lib/src/global_cupertino_localizations.dart`.
 
 // TODO(goderbauer): Extend the generator to properly format the output.
 // dart format off

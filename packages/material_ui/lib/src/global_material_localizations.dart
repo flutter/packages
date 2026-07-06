@@ -1,22 +1,25 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 /// @docImport 'package:intl/intl.dart';
 library;
 
+import 'package:cupertino_ui/cupertino_ui.dart' show GlobalCupertinoLocalizations;
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_localizations/flutter_localizations.dart' show GlobalWidgetsLocalizations;
+import 'package:flutter_localizations/src/utils/date_localizations.dart'; //ignore: implementation_imports
 import 'package:intl/intl.dart' as intl;
 
-import 'cupertino_localizations.dart';
 import 'l10n/generated_material_localizations.dart';
-import 'utils/date_localizations.dart' as util;
-import 'widgets_localizations.dart';
+import 'material_localizations.dart';
+import 'time.dart';
+import 'typography.dart';
 
 // Examples can assume:
 // import 'package:flutter_localizations/flutter_localizations.dart';
-// import 'package:flutter/material.dart';
+// import 'package:material_ui/material_ui.dart';
 
 /// Implementation of localized strings for the material widgets using the
 /// `intl` package for date and time formatting.
@@ -94,26 +97,17 @@ abstract class GlobalMaterialLocalizations implements MaterialLocalizations {
   /// The [narrowWeekdays] and [firstDayOfWeekIndex] properties use the values
   /// from the [intl.DateFormat] used by [formatFullDate].
   const GlobalMaterialLocalizations({
-    required String localeName,
-    required intl.DateFormat fullYearFormat,
-    required intl.DateFormat compactDateFormat,
-    required intl.DateFormat shortDateFormat,
-    required intl.DateFormat mediumDateFormat,
-    required intl.DateFormat longDateFormat,
-    required intl.DateFormat yearMonthFormat,
-    required intl.DateFormat shortMonthDayFormat,
-    required intl.NumberFormat decimalFormat,
-    required intl.NumberFormat twoDigitZeroPaddedFormat,
-  }) : _localeName = localeName,
-       _fullYearFormat = fullYearFormat,
-       _compactDateFormat = compactDateFormat,
-       _shortDateFormat = shortDateFormat,
-       _mediumDateFormat = mediumDateFormat,
-       _longDateFormat = longDateFormat,
-       _yearMonthFormat = yearMonthFormat,
-       _shortMonthDayFormat = shortMonthDayFormat,
-       _decimalFormat = decimalFormat,
-       _twoDigitZeroPaddedFormat = twoDigitZeroPaddedFormat;
+    required this._localeName,
+    required this._fullYearFormat,
+    required this._compactDateFormat,
+    required this._shortDateFormat,
+    required this._mediumDateFormat,
+    required this._longDateFormat,
+    required this._yearMonthFormat,
+    required this._shortMonthDayFormat,
+    required this._decimalFormat,
+    required this._twoDigitZeroPaddedFormat,
+  });
 
   final String _localeName;
   final intl.DateFormat _fullYearFormat;
@@ -732,7 +726,7 @@ class _MaterialLocalizationsDelegate extends LocalizationsDelegate<MaterialLocal
   Future<MaterialLocalizations> load(Locale locale) {
     assert(isSupported(locale));
     return _loadedTranslations.putIfAbsent(locale, () {
-      util.loadDateIntlDataIfNotLoaded();
+      loadDateIntlDataIfNotLoaded();
 
       final String localeName = intl.Intl.canonicalizedLocale(locale.toString());
       assert(
