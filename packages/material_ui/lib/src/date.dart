@@ -18,12 +18,15 @@ import 'material_localizations.dart';
 /// navigated within the picker. Different calendar systems (e.g., Gregorian,
 /// Nepali, Hijri, Buddhist) can be supported by providing custom implementations.
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This example demonstrates how a [CalendarDelegate] is used to implement a
 /// custom calendar system in the date picker.
 ///
-/// ** See code in examples/api/lib/material/date_picker/custom_calendar_date_picker.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/date_picker/custom_calendar_date_picker.0.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///

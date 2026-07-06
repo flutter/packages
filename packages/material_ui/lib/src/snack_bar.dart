@@ -234,27 +234,36 @@ class _SnackBarActionState extends State<SnackBarAction> {
 /// the floating action button. It also works in the case of a back gesture
 /// transition.
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// Here is an example of a [SnackBar] with an [action] button implemented using
 /// [SnackBarAction].
 ///
-/// ** See code in examples/api/lib/material/snack_bar/snack_bar.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/snack_bar/snack_bar.0.dart}
 ///
-/// {@tool dartpad}
+// TODO(framework): End of the @dartpad directive.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// Here is an example of a customized [SnackBar]. It utilizes
 /// [behavior], [shape], [padding], [width], and [duration] to customize the
 /// location, appearance, and the duration for which the [SnackBar] is visible.
 ///
-/// ** See code in examples/api/lib/material/snack_bar/snack_bar.1.dart **
-/// {@end-tool}
+/// {@example /example/lib/snack_bar/snack_bar.1.dart}
 ///
-/// {@tool dartpad}
+// TODO(framework): End of the @dartpad directive.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This example demonstrates the various [SnackBar] widget components,
 /// including an optional icon, in either floating or fixed format.
 ///
-/// ** See code in examples/api/lib/material/snack_bar/snack_bar.2.dart **
-/// {@end-tool}
+/// {@example /example/lib/snack_bar/snack_bar.2.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///

@@ -95,7 +95,10 @@ class _SelectableTextSelectionGestureDetectorBuilder extends TextSelectionGestur
 ///
 /// {@macro flutter.material.textfield.wantKeepAlive}
 ///
-/// {@tool snippet}
+// TODO(framework): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
 ///
 /// ```dart
 /// const SelectableText(
@@ -104,14 +107,18 @@ class _SelectableTextSelectionGestureDetectorBuilder extends TextSelectionGestur
 ///   style: TextStyle(fontWeight: FontWeight.bold),
 /// )
 /// ```
-/// {@end-tool}
+///
+// TODO(framework): End of the blue example container.
 ///
 /// Using the [SelectableText.rich] constructor, the [SelectableText] widget can
 /// display a paragraph with differently styled [TextSpan]s. The sample
 /// that follows displays "Hello beautiful world" with different styles
 /// for each word.
 ///
-/// {@tool snippet}
+// TODO(framework): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
 ///
 /// ```dart
 /// const SelectableText.rich(
@@ -124,7 +131,8 @@ class _SelectableTextSelectionGestureDetectorBuilder extends TextSelectionGestur
 ///   ),
 /// )
 /// ```
-/// {@end-tool}
+///
+// TODO(framework): End of the blue example container.
 ///
 /// ## Interactivity
 ///

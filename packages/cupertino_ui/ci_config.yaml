@@ -2,3 +2,7 @@
 exempt_from_excerpts: true
 release:
   batch: false
+
+# Temporarily ignore tests that have yet to have their cross imports fixed.
+# See https://github.com/flutter/flutter/issues/177028.
+allow_custom_analysis_options: true
