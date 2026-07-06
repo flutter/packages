@@ -343,6 +343,30 @@ void main() {
       ], tester);
       expect(await goRouter.routerDelegate.popRoute(), isFalse);
     });
+
+    testWidgets('popRoute does not throw when a shell navigator in the configuration '
+        'is not mounted', (WidgetTester tester) async {
+      final GoRouter goRouter = await createRouter(<RouteBase>[
+        GoRoute(path: '/', builder: (_, _) => const Text('Home')),
+        ShellRoute(
+          builder: (_, _, Widget child) => child,
+          routes: <RouteBase>[
+            GoRoute(path: '/dashboard', builder: (_, _) => const Text('Dashboard')),
+          ],
+        ),
+      ], tester);
+
+      // Simulate the transient state where the configuration references a
+      // shell route whose navigator is not (or no longer) mounted, e.g. while
+      // the widget tree rebuilds during a redirect or after resuming from
+      // background.
+      goRouter.routerDelegate.currentConfiguration = goRouter.configuration.findMatch(
+        Uri.parse('/dashboard'),
+      );
+
+      // Should not throw "Null check operator used on a null value".
+      expect(await goRouter.routerDelegate.popRoute(), isFalse);
+    });
   });
 
   group('push', () {
