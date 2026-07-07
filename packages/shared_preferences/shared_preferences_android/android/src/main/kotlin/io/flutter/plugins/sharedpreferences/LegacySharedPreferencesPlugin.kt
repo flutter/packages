@@ -53,7 +53,7 @@ class LegacySharedPreferencesPlugin @VisibleForTesting internal constructor(
     override fun setString(key: String, value: String): Boolean {
         // TODO (tarrinneal): Move this string prefix checking logic to Dart code and make it an
         // Argument Error.
-        if (value.startsWith(LIST_IDENTIFIER)
+        if (value.startsWith(LIST_PREFIX)
             || value.startsWith(BIG_INTEGER_PREFIX)
             || value.startsWith(DOUBLE_PREFIX)
         ) {
@@ -87,7 +87,7 @@ class LegacySharedPreferencesPlugin @VisibleForTesting internal constructor(
     @Deprecated("")
     @Throws(RuntimeException::class)
     override fun setDeprecatedStringList(key: String, value: List<String>): Boolean {
-        return preferences.edit().putString(key, LIST_IDENTIFIER + listEncoder.encode(value))
+        return preferences.edit().putString(key, LIST_PREFIX + listEncoder.encode(value))
             .commit()
     }
 
@@ -135,13 +135,13 @@ class LegacySharedPreferencesPlugin @VisibleForTesting internal constructor(
 
     private fun transformPref(key: String, value: Any): Any {
         if (value is String) {
-            if (value.startsWith(LIST_IDENTIFIER)) {
+            if (value.startsWith(LIST_PREFIX)) {
                 // The JSON-encoded lists use an extended prefix to distinguish them from
                 // lists that are encoded on the platform.
-                return if (value.startsWith(JSON_LIST_IDENTIFIER)) {
+                return if (value.startsWith(JSON_LIST_PREFIX)) {
                     value
                 } else {
-                    listEncoder.decode(value.substring(LIST_IDENTIFIER.length))
+                    listEncoder.decode(value.substring(LIST_PREFIX.length))
                 }
             } else if (value.startsWith(BIG_INTEGER_PREFIX)) {
                 // TODO (tarrinneal): Remove all BigInt code.
@@ -163,7 +163,7 @@ class LegacySharedPreferencesPlugin @VisibleForTesting internal constructor(
             preferences
                 .edit()
                 .remove(key)
-                .putString(key, LIST_IDENTIFIER + listEncoder.encode(listValue))
+                .putString(key, LIST_PREFIX + listEncoder.encode(listValue))
                 .apply()
 
             return listValue
@@ -201,17 +201,6 @@ class LegacySharedPreferencesPlugin @VisibleForTesting internal constructor(
     }
 
     companion object {
-        private const val TAG = "SharedPreferencesPlugin"
-        private const val SHARED_PREFERENCES_NAME = "FlutterSharedPreferences"
-
-        // All identifiers must match the SharedPreferencesPlugin.kt file, as well as the strings.dart
-        // file.
-        private const val LIST_IDENTIFIER = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu"
-
-        // The symbol `!` was chosen as it cannot be created by the base 64 encoding used with
-        // LIST_IDENTIFIER.
-        private const val JSON_LIST_IDENTIFIER = "$LIST_IDENTIFIER!"
         private const val BIG_INTEGER_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBCaWdJbnRlZ2Vy"
-        private const val DOUBLE_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu"
     }
 }
