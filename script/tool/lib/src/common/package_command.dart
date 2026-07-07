@@ -497,9 +497,7 @@ abstract class PackageCommand extends Command<void> {
     } else if (getBoolArg(runOnStagedPackagesArg)) {
       final gitVersionFinder = GitVersionFinder(await gitDir, baseSha: 'HEAD');
       print('Running for all packages that have staged changes\n');
-      packages = _getChangedPackageNames(
-        await gitVersionFinder.getStagedFiles(),
-      );
+      packages = _getChangedPackageNames(await gitVersionFinder.getStagedFiles());
       if (packages.isEmpty) {
         return;
       }

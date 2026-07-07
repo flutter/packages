@@ -197,10 +197,7 @@ void main() {
         (_) => FakeProcessInfo(MockProcess(stdout: stagedFilePath)),
       );
 
-      await runCapturingPrint(runner, <String>[
-        'format',
-        '--run-on-staged-packages',
-      ]);
+      await runCapturingPrint(runner, <String>['format', '--run-on-staged-packages']);
 
       expect(
         processRunner.recordedCalls,
@@ -252,10 +249,7 @@ void main() {
         (_) => FakeProcessInfo(MockProcess(stdout: stagedFiles)),
       );
 
-      await runCapturingPrint(runner, <String>[
-        'format',
-        '--run-on-staged-packages',
-      ]);
+      await runCapturingPrint(runner, <String>['format', '--run-on-staged-packages']);
 
       expect(
         processRunner.recordedCalls,
@@ -312,79 +306,70 @@ void main() {
       },
     );
 
-    test(
-      'skips Java and Kotlin formatting when no Java or Kotlin files are staged',
-      () async {
-        final RepositoryPackage plugin = createFakePlugin(
-          'a_plugin',
-          packagesDir,
-          extraFiles: <String>[
-            'lib/a.dart',
-            'android/src/main/java/io/flutter/plugins/a_plugin/a.java',
-            'android/src/main/kotlin/io/flutter/plugins/a_plugin/b.kt',
-          ],
-          dartConstraint: _dartConstraint,
-        );
-        fakePubGet(plugin);
+    test('skips Java and Kotlin formatting when no Java or Kotlin files are staged', () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+        extraFiles: <String>[
+          'lib/a.dart',
+          'android/src/main/java/io/flutter/plugins/a_plugin/a.java',
+          'android/src/main/kotlin/io/flutter/plugins/a_plugin/b.kt',
+        ],
+        dartConstraint: _dartConstraint,
+      );
+      fakePubGet(plugin);
 
-        // Mock git diff to return only the Dart file
-        const stagedFilePath = 'packages/a_plugin/lib/a.dart';
-        gitProcessRunner.mockProcessesForExecutable['git-diff'] = List<FakeProcessInfo>.generate(
-          3,
-          (_) => FakeProcessInfo(MockProcess(stdout: stagedFilePath)),
-        );
+      // Mock git diff to return only the Dart file
+      const stagedFilePath = 'packages/a_plugin/lib/a.dart';
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] = List<FakeProcessInfo>.generate(
+        3,
+        (_) => FakeProcessInfo(MockProcess(stdout: stagedFilePath)),
+      );
 
-        await runCapturingPrint(runner, <String>['format', '--run-on-staged-packages']);
+      await runCapturingPrint(runner, <String>['format', '--run-on-staged-packages']);
 
-        // Should only run dart format, no java format
-        expect(
-          processRunner.recordedCalls,
-          orderedEquals(<ProcessCall>[
-            ProcessCall('dart', const <String>['format', 'lib/a.dart'], plugin.path),
-          ]),
-        );
-      },
-    );
+      // Should only run dart format, no java format
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall('dart', const <String>['format', 'lib/a.dart'], plugin.path),
+        ]),
+      );
+    });
 
-    test(
-      'formats only staged Java files and skips Dart when only Java is staged',
-      () async {
-        const javaFile = 'android/src/main/java/io/flutter/plugins/a_plugin/a.java';
-        final RepositoryPackage plugin = createFakePlugin(
-          'a_plugin',
-          packagesDir,
-          extraFiles: <String>[
-            'lib/a.dart',
-            javaFile,
-          ],
-          dartConstraint: _dartConstraint,
-        );
-        fakePubGet(plugin);
+    test('formats only staged Java files and skips Dart when only Java is staged', () async {
+      const javaFile = 'android/src/main/java/io/flutter/plugins/a_plugin/a.java';
+      final RepositoryPackage plugin = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+        extraFiles: <String>['lib/a.dart', javaFile],
+        dartConstraint: _dartConstraint,
+      );
+      fakePubGet(plugin);
 
-        // Mock git diff to return only the Java file
-        const stagedFilePath = 'packages/a_plugin/$javaFile';
-        gitProcessRunner.mockProcessesForExecutable['git-diff'] = List<FakeProcessInfo>.generate(
-          3,
-          (_) => FakeProcessInfo(MockProcess(stdout: stagedFilePath)),
-        );
+      // Mock git diff to return only the Java file
+      const stagedFilePath = 'packages/a_plugin/$javaFile';
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] = List<FakeProcessInfo>.generate(
+        3,
+        (_) => FakeProcessInfo(MockProcess(stdout: stagedFilePath)),
+      );
 
-        await runCapturingPrint(runner, <String>['format', '--run-on-staged-packages']);
+      await runCapturingPrint(runner, <String>['format', '--run-on-staged-packages']);
 
-        // Should only run java format, no dart format
-        expect(
-          processRunner.recordedCalls,
-          orderedEquals(<ProcessCall>[
-            const ProcessCall('java', <String>['-version'], null),
-            ProcessCall('java', <String>[
-              '-jar',
-              javaFormatPath,
-              '--replace',
-              ...getPackagesDirRelativePaths(plugin, <String>[javaFile]),
-            ], packagesDir.path),
-          ]),
-        );
-      },
-    );
+      // Should only run java format, no dart format
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          const ProcessCall('java', <String>['-version'], null),
+          ProcessCall('java', <String>[
+            '-jar',
+            javaFormatPath,
+            '--replace',
+            ...getPackagesDirRelativePaths(plugin, <String>[javaFile]),
+          ], packagesDir.path),
+        ]),
+      );
+    });
 
     test('skips dart if --no-dart flag is provided', () async {
       const files = <String>['lib/a.dart'];
