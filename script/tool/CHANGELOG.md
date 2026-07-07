@@ -1,10 +1,15 @@
+## 0.14.4
+
+* Adds `--run-on-staged-packages` argument to support running commands only
+  on packages with staged changes.
+
 ## 0.14.3
 
 * Deprecates the `--custom-analysis` argument to `analyze`, which is now
   ignored, in favor of `allow_custom_analysis_options: true` in package-level
   `ci_config.yaml` files.
-* Adds `--run-on-staged-packages` argument to support running commands only
-  on packages with staged changes.
+* Adds `coverage-check` command to ensure opted-in packages meet the minimum
+  code coverage threshold as defined in `script/configs/custom_coverage_minimums.yaml`.
 
 ## 0.14.2
 
