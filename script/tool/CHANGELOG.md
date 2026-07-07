@@ -1,3 +1,9 @@
+## NEXT
+
+* Deprecates the `--custom-analysis` argument to `analyze`, which is now
+  ignored, in favor of `allow_custom_analysis_options: true` in package-level
+  `ci_config.yaml` files.
+
 ## 0.14.2
 
 * Ensures that pub commands use `flutter` or `dart` depending on whether the

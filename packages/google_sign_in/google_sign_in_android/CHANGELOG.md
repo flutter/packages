@@ -1,8 +1,12 @@
-## 7.2.14
+## 7.2.15
 
 * Fixes an `IllegalStateException` ("Reply already submitted") crash when an authorization activity
   result for `REQUEST_CODE_AUTHORIZE` is delivered more than once (for example after a configuration
-  change or process death), by clearing the pending callback before resolving it.
+  change or process death).
+
+## 7.2.14
+
+* Uses Google Identity APIs to extract the user ID from the ID token.
 
 ## 7.2.13
 

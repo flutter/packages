@@ -36,12 +36,15 @@ const EdgeInsetsGeometry _kDefaultPadding = EdgeInsetsDirectional.fromSTEB(20.0,
 /// be shown in [CupertinoColors.destructiveRed] coloring and
 /// medium-weighted font.
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// Creates a [CupertinoFormSection] containing a [CupertinoFormRow] with [prefix],
 /// [child], [helper] and [error] specified.
 ///
-/// ** See code in examples/api/lib/cupertino/form_row/cupertino_form_row.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/form_row/cupertino_form_row.0.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 class CupertinoFormRow extends StatelessWidget {
   /// Creates an iOS-style split form row with a standard prefix and child widget.

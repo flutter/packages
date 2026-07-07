@@ -71,18 +71,24 @@ enum MaterialBannerClosedReason {
 /// They are persistent and non-modal, allowing the user to either ignore them or
 /// interact with them at any time.
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// Banners placed directly into the widget tree are static.
 ///
-/// ** See code in examples/api/lib/material/banner/material_banner.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/banner/material_banner.0.dart}
 ///
-/// {@tool dartpad}
+// TODO(framework): End of the @dartpad directive.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// MaterialBanner's can also be presented through a [ScaffoldMessenger].
 /// Here is an example where ScaffoldMessengerState.showMaterialBanner() is used to show the MaterialBanner.
 ///
-/// ** See code in examples/api/lib/material/banner/material_banner.1.dart **
-/// {@end-tool}
+/// {@example /example/lib/banner/material_banner.1.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// The [actions] will be placed beside the [content] if there is only one.
 /// Otherwise, the [actions] will be placed below the [content]. Use

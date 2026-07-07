@@ -119,7 +119,11 @@ abstract class SearchDelegate<T> {
   /// [keyboardType] and/or [textInputAction]. Only one of [searchFieldLabel]
   /// and [searchFieldDecorationTheme] may be non-null.
   ///
-  /// {@tool snippet}
+  // TODO(framework): Replace the following block with a blue example container
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// ```dart
   /// class CustomSearchHintDelegate extends SearchDelegate<String> {
   ///   CustomSearchHintDelegate({
@@ -150,7 +154,8 @@ abstract class SearchDelegate<T> {
   ///   List<Widget> buildActions(BuildContext context) => <Widget>[];
   /// }
   /// ```
-  /// {@end-tool}
+  ///
+  // TODO(framework): End of the blue example container.
   SearchDelegate({
     this.searchFieldLabel,
     this.searchFieldStyle,

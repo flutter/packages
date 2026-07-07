@@ -125,7 +125,11 @@ final class PlatformAdaptiveIcons implements Icons {
 ///   uses-material-design: true
 /// ```
 ///
-/// {@tool snippet}
+// TODO(framework): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
+///
 /// This example shows how to create a [Row] of [Icon]s in different colors and
 /// sizes. The first [Icon] uses a [Icon.semanticLabel] to announce in accessibility
 /// modes like TalkBack and VoiceOver.
@@ -155,7 +159,8 @@ final class PlatformAdaptiveIcons implements Icons {
 ///   ],
 /// )
 /// ```
-/// {@end-tool}
+///
+// TODO(framework): End of the blue example container.
 ///
 /// See also:
 ///
@@ -172,7 +177,11 @@ abstract final class Icons {
   ///
   /// Use with the [Icon] class to show specific icons.
   ///
-  /// {@tool snippet}
+  // TODO(framework): Replace the following block with a blue example container
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// This example shows how to create a share icon that uses the material icon
   /// named "share" on non-Apple platforms, and the icon named "ios share" on
   /// Apple platforms.
@@ -182,7 +191,8 @@ abstract final class Icons {
   ///   Icons.adaptive.share,
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  // TODO(framework): End of the blue example container.
   ///
   /// See also:
   ///

@@ -48,12 +48,15 @@ const double _kIndicatorHeight = 32;
 /// [the adaptive_scaffold.dart sample](https://github.com/flutter/demos/blob/main/web_dashboard/lib/src/widgets/third_party/adaptive_scaffold.dart)
 /// for an example.
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This sample shows the creation of [NavigationRail] widget used within a Scaffold with 3
 /// [NavigationRailDestination]s, as described in: https://m3.material.io/components/navigation-rail/overview
 ///
-/// ** See code in examples/api/lib/material/navigation_rail/navigation_rail.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/navigation_rail/navigation_rail.0.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///
@@ -375,7 +378,9 @@ class NavigationRail extends StatefulWidget {
   /// This can be used to synchronize animations in the [leading] or [trailing]
   /// widget, such as an animated menu or a [FloatingActionButton] animation.
   ///
-  /// {@tool dartpad}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  ///
   /// This example shows how to use this animation to create a [FloatingActionButton]
   /// that animates itself between the normal and extended states of the
   /// [NavigationRail].
@@ -383,8 +388,9 @@ class NavigationRail extends StatefulWidget {
   /// An instance of `MyNavigationRailFab` is created for [NavigationRail.leading].
   /// Pressing the FAB button toggles the "extended" state of the [NavigationRail].
   ///
-  /// ** See code in examples/api/lib/material/navigation_rail/navigation_rail.extended_animation.0.dart **
-  /// {@end-tool}
+  /// {@example /example/lib/navigation_rail/navigation_rail.extended_animation.0.dart}
+  ///
+  // TODO(framework): End of the @dartpad directive.
   static Animation<double> extendedAnimation(BuildContext context) {
     return context
         .dependOnInheritedWidgetOfExactType<_ExtendedNavigationRailAnimation>()!

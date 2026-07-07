@@ -191,6 +191,8 @@ Future<bool> _isDevChange(
   String? repoPath,
 }) async {
   return _isTestChange(pathComponents) ||
+      // Agent directories (.agents/) are for developer-only utility tools (skills, scripts).
+      pathComponents.first == '.agents' ||
       // The top-level "tool" directory is for non-client-facing utility
       // code, such as test scripts.
       pathComponents.first == 'tool' ||

@@ -29,23 +29,29 @@ enum _CardVariant { elevated, filled, outlined }
 /// some text describing a musical, and the other with buttons for buying
 /// tickets or listening to the show.](https://flutter.github.io/assets-for-api-docs/assets/material/card.png)
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This sample shows creation of a [Card] widget that shows album information
 /// and two actions.
 ///
-/// ** See code in examples/api/lib/material/card/card.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/card/card.0.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// Sometimes the primary action area of a card is the card itself. Cards can be
 /// one large touch target that shows a detail screen when tapped.
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This sample shows creation of a [Card] widget that can be tapped. When
 /// tapped this [Card]'s [InkWell] displays an "ink splash" that fills the
 /// entire card.
 ///
-/// ** See code in examples/api/lib/material/card/card.1.dart **
-/// {@end-tool}
+/// {@example /example/lib/card/card.1.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// For Material Design 2 (when [ThemeData.useMaterial3] is false), there is a
 /// single card type: the elevated card. In that mode the named constructors
@@ -57,12 +63,15 @@ enum _CardVariant { elevated, filled, outlined }
 /// so theme properties (for example [CardThemeData.shape]) apply to every card
 /// variant within the theme's scope.
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This sample shows creation of [Card] widgets for elevated, filled and
 /// outlined types, as described in: https://m3.material.io/components/cards/overview
 ///
-/// ** See code in examples/api/lib/material/card/card.2.dart **
-/// {@end-tool}
+/// {@example /example/lib/card/card.2.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///

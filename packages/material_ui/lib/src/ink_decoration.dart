@@ -47,7 +47,10 @@ import 'material.dart';
 /// generally speaking will match the order they are given in the widget tree,
 /// but this order may appear to be somewhat random in more dynamic situations.
 ///
-/// {@tool snippet}
+// TODO(framework): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
 ///
 /// This example shows how a [Material] widget can have a yellow rectangle drawn
 /// on it using [Ink], while still having ink effects over the yellow rectangle:
@@ -70,8 +73,12 @@ import 'material.dart';
 ///   ),
 /// )
 /// ```
-/// {@end-tool}
-/// {@tool snippet}
+///
+// TODO(framework): End of the blue example container.
+// TODO(framework): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
 ///
 /// The following example shows how an image can be printed on a [Material]
 /// widget with an [InkWell] above it:
@@ -105,11 +112,14 @@ import 'material.dart';
 ///   ),
 /// )
 /// ```
-/// {@end-tool}
+///
+// TODO(framework): End of the blue example container.
 ///
 /// What to do if you want to clip this [Ink.image]?
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// Wrapping the [Ink] in a clipping widget directly will not work since the
 /// [Material] it will be printed on is responsible for clipping.
 ///
@@ -117,16 +127,20 @@ import 'material.dart';
 /// it is being rendered onto the Scaffold body Material, which isn't wrapped in
 /// the [ClipRRect].
 ///
-/// ** See code in examples/api/lib/material/ink/ink.image_clip.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/ink/ink.image_clip.0.dart}
 ///
-/// {@tool dartpad}
+// TODO(framework): End of the @dartpad directive.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// One solution would be to deliberately wrap the [Ink.image] in a [Material].
 /// This makes sure the Material that the image is painted on is also responsible
 /// for clipping said content.
 ///
-/// ** See code in examples/api/lib/material/ink/ink.image_clip.1.dart **
-/// {@end-tool}
+/// {@example /example/lib/ink/ink.image_clip.1.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///
