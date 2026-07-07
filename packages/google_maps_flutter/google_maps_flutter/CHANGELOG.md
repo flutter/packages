@@ -1,6 +1,6 @@
-## 2.17.2
+## 2.18.0
 
-* Add support for mapTypeControlEnabled, fullscreenControlEnabled, streetViewControlEnabled on web.
+* Adds support for mapTypeControlEnabled, fullscreenControlEnabled, and streetViewControlEnabled on web.
 
 ## 2.17.1
 
