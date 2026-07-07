@@ -169,6 +169,7 @@ void main() {
           int? targetRotation,
           CameraXFlashMode? flashMode,
           ResolutionSelector? resolutionSelector,
+          int? jpegQuality,
         }) {
           final mockImageCapture = MockImageCapture();
           when(mockImageCapture.resolutionSelector).thenReturn(resolutionSelector);
@@ -527,11 +528,14 @@ void main() {
             int? targetRotation,
             CameraXFlashMode? flashMode,
             ResolutionSelector? resolutionSelector,
+            int? jpegQuality,
           }) {
             return mockImageCapture;
           };
+      int? recorderTargetVideoEncodingBitRate;
       PigeonOverrides.recorder_new =
           ({int? aspectRatio, int? targetVideoEncodingBitRate, QualitySelector? qualitySelector}) {
+            recorderTargetVideoEncodingBitRate = targetVideoEncodingBitRate;
             return mockRecorder;
           };
       PigeonOverrides.videoCapture_withOutput =
@@ -658,6 +662,7 @@ void main() {
 
       // Verify the camera's Recorder and VideoCapture instances are instantiated properly.
       expect(camera.recorder, equals(mockRecorder));
+      expect(recorderTargetVideoEncodingBitRate, equals(200000));
       expect(camera.videoCapture, equals(mockVideoCapture));
 
       // Verify the camera's Preview instance has its surface provider set.
@@ -1044,6 +1049,7 @@ void main() {
             int? targetRotation,
             CameraXFlashMode? flashMode,
             ResolutionSelector? resolutionSelector,
+            int? jpegQuality,
           }) {
             return mockImageCapture;
           };
@@ -1449,6 +1455,7 @@ void main() {
           int? targetRotation,
           CameraXFlashMode? flashMode,
           ResolutionSelector? resolutionSelector,
+          int? jpegQuality,
         }) {
           return mockImageCapture;
         };
@@ -1799,6 +1806,7 @@ void main() {
           int? targetRotation,
           CameraXFlashMode? flashMode,
           ResolutionSelector? resolutionSelector,
+          int? jpegQuality,
         }) => mockImageCapture;
     PigeonOverrides.recorder_new =
         ({int? aspectRatio, int? targetVideoEncodingBitRate, QualitySelector? qualitySelector}) =>
@@ -2817,6 +2825,7 @@ void main() {
             CameraXFlashMode? flashMode,
             ResolutionSelector? resolutionSelector,
             int? targetRotation,
+            int? jpegQuality,
           }) {
             return mockImageCapture;
           };
@@ -3030,6 +3039,7 @@ void main() {
             CameraXFlashMode? flashMode,
             ResolutionSelector? resolutionSelector,
             int? targetRotation,
+            int? jpegQuality,
           }) {
             return mockImageCapture;
           };
@@ -3255,6 +3265,176 @@ void main() {
       camera.shouldSetDefaultRotation = true;
       await camera.takePicture(cameraId);
       verify(mockImageCapture.setTargetRotation(defaultTargetRotation));
+    },
+  );
+
+  test('setJpegImageQuality unbinds and recreates ImageCapture with requested quality', () async {
+    final camera = AndroidCameraCameraX();
+    final mockProcessCameraProvider = MockProcessCameraProvider();
+    final mockDeviceOrientationManager = MockDeviceOrientationManager();
+    final mockImageCapture = MockImageCapture();
+    final mockNewImageCapture = MockImageCapture();
+    const int defaultTargetRotation = Surface.rotation90;
+    const jpegQuality = 73;
+    const cameraId = 9;
+    int? actualTargetRotation;
+    int? actualJpegQuality;
+
+    camera.processCameraProvider = mockProcessCameraProvider;
+    camera.imageCapture = mockImageCapture;
+
+    PigeonOverrides.deviceOrientationManager_new =
+        ({required void Function(DeviceOrientationManager, String) onDeviceOrientationChanged}) {
+          when(
+            mockDeviceOrientationManager.getDefaultDisplayRotation(),
+          ).thenAnswer((_) async => defaultTargetRotation);
+          return mockDeviceOrientationManager;
+        };
+    PigeonOverrides.imageCapture_new =
+        ({
+          int? targetRotation,
+          CameraXFlashMode? flashMode,
+          ResolutionSelector? resolutionSelector,
+          int? jpegQuality,
+        }) {
+          actualTargetRotation = targetRotation;
+          actualJpegQuality = jpegQuality;
+          return mockNewImageCapture;
+        };
+
+    when(mockProcessCameraProvider.isBound(mockImageCapture)).thenAnswer((_) async => true);
+
+    await camera.setJpegImageQuality(cameraId, jpegQuality);
+
+    verify(mockProcessCameraProvider.unbind(<UseCase>[mockImageCapture])).called(1);
+    verify(mockDeviceOrientationManager.getDefaultDisplayRotation()).called(1);
+    expect(actualTargetRotation, defaultTargetRotation);
+    expect(actualJpegQuality, jpegQuality);
+    expect(camera.imageCapture, same(mockNewImageCapture));
+  });
+
+  test(
+    'setJpegImageQuality preserves locked target rotation when recreating ImageCapture',
+    () async {
+      final camera = AndroidCameraCameraX();
+      final mockProcessCameraProvider = MockProcessCameraProvider();
+      final mockDeviceOrientationManager = MockDeviceOrientationManager();
+      final mockImageCapture = MockImageCapture();
+      final mockImageAnalysis = MockImageAnalysis();
+      final mockVideoCapture = MockVideoCapture();
+      final mockNewImageCapture = MockImageCapture();
+      const int lockedTargetRotation = Surface.rotation270;
+      const jpegQuality = 64;
+      const cameraId = 11;
+      int? actualTargetRotation;
+      int? actualJpegQuality;
+
+      camera.processCameraProvider = mockProcessCameraProvider;
+      camera.imageCapture = mockImageCapture;
+      camera.imageAnalysis = mockImageAnalysis;
+      camera.videoCapture = mockVideoCapture;
+
+      await camera.lockCaptureOrientation(cameraId, DeviceOrientation.landscapeRight);
+
+      when(mockProcessCameraProvider.isBound(mockImageCapture)).thenAnswer((_) async => true);
+
+      PigeonOverrides.deviceOrientationManager_new =
+          ({required void Function(DeviceOrientationManager, String) onDeviceOrientationChanged}) {
+            when(
+              mockDeviceOrientationManager.getDefaultDisplayRotation(),
+            ).thenAnswer((_) async => Surface.rotation0);
+            return mockDeviceOrientationManager;
+          };
+      PigeonOverrides.imageCapture_new =
+          ({
+            int? targetRotation,
+            CameraXFlashMode? flashMode,
+            ResolutionSelector? resolutionSelector,
+            int? jpegQuality,
+          }) {
+            actualTargetRotation = targetRotation;
+            actualJpegQuality = jpegQuality;
+            return mockNewImageCapture;
+          };
+
+      await camera.setJpegImageQuality(cameraId, jpegQuality);
+
+      verifyNever(mockDeviceOrientationManager.getDefaultDisplayRotation());
+      expect(actualTargetRotation, lockedTargetRotation);
+      expect(actualJpegQuality, jpegQuality);
+      expect(camera.imageCapture, same(mockNewImageCapture));
+    },
+  );
+
+  test(
+    'setJpegImageQuality followed by takePicture binds the new ImageCapture to the ProcessCameraProvider',
+    () async {
+      final camera = AndroidCameraCameraX();
+      final mockProcessCameraProvider = MockProcessCameraProvider();
+      final mockDeviceOrientationManager = MockDeviceOrientationManager();
+      final mockCamera = MockCamera();
+      final mockCameraInfo = MockCameraInfo();
+      final mockOldImageCapture = MockImageCapture();
+      final mockNewImageCapture = MockImageCapture();
+      const jpegQuality = 73;
+      const cameraId = 9;
+      const int defaultTargetRotation = Surface.rotation90;
+      const testPicturePath = 'test/absolute/path/to/picture';
+
+      camera.processCameraProvider = mockProcessCameraProvider;
+      camera.imageCapture = mockOldImageCapture;
+      camera.cameraSelector = MockCameraSelector();
+      camera.captureOrientationLocked = true;
+
+      PigeonOverrides.deviceOrientationManager_new =
+          ({required void Function(DeviceOrientationManager, String) onDeviceOrientationChanged}) {
+            when(
+              mockDeviceOrientationManager.getDefaultDisplayRotation(),
+            ).thenAnswer((_) async => defaultTargetRotation);
+            return mockDeviceOrientationManager;
+          };
+      PigeonOverrides.imageCapture_new =
+          ({
+            int? targetRotation,
+            CameraXFlashMode? flashMode,
+            ResolutionSelector? resolutionSelector,
+            int? jpegQuality,
+          }) {
+            return mockNewImageCapture;
+          };
+
+      GenericsPigeonOverrides.observerNew =
+          <T>({required void Function(Observer<T>, T) onChanged}) {
+            return Observer<T>.detached(onChanged: onChanged);
+          };
+      PigeonOverrides.systemServicesManager_new =
+          ({required void Function(SystemServicesManager, String) onCameraError}) {
+            return MockSystemServicesManager();
+          };
+
+      when(mockProcessCameraProvider.isBound(mockOldImageCapture)).thenAnswer((_) async => true);
+      when(mockProcessCameraProvider.isBound(mockNewImageCapture)).thenAnswer((_) async => false);
+      when(
+        mockProcessCameraProvider.bindToLifecycle(camera.cameraSelector, <UseCase>[
+          mockNewImageCapture,
+        ]),
+      ).thenAnswer((_) async => mockCamera);
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(mockCameraInfo.getCameraState()).thenAnswer((_) async => MockLiveCameraState());
+      when(
+        mockNewImageCapture.takePicture(argThat(isA<SystemServicesManager>())),
+      ).thenAnswer((_) async => testPicturePath);
+
+      await camera.setJpegImageQuality(cameraId, jpegQuality);
+      final XFile imageFile = await camera.takePicture(cameraId);
+
+      verify(mockProcessCameraProvider.unbind(<UseCase>[mockOldImageCapture])).called(1);
+      verify(
+        mockProcessCameraProvider.bindToLifecycle(camera.cameraSelector, <UseCase>[
+          mockNewImageCapture,
+        ]),
+      ).called(1);
+      expect(imageFile.path, equals(testPicturePath));
     },
   );
 

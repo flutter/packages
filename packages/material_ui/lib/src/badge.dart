@@ -31,12 +31,15 @@ import 'theme.dart';
 /// configuration is intended to work well with a default sized (24)
 /// [Icon].
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This example shows how to create a [Badge] with label and count
 /// wrapped on an icon in an [IconButton].
 ///
-/// ** See code in examples/api/lib/material/badge/badge.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/badge/badge.0.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 class Badge extends StatelessWidget {
   /// Create a Badge that stacks [label] on top of [child].
   ///

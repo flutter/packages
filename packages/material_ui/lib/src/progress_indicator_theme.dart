@@ -316,7 +316,10 @@ class ProgressIndicatorThemeData with Diagnosticable {
 /// Values specified here are used for [ProgressIndicator] properties that are not
 /// given an explicit non-null value.
 ///
-/// {@tool snippet}
+// TODO(framework): Replace the following block with a blue example container
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
 ///
 /// Here is an example of a progress indicator theme that applies a red indicator
 /// color.
@@ -329,7 +332,8 @@ class ProgressIndicatorThemeData with Diagnosticable {
 ///   child: LinearProgressIndicator()
 /// )
 /// ```
-/// {@end-tool}
+///
+// TODO(framework): End of the blue example container.
 class ProgressIndicatorTheme extends InheritedTheme {
   /// Creates a theme that controls the configurations for [ProgressIndicator]
   /// widgets.

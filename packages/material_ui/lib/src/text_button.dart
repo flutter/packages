@@ -55,20 +55,26 @@ import 'theme_data.dart';
 /// If the [onPressed] and [onLongPress] callbacks are null, then this
 /// button will be disabled, it will not react to touch.
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This sample shows various ways to configure TextButtons, from the
 /// simplest default appearance to versions that don't resemble
 /// Material Design at all.
 ///
-/// ** See code in examples/api/lib/material/text_button/text_button.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/text_button/text_button.0.dart}
 ///
-/// {@tool dartpad}
+// TODO(framework): End of the @dartpad directive.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This sample demonstrates using the [statesController] parameter to create a button
 /// that adds support for [WidgetState.selected].
 ///
-/// ** See code in examples/api/lib/material/text_button/text_button.1.dart **
-/// {@end-tool}
+/// {@example /example/lib/text_button/text_button.1.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///
