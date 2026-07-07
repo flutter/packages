@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 package io.flutter.plugins.sharedpreferences
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Base64
@@ -20,6 +21,7 @@ import java.io.ObjectOutputStream
 import java.math.BigInteger
 
 /** LegacySharedPreferencesPlugin  */
+@SuppressLint("UseKtx")
 class LegacySharedPreferencesPlugin @VisibleForTesting internal constructor(
     private val listEncoder: SharedPreferencesListEncoder
 ) : FlutterPlugin, SharedPreferencesApi {
