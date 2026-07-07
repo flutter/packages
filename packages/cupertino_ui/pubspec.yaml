@@ -33,6 +33,7 @@ dev_dependencies:
   material_ui:
     # TODO(justinmc): Use the pub.dev package when published.
     path: ../material_ui
+  path: ^1.9.1
 
 topics:
   - ui

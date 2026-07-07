@@ -5,13 +5,12 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as path;
 
-import '../test_utils.dart';
+import 'test_utils.dart';
 
 final String rootDirectoryPath = Directory.current.path;
 
@@ -161,10 +160,10 @@ void main() {
     WidgetTester tester,
   ) async {
     final nbCupertinoArbFile = File(
-      path.join(rootDirectoryPath, 'lib', 'src', 'l10n', 'cupertino_nb.arb'),
+      path.join(rootDirectoryPath, 'lib', 'l10n', 'cupertino_nb.arb'),
     );
     final noCupertinoArbFile = File(
-      path.join(rootDirectoryPath, 'lib', 'src', 'l10n', 'cupertino_no.arb'),
+      path.join(rootDirectoryPath, 'lib', 'l10n', 'cupertino_no.arb'),
     );
 
     if (noCupertinoArbFile.existsSync() && !nbCupertinoArbFile.existsSync()) {
@@ -191,7 +190,7 @@ void main() {
 
   // Regression test for https://github.com/flutter/flutter/issues/36704.
   testWidgets('kn arb file should be properly Unicode escaped', (WidgetTester tester) async {
-    final file = File(path.join(rootDirectoryPath, 'lib', 'src', 'l10n', 'cupertino_kn.arb'));
+    final file = File(path.join(rootDirectoryPath, 'lib', 'l10n', 'cupertino_kn.arb'));
 
     final bundle = json.decode(file.readAsStringSync()) as Map<String, dynamic>;
 

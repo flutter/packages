@@ -23,6 +23,7 @@ library cupertino_ui;
 
 export 'package:flutter/widgets.dart';
 
+export 'l10n/generated_cupertino_localizations.dart';
 export 'src/activity_indicator.dart';
 export 'src/adaptive_text_selection_toolbar.dart';
 export 'src/app.dart';
