@@ -13,3 +13,8 @@ analyzer:
     - windows/**
     - macos/**
     - linux/**
+
+linter:
+  rules:
+    # TODO(dkwingsmt): Remove when https://github.com/dart-lang/sdk/issues/63777 is fixed.
+    unintended_html_in_doc_comment: false
