@@ -79,6 +79,8 @@ const List<double> _kDisabledDarkGradientOpacities = <double>[0.08, 0.14];
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
 /// {@example /example/lib/checkbox/cupertino_checkbox.0.dart}
 ///
 /// </callout-box>

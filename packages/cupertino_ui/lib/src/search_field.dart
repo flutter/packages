@@ -45,6 +45,8 @@ const double _kMaxPrefixIconSize = 30.0;
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
 /// {@example /example/lib/search_field/cupertino_search_field.0.dart}
 ///
 /// </callout-box>
@@ -60,6 +62,8 @@ const double _kMaxPrefixIconSize = 30.0;
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
 /// {@example /example/lib/search_field/cupertino_search_field.1.dart}
 ///
 /// </callout-box>

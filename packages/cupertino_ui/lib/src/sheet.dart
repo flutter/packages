@@ -165,6 +165,8 @@ typedef _GetSheetDragged = bool Function();
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
 /// {@example /example/lib/sheet/cupertino_sheet.1.dart}
 ///
 /// </callout-box>
@@ -619,6 +621,8 @@ class _StretchDragControllerProvider extends InheritedWidget {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
 /// {@example /example/lib/sheet/cupertino_sheet.0.dart}
 ///
 /// </callout-box>
@@ -630,6 +634,8 @@ class _StretchDragControllerProvider extends InheritedWidget {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
 /// {@example /example/lib/sheet/cupertino_sheet.2.dart}
 ///
 /// </callout-box>
@@ -640,6 +646,8 @@ class _StretchDragControllerProvider extends InheritedWidget {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
 /// {@example /example/lib/sheet/cupertino_sheet.3.dart}
 ///
 /// </callout-box>
@@ -689,6 +697,8 @@ class CupertinoSheetRoute<T> extends PageRoute<T> with _CupertinoSheetRouteTrans
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro cupertino_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/sheet/cupertino_sheet.3.dart}
   ///
   /// </callout-box>

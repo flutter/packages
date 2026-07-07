@@ -103,6 +103,8 @@ enum _ContextMenuLocation { center, left, right }
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
 /// {@example /example/lib/context_menu/cupertino_context_menu.0.dart}
 ///
 /// </callout-box>
@@ -114,6 +116,8 @@ enum _ContextMenuLocation { center, left, right }
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
 /// {@example /example/lib/context_menu/cupertino_context_menu.1.dart}
 ///
 /// </callout-box>
@@ -348,6 +352,8 @@ class CupertinoContextMenu extends StatefulWidget {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro cupertino_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/context_menu/cupertino_context_menu.1.dart}
   ///
   /// </callout-box>

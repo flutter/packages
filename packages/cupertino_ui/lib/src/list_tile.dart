@@ -85,6 +85,8 @@ enum _CupertinoListTileType { base, notched }
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
 /// {@example /example/lib/list_tile/cupertino_list_tile.0.dart}
 ///
 /// </callout-box>

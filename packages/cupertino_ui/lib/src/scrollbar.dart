@@ -53,6 +53,8 @@ const double _kScrollbarCrossAxisMargin = 3.0;
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
 /// {@example /example/lib/scrollbar/cupertino_scrollbar.0.dart}
 ///
 /// </callout-box>
@@ -65,6 +67,8 @@ const double _kScrollbarCrossAxisMargin = 3.0;
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
 /// {@example /example/lib/scrollbar/cupertino_scrollbar.1.dart}
 ///
 /// </callout-box>
