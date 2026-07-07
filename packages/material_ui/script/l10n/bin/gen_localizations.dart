@@ -545,8 +545,8 @@ void main(List<String> rawArgs) {
   // is the 2nd command line argument, lc is a language code and cc is the country
   // code. In most cases both codes are just two characters.
 
-  final materialDirectory = Directory(path.join('packages', 'material_ui', 'lib', 'l10n'));
-  final cupertinoDirectory = Directory(path.join('packages', 'cupertino_ui', 'lib', 'l10n'));
+  final materialDirectory = Directory(path.join('packages', 'material_ui', 'lib', 'src', 'l10n'));
+  final cupertinoDirectory = Directory(path.join('packages', 'cupertino_ui', 'lib', 'src', 'l10n'));
   final materialFilenameRE = RegExp(r'material_(\w+)\.arb$');
   final cupertinoFilenameRE = RegExp(r'cupertino_(\w+)\.arb$');
 

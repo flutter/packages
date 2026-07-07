@@ -11,7 +11,7 @@ import 'package:flutter_localizations/flutter_localizations.dart' show GlobalWid
 import 'package:flutter_localizations/src/utils/date_localizations.dart'; //ignore: implementation_imports
 import 'package:intl/intl.dart' as intl;
 
-import '../l10n/generated_cupertino_localizations.dart';
+import 'l10n/generated_cupertino_localizations.dart';
 import 'localizations.dart';
 
 // Examples can assume:

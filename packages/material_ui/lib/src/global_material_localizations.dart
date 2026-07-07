@@ -12,7 +12,7 @@ import 'package:flutter_localizations/flutter_localizations.dart' show GlobalWid
 import 'package:flutter_localizations/src/utils/date_localizations.dart'; //ignore: implementation_imports
 import 'package:intl/intl.dart' as intl;
 
-import '../l10n/generated_material_localizations.dart';
+import 'l10n/generated_material_localizations.dart';
 import 'material_localizations.dart';
 import 'time.dart';
 import 'typography.dart';

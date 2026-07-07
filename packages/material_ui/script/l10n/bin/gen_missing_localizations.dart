@@ -34,12 +34,12 @@ Future<void> main(List<String> rawArgs) async {
   checkCwdIsRepoRoot('gen_missing_localizations');
 
   updateMissingResources(
-    path.join('packages', 'material_ui', 'lib', 'l10n'),
+    path.join('packages', 'material_ui', 'lib', 'src', 'l10n'),
     'material',
     removeUndefined: removeUndefined,
   );
   updateMissingResources(
-    path.join('packages', 'cupertino_ui', 'lib', 'l10n'),
+    path.join('packages', 'cupertino_ui', 'lib', 'src', 'l10n'),
     'cupertino',
     removeUndefined: removeUndefined,
   );

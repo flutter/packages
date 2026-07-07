@@ -23,7 +23,6 @@ library cupertino_ui;
 
 export 'package:flutter/widgets.dart';
 
-export 'l10n/generated_cupertino_localizations.dart';
 export 'src/activity_indicator.dart';
 export 'src/adaptive_text_selection_toolbar.dart';
 export 'src/app.dart';
@@ -48,6 +47,7 @@ export 'src/global_cupertino_localizations.dart';
 export 'src/icon_theme_data.dart';
 export 'src/icons.dart';
 export 'src/interface_level.dart';
+export 'src/l10n/generated_cupertino_localizations.dart';
 export 'src/list_section.dart';
 export 'src/list_tile.dart';
 export 'src/localizations.dart';

@@ -11,16 +11,16 @@ import 'dart:collection';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart' as intl;
 
-import '../src/global_material_localizations.dart';
-import '../src/time.dart';
-import '../src/typography.dart';
+import '../global_material_localizations.dart';
+import '../time.dart';
+import '../typography.dart';
 
 // The classes defined here encode all of the translations found in the
-// `flutter_localizations/lib/src/l10n/*.arb` files.
+// `material_ui/lib/src/l10n/*.arb` files.
 //
 // These classes are constructed by the [getMaterialTranslation] method at the
 // bottom of this file, and used by the [_MaterialLocalizationsDelegate.load]
-// method defined in `flutter_localizations/lib/src/material_localizations.dart`.
+// method defined in `material_ui/lib/src/material_localizations.dart`.
 
 // TODO(goderbauer): Extend the generator to properly format the output.
 // dart format off

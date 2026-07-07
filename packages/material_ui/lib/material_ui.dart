@@ -18,7 +18,6 @@ library material_ui;
 
 export 'package:flutter/widgets.dart';
 
-export 'l10n/generated_material_localizations.dart';
 export 'src/about.dart';
 export 'src/action_buttons.dart';
 export 'src/action_chip.dart';
@@ -113,6 +112,7 @@ export 'src/input_border.dart';
 export 'src/input_chip.dart';
 export 'src/input_date_picker_form_field.dart';
 export 'src/input_decorator.dart';
+export 'src/l10n/generated_material_localizations.dart';
 export 'src/list_tile.dart';
 export 'src/list_tile_theme.dart';
 export 'src/magnifier.dart';
