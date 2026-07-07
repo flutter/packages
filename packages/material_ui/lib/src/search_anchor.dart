@@ -93,6 +93,8 @@ typedef ViewBuilder = Widget Function(Iterable<Widget> suggestions);
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/search_anchor/search_anchor.2.dart}
 ///
 /// </callout-box>
@@ -104,6 +106,8 @@ typedef ViewBuilder = Widget Function(Iterable<Widget> suggestions);
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/search_anchor/search_anchor.1.dart}
 ///
 /// </callout-box>
@@ -114,6 +118,8 @@ typedef ViewBuilder = Widget Function(Iterable<Widget> suggestions);
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/search_anchor/search_anchor.3.dart}
 ///
 /// </callout-box>
@@ -125,6 +131,8 @@ typedef ViewBuilder = Widget Function(Iterable<Widget> suggestions);
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/search_anchor/search_anchor.4.dart}
 ///
 /// </callout-box>
@@ -185,6 +193,8 @@ class SearchAnchor extends StatefulWidget {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/search_anchor/search_anchor.0.dart}
   ///
   /// </callout-box>
@@ -1415,6 +1425,8 @@ class SearchController extends TextEditingController {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/search_anchor/search_bar.0.dart}
 ///
 /// </callout-box>

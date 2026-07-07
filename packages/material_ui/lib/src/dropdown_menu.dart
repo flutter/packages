@@ -109,6 +109,8 @@ class DropdownMenuEntry<T> {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/dropdown_menu/dropdown_menu_entry_label_widget.0.dart}
   ///
   /// </callout-box>
@@ -171,6 +173,8 @@ enum DropdownMenuCloseBehavior {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/dropdown_menu/dropdown_menu.0.dart}
 ///
 /// </callout-box>
@@ -257,6 +261,8 @@ class DropdownMenu<T> extends StatefulWidget {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/dropdown_menu/dropdown_menu.2.dart}
   ///
   /// </callout-box>
@@ -533,6 +539,8 @@ class DropdownMenu<T> extends StatefulWidget {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/dropdown_menu/dropdown_menu.2.dart}
   ///
   /// </callout-box>

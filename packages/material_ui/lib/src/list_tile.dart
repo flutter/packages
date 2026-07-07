@@ -239,6 +239,8 @@ enum ListTileTitleAlignment {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/list_tile/list_tile.0.dart}
 ///
 /// </callout-box>
@@ -252,6 +254,8 @@ enum ListTileTitleAlignment {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/list_tile/list_tile.1.dart}
 ///
 /// </callout-box>
@@ -263,6 +267,8 @@ enum ListTileTitleAlignment {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/list_tile/list_tile.2.dart}
 ///
 /// </callout-box>
@@ -275,6 +281,8 @@ enum ListTileTitleAlignment {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/list_tile/list_tile.3.dart}
 ///
 /// </callout-box>
@@ -287,6 +295,8 @@ enum ListTileTitleAlignment {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/list_tile/list_tile.4.dart}
 ///
 /// </callout-box>
@@ -396,6 +406,8 @@ enum ListTileTitleAlignment {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/list_tile/custom_list_item.0.dart}
 ///
 /// </callout-box>
@@ -408,6 +420,8 @@ enum ListTileTitleAlignment {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/list_tile/custom_list_item.1.dart}
 ///
 /// </callout-box>
@@ -714,6 +728,8 @@ class ListTile extends StatelessWidget {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/list_tile/list_tile.selected.0.dart}
   ///
   /// </callout-box>

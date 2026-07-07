@@ -145,6 +145,8 @@ enum BottomNavigationBarLandscapeLayout {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/bottom_navigation_bar/bottom_navigation_bar.0.dart}
 ///
 /// </callout-box>
@@ -156,6 +158,8 @@ enum BottomNavigationBarLandscapeLayout {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/navigation_bar/navigation_bar.0.dart}
 ///
 /// </callout-box>
@@ -174,6 +178,8 @@ enum BottomNavigationBarLandscapeLayout {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/bottom_navigation_bar/bottom_navigation_bar.1.dart}
 ///
 /// </callout-box>
@@ -187,6 +193,8 @@ enum BottomNavigationBarLandscapeLayout {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/bottom_navigation_bar/bottom_navigation_bar.2.dart}
 ///
 /// </callout-box>

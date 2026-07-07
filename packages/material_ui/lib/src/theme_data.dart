@@ -111,6 +111,8 @@ class Adaptation<T> {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/switch/switch.4.dart}
   ///
   /// </callout-box>
@@ -133,6 +135,8 @@ class Adaptation<T> {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/theme/theme_extension.1.dart}
 ///
 /// </callout-box>
@@ -221,6 +225,8 @@ enum MaterialTapTargetSize {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/theme_data/theme_data.0.dart}
 ///
 /// </callout-box>
@@ -997,6 +1003,8 @@ class ThemeData with Diagnosticable {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/theme/theme_extension.1.dart}
   ///
   /// </callout-box>

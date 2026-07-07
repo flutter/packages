@@ -250,6 +250,8 @@ abstract interface class ChipAttributes {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/chip/chip_attributes.avatar_box_constraints.0.dart}
   ///
   /// </callout-box>
@@ -280,6 +282,8 @@ abstract interface class ChipAttributes {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/chip/chip_attributes.chip_animation_style.0.dart}
   ///
   /// </callout-box>
@@ -343,6 +347,8 @@ abstract interface class DeletableChipAttributes {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/chip/deletable_chip_attributes.on_deleted.0.dart}
   ///
   /// </callout-box>
@@ -386,6 +392,8 @@ abstract interface class DeletableChipAttributes {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/chip/deletable_chip_attributes.delete_icon_box_constraints.0.dart}
   ///
   /// </callout-box>

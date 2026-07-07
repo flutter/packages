@@ -168,6 +168,8 @@ typedef MaterialStateColor = WidgetStateColor;
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/material_state/material_state_mouse_cursor.0.dart}
 ///
 /// </callout-box>
@@ -207,6 +209,8 @@ typedef MaterialStateMouseCursor = WidgetStateMouseCursor;
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/material_state/material_state_border_side.0.dart}
 ///
 /// </callout-box>
@@ -240,6 +244,8 @@ typedef MaterialStateBorderSide = WidgetStateBorderSide;
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/material_state/material_state_outlined_border.0.dart}
 ///
 /// </callout-box>
@@ -479,6 +485,8 @@ class _MaterialStateUnderlineInputBorder extends MaterialStateUnderlineInputBord
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/widget_state_input_border/widget_state_input_border.0.dart}
 ///
 /// </callout-box>
@@ -550,6 +558,8 @@ class _WidgetInputBorderMapper extends WidgetStateMapper<InputBorder>
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/material_state/material_state_property.0.dart}
 ///
 /// </callout-box>

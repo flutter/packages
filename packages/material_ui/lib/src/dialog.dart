@@ -44,6 +44,8 @@ const EdgeInsets _defaultInsetPadding = EdgeInsets.symmetric(horizontal: 40.0, v
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/dialog/dialog.0.dart}
 ///
 /// </callout-box>
@@ -394,6 +396,8 @@ class Dialog extends StatelessWidget {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/dialog/alert_dialog.0.dart}
 ///
 /// </callout-box>
@@ -405,6 +409,8 @@ class Dialog extends StatelessWidget {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/dialog/alert_dialog.1.dart}
 ///
 /// </callout-box>
@@ -504,6 +510,8 @@ class AlertDialog extends StatelessWidget {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/dialog/adaptive_alert_dialog.0.dart}
   ///
   /// </callout-box>
@@ -1619,6 +1627,8 @@ class _DialogContentPage extends Page<void> {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/dialog/show_dialog.0.dart}
 ///
 /// </callout-box>
@@ -1630,6 +1640,8 @@ class _DialogContentPage extends Page<void> {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/dialog/show_dialog.1.dart}
 ///
 /// </callout-box>
@@ -1653,6 +1665,8 @@ class _DialogContentPage extends Page<void> {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/dialog/show_dialog.2.dart}
 ///
 /// </callout-box>

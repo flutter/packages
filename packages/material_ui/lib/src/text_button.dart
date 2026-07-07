@@ -63,6 +63,8 @@ import 'theme_data.dart';
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/text_button/text_button.0.dart}
 ///
 /// </callout-box>
@@ -74,6 +76,8 @@ import 'theme_data.dart';
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/text_button/text_button.1.dart}
 ///
 /// </callout-box>

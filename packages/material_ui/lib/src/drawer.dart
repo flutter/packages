@@ -106,6 +106,8 @@ const Duration _kBaseSettleDuration = Duration(milliseconds: 246);
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/drawer/drawer.0.dart}
 ///
 /// </callout-box>
@@ -116,6 +118,8 @@ const Duration _kBaseSettleDuration = Duration(milliseconds: 246);
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/navigation_drawer/navigation_drawer.0.dart}
 ///
 /// </callout-box>

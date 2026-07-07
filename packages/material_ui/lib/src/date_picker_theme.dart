@@ -251,6 +251,8 @@ class DatePickerThemeData with Diagnosticable {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/date_picker/date_picker_theme_day_shape.0.dart}
   ///
   /// </callout-box>
@@ -271,6 +273,8 @@ class DatePickerThemeData with Diagnosticable {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/date_picker/date_picker_theme_day_shape.0.dart}
   ///
   /// </callout-box>
@@ -297,6 +301,8 @@ class DatePickerThemeData with Diagnosticable {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/date_picker/date_picker_theme_day_shape.0.dart}
   ///
   /// </callout-box>

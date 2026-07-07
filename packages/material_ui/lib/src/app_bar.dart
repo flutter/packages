@@ -130,6 +130,8 @@ class _PreferredAppBarSize extends Size {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/app_bar/app_bar.0.dart}
 ///
 /// </callout-box>
@@ -144,6 +146,8 @@ class _PreferredAppBarSize extends Size {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/app_bar/app_bar.1.dart}
 ///
 /// </callout-box>
@@ -173,6 +177,8 @@ class _PreferredAppBarSize extends Size {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/app_bar/app_bar.2.dart}
 ///
 /// </callout-box>
@@ -185,6 +191,8 @@ class _PreferredAppBarSize extends Size {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/app_bar/app_bar.3.dart}
 ///
 /// </callout-box>
@@ -540,6 +548,8 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/app_bar/app_bar.4.dart}
   ///
   /// </callout-box>
@@ -1554,6 +1564,8 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/app_bar/sliver_app_bar.4.dart}
 ///
 /// </callout-box>
@@ -1565,6 +1577,8 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/app_bar/sliver_app_bar.1.dart}
 ///
 /// </callout-box>
@@ -1673,6 +1687,8 @@ class SliverAppBar extends StatefulWidget {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/app_bar/sliver_app_bar.2.dart}
   ///
   /// </callout-box>
@@ -1748,6 +1764,8 @@ class SliverAppBar extends StatefulWidget {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/app_bar/sliver_app_bar.3.dart}
   ///
   /// </callout-box>

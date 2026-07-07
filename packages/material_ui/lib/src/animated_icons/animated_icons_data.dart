@@ -21,6 +21,8 @@ part of material_animated_icons; // ignore: use_string_in_part_of_directives
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/animated_icon/animated_icons_data.0.dart}
 ///
 /// </callout-box>

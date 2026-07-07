@@ -241,6 +241,8 @@ class _SnackBarActionState extends State<SnackBarAction> {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/snack_bar/snack_bar.0.dart}
 ///
 /// </callout-box>
@@ -253,6 +255,8 @@ class _SnackBarActionState extends State<SnackBarAction> {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/snack_bar/snack_bar.1.dart}
 ///
 /// </callout-box>
@@ -264,6 +268,8 @@ class _SnackBarActionState extends State<SnackBarAction> {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/snack_bar/snack_bar.2.dart}
 ///
 /// </callout-box>

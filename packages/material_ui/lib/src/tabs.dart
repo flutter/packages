@@ -957,6 +957,8 @@ typedef TabValueChanged<T> = void Function(T value, int index);
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/tabs/tab_bar.0.dart}
 ///
 /// </callout-box>
@@ -969,6 +971,8 @@ typedef TabValueChanged<T> = void Function(T value, int index);
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/tabs/tab_bar.1.dart}
 ///
 /// </callout-box>
@@ -981,6 +985,8 @@ typedef TabValueChanged<T> = void Function(T value, int index);
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/tabs/tab_bar.2.dart}
 ///
 /// </callout-box>
@@ -995,6 +1001,8 @@ typedef TabValueChanged<T> = void Function(T value, int index);
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/tabs/tab_bar.3.dart}
 ///
 /// </callout-box>
@@ -1074,6 +1082,8 @@ class TabBar extends StatefulWidget implements PreferredSizeWidget {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/tabs/tab_bar.2.dart}
   ///
   /// </callout-box>
@@ -1404,6 +1414,8 @@ class TabBar extends StatefulWidget implements PreferredSizeWidget {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/tabs/tab_bar.onHover.dart}
   ///
   /// </callout-box>
@@ -1428,6 +1440,8 @@ class TabBar extends StatefulWidget implements PreferredSizeWidget {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/tabs/tab_bar.onFocusChange.dart}
   ///
   /// </callout-box>
@@ -1525,6 +1539,8 @@ class TabBar extends StatefulWidget implements PreferredSizeWidget {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/tabs/tab_bar.indicator_animation.0.dart}
   ///
   /// </callout-box>

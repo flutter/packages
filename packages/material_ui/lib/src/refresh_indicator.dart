@@ -93,6 +93,8 @@ enum _IndicatorType { material, adaptive, noSpinner }
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/refresh_indicator/refresh_indicator.0.dart}
 ///
 /// </callout-box>
@@ -104,6 +106,8 @@ enum _IndicatorType { material, adaptive, noSpinner }
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/refresh_indicator/refresh_indicator.1.dart}
 ///
 /// </callout-box>
@@ -114,6 +118,8 @@ enum _IndicatorType { material, adaptive, noSpinner }
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/refresh_indicator/refresh_indicator.2.dart}
 ///
 /// </callout-box>

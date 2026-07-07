@@ -49,6 +49,8 @@ const Duration _kExpand = Duration(milliseconds: 200);
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/expansion_tile/expansion_tile.1.dart}
 ///
 /// </callout-box>
@@ -97,6 +99,8 @@ typedef ExpansionTileController = ExpansibleController;
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/expansion_tile/expansion_tile.0.dart}
 ///
 /// </callout-box>
@@ -108,6 +112,8 @@ typedef ExpansionTileController = ExpansibleController;
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/expansion_tile/expansion_tile.1.dart}
 ///
 /// </callout-box>
@@ -489,6 +495,8 @@ class ExpansionTile extends StatefulWidget {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/expansion_tile/expansion_tile.2.dart}
   ///
   /// </callout-box>

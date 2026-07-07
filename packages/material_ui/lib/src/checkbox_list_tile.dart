@@ -103,6 +103,8 @@ enum _CheckboxType { material, adaptive }
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/checkbox_list_tile/checkbox_list_tile.0.dart}
 ///
 /// </callout-box>
@@ -114,6 +116,8 @@ enum _CheckboxType { material, adaptive }
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/checkbox_list_tile/checkbox_list_tile.1.dart}
 ///
 /// </callout-box>
@@ -145,6 +149,8 @@ enum _CheckboxType { material, adaptive }
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/checkbox_list_tile/custom_labeled_checkbox.0.dart}
 ///
 /// </callout-box>
@@ -165,6 +171,8 @@ enum _CheckboxType { material, adaptive }
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/checkbox_list_tile/custom_labeled_checkbox.1.dart}
 ///
 /// </callout-box>

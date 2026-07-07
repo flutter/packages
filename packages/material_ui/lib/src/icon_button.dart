@@ -70,6 +70,8 @@ enum _IconButtonVariant { standard, filled, filledTonal, outlined }
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/icon_button/icon_button.0.dart}
 ///
 /// </callout-box>
@@ -128,6 +130,8 @@ enum _IconButtonVariant { standard, filled, filledTonal, outlined }
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/icon_button/icon_button.1.dart}
 ///
 /// </callout-box>
@@ -163,6 +167,8 @@ enum _IconButtonVariant { standard, filled, filledTonal, outlined }
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/icon_button/icon_button.2.dart}
 ///
 /// </callout-box>
@@ -175,6 +181,8 @@ enum _IconButtonVariant { standard, filled, filledTonal, outlined }
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/icon_button/icon_button.3.dart}
 ///
 /// </callout-box>

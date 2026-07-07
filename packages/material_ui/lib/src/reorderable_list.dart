@@ -31,6 +31,8 @@ import 'theme.dart';
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/reorderable_list/reorderable_list_view.0.dart}
 ///
 /// </callout-box>
@@ -57,6 +59,8 @@ import 'theme.dart';
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/reorderable_list/reorderable_list_view.1.dart}
 ///
 /// </callout-box>
@@ -72,6 +76,8 @@ import 'theme.dart';
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/reorderable_list/reorderable_list_view.2.dart}
 ///
 /// </callout-box>
@@ -171,6 +177,8 @@ class ReorderableListView extends StatefulWidget {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/reorderable_list/reorderable_list_view.reorderable_list_view_builder.0.dart}
   ///
   /// </callout-box>
@@ -284,6 +292,8 @@ class ReorderableListView extends StatefulWidget {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/reorderable_list/reorderable_list_view.build_default_drag_handles.0.dart}
   ///
   /// </callout-box>

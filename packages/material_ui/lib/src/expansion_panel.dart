@@ -177,6 +177,8 @@ class ExpansionPanelRadio extends ExpansionPanel {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/expansion_panel/expansion_panel_list.0.dart}
 ///
 /// </callout-box>
@@ -215,6 +217,8 @@ class ExpansionPanelList extends StatefulWidget {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/expansion_panel/expansion_panel_list.expansion_panel_list_radio.0.dart}
   ///
   /// </callout-box>

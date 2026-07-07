@@ -128,6 +128,8 @@ import 'material.dart';
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/ink/ink.image_clip.0.dart}
 ///
 /// </callout-box>
@@ -140,6 +142,8 @@ import 'material.dart';
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/ink/ink.image_clip.1.dart}
 ///
 /// </callout-box>

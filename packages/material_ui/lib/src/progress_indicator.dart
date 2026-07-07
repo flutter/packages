@@ -392,6 +392,8 @@ class _LinearProgressIndicatorPainter extends CustomPainter {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/progress_indicator/linear_progress_indicator.0.dart}
 ///
 /// </callout-box>
@@ -404,6 +406,8 @@ class _LinearProgressIndicatorPainter extends CustomPainter {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/progress_indicator/linear_progress_indicator.1.dart}
 ///
 /// </callout-box>
@@ -819,6 +823,8 @@ class _CircularProgressIndicatorPainter extends CustomPainter {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/progress_indicator/circular_progress_indicator.0.dart}
 ///
 /// </callout-box>
@@ -831,6 +837,8 @@ class _CircularProgressIndicatorPainter extends CustomPainter {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/progress_indicator/circular_progress_indicator.1.dart}
 ///
 /// </callout-box>
@@ -870,6 +878,8 @@ class _CircularProgressIndicatorPainter extends CustomPainter {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/progress_indicator/circular_progress_indicator.2.dart}
 ///
 /// </callout-box>

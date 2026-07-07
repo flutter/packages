@@ -40,6 +40,8 @@ import 'theme.dart';
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/divider/divider.0.dart}
 ///
 /// </callout-box>
@@ -51,6 +53,8 @@ import 'theme.dart';
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/divider/divider.1.dart}
 ///
 /// </callout-box>
@@ -245,6 +249,8 @@ class Divider extends StatelessWidget {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/divider/vertical_divider.0.dart}
 ///
 /// </callout-box>
@@ -256,6 +262,8 @@ class Divider extends StatelessWidget {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/divider/vertical_divider.1.dart}
 ///
 /// </callout-box>

@@ -100,6 +100,8 @@ enum _ScaffoldSlot {
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/scaffold/scaffold_messenger.0.dart}
 ///
 /// </callout-box>
@@ -132,6 +134,8 @@ class ScaffoldMessenger extends StatefulWidget {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/scaffold/scaffold_messenger.of.0.dart}
   ///
   /// </callout-box>
@@ -153,6 +157,8 @@ class ScaffoldMessenger extends StatefulWidget {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/scaffold/scaffold_messenger.of.1.dart}
   ///
   /// </callout-box>
@@ -284,6 +290,8 @@ class ScaffoldMessengerState extends State<ScaffoldMessenger> with TickerProvide
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/scaffold/scaffold_messenger_state.show_snack_bar.0.dart}
   ///
   /// </callout-box>
@@ -304,6 +312,8 @@ class ScaffoldMessengerState extends State<ScaffoldMessenger> with TickerProvide
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/scaffold/scaffold_messenger_state.show_snack_bar.0.dart}
   ///
   /// </callout-box>
@@ -314,6 +324,8 @@ class ScaffoldMessengerState extends State<ScaffoldMessenger> with TickerProvide
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/scaffold/scaffold_messenger_state.show_snack_bar.1.dart}
   ///
   /// </callout-box>
@@ -335,6 +347,8 @@ class ScaffoldMessengerState extends State<ScaffoldMessenger> with TickerProvide
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/scaffold/scaffold_messenger_state.show_snack_bar.2.dart}
   ///
   /// </callout-box>
@@ -525,6 +539,8 @@ class ScaffoldMessengerState extends State<ScaffoldMessenger> with TickerProvide
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/scaffold/scaffold_messenger_state.show_material_banner.0.dart}
   ///
   /// </callout-box>
@@ -1592,6 +1608,8 @@ class _FloatingActionButtonTransitionState extends State<_FloatingActionButtonTr
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/scaffold/scaffold.0.dart}
 ///
 /// </callout-box>
@@ -1607,6 +1625,8 @@ class _FloatingActionButtonTransitionState extends State<_FloatingActionButtonTr
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/scaffold/scaffold.1.dart}
 ///
 /// </callout-box>
@@ -1624,6 +1644,8 @@ class _FloatingActionButtonTransitionState extends State<_FloatingActionButtonTr
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/scaffold/scaffold.2.dart}
 ///
 /// </callout-box>
@@ -1890,6 +1912,8 @@ class Scaffold extends StatefulWidget {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/scaffold/scaffold.drawer.0.dart}
   ///
   /// </callout-box>
@@ -1918,6 +1942,8 @@ class Scaffold extends StatefulWidget {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/scaffold/scaffold.end_drawer.0.dart}
   ///
   /// </callout-box>
@@ -2074,6 +2100,8 @@ class Scaffold extends StatefulWidget {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/scaffold/scaffold.of.0.dart}
   ///
   /// </callout-box>
@@ -2089,6 +2117,8 @@ class Scaffold extends StatefulWidget {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/scaffold/scaffold.of.1.dart}
   ///
   /// </callout-box>
@@ -2685,6 +2715,8 @@ class ScaffoldState extends State<Scaffold>
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/scaffold/scaffold_state.show_bottom_sheet.0.dart}
   ///
   /// </callout-box>
@@ -2709,6 +2741,8 @@ class ScaffoldState extends State<Scaffold>
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/scaffold/scaffold_state.show_bottom_sheet.1.dart}
   ///
   /// </callout-box>

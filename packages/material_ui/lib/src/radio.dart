@@ -63,6 +63,8 @@ const double _kInnerRadius = 4.5;
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/radio/radio.0.dart}
 ///
 /// </callout-box>
@@ -81,6 +83,8 @@ const double _kInnerRadius = 4.5;
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/radio/radio.1.dart}
 ///
 /// </callout-box>
@@ -257,6 +261,8 @@ class Radio<T> extends StatefulWidget {
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/radio/radio.toggleable.0.dart}
   ///
   /// </callout-box>
