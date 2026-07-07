@@ -128,16 +128,7 @@ enum ThemeMode {
 ///
 /// ![The MaterialApp displays a Scaffold ](https://flutter.github.io/assets-for-api-docs/assets/material/basic_material_app.png)
 ///
-/// ```dart
-/// MaterialApp(
-///   home: Scaffold(
-///     appBar: AppBar(
-///       title: const Text('Home'),
-///     ),
-///   ),
-///   debugShowCheckedModeBanner: false,
-/// )
-/// ```
+/// {@example /example/lib/app/app.snippet.0.dart#content indent=strip}
 ///
 // TODO(framework): End of the blue example container.
 ///
