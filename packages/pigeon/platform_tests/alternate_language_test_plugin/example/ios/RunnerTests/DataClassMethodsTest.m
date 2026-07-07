@@ -83,9 +83,9 @@
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   [api echoAllNullableTypes:everything
                  completion:^(FLTAllNullableTypes *_Nonnull result, FlutterError *_Nullable error) {
-                   XCTAssertEqual(result.aNullableBool, everything.aNullableBool);
-                   XCTAssertEqual(result.aNullableInt, everything.aNullableInt);
-                   XCTAssertEqual(result.aNullableDouble, everything.aNullableDouble);
+                   XCTAssertEqualObjects(result.aNullableBool, everything.aNullableBool);
+                   XCTAssertEqualObjects(result.aNullableInt, everything.aNullableInt);
+                   XCTAssertEqualObjects(result.aNullableDouble, everything.aNullableDouble);
                    XCTAssertEqualObjects(result.aNullableString, everything.aNullableString);
                    XCTAssertEqualObjects(result.aNullableByteArray.data,
                                          everything.aNullableByteArray.data);
