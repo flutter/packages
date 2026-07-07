@@ -1,3 +1,23 @@
+## 7.2.14
+
+* Uses Google Identity APIs to extract the user ID from the ID token.
+
+## 7.2.13
+
+* Bumps com.google.android.gms:play-services-auth from 21.5.1 to 21.6.0.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
+## 7.2.12
+
+* Migrates to Built-in Kotlin to support AGP 9.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
+## 7.2.11
+
+* Bumps AndroidX Credentials to v1.6.0
+* Bumps Play Services Auth to v21.5.1
+* Bumps Android Identity GoogleID to v1.2.0
+
 ## 7.2.10
 
 * Updates build files from Groovy to Kotlin.

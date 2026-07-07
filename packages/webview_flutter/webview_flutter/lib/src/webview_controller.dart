@@ -56,12 +56,11 @@ class WebViewController {
   ///
   /// See [WebViewController.fromPlatformCreationParams] for setting parameters
   /// for a specific platform.
-  WebViewController({
-    void Function(WebViewPermissionRequest request)? onPermissionRequest,
-  }) : this.fromPlatformCreationParams(
-         const PlatformWebViewControllerCreationParams(),
-         onPermissionRequest: onPermissionRequest,
-       );
+  WebViewController({void Function(WebViewPermissionRequest request)? onPermissionRequest})
+    : this.fromPlatformCreationParams(
+        const PlatformWebViewControllerCreationParams(),
+        onPermissionRequest: onPermissionRequest,
+      );
 
   /// Constructs a [WebViewController] from creation params for a specific
   /// platform.
@@ -110,12 +109,8 @@ class WebViewController {
     void Function(WebViewPermissionRequest request)? onPermissionRequest,
   }) {
     if (onPermissionRequest != null) {
-      platform.setOnPlatformPermissionRequest((
-        PlatformWebViewPermissionRequest request,
-      ) {
-        onPermissionRequest(
-          WebViewPermissionRequest._(request, types: request.types),
-        );
+      platform.setOnPlatformPermissionRequest((PlatformWebViewPermissionRequest request) {
+        onPermissionRequest(WebViewPermissionRequest._(request, types: request.types));
       });
     }
   }
@@ -369,8 +364,7 @@ class WebViewController {
   /// Sets a callback that notifies the host application that the web page
   /// wants to display a JavaScript alert() dialog.
   Future<void> setOnJavaScriptAlertDialog(
-    Future<void> Function(JavaScriptAlertDialogRequest request)
-    onJavaScriptAlertDialog,
+    Future<void> Function(JavaScriptAlertDialogRequest request) onJavaScriptAlertDialog,
   ) async {
     return platform.setOnJavaScriptAlertDialog(onJavaScriptAlertDialog);
   }
@@ -378,8 +372,7 @@ class WebViewController {
   /// Sets a callback that notifies the host application that the web page
   /// wants to display a JavaScript confirm() dialog.
   Future<void> setOnJavaScriptConfirmDialog(
-    Future<bool> Function(JavaScriptConfirmDialogRequest request)
-    onJavaScriptConfirmDialog,
+    Future<bool> Function(JavaScriptConfirmDialogRequest request) onJavaScriptConfirmDialog,
   ) async {
     return platform.setOnJavaScriptConfirmDialog(onJavaScriptConfirmDialog);
   }
@@ -387,8 +380,7 @@ class WebViewController {
   /// Sets a callback that notifies the host application that the web page
   /// wants to display a JavaScript prompt() dialog.
   Future<void> setOnJavaScriptTextInputDialog(
-    Future<String> Function(JavaScriptTextInputDialogRequest request)
-    onJavaScriptTextInputDialog,
+    Future<String> Function(JavaScriptTextInputDialogRequest request) onJavaScriptTextInputDialog,
   ) async {
     return platform.setOnJavaScriptTextInputDialog(onJavaScriptTextInputDialog);
   }

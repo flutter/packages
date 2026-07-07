@@ -22,8 +22,9 @@ void main() {
     setUp(() {
       mockPlatform = MockPlatform();
       final GitDir gitDir;
-      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
-          configureBaseCommandMocks(platform: mockPlatform);
+      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) = configureBaseCommandMocks(
+        platform: mockPlatform,
+      );
       final analyzeCommand = CustomTestCommand(
         packagesDir,
         processRunner: processRunner,
@@ -31,10 +32,7 @@ void main() {
         gitDir: gitDir,
       );
 
-      runner = CommandRunner<void>(
-        'custom_test_command',
-        'Test for custom_test_command',
-      );
+      runner = CommandRunner<void>('custom_test_command', 'Test for custom_test_command');
       runner.addCommand(analyzeCommand);
     });
 
@@ -45,9 +43,7 @@ void main() {
         extraFiles: <String>['tool/run_tests.dart', 'run_tests.sh'],
       );
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'custom-test',
-      ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['custom-test']);
 
       expect(
         processRunner.recordedCalls,
@@ -57,17 +53,11 @@ void main() {
             const <String>[],
             package.path,
           ),
-          ProcessCall('dart', const <String>[
-            'run',
-            'tool/run_tests.dart',
-          ], package.path),
+          ProcessCall('dart', const <String>['run', 'tool/run_tests.dart'], package.path),
         ]),
       );
 
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[contains('Ran for 1 package(s)')]),
-      );
+      expect(output, containsAllInOrder(<Matcher>[contains('Ran for 1 package(s)')]));
     });
 
     test('runs when only new is present', () async {
@@ -77,24 +67,16 @@ void main() {
         extraFiles: <String>['tool/run_tests.dart'],
       );
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'custom-test',
-      ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['custom-test']);
 
       expect(
         processRunner.recordedCalls,
         containsAll(<ProcessCall>[
-          ProcessCall('dart', const <String>[
-            'run',
-            'tool/run_tests.dart',
-          ], package.path),
+          ProcessCall('dart', const <String>['run', 'tool/run_tests.dart'], package.path),
         ]),
       );
 
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[contains('Ran for 1 package(s)')]),
-      );
+      expect(output, containsAllInOrder(<Matcher>[contains('Ran for 1 package(s)')]));
     });
 
     test('runs pub get before running Dart test script', () async {
@@ -110,10 +92,7 @@ void main() {
         processRunner.recordedCalls,
         containsAll(<ProcessCall>[
           ProcessCall('dart', const <String>['pub', 'get'], package.path),
-          ProcessCall('dart', const <String>[
-            'run',
-            'tool/run_tests.dart',
-          ], package.path),
+          ProcessCall('dart', const <String>['run', 'tool/run_tests.dart'], package.path),
         ]),
       );
     });
@@ -125,9 +104,7 @@ void main() {
         extraFiles: <String>['run_tests.sh'],
       );
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'custom-test',
-      ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['custom-test']);
 
       expect(
         processRunner.recordedCalls,
@@ -140,25 +117,17 @@ void main() {
         ]),
       );
 
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[contains('Ran for 1 package(s)')]),
-      );
+      expect(output, containsAllInOrder(<Matcher>[contains('Ran for 1 package(s)')]));
     });
 
     test('skips when neither is present', () async {
       createFakePackage('a_package', packagesDir);
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'custom-test',
-      ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['custom-test']);
 
       expect(processRunner.recordedCalls, isEmpty);
 
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[contains('Skipped 1 package(s)')]),
-      );
+      expect(output, containsAllInOrder(<Matcher>[contains('Skipped 1 package(s)')]));
     });
 
     test('fails if new fails', () async {
@@ -232,11 +201,8 @@ void main() {
         extraFiles: <String>['tool/run_tests.dart', 'run_tests.sh'],
       );
 
-      processRunner.mockProcessesForExecutable[package.directory
-          .childFile('run_tests.sh')
-          .path] = <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(exitCode: 1)),
-      ];
+      processRunner.mockProcessesForExecutable[package.directory.childFile('run_tests.sh').path] =
+          <FakeProcessInfo>[FakeProcessInfo(MockProcess(exitCode: 1))];
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
@@ -262,8 +228,9 @@ void main() {
     setUp(() {
       mockPlatform = MockPlatform(isWindows: true);
       final GitDir gitDir;
-      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
-          configureBaseCommandMocks(platform: mockPlatform);
+      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) = configureBaseCommandMocks(
+        platform: mockPlatform,
+      );
       final analyzeCommand = CustomTestCommand(
         packagesDir,
         processRunner: processRunner,
@@ -271,10 +238,7 @@ void main() {
         gitDir: gitDir,
       );
 
-      runner = CommandRunner<void>(
-        'custom_test_command',
-        'Test for custom_test_command',
-      );
+      runner = CommandRunner<void>('custom_test_command', 'Test for custom_test_command');
       runner.addCommand(analyzeCommand);
     });
 
@@ -285,24 +249,16 @@ void main() {
         extraFiles: <String>['tool/run_tests.dart', 'run_tests.sh'],
       );
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'custom-test',
-      ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['custom-test']);
 
       expect(
         processRunner.recordedCalls,
         containsAll(<ProcessCall>[
-          ProcessCall('dart', const <String>[
-            'run',
-            'tool/run_tests.dart',
-          ], package.path),
+          ProcessCall('dart', const <String>['run', 'tool/run_tests.dart'], package.path),
         ]),
       );
 
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[contains('Ran for 1 package(s)')]),
-      );
+      expect(output, containsAllInOrder(<Matcher>[contains('Ran for 1 package(s)')]));
     });
 
     test('runs when only new is present', () async {
@@ -312,36 +268,22 @@ void main() {
         extraFiles: <String>['tool/run_tests.dart'],
       );
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'custom-test',
-      ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['custom-test']);
 
       expect(
         processRunner.recordedCalls,
         containsAll(<ProcessCall>[
-          ProcessCall('dart', const <String>[
-            'run',
-            'tool/run_tests.dart',
-          ], package.path),
+          ProcessCall('dart', const <String>['run', 'tool/run_tests.dart'], package.path),
         ]),
       );
 
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[contains('Ran for 1 package(s)')]),
-      );
+      expect(output, containsAllInOrder(<Matcher>[contains('Ran for 1 package(s)')]));
     });
 
     test('skips package when only legacy is present', () async {
-      createFakePackage(
-        'a_package',
-        packagesDir,
-        extraFiles: <String>['run_tests.sh'],
-      );
+      createFakePackage('a_package', packagesDir, extraFiles: <String>['run_tests.sh']);
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'custom-test',
-      ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['custom-test']);
 
       expect(processRunner.recordedCalls, isEmpty);
 

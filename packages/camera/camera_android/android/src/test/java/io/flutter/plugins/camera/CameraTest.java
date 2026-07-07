@@ -978,6 +978,66 @@ public class CameraTest {
   }
 
   @Test
+  public void createTriggerResetCallback_shouldResetTriggerOnCaptureCompleted() {
+    CaptureRequest.Key<Integer> triggerKey = CaptureRequest.CONTROL_AF_TRIGGER;
+    int idleValue = CameraMetadata.CONTROL_AF_TRIGGER_IDLE;
+
+    CameraCaptureSession.CaptureCallback callback =
+        camera.createTriggerResetCallback(triggerKey, idleValue);
+
+    callback.onCaptureCompleted(
+        mock(CameraCaptureSession.class),
+        mock(CaptureRequest.class),
+        mock(TotalCaptureResult.class));
+
+    verify(mockPreviewRequestBuilder, times(1)).set(triggerKey, idleValue);
+  }
+
+  @Test
+  public void createTriggerResetCallback_shouldResetTriggerOnCaptureFailed() {
+    CaptureRequest.Key<Integer> triggerKey = CaptureRequest.CONTROL_AF_TRIGGER;
+    int idleValue = CameraMetadata.CONTROL_AF_TRIGGER_IDLE;
+
+    CameraCaptureSession.CaptureCallback callback =
+        camera.createTriggerResetCallback(triggerKey, idleValue);
+
+    callback.onCaptureFailed(
+        mock(CameraCaptureSession.class), mock(CaptureRequest.class), mock(CaptureFailure.class));
+
+    verify(mockPreviewRequestBuilder, times(1)).set(triggerKey, idleValue);
+  }
+
+  @Test
+  public void createTriggerResetCallback_shouldResetAEPrecaptureTriggerOnCaptureCompleted() {
+    CaptureRequest.Key<Integer> triggerKey = CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER;
+    int idleValue = CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE;
+
+    CameraCaptureSession.CaptureCallback callback =
+        camera.createTriggerResetCallback(triggerKey, idleValue);
+
+    callback.onCaptureCompleted(
+        mock(CameraCaptureSession.class),
+        mock(CaptureRequest.class),
+        mock(TotalCaptureResult.class));
+
+    verify(mockPreviewRequestBuilder, times(1)).set(triggerKey, idleValue);
+  }
+
+  @Test
+  public void createTriggerResetCallback_shouldResetAEPrecaptureTriggerOnCaptureFailed() {
+    CaptureRequest.Key<Integer> triggerKey = CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER;
+    int idleValue = CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE;
+
+    CameraCaptureSession.CaptureCallback callback =
+        camera.createTriggerResetCallback(triggerKey, idleValue);
+
+    callback.onCaptureFailed(
+        mock(CameraCaptureSession.class), mock(CaptureRequest.class), mock(CaptureFailure.class));
+
+    verify(mockPreviewRequestBuilder, times(1)).set(triggerKey, idleValue);
+  }
+
+  @Test
   public void setFocusMode_shouldCallErrorOnResultOnCameraAccessException()
       throws CameraAccessException {
     when(mockCaptureSession.setRepeatingRequest(any(), any(), any()))
@@ -1326,6 +1386,14 @@ public class CameraTest {
   }
 
   @Test
+  public void setJpegImageQuality_shouldSetJpegQualityOnCaptureRequestBuilder() {
+    camera.setJpegImageQuality(75L);
+    camera.updateBuilderSettings(mockPreviewRequestBuilder);
+
+    verify(mockPreviewRequestBuilder, times(1)).set(CaptureRequest.JPEG_QUALITY, (byte) 75);
+  }
+
+  @Test
   public void pausePreview_doesNotCallStopRepeatingWhenCameraClosed() throws CameraAccessException {
     ArrayList<CaptureRequest.Builder> mockRequestBuilders = new ArrayList<>();
     mockRequestBuilders.add(mock(CaptureRequest.Builder.class));
@@ -1472,7 +1540,7 @@ public class CameraTest {
 
     @Override
     public JpegQualityFeature createJpegQualityFeature(@NonNull CameraProperties cameraProperties) {
-      return mock(JpegQualityFeature.class);
+      return new JpegQualityFeature(cameraProperties);
     }
   }
 }

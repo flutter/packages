@@ -8,9 +8,7 @@ import 'package:go_router_examples/state_restoration/shell_route_state_restorati
 
 void main() {
   testWidgets('ShellRoute navigation location and route state '
-      'is restored when restorationIds are provided', (
-    WidgetTester tester,
-  ) async {
+      'is restored when restorationIds are provided', (WidgetTester tester) async {
     const homeTitle = 'Home';
     const welcomeTitle = 'Welcome';
     const setupTitle = 'Setup';

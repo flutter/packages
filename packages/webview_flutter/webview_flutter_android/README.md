@@ -59,8 +59,9 @@ checking `AndroidWebViewController.isWebViewFeatureSupported`.
 
 <?code-excerpt "example/lib/readme_excerpts.dart (payment_request_example)"?>
 ```dart
-final bool paymentRequestEnabled = await androidController
-    .isWebViewFeatureSupported(WebViewFeatureType.paymentRequest);
+final bool paymentRequestEnabled = await androidController.isWebViewFeatureSupported(
+  WebViewFeatureType.paymentRequest,
+);
 
 if (paymentRequestEnabled) {
   await androidController.setPaymentRequestEnabled(true);

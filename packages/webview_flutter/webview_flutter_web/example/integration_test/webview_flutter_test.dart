@@ -16,9 +16,7 @@ Future<void> main() async {
   const fakeUrl = 'about:blank';
 
   testWidgets('loadRequest', (WidgetTester tester) async {
-    final controller = WebWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
+    final controller = WebWebViewController(const PlatformWebViewControllerCreationParams());
     await controller.loadRequest(LoadRequestParams(uri: Uri.parse(fakeUrl)));
 
     await tester.pumpWidget(wrappedWebView(controller));
@@ -29,19 +27,14 @@ Future<void> main() async {
     await tester.pump(const Duration(seconds: 1));
 
     // Assert an iFrame has been rendered to the DOM with the correct src attribute.
-    final element =
-        web.document.querySelector('iframe') as web.HTMLIFrameElement?;
+    final element = web.document.querySelector('iframe') as web.HTMLIFrameElement?;
     expect(element, isNotNull);
     expect(element!.src, fakeUrl);
   });
 
   testWidgets('loadHtmlString', (WidgetTester tester) async {
-    final controller = WebWebViewController(
-      const PlatformWebViewControllerCreationParams(),
-    );
-    await controller.loadHtmlString(
-      'data:text/html;charset=utf-8,${Uri.encodeFull('test html')}',
-    );
+    final controller = WebWebViewController(const PlatformWebViewControllerCreationParams());
+    await controller.loadHtmlString('data:text/html;charset=utf-8,${Uri.encodeFull('test html')}');
 
     await tester.pumpWidget(wrappedWebView(controller));
     // Pump 2 frames so the framework injects the platform view into the DOM.
@@ -51,12 +44,8 @@ Future<void> main() async {
     await tester.pump(const Duration(seconds: 1));
 
     // Assert an iFrame has been rendered to the DOM with the correct src attribute.
-    final element =
-        web.document.querySelector('iframe') as web.HTMLIFrameElement?;
+    final element = web.document.querySelector('iframe') as web.HTMLIFrameElement?;
     expect(element, isNotNull);
-    expect(
-      element!.src,
-      'data:text/html;charset=utf-8,data:text/html;charset=utf-8,test%2520html',
-    );
+    expect(element!.src, 'data:text/html;charset=utf-8,data:text/html;charset=utf-8,test%2520html');
   });
 }

@@ -38,11 +38,7 @@ Object? _extractReplyValueOrThrow(
   return replyList.firstOrNull;
 }
 
-List<Object?> wrapResponse({
-  Object? result,
-  PlatformException? error,
-  bool empty = false,
-}) {
+List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
   }
@@ -64,9 +60,7 @@ bool _deepEquals(Object? a, Object? b) {
   }
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed.every(
-          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
-        );
+        a.indexed.every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
     if (a.length != b.length) {
@@ -152,6 +146,11 @@ class UnusedClass {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'UnusedClass(aField: $aField)';
+  }
 }
 
 /// A class containing all supported types.
@@ -309,10 +308,8 @@ class AllTypes {
       intMap: (result[23]! as Map<Object?, Object?>).cast<int, int>(),
       enumMap: (result[24]! as Map<Object?, Object?>).cast<AnEnum, AnEnum>(),
       objectMap: (result[25]! as Map<Object?, Object?>).cast<Object, Object>(),
-      listMap: (result[26]! as Map<Object?, Object?>)
-          .cast<int, List<Object?>>(),
-      mapMap: (result[27]! as Map<Object?, Object?>)
-          .cast<int, Map<Object?, Object?>>(),
+      listMap: (result[26]! as Map<Object?, Object?>).cast<int, List<Object?>>(),
+      mapMap: (result[27]! as Map<Object?, Object?>).cast<int, Map<Object?, Object?>>(),
     );
   }
 
@@ -358,6 +355,11 @@ class AllTypes {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'AllTypes(aBool: $aBool, anInt: $anInt, anInt64: $anInt64, aDouble: $aDouble, aByteArray: $aByteArray, a4ByteArray: $a4ByteArray, a8ByteArray: $a8ByteArray, aFloatArray: $aFloatArray, anEnum: $anEnum, anotherEnum: $anotherEnum, aString: $aString, anObject: $anObject, list: $list, stringList: $stringList, intList: $intList, doubleList: $doubleList, boolList: $boolList, enumList: $enumList, objectList: $objectList, listList: $listList, mapList: $mapList, map: $map, stringMap: $stringMap, intMap: $intMap, enumMap: $enumMap, objectMap: $objectMap, listMap: $listMap, mapMap: $mapMap)';
+  }
 }
 
 /// A class containing all supported nullable types.
@@ -523,20 +525,15 @@ class AllNullableTypes {
       objectList: result[19] as List<Object?>?,
       listList: (result[20] as List<Object?>?)?.cast<List<Object?>?>(),
       mapList: (result[21] as List<Object?>?)?.cast<Map<Object?, Object?>?>(),
-      recursiveClassList: (result[22] as List<Object?>?)
-          ?.cast<AllNullableTypes?>(),
+      recursiveClassList: (result[22] as List<Object?>?)?.cast<AllNullableTypes?>(),
       map: result[23] as Map<Object?, Object?>?,
-      stringMap: (result[24] as Map<Object?, Object?>?)
-          ?.cast<String?, String?>(),
+      stringMap: (result[24] as Map<Object?, Object?>?)?.cast<String?, String?>(),
       intMap: (result[25] as Map<Object?, Object?>?)?.cast<int?, int?>(),
       enumMap: (result[26] as Map<Object?, Object?>?)?.cast<AnEnum?, AnEnum?>(),
       objectMap: result[27] as Map<Object?, Object?>?,
-      listMap: (result[28] as Map<Object?, Object?>?)
-          ?.cast<int?, List<Object?>?>(),
-      mapMap: (result[29] as Map<Object?, Object?>?)
-          ?.cast<int?, Map<Object?, Object?>?>(),
-      recursiveClassMap: (result[30] as Map<Object?, Object?>?)
-          ?.cast<int?, AllNullableTypes?>(),
+      listMap: (result[28] as Map<Object?, Object?>?)?.cast<int?, List<Object?>?>(),
+      mapMap: (result[29] as Map<Object?, Object?>?)?.cast<int?, Map<Object?, Object?>?>(),
+      recursiveClassMap: (result[30] as Map<Object?, Object?>?)?.cast<int?, AllNullableTypes?>(),
     );
   }
 
@@ -585,6 +582,11 @@ class AllNullableTypes {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'AllNullableTypes(aNullableBool: $aNullableBool, aNullableInt: $aNullableInt, aNullableInt64: $aNullableInt64, aNullableDouble: $aNullableDouble, aNullableByteArray: $aNullableByteArray, aNullable4ByteArray: $aNullable4ByteArray, aNullable8ByteArray: $aNullable8ByteArray, aNullableFloatArray: $aNullableFloatArray, aNullableEnum: $aNullableEnum, anotherNullableEnum: $anotherNullableEnum, aNullableString: $aNullableString, aNullableObject: $aNullableObject, allNullableTypes: $allNullableTypes, list: $list, stringList: $stringList, intList: $intList, doubleList: $doubleList, boolList: $boolList, enumList: $enumList, objectList: $objectList, listList: $listList, mapList: $mapList, recursiveClassList: $recursiveClassList, map: $map, stringMap: $stringMap, intMap: $intMap, enumMap: $enumMap, objectMap: $objectMap, listMap: $listMap, mapMap: $mapMap, recursiveClassMap: $recursiveClassMap)';
+  }
 }
 
 /// The primary purpose for this class is to ensure coverage of Swift structs
@@ -740,23 +742,19 @@ class AllNullableTypesWithoutRecursion {
       listList: (result[19] as List<Object?>?)?.cast<List<Object?>?>(),
       mapList: (result[20] as List<Object?>?)?.cast<Map<Object?, Object?>?>(),
       map: result[21] as Map<Object?, Object?>?,
-      stringMap: (result[22] as Map<Object?, Object?>?)
-          ?.cast<String?, String?>(),
+      stringMap: (result[22] as Map<Object?, Object?>?)?.cast<String?, String?>(),
       intMap: (result[23] as Map<Object?, Object?>?)?.cast<int?, int?>(),
       enumMap: (result[24] as Map<Object?, Object?>?)?.cast<AnEnum?, AnEnum?>(),
       objectMap: result[25] as Map<Object?, Object?>?,
-      listMap: (result[26] as Map<Object?, Object?>?)
-          ?.cast<int?, List<Object?>?>(),
-      mapMap: (result[27] as Map<Object?, Object?>?)
-          ?.cast<int?, Map<Object?, Object?>?>(),
+      listMap: (result[26] as Map<Object?, Object?>?)?.cast<int?, List<Object?>?>(),
+      mapMap: (result[27] as Map<Object?, Object?>?)?.cast<int?, Map<Object?, Object?>?>(),
     );
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! AllNullableTypesWithoutRecursion ||
-        other.runtimeType != runtimeType) {
+    if (other is! AllNullableTypesWithoutRecursion || other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -795,6 +793,11 @@ class AllNullableTypesWithoutRecursion {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'AllNullableTypesWithoutRecursion(aNullableBool: $aNullableBool, aNullableInt: $aNullableInt, aNullableInt64: $aNullableInt64, aNullableDouble: $aNullableDouble, aNullableByteArray: $aNullableByteArray, aNullable4ByteArray: $aNullable4ByteArray, aNullable8ByteArray: $aNullable8ByteArray, aNullableFloatArray: $aNullableFloatArray, aNullableEnum: $aNullableEnum, anotherNullableEnum: $anotherNullableEnum, aNullableString: $aNullableString, aNullableObject: $aNullableObject, list: $list, stringList: $stringList, intList: $intList, doubleList: $doubleList, boolList: $boolList, enumList: $enumList, objectList: $objectList, listList: $listList, mapList: $mapList, map: $map, stringMap: $stringMap, intMap: $intMap, enumMap: $enumMap, objectMap: $objectMap, listMap: $listMap, mapMap: $mapMap)';
+  }
 }
 
 /// A class for testing nested class handling.
@@ -847,12 +850,10 @@ class AllClassesWrapper {
     result as List<Object?>;
     return AllClassesWrapper(
       allNullableTypes: result[0]! as AllNullableTypes,
-      allNullableTypesWithoutRecursion:
-          result[1] as AllNullableTypesWithoutRecursion?,
+      allNullableTypesWithoutRecursion: result[1] as AllNullableTypesWithoutRecursion?,
       allTypes: result[2] as AllTypes?,
       classList: (result[3]! as List<Object?>).cast<AllTypes?>(),
-      nullableClassList: (result[4] as List<Object?>?)
-          ?.cast<AllNullableTypesWithoutRecursion?>(),
+      nullableClassList: (result[4] as List<Object?>?)?.cast<AllNullableTypesWithoutRecursion?>(),
       classMap: (result[5]! as Map<Object?, Object?>).cast<int?, AllTypes?>(),
       nullableClassMap: (result[6] as Map<Object?, Object?>?)
           ?.cast<int?, AllNullableTypesWithoutRecursion?>(),
@@ -869,10 +870,7 @@ class AllClassesWrapper {
       return true;
     }
     return _deepEquals(allNullableTypes, other.allNullableTypes) &&
-        _deepEquals(
-          allNullableTypesWithoutRecursion,
-          other.allNullableTypesWithoutRecursion,
-        ) &&
+        _deepEquals(allNullableTypesWithoutRecursion, other.allNullableTypesWithoutRecursion) &&
         _deepEquals(allTypes, other.allTypes) &&
         _deepEquals(classList, other.classList) &&
         _deepEquals(nullableClassList, other.nullableClassList) &&
@@ -883,6 +881,11 @@ class AllClassesWrapper {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'AllClassesWrapper(allNullableTypes: $allNullableTypes, allNullableTypesWithoutRecursion: $allNullableTypesWithoutRecursion, allTypes: $allTypes, classList: $classList, nullableClassList: $nullableClassList, classMap: $classMap, nullableClassMap: $nullableClassMap)';
+  }
 }
 
 /// A data class containing a List, used in unit tests.
@@ -919,6 +922,11 @@ class TestMessage {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'TestMessage(testList: $testList)';
+  }
 }
 
 class _PigeonCodec extends StandardMessageCodec {
@@ -987,16 +995,14 @@ class _PigeonCodec extends StandardMessageCodec {
 /// The core interface that each host language plugin must implement in
 /// platform_test integration tests.
 class HostIntegrationCoreApi {
-  /// Constructor for [HostIntegrationCoreApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
+  /// Constructor for [HostIntegrationCoreApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  HostIntegrationCoreApi({
-    BinaryMessenger? binaryMessenger,
-    String messageChannelSuffix = '',
-  }) : pigeonVar_binaryMessenger = binaryMessenger,
-       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
-           ? '.$messageChannelSuffix'
-           : '';
+  HostIntegrationCoreApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+    : pigeonVar_binaryMessenger = binaryMessenger,
+      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+          ? '.$messageChannelSuffix'
+          : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -1016,11 +1022,7 @@ class HostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Returns the passed object, to test serialization and deserialization.
@@ -1032,9 +1034,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[everything],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[everything]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1077,11 +1077,7 @@ class HostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Returns a Flutter error, to test error handling.
@@ -1113,9 +1109,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[anInt],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anInt]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1135,9 +1129,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aDouble],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aDouble]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1157,9 +1149,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aBool],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aBool]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1179,9 +1169,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aString],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aString]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1201,9 +1189,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aUint8List],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aUint8List]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1223,9 +1209,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[anObject],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anObject]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1245,9 +1229,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[list],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[list]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1259,6 +1241,86 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed list, to test serialization and deserialization.
+  Future<List<String?>> echoStringList(List<String?> stringList) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoStringList$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[stringList]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return (pigeonVar_replyValue! as List<Object?>).cast<String?>();
+  }
+
+  /// Returns the passed list, to test serialization and deserialization.
+  Future<List<int?>> echoIntList(List<int?> intList) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoIntList$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[intList]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return (pigeonVar_replyValue! as List<Object?>).cast<int?>();
+  }
+
+  /// Returns the passed list, to test serialization and deserialization.
+  Future<List<double?>> echoDoubleList(List<double?> doubleList) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoDoubleList$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[doubleList]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return (pigeonVar_replyValue! as List<Object?>).cast<double?>();
+  }
+
+  /// Returns the passed list, to test serialization and deserialization.
+  Future<List<bool?>> echoBoolList(List<bool?> boolList) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBoolList$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[boolList]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return (pigeonVar_replyValue! as List<Object?>).cast<bool?>();
+  }
+
+  /// Returns the passed list, to test serialization and deserialization.
   Future<List<AnEnum?>> echoEnumList(List<AnEnum?> enumList) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoEnumList$pigeonVar_messageChannelSuffix';
@@ -1267,9 +1329,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[enumList],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1281,9 +1341,7 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  Future<List<AllNullableTypes?>> echoClassList(
-    List<AllNullableTypes?> classList,
-  ) async {
+  Future<List<AllNullableTypes?>> echoClassList(List<AllNullableTypes?> classList) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoClassList$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -1291,9 +1349,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[classList],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1313,9 +1369,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[enumList],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1327,9 +1381,7 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  Future<List<AllNullableTypes>> echoNonNullClassList(
-    List<AllNullableTypes> classList,
-  ) async {
+  Future<List<AllNullableTypes>> echoNonNullClassList(List<AllNullableTypes> classList) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullClassList$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -1337,9 +1389,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[classList],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1359,9 +1409,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[map],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[map]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1373,9 +1421,7 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  Future<Map<String?, String?>> echoStringMap(
-    Map<String?, String?> stringMap,
-  ) async {
+  Future<Map<String?, String?>> echoStringMap(Map<String?, String?> stringMap) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoStringMap$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -1383,9 +1429,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[stringMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[stringMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1393,8 +1437,7 @@ class HostIntegrationCoreApi {
       pigeonVar_channelName,
       isNullValid: false,
     );
-    return (pigeonVar_replyValue! as Map<Object?, Object?>)
-        .cast<String?, String?>();
+    return (pigeonVar_replyValue! as Map<Object?, Object?>).cast<String?, String?>();
   }
 
   /// Returns the passed map, to test serialization and deserialization.
@@ -1406,9 +1449,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[intMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[intMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1420,9 +1461,7 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  Future<Map<AnEnum?, AnEnum?>> echoEnumMap(
-    Map<AnEnum?, AnEnum?> enumMap,
-  ) async {
+  Future<Map<AnEnum?, AnEnum?>> echoEnumMap(Map<AnEnum?, AnEnum?> enumMap) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoEnumMap$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -1430,9 +1469,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[enumMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1440,14 +1477,11 @@ class HostIntegrationCoreApi {
       pigeonVar_channelName,
       isNullValid: false,
     );
-    return (pigeonVar_replyValue! as Map<Object?, Object?>)
-        .cast<AnEnum?, AnEnum?>();
+    return (pigeonVar_replyValue! as Map<Object?, Object?>).cast<AnEnum?, AnEnum?>();
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  Future<Map<int?, AllNullableTypes?>> echoClassMap(
-    Map<int?, AllNullableTypes?> classMap,
-  ) async {
+  Future<Map<int?, AllNullableTypes?>> echoClassMap(Map<int?, AllNullableTypes?> classMap) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoClassMap$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -1455,9 +1489,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[classMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1465,14 +1497,11 @@ class HostIntegrationCoreApi {
       pigeonVar_channelName,
       isNullValid: false,
     );
-    return (pigeonVar_replyValue! as Map<Object?, Object?>)
-        .cast<int?, AllNullableTypes?>();
+    return (pigeonVar_replyValue! as Map<Object?, Object?>).cast<int?, AllNullableTypes?>();
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  Future<Map<String, String>> echoNonNullStringMap(
-    Map<String, String> stringMap,
-  ) async {
+  Future<Map<String, String>> echoNonNullStringMap(Map<String, String> stringMap) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullStringMap$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -1480,9 +1509,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[stringMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[stringMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1490,8 +1517,7 @@ class HostIntegrationCoreApi {
       pigeonVar_channelName,
       isNullValid: false,
     );
-    return (pigeonVar_replyValue! as Map<Object?, Object?>)
-        .cast<String, String>();
+    return (pigeonVar_replyValue! as Map<Object?, Object?>).cast<String, String>();
   }
 
   /// Returns the passed map, to test serialization and deserialization.
@@ -1503,9 +1529,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[intMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[intMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1517,9 +1541,7 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  Future<Map<AnEnum, AnEnum>> echoNonNullEnumMap(
-    Map<AnEnum, AnEnum> enumMap,
-  ) async {
+  Future<Map<AnEnum, AnEnum>> echoNonNullEnumMap(Map<AnEnum, AnEnum> enumMap) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullEnumMap$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -1527,9 +1549,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[enumMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1537,8 +1557,7 @@ class HostIntegrationCoreApi {
       pigeonVar_channelName,
       isNullValid: false,
     );
-    return (pigeonVar_replyValue! as Map<Object?, Object?>)
-        .cast<AnEnum, AnEnum>();
+    return (pigeonVar_replyValue! as Map<Object?, Object?>).cast<AnEnum, AnEnum>();
   }
 
   /// Returns the passed map, to test serialization and deserialization.
@@ -1552,9 +1571,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[classMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1562,8 +1579,7 @@ class HostIntegrationCoreApi {
       pigeonVar_channelName,
       isNullValid: false,
     );
-    return (pigeonVar_replyValue! as Map<Object?, Object?>)
-        .cast<int, AllNullableTypes>();
+    return (pigeonVar_replyValue! as Map<Object?, Object?>).cast<int, AllNullableTypes>();
   }
 
   /// Returns the passed class to test nested class serialization and deserialization.
@@ -1575,9 +1591,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[wrapper],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[wrapper]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1597,9 +1611,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[anEnum],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anEnum]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1619,9 +1631,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[anotherEnum],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anotherEnum]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1641,9 +1651,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aString],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aString]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1663,9 +1671,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aDouble],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aDouble]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1685,9 +1691,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[anInt],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anInt]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1699,10 +1703,7 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the result of platform-side equality check.
-  Future<bool> areAllNullableTypesEqual(
-    AllNullableTypes a,
-    AllNullableTypes b,
-  ) async {
+  Future<bool> areAllNullableTypesEqual(AllNullableTypes a, AllNullableTypes b) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.areAllNullableTypesEqual$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -1710,9 +1711,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[a, b],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[a, b]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1732,9 +1731,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[value],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[value]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1756,9 +1753,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[value],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[value]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1770,9 +1765,7 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed object, to test serialization and deserialization.
-  Future<AllNullableTypes?> echoAllNullableTypes(
-    AllNullableTypes? everything,
-  ) async {
+  Future<AllNullableTypes?> echoAllNullableTypes(AllNullableTypes? everything) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllNullableTypes$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -1780,9 +1773,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[everything],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[everything]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1794,8 +1785,7 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed object, to test serialization and deserialization.
-  Future<AllNullableTypesWithoutRecursion?>
-  echoAllNullableTypesWithoutRecursion(
+  Future<AllNullableTypesWithoutRecursion?> echoAllNullableTypesWithoutRecursion(
     AllNullableTypesWithoutRecursion? everything,
   ) async {
     final pigeonVar_channelName =
@@ -1805,9 +1795,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[everything],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[everything]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1828,9 +1816,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[wrapper],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[wrapper]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1843,9 +1829,7 @@ class HostIntegrationCoreApi {
 
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
-  Future<AllClassesWrapper> createNestedNullableString(
-    String? nullableString,
-  ) async {
+  Future<AllClassesWrapper> createNestedNullableString(String? nullableString) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.createNestedNullableString$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -1853,9 +1837,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[nullableString],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[nullableString]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1879,9 +1861,11 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aNullableBool, aNullableInt, aNullableString],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      aNullableBool,
+      aNullableInt,
+      aNullableString,
+    ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1893,8 +1877,7 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns passed in arguments of multiple types.
-  Future<AllNullableTypesWithoutRecursion>
-  sendMultipleNullableTypesWithoutRecursion(
+  Future<AllNullableTypesWithoutRecursion> sendMultipleNullableTypesWithoutRecursion(
     bool? aNullableBool,
     int? aNullableInt,
     String? aNullableString,
@@ -1906,9 +1889,11 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aNullableBool, aNullableInt, aNullableString],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      aNullableBool,
+      aNullableInt,
+      aNullableString,
+    ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1928,9 +1913,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aNullableInt],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aNullableInt]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1950,9 +1933,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aNullableDouble],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aNullableDouble]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1972,9 +1953,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aNullableBool],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aNullableBool]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -1994,9 +1973,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aNullableString],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aNullableString]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2008,9 +1985,7 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed in Uint8List.
-  Future<Uint8List?> echoNullableUint8List(
-    Uint8List? aNullableUint8List,
-  ) async {
+  Future<Uint8List?> echoNullableUint8List(Uint8List? aNullableUint8List) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableUint8List$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -2018,9 +1993,9 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aNullableUint8List],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      aNullableUint8List,
+    ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2040,9 +2015,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aNullableObject],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aNullableObject]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2062,9 +2035,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aNullableList],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aNullableList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2084,9 +2055,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[enumList],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2098,9 +2067,7 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  Future<List<AllNullableTypes?>?> echoNullableClassList(
-    List<AllNullableTypes?>? classList,
-  ) async {
+  Future<List<AllNullableTypes?>?> echoNullableClassList(List<AllNullableTypes?>? classList) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableClassList$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -2108,9 +2075,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[classList],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2122,9 +2087,7 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  Future<List<AnEnum>?> echoNullableNonNullEnumList(
-    List<AnEnum>? enumList,
-  ) async {
+  Future<List<AnEnum>?> echoNullableNonNullEnumList(List<AnEnum>? enumList) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullEnumList$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -2132,9 +2095,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[enumList],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2156,9 +2117,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[classList],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2170,9 +2129,7 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  Future<Map<Object?, Object?>?> echoNullableMap(
-    Map<Object?, Object?>? map,
-  ) async {
+  Future<Map<Object?, Object?>?> echoNullableMap(Map<Object?, Object?>? map) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableMap$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -2180,9 +2137,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[map],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[map]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2194,9 +2149,7 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  Future<Map<String?, String?>?> echoNullableStringMap(
-    Map<String?, String?>? stringMap,
-  ) async {
+  Future<Map<String?, String?>?> echoNullableStringMap(Map<String?, String?>? stringMap) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableStringMap$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -2204,9 +2157,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[stringMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[stringMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2214,8 +2165,7 @@ class HostIntegrationCoreApi {
       pigeonVar_channelName,
       isNullValid: true,
     );
-    return (pigeonVar_replyValue as Map<Object?, Object?>?)
-        ?.cast<String?, String?>();
+    return (pigeonVar_replyValue as Map<Object?, Object?>?)?.cast<String?, String?>();
   }
 
   /// Returns the passed map, to test serialization and deserialization.
@@ -2227,9 +2177,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[intMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[intMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2241,9 +2189,7 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  Future<Map<AnEnum?, AnEnum?>?> echoNullableEnumMap(
-    Map<AnEnum?, AnEnum?>? enumMap,
-  ) async {
+  Future<Map<AnEnum?, AnEnum?>?> echoNullableEnumMap(Map<AnEnum?, AnEnum?>? enumMap) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableEnumMap$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -2251,9 +2197,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[enumMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2261,8 +2205,7 @@ class HostIntegrationCoreApi {
       pigeonVar_channelName,
       isNullValid: true,
     );
-    return (pigeonVar_replyValue as Map<Object?, Object?>?)
-        ?.cast<AnEnum?, AnEnum?>();
+    return (pigeonVar_replyValue as Map<Object?, Object?>?)?.cast<AnEnum?, AnEnum?>();
   }
 
   /// Returns the passed map, to test serialization and deserialization.
@@ -2276,9 +2219,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[classMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2286,14 +2227,11 @@ class HostIntegrationCoreApi {
       pigeonVar_channelName,
       isNullValid: true,
     );
-    return (pigeonVar_replyValue as Map<Object?, Object?>?)
-        ?.cast<int?, AllNullableTypes?>();
+    return (pigeonVar_replyValue as Map<Object?, Object?>?)?.cast<int?, AllNullableTypes?>();
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  Future<Map<String, String>?> echoNullableNonNullStringMap(
-    Map<String, String>? stringMap,
-  ) async {
+  Future<Map<String, String>?> echoNullableNonNullStringMap(Map<String, String>? stringMap) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullStringMap$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -2301,9 +2239,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[stringMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[stringMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2311,14 +2247,11 @@ class HostIntegrationCoreApi {
       pigeonVar_channelName,
       isNullValid: true,
     );
-    return (pigeonVar_replyValue as Map<Object?, Object?>?)
-        ?.cast<String, String>();
+    return (pigeonVar_replyValue as Map<Object?, Object?>?)?.cast<String, String>();
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  Future<Map<int, int>?> echoNullableNonNullIntMap(
-    Map<int, int>? intMap,
-  ) async {
+  Future<Map<int, int>?> echoNullableNonNullIntMap(Map<int, int>? intMap) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullIntMap$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -2326,9 +2259,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[intMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[intMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2340,9 +2271,7 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  Future<Map<AnEnum, AnEnum>?> echoNullableNonNullEnumMap(
-    Map<AnEnum, AnEnum>? enumMap,
-  ) async {
+  Future<Map<AnEnum, AnEnum>?> echoNullableNonNullEnumMap(Map<AnEnum, AnEnum>? enumMap) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullEnumMap$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -2350,9 +2279,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[enumMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2360,8 +2287,7 @@ class HostIntegrationCoreApi {
       pigeonVar_channelName,
       isNullValid: true,
     );
-    return (pigeonVar_replyValue as Map<Object?, Object?>?)
-        ?.cast<AnEnum, AnEnum>();
+    return (pigeonVar_replyValue as Map<Object?, Object?>?)?.cast<AnEnum, AnEnum>();
   }
 
   /// Returns the passed map, to test serialization and deserialization.
@@ -2375,9 +2301,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[classMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2385,8 +2309,7 @@ class HostIntegrationCoreApi {
       pigeonVar_channelName,
       isNullValid: true,
     );
-    return (pigeonVar_replyValue as Map<Object?, Object?>?)
-        ?.cast<int, AllNullableTypes>();
+    return (pigeonVar_replyValue as Map<Object?, Object?>?)?.cast<int, AllNullableTypes>();
   }
 
   Future<AnEnum?> echoNullableEnum(AnEnum? anEnum) async {
@@ -2397,9 +2320,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[anEnum],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anEnum]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2418,9 +2339,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[anotherEnum],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anotherEnum]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2440,9 +2359,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aNullableInt],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aNullableInt]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2462,9 +2379,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aNullableString],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aNullableString]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2488,11 +2403,7 @@ class HostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Returns passed in int asynchronously.
@@ -2504,9 +2415,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[anInt],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anInt]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2526,9 +2435,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aDouble],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aDouble]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2548,9 +2455,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aBool],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aBool]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2570,9 +2475,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aString],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aString]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2592,9 +2495,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aUint8List],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aUint8List]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2614,9 +2515,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[anObject],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anObject]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2636,9 +2535,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[list],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[list]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2658,9 +2555,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[enumList],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2672,9 +2567,7 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
-  Future<List<AllNullableTypes?>> echoAsyncClassList(
-    List<AllNullableTypes?> classList,
-  ) async {
+  Future<List<AllNullableTypes?>> echoAsyncClassList(List<AllNullableTypes?> classList) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncClassList$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -2682,9 +2575,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[classList],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2704,9 +2595,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[map],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[map]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2718,9 +2607,7 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
-  Future<Map<String?, String?>> echoAsyncStringMap(
-    Map<String?, String?> stringMap,
-  ) async {
+  Future<Map<String?, String?>> echoAsyncStringMap(Map<String?, String?> stringMap) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncStringMap$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -2728,9 +2615,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[stringMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[stringMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2738,8 +2623,7 @@ class HostIntegrationCoreApi {
       pigeonVar_channelName,
       isNullValid: false,
     );
-    return (pigeonVar_replyValue! as Map<Object?, Object?>)
-        .cast<String?, String?>();
+    return (pigeonVar_replyValue! as Map<Object?, Object?>).cast<String?, String?>();
   }
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
@@ -2751,9 +2635,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[intMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[intMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2765,9 +2647,7 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
-  Future<Map<AnEnum?, AnEnum?>> echoAsyncEnumMap(
-    Map<AnEnum?, AnEnum?> enumMap,
-  ) async {
+  Future<Map<AnEnum?, AnEnum?>> echoAsyncEnumMap(Map<AnEnum?, AnEnum?> enumMap) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncEnumMap$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -2775,9 +2655,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[enumMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2785,8 +2663,7 @@ class HostIntegrationCoreApi {
       pigeonVar_channelName,
       isNullValid: false,
     );
-    return (pigeonVar_replyValue! as Map<Object?, Object?>)
-        .cast<AnEnum?, AnEnum?>();
+    return (pigeonVar_replyValue! as Map<Object?, Object?>).cast<AnEnum?, AnEnum?>();
   }
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
@@ -2800,9 +2677,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[classMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2810,8 +2685,7 @@ class HostIntegrationCoreApi {
       pigeonVar_channelName,
       isNullValid: false,
     );
-    return (pigeonVar_replyValue! as Map<Object?, Object?>)
-        .cast<int?, AllNullableTypes?>();
+    return (pigeonVar_replyValue! as Map<Object?, Object?>).cast<int?, AllNullableTypes?>();
   }
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
@@ -2823,9 +2697,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[anEnum],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anEnum]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2845,9 +2717,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[anotherEnum],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anotherEnum]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2890,11 +2760,7 @@ class HostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Responds with a Flutter error from an async function returning a value.
@@ -2926,9 +2792,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[everything],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[everything]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2940,9 +2804,7 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed object, to test serialization and deserialization.
-  Future<AllNullableTypes?> echoAsyncNullableAllNullableTypes(
-    AllNullableTypes? everything,
-  ) async {
+  Future<AllNullableTypes?> echoAsyncNullableAllNullableTypes(AllNullableTypes? everything) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -2950,9 +2812,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[everything],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[everything]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2964,8 +2824,7 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed object, to test serialization and deserialization.
-  Future<AllNullableTypesWithoutRecursion?>
-  echoAsyncNullableAllNullableTypesWithoutRecursion(
+  Future<AllNullableTypesWithoutRecursion?> echoAsyncNullableAllNullableTypesWithoutRecursion(
     AllNullableTypesWithoutRecursion? everything,
   ) async {
     final pigeonVar_channelName =
@@ -2975,9 +2834,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[everything],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[everything]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2997,9 +2854,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[anInt],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anInt]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3019,9 +2874,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aDouble],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aDouble]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3041,9 +2894,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aBool],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aBool]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3063,9 +2914,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aString],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aString]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3085,9 +2934,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aUint8List],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aUint8List]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3107,9 +2954,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[anObject],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anObject]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3129,9 +2974,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[list],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[list]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3143,9 +2986,7 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
-  Future<List<AnEnum?>?> echoAsyncNullableEnumList(
-    List<AnEnum?>? enumList,
-  ) async {
+  Future<List<AnEnum?>?> echoAsyncNullableEnumList(List<AnEnum?>? enumList) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableEnumList$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -3153,9 +2994,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[enumList],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3177,9 +3016,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[classList],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3191,9 +3028,7 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
-  Future<Map<Object?, Object?>?> echoAsyncNullableMap(
-    Map<Object?, Object?>? map,
-  ) async {
+  Future<Map<Object?, Object?>?> echoAsyncNullableMap(Map<Object?, Object?>? map) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableMap$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -3201,9 +3036,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[map],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[map]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3225,9 +3058,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[stringMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[stringMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3235,14 +3066,11 @@ class HostIntegrationCoreApi {
       pigeonVar_channelName,
       isNullValid: true,
     );
-    return (pigeonVar_replyValue as Map<Object?, Object?>?)
-        ?.cast<String?, String?>();
+    return (pigeonVar_replyValue as Map<Object?, Object?>?)?.cast<String?, String?>();
   }
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
-  Future<Map<int?, int?>?> echoAsyncNullableIntMap(
-    Map<int?, int?>? intMap,
-  ) async {
+  Future<Map<int?, int?>?> echoAsyncNullableIntMap(Map<int?, int?>? intMap) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableIntMap$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -3250,9 +3078,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[intMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[intMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3264,9 +3090,7 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
-  Future<Map<AnEnum?, AnEnum?>?> echoAsyncNullableEnumMap(
-    Map<AnEnum?, AnEnum?>? enumMap,
-  ) async {
+  Future<Map<AnEnum?, AnEnum?>?> echoAsyncNullableEnumMap(Map<AnEnum?, AnEnum?>? enumMap) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableEnumMap$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -3274,9 +3098,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[enumMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3284,8 +3106,7 @@ class HostIntegrationCoreApi {
       pigeonVar_channelName,
       isNullValid: true,
     );
-    return (pigeonVar_replyValue as Map<Object?, Object?>?)
-        ?.cast<AnEnum?, AnEnum?>();
+    return (pigeonVar_replyValue as Map<Object?, Object?>?)?.cast<AnEnum?, AnEnum?>();
   }
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
@@ -3299,9 +3120,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[classMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3309,8 +3128,7 @@ class HostIntegrationCoreApi {
       pigeonVar_channelName,
       isNullValid: true,
     );
-    return (pigeonVar_replyValue as Map<Object?, Object?>?)
-        ?.cast<int?, AllNullableTypes?>();
+    return (pigeonVar_replyValue as Map<Object?, Object?>?)?.cast<int?, AllNullableTypes?>();
   }
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
@@ -3322,9 +3140,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[anEnum],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anEnum]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3336,9 +3152,7 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
-  Future<AnotherEnum?> echoAnotherAsyncNullableEnum(
-    AnotherEnum? anotherEnum,
-  ) async {
+  Future<AnotherEnum?> echoAnotherAsyncNullableEnum(AnotherEnum? anotherEnum) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherAsyncNullableEnum$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -3346,9 +3160,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[anotherEnum],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anotherEnum]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3412,11 +3224,7 @@ class HostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   Future<Object?> callFlutterThrowError() async {
@@ -3449,11 +3257,7 @@ class HostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   Future<AllTypes> callFlutterEchoAllTypes(AllTypes everything) async {
@@ -3464,9 +3268,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[everything],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[everything]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3477,9 +3279,7 @@ class HostIntegrationCoreApi {
     return pigeonVar_replyValue! as AllTypes;
   }
 
-  Future<AllNullableTypes?> callFlutterEchoAllNullableTypes(
-    AllNullableTypes? everything,
-  ) async {
+  Future<AllNullableTypes?> callFlutterEchoAllNullableTypes(AllNullableTypes? everything) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllNullableTypes$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -3487,9 +3287,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[everything],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[everything]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3512,9 +3310,11 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aNullableBool, aNullableInt, aNullableString],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      aNullableBool,
+      aNullableInt,
+      aNullableString,
+    ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3525,8 +3325,7 @@ class HostIntegrationCoreApi {
     return pigeonVar_replyValue! as AllNullableTypes;
   }
 
-  Future<AllNullableTypesWithoutRecursion?>
-  callFlutterEchoAllNullableTypesWithoutRecursion(
+  Future<AllNullableTypesWithoutRecursion?> callFlutterEchoAllNullableTypesWithoutRecursion(
     AllNullableTypesWithoutRecursion? everything,
   ) async {
     final pigeonVar_channelName =
@@ -3536,9 +3335,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[everything],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[everything]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3549,8 +3346,7 @@ class HostIntegrationCoreApi {
     return pigeonVar_replyValue as AllNullableTypesWithoutRecursion?;
   }
 
-  Future<AllNullableTypesWithoutRecursion>
-  callFlutterSendMultipleNullableTypesWithoutRecursion(
+  Future<AllNullableTypesWithoutRecursion> callFlutterSendMultipleNullableTypesWithoutRecursion(
     bool? aNullableBool,
     int? aNullableInt,
     String? aNullableString,
@@ -3562,9 +3358,11 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aNullableBool, aNullableInt, aNullableString],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      aNullableBool,
+      aNullableInt,
+      aNullableString,
+    ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3583,9 +3381,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aBool],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aBool]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3604,9 +3400,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[anInt],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anInt]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3625,9 +3419,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aDouble],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aDouble]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3646,9 +3438,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aString],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aString]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3667,9 +3457,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[list],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[list]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3688,9 +3476,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[list],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[list]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3709,9 +3495,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[enumList],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3732,9 +3516,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[classList],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3745,9 +3527,7 @@ class HostIntegrationCoreApi {
     return (pigeonVar_replyValue! as List<Object?>).cast<AllNullableTypes?>();
   }
 
-  Future<List<AnEnum>> callFlutterEchoNonNullEnumList(
-    List<AnEnum> enumList,
-  ) async {
+  Future<List<AnEnum>> callFlutterEchoNonNullEnumList(List<AnEnum> enumList) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullEnumList$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -3755,9 +3535,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[enumList],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3778,9 +3556,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[classList],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3791,9 +3567,7 @@ class HostIntegrationCoreApi {
     return (pigeonVar_replyValue! as List<Object?>).cast<AllNullableTypes>();
   }
 
-  Future<Map<Object?, Object?>> callFlutterEchoMap(
-    Map<Object?, Object?> map,
-  ) async {
+  Future<Map<Object?, Object?>> callFlutterEchoMap(Map<Object?, Object?> map) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoMap$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -3801,9 +3575,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[map],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[map]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3814,9 +3586,7 @@ class HostIntegrationCoreApi {
     return pigeonVar_replyValue! as Map<Object?, Object?>;
   }
 
-  Future<Map<String?, String?>> callFlutterEchoStringMap(
-    Map<String?, String?> stringMap,
-  ) async {
+  Future<Map<String?, String?>> callFlutterEchoStringMap(Map<String?, String?> stringMap) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoStringMap$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -3824,9 +3594,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[stringMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[stringMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3834,8 +3602,7 @@ class HostIntegrationCoreApi {
       pigeonVar_channelName,
       isNullValid: false,
     );
-    return (pigeonVar_replyValue! as Map<Object?, Object?>)
-        .cast<String?, String?>();
+    return (pigeonVar_replyValue! as Map<Object?, Object?>).cast<String?, String?>();
   }
 
   Future<Map<int?, int?>> callFlutterEchoIntMap(Map<int?, int?> intMap) async {
@@ -3846,9 +3613,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[intMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[intMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3859,9 +3624,7 @@ class HostIntegrationCoreApi {
     return (pigeonVar_replyValue! as Map<Object?, Object?>).cast<int?, int?>();
   }
 
-  Future<Map<AnEnum?, AnEnum?>> callFlutterEchoEnumMap(
-    Map<AnEnum?, AnEnum?> enumMap,
-  ) async {
+  Future<Map<AnEnum?, AnEnum?>> callFlutterEchoEnumMap(Map<AnEnum?, AnEnum?> enumMap) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoEnumMap$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -3869,9 +3632,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[enumMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3879,8 +3640,7 @@ class HostIntegrationCoreApi {
       pigeonVar_channelName,
       isNullValid: false,
     );
-    return (pigeonVar_replyValue! as Map<Object?, Object?>)
-        .cast<AnEnum?, AnEnum?>();
+    return (pigeonVar_replyValue! as Map<Object?, Object?>).cast<AnEnum?, AnEnum?>();
   }
 
   Future<Map<int?, AllNullableTypes?>> callFlutterEchoClassMap(
@@ -3893,9 +3653,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[classMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3903,13 +3661,10 @@ class HostIntegrationCoreApi {
       pigeonVar_channelName,
       isNullValid: false,
     );
-    return (pigeonVar_replyValue! as Map<Object?, Object?>)
-        .cast<int?, AllNullableTypes?>();
+    return (pigeonVar_replyValue! as Map<Object?, Object?>).cast<int?, AllNullableTypes?>();
   }
 
-  Future<Map<String, String>> callFlutterEchoNonNullStringMap(
-    Map<String, String> stringMap,
-  ) async {
+  Future<Map<String, String>> callFlutterEchoNonNullStringMap(Map<String, String> stringMap) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullStringMap$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -3917,9 +3672,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[stringMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[stringMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3927,13 +3680,10 @@ class HostIntegrationCoreApi {
       pigeonVar_channelName,
       isNullValid: false,
     );
-    return (pigeonVar_replyValue! as Map<Object?, Object?>)
-        .cast<String, String>();
+    return (pigeonVar_replyValue! as Map<Object?, Object?>).cast<String, String>();
   }
 
-  Future<Map<int, int>> callFlutterEchoNonNullIntMap(
-    Map<int, int> intMap,
-  ) async {
+  Future<Map<int, int>> callFlutterEchoNonNullIntMap(Map<int, int> intMap) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullIntMap$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -3941,9 +3691,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[intMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[intMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3954,9 +3702,7 @@ class HostIntegrationCoreApi {
     return (pigeonVar_replyValue! as Map<Object?, Object?>).cast<int, int>();
   }
 
-  Future<Map<AnEnum, AnEnum>> callFlutterEchoNonNullEnumMap(
-    Map<AnEnum, AnEnum> enumMap,
-  ) async {
+  Future<Map<AnEnum, AnEnum>> callFlutterEchoNonNullEnumMap(Map<AnEnum, AnEnum> enumMap) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullEnumMap$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -3964,9 +3710,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[enumMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3974,8 +3718,7 @@ class HostIntegrationCoreApi {
       pigeonVar_channelName,
       isNullValid: false,
     );
-    return (pigeonVar_replyValue! as Map<Object?, Object?>)
-        .cast<AnEnum, AnEnum>();
+    return (pigeonVar_replyValue! as Map<Object?, Object?>).cast<AnEnum, AnEnum>();
   }
 
   Future<Map<int, AllNullableTypes>> callFlutterEchoNonNullClassMap(
@@ -3988,9 +3731,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[classMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3998,8 +3739,7 @@ class HostIntegrationCoreApi {
       pigeonVar_channelName,
       isNullValid: false,
     );
-    return (pigeonVar_replyValue! as Map<Object?, Object?>)
-        .cast<int, AllNullableTypes>();
+    return (pigeonVar_replyValue! as Map<Object?, Object?>).cast<int, AllNullableTypes>();
   }
 
   Future<AnEnum> callFlutterEchoEnum(AnEnum anEnum) async {
@@ -4010,9 +3750,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[anEnum],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anEnum]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4023,9 +3761,7 @@ class HostIntegrationCoreApi {
     return pigeonVar_replyValue! as AnEnum;
   }
 
-  Future<AnotherEnum> callFlutterEchoAnotherEnum(
-    AnotherEnum anotherEnum,
-  ) async {
+  Future<AnotherEnum> callFlutterEchoAnotherEnum(AnotherEnum anotherEnum) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAnotherEnum$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -4033,9 +3769,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[anotherEnum],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anotherEnum]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4054,9 +3788,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aBool],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aBool]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4075,9 +3807,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[anInt],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anInt]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4096,9 +3826,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aDouble],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aDouble]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4117,9 +3845,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aString],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aString]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4138,9 +3864,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[list],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[list]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4151,9 +3875,7 @@ class HostIntegrationCoreApi {
     return pigeonVar_replyValue as Uint8List?;
   }
 
-  Future<List<Object?>?> callFlutterEchoNullableList(
-    List<Object?>? list,
-  ) async {
+  Future<List<Object?>?> callFlutterEchoNullableList(List<Object?>? list) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableList$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -4161,9 +3883,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[list],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[list]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4174,9 +3894,7 @@ class HostIntegrationCoreApi {
     return pigeonVar_replyValue as List<Object?>?;
   }
 
-  Future<List<AnEnum?>?> callFlutterEchoNullableEnumList(
-    List<AnEnum?>? enumList,
-  ) async {
+  Future<List<AnEnum?>?> callFlutterEchoNullableEnumList(List<AnEnum?>? enumList) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableEnumList$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -4184,9 +3902,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[enumList],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4207,9 +3923,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[classList],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4220,9 +3934,7 @@ class HostIntegrationCoreApi {
     return (pigeonVar_replyValue as List<Object?>?)?.cast<AllNullableTypes?>();
   }
 
-  Future<List<AnEnum>?> callFlutterEchoNullableNonNullEnumList(
-    List<AnEnum>? enumList,
-  ) async {
+  Future<List<AnEnum>?> callFlutterEchoNullableNonNullEnumList(List<AnEnum>? enumList) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullEnumList$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -4230,9 +3942,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[enumList],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4253,9 +3963,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[classList],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4266,9 +3974,7 @@ class HostIntegrationCoreApi {
     return (pigeonVar_replyValue as List<Object?>?)?.cast<AllNullableTypes>();
   }
 
-  Future<Map<Object?, Object?>?> callFlutterEchoNullableMap(
-    Map<Object?, Object?>? map,
-  ) async {
+  Future<Map<Object?, Object?>?> callFlutterEchoNullableMap(Map<Object?, Object?>? map) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableMap$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -4276,9 +3982,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[map],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[map]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4299,9 +4003,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[stringMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[stringMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4309,13 +4011,10 @@ class HostIntegrationCoreApi {
       pigeonVar_channelName,
       isNullValid: true,
     );
-    return (pigeonVar_replyValue as Map<Object?, Object?>?)
-        ?.cast<String?, String?>();
+    return (pigeonVar_replyValue as Map<Object?, Object?>?)?.cast<String?, String?>();
   }
 
-  Future<Map<int?, int?>?> callFlutterEchoNullableIntMap(
-    Map<int?, int?>? intMap,
-  ) async {
+  Future<Map<int?, int?>?> callFlutterEchoNullableIntMap(Map<int?, int?>? intMap) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableIntMap$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -4323,9 +4022,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[intMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[intMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4346,9 +4043,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[enumMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4356,8 +4051,7 @@ class HostIntegrationCoreApi {
       pigeonVar_channelName,
       isNullValid: true,
     );
-    return (pigeonVar_replyValue as Map<Object?, Object?>?)
-        ?.cast<AnEnum?, AnEnum?>();
+    return (pigeonVar_replyValue as Map<Object?, Object?>?)?.cast<AnEnum?, AnEnum?>();
   }
 
   Future<Map<int?, AllNullableTypes?>?> callFlutterEchoNullableClassMap(
@@ -4370,9 +4064,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[classMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4380,8 +4072,7 @@ class HostIntegrationCoreApi {
       pigeonVar_channelName,
       isNullValid: true,
     );
-    return (pigeonVar_replyValue as Map<Object?, Object?>?)
-        ?.cast<int?, AllNullableTypes?>();
+    return (pigeonVar_replyValue as Map<Object?, Object?>?)?.cast<int?, AllNullableTypes?>();
   }
 
   Future<Map<String, String>?> callFlutterEchoNullableNonNullStringMap(
@@ -4394,9 +4085,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[stringMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[stringMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4404,13 +4093,10 @@ class HostIntegrationCoreApi {
       pigeonVar_channelName,
       isNullValid: true,
     );
-    return (pigeonVar_replyValue as Map<Object?, Object?>?)
-        ?.cast<String, String>();
+    return (pigeonVar_replyValue as Map<Object?, Object?>?)?.cast<String, String>();
   }
 
-  Future<Map<int, int>?> callFlutterEchoNullableNonNullIntMap(
-    Map<int, int>? intMap,
-  ) async {
+  Future<Map<int, int>?> callFlutterEchoNullableNonNullIntMap(Map<int, int>? intMap) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullIntMap$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -4418,9 +4104,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[intMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[intMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4441,9 +4125,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[enumMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[enumMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4451,8 +4133,7 @@ class HostIntegrationCoreApi {
       pigeonVar_channelName,
       isNullValid: true,
     );
-    return (pigeonVar_replyValue as Map<Object?, Object?>?)
-        ?.cast<AnEnum, AnEnum>();
+    return (pigeonVar_replyValue as Map<Object?, Object?>?)?.cast<AnEnum, AnEnum>();
   }
 
   Future<Map<int, AllNullableTypes>?> callFlutterEchoNullableNonNullClassMap(
@@ -4465,9 +4146,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[classMap],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[classMap]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4475,8 +4154,7 @@ class HostIntegrationCoreApi {
       pigeonVar_channelName,
       isNullValid: true,
     );
-    return (pigeonVar_replyValue as Map<Object?, Object?>?)
-        ?.cast<int, AllNullableTypes>();
+    return (pigeonVar_replyValue as Map<Object?, Object?>?)?.cast<int, AllNullableTypes>();
   }
 
   Future<AnEnum?> callFlutterEchoNullableEnum(AnEnum? anEnum) async {
@@ -4487,9 +4165,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[anEnum],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anEnum]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4500,9 +4176,7 @@ class HostIntegrationCoreApi {
     return pigeonVar_replyValue as AnEnum?;
   }
 
-  Future<AnotherEnum?> callFlutterEchoAnotherNullableEnum(
-    AnotherEnum? anotherEnum,
-  ) async {
+  Future<AnotherEnum?> callFlutterEchoAnotherNullableEnum(AnotherEnum? anotherEnum) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAnotherNullableEnum$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -4510,9 +4184,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[anotherEnum],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anotherEnum]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4531,9 +4203,7 @@ class HostIntegrationCoreApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aString],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aString]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4632,9 +4302,7 @@ abstract class FlutterIntegrationCoreApi {
   Map<AnEnum?, AnEnum?> echoEnumMap(Map<AnEnum?, AnEnum?> enumMap);
 
   /// Returns the passed map, to test serialization and deserialization.
-  Map<int?, AllNullableTypes?> echoClassMap(
-    Map<int?, AllNullableTypes?> classMap,
-  );
+  Map<int?, AllNullableTypes?> echoClassMap(Map<int?, AllNullableTypes?> classMap);
 
   /// Returns the passed map, to test serialization and deserialization.
   Map<String, String> echoNonNullStringMap(Map<String, String> stringMap);
@@ -4646,9 +4314,7 @@ abstract class FlutterIntegrationCoreApi {
   Map<AnEnum, AnEnum> echoNonNullEnumMap(Map<AnEnum, AnEnum> enumMap);
 
   /// Returns the passed map, to test serialization and deserialization.
-  Map<int, AllNullableTypes> echoNonNullClassMap(
-    Map<int, AllNullableTypes> classMap,
-  );
+  Map<int, AllNullableTypes> echoNonNullClassMap(Map<int, AllNullableTypes> classMap);
 
   /// Returns the passed enum to test serialization and deserialization.
   AnEnum echoEnum(AnEnum anEnum);
@@ -4678,25 +4344,19 @@ abstract class FlutterIntegrationCoreApi {
   List<AnEnum?>? echoNullableEnumList(List<AnEnum?>? enumList);
 
   /// Returns the passed list, to test serialization and deserialization.
-  List<AllNullableTypes?>? echoNullableClassList(
-    List<AllNullableTypes?>? classList,
-  );
+  List<AllNullableTypes?>? echoNullableClassList(List<AllNullableTypes?>? classList);
 
   /// Returns the passed list, to test serialization and deserialization.
   List<AnEnum>? echoNullableNonNullEnumList(List<AnEnum>? enumList);
 
   /// Returns the passed list, to test serialization and deserialization.
-  List<AllNullableTypes>? echoNullableNonNullClassList(
-    List<AllNullableTypes>? classList,
-  );
+  List<AllNullableTypes>? echoNullableNonNullClassList(List<AllNullableTypes>? classList);
 
   /// Returns the passed map, to test serialization and deserialization.
   Map<Object?, Object?>? echoNullableMap(Map<Object?, Object?>? map);
 
   /// Returns the passed map, to test serialization and deserialization.
-  Map<String?, String?>? echoNullableStringMap(
-    Map<String?, String?>? stringMap,
-  );
+  Map<String?, String?>? echoNullableStringMap(Map<String?, String?>? stringMap);
 
   /// Returns the passed map, to test serialization and deserialization.
   Map<int?, int?>? echoNullableIntMap(Map<int?, int?>? intMap);
@@ -4705,14 +4365,10 @@ abstract class FlutterIntegrationCoreApi {
   Map<AnEnum?, AnEnum?>? echoNullableEnumMap(Map<AnEnum?, AnEnum?>? enumMap);
 
   /// Returns the passed map, to test serialization and deserialization.
-  Map<int?, AllNullableTypes?>? echoNullableClassMap(
-    Map<int?, AllNullableTypes?>? classMap,
-  );
+  Map<int?, AllNullableTypes?>? echoNullableClassMap(Map<int?, AllNullableTypes?>? classMap);
 
   /// Returns the passed map, to test serialization and deserialization.
-  Map<String, String>? echoNullableNonNullStringMap(
-    Map<String, String>? stringMap,
-  );
+  Map<String, String>? echoNullableNonNullStringMap(Map<String, String>? stringMap);
 
   /// Returns the passed map, to test serialization and deserialization.
   Map<int, int>? echoNullableNonNullIntMap(Map<int, int>? intMap);
@@ -4721,9 +4377,7 @@ abstract class FlutterIntegrationCoreApi {
   Map<AnEnum, AnEnum>? echoNullableNonNullEnumMap(Map<AnEnum, AnEnum>? enumMap);
 
   /// Returns the passed map, to test serialization and deserialization.
-  Map<int, AllNullableTypes>? echoNullableNonNullClassMap(
-    Map<int, AllNullableTypes>? classMap,
-  );
+  Map<int, AllNullableTypes>? echoNullableNonNullClassMap(Map<int, AllNullableTypes>? classMap);
 
   /// Returns the passed enum to test serialization and deserialization.
   AnEnum? echoNullableEnum(AnEnum? anEnum);
@@ -4743,9 +4397,7 @@ abstract class FlutterIntegrationCoreApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) {
-    messageChannelSuffix = messageChannelSuffix.isNotEmpty
-        ? '.$messageChannelSuffix'
-        : '';
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noop$messageChannelSuffix',
@@ -4853,9 +4505,7 @@ abstract class FlutterIntegrationCoreApi {
           final List<Object?> args = message! as List<Object?>;
           final AllNullableTypes? arg_everything = args[0] as AllNullableTypes?;
           try {
-            final AllNullableTypes? output = api.echoAllNullableTypes(
-              arg_everything,
-            );
+            final AllNullableTypes? output = api.echoAllNullableTypes(arg_everything);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -5118,8 +4768,7 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final List<AnEnum?> arg_enumList = (args[0]! as List<Object?>)
-              .cast<AnEnum?>();
+          final List<AnEnum?> arg_enumList = (args[0]! as List<Object?>).cast<AnEnum?>();
           try {
             final List<AnEnum?> output = api.echoEnumList(arg_enumList);
             return wrapResponse(result: output);
@@ -5144,12 +4793,10 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final List<AllNullableTypes?> arg_classList =
-              (args[0]! as List<Object?>).cast<AllNullableTypes?>();
+          final List<AllNullableTypes?> arg_classList = (args[0]! as List<Object?>)
+              .cast<AllNullableTypes?>();
           try {
-            final List<AllNullableTypes?> output = api.echoClassList(
-              arg_classList,
-            );
+            final List<AllNullableTypes?> output = api.echoClassList(arg_classList);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -5172,8 +4819,7 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final List<AnEnum> arg_enumList = (args[0]! as List<Object?>)
-              .cast<AnEnum>();
+          final List<AnEnum> arg_enumList = (args[0]! as List<Object?>).cast<AnEnum>();
           try {
             final List<AnEnum> output = api.echoNonNullEnumList(arg_enumList);
             return wrapResponse(result: output);
@@ -5198,12 +4844,10 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final List<AllNullableTypes> arg_classList =
-              (args[0]! as List<Object?>).cast<AllNullableTypes>();
+          final List<AllNullableTypes> arg_classList = (args[0]! as List<Object?>)
+              .cast<AllNullableTypes>();
           try {
-            final List<AllNullableTypes> output = api.echoNonNullClassList(
-              arg_classList,
-            );
+            final List<AllNullableTypes> output = api.echoNonNullClassList(arg_classList);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -5226,8 +4870,7 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final Map<Object?, Object?> arg_map =
-              args[0]! as Map<Object?, Object?>;
+          final Map<Object?, Object?> arg_map = args[0]! as Map<Object?, Object?>;
           try {
             final Map<Object?, Object?> output = api.echoMap(arg_map);
             return wrapResponse(result: output);
@@ -5252,12 +4895,10 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final Map<String?, String?> arg_stringMap =
-              (args[0]! as Map<Object?, Object?>).cast<String?, String?>();
+          final Map<String?, String?> arg_stringMap = (args[0]! as Map<Object?, Object?>)
+              .cast<String?, String?>();
           try {
-            final Map<String?, String?> output = api.echoStringMap(
-              arg_stringMap,
-            );
+            final Map<String?, String?> output = api.echoStringMap(arg_stringMap);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -5280,8 +4921,7 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final Map<int?, int?> arg_intMap = (args[0]! as Map<Object?, Object?>)
-              .cast<int?, int?>();
+          final Map<int?, int?> arg_intMap = (args[0]! as Map<Object?, Object?>).cast<int?, int?>();
           try {
             final Map<int?, int?> output = api.echoIntMap(arg_intMap);
             return wrapResponse(result: output);
@@ -5306,8 +4946,8 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final Map<AnEnum?, AnEnum?> arg_enumMap =
-              (args[0]! as Map<Object?, Object?>).cast<AnEnum?, AnEnum?>();
+          final Map<AnEnum?, AnEnum?> arg_enumMap = (args[0]! as Map<Object?, Object?>)
+              .cast<AnEnum?, AnEnum?>();
           try {
             final Map<AnEnum?, AnEnum?> output = api.echoEnumMap(arg_enumMap);
             return wrapResponse(result: output);
@@ -5332,13 +4972,10 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final Map<int?, AllNullableTypes?> arg_classMap =
-              (args[0]! as Map<Object?, Object?>)
-                  .cast<int?, AllNullableTypes?>();
+          final Map<int?, AllNullableTypes?> arg_classMap = (args[0]! as Map<Object?, Object?>)
+              .cast<int?, AllNullableTypes?>();
           try {
-            final Map<int?, AllNullableTypes?> output = api.echoClassMap(
-              arg_classMap,
-            );
+            final Map<int?, AllNullableTypes?> output = api.echoClassMap(arg_classMap);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -5361,12 +4998,10 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final Map<String, String> arg_stringMap =
-              (args[0]! as Map<Object?, Object?>).cast<String, String>();
+          final Map<String, String> arg_stringMap = (args[0]! as Map<Object?, Object?>)
+              .cast<String, String>();
           try {
-            final Map<String, String> output = api.echoNonNullStringMap(
-              arg_stringMap,
-            );
+            final Map<String, String> output = api.echoNonNullStringMap(arg_stringMap);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -5389,8 +5024,7 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final Map<int, int> arg_intMap = (args[0]! as Map<Object?, Object?>)
-              .cast<int, int>();
+          final Map<int, int> arg_intMap = (args[0]! as Map<Object?, Object?>).cast<int, int>();
           try {
             final Map<int, int> output = api.echoNonNullIntMap(arg_intMap);
             return wrapResponse(result: output);
@@ -5415,12 +5049,10 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final Map<AnEnum, AnEnum> arg_enumMap =
-              (args[0]! as Map<Object?, Object?>).cast<AnEnum, AnEnum>();
+          final Map<AnEnum, AnEnum> arg_enumMap = (args[0]! as Map<Object?, Object?>)
+              .cast<AnEnum, AnEnum>();
           try {
-            final Map<AnEnum, AnEnum> output = api.echoNonNullEnumMap(
-              arg_enumMap,
-            );
+            final Map<AnEnum, AnEnum> output = api.echoNonNullEnumMap(arg_enumMap);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -5443,12 +5075,10 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final Map<int, AllNullableTypes> arg_classMap =
-              (args[0]! as Map<Object?, Object?>).cast<int, AllNullableTypes>();
+          final Map<int, AllNullableTypes> arg_classMap = (args[0]! as Map<Object?, Object?>)
+              .cast<int, AllNullableTypes>();
           try {
-            final Map<int, AllNullableTypes> output = api.echoNonNullClassMap(
-              arg_classMap,
-            );
+            final Map<int, AllNullableTypes> output = api.echoNonNullClassMap(arg_classMap);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -5671,12 +5301,9 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final List<AnEnum?>? arg_enumList = (args[0] as List<Object?>?)
-              ?.cast<AnEnum?>();
+          final List<AnEnum?>? arg_enumList = (args[0] as List<Object?>?)?.cast<AnEnum?>();
           try {
-            final List<AnEnum?>? output = api.echoNullableEnumList(
-              arg_enumList,
-            );
+            final List<AnEnum?>? output = api.echoNullableEnumList(arg_enumList);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -5699,12 +5326,10 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final List<AllNullableTypes?>? arg_classList =
-              (args[0] as List<Object?>?)?.cast<AllNullableTypes?>();
+          final List<AllNullableTypes?>? arg_classList = (args[0] as List<Object?>?)
+              ?.cast<AllNullableTypes?>();
           try {
-            final List<AllNullableTypes?>? output = api.echoNullableClassList(
-              arg_classList,
-            );
+            final List<AllNullableTypes?>? output = api.echoNullableClassList(arg_classList);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -5727,12 +5352,9 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final List<AnEnum>? arg_enumList = (args[0] as List<Object?>?)
-              ?.cast<AnEnum>();
+          final List<AnEnum>? arg_enumList = (args[0] as List<Object?>?)?.cast<AnEnum>();
           try {
-            final List<AnEnum>? output = api.echoNullableNonNullEnumList(
-              arg_enumList,
-            );
+            final List<AnEnum>? output = api.echoNullableNonNullEnumList(arg_enumList);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -5755,11 +5377,10 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final List<AllNullableTypes>? arg_classList =
-              (args[0] as List<Object?>?)?.cast<AllNullableTypes>();
+          final List<AllNullableTypes>? arg_classList = (args[0] as List<Object?>?)
+              ?.cast<AllNullableTypes>();
           try {
-            final List<AllNullableTypes>? output = api
-                .echoNullableNonNullClassList(arg_classList);
+            final List<AllNullableTypes>? output = api.echoNullableNonNullClassList(arg_classList);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -5782,8 +5403,7 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final Map<Object?, Object?>? arg_map =
-              args[0] as Map<Object?, Object?>?;
+          final Map<Object?, Object?>? arg_map = args[0] as Map<Object?, Object?>?;
           try {
             final Map<Object?, Object?>? output = api.echoNullableMap(arg_map);
             return wrapResponse(result: output);
@@ -5808,12 +5428,10 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final Map<String?, String?>? arg_stringMap =
-              (args[0] as Map<Object?, Object?>?)?.cast<String?, String?>();
+          final Map<String?, String?>? arg_stringMap = (args[0] as Map<Object?, Object?>?)
+              ?.cast<String?, String?>();
           try {
-            final Map<String?, String?>? output = api.echoNullableStringMap(
-              arg_stringMap,
-            );
+            final Map<String?, String?>? output = api.echoNullableStringMap(arg_stringMap);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -5836,8 +5454,8 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final Map<int?, int?>? arg_intMap =
-              (args[0] as Map<Object?, Object?>?)?.cast<int?, int?>();
+          final Map<int?, int?>? arg_intMap = (args[0] as Map<Object?, Object?>?)
+              ?.cast<int?, int?>();
           try {
             final Map<int?, int?>? output = api.echoNullableIntMap(arg_intMap);
             return wrapResponse(result: output);
@@ -5862,12 +5480,10 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final Map<AnEnum?, AnEnum?>? arg_enumMap =
-              (args[0] as Map<Object?, Object?>?)?.cast<AnEnum?, AnEnum?>();
+          final Map<AnEnum?, AnEnum?>? arg_enumMap = (args[0] as Map<Object?, Object?>?)
+              ?.cast<AnEnum?, AnEnum?>();
           try {
-            final Map<AnEnum?, AnEnum?>? output = api.echoNullableEnumMap(
-              arg_enumMap,
-            );
+            final Map<AnEnum?, AnEnum?>? output = api.echoNullableEnumMap(arg_enumMap);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -5890,12 +5506,10 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final Map<int?, AllNullableTypes?>? arg_classMap =
-              (args[0] as Map<Object?, Object?>?)
-                  ?.cast<int?, AllNullableTypes?>();
+          final Map<int?, AllNullableTypes?>? arg_classMap = (args[0] as Map<Object?, Object?>?)
+              ?.cast<int?, AllNullableTypes?>();
           try {
-            final Map<int?, AllNullableTypes?>? output = api
-                .echoNullableClassMap(arg_classMap);
+            final Map<int?, AllNullableTypes?>? output = api.echoNullableClassMap(arg_classMap);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -5918,11 +5532,10 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final Map<String, String>? arg_stringMap =
-              (args[0] as Map<Object?, Object?>?)?.cast<String, String>();
+          final Map<String, String>? arg_stringMap = (args[0] as Map<Object?, Object?>?)
+              ?.cast<String, String>();
           try {
-            final Map<String, String>? output = api
-                .echoNullableNonNullStringMap(arg_stringMap);
+            final Map<String, String>? output = api.echoNullableNonNullStringMap(arg_stringMap);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -5945,12 +5558,9 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final Map<int, int>? arg_intMap = (args[0] as Map<Object?, Object?>?)
-              ?.cast<int, int>();
+          final Map<int, int>? arg_intMap = (args[0] as Map<Object?, Object?>?)?.cast<int, int>();
           try {
-            final Map<int, int>? output = api.echoNullableNonNullIntMap(
-              arg_intMap,
-            );
+            final Map<int, int>? output = api.echoNullableNonNullIntMap(arg_intMap);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -5973,12 +5583,10 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final Map<AnEnum, AnEnum>? arg_enumMap =
-              (args[0] as Map<Object?, Object?>?)?.cast<AnEnum, AnEnum>();
+          final Map<AnEnum, AnEnum>? arg_enumMap = (args[0] as Map<Object?, Object?>?)
+              ?.cast<AnEnum, AnEnum>();
           try {
-            final Map<AnEnum, AnEnum>? output = api.echoNullableNonNullEnumMap(
-              arg_enumMap,
-            );
+            final Map<AnEnum, AnEnum>? output = api.echoNullableNonNullEnumMap(arg_enumMap);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -6001,12 +5609,12 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final Map<int, AllNullableTypes>? arg_classMap =
-              (args[0] as Map<Object?, Object?>?)
-                  ?.cast<int, AllNullableTypes>();
+          final Map<int, AllNullableTypes>? arg_classMap = (args[0] as Map<Object?, Object?>?)
+              ?.cast<int, AllNullableTypes>();
           try {
-            final Map<int, AllNullableTypes>? output = api
-                .echoNullableNonNullClassMap(arg_classMap);
+            final Map<int, AllNullableTypes>? output = api.echoNullableNonNullClassMap(
+              arg_classMap,
+            );
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -6056,9 +5664,7 @@ abstract class FlutterIntegrationCoreApi {
           final List<Object?> args = message! as List<Object?>;
           final AnotherEnum? arg_anotherEnum = args[0] as AnotherEnum?;
           try {
-            final AnotherEnum? output = api.echoAnotherNullableEnum(
-              arg_anotherEnum,
-            );
+            final AnotherEnum? output = api.echoAnotherNullableEnum(arg_anotherEnum);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -6123,16 +5729,14 @@ abstract class FlutterIntegrationCoreApi {
 
 /// An API that can be implemented for minimal, compile-only tests.
 class HostTrivialApi {
-  /// Constructor for [HostTrivialApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
+  /// Constructor for [HostTrivialApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  HostTrivialApi({
-    BinaryMessenger? binaryMessenger,
-    String messageChannelSuffix = '',
-  }) : pigeonVar_binaryMessenger = binaryMessenger,
-       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
-           ? '.$messageChannelSuffix'
-           : '';
+  HostTrivialApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+    : pigeonVar_binaryMessenger = binaryMessenger,
+      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+          ? '.$messageChannelSuffix'
+          : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -6150,26 +5754,20 @@ class HostTrivialApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 }
 
 /// A simple API implemented in some unit tests.
 class HostSmallApi {
-  /// Constructor for [HostSmallApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
+  /// Constructor for [HostSmallApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  HostSmallApi({
-    BinaryMessenger? binaryMessenger,
-    String messageChannelSuffix = '',
-  }) : pigeonVar_binaryMessenger = binaryMessenger,
-       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
-           ? '.$messageChannelSuffix'
-           : '';
+  HostSmallApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+    : pigeonVar_binaryMessenger = binaryMessenger,
+      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+          ? '.$messageChannelSuffix'
+          : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -6184,9 +5782,7 @@ class HostSmallApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[aString],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aString]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -6208,11 +5804,7 @@ class HostSmallApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 }
 
@@ -6229,9 +5821,7 @@ abstract class FlutterSmallApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) {
-    messageChannelSuffix = messageChannelSuffix.isNotEmpty
-        ? '.$messageChannelSuffix'
-        : '';
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoWrappedList$messageChannelSuffix',

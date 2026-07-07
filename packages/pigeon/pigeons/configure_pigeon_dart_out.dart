@@ -5,11 +5,7 @@
 import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(
-  PigeonOptions(
-    dartOut: 'stdout',
-    javaOut: 'stdout',
-    dartOptions: DartOptions(ignoreLints: false),
-  ),
+  PigeonOptions(dartOut: 'stdout', javaOut: 'stdout', dartOptions: DartOptions(ignoreLints: false)),
 )
 @HostApi()
 abstract class ConfigurePigeonApi {

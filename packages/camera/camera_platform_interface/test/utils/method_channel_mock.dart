@@ -6,13 +6,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class MethodChannelMock {
-  MethodChannelMock({
-    required String channelName,
-    this.delay,
-    required this.methods,
-  }) : methodChannel = MethodChannel(channelName) {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(methodChannel, _handler);
+  MethodChannelMock({required String channelName, this.delay, required this.methods})
+    : methodChannel = MethodChannel(channelName) {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+      methodChannel,
+      _handler,
+    );
   }
 
   final Duration? delay;

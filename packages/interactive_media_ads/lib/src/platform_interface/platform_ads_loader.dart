@@ -81,8 +81,7 @@ abstract base class PlatformAdsLoader {
       'unit testing, `InteractiveMediaAdsPlatform.instance` can be set with '
       'your own test implementation.',
     );
-    final PlatformAdsLoader implementation = InteractiveMediaAdsPlatform
-        .instance!
+    final PlatformAdsLoader implementation = InteractiveMediaAdsPlatform.instance!
         .createPlatformAdsLoader(params);
     return implementation;
   }

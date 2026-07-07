@@ -1,3 +1,17 @@
+## 2.4.26
+
+* Updates internal implementation to use Kotlin Pigeon.
+
+## 2.4.25
+
+* Bumps the test-dependencies group across 2 directories with 1 update.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
+## 2.4.24
+
+* Migrates to Built-in Kotlin to support AGP 9.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
 ## 2.4.23
 
 * Fixes dartdoc comments that accidentally used HTML.

@@ -64,17 +64,10 @@ class _App extends StatelessWidget {
         ),
         body: TabBarView(
           children: <Widget>[
+            _ViewTypeTabBar(builder: (VideoViewType viewType) => _BumbleBeeRemoteVideo(viewType)),
+            _ViewTypeTabBar(builder: (VideoViewType viewType) => _ButterFlyAssetVideo(viewType)),
             _ViewTypeTabBar(
-              builder: (VideoViewType viewType) =>
-                  _BumbleBeeRemoteVideo(viewType),
-            ),
-            _ViewTypeTabBar(
-              builder: (VideoViewType viewType) =>
-                  _ButterFlyAssetVideo(viewType),
-            ),
-            _ViewTypeTabBar(
-              builder: (VideoViewType viewType) =>
-                  _ButterFlyAssetVideoInList(viewType),
+              builder: (VideoViewType viewType) => _ButterFlyAssetVideoInList(viewType),
             ),
           ],
         ),
@@ -92,8 +85,7 @@ class _ViewTypeTabBar extends StatefulWidget {
   State<_ViewTypeTabBar> createState() => _ViewTypeTabBarState();
 }
 
-class _ViewTypeTabBarState extends State<_ViewTypeTabBar>
-    with SingleTickerProviderStateMixin {
+class _ViewTypeTabBarState extends State<_ViewTypeTabBar> with SingleTickerProviderStateMixin {
   late final TabController _tabController;
 
   @override
@@ -155,14 +147,9 @@ class _ButterFlyAssetVideoInList extends StatelessWidget {
             children: <Widget>[
               Column(
                 children: <Widget>[
-                  const ListTile(
-                    leading: Icon(Icons.cake),
-                    title: Text('Video video'),
-                  ),
+                  const ListTile(leading: Icon(Icons.cake), title: Text('Video video')),
                   Stack(
-                    alignment:
-                        FractionalOffset.bottomRight +
-                        const FractionalOffset(-0.1, -0.1),
+                    alignment: FractionalOffset.bottomRight + const FractionalOffset(-0.1, -0.1),
                     children: <Widget>[
                       _ButterFlyAssetVideo(viewType),
                       Image.asset('assets/flutter-mark-square-64.png'),
@@ -195,10 +182,7 @@ class _ExampleCard extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          ListTile(
-            leading: const Icon(Icons.airline_seat_flat_angled),
-            title: Text(title),
-          ),
+          ListTile(leading: const Icon(Icons.airline_seat_flat_angled), title: Text(title)),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: OverflowBar(
@@ -303,18 +287,14 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
     final String fileContents = await DefaultAssetBundle.of(
       context,
     ).loadString('assets/bumble_bee_captions.vtt');
-    return WebVTTCaptionFile(
-      fileContents,
-    ); // For vtt files, use WebVTTCaptionFile
+    return WebVTTCaptionFile(fileContents); // For vtt files, use WebVTTCaptionFile
   }
 
   @override
   void initState() {
     super.initState();
     _controller = VideoPlayerController.networkUrl(
-      Uri.parse(
-        'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
-      ),
+      Uri.parse('https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4'),
       closedCaptionFile: _loadCaptions(),
       videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
       viewType: widget.viewType,
@@ -487,9 +467,7 @@ class _PlayerVideoAndPopPageState extends State<_PlayerVideoAndPopPage> {
   void initState() {
     super.initState();
 
-    _videoPlayerController = VideoPlayerController.asset(
-      'assets/Butterfly-209.mp4',
-    );
+    _videoPlayerController = VideoPlayerController.asset('assets/Butterfly-209.mp4');
     _videoPlayerController.addListener(() {
       if (startedPlaying && !_videoPlayerController.value.isPlaying) {
         Navigator.pop(context);

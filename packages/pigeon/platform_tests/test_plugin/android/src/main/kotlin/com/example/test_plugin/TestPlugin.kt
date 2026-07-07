@@ -113,6 +113,22 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     return list
   }
 
+  override fun echoStringList(stringList: List<String?>): List<String?> {
+    return stringList
+  }
+
+  override fun echoIntList(intList: List<Long?>): List<Long?> {
+    return intList
+  }
+
+  override fun echoDoubleList(doubleList: List<Double?>): List<Double?> {
+    return doubleList
+  }
+
+  override fun echoBoolList(boolList: List<Boolean?>): List<Boolean?> {
+    return boolList
+  }
+
   override fun echoEnumList(enumList: List<AnEnum?>): List<AnEnum?> {
     return enumList
   }

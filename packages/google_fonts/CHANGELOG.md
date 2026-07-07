@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
 ## 8.1.0
 
 - Adds the ability to supply a custom HTTP client to `GoogleFonts.config`.

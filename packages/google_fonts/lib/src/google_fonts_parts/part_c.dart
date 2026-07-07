@@ -6404,9 +6404,7 @@ class PartC {
       displayMedium: chocolateClassicalSans(textStyle: textTheme.displayMedium),
       displaySmall: chocolateClassicalSans(textStyle: textTheme.displaySmall),
       headlineLarge: chocolateClassicalSans(textStyle: textTheme.headlineLarge),
-      headlineMedium: chocolateClassicalSans(
-        textStyle: textTheme.headlineMedium,
-      ),
+      headlineMedium: chocolateClassicalSans(textStyle: textTheme.headlineMedium),
       headlineSmall: chocolateClassicalSans(textStyle: textTheme.headlineSmall),
       titleLarge: chocolateClassicalSans(textStyle: textTheme.titleLarge),
       titleMedium: chocolateClassicalSans(textStyle: textTheme.titleMedium),

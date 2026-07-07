@@ -120,10 +120,7 @@ void main() {
           showTitle: false,
         )
         ..setResponse(true);
-      expect(
-        await launchUrlString(urlString, mode: LaunchMode.inAppWebView),
-        isTrue,
-      );
+      expect(await launchUrlString(urlString, mode: LaunchMode.inAppWebView), isTrue);
     });
 
     test('external browser', () async {
@@ -140,10 +137,7 @@ void main() {
           showTitle: false,
         )
         ..setResponse(true);
-      expect(
-        await launchUrlString(urlString, mode: LaunchMode.externalApplication),
-        isTrue,
-      );
+      expect(await launchUrlString(urlString, mode: LaunchMode.externalApplication), isTrue);
     });
 
     test('in-app browser', () async {
@@ -160,10 +154,7 @@ void main() {
           showTitle: false,
         )
         ..setResponse(true);
-      expect(
-        await launchUrlString(urlString, mode: LaunchMode.inAppBrowserView),
-        isTrue,
-      );
+      expect(await launchUrlString(urlString, mode: LaunchMode.inAppBrowserView), isTrue);
     });
 
     test('in-app browser with title', () async {
@@ -205,10 +196,7 @@ void main() {
         )
         ..setResponse(true);
       expect(
-        await launchUrlString(
-          urlString,
-          mode: LaunchMode.externalNonBrowserApplication,
-        ),
+        await launchUrlString(urlString, mode: LaunchMode.externalNonBrowserApplication),
         isTrue,
       );
     });
@@ -231,9 +219,7 @@ void main() {
         await launchUrlString(
           urlString,
           mode: LaunchMode.inAppWebView,
-          webViewConfiguration: const WebViewConfiguration(
-            enableJavaScript: false,
-          ),
+          webViewConfiguration: const WebViewConfiguration(enableJavaScript: false),
         ),
         isTrue,
       );
@@ -257,9 +243,7 @@ void main() {
         await launchUrlString(
           urlString,
           mode: LaunchMode.inAppWebView,
-          webViewConfiguration: const WebViewConfiguration(
-            enableDomStorage: false,
-          ),
+          webViewConfiguration: const WebViewConfiguration(enableDomStorage: false),
         ),
         isTrue,
       );
@@ -293,8 +277,7 @@ void main() {
 
     test('cannot launch a non-web URL in a webview', () async {
       expect(
-        () async =>
-            launchUrlString('tel:555-555-5555', mode: LaunchMode.inAppWebView),
+        () async => launchUrlString('tel:555-555-5555', mode: LaunchMode.inAppWebView),
         throwsA(isA<ArgumentError>()),
       );
     });
@@ -318,8 +301,7 @@ void main() {
 
     test('allows non-parsable url', () async {
       // Not a valid Dart [Uri], but a valid URL on at least some platforms.
-      const urlString =
-          'rdp://full%20address=s:mypc:3389&audiomode=i:2&disable%20themes=i:1';
+      const urlString = 'rdp://full%20address=s:mypc:3389&audiomode=i:2&disable%20themes=i:1';
       mock
         ..setLaunchExpectations(
           url: urlString,

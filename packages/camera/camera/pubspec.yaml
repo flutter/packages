@@ -7,8 +7,8 @@ issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+
 version: 0.12.1
 
 environment:
-  sdk: ^3.9.0
-  flutter: ">=3.35.0"
+  sdk: ^3.10.0
+  flutter: ">=3.38.0"
 
 flutter:
   plugin:
@@ -21,8 +21,8 @@ flutter:
         default_package: camera_web
 
 dependencies:
-  camera_android_camerax: ^0.7.1
-  camera_avfoundation: ^0.10.1
+  camera_android_camerax: ^0.7.4
+  camera_avfoundation: ^0.10.2
   camera_platform_interface: ^2.13.0
   camera_web: ^0.3.3
   flutter:
@@ -38,8 +38,3 @@ dev_dependencies:
 
 topics:
   - camera
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
-dependency_overrides:
-  camera_android_camerax: {path: ../../../packages/camera/camera_android_camerax}
-  camera_avfoundation: {path: ../../../packages/camera/camera_avfoundation}

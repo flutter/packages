@@ -78,10 +78,7 @@ set xdgProcessRunner(XdgProcessRunner processRunner) {
 
 XdgProcessRunner _processRunner = const _DefaultProcessRunner();
 
-List<Directory> _directoryListFromEnvironment(
-  String envVar,
-  List<Directory> fallback,
-) {
+List<Directory> _directoryListFromEnvironment(String envVar, List<Directory> fallback) {
   ArgumentError.checkNotNull(envVar);
   ArgumentError.checkNotNull(fallback);
   final String? value = _getenv(envVar);
@@ -108,10 +105,7 @@ Directory? _directoryFromEnvironment(String envVar) {
   return Directory(value);
 }
 
-Directory _directoryFromEnvironmentWithFallback(
-  String envVar,
-  String fallback,
-) {
+Directory _directoryFromEnvironmentWithFallback(String envVar, String fallback) {
   ArgumentError.checkNotNull(envVar);
   final String? value = _getenv(envVar);
   if (value == null || value.isEmpty) {
@@ -139,8 +133,7 @@ Directory _getDirectory(String subdir) {
 /// `$XDG_CACHE_HOME`).
 ///
 /// Throws [StateError] if the HOME environment variable is not set.
-Directory get cacheHome =>
-    _directoryFromEnvironmentWithFallback('XDG_CACHE_HOME', '.cache');
+Directory get cacheHome => _directoryFromEnvironmentWithFallback('XDG_CACHE_HOME', '.cache');
 
 /// The list of preference-ordered base directories relative to
 /// which configuration files should be searched. (Corresponds to
@@ -148,17 +141,14 @@ Directory get cacheHome =>
 ///
 /// Throws [StateError] if the HOME environment variable is not set.
 List<Directory> get configDirs {
-  return _directoryListFromEnvironment('XDG_CONFIG_DIRS', <Directory>[
-    Directory('/etc/xdg'),
-  ]);
+  return _directoryListFromEnvironment('XDG_CONFIG_DIRS', <Directory>[Directory('/etc/xdg')]);
 }
 
 /// The a single base directory relative to which user-specific
 /// configuration files should be written. (Corresponds to `$XDG_CONFIG_HOME`).
 ///
 /// Throws [StateError] if the HOME environment variable is not set.
-Directory get configHome =>
-    _directoryFromEnvironmentWithFallback('XDG_CONFIG_HOME', '.config');
+Directory get configHome => _directoryFromEnvironmentWithFallback('XDG_CONFIG_HOME', '.config');
 
 /// The list of preference-ordered base directories relative to
 /// which data files should be searched. (Corresponds to `$XDG_DATA_DIRS`).
@@ -175,8 +165,7 @@ List<Directory> get dataDirs {
 /// written. (Corresponds to `$XDG_DATA_HOME`).
 ///
 /// Throws [StateError] if the HOME environment variable is not set.
-Directory get dataHome =>
-    _directoryFromEnvironmentWithFallback('XDG_DATA_HOME', '.local/share');
+Directory get dataHome => _directoryFromEnvironmentWithFallback('XDG_DATA_HOME', '.local/share');
 
 /// The base directory relative to which user-specific runtime
 /// files and other file objects should be placed. (Corresponds to
@@ -189,8 +178,7 @@ Directory? get runtimeDir => _directoryFromEnvironment('XDG_RUNTIME_DIR');
 /// written. (Corresponds to `$XDG_STATE_HOME`).
 ///
 /// Throws [StateError] if the HOME environment variable is not set.
-Directory get stateHome =>
-    _directoryFromEnvironmentWithFallback('XDG_STATE_HOME', '.local/state');
+Directory get stateHome => _directoryFromEnvironmentWithFallback('XDG_STATE_HOME', '.local/state');
 
 /// Gets the xdg user directory named by `dirName`.
 ///
@@ -200,9 +188,7 @@ Directory get stateHome =>
 Directory? getUserDirectory(String dirName) {
   final ProcessResult result;
   try {
-    result = _processRunner.runSync('xdg-user-dir', <String>[
-      dirName,
-    ], stdoutEncoding: utf8);
+    result = _processRunner.runSync('xdg-user-dir', <String>[dirName], stdoutEncoding: utf8);
   } on ProcessException catch (e) {
     // Silently return null if it's missing, otherwise pass the exception up.
     if (e.errorCode == _noSuchFileError) {
@@ -230,9 +216,7 @@ Set<String> getUserDirectoryNames() {
     return const <String>{};
   }
   final result = <String>{};
-  final dirRegExp = RegExp(
-    r'^\s*XDG_(?<dirname>[^=]*)_DIR\s*=\s*(?<dir>.*)\s*$',
-  );
+  final dirRegExp = RegExp(r'^\s*XDG_(?<dirname>[^=]*)_DIR\s*=\s*(?<dir>.*)\s*$');
   for (final line in contents) {
     final RegExpMatch? match = dirRegExp.firstMatch(line);
     if (match == null) {

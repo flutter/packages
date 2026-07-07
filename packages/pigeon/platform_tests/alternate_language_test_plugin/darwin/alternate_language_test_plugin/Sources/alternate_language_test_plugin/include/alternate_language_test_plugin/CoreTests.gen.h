@@ -336,6 +336,26 @@ NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void);
 /// Returns the passed list, to test serialization and deserialization.
 ///
 /// @return `nil` only when `error != nil`.
+- (nullable NSArray<NSString *> *)echoStringList:(NSArray<NSString *> *)stringList
+                                           error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed list, to test serialization and deserialization.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable NSArray<NSNumber *> *)echoIntList:(NSArray<NSNumber *> *)intList
+                                        error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed list, to test serialization and deserialization.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable NSArray<NSNumber *> *)echoDoubleList:(NSArray<NSNumber *> *)doubleList
+                                           error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed list, to test serialization and deserialization.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable NSArray<NSNumber *> *)echoBoolList:(NSArray<NSNumber *> *)boolList
+                                         error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed list, to test serialization and deserialization.
+///
+/// @return `nil` only when `error != nil`.
 - (nullable NSArray<FLTAnEnumBox *> *)echoEnumList:(NSArray<FLTAnEnumBox *> *)enumList
                                              error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns the passed list, to test serialization and deserialization.

@@ -2,8 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart'
-    show immutable, listEquals, objectRuntimeType;
+import 'package:flutter/foundation.dart' show immutable, listEquals, objectRuntimeType;
 import 'package:flutter/material.dart' show Color;
 
 import 'types.dart';
@@ -158,10 +157,8 @@ class Heatmap implements MapsObject<Heatmap> {
   /// Creates a new [Heatmap] object whose values are the same as this
   /// instance.
   @override
-  Heatmap clone() => copyWith(
-    dataParam: List<WeightedLatLng>.of(data),
-    gradientParam: gradient?.clone(),
-  );
+  Heatmap clone() =>
+      copyWith(dataParam: List<WeightedLatLng>.of(data), gradientParam: gradient?.clone());
 
   /// Converts this object to something serializable in JSON.
   @override
@@ -237,9 +234,7 @@ class WeightedLatLng {
 
   @override
   bool operator ==(Object other) {
-    return other is WeightedLatLng &&
-        other.point == point &&
-        other.weight == weight;
+    return other is WeightedLatLng && other.point == point && other.weight == weight;
   }
 
   @override
@@ -266,20 +261,13 @@ class HeatmapGradient {
 
   /// Creates a new [HeatmapGradient] object whose values are the same as this
   /// instance, unless overwritten by the specified parameters.
-  HeatmapGradient copyWith({
-    List<HeatmapGradientColor>? colorsParam,
-    int? colorMapSizeParam,
-  }) {
-    return HeatmapGradient(
-      colorsParam ?? colors,
-      colorMapSize: colorMapSizeParam ?? colorMapSize,
-    );
+  HeatmapGradient copyWith({List<HeatmapGradientColor>? colorsParam, int? colorMapSizeParam}) {
+    return HeatmapGradient(colorsParam ?? colors, colorMapSize: colorMapSizeParam ?? colorMapSize);
   }
 
   /// Creates a new [HeatmapGradient] object whose values are the same as this
   /// instance.
-  HeatmapGradient clone() =>
-      copyWith(colorsParam: List<HeatmapGradientColor>.of(colors));
+  HeatmapGradient clone() => copyWith(colorsParam: List<HeatmapGradientColor>.of(colors));
 
   /// Converts this object to something serializable in JSON.
   Object toJson() {
@@ -291,14 +279,8 @@ class HeatmapGradient {
       }
     }
 
-    addIfPresent(
-      'colors',
-      colors.map((HeatmapGradientColor e) => e.color.toARGB32()).toList(),
-    );
-    addIfPresent(
-      'startPoints',
-      colors.map((HeatmapGradientColor e) => e.startPoint).toList(),
-    );
+    addIfPresent('colors', colors.map((HeatmapGradientColor e) => e.color.toARGB32()).toList());
+    addIfPresent('startPoints', colors.map((HeatmapGradientColor e) => e.startPoint).toList());
     addIfPresent('colorMapSize', colorMapSize);
 
     return json;
@@ -336,10 +318,7 @@ class HeatmapGradientColor {
   /// Creates a new [HeatmapGradientColor] object whose values are the same as
   /// this instance, unless overwritten by the specified parameters.
   HeatmapGradientColor copyWith({Color? colorParam, double? startPointParam}) {
-    return HeatmapGradientColor(
-      colorParam ?? color,
-      startPointParam ?? startPoint,
-    );
+    return HeatmapGradientColor(colorParam ?? color, startPointParam ?? startPoint);
   }
 
   /// Creates a new [HeatmapGradientColor] object whose values are the same as
@@ -354,9 +333,7 @@ class HeatmapGradientColor {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is HeatmapGradientColor &&
-        color == other.color &&
-        startPoint == other.startPoint;
+    return other is HeatmapGradientColor && color == other.color && startPoint == other.startPoint;
   }
 
   @override

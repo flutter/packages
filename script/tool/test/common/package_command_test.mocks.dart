@@ -29,12 +29,10 @@ import 'package:mockito/src/dummies.dart' as _i5;
 // ignore_for_file: subtype_of_sealed_class
 
 class _FakeCommit_0 extends _i1.SmartFake implements _i2.Commit {
-  _FakeCommit_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakeCommit_0(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
 }
 
-class _FakeBranchReference_1 extends _i1.SmartFake
-    implements _i3.BranchReference {
+class _FakeBranchReference_1 extends _i1.SmartFake implements _i3.BranchReference {
   _FakeBranchReference_1(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -68,10 +66,7 @@ class MockGitDir extends _i1.Mock implements _i4.GitDir {
       (super.noSuchMethod(
             Invocation.method(#commitFromRevision, [revision]),
             returnValue: _i6.Future<_i2.Commit>.value(
-              _FakeCommit_0(
-                this,
-                Invocation.method(#commitFromRevision, [revision]),
-              ),
+              _FakeCommit_0(this, Invocation.method(#commitFromRevision, [revision])),
             ),
           )
           as _i6.Future<_i2.Commit>);
@@ -80,9 +75,7 @@ class MockGitDir extends _i1.Mock implements _i4.GitDir {
   _i6.Future<Map<String, _i2.Commit>> commits([String? branchName = r'HEAD']) =>
       (super.noSuchMethod(
             Invocation.method(#commits, [branchName]),
-            returnValue: _i6.Future<Map<String, _i2.Commit>>.value(
-              <String, _i2.Commit>{},
-            ),
+            returnValue: _i6.Future<Map<String, _i2.Commit>>.value(<String, _i2.Commit>{}),
           )
           as _i6.Future<Map<String, _i2.Commit>>);
 
@@ -98,30 +91,20 @@ class MockGitDir extends _i1.Mock implements _i4.GitDir {
   _i6.Future<List<_i3.BranchReference>> branches() =>
       (super.noSuchMethod(
             Invocation.method(#branches, []),
-            returnValue: _i6.Future<List<_i3.BranchReference>>.value(
-              <_i3.BranchReference>[],
-            ),
+            returnValue: _i6.Future<List<_i3.BranchReference>>.value(<_i3.BranchReference>[]),
           )
           as _i6.Future<List<_i3.BranchReference>>);
 
   @override
   _i6.Stream<_i7.Tag> tags() =>
-      (super.noSuchMethod(
-            Invocation.method(#tags, []),
-            returnValue: _i6.Stream<_i7.Tag>.empty(),
-          )
+      (super.noSuchMethod(Invocation.method(#tags, []), returnValue: _i6.Stream<_i7.Tag>.empty())
           as _i6.Stream<_i7.Tag>);
 
   @override
-  _i6.Future<List<_i8.CommitReference>> showRef({
-    bool? heads = false,
-    bool? tags = false,
-  }) =>
+  _i6.Future<List<_i8.CommitReference>> showRef({bool? heads = false, bool? tags = false}) =>
       (super.noSuchMethod(
             Invocation.method(#showRef, [], {#heads: heads, #tags: tags}),
-            returnValue: _i6.Future<List<_i8.CommitReference>>.value(
-              <_i8.CommitReference>[],
-            ),
+            returnValue: _i6.Future<List<_i8.CommitReference>>.value(<_i8.CommitReference>[]),
           )
           as _i6.Future<List<_i8.CommitReference>>);
 
@@ -130,10 +113,7 @@ class MockGitDir extends _i1.Mock implements _i4.GitDir {
       (super.noSuchMethod(
             Invocation.method(#currentBranch, []),
             returnValue: _i6.Future<_i3.BranchReference>.value(
-              _FakeBranchReference_1(
-                this,
-                Invocation.method(#currentBranch, []),
-              ),
+              _FakeBranchReference_1(this, Invocation.method(#currentBranch, [])),
             ),
           )
           as _i6.Future<_i3.BranchReference>);
@@ -145,14 +125,8 @@ class MockGitDir extends _i1.Mock implements _i4.GitDir {
     String? path,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(
-              #lsTree,
-              [treeish],
-              {#subTreesOnly: subTreesOnly, #path: path},
-            ),
-            returnValue: _i6.Future<List<_i9.TreeEntry>>.value(
-              <_i9.TreeEntry>[],
-            ),
+            Invocation.method(#lsTree, [treeish], {#subTreesOnly: subTreesOnly, #path: path}),
+            returnValue: _i6.Future<List<_i9.TreeEntry>>.value(<_i9.TreeEntry>[]),
           )
           as _i6.Future<List<_i9.TreeEntry>>);
 
@@ -163,11 +137,7 @@ class MockGitDir extends _i1.Mock implements _i4.GitDir {
     String? commitMessage,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#createOrUpdateBranch, [
-              branchName,
-              treeSha,
-              commitMessage,
-            ]),
+            Invocation.method(#createOrUpdateBranch, [branchName, treeSha, commitMessage]),
             returnValue: _i6.Future<String?>.value(),
           )
           as _i6.Future<String?>);
@@ -201,9 +171,7 @@ class MockGitDir extends _i1.Mock implements _i4.GitDir {
   _i6.Future<Map<String, String>> writeObjects(List<String>? paths) =>
       (super.noSuchMethod(
             Invocation.method(#writeObjects, [paths]),
-            returnValue: _i6.Future<Map<String, String>>.value(
-              <String, String>{},
-            ),
+            returnValue: _i6.Future<Map<String, String>>.value(<String, String>{}),
           )
           as _i6.Future<Map<String, String>>);
 
@@ -247,11 +215,7 @@ class MockGitDir extends _i1.Mock implements _i4.GitDir {
     String? commitMessage,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#updateBranch, [
-              branchName,
-              populater,
-              commitMessage,
-            ]),
+            Invocation.method(#updateBranch, [branchName, populater, commitMessage]),
             returnValue: _i6.Future<_i2.Commit?>.value(),
           )
           as _i6.Future<_i2.Commit?>);

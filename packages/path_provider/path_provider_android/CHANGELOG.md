@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
 ## 2.3.1
 
 * Removes dependency on `PathUtils` to avoid a potential

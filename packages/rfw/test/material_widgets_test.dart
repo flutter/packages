@@ -11,8 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rfw/formats.dart' show parseLibraryFile;
 import 'package:rfw/rfw.dart';
 
-import 'tolerant_comparator.dart'
-    if (dart.library.js_interop) 'tolerant_comparator_web.dart';
+import 'tolerant_comparator.dart' if (dart.library.js_interop) 'tolerant_comparator_web.dart';
 import 'utils.dart';
 
 /// A const to tell apart Wasm from JS web.
@@ -58,10 +57,7 @@ void main() {
         ),
       ),
     );
-    expect(
-      tester.takeException().toString(),
-      contains('Could not find remote widget named'),
-    );
+    expect(tester.takeException().toString(), contains('Could not find remote widget named'));
 
     runtime.update(
       const LibraryName(<String>['test']),
@@ -241,10 +237,7 @@ void main() {
     await tester.tap(find.text('second'));
     await tester.pumpAndSettle();
     expect(eventLog, contains('menu_item {args: second}'));
-    expect(
-      eventLog,
-      contains(kIsJS ? 'dropdown {value: 2}' : 'dropdown {value: 2.0}'),
-    );
+    expect(eventLog, contains(kIsJS ? 'dropdown {value: 2}' : 'dropdown {value: 2.0}'));
 
     await tester.tapAt(const Offset(20.0, 20.0));
     await tester.pump();
@@ -273,10 +266,7 @@ void main() {
         ),
       ),
     );
-    expect(
-      tester.takeException().toString(),
-      contains('Could not find remote widget named'),
-    );
+    expect(tester.takeException().toString(), contains('Could not find remote widget named'));
 
     addTearDown(() async {
       await tester.binding.setSurfaceSize(null);
@@ -331,16 +321,12 @@ void main() {
 
     await expectLater(
       find.byType(RemoteWidget),
-      matchesGoldenFile(
-        'goldens/material_test.button_bar_properties.overflow.png',
-      ),
+      matchesGoldenFile('goldens/material_test.button_bar_properties.overflow.png'),
       skip: !runGoldens || true,
     );
   });
 
-  testWidgets('OverflowBar configured to resemble ButtonBar', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('OverflowBar configured to resemble ButtonBar', (WidgetTester tester) async {
     final Runtime runtime = setupRuntime();
     final data = DynamicContent();
     final eventLog = <String>[];
@@ -357,10 +343,7 @@ void main() {
         ),
       ),
     );
-    expect(
-      tester.takeException().toString(),
-      contains('Could not find remote widget named'),
-    );
+    expect(tester.takeException().toString(), contains('Could not find remote widget named'));
 
     runtime.update(
       testName,
@@ -397,9 +380,7 @@ void main() {
     await tester.pump();
     await expectLater(
       find.byType(RemoteWidget),
-      matchesGoldenFile(
-        'goldens/material_test.overflow_bar_resembles_button_bar.png',
-      ),
+      matchesGoldenFile('goldens/material_test.overflow_bar_resembles_button_bar.png'),
       // TODO(louisehsu): Unskip once golden file is updated. See
       // https://github.com/flutter/flutter/issues/151995
       skip: !runGoldens || true,
@@ -423,10 +404,7 @@ void main() {
         ),
       ),
     );
-    expect(
-      tester.takeException().toString(),
-      contains('Could not find remote widget named'),
-    );
+    expect(tester.takeException().toString(), contains('Could not find remote widget named'));
 
     addTearDown(() async {
       await tester.binding.setSurfaceSize(null);
@@ -478,9 +456,7 @@ void main() {
 
     await expectLater(
       find.byType(RemoteWidget),
-      matchesGoldenFile(
-        'goldens/material_test.overflow_bar_properties.overflow.png',
-      ),
+      matchesGoldenFile('goldens/material_test.overflow_bar_properties.overflow.png'),
       // TODO(louisehsu): Unskip once golden file is updated. See
       // https://github.com/flutter/flutter/issues/151995
       skip: !runGoldens || true,
@@ -504,10 +480,7 @@ void main() {
         ),
       ),
     );
-    expect(
-      tester.takeException().toString(),
-      contains('Could not find remote widget named'),
-    );
+    expect(tester.takeException().toString(), contains('Could not find remote widget named'));
 
     runtime.update(
       testName,
@@ -537,9 +510,7 @@ void main() {
 
     // Hover
     final Offset center = tester.getCenter(find.byType(InkResponse));
-    final TestGesture gesture = await tester.createGesture(
-      kind: PointerDeviceKind.mouse,
-    );
+    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
     await gesture.addPointer();
     addTearDown(gesture.removePointer);
     await gesture.moveTo(center);
@@ -555,9 +526,7 @@ void main() {
     // Tap
     await gesture.down(center);
     await tester.pump(); // start gesture
-    await tester.pump(
-      const Duration(milliseconds: 200),
-    ); // wait for splash to be well under way
+    await tester.pump(const Duration(milliseconds: 200)); // wait for splash to be well under way
 
     await expectLater(
       find.byType(RemoteWidget),
@@ -587,10 +556,7 @@ void main() {
         ),
       ),
     );
-    expect(
-      tester.takeException().toString(),
-      contains('Could not find remote widget named'),
-    );
+    expect(tester.takeException().toString(), contains('Could not find remote widget named'));
 
     runtime.update(
       testName,
@@ -618,10 +584,7 @@ void main() {
       tester.widget<Material>(find.byType(Material)).animationDuration,
       const Duration(milliseconds: 300),
     );
-    expect(
-      tester.widget<Material>(find.byType(Material)).borderOnForeground,
-      false,
-    );
+    expect(tester.widget<Material>(find.byType(Material)).borderOnForeground, false);
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/material_test.material_properties.png'),
@@ -647,10 +610,7 @@ void main() {
     );
     await tester.pump();
 
-    expect(
-      tester.widget<Material>(find.byType(Material)).clipBehavior,
-      Clip.antiAlias,
-    );
+    expect(tester.widget<Material>(find.byType(Material)).clipBehavior, Clip.antiAlias);
   });
 
   testWidgets('Slider properties', (WidgetTester tester) async {
@@ -670,10 +630,7 @@ void main() {
         ),
       ),
     );
-    expect(
-      tester.takeException().toString(),
-      contains('Could not find remote widget named'),
-    );
+    expect(tester.takeException().toString(), contains('Could not find remote widget named'));
 
     runtime.update(
       testName,
@@ -732,18 +689,9 @@ void main() {
     //drag slider
     await _slideToValue(tester, sliderFinder, 20.0);
     await tester.pumpAndSettle();
-    expect(
-      eventLog,
-      contains(kIsJS ? 'slider {value: 20}' : 'slider {value: 20.0}'),
-    );
-    expect(
-      eventLog,
-      contains(kIsJS ? 'slider.start {value: 0}' : 'slider.start {value: 0.0}'),
-    );
-    expect(
-      eventLog,
-      contains(kIsJS ? 'slider.end {value: 20}' : 'slider.end {value: 20.0}'),
-    );
+    expect(eventLog, contains(kIsJS ? 'slider {value: 20}' : 'slider {value: 20.0}'));
+    expect(eventLog, contains(kIsJS ? 'slider.start {value: 0}' : 'slider.start {value: 0.0}'));
+    expect(eventLog, contains(kIsJS ? 'slider.end {value: 20}' : 'slider.end {value: 20.0}'));
   });
 }
 
@@ -757,8 +705,7 @@ Future<void> _slideToValue(
   final Offset zeroPoint =
       widgetTester.getTopLeft(slider) +
       Offset(paddingOffset, widgetTester.getSize(slider).height / 2);
-  final double totalWidth =
-      widgetTester.getSize(slider).width - (2 * paddingOffset);
+  final double totalWidth = widgetTester.getSize(slider).width - (2 * paddingOffset);
   final double calculateOffset = value * (totalWidth / 100);
   await widgetTester.dragFrom(zeroPoint, Offset(calculateOffset, 0));
 }

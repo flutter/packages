@@ -101,36 +101,30 @@ Future<void> main() async {
     );
   });
 
-  testWidgets(
-    'withWeakRefenceTo allows encapsulating class to be garbage collected',
-    (WidgetTester tester) async {
-      final gcCompleter = Completer<int>();
-      final instanceManager = android.PigeonInstanceManager(
-        onWeakReferenceRemoved: gcCompleter.complete,
-      );
+  testWidgets('withWeakRefenceTo allows encapsulating class to be garbage collected', (
+    WidgetTester tester,
+  ) async {
+    final gcCompleter = Completer<int>();
+    final instanceManager = android.PigeonInstanceManager(
+      onWeakReferenceRemoved: gcCompleter.complete,
+    );
 
-      ClassWithCallbackClass? instance = ClassWithCallbackClass();
-      instanceManager.addHostCreatedInstance(instance.callbackClass, 0);
-      instance = null;
+    ClassWithCallbackClass? instance = ClassWithCallbackClass();
+    instanceManager.addHostCreatedInstance(instance.callbackClass, 0);
+    instance = null;
 
-      // Force garbage collection.
-      await IntegrationTestWidgetsFlutterBinding.instance.watchPerformance(
-        () async {
-          await tester.pumpAndSettle();
-        },
-      );
+    // Force garbage collection.
+    await IntegrationTestWidgetsFlutterBinding.instance.watchPerformance(() async {
+      await tester.pumpAndSettle();
+    });
 
-      final int gcIdentifier = await gcCompleter.future;
-      expect(gcIdentifier, 0);
-    },
-    timeout: const Timeout(Duration(seconds: 10)),
-  );
+    final int gcIdentifier = await gcCompleter.future;
+    expect(gcIdentifier, 0);
+  }, timeout: const Timeout(Duration(seconds: 10)));
 
   // TODO(bparrishMines): This test is skipped because of
   // https://github.com/flutter/flutter/issues/123327
-  testWidgets('WebView is released by garbage collection', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('WebView is released by garbage collection', (WidgetTester tester) async {
     final webViewGCCompleter = Completer<void>();
 
     late final android.PigeonInstanceManager instanceManager;
@@ -158,9 +152,7 @@ Future<void> main() async {
                   userAgent: const WebSetting<String>.of('woeifj'),
                 ),
               ),
-              javascriptChannelRegistry: JavascriptChannelRegistry(
-                <JavascriptChannel>{},
-              ),
+              javascriptChannelRegistry: JavascriptChannelRegistry(<JavascriptChannel>{}),
               webViewPlatformCallbacksHandler: TestPlatformCallbacksHandler(),
             );
           },
@@ -240,8 +232,7 @@ Future<void> main() async {
         child: WebView(
           key: GlobalKey(),
           // This is the data URL for: '<!DOCTYPE html>'
-          initialUrl:
-              'data:text/html;charset=utf-8;base64,PCFET0NUWVBFIGh0bWw+',
+          initialUrl: 'data:text/html;charset=utf-8;base64,PCFET0NUWVBFIGh0bWw+',
           onWebViewCreated: (WebViewController controller) {
             controllerCompleter.complete(controller);
           },
@@ -293,10 +284,7 @@ Future<void> main() async {
     );
     await onPageFinished.future;
     // Wait for a potential call to resize after page is loaded.
-    await initialResizeCompleter.future.timeout(
-      const Duration(seconds: 3),
-      onTimeout: () => null,
-    );
+    await initialResizeCompleter.future.timeout(const Duration(seconds: 3), onTimeout: () => null);
 
     resizeButtonTapped = true;
     await tester.tap(find.byKey(const ValueKey<String>('resizeButton')));
@@ -395,12 +383,8 @@ Future<void> main() async {
   group('Video playback policy', () {
     late String videoTestBase64;
     setUpAll(() async {
-      final ByteData videoData = await rootBundle.load(
-        'assets/sample_video.mp4',
-      );
-      final String base64VideoData = base64Encode(
-        Uint8List.view(videoData.buffer),
-      );
+      final ByteData videoData = await rootBundle.load('assets/sample_video.mp4');
+      final String base64VideoData = base64Encode(Uint8List.view(videoData.buffer));
       final videoTest =
           '''
         <!DOCTYPE html><html>
@@ -459,9 +443,7 @@ Future<void> main() async {
       WebViewController controller = await controllerCompleter.future;
       await pageLoaded.future;
 
-      String isPaused = await controller.runJavascriptReturningResult(
-        'isPaused();',
-      );
+      String isPaused = await controller.runJavascriptReturningResult('isPaused();');
       expect(isPaused, _webviewBool(false));
 
       controllerCompleter = Completer<WebViewController>();
@@ -492,9 +474,7 @@ Future<void> main() async {
       expect(isPaused, _webviewBool(true));
     });
 
-    testWidgets('Changes to initialMediaPlaybackPolicy are ignored', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('Changes to initialMediaPlaybackPolicy are ignored', (WidgetTester tester) async {
       final controllerCompleter = Completer<WebViewController>();
       var pageLoaded = Completer<void>();
 
@@ -519,9 +499,7 @@ Future<void> main() async {
       final WebViewController controller = await controllerCompleter.future;
       await pageLoaded.future;
 
-      String isPaused = await controller.runJavascriptReturningResult(
-        'isPaused();',
-      );
+      String isPaused = await controller.runJavascriptReturningResult('isPaused();');
       expect(isPaused, _webviewBool(false));
 
       pageLoaded = Completer<void>();
@@ -596,9 +574,7 @@ Future<void> main() async {
       // Makes sure we get the correct event that indicates the video is actually playing.
       await videoPlaying.future;
 
-      final String fullScreen = await controller.runJavascriptReturningResult(
-        'isFullScreen();',
-      );
+      final String fullScreen = await controller.runJavascriptReturningResult('isFullScreen();');
       expect(fullScreen, _webviewBool(false));
     });
   });
@@ -606,12 +582,8 @@ Future<void> main() async {
   group('Audio playback policy', () {
     late String audioTestBase64;
     setUpAll(() async {
-      final ByteData audioData = await rootBundle.load(
-        'assets/sample_audio.ogg',
-      );
-      final String base64AudioData = base64Encode(
-        Uint8List.view(audioData.buffer),
-      );
+      final ByteData audioData = await rootBundle.load('assets/sample_audio.ogg');
+      final String base64AudioData = base64Encode(Uint8List.view(audioData.buffer));
       final audioTest =
           '''
         <!DOCTYPE html><html>
@@ -666,9 +638,7 @@ Future<void> main() async {
       await pageStarted.future;
       await pageLoaded.future;
 
-      String isPaused = await controller.runJavascriptReturningResult(
-        'isPaused();',
-      );
+      String isPaused = await controller.runJavascriptReturningResult('isPaused();');
       expect(isPaused, _webviewBool(false));
 
       controllerCompleter = Completer<WebViewController>();
@@ -704,9 +674,7 @@ Future<void> main() async {
       expect(isPaused, _webviewBool(true));
     });
 
-    testWidgets('Changes to initialMediaPlaybackPolicy are ignored', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('Changes to initialMediaPlaybackPolicy are ignored', (WidgetTester tester) async {
       final controllerCompleter = Completer<WebViewController>();
       var pageStarted = Completer<void>();
       var pageLoaded = Completer<void>();
@@ -736,9 +704,7 @@ Future<void> main() async {
       await pageStarted.future;
       await pageLoaded.future;
 
-      String isPaused = await controller.runJavascriptReturningResult(
-        'isPaused();',
-      );
+      String isPaused = await controller.runJavascriptReturningResult('isPaused();');
       expect(isPaused, _webviewBool(false));
 
       pageStarted = Completer<void>();
@@ -783,9 +749,7 @@ Future<void> main() async {
         </body>
         </html>
       ''';
-    final String getTitleTestBase64 = base64Encode(
-      const Utf8Encoder().convert(getTitleTest),
-    );
+    final String getTitleTestBase64 = base64Encode(const Utf8Encoder().convert(getTitleTest));
     final pageStarted = Completer<void>();
     final pageLoaded = Completer<void>();
     final controllerCompleter = Completer<WebViewController>();
@@ -839,9 +803,7 @@ Future<void> main() async {
         </html>
       ''';
 
-      final String scrollTestPageBase64 = base64Encode(
-        const Utf8Encoder().convert(scrollTestPage),
-      );
+      final String scrollTestPageBase64 = base64Encode(const Utf8Encoder().convert(scrollTestPage));
 
       final pageLoaded = Completer<void>();
       final controllerCompleter = Completer<WebViewController>();
@@ -850,8 +812,7 @@ Future<void> main() async {
         Directionality(
           textDirection: TextDirection.ltr,
           child: WebView(
-            initialUrl:
-                'data:text/html;charset=utf-8;base64,$scrollTestPageBase64',
+            initialUrl: 'data:text/html;charset=utf-8;base64,$scrollTestPageBase64',
             onWebViewCreated: (WebViewController controller) {
               controllerCompleter.complete(controller);
             },
@@ -925,9 +886,7 @@ Future<void> main() async {
         </html>
       ''';
 
-      final String scrollTestPageBase64 = base64Encode(
-        const Utf8Encoder().convert(scrollTestPage),
-      );
+      final String scrollTestPageBase64 = base64Encode(const Utf8Encoder().convert(scrollTestPage));
 
       final pageLoaded = Completer<void>();
       final controllerCompleter = Completer<WebViewController>();
@@ -936,8 +895,7 @@ Future<void> main() async {
         Directionality(
           textDirection: TextDirection.ltr,
           child: WebView(
-            initialUrl:
-                'data:text/html;charset=utf-8;base64,$scrollTestPageBase64',
+            initialUrl: 'data:text/html;charset=utf-8;base64,$scrollTestPageBase64',
             onWebViewCreated: (WebViewController controller) {
               controllerCompleter.complete(controller);
             },
@@ -971,9 +929,7 @@ Future<void> main() async {
       expect(Y_SCROLL * 2, scrollPosY);
     });
 
-    testWidgets('inputs are scrolled into view when focused', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('inputs are scrolled into view when focused', (WidgetTester tester) async {
       const scrollTestPage = '''
         <!DOCTYPE html>
         <html>
@@ -998,9 +954,7 @@ Future<void> main() async {
         </html>
       ''';
 
-      final String scrollTestPageBase64 = base64Encode(
-        const Utf8Encoder().convert(scrollTestPage),
-      );
+      final String scrollTestPageBase64 = base64Encode(const Utf8Encoder().convert(scrollTestPage));
 
       final pageLoaded = Completer<void>();
       final controllerCompleter = Completer<WebViewController>();
@@ -1013,8 +967,7 @@ Future<void> main() async {
               width: 200,
               height: 200,
               child: WebView(
-                initialUrl:
-                    'data:text/html;charset=utf-8;base64,$scrollTestPageBase64',
+                initialUrl: 'data:text/html;charset=utf-8;base64,$scrollTestPageBase64',
                 onWebViewCreated: (WebViewController controller) {
                   controllerCompleter.complete(controller);
                 },
@@ -1036,31 +989,23 @@ Future<void> main() async {
         controller,
         'JSON.stringify(viewport.getBoundingClientRect())',
       );
-      final viewportRectRelativeToViewport =
-          jsonDecode(viewportRectJSON) as Map<String, dynamic>;
+      final viewportRectRelativeToViewport = jsonDecode(viewportRectJSON) as Map<String, dynamic>;
 
-      num getDomRectComponent(
-        Map<String, dynamic> rectAsJson,
-        String component,
-      ) {
+      num getDomRectComponent(Map<String, dynamic> rectAsJson, String component) {
         return rectAsJson[component]! as num;
       }
 
       // Check that the input is originally outside of the viewport.
 
-      final String initialInputClientRectJSON =
-          await _runJavaScriptReturningResult(
-            controller,
-            'JSON.stringify(inputEl.getBoundingClientRect())',
-          );
+      final String initialInputClientRectJSON = await _runJavaScriptReturningResult(
+        controller,
+        'JSON.stringify(inputEl.getBoundingClientRect())',
+      );
       final initialInputClientRectRelativeToViewport =
           jsonDecode(initialInputClientRectJSON) as Map<String, dynamic>;
 
       expect(
-        getDomRectComponent(
-              initialInputClientRectRelativeToViewport,
-              'bottom',
-            ) <=
+        getDomRectComponent(initialInputClientRectRelativeToViewport, 'bottom') <=
             getDomRectComponent(viewportRectRelativeToViewport, 'bottom'),
         isFalse,
       );
@@ -1069,11 +1014,10 @@ Future<void> main() async {
 
       // Check that focusing the input brought it into view.
 
-      final String lastInputClientRectJSON =
-          await _runJavaScriptReturningResult(
-            controller,
-            'JSON.stringify(inputEl.getBoundingClientRect())',
-          );
+      final String lastInputClientRectJSON = await _runJavaScriptReturningResult(
+        controller,
+        'JSON.stringify(inputEl.getBoundingClientRect())',
+      );
       final lastInputClientRectRelativeToViewport =
           jsonDecode(lastInputClientRectJSON) as Map<String, dynamic>;
 
@@ -1159,15 +1103,10 @@ Future<void> main() async {
       expect(error, isNotNull);
 
       expect(error.errorType, isNotNull);
-      expect(
-        error.failingUrl?.startsWith('https://www.notawebsite..com'),
-        isTrue,
-      );
+      expect(error.failingUrl?.startsWith('https://www.notawebsite..com'), isTrue);
     });
 
-    testWidgets('onWebResourceError is not called with valid url', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('onWebResourceError is not called with valid url', (WidgetTester tester) async {
       final errorCompleter = Completer<WebResourceError>();
       final pageFinishCompleter = Completer<void>();
 
@@ -1176,8 +1115,7 @@ Future<void> main() async {
           textDirection: TextDirection.ltr,
           child: WebView(
             key: GlobalKey(),
-            initialUrl:
-                'data:text/html;charset=utf-8;base64,PCFET0NUWVBFIGh0bWw+',
+            initialUrl: 'data:text/html;charset=utf-8;base64,PCFET0NUWVBFIGh0bWw+',
             onWebResourceError: (WebResourceError error) {
               errorCompleter.complete(error);
             },
@@ -1190,9 +1128,7 @@ Future<void> main() async {
       await pageFinishCompleter.future;
     });
 
-    testWidgets('onWebResourceError only called for main frame', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('onWebResourceError only called for main frame', (WidgetTester tester) async {
       const iframeTest = '''
         <!DOCTYPE html>
         <html>
@@ -1204,9 +1140,7 @@ Future<void> main() async {
         </body>
         </html>
        ''';
-      final String iframeTestBase64 = base64Encode(
-        const Utf8Encoder().convert(iframeTest),
-      );
+      final String iframeTestBase64 = base64Encode(const Utf8Encoder().convert(iframeTest));
 
       final errorCompleter = Completer<WebResourceError>();
       final pageFinishCompleter = Completer<void>();
@@ -1254,17 +1188,12 @@ Future<void> main() async {
 
       await pageLoads.stream.first; // Wait for initial page load.
       final WebViewController controller = await controllerCompleter.future;
-      await controller.runJavascript(
-        'location.href = "https://www.youtube.com/"',
-      );
+      await controller.runJavascript('location.href = "https://www.youtube.com/"');
 
       // There should never be any second page load, since our new URL is
       // blocked. Still wait for a potential page change for some time in order
       // to give the test a chance to fail.
-      await pageLoads.stream.first.timeout(
-        const Duration(milliseconds: 500),
-        onTimeout: () => '',
-      );
+      await pageLoads.stream.first.timeout(const Duration(milliseconds: 500), onTimeout: () => '');
       final String? currentUrl = await controller.currentUrl();
       expect(currentUrl, isNot(contains('youtube.com')));
     });
@@ -1305,9 +1234,7 @@ Future<void> main() async {
     });
   });
 
-  testWidgets('launches with gestureNavigationEnabled on iOS', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('launches with gestureNavigationEnabled on iOS', (WidgetTester tester) async {
     final controllerCompleter = Completer<WebViewController>();
     await tester.pumpWidget(
       Directionality(
@@ -1331,9 +1258,7 @@ Future<void> main() async {
     expect(currentUrl, primaryUrl);
   });
 
-  testWidgets('target _blank opens in same window', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('target _blank opens in same window', (WidgetTester tester) async {
     final controllerCompleter = Completer<WebViewController>();
     final pageLoaded = Completer<void>();
     await tester.pumpWidget(
@@ -1393,9 +1318,7 @@ Future<void> main() async {
     await expectLater(controller.currentUrl(), completion(primaryUrl));
   });
 
-  testWidgets('JavaScript does not run in parent window', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('JavaScript does not run in parent window', (WidgetTester tester) async {
     const iframe = '''
         <!DOCTYPE html>
         <script>
@@ -1408,9 +1331,7 @@ Future<void> main() async {
           };
         </script>
       ''';
-    final String iframeTestBase64 = base64Encode(
-      const Utf8Encoder().convert(iframe),
-    );
+    final String iframeTestBase64 = base64Encode(const Utf8Encoder().convert(iframe));
 
     final openWindowTest =
         '''
@@ -1426,9 +1347,7 @@ Future<void> main() async {
         </body>
         </html>
       ''';
-    final String openWindowTestBase64 = base64Encode(
-      const Utf8Encoder().convert(openWindowTest),
-    );
+    final String openWindowTestBase64 = base64Encode(const Utf8Encoder().convert(openWindowTest));
     final controllerCompleter = Completer<WebViewController>();
     final pageLoadCompleter = Completer<void>();
 
@@ -1441,8 +1360,7 @@ Future<void> main() async {
             controllerCompleter.complete(controller);
           },
           javascriptMode: JavascriptMode.unrestricted,
-          initialUrl:
-              'data:text/html;charset=utf-8;base64,$openWindowTestBase64',
+          initialUrl: 'data:text/html;charset=utf-8;base64,$openWindowTestBase64',
           onPageFinished: (String url) {
             pageLoadCompleter.complete();
           },
@@ -1453,9 +1371,7 @@ Future<void> main() async {
     final WebViewController controller = await controllerCompleter.future;
     await pageLoadCompleter.future;
 
-    final String iframeLoaded = await controller.runJavascriptReturningResult(
-      'iframeLoaded',
-    );
+    final String iframeLoaded = await controller.runJavascriptReturningResult('iframeLoaded');
     expect(iframeLoaded, 'true');
 
     final String elementText = await controller.runJavascriptReturningResult(
@@ -1464,9 +1380,7 @@ Future<void> main() async {
     expect(elementText, 'null');
   });
 
-  testWidgets('clearCache should clear local storage', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('clearCache should clear local storage', (WidgetTester tester) async {
     final controllerCompleter = Completer<WebViewController>();
 
     var pageLoadCompleter = Completer<void>();
@@ -1520,20 +1434,12 @@ Future<String> _getUserAgent(WebViewController controller) async {
   return _runJavaScriptReturningResult(controller, 'navigator.userAgent;');
 }
 
-Future<String> _runJavaScriptReturningResult(
-  WebViewController controller,
-  String js,
-) async {
-  return jsonDecode(await controller.runJavascriptReturningResult(js))
-      as String;
+Future<String> _runJavaScriptReturningResult(WebViewController controller, String js) async {
+  return jsonDecode(await controller.runJavascriptReturningResult(js)) as String;
 }
 
 class ResizableWebView extends StatefulWidget {
-  const ResizableWebView({
-    super.key,
-    required this.onResize,
-    required this.onPageFinished,
-  });
+  const ResizableWebView({super.key, required this.onResize, required this.onPageFinished});
 
   final JavascriptMessageHandler onResize;
   final VoidCallback onPageFinished;
@@ -1565,9 +1471,7 @@ class ResizableWebViewState extends State<ResizableWebView> {
 
   @override
   Widget build(BuildContext context) {
-    final String resizeTestBase64 = base64Encode(
-      const Utf8Encoder().convert(resizePage),
-    );
+    final String resizeTestBase64 = base64Encode(const Utf8Encoder().convert(resizePage));
     return Directionality(
       textDirection: TextDirection.ltr,
       child: Column(
@@ -1576,13 +1480,9 @@ class ResizableWebViewState extends State<ResizableWebView> {
             width: webViewWidth,
             height: webViewHeight,
             child: WebView(
-              initialUrl:
-                  'data:text/html;charset=utf-8;base64,$resizeTestBase64',
+              initialUrl: 'data:text/html;charset=utf-8;base64,$resizeTestBase64',
               javascriptChannels: <JavascriptChannel>{
-                JavascriptChannel(
-                  name: 'Resize',
-                  onMessageReceived: widget.onResize,
-                ),
+                JavascriptChannel(name: 'Resize', onMessageReceived: widget.onResize),
               },
               onPageFinished: (_) => widget.onPageFinished(),
               javascriptMode: JavascriptMode.unrestricted,
@@ -1604,8 +1504,7 @@ class ResizableWebViewState extends State<ResizableWebView> {
   }
 }
 
-class CopyableObjectWithCallback
-    extends android.PigeonInternalProxyApiBaseClass {
+class CopyableObjectWithCallback extends android.PigeonInternalProxyApiBaseClass {
   CopyableObjectWithCallback(this.callback);
 
   final VoidCallback callback;
@@ -1620,9 +1519,7 @@ class CopyableObjectWithCallback
 class ClassWithCallbackClass {
   ClassWithCallbackClass() {
     callbackClass = CopyableObjectWithCallback(
-      withWeakReferenceTo(this, (
-        WeakReference<ClassWithCallbackClass> weakReference,
-      ) {
+      withWeakReferenceTo(this, (WeakReference<ClassWithCallbackClass> weakReference) {
         return () {
           // Weak reference to `this` in callback.
           // ignore: unnecessary_statements
@@ -1637,10 +1534,7 @@ class ClassWithCallbackClass {
 
 class TestPlatformCallbacksHandler implements WebViewPlatformCallbacksHandler {
   @override
-  FutureOr<bool> onNavigationRequest({
-    required String url,
-    required bool isForMainFrame,
-  }) async {
+  FutureOr<bool> onNavigationRequest({required String url, required bool isForMainFrame}) async {
     return true;
   }
 

@@ -32,8 +32,7 @@ class VideoAdExampleScreen extends StatefulWidget {
   State<VideoAdExampleScreen> createState() => _VideoAdExampleScreenState();
 }
 
-class _VideoAdExampleScreenState extends State<VideoAdExampleScreen>
-    with WidgetsBindingObserver {
+class _VideoAdExampleScreenState extends State<VideoAdExampleScreen> with WidgetsBindingObserver {
   // The AdsLoader instance exposes the request ads method.
   late final AdsLoader _adsLoader;
 
@@ -56,8 +55,7 @@ class _VideoAdExampleScreenState extends State<VideoAdExampleScreen>
 
   // Provides the SDK with the current playback progress of the content video.
   // This is required to support mid-roll ads.
-  final ContentProgressProvider _contentProgressProvider =
-      ContentProgressProvider();
+  final ContentProgressProvider _contentProgressProvider = ContentProgressProvider();
 
   late final CompanionAdSlot companionAd = CompanionAdSlot(
     size: CompanionAdSlotSize.fixed(width: 300, height: 250),
@@ -100,11 +98,7 @@ class _VideoAdExampleScreenState extends State<VideoAdExampleScreen>
             ),
           );
 
-          manager.init(
-            settings: AdsRenderingSettings(
-              enablePreloading: widget.enablePreloading,
-            ),
-          );
+          manager.init(settings: AdsRenderingSettings(enablePreloading: widget.enablePreloading));
         },
         onAdsLoadError: (AdsLoadErrorData data) {
           debugPrint('OnAdsLoadError: ${data.error.message}');
@@ -126,9 +120,7 @@ class _VideoAdExampleScreenState extends State<VideoAdExampleScreen>
 
     _contentVideoController =
         VideoPlayerController.networkUrl(
-            Uri.parse(
-              'https://storage.googleapis.com/gvabox/media/samples/stock.mp4',
-            ),
+            Uri.parse('https://storage.googleapis.com/gvabox/media/samples/stock.mp4'),
           )
           ..addListener(() {
             if (_contentVideoController.value.isCompleted) {
@@ -154,8 +146,7 @@ class _VideoAdExampleScreenState extends State<VideoAdExampleScreen>
         // because it corresponds to `Activity.onPause`. This state is also
         // triggered before resume, so this will only pause the Ad if the app is
         // in the process of being sent to the background.
-        if (!_shouldShowContentVideo &&
-            _lastLifecycleState == AppLifecycleState.resumed) {
+        if (!_shouldShowContentVideo && _lastLifecycleState == AppLifecycleState.resumed) {
           _adsManager?.pause();
         }
       case AppLifecycleState.hidden:
@@ -167,10 +158,7 @@ class _VideoAdExampleScreenState extends State<VideoAdExampleScreen>
 
   Future<void> _requestAds(AdDisplayContainer container) {
     return _adsLoader.requestAds(
-      AdsRequest(
-        adTagUrl: widget.adTagUrl,
-        contentProgressProvider: _contentProgressProvider,
-      ),
+      AdsRequest(adTagUrl: widget.adTagUrl, contentProgressProvider: _contentProgressProvider),
     );
   }
 
@@ -184,20 +172,19 @@ class _VideoAdExampleScreenState extends State<VideoAdExampleScreen>
     });
 
     if (_adsManager != null) {
-      _contentProgressTimer = Timer.periodic(
-        const Duration(milliseconds: 200),
-        (Timer timer) async {
-          if (_contentVideoController.value.isInitialized) {
-            final Duration? progress = await _contentVideoController.position;
-            if (progress != null) {
-              await _contentProgressProvider.setProgress(
-                progress: progress,
-                duration: _contentVideoController.value.duration,
-              );
-            }
+      _contentProgressTimer = Timer.periodic(const Duration(milliseconds: 200), (
+        Timer timer,
+      ) async {
+        if (_contentVideoController.value.isInitialized) {
+          final Duration? progress = await _contentVideoController.position;
+          if (progress != null) {
+            await _contentProgressProvider.setProgress(
+              progress: progress,
+              duration: _contentVideoController.value.duration,
+            );
           }
-        },
-      );
+        }
+      });
     }
 
     await _contentVideoController.play();
@@ -224,19 +211,13 @@ class _VideoAdExampleScreenState extends State<VideoAdExampleScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('IMA Test App'),
-        backgroundColor: Colors.blue,
-      ),
+      appBar: AppBar(title: const Text('IMA Test App'), backgroundColor: Colors.blue),
       body: Center(
         child: Column(
           spacing: 80,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              widget.adType,
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
+            Text(widget.adType, style: Theme.of(context).textTheme.headlineMedium),
             SizedBox(
               width: 300,
               child: !_contentVideoController.value.isInitialized
@@ -249,25 +230,19 @@ class _VideoAdExampleScreenState extends State<VideoAdExampleScreen>
                           // loaded and can't be removed between ads. This handles clicks for
                           // ads.
                           _adDisplayContainer,
-                          if (_shouldShowContentVideo)
-                            VideoPlayer(_contentVideoController),
+                          if (_shouldShowContentVideo) VideoPlayer(_contentVideoController),
                         ],
                       ),
                     ),
             ),
             ColoredBox(
               color: Colors.green,
-              child: SizedBox(
-                width: 300,
-                height: 250,
-                child: companionAd.buildWidget(context),
-              ),
+              child: SizedBox(width: 300, height: 250, child: companionAd.buildWidget(context)),
             ),
           ],
         ),
       ),
-      floatingActionButton:
-          _contentVideoController.value.isInitialized && _shouldShowContentVideo
+      floatingActionButton: _contentVideoController.value.isInitialized && _shouldShowContentVideo
           ? FloatingActionButton(
               onPressed: () {
                 setState(() {
@@ -276,11 +251,7 @@ class _VideoAdExampleScreenState extends State<VideoAdExampleScreen>
                       : _contentVideoController.play();
                 });
               },
-              child: Icon(
-                _contentVideoController.value.isPlaying
-                    ? Icons.pause
-                    : Icons.play_arrow,
-              ),
+              child: Icon(_contentVideoController.value.isPlaying ? Icons.pause : Icons.play_arrow),
             )
           : null,
     );

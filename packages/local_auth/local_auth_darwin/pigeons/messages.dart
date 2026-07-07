@@ -7,8 +7,7 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    swiftOut:
-        'darwin/local_auth_darwin/Sources/local_auth_darwin/messages.g.swift',
+    swiftOut: 'darwin/local_auth_darwin/Sources/local_auth_darwin/messages.g.swift',
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
@@ -64,11 +63,7 @@ class AuthOptions {
 }
 
 class AuthResultDetails {
-  AuthResultDetails({
-    required this.result,
-    this.errorMessage,
-    this.errorDetails,
-  });
+  AuthResultDetails({required this.result, this.errorMessage, this.errorDetails});
 
   /// The result of authenticating.
   final AuthResult result;
