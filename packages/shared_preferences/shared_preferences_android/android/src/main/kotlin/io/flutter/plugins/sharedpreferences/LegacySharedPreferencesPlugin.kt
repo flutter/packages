@@ -18,13 +18,12 @@ import java.io.IOException
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.math.BigInteger
-import java.util.Objects
 
 /** LegacySharedPreferencesPlugin  */
 class LegacySharedPreferencesPlugin @VisibleForTesting internal constructor(
     private val listEncoder: SharedPreferencesListEncoder
 ) : FlutterPlugin, SharedPreferencesApi {
-    private var preferences: SharedPreferences? = null
+    private lateinit var preferences: SharedPreferences
 
     constructor() : this(ListEncoder())
 
@@ -38,19 +37,19 @@ class LegacySharedPreferencesPlugin @VisibleForTesting internal constructor(
     }
 
     override fun onAttachedToEngine(binding: FlutterPluginBinding) {
-        setUp(binding.getBinaryMessenger(), binding.getApplicationContext())
+        setUp(binding.binaryMessenger, binding.applicationContext)
     }
 
     override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
-        setUp(binding.getBinaryMessenger(), null)
+        setUp(binding.binaryMessenger, null)
     }
 
     override fun setBool(key: String, value: Boolean): Boolean {
-        return preferences!!.edit().putBoolean(key, value).commit()
+        return preferences.edit().putBoolean(key, value).commit()
     }
 
     override fun setString(key: String, value: String): Boolean {
-        // TODO (tarrinneal): Move this string prefix checking logic to dart code and make it an
+        // TODO (tarrinneal): Move this string prefix checking logic to Dart code and make it an
         // Argument Error.
         if (value.startsWith(LIST_IDENTIFIER)
             || value.startsWith(BIG_INTEGER_PREFIX)
@@ -61,32 +60,32 @@ class LegacySharedPreferencesPlugin @VisibleForTesting internal constructor(
                         + " prefixes"
             )
         }
-        return preferences!!.edit().putString(key, value).commit()
+        return preferences.edit().putString(key, value).commit()
     }
 
     override fun setInt(key: String, value: Long): Boolean {
-        return preferences!!.edit().putLong(key, value).commit()
+        return preferences.edit().putLong(key, value).commit()
     }
 
     override fun setDouble(key: String, value: Double): Boolean {
         val doubleValueStr = value.toString()
-        return preferences!!.edit().putString(key, DOUBLE_PREFIX + doubleValueStr).commit()
+        return preferences.edit().putString(key, DOUBLE_PREFIX + doubleValueStr).commit()
     }
 
     override fun remove(key: String): Boolean {
-        return preferences!!.edit().remove(key).commit()
+        return preferences.edit().remove(key).commit()
     }
 
     @Throws(RuntimeException::class)
     override fun setEncodedStringList(key: String, value: String): Boolean {
-        return preferences!!.edit().putString(key, value).commit()
+        return preferences.edit().putString(key, value).commit()
     }
 
     // Deprecated, for testing purposes only.
     @Deprecated("")
     @Throws(RuntimeException::class)
     override fun setDeprecatedStringList(key: String, value: List<String>): Boolean {
-        return preferences!!.edit().putString(key, LIST_IDENTIFIER + listEncoder.encode(value))
+        return preferences.edit().putString(key, LIST_IDENTIFIER + listEncoder.encode(value))
             .commit()
     }
 
@@ -101,8 +100,8 @@ class LegacySharedPreferencesPlugin @VisibleForTesting internal constructor(
 
     @Throws(RuntimeException::class)
     override fun clear(prefix: String, allowList: List<String>?): Boolean {
-        val clearEditor = preferences!!.edit()
-        val allPrefs = preferences!!.getAll()
+        val clearEditor = preferences.edit()
+        val allPrefs = preferences.all
         val filteredPrefs = ArrayList<String?>()
         for (key in allPrefs.keys) {
             if (key.startsWith(prefix) && (allowList == null || allowList.contains(key))) {
@@ -121,14 +120,11 @@ class LegacySharedPreferencesPlugin @VisibleForTesting internal constructor(
     private fun getAllPrefs(
         prefix: String, allowList: Set<String>?
     ): Map<String, Any> {
-        val allPrefs = preferences!!.getAll()
-        val filteredPrefs: Map<String, Any> = HashMap()
-        for (key in allPrefs.keys) {
-            if (key.startsWith(prefix) && (allowList == null || allowList.contains(key))) {
-                filteredPrefs.put(
-                    key,
-                    transformPref(key, Objects.requireNonNull(allPrefs.get(key)))
-                )
+        val allPrefs = preferences.all
+        val filteredPrefs: MutableMap<String, Any> = HashMap()
+        for ((key, value) in allPrefs) {
+            if (key.startsWith(prefix) && value != null && (allowList == null || allowList.contains(key))) {
+                filteredPrefs[key] = transformPref(key, value)
             }
         }
 
@@ -137,22 +133,21 @@ class LegacySharedPreferencesPlugin @VisibleForTesting internal constructor(
 
     private fun transformPref(key: String, value: Any): Any {
         if (value is String) {
-            val stringValue = value
-            if (stringValue.startsWith(LIST_IDENTIFIER)) {
+            if (value.startsWith(LIST_IDENTIFIER)) {
                 // The JSON-encoded lists use an extended prefix to distinguish them from
                 // lists that are encoded on the platform.
-                if (stringValue.startsWith(JSON_LIST_IDENTIFIER)) {
-                    return value
+                return if (value.startsWith(JSON_LIST_IDENTIFIER)) {
+                    value
                 } else {
-                    return listEncoder.decode(stringValue.substring(LIST_IDENTIFIER.length))
+                    listEncoder.decode(value.substring(LIST_IDENTIFIER.length))
                 }
-            } else if (stringValue.startsWith(BIG_INTEGER_PREFIX)) {
+            } else if (value.startsWith(BIG_INTEGER_PREFIX)) {
                 // TODO (tarrinneal): Remove all BigInt code.
                 // https://github.com/flutter/flutter/issues/124420
-                val encoded: String = stringValue.substring(BIG_INTEGER_PREFIX.length)
+                val encoded: String = value.substring(BIG_INTEGER_PREFIX.length)
                 return BigInteger(encoded, Character.MAX_RADIX)
-            } else if (stringValue.startsWith(DOUBLE_PREFIX)) {
-                val doubleStr: String = stringValue.substring(DOUBLE_PREFIX.length)
+            } else if (value.startsWith(DOUBLE_PREFIX)) {
+                val doubleStr: String = value.substring(DOUBLE_PREFIX.length)
                 return doubleStr.toDouble()
             }
         } else if (value is Set<*>) {
@@ -160,9 +155,10 @@ class LegacySharedPreferencesPlugin @VisibleForTesting internal constructor(
             // https://github.com/flutter/flutter/issues/124420
 
             // This only happens for previous usage of setStringSet. The app expects a list.
+            @Suppress("UNCHECKED_CAST")
             val listValue: List<String> = ArrayList(value as Set<String>)
             // Let's migrate the value too while we are at it.
-            preferences!!
+            preferences
                 .edit()
                 .remove(key)
                 .putString(key, LIST_IDENTIFIER + listEncoder.encode(listValue))
@@ -192,6 +188,7 @@ class LegacySharedPreferencesPlugin @VisibleForTesting internal constructor(
             try {
                 val stream: ObjectInputStream =
                     StringListObjectInputStream(ByteArrayInputStream(Base64.decode(listString, 0)))
+                @Suppress("UNCHECKED_CAST")
                 return stream.readObject() as List<String>
             } catch (e: IOException) {
                 throw RuntimeException(e)
@@ -211,7 +208,7 @@ class LegacySharedPreferencesPlugin @VisibleForTesting internal constructor(
 
         // The symbol `!` was chosen as it cannot be created by the base 64 encoding used with
         // LIST_IDENTIFIER.
-        private val JSON_LIST_IDENTIFIER: String = LIST_IDENTIFIER + "!"
+        private const val JSON_LIST_IDENTIFIER = "$LIST_IDENTIFIER!"
         private const val BIG_INTEGER_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBCaWdJbnRlZ2Vy"
         private const val DOUBLE_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu"
     }
