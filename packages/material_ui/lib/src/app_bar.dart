@@ -135,6 +135,7 @@ class _PreferredAppBarSize extends Size {
 /// </callout-box>
 ///
 /// Material Design 3 introduced new types of app bar.
+///
 /// <callout-box>
 ///
 /// This sample shows the creation of an [AppBar] widget with the [shadowColor] and
