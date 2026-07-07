@@ -18,6 +18,7 @@ library material_ui;
 
 export 'package:flutter/widgets.dart';
 
+export 'l10n/generated_material_localizations.dart';
 export 'src/about.dart';
 export 'src/action_buttons.dart';
 export 'src/action_chip.dart';
