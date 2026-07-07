@@ -1558,7 +1558,6 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 ///
 /// </callout-box>
 ///
-///
 /// <callout-box>
 ///
 /// This sample shows a [SliverAppBar] and its behavior when using the

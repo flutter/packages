@@ -2712,6 +2712,7 @@ class ScaffoldState extends State<Scaffold>
   /// {@example /example/lib/scaffold/scaffold_state.show_bottom_sheet.1.dart}
   ///
   /// </callout-box>
+  ///
   /// See also:
   ///
   ///  * [BottomSheet], which becomes the parent of the widget returned by the

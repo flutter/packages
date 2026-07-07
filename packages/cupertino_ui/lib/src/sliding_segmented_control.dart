@@ -353,6 +353,7 @@ class _SegmentSeparatorState extends State<_SegmentSeparator>
 /// {@example /example/lib/segmented_control/cupertino_sliding_segmented_control.0.dart}
 ///
 /// </callout-box>
+///
 /// See also:
 ///
 ///  * <https://developer.apple.com/design/human-interface-guidelines/ios/controls/segmented-controls/>

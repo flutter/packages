@@ -190,6 +190,7 @@ enum BottomNavigationBarLandscapeLayout {
 /// {@example /example/lib/bottom_navigation_bar/bottom_navigation_bar.2.dart}
 ///
 /// </callout-box>
+///
 /// See also:
 ///
 ///  * [BottomNavigationBarItem]

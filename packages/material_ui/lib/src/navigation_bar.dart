@@ -100,6 +100,7 @@ const double _kMaxLabelTextScaleFactor = 1.3;
 /// {@example /example/lib/navigation_bar/navigation_bar.2.dart}
 ///
 /// </callout-box>
+///
 /// See also:
 ///
 ///  * [NavigationDestination]

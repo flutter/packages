@@ -166,14 +166,15 @@ class ReorderableListView extends StatefulWidget {
   /// This example creates a list using the
   /// [ReorderableListView.builder] constructor. Using the [IndexedWidgetBuilder], The
   /// list items are built lazily on demand.
-  /// <callout-box>
   ///
+  /// <callout-box>
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@example /example/lib/reorderable_list/reorderable_list_view.reorderable_list_view_builder.0.dart}
   ///
   /// </callout-box>
+  ///
   /// See also:
   ///
   ///   * [ReorderableListView], which allows you to build a reorderable
