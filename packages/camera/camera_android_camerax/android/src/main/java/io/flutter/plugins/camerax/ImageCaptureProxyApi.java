@@ -40,7 +40,8 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
   public ImageCapture pigeon_defaultConstructor(
       @Nullable ResolutionSelector resolutionSelector,
       @Nullable Long targetRotation,
-      @Nullable CameraXFlashMode flashMode) {
+      @Nullable CameraXFlashMode flashMode,
+      @Nullable Long jpegQuality) {
     final ImageCapture.Builder builder = new ImageCapture.Builder();
     if (targetRotation != null) {
       builder.setTargetRotation(targetRotation.intValue());
@@ -61,6 +62,9 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
     }
     if (resolutionSelector != null) {
       builder.setResolutionSelector(resolutionSelector);
+    }
+    if (jpegQuality != null) {
+      builder.setJpegQuality(jpegQuality.intValue());
     }
     return builder.build();
   }

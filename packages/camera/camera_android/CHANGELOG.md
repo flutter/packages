@@ -1,3 +1,7 @@
+## 0.10.11
+
+* Adds `setJpegImageQuality` for controlling JPEG compression quality.
+
 ## 0.10.10+18
 
 * Bumps the androidx group across 10 directories with 1 update.

@@ -54,6 +54,7 @@ import io.flutter.plugins.camera.features.flash.FlashFeature;
 import io.flutter.plugins.camera.features.flash.FlashMode;
 import io.flutter.plugins.camera.features.focuspoint.FocusPointFeature;
 import io.flutter.plugins.camera.features.fpsrange.FpsRangeFeature;
+import io.flutter.plugins.camera.features.jpegquality.JpegQualityFeature;
 import io.flutter.plugins.camera.features.resolution.ResolutionFeature;
 import io.flutter.plugins.camera.features.resolution.ResolutionPreset;
 import io.flutter.plugins.camera.features.sensororientation.DeviceOrientationManager;
@@ -1445,6 +1446,20 @@ class Camera
     } catch (CameraAccessException e) {
       throw new Messages.FlutterError("setDescriptionWhileRecordingFailed", e.getMessage(), null);
     }
+  }
+
+  /**
+   * Sets the JPEG compression quality for still image capture.
+   *
+   * @param quality JPEG quality value between 1 and 100.
+   */
+  public void setJpegImageQuality(@NonNull Long quality) {
+    JpegQualityFeature jpegQualityFeature = cameraFeatures.getJpegQuality();
+    if (jpegQualityFeature == null) {
+      jpegQualityFeature = cameraFeatureFactory.createJpegQualityFeature(cameraProperties);
+      cameraFeatures.setJpegQuality(jpegQualityFeature);
+    }
+    jpegQualityFeature.setValue(quality.intValue());
   }
 
   public void dispose() {
