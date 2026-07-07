@@ -85,22 +85,22 @@ class LegacySharedPreferencesPlugin @VisibleForTesting internal constructor(
     // Deprecated, for testing purposes only.
     @Deprecated("")
     @Throws(RuntimeException::class)
-    override fun setDeprecatedStringList(key: String, value: MutableList<String?>): Boolean {
+    override fun setDeprecatedStringList(key: String, value: List<String>): Boolean {
         return preferences!!.edit().putString(key, LIST_IDENTIFIER + listEncoder.encode(value))
             .commit()
     }
 
     @Throws(RuntimeException::class)
     override fun getAll(
-        prefix: String, allowList: MutableList<String?>?
-    ): MutableMap<String?, Any?> {
-        val allowSet: MutableSet<String?>? =
-            if (allowList == null) null else HashSet<String?>(allowList)
+        prefix: String, allowList: List<String>?
+    ): Map<String, Any> {
+        val allowSet: Set<String>? =
+            if (allowList == null) null else HashSet<String>(allowList)
         return getAllPrefs(prefix, allowSet)
     }
 
     @Throws(RuntimeException::class)
-    override fun clear(prefix: String, allowList: MutableList<String?>?): Boolean {
+    override fun clear(prefix: String, allowList: List<String>?): Boolean {
         val clearEditor = preferences!!.edit()
         val allPrefs = preferences!!.getAll()
         val filteredPrefs = ArrayList<String?>()
@@ -119,10 +119,10 @@ class LegacySharedPreferencesPlugin @VisibleForTesting internal constructor(
     // Optionally filtered also to only those items in the optional [allowList].
     @Throws(RuntimeException::class)
     private fun getAllPrefs(
-        prefix: String, allowList: MutableSet<String?>?
-    ): MutableMap<String?, Any?> {
+        prefix: String, allowList: Set<String>?
+    ): Map<String, Any> {
         val allPrefs = preferences!!.getAll()
-        val filteredPrefs: MutableMap<String?, Any?> = HashMap<String?, Any?>()
+        val filteredPrefs: Map<String, Any> = HashMap()
         for (key in allPrefs.keys) {
             if (key.startsWith(prefix) && (allowList == null || allowList.contains(key))) {
                 filteredPrefs.put(
@@ -155,13 +155,12 @@ class LegacySharedPreferencesPlugin @VisibleForTesting internal constructor(
                 val doubleStr: String = stringValue.substring(DOUBLE_PREFIX.length)
                 return doubleStr.toDouble()
             }
-        } else if (value is MutableSet<*>) {
+        } else if (value is Set<*>) {
             // TODO (tarrinneal): Remove Set code.
             // https://github.com/flutter/flutter/issues/124420
 
             // This only happens for previous usage of setStringSet. The app expects a list.
-
-            val listValue: MutableList<String?> = ArrayList<String?>(value as MutableSet<String?>)
+            val listValue: List<String> = ArrayList(value as Set<String>)
             // Let's migrate the value too while we are at it.
             preferences!!
                 .edit()
@@ -176,7 +175,7 @@ class LegacySharedPreferencesPlugin @VisibleForTesting internal constructor(
 
     internal class ListEncoder : SharedPreferencesListEncoder {
         @Throws(RuntimeException::class)
-        override fun encode(list: MutableList<String?>): String {
+        override fun encode(list: List<String>): String {
             try {
                 val byteStream = ByteArrayOutputStream()
                 val stream = ObjectOutputStream(byteStream)
@@ -189,11 +188,11 @@ class LegacySharedPreferencesPlugin @VisibleForTesting internal constructor(
         }
 
         @Throws(RuntimeException::class)
-        override fun decode(listString: String): MutableList<String?> {
+        override fun decode(listString: String): List<String> {
             try {
                 val stream: ObjectInputStream =
                     StringListObjectInputStream(ByteArrayInputStream(Base64.decode(listString, 0)))
-                return stream.readObject() as MutableList<String?>
+                return stream.readObject() as List<String>
             } catch (e: IOException) {
                 throw RuntimeException(e)
             } catch (e: ClassNotFoundException) {

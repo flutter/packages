@@ -9,8 +9,8 @@ package io.flutter.plugins.sharedpreferences
 </String> */
 interface SharedPreferencesListEncoder {
     /** Converts list to String for storing in shared preferences.  */
-    fun encode(list: MutableList<String?>): String
+    fun encode(list: List<String>): String
 
     /** Converts stored String representing List<String> to List. </String> */
-    fun decode(listString: String): MutableList<String?>
+    fun decode(listString: String): List<String>
 }
