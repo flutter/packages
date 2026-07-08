@@ -808,8 +808,8 @@ class TextField extends StatefulWidget {
   /// accessibility, but it also needs to be accessible itself. For example,
   /// if returning a Text widget, set the [Text.semanticsLabel] property.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -829,7 +829,7 @@ class TextField extends StatefulWidget {
   /// }
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// If buildCounter returns null, then no counter and no Semantics widget will
   /// be created at all.

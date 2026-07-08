@@ -159,8 +159,8 @@ class Tab extends StatelessWidget implements PreferredSizeWidget {
   /// null along with `child` or `text`, the default height is 72.0 pixels. Without an `icon`, the
   /// height is 46.0 pixels.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -186,7 +186,7 @@ class Tab extends StatelessWidget implements PreferredSizeWidget {
   /// ),
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   final double? height;
 
   Widget _buildLabelText() {

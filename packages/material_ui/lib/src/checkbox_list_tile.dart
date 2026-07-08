@@ -61,8 +61,8 @@ enum _CheckboxType { material, adaptive }
 /// In this case, one can wrap a [Material] widget around the [CheckboxListTile],
 /// e.g.:
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -80,7 +80,7 @@ enum _CheckboxType { material, adaptive }
 /// )
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// ## Performance considerations when wrapping [CheckboxListTile] with [Material]
 ///
@@ -296,8 +296,8 @@ class CheckboxListTile extends StatelessWidget {
   ///
   /// If null, the checkbox will be displayed as disabled.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -317,7 +317,7 @@ class CheckboxListTile extends StatelessWidget {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   final ValueChanged<bool?>? onChanged;
 
   /// The cursor for a mouse pointer when it enters or is hovering over the

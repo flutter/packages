@@ -148,8 +148,8 @@ class CupertinoContextMenu extends StatefulWidget {
   /// Exposes the default border radius for matching iOS 16.0 behavior. This
   /// value was eyeballed from the iOS simulator running iOS 16.0.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -216,7 +216,7 @@ class CupertinoContextMenu extends StatefulWidget {
   /// ```
   ///
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   static const double kOpenBorderRadius = _previewBorderRadiusRatio;
 
   /// Exposes the final box shadow of the opening animation of the child widget
@@ -259,8 +259,8 @@ class CupertinoContextMenu extends StatefulWidget {
   /// the widget from 0 to [animationOpensAt], and the second stage for when the
   /// widget fully opens up to the menu, from [animationOpensAt] to 1.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -330,7 +330,7 @@ class CupertinoContextMenu extends StatefulWidget {
   /// ```
   ///
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123

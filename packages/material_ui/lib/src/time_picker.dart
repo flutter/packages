@@ -3142,8 +3142,8 @@ class _TimePickerState extends State<_TimePicker> with RestorationMixin {
 /// The returned Future resolves to the time selected by the user when the user
 /// closes the dialog. If the user cancels the dialog, null is returned.
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 /// Show a dialog with [initialTime] equal to the current time.
@@ -3155,7 +3155,7 @@ class _TimePickerState extends State<_TimePicker> with RestorationMixin {
 /// );
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// The [context], [barrierDismissible], [barrierColor], [barrierLabel],
 /// [useRootNavigator] and [routeSettings] arguments are passed to [showDialog],
@@ -3201,8 +3201,8 @@ class _TimePickerState extends State<_TimePicker> with RestorationMixin {
 /// [ColorScheme]. The time picker can be further customized by providing a
 /// [TimePickerThemeData] to the overall theme.
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 /// Show a dialog with the text direction overridden to be
@@ -3221,10 +3221,10 @@ class _TimePickerState extends State<_TimePicker> with RestorationMixin {
 /// );
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 /// Show a dialog with time unconditionally displayed in 24 hour
@@ -3243,7 +3243,7 @@ class _TimePickerState extends State<_TimePicker> with RestorationMixin {
 /// );
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123

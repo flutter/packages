@@ -128,8 +128,8 @@ class Divider extends StatelessWidget {
   /// also null, then [ThemeData.dividerColor] is used.
   /// {@endtemplate}
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -139,7 +139,7 @@ class Divider extends StatelessWidget {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   final Color? color;
 
   /// Computes the [BorderSide] that represents a divider.
@@ -155,8 +155,8 @@ class Divider extends StatelessWidget {
   /// If [context] is null, the default color of [BorderSide] is used and the
   /// default width of 0.0 is used.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -176,7 +176,7 @@ class Divider extends StatelessWidget {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   static BorderSide createBorderSide(BuildContext? context, {Color? color, double? width}) {
     final DividerThemeData? dividerTheme = context != null ? DividerTheme.of(context) : null;
     final DividerThemeData? defaults = context != null
@@ -314,8 +314,8 @@ class VerticalDivider extends StatelessWidget {
   /// If this is null, then the [DividerThemeData.color] is used. If that is
   /// also null, then [ThemeData.dividerColor] is used.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -325,7 +325,7 @@ class VerticalDivider extends StatelessWidget {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   final Color? color;
 
   /// The amount of radius for the border of the divider.

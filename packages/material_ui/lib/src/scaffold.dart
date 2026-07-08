@@ -1666,8 +1666,8 @@ class _FloatingActionButtonTransitionState extends State<_FloatingActionButtonTr
 /// better to add a listener to the [TabController] that updates the
 /// AppBar
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -1685,7 +1685,7 @@ class _FloatingActionButtonTransitionState extends State<_FloatingActionButtonTr
 /// })
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// Although there are some use cases, like a presentation app that
 /// shows embedded flutter content, where nested scaffolds are

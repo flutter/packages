@@ -422,8 +422,8 @@ class DrawerController extends StatefulWidget {
   /// The closest instance of [DrawerController] that encloses the given
   /// context, or null if none is found.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   /// Typical usage is as follows:
@@ -432,7 +432,7 @@ class DrawerController extends StatefulWidget {
   /// DrawerController? controller = DrawerController.maybeOf(context);
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// Calling this method will create a dependency on the closest
   /// [DrawerController] in the [context], if there is one.
@@ -454,8 +454,8 @@ class DrawerController extends StatefulWidget {
   /// Calling this method will create a dependency on the closest
   /// [DrawerController] in the [context].
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   /// Typical usage is as follows:
@@ -464,7 +464,7 @@ class DrawerController extends StatefulWidget {
   /// DrawerController controller = DrawerController.of(context);
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   static DrawerController of(BuildContext context) {
     final DrawerController? controller = maybeOf(context);
     assert(() {

@@ -203,8 +203,8 @@ enum ListTileTitleAlignment {
 /// ancestor. In this case, one can wrap a [Material] widget around the
 /// [ListTile], e.g.:
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -220,7 +220,7 @@ enum ListTileTitleAlignment {
 /// )
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// ## Performance considerations when wrapping [ListTile] with [Material]
 ///
@@ -286,8 +286,8 @@ enum ListTileTitleAlignment {
 ///
 // TODO(framework): End of the @dartpad directive.
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -314,9 +314,9 @@ enum ListTileTitleAlignment {
 /// )
 /// ```
 ///
-// TODO(framework): End of the blue example container.
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// </callout-box>
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -334,7 +334,7 @@ enum ListTileTitleAlignment {
 /// )
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// To be accessible, tappable [leading] and [trailing] widgets have to
 /// be at least 48x48 in size. However, to adhere to the Material spec,
@@ -348,8 +348,8 @@ enum ListTileTitleAlignment {
 /// that are large enough, but it is up to the developer to ensure that
 /// their widgets follow the Material spec.
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -376,7 +376,7 @@ enum ListTileTitleAlignment {
 /// )
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// ## The ListTile layout isn't exactly what I want
 ///

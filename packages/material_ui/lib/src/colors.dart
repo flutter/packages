@@ -187,8 +187,8 @@ class MaterialAccentColor extends ColorSwatch<int> {
 /// In addition, a series of blacks and whites with common opacities are
 /// available. For example, [black54] is a pure black with 54% opacity.
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -199,9 +199,9 @@ class MaterialAccentColor extends ColorSwatch<int> {
 /// Color selection = Colors.green[400]!; // Selects a mid-range green.
 /// ```
 ///
-// TODO(framework): End of the blue example container.
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// </callout-box>
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -213,7 +213,7 @@ class MaterialAccentColor extends ColorSwatch<int> {
 /// )
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// ## Color palettes
 ///
@@ -525,8 +525,8 @@ abstract final class Colors {
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.pink.png)
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.pinkAccent.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -537,7 +537,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -570,8 +570,8 @@ abstract final class Colors {
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.pink.png)
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.pinkAccent.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -582,7 +582,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -609,8 +609,8 @@ abstract final class Colors {
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.purple.png)
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.purpleAccent.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -621,7 +621,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -654,8 +654,8 @@ abstract final class Colors {
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.purple.png)
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.purpleAccent.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -666,7 +666,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -694,8 +694,8 @@ abstract final class Colors {
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.pink.png)
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.pinkAccent.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -706,7 +706,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -739,8 +739,8 @@ abstract final class Colors {
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.pink.png)
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.pinkAccent.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -751,7 +751,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -779,8 +779,8 @@ abstract final class Colors {
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.indigo.png)
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.indigoAccent.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -791,7 +791,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -824,8 +824,8 @@ abstract final class Colors {
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.indigo.png)
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.indigoAccent.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -836,7 +836,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -864,8 +864,8 @@ abstract final class Colors {
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.deepPurple.png)
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.deepPurpleAccent.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -876,7 +876,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -909,8 +909,8 @@ abstract final class Colors {
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.deepPurple.png)
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.deepPurpleAccent.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -921,7 +921,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -951,8 +951,8 @@ abstract final class Colors {
   ///
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.blueGrey.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -963,7 +963,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -996,8 +996,8 @@ abstract final class Colors {
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.lightBlue.png)
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.lightBlueAccent.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -1008,7 +1008,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -1036,8 +1036,8 @@ abstract final class Colors {
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.cyan.png)
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.cyanAccent.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -1048,7 +1048,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -1081,8 +1081,8 @@ abstract final class Colors {
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.cyan.png)
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.cyanAccent.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -1093,7 +1093,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -1123,8 +1123,8 @@ abstract final class Colors {
   ///
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.blueGrey.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -1135,7 +1135,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -1168,8 +1168,8 @@ abstract final class Colors {
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.teal.png)
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.tealAccent.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -1180,7 +1180,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -1208,8 +1208,8 @@ abstract final class Colors {
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.cyan.png)
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.cyanAccent.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -1220,7 +1220,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -1253,8 +1253,8 @@ abstract final class Colors {
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.cyan.png)
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.cyanAccent.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -1265,7 +1265,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -1296,8 +1296,8 @@ abstract final class Colors {
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.lime.png)
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.limeAccent.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -1308,7 +1308,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -1344,8 +1344,8 @@ abstract final class Colors {
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.lime.png)
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.limeAccent.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -1356,7 +1356,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -1384,8 +1384,8 @@ abstract final class Colors {
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.lime.png)
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.limeAccent.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -1396,7 +1396,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -1429,8 +1429,8 @@ abstract final class Colors {
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.lime.png)
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.limeAccent.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -1441,7 +1441,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -1469,8 +1469,8 @@ abstract final class Colors {
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.yellow.png)
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.yellowAccent.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -1481,7 +1481,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -1514,8 +1514,8 @@ abstract final class Colors {
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.yellow.png)
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.yellowAccent.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -1526,7 +1526,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -1554,8 +1554,8 @@ abstract final class Colors {
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.amber.png)
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.amberAccent.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -1566,7 +1566,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -1599,8 +1599,8 @@ abstract final class Colors {
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.amber.png)
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.amberAccent.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -1611,7 +1611,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -1639,8 +1639,8 @@ abstract final class Colors {
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.orange.png)
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.orangeAccent.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -1651,7 +1651,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -1684,8 +1684,8 @@ abstract final class Colors {
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.orange.png)
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.orangeAccent.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -1696,7 +1696,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -1726,8 +1726,8 @@ abstract final class Colors {
   ///
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.brown.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -1738,7 +1738,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -1771,8 +1771,8 @@ abstract final class Colors {
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.deepOrange.png)
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.deepOrangeAccent.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -1783,7 +1783,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -1813,8 +1813,8 @@ abstract final class Colors {
   ///
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.brown.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -1825,7 +1825,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -1858,8 +1858,8 @@ abstract final class Colors {
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.red.png)
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/Colors.redAccent.png)
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -1870,7 +1870,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -1897,8 +1897,8 @@ abstract final class Colors {
   ///
   /// This swatch has no corresponding accent color and swatch.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -1909,7 +1909,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -1945,8 +1945,8 @@ abstract final class Colors {
   /// used for raised button while pressed in light themes, and 850 is used for
   /// the background color of the dark theme. See [ThemeData.brightness].
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -1957,7 +1957,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -1994,8 +1994,8 @@ abstract final class Colors {
   ///
   /// This swatch has no corresponding accent swatch.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -2006,7 +2006,7 @@ abstract final class Colors {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
