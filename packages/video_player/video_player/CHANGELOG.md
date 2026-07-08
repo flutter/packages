@@ -1,3 +1,7 @@
+## 2.14.0
+
+* Forwards `VideoPlayerOptions.preferredAudioLanguage` during player creation so platform implementations can apply the preferred audio language per player instance.
+
 ## 2.13.0
 
 * Adds `preventsDisplaySleepDuringVideoPlayback` to `VideoPlayerOptions` and
