@@ -29,7 +29,9 @@ class GooglePlayPurchaseParam extends PurchaseParam {
 
   /// An optional obfuscated profile ID associated with the user's profile.
   ///
-  /// Setting this field requires [applicationUserName], which maps to the
-  /// obfuscated account ID, to be specified as well.
+  /// This is useful when an app allows multiple profiles under a single account.
+  /// Google Play can use this value to detect irregular activity and to associate
+  /// the purchase with the profile that initiated it. If specified, consider also
+  /// setting [applicationUserName], which maps to the obfuscated account ID.
   final String? obfuscatedProfileId;
 }
