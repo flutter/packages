@@ -34,7 +34,9 @@ const Duration _kExpand = Duration(milliseconds: 200);
 /// or look up the tile's automatically created [ExpansionTileController]
 /// with [ExpansibleController.of].
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// Typical usage of the [ExpansibleController.of] function is to call it from within the
 /// `build` method of a descendant of an [ExpansionTile].
 ///
@@ -46,8 +48,9 @@ const Duration _kExpand = Duration(milliseconds: 200);
 /// add a [Builder] widget, which provides a new scope with a
 /// [BuildContext] that is "under" the [ExpansionTile]:
 ///
-/// ** See code in examples/api/lib/material/expansion_tile/expansion_tile.1.dart **
-/// {@end-tool}
+/// {@example /example/lib/expansion_tile/expansion_tile.1.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// A more efficient solution is to split your build function into
 /// several widgets. This introduces a new context from which you
@@ -86,19 +89,25 @@ typedef ExpansionTileController = ExpansibleController;
 /// (i.e. the trailing edge). This can be changed using [controlAffinity]. This maps
 /// to the [leading] and [trailing] properties of [ExpansionTile].
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This example demonstrates how the [ExpansionTile] icon's location and appearance
 /// can be customized.
 ///
-/// ** See code in examples/api/lib/material/expansion_tile/expansion_tile.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/expansion_tile/expansion_tile.0.dart}
 ///
-/// {@tool dartpad}
+// TODO(framework): End of the @dartpad directive.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This example demonstrates how an [ExpansibleController] can be used to
 /// programmatically expand or collapse an [ExpansionTile].
 ///
-/// ** See code in examples/api/lib/material/expansion_tile/expansion_tile.1.dart **
-/// {@end-tool}
+/// {@example /example/lib/expansion_tile/expansion_tile.1.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// ## Accessibility
 ///
@@ -470,12 +479,15 @@ class ExpansionTile extends StatefulWidget {
   ///
   /// To disable the theme animation, use [AnimationStyle.noAnimation].
   ///
-  /// {@tool dartpad}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  ///
   /// This sample showcases how to override the [ExpansionTile] expansion
   /// animation curve and duration using [AnimationStyle].
   ///
-  /// ** See code in examples/api/lib/material/expansion_tile/expansion_tile.2.dart **
-  /// {@end-tool}
+  /// {@example /example/lib/expansion_tile/expansion_tile.2.dart}
+  ///
+  // TODO(framework): End of the @dartpad directive.
   final AnimationStyle? expansionAnimationStyle;
 
   /// Whether to add button:true to the semantics if onTap is provided.

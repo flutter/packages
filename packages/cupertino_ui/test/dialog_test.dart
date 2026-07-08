@@ -2,14 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@Skip(
-  'This file is skipped due to a cross-import that needs to be fixed. Tracked in https://github.com/flutter/flutter/issues/177028.',
-)
 // This file is run as part of a reduced test set in CI on Mac and Windows
 // machines.
 @Tags(<String>['reduced-test-set'])
 library;
 
+import 'dart:async' show unawaited;
 import 'dart:math';
 import 'dart:ui';
 
@@ -18,8 +16,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import '../widgets/semantics_tester.dart';
 
 void main() {
   testWidgets('Overall appearance is correct for the light theme', (WidgetTester tester) async {
@@ -575,16 +571,18 @@ void main() {
 
     final BuildContext context = tester.element(find.text('Go'));
 
-    showCupertinoDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          width: 100.0,
-          height: 100.0,
-          alignment: Alignment.center,
-          child: const Text('Dialog'),
-        );
-      },
+    unawaited(
+      showCupertinoDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            width: 100.0,
+            height: 100.0,
+            alignment: Alignment.center,
+            child: const Text('Dialog'),
+          );
+        },
+      ),
     );
 
     await tester.pumpAndSettle(const Duration(seconds: 1));
@@ -602,17 +600,19 @@ void main() {
 
     final BuildContext context = tester.element(find.text('Go'));
 
-    showCupertinoDialog<void>(
-      context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return Container(
-          width: 100.0,
-          height: 100.0,
-          alignment: Alignment.center,
-          child: const Text('Dialog'),
-        );
-      },
+    unawaited(
+      showCupertinoDialog<void>(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return Container(
+            width: 100.0,
+            height: 100.0,
+            alignment: Alignment.center,
+            child: const Text('Dialog'),
+          );
+        },
+      ),
     );
 
     await tester.pumpAndSettle(const Duration(seconds: 1));
@@ -683,7 +683,6 @@ void main() {
   });
 
   testWidgets('Has semantic annotations', (WidgetTester tester) async {
-    final semantics = SemanticsTester(tester);
     await tester.pumpWidget(
       const CupertinoApp(
         home: CupertinoAlertDialog(
@@ -697,63 +696,31 @@ void main() {
       ),
     );
 
+    final SemanticsNode dialog = tester.semantics.find(find.bySemanticsLabel('Alert'));
+    expect(dialog.role, SemanticsRole.alertDialog);
     expect(
-      semantics,
-      hasSemantics(
-        TestSemantics.root(
-          children: <TestSemantics>[
-            TestSemantics(
-              children: <TestSemantics>[
-                TestSemantics(
-                  children: <TestSemantics>[
-                    TestSemantics(
-                      flags: <SemanticsFlag>[SemanticsFlag.scopesRoute],
-                      children: <TestSemantics>[
-                        TestSemantics(
-                          flags: <SemanticsFlag>[
-                            SemanticsFlag.scopesRoute,
-                            SemanticsFlag.namesRoute,
-                          ],
-                          role: SemanticsRole.alertDialog,
-                          label: 'Alert',
-                          children: <TestSemantics>[
-                            TestSemantics(
-                              flags: <SemanticsFlag>[SemanticsFlag.hasImplicitScrolling],
-                              children: <TestSemantics>[
-                                TestSemantics(label: 'The Title'),
-                                TestSemantics(label: 'Content'),
-                              ],
-                            ),
-                            TestSemantics(
-                              flags: <SemanticsFlag>[SemanticsFlag.hasImplicitScrolling],
-                              children: <TestSemantics>[
-                                TestSemantics(
-                                  flags: <SemanticsFlag>[SemanticsFlag.isButton],
-                                  label: 'Cancel',
-                                ),
-                                TestSemantics(
-                                  flags: <SemanticsFlag>[SemanticsFlag.isButton],
-                                  label: 'OK',
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-        ignoreId: true,
-        ignoreRect: true,
-        ignoreTransform: true,
+      dialog,
+      isSemantics(
+        namesRoute: true,
+        scopesRoute: true,
+        children: <Matcher>[
+          isSemantics(
+            hasImplicitScrolling: true,
+            children: <Matcher>[
+              isSemantics(label: 'The Title'),
+              isSemantics(label: 'Content'),
+            ],
+          ),
+          isSemantics(
+            hasImplicitScrolling: true,
+            children: <Matcher>[
+              isSemantics(label: 'Cancel', isButton: true),
+              isSemantics(label: 'OK', isButton: true),
+            ],
+          ),
+        ],
       ),
     );
-
-    semantics.dispose();
   });
 
   testWidgets('Dialog default action style', (WidgetTester tester) async {
@@ -1699,8 +1666,6 @@ void main() {
   });
 
   testWidgets('showCupertinoDialog - custom barrierLabel', (WidgetTester tester) async {
-    final semantics = SemanticsTester(tester);
-
     await tester.pumpWidget(
       CupertinoApp(
         home: Builder(
@@ -1731,13 +1696,7 @@ void main() {
       ),
     );
 
-    expect(
-      semantics,
-      isNot(
-        includesNodeWith(label: 'Custom label', flags: <SemanticsFlag>[SemanticsFlag.namesRoute]),
-      ),
-    );
-    semantics.dispose();
+    expect(find.semantics.byLabel('Custom label'), findsNothing);
   });
 
   testWidgets('showCupertinoDialog - custom barrierColor', (WidgetTester tester) async {
@@ -1913,12 +1872,14 @@ void main() {
       );
 
       final BuildContext context = tester.element(find.text('Test'));
-      showCupertinoDialog<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return const Placeholder();
-        },
-        anchorPoint: const Offset(1000, 0),
+      unawaited(
+        showCupertinoDialog<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return const Placeholder();
+          },
+          anchorPoint: const Offset(1000, 0),
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -1951,11 +1912,13 @@ void main() {
       );
 
       final BuildContext context = tester.element(find.text('Test'));
-      showCupertinoDialog<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return const Placeholder();
-        },
+      unawaited(
+        showCupertinoDialog<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return const Placeholder();
+          },
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -1988,11 +1951,13 @@ void main() {
       );
 
       final BuildContext context = tester.element(find.text('Test'));
-      showCupertinoDialog<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return const Placeholder();
-        },
+      unawaited(
+        showCupertinoDialog<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return const Placeholder();
+          },
+        ),
       );
       await tester.pumpAndSettle();
 

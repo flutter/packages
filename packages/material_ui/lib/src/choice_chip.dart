@@ -30,12 +30,15 @@ enum _ChipVariant { flat, elevated }
 ///
 /// Requires one of its ancestors to be a [Material] widget.
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This example shows how to create [ChoiceChip]s with [onSelected]. When the
 /// user taps, the chip will be selected.
 ///
-/// ** See code in examples/api/lib/material/choice_chip/choice_chip.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/choice_chip/choice_chip.0.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// ## Material Design 3
 ///

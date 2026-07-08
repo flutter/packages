@@ -93,18 +93,24 @@ class ButtonSegment<T> {
 /// then the entire segmented button will be disabled, regardless of the
 /// individual segment settings.
 ///
-/// {@tool dartpad}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This sample shows how to display a [SegmentedButton] with either a single or
 /// multiple selection.
 ///
-/// ** See code in examples/api/lib/material/segmented_button/segmented_button.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/segmented_button/segmented_button.0.dart}
 ///
-/// {@tool dartpad}
+// TODO(framework): End of the @dartpad directive.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+///
 /// This sample showcases how to customize [SegmentedButton] using [SegmentedButton.styleFrom].
 ///
-/// ** See code in examples/api/lib/material/segmented_button/segmented_button.1.dart **
-/// {@end-tool}
+/// {@example /example/lib/segmented_button/segmented_button.1.dart}
+///
+// TODO(framework): End of the @dartpad directive.
 ///
 /// See also:
 ///
@@ -244,14 +250,17 @@ class SegmentedButton<T> extends StatefulWidget {
   /// All parameters default to null. By default this method returns
   /// a [ButtonStyle] that doesn't override anything.
   ///
-  /// {@tool snippet}
+  // TODO(framework): Replace the following block with a blue example container
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
   ///
   /// For example, to override the default text and icon colors for a
   /// [SegmentedButton], as well as its overlay color, with all of the
   /// standard opacity adjustments for the pressed, focused, and
   /// hovered states, one could write:
   ///
-  /// ** See code in examples/api/lib/material/segmented_button/segmented_button.1.dart **
+  /// {@example /example/lib/segmented_button/segmented_button.1.dart}
   ///
   /// ```dart
   /// SegmentedButton<int>(
@@ -277,7 +286,8 @@ class SegmentedButton<T> extends StatefulWidget {
   ///   onSelectionChanged: (Set<int> selection) {},
   /// ),
   /// ```
-  /// {@end-tool}
+  ///
+  // TODO(framework): End of the blue example container.
   static ButtonStyle styleFrom({
     Color? foregroundColor,
     Color? backgroundColor,
