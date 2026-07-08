@@ -77,55 +77,38 @@ internal constructor(private val listEncoder: SharedPreferencesListEncoder) :
     return preferences.edit().remove(key).commit()
   }
 
-  @Throws(RuntimeException::class)
   override fun setEncodedStringList(key: String, value: String): Boolean {
     return preferences.edit().putString(key, value).commit()
   }
 
   // Deprecated, for testing purposes only.
   @Deprecated("")
-  @Throws(RuntimeException::class)
   override fun setDeprecatedStringList(key: String, value: List<String>): Boolean {
     return preferences.edit().putString(key, LIST_PREFIX + listEncoder.encode(value)).commit()
   }
 
-  @Throws(RuntimeException::class)
   override fun getAll(prefix: String, allowList: List<String>?): Map<String, Any> {
-    val allowSet: Set<String>? = if (allowList == null) null else HashSet<String>(allowList)
-    return getAllPrefs(prefix, allowSet)
+    return getAllPrefs(prefix, allowList?.toSet())
   }
 
-  @Throws(RuntimeException::class)
   override fun clear(prefix: String, allowList: List<String>?): Boolean {
     val clearEditor = preferences.edit()
-    val allPrefs = preferences.all
-    val filteredPrefs = ArrayList<String?>()
-    for (key in allPrefs.keys) {
-      if (key.startsWith(prefix) && (allowList == null || allowList.contains(key))) {
-        filteredPrefs.add(key)
-      }
-    }
-    for (key in filteredPrefs) {
-      clearEditor.remove(key)
-    }
+    val allowSet = allowList?.toSet()
+    preferences.all.keys
+        .filter { key -> key.startsWith(prefix) && (allowSet == null || allowSet.contains(key)) }
+        .forEach { key -> clearEditor.remove(key) }
     return clearEditor.commit()
   }
 
   // Gets all shared preferences, filtered to only those set with the given prefix.
-  // Optionally filtered also to only those items in the optional [allowList].
-  @Throws(RuntimeException::class)
+  // Optionally filtered also to only those items in
   private fun getAllPrefs(prefix: String, allowList: Set<String>?): Map<String, Any> {
-    val allPrefs = preferences.all
-    val filteredPrefs: MutableMap<String, Any> = HashMap()
-    for ((key, value) in allPrefs) {
-      if (key.startsWith(prefix) &&
-          value != null &&
-          (allowList == null || allowList.contains(key))) {
-        filteredPrefs[key] = transformPref(key, value)
-      }
-    }
-
-    return filteredPrefs
+    return preferences.all
+        .filter { (key, value) ->
+          key.startsWith(prefix) && value != null && (allowList == null || allowList.contains(key))
+        }
+        // Force-unwrapping is safe here due to the `value != null` in the filter above.
+        .mapValues { (key, value) -> transformPref(key, value!!) }
   }
 
   private fun transformPref(key: String, value: Any): Any {
@@ -152,7 +135,7 @@ internal constructor(private val listEncoder: SharedPreferencesListEncoder) :
       // https://github.com/flutter/flutter/issues/124420
 
       // This only happens for previous usage of setStringSet. The app expects a list.
-      @Suppress("UNCHECKED_CAST") val listValue: List<String> = ArrayList(value as Set<String>)
+      @Suppress("UNCHECKED_CAST") val listValue = (value as Set<String>).toList()
       // Let's migrate the value too while we are at it.
       preferences
           .edit()
@@ -166,7 +149,6 @@ internal constructor(private val listEncoder: SharedPreferencesListEncoder) :
   }
 
   internal class ListEncoder : SharedPreferencesListEncoder {
-    @Throws(RuntimeException::class)
     override fun encode(list: List<String>): String {
       try {
         val byteStream = ByteArrayOutputStream()
@@ -179,7 +161,6 @@ internal constructor(private val listEncoder: SharedPreferencesListEncoder) :
       }
     }
 
-    @Throws(RuntimeException::class)
     override fun decode(listString: String): List<String> {
       try {
         val stream: ObjectInputStream =
