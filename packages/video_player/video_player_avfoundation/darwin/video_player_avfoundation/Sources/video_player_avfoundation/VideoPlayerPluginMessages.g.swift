@@ -228,21 +228,25 @@ struct PlatformVideoViewCreationParams: Hashable, CustomStringConvertible {
 struct CreationOptions: Hashable, CustomStringConvertible {
   var uri: String
   var httpHeaders: [String: String]
+  var preferredAudioLanguage: String? = nil
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> CreationOptions? {
     let uri = pigeonVar_list[0] as! String
     let httpHeaders = pigeonVar_list[1] as! [String: String]
+    let preferredAudioLanguage: String? = nilOrValue(pigeonVar_list[2])
 
     return CreationOptions(
       uri: uri,
-      httpHeaders: httpHeaders
+      httpHeaders: httpHeaders,
+      preferredAudioLanguage: preferredAudioLanguage
     )
   }
   func toList() -> [Any?] {
     return [
       uri,
       httpHeaders,
+      preferredAudioLanguage,
     ]
   }
   static func == (lhs: CreationOptions, rhs: CreationOptions) -> Bool {
@@ -251,17 +255,20 @@ struct CreationOptions: Hashable, CustomStringConvertible {
     }
     return VideoPlayerPluginMessagesPigeonInternal.deepEquals(lhs.uri, rhs.uri)
       && VideoPlayerPluginMessagesPigeonInternal.deepEquals(lhs.httpHeaders, rhs.httpHeaders)
+      && VideoPlayerPluginMessagesPigeonInternal.deepEquals(
+        lhs.preferredAudioLanguage, rhs.preferredAudioLanguage)
   }
 
   func hash(into hasher: inout Hasher) {
     hasher.combine("CreationOptions")
     VideoPlayerPluginMessagesPigeonInternal.deepHash(value: uri, hasher: &hasher)
     VideoPlayerPluginMessagesPigeonInternal.deepHash(value: httpHeaders, hasher: &hasher)
+    VideoPlayerPluginMessagesPigeonInternal.deepHash(value: preferredAudioLanguage, hasher: &hasher)
   }
 
   public var description: String {
     return
-      "CreationOptions(uri: \(String(describing: uri)), httpHeaders: \(String(describing: httpHeaders)))"
+      "CreationOptions(uri: \(String(describing: uri)), httpHeaders: \(String(describing: httpHeaders)), preferredAudioLanguage: \(String(describing: preferredAudioLanguage)))"
   }
 }
 
