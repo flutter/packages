@@ -1,3 +1,7 @@
+## 2.12.0
+
+* Adds support for setting a preferred audio language during player creation via `VideoPlayerOptions.preferredAudioLanguage`.
+
 ## 2.11.0
 
 * Adds `backBufferDurationMs` to `CreationOptions` to configure ExoPlayer `DefaultLoadControl` back buffer duration.
