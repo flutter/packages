@@ -153,7 +153,7 @@ you've added a new widget and it has a tooltip), follow these steps:
    String get showMenuTooltip;
    ```
    to the localizations class `MaterialLocalizations`,
-   in [`packages/flutter/lib/src/material/material_localizations.dart`](https://github.com/flutter/flutter/blob/main/packages/flutter/lib/src/material/material_localizations.dart);
+   in [`packages/material_ui/lib/src/material_localizations.dart`](https://github.com/flutter/packages/blob/main/packages/material_ui/lib/src/material_localizations.dart);
 
    #### For messages with parameters, add new function
    ```
@@ -189,12 +189,12 @@ you've added a new widget and it has a tooltip), follow these steps:
    }
    ```
 
-3. Add a test to `test/material/localizations_test.dart` that verifies that
+3. Add a test to `test/localizations_test.dart` that verifies that
    this new value is implemented.
 
-4. Update the `flutter_localizations` package. To add a new string to the
-   `flutter_localizations` package, you must first add it to the English
-   translations (`lib/src/l10n/material_en.arb`), including a description.
+4. Update the .arb files. To add a new string to the .arb files, you must first
+   add it to the English translations (`lib/src/l10n/material_en.arb`),
+   including a description.
 
    #### Messages without parameters:
    ```
@@ -216,25 +216,23 @@ you've added a new widget and it has a tooltip), follow these steps:
    Then you need to add new entries for the string to all of the other
    language locale files by running:
    ```
-   dart dev/tools/localization/bin/gen_missing_localizations.dart
+   dart packages/material_ui/script/l10n/bin/gen_missing_localizations.dart
    ```
    Which will copy the English strings into the other locales as placeholders
    until they can be translated.
 
-   Finally you need to re-generate lib/src/l10n/localizations.dart by running:
+   Finally you need to re-generate
+   lib/src/l10n/generated_material_localizations.dart by running:
    ```
-   dart dev/tools/localization/bin/gen_localizations.dart --overwrite
+   dart packages/material_ui/script/l10n/bin/gen_localizations.dart --overwrite
    ```
 
    If you got an error when running this command, [this issue](https://github.com/flutter/flutter/issues/104601) might be helpful.
 
    TL;DR: If you got the same type of errors as discussed in the issue, run this instead:
    ```
-   dart dev/tools/localization/bin/gen_localizations.dart --overwrite --remove-undefined
+   dart packages/material_ui/script/l10n/bin/gen_localizations.dart --overwrite --remove-undefined
    ```
-
-   There is a [localization README](./lib/src/l10n/README.md) file with further
-   information in the `lib/src/l10n/` directory.
 
 5. If you are a Google employee, you should then also follow the instructions
    at `go/flutter-l10n`. If you're not, don't worry about it.
@@ -247,12 +245,12 @@ existing string in the MaterialLocalizations objects, follow these steps:
 1. Modify the default value of the relevant getter(s) in
    `DefaultMaterialLocalizations` below.
 
-2. Update the `flutter_localizations` package. Modify the out-of-date English
-   strings in `lib/l10n/material_en.arb`.
+2. Update the .arb files. Modify the out-of-date English strings in
+   `lib/scr/l10n/material_en.arb`.
 
-   You also need to re-generate `lib/l10n/localizations.dart` by running:
+   You also need to re-generate `lib/src/l10n/localizations.dart` by running:
    ```
-   dart dev/tools/localization/bin/gen_localizations.dart --overwrite
+   dart packages/material_ui/script/l10n/bin/generated_material_localizations.dart --overwrite
    ```
 
    This script may result in your updated getters being created in newer
@@ -260,31 +258,28 @@ existing string in the MaterialLocalizations objects, follow these steps:
    Leave them as they were generated, and they will be picked up for
    translation.
 
-   There is a [localization README](./lib/src/l10n/README.md) file with further
-   information in the `lib/src/l10n/` directory.
-
 3. If you are a Google employee, you should then also follow the instructions
    at `go/flutter-l10n`. If you're not, don't worry about it.
 
 #### 'generated\_\*\_localizations.dart': all of the localizations
 
-All of the localizations are combined in a single file per library
-using the gen_localizations script.
+All of the localizations are combined in a single file
+(generated_material_localizations.dart) using the gen_localizations script.
 
 You can see what that script would generate by running:
 
 ```dart
-dart dev/tools/localization/bin/gen_localizations.dart
+dart packages/material_ui/script/l10n/bin/gen_localizations.dart
 ```
 
 Actually update the generated files with:
 
 ```dart
-dart dev/tools/localization/bin/gen_localizations.dart --overwrite
+dart packages/material_ui/script/l10n/bin/gen_localizations.dart --overwrite
 ```
 
 The gen_localizations script just combines the contents of all of the
-.arb files, each into a class which extends `Global*Localizations`.
+.arb files, each into a class which extends `GlobalMaterialLocalizations`.
 The `MaterialLocalizations` class implementation uses these to lookup localized
 resource values.
 
@@ -304,9 +299,9 @@ https://github.com/flutter/flutter/issues/36704.
 Rather than risking developers' editor sessions, the strings in these arb files
 (and the code generated for them) have been encoded using the appropriate
 escapes for JSON and Dart. The JSON format arb files were rewritten with
-dev/tools/localization/bin/encode_kn_arb_files.dart. The localizations code
+packages/material_ui/script/l10n/bin/encode_kn_arb_files.dart. The localizations code
 generator uses generateEncodedString()
-from dev/tools/localization/localizations_utils.dart.
+from packages/material_ui/script/l10n//localizations_utils.dart.
 
 ### Support for Pashto (ps) translations
 
@@ -343,3 +338,8 @@ of messages, format strings, and other values.
 
 The Dart [intl](https://pub.dev/packages/intl)
 package supports internationalization.
+
+The [flutter_localizations
+package](https://github.com/flutter/flutter/tree/master/packages/flutter_localizations),
+which contains the localizations for the core framework and is where these
+Material localizations were originally located.

@@ -7,7 +7,8 @@
 // returned value is a generated instance of a GlobalMaterialLocalizations or
 // GlobalCupertinoLocalizations object that corresponds to a single locale.
 //
-// The *.arb files are in packages/material_ui/lib/l10n and packages/cupertino_ui/lib/l10n.
+// The *.arb files are in packages/material_ui/lib/l10n and
+// packages/cupertino_ui/lib/l10n.
 //
 // The arb (JSON) format files must contain a single map indexed by locale.
 // Each map value is itself a map with resource identifier keys and localized

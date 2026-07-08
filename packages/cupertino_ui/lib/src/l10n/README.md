@@ -120,6 +120,125 @@ When defining new resources that handle pluralizations, the "One" and
 the "Other" forms must, at minimum, always be defined in the source
 English ARB files.
 
+### Adding a new string to localizations
+
+If you (someone contributing to the package) want to add a new string to the
+`CupertinoLocalizations` object (e.g. because
+you've added a new widget and it has a tooltip), follow these steps:
+
+1. #### For messages without parameters, add new getter
+   ```
+   String get showMenuTooltip;
+   ```
+   to the localizations class `CupertinoLocalizations`,
+   in [`packages/cupertino_ui/lib/src/cupertino_localizations.dart`](https://github.com/flutter/packages/blob/main/packages/cupertino_ui/lib/src/cupertino_localizations.dart);
+
+   #### For messages with parameters, add new function
+   ```
+   String aboutListTileTitle(String applicationName);
+   ```
+   to the same localization class.
+
+2. Implement a default return value in `DefaultCupertinoLocalizations` in
+   the same file as in step 1.
+
+   #### Messages without parameters:
+   ```
+   @override
+   String get showMenuTooltip => 'Show menu';
+   ```
+   #### Messages with parameters:
+   ```
+   @override
+   String aboutListTileTitle(String applicationName) => 'About $applicationName';
+   ```
+   For messages with parameters, do also add the function to `GlobalCupertinoLocalizations`  in [`packages/flutter_localizations/lib/src/cupertino_localizations.dart`](https://github.com/flutter/flutter/blob/main/packages/flutter_localizations/lib/src/cupertino_localizations.dart), and add a raw getter as demonstrated below:
+
+   ```
+   /// The raw version of [aboutListTileTitle], with `$applicationName` verbatim
+   /// in the string.
+   @protected
+   String get aboutListTileTitleRaw;
+
+   @override
+   String aboutListTileTitle(String applicationName) {
+     final String text = aboutListTileTitleRaw;
+     return text.replaceFirst(r'$applicationName', applicationName);
+   }
+   ```
+
+3. Add a test to `test/localizations_test.dart` that verifies that
+   this new value is implemented.
+
+4. Update the .arb files. To add a new string to the .arb files, you must first
+   add it to the English translations (`lib/src/l10n/cupertino_en.arb`),
+   including a description.
+
+   #### Messages without parameters:
+   ```
+   "showMenuTooltip": "Show menu",
+   "@showMenuTooltip": {
+     "description": "The tooltip for the button that shows a popup menu."
+   },
+   ```
+
+   #### Messages with parameters:
+   ```
+   "aboutListTileTitle": "About $applicationName",
+   "@aboutListTileTitle": {
+     "description": "The default title for the drawer item that shows an about page for the application. The value of $applicationName is the name of the application, like GMail or Chrome.",
+     "parameters": "applicationName"
+   },
+   ```
+
+   Then you need to add new entries for the string to all of the other
+   language locale files by running:
+   ```
+   dart packages/material_ui/script/l10n/bin/gen_missing_localizations.dart
+   ```
+   Which will copy the English strings into the other locales as placeholders
+   until they can be translated.
+
+   Finally you need to re-generate
+   lib/src/l10n/generated_material_localizations.dart by running:
+   ```
+   dart packages/material_ui/script/l10n/bin/gen_localizations.dart --overwrite
+   ```
+
+   If you got an error when running this command, [this issue](https://github.com/flutter/flutter/issues/104601) might be helpful.
+
+   TL;DR: If you got the same type of errors as discussed in the issue, run this instead:
+   ```
+   dart packages/material_ui/script/l10n/bin/gen_localizations.dart --overwrite --remove-undefined
+   ```
+
+5. If you are a Google employee, you should then also follow the instructions
+   at `go/flutter-l10n`. If you're not, don't worry about it.
+
+### Updating an existing string
+
+If you or someone contributing to the Flutter framework wants to modify an
+existing string in the CupertinoLocalizations objects, follow these steps:
+
+1. Modify the default value of the relevant getter(s) in
+   `DefaultCupertinoLocalizations` below.
+
+2. Update the .arb files. Modify the out-of-date English strings in
+   `lib/scr/l10n/cupertino_en.arb`.
+
+   You also need to re-generate `lib/src/l10n/localizations.dart` by running:
+   ```
+   dart packages/material_ui/script/l10n/bin/generated_material_localizations.dart --overwrite
+   ```
+
+   This script may result in your updated getters being created in newer
+   locales and set to the old value of the strings. This is to be expected.
+   Leave them as they were generated, and they will be picked up for
+   translation.
+
+3. If you are a Google employee, you should then also follow the instructions
+   at `go/flutter-l10n`. If you're not, don't worry about it.
+
 ### 'generated\_\*\_localizations.dart': all of the localizations
 
 All of the localizations are combined in a single file per library
@@ -128,13 +247,13 @@ using the gen_localizations script.
 You can see what that script would generate by running:
 
 ```dart
-dart dev/tools/localization/bin/gen_localizations.dart
+dart packages/material_ui/script/l10n/bin/gen_localizations.dart
 ```
 
 Actually update the generated files with:
 
 ```dart
-dart dev/tools/localization/bin/gen_localizations.dart --overwrite
+dart packages/material_ui/script/l10n/bin/gen_localizations.dart --overwrite
 ```
 
 The gen_localizations script just combines the contents of all of the
@@ -158,9 +277,9 @@ https://github.com/flutter/flutter/issues/36704.
 Rather than risking developers' editor sessions, the strings in these arb files
 (and the code generated for them) have been encoded using the appropriate
 escapes for JSON and Dart. The JSON format arb files were rewritten with
-dev/tools/localization/bin/encode_kn_arb_files.dart. The localizations code
+packages/material_ui/script/l10n/bin/encode_kn_arb_files.dart. The localizations code
 generator uses generateEncodedString()
-from dev/tools/localization/localizations_utils.dart.
+from packages/material_ui/script/l10n/localizations_utils.dart.
 
 ### Translations Status, Reporting Errors
 
@@ -184,3 +303,8 @@ of messages, format strings, and other values.
 
 The Dart [intl](https://pub.dev/packages/intl)
 package supports internationalization.
+
+The [flutter_localizations
+package](https://github.com/flutter/flutter/tree/master/packages/flutter_localizations),
+which contains the localizations for the core framework and is where these
+Cupertino localizations were originally located.
