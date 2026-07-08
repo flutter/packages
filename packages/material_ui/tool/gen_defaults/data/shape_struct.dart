@@ -4,11 +4,15 @@
 // Source template: javascript/materialdesign/tokens/compiler/formats/flutter/templates/shape_struct.dart
 
 class ShapeStruct {
-  final String family;
-  final double topLeft;
-  final double topRight;
   final double bottomLeft;
+
   final double bottomRight;
+
+  final String family;
+
+  final double topLeft;
+
+  final double topRight;
 
   const ShapeStruct({
     required this.family,

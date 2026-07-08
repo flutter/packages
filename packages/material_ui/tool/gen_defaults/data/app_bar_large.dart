@@ -9,17 +9,17 @@ class TokenAppBarLarge {
   static const double containerHeight = 152.00;
 
   /// md.comp.app-bar.large.title.font
+  static const String titleFontFontFamily = 'Roboto';
+
+  /// md.comp.app-bar.large.title.font
   static const double titleFontFontSize = 28.00;
 
   /// md.comp.app-bar.large.title.font
   static const double titleFontFontWeight = 400;
 
   /// md.comp.app-bar.large.title.font
-  static const double titleFontLineHeight = 36.00;
-
-  /// md.comp.app-bar.large.title.font
   static const double titleFontLetterSpacing = 0.00;
 
   /// md.comp.app-bar.large.title.font
-  static const String titleFontFontFamily = 'Roboto';
+  static const double titleFontLineHeight = 36.00;
 }

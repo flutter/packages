@@ -8,6 +8,12 @@ import 'color_role.dart';
 import 'shape_struct.dart';
 
 class TokenListExpand {
+  /// md.comp.list.expand.collapsed.list-item.trailing-icon.container.color
+  static const TokenColorRole collapsedListItemTrailingIconContainerColor = TokenColorRole.surface;
+
+  /// md.comp.list.expand.collapsed.list-item.trailing-icon.icon.color
+  static const TokenColorRole collapsedListItemTrailingIconIconColor = TokenColorRole.onSurface;
+
   /// md.comp.list.expand.container.shape
   static const ShapeStruct containerShape = ShapeStruct(
     family: 'SHAPE_FAMILY_ROUNDED_CORNERS',
@@ -17,21 +23,18 @@ class TokenListExpand {
     bottomRight: 16.00,
   );
 
+  /// md.comp.list.expand.expanded.list-item.container.color
+  static const TokenColorRole expandedListItemContainerColor = TokenColorRole.surface;
+
   /// md.comp.list.expand.expanded.list-item.segmented.container.color
-  static const TokenColorRole expandedListItemSegmentedContainerColor =
-      TokenColorRole.surface;
+  static const TokenColorRole expandedListItemSegmentedContainerColor = TokenColorRole.surface;
 
-  /// md.comp.list.expand.collapsed.list-item.trailing-icon.icon.color
-  static const TokenColorRole collapsedListItemTrailingIconIconColor =
-      TokenColorRole.onSurface;
-
-  /// md.comp.list.expand.collapsed.list-item.trailing-icon.container.color
-  static const TokenColorRole collapsedListItemTrailingIconContainerColor =
-      TokenColorRole.surface;
+  /// md.comp.list.expand.expanded.list-item.trailing-icon.container.color
+  static const TokenColorRole expandedListItemTrailingIconContainerColor =
+      TokenColorRole.surfaceContainer;
 
   /// md.comp.list.expand.expanded.list-item.trailing-icon.icon.color
-  static const TokenColorRole expandedListItemTrailingIconIconColor =
-      TokenColorRole.onSurface;
+  static const TokenColorRole expandedListItemTrailingIconIconColor = TokenColorRole.onSurface;
 
   /// md.comp.list.expand.trailing-icon.shape
   static const ShapeStruct trailingIconShape = ShapeStruct(
@@ -41,12 +44,4 @@ class TokenListExpand {
     bottomLeft: 0.00,
     bottomRight: 0.00,
   );
-
-  /// md.comp.list.expand.expanded.list-item.container.color
-  static const TokenColorRole expandedListItemContainerColor =
-      TokenColorRole.surface;
-
-  /// md.comp.list.expand.expanded.list-item.trailing-icon.container.color
-  static const TokenColorRole expandedListItemTrailingIconContainerColor =
-      TokenColorRole.surfaceContainer;
 }

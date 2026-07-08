@@ -7,9 +7,9 @@
 import 'color_role.dart';
 
 class TokenScrim {
-  /// md.comp.scrim.container.opacity
-  static const double containerOpacity = 0.32;
-
   /// md.comp.scrim.container.color
   static const TokenColorRole containerColor = TokenColorRole.scrim;
+
+  /// md.comp.scrim.container.opacity
+  static const double containerOpacity = 0.32;
 }

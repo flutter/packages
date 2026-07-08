@@ -10,6 +10,9 @@ class TokenButtonGroupConnectedXlarge {
   /// md.comp.button-group.connected.xlarge.between-space
   static const double betweenSpace = 2.00;
 
+  /// md.comp.button-group.connected.xlarge.container.height
+  static const double containerHeight = 136.00;
+
   /// md.comp.button-group.connected.xlarge.container.shape
   static const ShapeStruct containerShape = ShapeStruct(
     family: 'SHAPE_FAMILY_CIRCULAR',
@@ -19,15 +22,12 @@ class TokenButtonGroupConnectedXlarge {
     bottomRight: 0.00,
   );
 
-  /// md.comp.button-group.connected.xlarge.container.height
-  static const double containerHeight = 136.00;
-
-  /// md.comp.button-group.connected.xlarge.selected.inner-corner.corner-size
-  static const double selectedInnerCornerCornerSize = 50.00;
+  /// md.comp.button-group.connected.xlarge.inner-corner.corner-size
+  static const double innerCornerCornerSize = 20.00;
 
   /// md.comp.button-group.connected.xlarge.pressed.inner-corner.corner-size
   static const double pressedInnerCornerCornerSize = 16.00;
 
-  /// md.comp.button-group.connected.xlarge.inner-corner.corner-size
-  static const double innerCornerCornerSize = 20.00;
+  /// md.comp.button-group.connected.xlarge.selected.inner-corner.corner-size
+  static const double selectedInnerCornerCornerSize = 50.00;
 }
