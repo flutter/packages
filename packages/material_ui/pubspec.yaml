@@ -36,7 +36,7 @@ dev_dependencies:
     sdk: flutter
   # To track memory leaks.
   leak_tracker_flutter_testing: ^3.0.10
-  meta: ^1.18.3
+  meta: ^1.18.0
   path: ^1.9.1
   platform: ^3.1.6
 
