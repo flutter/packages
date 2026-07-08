@@ -684,8 +684,9 @@ abstract class RouteBaseConfig {
         }
         final ConstantReader nameValue = reader.read('name');
         final ConstantReader caseSensitiveValue = reader.read('caseSensitive');
-        final bool hasOverriddenOnExit = classElement.methods.any((
-            method) => method.name == 'onExit');
+        final bool hasOverriddenOnExit = classElement.methods.any(
+          (method) => method.name == 'onExit',
+        );
         value = GoRouteConfig._(
           path: pathValue.stringValue,
           name: nameValue.isNull ? null : nameValue.stringValue,
@@ -714,8 +715,9 @@ abstract class RouteBaseConfig {
           );
         }
         final ConstantReader caseSensitiveValue = reader.read('caseSensitive');
-        final bool hasOverriddenOnExit = classElement.methods.any((
-            method) => method.name == 'onExit');
+        final bool hasOverriddenOnExit = classElement.methods.any(
+          (method) => method.name == 'onExit',
+        );
         value = RelativeGoRouteConfig._(
           path: pathValue.stringValue,
           caseSensitive: caseSensitiveValue.boolValue,

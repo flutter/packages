@@ -7,5 +7,4 @@ import 'package:go_router/go_router.dart';
 mixin $HasNotOverriddenOnExitRoute {}
 
 @TypedGoRoute<HasNotOverriddenOnExitRoute>(path: '/has-not-overridden-on-exit-route')
-class HasNotOverriddenOnExitRoute extends GoRouteData
-    with $HasNotOverriddenOnExitRoute {}
+class HasNotOverriddenOnExitRoute extends GoRouteData with $HasNotOverriddenOnExitRoute {}
