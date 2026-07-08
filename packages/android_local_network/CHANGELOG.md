@@ -1,14 +1,7 @@
-## 0.1.1+1
-
-* Added AndroidLocalNetwork.initialize() to automatically handle ACCESS_LOCAL_NETWORK permission for sockets.
-
-## 0.1.1
-
-* `AndroidLocalAreaSocket.connect` now automatically requests permission on first use.
-* Synchronized `AndroidLocalNetwork.requestPermission` to handle concurrent calls.
-
-## 0.1.0
+## 1.0.0
 
 * Initial release.
-* Added `AndroidLocalNetwork` to check and request `ACCESS_LOCAL_NETWORK` permission.
-* Added `AndroidLocalAreaSocket` wrapper for `Socket.connect`.
+* Provides transparent handling of the Android Local Area Network permission (`ACCESS_LOCAL_NETWORK`) using `IOOverrides`.
+* Supports Android 16+ (API 36+) runtime permission enforcement.
+* Robust synchronization for concurrent socket connections, ensuring only one permission dialog is shown.
+* Comprehensive example app demonstrating both proactive and transparent permission handling.

@@ -8,6 +8,7 @@ import 'package:android_local_network/android_local_network.dart';
 import 'package:flutter/material.dart';
 
 void main() {
+  AndroidLocalNetwork.initialize();
   runApp(const MyApp());
 }
 
@@ -38,6 +39,11 @@ class _MyHomePageState extends State<MyHomePage> {
   String _status = 'Unknown';
   String _lastAction = 'None';
   bool _isScanning = false;
+  int _totalAttempts = 0;
+  int _permissionGrants = 0;
+  int _permissionDenials = 0;
+  int _connectionSuccesses = 0;
+  int _connectionFailures = 0;
   final List<String> _foundDevices = [];
   final List<String> _interfacesInfo = [];
 
@@ -69,11 +75,59 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  Future<void> _requestPermission() async {
+    final bool granted = await AndroidLocalNetwork.requestPermission();
+    setState(() {
+      _status = granted ? 'Granted' : 'Denied';
+      _lastAction = 'Proactively Requested Permission';
+    });
+  }
+
+  Future<void> _testStandardSocket() async {
+    setState(() {
+      _totalAttempts = 1;
+      _permissionGrants = 0;
+      _permissionDenials = 0;
+      _connectionSuccesses = 0;
+      _connectionFailures = 0;
+      _lastAction = 'Attempting Socket.connect("1.1.1.1", 80)...';
+    });
+
+    try {
+      final socket = await Socket.connect('1.1.1.1', 80,
+          timeout: const Duration(seconds: 5));
+      await socket.close();
+      setState(() {
+        _permissionGrants++;
+        _connectionSuccesses++;
+        _lastAction = 'Socket.connect successful';
+      });
+      await _checkPermission();
+    } catch (e) {
+      setState(() {
+        if (e is SocketException &&
+            e.message.contains('ACCESS_LOCAL_NETWORK')) {
+          _permissionDenials++;
+        } else {
+          _permissionGrants++;
+          _connectionFailures++;
+        }
+        _lastAction = 'Socket.connect failed: $e';
+      });
+      await _checkPermission();
+    }
+  }
+
   Future<void> _scanLan() async {
     setState(() {
       _isScanning = true;
       _foundDevices.clear();
-      _lastAction = 'Scanning all IPv4 interfaces (ports 80, 8080, 443)...';
+      _totalAttempts = 0;
+      _permissionGrants = 0;
+      _permissionDenials = 0;
+      _connectionSuccesses = 0;
+      _connectionFailures = 0;
+      _lastAction = 'Scanning LAN...';
     });
 
     try {
@@ -104,21 +158,34 @@ class _MyHomePageState extends State<MyHomePage> {
           final ip = '$subnet.$i';
           for (final port in ports) {
             scans.add(() async {
+              setState(() {
+                _totalAttempts++;
+              });
               try {
-                final socket = await AndroidLocalAreaSocket.connect(
+                final socket = await Socket.connect(
                   ip,
                   port,
                   timeout: const Duration(milliseconds: 500),
                 );
                 await socket.close();
                 setState(() {
+                  _permissionGrants++;
+                  _connectionSuccesses++;
                   final entry = '$ip:$port';
                   if (!_foundDevices.contains(entry)) {
                     _foundDevices.add(entry);
                   }
                 });
-              } catch (_) {
-                // Ignore connection failures
+              } catch (e) {
+                setState(() {
+                  if (e is SocketException &&
+                      e.message.contains('ACCESS_LOCAL_NETWORK')) {
+                    _permissionDenials++;
+                  } else {
+                    _permissionGrants++;
+                    _connectionFailures++;
+                  }
+                });
               }
             }());
           }
@@ -127,7 +194,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
       await Future.wait(scans);
       setState(() {
-        _lastAction = 'Scan complete. Found ${_foundDevices.length} devices.';
+        _lastAction = 'Scan complete.';
       });
     } catch (e) {
       setState(() {
@@ -168,9 +235,55 @@ class _MyHomePageState extends State<MyHomePage> {
                 Text(
                   _status,
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    color: _status == 'Granted' ? Colors.green : Colors.red,
-                  ),
+                        color: _status == 'Granted' ? Colors.green : Colors.red,
+                      ),
                 ),
+                const SizedBox(height: 20),
+                if (_totalAttempts > 0)
+                  Card(
+                    elevation: 4,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          const Text(
+                            'Permission & Connection Stats',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 12),
+                          const Text('Permission Result:',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              _buildStatItem('Granted', _permissionGrants,
+                                  Colors.green),
+                              _buildStatItem('Denied', _permissionDenials,
+                                  Colors.red),
+                            ],
+                          ),
+                          const Divider(height: 32),
+                          const Text('Network Result:',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              _buildStatItem('Connected', _connectionSuccesses,
+                                  Colors.green),
+                              _buildStatItem('Timed Out', _connectionFailures,
+                                  Colors.orange),
+                            ],
+                          ),
+                          if (_isScanning) ...[
+                            const SizedBox(height: 16),
+                            const LinearProgressIndicator(),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ),
+
                 const SizedBox(height: 20),
                 Card(
                   child: Padding(
@@ -196,7 +309,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 10),
                 Wrap(
                   spacing: 10,
                   runSpacing: 10,
@@ -205,6 +318,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     ElevatedButton(
                       onPressed: _checkPermission,
                       child: const Text('Check Status'),
+                    ),
+                    ElevatedButton(
+                      onPressed: _requestPermission,
+                      child: const Text('Request Permission'),
+                    ),
+                    ElevatedButton(
+                      onPressed: _testStandardSocket,
+                      child: const Text('Test Socket.connect'),
                     ),
                     ElevatedButton(
                       onPressed: _isScanning ? null : _scanLan,
@@ -240,6 +361,28 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildStatItem(String label, int value, Color color) {
+    return Column(
+      children: [
+        Text(
+          value.toString(),
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
+        ),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey[600],
+          ),
+        ),
+      ],
     );
   }
 }

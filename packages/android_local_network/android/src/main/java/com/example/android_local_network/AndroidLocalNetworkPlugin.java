@@ -81,6 +81,10 @@ public class AndroidLocalNetworkPlugin
 
   /** Checks if the local area permission is granted. */
   public boolean checkPermission() {
+    if (Build.VERSION.SDK_INT < 36) {
+      Log.d(TAG, "checkPermission: API level " + Build.VERSION.SDK_INT + " < 36, auto-granting");
+      return true;
+    }
     if (activity == null) {
       Log.w(TAG, "checkPermission: activity is null");
       return false;
@@ -100,6 +104,12 @@ public class AndroidLocalNetworkPlugin
   /** Requests the local area permission. */
   public void requestPermission(PermissionCallback callback) {
     Log.d(TAG, "requestPermission called. Current API: " + Build.VERSION.SDK_INT);
+
+    if (Build.VERSION.SDK_INT < 36) {
+      Log.d(TAG, "requestPermission: API level < 36, returning true");
+      callback.onResult(true);
+      return;
+    }
 
     if (activity == null) {
       Log.w(TAG, "requestPermission: activity is null");

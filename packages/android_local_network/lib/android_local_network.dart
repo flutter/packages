@@ -56,6 +56,16 @@ class AndroidLocalNetwork {
       return _pendingRequest!;
     }
 
+    // Check if already granted.
+    if (await checkPermission()) {
+      return true;
+    }
+
+    // Re-check pending request after async checkPermission.
+    if (_pendingRequest != null) {
+      return _pendingRequest!;
+    }
+
     final completer = Completer<bool>();
     _pendingRequest = completer.future;
     _hasRequestedOnce = true;
@@ -66,13 +76,6 @@ class AndroidLocalNetwork {
       if (plugin == null) {
         completer.complete(false);
         return false;
-      }
-
-      // Check if already granted to avoid unnecessary callback setup.
-      if (plugin.checkPermission()) {
-        plugin.release();
-        completer.complete(true);
-        return true;
       }
 
       final callback = AndroidLocalNetworkPlugin$PermissionCallback.implement(
@@ -103,14 +106,26 @@ class AndroidLocalNetwork {
 
   /// Internal method to check and potentially request permission automatically.
   static Future<bool> _checkAndRequestPermission() async {
+    // If a request is already in progress, wait for it.
+    if (_pendingRequest != null) {
+      return _pendingRequest!;
+    }
+
+    // Check if we already have the permission.
     if (await checkPermission()) {
       return true;
     }
-    // If we haven't requested yet, or if a request is already in progress,
-    // call requestPermission (which handles synchronization).
-    if (!_hasRequestedOnce || _pendingRequest != null) {
+
+    // After the async checkPermission, a request might have started from another call.
+    if (_pendingRequest != null) {
+      return _pendingRequest!;
+    }
+
+    // If we haven't requested yet, start a new request.
+    if (!_hasRequestedOnce) {
       return requestPermission();
     }
+
     return false;
   }
 }
