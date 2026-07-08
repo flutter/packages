@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 
 public class VideoPlayerOptions {
   public boolean mixWithOthers;
+  public String preferredAudioLanguage;
 
   /**
    * The duration of the back buffer in milliseconds, used to configure ExoPlayer's load control.
@@ -21,5 +22,6 @@ public class VideoPlayerOptions {
   public VideoPlayerOptions(@NonNull VideoPlayerOptions other) {
     this.mixWithOthers = other.mixWithOthers;
     this.backBufferDurationMs = other.backBufferDurationMs;
+    this.preferredAudioLanguage = other.preferredAudioLanguage;
   }
 }
