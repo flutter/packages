@@ -18,6 +18,7 @@
 #include <limits>
 #include <map>
 #include <optional>
+#include <sstream>
 #include <string>
 
 namespace core_tests_pigeontest {
@@ -239,6 +240,101 @@ size_t PigeonInternalDeepHash(const ::flutter::EncodableValue& v) {
   return result;
 }
 
+template <typename T>
+std::string PigeonInternalToString(const T& v);
+
+std::string PigeonInternalToString(const bool& v);
+
+template <typename T>
+std::string PigeonInternalToString(const std::vector<T>& v);
+
+template <typename K, typename V>
+std::string PigeonInternalToString(const std::map<K, V>& v);
+
+template <typename T>
+std::string PigeonInternalToString(const std::optional<T>& v);
+
+template <typename T>
+std::string PigeonInternalToString(const std::unique_ptr<T>& v);
+
+std::string PigeonInternalToString(const ::flutter::EncodableValue& v);
+
+template <typename T>
+std::string PigeonInternalToString(const T& v) {
+  std::stringstream ss;
+  if constexpr (std::is_enum_v<T>) {
+    ss << static_cast<int>(v);
+  } else {
+    ss << v;
+  }
+  return ss.str();
+}
+
+std::string PigeonInternalToString(const bool& v) {
+  return v ? "true" : "false";
+}
+
+template <typename T>
+std::string PigeonInternalToString(const std::vector<T>& v) {
+  std::stringstream ss;
+  ss << "[";
+  for (size_t i = 0; i < v.size(); ++i) {
+    if (i > 0) {
+      ss << ", ";
+    }
+    ss << PigeonInternalToString(v[i]);
+  }
+  ss << "]";
+  return ss.str();
+}
+
+template <typename K, typename V>
+std::string PigeonInternalToString(const std::map<K, V>& v) {
+  std::stringstream ss;
+  ss << "{";
+  bool first = true;
+  for (const auto& kv : v) {
+    if (!first) {
+      ss << ", ";
+    }
+    first = false;
+    ss << PigeonInternalToString(kv.first) << ": "
+       << PigeonInternalToString(kv.second);
+  }
+  ss << "}";
+  return ss.str();
+}
+
+template <typename T>
+std::string PigeonInternalToString(const std::optional<T>& v) {
+  return v ? PigeonInternalToString(*v) : "null";
+}
+
+template <typename T>
+std::string PigeonInternalToString(const std::unique_ptr<T>& v) {
+  return v ? PigeonInternalToString(*v) : "null";
+}
+
+std::string PigeonInternalToString(const ::flutter::EncodableValue& v) {
+  return std::visit(
+      [](const auto& val) {
+        using T = std::decay_t<decltype(val)>;
+        if constexpr (std::is_same_v<T, std::monostate>) {
+          return std::string("null");
+        } else if constexpr (std::is_same_v<T, bool>) {
+          return val ? std::string("true") : std::string("false");
+        } else if constexpr (std::is_same_v<T, std::string>) {
+          return "\"" + val + "\"";
+        } else if constexpr (std::is_same_v<T,
+                                            ::flutter::CustomEncodableValue>) {
+          return std::string("[custom]");
+        } else {
+          return PigeonInternalToString(val);
+        }
+      },
+      v);
+}
+
 }  // namespace
 // UnusedClass
 
@@ -289,6 +385,18 @@ size_t UnusedClass::Hash() const {
   size_t result = 1;
   result = result * 31 + PigeonInternalDeepHash(a_field_);
   return result;
+}
+
+std::ostream& operator<<(std::ostream& os, const UnusedClass& obj) {
+  os << "UnusedClass(";
+  os << "a_field: ";
+  if (obj.a_field_) {
+    os << PigeonInternalToString(*obj.a_field_);
+  } else {
+    os << "null";
+  }
+  os << ")";
+  return os;
 }
 
 size_t PigeonInternalDeepHash(const UnusedClass& v) { return v.Hash(); }
@@ -627,6 +735,68 @@ size_t AllTypes::Hash() const {
   result = result * 31 + PigeonInternalDeepHash(list_map_);
   result = result * 31 + PigeonInternalDeepHash(map_map_);
   return result;
+}
+
+std::ostream& operator<<(std::ostream& os, const AllTypes& obj) {
+  os << "AllTypes(";
+  os << "a_bool: ";
+  os << PigeonInternalToString(obj.a_bool_);
+  os << ", an_int: ";
+  os << PigeonInternalToString(obj.an_int_);
+  os << ", an_int64: ";
+  os << PigeonInternalToString(obj.an_int64_);
+  os << ", a_double: ";
+  os << PigeonInternalToString(obj.a_double_);
+  os << ", a_byte_array: ";
+  os << PigeonInternalToString(obj.a_byte_array_);
+  os << ", a4_byte_array: ";
+  os << PigeonInternalToString(obj.a4_byte_array_);
+  os << ", a8_byte_array: ";
+  os << PigeonInternalToString(obj.a8_byte_array_);
+  os << ", a_float_array: ";
+  os << PigeonInternalToString(obj.a_float_array_);
+  os << ", an_enum: ";
+  os << PigeonInternalToString(obj.an_enum_);
+  os << ", another_enum: ";
+  os << PigeonInternalToString(obj.another_enum_);
+  os << ", a_string: ";
+  os << PigeonInternalToString(obj.a_string_);
+  os << ", an_object: ";
+  os << PigeonInternalToString(obj.an_object_);
+  os << ", list: ";
+  os << PigeonInternalToString(obj.list_);
+  os << ", string_list: ";
+  os << PigeonInternalToString(obj.string_list_);
+  os << ", int_list: ";
+  os << PigeonInternalToString(obj.int_list_);
+  os << ", double_list: ";
+  os << PigeonInternalToString(obj.double_list_);
+  os << ", bool_list: ";
+  os << PigeonInternalToString(obj.bool_list_);
+  os << ", enum_list: ";
+  os << PigeonInternalToString(obj.enum_list_);
+  os << ", object_list: ";
+  os << PigeonInternalToString(obj.object_list_);
+  os << ", list_list: ";
+  os << PigeonInternalToString(obj.list_list_);
+  os << ", map_list: ";
+  os << PigeonInternalToString(obj.map_list_);
+  os << ", map: ";
+  os << PigeonInternalToString(obj.map_);
+  os << ", string_map: ";
+  os << PigeonInternalToString(obj.string_map_);
+  os << ", int_map: ";
+  os << PigeonInternalToString(obj.int_map_);
+  os << ", enum_map: ";
+  os << PigeonInternalToString(obj.enum_map_);
+  os << ", object_map: ";
+  os << PigeonInternalToString(obj.object_map_);
+  os << ", list_map: ";
+  os << PigeonInternalToString(obj.list_map_);
+  os << ", map_map: ";
+  os << PigeonInternalToString(obj.map_map_);
+  os << ")";
+  return os;
 }
 
 size_t PigeonInternalDeepHash(const AllTypes& v) { return v.Hash(); }
@@ -1566,6 +1736,198 @@ size_t AllNullableTypes::Hash() const {
   return result;
 }
 
+std::ostream& operator<<(std::ostream& os, const AllNullableTypes& obj) {
+  os << "AllNullableTypes(";
+  os << "a_nullable_bool: ";
+  if (obj.a_nullable_bool_) {
+    os << PigeonInternalToString(*obj.a_nullable_bool_);
+  } else {
+    os << "null";
+  }
+  os << ", a_nullable_int: ";
+  if (obj.a_nullable_int_) {
+    os << PigeonInternalToString(*obj.a_nullable_int_);
+  } else {
+    os << "null";
+  }
+  os << ", a_nullable_int64: ";
+  if (obj.a_nullable_int64_) {
+    os << PigeonInternalToString(*obj.a_nullable_int64_);
+  } else {
+    os << "null";
+  }
+  os << ", a_nullable_double: ";
+  if (obj.a_nullable_double_) {
+    os << PigeonInternalToString(*obj.a_nullable_double_);
+  } else {
+    os << "null";
+  }
+  os << ", a_nullable_byte_array: ";
+  if (obj.a_nullable_byte_array_) {
+    os << PigeonInternalToString(*obj.a_nullable_byte_array_);
+  } else {
+    os << "null";
+  }
+  os << ", a_nullable4_byte_array: ";
+  if (obj.a_nullable4_byte_array_) {
+    os << PigeonInternalToString(*obj.a_nullable4_byte_array_);
+  } else {
+    os << "null";
+  }
+  os << ", a_nullable8_byte_array: ";
+  if (obj.a_nullable8_byte_array_) {
+    os << PigeonInternalToString(*obj.a_nullable8_byte_array_);
+  } else {
+    os << "null";
+  }
+  os << ", a_nullable_float_array: ";
+  if (obj.a_nullable_float_array_) {
+    os << PigeonInternalToString(*obj.a_nullable_float_array_);
+  } else {
+    os << "null";
+  }
+  os << ", a_nullable_enum: ";
+  if (obj.a_nullable_enum_) {
+    os << PigeonInternalToString(*obj.a_nullable_enum_);
+  } else {
+    os << "null";
+  }
+  os << ", another_nullable_enum: ";
+  if (obj.another_nullable_enum_) {
+    os << PigeonInternalToString(*obj.another_nullable_enum_);
+  } else {
+    os << "null";
+  }
+  os << ", a_nullable_string: ";
+  if (obj.a_nullable_string_) {
+    os << PigeonInternalToString(*obj.a_nullable_string_);
+  } else {
+    os << "null";
+  }
+  os << ", a_nullable_object: ";
+  if (obj.a_nullable_object_) {
+    os << PigeonInternalToString(*obj.a_nullable_object_);
+  } else {
+    os << "null";
+  }
+  os << ", all_nullable_types: ";
+  if (obj.all_nullable_types_) {
+    os << *obj.all_nullable_types_;
+  } else {
+    os << "null";
+  }
+  os << ", list: ";
+  if (obj.list_) {
+    os << PigeonInternalToString(*obj.list_);
+  } else {
+    os << "null";
+  }
+  os << ", string_list: ";
+  if (obj.string_list_) {
+    os << PigeonInternalToString(*obj.string_list_);
+  } else {
+    os << "null";
+  }
+  os << ", int_list: ";
+  if (obj.int_list_) {
+    os << PigeonInternalToString(*obj.int_list_);
+  } else {
+    os << "null";
+  }
+  os << ", double_list: ";
+  if (obj.double_list_) {
+    os << PigeonInternalToString(*obj.double_list_);
+  } else {
+    os << "null";
+  }
+  os << ", bool_list: ";
+  if (obj.bool_list_) {
+    os << PigeonInternalToString(*obj.bool_list_);
+  } else {
+    os << "null";
+  }
+  os << ", enum_list: ";
+  if (obj.enum_list_) {
+    os << PigeonInternalToString(*obj.enum_list_);
+  } else {
+    os << "null";
+  }
+  os << ", object_list: ";
+  if (obj.object_list_) {
+    os << PigeonInternalToString(*obj.object_list_);
+  } else {
+    os << "null";
+  }
+  os << ", list_list: ";
+  if (obj.list_list_) {
+    os << PigeonInternalToString(*obj.list_list_);
+  } else {
+    os << "null";
+  }
+  os << ", map_list: ";
+  if (obj.map_list_) {
+    os << PigeonInternalToString(*obj.map_list_);
+  } else {
+    os << "null";
+  }
+  os << ", recursive_class_list: ";
+  if (obj.recursive_class_list_) {
+    os << PigeonInternalToString(*obj.recursive_class_list_);
+  } else {
+    os << "null";
+  }
+  os << ", map: ";
+  if (obj.map_) {
+    os << PigeonInternalToString(*obj.map_);
+  } else {
+    os << "null";
+  }
+  os << ", string_map: ";
+  if (obj.string_map_) {
+    os << PigeonInternalToString(*obj.string_map_);
+  } else {
+    os << "null";
+  }
+  os << ", int_map: ";
+  if (obj.int_map_) {
+    os << PigeonInternalToString(*obj.int_map_);
+  } else {
+    os << "null";
+  }
+  os << ", enum_map: ";
+  if (obj.enum_map_) {
+    os << PigeonInternalToString(*obj.enum_map_);
+  } else {
+    os << "null";
+  }
+  os << ", object_map: ";
+  if (obj.object_map_) {
+    os << PigeonInternalToString(*obj.object_map_);
+  } else {
+    os << "null";
+  }
+  os << ", list_map: ";
+  if (obj.list_map_) {
+    os << PigeonInternalToString(*obj.list_map_);
+  } else {
+    os << "null";
+  }
+  os << ", map_map: ";
+  if (obj.map_map_) {
+    os << PigeonInternalToString(*obj.map_map_);
+  } else {
+    os << "null";
+  }
+  os << ", recursive_class_map: ";
+  if (obj.recursive_class_map_) {
+    os << PigeonInternalToString(*obj.recursive_class_map_);
+  } else {
+    os << "null";
+  }
+  os << ")";
+  return os;
+}
+
 size_t PigeonInternalDeepHash(const AllNullableTypes& v) { return v.Hash(); }
 
 // AllNullableTypesWithoutRecursion
@@ -2332,6 +2694,181 @@ size_t AllNullableTypesWithoutRecursion::Hash() const {
   return result;
 }
 
+std::ostream& operator<<(std::ostream& os,
+                         const AllNullableTypesWithoutRecursion& obj) {
+  os << "AllNullableTypesWithoutRecursion(";
+  os << "a_nullable_bool: ";
+  if (obj.a_nullable_bool_) {
+    os << PigeonInternalToString(*obj.a_nullable_bool_);
+  } else {
+    os << "null";
+  }
+  os << ", a_nullable_int: ";
+  if (obj.a_nullable_int_) {
+    os << PigeonInternalToString(*obj.a_nullable_int_);
+  } else {
+    os << "null";
+  }
+  os << ", a_nullable_int64: ";
+  if (obj.a_nullable_int64_) {
+    os << PigeonInternalToString(*obj.a_nullable_int64_);
+  } else {
+    os << "null";
+  }
+  os << ", a_nullable_double: ";
+  if (obj.a_nullable_double_) {
+    os << PigeonInternalToString(*obj.a_nullable_double_);
+  } else {
+    os << "null";
+  }
+  os << ", a_nullable_byte_array: ";
+  if (obj.a_nullable_byte_array_) {
+    os << PigeonInternalToString(*obj.a_nullable_byte_array_);
+  } else {
+    os << "null";
+  }
+  os << ", a_nullable4_byte_array: ";
+  if (obj.a_nullable4_byte_array_) {
+    os << PigeonInternalToString(*obj.a_nullable4_byte_array_);
+  } else {
+    os << "null";
+  }
+  os << ", a_nullable8_byte_array: ";
+  if (obj.a_nullable8_byte_array_) {
+    os << PigeonInternalToString(*obj.a_nullable8_byte_array_);
+  } else {
+    os << "null";
+  }
+  os << ", a_nullable_float_array: ";
+  if (obj.a_nullable_float_array_) {
+    os << PigeonInternalToString(*obj.a_nullable_float_array_);
+  } else {
+    os << "null";
+  }
+  os << ", a_nullable_enum: ";
+  if (obj.a_nullable_enum_) {
+    os << PigeonInternalToString(*obj.a_nullable_enum_);
+  } else {
+    os << "null";
+  }
+  os << ", another_nullable_enum: ";
+  if (obj.another_nullable_enum_) {
+    os << PigeonInternalToString(*obj.another_nullable_enum_);
+  } else {
+    os << "null";
+  }
+  os << ", a_nullable_string: ";
+  if (obj.a_nullable_string_) {
+    os << PigeonInternalToString(*obj.a_nullable_string_);
+  } else {
+    os << "null";
+  }
+  os << ", a_nullable_object: ";
+  if (obj.a_nullable_object_) {
+    os << PigeonInternalToString(*obj.a_nullable_object_);
+  } else {
+    os << "null";
+  }
+  os << ", list: ";
+  if (obj.list_) {
+    os << PigeonInternalToString(*obj.list_);
+  } else {
+    os << "null";
+  }
+  os << ", string_list: ";
+  if (obj.string_list_) {
+    os << PigeonInternalToString(*obj.string_list_);
+  } else {
+    os << "null";
+  }
+  os << ", int_list: ";
+  if (obj.int_list_) {
+    os << PigeonInternalToString(*obj.int_list_);
+  } else {
+    os << "null";
+  }
+  os << ", double_list: ";
+  if (obj.double_list_) {
+    os << PigeonInternalToString(*obj.double_list_);
+  } else {
+    os << "null";
+  }
+  os << ", bool_list: ";
+  if (obj.bool_list_) {
+    os << PigeonInternalToString(*obj.bool_list_);
+  } else {
+    os << "null";
+  }
+  os << ", enum_list: ";
+  if (obj.enum_list_) {
+    os << PigeonInternalToString(*obj.enum_list_);
+  } else {
+    os << "null";
+  }
+  os << ", object_list: ";
+  if (obj.object_list_) {
+    os << PigeonInternalToString(*obj.object_list_);
+  } else {
+    os << "null";
+  }
+  os << ", list_list: ";
+  if (obj.list_list_) {
+    os << PigeonInternalToString(*obj.list_list_);
+  } else {
+    os << "null";
+  }
+  os << ", map_list: ";
+  if (obj.map_list_) {
+    os << PigeonInternalToString(*obj.map_list_);
+  } else {
+    os << "null";
+  }
+  os << ", map: ";
+  if (obj.map_) {
+    os << PigeonInternalToString(*obj.map_);
+  } else {
+    os << "null";
+  }
+  os << ", string_map: ";
+  if (obj.string_map_) {
+    os << PigeonInternalToString(*obj.string_map_);
+  } else {
+    os << "null";
+  }
+  os << ", int_map: ";
+  if (obj.int_map_) {
+    os << PigeonInternalToString(*obj.int_map_);
+  } else {
+    os << "null";
+  }
+  os << ", enum_map: ";
+  if (obj.enum_map_) {
+    os << PigeonInternalToString(*obj.enum_map_);
+  } else {
+    os << "null";
+  }
+  os << ", object_map: ";
+  if (obj.object_map_) {
+    os << PigeonInternalToString(*obj.object_map_);
+  } else {
+    os << "null";
+  }
+  os << ", list_map: ";
+  if (obj.list_map_) {
+    os << PigeonInternalToString(*obj.list_map_);
+  } else {
+    os << "null";
+  }
+  os << ", map_map: ";
+  if (obj.map_map_) {
+    os << PigeonInternalToString(*obj.map_map_);
+  } else {
+    os << "null";
+  }
+  os << ")";
+  return os;
+}
+
 size_t PigeonInternalDeepHash(const AllNullableTypesWithoutRecursion& v) {
   return v.Hash();
 }
@@ -2574,6 +3111,42 @@ size_t AllClassesWrapper::Hash() const {
   return result;
 }
 
+std::ostream& operator<<(std::ostream& os, const AllClassesWrapper& obj) {
+  os << "AllClassesWrapper(";
+  os << "all_nullable_types: ";
+  os << obj.all_nullable_types_;
+  os << ", all_nullable_types_without_recursion: ";
+  if (obj.all_nullable_types_without_recursion_) {
+    os << *obj.all_nullable_types_without_recursion_;
+  } else {
+    os << "null";
+  }
+  os << ", all_types: ";
+  if (obj.all_types_) {
+    os << *obj.all_types_;
+  } else {
+    os << "null";
+  }
+  os << ", class_list: ";
+  os << PigeonInternalToString(obj.class_list_);
+  os << ", nullable_class_list: ";
+  if (obj.nullable_class_list_) {
+    os << PigeonInternalToString(*obj.nullable_class_list_);
+  } else {
+    os << "null";
+  }
+  os << ", class_map: ";
+  os << PigeonInternalToString(obj.class_map_);
+  os << ", nullable_class_map: ";
+  if (obj.nullable_class_map_) {
+    os << PigeonInternalToString(*obj.nullable_class_map_);
+  } else {
+    os << "null";
+  }
+  os << ")";
+  return os;
+}
+
 size_t PigeonInternalDeepHash(const AllClassesWrapper& v) { return v.Hash(); }
 
 // TestMessage
@@ -2625,6 +3198,18 @@ size_t TestMessage::Hash() const {
   size_t result = 1;
   result = result * 31 + PigeonInternalDeepHash(test_list_);
   return result;
+}
+
+std::ostream& operator<<(std::ostream& os, const TestMessage& obj) {
+  os << "TestMessage(";
+  os << "test_list: ";
+  if (obj.test_list_) {
+    os << PigeonInternalToString(*obj.test_list_);
+  } else {
+    os << "null";
+  }
+  os << ")";
+  return os;
 }
 
 size_t PigeonInternalDeepHash(const TestMessage& v) { return v.Hash(); }
@@ -3154,6 +3739,148 @@ void HostIntegrationCoreApi::SetUp(::flutter::BinaryMessenger* binary_messenger,
               const auto& list_arg =
                   std::get<EncodableList>(encodable_list_arg);
               ErrorOr<EncodableList> output = api->EchoList(list_arg);
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              wrapped.push_back(EncodableValue(std::move(output).TakeValue()));
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(binary_messenger,
+                                  "dev.flutter.pigeon.pigeon_integration_tests."
+                                  "HostIntegrationCoreApi.echoStringList" +
+                                      prepended_suffix,
+                                  &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const ::flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_string_list_arg = args.at(0);
+              if (encodable_string_list_arg.IsNull()) {
+                reply(WrapError("string_list_arg unexpectedly null."));
+                return;
+              }
+              const auto& string_list_arg =
+                  std::get<EncodableList>(encodable_string_list_arg);
+              ErrorOr<EncodableList> output =
+                  api->EchoStringList(string_list_arg);
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              wrapped.push_back(EncodableValue(std::move(output).TakeValue()));
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(binary_messenger,
+                                  "dev.flutter.pigeon.pigeon_integration_tests."
+                                  "HostIntegrationCoreApi.echoIntList" +
+                                      prepended_suffix,
+                                  &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const ::flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_int_list_arg = args.at(0);
+              if (encodable_int_list_arg.IsNull()) {
+                reply(WrapError("int_list_arg unexpectedly null."));
+                return;
+              }
+              const auto& int_list_arg =
+                  std::get<EncodableList>(encodable_int_list_arg);
+              ErrorOr<EncodableList> output = api->EchoIntList(int_list_arg);
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              wrapped.push_back(EncodableValue(std::move(output).TakeValue()));
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(binary_messenger,
+                                  "dev.flutter.pigeon.pigeon_integration_tests."
+                                  "HostIntegrationCoreApi.echoDoubleList" +
+                                      prepended_suffix,
+                                  &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const ::flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_double_list_arg = args.at(0);
+              if (encodable_double_list_arg.IsNull()) {
+                reply(WrapError("double_list_arg unexpectedly null."));
+                return;
+              }
+              const auto& double_list_arg =
+                  std::get<EncodableList>(encodable_double_list_arg);
+              ErrorOr<EncodableList> output =
+                  api->EchoDoubleList(double_list_arg);
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              wrapped.push_back(EncodableValue(std::move(output).TakeValue()));
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(binary_messenger,
+                                  "dev.flutter.pigeon.pigeon_integration_tests."
+                                  "HostIntegrationCoreApi.echoBoolList" +
+                                      prepended_suffix,
+                                  &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const ::flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_bool_list_arg = args.at(0);
+              if (encodable_bool_list_arg.IsNull()) {
+                reply(WrapError("bool_list_arg unexpectedly null."));
+                return;
+              }
+              const auto& bool_list_arg =
+                  std::get<EncodableList>(encodable_bool_list_arg);
+              ErrorOr<EncodableList> output = api->EchoBoolList(bool_list_arg);
               if (output.has_error()) {
                 reply(WrapError(output.error()));
                 return;

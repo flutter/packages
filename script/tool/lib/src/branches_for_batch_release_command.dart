@@ -84,10 +84,7 @@ class BranchesForBatchReleaseCommand extends PackageCommand {
       );
       throw ToolExit(_kExitPackageMalformed);
     }
-    final _ReleaseInfo releaseInfo = _getReleaseInfo(
-      pendingChangelogs,
-      pubspec.version!,
-    );
+    final _ReleaseInfo releaseInfo = _getReleaseInfo(pendingChangelogs, pubspec.version!);
 
     if (releaseInfo.newVersion == null) {
       print(
@@ -97,8 +94,7 @@ class BranchesForBatchReleaseCommand extends PackageCommand {
       return;
     }
 
-    final releaseBranchName =
-        'release-${package.directory.basename}-${releaseInfo.newVersion}';
+    final releaseBranchName = 'release-${package.directory.basename}-${releaseInfo.newVersion}';
 
     await _createAndPushReleaseBranch(
       git: repository,
@@ -133,18 +129,13 @@ class BranchesForBatchReleaseCommand extends PackageCommand {
       changelogs.add(entry.changelog);
       versionIndex = math.min(versionIndex, entry.version.index);
     }
-    final VersionChange effectiveVersionChange =
-        VersionChange.values[versionIndex];
+    final VersionChange effectiveVersionChange = VersionChange.values[versionIndex];
 
     final Version? newVersion = switch (effectiveVersionChange) {
       VersionChange.skip => null,
       VersionChange.major => Version(oldVersion.major + 1, 0, 0),
       VersionChange.minor => Version(oldVersion.major, oldVersion.minor + 1, 0),
-      VersionChange.patch => Version(
-        oldVersion.major,
-        oldVersion.minor,
-        oldVersion.patch + 1,
-      ),
+      VersionChange.patch => Version(oldVersion.major, oldVersion.minor, oldVersion.patch + 1),
     };
     return _ReleaseInfo(newVersion, changelogs);
   }
@@ -178,10 +169,7 @@ class BranchesForBatchReleaseCommand extends PackageCommand {
     final String? githubOutput = platform.environment['GITHUB_OUTPUT'];
     if (githubOutput != null && githubOutput.isNotEmpty) {
       final File file = package.directory.fileSystem.file(githubOutput);
-      file.writeAsStringSync(
-        'release_branch=$releaseBranchName\n',
-        mode: io.FileMode.append,
-      );
+      file.writeAsStringSync('release_branch=$releaseBranchName\n', mode: io.FileMode.append);
     }
   }
 
@@ -200,9 +188,7 @@ class BranchesForBatchReleaseCommand extends PackageCommand {
       branchName,
     ]);
     if (checkoutResult.exitCode != 0) {
-      printError(
-        'Failed to create branch $branchName: ${checkoutResult.stderr}',
-      );
+      printError('Failed to create branch $branchName: ${checkoutResult.stderr}');
       throw ToolExit(_kGitFailedToPush);
     }
 
@@ -231,11 +217,7 @@ class BranchesForBatchReleaseCommand extends PackageCommand {
     final Match? match = nextSection.firstMatch(oldChangelogContent);
     if (match != null) {
       final replacement = '$newHeader\n\n${newEntries.join('\n')}\n';
-      oldChangelogContent = oldChangelogContent.replaceRange(
-        match.start,
-        match.end,
-        replacement,
-      );
+      oldChangelogContent = oldChangelogContent.replaceRange(match.start, match.end, replacement);
       newChangelog.write(oldChangelogContent);
     } else {
       newChangelog.writeln(newHeader);
@@ -253,13 +235,8 @@ class BranchesForBatchReleaseCommand extends PackageCommand {
     RepositoryPackage package,
     List<File> pendingChangelogFiles,
   ) async {
-    final List<String> paths = pendingChangelogFiles
-        .map((File f) => f.path)
-        .toList();
-    final io.ProcessResult rmResult = await git.runCommand(<String>[
-      'rm',
-      ...paths,
-    ]);
+    final List<String> paths = pendingChangelogFiles.map((File f) => f.path).toList();
+    final io.ProcessResult rmResult = await git.runCommand(<String>['rm', ...paths]);
     if (rmResult.exitCode != 0) {
       printError('Failed to rm ${paths.join(' ')}: ${rmResult.stderr}');
       throw ToolExit(_kGitFailedToPush);
@@ -286,11 +263,7 @@ class BranchesForBatchReleaseCommand extends PackageCommand {
     }
   }
 
-  Future<void> _pushBranch(
-    GitDir git,
-    String remoteName,
-    String branchName,
-  ) async {
+  Future<void> _pushBranch(GitDir git, String remoteName, String branchName) async {
     print('  Pushing branch $branchName to remote $remoteName...');
     final io.ProcessResult pushResult = await git.runCommand(<String>[
       'push',

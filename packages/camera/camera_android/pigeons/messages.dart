@@ -28,12 +28,7 @@ class PlatformCameraDescription {
 }
 
 /// Pigeon equivalent of [DeviceOrientation].
-enum PlatformDeviceOrientation {
-  portraitUp,
-  portraitDown,
-  landscapeLeft,
-  landscapeRight,
-}
+enum PlatformDeviceOrientation { portraitUp, portraitDown, landscapeLeft, landscapeRight }
 
 /// Pigeon equivalent of [ExposureMode].
 enum PlatformExposureMode { auto, locked }
@@ -207,6 +202,9 @@ abstract class CameraApi {
   ///
   /// This should be called only while video recording is active.
   void setDescriptionWhileRecording(String description);
+
+  /// Sets the JPEG compression quality for still image capture.
+  void setJpegImageQuality(int quality);
 }
 
 /// Handles calls from native side to Dart that are not camera-specific.

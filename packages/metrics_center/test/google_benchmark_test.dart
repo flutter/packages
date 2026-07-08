@@ -26,16 +26,13 @@ void main() {
       3.89,
       4.89,
     ]);
-    expectSetMatch(
-      points.map((MetricPoint p) => p.tags[kSubResultKey]),
-      <String>[
-        'cpu_time',
-        'real_time',
-        'cpu_coefficient',
-        'real_coefficient',
-        'rms',
-      ],
-    );
+    expectSetMatch(points.map((MetricPoint p) => p.tags[kSubResultKey]), <String>[
+      'cpu_time',
+      'real_time',
+      'cpu_coefficient',
+      'real_coefficient',
+      'rms',
+    ]);
     expectSetMatch(points.map((MetricPoint p) => p.tags[kNameKey]), <String>[
       'BM_PaintRecordInit',
       'SkParagraphFixture/ShortLayout',

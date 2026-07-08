@@ -17,11 +17,7 @@ void main() {
         ),
       ],
     );
-    final root = Root(
-      apis: <Api>[],
-      classes: <Class>[classDefinition],
-      enums: <Enum>[],
-    );
+    final root = Root(apis: <Api>[], classes: <Class>[classDefinition], enums: <Enum>[]);
     final sink = StringBuffer();
     generateAst(root, sink);
     final code = sink.toString();

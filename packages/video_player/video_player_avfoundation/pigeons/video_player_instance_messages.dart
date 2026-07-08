@@ -15,8 +15,7 @@ import 'package:pigeon/pigeon.dart';
         'darwin/video_player_avfoundation/Sources/video_player_avfoundation_objc/VideoPlayerInstanceMessages.g.m',
     objcOptions: ObjcOptions(
       prefix: 'FVP',
-      headerIncludePath:
-          './include/video_player_avfoundation_objc/VideoPlayerInstanceMessages.g.h',
+      headerIncludePath: './include/video_player_avfoundation_objc/VideoPlayerInstanceMessages.g.h',
     ),
     copyrightHeader: 'pigeons/copyright.txt',
   ),
@@ -36,6 +35,61 @@ class MediaSelectionAudioTrackData {
   String? languageCode;
   bool isSelected;
   String? commonMetadataTitle;
+}
+
+/// Video track data from AVAssetVariant (HLS variants) for iOS 15+.
+class MediaSelectionVideoTrackData {
+  MediaSelectionVideoTrackData({
+    required this.variantIndex,
+    this.label,
+    this.bitrate,
+    this.width,
+    this.height,
+    this.frameRate,
+    this.codec,
+    required this.isSelected,
+  });
+
+  int variantIndex;
+  String? label;
+  int? bitrate;
+  int? width;
+  int? height;
+  double? frameRate;
+  String? codec;
+  bool isSelected;
+}
+
+/// Video track data from AVAssetTrack (regular videos).
+class AssetVideoTrackData {
+  AssetVideoTrackData({
+    required this.trackId,
+    this.label,
+    this.width,
+    this.height,
+    this.frameRate,
+    this.codec,
+    required this.isSelected,
+  });
+
+  int trackId;
+  String? label;
+  int? width;
+  int? height;
+  double? frameRate;
+  String? codec;
+  bool isSelected;
+}
+
+/// Container for video track data from iOS.
+class NativeVideoTrackData {
+  NativeVideoTrackData({this.assetTracks, this.mediaSelectionTracks});
+
+  /// Asset-based tracks (for regular videos)
+  List<AssetVideoTrackData>? assetTracks;
+
+  /// Media selection tracks (for HLS variants on iOS 15+)
+  List<MediaSelectionVideoTrackData>? mediaSelectionTracks;
 }
 
 @HostApi()
@@ -58,4 +112,14 @@ abstract class VideoPlayerInstanceApi {
   List<MediaSelectionAudioTrackData> getAudioTracks();
   @ObjCSelector('selectAudioTrackAtIndex:')
   void selectAudioTrack(int trackIndex);
+
+  /// Gets the available video tracks for the video.
+  @async
+  @ObjCSelector('getVideoTracks')
+  NativeVideoTrackData getVideoTracks();
+
+  /// Selects a video track by setting preferredPeakBitRate.
+  /// Pass 0 to enable auto quality selection.
+  @ObjCSelector('selectVideoTrackWithBitrate:')
+  void selectVideoTrack(int bitrate);
 }

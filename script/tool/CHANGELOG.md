@@ -1,3 +1,24 @@
+## 0.14.3
+
+* Deprecates the `--custom-analysis` argument to `analyze`, which is now
+  ignored, in favor of `allow_custom_analysis_options: true` in package-level
+  `ci_config.yaml` files.
+* Adds `coverage-check` command to ensure opted-in packages meet the minimum
+  code coverage threshold as defined in `script/configs/custom_coverage_minimums.yaml`.
+
+## 0.14.2
+
+* Ensures that pub commands use `flutter` or `dart` depending on whether the
+  package requires Flutter for analysis and publishing, to support
+  non-Flutter-based repositories.
+* Adds `--skip-if-not-supporting-dart-version` to support package constraints
+  via Dart versions rather than Flutter versions.
+
+## 0.14.1
+
+* Adds `min_dart` as an alternative to `min_flutter` in tool configuration.
+* Makes .ci.yaml optional if batched release is not used.
+
 ## 0.14.0
 
 * Re-launches the published version of the tool for use in

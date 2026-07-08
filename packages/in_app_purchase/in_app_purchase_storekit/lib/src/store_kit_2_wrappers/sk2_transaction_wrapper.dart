@@ -94,8 +94,7 @@ class SK2Transaction {
   /// https://developer.apple.com/documentation/storekit/transaction/unfinished
   /// A sequence that emits unfinished transactions for the customer.
   static Future<List<SK2Transaction>> unfinishedTransactions() async {
-    final List<SK2TransactionMessage> msgs = await hostApi2
-        .unfinishedTransactions();
+    final List<SK2TransactionMessage> msgs = await hostApi2.unfinishedTransactions();
     final List<SK2Transaction> transactions = msgs
         .map((SK2TransactionMessage e) => e.convertFromPigeon())
         .toList();
@@ -127,6 +126,7 @@ extension on SK2TransactionMessage {
       productId: productId,
       purchaseDate: purchaseDate ?? '',
       expirationDate: expirationDate,
+      quantity: purchasedQuantity,
       appAccountToken: appAccountToken,
       receiptData: receiptData,
       jsonRepresentation: jsonRepresentation,
@@ -173,9 +173,7 @@ class SK2TransactionObserverWrapper implements InAppPurchase2CallbackAPI {
   @override
   void onTransactionsUpdated(List<SK2TransactionMessage> newTransactions) {
     transactionsCreatedController.add(
-      newTransactions
-          .map((SK2TransactionMessage e) => e.convertToDetails())
-          .toList(),
+      newTransactions.map((SK2TransactionMessage e) => e.convertToDetails()).toList(),
     );
   }
 }

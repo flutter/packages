@@ -20,30 +20,15 @@ void main() {
 
     final Caption secondCaption = parsedFile.captions[1];
     expect(secondCaption.number, 2);
-    expect(
-      secondCaption.start,
-      const Duration(minutes: 1, seconds: 54, milliseconds: 724),
-    );
-    expect(
-      secondCaption.end,
-      const Duration(minutes: 1, seconds: 56, milliseconds: 760),
-    );
+    expect(secondCaption.start, const Duration(minutes: 1, seconds: 54, milliseconds: 724));
+    expect(secondCaption.end, const Duration(minutes: 1, seconds: 56, milliseconds: 760));
     expect(secondCaption.text, '- Hello.\n- Yes?');
 
     final Caption thirdCaption = parsedFile.captions[2];
     expect(thirdCaption.number, 3);
-    expect(
-      thirdCaption.start,
-      const Duration(minutes: 1, seconds: 56, milliseconds: 884),
-    );
-    expect(
-      thirdCaption.end,
-      const Duration(minutes: 1, seconds: 58, milliseconds: 954),
-    );
-    expect(
-      thirdCaption.text,
-      'These are more test lines\nYes, these are more test lines.',
-    );
+    expect(thirdCaption.start, const Duration(minutes: 1, seconds: 56, milliseconds: 884));
+    expect(thirdCaption.end, const Duration(minutes: 1, seconds: 58, milliseconds: 954));
+    expect(thirdCaption.text, 'These are more test lines\nYes, these are more test lines.');
 
     final Caption fourthCaption = parsedFile.captions[3];
     expect(fourthCaption.number, 4);
@@ -51,14 +36,8 @@ void main() {
       fourthCaption.start,
       const Duration(hours: 1, minutes: 1, seconds: 59, milliseconds: 84),
     );
-    expect(
-      fourthCaption.end,
-      const Duration(hours: 1, minutes: 2, seconds: 1, milliseconds: 552),
-    );
-    expect(
-      fourthCaption.text,
-      "- [ Machinery Beeping ]\n- I'm not sure what that was,",
-    );
+    expect(fourthCaption.end, const Duration(hours: 1, minutes: 2, seconds: 1, milliseconds: 552));
+    expect(fourthCaption.text, "- [ Machinery Beeping ]\n- I'm not sure what that was,");
   });
 
   test('Parses SubRip file with malformed input', () {

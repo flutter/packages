@@ -25,8 +25,7 @@ void runTests() {
 
   GoogleMapsFlutterPlatform.instance.enableDebugInspection();
 
-  final GoogleMapsInspectorPlatform inspector =
-      GoogleMapsInspectorPlatform.instance!;
+  final GoogleMapsInspectorPlatform inspector = GoogleMapsInspectorPlatform.instance!;
 
   group('Tiles', () {
     testWidgets('set tileOverlay correctly', (WidgetTester tester) async {
@@ -73,18 +72,12 @@ void runTests() {
 
       expect(tileOverlayInfo1.visible, isTrue);
       expect(tileOverlayInfo1.fadeIn, isTrue);
-      expect(
-        tileOverlayInfo1.transparency,
-        moreOrLessEquals(0.2, epsilon: 0.001),
-      );
+      expect(tileOverlayInfo1.transparency, moreOrLessEquals(0.2, epsilon: 0.001));
       expect(tileOverlayInfo1.zIndex, 2);
 
       expect(tileOverlayInfo2.visible, isFalse);
       expect(tileOverlayInfo2.fadeIn, isFalse);
-      expect(
-        tileOverlayInfo2.transparency,
-        moreOrLessEquals(0.3, epsilon: 0.001),
-      );
+      expect(tileOverlayInfo2.transparency, moreOrLessEquals(0.3, epsilon: 0.001));
       expect(tileOverlayInfo2.zIndex, 1);
     });
 
@@ -156,10 +149,7 @@ void runTests() {
 
       expect(tileOverlayInfo1.visible, isFalse);
       expect(tileOverlayInfo1.fadeIn, isFalse);
-      expect(
-        tileOverlayInfo1.transparency,
-        moreOrLessEquals(0.3, epsilon: 0.001),
-      );
+      expect(tileOverlayInfo1.transparency, moreOrLessEquals(0.3, epsilon: 0.001));
       expect(tileOverlayInfo1.zIndex, 1);
 
       expect(tileOverlayInfo2, isNull);
@@ -216,10 +206,7 @@ void runTests() {
 
   group('Heatmaps', () {
     /// Check that two lists of [WeightedLatLng] are more or less equal.
-    void expectHeatmapDataMoreOrLessEquals(
-      List<WeightedLatLng> data1,
-      List<WeightedLatLng> data2,
-    ) {
+    void expectHeatmapDataMoreOrLessEquals(List<WeightedLatLng> data1, List<WeightedLatLng> data2) {
       expect(data1.length, data2.length);
       for (var i = 0; i < data1.length; i++) {
         final WeightedLatLng wll1 = data1[i];
@@ -246,10 +233,7 @@ void runTests() {
         final HeatmapGradientColor color1 = gradient1.colors[i];
         final HeatmapGradientColor color2 = gradient2.colors[i];
         expect(color1.color, color2.color);
-        expect(
-          color1.startPoint,
-          moreOrLessEquals(color2.startPoint, epsilon: floatTolerance),
-        );
+        expect(color1.startPoint, moreOrLessEquals(color2.startPoint, epsilon: floatTolerance));
       }
 
       expect(gradient1.colorMapSize, gradient2.colorMapSize);
@@ -257,10 +241,7 @@ void runTests() {
 
     void expectHeatmapEquals(Heatmap heatmap1, Heatmap heatmap2) {
       expectHeatmapDataMoreOrLessEquals(heatmap1.data, heatmap2.data);
-      expectHeatmapGradientMoreOrLessEquals(
-        heatmap1.gradient,
-        heatmap2.gradient,
-      );
+      expectHeatmapGradientMoreOrLessEquals(heatmap1.gradient, heatmap2.gradient);
 
       // Only Android supports `maxIntensity`
       // so the platform value is undefined on others.
@@ -277,10 +258,7 @@ void runTests() {
       if (canHandleMaxIntensity()) {
         expect(heatmap1.maxIntensity, heatmap2.maxIntensity);
       }
-      expect(
-        heatmap1.opacity,
-        moreOrLessEquals(heatmap2.opacity, epsilon: floatTolerance),
-      );
+      expect(heatmap1.opacity, moreOrLessEquals(heatmap2.opacity, epsilon: floatTolerance));
       expect(heatmap1.radius, heatmap2.radius);
       if (canHandleZoomIntensity()) {
         expect(heatmap1.minimumZoomIntensity, heatmap2.minimumZoomIntensity);
@@ -350,8 +328,7 @@ void runTests() {
       await tester.pumpAndSettle(const Duration(seconds: 3));
 
       final int mapId = await mapIdCompleter.future;
-      final GoogleMapsInspectorPlatform inspector =
-          GoogleMapsInspectorPlatform.instance!;
+      final GoogleMapsInspectorPlatform inspector = GoogleMapsInspectorPlatform.instance!;
 
       if (inspector.supportsGettingHeatmapInfo()) {
         final Heatmap heatmapInfo1 = (await inspector.getHeatmapInfo(
@@ -388,8 +365,7 @@ void runTests() {
       await tester.pumpAndSettle(const Duration(seconds: 3));
 
       final int mapId = await mapIdCompleter.future;
-      final GoogleMapsInspectorPlatform inspector =
-          GoogleMapsInspectorPlatform.instance!;
+      final GoogleMapsInspectorPlatform inspector = GoogleMapsInspectorPlatform.instance!;
 
       final Heatmap heatmap1New = heatmap1.copyWith(
         dataParam: heatmap1.data.sublist(5),
@@ -448,8 +424,7 @@ void runTests() {
       await tester.pumpAndSettle(const Duration(seconds: 3));
 
       final int mapId = await mapIdCompleter.future;
-      final GoogleMapsInspectorPlatform inspector =
-          GoogleMapsInspectorPlatform.instance!;
+      final GoogleMapsInspectorPlatform inspector = GoogleMapsInspectorPlatform.instance!;
 
       await tester.pumpWidget(
         Directionality(
@@ -467,10 +442,7 @@ void runTests() {
       await tester.pumpAndSettle(const Duration(seconds: 3));
 
       if (inspector.supportsGettingHeatmapInfo()) {
-        final Heatmap? heatmapInfo1 = await inspector.getHeatmapInfo(
-          heatmap1.mapsId,
-          mapId: mapId,
-        );
+        final Heatmap? heatmapInfo1 = await inspector.getHeatmapInfo(heatmap1.mapsId, mapId: mapId);
 
         expect(heatmapInfo1, isNull);
       }
@@ -513,22 +485,13 @@ void runTests() {
       zoomLevel: 14.0,
     );
 
-    void expectGroundOverlayEquals(
-      GroundOverlay source,
-      GroundOverlay response,
-    ) {
+    void expectGroundOverlayEquals(GroundOverlay source, GroundOverlay response) {
       expect(response.groundOverlayId, source.groundOverlayId);
-      expect(
-        response.transparency,
-        moreOrLessEquals(source.transparency, epsilon: floatTolerance),
-      );
+      expect(response.transparency, moreOrLessEquals(source.transparency, epsilon: floatTolerance));
 
       // Web does not support bearing.
       if (!isWeb) {
-        expect(
-          response.bearing,
-          moreOrLessEquals(source.bearing, epsilon: floatTolerance),
-        );
+        expect(response.bearing, moreOrLessEquals(source.bearing, epsilon: floatTolerance));
       }
 
       // Only test bounds if it was given in the original object.
@@ -561,14 +524,8 @@ void runTests() {
 
       // Only Android (using position) and iOS supports `anchor`.
       if ((isAndroid && source.position != null) || isIOS) {
-        expect(
-          response.anchor?.dx,
-          moreOrLessEquals(source.anchor!.dx, epsilon: floatTolerance),
-        );
-        expect(
-          response.anchor?.dy,
-          moreOrLessEquals(source.anchor!.dy, epsilon: floatTolerance),
-        );
+        expect(response.anchor?.dx, moreOrLessEquals(source.anchor!.dx, epsilon: floatTolerance));
+        expect(response.anchor?.dy, moreOrLessEquals(source.anchor!.dy, epsilon: floatTolerance));
       }
     }
 
@@ -600,42 +557,33 @@ void runTests() {
       await tester.pumpAndSettle(const Duration(seconds: 3));
 
       final int mapId = await mapIdCompleter.future;
-      final GoogleMapsInspectorPlatform inspector =
-          GoogleMapsInspectorPlatform.instance!;
+      final GoogleMapsInspectorPlatform inspector = GoogleMapsInspectorPlatform.instance!;
 
       if (inspector.supportsGettingGroundOverlayInfo()) {
-        final GroundOverlay groundOverlayBoundsInfo1 = (await inspector
-            .getGroundOverlayInfo(groundOverlayBounds1.mapsId, mapId: mapId))!;
-        final GroundOverlay groundOverlayBoundsInfo2 = (await inspector
-            .getGroundOverlayInfo(groundOverlayBounds2.mapsId, mapId: mapId))!;
+        final GroundOverlay groundOverlayBoundsInfo1 = (await inspector.getGroundOverlayInfo(
+          groundOverlayBounds1.mapsId,
+          mapId: mapId,
+        ))!;
+        final GroundOverlay groundOverlayBoundsInfo2 = (await inspector.getGroundOverlayInfo(
+          groundOverlayBounds2.mapsId,
+          mapId: mapId,
+        ))!;
 
-        expectGroundOverlayEquals(
-          groundOverlayBounds1,
-          groundOverlayBoundsInfo1,
-        );
-        expectGroundOverlayEquals(
-          groundOverlayBounds2,
-          groundOverlayBoundsInfo2,
-        );
+        expectGroundOverlayEquals(groundOverlayBounds1, groundOverlayBoundsInfo1);
+        expectGroundOverlayEquals(groundOverlayBounds2, groundOverlayBoundsInfo2);
 
         // Web does not support position-based ground overlays.
         if (!isWeb) {
-          final GroundOverlay groundOverlayPositionInfo1 = (await inspector
-              .getGroundOverlayInfo(
-                groundOverlayPosition1.mapsId,
-                mapId: mapId,
-              ))!;
-          expectGroundOverlayEquals(
-            groundOverlayPosition1,
-            groundOverlayPositionInfo1,
-          );
+          final GroundOverlay groundOverlayPositionInfo1 = (await inspector.getGroundOverlayInfo(
+            groundOverlayPosition1.mapsId,
+            mapId: mapId,
+          ))!;
+          expectGroundOverlayEquals(groundOverlayPosition1, groundOverlayPositionInfo1);
         }
       }
     });
 
-    testWidgets('update ground overlays correctly', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('update ground overlays correctly', (WidgetTester tester) async {
       final mapIdCompleter = Completer<int>();
       final Key key = GlobalKey();
 
@@ -659,26 +607,23 @@ void runTests() {
       await tester.pumpAndSettle(const Duration(seconds: 3));
 
       final int mapId = await mapIdCompleter.future;
-      final GoogleMapsInspectorPlatform inspector =
-          GoogleMapsInspectorPlatform.instance!;
+      final GoogleMapsInspectorPlatform inspector = GoogleMapsInspectorPlatform.instance!;
 
-      final GroundOverlay groundOverlayBounds1New = groundOverlayBounds1
-          .copyWith(
-            bearingParam: 10,
-            clickableParam: false,
-            visibleParam: false,
-            transparencyParam: 0.5,
-            zIndexParam: 10,
-          );
+      final GroundOverlay groundOverlayBounds1New = groundOverlayBounds1.copyWith(
+        bearingParam: 10,
+        clickableParam: false,
+        visibleParam: false,
+        transparencyParam: 0.5,
+        zIndexParam: 10,
+      );
 
-      final GroundOverlay groundOverlayPosition1New = groundOverlayPosition1
-          .copyWith(
-            bearingParam: 10,
-            clickableParam: false,
-            visibleParam: false,
-            transparencyParam: 0.5,
-            zIndexParam: 10,
-          );
+      final GroundOverlay groundOverlayPosition1New = groundOverlayPosition1.copyWith(
+        bearingParam: 10,
+        clickableParam: false,
+        visibleParam: false,
+        transparencyParam: 0.5,
+        zIndexParam: 10,
+      );
 
       await tester.pumpWidget(
         Directionality(
@@ -701,33 +646,26 @@ void runTests() {
       await tester.pumpAndSettle(const Duration(seconds: 3));
 
       if (inspector.supportsGettingGroundOverlayInfo()) {
-        final GroundOverlay groundOverlayBounds1Info = (await inspector
-            .getGroundOverlayInfo(groundOverlayBounds1.mapsId, mapId: mapId))!;
+        final GroundOverlay groundOverlayBounds1Info = (await inspector.getGroundOverlayInfo(
+          groundOverlayBounds1.mapsId,
+          mapId: mapId,
+        ))!;
 
-        expectGroundOverlayEquals(
-          groundOverlayBounds1New,
-          groundOverlayBounds1Info,
-        );
+        expectGroundOverlayEquals(groundOverlayBounds1New, groundOverlayBounds1Info);
 
         // Web does not support position-based ground overlays.
         if (!isWeb) {
-          final GroundOverlay groundOverlayPosition1Info = (await inspector
-              .getGroundOverlayInfo(
-                groundOverlayPosition1.mapsId,
-                mapId: mapId,
-              ))!;
+          final GroundOverlay groundOverlayPosition1Info = (await inspector.getGroundOverlayInfo(
+            groundOverlayPosition1.mapsId,
+            mapId: mapId,
+          ))!;
 
-          expectGroundOverlayEquals(
-            groundOverlayPosition1New,
-            groundOverlayPosition1Info,
-          );
+          expectGroundOverlayEquals(groundOverlayPosition1New, groundOverlayPosition1Info);
         }
       }
     });
 
-    testWidgets('remove ground overlays correctly', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('remove ground overlays correctly', (WidgetTester tester) async {
       final mapIdCompleter = Completer<int>();
       final Key key = GlobalKey();
 
@@ -751,8 +689,7 @@ void runTests() {
       await tester.pumpAndSettle(const Duration(seconds: 3));
 
       final int mapId = await mapIdCompleter.future;
-      final GoogleMapsInspectorPlatform inspector =
-          GoogleMapsInspectorPlatform.instance!;
+      final GoogleMapsInspectorPlatform inspector = GoogleMapsInspectorPlatform.instance!;
 
       await tester.pumpWidget(
         Directionality(
@@ -770,17 +707,18 @@ void runTests() {
       await tester.pumpAndSettle(const Duration(seconds: 3));
 
       if (inspector.supportsGettingGroundOverlayInfo()) {
-        final GroundOverlay? groundOverlayBounds1Info = await inspector
-            .getGroundOverlayInfo(groundOverlayBounds1.mapsId, mapId: mapId);
+        final GroundOverlay? groundOverlayBounds1Info = await inspector.getGroundOverlayInfo(
+          groundOverlayBounds1.mapsId,
+          mapId: mapId,
+        );
         expect(groundOverlayBounds1Info, isNull);
 
         // Web does not support position-based ground overlays.
         if (!isWeb) {
-          final GroundOverlay? groundOverlayPositionInfo = await inspector
-              .getGroundOverlayInfo(
-                groundOverlayPosition1.mapsId,
-                mapId: mapId,
-              );
+          final GroundOverlay? groundOverlayPositionInfo = await inspector.getGroundOverlayInfo(
+            groundOverlayPosition1.mapsId,
+            mapId: mapId,
+          );
           expect(groundOverlayPositionInfo, isNull);
         }
       }
@@ -806,22 +744,14 @@ class _DebugTileProvider implements TileProvider {
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
     final textSpan = TextSpan(text: '$x,$y', style: textStyle);
-    final textPainter = TextPainter(
-      text: textSpan,
-      textDirection: TextDirection.ltr,
-    );
+    final textPainter = TextPainter(text: textSpan, textDirection: TextDirection.ltr);
     textPainter.layout(maxWidth: width.toDouble());
     textPainter.paint(canvas, Offset.zero);
-    canvas.drawRect(
-      Rect.fromLTRB(0, 0, width.toDouble(), width.toDouble()),
-      boxPaint,
-    );
+    canvas.drawRect(Rect.fromLTRB(0, 0, width.toDouble(), width.toDouble()), boxPaint);
     final ui.Picture picture = recorder.endRecording();
     final Uint8List byteData = await picture
         .toImage(width, height)
-        .then(
-          (ui.Image image) => image.toByteData(format: ui.ImageByteFormat.png),
-        )
+        .then((ui.Image image) => image.toByteData(format: ui.ImageByteFormat.png))
         .then((ByteData? byteData) => byteData!.buffer.asUint8List());
     return Tile(width, height, byteData);
   }

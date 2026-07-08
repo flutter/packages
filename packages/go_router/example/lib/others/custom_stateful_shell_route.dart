@@ -7,9 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
-  debugLabel: 'root',
-);
+final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 final GlobalKey<NavigatorState> _tabANavigatorKey = GlobalKey<NavigatorState>(
   debugLabel: 'tabANav',
 );
@@ -25,8 +23,9 @@ final GlobalKey<NavigatorState> _tabB2NavigatorKey = GlobalKey<NavigatorState>(
 
 @visibleForTesting
 // ignore: public_member_api_docs
-final GlobalKey<TabbedRootScreenState> tabbedRootScreenKey =
-    GlobalKey<TabbedRootScreenState>(debugLabel: 'TabbedRootScreen');
+final GlobalKey<TabbedRootScreenState> tabbedRootScreenKey = GlobalKey<TabbedRootScreenState>(
+  debugLabel: 'TabbedRootScreen',
+);
 
 // This example demonstrates how to setup nested navigation using a
 // BottomNavigationBar, where each bar item uses its own persistent navigator,
@@ -51,11 +50,7 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
     routes: <RouteBase>[
       StatefulShellRoute(
         builder:
-            (
-              BuildContext context,
-              GoRouterState state,
-              StatefulNavigationShell navigationShell,
-            ) {
+            (BuildContext context, GoRouterState state, StatefulNavigationShell navigationShell) {
               // This nested StatefulShellRoute demonstrates the use of a
               // custom container for the branch Navigators. In this implementation,
               // no customization is done in the builder function (navigationShell
@@ -65,20 +60,13 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
               return navigationShell;
             },
         navigatorContainerBuilder:
-            (
-              BuildContext context,
-              StatefulNavigationShell navigationShell,
-              List<Widget> children,
-            ) {
+            (BuildContext context, StatefulNavigationShell navigationShell, List<Widget> children) {
               // Returning a customized container for the branch
               // Navigators (i.e. the `List<Widget> children` argument).
               //
               // See ScaffoldWithNavBar for more details on how the children
               // are managed (using AnimatedBranchContainer).
-              return ScaffoldWithNavBar(
-                navigationShell: navigationShell,
-                children: children,
-              );
+              return ScaffoldWithNavBar(navigationShell: navigationShell, children: children);
               // NOTE: To use a Cupertino version of ScaffoldWithNavBar, replace
               // ScaffoldWithNavBar above with CupertinoScaffoldWithNavBar.
             },
@@ -91,8 +79,7 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                 // The screen to display as the root in the first tab of the
                 // bottom navigation bar.
                 path: '/a',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const RootScreenA(),
+                builder: (BuildContext context, GoRouterState state) => const RootScreenA(),
                 routes: <RouteBase>[
                   // The details screen to display stacked on navigator of the
                   // first tab. This will cover screen A but not the application
@@ -158,19 +145,12 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                       GoRoute(
                         path: '/b1',
                         builder: (BuildContext context, GoRouterState state) =>
-                            const TabScreen(
-                              label: 'B1',
-                              detailsPath: '/b1/details',
-                            ),
+                            const TabScreen(label: 'B1', detailsPath: '/b1/details'),
                         routes: <RouteBase>[
                           GoRoute(
                             path: 'details',
-                            builder:
-                                (BuildContext context, GoRouterState state) =>
-                                    const DetailsScreen(
-                                      label: 'B1',
-                                      withScaffold: false,
-                                    ),
+                            builder: (BuildContext context, GoRouterState state) =>
+                                const DetailsScreen(label: 'B1', withScaffold: false),
                           ),
                         ],
                       ),
@@ -185,19 +165,12 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                       GoRoute(
                         path: '/b2',
                         builder: (BuildContext context, GoRouterState state) =>
-                            const TabScreen(
-                              label: 'B2',
-                              detailsPath: '/b2/details',
-                            ),
+                            const TabScreen(label: 'B2', detailsPath: '/b2/details'),
                         routes: <RouteBase>[
                           GoRoute(
                             path: 'details',
-                            builder:
-                                (BuildContext context, GoRouterState state) =>
-                                    const DetailsScreen(
-                                      label: 'B2',
-                                      withScaffold: false,
-                                    ),
+                            builder: (BuildContext context, GoRouterState state) =>
+                                const DetailsScreen(label: 'B2', withScaffold: false),
                           ),
                         ],
                       ),
@@ -226,11 +199,8 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
 /// BottomNavigationBar, where [child] is placed in the body of the Scaffold.
 class ScaffoldWithNavBar extends StatelessWidget {
   /// Constructs an [ScaffoldWithNavBar].
-  const ScaffoldWithNavBar({
-    required this.navigationShell,
-    required this.children,
-    Key? key,
-  }) : super(key: key ?? const ValueKey<String>('ScaffoldWithNavBar'));
+  const ScaffoldWithNavBar({required this.navigationShell, required this.children, Key? key})
+    : super(key: key ?? const ValueKey<String>('ScaffoldWithNavBar'));
 
   /// The navigation shell and container for the branch Navigators.
   final StatefulNavigationShell navigationShell;
@@ -242,10 +212,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: AnimatedBranchContainer(
-        currentIndex: navigationShell.currentIndex,
-        children: children,
-      ),
+      body: AnimatedBranchContainer(currentIndex: navigationShell.currentIndex, children: children),
       bottomNavigationBar: BottomNavigationBar(
         // Here, the items of BottomNavigationBar are hard coded. In a real
         // world scenario, the items would most likely be generated from the
@@ -302,8 +269,7 @@ class CupertinoScaffoldWithNavBar extends StatefulWidget {
   State<StatefulWidget> createState() => _CupertinoScaffoldWithNavBarState();
 }
 
-class _CupertinoScaffoldWithNavBarState
-    extends State<CupertinoScaffoldWithNavBar> {
+class _CupertinoScaffoldWithNavBarState extends State<CupertinoScaffoldWithNavBar> {
   late final CupertinoTabController tabController = CupertinoTabController(
     initialIndex: widget.navigationShell.currentIndex,
   );
@@ -347,11 +313,7 @@ class _CupertinoScaffoldWithNavBarState
 /// when switching branches.
 class AnimatedBranchContainer extends StatelessWidget {
   /// Creates a AnimatedBranchContainer
-  const AnimatedBranchContainer({
-    super.key,
-    required this.currentIndex,
-    required this.children,
-  });
+  const AnimatedBranchContainer({super.key, required this.currentIndex, required this.children});
 
   /// The index (in [children]) of the branch Navigator to display.
   final int currentIndex;
@@ -413,12 +375,7 @@ class RootScreenA extends StatelessWidget {
 /// The details screen for either the A or B screen.
 class DetailsScreen extends StatefulWidget {
   /// Constructs a [DetailsScreen].
-  const DetailsScreen({
-    required this.label,
-    this.param,
-    this.withScaffold = true,
-    super.key,
-  });
+  const DetailsScreen({required this.label, this.param, this.withScaffold = true, super.key});
 
   /// The label to display in the center of the screen.
   final String label;
@@ -445,10 +402,7 @@ class DetailsScreenState extends State<DetailsScreen> {
         body: _build(context),
       );
     } else {
-      return ColoredBox(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        child: _build(context),
-      );
+      return ColoredBox(color: Theme.of(context).scaffoldBackgroundColor, child: _build(context));
     }
   }
 
@@ -472,10 +426,7 @@ class DetailsScreenState extends State<DetailsScreen> {
           ),
           const Padding(padding: EdgeInsets.all(8)),
           if (widget.param != null)
-            Text(
-              'Parameter: ${widget.param!}',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
+            Text('Parameter: ${widget.param!}', style: Theme.of(context).textTheme.titleMedium),
           const Padding(padding: EdgeInsets.all(8)),
           if (!widget.withScaffold) ...<Widget>[
             const Padding(padding: EdgeInsets.all(16)),
@@ -498,11 +449,7 @@ class DetailsScreenState extends State<DetailsScreen> {
 /// Builds a nested shell using a [TabBar] and [TabBarView].
 class TabbedRootScreen extends StatefulWidget {
   /// Constructs a TabbedRootScreen
-  const TabbedRootScreen({
-    required this.navigationShell,
-    required this.children,
-    super.key,
-  });
+  const TabbedRootScreen({required this.navigationShell, required this.children, super.key});
 
   /// The current state of the parent StatefulShellRoute.
   final StatefulNavigationShell navigationShell;
@@ -516,8 +463,7 @@ class TabbedRootScreen extends StatefulWidget {
 
 @visibleForTesting
 // ignore: public_member_api_docs
-class TabbedRootScreenState extends State<TabbedRootScreen>
-    with SingleTickerProviderStateMixin {
+class TabbedRootScreenState extends State<TabbedRootScreen> with SingleTickerProviderStateMixin {
   @visibleForTesting
   // ignore: public_member_api_docs
   late final TabController tabController = TabController(
@@ -559,9 +505,7 @@ class TabbedRootScreenState extends State<TabbedRootScreen>
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Section B root (tab: ${widget.navigationShell.currentIndex + 1})',
-        ),
+        title: Text('Section B root (tab: ${widget.navigationShell.currentIndex + 1})'),
         bottom: TabBar(
           controller: tabController,
           tabs: tabs,
@@ -583,11 +527,7 @@ class TabbedRootScreenState extends State<TabbedRootScreen>
 class PagedRootScreen extends StatefulWidget {
   /// Constructs a PagedRootScreen
   // ignore: unreachable_from_main
-  const PagedRootScreen({
-    required this.navigationShell,
-    required this.children,
-    super.key,
-  });
+  const PagedRootScreen({required this.navigationShell, required this.children, super.key});
 
   /// The current state of the parent StatefulShellRoute.
   // ignore: unreachable_from_main
@@ -618,23 +558,15 @@ class _PagedRootScreenState extends State<PagedRootScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Section B root (tab ${widget.navigationShell.currentIndex + 1})',
-        ),
+        title: Text('Section B root (tab ${widget.navigationShell.currentIndex + 1})'),
       ),
       body: Column(
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              ElevatedButton(
-                onPressed: () => _animateToPage(0),
-                child: const Text('Tab 1'),
-              ),
-              ElevatedButton(
-                onPressed: () => _animateToPage(1),
-                child: const Text('Tab 2'),
-              ),
+              ElevatedButton(onPressed: () => _animateToPage(0), child: const Text('Tab 1')),
+              ElevatedButton(onPressed: () => _animateToPage(1), child: const Text('Tab 2')),
             ],
           ),
           Expanded(

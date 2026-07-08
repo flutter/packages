@@ -17,12 +17,7 @@ const String _legacyScriptName = 'run_tests.sh';
 /// tooling to eliminate the need for bespoke tests.
 class CustomTestCommand extends PackageLoopingCommand {
   /// Creates a custom test command instance.
-  CustomTestCommand(
-    super.packagesDir, {
-    super.processRunner,
-    super.platform,
-    super.gitDir,
-  });
+  CustomTestCommand(super.packagesDir, {super.processRunner, super.platform, super.gitDir});
 
   @override
   final String name = 'custom-test';
@@ -39,10 +34,7 @@ class CustomTestCommand extends PackageLoopingCommand {
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
     final File script = package.customTestScript;
-    final String relativeScriptPath = getRelativePosixPath(
-      script,
-      from: package.directory,
-    );
+    final String relativeScriptPath = getRelativePosixPath(script, from: package.directory);
     final File legacyScript = package.directory.childFile(_legacyScriptName);
     String? customSkipReason;
     var ranTests = false;
@@ -51,16 +43,13 @@ class CustomTestCommand extends PackageLoopingCommand {
     if (script.existsSync()) {
       // Ensure that dependencies are available.
       if (!await runPubGet(package, processRunner, platform)) {
-        return PackageResult.fail(<String>[
-          'Unable to get script dependencies',
-        ]);
+        return PackageResult.fail(<String>['Unable to get script dependencies']);
       }
 
-      final int testExitCode = await processRunner.runAndStream(
-        'dart',
-        <String>['run', relativeScriptPath],
-        workingDir: package.directory,
-      );
+      final int testExitCode = await processRunner.runAndStream('dart', <String>[
+        'run',
+        relativeScriptPath,
+      ], workingDir: package.directory);
       if (testExitCode != 0) {
         return PackageResult.fail();
       }
@@ -87,9 +76,7 @@ class CustomTestCommand extends PackageLoopingCommand {
     }
 
     if (!ranTests) {
-      return PackageResult.skip(
-        customSkipReason ?? 'No $relativeScriptPath file',
-      );
+      return PackageResult.skip(customSkipReason ?? 'No $relativeScriptPath file');
     }
 
     return PackageResult.success();

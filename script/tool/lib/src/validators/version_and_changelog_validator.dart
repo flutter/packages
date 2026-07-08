@@ -98,18 +98,15 @@ class VersionAndChangelogValidator {
 
   /// The label that must be on a PR to allow a breaking
   /// change to a platform interface.
-  static const String _breakingChangeOverrideLabel =
-      'override: allow breaking change';
+  static const String _breakingChangeOverrideLabel = 'override: allow breaking change';
 
   /// The label that must be on a PR to allow skipping a version change for a PR
   /// that would normally require one.
-  static const String _missingVersionChangeOverrideLabel =
-      'override: no versioning needed';
+  static const String _missingVersionChangeOverrideLabel = 'override: no versioning needed';
 
   /// The label that must be on a PR to allow skipping a CHANGELOG change for a
   /// PR that would normally require one.
-  static const String _missingChangelogChangeOverrideLabel =
-      'override: no changelog needed';
+  static const String _missingChangelogChangeOverrideLabel = 'override: no changelog needed';
 
   /// Validates that the version and changelog of a package are consistent,
   /// and match the policy for the files changed, returning a list of resulting
@@ -157,12 +154,8 @@ class VersionAndChangelogValidator {
       }
     } else {
       if (package.pendingChangelogsDirectory.existsSync()) {
-        printError(
-          '${_indentation}Package does not use batch release but has pending changelogs.',
-        );
-        errors.add(
-          'Package does not use batch release but has pending changelogs.',
-        );
+        printError('${_indentation}Package does not use batch release but has pending changelogs.');
+        errors.add('Package does not use batch release but has pending changelogs.');
       }
     }
 
@@ -171,14 +164,15 @@ class VersionAndChangelogValidator {
       pubspec: pubspec,
       ignorePlatformInterfaceBreaks: ignorePlatformInterfaceBreaks,
     );
-    // PR with post release label is going to sync changelog.md and pubspec.yaml
-    // change back to main branch. Proceed with regular version check.
-    final bool hasPostReleaseLabel = _prLabels.contains(
-      'override: post-release-${pubspec.name}',
+    // PR with override: skip-batch-release-repo-check-<package> label is going to sync
+    // changelog.md and pubspec.yaml changes back to main branch.
+    // Proceed with regular version check.
+    final bool shouldSkipBatchReleaseRepoCheck = _prLabels.contains(
+      'override: skip-batch-release-repo-check-${pubspec.name}',
     );
     bool versionChanged;
 
-    if (usesBatchRelease && !hasPostReleaseLabel) {
+    if (usesBatchRelease && !shouldSkipBatchReleaseRepoCheck) {
       versionChanged = await _validatePendingChangeForBatchReleasePackage(
         package: package,
         changedFiles: _changedFiles,
@@ -229,11 +223,7 @@ class VersionAndChangelogValidator {
   Future<Version?> _getPreviousVersionFromGit(RepositoryPackage package) async {
     final File pubspecFile = package.pubspecFile;
     // Use Posix-style paths for git.
-    final String gitPath = relativePosixPath(
-      pubspecFile,
-      from: _repoRoot,
-      platformContext: _path,
-    );
+    final String gitPath = relativePosixPath(pubspecFile, from: _repoRoot, platformContext: _path);
     return _gitVersionFinder.getPackageVersion(gitPath);
   }
 
@@ -246,16 +236,13 @@ class VersionAndChangelogValidator {
   }) async {
     // This method isn't called unless `version` is non-null.
     final Version currentVersion = pubspec.version!;
-    final Version previousVersion =
-        await _getPreviousVersionFromGit(package) ?? Version.none;
+    final Version previousVersion = await _getPreviousVersionFromGit(package) ?? Version.none;
     if (previousVersion == Version.none) {
       print(
         '${_indentation}Unable to find previous version '
         'at git base.',
       );
-      _logWarning(
-        '${_indentation}If this package is not new, something has gone wrong.',
-      );
+      _logWarning('${_indentation}If this package is not new, something has gone wrong.');
       return _CurrentVersionState.newPackage;
     }
 
@@ -269,10 +256,7 @@ class VersionAndChangelogValidator {
       // Since this skips validation, try to ensure that it really is likely
       // to be a revert rather than a typo by checking that the transition
       // from the lower version to the new version would have been valid.
-      if (_shouldAllowVersionChange(
-        oldVersion: currentVersion,
-        newVersion: previousVersion,
-      )) {
+      if (_shouldAllowVersionChange(oldVersion: currentVersion, newVersion: previousVersion)) {
         _logWarning(
           '${_indentation}New version is lower than previous version. '
           'This is assumed to be a revert.',
@@ -281,13 +265,12 @@ class VersionAndChangelogValidator {
       }
     }
 
-    final Map<Version, NextVersionType> allowedNextVersions =
-        getAllowedNextVersions(previousVersion, newVersion: currentVersion);
-
-    if (_shouldAllowVersionChange(
-      oldVersion: previousVersion,
+    final Map<Version, NextVersionType> allowedNextVersions = getAllowedNextVersions(
+      previousVersion,
       newVersion: currentVersion,
-    )) {
+    );
+
+    if (_shouldAllowVersionChange(oldVersion: previousVersion, newVersion: currentVersion)) {
       print('$_indentation$previousVersion -> $currentVersion');
     } else {
       final String baseSha = await _gitVersionFinder.getBaseSha();
@@ -305,8 +288,7 @@ class VersionAndChangelogValidator {
     final Version targetReleaseVersion = currentVersion.isPreRelease
         ? currentVersion.nextPatch
         : currentVersion;
-    if (allowedNextVersions[targetReleaseVersion] ==
-            NextVersionType.BREAKING_MAJOR &&
+    if (allowedNextVersions[targetReleaseVersion] == NextVersionType.BREAKING_MAJOR &&
         !_validateBreakingChange(
           package,
           ignorePlatformInterfaceBreaks: ignorePlatformInterfaceBreaks,
@@ -368,9 +350,7 @@ class VersionAndChangelogValidator {
         printError(badNextErrorMessage);
         return false;
       }
-      print(
-        '${_indentation}Found NEXT; validating next version in the CHANGELOG.',
-      );
+      print('${_indentation}Found NEXT; validating next version in the CHANGELOG.');
       // Ensure that the version in pubspec hasn't changed without updating
       // CHANGELOG. That means the next version entry in the CHANGELOG should
       // pass the normal validation.
@@ -486,13 +466,12 @@ ${_indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
   }
 
   /// Returns true if the given version transition should be allowed.
-  bool _shouldAllowVersionChange({
-    required Version oldVersion,
-    required Version newVersion,
-  }) {
+  bool _shouldAllowVersionChange({required Version oldVersion, required Version newVersion}) {
     // Get the non-pre-release next version mapping.
-    final Map<Version, NextVersionType> allowedNextVersions =
-        getAllowedNextVersions(oldVersion, newVersion: newVersion);
+    final Map<Version, NextVersionType> allowedNextVersions = getAllowedNextVersions(
+      oldVersion,
+      newVersion: newVersion,
+    );
 
     if (allowedNextVersions.containsKey(newVersion)) {
       return true;
@@ -659,11 +638,7 @@ ${_indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
   }
 
   Future<String> _getRelativePackagePath(RepositoryPackage package) async {
-    return relativePosixPath(
-      package.directory,
-      from: _repoRoot,
-      platformContext: _path,
-    );
+    return relativePosixPath(package.directory, from: _repoRoot, platformContext: _path);
   }
 
   Pubspec? _tryParsePubspec(RepositoryPackage package) {

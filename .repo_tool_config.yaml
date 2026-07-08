@@ -20,6 +20,9 @@ allowed_dependencies:
   # A pin can be either an exact version, or a range with an explicit, inclusive
   # max version, which must a version that already exists, not a future version.
   pinned:
+    # Cyclomatic complexity linter for camera_android_camerax
+    - dart_code_linter
+
     # Test-only dependency, so does not impact package clients, and
     # has limited impact so could be easily removed if there are
     # ever maintenance issues in the future.
@@ -50,6 +53,9 @@ allowed_dependencies:
 
     ## Allowed by default:
 
+    # flutter/core-packages
+    - mustache_template
+
     # Dart-team-owned packages
     - analyzer
     - args
@@ -58,6 +64,7 @@ allowed_dependencies:
     - build_config
     - build_runner
     - build_test
+    - clock
     - code_builder
     - collection
     - convert
@@ -109,9 +116,11 @@ allowed_dependencies:
     # Google-owned packages
     - _discoveryapis_commons
     - adaptive_navigation
+    - dart_skills_lint
     - googleapis
     - googleapis_auth
     - json_annotation
+    - material_color_utilities
     - protobuf
     - quiver
     - sanitize_html

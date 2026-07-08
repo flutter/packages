@@ -12,9 +12,9 @@ class AndroidSslAuthError extends PlatformSslAuthError {
   AndroidSslAuthError._({
     required super.certificate,
     required super.description,
-    required android.SslErrorHandler handler,
+    required this._handler,
     required this.url,
-  }) : _handler = handler;
+  });
 
   final android.SslErrorHandler _handler;
 
@@ -29,27 +29,22 @@ class AndroidSslAuthError extends PlatformSslAuthError {
     required android.SslErrorHandler handler,
   }) async {
     final android.SslCertificate certificate = error.certificate;
-    final android.X509Certificate? x509Certificate = await certificate
-        .getX509Certificate();
+    final android.X509Certificate? x509Certificate = await certificate.getX509Certificate();
 
     final android.SslErrorType errorType = await error.getPrimaryError();
     final String errorDescription = switch (errorType) {
-      android.SslErrorType.dateInvalid =>
-        'The date of the certificate is invalid.',
+      android.SslErrorType.dateInvalid => 'The date of the certificate is invalid.',
       android.SslErrorType.expired => 'The certificate has expired.',
       android.SslErrorType.idMismatch => 'Hostname mismatch.',
       android.SslErrorType.invalid => 'A generic error occurred.',
       android.SslErrorType.notYetValid => 'The certificate is not yet valid.',
-      android.SslErrorType.untrusted =>
-        'The certificate authority is not trusted.',
+      android.SslErrorType.untrusted => 'The certificate authority is not trusted.',
       android.SslErrorType.unknown => 'The certificate has an unknown error.',
     };
 
     return AndroidSslAuthError._(
       certificate: X509Certificate(
-        data: x509Certificate != null
-            ? await x509Certificate.getEncoded()
-            : null,
+        data: x509Certificate != null ? await x509Certificate.getEncoded() : null,
       ),
       handler: handler,
       description: errorDescription,

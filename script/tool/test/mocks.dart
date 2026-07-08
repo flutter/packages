@@ -14,11 +14,7 @@ import 'package:platform/platform.dart';
 import 'common/package_command_test.mocks.dart';
 
 class MockPlatform extends Mock implements Platform {
-  MockPlatform({
-    this.isLinux = false,
-    this.isMacOS = false,
-    this.isWindows = false,
-  });
+  MockPlatform({this.isLinux = false, this.isMacOS = false, this.isWindows = false});
 
   @override
   bool isLinux;
@@ -30,9 +26,8 @@ class MockPlatform extends Mock implements Platform {
   bool isWindows;
 
   @override
-  Uri get script => isWindows
-      ? Uri.file(r'C:\foo\bar', windows: true)
-      : Uri.file('/foo/bar', windows: false);
+  Uri get script =>
+      isWindows ? Uri.file(r'C:\foo\bar', windows: true) : Uri.file('/foo/bar', windows: false);
 
   @override
   Map<String, String> environment = <String, String>{};
@@ -65,10 +60,8 @@ class MockProcess extends Mock implements io.Process {
   }
 
   final int _exitCode;
-  final StreamController<List<int>> _stdoutController =
-      StreamController<List<int>>();
-  final StreamController<List<int>> _stderrController =
-      StreamController<List<int>>();
+  final StreamController<List<int>> _stdoutController = StreamController<List<int>>();
+  final StreamController<List<int>> _stderrController = StreamController<List<int>>();
   final MockIOSink stdinMock = MockIOSink();
 
   @override
@@ -111,9 +104,9 @@ MockGitDir createForwardingMockGitDir({
 }) {
   final gitDir = MockGitDir();
   when(gitDir.path).thenReturn(packagesDir.parent.path);
-  when(
-    gitDir.runCommand(any, throwOnError: anyNamed('throwOnError')),
-  ).thenAnswer((Invocation invocation) {
+  when(gitDir.runCommand(any, throwOnError: anyNamed('throwOnError'))).thenAnswer((
+    Invocation invocation,
+  ) {
     final arguments = invocation.positionalArguments[0]! as List<String>;
     final String gitCommand = arguments.removeAt(0);
     return processRunner.run('git-$gitCommand', arguments);

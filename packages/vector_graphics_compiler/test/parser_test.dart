@@ -14,12 +14,7 @@ class _TestOpacityColorMapper implements ColorMapper {
   const _TestOpacityColorMapper();
 
   @override
-  Color substitute(
-    String? id,
-    String elementName,
-    String attributeName,
-    Color color,
-  ) {
+  Color substitute(String? id, String elementName, String attributeName, Color color) {
     if (color.value == 0xff000000) {
       return const Color(0x7fff0000);
     } else {
@@ -29,6 +24,332 @@ class _TestOpacityColorMapper implements ColorMapper {
 }
 
 void main() {
+  test('Exponential DAG expansion triggers DoS protection limit', () {
+    final svg =
+        '''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <path id="leaf" d="M 0,0 L 10,10" />
+    <g id="lvl1"><use href="#leaf" /><use href="#leaf" /></g>
+${[for (var i = 2; i <= 30; i++) '    <g id="lvl$i"><use href="#lvl${i - 1}" /><use href="#lvl${i - 1}" /></g>'].join('\n')}
+  </defs>
+  <use href="#lvl30" />
+</svg>''';
+
+    expect(
+      () => parseWithoutOptimizers(svg),
+      throwsA(
+        isA<StateError>().having(
+          (e) => e.message,
+          'message',
+          contains('SVG contains too many nested reference expansions'),
+        ),
+      ),
+    );
+  });
+
+  test('Exponential DAG clipPath expansion triggers DoS protection limit', () {
+    final svg =
+        '''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <path id="leaf" d="M 0,0 L 10,10" />
+    <g id="lvl1"><use href="#leaf" /><use href="#leaf" /></g>
+${[for (var i = 2; i <= 30; i++) '    <g id="lvl$i"><use href="#lvl${i - 1}" /><use href="#lvl${i - 1}" /></g>'].join('\n')}
+    <clipPath id="clip1"><use href="#lvl30" /></clipPath>
+  </defs>
+  <rect width="100" height="100" clip-path="url(#clip1)" />
+</svg>''';
+
+    expect(
+      () => parseWithoutOptimizers(svg),
+      throwsA(
+        isA<StateError>().having(
+          (e) => e.message,
+          'message',
+          contains('SVG contains too many nested reference expansions'),
+        ),
+      ),
+    );
+  });
+
+  test('Cumulative clipPath reference expansions trigger DoS protection limit', () {
+    final svg =
+        '''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <path id="leaf" d="M 0,0 L 10,10" />
+    <g id="lvl1"><use href="#leaf" /><use href="#leaf" /></g>
+${[for (var i = 2; i <= 8; i++) '    <g id="lvl$i"><use href="#lvl${i - 1}" /><use href="#lvl${i - 1}" /></g>'].join('\n')}
+    <clipPath id="clip1"><use href="#lvl8" /></clipPath>
+    <clipPath id="clip2"><use href="#lvl8" /></clipPath>
+  </defs>
+  <g clip-path="url(#clip1)">
+    <rect width="100" height="100" clip-path="url(#clip2)" />
+  </g>
+</svg>''';
+
+    expect(
+      () => parseWithoutOptimizers(svg),
+      throwsA(
+        isA<StateError>().having(
+          (e) => e.message,
+          'message',
+          contains('SVG contains too many nested reference expansions'),
+        ),
+      ),
+    );
+  });
+
+  test('Exponential DAG mask expansion triggers DoS protection limit', () {
+    final svg =
+        '''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <path id="leaf" d="M 0,0 L 10,10" />
+    <mask id="lvl1"><use href="#leaf" /><use href="#leaf" /></mask>
+${[for (var i = 2; i <= 30; i++) '    <mask id="lvl$i"><g mask="url(#lvl${i - 1})"><use href="#lvl${i - 1}" /></g></mask>'].join('\n')}
+  </defs>
+  <rect width="100" height="100" mask="url(#lvl30)" />
+</svg>''';
+
+    expect(
+      () => parseWithoutOptimizers(svg),
+      throwsA(
+        isA<StateError>().having(
+          (e) => e.message,
+          'message',
+          contains('SVG contains too many nested reference expansions'),
+        ),
+      ),
+    );
+  });
+
+  test('Exponential DAG pattern expansion triggers DoS protection limit', () {
+    final svg =
+        '''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <path id="leaf" d="M 0,0 L 10,10" />
+    <pattern id="lvl1" width="10" height="10"><use href="#leaf" /><use href="#leaf" /></pattern>
+${[for (var i = 2; i <= 30; i++) '    <pattern id="lvl$i" width="10" height="10"><g fill="url(#lvl${i - 1})"><use href="#lvl${i - 1}" /></g></pattern>'].join('\n')}
+  </defs>
+  <rect width="100" height="100" fill="url(#lvl30)" />
+</svg>''';
+
+    expect(
+      () => parseWithoutOptimizers(svg),
+      throwsA(
+        isA<StateError>().having(
+          (e) => e.message,
+          'message',
+          contains('SVG contains too many nested reference expansions'),
+        ),
+      ),
+    );
+  });
+
+  test('Circular Mask Loop Avoidance', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+  <mask id="mask1">
+    <g mask="url(#mask1)">
+      <rect width="100" height="100" fill="white"/>
+    </g>
+  </mask>
+  <rect width="100" height="100" fill="blue" mask="url(#mask1)"/>
+</svg>
+''');
+
+    expect(instructions.paths.isNotEmpty, true);
+  });
+
+  test('Unreferenced Circular Mask Loop resolves successfully', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <mask id="mask1">
+      <g mask="url(#mask2)">
+        <rect width="100" height="100" fill="white"/>
+      </g>
+    </mask>
+    <mask id="mask2">
+      <g mask="url(#mask1)">
+        <rect width="100" height="100" fill="white"/>
+      </g>
+    </mask>
+  </defs>
+  <rect width="10" height="10" fill="red" />
+</svg>
+''');
+
+    expect(instructions.paths.length, 1);
+  });
+
+  test('Multi-hop Referenced Circular Mask Loop Avoidance', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <mask id="mask1">
+      <g mask="url(#mask2)">
+        <rect width="100" height="100" fill="white"/>
+      </g>
+    </mask>
+    <mask id="mask2">
+      <g mask="url(#mask3)">
+        <rect width="100" height="100" fill="white"/>
+      </g>
+    </mask>
+    <mask id="mask3">
+      <g mask="url(#mask1)">
+        <rect width="100" height="100" fill="white"/>
+      </g>
+    </mask>
+  </defs>
+  <rect width="100" height="100" fill="blue" mask="url(#mask1)"/>
+</svg>
+''');
+
+    expect(instructions.paths.isNotEmpty, true);
+  });
+
+  test('Circular Deferred Node Loop Avoidance', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+  <g id="groupA">
+    <use xlink:href="#groupB" />
+  </g>
+  <g id="groupB">
+    <use xlink:href="#groupA" />
+  </g>
+  <use xlink:href="#groupA" />
+</svg>
+''');
+
+    expect(instructions.paths.isEmpty, true);
+  });
+
+  test('Unreferenced Circular Use Loop resolves successfully', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <g id="groupA">
+      <use xlink:href="#groupB" />
+    </g>
+    <g id="groupB">
+      <use xlink:href="#groupA" />
+    </g>
+  </defs>
+  <rect width="10" height="10" fill="red" />
+</svg>
+''');
+
+    expect(instructions.paths.length, 1);
+  });
+
+  test('Multi-hop Referenced Circular Use Loop Avoidance', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <g id="groupA">
+      <use xlink:href="#groupB" />
+    </g>
+    <g id="groupB">
+      <use xlink:href="#groupC" />
+    </g>
+    <g id="groupC">
+      <use xlink:href="#groupA" />
+    </g>
+  </defs>
+  <use xlink:href="#groupA" />
+</svg>
+''');
+
+    expect(instructions.paths.isEmpty, true);
+  });
+
+  test('Circular Pattern Loop Avoidance', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+  <pattern id="pattern1" width="20" height="20" patternUnits="userSpaceOnUse">
+    <rect width="20" height="20" fill="url(#pattern1)"/>
+  </pattern>
+  <rect width="100" height="100" fill="url(#pattern1)"/>
+</svg>
+''');
+
+    expect(instructions.paths.isNotEmpty, true);
+  });
+
+  test('Circular ClipPath Loop Avoidance', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+  <g id="groupA">
+    <use xlink:href="#groupB" />
+  </g>
+  <g id="groupB">
+    <use xlink:href="#groupA" />
+  </g>
+  <clipPath id="clip1">
+    <use xlink:href="#groupA" />
+  </clipPath>
+  <rect width="100" height="100" fill="blue" clip-path="url(#clip1)"/>
+</svg>
+''');
+    expect(instructions.paths.length, 1);
+    expect(instructions.commands.any((c) => c.type == DrawCommandType.clip), false);
+  });
+
+  test('Shared DAG Sibling Node (No Loop) resolves successfully', () {
+    // Case 1: Identical positions. The paths are geometrically identical,
+    // so they are deduplicated in the unique paths list, but drawn twice in the command list.
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <path id="leaf" d="M 0,0 L 10,10" />
+    <g id="shared">
+      <use href="#leaf" />
+    </g>
+    <g id="sibling1">
+      <use href="#shared" />
+    </g>
+    <g id="sibling2">
+      <use href="#shared" />
+    </g>
+  </defs>
+  <use href="#sibling1" />
+  <use href="#sibling2" />
+</svg>
+''');
+
+    expect(instructions.paths.length, 1);
+    expect(instructions.commands.where((c) => c.type == DrawCommandType.path).length, 2);
+
+    // Case 2: Distinct positions. The paths are transformed differently,
+    // so they are distinct paths and both exist in the unique paths list.
+    final VectorInstructions distinctInstructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <path id="leaf" d="M 0,0 L 10,10" />
+    <g id="shared">
+      <use href="#leaf" />
+    </g>
+    <g id="sibling1">
+      <use href="#shared" x="10" />
+    </g>
+    <g id="sibling2">
+      <use href="#shared" x="20" />
+    </g>
+  </defs>
+  <use href="#sibling1" />
+  <use href="#sibling2" />
+</svg>
+''');
+
+    expect(distinctInstructions.paths.length, 2);
+    expect(distinctInstructions.commands.where((c) => c.type == DrawCommandType.path).length, 2);
+  });
+
   test('Reuse ID self-referentially', () {
     final VectorInstructions instructions = parseWithoutOptimizers('''
 <?xml version="1.0" encoding="UTF-8"?>
@@ -88,21 +409,13 @@ void main() {
       ),
     ]);
     expect(instructions.textPositions, <TextPosition>[
-      TextPosition(
-        reset: true,
-        transform: AffineMatrix.identity.translated(60, 45),
-      ),
-      TextPosition(
-        reset: true,
-        transform: AffineMatrix.identity.translated(60, 75),
-      ),
+      TextPosition(reset: true, transform: AffineMatrix.identity.translated(60, 45)),
+      TextPosition(reset: true, transform: AffineMatrix.identity.translated(60, 75)),
     ]);
   });
 
   test('Fill rule inheritence', () {
-    final VectorInstructions instructions = parseWithoutOptimizers(
-      inheritFillRule,
-    );
+    final VectorInstructions instructions = parseWithoutOptimizers(inheritFillRule);
 
     expect(instructions.paints, const <Paint>[
       Paint(
@@ -141,9 +454,7 @@ void main() {
   });
 
   test('Text whitespace handling (number bubbles)', () {
-    final VectorInstructions instructions = parseWithoutOptimizers(
-      numberBubbles,
-    );
+    final VectorInstructions instructions = parseWithoutOptimizers(numberBubbles);
 
     expect(instructions.textPositions, const <TextPosition>[
       TextPosition(reset: true),
@@ -290,10 +601,7 @@ void main() {
 
     final VectorInstructions instructions = parseWithoutOptimizers(svg);
 
-    expect(instructions.text.map((TextConfig t) => t.text), <String>[
-      'ABCDEFG',
-      'HIJKLMN',
-    ]);
+    expect(instructions.text.map((TextConfig t) => t.text), <String>['ABCDEFG', 'HIJKLMN']);
   });
 
   test('adjacent tspans with whitespace between still get a space', () {
@@ -307,10 +615,7 @@ void main() {
 
     final VectorInstructions instructions = parseWithoutOptimizers(svg);
 
-    expect(instructions.text.map((TextConfig t) => t.text), <String>[
-      'A',
-      ' B',
-    ]);
+    expect(instructions.text.map((TextConfig t) => t.text), <String>['A', ' B']);
   });
 
   test('stroke-opacity', () {
@@ -320,14 +625,9 @@ void main() {
 </svg>
 ''';
 
-    final VectorInstructions instructions = parseWithoutOptimizers(
-      strokeOpacitySvg,
-    );
+    final VectorInstructions instructions = parseWithoutOptimizers(strokeOpacitySvg);
 
-    expect(
-      instructions.paints.single,
-      const Paint(stroke: Stroke(color: Color(0x7fff0000))),
-    );
+    expect(instructions.paints.single, const Paint(stroke: Stroke(color: Color(0x7fff0000))));
   });
 
   test('preserve opacity from color mapper for strokes', () {
@@ -342,10 +642,7 @@ void main() {
       colorMapper: const _TestOpacityColorMapper(),
     );
 
-    expect(
-      instructions.paints.single,
-      const Paint(stroke: Stroke(color: Color(0x7fff0000))),
-    );
+    expect(instructions.paints.single, const Paint(stroke: Stroke(color: Color(0x7fff0000))));
   });
 
   test('text attributes are preserved', () {
@@ -420,15 +717,9 @@ void main() {
       theme: const SvgTheme(currentColor: Color(0xFFFF0000)),
     );
 
-    expect(
-      blueInstructions.paints.single,
-      const Paint(fill: Fill(color: Color(0xFF0000FF))),
-    );
+    expect(blueInstructions.paints.single, const Paint(fill: Fill(color: Color(0xFF0000FF))));
 
-    expect(
-      redInstructions.paints.single,
-      const Paint(fill: Fill(color: Color(0xFFFF0000))),
-    );
+    expect(redInstructions.paints.single, const Paint(fill: Fill(color: Color(0xFFFF0000))));
   });
 
   test('currentColor stoke opacity', () {
@@ -510,26 +801,16 @@ void main() {
   });
 
   test('Stroke width with scaling', () {
-    final VectorInstructions instructions = parseWithoutOptimizers(
-      signWithScaledStroke,
-    );
+    final VectorInstructions instructions = parseWithoutOptimizers(signWithScaledStroke);
 
     expect(instructions.paints, const <Paint>[
       Paint(
         blendMode: BlendMode.srcOver,
-        stroke: Stroke(
-          color: Color(0xffffee44),
-          join: StrokeJoin.round,
-          width: 3.0,
-        ),
+        stroke: Stroke(color: Color(0xffffee44), join: StrokeJoin.round, width: 3.0),
       ),
       Paint(
         blendMode: BlendMode.srcOver,
-        stroke: Stroke(
-          color: Color(0xff333333),
-          join: StrokeJoin.round,
-          width: 3.0,
-        ),
+        stroke: Stroke(color: Color(0xff333333), join: StrokeJoin.round, width: 3.0),
         fill: Fill(color: Color(0xffffee44)),
       ),
       Paint(
@@ -544,11 +825,7 @@ void main() {
       ),
       Paint(
         blendMode: BlendMode.srcOver,
-        stroke: Stroke(
-          color: Color(0xff446699),
-          join: StrokeJoin.round,
-          width: 0.5,
-        ),
+        stroke: Stroke(color: Color(0xff446699), join: StrokeJoin.round, width: 0.5),
       ),
       Paint(
         blendMode: BlendMode.srcOver,
@@ -568,28 +845,16 @@ void main() {
       ),
       Paint(
         blendMode: BlendMode.srcOver,
-        stroke: Stroke(
-          color: Color(0xff333311),
-          join: StrokeJoin.round,
-          width: 0.5,
-        ),
+        stroke: Stroke(color: Color(0xff333311), join: StrokeJoin.round, width: 0.5),
       ),
       Paint(
         blendMode: BlendMode.srcOver,
-        stroke: Stroke(
-          color: Color(0xffffee44),
-          join: StrokeJoin.round,
-          width: 0.5,
-        ),
+        stroke: Stroke(color: Color(0xffffee44), join: StrokeJoin.round, width: 0.5),
         fill: Fill(color: Color(0xff80a3cf)),
       ),
       Paint(
         blendMode: BlendMode.srcOver,
-        stroke: Stroke(
-          color: Color(0xffffee44),
-          join: StrokeJoin.round,
-          width: 0.5,
-        ),
+        stroke: Stroke(color: Color(0xffffee44), join: StrokeJoin.round, width: 0.5),
         fill: Fill(color: Color(0xff668899)),
       ),
     ]);
@@ -668,9 +933,7 @@ void main() {
   });
 
   test('Transformed clip', () {
-    final VectorInstructions instructions = parseWithoutOptimizers(
-      transformedClip,
-    );
+    final VectorInstructions instructions = parseWithoutOptimizers(transformedClip);
 
     expect(instructions.paths, <Path>[
       Path(
@@ -701,10 +964,7 @@ void main() {
 </svg>''');
 
     expect(instructions.paints.single.stroke, null);
-    expect(
-      instructions.paints.single.fill,
-      const Fill(color: Color(0xFFFFFFFF)),
-    );
+    expect(instructions.paints.single.fill, const Fill(color: Color(0xFFFFFFFF)));
   });
 
   test('text anchor', () {
@@ -745,9 +1005,7 @@ void main() {
   });
 
   test('text decorations', () {
-    final VectorInstructions instructions = parseWithoutOptimizers(
-      textDecorations,
-    );
+    final VectorInstructions instructions = parseWithoutOptimizers(textDecorations);
 
     expect(instructions.text, const <TextConfig>[
       TextConfig(
@@ -784,9 +1042,7 @@ void main() {
   });
 
   test('Stroke property set but does not draw stroke', () {
-    final VectorInstructions instructions = parseWithoutOptimizers(
-      strokePropertyButNoStroke,
-    );
+    final VectorInstructions instructions = parseWithoutOptimizers(strokePropertyButNoStroke);
     expect(instructions.paths.single.commands, const <PathCommand>[
       MoveToCommand(10.0, 20.0),
       LineToCommand(110.0, 20.0),
@@ -794,10 +1050,7 @@ void main() {
       LineToCommand(10.0, 120.0),
       CloseCommand(),
     ]);
-    expect(
-      instructions.paints.single,
-      const Paint(fill: Fill(color: Color(0xFFFF0000))),
-    );
+    expect(instructions.paints.single, const Paint(fill: Fill(color: Color(0xFFFF0000))));
   });
 
   test('Clip with use', () {
@@ -895,30 +1148,21 @@ void main() {
 
     expect(instructionsEx.paints, <Paint>[
       Paint(
-        stroke: Stroke(
-          color: const Color(0xff0000ff),
-          width: 1.0 * theme.xHeight,
-        ),
+        stroke: Stroke(color: const Color(0xff0000ff), width: 1.0 * theme.xHeight),
         fill: const Fill(color: Color(0xffff0000)),
       ),
     ]);
 
     expect(instructionsEm.paints, <Paint>[
       Paint(
-        stroke: Stroke(
-          color: const Color(0xff0000ff),
-          width: 1.0 * theme.fontSize,
-        ),
+        stroke: Stroke(color: const Color(0xff0000ff), width: 1.0 * theme.fontSize),
         fill: const Fill(color: Color(0xffff0000)),
       ),
     ]);
 
     expect(instructionsRem.paints, <Paint>[
       Paint(
-        stroke: Stroke(
-          color: const Color(0xff0000ff),
-          width: 1.0 * theme.fontSize,
-        ),
+        stroke: Stroke(color: const Color(0xff0000ff), width: 1.0 * theme.fontSize),
         fill: const Fill(color: Color(0xffff0000)),
       ),
     ]);
@@ -1013,10 +1257,7 @@ void main() {
 
   test('Missing references', () {
     final VectorInstructions instructions = parseWithoutOptimizers(missingRefs);
-    expect(
-      instructions.paints.single,
-      const Paint(fill: Fill(color: Color(0xFFFF0000))),
-    );
+    expect(instructions.paints.single, const Paint(fill: Fill(color: Color(0xFFFF0000))));
     expect(
       instructions.paths.single,
       PathBuilder().addRect(const Rect.fromLTWH(5, 5, 100, 100)).toPath(),
@@ -1040,11 +1281,7 @@ void main() {
             id: 'url(#radial)',
             center: Point(0.5, 0.5),
             radius: 0.5,
-            colors: <Color>[
-              Color(0xffff0000),
-              Color(0xff008000),
-              Color(0xff0000ff),
-            ],
+            colors: <Color>[Color(0xffff0000), Color(0xff008000), Color(0xff0000ff)],
             offsets: <double>[0.0, 0.5, 1.0],
             tileMode: TileMode.clamp,
             transform: AffineMatrix(120.0, 0.0, 0.0, 120.0, 10.0, 10.0, 120.0),
@@ -1061,9 +1298,7 @@ void main() {
   });
 
   test('Transformed userSpaceOnUse radial', () {
-    final VectorInstructions instructions = parseWithoutOptimizers(
-      xformUsosRadial,
-    );
+    final VectorInstructions instructions = parseWithoutOptimizers(xformUsosRadial);
     expect(
       instructions.paints.single,
       const Paint(
@@ -1096,10 +1331,7 @@ void main() {
           .addRect(const Rect.fromLTWH(667, 667, 667, 667))
           .toPath()
           .transformed(
-            AffineMatrix.identity
-                .translated(667, 667)
-                .rotated(radians(180))
-                .translated(-667, -667),
+            AffineMatrix.identity.translated(667, 667).rotated(radians(180)).translated(-667, -667),
           ),
     );
   });
@@ -1107,9 +1339,7 @@ void main() {
   test(
     'Transformed objectBoundingBox gradient onto transformed path',
     () {
-      final VectorInstructions instructions = parseWithoutOptimizers(
-        xformObbGradient,
-      );
+      final VectorInstructions instructions = parseWithoutOptimizers(xformObbGradient);
       expect(
         instructions.paints.single,
         const Paint(
@@ -1246,9 +1476,7 @@ void main() {
   });
 
   test('group opacity results in save layer', () {
-    final VectorInstructions instructions = parseWithoutOptimizers(
-      groupOpacity,
-    );
+    final VectorInstructions instructions = parseWithoutOptimizers(groupOpacity);
     expect(instructions.paths, <Path>[
       PathBuilder().addOval(const Rect.fromCircle(80, 100, 50)).toPath(),
       PathBuilder().addOval(const Rect.fromCircle(120, 100, 50)).toPath(),
@@ -1267,12 +1495,8 @@ void main() {
   });
 
   test('xlink gradient Out of order', () {
-    final VectorInstructions instructions = parseWithoutOptimizers(
-      xlinkGradient,
-    );
-    final VectorInstructions instructions2 = parseWithoutOptimizers(
-      xlinkGradientOoO,
-    );
+    final VectorInstructions instructions = parseWithoutOptimizers(xlinkGradient);
+    final VectorInstructions instructions2 = parseWithoutOptimizers(xlinkGradientOoO);
 
     expect(instructions.paints, instructions2.paints);
     expect(instructions.paths, instructions2.paths);
@@ -1280,12 +1504,8 @@ void main() {
   });
 
   test('xlink use Out of order', () {
-    final VectorInstructions instructions = parseWithoutOptimizers(
-      simpleUseCircles,
-    );
-    final VectorInstructions instructions2 = parseWithoutOptimizers(
-      simpleUseCirclesOoO,
-    );
+    final VectorInstructions instructions = parseWithoutOptimizers(simpleUseCircles);
+    final VectorInstructions instructions2 = parseWithoutOptimizers(simpleUseCirclesOoO);
 
     // Use toSet to ignore ordering differences.
     expect(instructions.paints.toSet(), instructions2.paints.toSet());
@@ -1294,16 +1514,12 @@ void main() {
   });
 
   test('xlink gradient with transform', () {
-    final VectorInstructions instructions = parseWithoutOptimizers(
-      xlinkGradient,
-    );
+    final VectorInstructions instructions = parseWithoutOptimizers(xlinkGradient);
     expect(instructions.paths, <Path>[
       PathBuilder()
           .addOval(const Rect.fromCircle(-83.533, 122.753, 74.461))
           .toPath()
-          .transformed(
-            const AffineMatrix(.63388, 0, 0, .63388, 100.15, -30.611),
-          ),
+          .transformed(const AffineMatrix(.63388, 0, 0, .63388, 100.15, -30.611)),
     ]);
 
     expect(instructions.paints, const <Paint>[
@@ -1329,13 +1545,9 @@ void main() {
   });
 
   test('Out of order def', () {
-    final VectorInstructions instructions = parseWithoutOptimizers(
-      outOfOrderGradientDef,
-    );
+    final VectorInstructions instructions = parseWithoutOptimizers(outOfOrderGradientDef);
     expect(instructions.paths, <Path>[
-      parseSvgPathData(
-        'M10 20c5.523 0 10-4.477 10-10S15.523 0 10 0 0 4.477 0 10s4.477 10 10 10z',
-      ),
+      parseSvgPathData('M10 20c5.523 0 10-4.477 10-10S15.523 0 10 0 0 4.477 0 10s4.477 10 10 10z'),
     ]);
     expect(instructions.paints, const <Paint>[
       Paint(
@@ -1370,10 +1582,7 @@ void main() {
         parseSvgPathData(
           'M10,35 A20,20,0,0,1,50,35 A20,20,0,0,1,90,35 Q90,65,50,95 Q10,65,10,35 Z',
         ),
-      ].map(
-        (Path path) =>
-            path.transformed(AffineMatrix.identity.translated(10, 10)),
-      ),
+      ].map((Path path) => path.transformed(AffineMatrix.identity.translated(10, 10))),
     );
 
     expect(instructions.paints, const <Paint>[
@@ -1417,9 +1626,7 @@ void main() {
 ''';
     final VectorInstructions instructions = parseWithoutOptimizers(svg);
     expect(instructions.paths, <Path>[
-      PathBuilder()
-          .addRRect(const Rect.fromLTWH(11, 36, 31, 20), 2.5, 2.5)
-          .toPath(),
+      PathBuilder().addRRect(const Rect.fromLTWH(11, 36, 31, 20), 2.5, 2.5).toPath(),
     ]);
   });
 
@@ -1455,30 +1662,9 @@ void main() {
       Path(
         commands: const <PathCommand>[
           MoveToCommand(5.0, 1.0),
-          CubicToCommand(
-            7.2076600979759995,
-            1.0,
-            9.0,
-            2.792339902024,
-            9.0,
-            5.0,
-          ),
-          CubicToCommand(
-            9.0,
-            7.2076600979759995,
-            7.2076600979759995,
-            9.0,
-            5.0,
-            9.0,
-          ),
-          CubicToCommand(
-            2.792339902024,
-            9.0,
-            1.0,
-            7.2076600979759995,
-            1.0,
-            5.0,
-          ),
+          CubicToCommand(7.2076600979759995, 1.0, 9.0, 2.792339902024, 9.0, 5.0),
+          CubicToCommand(9.0, 7.2076600979759995, 7.2076600979759995, 9.0, 5.0, 9.0),
+          CubicToCommand(2.792339902024, 9.0, 1.0, 7.2076600979759995, 1.0, 5.0),
           CubicToCommand(1.0, 2.792339902024, 2.792339902024, 1.0, 5.0, 1.0),
           CloseCommand(),
         ],
@@ -1487,22 +1673,8 @@ void main() {
         commands: const <PathCommand>[
           MoveToCommand(15.0, 1.0),
           CubicToCommand(17.207660097976, 1.0, 19.0, 2.792339902024, 19.0, 5.0),
-          CubicToCommand(
-            19.0,
-            7.2076600979759995,
-            17.207660097976,
-            9.0,
-            15.0,
-            9.0,
-          ),
-          CubicToCommand(
-            12.792339902024,
-            9.0,
-            11.0,
-            7.2076600979759995,
-            11.0,
-            5.0,
-          ),
+          CubicToCommand(19.0, 7.2076600979759995, 17.207660097976, 9.0, 15.0, 9.0),
+          CubicToCommand(12.792339902024, 9.0, 11.0, 7.2076600979759995, 11.0, 5.0),
           CubicToCommand(11.0, 2.792339902024, 12.792339902024, 1.0, 15.0, 1.0),
           CloseCommand(),
         ],
@@ -1511,22 +1683,8 @@ void main() {
         commands: const <PathCommand>[
           MoveToCommand(25.0, 1.0),
           CubicToCommand(27.207660097976, 1.0, 29.0, 2.792339902024, 29.0, 5.0),
-          CubicToCommand(
-            29.0,
-            7.2076600979759995,
-            27.207660097976,
-            9.0,
-            25.0,
-            9.0,
-          ),
-          CubicToCommand(
-            22.792339902024,
-            9.0,
-            21.0,
-            7.2076600979759995,
-            21.0,
-            5.0,
-          ),
+          CubicToCommand(29.0, 7.2076600979759995, 27.207660097976, 9.0, 25.0, 9.0),
+          CubicToCommand(22.792339902024, 9.0, 21.0, 7.2076600979759995, 21.0, 5.0),
           CubicToCommand(21.0, 2.792339902024, 22.792339902024, 1.0, 25.0, 1.0),
           CloseCommand(),
         ],
@@ -1534,24 +1692,9 @@ void main() {
     ]);
 
     expect(instructions.commands, const <DrawCommand>[
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 0,
-        paintId: 0,
-        debugString: 'myCircle',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 1,
-        paintId: 1,
-        debugString: 'myCircle',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 2,
-        paintId: 2,
-        debugString: 'myCircle',
-      ),
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0, debugString: 'myCircle'),
+      DrawCommand(DrawCommandType.path, objectId: 1, paintId: 1, debugString: 'myCircle'),
+      DrawCommand(DrawCommandType.path, objectId: 2, paintId: 2, debugString: 'myCircle'),
     ]);
   });
 
@@ -1562,38 +1705,15 @@ void main() {
       warningsAsErrors: true,
     );
 
-    expect(instructions.paints, const <Paint>[
-      Paint(fill: Fill(color: Color.opaqueBlack)),
-    ]);
+    expect(instructions.paints, const <Paint>[Paint(fill: Fill(color: Color.opaqueBlack))]);
 
     expect(instructions.paths, <Path>[
       Path(
         commands: const <PathCommand>[
           MoveToCommand(5.0, 1.0),
-          CubicToCommand(
-            7.2076600979759995,
-            1.0,
-            9.0,
-            2.792339902024,
-            9.0,
-            5.0,
-          ),
-          CubicToCommand(
-            9.0,
-            7.2076600979759995,
-            7.2076600979759995,
-            9.0,
-            5.0,
-            9.0,
-          ),
-          CubicToCommand(
-            2.792339902024,
-            9.0,
-            1.0,
-            7.2076600979759995,
-            1.0,
-            5.0,
-          ),
+          CubicToCommand(7.2076600979759995, 1.0, 9.0, 2.792339902024, 9.0, 5.0),
+          CubicToCommand(9.0, 7.2076600979759995, 7.2076600979759995, 9.0, 5.0, 9.0),
+          CubicToCommand(2.792339902024, 9.0, 1.0, 7.2076600979759995, 1.0, 5.0),
           CubicToCommand(1.0, 2.792339902024, 2.792339902024, 1.0, 5.0, 1.0),
           CloseCommand(),
         ],
@@ -1601,12 +1721,7 @@ void main() {
     ]);
 
     expect(instructions.commands, const <DrawCommand>[
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 0,
-        paintId: 0,
-        debugString: 'myCircle',
-      ),
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0, debugString: 'myCircle'),
     ]);
   });
 
@@ -1736,1446 +1851,246 @@ void main() {
     expect(instructions.paints.toSet(), ghostScriptTigerPaints.toSet());
     expect(instructions.paths, ghostScriptTigerPaths);
     expect(instructions.commands, const <DrawCommand>[
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 0,
-        paintId: 0,
-        debugString: 'path8',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 1,
-        paintId: 0,
-        debugString: 'path12',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 2,
-        paintId: 0,
-        debugString: 'path16',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 3,
-        paintId: 0,
-        debugString: 'path20',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 4,
-        paintId: 0,
-        debugString: 'path24',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 5,
-        paintId: 0,
-        debugString: 'path28',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 6,
-        paintId: 0,
-        debugString: 'path32',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 7,
-        paintId: 0,
-        debugString: 'path36',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 8,
-        paintId: 0,
-        debugString: 'path40',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 9,
-        paintId: 0,
-        debugString: 'path44',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 10,
-        paintId: 0,
-        debugString: 'path48',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 11,
-        paintId: 0,
-        debugString: 'path52',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 12,
-        paintId: 1,
-        debugString: 'path56',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 13,
-        paintId: 2,
-        debugString: 'path60',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 14,
-        paintId: 3,
-        debugString: 'path64',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 15,
-        paintId: 4,
-        debugString: 'path68',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 16,
-        paintId: 5,
-        debugString: 'path72',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 17,
-        paintId: 6,
-        debugString: 'path76',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 18,
-        paintId: 7,
-        debugString: 'path80',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 19,
-        paintId: 8,
-        debugString: 'path84',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 20,
-        paintId: 9,
-        debugString: 'path88',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 21,
-        paintId: 10,
-        debugString: 'path92',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 22,
-        paintId: 11,
-        debugString: 'path96',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 23,
-        paintId: 12,
-        debugString: 'path100',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 24,
-        paintId: 13,
-        debugString: 'path104',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 25,
-        paintId: 14,
-        debugString: 'path108',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 26,
-        paintId: 15,
-        debugString: 'path112',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 27,
-        paintId: 16,
-        debugString: 'path116',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 28,
-        paintId: 15,
-        debugString: 'path120',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 29,
-        paintId: 16,
-        debugString: 'path124',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 30,
-        paintId: 16,
-        debugString: 'path128',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 31,
-        paintId: 16,
-        debugString: 'path132',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 32,
-        paintId: 16,
-        debugString: 'path136',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 33,
-        paintId: 16,
-        debugString: 'path140',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 34,
-        paintId: 16,
-        debugString: 'path144',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 35,
-        paintId: 15,
-        debugString: 'path148',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 36,
-        paintId: 17,
-        debugString: 'path152',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 37,
-        paintId: 18,
-        debugString: 'path156',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 38,
-        paintId: 19,
-        debugString: 'path160',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 39,
-        paintId: 20,
-        debugString: 'path164',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 40,
-        paintId: 21,
-        debugString: 'path168',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 41,
-        paintId: 22,
-        debugString: 'path172',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 42,
-        paintId: 23,
-        debugString: 'path176',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 43,
-        paintId: 21,
-        debugString: 'path180',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 44,
-        paintId: 21,
-        debugString: 'path184',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 45,
-        paintId: 21,
-        debugString: 'path188',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 46,
-        paintId: 21,
-        debugString: 'path192',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 47,
-        paintId: 21,
-        debugString: 'path196',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 48,
-        paintId: 21,
-        debugString: 'path200',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 49,
-        paintId: 24,
-        debugString: 'path204',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 50,
-        paintId: 24,
-        debugString: 'path208',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 51,
-        paintId: 21,
-        debugString: 'path212',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 52,
-        paintId: 24,
-        debugString: 'path216',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 53,
-        paintId: 24,
-        debugString: 'path220',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 54,
-        paintId: 25,
-        debugString: 'path224',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 55,
-        paintId: 21,
-        debugString: 'path228',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 56,
-        paintId: 21,
-        debugString: 'path232',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 57,
-        paintId: 21,
-        debugString: 'path236',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 58,
-        paintId: 15,
-        debugString: 'path240',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 59,
-        paintId: 21,
-        debugString: 'path244',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 60,
-        paintId: 21,
-        debugString: 'path248',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 61,
-        paintId: 21,
-        debugString: 'path252',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 62,
-        paintId: 21,
-        debugString: 'path256',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 63,
-        paintId: 21,
-        debugString: 'path260',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 64,
-        paintId: 26,
-        debugString: 'path264',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 65,
-        paintId: 26,
-        debugString: 'path268',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 66,
-        paintId: 3,
-        debugString: 'path272',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 67,
-        paintId: 27,
-        debugString: 'path276',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 68,
-        paintId: 28,
-        debugString: 'path280',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 69,
-        paintId: 29,
-        debugString: 'path284',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 70,
-        paintId: 30,
-        debugString: 'path288',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 71,
-        paintId: 14,
-        debugString: 'path292',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 72,
-        paintId: 16,
-        debugString: 'path296',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 73,
-        paintId: 15,
-        debugString: 'path300',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 74,
-        paintId: 31,
-        debugString: 'path304',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 75,
-        paintId: 32,
-        debugString: 'path308',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 76,
-        paintId: 14,
-        debugString: 'path312',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 77,
-        paintId: 15,
-        debugString: 'path316',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 78,
-        paintId: 3,
-        debugString: 'path320',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 79,
-        paintId: 14,
-        debugString: 'path324',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 80,
-        paintId: 33,
-        debugString: 'path328',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 81,
-        paintId: 34,
-        debugString: 'path332',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 82,
-        paintId: 35,
-        debugString: 'path336',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 83,
-        paintId: 14,
-        debugString: 'path340',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 84,
-        paintId: 16,
-        debugString: 'path344',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 85,
-        paintId: 15,
-        debugString: 'path348',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 86,
-        paintId: 31,
-        debugString: 'path352',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 87,
-        paintId: 15,
-        debugString: 'path356',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 88,
-        paintId: 15,
-        debugString: 'path360',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 89,
-        paintId: 15,
-        debugString: 'path364',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 90,
-        paintId: 36,
-        debugString: 'path368',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 91,
-        paintId: 37,
-        debugString: 'path372',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 92,
-        paintId: 38,
-        debugString: 'path376',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 93,
-        paintId: 16,
-        debugString: 'path380',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 94,
-        paintId: 14,
-        debugString: 'path384',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 95,
-        paintId: 39,
-        debugString: 'path388',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 96,
-        paintId: 16,
-        debugString: 'path392',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 97,
-        paintId: 16,
-        debugString: 'path396',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 98,
-        paintId: 16,
-        debugString: 'path400',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 99,
-        paintId: 16,
-        debugString: 'path404',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 100,
-        paintId: 16,
-        debugString: 'path408',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 101,
-        paintId: 15,
-        debugString: 'path412',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 102,
-        paintId: 15,
-        debugString: 'path416',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 103,
-        paintId: 3,
-        debugString: 'path420',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 104,
-        paintId: 3,
-        debugString: 'path424',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 105,
-        paintId: 3,
-        debugString: 'path428',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 106,
-        paintId: 3,
-        debugString: 'path432',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 107,
-        paintId: 3,
-        debugString: 'path436',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 108,
-        paintId: 3,
-        debugString: 'path440',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 109,
-        paintId: 15,
-        debugString: 'path444',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 110,
-        paintId: 40,
-        debugString: 'path448',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 111,
-        paintId: 40,
-        debugString: 'path452',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 112,
-        paintId: 40,
-        debugString: 'path456',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 113,
-        paintId: 40,
-        debugString: 'path460',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 114,
-        paintId: 15,
-        debugString: 'path464',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 115,
-        paintId: 41,
-        debugString: 'path468',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 116,
-        paintId: 31,
-        debugString: 'path472',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 117,
-        paintId: 32,
-        debugString: 'path476',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 118,
-        paintId: 15,
-        debugString: 'path480',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 119,
-        paintId: 15,
-        debugString: 'path484',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 120,
-        paintId: 15,
-        debugString: 'path488',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 121,
-        paintId: 42,
-        debugString: 'path492',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 122,
-        paintId: 43,
-        debugString: 'path496',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 123,
-        paintId: 39,
-        debugString: 'path500',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 124,
-        paintId: 14,
-        debugString: 'path504',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 125,
-        paintId: 39,
-        debugString: 'path508',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 126,
-        paintId: 15,
-        debugString: 'path512',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 127,
-        paintId: 15,
-        debugString: 'path516',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 128,
-        paintId: 15,
-        debugString: 'path520',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 129,
-        paintId: 15,
-        debugString: 'path524',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 130,
-        paintId: 15,
-        debugString: 'path528',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 131,
-        paintId: 15,
-        debugString: 'path532',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 132,
-        paintId: 15,
-        debugString: 'path536',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 133,
-        paintId: 15,
-        debugString: 'path540',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 134,
-        paintId: 15,
-        debugString: 'path544',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 135,
-        paintId: 14,
-        debugString: 'path548',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 136,
-        paintId: 14,
-        debugString: 'path552',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 137,
-        paintId: 16,
-        debugString: 'path556',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 138,
-        paintId: 15,
-        debugString: 'path560',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 139,
-        paintId: 16,
-        debugString: 'path564',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 140,
-        paintId: 15,
-        debugString: 'path568',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 141,
-        paintId: 15,
-        debugString: 'path572',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 142,
-        paintId: 15,
-        debugString: 'path576',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 143,
-        paintId: 15,
-        debugString: 'path580',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 144,
-        paintId: 15,
-        debugString: 'path584',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 145,
-        paintId: 15,
-        debugString: 'path588',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 146,
-        paintId: 15,
-        debugString: 'path592',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 147,
-        paintId: 15,
-        debugString: 'path596',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 148,
-        paintId: 15,
-        debugString: 'path600',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 149,
-        paintId: 15,
-        debugString: 'path604',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 150,
-        paintId: 15,
-        debugString: 'path608',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 151,
-        paintId: 15,
-        debugString: 'path612',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 152,
-        paintId: 15,
-        debugString: 'path616',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 153,
-        paintId: 15,
-        debugString: 'path620',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 154,
-        paintId: 15,
-        debugString: 'path624',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 155,
-        paintId: 15,
-        debugString: 'path628',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 156,
-        paintId: 15,
-        debugString: 'path632',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 157,
-        paintId: 39,
-        debugString: 'path636',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 158,
-        paintId: 39,
-        debugString: 'path640',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 159,
-        paintId: 16,
-        debugString: 'path644',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 160,
-        paintId: 15,
-        debugString: 'path648',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 161,
-        paintId: 15,
-        debugString: 'path652',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 162,
-        paintId: 44,
-        debugString: 'path656',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 163,
-        paintId: 44,
-        debugString: 'path660',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 164,
-        paintId: 44,
-        debugString: 'path664',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 165,
-        paintId: 44,
-        debugString: 'path668',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 166,
-        paintId: 44,
-        debugString: 'path672',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 167,
-        paintId: 44,
-        debugString: 'path676',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 168,
-        paintId: 44,
-        debugString: 'path680',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 169,
-        paintId: 44,
-        debugString: 'path684',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 170,
-        paintId: 16,
-        debugString: 'path688',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 171,
-        paintId: 15,
-        debugString: 'path692',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 172,
-        paintId: 15,
-        debugString: 'path696',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 173,
-        paintId: 15,
-        debugString: 'path700',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 174,
-        paintId: 15,
-        debugString: 'path704',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 175,
-        paintId: 15,
-        debugString: 'path708',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 176,
-        paintId: 15,
-        debugString: 'path712',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 177,
-        paintId: 15,
-        debugString: 'path716',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 178,
-        paintId: 15,
-        debugString: 'path720',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 179,
-        paintId: 15,
-        debugString: 'path724',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 180,
-        paintId: 15,
-        debugString: 'path728',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 181,
-        paintId: 44,
-        debugString: 'path732',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 182,
-        paintId: 15,
-        debugString: 'path736',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 183,
-        paintId: 44,
-        debugString: 'path740',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 184,
-        paintId: 44,
-        debugString: 'path744',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 185,
-        paintId: 44,
-        debugString: 'path748',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 186,
-        paintId: 44,
-        debugString: 'path752',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 187,
-        paintId: 44,
-        debugString: 'path756',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 188,
-        paintId: 44,
-        debugString: 'path760',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 189,
-        paintId: 44,
-        debugString: 'path764',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 190,
-        paintId: 44,
-        debugString: 'path768',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 191,
-        paintId: 44,
-        debugString: 'path772',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 192,
-        paintId: 44,
-        debugString: 'path776',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 193,
-        paintId: 44,
-        debugString: 'path780',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 194,
-        paintId: 44,
-        debugString: 'path784',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 195,
-        paintId: 44,
-        debugString: 'path788',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 196,
-        paintId: 44,
-        debugString: 'path792',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 197,
-        paintId: 44,
-        debugString: 'path796',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 198,
-        paintId: 44,
-        debugString: 'path800',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 199,
-        paintId: 44,
-        debugString: 'path804',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 200,
-        paintId: 44,
-        debugString: 'path808',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 201,
-        paintId: 44,
-        debugString: 'path812',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 202,
-        paintId: 44,
-        debugString: 'path816',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 203,
-        paintId: 44,
-        debugString: 'path820',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 204,
-        paintId: 44,
-        debugString: 'path824',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 205,
-        paintId: 44,
-        debugString: 'path828',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 206,
-        paintId: 44,
-        debugString: 'path832',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 207,
-        paintId: 44,
-        debugString: 'path836',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 208,
-        paintId: 15,
-        debugString: 'path840',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 209,
-        paintId: 15,
-        debugString: 'path844',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 210,
-        paintId: 15,
-        debugString: 'path848',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 211,
-        paintId: 15,
-        debugString: 'path852',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 212,
-        paintId: 15,
-        debugString: 'path856',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 213,
-        paintId: 15,
-        debugString: 'path860',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 214,
-        paintId: 16,
-        debugString: 'path864',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 215,
-        paintId: 16,
-        debugString: 'path868',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 216,
-        paintId: 16,
-        debugString: 'path872',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 217,
-        paintId: 16,
-        debugString: 'path876',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 218,
-        paintId: 16,
-        debugString: 'path880',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 219,
-        paintId: 16,
-        debugString: 'path884',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 220,
-        paintId: 16,
-        debugString: 'path888',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 221,
-        paintId: 16,
-        debugString: 'path892',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 222,
-        paintId: 16,
-        debugString: 'path896',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 223,
-        paintId: 16,
-        debugString: 'path900',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 224,
-        paintId: 16,
-        debugString: 'path904',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 225,
-        paintId: 16,
-        debugString: 'path908',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 226,
-        paintId: 16,
-        debugString: 'path912',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 227,
-        paintId: 16,
-        debugString: 'path916',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 228,
-        paintId: 16,
-        debugString: 'path920',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 229,
-        paintId: 16,
-        debugString: 'path924',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 230,
-        paintId: 16,
-        debugString: 'path928',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 231,
-        paintId: 16,
-        debugString: 'path932',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 232,
-        paintId: 16,
-        debugString: 'path936',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 233,
-        paintId: 16,
-        debugString: 'path940',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 234,
-        paintId: 16,
-        debugString: 'path944',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 235,
-        paintId: 16,
-        debugString: 'path948',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 236,
-        paintId: 45,
-        debugString: 'path952',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 237,
-        paintId: 45,
-        debugString: 'path956',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 238,
-        paintId: 45,
-        debugString: 'path960',
-      ),
-      DrawCommand(
-        DrawCommandType.path,
-        objectId: 239,
-        paintId: 45,
-        debugString: 'path964',
-      ),
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0, debugString: 'path8'),
+      DrawCommand(DrawCommandType.path, objectId: 1, paintId: 0, debugString: 'path12'),
+      DrawCommand(DrawCommandType.path, objectId: 2, paintId: 0, debugString: 'path16'),
+      DrawCommand(DrawCommandType.path, objectId: 3, paintId: 0, debugString: 'path20'),
+      DrawCommand(DrawCommandType.path, objectId: 4, paintId: 0, debugString: 'path24'),
+      DrawCommand(DrawCommandType.path, objectId: 5, paintId: 0, debugString: 'path28'),
+      DrawCommand(DrawCommandType.path, objectId: 6, paintId: 0, debugString: 'path32'),
+      DrawCommand(DrawCommandType.path, objectId: 7, paintId: 0, debugString: 'path36'),
+      DrawCommand(DrawCommandType.path, objectId: 8, paintId: 0, debugString: 'path40'),
+      DrawCommand(DrawCommandType.path, objectId: 9, paintId: 0, debugString: 'path44'),
+      DrawCommand(DrawCommandType.path, objectId: 10, paintId: 0, debugString: 'path48'),
+      DrawCommand(DrawCommandType.path, objectId: 11, paintId: 0, debugString: 'path52'),
+      DrawCommand(DrawCommandType.path, objectId: 12, paintId: 1, debugString: 'path56'),
+      DrawCommand(DrawCommandType.path, objectId: 13, paintId: 2, debugString: 'path60'),
+      DrawCommand(DrawCommandType.path, objectId: 14, paintId: 3, debugString: 'path64'),
+      DrawCommand(DrawCommandType.path, objectId: 15, paintId: 4, debugString: 'path68'),
+      DrawCommand(DrawCommandType.path, objectId: 16, paintId: 5, debugString: 'path72'),
+      DrawCommand(DrawCommandType.path, objectId: 17, paintId: 6, debugString: 'path76'),
+      DrawCommand(DrawCommandType.path, objectId: 18, paintId: 7, debugString: 'path80'),
+      DrawCommand(DrawCommandType.path, objectId: 19, paintId: 8, debugString: 'path84'),
+      DrawCommand(DrawCommandType.path, objectId: 20, paintId: 9, debugString: 'path88'),
+      DrawCommand(DrawCommandType.path, objectId: 21, paintId: 10, debugString: 'path92'),
+      DrawCommand(DrawCommandType.path, objectId: 22, paintId: 11, debugString: 'path96'),
+      DrawCommand(DrawCommandType.path, objectId: 23, paintId: 12, debugString: 'path100'),
+      DrawCommand(DrawCommandType.path, objectId: 24, paintId: 13, debugString: 'path104'),
+      DrawCommand(DrawCommandType.path, objectId: 25, paintId: 14, debugString: 'path108'),
+      DrawCommand(DrawCommandType.path, objectId: 26, paintId: 15, debugString: 'path112'),
+      DrawCommand(DrawCommandType.path, objectId: 27, paintId: 16, debugString: 'path116'),
+      DrawCommand(DrawCommandType.path, objectId: 28, paintId: 15, debugString: 'path120'),
+      DrawCommand(DrawCommandType.path, objectId: 29, paintId: 16, debugString: 'path124'),
+      DrawCommand(DrawCommandType.path, objectId: 30, paintId: 16, debugString: 'path128'),
+      DrawCommand(DrawCommandType.path, objectId: 31, paintId: 16, debugString: 'path132'),
+      DrawCommand(DrawCommandType.path, objectId: 32, paintId: 16, debugString: 'path136'),
+      DrawCommand(DrawCommandType.path, objectId: 33, paintId: 16, debugString: 'path140'),
+      DrawCommand(DrawCommandType.path, objectId: 34, paintId: 16, debugString: 'path144'),
+      DrawCommand(DrawCommandType.path, objectId: 35, paintId: 15, debugString: 'path148'),
+      DrawCommand(DrawCommandType.path, objectId: 36, paintId: 17, debugString: 'path152'),
+      DrawCommand(DrawCommandType.path, objectId: 37, paintId: 18, debugString: 'path156'),
+      DrawCommand(DrawCommandType.path, objectId: 38, paintId: 19, debugString: 'path160'),
+      DrawCommand(DrawCommandType.path, objectId: 39, paintId: 20, debugString: 'path164'),
+      DrawCommand(DrawCommandType.path, objectId: 40, paintId: 21, debugString: 'path168'),
+      DrawCommand(DrawCommandType.path, objectId: 41, paintId: 22, debugString: 'path172'),
+      DrawCommand(DrawCommandType.path, objectId: 42, paintId: 23, debugString: 'path176'),
+      DrawCommand(DrawCommandType.path, objectId: 43, paintId: 21, debugString: 'path180'),
+      DrawCommand(DrawCommandType.path, objectId: 44, paintId: 21, debugString: 'path184'),
+      DrawCommand(DrawCommandType.path, objectId: 45, paintId: 21, debugString: 'path188'),
+      DrawCommand(DrawCommandType.path, objectId: 46, paintId: 21, debugString: 'path192'),
+      DrawCommand(DrawCommandType.path, objectId: 47, paintId: 21, debugString: 'path196'),
+      DrawCommand(DrawCommandType.path, objectId: 48, paintId: 21, debugString: 'path200'),
+      DrawCommand(DrawCommandType.path, objectId: 49, paintId: 24, debugString: 'path204'),
+      DrawCommand(DrawCommandType.path, objectId: 50, paintId: 24, debugString: 'path208'),
+      DrawCommand(DrawCommandType.path, objectId: 51, paintId: 21, debugString: 'path212'),
+      DrawCommand(DrawCommandType.path, objectId: 52, paintId: 24, debugString: 'path216'),
+      DrawCommand(DrawCommandType.path, objectId: 53, paintId: 24, debugString: 'path220'),
+      DrawCommand(DrawCommandType.path, objectId: 54, paintId: 25, debugString: 'path224'),
+      DrawCommand(DrawCommandType.path, objectId: 55, paintId: 21, debugString: 'path228'),
+      DrawCommand(DrawCommandType.path, objectId: 56, paintId: 21, debugString: 'path232'),
+      DrawCommand(DrawCommandType.path, objectId: 57, paintId: 21, debugString: 'path236'),
+      DrawCommand(DrawCommandType.path, objectId: 58, paintId: 15, debugString: 'path240'),
+      DrawCommand(DrawCommandType.path, objectId: 59, paintId: 21, debugString: 'path244'),
+      DrawCommand(DrawCommandType.path, objectId: 60, paintId: 21, debugString: 'path248'),
+      DrawCommand(DrawCommandType.path, objectId: 61, paintId: 21, debugString: 'path252'),
+      DrawCommand(DrawCommandType.path, objectId: 62, paintId: 21, debugString: 'path256'),
+      DrawCommand(DrawCommandType.path, objectId: 63, paintId: 21, debugString: 'path260'),
+      DrawCommand(DrawCommandType.path, objectId: 64, paintId: 26, debugString: 'path264'),
+      DrawCommand(DrawCommandType.path, objectId: 65, paintId: 26, debugString: 'path268'),
+      DrawCommand(DrawCommandType.path, objectId: 66, paintId: 3, debugString: 'path272'),
+      DrawCommand(DrawCommandType.path, objectId: 67, paintId: 27, debugString: 'path276'),
+      DrawCommand(DrawCommandType.path, objectId: 68, paintId: 28, debugString: 'path280'),
+      DrawCommand(DrawCommandType.path, objectId: 69, paintId: 29, debugString: 'path284'),
+      DrawCommand(DrawCommandType.path, objectId: 70, paintId: 30, debugString: 'path288'),
+      DrawCommand(DrawCommandType.path, objectId: 71, paintId: 14, debugString: 'path292'),
+      DrawCommand(DrawCommandType.path, objectId: 72, paintId: 16, debugString: 'path296'),
+      DrawCommand(DrawCommandType.path, objectId: 73, paintId: 15, debugString: 'path300'),
+      DrawCommand(DrawCommandType.path, objectId: 74, paintId: 31, debugString: 'path304'),
+      DrawCommand(DrawCommandType.path, objectId: 75, paintId: 32, debugString: 'path308'),
+      DrawCommand(DrawCommandType.path, objectId: 76, paintId: 14, debugString: 'path312'),
+      DrawCommand(DrawCommandType.path, objectId: 77, paintId: 15, debugString: 'path316'),
+      DrawCommand(DrawCommandType.path, objectId: 78, paintId: 3, debugString: 'path320'),
+      DrawCommand(DrawCommandType.path, objectId: 79, paintId: 14, debugString: 'path324'),
+      DrawCommand(DrawCommandType.path, objectId: 80, paintId: 33, debugString: 'path328'),
+      DrawCommand(DrawCommandType.path, objectId: 81, paintId: 34, debugString: 'path332'),
+      DrawCommand(DrawCommandType.path, objectId: 82, paintId: 35, debugString: 'path336'),
+      DrawCommand(DrawCommandType.path, objectId: 83, paintId: 14, debugString: 'path340'),
+      DrawCommand(DrawCommandType.path, objectId: 84, paintId: 16, debugString: 'path344'),
+      DrawCommand(DrawCommandType.path, objectId: 85, paintId: 15, debugString: 'path348'),
+      DrawCommand(DrawCommandType.path, objectId: 86, paintId: 31, debugString: 'path352'),
+      DrawCommand(DrawCommandType.path, objectId: 87, paintId: 15, debugString: 'path356'),
+      DrawCommand(DrawCommandType.path, objectId: 88, paintId: 15, debugString: 'path360'),
+      DrawCommand(DrawCommandType.path, objectId: 89, paintId: 15, debugString: 'path364'),
+      DrawCommand(DrawCommandType.path, objectId: 90, paintId: 36, debugString: 'path368'),
+      DrawCommand(DrawCommandType.path, objectId: 91, paintId: 37, debugString: 'path372'),
+      DrawCommand(DrawCommandType.path, objectId: 92, paintId: 38, debugString: 'path376'),
+      DrawCommand(DrawCommandType.path, objectId: 93, paintId: 16, debugString: 'path380'),
+      DrawCommand(DrawCommandType.path, objectId: 94, paintId: 14, debugString: 'path384'),
+      DrawCommand(DrawCommandType.path, objectId: 95, paintId: 39, debugString: 'path388'),
+      DrawCommand(DrawCommandType.path, objectId: 96, paintId: 16, debugString: 'path392'),
+      DrawCommand(DrawCommandType.path, objectId: 97, paintId: 16, debugString: 'path396'),
+      DrawCommand(DrawCommandType.path, objectId: 98, paintId: 16, debugString: 'path400'),
+      DrawCommand(DrawCommandType.path, objectId: 99, paintId: 16, debugString: 'path404'),
+      DrawCommand(DrawCommandType.path, objectId: 100, paintId: 16, debugString: 'path408'),
+      DrawCommand(DrawCommandType.path, objectId: 101, paintId: 15, debugString: 'path412'),
+      DrawCommand(DrawCommandType.path, objectId: 102, paintId: 15, debugString: 'path416'),
+      DrawCommand(DrawCommandType.path, objectId: 103, paintId: 3, debugString: 'path420'),
+      DrawCommand(DrawCommandType.path, objectId: 104, paintId: 3, debugString: 'path424'),
+      DrawCommand(DrawCommandType.path, objectId: 105, paintId: 3, debugString: 'path428'),
+      DrawCommand(DrawCommandType.path, objectId: 106, paintId: 3, debugString: 'path432'),
+      DrawCommand(DrawCommandType.path, objectId: 107, paintId: 3, debugString: 'path436'),
+      DrawCommand(DrawCommandType.path, objectId: 108, paintId: 3, debugString: 'path440'),
+      DrawCommand(DrawCommandType.path, objectId: 109, paintId: 15, debugString: 'path444'),
+      DrawCommand(DrawCommandType.path, objectId: 110, paintId: 40, debugString: 'path448'),
+      DrawCommand(DrawCommandType.path, objectId: 111, paintId: 40, debugString: 'path452'),
+      DrawCommand(DrawCommandType.path, objectId: 112, paintId: 40, debugString: 'path456'),
+      DrawCommand(DrawCommandType.path, objectId: 113, paintId: 40, debugString: 'path460'),
+      DrawCommand(DrawCommandType.path, objectId: 114, paintId: 15, debugString: 'path464'),
+      DrawCommand(DrawCommandType.path, objectId: 115, paintId: 41, debugString: 'path468'),
+      DrawCommand(DrawCommandType.path, objectId: 116, paintId: 31, debugString: 'path472'),
+      DrawCommand(DrawCommandType.path, objectId: 117, paintId: 32, debugString: 'path476'),
+      DrawCommand(DrawCommandType.path, objectId: 118, paintId: 15, debugString: 'path480'),
+      DrawCommand(DrawCommandType.path, objectId: 119, paintId: 15, debugString: 'path484'),
+      DrawCommand(DrawCommandType.path, objectId: 120, paintId: 15, debugString: 'path488'),
+      DrawCommand(DrawCommandType.path, objectId: 121, paintId: 42, debugString: 'path492'),
+      DrawCommand(DrawCommandType.path, objectId: 122, paintId: 43, debugString: 'path496'),
+      DrawCommand(DrawCommandType.path, objectId: 123, paintId: 39, debugString: 'path500'),
+      DrawCommand(DrawCommandType.path, objectId: 124, paintId: 14, debugString: 'path504'),
+      DrawCommand(DrawCommandType.path, objectId: 125, paintId: 39, debugString: 'path508'),
+      DrawCommand(DrawCommandType.path, objectId: 126, paintId: 15, debugString: 'path512'),
+      DrawCommand(DrawCommandType.path, objectId: 127, paintId: 15, debugString: 'path516'),
+      DrawCommand(DrawCommandType.path, objectId: 128, paintId: 15, debugString: 'path520'),
+      DrawCommand(DrawCommandType.path, objectId: 129, paintId: 15, debugString: 'path524'),
+      DrawCommand(DrawCommandType.path, objectId: 130, paintId: 15, debugString: 'path528'),
+      DrawCommand(DrawCommandType.path, objectId: 131, paintId: 15, debugString: 'path532'),
+      DrawCommand(DrawCommandType.path, objectId: 132, paintId: 15, debugString: 'path536'),
+      DrawCommand(DrawCommandType.path, objectId: 133, paintId: 15, debugString: 'path540'),
+      DrawCommand(DrawCommandType.path, objectId: 134, paintId: 15, debugString: 'path544'),
+      DrawCommand(DrawCommandType.path, objectId: 135, paintId: 14, debugString: 'path548'),
+      DrawCommand(DrawCommandType.path, objectId: 136, paintId: 14, debugString: 'path552'),
+      DrawCommand(DrawCommandType.path, objectId: 137, paintId: 16, debugString: 'path556'),
+      DrawCommand(DrawCommandType.path, objectId: 138, paintId: 15, debugString: 'path560'),
+      DrawCommand(DrawCommandType.path, objectId: 139, paintId: 16, debugString: 'path564'),
+      DrawCommand(DrawCommandType.path, objectId: 140, paintId: 15, debugString: 'path568'),
+      DrawCommand(DrawCommandType.path, objectId: 141, paintId: 15, debugString: 'path572'),
+      DrawCommand(DrawCommandType.path, objectId: 142, paintId: 15, debugString: 'path576'),
+      DrawCommand(DrawCommandType.path, objectId: 143, paintId: 15, debugString: 'path580'),
+      DrawCommand(DrawCommandType.path, objectId: 144, paintId: 15, debugString: 'path584'),
+      DrawCommand(DrawCommandType.path, objectId: 145, paintId: 15, debugString: 'path588'),
+      DrawCommand(DrawCommandType.path, objectId: 146, paintId: 15, debugString: 'path592'),
+      DrawCommand(DrawCommandType.path, objectId: 147, paintId: 15, debugString: 'path596'),
+      DrawCommand(DrawCommandType.path, objectId: 148, paintId: 15, debugString: 'path600'),
+      DrawCommand(DrawCommandType.path, objectId: 149, paintId: 15, debugString: 'path604'),
+      DrawCommand(DrawCommandType.path, objectId: 150, paintId: 15, debugString: 'path608'),
+      DrawCommand(DrawCommandType.path, objectId: 151, paintId: 15, debugString: 'path612'),
+      DrawCommand(DrawCommandType.path, objectId: 152, paintId: 15, debugString: 'path616'),
+      DrawCommand(DrawCommandType.path, objectId: 153, paintId: 15, debugString: 'path620'),
+      DrawCommand(DrawCommandType.path, objectId: 154, paintId: 15, debugString: 'path624'),
+      DrawCommand(DrawCommandType.path, objectId: 155, paintId: 15, debugString: 'path628'),
+      DrawCommand(DrawCommandType.path, objectId: 156, paintId: 15, debugString: 'path632'),
+      DrawCommand(DrawCommandType.path, objectId: 157, paintId: 39, debugString: 'path636'),
+      DrawCommand(DrawCommandType.path, objectId: 158, paintId: 39, debugString: 'path640'),
+      DrawCommand(DrawCommandType.path, objectId: 159, paintId: 16, debugString: 'path644'),
+      DrawCommand(DrawCommandType.path, objectId: 160, paintId: 15, debugString: 'path648'),
+      DrawCommand(DrawCommandType.path, objectId: 161, paintId: 15, debugString: 'path652'),
+      DrawCommand(DrawCommandType.path, objectId: 162, paintId: 44, debugString: 'path656'),
+      DrawCommand(DrawCommandType.path, objectId: 163, paintId: 44, debugString: 'path660'),
+      DrawCommand(DrawCommandType.path, objectId: 164, paintId: 44, debugString: 'path664'),
+      DrawCommand(DrawCommandType.path, objectId: 165, paintId: 44, debugString: 'path668'),
+      DrawCommand(DrawCommandType.path, objectId: 166, paintId: 44, debugString: 'path672'),
+      DrawCommand(DrawCommandType.path, objectId: 167, paintId: 44, debugString: 'path676'),
+      DrawCommand(DrawCommandType.path, objectId: 168, paintId: 44, debugString: 'path680'),
+      DrawCommand(DrawCommandType.path, objectId: 169, paintId: 44, debugString: 'path684'),
+      DrawCommand(DrawCommandType.path, objectId: 170, paintId: 16, debugString: 'path688'),
+      DrawCommand(DrawCommandType.path, objectId: 171, paintId: 15, debugString: 'path692'),
+      DrawCommand(DrawCommandType.path, objectId: 172, paintId: 15, debugString: 'path696'),
+      DrawCommand(DrawCommandType.path, objectId: 173, paintId: 15, debugString: 'path700'),
+      DrawCommand(DrawCommandType.path, objectId: 174, paintId: 15, debugString: 'path704'),
+      DrawCommand(DrawCommandType.path, objectId: 175, paintId: 15, debugString: 'path708'),
+      DrawCommand(DrawCommandType.path, objectId: 176, paintId: 15, debugString: 'path712'),
+      DrawCommand(DrawCommandType.path, objectId: 177, paintId: 15, debugString: 'path716'),
+      DrawCommand(DrawCommandType.path, objectId: 178, paintId: 15, debugString: 'path720'),
+      DrawCommand(DrawCommandType.path, objectId: 179, paintId: 15, debugString: 'path724'),
+      DrawCommand(DrawCommandType.path, objectId: 180, paintId: 15, debugString: 'path728'),
+      DrawCommand(DrawCommandType.path, objectId: 181, paintId: 44, debugString: 'path732'),
+      DrawCommand(DrawCommandType.path, objectId: 182, paintId: 15, debugString: 'path736'),
+      DrawCommand(DrawCommandType.path, objectId: 183, paintId: 44, debugString: 'path740'),
+      DrawCommand(DrawCommandType.path, objectId: 184, paintId: 44, debugString: 'path744'),
+      DrawCommand(DrawCommandType.path, objectId: 185, paintId: 44, debugString: 'path748'),
+      DrawCommand(DrawCommandType.path, objectId: 186, paintId: 44, debugString: 'path752'),
+      DrawCommand(DrawCommandType.path, objectId: 187, paintId: 44, debugString: 'path756'),
+      DrawCommand(DrawCommandType.path, objectId: 188, paintId: 44, debugString: 'path760'),
+      DrawCommand(DrawCommandType.path, objectId: 189, paintId: 44, debugString: 'path764'),
+      DrawCommand(DrawCommandType.path, objectId: 190, paintId: 44, debugString: 'path768'),
+      DrawCommand(DrawCommandType.path, objectId: 191, paintId: 44, debugString: 'path772'),
+      DrawCommand(DrawCommandType.path, objectId: 192, paintId: 44, debugString: 'path776'),
+      DrawCommand(DrawCommandType.path, objectId: 193, paintId: 44, debugString: 'path780'),
+      DrawCommand(DrawCommandType.path, objectId: 194, paintId: 44, debugString: 'path784'),
+      DrawCommand(DrawCommandType.path, objectId: 195, paintId: 44, debugString: 'path788'),
+      DrawCommand(DrawCommandType.path, objectId: 196, paintId: 44, debugString: 'path792'),
+      DrawCommand(DrawCommandType.path, objectId: 197, paintId: 44, debugString: 'path796'),
+      DrawCommand(DrawCommandType.path, objectId: 198, paintId: 44, debugString: 'path800'),
+      DrawCommand(DrawCommandType.path, objectId: 199, paintId: 44, debugString: 'path804'),
+      DrawCommand(DrawCommandType.path, objectId: 200, paintId: 44, debugString: 'path808'),
+      DrawCommand(DrawCommandType.path, objectId: 201, paintId: 44, debugString: 'path812'),
+      DrawCommand(DrawCommandType.path, objectId: 202, paintId: 44, debugString: 'path816'),
+      DrawCommand(DrawCommandType.path, objectId: 203, paintId: 44, debugString: 'path820'),
+      DrawCommand(DrawCommandType.path, objectId: 204, paintId: 44, debugString: 'path824'),
+      DrawCommand(DrawCommandType.path, objectId: 205, paintId: 44, debugString: 'path828'),
+      DrawCommand(DrawCommandType.path, objectId: 206, paintId: 44, debugString: 'path832'),
+      DrawCommand(DrawCommandType.path, objectId: 207, paintId: 44, debugString: 'path836'),
+      DrawCommand(DrawCommandType.path, objectId: 208, paintId: 15, debugString: 'path840'),
+      DrawCommand(DrawCommandType.path, objectId: 209, paintId: 15, debugString: 'path844'),
+      DrawCommand(DrawCommandType.path, objectId: 210, paintId: 15, debugString: 'path848'),
+      DrawCommand(DrawCommandType.path, objectId: 211, paintId: 15, debugString: 'path852'),
+      DrawCommand(DrawCommandType.path, objectId: 212, paintId: 15, debugString: 'path856'),
+      DrawCommand(DrawCommandType.path, objectId: 213, paintId: 15, debugString: 'path860'),
+      DrawCommand(DrawCommandType.path, objectId: 214, paintId: 16, debugString: 'path864'),
+      DrawCommand(DrawCommandType.path, objectId: 215, paintId: 16, debugString: 'path868'),
+      DrawCommand(DrawCommandType.path, objectId: 216, paintId: 16, debugString: 'path872'),
+      DrawCommand(DrawCommandType.path, objectId: 217, paintId: 16, debugString: 'path876'),
+      DrawCommand(DrawCommandType.path, objectId: 218, paintId: 16, debugString: 'path880'),
+      DrawCommand(DrawCommandType.path, objectId: 219, paintId: 16, debugString: 'path884'),
+      DrawCommand(DrawCommandType.path, objectId: 220, paintId: 16, debugString: 'path888'),
+      DrawCommand(DrawCommandType.path, objectId: 221, paintId: 16, debugString: 'path892'),
+      DrawCommand(DrawCommandType.path, objectId: 222, paintId: 16, debugString: 'path896'),
+      DrawCommand(DrawCommandType.path, objectId: 223, paintId: 16, debugString: 'path900'),
+      DrawCommand(DrawCommandType.path, objectId: 224, paintId: 16, debugString: 'path904'),
+      DrawCommand(DrawCommandType.path, objectId: 225, paintId: 16, debugString: 'path908'),
+      DrawCommand(DrawCommandType.path, objectId: 226, paintId: 16, debugString: 'path912'),
+      DrawCommand(DrawCommandType.path, objectId: 227, paintId: 16, debugString: 'path916'),
+      DrawCommand(DrawCommandType.path, objectId: 228, paintId: 16, debugString: 'path920'),
+      DrawCommand(DrawCommandType.path, objectId: 229, paintId: 16, debugString: 'path924'),
+      DrawCommand(DrawCommandType.path, objectId: 230, paintId: 16, debugString: 'path928'),
+      DrawCommand(DrawCommandType.path, objectId: 231, paintId: 16, debugString: 'path932'),
+      DrawCommand(DrawCommandType.path, objectId: 232, paintId: 16, debugString: 'path936'),
+      DrawCommand(DrawCommandType.path, objectId: 233, paintId: 16, debugString: 'path940'),
+      DrawCommand(DrawCommandType.path, objectId: 234, paintId: 16, debugString: 'path944'),
+      DrawCommand(DrawCommandType.path, objectId: 235, paintId: 16, debugString: 'path948'),
+      DrawCommand(DrawCommandType.path, objectId: 236, paintId: 45, debugString: 'path952'),
+      DrawCommand(DrawCommandType.path, objectId: 237, paintId: 45, debugString: 'path956'),
+      DrawCommand(DrawCommandType.path, objectId: 238, paintId: 45, debugString: 'path960'),
+      DrawCommand(DrawCommandType.path, objectId: 239, paintId: 45, debugString: 'path964'),
     ]);
   });
 
@@ -10361,14 +9276,7 @@ final List<Path> ghostScriptTigerPaths = <Path>[
       ),
       LineToCommand(250.39688614, 389.1985388),
       LineToCommand(245.4530765, 397.67364104),
-      CubicToCommand(
-        245.4530765,
-        397.67364104,
-        252.5156617,
-        371.5420758,
-        285.00355362,
-        360.948198,
-      ),
+      CubicToCommand(245.4530765, 397.67364104, 252.5156617, 371.5420758, 285.00355362, 360.948198),
       CubicToCommand(
         285.00355362,
         360.948198,
@@ -10504,14 +9412,7 @@ final List<Path> ghostScriptTigerPaths = <Path>[
         609.1762143,
         664.6393616,
       ),
-      CubicToCommand(
-        609.1762143,
-        664.6393616,
-        655.0830181,
-        692.8897024,
-        661.26278015,
-        724.6713358,
-      ),
+      CubicToCommand(609.1762143, 664.6393616, 655.0830181, 692.8897024, 661.26278015, 724.6713358),
       CubicToCommand(
         661.26278015,
         724.6713358,
@@ -14335,10 +13236,7 @@ final List<Path> ghostScriptTigerPaths = <Path>[
     ],
   ),
   Path(
-    commands: const <PathCommand>[
-      MoveToCommand(209.43389197999997, 270.9002367),
-      CloseCommand(),
-    ],
+    commands: const <PathCommand>[MoveToCommand(209.43389197999997, 270.9002367), CloseCommand()],
   ),
   Path(
     commands: const <PathCommand>[

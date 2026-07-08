@@ -15,12 +15,7 @@ import 'listener.dart';
 /// for HTML compatibility.
 class RenderWebVectorGraphic extends RenderBox {
   /// Create a new [RenderWebVectorGraphic].
-  RenderWebVectorGraphic(
-    this._pictureInfo,
-    this._assetKey,
-    this._colorFilter,
-    this._opacity,
-  ) {
+  RenderWebVectorGraphic(this._pictureInfo, this._assetKey, this._colorFilter, this._opacity) {
     _opacity?.addListener(_updateOpacity);
     _updateOpacity();
   }
@@ -122,21 +117,16 @@ class RenderWebVectorGraphic extends RenderBox {
     super.dispose();
   }
 
-  final LayerHandle<TransformLayer> _transformLayer =
-      LayerHandle<TransformLayer>();
+  final LayerHandle<TransformLayer> _transformLayer = LayerHandle<TransformLayer>();
   final LayerHandle<OpacityLayer> _opacityHandle = LayerHandle<OpacityLayer>();
-  final LayerHandle<ColorFilterLayer> _filterLayer =
-      LayerHandle<ColorFilterLayer>();
+  final LayerHandle<ColorFilterLayer> _filterLayer = LayerHandle<ColorFilterLayer>();
   final Matrix4 _transform = Matrix4.identity();
 
   @override
   void paint(PaintingContext context, ui.Offset offset) {
     assert(size == pictureInfo.size);
     if (kDebugMode && debugSkipRaster) {
-      context.canvas.drawRect(
-        offset & size,
-        Paint()..color = const Color(0xFFFF00FF),
-      );
+      context.canvas.drawRect(offset & size, Paint()..color = const Color(0xFFFF00FF));
       return;
     }
 
@@ -150,24 +140,22 @@ class RenderWebVectorGraphic extends RenderBox {
       PaintingContext context,
       Offset offset,
     ) {
-      _opacityHandle.layer = context.pushOpacity(
-        offset,
-        (_opacityValue * 255).round(),
-        (PaintingContext context, Offset offset) {
-          if (colorFilter != null) {
-            _filterLayer.layer = context.pushColorFilter(offset, colorFilter!, (
-              PaintingContext context,
-              Offset offset,
-            ) {
-              context.canvas.drawPicture(pictureInfo.picture);
-            }, oldLayer: _filterLayer.layer);
-          } else {
-            _filterLayer.layer = null;
+      _opacityHandle.layer = context.pushOpacity(offset, (_opacityValue * 255).round(), (
+        PaintingContext context,
+        Offset offset,
+      ) {
+        if (colorFilter != null) {
+          _filterLayer.layer = context.pushColorFilter(offset, colorFilter!, (
+            PaintingContext context,
+            Offset offset,
+          ) {
             context.canvas.drawPicture(pictureInfo.picture);
-          }
-        },
-        oldLayer: _opacityHandle.layer,
-      );
+          }, oldLayer: _filterLayer.layer);
+        } else {
+          _filterLayer.layer = null;
+          context.canvas.drawPicture(pictureInfo.picture);
+        }
+      }, oldLayer: _opacityHandle.layer);
     }, oldLayer: _transformLayer.layer);
   }
 }

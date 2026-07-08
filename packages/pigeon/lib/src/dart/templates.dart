@@ -8,15 +8,13 @@ import '../generator_tools.dart';
 ///
 /// This lowers the chances of variable name collisions with user defined
 /// parameters.
-const String dartInstanceManagerClassName =
-    '${proxyApiClassNamePrefix}InstanceManager';
+const String dartInstanceManagerClassName = '${proxyApiClassNamePrefix}InstanceManager';
 
 /// Name for the generated InstanceManager API.
 ///
 /// This lowers the chances of variable name collisions with user defined
 /// parameters.
-const String dartInstanceManagerApiClassName =
-    '_${classNamePrefix}InstanceManagerApi';
+const String dartInstanceManagerApiClassName = '_${classNamePrefix}InstanceManagerApi';
 
 /// Creates the `InstanceManager` with the passed string values.
 String instanceManagerTemplate({required Iterable<String> allProxyApiNames}) {
@@ -307,8 +305,6 @@ class $_proxyApiCodecName extends _PigeonCodec {
 
 /// Name of the base class of all Dart proxy classes.
 const String proxyApiBaseClassName = '${classNamePrefix}ProxyApiBaseClass';
-const String _proxyApiBaseClassMessengerVarName =
-    '${classMemberNamePrefix}binaryMessenger';
-const String _proxyApiBaseClassInstanceManagerVarName =
-    '${classMemberNamePrefix}instanceManager';
+const String _proxyApiBaseClassMessengerVarName = '${classMemberNamePrefix}binaryMessenger';
+const String _proxyApiBaseClassInstanceManagerVarName = '${classMemberNamePrefix}instanceManager';
 const String _proxyApiCodecName = '_${classNamePrefix}ProxyApiBaseCodec';

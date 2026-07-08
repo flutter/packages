@@ -6,8 +6,7 @@
 import 'dart:async' as _i4;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:webview_flutter_platform_interface/src/platform_navigation_delegate.dart'
-    as _i3;
+import 'package:webview_flutter_platform_interface/src/platform_navigation_delegate.dart' as _i3;
 import 'package:webview_flutter_platform_interface/src/types/types.dart' as _i2;
 
 // ignore_for_file: type=lint
@@ -25,17 +24,14 @@ import 'package:webview_flutter_platform_interface/src/types/types.dart' as _i2;
 
 class _FakePlatformNavigationDelegateCreationParams_0 extends _i1.SmartFake
     implements _i2.PlatformNavigationDelegateCreationParams {
-  _FakePlatformNavigationDelegateCreationParams_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(parent, parentInvocation);
+  _FakePlatformNavigationDelegateCreationParams_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [PlatformNavigationDelegate].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockPlatformNavigationDelegate extends _i1.Mock
-    implements _i3.PlatformNavigationDelegate {
+class MockPlatformNavigationDelegate extends _i1.Mock implements _i3.PlatformNavigationDelegate {
   MockPlatformNavigationDelegate() {
     _i1.throwOnMissingStub(this);
   }
@@ -52,9 +48,7 @@ class MockPlatformNavigationDelegate extends _i1.Mock
           as _i2.PlatformNavigationDelegateCreationParams);
 
   @override
-  _i4.Future<void> setOnNavigationRequest(
-    _i3.NavigationRequestCallback? onNavigationRequest,
-  ) =>
+  _i4.Future<void> setOnNavigationRequest(_i3.NavigationRequestCallback? onNavigationRequest) =>
       (super.noSuchMethod(
             Invocation.method(#setOnNavigationRequest, [onNavigationRequest]),
             returnValue: _i4.Future<void>.value(),
@@ -99,9 +93,7 @@ class MockPlatformNavigationDelegate extends _i1.Mock
           as _i4.Future<void>);
 
   @override
-  _i4.Future<void> setOnWebResourceError(
-    _i3.WebResourceErrorCallback? onWebResourceError,
-  ) =>
+  _i4.Future<void> setOnWebResourceError(_i3.WebResourceErrorCallback? onWebResourceError) =>
       (super.noSuchMethod(
             Invocation.method(#setOnWebResourceError, [onWebResourceError]),
             returnValue: _i4.Future<void>.value(),
@@ -119,9 +111,7 @@ class MockPlatformNavigationDelegate extends _i1.Mock
           as _i4.Future<void>);
 
   @override
-  _i4.Future<void> setOnHttpAuthRequest(
-    _i3.HttpAuthRequestCallback? onHttpAuthRequest,
-  ) =>
+  _i4.Future<void> setOnHttpAuthRequest(_i3.HttpAuthRequestCallback? onHttpAuthRequest) =>
       (super.noSuchMethod(
             Invocation.method(#setOnHttpAuthRequest, [onHttpAuthRequest]),
             returnValue: _i4.Future<void>.value(),

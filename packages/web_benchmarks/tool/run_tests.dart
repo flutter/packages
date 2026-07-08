@@ -22,14 +22,8 @@ Future<void> main(List<String> args) async {
     exit(0);
   }
 
-  final Directory packageDir = Directory(
-    p.dirname(Platform.script.path),
-  ).parent;
-  final String testingAppDirPath = p.join(
-    packageDir.path,
-    'testing',
-    'test_app',
-  );
+  final Directory packageDir = Directory(p.dirname(Platform.script.path)).parent;
+  final String testingAppDirPath = p.join(packageDir.path, 'testing', 'test_app');
 
   // Fetch the test app's dependencies.
   int status = await _runProcess('flutter', <String>[
@@ -58,11 +52,7 @@ Future<Process> _streamOutput(Future<Process> processFuture) async {
   return process;
 }
 
-Future<int> _runProcess(
-  String command,
-  List<String> arguments, {
-  String? workingDirectory,
-}) async {
+Future<int> _runProcess(String command, List<String> arguments, {String? workingDirectory}) async {
   final Process process = await _streamOutput(
     Process.start(command, arguments, workingDirectory: workingDirectory),
   );
