@@ -5,6 +5,8 @@
 import 'dart:io';
 
 import 'package:test/test.dart';
+import '../data/color_role.dart';
+import '../data/shape_struct.dart';
 import '../templates/template.dart';
 import 'test_fixtures/test_templates.dart';
 
@@ -66,6 +68,85 @@ void main() {
       });
     }
 
+    test('color generates color expression', () {
+      final template = M3IconButtonTemplate(testPath());
+      expect(template.color(TokenColorRole.onSurface, '_colors'), '_colors.onSurface');
+    });
+
+    test('colorWithOpacity generates color expression with opacity', () {
+      final template = M3IconButtonTemplate(testPath());
+      expect(
+        template.colorWithOpacity(TokenColorRole.onSurface, 0.12, '_colors'),
+        '_colors.onSurface.withOpacity(0.12)',
+      );
+      expect(
+        template.colorWithOpacity(TokenColorRole.onSurface, 1.0, '_colors'),
+        '_colors.onSurface',
+      );
+    });
+
+    test('shape generates shape expressions', () {
+      final template = M3IconButtonTemplate(testPath());
+      expect(
+        template.shape(
+          const ShapeStruct(
+            family: 'SHAPE_FAMILY_ROUNDED_CORNERS',
+            topLeft: 8.0,
+            topRight: 8.0,
+            bottomLeft: 8.0,
+            bottomRight: 8.0,
+          ),
+        ),
+        'const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0)))',
+      );
+      expect(
+        template.shape(
+          const ShapeStruct(
+            family: 'SHAPE_FAMILY_ROUNDED_CORNERS',
+            topLeft: 8.0,
+            topRight: 8.0,
+            bottomLeft: 4.0,
+            bottomRight: 4.0,
+          ),
+        ),
+        'const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(8.0), bottom: Radius.circular(4.0)))',
+      );
+      expect(
+        template.shape(
+          const ShapeStruct(
+            family: 'SHAPE_FAMILY_CIRCULAR',
+            topLeft: 0.0,
+            topRight: 0.0,
+            bottomLeft: 0.0,
+            bottomRight: 0.0,
+          ),
+        ),
+        'const StadiumBorder()',
+      );
+    });
+
+    test('shape throws UnsupportedError for unsupported shape family', () {
+      final template = M3IconButtonTemplate(testPath());
+      expect(
+        () => template.shape(
+          const ShapeStruct(
+            family: 'SHAPE_FAMILY_UNKNOWN',
+            topLeft: 0.0,
+            topRight: 0.0,
+            bottomLeft: 0.0,
+            bottomRight: 0.0,
+          ),
+        ),
+        throwsA(
+          isA<UnsupportedError>().having(
+            (UnsupportedError e) => e.message,
+            'message',
+            'Unsupported shape family type: SHAPE_FAMILY_UNKNOWN',
+          ),
+        ),
+      );
+    });
+
     test('will run dart format over the generated file', () {
       final template = UnformattedTemplate(testPath());
       template.generateFile();
@@ -115,21 +196,33 @@ const _fileHeader = '''
 ''';
 
 const _buttonExpressiveDefaultsClass = '''
-class _M3EIconButtonDefaults {
+class _IconButtonDefaultsM3E {
   static const double height = 40.0;
   static const double borderRadius = 8.0;
 }
 ''';
 
 const _buttonDefaultsClass = '''
-class _M3IconButtonDefaults {
+class _IconButtonDefaultsM3 {
+  _IconButtonDefaultsM3(this.context);
+
+  final BuildContext context;
+  late final ColorScheme _colors = Theme.of(context).colorScheme;
+
   static const double height = 40.0;
   static const double borderRadius = 8.0;
+  Color get iconColor => _colors.onSurfaceVariant;
+  Color get disabledIconColor => _colors.onSurface.withOpacity(0.38);
+  Color get hoveredStateLayerColor =>
+      _colors.onSurfaceVariant.withOpacity(0.08);
+  OutlinedBorder get shape => const RoundedRectangleBorder(
+    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+  );
 }
 ''';
 
 const formattedClass = '''
-class _M3UnformattedDefaults {
+class _UnformattedDefaultsM3 {
   final int x = 1;
   final String y = 'hello';
 }
