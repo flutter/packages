@@ -29,4 +29,3 @@ String generateArbString(Map<String, dynamic> bundle) {
   contents.writeln('}');
   return contents.toString();
 }
-

@@ -24,8 +24,6 @@ dev_dependencies:
   clock: ^1.1.2
   flutter_goldens:
     path: ../../script/flutter_goldens
-  flutter_localizations:
-    sdk: flutter
   flutter_test:
     sdk: flutter
   # To track memory leaks.
