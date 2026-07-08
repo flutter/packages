@@ -84,6 +84,7 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
     exoPlayer.prepare();
     exoPlayer.addListener(createExoPlayerEventListener(exoPlayer, surfaceProducer));
     setAudioAttributes(exoPlayer, options.mixWithOthers);
+    setPreferredAudioLanguage(exoPlayer, options.preferredAudioLanguage);
   }
 
   public void setDisposeHandler(@Nullable DisposeHandler handler) {
@@ -445,6 +446,18 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
     // Apply the track selection override normally if dimensions haven't changed
     trackSelector.setParameters(
         trackSelector.buildUponParameters().setOverrideForType(override).build());
+  }
+
+  private static void setPreferredAudioLanguage(
+      ExoPlayer exoPlayer, String preferredAudioLanguage) {
+    if (preferredAudioLanguage != null) {
+      exoPlayer.setTrackSelectionParameters(
+          exoPlayer
+              .getTrackSelectionParameters()
+              .buildUpon()
+              .setPreferredAudioLanguage(preferredAudioLanguage)
+              .build());
+    }
   }
 
   public void dispose() {
