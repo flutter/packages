@@ -2,6 +2,10 @@
 
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
+## 6.10.0
+
+* Adds `videoPlayerOptions` to `VideoCreationOptions` to allow platform implementations to receive per-player options at creation time.
+
 ## 6.9.0
 
 * Adds `backBufferDurationMs` to `VideoPlayerOptions` to support configuring the back buffer duration.
