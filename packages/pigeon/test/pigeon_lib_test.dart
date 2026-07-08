@@ -60,6 +60,26 @@ void main() {
     return results!;
   }
 
+  ParseResults parseSourceWithParts({
+    required String mainSource,
+    required Map<String, String> partSources,
+  }) {
+    final Pigeon dartle = Pigeon.setup();
+    final Directory dir = Directory.systemTemp.createTempSync();
+    try {
+      for (final MapEntry<String, String> part in partSources.entries) {
+        final partFile = File('${dir.path}/${part.key}');
+        partFile.createSync(recursive: true);
+        partFile.writeAsStringSync(part.value);
+      }
+      final mainFile = File('${dir.path}/source.dart')
+        ..writeAsStringSync(mainSource);
+      return dartle.parseFile(mainFile.path);
+    } finally {
+      dir.deleteSync(recursive: true);
+    }
+  }
+
   test('parse args - input', () {
     final PigeonOptions opts = Pigeon.parseArgs(<String>['--input', 'foo.dart']);
     expect(opts.input, equals('foo.dart'));
@@ -196,6 +216,101 @@ abstract class Api1 {
     expect(unused?.fields[0].name, equals('field'));
     expect(unused?.fields[0].type.baseName, equals('String'));
     expect(unused?.fields[0].type.isNullable, isTrue);
+  });
+
+  test('parse source split across multiple part files', () {
+    const mainSource = '''
+part 'shared_classes.dart';
+part 'api.dart';
+''';
+    const sharedClassesPart = '''
+part of 'source.dart';
+
+class Input1 {
+  String? input;
+}
+
+class Output1 {
+  String? output;
+}
+''';
+    const apiPart = '''
+part of 'source.dart';
+
+@HostApi()
+abstract class Api1 {
+  Output1 doit(Input1 input);
+}
+''';
+    final ParseResults parseResult = parseSourceWithParts(
+      mainSource: mainSource,
+      partSources: <String, String>{
+        'shared_classes.dart': sharedClassesPart,
+        'api.dart': apiPart,
+      },
+    );
+
+    expect(parseResult.errors, isEmpty);
+    expect(parseResult.root.apis, hasLength(1));
+    expect(parseResult.root.apis[0].name, equals('Api1'));
+    expect(parseResult.root.apis[0].methods, hasLength(1));
+    expect(parseResult.root.apis[0].methods[0].name, equals('doit'));
+    expect(parseResult.root.apis[0].methods[0].returnType.baseName, 'Output1');
+    expect(parseResult.root.apis[0].methods[0].parameters, hasLength(1));
+    expect(
+      parseResult.root.apis[0].methods[0].parameters[0].type.baseName,
+      equals('Input1'),
+    );
+    expect(
+      parseResult.root.classes.map(
+        (Class classDefinition) => classDefinition.name,
+      ),
+      containsAll(<String>['Input1', 'Output1']),
+    );
+  });
+
+  test('missing part file returns parse error', () {
+    const source = '''
+part 'missing.dart';
+''';
+    final ParseResults parseResult = parseSource(source);
+    expect(parseResult.root.apis, isEmpty);
+    expect(parseResult.root.classes, isEmpty);
+    expect(parseResult.errors, isNotEmpty);
+  });
+
+  test('part errors keep part file line numbers', () {
+    const mainSource = '''
+part 'api.dart';
+part 'extra.dart';
+''';
+    const apiPart = '''
+part of 'source.dart';
+
+@HostApi()
+@FlutterApi()
+abstract class Api1 {
+  void ping();
+}
+''';
+    const extraPart = '''
+part of 'source.dart';
+class Extra {
+  int? value;
+}
+''';
+    final ParseResults parseResult = parseSourceWithParts(
+      mainSource: mainSource,
+      partSources: <String, String>{
+        'api.dart': apiPart,
+        'extra.dart': extraPart,
+      },
+    );
+    final Error apiAnnotationError = parseResult.errors.firstWhere(
+      (Error error) =>
+          error.message.contains('can only have one API annotation'),
+    );
+    expect(apiAnnotationError.lineNumber, 4);
   });
 
   test('invalid datatype', () {

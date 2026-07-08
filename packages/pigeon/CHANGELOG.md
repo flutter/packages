@@ -1,3 +1,8 @@
+## 27.2.0
+
+* Adds support for parsing Pigeon definitions split across multiple Dart `part`
+  files.
+
 ## 27.1.0
 
 * [swift] Adds `CaseIterable` conformance to generated enums.
