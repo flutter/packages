@@ -200,6 +200,7 @@ class MaterialAccentColor extends ColorSwatch<int> {
 /// ```
 ///
 /// </callout-box>
+///
 /// <callout-box>
 ///
 // TODO(framework): Add unit tests to this code snippet.

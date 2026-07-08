@@ -297,7 +297,6 @@ typedef CupertinoMenuAnimationStatusChangedCallback = void Function(AnimationSta
 /// ## Usage
 /// <callout-box>
 ///
-///
 /// This example demonstrates a simple [CupertinoMenuAnchor] that wraps
 /// a button.
 ///
@@ -1702,7 +1701,6 @@ class _CupertinoDividerPainter extends CustomPainter {
 /// [CupertinoColors.systemRed].
 ///
 /// <callout-box>
-///
 ///
 /// This example demonstrates a simple [CupertinoMenuAnchor] that wraps
 /// a button.

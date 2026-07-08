@@ -215,7 +215,6 @@ class CupertinoContextMenu extends StatefulWidget {
   /// )
   /// ```
   ///
-  ///
   /// </callout-box>
   static const double kOpenBorderRadius = _previewBorderRadiusRatio;
 
@@ -328,7 +327,6 @@ class CupertinoContextMenu extends StatefulWidget {
   ///   },
   /// )
   /// ```
-  ///
   ///
   /// </callout-box>
   ///
