@@ -29,6 +29,8 @@ Before making any changes, run the the [check-readiness skill](.agents/skills/ch
      - Dart unit tests.
      - Android native unit tests.
      - Integration tests.
+3. **Static Analysis**:
+   - Do not rely on ad-hoc or generic commands to check for formatting or lint errors. Always use the [dart-run-static-analysis skill](.agents/skills/dart-run-static-analysis/SKILL.md) during development to analyze the code and apply automated fixes.
 
 ## Code Generation
 
@@ -68,3 +70,19 @@ With an emulator or physical device connected, run from this directory:
 ```bash
 dart run ../../../script/tool/bin/flutter_plugin_tools.dart integration-test --android --packages=camera_android_camerax
 ```
+
+## Required Steps Before Pushing
+
+You MUST read and follow the [pre-push skill](.agents/skills/pre-push-skill/SKILL.md) immediately whenever:
+- The user asks to push changes.
+- The user asks if you or they are ready to push.
+- The user wants to validate that local changes are ready to become a pull request.
+- It is the final step when you are ready to make a PR and consider an issue solved.
+
+This skill will execute all the required pre-push checks (e.g., tests, publish checks, license formatting) for the `flutter/packages` repository.
+
+## Agent Coding and Review Guidelines
+
+- **Communication and Code Review**: When receiving code review feedback, DO NOT be overly accommodating or blindly agree with the user if the feedback seems technically questionable. Instead, use the [receiving-code-review skill](.agents/skills/receiving-code-review/SKILL.md) to apply technical rigor and verify the suggestions. Be direct if you believe the feedback is incorrect.
+- **Code Quality and Complexity**: Do not produce low-quality or overly complex code. For complex features, propose using the `/grill-me` or `/plan` slash commands to create a design plan before writing code. Enforce strict minimum test coverage and cognitive complexity standards. Use the [dart-add-unit-test skill](.agents/skills/dart-add-unit-test/SKILL.md) and [dart-collect-coverage skill](.agents/skills/dart-collect-coverage/SKILL.md) to ensure high coverage.
+- **Duplicate Code**: Avoid duplicating code, especially constant strings. Instead of duplicating, look for existing patterns in adjacent code and extract shared values into constants.
