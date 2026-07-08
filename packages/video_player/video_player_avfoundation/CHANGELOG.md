@@ -1,3 +1,7 @@
+## 2.13.0
+
+* Adds support for setting a preferred audio language during player creation via `VideoPlayerOptions.preferredAudioLanguage`.
+
 ## 2.12.1
 
 * Fixes a crash when a video track reports a zero `minFrameDuration`.
