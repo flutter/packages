@@ -282,6 +282,68 @@ void main() {
       );
     });
 
+    test('createWithOptions forwards preferredAudioLanguage for texture view', () async {
+      final (AVFoundationVideoPlayer player, MockAVFoundationVideoPlayerApi api, _) =
+          setUpMockPlayer(playerId: 1, textureId: 101);
+      const newPlayerId = 2;
+      when(
+        api.createForTextureView(any),
+      ).thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102));
+
+      const preferredAudioLanguage = 'es';
+      await player.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(sourceType: DataSourceType.file, uri: 'file:///foo/bar'),
+          viewType: VideoViewType.textureView,
+          videoPlayerOptions: VideoPlayerOptions(preferredAudioLanguage: preferredAudioLanguage),
+        ),
+      );
+
+      final VerificationResult verification = verify(api.createForTextureView(captureAny));
+      final creationOptions = verification.captured[0] as CreationOptions;
+      expect(creationOptions.preferredAudioLanguage, preferredAudioLanguage);
+    });
+
+    test('createWithOptions forwards preferredAudioLanguage for platform view', () async {
+      final (AVFoundationVideoPlayer player, MockAVFoundationVideoPlayerApi api, _) =
+          setUpMockPlayer(playerId: 1);
+      const newPlayerId = 2;
+      when(api.createForPlatformView(any)).thenAnswer((_) async => newPlayerId);
+
+      const preferredAudioLanguage = 'fr';
+      await player.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(sourceType: DataSourceType.file, uri: 'file:///foo/bar'),
+          viewType: VideoViewType.platformView,
+          videoPlayerOptions: VideoPlayerOptions(preferredAudioLanguage: preferredAudioLanguage),
+        ),
+      );
+
+      final VerificationResult verification = verify(api.createForPlatformView(captureAny));
+      final creationOptions = verification.captured[0] as CreationOptions;
+      expect(creationOptions.preferredAudioLanguage, preferredAudioLanguage);
+    });
+
+    test('createWithOptions keeps preferredAudioLanguage null when options are absent', () async {
+      final (AVFoundationVideoPlayer player, MockAVFoundationVideoPlayerApi api, _) =
+          setUpMockPlayer(playerId: 1, textureId: 101);
+      const newPlayerId = 2;
+      when(
+        api.createForTextureView(any),
+      ).thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102));
+
+      await player.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(sourceType: DataSourceType.file, uri: 'file:///foo/bar'),
+          viewType: VideoViewType.textureView,
+        ),
+      );
+
+      final VerificationResult verification = verify(api.createForTextureView(captureAny));
+      final creationOptions = verification.captured[0] as CreationOptions;
+      expect(creationOptions.preferredAudioLanguage, isNull);
+    });
+
     test('setLooping', () async {
       final (AVFoundationVideoPlayer player, _, MockVideoPlayerInstanceApi playerApi) =
           setUpMockPlayer(playerId: 1);

@@ -26,4 +26,12 @@ void main() {
     final options = VideoPlayerOptions(backBufferDurationMs: 20000);
     expect(options.backBufferDurationMs, 20000);
   });
+  test('VideoPlayerOptions preferredAudioLanguage defaults to null', () {
+    final options = VideoPlayerOptions();
+    expect(options.preferredAudioLanguage, null);
+  });
+  test('VideoPlayerOptions preferredAudioLanguage is set correctly', () {
+    final options = VideoPlayerOptions(preferredAudioLanguage: 'en');
+    expect(options.preferredAudioLanguage, 'en');
+  });
 }
