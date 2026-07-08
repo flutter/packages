@@ -12,7 +12,6 @@ import androidx.annotation.VisibleForTesting
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
 import io.flutter.plugin.common.BinaryMessenger
-import io.flutter.plugins.sharedpreferences.SharedPreferencesApi.Companion.setUp
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.IOException
@@ -33,7 +32,7 @@ internal constructor(private val listEncoder: SharedPreferencesListEncoder) :
   private fun setUp(messenger: BinaryMessenger, context: Context) {
     preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
     try {
-      setUp(messenger, this)
+      SharedPreferencesApi.setUp(messenger, this)
     } catch (ex: Exception) {
       Log.e(TAG, "Received exception while setting up SharedPreferencesPlugin", ex)
     }
@@ -44,7 +43,7 @@ internal constructor(private val listEncoder: SharedPreferencesListEncoder) :
   }
 
   override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
-    setUp(binding.binaryMessenger, null)
+    SharedPreferencesApi.setUp(binding.binaryMessenger, null)
   }
 
   override fun setBool(key: String, value: Boolean): Boolean {
@@ -103,12 +102,15 @@ internal constructor(private val listEncoder: SharedPreferencesListEncoder) :
   // Gets all shared preferences, filtered to only those set with the given prefix.
   // Optionally filtered also to only those items in
   private fun getAllPrefs(prefix: String, allowList: Set<String>?): Map<String, Any> {
-    return preferences.all
-        .filter { (key, value) ->
-          key.startsWith(prefix) && value != null && (allowList == null || allowList.contains(key))
+    return buildMap {
+      preferences.all.forEach { (key, value) ->
+        if (key.startsWith(prefix) &&
+            value != null &&
+            (allowList == null || allowList.contains(key))) {
+          put(key, transformPref(key, value))
         }
-        // Force-unwrapping is safe here due to the `value != null` in the filter above.
-        .mapValues { (key, value) -> transformPref(key, value!!) }
+      }
+    }
   }
 
   private fun transformPref(key: String, value: Any): Any {
