@@ -407,8 +407,39 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   NSAssert(!_isInitialized, @"reportInitializedIfReadyToPlay should only be called once.");
 
   _isInitialized = YES;
+  [self setPreferredAudioLanguage];
   [self.eventListener videoPlayerDidInitializeWithDuration:self.duration
                                                       size:currentItem.presentationSize];
+}
+
+/// Selects the audio track whose locale language code matches self.preferredAudioLanguage.
+/// Does nothing if preferredAudioLanguage is nil, the player is not yet initialized, or no
+/// matching track is found.
+- (void)setPreferredAudioLanguage {
+  if (!self.preferredAudioLanguage || !_isInitialized) {
+    return;
+  }
+
+  NSString *preferredLanguage = self.preferredAudioLanguage;
+
+  AVPlayerItem *currentItem = _player.currentItem;
+  if (!currentItem) {
+    return;
+  }
+
+  AVMediaSelectionGroup *audioGroup =
+      [currentItem.asset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
+  if (!audioGroup) {
+    return;
+  }
+
+  for (AVMediaSelectionOption *option in audioGroup.options) {
+    NSString *optionLanguageCode = option.locale.languageCode;
+    if (optionLanguageCode && [optionLanguageCode isEqualToString:preferredLanguage]) {
+      [currentItem selectMediaOption:option inMediaSelectionGroup:audioGroup];
+      break;
+    }
+  }
 }
 
 #pragma mark - FVPVideoPlayerInstanceApi

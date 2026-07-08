@@ -22,10 +22,11 @@ class PlatformVideoViewCreationParams {
 }
 
 class CreationOptions {
-  CreationOptions({required this.uri, required this.httpHeaders});
+  CreationOptions({required this.uri, required this.httpHeaders, this.preferredAudioLanguage});
 
   String uri;
   Map<String, String> httpHeaders;
+  String? preferredAudioLanguage;
 }
 
 class TexturePlayerIds {
