@@ -26,6 +26,7 @@ class ResolutionSelectorProxyApi extends PigeonApiResolutionSelector {
   public ResolutionSelector pigeon_defaultConstructor(
       @Nullable ResolutionFilter resolutionFilter,
       @Nullable ResolutionStrategy resolutionStrategy,
+      @Nullable Long allowedResolutionMode,
       @Nullable AspectRatioStrategy aspectRatioStrategy) {
     final ResolutionSelector.Builder builder = new ResolutionSelector.Builder();
     if (aspectRatioStrategy != null) {
@@ -36,6 +37,9 @@ class ResolutionSelectorProxyApi extends PigeonApiResolutionSelector {
     }
     if (resolutionFilter != null) {
       builder.setResolutionFilter(resolutionFilter);
+    }
+    if (allowedResolutionMode != null) {
+      builder.setAllowedResolutionMode(allowedResolutionMode.intValue());
     }
     return builder.build();
   }
@@ -50,6 +54,12 @@ class ResolutionSelectorProxyApi extends PigeonApiResolutionSelector {
   @Override
   public ResolutionStrategy resolutionStrategy(@NonNull ResolutionSelector pigeonInstance) {
     return pigeonInstance.getResolutionStrategy();
+  }
+
+  @Nullable
+  @Override
+  public Long allowedResolutionMode(@NonNull ResolutionSelector pigeonInstance) {
+    return (long) pigeonInstance.getAllowedResolutionMode();
   }
 
   @NonNull
