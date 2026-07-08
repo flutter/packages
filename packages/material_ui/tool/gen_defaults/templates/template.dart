@@ -119,10 +119,12 @@ abstract class TokenTemplate {
   String shape(ShapeStruct shape, [String prefix = 'const ']) {
     switch (shape.family) {
       case 'SHAPE_FAMILY_ROUNDED_CORNERS':
-        final double topLeft = shape.topLeft;
-        final double topRight = shape.topRight;
-        final double bottomLeft = shape.bottomLeft;
-        final double bottomRight = shape.bottomRight;
+        final ShapeStruct(
+          :double topLeft,
+          :double topRight,
+          :double bottomLeft,
+          :double bottomRight,
+        ) = shape;
         if (topLeft == topRight && topLeft == bottomLeft && topLeft == bottomRight) {
           if (topLeft == 0) {
             return '${prefix}RoundedRectangleBorder()';
