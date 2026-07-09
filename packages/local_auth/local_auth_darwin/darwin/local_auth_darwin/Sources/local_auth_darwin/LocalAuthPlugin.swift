@@ -91,7 +91,11 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
         localizedReason: strings.reason
       ) { [weak self] (success: Bool, error: Error?) in
         DispatchQueue.main.async {
-          self?.activeContext = nil
+          if let currentActive = self?.activeContext,
+            currentActive as AnyObject === context as AnyObject
+          {
+            self?.activeContext = nil
+          }
           self?.handleAuthReply(
             success: success,
             error: error,
