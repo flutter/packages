@@ -1,5 +1,6 @@
-## NEXT
+## 0.0.2
 
+* Add `label` and `labelAlignment` properties to `CupertinoButton` to allow for a label to be displayed alongside the button's child widget.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 0.0.1
