@@ -39,6 +39,8 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
   private let authContextFactory: AuthContextFactory
   /// Manages the last call state for sticky auth.
   private var lastCallState: StickyAuthState?
+  /// The active context for the current authentication session.
+  private var activeContext: AuthContext?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let instance = LocalAuthPlugin(
@@ -74,6 +76,7 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
     completion: @escaping (Result<AuthResultDetails, Error>) -> Void
   ) {
     var context = authContextFactory.createAuthContext()
+    activeContext = context
     lastCallState = nil
     context.localizedFallbackTitle = strings.localizedFallbackTitle
 
@@ -88,6 +91,7 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
         localizedReason: strings.reason
       ) { [weak self] (success: Bool, error: Error?) in
         DispatchQueue.main.async {
+          self?.activeContext = nil
           self?.handleAuthReply(
             success: success,
             error: error,
@@ -97,6 +101,7 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
         }
       }
     } else {
+      activeContext = nil
       if let authError = authError {
         self.handleError(authError, options: options, strings: strings, completion: completion)
       } else {
@@ -157,6 +162,17 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
   func isDeviceSupported() throws -> Bool {
     let context = authContextFactory.createAuthContext()
     return context.canEvaluatePolicy(.deviceOwnerAuthentication, error: nil)
+  }
+
+  func stopAuthentication(completion: @escaping (Result<Bool, any Error>) -> Void) {
+    guard let context = activeContext else {
+      completion(.success(false))
+      return
+    }
+
+    context.invalidate()
+    activeContext = nil
+    completion(.success(true))
   }
 
   // MARK: Private Methods
