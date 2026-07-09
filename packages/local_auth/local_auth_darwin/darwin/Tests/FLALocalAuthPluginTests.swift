@@ -47,7 +47,7 @@ final class StubAuthContext: NSObject, AuthContext, @unchecked Sendable {
   // Overridden as read-write to allow stubbing.
   var biometryType: LABiometryType = .none
   var localizedFallbackTitle: String?
-    
+
   /// Tracks if invalidate() was called during the test.
   var invalidated = false
 
@@ -78,7 +78,7 @@ final class StubAuthContext: NSObject, AuthContext, @unchecked Sendable {
       reply(self.evaluateResponse, self.evaluateError)
     }
   }
-    
+
   func invalidate() { invalidated = true }
 }
 
@@ -464,7 +464,7 @@ struct LocalAuthPluginTests {
     let stubAuthContext = StubAuthContext()
     let plugin = LocalAuthPlugin(
       contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]))
-   
+
     let result = await withCheckedContinuation { continuation in
       plugin.stopAuthentication { response in
         switch response {
@@ -485,7 +485,7 @@ struct LocalAuthPluginTests {
     let stubAuthContext = StubAuthContext()
     let plugin = LocalAuthPlugin(
       contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]))
-    
+
     plugin.authenticate(
       options: AuthOptions(biometricOnly: false, sticky: false),
       strings: createAuthStrings()
