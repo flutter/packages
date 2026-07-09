@@ -66,3 +66,4 @@ class _SwitchExampleState extends State<SwitchExample> {
     );
   }
 }
+// #endregion body

@@ -38,3 +38,4 @@ class MaterialBannerExample extends StatelessWidget {
     );
   }
 }
+// #endregion body

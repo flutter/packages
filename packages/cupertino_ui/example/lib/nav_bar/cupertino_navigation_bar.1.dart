@@ -72,3 +72,4 @@ class _NavigationBarSearchField extends StatelessWidget
   Size get preferredSize =>
       const Size.fromHeight(searchFieldHeight + padding * 2);
 }
+// #endregion body

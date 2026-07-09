@@ -185,3 +185,4 @@ class _NavigationDrawerExampleState extends State<NavigationDrawerExample> {
         : buildBottomBarScaffold();
   }
 }
+// #endregion body

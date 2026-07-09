@@ -161,3 +161,4 @@ class _ChipAnimationStyleExampleState extends State<ChipAnimationStyleExample> {
     );
   }
 }
+// #endregion body

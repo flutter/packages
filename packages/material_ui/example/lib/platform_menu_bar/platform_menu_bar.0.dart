@@ -138,3 +138,4 @@ class _PlatformMenuBarExampleState extends State<PlatformMenuBarExample> {
     );
   }
 }
+// #endregion body

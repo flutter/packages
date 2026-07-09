@@ -48,3 +48,4 @@ class TabBarExample extends StatelessWidget {
     );
   }
 }
+// #endregion body

@@ -136,3 +136,4 @@ class SelectAllOrNoneContainerDelegate
     return super.handleSelectAll(event);
   }
 }
+// #endregion body

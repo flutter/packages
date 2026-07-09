@@ -43,3 +43,4 @@ class ShowMaterialBannerExample extends StatelessWidget {
     );
   }
 }
+// #endregion body

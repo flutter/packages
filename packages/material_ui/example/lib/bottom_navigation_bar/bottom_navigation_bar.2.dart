@@ -97,3 +97,4 @@ class _BottomNavigationBarExampleState
     );
   }
 }
+// #endregion body

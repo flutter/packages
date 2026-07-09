@@ -145,3 +145,4 @@ class _IconAlignmentExampleState extends State<IconAlignmentExample> {
     );
   }
 }
+// #endregion body

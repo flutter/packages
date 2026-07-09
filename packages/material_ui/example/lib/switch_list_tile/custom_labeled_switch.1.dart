@@ -85,3 +85,4 @@ class _LabeledSwitchExampleState extends State<LabeledSwitchExample> {
     );
   }
 }
+// #endregion body

@@ -136,3 +136,4 @@ class _SwitchThemeAdaptation extends Adaptation<SwitchThemeData> {
     }
   }
 }
+// #endregion body

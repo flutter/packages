@@ -78,3 +78,4 @@ class _CupertinoMagnifierExampleState extends State<CupertinoMagnifierExample> {
     );
   }
 }
+// #endregion body

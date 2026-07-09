@@ -110,3 +110,4 @@ class MenuAcceleratorApp extends StatelessWidget {
     );
   }
 }
+// #endregion body

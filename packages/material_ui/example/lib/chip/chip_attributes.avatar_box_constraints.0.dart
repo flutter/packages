@@ -66,3 +66,4 @@ class AvatarBoxConstraintsExample extends StatelessWidget {
     );
   }
 }
+// #endregion body

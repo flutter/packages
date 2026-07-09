@@ -59,3 +59,4 @@ class _CupertinoTextMagnifierExampleAppState
     );
   }
 }
+// #endregion body

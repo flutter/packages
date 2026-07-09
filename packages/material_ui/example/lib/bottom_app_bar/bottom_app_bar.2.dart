@@ -188,3 +188,4 @@ class _DemoBottomAppBar extends StatelessWidget {
     );
   }
 }
+// #endregion body

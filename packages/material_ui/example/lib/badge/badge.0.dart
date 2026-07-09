@@ -53,3 +53,4 @@ class BadgeExample extends StatelessWidget {
     );
   }
 }
+// #endregion body

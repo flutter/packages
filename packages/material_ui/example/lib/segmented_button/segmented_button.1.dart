@@ -77,3 +77,4 @@ class _SegmentedButtonExampleState extends State<SegmentedButtonExample> {
     );
   }
 }
+// #endregion body

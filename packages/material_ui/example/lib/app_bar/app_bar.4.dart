@@ -149,3 +149,4 @@ class CustomAppBarShape extends OutlinedBorder {
     return super.lerpTo(b, t);
   }
 }
+// #endregion body

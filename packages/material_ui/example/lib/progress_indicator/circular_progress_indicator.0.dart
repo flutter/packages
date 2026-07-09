@@ -88,3 +88,4 @@ class _ProgressIndicatorExampleState extends State<ProgressIndicatorExample>
     );
   }
 }
+// #endregion body

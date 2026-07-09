@@ -65,3 +65,4 @@ class _AnimatedIconExampleState extends State<AnimatedIconExample>
     );
   }
 }
+// #endregion body

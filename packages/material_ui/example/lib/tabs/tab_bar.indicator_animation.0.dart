@@ -100,3 +100,4 @@ class _IndicatorAnimationExampleState extends State<IndicatorAnimationExample> {
     );
   }
 }
+// #endregion body

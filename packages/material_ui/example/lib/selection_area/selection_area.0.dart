@@ -29,3 +29,4 @@ class SelectionAreaExampleApp extends StatelessWidget {
     );
   }
 }
+// #endregion body

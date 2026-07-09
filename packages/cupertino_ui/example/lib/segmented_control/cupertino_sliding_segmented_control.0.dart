@@ -118,3 +118,4 @@ class _SegmentedControlExampleState extends State<SegmentedControlExample> {
     );
   }
 }
+// #endregion body

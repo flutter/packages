@@ -106,3 +106,4 @@ class CustomMagnifier extends StatelessWidget {
     );
   }
 }
+// #endregion body

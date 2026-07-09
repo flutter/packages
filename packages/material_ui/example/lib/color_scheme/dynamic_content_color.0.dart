@@ -525,3 +525,4 @@ class ColorChip extends StatelessWidget {
     );
   }
 }
+// #endregion body

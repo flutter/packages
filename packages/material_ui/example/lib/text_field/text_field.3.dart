@@ -125,3 +125,4 @@ class _TextFieldShiftEnterExampleState
 
 /// A custom [Intent] to represent the action of inserting a newline.
 class _InsertNewLineTextIntent extends Intent {}
+// #endregion body
