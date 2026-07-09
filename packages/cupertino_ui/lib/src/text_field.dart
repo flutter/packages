@@ -156,7 +156,7 @@ class _CupertinoTextFieldSelectionGestureDetectorBuilder
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/text_field/cupertino_text_field.0.dart}
+/// {@example /example/lib/text_field/cupertino_text_field.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -847,7 +847,7 @@ class CupertinoTextField extends StatefulWidget {
   ///
   /// This sample demonstrates how to customize the magnifier that this text field uses.
   ///
-  /// {@example example/lib/magnifier/text_magnifier.0.dart}
+  /// {@example example/lib/magnifier/text_magnifier.0.dart#body}
   ///
   // TODO(framework): End of the blue example container.
   final TextMagnifierConfiguration? magnifierConfiguration;

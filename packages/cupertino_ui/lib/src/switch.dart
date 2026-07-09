@@ -86,7 +86,7 @@ const CupertinoDynamicColor _kOffLabelColor = CupertinoDynamicColor.withBrightne
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/switch/cupertino_switch.0.dart}
+/// {@example /example/lib/switch/cupertino_switch.0.dart#body}
 ///
 /// </callout-box>
 ///

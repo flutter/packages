@@ -301,7 +301,7 @@ typedef CupertinoMenuAnimationStatusChangedCallback = void Function(AnimationSta
 /// This example demonstrates a simple [CupertinoMenuAnchor] that wraps
 /// a button.
 ///
-/// {@example /example/lib/menu_anchor/menu_anchor.0.dart}
+/// {@example /example/lib/menu_anchor/menu_anchor.0.dart#body}
 ///
 // TODO(framework): End of the blue example container.
 ///
@@ -314,7 +314,7 @@ typedef CupertinoMenuAnimationStatusChangedCallback = void Function(AnimationSta
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/menu_anchor/menu_anchor.1.dart}
+/// {@example /example/lib/menu_anchor/menu_anchor.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1710,7 +1710,7 @@ class _CupertinoDividerPainter extends CustomPainter {
 /// This example demonstrates a simple [CupertinoMenuAnchor] that wraps
 /// a button.
 ///
-/// {@example /example/lib/menu_anchor/menu_anchor.0.dart}
+/// {@example /example/lib/menu_anchor/menu_anchor.0.dart#body}
 ///
 // TODO(framework): End of the blue example container.
 ///
@@ -1723,7 +1723,7 @@ class _CupertinoDividerPainter extends CustomPainter {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/menu_anchor/menu_anchor.1.dart}
+/// {@example /example/lib/menu_anchor/menu_anchor.1.dart#body}
 ///
 /// </callout-box>
 ///

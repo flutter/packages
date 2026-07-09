@@ -242,7 +242,7 @@ enum _PickerColumnType {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/date_picker/cupertino_date_picker.0.dart}
+/// {@example /example/lib/date_picker/cupertino_date_picker.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -2184,7 +2184,7 @@ enum CupertinoTimerPickerMode {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/date_picker/cupertino_timer_picker.0.dart}
+/// {@example /example/lib/date_picker/cupertino_timer_picker.0.dart#body}
 ///
 /// </callout-box>
 ///

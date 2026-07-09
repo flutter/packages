@@ -831,7 +831,7 @@ class MaterialApp extends StatefulWidget {
   /// </small>
   /// {@endtemplate}
   ///
-  /// {@example /example/lib/app/app.0.dart}
+  /// {@example /example/lib/app/app.0.dart#body}
   ///
   /// </callout-box>
   final AnimationStyle? themeAnimationStyle;

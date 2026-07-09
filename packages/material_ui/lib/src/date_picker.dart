@@ -166,7 +166,7 @@ const double _fontSizeToScale = 14.0;
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/date_picker/show_date_picker.1.dart}
+/// {@example /example/lib/date_picker/show_date_picker.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -192,7 +192,7 @@ const double _fontSizeToScale = 14.0;
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/date_picker/show_date_picker.0.dart}
+/// {@example /example/lib/date_picker/show_date_picker.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1169,7 +1169,7 @@ typedef SelectableDayForRangePredicate =
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/date_picker/show_date_range_picker.0.dart}
+/// {@example /example/lib/date_picker/show_date_range_picker.0.dart#body}
 ///
 /// </callout-box>
 ///

@@ -2716,7 +2716,7 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/input_decorator/input_decoration.0.dart}
+/// {@example /example/lib/input_decorator/input_decoration.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -2732,7 +2732,7 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/input_decorator/input_decoration.1.dart}
+/// {@example /example/lib/input_decorator/input_decoration.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -2748,7 +2748,7 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/input_decorator/input_decoration.2.dart}
+/// {@example /example/lib/input_decorator/input_decoration.2.dart#body}
 ///
 /// </callout-box>
 ///
@@ -2764,7 +2764,7 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/input_decorator/input_decoration.3.dart}
+/// {@example /example/lib/input_decorator/input_decoration.3.dart#body}
 ///
 /// </callout-box>
 ///
@@ -2777,7 +2777,7 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/input_decorator/input_decoration.widget_state.0.dart}
+/// {@example /example/lib/input_decorator/input_decoration.widget_state.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -2791,7 +2791,7 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/input_decorator/input_decoration.widget_state.1.dart}
+/// {@example /example/lib/input_decorator/input_decoration.widget_state.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -3038,7 +3038,7 @@ class InputDecoration {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/input_decorator/input_decoration.label.0.dart}
+  /// {@example /example/lib/input_decorator/input_decoration.label.0.dart#body}
   ///
   /// </callout-box>
   ///
@@ -3084,7 +3084,7 @@ class InputDecoration {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/input_decorator/input_decoration.label_style_error.0.dart}
+  /// {@example /example/lib/input_decorator/input_decoration.label_style_error.0.dart#body}
   ///
   /// </callout-box>
   /// {@endtemplate}
@@ -3123,7 +3123,7 @@ class InputDecoration {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/input_decorator/input_decoration.floating_label_style_error.0.dart}
+  /// {@example /example/lib/input_decorator/input_decoration.floating_label_style_error.0.dart#body}
   ///
   /// </callout-box>
   /// {@endtemplate}
@@ -3144,7 +3144,7 @@ class InputDecoration {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/input_decorator/input_decoration.helper.0.dart}
+  /// {@example /example/lib/input_decorator/input_decoration.helper.0.dart#body}
   ///
   /// </callout-box>
   ///
@@ -3453,7 +3453,7 @@ class InputDecoration {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/input_decorator/input_decoration.prefix_icon.0.dart}
+  /// {@example /example/lib/input_decorator/input_decoration.prefix_icon.0.dart#body}
   ///
   /// </callout-box>
   ///
@@ -3492,7 +3492,7 @@ class InputDecoration {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/input_decorator/input_decoration.prefix_icon_constraints.0.dart}
+  /// {@example /example/lib/input_decorator/input_decoration.prefix_icon_constraints.0.dart#body}
   ///
   /// </callout-box>
   final BoxConstraints? prefixIconConstraints;
@@ -3588,7 +3588,7 @@ class InputDecoration {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/input_decorator/input_decoration.suffix_icon.0.dart}
+  /// {@example /example/lib/input_decorator/input_decoration.suffix_icon.0.dart#body}
   ///
   /// </callout-box>
   ///
@@ -3682,7 +3682,7 @@ class InputDecoration {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/input_decorator/input_decoration.suffix_icon_constraints.0.dart}
+  /// {@example /example/lib/input_decorator/input_decoration.suffix_icon_constraints.0.dart#body}
   ///
   /// </callout-box>
   final BoxConstraints? suffixIconConstraints;

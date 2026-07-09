@@ -1312,7 +1312,7 @@ typedef PopupMenuItemBuilder<T> = List<PopupMenuEntry<T>> Function(BuildContext 
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/popup_menu/popup_menu.0.dart}
+/// {@example /example/lib/popup_menu/popup_menu.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1324,7 +1324,7 @@ typedef PopupMenuItemBuilder<T> = List<PopupMenuEntry<T>> Function(BuildContext 
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/menu_anchor/menu_anchor.2.dart}
+/// {@example /example/lib/menu_anchor/menu_anchor.2.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1337,7 +1337,7 @@ typedef PopupMenuItemBuilder<T> = List<PopupMenuEntry<T>> Function(BuildContext 
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/popup_menu/popup_menu.1.dart}
+/// {@example /example/lib/popup_menu/popup_menu.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1350,7 +1350,7 @@ typedef PopupMenuItemBuilder<T> = List<PopupMenuEntry<T>> Function(BuildContext 
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/popup_menu/popup_menu.2.dart}
+/// {@example /example/lib/popup_menu/popup_menu.2.dart#body}
 ///
 /// </callout-box>
 ///

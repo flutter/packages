@@ -111,7 +111,7 @@ class DropdownMenuEntry<T> {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/dropdown_menu/dropdown_menu_entry_label_widget.0.dart}
+  /// {@example /example/lib/dropdown_menu/dropdown_menu_entry_label_widget.0.dart#body}
   ///
   /// </callout-box>
   final Widget? labelWidget;
@@ -175,7 +175,7 @@ enum DropdownMenuCloseBehavior {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/dropdown_menu/dropdown_menu.0.dart}
+/// {@example /example/lib/dropdown_menu/dropdown_menu.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -263,7 +263,7 @@ class DropdownMenu<T> extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/dropdown_menu/dropdown_menu.2.dart}
+  /// {@example /example/lib/dropdown_menu/dropdown_menu.2.dart#body}
   ///
   /// </callout-box>
   final bool enabled;
@@ -541,7 +541,7 @@ class DropdownMenu<T> extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/dropdown_menu/dropdown_menu.2.dart}
+  /// {@example /example/lib/dropdown_menu/dropdown_menu.2.dart#body}
   ///
   /// </callout-box>
   final bool? requestFocusOnTap;

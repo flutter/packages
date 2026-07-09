@@ -132,7 +132,7 @@ class _PreferredAppBarSize extends Size {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/app_bar/app_bar.0.dart}
+/// {@example /example/lib/app_bar/app_bar.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -148,7 +148,7 @@ class _PreferredAppBarSize extends Size {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/app_bar/app_bar.1.dart}
+/// {@example /example/lib/app_bar/app_bar.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -179,7 +179,7 @@ class _PreferredAppBarSize extends Size {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/app_bar/app_bar.2.dart}
+/// {@example /example/lib/app_bar/app_bar.2.dart#body}
 ///
 /// </callout-box>
 ///
@@ -193,7 +193,7 @@ class _PreferredAppBarSize extends Size {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/app_bar/app_bar.3.dart}
+/// {@example /example/lib/app_bar/app_bar.3.dart#body}
 ///
 /// </callout-box>
 ///
@@ -550,7 +550,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/app_bar/app_bar.4.dart}
+  /// {@example /example/lib/app_bar/app_bar.4.dart#body}
   ///
   /// </callout-box>
   ///
@@ -1566,7 +1566,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/app_bar/sliver_app_bar.4.dart}
+/// {@example /example/lib/app_bar/sliver_app_bar.4.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1579,7 +1579,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/app_bar/sliver_app_bar.1.dart}
+/// {@example /example/lib/app_bar/sliver_app_bar.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1689,7 +1689,7 @@ class SliverAppBar extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/app_bar/sliver_app_bar.2.dart}
+  /// {@example /example/lib/app_bar/sliver_app_bar.2.dart#body}
   ///
   /// </callout-box>
   ///
@@ -1766,7 +1766,7 @@ class SliverAppBar extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/app_bar/sliver_app_bar.3.dart}
+  /// {@example /example/lib/app_bar/sliver_app_bar.3.dart#body}
   ///
   /// </callout-box>
   ///

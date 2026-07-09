@@ -63,7 +63,7 @@ enum _FilledButtonVariant { filled, tonal }
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/filled_button/filled_button.0.dart}
+/// {@example /example/lib/filled_button/filled_button.0.dart#body}
 ///
 /// </callout-box>
 ///

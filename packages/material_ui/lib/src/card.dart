@@ -38,7 +38,7 @@ enum _CardVariant { elevated, filled, outlined }
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/card/card.0.dart}
+/// {@example /example/lib/card/card.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -55,7 +55,7 @@ enum _CardVariant { elevated, filled, outlined }
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/card/card.1.dart}
+/// {@example /example/lib/card/card.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -78,7 +78,7 @@ enum _CardVariant { elevated, filled, outlined }
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/card/card.2.dart}
+/// {@example /example/lib/card/card.2.dart#body}
 ///
 /// </callout-box>
 ///

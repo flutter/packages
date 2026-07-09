@@ -113,7 +113,7 @@ class Adaptation<T> {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/switch/switch.4.dart}
+  /// {@example /example/lib/switch/switch.4.dart#body}
   ///
   /// </callout-box>
   T adapt(ThemeData theme, T defaultValue) => defaultValue;
@@ -137,7 +137,7 @@ class Adaptation<T> {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/theme/theme_extension.1.dart}
+/// {@example /example/lib/theme/theme_extension.1.dart#body}
 ///
 /// </callout-box>
 abstract class ThemeExtension<T extends ThemeExtension<T>> {
@@ -227,7 +227,7 @@ enum MaterialTapTargetSize {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/theme_data/theme_data.0.dart}
+/// {@example /example/lib/theme_data/theme_data.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1005,7 +1005,7 @@ class ThemeData with Diagnosticable {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/theme/theme_extension.1.dart}
+  /// {@example /example/lib/theme/theme_extension.1.dart#body}
   ///
   /// </callout-box>
   ///

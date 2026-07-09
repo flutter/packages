@@ -23,7 +23,7 @@ import 'theme.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/autocomplete/autocomplete.0.dart}
+/// {@example /example/lib/autocomplete/autocomplete.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -36,7 +36,7 @@ import 'theme.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/autocomplete/autocomplete.1.dart}
+/// {@example /example/lib/autocomplete/autocomplete.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -49,7 +49,7 @@ import 'theme.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/autocomplete/autocomplete.2.dart}
+/// {@example /example/lib/autocomplete/autocomplete.2.dart#body}
 ///
 /// </callout-box>
 ///
@@ -63,7 +63,7 @@ import 'theme.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/autocomplete/autocomplete.3.dart}
+/// {@example /example/lib/autocomplete/autocomplete.3.dart#body}
 ///
 /// </callout-box>
 ///
@@ -78,7 +78,7 @@ import 'theme.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/autocomplete/autocomplete.4.dart}
+/// {@example /example/lib/autocomplete/autocomplete.4.dart#body}
 ///
 /// </callout-box>
 ///

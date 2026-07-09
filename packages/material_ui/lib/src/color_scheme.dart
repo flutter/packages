@@ -123,7 +123,7 @@ enum DynamicSchemeVariant {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/color_scheme/color_scheme.0.dart}
+/// {@example /example/lib/color_scheme/color_scheme.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -267,7 +267,7 @@ class ColorScheme with Diagnosticable {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/color_scheme/color_scheme.0.dart}
+  /// {@example /example/lib/color_scheme/color_scheme.0.dart#body}
   ///
   /// </callout-box>
   ///
@@ -1738,7 +1738,7 @@ class ColorScheme with Diagnosticable {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/color_scheme/dynamic_content_color.0.dart}
+  /// {@example /example/lib/color_scheme/dynamic_content_color.0.dart#body}
   ///
   /// </callout-box>
   ///

@@ -127,7 +127,7 @@ class _TextFieldSelectionGestureDetectorBuilder extends TextSelectionGestureDete
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/text_field/text_field.0.dart}
+/// {@example /example/lib/text_field/text_field.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -146,7 +146,7 @@ class _TextFieldSelectionGestureDetectorBuilder extends TextSelectionGestureDete
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/text_field/text_field.1.dart}
+/// {@example /example/lib/text_field/text_field.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -185,7 +185,7 @@ class _TextFieldSelectionGestureDetectorBuilder extends TextSelectionGestureDete
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/text_field/text_field.2.dart}
+/// {@example /example/lib/text_field/text_field.2.dart#body}
 ///
 /// </callout-box>
 ///
@@ -207,7 +207,7 @@ class _TextFieldSelectionGestureDetectorBuilder extends TextSelectionGestureDete
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/text_field/text_field.3.dart}
+/// {@example /example/lib/text_field/text_field.3.dart#body}
 ///
 /// </callout-box>
 ///
@@ -396,7 +396,7 @@ class TextField extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/text_field/text_field_magnifier.0.dart}
+  /// {@example /example/lib/text_field/text_field_magnifier.0.dart#body}
   ///
   /// </callout-box>
   final TextMagnifierConfiguration? magnifierConfiguration;
@@ -785,7 +785,7 @@ class TextField extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/text_field/text_field_tap_region.0.dart}
+  /// {@example /example/lib/text_field/text_field_tap_region.0.dart#body}
   ///
   /// </callout-box>
   ///

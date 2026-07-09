@@ -66,7 +66,7 @@ import 'toggle_buttons_theme.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/toggle_buttons/toggle_buttons.1.dart}
+/// {@example /example/lib/toggle_buttons/toggle_buttons.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -78,7 +78,7 @@ import 'toggle_buttons_theme.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/toggle_buttons/toggle_buttons.0.dart}
+/// {@example /example/lib/toggle_buttons/toggle_buttons.0.dart#body}
 ///
 /// </callout-box>
 ///

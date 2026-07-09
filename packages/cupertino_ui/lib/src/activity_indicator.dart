@@ -29,7 +29,7 @@ const Color _kActiveTickColor = CupertinoDynamicColor.withBrightness(
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/activity_indicator/cupertino_activity_indicator.0.dart}
+/// {@example /example/lib/activity_indicator/cupertino_activity_indicator.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -215,7 +215,7 @@ class _CupertinoActivityIndicatorPainter extends CustomPainter {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/activity_indicator/cupertino_linear_activity_indicator.0.dart}
+/// {@example /example/lib/activity_indicator/cupertino_linear_activity_indicator.0.dart#body}
 ///
 /// </callout-box>
 ///

@@ -1239,7 +1239,7 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/bottom_sheet/show_modal_bottom_sheet.0.dart}
+/// {@example /example/lib/bottom_sheet/show_modal_bottom_sheet.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1252,7 +1252,7 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/bottom_sheet/show_modal_bottom_sheet.1.dart}
+/// {@example /example/lib/bottom_sheet/show_modal_bottom_sheet.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1282,7 +1282,7 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/bottom_sheet/show_modal_bottom_sheet.2.dart}
+/// {@example /example/lib/bottom_sheet/show_modal_bottom_sheet.2.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1392,7 +1392,7 @@ Future<T?> showModalBottomSheet<T>({
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/bottom_sheet/show_bottom_sheet.0.dart}
+/// {@example /example/lib/bottom_sheet/show_bottom_sheet.0.dart#body}
 ///
 /// </callout-box>
 ///

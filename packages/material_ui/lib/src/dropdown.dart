@@ -951,7 +951,7 @@ class DropdownButtonHideUnderline extends InheritedWidget {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/dropdown/dropdown_button.0.dart}
+/// {@example /example/lib/dropdown/dropdown_button.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -971,7 +971,7 @@ class DropdownButtonHideUnderline extends InheritedWidget {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/dropdown_menu/dropdown_menu.1.dart}
+/// {@example /example/lib/dropdown_menu/dropdown_menu.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1170,7 +1170,7 @@ class DropdownButton<T> extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/dropdown/dropdown_button.selected_item_builder.0.dart}
+  /// {@example /example/lib/dropdown/dropdown_button.selected_item_builder.0.dart#body}
   ///
   /// </callout-box>
   ///
@@ -1204,7 +1204,7 @@ class DropdownButton<T> extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/dropdown/dropdown_button.style.0.dart}
+  /// {@example /example/lib/dropdown/dropdown_button.style.0.dart#body}
   ///
   /// </callout-box>
   ///

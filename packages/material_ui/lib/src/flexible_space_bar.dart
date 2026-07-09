@@ -73,7 +73,7 @@ enum StretchMode {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/flexible_space_bar/flexible_space_bar.0.dart}
+/// {@example /example/lib/flexible_space_bar/flexible_space_bar.0.dart#body}
 ///
 /// </callout-box>
 ///
