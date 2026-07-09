@@ -118,10 +118,67 @@ class AndroidLocalNetwork {
 
 /// A wrapper around [Socket] that ensures the local area permission is granted on Android.
 class AndroidLocalAreaSocket {
+  static bool _isLocalAddress(InternetAddress address) {
+    if (address.type == InternetAddressType.IPv4) {
+      final List<int> bytes = address.rawAddress;
+      // 10.0.0.0/8
+      if (bytes[0] == 10) {
+        return true;
+      }
+      // 172.16.0.0/12
+      if (bytes[0] == 172 && (bytes[1] >= 16 && bytes[1] <= 31)) {
+        return true;
+      }
+      // 192.168.0.0/16
+      if (bytes[0] == 192 && bytes[1] == 168) {
+        return true;
+      }
+      // 169.254.0.0/16 (Link Local)
+      if (bytes[0] == 169 && bytes[1] == 254) {
+        return true;
+      }
+    } else if (address.type == InternetAddressType.IPv6) {
+      if (address.isLinkLocal || address.isMulticast) {
+        return true;
+      }
+      // Unique Local Addresses (ULA): fc00::/7
+      final List<int> bytes = address.rawAddress;
+      if (bytes[0] >= 0xfc && bytes[0] <= 0xfd) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  static Future<bool> _isLocalNetworkHost(Object host) async {
+    if (host is InternetAddress) {
+      return _isLocalAddress(host);
+    } else if (host is String) {
+      if (host.endsWith('.local')) {
+        return true;
+      }
+      final InternetAddress? parsed = InternetAddress.tryParse(host);
+      if (parsed != null) {
+        return _isLocalAddress(parsed);
+      }
+      try {
+        final List<InternetAddress> addresses = await InternetAddress.lookup(
+          host,
+        );
+        return addresses.any(_isLocalAddress);
+      } catch (_) {
+        // DNS lookup failed, let Socket.connect handle the error.
+        return false;
+      }
+    }
+    return false;
+  }
+
   /// Connects to a socket, requesting permission first on Android if necessary.
   ///
   /// On Android, it will automatically request the ACCESS_LOCAL_NETWORK
-  /// permission on the first call to [connect] if it hasn't been granted.
+  /// permission on the first call to [connect] if it hasn't been granted
+  /// AND the target host is a local area network address.
   /// Subsequent calls will only check if the permission is currently granted.
   static Future<Socket> connect(
     Object host,
@@ -130,7 +187,7 @@ class AndroidLocalAreaSocket {
     int sourcePort = 0,
     Duration? timeout,
   }) async {
-    if (Platform.isAndroid) {
+    if (Platform.isAndroid && await _isLocalNetworkHost(host)) {
       final bool granted =
           await AndroidLocalNetwork._checkAndRequestPermission();
       if (!granted) {
