@@ -2,35 +2,44 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.15
 
 import 'color_role.dart';
 import 'shape_struct.dart';
+import 'typescale_struct.dart';
 
 class TokenNavigationDrawer {
   /// md.comp.navigation-drawer.active.focus.icon.color
-  static const TokenColorRole activeFocusIconColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole activeFocusIconColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.navigation-drawer.active.focus.label-text.color
-  static const TokenColorRole activeFocusLabelTextColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole activeFocusLabelTextColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.navigation-drawer.active.focus.state-layer.color
-  static const TokenColorRole activeFocusStateLayerColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole activeFocusStateLayerColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.navigation-drawer.active.hover.icon.color
-  static const TokenColorRole activeHoverIconColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole activeHoverIconColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.navigation-drawer.active.hover.label-text.color
-  static const TokenColorRole activeHoverLabelTextColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole activeHoverLabelTextColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.navigation-drawer.active.hover.state-layer.color
-  static const TokenColorRole activeHoverStateLayerColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole activeHoverStateLayerColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.navigation-drawer.active.icon.color
-  static const TokenColorRole activeIconColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole activeIconColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.navigation-drawer.active-indicator.color
-  static const TokenColorRole activeIndicatorColor = TokenColorRole.secondaryContainer;
+  static const TokenColorRole activeIndicatorColor =
+      TokenColorRole.secondaryContainer;
 
   /// md.comp.navigation-drawer.active-indicator.height
   static const double activeIndicatorHeight = 56.00;
@@ -48,16 +57,20 @@ class TokenNavigationDrawer {
   static const double activeIndicatorWidth = 336.00;
 
   /// md.comp.navigation-drawer.active.label-text.color
-  static const TokenColorRole activeLabelTextColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole activeLabelTextColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.navigation-drawer.active.pressed.icon.color
-  static const TokenColorRole activePressedIconColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole activePressedIconColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.navigation-drawer.active.pressed.label-text.color
-  static const TokenColorRole activePressedLabelTextColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole activePressedLabelTextColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.navigation-drawer.active.pressed.state-layer.color
-  static const TokenColorRole activePressedStateLayerColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole activePressedStateLayerColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.navigation-drawer.bottom.container.shape
   static const ShapeStruct bottomContainerShape = ShapeStruct(
@@ -98,23 +111,14 @@ class TokenNavigationDrawer {
   /// md.comp.navigation-drawer.headline.color
   static const TokenColorRole headlineColor = TokenColorRole.onSurfaceVariant;
 
-  /// md.comp.navigation-drawer.headline.font
-  static const String headlineFont = 'Roboto';
-
   /// md.comp.navigation-drawer.headline.type
-  static const String headlineTypeFontFamily = 'Roboto';
-
-  /// md.comp.navigation-drawer.headline.type
-  static const double headlineTypeFontSize = 14.00;
-
-  /// md.comp.navigation-drawer.headline.type
-  static const double headlineTypeFontWeight = 500;
-
-  /// md.comp.navigation-drawer.headline.type
-  static const double headlineTypeLetterSpacing = 0.10;
-
-  /// md.comp.navigation-drawer.headline.type
-  static const double headlineTypeLineHeight = 20.00;
+  static const TypescaleStruct headlineType = TypescaleStruct(
+    fontFamily: 'Roboto',
+    fontSize: 14.00,
+    fontWeight: 500,
+    lineHeight: 20.00,
+    letterSpacing: 0.10,
+  );
 
   /// md.comp.navigation-drawer.hover.state-layer.opacity
   static const double hoverStateLayerOpacity = 0.08;
@@ -126,76 +130,69 @@ class TokenNavigationDrawer {
   static const TokenColorRole inactiveFocusIconColor = TokenColorRole.onSurface;
 
   /// md.comp.navigation-drawer.inactive.focus.label-text.color
-  static const TokenColorRole inactiveFocusLabelTextColor = TokenColorRole.onSurface;
+  static const TokenColorRole inactiveFocusLabelTextColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.navigation-drawer.inactive.focus.state-layer.color
-  static const TokenColorRole inactiveFocusStateLayerColor = TokenColorRole.onSurface;
+  static const TokenColorRole inactiveFocusStateLayerColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.navigation-drawer.inactive.hover.icon.color
   static const TokenColorRole inactiveHoverIconColor = TokenColorRole.onSurface;
 
   /// md.comp.navigation-drawer.inactive.hover.label-text.color
-  static const TokenColorRole inactiveHoverLabelTextColor = TokenColorRole.onSurface;
+  static const TokenColorRole inactiveHoverLabelTextColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.navigation-drawer.inactive.hover.state-layer.color
-  static const TokenColorRole inactiveHoverStateLayerColor = TokenColorRole.onSurface;
+  static const TokenColorRole inactiveHoverStateLayerColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.navigation-drawer.inactive.icon.color
-  static const TokenColorRole inactiveIconColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole inactiveIconColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.navigation-drawer.inactive.label-text.color
-  static const TokenColorRole inactiveLabelTextColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole inactiveLabelTextColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.navigation-drawer.inactive.pressed.icon.color
-  static const TokenColorRole inactivePressedIconColor = TokenColorRole.onSurface;
+  static const TokenColorRole inactivePressedIconColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.navigation-drawer.inactive.pressed.label-text.color
-  static const TokenColorRole inactivePressedLabelTextColor = TokenColorRole.onSurface;
+  static const TokenColorRole inactivePressedLabelTextColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.navigation-drawer.inactive.pressed.state-layer.color
-  static const TokenColorRole inactivePressedStateLayerColor = TokenColorRole.onSecondaryContainer;
-
-  /// md.comp.navigation-drawer.label-text.font
-  static const String labelTextFont = 'Roboto';
+  static const TokenColorRole inactivePressedStateLayerColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.navigation-drawer.label-text.type
-  static const String labelTextTypeFontFamily = 'Roboto';
-
-  /// md.comp.navigation-drawer.label-text.type
-  static const double labelTextTypeFontSize = 14.00;
-
-  /// md.comp.navigation-drawer.label-text.type
-  static const double labelTextTypeFontWeight = 500;
-
-  /// md.comp.navigation-drawer.label-text.type
-  static const double labelTextTypeLetterSpacing = 0.10;
-
-  /// md.comp.navigation-drawer.label-text.type
-  static const double labelTextTypeLineHeight = 20.00;
+  static const TypescaleStruct labelTextType = TypescaleStruct(
+    fontFamily: 'Roboto',
+    fontSize: 14.00,
+    fontWeight: 500,
+    lineHeight: 20.00,
+    letterSpacing: 0.10,
+  );
 
   /// md.comp.navigation-drawer.large-badge-label.color
-  static const TokenColorRole largeBadgeLabelColor = TokenColorRole.onSurfaceVariant;
-
-  /// md.comp.navigation-drawer.large-badge-label.font
-  static const String largeBadgeLabelFont = 'Roboto';
+  static const TokenColorRole largeBadgeLabelColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.navigation-drawer.large-badge-label.type
-  static const String largeBadgeLabelTypeFontFamily = 'Roboto';
-
-  /// md.comp.navigation-drawer.large-badge-label.type
-  static const double largeBadgeLabelTypeFontSize = 14.00;
-
-  /// md.comp.navigation-drawer.large-badge-label.type
-  static const double largeBadgeLabelTypeFontWeight = 500;
-
-  /// md.comp.navigation-drawer.large-badge-label.type
-  static const double largeBadgeLabelTypeLetterSpacing = 0.10;
-
-  /// md.comp.navigation-drawer.large-badge-label.type
-  static const double largeBadgeLabelTypeLineHeight = 20.00;
+  static const TypescaleStruct largeBadgeLabelType = TypescaleStruct(
+    fontFamily: 'Roboto',
+    fontSize: 14.00,
+    fontWeight: 500,
+    lineHeight: 20.00,
+    letterSpacing: 0.10,
+  );
 
   /// md.comp.navigation-drawer.modal.container.color
-  static const TokenColorRole modalContainerColor = TokenColorRole.surfaceContainerLow;
+  static const TokenColorRole modalContainerColor =
+      TokenColorRole.surfaceContainerLow;
 
   /// md.comp.navigation-drawer.modal.container.elevation
   static const double modalContainerElevation = 1.00;

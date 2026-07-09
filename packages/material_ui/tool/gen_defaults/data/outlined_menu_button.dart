@@ -2,10 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.15
 
 import 'color_role.dart';
 import 'shape_struct.dart';
+import 'typescale_struct.dart';
 
 class TokenOutlinedMenuButton {
   /// md.comp.outlined-menu-button.container.height
@@ -24,7 +25,8 @@ class TokenOutlinedMenuButton {
   static const TokenColorRole disabledOutlineColor = TokenColorRole.onSurface;
 
   /// md.comp.outlined-menu-button.disabled.trailing-icon.color
-  static const TokenColorRole disabledTrailingIconColor = TokenColorRole.onSurface;
+  static const TokenColorRole disabledTrailingIconColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.outlined-menu-button.disabled.trailing-icon.opacity
   static const double disabledTrailingIconOpacity = 0.38;
@@ -71,23 +73,14 @@ class TokenOutlinedMenuButton {
   /// md.comp.outlined-menu-button.label-text.color
   static const TokenColorRole labelTextColor = TokenColorRole.primary;
 
-  /// md.comp.outlined-menu-button.label-text.font
-  static const String labelTextFont = 'Roboto';
-
   /// md.comp.outlined-menu-button.label-text.type
-  static const String labelTextTypeFontFamily = 'Roboto';
-
-  /// md.comp.outlined-menu-button.label-text.type
-  static const double labelTextTypeFontSize = 14.00;
-
-  /// md.comp.outlined-menu-button.label-text.type
-  static const double labelTextTypeFontWeight = 500;
-
-  /// md.comp.outlined-menu-button.label-text.type
-  static const double labelTextTypeLetterSpacing = 0.10;
-
-  /// md.comp.outlined-menu-button.label-text.type
-  static const double labelTextTypeLineHeight = 20.00;
+  static const TypescaleStruct labelTextType = TypescaleStruct(
+    fontFamily: 'Roboto',
+    fontSize: 14.00,
+    fontWeight: 500,
+    lineHeight: 20.00,
+    letterSpacing: 0.10,
+  );
 
   /// md.comp.outlined-menu-button.outline.color
   static const TokenColorRole outlineColor = TokenColorRole.outline;
@@ -126,16 +119,19 @@ class TokenOutlinedMenuButton {
   static const double trailingIconSize = 18.00;
 
   /// md.comp.outlined-menu-button.with-icon.disabled.icon.color
-  static const TokenColorRole withIconDisabledIconColor = TokenColorRole.onSurface;
+  static const TokenColorRole withIconDisabledIconColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.outlined-menu-button.with-icon.disabled.icon.opacity
   static const double withIconDisabledIconOpacity = 0.38;
 
   /// md.comp.outlined-menu-button.with-icon.focus.leading-icon.color
-  static const TokenColorRole withIconFocusLeadingIconColor = TokenColorRole.primary;
+  static const TokenColorRole withIconFocusLeadingIconColor =
+      TokenColorRole.primary;
 
   /// md.comp.outlined-menu-button.with-icon.hover.leading-icon.color
-  static const TokenColorRole withIconHoverLeadingIconColor = TokenColorRole.primary;
+  static const TokenColorRole withIconHoverLeadingIconColor =
+      TokenColorRole.primary;
 
   /// md.comp.outlined-menu-button.with-icon.leading-icon.color
   static const TokenColorRole withIconLeadingIconColor = TokenColorRole.primary;
@@ -144,5 +140,6 @@ class TokenOutlinedMenuButton {
   static const double withIconLeadingIconSize = 18.00;
 
   /// md.comp.outlined-menu-button.with-icon.pressed.leading-icon.color
-  static const TokenColorRole withIconPressedLeadingIconColor = TokenColorRole.primary;
+  static const TokenColorRole withIconPressedLeadingIconColor =
+      TokenColorRole.primary;
 }

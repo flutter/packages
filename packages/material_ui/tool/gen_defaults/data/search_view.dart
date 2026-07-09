@@ -2,14 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.15
 
 import 'color_role.dart';
 import 'shape_struct.dart';
+import 'typescale_struct.dart';
 
 class TokenSearchView {
   /// md.comp.search-view.contained.background.color
-  static const TokenColorRole containedBackgroundColor = TokenColorRole.surfaceContainerLow;
+  static const TokenColorRole containedBackgroundColor =
+      TokenColorRole.surfaceContainerLow;
 
   /// md.comp.search-view.contained.docked.bar-results.gap
   static const double containedDockedBarResultsGap = 2.00;
@@ -45,7 +47,8 @@ class TokenSearchView {
   static const double containedTrailingMargin = 12.00;
 
   /// md.comp.search-view.container.color
-  static const TokenColorRole containerColor = TokenColorRole.surfaceContainerHigh;
+  static const TokenColorRole containerColor =
+      TokenColorRole.surfaceContainerHigh;
 
   /// md.comp.search-view.container.elevation
   static const double containerElevation = 6.00;
@@ -80,50 +83,34 @@ class TokenSearchView {
   /// md.comp.search-view.header.input-text.color
   static const TokenColorRole headerInputTextColor = TokenColorRole.onSurface;
 
-  /// md.comp.search-view.header.input-text.font
-  static const String headerInputTextFont = 'Roboto';
-
   /// md.comp.search-view.header.input-text.type
-  static const String headerInputTextTypeFontFamily = 'Roboto';
-
-  /// md.comp.search-view.header.input-text.type
-  static const double headerInputTextTypeFontSize = 16.00;
-
-  /// md.comp.search-view.header.input-text.type
-  static const double headerInputTextTypeFontWeight = 400;
-
-  /// md.comp.search-view.header.input-text.type
-  static const double headerInputTextTypeLetterSpacing = 0.50;
-
-  /// md.comp.search-view.header.input-text.type
-  static const double headerInputTextTypeLineHeight = 24.00;
+  static const TypescaleStruct headerInputTextType = TypescaleStruct(
+    fontFamily: 'Roboto',
+    fontSize: 16.00,
+    fontWeight: 400,
+    lineHeight: 24.00,
+    letterSpacing: 0.50,
+  );
 
   /// md.comp.search-view.header.leading-icon.color
   static const TokenColorRole headerLeadingIconColor = TokenColorRole.onSurface;
 
   /// md.comp.search-view.header.supporting-text.color
-  static const TokenColorRole headerSupportingTextColor = TokenColorRole.onSurfaceVariant;
-
-  /// md.comp.search-view.header.supporting-text.font
-  static const String headerSupportingTextFont = 'Roboto';
+  static const TokenColorRole headerSupportingTextColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.search-view.header.supporting-text.type
-  static const String headerSupportingTextTypeFontFamily = 'Roboto';
-
-  /// md.comp.search-view.header.supporting-text.type
-  static const double headerSupportingTextTypeFontSize = 16.00;
-
-  /// md.comp.search-view.header.supporting-text.type
-  static const double headerSupportingTextTypeFontWeight = 400;
-
-  /// md.comp.search-view.header.supporting-text.type
-  static const double headerSupportingTextTypeLetterSpacing = 0.50;
-
-  /// md.comp.search-view.header.supporting-text.type
-  static const double headerSupportingTextTypeLineHeight = 24.00;
+  static const TypescaleStruct headerSupportingTextType = TypescaleStruct(
+    fontFamily: 'Roboto',
+    fontSize: 16.00,
+    fontWeight: 400,
+    lineHeight: 24.00,
+    letterSpacing: 0.50,
+  );
 
   /// md.comp.search-view.header.trailing-icon.color
-  static const TokenColorRole headerTrailingIconColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole headerTrailingIconColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.search-view.leading-icon.leading-icon-label-space
   static const double leadingIconLeadingIconLabelSpace = 16.00;

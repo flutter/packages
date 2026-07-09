@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.15
 
 import 'color_role.dart';
 import 'shape_struct.dart';
@@ -15,10 +15,12 @@ class TokenLoadingIndicator {
   static const double activeIndicatorSize = 38.00;
 
   /// md.comp.loading-indicator.contained.active-indicator.color
-  static const TokenColorRole containedActiveIndicatorColor = TokenColorRole.onPrimaryContainer;
+  static const TokenColorRole containedActiveIndicatorColor =
+      TokenColorRole.onPrimaryContainer;
 
   /// md.comp.loading-indicator.contained.container.color
-  static const TokenColorRole containedContainerColor = TokenColorRole.primaryContainer;
+  static const TokenColorRole containedContainerColor =
+      TokenColorRole.primaryContainer;
 
   /// md.comp.loading-indicator.container.height
   static const double containerHeight = 48.00;

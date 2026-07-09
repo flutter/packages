@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.15
 
 import 'color_role.dart';
 import 'shape_struct.dart';
@@ -39,7 +39,8 @@ class TokenOutlinedCard {
   static const double draggedContainerElevation = 6.00;
 
   /// md.comp.outlined-card.dragged.outline.color
-  static const TokenColorRole draggedOutlineColor = TokenColorRole.outlineVariant;
+  static const TokenColorRole draggedOutlineColor =
+      TokenColorRole.outlineVariant;
 
   /// md.comp.outlined-card.dragged.state-layer.color
   static const TokenColorRole draggedStateLayerColor = TokenColorRole.onSurface;
@@ -96,7 +97,8 @@ class TokenOutlinedCard {
   static const double pressedContainerElevation = 0.00;
 
   /// md.comp.outlined-card.pressed.outline.color
-  static const TokenColorRole pressedOutlineColor = TokenColorRole.outlineVariant;
+  static const TokenColorRole pressedOutlineColor =
+      TokenColorRole.outlineVariant;
 
   /// md.comp.outlined-card.pressed.state-layer.color
   static const TokenColorRole pressedStateLayerColor = TokenColorRole.onSurface;

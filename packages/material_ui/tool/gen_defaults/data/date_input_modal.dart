@@ -2,14 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.15
 
 import 'color_role.dart';
 import 'shape_struct.dart';
+import 'typescale_struct.dart';
 
 class TokenDateInputModal {
   /// md.comp.date-input.modal.container.color
-  static const TokenColorRole containerColor = TokenColorRole.surfaceContainerHigh;
+  static const TokenColorRole containerColor =
+      TokenColorRole.surfaceContainerHigh;
 
   /// md.comp.date-input.modal.container.elevation
   static const double containerElevation = 6.00;
@@ -36,44 +38,28 @@ class TokenDateInputModal {
   static const double headerContainerWidth = 328.00;
 
   /// md.comp.date-input.modal.header.headline.color
-  static const TokenColorRole headerHeadlineColor = TokenColorRole.onSurfaceVariant;
-
-  /// md.comp.date-input.modal.header.headline.font
-  static const String headerHeadlineFont = 'Roboto';
+  static const TokenColorRole headerHeadlineColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.date-input.modal.header.headline.type
-  static const String headerHeadlineTypeFontFamily = 'Roboto';
-
-  /// md.comp.date-input.modal.header.headline.type
-  static const double headerHeadlineTypeFontSize = 32.00;
-
-  /// md.comp.date-input.modal.header.headline.type
-  static const double headerHeadlineTypeFontWeight = 400;
-
-  /// md.comp.date-input.modal.header.headline.type
-  static const double headerHeadlineTypeLetterSpacing = 0.00;
-
-  /// md.comp.date-input.modal.header.headline.type
-  static const double headerHeadlineTypeLineHeight = 40.00;
+  static const TypescaleStruct headerHeadlineType = TypescaleStruct(
+    fontFamily: 'Roboto',
+    fontSize: 32.00,
+    fontWeight: 400,
+    lineHeight: 40.00,
+    letterSpacing: 0.00,
+  );
 
   /// md.comp.date-input.modal.header.supporting-text.color
-  static const TokenColorRole headerSupportingTextColor = TokenColorRole.onSurfaceVariant;
-
-  /// md.comp.date-input.modal.header.supporting-text.font
-  static const String headerSupportingTextFont = 'Roboto';
+  static const TokenColorRole headerSupportingTextColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.date-input.modal.header.supporting-text.type
-  static const String headerSupportingTextTypeFontFamily = 'Roboto';
-
-  /// md.comp.date-input.modal.header.supporting-text.type
-  static const double headerSupportingTextTypeFontSize = 14.00;
-
-  /// md.comp.date-input.modal.header.supporting-text.type
-  static const double headerSupportingTextTypeFontWeight = 500;
-
-  /// md.comp.date-input.modal.header.supporting-text.type
-  static const double headerSupportingTextTypeLetterSpacing = 0.10;
-
-  /// md.comp.date-input.modal.header.supporting-text.type
-  static const double headerSupportingTextTypeLineHeight = 20.00;
+  static const TypescaleStruct headerSupportingTextType = TypescaleStruct(
+    fontFamily: 'Roboto',
+    fontSize: 14.00,
+    fontWeight: 500,
+    lineHeight: 20.00,
+    letterSpacing: 0.10,
+  );
 }

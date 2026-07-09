@@ -2,14 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.15
 
 import 'color_role.dart';
 import 'shape_struct.dart';
+import 'typescale_struct.dart';
 
 class TokenExtendedFabSurface {
   /// md.comp.extended-fab.surface.container.color
-  static const TokenColorRole containerColor = TokenColorRole.surfaceContainerHigh;
+  static const TokenColorRole containerColor =
+      TokenColorRole.surfaceContainerHigh;
 
   /// md.comp.extended-fab.surface.container.elevation
   static const double containerElevation = 6.00;
@@ -77,26 +79,18 @@ class TokenExtendedFabSurface {
   /// md.comp.extended-fab.surface.label-text.color
   static const TokenColorRole labelTextColor = TokenColorRole.primary;
 
-  /// md.comp.extended-fab.surface.label-text.font
-  static const String labelTextFont = 'Roboto';
-
   /// md.comp.extended-fab.surface.label-text.type
-  static const String labelTextTypeFontFamily = 'Roboto';
-
-  /// md.comp.extended-fab.surface.label-text.type
-  static const double labelTextTypeFontSize = 14.00;
-
-  /// md.comp.extended-fab.surface.label-text.type
-  static const double labelTextTypeFontWeight = 500;
-
-  /// md.comp.extended-fab.surface.label-text.type
-  static const double labelTextTypeLetterSpacing = 0.10;
-
-  /// md.comp.extended-fab.surface.label-text.type
-  static const double labelTextTypeLineHeight = 20.00;
+  static const TypescaleStruct labelTextType = TypescaleStruct(
+    fontFamily: 'Roboto',
+    fontSize: 14.00,
+    fontWeight: 500,
+    lineHeight: 20.00,
+    letterSpacing: 0.10,
+  );
 
   /// md.comp.extended-fab.surface.lowered.container.color
-  static const TokenColorRole loweredContainerColor = TokenColorRole.surfaceContainerLow;
+  static const TokenColorRole loweredContainerColor =
+      TokenColorRole.surfaceContainerLow;
 
   /// md.comp.extended-fab.surface.lowered.container.elevation
   static const double loweredContainerElevation = 1.00;

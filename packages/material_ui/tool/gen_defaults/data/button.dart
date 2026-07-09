@@ -2,10 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.15
 
 import 'color_role.dart';
 import 'shape_struct.dart';
+import 'typescale_struct.dart';
 
 class TokenButton {
   /// md.comp.button.container.color
@@ -59,6 +60,15 @@ class TokenButton {
   /// md.comp.button.disabled.label-text.opacity
   static const double disabledLabelTextOpacity = 0.38;
 
+  /// md.comp.button.focus.indicator.color
+  static const TokenColorRole focusIndicatorColor = TokenColorRole.secondary;
+
+  /// md.comp.button.focus.indicator.outline.offset
+  static const double focusIndicatorOutlineOffset = 2.00;
+
+  /// md.comp.button.focus.indicator.thickness
+  static const double focusIndicatorThickness = 3.00;
+
   /// md.comp.button.focused.container.elevation
   static const double focusedContainerElevation = 0.00;
 
@@ -73,15 +83,6 @@ class TokenButton {
 
   /// md.comp.button.focused.state-layer.opacity
   static const double focusedStateLayerOpacity = 0.10;
-
-  /// md.comp.button.focus.indicator.color
-  static const TokenColorRole focusIndicatorColor = TokenColorRole.secondary;
-
-  /// md.comp.button.focus.indicator.outline.offset
-  static const double focusIndicatorOutlineOffset = 2.00;
-
-  /// md.comp.button.focus.indicator.thickness
-  static const double focusIndicatorThickness = 3.00;
 
   /// md.comp.button.hovered.icon.color
   static const TokenColorRole hoveredIconColor = TokenColorRole.onPrimary;
@@ -104,29 +105,24 @@ class TokenButton {
   /// md.comp.button.icon.size
   static const double iconSize = 20.00;
 
+  /// md.comp.button.label-text
+  static const TypescaleStruct labelText = TypescaleStruct(
+    fontFamily: 'Roboto',
+    fontSize: 14.00,
+    fontWeight: 500,
+    lineHeight: 20.00,
+    letterSpacing: 0.10,
+  );
+
   /// md.comp.button.label-text.color
   static const TokenColorRole labelTextColor = TokenColorRole.onPrimary;
-
-  /// md.comp.button.label-text
-  static const String labelTextFontFamily = 'Roboto';
-
-  /// md.comp.button.label-text
-  static const double labelTextFontSize = 14.00;
-
-  /// md.comp.button.label-text
-  static const double labelTextFontWeight = 500;
-
-  /// md.comp.button.label-text
-  static const double labelTextLetterSpacing = 0.10;
-
-  /// md.comp.button.label-text
-  static const double labelTextLineHeight = 20.00;
 
   /// md.comp.button.label-text.selected.color
   static const TokenColorRole labelTextSelectedColor = TokenColorRole.onPrimary;
 
   /// md.comp.button.label-text.unselected.color
-  static const TokenColorRole labelTextUnselectedColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole labelTextUnselectedColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.button.leading-space
   static const double leadingSpace = 24.00;
@@ -183,68 +179,88 @@ class TokenButton {
   );
 
   /// md.comp.button.selected.focused.icon.color
-  static const TokenColorRole selectedFocusedIconColor = TokenColorRole.onPrimary;
+  static const TokenColorRole selectedFocusedIconColor =
+      TokenColorRole.onPrimary;
 
   /// md.comp.button.selected.focused.label-text.color
-  static const TokenColorRole selectedFocusedLabelTextColor = TokenColorRole.onPrimary;
+  static const TokenColorRole selectedFocusedLabelTextColor =
+      TokenColorRole.onPrimary;
 
   /// md.comp.button.selected.focused.state-layer.color
-  static const TokenColorRole selectedFocusedStateLayerColor = TokenColorRole.onPrimary;
+  static const TokenColorRole selectedFocusedStateLayerColor =
+      TokenColorRole.onPrimary;
 
   /// md.comp.button.selected.hovered.icon.color
-  static const TokenColorRole selectedHoveredIconColor = TokenColorRole.onPrimary;
+  static const TokenColorRole selectedHoveredIconColor =
+      TokenColorRole.onPrimary;
 
   /// md.comp.button.selected.hovered.label-text.color
-  static const TokenColorRole selectedHoveredLabelTextColor = TokenColorRole.onPrimary;
+  static const TokenColorRole selectedHoveredLabelTextColor =
+      TokenColorRole.onPrimary;
 
   /// md.comp.button.selected.hovered.state-layer.color
-  static const TokenColorRole selectedHoveredStateLayerColor = TokenColorRole.onPrimary;
+  static const TokenColorRole selectedHoveredStateLayerColor =
+      TokenColorRole.onPrimary;
 
   /// md.comp.button.selected.icon.color
   static const TokenColorRole selectedIconColor = TokenColorRole.onPrimary;
 
   /// md.comp.button.selected.pressed.icon.color
-  static const TokenColorRole selectedPressedIconColor = TokenColorRole.onPrimary;
+  static const TokenColorRole selectedPressedIconColor =
+      TokenColorRole.onPrimary;
 
   /// md.comp.button.selected.pressed.label-text.color
-  static const TokenColorRole selectedPressedLabelTextColor = TokenColorRole.onPrimary;
+  static const TokenColorRole selectedPressedLabelTextColor =
+      TokenColorRole.onPrimary;
 
   /// md.comp.button.selected.pressed.state-layer.color
-  static const TokenColorRole selectedPressedStateLayerColor = TokenColorRole.onPrimary;
+  static const TokenColorRole selectedPressedStateLayerColor =
+      TokenColorRole.onPrimary;
 
   /// md.comp.button.trailing-space
   static const double trailingSpace = 24.00;
 
   /// md.comp.button.unselected.container.color
-  static const TokenColorRole unselectedContainerColor = TokenColorRole.surfaceContainer;
+  static const TokenColorRole unselectedContainerColor =
+      TokenColorRole.surfaceContainer;
 
   /// md.comp.button.unselected.focused.icon.color
-  static const TokenColorRole unselectedFocusedIconColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole unselectedFocusedIconColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.button.unselected.focused.label-text.color
-  static const TokenColorRole unselectedFocusedLabelTextColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole unselectedFocusedLabelTextColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.button.unselected.focused.state-layer.color
-  static const TokenColorRole unselectedFocusedStateLayerColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole unselectedFocusedStateLayerColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.button.unselected.hovered.icon.color
-  static const TokenColorRole unselectedHoveredIconColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole unselectedHoveredIconColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.button.unselected.hovered.label-text.color
-  static const TokenColorRole unselectedHoveredLabelTextColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole unselectedHoveredLabelTextColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.button.unselected.hovered.state-layer.color
-  static const TokenColorRole unselectedHoveredStateLayerColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole unselectedHoveredStateLayerColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.button.unselected.icon.color
-  static const TokenColorRole unselectedIconColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole unselectedIconColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.button.unselected.pressed.icon.color
-  static const TokenColorRole unselectedPressedIconColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole unselectedPressedIconColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.button.unselected.pressed.label-text.color
-  static const TokenColorRole unselectedPressedLabelTextColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole unselectedPressedLabelTextColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.button.unselected.pressed.state-layer.color
-  static const TokenColorRole unselectedPressedStateLayerColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole unselectedPressedStateLayerColor =
+      TokenColorRole.onSurfaceVariant;
 }

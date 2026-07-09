@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.15
 
 import 'color_role.dart';
 import 'shape_struct.dart';
@@ -39,22 +39,26 @@ class TokenAppBar {
   static const double leadingSpace = 4.00;
 
   /// md.comp.app-bar.on-scroll.container.color
-  static const TokenColorRole onScrollContainerColor = TokenColorRole.surfaceContainer;
+  static const TokenColorRole onScrollContainerColor =
+      TokenColorRole.surfaceContainer;
 
   /// md.comp.app-bar.on-scroll.container.elevation
   static const double onScrollContainerElevation = 3.00;
 
   /// md.comp.app-bar.search.container.color
-  static const TokenColorRole searchContainerColor = TokenColorRole.surfaceContainer;
+  static const TokenColorRole searchContainerColor =
+      TokenColorRole.surfaceContainer;
 
   /// md.comp.app-bar.search.label.color
-  static const TokenColorRole searchLabelColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole searchLabelColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.app-bar.search.leading-space
   static const double searchLeadingSpace = 8.00;
 
   /// md.comp.app-bar.search.on-scroll.container.color
-  static const TokenColorRole searchOnScrollContainerColor = TokenColorRole.surfaceContainerHighest;
+  static const TokenColorRole searchOnScrollContainerColor =
+      TokenColorRole.surfaceContainerHighest;
 
   /// md.comp.app-bar.search.trailing-space
   static const double searchTrailingSpace = 8.00;
@@ -66,7 +70,8 @@ class TokenAppBar {
   static const TokenColorRole titleColor = TokenColorRole.onSurface;
 
   /// md.comp.app-bar.trailing-icon.color
-  static const TokenColorRole trailingIconColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole trailingIconColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.app-bar.trailing-space
   static const double trailingSpace = 4.00;

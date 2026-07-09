@@ -2,14 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.15
 
 import 'color_role.dart';
 import 'shape_struct.dart';
 
 class TokenListReveal {
   /// md.comp.list.reveal.list-item.action.icon-button.container.color
-  static const TokenColorRole listItemActionIconButtonContainerColor = TokenColorRole.primary;
+  static const TokenColorRole listItemActionIconButtonContainerColor =
+      TokenColorRole.primary;
 
   /// md.comp.list.reveal.list-item.action.icon-button.focused.state-layer.color
   static const TokenColorRole listItemActionIconButtonFocusedStateLayerColor =
@@ -20,7 +21,8 @@ class TokenListReveal {
       TokenColorRole.onPrimary;
 
   /// md.comp.list.reveal.list-item.action.icon-button.icon.color
-  static const TokenColorRole listItemActionIconButtonIconColor = TokenColorRole.onPrimary;
+  static const TokenColorRole listItemActionIconButtonIconColor =
+      TokenColorRole.onPrimary;
 
   /// md.comp.list.reveal.list-item.action.icon-button.pressed.state-layer.color
   static const TokenColorRole listItemActionIconButtonPressedStateLayerColor =
@@ -48,7 +50,8 @@ class TokenListReveal {
   );
 
   /// md.comp.list.reveal.list-item.icon-button.container.color
-  static const TokenColorRole listItemIconButtonContainerColor = TokenColorRole.secondaryContainer;
+  static const TokenColorRole listItemIconButtonContainerColor =
+      TokenColorRole.secondaryContainer;
 
   /// md.comp.list.reveal.list-item.icon-button.container.shape
   static const ShapeStruct listItemIconButtonContainerShape = ShapeStruct(
@@ -68,7 +71,8 @@ class TokenListReveal {
       TokenColorRole.onSecondaryContainer;
 
   /// md.comp.list.reveal.list-item.icon-button.icon.color
-  static const TokenColorRole listItemIconButtonIconColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole listItemIconButtonIconColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.list.reveal.list-item.icon-button.pressed.state-layer.color
   static const TokenColorRole listItemIconButtonPressedStateLayerColor =

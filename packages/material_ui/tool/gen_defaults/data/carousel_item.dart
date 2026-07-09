@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.15
 
 import 'color_role.dart';
 import 'shape_struct.dart';
@@ -72,16 +72,19 @@ class TokenCarouselItem {
   static const double pressedStateLayerOpacity = 0.10;
 
   /// md.comp.carousel-item.with-outline.disabled.outline.color
-  static const TokenColorRole withOutlineDisabledOutlineColor = TokenColorRole.outline;
+  static const TokenColorRole withOutlineDisabledOutlineColor =
+      TokenColorRole.outline;
 
   /// md.comp.carousel-item.with-outline.disabled.outline.opacity
   static const double withOutlineDisabledOutlineOpacity = 0.12;
 
   /// md.comp.carousel-item.with-outline.focus.outline.color
-  static const TokenColorRole withOutlineFocusOutlineColor = TokenColorRole.onSurface;
+  static const TokenColorRole withOutlineFocusOutlineColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.carousel-item.with-outline.hover.outline.color
-  static const TokenColorRole withOutlineHoverOutlineColor = TokenColorRole.outline;
+  static const TokenColorRole withOutlineHoverOutlineColor =
+      TokenColorRole.outline;
 
   /// md.comp.carousel-item.with-outline.outline.color
   static const TokenColorRole withOutlineOutlineColor = TokenColorRole.outline;
@@ -90,5 +93,6 @@ class TokenCarouselItem {
   static const double withOutlineOutlineWidth = 1.00;
 
   /// md.comp.carousel-item.with-outline.pressed.outline.color
-  static const TokenColorRole withOutlinePressedOutlineColor = TokenColorRole.outline;
+  static const TokenColorRole withOutlinePressedOutlineColor =
+      TokenColorRole.outline;
 }

@@ -2,14 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.15
 
 import 'color_role.dart';
 import 'shape_struct.dart';
+import 'typescale_struct.dart';
 
 class TokenDatePickerModal {
   /// md.comp.date-picker.modal.container.color
-  static const TokenColorRole containerColor = TokenColorRole.surfaceContainerHigh;
+  static const TokenColorRole containerColor =
+      TokenColorRole.surfaceContainerHigh;
 
   /// md.comp.date-picker.modal.container.elevation
   static const double containerElevation = 6.00;
@@ -50,41 +52,37 @@ class TokenDatePickerModal {
   /// md.comp.date-picker.modal.date.hover.state-layer.opacity
   static const double dateHoverStateLayerOpacity = 0.08;
 
-  /// md.comp.date-picker.modal.date.label-text.font
-  static const String dateLabelTextFont = 'Roboto';
-
   /// md.comp.date-picker.modal.date.label-text.type
-  static const String dateLabelTextTypeFontFamily = 'Roboto';
-
-  /// md.comp.date-picker.modal.date.label-text.type
-  static const double dateLabelTextTypeFontSize = 16.00;
-
-  /// md.comp.date-picker.modal.date.label-text.type
-  static const double dateLabelTextTypeFontWeight = 400;
-
-  /// md.comp.date-picker.modal.date.label-text.type
-  static const double dateLabelTextTypeLetterSpacing = 0.50;
-
-  /// md.comp.date-picker.modal.date.label-text.type
-  static const double dateLabelTextTypeLineHeight = 24.00;
+  static const TypescaleStruct dateLabelTextType = TypescaleStruct(
+    fontFamily: 'Roboto',
+    fontSize: 16.00,
+    fontWeight: 400,
+    lineHeight: 24.00,
+    letterSpacing: 0.50,
+  );
 
   /// md.comp.date-picker.modal.date.pressed.state-layer.opacity
   static const double datePressedStateLayerOpacity = 0.10;
 
   /// md.comp.date-picker.modal.date.selected.container.color
-  static const TokenColorRole dateSelectedContainerColor = TokenColorRole.primary;
+  static const TokenColorRole dateSelectedContainerColor =
+      TokenColorRole.primary;
 
   /// md.comp.date-picker.modal.date.selected.focus.state-layer.color
-  static const TokenColorRole dateSelectedFocusStateLayerColor = TokenColorRole.onPrimary;
+  static const TokenColorRole dateSelectedFocusStateLayerColor =
+      TokenColorRole.onPrimary;
 
   /// md.comp.date-picker.modal.date.selected.hover.state-layer.color
-  static const TokenColorRole dateSelectedHoverStateLayerColor = TokenColorRole.onPrimary;
+  static const TokenColorRole dateSelectedHoverStateLayerColor =
+      TokenColorRole.onPrimary;
 
   /// md.comp.date-picker.modal.date.selected.label-text.color
-  static const TokenColorRole dateSelectedLabelTextColor = TokenColorRole.onPrimary;
+  static const TokenColorRole dateSelectedLabelTextColor =
+      TokenColorRole.onPrimary;
 
   /// md.comp.date-picker.modal.date.selected.pressed.state-layer.color
-  static const TokenColorRole dateSelectedPressedStateLayerColor = TokenColorRole.onPrimary;
+  static const TokenColorRole dateSelectedPressedStateLayerColor =
+      TokenColorRole.onPrimary;
 
   /// md.comp.date-picker.modal.date.state-layer.height
   static const double dateStateLayerHeight = 40.00;
@@ -102,31 +100,38 @@ class TokenDatePickerModal {
   static const double dateStateLayerWidth = 40.00;
 
   /// md.comp.date-picker.modal.date.today.container.outline.color
-  static const TokenColorRole dateTodayContainerOutlineColor = TokenColorRole.primary;
+  static const TokenColorRole dateTodayContainerOutlineColor =
+      TokenColorRole.primary;
 
   /// md.comp.date-picker.modal.date.today.container.outline.width
   static const double dateTodayContainerOutlineWidth = 1.00;
 
   /// md.comp.date-picker.modal.date.today.focus.state-layer.color
-  static const TokenColorRole dateTodayFocusStateLayerColor = TokenColorRole.primary;
+  static const TokenColorRole dateTodayFocusStateLayerColor =
+      TokenColorRole.primary;
 
   /// md.comp.date-picker.modal.date.today.hover.state-layer.color
-  static const TokenColorRole dateTodayHoverStateLayerColor = TokenColorRole.primary;
+  static const TokenColorRole dateTodayHoverStateLayerColor =
+      TokenColorRole.primary;
 
   /// md.comp.date-picker.modal.date.today.label-text.color
   static const TokenColorRole dateTodayLabelTextColor = TokenColorRole.primary;
 
   /// md.comp.date-picker.modal.date.today.pressed.state-layer.color
-  static const TokenColorRole dateTodayPressedStateLayerColor = TokenColorRole.primary;
+  static const TokenColorRole dateTodayPressedStateLayerColor =
+      TokenColorRole.primary;
 
   /// md.comp.date-picker.modal.date.unselected.focus.state-layer.color
-  static const TokenColorRole dateUnselectedFocusStateLayerColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole dateUnselectedFocusStateLayerColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.date-picker.modal.date.unselected.hover.state-layer.color
-  static const TokenColorRole dateUnselectedHoverStateLayerColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole dateUnselectedHoverStateLayerColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.date-picker.modal.date.unselected.label-text.color
-  static const TokenColorRole dateUnselectedLabelTextColor = TokenColorRole.onSurface;
+  static const TokenColorRole dateUnselectedLabelTextColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.date-picker.modal.date.unselected.pressed.state-layer.color
   static const TokenColorRole dateUnselectedPressedStateLayerColor =
@@ -139,46 +144,30 @@ class TokenDatePickerModal {
   static const double headerContainerWidth = 360.00;
 
   /// md.comp.date-picker.modal.header.headline.color
-  static const TokenColorRole headerHeadlineColor = TokenColorRole.onSurfaceVariant;
-
-  /// md.comp.date-picker.modal.header.headline.font
-  static const String headerHeadlineFont = 'Roboto';
+  static const TokenColorRole headerHeadlineColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.date-picker.modal.header.headline.type
-  static const String headerHeadlineTypeFontFamily = 'Roboto';
-
-  /// md.comp.date-picker.modal.header.headline.type
-  static const double headerHeadlineTypeFontSize = 32.00;
-
-  /// md.comp.date-picker.modal.header.headline.type
-  static const double headerHeadlineTypeFontWeight = 400;
-
-  /// md.comp.date-picker.modal.header.headline.type
-  static const double headerHeadlineTypeLetterSpacing = 0.00;
-
-  /// md.comp.date-picker.modal.header.headline.type
-  static const double headerHeadlineTypeLineHeight = 40.00;
+  static const TypescaleStruct headerHeadlineType = TypescaleStruct(
+    fontFamily: 'Roboto',
+    fontSize: 32.00,
+    fontWeight: 400,
+    lineHeight: 40.00,
+    letterSpacing: 0.00,
+  );
 
   /// md.comp.date-picker.modal.header.supporting-text.color
-  static const TokenColorRole headerSupportingTextColor = TokenColorRole.onSurfaceVariant;
-
-  /// md.comp.date-picker.modal.header.supporting-text.font
-  static const String headerSupportingTextFont = 'Roboto';
+  static const TokenColorRole headerSupportingTextColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.date-picker.modal.header.supporting-text.type
-  static const String headerSupportingTextTypeFontFamily = 'Roboto';
-
-  /// md.comp.date-picker.modal.header.supporting-text.type
-  static const double headerSupportingTextTypeFontSize = 14.00;
-
-  /// md.comp.date-picker.modal.header.supporting-text.type
-  static const double headerSupportingTextTypeFontWeight = 500;
-
-  /// md.comp.date-picker.modal.header.supporting-text.type
-  static const double headerSupportingTextTypeLetterSpacing = 0.10;
-
-  /// md.comp.date-picker.modal.header.supporting-text.type
-  static const double headerSupportingTextTypeLineHeight = 20.00;
+  static const TypescaleStruct headerSupportingTextType = TypescaleStruct(
+    fontFamily: 'Roboto',
+    fontSize: 14.00,
+    fontWeight: 500,
+    lineHeight: 20.00,
+    letterSpacing: 0.10,
+  );
 
   /// md.comp.date-picker.modal.range-selection.active-indicator.container.color
   static const TokenColorRole rangeSelectionActiveIndicatorContainerColor =
@@ -188,13 +177,14 @@ class TokenDatePickerModal {
   static const double rangeSelectionActiveIndicatorContainerHeight = 40.00;
 
   /// md.comp.date-picker.modal.range-selection.active-indicator.container.shape
-  static const ShapeStruct rangeSelectionActiveIndicatorContainerShape = ShapeStruct(
-    family: 'SHAPE_FAMILY_CIRCULAR',
-    topLeft: 0.00,
-    topRight: 0.00,
-    bottomLeft: 0.00,
-    bottomRight: 0.00,
-  );
+  static const ShapeStruct rangeSelectionActiveIndicatorContainerShape =
+      ShapeStruct(
+        family: 'SHAPE_FAMILY_CIRCULAR',
+        topLeft: 0.00,
+        topRight: 0.00,
+        bottomLeft: 0.00,
+        bottomRight: 0.00,
+      );
 
   /// md.comp.date-picker.modal.range-selection.container.elevation
   static const double rangeSelectionContainerElevation = 0.00;
@@ -236,65 +226,40 @@ class TokenDatePickerModal {
   /// md.comp.date-picker.modal.range-selection.header.container.height
   static const double rangeSelectionHeaderContainerHeight = 128.00;
 
-  /// md.comp.date-picker.modal.range-selection.header.headline.font
-  static const String rangeSelectionHeaderHeadlineFont = 'Roboto';
-
   /// md.comp.date-picker.modal.range-selection.header.headline.type
-  static const String rangeSelectionHeaderHeadlineTypeFontFamily = 'Roboto';
-
-  /// md.comp.date-picker.modal.range-selection.header.headline.type
-  static const double rangeSelectionHeaderHeadlineTypeFontSize = 22.00;
-
-  /// md.comp.date-picker.modal.range-selection.header.headline.type
-  static const double rangeSelectionHeaderHeadlineTypeFontWeight = 400;
-
-  /// md.comp.date-picker.modal.range-selection.header.headline.type
-  static const double rangeSelectionHeaderHeadlineTypeLetterSpacing = 0.00;
-
-  /// md.comp.date-picker.modal.range-selection.header.headline.type
-  static const double rangeSelectionHeaderHeadlineTypeLineHeight = 28.00;
+  static const TypescaleStruct rangeSelectionHeaderHeadlineType =
+      TypescaleStruct(
+        fontFamily: 'Roboto',
+        fontSize: 22.00,
+        fontWeight: 400,
+        lineHeight: 28.00,
+        letterSpacing: 0.00,
+      );
 
   /// md.comp.date-picker.modal.range-selection.month.subhead.color
-  static const TokenColorRole rangeSelectionMonthSubheadColor = TokenColorRole.onSurfaceVariant;
-
-  /// md.comp.date-picker.modal.range-selection.month.subhead.font
-  static const String rangeSelectionMonthSubheadFont = 'Roboto';
+  static const TokenColorRole rangeSelectionMonthSubheadColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.date-picker.modal.range-selection.month.subhead.type
-  static const String rangeSelectionMonthSubheadTypeFontFamily = 'Roboto';
-
-  /// md.comp.date-picker.modal.range-selection.month.subhead.type
-  static const double rangeSelectionMonthSubheadTypeFontSize = 14.00;
-
-  /// md.comp.date-picker.modal.range-selection.month.subhead.type
-  static const double rangeSelectionMonthSubheadTypeFontWeight = 500;
-
-  /// md.comp.date-picker.modal.range-selection.month.subhead.type
-  static const double rangeSelectionMonthSubheadTypeLetterSpacing = 0.10;
-
-  /// md.comp.date-picker.modal.range-selection.month.subhead.type
-  static const double rangeSelectionMonthSubheadTypeLineHeight = 20.00;
+  static const TypescaleStruct rangeSelectionMonthSubheadType = TypescaleStruct(
+    fontFamily: 'Roboto',
+    fontSize: 14.00,
+    fontWeight: 500,
+    lineHeight: 20.00,
+    letterSpacing: 0.10,
+  );
 
   /// md.comp.date-picker.modal.weekdays.label-text.color
   static const TokenColorRole weekdaysLabelTextColor = TokenColorRole.onSurface;
 
-  /// md.comp.date-picker.modal.weekdays.label-text.font
-  static const String weekdaysLabelTextFont = 'Roboto';
-
   /// md.comp.date-picker.modal.weekdays.label-text.type
-  static const String weekdaysLabelTextTypeFontFamily = 'Roboto';
-
-  /// md.comp.date-picker.modal.weekdays.label-text.type
-  static const double weekdaysLabelTextTypeFontSize = 16.00;
-
-  /// md.comp.date-picker.modal.weekdays.label-text.type
-  static const double weekdaysLabelTextTypeFontWeight = 400;
-
-  /// md.comp.date-picker.modal.weekdays.label-text.type
-  static const double weekdaysLabelTextTypeLetterSpacing = 0.50;
-
-  /// md.comp.date-picker.modal.weekdays.label-text.type
-  static const double weekdaysLabelTextTypeLineHeight = 24.00;
+  static const TypescaleStruct weekdaysLabelTextType = TypescaleStruct(
+    fontFamily: 'Roboto',
+    fontSize: 16.00,
+    fontWeight: 400,
+    lineHeight: 24.00,
+    letterSpacing: 0.50,
+  );
 
   /// md.comp.date-picker.modal.year-selection.year.container.height
   static const double yearSelectionYearContainerHeight = 36.00;
@@ -308,29 +273,21 @@ class TokenDatePickerModal {
   /// md.comp.date-picker.modal.year-selection.year.hover.state-layer.opacity
   static const double yearSelectionYearHoverStateLayerOpacity = 0.08;
 
-  /// md.comp.date-picker.modal.year-selection.year.label-text.font
-  static const String yearSelectionYearLabelTextFont = 'Roboto';
-
   /// md.comp.date-picker.modal.year-selection.year.label-text.type
-  static const String yearSelectionYearLabelTextTypeFontFamily = 'Roboto';
-
-  /// md.comp.date-picker.modal.year-selection.year.label-text.type
-  static const double yearSelectionYearLabelTextTypeFontSize = 16.00;
-
-  /// md.comp.date-picker.modal.year-selection.year.label-text.type
-  static const double yearSelectionYearLabelTextTypeFontWeight = 400;
-
-  /// md.comp.date-picker.modal.year-selection.year.label-text.type
-  static const double yearSelectionYearLabelTextTypeLetterSpacing = 0.50;
-
-  /// md.comp.date-picker.modal.year-selection.year.label-text.type
-  static const double yearSelectionYearLabelTextTypeLineHeight = 24.00;
+  static const TypescaleStruct yearSelectionYearLabelTextType = TypescaleStruct(
+    fontFamily: 'Roboto',
+    fontSize: 16.00,
+    fontWeight: 400,
+    lineHeight: 24.00,
+    letterSpacing: 0.50,
+  );
 
   /// md.comp.date-picker.modal.year-selection.year.pressed.state-layer.opacity
   static const double yearSelectionYearPressedStateLayerOpacity = 0.10;
 
   /// md.comp.date-picker.modal.year-selection.year.selected.container.color
-  static const TokenColorRole yearSelectionYearSelectedContainerColor = TokenColorRole.primary;
+  static const TokenColorRole yearSelectionYearSelectedContainerColor =
+      TokenColorRole.primary;
 
   /// md.comp.date-picker.modal.year-selection.year.selected.focus.state-layer.color
   static const TokenColorRole yearSelectionYearSelectedFocusStateLayerColor =
@@ -341,7 +298,8 @@ class TokenDatePickerModal {
       TokenColorRole.onPrimary;
 
   /// md.comp.date-picker.modal.year-selection.year.selected.label-text.color
-  static const TokenColorRole yearSelectionYearSelectedLabelTextColor = TokenColorRole.onPrimary;
+  static const TokenColorRole yearSelectionYearSelectedLabelTextColor =
+      TokenColorRole.onPrimary;
 
   /// md.comp.date-picker.modal.year-selection.year.selected.pressed.state-layer.color
   static const TokenColorRole yearSelectionYearSelectedPressedStateLayerColor =
@@ -375,6 +333,7 @@ class TokenDatePickerModal {
       TokenColorRole.onSurfaceVariant;
 
   /// md.comp.date-picker.modal.year-selection.year.unselected.pressed.state-layer.color
-  static const TokenColorRole yearSelectionYearUnselectedPressedStateLayerColor =
+  static const TokenColorRole
+  yearSelectionYearUnselectedPressedStateLayerColor =
       TokenColorRole.onSurfaceVariant;
 }

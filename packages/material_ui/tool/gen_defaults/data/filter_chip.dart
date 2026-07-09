@@ -2,10 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.15
 
 import 'color_role.dart';
 import 'shape_struct.dart';
+import 'typescale_struct.dart';
 
 class TokenFilterChip {
   /// md.comp.filter-chip.container.height
@@ -33,10 +34,12 @@ class TokenFilterChip {
   static const double elevatedContainerElevation = 1.00;
 
   /// md.comp.filter-chip.elevated.container.shadow-color
-  static const TokenColorRole elevatedContainerShadowColor = TokenColorRole.shadow;
+  static const TokenColorRole elevatedContainerShadowColor =
+      TokenColorRole.shadow;
 
   /// md.comp.filter-chip.elevated.disabled.container.color
-  static const TokenColorRole elevatedDisabledContainerColor = TokenColorRole.onSurface;
+  static const TokenColorRole elevatedDisabledContainerColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.filter-chip.elevated.disabled.container.elevation
   static const double elevatedDisabledContainerElevation = 0.00;
@@ -54,28 +57,33 @@ class TokenFilterChip {
   static const double elevatedPressedContainerElevation = 1.00;
 
   /// md.comp.filter-chip.elevated.selected.container.color
-  static const TokenColorRole elevatedSelectedContainerColor = TokenColorRole.secondaryContainer;
+  static const TokenColorRole elevatedSelectedContainerColor =
+      TokenColorRole.secondaryContainer;
 
   /// md.comp.filter-chip.elevated.unselected.container.color
-  static const TokenColorRole elevatedUnselectedContainerColor = TokenColorRole.surfaceContainerLow;
+  static const TokenColorRole elevatedUnselectedContainerColor =
+      TokenColorRole.surfaceContainerLow;
 
   /// md.comp.filter-chip.flat.container.elevation
   static const double flatContainerElevation = 0.00;
 
   /// md.comp.filter-chip.flat.disabled.selected.container.color
-  static const TokenColorRole flatDisabledSelectedContainerColor = TokenColorRole.onSurface;
+  static const TokenColorRole flatDisabledSelectedContainerColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.filter-chip.flat.disabled.selected.container.opacity
   static const double flatDisabledSelectedContainerOpacity = 0.12;
 
   /// md.comp.filter-chip.flat.disabled.unselected.outline.color
-  static const TokenColorRole flatDisabledUnselectedOutlineColor = TokenColorRole.onSurface;
+  static const TokenColorRole flatDisabledUnselectedOutlineColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.filter-chip.flat.disabled.unselected.outline.opacity
   static const double flatDisabledUnselectedOutlineOpacity = 0.12;
 
   /// md.comp.filter-chip.flat.selected.container.color
-  static const TokenColorRole flatSelectedContainerColor = TokenColorRole.secondaryContainer;
+  static const TokenColorRole flatSelectedContainerColor =
+      TokenColorRole.secondaryContainer;
 
   /// md.comp.filter-chip.flat.selected.focus.container.elevation
   static const double flatSelectedFocusContainerElevation = 0.00;
@@ -93,13 +101,15 @@ class TokenFilterChip {
   static const double flatUnselectedFocusContainerElevation = 0.00;
 
   /// md.comp.filter-chip.flat.unselected.focus.outline.color
-  static const TokenColorRole flatUnselectedFocusOutlineColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole flatUnselectedFocusOutlineColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.filter-chip.flat.unselected.hover.container.elevation
   static const double flatUnselectedHoverContainerElevation = 0.00;
 
   /// md.comp.filter-chip.flat.unselected.outline.color
-  static const TokenColorRole flatUnselectedOutlineColor = TokenColorRole.outlineVariant;
+  static const TokenColorRole flatUnselectedOutlineColor =
+      TokenColorRole.outlineVariant;
 
   /// md.comp.filter-chip.flat.unselected.outline.width
   static const double flatUnselectedOutlineWidth = 1.00;
@@ -116,95 +126,103 @@ class TokenFilterChip {
   /// md.comp.filter-chip.focus.indicator.thickness
   static const double focusIndicatorThickness = 3.00;
 
-  /// md.comp.filter-chip.label-text.font
-  static const String labelTextFont = 'Roboto';
-
   /// md.comp.filter-chip.label-text.type
-  static const String labelTextTypeFontFamily = 'Roboto';
-
-  /// md.comp.filter-chip.label-text.type
-  static const double labelTextTypeFontSize = 14.00;
-
-  /// md.comp.filter-chip.label-text.type
-  static const double labelTextTypeFontWeight = 500;
-
-  /// md.comp.filter-chip.label-text.type
-  static const double labelTextTypeLetterSpacing = 0.10;
-
-  /// md.comp.filter-chip.label-text.type
-  static const double labelTextTypeLineHeight = 20.00;
+  static const TypescaleStruct labelTextType = TypescaleStruct(
+    fontFamily: 'Roboto',
+    fontSize: 14.00,
+    fontWeight: 500,
+    lineHeight: 20.00,
+    letterSpacing: 0.10,
+  );
 
   /// md.comp.filter-chip.selected.dragged.label-text.color
-  static const TokenColorRole selectedDraggedLabelTextColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole selectedDraggedLabelTextColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.filter-chip.selected.dragged.state-layer.color
-  static const TokenColorRole selectedDraggedStateLayerColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole selectedDraggedStateLayerColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.filter-chip.selected.dragged.state-layer.opacity
   static const double selectedDraggedStateLayerOpacity = 0.16;
 
   /// md.comp.filter-chip.selected.focus.label-text.color
-  static const TokenColorRole selectedFocusLabelTextColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole selectedFocusLabelTextColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.filter-chip.selected.focus.state-layer.color
-  static const TokenColorRole selectedFocusStateLayerColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole selectedFocusStateLayerColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.filter-chip.selected.focus.state-layer.opacity
   static const double selectedFocusStateLayerOpacity = 0.10;
 
   /// md.comp.filter-chip.selected.hover.label-text.color
-  static const TokenColorRole selectedHoverLabelTextColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole selectedHoverLabelTextColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.filter-chip.selected.hover.state-layer.color
-  static const TokenColorRole selectedHoverStateLayerColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole selectedHoverStateLayerColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.filter-chip.selected.hover.state-layer.opacity
   static const double selectedHoverStateLayerOpacity = 0.08;
 
   /// md.comp.filter-chip.selected.label-text.color
-  static const TokenColorRole selectedLabelTextColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole selectedLabelTextColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.filter-chip.selected.pressed.label-text.color
-  static const TokenColorRole selectedPressedLabelTextColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole selectedPressedLabelTextColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.filter-chip.selected.pressed.state-layer.color
-  static const TokenColorRole selectedPressedStateLayerColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole selectedPressedStateLayerColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.filter-chip.selected.pressed.state-layer.opacity
   static const double selectedPressedStateLayerOpacity = 0.10;
 
   /// md.comp.filter-chip.unselected.dragged.label-text.color
-  static const TokenColorRole unselectedDraggedLabelTextColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole unselectedDraggedLabelTextColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.filter-chip.unselected.dragged.state-layer.color
-  static const TokenColorRole unselectedDraggedStateLayerColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole unselectedDraggedStateLayerColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.filter-chip.unselected.dragged.state-layer.opacity
   static const double unselectedDraggedStateLayerOpacity = 0.16;
 
   /// md.comp.filter-chip.unselected.focus.label-text.color
-  static const TokenColorRole unselectedFocusLabelTextColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole unselectedFocusLabelTextColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.filter-chip.unselected.focus.state-layer.color
-  static const TokenColorRole unselectedFocusStateLayerColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole unselectedFocusStateLayerColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.filter-chip.unselected.focus.state-layer.opacity
   static const double unselectedFocusStateLayerOpacity = 0.10;
 
   /// md.comp.filter-chip.unselected.hover.label-text.color
-  static const TokenColorRole unselectedHoverLabelTextColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole unselectedHoverLabelTextColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.filter-chip.unselected.hover.state-layer.color
-  static const TokenColorRole unselectedHoverStateLayerColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole unselectedHoverStateLayerColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.filter-chip.unselected.hover.state-layer.opacity
   static const double unselectedHoverStateLayerOpacity = 0.08;
 
   /// md.comp.filter-chip.unselected.label-text.color
-  static const TokenColorRole unselectedLabelTextColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole unselectedLabelTextColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.filter-chip.unselected.pressed.label-text.color
-  static const TokenColorRole unselectedPressedLabelTextColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole unselectedPressedLabelTextColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.filter-chip.unselected.pressed.state-layer.color
   static const TokenColorRole unselectedPressedStateLayerColor =
@@ -217,7 +235,8 @@ class TokenFilterChip {
   static const double withIconIconSize = 18.00;
 
   /// md.comp.filter-chip.with-leading-icon.disabled.leading-icon.color
-  static const TokenColorRole withLeadingIconDisabledLeadingIconColor = TokenColorRole.onSurface;
+  static const TokenColorRole withLeadingIconDisabledLeadingIconColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.filter-chip.with-leading-icon.disabled.leading-icon.opacity
   static const double withLeadingIconDisabledLeadingIconOpacity = 0.38;
@@ -255,14 +274,16 @@ class TokenFilterChip {
       TokenColorRole.primary;
 
   /// md.comp.filter-chip.with-leading-icon.unselected.leading-icon.color
-  static const TokenColorRole withLeadingIconUnselectedLeadingIconColor = TokenColorRole.primary;
+  static const TokenColorRole withLeadingIconUnselectedLeadingIconColor =
+      TokenColorRole.primary;
 
   /// md.comp.filter-chip.with-leading-icon.unselected.pressed.leading-icon.color
   static const TokenColorRole withLeadingIconUnselectedPressedLeadingIconColor =
       TokenColorRole.primary;
 
   /// md.comp.filter-chip.with-trailing-icon.disabled.trailing-icon.color
-  static const TokenColorRole withTrailingIconDisabledTrailingIconColor = TokenColorRole.onSurface;
+  static const TokenColorRole withTrailingIconDisabledTrailingIconColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.filter-chip.with-trailing-icon.disabled.trailing-icon.opacity
   static const double withTrailingIconDisabledTrailingIconOpacity = 0.38;
@@ -288,7 +309,8 @@ class TokenFilterChip {
       TokenColorRole.onSecondaryContainer;
 
   /// md.comp.filter-chip.with-trailing-icon.unselected.dragged.trailing-icon.color
-  static const TokenColorRole withTrailingIconUnselectedDraggedTrailingIconColor =
+  static const TokenColorRole
+  withTrailingIconUnselectedDraggedTrailingIconColor =
       TokenColorRole.onSurfaceVariant;
 
   /// md.comp.filter-chip.with-trailing-icon.unselected.focus.trailing-icon.color
@@ -300,7 +322,8 @@ class TokenFilterChip {
       TokenColorRole.onSurfaceVariant;
 
   /// md.comp.filter-chip.with-trailing-icon.unselected.pressed.trailing-icon.color
-  static const TokenColorRole withTrailingIconUnselectedPressedTrailingIconColor =
+  static const TokenColorRole
+  withTrailingIconUnselectedPressedTrailingIconColor =
       TokenColorRole.onSurfaceVariant;
 
   /// md.comp.filter-chip.with-trailing-icon.unselected.trailing-icon.color

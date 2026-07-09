@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.15
 
 import 'color_role.dart';
 
@@ -23,7 +23,8 @@ class TokenFabSecondary {
   static const TokenColorRole focusedIconColor = TokenColorRole.onSecondary;
 
   /// md.comp.fab.secondary.focused.state-layer.color
-  static const TokenColorRole focusedStateLayerColor = TokenColorRole.onSecondary;
+  static const TokenColorRole focusedStateLayerColor =
+      TokenColorRole.onSecondary;
 
   /// md.comp.fab.secondary.focused.state-layer.opacity
   static const double focusedStateLayerOpacity = 0.10;
@@ -35,7 +36,8 @@ class TokenFabSecondary {
   static const TokenColorRole hoveredIconColor = TokenColorRole.onSecondary;
 
   /// md.comp.fab.secondary.hovered.state-layer.color
-  static const TokenColorRole hoveredStateLayerColor = TokenColorRole.onSecondary;
+  static const TokenColorRole hoveredStateLayerColor =
+      TokenColorRole.onSecondary;
 
   /// md.comp.fab.secondary.hovered.state-layer.opacity
   static const double hoveredStateLayerOpacity = 0.08;
@@ -50,7 +52,8 @@ class TokenFabSecondary {
   static const TokenColorRole pressedIconColor = TokenColorRole.onSecondary;
 
   /// md.comp.fab.secondary.pressed.state-layer.color
-  static const TokenColorRole pressedStateLayerColor = TokenColorRole.onSecondary;
+  static const TokenColorRole pressedStateLayerColor =
+      TokenColorRole.onSecondary;
 
   /// md.comp.fab.secondary.pressed.state-layer.opacity
   static const double pressedStateLayerOpacity = 0.10;

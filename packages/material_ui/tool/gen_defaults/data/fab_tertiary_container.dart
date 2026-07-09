@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.15
 
 import 'color_role.dart';
 
@@ -20,10 +20,12 @@ class TokenFabTertiaryContainer {
   static const double focusedContainerElevation = 6.00;
 
   /// md.comp.fab.tertiary-container.focused.icon.color
-  static const TokenColorRole focusedIconColor = TokenColorRole.onTertiaryContainer;
+  static const TokenColorRole focusedIconColor =
+      TokenColorRole.onTertiaryContainer;
 
   /// md.comp.fab.tertiary-container.focused.state-layer.color
-  static const TokenColorRole focusedStateLayerColor = TokenColorRole.onTertiaryContainer;
+  static const TokenColorRole focusedStateLayerColor =
+      TokenColorRole.onTertiaryContainer;
 
   /// md.comp.fab.tertiary-container.focused.state-layer.opacity
   static const double focusedStateLayerOpacity = 0.10;
@@ -32,10 +34,12 @@ class TokenFabTertiaryContainer {
   static const double hoveredContainerElevation = 8.00;
 
   /// md.comp.fab.tertiary-container.hovered.icon.color
-  static const TokenColorRole hoveredIconColor = TokenColorRole.onTertiaryContainer;
+  static const TokenColorRole hoveredIconColor =
+      TokenColorRole.onTertiaryContainer;
 
   /// md.comp.fab.tertiary-container.hovered.state-layer.color
-  static const TokenColorRole hoveredStateLayerColor = TokenColorRole.onTertiaryContainer;
+  static const TokenColorRole hoveredStateLayerColor =
+      TokenColorRole.onTertiaryContainer;
 
   /// md.comp.fab.tertiary-container.hovered.state-layer.opacity
   static const double hoveredStateLayerOpacity = 0.08;
@@ -47,10 +51,12 @@ class TokenFabTertiaryContainer {
   static const double pressedContainerElevation = 6.00;
 
   /// md.comp.fab.tertiary-container.pressed.icon.color
-  static const TokenColorRole pressedIconColor = TokenColorRole.onTertiaryContainer;
+  static const TokenColorRole pressedIconColor =
+      TokenColorRole.onTertiaryContainer;
 
   /// md.comp.fab.tertiary-container.pressed.state-layer.color
-  static const TokenColorRole pressedStateLayerColor = TokenColorRole.onTertiaryContainer;
+  static const TokenColorRole pressedStateLayerColor =
+      TokenColorRole.onTertiaryContainer;
 
   /// md.comp.fab.tertiary-container.pressed.state-layer.opacity
   static const double pressedStateLayerOpacity = 0.10;

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.15
 
 import 'package:flutter/animation.dart';
 
@@ -54,6 +54,10 @@ class TokenMotionExpressive {
 
   /// md.sys.motion.duration.short4
   static const Duration durationShort4 = Duration(milliseconds: 200);
+
+  /// md.sys.motion.easing.emphasized
+  static const String easingEmphasized =
+      'M 0,0 C 0.05, 0, 0.133333, 0.06, 0.166666, 0.4 C 0.208333, 0.82, 0.25, 1, 1, 1';
 
   /// md.sys.motion.easing.emphasized.accelerate
   static const Cubic easingEmphasizedAccelerate = Cubic(0.30, 0.00, 0.80, 0.15);

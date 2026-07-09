@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.15
 
 class TokenColorDark {
   /// md.sys.color.background
@@ -38,11 +38,23 @@ class TokenColorDark {
   /// md.sys.color.on-primary-container
   static const String onPrimaryContainer = '0xFFEADDFF';
 
+  /// md.sys.color.on-primary-fixed
+  static const String onPrimaryFixed = '0xFF21005D';
+
+  /// md.sys.color.on-primary-fixed-variant
+  static const String onPrimaryFixedVariant = '0xFF4F378B';
+
   /// md.sys.color.on-secondary
   static const String onSecondary = '0xFF332D41';
 
   /// md.sys.color.on-secondary-container
   static const String onSecondaryContainer = '0xFFE8DEF8';
+
+  /// md.sys.color.on-secondary-fixed
+  static const String onSecondaryFixed = '0xFF1D192B';
+
+  /// md.sys.color.on-secondary-fixed-variant
+  static const String onSecondaryFixedVariant = '0xFF4A4458';
 
   /// md.sys.color.on-surface
   static const String onSurface = '0xFFE6E0E9';
@@ -56,6 +68,12 @@ class TokenColorDark {
   /// md.sys.color.on-tertiary-container
   static const String onTertiaryContainer = '0xFFFFD8E4';
 
+  /// md.sys.color.on-tertiary-fixed
+  static const String onTertiaryFixed = '0xFF31111D';
+
+  /// md.sys.color.on-tertiary-fixed-variant
+  static const String onTertiaryFixedVariant = '0xFF633B48';
+
   /// md.sys.color.outline
   static const String outline = '0xFF938F99';
 
@@ -68,6 +86,12 @@ class TokenColorDark {
   /// md.sys.color.primary-container
   static const String primaryContainer = '0xFF4F378B';
 
+  /// md.sys.color.primary-fixed
+  static const String primaryFixed = '0xFFEADDFF';
+
+  /// md.sys.color.primary-fixed-dim
+  static const String primaryFixedDim = '0xFFD0BCFF';
+
   /// md.sys.color.scrim
   static const String scrim = '0xFF000000';
 
@@ -76,6 +100,12 @@ class TokenColorDark {
 
   /// md.sys.color.secondary-container
   static const String secondaryContainer = '0xFF4A4458';
+
+  /// md.sys.color.secondary-fixed
+  static const String secondaryFixed = '0xFFE8DEF8';
+
+  /// md.sys.color.secondary-fixed-dim
+  static const String secondaryFixedDim = '0xFFCCC2DC';
 
   /// md.sys.color.shadow
   static const String shadow = '0xFF000000';
@@ -112,4 +142,10 @@ class TokenColorDark {
 
   /// md.sys.color.tertiary-container
   static const String tertiaryContainer = '0xFF633B48';
+
+  /// md.sys.color.tertiary-fixed
+  static const String tertiaryFixed = '0xFFFFD8E4';
+
+  /// md.sys.color.tertiary-fixed-dim
+  static const String tertiaryFixedDim = '0xFFEFB8C8';
 }

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.15
 
 import 'color_role.dart';
 
@@ -20,7 +20,8 @@ class TokenFabMenuTertiaryCloseButton {
   static const TokenColorRole focusedIconColor = TokenColorRole.onTertiary;
 
   /// md.comp.fab-menu.tertiary.close-button.focused.state-layer.color
-  static const TokenColorRole focusedStateLayerColor = TokenColorRole.onTertiary;
+  static const TokenColorRole focusedStateLayerColor =
+      TokenColorRole.onTertiary;
 
   /// md.comp.fab-menu.tertiary.close-button.focused.state-layer.opacity
   static const double focusedStateLayerOpacity = 0.10;
@@ -32,7 +33,8 @@ class TokenFabMenuTertiaryCloseButton {
   static const TokenColorRole hoveredIconColor = TokenColorRole.onTertiary;
 
   /// md.comp.fab-menu.tertiary.close-button.hovered.state-layer.color
-  static const TokenColorRole hoveredStateLayerColor = TokenColorRole.onTertiary;
+  static const TokenColorRole hoveredStateLayerColor =
+      TokenColorRole.onTertiary;
 
   /// md.comp.fab-menu.tertiary.close-button.hovered.state-layer.opacity
   static const double hoveredStateLayerOpacity = 0.08;
@@ -47,7 +49,8 @@ class TokenFabMenuTertiaryCloseButton {
   static const TokenColorRole pressedIconColor = TokenColorRole.onTertiary;
 
   /// md.comp.fab-menu.tertiary.close-button.pressed.state-layer.color
-  static const TokenColorRole pressedStateLayerColor = TokenColorRole.onTertiary;
+  static const TokenColorRole pressedStateLayerColor =
+      TokenColorRole.onTertiary;
 
   /// md.comp.fab-menu.tertiary.close-button.pressed.state-layer.opacity
   static const double pressedStateLayerOpacity = 0.10;

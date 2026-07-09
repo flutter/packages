@@ -2,13 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.15
 
 import 'color_role.dart';
 
 class TokenButtonElevated {
   /// md.comp.button.elevated.container.color
-  static const TokenColorRole containerColor = TokenColorRole.surfaceContainerLow;
+  static const TokenColorRole containerColor =
+      TokenColorRole.surfaceContainerLow;
 
   /// md.comp.button.elevated.container.elevation
   static const double containerElevation = 1.00;
@@ -89,22 +90,28 @@ class TokenButtonElevated {
   static const TokenColorRole selectedContainerColor = TokenColorRole.primary;
 
   /// md.comp.button.elevated.selected.focused.icon.color
-  static const TokenColorRole selectedFocusedIconColor = TokenColorRole.onPrimary;
+  static const TokenColorRole selectedFocusedIconColor =
+      TokenColorRole.onPrimary;
 
   /// md.comp.button.elevated.selected.focused.label-text.color
-  static const TokenColorRole selectedFocusedLabelTextColor = TokenColorRole.onPrimary;
+  static const TokenColorRole selectedFocusedLabelTextColor =
+      TokenColorRole.onPrimary;
 
   /// md.comp.button.elevated.selected.focused.state-layer.color
-  static const TokenColorRole selectedFocusedStateLayerColor = TokenColorRole.onPrimary;
+  static const TokenColorRole selectedFocusedStateLayerColor =
+      TokenColorRole.onPrimary;
 
   /// md.comp.button.elevated.selected.hovered.icon.color
-  static const TokenColorRole selectedHoveredIconColor = TokenColorRole.onPrimary;
+  static const TokenColorRole selectedHoveredIconColor =
+      TokenColorRole.onPrimary;
 
   /// md.comp.button.elevated.selected.hovered.label-text.color
-  static const TokenColorRole selectedHoveredLabelTextColor = TokenColorRole.onPrimary;
+  static const TokenColorRole selectedHoveredLabelTextColor =
+      TokenColorRole.onPrimary;
 
   /// md.comp.button.elevated.selected.hovered.state-layer.color
-  static const TokenColorRole selectedHoveredStateLayerColor = TokenColorRole.onPrimary;
+  static const TokenColorRole selectedHoveredStateLayerColor =
+      TokenColorRole.onPrimary;
 
   /// md.comp.button.elevated.selected.icon.color
   static const TokenColorRole selectedIconColor = TokenColorRole.onPrimary;
@@ -113,34 +120,44 @@ class TokenButtonElevated {
   static const TokenColorRole selectedLabelTextColor = TokenColorRole.onPrimary;
 
   /// md.comp.button.elevated.selected.pressed.icon.color
-  static const TokenColorRole selectedPressedIconColor = TokenColorRole.onPrimary;
+  static const TokenColorRole selectedPressedIconColor =
+      TokenColorRole.onPrimary;
 
   /// md.comp.button.elevated.selected.pressed.label-text.color
-  static const TokenColorRole selectedPressedLabelTextColor = TokenColorRole.onPrimary;
+  static const TokenColorRole selectedPressedLabelTextColor =
+      TokenColorRole.onPrimary;
 
   /// md.comp.button.elevated.selected.pressed.state-layer.color
-  static const TokenColorRole selectedPressedStateLayerColor = TokenColorRole.onPrimary;
+  static const TokenColorRole selectedPressedStateLayerColor =
+      TokenColorRole.onPrimary;
 
   /// md.comp.button.elevated.unselected.container.color
-  static const TokenColorRole unselectedContainerColor = TokenColorRole.surfaceContainerLow;
+  static const TokenColorRole unselectedContainerColor =
+      TokenColorRole.surfaceContainerLow;
 
   /// md.comp.button.elevated.unselected.focused.icon.color
-  static const TokenColorRole unselectedFocusedIconColor = TokenColorRole.primary;
+  static const TokenColorRole unselectedFocusedIconColor =
+      TokenColorRole.primary;
 
   /// md.comp.button.elevated.unselected.focused.label-text.color
-  static const TokenColorRole unselectedFocusedLabelTextColor = TokenColorRole.primary;
+  static const TokenColorRole unselectedFocusedLabelTextColor =
+      TokenColorRole.primary;
 
   /// md.comp.button.elevated.unselected.focused.state-layer.color
-  static const TokenColorRole unselectedFocusedStateLayerColor = TokenColorRole.primary;
+  static const TokenColorRole unselectedFocusedStateLayerColor =
+      TokenColorRole.primary;
 
   /// md.comp.button.elevated.unselected.hovered.icon.color
-  static const TokenColorRole unselectedHoveredIconColor = TokenColorRole.primary;
+  static const TokenColorRole unselectedHoveredIconColor =
+      TokenColorRole.primary;
 
   /// md.comp.button.elevated.unselected.hovered.label-text.color
-  static const TokenColorRole unselectedHoveredLabelTextColor = TokenColorRole.primary;
+  static const TokenColorRole unselectedHoveredLabelTextColor =
+      TokenColorRole.primary;
 
   /// md.comp.button.elevated.unselected.hovered.state-layer.color
-  static const TokenColorRole unselectedHoveredStateLayerColor = TokenColorRole.primary;
+  static const TokenColorRole unselectedHoveredStateLayerColor =
+      TokenColorRole.primary;
 
   /// md.comp.button.elevated.unselected.icon.color
   static const TokenColorRole unselectedIconColor = TokenColorRole.primary;
@@ -149,11 +166,14 @@ class TokenButtonElevated {
   static const TokenColorRole unselectedLabelTextColor = TokenColorRole.primary;
 
   /// md.comp.button.elevated.unselected.pressed.icon.color
-  static const TokenColorRole unselectedPressedIconColor = TokenColorRole.primary;
+  static const TokenColorRole unselectedPressedIconColor =
+      TokenColorRole.primary;
 
   /// md.comp.button.elevated.unselected.pressed.label-text.color
-  static const TokenColorRole unselectedPressedLabelTextColor = TokenColorRole.primary;
+  static const TokenColorRole unselectedPressedLabelTextColor =
+      TokenColorRole.primary;
 
   /// md.comp.button.elevated.unselected.pressed.state-layer.color
-  static const TokenColorRole unselectedPressedStateLayerColor = TokenColorRole.primary;
+  static const TokenColorRole unselectedPressedStateLayerColor =
+      TokenColorRole.primary;
 }

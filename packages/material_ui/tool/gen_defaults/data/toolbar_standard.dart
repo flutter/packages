@@ -2,14 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.15
 
 import 'color_role.dart';
 import 'shape_struct.dart';
 
 class TokenToolbarStandard {
   /// md.comp.toolbar.standard.button.container.color
-  static const TokenColorRole buttonContainerColor = TokenColorRole.surfaceContainer;
+  static const TokenColorRole buttonContainerColor =
+      TokenColorRole.surfaceContainer;
 
   /// md.comp.toolbar.standard.container.color
   static const TokenColorRole containerColor = TokenColorRole.surfaceContainer;
@@ -36,25 +37,31 @@ class TokenToolbarStandard {
   static const double disabledLabelTextOpacity = 0.38;
 
   /// md.comp.toolbar.standard.focused.icon.color
-  static const TokenColorRole focusedIconColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole focusedIconColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.toolbar.standard.focused.label-text.color
-  static const TokenColorRole focusedLabelTextColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole focusedLabelTextColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.toolbar.standard.focused.state-layer.color
-  static const TokenColorRole focusedStateLayerColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole focusedStateLayerColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.toolbar.standard.focused.state-layer.opacity
   static const double focusedStateLayerOpacity = 0.10;
 
   /// md.comp.toolbar.standard.hovered.icon.color
-  static const TokenColorRole hoveredIconColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole hoveredIconColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.toolbar.standard.hovered.label-text.color
-  static const TokenColorRole hoveredLabelTextColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole hoveredLabelTextColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.toolbar.standard.hovered.state-layer.color
-  static const TokenColorRole hoveredStateLayerColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole hoveredStateLayerColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.toolbar.standard.hovered.state-layer.opacity
   static const double hoveredStateLayerOpacity = 0.08;
@@ -66,50 +73,65 @@ class TokenToolbarStandard {
   static const TokenColorRole labelTextColor = TokenColorRole.onSurfaceVariant;
 
   /// md.comp.toolbar.standard.pressed.icon.color
-  static const TokenColorRole pressedIconColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole pressedIconColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.toolbar.standard.pressed.label-text.color
-  static const TokenColorRole pressedLabelTextColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole pressedLabelTextColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.toolbar.standard.pressed.state-layer.color
-  static const TokenColorRole pressedStateLayerColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole pressedStateLayerColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.toolbar.standard.pressed.state-layer.opacity
   static const double pressedStateLayerOpacity = 0.10;
 
   /// md.comp.toolbar.standard.selected.button.container.color
-  static const TokenColorRole selectedButtonContainerColor = TokenColorRole.secondaryContainer;
+  static const TokenColorRole selectedButtonContainerColor =
+      TokenColorRole.secondaryContainer;
 
   /// md.comp.toolbar.standard.selected.focused.icon.color
-  static const TokenColorRole selectedFocusedIconColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole selectedFocusedIconColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.toolbar.standard.selected.focused.label-text.color
-  static const TokenColorRole selectedFocusedLabelTextColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole selectedFocusedLabelTextColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.toolbar.standard.selected.focused.state-layer.color
-  static const TokenColorRole selectedFocusedStateLayerColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole selectedFocusedStateLayerColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.toolbar.standard.selected.hovered.icon.color
-  static const TokenColorRole selectedHoveredIconColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole selectedHoveredIconColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.toolbar.standard.selected.hovered.label-text.color
-  static const TokenColorRole selectedHoveredLabelTextColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole selectedHoveredLabelTextColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.toolbar.standard.selected.hovered.state-layer.color
-  static const TokenColorRole selectedHoveredStateLayerColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole selectedHoveredStateLayerColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.toolbar.standard.selected.icon.color
-  static const TokenColorRole selectedIconColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole selectedIconColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.toolbar.standard.selected.label-text.color
-  static const TokenColorRole selectedLabelTextColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole selectedLabelTextColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.toolbar.standard.selected.pressed.icon.color
-  static const TokenColorRole selectedPressedIconColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole selectedPressedIconColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.toolbar.standard.selected.pressed.label-text.color
-  static const TokenColorRole selectedPressedLabelTextColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole selectedPressedLabelTextColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.toolbar.standard.selected.pressed.state-layer.color
-  static const TokenColorRole selectedPressedStateLayerColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole selectedPressedStateLayerColor =
+      TokenColorRole.onSecondaryContainer;
 }

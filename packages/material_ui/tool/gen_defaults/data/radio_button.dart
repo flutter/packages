@@ -2,19 +2,21 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.15
 
 import 'color_role.dart';
 
 class TokenRadioButton {
   /// md.comp.radio-button.disabled.selected.icon.color
-  static const TokenColorRole disabledSelectedIconColor = TokenColorRole.onSurface;
+  static const TokenColorRole disabledSelectedIconColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.radio-button.disabled.selected.icon.opacity
   static const double disabledSelectedIconOpacity = 0.38;
 
   /// md.comp.radio-button.disabled.unselected.icon.color
-  static const TokenColorRole disabledUnselectedIconColor = TokenColorRole.onSurface;
+  static const TokenColorRole disabledUnselectedIconColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.radio-button.disabled.unselected.icon.opacity
   static const double disabledUnselectedIconOpacity = 0.38;
@@ -26,7 +28,8 @@ class TokenRadioButton {
   static const TokenColorRole selectedFocusIconColor = TokenColorRole.primary;
 
   /// md.comp.radio-button.selected.focus.state-layer.color
-  static const TokenColorRole selectedFocusStateLayerColor = TokenColorRole.primary;
+  static const TokenColorRole selectedFocusStateLayerColor =
+      TokenColorRole.primary;
 
   /// md.comp.radio-button.selected.focus.state-layer.opacity
   static const double selectedFocusStateLayerOpacity = 0.10;
@@ -35,7 +38,8 @@ class TokenRadioButton {
   static const TokenColorRole selectedHoverIconColor = TokenColorRole.primary;
 
   /// md.comp.radio-button.selected.hover.state-layer.color
-  static const TokenColorRole selectedHoverStateLayerColor = TokenColorRole.primary;
+  static const TokenColorRole selectedHoverStateLayerColor =
+      TokenColorRole.primary;
 
   /// md.comp.radio-button.selected.hover.state-layer.opacity
   static const double selectedHoverStateLayerOpacity = 0.08;
@@ -47,7 +51,8 @@ class TokenRadioButton {
   static const TokenColorRole selectedPressedIconColor = TokenColorRole.primary;
 
   /// md.comp.radio-button.selected.pressed.state-layer.color
-  static const TokenColorRole selectedPressedStateLayerColor = TokenColorRole.onSurface;
+  static const TokenColorRole selectedPressedStateLayerColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.radio-button.selected.pressed.state-layer.opacity
   static const double selectedPressedStateLayerOpacity = 0.10;
@@ -56,31 +61,38 @@ class TokenRadioButton {
   static const double stateLayerSize = 40.00;
 
   /// md.comp.radio-button.unselected.focus.icon.color
-  static const TokenColorRole unselectedFocusIconColor = TokenColorRole.onSurface;
+  static const TokenColorRole unselectedFocusIconColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.radio-button.unselected.focus.state-layer.color
-  static const TokenColorRole unselectedFocusStateLayerColor = TokenColorRole.onSurface;
+  static const TokenColorRole unselectedFocusStateLayerColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.radio-button.unselected.focus.state-layer.opacity
   static const double unselectedFocusStateLayerOpacity = 0.10;
 
   /// md.comp.radio-button.unselected.hover.icon.color
-  static const TokenColorRole unselectedHoverIconColor = TokenColorRole.onSurface;
+  static const TokenColorRole unselectedHoverIconColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.radio-button.unselected.hover.state-layer.color
-  static const TokenColorRole unselectedHoverStateLayerColor = TokenColorRole.onSurface;
+  static const TokenColorRole unselectedHoverStateLayerColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.radio-button.unselected.hover.state-layer.opacity
   static const double unselectedHoverStateLayerOpacity = 0.08;
 
   /// md.comp.radio-button.unselected.icon.color
-  static const TokenColorRole unselectedIconColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole unselectedIconColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.radio-button.unselected.pressed.icon.color
-  static const TokenColorRole unselectedPressedIconColor = TokenColorRole.onSurface;
+  static const TokenColorRole unselectedPressedIconColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.radio-button.unselected.pressed.state-layer.color
-  static const TokenColorRole unselectedPressedStateLayerColor = TokenColorRole.primary;
+  static const TokenColorRole unselectedPressedStateLayerColor =
+      TokenColorRole.primary;
 
   /// md.comp.radio-button.unselected.pressed.state-layer.opacity
   static const double unselectedPressedStateLayerOpacity = 0.10;

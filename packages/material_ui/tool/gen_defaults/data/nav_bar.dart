@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.15
 
 import 'color_role.dart';
 import 'shape_struct.dart';
@@ -44,10 +44,12 @@ class TokenNavBar {
   static const double itemActiveHoveredStateLayerOpacity = 0.08;
 
   /// md.comp.nav-bar.item.active.icon.color
-  static const TokenColorRole itemActiveIconColor = TokenColorRole.onSecondaryContainer;
+  static const TokenColorRole itemActiveIconColor =
+      TokenColorRole.onSecondaryContainer;
 
   /// md.comp.nav-bar.item.active.indicator.color
-  static const TokenColorRole itemActiveIndicatorColor = TokenColorRole.secondaryContainer;
+  static const TokenColorRole itemActiveIndicatorColor =
+      TokenColorRole.secondaryContainer;
 
   /// md.comp.nav-bar.item.active-indicator.icon-label-space
   static const double itemActiveIndicatorIconLabelSpace = 4.00;
@@ -62,7 +64,8 @@ class TokenNavBar {
   );
 
   /// md.comp.nav-bar.item.active.label-text.color
-  static const TokenColorRole itemActiveLabelTextColor = TokenColorRole.secondary;
+  static const TokenColorRole itemActiveLabelTextColor =
+      TokenColorRole.secondary;
 
   /// md.comp.nav-bar.item.active.pressed.state-layer.color
   static const TokenColorRole itemActivePressedStateLayerColor =
@@ -86,10 +89,12 @@ class TokenNavBar {
       TokenColorRole.onSecondaryContainer;
 
   /// md.comp.nav-bar.item.inactive.icon.color
-  static const TokenColorRole itemInactiveIconColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole itemInactiveIconColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.nav-bar.item.inactive.label-text.color
-  static const TokenColorRole itemInactiveLabelTextColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole itemInactiveLabelTextColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.nav-bar.item.inactive.pressed.state-layer.color
   static const TokenColorRole itemInactivePressedStateLayerColor =

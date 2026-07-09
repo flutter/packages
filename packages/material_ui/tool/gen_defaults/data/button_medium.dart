@@ -2,9 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.15
 
 import 'shape_struct.dart';
+import 'typescale_struct.dart';
 
 class TokenButtonMedium {
   /// md.comp.button.medium.container.height
@@ -35,19 +36,13 @@ class TokenButtonMedium {
   static const double iconSize = 24.00;
 
   /// md.comp.button.medium.label-text
-  static const String labelTextFontFamily = 'Roboto';
-
-  /// md.comp.button.medium.label-text
-  static const double labelTextFontSize = 16.00;
-
-  /// md.comp.button.medium.label-text
-  static const double labelTextFontWeight = 500;
-
-  /// md.comp.button.medium.label-text
-  static const double labelTextLetterSpacing = 0.15;
-
-  /// md.comp.button.medium.label-text
-  static const double labelTextLineHeight = 24.00;
+  static const TypescaleStruct labelText = TypescaleStruct(
+    fontFamily: 'Roboto',
+    fontSize: 16.00,
+    fontWeight: 500,
+    lineHeight: 24.00,
+    letterSpacing: 0.15,
+  );
 
   /// md.comp.button.medium.leading-space
   static const double leadingSpace = 24.00;

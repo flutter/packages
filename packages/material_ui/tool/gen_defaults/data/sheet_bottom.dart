@@ -2,14 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.15
 
 import 'color_role.dart';
 import 'shape_struct.dart';
 
 class TokenSheetBottom {
   /// md.comp.sheet.bottom.docked.container.color
-  static const TokenColorRole dockedContainerColor = TokenColorRole.surfaceContainerLow;
+  static const TokenColorRole dockedContainerColor =
+      TokenColorRole.surfaceContainerLow;
 
   /// md.comp.sheet.bottom.docked.container.shape
   static const ShapeStruct dockedContainerShape = ShapeStruct(
@@ -21,7 +22,8 @@ class TokenSheetBottom {
   );
 
   /// md.comp.sheet.bottom.docked.drag-handle.color
-  static const TokenColorRole dockedDragHandleColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole dockedDragHandleColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.sheet.bottom.docked.drag-handle.height
   static const double dockedDragHandleHeight = 4.00;

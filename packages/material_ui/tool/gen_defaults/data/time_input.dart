@@ -2,14 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.15
 
 import 'color_role.dart';
 import 'shape_struct.dart';
+import 'typescale_struct.dart';
 
 class TokenTimeInput {
   /// md.comp.time-input.container.color
-  static const TokenColorRole containerColor = TokenColorRole.surfaceContainerHigh;
+  static const TokenColorRole containerColor =
+      TokenColorRole.surfaceContainerHigh;
 
   /// md.comp.time-input.container.elevation
   static const double containerElevation = 6.00;
@@ -35,23 +37,14 @@ class TokenTimeInput {
   /// md.comp.time-input.headline.color
   static const TokenColorRole headlineColor = TokenColorRole.onSurfaceVariant;
 
-  /// md.comp.time-input.headline.font
-  static const String headlineFont = 'Roboto';
-
   /// md.comp.time-input.headline.type
-  static const String headlineTypeFontFamily = 'Roboto';
-
-  /// md.comp.time-input.headline.type
-  static const double headlineTypeFontSize = 12.00;
-
-  /// md.comp.time-input.headline.type
-  static const double headlineTypeFontWeight = 500;
-
-  /// md.comp.time-input.headline.type
-  static const double headlineTypeLetterSpacing = 0.50;
-
-  /// md.comp.time-input.headline.type
-  static const double headlineTypeLineHeight = 16.00;
+  static const TypescaleStruct headlineType = TypescaleStruct(
+    fontFamily: 'Roboto',
+    fontSize: 12.00,
+    fontWeight: 500,
+    lineHeight: 16.00,
+    letterSpacing: 0.50,
+  );
 
   /// md.comp.time-input.period-selector.container.height
   static const double periodSelectorContainerHeight = 72.00;
@@ -74,26 +67,18 @@ class TokenTimeInput {
   /// md.comp.time-input.period-selector.hover.state-layer.opacity
   static const double periodSelectorHoverStateLayerOpacity = 0.08;
 
-  /// md.comp.time-input.period-selector.label-text.font
-  static const String periodSelectorLabelTextFont = 'Roboto';
-
   /// md.comp.time-input.period-selector.label-text.type
-  static const String periodSelectorLabelTextTypeFontFamily = 'Roboto';
-
-  /// md.comp.time-input.period-selector.label-text.type
-  static const double periodSelectorLabelTextTypeFontSize = 16.00;
-
-  /// md.comp.time-input.period-selector.label-text.type
-  static const double periodSelectorLabelTextTypeFontWeight = 500;
-
-  /// md.comp.time-input.period-selector.label-text.type
-  static const double periodSelectorLabelTextTypeLetterSpacing = 0.15;
-
-  /// md.comp.time-input.period-selector.label-text.type
-  static const double periodSelectorLabelTextTypeLineHeight = 24.00;
+  static const TypescaleStruct periodSelectorLabelTextType = TypescaleStruct(
+    fontFamily: 'Roboto',
+    fontSize: 16.00,
+    fontWeight: 500,
+    lineHeight: 24.00,
+    letterSpacing: 0.15,
+  );
 
   /// md.comp.time-input.period-selector.outline.color
-  static const TokenColorRole periodSelectorOutlineColor = TokenColorRole.outline;
+  static const TokenColorRole periodSelectorOutlineColor =
+      TokenColorRole.outline;
 
   /// md.comp.time-input.period-selector.outline.width
   static const double periodSelectorOutlineWidth = 1.00;
@@ -162,7 +147,8 @@ class TokenTimeInput {
       TokenColorRole.onSurfaceVariant;
 
   /// md.comp.time-input.time-input-field.container.color
-  static const TokenColorRole timeInputFieldContainerColor = TokenColorRole.surfaceContainerHighest;
+  static const TokenColorRole timeInputFieldContainerColor =
+      TokenColorRole.surfaceContainerHighest;
 
   /// md.comp.time-input.time-input-field.container.height
   static const double timeInputFieldContainerHeight = 72.00;
@@ -180,86 +166,68 @@ class TokenTimeInput {
   static const double timeInputFieldContainerWidth = 96.00;
 
   /// md.comp.time-input.time-input-field.focus.container.color
-  static const TokenColorRole timeInputFieldFocusContainerColor = TokenColorRole.primaryContainer;
+  static const TokenColorRole timeInputFieldFocusContainerColor =
+      TokenColorRole.primaryContainer;
 
   /// md.comp.time-input.time-input-field.focus.label-text.color
-  static const TokenColorRole timeInputFieldFocusLabelTextColor = TokenColorRole.onPrimaryContainer;
+  static const TokenColorRole timeInputFieldFocusLabelTextColor =
+      TokenColorRole.onPrimaryContainer;
 
   /// md.comp.time-input.time-input-field.focus.outline.color
-  static const TokenColorRole timeInputFieldFocusOutlineColor = TokenColorRole.primary;
+  static const TokenColorRole timeInputFieldFocusOutlineColor =
+      TokenColorRole.primary;
 
   /// md.comp.time-input.time-input-field.focus.outline.width
   static const double timeInputFieldFocusOutlineWidth = 2.00;
 
   /// md.comp.time-input.time-input-field.hover.label-text.color
-  static const TokenColorRole timeInputFieldHoverLabelTextColor = TokenColorRole.onSurface;
+  static const TokenColorRole timeInputFieldHoverLabelTextColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.time-input.time-input-field.hover.state-layer.color
-  static const TokenColorRole timeInputFieldHoverStateLayerColor = TokenColorRole.onSurface;
+  static const TokenColorRole timeInputFieldHoverStateLayerColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.time-input.time-input-field.hover.state-layer.opacity
   static const double timeInputFieldHoverStateLayerOpacity = 0.08;
 
   /// md.comp.time-input.time-input-field.label-text.color
-  static const TokenColorRole timeInputFieldLabelTextColor = TokenColorRole.onSurface;
-
-  /// md.comp.time-input.time-input-field.label-text.font
-  static const String timeInputFieldLabelTextFont = 'Roboto';
+  static const TokenColorRole timeInputFieldLabelTextColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.time-input.time-input-field.label-text.type
-  static const String timeInputFieldLabelTextTypeFontFamily = 'Roboto';
-
-  /// md.comp.time-input.time-input-field.label-text.type
-  static const double timeInputFieldLabelTextTypeFontSize = 45.00;
-
-  /// md.comp.time-input.time-input-field.label-text.type
-  static const double timeInputFieldLabelTextTypeFontWeight = 400;
-
-  /// md.comp.time-input.time-input-field.label-text.type
-  static const double timeInputFieldLabelTextTypeLetterSpacing = 0.00;
-
-  /// md.comp.time-input.time-input-field.label-text.type
-  static const double timeInputFieldLabelTextTypeLineHeight = 52.00;
+  static const TypescaleStruct timeInputFieldLabelTextType = TypescaleStruct(
+    fontFamily: 'Roboto',
+    fontSize: 45.00,
+    fontWeight: 400,
+    lineHeight: 52.00,
+    letterSpacing: 0.00,
+  );
 
   /// md.comp.time-input.time-input-field.separator.color
-  static const TokenColorRole timeInputFieldSeparatorColor = TokenColorRole.onSurface;
-
-  /// md.comp.time-input.time-input-field.separator.font
-  static const String timeInputFieldSeparatorFont = 'Roboto';
+  static const TokenColorRole timeInputFieldSeparatorColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.time-input.time-input-field.separator.type
-  static const String timeInputFieldSeparatorTypeFontFamily = 'Roboto';
-
-  /// md.comp.time-input.time-input-field.separator.type
-  static const double timeInputFieldSeparatorTypeFontSize = 57.00;
-
-  /// md.comp.time-input.time-input-field.separator.type
-  static const double timeInputFieldSeparatorTypeFontWeight = 400;
-
-  /// md.comp.time-input.time-input-field.separator.type
-  static const double timeInputFieldSeparatorTypeLetterSpacing = -0.25;
-
-  /// md.comp.time-input.time-input-field.separator.type
-  static const double timeInputFieldSeparatorTypeLineHeight = 64.00;
+  static const TypescaleStruct timeInputFieldSeparatorType = TypescaleStruct(
+    fontFamily: 'Roboto',
+    fontSize: 57.00,
+    fontWeight: 400,
+    lineHeight: 64.00,
+    letterSpacing: -0.25,
+  );
 
   /// md.comp.time-input.time-input-field.supporting-text.color
-  static const TokenColorRole timeInputFieldSupportingTextColor = TokenColorRole.onSurfaceVariant;
-
-  /// md.comp.time-input.time-input-field.supporting-text.font
-  static const String timeInputFieldSupportingTextFont = 'Roboto';
+  static const TokenColorRole timeInputFieldSupportingTextColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.time-input.time-input-field.supporting-text.type
-  static const String timeInputFieldSupportingTextTypeFontFamily = 'Roboto';
-
-  /// md.comp.time-input.time-input-field.supporting-text.type
-  static const double timeInputFieldSupportingTextTypeFontSize = 12.00;
-
-  /// md.comp.time-input.time-input-field.supporting-text.type
-  static const double timeInputFieldSupportingTextTypeFontWeight = 400;
-
-  /// md.comp.time-input.time-input-field.supporting-text.type
-  static const double timeInputFieldSupportingTextTypeLetterSpacing = 0.40;
-
-  /// md.comp.time-input.time-input-field.supporting-text.type
-  static const double timeInputFieldSupportingTextTypeLineHeight = 16.00;
+  static const TypescaleStruct timeInputFieldSupportingTextType =
+      TypescaleStruct(
+        fontFamily: 'Roboto',
+        fontSize: 12.00,
+        fontWeight: 400,
+        lineHeight: 16.00,
+        letterSpacing: 0.40,
+      );
 }

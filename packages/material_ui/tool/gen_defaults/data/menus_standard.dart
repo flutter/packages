@@ -2,40 +2,49 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.15
 
 import 'color_role.dart';
 
 class TokenMenusStandard {
   /// md.comp.menus.standard.container.color
-  static const TokenColorRole containerColor = TokenColorRole.surfaceContainerLow;
+  static const TokenColorRole containerColor =
+      TokenColorRole.surfaceContainerLow;
 
   /// md.comp.menus.standard.container.shadow-color
   static const TokenColorRole containerShadowColor = TokenColorRole.shadow;
 
   /// md.comp.menus.standard.disabled.icon-button.icon.color
-  static const TokenColorRole disabledIconButtonIconColor = TokenColorRole.onSurface;
+  static const TokenColorRole disabledIconButtonIconColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.menus.standard.icon-button.container.color
-  static const TokenColorRole iconButtonContainerColor = TokenColorRole.surfaceContainerLow;
+  static const TokenColorRole iconButtonContainerColor =
+      TokenColorRole.surfaceContainerLow;
 
   /// md.comp.menus.standard.icon-button.disabled.icon.color
-  static const TokenColorRole iconButtonDisabledIconColor = TokenColorRole.onTertiaryContainer;
+  static const TokenColorRole iconButtonDisabledIconColor =
+      TokenColorRole.onTertiaryContainer;
 
   /// md.comp.menus.standard.icon-button.focused.state-layer.color
-  static const TokenColorRole iconButtonFocusedStateLayerColor = TokenColorRole.onSurface;
+  static const TokenColorRole iconButtonFocusedStateLayerColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.menus.standard.icon-button.hovered.state-layer.color
-  static const TokenColorRole iconButtonHoveredStateLayerColor = TokenColorRole.onSurface;
+  static const TokenColorRole iconButtonHoveredStateLayerColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.menus.standard.icon-button.icon.color
-  static const TokenColorRole iconButtonIconColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole iconButtonIconColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.menus.standard.icon-button.pressed.state-layer.color
-  static const TokenColorRole iconButtonPressedStateLayerColor = TokenColorRole.onSurface;
+  static const TokenColorRole iconButtonPressedStateLayerColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.menus.standard.icon-button.selected.container.color
-  static const TokenColorRole iconButtonSelectedContainerColor = TokenColorRole.tertiaryContainer;
+  static const TokenColorRole iconButtonSelectedContainerColor =
+      TokenColorRole.tertiaryContainer;
 
   /// md.comp.menus.standard.icon-button.selected.focused.state-layer.color
   static const TokenColorRole iconButtonSelectedFocusedStateLayerColor =
@@ -46,41 +55,48 @@ class TokenMenusStandard {
       TokenColorRole.onTertiaryContainer;
 
   /// md.comp.menus.standard.icon-button.selected.icon.color
-  static const TokenColorRole iconButtonSelectedIconColor = TokenColorRole.onTertiaryContainer;
+  static const TokenColorRole iconButtonSelectedIconColor =
+      TokenColorRole.onTertiaryContainer;
 
   /// md.comp.menus.standard.icon-button.selected.pressed.state-layer.color
   static const TokenColorRole iconButtonSelectedPressedStateLayerColor =
       TokenColorRole.onTertiaryContainer;
 
   /// md.comp.menus.standard.menu-item.active.state-layer.color
-  static const TokenColorRole menuItemActiveStateLayerColor = TokenColorRole.onSurface;
+  static const TokenColorRole menuItemActiveStateLayerColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.menus.standard.menu-item.active.state-layer.opacity
   static const double menuItemActiveStateLayerOpacity = 0.08;
 
   /// md.comp.menus.standard.menu-item.container.color
-  static const TokenColorRole menuItemContainerColor = TokenColorRole.surfaceContainerLow;
+  static const TokenColorRole menuItemContainerColor =
+      TokenColorRole.surfaceContainerLow;
 
   /// md.comp.menus.standard.menu-item.disabled.label-text.color
-  static const TokenColorRole menuItemDisabledLabelTextColor = TokenColorRole.onSurface;
+  static const TokenColorRole menuItemDisabledLabelTextColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.menus.standard.menu-item.disabled.label-text.opacity
   static const double menuItemDisabledLabelTextOpacity = 0.38;
 
   /// md.comp.menus.standard.menu-item.disabled.leading-icon.color
-  static const TokenColorRole menuItemDisabledLeadingIconColor = TokenColorRole.onSurface;
+  static const TokenColorRole menuItemDisabledLeadingIconColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.menus.standard.menu-item.disabled.leading-icon.opacity
   static const double menuItemDisabledLeadingIconOpacity = 0.38;
 
   /// md.comp.menus.standard.menu-item.disabled.supporting-text.color
-  static const TokenColorRole menuItemDisabledSupportingTextColor = TokenColorRole.onSurface;
+  static const TokenColorRole menuItemDisabledSupportingTextColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.menus.standard.menu-item.disabled.supporting-text.opacity
   static const double menuItemDisabledSupportingTextOpacity = 0.38;
 
   /// md.comp.menus.standard.menu-item.disabled.trailing-icon.color
-  static const TokenColorRole menuItemDisabledTrailingIconColor = TokenColorRole.onSurface;
+  static const TokenColorRole menuItemDisabledTrailingIconColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.menus.standard.menu-item.disabled.trailing-icon.opacity
   static const double menuItemDisabledTrailingIconOpacity = 0.38;
@@ -93,58 +109,72 @@ class TokenMenusStandard {
   static const double menuItemDisabledTrailingSupportingTextOpacity = 0.38;
 
   /// md.comp.menus.standard.menu-item.focused.label-text.color
-  static const TokenColorRole menuItemFocusedLabelTextColor = TokenColorRole.onSurface;
+  static const TokenColorRole menuItemFocusedLabelTextColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.menus.standard.menu-item.focused.leading-icon.color
-  static const TokenColorRole menuItemFocusedLeadingIconColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole menuItemFocusedLeadingIconColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.menus.standard.menu-item.focused.state-layer.color
-  static const TokenColorRole menuItemFocusedStateLayerColor = TokenColorRole.onSurface;
+  static const TokenColorRole menuItemFocusedStateLayerColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.menus.standard.menu-item.focused.state-layer.opacity
   static const double menuItemFocusedStateLayerOpacity = 0.10;
 
   /// md.comp.menus.standard.menu-item.focused.trailing-icon.color
-  static const TokenColorRole menuItemFocusedTrailingIconColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole menuItemFocusedTrailingIconColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.menus.standard.menu-item.hovered.label-text.color
-  static const TokenColorRole menuItemHoveredLabelTextColor = TokenColorRole.onSurface;
+  static const TokenColorRole menuItemHoveredLabelTextColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.menus.standard.menu-item.hovered.leading-icon.color
-  static const TokenColorRole menuItemHoveredLeadingIconColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole menuItemHoveredLeadingIconColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.menus.standard.menu-item.hovered.state-layer.color
-  static const TokenColorRole menuItemHoveredStateLayerColor = TokenColorRole.onSurface;
+  static const TokenColorRole menuItemHoveredStateLayerColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.menus.standard.menu-item.hovered.state-layer.opacity
   static const double menuItemHoveredStateLayerOpacity = 0.08;
 
   /// md.comp.menus.standard.menu-item.hovered.trailing-icon.color
-  static const TokenColorRole menuItemHoveredTrailingIconColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole menuItemHoveredTrailingIconColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.menus.standard.menu-item.label-text.color
   static const TokenColorRole menuItemLabelTextColor = TokenColorRole.onSurface;
 
   /// md.comp.menus.standard.menu-item.leading-icon.color
-  static const TokenColorRole menuItemLeadingIconColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole menuItemLeadingIconColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.menus.standard.menu-item.pressed.label-text.color
-  static const TokenColorRole menuItemPressedLabelTextColor = TokenColorRole.onSurface;
+  static const TokenColorRole menuItemPressedLabelTextColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.menus.standard.menu-item.pressed.leading-icon.color
-  static const TokenColorRole menuItemPressedLeadingIconColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole menuItemPressedLeadingIconColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.menus.standard.menu-item.pressed.state-layer.color
-  static const TokenColorRole menuItemPressedStateLayerColor = TokenColorRole.onSurface;
+  static const TokenColorRole menuItemPressedStateLayerColor =
+      TokenColorRole.onSurface;
 
   /// md.comp.menus.standard.menu-item.pressed.state-layer.opacity
   static const double menuItemPressedStateLayerOpacity = 0.10;
 
   /// md.comp.menus.standard.menu-item.pressed.trailing-icon.color
-  static const TokenColorRole menuItemPressedTrailingIconColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole menuItemPressedTrailingIconColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.menus.standard.menu-item.selected.container.color
-  static const TokenColorRole menuItemSelectedContainerColor = TokenColorRole.tertiaryContainer;
+  static const TokenColorRole menuItemSelectedContainerColor =
+      TokenColorRole.tertiaryContainer;
 
   /// md.comp.menus.standard.menu-item.selected.disabled.container.color
   static const TokenColorRole menuItemSelectedDisabledContainerColor =
@@ -175,7 +205,8 @@ class TokenMenusStandard {
   static const double menuItemSelectedDisabledTrailingIconOpacity = 0.38;
 
   /// md.comp.menus.standard.menu-item.selected.disabled.trailing-supporting-text.color
-  static const TokenColorRole menuItemSelectedDisabledTrailingSupportingTextColor =
+  static const TokenColorRole
+  menuItemSelectedDisabledTrailingSupportingTextColor =
       TokenColorRole.onTertiaryContainer;
 
   /// md.comp.menus.standard.menu-item.selected.focused.label-text.color
@@ -202,7 +233,8 @@ class TokenMenusStandard {
       TokenColorRole.onTertiaryContainer;
 
   /// md.comp.menus.standard.menu-item.selected.focused.trailing-supporting-text.color
-  static const TokenColorRole menuItemSelectedFocusedTrailingSupportingTextColor =
+  static const TokenColorRole
+  menuItemSelectedFocusedTrailingSupportingTextColor =
       TokenColorRole.onTertiaryContainer;
 
   /// md.comp.menus.standard.menu-item.selected.hovered.label-text.color
@@ -229,14 +261,17 @@ class TokenMenusStandard {
       TokenColorRole.onTertiaryContainer;
 
   /// md.comp.menus.standard.menu-item.selected.hovered.trailing-supporting-text.color
-  static const TokenColorRole menuItemSelectedHoveredTrailingSupportingTextColor =
+  static const TokenColorRole
+  menuItemSelectedHoveredTrailingSupportingTextColor =
       TokenColorRole.onTertiaryContainer;
 
   /// md.comp.menus.standard.menu-item.selected.label-text.color
-  static const TokenColorRole menuItemSelectedLabelTextColor = TokenColorRole.onTertiaryContainer;
+  static const TokenColorRole menuItemSelectedLabelTextColor =
+      TokenColorRole.onTertiaryContainer;
 
   /// md.comp.menus.standard.menu-item.selected.leading-icon.color
-  static const TokenColorRole menuItemSelectedLeadingIconColor = TokenColorRole.onTertiaryContainer;
+  static const TokenColorRole menuItemSelectedLeadingIconColor =
+      TokenColorRole.onTertiaryContainer;
 
   /// md.comp.menus.standard.menu-item.selected.pressed.label-text.color
   static const TokenColorRole menuItemSelectedPressedLabelTextColor =
@@ -262,7 +297,8 @@ class TokenMenusStandard {
       TokenColorRole.onTertiaryContainer;
 
   /// md.comp.menus.standard.menu-item.selected.pressed.trailing-supporting-text.color
-  static const TokenColorRole menuItemSelectedPressedTrailingSupportingTextColor =
+  static const TokenColorRole
+  menuItemSelectedPressedTrailingSupportingTextColor =
       TokenColorRole.onTertiaryContainer;
 
   /// md.comp.menus.standard.menu-item.selected.supporting-text.color
@@ -278,14 +314,18 @@ class TokenMenusStandard {
       TokenColorRole.onTertiaryContainer;
 
   /// md.comp.menus.standard.menu-item.supporting-text.color
-  static const TokenColorRole menuItemSupportingTextColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole menuItemSupportingTextColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.menus.standard.menu-item.trailing-icon.color
-  static const TokenColorRole menuItemTrailingIconColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole menuItemTrailingIconColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.menus.standard.menu-item.trailing-supporting-text.color
-  static const TokenColorRole menuItemTrailingSupportingTextColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole menuItemTrailingSupportingTextColor =
+      TokenColorRole.onSurfaceVariant;
 
   /// md.comp.menus.standard.section-label-text.color
-  static const TokenColorRole sectionLabelTextColor = TokenColorRole.onSurfaceVariant;
+  static const TokenColorRole sectionLabelTextColor =
+      TokenColorRole.onSurfaceVariant;
 }
