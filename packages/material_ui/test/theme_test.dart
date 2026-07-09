@@ -1342,6 +1342,7 @@ class _TextStyleProxy implements TextStyle {
     FontStyle? fontStyle,
     double? height,
     StrutStyle? strutStyle,
+    ui.Hyphens? hyphens,
   }) {
     throw UnimplementedError();
   }
