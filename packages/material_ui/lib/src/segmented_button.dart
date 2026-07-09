@@ -93,24 +93,30 @@ class ButtonSegment<T> {
 /// then the entire segmented button will be disabled, regardless of the
 /// individual segment settings.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample shows how to display a [SegmentedButton] with either a single or
 /// multiple selection.
 ///
-/// {@example /example/lib/segmented_button/segmented_button.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/segmented_button/segmented_button.0.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This sample showcases how to customize [SegmentedButton] using [SegmentedButton.styleFrom].
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/segmented_button/segmented_button.1.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// See also:
 ///

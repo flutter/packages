@@ -3245,15 +3245,18 @@ class _TimePickerState extends State<_TimePicker> with RestorationMixin {
 ///
 // TODO(framework): End of the blue example container.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example illustrates how to open a time picker, and allows exploring
 /// some of the variations in the types of time pickers that may be shown.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/time_picker/show_time_picker.0.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// See also:
 ///

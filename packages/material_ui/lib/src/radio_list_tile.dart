@@ -89,27 +89,33 @@ enum _RadioType { material, adaptive }
 /// is expensive. Consider only wrapping the [RadioListTile]s that require it
 /// or include a common [Material] ancestor where possible.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// ![RadioListTile sample](https://flutter.github.io/assets-for-api-docs/assets/material/radio_list_tile.png)
 ///
 /// This widget shows a pair of radio buttons that control the `_character`
 /// field. The field is of the type `SingingCharacter`, an enum.
 ///
-/// {@example /example/lib/radio_list_tile/radio_list_tile.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/radio_list_tile/radio_list_tile.0.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This sample demonstrates how [RadioListTile] positions the radio widget
 /// relative to the text in different configurations.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/radio_list_tile/radio_list_tile.1.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// ## Semantics in RadioListTile
 ///
@@ -128,8 +134,7 @@ enum _RadioType { material, adaptive }
 /// into one. Therefore, it may be necessary to create a custom radio tile
 /// widget to accommodate similar use cases.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// ![Radio list tile semantics sample](https://flutter.github.io/assets-for-api-docs/assets/material/radio_list_tile_semantics.png)
 ///
@@ -137,9 +142,13 @@ enum _RadioType { material, adaptive }
 /// LinkedLabelRadio, that includes an interactive [RichText] widget that
 /// handles tap gestures.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/radio_list_tile/custom_labeled_radio.0.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// ## RadioListTile isn't exactly what I want
 ///
@@ -148,17 +157,20 @@ enum _RadioType { material, adaptive }
 /// combining [Radio] with other widgets, such as [Text], [Padding] and
 /// [InkWell].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// ![Custom radio list tile sample](https://flutter.github.io/assets-for-api-docs/assets/material/radio_list_tile_custom.png)
 ///
 /// Here is an example of a custom LabeledRadio widget, but you can easily
 /// make your own configurable widget.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/radio_list_tile/custom_labeled_radio.1.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -368,15 +380,18 @@ class RadioListTile<T> extends StatefulWidget {
   ///
   /// The default is false.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This example shows how to enable deselecting a radio button by setting the
   /// [toggleable] attribute.
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/radio_list_tile/radio_list_tile.toggleable.0.dart}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// </callout-box>
   final bool toggleable;
 
   /// The color to use when this radio button is selected.

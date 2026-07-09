@@ -816,15 +816,24 @@ class MaterialApp extends StatefulWidget {
   ///
   /// To disable the theme animation, use [AnimationStyle.noAnimation].
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This sample showcases how to override the theme animation curve and
   /// duration in the [MaterialApp] widget using [AnimationStyle].
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@template material_ui.dartpad_guide}
+  /// <small>
+  ///
+  /// To see it in action, copy and run this code snippet on [DartPad](https://dartpad.dev/).
+  ///
+  /// </small>
+  /// {@endtemplate}
+  ///
   /// {@example /example/lib/app/app.0.dart}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// </callout-box>
   final AnimationStyle? themeAnimationStyle;
 
   @override

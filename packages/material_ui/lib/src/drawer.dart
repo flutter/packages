@@ -96,8 +96,7 @@ const Duration _kBaseSettleDuration = Duration(milliseconds: 246);
 /// [NavigationDrawerDestination] widgets and/or customized widgets like headlines
 /// and dividers.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows how to create a [Scaffold] that contains an [AppBar] and
 /// a [Drawer]. A user taps the "menu" icon in the [AppBar] to open the
@@ -105,18 +104,25 @@ const Duration _kBaseSettleDuration = Duration(milliseconds: 246);
 /// The [Drawer] displays the four items using a [ListView], which allows the
 /// user to scroll through the items if need be.
 ///
-/// {@example /example/lib/drawer/drawer.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/drawer/drawer.0.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to migrate the above [Drawer] to a [NavigationDrawer].
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/navigation_drawer/navigation_drawer.0.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// An open drawer may be closed with a swipe to close gesture, pressing the
 /// escape key, by tapping the scrim, or by calling pop route function such as

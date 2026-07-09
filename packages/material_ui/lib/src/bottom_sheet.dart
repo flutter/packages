@@ -1228,27 +1228,33 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
 /// Will default to [MaterialLocalizations.modalBarrierDismissLabel] of context
 /// if not set.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example demonstrates how to use [showModalBottomSheet] to display a
 /// bottom sheet that obscures the content behind it when a user taps a button.
 /// It also demonstrates how to close the bottom sheet using the [Navigator]
 /// when a user taps on a button inside the bottom sheet.
 ///
-/// {@example /example/lib/bottom_sheet/show_modal_bottom_sheet.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/bottom_sheet/show_modal_bottom_sheet.0.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This sample shows the creation of [showModalBottomSheet], as described in:
 /// https://m3.material.io/components/bottom-sheets/overview
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/bottom_sheet/show_modal_bottom_sheet.1.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// The [sheetAnimationStyle] parameter is used to override the modal bottom sheet
 /// animation duration and reverse animation duration.
@@ -1267,15 +1273,18 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
 ///
 /// To disable the bottom sheet animation, use [AnimationStyle.noAnimation].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample showcases how to override the [showModalBottomSheet] animation
 /// duration and reverse animation duration using [AnimationStyle].
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/bottom_sheet/show_modal_bottom_sheet.2.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -1374,15 +1383,18 @@ Future<T?> showModalBottomSheet<T>({
 ///
 /// To disable the bottom sheet animation, use [AnimationStyle.noAnimation].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample showcases how to override the [showBottomSheet] animation
 /// duration and reverse animation duration using [AnimationStyle].
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/bottom_sheet/show_bottom_sheet.0.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// To rebuild the bottom sheet (e.g. if it is stateful), call
 /// [PersistentBottomSheetController.setState] on the controller returned by
