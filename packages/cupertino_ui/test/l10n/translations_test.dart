@@ -186,7 +186,7 @@ void main() {
       expect(localizations.copyButtonLabel, copyButtonLabelNo);
       expect(localizations.cutButtonLabel, cutButtonLabelNo);
     }
-  });
+  }, skip: isBrowser); // No file i/o on web.
 
   // Regression test for https://github.com/flutter/flutter/issues/36704.
   testWidgets('kn arb file should be properly Unicode escaped', (WidgetTester tester) async {
@@ -211,7 +211,7 @@ void main() {
     } else {
       expect(file.readAsStringSync(), encodedArbFile);
     }
-  });
+  }, skip: isBrowser); // No file i/o on web.
 
   // Regression test for https://github.com/flutter/flutter/issues/110451.
   testWidgets('Finnish translation for tab label', (WidgetTester tester) async {
