@@ -1748,15 +1748,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   @override
   Object? visitEnumDeclaration(dart_ast.EnumDeclaration node) {
     // Enhanced enums (those with a constructor, fields, methods, or arguments
-    // on their values) aren't supported by Pigeon. Detect them and emit a
-    // clear error instead of silently dropping the extra members, which
-    // previously produced confusing output (the enum's fields were coalesced
-    // into the following class).
-    // See https://github.com/flutter/flutter/issues/160827.
-    //
-    // The enum is still registered below (by its value names) so that classes
-    // referencing it don't produce additional, confusing "Unknown type"
-    // errors; recording the error here already prevents code generation.
+    // on their values) aren't supported by Pigeon.
     final bool isEnhancedEnum =
         node.body.members.isNotEmpty ||
         node.body.constants.any((dart_ast.EnumConstantDeclaration e) => e.arguments != null) ||
@@ -1791,8 +1783,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     );
     // Don't visit the children of an enhanced enum: the declaration is
     // already reported as unsupported, and the visitor doesn't expect
-    // class-like members outside of a class (for example, a getter would
-    // fail visitMethodDeclaration's parameter access).
+    // class-like members outside of a class.
     if (!isEnhancedEnum) {
       node.visitChildren(this);
     }
