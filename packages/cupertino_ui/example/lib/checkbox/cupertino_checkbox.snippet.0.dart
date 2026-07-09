@@ -29,7 +29,7 @@ class CupertinoCheckboxExample extends StatelessWidget {
         return Colors.orange;
       }),
     )
-    // #region body
+    // #endregion body
     ;
   }
 }

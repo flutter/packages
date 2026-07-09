@@ -207,25 +207,12 @@ class CupertinoCheckbox extends StatefulWidget {
   ///
   // TODO(framework): Replace the following block with a blue example container
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
   ///
   /// This example resolves the [fillColor] based on the current [WidgetState]
   /// of the [CupertinoCheckbox], providing a different [Color] when it is
   /// [WidgetState.disabled].
   ///
-  /// ```dart
-  /// CupertinoCheckbox(
-  ///   value: true,
-  ///   onChanged: _nullableOnChanged,
-  ///   fillColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
-  ///     if (states.contains(WidgetState.disabled)) {
-  ///       return Colors.orange.withValues(alpha: .32);
-  ///     }
-  ///     return Colors.orange;
-  ///   })
-  /// )
-  /// ```
+  /// {@example /example/lib/checkbox/cupertino_checkbox.snippet.0.dart#body indent=strip}
   ///
   // TODO(framework): End of the blue example container.
   /// {@endtemplate}
