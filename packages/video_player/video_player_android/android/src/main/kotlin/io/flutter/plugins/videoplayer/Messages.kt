@@ -436,16 +436,21 @@ data class VideoTrackChangedEvent(
   }
 
   override fun equals(other: Any?): Boolean {
-    if (other !is VideoTrackChangedEvent) {
+    if (other == null || other.javaClass != javaClass) {
       return false
     }
     if (this === other) {
       return true
     }
-    return MessagesPigeonUtils.deepEquals(toList(), other.toList())
+    val other = other as VideoTrackChangedEvent
+    return MessagesPigeonUtils.deepEquals(this.selectedTrackId, other.selectedTrackId)
   }
 
-  override fun hashCode(): Int = toList().hashCode()
+  override fun hashCode(): Int {
+    var result = javaClass.hashCode()
+    result = 31 * result + MessagesPigeonUtils.deepHash(this.selectedTrackId)
+    return result
+  }
 }
 
 /**
@@ -869,16 +874,37 @@ data class ExoPlayerVideoTrackData(
   }
 
   override fun equals(other: Any?): Boolean {
-    if (other !is ExoPlayerVideoTrackData) {
+    if (other == null || other.javaClass != javaClass) {
       return false
     }
     if (this === other) {
       return true
     }
-    return MessagesPigeonUtils.deepEquals(toList(), other.toList())
+    val other = other as ExoPlayerVideoTrackData
+    return MessagesPigeonUtils.deepEquals(this.groupIndex, other.groupIndex) &&
+        MessagesPigeonUtils.deepEquals(this.trackIndex, other.trackIndex) &&
+        MessagesPigeonUtils.deepEquals(this.label, other.label) &&
+        MessagesPigeonUtils.deepEquals(this.isSelected, other.isSelected) &&
+        MessagesPigeonUtils.deepEquals(this.bitrate, other.bitrate) &&
+        MessagesPigeonUtils.deepEquals(this.width, other.width) &&
+        MessagesPigeonUtils.deepEquals(this.height, other.height) &&
+        MessagesPigeonUtils.deepEquals(this.frameRate, other.frameRate) &&
+        MessagesPigeonUtils.deepEquals(this.codec, other.codec)
   }
 
-  override fun hashCode(): Int = toList().hashCode()
+  override fun hashCode(): Int {
+    var result = javaClass.hashCode()
+    result = 31 * result + MessagesPigeonUtils.deepHash(this.groupIndex)
+    result = 31 * result + MessagesPigeonUtils.deepHash(this.trackIndex)
+    result = 31 * result + MessagesPigeonUtils.deepHash(this.label)
+    result = 31 * result + MessagesPigeonUtils.deepHash(this.isSelected)
+    result = 31 * result + MessagesPigeonUtils.deepHash(this.bitrate)
+    result = 31 * result + MessagesPigeonUtils.deepHash(this.width)
+    result = 31 * result + MessagesPigeonUtils.deepHash(this.height)
+    result = 31 * result + MessagesPigeonUtils.deepHash(this.frameRate)
+    result = 31 * result + MessagesPigeonUtils.deepHash(this.codec)
+    return result
+  }
 }
 
 /**
@@ -904,16 +930,21 @@ data class NativeVideoTrackData(
   }
 
   override fun equals(other: Any?): Boolean {
-    if (other !is NativeVideoTrackData) {
+    if (other == null || other.javaClass != javaClass) {
       return false
     }
     if (this === other) {
       return true
     }
-    return MessagesPigeonUtils.deepEquals(toList(), other.toList())
+    val other = other as NativeVideoTrackData
+    return MessagesPigeonUtils.deepEquals(this.exoPlayerTracks, other.exoPlayerTracks)
   }
 
-  override fun hashCode(): Int = toList().hashCode()
+  override fun hashCode(): Int {
+    var result = javaClass.hashCode()
+    result = 31 * result + MessagesPigeonUtils.deepHash(this.exoPlayerTracks)
+    return result
+  }
 }
 
 private open class MessagesPigeonCodec : StandardMessageCodec() {

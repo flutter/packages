@@ -315,12 +315,12 @@ class VideoTrackChangedEvent extends PlatformVideoEvent {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(selectedTrackId, other.selectedTrackId);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
 }
 
 /// Information passed to the platform view creation.
@@ -391,7 +391,7 @@ class CreationOptions {
     return CreationOptions(
       uri: result[0]! as String,
       formatHint: result[1] as PlatformVideoFormat?,
-      httpHeaders: (result[2] as Map<Object?, Object?>?)!.cast<String, String>(),
+      httpHeaders: (result[2]! as Map<Object?, Object?>).cast<String, String>(),
       userAgent: result[3] as String?,
       backBufferDurationMs: result[4] as int?,
     );
@@ -773,12 +773,20 @@ class ExoPlayerVideoTrackData {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(groupIndex, other.groupIndex) &&
+        _deepEquals(trackIndex, other.trackIndex) &&
+        _deepEquals(label, other.label) &&
+        _deepEquals(isSelected, other.isSelected) &&
+        _deepEquals(bitrate, other.bitrate) &&
+        _deepEquals(width, other.width) &&
+        _deepEquals(height, other.height) &&
+        _deepEquals(frameRate, other.frameRate) &&
+        _deepEquals(codec, other.codec);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
 }
 
 /// Container for raw video track data from Android ExoPlayer.
@@ -812,12 +820,12 @@ class NativeVideoTrackData {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(exoPlayerTracks, other.exoPlayerTracks);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
 }
 
 class _PigeonCodec extends StandardMessageCodec {
@@ -1237,22 +1245,13 @@ class VideoPlayerInstanceApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as NativeVideoTrackData?)!;
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as NativeVideoTrackData;
   }
 
   /// Selects which video track is chosen for playback from its [groupIndex] and [trackIndex].
@@ -1269,17 +1268,8 @@ class VideoPlayerInstanceApi {
       trackIndex,
     ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
+
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Enables automatic video quality selection, allowing the player to adaptively
@@ -1294,17 +1284,8 @@ class VideoPlayerInstanceApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
+
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 }
 
