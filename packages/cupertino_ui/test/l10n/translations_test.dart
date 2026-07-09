@@ -160,10 +160,10 @@ void main() {
     WidgetTester tester,
   ) async {
     final nbCupertinoArbFile = File(
-      path.join(rootDirectoryPath, 'lib', 'l10n', 'cupertino_nb.arb'),
+      path.join(rootDirectoryPath, 'lib', 'src', 'l10n', 'cupertino_nb.arb'),
     );
     final noCupertinoArbFile = File(
-      path.join(rootDirectoryPath, 'lib', 'l10n', 'cupertino_no.arb'),
+      path.join(rootDirectoryPath, 'lib', 'src', 'l10n', 'cupertino_no.arb'),
     );
 
     if (noCupertinoArbFile.existsSync() && !nbCupertinoArbFile.existsSync()) {
