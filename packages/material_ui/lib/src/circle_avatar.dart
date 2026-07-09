@@ -21,13 +21,8 @@ import 'theme.dart';
 /// such an image, the user's initials. A given user's initials should
 /// always be paired with the same background color, for consistency.
 ///
-/// If [foregroundImage] fails then [backgroundImage] is used. If
-/// [backgroundImage] fails too, [backgroundColor] is used.
-///
-/// The [onBackgroundImageError] parameter must be null if the [backgroundImage]
-/// is null.
-/// The [onForegroundImageError] parameter must be null if the [foregroundImage]
-/// is null.
+/// If [foregroundDecorationImage] fails then [backgroundDecorationImage] is used. If
+/// [backgroundDecorationImage] fails too, [backgroundColor] is used.
 ///
 // TODO(framework): Replace the following block with a blue example container
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
@@ -35,11 +30,13 @@ import 'theme.dart';
 // https://github.com/flutter/flutter/issues/188530
 ///
 /// If the avatar is to have an image, the image should be specified in the
-/// [backgroundImage] property:
+/// [backgroundDecorationImage] property:
 ///
 /// ```dart
 /// CircleAvatar(
-///   backgroundImage: NetworkImage(userAvatarUrl),
+///   backgroundDecorationImage: DecorationImage(
+///     image: NetworkImage(userAvatarUrl),
+///   ),
 /// )
 /// ```
 ///
@@ -76,10 +73,12 @@ class CircleAvatar extends StatelessWidget {
     super.key,
     this.child,
     this.backgroundColor,
-    this.backgroundImage,
-    this.foregroundImage,
-    this.onBackgroundImageError,
-    this.onForegroundImageError,
+    this.backgroundDecorationImage,
+    this.foregroundDecorationImage,
+    @Deprecated('Use backgroundDecorationImage instead.') this.backgroundImage,
+    @Deprecated('Use foregroundDecorationImage instead.') this.foregroundImage,
+    @Deprecated('Use backgroundDecorationImage instead.') this.onBackgroundImageError,
+    @Deprecated('Use foregroundDecorationImage instead.') this.onForegroundImageError,
     this.foregroundColor,
     this.radius,
     this.minRadius,
@@ -114,25 +113,45 @@ class CircleAvatar extends StatelessWidget {
   /// [ThemeData.primaryColorDark] for light background colors.
   final Color? foregroundColor;
 
+  /// The background image decoration of the circle. Changing the background
+  /// image will cause the avatar to animate to the new image.
+  ///
+  /// Typically used as a fallback image for [foregroundDecorationImage]
+  ///
+  /// if the [CircleAvatar] is to have the user's initials, use [child] instead.
+  final DecorationImage? backgroundDecorationImage;
+
+  /// The foreground image decoration of the circle. Changing the foreground
+  /// image will cause the avatar to animate to the new image.
+  ///
+  /// Typically used as profile image. For fallback use [backgroundDecorationImage].
+  ///
+  /// if the [CircleAvatar] is to have the user's initials, use [child] instead.
+  final DecorationImage? foregroundDecorationImage;
+
   /// The background image of the circle. Changing the background
   /// image will cause the avatar to animate to the new image.
   ///
   /// Typically used as a fallback image for [foregroundImage].
   ///
   /// If the [CircleAvatar] is to have the user's initials, use [child] instead.
+  @Deprecated('Use backgroundDecorationImage instead.')
   final ImageProvider? backgroundImage;
 
   /// The foreground image of the circle.
   ///
   /// Typically used as profile image. For fallback use [backgroundImage].
+  @Deprecated('Use foregroundDecorationImage instead.')
   final ImageProvider? foregroundImage;
 
   /// An optional error callback for errors emitted when loading
   /// [backgroundImage].
+  @Deprecated('Use backgroundDecorationImage instead.')
   final ImageErrorListener? onBackgroundImageError;
 
   /// An optional error callback for errors emitted when loading
   /// [foregroundImage].
+  @Deprecated('Use foregroundDecorationImage instead.')
   final ImageErrorListener? onForegroundImageError;
 
   /// The size of the avatar, expressed as the radius (half the diameter).
@@ -229,6 +248,17 @@ class CircleAvatar extends StatelessWidget {
     }
     final double minDiameter = _minDiameter;
     final double maxDiameter = _maxDiameter;
+
+    DecorationImage? backgroundDecorationImage = this.backgroundDecorationImage;
+    backgroundDecorationImage ??= backgroundImage != null
+        ? DecorationImage(image: backgroundImage!, onError: onBackgroundImageError, fit: .cover)
+        : null;
+
+    DecorationImage? foregroundDecorationImage = this.foregroundDecorationImage;
+    foregroundDecorationImage ??= foregroundImage != null
+        ? DecorationImage(image: foregroundImage!, onError: onForegroundImageError, fit: .cover)
+        : null;
+
     return AnimatedContainer(
       constraints: BoxConstraints(
         minHeight: minDiameter,
@@ -239,24 +269,11 @@ class CircleAvatar extends StatelessWidget {
       duration: kThemeChangeDuration,
       decoration: BoxDecoration(
         color: effectiveBackgroundColor,
-        image: backgroundImage != null
-            ? DecorationImage(
-                image: backgroundImage!,
-                onError: onBackgroundImageError,
-                fit: BoxFit.cover,
-              )
-            : null,
+        image: backgroundDecorationImage,
         shape: BoxShape.circle,
       ),
-      foregroundDecoration: foregroundImage != null
-          ? BoxDecoration(
-              image: DecorationImage(
-                image: foregroundImage!,
-                onError: onForegroundImageError,
-                fit: BoxFit.cover,
-              ),
-              shape: BoxShape.circle,
-            )
+      foregroundDecoration: foregroundDecorationImage != null
+          ? BoxDecoration(image: foregroundDecorationImage, shape: BoxShape.circle)
           : null,
       child: child == null
           ? null
