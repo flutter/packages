@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// #region body
 // This example demonstrates a custom context menu in non-editable text using
 // SelectionArea.
 
