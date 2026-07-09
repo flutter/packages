@@ -174,7 +174,7 @@ you've added a new widget and it has a tooltip), follow these steps:
    @override
    String aboutListTileTitle(String applicationName) => 'About $applicationName';
    ```
-   For messages with parameters, do also add the function to `GlobalMaterialLocalizations`  in [`packages/flutter_localizations/lib/src/material_localizations.dart`](https://github.com/flutter/flutter/blob/main/packages/flutter_localizations/lib/src/material_localizations.dart), and add a raw getter as demonstrated below:
+   For messages with parameters, do also add the function to `GlobalMaterialLocalizations`  in [`packages/material_ui/lib/src/global_material_localizations.dart`](https://github.com/flutter/packages/blob/main/packages/material_ui/lib/src/global_material_localizations.dart), and add a raw getter as demonstrated below:
 
    ```
    /// The raw version of [aboutListTileTitle], with `$applicationName` verbatim
@@ -246,7 +246,7 @@ existing string in the MaterialLocalizations objects, follow these steps:
    `DefaultMaterialLocalizations` below.
 
 2. Update the .arb files. Modify the out-of-date English strings in
-   `lib/scr/l10n/material_en.arb`.
+   `lib/src/l10n/material_en.arb`.
 
    You also need to re-generate `lib/src/l10n/localizations.dart` by running:
    ```

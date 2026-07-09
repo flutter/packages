@@ -23,7 +23,7 @@ dependencies:
   # See https://github.com/flutter/flutter/issues/185017
   flutter_localizations:
     sdk: flutter
-  intl: any
+  intl: ^0.20.2
   material_color_utilities: 0.13.0
   vector_math: ^2.2.0
 

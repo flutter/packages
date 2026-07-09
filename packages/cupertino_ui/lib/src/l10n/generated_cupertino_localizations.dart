@@ -4,7 +4,7 @@
 
 // This file has been automatically generated. Please do not edit it manually.
 // To regenerate the file, use:
-// dart dev/tools/localization/bin/gen_localizations.dart --overwrite
+// dart packages/material_ui/script/l10n/bin/gen_localizations.dart --overwrite
 
 import 'dart:collection';
 
@@ -18,7 +18,7 @@ import '../global_cupertino_localizations.dart';
 //
 // These classes are constructed by the [getCupertinoTranslation] method at the
 // bottom of this file, and used by the [_GlobalCupertinoLocalizationsDelegate.load]
-// method defined in `cupertino_ui/lib/src/cupertino_localizations.dart`.
+// method defined in `cupertino_ui/lib/src/global_cupertino_localizations.dart`.
 
 // TODO(goderbauer): Extend the generator to properly format the output.
 // dart format off

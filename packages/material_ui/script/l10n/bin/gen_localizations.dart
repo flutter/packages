@@ -84,7 +84,7 @@ String generateArbBasedLocalizationSubclasses({
   generateConstructorForCountrySubClass ??= generateConstructor;
   final output = StringBuffer();
   output.writeln(
-    generateHeader('dart dev/tools/localization/bin/gen_localizations.dart --overwrite'),
+    generateHeader('dart packages/material_ui/script/l10n/bin/gen_localizations.dart --overwrite'),
   );
 
   final supportedLocales = StringBuffer();

@@ -131,7 +131,7 @@ you've added a new widget and it has a tooltip), follow these steps:
    String get showMenuTooltip;
    ```
    to the localizations class `CupertinoLocalizations`,
-   in [`packages/cupertino_ui/lib/src/cupertino_localizations.dart`](https://github.com/flutter/packages/blob/main/packages/cupertino_ui/lib/src/cupertino_localizations.dart);
+   in [`packages/cupertino_ui/lib/src/localizations.dart`](https://github.com/flutter/packages/blob/main/packages/cupertino_ui/lib/src/localizations.dart);
 
    #### For messages with parameters, add new function
    ```
@@ -152,7 +152,7 @@ you've added a new widget and it has a tooltip), follow these steps:
    @override
    String aboutListTileTitle(String applicationName) => 'About $applicationName';
    ```
-   For messages with parameters, do also add the function to `GlobalCupertinoLocalizations`  in [`packages/flutter_localizations/lib/src/cupertino_localizations.dart`](https://github.com/flutter/flutter/blob/main/packages/flutter_localizations/lib/src/cupertino_localizations.dart), and add a raw getter as demonstrated below:
+   For messages with parameters, do also add the function to `GlobalCupertinoLocalizations`  in [`packages/cupertino_ui/lib/src/global_cupertino_localizations.dart`](https://github.com/flutter/packages/blob/main/packages/cupertino_ui/lib/src/global_cupertino_localizations.dart), and add a raw getter as demonstrated below:
 
    ```
    /// The raw version of [aboutListTileTitle], with `$applicationName` verbatim
@@ -200,7 +200,7 @@ you've added a new widget and it has a tooltip), follow these steps:
    until they can be translated.
 
    Finally you need to re-generate
-   lib/src/l10n/generated_material_localizations.dart by running:
+   lib/src/l10n/generated_cupertino_localizations.dart by running:
    ```
    dart packages/material_ui/script/l10n/bin/gen_localizations.dart --overwrite
    ```
@@ -224,11 +224,11 @@ existing string in the CupertinoLocalizations objects, follow these steps:
    `DefaultCupertinoLocalizations` below.
 
 2. Update the .arb files. Modify the out-of-date English strings in
-   `lib/scr/l10n/cupertino_en.arb`.
+   `lib/src/l10n/cupertino_en.arb`.
 
-   You also need to re-generate `lib/src/l10n/localizations.dart` by running:
+   You also need to re-generate `lib/src/l10n/generated_material_localizations.dart` by running:
    ```
-   dart packages/material_ui/script/l10n/bin/generated_material_localizations.dart --overwrite
+   dart packages/material_ui/script/l10n/bin/gen_localizations.dart --overwrite
    ```
 
    This script may result in your updated getters being created in newer
@@ -257,7 +257,7 @@ dart packages/material_ui/script/l10n/bin/gen_localizations.dart --overwrite
 ```
 
 The gen_localizations script just combines the contents of all of the
-.arb files, each into a class which extends `Global*Localizations`.
+.arb files, each into a class which extends `GlobalCupertinoLocalizations`.
 The `CupertinoLocalizations` class implementation uses these to lookup localized
 resource values.
 
