@@ -1,5 +1,6 @@
-## NEXT
+## 2.0.4
 
+* Adds support for localizedCancelTitle. 
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 2.0.3
