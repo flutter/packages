@@ -1129,6 +1129,66 @@ void main() {
     );
     expect(tester.getSize(find.byType(CupertinoButton)), Size.zero);
   });
+
+  group('CupertinoButton label and labelAlignment', () {
+    const Widget labelWidget = Text('Label');
+    const Widget childWidget = Text('Child');
+
+    testWidgets('Label visible', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        CupertinoApp(
+          home: CupertinoButton(onPressed: () {}, label: labelWidget, child: childWidget),
+        ),
+      );
+      expect(find.text('Label'), findsOneWidget);
+      expect(find.text('Child'), findsOneWidget);
+    });
+    testWidgets('Label not visible', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        CupertinoApp(
+          home: CupertinoButton(onPressed: () {}, child: childWidget),
+        ),
+      );
+      expect(find.text('Label'), findsNothing);
+      expect(find.text('Child'), findsOneWidget);
+    });
+    testWidgets('Label alignment - start', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        CupertinoApp(
+          home: CupertinoButton(onPressed: () {}, label: labelWidget, child: childWidget),
+        ),
+      );
+      final Row row = tester.widget<Row>(
+        find.descendant(of: find.byType(CupertinoButton), matching: find.byType(Row)),
+      );
+      expect(row.children.length, 3);
+      expect(row.children[0], labelWidget);
+      expect(row.children[1], isA<SizedBox>());
+      expect((row.children[1] as SizedBox).width, 8.0);
+      expect(row.children[2], childWidget);
+    });
+    testWidgets('Label alignment - end', (WidgetTester tester) async {
+      // Label alignment end
+      await tester.pumpWidget(
+        CupertinoApp(
+          home: CupertinoButton(
+            onPressed: () {},
+            label: labelWidget,
+            labelAlignment: CupertinoButtonLabelAlignment.end,
+            child: childWidget,
+          ),
+        ),
+      );
+      final Row row = tester.widget<Row>(
+        find.descendant(of: find.byType(CupertinoButton), matching: find.byType(Row)),
+      );
+      expect(row.children.length, 3);
+      expect(row.children[0], childWidget);
+      expect(row.children[1], isA<SizedBox>());
+      expect((row.children[1] as SizedBox).width, 8.0);
+      expect(row.children[2], labelWidget);
+    });
+  });
 }
 
 Widget boilerplate({required Widget child}) {
