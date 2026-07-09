@@ -140,10 +140,8 @@ void updateMissingResources(
             return found;
           });
           if (shouldWrite) {
-              // ignore: avoid_print
-            print(
-              'Updating $entityPath by removing extra entries for $extraResources',
-            );
+            // ignore: avoid_print
+            print('Updating $entityPath by removing extra entries for $extraResources');
           }
         }
 
@@ -164,9 +162,7 @@ void updateMissingResources(
           );
           shouldWrite = true;
           // ignore: avoid_print
-          print(
-            'Updating $entityPath with missing entries for $missingResources',
-          );
+          print('Updating $entityPath with missing entries for $missingResources');
         }
         if (shouldWrite) {
           writeBundle(arbFile, localeBundle);
