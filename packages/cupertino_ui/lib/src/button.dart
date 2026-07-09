@@ -7,6 +7,7 @@ library;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/widgets.dart';
 
@@ -44,6 +45,20 @@ enum _CupertinoButtonStyle {
   filled,
 }
 
+/// The alignment of a [CupertinoButton]'s [label] relative to its [child].
+///
+/// The visual effect of `labelAlignment` depends on the ambient [TextDirection].
+/// If the text direction is [TextDirection.ltr], then [CupertinoButtonLabelAlignment.start]
+/// and [CupertinoButtonLabelAlignment.end] align the label on the left or the right respectively.
+/// If the text direction is [TextDirection.rtl], then the alignments are reversed.
+enum CupertinoButtonLabelAlignment {
+  /// The label is placed before the child.
+  start,
+
+  /// The label is placed after the child.
+  end,
+}
+
 /// An iOS-style button.
 ///
 /// Takes in a text or an icon that fades out and in on touch. May optionally have a
@@ -76,6 +91,7 @@ class CupertinoButton extends StatefulWidget {
   const CupertinoButton({
     super.key,
     required this.child,
+    this.label,
     this.sizeStyle = CupertinoButtonSize.large,
     this.padding,
     this.color,
@@ -90,6 +106,7 @@ class CupertinoButton extends StatefulWidget {
     this.pressedOpacity = 0.4,
     this.borderRadius,
     this.alignment = Alignment.center,
+    this.labelAlignment = .start,
     this.focusColor,
     this.focusNode,
     this.onFocusChange,
@@ -113,6 +130,7 @@ class CupertinoButton extends StatefulWidget {
   const CupertinoButton.tinted({
     super.key,
     required this.child,
+    this.label,
     this.sizeStyle = CupertinoButtonSize.large,
     this.padding,
     this.color,
@@ -127,6 +145,7 @@ class CupertinoButton extends StatefulWidget {
     this.pressedOpacity = 0.4,
     this.borderRadius,
     this.alignment = Alignment.center,
+    this.labelAlignment = .start,
     this.focusColor,
     this.focusNode,
     this.onFocusChange,
@@ -144,6 +163,7 @@ class CupertinoButton extends StatefulWidget {
   const CupertinoButton.filled({
     super.key,
     required this.child,
+    this.label,
     this.sizeStyle = CupertinoButtonSize.large,
     this.padding,
     this.color,
@@ -158,6 +178,7 @@ class CupertinoButton extends StatefulWidget {
     this.pressedOpacity = 0.4,
     this.borderRadius,
     this.alignment = Alignment.center,
+    this.labelAlignment = .start,
     this.focusColor,
     this.focusNode,
     this.onFocusChange,
@@ -173,6 +194,11 @@ class CupertinoButton extends StatefulWidget {
   ///
   /// Typically a [Text] widget.
   final Widget child;
+
+  /// The label of the button, which is displayed before the [child] widget.
+  ///
+  /// Typically a [Icon] widget.
+  final Widget? label;
 
   /// The amount of space to surround the child inside the bounds of the button.
   ///
@@ -252,6 +278,11 @@ class CupertinoButton extends StatefulWidget {
   ///
   /// Always defaults to [Alignment.center].
   final AlignmentGeometry alignment;
+
+  /// The alignment of the button's [label] relative to its [child].
+  ///
+  /// Defaults to [CupertinoButtonLabelAlignment.start].
+  final CupertinoButtonLabelAlignment labelAlignment;
 
   /// The color to use for the focus highlight for keyboard interactions.
   ///
@@ -597,7 +628,26 @@ class _CupertinoButtonState extends State<CupertinoButton> with SingleTickerProv
                       heightFactor: 1.0,
                       child: DefaultTextStyle(
                         style: textStyle,
-                        child: IconTheme(data: iconTheme, child: widget.child),
+                        child: IconTheme(
+                          data: iconTheme,
+                          child: widget.label != null
+                              ? Row(
+                                  mainAxisSize: .min,
+                                  mainAxisAlignment: .center,
+                                  children: widget.labelAlignment == .start
+                                      ? <Widget>[
+                                          widget.label!,
+                                          const SizedBox(width: 8),
+                                          widget.child,
+                                        ]
+                                      : <Widget>[
+                                          widget.child,
+                                          const SizedBox(width: 8),
+                                          widget.label!,
+                                        ],
+                                )
+                              : widget.child,
+                        ),
                       ),
                     ),
                   ),
