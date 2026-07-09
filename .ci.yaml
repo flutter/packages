@@ -187,7 +187,7 @@ targets:
       target_file: web_dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
-      package_sharding: "--shardIndex 0 --shardCount 2"
+      package_sharding: "--shardIndex 0 --shardCount 3"
 
   - name: Linux_web web_dart_unit_test_shard_2 master
     recipe: packages/packages
@@ -196,10 +196,9 @@ targets:
       target_file: web_dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
-      package_sharding: "--shardIndex 1 --shardCount 2"
+      package_sharding: "--shardIndex 1 --shardCount 3"
 
   - name: Linux_web web_dart_unit_test_shard_3 master
-    bringup: true
     recipe: packages/packages
     timeout: 60
     properties:
@@ -215,7 +214,7 @@ targets:
       target_file: web_dart_unit_tests.yaml
       channel: stable
       version_file: flutter_stable.version
-      package_sharding: "--shardIndex 0 --shardCount 2"
+      package_sharding: "--shardIndex 0 --shardCount 3"
 
   - name: Linux_web web_dart_unit_test_shard_2 stable
     recipe: packages/packages
@@ -224,10 +223,9 @@ targets:
       target_file: web_dart_unit_tests.yaml
       channel: stable
       version_file: flutter_stable.version
-      package_sharding: "--shardIndex 1 --shardCount 2"
+      package_sharding: "--shardIndex 1 --shardCount 3"
 
   - name: Linux_web web_dart_unit_test_shard_3 stable
-    bringup: true
     recipe: packages/packages
     timeout: 60
     properties:
