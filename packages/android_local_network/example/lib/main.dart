@@ -8,11 +8,12 @@ import 'package:android_local_network/android_local_network.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  AndroidLocalNetwork.initialize();
   runApp(const MyApp());
 }
 
+/// The main application.
 class MyApp extends StatelessWidget {
+  /// Create the main application.
   const MyApp({super.key});
 
   @override
@@ -28,7 +29,9 @@ class MyApp extends StatelessWidget {
   }
 }
 
+/// The main home page screen.
 class MyHomePage extends StatefulWidget {
+  /// Create the home page.
   const MyHomePage({super.key});
 
   @override
@@ -54,11 +57,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _refreshInterfaces() async {
-    final interfaces = await NetworkInterface.list();
+    final List<NetworkInterface> interfaces = await NetworkInterface.list();
     setState(() {
       _interfacesInfo.clear();
       for (final interface in interfaces) {
-        for (final addr in interface.addresses) {
+        for (final InternetAddress addr in interface.addresses) {
           if (addr.type == InternetAddressType.IPv4) {
             _interfacesInfo.add('${interface.name}: ${addr.address}');
           }
@@ -90,17 +93,21 @@ class _MyHomePageState extends State<MyHomePage> {
       _permissionDenials = 0;
       _connectionSuccesses = 0;
       _connectionFailures = 0;
-      _lastAction = 'Attempting Socket.connect("1.1.1.1", 80)...';
+      _lastAction =
+          'Attempting AndroidLocalAreaSocket.connect("1.1.1.1", 80)...';
     });
 
     try {
-      final socket = await Socket.connect('1.1.1.1', 80,
-          timeout: const Duration(seconds: 5));
+      final Socket socket = await AndroidLocalAreaSocket.connect(
+        '1.1.1.1',
+        80,
+        timeout: const Duration(seconds: 5),
+      );
       await socket.close();
       setState(() {
         _permissionGrants++;
         _connectionSuccesses++;
-        _lastAction = 'Socket.connect successful';
+        _lastAction = 'AndroidLocalAreaSocket.connect successful';
       });
       await _checkPermission();
     } catch (e) {
@@ -112,7 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
           _permissionGrants++;
           _connectionFailures++;
         }
-        _lastAction = 'Socket.connect failed: $e';
+        _lastAction = 'AndroidLocalAreaSocket.connect failed: $e';
       });
       await _checkPermission();
     }
@@ -131,12 +138,12 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     try {
-      final interfaces = await NetworkInterface.list();
-      final List<String> subnets = [];
+      final List<NetworkInterface> interfaces = await NetworkInterface.list();
+      final subnets = <String>[];
       for (final interface in interfaces) {
-        for (final addr in interface.addresses) {
+        for (final InternetAddress addr in interface.addresses) {
           if (addr.type == InternetAddressType.IPv4 && !addr.isLoopback) {
-            final parts = addr.address.split('.');
+            final List<String> parts = addr.address.split('.');
             subnets.add('${parts[0]}.${parts[1]}.${parts[2]}');
           }
         }
@@ -150,11 +157,11 @@ class _MyHomePageState extends State<MyHomePage> {
         return;
       }
 
-      final List<Future<void>> scans = [];
-      final List<int> ports = [80, 8080, 443, 22];
+      final scans = <Future<void>>[];
+      final ports = <int>[80, 8080, 443, 22];
 
       for (final subnet in subnets) {
-        for (int i = 1; i <= 254; i++) {
+        for (var i = 1; i <= 254; i++) {
           final ip = '$subnet.$i';
           for (final port in ports) {
             scans.add(() async {
@@ -162,7 +169,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 _totalAttempts++;
               });
               try {
-                final socket = await Socket.connect(
+                final Socket socket = await AndroidLocalAreaSocket.connect(
                   ip,
                   port,
                   timeout: const Duration(milliseconds: 500),
@@ -235,8 +242,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 Text(
                   _status,
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        color: _status == 'Granted' ? Colors.green : Colors.red,
-                      ),
+                    color: _status == 'Granted' ? Colors.green : Colors.red,
+                  ),
                 ),
                 const SizedBox(height: 20),
                 if (_totalAttempts > 0)
@@ -249,30 +256,48 @@ class _MyHomePageState extends State<MyHomePage> {
                           const Text(
                             'Permission & Connection Stats',
                             style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const SizedBox(height: 12),
-                          const Text('Permission Result:',
-                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          const Text(
+                            'Permission Result:',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              _buildStatItem('Granted', _permissionGrants,
-                                  Colors.green),
-                              _buildStatItem('Denied', _permissionDenials,
-                                  Colors.red),
+                              _buildStatItem(
+                                'Granted',
+                                _permissionGrants,
+                                Colors.green,
+                              ),
+                              _buildStatItem(
+                                'Denied',
+                                _permissionDenials,
+                                Colors.red,
+                              ),
                             ],
                           ),
                           const Divider(height: 32),
-                          const Text('Network Result:',
-                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          const Text(
+                            'Network Result:',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              _buildStatItem('Connected', _connectionSuccesses,
-                                  Colors.green),
-                              _buildStatItem('Timed Out', _connectionFailures,
-                                  Colors.orange),
+                              _buildStatItem(
+                                'Connected',
+                                _connectionSuccesses,
+                                Colors.green,
+                              ),
+                              _buildStatItem(
+                                'Timed Out',
+                                _connectionFailures,
+                                Colors.orange,
+                              ),
                             ],
                           ),
                           if (_isScanning) ...[
@@ -325,7 +350,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     ElevatedButton(
                       onPressed: _testStandardSocket,
-                      child: const Text('Test Socket.connect'),
+                      child: const Text('Test AndroidLocalAreaSocket.connect'),
                     ),
                     ElevatedButton(
                       onPressed: _isScanning ? null : _scanLan,
@@ -375,13 +400,7 @@ class _MyHomePageState extends State<MyHomePage> {
             color: color,
           ),
         ),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-          ),
-        ),
+        Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
       ],
     );
   }

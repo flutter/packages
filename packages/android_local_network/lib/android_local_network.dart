@@ -12,20 +12,6 @@ class AndroidLocalNetwork {
   static Future<bool>? _pendingRequest;
   static bool _hasRequestedOnce = false;
 
-  /// Initializes the local network permission handler.
-  ///
-  /// This will set a global [IOOverrides] that automatically requests the
-  /// ACCESS_LOCAL_NETWORK permission on Android whenever a socket is used
-  /// (e.g., [Socket.connect], [ServerSocket.bind], etc.).
-  ///
-  /// This should be called early in your application's lifecycle,
-  /// typically in `main()`.
-  static void initialize() {
-    if (Platform.isAndroid) {
-      IOOverrides.global = _AndroidLocalNetworkIOOverrides(IOOverrides.current);
-    }
-  }
-
   /// Checks if the local area permission is granted.
   /// Returns true on non-Android platforms.
   static Future<bool> checkPermission() async {
@@ -127,99 +113,6 @@ class AndroidLocalNetwork {
     }
 
     return false;
-  }
-}
-
-base class _AndroidLocalNetworkIOOverrides extends IOOverrides {
-  _AndroidLocalNetworkIOOverrides(this._previous);
-
-  final IOOverrides? _previous;
-
-  @override
-  Future<Socket> socketConnect(
-    dynamic host,
-    int port, {
-    dynamic sourceAddress,
-    int sourcePort = 0,
-    Duration? timeout,
-  }) async {
-    final bool granted = await AndroidLocalNetwork._checkAndRequestPermission();
-    if (!granted) {
-      throw const SocketException('ACCESS_LOCAL_NETWORK permission denied');
-    }
-    if (_previous != null) {
-      return _previous.socketConnect(
-        host,
-        port,
-        sourceAddress: sourceAddress,
-        sourcePort: sourcePort,
-        timeout: timeout,
-      );
-    }
-    return super.socketConnect(
-      host,
-      port,
-      sourceAddress: sourceAddress,
-      sourcePort: sourcePort,
-      timeout: timeout,
-    );
-  }
-
-  @override
-  Future<ConnectionTask<Socket>> socketStartConnect(
-    dynamic host,
-    int port, {
-    dynamic sourceAddress,
-    int sourcePort = 0,
-  }) async {
-    final bool granted = await AndroidLocalNetwork._checkAndRequestPermission();
-    if (!granted) {
-      throw const SocketException('ACCESS_LOCAL_NETWORK permission denied');
-    }
-    if (_previous != null) {
-      return _previous.socketStartConnect(
-        host,
-        port,
-        sourceAddress: sourceAddress,
-        sourcePort: sourcePort,
-      );
-    }
-    return super.socketStartConnect(
-      host,
-      port,
-      sourceAddress: sourceAddress,
-      sourcePort: sourcePort,
-    );
-  }
-
-  @override
-  Future<ServerSocket> serverSocketBind(
-    dynamic address,
-    int port, {
-    int backlog = 0,
-    bool v6Only = false,
-    bool shared = false,
-  }) async {
-    final bool granted = await AndroidLocalNetwork._checkAndRequestPermission();
-    if (!granted) {
-      throw const SocketException('ACCESS_LOCAL_NETWORK permission denied');
-    }
-    if (_previous != null) {
-      return _previous.serverSocketBind(
-        address,
-        port,
-        backlog: backlog,
-        v6Only: v6Only,
-        shared: shared,
-      );
-    }
-    return super.serverSocketBind(
-      address,
-      port,
-      backlog: backlog,
-      v6Only: v6Only,
-      shared: shared,
-    );
   }
 }
 

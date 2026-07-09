@@ -4,30 +4,17 @@ A Flutter package to handle the Android 15 Local Area Permission (`ACCESS_LOCAL_
 
 ## Usage
 
-### Automatic Permission Handling (Recommended)
+### Connecting via Wrapper
 
-To automatically handle the permission whenever a socket is used, call `AndroidLocalNetwork.initialize()` early in your application's lifecycle (e.g., in `main()`):
-
-```dart
-import 'package:android_local_network/android_local_network.dart';
-
-void main() {
-  AndroidLocalNetwork.initialize();
-  runApp(const MyApp());
-}
-```
-
-Once initialized, any use of `Socket.connect`, `ServerSocket.bind`, `RawSocket.connect`, `RawServerSocket.bind`, or `RawDatagramSocket.bind` will automatically check for and request the `ACCESS_LOCAL_NETWORK` permission on Android if it hasn't been granted.
-
-### Manual Permission Handling
-
-Instead of using `Socket.connect` directly, you can use `AndroidLocalAreaSocket.connect`:
+Instead of using `Socket.connect` directly, use `AndroidLocalAreaSocket.connect`. This automatically requests the `ACCESS_LOCAL_NETWORK` permission on Android if it hasn't been granted.
 
 ```dart
 import 'package:android_local_network/android_local_network.dart';
 
 final socket = await AndroidLocalAreaSocket.connect('192.168.1.1', 8080);
 ```
+
+### Manual Permission Handling
 
 Or check and request the permission manually:
 
