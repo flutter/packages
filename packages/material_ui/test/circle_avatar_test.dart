@@ -115,6 +115,93 @@ void main() {
     await expectLater(find.byType(CircleAvatar), matchesGoldenFile('circle_avatar.fallback.png'));
   });
 
+  testWidgets('CircleAvatar with backgroundDecorationImage', (WidgetTester tester) async {
+    final decorationImage = DecorationImage(
+      image: MemoryImage(Uint8List.fromList(kTransparentImage)),
+      fit: .cover,
+    );
+    await tester.pumpWidget(
+      wrap(child: CircleAvatar(backgroundDecorationImage: decorationImage, radius: 50.0)),
+    );
+
+    final RenderConstrainedBox box = tester.renderObject(find.byType(CircleAvatar));
+    expect(box.size, equals(const Size(100.0, 100.0)));
+    final child = box.child! as RenderDecoratedBox;
+    final decoration = child.decoration as BoxDecoration;
+    expect(decoration.image, equals(decorationImage));
+    expect(decoration.image!.fit, equals(BoxFit.cover));
+  });
+
+  testWidgets('CircleAvatar with foregroundDecorationImage', (WidgetTester tester) async {
+    final decorationImage = DecorationImage(
+      image: MemoryImage(Uint8List.fromList(kBlueRectPng)),
+      fit: .cover,
+    );
+    await tester.pumpWidget(
+      wrap(child: CircleAvatar(foregroundDecorationImage: decorationImage, radius: 50.0)),
+    );
+
+    final RenderConstrainedBox box = tester.renderObject(find.byType(CircleAvatar));
+    expect(box.size, equals(const Size(100.0, 100.0)));
+    final RenderDecoratedBox foregroundBox = tester.renderObject(
+      find.descendant(of: find.byType(CircleAvatar), matching: find.byType(DecoratedBox)).first,
+    );
+    final foregroundDecoration = foregroundBox.decoration as BoxDecoration;
+    expect(foregroundDecoration.image, equals(decorationImage));
+    expect(foregroundDecoration.image!.fit, equals(BoxFit.cover));
+  });
+
+  testWidgets('CircleAvatar uses backgroundDecorationImage over backgroundImage', (
+    WidgetTester tester,
+  ) async {
+    final backgroundDecoration = DecorationImage(
+      image: MemoryImage(Uint8List.fromList(kBlueRectPng)),
+      fit: .fitWidth,
+    );
+    await tester.pumpWidget(
+      wrap(
+        child: CircleAvatar(
+          backgroundDecorationImage: backgroundDecoration,
+          backgroundImage: MemoryImage(Uint8List.fromList(kTransparentImage)),
+          radius: 50.0,
+        ),
+      ),
+    );
+
+    final RenderConstrainedBox box = tester.renderObject(find.byType(CircleAvatar));
+    final child = box.child! as RenderDecoratedBox;
+    final decoration = child.decoration as BoxDecoration;
+    expect(decoration.image, equals(backgroundDecoration));
+    expect(decoration.image!.fit, equals(BoxFit.fitWidth));
+  });
+
+  testWidgets('CircleAvatar uses foregroundDecorationImage over foregroundImage', (
+    WidgetTester tester,
+  ) async {
+    final foregroundDecoration = DecorationImage(
+      image: MemoryImage(Uint8List.fromList(kBlueRectPng)),
+      fit: .fitWidth,
+    );
+    await tester.pumpWidget(
+      wrap(
+        child: CircleAvatar(
+          foregroundDecorationImage: foregroundDecoration,
+          foregroundImage: MemoryImage(Uint8List.fromList(kTransparentImage)),
+          radius: 50.0,
+        ),
+      ),
+    );
+
+    final RenderConstrainedBox box = tester.renderObject(find.byType(CircleAvatar));
+    expect(box.size, equals(const Size(100.0, 100.0)));
+    final RenderDecoratedBox foregroundBox = tester.renderObject(
+      find.descendant(of: find.byType(CircleAvatar), matching: find.byType(DecoratedBox)).first,
+    );
+    final foregroundDec = foregroundBox.decoration as BoxDecoration;
+    expect(foregroundDec.image, equals(foregroundDecoration));
+    expect(foregroundDec.image!.fit, equals(BoxFit.fitWidth));
+  });
+
   testWidgets('CircleAvatar with foreground color', (WidgetTester tester) async {
     final Color foregroundColor = Colors.red.shade100;
     await tester.pumpWidget(
