@@ -580,24 +580,18 @@ class SampleMenu extends StatelessWidget {
     if (!supported) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Web Authentication is not supported on this device.',
-            ),
-          ),
+          const SnackBar(content: Text('Web Authentication is not supported on this device.')),
         );
       }
       return;
     }
 
-    await androidController.setWebAuthenticationSupport(
-      WebAuthenticationSupport.forApp,
-    );
+    await androidController.setWebAuthenticationSupport(WebAuthenticationSupport.forApp);
 
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Web Authentication enabled.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Web Authentication enabled.')));
     }
   }
 

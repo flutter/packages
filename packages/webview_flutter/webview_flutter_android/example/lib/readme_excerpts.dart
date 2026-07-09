@@ -22,19 +22,16 @@ Future<void> enablePaymentRequest() async {
 
 /// Example function for README demonstration of Web Authentication support.
 Future<void> enableWebAuthentication() async {
-  final controller = PlatformWebViewController(
-    AndroidWebViewControllerCreationParams(),
-  );
+  final controller = PlatformWebViewController(AndroidWebViewControllerCreationParams());
   final androidController = controller as AndroidWebViewController;
   // #docregion web_authentication_example
-  final bool webAuthenticationSupported = await androidController
-      .isWebViewFeatureSupported(WebViewFeatureType.webAuthentication);
+  final bool webAuthenticationSupported = await androidController.isWebViewFeatureSupported(
+    WebViewFeatureType.webAuthentication,
+  );
 
   if (webAuthenticationSupported) {
     // Enable WebAuthn for the embedded app
-    await androidController.setWebAuthenticationSupport(
-      WebAuthenticationSupport.forApp,
-    );
+    await androidController.setWebAuthenticationSupport(WebAuthenticationSupport.forApp);
     // Or for browser-like behavior supporting any website:
     // await androidController.setWebAuthenticationSupport(
     //   WebAuthenticationSupport.forBrowser,

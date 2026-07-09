@@ -96,8 +96,7 @@ void main() {
     android_webview.WebSettings? mockSettings,
     Future<bool> Function(String)? isWebViewFeatureSupported,
     Future<void> Function(android_webview.WebSettings, bool)? setPaymentRequestEnabled,
-    Future<void> Function(android_webview.WebSettings, int)?
-    setWebAuthenticationSupport,
+    Future<void> Function(android_webview.WebSettings, int)? setWebAuthenticationSupport,
   }) {
     final android_webview.WebView nonNullMockWebView = mockWebView ?? MockWebView();
 
@@ -256,10 +255,8 @@ void main() {
         isWebViewFeatureSupported ?? (_) async => false;
     android_webview.PigeonOverrides.webSettingsCompat_setPaymentRequestEnabled =
         setPaymentRequestEnabled ?? (_, _) async {};
-    android_webview
-            .PigeonOverrides
-            .webSettingsCompat_setWebAuthenticationSupport =
-        setWebAuthenticationSupport ?? (_, __) async {};
+    android_webview.PigeonOverrides.webSettingsCompat_setWebAuthenticationSupport =
+        setWebAuthenticationSupport ?? (_, _) async {};
 
     final creationParams = AndroidWebViewControllerCreationParams(
       androidWebStorage: mockWebStorage ?? MockWebStorage(),
@@ -1896,16 +1893,13 @@ void main() {
     final AndroidWebViewController controller = createControllerWithMocks(
       mockWebView: mockWebView,
       mockSettings: mockSettings,
-      setWebAuthenticationSupport:
-          (android_webview.WebSettings settings, int support) async {
-            capturedSettings = settings;
-            capturedSupport = support;
-          },
+      setWebAuthenticationSupport: (android_webview.WebSettings settings, int support) async {
+        capturedSettings = settings;
+        capturedSupport = support;
+      },
     );
 
-    await controller.setWebAuthenticationSupport(
-      WebAuthenticationSupport.forApp,
-    );
+    await controller.setWebAuthenticationSupport(WebAuthenticationSupport.forApp);
 
     expect(mockSettings, capturedSettings);
     expect(WebAuthenticationSupport.forApp.value, capturedSupport);
@@ -1920,16 +1914,13 @@ void main() {
     final AndroidWebViewController controller = createControllerWithMocks(
       mockWebView: mockWebView,
       mockSettings: mockSettings,
-      setWebAuthenticationSupport:
-          (android_webview.WebSettings settings, int support) async {
-            capturedSettings = settings;
-            capturedSupport = support;
-          },
+      setWebAuthenticationSupport: (android_webview.WebSettings settings, int support) async {
+        capturedSettings = settings;
+        capturedSupport = support;
+      },
     );
 
-    await controller.setWebAuthenticationSupport(
-      WebAuthenticationSupport.forBrowser,
-    );
+    await controller.setWebAuthenticationSupport(WebAuthenticationSupport.forBrowser);
 
     expect(mockSettings, capturedSettings);
     expect(WebAuthenticationSupport.forBrowser.value, capturedSupport);
@@ -1944,11 +1935,10 @@ void main() {
     final AndroidWebViewController controller = createControllerWithMocks(
       mockWebView: mockWebView,
       mockSettings: mockSettings,
-      setWebAuthenticationSupport:
-          (android_webview.WebSettings settings, int support) async {
-            capturedSettings = settings;
-            capturedSupport = support;
-          },
+      setWebAuthenticationSupport: (android_webview.WebSettings settings, int support) async {
+        capturedSettings = settings;
+        capturedSupport = support;
+      },
     );
 
     await controller.setWebAuthenticationSupport(WebAuthenticationSupport.none);
@@ -1958,19 +1948,16 @@ void main() {
   });
 
   test('setWebAuthenticationSupport propagates unsupported errors', () async {
-    final expectedError = UnsupportedError(
-      'WEB_AUTHENTICATION is not supported',
-    );
+    final expectedError = UnsupportedError('WEB_AUTHENTICATION is not supported');
 
     final mockWebView = MockWebView();
     final mockSettings = MockWebSettings();
     final AndroidWebViewController controller = createControllerWithMocks(
       mockWebView: mockWebView,
       mockSettings: mockSettings,
-      setWebAuthenticationSupport:
-          (android_webview.WebSettings settings, int support) async {
-            throw expectedError;
-          },
+      setWebAuthenticationSupport: (android_webview.WebSettings settings, int support) async {
+        throw expectedError;
+      },
     );
 
     await expectLater(
@@ -1988,16 +1975,13 @@ void main() {
     final AndroidWebViewController controller = createControllerWithMocks(
       mockWebView: mockWebView,
       mockSettings: mockSettings,
-      setWebAuthenticationSupport:
-          (android_webview.WebSettings settings, int support) async {
-            capturedSettings = settings;
-            capturedSupport = support;
-          },
+      setWebAuthenticationSupport: (android_webview.WebSettings settings, int support) async {
+        capturedSettings = settings;
+        capturedSupport = support;
+      },
     );
 
-    await controller.setWebAuthenticationSupport(
-      WebAuthenticationSupport.forApp,
-    );
+    await controller.setWebAuthenticationSupport(WebAuthenticationSupport.forApp);
 
     expect(mockSettings, capturedSettings);
     expect(WebAuthenticationSupport.forApp.value, capturedSupport);
@@ -2012,16 +1996,13 @@ void main() {
     final AndroidWebViewController controller = createControllerWithMocks(
       mockWebView: mockWebView,
       mockSettings: mockSettings,
-      setWebAuthenticationSupport:
-          (android_webview.WebSettings settings, int support) async {
-            capturedSettings = settings;
-            capturedSupport = support;
-          },
+      setWebAuthenticationSupport: (android_webview.WebSettings settings, int support) async {
+        capturedSettings = settings;
+        capturedSupport = support;
+      },
     );
 
-    await controller.setWebAuthenticationSupport(
-      WebAuthenticationSupport.forBrowser,
-    );
+    await controller.setWebAuthenticationSupport(WebAuthenticationSupport.forBrowser);
 
     expect(mockSettings, capturedSettings);
     expect(WebAuthenticationSupport.forBrowser.value, capturedSupport);
@@ -2036,11 +2017,10 @@ void main() {
     final AndroidWebViewController controller = createControllerWithMocks(
       mockWebView: mockWebView,
       mockSettings: mockSettings,
-      setWebAuthenticationSupport:
-          (android_webview.WebSettings settings, int support) async {
-            capturedSettings = settings;
-            capturedSupport = support;
-          },
+      setWebAuthenticationSupport: (android_webview.WebSettings settings, int support) async {
+        capturedSettings = settings;
+        capturedSupport = support;
+      },
     );
 
     await controller.setWebAuthenticationSupport(WebAuthenticationSupport.none);
@@ -2050,19 +2030,16 @@ void main() {
   });
 
   test('setWebAuthenticationSupport propagates unsupported errors', () async {
-    final expectedError = UnsupportedError(
-      'WEB_AUTHENTICATION is not supported',
-    );
+    final expectedError = UnsupportedError('WEB_AUTHENTICATION is not supported');
 
     final mockWebView = MockWebView();
     final mockSettings = MockWebSettings();
     final AndroidWebViewController controller = createControllerWithMocks(
       mockWebView: mockWebView,
       mockSettings: mockSettings,
-      setWebAuthenticationSupport:
-          (android_webview.WebSettings settings, int support) async {
-            throw expectedError;
-          },
+      setWebAuthenticationSupport: (android_webview.WebSettings settings, int support) async {
+        throw expectedError;
+      },
     );
 
     await expectLater(

@@ -586,9 +586,7 @@ class MockAndroidWebViewController extends _i1.Mock implements _i6.AndroidWebVie
           as _i5.Future<bool>);
 
   @override
-  _i5.Future<void> setWebAuthenticationSupport(
-    _i6.WebAuthenticationSupport? support,
-  ) =>
+  _i5.Future<void> setWebAuthenticationSupport(_i6.WebAuthenticationSupport? support) =>
       (super.noSuchMethod(
             Invocation.method(#setWebAuthenticationSupport, [support]),
             returnValue: _i5.Future<void>.value(),
@@ -606,9 +604,7 @@ class MockAndroidWebViewController extends _i1.Mock implements _i6.AndroidWebVie
           as _i5.Future<void>);
 
   @override
-  _i5.Future<void> setInsetsForWebContentToIgnore(
-    List<_i6.AndroidWebViewInsets>? insets,
-  ) =>
+  _i5.Future<void> setInsetsForWebContentToIgnore(List<_i6.AndroidWebViewInsets>? insets) =>
       (super.noSuchMethod(
             Invocation.method(#setInsetsForWebContentToIgnore, [insets]),
             returnValue: _i5.Future<void>.value(),

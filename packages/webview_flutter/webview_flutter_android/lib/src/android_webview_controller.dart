@@ -789,11 +789,8 @@ class AndroidWebViewController extends PlatformWebViewController {
   /// See [WebViewFeatureType] for available feature constants.
   Future<bool> isWebViewFeatureSupported(WebViewFeatureType featureType) {
     final String feature = switch (featureType) {
-      WebViewFeatureType.paymentRequest =>
-        WebViewFeatureConstants.paymentRequest,
-      WebViewFeatureType.webAuthentication =>
-        WebViewFeatureConstants.webAuthentication,
       WebViewFeatureType.paymentRequest => WebViewFeatureConstants.paymentRequest,
+      WebViewFeatureType.webAuthentication => WebViewFeatureConstants.webAuthentication,
     };
     return android_webview.WebViewFeature.isFeatureSupported(feature);
   }
@@ -822,9 +819,7 @@ class AndroidWebViewController extends PlatformWebViewController {
   /// ```
   ///
   /// See https://developer.android.com/reference/androidx/webkit/WebSettingsCompat#setWebAuthenticationSupport.
-  Future<void> setWebAuthenticationSupport(
-    WebAuthenticationSupport support,
-  ) async {
+  Future<void> setWebAuthenticationSupport(WebAuthenticationSupport support) async {
     await android_webview.WebSettingsCompat.setWebAuthenticationSupport(
       _webView.settings,
       support.value,
