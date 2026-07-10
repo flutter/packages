@@ -121,6 +121,7 @@ final class DefaultCamera: NSObject, Camera {
   private var maxStreamingPendingFramesCount = 4
 
   private var fileFormat = PlatformImageFileFormat.jpeg
+  private var imageQuality: Int64 = 100
   private var lockedCaptureOrientation = UIDeviceOrientation.unknown
   private var exposureMode = PlatformExposureMode.auto
   private var focusMode = PlatformFocusMode.auto
@@ -719,6 +720,17 @@ final class DefaultCamera: NSObject, Camera {
       fileExtension = "heif"
     } else {
       fileExtension = "jpg"
+      if imageQuality < 100 {
+        settings = AVCapturePhotoSettings(format: [
+          AVVideoCodecKey: AVVideoCodecType.jpeg,
+          AVVideoCompressionPropertiesKey: [
+            AVVideoQualityKey: CGFloat(imageQuality) / 100.0
+          ],
+        ])
+        if mediaSettings.resolutionPreset == .max {
+          settings.isHighResolutionPhotoEnabled = true
+        }
+      }
     }
 
     if flashMode != .torch {
@@ -840,6 +852,10 @@ final class DefaultCamera: NSObject, Camera {
 
   func setImageFileFormat(_ fileFormat: PlatformImageFileFormat) {
     self.fileFormat = fileFormat
+  }
+
+  func setJpegImageQuality(_ quality: Int64) {
+    self.imageQuality = quality
   }
 
   func setExposureMode(_ mode: PlatformExposureMode) {

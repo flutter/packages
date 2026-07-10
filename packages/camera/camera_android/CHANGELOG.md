@@ -1,3 +1,20 @@
+## 0.10.11
+
+* Adds `setJpegImageQuality` for controlling JPEG compression quality.
+
+## 0.10.10+18
+
+* Bumps the androidx group across 10 directories with 1 update.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
+## 0.10.10+17
+
+* Reset AE and AF triggers to idle after capture to fix camera flash remaining issue #97501.
+
+## 0.10.10+16
+
+* Updates build files from Groovy to Kotlin.
+
 ## 0.10.10+15
 
 * Updates example to demonstrate correct exception handling for async return statements, ensuring exceptions thrown during return within try blocks are properly caught as per [dart-lang/sdk#44395](https://github.com/dart-lang/sdk/issues/44395).

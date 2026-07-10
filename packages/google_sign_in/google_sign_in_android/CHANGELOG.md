@@ -1,3 +1,33 @@
+## 7.2.15
+
+* Fixes an `IllegalStateException` ("Reply already submitted") crash when an authorization activity
+  result for `REQUEST_CODE_AUTHORIZE` is delivered more than once (for example after a configuration
+  change or process death).
+
+## 7.2.14
+
+* Uses Google Identity APIs to extract the user ID from the ID token.
+
+## 7.2.13
+
+* Bumps com.google.android.gms:play-services-auth from 21.5.1 to 21.6.0.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
+## 7.2.12
+
+* Migrates to Built-in Kotlin to support AGP 9.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
+## 7.2.11
+
+* Bumps AndroidX Credentials to v1.6.0
+* Bumps Play Services Auth to v21.5.1
+* Bumps Android Identity GoogleID to v1.2.0
+
+## 7.2.10
+
+* Updates build files from Groovy to Kotlin.
+
 ## 7.2.9
 
 * Simplifies internal code for Kotlin/Java interoperability.

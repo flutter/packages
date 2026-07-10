@@ -53,6 +53,20 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     return everything
   }
 
+  override fun areAllNullableTypesEqual(a: AllNullableTypes, b: AllNullableTypes): Boolean {
+    return a == b
+  }
+
+  override fun getAllNullableTypesHash(value: AllNullableTypes): Long {
+    return value.hashCode().toLong()
+  }
+
+  override fun getAllNullableTypesWithoutRecursionHash(
+      value: AllNullableTypesWithoutRecursion
+  ): Long {
+    return value.hashCode().toLong()
+  }
+
   override fun echoAllNullableTypesWithoutRecursion(
       everything: AllNullableTypesWithoutRecursion?
   ): AllNullableTypesWithoutRecursion? {
@@ -97,6 +111,22 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
 
   override fun echoList(list: List<Any?>): List<Any?> {
     return list
+  }
+
+  override fun echoStringList(stringList: List<String?>): List<String?> {
+    return stringList
+  }
+
+  override fun echoIntList(intList: List<Long?>): List<Long?> {
+    return intList
+  }
+
+  override fun echoDoubleList(doubleList: List<Double?>): List<Double?> {
+    return doubleList
+  }
+
+  override fun echoBoolList(boolList: List<Boolean?>): List<Boolean?> {
+    return boolList
   }
 
   override fun echoEnumList(enumList: List<AnEnum?>): List<AnEnum?> {

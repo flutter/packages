@@ -336,6 +336,26 @@ NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void);
 /// Returns the passed list, to test serialization and deserialization.
 ///
 /// @return `nil` only when `error != nil`.
+- (nullable NSArray<NSString *> *)echoStringList:(NSArray<NSString *> *)stringList
+                                           error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed list, to test serialization and deserialization.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable NSArray<NSNumber *> *)echoIntList:(NSArray<NSNumber *> *)intList
+                                        error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed list, to test serialization and deserialization.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable NSArray<NSNumber *> *)echoDoubleList:(NSArray<NSNumber *> *)doubleList
+                                           error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed list, to test serialization and deserialization.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable NSArray<NSNumber *> *)echoBoolList:(NSArray<NSNumber *> *)boolList
+                                         error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed list, to test serialization and deserialization.
+///
+/// @return `nil` only when `error != nil`.
 - (nullable NSArray<FLTAnEnumBox *> *)echoEnumList:(NSArray<FLTAnEnumBox *> *)enumList
                                              error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns the passed list, to test serialization and deserialization.
@@ -438,6 +458,23 @@ NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void);
 /// @return `nil` only when `error != nil`.
 - (nullable NSNumber *)echoRequiredInt:(NSInteger)anInt
                                  error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the result of platform-side equality check.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable NSNumber *)areAllNullableTypesEqualA:(FLTAllNullableTypes *)a
+                                               b:(FLTAllNullableTypes *)b
+                                           error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the platform-side hash code for the given object.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable NSNumber *)getAllNullableTypesHashValue:(FLTAllNullableTypes *)value
+                                              error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the platform-side hash code for the given object.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable NSNumber *)
+    getAllNullableTypesWithoutRecursionHashValue:(FLTAllNullableTypesWithoutRecursion *)value
+                                           error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns the passed object, to test serialization and deserialization.
 - (nullable FLTAllNullableTypes *)echoAllNullableTypes:(nullable FLTAllNullableTypes *)everything
                                                  error:(FlutterError *_Nullable *_Nonnull)error;

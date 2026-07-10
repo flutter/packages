@@ -4,6 +4,7 @@
   `VideoPlayerValue`, and `setPreventsDisplaySleepDuringVideoPlayback` to
   `VideoPlayerController`, to control whether the display sleeps during playback
   on iOS and macOS.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 2.11.1
 

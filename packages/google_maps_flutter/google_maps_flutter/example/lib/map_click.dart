@@ -14,8 +14,7 @@ const CameraPosition _kInitialPosition = CameraPosition(
 );
 
 class MapClickPage extends GoogleMapExampleAppPage {
-  const MapClickPage({Key? key})
-    : super(const Icon(Icons.mouse), 'Map click', key: key);
+  const MapClickPage({super.key}) : super(const Icon(Icons.mouse), 'Map click');
 
   @override
   Widget build(BuildContext context) {
@@ -57,42 +56,25 @@ class _MapClickBodyState extends State<_MapClickBody> {
     final columnChildren = <Widget>[
       Padding(
         padding: const EdgeInsets.all(10.0),
-        child: Center(
-          child: SizedBox(width: 300.0, height: 200.0, child: googleMap),
-        ),
+        child: Center(child: SizedBox(width: 300.0, height: 200.0, child: googleMap)),
       ),
     ];
 
     if (mapController != null) {
       final lastTap = 'Tap:\n${_lastTap ?? ""}\n';
       final lastLongPress = 'Long press:\n${_lastLongPress ?? ""}';
+      columnChildren.add(Center(child: Text(lastTap, textAlign: TextAlign.center)));
       columnChildren.add(
-        Center(child: Text(lastTap, textAlign: TextAlign.center)),
+        Center(child: Text(_lastTap != null ? 'Tapped' : '', textAlign: TextAlign.center)),
       );
+      columnChildren.add(Center(child: Text(lastLongPress, textAlign: TextAlign.center)));
       columnChildren.add(
         Center(
-          child: Text(
-            _lastTap != null ? 'Tapped' : '',
-            textAlign: TextAlign.center,
-          ),
-        ),
-      );
-      columnChildren.add(
-        Center(child: Text(lastLongPress, textAlign: TextAlign.center)),
-      );
-      columnChildren.add(
-        Center(
-          child: Text(
-            _lastLongPress != null ? 'Long pressed' : '',
-            textAlign: TextAlign.center,
-          ),
+          child: Text(_lastLongPress != null ? 'Long pressed' : '', textAlign: TextAlign.center),
         ),
       );
     }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: columnChildren,
-    );
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: columnChildren);
   }
 
   Future<void> onMapCreated(GoogleMapController controller) async {

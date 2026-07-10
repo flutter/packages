@@ -32,9 +32,8 @@ void clearCache() => _loadedFonts.clear();
 /// the [FontLoader], that future is removed from this set.
 final Set<Future<void>> pendingFontFutures = <Future<void>>{};
 
-/// The client used to fetch fonts.
-@visibleForTesting
-http.Client httpClient = http.Client();
+/// Default client used to fetch fonts when one is not supplied.
+final http.Client _httpClient = http.Client();
 
 /// The asset manifest to use for loading pre-bundled fonts.
 @visibleForTesting
@@ -166,10 +165,7 @@ Future<void> loadFontIfNecessary(GoogleFontsDescriptor descriptor) async {
 
     // Attempt to load this font via http, unless disallowed.
     if (GoogleFonts.config.allowRuntimeFetching) {
-      byteData = _httpFetchFontAndSaveToDevice(
-        familyWithVariantString,
-        descriptor.file,
-      );
+      byteData = _httpFetchFontAndSaveToDevice(familyWithVariantString, descriptor.file);
       if (await byteData != null) {
         return await loadFontByteData(familyWithVariantString, byteData);
       }
@@ -207,10 +203,7 @@ Future<void> loadFontIfNecessary(GoogleFontsDescriptor descriptor) async {
 
 /// Loads a font with [FontLoader], given its name and byte-representation.
 @visibleForTesting
-Future<void> loadFontByteData(
-  String familyWithVariantString,
-  Future<ByteData?>? byteData,
-) async {
+Future<void> loadFontByteData(String familyWithVariantString, Future<ByteData?>? byteData) async {
   if (byteData == null) {
     return;
   }
@@ -250,26 +243,22 @@ GoogleFontsVariant _closestMatch(
 /// it is the first time it is being loaded.
 ///
 /// This function can return `null` if the font fails to load from the URL.
-Future<ByteData> _httpFetchFontAndSaveToDevice(
-  String fontName,
-  GoogleFontsFile file,
-) async {
+Future<ByteData> _httpFetchFontAndSaveToDevice(String fontName, GoogleFontsFile file) async {
   final Uri? uri = Uri.tryParse(file.url);
   if (uri == null) {
     throw Exception('Invalid fontUrl: ${file.url}');
   }
 
   http.Response response;
+  final http.Client client = GoogleFonts.config.httpClient ?? _httpClient;
   try {
-    response = await httpClient.get(uri);
+    response = await client.get(uri);
   } catch (e) {
     throw Exception('Failed to load font with url ${file.url}: $e');
   }
   if (response.statusCode == 200) {
     if (!_isFileSecure(file, response.bodyBytes)) {
-      throw Exception(
-        'File from ${file.url} did not match expected length and checksum.',
-      );
+      throw Exception('File from ${file.url} did not match expected length and checksum.');
     }
 
     _unawaited(
@@ -314,18 +303,13 @@ String? findFamilyWithVariantAssetPath(
   }
 
   final String apiFilenamePrefix = familyWithVariant.toApiFilenamePrefix();
-  final fileTypes = isWeb
-      ? ['.woff2', '.woff', '.ttf', '.otf']
-      : ['.ttf', '.otf'];
+  final fileTypes = isWeb ? ['.woff2', '.woff', '.ttf', '.otf'] : ['.ttf', '.otf'];
 
   // Iterate by file type priority, ensuring preferred formats are selected.
   for (final fileType in fileTypes) {
     for (final String asset in manifestValues) {
       if (asset.endsWith(fileType)) {
-        final String assetWithoutExtension = asset.substring(
-          0,
-          asset.length - fileType.length,
-        );
+        final String assetWithoutExtension = asset.substring(0, asset.length - fileType.length);
         if (assetWithoutExtension.endsWith(apiFilenamePrefix)) {
           return asset;
         }
@@ -339,8 +323,7 @@ String? findFamilyWithVariantAssetPath(
 bool _isFileSecure(GoogleFontsFile file, Uint8List bytes) {
   final int actualFileLength = bytes.length;
   final actualFileHash = sha256.convert(bytes).toString();
-  return file.expectedLength == actualFileLength &&
-      file.expectedFileHash == actualFileHash;
+  return file.expectedLength == actualFileLength && file.expectedFileHash == actualFileHash;
 }
 
 void _unawaited(Future<void> future) {}

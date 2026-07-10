@@ -5,7 +5,6 @@
 import 'package:file/file.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
-import 'package:platform/platform.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
 
@@ -13,7 +12,7 @@ import 'common/core.dart';
 import 'common/file_utils.dart';
 import 'common/output_utils.dart';
 import 'common/package_command.dart';
-import 'common/process_runner.dart';
+import 'common/plugin_utils.dart';
 import 'common/pub_utils.dart';
 import 'common/repository_package.dart';
 
@@ -29,14 +28,10 @@ const int _exitMissingLegacySource = 6;
 /// A command to create an application that builds all in a single application.
 class CreateAllPackagesAppCommand extends PackageCommand {
   /// Creates an instance of the builder command.
-  CreateAllPackagesAppCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-  }) : super(packagesDir, processRunner: processRunner, platform: platform) {
+  CreateAllPackagesAppCommand(super.packagesDir, {super.processRunner, super.platform}) {
     argParser.addOption(
       _outputDirectoryFlag,
-      defaultsTo: packagesDir.parent.path,
+      defaultsTo: rootDir.path,
       help:
           'The path the directory to create the "$allPackagesProjectName" '
           'project in.\n'
@@ -52,10 +47,18 @@ class CreateAllPackagesAppCommand extends PackageCommand {
           'The replacement will be done before any tool-driven '
           'modifications.',
     );
+    argParser.addFlag(
+      _swiftPackageManagerFlag,
+      defaultsTo: null,
+      help:
+          'Explicitly sets the app-level flag for Swift Package Manager in '
+          'pubspec.yaml.',
+    );
   }
 
   static const String _legacySourceFlag = 'legacy-source';
   static const String _outputDirectoryFlag = 'output-dir';
+  static const String _swiftPackageManagerFlag = 'swift-package-manager';
 
   /// The location to create the synthesized app project.
   Directory get _appDirectory => packagesDir.fileSystem
@@ -66,8 +69,7 @@ class CreateAllPackagesAppCommand extends PackageCommand {
   RepositoryPackage get app => RepositoryPackage(_appDirectory);
 
   @override
-  String get description =>
-      'Generate Flutter app that includes all target packagas.';
+  String get description => 'Generate Flutter app that includes all target packagas.';
 
   @override
   String get name => 'create-all-packages-app';
@@ -82,9 +84,7 @@ class CreateAllPackagesAppCommand extends PackageCommand {
 
     final String? legacySource = getNullableStringArg(_legacySourceFlag);
     if (legacySource != null) {
-      final Directory legacyDir = packagesDir.fileSystem.directory(
-        legacySource,
-      );
+      final Directory legacyDir = packagesDir.fileSystem.directory(legacySource);
       await _replaceWithLegacy(target: _appDirectory, source: legacyDir);
     }
 
@@ -106,9 +106,7 @@ class CreateAllPackagesAppCommand extends PackageCommand {
     // and remove the need for this conditional.
     if (!platform.isWindows) {
       if (!await runPubGet(app, processRunner, platform)) {
-        printError(
-          "Failed to generate native build files via 'flutter pub get'",
-        );
+        printError("Failed to generate native build files via 'flutter pub get'");
         throw ToolExit(_exitGenNativeBuildFilesFailed);
       }
     }
@@ -121,6 +119,11 @@ class CreateAllPackagesAppCommand extends PackageCommand {
       // flutter pub get above, so can't currently be run on Windows.
       if (!platform.isWindows) _updateMacosPodfile(),
     ]);
+
+    final bool? swiftPackageManagerOverride = getNullableBoolArg(_swiftPackageManagerFlag);
+    if (swiftPackageManagerOverride != null) {
+      setSwiftPackageManagerState(app, enabled: swiftPackageManagerOverride);
+    }
   }
 
   Future<int> _createApp() async {
@@ -132,10 +135,7 @@ class CreateAllPackagesAppCommand extends PackageCommand {
     ]);
   }
 
-  Future<void> _replaceWithLegacy({
-    required Directory target,
-    required Directory source,
-  }) async {
+  Future<void> _replaceWithLegacy({required Directory target, required Directory source}) async {
     if (!source.existsSync()) {
       printError('No such legacy source directory: ${source.path}');
       throw ToolExit(_exitMissingLegacySource);
@@ -155,19 +155,11 @@ class CreateAllPackagesAppCommand extends PackageCommand {
   void _copyDirectory({required Directory target, required Directory source}) {
     target.createSync(recursive: true);
     for (final FileSystemEntity entity in source.listSync(recursive: true)) {
-      final List<String> subcomponents = p.split(
-        p.relative(entity.path, from: source.path),
-      );
+      final List<String> subcomponents = p.split(p.relative(entity.path, from: source.path));
       if (entity is Directory) {
-        childDirectoryWithSubcomponents(
-          target,
-          subcomponents,
-        ).createSync(recursive: true);
+        childDirectoryWithSubcomponents(target, subcomponents).createSync(recursive: true);
       } else if (entity is File) {
-        final File targetFile = childFileWithSubcomponents(
-          target,
-          subcomponents,
-        );
+        final File targetFile = childFileWithSubcomponents(target, subcomponents);
         targetFile.parent.createSync(recursive: true);
         entity.copySync(targetFile.path);
       } else {
@@ -183,8 +175,7 @@ class CreateAllPackagesAppCommand extends PackageCommand {
     File file, {
     Map<String, List<String>> replacements = const <String, List<String>>{},
     Map<String, List<String>> additions = const <String, List<String>>{},
-    Map<RegExp, List<String>> regexReplacements =
-        const <RegExp, List<String>>{},
+    Map<RegExp, List<String>> regexReplacements = const <RegExp, List<String>>{},
   }) {
     if (replacements.isEmpty && additions.isEmpty) {
       return;
@@ -197,16 +188,14 @@ class CreateAllPackagesAppCommand extends PackageCommand {
     final output = StringBuffer();
     for (final String line in file.readAsLinesSync()) {
       List<String>? replacementLines;
-      for (final MapEntry<String, List<String>> replacement
-          in replacements.entries) {
+      for (final MapEntry<String, List<String>> replacement in replacements.entries) {
         if (line.contains(replacement.key)) {
           replacementLines = replacement.value;
           break;
         }
       }
       if (replacementLines == null) {
-        for (final MapEntry<RegExp, List<String>> replacement
-            in regexReplacements.entries) {
+        for (final MapEntry<RegExp, List<String>> replacement in regexReplacements.entries) {
           final RegExpMatch? match = replacement.key.firstMatch(line);
           if (match != null) {
             replacementLines = replacement.value;
@@ -305,18 +294,14 @@ dependencies {}
         originalPubspec.environment[dartSdkKey] ??
         VersionConstraint.compatibleWith(Version.parse('3.0.0'));
 
-    final Map<String, PathDependency> pluginDeps =
-        await _getValidPathDependencies();
+    final Map<String, PathDependency> pluginDeps = await _getValidPathDependencies();
     final pubspec = Pubspec(
       allPackagesProjectName,
       description: 'Flutter app containing all 1st party plugins.',
       version: Version.parse('1.0.0+1'),
       environment: <String, VersionConstraint>{dartSdkKey: dartSdkConstraint},
-      dependencies: <String, Dependency>{'flutter': SdkDependency('flutter')}
-        ..addAll(pluginDeps),
-      devDependencies: <String, Dependency>{
-        'flutter_test': SdkDependency('flutter'),
-      },
+      dependencies: <String, Dependency>{'flutter': SdkDependency('flutter')}..addAll(pluginDeps),
+      devDependencies: <String, Dependency>{'flutter_test': SdkDependency('flutter')},
       dependencyOverrides: pluginDeps,
     );
 
@@ -396,18 +381,13 @@ dev_dependencies:${_pubspecMapString(pubspec.devDependencies)}
           // path.split leaves a \ on drive components that isn't necessary,
           // and confuses pub, so remove it.
           if (firstComponent.endsWith(r':\')) {
-            components[0] = firstComponent.substring(
-              0,
-              firstComponent.length - 1,
-            );
+            components[0] = firstComponent.substring(0, firstComponent.length - 1);
           }
           depPath = p.posix.joinAll(components);
         }
         buffer.write('  ${entry.key}: \n    path: $depPath');
       } else {
-        throw UnimplementedError(
-          'Not available for type: ${entryValue.runtimeType}',
-        );
+        throw UnimplementedError('Not available for type: ${entryValue.runtimeType}');
       }
     }
 
@@ -421,9 +401,7 @@ dev_dependencies:${_pubspecMapString(pubspec.devDependencies)}
       return;
     }
 
-    final File podfile = app
-        .platformDirectory(FlutterPlatform.macos)
-        .childFile('Podfile');
+    final File podfile = app.platformDirectory(FlutterPlatform.macos).childFile('Podfile');
     if (podfile.existsSync()) {
       _adjustFile(
         podfile,
@@ -446,9 +424,7 @@ dev_dependencies:${_pubspecMapString(pubspec.devDependencies)}
       pbxprojFile,
       replacements: <String, List<String>>{
         // macOS 10.15 is required by in_app_purchase.
-        'MACOSX_DEPLOYMENT_TARGET': <String>[
-          '				MACOSX_DEPLOYMENT_TARGET = 10.15;',
-        ],
+        'MACOSX_DEPLOYMENT_TARGET': <String>['				MACOSX_DEPLOYMENT_TARGET = 10.15;'],
       },
     );
   }
@@ -462,9 +438,7 @@ dev_dependencies:${_pubspecMapString(pubspec.devDependencies)}
       pbxprojFile,
       replacements: <String, List<String>>{
         // iOS 15 is required by google_maps_flutter_ios_sdk9.
-        'IPHONEOS_DEPLOYMENT_TARGET': <String>[
-          '				IPHONEOS_DEPLOYMENT_TARGET = 15.0;',
-        ],
+        'IPHONEOS_DEPLOYMENT_TARGET': <String>['				IPHONEOS_DEPLOYMENT_TARGET = 15.0;'],
       },
     );
   }

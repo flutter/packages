@@ -18,10 +18,7 @@ void main() {
       compassEnabled: false,
       mapToolbarEnabled: false,
       cameraTargetBounds: CameraTargetBounds(
-        LatLngBounds(
-          northeast: const LatLng(30, 20),
-          southwest: const LatLng(10, 40),
-        ),
+        LatLngBounds(northeast: const LatLng(30, 20), southwest: const LatLng(10, 40)),
       ),
       mapType: MapType.normal,
       minMaxZoomPreference: const MinMaxZoomPreference(1.0, 10.0),
@@ -70,9 +67,7 @@ void main() {
     });
 
     test('handle webGestureHandling', () async {
-      const diff = MapConfiguration(
-        webGestureHandling: WebGestureHandling.none,
-      );
+      const diff = MapConfiguration(webGestureHandling: WebGestureHandling.none);
 
       const empty = MapConfiguration();
       final MapConfiguration updated = diffBase.applyDiff(diff);
@@ -100,10 +95,7 @@ void main() {
       // The diff from empty options should be the diff itself.
       expect(diff.diffFrom(empty), diff);
       // A diff applied to non-empty options should update that field.
-      expect(
-        updated.webCameraControlPosition,
-        WebCameraControlPosition.blockEndInlineEnd,
-      );
+      expect(updated.webCameraControlPosition, WebCameraControlPosition.blockEndInlineEnd);
       // The hash code should change.
       expect(empty.hashCode, isNot(diff.hashCode));
     });
@@ -158,10 +150,7 @@ void main() {
 
     test('handle cameraTargetBounds', () async {
       final newBounds = CameraTargetBounds(
-        LatLngBounds(
-          northeast: const LatLng(55, 15),
-          southwest: const LatLng(5, 15),
-        ),
+        LatLngBounds(northeast: const LatLng(55, 15), southwest: const LatLng(5, 15)),
       );
       final diff = MapConfiguration(cameraTargetBounds: newBounds);
 
@@ -485,6 +474,22 @@ void main() {
       // The hash code should change.
       expect(empty.hashCode, isNot(diff.hashCode));
     });
+
+    test('handle colorScheme', () async {
+      const diff = MapConfiguration(colorScheme: MapColorScheme.followSystem);
+
+      const empty = MapConfiguration();
+      final MapConfiguration updated = diffBase.applyDiff(diff);
+
+      // A diff applied to empty options should be the diff itself.
+      expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
+      // A diff applied to non-empty options should update that field.
+      expect(updated.colorScheme, MapColorScheme.followSystem);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
+    });
   });
 
   group('isEmpty', () {
@@ -522,10 +527,7 @@ void main() {
 
     test('is false with cameraTargetBounds', () async {
       final newBounds = CameraTargetBounds(
-        LatLngBounds(
-          northeast: const LatLng(55, 15),
-          southwest: const LatLng(5, 15),
-        ),
+        LatLngBounds(northeast: const LatLng(55, 15), southwest: const LatLng(5, 15)),
       );
       final diff = MapConfiguration(cameraTargetBounds: newBounds);
 
@@ -638,6 +640,12 @@ void main() {
 
     test('is false with style', () async {
       const diff = MapConfiguration(style: 'a style');
+
+      expect(diff.isEmpty, false);
+    });
+
+    test('is false with colorScheme', () async {
+      const diff = MapConfiguration(colorScheme: MapColorScheme.followSystem);
 
       expect(diff.isEmpty, false);
     });

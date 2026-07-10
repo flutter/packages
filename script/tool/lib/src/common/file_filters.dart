@@ -9,10 +9,10 @@
 bool isRepoLevelNonCodeImpactingFile(String path) {
   return <String>[
         'AUTHORS',
-        'CODEOWNERS',
         'CONTRIBUTING.md',
         'LICENSE',
         'README.md',
+        'SUGGESTED_REVIEWERS.md',
         'AGENTS.md',
         // This deliberate lists specific files rather than excluding the whole
         // .github directory since it's better to have false negatives than to

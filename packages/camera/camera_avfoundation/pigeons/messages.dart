@@ -7,8 +7,7 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    swiftOut:
-        'ios/camera_avfoundation/Sources/camera_avfoundation/Messages.swift',
+    swiftOut: 'ios/camera_avfoundation/Sources/camera_avfoundation/Messages.swift',
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
@@ -40,12 +39,7 @@ enum PlatformCameraLensType {
 }
 
 // Pigeon version of DeviceOrientation.
-enum PlatformDeviceOrientation {
-  portraitUp,
-  landscapeLeft,
-  portraitDown,
-  landscapeRight,
-}
+enum PlatformDeviceOrientation { portraitUp, landscapeLeft, portraitDown, landscapeRight }
 
 // Pigeon version of ExposureMode.
 enum PlatformExposureMode { auto, locked }
@@ -65,12 +59,7 @@ enum PlatformImageFormatGroup { bgra8888, yuv420 }
 // Pigeon version of ResolutionPreset.
 enum PlatformResolutionPreset { low, medium, high, veryHigh, ultraHigh, max }
 
-enum PlatformVideoStabilizationMode {
-  off,
-  standard,
-  cinematic,
-  cinematicExtended,
-}
+enum PlatformVideoStabilizationMode { off, standard, cinematic, cinematicExtended }
 
 // Pigeon version of CameraDescription.
 class PlatformCameraDescription {
@@ -190,9 +179,6 @@ class PlatformSize {
 @HostApi()
 abstract class CameraApi {
   /// Returns the list of available cameras.
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats it as non-nullable.
   @async
   @ObjCSelector('availableCamerasWithCompletion')
   List<PlatformCameraDescription> getAvailableCameras();
@@ -352,6 +338,11 @@ abstract class CameraApi {
   @async
   @ObjCSelector('setImageFileFormat:')
   void setImageFileFormat(PlatformImageFileFormat format);
+
+  /// Sets the JPEG compression quality for still image capture.
+  @async
+  @ObjCSelector('setJpegImageQuality:')
+  void setJpegImageQuality(int quality);
 }
 
 @EventChannelApi()

@@ -2,17 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// TODO(stuartmorgan): Consider merging this with messages_async.dart now that
+//  they both use the Kotlin generator.
+
 import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(
   PigeonOptions(
     input: 'pigeons/messages.dart',
-    javaOut:
-        'android/src/main/java/io/flutter/plugins/sharedpreferences/Messages.java',
-    javaOptions: JavaOptions(
-      className: 'Messages',
-      package: 'io.flutter.plugins.sharedpreferences',
-    ),
+    kotlinOut: 'android/src/main/kotlin/io/flutter/plugins/sharedpreferences/Messages.g.kt',
+    kotlinOptions: KotlinOptions(package: 'io.flutter.plugins.sharedpreferences'),
     dartOut: 'lib/src/messages.g.dart',
     copyrightHeader: 'pigeons/copyright.txt',
   ),
@@ -23,27 +22,27 @@ abstract class SharedPreferencesApi {
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   bool remove(String key);
 
-  /// Adds property to shared preferences data set of type bool.
+  /// Adds property to shared preferences data set of type `bool`.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   bool setBool(String key, bool value);
 
-  /// Adds property to shared preferences data set of type String.
+  /// Adds property to shared preferences data set of type `String`.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   bool setString(String key, String value);
 
-  /// Adds property to shared preferences data set of type int.
+  /// Adds property to shared preferences data set of type `int`.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   bool setInt(String key, int value);
 
-  /// Adds property to shared preferences data set of type double.
+  /// Adds property to shared preferences data set of type `double`.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   bool setDouble(String key, double value);
 
-  /// Adds property to shared preferences data set of type List<String>.
+  /// Adds property to shared preferences data set of type `List<String>`.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   bool setEncodedStringList(String key, String value);
 
-  /// Adds property to shared preferences data set of type List<String>.
+  /// Adds property to shared preferences data set of type `List<String>`.
   ///
   /// Deprecated, this is only here for testing purposes.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)

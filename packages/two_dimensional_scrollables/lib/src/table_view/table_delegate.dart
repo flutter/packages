@@ -24,8 +24,7 @@ typedef TableSpanBuilder = TableSpan? Function(int index);
 ///
 /// Used by [TableCellBuilderDelegate.builder] to build cells on demand for the
 /// table.
-typedef TableViewCellBuilder =
-    TableViewCell Function(BuildContext context, TableVicinity vicinity);
+typedef TableViewCellBuilder = TableViewCell Function(BuildContext context, TableVicinity vicinity);
 
 /// A mixin that defines the model for a [TwoDimensionalChildDelegate] to be
 /// used with a [TableView].
@@ -91,6 +90,27 @@ mixin TableCellDelegateMixin on TwoDimensionalChildDelegate {
   /// the delegate object, [notifyListeners] must be called.
   int get pinnedColumnCount => 0;
 
+  /// The number of columns that are permanently shown on the trailing vertical
+  /// edge of the viewport.
+  ///
+  /// If scrolling is enabled, other columns will scroll underneath the pinned
+  /// columns.
+  ///
+  /// Just like for regular columns, [buildColumn] method will be consulted for
+  /// additional information about the pinned column. The indices of trailing
+  /// pinned columns start at `columnCount - trailingPinnedColumnCount` and go
+  /// to `columnCount - 1`.
+  ///
+  /// [columnCount] must not be null if [trailingPinnedColumnCount] is greater
+  /// than zero.
+  ///
+  /// The integer returned by this getter must be smaller than (or equal to) the
+  /// integer returned by [columnCount].
+  ///
+  /// If the value returned by this getter changes throughout the lifetime of
+  /// the delegate object, [notifyListeners] must be called.
+  int get trailingPinnedColumnCount => 0;
+
   /// The number of rows that are permanently shown on the leading horizontal
   /// edge of the viewport.
   ///
@@ -107,6 +127,27 @@ mixin TableCellDelegateMixin on TwoDimensionalChildDelegate {
   /// If the value returned by this getter changes throughout the lifetime of
   /// the delegate object, [notifyListeners] must be called.
   int get pinnedRowCount => 0;
+
+  /// The number of rows that are permanently shown on the trailing horizontal
+  /// edge of the viewport.
+  ///
+  /// If scrolling is enabled, other rows will scroll underneath the pinned
+  /// rows.
+  ///
+  /// Just like for regular rows, [buildRow] will be consulted for
+  /// additional information about the pinned row. The indices of trailing
+  /// pinned rows start at `rowCount - trailingPinnedRowCount` and go to
+  /// `rowCount - 1`.
+  ///
+  /// [rowCount] must not be null if [trailingPinnedRowCount] is greater than
+  /// zero.
+  ///
+  /// The integer returned by this getter must be smaller than (or equal to) the
+  /// integer returned by [rowCount].
+  ///
+  /// If the value returned by this getter changes throughout the lifetime of
+  /// the delegate object, [notifyListeners] must be called.
+  int get trailingPinnedRowCount => 0;
 
   /// Builds the [TableSpan] that describes the column at the provided index.
   ///
@@ -144,20 +185,26 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
     int? rowCount,
     int pinnedColumnCount = 0,
     int pinnedRowCount = 0,
+    int trailingPinnedColumnCount = 0,
+    int trailingPinnedRowCount = 0,
     super.addAutomaticKeepAlives,
     required TableViewCellBuilder cellBuilder,
     required TableSpanBuilder columnBuilder,
     required TableSpanBuilder rowBuilder,
   }) : assert(pinnedColumnCount >= 0),
        assert(pinnedRowCount >= 0),
+       assert(trailingPinnedColumnCount >= 0),
+       assert(trailingPinnedRowCount >= 0),
        assert(rowCount == null || rowCount >= 0),
        assert(columnCount == null || columnCount >= 0),
-       assert(columnCount == null || pinnedColumnCount <= columnCount),
-       assert(rowCount == null || pinnedRowCount <= rowCount),
+       assert(columnCount == null || pinnedColumnCount + trailingPinnedColumnCount <= columnCount),
+       assert(rowCount == null || pinnedRowCount + trailingPinnedRowCount <= rowCount),
        _rowBuilder = rowBuilder,
        _columnBuilder = columnBuilder,
        _pinnedColumnCount = pinnedColumnCount,
        _pinnedRowCount = pinnedRowCount,
+       _trailingPinnedColumnCount = trailingPinnedColumnCount,
+       _trailingPinnedRowCount = trailingPinnedRowCount,
        super(
          builder: (BuildContext context, ChildVicinity vicinity) =>
              cellBuilder(context, vicinity as TableVicinity),
@@ -171,7 +218,7 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
   int? get columnCount => maxXIndex == null ? null : maxXIndex! + 1;
 
   set columnCount(int? value) {
-    assert(value == null || pinnedColumnCount <= value);
+    assert(value == null || pinnedColumnCount + trailingPinnedColumnCount <= value);
     maxXIndex = value == null ? null : value - 1;
   }
 
@@ -190,7 +237,7 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
   int _pinnedColumnCount;
   set pinnedColumnCount(int value) {
     assert(value >= 0);
-    assert(columnCount == null || value <= columnCount!);
+    assert(columnCount == null || value + trailingPinnedColumnCount <= columnCount!);
     if (pinnedColumnCount == value) {
       return;
     }
@@ -199,10 +246,23 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
   }
 
   @override
+  int get trailingPinnedColumnCount => _trailingPinnedColumnCount;
+  int _trailingPinnedColumnCount;
+  set trailingPinnedColumnCount(int value) {
+    assert(value >= 0);
+    assert(columnCount == null || pinnedColumnCount + value <= columnCount!);
+    if (trailingPinnedColumnCount == value) {
+      return;
+    }
+    _trailingPinnedColumnCount = value;
+    notifyListeners();
+  }
+
+  @override
   int? get rowCount => maxYIndex == null ? null : maxYIndex! + 1;
 
   set rowCount(int? value) {
-    assert(value == null || pinnedRowCount <= value);
+    assert(value == null || pinnedRowCount + trailingPinnedRowCount <= value);
     maxYIndex = value == null ? null : value - 1;
   }
 
@@ -221,11 +281,24 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
   int _pinnedRowCount;
   set pinnedRowCount(int value) {
     assert(value >= 0);
-    assert(rowCount == null || value <= rowCount!);
+    assert(rowCount == null || value + trailingPinnedRowCount <= rowCount!);
     if (pinnedRowCount == value) {
       return;
     }
     _pinnedRowCount = value;
+    notifyListeners();
+  }
+
+  @override
+  int get trailingPinnedRowCount => _trailingPinnedRowCount;
+  int _trailingPinnedRowCount;
+  set trailingPinnedRowCount(int value) {
+    assert(value >= 0);
+    assert(rowCount == null || pinnedRowCount + value <= rowCount!);
+    if (trailingPinnedRowCount == value) {
+      return;
+    }
+    _trailingPinnedRowCount = value;
     notifyListeners();
   }
 }
@@ -240,22 +313,27 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
 /// Unlike the base [TwoDimensionalChildBuilderDelegate] this delegate does not
 /// automatically insert repaint boundaries. Instead, repaint boundaries are
 /// controlled by [TableViewCell.addRepaintBoundaries].
-class TableCellListDelegate extends TwoDimensionalChildListDelegate
-    with TableCellDelegateMixin {
+class TableCellListDelegate extends TwoDimensionalChildListDelegate with TableCellDelegateMixin {
   /// Creates a delegate that supplies children for a [TableView].
   TableCellListDelegate({
     int pinnedColumnCount = 0,
     int pinnedRowCount = 0,
+    int trailingPinnedColumnCount = 0,
+    int trailingPinnedRowCount = 0,
     super.addAutomaticKeepAlives,
     required List<List<TableViewCell>> cells,
     required TableSpanBuilder columnBuilder,
     required TableSpanBuilder rowBuilder,
   }) : assert(pinnedColumnCount >= 0),
        assert(pinnedRowCount >= 0),
+       assert(trailingPinnedColumnCount >= 0),
+       assert(trailingPinnedRowCount >= 0),
        _columnBuilder = columnBuilder,
        _rowBuilder = rowBuilder,
        _pinnedColumnCount = pinnedColumnCount,
        _pinnedRowCount = pinnedRowCount,
+       _trailingPinnedColumnCount = trailingPinnedColumnCount,
+       _trailingPinnedRowCount = trailingPinnedRowCount,
        super(
          children: cells,
          // repaintBoundaries handled by TableViewCell
@@ -270,8 +348,8 @@ class TableCellListDelegate extends TwoDimensionalChildListDelegate
       children.map((List<Widget> array) => array.length).toSet().length == 1,
       'Each list of Widgets within cells must be of the same length.',
     );
-    assert(rowCount >= pinnedRowCount);
-    assert(columnCount >= pinnedColumnCount);
+    assert(columnCount >= pinnedColumnCount + trailingPinnedColumnCount);
+    assert(rowCount >= pinnedRowCount + trailingPinnedRowCount);
   }
 
   @override
@@ -296,11 +374,24 @@ class TableCellListDelegate extends TwoDimensionalChildListDelegate
   int _pinnedColumnCount;
   set pinnedColumnCount(int value) {
     assert(value >= 0);
-    assert(value <= columnCount);
+    assert(value + trailingPinnedColumnCount <= columnCount);
     if (pinnedColumnCount == value) {
       return;
     }
     _pinnedColumnCount = value;
+    notifyListeners();
+  }
+
+  @override
+  int get trailingPinnedColumnCount => _trailingPinnedColumnCount;
+  int _trailingPinnedColumnCount;
+  set trailingPinnedColumnCount(int value) {
+    assert(value >= 0);
+    assert(pinnedColumnCount + value <= columnCount);
+    if (trailingPinnedColumnCount == value) {
+      return;
+    }
+    _trailingPinnedColumnCount = value;
     notifyListeners();
   }
 
@@ -326,7 +417,7 @@ class TableCellListDelegate extends TwoDimensionalChildListDelegate
   int _pinnedRowCount;
   set pinnedRowCount(int value) {
     assert(value >= 0);
-    assert(value <= rowCount);
+    assert(value + trailingPinnedRowCount <= rowCount);
     if (pinnedRowCount == value) {
       return;
     }
@@ -335,13 +426,28 @@ class TableCellListDelegate extends TwoDimensionalChildListDelegate
   }
 
   @override
+  int get trailingPinnedRowCount => _trailingPinnedRowCount;
+  int _trailingPinnedRowCount;
+  set trailingPinnedRowCount(int value) {
+    assert(value >= 0);
+    assert(pinnedRowCount + value <= rowCount);
+    if (trailingPinnedRowCount == value) {
+      return;
+    }
+    _trailingPinnedRowCount = value;
+    notifyListeners();
+  }
+
+  @override
   bool shouldRebuild(covariant TableCellListDelegate oldDelegate) {
     return columnCount != oldDelegate.columnCount ||
         _columnBuilder != oldDelegate._columnBuilder ||
         pinnedColumnCount != oldDelegate.pinnedColumnCount ||
+        trailingPinnedColumnCount != oldDelegate.trailingPinnedColumnCount ||
         rowCount != oldDelegate.rowCount ||
         _rowBuilder != oldDelegate._rowBuilder ||
         pinnedRowCount != oldDelegate.pinnedRowCount ||
+        trailingPinnedRowCount != oldDelegate.trailingPinnedRowCount ||
         super.shouldRebuild(oldDelegate);
   }
 }

@@ -80,6 +80,7 @@ Next, add the imports of the implementation packages to your app or package:
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 // Import for iOS/macOS features.
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
+
 ```
 
 Now, additional features can be accessed through the platform implementations. Classes
@@ -111,8 +112,7 @@ final controller = WebViewController.fromPlatformCreationParams(params);
 // ···
 if (controller.platform is AndroidWebViewController) {
   AndroidWebViewController.enableDebugging(true);
-  (controller.platform as AndroidWebViewController)
-      .setMediaPlaybackRequiresUserGesture(false);
+  (controller.platform as AndroidWebViewController).setMediaPlaybackRequiresUserGesture(false);
 }
 ```
 

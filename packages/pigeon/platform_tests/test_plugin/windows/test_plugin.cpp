@@ -97,6 +97,21 @@ ErrorOr<std::optional<AllNullableTypes>> TestPlugin::EchoAllNullableTypes(
   return std::optional<AllNullableTypes>(*everything);
 }
 
+ErrorOr<bool> TestPlugin::AreAllNullableTypesEqual(const AllNullableTypes& a,
+                                                   const AllNullableTypes& b) {
+  return a == b;
+}
+
+ErrorOr<int64_t> TestPlugin::GetAllNullableTypesHash(
+    const AllNullableTypes& value) {
+  return (int64_t)value.Hash();
+}
+
+ErrorOr<int64_t> TestPlugin::GetAllNullableTypesWithoutRecursionHash(
+    const AllNullableTypesWithoutRecursion& value) {
+  return (int64_t)value.Hash();
+}
+
 ErrorOr<std::optional<AllNullableTypesWithoutRecursion>>
 TestPlugin::EchoAllNullableTypesWithoutRecursion(
     const AllNullableTypesWithoutRecursion* everything) {
@@ -141,6 +156,25 @@ ErrorOr<EncodableValue> TestPlugin::EchoObject(
 
 ErrorOr<EncodableList> TestPlugin::EchoList(const EncodableList& a_list) {
   return a_list;
+}
+
+ErrorOr<EncodableList> TestPlugin::EchoStringList(
+    const EncodableList& string_list) {
+  return string_list;
+}
+
+ErrorOr<EncodableList> TestPlugin::EchoIntList(const EncodableList& int_list) {
+  return int_list;
+}
+
+ErrorOr<EncodableList> TestPlugin::EchoDoubleList(
+    const EncodableList& double_list) {
+  return double_list;
+}
+
+ErrorOr<EncodableList> TestPlugin::EchoBoolList(
+    const EncodableList& bool_list) {
+  return bool_list;
 }
 
 ErrorOr<EncodableList> TestPlugin::EchoEnumList(
@@ -731,8 +765,9 @@ void TestPlugin::CallFlutterThrowError(
     std::function<void(ErrorOr<std::optional<flutter::EncodableValue>> reply)>
         result) {
   flutter_api_->ThrowError(
-      [result](const std::optional<flutter::EncodableValue>& echo) {
-        result(echo);
+      [result](const flutter::EncodableValue* echo) {
+        result(echo ? std::optional<flutter::EncodableValue>(*echo)
+                    : std::nullopt);
       },
       [result](const FlutterError& error) { result(error); });
 }

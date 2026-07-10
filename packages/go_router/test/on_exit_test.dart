@@ -18,13 +18,11 @@ void main() {
     final routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (BuildContext context, GoRouterState state) =>
-            DummyScreen(key: home),
+        builder: (BuildContext context, GoRouterState state) => DummyScreen(key: home),
         routes: <GoRoute>[
           GoRoute(
             path: '1',
-            builder: (BuildContext context, GoRouterState state) =>
-                DummyScreen(key: page1),
+            builder: (BuildContext context, GoRouterState state) => DummyScreen(key: page1),
             onExit: (BuildContext context, GoRouterState state) {
               return allow;
             },
@@ -33,11 +31,7 @@ void main() {
       ),
     ];
 
-    final GoRouter router = await createRouter(
-      routes,
-      tester,
-      initialLocation: '/1',
-    );
+    final GoRouter router = await createRouter(routes, tester, initialLocation: '/1');
     expect(find.byKey(page1), findsOneWidget);
 
     router.pop();
@@ -57,24 +51,18 @@ void main() {
     final routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (BuildContext context, GoRouterState state) =>
-            DummyScreen(key: home),
+        builder: (BuildContext context, GoRouterState state) => DummyScreen(key: home),
       ),
       GoRoute(
         path: '/1',
-        builder: (BuildContext context, GoRouterState state) =>
-            DummyScreen(key: page1),
+        builder: (BuildContext context, GoRouterState state) => DummyScreen(key: page1),
         onExit: (BuildContext context, GoRouterState state) {
           return allow;
         },
       ),
     ];
 
-    final GoRouter router = await createRouter(
-      routes,
-      tester,
-      initialLocation: '/1',
-    );
+    final GoRouter router = await createRouter(routes, tester, initialLocation: '/1');
     expect(find.byKey(page1), findsOneWidget);
 
     router.go('/');
@@ -94,13 +82,11 @@ void main() {
     final routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (BuildContext context, GoRouterState state) =>
-            DummyScreen(key: home),
+        builder: (BuildContext context, GoRouterState state) => DummyScreen(key: home),
         routes: <GoRoute>[
           GoRoute(
             path: '1',
-            builder: (BuildContext context, GoRouterState state) =>
-                DummyScreen(key: page1),
+            builder: (BuildContext context, GoRouterState state) => DummyScreen(key: page1),
             onExit: (BuildContext context, GoRouterState state) async {
               return allow.future;
             },
@@ -109,11 +95,7 @@ void main() {
       ),
     ];
 
-    final GoRouter router = await createRouter(
-      routes,
-      tester,
-      initialLocation: '/1',
-    );
+    final GoRouter router = await createRouter(routes, tester, initialLocation: '/1');
     expect(find.byKey(page1), findsOneWidget);
 
     router.pop();
@@ -141,24 +123,18 @@ void main() {
     final routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (BuildContext context, GoRouterState state) =>
-            DummyScreen(key: home),
+        builder: (BuildContext context, GoRouterState state) => DummyScreen(key: home),
       ),
       GoRoute(
         path: '/1',
-        builder: (BuildContext context, GoRouterState state) =>
-            DummyScreen(key: page1),
+        builder: (BuildContext context, GoRouterState state) => DummyScreen(key: page1),
         onExit: (BuildContext context, GoRouterState state) async {
           return allow.future;
         },
       ),
     ];
 
-    final GoRouter router = await createRouter(
-      routes,
-      tester,
-      initialLocation: '/1',
-    );
+    final GoRouter router = await createRouter(routes, tester, initialLocation: '/1');
     expect(find.byKey(page1), findsOneWidget);
 
     router.go('/');
@@ -179,16 +155,13 @@ void main() {
     expect(find.byKey(home), findsOneWidget);
   });
 
-  testWidgets('android back button respects the last route.', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('android back button respects the last route.', (WidgetTester tester) async {
     var allow = false;
     final home = UniqueKey();
     final routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (BuildContext context, GoRouterState state) =>
-            DummyScreen(key: home),
+        builder: (BuildContext context, GoRouterState state) => DummyScreen(key: home),
         onExit: (BuildContext context, GoRouterState state) {
           return allow;
         },
@@ -205,16 +178,13 @@ void main() {
     expect(await router.routerDelegate.popRoute(), false);
   });
 
-  testWidgets('android back button respects the last route. async', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('android back button respects the last route. async', (WidgetTester tester) async {
     var allow = false;
     final home = UniqueKey();
     final routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (BuildContext context, GoRouterState state) =>
-            DummyScreen(key: home),
+        builder: (BuildContext context, GoRouterState state) => DummyScreen(key: home),
         onExit: (BuildContext context, GoRouterState state) async {
           return allow;
         },
@@ -238,12 +208,11 @@ void main() {
     final home = UniqueKey();
     final routes = <RouteBase>[
       ShellRoute(
-        builder: (_, __, Widget child) => child,
+        builder: (_, _, Widget child) => child,
         routes: <RouteBase>[
           GoRoute(
             path: '/',
-            builder: (BuildContext context, GoRouterState state) =>
-                DummyScreen(key: home),
+            builder: (BuildContext context, GoRouterState state) => DummyScreen(key: home),
             onExit: (BuildContext context, GoRouterState state) {
               return allow;
             },
@@ -275,13 +244,11 @@ void main() {
     final routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (BuildContext context, GoRouterState state) =>
-            DummyScreen(key: home),
+        builder: (BuildContext context, GoRouterState state) => DummyScreen(key: home),
         routes: <GoRoute>[
           GoRoute(
             path: '1',
-            builder: (BuildContext context, GoRouterState state) =>
-                DummyScreen(key: page1),
+            builder: (BuildContext context, GoRouterState state) => DummyScreen(key: page1),
             onExit: (BuildContext context, GoRouterState state) {
               onExitState1 = state;
               return true;
@@ -289,8 +256,7 @@ void main() {
             routes: <GoRoute>[
               GoRoute(
                 path: '2',
-                builder: (BuildContext context, GoRouterState state) =>
-                    DummyScreen(key: page2),
+                builder: (BuildContext context, GoRouterState state) => DummyScreen(key: page2),
                 onExit: (BuildContext context, GoRouterState state) {
                   onExitState2 = state;
                   return true;
@@ -298,8 +264,7 @@ void main() {
                 routes: <GoRoute>[
                   GoRoute(
                     path: '3',
-                    builder: (BuildContext context, GoRouterState state) =>
-                        DummyScreen(key: page3),
+                    builder: (BuildContext context, GoRouterState state) => DummyScreen(key: page3),
                     onExit: (BuildContext context, GoRouterState state) {
                       onExitState3 = state;
                       return true;
@@ -313,11 +278,7 @@ void main() {
       ),
     ];
 
-    final GoRouter router = await createRouter(
-      routes,
-      tester,
-      initialLocation: '/1/2/3',
-    );
+    final GoRouter router = await createRouter(routes, tester, initialLocation: '/1/2/3');
     expect(find.byKey(page3), findsOneWidget);
 
     router.pop();
@@ -337,160 +298,312 @@ void main() {
     expect(onExitState1.uri.toString(), '/1');
   });
 
-  testWidgets(
-    'It should provide the correct path parameters to the onExit callback',
-    (WidgetTester tester) async {
-      final page0 = UniqueKey();
-      final page1 = UniqueKey();
-      final page2 = UniqueKey();
-      final page3 = UniqueKey();
-      late final GoRouterState onExitState1;
-      late final GoRouterState onExitState2;
-      late final GoRouterState onExitState3;
-      final routes = <GoRoute>[
+  testWidgets('It should provide the correct path parameters to the onExit callback', (
+    WidgetTester tester,
+  ) async {
+    final page0 = UniqueKey();
+    final page1 = UniqueKey();
+    final page2 = UniqueKey();
+    final page3 = UniqueKey();
+    late final GoRouterState onExitState1;
+    late final GoRouterState onExitState2;
+    late final GoRouterState onExitState3;
+    final routes = <GoRoute>[
+      GoRoute(
+        path: '/route-0/:id0',
+        builder: (BuildContext context, GoRouterState state) => DummyScreen(key: page0),
+      ),
+      GoRoute(
+        path: '/route-1/:id1',
+        builder: (BuildContext context, GoRouterState state) => DummyScreen(key: page1),
+        onExit: (BuildContext context, GoRouterState state) {
+          onExitState1 = state;
+          return true;
+        },
+      ),
+      GoRoute(
+        path: '/route-2/:id2',
+        builder: (BuildContext context, GoRouterState state) => DummyScreen(key: page2),
+        onExit: (BuildContext context, GoRouterState state) {
+          onExitState2 = state;
+          return true;
+        },
+      ),
+      GoRoute(
+        path: '/route-3/:id3',
+        builder: (BuildContext context, GoRouterState state) {
+          return DummyScreen(key: page3);
+        },
+        onExit: (BuildContext context, GoRouterState state) {
+          onExitState3 = state;
+          return true;
+        },
+      ),
+    ];
+
+    final GoRouter router = await createRouter(
+      routes,
+      tester,
+      initialLocation: '/route-0/0?param0=0',
+    );
+    unawaited(router.push('/route-1/1?param1=1'));
+    unawaited(router.push('/route-2/2?param2=2'));
+    unawaited(router.push('/route-3/3?param3=3'));
+
+    await tester.pumpAndSettle();
+    expect(find.byKey(page3), findsOne);
+
+    router.pop();
+    await tester.pumpAndSettle();
+    expect(find.byKey(page2), findsOne);
+    expect(onExitState3.uri.toString(), '/route-3/3?param3=3');
+    expect(onExitState3.pathParameters, const <String, String>{'id3': '3'});
+    expect(onExitState3.fullPath, '/route-3/:id3');
+
+    router.pop();
+    await tester.pumpAndSettle();
+    expect(find.byKey(page1), findsOne);
+    expect(onExitState2.uri.toString(), '/route-2/2?param2=2');
+    expect(onExitState2.pathParameters, const <String, String>{'id2': '2'});
+    expect(onExitState2.fullPath, '/route-2/:id2');
+
+    router.pop();
+    await tester.pumpAndSettle();
+    expect(find.byKey(page0), findsOne);
+    expect(onExitState1.uri.toString(), '/route-1/1?param1=1');
+    expect(onExitState1.pathParameters, const <String, String>{'id1': '1'});
+    expect(onExitState1.fullPath, '/route-1/:id1');
+  });
+
+  testWidgets('It should provide the correct path parameters to the onExit callback during a go', (
+    WidgetTester tester,
+  ) async {
+    final page0 = UniqueKey();
+    final page1 = UniqueKey();
+    final page2 = UniqueKey();
+    final page3 = UniqueKey();
+    late final GoRouterState onExitState0;
+    late final GoRouterState onExitState1;
+    late final GoRouterState onExitState2;
+    final routes = <GoRoute>[
+      GoRoute(
+        path: '/route-0/:id0',
+        builder: (BuildContext context, GoRouterState state) => DummyScreen(key: page0),
+        onExit: (BuildContext context, GoRouterState state) {
+          onExitState0 = state;
+          return true;
+        },
+      ),
+      GoRoute(
+        path: '/route-1/:id1',
+        builder: (BuildContext context, GoRouterState state) => DummyScreen(key: page1),
+        onExit: (BuildContext context, GoRouterState state) {
+          onExitState1 = state;
+          return true;
+        },
+      ),
+      GoRoute(
+        path: '/route-2/:id2',
+        builder: (BuildContext context, GoRouterState state) => DummyScreen(key: page2),
+        onExit: (BuildContext context, GoRouterState state) {
+          onExitState2 = state;
+          return true;
+        },
+      ),
+      GoRoute(
+        path: '/route-3/:id3',
+        builder: (BuildContext context, GoRouterState state) {
+          return DummyScreen(key: page3);
+        },
+      ),
+    ];
+
+    final GoRouter router = await createRouter(
+      routes,
+      tester,
+      initialLocation: '/route-0/0?param0=0',
+    );
+    expect(find.byKey(page0), findsOne);
+
+    router.go('/route-1/1?param1=1');
+    await tester.pumpAndSettle();
+    expect(find.byKey(page1), findsOne);
+    expect(onExitState0.uri.toString(), '/route-0/0?param0=0');
+    expect(onExitState0.pathParameters, const <String, String>{'id0': '0'});
+    expect(onExitState0.fullPath, '/route-0/:id0');
+
+    router.go('/route-2/2?param2=2');
+    await tester.pumpAndSettle();
+    expect(find.byKey(page2), findsOne);
+    expect(onExitState1.uri.toString(), '/route-1/1?param1=1');
+    expect(onExitState1.pathParameters, const <String, String>{'id1': '1'});
+    expect(onExitState1.fullPath, '/route-1/:id1');
+
+    router.go('/route-3/3?param3=3');
+    await tester.pumpAndSettle();
+    expect(find.byKey(page3), findsOne);
+    expect(onExitState2.uri.toString(), '/route-2/2?param2=2');
+    expect(onExitState2.pathParameters, const <String, String>{'id2': '2'});
+    expect(onExitState2.fullPath, '/route-2/:id2');
+  });
+
+  // Regression test: pop() with onExit + async redirect must not restore
+  // stale configuration.
+  testWidgets('pop does not call restore with stale config when route has onExit', (
+    WidgetTester tester,
+  ) async {
+    final homeKey = UniqueKey();
+    final detailKey = UniqueKey();
+
+    final GoRouter router = await createRouter(
+      <RouteBase>[
         GoRoute(
-          path: '/route-0/:id0',
-          builder: (BuildContext context, GoRouterState state) =>
-              DummyScreen(key: page0),
+          path: '/',
+          builder: (_, _) => DummyScreen(key: homeKey),
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'detail',
+              onExit: (_, _) => true,
+              builder: (_, _) => DummyScreen(key: detailKey),
+            ),
+          ],
         ),
+      ],
+      tester,
+      initialLocation: '/detail',
+      redirect: (_, GoRouterState state) async {
+        // Async redirect — completes in a later microtask.
+        await Future<void>.delayed(Duration.zero);
+        return null;
+      },
+    );
+
+    await tester.pumpAndSettle();
+    expect(find.byKey(detailKey), findsOneWidget);
+
+    router.pop();
+    await tester.pumpAndSettle();
+
+    // The detail route should be gone after pop.
+    expect(
+      find.byKey(detailKey),
+      findsNothing,
+      reason:
+          'Route with onExit should be properly popped '
+          'even when async redirect is present',
+    );
+    expect(find.byKey(homeKey), findsOneWidget);
+  });
+
+  // Verify that pop is correctly cancelled when onExit returns false.
+  testWidgets('pop is cancelled when onExit returns false', (WidgetTester tester) async {
+    final homeKey = UniqueKey();
+    final detailKey = UniqueKey();
+
+    final GoRouter router = await createRouter(
+      <RouteBase>[
         GoRoute(
-          path: '/route-1/:id1',
-          builder: (BuildContext context, GoRouterState state) =>
-              DummyScreen(key: page1),
-          onExit: (BuildContext context, GoRouterState state) {
-            onExitState1 = state;
-            return true;
-          },
+          path: '/',
+          builder: (_, _) => DummyScreen(key: homeKey),
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'detail',
+              onExit: (_, _) => false, // Always prevent leaving.
+              builder: (_, _) => DummyScreen(key: detailKey),
+            ),
+          ],
         ),
-        GoRoute(
-          path: '/route-2/:id2',
-          builder: (BuildContext context, GoRouterState state) =>
-              DummyScreen(key: page2),
-          onExit: (BuildContext context, GoRouterState state) {
-            onExitState2 = state;
-            return true;
-          },
-        ),
-        GoRoute(
-          path: '/route-3/:id3',
-          builder: (BuildContext context, GoRouterState state) {
-            return DummyScreen(key: page3);
-          },
-          onExit: (BuildContext context, GoRouterState state) {
-            onExitState3 = state;
-            return true;
-          },
-        ),
-      ];
+      ],
+      tester,
+      initialLocation: '/detail',
+    );
 
-      final GoRouter router = await createRouter(
-        routes,
-        tester,
-        initialLocation: '/route-0/0?param0=0',
-      );
-      unawaited(router.push('/route-1/1?param1=1'));
-      unawaited(router.push('/route-2/2?param2=2'));
-      unawaited(router.push('/route-3/3?param3=3'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(detailKey), findsOneWidget);
 
-      await tester.pumpAndSettle();
-      expect(find.byKey(page3), findsOne);
+    router.pop();
+    await tester.pumpAndSettle();
 
-      router.pop();
-      await tester.pumpAndSettle();
-      expect(find.byKey(page2), findsOne);
-      expect(onExitState3.uri.toString(), '/route-3/3?param3=3');
-      expect(onExitState3.pathParameters, const <String, String>{'id3': '3'});
-      expect(onExitState3.fullPath, '/route-3/:id3');
+    // Should still be on the detail page.
+    expect(find.byKey(detailKey), findsOneWidget);
+    expect(find.byKey(homeKey), findsNothing);
+  });
 
-      router.pop();
-      await tester.pumpAndSettle();
-      expect(find.byKey(page1), findsOne);
-      expect(onExitState2.uri.toString(), '/route-2/2?param2=2');
-      expect(onExitState2.pathParameters, const <String, String>{'id2': '2'});
-      expect(onExitState2.fullPath, '/route-2/:id2');
+  // Regression test for https://github.com/flutter/flutter/issues/137829
+  testWidgets('back button works synchronously with ShellRoute', (WidgetTester tester) async {
+    var allow = false;
+    final home = UniqueKey();
+    final page = UniqueKey();
+    final routes = <RouteBase>[
+      GoRoute(
+        path: '/',
+        builder: (_, _) => DummyScreen(key: home),
+        routes: <RouteBase>[
+          ShellRoute(
+            builder: (_, _, Widget child) => child,
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'page',
+                builder: (_, _) => DummyScreen(key: page),
+                onExit: (BuildContext context, GoRouterState state) => allow,
+              ),
+            ],
+          ),
+        ],
+      ),
+    ];
 
-      router.pop();
-      await tester.pumpAndSettle();
-      expect(find.byKey(page0), findsOne);
-      expect(onExitState1.uri.toString(), '/route-1/1?param1=1');
-      expect(onExitState1.pathParameters, const <String, String>{'id1': '1'});
-      expect(onExitState1.fullPath, '/route-1/:id1');
-    },
-  );
+    final GoRouter router = await createRouter(routes, tester, initialLocation: '/page');
+    expect(find.byKey(page), findsOneWidget);
 
-  testWidgets(
-    'It should provide the correct path parameters to the onExit callback during a go',
-    (WidgetTester tester) async {
-      final page0 = UniqueKey();
-      final page1 = UniqueKey();
-      final page2 = UniqueKey();
-      final page3 = UniqueKey();
-      late final GoRouterState onExitState0;
-      late final GoRouterState onExitState1;
-      late final GoRouterState onExitState2;
-      final routes = <GoRoute>[
-        GoRoute(
-          path: '/route-0/:id0',
-          builder: (BuildContext context, GoRouterState state) =>
-              DummyScreen(key: page0),
-          onExit: (BuildContext context, GoRouterState state) {
-            onExitState0 = state;
-            return true;
-          },
-        ),
-        GoRoute(
-          path: '/route-1/:id1',
-          builder: (BuildContext context, GoRouterState state) =>
-              DummyScreen(key: page1),
-          onExit: (BuildContext context, GoRouterState state) {
-            onExitState1 = state;
-            return true;
-          },
-        ),
-        GoRoute(
-          path: '/route-2/:id2',
-          builder: (BuildContext context, GoRouterState state) =>
-              DummyScreen(key: page2),
-          onExit: (BuildContext context, GoRouterState state) {
-            onExitState2 = state;
-            return true;
-          },
-        ),
-        GoRoute(
-          path: '/route-3/:id3',
-          builder: (BuildContext context, GoRouterState state) {
-            return DummyScreen(key: page3);
-          },
-        ),
-      ];
+    router.pop();
+    await tester.pumpAndSettle();
+    expect(find.byKey(page), findsOneWidget);
 
-      final GoRouter router = await createRouter(
-        routes,
-        tester,
-        initialLocation: '/route-0/0?param0=0',
-      );
-      expect(find.byKey(page0), findsOne);
+    allow = true;
+    router.pop();
+    await tester.pumpAndSettle();
+    expect(find.byKey(home), findsOneWidget);
+  });
 
-      router.go('/route-1/1?param1=1');
-      await tester.pumpAndSettle();
-      expect(find.byKey(page1), findsOne);
-      expect(onExitState0.uri.toString(), '/route-0/0?param0=0');
-      expect(onExitState0.pathParameters, const <String, String>{'id0': '0'});
-      expect(onExitState0.fullPath, '/route-0/:id0');
+  // Regression test for https://github.com/flutter/flutter/issues/137829
+  testWidgets('back button works asynchronously with ShellRoute', (WidgetTester tester) async {
+    var allow = Completer<bool>();
+    final home = UniqueKey();
+    final page = UniqueKey();
+    final routes = <RouteBase>[
+      GoRoute(
+        path: '/',
+        builder: (_, _) => DummyScreen(key: home),
+        routes: <RouteBase>[
+          ShellRoute(
+            builder: (_, _, Widget child) => child,
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'page',
+                builder: (_, _) => DummyScreen(key: page),
+                onExit: (BuildContext context, GoRouterState state) async => allow.future,
+              ),
+            ],
+          ),
+        ],
+      ),
+    ];
 
-      router.go('/route-2/2?param2=2');
-      await tester.pumpAndSettle();
-      expect(find.byKey(page2), findsOne);
-      expect(onExitState1.uri.toString(), '/route-1/1?param1=1');
-      expect(onExitState1.pathParameters, const <String, String>{'id1': '1'});
-      expect(onExitState1.fullPath, '/route-1/:id1');
+    final GoRouter router = await createRouter(routes, tester, initialLocation: '/page');
+    expect(find.byKey(page), findsOneWidget);
 
-      router.go('/route-3/3?param3=3');
-      await tester.pumpAndSettle();
-      expect(find.byKey(page3), findsOne);
-      expect(onExitState2.uri.toString(), '/route-2/2?param2=2');
-      expect(onExitState2.pathParameters, const <String, String>{'id2': '2'});
-      expect(onExitState2.fullPath, '/route-2/:id2');
-    },
-  );
+    router.pop();
+    await tester.pumpAndSettle();
+    allow.complete(false);
+    await tester.pumpAndSettle();
+    expect(find.byKey(page), findsOneWidget);
+
+    allow = Completer<bool>();
+    router.pop();
+    await tester.pumpAndSettle();
+    allow.complete(true);
+    await tester.pumpAndSettle();
+    expect(find.byKey(home), findsOneWidget);
+  });
 }

@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
+## 0.12.0+1
+
+* Makes `Optional.of` constructor `const`.
+
 ## 0.12.0
 
 * Adds support for video stabilization.

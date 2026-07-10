@@ -3,8 +3,11 @@
 // found in the LICENSE file.
 
 import Flutter
+import UIKit
 
-public final class QuickActionsPlugin: NSObject, FlutterPlugin, IOSQuickActionsApi {
+public final class QuickActionsPlugin: NSObject, FlutterPlugin, IOSQuickActionsApi,
+  FlutterSceneLifeCycleDelegate
+{
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let messenger = registrar.messenger()
@@ -12,6 +15,7 @@ public final class QuickActionsPlugin: NSObject, FlutterPlugin, IOSQuickActionsA
     let instance = QuickActionsPlugin(flutterApi: flutterApi)
     IOSQuickActionsApiSetup.setUp(binaryMessenger: messenger, api: instance)
     registrar.addApplicationDelegate(instance)
+    registrar.addSceneDelegate(instance)
   }
 
   private let shortcutItemProvider: ShortcutItemProviding
@@ -71,6 +75,46 @@ public final class QuickActionsPlugin: NSObject, FlutterPlugin, IOSQuickActionsA
       launchingShortcutType = nil
     }
   }
+
+  // MARK: - FlutterSceneLifeCycleDelegate
+
+  public func scene(
+    _ scene: UIScene,
+    willConnectTo session: UISceneSession,
+    options connectionOptions: UIScene.ConnectionOptions?
+  ) -> Bool {
+    return handleSceneWillConnectTo(shortcutItem: connectionOptions?.shortcutItem)
+  }
+
+  func handleSceneWillConnectTo(shortcutItem: UIApplicationShortcutItem?) -> Bool {
+    if let shortcutItem {
+      // Keep hold of the shortcut type and handle it in the
+      // `sceneDidBecomeActive:` method once the Dart MethodChannel
+      // is initialized.
+      launchingShortcutType = shortcutItem.type
+      return true
+    }
+    return false
+  }
+
+  public func sceneDidBecomeActive(_ scene: UIScene) {
+    if let shortcutType = launchingShortcutType {
+      handleShortcut(shortcutType)
+      launchingShortcutType = nil
+    }
+  }
+
+  public func windowScene(
+    _ windowScene: UIWindowScene,
+    performActionFor shortcutItem: UIApplicationShortcutItem,
+    completionHandler: @escaping (Bool) -> Void
+  ) -> Bool {
+    handleShortcut(shortcutItem.type)
+    completionHandler(true)
+    return true
+  }
+
+  // MARK: - Shortcut handling
 
   func handleShortcut(_ shortcut: String) {
     flutterApi.launchAction(action: shortcut) { _ in

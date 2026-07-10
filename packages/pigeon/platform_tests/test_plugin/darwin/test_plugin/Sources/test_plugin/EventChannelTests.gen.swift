@@ -33,8 +33,127 @@ final class EventChannelTestsError: Error {
   }
 }
 
-private func isNullish(_ value: Any?) -> Bool {
-  return value is NSNull || value == nil
+enum EventChannelTestsPigeonInternal {
+  static func isNullish(_ value: Any?) -> Bool {
+    guard let innerValue = value else {
+      return true
+    }
+
+    if case Optional<Any>.some(Optional<Any>.none) = value {
+      return true
+    }
+
+    return innerValue is NSNull
+  }
+  static func doubleEquals(_ lhs: Double, _ rhs: Double) -> Bool {
+    return (lhs.isNaN && rhs.isNaN) || lhs == rhs
+  }
+
+  static func doubleHash(_ value: Double, _ hasher: inout Hasher) {
+    if value.isNaN {
+      hasher.combine(0x7FF8_0000_0000_0000)
+    } else {
+      // Normalize -0.0 to 0.0
+      hasher.combine(value == 0 ? 0 : value)
+    }
+  }
+
+  static func deepEquals(_ lhs: Any?, _ rhs: Any?) -> Bool {
+    let cleanLhs = nilOrValue(lhs) as Any?
+    let cleanRhs = nilOrValue(rhs) as Any?
+    switch (cleanLhs, cleanRhs) {
+    case (nil, nil):
+      return true
+
+    case (nil, _), (_, nil):
+      return false
+
+    case (let lhs as AnyObject, let rhs as AnyObject) where lhs === rhs:
+      return true
+
+    case is (Void, Void):
+      return true
+
+    case (let lhsArray, let rhsArray) as ([Any?], [Any?]):
+      guard lhsArray.count == rhsArray.count else { return false }
+      for (index, element) in lhsArray.enumerated() {
+        if !deepEquals(element, rhsArray[index]) {
+          return false
+        }
+      }
+      return true
+
+    case (let lhsArray, let rhsArray) as ([Double], [Double]):
+      guard lhsArray.count == rhsArray.count else { return false }
+      for (index, element) in lhsArray.enumerated() {
+        if !doubleEquals(element, rhsArray[index]) {
+          return false
+        }
+      }
+      return true
+
+    case (let lhsDictionary, let rhsDictionary) as ([AnyHashable: Any?], [AnyHashable: Any?]):
+      guard lhsDictionary.count == rhsDictionary.count else { return false }
+      for (lhsKey, lhsValue) in lhsDictionary {
+        var found = false
+        for (rhsKey, rhsValue) in rhsDictionary {
+          if deepEquals(lhsKey, rhsKey) {
+            if deepEquals(lhsValue, rhsValue) {
+              found = true
+              break
+            } else {
+              return false
+            }
+          }
+        }
+        if !found { return false }
+      }
+      return true
+
+    case (let lhs as Double, let rhs as Double):
+      return doubleEquals(lhs, rhs)
+
+    case (let lhsHashable, let rhsHashable) as (AnyHashable, AnyHashable):
+      return lhsHashable == rhsHashable
+
+    default:
+      return false
+    }
+  }
+
+  static func deepHash(value: Any?, hasher: inout Hasher) {
+    let cleanValue = nilOrValue(value) as Any?
+    if let cleanValue = cleanValue {
+      if let doubleValue = cleanValue as? Double {
+        doubleHash(doubleValue, &hasher)
+      } else if let valueList = cleanValue as? [Any?] {
+        for item in valueList {
+          deepHash(value: item, hasher: &hasher)
+        }
+      } else if let valueList = cleanValue as? [Double] {
+        for item in valueList {
+          doubleHash(item, &hasher)
+        }
+      } else if let valueDict = cleanValue as? [AnyHashable: Any?] {
+        var result = 0
+        for (key, value) in valueDict {
+          var entryKeyHasher = Hasher()
+          deepHash(value: key, hasher: &entryKeyHasher)
+          var entryValueHasher = Hasher()
+          deepHash(value: value, hasher: &entryValueHasher)
+          result = result &+ ((entryKeyHasher.finalize() &* 31) ^ entryValueHasher.finalize())
+        }
+        hasher.combine(result)
+      } else if let hashableValue = cleanValue as? AnyHashable {
+        hasher.combine(hashableValue)
+      } else {
+        hasher.combine(String(describing: cleanValue))
+      }
+    } else {
+      hasher.combine(0)
+    }
+  }
+
 }
 
 private func nilOrValue<T>(_ value: Any?) -> T? {
@@ -42,69 +161,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
-func deepEqualsEventChannelTests(_ lhs: Any?, _ rhs: Any?) -> Bool {
-  let cleanLhs = nilOrValue(lhs) as Any?
-  let cleanRhs = nilOrValue(rhs) as Any?
-  switch (cleanLhs, cleanRhs) {
-  case (nil, nil):
-    return true
-
-  case (nil, _), (_, nil):
-    return false
-
-  case is (Void, Void):
-    return true
-
-  case let (cleanLhsHashable, cleanRhsHashable) as (AnyHashable, AnyHashable):
-    return cleanLhsHashable == cleanRhsHashable
-
-  case let (cleanLhsArray, cleanRhsArray) as ([Any?], [Any?]):
-    guard cleanLhsArray.count == cleanRhsArray.count else { return false }
-    for (index, element) in cleanLhsArray.enumerated() {
-      if !deepEqualsEventChannelTests(element, cleanRhsArray[index]) {
-        return false
-      }
-    }
-    return true
-
-  case let (cleanLhsDictionary, cleanRhsDictionary) as ([AnyHashable: Any?], [AnyHashable: Any?]):
-    guard cleanLhsDictionary.count == cleanRhsDictionary.count else { return false }
-    for (key, cleanLhsValue) in cleanLhsDictionary {
-      guard cleanRhsDictionary.index(forKey: key) != nil else { return false }
-      if !deepEqualsEventChannelTests(cleanLhsValue, cleanRhsDictionary[key]!) {
-        return false
-      }
-    }
-    return true
-
-  default:
-    // Any other type shouldn't be able to be used with pigeon. File an issue if you find this to be untrue.
-    return false
-  }
-}
-
-func deepHashEventChannelTests(value: Any?, hasher: inout Hasher) {
-  if let valueList = value as? [AnyHashable] {
-    for item in valueList { deepHashEventChannelTests(value: item, hasher: &hasher) }
-    return
-  }
-
-  if let valueDict = value as? [AnyHashable: AnyHashable] {
-    for key in valueDict.keys {
-      hasher.combine(key)
-      deepHashEventChannelTests(value: valueDict[key]!, hasher: &hasher)
-    }
-    return
-  }
-
-  if let hashableValue = value as? AnyHashable {
-    hasher.combine(hashableValue.hashValue)
-  }
-
-  return hasher.combine(String(describing: value))
-}
-
-enum EventEnum: Int {
+enum EventEnum: Int, CaseIterable {
   case one = 0
   case two = 1
   case three = 2
@@ -112,14 +169,14 @@ enum EventEnum: Int {
   case fourHundredTwentyTwo = 4
 }
 
-enum AnotherEventEnum: Int {
+enum AnotherEventEnum: Int, CaseIterable {
   case justInCase = 0
 }
 
 /// A class containing all supported nullable types.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-class EventAllNullableTypes: Hashable {
+class EventAllNullableTypes: Hashable, CustomStringConvertible {
   init(
     aNullableBool: Bool? = nil,
     aNullableInt: Int64? = nil,
@@ -321,13 +378,87 @@ class EventAllNullableTypes: Hashable {
     ]
   }
   static func == (lhs: EventAllNullableTypes, rhs: EventAllNullableTypes) -> Bool {
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
     if lhs === rhs {
       return true
     }
-    return deepEqualsEventChannelTests(lhs.toList(), rhs.toList())
+    return EventChannelTestsPigeonInternal.deepEquals(lhs.aNullableBool, rhs.aNullableBool)
+      && EventChannelTestsPigeonInternal.deepEquals(lhs.aNullableInt, rhs.aNullableInt)
+      && EventChannelTestsPigeonInternal.deepEquals(lhs.aNullableInt64, rhs.aNullableInt64)
+      && EventChannelTestsPigeonInternal.deepEquals(lhs.aNullableDouble, rhs.aNullableDouble)
+      && EventChannelTestsPigeonInternal.deepEquals(lhs.aNullableByteArray, rhs.aNullableByteArray)
+      && EventChannelTestsPigeonInternal.deepEquals(
+        lhs.aNullable4ByteArray, rhs.aNullable4ByteArray)
+      && EventChannelTestsPigeonInternal.deepEquals(
+        lhs.aNullable8ByteArray, rhs.aNullable8ByteArray)
+      && EventChannelTestsPigeonInternal.deepEquals(
+        lhs.aNullableFloatArray, rhs.aNullableFloatArray)
+      && EventChannelTestsPigeonInternal.deepEquals(lhs.aNullableEnum, rhs.aNullableEnum)
+      && EventChannelTestsPigeonInternal.deepEquals(
+        lhs.anotherNullableEnum, rhs.anotherNullableEnum)
+      && EventChannelTestsPigeonInternal.deepEquals(lhs.aNullableString, rhs.aNullableString)
+      && EventChannelTestsPigeonInternal.deepEquals(lhs.aNullableObject, rhs.aNullableObject)
+      && EventChannelTestsPigeonInternal.deepEquals(lhs.allNullableTypes, rhs.allNullableTypes)
+      && EventChannelTestsPigeonInternal.deepEquals(lhs.list, rhs.list)
+      && EventChannelTestsPigeonInternal.deepEquals(lhs.stringList, rhs.stringList)
+      && EventChannelTestsPigeonInternal.deepEquals(lhs.intList, rhs.intList)
+      && EventChannelTestsPigeonInternal.deepEquals(lhs.doubleList, rhs.doubleList)
+      && EventChannelTestsPigeonInternal.deepEquals(lhs.boolList, rhs.boolList)
+      && EventChannelTestsPigeonInternal.deepEquals(lhs.enumList, rhs.enumList)
+      && EventChannelTestsPigeonInternal.deepEquals(lhs.objectList, rhs.objectList)
+      && EventChannelTestsPigeonInternal.deepEquals(lhs.listList, rhs.listList)
+      && EventChannelTestsPigeonInternal.deepEquals(lhs.mapList, rhs.mapList)
+      && EventChannelTestsPigeonInternal.deepEquals(lhs.recursiveClassList, rhs.recursiveClassList)
+      && EventChannelTestsPigeonInternal.deepEquals(lhs.map, rhs.map)
+      && EventChannelTestsPigeonInternal.deepEquals(lhs.stringMap, rhs.stringMap)
+      && EventChannelTestsPigeonInternal.deepEquals(lhs.intMap, rhs.intMap)
+      && EventChannelTestsPigeonInternal.deepEquals(lhs.enumMap, rhs.enumMap)
+      && EventChannelTestsPigeonInternal.deepEquals(lhs.objectMap, rhs.objectMap)
+      && EventChannelTestsPigeonInternal.deepEquals(lhs.listMap, rhs.listMap)
+      && EventChannelTestsPigeonInternal.deepEquals(lhs.mapMap, rhs.mapMap)
+      && EventChannelTestsPigeonInternal.deepEquals(lhs.recursiveClassMap, rhs.recursiveClassMap)
   }
+
   func hash(into hasher: inout Hasher) {
-    deepHashEventChannelTests(value: toList(), hasher: &hasher)
+    hasher.combine("EventAllNullableTypes")
+    EventChannelTestsPigeonInternal.deepHash(value: aNullableBool, hasher: &hasher)
+    EventChannelTestsPigeonInternal.deepHash(value: aNullableInt, hasher: &hasher)
+    EventChannelTestsPigeonInternal.deepHash(value: aNullableInt64, hasher: &hasher)
+    EventChannelTestsPigeonInternal.deepHash(value: aNullableDouble, hasher: &hasher)
+    EventChannelTestsPigeonInternal.deepHash(value: aNullableByteArray, hasher: &hasher)
+    EventChannelTestsPigeonInternal.deepHash(value: aNullable4ByteArray, hasher: &hasher)
+    EventChannelTestsPigeonInternal.deepHash(value: aNullable8ByteArray, hasher: &hasher)
+    EventChannelTestsPigeonInternal.deepHash(value: aNullableFloatArray, hasher: &hasher)
+    EventChannelTestsPigeonInternal.deepHash(value: aNullableEnum, hasher: &hasher)
+    EventChannelTestsPigeonInternal.deepHash(value: anotherNullableEnum, hasher: &hasher)
+    EventChannelTestsPigeonInternal.deepHash(value: aNullableString, hasher: &hasher)
+    EventChannelTestsPigeonInternal.deepHash(value: aNullableObject, hasher: &hasher)
+    EventChannelTestsPigeonInternal.deepHash(value: allNullableTypes, hasher: &hasher)
+    EventChannelTestsPigeonInternal.deepHash(value: list, hasher: &hasher)
+    EventChannelTestsPigeonInternal.deepHash(value: stringList, hasher: &hasher)
+    EventChannelTestsPigeonInternal.deepHash(value: intList, hasher: &hasher)
+    EventChannelTestsPigeonInternal.deepHash(value: doubleList, hasher: &hasher)
+    EventChannelTestsPigeonInternal.deepHash(value: boolList, hasher: &hasher)
+    EventChannelTestsPigeonInternal.deepHash(value: enumList, hasher: &hasher)
+    EventChannelTestsPigeonInternal.deepHash(value: objectList, hasher: &hasher)
+    EventChannelTestsPigeonInternal.deepHash(value: listList, hasher: &hasher)
+    EventChannelTestsPigeonInternal.deepHash(value: mapList, hasher: &hasher)
+    EventChannelTestsPigeonInternal.deepHash(value: recursiveClassList, hasher: &hasher)
+    EventChannelTestsPigeonInternal.deepHash(value: map, hasher: &hasher)
+    EventChannelTestsPigeonInternal.deepHash(value: stringMap, hasher: &hasher)
+    EventChannelTestsPigeonInternal.deepHash(value: intMap, hasher: &hasher)
+    EventChannelTestsPigeonInternal.deepHash(value: enumMap, hasher: &hasher)
+    EventChannelTestsPigeonInternal.deepHash(value: objectMap, hasher: &hasher)
+    EventChannelTestsPigeonInternal.deepHash(value: listMap, hasher: &hasher)
+    EventChannelTestsPigeonInternal.deepHash(value: mapMap, hasher: &hasher)
+    EventChannelTestsPigeonInternal.deepHash(value: recursiveClassMap, hasher: &hasher)
+  }
+
+  public var description: String {
+    return
+      "EventAllNullableTypes(aNullableBool: \(String(describing: aNullableBool)), aNullableInt: \(String(describing: aNullableInt)), aNullableInt64: \(String(describing: aNullableInt64)), aNullableDouble: \(String(describing: aNullableDouble)), aNullableByteArray: \(String(describing: aNullableByteArray)), aNullable4ByteArray: \(String(describing: aNullable4ByteArray)), aNullable8ByteArray: \(String(describing: aNullable8ByteArray)), aNullableFloatArray: \(String(describing: aNullableFloatArray)), aNullableEnum: \(String(describing: aNullableEnum)), anotherNullableEnum: \(String(describing: anotherNullableEnum)), aNullableString: \(String(describing: aNullableString)), aNullableObject: \(String(describing: aNullableObject)), allNullableTypes: \(String(describing: allNullableTypes)), list: \(String(describing: list)), stringList: \(String(describing: stringList)), intList: \(String(describing: intList)), doubleList: \(String(describing: doubleList)), boolList: \(String(describing: boolList)), enumList: \(String(describing: enumList)), objectList: \(String(describing: objectList)), listList: \(String(describing: listList)), mapList: \(String(describing: mapList)), recursiveClassList: \(String(describing: recursiveClassList)), map: \(String(describing: map)), stringMap: \(String(describing: stringMap)), intMap: \(String(describing: intMap)), enumMap: \(String(describing: enumMap)), objectMap: \(String(describing: objectMap)), listMap: \(String(describing: listMap)), mapMap: \(String(describing: mapMap)), recursiveClassMap: \(String(describing: recursiveClassMap)))"
   }
 }
 
@@ -355,10 +486,19 @@ struct IntEvent: PlatformEvent {
     ]
   }
   static func == (lhs: IntEvent, rhs: IntEvent) -> Bool {
-    return deepEqualsEventChannelTests(lhs.toList(), rhs.toList())
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
+    return EventChannelTestsPigeonInternal.deepEquals(lhs.value, rhs.value)
   }
+
   func hash(into hasher: inout Hasher) {
-    deepHashEventChannelTests(value: toList(), hasher: &hasher)
+    hasher.combine("IntEvent")
+    EventChannelTestsPigeonInternal.deepHash(value: value, hasher: &hasher)
+  }
+
+  public var description: String {
+    return "IntEvent(value: \(String(describing: value)))"
   }
 }
 
@@ -380,10 +520,19 @@ struct StringEvent: PlatformEvent {
     ]
   }
   static func == (lhs: StringEvent, rhs: StringEvent) -> Bool {
-    return deepEqualsEventChannelTests(lhs.toList(), rhs.toList())
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
+    return EventChannelTestsPigeonInternal.deepEquals(lhs.value, rhs.value)
   }
+
   func hash(into hasher: inout Hasher) {
-    deepHashEventChannelTests(value: toList(), hasher: &hasher)
+    hasher.combine("StringEvent")
+    EventChannelTestsPigeonInternal.deepHash(value: value, hasher: &hasher)
+  }
+
+  public var description: String {
+    return "StringEvent(value: \(String(describing: value)))"
   }
 }
 
@@ -405,10 +554,19 @@ struct BoolEvent: PlatformEvent {
     ]
   }
   static func == (lhs: BoolEvent, rhs: BoolEvent) -> Bool {
-    return deepEqualsEventChannelTests(lhs.toList(), rhs.toList())
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
+    return EventChannelTestsPigeonInternal.deepEquals(lhs.value, rhs.value)
   }
+
   func hash(into hasher: inout Hasher) {
-    deepHashEventChannelTests(value: toList(), hasher: &hasher)
+    hasher.combine("BoolEvent")
+    EventChannelTestsPigeonInternal.deepHash(value: value, hasher: &hasher)
+  }
+
+  public var description: String {
+    return "BoolEvent(value: \(String(describing: value)))"
   }
 }
 
@@ -430,10 +588,19 @@ struct DoubleEvent: PlatformEvent {
     ]
   }
   static func == (lhs: DoubleEvent, rhs: DoubleEvent) -> Bool {
-    return deepEqualsEventChannelTests(lhs.toList(), rhs.toList())
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
+    return EventChannelTestsPigeonInternal.deepEquals(lhs.value, rhs.value)
   }
+
   func hash(into hasher: inout Hasher) {
-    deepHashEventChannelTests(value: toList(), hasher: &hasher)
+    hasher.combine("DoubleEvent")
+    EventChannelTestsPigeonInternal.deepHash(value: value, hasher: &hasher)
+  }
+
+  public var description: String {
+    return "DoubleEvent(value: \(String(describing: value)))"
   }
 }
 
@@ -455,10 +622,19 @@ struct ObjectsEvent: PlatformEvent {
     ]
   }
   static func == (lhs: ObjectsEvent, rhs: ObjectsEvent) -> Bool {
-    return deepEqualsEventChannelTests(lhs.toList(), rhs.toList())
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
+    return EventChannelTestsPigeonInternal.deepEquals(lhs.value, rhs.value)
   }
+
   func hash(into hasher: inout Hasher) {
-    deepHashEventChannelTests(value: toList(), hasher: &hasher)
+    hasher.combine("ObjectsEvent")
+    EventChannelTestsPigeonInternal.deepHash(value: value, hasher: &hasher)
+  }
+
+  public var description: String {
+    return "ObjectsEvent(value: \(String(describing: value)))"
   }
 }
 
@@ -480,10 +656,19 @@ struct EnumEvent: PlatformEvent {
     ]
   }
   static func == (lhs: EnumEvent, rhs: EnumEvent) -> Bool {
-    return deepEqualsEventChannelTests(lhs.toList(), rhs.toList())
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
+    return EventChannelTestsPigeonInternal.deepEquals(lhs.value, rhs.value)
   }
+
   func hash(into hasher: inout Hasher) {
-    deepHashEventChannelTests(value: toList(), hasher: &hasher)
+    hasher.combine("EnumEvent")
+    EventChannelTestsPigeonInternal.deepHash(value: value, hasher: &hasher)
+  }
+
+  public var description: String {
+    return "EnumEvent(value: \(String(describing: value)))"
   }
 }
 
@@ -505,10 +690,19 @@ struct ClassEvent: PlatformEvent {
     ]
   }
   static func == (lhs: ClassEvent, rhs: ClassEvent) -> Bool {
-    return deepEqualsEventChannelTests(lhs.toList(), rhs.toList())
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
+    return EventChannelTestsPigeonInternal.deepEquals(lhs.value, rhs.value)
   }
+
   func hash(into hasher: inout Hasher) {
-    deepHashEventChannelTests(value: toList(), hasher: &hasher)
+    hasher.combine("ClassEvent")
+    EventChannelTestsPigeonInternal.deepHash(value: value, hasher: &hasher)
+  }
+
+  public var description: String {
+    return "ClassEvent(value: \(String(describing: value)))"
   }
 }
 

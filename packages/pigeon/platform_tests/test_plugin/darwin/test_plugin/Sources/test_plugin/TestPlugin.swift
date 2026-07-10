@@ -70,6 +70,22 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   func echo(_ everything: AllNullableTypes?) -> AllNullableTypes? {
     return everything
   }
+
+  func areAllNullableTypesEqual(a: AllNullableTypes, b: AllNullableTypes) -> Bool {
+    return a == b
+  }
+
+  func getAllNullableTypesHash(value: AllNullableTypes) -> Int64 {
+    var hasher = Hasher()
+    value.hash(into: &hasher)
+    return Int64(hasher.finalize())
+  }
+
+  func getAllNullableTypesWithoutRecursionHash(value: AllNullableTypesWithoutRecursion) -> Int64 {
+    var hasher = Hasher()
+    value.hash(into: &hasher)
+    return Int64(hasher.finalize())
+  }
   func echo(_ everything: AllNullableTypesWithoutRecursion?) throws
     -> AllNullableTypesWithoutRecursion?
   {
@@ -114,6 +130,22 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 
   func echo(_ list: [Any?]) throws -> [Any?] {
     return list
+  }
+
+  func echo(stringList: [String?]) throws -> [String?] {
+    return stringList
+  }
+
+  func echo(intList: [Int64?]) throws -> [Int64?] {
+    return intList
+  }
+
+  func echo(doubleList: [Double?]) throws -> [Double?] {
+    return doubleList
+  }
+
+  func echo(boolList: [Bool?]) throws -> [Bool?] {
+    return boolList
   }
 
   func echo(enumList: [AnEnum?]) throws -> [AnEnum?] {

@@ -19,14 +19,171 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /** Generated class from Pigeon. */
 @SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression", "serial"})
 public class Messages {
+  static boolean pigeonDoubleEquals(double a, double b) {
+    // Normalize -0.0 to 0.0 and handle NaN equality.
+    return (a == 0.0 ? 0.0 : a) == (b == 0.0 ? 0.0 : b) || (Double.isNaN(a) && Double.isNaN(b));
+  }
+
+  static boolean pigeonFloatEquals(float a, float b) {
+    // Normalize -0.0 to 0.0 and handle NaN equality.
+    return (a == 0.0f ? 0.0f : a) == (b == 0.0f ? 0.0f : b) || (Float.isNaN(a) && Float.isNaN(b));
+  }
+
+  static int pigeonDoubleHashCode(double d) {
+    // Normalize -0.0 to 0.0 and handle NaN to ensure consistent hash codes.
+    if (d == 0.0) {
+      d = 0.0;
+    }
+    long bits = Double.doubleToLongBits(d);
+    return (int) (bits ^ (bits >>> 32));
+  }
+
+  static int pigeonFloatHashCode(float f) {
+    // Normalize -0.0 to 0.0 and handle NaN to ensure consistent hash codes.
+    if (f == 0.0f) {
+      f = 0.0f;
+    }
+    return Float.floatToIntBits(f);
+  }
+
+  static boolean pigeonDeepEquals(Object a, Object b) {
+    if (a == b) {
+      return true;
+    }
+    if (a == null || b == null) {
+      return false;
+    }
+    if (a instanceof byte[] && b instanceof byte[]) {
+      return Arrays.equals((byte[]) a, (byte[]) b);
+    }
+    if (a instanceof int[] && b instanceof int[]) {
+      return Arrays.equals((int[]) a, (int[]) b);
+    }
+    if (a instanceof long[] && b instanceof long[]) {
+      return Arrays.equals((long[]) a, (long[]) b);
+    }
+    if (a instanceof double[] && b instanceof double[]) {
+      double[] da = (double[]) a;
+      double[] db = (double[]) b;
+      if (da.length != db.length) {
+        return false;
+      }
+      for (int i = 0; i < da.length; i++) {
+        if (!pigeonDoubleEquals(da[i], db[i])) {
+          return false;
+        }
+      }
+      return true;
+    }
+    if (a instanceof List && b instanceof List) {
+      List<?> listA = (List<?>) a;
+      List<?> listB = (List<?>) b;
+      if (listA.size() != listB.size()) {
+        return false;
+      }
+      for (int i = 0; i < listA.size(); i++) {
+        if (!pigeonDeepEquals(listA.get(i), listB.get(i))) {
+          return false;
+        }
+      }
+      return true;
+    }
+    if (a instanceof Map && b instanceof Map) {
+      Map<?, ?> mapA = (Map<?, ?>) a;
+      Map<?, ?> mapB = (Map<?, ?>) b;
+      if (mapA.size() != mapB.size()) {
+        return false;
+      }
+      for (Map.Entry<?, ?> entryA : mapA.entrySet()) {
+        Object keyA = entryA.getKey();
+        Object valueA = entryA.getValue();
+        boolean found = false;
+        for (Map.Entry<?, ?> entryB : mapB.entrySet()) {
+          Object keyB = entryB.getKey();
+          if (pigeonDeepEquals(keyA, keyB)) {
+            Object valueB = entryB.getValue();
+            if (pigeonDeepEquals(valueA, valueB)) {
+              found = true;
+              break;
+            } else {
+              return false;
+            }
+          }
+        }
+        if (!found) {
+          return false;
+        }
+      }
+      return true;
+    }
+    if (a instanceof Double && b instanceof Double) {
+      return pigeonDoubleEquals((double) a, (double) b);
+    }
+    if (a instanceof Float && b instanceof Float) {
+      return pigeonFloatEquals((float) a, (float) b);
+    }
+    return a.equals(b);
+  }
+
+  static int pigeonDeepHashCode(Object value) {
+    if (value == null) {
+      return 0;
+    }
+    if (value instanceof byte[]) {
+      return Arrays.hashCode((byte[]) value);
+    }
+    if (value instanceof int[]) {
+      return Arrays.hashCode((int[]) value);
+    }
+    if (value instanceof long[]) {
+      return Arrays.hashCode((long[]) value);
+    }
+    if (value instanceof double[]) {
+      double[] da = (double[]) value;
+      int result = 1;
+      for (double d : da) {
+        result = 31 * result + pigeonDoubleHashCode(d);
+      }
+      return result;
+    }
+    if (value instanceof List) {
+      int result = 1;
+      for (Object item : (List<?>) value) {
+        result = 31 * result + pigeonDeepHashCode(item);
+      }
+      return result;
+    }
+    if (value instanceof Map) {
+      int result = 0;
+      for (Map.Entry<?, ?> entry : ((Map<?, ?>) value).entrySet()) {
+        result +=
+            ((pigeonDeepHashCode(entry.getKey()) * 31) ^ pigeonDeepHashCode(entry.getValue()));
+      }
+      return result;
+    }
+    if (value instanceof Object[]) {
+      int result = 1;
+      for (Object item : (Object[]) value) {
+        result = 31 * result + pigeonDeepHashCode(item);
+      }
+      return result;
+    }
+    if (value instanceof Double) {
+      return pigeonDoubleHashCode((double) value);
+    }
+    if (value instanceof Float) {
+      return pigeonFloatHashCode((float) value);
+    }
+    return value.hashCode();
+  }
 
   /** Error class for passing custom error details to Flutter via a thrown PlatformException. */
   public static class FlutterError extends RuntimeException {
@@ -94,14 +251,14 @@ public class Messages {
       this.name = setterArg;
     }
 
-    private @Nullable String description;
+    private @Nullable String messageDescription;
 
-    public @Nullable String getDescription() {
-      return description;
+    public @Nullable String getMessageDescription() {
+      return messageDescription;
     }
 
-    public void setDescription(@Nullable String setterArg) {
-      this.description = setterArg;
+    public void setMessageDescription(@Nullable String setterArg) {
+      this.messageDescription = setterArg;
     }
 
     private @NonNull Code code;
@@ -142,15 +299,33 @@ public class Messages {
         return false;
       }
       MessageData that = (MessageData) o;
-      return Objects.equals(name, that.name)
-          && Objects.equals(description, that.description)
-          && code.equals(that.code)
-          && data.equals(that.data);
+      return pigeonDeepEquals(name, that.name)
+          && pigeonDeepEquals(messageDescription, that.messageDescription)
+          && pigeonDeepEquals(code, that.code)
+          && pigeonDeepEquals(data, that.data);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(name, description, code, data);
+      Object[] fields = new Object[] {getClass(), name, messageDescription, code, data};
+      return pigeonDeepHashCode(fields);
+    }
+
+    @Override
+    public String toString() {
+      return "MessageData{"
+          + "name="
+          + name
+          + ", "
+          + "messageDescription="
+          + messageDescription
+          + ", "
+          + "code="
+          + code
+          + ", "
+          + "data="
+          + data
+          + "}";
     }
 
     public static final class Builder {
@@ -163,11 +338,11 @@ public class Messages {
         return this;
       }
 
-      private @Nullable String description;
+      private @Nullable String messageDescription;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setDescription(@Nullable String setterArg) {
-        this.description = setterArg;
+      public @NonNull Builder setMessageDescription(@Nullable String setterArg) {
+        this.messageDescription = setterArg;
         return this;
       }
 
@@ -190,7 +365,7 @@ public class Messages {
       public @NonNull MessageData build() {
         MessageData pigeonReturn = new MessageData();
         pigeonReturn.setName(name);
-        pigeonReturn.setDescription(description);
+        pigeonReturn.setMessageDescription(messageDescription);
         pigeonReturn.setCode(code);
         pigeonReturn.setData(data);
         return pigeonReturn;
@@ -201,7 +376,7 @@ public class Messages {
     ArrayList<Object> toList() {
       ArrayList<Object> toListResult = new ArrayList<>(4);
       toListResult.add(name);
-      toListResult.add(description);
+      toListResult.add(messageDescription);
       toListResult.add(code);
       toListResult.add(data);
       return toListResult;
@@ -211,8 +386,8 @@ public class Messages {
       MessageData pigeonResult = new MessageData();
       Object name = pigeonVar_list.get(0);
       pigeonResult.setName((String) name);
-      Object description = pigeonVar_list.get(1);
-      pigeonResult.setDescription((String) description);
+      Object messageDescription = pigeonVar_list.get(1);
+      pigeonResult.setMessageDescription((String) messageDescription);
       Object code = pigeonVar_list.get(2);
       pigeonResult.setCode((Code) code);
       Object data = pigeonVar_list.get(3);
@@ -263,6 +438,7 @@ public class Messages {
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
+
   /** Asynchronous error handling return type for nullable API method returns. */
   public interface NullableResult<T> {
     /** Success case callback method for handling returns. */
@@ -271,6 +447,7 @@ public class Messages {
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
+
   /** Asynchronous error handling return type for void API method returns. */
   public interface VoidResult {
     /** Success case callback method for handling returns. */
@@ -279,6 +456,7 @@ public class Messages {
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface ExampleHostApi {
 
@@ -294,6 +472,7 @@ public class Messages {
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
+
     /** Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`. */
     static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable ExampleHostApi api) {
       setUp(binaryMessenger, "", api);
@@ -387,6 +566,7 @@ public class Messages {
       }
     }
   }
+
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
   public static class MessageFlutterApi {
     private final @NonNull BinaryMessenger binaryMessenger;

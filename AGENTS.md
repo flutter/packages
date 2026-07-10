@@ -90,11 +90,9 @@ dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart update-dependency 
   The tool can also run native and integration tests, but these may require a more complete environment than is available.
 - **Validation**: Run these checks to ensure that changes follow team guidelines:
   ```bash
+  dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart validate --packages <changed_packages>
   dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart publish-check --packages <changed_packages>
-  dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart readme-check --packages <changed_packages>
-  dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart version-check --packages <changed_packages>
   dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart license-check
-  dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart repo-package-info-check
   ```
 
 ### Specialized Workflows
@@ -138,6 +136,7 @@ All code must adhere to the repository's style guides. The `format` command hand
 - **Kotlin**: Android Kotlin style, formatted with `ktfmt`.
 - **Objective-C**: Google style, formatted with `clang-format`.
 - **Swift**: Google style, formatted with `swift-format`.
+- **Comments**: Avoid adding redundant or trivial comments that simply restate what the code itself does (e.g., repeating method calls in English). Comments should explain the *why* behind complex or non-obvious logic, or serve as public API documentation.
 
 ## Version and CHANGELOG updates
 

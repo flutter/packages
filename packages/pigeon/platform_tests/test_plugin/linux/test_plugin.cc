@@ -128,6 +128,30 @@ static CoreTestsPigeonTestHostIntegrationCoreApiEchoListResponse* echo_list(
       a_list);
 }
 
+static CoreTestsPigeonTestHostIntegrationCoreApiEchoStringListResponse*
+echo_string_list(FlValue* string_list, gpointer user_data) {
+  return core_tests_pigeon_test_host_integration_core_api_echo_string_list_response_new(
+      string_list);
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiEchoIntListResponse*
+echo_int_list(FlValue* int_list, gpointer user_data) {
+  return core_tests_pigeon_test_host_integration_core_api_echo_int_list_response_new(
+      int_list);
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiEchoDoubleListResponse*
+echo_double_list(FlValue* double_list, gpointer user_data) {
+  return core_tests_pigeon_test_host_integration_core_api_echo_double_list_response_new(
+      double_list);
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiEchoBoolListResponse*
+echo_bool_list(FlValue* bool_list, gpointer user_data) {
+  return core_tests_pigeon_test_host_integration_core_api_echo_bool_list_response_new(
+      bool_list);
+}
+
 static CoreTestsPigeonTestHostIntegrationCoreApiEchoEnumListResponse*
 echo_enum_list(FlValue* enum_list, gpointer user_data) {
   return core_tests_pigeon_test_host_integration_core_api_echo_enum_list_response_new(
@@ -251,6 +275,29 @@ echo_all_nullable_types(CoreTestsPigeonTestAllNullableTypes* everything,
                         gpointer user_data) {
   return core_tests_pigeon_test_host_integration_core_api_echo_all_nullable_types_response_new(
       everything);
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiAreAllNullableTypesEqualResponse*
+are_all_nullable_types_equal(CoreTestsPigeonTestAllNullableTypes* a,
+                             CoreTestsPigeonTestAllNullableTypes* b,
+                             gpointer user_data) {
+  return core_tests_pigeon_test_host_integration_core_api_are_all_nullable_types_equal_response_new(
+      core_tests_pigeon_test_all_nullable_types_equals(a, b));
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesHashResponse*
+get_all_nullable_types_hash(CoreTestsPigeonTestAllNullableTypes* value,
+                            gpointer user_data) {
+  return core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_hash_response_new(
+      core_tests_pigeon_test_all_nullable_types_hash(value));
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesWithoutRecursionHashResponse*
+get_all_nullable_types_without_recursion_hash(
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* value,
+    gpointer user_data) {
+  return core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_response_new(
+      core_tests_pigeon_test_all_nullable_types_without_recursion_hash(value));
 }
 
 static CoreTestsPigeonTestHostIntegrationCoreApiEchoAllNullableTypesWithoutRecursionResponse*
@@ -3205,6 +3252,10 @@ static CoreTestsPigeonTestHostIntegrationCoreApiVTable host_core_api_vtable = {
     .echo_uint8_list = echo_uint8_list,
     .echo_object = echo_object,
     .echo_list = echo_list,
+    .echo_string_list = echo_string_list,
+    .echo_int_list = echo_int_list,
+    .echo_double_list = echo_double_list,
+    .echo_bool_list = echo_bool_list,
     .echo_enum_list = echo_enum_list,
     .echo_class_list = echo_class_list,
     .echo_non_null_enum_list = echo_non_null_enum_list,
@@ -3224,6 +3275,10 @@ static CoreTestsPigeonTestHostIntegrationCoreApiVTable host_core_api_vtable = {
     .echo_named_default_string = echo_named_default_string,
     .echo_optional_default_double = echo_optional_default_double,
     .echo_required_int = echo_required_int,
+    .are_all_nullable_types_equal = are_all_nullable_types_equal,
+    .get_all_nullable_types_hash = get_all_nullable_types_hash,
+    .get_all_nullable_types_without_recursion_hash =
+        get_all_nullable_types_without_recursion_hash,
     .echo_all_nullable_types = echo_all_nullable_types,
     .echo_all_nullable_types_without_recursion =
         echo_all_nullable_types_without_recursion,

@@ -49,10 +49,8 @@ void main() {
       };
       PigeonOverrides.iMACompanionDelegate_new =
           ({
-            void Function(IMACompanionDelegate, IMACompanionAdSlot, bool)?
-            companionAdSlotFilled,
-            void Function(IMACompanionDelegate, IMACompanionAdSlot)?
-            companionSlotWasClicked,
+            void Function(IMACompanionDelegate, IMACompanionAdSlot, bool)? companionAdSlotFilled,
+            void Function(IMACompanionDelegate, IMACompanionAdSlot)? companionSlotWasClicked,
           }) {
             return IMACompanionDelegate.pigeon_detached(
               companionAdSlotFilled: companionAdSlotFilled,

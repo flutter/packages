@@ -22,8 +22,7 @@ AdEventType toInterfaceEventType(ima.AdEventType type) {
     ima.AdEventType.allAdsCompleted => AdEventType.allAdsCompleted,
     ima.AdEventType.completed => AdEventType.complete,
     ima.AdEventType.contentPauseRequested => AdEventType.contentPauseRequested,
-    ima.AdEventType.contentResumeRequested =>
-      AdEventType.contentResumeRequested,
+    ima.AdEventType.contentResumeRequested => AdEventType.contentResumeRequested,
     ima.AdEventType.loaded => AdEventType.loaded,
     ima.AdEventType.clicked => AdEventType.clicked,
     ima.AdEventType.adBreakEnded => AdEventType.adBreakEnded,
@@ -36,8 +35,7 @@ AdEventType toInterfaceEventType(ima.AdEventType type) {
     ima.AdEventType.adProgress => AdEventType.adProgress,
     ima.AdEventType.cuepointsChanged => AdEventType.cuepointsChanged,
     ima.AdEventType.firstQuartile => AdEventType.firstQuartile,
-    ima.AdEventType.iconFallbackImageClosed =>
-      AdEventType.iconFallbackImageClosed,
+    ima.AdEventType.iconFallbackImageClosed => AdEventType.iconFallbackImageClosed,
     ima.AdEventType.iconTapped => AdEventType.iconTapped,
     ima.AdEventType.log => AdEventType.log,
     ima.AdEventType.midpoint => AdEventType.midpoint,
@@ -56,32 +54,24 @@ AdEventType toInterfaceEventType(ima.AdEventType type) {
 AdErrorCode toInterfaceErrorCode(ima.AdErrorCode code) {
   return switch (code) {
     ima.AdErrorCode.adsPlayerWasNotProvided => AdErrorCode.adsPlayerNotProvided,
-    ima.AdErrorCode.adsRequestNetworkError =>
-      AdErrorCode.adsRequestNetworkError,
-    ima.AdErrorCode.companionAdLoadingFailed =>
-      AdErrorCode.companionAdLoadingFailed,
+    ima.AdErrorCode.adsRequestNetworkError => AdErrorCode.adsRequestNetworkError,
+    ima.AdErrorCode.companionAdLoadingFailed => AdErrorCode.companionAdLoadingFailed,
     ima.AdErrorCode.failedToRequestAds => AdErrorCode.failedToRequestAds,
     ima.AdErrorCode.internalError => AdErrorCode.internalError,
     ima.AdErrorCode.invalidArguments => AdErrorCode.invalidArguments,
-    ima.AdErrorCode.overlayAdLoadingFailed =>
-      AdErrorCode.overlayAdLoadingFailed,
-    ima.AdErrorCode.overlayAdPlayingFailed =>
-      AdErrorCode.overlayAdPlayingFailed,
-    ima.AdErrorCode.playlistNoContentTracking =>
-      AdErrorCode.playlistNoContentTracking,
-    ima.AdErrorCode.unexpectedAdsLoadedEvent =>
-      AdErrorCode.unexpectedAdsLoadedEvent,
+    ima.AdErrorCode.overlayAdLoadingFailed => AdErrorCode.overlayAdLoadingFailed,
+    ima.AdErrorCode.overlayAdPlayingFailed => AdErrorCode.overlayAdPlayingFailed,
+    ima.AdErrorCode.playlistNoContentTracking => AdErrorCode.playlistNoContentTracking,
+    ima.AdErrorCode.unexpectedAdsLoadedEvent => AdErrorCode.unexpectedAdsLoadedEvent,
     ima.AdErrorCode.unknownAdResponse => AdErrorCode.unknownAdResponse,
     ima.AdErrorCode.unknownError => AdErrorCode.unknownError,
     ima.AdErrorCode.vastAssetNotFound => AdErrorCode.vastAssetNotFound,
     ima.AdErrorCode.vastEmptyResponse => AdErrorCode.vastEmptyResponse,
-    ima.AdErrorCode.vastLinearAssetMismatch =>
-      AdErrorCode.vastLinearAssetMismatch,
+    ima.AdErrorCode.vastLinearAssetMismatch => AdErrorCode.vastLinearAssetMismatch,
     ima.AdErrorCode.vastLoadTimeout => AdErrorCode.vastLoadTimeout,
     ima.AdErrorCode.vastMalformedResponse => AdErrorCode.vastMalformedResponse,
     ima.AdErrorCode.vastMediaLoadTimeout => AdErrorCode.vastMediaLoadTimeout,
-    ima.AdErrorCode.vastNonlinearAssetMismatch =>
-      AdErrorCode.vastNonlinearAssetMismatch,
+    ima.AdErrorCode.vastNonlinearAssetMismatch => AdErrorCode.vastNonlinearAssetMismatch,
     ima.AdErrorCode.vastNoAdsAfterWrapper => AdErrorCode.vastNoAdsAfterWrapper,
     ima.AdErrorCode.vastTooManyRedirects => AdErrorCode.vastTooManyRedirects,
     ima.AdErrorCode.vastTraffickingError => AdErrorCode.vastTraffickingError,

@@ -40,7 +40,8 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
   public ImageCapture pigeon_defaultConstructor(
       @Nullable ResolutionSelector resolutionSelector,
       @Nullable Long targetRotation,
-      @Nullable CameraXFlashMode flashMode) {
+      @Nullable CameraXFlashMode flashMode,
+      @Nullable Long jpegQuality) {
     final ImageCapture.Builder builder = new ImageCapture.Builder();
     if (targetRotation != null) {
       builder.setTargetRotation(targetRotation.intValue());
@@ -61,6 +62,9 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
     }
     if (resolutionSelector != null) {
       builder.setResolutionSelector(resolutionSelector);
+    }
+    if (jpegQuality != null) {
+      builder.setJpegQuality(jpegQuality.intValue());
     }
     return builder.build();
   }
@@ -156,9 +160,12 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
       case ImageCapture.ERROR_CAMERA_CLOSED:
         return "Image capture failed due to the camera being closed.";
       case ImageCapture.ERROR_INVALID_CAMERA:
-        return "The ImageCapture use case was bound to an invalid camera by the Flutter camera plugin. If you see this error, please file an issue if you cannot find one that already exists: https://github.com/flutter/flutter/issues/.";
+        return "The ImageCapture use case was bound to an invalid camera by the Flutter camera"
+            + " plugin. If you see this error, please file an issue if you cannot find one"
+            + " that already exists: https://github.com/flutter/flutter/issues/.";
       default:
-        return "An unknown error has occurred while attempting to take a picture. Check the logs for more details.";
+        return "An unknown error has occurred while attempting to take a picture. Check the logs"
+            + " for more details.";
     }
   }
 }

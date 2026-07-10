@@ -9,53 +9,21 @@ void main() {
   group('isRepoLevelNonCodeImpactingFile', () {
     test('returns true for known non-code files', () {
       expect(isRepoLevelNonCodeImpactingFile('AUTHORS'), isTrue);
-      expect(isRepoLevelNonCodeImpactingFile('CODEOWNERS'), isTrue);
       expect(isRepoLevelNonCodeImpactingFile('CONTRIBUTING.md'), isTrue);
       expect(isRepoLevelNonCodeImpactingFile('LICENSE'), isTrue);
       expect(isRepoLevelNonCodeImpactingFile('README.md'), isTrue);
+      expect(isRepoLevelNonCodeImpactingFile('SUGGESTED_REVIEWERS.md'), isTrue);
       expect(isRepoLevelNonCodeImpactingFile('AGENTS.md'), isTrue);
-      expect(
-        isRepoLevelNonCodeImpactingFile('.github/PULL_REQUEST_TEMPLATE.md'),
-        isTrue,
-      );
+      expect(isRepoLevelNonCodeImpactingFile('.github/PULL_REQUEST_TEMPLATE.md'), isTrue);
       expect(isRepoLevelNonCodeImpactingFile('.github/dependabot.yml'), isTrue);
       expect(isRepoLevelNonCodeImpactingFile('.github/labeler.yml'), isTrue);
-      expect(
-        isRepoLevelNonCodeImpactingFile('.github/post_merge_labeler.yml'),
-        isTrue,
-      );
-      expect(
-        isRepoLevelNonCodeImpactingFile('.github/workflows/release.yml'),
-        isTrue,
-      );
-      expect(
-        isRepoLevelNonCodeImpactingFile(
-          '.github/workflows/pull_request_label.yml',
-        ),
-        isTrue,
-      );
-      expect(
-        isRepoLevelNonCodeImpactingFile(
-          '.github/workflows/batch_release_pr.yml',
-        ),
-        isTrue,
-      );
-      expect(
-        isRepoLevelNonCodeImpactingFile(
-          '.github/workflows/go_router_batch.yml',
-        ),
-        isTrue,
-      );
-      expect(
-        isRepoLevelNonCodeImpactingFile('.github/workflows/ci.yml'),
-        isTrue,
-      );
-      expect(
-        isRepoLevelNonCodeImpactingFile(
-          '.github/workflows/any_new_workflow.yml',
-        ),
-        isTrue,
-      );
+      expect(isRepoLevelNonCodeImpactingFile('.github/post_merge_labeler.yml'), isTrue);
+      expect(isRepoLevelNonCodeImpactingFile('.github/workflows/release.yml'), isTrue);
+      expect(isRepoLevelNonCodeImpactingFile('.github/workflows/pull_request_label.yml'), isTrue);
+      expect(isRepoLevelNonCodeImpactingFile('.github/workflows/batch_release_pr.yml'), isTrue);
+      expect(isRepoLevelNonCodeImpactingFile('.github/workflows/go_router_batch.yml'), isTrue);
+      expect(isRepoLevelNonCodeImpactingFile('.github/workflows/ci.yml'), isTrue);
+      expect(isRepoLevelNonCodeImpactingFile('.github/workflows/any_new_workflow.yml'), isTrue);
     });
 
     test('returns true for .gemini/ files', () {

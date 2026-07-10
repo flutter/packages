@@ -1,3 +1,8 @@
+## 1.2.4
+
+* Adds support for UIScene lifecycle.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
 ## 1.2.3
 
 * Updates to Pigeon 26.

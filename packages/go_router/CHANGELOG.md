@@ -1,3 +1,26 @@
+## 17.3.0
+
+- Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+- Adds `hasOverriddenOnExit` parameter to `GoRouteData.$route` and `RelativeGoRouteData.$route` helper methods for type-safe routes. When set to `true`, enables custom `onExit` callback invocation from route data classes extending `GoRouteData` or `RelativeGoRouteData` when the route is removed from the navigation stack.
+
+## 17.2.3
+
+- Fixes an assertion failure when navigating to URLs with hash fragments missing a leading slash.
+
+## 17.2.2
+
+- Fixes `pop()` restoring stale configuration when route has `onExit`, which could cause the popped route to reappear with async redirects.
+
+## 17.2.1
+
+- Fixes chained top-level redirects not being fully resolved (e.g. `/ → /a → /b` stopping at `/a`).
+- Fixes route-level redirects not triggering top-level redirect re-evaluation on the new location.
+
+## 17.2.0
+
+- Fixes `Block.then()` and `Allow.then()` navigation callbacks being silently lost when triggered by `refreshListenable` due to re-entrant route processing.
+- Adds `encoder`, `decoder` and `compare` parameters to `TypedQueryParameter` annotation for custom encoding, decoding and comparison of query parameters in `TypedGoRoute` constructors.
+
 ## 17.1.0
 
 - Adds `TypedQueryParameter` annotation to override parameter names in `TypedGoRoute` constructors.

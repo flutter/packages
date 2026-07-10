@@ -11,6 +11,7 @@ import android.app.KeyguardManager;
 import android.content.Context;
 import android.os.Build;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.biometric.BiometricManager;
 import androidx.fragment.app.FragmentActivity;
@@ -20,16 +21,13 @@ import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.embedding.engine.plugins.lifecycle.FlutterLifecycleAdapter;
 import io.flutter.plugins.localauth.AuthenticationHelper.AuthCompletionHandler;
-import io.flutter.plugins.localauth.Messages.AuthClassification;
-import io.flutter.plugins.localauth.Messages.AuthOptions;
-import io.flutter.plugins.localauth.Messages.AuthResult;
-import io.flutter.plugins.localauth.Messages.AuthResultCode;
-import io.flutter.plugins.localauth.Messages.AuthStrings;
-import io.flutter.plugins.localauth.Messages.LocalAuthApi;
-import io.flutter.plugins.localauth.Messages.Result;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import kotlin.Result;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Flutter plugin providing access to local authentication.
@@ -54,17 +52,17 @@ public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthA
   public LocalAuthPlugin() {}
 
   @Override
-  public @NonNull Boolean isDeviceSupported() {
+  public boolean isDeviceSupported() {
     return isDeviceSecure() || canAuthenticateWithBiometrics();
   }
 
   @Override
-  public @NonNull Boolean deviceCanSupportBiometrics() {
+  public boolean deviceCanSupportBiometrics() {
     return hasBiometricHardware();
   }
 
   @Override
-  public @NonNull List<AuthClassification> getEnrolledBiometrics() {
+  public @Nullable List<AuthClassification> getEnrolledBiometrics() {
     if (biometricManager == null) {
       return null;
     }
@@ -81,7 +79,7 @@ public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthA
   }
 
   @Override
-  public @NonNull Boolean stopAuthentication() {
+  public boolean stopAuthentication() {
     try {
       if (authHelper != null && authInProgress.get()) {
         authHelper.stopAuthentication();
@@ -98,30 +96,32 @@ public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthA
   public void authenticate(
       @NonNull AuthOptions options,
       @NonNull AuthStrings strings,
-      @NonNull Result<AuthResult> result) {
+      @NonNull Function1<? super @NotNull Result<@NotNull AuthResult>, @NotNull Unit> callback) {
     if (authInProgress.get()) {
-      result.success(new AuthResult.Builder().setCode(AuthResultCode.ALREADY_IN_PROGRESS).build());
+      ResultUtilsKt.completeWithValue(
+          callback, new AuthResult(AuthResultCode.ALREADY_IN_PROGRESS, null));
       return;
     }
 
     if (activity == null || activity.isFinishing()) {
-      result.success(new AuthResult.Builder().setCode(AuthResultCode.NO_ACTIVITY).build());
+      ResultUtilsKt.completeWithValue(callback, new AuthResult(AuthResultCode.NO_ACTIVITY, null));
       return;
     }
 
     if (!(activity instanceof FragmentActivity)) {
-      result.success(
-          new AuthResult.Builder().setCode(AuthResultCode.NOT_FRAGMENT_ACTIVITY).build());
+      ResultUtilsKt.completeWithValue(
+          callback, new AuthResult(AuthResultCode.NOT_FRAGMENT_ACTIVITY, null));
       return;
     }
 
     if (!isDeviceSupported()) {
-      result.success(new AuthResult.Builder().setCode(AuthResultCode.NO_CREDENTIALS).build());
+      ResultUtilsKt.completeWithValue(
+          callback, new AuthResult(AuthResultCode.NO_CREDENTIALS, null));
       return;
     }
 
     authInProgress.set(true);
-    AuthCompletionHandler completionHandler = createAuthCompletionHandler(result);
+    AuthCompletionHandler completionHandler = createAuthCompletionHandler(callback);
 
     boolean allowCredentials = !options.getBiometricOnly() && canAuthenticateWithDeviceCredential();
 
@@ -130,8 +130,8 @@ public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthA
 
   @VisibleForTesting
   public @NonNull AuthCompletionHandler createAuthCompletionHandler(
-      @NonNull final Result<AuthResult> result) {
-    return authResult -> onAuthenticationCompleted(result, authResult);
+      @NonNull Function1<? super @NotNull Result<@NotNull AuthResult>, @NotNull Unit> callback) {
+    return authResult -> onAuthenticationCompleted(callback, authResult);
   }
 
   @VisibleForTesting
@@ -152,9 +152,11 @@ public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthA
     authHelper.authenticate();
   }
 
-  void onAuthenticationCompleted(Result<AuthResult> result, AuthResult value) {
+  void onAuthenticationCompleted(
+      @NonNull Function1<? super @NotNull Result<@NotNull AuthResult>, @NotNull Unit> callback,
+      AuthResult value) {
     if (authInProgress.compareAndSet(true, false)) {
-      result.success(value);
+      ResultUtilsKt.completeWithValue(callback, value);
     }
   }
 
@@ -192,12 +194,12 @@ public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthA
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
-    LocalAuthApi.setUp(binding.getBinaryMessenger(), this);
+    LocalAuthApi.Companion.setUp(binding.getBinaryMessenger(), this);
   }
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-    LocalAuthApi.setUp(binding.getBinaryMessenger(), null);
+    LocalAuthApi.Companion.setUp(binding.getBinaryMessenger(), null);
   }
 
   private void setServicesFromActivity(Activity activity) {

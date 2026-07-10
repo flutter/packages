@@ -6,7 +6,7 @@ import XCTest
 
 @testable import camera_avfoundation
 
-/// Tests of `CameraPlugin` methods delegating to `FLTCam` instance
+/// Tests of `CameraPlugin` methods delegating to `Camera` instance
 final class CameraPluginDelegatingMethodTests: XCTestCase {
   private func createCameraPlugin() -> (CameraPlugin, MockCamera) {
     let mockCamera = MockCamera()
@@ -249,6 +249,28 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     waitForExpectations(timeout: 30, handler: nil)
 
     XCTAssertTrue(setImageFileFormatCalled)
+  }
+
+  func testSetImageQuality_callsCameraSetImageQuality() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
+    let targetQuality: Int64 = 50
+
+    var setJpegImageQualityCalled = false
+    mockCamera.setJpegImageQualityStub = { quality in
+      XCTAssertEqual(quality, targetQuality)
+      setJpegImageQualityCalled = true
+    }
+
+    cameraPlugin.setJpegImageQuality(quality: targetQuality) { result in
+      let _ = self.assertSuccess(result)
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(setJpegImageQualityCalled)
   }
 
   func testStartImageStream_callsCameraStartImageStream() {

@@ -17,6 +17,7 @@ void main() async {
 
   runApp(const MyApp());
 }
+
 // #enddocregion init
 
 /// The main app.

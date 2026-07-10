@@ -1,3 +1,44 @@
+## 2.19.12
+
+* Bumps the androidx group across 10 directories with 1 update.
+
+## 2.19.11
+
+* Migrates to Built-in Kotlin to support AGP 9.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
+## 2.19.10
+
+* Updates README to include setup information.
+
+## 2.19.9
+
+* Adds attribution ID for Google Maps SDK usage.
+
+## 2.19.8
+
+* Updates internal implementation to use Kotlin Pigeon.
+
+## 2.19.7
+
+* Fixes warnings in Java code.
+
+## 2.19.6
+
+* Fixes the onTap callback for clustered pin info window taps.
+
+## 2.19.5
+
+* Fixes a crash when using the legacy map renderer by adding the `org.apache.http.legacy` library.
+
+## 2.19.4
+
+* Updates build files from Groovy to Kotlin.
+
+## 2.19.3
+
+* Batches clustered marker add/remove operations to avoid redundant re-rendering.
+
 ## 2.19.2
 
 * Bump com.google.maps.android:android-maps-utils from 4.0.0 to 4.1.0.
@@ -35,6 +76,7 @@
 * Replaces internal use of deprecated methods.
 
 ## 2.18.6
+
 * Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
 
 ## 2.18.5
@@ -60,7 +102,7 @@
 
 ## 2.18.0
 
-* Adds support for warming up the Google Maps SDK 
+* Adds support for warming up the Google Maps SDK
   via `GoogleMapsFlutterAndroid.warmup()`.
 
 ## 2.17.0

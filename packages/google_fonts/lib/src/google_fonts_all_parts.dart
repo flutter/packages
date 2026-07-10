@@ -9,6 +9,7 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 import 'google_fonts_base.dart';
 import 'google_fonts_parts/part_a.dart';
@@ -44,6 +45,13 @@ class Config {
   /// Whether or not the GoogleFonts library can make requests to
   /// [fonts.google.com](https://fonts.google.com/) to retrieve font files.
   bool allowRuntimeFetching = true;
+
+  /// The HTTP client used to fetch fonts.
+  ///
+  /// If this is null, a shared default [http.Client] will be used.
+  ///
+  /// If you supply a client, you are responsible for closing it.
+  http.Client? httpClient;
 }
 
 /// Provides configuration, and static methods to obtain [TextStyle]s and [TextTheme]s.
@@ -114,8 +122,7 @@ class GoogleFonts {
   ///   );
   /// }
   /// ```
-  static Future<List<void>> pendingFonts([List<dynamic>? _]) =>
-      Future.wait(pendingFontFutures);
+  static Future<List<void>> pendingFonts([List<dynamic>? _]) => Future.wait(pendingFontFutures);
 
   /// Get a map of all available fonts.
   ///
@@ -2045,8 +2052,7 @@ class GoogleFonts {
   ///
   /// Returns a map where the key is the name of the font family and the value
   /// is the corresponding [GoogleFonts] `TextTheme` method.
-  static Map<String, TextTheme Function([TextTheme?])>
-  _asMapOfTextThemes() => const {
+  static Map<String, TextTheme Function([TextTheme?])> _asMapOfTextThemes() => const {
     'ABeeZee': PartA.aBeeZeeTextTheme,
     'ADLaM Display': PartA.aDLaMDisplayTextTheme,
     'AR One Sans': PartA.arOneSansTextTheme,
@@ -3071,8 +3077,7 @@ class GoogleFonts {
     'Noto Sans': PartN.notoSansTextTheme,
     'Noto Sans Adlam': PartN.notoSansAdlamTextTheme,
     'Noto Sans Adlam Unjoined': PartN.notoSansAdlamUnjoinedTextTheme,
-    'Noto Sans Anatolian Hieroglyphs':
-        PartN.notoSansAnatolianHieroglyphsTextTheme,
+    'Noto Sans Anatolian Hieroglyphs': PartN.notoSansAnatolianHieroglyphsTextTheme,
     'Noto Sans Arabic': PartN.notoSansArabicTextTheme,
     'Noto Sans Armenian': PartN.notoSansArmenianTextTheme,
     'Noto Sans Avestan': PartN.notoSansAvestanTextTheme,
@@ -3100,8 +3105,7 @@ class GoogleFonts {
     'Noto Sans Devanagari': PartN.notoSansDevanagariTextTheme,
     'Noto Sans Display': PartN.notoSansDisplayTextTheme,
     'Noto Sans Duployan': PartN.notoSansDuployanTextTheme,
-    'Noto Sans Egyptian Hieroglyphs':
-        PartN.notoSansEgyptianHieroglyphsTextTheme,
+    'Noto Sans Egyptian Hieroglyphs': PartN.notoSansEgyptianHieroglyphsTextTheme,
     'Noto Sans Elbasan': PartN.notoSansElbasanTextTheme,
     'Noto Sans Elymaic': PartN.notoSansElymaicTextTheme,
     'Noto Sans Ethiopic': PartN.notoSansEthiopicTextTheme,
@@ -3119,10 +3123,8 @@ class GoogleFonts {
     'Noto Sans Hebrew': PartN.notoSansHebrewTextTheme,
     'Noto Sans Imperial Aramaic': PartN.notoSansImperialAramaicTextTheme,
     'Noto Sans Indic Siyaq Numbers': PartN.notoSansIndicSiyaqNumbersTextTheme,
-    'Noto Sans Inscriptional Pahlavi':
-        PartN.notoSansInscriptionalPahlaviTextTheme,
-    'Noto Sans Inscriptional Parthian':
-        PartN.notoSansInscriptionalParthianTextTheme,
+    'Noto Sans Inscriptional Pahlavi': PartN.notoSansInscriptionalPahlaviTextTheme,
+    'Noto Sans Inscriptional Parthian': PartN.notoSansInscriptionalParthianTextTheme,
     'Noto Sans JP': PartN.notoSansJpTextTheme,
     'Noto Sans Javanese': PartN.notoSansJavaneseTextTheme,
     'Noto Sans KR': PartN.notoSansKrTextTheme,
@@ -3277,8 +3279,7 @@ class GoogleFonts {
     'Noto Serif Vithkuqi': PartN.notoSerifVithkuqiTextTheme,
     'Noto Serif Yezidi': PartN.notoSerifYezidiTextTheme,
     'Noto Traditional Nushu': PartN.notoTraditionalNushuTextTheme,
-    'Noto Znamenny Musical Notation':
-        PartN.notoZnamennyMusicalNotationTextTheme,
+    'Noto Znamenny Musical Notation': PartN.notoZnamennyMusicalNotationTextTheme,
     'Nova Cut': PartN.novaCutTextTheme,
     'Nova Flat': PartN.novaFlatTextTheme,
     'Nova Mono': PartN.novaMonoTextTheme,
@@ -4350,22 +4351,19 @@ class GoogleFonts {
   static const alumniSansCollegiateOne = PartA.alumniSansCollegiateOne;
 
   /// See [PartA.alumniSansCollegiateOneTextTheme].
-  static const alumniSansCollegiateOneTextTheme =
-      PartA.alumniSansCollegiateOneTextTheme;
+  static const alumniSansCollegiateOneTextTheme = PartA.alumniSansCollegiateOneTextTheme;
 
   /// See [PartA.alumniSansInlineOne].
   static const alumniSansInlineOne = PartA.alumniSansInlineOne;
 
   /// See [PartA.alumniSansInlineOneTextTheme].
-  static const alumniSansInlineOneTextTheme =
-      PartA.alumniSansInlineOneTextTheme;
+  static const alumniSansInlineOneTextTheme = PartA.alumniSansInlineOneTextTheme;
 
   /// See [PartA.alumniSansPinstripe].
   static const alumniSansPinstripe = PartA.alumniSansPinstripe;
 
   /// See [PartA.alumniSansPinstripeTextTheme].
-  static const alumniSansPinstripeTextTheme =
-      PartA.alumniSansPinstripeTextTheme;
+  static const alumniSansPinstripeTextTheme = PartA.alumniSansPinstripeTextTheme;
 
   /// See [PartA.alumniSansSc].
   static const alumniSansSc = PartA.alumniSansSc;
@@ -4533,8 +4531,7 @@ class GoogleFonts {
   static const annieUseYourTelescope = PartA.annieUseYourTelescope;
 
   /// See [PartA.annieUseYourTelescopeTextTheme].
-  static const annieUseYourTelescopeTextTheme =
-      PartA.annieUseYourTelescopeTextTheme;
+  static const annieUseYourTelescopeTextTheme = PartA.annieUseYourTelescopeTextTheme;
 
   /// See [PartA.anonymousPro].
   static const anonymousPro = PartA.anonymousPro;
@@ -4774,22 +4771,19 @@ class GoogleFonts {
   static const atkinsonHyperlegible = PartA.atkinsonHyperlegible;
 
   /// See [PartA.atkinsonHyperlegibleTextTheme].
-  static const atkinsonHyperlegibleTextTheme =
-      PartA.atkinsonHyperlegibleTextTheme;
+  static const atkinsonHyperlegibleTextTheme = PartA.atkinsonHyperlegibleTextTheme;
 
   /// See [PartA.atkinsonHyperlegibleMono].
   static const atkinsonHyperlegibleMono = PartA.atkinsonHyperlegibleMono;
 
   /// See [PartA.atkinsonHyperlegibleMonoTextTheme].
-  static const atkinsonHyperlegibleMonoTextTheme =
-      PartA.atkinsonHyperlegibleMonoTextTheme;
+  static const atkinsonHyperlegibleMonoTextTheme = PartA.atkinsonHyperlegibleMonoTextTheme;
 
   /// See [PartA.atkinsonHyperlegibleNext].
   static const atkinsonHyperlegibleNext = PartA.atkinsonHyperlegibleNext;
 
   /// See [PartA.atkinsonHyperlegibleNextTextTheme].
-  static const atkinsonHyperlegibleNextTextTheme =
-      PartA.atkinsonHyperlegibleNextTextTheme;
+  static const atkinsonHyperlegibleNextTextTheme = PartA.atkinsonHyperlegibleNextTextTheme;
 
   /// See [PartA.atma].
   static const atma = PartA.atma;
@@ -5071,8 +5065,7 @@ class GoogleFonts {
   static const barlowSemiCondensed = PartB.barlowSemiCondensed;
 
   /// See [PartB.barlowSemiCondensedTextTheme].
-  static const barlowSemiCondensedTextTheme =
-      PartB.barlowSemiCondensedTextTheme;
+  static const barlowSemiCondensedTextTheme = PartB.barlowSemiCondensedTextTheme;
 
   /// See [PartB.barriecito].
   static const barriecito = PartB.barriecito;
@@ -5246,8 +5239,7 @@ class GoogleFonts {
   static const bigShouldersStencil = PartB.bigShouldersStencil;
 
   /// See [PartB.bigShouldersStencilTextTheme].
-  static const bigShouldersStencilTextTheme =
-      PartB.bigShouldersStencilTextTheme;
+  static const bigShouldersStencilTextTheme = PartB.bigShouldersStencilTextTheme;
 
   /// See [PartB.bigelowRules].
   static const bigelowRules = PartB.bigelowRules;
@@ -5313,8 +5305,7 @@ class GoogleFonts {
   static const bitcountGridDoubleInk = PartB.bitcountGridDoubleInk;
 
   /// See [PartB.bitcountGridDoubleInkTextTheme].
-  static const bitcountGridDoubleInkTextTheme =
-      PartB.bitcountGridDoubleInkTextTheme;
+  static const bitcountGridDoubleInkTextTheme = PartB.bitcountGridDoubleInkTextTheme;
 
   /// See [PartB.bitcountGridSingle].
   static const bitcountGridSingle = PartB.bitcountGridSingle;
@@ -5326,8 +5317,7 @@ class GoogleFonts {
   static const bitcountGridSingleInk = PartB.bitcountGridSingleInk;
 
   /// See [PartB.bitcountGridSingleInkTextTheme].
-  static const bitcountGridSingleInkTextTheme =
-      PartB.bitcountGridSingleInkTextTheme;
+  static const bitcountGridSingleInkTextTheme = PartB.bitcountGridSingleInkTextTheme;
 
   /// See [PartB.bitcountInk].
   static const bitcountInk = PartB.bitcountInk;
@@ -5345,8 +5335,7 @@ class GoogleFonts {
   static const bitcountPropDoubleInk = PartB.bitcountPropDoubleInk;
 
   /// See [PartB.bitcountPropDoubleInkTextTheme].
-  static const bitcountPropDoubleInkTextTheme =
-      PartB.bitcountPropDoubleInkTextTheme;
+  static const bitcountPropDoubleInkTextTheme = PartB.bitcountPropDoubleInkTextTheme;
 
   /// See [PartB.bitcountPropSingle].
   static const bitcountPropSingle = PartB.bitcountPropSingle;
@@ -5358,8 +5347,7 @@ class GoogleFonts {
   static const bitcountPropSingleInk = PartB.bitcountPropSingleInk;
 
   /// See [PartB.bitcountPropSingleInkTextTheme].
-  static const bitcountPropSingleInkTextTheme =
-      PartB.bitcountPropSingleInkTextTheme;
+  static const bitcountPropSingleInkTextTheme = PartB.bitcountPropSingleInkTextTheme;
 
   /// See [PartB.bitcountSingle].
   static const bitcountSingle = PartB.bitcountSingle;
@@ -5383,8 +5371,7 @@ class GoogleFonts {
   static const blackAndWhitePicture = PartB.blackAndWhitePicture;
 
   /// See [PartB.blackAndWhitePictureTextTheme].
-  static const blackAndWhitePictureTextTheme =
-      PartB.blackAndWhitePictureTextTheme;
+  static const blackAndWhitePictureTextTheme = PartB.blackAndWhitePictureTextTheme;
 
   /// See [PartB.blackHanSans].
   static const blackHanSans = PartB.blackHanSans;
@@ -5636,8 +5623,7 @@ class GoogleFonts {
   static const cactusClassicalSerif = PartC.cactusClassicalSerif;
 
   /// See [PartC.cactusClassicalSerifTextTheme].
-  static const cactusClassicalSerifTextTheme =
-      PartC.cactusClassicalSerifTextTheme;
+  static const cactusClassicalSerifTextTheme = PartC.cactusClassicalSerifTextTheme;
 
   /// See [PartC.caesarDressing].
   static const caesarDressing = PartC.caesarDressing;
@@ -5985,8 +5971,7 @@ class GoogleFonts {
   static const chocolateClassicalSans = PartC.chocolateClassicalSans;
 
   /// See [PartC.chocolateClassicalSansTextTheme].
-  static const chocolateClassicalSansTextTheme =
-      PartC.chocolateClassicalSansTextTheme;
+  static const chocolateClassicalSansTextTheme = PartC.chocolateClassicalSansTextTheme;
 
   /// See [PartC.chokokutai].
   static const chokokutai = PartC.chokokutai;
@@ -6628,8 +6613,7 @@ class GoogleFonts {
   static const eduNswActFoundation = PartE.eduNswActFoundation;
 
   /// See [PartE.eduNswActFoundationTextTheme].
-  static const eduNswActFoundationTextTheme =
-      PartE.eduNswActFoundationTextTheme;
+  static const eduNswActFoundationTextTheme = PartE.eduNswActFoundationTextTheme;
 
   /// See [PartE.eduNswActHandPre].
   static const eduNswActHandPre = PartE.eduNswActHandPre;
@@ -6989,8 +6973,7 @@ class GoogleFonts {
   static const firaSansExtraCondensed = PartF.firaSansExtraCondensed;
 
   /// See [PartF.firaSansExtraCondensedTextTheme].
-  static const firaSansExtraCondensedTextTheme =
-      PartF.firaSansExtraCondensedTextTheme;
+  static const firaSansExtraCondensedTextTheme = PartF.firaSansExtraCondensedTextTheme;
 
   /// See [PartF.fjallaOne].
   static const fjallaOne = PartF.fjallaOne;
@@ -7482,8 +7465,7 @@ class GoogleFonts {
   static const goudyBookletter1911 = PartG.goudyBookletter1911;
 
   /// See [PartG.goudyBookletter1911TextTheme].
-  static const goudyBookletter1911TextTheme =
-      PartG.goudyBookletter1911TextTheme;
+  static const goudyBookletter1911TextTheme = PartG.goudyBookletter1911TextTheme;
 
   /// See [PartG.gowunBatang].
   static const gowunBatang = PartG.gowunBatang;
@@ -7855,8 +7837,7 @@ class GoogleFonts {
   static const ibmPlexSansDevanagari = PartI.ibmPlexSansDevanagari;
 
   /// See [PartI.ibmPlexSansDevanagariTextTheme].
-  static const ibmPlexSansDevanagariTextTheme =
-      PartI.ibmPlexSansDevanagariTextTheme;
+  static const ibmPlexSansDevanagariTextTheme = PartI.ibmPlexSansDevanagariTextTheme;
 
   /// See [PartI.ibmPlexSansHebrew].
   static const ibmPlexSansHebrew = PartI.ibmPlexSansHebrew;
@@ -7886,8 +7867,7 @@ class GoogleFonts {
   static const ibmPlexSansThaiLooped = PartI.ibmPlexSansThaiLooped;
 
   /// See [PartI.ibmPlexSansThaiLoopedTextTheme].
-  static const ibmPlexSansThaiLoopedTextTheme =
-      PartI.ibmPlexSansThaiLoopedTextTheme;
+  static const ibmPlexSansThaiLoopedTextTheme = PartI.ibmPlexSansThaiLoopedTextTheme;
 
   /// See [PartI.ibmPlexSerif].
   static const ibmPlexSerif = PartI.ibmPlexSerif;
@@ -7941,8 +7921,7 @@ class GoogleFonts {
   static const imFellFrenchCanonSc = PartI.imFellFrenchCanonSc;
 
   /// See [PartI.imFellFrenchCanonScTextTheme].
-  static const imFellFrenchCanonScTextTheme =
-      PartI.imFellFrenchCanonScTextTheme;
+  static const imFellFrenchCanonScTextTheme = PartI.imFellFrenchCanonScTextTheme;
 
   /// See [PartI.imFellGreatPrimer].
   static const imFellGreatPrimer = PartI.imFellGreatPrimer;
@@ -7954,8 +7933,7 @@ class GoogleFonts {
   static const imFellGreatPrimerSc = PartI.imFellGreatPrimerSc;
 
   /// See [PartI.imFellGreatPrimerScTextTheme].
-  static const imFellGreatPrimerScTextTheme =
-      PartI.imFellGreatPrimerScTextTheme;
+  static const imFellGreatPrimerScTextTheme = PartI.imFellGreatPrimerScTextTheme;
 
   /// See [PartI.iansui].
   static const iansui = PartI.iansui;
@@ -8159,8 +8137,7 @@ class GoogleFonts {
   static const jacquardaBastarda9Charted = PartJ.jacquardaBastarda9Charted;
 
   /// See [PartJ.jacquardaBastarda9ChartedTextTheme].
-  static const jacquardaBastarda9ChartedTextTheme =
-      PartJ.jacquardaBastarda9ChartedTextTheme;
+  static const jacquardaBastarda9ChartedTextTheme = PartJ.jacquardaBastarda9ChartedTextTheme;
 
   /// See [PartJ.jacquesFrancois].
   static const jacquesFrancois = PartJ.jacquesFrancois;
@@ -8172,8 +8149,7 @@ class GoogleFonts {
   static const jacquesFrancoisShadow = PartJ.jacquesFrancoisShadow;
 
   /// See [PartJ.jacquesFrancoisShadowTextTheme].
-  static const jacquesFrancoisShadowTextTheme =
-      PartJ.jacquesFrancoisShadowTextTheme;
+  static const jacquesFrancoisShadowTextTheme = PartJ.jacquesFrancoisShadowTextTheme;
 
   /// See [PartJ.jaini].
   static const jaini = PartJ.jaini;
@@ -8359,8 +8335,7 @@ class GoogleFonts {
   static const justMeAgainDownHere = PartJ.justMeAgainDownHere;
 
   /// See [PartJ.justMeAgainDownHereTextTheme].
-  static const justMeAgainDownHereTextTheme =
-      PartJ.justMeAgainDownHereTextTheme;
+  static const justMeAgainDownHereTextTheme = PartJ.justMeAgainDownHereTextTheme;
 
   /// See [PartK.k2d].
   static const k2d = PartK.k2d;
@@ -8936,8 +8911,7 @@ class GoogleFonts {
   static const libertinusSerifDisplay = PartL.libertinusSerifDisplay;
 
   /// See [PartL.libertinusSerifDisplayTextTheme].
-  static const libertinusSerifDisplayTextTheme =
-      PartL.libertinusSerifDisplayTextTheme;
+  static const libertinusSerifDisplayTextTheme = PartL.libertinusSerifDisplayTextTheme;
 
   /// See [PartL.libreBarcode128].
   static const libreBarcode128 = PartL.libreBarcode128;
@@ -8949,8 +8923,7 @@ class GoogleFonts {
   static const libreBarcode128Text = PartL.libreBarcode128Text;
 
   /// See [PartL.libreBarcode128TextTextTheme].
-  static const libreBarcode128TextTextTheme =
-      PartL.libreBarcode128TextTextTheme;
+  static const libreBarcode128TextTextTheme = PartL.libreBarcode128TextTextTheme;
 
   /// See [PartL.libreBarcode39].
   static const libreBarcode39 = PartL.libreBarcode39;
@@ -8962,15 +8935,13 @@ class GoogleFonts {
   static const libreBarcode39Extended = PartL.libreBarcode39Extended;
 
   /// See [PartL.libreBarcode39ExtendedTextTheme].
-  static const libreBarcode39ExtendedTextTheme =
-      PartL.libreBarcode39ExtendedTextTheme;
+  static const libreBarcode39ExtendedTextTheme = PartL.libreBarcode39ExtendedTextTheme;
 
   /// See [PartL.libreBarcode39ExtendedText].
   static const libreBarcode39ExtendedText = PartL.libreBarcode39ExtendedText;
 
   /// See [PartL.libreBarcode39ExtendedTextTextTheme].
-  static const libreBarcode39ExtendedTextTextTheme =
-      PartL.libreBarcode39ExtendedTextTextTheme;
+  static const libreBarcode39ExtendedTextTextTheme = PartL.libreBarcode39ExtendedTextTextTheme;
 
   /// See [PartL.libreBarcode39Text].
   static const libreBarcode39Text = PartL.libreBarcode39Text;
@@ -8982,8 +8953,7 @@ class GoogleFonts {
   static const libreBarcodeEan13Text = PartL.libreBarcodeEan13Text;
 
   /// See [PartL.libreBarcodeEan13TextTextTheme].
-  static const libreBarcodeEan13TextTextTheme =
-      PartL.libreBarcodeEan13TextTextTheme;
+  static const libreBarcodeEan13TextTextTheme = PartL.libreBarcodeEan13TextTextTheme;
 
   /// See [PartL.libreBaskerville].
   static const libreBaskerville = PartL.libreBaskerville;
@@ -9361,8 +9331,7 @@ class GoogleFonts {
   static const manufacturingConsent = PartM.manufacturingConsent;
 
   /// See [PartM.manufacturingConsentTextTheme].
-  static const manufacturingConsentTextTheme =
-      PartM.manufacturingConsentTextTheme;
+  static const manufacturingConsentTextTheme = PartM.manufacturingConsentTextTheme;
 
   /// See [PartM.marcellus].
   static const marcellus = PartM.marcellus;
@@ -9800,15 +9769,13 @@ class GoogleFonts {
   static const montserratAlternates = PartM.montserratAlternates;
 
   /// See [PartM.montserratAlternatesTextTheme].
-  static const montserratAlternatesTextTheme =
-      PartM.montserratAlternatesTextTheme;
+  static const montserratAlternatesTextTheme = PartM.montserratAlternatesTextTheme;
 
   /// See [PartM.montserratUnderline].
   static const montserratUnderline = PartM.montserratUnderline;
 
   /// See [PartM.montserratUnderlineTextTheme].
-  static const montserratUnderlineTextTheme =
-      PartM.montserratUnderlineTextTheme;
+  static const montserratUnderlineTextTheme = PartM.montserratUnderlineTextTheme;
 
   /// See [PartM.mooLahLah].
   static const mooLahLah = PartM.mooLahLah;
@@ -9844,8 +9811,7 @@ class GoogleFonts {
   static const mountainsOfChristmas = PartM.mountainsOfChristmas;
 
   /// See [PartM.mountainsOfChristmasTextTheme].
-  static const mountainsOfChristmasTextTheme =
-      PartM.mountainsOfChristmasTextTheme;
+  static const mountainsOfChristmasTextTheme = PartM.mountainsOfChristmasTextTheme;
 
   /// See [PartM.mouseMemoirs].
   static const mouseMemoirs = PartM.mouseMemoirs;
@@ -10199,16 +10165,13 @@ class GoogleFonts {
   static const notoSansAdlamUnjoined = PartN.notoSansAdlamUnjoined;
 
   /// See [PartN.notoSansAdlamUnjoinedTextTheme].
-  static const notoSansAdlamUnjoinedTextTheme =
-      PartN.notoSansAdlamUnjoinedTextTheme;
+  static const notoSansAdlamUnjoinedTextTheme = PartN.notoSansAdlamUnjoinedTextTheme;
 
   /// See [PartN.notoSansAnatolianHieroglyphs].
-  static const notoSansAnatolianHieroglyphs =
-      PartN.notoSansAnatolianHieroglyphs;
+  static const notoSansAnatolianHieroglyphs = PartN.notoSansAnatolianHieroglyphs;
 
   /// See [PartN.notoSansAnatolianHieroglyphsTextTheme].
-  static const notoSansAnatolianHieroglyphsTextTheme =
-      PartN.notoSansAnatolianHieroglyphsTextTheme;
+  static const notoSansAnatolianHieroglyphsTextTheme = PartN.notoSansAnatolianHieroglyphsTextTheme;
 
   /// See [PartN.notoSansArabic].
   static const notoSansArabic = PartN.notoSansArabic;
@@ -10286,8 +10249,7 @@ class GoogleFonts {
   static const notoSansCanadianAboriginal = PartN.notoSansCanadianAboriginal;
 
   /// See [PartN.notoSansCanadianAboriginalTextTheme].
-  static const notoSansCanadianAboriginalTextTheme =
-      PartN.notoSansCanadianAboriginalTextTheme;
+  static const notoSansCanadianAboriginalTextTheme = PartN.notoSansCanadianAboriginalTextTheme;
 
   /// See [PartN.notoSansCarian].
   static const notoSansCarian = PartN.notoSansCarian;
@@ -10299,8 +10261,7 @@ class GoogleFonts {
   static const notoSansCaucasianAlbanian = PartN.notoSansCaucasianAlbanian;
 
   /// See [PartN.notoSansCaucasianAlbanianTextTheme].
-  static const notoSansCaucasianAlbanianTextTheme =
-      PartN.notoSansCaucasianAlbanianTextTheme;
+  static const notoSansCaucasianAlbanianTextTheme = PartN.notoSansCaucasianAlbanianTextTheme;
 
   /// See [PartN.notoSansChakma].
   static const notoSansChakma = PartN.notoSansChakma;
@@ -10348,8 +10309,7 @@ class GoogleFonts {
   static const notoSansCyproMinoan = PartN.notoSansCyproMinoan;
 
   /// See [PartN.notoSansCyproMinoanTextTheme].
-  static const notoSansCyproMinoanTextTheme =
-      PartN.notoSansCyproMinoanTextTheme;
+  static const notoSansCyproMinoanTextTheme = PartN.notoSansCyproMinoanTextTheme;
 
   /// See [PartN.notoSansDeseret].
   static const notoSansDeseret = PartN.notoSansDeseret;
@@ -10379,8 +10339,7 @@ class GoogleFonts {
   static const notoSansEgyptianHieroglyphs = PartN.notoSansEgyptianHieroglyphs;
 
   /// See [PartN.notoSansEgyptianHieroglyphsTextTheme].
-  static const notoSansEgyptianHieroglyphsTextTheme =
-      PartN.notoSansEgyptianHieroglyphsTextTheme;
+  static const notoSansEgyptianHieroglyphsTextTheme = PartN.notoSansEgyptianHieroglyphsTextTheme;
 
   /// See [PartN.notoSansElbasan].
   static const notoSansElbasan = PartN.notoSansElbasan;
@@ -10434,8 +10393,7 @@ class GoogleFonts {
   static const notoSansGunjalaGondi = PartN.notoSansGunjalaGondi;
 
   /// See [PartN.notoSansGunjalaGondiTextTheme].
-  static const notoSansGunjalaGondiTextTheme =
-      PartN.notoSansGunjalaGondiTextTheme;
+  static const notoSansGunjalaGondiTextTheme = PartN.notoSansGunjalaGondiTextTheme;
 
   /// See [PartN.notoSansGurmukhi].
   static const notoSansGurmukhi = PartN.notoSansGurmukhi;
@@ -10453,8 +10411,7 @@ class GoogleFonts {
   static const notoSansHanifiRohingya = PartN.notoSansHanifiRohingya;
 
   /// See [PartN.notoSansHanifiRohingyaTextTheme].
-  static const notoSansHanifiRohingyaTextTheme =
-      PartN.notoSansHanifiRohingyaTextTheme;
+  static const notoSansHanifiRohingyaTextTheme = PartN.notoSansHanifiRohingyaTextTheme;
 
   /// See [PartN.notoSansHanunoo].
   static const notoSansHanunoo = PartN.notoSansHanunoo;
@@ -10478,27 +10435,22 @@ class GoogleFonts {
   static const notoSansImperialAramaic = PartN.notoSansImperialAramaic;
 
   /// See [PartN.notoSansImperialAramaicTextTheme].
-  static const notoSansImperialAramaicTextTheme =
-      PartN.notoSansImperialAramaicTextTheme;
+  static const notoSansImperialAramaicTextTheme = PartN.notoSansImperialAramaicTextTheme;
 
   /// See [PartN.notoSansIndicSiyaqNumbers].
   static const notoSansIndicSiyaqNumbers = PartN.notoSansIndicSiyaqNumbers;
 
   /// See [PartN.notoSansIndicSiyaqNumbersTextTheme].
-  static const notoSansIndicSiyaqNumbersTextTheme =
-      PartN.notoSansIndicSiyaqNumbersTextTheme;
+  static const notoSansIndicSiyaqNumbersTextTheme = PartN.notoSansIndicSiyaqNumbersTextTheme;
 
   /// See [PartN.notoSansInscriptionalPahlavi].
-  static const notoSansInscriptionalPahlavi =
-      PartN.notoSansInscriptionalPahlavi;
+  static const notoSansInscriptionalPahlavi = PartN.notoSansInscriptionalPahlavi;
 
   /// See [PartN.notoSansInscriptionalPahlaviTextTheme].
-  static const notoSansInscriptionalPahlaviTextTheme =
-      PartN.notoSansInscriptionalPahlaviTextTheme;
+  static const notoSansInscriptionalPahlaviTextTheme = PartN.notoSansInscriptionalPahlaviTextTheme;
 
   /// See [PartN.notoSansInscriptionalParthian].
-  static const notoSansInscriptionalParthian =
-      PartN.notoSansInscriptionalParthian;
+  static const notoSansInscriptionalParthian = PartN.notoSansInscriptionalParthian;
 
   /// See [PartN.notoSansInscriptionalParthianTextTheme].
   static const notoSansInscriptionalParthianTextTheme =
@@ -10658,8 +10610,7 @@ class GoogleFonts {
   static const notoSansMasaramGondi = PartN.notoSansMasaramGondi;
 
   /// See [PartN.notoSansMasaramGondiTextTheme].
-  static const notoSansMasaramGondiTextTheme =
-      PartN.notoSansMasaramGondiTextTheme;
+  static const notoSansMasaramGondiTextTheme = PartN.notoSansMasaramGondiTextTheme;
 
   /// See [PartN.notoSansMath].
   static const notoSansMath = PartN.notoSansMath;
@@ -10671,29 +10622,25 @@ class GoogleFonts {
   static const notoSansMayanNumerals = PartN.notoSansMayanNumerals;
 
   /// See [PartN.notoSansMayanNumeralsTextTheme].
-  static const notoSansMayanNumeralsTextTheme =
-      PartN.notoSansMayanNumeralsTextTheme;
+  static const notoSansMayanNumeralsTextTheme = PartN.notoSansMayanNumeralsTextTheme;
 
   /// See [PartN.notoSansMedefaidrin].
   static const notoSansMedefaidrin = PartN.notoSansMedefaidrin;
 
   /// See [PartN.notoSansMedefaidrinTextTheme].
-  static const notoSansMedefaidrinTextTheme =
-      PartN.notoSansMedefaidrinTextTheme;
+  static const notoSansMedefaidrinTextTheme = PartN.notoSansMedefaidrinTextTheme;
 
   /// See [PartN.notoSansMeeteiMayek].
   static const notoSansMeeteiMayek = PartN.notoSansMeeteiMayek;
 
   /// See [PartN.notoSansMeeteiMayekTextTheme].
-  static const notoSansMeeteiMayekTextTheme =
-      PartN.notoSansMeeteiMayekTextTheme;
+  static const notoSansMeeteiMayekTextTheme = PartN.notoSansMeeteiMayekTextTheme;
 
   /// See [PartN.notoSansMendeKikakui].
   static const notoSansMendeKikakui = PartN.notoSansMendeKikakui;
 
   /// See [PartN.notoSansMendeKikakuiTextTheme].
-  static const notoSansMendeKikakuiTextTheme =
-      PartN.notoSansMendeKikakuiTextTheme;
+  static const notoSansMendeKikakuiTextTheme = PartN.notoSansMendeKikakuiTextTheme;
 
   /// See [PartN.notoSansMeroitic].
   static const notoSansMeroitic = PartN.notoSansMeroitic;
@@ -10753,8 +10700,7 @@ class GoogleFonts {
   static const notoSansNKoUnjoined = PartN.notoSansNKoUnjoined;
 
   /// See [PartN.notoSansNKoUnjoinedTextTheme].
-  static const notoSansNKoUnjoinedTextTheme =
-      PartN.notoSansNKoUnjoinedTextTheme;
+  static const notoSansNKoUnjoinedTextTheme = PartN.notoSansNKoUnjoinedTextTheme;
 
   /// See [PartN.notoSansNabataean].
   static const notoSansNabataean = PartN.notoSansNabataean;
@@ -10772,8 +10718,7 @@ class GoogleFonts {
   static const notoSansNandinagari = PartN.notoSansNandinagari;
 
   /// See [PartN.notoSansNandinagariTextTheme].
-  static const notoSansNandinagariTextTheme =
-      PartN.notoSansNandinagariTextTheme;
+  static const notoSansNandinagariTextTheme = PartN.notoSansNandinagariTextTheme;
 
   /// See [PartN.notoSansNewTaiLue].
   static const notoSansNewTaiLue = PartN.notoSansNewTaiLue;
@@ -10809,8 +10754,7 @@ class GoogleFonts {
   static const notoSansOldHungarian = PartN.notoSansOldHungarian;
 
   /// See [PartN.notoSansOldHungarianTextTheme].
-  static const notoSansOldHungarianTextTheme =
-      PartN.notoSansOldHungarianTextTheme;
+  static const notoSansOldHungarianTextTheme = PartN.notoSansOldHungarianTextTheme;
 
   /// See [PartN.notoSansOldItalic].
   static const notoSansOldItalic = PartN.notoSansOldItalic;
@@ -10822,8 +10766,7 @@ class GoogleFonts {
   static const notoSansOldNorthArabian = PartN.notoSansOldNorthArabian;
 
   /// See [PartN.notoSansOldNorthArabianTextTheme].
-  static const notoSansOldNorthArabianTextTheme =
-      PartN.notoSansOldNorthArabianTextTheme;
+  static const notoSansOldNorthArabianTextTheme = PartN.notoSansOldNorthArabianTextTheme;
 
   /// See [PartN.notoSansOldPermic].
   static const notoSansOldPermic = PartN.notoSansOldPermic;
@@ -10847,8 +10790,7 @@ class GoogleFonts {
   static const notoSansOldSouthArabian = PartN.notoSansOldSouthArabian;
 
   /// See [PartN.notoSansOldSouthArabianTextTheme].
-  static const notoSansOldSouthArabianTextTheme =
-      PartN.notoSansOldSouthArabianTextTheme;
+  static const notoSansOldSouthArabianTextTheme = PartN.notoSansOldSouthArabianTextTheme;
 
   /// See [PartN.notoSansOldTurkic].
   static const notoSansOldTurkic = PartN.notoSansOldTurkic;
@@ -10878,8 +10820,7 @@ class GoogleFonts {
   static const notoSansPahawhHmong = PartN.notoSansPahawhHmong;
 
   /// See [PartN.notoSansPahawhHmongTextTheme].
-  static const notoSansPahawhHmongTextTheme =
-      PartN.notoSansPahawhHmongTextTheme;
+  static const notoSansPahawhHmongTextTheme = PartN.notoSansPahawhHmongTextTheme;
 
   /// See [PartN.notoSansPalmyrene].
   static const notoSansPalmyrene = PartN.notoSansPalmyrene;
@@ -10909,8 +10850,7 @@ class GoogleFonts {
   static const notoSansPsalterPahlavi = PartN.notoSansPsalterPahlavi;
 
   /// See [PartN.notoSansPsalterPahlaviTextTheme].
-  static const notoSansPsalterPahlaviTextTheme =
-      PartN.notoSansPsalterPahlaviTextTheme;
+  static const notoSansPsalterPahlaviTextTheme = PartN.notoSansPsalterPahlaviTextTheme;
 
   /// See [PartN.notoSansRejang].
   static const notoSansRejang = PartN.notoSansRejang;
@@ -10964,8 +10904,7 @@ class GoogleFonts {
   static const notoSansSignWriting = PartN.notoSansSignWriting;
 
   /// See [PartN.notoSansSignWritingTextTheme].
-  static const notoSansSignWritingTextTheme =
-      PartN.notoSansSignWritingTextTheme;
+  static const notoSansSignWritingTextTheme = PartN.notoSansSignWritingTextTheme;
 
   /// See [PartN.notoSansSinhala].
   static const notoSansSinhala = PartN.notoSansSinhala;
@@ -10983,8 +10922,7 @@ class GoogleFonts {
   static const notoSansSoraSompeng = PartN.notoSansSoraSompeng;
 
   /// See [PartN.notoSansSoraSompengTextTheme].
-  static const notoSansSoraSompengTextTheme =
-      PartN.notoSansSoraSompengTextTheme;
+  static const notoSansSoraSompengTextTheme = PartN.notoSansSoraSompengTextTheme;
 
   /// See [PartN.notoSansSoyombo].
   static const notoSansSoyombo = PartN.notoSansSoyombo;
@@ -11008,8 +10946,7 @@ class GoogleFonts {
   static const notoSansSylotiNagri = PartN.notoSansSylotiNagri;
 
   /// See [PartN.notoSansSylotiNagriTextTheme].
-  static const notoSansSylotiNagriTextTheme =
-      PartN.notoSansSylotiNagriTextTheme;
+  static const notoSansSylotiNagriTextTheme = PartN.notoSansSylotiNagriTextTheme;
 
   /// See [PartN.notoSansSymbols].
   static const notoSansSymbols = PartN.notoSansSymbols;
@@ -11033,15 +10970,13 @@ class GoogleFonts {
   static const notoSansSyriacEastern = PartN.notoSansSyriacEastern;
 
   /// See [PartN.notoSansSyriacEasternTextTheme].
-  static const notoSansSyriacEasternTextTheme =
-      PartN.notoSansSyriacEasternTextTheme;
+  static const notoSansSyriacEasternTextTheme = PartN.notoSansSyriacEasternTextTheme;
 
   /// See [PartN.notoSansSyriacWestern].
   static const notoSansSyriacWestern = PartN.notoSansSyriacWestern;
 
   /// See [PartN.notoSansSyriacWesternTextTheme].
-  static const notoSansSyriacWesternTextTheme =
-      PartN.notoSansSyriacWesternTextTheme;
+  static const notoSansSyriacWesternTextTheme = PartN.notoSansSyriacWesternTextTheme;
 
   /// See [PartN.notoSansTc].
   static const notoSansTc = PartN.notoSansTc;
@@ -11095,8 +11030,7 @@ class GoogleFonts {
   static const notoSansTamilSupplement = PartN.notoSansTamilSupplement;
 
   /// See [PartN.notoSansTamilSupplementTextTheme].
-  static const notoSansTamilSupplementTextTheme =
-      PartN.notoSansTamilSupplementTextTheme;
+  static const notoSansTamilSupplementTextTheme = PartN.notoSansTamilSupplementTextTheme;
 
   /// See [PartN.notoSansTangsa].
   static const notoSansTangsa = PartN.notoSansTangsa;
@@ -11180,8 +11114,7 @@ class GoogleFonts {
   static const notoSansZanabazarSquare = PartN.notoSansZanabazarSquare;
 
   /// See [PartN.notoSansZanabazarSquareTextTheme].
-  static const notoSansZanabazarSquareTextTheme =
-      PartN.notoSansZanabazarSquareTextTheme;
+  static const notoSansZanabazarSquareTextTheme = PartN.notoSansZanabazarSquareTextTheme;
 
   /// See [PartN.notoSerif].
   static const notoSerif = PartN.notoSerif;
@@ -11217,8 +11150,7 @@ class GoogleFonts {
   static const notoSerifDevanagari = PartN.notoSerifDevanagari;
 
   /// See [PartN.notoSerifDevanagariTextTheme].
-  static const notoSerifDevanagariTextTheme =
-      PartN.notoSerifDevanagariTextTheme;
+  static const notoSerifDevanagariTextTheme = PartN.notoSerifDevanagariTextTheme;
 
   /// See [PartN.notoSerifDisplay].
   static const notoSerifDisplay = PartN.notoSerifDisplay;
@@ -11230,8 +11162,7 @@ class GoogleFonts {
   static const notoSerifDivesAkuru = PartN.notoSerifDivesAkuru;
 
   /// See [PartN.notoSerifDivesAkuruTextTheme].
-  static const notoSerifDivesAkuruTextTheme =
-      PartN.notoSerifDivesAkuruTextTheme;
+  static const notoSerifDivesAkuruTextTheme = PartN.notoSerifDivesAkuruTextTheme;
 
   /// See [PartN.notoSerifDogra].
   static const notoSerifDogra = PartN.notoSerifDogra;
@@ -11285,8 +11216,7 @@ class GoogleFonts {
   static const notoSerifHentaigana = PartN.notoSerifHentaigana;
 
   /// See [PartN.notoSerifHentaiganaTextTheme].
-  static const notoSerifHentaiganaTextTheme =
-      PartN.notoSerifHentaiganaTextTheme;
+  static const notoSerifHentaiganaTextTheme = PartN.notoSerifHentaiganaTextTheme;
 
   /// See [PartN.notoSerifJp].
   static const notoSerifJp = PartN.notoSerifJp;
@@ -11310,8 +11240,7 @@ class GoogleFonts {
   static const notoSerifKhitanSmallScript = PartN.notoSerifKhitanSmallScript;
 
   /// See [PartN.notoSerifKhitanSmallScriptTextTheme].
-  static const notoSerifKhitanSmallScriptTextTheme =
-      PartN.notoSerifKhitanSmallScriptTextTheme;
+  static const notoSerifKhitanSmallScriptTextTheme = PartN.notoSerifKhitanSmallScriptTextTheme;
 
   /// See [PartN.notoSerifKhmer].
   static const notoSerifKhmer = PartN.notoSerifKhmer;
@@ -11371,8 +11300,7 @@ class GoogleFonts {
   static const notoSerifOttomanSiyaq = PartN.notoSerifOttomanSiyaq;
 
   /// See [PartN.notoSerifOttomanSiyaqTextTheme].
-  static const notoSerifOttomanSiyaqTextTheme =
-      PartN.notoSerifOttomanSiyaqTextTheme;
+  static const notoSerifOttomanSiyaqTextTheme = PartN.notoSerifOttomanSiyaqTextTheme;
 
   /// See [PartN.notoSerifSc].
   static const notoSerifSc = PartN.notoSerifSc;
@@ -11450,15 +11378,13 @@ class GoogleFonts {
   static const notoTraditionalNushu = PartN.notoTraditionalNushu;
 
   /// See [PartN.notoTraditionalNushuTextTheme].
-  static const notoTraditionalNushuTextTheme =
-      PartN.notoTraditionalNushuTextTheme;
+  static const notoTraditionalNushuTextTheme = PartN.notoTraditionalNushuTextTheme;
 
   /// See [PartN.notoZnamennyMusicalNotation].
   static const notoZnamennyMusicalNotation = PartN.notoZnamennyMusicalNotation;
 
   /// See [PartN.notoZnamennyMusicalNotationTextTheme].
-  static const notoZnamennyMusicalNotationTextTheme =
-      PartN.notoZnamennyMusicalNotationTextTheme;
+  static const notoZnamennyMusicalNotationTextTheme = PartN.notoZnamennyMusicalNotationTextTheme;
 
   /// See [PartN.novaCut].
   static const novaCut = PartN.novaCut;
@@ -11590,8 +11516,7 @@ class GoogleFonts {
   static const oleoScriptSwashCaps = PartO.oleoScriptSwashCaps;
 
   /// See [PartO.oleoScriptSwashCapsTextTheme].
-  static const oleoScriptSwashCapsTextTheme =
-      PartO.oleoScriptSwashCapsTextTheme;
+  static const oleoScriptSwashCapsTextTheme = PartO.oleoScriptSwashCapsTextTheme;
 
   /// See [PartO.onest].
   static const onest = PartO.onest;
@@ -11771,8 +11696,7 @@ class GoogleFonts {
   static const padyakkeExpandedOne = PartP.padyakkeExpandedOne;
 
   /// See [PartP.padyakkeExpandedOneTextTheme].
-  static const padyakkeExpandedOneTextTheme =
-      PartP.padyakkeExpandedOneTextTheme;
+  static const padyakkeExpandedOneTextTheme = PartP.padyakkeExpandedOneTextTheme;
 
   /// See [PartP.palanquin].
   static const palanquin = PartP.palanquin;
@@ -12078,8 +12002,7 @@ class GoogleFonts {
   static const playwriteAuNswGuides = PartP.playwriteAuNswGuides;
 
   /// See [PartP.playwriteAuNswGuidesTextTheme].
-  static const playwriteAuNswGuidesTextTheme =
-      PartP.playwriteAuNswGuidesTextTheme;
+  static const playwriteAuNswGuidesTextTheme = PartP.playwriteAuNswGuidesTextTheme;
 
   /// See [PartP.playwriteAuQld].
   static const playwriteAuQld = PartP.playwriteAuQld;
@@ -12091,8 +12014,7 @@ class GoogleFonts {
   static const playwriteAuQldGuides = PartP.playwriteAuQldGuides;
 
   /// See [PartP.playwriteAuQldGuidesTextTheme].
-  static const playwriteAuQldGuidesTextTheme =
-      PartP.playwriteAuQldGuidesTextTheme;
+  static const playwriteAuQldGuidesTextTheme = PartP.playwriteAuQldGuidesTextTheme;
 
   /// See [PartP.playwriteAuSa].
   static const playwriteAuSa = PartP.playwriteAuSa;
@@ -12104,8 +12026,7 @@ class GoogleFonts {
   static const playwriteAuSaGuides = PartP.playwriteAuSaGuides;
 
   /// See [PartP.playwriteAuSaGuidesTextTheme].
-  static const playwriteAuSaGuidesTextTheme =
-      PartP.playwriteAuSaGuidesTextTheme;
+  static const playwriteAuSaGuidesTextTheme = PartP.playwriteAuSaGuidesTextTheme;
 
   /// See [PartP.playwriteAuTas].
   static const playwriteAuTas = PartP.playwriteAuTas;
@@ -12117,8 +12038,7 @@ class GoogleFonts {
   static const playwriteAuTasGuides = PartP.playwriteAuTasGuides;
 
   /// See [PartP.playwriteAuTasGuidesTextTheme].
-  static const playwriteAuTasGuidesTextTheme =
-      PartP.playwriteAuTasGuidesTextTheme;
+  static const playwriteAuTasGuidesTextTheme = PartP.playwriteAuTasGuidesTextTheme;
 
   /// See [PartP.playwriteAuVic].
   static const playwriteAuVic = PartP.playwriteAuVic;
@@ -12130,8 +12050,7 @@ class GoogleFonts {
   static const playwriteAuVicGuides = PartP.playwriteAuVicGuides;
 
   /// See [PartP.playwriteAuVicGuidesTextTheme].
-  static const playwriteAuVicGuidesTextTheme =
-      PartP.playwriteAuVicGuidesTextTheme;
+  static const playwriteAuVicGuidesTextTheme = PartP.playwriteAuVicGuidesTextTheme;
 
   /// See [PartP.playwriteBeVlg].
   static const playwriteBeVlg = PartP.playwriteBeVlg;
@@ -12143,8 +12062,7 @@ class GoogleFonts {
   static const playwriteBeVlgGuides = PartP.playwriteBeVlgGuides;
 
   /// See [PartP.playwriteBeVlgGuidesTextTheme].
-  static const playwriteBeVlgGuidesTextTheme =
-      PartP.playwriteBeVlgGuidesTextTheme;
+  static const playwriteBeVlgGuidesTextTheme = PartP.playwriteBeVlgGuidesTextTheme;
 
   /// See [PartP.playwriteBeWal].
   static const playwriteBeWal = PartP.playwriteBeWal;
@@ -12156,8 +12074,7 @@ class GoogleFonts {
   static const playwriteBeWalGuides = PartP.playwriteBeWalGuides;
 
   /// See [PartP.playwriteBeWalGuidesTextTheme].
-  static const playwriteBeWalGuidesTextTheme =
-      PartP.playwriteBeWalGuidesTextTheme;
+  static const playwriteBeWalGuidesTextTheme = PartP.playwriteBeWalGuidesTextTheme;
 
   /// See [PartP.playwriteBr].
   static const playwriteBr = PartP.playwriteBr;
@@ -12241,8 +12158,7 @@ class GoogleFonts {
   static const playwriteDeGrundGuides = PartP.playwriteDeGrundGuides;
 
   /// See [PartP.playwriteDeGrundGuidesTextTheme].
-  static const playwriteDeGrundGuidesTextTheme =
-      PartP.playwriteDeGrundGuidesTextTheme;
+  static const playwriteDeGrundGuidesTextTheme = PartP.playwriteDeGrundGuidesTextTheme;
 
   /// See [PartP.playwriteDeLa].
   static const playwriteDeLa = PartP.playwriteDeLa;
@@ -12254,8 +12170,7 @@ class GoogleFonts {
   static const playwriteDeLaGuides = PartP.playwriteDeLaGuides;
 
   /// See [PartP.playwriteDeLaGuidesTextTheme].
-  static const playwriteDeLaGuidesTextTheme =
-      PartP.playwriteDeLaGuidesTextTheme;
+  static const playwriteDeLaGuidesTextTheme = PartP.playwriteDeLaGuidesTextTheme;
 
   /// See [PartP.playwriteDeSas].
   static const playwriteDeSas = PartP.playwriteDeSas;
@@ -12267,8 +12182,7 @@ class GoogleFonts {
   static const playwriteDeSasGuides = PartP.playwriteDeSasGuides;
 
   /// See [PartP.playwriteDeSasGuidesTextTheme].
-  static const playwriteDeSasGuidesTextTheme =
-      PartP.playwriteDeSasGuidesTextTheme;
+  static const playwriteDeSasGuidesTextTheme = PartP.playwriteDeSasGuidesTextTheme;
 
   /// See [PartP.playwriteDeVa].
   static const playwriteDeVa = PartP.playwriteDeVa;
@@ -12280,8 +12194,7 @@ class GoogleFonts {
   static const playwriteDeVaGuides = PartP.playwriteDeVaGuides;
 
   /// See [PartP.playwriteDeVaGuidesTextTheme].
-  static const playwriteDeVaGuidesTextTheme =
-      PartP.playwriteDeVaGuidesTextTheme;
+  static const playwriteDeVaGuidesTextTheme = PartP.playwriteDeVaGuidesTextTheme;
 
   /// See [PartP.playwriteDkLoopet].
   static const playwriteDkLoopet = PartP.playwriteDkLoopet;
@@ -12293,8 +12206,7 @@ class GoogleFonts {
   static const playwriteDkLoopetGuides = PartP.playwriteDkLoopetGuides;
 
   /// See [PartP.playwriteDkLoopetGuidesTextTheme].
-  static const playwriteDkLoopetGuidesTextTheme =
-      PartP.playwriteDkLoopetGuidesTextTheme;
+  static const playwriteDkLoopetGuidesTextTheme = PartP.playwriteDkLoopetGuidesTextTheme;
 
   /// See [PartP.playwriteDkUloopet].
   static const playwriteDkUloopet = PartP.playwriteDkUloopet;
@@ -12306,8 +12218,7 @@ class GoogleFonts {
   static const playwriteDkUloopetGuides = PartP.playwriteDkUloopetGuides;
 
   /// See [PartP.playwriteDkUloopetGuidesTextTheme].
-  static const playwriteDkUloopetGuidesTextTheme =
-      PartP.playwriteDkUloopetGuidesTextTheme;
+  static const playwriteDkUloopetGuidesTextTheme = PartP.playwriteDkUloopetGuidesTextTheme;
 
   /// See [PartP.playwriteEs].
   static const playwriteEs = PartP.playwriteEs;
@@ -12325,8 +12236,7 @@ class GoogleFonts {
   static const playwriteEsDecoGuides = PartP.playwriteEsDecoGuides;
 
   /// See [PartP.playwriteEsDecoGuidesTextTheme].
-  static const playwriteEsDecoGuidesTextTheme =
-      PartP.playwriteEsDecoGuidesTextTheme;
+  static const playwriteEsDecoGuidesTextTheme = PartP.playwriteEsDecoGuidesTextTheme;
 
   /// See [PartP.playwriteEsGuides].
   static const playwriteEsGuides = PartP.playwriteEsGuides;
@@ -12344,8 +12254,7 @@ class GoogleFonts {
   static const playwriteFrModerneGuides = PartP.playwriteFrModerneGuides;
 
   /// See [PartP.playwriteFrModerneGuidesTextTheme].
-  static const playwriteFrModerneGuidesTextTheme =
-      PartP.playwriteFrModerneGuidesTextTheme;
+  static const playwriteFrModerneGuidesTextTheme = PartP.playwriteFrModerneGuidesTextTheme;
 
   /// See [PartP.playwriteFrTrad].
   static const playwriteFrTrad = PartP.playwriteFrTrad;
@@ -12357,8 +12266,7 @@ class GoogleFonts {
   static const playwriteFrTradGuides = PartP.playwriteFrTradGuides;
 
   /// See [PartP.playwriteFrTradGuidesTextTheme].
-  static const playwriteFrTradGuidesTextTheme =
-      PartP.playwriteFrTradGuidesTextTheme;
+  static const playwriteFrTradGuidesTextTheme = PartP.playwriteFrTradGuidesTextTheme;
 
   /// See [PartP.playwriteGbJ].
   static const playwriteGbJ = PartP.playwriteGbJ;
@@ -12406,8 +12314,7 @@ class GoogleFonts {
   static const playwriteHrLijevaGuides = PartP.playwriteHrLijevaGuides;
 
   /// See [PartP.playwriteHrLijevaGuidesTextTheme].
-  static const playwriteHrLijevaGuidesTextTheme =
-      PartP.playwriteHrLijevaGuidesTextTheme;
+  static const playwriteHrLijevaGuidesTextTheme = PartP.playwriteHrLijevaGuidesTextTheme;
 
   /// See [PartP.playwriteHu].
   static const playwriteHu = PartP.playwriteHu;
@@ -12479,8 +12386,7 @@ class GoogleFonts {
   static const playwriteItModernaGuides = PartP.playwriteItModernaGuides;
 
   /// See [PartP.playwriteItModernaGuidesTextTheme].
-  static const playwriteItModernaGuidesTextTheme =
-      PartP.playwriteItModernaGuidesTextTheme;
+  static const playwriteItModernaGuidesTextTheme = PartP.playwriteItModernaGuidesTextTheme;
 
   /// See [PartP.playwriteItTrad].
   static const playwriteItTrad = PartP.playwriteItTrad;
@@ -12492,8 +12398,7 @@ class GoogleFonts {
   static const playwriteItTradGuides = PartP.playwriteItTradGuides;
 
   /// See [PartP.playwriteItTradGuidesTextTheme].
-  static const playwriteItTradGuidesTextTheme =
-      PartP.playwriteItTradGuidesTextTheme;
+  static const playwriteItTradGuidesTextTheme = PartP.playwriteItTradGuidesTextTheme;
 
   /// See [PartP.playwriteMx].
   static const playwriteMx = PartP.playwriteMx;
@@ -12517,8 +12422,7 @@ class GoogleFonts {
   static const playwriteNgModernGuides = PartP.playwriteNgModernGuides;
 
   /// See [PartP.playwriteNgModernGuidesTextTheme].
-  static const playwriteNgModernGuidesTextTheme =
-      PartP.playwriteNgModernGuidesTextTheme;
+  static const playwriteNgModernGuidesTextTheme = PartP.playwriteNgModernGuidesTextTheme;
 
   /// See [PartP.playwriteNl].
   static const playwriteNl = PartP.playwriteNl;
@@ -12638,8 +12542,7 @@ class GoogleFonts {
   static const playwriteUsModernGuides = PartP.playwriteUsModernGuides;
 
   /// See [PartP.playwriteUsModernGuidesTextTheme].
-  static const playwriteUsModernGuidesTextTheme =
-      PartP.playwriteUsModernGuidesTextTheme;
+  static const playwriteUsModernGuidesTextTheme = PartP.playwriteUsModernGuidesTextTheme;
 
   /// See [PartP.playwriteUsTrad].
   static const playwriteUsTrad = PartP.playwriteUsTrad;
@@ -12651,8 +12554,7 @@ class GoogleFonts {
   static const playwriteUsTradGuides = PartP.playwriteUsTradGuides;
 
   /// See [PartP.playwriteUsTradGuidesTextTheme].
-  static const playwriteUsTradGuidesTextTheme =
-      PartP.playwriteUsTradGuidesTextTheme;
+  static const playwriteUsTradGuidesTextTheme = PartP.playwriteUsTradGuidesTextTheme;
 
   /// See [PartP.playwriteVn].
   static const playwriteVn = PartP.playwriteVn;
@@ -13138,8 +13040,7 @@ class GoogleFonts {
   static const redditSansCondensed = PartR.redditSansCondensed;
 
   /// See [PartR.redditSansCondensedTextTheme].
-  static const redditSansCondensedTextTheme =
-      PartR.redditSansCondensedTextTheme;
+  static const redditSansCondensedTextTheme = PartR.redditSansCondensedTextTheme;
 
   /// See [PartR.redressed].
   static const redressed = PartR.redressed;
@@ -13385,8 +13286,7 @@ class GoogleFonts {
   static const rubikDoodleTriangles = PartR.rubikDoodleTriangles;
 
   /// See [PartR.rubikDoodleTrianglesTextTheme].
-  static const rubikDoodleTrianglesTextTheme =
-      PartR.rubikDoodleTrianglesTextTheme;
+  static const rubikDoodleTrianglesTextTheme = PartR.rubikDoodleTrianglesTextTheme;
 
   /// See [PartR.rubikGemstones].
   static const rubikGemstones = PartR.rubikGemstones;
@@ -13812,8 +13712,7 @@ class GoogleFonts {
   static const shadowsIntoLightTwo = PartS.shadowsIntoLightTwo;
 
   /// See [PartS.shadowsIntoLightTwoTextTheme].
-  static const shadowsIntoLightTwoTextTheme =
-      PartS.shadowsIntoLightTwoTextTheme;
+  static const shadowsIntoLightTwoTextTheme = PartS.shadowsIntoLightTwoTextTheme;
 
   /// See [PartS.shafarik].
   static const shafarik = PartS.shafarik;
@@ -13987,8 +13886,7 @@ class GoogleFonts {
   static const sixtyfourConvergence = PartS.sixtyfourConvergence;
 
   /// See [PartS.sixtyfourConvergenceTextTheme].
-  static const sixtyfourConvergenceTextTheme =
-      PartS.sixtyfourConvergenceTextTheme;
+  static const sixtyfourConvergenceTextTheme = PartS.sixtyfourConvergenceTextTheme;
 
   /// See [PartS.skranji].
   static const skranji = PartS.skranji;
@@ -14090,15 +13988,13 @@ class GoogleFonts {
   static const sofiaSansExtraCondensed = PartS.sofiaSansExtraCondensed;
 
   /// See [PartS.sofiaSansExtraCondensedTextTheme].
-  static const sofiaSansExtraCondensedTextTheme =
-      PartS.sofiaSansExtraCondensedTextTheme;
+  static const sofiaSansExtraCondensedTextTheme = PartS.sofiaSansExtraCondensedTextTheme;
 
   /// See [PartS.sofiaSansSemiCondensed].
   static const sofiaSansSemiCondensed = PartS.sofiaSansSemiCondensed;
 
   /// See [PartS.sofiaSansSemiCondensedTextTheme].
-  static const sofiaSansSemiCondensedTextTheme =
-      PartS.sofiaSansSemiCondensedTextTheme;
+  static const sofiaSansSemiCondensedTextTheme = PartS.sofiaSansSemiCondensedTextTheme;
 
   /// See [PartS.solitreo].
   static const solitreo = PartS.solitreo;
@@ -14200,15 +14096,13 @@ class GoogleFonts {
   static const specialGothicCondensedOne = PartS.specialGothicCondensedOne;
 
   /// See [PartS.specialGothicCondensedOneTextTheme].
-  static const specialGothicCondensedOneTextTheme =
-      PartS.specialGothicCondensedOneTextTheme;
+  static const specialGothicCondensedOneTextTheme = PartS.specialGothicCondensedOneTextTheme;
 
   /// See [PartS.specialGothicExpandedOne].
   static const specialGothicExpandedOne = PartS.specialGothicExpandedOne;
 
   /// See [PartS.specialGothicExpandedOneTextTheme].
-  static const specialGothicExpandedOneTextTheme =
-      PartS.specialGothicExpandedOneTextTheme;
+  static const specialGothicExpandedOneTextTheme = PartS.specialGothicExpandedOneTextTheme;
 
   /// See [PartS.spectral].
   static const spectral = PartS.spectral;
@@ -14274,8 +14168,7 @@ class GoogleFonts {
   static const sreeKrushnadevaraya = PartS.sreeKrushnadevaraya;
 
   /// See [PartS.sreeKrushnadevarayaTextTheme].
-  static const sreeKrushnadevarayaTextTheme =
-      PartS.sreeKrushnadevarayaTextTheme;
+  static const sreeKrushnadevarayaTextTheme = PartS.sreeKrushnadevarayaTextTheme;
 
   /// See [PartS.sriracha].
   static const sriracha = PartS.sriracha;
@@ -14347,8 +14240,7 @@ class GoogleFonts {
   static const stintUltraCondensed = PartS.stintUltraCondensed;
 
   /// See [PartS.stintUltraCondensedTextTheme].
-  static const stintUltraCondensedTextTheme =
-      PartS.stintUltraCondensedTextTheme;
+  static const stintUltraCondensedTextTheme = PartS.stintUltraCondensedTextTheme;
 
   /// See [PartS.stintUltraExpanded].
   static const stintUltraExpanded = PartS.stintUltraExpanded;
@@ -14678,22 +14570,19 @@ class GoogleFonts {
   static const tiroDevanagariHindi = PartT.tiroDevanagariHindi;
 
   /// See [PartT.tiroDevanagariHindiTextTheme].
-  static const tiroDevanagariHindiTextTheme =
-      PartT.tiroDevanagariHindiTextTheme;
+  static const tiroDevanagariHindiTextTheme = PartT.tiroDevanagariHindiTextTheme;
 
   /// See [PartT.tiroDevanagariMarathi].
   static const tiroDevanagariMarathi = PartT.tiroDevanagariMarathi;
 
   /// See [PartT.tiroDevanagariMarathiTextTheme].
-  static const tiroDevanagariMarathiTextTheme =
-      PartT.tiroDevanagariMarathiTextTheme;
+  static const tiroDevanagariMarathiTextTheme = PartT.tiroDevanagariMarathiTextTheme;
 
   /// See [PartT.tiroDevanagariSanskrit].
   static const tiroDevanagariSanskrit = PartT.tiroDevanagariSanskrit;
 
   /// See [PartT.tiroDevanagariSanskritTextTheme].
-  static const tiroDevanagariSanskritTextTheme =
-      PartT.tiroDevanagariSanskritTextTheme;
+  static const tiroDevanagariSanskritTextTheme = PartT.tiroDevanagariSanskritTextTheme;
 
   /// See [PartT.tiroGurmukhi].
   static const tiroGurmukhi = PartT.tiroGurmukhi;
@@ -15101,8 +14990,7 @@ class GoogleFonts {
   static const waitingForTheSunrise = PartW.waitingForTheSunrise;
 
   /// See [PartW.waitingForTheSunriseTextTheme].
-  static const waitingForTheSunriseTextTheme =
-      PartW.waitingForTheSunriseTextTheme;
+  static const waitingForTheSunriseTextTheme = PartW.waitingForTheSunriseTextTheme;
 
   /// See [PartW.wallpoet].
   static const wallpoet = PartW.wallpoet;
@@ -15342,15 +15230,13 @@ class GoogleFonts {
   static const yujiHentaiganaAkari = PartY.yujiHentaiganaAkari;
 
   /// See [PartY.yujiHentaiganaAkariTextTheme].
-  static const yujiHentaiganaAkariTextTheme =
-      PartY.yujiHentaiganaAkariTextTheme;
+  static const yujiHentaiganaAkariTextTheme = PartY.yujiHentaiganaAkariTextTheme;
 
   /// See [PartY.yujiHentaiganaAkebono].
   static const yujiHentaiganaAkebono = PartY.yujiHentaiganaAkebono;
 
   /// See [PartY.yujiHentaiganaAkebonoTextTheme].
-  static const yujiHentaiganaAkebonoTextTheme =
-      PartY.yujiHentaiganaAkebonoTextTheme;
+  static const yujiHentaiganaAkebonoTextTheme = PartY.yujiHentaiganaAkebonoTextTheme;
 
   /// See [PartY.yujiMai].
   static const yujiMai = PartY.yujiMai;
@@ -15380,8 +15266,7 @@ class GoogleFonts {
   static const zcoolQingKeHuangYou = PartZ.zcoolQingKeHuangYou;
 
   /// See [PartZ.zcoolQingKeHuangYouTextTheme].
-  static const zcoolQingKeHuangYouTextTheme =
-      PartZ.zcoolQingKeHuangYouTextTheme;
+  static const zcoolQingKeHuangYouTextTheme = PartZ.zcoolQingKeHuangYouTextTheme;
 
   /// See [PartZ.zcoolXiaoWei].
   static const zcoolXiaoWei = PartZ.zcoolXiaoWei;
@@ -15405,15 +15290,13 @@ class GoogleFonts {
   static const zalandoSansExpanded = PartZ.zalandoSansExpanded;
 
   /// See [PartZ.zalandoSansExpandedTextTheme].
-  static const zalandoSansExpandedTextTheme =
-      PartZ.zalandoSansExpandedTextTheme;
+  static const zalandoSansExpandedTextTheme = PartZ.zalandoSansExpandedTextTheme;
 
   /// See [PartZ.zalandoSansSemiExpanded].
   static const zalandoSansSemiExpanded = PartZ.zalandoSansSemiExpanded;
 
   /// See [PartZ.zalandoSansSemiExpandedTextTheme].
-  static const zalandoSansSemiExpandedTextTheme =
-      PartZ.zalandoSansSemiExpandedTextTheme;
+  static const zalandoSansSemiExpandedTextTheme = PartZ.zalandoSansSemiExpandedTextTheme;
 
   /// See [PartZ.zenAntique].
   static const zenAntique = PartZ.zenAntique;
@@ -15437,8 +15320,7 @@ class GoogleFonts {
   static const zenKakuGothicAntique = PartZ.zenKakuGothicAntique;
 
   /// See [PartZ.zenKakuGothicAntiqueTextTheme].
-  static const zenKakuGothicAntiqueTextTheme =
-      PartZ.zenKakuGothicAntiqueTextTheme;
+  static const zenKakuGothicAntiqueTextTheme = PartZ.zenKakuGothicAntiqueTextTheme;
 
   /// See [PartZ.zenKakuGothicNew].
   static const zenKakuGothicNew = PartZ.zenKakuGothicNew;
