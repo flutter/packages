@@ -216,7 +216,7 @@ you've added a new widget and it has a tooltip), follow these steps:
    Then you need to add new entries for the string to all of the other
    language locale files by running:
    ```
-   dart packages/material_ui/script/l10n/bin/gen_missing_localizations.dart
+   dart script/l10n/bin/gen_missing_localizations.dart
    ```
    Which will copy the English strings into the other locales as placeholders
    until they can be translated.
@@ -224,7 +224,7 @@ you've added a new widget and it has a tooltip), follow these steps:
    Finally you need to re-generate
    lib/src/l10n/generated_material_localizations.dart by running:
    ```
-   dart packages/material_ui/script/l10n/bin/gen_localizations.dart --overwrite
+   dart script/l10n/bin/gen_localizations.dart --overwrite
    ```
 
    If you got an error when running this command, [this issue](https://github.com/flutter/flutter/issues/104601) might be helpful.
