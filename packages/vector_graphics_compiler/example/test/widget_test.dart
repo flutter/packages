@@ -7,15 +7,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:vector_graphics_compiler_example/main.dart';
 
 void main() {
-  testWidgets('ExampleApp renders the Dart logo VectorGraphic', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('ExampleApp renders the Dart logo VectorGraphic', (WidgetTester tester) async {
     await tester.pumpWidget(const ExampleApp());
     await tester.pumpAndSettle();
 
-    final SizedBox sizedBox = tester.widget<SizedBox>(
-      find.byType(SizedBox).first,
-    );
+    final SizedBox sizedBox = tester.widget<SizedBox>(find.byType(SizedBox).first);
     expect(sizedBox.width, 200);
     expect(sizedBox.height, 200);
   });
