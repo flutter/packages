@@ -112,8 +112,7 @@ import 'theme.dart';
 /// visible items may be slightly compressed during scrolling. The [shrinkExtent]
 /// property controls the minimum allowable size for these compressed items.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// Here is an example to show different carousel layouts that [CarouselView]
 /// and [CarouselView.weighted] can build.
@@ -127,9 +126,13 @@ import 'theme.dart';
 /// This key-driven behavior is dictated by the [ScrollBehavior.pointerAxisModifiers],
 /// while [ScrollBehavior.dragDevices] manages what devices can drag a scrollable.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/carousel/carousel.0.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -236,14 +239,17 @@ class CarouselView extends StatefulWidget {
   /// The [itemBuilder] callback will be called only with indices greater than
   /// or equal to zero and less than [itemCount].
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This example shows how to create a carousel with 1000 items using lazy loading:
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/carousel/carousel.1.dart}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// </callout-box>
   ///
   /// See also:
   ///

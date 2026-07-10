@@ -244,14 +244,17 @@ abstract interface class ChipAttributes {
   /// Specifying this parameter enables creation of avatar smaller than
   /// the minimum size, but it is not recommended.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This sample shows how to use [avatarBoxConstraints] to adjust avatar size constraints
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/chip/chip_attributes.avatar_box_constraints.0.dart}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// </callout-box>
   BoxConstraints? get avatarBoxConstraints;
 
   /// Used to override the default chip animations durations.
@@ -272,15 +275,18 @@ abstract interface class ChipAttributes {
   /// is provided, it will be used to override the chip delete icon animation duration.
   /// If it is null, then default duration will be 150ms.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This sample showcases how to override the chip animations durations using
   /// [ChipAnimationStyle].
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/chip/chip_attributes.chip_animation_style.0.dart}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// </callout-box>
   ChipAnimationStyle? get chipAnimationStyle;
 
   /// The cursor for a mouse pointer when it enters or is hovering over the
@@ -334,15 +340,18 @@ abstract interface class DeletableChipAttributes {
   /// that the user tapped the delete button. In order to delete the chip, you
   /// have to do something similar to the following sample:
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This sample shows how to use [onDeleted] to remove an entry when the
   /// delete button is tapped.
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/chip/deletable_chip_attributes.on_deleted.0.dart}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// </callout-box>
   VoidCallback? get onDeleted;
 
   /// Used to define the delete icon's color with an [IconTheme] that
@@ -376,15 +385,18 @@ abstract interface class DeletableChipAttributes {
   /// Specifying this parameter enables creation of delete icon smaller than
   /// the minimum size, but it is not recommended.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This sample shows how to use [deleteIconBoxConstraints] to adjust delete icon
   /// size constraints.
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/chip/deletable_chip_attributes.delete_icon_box_constraints.0.dart}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// </callout-box>
   BoxConstraints? get deleteIconBoxConstraints;
 }
 

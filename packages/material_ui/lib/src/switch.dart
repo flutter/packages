@@ -53,45 +53,57 @@ enum _SwitchType { material, adaptive }
 /// If [ThemeData.useMaterial3] is set to true, users can use [Switch.thumbIcon]
 /// to add optional Icons based on the different [WidgetState]s of the [Switch].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows a toggleable [Switch]. When the thumb slides to the other
 /// side of the track, the switch is toggled between on/off.
 ///
-/// {@example /example/lib/switch/switch.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/switch/switch.0.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to customize [Switch] using [WidgetStateProperty]
 /// switch properties.
 ///
-/// {@example /example/lib/switch/switch.1.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/switch/switch.1.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to add icons on the thumb of the [Switch] using the
 /// [Switch.thumbIcon] property.
 ///
-/// {@example /example/lib/switch/switch.2.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/switch/switch.2.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to use the ambient [CupertinoThemeData] to style all
 /// widgets which would otherwise use iOS defaults.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/switch/switch.3.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -166,15 +178,18 @@ class Switch extends StatelessWidget {
   /// where you don't want the overall [ThemeData.switchTheme] to apply when
   /// this adaptive constructor is used.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This sample shows how to create and use subclasses of [Adaptation] that
   /// define adaptive [SwitchThemeData]s.
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/switch/switch.4.dart}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// </callout-box>
   ///
   /// The target platform is based on the current [Theme]: [ThemeData.platform].
   const Switch.adaptive({

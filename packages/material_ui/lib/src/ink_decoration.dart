@@ -117,8 +117,7 @@ import 'material.dart';
 ///
 /// What to do if you want to clip this [Ink.image]?
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// Wrapping the [Ink] in a clipping widget directly will not work since the
 /// [Material] it will be printed on is responsible for clipping.
@@ -127,20 +126,27 @@ import 'material.dart';
 /// it is being rendered onto the Scaffold body Material, which isn't wrapped in
 /// the [ClipRRect].
 ///
-/// {@example /example/lib/ink/ink.image_clip.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/ink/ink.image_clip.0.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// One solution would be to deliberately wrap the [Ink.image] in a [Material].
 /// This makes sure the Material that the image is painted on is also responsible
 /// for clipping said content.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/ink/ink.image_clip.1.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// See also:
 ///
