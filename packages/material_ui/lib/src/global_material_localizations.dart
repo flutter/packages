@@ -19,7 +19,7 @@ import 'typography.dart';
 
 // Examples can assume:
 // import 'package:flutter_localizations/flutter_localizations.dart';
-// import 'package:flutter/material.dart';
+// import 'package:material_ui/material_ui.dart';
 
 /// Implementation of localized strings for the material widgets using the
 /// `intl` package for date and time formatting.

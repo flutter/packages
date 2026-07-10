@@ -16,7 +16,7 @@ import 'localizations.dart';
 
 // Examples can assume:
 // import 'package:flutter_localizations/flutter_localizations.dart';
-// import 'package:flutter/cupertino.dart';
+// import 'package:cupertino_ui/cupertino_ui.dart';
 
 /// Implementation of localized strings for Cupertino widgets using the `intl`
 /// package for date and time formatting.

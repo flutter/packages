@@ -442,7 +442,8 @@ String generateString(String value) {
 
 /// Only used to generate localization strings for the Kannada locale ('kn') because
 /// some of the localized strings contain characters that can crash Emacs on Linux.
-/// See packages/flutter_localizations/lib/src/l10n/README for more information.
+/// See packages/flutter_localizations/lib/src/l10n/README in the Flutter SDK
+/// for more information.
 String generateEncodedString(String? locale, String value) {
   if (locale != 'kn' || value.runes.every((int code) => code <= 0xFF)) {
     return generateString(value);
