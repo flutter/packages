@@ -9,9 +9,8 @@ For a comprehensive walkthrough on setting up Native Interop from scratch, see t
 
 ## 1. Key Architectural Differences
 
-| Feature | MethodChannels | Native Interop (FFI / JNI) |
+| Feature | Method Channels | Native Interop (FFI / JNI) |
 | :--- | :--- | :--- |
-| **Communication Layer** | Binary message passing over platform channels | Direct memory-bound function calls via `dart:ffi` / `package:jni` |
 | **Data Serialization** | Serialized to binary format (`StandardMessageCodec`) | Direct memory mapping or native references |
 | **Synchronous Calls** | Asynchronous only | Supports both true synchronous and asynchronous calls |
 | **Swift Concurrency** | Callback-based completion handlers | Modern `async/await` syntax |
@@ -21,11 +20,11 @@ For a comprehensive walkthrough on setting up Native Interop from scratch, see t
 
 ## 2. Migrating Native Code signatures
 
-If your existing native implementation uses the callback-based completion-handler model, you will need to migrate to modern native concurrency (such as Kotlin Coroutines or Swift async/await) as part of adopting the Native Interop model.
+If your existing native implementation uses the callback-based completion-handler model, you will need to migrate to modern native concurrency (Kotlin Coroutines or Swift async/await) as part of adopting the Native Interop model.
 
 ### 2.1 Swift Async Methods
 
-#### MethodChannels (Callback Style)
+#### Method Channels (Callback Style)
 <?code-excerpt "ios/Runner/NativeInteropExample.swift (callback-style)"?>
 ```swift
 func echoAsync(_ value: String, completion: @escaping (Result<String, Error>) -> Void) {
@@ -43,7 +42,7 @@ func echoAsync(_ value: String) async throws -> String {
 
 ### 2.2 Kotlin Async Methods
 
-#### MethodChannels (Callback Style)
+#### Method Channels (Callback Style)
 <?code-excerpt "android/app/src/main/kotlin/dev/flutter/pigeon_example_app/NativeInteropExample.kt (callback-style)"?>
 ```kotlin
 fun echoAsync(value: String, callback: (Result<String>) -> Unit) {

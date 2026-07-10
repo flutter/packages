@@ -49,7 +49,7 @@ class FfigenConfigGenerator extends Generator<InternalFfigenConfigOptions> {
     final indent = Indent();
     indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
-    indent.writeln('// ignore_for_file: avoid_print, depend_on_referenced_packages');
+    indent.writeln('// ignore_for_file: depend_on_referenced_packages');
     indent.newln();
     indent.format('''
 import 'dart:io';
@@ -95,7 +95,7 @@ import 'package:swiftgen/swiftgen.dart';
   }
 ''');
       final String prefix = generatorOptions.swiftOptions.fileSpecificClassNameComponent ?? '';
-      indent.writeScoped('final classes = <String>[', '];', () {
+      indent.writeScoped('final classes = <String>{', '};', () {
         indent.inc();
         indent.writeln("'${prefix}PigeonInternalNull',");
         indent.writeln("'${prefix}PigeonTypedData',");
@@ -119,7 +119,7 @@ import 'package:swiftgen/swiftgen.dart';
         indent.writeln("'${generatorOptions.swiftOptions.errorClassName ?? 'PigeonError'}'");
         indent.dec();
       });
-      indent.writeScoped('final enums = <String>[', '];', () {
+      indent.writeScoped('final enums = <String>{', '};', () {
         indent.inc();
         for (final Enum enumType in root.enums) {
           indent.writeln("'${enumType.name}',");
@@ -152,7 +152,6 @@ import 'package:swiftgen/swiftgen.dart';
         classes.contains(d.name) || enums.contains(d.name),
     output: Output(
       module: '$moduleName',
-      // Path is relative to appDirectory.
       dartFile: Uri.file('${path.relative(path.withoutExtension(fullDartOut), from: generatorOptions.exampleAppDirectory ?? './')}.ffi.dart'),
       objectiveCFile: Uri.file('${path.relative(path.posix.join(objcDir, '${path.posix.basenameWithoutExtension(fullSwiftOut)}.m'), from: generatorOptions.exampleAppDirectory ?? './')}'),
       preamble: \'''
@@ -165,7 +164,7 @@ import 'package:swiftgen/swiftgen.dart';
     ffigen: FfiGeneratorOptions(
       objectiveC: fg.ObjectiveC(
         externalVersions: fg.ExternalVersions(
-          ios: fg.Versions(min: Version(12, 0, 0)),
+          ios: fg.Versions(min: Version(13, 0, 0)),
           macos: fg.Versions(min: Version(10, 14, 0)),
         ),
         interfaces: fg.Interfaces(

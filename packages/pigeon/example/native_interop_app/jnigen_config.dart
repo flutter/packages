@@ -14,7 +14,6 @@ void main() async {
       summarizerOptions: SummarizerOptions(backend: SummarizerBackend.asm),
       outputConfig: OutputConfig(
         dartConfig: DartCodeOutputConfig(
-          // Path is relative to appDirectory.
           path: Uri.file('lib/src/native_interop_example.g.jni.dart'),
           structure: OutputStructure.singleFile,
         ),

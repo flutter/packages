@@ -101,6 +101,15 @@ class DartOptions {
   }
 }
 
+/// A recursive representation of a Dart [TypeDeclaration] specifically adapted
+/// for Native Interop generation (FFI and JNI).
+///
+/// This class parses type declarations recursively to capture sub-types (such
+/// as elements of a [List] or keys and values of a [Map]), which is essential
+/// for mapping nested collection types at the native interop boundary.
+///
+/// [T] is the concrete subclass type (e.g., `_FfiType` or `_JniType`), allowing
+/// recursive type arguments ([subTypeOne], [subTypeTwo]) to resolve to the same subclass.
 abstract class _NativeInteropType<T extends _NativeInteropType<T>> {
   _NativeInteropType({required this.type, this.subTypeOne, this.subTypeTwo});
 
@@ -157,19 +166,10 @@ abstract class _NativeInteropType<T extends _NativeInteropType<T>> {
   }
 
   bool get nonNullableNeedsUnwrapping {
-    if (type.isClass ||
-        type.isEnum ||
-        type.baseName == 'String' ||
-        type.baseName == 'Object' ||
-        type.baseName == 'List' ||
-        type.baseName == 'Map' ||
-        type.baseName == 'Uint8List' ||
-        type.baseName == 'Int32List' ||
-        type.baseName == 'Int64List' ||
-        type.baseName == 'Float64List') {
-      return true;
-    }
-    return false;
+    return type.baseName != 'int' &&
+        type.baseName != 'double' &&
+        type.baseName != 'bool' &&
+        type.baseName != 'void';
   }
 
   String getDartReturnType(bool forceUnwrap) {
@@ -180,9 +180,7 @@ abstract class _NativeInteropType<T extends _NativeInteropType<T>> {
   }
 
   String get dartCollectionTypeAnnotations {
-    if (type.baseName == 'List') {
-      return '<$dartCollectionTypes>';
-    } else if (type.baseName == 'Map') {
+    if (type.baseName == 'List' || type.baseName == 'Map') {
       return '<$dartCollectionTypes>';
     }
     return '';
@@ -213,65 +211,33 @@ class _FfiType extends _NativeInteropType<_FfiType> {
     return _NativeInteropType.fromEnum<_FfiType>(enumDefinition, _FfiType.new);
   }
 
-  String get ffiName {
-    switch (type.baseName) {
-      case 'String':
-        return 'NSString';
-      case 'void':
-        return 'NSVoid';
-      case 'bool':
-      case 'int':
-      case 'double':
-        return 'NSNumber';
-      case 'Uint8List':
-        return 'ffi_bridge.${_classNamePrefix}PigeonTypedData';
-      case 'Int32List':
-        return 'ffi_bridge.${_classNamePrefix}PigeonTypedData';
-      case 'Int64List':
-        return 'ffi_bridge.${_classNamePrefix}PigeonTypedData';
-      case 'Float64List':
-        return 'ffi_bridge.${_classNamePrefix}PigeonTypedData';
-      case 'Object':
-        return 'NSObject';
-      case 'List':
-        return 'NSMutableArray';
-      case 'Map':
-        return 'NSDictionary';
-      default:
-        {
-          if (type.isClass) {
-            final bridge = type.isClass ? 'Bridge' : '';
-            return 'ffi_bridge.${type.baseName}$bridge';
-          }
-          if (type.isEnum) {
-            return 'NSNumber';
-          }
-          return 'There is something wrong, a type is not classified';
-        }
-    }
-  }
+  String get ffiName => switch (type.baseName) {
+    'String' => 'NSString',
+    'void' => 'NSVoid',
+    'bool' || 'int' || 'double' => 'NSNumber',
+    'Uint8List' ||
+    'Int32List' ||
+    'Int64List' ||
+    'Float64List' => 'ffi_bridge.${_classNamePrefix}PigeonTypedData',
+    'Object' => 'NSObject',
+    'List' => 'NSMutableArray',
+    'Map' => 'NSDictionary',
+    _ =>
+      type.isClass
+          ? 'ffi_bridge.${type.baseName}Bridge'
+          : type.isEnum
+          ? 'NSNumber'
+          : 'There is something wrong, a type is not classified',
+  };
 
-  String get fullFfiName {
-    if (type.baseName == 'List' || type.baseName == 'Map') {
-      return ffiName;
-    }
-    return ffiName;
-  }
+  String get primitiveToDartMethodName => switch (type.baseName) {
+    'String' => 'toDartString()',
+    'int' => 'longValue',
+    'double' => 'doubleValue',
+    'bool' => 'boolValue',
+    _ => '',
+  };
 
-  String get primitiveToDartMethodName {
-    switch (type.baseName) {
-      case 'String':
-        return 'toDartString()';
-      case 'int':
-        return 'longValue';
-      case 'double':
-        return 'doubleValue';
-      case 'bool':
-        return 'boolValue';
-      default:
-        return '';
-    }
-  }
 
   String getToDartCall(
     TypeDeclaration type, {
@@ -2739,7 +2705,7 @@ class _PigeonFfiCodec {
       }
       final _FfiType ffiType = _FfiType.fromTypeDeclaration(list);
       return '''
-    } else if (value is ${ffiType.type.getFullName(withNullable: false)} && isTypeOrNullableType<${ffiType.fullFfiName}>(T)) {
+    } else if (value is ${ffiType.type.getFullName(withNullable: false)} && isTypeOrNullableType<${ffiType.ffiName}>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final ${ffiType.dartCollectionTypes} entry in value) {
         res.addObject(${ffiType.subTypeOne!.type.isNullable ? 'entry == null ? ffi_bridge.${_classNamePrefix}PigeonInternalNull() : ' : ''}writeValue<${ffiType.subTypeOne?.getFfiCallReturnType(forceNonNullable: true) ?? 'ObjCObject'}>(entry, generic: true));
@@ -2761,7 +2727,7 @@ class _PigeonFfiCodec {
       }
       final _FfiType ffiType = _FfiType.fromTypeDeclaration(mapType.value);
       return '''
-    } else if (value is ${ffiType.type.getFullName(withNullable: false)} && isTypeOrNullableType<${ffiType.fullFfiName}>(T)) {
+    } else if (value is ${ffiType.type.getFullName(withNullable: false)} && isTypeOrNullableType<${ffiType.ffiName}>(T)) {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry${ffiType.dartCollectionTypeAnnotations} entry in value.entries) {
         res.setObject(writeValue(entry.value, generic: true), forKey: NSCopying.as(writeValue(entry.key, generic: true)));

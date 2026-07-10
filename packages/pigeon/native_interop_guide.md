@@ -1,14 +1,14 @@
 <?code-excerpt path-base="."?>
 # Pigeon Native Interop (FFI & JNI) Guide
 
-This guide describes Pigeon's Native Interop feature, which allows for direct, high-performance communication between Dart and native code using **FFI (Foreign Function Interface)** for Swift (iOS/macOS) and **JNI (Java Native Interface)** for Kotlin/Java (Android).
+This guide describes Pigeon's Native Interop feature, which allows for direct, high-performance communication between Dart and native code using **FFI (Foreign Function Interface)** for Swift (iOS/macOS) and **JNI (Java Native Interface)** for Kotlin (Android).
 
 ---
 
 ## 1. Overview
 
 Pigeon Native Interop allows Dart code to make direct function calls into native platform code, and vice versa, without the overhead of MethodChannel-based message passing. Instead of serializing data into binary buffers, Native Interop establishes direct memory-bound bridges using native pointers and JVM references.
-For a detailed comparison between MethodChannel-based communication and Native Interop—including advantages, limitations, and recommended use cases—see the [Pigeon README](file:///Users/tarrinneal/work/packages/packages/pigeon/README.md#communication-options-methodchannels-vs-native-interop).
+For a detailed comparison between MethodChannel-based communication and Native Interop—including advantages, limitations, and recommended use cases—see the [Pigeon README](file:///Users/tarrinneal/work/packages/packages/pigeon/README.md#communication-options-method-channels-vs-native-interop).
 
 ---
 
@@ -20,7 +20,7 @@ Using Native Interop in pigeon follows the standard pigeon workflow, with a few 
 2. **Configure Options**: Configure `kotlinOptions.useJni` or `swiftOptions.useFfi` in your `PigeonOptions` (see [Step 1: Configure Pigeon Options](#step-1-configure-pigeon-options) below).
 3. **Prerequisites**: Ensure your local environment meets the toolchain prerequisites for `jnigen` and `ffigen` (see [Section 3: Prerequisites](#section-3-prerequisites) below).
 4. **Run Code Generation**: Run the `pigeon` tool to generate the native bridge code, Dart wrapper, and config scripts, then run the generated config scripts to produce the underlying interop bindings (see [Step 2: Automated Interop Generation](#step-2-automated-interop-generation) below).
-5. **Configure Build Systems**: For Swift FFI, configure CocoaPods or Swift Package Manager to compile the intermediate Objective-C bridge files (see [Step 3: iOS/macOS Build System Configuration (FFI)](#step-3-iosmacos-build-system-configuration-ffi) below).
+5. **Configure Build Systems**: For Swift FFI, configure CocoaPods or Swift Package Manager (SwiftPM) to compile the intermediate Objective-C bridge files (see [Step 3: iOS/macOS Build System Configuration (FFI)](#step-3-iosmacos-build-system-configuration-ffi) below).
 6. **Implement and Call**: Implement the generated protocol/class interface in your native codebase and call the generated Dart methods from your Flutter application.
 
 ---
@@ -30,7 +30,7 @@ Using Native Interop in pigeon follows the standard pigeon workflow, with a few 
 To use Native Interop, your development environment and the corresponding external tools must be configured:
 
 ### Android (JNI / JNIgen)
-- **Java 17**: Required by the Android build tools and JNIgen.
+- **Java 17**: Required specifically by the Android build tools and JNIgen.
 - **Maven (`mvn`)**: Required to resolve dependencies during generation.
 - **Android SDK**: Must be installed and configured in your path.
 - **Kotlin Version**: The maximum supported version is **2.1.0**.
@@ -86,22 +86,22 @@ Pigeon automatically orchestrates running `jnigen` and `ffigen` as part of the g
 
 Because Dart FFI cannot directly call Swift symbols, the FFI toolchain generates an intermediate Objective-C bridging file (`.m` file) in a subdirectory named `<swift_output_dir>_objc_gen`. 
 
-To compile the generated Objective-C files alongside your Swift code, you must configure your iOS/macOS build system:
+To compile the generated Objective-C files alongside your Swift code, you must configure your iOS/macOS build systems (both CocoaPods and Swift Package Manager (SwiftPM) are expected to be supported by Flutter plugins):
 
-#### Option A: CocoaPods (Standard Flutter Plugins)
-If you are developing a standard Flutter plugin using CocoaPods, ensure your `.podspec` file matches both Swift and Objective-C source files:
+#### CocoaPods Configuration
+Ensure your `.podspec` file matches both Swift and Objective-C source files:
 ```ruby
 s.source_files = 'Sources/**/*.{swift,m}'
 ```
 This allows CocoaPods to automatically compile the generated Objective-C bridging files into the framework.
 
-#### Option B: Swift Package Manager (SPM)
-If your plugin uses SPM, note that Swift and Objective-C files cannot reside within the same SPM target. You must define two separate targets in your `Package.swift` file:
+#### Swift Package Manager (SwiftPM) Configuration
+Because Swift and Objective-C files cannot reside within the same SwiftPM target, you must define two separate targets in your `Package.swift` file:
 1. An Objective-C target for the generated bridge files (e.g., `my_plugin_objc_gen`).
 2. The main Swift target that depends on the Objective-C target.
 
 Example configuration:
-<?code-excerpt "platform_tests/test_plugin/darwin/test_plugin/Package.swift (spm-targets)"?>
+<?code-excerpt "platform_tests/test_plugin/darwin/test_plugin/Package.swift (swiftpm-targets)"?>
 ```swift
 targets: [
   .target(

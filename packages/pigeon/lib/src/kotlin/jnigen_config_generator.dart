@@ -53,7 +53,7 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
 
     final String fullDartOut = generatorOptions.basePath != null
         ? path.posix.join(generatorOptions.basePath!, generatorOptions.dartOptions.dartOut ?? '')
-        : (generatorOptions.dartOptions.dartOut ?? './lib/pigeons/');
+        : (generatorOptions.dartOptions.dartOut ?? './lib/src/');
 
     final List<String> jniClassPaths =
         generatorOptions.kotlinOptions.jniClassPaths ??
@@ -80,7 +80,6 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
             summarizerOptions: SummarizerOptions(backend: SummarizerBackend.asm),
             outputConfig: OutputConfig(
               dartConfig: DartCodeOutputConfig(
-                // Path is relative to appDirectory.
                 path: Uri.file('${path.relative(path.withoutExtension(fullDartOut), from: generatorOptions.appDirectory ?? './')}.jni.dart'),
               structure: OutputStructure.singleFile,
             ),

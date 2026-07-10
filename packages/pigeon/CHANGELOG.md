@@ -1,6 +1,6 @@
 ## 27.2.0
 
-* [swift] [kotlin] Adds support for FFI and JNI.
+* [swift] [kotlin] Adds experimental support for FFI and JNI.
 * Exposes missing PigeonOptions and language-specific configurations as command-line arguments.
 
 ## 27.1.0
