@@ -21,6 +21,7 @@ jobs:
       uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       with:
         fetch-depth: 0 # Fetch all history so the tool can get all the tags to determine version.
+        persist-credentials: false
     - name: "Install Flutter"
       uses: ./.github/workflows/internals/install_flutter
     - name: Set up tools

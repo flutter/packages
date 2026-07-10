@@ -8,6 +8,13 @@ on:
       branch-name:
         required: true
         type: string
+    secrets:
+      USER_NAME:
+        required: true
+      USER_EMAIL:
+        required: true
+      PUB_CREDENTIALS:
+        required: true
 jobs:
   release:
     if: github.repository_owner == 'flutter'
@@ -23,6 +30,7 @@ jobs:
       with:
         fetch-depth: 0 # Fetch all history so the tool can get all the tags to determine version.
         ref: ${{ inputs.branch-name }}
+        persist-credentials: false
     - name: "Install Flutter"
       uses: ./.github/workflows/internals/install_flutter
     - name: Set up tools

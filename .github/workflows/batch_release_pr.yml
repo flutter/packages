@@ -22,6 +22,7 @@ jobs:
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           token: ${{ secrets.FLUTTERGITHUBBOT_TOKEN }}
+          persist-credentials: false
       - name: "Install Flutter"
         uses: ./.github/workflows/internals/install_flutter
       - name: Set up tools
@@ -62,13 +63,17 @@ jobs:
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           ref: ${{ env.HEAD_BRANCH_NAME }}
+          persist-credentials: false
       - name: Create batch release PR
         run: |
           gh pr create \
-            --base "${{ needs.create_batch_release_branch.outputs.release_branch }}" \
-            --head "${{ env.HEAD_BRANCH_NAME }}" \
-            --title "[${{ github.event.client_payload.package }}] Batch release" \
-            --body "This PR was created automatically to batch release the \`${{ github.event.client_payload.package }}\`." \
-            --label "override: skip-batch-release-repo-check-${{ github.event.client_payload.package }}"
+            --base "${NEEDS_CREATE_BATCH_RELEASE_BRANCH_OUTPUTS_RELEASE_BRANCH}" \
+            --head "${HEAD_BRANCH_NAME}" \
+            --title "[${GITHUB_EVENT_CLIENT_PAYLOAD_PACKAGE}] Batch release" \
+            --body "This PR was created automatically to batch release the \`${GITHUB_EVENT_CLIENT_PAYLOAD_PACKAGE}\`." \
+            --label "override: skip-batch-release-repo-check-${GITHUB_EVENT_CLIENT_PAYLOAD_PACKAGE}"
+        env:
+          NEEDS_CREATE_BATCH_RELEASE_BRANCH_OUTPUTS_RELEASE_BRANCH: ${{ needs.create_batch_release_branch.outputs.release_branch }}
+          GITHUB_EVENT_CLIENT_PAYLOAD_PACKAGE: ${{ github.event.client_payload.package }}
 
 

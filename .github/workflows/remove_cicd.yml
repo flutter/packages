@@ -5,6 +5,8 @@
 name: Remove outdated CICD Label
 
 on:
+  # This pull_request_target trigger is safe because the workflow does not checkout any untrusted code or execute code from the PR.
+  # zizmor: ignore[dangerous-triggers]
   pull_request_target:
     types: [synchronize]
 
@@ -21,7 +23,7 @@ jobs:
         id: check_timing
         run: |
           # Get push time (commit date of the head SHA)
-          PUSH_TIME='${{ github.event.pull_request.updated_at }}'
+          PUSH_TIME='${GITHUB_EVENT_PULL_REQUEST_UPDATED_AT}'
           echo "Push time: $PUSH_TIME"
 
           # Get latest CICD labeling event time from the last 100 events
@@ -39,7 +41,7 @@ jobs:
                   }
                 }
               }
-            }' -f owner=${{ github.repository_owner }} -f repo=${{ github.event.repository.name }} -F pr=${{ github.event.pull_request.number }} \
+            }' -f owner=${{ github.repository_owner }} -f repo=${GITHUB_EVENT_REPOSITORY_NAME} -F pr=${{ github.event.pull_request.number }} \
             --jq '.data.repository.pullRequest.timelineItems.nodes | map(select(.label.name == "CICD")) | last | .createdAt')
           echo "Label time: $LABEL_TIME"
 
@@ -56,6 +58,8 @@ jobs:
           fi
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_EVENT_PULL_REQUEST_UPDATED_AT: ${{ github.event.pull_request.updated_at }}
+          GITHUB_EVENT_REPOSITORY_NAME: ${{ github.event.repository.name }}
 
       - name: Remove outdated CICD label
         if: steps.check_timing.outputs.should_remove == 'true'
