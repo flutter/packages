@@ -76,6 +76,7 @@ jobs:
 
     - name: run release
       run: |
+        gh auth setup-git
         git config --global user.name "${{ secrets.USER_NAME }}"
         git config --global user.email "${{ secrets.USER_EMAIL }}"
         
@@ -91,4 +92,7 @@ jobs:
           --base-sha=HEAD~ \
           --skip-confirmation \
           --remote=origin
-      env: { PUB_CREDENTIALS: "${{ secrets.PUB_CREDENTIALS }}", INPUTS_BRANCH_NAME: "${{ inputs.branch-name }}" }
+      env:
+        PUB_CREDENTIALS: "${{ secrets.PUB_CREDENTIALS }}"
+        INPUTS_BRANCH_NAME: "${{ inputs.branch-name }}"
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

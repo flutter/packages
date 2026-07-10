@@ -22,8 +22,9 @@ jobs:
 
       - name: Create Pull Request
         env:
-          GITHUB_TOKEN: ${{ secrets.FLUTTERGITHUBBOT_TOKEN }}
+          GH_TOKEN: ${{ secrets.FLUTTERGITHUBBOT_TOKEN }}
         run: |
+          gh auth setup-git
           # 1. Fetch main so the runner can see the difference
           git fetch origin main
 
