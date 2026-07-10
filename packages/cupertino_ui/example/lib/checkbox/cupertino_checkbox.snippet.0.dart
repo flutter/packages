@@ -21,6 +21,8 @@ class CupertinoCheckboxExample extends StatelessWidget {
     // #region body
     CupertinoCheckbox(
       value: _value,
+      // If `onChanged` is null, this checkbox is disabled.
+      // If `onChanged` is not null, this checkbox is enabled.
       onChanged: _nullableOnChanged,
       fillColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
         if (states.contains(WidgetState.disabled)) {
