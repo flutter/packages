@@ -50,12 +50,13 @@
 
 import 'dart:io';
 
+import 'package:l10n/gen_cupertino_localizations.dart';
+import 'package:l10n/gen_material_localizations.dart';
+import 'package:l10n/localizations_utils.dart';
+import 'package:l10n/localizations_validator.dart';
+
 import 'package:path/path.dart' as path;
 
-import '../gen_cupertino_localizations.dart';
-import '../gen_material_localizations.dart';
-import '../localizations_utils.dart';
-import '../localizations_validator.dart';
 import 'encode_kn_arb_files.dart';
 
 /// This is the core of this script; it generates the code used for translations.

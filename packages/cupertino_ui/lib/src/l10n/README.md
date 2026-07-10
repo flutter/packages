@@ -194,7 +194,7 @@ you've added a new widget and it has a tooltip), follow these steps:
    Then you need to add new entries for the string to all of the other
    language locale files by running:
    ```
-   dart packages/material_ui/script/l10n/bin/gen_missing_localizations.dart
+   dart script/l10n/bin/gen_missing_localizations.dart
    ```
    Which will copy the English strings into the other locales as placeholders
    until they can be translated.
@@ -202,14 +202,14 @@ you've added a new widget and it has a tooltip), follow these steps:
    Finally you need to re-generate
    lib/src/l10n/generated_cupertino_localizations.dart by running:
    ```
-   dart packages/material_ui/script/l10n/bin/gen_localizations.dart --overwrite
+   dart script/l10n/bin/gen_localizations.dart --overwrite
    ```
 
    If you got an error when running this command, [this issue](https://github.com/flutter/flutter/issues/104601) might be helpful.
 
    TL;DR: If you got the same type of errors as discussed in the issue, run this instead:
    ```
-   dart packages/material_ui/script/l10n/bin/gen_localizations.dart --overwrite --remove-undefined
+   dart script/l10n/bin/gen_localizations.dart --overwrite --remove-undefined
    ```
 
 5. If you are a Google employee, you should then also follow the instructions
@@ -228,7 +228,7 @@ existing string in the CupertinoLocalizations objects, follow these steps:
 
    You also need to re-generate `lib/src/l10n/generated_material_localizations.dart` by running:
    ```
-   dart packages/material_ui/script/l10n/bin/gen_localizations.dart --overwrite
+   dart script/l10n/bin/gen_localizations.dart --overwrite
    ```
 
    This script may result in your updated getters being created in newer
@@ -247,13 +247,13 @@ using the gen_localizations script.
 You can see what that script would generate by running:
 
 ```dart
-dart packages/material_ui/script/l10n/bin/gen_localizations.dart
+dart script/l10n/bin/gen_localizations.dart
 ```
 
 Actually update the generated files with:
 
 ```dart
-dart packages/material_ui/script/l10n/bin/gen_localizations.dart --overwrite
+dart script/l10n/bin/gen_localizations.dart --overwrite
 ```
 
 The gen_localizations script just combines the contents of all of the
@@ -277,9 +277,9 @@ https://github.com/flutter/flutter/issues/36704.
 Rather than risking developers' editor sessions, the strings in these arb files
 (and the code generated for them) have been encoded using the appropriate
 escapes for JSON and Dart. The JSON format arb files were rewritten with
-packages/material_ui/script/l10n/bin/encode_kn_arb_files.dart. The localizations code
+script/l10n/bin/encode_kn_arb_files.dart. The localizations code
 generator uses generateEncodedString()
-from packages/material_ui/script/l10n/localizations_utils.dart.
+from script/l10n/lib//localizations_utils.dart.
 
 ### Translations Status, Reporting Errors
 
