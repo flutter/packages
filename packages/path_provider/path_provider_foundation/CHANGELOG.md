@@ -1,3 +1,7 @@
+## 2.6.1
+
+* Migrate the iOS example to UIScene
+
 ## 2.6.0
 
 * Re-release: replaces Flutter-plugin-based implementation with direct
