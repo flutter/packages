@@ -814,6 +814,7 @@ class AllClassesWrapper {
     this.nullableClassList,
     required this.classMap,
     this.nullableClassMap,
+    this.anEmptyClass,
   });
 
   AllNullableTypes allNullableTypes;
@@ -830,6 +831,8 @@ class AllClassesWrapper {
 
   Map<int?, AllNullableTypesWithoutRecursion?>? nullableClassMap;
 
+  AnEmptyClass? anEmptyClass;
+
   List<Object?> _toList() {
     return <Object?>[
       allNullableTypes,
@@ -839,6 +842,7 @@ class AllClassesWrapper {
       nullableClassList,
       classMap,
       nullableClassMap,
+      anEmptyClass,
     ];
   }
 
@@ -857,6 +861,7 @@ class AllClassesWrapper {
       classMap: (result[5]! as Map<Object?, Object?>).cast<int?, AllTypes?>(),
       nullableClassMap: (result[6] as Map<Object?, Object?>?)
           ?.cast<int?, AllNullableTypesWithoutRecursion?>(),
+      anEmptyClass: result[7] as AnEmptyClass?,
     );
   }
 
@@ -875,7 +880,8 @@ class AllClassesWrapper {
         _deepEquals(classList, other.classList) &&
         _deepEquals(nullableClassList, other.nullableClassList) &&
         _deepEquals(classMap, other.classMap) &&
-        _deepEquals(nullableClassMap, other.nullableClassMap);
+        _deepEquals(nullableClassMap, other.nullableClassMap) &&
+        _deepEquals(anEmptyClass, other.anEmptyClass);
   }
 
   @override
@@ -884,7 +890,7 @@ class AllClassesWrapper {
 
   @override
   String toString() {
-    return 'AllClassesWrapper(allNullableTypes: $allNullableTypes, allNullableTypesWithoutRecursion: $allNullableTypesWithoutRecursion, allTypes: $allTypes, classList: $classList, nullableClassList: $nullableClassList, classMap: $classMap, nullableClassMap: $nullableClassMap)';
+    return 'AllClassesWrapper(allNullableTypes: $allNullableTypes, allNullableTypesWithoutRecursion: $allNullableTypesWithoutRecursion, allTypes: $allTypes, classList: $classList, nullableClassList: $nullableClassList, classMap: $classMap, nullableClassMap: $nullableClassMap, anEmptyClass: $anEmptyClass)';
   }
 }
 
@@ -929,6 +935,40 @@ class TestMessage {
   }
 }
 
+class AnEmptyClass {
+  AnEmptyClass();
+  List<Object?> _toList() {
+    return <Object?>[];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static AnEmptyClass decode(Object result) {
+    result as List<Object?>;
+    return AnEmptyClass();
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! AnEmptyClass || other.runtimeType != runtimeType) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'AnEmptyClass()';
+  }
+}
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -960,6 +1000,9 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is TestMessage) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
+    } else if (value is AnEmptyClass) {
+      buffer.putUint8(137);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -986,6 +1029,8 @@ class _PigeonCodec extends StandardMessageCodec {
         return AllClassesWrapper.decode(readValue(buffer)!);
       case 136:
         return TestMessage.decode(readValue(buffer)!);
+      case 137:
+        return AnEmptyClass.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }

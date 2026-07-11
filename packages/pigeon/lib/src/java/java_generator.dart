@@ -349,7 +349,11 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
       final Iterable<String> checks = classDefinition.fields.map((NamedType field) {
         return 'pigeonDeepEquals(${field.name}, that.${field.name})';
       });
-      indent.writeln('return ${checks.join(' && ')};');
+      if (checks.isEmpty) {
+        indent.writeln('return true;');
+      } else {
+        indent.writeln('return ${checks.join(' && ')};');
+      }
     });
     indent.newln();
 

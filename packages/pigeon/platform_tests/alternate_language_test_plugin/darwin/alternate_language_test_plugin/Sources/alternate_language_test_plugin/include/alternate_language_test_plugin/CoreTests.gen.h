@@ -44,6 +44,7 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @class FLTAllNullableTypesWithoutRecursion;
 @class FLTAllClassesWrapper;
 @class FLTTestMessage;
+@class FLTAnEmptyClass;
 
 @interface FLTUnusedClass : NSObject
 + (instancetype)makeWithAField:(nullable id)aField;
@@ -263,7 +264,8 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
                             classMap:(NSDictionary<NSNumber *, FLTAllTypes *> *)classMap
                     nullableClassMap:
                         (nullable NSDictionary<NSNumber *, FLTAllNullableTypesWithoutRecursion *> *)
-                            nullableClassMap;
+                            nullableClassMap
+                        anEmptyClass:(nullable FLTAnEmptyClass *)anEmptyClass;
 @property(nonatomic, strong) FLTAllNullableTypes *allNullableTypes;
 @property(nonatomic, strong, nullable)
     FLTAllNullableTypesWithoutRecursion *allNullableTypesWithoutRecursion;
@@ -274,12 +276,16 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @property(nonatomic, copy) NSDictionary<NSNumber *, FLTAllTypes *> *classMap;
 @property(nonatomic, copy, nullable)
     NSDictionary<NSNumber *, FLTAllNullableTypesWithoutRecursion *> *nullableClassMap;
+@property(nonatomic, strong, nullable) FLTAnEmptyClass *anEmptyClass;
 @end
 
 /// A data class containing a List, used in unit tests.
 @interface FLTTestMessage : NSObject
 + (instancetype)makeWithTestList:(nullable NSArray<id> *)testList;
 @property(nonatomic, copy, nullable) NSArray<id> *testList;
+@end
+
+@interface FLTAnEmptyClass : NSObject
 @end
 
 /// The codec used by all APIs.

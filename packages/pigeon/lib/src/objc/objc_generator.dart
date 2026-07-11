@@ -519,7 +519,9 @@ class ObjcSourceGenerator extends StructuredGenerator<InternalObjcOptions> {
     final String className = _className(generatorOptions.prefix, classDefinition.name);
 
     indent.writeln('@implementation $className');
-    _writeObjcSourceClassInitializer(generatorOptions, root, indent, classDefinition, className);
+    if (classDefinition.fields.isNotEmpty) {
+      _writeObjcSourceClassInitializer(generatorOptions, root, indent, classDefinition, className);
+    }
     writeClassDecode(
       generatorOptions,
       root,
@@ -1900,10 +1902,8 @@ void _writeDataClassDeclaration(
   addDocumentationComments(indent, classDefinition.documentationComments, _docCommentSpec);
 
   indent.writeln('@interface ${_className(prefix, classDefinition.name)} : NSObject');
-  if (getFieldsInSerializationOrder(classDefinition).isNotEmpty) {
-    if (getFieldsInSerializationOrder(
-      classDefinition,
-    ).map((NamedType e) => !e.type.isNullable).any((bool e) => e)) {
+  if (classDefinition.fields.isNotEmpty) {
+    if (classDefinition.fields.any((NamedType e) => !e.type.isNullable)) {
       indent.writeln(
         '$_docCommentPrefix `init` unavailable to enforce nonnull fields, see the `make` class method.',
       );

@@ -3933,6 +3933,7 @@ struct _CoreTestsPigeonTestAllClassesWrapper {
   FlValue* nullable_class_list;
   FlValue* class_map;
   FlValue* nullable_class_map;
+  CoreTestsPigeonTestAnEmptyClass* an_empty_class;
 };
 
 G_DEFINE_TYPE(CoreTestsPigeonTestAllClassesWrapper,
@@ -3949,6 +3950,7 @@ static void core_tests_pigeon_test_all_classes_wrapper_dispose(
   g_clear_pointer(&self->nullable_class_list, fl_value_unref);
   g_clear_pointer(&self->class_map, fl_value_unref);
   g_clear_pointer(&self->nullable_class_map, fl_value_unref);
+  g_clear_object(&self->an_empty_class);
   G_OBJECT_CLASS(core_tests_pigeon_test_all_classes_wrapper_parent_class)
       ->dispose(object);
 }
@@ -3969,7 +3971,8 @@ core_tests_pigeon_test_all_classes_wrapper_new(
         all_nullable_types_without_recursion,
     CoreTestsPigeonTestAllTypes* all_types, FlValue* class_list,
     FlValue* nullable_class_list, FlValue* class_map,
-    FlValue* nullable_class_map) {
+    FlValue* nullable_class_map,
+    CoreTestsPigeonTestAnEmptyClass* an_empty_class) {
   CoreTestsPigeonTestAllClassesWrapper* self =
       CORE_TESTS_PIGEON_TEST_ALL_CLASSES_WRAPPER(g_object_new(
           core_tests_pigeon_test_all_classes_wrapper_get_type(), nullptr));
@@ -3998,6 +4001,12 @@ core_tests_pigeon_test_all_classes_wrapper_new(
     self->nullable_class_map = fl_value_ref(nullable_class_map);
   } else {
     self->nullable_class_map = nullptr;
+  }
+  if (an_empty_class != nullptr) {
+    self->an_empty_class =
+        CORE_TESTS_PIGEON_TEST_AN_EMPTY_CLASS(g_object_ref(an_empty_class));
+  } else {
+    self->an_empty_class = nullptr;
   }
   return self;
 }
@@ -4054,6 +4063,14 @@ FlValue* core_tests_pigeon_test_all_classes_wrapper_get_nullable_class_map(
   return self->nullable_class_map;
 }
 
+CoreTestsPigeonTestAnEmptyClass*
+core_tests_pigeon_test_all_classes_wrapper_get_an_empty_class(
+    CoreTestsPigeonTestAllClassesWrapper* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_CLASSES_WRAPPER(self),
+                       nullptr);
+  return self->an_empty_class;
+}
+
 static FlValue* core_tests_pigeon_test_all_classes_wrapper_to_list(
     CoreTestsPigeonTestAllClassesWrapper* self) {
   FlValue* values = fl_value_new_list();
@@ -4082,6 +4099,12 @@ static FlValue* core_tests_pigeon_test_all_classes_wrapper_to_list(
   fl_value_append_take(values, self->nullable_class_map != nullptr
                                    ? fl_value_ref(self->nullable_class_map)
                                    : fl_value_new_null());
+  fl_value_append_take(values,
+                       self->an_empty_class != nullptr
+                           ? fl_value_new_custom_object(
+                                 core_tests_pigeon_test_an_empty_class_type_id,
+                                 G_OBJECT(self->an_empty_class))
+                           : fl_value_new_null());
   return values;
 }
 
@@ -4119,9 +4142,16 @@ core_tests_pigeon_test_all_classes_wrapper_new_from_list(FlValue* values) {
   if (fl_value_get_type(value6) != FL_VALUE_TYPE_NULL) {
     nullable_class_map = value6;
   }
+  FlValue* value7 = fl_value_get_list_value(values, 7);
+  CoreTestsPigeonTestAnEmptyClass* an_empty_class = nullptr;
+  if (fl_value_get_type(value7) != FL_VALUE_TYPE_NULL) {
+    an_empty_class = CORE_TESTS_PIGEON_TEST_AN_EMPTY_CLASS(
+        fl_value_get_custom_value_object(value7));
+  }
   return core_tests_pigeon_test_all_classes_wrapper_new(
       all_nullable_types, all_nullable_types_without_recursion, all_types,
-      class_list, nullable_class_list, class_map, nullable_class_map);
+      class_list, nullable_class_list, class_map, nullable_class_map,
+      an_empty_class);
 }
 
 gboolean core_tests_pigeon_test_all_classes_wrapper_equals(
@@ -4157,6 +4187,10 @@ gboolean core_tests_pigeon_test_all_classes_wrapper_equals(
   if (!flpigeon_deep_equals(a->nullable_class_map, b->nullable_class_map)) {
     return FALSE;
   }
+  if (!core_tests_pigeon_test_an_empty_class_equals(a->an_empty_class,
+                                                    b->an_empty_class)) {
+    return FALSE;
+  }
   return TRUE;
 }
 
@@ -4174,6 +4208,8 @@ guint core_tests_pigeon_test_all_classes_wrapper_hash(
   result = result * 31 + flpigeon_deep_hash(self->nullable_class_list);
   result = result * 31 + flpigeon_deep_hash(self->class_map);
   result = result * 31 + flpigeon_deep_hash(self->nullable_class_map);
+  result = result * 31 +
+           core_tests_pigeon_test_an_empty_class_hash(self->an_empty_class);
   return result;
 }
 
@@ -4239,6 +4275,15 @@ gchar* core_tests_pigeon_test_all_classes_wrapper_to_string(
     gchar* val_str = flpigeon_to_string(self->nullable_class_map);
     g_string_append(str, val_str);
     g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
+  g_string_append(str, ", an_empty_class: ");
+  if (self->an_empty_class != nullptr) {
+    gchar* field_str =
+        core_tests_pigeon_test_an_empty_class_to_string(self->an_empty_class);
+    g_string_append(str, field_str);
+    g_free(field_str);
   } else {
     g_string_append(str, "null");
   }
@@ -4346,6 +4391,70 @@ gchar* core_tests_pigeon_test_test_message_to_string(
   return g_string_free(str, FALSE);
 }
 
+struct _CoreTestsPigeonTestAnEmptyClass {
+  GObject parent_instance;
+};
+
+G_DEFINE_TYPE(CoreTestsPigeonTestAnEmptyClass,
+              core_tests_pigeon_test_an_empty_class, G_TYPE_OBJECT)
+
+static void core_tests_pigeon_test_an_empty_class_dispose(GObject* object) {
+  G_OBJECT_CLASS(core_tests_pigeon_test_an_empty_class_parent_class)
+      ->dispose(object);
+}
+
+static void core_tests_pigeon_test_an_empty_class_init(
+    CoreTestsPigeonTestAnEmptyClass* self) {}
+
+static void core_tests_pigeon_test_an_empty_class_class_init(
+    CoreTestsPigeonTestAnEmptyClassClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_an_empty_class_dispose;
+}
+
+CoreTestsPigeonTestAnEmptyClass* core_tests_pigeon_test_an_empty_class_new() {
+  CoreTestsPigeonTestAnEmptyClass* self = CORE_TESTS_PIGEON_TEST_AN_EMPTY_CLASS(
+      g_object_new(core_tests_pigeon_test_an_empty_class_get_type(), nullptr));
+  return self;
+}
+
+static FlValue* core_tests_pigeon_test_an_empty_class_to_list(
+    CoreTestsPigeonTestAnEmptyClass* self) {
+  FlValue* values = fl_value_new_list();
+  return values;
+}
+
+static CoreTestsPigeonTestAnEmptyClass*
+core_tests_pigeon_test_an_empty_class_new_from_list(FlValue* values) {
+  return core_tests_pigeon_test_an_empty_class_new();
+}
+
+gboolean core_tests_pigeon_test_an_empty_class_equals(
+    CoreTestsPigeonTestAnEmptyClass* a, CoreTestsPigeonTestAnEmptyClass* b) {
+  if (a == b) {
+    return TRUE;
+  }
+  if (a == nullptr || b == nullptr) {
+    return FALSE;
+  }
+  return TRUE;
+}
+
+guint core_tests_pigeon_test_an_empty_class_hash(
+    CoreTestsPigeonTestAnEmptyClass* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_AN_EMPTY_CLASS(self), 0);
+  guint result = 0;
+  return result;
+}
+
+gchar* core_tests_pigeon_test_an_empty_class_to_string(
+    CoreTestsPigeonTestAnEmptyClass* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_AN_EMPTY_CLASS(self), NULL);
+  GString* str = g_string_new("AnEmptyClass(");
+  g_string_append(str, ")");
+  return g_string_free(str, FALSE);
+}
+
 struct _CoreTestsPigeonTestMessageCodec {
   FlStandardMessageCodec parent_instance;
 };
@@ -4363,6 +4472,7 @@ const int core_tests_pigeon_test_all_nullable_types_without_recursion_type_id =
     134;
 const int core_tests_pigeon_test_all_classes_wrapper_type_id = 135;
 const int core_tests_pigeon_test_test_message_type_id = 136;
+const int core_tests_pigeon_test_an_empty_class_type_id = 137;
 
 static gboolean
 core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_an_enum(
@@ -4450,6 +4560,17 @@ core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_test_message(
   return fl_standard_message_codec_write_value(codec, buffer, values, error);
 }
 
+static gboolean
+core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_an_empty_class(
+    FlStandardMessageCodec* codec, GByteArray* buffer,
+    CoreTestsPigeonTestAnEmptyClass* value, GError** error) {
+  uint8_t type = core_tests_pigeon_test_an_empty_class_type_id;
+  g_byte_array_append(buffer, &type, sizeof(uint8_t));
+  g_autoptr(FlValue) values =
+      core_tests_pigeon_test_an_empty_class_to_list(value);
+  return fl_standard_message_codec_write_value(codec, buffer, values, error);
+}
+
 static gboolean core_tests_pigeon_test_message_codec_write_value(
     FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
     GError** error) {
@@ -4501,6 +4622,12 @@ static gboolean core_tests_pigeon_test_message_codec_write_value(
         return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_test_message(
             codec, buffer,
             CORE_TESTS_PIGEON_TEST_TEST_MESSAGE(
+                fl_value_get_custom_value_object(value)),
+            error);
+      case core_tests_pigeon_test_an_empty_class_type_id:
+        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_an_empty_class(
+            codec, buffer,
+            CORE_TESTS_PIGEON_TEST_AN_EMPTY_CLASS(
                 fl_value_get_custom_value_object(value)),
             error);
     }
@@ -4665,6 +4792,28 @@ core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_test_message(
                                     G_OBJECT(value));
 }
 
+static FlValue*
+core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_an_empty_class(
+    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
+    GError** error) {
+  g_autoptr(FlValue) values =
+      fl_standard_message_codec_read_value(codec, buffer, offset, error);
+  if (values == nullptr) {
+    return nullptr;
+  }
+
+  g_autoptr(CoreTestsPigeonTestAnEmptyClass) value =
+      core_tests_pigeon_test_an_empty_class_new_from_list(values);
+  if (value == nullptr) {
+    g_set_error(error, FL_MESSAGE_CODEC_ERROR, FL_MESSAGE_CODEC_ERROR_FAILED,
+                "Invalid data received for MessageData");
+    return nullptr;
+  }
+
+  return fl_value_new_custom_object(
+      core_tests_pigeon_test_an_empty_class_type_id, G_OBJECT(value));
+}
+
 static FlValue* core_tests_pigeon_test_message_codec_read_value_of_type(
     FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset, int type,
     GError** error) {
@@ -4692,6 +4841,9 @@ static FlValue* core_tests_pigeon_test_message_codec_read_value_of_type(
           codec, buffer, offset, error);
     case core_tests_pigeon_test_test_message_type_id:
       return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_test_message(
+          codec, buffer, offset, error);
+    case core_tests_pigeon_test_an_empty_class_type_id:
+      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_an_empty_class(
           codec, buffer, offset, error);
     default:
       return FL_STANDARD_MESSAGE_CODEC_CLASS(

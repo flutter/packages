@@ -2890,7 +2890,8 @@ AllClassesWrapper::AllClassesWrapper(const AllNullableTypes& all_nullable_types,
                                      const EncodableList& class_list,
                                      const EncodableList* nullable_class_list,
                                      const EncodableMap& class_map,
-                                     const EncodableMap* nullable_class_map)
+                                     const EncodableMap* nullable_class_map,
+                                     const AnEmptyClass* an_empty_class)
     : all_nullable_types_(
           std::make_unique<AllNullableTypes>(all_nullable_types)),
       all_nullable_types_without_recursion_(
@@ -2906,7 +2907,10 @@ AllClassesWrapper::AllClassesWrapper(const AllNullableTypes& all_nullable_types,
       class_map_(class_map),
       nullable_class_map_(nullable_class_map
                               ? std::optional<EncodableMap>(*nullable_class_map)
-                              : std::nullopt) {}
+                              : std::nullopt),
+      an_empty_class_(an_empty_class
+                          ? std::make_unique<AnEmptyClass>(*an_empty_class)
+                          : nullptr) {}
 
 AllClassesWrapper::AllClassesWrapper(const AllClassesWrapper& other)
     : all_nullable_types_(
@@ -2928,7 +2932,10 @@ AllClassesWrapper::AllClassesWrapper(const AllClassesWrapper& other)
       nullable_class_map_(
           other.nullable_class_map_
               ? std::optional<EncodableMap>(*other.nullable_class_map_)
-              : std::nullopt) {}
+              : std::nullopt),
+      an_empty_class_(other.an_empty_class_ ? std::make_unique<AnEmptyClass>(
+                                                  *other.an_empty_class_)
+                                            : nullptr) {}
 
 AllClassesWrapper& AllClassesWrapper::operator=(
     const AllClassesWrapper& other) {
@@ -2945,6 +2952,9 @@ AllClassesWrapper& AllClassesWrapper::operator=(
   nullable_class_list_ = other.nullable_class_list_;
   class_map_ = other.class_map_;
   nullable_class_map_ = other.nullable_class_map_;
+  an_empty_class_ = other.an_empty_class_
+                        ? std::make_unique<AnEmptyClass>(*other.an_empty_class_)
+                        : nullptr;
   return *this;
 }
 
@@ -3029,9 +3039,22 @@ void AllClassesWrapper::set_nullable_class_map(const EncodableMap& value_arg) {
   nullable_class_map_ = value_arg;
 }
 
+const AnEmptyClass* AllClassesWrapper::an_empty_class() const {
+  return an_empty_class_.get();
+}
+
+void AllClassesWrapper::set_an_empty_class(const AnEmptyClass* value_arg) {
+  an_empty_class_ =
+      value_arg ? std::make_unique<AnEmptyClass>(*value_arg) : nullptr;
+}
+
+void AllClassesWrapper::set_an_empty_class(const AnEmptyClass& value_arg) {
+  an_empty_class_ = std::make_unique<AnEmptyClass>(value_arg);
+}
+
 EncodableList AllClassesWrapper::ToEncodableList() const {
   EncodableList list;
-  list.reserve(7);
+  list.reserve(8);
   list.push_back(CustomEncodableValue(*all_nullable_types_));
   list.push_back(
       all_nullable_types_without_recursion_
@@ -3045,6 +3068,8 @@ EncodableList AllClassesWrapper::ToEncodableList() const {
   list.push_back(EncodableValue(class_map_));
   list.push_back(nullable_class_map_ ? EncodableValue(*nullable_class_map_)
                                      : EncodableValue());
+  list.push_back(an_empty_class_ ? CustomEncodableValue(*an_empty_class_)
+                                 : EncodableValue());
   return list;
 }
 
@@ -3076,6 +3101,11 @@ AllClassesWrapper AllClassesWrapper::FromEncodableList(
     decoded.set_nullable_class_map(
         std::get<EncodableMap>(encodable_nullable_class_map));
   }
+  auto& encodable_an_empty_class = list[7];
+  if (!encodable_an_empty_class.IsNull()) {
+    decoded.set_an_empty_class(std::any_cast<const AnEmptyClass&>(
+        std::get<CustomEncodableValue>(encodable_an_empty_class)));
+  }
   return decoded;
 }
 
@@ -3091,7 +3121,8 @@ bool AllClassesWrapper::operator==(const AllClassesWrapper& other) const {
                                   other.nullable_class_list_) &&
          PigeonInternalDeepEquals(class_map_, other.class_map_) &&
          PigeonInternalDeepEquals(nullable_class_map_,
-                                  other.nullable_class_map_);
+                                  other.nullable_class_map_) &&
+         PigeonInternalDeepEquals(an_empty_class_, other.an_empty_class_);
 }
 
 bool AllClassesWrapper::operator!=(const AllClassesWrapper& other) const {
@@ -3108,6 +3139,7 @@ size_t AllClassesWrapper::Hash() const {
   result = result * 31 + PigeonInternalDeepHash(nullable_class_list_);
   result = result * 31 + PigeonInternalDeepHash(class_map_);
   result = result * 31 + PigeonInternalDeepHash(nullable_class_map_);
+  result = result * 31 + PigeonInternalDeepHash(an_empty_class_);
   return result;
 }
 
@@ -3140,6 +3172,12 @@ std::ostream& operator<<(std::ostream& os, const AllClassesWrapper& obj) {
   os << ", nullable_class_map: ";
   if (obj.nullable_class_map_) {
     os << PigeonInternalToString(*obj.nullable_class_map_);
+  } else {
+    os << "null";
+  }
+  os << ", an_empty_class: ";
+  if (obj.an_empty_class_) {
+    os << *obj.an_empty_class_;
   } else {
     os << "null";
   }
@@ -3214,6 +3252,40 @@ std::ostream& operator<<(std::ostream& os, const TestMessage& obj) {
 
 size_t PigeonInternalDeepHash(const TestMessage& v) { return v.Hash(); }
 
+// AnEmptyClass
+
+AnEmptyClass::AnEmptyClass() {}
+
+EncodableList AnEmptyClass::ToEncodableList() const {
+  EncodableList list;
+  list.reserve(0);
+  return list;
+}
+
+AnEmptyClass AnEmptyClass::FromEncodableList(const EncodableList& list) {
+  AnEmptyClass decoded;
+  return decoded;
+}
+
+bool AnEmptyClass::operator==(const AnEmptyClass& other) const { return true; }
+
+bool AnEmptyClass::operator!=(const AnEmptyClass& other) const {
+  return !(*this == other);
+}
+
+size_t AnEmptyClass::Hash() const {
+  size_t result = 1;
+  return result;
+}
+
+std::ostream& operator<<(std::ostream& os, const AnEmptyClass& obj) {
+  os << "AnEmptyClass(";
+  os << ")";
+  return os;
+}
+
+size_t PigeonInternalDeepHash(const AnEmptyClass& v) { return v.Hash(); }
+
 PigeonInternalCodecSerializer::PigeonInternalCodecSerializer() {}
 
 EncodableValue PigeonInternalCodecSerializer::ReadValueOfType(
@@ -3259,6 +3331,10 @@ EncodableValue PigeonInternalCodecSerializer::ReadValueOfType(
     }
     case 136: {
       return CustomEncodableValue(TestMessage::FromEncodableList(
+          std::get<EncodableList>(ReadValue(stream))));
+    }
+    case 137: {
+      return CustomEncodableValue(AnEmptyClass::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
     }
     default:
@@ -3327,6 +3403,14 @@ void PigeonInternalCodecSerializer::WriteValue(
       WriteValue(
           EncodableValue(
               std::any_cast<TestMessage>(*custom_value).ToEncodableList()),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AnEmptyClass)) {
+      stream->WriteByte(137);
+      WriteValue(
+          EncodableValue(
+              std::any_cast<AnEmptyClass>(*custom_value).ToEncodableList()),
           stream);
       return;
     }

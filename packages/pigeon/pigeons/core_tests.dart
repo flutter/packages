@@ -265,6 +265,7 @@ class AllClassesWrapper {
     this.classMap,
     this.nullableClassList,
     this.nullableClassMap,
+    this.anEmptyClass,
   );
   AllNullableTypes allNullableTypes;
   AllNullableTypesWithoutRecursion? allNullableTypesWithoutRecursion;
@@ -273,6 +274,7 @@ class AllClassesWrapper {
   List<AllNullableTypesWithoutRecursion?>? nullableClassList;
   Map<int?, AllTypes?> classMap;
   Map<int?, AllNullableTypesWithoutRecursion?>? nullableClassMap;
+  AnEmptyClass? anEmptyClass;
 }
 
 /// The core interface that each host language plugin must implement in
@@ -1465,3 +1467,5 @@ class TestMessage {
   // ignore: always_specify_types, strict_raw_type
   List? testList;
 }
+
+class AnEmptyClass {}

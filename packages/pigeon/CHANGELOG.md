@@ -1,3 +1,7 @@
+## 27.2.0
+
+* Adds support for empty data classes.
+
 ## 27.1.1
 
 * [dart] Adds usage documentation to generated event channel methods, and

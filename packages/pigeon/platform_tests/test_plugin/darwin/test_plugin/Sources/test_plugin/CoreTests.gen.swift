@@ -941,6 +941,7 @@ struct AllClassesWrapper: Hashable, CustomStringConvertible {
   var nullableClassList: [AllNullableTypesWithoutRecursion?]? = nil
   var classMap: [Int64?: AllTypes?]
   var nullableClassMap: [Int64?: AllNullableTypesWithoutRecursion?]? = nil
+  var anEmptyClass: AnEmptyClass? = nil
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> AllClassesWrapper? {
@@ -953,6 +954,7 @@ struct AllClassesWrapper: Hashable, CustomStringConvertible {
     let classMap = pigeonVar_list[5] as! [Int64?: AllTypes?]
     let nullableClassMap: [Int64?: AllNullableTypesWithoutRecursion?]? = nilOrValue(
       pigeonVar_list[6])
+    let anEmptyClass: AnEmptyClass? = nilOrValue(pigeonVar_list[7])
 
     return AllClassesWrapper(
       allNullableTypes: allNullableTypes,
@@ -961,7 +963,8 @@ struct AllClassesWrapper: Hashable, CustomStringConvertible {
       classList: classList,
       nullableClassList: nullableClassList,
       classMap: classMap,
-      nullableClassMap: nullableClassMap
+      nullableClassMap: nullableClassMap,
+      anEmptyClass: anEmptyClass
     )
   }
   func toList() -> [Any?] {
@@ -973,6 +976,7 @@ struct AllClassesWrapper: Hashable, CustomStringConvertible {
       nullableClassList,
       classMap,
       nullableClassMap,
+      anEmptyClass,
     ]
   }
   static func == (lhs: AllClassesWrapper, rhs: AllClassesWrapper) -> Bool {
@@ -987,6 +991,7 @@ struct AllClassesWrapper: Hashable, CustomStringConvertible {
       && CoreTestsPigeonInternal.deepEquals(lhs.nullableClassList, rhs.nullableClassList)
       && CoreTestsPigeonInternal.deepEquals(lhs.classMap, rhs.classMap)
       && CoreTestsPigeonInternal.deepEquals(lhs.nullableClassMap, rhs.nullableClassMap)
+      && CoreTestsPigeonInternal.deepEquals(lhs.anEmptyClass, rhs.anEmptyClass)
   }
 
   func hash(into hasher: inout Hasher) {
@@ -998,11 +1003,12 @@ struct AllClassesWrapper: Hashable, CustomStringConvertible {
     CoreTestsPigeonInternal.deepHash(value: nullableClassList, hasher: &hasher)
     CoreTestsPigeonInternal.deepHash(value: classMap, hasher: &hasher)
     CoreTestsPigeonInternal.deepHash(value: nullableClassMap, hasher: &hasher)
+    CoreTestsPigeonInternal.deepHash(value: anEmptyClass, hasher: &hasher)
   }
 
   public var description: String {
     return
-      "AllClassesWrapper(allNullableTypes: \(String(describing: allNullableTypes)), allNullableTypesWithoutRecursion: \(String(describing: allNullableTypesWithoutRecursion)), allTypes: \(String(describing: allTypes)), classList: \(String(describing: classList)), nullableClassList: \(String(describing: nullableClassList)), classMap: \(String(describing: classMap)), nullableClassMap: \(String(describing: nullableClassMap)))"
+      "AllClassesWrapper(allNullableTypes: \(String(describing: allNullableTypes)), allNullableTypesWithoutRecursion: \(String(describing: allNullableTypesWithoutRecursion)), allTypes: \(String(describing: allTypes)), classList: \(String(describing: classList)), nullableClassList: \(String(describing: nullableClassList)), classMap: \(String(describing: classMap)), nullableClassMap: \(String(describing: nullableClassMap)), anEmptyClass: \(String(describing: anEmptyClass)))"
   }
 }
 
@@ -1042,6 +1048,33 @@ struct TestMessage: Hashable, CustomStringConvertible {
   }
 }
 
+/// Generated class from Pigeon that represents data sent in messages.
+struct AnEmptyClass: Hashable, CustomStringConvertible {
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> AnEmptyClass? {
+
+    return AnEmptyClass()
+  }
+  func toList() -> [Any?] {
+    return []
+  }
+  static func == (lhs: AnEmptyClass, rhs: AnEmptyClass) -> Bool {
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
+    return true
+  }
+
+  func hash(into hasher: inout Hasher) {
+    hasher.combine("AnEmptyClass")
+  }
+
+  public var description: String {
+    return "AnEmptyClass()"
+  }
+}
+
 private class CoreTestsPigeonCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
@@ -1069,6 +1102,8 @@ private class CoreTestsPigeonCodecReader: FlutterStandardReader {
       return AllClassesWrapper.fromList(self.readValue() as! [Any?])
     case 136:
       return TestMessage.fromList(self.readValue() as! [Any?])
+    case 137:
+      return AnEmptyClass.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
     }
@@ -1100,6 +1135,9 @@ private class CoreTestsPigeonCodecWriter: FlutterStandardWriter {
       super.writeValue(value.toList())
     } else if let value = value as? TestMessage {
       super.writeByte(136)
+      super.writeValue(value.toList())
+    } else if let value = value as? AnEmptyClass {
+      super.writeByte(137)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
