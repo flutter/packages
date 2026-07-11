@@ -604,6 +604,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     final creationOptions = platform_interface.VideoCreationOptions(
       dataSource: dataSourceDescription,
       viewType: viewType,
+      videoPlayerOptions: videoPlayerOptions,
     );
 
     if (videoPlayerOptions?.mixWithOthers != null) {
