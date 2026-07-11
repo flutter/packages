@@ -1,3 +1,7 @@
+## 4.14.2
+
+* Migrate the iOS example to UIScene
+
 ## 4.14.1
 
 * Adds documentation for `NavigationDelegate` callback parameters.
