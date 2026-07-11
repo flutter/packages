@@ -1,3 +1,7 @@
+## 3.0.3
+
+* Migrate the iOS example to UIScene
+
 ## 3.0.2
 
 * Clarifies the `getAvailableBiometrics` documentation regarding iOS permission requirements.
