@@ -1,3 +1,7 @@
+## 3.3.1
+
+* Migrate the iOS example to UIScene
+
 ## 3.3.0
 
 * Updates `in_app_purchase_android` dependency to `^0.5.0`.
