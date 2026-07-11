@@ -63,8 +63,8 @@ enum _RadioType { material, adaptive }
 /// [RadioListTile] itself but by the [Material] widget ancestor. In this
 /// case, one can wrap a [Material] widget around the [RadioListTile], e.g.:
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -81,7 +81,7 @@ enum _RadioType { material, adaptive }
 /// )
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// ## Performance considerations when wrapping [RadioListTile] with [Material]
 ///
