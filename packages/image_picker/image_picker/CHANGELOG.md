@@ -1,3 +1,7 @@
+## 1.2.4
+
+* Migrate the iOS example to UIScene
+
 ## 1.2.3
 
 * Fixes `pickMultiImage(limit: 1)` and `pickMultipleMedia(limit: 1)` throwing an `ArgumentError` by delegating to
