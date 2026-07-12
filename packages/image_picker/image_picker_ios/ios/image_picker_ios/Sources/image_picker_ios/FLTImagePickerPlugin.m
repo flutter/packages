@@ -533,11 +533,14 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 
 - (void)imagePickerController:(UIImagePickerController *)picker
     didFinishPickingMediaWithInfo:(NSDictionary<NSString *, id> *)info {
+  FLTImagePickerMethodCallContext *context = self.callContext;
   __weak typeof(self) weakSelf = self;
   [picker dismissViewControllerAnimated:YES
                              completion:^{
                                [weakSelf removeInteractionBlocker];
-                               [weakSelf sendCallResultWithPickerInfo:info];
+                               if (weakSelf.callContext == context) {
+                                 [weakSelf sendCallResultWithPickerInfo:info];
+                               }
                              }];
 }
 
@@ -628,11 +631,14 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
+  FLTImagePickerMethodCallContext *context = self.callContext;
   __weak typeof(self) weakSelf = self;
   [picker dismissViewControllerAnimated:YES
                              completion:^{
                                [weakSelf removeInteractionBlocker];
-                               [weakSelf sendCallResultWithSavedPathList:nil];
+                               if (weakSelf.callContext == context) {
+                                 [weakSelf sendCallResultWithSavedPathList:nil];
+                               }
                              }];
 }
 
