@@ -279,15 +279,16 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     Task { [weak self] in
       guard let self = self else { return }
       do {
+        var restoredTransactions: [SK2TransactionMessage] = []
         var unverifiedPurchases: [UInt64: (receipt: String, error: Error?)] = [:]
         for await completedPurchase in Transaction.currentEntitlements {
           switch completedPurchase {
           case .verified(let purchase):
-            self.sendTransactionUpdate(
-              productId: purchase.productID,
-              transaction: purchase,
-              receipt: "\(completedPurchase.jwsRepresentation)",
-              status: .restored
+            restoredTransactions.append(
+              purchase.convertToPigeon(
+                receipt: "\(completedPurchase.jwsRepresentation)",
+                status: .restored
+              )
             )
           case .unverified(let failedPurchase, let error):
             unverifiedPurchases[failedPurchase.id] = (
@@ -303,7 +304,9 @@ extension InAppPurchasePlugin: InAppPurchase2API {
                 message:
                   "This purchase could not be restored.",
                 details: unverifiedPurchases)))
+          return
         }
+        self.sendTransactionUpdates(restoredTransactions)
         completion(.success(Void()))
       }
     }
@@ -473,8 +476,12 @@ extension InAppPurchasePlugin: InAppPurchase2API {
       )
     }
 
+    sendTransactionUpdates([transactionMessage])
+  }
+
+  private func sendTransactionUpdates(_ transactionMessages: [SK2TransactionMessage]) {
     Task { @MainActor in
-      self.transactionCallbackAPI?.onTransactionsUpdated(newTransactions: [transactionMessage]) {
+      self.transactionCallbackAPI?.onTransactionsUpdated(newTransactions: transactionMessages) {
         result in
         switch result {
         case .success: break
