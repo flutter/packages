@@ -498,3 +498,87 @@ class MockGroundOverlaysController extends _i1.Mock implements _i2.GroundOverlay
     returnValueForMissingStub: null,
   );
 }
+
+/// A class which mocks [MyLocationController].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockMyLocationController extends _i1.Mock implements _i2.MyLocationController {
+  @override
+  set myLocationButton(_i2.MyLocationButton? value) => super.noSuchMethod(
+    Invocation.setter(#myLocationButton, value),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  _i6.Future<void> displayAndWatchMyLocation(
+    _i2.MarkersController<Object?, Object>? markersController,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#displayAndWatchMyLocation, [markersController]),
+            returnValue: _i6.Future<void>.value(),
+            returnValueForMissingStub: _i6.Future<void>.value(),
+          )
+          as _i6.Future<void>);
+
+  @override
+  _i6.Future<void> centerMyCurrentLocation(_i2.GoogleMapController? controller) =>
+      (super.noSuchMethod(
+            Invocation.method(#centerMyCurrentLocation, [controller]),
+            returnValue: _i6.Future<void>.value(),
+            returnValueForMissingStub: _i6.Future<void>.value(),
+          )
+          as _i6.Future<void>);
+
+  @override
+  void addMyLocationButton(_i4.Map? map, _i2.GoogleMapController? controller) => super.noSuchMethod(
+    Invocation.method(#addMyLocationButton, [map, controller]),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void removeMyLocationButton(_i4.Map? map) => super.noSuchMethod(
+    Invocation.method(#removeMyLocationButton, [map]),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void removeBlueDot(_i2.MarkersController<Object?, Object?>? markersController) =>
+      super.noSuchMethod(
+        Invocation.method(#removeBlueDot, [markersController]),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void dispose() =>
+      super.noSuchMethod(Invocation.method(#dispose, []), returnValueForMissingStub: null);
+}
+
+/// A class which mocks [GeolocationApi].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockGeolocationApi extends _i1.Mock implements _i2.GeolocationApi {
+  @override
+  int watchPosition(void Function(double, double)? onSuccess, void Function(dynamic)? onError) =>
+      (super.noSuchMethod(
+            Invocation.method(#watchPosition, [onSuccess, onError]),
+            returnValue: 0,
+            returnValueForMissingStub: 0,
+          )
+          as int);
+
+  @override
+  void getCurrentPosition(
+    void Function(double, double)? onSuccess,
+    void Function(dynamic)? onError, {
+    int? timeoutMs = 30000,
+  }) => super.noSuchMethod(
+    Invocation.method(#getCurrentPosition, [onSuccess, onError], {#timeoutMs: timeoutMs}),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void clearWatch(int? watchId) => super.noSuchMethod(
+    Invocation.method(#clearWatch, [watchId]),
+    returnValueForMissingStub: null,
+  );
+}
