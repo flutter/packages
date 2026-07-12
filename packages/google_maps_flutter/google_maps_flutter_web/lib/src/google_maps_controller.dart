@@ -37,6 +37,7 @@ class GoogleMapController {
     _heatmapsController = HeatmapsController();
     _polygonsController = PolygonsController(stream: _streamController);
     _polylinesController = PolylinesController(stream: _streamController);
+    _myLocationController = MyLocationController(geolocationApi: WebGeolocationApi());
 
     // Check if all markers are of the same type. Mixing marker types is not
     // allowed.
@@ -170,6 +171,7 @@ class GoogleMapController {
   ClusterManagersController<Object?>? _clusterManagersController;
   TileOverlaysController? _tileOverlaysController;
   GroundOverlaysController? _groundOverlaysController;
+  MyLocationController? _myLocationController;
 
   StreamSubscription<void>? _onClickSubscription;
   StreamSubscription<void>? _onRightClickSubscription;
@@ -203,6 +205,7 @@ class GoogleMapController {
     ClusterManagersController<Object?>? clusterManagers,
     TileOverlaysController? tileOverlays,
     GroundOverlaysController? groundOverlays,
+    MyLocationController? myLocation,
   }) {
     _overrideCreateMap = createMap;
     _overrideSetOptions = setOptions;
@@ -214,6 +217,7 @@ class GoogleMapController {
     _clusterManagersController = clusterManagers ?? _clusterManagersController;
     _tileOverlaysController = tileOverlays ?? _tileOverlaysController;
     _groundOverlaysController = groundOverlays ?? _groundOverlaysController;
+    _myLocationController = myLocation ?? _myLocationController;
   }
 
   DebugCreateMapFunction? _overrideCreateMap;
@@ -276,6 +280,7 @@ class GoogleMapController {
     // Now attach the geometry, traffic and any other layers...
     _renderInitialGeometry();
     _setTrafficLayer(map, _lastMapConfiguration.trafficEnabled ?? false);
+    _renderMyLocation(map, _lastMapConfiguration);
   }
 
   // Funnels map gmap events into the plugin's stream controller.
@@ -430,6 +435,7 @@ class GoogleMapController {
 
     _setOptions(newOptions);
     _setTrafficLayer(_googleMap!, newConfiguration.trafficEnabled ?? false);
+    _renderMyLocation(_googleMap!, newConfiguration);
   }
 
   /// Updates the map options with a new list of [styles].
@@ -610,6 +616,25 @@ class GoogleMapController {
     _markersController?.hideMarkerInfoWindow(markerId);
   }
 
+  /// Render my location
+  Future<void> _renderMyLocation(gmaps.Map map, MapConfiguration mapConfiguration) async {
+    if (mapConfiguration.myLocationEnabled != true) {
+      _myLocationController?.removeMyLocationButton(map);
+      _myLocationController?.removeBlueDot(_markersController!);
+      return;
+    }
+
+    await _myLocationController?.displayAndWatchMyLocation(_markersController!);
+    await _myLocationController?.centerMyCurrentLocation(this);
+
+    if (mapConfiguration.myLocationButtonEnabled != true) {
+      _myLocationController?.removeMyLocationButton(map);
+      return;
+    }
+
+    _myLocationController?.addMyLocationButton(map, this);
+  }
+
   /// Returns true if the [InfoWindow] of the marker identified by [MarkerId] is shown.
   bool isInfoWindowShown(MarkerId markerId) {
     return _markersController?.isInfoWindowShown(markerId) ?? false;
@@ -648,6 +673,8 @@ class GoogleMapController {
     _onIdleSubscription?.cancel();
     _onIdleSubscription = null;
     _streamController.close();
+    _myLocationController?.dispose();
+    _myLocationController = null;
   }
 }
 
