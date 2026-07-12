@@ -12,6 +12,9 @@ import UIKit
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
+    let mapsApiKey = ProcessInfo.processInfo.environment["MAPS_API_KEY"] ?? "YOUR KEY HERE"
+    GMSServices.provideAPIKey(mapsApiKey)
+
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
