@@ -1,8 +1,12 @@
-## 2.12.0
+## 2.13.0 
 
 * Adds video quality selection support for HLS/DASH adaptive streams via
   `getVideoTracks()`, `selectVideoTrack()`, and
   `isVideoTrackSupportAvailable()` methods.
+
+## 2.12.0
+
+* Passes `backBufferDurationMs` from `VideoPlayerOptions` to the underlying platform interface.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 2.11.1

@@ -1,3 +1,7 @@
+## 4.14.1
+
+* Adds documentation for `NavigationDelegate` callback parameters.
+
 ## 4.14.0
 
 * Add method to retrieve cookies. See `WebViewCookieManager.getCookies`.

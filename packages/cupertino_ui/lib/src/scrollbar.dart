@@ -43,8 +43,7 @@ const double _kScrollbarCrossAxisMargin = 3.0;
 /// animate from [thickness] and [radius] to [thicknessWhileDragging] and
 /// [radiusWhileDragging], respectively.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample shows a [CupertinoScrollbar] that fades in and out of view as scrolling occurs.
 /// The scrollbar will fade into view as the user scrolls, and fade out when scrolling stops.
@@ -52,20 +51,27 @@ const double _kScrollbarCrossAxisMargin = 3.0;
 /// when it is dragged by the user. The `radius` of the scrollbar thumb corners will animate from 34
 /// to the `radiusWhileDragging` of 0 when the scrollbar is being dragged by the user.
 ///
-/// {@example /example/lib/scrollbar/cupertino_scrollbar.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
+/// {@example /example/lib/scrollbar/cupertino_scrollbar.0.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// When [thumbVisibility] is true, the scrollbar thumb will remain visible without the
 /// fade animation. This requires that a [ScrollController] is provided to controller,
 /// or that the [PrimaryScrollController] is available.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
 /// {@example /example/lib/scrollbar/cupertino_scrollbar.1.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// See also:
 ///

@@ -244,4 +244,17 @@ class MockVideoPlayerInstanceApi extends _i1.Mock implements _i3.VideoPlayerInst
             returnValueForMissingStub: _i5.Future<void>.value(),
           )
           as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setPreventsDisplaySleepDuringVideoPlayback(
+    bool? preventsDisplaySleepDuringVideoPlayback,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#setPreventsDisplaySleepDuringVideoPlayback, [
+              preventsDisplaySleepDuringVideoPlayback,
+            ]),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
 }

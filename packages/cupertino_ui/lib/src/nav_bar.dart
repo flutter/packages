@@ -330,27 +330,33 @@ bool _isTransitionable(BuildContext context) {
 /// this behavior, wrap each of the `navigationBar`'s components inside a
 /// [MediaQuery] with the desired [TextScaler].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows a [CupertinoNavigationBar] placed in a [CupertinoPageScaffold].
 /// Since [backgroundColor]'s opacity is not 1.0, there is a blur effect and
 /// content slides underneath.
 ///
-/// {@example /example/lib/nav_bar/cupertino_navigation_bar.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
+/// {@example /example/lib/nav_bar/cupertino_navigation_bar.0.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows the resulting layout from [CupertinoNavigationBar.large]
 /// constructor, showing a large title similar to the expanded state of
 /// [CupertinoSliverNavigationBar].
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
 /// {@example /example/lib/nav_bar/cupertino_navigation_bar.2.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -626,15 +632,18 @@ class CupertinoNavigationBar extends StatefulWidget implements ObstructingPrefer
   /// Only widgets that implement [PreferredSizeWidget] can be used at the
   /// bottom of a navigation bar.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This example shows a [CupertinoSearchTextField] at the bottom of a
   /// [CupertinoNavigationBar].
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro cupertino_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/nav_bar/cupertino_navigation_bar.1.dart}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -935,23 +944,29 @@ class _CupertinoNavigationBarState extends State<CupertinoNavigationBar> {
 /// user scrolls, but it will also stretch when the user over-scrolls if the
 /// [stretch] value is `true`. Defaults to `false`.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows [CupertinoSliverNavigationBar] in action inside a [CustomScrollView].
 ///
-/// {@example /example/lib/nav_bar/cupertino_sliver_nav_bar.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
+/// {@example /example/lib/nav_bar/cupertino_sliver_nav_bar.0.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// To add a widget to the bottom of the nav bar, wrap it with [PreferredSize] and provide its fully extended size.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
 /// {@example /example/lib/nav_bar/cupertino_sliver_nav_bar.2.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -1015,15 +1030,18 @@ class CupertinoSliverNavigationBar extends StatefulWidget {
   /// If [automaticallyImplyTitle] is false, then the [largeTitle] argument is
   /// required.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This example demonstrates how to use a
   /// [CupertinoSliverNavigationBar.search] to manage a search view.
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro cupertino_ui.dartpad_guide}
+  ///
   /// {@example /example/lib/nav_bar/cupertino_sliver_nav_bar.1.dart}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// </callout-box>
   const CupertinoSliverNavigationBar.search({
     super.key,
     required Widget this.searchField,
