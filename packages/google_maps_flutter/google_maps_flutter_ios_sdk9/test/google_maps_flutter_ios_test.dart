@@ -1311,6 +1311,109 @@ void main() {
       );
     });
   });
+
+  group('colorScheme in creationParams', () {
+    Future<PlatformMapColorScheme?> getColorSchemeFromCreationParams(
+      WidgetTester tester,
+      MapColorScheme? colorScheme,
+    ) async {
+      final passedColorSchemeCompleter = Completer<PlatformMapColorScheme?>();
+
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform_views,
+        (MethodCall methodCall) {
+          if (methodCall.method == 'create') {
+            final args = Map<String, dynamic>.from(methodCall.arguments as Map<dynamic, dynamic>);
+            if (args.containsKey('params')) {
+              final paramsUint8List = args['params'] as Uint8List;
+              final byteData = ByteData.sublistView(paramsUint8List);
+              final creationParams =
+                  MapsApi.pigeonChannelCodec.decodeMessage(byteData)
+                      as PlatformMapViewCreationParams?;
+              if (creationParams != null && !passedColorSchemeCompleter.isCompleted) {
+                passedColorSchemeCompleter.complete(creationParams.mapConfiguration.colorScheme);
+              }
+            }
+          }
+          return null;
+        },
+      );
+
+      final maps = GoogleMapsFlutterIOS();
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: maps.buildViewWithConfiguration(
+            1,
+            (int _) {},
+            widgetConfiguration: const MapWidgetConfiguration(
+              initialCameraPosition: CameraPosition(target: LatLng(0, 0), zoom: 1),
+              textDirection: TextDirection.ltr,
+            ),
+            mapConfiguration: MapConfiguration(colorScheme: colorScheme),
+          ),
+        ),
+      );
+
+      return passedColorSchemeCompleter.future;
+    }
+
+    testWidgets('passes light when MapColorScheme.light is set', (WidgetTester tester) async {
+      final PlatformMapColorScheme? passedColorScheme = await getColorSchemeFromCreationParams(
+        tester,
+        MapColorScheme.light,
+      );
+
+      expect(
+        passedColorScheme,
+        PlatformMapColorScheme.light,
+        reason: 'Should pass light on PlatformView creation when MapColorScheme.light is set',
+      );
+    });
+
+    testWidgets('passes dark when MapColorScheme.dark is set', (WidgetTester tester) async {
+      final PlatformMapColorScheme? passedColorScheme = await getColorSchemeFromCreationParams(
+        tester,
+        MapColorScheme.dark,
+      );
+
+      expect(
+        passedColorScheme,
+        PlatformMapColorScheme.dark,
+        reason: 'Should pass dark on PlatformView creation when MapColorScheme.dark is set',
+      );
+    });
+
+    testWidgets('passes followSystem when MapColorScheme.followSystem is set', (
+      WidgetTester tester,
+    ) async {
+      final PlatformMapColorScheme? passedColorScheme = await getColorSchemeFromCreationParams(
+        tester,
+        MapColorScheme.followSystem,
+      );
+
+      expect(
+        passedColorScheme,
+        PlatformMapColorScheme.followSystem,
+        reason:
+            'Should pass followSystem on PlatformView creation when MapColorScheme.followSystem is set',
+      );
+    });
+
+    testWidgets('passes null when colorScheme is null', (WidgetTester tester) async {
+      final PlatformMapColorScheme? passedColorScheme = await getColorSchemeFromCreationParams(
+        tester,
+        null,
+      );
+
+      expect(
+        passedColorScheme,
+        isNull,
+        reason: 'Should default to null on PlatformView creation when colorScheme is null',
+      );
+    });
+  });
 }
 
 void _expectColorsEqual(PlatformColor actual, Color expected) {

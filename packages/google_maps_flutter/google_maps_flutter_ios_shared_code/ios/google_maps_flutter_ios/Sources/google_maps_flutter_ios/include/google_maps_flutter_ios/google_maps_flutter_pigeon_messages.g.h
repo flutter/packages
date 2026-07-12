@@ -28,7 +28,7 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapType) {
 - (instancetype)initWithValue:(FGMPlatformMapType)value;
 @end
 
-/// Pigeon equivalent of MarkerCollisionBehavior.
+/// Pigeon equivalent of the MarkerCollisionBehavior enum.
 typedef NS_ENUM(NSUInteger, FGMPlatformMarkerCollisionBehavior) {
   FGMPlatformMarkerCollisionBehaviorRequiredDisplay = 0,
   FGMPlatformMarkerCollisionBehaviorOptionalAndHidesLowerPriority = 1,
@@ -76,6 +76,19 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMarkerType) {
 @interface FGMPlatformMarkerTypeBox : NSObject
 @property(nonatomic, assign) FGMPlatformMarkerType value;
 - (instancetype)initWithValue:(FGMPlatformMarkerType)value;
+@end
+
+/// Pigeon equivalent of MapColorScheme.
+typedef NS_ENUM(NSUInteger, FGMPlatformMapColorScheme) {
+  FGMPlatformMapColorSchemeLight = 0,
+  FGMPlatformMapColorSchemeDark = 1,
+  FGMPlatformMapColorSchemeFollowSystem = 2,
+};
+
+/// Wrapper for FGMPlatformMapColorScheme to allow for nullability.
+@interface FGMPlatformMapColorSchemeBox : NSObject
+@property(nonatomic, assign) FGMPlatformMapColorScheme value;
+- (instancetype)initWithValue:(FGMPlatformMapColorScheme)value;
 @end
 
 /// Pigeon equivalent of [MapBitmapScaling].
@@ -573,7 +586,8 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
                       buildingsEnabled:(nullable NSNumber *)buildingsEnabled
                             markerType:(FGMPlatformMarkerType)markerType
                                  mapId:(nullable NSString *)mapId
-                                 style:(nullable NSString *)style;
+                                 style:(nullable NSString *)style
+                           colorScheme:(nullable FGMPlatformMapColorSchemeBox *)colorScheme;
 @property(nonatomic, strong, nullable) NSNumber *compassEnabled;
 @property(nonatomic, strong, nullable) FGMPlatformCameraTargetBounds *cameraTargetBounds;
 @property(nonatomic, strong, nullable) FGMPlatformMapTypeBox *mapType;
@@ -592,6 +606,7 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 @property(nonatomic, assign) FGMPlatformMarkerType markerType;
 @property(nonatomic, copy, nullable) NSString *mapId;
 @property(nonatomic, copy, nullable) NSString *style;
+@property(nonatomic, strong, nullable) FGMPlatformMapColorSchemeBox *colorScheme;
 @end
 
 /// Pigeon representation of an x,y coordinate.

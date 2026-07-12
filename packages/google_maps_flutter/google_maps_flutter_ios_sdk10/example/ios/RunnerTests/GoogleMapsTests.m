@@ -222,6 +222,56 @@
   XCTAssertEqual(cameraPosition.zoom, initialCameraPosition.zoom);
 }
 
+- (void)testSetMapColorScheme {
+  CGRect frame = CGRectMake(0, 0, 100, 100);
+  GMSMapViewOptions *options = [[GMSMapViewOptions alloc] init];
+  options.frame = frame;
+  options.camera = [[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0];
+  PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc] initWithOptions:options];
+  FGMGoogleMapController *controller =
+      [[FGMGoogleMapController alloc] initWithMapView:mapView
+                                       viewIdentifier:0
+                                   creationParameters:[self emptyCreationParameters]
+                                        assetProvider:[[TestAssetProvider alloc] init]
+                                      binaryMessenger:[[StubBinaryMessenger alloc] init]];
+  FlutterError *error = nil;
+
+  // Light. Start from a different style so the assertion confirms a real change.
+  mapView.overrideUserInterfaceStyle = UIUserInterfaceStyleDark;
+  FGMPlatformMapConfiguration *lightConfig = [self emptyCreationParameters].mapConfiguration;
+  lightConfig.colorScheme =
+      [[FGMPlatformMapColorSchemeBox alloc] initWithValue:FGMPlatformMapColorSchemeLight];
+  [controller.callHandler updateWithMapConfiguration:lightConfig error:&error];
+  XCTAssertNil(error);
+  XCTAssertEqual(mapView.overrideUserInterfaceStyle, UIUserInterfaceStyleLight);
+
+  // Dark.
+  mapView.overrideUserInterfaceStyle = UIUserInterfaceStyleLight;
+  FGMPlatformMapConfiguration *darkConfig = [self emptyCreationParameters].mapConfiguration;
+  darkConfig.colorScheme =
+      [[FGMPlatformMapColorSchemeBox alloc] initWithValue:FGMPlatformMapColorSchemeDark];
+  [controller.callHandler updateWithMapConfiguration:darkConfig error:&error];
+  XCTAssertNil(error);
+  XCTAssertEqual(mapView.overrideUserInterfaceStyle, UIUserInterfaceStyleDark);
+
+  // followSystem maps to "unspecified", letting the system drive appearance.
+  mapView.overrideUserInterfaceStyle = UIUserInterfaceStyleDark;
+  FGMPlatformMapConfiguration *followConfig = [self emptyCreationParameters].mapConfiguration;
+  followConfig.colorScheme =
+      [[FGMPlatformMapColorSchemeBox alloc] initWithValue:FGMPlatformMapColorSchemeFollowSystem];
+  [controller.callHandler updateWithMapConfiguration:followConfig error:&error];
+  XCTAssertNil(error);
+  XCTAssertEqual(mapView.overrideUserInterfaceStyle, UIUserInterfaceStyleUnspecified);
+
+  // A configuration with no color scheme must not change the interface style.
+  mapView.overrideUserInterfaceStyle = UIUserInterfaceStyleDark;
+  FGMPlatformMapConfiguration *noSchemeConfig = [self emptyCreationParameters].mapConfiguration;
+  noSchemeConfig.colorScheme = nil;
+  [controller.callHandler updateWithMapConfiguration:noSchemeConfig error:&error];
+  XCTAssertNil(error);
+  XCTAssertEqual(mapView.overrideUserInterfaceStyle, UIUserInterfaceStyleDark);
+}
+
 /// Creates an empty creation paramaters object for tests where the values don't matter, just that
 /// there's a valid object to pass in.
 - (FGMPlatformMapViewCreationParams *)emptyCreationParameters {
@@ -250,7 +300,8 @@
                                                buildingsEnabled:nil
                                                      markerType:FGMPlatformMarkerTypeMarker
                                                           mapId:nil
-                                                          style:nil]
+                                                          style:nil
+                                                    colorScheme:nil]
                      initialCircles:@[]
                      initialMarkers:@[]
                     initialPolygons:@[]

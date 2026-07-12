@@ -132,6 +132,9 @@ enum PlatformPatternItemType { dot, dash, gap }
 
 enum PlatformMarkerType { marker, advancedMarker }
 
+/// Pigeon equivalent of MapColorScheme.
+enum PlatformMapColorScheme { light, dark, followSystem }
+
 /// Pigeon equivalent of [MapBitmapScaling].
 enum PlatformMapBitmapScaling { auto, none }
 
@@ -1930,6 +1933,7 @@ class PlatformMapConfiguration {
     required this.markerType,
     this.mapId,
     this.style,
+    this.colorScheme,
   });
 
   bool? compassEnabled;
@@ -1974,6 +1978,8 @@ class PlatformMapConfiguration {
 
   String? style;
 
+  PlatformMapColorScheme? colorScheme;
+
   List<Object?> _toList() {
     return <Object?>[
       compassEnabled,
@@ -1997,6 +2003,7 @@ class PlatformMapConfiguration {
       markerType,
       mapId,
       style,
+      colorScheme,
     ];
   }
 
@@ -2028,6 +2035,7 @@ class PlatformMapConfiguration {
       markerType: result[18]! as PlatformMarkerType,
       mapId: result[19] as String?,
       style: result[20] as String?,
+      colorScheme: result[21] as PlatformMapColorScheme?,
     );
   }
 
@@ -2060,7 +2068,8 @@ class PlatformMapConfiguration {
         _deepEquals(liteModeEnabled, other.liteModeEnabled) &&
         _deepEquals(markerType, other.markerType) &&
         _deepEquals(mapId, other.mapId) &&
-        _deepEquals(style, other.style);
+        _deepEquals(style, other.style) &&
+        _deepEquals(colorScheme, other.colorScheme);
   }
 
   @override
@@ -2631,140 +2640,143 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformMarkerType) {
       buffer.putUint8(135);
       writeValue(buffer, value.index);
-    } else if (value is PlatformMapBitmapScaling) {
+    } else if (value is PlatformMapColorScheme) {
       buffer.putUint8(136);
       writeValue(buffer, value.index);
-    } else if (value is PlatformCameraPosition) {
+    } else if (value is PlatformMapBitmapScaling) {
       buffer.putUint8(137);
-      writeValue(buffer, value.encode());
-    } else if (value is PlatformCameraUpdate) {
+      writeValue(buffer, value.index);
+    } else if (value is PlatformCameraPosition) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCameraUpdateNewCameraPosition) {
+    } else if (value is PlatformCameraUpdate) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCameraUpdateNewLatLng) {
+    } else if (value is PlatformCameraUpdateNewCameraPosition) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCameraUpdateNewLatLngBounds) {
+    } else if (value is PlatformCameraUpdateNewLatLng) {
       buffer.putUint8(141);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCameraUpdateNewLatLngZoom) {
+    } else if (value is PlatformCameraUpdateNewLatLngBounds) {
       buffer.putUint8(142);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCameraUpdateScrollBy) {
+    } else if (value is PlatformCameraUpdateNewLatLngZoom) {
       buffer.putUint8(143);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCameraUpdateZoomBy) {
+    } else if (value is PlatformCameraUpdateScrollBy) {
       buffer.putUint8(144);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCameraUpdateZoom) {
+    } else if (value is PlatformCameraUpdateZoomBy) {
       buffer.putUint8(145);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCameraUpdateZoomTo) {
+    } else if (value is PlatformCameraUpdateZoom) {
       buffer.putUint8(146);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCircle) {
+    } else if (value is PlatformCameraUpdateZoomTo) {
       buffer.putUint8(147);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformHeatmap) {
+    } else if (value is PlatformCircle) {
       buffer.putUint8(148);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformHeatmapGradient) {
+    } else if (value is PlatformHeatmap) {
       buffer.putUint8(149);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformWeightedLatLng) {
+    } else if (value is PlatformHeatmapGradient) {
       buffer.putUint8(150);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformClusterManager) {
+    } else if (value is PlatformWeightedLatLng) {
       buffer.putUint8(151);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformDoublePair) {
+    } else if (value is PlatformClusterManager) {
       buffer.putUint8(152);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformColor) {
+    } else if (value is PlatformDoublePair) {
       buffer.putUint8(153);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformInfoWindow) {
+    } else if (value is PlatformColor) {
       buffer.putUint8(154);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformMarker) {
+    } else if (value is PlatformInfoWindow) {
       buffer.putUint8(155);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPolygon) {
+    } else if (value is PlatformMarker) {
       buffer.putUint8(156);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPolyline) {
+    } else if (value is PlatformPolygon) {
       buffer.putUint8(157);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCap) {
+    } else if (value is PlatformPolyline) {
       buffer.putUint8(158);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPatternItem) {
+    } else if (value is PlatformCap) {
       buffer.putUint8(159);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformTile) {
+    } else if (value is PlatformPatternItem) {
       buffer.putUint8(160);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformTileOverlay) {
+    } else if (value is PlatformTile) {
       buffer.putUint8(161);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformEdgeInsets) {
+    } else if (value is PlatformTileOverlay) {
       buffer.putUint8(162);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformLatLng) {
+    } else if (value is PlatformEdgeInsets) {
       buffer.putUint8(163);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformLatLngBounds) {
+    } else if (value is PlatformLatLng) {
       buffer.putUint8(164);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCluster) {
+    } else if (value is PlatformLatLngBounds) {
       buffer.putUint8(165);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformGroundOverlay) {
+    } else if (value is PlatformCluster) {
       buffer.putUint8(166);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCameraTargetBounds) {
+    } else if (value is PlatformGroundOverlay) {
       buffer.putUint8(167);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformMapViewCreationParams) {
+    } else if (value is PlatformCameraTargetBounds) {
       buffer.putUint8(168);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformMapConfiguration) {
+    } else if (value is PlatformMapViewCreationParams) {
       buffer.putUint8(169);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPoint) {
+    } else if (value is PlatformMapConfiguration) {
       buffer.putUint8(170);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformTileLayer) {
+    } else if (value is PlatformPoint) {
       buffer.putUint8(171);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformZoomRange) {
+    } else if (value is PlatformTileLayer) {
       buffer.putUint8(172);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmap) {
+    } else if (value is PlatformZoomRange) {
       buffer.putUint8(173);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapDefaultMarker) {
+    } else if (value is PlatformBitmap) {
       buffer.putUint8(174);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapBytes) {
+    } else if (value is PlatformBitmapDefaultMarker) {
       buffer.putUint8(175);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapAsset) {
+    } else if (value is PlatformBitmapBytes) {
       buffer.putUint8(176);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapAssetImage) {
+    } else if (value is PlatformBitmapAsset) {
       buffer.putUint8(177);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapAssetMap) {
+    } else if (value is PlatformBitmapAssetImage) {
       buffer.putUint8(178);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapBytesMap) {
+    } else if (value is PlatformBitmapAssetMap) {
       buffer.putUint8(179);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapPinConfig) {
+    } else if (value is PlatformBitmapBytesMap) {
       buffer.putUint8(180);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformBitmapPinConfig) {
+      buffer.putUint8(181);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -2797,94 +2809,97 @@ class _PigeonCodec extends StandardMessageCodec {
         return value == null ? null : PlatformMarkerType.values[value];
       case 136:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PlatformMapBitmapScaling.values[value];
+        return value == null ? null : PlatformMapColorScheme.values[value];
       case 137:
-        return PlatformCameraPosition.decode(readValue(buffer)!);
+        final value = readValue(buffer) as int?;
+        return value == null ? null : PlatformMapBitmapScaling.values[value];
       case 138:
-        return PlatformCameraUpdate.decode(readValue(buffer)!);
+        return PlatformCameraPosition.decode(readValue(buffer)!);
       case 139:
-        return PlatformCameraUpdateNewCameraPosition.decode(readValue(buffer)!);
+        return PlatformCameraUpdate.decode(readValue(buffer)!);
       case 140:
-        return PlatformCameraUpdateNewLatLng.decode(readValue(buffer)!);
+        return PlatformCameraUpdateNewCameraPosition.decode(readValue(buffer)!);
       case 141:
-        return PlatformCameraUpdateNewLatLngBounds.decode(readValue(buffer)!);
+        return PlatformCameraUpdateNewLatLng.decode(readValue(buffer)!);
       case 142:
-        return PlatformCameraUpdateNewLatLngZoom.decode(readValue(buffer)!);
+        return PlatformCameraUpdateNewLatLngBounds.decode(readValue(buffer)!);
       case 143:
-        return PlatformCameraUpdateScrollBy.decode(readValue(buffer)!);
+        return PlatformCameraUpdateNewLatLngZoom.decode(readValue(buffer)!);
       case 144:
-        return PlatformCameraUpdateZoomBy.decode(readValue(buffer)!);
+        return PlatformCameraUpdateScrollBy.decode(readValue(buffer)!);
       case 145:
-        return PlatformCameraUpdateZoom.decode(readValue(buffer)!);
+        return PlatformCameraUpdateZoomBy.decode(readValue(buffer)!);
       case 146:
-        return PlatformCameraUpdateZoomTo.decode(readValue(buffer)!);
+        return PlatformCameraUpdateZoom.decode(readValue(buffer)!);
       case 147:
-        return PlatformCircle.decode(readValue(buffer)!);
+        return PlatformCameraUpdateZoomTo.decode(readValue(buffer)!);
       case 148:
-        return PlatformHeatmap.decode(readValue(buffer)!);
+        return PlatformCircle.decode(readValue(buffer)!);
       case 149:
-        return PlatformHeatmapGradient.decode(readValue(buffer)!);
+        return PlatformHeatmap.decode(readValue(buffer)!);
       case 150:
-        return PlatformWeightedLatLng.decode(readValue(buffer)!);
+        return PlatformHeatmapGradient.decode(readValue(buffer)!);
       case 151:
-        return PlatformClusterManager.decode(readValue(buffer)!);
+        return PlatformWeightedLatLng.decode(readValue(buffer)!);
       case 152:
-        return PlatformDoublePair.decode(readValue(buffer)!);
+        return PlatformClusterManager.decode(readValue(buffer)!);
       case 153:
-        return PlatformColor.decode(readValue(buffer)!);
+        return PlatformDoublePair.decode(readValue(buffer)!);
       case 154:
-        return PlatformInfoWindow.decode(readValue(buffer)!);
+        return PlatformColor.decode(readValue(buffer)!);
       case 155:
-        return PlatformMarker.decode(readValue(buffer)!);
+        return PlatformInfoWindow.decode(readValue(buffer)!);
       case 156:
-        return PlatformPolygon.decode(readValue(buffer)!);
+        return PlatformMarker.decode(readValue(buffer)!);
       case 157:
-        return PlatformPolyline.decode(readValue(buffer)!);
+        return PlatformPolygon.decode(readValue(buffer)!);
       case 158:
-        return PlatformCap.decode(readValue(buffer)!);
+        return PlatformPolyline.decode(readValue(buffer)!);
       case 159:
-        return PlatformPatternItem.decode(readValue(buffer)!);
+        return PlatformCap.decode(readValue(buffer)!);
       case 160:
-        return PlatformTile.decode(readValue(buffer)!);
+        return PlatformPatternItem.decode(readValue(buffer)!);
       case 161:
-        return PlatformTileOverlay.decode(readValue(buffer)!);
+        return PlatformTile.decode(readValue(buffer)!);
       case 162:
-        return PlatformEdgeInsets.decode(readValue(buffer)!);
+        return PlatformTileOverlay.decode(readValue(buffer)!);
       case 163:
-        return PlatformLatLng.decode(readValue(buffer)!);
+        return PlatformEdgeInsets.decode(readValue(buffer)!);
       case 164:
-        return PlatformLatLngBounds.decode(readValue(buffer)!);
+        return PlatformLatLng.decode(readValue(buffer)!);
       case 165:
-        return PlatformCluster.decode(readValue(buffer)!);
+        return PlatformLatLngBounds.decode(readValue(buffer)!);
       case 166:
-        return PlatformGroundOverlay.decode(readValue(buffer)!);
+        return PlatformCluster.decode(readValue(buffer)!);
       case 167:
-        return PlatformCameraTargetBounds.decode(readValue(buffer)!);
+        return PlatformGroundOverlay.decode(readValue(buffer)!);
       case 168:
-        return PlatformMapViewCreationParams.decode(readValue(buffer)!);
+        return PlatformCameraTargetBounds.decode(readValue(buffer)!);
       case 169:
-        return PlatformMapConfiguration.decode(readValue(buffer)!);
+        return PlatformMapViewCreationParams.decode(readValue(buffer)!);
       case 170:
-        return PlatformPoint.decode(readValue(buffer)!);
+        return PlatformMapConfiguration.decode(readValue(buffer)!);
       case 171:
-        return PlatformTileLayer.decode(readValue(buffer)!);
+        return PlatformPoint.decode(readValue(buffer)!);
       case 172:
-        return PlatformZoomRange.decode(readValue(buffer)!);
+        return PlatformTileLayer.decode(readValue(buffer)!);
       case 173:
-        return PlatformBitmap.decode(readValue(buffer)!);
+        return PlatformZoomRange.decode(readValue(buffer)!);
       case 174:
-        return PlatformBitmapDefaultMarker.decode(readValue(buffer)!);
+        return PlatformBitmap.decode(readValue(buffer)!);
       case 175:
-        return PlatformBitmapBytes.decode(readValue(buffer)!);
+        return PlatformBitmapDefaultMarker.decode(readValue(buffer)!);
       case 176:
-        return PlatformBitmapAsset.decode(readValue(buffer)!);
+        return PlatformBitmapBytes.decode(readValue(buffer)!);
       case 177:
-        return PlatformBitmapAssetImage.decode(readValue(buffer)!);
+        return PlatformBitmapAsset.decode(readValue(buffer)!);
       case 178:
-        return PlatformBitmapAssetMap.decode(readValue(buffer)!);
+        return PlatformBitmapAssetImage.decode(readValue(buffer)!);
       case 179:
-        return PlatformBitmapBytesMap.decode(readValue(buffer)!);
+        return PlatformBitmapAssetMap.decode(readValue(buffer)!);
       case 180:
+        return PlatformBitmapBytesMap.decode(readValue(buffer)!);
+      case 181:
         return PlatformBitmapPinConfig.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

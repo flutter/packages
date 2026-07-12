@@ -522,6 +522,28 @@ public class ConvertTest {
   }
 
   @Test
+  public void toMapColorScheme_mapsAllPlatformValues() {
+    for (PlatformMapColorScheme value : PlatformMapColorScheme.values()) {
+      final int expected =
+          switch (value) {
+            case LIGHT -> com.google.android.gms.maps.model.MapColorScheme.LIGHT;
+            case DARK -> com.google.android.gms.maps.model.MapColorScheme.DARK;
+            case FOLLOW_SYSTEM -> com.google.android.gms.maps.model.MapColorScheme.FOLLOW_SYSTEM;
+          };
+      Assert.assertEquals(expected, Convert.toMapColorScheme(value));
+    }
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesColorScheme() {
+    final PlatformMapConfiguration config =
+        getMinimalConfigurationBuilder().setColorScheme(PlatformMapColorScheme.DARK).build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1))
+        .setMapColorScheme(com.google.android.gms.maps.model.MapColorScheme.DARK);
+  }
+
+  @Test
   public void interpretMapConfiguration_handlesUnboundedCameraTargetBounds() {
     final PlatformMapConfiguration config =
         getMinimalConfigurationBuilder()
@@ -859,6 +881,7 @@ public class ConvertTest {
     private @Nullable PlatformMarkerType markerType;
     private @Nullable String mapId;
     private @Nullable String style;
+    private @Nullable PlatformMapColorScheme colorScheme;
 
     public @NonNull PlatformMapConfigurationBuilder setCompassEnabled(@Nullable Boolean setterArg) {
       this.compassEnabled = setterArg;
@@ -982,6 +1005,12 @@ public class ConvertTest {
       return this;
     }
 
+    public @NonNull PlatformMapConfigurationBuilder setColorScheme(
+        @Nullable PlatformMapColorScheme setterArg) {
+      this.colorScheme = setterArg;
+      return this;
+    }
+
     public @NonNull PlatformMapConfiguration build() {
       return new PlatformMapConfiguration(
           compassEnabled,
@@ -1004,7 +1033,8 @@ public class ConvertTest {
           liteModeEnabled,
           Objects.requireNonNull(markerType),
           mapId,
-          style);
+          style,
+          colorScheme);
     }
   }
 }
