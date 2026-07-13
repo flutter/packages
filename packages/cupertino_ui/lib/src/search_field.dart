@@ -284,7 +284,7 @@ class CupertinoSearchTextField extends StatefulWidget {
   /// necessarily clearing text.
   final VoidCallback? onSuffixTap;
 
-  /// {@macro flutter.material.textfield.restorationId}
+  /// {@macro flutter.cupertino.textfield.restorationId}
   final String? restorationId;
 
   /// {@macro flutter.widgets.Focus.focusNode}
@@ -293,7 +293,7 @@ class CupertinoSearchTextField extends StatefulWidget {
   /// {@macro flutter.widgets.editableText.autofocus}
   final bool autofocus;
 
-  /// {@macro flutter.material.textfield.onTap}
+  /// {@macro flutter.cupertino.textfield.onTap}
   final VoidCallback? onTap;
 
   /// Whether to enable autocorrection.

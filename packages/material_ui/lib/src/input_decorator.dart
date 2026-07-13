@@ -1893,18 +1893,7 @@ class InputDecorator extends StatefulWidget {
   /// How the text in the decoration should be aligned horizontally.
   final TextAlign? textAlign;
 
-  /// {@template flutter.material.InputDecorator.textAlignVertical}
-  /// How the text should be aligned vertically.
-  ///
-  /// Determines the alignment of the baseline within the available space of
-  /// the input (typically a TextField). For example, TextAlignVertical.top will
-  /// place the baseline such that the text, and any attached decoration like
-  /// prefix and suffix, is as close to the top of the input as possible without
-  /// overflowing. The heights of the prefix and suffix are similarly included
-  /// for other alignment values. If the height is greater than the height
-  /// available, then the prefix and suffix will be allowed to overflow first
-  /// before the text scrolls.
-  /// {@endtemplate}
+  /// {@macro flutter.cupertino.InputDecorator.textAlignVertical}
   final TextAlignVertical? textAlignVertical;
 
   /// Whether the input field has focus.

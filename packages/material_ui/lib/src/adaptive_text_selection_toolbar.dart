@@ -195,9 +195,7 @@ class AdaptiveTextSelectionToolbar extends StatelessWidget {
   /// The children of the toolbar, typically buttons.
   final List<Widget>? children;
 
-  /// {@template flutter.material.AdaptiveTextSelectionToolbar.anchors}
-  /// The location on which to anchor the menu.
-  /// {@endtemplate}
+  /// {@macro flutter.cupertino.AdaptiveTextSelectionToolbar.anchors}
   final TextSelectionToolbarAnchors anchors;
 
   /// Returns the default button label String for the button of the given

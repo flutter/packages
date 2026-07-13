@@ -311,26 +311,16 @@ class Switch extends StatelessWidget {
   /// used instead of this color.
   final Color? inactiveTrackColor;
 
-  /// {@template flutter.material.switch.activeThumbImage}
-  /// An image to use on the thumb of this switch when the switch is on.
-  /// {@endtemplate}
+  /// {@macro flutter.cupertino.switch.activeThumbImage}
   final ImageProvider? activeThumbImage;
 
-  /// {@template flutter.material.switch.onActiveThumbImageError}
-  /// An optional error callback for errors emitted when loading
-  /// [activeThumbImage].
-  /// {@endtemplate}
+  /// {@macro flutter.cupertino.switch.onActiveThumbImageError}
   final ImageErrorListener? onActiveThumbImageError;
 
-  /// {@template flutter.material.switch.inactiveThumbImage}
-  /// An image to use on the thumb of this switch when the switch is off.
-  /// {@endtemplate}
+  /// {@macro flutter.cupertino.switch.inactiveThumbImage}
   final ImageProvider? inactiveThumbImage;
 
-  /// {@template flutter.material.switch.onInactiveThumbImageError}
-  /// An optional error callback for errors emitted when loading
-  /// [inactiveThumbImage].
-  /// {@endtemplate}
+  /// {@macro flutter.cupertino.switch.onInactiveThumbImageError}
   final ImageErrorListener? onInactiveThumbImageError;
 
   /// {@template flutter.material.switch.thumbColor}
@@ -627,7 +617,7 @@ class Switch extends StatelessWidget {
   /// {@macro flutter.widgets.Focus.focusNode}
   final FocusNode? focusNode;
 
-  /// {@macro flutter.material.inkwell.onFocusChange}
+  /// {@macro flutter.cupertino.inkwell.onFocusChange}
   final ValueChanged<bool>? onFocusChange;
 
   /// {@macro flutter.widgets.Focus.autofocus}

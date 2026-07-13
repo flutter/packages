@@ -1798,7 +1798,12 @@ class CupertinoMenuItem extends StatelessWidget implements CupertinoMenuEntry {
   /// pointer event, which is always between frames.
   final ValueChanged<bool>? onHover;
 
-  /// {@macro flutter.material.inkwell.onFocusChange}
+  /// {@template flutter.cupertino.inkwell.onFocusChange}
+  /// Handler called when the focus changes.
+  /// 
+  /// Called with true if this widget's node gains focus, and false if it loses
+  /// focus.
+  /// {@endtemplate}
   final ValueChanged<bool>? onFocusChange;
 
   /// Whether hovering should request focus for this widget.

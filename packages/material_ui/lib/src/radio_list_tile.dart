@@ -510,7 +510,7 @@ class RadioListTile<T> extends StatefulWidget {
   /// Controls the interactive states of the backing [ListTile].
   final WidgetStatesController? statesController;
 
-  /// {@macro flutter.material.inkwell.onFocusChange}
+  /// {@macro flutter.cupertino.inkwell.onFocusChange}
   final ValueChanged<bool>? onFocusChange;
 
   /// {@macro flutter.material.ListTile.enableFeedback}

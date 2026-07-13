@@ -391,18 +391,18 @@ class SwitchListTile extends StatelessWidget {
   /// Ignored if created with [SwitchListTile.adaptive].
   final Color? inactiveTrackColor;
 
-  /// {@macro flutter.material.switch.activeThumbImage}
+  /// {@macro flutter.cupertino.switch.activeThumbImage}
   final ImageProvider? activeThumbImage;
 
-  /// {@macro flutter.material.switch.onActiveThumbImageError}
+  /// {@macro flutter.cupertino.switch.onActiveThumbImageError}
   final ImageErrorListener? onActiveThumbImageError;
 
-  /// {@macro flutter.material.switch.inactiveThumbImage}
+  /// {@macro flutter.cupertino.switch.inactiveThumbImage}
   ///
   /// Ignored if created with [SwitchListTile.adaptive].
   final ImageProvider? inactiveThumbImage;
 
-  /// {@macro flutter.material.switch.onInactiveThumbImageError}
+  /// {@macro flutter.cupertino.switch.onInactiveThumbImageError}
   final ImageErrorListener? onInactiveThumbImageError;
 
   /// The color of this switch's thumb.
@@ -499,7 +499,7 @@ class SwitchListTile extends StatelessWidget {
   /// Controls the interactive states of the backing [ListTile].
   final WidgetStatesController? statesController;
 
-  /// {@macro flutter.material.inkwell.onFocusChange}
+  /// {@macro flutter.cupertino.inkwell.onFocusChange}
   final ValueChanged<bool>? onFocusChange;
 
   /// {@macro flutter.widgets.Focus.autofocus}

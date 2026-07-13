@@ -1567,7 +1567,7 @@ class PopupMenuButton<T> extends StatefulWidget {
   /// over the button that was used to create it.
   final PopupMenuPosition? position;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// The [clipBehavior] argument is used the clip shape of the menu.
   ///

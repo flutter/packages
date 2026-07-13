@@ -829,7 +829,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   /// {@endtemplate}
   final bool useDefaultSemanticsOrder;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   final Clip? clipBehavior;
 
   /// {@template flutter.material.appbar.actionsPadding}
@@ -2086,7 +2086,7 @@ class SliverAppBar extends StatefulWidget {
   /// This property is used to configure an [AppBar].
   final bool useDefaultSemanticsOrder;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   final Clip? clipBehavior;
 
   /// {@macro flutter.material.appbar.actionsPadding}
