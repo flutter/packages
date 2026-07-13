@@ -38,11 +38,17 @@ const EdgeInsets _defaultInsetPadding = EdgeInsets.symmetric(horizontal: 40.0, v
 /// or [SimpleDialog], which implement specific kinds of Material Design
 /// dialogs.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This sample shows the creation of [Dialog] and [Dialog.fullscreen] widgets.
 ///
-/// ** See code in examples/api/lib/material/dialog/dialog.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/dialog/dialog.0.dart}
+///
+/// </callout-box>
 ///
 /// ## Contraints
 /// The Material 3 guideline recommends that a dialog should have a maximal width of 560dp.
@@ -50,13 +56,18 @@ const EdgeInsets _defaultInsetPadding = EdgeInsets.symmetric(horizontal: 40.0, v
 /// For applications targeting large screens such as desktop or Web, it is recommended to
 /// set the [constraints] property.
 ///
-/// {@tool snippet}
+/// <callout-box>
+///
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
+///
 /// This sample shows a [Dialog] using [BoxConstraints] defined by the Material 3 specification.
 ///
 /// ```dart
 /// const Dialog(constraints: BoxConstraints(maxWidth: 560, minHeight: 280));
 /// ```
-/// {@end-tool}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -337,7 +348,10 @@ class Dialog extends StatelessWidget {
 ///
 /// {@animation 350 622 https://flutter.github.io/assets-for-api-docs/assets/material/alert_dialog.mp4}
 ///
-/// {@tool snippet}
+/// <callout-box>
+///
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
 ///
 /// This snippet shows a method in a [State] which, when called, displays a dialog box
 /// and returns a [Future] that completes when the dialog is dismissed.
@@ -371,22 +385,35 @@ class Dialog extends StatelessWidget {
 ///   );
 /// }
 /// ```
-/// {@end-tool}
 ///
-/// {@tool dartpad}
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This demo shows a [TextButton] which when pressed, calls [showDialog]. When called, this method
 /// displays a Material dialog above the current contents of the app and returns
 /// a [Future] that completes when the dialog is dismissed.
 ///
-/// ** See code in examples/api/lib/material/dialog/alert_dialog.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-/// {@tool dartpad}
+/// {@example /example/lib/dialog/alert_dialog.0.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This sample shows the creation of [AlertDialog], as described in:
 /// https://m3.material.io/components/dialogs/overview
 ///
-/// ** See code in examples/api/lib/material/dialog/alert_dialog.1.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/dialog/alert_dialog.1.dart}
+///
+/// </callout-box>
 ///
 /// ## Alert dialogs and scrolling
 ///
@@ -472,7 +499,8 @@ class AlertDialog extends StatelessWidget {
   ///
   /// The target platform is based on the current [Theme]: [ThemeData.platform].
   ///
-  /// {@tool dartpad}
+  /// <callout-box>
+  ///
   /// This demo shows a [TextButton] which when pressed, calls [showAdaptiveDialog].
   /// When called, this method displays an adaptive dialog above the current
   /// contents of the app, with different behaviors depending on target platform.
@@ -480,8 +508,13 @@ class AlertDialog extends StatelessWidget {
   /// [CupertinoDialogAction] is conditionally used as the child to show more
   /// platform specific design.
   ///
-  /// ** See code in examples/api/lib/material/dialog/adaptive_alert_dialog.0.dart **
-  /// {@end-tool}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
+  /// {@example /example/lib/dialog/adaptive_alert_dialog.0.dart}
+  ///
+  /// </callout-box>
   const factory AlertDialog.adaptive({
     Key? key,
     Widget? icon,
@@ -625,7 +658,11 @@ class AlertDialog extends StatelessWidget {
   ///
   /// If there are no [actions], then no padding will be included.
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// This is an example of a set of actions aligned with the content widget.
   /// ```dart
   /// AlertDialog(
@@ -638,7 +675,8 @@ class AlertDialog extends StatelessWidget {
   ///   actionsPadding: const EdgeInsets.symmetric(horizontal: 8.0),
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -1035,7 +1073,10 @@ class _AdaptiveAlertDialog extends AlertDialog {
 /// title and the first option, and 24 pixels of spacing between the last option
 /// and the bottom of the dialog.
 ///
-/// {@tool snippet}
+/// <callout-box>
+///
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
 ///
 /// ```dart
 /// SimpleDialogOption(
@@ -1043,7 +1084,8 @@ class _AdaptiveAlertDialog extends AlertDialog {
 ///   child: const Text('Treasury department'),
 /// )
 /// ```
-/// {@end-tool}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -1103,7 +1145,10 @@ class SimpleDialogOption extends StatelessWidget {
 ///
 /// {@animation 350 622 https://flutter.github.io/assets-for-api-docs/assets/material/simple_dialog.mp4}
 ///
-/// {@tool snippet}
+/// <callout-box>
+///
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
 ///
 /// In this example, the user is asked to select between two options. These
 /// options are represented as an enum. The [showDialog] method here returns
@@ -1149,7 +1194,8 @@ class SimpleDialogOption extends StatelessWidget {
 ///   }
 /// }
 /// ```
-/// {@end-tool}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -1575,18 +1621,30 @@ class _DialogContentPage extends Page<void> {
 /// Returns a [Future] that resolves to the value (if any) that was passed to
 /// [Navigator.pop] when the dialog was closed.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This sample demonstrates how to use [showDialog] to display a dialog box.
 ///
-/// ** See code in examples/api/lib/material/dialog/show_dialog.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-/// {@tool dartpad}
+/// {@example /example/lib/dialog/show_dialog.0.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This sample shows the creation of [showDialog], as described in:
 /// https://m3.material.io/components/dialogs/overview
 ///
-/// ** See code in examples/api/lib/material/dialog/show_dialog.1.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/dialog/show_dialog.1.dart}
+///
+/// </callout-box>
 ///
 /// ### State Restoration in Dialogs
 ///
@@ -1596,7 +1654,8 @@ class _DialogContentPage extends Page<void> {
 ///
 /// For more information about state restoration, see [RestorationManager].
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This sample demonstrates how to create a restorable Material dialog. This is
 /// accomplished by enabling state restoration by specifying
 /// [MaterialApp.restorationScopeId] and using [Navigator.restorablePush] to
@@ -1604,8 +1663,13 @@ class _DialogContentPage extends Page<void> {
 ///
 /// {@macro flutter.widgets.RestorationManager}
 ///
-/// ** See code in examples/api/lib/material/dialog/show_dialog.2.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/dialog/show_dialog.2.dart}
+///
+/// </callout-box>
 ///
 /// See also:
 ///

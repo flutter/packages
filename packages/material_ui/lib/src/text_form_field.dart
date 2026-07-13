@@ -47,7 +47,10 @@ export 'package:flutter/services.dart' show SmartDashesType, SmartQuotesType;
 ///
 /// For a documentation about the various parameters, see [TextField].
 ///
-/// {@tool snippet}
+/// <callout-box>
+///
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
 ///
 /// Creates a [TextFormField] with an [InputDecoration] and validator function.
 ///
@@ -71,21 +74,34 @@ export 'package:flutter/services.dart' show SmartDashesType, SmartQuotesType;
 ///   },
 /// )
 /// ```
-/// {@end-tool}
 ///
-/// {@tool dartpad}
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This example shows how to move the focus to the next field when the user
 /// presses the SPACE key.
 ///
-/// ** See code in examples/api/lib/material/text_form_field/text_form_field.1.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-/// {@tool dartpad}
+/// {@example /example/lib/text_form_field/text_form_field.1.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This example shows how to force an error text to the field after making
 /// an asynchronous call.
 ///
-/// ** See code in examples/api/lib/material/text_form_field/text_form_field.2.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/text_form_field/text_form_field.2.dart}
+///
+/// </callout-box>
 ///
 /// See also:
 ///

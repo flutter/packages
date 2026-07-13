@@ -1,6 +1,19 @@
-## 0.7.3
+## 0.7.5
 
 * Supports video encoding bitrate.
+
+## 0.7.4+1
+
+* Fixes a `StateError` ("Bad state: No element") in `setFocusMode(FocusMode.auto)`
+  when the current focus and metering action has no auto-focus points.
+
+## 0.7.4
+
+* Adds `setJpegImageQuality` for controlling JPEG compression quality.
+
+## 0.7.3
+
+* Fixes `videoBitrate` configuration being ignored during video recording.
 
 ## 0.7.2+1
 

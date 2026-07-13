@@ -244,11 +244,17 @@ abstract interface class ChipAttributes {
   /// Specifying this parameter enables creation of avatar smaller than
   /// the minimum size, but it is not recommended.
   ///
-  /// {@tool dartpad}
+  /// <callout-box>
+  ///
   /// This sample shows how to use [avatarBoxConstraints] to adjust avatar size constraints
   ///
-  /// ** See code in examples/api/lib/material/chip/chip_attributes.avatar_box_constraints.0.dart **
-  /// {@end-tool}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
+  /// {@example /example/lib/chip/chip_attributes.avatar_box_constraints.0.dart}
+  ///
+  /// </callout-box>
   BoxConstraints? get avatarBoxConstraints;
 
   /// Used to override the default chip animations durations.
@@ -269,12 +275,18 @@ abstract interface class ChipAttributes {
   /// is provided, it will be used to override the chip delete icon animation duration.
   /// If it is null, then default duration will be 150ms.
   ///
-  /// {@tool dartpad}
+  /// <callout-box>
+  ///
   /// This sample showcases how to override the chip animations durations using
   /// [ChipAnimationStyle].
   ///
-  /// ** See code in examples/api/lib/material/chip/chip_attributes.chip_animation_style.0.dart **
-  /// {@end-tool}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
+  /// {@example /example/lib/chip/chip_attributes.chip_animation_style.0.dart}
+  ///
+  /// </callout-box>
   ChipAnimationStyle? get chipAnimationStyle;
 
   /// The cursor for a mouse pointer when it enters or is hovering over the
@@ -328,12 +340,18 @@ abstract interface class DeletableChipAttributes {
   /// that the user tapped the delete button. In order to delete the chip, you
   /// have to do something similar to the following sample:
   ///
-  /// {@tool dartpad}
+  /// <callout-box>
+  ///
   /// This sample shows how to use [onDeleted] to remove an entry when the
   /// delete button is tapped.
   ///
-  /// ** See code in examples/api/lib/material/chip/deletable_chip_attributes.on_deleted.0.dart **
-  /// {@end-tool}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
+  /// {@example /example/lib/chip/deletable_chip_attributes.on_deleted.0.dart}
+  ///
+  /// </callout-box>
   VoidCallback? get onDeleted;
 
   /// Used to define the delete icon's color with an [IconTheme] that
@@ -367,12 +385,18 @@ abstract interface class DeletableChipAttributes {
   /// Specifying this parameter enables creation of delete icon smaller than
   /// the minimum size, but it is not recommended.
   ///
-  /// {@tool dartpad}
+  /// <callout-box>
+  ///
   /// This sample shows how to use [deleteIconBoxConstraints] to adjust delete icon
   /// size constraints.
   ///
-  /// ** See code in examples/api/lib/material/chip/deletable_chip_attributes.delete_icon_box_constraints.0.dart **
-  /// {@end-tool}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
+  /// {@example /example/lib/chip/deletable_chip_attributes.delete_icon_box_constraints.0.dart}
+  ///
+  /// </callout-box>
   BoxConstraints? get deleteIconBoxConstraints;
 }
 
@@ -448,7 +472,10 @@ abstract interface class SelectableChipAttributes {
   /// The [onSelected] and [TappableChipAttributes.onPressed] callbacks must not
   /// both be specified at the same time.
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
   ///
   /// A [StatefulWidget] that illustrates use of onSelected in an [InputChip].
   ///
@@ -477,7 +504,8 @@ abstract interface class SelectableChipAttributes {
   ///   }
   /// }
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   ValueChanged<bool>? get onSelected;
 
   /// Elevation to be applied on the chip relative to its parent during the
@@ -579,7 +607,10 @@ abstract interface class TappableChipAttributes {
   /// taps on the label or avatar parts of the chip. If [onPressed] is null,
   /// then the chip will be disabled.
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
   ///
   /// ```dart
   /// class Blacksmith extends StatelessWidget {
@@ -598,7 +629,8 @@ abstract interface class TappableChipAttributes {
   ///   }
   /// }
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   VoidCallback? get onPressed;
 
   /// Elevation to be applied on the chip relative to its parent during the
@@ -658,7 +690,10 @@ class ChipAnimationStyle {
 /// [MaterialApp] and [Scaffold]. The [label] and [clipBehavior] arguments must
 /// not be null.
 ///
-/// {@tool snippet}
+/// <callout-box>
+///
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
 ///
 /// ```dart
 /// Chip(
@@ -669,7 +704,8 @@ class ChipAnimationStyle {
 ///   label: const Text('Aaron Burr'),
 /// )
 /// ```
-/// {@end-tool}
+///
+/// </callout-box>
 ///
 /// See also:
 ///

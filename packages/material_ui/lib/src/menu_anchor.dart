@@ -211,29 +211,47 @@ class _TweenCurve extends Curve {
 /// to retrieve the controller for the closest [MenuAnchor] ancestor of a given [BuildContext].
 /// More detailed usage of [MenuController] is available in its class documentation.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This example shows how to use a [MenuAnchor] to wrap a button and open a
 /// cascading menu from the button. This example also shows how to use
 /// [onAnimationStatusChanged] to track animation status and toggle the menu.
 ///
-/// ** See code in examples/api/lib/material/menu_anchor/menu_anchor.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-/// {@tool dartpad}
+/// {@example /example/lib/menu_anchor/menu_anchor.0.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This example shows how to use a [MenuAnchor] to create a cascading context
 /// menu in a region of the view, positioned where the user clicks the mouse
 /// with Ctrl pressed. The [anchorTapClosesMenu] attribute is set to true so
 /// that clicks on the [MenuAnchor] area will cause the menus to be closed.
 ///
-/// ** See code in examples/api/lib/material/menu_anchor/menu_anchor.1.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-/// {@tool dartpad}
+/// {@example /example/lib/menu_anchor/menu_anchor.1.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This example demonstrates a simplified cascading menu using the [MenuAnchor]
 /// widget.
 ///
-/// ** See code in examples/api/lib/material/menu_anchor/menu_anchor.3.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/menu_anchor/menu_anchor.3.dart}
+///
+/// </callout-box>
 ///
 /// The [MenuStyle.visualDensity] setting only affects horizontal padding,
 /// and it will never make it negative. Vertical padding is not affected at all.
@@ -403,7 +421,11 @@ class MenuAnchor extends StatefulWidget {
   /// therefore cannot be used on its own to determine the current animation
   /// direction.
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// This example shows how to use the [onAnimationStatusChanged] callback to
   /// create a [MenuAnchor] that will toggle between opening and closing.
   ///
@@ -429,7 +451,8 @@ class MenuAnchor extends StatefulWidget {
   ///   },
   /// );
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   ///
   /// Defaults to null.
   final ValueChanged<AnimationStatus>? onAnimationStatusChanged;
@@ -811,13 +834,20 @@ class _MenuAnchorState extends State<MenuAnchor> with SingleTickerProviderStateM
 /// sure that selecting a menu item and triggering the shortcut do the same
 /// thing, it is recommended that they call the same callback.
 ///
-/// {@tool dartpad} This example shows a [MenuBar] that contains a single top
+/// <callout-box>
+///
+/// This example shows a [MenuBar] that contains a single top
 /// level menu, containing three items: "About", a checkbox menu item for
 /// showing a message, and "Quit". The items are identified with an enum value,
 /// and the shortcuts are registered globally with the [ShortcutRegistry].
 ///
-/// ** See code in examples/api/lib/material/menu_anchor/menu_bar.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/menu_anchor/menu_bar.0.dart}
+///
+/// </callout-box>
 /// {@endtemplate}
 ///
 /// {@macro flutter.material.MenuAcceleratorLabel.accelerator_sample}
@@ -1330,12 +1360,18 @@ class _MenuItemButtonState extends State<MenuItemButton> {
 /// To style the checkbox separately from the button, add a [CheckboxTheme]
 /// ancestor.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This example shows a menu with a checkbox that shows a message in the body
 /// of the app if checked.
 ///
-/// ** See code in examples/api/lib/material/menu_anchor/checkbox_menu_button.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/menu_anchor/checkbox_menu_button.0.dart}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -1526,12 +1562,18 @@ class CheckboxMenuButton extends StatelessWidget {
 /// To style the radio button separately from the overall button, add a
 /// [RadioTheme] ancestor.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This example shows a menu with three radio buttons with shortcuts that
 /// changes the background color of the body when the buttons are selected.
 ///
-/// ** See code in examples/api/lib/material/menu_anchor/radio_menu_button.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/menu_anchor/radio_menu_button.0.dart}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -2918,15 +2960,22 @@ typedef MenuAcceleratorChildBuilder =
 /// not necessary to provide one.
 ///
 /// {@template flutter.material.MenuAcceleratorLabel.accelerator_sample}
-/// {@tool dartpad} This example shows a [MenuBar] that handles keyboard
+/// <callout-box>
+///
+/// This example shows a [MenuBar] that handles keyboard
 /// accelerators using [MenuAcceleratorLabel]. To use the accelerators, press
 /// the Alt key to see which letters are underlined in the menu bar, and then
 /// press the appropriate letter. Accelerators are not supported on macOS or iOS
 /// since those platforms don't support them natively, so this demo will only
 /// show a regular Material menu bar on those platforms.
 ///
-/// ** See code in examples/api/lib/material/menu_anchor/menu_accelerator_label.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/menu_anchor/menu_accelerator_label.0.dart}
+///
+/// </callout-box>
 /// {@endtemplate}
 class MenuAcceleratorLabel extends StatefulWidget {
   /// Creates a const [MenuAcceleratorLabel].

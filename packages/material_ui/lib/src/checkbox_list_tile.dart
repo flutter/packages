@@ -61,7 +61,11 @@ enum _CheckboxType { material, adaptive }
 /// In this case, one can wrap a [Material] widget around the [CheckboxListTile],
 /// e.g.:
 ///
-/// {@tool snippet}
+/// <callout-box>
+///
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
+///
 /// ```dart
 /// ColoredBox(
 ///   color: Colors.green,
@@ -75,7 +79,8 @@ enum _CheckboxType { material, adaptive }
 ///   ),
 /// )
 /// ```
-/// {@end-tool}
+///
+/// </callout-box>
 ///
 /// ## Performance considerations when wrapping [CheckboxListTile] with [Material]
 ///
@@ -86,7 +91,8 @@ enum _CheckboxType { material, adaptive }
 /// To show the [CheckboxListTile] as disabled, pass null as the [onChanged]
 /// callback.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// ![CheckboxListTile sample](https://flutter.github.io/assets-for-api-docs/assets/material/checkbox_list_tile.png)
 ///
 /// This widget shows a checkbox that, when checked, slows down all animations
@@ -95,15 +101,26 @@ enum _CheckboxType { material, adaptive }
 /// This sample requires that you also import 'package:flutter/scheduler.dart',
 /// so that you can reference [timeDilation].
 ///
-/// ** See code in examples/api/lib/material/checkbox_list_tile/checkbox_list_tile.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-/// {@tool dartpad}
+/// {@example /example/lib/checkbox_list_tile/checkbox_list_tile.0.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This sample demonstrates how [CheckboxListTile] positions the checkbox widget
 /// relative to the text in different configurations.
 ///
-/// ** See code in examples/api/lib/material/checkbox_list_tile/checkbox_list_tile.1.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/checkbox_list_tile/checkbox_list_tile.1.dart}
+///
+/// </callout-box>
 ///
 /// ## Semantics in CheckboxListTile
 ///
@@ -122,15 +139,21 @@ enum _CheckboxType { material, adaptive }
 /// into one. Therefore, it may be necessary to create a custom radio tile
 /// widget to accommodate similar use cases.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// ![Checkbox list tile semantics sample](https://flutter.github.io/assets-for-api-docs/assets/material/checkbox_list_tile_semantics.png)
 ///
 /// Here is an example of a custom labeled checkbox widget, called
 /// LinkedLabelCheckbox, that includes an interactive [RichText] widget that
 /// handles tap gestures.
 ///
-/// ** See code in examples/api/lib/material/checkbox_list_tile/custom_labeled_checkbox.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/checkbox_list_tile/custom_labeled_checkbox.0.dart}
+///
+/// </callout-box>
 ///
 /// ## CheckboxListTile isn't exactly what I want
 ///
@@ -139,14 +162,20 @@ enum _CheckboxType { material, adaptive }
 /// combining [Checkbox] with other widgets, such as [Text], [Padding] and
 /// [InkWell].
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// ![Custom checkbox list tile sample](https://flutter.github.io/assets-for-api-docs/assets/material/checkbox_list_tile_custom.png)
 ///
 /// Here is an example of a custom LabeledCheckbox widget, but you can easily
 /// make your own configurable widget.
 ///
-/// ** See code in examples/api/lib/material/checkbox_list_tile/custom_labeled_checkbox.1.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/checkbox_list_tile/custom_labeled_checkbox.1.dart}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -279,7 +308,10 @@ class CheckboxListTile extends StatelessWidget {
   ///
   /// If null, the checkbox will be displayed as disabled.
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
   ///
   /// The callback provided to [onChanged] should update the state of the parent
   /// [StatefulWidget] using the [State.setState] method, so that the parent
@@ -296,7 +328,8 @@ class CheckboxListTile extends StatelessWidget {
   ///   title: const Text('Throw away your shot'),
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   final ValueChanged<bool?>? onChanged;
 
   /// The cursor for a mouse pointer when it enters or is hovering over the

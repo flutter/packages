@@ -146,12 +146,18 @@ class ActionIconThemeData with Diagnosticable {
 /// [CloseButtonIcon], [DrawerButtonIcon], and [EndDrawerButtonIcon] in this
 /// widget's subtree.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This example shows how to define custom builders for drawer and back
 /// buttons.
 ///
-/// ** See code in examples/api/lib/material/action_buttons/action_icon_theme.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/action_buttons/action_icon_theme.0.dart}
+///
+/// </callout-box>
 class ActionIconTheme extends InheritedTheme {
   /// Creates a theme that overrides the default icon of [BackButtonIcon],
   /// [CloseButtonIcon], [DrawerButtonIcon], and [EndDrawerButtonIcon] in this

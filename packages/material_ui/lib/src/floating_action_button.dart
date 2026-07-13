@@ -49,28 +49,46 @@ enum _FloatingActionButtonType { regular, small, large, extended }
 /// disabled. Consider changing the [backgroundColor] if disabling the floating
 /// action button.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This example shows a [FloatingActionButton] in its usual position within a
 /// [Scaffold]. Pressing the button cycles it through a few variations in its
 /// [foregroundColor], [backgroundColor], and [shape]. The button automatically
 /// animates its segue from one set of visual parameters to another.
 ///
-/// ** See code in examples/api/lib/material/floating_action_button/floating_action_button.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-/// {@tool dartpad}
+/// {@example /example/lib/floating_action_button/floating_action_button.0.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This sample shows all the variants of [FloatingActionButton] widget as
 /// described in: https://m3.material.io/components/floating-action-button/overview.
 ///
-/// ** See code in examples/api/lib/material/floating_action_button/floating_action_button.1.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-/// {@tool dartpad}
+/// {@example /example/lib/floating_action_button/floating_action_button.1.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This sample shows [FloatingActionButton] with additional color mappings as
 /// described in: https://m3.material.io/components/floating-action-button/overview.
 ///
-/// ** See code in examples/api/lib/material/floating_action_button/floating_action_button.2.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/floating_action_button/floating_action_button.2.dart}
+///
+/// </callout-box>
 ///
 /// See also:
 ///

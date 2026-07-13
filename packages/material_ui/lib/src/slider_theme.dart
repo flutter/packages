@@ -66,7 +66,10 @@ class SliderTheme extends InheritedTheme {
   /// Defaults to the ambient [ThemeData.sliderTheme] if there is no
   /// [SliderTheme] in the given build context.
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
   ///
   /// ```dart
   /// class Launch extends StatefulWidget {
@@ -91,7 +94,8 @@ class SliderTheme extends InheritedTheme {
   ///   }
   /// }
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -250,7 +254,10 @@ class SliderThemeData with Diagnosticable {
   /// [copyWith] on the one you get from [SliderTheme.of], or create an
   /// entirely new one with [SliderThemeData.fromPrimaryColors].
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
   ///
   /// ```dart
   /// class Blissful extends StatefulWidget {
@@ -275,7 +282,8 @@ class SliderThemeData with Diagnosticable {
   ///   }
   /// }
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   const SliderThemeData({
     this.trackHeight,
     this.activeTrackColor,
