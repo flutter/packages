@@ -39,6 +39,7 @@ public class LegacySharedPreferencesTest {
     Context context = Mockito.mock(Context.class);
     SharedPreferences sharedPrefs = new FakeSharedPreferences();
 
+    mockMessenger = Mockito.mock(BinaryMessenger.class);
     flutterPluginBinding = Mockito.mock(FlutterPlugin.FlutterPluginBinding.class);
 
     Mockito.when(flutterPluginBinding.getBinaryMessenger()).thenReturn(mockMessenger);

@@ -53,33 +53,57 @@ enum _SwitchType { material, adaptive }
 /// If [ThemeData.useMaterial3] is set to true, users can use [Switch.thumbIcon]
 /// to add optional Icons based on the different [WidgetState]s of the [Switch].
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This example shows a toggleable [Switch]. When the thumb slides to the other
 /// side of the track, the switch is toggled between on/off.
 ///
-/// ** See code in examples/api/lib/material/switch/switch.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-/// {@tool dartpad}
+/// {@example /example/lib/switch/switch.0.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This example shows how to customize [Switch] using [WidgetStateProperty]
 /// switch properties.
 ///
-/// ** See code in examples/api/lib/material/switch/switch.1.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-/// {@tool dartpad}
+/// {@example /example/lib/switch/switch.1.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This example shows how to add icons on the thumb of the [Switch] using the
 /// [Switch.thumbIcon] property.
 ///
-/// ** See code in examples/api/lib/material/switch/switch.2.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-/// {@tool dartpad}
+/// {@example /example/lib/switch/switch.2.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This example shows how to use the ambient [CupertinoThemeData] to style all
 /// widgets which would otherwise use iOS defaults.
 ///
-/// ** See code in examples/api/lib/material/switch/switch.3.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/switch/switch.3.dart}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -154,12 +178,18 @@ class Switch extends StatelessWidget {
   /// where you don't want the overall [ThemeData.switchTheme] to apply when
   /// this adaptive constructor is used.
   ///
-  /// {@tool dartpad}
+  /// <callout-box>
+  ///
   /// This sample shows how to create and use subclasses of [Adaptation] that
   /// define adaptive [SwitchThemeData]s.
   ///
-  /// ** See code in examples/api/lib/material/switch/switch.4.dart **
-  /// {@end-tool}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
+  /// {@example /example/lib/switch/switch.4.dart}
+  ///
+  /// </callout-box>
   ///
   /// The target platform is based on the current [Theme]: [ThemeData.platform].
   const Switch.adaptive({
@@ -312,7 +342,11 @@ class Switch extends StatelessWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// This example resolves the [thumbColor] based on the current
   /// [WidgetState] of the [Switch], providing a different [Color] when it is
   /// [WidgetState.disabled].
@@ -329,7 +363,8 @@ class Switch extends StatelessWidget {
   ///   }),
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   /// {@endtemplate}
   ///
   /// If null, then the value of [activeThumbColor] is used in the selected
@@ -353,7 +388,11 @@ class Switch extends StatelessWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// This example resolves the [trackColor] based on the current
   /// [WidgetState] of the [Switch], providing a different [Color] when it is
   /// [WidgetState.disabled].
@@ -370,7 +409,8 @@ class Switch extends StatelessWidget {
   ///   }),
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   /// {@endtemplate}
   ///
   /// If null, then the value of [activeTrackColor] is used in the selected
@@ -394,7 +434,11 @@ class Switch extends StatelessWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// This example resolves the [trackOutlineColor] based on the current
   /// [WidgetState] of the [Switch], providing a different [Color] when it is
   /// [WidgetState.disabled].
@@ -411,7 +455,8 @@ class Switch extends StatelessWidget {
   ///   }),
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   /// {@endtemplate}
   ///
   /// In Material 3, the outline color defaults to transparent in the selected
@@ -428,7 +473,11 @@ class Switch extends StatelessWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// This example resolves the [trackOutlineWidth] based on the current
   /// [WidgetState] of the [Switch], providing a different outline width when it is
   /// [WidgetState.disabled].
@@ -445,7 +494,8 @@ class Switch extends StatelessWidget {
   ///   }),
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   /// {@endtemplate}
   ///
   /// Defaults to 2.0.
@@ -460,7 +510,11 @@ class Switch extends StatelessWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// This example resolves the [thumbIcon] based on the current
   /// [WidgetState] of the [Switch], providing a different [Icon] when it is
   /// [WidgetState.disabled].
@@ -477,7 +531,8 @@ class Switch extends StatelessWidget {
   ///   }),
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   /// {@endtemplate}
   ///
   /// If null, then the value of [SwitchThemeData.thumbIcon] is used. If this is also null,

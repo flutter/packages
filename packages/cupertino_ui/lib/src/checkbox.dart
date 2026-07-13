@@ -73,11 +73,17 @@ const List<double> _kDisabledDarkGradientOpacities = <double>[0.08, 0.14];
 ///     [kMinInteractiveDimensionCupertino] pixels to meet accessibility
 ///     guidelines.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This example shows a toggleable [CupertinoCheckbox].
 ///
-/// ** See code in examples/api/lib/cupertino/checkbox/cupertino_checkbox.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
+/// {@example /example/lib/checkbox/cupertino_checkbox.0.dart}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -202,7 +208,11 @@ class CupertinoCheckbox extends StatefulWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// This example resolves the [fillColor] based on the current [WidgetState]
   /// of the [CupertinoCheckbox], providing a different [Color] when it is
   /// [WidgetState.disabled].
@@ -219,7 +229,8 @@ class CupertinoCheckbox extends StatefulWidget {
   ///   })
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   /// {@endtemplate}
   ///
   /// If [fillColor] resolves to null for the requested state, then the fill color

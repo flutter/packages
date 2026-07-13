@@ -114,12 +114,18 @@ enum DynamicSchemeVariant {
 /// with on '-Fixed' roles, such as [onPrimaryFixed], they provide a
 /// lower-emphasis option for text and icons.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This example shows all Material [ColorScheme] roles in light and dark
 /// brightnesses.
 ///
-/// ** See code in examples/api/lib/material/color_scheme/color_scheme.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/color_scheme/color_scheme.0.dart}
+///
+/// </callout-box>
 ///
 /// ### Setting Colors in Flutter
 ///
@@ -251,13 +257,19 @@ class ColorScheme with Diagnosticable {
   /// -1.0 is the lowest; 1.0 is the highest. From Material Design guideline, the
   /// medium and high contrast correspond to 0.5 and 1.0 respectively.
   ///
-  /// {@tool dartpad}
+  /// <callout-box>
+  ///
   /// This sample shows how to use [ColorScheme.fromSeed] to create dynamic
   /// color schemes with different [DynamicSchemeVariant]s and different
   /// contrast level.
   ///
-  /// ** See code in examples/api/lib/material/color_scheme/color_scheme.0.dart **
-  /// {@end-tool}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
+  /// {@example /example/lib/color_scheme/color_scheme.0.dart}
+  ///
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -429,7 +441,11 @@ class ColorScheme with Diagnosticable {
   /// For Material 3, use [ColorScheme.fromSeed] to create a color scheme
   /// from a single seed color based on the Material 3 color system.
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// This example demonstrates how to create a color scheme similar to [ColorScheme.light]
   /// using the [ColorScheme.fromSeed] constructor:
   ///
@@ -443,7 +459,8 @@ class ColorScheme with Diagnosticable {
   ///   onError: Colors.white,
   /// ),
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   const ColorScheme.light({
     this.brightness = Brightness.light,
     this.primary = const Color(0xff6200ee),
@@ -519,7 +536,11 @@ class ColorScheme with Diagnosticable {
   /// Override the `brightness` property of [ColorScheme.fromSeed] to create a
   /// dark color scheme.
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// This example demonstrates how to create a color scheme similar to [ColorScheme.dark]
   /// using the [ColorScheme.fromSeed] constructor:
   ///
@@ -536,7 +557,8 @@ class ColorScheme with Diagnosticable {
   ///   onError: Colors.black,
   /// ),
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   const ColorScheme.dark({
     this.brightness = Brightness.dark,
     this.primary = const Color(0xffbb86fc),
@@ -611,7 +633,11 @@ class ColorScheme with Diagnosticable {
   /// from a single seed color based on the Material 3 color system. To create a
   /// high-contrast color scheme, set `contrastLevel` to 1.0.
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// This example demonstrates how to create a color scheme similar to [ColorScheme.highContrastLight]
   /// using the [ColorScheme.fromSeed] constructor:
   ///
@@ -625,7 +651,8 @@ class ColorScheme with Diagnosticable {
   ///   onError: Colors.white,
   /// ),
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   const ColorScheme.highContrastLight({
     this.brightness = Brightness.light,
     this.primary = const Color(0xff0000ba),
@@ -702,7 +729,11 @@ class ColorScheme with Diagnosticable {
   /// dark color scheme. To create a high-contrast color scheme, set
   /// `contrastLevel` to 1.0.
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// This example demonstrates how to create a color scheme similar to [ColorScheme.highContrastDark]
   /// using the [ColorScheme.fromSeed] constructor:
   ///
@@ -719,7 +750,8 @@ class ColorScheme with Diagnosticable {
   ///   onError: Colors.white,
   /// ),
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   const ColorScheme.highContrastDark({
     this.brightness = Brightness.dark,
     this.primary = const Color(0xffefb7ff),
@@ -1697,12 +1729,18 @@ class ColorScheme with Diagnosticable {
   /// The provided image will be scaled down to a maximum size of 112x112 pixels
   /// during color extraction.
   ///
-  /// {@tool dartpad}
+  /// <callout-box>
+  ///
   /// This sample shows how to use [ColorScheme.fromImageProvider] to create
   /// content-based dynamic color schemes.
   ///
-  /// ** See code in examples/api/lib/material/color_scheme/dynamic_content_color.0.dart **
-  /// {@end-tool}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
+  /// {@example /example/lib/color_scheme/dynamic_content_color.0.dart}
+  ///
+  /// </callout-box>
   ///
   /// See also:
   ///

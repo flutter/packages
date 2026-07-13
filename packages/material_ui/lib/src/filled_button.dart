@@ -54,12 +54,18 @@ enum _FilledButtonVariant { filled, tonal }
 ///
 /// To create a 'filled tonal' button, use [FilledButton.tonal].
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This sample produces enabled and disabled filled and filled tonal
 /// buttons.
 ///
-/// ** See code in examples/api/lib/material/filled_button/filled_button.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/filled_button/filled_button.0.dart}
+///
+/// </callout-box>
 ///
 /// ## Visual density effects
 ///

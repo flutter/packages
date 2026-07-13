@@ -117,13 +117,19 @@ class _TextFieldSelectionGestureDetectorBuilder extends TextSelectionGestureDete
 ///
 /// ## Obscured Input
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This example shows how to create a [TextField] that will obscure input. The
 /// [InputDecoration] surrounds the field in a border using [OutlineInputBorder]
 /// and adds a label.
 ///
-/// ** See code in examples/api/lib/material/text_field/text_field.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/text_field/text_field.0.dart}
+///
+/// </callout-box>
 ///
 /// ## Reading values
 ///
@@ -131,12 +137,18 @@ class _TextFieldSelectionGestureDetectorBuilder extends TextSelectionGestureDete
 /// callback. This callback is applied to the text field's current value when
 /// the user finishes editing.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This sample shows how to get a value from a TextField via the [onSubmitted]
 /// callback.
 ///
-/// ** See code in examples/api/lib/material/text_field/text_field.1.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/text_field/text_field.1.dart}
+///
+/// </callout-box>
 ///
 /// {@macro flutter.widgets.EditableText.lifeCycle}
 ///
@@ -164,12 +176,18 @@ class _TextFieldSelectionGestureDetectorBuilder extends TextSelectionGestureDete
 ///
 /// {@macro flutter.widgets.editableText.accessibility}
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This sample shows how to style a text field to match a filled or outlined
 /// Material Design 3 text field.
 ///
-/// ** See code in examples/api/lib/material/text_field/text_field.2.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/text_field/text_field.2.dart}
+///
+/// </callout-box>
 ///
 /// ## Scrolling Considerations
 ///
@@ -179,13 +197,19 @@ class _TextFieldSelectionGestureDetectorBuilder extends TextSelectionGestureDete
 /// [TextField] to ensure proper scroll coordination for [TextField] and its
 /// components like [TextSelectionOverlay].
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This sample demonstrates how to use the [Shortcuts] and [Actions] widgets
 /// to create a custom `Shift+Enter` keyboard shortcut for inserting a new line
 /// in a [TextField].
 ///
-/// ** See code in examples/api/lib/material/text_field/text_field.3.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/text_field/text_field.3.dart}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -364,11 +388,17 @@ class TextField extends StatefulWidget {
   ///
   /// {@macro flutter.widgets.magnifier.intro}
   ///
-  /// {@tool dartpad}
+  /// <callout-box>
+  ///
   /// This sample demonstrates how to customize the magnifier that this text field uses.
   ///
-  /// ** See code in examples/api/lib/widgets/text_magnifier/text_magnifier.0.dart **
-  /// {@end-tool}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
+  /// {@example /example/lib/text_field/text_field_magnifier.0.dart}
+  ///
+  /// </callout-box>
   final TextMagnifierConfiguration? magnifierConfiguration;
 
   /// {@macro flutter.widgets.editableText.groupId}
@@ -742,7 +772,8 @@ class TextField extends StatefulWidget {
 
   /// {@macro flutter.widgets.editableText.onTapOutside}
   ///
-  /// {@tool dartpad}
+  /// <callout-box>
+  ///
   /// This example shows how to use a `TextFieldTapRegion` to wrap a set of
   /// "spinner" buttons that increment and decrement a value in the [TextField]
   /// without causing the text field to lose keyboard focus.
@@ -750,8 +781,13 @@ class TextField extends StatefulWidget {
   /// This example includes a generic `SpinnerField<T>` class that you can copy
   /// into your own project and customize.
   ///
-  /// ** See code in examples/api/lib/widgets/tap_region/text_field_tap_region.0.dart **
-  /// {@end-tool}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
+  /// {@example /example/lib/text_field/text_field_tap_region.0.dart}
+  ///
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -790,7 +826,11 @@ class TextField extends StatefulWidget {
   /// accessibility, but it also needs to be accessible itself. For example,
   /// if returning a Text widget, set the [Text.semanticsLabel] property.
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// ```dart
   /// Widget counter(
   ///   BuildContext context,
@@ -806,7 +846,8 @@ class TextField extends StatefulWidget {
   ///   );
   /// }
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   ///
   /// If buildCounter returns null, then no counter and no Semantics widget will
   /// be created at all.

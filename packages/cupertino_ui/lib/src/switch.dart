@@ -77,14 +77,24 @@ const CupertinoDynamicColor _kOffLabelColor = CupertinoDynamicColor.withBrightne
 /// callback and rebuild the switch with a new [value] to update the visual
 /// appearance of the switch.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This example shows a toggleable [CupertinoSwitch]. When the thumb slides to
 /// the other side of the track, the switch is toggled between on/off.
 ///
-/// ** See code in examples/api/lib/cupertino/switch/cupertino_switch.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@tool snippet}
+/// {@example /example/lib/switch/cupertino_switch.0.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
+///
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
+///
 ///
 /// This sample shows how to use a [CupertinoSwitch] in a [CupertinoListTile]. The
 /// [MergeSemantics] is used to turn the entire [CupertinoListTile] into a single item
@@ -102,7 +112,8 @@ const CupertinoDynamicColor _kOffLabelColor = CupertinoDynamicColor.withBrightne
 ///   ),
 /// )
 /// ```
-/// {@end-tool}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -297,7 +308,11 @@ class CupertinoSwitch extends StatefulWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// This example resolves the [trackOutlineColor] based on the current
   /// [WidgetState] of the [CupertinoSwitch], providing a different [Color] when it is
   /// [WidgetState.disabled].
@@ -314,7 +329,8 @@ class CupertinoSwitch extends StatefulWidget {
   ///   }),
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   ///
   /// The [CupertinoSwitch] track has no outline by default.
   final WidgetStateProperty<Color?>? trackOutlineColor;
@@ -327,7 +343,11 @@ class CupertinoSwitch extends StatefulWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// This example resolves the [trackOutlineWidth] based on the current
   /// [WidgetState] of the [CupertinoSwitch], providing a different outline width when it is
   /// [WidgetState.disabled].
@@ -344,7 +364,8 @@ class CupertinoSwitch extends StatefulWidget {
   ///   }),
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   ///
   /// Since a [CupertinoSwitch] has no track outline by default, this parameter
   /// is set only if [trackOutlineColor] is provided.
@@ -360,7 +381,11 @@ class CupertinoSwitch extends StatefulWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// This example resolves the [thumbIcon] based on the current
   /// [WidgetState] of the [CupertinoSwitch], providing a different [Icon] when it is
   /// [WidgetState.disabled].
@@ -377,7 +402,8 @@ class CupertinoSwitch extends StatefulWidget {
   ///   }),
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   ///
   /// If null, then the [CupertinoSwitch] does not have any icons on the thumb.
   final WidgetStateProperty<Icon?>? thumbIcon;
@@ -391,7 +417,11 @@ class CupertinoSwitch extends StatefulWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// This example resolves the [mouseCursor] based on the current
   /// [WidgetState] of the [CupertinoSwitch], providing a different [mouseCursor] when it is
   /// [WidgetState.disabled].
@@ -408,7 +438,8 @@ class CupertinoSwitch extends StatefulWidget {
   ///   }),
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   ///
   /// If null, then [MouseCursor.defer] is used when the switch is disabled.
   /// When the switch is enabled, [SystemMouseCursors.click] is used on Web, and

@@ -3,11 +3,13 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
+import 'package:glob/glob.dart';
 import 'package:path/path.dart' as p;
 import 'package:pubspec_parse/pubspec_parse.dart';
 
 import 'ci_config.dart';
 import 'core.dart';
+import 'output_utils.dart';
 import 'pending_changelog_entry.dart';
 
 export 'package:pubspec_parse/pubspec_parse.dart' show Pubspec;
@@ -200,18 +202,73 @@ class RepositoryPackage {
   }
 
   /// Returns the package that this package is a part of, if any.
-  ///
-  /// Currently this is limited to checking up two directories, since that
-  /// covers all the example structures currently used.
   RepositoryPackage? getEnclosingPackage() {
-    final Directory parent = directory.parent;
-    if (isPackage(parent)) {
-      return RepositoryPackage(parent);
-    }
-    if (isPackage(parent.parent)) {
-      return RepositoryPackage(parent.parent);
+    Directory current = directory.parent;
+    while (current.path != current.parent.path) {
+      if (isPackage(current)) {
+        return RepositoryPackage(current);
+      }
+      // Stop walking up if we hit a known repo root directory.
+      if (current.basename == 'packages' || current.basename == 'third_party') {
+        break;
+      }
+      current = current.parent;
     }
     return null;
+  }
+
+  /// True if this package is located within a directory that is ignored
+  /// by the enclosing package's `.pubignore` file.
+  bool get isPubIgnored {
+    final RepositoryPackage? enclosingPackage = getEnclosingPackage();
+    if (enclosingPackage == null) {
+      return false;
+    }
+    final File pubignoreFile = enclosingPackage.directory.childFile('.pubignore');
+    if (!pubignoreFile.existsSync()) {
+      return false;
+    }
+
+    final String relativePath = p.relative(directory.path, from: enclosingPackage.directory.path);
+    final List<String> segments = p.split(relativePath);
+    final candidatePaths = <String>[];
+    for (var i = 1; i <= segments.length; i++) {
+      final String prefix = p.posix.joinAll(segments.sublist(0, i));
+      candidatePaths.add(prefix);
+      candidatePaths.add('$prefix/');
+    }
+
+    final List<String> ignoreLines = pubignoreFile.readAsLinesSync();
+
+    for (final line in ignoreLines) {
+      final String trimmed = line.trim();
+      if (trimmed.isEmpty || trimmed.startsWith('#')) {
+        continue;
+      }
+
+      var pattern = trimmed;
+      final bool isAnchored = pattern.startsWith('/');
+      if (isAnchored) {
+        pattern = pattern.substring(1);
+      }
+      if (pattern.endsWith('/')) {
+        pattern = '$pattern**';
+      }
+
+      try {
+        final globExact = Glob(pattern);
+        final Glob? globNested = isAnchored ? null : Glob('**/$pattern');
+        for (final candidate in candidatePaths) {
+          if (globExact.matches(candidate) ||
+              (globNested != null && globNested.matches(candidate))) {
+            return true;
+          }
+        }
+      } on FormatException catch (e) {
+        printWarning('Warning: Invalid glob pattern "$trimmed" in ${pubignoreFile.path}: $e');
+      }
+    }
+    return false;
   }
 
   /// Returns all Dart package folders (e.g., examples) under this package.

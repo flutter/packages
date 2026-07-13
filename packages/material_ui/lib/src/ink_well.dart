@@ -1487,12 +1487,18 @@ class _InkResponseState extends State<_InkResponseStateWidget>
 ///
 /// An example of this situation is as follows:
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// Tap the container to cause it to grow. Then, tap it again and hold before
 /// the widget reaches its maximum size to observe the clipped ink splash.
 ///
-/// ** See code in examples/api/lib/material/ink_well/ink_well.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/ink_well/ink_well.0.dart}
+///
+/// </callout-box>
 ///
 /// An InkWell's splashes will not properly update to conform to changes if the
 /// size of its underlying [Material], where the splashes are rendered, changes

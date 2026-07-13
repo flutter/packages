@@ -52,11 +52,17 @@ const double _kVelocityThreshold = 1.0;
 /// that use a slider will listen for the [onChanged] callback and rebuild the
 /// slider with a new [value] to update the visual appearance of the slider.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This example shows how to show the current slider value as it changes.
 ///
-/// ** See code in examples/api/lib/cupertino/slider/cupertino_slider.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
+/// {@example /example/lib/slider/cupertino_slider.0.dart}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -137,7 +143,11 @@ class CupertinoSlider extends StatefulWidget {
   /// The value passed will be the last [value] that the slider had before the
   /// change began.
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   ///
   /// ```dart
   /// CupertinoSlider(
@@ -155,7 +165,8 @@ class CupertinoSlider extends StatefulWidget {
   ///   },
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -169,7 +180,11 @@ class CupertinoSlider extends StatefulWidget {
   /// [onChanged] for that), but rather to know when the user has completed
   /// selecting a new [value] by ending a drag.
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   ///
   /// ```dart
   /// CupertinoSlider(
@@ -187,7 +202,8 @@ class CupertinoSlider extends StatefulWidget {
   ///   },
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   ///
   /// See also:
   ///
