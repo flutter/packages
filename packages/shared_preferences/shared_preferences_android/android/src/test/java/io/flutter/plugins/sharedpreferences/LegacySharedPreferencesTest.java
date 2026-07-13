@@ -72,27 +72,27 @@ public class LegacySharedPreferencesTest {
 
   @Test
   public void getAll() {
-    assertEquals(plugin.getAll("", null).size(), 0);
+    assertEquals(0, plugin.getAll("", null).size());
 
     addData();
 
     Map<String, Object> flutterData = plugin.getAll("flutter.", null);
 
-    assertEquals(flutterData.size(), 5);
-    assertEquals(flutterData.get("flutter.Language"), "Java");
-    assertEquals(flutterData.get("flutter.Counter"), 0L);
-    assertEquals(flutterData.get("flutter.Pie"), 3.14);
+    assertEquals(5, flutterData.size());
+    assertEquals("Java", flutterData.get("flutter.Language"));
+    assertEquals(0L, flutterData.get("flutter.Counter"));
+    assertEquals(3.14, flutterData.get("flutter.Pie"));
     assertEquals(flutterData.get("flutter.Names"), Arrays.asList("Flutter", "Dart").toString());
-    assertEquals(flutterData.get("flutter.NewToFlutter"), false);
+    assertEquals(false, flutterData.get("flutter.NewToFlutter"));
 
     Map<String, Object> allData = plugin.getAll("", null);
 
-    assertEquals(allData, data);
+    assertEquals(data, allData);
   }
 
   @Test
   public void allowList() {
-    assertEquals(plugin.getAll("", null).size(), 0);
+    assertEquals(0, plugin.getAll("", null).size());
 
     addData();
 
@@ -100,19 +100,19 @@ public class LegacySharedPreferencesTest {
 
     Map<String, Object> allData = plugin.getAll("flutter.", allowList);
 
-    assertEquals(allData.size(), 1);
-    assertEquals(allData.get("flutter.Language"), "Java");
+    assertEquals(1, allData.size());
+    assertEquals("Java", allData.get("flutter.Language"));
     assertNull(allData.get("flutter.Counter"));
 
     allData = plugin.getAll("", allowList);
 
-    assertEquals(allData.size(), 1);
-    assertEquals(allData.get("flutter.Language"), "Java");
+    assertEquals(1, allData.size());
+    assertEquals("Java", allData.get("flutter.Language"));
     assertNull(allData.get("flutter.Counter"));
 
     allData = plugin.getAll("prefix.", allowList);
 
-    assertEquals(allData.size(), 0);
+    assertEquals(0, allData.size());
     assertNull(allData.get("flutter.Language"));
   }
 
@@ -122,7 +122,7 @@ public class LegacySharedPreferencesTest {
     final String value = "Java";
     plugin.setString(key, value);
     Map<String, Object> flutterData = plugin.getAll("", null);
-    assertEquals(flutterData.get(key), value);
+    assertEquals(value, flutterData.get(key));
   }
 
   @Test
@@ -131,7 +131,7 @@ public class LegacySharedPreferencesTest {
     final long value = 0L;
     plugin.setInt(key, value);
     Map<String, Object> flutterData = plugin.getAll("", null);
-    assertEquals(flutterData.get(key), value);
+    assertEquals(value, flutterData.get(key));
   }
 
   @Test
@@ -140,7 +140,7 @@ public class LegacySharedPreferencesTest {
     final double value = 3.14;
     plugin.setDouble(key, value);
     Map<String, Object> flutterData = plugin.getAll("", null);
-    assertEquals(flutterData.get(key), value);
+    assertEquals(value, flutterData.get(key));
   }
 
   @Test
@@ -158,40 +158,40 @@ public class LegacySharedPreferencesTest {
     final boolean value = false;
     plugin.setBool(key, value);
     Map<String, Object> flutterData = plugin.getAll("", null);
-    assertEquals(flutterData.get(key), value);
+    assertEquals(value, flutterData.get(key));
   }
 
   @Test
   public void clearWithNoAllowList() {
     addData();
 
-    assertEquals(plugin.getAll("", null).size(), 15);
+    assertEquals(15, plugin.getAll("", null).size());
 
     plugin.clear("flutter.", null);
 
-    assertEquals(plugin.getAll("", null).size(), 10);
+    assertEquals(10, plugin.getAll("", null).size());
   }
 
   @Test
   public void clearWithAllowList() {
     addData();
 
-    assertEquals(plugin.getAll("", null).size(), 15);
+    assertEquals(15, plugin.getAll("", null).size());
 
-    plugin.clear("flutter.", Collections.singletonList("flutter.Language"));
+    plugin.clear("flutter.", Collections.<@org.jetbrains.annotations.NotNull String>singletonList("flutter.Language"));
 
-    assertEquals(plugin.getAll("", null).size(), 14);
+    assertEquals(14, plugin.getAll("", null).size());
   }
 
   @Test
   public void clearAll() {
     addData();
 
-    assertEquals(plugin.getAll("", null).size(), 15);
+    assertEquals(15, plugin.getAll("", null).size());
 
     plugin.clear("", null);
 
-    assertEquals(plugin.getAll("", null).size(), 0);
+    assertEquals(0, plugin.getAll("", null).size());
   }
 
   @Test
