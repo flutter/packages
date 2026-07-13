@@ -55,7 +55,7 @@ class LegacySharedPreferencesTest {
     assertEquals("Java", flutterData["flutter.Language"])
     assertEquals(0L, flutterData["flutter.Counter"])
     assertEquals(3.14, flutterData["flutter.Pie"])
-    assertEquals(flutterData["flutter.Names"], listOf("Flutter", "Dart").toString())
+    assertEquals(listOf("Flutter", "Dart").toString(), flutterData["flutter.Names"])
     assertEquals(false, flutterData["flutter.NewToFlutter"])
 
     val allData: Map<String, Any> = plugin.getAll("", null)
