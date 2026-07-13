@@ -35,10 +35,8 @@ class DesktopTextSelectionToolbar extends StatelessWidget {
   const DesktopTextSelectionToolbar({super.key, required this.anchor, required this.children})
     : assert(children.length > 0);
 
-  /// {@template flutter.material.DesktopTextSelectionToolbar.anchor}
   /// The point where the toolbar will attempt to position itself as closely as
   /// possible.
-  /// {@endtemplate}
   final Offset anchor;
 
   /// {@macro flutter.material.TextSelectionToolbar.children}

@@ -17,12 +17,10 @@ import 'text_selection_toolbar_button.dart';
 /// The default Cupertino context menu for text selection for the current
 /// platform with the given children.
 ///
-/// {@template flutter.cupertino.CupertinoAdaptiveTextSelectionToolbar.platforms}
 /// Builds the mobile Cupertino context menu on all mobile platforms, not just
 /// iOS, and builds the desktop Cupertino context menu on all desktop platforms,
 /// not just MacOS. For a widget that builds the native-looking context menu for
 /// all platforms, see [AdaptiveTextSelectionToolbar].
-/// {@endtemplate}
 ///
 /// See also:
 ///

@@ -701,7 +701,6 @@ class ListTile extends StatelessWidget {
   /// {@macro flutter.material.inkwell.onFocusChange}
   final ValueChanged<bool>? onFocusChange;
 
-  /// {@template flutter.material.ListTile.mouseCursor}
   /// The cursor for a mouse pointer when it enters or is hovering over the
   /// widget.
   ///
@@ -710,7 +709,6 @@ class ListTile extends StatelessWidget {
   ///
   ///  * [WidgetState.selected].
   ///  * [WidgetState.disabled].
-  /// {@endtemplate}
   ///
   /// If null, then the value of [ListTileThemeData.mouseCursor] is used. If
   /// that is also null, then [WidgetStateMouseCursor.clickable] is used.

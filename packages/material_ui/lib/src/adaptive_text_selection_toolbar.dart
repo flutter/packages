@@ -20,7 +20,6 @@ import 'theme.dart';
 
 /// The default context menu for text selection for the current platform.
 ///
-/// {@template flutter.material.AdaptiveTextSelectionToolbar.contextMenuBuilders}
 /// Typically, this widget would be passed to `contextMenuBuilder` in a
 /// supported parent widget, such as:
 ///
@@ -29,7 +28,6 @@ import 'theme.dart';
 /// * [CupertinoTextField.contextMenuBuilder]
 /// * [SelectionArea.contextMenuBuilder]
 /// * [SelectableText.contextMenuBuilder]
-/// {@endtemplate}
 ///
 /// See also:
 ///
@@ -195,9 +193,7 @@ class AdaptiveTextSelectionToolbar extends StatelessWidget {
   /// The children of the toolbar, typically buttons.
   final List<Widget>? children;
 
-  /// {@template flutter.material.AdaptiveTextSelectionToolbar.anchors}
   /// The location on which to anchor the menu.
-  /// {@endtemplate}
   final TextSelectionToolbarAnchors anchors;
 
   /// Returns the default button label String for the button of the given

@@ -107,13 +107,11 @@ enum ThemeMode {
 /// This widget also configures the observer of the top-level [Navigator] (if
 /// any) to perform [Hero] animations.
 ///
-/// {@template flutter.material.MaterialApp.defaultSelectionStyle}
 /// The [MaterialApp] automatically creates a [DefaultSelectionStyle]. It uses
 /// the colors in the [ThemeData.textSelectionTheme] if they are not null;
 /// otherwise, the [MaterialApp] sets [DefaultSelectionStyle.selectionColor] to
 /// [ColorScheme.primary] with 0.4 opacity and
 /// [DefaultSelectionStyle.cursorColor] to [ColorScheme.primary].
-/// {@endtemplate}
 ///
 /// If [home], [routes], [onGenerateRoute], and [onUnknownRoute] are all null,
 /// and [builder] is not null, then no [Navigator] is created.
@@ -767,14 +765,12 @@ class MaterialApp extends StatefulWidget {
   /// {@macro flutter.widgets.widgetsApp.restorationScopeId}
   final String? restorationScopeId;
 
-  /// {@template flutter.material.materialApp.scrollBehavior}
   /// The default [ScrollBehavior] for the application.
   ///
   /// [ScrollBehavior]s describe how [Scrollable] widgets behave. Providing
   /// a [ScrollBehavior] can set the default [ScrollPhysics] across
   /// an application, and manage [Scrollable] decorations like [Scrollbar]s and
   /// [GlowingOverscrollIndicator]s.
-  /// {@endtemplate}
   ///
   /// When null, defaults to [MaterialScrollBehavior].
   ///

@@ -464,17 +464,14 @@ class CupertinoSwitch extends StatefulWidget {
   /// {@macro flutter.widgets.Focus.autofocus}
   final bool autofocus;
 
-  /// {@template flutter.cupertino.CupertinoSwitch.applyTheme}
   /// Whether to apply the ambient [CupertinoThemeData].
   ///
   /// If true, the track uses [CupertinoThemeData.primaryColor] for the track
   /// when the switch is on.
   ///
   /// Defaults to [CupertinoThemeData.applyThemeToAll].
-  /// {@endtemplate}
   final bool? applyTheme;
 
-  /// {@template flutter.cupertino.CupertinoSwitch.dragStartBehavior}
   /// Determines the way that drag start behavior is handled.
   ///
   /// If set to [DragStartBehavior.start], the drag behavior used to move the
@@ -493,7 +490,6 @@ class CupertinoSwitch extends StatefulWidget {
   ///  * [DragGestureRecognizer.dragStartBehavior], which gives an example for
   ///    the different behaviors.
   ///
-  /// {@endtemplate}
   final DragStartBehavior dragStartBehavior;
 
   @override

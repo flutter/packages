@@ -195,21 +195,17 @@ class Dialog extends StatelessWidget {
   /// {@endtemplate}
   final Color? surfaceTintColor;
 
-  /// {@template flutter.material.dialog.insetAnimationDuration}
   /// The duration of the animation to show when the system keyboard intrudes
   /// into the space that the dialog is placed in.
   ///
   /// Defaults to 100 milliseconds when [Dialog] is used, and [Duration.zero]
   /// when [Dialog.fullscreen] is used.
-  /// {@endtemplate}
   final Duration insetAnimationDuration;
 
-  /// {@template flutter.material.dialog.insetAnimationCurve}
   /// The curve to use for the animation shown when the system keyboard intrudes
   /// into the space that the dialog is placed in.
   ///
   /// Defaults to [Curves.decelerate].
-  /// {@endtemplate}
   final Curve insetAnimationCurve;
 
   /// {@template flutter.material.dialog.insetPadding}
@@ -1603,10 +1599,8 @@ class _DialogContentPage extends Page<void> {
 /// argument is ignored as dialogs are displayed in their own windows which
 /// manage focus traversal independently.
 ///
-/// {@template flutter.material.dialog.requestFocus}
 /// The `requestFocus` argument is used to specify whether the dialog should
 /// request focus when shown.
-/// {@endtemplate}
 /// {@macro flutter.widgets.navigator.Route.requestFocus}
 /// If windowing is enabled via `flutter config --enable-windowing`, then this
 /// argument is ignored as dialogs are displayed in their own windows which are

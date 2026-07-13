@@ -739,7 +739,6 @@ class TextField extends StatefulWidget {
   /// {@macro flutter.widgets.editableText.selectionEnabled}
   bool get selectionEnabled => enableInteractiveSelection;
 
-  /// {@template flutter.material.textfield.onTap}
   /// Called for the first tap in a series of taps.
   ///
   /// The text field builds a [GestureDetector] to handle input events like tap,
@@ -758,7 +757,6 @@ class TextField extends StatefulWidget {
   ///
   /// To listen to arbitrary pointer events without competing with the
   /// text field's internal gesture detector, use a [Listener].
-  /// {@endtemplate}
   ///
   /// If [onTapAlwaysCalled] is enabled, this will also be called for consecutive
   /// taps.

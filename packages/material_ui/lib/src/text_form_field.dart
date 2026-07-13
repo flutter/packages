@@ -339,10 +339,8 @@ class TextFormField extends FormField<String> {
   /// {@macro flutter.widgets.editableText.groupId}
   final Object groupId;
 
-  /// {@template flutter.material.TextFormField.onChanged}
   /// Called when the user initiates a change to the TextField's
   /// value: when they have inserted or deleted text or reset the form.
-  /// {@endtemplate}
   final ValueChanged<String>? onChanged;
 
   static Widget _defaultContextMenuBuilder(

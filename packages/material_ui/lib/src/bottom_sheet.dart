@@ -1047,13 +1047,11 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
   /// To disable the modal bottom sheet animation, use [AnimationStyle.noAnimation].
   final AnimationStyle? sheetAnimationStyle;
 
-  /// {@template flutter.material.ModalBottomSheetRoute.barrierOnTapHint}
   /// The semantic hint text that informs users what will happen if they
   /// tap on the widget. Announced in the format of 'Double tap to ...'.
   ///
   /// If the field is null, the default hint will be used, which results in
   /// announcement of 'Double tap to activate'.
-  /// {@endtemplate}
   ///
   /// See also:
   ///

@@ -88,7 +88,6 @@ abstract class ProgressIndicator extends StatefulWidget {
   /// for the given use case. See the subclass documentation for details.
   final Color? backgroundColor;
 
-  /// {@template flutter.progress_indicator.ProgressIndicator.color}
   /// The progress indicator's color.
   ///
   /// This is only used if [ProgressIndicator.valueColor] is null.
@@ -96,7 +95,6 @@ abstract class ProgressIndicator extends StatefulWidget {
   /// [ProgressIndicatorThemeData.color] will be used. If that
   /// is null then the current theme's [ColorScheme.primary] will
   /// be used by default.
-  /// {@endtemplate}
   final Color? color;
 
   /// The progress indicator's color as an animated value.

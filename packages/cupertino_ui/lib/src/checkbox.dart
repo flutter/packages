@@ -199,7 +199,6 @@ class CupertinoCheckbox extends StatefulWidget {
   /// Defaults to [CupertinoColors.activeBlue].
   final Color? activeColor;
 
-  /// {@template flutter.cupertino.CupertinoCheckbox.fillColor}
   /// The color used to fill this checkbox.
   ///
   /// Resolves in the following states:
@@ -231,7 +230,6 @@ class CupertinoCheckbox extends StatefulWidget {
   /// ```
   ///
   /// </callout-box>
-  /// {@endtemplate}
   ///
   /// If [fillColor] resolves to null for the requested state, then the fill color
   /// falls back to [activeColor] if the state includes [WidgetState.selected],

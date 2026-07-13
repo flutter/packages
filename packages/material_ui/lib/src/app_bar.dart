@@ -694,7 +694,6 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   /// {@endtemplate}
   final double? titleSpacing;
 
-  /// {@template flutter.material.appbar.toolbarOpacity}
   /// How opaque the toolbar part of the app bar is.
   ///
   /// A value of 1.0 is fully opaque, and a value of 0.0 is fully transparent.
@@ -702,10 +701,8 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   /// Typically, this value is not changed from its default value (1.0). It is
   /// used by [SliverAppBar] to animate the opacity of the toolbar when the app
   /// bar is scrolled.
-  /// {@endtemplate}
   final double toolbarOpacity;
 
-  /// {@template flutter.material.appbar.bottomOpacity}
   /// How opaque the bottom part of the app bar is.
   ///
   /// A value of 1.0 is fully opaque, and a value of 0.0 is fully transparent.
@@ -713,15 +710,12 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   /// Typically, this value is not changed from its default value (1.0). It is
   /// used by [SliverAppBar] to animate the opacity of the toolbar when the app
   /// bar is scrolled.
-  /// {@endtemplate}
   final double bottomOpacity;
 
-  /// {@template flutter.material.appbar.preferredSize}
   /// A size whose height is the sum of [toolbarHeight] and the [bottom] widget's
   /// preferred height.
   ///
   /// [Scaffold] uses this size to set its app bar's height.
-  /// {@endtemplate}
   @override
   final Size preferredSize;
 

@@ -189,21 +189,18 @@ class Radio<T> extends StatefulWidget {
   /// {@macro flutter.widget.RawRadio.value}
   final T value;
 
-  /// {@template flutter.material.Radio.groupValue}
   /// The currently selected value for a group of radio buttons.
   ///
   /// This radio button is considered selected if its [value] matches the
   /// [groupValue].
   ///
   /// This is deprecated, use [RadioGroup] to manage group value instead.
-  /// {@endtemplate}
   @Deprecated(
     'Use a RadioGroup ancestor to manage group value instead. '
     'This feature was deprecated after v3.32.0-0.0.pre.',
   )
   final T? groupValue;
 
-  /// {@template flutter.material.Radio.onChanged}
   /// Called when the user selects this radio button.
   ///
   /// The radio button passes [value] as a parameter to this callback. The radio
@@ -221,7 +218,6 @@ class Radio<T> extends StatefulWidget {
   /// The callback provided to [onChanged] should update the state of the parent
   /// [StatefulWidget] using the [State.setState] method, so that the parent
   /// gets rebuilt.
-  /// {@endtemplate}
   ///
   /// For example:
   ///
@@ -427,7 +423,6 @@ class Radio<T> extends StatefulWidget {
 
   final _RadioType _radioType;
 
-  /// {@template flutter.material.Radio.enabled}
   /// Whether this widget is interactive.
   ///
   /// If not provided, this widget will be interactable if one of the following
@@ -439,7 +434,6 @@ class Radio<T> extends StatefulWidget {
   ///
   /// If this is set to true, one of the above condition must also be true.
   /// Otherwise, an assertion error is thrown.
-  /// {@endtemplate}
   final bool? enabled;
 
   /// {@template flutter.material.Radio.backgroundColor}
