@@ -65,7 +65,7 @@ Run from this directory:
 dart run pigeon --input pigeons/camerax_library.dart
 ```
 
-Because test in this package use `mockito` for mocking, you must also
+Because tests in this package use mockito for mocking, you must also
 regenerate the Mockito mocks that are used for unit testing any changes
 you make by running in this directory:
 
@@ -79,7 +79,7 @@ For more in-depth guidance on creating or updating mocks, refer to the
 ## Running Tests
 
 When you make a change, add a test if you can (either a Dart unit test,
-Android native unit test, or Flutter integration tests). Regardless of
+Android native unit test, or a Flutter integration test). Regardless of
 whether you add a test or not, all tests must pass after you make changes.
 How to run the tests:
 
