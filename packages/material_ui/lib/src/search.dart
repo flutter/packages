@@ -119,8 +119,8 @@ abstract class SearchDelegate<T> {
   /// [keyboardType] and/or [textInputAction]. Only one of [searchFieldLabel]
   /// and [searchFieldDecorationTheme] may be non-null.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -155,7 +155,7 @@ abstract class SearchDelegate<T> {
   /// }
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   SearchDelegate({
     this.searchFieldLabel,
     this.searchFieldStyle,

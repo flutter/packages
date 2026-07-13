@@ -208,8 +208,7 @@ class CupertinoCheckbox extends StatefulWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
   ///
   /// This example resolves the [fillColor] based on the current [WidgetState]
   /// of the [CupertinoCheckbox], providing a different [Color] when it is
@@ -217,7 +216,7 @@ class CupertinoCheckbox extends StatefulWidget {
   ///
   /// {@example /example/lib/checkbox/cupertino_checkbox.snippet.0.dart#body indent=strip}
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   /// {@endtemplate}
   ///
   /// If [fillColor] resolves to null for the requested state, then the fill color

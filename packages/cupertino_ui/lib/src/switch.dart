@@ -90,8 +90,8 @@ const CupertinoDynamicColor _kOffLabelColor = CupertinoDynamicColor.withBrightne
 ///
 /// </callout-box>
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -113,7 +113,7 @@ const CupertinoDynamicColor _kOffLabelColor = CupertinoDynamicColor.withBrightne
 /// )
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -308,8 +308,8 @@ class CupertinoSwitch extends StatefulWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -330,7 +330,7 @@ class CupertinoSwitch extends StatefulWidget {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// The [CupertinoSwitch] track has no outline by default.
   final WidgetStateProperty<Color?>? trackOutlineColor;
@@ -343,8 +343,8 @@ class CupertinoSwitch extends StatefulWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -365,7 +365,7 @@ class CupertinoSwitch extends StatefulWidget {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// Since a [CupertinoSwitch] has no track outline by default, this parameter
   /// is set only if [trackOutlineColor] is provided.
@@ -381,8 +381,8 @@ class CupertinoSwitch extends StatefulWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -403,7 +403,7 @@ class CupertinoSwitch extends StatefulWidget {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// If null, then the [CupertinoSwitch] does not have any icons on the thumb.
   final WidgetStateProperty<Icon?>? thumbIcon;
@@ -417,8 +417,8 @@ class CupertinoSwitch extends StatefulWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -439,7 +439,7 @@ class CupertinoSwitch extends StatefulWidget {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// If null, then [MouseCursor.defer] is used when the switch is disabled.
   /// When the switch is enabled, [SystemMouseCursors.click] is used on Web, and
