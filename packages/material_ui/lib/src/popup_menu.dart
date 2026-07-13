@@ -148,8 +148,8 @@ class PopupMenuDivider extends PopupMenuEntry<Never> {
 
   /// {@macro flutter.material.Divider.color}
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -159,7 +159,7 @@ class PopupMenuDivider extends PopupMenuEntry<Never> {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   final Color? color;
 
   @override
@@ -245,8 +245,8 @@ class _RenderMenuItem extends RenderShiftedBox {
 /// [PopupMenuItem] is [kMinInteractiveDimension] pixels high. If you use a widget
 /// with a different height, it must be specified in the [height] property.
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -260,7 +260,7 @@ class _RenderMenuItem extends RenderShiftedBox {
 /// )
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// See the example at [PopupMenuButton] for how this example could be used in a
 /// complete menu, and see the example at [CheckedPopupMenuItem] for one way to
@@ -502,8 +502,8 @@ class PopupMenuItemState<T, W extends PopupMenuItem<T>> extends State<W> {
 /// layout uses [ListTile]; the checkmark is an [Icons.done] icon, shown in the
 /// [ListTile.leading] position.
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -543,7 +543,7 @@ class PopupMenuItemState<T, W extends PopupMenuItem<T>> extends State<W> {
 /// )
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// In particular, observe how the second menu item uses a [ListTile] with a
 /// blank [Icon] in the [ListTile.leading] position to get the same alignment as

@@ -47,8 +47,8 @@ export 'package:flutter/services.dart' show SmartDashesType, SmartQuotesType;
 ///
 /// For a documentation about the various parameters, see [TextField].
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -75,7 +75,7 @@ export 'package:flutter/services.dart' show SmartDashesType, SmartQuotesType;
 /// )
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// <callout-box>
 ///

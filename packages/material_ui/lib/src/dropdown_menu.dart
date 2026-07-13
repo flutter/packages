@@ -588,8 +588,8 @@ class DropdownMenu<T> extends StatefulWidget {
   /// When [DropdownMenu.enableFilter] is true, this callback is used to
   /// compute the list of filtered items.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -615,7 +615,7 @@ class DropdownMenu<T> extends StatefulWidget {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// Defaults to null. If this parameter is null and the
   /// [DropdownMenu.enableFilter] property is set to true, the default behavior
@@ -627,8 +627,8 @@ class DropdownMenu<T> extends StatefulWidget {
   /// When [DropdownMenu.enableSearch] is true, this callback is used to compute
   /// the index of the search result to be highlighted.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -649,7 +649,7 @@ class DropdownMenu<T> extends StatefulWidget {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// Defaults to null. If this is null and [DropdownMenu.enableSearch] is true,
   /// the default function will return the index of the first matching result

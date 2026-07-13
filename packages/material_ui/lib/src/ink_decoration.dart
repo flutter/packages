@@ -47,8 +47,8 @@ import 'material.dart';
 /// generally speaking will match the order they are given in the widget tree,
 /// but this order may appear to be somewhat random in more dynamic situations.
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -74,9 +74,10 @@ import 'material.dart';
 /// )
 /// ```
 ///
-// TODO(framework): End of the blue example container.
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// </callout-box>
+///
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -113,7 +114,7 @@ import 'material.dart';
 /// )
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// What to do if you want to clip this [Ink.image]?
 ///

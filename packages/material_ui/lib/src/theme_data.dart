@@ -841,8 +841,8 @@ class ThemeData with Diagnosticable {
   /// forward we will be converting all the widget implementations to only use
   /// colors or colors derived from those in [ColorScheme].
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -856,7 +856,7 @@ class ThemeData with Diagnosticable {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See <https://material.io/design/color/> for
   /// more discussion on how to pick the right colors.

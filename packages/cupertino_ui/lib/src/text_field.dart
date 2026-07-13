@@ -840,16 +840,16 @@ class CupertinoTextField extends StatefulWidget {
   ///
   /// {@macro flutter.widgets.magnifier.intro}
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
   /// This sample demonstrates how to customize the magnifier that this text field uses.
   ///
-  /// {@example example/lib/magnifier/text_magnifier.0.dart#body}
+  /// {@example /example/lib/magnifier/text_magnifier.0.dart#body}
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   final TextMagnifierConfiguration? magnifierConfiguration;
 
   /// {@macro flutter.widgets.EditableText.spellCheckConfiguration}

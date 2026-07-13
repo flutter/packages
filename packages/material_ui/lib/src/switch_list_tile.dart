@@ -66,8 +66,8 @@ enum _SwitchListTileType { material, adaptive }
 /// [SwitchListTile] itself but by the [Material] widget ancestor. In this
 /// case, one can wrap a [Material] widget around the [SwitchListTile], e.g.:
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -85,7 +85,7 @@ enum _SwitchListTileType { material, adaptive }
 /// )
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// ## Performance considerations when wrapping [SwitchListTile] with [Material]
 ///
@@ -336,8 +336,8 @@ class SwitchListTile extends StatelessWidget {
   /// [StatefulWidget] using the [State.setState] method, so that the parent
   /// gets rebuilt; for example:
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -353,7 +353,7 @@ class SwitchListTile extends StatelessWidget {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   final ValueChanged<bool>? onChanged;
 
   /// {@macro flutter.material.switch.activeColor}
