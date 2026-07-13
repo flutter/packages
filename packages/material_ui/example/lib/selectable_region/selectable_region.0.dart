@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// #region body
 import 'package:flutter/rendering.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -376,4 +375,3 @@ class _RenderSelectableAdapter extends RenderProxyBox
     super.dispose();
   }
 }
-// #endregion body
