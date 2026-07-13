@@ -40,29 +40,35 @@ import 'theme_data.dart';
 ///  * In a horizontally scrollable list, for example configured such as a
 ///    [ListView] with [ListView.scrollDirection] set to [Axis.horizontal].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows how to create [InputChip]s with [onSelected] and
 /// [onDeleted] callbacks. When the user taps the chip, the chip will be selected.
 /// When the user taps the delete icon, the chip will be deleted.
 ///
-/// {@example /example/lib/input_chip/input_chip.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/input_chip/input_chip.0.dart}
+///
+/// </callout-box>
+///
+///
+/// <callout-box>
 ///
 /// The following example shows how to generate [InputChip]s from
 /// user text input. When the user enters a pizza topping in the text field,
 /// the user is presented with a list of suggestions. When selecting one of the
 /// suggestions, an [InputChip] is generated in the text field.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/input_chip/input_chip.1.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// ## Material Design 3
 ///

@@ -14,16 +14,16 @@ import 'theme.dart';
 /// A [CupertinoMagnifier] used for magnifying text in cases where a user's
 /// finger may be blocking the point of interest, like a selection handle.
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
 /// This sample demonstrates how to use [CupertinoTextMagnifier].
 ///
-/// {@example example/lib/magnifier/cupertino_text_magnifier.0.dart}
+/// {@example /example/lib/magnifier/cupertino_text_magnifier.0.dart}
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// Delegates styling to [CupertinoMagnifier] with its position depending on
 /// [magnifierInfo].
@@ -226,16 +226,16 @@ class _CupertinoTextMagnifierState extends State<CupertinoTextMagnifier>
 /// A [RawMagnifier] used for magnifying text in cases where a user's
 /// finger may be blocking the point of interest, like a selection handle.
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
 /// This sample demonstrates how to use [CupertinoMagnifier].
 ///
-/// {@example example/lib/magnifier/cupertino_magnifier.0.dart}
+/// {@example /example/lib/magnifier/cupertino_magnifier.0.dart}
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// [CupertinoMagnifier] is a wrapper around [RawMagnifier] that handles styling
 /// and transitions.

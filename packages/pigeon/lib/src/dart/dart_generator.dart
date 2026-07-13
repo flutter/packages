@@ -632,6 +632,19 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     indent.newln();
     addDocumentationComments(indent, api.documentationComments, docCommentSpec);
     for (final Method func in api.methods) {
+      addDocumentationComments(
+        indent,
+        func.documentationComments,
+        docCommentSpec,
+        generatorComments: <String>[
+          'Returns a broadcast [Stream] of events from the `${func.name}` event channel.',
+          '',
+          'Each call to this method creates a new [EventChannel], so it should',
+          'not be called multiple times for the same `instanceName`. To deliver',
+          'events to multiple listeners, call this method once and listen to the',
+          'returned broadcast stream multiple times instead.',
+        ],
+      );
       indent.format('''
       Stream<${func.returnType.baseName}> ${func.name}(${_getMethodParameterSignature(func.parameters, addTrailingComma: true)} {String instanceName = ''}) {
         if (instanceName.isNotEmpty) {

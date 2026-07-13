@@ -66,8 +66,8 @@ enum _SwitchListTileType { material, adaptive }
 /// [SwitchListTile] itself but by the [Material] widget ancestor. In this
 /// case, one can wrap a [Material] widget around the [SwitchListTile], e.g.:
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -85,7 +85,7 @@ enum _SwitchListTileType { material, adaptive }
 /// )
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// ## Performance considerations when wrapping [SwitchListTile] with [Material]
 ///
@@ -96,27 +96,33 @@ enum _SwitchListTileType { material, adaptive }
 /// To show the [SwitchListTile] as disabled, pass null as the [onChanged]
 /// callback.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// ![SwitchListTile sample](https://flutter.github.io/assets-for-api-docs/assets/material/switch_list_tile.png)
 ///
 /// This widget shows a switch that, when toggled, changes the state of a [bool]
 /// member field called `_lights`.
 ///
-/// {@example /example/lib/switch_list_tile/switch_list_tile.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/switch_list_tile/switch_list_tile.0.dart}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This sample demonstrates how [SwitchListTile] positions the switch widget
 /// relative to the text in different configurations.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/switch_list_tile/switch_list_tile.1.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// ## Semantics in SwitchListTile
 ///
@@ -135,8 +141,7 @@ enum _SwitchListTileType { material, adaptive }
 /// into one. Therefore, it may be necessary to create a custom radio tile
 /// widget to accommodate similar use cases.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// ![Switch list tile semantics sample](https://flutter.github.io/assets-for-api-docs/assets/material/switch_list_tile_semantics.png)
 ///
@@ -144,9 +149,13 @@ enum _SwitchListTileType { material, adaptive }
 /// LinkedLabelRadio, that includes an interactive [RichText] widget that
 /// handles tap gestures.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/switch_list_tile/custom_labeled_switch.0.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// ## SwitchListTile isn't exactly what I want
 ///
@@ -155,17 +164,20 @@ enum _SwitchListTileType { material, adaptive }
 /// combining [Switch] with other widgets, such as [Text], [Padding] and
 /// [InkWell].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// ![Custom switch list tile sample](https://flutter.github.io/assets-for-api-docs/assets/material/switch_list_tile_custom.png)
 ///
 /// Here is an example of a custom LabeledSwitch widget, but you can easily
 /// make your own configurable widget.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
 /// {@example /example/lib/switch_list_tile/custom_labeled_switch.1.dart}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -324,8 +336,8 @@ class SwitchListTile extends StatelessWidget {
   /// [StatefulWidget] using the [State.setState] method, so that the parent
   /// gets rebuilt; for example:
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -341,7 +353,7 @@ class SwitchListTile extends StatelessWidget {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   final ValueChanged<bool>? onChanged;
 
   /// {@macro flutter.material.switch.activeColor}
