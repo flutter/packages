@@ -1800,7 +1800,7 @@ class CupertinoMenuItem extends StatelessWidget implements CupertinoMenuEntry {
 
   /// {@template flutter.cupertino.inkwell.onFocusChange}
   /// Handler called when the focus changes.
-  /// 
+  ///
   /// Called with true if this widget's node gains focus, and false if it loses
   /// focus.
   /// {@endtemplate}

@@ -447,7 +447,7 @@ class CupertinoApp extends StatefulWidget {
 
   /// {@template flutter.cupertino.materialApp.scrollBehavior}
   /// The default [ScrollBehavior] for the application.
-  /// 
+  ///
   /// [ScrollBehavior]s describe how [Scrollable] widgets behave. Providing
   /// a [ScrollBehavior] can set the default [ScrollPhysics] across
   /// an application, and manage [Scrollable] decorations like [Scrollbar]s and

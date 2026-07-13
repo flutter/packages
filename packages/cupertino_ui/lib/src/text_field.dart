@@ -615,7 +615,7 @@ class CupertinoTextField extends StatefulWidget {
 
   /// {@template flutter.cupertino.InputDecorator.textAlignVertical}
   /// How the text should be aligned vertically.
-  /// 
+  ///
   /// Determines the alignment of the baseline within the available space of
   /// the input (typically a TextField). For example, TextAlignVertical.top will
   /// place the baseline such that the text, and any attached decoration like
@@ -796,21 +796,21 @@ class CupertinoTextField extends StatefulWidget {
 
   /// {@template flutter.cupertino.textfield.onTap}
   /// Called for the first tap in a series of taps.
-  /// 
+  ///
   /// The text field builds a [GestureDetector] to handle input events like tap,
   /// to trigger focus requests, to move the caret, adjust the selection, etc.
   /// Handling some of those events by wrapping the text field with a competing
   /// GestureDetector is problematic.
-  /// 
+  ///
   /// To unconditionally handle taps, without interfering with the text field's
   /// internal gesture detector, provide this callback.
-  /// 
+  ///
   /// If the text field is created with [enabled] false, taps will not be
   /// recognized.
-  /// 
+  ///
   /// To be notified when the text field gains or loses the focus, provide a
   /// [focusNode] and add a listener to that.
-  /// 
+  ///
   /// To listen to arbitrary pointer events without competing with the
   /// text field's internal gesture detector, use a [Listener].
   /// {@endtemplate}
@@ -822,7 +822,7 @@ class CupertinoTextField extends StatefulWidget {
 
   /// {@template flutter.cupertino.Material.clipBehavior}
   /// The content will be clipped (or not) according to this option.
-  /// 
+  ///
   /// See the enum [Clip] for details of all possible options and their common
   /// use cases.
   /// {@endtemplate}
@@ -832,18 +832,18 @@ class CupertinoTextField extends StatefulWidget {
 
   /// {@template flutter.cupertino.textfield.restorationId}
   /// Restoration ID to save and restore the state of the text field.
-  /// 
+  ///
   /// If non-null, the text field will persist and restore its current scroll
   /// offset and - if no [controller] has been provided - the content of the
   /// text field. If a [controller] has been provided, it is the responsibility
   /// of the owner of that controller to persist and restore it, e.g. by using
   /// a [RestorableTextEditingController].
-  /// 
+  ///
   /// The state of this widget is persisted in a [RestorationBucket] claimed
   /// from the surrounding [RestorationScope] using the provided restoration ID.
-  /// 
+  ///
   /// See also:
-  /// 
+  ///
   ///  * [RestorationManager], which explains how state restoration works in
   ///    Flutter.
   /// {@endtemplate}
