@@ -3,7 +3,7 @@
 The `.arb` files in this directory contain localized values (primarily strings)
 used by the Cupertino library. The `generated_cupertino_localizations.dart` file
 combines all of the localizations into a single Map that is linked with the rest
-of flutter_localizations package.
+of the cupertino_ui package.
 
 If you're looking for information about internationalizing Flutter
 apps in general, see the
@@ -226,7 +226,7 @@ existing string in the CupertinoLocalizations objects, follow these steps:
 2. Update the .arb files. Modify the out-of-date English strings in
    `lib/src/l10n/cupertino_en.arb`.
 
-   You also need to re-generate `lib/src/l10n/generated_material_localizations.dart` by running:
+   You also need to re-generate `lib/src/l10n/generated_cupertino_localizations.dart` by running:
    ```
    dart script/l10n/bin/gen_localizations.dart --overwrite
    ```
