@@ -1,3 +1,7 @@
+## 0.7.5
+
+* Adds [AGENTS.md](./AGENTS.md) to provide AI agents with repository-specific context.
+
 ## 0.7.4+1
 
 * Fixes a `StateError` ("Bad state: No element") in `setFocusMode(FocusMode.auto)`
