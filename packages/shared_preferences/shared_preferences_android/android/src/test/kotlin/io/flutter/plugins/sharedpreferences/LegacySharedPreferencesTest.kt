@@ -197,8 +197,7 @@ class LegacySharedPreferencesTest {
 
   /** A dummy implementation for tests for use with FakeSharedPreferences */
   private class FakeSharedPreferencesEditor
-  internal constructor(private val sharedPrefData: MutableMap<String, Any?>) :
-      SharedPreferences.Editor {
+  constructor(private val sharedPrefData: MutableMap<String, Any?>) : SharedPreferences.Editor {
     override fun putString(key: String, value: String?): SharedPreferences.Editor {
       sharedPrefData[key] = value
       return this
@@ -301,10 +300,7 @@ class LegacySharedPreferencesTest {
     }
   }
 
-  /**
-   * A dummy implementation of SharedPreferencesListEncoder for tests that store List<String>.
-   * </String>
-   */
+  /** A dummy implementation of SharedPreferencesListEncoder for tests that store List<String>. */
   internal class ListEncoder : SharedPreferencesListEncoder {
     override fun encode(list: List<String>): String {
       return list.joinToString(separator = ";-;")
