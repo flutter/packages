@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
 ## 3.0.1
 
 * Replaces platform-specific setup instructions with links to the relevant

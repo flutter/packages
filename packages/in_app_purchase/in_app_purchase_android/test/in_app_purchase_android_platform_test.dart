@@ -47,6 +47,10 @@ const ProductDetailsWrapper dummySubscriptionProductDetails =
       ],
     );
 
+final PlatformUnfetchedProduct dummyUnfetchedProduct = PlatformUnfetchedProduct(
+  productId: 'unfetched',
+);
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -149,6 +153,7 @@ void main() {
             debugMessage: debugMessage,
           ),
           productDetails: <PlatformProductDetails>[],
+          unfetchedProductList: <PlatformUnfetchedProduct>[],
         ),
       );
 
@@ -168,6 +173,9 @@ void main() {
           ),
           productDetails: <PlatformProductDetails>[
             convertToPigeonProductDetails(dummyOneTimeProductDetails),
+          ],
+          unfetchedProductList: <PlatformUnfetchedProduct>[
+            dummyUnfetchedProduct,
           ],
         ),
       );
@@ -202,6 +210,7 @@ void main() {
           productDetails: <PlatformProductDetails>[
             convertToPigeonProductDetails(dummyOneTimeProductDetails),
           ],
+          unfetchedProductList: <PlatformUnfetchedProduct>[],
         ),
       );
       // Since queryProductDetails makes 2 platform method calls (one for each ProductType), the result will contain 2 dummyWrapper instead

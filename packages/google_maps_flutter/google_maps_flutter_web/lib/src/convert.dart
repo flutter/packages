@@ -124,12 +124,22 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
   options.fullscreenControl = false;
   options.streetViewControl = false;
 
+  // Treat an empty mapId as null, as the app-facing package may pass it either
+  // way.
+  final String? mapId = configuration.mapId == '' ? null : configuration.mapId;
   // If using cloud map, do not set options.styles
-  if (configuration.mapId == null) {
+  if (mapId == null) {
     options.styles = styles;
   }
 
-  options.mapId = configuration.mapId;
+  options.mapId = mapId;
+
+  final gmaps.ColorScheme? jsColorScheme = _gmapTypeColorSchemeForPluginColor(
+    configuration.colorScheme,
+  );
+  if (jsColorScheme != null) {
+    options.colorScheme = jsColorScheme;
+  }
 
   return options;
 }
@@ -153,6 +163,28 @@ gmaps.MapTypeId _gmapTypeIDForPluginType(MapType type) {
   // switch as needing an update.
   // ignore: dead_code
   return gmaps.MapTypeId.ROADMAP;
+}
+
+gmaps.ColorScheme? _gmapTypeColorSchemeForPluginColor(MapColorScheme? scheme) {
+  if (scheme == null) {
+    return null;
+  }
+
+  switch (scheme) {
+    case MapColorScheme.dark:
+      return gmaps.ColorScheme.DARK;
+    case MapColorScheme.light:
+      return gmaps.ColorScheme.LIGHT;
+    case MapColorScheme.followSystem:
+      return gmaps.ColorScheme.FOLLOW_SYSTEM;
+  }
+  // The enum comes from a different package, which could get a new value at
+  // any time, so provide a fallback that ensures this won't break when used
+  // with a version that contains new values. This is deliberately outside
+  // the switch rather than a `default` so that the linter will flag the
+  // switch as needing an update.
+  // ignore: dead_code
+  return null;
 }
 
 gmaps.MapOptions _applyInitialPosition(

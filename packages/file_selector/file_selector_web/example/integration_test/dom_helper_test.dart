@@ -46,8 +46,16 @@ void main() {
     });
 
     group('getFiles', () {
-      final mockFile1 = File(<JSAny>['123456'.toJS].toJS, 'file1.txt');
-      final mockFile2 = File(<JSAny>[].toJS, 'file2.txt');
+      final mockFile1 = File(
+        <JSAny>['123456'.toJS].toJS,
+        'file1.txt',
+        FilePropertyBag(type: 'text/plain'),
+      );
+      final mockFile2 = File(
+        <JSAny>[].toJS,
+        'file2.txt',
+        FilePropertyBag(type: 'text/plain'),
+      );
 
       testWidgets('works', (_) async {
         final Future<List<XFile>> futureFiles = domHelper.getFiles(
@@ -61,11 +69,13 @@ void main() {
         expect(files.length, 2);
 
         expect(files[0].name, 'file1.txt');
+        expect(files[0].mimeType, 'text/plain');
         expect(await files[0].length(), 6);
         expect(await files[0].readAsString(), '123456');
         expect(await files[0].lastModified(), isNotNull);
 
         expect(files[1].name, 'file2.txt');
+        expect(files[1].mimeType, 'text/plain');
         expect(await files[1].length(), 0);
         expect(await files[1].readAsString(), '');
         expect(await files[1].lastModified(), isNotNull);

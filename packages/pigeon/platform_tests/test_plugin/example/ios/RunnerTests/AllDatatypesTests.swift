@@ -187,4 +187,141 @@ struct AllDatatypesTests {
       withMapInList == withMatchingMapInList,
       "Instances with equivalent nested maps in lists should be equal")
   }
+
+  @Test
+  func equalityWithNaN() throws {
+    let list = [Double.nan]
+    let map: [Int64: Double?] = [1: Double.nan]
+    let a = AllNullableTypes(
+      aNullableDouble: Double.nan,
+      doubleList: list,
+      recursiveClassList: [AllNullableTypes(aNullableDouble: Double.nan)],
+      map: map
+    )
+    let b = AllNullableTypes(
+      aNullableDouble: Double.nan,
+      doubleList: list,
+      recursiveClassList: [AllNullableTypes(aNullableDouble: Double.nan)],
+      map: map
+    )
+    #expect(a == b)
+  }
+
+  @Test
+  func hashWithNaN() throws {
+    let a = AllNullableTypes(aNullableDouble: Double.nan)
+    let b = AllNullableTypes(aNullableDouble: Double.nan)
+
+    var hasherA = Hasher()
+    a.hash(into: &hasherA)
+    let hashA = hasherA.finalize()
+
+    var hasherB = Hasher()
+    b.hash(into: &hasherB)
+    let hashB = hasherB.finalize()
+
+    #expect(hashA == hashB)
+  }
+
+  @Test
+  func structEquality() {
+    let a = AllNullableTypesWithoutRecursion(aNullableInt: 1)
+    let b = AllNullableTypesWithoutRecursion(aNullableInt: 1)
+    let c = AllNullableTypesWithoutRecursion(aNullableInt: 2)
+    #expect(a == b)
+    #expect(a != c)
+  }
+
+  @Test
+  func crossTypeEquality() {
+    let a = AllNullableTypes(aNullableInt: 1)
+    let b = AllNullableTypesWithoutRecursion(aNullableInt: 1)
+    // They are different types, so they shouldn't be equal even if we cast to Any
+    let anyA: Any = a
+    let anyB: Any = b
+    #expect(!(anyA as? AllNullableTypesWithoutRecursion == b))
+    #expect(!(anyB as? AllNullableTypes == a))
+  }
+
+  @Test
+  func typedDataEquality() {
+    let data1 = "1234".data(using: .utf8)!
+    let data2 = "1234".data(using: .utf8)!
+    // Ensure they are different instances in memory if possible,
+    // though Data in Swift is a value type.
+    // FlutterStandardTypedData is a class.
+    let a = AllNullableTypes(aNullableByteArray: FlutterStandardTypedData(bytes: data1))
+    let c = a
+    c.aNullableByteArray = FlutterStandardTypedData(bytes: data2)
+
+    #expect(a == c)
+  }
+
+  @Test
+  func signedZeroEquality() {
+    let a = AllNullableTypes(aNullableDouble: 0.0)
+    let b = AllNullableTypes(aNullableDouble: -0.0)
+    #expect(a == b)
+
+    var hasherA = Hasher()
+    a.hash(into: &hasherA)
+    let hashA = hasherA.finalize()
+
+    var hasherB = Hasher()
+    b.hash(into: &hasherB)
+    let hashB = hasherB.finalize()
+
+    #expect(hashA == hashB)
+  }
+
+  @Test
+  func nestedZeroListEquality() {
+    let a = AllNullableTypes(doubleList: [0.0])
+    let b = AllNullableTypes(doubleList: [-0.0])
+    #expect(a == b)
+
+    var hasherA = Hasher()
+    a.hash(into: &hasherA)
+    let hashA = hasherA.finalize()
+
+    var hasherB = Hasher()
+    b.hash(into: &hasherB)
+    let hashB = hasherB.finalize()
+
+    #expect(hashA == hashB)
+  }
+
+  @Test
+  func zeroMapKeyEquality() {
+    let a = AllNullableTypes(map: [0.0: "a"])
+    let b = AllNullableTypes(map: [-0.0: "a"])
+    #expect(a == b)
+
+    var hasherA = Hasher()
+    a.hash(into: &hasherA)
+    let hashA = hasherA.finalize()
+
+    var hasherB = Hasher()
+    b.hash(into: &hasherB)
+    let hashB = hasherB.finalize()
+
+    #expect(hashA == hashB)
+  }
+
+  @Test
+  func zeroMapValueEquality() {
+    let a = AllNullableTypes(map: ["a": 0.0])
+    let b = AllNullableTypes(map: ["a": -0.0])
+    #expect(a == b)
+
+    var hasherA = Hasher()
+    a.hash(into: &hasherA)
+    let hashA = hasherA.finalize()
+
+    var hasherB = Hasher()
+    b.hash(into: &hasherB)
+    let hashB = hasherB.finalize()
+
+    #expect(hashA == hashB)
+  }
 }

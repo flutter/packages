@@ -201,7 +201,9 @@ public class DeviceOrientationManager {
     return (angle + sensorOrientation + 360) % 360;
   }
 
-  /** @return the last received UI orientation. */
+  /**
+   * @return the last received UI orientation.
+   */
   @Nullable
   public PlatformChannel.DeviceOrientation getLastUIOrientation() {
     return this.lastOrientation;

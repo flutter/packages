@@ -4735,6 +4735,7 @@ class ImageCapture extends UseCase {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel
         .send(<Object?>[
+<<<<<<< HEAD
       pigeonVar_instanceIdentifier,
       resolutionSelector,
       targetRotation,

@@ -1582,5 +1582,442 @@ void main() {
         expect(find.text('Home'), findsOneWidget);
       },
     );
+
+    group('with refreshListenable', () {
+      testWidgets(
+        'Block.then(router.go) navigates after refreshListenable fires',
+        (WidgetTester tester) async {
+          final isAuthenticated = ValueNotifier<bool>(true);
+          addTearDown(isAuthenticated.dispose);
+
+          router = GoRouter(
+            initialLocation: '/home',
+            refreshListenable: isAuthenticated,
+            onEnter:
+                (
+                  BuildContext context,
+                  GoRouterState current,
+                  GoRouterState next,
+                  GoRouter goRouter,
+                ) {
+                  // Public routes — always allow
+                  if (next.uri.path == '/login') {
+                    return const Allow();
+                  }
+
+                  // Protected routes — require auth
+                  if (!isAuthenticated.value) {
+                    return Block.then(() => goRouter.go('/login'));
+                  }
+                  return const Allow();
+                },
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/home',
+                builder: (_, __) =>
+                    const Scaffold(body: Center(child: Text('Home'))),
+              ),
+              GoRoute(
+                path: '/login',
+                builder: (_, __) =>
+                    const Scaffold(body: Center(child: Text('Login'))),
+              ),
+            ],
+          );
+
+          await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+          await tester.pumpAndSettle();
+          expect(find.text('Home'), findsOneWidget);
+
+          // Toggle auth off — refreshListenable fires, guard blocks and
+          // calls router.go('/login') in Block.then callback.
+          isAuthenticated.value = false;
+          await tester.pumpAndSettle();
+
+          // The callback navigation must commit.
+          expect(router.state.uri.path, equals('/login'));
+          expect(find.text('Login'), findsOneWidget);
+        },
+      );
+
+      testWidgets(
+        'Block.then(router.goNamed) navigates after refreshListenable fires',
+        (WidgetTester tester) async {
+          final isAuthenticated = ValueNotifier<bool>(true);
+          addTearDown(isAuthenticated.dispose);
+
+          router = GoRouter(
+            initialLocation: '/home',
+            refreshListenable: isAuthenticated,
+            onEnter:
+                (
+                  BuildContext context,
+                  GoRouterState current,
+                  GoRouterState next,
+                  GoRouter goRouter,
+                ) {
+                  if (next.uri.path == '/login') {
+                    return const Allow();
+                  }
+
+                  if (!isAuthenticated.value) {
+                    return Block.then(() => goRouter.goNamed('login'));
+                  }
+                  return const Allow();
+                },
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/home',
+                builder: (_, __) =>
+                    const Scaffold(body: Center(child: Text('Home'))),
+              ),
+              GoRoute(
+                path: '/login',
+                name: 'login',
+                builder: (_, __) =>
+                    const Scaffold(body: Center(child: Text('Login'))),
+              ),
+            ],
+          );
+
+          await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+          await tester.pumpAndSettle();
+          expect(find.text('Home'), findsOneWidget);
+
+          isAuthenticated.value = false;
+          await tester.pumpAndSettle();
+
+          expect(router.state.uri.path, equals('/login'));
+          expect(find.text('Login'), findsOneWidget);
+        },
+      );
+
+      testWidgets(
+        'Block.then(router.go) navigates after multiple rapid refreshListenable emissions',
+        (WidgetTester tester) async {
+          final authState = ValueNotifier<int>(0);
+          addTearDown(authState.dispose);
+
+          router = GoRouter(
+            initialLocation: '/home',
+            refreshListenable: authState,
+            onEnter:
+                (
+                  BuildContext context,
+                  GoRouterState current,
+                  GoRouterState next,
+                  GoRouter goRouter,
+                ) {
+                  if (next.uri.path == '/login') {
+                    return const Allow();
+                  }
+
+                  if (authState.value > 2) {
+                    return Block.then(() => goRouter.go('/login'));
+                  }
+                  return const Allow();
+                },
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/home',
+                builder: (_, __) =>
+                    const Scaffold(body: Center(child: Text('Home'))),
+              ),
+              GoRoute(
+                path: '/login',
+                builder: (_, __) =>
+                    const Scaffold(body: Center(child: Text('Login'))),
+              ),
+            ],
+          );
+
+          await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+          await tester.pumpAndSettle();
+          expect(find.text('Home'), findsOneWidget);
+
+          // Rapid emissions simulating CombineLatestStream
+          authState.value = 1;
+          authState.value = 2;
+          authState.value = 3; // triggers Block.then
+          await tester.pumpAndSettle();
+
+          expect(router.state.uri.path, equals('/login'));
+          expect(find.text('Login'), findsOneWidget);
+        },
+      );
+
+      testWidgets(
+        'Allow.then(router.go) navigates after refreshListenable fires',
+        (WidgetTester tester) async {
+          final shouldRedirect = ValueNotifier<bool>(false);
+          addTearDown(shouldRedirect.dispose);
+
+          router = GoRouter(
+            initialLocation: '/home',
+            refreshListenable: shouldRedirect,
+            onEnter:
+                (
+                  BuildContext context,
+                  GoRouterState current,
+                  GoRouterState next,
+                  GoRouter goRouter,
+                ) {
+                  if (next.uri.path == '/dashboard') {
+                    return const Allow();
+                  }
+
+                  if (shouldRedirect.value && next.uri.path == '/home') {
+                    return Allow(then: () => goRouter.go('/dashboard'));
+                  }
+                  return const Allow();
+                },
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/home',
+                builder: (_, __) =>
+                    const Scaffold(body: Center(child: Text('Home'))),
+              ),
+              GoRoute(
+                path: '/dashboard',
+                builder: (_, __) =>
+                    const Scaffold(body: Center(child: Text('Dashboard'))),
+              ),
+            ],
+          );
+
+          await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+          await tester.pumpAndSettle();
+          expect(find.text('Home'), findsOneWidget);
+
+          shouldRedirect.value = true;
+          await tester.pumpAndSettle();
+
+          expect(router.state.uri.path, equals('/dashboard'));
+          expect(find.text('Dashboard'), findsOneWidget);
+        },
+      );
+
+      testWidgets(
+        'Block.then error is reported after refreshListenable fires',
+        (WidgetTester tester) async {
+          final trigger = ValueNotifier<bool>(false);
+          addTearDown(trigger.dispose);
+
+          FlutterErrorDetails? reported;
+          final void Function(FlutterErrorDetails)? oldHandler =
+              FlutterError.onError;
+          FlutterError.onError = (FlutterErrorDetails details) {
+            reported = details;
+          };
+          addTearDown(() => FlutterError.onError = oldHandler);
+
+          router = GoRouter(
+            initialLocation: '/home',
+            refreshListenable: trigger,
+            onEnter:
+                (
+                  BuildContext context,
+                  GoRouterState current,
+                  GoRouterState next,
+                  GoRouter goRouter,
+                ) {
+                  if (trigger.value && next.uri.path == '/home') {
+                    return Block.then(() => throw StateError('callback error'));
+                  }
+                  return const Allow();
+                },
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/home',
+                builder: (_, __) =>
+                    const Scaffold(body: Center(child: Text('Home'))),
+              ),
+            ],
+          );
+
+          await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+          await tester.pumpAndSettle();
+          expect(find.text('Home'), findsOneWidget);
+
+          trigger.value = true;
+          await tester.pumpAndSettle();
+
+          // Error should be reported (not swallowed)
+          expect(reported, isNotNull);
+          expect(reported!.exception.toString(), contains('callback error'));
+        },
+      );
+    });
+
+    // Tests for onEnter interaction with chained redirects.
+    // These validate that onEnter works correctly when top-level and
+    // route-level redirects produce chains.
+    group('onEnter with chained redirects', () {
+      testWidgets('onEnter called once when top-level redirect chains', (
+        WidgetTester tester,
+      ) async {
+        // Regression test for https://github.com/flutter/flutter/issues/178984
+        //
+        // Top-level redirect: / -> /a -> /b
+        // onEnter should allow navigation and be called exactly once
+        // for the final resolved location.
+        var onEnterCallCount = 0;
+        var redirectCallCount = 0;
+
+        router = GoRouter(
+          initialLocation: '/',
+          onEnter:
+              (
+                BuildContext context,
+                GoRouterState current,
+                GoRouterState next,
+                GoRouter goRouter,
+              ) async {
+                onEnterCallCount++;
+                return const Allow();
+              },
+          redirect: (BuildContext context, GoRouterState state) {
+            redirectCallCount++;
+            if (state.matchedLocation == '/') {
+              return '/a';
+            }
+            if (state.matchedLocation == '/a') {
+              return '/b';
+            }
+            return null;
+          },
+          routes: <RouteBase>[
+            GoRoute(path: '/', builder: (_, __) => const Text('Home')),
+            GoRoute(path: '/a', builder: (_, __) => const Text('A')),
+            GoRoute(path: '/b', builder: (_, __) => const Text('B')),
+          ],
+        );
+
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pumpAndSettle();
+
+        // Chain should resolve to /b.
+        expect(router.routerDelegate.currentConfiguration.uri.toString(), '/b');
+        expect(find.text('B'), findsOneWidget);
+        // onEnter should be called exactly once for the initial navigation.
+        expect(onEnterCallCount, 1);
+        // Redirect should be called for /, /a, and /b.
+        expect(redirectCallCount, 3);
+      });
+
+      testWidgets(
+        'onEnter called once when route-level triggers top-level redirect',
+        (WidgetTester tester) async {
+          // Route-level on /src: /src -> /dst
+          // Top-level: /dst -> /final
+          // onEnter should be called exactly once.
+          var onEnterCallCount = 0;
+
+          router = GoRouter(
+            initialLocation: '/src',
+            onEnter:
+                (
+                  BuildContext context,
+                  GoRouterState current,
+                  GoRouterState next,
+                  GoRouter goRouter,
+                ) async {
+                  onEnterCallCount++;
+                  return const Allow();
+                },
+            redirect: (BuildContext context, GoRouterState state) {
+              if (state.matchedLocation == '/dst') {
+                return '/final';
+              }
+              return null;
+            },
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/',
+                builder: (_, __) => const Text('Home'),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'src',
+                    builder: (_, __) => const Text('Src'),
+                    redirect: (BuildContext context, GoRouterState state) =>
+                        '/dst',
+                  ),
+                ],
+              ),
+              GoRoute(path: '/dst', builder: (_, __) => const Text('Dst')),
+              GoRoute(path: '/final', builder: (_, __) => const Text('Final')),
+            ],
+          );
+
+          await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+          await tester.pumpAndSettle();
+
+          // Chain should resolve to /final.
+          expect(
+            router.routerDelegate.currentConfiguration.uri.toString(),
+            '/final',
+          );
+          expect(find.text('Final'), findsOneWidget);
+          // onEnter should be called exactly once for the initial navigation.
+          expect(onEnterCallCount, 1);
+        },
+      );
+
+      testWidgets('onEnter block prevents redirect chain evaluation', (
+        WidgetTester tester,
+      ) async {
+        // onEnter blocks navigation to /a.
+        // Top-level redirect: /a -> /b (should never be evaluated).
+        var redirectCallCount = 0;
+
+        router = GoRouter(
+          initialLocation: '/',
+          onEnter:
+              (
+                BuildContext context,
+                GoRouterState current,
+                GoRouterState next,
+                GoRouter goRouter,
+              ) async {
+                // Block all navigation except to /.
+                if (next.uri.path == '/') {
+                  return const Allow();
+                }
+                return const Block.stop();
+              },
+          redirect: (BuildContext context, GoRouterState state) {
+            redirectCallCount++;
+            if (state.matchedLocation == '/a') {
+              return '/b';
+            }
+            return null;
+          },
+          routes: <RouteBase>[
+            GoRoute(path: '/', builder: (_, __) => const Text('Home')),
+            GoRoute(path: '/a', builder: (_, __) => const Text('A')),
+            GoRoute(path: '/b', builder: (_, __) => const Text('B')),
+          ],
+        );
+
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pumpAndSettle();
+
+        // Initial navigation to / is allowed.
+        expect(find.text('Home'), findsOneWidget);
+        final redirectCountAfterInit = redirectCallCount;
+
+        // Navigate to /a — should be blocked by onEnter.
+        router.go('/a');
+        await tester.pumpAndSettle();
+
+        // Navigation was blocked; still on Home.
+        expect(find.text('Home'), findsOneWidget);
+        expect(find.text('A'), findsNothing);
+        expect(find.text('B'), findsNothing);
+        // Redirect function should NOT have been called for /a since
+        // onEnter blocked before redirects were evaluated.
+        expect(redirectCallCount, redirectCountAfterInit);
+      });
+    });
   });
 }

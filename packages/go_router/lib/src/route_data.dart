@@ -90,19 +90,22 @@ class _GoRouteParameters {
     required this.builder,
     required this.pageBuilder,
     required this.redirect,
-    required this.onExit,
+    this.onExit,
   });
 
   final GoRouterWidgetBuilder builder;
   final GoRouterPageBuilder pageBuilder;
   final GoRouterRedirect redirect;
-  final ExitCallback onExit;
+  final ExitCallback? onExit;
 }
 
 /// Helper to create [GoRoute] parameters from a factory function and an Expando.
+///
+/// When [hasOverriddenOnExit] is null, treat it the same as true for backward compatibility.
 _GoRouteParameters _createGoRouteParameters<T extends _GoRouteDataBase>({
   required T Function(GoRouterState) factory,
   required Expando<_GoRouteDataBase> expando,
+  bool? hasOverriddenOnExit,
 }) {
   T factoryImpl(GoRouterState state) {
     final Object? extra = state.extra;
@@ -123,8 +126,10 @@ _GoRouteParameters _createGoRouteParameters<T extends _GoRouteDataBase>({
         factoryImpl(state).buildPage(context, state),
     redirect: (BuildContext context, GoRouterState state) =>
         factoryImpl(state).redirect(context, state),
-    onExit: (BuildContext context, GoRouterState state) =>
-        factoryImpl(state).onExit(context, state),
+    onExit: hasOverriddenOnExit == null || hasOverriddenOnExit
+        ? (BuildContext context, GoRouterState state) =>
+              factoryImpl(state).onExit(context, state)
+        : null,
   );
 }
 
@@ -156,10 +161,12 @@ abstract class GoRouteData extends _GoRouteDataBase {
     required T Function(GoRouterState) factory,
     GlobalKey<NavigatorState>? parentNavigatorKey,
     List<RouteBase> routes = const <RouteBase>[],
+    bool? hasOverriddenOnExit,
   }) {
     final _GoRouteParameters params = _createGoRouteParameters<T>(
       factory: factory,
       expando: _GoRouteDataBase.stateObjectExpando,
+      hasOverriddenOnExit: hasOverriddenOnExit,
     );
 
     return GoRoute(
@@ -227,10 +234,12 @@ abstract class RelativeGoRouteData extends _GoRouteDataBase {
     required T Function(GoRouterState) factory,
     GlobalKey<NavigatorState>? parentNavigatorKey,
     List<RouteBase> routes = const <RouteBase>[],
+    bool? hasOverriddenOnExit,
   }) {
     final _GoRouteParameters params = _createGoRouteParameters<T>(
       factory: factory,
       expando: _GoRouteDataBase.stateObjectExpando,
+      hasOverriddenOnExit: hasOverriddenOnExit,
     );
 
     return GoRoute(
@@ -620,11 +629,42 @@ class NoOpPage extends Page<void> {
       throw UnsupportedError('Should never be called');
 }
 
+/// Signature of custom query parameter encoding.
+///
+/// The function takes a parameter value of type `T` and returns a string
+/// representation suitable for use in a URI. The returned string is escaped to
+/// be URL-safe.
+///
+/// For example, a parameter value of `'field with space'` will generate a query
+/// parameter value of `'field+with+space'`.
+typedef QueryParameterEncoder<T> = String Function(T value);
+
+/// Signature for custom query parameter decoding functions.
+///
+/// Converts an encoded string from the URI into a parameter value of type `T`.
+///
+/// The [value] parameter contains the encoded string from the URI. if the
+/// parameter is absent from the URI.
+typedef QueryParameterDecoder<T> = T Function(String value);
+
 /// Annotation to override the URI name for a route parameter.
+@optionalTypeArgs
 @Target({TargetKind.parameter})
-class TypedQueryParameter {
+class TypedQueryParameter<T> {
   /// Annotation to override the URI name for a route parameter.
-  const TypedQueryParameter({this.name});
+  const TypedQueryParameter({
+    this.name,
+    this.encoder,
+    this.decoder,
+    this.compare,
+  }) : assert(
+         (encoder == null) == (decoder == null),
+         'encoder and decoder must both be provided together',
+       ),
+       assert(
+         compare == null || encoder != null,
+         'compare function requires an encoder to be provided',
+       );
 
   /// The name of the parameter in the URI.
   ///
@@ -647,4 +687,26 @@ class TypedQueryParameter {
   /// It is escaped to be URL-safe. For example `'field with space'` will
   /// generate a query parameter named `'field+with+space'`.
   final String? name;
+
+  /// A function that converts a parameter value to a string for use in the URI.
+  ///
+  /// See [QueryParameterEncoder] for details.
+  final QueryParameterEncoder<T>? encoder;
+
+  /// A function that converts a string from the URI to a parameter value.
+  ///
+  /// See [QueryParameterDecoder] for details.
+  final QueryParameterDecoder<T>? decoder;
+
+  /// A function that determines if two parameter values differ.
+  ///
+  /// Returns `true` when the values differ and `false` when they match.
+  ///
+  /// Used to decide whether to include a parameter in the URI when a default
+  /// value exists. If the parameter equals its default value, it is omitted
+  /// from the URI; otherwise, it is included.
+  ///
+  /// This should be provided if the parameter has a default value and is is not
+  /// a primitive type.
+  final bool Function(T, T)? compare;
 }

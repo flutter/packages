@@ -6,7 +6,7 @@ import XCTest
 
 @testable import camera_avfoundation
 
-/// Tests of `CameraPlugin` methods delegating to `FLTCam` instance
+/// Tests of `CameraPlugin` methods delegating to `Camera` instance
 final class CameraPluginDelegatingMethodTests: XCTestCase {
   private func createCameraPlugin() -> (CameraPlugin, MockCamera) {
     let mockCamera = MockCamera()

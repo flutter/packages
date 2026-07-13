@@ -53,23 +53,6 @@ void main() {
     );
   });
 
-  test('runs with Flutter for a Dart package when requested', () async {
-    final RepositoryPackage package = createFakePackage(
-      'a_package',
-      packagesDir,
-    );
-    final platform = MockPlatform();
-
-    await runPubGet(package, processRunner, platform, alwaysUseFlutter: true);
-
-    expect(
-      processRunner.recordedCalls,
-      orderedEquals(<ProcessCall>[
-        ProcessCall('flutter', const <String>['pub', 'get'], package.path),
-      ]),
-    );
-  });
-
   test('uses the correct Flutter command on Windows', () async {
     final RepositoryPackage package = createFakePackage(
       'a_package',

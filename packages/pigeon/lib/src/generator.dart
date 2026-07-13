@@ -40,7 +40,7 @@ abstract class StructuredGenerator<T extends InternalOptions>
     StringSink sink, {
     required String dartPackageName,
   }) {
-    final indent = Indent(sink);
+    final indent = Indent();
 
     writeFilePrologue(
       generatorOptions,
@@ -117,6 +117,8 @@ abstract class StructuredGenerator<T extends InternalOptions>
       indent,
       dartPackageName: dartPackageName,
     );
+
+    sink.write(indent.toString());
   }
 
   /// Adds specified headers to [indent].

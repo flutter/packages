@@ -42,6 +42,7 @@ class MapConfiguration {
     String? cloudMapId,
     this.style,
     this.markerType,
+    this.colorScheme,
   }) : mapId = mapId ?? cloudMapId;
 
   /// This setting controls how the API handles gestures on the map. Web only.
@@ -143,6 +144,11 @@ class MapConfiguration {
   /// used.
   final MarkerType? markerType;
 
+  /// Preferred color scheme for the cloud-styled map. Web only.
+  ///
+  /// See https://developers.google.com/maps/documentation/javascript/mapcolorscheme for more details.
+  final MapColorScheme? colorScheme;
+
   /// Identifier that's associated with a specific cloud-based map style.
   ///
   /// See https://developers.google.com/maps/documentation/get-map-id
@@ -227,6 +233,7 @@ class MapConfiguration {
       mapId: mapId != other.mapId ? mapId : null,
       style: style != other.style ? style : null,
       markerType: markerType != other.markerType ? markerType : null,
+      colorScheme: colorScheme != other.colorScheme ? colorScheme : null,
     );
   }
 
@@ -265,6 +272,7 @@ class MapConfiguration {
       mapId: diff.mapId ?? mapId,
       style: diff.style ?? style,
       markerType: diff.markerType ?? markerType,
+      colorScheme: diff.colorScheme ?? colorScheme,
     );
   }
 
@@ -294,7 +302,8 @@ class MapConfiguration {
       buildingsEnabled == null &&
       mapId == null &&
       style == null &&
-      markerType == null;
+      markerType == null &&
+      colorScheme == null;
 
   @override
   bool operator ==(Object other) {
@@ -329,7 +338,8 @@ class MapConfiguration {
         buildingsEnabled == other.buildingsEnabled &&
         mapId == other.mapId &&
         style == other.style &&
-        markerType == other.markerType;
+        markerType == other.markerType &&
+        colorScheme == other.colorScheme;
   }
 
   @override
@@ -359,6 +369,7 @@ class MapConfiguration {
     mapId,
     style,
     markerType,
+    colorScheme,
   ]);
 }
 

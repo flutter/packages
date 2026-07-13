@@ -15,17 +15,17 @@ import 'custom_marker_icon.dart';
 import 'page.dart';
 
 class MarkerIconsPage extends GoogleMapExampleAppPage {
-  const MarkerIconsPage({Key? key})
-    : super(const Icon(Icons.image), 'Marker icons', key: key);
+  const MarkerIconsPage({super.key})
+    : super(const Icon(Icons.image), 'Marker icons');
 
   @override
   Widget build(BuildContext context) {
-    return const MarkerIconsBody();
+    return const _MarkerIconsBody();
   }
 }
 
-class MarkerIconsBody extends StatefulWidget {
-  const MarkerIconsBody({super.key});
+class _MarkerIconsBody extends StatefulWidget {
+  const _MarkerIconsBody();
 
   @override
   State<StatefulWidget> createState() => MarkerIconsBodyState();
@@ -35,7 +35,7 @@ const LatLng _kMapCenter = LatLng(52.4478, -3.5402);
 
 enum _MarkerSizeOption { original, width30, height40, size30x60, size120x60 }
 
-class MarkerIconsBodyState extends State<MarkerIconsBody> {
+class MarkerIconsBodyState extends State<_MarkerIconsBody> {
   final Size _markerAssetImageSize = const Size(48, 48);
   _MarkerSizeOption _currentSizeOption = _MarkerSizeOption.original;
   Set<Marker> _markers = <Marker>{};

@@ -78,9 +78,11 @@ class FetchDepsCommand extends PackageLoopingCommand {
           'Include packages with Windows examples when used with '
           '--$_supportingTargetPlatformsOnlyFlag',
     );
+    argParser.addFlag(_swiftPackageManagerFlag, defaultsTo: null);
   }
 
   static const String _dartFlag = 'dart';
+  static const String _swiftPackageManagerFlag = 'swift-package-manager';
   static const String _supportingTargetPlatformsOnlyFlag =
       'supporting-target-platforms-only';
 
@@ -101,18 +103,24 @@ class FetchDepsCommand extends PackageLoopingCommand {
 
   @override
   Future<void> initializeRun() async {
-    // `pod install` requires having the platform artifacts precached. See
-    // https://github.com/flutter/flutter/blob/fb7a763c640d247d090cbb373e4b3a0459ac171b/packages/flutter_tools/bin/podhelper.rb#L47
-    // https://github.com/flutter/flutter/blob/fb7a763c640d247d090cbb373e4b3a0459ac171b/packages/flutter_tools/bin/podhelper.rb#L130
-    final bool precacheIOS = getBoolArg(platformIOS);
-    final bool precacheMacOS = getBoolArg(platformMacOS);
-    if (precacheIOS || precacheMacOS) {
+    final bool includeIOS = getBoolArg(platformIOS);
+    final bool includeMacOS = getBoolArg(platformMacOS);
+    // TODO(stuartmorgan): Flip the default to true once SwiftPM is on by
+    // default on stable. For now this will have the wrong default on stable,
+    // but that's fine since we are usually providing an explicit flag for now.
+    final bool usesCocoaPods =
+        (includeIOS || includeMacOS) &&
+        !(getNullableBoolArg(_swiftPackageManagerFlag) ?? false);
+    if (usesCocoaPods) {
+      // `pod install` requires having the platform artifacts precached. See
+      // https://github.com/flutter/flutter/blob/fb7a763c640d247d090cbb373e4b3a0459ac171b/packages/flutter_tools/bin/podhelper.rb#L47
+      // https://github.com/flutter/flutter/blob/fb7a763c640d247d090cbb373e4b3a0459ac171b/packages/flutter_tools/bin/podhelper.rb#L130
       final int precacheExitCode = await processRunner.runAndStream(
         flutterCommand,
         <String>[
           'precache',
-          if (precacheIOS) '--ios',
-          if (precacheMacOS) '--macos',
+          if (includeIOS) '--ios',
+          if (includeMacOS) '--macos',
         ],
       );
       if (precacheExitCode != 0) {
@@ -128,10 +136,41 @@ class FetchDepsCommand extends PackageLoopingCommand {
     }
   }
 
+  bool? get _swiftPackageManagerFeatureConfig {
+    if (!getBoolArg(platformIOS) && !getBoolArg(platformMacOS)) {
+      return null;
+    }
+    return getNullableBoolArg(_swiftPackageManagerFlag);
+  }
+
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
     var fetchedDeps = false;
     final skips = <String>[];
+
+    final bool? swiftPackageManagerOverride = _swiftPackageManagerFeatureConfig;
+    // Rather than changing global config state, enable SwiftPM via a
+    // temporary package-level override. This must be done before running any
+    // Flutter commands, not just `build`, because `flutter pub get` triggers
+    // codepaths that can generate a Podfile, changing the behavior of
+    // `flutter build`.
+    if (swiftPackageManagerOverride != null) {
+      print(
+        'Overriding enable-swift-package-manager to '
+        '$swiftPackageManagerOverride',
+      );
+      setSwiftPackageManagerState(
+        package,
+        enabled: swiftPackageManagerOverride,
+      );
+      for (final RepositoryPackage example in package.getExamples()) {
+        setSwiftPackageManagerState(
+          example,
+          enabled: swiftPackageManagerOverride,
+        );
+      }
+    }
+
     if (getBoolArg(_dartFlag)) {
       final bool filterPlatforms = getBoolArg(
         _supportingTargetPlatformsOnlyFlag,
@@ -176,6 +215,15 @@ class FetchDepsCommand extends PackageLoopingCommand {
           errors.addAll(result.details);
         case RunState.excluded:
           throw StateError('Unreachable');
+      }
+    }
+
+    // If an override was added, remove it.
+    if (swiftPackageManagerOverride != null) {
+      print('Removing enable-swift-package-manager override');
+      setSwiftPackageManagerState(package, enabled: null);
+      for (final RepositoryPackage example in package.getExamples()) {
+        setSwiftPackageManagerState(example, enabled: null);
       }
     }
 

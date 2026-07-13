@@ -1,0 +1,17 @@
+name: flutter_goldens
+publish_to: none
+
+environment:
+  sdk: ^3.9.0
+
+dependencies:
+  crypto: ^3.0.7
+  file: ^7.0.1
+  flutter:
+    sdk: flutter
+  flutter_test:
+    sdk: flutter
+  path: ^1.9.1
+  platform: ^3.1.6
+  process: ^5.0.5
+  yaml: ^3.1.3

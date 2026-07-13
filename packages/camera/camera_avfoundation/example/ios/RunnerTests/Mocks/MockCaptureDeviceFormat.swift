@@ -32,4 +32,12 @@ final class MockCaptureDeviceFormat: NSObject, CaptureDeviceFormat {
       allocator: kCFAllocatorDefault, codecType: kCVPixelFormatType_32BGRA, width: 1920,
       height: 1080, extensions: nil, formatDescriptionOut: &_formatDescription)
   }
+
+  init(codecType: OSType, width: Int32, height: Int32) {
+    super.init()
+
+    CMVideoFormatDescriptionCreate(
+      allocator: kCFAllocatorDefault, codecType: codecType, width: width,
+      height: height, extensions: nil, formatDescriptionOut: &_formatDescription)
+  }
 }

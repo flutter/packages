@@ -201,7 +201,7 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
     String pubspecRepoRelativePosixPath,
   ) async {
     final File pubspecFile = childFileWithSubcomponents(
-      packagesDir.parent,
+      rootDir,
       p.posix.split(pubspecRepoRelativePosixPath),
     );
     if (!pubspecFile.existsSync()) {

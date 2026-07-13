@@ -114,8 +114,125 @@
   [self waitForExpectations:@[ expectation ] timeout:1.0];
 }
 
-- (void)unusedClassesExist {
-  XCTAssert([[FLTUnusedClass alloc] init] != nil);
+- (void)testEquality {
+  FLTAllNullableTypes *everything1 = [[FLTAllNullableTypes alloc] init];
+  everything1.aNullableBool = @NO;
+  everything1.aNullableInt = @(1);
+  everything1.aNullableString = @"123";
+
+  FLTAllNullableTypes *everything2 = [[FLTAllNullableTypes alloc] init];
+  everything2.aNullableBool = @NO;
+  everything2.aNullableInt = @(1);
+  everything2.aNullableString = @"123";
+
+  FLTAllNullableTypes *everything3 = [[FLTAllNullableTypes alloc] init];
+  everything3.aNullableBool = @YES;
+
+  XCTAssertEqualObjects(everything1, everything2);
+  XCTAssertNotEqualObjects(everything1, everything3);
+  XCTAssertEqual(everything1.hash, everything2.hash);
+}
+
+- (void)testNaNEquality {
+  FLTAllNullableTypes *everything1 = [[FLTAllNullableTypes alloc] init];
+  everything1.aNullableDouble = @(NAN);
+
+  FLTAllNullableTypes *everything2 = [[FLTAllNullableTypes alloc] init];
+  everything2.aNullableDouble = @(NAN);
+
+  XCTAssertEqualObjects(everything1, everything2);
+  XCTAssertEqual(everything1.hash, everything2.hash);
+}
+
+- (void)testCrossTypeEquality {
+  FLTAllNullableTypes *a = [[FLTAllNullableTypes alloc] init];
+  a.aNullableInt = @(1);
+
+  FLTAllNullableTypesWithoutRecursion *b = [[FLTAllNullableTypesWithoutRecursion alloc] init];
+  b.aNullableInt = @(1);
+
+  XCTAssertNotEqualObjects(a, b);
+  XCTAssertNotEqualObjects(b, a);
+}
+
+- (void)testZeroEquality {
+  FLTAllNullableTypes *a = [[FLTAllNullableTypes alloc] init];
+  a.aNullableDouble = @(0.0);
+
+  FLTAllNullableTypes *b = [[FLTAllNullableTypes alloc] init];
+  b.aNullableDouble = @(-0.0);
+
+  XCTAssertEqualObjects(a, b);
+  XCTAssertEqual(a.hash, b.hash);
+}
+
+- (void)testNestedNaNEquality {
+  FLTAllNullableTypes *a = [[FLTAllNullableTypes alloc] init];
+  a.aNullableDouble = @(nan(""));
+  a.doubleList = @[ @(nan("")) ];
+
+  FLTAllNullableTypes *b = [[FLTAllNullableTypes alloc] init];
+  b.aNullableDouble = @(nan(""));
+  b.doubleList = @[ @(nan("")) ];
+
+  // If this fails, Objective-C needs a deepEquals helper too.
+  XCTAssertEqualObjects(a, b);
+  XCTAssertEqual(a.hash, b.hash);
+}
+
+- (void)testNestedZeroListEquality {
+  FLTAllNullableTypes *a = [[FLTAllNullableTypes alloc] init];
+  a.doubleList = @[ @(0.0) ];
+
+  FLTAllNullableTypes *b = [[FLTAllNullableTypes alloc] init];
+  b.doubleList = @[ @(-0.0) ];
+
+  XCTAssertEqualObjects(a, b);
+  XCTAssertEqual(a.hash, b.hash);
+}
+
+- (void)testZeroMapKeyEquality {
+  FLTAllNullableTypes *a = [[FLTAllNullableTypes alloc] init];
+  a.map = @{@(0.0) : @"a"};
+
+  FLTAllNullableTypes *b = [[FLTAllNullableTypes alloc] init];
+  b.map = @{@(-0.0) : @"a"};
+
+  XCTAssertEqualObjects(a, b);
+  XCTAssertEqual(a.hash, b.hash);
+}
+
+- (void)testZeroMapValueEquality {
+  FLTAllNullableTypes *a = [[FLTAllNullableTypes alloc] init];
+  a.map = @{@"a" : @(0.0)};
+
+  FLTAllNullableTypes *b = [[FLTAllNullableTypes alloc] init];
+  b.map = @{@"a" : @(-0.0)};
+
+  XCTAssertEqualObjects(a, b);
+  XCTAssertEqual(a.hash, b.hash);
+}
+
+- (void)testNSNullListEquality {
+  FLTAllNullableTypes *a = [[FLTAllNullableTypes alloc] init];
+  a.list = @[ [NSNull null] ];
+
+  FLTAllNullableTypes *b = [[FLTAllNullableTypes alloc] init];
+  b.list = @[ [NSNull null] ];
+
+  XCTAssertEqualObjects(a, b);
+  XCTAssertEqual(a.hash, b.hash);
+}
+
+- (void)testNSNullPropertyEquality {
+  FLTAllNullableTypes *a = [[FLTAllNullableTypes alloc] init];
+  a.aNullableObject = [NSNull null];
+
+  FLTAllNullableTypes *b = [[FLTAllNullableTypes alloc] init];
+  b.aNullableObject = nil;
+
+  XCTAssertEqualObjects(a, b);
+  XCTAssertEqual(a.hash, b.hash);
 }
 
 @end

@@ -13,6 +13,10 @@ tasks:
     script: .ci/scripts/plugin_tools_tests.sh
   - name: tool format
     script: .ci/scripts/plugin_tools_format.sh
+  - name: flutter_goldens unit tests
+    script: .ci/scripts/flutter_goldens_tests.sh
+  - name: flutter_goldens format
+    script: .ci/scripts/flutter_goldens_format.sh
   - name: format
     script: .ci/scripts/tool_runner.sh
     # Skip Swift formatting on Linux builders.
@@ -22,46 +26,12 @@ tasks:
     script: .ci/scripts/tool_runner.sh
     args: ["license-check"]
     always: true
-    # The major and minor version here should match the lowest version analyzed
-    # in legacy version analysis (.ci.yaml analyze_legacy).
-  - name: pubspec validation
-    script: .ci/scripts/tool_runner.sh
-    args:
-      - "pubspec-check"
-      - "--min-min-flutter-version=3.35.0"
-      - "--allow-dependencies=script/configs/allowed_unpinned_deps.yaml"
-      - "--allow-pinned-dependencies=script/configs/allowed_pinned_deps.yaml"
-    always: true
-  - name: README validation
-    script: .ci/scripts/tool_runner.sh
-    args: ["readme-check"]
-    always: true
-    # Re-run with --require-excerpts, skipping packages that still need
-    # to be converted. Once https://github.com/flutter/flutter/issues/102679
-    # has been fixed, this can be removed --require-excerpts added to the
-    # run above.
-  - name: README snippet configuration validation
-    script: .ci/scripts/tool_runner.sh
-    args: ["readme-check", "--require-excerpts", "--exclude=script/configs/temp_exclude_excerpt.yaml"]
-    always: true
   - name: README snippet validation
     script: .ci/scripts/tool_runner.sh
     args: ["update-excerpts", "--fail-on-change"]
     always: true
-  - name: Gradle validation
-    script: .ci/scripts/tool_runner.sh
-    args: ["gradle-check"]
-    always: true
-  - name: Repository-level package metadata validation
-    script: .ci/scripts/tool_runner.sh
-    args: ["check-repo-package-info"]
-    always: true
-  - name: Dependabot coverage validation
-    script: .ci/scripts/tool_runner.sh
-    args: ["dependabot-check"]
-    always: true
-  - name: CHANGELOG and version validation
-    script: .ci/scripts/check_version.sh
+  - name: Repository standards validation
+    script: .ci/scripts/validate.sh
     always: true
   - name: federated safety check
     script: .ci/scripts/check_federated_safety.sh

@@ -1,3 +1,16 @@
+## 2.4.24
+
+* Migrates to Built-in Kotlin to support AGP 9.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
+## 2.4.23
+
+* Fixes dartdoc comments that accidentally used HTML.
+
+## 2.4.22
+
+* Updates build files from Groovy to Kotlin.
+
 ## 2.4.21
 
 * Reverts `androidx.datastore:datastore` to 1.1.7 due to a regression 16 KB

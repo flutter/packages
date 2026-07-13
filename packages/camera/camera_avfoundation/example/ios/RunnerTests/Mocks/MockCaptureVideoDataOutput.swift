@@ -6,12 +6,13 @@ import AVFoundation
 
 @testable import camera_avfoundation
 
-/// Mock implementation of `FLTCaptureVideoDataOutput` protocol which allows injecting a custom
+/// Mock implementation of `CaptureVideoDataOutput` protocol which allows injecting a custom
 /// implementation.
 class MockCaptureVideoDataOutput: NSObject, CaptureVideoDataOutput {
   var avOutput = AVCaptureVideoDataOutput()
   var alwaysDiscardsLateVideoFrames = false
   var videoSettings: [String: Any]! = [:]
+  var availableVideoPixelFormatTypes: [FourCharCode] = []
 
   var connectionWithMediaTypeStub: ((AVMediaType) -> CaptureConnection?)?
 

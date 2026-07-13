@@ -322,6 +322,7 @@ class TreeView<T> extends StatefulWidget {
     this.clipBehavior = Clip.hardEdge,
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
+    this.alignment = Alignment.topLeft,
   }) : assert(
          verticalDetails.direction == AxisDirection.down &&
              horizontalDetails.direction == AxisDirection.right,
@@ -495,6 +496,14 @@ class TreeView<T> extends StatefulWidget {
   ///
   /// Defaults to true.
   final bool addRepaintBoundaries;
+
+  /// The alignment of the tree within the viewport when there is extra space.
+  ///
+  /// Currently, [TreeView] only supports the vertical component of [alignment]
+  /// for aligning the tree within the viewport.
+  ///
+  /// Defaults to [Alignment.topLeft].
+  final AlignmentGeometry alignment;
 
   /// The default [AnimationStyle] used for node expand and collapse animations,
   /// when one has not been provided in [toggleAnimationStyle].
@@ -758,6 +767,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
       },
       addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
       indentation: widget.indentation.value,
+      alignment: widget.alignment,
     );
   }
 
@@ -984,6 +994,7 @@ class _TreeView extends TwoDimensionalScrollView {
     required this.activeAnimations,
     required this.rowDepths,
     required this.indentation,
+    required this.alignment,
     required int rowCount,
     bool addAutomaticKeepAlives = true,
   }) : assert(verticalDetails.direction == AxisDirection.down),
@@ -1000,6 +1011,7 @@ class _TreeView extends TwoDimensionalScrollView {
   final Map<UniqueKey, TreeViewNodesAnimation> activeAnimations;
   final Map<int, int> rowDepths;
   final double indentation;
+  final AlignmentGeometry alignment;
 
   @override
   TreeViewport buildViewport(
@@ -1018,6 +1030,7 @@ class _TreeView extends TwoDimensionalScrollView {
       activeAnimations: activeAnimations,
       rowDepths: rowDepths,
       indentation: indentation,
+      alignment: alignment,
     );
   }
 }
@@ -1039,6 +1052,7 @@ class TreeViewport extends TwoDimensionalViewport {
     required this.activeAnimations,
     required this.rowDepths,
     required this.indentation,
+    this.alignment = Alignment.topLeft,
   }) : assert(
          verticalAxisDirection == AxisDirection.down &&
              horizontalAxisDirection == AxisDirection.right,
@@ -1063,6 +1077,9 @@ class TreeViewport extends TwoDimensionalViewport {
   /// for more options to customize the indented space.
   final double indentation;
 
+  /// The alignment of the tree within the viewport when there is extra space.
+  final AlignmentGeometry alignment;
+
   @override
   RenderTreeViewport createRenderObject(BuildContext context) {
     return RenderTreeViewport(
@@ -1077,6 +1094,8 @@ class TreeViewport extends TwoDimensionalViewport {
       clipBehavior: clipBehavior,
       delegate: delegate as TreeRowDelegateMixin,
       childManager: context as TwoDimensionalChildManager,
+      alignment: alignment,
+      textDirection: Directionality.maybeOf(context),
     );
   }
 
@@ -1095,6 +1114,8 @@ class TreeViewport extends TwoDimensionalViewport {
       ..verticalAxisDirection = verticalAxisDirection
       ..cacheExtent = cacheExtent
       ..clipBehavior = clipBehavior
-      ..delegate = delegate as TreeRowDelegateMixin;
+      ..delegate = delegate as TreeRowDelegateMixin
+      ..alignment = alignment
+      ..textDirection = Directionality.maybeOf(context);
   }
 }

@@ -167,6 +167,10 @@ class RepositoryPackage {
       !isPlatformInterface &&
       directory.basename != directory.parent.basename;
 
+  /// True if this appears to be a top-level package, according to repository
+  /// conventions.
+  bool get isTopLevel => getEnclosingPackage() == null;
+
   /// True if this appears to be an example package, according to package
   /// conventions.
   bool get isExample {

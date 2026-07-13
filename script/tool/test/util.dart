@@ -14,11 +14,14 @@ import 'package:flutter_plugin_tools/src/common/file_utils.dart';
 import 'package:flutter_plugin_tools/src/common/plugin_utils.dart';
 import 'package:flutter_plugin_tools/src/common/process_runner.dart';
 import 'package:flutter_plugin_tools/src/common/repository_package.dart';
+import 'package:flutter_plugin_tools/src/common/tool_config.dart';
 import 'package:git/git.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
 import 'package:platform/platform.dart';
 import 'package:quiver/collection.dart';
+import 'package:yaml/yaml.dart';
+import 'package:yaml_edit/yaml_edit.dart';
 
 import 'mocks.dart';
 
@@ -589,4 +592,50 @@ configureBaseCommandMocks({
     gitProcessRunner: gitProcessRunner,
     gitDir: gitDir,
   );
+}
+
+void setToolConfig(
+  Directory repoRoot, {
+  String repoName = 'flutter/packages',
+  String? minFlutterVersion,
+  String? minDartVersion,
+  List<String>? pinnedDependencies,
+  List<String>? unpinnedDependencies,
+  Map<String, String>? packageLabels,
+}) {
+  final editor = YamlEditor('{repo_name: $repoName}');
+  if (minFlutterVersion != null) {
+    editor.update(['min_flutter'], minFlutterVersion);
+  }
+  if (minDartVersion != null) {
+    editor.update(['min_dart'], minDartVersion);
+  }
+  if (pinnedDependencies != null || unpinnedDependencies != null) {
+    const allowedDependenciesKey = 'allowed_dependencies';
+    const pinnedKey = 'pinned';
+    const unpinnedKey = 'unpinned';
+    editor.update([allowedDependenciesKey], YamlMap());
+    if (pinnedDependencies != null) {
+      editor.update([allowedDependenciesKey, pinnedKey], YamlList());
+      for (final String dependency in pinnedDependencies) {
+        editor.appendToList([allowedDependenciesKey, pinnedKey], dependency);
+      }
+    }
+    if (unpinnedDependencies != null) {
+      editor.update([allowedDependenciesKey, unpinnedKey], YamlList());
+      for (final String dependency in unpinnedDependencies) {
+        editor.appendToList([allowedDependenciesKey, unpinnedKey], dependency);
+      }
+    }
+  }
+  if (packageLabels != null) {
+    editor.update(['package_labels'], YamlMap());
+    for (final MapEntry<String, String> entry in packageLabels.entries) {
+      editor.update(['package_labels', entry.key], entry.value);
+    }
+  }
+  repoRoot
+      .childFile('.repo_tool_config.yaml')
+      .writeAsStringSync(editor.toString());
+  clearToolConfigCache();
 }

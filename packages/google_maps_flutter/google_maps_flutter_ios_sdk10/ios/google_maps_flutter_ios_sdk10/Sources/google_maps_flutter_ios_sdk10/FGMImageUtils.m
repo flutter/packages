@@ -5,6 +5,7 @@
 @import Flutter;
 
 #import "FGMImageUtils.h"
+#import "FGMConversionUtils.h"
 
 @import Foundation;
 
@@ -127,6 +128,40 @@ UIImage *FGMIconFromBitmap(FGMPlatformBitmap *platformBitmap,
                                      reason:@"Unable to interpret bytes as a valid image."
                                    userInfo:nil];
     }
+  } else if ([bitmap isKindOfClass:[FGMPlatformBitmapPinConfig class]]) {
+    FGMPlatformBitmapPinConfig *pinConfig = bitmap;
+
+    GMSPinImageOptions *options = [[GMSPinImageOptions alloc] init];
+    FGMPlatformColor *backgroundColor = pinConfig.backgroundColor;
+    if (backgroundColor) {
+      options.backgroundColor = FGMGetColorForPigeonColor(backgroundColor);
+    }
+
+    FGMPlatformColor *borderColor = pinConfig.borderColor;
+    if (borderColor) {
+      options.borderColor = FGMGetColorForPigeonColor(borderColor);
+    }
+
+    GMSPinImageGlyph *glyph;
+    NSString *glyphText = pinConfig.glyphText;
+    FGMPlatformColor *glyphColor = pinConfig.glyphColor;
+    FGMPlatformBitmap *glyphBitmap = pinConfig.glyphBitmap;
+    if (glyphText) {
+      FGMPlatformColor *glyphTextColorValue = pinConfig.glyphTextColor;
+      UIColor *glyphTextColor = glyphTextColorValue ? FGMGetColorForPigeonColor(glyphTextColorValue)
+                                                    : [UIColor blackColor];
+      glyph = [[GMSPinImageGlyph alloc] initWithText:glyphText textColor:glyphTextColor];
+    } else if (glyphColor) {
+      UIColor *color = FGMGetColorForPigeonColor(glyphColor);
+      glyph = [[GMSPinImageGlyph alloc] initWithGlyphColor:color];
+    } else if (glyphBitmap) {
+      UIImage *glyphImage = FGMIconFromBitmap(glyphBitmap, assetProvider, screenScale);
+      glyph = [[GMSPinImageGlyph alloc] initWithImage:glyphImage];
+    }
+
+    options.glyph = glyph;
+
+    image = [GMSPinImage pinImageWithOptions:options];
   }
 
   return image;

@@ -67,6 +67,7 @@ void main() {
       MockURLRequest Function({required String url, dynamic observeValue})?
       createURLRequest,
       MockWKWebpagePreferences? mockWebpagePreferences,
+      bool? javaScriptCanOpenWindowsAutomatically,
     }) {
       final MockWKWebViewConfiguration nonNullMockWebViewConfiguration =
           mockWebViewConfiguration ?? MockWKWebViewConfiguration();
@@ -190,7 +191,10 @@ void main() {
             );
           };
       final PlatformWebViewControllerCreationParams controllerCreationParams =
-          WebKitWebViewControllerCreationParams();
+          WebKitWebViewControllerCreationParams(
+            javaScriptCanOpenWindowsAutomatically:
+                javaScriptCanOpenWindowsAutomatically,
+          );
 
       final controller = WebKitWebViewController(controllerCreationParams);
 
@@ -793,13 +797,37 @@ void main() {
 
     test('setBackgroundColor', () async {
       final mockWebView = MockUIViewWKWebView();
-      //when(mockWebView)
       final mockScrollView = MockUIScrollView();
 
       final WebKitWebViewController controller = createControllerWithMocks(
         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
         mockScrollView: mockScrollView,
       );
+
+      final transparentUiColor = UIColor.pigeon_detached();
+      final redUiColor = UIColor.pigeon_detached();
+      PigeonOverrides.uIColor_new =
+          ({
+            required double red,
+            required double green,
+            required double blue,
+            required double alpha,
+            dynamic observeValue,
+          }) {
+            if (red == Colors.transparent.r &&
+                green == Colors.transparent.g &&
+                blue == Colors.transparent.b &&
+                alpha == Colors.transparent.a) {
+              return transparentUiColor;
+            } else if (red == Colors.red.r &&
+                green == Colors.red.g &&
+                blue == Colors.red.b &&
+                alpha == Colors.red.a) {
+              return redUiColor;
+            }
+
+            return UIColor.pigeon_detached();
+          };
 
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
 
@@ -808,8 +836,8 @@ void main() {
       // UIScrollView.setBackgroundColor must be called last.
       verifyInOrder(<Object>[
         mockWebView.setOpaque(false),
-        mockWebView.setBackgroundColor(Colors.transparent.toARGB32()),
-        mockScrollView.setBackgroundColor(Colors.red.toARGB32()),
+        mockWebView.setBackgroundColor(transparentUiColor),
+        mockScrollView.setBackgroundColor(redUiColor),
       ]);
 
       debugDefaultTargetPlatformOverride = null;
@@ -867,6 +895,43 @@ void main() {
         await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
 
         verify(mockPreferences.setJavaScriptEnabled(true));
+      },
+    );
+
+    test(
+      'setJavaScriptMode sets javaScriptCanOpenWindowsAutomatically from creation params',
+      () async {
+        final mockPreferences = MockWKPreferences();
+        final mockWebpagePreferences = MockWKWebpagePreferences();
+
+        final WebKitWebViewController controller = createControllerWithMocks(
+          mockPreferences: mockPreferences,
+          mockWebpagePreferences: mockWebpagePreferences,
+          javaScriptCanOpenWindowsAutomatically: true,
+        );
+
+        await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+
+        verify(mockPreferences.setJavaScriptCanOpenWindowsAutomatically(true));
+      },
+    );
+
+    test(
+      'setJavaScriptMode does not set javaScriptCanOpenWindowsAutomatically when null',
+      () async {
+        final mockPreferences = MockWKPreferences();
+        final mockWebpagePreferences = MockWKWebpagePreferences();
+
+        final WebKitWebViewController controller = createControllerWithMocks(
+          mockPreferences: mockPreferences,
+          mockWebpagePreferences: mockWebpagePreferences,
+        );
+
+        await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+
+        verifyNever(
+          mockPreferences.setJavaScriptCanOpenWindowsAutomatically(any),
+        );
       },
     );
 

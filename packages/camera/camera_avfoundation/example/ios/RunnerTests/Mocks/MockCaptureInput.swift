@@ -6,7 +6,7 @@ import AVFoundation
 
 @testable import camera_avfoundation
 
-/// A mocked implementation of FLTCaptureInput which allows injecting a custom
+/// A mocked implementation of CaptureInput which allows injecting a custom
 /// implementation.
 final class MockCaptureInput: NSObject, CaptureInput {
   var avInput: AVCaptureInput {

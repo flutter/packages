@@ -496,13 +496,13 @@ class TypeDeclaration {
       associatedProxyApi = null,
       typeArguments = const <TypeDeclaration>[];
 
-  /// The base name of the [TypeDeclaration] (ex 'Foo' to 'Foo<Bar>?').
+  /// The base name of the [TypeDeclaration] (ex `Foo` to `Foo<Bar>?`).
   final String baseName;
 
   /// Whether the declaration represents 'void'.
   bool get isVoid => baseName == 'void';
 
-  /// Whether the type arguments to the entity (ex 'Bar' to 'Foo<Bar>?').
+  /// Whether the type arguments to the entity (ex `Bar` to `Foo<Bar>?`).
   final List<TypeDeclaration> typeArguments;
 
   /// Whether the type is nullable.
@@ -555,7 +555,8 @@ class TypeDeclaration {
     }
   }
 
-  /// Returns duplicated `TypeDeclaration` with attached `associatedEnum` value.
+  /// Returns a new [TypeDeclaration] with [enumDefinition] as the
+  /// [associatedEnum] value.
   TypeDeclaration copyWithEnum(Enum enumDefinition) {
     return TypeDeclaration(
       baseName: baseName,
@@ -565,7 +566,8 @@ class TypeDeclaration {
     );
   }
 
-  /// Returns duplicated `TypeDeclaration` with attached `associatedClass` value.
+  /// Returns a new [TypeDeclaration] with [classDefinition] as the
+  /// [associatedClass] value.
   TypeDeclaration copyWithClass(Class classDefinition) {
     return TypeDeclaration(
       baseName: baseName,
@@ -575,7 +577,8 @@ class TypeDeclaration {
     );
   }
 
-  /// Returns duplicated `TypeDeclaration` with attached `associatedProxyApi` value.
+  /// Returns a new [TypeDeclaration] with [proxyApiDefinition] as the
+  /// [associatedProxyApi] value.
   TypeDeclaration copyWithProxyApi(AstProxyApi proxyApiDefinition) {
     return TypeDeclaration(
       baseName: baseName,
@@ -585,7 +588,7 @@ class TypeDeclaration {
     );
   }
 
-  /// Returns duplicated `TypeDeclaration` with attached `associatedProxyApi` value.
+  /// Returns a new [TypeDeclaration] with [types] as the [typeArguments] value.
   TypeDeclaration copyWithTypeArguments(List<TypeDeclaration> types) {
     return TypeDeclaration(
       baseName: baseName,

@@ -12,4 +12,6 @@ const intentionallyUnsharedSourceFiles = <String>[
   'test/package_specific_test_import.dart',
   // Each package will have its own list.
   'tool/unshared_source_files.dart',
+  // Unshared due to https://github.com/flutter/flutter/issues/183441.
+  'ios/google_maps_flutter_ios_sdk9/Sources/google_maps_flutter_ios_sdk9/include/google_maps_flutter_ios_sdk9/GoogleMapsUtilsTrampoline.h',
 ];

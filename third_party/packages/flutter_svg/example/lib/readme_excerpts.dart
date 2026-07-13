@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 // #docregion PrecompiledAsset
 import 'package:vector_graphics/vector_graphics.dart';
+
 // #enddocregion PrecompiledAsset
 
 /// Loads an SVG asset.
@@ -90,6 +91,9 @@ Future<ui.Image> convertSvgOutput() async {
     null,
   );
 
+  // You can scale the canvas to achieve lossless scaling:
+  canvas.scale(1.2, 1.2);
+
   // You can draw the picture to a canvas:
   canvas.drawPicture(pictureInfo.picture);
 
@@ -121,6 +125,7 @@ class _MyColorMapper extends ColorMapper {
     return color;
   }
 }
+
 // #enddocregion ColorMapper
 
 /// Demonstrates loading an SVG asset with a color mapping.

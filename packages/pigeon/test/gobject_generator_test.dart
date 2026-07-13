@@ -1035,4 +1035,50 @@ void main() {
       expect(code, contains('const int test_package_object_type_id = 131;'));
     }
   });
+
+  test('data classes handle equality and hashing', () {
+    final inputClass = Class(
+      name: 'Input',
+      fields: <NamedType>[
+        NamedType(
+          type: const TypeDeclaration(baseName: 'String', isNullable: true),
+          name: 'input',
+        ),
+        NamedType(
+          type: const TypeDeclaration(baseName: 'double', isNullable: false),
+          name: 'someDouble',
+        ),
+        NamedType(
+          type: const TypeDeclaration(baseName: 'Uint8List', isNullable: false),
+          name: 'someBytes',
+        ),
+      ],
+    );
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[inputClass],
+      enums: <Enum>[],
+    );
+    {
+      final sink = StringBuffer();
+      const generator = GObjectGenerator();
+      final generatorOptions = OutputFileOptions<InternalGObjectOptions>(
+        fileType: FileType.source,
+        languageOptions: const InternalGObjectOptions(
+          headerIncludePath: '',
+          gobjectHeaderOut: '',
+          gobjectSourceOut: '',
+        ),
+      );
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('gboolean test_package_input_equals('));
+      expect(code, contains('guint test_package_input_hash('));
+    }
+  });
 }

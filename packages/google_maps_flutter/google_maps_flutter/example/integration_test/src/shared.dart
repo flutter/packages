@@ -22,7 +22,7 @@ const CameraPosition kInitialCameraPosition = CameraPosition(
 );
 
 // Dummy map ID
-const String kCloudMapId = '000000000000000'; // Dummy map ID.
+const String kMapId = '000000000000000'; // Dummy map ID.
 
 /// True if the test is running in an iOS device
 final bool isIOS = defaultTargetPlatform == TargetPlatform.iOS;

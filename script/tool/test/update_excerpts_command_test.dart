@@ -545,6 +545,7 @@ FAIL
       <String, String>{'filename': 'main.dart'},
       <String, String>{'filename': 'main.js'},
       <String, String>{'filename': 'main.kt', 'language': 'kotlin'},
+      <String, String>{'filename': 'main.kts', 'language': 'kotlin'},
       <String, String>{'filename': 'main.java'},
       <String, String>{'filename': 'main.gradle', 'language': 'groovy'},
       <String, String>{'filename': 'main.m', 'language': 'objectivec'},

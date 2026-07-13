@@ -1024,6 +1024,171 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final String? receivedNullString = await api.echoNamedNullableString();
       expect(receivedNullString, null);
     });
+
+    testWidgets('Signed zero equality', (WidgetTester _) async {
+      final api = HostIntegrationCoreApi();
+
+      final a = AllNullableTypes(aNullableDouble: 0.0);
+      final b = AllNullableTypes(aNullableDouble: -0.0);
+
+      expect(await api.areAllNullableTypesEqual(a, b), isTrue);
+    });
+
+    testWidgets('Signed zero hashing', (WidgetTester _) async {
+      final api = HostIntegrationCoreApi();
+
+      final a = AllNullableTypes(aNullableDouble: 0.0);
+      final b = AllNullableTypes(aNullableDouble: -0.0);
+
+      final int hashA = await api.getAllNullableTypesHash(a);
+      final int hashB = await api.getAllNullableTypesHash(b);
+      expect(
+        hashA,
+        hashB,
+        reason: 'Hash codes for 0.0 and -0.0 should be equal',
+      );
+    });
+
+    testWidgets('NaN equality', (WidgetTester _) async {
+      final api = HostIntegrationCoreApi();
+
+      final a = AllNullableTypes(aNullableDouble: double.nan);
+      final b = AllNullableTypes(aNullableDouble: double.nan);
+
+      expect(await api.areAllNullableTypesEqual(a, b), isTrue);
+    });
+
+    testWidgets('NaN hashing', (WidgetTester _) async {
+      final api = HostIntegrationCoreApi();
+
+      final a = AllNullableTypes(aNullableDouble: double.nan);
+      final b = AllNullableTypes(aNullableDouble: double.nan);
+
+      final int hashA = await api.getAllNullableTypesHash(a);
+      final int hashB = await api.getAllNullableTypesHash(b);
+      expect(hashA, hashB, reason: 'Hash codes for two NaNs should be equal');
+    });
+
+    testWidgets('Collection equality with signed zero and NaN', (
+      WidgetTester _,
+    ) async {
+      final api = HostIntegrationCoreApi();
+
+      final a = AllNullableTypes(
+        doubleList: <double>[0.0, double.nan],
+        stringMap: <String?, String?>{'k': 'v', 'n': null},
+      );
+      final b = AllNullableTypes(
+        doubleList: <double>[-0.0, double.nan],
+        stringMap: <String?, String?>{'n': null, 'k': 'v'},
+      );
+
+      expect(await api.areAllNullableTypesEqual(a, b), isTrue);
+    });
+
+    testWidgets('Collection hashing with signed zero and NaN', (
+      WidgetTester _,
+    ) async {
+      final api = HostIntegrationCoreApi();
+
+      final a = AllNullableTypes(
+        doubleList: <double>[0.0, double.nan],
+        stringMap: <String?, String?>{'k': 'v', 'n': null},
+      );
+      final b = AllNullableTypes(
+        doubleList: <double>[-0.0, double.nan],
+        stringMap: <String?, String?>{'n': null, 'k': 'v'},
+      );
+
+      expect(
+        await api.getAllNullableTypesHash(a),
+        await api.getAllNullableTypesHash(b),
+      );
+    });
+
+    testWidgets('Collection hashing with null/NSNull', (WidgetTester _) async {
+      final api = HostIntegrationCoreApi();
+
+      final a = AllNullableTypes(
+        list: <Object?>[null],
+        stringMap: <String?, String?>{'k': null},
+      );
+      final b = AllNullableTypes(
+        list: <Object?>[null],
+        stringMap: <String?, String?>{'k': null},
+      );
+
+      // Verify cross-platform equivalence via identical hash values.
+      expect(
+        await api.getAllNullableTypesHash(a),
+        await api.getAllNullableTypesHash(b),
+      );
+      expect(await api.areAllNullableTypesEqual(a, b), isTrue);
+    });
+
+    testWidgets('Map equality with signed zero keys and values', (
+      WidgetTester _,
+    ) async {
+      final api = HostIntegrationCoreApi();
+
+      final a = AllNullableTypes(map: <Object?, Object?>{0.0: 'a', 'b': 0.0});
+      final b = AllNullableTypes(map: <Object?, Object?>{-0.0: 'a', 'b': -0.0});
+
+      expect(await api.areAllNullableTypesEqual(a, b), isTrue);
+    });
+
+    testWidgets('Map hashing with signed zero keys and values', (
+      WidgetTester _,
+    ) async {
+      final api = HostIntegrationCoreApi();
+
+      final a = AllNullableTypes(map: <Object?, Object?>{0.0: 'a', 'b': 0.0});
+      final b = AllNullableTypes(map: <Object?, Object?>{-0.0: 'a', 'b': -0.0});
+
+      expect(
+        await api.getAllNullableTypesHash(a),
+        await api.getAllNullableTypesHash(b),
+      );
+    });
+
+    testWidgets('Map equality with null values and different keys', (
+      WidgetTester _,
+    ) async {
+      final api = HostIntegrationCoreApi();
+
+      final a = AllNullableTypes(intMap: <int?, int?>{1: null});
+      final b = AllNullableTypes(intMap: <int?, int?>{2: null});
+
+      expect(await api.areAllNullableTypesEqual(a, b), isFalse);
+    });
+
+    testWidgets('Deeply nested equality', (WidgetTester _) async {
+      final api = HostIntegrationCoreApi();
+
+      final a = AllNullableTypes(
+        allNullableTypes: AllNullableTypes(aNullableDouble: 0.0),
+      );
+      final b = AllNullableTypes(
+        allNullableTypes: AllNullableTypes(aNullableDouble: -0.0),
+      );
+
+      expect(await api.areAllNullableTypesEqual(a, b), isTrue);
+    });
+
+    testWidgets('Hashing inequality across types with same values', (
+      WidgetTester _,
+    ) async {
+      final api = HostIntegrationCoreApi();
+      final a = AllNullableTypes(aNullableInt: 42);
+      final b = AllNullableTypesWithoutRecursion(aNullableInt: 42);
+
+      expect(a.hashCode, isNot(b.hashCode));
+
+      expect(
+        await api.getAllNullableTypesHash(a),
+        isNot(await api.getAllNullableTypesWithoutRecursionHash(b)),
+      );
+    });
   });
 
   group('Host async API tests', () {
@@ -3100,87 +3265,75 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     TargetGenerator.swift,
   ];
 
-  testWidgets(
-    'event channel sends continuous ints',
-    (_) async {
-      final Stream<int> events = streamInts();
-      final List<int> listEvents = await events.toList();
-      for (final value in listEvents) {
-        expect(listEvents[value], value);
+  testWidgets('event channel sends continuous ints', (_) async {
+    final Stream<int> events = streamInts();
+    final List<int> listEvents = await events.toList();
+    for (final value in listEvents) {
+      expect(listEvents[value], value);
+    }
+  }, skip: !eventChannelSupported.contains(targetGenerator));
+
+  testWidgets('event channel handles extended sealed classes', (_) async {
+    final completer = Completer<void>();
+    var count = 0;
+    final Stream<PlatformEvent> events = streamEvents();
+    events.listen((PlatformEvent event) {
+      switch (event) {
+        case IntEvent():
+          expect(event.value, 1);
+          expect(count, 0);
+          count++;
+        case StringEvent():
+          expect(event.value, 'string');
+          expect(count, 1);
+          count++;
+        case BoolEvent():
+          expect(event.value, false);
+          expect(count, 2);
+          count++;
+        case DoubleEvent():
+          expect(event.value, 3.14);
+          expect(count, 3);
+          count++;
+        case ObjectsEvent():
+          expect(event.value, true);
+          expect(count, 4);
+          count++;
+        case EnumEvent():
+          expect(event.value, EventEnum.fortyTwo);
+          expect(count, 5);
+          count++;
+        case ClassEvent():
+          expect(event.value.aNullableInt, 0);
+          expect(count, 6);
+          count++;
+          completer.complete();
       }
-    },
-    skip: !eventChannelSupported.contains(targetGenerator),
-  );
+    });
+    await completer.future;
+  }, skip: !eventChannelSupported.contains(targetGenerator));
 
-  testWidgets(
-    'event channel handles extended sealed classes',
-    (_) async {
-      final completer = Completer<void>();
-      var count = 0;
-      final Stream<PlatformEvent> events = streamEvents();
-      events.listen((PlatformEvent event) {
-        switch (event) {
-          case IntEvent():
-            expect(event.value, 1);
-            expect(count, 0);
-            count++;
-          case StringEvent():
-            expect(event.value, 'string');
-            expect(count, 1);
-            count++;
-          case BoolEvent():
-            expect(event.value, false);
-            expect(count, 2);
-            count++;
-          case DoubleEvent():
-            expect(event.value, 3.14);
-            expect(count, 3);
-            count++;
-          case ObjectsEvent():
-            expect(event.value, true);
-            expect(count, 4);
-            count++;
-          case EnumEvent():
-            expect(event.value, EventEnum.fortyTwo);
-            expect(count, 5);
-            count++;
-          case ClassEvent():
-            expect(event.value.aNullableInt, 0);
-            expect(count, 6);
-            count++;
-            completer.complete();
-        }
-      });
-      await completer.future;
-    },
-    skip: !eventChannelSupported.contains(targetGenerator),
-  );
+  testWidgets('event channels handle multiple instances', (_) async {
+    final completer1 = Completer<void>();
+    final completer2 = Completer<void>();
+    final Stream<int> events1 = streamConsistentNumbers(instanceName: '1');
+    final Stream<int> events2 = streamConsistentNumbers(instanceName: '2');
 
-  testWidgets(
-    'event channels handle multiple instances',
-    (_) async {
-      final completer1 = Completer<void>();
-      final completer2 = Completer<void>();
-      final Stream<int> events1 = streamConsistentNumbers(instanceName: '1');
-      final Stream<int> events2 = streamConsistentNumbers(instanceName: '2');
+    events1
+        .listen((int event) {
+          expect(event, 1);
+        })
+        .onDone(() => completer1.complete());
 
-      events1
-          .listen((int event) {
-            expect(event, 1);
-          })
-          .onDone(() => completer1.complete());
+    events2
+        .listen((int event) {
+          expect(event, 2);
+        })
+        .onDone(() => completer2.complete());
 
-      events2
-          .listen((int event) {
-            expect(event, 2);
-          })
-          .onDone(() => completer2.complete());
-
-      await completer1.future;
-      await completer2.future;
-    },
-    skip: !eventChannelSupported.contains(targetGenerator),
-  );
+    await completer1.future;
+    await completer2.future;
+  }, skip: !eventChannelSupported.contains(targetGenerator));
 }
 
 class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {

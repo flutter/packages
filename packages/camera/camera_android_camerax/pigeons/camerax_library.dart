@@ -112,7 +112,7 @@ enum CameraStateType {
   unknown,
 }
 
-/// The types (T) properly wrapped to be used as a LiveData<T>.
+/// The types (T) properly wrapped to be used as a `LiveData<T>`.
 enum LiveDataSupportedType { cameraState, zoomState }
 
 /// Immutable class for describing the range of two integer values.

@@ -1,6 +1,11 @@
 ## NEXT
 
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
+## 2.13.0
+
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+* Adds `setJpegImageQuality` for controlling JPEG compression quality.
 
 ## 2.12.0
 

@@ -35,6 +35,10 @@ const String _pigeonMethodChannelCodec = 'PigeonMethodCodec';
 
 const String _overflowClassName = '${classNamePrefix}CodecOverflow';
 
+/// Kotlin file-level annotation for generated code.
+const String kotlinGeneratedAnnotation =
+    '@file:Generated("$defaultPluginPackageName")';
+
 /// Options that control how Kotlin code will be generated.
 class KotlinOptions {
   /// Creates a [KotlinOptions] object
@@ -44,6 +48,7 @@ class KotlinOptions {
     this.errorClassName,
     this.includeErrorClass = true,
     this.fileSpecificClassNameComponent,
+    this.useGeneratedAnnotation = false,
   });
 
   /// The package where the generated class will live.
@@ -64,6 +69,11 @@ class KotlinOptions {
   /// A String to augment class names to avoid cross file collisions.
   final String? fileSpecificClassNameComponent;
 
+  /// Determines if the `javax.annotation.Generated` is used in the output. This
+  /// is false by default since that dependency isn't available in plugins by
+  /// default.
+  final bool useGeneratedAnnotation;
+
   /// Creates a [KotlinOptions] from a Map representation where:
   /// `x = KotlinOptions.fromMap(x.toMap())`.
   static KotlinOptions fromMap(Map<String, Object> map) {
@@ -74,6 +84,7 @@ class KotlinOptions {
       includeErrorClass: map['includeErrorClass'] as bool? ?? true,
       fileSpecificClassNameComponent:
           map['fileSpecificClassNameComponent'] as String?,
+      useGeneratedAnnotation: map['useGeneratedAnnotation'] as bool? ?? false,
     );
   }
 
@@ -87,6 +98,7 @@ class KotlinOptions {
       'includeErrorClass': includeErrorClass,
       if (fileSpecificClassNameComponent != null)
         'fileSpecificClassNameComponent': fileSpecificClassNameComponent!,
+      'useGeneratedAnnotation': useGeneratedAnnotation,
     };
     return result;
   }
@@ -108,6 +120,7 @@ class InternalKotlinOptions extends InternalOptions {
     this.errorClassName,
     this.includeErrorClass = true,
     this.fileSpecificClassNameComponent,
+    this.useGeneratedAnnotation = false,
   });
 
   /// Creates InternalKotlinOptions from KotlinOptions.
@@ -119,6 +132,7 @@ class InternalKotlinOptions extends InternalOptions {
        copyrightHeader = options.copyrightHeader ?? copyrightHeader,
        errorClassName = options.errorClassName,
        includeErrorClass = options.includeErrorClass,
+       useGeneratedAnnotation = options.useGeneratedAnnotation,
        fileSpecificClassNameComponent =
            options.fileSpecificClassNameComponent ??
            kotlinOut.split('/').lastOrNull?.split('.').first;
@@ -143,6 +157,11 @@ class InternalKotlinOptions extends InternalOptions {
 
   /// A String to augment class names to avoid cross file collisions.
   final String? fileSpecificClassNameComponent;
+
+  /// Determines if the `javax.annotation.Generated` is used in the output. This
+  /// is false by default since that dependency isn't available in plugins by
+  /// default.
+  final bool useGeneratedAnnotation;
 }
 
 /// Options that control how Kotlin code will be generated for a specific
@@ -192,6 +211,9 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
     indent.writeln('@file:Suppress("UNCHECKED_CAST", "ArrayInDataClass")');
+    if (generatorOptions.useGeneratedAnnotation) {
+      indent.writeln(kotlinGeneratedAnnotation);
+    }
   }
 
   @override
@@ -215,6 +237,9 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     indent.writeln('import io.flutter.plugin.common.StandardMessageCodec');
     indent.writeln('import java.io.ByteArrayOutputStream');
     indent.writeln('import java.nio.ByteBuffer');
+    if (generatorOptions.useGeneratedAnnotation) {
+      indent.writeln('import javax.annotation.Generated');
+    }
   }
 
   @override
@@ -320,19 +345,49 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     required String dartPackageName,
   }) {
     indent.writeScoped('override fun equals(other: Any?): Boolean {', '}', () {
-      indent.writeScoped('if (other !is ${classDefinition.name}) {', '}', () {
-        indent.writeln('return false');
-      });
+      indent.writeScoped(
+        'if (other == null || other.javaClass != javaClass) {',
+        '}',
+        () {
+          indent.writeln('return false');
+        },
+      );
       indent.writeScoped('if (this === other) {', '}', () {
         indent.writeln('return true');
       });
-      indent.write(
-        'return ${_getUtilsClassName(generatorOptions)}.deepEquals(toList(), other.toList())',
+
+      indent.writeln('val other = other as ${classDefinition.name}');
+      final Iterable<NamedType> fields = getFieldsInSerializationOrder(
+        classDefinition,
       );
+      if (fields.isEmpty) {
+        indent.writeln('return true');
+      } else {
+        final String utils = _getUtilsClassName(generatorOptions);
+        final String comparisons = fields
+            .map(
+              (NamedType field) =>
+                  '$utils.deepEquals(this.${field.name}, other.${field.name})',
+            )
+            .join(' && ');
+        indent.writeln('return $comparisons');
+      }
     });
 
     indent.newln();
-    indent.writeln('override fun hashCode(): Int = toList().hashCode()');
+    indent.writeScoped('override fun hashCode(): Int {', '}', () {
+      final Iterable<NamedType> fields = getFieldsInSerializationOrder(
+        classDefinition,
+      );
+      final String utils = _getUtilsClassName(generatorOptions);
+      indent.writeln('var result = javaClass.hashCode()');
+      for (final field in fields) {
+        indent.writeln(
+          'result = 31 * result + $utils.deepHash(this.${field.name})',
+        );
+      }
+      indent.writeln('return result');
+    });
   }
 
   void _writeDataClassSignature(
@@ -1295,7 +1350,7 @@ if (wrapped == null) {
       indent.writeln('override val message: String? = null,');
       indent.writeln('val details: Any? = null');
     }, addTrailingNewline: false);
-    indent.addln(' : Throwable()');
+    indent.addln(' : RuntimeException()');
   }
 
   void _writeCreateConnectionError(
@@ -1317,35 +1372,157 @@ if (wrapped == null) {
   void _writeDeepEquals(InternalKotlinOptions generatorOptions, Indent indent) {
     indent.format('''
 fun deepEquals(a: Any?, b: Any?): Boolean {
+  if (a === b) {
+    return true
+  }
+  if (a == null || b == null) {
+    return false
+  }
   if (a is ByteArray && b is ByteArray) {
-      return a.contentEquals(b)
+    return a.contentEquals(b)
   }
   if (a is IntArray && b is IntArray) {
-      return a.contentEquals(b)
+    return a.contentEquals(b)
   }
   if (a is LongArray && b is LongArray) {
-      return a.contentEquals(b)
+    return a.contentEquals(b)
   }
   if (a is DoubleArray && b is DoubleArray) {
-      return a.contentEquals(b)
+    if (a.size != b.size) return false
+    for (i in a.indices) {
+      if (!doubleEquals(a[i], b[i])) return false
+    }
+    return true
+  }
+  if (a is FloatArray && b is FloatArray) {
+    if (a.size != b.size) return false
+    for (i in a.indices) {
+      if (!floatEquals(a[i], b[i])) return false
+    }
+    return true
   }
   if (a is Array<*> && b is Array<*>) {
-    return a.size == b.size &&
-        a.indices.all{ deepEquals(a[it], b[it]) }
+    if (a.size != b.size) return false
+    for (i in a.indices) {
+      if (!deepEquals(a[i], b[i])) return false
+    }
+    return true
   }
   if (a is List<*> && b is List<*>) {
-    return a.size == b.size &&
-        a.indices.all{ deepEquals(a[it], b[it]) }
+    if (a.size != b.size) return false
+    val iterA = a.iterator()
+    val iterB = b.iterator()
+    while (iterA.hasNext() && iterB.hasNext()) {
+      if (!deepEquals(iterA.next(), iterB.next())) return false
+    }
+    return true
   }
   if (a is Map<*, *> && b is Map<*, *>) {
-    return a.size == b.size && a.all {
-        (b as Map<Any?, Any?>).contains(it.key) &&
-        deepEquals(it.value, b[it.key])
+    if (a.size != b.size) return false
+    for (entry in a) {
+      val key = entry.key
+      var found = false
+      for (bEntry in b) {
+        if (deepEquals(key, bEntry.key)) {
+          if (deepEquals(entry.value, bEntry.value)) {
+            found = true
+            break
+          } else {
+            return false
+          }
+        }
+      }
+      if (!found) return false
     }
+    return true
+  }
+  if (a is Double && b is Double) {
+    return doubleEquals(a, b)
+  }
+  if (a is Float && b is Float) {
+    return floatEquals(a, b)
   }
   return a == b
 }
-    ''');
+''');
+  }
+
+  void _writeDeepHash(InternalKotlinOptions generatorOptions, Indent indent) {
+    indent.format('''
+fun deepHash(value: Any?): Int {
+  return when (value) {
+    null -> 0
+    is ByteArray -> value.contentHashCode()
+    is IntArray -> value.contentHashCode()
+    is LongArray -> value.contentHashCode()
+    is DoubleArray -> {
+      var result = 1
+      for (item in value) {
+        result = 31 * result + doubleHash(item)
+      }
+      result
+    }
+    is FloatArray -> {
+      var result = 1
+      for (item in value) {
+        result = 31 * result + floatHash(item)
+      }
+      result
+    }
+    is Array<*> -> {
+      var result = 1
+      for (item in value) {
+        result = 31 * result + deepHash(item)
+      }
+      result
+    }
+    is List<*> -> {
+      var result = 1
+      for (item in value) {
+        result = 31 * result + deepHash(item)
+      }
+      result
+    }
+    is Map<*, *> -> {
+      var result = 0
+      for (entry in value) {
+        result += ((deepHash(entry.key) * 31) xor deepHash(entry.value))
+      }
+      result
+    }
+    is Double -> doubleHash(value)
+    is Float -> floatHash(value)
+    else -> value.hashCode()
+  }
+}
+''');
+  }
+
+  void _writeNumberHelpers(Indent indent) {
+    indent.format('''
+fun doubleEquals(a: Double, b: Double): Boolean {
+  // Normalize -0.0 to 0.0 and handle NaN equality.
+  return (if (a == 0.0) 0.0 else a) == (if (b == 0.0) 0.0 else b) || (a.isNaN() && b.isNaN())
+}
+
+fun floatEquals(a: Float, b: Float): Boolean {
+  // Normalize -0.0 to 0.0 and handle NaN equality.
+  return (if (a == 0.0f) 0.0f else a) == (if (b == 0.0f) 0.0f else b) || (a.isNaN() && b.isNaN())
+}
+
+fun doubleHash(d: Double): Int {
+  // Normalize -0.0 to 0.0 and handle NaN to ensure consistent hash codes.
+  val normalized = if (d == 0.0) 0.0 else d
+  val bits = java.lang.Double.doubleToLongBits(normalized)
+  return (bits xor (bits ushr 32)).toInt()
+}
+
+fun floatHash(f: Float): Int {
+  // Normalize -0.0 to 0.0 and handle NaN to ensure consistent hash codes.
+  val normalized = if (f == 0.0f) 0.0f else f
+  return java.lang.Float.floatToIntBits(normalized)
+}
+''');
   }
 
   @override
@@ -1367,7 +1544,9 @@ fun deepEquals(a: Any?, b: Any?): Boolean {
           _writeWrapError(generatorOptions, indent);
         }
         if (root.classes.isNotEmpty) {
+          _writeNumberHelpers(indent);
           _writeDeepEquals(generatorOptions, indent);
+          _writeDeepHash(generatorOptions, indent);
         }
       },
     );

@@ -62,6 +62,7 @@ class _MyColorMapper extends ColorMapper {
     return color;
   }
 }
+
 // ···
   const svgString = '''
 <svg viewBox="0 0 100 100">
@@ -118,6 +119,9 @@ import 'dart:ui' as ui;
     null,
   );
 
+  // You can scale the canvas to achieve lossless scaling:
+  canvas.scale(1.2, 1.2);
+
   // You can draw the picture to a canvas:
   canvas.drawPicture(pictureInfo.picture);
 
@@ -155,6 +159,7 @@ The output `foo.svg.vec` can be loaded using the default constructor of
 <?code-excerpt "example/lib/readme_excerpts.dart (PrecompiledAsset)"?>
 ```dart
 import 'package:vector_graphics/vector_graphics.dart';
+
 // ···
   const Widget svg = SvgPicture(AssetBytesLoader('assets/foo.svg.vec'));
 ```

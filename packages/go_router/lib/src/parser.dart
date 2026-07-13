@@ -111,54 +111,22 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     );
 
     // ALL navigation types now go through onEnter, and if allowed,
-    // legacy top-level redirect runs, then route-level redirects.
+    // redirect() handles both top-level and route-level redirects.
     return _onEnterHandler.handleTopOnEnter(
       context: context,
       routeInformation: effectiveRoute,
       infoState: infoState,
       onCanEnter: () {
-        // Compose legacy top-level redirect here (one shared cycle/history).
         final RouteMatchList initialMatches = configuration.findMatch(
           effectiveRoute.uri,
           extra: infoState.extra,
         );
-        final redirectHistory = <RouteMatchList>[];
-
-        final FutureOr<RouteMatchList> afterLegacy = configuration
-            .applyTopLegacyRedirect(
-              context,
-              initialMatches,
-              redirectHistory: redirectHistory,
-            );
-
-        if (afterLegacy is RouteMatchList) {
-          return _navigate(
-            effectiveRoute,
-            context,
-            infoState,
-            startingMatches: afterLegacy,
-            preSharedHistory: redirectHistory,
-          );
-        }
-        return afterLegacy.then((RouteMatchList ml) {
-          if (!context.mounted) {
-            return _lastMatchList ??
-                _OnEnterHandler._errorRouteMatchList(
-                  effectiveRoute.uri,
-                  GoException(
-                    'Navigation aborted because the router context was disposed.',
-                  ),
-                  extra: infoState.extra,
-                );
-          }
-          return _navigate(
-            effectiveRoute,
-            context,
-            infoState,
-            startingMatches: ml,
-            preSharedHistory: redirectHistory,
-          );
-        });
+        return _navigate(
+          effectiveRoute,
+          context,
+          infoState,
+          startingMatches: initialMatches,
+        );
       },
       onCanNotEnter: () {
         // If blocked, stay on the current route by restoring the last known good configuration.
@@ -198,7 +166,6 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     BuildContext context,
     RouteInfoState infoState, {
     FutureOr<RouteMatchList>? startingMatches,
-    List<RouteMatchList>? preSharedHistory,
   }) {
     // If we weren't given matches, compute them here. The URI has already been
     // normalized at the parser entry point.
@@ -206,11 +173,10 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         startingMatches ??
         configuration.findMatch(routeInformation.uri, extra: infoState.extra);
 
-    // History may be shared with the legacy step done in onEnter.
-    final List<RouteMatchList> redirectHistory =
-        preSharedHistory ?? <RouteMatchList>[];
+    final redirectHistory = <RouteMatchList>[];
 
-    FutureOr<RouteMatchList> afterRouteLevel(FutureOr<RouteMatchList> base) {
+    // redirect() handles both top-level and route-level redirects.
+    FutureOr<RouteMatchList> applyRedirects(FutureOr<RouteMatchList> base) {
       if (base is RouteMatchList) {
         return configuration.redirect(
           context,
@@ -222,27 +188,33 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         if (!context.mounted) {
           return ml;
         }
-        final FutureOr<RouteMatchList> step = configuration.redirect(
+        return configuration.redirect(
           context,
           ml,
           redirectHistory: redirectHistory,
         );
-        return step;
       });
     }
 
-    // Only route-level redirects from here on out.
-    final FutureOr<RouteMatchList> redirected = afterRouteLevel(baseMatches);
+    final FutureOr<RouteMatchList> redirected = applyRedirects(baseMatches);
 
     return debugParserFuture =
         (redirected is RouteMatchList
                 ? SynchronousFuture<RouteMatchList>(redirected)
                 : redirected)
             .then((RouteMatchList matchList) {
+              // Guard against context disposal during async redirects.
+              if (!context.mounted) {
+                return _lastMatchList ??
+                    _OnEnterHandler._errorRouteMatchList(
+                      routeInformation.uri,
+                      GoException(
+                        'Navigation aborted because the router context was disposed.',
+                      ),
+                      extra: infoState.extra,
+                    );
+              }
               if (matchList.isError && onParserException != null) {
-                if (!context.mounted) {
-                  return matchList;
-                }
                 return onParserException!(context, matchList);
               }
 
@@ -529,20 +501,28 @@ class _OnEnterHandler {
         }
 
         if (callback != null) {
-          try {
-            await Future<void>.sync(callback);
-          } catch (error, stack) {
-            // Log error but don't crash - navigation already committed
-            log('Error in then callback: $error');
-            FlutterError.reportError(
-              FlutterErrorDetails(
-                exception: error,
-                stack: stack,
-                library: 'go_router',
-                context: ErrorDescription('while executing then callback'),
-              ),
-            );
-          }
+          // Defer the callback to a microtask so that router.go() (or
+          // similar) inside it does not trigger a re-entrant
+          // _processRouteInformation while the current parse is still
+          // in-flight. Without this, Flutter's Router mints a new
+          // transaction token for the re-entrant parse and silently
+          // discards the result due to token churn.
+          scheduleMicrotask(() async {
+            try {
+              await callback();
+            } catch (error, stack) {
+              // Log error but don't crash - navigation already committed
+              log('Error in then callback: $error');
+              FlutterError.reportError(
+                FlutterErrorDetails(
+                  exception: error,
+                  stack: stack,
+                  library: 'go_router',
+                  context: ErrorDescription('while executing then callback'),
+                ),
+              );
+            }
+          });
         }
 
         return matchList;

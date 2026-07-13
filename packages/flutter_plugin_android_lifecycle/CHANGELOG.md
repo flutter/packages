@@ -1,5 +1,10 @@
 ## NEXT
 
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
+## 2.0.34
+
+* Updates build files from Groovy to Kotlin.
 * Updates README to reflect currently supported OS version.
 
 ## 2.0.33

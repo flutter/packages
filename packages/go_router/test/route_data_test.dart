@@ -259,6 +259,10 @@ final List<GoRoute> _relativeRoutes = <GoRoute>[
   ),
 ];
 
+String _coder(String? value) => '';
+
+bool _compare(String a, String b) => true;
+
 void main() {
   group('GoRouteData', () {
     testWidgets('It should build the page from the overridden build method', (
@@ -796,8 +800,23 @@ void main() {
   });
 
   test('TypedQueryParameter stores the name', () {
-    const parameter = TypedQueryParameter(name: 'customName');
+    const TypedQueryParameter<dynamic> parameter = TypedQueryParameter(
+      name: 'customName',
+    );
 
     expect(parameter.name, 'customName');
+  });
+
+  test('TypedQueryParameter stores the encoder, decoder and compare', () {
+    const TypedQueryParameter<String> parameter = TypedQueryParameter(
+      name: 'customName',
+      encoder: _coder,
+      decoder: _coder,
+      compare: _compare,
+    );
+
+    expect(parameter.encoder, _coder);
+    expect(parameter.decoder, _coder);
+    expect(parameter.compare, _compare);
   });
 }

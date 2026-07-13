@@ -97,6 +97,18 @@ GMSMapViewType FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapType type) {
   }
 }
 
+GMSCollisionBehavior FGMGetCollisionBehaviorForPigeonCollisionBehavior(
+    FGMPlatformMarkerCollisionBehavior collisionBehavior) {
+  switch (collisionBehavior) {
+    case FGMPlatformMarkerCollisionBehaviorRequiredDisplay:
+      return GMSCollisionBehaviorRequired;
+    case FGMPlatformMarkerCollisionBehaviorOptionalAndHidesLowerPriority:
+      return GMSCollisionBehaviorOptionalAndHidesLowerPriority;
+    case FGMPlatformMarkerCollisionBehaviorRequiredAndHidesOptional:
+      return GMSCollisionBehaviorRequiredAndHidesOptional;
+  }
+}
+
 FGMPlatformCluster *FGMGetPigeonCluster(GMUStaticCluster *cluster,
                                         NSString *clusterManagerIdentifier) {
   NSMutableArray *markerIDs = [[NSMutableArray alloc] initWithCapacity:cluster.items.count];

@@ -57,6 +57,9 @@ void main() {
           platformMacOS: const PlatformDetails(PlatformSupport.inline),
         },
       );
+      plugin
+          .platformDirectory(FlutterPlatform.android)
+          .createSync(recursive: true);
 
       // Simulate Android analysis failure only.
       final String gradlewPath = plugin
@@ -133,6 +136,8 @@ void main() {
 
   group('dart analyze', () {
     test('analyzes all packages', () async {
+      // Create a non-Flutter Dart package and a Flutter plugin to make sure
+      // the right command is used for each.
       final RepositoryPackage package1 = createFakePackage('a', packagesDir);
       final RepositoryPackage plugin2 = createFakePlugin('b', packagesDir);
 
@@ -141,7 +146,7 @@ void main() {
       expect(
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[
-          ProcessCall('flutter', const <String>['pub', 'get'], package1.path),
+          ProcessCall('dart', const <String>['pub', 'get'], package1.path),
           ProcessCall('dart', const <String>[
             'analyze',
             '--fatal-infos',
@@ -155,7 +160,7 @@ void main() {
       );
     });
 
-    test('skips flutter pub get for examples', () async {
+    test('skips pub get for examples', () async {
       final RepositoryPackage plugin1 = createFakePlugin('a', packagesDir);
 
       await runCapturingPrint(runner, <String>['analyze']);
@@ -172,7 +177,7 @@ void main() {
       );
     });
 
-    test('runs flutter pub get for non-example subpackages', () async {
+    test('runs pub get for non-example subpackages', () async {
       final RepositoryPackage mainPackage = createFakePackage('a', packagesDir);
       final Directory otherPackagesDir = mainPackage.directory.childDirectory(
         'other_packages',
@@ -191,18 +196,9 @@ void main() {
       expect(
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[
-          ProcessCall('flutter', const <String>[
-            'pub',
-            'get',
-          ], mainPackage.path),
-          ProcessCall('flutter', const <String>[
-            'pub',
-            'get',
-          ], subpackage1.path),
-          ProcessCall('flutter', const <String>[
-            'pub',
-            'get',
-          ], subpackage2.path),
+          ProcessCall('dart', const <String>['pub', 'get'], mainPackage.path),
+          ProcessCall('dart', const <String>['pub', 'get'], subpackage1.path),
+          ProcessCall('dart', const <String>['pub', 'get'], subpackage2.path),
           ProcessCall('dart', const <String>[
             'analyze',
             '--fatal-infos',
@@ -222,7 +218,7 @@ void main() {
       expect(
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[
-          ProcessCall('flutter', const <String>['pub', 'get'], package.path),
+          ProcessCall('dart', const <String>['pub', 'get'], package.path),
           ProcessCall('dart', const <String>[
             'analyze',
             '--fatal-infos',
@@ -252,7 +248,7 @@ void main() {
     });
 
     test(
-      'does not run flutter pub get for non-example subpackages with --lib-only',
+      'does not run pub get for non-example subpackages with --lib-only',
       () async {
         final RepositoryPackage mainPackage = createFakePackage(
           'a',
@@ -269,10 +265,7 @@ void main() {
         expect(
           processRunner.recordedCalls,
           orderedEquals(<ProcessCall>[
-            ProcessCall('flutter', const <String>[
-              'pub',
-              'get',
-            ], mainPackage.path),
+            ProcessCall('dart', const <String>['pub', 'get'], mainPackage.path),
             ProcessCall('dart', const <String>[
               'analyze',
               '--fatal-infos',
@@ -758,7 +751,7 @@ packages/package_a/$file
                 MockProcess(
                   stdout: '''
 README.md
-CODEOWNERS
+SUGGESTED_REVIEWERS.md
 packages/package_a/CHANGELOG.md
 ''',
                 ),
@@ -793,6 +786,9 @@ packages/package_a/CHANGELOG.md
           platformAndroid: const PlatformDetails(PlatformSupport.inline),
         },
       );
+      plugin
+          .platformDirectory(FlutterPlatform.android)
+          .createSync(recursive: true);
 
       final Directory androidDir = plugin.getExamples().first.platformDirectory(
         FlutterPlatform.android,
@@ -836,6 +832,9 @@ packages/package_a/CHANGELOG.md
           platformAndroid: const PlatformDetails(PlatformSupport.inline),
         },
       );
+      plugin
+          .platformDirectory(FlutterPlatform.android)
+          .createSync(recursive: true);
 
       final Iterable<Directory> exampleAndroidDirs = plugin.getExamples().map(
         (RepositoryPackage example) =>
@@ -875,6 +874,9 @@ packages/package_a/CHANGELOG.md
           platformAndroid: const PlatformDetails(PlatformSupport.inline),
         },
       );
+      plugin
+          .platformDirectory(FlutterPlatform.android)
+          .createSync(recursive: true);
 
       final Directory androidDir = plugin.getExamples().first.platformDirectory(
         FlutterPlatform.android,
@@ -889,11 +891,11 @@ packages/package_a/CHANGELOG.md
       expect(
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[
-          ProcessCall(
-            getFlutterCommand(mockPlatform),
-            const <String>['build', 'apk', '--config-only'],
-            plugin.getExamples().first.directory.path,
-          ),
+          ProcessCall(getFlutterCommand(mockPlatform), const <String>[
+            'build',
+            'apk',
+            '--config-only',
+          ], plugin.getExamples().first.directory.path),
           ProcessCall(androidDir.childFile('gradlew').path, const <String>[
             'plugin1:lintDebug',
           ], androidDir.path),
@@ -910,13 +912,16 @@ packages/package_a/CHANGELOG.md
     });
 
     test('fails if gradlew generation fails', () async {
-      createFakePlugin(
+      final RepositoryPackage plugin = createFakePlugin(
         'plugin1',
         packagesDir,
         platformSupport: <String, PlatformDetails>{
           platformAndroid: const PlatformDetails(PlatformSupport.inline),
         },
       );
+      plugin
+          .platformDirectory(FlutterPlatform.android)
+          .createSync(recursive: true);
 
       processRunner.mockProcessesForExecutable[getFlutterCommand(
         mockPlatform,
@@ -951,6 +956,9 @@ packages/package_a/CHANGELOG.md
           platformAndroid: const PlatformDetails(PlatformSupport.inline),
         },
       );
+      plugin
+          .platformDirectory(FlutterPlatform.android)
+          .createSync(recursive: true);
 
       final String gradlewPath = plugin
           .getExamples()
@@ -1024,6 +1032,31 @@ packages/package_a/CHANGELOG.md
       );
     });
 
+    test('skips Dart-only plugins', () async {
+      createFakePlugin(
+        'plugin1',
+        packagesDir,
+        platformSupport: <String, PlatformDetails>{
+          platformAndroid: const PlatformDetails(PlatformSupport.inline),
+        },
+      );
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'analyze',
+        '--android',
+        '--no-dart',
+      ]);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(
+            'SKIPPING: Package does not contain native Android plugin code',
+          ),
+        ]),
+      );
+    });
+
     group('file filtering', () {
       const files = <String>['foo.java', 'foo.kt'];
       for (final file in files) {
@@ -1064,7 +1097,7 @@ packages/package_a/$file
                 MockProcess(
                   stdout: '''
 README.md
-CODEOWNERS
+SUGGESTED_REVIEWERS.md
 packages/package_a/CHANGELOG.md
 packages/package_a/lib/foo.dart
 ''',
@@ -1093,47 +1126,6 @@ packages/package_a/lib/foo.dart
   });
 
   group('Xcode analyze', () {
-    test('temporarily disables Swift Package Manager', () async {
-      final RepositoryPackage plugin = createFakePlugin(
-        'plugin',
-        packagesDir,
-        platformSupport: <String, PlatformDetails>{
-          platformIOS: const PlatformDetails(PlatformSupport.inline),
-        },
-      );
-
-      final RepositoryPackage example = plugin.getExamples().first;
-      final String originalPubspecContents = example.pubspecFile
-          .readAsStringSync();
-      String? buildTimePubspecContents;
-      processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(), <String>[], () {
-          buildTimePubspecContents = example.pubspecFile.readAsStringSync();
-        }),
-      ];
-
-      await runCapturingPrint(runner, <String>[
-        'analyze',
-        '--no-dart',
-        '--ios',
-      ]);
-
-      // Ensure that SwiftPM was disabled for the package.
-      expect(
-        originalPubspecContents,
-        isNot(contains('enable-swift-package-manager: false')),
-      );
-      expect(
-        buildTimePubspecContents,
-        contains('enable-swift-package-manager: false'),
-      );
-      // And that it was undone after.
-      expect(
-        example.pubspecFile.readAsStringSync().trim(),
-        originalPubspecContents.trim(),
-      );
-    });
-
     group('iOS', () {
       test('skip if iOS is not supported', () async {
         createFakePlugin(
@@ -1710,7 +1702,7 @@ packages/package_a/$file
 .gemini/config.yaml
 AGENTS.md
 README.md
-CODEOWNERS
+SUGGESTED_REVIEWERS.md
 packages/package_a/CHANGELOG.md
 packages/package_a/lib/foo.dart
 ''',

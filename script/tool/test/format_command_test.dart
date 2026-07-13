@@ -40,16 +40,9 @@ void main() {
 
     // Create the Java and Kotlin formatter files that the command checks for,
     // to avoid a download.
-    final p.Context path = analyzeCommand.path;
-    javaFormatPath = path.join(
-      path.dirname(path.fromUri(mockPlatform.script)),
-      'google-java-format-1.3-all-deps.jar',
-    );
+    javaFormatPath = analyzeCommand.javaFormatterFile.path;
     packagesDir.fileSystem.file(javaFormatPath).createSync(recursive: true);
-    kotlinFormatPath = path.join(
-      path.dirname(path.fromUri(mockPlatform.script)),
-      'ktfmt-0.46-jar-with-dependencies.jar',
-    );
+    kotlinFormatPath = analyzeCommand.kotlinFormatterFile.path;
     packagesDir.fileSystem.file(kotlinFormatPath).createSync(recursive: true);
 
     runner = CommandRunner<void>('format_command', 'Test for format_command');
@@ -976,9 +969,7 @@ void main() {
         contains('These files are not formatted correctly'),
         contains(changedFilePath),
         // Ensure the error message links to instructions.
-        contains(
-          'https://github.com/flutter/packages/blob/main/script/tool/README.md#format-code',
-        ),
+        contains('$toolDocsUrl#format-code'),
         contains('patch -p1 <<DONE'),
       ]),
     );

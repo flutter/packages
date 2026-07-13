@@ -93,7 +93,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
     XCTAssert(callback.lastUpdate.count == 1)
     XCTAssert(
-      callback.lastUpdate.first?.restoring == false,
+      callback.lastUpdate.first?.status != .restored,
       "Ordinary purchase updates should not be marked as restoring")
 
     plugin.transactions {
@@ -101,7 +101,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
       switch result {
       case .success(let transactions):
         XCTAssert(transactions.count == 1)
-        XCTAssert(transactions.first?.restoring == false)
+        XCTAssert(transactions.first?.status != .restored)
         transactionExpectation.fulfill()
       case .failure(let error):
         XCTFail("Getting transactions should NOT fail. Failed with \(error)")
@@ -181,6 +181,13 @@ final class InAppPurchase2PluginTests: XCTestCase {
   //TODO(louisehsu): Add testing for lower versions.
   @available(iOS 17.0, macOS 14.0, *)
   func testGetProductsWithStoreKitError() async throws {
+    let osVersion = ProcessInfo.processInfo.operatingSystemVersion
+    try XCTSkipIf(
+      // https://developer.apple.com/forums/thread/808030
+      osVersion.majorVersion == 26 && osVersion.minorVersion == 2,
+      "Known StoreKitTest bug on Xcode 26.2 with setSimulatedError() when used on .loadProducts API"
+    )
+
     try await session.setSimulatedError(
       .generic(.networkError(URLError(.badURL))), forAPI: .loadProducts)
 
@@ -217,6 +224,15 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
   @available(iOS 17.0, macOS 14.0, *)
   func testFailedNetworkErrorPurchase() async throws {
+    let osVersion = ProcessInfo.processInfo.operatingSystemVersion
+    try XCTSkipIf(
+      // https://developer.apple.com/forums/thread/808030
+      osVersion.majorVersion == 26 && osVersion.minorVersion == 2,
+      "Known StoreKitTest bug on Xcode 26.2 with setSimulatedError() when used on .loadProducts API"
+    )
+
+    // StoreKitTest aggressively caches products and transaction, which means sometimes it bypasses a simulated error.
+    session.clearTransactions()
     try await session.setSimulatedError(
       .generic(.networkError(URLError(.badURL))), forAPI: .loadProducts)
     let expectation = self.expectation(description: "products request should fail")
@@ -227,7 +243,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
       case .failure(let error):
         XCTAssertEqual(
           error.localizedDescription,
-          "The operation couldn’t be completed. (NSURLErrorDomain error -1009.)")
+          "The operation couldn’t be completed. (in_app_purchase_storekit.PigeonError error 1.)")
         expectation.fulfill()
       }
     }
@@ -290,7 +306,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
         XCTFail("Purchase should NOT fail. Failed with \(error)")
       }
     }
-    await fulfillment(of: [expectation], timeout: 5)
+    await fulfillment(of: [expectation], timeout: 10)
   }
 
   func testDiscountedProductSuccess() async throws {
@@ -303,7 +319,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
         XCTFail("Purchase should NOT fail. Failed with \(error)")
       }
     }
-    await fulfillment(of: [expectation], timeout: 5)
+    await fulfillment(of: [expectation], timeout: 10)
   }
 
   func testPurchaseWithAppAccountToken() async throws {
@@ -388,7 +404,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
     await fulfillment(of: [purchaseExpectation], timeout: 5)
 
     XCTAssert(callback.lastUpdate.count == 1)
-    XCTAssert(callback.lastUpdate.first?.restoring == false)
+    XCTAssert(callback.lastUpdate.first?.status != .restored)
 
     plugin.restorePurchases { result in
       switch result {
@@ -401,7 +417,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
     await fulfillment(of: [restoreExpectation], timeout: 5)
 
     XCTAssert(callback.lastUpdate.count == 1)
-    XCTAssert(callback.lastUpdate.first?.restoring == true)
+    XCTAssert(callback.lastUpdate.first?.status == .restored)
   }
 
   func testFinishTransaction() async throws {
@@ -529,6 +545,22 @@ final class InAppPurchase2PluginTests: XCTestCase {
     }
 
     await fulfillment(of: [expectation], timeout: 5)
+  }
+
+  @available(iOS 16.0, macOS 15.0, *)
+  func testRedeemCodeSheetFailsGracefullyWhenNoWindow() {
+    let expectation = self.expectation(
+      description: "Should fail gracefully when without key window")
+
+    plugin.registrar = nil
+
+    plugin.presentOfferCodeRedeemSheet { result in
+      if case .failure = result {
+        expectation.fulfill()
+      }
+    }
+
+    waitForExpectations(timeout: 1.0)
   }
 
 }

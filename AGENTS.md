@@ -90,11 +90,9 @@ dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart update-dependency 
   The tool can also run native and integration tests, but these may require a more complete environment than is available.
 - **Validation**: Run these checks to ensure that changes follow team guidelines:
   ```bash
+  dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart validate --packages <changed_packages>
   dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart publish-check --packages <changed_packages>
-  dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart readme-check --packages <changed_packages>
-  dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart version-check --packages <changed_packages>
   dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart license-check
-  dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart repo-package-info-check
   ```
 
 ### Specialized Workflows

@@ -23,27 +23,27 @@ abstract class SharedPreferencesApi {
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   bool remove(String key);
 
-  /// Adds property to shared preferences data set of type bool.
+  /// Adds property to shared preferences data set of type `bool`.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   bool setBool(String key, bool value);
 
-  /// Adds property to shared preferences data set of type String.
+  /// Adds property to shared preferences data set of type `String`.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   bool setString(String key, String value);
 
-  /// Adds property to shared preferences data set of type int.
+  /// Adds property to shared preferences data set of type `int`.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   bool setInt(String key, int value);
 
-  /// Adds property to shared preferences data set of type double.
+  /// Adds property to shared preferences data set of type `double`.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   bool setDouble(String key, double value);
 
-  /// Adds property to shared preferences data set of type List<String>.
+  /// Adds property to shared preferences data set of type `List<String>`.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   bool setEncodedStringList(String key, String value);
 
-  /// Adds property to shared preferences data set of type List<String>.
+  /// Adds property to shared preferences data set of type `List<String>`.
   ///
   /// Deprecated, this is only here for testing purposes.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)

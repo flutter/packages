@@ -71,13 +71,11 @@ void main() {
           ProcessCall('flutter', const <String>[
             'pub',
             'publish',
-            '--',
             '--dry-run',
           ], plugin1.path),
           ProcessCall('flutter', const <String>[
             'pub',
             'publish',
-            '--',
             '--dry-run',
           ], plugin2.path),
         ]),
@@ -117,14 +115,12 @@ void main() {
           ProcessCall('flutter', const <String>[
             'pub',
             'publish',
-            '--',
             '--dry-run',
           ], plugin1.path),
           // plugin2 has no examples, so there's no extra 'dart pub get' calls.
           ProcessCall('flutter', const <String>[
             'pub',
             'publish',
-            '--',
             '--dry-run',
           ], plugin2.path),
         ]),
@@ -329,7 +325,8 @@ void main() {
 
         runner = configureRunner(httpClient: mockClient);
 
-        processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
+        processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
           FakeProcessInfo(
             MockProcess(exitCode: 1, stdout: 'Some error from pub'),
             <String>['pub', 'publish'],
@@ -355,10 +352,9 @@ void main() {
         expect(
           processRunner.recordedCalls,
           contains(
-            ProcessCall('flutter', const <String>[
+            ProcessCall('dart', const <String>[
               'pub',
               'publish',
-              '--',
               '--dry-run',
             ], package.path),
           ),
@@ -426,10 +422,9 @@ void main() {
         expect(
           processRunner.recordedCalls,
           contains(
-            ProcessCall('flutter', const <String>[
+            ProcessCall('dart', const <String>[
               'pub',
               'publish',
-              '--',
               '--dry-run',
             ], package.path),
           ),
@@ -496,10 +491,9 @@ void main() {
               'run',
               'tool/pre_publish.dart',
             ], package.directory.path),
-            ProcessCall('flutter', const <String>[
+            ProcessCall('dart', const <String>[
               'pub',
               'publish',
-              '--',
               '--dry-run',
             ], package.directory.path),
           ]),
