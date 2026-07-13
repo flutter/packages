@@ -21,9 +21,9 @@ import org.mockito.Mockito
 class LegacySharedPreferencesTest {
   private lateinit var plugin: LegacySharedPreferencesPlugin
 
-  @Mock private lateinit var mockMessenger: BinaryMessenger
+  private lateinit var mockMessenger: BinaryMessenger
 
-  @Mock private lateinit var flutterPluginBinding: FlutterPluginBinding
+  private lateinit var flutterPluginBinding: FlutterPluginBinding
 
   @Before
   fun before() {
