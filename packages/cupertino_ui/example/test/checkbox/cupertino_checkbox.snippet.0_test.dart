@@ -9,7 +9,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart' show Colors;
 
 void main() {
-  testWidgets('Checkbox color is affected by whether it is enabled', (WidgetTester tester) async {
+  testWidgets('Checkbox color is affected by whether it is enabled', (
+    WidgetTester tester,
+  ) async {
     RenderBox getCheckboxRenderer() {
       return tester.renderObject<RenderBox>(find.byType(CupertinoCheckbox));
     }
@@ -21,9 +23,9 @@ void main() {
           navigationBar: CupertinoNavigationBar(
             middle: Text('CupertinoCheckbox Example'),
           ),
-          child: SafeArea(child: example.CupertinoCheckboxExample(
-            onChanged: onChanged,
-          )),
+          child: SafeArea(
+            child: example.CupertinoCheckboxExample(onChanged: onChanged),
+          ),
         ),
       );
     }
@@ -34,6 +36,9 @@ void main() {
 
     await tester.pumpWidget(buildApp(onChanged: null));
     await tester.pumpAndSettle();
-    expect(getCheckboxRenderer(), paints..rrect(color: Colors.orange.withValues(alpha: .32)));
+    expect(
+      getCheckboxRenderer(),
+      paints..rrect(color: Colors.orange.withValues(alpha: .32)),
+    );
   });
 }
