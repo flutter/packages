@@ -4,7 +4,7 @@
 
 // This file has been automatically generated. Please do not edit it manually.
 // To regenerate the file, use:
-// dart packages/material_ui/script/l10n/bin/gen_localizations.dart --overwrite
+// dart script/l10n/bin/gen_localizations.dart --overwrite
 
 import 'dart:collection';
 
@@ -20,7 +20,7 @@ import '../typography.dart';
 //
 // These classes are constructed by the [getMaterialTranslation] method at the
 // bottom of this file, and used by the [_MaterialLocalizationsDelegate.load]
-// method defined in `material_ui/lib/src/global_material_localizations.dart`.
+// method defined in `packages/material_ui/lib/src/global_material_localizations.dart`.
 
 // TODO(goderbauer): Extend the generator to properly format the output.
 // dart format off

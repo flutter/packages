@@ -28,7 +28,7 @@ import '../typography.dart';
 //
 // These classes are constructed by the [getMaterialTranslation] method at the
 // bottom of this file, and used by the [_MaterialLocalizationsDelegate.load]
-// method defined in `material_ui/lib/src/global_material_localizations.dart`.
+// method defined in `packages/material_ui/lib/src/global_material_localizations.dart`.
 
 // TODO(goderbauer): Extend the generator to properly format the output.
 // dart format off''';
