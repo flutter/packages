@@ -221,7 +221,7 @@ class _TweenCurve extends Curve {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/menu_anchor/menu_anchor.0.dart}
+/// {@example /example/lib/menu_anchor/menu_anchor.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -236,7 +236,7 @@ class _TweenCurve extends Curve {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/menu_anchor/menu_anchor.1.dart}
+/// {@example /example/lib/menu_anchor/menu_anchor.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -249,7 +249,7 @@ class _TweenCurve extends Curve {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/menu_anchor/menu_anchor.3.dart}
+/// {@example /example/lib/menu_anchor/menu_anchor.3.dart#body}
 ///
 /// </callout-box>
 ///
@@ -845,7 +845,7 @@ class _MenuAnchorState extends State<MenuAnchor> with SingleTickerProviderStateM
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/menu_anchor/menu_bar.0.dart}
+/// {@example /example/lib/menu_anchor/menu_bar.0.dart#body}
 ///
 /// </callout-box>
 /// {@endtemplate}
@@ -1369,7 +1369,7 @@ class _MenuItemButtonState extends State<MenuItemButton> {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/menu_anchor/checkbox_menu_button.0.dart}
+/// {@example /example/lib/menu_anchor/checkbox_menu_button.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1571,7 +1571,7 @@ class CheckboxMenuButton extends StatelessWidget {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/menu_anchor/radio_menu_button.0.dart}
+/// {@example /example/lib/menu_anchor/radio_menu_button.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -2973,7 +2973,7 @@ typedef MenuAcceleratorChildBuilder =
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/menu_anchor/menu_accelerator_label.0.dart}
+/// {@example /example/lib/menu_anchor/menu_accelerator_label.0.dart#body}
 ///
 /// </callout-box>
 /// {@endtemplate}

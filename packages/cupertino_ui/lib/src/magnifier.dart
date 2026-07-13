@@ -21,7 +21,7 @@ import 'theme.dart';
 ///
 /// This sample demonstrates how to use [CupertinoTextMagnifier].
 ///
-/// {@example /example/lib/magnifier/cupertino_text_magnifier.0.dart}
+/// {@example /example/lib/magnifier/cupertino_text_magnifier.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -233,7 +233,7 @@ class _CupertinoTextMagnifierState extends State<CupertinoTextMagnifier>
 ///
 /// This sample demonstrates how to use [CupertinoMagnifier].
 ///
-/// {@example /example/lib/magnifier/cupertino_magnifier.0.dart}
+/// {@example /example/lib/magnifier/cupertino_magnifier.0.dart#body}
 ///
 /// </callout-box>
 ///

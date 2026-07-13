@@ -223,7 +223,7 @@ bool _isInAccessibilityMode(BuildContext context) {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/dialog/cupertino_alert_dialog.0.dart}
+/// {@example /example/lib/dialog/cupertino_alert_dialog.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -533,7 +533,7 @@ class _CupertinoAlertDialogState extends State<CupertinoAlertDialog> {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/dialog/cupertino_popup_surface.0.dart}
+/// {@example /example/lib/dialog/cupertino_popup_surface.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1074,7 +1074,7 @@ class _ActionSheetGestureDetector extends StatelessWidget {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/dialog/cupertino_action_sheet.0.dart}
+/// {@example /example/lib/dialog/cupertino_action_sheet.0.dart#body}
 ///
 /// </callout-box>
 ///

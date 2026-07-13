@@ -1307,7 +1307,7 @@ class CupertinoModalPopupRoute<T> extends PopupRoute<T> {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/route/show_cupertino_modal_popup.0.dart}
+/// {@example /example/lib/route/show_cupertino_modal_popup.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1406,7 +1406,7 @@ Widget _buildCupertinoDialogTransitions(
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/route/show_cupertino_dialog.0.dart}
+/// {@example /example/lib/route/show_cupertino_dialog.0.dart#body}
 ///
 /// </callout-box>
 ///

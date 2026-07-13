@@ -65,7 +65,7 @@ const double _kInnerRadius = 4.5;
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/radio/radio.0.dart}
+/// {@example /example/lib/radio/radio.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -85,7 +85,7 @@ const double _kInnerRadius = 4.5;
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/radio/radio.1.dart}
+/// {@example /example/lib/radio/radio.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -263,7 +263,7 @@ class Radio<T> extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/radio/radio.toggleable.0.dart}
+  /// {@example /example/lib/radio/radio.toggleable.0.dart#body}
   ///
   /// </callout-box>
   final bool toggleable;

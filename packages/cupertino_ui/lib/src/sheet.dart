@@ -167,7 +167,7 @@ typedef _GetSheetDragged = bool Function();
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/sheet/cupertino_sheet.1.dart}
+/// {@example /example/lib/sheet/cupertino_sheet.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -623,7 +623,7 @@ class _StretchDragControllerProvider extends InheritedWidget {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/sheet/cupertino_sheet.0.dart}
+/// {@example /example/lib/sheet/cupertino_sheet.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -636,7 +636,7 @@ class _StretchDragControllerProvider extends InheritedWidget {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/sheet/cupertino_sheet.2.dart}
+/// {@example /example/lib/sheet/cupertino_sheet.2.dart#body}
 ///
 /// </callout-box>
 ///
@@ -648,7 +648,7 @@ class _StretchDragControllerProvider extends InheritedWidget {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/sheet/cupertino_sheet.3.dart}
+/// {@example /example/lib/sheet/cupertino_sheet.3.dart#body}
 ///
 /// </callout-box>
 ///
@@ -699,7 +699,7 @@ class CupertinoSheetRoute<T> extends PageRoute<T> with _CupertinoSheetRouteTrans
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro cupertino_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/sheet/cupertino_sheet.3.dart}
+  /// {@example /example/lib/sheet/cupertino_sheet.3.dart#body}
   ///
   /// </callout-box>
   final ScrollableWidgetBuilder? scrollableBuilder;

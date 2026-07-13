@@ -241,7 +241,7 @@ enum ListTileTitleAlignment {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/list_tile/list_tile.0.dart}
+/// {@example /example/lib/list_tile/list_tile.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -256,7 +256,7 @@ enum ListTileTitleAlignment {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/list_tile/list_tile.1.dart}
+/// {@example /example/lib/list_tile/list_tile.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -269,7 +269,7 @@ enum ListTileTitleAlignment {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/list_tile/list_tile.2.dart}
+/// {@example /example/lib/list_tile/list_tile.2.dart#body}
 ///
 /// </callout-box>
 ///
@@ -283,7 +283,7 @@ enum ListTileTitleAlignment {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/list_tile/list_tile.3.dart}
+/// {@example /example/lib/list_tile/list_tile.3.dart#body}
 ///
 /// </callout-box>
 ///
@@ -297,7 +297,7 @@ enum ListTileTitleAlignment {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/list_tile/list_tile.4.dart}
+/// {@example /example/lib/list_tile/list_tile.4.dart#body}
 ///
 /// </callout-box>
 ///
@@ -409,7 +409,7 @@ enum ListTileTitleAlignment {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/list_tile/custom_list_item.0.dart}
+/// {@example /example/lib/list_tile/custom_list_item.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -423,7 +423,7 @@ enum ListTileTitleAlignment {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/list_tile/custom_list_item.1.dart}
+/// {@example /example/lib/list_tile/custom_list_item.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -731,7 +731,7 @@ class ListTile extends StatelessWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/list_tile/list_tile.selected.0.dart}
+  /// {@example /example/lib/list_tile/list_tile.selected.0.dart#body}
   ///
   /// </callout-box>
   final bool selected;

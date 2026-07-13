@@ -107,7 +107,7 @@ enum _SwitchListTileType { material, adaptive }
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/switch_list_tile/switch_list_tile.0.dart}
+/// {@example /example/lib/switch_list_tile/switch_list_tile.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -120,7 +120,7 @@ enum _SwitchListTileType { material, adaptive }
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/switch_list_tile/switch_list_tile.1.dart}
+/// {@example /example/lib/switch_list_tile/switch_list_tile.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -153,7 +153,7 @@ enum _SwitchListTileType { material, adaptive }
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/switch_list_tile/custom_labeled_switch.0.dart}
+/// {@example /example/lib/switch_list_tile/custom_labeled_switch.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -175,7 +175,7 @@ enum _SwitchListTileType { material, adaptive }
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/switch_list_tile/custom_labeled_switch.1.dart}
+/// {@example /example/lib/switch_list_tile/custom_labeled_switch.1.dart#body}
 ///
 /// </callout-box>
 ///
