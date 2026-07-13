@@ -276,6 +276,125 @@ abstract class Api {
     expect(results.root.classes[0].fields[0].name, equals('enum1'));
   });
 
+  test('enhanced enum with a constructor and fields is an error', () {
+    const code = '''
+enum Enum1 {
+  one(1),
+  two(2);
+
+  const Enum1(this.value);
+  final int value;
+}
+
+class ClassWithEnum {
+  Enum1? enum1;
+}
+
+@HostApi
+abstract class Api {
+  ClassWithEnum foo();
+}
+''';
+    final ParseResults results = parseSource(code);
+    expect(results.errors, hasLength(1));
+    expect(results.errors[0].message, contains('enhanced enums'));
+    expect(results.errors[0].message, contains('Enum1'));
+  });
+
+  test('enum with a mixin or interface is an error', () {
+    const code = '''
+mixin Mixin1 {}
+
+abstract class Interface1 {}
+
+enum Enum1 with Mixin1 implements Interface1 {
+  one,
+  two,
+}
+
+class ClassWithEnum {
+  Enum1? enum1;
+}
+
+@HostApi
+abstract class Api {
+  ClassWithEnum foo();
+}
+''';
+    final ParseResults results = parseSource(code);
+    expect(results.errors, hasLength(1));
+    expect(results.errors[0].message, contains('enhanced enums'));
+    expect(results.errors[0].message, contains('Enum1'));
+  });
+
+  test('plain enum with a trailing semicolon is not an error', () {
+    const code = '''
+enum Enum1 {
+  one,
+  two;
+}
+
+class ClassWithEnum {
+  Enum1? enum1;
+}
+
+@HostApi
+abstract class Api {
+  ClassWithEnum foo();
+}
+''';
+    final ParseResults results = parseSource(code);
+    expect(results.errors, isEmpty);
+  });
+
+  test('enhanced enum with a getter is an error and does not crash', () {
+    const code = '''
+enum Enum1 {
+  one(1),
+  two(2);
+
+  const Enum1(this.value);
+  final int value;
+  int get doubled => value * 2;
+}
+
+class ClassWithEnum {
+  Enum1? enum1;
+}
+
+@HostApi
+abstract class Api {
+  ClassWithEnum foo();
+}
+''';
+    final ParseResults results = parseSource(code);
+    expect(results.errors, hasLength(1));
+    expect(results.errors[0].message, contains('enhanced enums'));
+    expect(results.errors[0].message, contains('Enum1'));
+  });
+
+  test('enum with arguments on its values is an error', () {
+    const code = '''
+enum Enum1 {
+  one(1),
+  two(2);
+}
+
+class ClassWithEnum {
+  Enum1? enum1;
+}
+
+@HostApi
+abstract class Api {
+  ClassWithEnum foo();
+}
+''';
+    final ParseResults results = parseSource(code);
+    expect(results.errors, hasLength(1));
+    expect(results.errors[0].message, contains('enhanced enums'));
+    expect(results.errors[0].message, contains('Enum1'));
+  });
+
   test('two methods', () {
     const code = '''
 class Input1 {
