@@ -1,6 +1,6 @@
-## 0.12.1
+## 0.12.0+2
 
-* Fixes a crash where a `CameraController` could update its value after being disposed, throwing "A CameraController was used after being disposed." (see [flutter/flutter#184959](https://github.com/flutter/flutter/issues/184959)).
+* Fixes a crash where a `CameraController` could update its value after being disposed, throwing "A CameraController was used after being disposed".
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 0.12.0+1
