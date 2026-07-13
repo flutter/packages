@@ -2305,7 +2305,7 @@ class TabBarView extends StatefulWidget {
   /// {@macro flutter.widgets.pageview.viewportFraction}
   final double viewportFraction;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// Defaults to [Clip.hardEdge].
   final Clip clipBehavior;

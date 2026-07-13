@@ -250,7 +250,7 @@ class Drawer extends StatelessWidget {
   ///    value is used.
   final String? semanticLabel;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// The [clipBehavior] argument specifies how to clip the drawer's [shape].
   ///

@@ -506,7 +506,7 @@ class SnackBar extends StatefulWidget {
   /// is used. If that is null, then the default is [DismissDirection.down].
   final DismissDirection? dismissDirection;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// Defaults to [Clip.hardEdge].
   final Clip clipBehavior;

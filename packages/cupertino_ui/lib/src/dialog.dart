@@ -289,10 +289,21 @@ class CupertinoAlertDialog extends StatefulWidget {
   ///    section when it is long.
   final ScrollController? actionScrollController;
 
-  /// {@macro flutter.material.dialog.insetAnimationDuration}
+  /// {@template flutter.cupertino.dialog.insetAnimationDuration}
+  /// The duration of the animation to show when the system keyboard intrudes
+  /// into the space that the dialog is placed in.
+  ///
+  /// Defaults to 100 milliseconds when [Dialog] is used, and [Duration.zero]
+  /// when [Dialog.fullscreen] is used.
+  /// {@endtemplate}
   final Duration insetAnimationDuration;
 
-  /// {@macro flutter.material.dialog.insetAnimationCurve}
+  /// {@template flutter.cupertino.dialog.insetAnimationCurve}
+  /// The curve to use for the animation shown when the system keyboard intrudes
+  /// into the space that the dialog is placed in.
+  ///
+  /// Defaults to [Curves.decelerate].
+  /// {@endtemplate}
   final Curve insetAnimationCurve;
 
   @override

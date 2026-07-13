@@ -143,7 +143,7 @@ abstract interface class ChipAttributes {
   ///  * [WidgetState.pressed].
   OutlinedBorder? get shape;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none].
   Clip get clipBehavior;

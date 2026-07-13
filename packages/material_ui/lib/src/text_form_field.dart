@@ -35,7 +35,7 @@ export 'package:flutter/services.dart' show SmartDashesType, SmartQuotesType;
 /// If a [controller] is not specified, [initialValue] can be used to give
 /// the automatically generated controller an initial value.
 ///
-/// {@macro flutter.material.textfield.wantKeepAlive}
+/// {@macro flutter.cupertino.textfield.wantKeepAlive}
 ///
 /// Remember to call [TextEditingController.dispose] of the [TextEditingController]
 /// when it is no longer needed. This will ensure any resources used by the object
@@ -339,10 +339,7 @@ class TextFormField extends FormField<String> {
   /// {@macro flutter.widgets.editableText.groupId}
   final Object groupId;
 
-  /// {@template flutter.material.TextFormField.onChanged}
-  /// Called when the user initiates a change to the TextField's
-  /// value: when they have inserted or deleted text or reset the form.
-  /// {@endtemplate}
+  /// {@macro flutter.cupertino.TextFormField.onChanged}
   final ValueChanged<String>? onChanged;
 
   static Widget _defaultContextMenuBuilder(

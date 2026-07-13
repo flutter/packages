@@ -288,16 +288,26 @@ class CupertinoSwitch extends StatefulWidget {
   /// (or [Color.fromARGB(255, 255, 255, 255)] in high contrast) when null.
   final Color? offLabelColor;
 
-  /// {@macro flutter.material.switch.activeThumbImage}
+  /// {@template flutter.cupertino.switch.activeThumbImage}
+  /// An image to use on the thumb of this switch when the switch is on.
+  /// {@endtemplate}
   final ImageProvider? activeThumbImage;
 
-  /// {@macro flutter.material.switch.onActiveThumbImageError}
+  /// {@template flutter.cupertino.switch.onActiveThumbImageError}
+  /// An optional error callback for errors emitted when loading
+  /// [activeThumbImage].
+  /// {@endtemplate}
   final ImageErrorListener? onActiveThumbImageError;
 
-  /// {@macro flutter.material.switch.inactiveThumbImage}
+  /// {@template flutter.cupertino.switch.inactiveThumbImage}
+  /// An image to use on the thumb of this switch when the switch is off.
+  /// {@endtemplate}
   final ImageProvider? inactiveThumbImage;
 
-  /// {@macro flutter.material.switch.onInactiveThumbImageError}
+  /// {@template flutter.cupertino.switch.onInactiveThumbImageError}
+  /// An optional error callback for errors emitted when loading
+  /// [inactiveThumbImage].
+  /// {@endtemplate}
   final ImageErrorListener? onInactiveThumbImageError;
 
   /// The outline color of this [CupertinoSwitch]'s track.

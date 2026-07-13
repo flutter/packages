@@ -712,7 +712,7 @@ class DropdownMenu<T> extends StatefulWidget {
   /// {@macro flutter.widgets.editableText.cursorHeight}
   final double? cursorHeight;
 
-  /// {@macro flutter.material.textfield.restorationId}
+  /// {@macro flutter.cupertino.textfield.restorationId}
   final String? restorationId;
 
   /// An optional controller that allows opening and closing of the menu from

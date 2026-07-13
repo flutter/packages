@@ -781,7 +781,7 @@ class DataTable extends StatelessWidget {
   /// The style to use when painting the boundary and interior divisions of the table.
   final TableBorder? border;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// This can be used to clip the content within the border of the [DataTable].
   ///
