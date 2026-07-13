@@ -25,12 +25,7 @@ const int _exitPodUpdateFailed = 5;
 /// See https://docs.gradle.org/6.4/userguide/core_dependency_management.html#sec:dependency-mgmt-in-gradle.
 class FetchDepsCommand extends PackageLoopingCommand {
   /// Creates an instance of the fetch-deps command.
-  FetchDepsCommand(
-    super.packagesDir, {
-    super.processRunner,
-    super.platform,
-    super.gitDir,
-  }) {
+  FetchDepsCommand(super.packagesDir, {super.processRunner, super.platform, super.gitDir}) {
     argParser.addFlag(_dartFlag, defaultsTo: true, help: 'Run "pub get"');
     argParser.addFlag(
       _supportingTargetPlatformsOnlyFlag,
@@ -83,8 +78,7 @@ class FetchDepsCommand extends PackageLoopingCommand {
 
   static const String _dartFlag = 'dart';
   static const String _swiftPackageManagerFlag = 'swift-package-manager';
-  static const String _supportingTargetPlatformsOnlyFlag =
-      'supporting-target-platforms-only';
+  static const String _supportingTargetPlatformsOnlyFlag = 'supporting-target-platforms-only';
 
   static const Iterable<String> _platforms = <String>[
     platformAndroid,
@@ -109,27 +103,23 @@ class FetchDepsCommand extends PackageLoopingCommand {
     // default on stable. For now this will have the wrong default on stable,
     // but that's fine since we are usually providing an explicit flag for now.
     final bool usesCocoaPods =
-        (includeIOS || includeMacOS) &&
-        !(getNullableBoolArg(_swiftPackageManagerFlag) ?? false);
+        (includeIOS || includeMacOS) && !(getNullableBoolArg(_swiftPackageManagerFlag) ?? false);
     if (usesCocoaPods) {
       // `pod install` requires having the platform artifacts precached. See
       // https://github.com/flutter/flutter/blob/fb7a763c640d247d090cbb373e4b3a0459ac171b/packages/flutter_tools/bin/podhelper.rb#L47
       // https://github.com/flutter/flutter/blob/fb7a763c640d247d090cbb373e4b3a0459ac171b/packages/flutter_tools/bin/podhelper.rb#L130
-      final int precacheExitCode = await processRunner.runAndStream(
-        flutterCommand,
-        <String>[
-          'precache',
-          if (includeIOS) '--ios',
-          if (includeMacOS) '--macos',
-        ],
-      );
+      final int precacheExitCode = await processRunner.runAndStream(flutterCommand, <String>[
+        'precache',
+        if (includeIOS) '--ios',
+        if (includeMacOS) '--macos',
+      ]);
       if (precacheExitCode != 0) {
         throw ToolExit(_exitPrecacheFailed);
       }
-      final int updateUpdateExitCode = await processRunner.runAndStream(
-        'pod',
-        <String>['repo', 'update'],
-      );
+      final int updateUpdateExitCode = await processRunner.runAndStream('pod', <String>[
+        'repo',
+        'update',
+      ]);
       if (updateUpdateExitCode != 0) {
         throw ToolExit(_exitPodUpdateFailed);
       }
@@ -159,22 +149,14 @@ class FetchDepsCommand extends PackageLoopingCommand {
         'Overriding enable-swift-package-manager to '
         '$swiftPackageManagerOverride',
       );
-      setSwiftPackageManagerState(
-        package,
-        enabled: swiftPackageManagerOverride,
-      );
+      setSwiftPackageManagerState(package, enabled: swiftPackageManagerOverride);
       for (final RepositoryPackage example in package.getExamples()) {
-        setSwiftPackageManagerState(
-          example,
-          enabled: swiftPackageManagerOverride,
-        );
+        setSwiftPackageManagerState(example, enabled: swiftPackageManagerOverride);
       }
     }
 
     if (getBoolArg(_dartFlag)) {
-      final bool filterPlatforms = getBoolArg(
-        _supportingTargetPlatformsOnlyFlag,
-      );
+      final bool filterPlatforms = getBoolArg(_supportingTargetPlatformsOnlyFlag);
       if (!filterPlatforms || _hasExampleSupportingRequestedPlatform(package)) {
         fetchedDeps = true;
         if (!await _fetchDartPackages(package)) {
@@ -242,14 +224,8 @@ class FetchDepsCommand extends PackageLoopingCommand {
   }
 
   Future<PackageResult> _fetchAndroidDeps(RepositoryPackage package) async {
-    if (!pluginSupportsPlatform(
-      platformAndroid,
-      package,
-      requiredMode: PlatformSupport.inline,
-    )) {
-      return PackageResult.skip(
-        'Package does not have native Android dependencies.',
-      );
+    if (!pluginSupportsPlatform(platformAndroid, package, requiredMode: PlatformSupport.inline)) {
+      return PackageResult.skip('Package does not have native Android dependencies.');
     }
 
     for (final RepositoryPackage example in package.getExamples()) {
@@ -274,9 +250,7 @@ class FetchDepsCommand extends PackageLoopingCommand {
 
       final String packageName = package.directory.basename;
 
-      final int exitCode = await gradleProject.runCommand(
-        '$packageName:dependencies',
-      );
+      final int exitCode = await gradleProject.runCommand('$packageName:dependencies');
       if (exitCode != 0) {
         return PackageResult.fail();
       }
@@ -285,20 +259,11 @@ class FetchDepsCommand extends PackageLoopingCommand {
     return PackageResult.success();
   }
 
-  Future<PackageResult> _fetchDarwinDeps(
-    RepositoryPackage package,
-    final String platformString,
-  ) async {
-    if (!pluginSupportsPlatform(
-      platformString,
-      package,
-      requiredMode: PlatformSupport.inline,
-    )) {
+  Future<PackageResult> _fetchDarwinDeps(RepositoryPackage package, String platformString) async {
+    if (!pluginSupportsPlatform(platformString, package, requiredMode: PlatformSupport.inline)) {
       // Convert from the flag (lower case ios/macos) to the actual name.
       final String displayPlatform = platformString.replaceFirst('os', 'OS');
-      return PackageResult.skip(
-        'Package does not have native $displayPlatform dependencies.',
-      );
+      return PackageResult.skip('Package does not have native $displayPlatform dependencies.');
     }
 
     for (final RepositoryPackage example in package.getExamples()) {
@@ -307,9 +272,7 @@ class FetchDepsCommand extends PackageLoopingCommand {
         example,
         processRunner,
         platform,
-        platformString == platformIOS
-            ? FlutterPlatform.ios
-            : FlutterPlatform.macos,
+        platformString == platformIOS ? FlutterPlatform.ios : FlutterPlatform.macos,
       );
       if (!buildSuccess) {
         printError('Unable to prepare native project files.');

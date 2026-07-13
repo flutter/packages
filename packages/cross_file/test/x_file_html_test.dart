@@ -16,10 +16,7 @@ import 'package:web/web.dart' as html;
 
 const String expectedStringContents = 'Hello, world! I ❤ ñ! 空手';
 final Uint8List bytes = Uint8List.fromList(utf8.encode(expectedStringContents));
-final html.File textFile = html.File(
-  <JSUint8Array>[bytes.toJS].toJS,
-  'hello.txt',
-);
+final html.File textFile = html.File(<JSUint8Array>[bytes.toJS].toJS, 'hello.txt');
 final String textFileUrl =
     // TODO(kevmoo): drop ignore when pkg:web constraint excludes v0.3
     // ignore: unnecessary_cast
@@ -89,9 +86,7 @@ void main() {
 
     test('Stores data as a Blob', () async {
       // Read the blob from its path 'natively'
-      final html.Response response = await html.window
-          .fetch(file.path.toJS)
-          .toDart;
+      final html.Response response = await html.window.fetch(file.path.toJS).toDart;
 
       final JSAny arrayBuffer = await response.arrayBuffer().toDart;
       final ByteBuffer data = (arrayBuffer as JSArrayBuffer).toDart;
@@ -116,9 +111,7 @@ void main() {
 
         await file.saveTo('');
 
-        final html.Element? container = html.document.querySelector(
-          '#$crossFileDomElementId',
-        );
+        final html.Element? container = html.document.querySelector('#$crossFileDomElementId');
 
         expect(container, isNotNull);
       });
@@ -128,9 +121,7 @@ void main() {
 
         await file.saveTo('path');
 
-        final html.Element container = html.document.querySelector(
-          '#$crossFileDomElementId',
-        )!;
+        final html.Element container = html.document.querySelector('#$crossFileDomElementId')!;
 
         late html.HTMLAnchorElement element;
         for (var i = 0; i < container.childNodes.length; i++) {
@@ -147,17 +138,15 @@ void main() {
       });
 
       test('anchor element is clicked', () async {
-        final mockAnchor =
-            html.document.createElement('a') as html.HTMLAnchorElement;
+        final mockAnchor = html.document.createElement('a') as html.HTMLAnchorElement;
 
         // Save original function so we can restore it
-        final helpers.CreateAnchorElement original =
-            helpers.createAnchorElementFunction;
+        final helpers.CreateAnchorElement original = helpers.createAnchorElementFunction;
 
         addTearDown(() {
           helpers.createAnchorElementFunction = original;
         });
-        helpers.createAnchorElementFunction = (_, __) => mockAnchor;
+        helpers.createAnchorElementFunction = (_, _) => mockAnchor;
 
         final file = XFile.fromData(bytes, name: textFile.name);
 

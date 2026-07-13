@@ -43,10 +43,7 @@ compliance.
 ```dart
 await adSense.initialize(
   '0123456789012345',
-  adSenseCodeParameters: AdSenseCodeParameters(
-    adbreakTest: 'on',
-    adFrequencyHint: '30s',
-  ),
+  adSenseCodeParameters: AdSenseCodeParameters(adbreakTest: 'on', adFrequencyHint: '30s'),
 );
 ```
 

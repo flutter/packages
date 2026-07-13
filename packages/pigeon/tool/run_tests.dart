@@ -39,8 +39,7 @@ Future<void> _validateGeneratedTestFiles() async {
   await _validateGeneratedFiles(
     (String baseDir) => generateTestPigeons(baseDir: baseDir),
     generationMessage: 'Generating test output',
-    incorrectFilesMessage:
-        'The following files are not updated, or not formatted correctly:',
+    incorrectFilesMessage: 'The following files are not updated, or not formatted correctly:',
   );
 }
 
@@ -119,8 +118,7 @@ Future<void> _validateGeneratedFiles(
       .flattened
       .toSet();
   final Iterable<String> filteredFiles = modifiedFiles.where(
-    (String path) =>
-        extensions.contains(p.extension(path).replaceFirst('.', '')),
+    (String path) => extensions.contains(p.extension(path).replaceFirst('.', '')),
   );
 
   if (filteredFiles.isEmpty) {

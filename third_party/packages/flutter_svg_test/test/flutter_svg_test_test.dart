@@ -14,9 +14,7 @@ void main() {
       // #docregion ByLoader
       testWidgets('asset svg', (WidgetTester widgetTester) async {
         final asset = SvgPicture.asset('test/flutter_logo.svg');
-        await widgetTester.pumpWidget(
-          DefaultAssetBundle(bundle: _FakeAssetBundle(), child: asset),
-        );
+        await widgetTester.pumpWidget(DefaultAssetBundle(bundle: _FakeAssetBundle(), child: asset));
 
         expect(find.svg(asset.bytesLoader), findsOneWidget);
       });
@@ -57,10 +55,7 @@ void main() {
     testWidgets('asset svg with path', (WidgetTester widgetTester) async {
       const svgPath = 'test/flutter_logo.svg';
       await widgetTester.pumpWidget(
-        DefaultAssetBundle(
-          bundle: _FakeAssetBundle(),
-          child: SvgPicture.asset(svgPath),
-        ),
+        DefaultAssetBundle(bundle: _FakeAssetBundle(), child: SvgPicture.asset(svgPath)),
       );
 
       expect(find.svgAssetWithPath(svgPath), findsOneWidget);

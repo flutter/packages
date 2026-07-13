@@ -15,8 +15,7 @@ class WebVTTCaptionFile extends ClosedCaptionFile {
   /// Parses a string into a [ClosedCaptionFile], assuming [fileContents] is in
   /// the WebVTT file format.
   /// * See: https://en.wikipedia.org/wiki/WebVTT
-  WebVTTCaptionFile(String fileContents)
-    : _captions = _parseCaptionsFromWebVTTString(fileContents);
+  WebVTTCaptionFile(String fileContents) : _captions = _parseCaptionsFromWebVTTString(fileContents);
 
   @override
   List<Caption> get captions => _captions;
@@ -178,12 +177,7 @@ Duration? _parseWebVTTTimestamp(String timestampString) {
   // calling this method. See: https://github.com/flutter/plugins/pull/2878/files#r713381134.
   final int milliseconds = int.parse(milisecondsStyles[0]);
 
-  return Duration(
-    hours: hours,
-    minutes: minutes,
-    seconds: seconds,
-    milliseconds: milliseconds,
-  );
+  return Duration(hours: hours, minutes: minutes, seconds: seconds, milliseconds: milliseconds);
 }
 
 // Reads on VTT file and splits it into Lists of strings where each list is one

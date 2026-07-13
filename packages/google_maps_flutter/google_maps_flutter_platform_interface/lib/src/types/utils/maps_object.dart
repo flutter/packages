@@ -5,13 +5,9 @@
 import '../maps_object.dart';
 
 /// Converts an [Iterable] of [MapsObject]s in a Map of [MapObjectId] -> [MapObject].
-Map<MapsObjectId<T>, T> keyByMapsObjectId<T extends MapsObject<T>>(
-  Iterable<T> objects,
-) {
+Map<MapsObjectId<T>, T> keyByMapsObjectId<T extends MapsObject<T>>(Iterable<T> objects) {
   return Map<MapsObjectId<T>, T>.fromEntries(
-    objects.map(
-      (T object) => MapEntry<MapsObjectId<T>, T>(object.mapsId, object.clone()),
-    ),
+    objects.map((T object) => MapEntry<MapsObjectId<T>, T>(object.mapsId, object.clone())),
   );
 }
 

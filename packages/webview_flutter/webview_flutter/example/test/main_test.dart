@@ -12,9 +12,7 @@ void main() {
     WebViewPlatform.instance = FakeWebViewPlatform();
   });
 
-  testWidgets('Test snackbar from ScaffoldMessenger', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('Test snackbar from ScaffoldMessenger', (WidgetTester tester) async {
     await tester.pumpWidget(const MaterialApp(home: WebViewExample()));
     expect(find.byIcon(Icons.favorite), findsOneWidget);
     await tester.tap(find.byIcon(Icons.favorite));
@@ -32,9 +30,7 @@ class FakeWebViewPlatform extends WebViewPlatform {
   }
 
   @override
-  PlatformWebViewWidget createPlatformWebViewWidget(
-    PlatformWebViewWidgetCreationParams params,
-  ) {
+  PlatformWebViewWidget createPlatformWebViewWidget(PlatformWebViewWidgetCreationParams params) {
     return FakeWebViewWidget(params);
   }
 
@@ -63,14 +59,10 @@ class FakeWebViewController extends PlatformWebViewController {
   Future<void> setBackgroundColor(Color color) async {}
 
   @override
-  Future<void> setPlatformNavigationDelegate(
-    PlatformNavigationDelegate handler,
-  ) async {}
+  Future<void> setPlatformNavigationDelegate(PlatformNavigationDelegate handler) async {}
 
   @override
-  Future<void> addJavaScriptChannel(
-    JavaScriptChannelParams javaScriptChannelParams,
-  ) async {}
+  Future<void> addJavaScriptChannel(JavaScriptChannelParams javaScriptChannelParams) async {}
 
   @override
   Future<void> loadRequest(LoadRequestParams params) async {}
@@ -98,9 +90,7 @@ class FakeNavigationDelegate extends PlatformNavigationDelegate {
   FakeNavigationDelegate(super.params) : super.implementation();
 
   @override
-  Future<void> setOnNavigationRequest(
-    NavigationRequestCallback onNavigationRequest,
-  ) async {}
+  Future<void> setOnNavigationRequest(NavigationRequestCallback onNavigationRequest) async {}
 
   @override
   Future<void> setOnPageFinished(PageEventCallback onPageFinished) async {}
@@ -112,9 +102,7 @@ class FakeNavigationDelegate extends PlatformNavigationDelegate {
   Future<void> setOnProgress(ProgressCallback onProgress) async {}
 
   @override
-  Future<void> setOnWebResourceError(
-    WebResourceErrorCallback onWebResourceError,
-  ) async {}
+  Future<void> setOnWebResourceError(WebResourceErrorCallback onWebResourceError) async {}
 
   @override
   Future<void> setOnUrlChange(UrlChangeCallback onUrlChange) async {}

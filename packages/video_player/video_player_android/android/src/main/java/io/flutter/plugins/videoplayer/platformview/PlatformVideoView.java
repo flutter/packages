@@ -6,6 +6,7 @@ package io.flutter.plugins.videoplayer.platformview;
 
 import android.content.Context;
 import android.os.Build;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -30,23 +31,14 @@ public final class PlatformVideoView implements PlatformView {
    */
   @OptIn(markerClass = UnstableApi.class)
   public PlatformVideoView(@NonNull Context context, @NonNull ExoPlayer exoPlayer) {
-    surfaceView = new SurfaceView(context);
+    this.surfaceView = new VideoSurfaceView(context, exoPlayer);
 
-    if (Build.VERSION.SDK_INT == Build.VERSION_CODES.P) {
-      // Workaround for rendering issues on Android 9 (API 28).
-      // On Android 9, using setVideoSurfaceView seems to lead to issues where the first frame is
-      // not displayed if the video is paused initially.
-      // To ensure the first frame is visible, the surface is directly set using holder.getSurface()
-      // when the surface is created, and ExoPlayer seeks to a position to force rendering of the
-      // first frame.
-      setupSurfaceWithCallback(exoPlayer);
-    } else {
-      if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
-        // Avoid blank space instead of a video on Android versions below 8 by adjusting video's
-        // z-layer within the Android view hierarchy:
-        surfaceView.setZOrderMediaOverlay(true);
-      }
-      exoPlayer.setVideoSurfaceView(surfaceView);
+    setupSurfaceWithCallback(exoPlayer);
+
+    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
+      // Avoid blank space instead of a video on Android versions below 8 by adjusting video's
+      // z-layer within the Android view hierarchy:
+      surfaceView.setZOrderMediaOverlay(true);
     }
   }
 
@@ -57,22 +49,61 @@ public final class PlatformVideoView implements PlatformView {
             new SurfaceHolder.Callback() {
               @Override
               public void surfaceCreated(@NonNull SurfaceHolder holder) {
-                exoPlayer.setVideoSurface(holder.getSurface());
-                // Force first frame rendering:
-                exoPlayer.seekTo(1);
+                bindPlayerToSurface(exoPlayer, holder.getSurface());
+                forceFirstFrameForAndroid9(exoPlayer);
               }
 
               @Override
               public void surfaceChanged(
-                  @NonNull SurfaceHolder holder, int format, int width, int height) {
-                // No implementation needed.
-              }
+                  @NonNull SurfaceHolder holder, int format, int width, int height) {}
 
               @Override
               public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
-                exoPlayer.setVideoSurface(null);
+                // Use clearVideoSurface to ensure we only unbind if this surface is currently
+                // active.
+                exoPlayer.clearVideoSurface(holder.getSurface());
               }
             });
+  }
+
+  /** Binds the ExoPlayer to the provided surface. */
+  static void bindPlayerToSurface(@NonNull ExoPlayer exoPlayer, @NonNull Surface surface) {
+    if (surface.isValid()) {
+      exoPlayer.setVideoSurface(surface);
+    }
+  }
+
+  /**
+   * Workaround for a rendering bug on Android 9 (API 28) where the decoder does not flush its
+   * output buffer when a new surface is attached while the player is paused.
+   */
+  static void forceFirstFrameForAndroid9(@NonNull ExoPlayer exoPlayer) {
+    if (Build.VERSION.SDK_INT == Build.VERSION_CODES.P && !exoPlayer.getPlayWhenReady()) {
+      long position = exoPlayer.getCurrentPosition();
+      exoPlayer.seekTo(position == 0 ? 1 : position);
+    }
+  }
+
+  /**
+   * A custom SurfaceView that re-attaches the player surface when the view becomes visible again,
+   * such as after returning from a full-screen route transition.
+   */
+  private static class VideoSurfaceView extends SurfaceView {
+    private final ExoPlayer exoPlayer;
+
+    public VideoSurfaceView(Context context, ExoPlayer exoPlayer) {
+      super(context);
+      this.exoPlayer = exoPlayer;
+    }
+
+    @Override
+    protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
+      super.onVisibilityChanged(changedView, visibility);
+      // When the view becomes visible again, re-attach the current surface.
+      if (visibility == View.VISIBLE && isShown()) {
+        bindPlayerToSurface(exoPlayer, getHolder().getSurface());
+      }
+    }
   }
 
   /**

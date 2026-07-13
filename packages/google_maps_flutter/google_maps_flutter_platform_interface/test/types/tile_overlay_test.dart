@@ -53,17 +53,11 @@ void main() {
 
     test('invalid transparency throws', () async {
       expect(
-        () => TileOverlay(
-          tileOverlayId: const TileOverlayId('id1'),
-          transparency: -0.1,
-        ),
+        () => TileOverlay(tileOverlayId: const TileOverlayId('id1'), transparency: -0.1),
         throwsAssertionError,
       );
       expect(
-        () => TileOverlay(
-          tileOverlayId: const TileOverlayId('id2'),
-          transparency: 1.2,
-        ),
+        () => TileOverlay(tileOverlayId: const TileOverlayId('id2'), transparency: 1.2),
         throwsAssertionError,
       );
     });

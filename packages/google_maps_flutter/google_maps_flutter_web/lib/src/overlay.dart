@@ -31,11 +31,7 @@ class TileOverlayController {
   }
 
   /// Renders a Tile for gmaps; delegating to the configured [TileProvider].
-  web.HTMLElement? _getTile(
-    gmaps.Point? tileCoord,
-    num? zoom,
-    web.Document? ownerDocument,
-  ) {
+  web.HTMLElement? _getTile(gmaps.Point? tileCoord, num? zoom, web.Document? ownerDocument) {
     if (_tileOverlay.tileProvider == null) {
       return null;
     }

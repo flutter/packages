@@ -8,8 +8,7 @@ import 'package:mockito/mockito.dart';
 
 void main() {
   // Store the initial instance before any tests change it.
-  final GoogleMapsInspectorPlatform? initialInstance =
-      GoogleMapsInspectorPlatform.instance;
+  final GoogleMapsInspectorPlatform? initialInstance = GoogleMapsInspectorPlatform.instance;
 
   test('default instance is null', () {
     expect(initialInstance, isNull);
@@ -17,8 +16,7 @@ void main() {
 
   test('cannot be implemented with `implements`', () {
     expect(() {
-      GoogleMapsInspectorPlatform.instance =
-          ImplementsGoogleMapsInspectorPlatform();
+      GoogleMapsInspectorPlatform.instance = ImplementsGoogleMapsInspectorPlatform();
     }, throwsA(isInstanceOf<AssertionError>()));
   });
 
@@ -27,7 +25,6 @@ void main() {
   });
 }
 
-class ImplementsGoogleMapsInspectorPlatform extends Mock
-    implements GoogleMapsInspectorPlatform {}
+class ImplementsGoogleMapsInspectorPlatform extends Mock implements GoogleMapsInspectorPlatform {}
 
 class ExtendsGoogleMapsInspectorPlatform extends GoogleMapsInspectorPlatform {}

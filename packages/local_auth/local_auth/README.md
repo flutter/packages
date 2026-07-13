@@ -32,8 +32,7 @@ import 'package:local_auth/local_auth.dart';
   final LocalAuthentication auth = LocalAuthentication();
   // ···
     final bool canAuthenticateWithBiometrics = await auth.canCheckBiometrics;
-    final bool canAuthenticate =
-        canAuthenticateWithBiometrics || await auth.isDeviceSupported();
+    final bool canAuthenticate = canAuthenticateWithBiometrics || await auth.isDeviceSupported();
 ```
 
 Currently the following biometric types are implemented:
@@ -55,8 +54,7 @@ types and only check that some biometric is enrolled:
 
 <?code-excerpt "readme_excerpts.dart (Enrolled)"?>
 ```dart
-final List<BiometricType> availableBiometrics = await auth
-    .getAvailableBiometrics();
+final List<BiometricType> availableBiometrics = await auth.getAvailableBiometrics();
 
 if (availableBiometrics.isNotEmpty) {
   // Some biometrics are enrolled.

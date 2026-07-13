@@ -50,35 +50,26 @@ void main() {
     test('isAvailable', () async {
       final bool isAvailable = await inAppPurchase.isAvailable();
       expect(isAvailable, true);
-      expect(fakePlatform.log, <Matcher>[
-        isMethodCall('isAvailable', arguments: null),
-      ]);
+      expect(fakePlatform.log, <Matcher>[isMethodCall('isAvailable', arguments: null)]);
     });
 
     test('countryCode', () async {
       final String country = await inAppPurchase.countryCode();
       expect(country, 'USA');
-      expect(fakePlatform.log, <Matcher>[
-        isMethodCall('countryCode', arguments: null),
-      ]);
+      expect(fakePlatform.log, <Matcher>[isMethodCall('countryCode', arguments: null)]);
     });
 
     test('purchaseStream', () async {
       final bool isEmptyStream = await inAppPurchase.purchaseStream.isEmpty;
       expect(isEmptyStream, true);
-      expect(fakePlatform.log, <Matcher>[
-        isMethodCall('purchaseStream', arguments: null),
-      ]);
+      expect(fakePlatform.log, <Matcher>[isMethodCall('purchaseStream', arguments: null)]);
     });
 
     test('queryProductDetails', () async {
-      final ProductDetailsResponse response = await inAppPurchase
-          .queryProductDetails(<String>{});
+      final ProductDetailsResponse response = await inAppPurchase.queryProductDetails(<String>{});
       expect(response.notFoundIDs.isEmpty, true);
       expect(response.productDetails.isEmpty, true);
-      expect(fakePlatform.log, <Matcher>[
-        isMethodCall('queryProductDetails', arguments: null),
-      ]);
+      expect(fakePlatform.log, <Matcher>[isMethodCall('queryProductDetails', arguments: null)]);
     });
 
     test('buyNonConsumable', () async {
@@ -87,25 +78,18 @@ void main() {
       );
 
       expect(result, true);
-      expect(fakePlatform.log, <Matcher>[
-        isMethodCall('buyNonConsumable', arguments: null),
-      ]);
+      expect(fakePlatform.log, <Matcher>[isMethodCall('buyNonConsumable', arguments: null)]);
     });
 
     test('buyConsumable', () async {
       final purchaseParam = PurchaseParam(productDetails: productDetails);
-      final bool result = await inAppPurchase.buyConsumable(
-        purchaseParam: purchaseParam,
-      );
+      final bool result = await inAppPurchase.buyConsumable(purchaseParam: purchaseParam);
 
       expect(result, true);
       expect(fakePlatform.log, <Matcher>[
         isMethodCall(
           'buyConsumable',
-          arguments: <dynamic, dynamic>{
-            'purchaseParam': purchaseParam,
-            'autoConsume': true,
-          },
+          arguments: <dynamic, dynamic>{'purchaseParam': purchaseParam, 'autoConsume': true},
         ),
       ]);
     });
@@ -121,10 +105,7 @@ void main() {
       expect(fakePlatform.log, <Matcher>[
         isMethodCall(
           'buyConsumable',
-          arguments: <dynamic, dynamic>{
-            'purchaseParam': purchaseParam,
-            'autoConsume': false,
-          },
+          arguments: <dynamic, dynamic>{'purchaseParam': purchaseParam, 'autoConsume': false},
         ),
       ]);
     });
@@ -132,17 +113,13 @@ void main() {
     test('completePurchase', () async {
       await inAppPurchase.completePurchase(purchaseDetails);
 
-      expect(fakePlatform.log, <Matcher>[
-        isMethodCall('completePurchase', arguments: null),
-      ]);
+      expect(fakePlatform.log, <Matcher>[isMethodCall('completePurchase', arguments: null)]);
     });
 
     test('restorePurchases', () async {
       await inAppPurchase.restorePurchases();
 
-      expect(fakePlatform.log, <Matcher>[
-        isMethodCall('restorePurchases', arguments: null),
-      ]);
+      expect(fakePlatform.log, <Matcher>[isMethodCall('restorePurchases', arguments: null)]);
     });
   });
 }
@@ -168,10 +145,7 @@ class MockInAppPurchasePlatform extends Fake
   Future<ProductDetailsResponse> queryProductDetails(Set<String> identifiers) {
     log.add(const MethodCall('queryProductDetails'));
     return Future<ProductDetailsResponse>.value(
-      ProductDetailsResponse(
-        productDetails: <ProductDetails>[],
-        notFoundIDs: <String>[],
-      ),
+      ProductDetailsResponse(productDetails: <ProductDetails>[], notFoundIDs: <String>[]),
     );
   }
 
@@ -182,10 +156,7 @@ class MockInAppPurchasePlatform extends Fake
   }
 
   @override
-  Future<bool> buyConsumable({
-    required PurchaseParam purchaseParam,
-    bool autoConsume = true,
-  }) {
+  Future<bool> buyConsumable({required PurchaseParam purchaseParam, bool autoConsume = true}) {
     log.add(
       MethodCall('buyConsumable', <String, Object?>{
         'purchaseParam': purchaseParam,

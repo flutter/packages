@@ -1,0 +1,7 @@
+tasks:
+  - name: prepare tool
+    script: .ci/scripts/prepare_tool.sh
+    infra_step: true
+  - name: code coverage check
+    script: .ci/scripts/tool_runner.sh
+    args: ["coverage-check", "--base-branch=origin/main"]

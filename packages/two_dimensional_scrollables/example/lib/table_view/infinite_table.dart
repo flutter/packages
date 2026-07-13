@@ -46,9 +46,7 @@ class _InfiniteExampleState extends State<InfiniteTableExample> {
               }
             });
           },
-          child: Text(
-            'Make columns ${_columnCount == null ? 'fixed' : 'infinite'}',
-          ),
+          child: Text('Make columns ${_columnCount == null ? 'fixed' : 'infinite'}'),
         ),
         const SizedBox.square(dimension: 10),
         Text(
@@ -72,10 +70,7 @@ class _InfiniteExampleState extends State<InfiniteTableExample> {
   }
 
   TableViewCell _buildCell(BuildContext context, TableVicinity vicinity) {
-    final Color boxColor = switch ((
-      vicinity.row.isEven,
-      vicinity.column.isEven,
-    )) {
+    final Color boxColor = switch ((vicinity.row.isEven, vicinity.column.isEven)) {
       (true, false) || (false, true) => Colors.white,
       (false, false) => Colors.indigo[100]!,
       (true, true) => Colors.indigo[200]!,

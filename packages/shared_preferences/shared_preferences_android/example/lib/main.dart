@@ -13,13 +13,12 @@ void main() {
 }
 
 // #docregion Android_Options
-const SharedPreferencesAsyncAndroidOptions options =
-    SharedPreferencesAsyncAndroidOptions(
-      backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
-      originalSharedPreferencesOptions: AndroidSharedPreferencesStoreOptions(
-        fileName: 'the_name_of_a_file',
-      ),
-    );
+const SharedPreferencesAsyncAndroidOptions options = SharedPreferencesAsyncAndroidOptions(
+  backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
+  originalSharedPreferencesOptions: AndroidSharedPreferencesStoreOptions(
+    fileName: 'the_name_of_a_file',
+  ),
+);
 
 // #enddocregion Android_Options
 
@@ -28,10 +27,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: 'SharedPreferences Demo',
-      home: SharedPreferencesDemo(),
-    );
+    return const MaterialApp(title: 'SharedPreferences Demo', home: SharedPreferencesDemo());
   }
 }
 
@@ -43,10 +39,8 @@ class SharedPreferencesDemo extends StatefulWidget {
 }
 
 class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
-  final SharedPreferencesAsyncPlatform _prefs =
-      SharedPreferencesAsyncPlatform.instance!;
-  final SharedPreferencesAsyncAndroidOptions options =
-      const SharedPreferencesAsyncAndroidOptions();
+  final SharedPreferencesAsyncPlatform _prefs = SharedPreferencesAsyncPlatform.instance!;
+  final SharedPreferencesAsyncAndroidOptions options = const SharedPreferencesAsyncAndroidOptions();
   static const String _counterKey = 'counter';
   late Future<int> _counter;
 

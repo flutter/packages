@@ -33,9 +33,7 @@ class TestBytesLoader extends BytesLoader {
 }
 
 void main() {
-  testWidgets('Can endcode and decode simple SVGs with no errors', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('Can endcode and decode simple SVGs with no errors', (WidgetTester tester) async {
     for (final String svg in allSvgTestStrings) {
       final Uint8List bytes = encodeSvg(
         xml: svg,
@@ -47,11 +45,7 @@ void main() {
       );
 
       await tester.pumpWidget(
-        Center(
-          child: VectorGraphic(
-            loader: TestBytesLoader(bytes.buffer.asByteData()),
-          ),
-        ),
+        Center(child: VectorGraphic(loader: TestBytesLoader(bytes.buffer.asByteData()))),
       );
       await tester.pumpAndSettle();
 
@@ -59,9 +53,7 @@ void main() {
     }
   });
 
-  testWidgets('Errors on unsupported image mime type', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('Errors on unsupported image mime type', (WidgetTester tester) async {
     const svgInlineImage = r'''
 <svg width="248" height="100" viewBox="0 0 248 100">
 <image id="image0" width="50" height="50" xlink:href="data:image/foobar;base64,iVBORw0I5IAAM1SvoAAAAASUVORK5CYII=">
@@ -216,50 +208,10 @@ void main() {
         id: 3,
         shaderId: null,
       ),
-      const OnTextConfig(
-        'Plain text Roboto',
-        0,
-        55,
-        'Roboto',
-        3,
-        0,
-        0,
-        4278190080,
-        0,
-      ),
-      const OnTextConfig(
-        'Plain text Verdana',
-        0,
-        55,
-        'Verdana',
-        3,
-        0,
-        0,
-        4278190080,
-        1,
-      ),
-      const OnTextConfig(
-        'Bold text Verdana',
-        0,
-        55,
-        'Verdana',
-        6,
-        0,
-        0,
-        4278190080,
-        2,
-      ),
-      const OnTextConfig(
-        'Stroked bold line',
-        0,
-        55,
-        'Roboto',
-        8,
-        0,
-        0,
-        4278190080,
-        3,
-      ),
+      const OnTextConfig('Plain text Roboto', 0, 55, 'Roboto', 3, 0, 0, 4278190080, 0),
+      const OnTextConfig('Plain text Verdana', 0, 55, 'Verdana', 3, 0, 0, 4278190080, 1),
+      const OnTextConfig('Bold text Verdana', 0, 55, 'Verdana', 6, 0, 0, 4278190080, 2),
+      const OnTextConfig('Stroked bold line', 0, 55, 'Roboto', 8, 0, 0, 4278190080, 3),
       const OnTextConfig(' Line 3', 0, 55, 'Roboto', 3, 0, 0, 4278190080, 4),
       const OnDrawText(0, 0, null, null),
       const OnDrawText(1, 0, null, null),
@@ -437,14 +389,7 @@ class TestListener extends VectorGraphicsCodecListener {
   }
 
   @override
-  void onPathCubicTo(
-    double x1,
-    double y1,
-    double x2,
-    double y2,
-    double x3,
-    double y3,
-  ) {
+  void onPathCubicTo(double x1, double y1, double x2, double y2, double x3, double y3) {
     commands.add(OnPathCubicTo(x1, y1, x2, y2, x3, y3));
   }
 
@@ -592,12 +537,7 @@ class TestListener extends VectorGraphicsCodecListener {
   }
 
   @override
-  void onImage(
-    int imageId,
-    int format,
-    Uint8List data, {
-    VectorGraphicsErrorListener? onError,
-  }) {
+  void onImage(int imageId, int format, Uint8List data, {VectorGraphicsErrorListener? onError}) {
     commands.add(OnImage(imageId, format, data, onError: onError));
   }
 
@@ -798,11 +738,8 @@ class OnDrawVertices {
   final int? paintId;
 
   @override
-  int get hashCode => Object.hash(
-    Object.hashAll(vertices),
-    Object.hashAll(indices ?? <int>[]),
-    paintId,
-  );
+  int get hashCode =>
+      Object.hash(Object.hashAll(vertices), Object.hashAll(indices ?? <int>[]), paintId);
 
   @override
   bool operator ==(Object other) =>
@@ -939,8 +876,7 @@ class OnPathLineTo {
   int get hashCode => Object.hash(x, y);
 
   @override
-  bool operator ==(Object other) =>
-      other is OnPathLineTo && other.x == x && other.y == y;
+  bool operator ==(Object other) => other is OnPathLineTo && other.x == x && other.y == y;
 
   @override
   String toString() => 'OnPathLineTo($x, $y)';
@@ -957,8 +893,7 @@ class OnPathMoveTo {
   int get hashCode => Object.hash(x, y);
 
   @override
-  bool operator ==(Object other) =>
-      other is OnPathMoveTo && other.x == x && other.y == y;
+  bool operator ==(Object other) => other is OnPathMoveTo && other.x == x && other.y == y;
 
   @override
   String toString() => 'OnPathMoveTo($x, $y)';
@@ -1105,14 +1040,7 @@ class OnImage {
 
 @immutable
 class OnDrawImage {
-  const OnDrawImage(
-    this.id,
-    this.x,
-    this.y,
-    this.width,
-    this.height,
-    this.transform,
-  );
+  const OnDrawImage(this.id, this.x, this.y, this.width, this.height, this.transform);
 
   final int id;
   final double x;
@@ -1141,14 +1069,7 @@ class OnDrawImage {
 
 @immutable
 class OnPatternStart {
-  const OnPatternStart(
-    this.patternId,
-    this.x,
-    this.y,
-    this.width,
-    this.height,
-    this.transform,
-  );
+  const OnPatternStart(this.patternId, this.x, this.y, this.width, this.height, this.transform);
 
   final int patternId;
   final double x;
@@ -1158,8 +1079,7 @@ class OnPatternStart {
   final Float64List transform;
 
   @override
-  int get hashCode =>
-      Object.hash(patternId, x, y, width, height, Object.hashAll(transform));
+  int get hashCode => Object.hash(patternId, x, y, width, height, Object.hashAll(transform));
 
   @override
   bool operator ==(Object other) =>
@@ -1172,8 +1092,7 @@ class OnPatternStart {
       _listEquals(other.transform, transform);
 
   @override
-  String toString() =>
-      'OnPatternStart($patternId, $x, $y, $width, $height, $transform)';
+  String toString() => 'OnPatternStart($patternId, $x, $y, $width, $height, $transform)';
 }
 
 bool _listEquals<E>(List<E>? left, List<E>? right) {

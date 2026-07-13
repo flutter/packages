@@ -113,11 +113,7 @@ enum AdEventType {
 @immutable
 base class PlatformAdEvent {
   /// Creates an [PlatformAdEvent].
-  const PlatformAdEvent({
-    required this.type,
-    this.ad,
-    this.adData = const <String, String>{},
-  });
+  const PlatformAdEvent({required this.type, this.ad, this.adData = const <String, String>{}});
 
   /// The type of event that occurred.
   final AdEventType type;

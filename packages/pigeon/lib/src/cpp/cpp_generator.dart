@@ -16,8 +16,7 @@ const String _commentPrefix = '//';
 const String _voidType = 'void';
 
 /// Documentation comment spec.
-const DocumentCommentSpecification _docCommentSpec =
-    DocumentCommentSpecification(_commentPrefix);
+const DocumentCommentSpecification _docCommentSpec = DocumentCommentSpecification(_commentPrefix);
 
 /// The default serializer for Flutter.
 const String _standardCodecSerializer = '::flutter::StandardCodecSerializer';
@@ -35,14 +34,8 @@ final NamedType _overflowObject = NamedType(
   name: 'wrapped',
   type: const TypeDeclaration(baseName: 'Object', isNullable: false),
 );
-final List<NamedType> _overflowFields = <NamedType>[
-  _overflowType,
-  _overflowObject,
-];
-final Class _overflowClass = Class(
-  name: _overflowClassName,
-  fields: _overflowFields,
-);
+final List<NamedType> _overflowFields = <NamedType>[_overflowType, _overflowObject];
+final Class _overflowClass = Class(name: _overflowClassName, fields: _overflowFields);
 final EnumeratedType _enumeratedOverflow = EnumeratedType(
   _overflowClassName,
   maximumCodecFieldKey,
@@ -122,8 +115,7 @@ class InternalCppOptions extends InternalOptions {
     required this.cppHeaderOut,
     required this.cppSourceOut,
     Iterable<String>? copyrightHeader,
-  }) : headerIncludePath =
-           options.headerIncludePath ?? path.basename(cppHeaderOut),
+  }) : headerIncludePath = options.headerIncludePath ?? path.basename(cppHeaderOut),
        namespace = options.namespace,
        copyrightHeader = options.copyrightHeader ?? copyrightHeader,
        headerOutPath = options.headerOutPath;
@@ -162,8 +154,7 @@ class CppGenerator extends Generator<OutputFileOptions<InternalCppOptions>> {
     required String dartPackageName,
   }) {
     assert(
-      generatorOptions.fileType == FileType.header ||
-          generatorOptions.fileType == FileType.source,
+      generatorOptions.fileType == FileType.header || generatorOptions.fileType == FileType.source,
     );
     if (generatorOptions.fileType == FileType.header) {
       const CppHeaderGenerator().generate(
@@ -221,11 +212,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
       'flutter/standard_message_codec.h',
     ]);
     indent.newln();
-    _writeSystemHeaderIncludeBlock(indent, <String>[
-      'map',
-      'string',
-      'optional',
-    ]);
+    _writeSystemHeaderIncludeBlock(indent, <String>['map', 'string', 'optional', 'ostream']);
     indent.newln();
     if (generatorOptions.namespace != null) {
       indent.writeln('namespace ${generatorOptions.namespace} {');
@@ -249,23 +236,13 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
     required String dartPackageName,
   }) {
     indent.newln();
-    addDocumentationComments(
-      indent,
-      anEnum.documentationComments,
-      _docCommentSpec,
-    );
+    addDocumentationComments(indent, anEnum.documentationComments, _docCommentSpec);
     indent.write('enum class ${anEnum.name} ');
     indent.addScoped('{', '};', () {
-      enumerate(anEnum.members, (int index, final EnumMember member) {
-        addDocumentationComments(
-          indent,
-          member.documentationComments,
-          _docCommentSpec,
-        );
+      enumerate(anEnum.members, (int index, EnumMember member) {
+        addDocumentationComments(indent, member.documentationComments, _docCommentSpec);
         final valueName = 'k${_pascalCaseFromCamelCase(member.name)}';
-        indent.writeln(
-          '$valueName = $index${index == anEnum.members.length - 1 ? '' : ','}',
-        );
+        indent.writeln('$valueName = $index${index == anEnum.members.length - 1 ? '' : ','}');
       });
     });
   }
@@ -296,12 +273,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
     required String dartPackageName,
   }) {
     indent.newln();
-    super.writeDataClasses(
-      generatorOptions,
-      root,
-      indent,
-      dartPackageName: dartPackageName,
-    );
+    super.writeDataClasses(generatorOptions, root, indent, dartPackageName: dartPackageName);
     if (root.requiresOverflowClass) {
       writeDataClass(
         generatorOptions,
@@ -344,9 +316,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
       generatorComments: generatedMessages,
     );
 
-    final Iterable<NamedType> orderedFields = getFieldsInSerializationOrder(
-      classDefinition,
-    );
+    final Iterable<NamedType> orderedFields = getFieldsInSerializationOrder(classDefinition);
 
     indent.write('class ${classDefinition.name} ');
     indent.addScoped('{', '};', () {
@@ -376,9 +346,8 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
         // If any fields are pointer type, then the class requires a custom
         // copy constructor, so declare the rule-of-five group of functions.
         if (orderedFields.any(
-          (NamedType field) => _isPointerField(
-            getFieldHostDatatype(field, _baseCppTypeForBuiltinDartType),
-          ),
+          (NamedType field) =>
+              _isPointerField(getFieldHostDatatype(field, _baseCppTypeForBuiltinDartType)),
         )) {
           final String className = classDefinition.name;
           // Add the default destructor, since unique_ptr destroys itself.
@@ -418,11 +387,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
         }
 
         for (final field in orderedFields) {
-          addDocumentationComments(
-            indent,
-            field.documentationComments,
-            _docCommentSpec,
-          );
+          addDocumentationComments(indent, field.documentationComments, _docCommentSpec);
           final HostDatatype baseDatatype = getFieldHostDatatype(
             field,
             _baseCppTypeForBuiltinDartType,
@@ -439,9 +404,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
             indent,
             setterName,
             returnType: _voidType,
-            parameters: <String>[
-              '${_unownedArgumentType(baseDatatype)} value_arg',
-            ],
+            parameters: <String>['${_unownedArgumentType(baseDatatype)} value_arg'],
           );
           if (field.type.isNullable) {
             // Add a second setter that takes the non-nullable version of the
@@ -452,9 +415,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
               indent,
               setterName,
               returnType: _voidType,
-              parameters: <String>[
-                '${_unownedArgumentType(nonNullType)} value_arg',
-              ],
+              parameters: <String>['${_unownedArgumentType(nonNullType)} value_arg'],
             );
           }
           indent.newln();
@@ -477,11 +438,10 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
         indent.writeln(
           '/// Returns a hash code value for the object. This method is supported for the benefit of hash tables.',
         );
-        _writeFunctionDeclaration(
-          indent,
-          'Hash',
-          returnType: 'size_t',
-          isConst: true,
+        _writeFunctionDeclaration(indent, 'Hash', returnType: 'size_t', isConst: true);
+        indent.writeln('/// Stream output operator for formatted string representation.');
+        indent.writeln(
+          'friend std::ostream& operator<<(std::ostream& os, const ${classDefinition.name}& obj);',
         );
       });
 
@@ -489,9 +449,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
         _writeFunctionDeclaration(
           indent,
           'FromEncodableList',
-          returnType: isOverflowClass
-              ? '::flutter::EncodableValue'
-              : classDefinition.name,
+          returnType: isOverflowClass ? '::flutter::EncodableValue' : classDefinition.name,
           parameters: <String>['const ::flutter::EncodableList& list'],
           isStatic: true,
         );
@@ -502,11 +460,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
           isConst: true,
         );
         if (isOverflowClass) {
-          _writeFunctionDeclaration(
-            indent,
-            'Unwrap',
-            returnType: '::flutter::EncodableValue',
-          );
+          _writeFunctionDeclaration(indent, 'Unwrap', returnType: '::flutter::EncodableValue');
         }
         if (!isOverflowClass && root.requiresOverflowClass) {
           indent.writeln('friend class $_overflowClassName;');
@@ -514,8 +468,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
         for (final Class friend in root.classes) {
           if (friend != classDefinition &&
               friend.fields.any(
-                (NamedType element) =>
-                    element.type.baseName == classDefinition.name,
+                (NamedType element) => element.type.baseName == classDefinition.name,
               )) {
             indent.writeln('friend class ${friend.name};');
           }
@@ -537,9 +490,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
             field,
             _baseCppTypeForBuiltinDartType,
           );
-          indent.writeln(
-            '${_fieldType(hostDatatype)} ${_makeInstanceVariableName(field)};',
-          );
+          indent.writeln('${_fieldType(hostDatatype)} ${_makeInstanceVariableName(field)};');
         }
       });
     }, nestCount: 0);
@@ -554,16 +505,10 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
     required String dartPackageName,
   }) {
     indent.newln();
-    indent.write(
-      'class $_codecSerializerName : public $_standardCodecSerializer ',
-    );
+    indent.write('class $_codecSerializerName : public $_standardCodecSerializer ');
     indent.addScoped('{', '};', () {
       _writeAccessBlock(indent, _ClassAccess.public, () {
-        _writeFunctionDeclaration(
-          indent,
-          _codecSerializerName,
-          isConstructor: true,
-        );
+        _writeFunctionDeclaration(indent, _codecSerializerName, isConstructor: true);
         _writeFunctionDeclaration(
           indent,
           'GetInstance',
@@ -592,10 +537,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
           indent,
           'ReadValueOfType',
           returnType: '::flutter::EncodableValue',
-          parameters: <String>[
-            'uint8_t type',
-            '::flutter::ByteStreamReader* stream',
-          ],
+          parameters: <String>['uint8_t type', '::flutter::ByteStreamReader* stream'],
           isConst: true,
           isOverride: true,
         );
@@ -648,25 +590,13 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
             func.returnType,
             _baseCppTypeForBuiltinDartType,
           );
-          addDocumentationComments(
-            indent,
-            func.documentationComments,
-            _docCommentSpec,
-          );
+          addDocumentationComments(indent, func.documentationComments, _docCommentSpec);
 
-          final Iterable<String> argTypes = func.parameters.map((
-            NamedType arg,
-          ) {
-            final HostDatatype hostType = getFieldHostDatatype(
-              arg,
-              _baseCppTypeForBuiltinDartType,
-            );
+          final Iterable<String> argTypes = func.parameters.map((NamedType arg) {
+            final HostDatatype hostType = getFieldHostDatatype(arg, _baseCppTypeForBuiltinDartType);
             return _flutterApiArgumentType(hostType);
           });
-          final Iterable<String> argNames = indexMap(
-            func.parameters,
-            _getArgumentName,
-          );
+          final Iterable<String> argNames = indexMap(func.parameters, _getArgumentName);
           final parameters = <String>[
             ...map2(argTypes, argNames, (String x, String y) => '$x $y'),
             ..._flutterApiCallbackParameters(returnType),
@@ -722,12 +652,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
           deleted: true,
         );
         // No-op virtual destructor.
-        _writeFunctionDeclaration(
-          indent,
-          '~${api.name}',
-          isVirtual: true,
-          inlineNoop: true,
-        );
+        _writeFunctionDeclaration(indent, '~${api.name}', isVirtual: true, inlineNoop: true);
         for (final Method method in api.methods) {
           final HostDatatype returnType = getHostDatatype(
             method.returnType,
@@ -737,9 +662,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
 
           final parameters = <String>[];
           if (method.parameters.isNotEmpty) {
-            final Iterable<String> argTypes = method.parameters.map((
-              NamedType arg,
-            ) {
+            final Iterable<String> argTypes = method.parameters.map((NamedType arg) {
               final HostDatatype hostType = getFieldHostDatatype(
                 arg,
                 _baseCppTypeForBuiltinDartType,
@@ -756,11 +679,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
             );
           }
 
-          addDocumentationComments(
-            indent,
-            method.documentationComments,
-            _docCommentSpec,
-          );
+          addDocumentationComments(indent, method.documentationComments, _docCommentSpec);
           final String methodReturn;
           if (method.isAsynchronous) {
             methodReturn = _voidType;
@@ -793,10 +712,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
           'SetUp',
           returnType: _voidType,
           isStatic: true,
-          parameters: <String>[
-            '::flutter::BinaryMessenger* binary_messenger',
-            '${api.name}* api',
-          ],
+          parameters: <String>['::flutter::BinaryMessenger* binary_messenger', '${api.name}* api'],
         );
         _writeFunctionDeclaration(
           indent,
@@ -838,10 +754,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
     String docComment,
   ) {
     final List<String> paramStrings = params.map((NamedType param) {
-      final HostDatatype hostDatatype = getFieldHostDatatype(
-        param,
-        _baseCppTypeForBuiltinDartType,
-      );
+      final HostDatatype hostDatatype = getFieldHostDatatype(param, _baseCppTypeForBuiltinDartType);
       return '${_hostApiArgumentType(hostDatatype)} ${_makeVariableName(param)}';
     }).toList();
     indent.writeln('$_commentPrefix $docComment');
@@ -877,10 +790,7 @@ class FlutterError {
 };''');
   }
 
-  void _writeErrorOr(
-    Indent indent, {
-    Iterable<String> friends = const <String>[],
-  }) {
+  void _writeErrorOr(Indent indent, {Iterable<String> friends = const <String>[]}) {
     final String friendLines = friends
         .map((String className) => '\tfriend class $className;')
         .join('\n');
@@ -966,6 +876,7 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
       'map',
       'string',
       'optional',
+      'sstream',
     ]);
     indent.newln();
   }
@@ -1017,6 +928,7 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
     indent.writeln('namespace {');
     _writeDeepEquals(indent);
     _writeDeepHash(indent);
+    _writeDeepToString(indent);
     indent.writeln('}  // namespace');
   }
 
@@ -1031,9 +943,7 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
     indent.writeln('$_commentPrefix ${classDefinition.name}');
     indent.newln();
 
-    final Iterable<NamedType> orderedFields = getFieldsInSerializationOrder(
-      classDefinition,
-    );
+    final Iterable<NamedType> orderedFields = getFieldsInSerializationOrder(classDefinition);
     final Iterable<NamedType> requiredFields = orderedFields.where(
       (NamedType type) => !type.type.isNullable,
     );
@@ -1046,9 +956,8 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
 
     // Custom copy/assign to handle pointer fields, if necessary.
     if (orderedFields.any(
-      (NamedType field) => _isPointerField(
-        getFieldHostDatatype(field, _baseCppTypeForBuiltinDartType),
-      ),
+      (NamedType field) =>
+          _isPointerField(getFieldHostDatatype(field, _baseCppTypeForBuiltinDartType)),
     )) {
       _writeCopyConstructor(root, indent, classDefinition, orderedFields);
       _writeAssignmentOperator(root, indent, classDefinition, orderedFields);
@@ -1056,13 +965,7 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
 
     // Getters and setters.
     for (final field in orderedFields) {
-      _writeCppSourceClassField(
-        generatorOptions,
-        root,
-        indent,
-        classDefinition,
-        field,
-      );
+      _writeCppSourceClassField(generatorOptions, root, indent, classDefinition, field);
     }
 
     // Serialization.
@@ -1125,11 +1028,44 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
         indent.writeln('size_t result = 1;');
         for (final field in orderedFields) {
           final String name = _makeInstanceVariableName(field);
-          indent.writeln(
-            'result = result * 31 + PigeonInternalDeepHash($name);',
-          );
+          indent.writeln('result = result * 31 + PigeonInternalDeepHash($name);');
         }
         indent.writeln('return result;');
+      },
+    );
+
+    _writeFunctionDefinition(
+      indent,
+      'operator<<',
+      returnType: 'std::ostream&',
+      parameters: <String>['std::ostream& os', 'const ${classDefinition.name}& obj'],
+      body: () {
+        indent.writeln('os << "${classDefinition.name}(";');
+        enumerate(orderedFields, (int index, NamedType field) {
+          final name = 'obj.${_makeInstanceVariableName(field)}';
+          final comma = index == 0 ? '' : ', ';
+          indent.writeln('os << "$comma${_makeVariableName(field)}: ";');
+          if (field.type.isNullable) {
+            indent.writeScoped('if ($name) {', '}', () {
+              if (field.type.isClass) {
+                indent.writeln('os << *$name;');
+              } else {
+                indent.writeln('os << PigeonInternalToString(*$name);');
+              }
+            });
+            indent.writeScoped('else {', '}', () {
+              indent.writeln('os << "null";');
+            });
+          } else {
+            if (field.type.isClass) {
+              indent.writeln('os << $name;');
+            } else {
+              indent.writeln('os << PigeonInternalToString($name);');
+            }
+          }
+        });
+        indent.writeln('os << ")";');
+        indent.writeln('return os;');
       },
     );
 
@@ -1345,6 +1281,103 @@ size_t PigeonInternalDeepHash(const ::flutter::EncodableValue& v) {
 ''');
   }
 
+  void _writeDeepToString(Indent indent) {
+    indent.format(r'''
+template <typename T>
+std::string PigeonInternalToString(const T& v);
+
+std::string PigeonInternalToString(const bool& v);
+
+template <typename T>
+std::string PigeonInternalToString(const std::vector<T>& v);
+
+template <typename K, typename V>
+std::string PigeonInternalToString(const std::map<K, V>& v);
+
+template <typename T>
+std::string PigeonInternalToString(const std::optional<T>& v);
+
+template <typename T>
+std::string PigeonInternalToString(const std::unique_ptr<T>& v);
+
+std::string PigeonInternalToString(const ::flutter::EncodableValue& v);
+
+template <typename T>
+std::string PigeonInternalToString(const T& v) {
+  std::stringstream ss;
+  if constexpr (std::is_enum_v<T>) {
+    ss << static_cast<int>(v);
+  } else {
+    ss << v;
+  }
+  return ss.str();
+}
+
+std::string PigeonInternalToString(const bool& v) {
+  return v ? "true" : "false";
+}
+
+template <typename T>
+std::string PigeonInternalToString(const std::vector<T>& v) {
+  std::stringstream ss;
+  ss << "[";
+  for (size_t i = 0; i < v.size(); ++i) {
+    if (i > 0) {
+      ss << ", ";
+    }
+    ss << PigeonInternalToString(v[i]);
+  }
+  ss << "]";
+  return ss.str();
+}
+
+template <typename K, typename V>
+std::string PigeonInternalToString(const std::map<K, V>& v) {
+  std::stringstream ss;
+  ss << "{";
+  bool first = true;
+  for (const auto& kv : v) {
+    if (!first) {
+      ss << ", ";
+    }
+    first = false;
+    ss << PigeonInternalToString(kv.first) << ": " << PigeonInternalToString(kv.second);
+  }
+  ss << "}";
+  return ss.str();
+}
+
+template <typename T>
+std::string PigeonInternalToString(const std::optional<T>& v) {
+  return v ? PigeonInternalToString(*v) : "null";
+}
+
+template <typename T>
+std::string PigeonInternalToString(const std::unique_ptr<T>& v) {
+  return v ? PigeonInternalToString(*v) : "null";
+}
+
+std::string PigeonInternalToString(const ::flutter::EncodableValue& v) {
+  return std::visit(
+      [](const auto& val) {
+        using T = std::decay_t<decltype(val)>;
+        if constexpr (std::is_same_v<T, std::monostate>) {
+          return std::string("null");
+        } else if constexpr (std::is_same_v<T, bool>) {
+          return val ? std::string("true") : std::string("false");
+        } else if constexpr (std::is_same_v<T, std::string>) {
+          return "\"" + val + "\"";
+        } else if constexpr (std::is_same_v<T, ::flutter::CustomEncodableValue>) {
+          return std::string("[custom]");
+        } else {
+          return PigeonInternalToString(val);
+        }
+      },
+      v);
+}
+''');
+  }
+
   @override
   void writeClassEncode(
     InternalCppOptions generatorOptions,
@@ -1362,9 +1395,7 @@ size_t PigeonInternalDeepHash(const ::flutter::EncodableValue& v) {
       body: () {
         indent.writeln('EncodableList list;');
         indent.writeln('list.reserve(${classDefinition.fields.length});');
-        for (final NamedType field in getFieldsInSerializationOrder(
-          classDefinition,
-        )) {
+        for (final NamedType field in getFieldsInSerializationOrder(classDefinition)) {
           final HostDatatype hostDatatype = getFieldHostDatatype(
             field,
             _shortBaseCppTypeForBuiltinDartType,
@@ -1430,17 +1461,12 @@ size_t PigeonInternalDeepHash(const ::flutter::EncodableValue& v) {
 
         // Non-nullable fields must be set via the constructor.
         String constructorArgs = nonNullableFields
-            .map(
-              (_IndexedField param) =>
-                  getValueExpression(param.field, 'list[${param.index}]'),
-            )
+            .map((_IndexedField param) => getValueExpression(param.field, 'list[${param.index}]'))
             .join(',\n\t');
         if (constructorArgs.isNotEmpty) {
           constructorArgs = '(\n\t$constructorArgs)';
         }
-        indent.format(
-          '${classDefinition.name} $instanceVariable$constructorArgs;',
-        );
+        indent.format('${classDefinition.name} $instanceVariable$constructorArgs;');
 
         // Add the nullable fields via setters, since converting the encodable
         // values to the pointer types that the convenience constructor uses for
@@ -1448,14 +1474,10 @@ size_t PigeonInternalDeepHash(const ::flutter::EncodableValue& v) {
         for (final entry in nullableFields) {
           final NamedType field = entry.field;
           final String setterName = _makeSetterName(field);
-          final encodableFieldName =
-              '${_encodablePrefix}_${_makeVariableName(field)}';
+          final encodableFieldName = '${_encodablePrefix}_${_makeVariableName(field)}';
           indent.writeln('auto& $encodableFieldName = list[${entry.index}];');
 
-          final String valueExpression = getValueExpression(
-            field,
-            encodableFieldName,
-          );
+          final String valueExpression = getValueExpression(field, encodableFieldName);
           indent.writeScoped('if (!$encodableFieldName.IsNull()) {', '}', () {
             indent.writeln('$instanceVariable.$setterName($valueExpression);');
           });
@@ -1479,13 +1501,7 @@ size_t PigeonInternalDeepHash(const ::flutter::EncodableValue& v) {
     _writeClassConstructor(root, indent, _overflowClass, _overflowFields);
     // Getters and setters.
     for (final NamedType field in _overflowFields) {
-      _writeCppSourceClassField(
-        generatorOptions,
-        root,
-        indent,
-        _overflowClass,
-        field,
-      );
+      _writeCppSourceClassField(generatorOptions, root, indent, _overflowClass, field);
     }
     // Serialization.
     writeClassEncode(
@@ -1504,31 +1520,21 @@ EncodableValue $_overflowClassName::FromEncodableList(
       .Unwrap();
 }''');
 
-    indent.writeScoped(
-      'EncodableValue $_overflowClassName::Unwrap() {',
-      '}',
-      () {
-        indent.writeScoped('if (wrapped_.IsNull()) {', '}', () {
-          indent.writeln('return EncodableValue();');
-        });
-        indent.writeScoped('switch(type_) {', '}', () {
-          for (int i = totalCustomCodecKeysAllowed; i < types.length; i++) {
-            indent.write(
-              'case ${types[i].enumeration - maximumCodecFieldKey}: ',
-            );
-            _writeCodecDecode(indent, types[i], 'wrapped_');
-          }
-        });
+    indent.writeScoped('EncodableValue $_overflowClassName::Unwrap() {', '}', () {
+      indent.writeScoped('if (wrapped_.IsNull()) {', '}', () {
         indent.writeln('return EncodableValue();');
-      },
-    );
+      });
+      indent.writeScoped('switch(type_) {', '}', () {
+        for (int i = totalCustomCodecKeysAllowed; i < types.length; i++) {
+          indent.write('case ${types[i].enumeration - maximumCodecFieldKey}: ');
+          _writeCodecDecode(indent, types[i], 'wrapped_');
+        }
+      });
+      indent.writeln('return EncodableValue();');
+    });
   }
 
-  void _writeCodecDecode(
-    Indent indent,
-    EnumeratedType customType,
-    String value,
-  ) {
+  void _writeCodecDecode(Indent indent, EnumeratedType customType, String value) {
     indent.addScoped('{', '}', () {
       if (customType.type == CustomTypes.customClass) {
         if (customType.name == _overflowClassName) {
@@ -1573,20 +1579,13 @@ EncodableValue $_overflowClassName::FromEncodableList(
         dartPackageName: dartPackageName,
       );
     }
-    _writeFunctionDefinition(
-      indent,
-      _codecSerializerName,
-      scope: _codecSerializerName,
-    );
+    _writeFunctionDefinition(indent, _codecSerializerName, scope: _codecSerializerName);
     _writeFunctionDefinition(
       indent,
       'ReadValueOfType',
       scope: _codecSerializerName,
       returnType: 'EncodableValue',
-      parameters: <String>[
-        'uint8_t type',
-        '::flutter::ByteStreamReader* stream',
-      ],
+      parameters: <String>['uint8_t type', '::flutter::ByteStreamReader* stream'],
       isConst: true,
       body: () {
         if (enumeratedTypes.isNotEmpty) {
@@ -1607,9 +1606,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
           indent.writeln('default:');
           indent.inc();
         }
-        indent.writeln(
-          'return $_standardCodecSerializer::ReadValueOfType(type, stream);',
-        );
+        indent.writeln('return $_standardCodecSerializer::ReadValueOfType(type, stream);');
         if (enumeratedTypes.isNotEmpty) {
           indent.dec();
           indent.writeln('}');
@@ -1622,10 +1619,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
       'WriteValue',
       scope: _codecSerializerName,
       returnType: _voidType,
-      parameters: <String>[
-        'const EncodableValue& value',
-        '::flutter::ByteStreamWriter* stream',
-      ],
+      parameters: <String>['const EncodableValue& value', '::flutter::ByteStreamWriter* stream'],
       isConst: true,
       body: () {
         if (enumeratedTypes.isNotEmpty) {
@@ -1640,13 +1634,10 @@ EncodableValue $_overflowClassName::FromEncodableList(
               final valueString = customType.enumeration < maximumCodecFieldKey
                   ? encodeString
                   : 'wrap.ToEncodableList()';
-              final int enumeration =
-                  customType.enumeration < maximumCodecFieldKey
+              final int enumeration = customType.enumeration < maximumCodecFieldKey
                   ? customType.enumeration
                   : maximumCodecFieldKey;
-              indent.write(
-                'if (custom_value->type() == typeid(${customType.name})) ',
-              );
+              indent.write('if (custom_value->type() == typeid(${customType.name})) ');
               indent.addScoped('{', '}', () {
                 indent.writeln('stream->WriteByte($enumeration);');
                 if (enumeration == maximumCodecFieldKey) {
@@ -1654,9 +1645,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
                     'const auto wrap = $_overflowClassName(${customType.enumeration - maximumCodecFieldKey}, $encodeString);',
                   );
                 }
-                indent.writeln(
-                  'WriteValue(EncodableValue($valueString), stream);',
-                );
+                indent.writeln('WriteValue(EncodableValue($valueString), stream);');
                 indent.writeln('return;');
               });
             }
@@ -1683,10 +1672,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
       api.name,
       scope: api.name,
       parameters: <String>['::flutter::BinaryMessenger* binary_messenger'],
-      initializers: <String>[
-        'binary_messenger_(binary_messenger)',
-        'message_channel_suffix_("")',
-      ],
+      initializers: <String>['binary_messenger_(binary_messenger)', 'message_channel_suffix_("")'],
     );
     _writeFunctionDefinition(
       indent,
@@ -1720,24 +1706,19 @@ EncodableValue $_overflowClassName::FromEncodableList(
 
       // Determine the input parameter list, saved in a structured form for later
       // use as platform channel call arguments.
-      final Iterable<_HostNamedType> hostParameters = indexMap(
-        func.parameters,
-        (int i, NamedType arg) {
-          final HostDatatype hostType = getFieldHostDatatype(
-            arg,
-            _shortBaseCppTypeForBuiltinDartType,
-          );
-          return _HostNamedType(
-            _getSafeArgumentName(i, arg),
-            hostType,
-            arg.type,
-          );
-        },
-      );
+      final Iterable<_HostNamedType> hostParameters = indexMap(func.parameters, (
+        int i,
+        NamedType arg,
+      ) {
+        final HostDatatype hostType = getFieldHostDatatype(
+          arg,
+          _shortBaseCppTypeForBuiltinDartType,
+        );
+        return _HostNamedType(_getSafeArgumentName(i, arg), hostType, arg.type);
+      });
       final parameters = <String>[
         ...hostParameters.map(
-          (_HostNamedType arg) =>
-              '${_flutterApiArgumentType(arg.hostType)} ${arg.name}',
+          (_HostNamedType arg) => '${_flutterApiArgumentType(arg.hostType)} ${arg.name}',
         ),
         ..._flutterApiCallbackParameters(returnType),
       ];
@@ -1764,14 +1745,13 @@ EncodableValue $_overflowClassName::FromEncodableList(
           } else {
             indent.addScoped('EncodableValue(EncodableList{', '});', () {
               for (final param in hostParameters) {
-                final String encodedArgument =
-                    _wrappedHostApiArgumentExpression(
-                      root,
-                      param.name,
-                      param.originalType,
-                      param.hostType,
-                      false,
-                    );
+                final String encodedArgument = _wrappedHostApiArgumentExpression(
+                  root,
+                  param.name,
+                  param.originalType,
+                  param.hostType,
+                  false,
+                );
                 indent.writeln('$encodedArgument,');
               }
             });
@@ -1854,10 +1834,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
       'SetUp',
       scope: api.name,
       returnType: _voidType,
-      parameters: <String>[
-        '::flutter::BinaryMessenger* binary_messenger',
-        '${api.name}* api',
-      ],
+      parameters: <String>['::flutter::BinaryMessenger* binary_messenger', '${api.name}* api'],
       body: () {
         indent.writeln('${api.name}::SetUp(binary_messenger, api, "");');
       },
@@ -1877,11 +1854,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
           'const std::string prepended_suffix = message_channel_suffix.length() > 0 ? std::string(".") + message_channel_suffix : "";',
         );
         for (final Method method in api.methods) {
-          final String channelName = makeChannelName(
-            api,
-            method,
-            dartPackageName,
-          );
+          final String channelName = makeChannelName(api, method, dartPackageName);
           indent.writeScoped('{', '}', () {
             indent.writeln(
               'BasicMessageChannel<> channel(binary_messenger, '
@@ -1895,33 +1868,22 @@ EncodableValue $_overflowClassName::FromEncodableList(
                 indent.writeScoped('try {', '}', () {
                   final methodArgument = <String>[];
                   if (method.parameters.isNotEmpty) {
-                    indent.writeln(
-                      'const auto& args = std::get<EncodableList>(message);',
-                    );
+                    indent.writeln('const auto& args = std::get<EncodableList>(message);');
 
                     enumerate(method.parameters, (int index, NamedType arg) {
                       final HostDatatype hostType = getHostDatatype(
                         arg.type,
-                        (TypeDeclaration x) =>
-                            _shortBaseCppTypeForBuiltinDartType(x),
+                        (TypeDeclaration x) => _shortBaseCppTypeForBuiltinDartType(x),
                       );
                       final String argName = _getSafeArgumentName(index, arg);
 
                       final encodableArgName = '${_encodablePrefix}_$argName';
-                      indent.writeln(
-                        'const auto& $encodableArgName = args.at($index);',
-                      );
+                      indent.writeln('const auto& $encodableArgName = args.at($index);');
                       if (!arg.type.isNullable) {
-                        indent.writeScoped(
-                          'if ($encodableArgName.IsNull()) {',
-                          '}',
-                          () {
-                            indent.writeln(
-                              'reply(WrapError("$argName unexpectedly null."));',
-                            );
-                            indent.writeln('return;');
-                          },
-                        );
+                        indent.writeScoped('if ($encodableArgName.IsNull()) {', '}', () {
+                          indent.writeln('reply(WrapError("$argName unexpectedly null."));');
+                          indent.writeln('return;');
+                        });
                       }
                       _writeEncodableValueArgumentUnwrapping(
                         indent,
@@ -1950,15 +1912,12 @@ EncodableValue $_overflowClassName::FromEncodableList(
                       '}',
                     );
                   }
-                  final call =
-                      'api->${_makeMethodName(method)}(${methodArgument.join(', ')})';
+                  final call = 'api->${_makeMethodName(method)}(${methodArgument.join(', ')})';
                   if (method.isAsynchronous) {
                     indent.format('$call;');
                   } else {
                     indent.writeln('$returnTypeName output = $call;');
-                    indent.format(
-                      _wrapResponse(indent, root, method.returnType),
-                    );
+                    indent.format(_wrapResponse(indent, root, method.returnType));
                   }
                 }, addTrailingNewline: false);
                 indent.add(' catch (const std::exception& exception) ');
@@ -2030,10 +1989,7 @@ return EncodableValue(EncodableList{
     });
 
     final List<String> paramStrings = hostParams
-        .map(
-          (_HostNamedType param) =>
-              '${_hostApiArgumentType(param.hostType)} ${param.name}',
-        )
+        .map((_HostNamedType param) => '${_hostApiArgumentType(param.hostType)} ${param.name}')
         .toList();
     final List<String> initializerStrings = hostParams
         .map(
@@ -2096,8 +2052,7 @@ return EncodableValue(EncodableList{
           final otherIvar = 'other.$ivarName';
           final String valueExpression;
           if (_isPointerField(hostDatatype)) {
-            final constructor =
-                'std::make_unique<${hostDatatype.datatype}>(*$otherIvar)';
+            final constructor = 'std::make_unique<${hostDatatype.datatype}>(*$otherIvar)';
             valueExpression = hostDatatype.isNullable
                 ? '$otherIvar ? $constructor : nullptr'
                 : constructor;
@@ -2132,8 +2087,7 @@ return EncodableValue(EncodableList{
           : '*$instanceVariableName';
     } else if (hostDatatype.isNullable) {
       // Convert std::optional<T> to T*.
-      returnExpression =
-          '$instanceVariableName ? &(*$instanceVariableName) : nullptr';
+      returnExpression = '$instanceVariableName ? &(*$instanceVariableName) : nullptr';
     } else {
       returnExpression = instanceVariableName;
     }
@@ -2147,9 +2101,7 @@ return EncodableValue(EncodableList{
         setterName,
         scope: classDefinition.name,
         returnType: _voidType,
-        parameters: <String>[
-          '${_unownedArgumentType(type)} $setterArgumentName',
-        ],
+        parameters: <String>['${_unownedArgumentType(type)} $setterArgumentName'],
         body: () {
           indent.writeln(
             '$instanceVariableName = ${_fieldValueExpression(type, setterArgumentName)};',
@@ -2184,11 +2136,7 @@ return EncodableValue(EncodableList{
   /// itself, but for other values this handles the conversion between an
   /// argument type (a pointer or value/reference) and the field type
   /// (a std::optional or std::unique_ptr).
-  String _fieldValueExpression(
-    HostDatatype type,
-    String variable, {
-    bool sourceIsField = false,
-  }) {
+  String _fieldValueExpression(HostDatatype type, String variable, {bool sourceIsField = false}) {
     if (_isPointerField(type)) {
       final constructor = 'std::make_unique<${type.datatype}>';
       // If the source is a pointer field, it always needs dereferencing.
@@ -2202,12 +2150,7 @@ return EncodableValue(EncodableList{
         : variable;
   }
 
-  String _wrapResponse(
-    Indent indent,
-    Root root,
-    TypeDeclaration returnType, {
-    String prefix = '',
-  }) {
+  String _wrapResponse(Indent indent, Root root, TypeDeclaration returnType, {String prefix = ''}) {
     final String nonErrorPath;
     final String errorCondition;
     final String errorGetter;
@@ -2224,9 +2167,7 @@ return EncodableValue(EncodableList{
       );
 
       const extractedValue = 'std::move(output).TakeValue()';
-      final wrapperType = hostType.isBuiltin
-          ? 'EncodableValue'
-          : 'CustomEncodableValue';
+      final wrapperType = hostType.isBuiltin ? 'EncodableValue' : 'CustomEncodableValue';
       if (returnType.isNullable) {
         // The value is a std::optional, so needs an extra layer of
         // handling.
@@ -2239,8 +2180,7 @@ $prefix} else {
 $prefix\twrapped.push_back($nullValue);
 $prefix}''';
       } else {
-        nonErrorPath =
-            '${prefix}wrapped.push_back($wrapperType($extractedValue));';
+        nonErrorPath = '${prefix}wrapped.push_back($wrapperType($extractedValue));';
       }
       errorCondition = 'output.has_error()';
       errorGetter = 'error';
@@ -2282,8 +2222,7 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
   ) {
     final String encodableValue;
     if (!hostType.isBuiltin) {
-      final nonNullValue =
-          hostType.isNullable || (!hostType.isEnum && isNestedClass)
+      final nonNullValue = hostType.isNullable || (!hostType.isEnum && isNestedClass)
           ? '*$variableName'
           : variableName;
       encodableValue = 'CustomEncodableValue($nonNullValue)';
@@ -2343,18 +2282,14 @@ if (!$encodableArgName.IsNull()) {
         // The EncodableValue will either be an int32_t or an int64_t depending
         // on the value, but the generated API requires an int64_t so that it can
         // handle any case.
-        indent.writeln(
-          'const int64_t $argName = $encodableArgName.LongValue();',
-        );
+        indent.writeln('const int64_t $argName = $encodableArgName.LongValue();');
       } else if (hostType.datatype == 'EncodableValue') {
         // Generic objects just pass the EncodableValue through directly. This
         // creates an alias just to avoid having to special-case the
         // argName/encodableArgName distinction at a higher level.
         indent.writeln('const auto& $argName = $encodableArgName;');
       } else if (hostType.isBuiltin) {
-        indent.writeln(
-          'const auto& $argName = std::get<${hostType.datatype}>($encodableArgName);',
-        );
+        indent.writeln('const auto& $argName = std::get<${hostType.datatype}>($encodableArgName);');
       } else {
         indent.writeln(
           'const auto& $argName = ${_classReferenceFromEncodableValue(hostType, encodableArgName)};',
@@ -2372,10 +2307,7 @@ if (!$encodableArgName.IsNull()) {
 
   /// Returns the code to extract a `const {type.datatype}&` from an EncodableValue
   /// variable [variableName] that contains an instance of [type].
-  String _classReferenceFromEncodableValue(
-    HostDatatype type,
-    String variableName,
-  ) {
+  String _classReferenceFromEncodableValue(HostDatatype type, String variableName) {
     return 'std::any_cast<const ${type.datatype}&>(std::get<CustomEncodableValue>($variableName))';
   }
 }
@@ -2440,14 +2372,11 @@ String _makeMethodName(Method method) => _pascalCaseFromCamelCase(method.name);
 
 String _makeGetterName(NamedType field) => _snakeCaseFromCamelCase(field.name);
 
-String _makeSetterName(NamedType field) =>
-    'set_${_snakeCaseFromCamelCase(field.name)}';
+String _makeSetterName(NamedType field) => 'set_${_snakeCaseFromCamelCase(field.name)}';
 
-String _makeVariableName(NamedType field) =>
-    _snakeCaseFromCamelCase(field.name);
+String _makeVariableName(NamedType field) => _snakeCaseFromCamelCase(field.name);
 
-String _makeInstanceVariableName(NamedType field) =>
-    '${_makeVariableName(field)}_';
+String _makeInstanceVariableName(NamedType field) => '${_makeVariableName(field)}_';
 
 // TODO(stuartmorgan): Remove this in favor of _isPodType once callers have
 // all been updated to using HostDatatypes.
@@ -2513,9 +2442,7 @@ String _valueType(HostDatatype type) {
 /// Returns the C++ type to use when declaring a data class field for the
 /// given type.
 String _fieldType(HostDatatype type) {
-  return _isPointerField(type)
-      ? 'std::unique_ptr<${type.datatype}>'
-      : _valueType(type);
+  return _isPointerField(type) ? 'std::unique_ptr<${type.datatype}>' : _valueType(type);
 }
 
 /// Returns true if [type] should be stored as a pointer, rather than a
@@ -2659,7 +2586,7 @@ void _writeFunction(
     indent.add('(${parameters.first})');
   } else {
     indent.addScoped('(', null, () {
-      enumerate(parameters, (int index, final String param) {
+      enumerate(parameters, (int index, String param) {
         if (index == parameters.length - 1) {
           indent.write('$param)');
         } else {
@@ -2680,11 +2607,7 @@ void _writeFunction(
     // own lines indented two extra levels, with no comma or newline after the
     // last one. The easiest way to express the special casing of the first and
     // last is with a join+format.
-    indent.format(
-      initializers.join(',\n\t\t'),
-      leadingSpace: false,
-      trailingNewline: false,
-    );
+    indent.format(initializers.join(',\n\t\t'), leadingSpace: false, trailingNewline: false);
   }
   // Write the body or end the declaration.
   if (type == _FunctionOutputType.declaration) {
@@ -2718,10 +2641,7 @@ void _writeFunctionDeclaration(
 }) {
   assert(!(isVirtual && isOverride), 'virtual is redundant with override');
   assert(isVirtual || !isPureVirtual, 'pure virtual methods must be virtual');
-  assert(
-    returnType == null || !isConstructor,
-    'constructors cannot have return types',
-  );
+  assert(returnType == null || !isConstructor, 'constructors cannot have return types');
   assert(!(deleted && defaultImpl), 'a function cannot be deleted and default');
   _writeFunction(
     indent,
@@ -2775,11 +2695,7 @@ void _writeFunctionDefinition(
 
 enum _ClassAccess { public, protected, private }
 
-void _writeAccessBlock(
-  Indent indent,
-  _ClassAccess access,
-  void Function() body,
-) {
+void _writeAccessBlock(Indent indent, _ClassAccess access, void Function() body) {
   final String accessLabel;
   switch (access) {
     case _ClassAccess.public:

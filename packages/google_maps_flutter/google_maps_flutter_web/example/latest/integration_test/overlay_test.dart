@@ -37,30 +37,20 @@ void main() {
     const id = TileOverlayId('');
 
     testWidgets('minimal initialization', (WidgetTester tester) async {
-      final controller = TileOverlayController(
-        tileOverlay: const TileOverlay(tileOverlayId: id),
-      );
+      final controller = TileOverlayController(tileOverlay: const TileOverlay(tileOverlayId: id));
 
       final gmaps.Size? size = controller.gmMapType.tileSize;
       expect(size?.width, TileOverlayController.logicalTileSize);
       expect(size?.height, TileOverlayController.logicalTileSize);
-      expect(
-        controller.gmMapType.getTile(gmaps.Point(0, 0), 0, document),
-        null,
-      );
+      expect(controller.gmMapType.getTile(gmaps.Point(0, 0), 0, document), null);
     });
 
     testWidgets('produces image tiles', (WidgetTester tester) async {
       final controller = TileOverlayController(
-        tileOverlay: const TileOverlay(
-          tileOverlayId: id,
-          tileProvider: TestTileProvider(),
-        ),
+        tileOverlay: const TileOverlay(tileOverlayId: id, tileProvider: TestTileProvider()),
       );
 
-      final img =
-          controller.gmMapType.getTile(gmaps.Point(0, 0), 0, document)!
-              as HTMLImageElement;
+      final img = controller.gmMapType.getTile(gmaps.Point(0, 0), 0, document)! as HTMLImageElement;
       expect(img.naturalWidth, 0);
       expect(img.naturalHeight, 0);
       expect((img.hidden! as JSBoolean).toDart, true);
@@ -76,38 +66,23 @@ void main() {
 
     testWidgets('update', (WidgetTester tester) async {
       final controller = TileOverlayController(
-        tileOverlay: const TileOverlay(
-          tileOverlayId: id,
-          tileProvider: NoTileProvider(),
-        ),
+        tileOverlay: const TileOverlay(tileOverlayId: id, tileProvider: NoTileProvider()),
       );
       {
         final img =
-            controller.gmMapType.getTile(gmaps.Point(0, 0), 0, document)!
-                as HTMLImageElement;
+            controller.gmMapType.getTile(gmaps.Point(0, 0), 0, document)! as HTMLImageElement;
         await null; // let `getTile` `then` complete
-        expect(
-          img.src,
-          isEmpty,
-          reason: 'The NoTileProvider never updates the img src',
-        );
+        expect(img.src, isEmpty, reason: 'The NoTileProvider never updates the img src');
       }
 
-      controller.update(
-        const TileOverlay(tileOverlayId: id, tileProvider: TestTileProvider()),
-      );
+      controller.update(const TileOverlay(tileOverlayId: id, tileProvider: TestTileProvider()));
       {
         final img =
-            controller.gmMapType.getTile(gmaps.Point(0, 0), 0, document)!
-                as HTMLImageElement;
+            controller.gmMapType.getTile(gmaps.Point(0, 0), 0, document)! as HTMLImageElement;
 
         await img.onLoad.first;
 
-        expect(
-          img.src,
-          isNotEmpty,
-          reason: 'The img `src` should eventually become the Blob URL.',
-        );
+        expect(img.src, isNotEmpty, reason: 'The img `src` should eventually become the Blob URL.');
       }
 
       controller.update(const TileOverlay(tileOverlayId: id));

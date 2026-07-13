@@ -4,7 +4,10 @@
 
 // ignore_for_file: avoid_print
 
+import 'dart:ffi' show Abi;
 import 'dart:io';
+
+import 'engine_artifact.dart';
 import 'svg/path_ops.dart';
 
 /// Look up the location of the pathops from flutter's artifact cache.
@@ -19,22 +22,17 @@ bool initializePathOpsFromFlutterCache() {
     return false;
   }
 
-  final String platform;
-  final String executable;
-  if (Platform.isWindows) {
-    platform = 'windows-x64';
-    executable = 'path_ops.dll';
-  } else if (Platform.isMacOS) {
-    platform = 'darwin-x64';
-    executable = 'libpath_ops.dylib';
-  } else if (Platform.isLinux) {
-    platform = 'linux-x64';
-    executable = 'libpath_ops.so';
-  } else {
-    print('path_ops not supported on ${Platform.localeName}');
+  final String? subpath = engineArtifactSubpath(
+    windowsFile: 'path_ops.dll',
+    macOSFile: 'libpath_ops.dylib',
+    linuxFile: 'libpath_ops.so',
+    abi: Abi.current(),
+  );
+  if (subpath == null) {
+    print('path_ops not supported on ${Abi.current()}');
     return false;
   }
-  final pathops = '${cacheRoot.path}/artifacts/engine/$platform/$executable';
+  final pathops = '${cacheRoot.path}/artifacts/engine/$subpath';
   if (!File(pathops).existsSync()) {
     print('Could not locate libpathops at $pathops.');
     print('Ensure you are on a supported version of flutter and then run ');

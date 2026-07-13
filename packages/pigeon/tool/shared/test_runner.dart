@@ -38,10 +38,7 @@ Future<void> runTests(
     // https://github.com/flutter/flutter/issues/152916
     await _runTests(
       testsToRun
-          .where(
-            (String test) =>
-                test.contains('integration') && !test.contains('linux'),
-          )
+          .where((String test) => test.contains('integration') && !test.contains('linux'))
           .toList(),
       ciMode: ciMode,
     );
@@ -78,9 +75,7 @@ Future<void> _runGenerate(
 
 Future<void> _runFormat(String baseDir, {required bool ciMode}) async {
   _printHeading('Formatting generated output', ciMode: ciMode);
-  final int formatExitCode = await formatAllFiles(
-    repositoryRoot: p.dirname(p.dirname(baseDir)),
-  );
+  final int formatExitCode = await formatAllFiles(repositoryRoot: p.dirname(p.dirname(baseDir)));
   if (formatExitCode != 0) {
     print('Formatting failed; see above for errors.');
     exit(formatExitCode);

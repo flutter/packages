@@ -7,8 +7,7 @@ import 'package:go_router/go_router.dart';
 mixin $RequiredExtraValueRoute {}
 
 @TypedGoRoute<RequiredExtraValueRoute>(path: '/default-value-route')
-class RequiredExtraValueRoute extends GoRouteData
-    with $RequiredExtraValueRoute {
+class RequiredExtraValueRoute extends GoRouteData with $RequiredExtraValueRoute {
   RequiredExtraValueRoute({required this.$extra});
   final int $extra;
 }

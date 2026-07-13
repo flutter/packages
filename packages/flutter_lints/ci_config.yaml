@@ -1,0 +1,2 @@
+# Deliberately uses flutter_lints, as that's what it is demonstrating.
+allow_custom_analysis_options: true
