@@ -8,7 +8,10 @@ import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
 import io.flutter.plugin.common.BinaryMessenger
-import org.junit.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers
@@ -16,11 +19,11 @@ import org.mockito.Mock
 import org.mockito.Mockito
 
 class LegacySharedPreferencesTest {
-  lateinit var plugin: LegacySharedPreferencesPlugin
+  private lateinit var plugin: LegacySharedPreferencesPlugin
 
-  @Mock lateinit var mockMessenger: BinaryMessenger
+  @Mock private lateinit var mockMessenger: BinaryMessenger
 
-  @Mock lateinit var flutterPluginBinding: FlutterPluginBinding
+  @Mock private lateinit var flutterPluginBinding: FlutterPluginBinding
 
   @Before
   fun before() {
@@ -42,27 +45,27 @@ class LegacySharedPreferencesTest {
 
   @Test
   fun getAll() {
-    Assert.assertEquals(0, plugin.getAll("", null).size.toLong())
+    assertEquals(0, plugin.getAll("", null).size)
 
     addData()
 
     val flutterData: Map<String, Any> = plugin.getAll("flutter.", null)
 
-    Assert.assertEquals(5, flutterData.size.toLong())
-    Assert.assertEquals("Java", flutterData["flutter.Language"])
-    Assert.assertEquals(0L, flutterData["flutter.Counter"])
-    Assert.assertEquals(3.14, flutterData["flutter.Pie"])
-    Assert.assertEquals(flutterData["flutter.Names"], listOf<String?>("Flutter", "Dart").toString())
-    Assert.assertEquals(false, flutterData["flutter.NewToFlutter"])
+    assertEquals(5, flutterData.size)
+    assertEquals("Java", flutterData["flutter.Language"])
+    assertEquals(0L, flutterData["flutter.Counter"])
+    assertEquals(3.14, flutterData["flutter.Pie"])
+    assertEquals(flutterData["flutter.Names"], listOf("Flutter", "Dart").toString())
+    assertEquals(false, flutterData["flutter.NewToFlutter"])
 
     val allData: Map<String, Any> = plugin.getAll("", null)
 
-    Assert.assertEquals(data, allData)
+    assertEquals(data, allData)
   }
 
   @Test
   fun allowList() {
-    Assert.assertEquals(0, plugin.getAll("", null).size.toLong())
+    assertEquals(0, plugin.getAll("", null).size)
 
     addData()
 
@@ -70,20 +73,20 @@ class LegacySharedPreferencesTest {
 
     var allData: Map<String, Any> = plugin.getAll("flutter.", allowList)
 
-    Assert.assertEquals(1, allData.size.toLong())
-    Assert.assertEquals("Java", allData["flutter.Language"])
-    Assert.assertNull(allData["flutter.Counter"])
+    assertEquals(1, allData.size)
+    assertEquals("Java", allData["flutter.Language"])
+    assertNull(allData["flutter.Counter"])
 
     allData = plugin.getAll("", allowList)
 
-    Assert.assertEquals(1, allData.size.toLong())
-    Assert.assertEquals("Java", allData["flutter.Language"])
-    Assert.assertNull(allData["flutter.Counter"])
+    assertEquals(1, allData.size)
+    assertEquals("Java", allData["flutter.Language"])
+    assertNull(allData["flutter.Counter"])
 
     allData = plugin.getAll("prefix.", allowList)
 
-    Assert.assertEquals(0, allData.size.toLong())
-    Assert.assertNull(allData["flutter.Language"])
+    assertEquals(0, allData.size)
+    assertNull(allData["flutter.Language"])
   }
 
   @Test
@@ -92,7 +95,7 @@ class LegacySharedPreferencesTest {
     val value = "Java"
     plugin.setString(key, value)
     val flutterData: Map<String, Any> = plugin.getAll("", null)
-    Assert.assertEquals(value, flutterData[key])
+    assertEquals(value, flutterData[key])
   }
 
   @Test
@@ -101,7 +104,7 @@ class LegacySharedPreferencesTest {
     val value = 0L
     plugin.setInt(key, value)
     val flutterData: Map<String, Any> = plugin.getAll("", null)
-    Assert.assertEquals(value, flutterData[key])
+    assertEquals(value, flutterData[key])
   }
 
   @Test
@@ -110,16 +113,16 @@ class LegacySharedPreferencesTest {
     val value = 3.14
     plugin.setDouble(key, value)
     val flutterData: Map<String, Any> = plugin.getAll("", null)
-    Assert.assertEquals(value, flutterData[key])
+    assertEquals(value, flutterData[key])
   }
 
   @Test
   fun setEncodedStringListSetsAndGetsString() {
     val key = "Names"
-    val value = listOf<String?>("Flutter", "Dart").toString()
+    val value = listOf("Flutter", "Dart").toString()
     plugin.setEncodedStringList(key, value)
     val flutterData: Map<String, Any> = plugin.getAll("", null)
-    Assert.assertEquals(flutterData[key], value)
+    assertEquals(flutterData[key], value)
   }
 
   @Test
@@ -128,40 +131,40 @@ class LegacySharedPreferencesTest {
     val value = false
     plugin.setBool(key, value)
     val flutterData: Map<String, Any> = plugin.getAll("", null)
-    Assert.assertEquals(value, flutterData[key])
+    assertEquals(value, flutterData[key])
   }
 
   @Test
   fun clearWithNoAllowList() {
     addData()
 
-    Assert.assertEquals(15, plugin.getAll("", null).size.toLong())
+    assertEquals(15, plugin.getAll("", null).size)
 
     plugin.clear("flutter.", null)
 
-    Assert.assertEquals(10, plugin.getAll("", null).size.toLong())
+    assertEquals(10, plugin.getAll("", null).size)
   }
 
   @Test
   fun clearWithAllowList() {
     addData()
 
-    Assert.assertEquals(15, plugin.getAll("", null).size.toLong())
+    assertEquals(15, plugin.getAll("", null).size)
 
     plugin.clear("flutter.", listOf("flutter.Language"))
 
-    Assert.assertEquals(14, plugin.getAll("", null).size.toLong())
+    assertEquals(14, plugin.getAll("", null).size)
   }
 
   @Test
   fun clearAll() {
     addData()
 
-    Assert.assertEquals(15, plugin.getAll("", null).size.toLong())
+    assertEquals(15, plugin.getAll("", null).size)
 
     plugin.clear("", null)
 
-    Assert.assertEquals(0, plugin.getAll("", null).size.toLong())
+    assertEquals(0, plugin.getAll("", null).size)
   }
 
   @Test
@@ -169,31 +172,31 @@ class LegacySharedPreferencesTest {
     val key = "NewToFlutter"
     val value = true
     plugin.setBool(key, value)
-    assert(plugin.getAll("", null).containsKey(key))
+    assertTrue(plugin.getAll("", null).containsKey(key))
     plugin.remove(key)
-    Assert.assertFalse(plugin.getAll("", null).containsKey(key))
+    assertFalse(plugin.getAll("", null).containsKey(key))
   }
 
   private fun addData() {
     plugin.setString("Language", "Java")
     plugin.setInt("Counter", 0L)
     plugin.setDouble("Pie", 3.14)
-    plugin.setEncodedStringList("Names", listOf<String?>("Flutter", "Dart").toString())
+    plugin.setEncodedStringList("Names", listOf("Flutter", "Dart").toString())
     plugin.setBool("NewToFlutter", false)
     plugin.setString("flutter.Language", "Java")
     plugin.setInt("flutter.Counter", 0L)
     plugin.setDouble("flutter.Pie", 3.14)
-    plugin.setEncodedStringList("flutter.Names", listOf<String?>("Flutter", "Dart").toString())
+    plugin.setEncodedStringList("flutter.Names", listOf("Flutter", "Dart").toString())
     plugin.setBool("flutter.NewToFlutter", false)
     plugin.setString("prefix.Language", "Java")
     plugin.setInt("prefix.Counter", 0L)
     plugin.setDouble("prefix.Pie", 3.14)
-    plugin.setEncodedStringList("prefix.Names", listOf<String?>("Flutter", "Dart").toString())
+    plugin.setEncodedStringList("prefix.Names", listOf("Flutter", "Dart").toString())
     plugin.setBool("prefix.NewToFlutter", false)
   }
 
   /** A dummy implementation for tests for use with FakeSharedPreferences */
-  class FakeSharedPreferencesEditor
+  private class FakeSharedPreferencesEditor
   internal constructor(private val sharedPrefData: MutableMap<String, Any?>) :
       SharedPreferences.Editor {
     override fun putString(key: String, value: String?): SharedPreferences.Editor {
@@ -246,7 +249,7 @@ class LegacySharedPreferencesTest {
 
   /** A dummy implementation of SharedPreferences for tests that store values in memory. */
   private class FakeSharedPreferences : SharedPreferences {
-    var sharedPrefData: MutableMap<String, Any?> = HashMap()
+    val sharedPrefData = mutableMapOf<String, Any?>()
 
     override fun getAll(): Map<String, Any?> {
       return sharedPrefData
@@ -313,24 +316,22 @@ class LegacySharedPreferencesTest {
   }
 
   companion object {
-    private val data: MutableMap<String?, Any?> = HashMap()
-
-    init {
-      data["Language"] = "Java"
-      data["Counter"] = 0L
-      data["Pie"] = 3.14
-      data["Names"] = listOf("Flutter", "Dart").toString()
-      data["NewToFlutter"] = false
-      data["flutter.Language"] = "Java"
-      data["flutter.Counter"] = 0L
-      data["flutter.Pie"] = 3.14
-      data["flutter.Names"] = listOf("Flutter", "Dart").toString()
-      data["flutter.NewToFlutter"] = false
-      data["prefix.Language"] = "Java"
-      data["prefix.Counter"] = 0L
-      data["prefix.Pie"] = 3.14
-      data["prefix.Names"] = listOf("Flutter", "Dart").toString()
-      data["prefix.NewToFlutter"] = false
-    }
+    private val data =
+        mapOf<String, Any>(
+            "Language" to "Java",
+            "Counter" to 0L,
+            "Pie" to 3.14,
+            "Names" to listOf("Flutter", "Dart").toString(),
+            "NewToFlutter" to false,
+            "flutter.Language" to "Java",
+            "flutter.Counter" to 0L,
+            "flutter.Pie" to 3.14,
+            "flutter.Names" to listOf("Flutter", "Dart").toString(),
+            "flutter.NewToFlutter" to false,
+            "prefix.Language" to "Java",
+            "prefix.Counter" to 0L,
+            "prefix.Pie" to 3.14,
+            "prefix.Names" to listOf("Flutter", "Dart").toString(),
+            "prefix.NewToFlutter" to false)
   }
 }
