@@ -3,6 +3,9 @@
 // found in the LICENSE file.
 package io.flutter.plugins.sharedpreferences
 
+// TODO(stuartmorgan): Now that this code has been converted to Kotlin, look into sharing code with
+//  SharedPreferencesBackend to reduce duplication.
+
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
@@ -80,8 +83,7 @@ internal constructor(private val listEncoder: SharedPreferencesListEncoder) :
     return preferences.edit().putString(key, value).commit()
   }
 
-  // Deprecated, for testing purposes only.
-  @Deprecated("")
+  @Deprecated("Exists for testing purposes only")
   override fun setDeprecatedStringList(key: String, value: List<String>): Boolean {
     return preferences.edit().putString(key, LIST_PREFIX + listEncoder.encode(value)).commit()
   }
@@ -100,7 +102,7 @@ internal constructor(private val listEncoder: SharedPreferencesListEncoder) :
   }
 
   // Gets all shared preferences, filtered to only those set with the given prefix.
-  // Optionally filtered also to only those items in
+  // Optionally filtered also to only those items in the optional [allowList].
   private fun getAllPrefs(prefix: String, allowList: Set<String>?): Map<String, Any> {
     return buildMap {
       preferences.all.forEach { (key, value) ->
