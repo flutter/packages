@@ -122,7 +122,7 @@ class LegacySharedPreferencesTest {
     val value = listOf("Flutter", "Dart").toString()
     plugin.setEncodedStringList(key, value)
     val flutterData: Map<String, Any> = plugin.getAll("", null)
-    assertEquals(flutterData[key], value)
+    assertEquals(value, flutterData[key])
   }
 
   @Test
