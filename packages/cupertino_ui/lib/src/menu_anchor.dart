@@ -300,7 +300,7 @@ typedef CupertinoMenuAnimationStatusChangedCallback = void Function(AnimationSta
 /// This example demonstrates a simple [CupertinoMenuAnchor] that wraps
 /// a button.
 ///
-/// {@example /example/lib/menu_anchor/menu_anchor.0.dart}
+/// {@example /example/lib/menu_anchor/menu_anchor.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -313,7 +313,7 @@ typedef CupertinoMenuAnimationStatusChangedCallback = void Function(AnimationSta
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/menu_anchor/menu_anchor.1.dart}
+/// {@example /example/lib/menu_anchor/menu_anchor.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1708,7 +1708,7 @@ class _CupertinoDividerPainter extends CustomPainter {
 /// This example demonstrates a simple [CupertinoMenuAnchor] that wraps
 /// a button.
 ///
-/// {@example /example/lib/menu_anchor/menu_anchor.0.dart}
+/// {@example /example/lib/menu_anchor/menu_anchor.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1721,7 +1721,7 @@ class _CupertinoDividerPainter extends CustomPainter {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/menu_anchor/menu_anchor.1.dart}
+/// {@example /example/lib/menu_anchor/menu_anchor.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1798,7 +1798,12 @@ class CupertinoMenuItem extends StatelessWidget implements CupertinoMenuEntry {
   /// pointer event, which is always between frames.
   final ValueChanged<bool>? onHover;
 
-  /// {@macro flutter.material.inkwell.onFocusChange}
+  /// {@template flutter.cupertino.inkwell.onFocusChange}
+  /// Handler called when the focus changes.
+  ///
+  /// Called with true if this widget's node gains focus, and false if it loses
+  /// focus.
+  /// {@endtemplate}
   final ValueChanged<bool>? onFocusChange;
 
   /// Whether hovering should request focus for this widget.

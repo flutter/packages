@@ -1307,7 +1307,7 @@ class CupertinoModalPopupRoute<T> extends PopupRoute<T> {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/route/show_cupertino_modal_popup.0.dart}
+/// {@example /example/lib/route/show_cupertino_modal_popup.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1373,7 +1373,10 @@ Widget _buildCupertinoDialogTransitions(
 /// By default, `useRootNavigator` is `true` and the dialog route created by
 /// this method is pushed to the root navigator.
 ///
-/// {@macro flutter.material.dialog.requestFocus}
+/// {@template flutter.cupertino.dialog.requestFocus}
+/// The `requestFocus` argument is used to specify whether the dialog should
+/// request focus when shown.
+/// {@endtemplate}
 /// {@macro flutter.widgets.navigator.Route.requestFocus}
 ///
 /// {@macro flutter.widgets.RawDialogRoute}
@@ -1406,7 +1409,7 @@ Widget _buildCupertinoDialogTransitions(
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/route/show_cupertino_dialog.0.dart}
+/// {@example /example/lib/route/show_cupertino_dialog.0.dart#body}
 ///
 /// </callout-box>
 ///

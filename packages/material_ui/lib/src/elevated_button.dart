@@ -60,7 +60,7 @@ import 'theme_data.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/elevated_button/elevated_button.0.dart}
+/// {@example /example/lib/elevated_button/elevated_button.0.dart#body}
 ///
 /// </callout-box>
 ///

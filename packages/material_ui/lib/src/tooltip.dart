@@ -59,7 +59,7 @@ import 'tooltip_visibility.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/tooltip/tooltip.0.dart}
+/// {@example /example/lib/tooltip/tooltip.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -81,7 +81,7 @@ import 'tooltip_visibility.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/tooltip/tooltip.1.dart}
+/// {@example /example/lib/tooltip/tooltip.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -96,7 +96,7 @@ import 'tooltip_visibility.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/tooltip/tooltip.2.dart}
+/// {@example /example/lib/tooltip/tooltip.2.dart#body}
 ///
 /// </callout-box>
 ///
@@ -109,7 +109,7 @@ import 'tooltip_visibility.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/tooltip/tooltip.3.dart}
+/// {@example /example/lib/tooltip/tooltip.3.dart#body}
 ///
 /// </callout-box>
 ///

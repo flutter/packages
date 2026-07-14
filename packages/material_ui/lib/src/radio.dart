@@ -65,7 +65,7 @@ const double _kInnerRadius = 4.5;
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/radio/radio.0.dart}
+/// {@example /example/lib/radio/radio.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -85,7 +85,7 @@ const double _kInnerRadius = 4.5;
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/radio/radio.1.dart}
+/// {@example /example/lib/radio/radio.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -189,39 +189,14 @@ class Radio<T> extends StatefulWidget {
   /// {@macro flutter.widget.RawRadio.value}
   final T value;
 
-  /// {@template flutter.material.Radio.groupValue}
-  /// The currently selected value for a group of radio buttons.
-  ///
-  /// This radio button is considered selected if its [value] matches the
-  /// [groupValue].
-  ///
-  /// This is deprecated, use [RadioGroup] to manage group value instead.
-  /// {@endtemplate}
+  /// {@macro flutter.cupertino.Radio.groupValue}
   @Deprecated(
     'Use a RadioGroup ancestor to manage group value instead. '
     'This feature was deprecated after v3.32.0-0.0.pre.',
   )
   final T? groupValue;
 
-  /// {@template flutter.material.Radio.onChanged}
-  /// Called when the user selects this radio button.
-  ///
-  /// The radio button passes [value] as a parameter to this callback. The radio
-  /// button does not actually change state until the parent widget rebuilds the
-  /// radio button with the new [groupValue].
-  ///
-  /// If null, the radio button will be displayed as disabled.
-  ///
-  /// The provided callback will not be invoked if this radio button is already
-  /// selected and [toggleable] is not set to true.
-  ///
-  /// If the [toggleable] is set to true, tapping a already selected radio will
-  /// invoke this callback with `null` as value.
-  ///
-  /// The callback provided to [onChanged] should update the state of the parent
-  /// [StatefulWidget] using the [State.setState] method, so that the parent
-  /// gets rebuilt.
-  /// {@endtemplate}
+  /// {@macro flutter.cupertino.Radio.onChanged}
   ///
   /// For example:
   ///
@@ -263,7 +238,7 @@ class Radio<T> extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/radio/radio.toggleable.0.dart}
+  /// {@example /example/lib/radio/radio.toggleable.0.dart#body}
   ///
   /// </callout-box>
   final bool toggleable;
@@ -427,19 +402,7 @@ class Radio<T> extends StatefulWidget {
 
   final _RadioType _radioType;
 
-  /// {@template flutter.material.Radio.enabled}
-  /// Whether this widget is interactive.
-  ///
-  /// If not provided, this widget will be interactable if one of the following
-  /// is true:
-  ///
-  /// * A [onChanged] is provided.
-  /// * Having a [RadioGroup] with the same type T above this widget.
-  /// * A [groupRegistry] is provided.
-  ///
-  /// If this is set to true, one of the above condition must also be true.
-  /// Otherwise, an assertion error is thrown.
-  /// {@endtemplate}
+  /// {@macro flutter.cupertino.Radio.enabled}
   final bool? enabled;
 
   /// {@template flutter.material.Radio.backgroundColor}

@@ -53,7 +53,7 @@ import 'tooltip.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/icon_alignment/icon_alignment.0.dart}
+/// {@example /example/lib/icon_alignment/icon_alignment.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -144,7 +144,7 @@ abstract class ButtonStyleButton extends StatefulWidget {
   /// Null by default.
   final ButtonStyle? style;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none] unless [ButtonStyle.backgroundBuilder] or
   /// [ButtonStyle.foregroundBuilder] is specified. In those

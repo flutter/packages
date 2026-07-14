@@ -616,12 +616,7 @@ class InkResponse extends StatelessWidget {
   /// duplication of information.
   final bool excludeFromSemantics;
 
-  /// {@template flutter.material.inkwell.onFocusChange}
-  /// Handler called when the focus changes.
-  ///
-  /// Called with true if this widget's node gains focus, and false if it loses
-  /// focus.
-  /// {@endtemplate}
+  /// {@macro flutter.cupertino.inkwell.onFocusChange}
   final ValueChanged<bool>? onFocusChange;
 
   /// {@macro flutter.widgets.Focus.autofocus}
@@ -1496,7 +1491,7 @@ class _InkResponseState extends State<_InkResponseStateWidget>
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/ink_well/ink_well.0.dart}
+/// {@example /example/lib/ink_well/ink_well.0.dart#body}
 ///
 /// </callout-box>
 ///

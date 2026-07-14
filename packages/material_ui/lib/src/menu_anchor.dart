@@ -221,7 +221,7 @@ class _TweenCurve extends Curve {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/menu_anchor/menu_anchor.0.dart}
+/// {@example /example/lib/menu_anchor/menu_anchor.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -236,7 +236,7 @@ class _TweenCurve extends Curve {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/menu_anchor/menu_anchor.1.dart}
+/// {@example /example/lib/menu_anchor/menu_anchor.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -249,7 +249,7 @@ class _TweenCurve extends Curve {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/menu_anchor/menu_anchor.3.dart}
+/// {@example /example/lib/menu_anchor/menu_anchor.3.dart#body}
 ///
 /// </callout-box>
 ///
@@ -338,7 +338,7 @@ class MenuAnchor extends StatefulWidget {
   /// surrounds if it moves because of view insets changes.
   final LayerLink? layerLink;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// Defaults to [Clip.hardEdge].
   final Clip clipBehavior;
@@ -845,7 +845,7 @@ class _MenuAnchorState extends State<MenuAnchor> with SingleTickerProviderStateM
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/menu_anchor/menu_bar.0.dart}
+/// {@example /example/lib/menu_anchor/menu_bar.0.dart#body}
 ///
 /// </callout-box>
 /// {@endtemplate}
@@ -886,7 +886,7 @@ class MenuBar extends StatelessWidget {
   /// Defaults to the ambient [MenuThemeData.style].
   final MenuStyle? style;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none].
   final Clip clipBehavior;
@@ -1043,7 +1043,7 @@ class MenuItemButton extends StatefulWidget {
   /// {@macro flutter.material.inkwell.statesController}
   final MaterialStatesController? statesController;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none].
   final Clip clipBehavior;
@@ -1369,7 +1369,7 @@ class _MenuItemButtonState extends State<MenuItemButton> {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/menu_anchor/checkbox_menu_button.0.dart}
+/// {@example /example/lib/menu_anchor/checkbox_menu_button.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1491,7 +1491,7 @@ class CheckboxMenuButton extends StatelessWidget {
   /// {@macro flutter.material.inkwell.statesController}
   final MaterialStatesController? statesController;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none].
   final Clip clipBehavior;
@@ -1571,7 +1571,7 @@ class CheckboxMenuButton extends StatelessWidget {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/menu_anchor/radio_menu_button.0.dart}
+/// {@example /example/lib/menu_anchor/radio_menu_button.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1695,7 +1695,7 @@ class RadioMenuButton<T> extends StatelessWidget {
   /// {@macro flutter.material.inkwell.statesController}
   final MaterialStatesController? statesController;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none].
   final Clip clipBehavior;
@@ -1860,7 +1860,7 @@ class SubmenuButton extends StatefulWidget {
   /// top of the [MenuAnchor] region.
   final Offset? alignmentOffset;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// Defaults to [Clip.hardEdge].
   final Clip clipBehavior;
@@ -2973,7 +2973,7 @@ typedef MenuAcceleratorChildBuilder =
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/menu_anchor/menu_accelerator_label.0.dart}
+/// {@example /example/lib/menu_anchor/menu_accelerator_label.0.dart#body}
 ///
 /// </callout-box>
 /// {@endtemplate}
@@ -3627,7 +3627,7 @@ class _MenuPanel extends StatefulWidget {
   /// The menu style that has all the attributes for this menu panel.
   final MenuStyle? menuStyle;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none].
   final Clip clipBehavior;

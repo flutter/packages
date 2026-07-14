@@ -143,7 +143,7 @@ abstract interface class ChipAttributes {
   ///  * [WidgetState.pressed].
   OutlinedBorder? get shape;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none].
   Clip get clipBehavior;
@@ -252,7 +252,7 @@ abstract interface class ChipAttributes {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/chip/chip_attributes.avatar_box_constraints.0.dart}
+  /// {@example /example/lib/chip/chip_attributes.avatar_box_constraints.0.dart#body}
   ///
   /// </callout-box>
   BoxConstraints? get avatarBoxConstraints;
@@ -284,7 +284,7 @@ abstract interface class ChipAttributes {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/chip/chip_attributes.chip_animation_style.0.dart}
+  /// {@example /example/lib/chip/chip_attributes.chip_animation_style.0.dart#body}
   ///
   /// </callout-box>
   ChipAnimationStyle? get chipAnimationStyle;
@@ -349,7 +349,7 @@ abstract interface class DeletableChipAttributes {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/chip/deletable_chip_attributes.on_deleted.0.dart}
+  /// {@example /example/lib/chip/deletable_chip_attributes.on_deleted.0.dart#body}
   ///
   /// </callout-box>
   VoidCallback? get onDeleted;
@@ -394,7 +394,7 @@ abstract interface class DeletableChipAttributes {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/chip/deletable_chip_attributes.delete_icon_box_constraints.0.dart}
+  /// {@example /example/lib/chip/deletable_chip_attributes.delete_icon_box_constraints.0.dart#body}
   ///
   /// </callout-box>
   BoxConstraints? get deleteIconBoxConstraints;

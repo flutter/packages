@@ -243,7 +243,7 @@ class _SnackBarActionState extends State<SnackBarAction> {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/snack_bar/snack_bar.0.dart}
+/// {@example /example/lib/snack_bar/snack_bar.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -257,7 +257,7 @@ class _SnackBarActionState extends State<SnackBarAction> {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/snack_bar/snack_bar.1.dart}
+/// {@example /example/lib/snack_bar/snack_bar.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -270,7 +270,7 @@ class _SnackBarActionState extends State<SnackBarAction> {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/snack_bar/snack_bar.2.dart}
+/// {@example /example/lib/snack_bar/snack_bar.2.dart#body}
 ///
 /// </callout-box>
 ///
@@ -506,7 +506,7 @@ class SnackBar extends StatefulWidget {
   /// is used. If that is null, then the default is [DismissDirection.down].
   final DismissDirection? dismissDirection;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// Defaults to [Clip.hardEdge].
   final Clip clipBehavior;

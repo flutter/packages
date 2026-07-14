@@ -57,7 +57,7 @@ const double _kIndicatorHeight = 32;
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/navigation_rail/navigation_rail.0.dart}
+/// {@example /example/lib/navigation_rail/navigation_rail.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -394,7 +394,7 @@ class NavigationRail extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/navigation_rail/navigation_rail.extended_animation.0.dart}
+  /// {@example /example/lib/navigation_rail/navigation_rail.extended_animation.0.dart#body}
   ///
   /// </callout-box>
   static Animation<double> extendedAnimation(BuildContext context) {

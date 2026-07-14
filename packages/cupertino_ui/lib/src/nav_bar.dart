@@ -340,7 +340,7 @@ bool _isTransitionable(BuildContext context) {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/nav_bar/cupertino_navigation_bar.0.dart}
+/// {@example /example/lib/nav_bar/cupertino_navigation_bar.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -354,7 +354,7 @@ bool _isTransitionable(BuildContext context) {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/nav_bar/cupertino_navigation_bar.2.dart}
+/// {@example /example/lib/nav_bar/cupertino_navigation_bar.2.dart#body}
 ///
 /// </callout-box>
 ///
@@ -641,7 +641,7 @@ class CupertinoNavigationBar extends StatefulWidget implements ObstructingPrefer
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro cupertino_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/nav_bar/cupertino_navigation_bar.1.dart}
+  /// {@example /example/lib/nav_bar/cupertino_navigation_bar.1.dart#body}
   ///
   /// </callout-box>
   ///
@@ -952,7 +952,7 @@ class _CupertinoNavigationBarState extends State<CupertinoNavigationBar> {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/nav_bar/cupertino_sliver_nav_bar.0.dart}
+/// {@example /example/lib/nav_bar/cupertino_sliver_nav_bar.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -964,7 +964,7 @@ class _CupertinoNavigationBarState extends State<CupertinoNavigationBar> {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/nav_bar/cupertino_sliver_nav_bar.2.dart}
+/// {@example /example/lib/nav_bar/cupertino_sliver_nav_bar.2.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1039,7 +1039,7 @@ class CupertinoSliverNavigationBar extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro cupertino_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/nav_bar/cupertino_sliver_nav_bar.1.dart}
+  /// {@example /example/lib/nav_bar/cupertino_sliver_nav_bar.1.dart#body}
   ///
   /// </callout-box>
   const CupertinoSliverNavigationBar.search({
