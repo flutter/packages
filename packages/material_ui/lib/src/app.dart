@@ -767,14 +767,7 @@ class MaterialApp extends StatefulWidget {
   /// {@macro flutter.widgets.widgetsApp.restorationScopeId}
   final String? restorationScopeId;
 
-  /// {@template flutter.material.materialApp.scrollBehavior}
-  /// The default [ScrollBehavior] for the application.
-  ///
-  /// [ScrollBehavior]s describe how [Scrollable] widgets behave. Providing
-  /// a [ScrollBehavior] can set the default [ScrollPhysics] across
-  /// an application, and manage [Scrollable] decorations like [Scrollbar]s and
-  /// [GlowingOverscrollIndicator]s.
-  /// {@endtemplate}
+  /// {@macro flutter.cupertino.materialApp.scrollBehavior}
   ///
   /// When null, defaults to [MaterialScrollBehavior].
   ///
@@ -831,7 +824,7 @@ class MaterialApp extends StatefulWidget {
   /// </small>
   /// {@endtemplate}
   ///
-  /// {@example /example/lib/app/app.0.dart}
+  /// {@example /example/lib/app/app.0.dart#body}
   ///
   /// </callout-box>
   final AnimationStyle? themeAnimationStyle;

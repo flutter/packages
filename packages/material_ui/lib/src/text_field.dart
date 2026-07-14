@@ -99,12 +99,7 @@ class _TextFieldSelectionGestureDetectorBuilder extends TextSelectionGestureDete
 /// To integrate the [TextField] into a [Form] with other [FormField] widgets,
 /// consider using [TextFormField].
 ///
-/// {@template flutter.material.textfield.wantKeepAlive}
-/// When the widget has focus, it will prevent itself from disposing via its
-/// underlying [EditableText]'s [AutomaticKeepAliveClientMixin.wantKeepAlive] in
-/// order to avoid losing the selection. Removing the focus will allow it to be
-/// disposed.
-/// {@endtemplate}
+/// {@macro flutter.cupertino.textfield.wantKeepAlive}
 ///
 /// Remember to call [TextEditingController.dispose] on the [TextEditingController]
 /// when it is no longer needed. This will ensure we discard any resources used
@@ -127,7 +122,7 @@ class _TextFieldSelectionGestureDetectorBuilder extends TextSelectionGestureDete
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/text_field/text_field.0.dart}
+/// {@example /example/lib/text_field/text_field.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -146,7 +141,7 @@ class _TextFieldSelectionGestureDetectorBuilder extends TextSelectionGestureDete
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/text_field/text_field.1.dart}
+/// {@example /example/lib/text_field/text_field.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -185,7 +180,7 @@ class _TextFieldSelectionGestureDetectorBuilder extends TextSelectionGestureDete
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/text_field/text_field.2.dart}
+/// {@example /example/lib/text_field/text_field.2.dart#body}
 ///
 /// </callout-box>
 ///
@@ -207,7 +202,7 @@ class _TextFieldSelectionGestureDetectorBuilder extends TextSelectionGestureDete
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/text_field/text_field.3.dart}
+/// {@example /example/lib/text_field/text_field.3.dart#body}
 ///
 /// </callout-box>
 ///
@@ -396,7 +391,7 @@ class TextField extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/text_field/text_field_magnifier.0.dart}
+  /// {@example /example/lib/text_field/text_field_magnifier.0.dart#body}
   ///
   /// </callout-box>
   final TextMagnifierConfiguration? magnifierConfiguration;
@@ -490,7 +485,7 @@ class TextField extends StatefulWidget {
   /// {@macro flutter.widgets.editableText.textAlign}
   final TextAlign textAlign;
 
-  /// {@macro flutter.material.InputDecorator.textAlignVertical}
+  /// {@macro flutter.cupertino.InputDecorator.textAlignVertical}
   final TextAlignVertical? textAlignVertical;
 
   /// {@macro flutter.widgets.editableText.textDirection}
@@ -739,26 +734,7 @@ class TextField extends StatefulWidget {
   /// {@macro flutter.widgets.editableText.selectionEnabled}
   bool get selectionEnabled => enableInteractiveSelection;
 
-  /// {@template flutter.material.textfield.onTap}
-  /// Called for the first tap in a series of taps.
-  ///
-  /// The text field builds a [GestureDetector] to handle input events like tap,
-  /// to trigger focus requests, to move the caret, adjust the selection, etc.
-  /// Handling some of those events by wrapping the text field with a competing
-  /// GestureDetector is problematic.
-  ///
-  /// To unconditionally handle taps, without interfering with the text field's
-  /// internal gesture detector, provide this callback.
-  ///
-  /// If the text field is created with [enabled] false, taps will not be
-  /// recognized.
-  ///
-  /// To be notified when the text field gains or loses the focus, provide a
-  /// [focusNode] and add a listener to that.
-  ///
-  /// To listen to arbitrary pointer events without competing with the
-  /// text field's internal gesture detector, use a [Listener].
-  /// {@endtemplate}
+  /// {@macro flutter.cupertino.textfield.onTap}
   ///
   /// If [onTapAlwaysCalled] is enabled, this will also be called for consecutive
   /// taps.
@@ -785,7 +761,7 @@ class TextField extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/text_field/text_field_tap_region.0.dart}
+  /// {@example /example/lib/text_field/text_field_tap_region.0.dart#body}
   ///
   /// </callout-box>
   ///
@@ -863,28 +839,12 @@ class TextField extends StatefulWidget {
   /// {@macro flutter.services.AutofillConfiguration.autofillHints}
   final Iterable<String>? autofillHints;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// Defaults to [Clip.hardEdge].
   final Clip clipBehavior;
 
-  /// {@template flutter.material.textfield.restorationId}
-  /// Restoration ID to save and restore the state of the text field.
-  ///
-  /// If non-null, the text field will persist and restore its current scroll
-  /// offset and - if no [controller] has been provided - the content of the
-  /// text field. If a [controller] has been provided, it is the responsibility
-  /// of the owner of that controller to persist and restore it, e.g. by using
-  /// a [RestorableTextEditingController].
-  ///
-  /// The state of this widget is persisted in a [RestorationBucket] claimed
-  /// from the surrounding [RestorationScope] using the provided restoration ID.
-  ///
-  /// See also:
-  ///
-  ///  * [RestorationManager], which explains how state restoration works in
-  ///    Flutter.
-  /// {@endtemplate}
+  /// {@macro flutter.cupertino.textfield.restorationId}
   final String? restorationId;
 
   /// {@macro flutter.widgets.editableText.scribbleEnabled}

@@ -223,7 +223,7 @@ bool _isInAccessibilityMode(BuildContext context) {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/dialog/cupertino_alert_dialog.0.dart}
+/// {@example /example/lib/dialog/cupertino_alert_dialog.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -289,10 +289,21 @@ class CupertinoAlertDialog extends StatefulWidget {
   ///    section when it is long.
   final ScrollController? actionScrollController;
 
-  /// {@macro flutter.material.dialog.insetAnimationDuration}
+  /// {@template flutter.cupertino.dialog.insetAnimationDuration}
+  /// The duration of the animation to show when the system keyboard intrudes
+  /// into the space that the dialog is placed in.
+  ///
+  /// Defaults to 100 milliseconds when [Dialog] is used, and [Duration.zero]
+  /// when [Dialog.fullscreen] is used.
+  /// {@endtemplate}
   final Duration insetAnimationDuration;
 
-  /// {@macro flutter.material.dialog.insetAnimationCurve}
+  /// {@template flutter.cupertino.dialog.insetAnimationCurve}
+  /// The curve to use for the animation shown when the system keyboard intrudes
+  /// into the space that the dialog is placed in.
+  ///
+  /// Defaults to [Curves.decelerate].
+  /// {@endtemplate}
   final Curve insetAnimationCurve;
 
   @override
@@ -533,7 +544,7 @@ class _CupertinoAlertDialogState extends State<CupertinoAlertDialog> {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/dialog/cupertino_popup_surface.0.dart}
+/// {@example /example/lib/dialog/cupertino_popup_surface.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1074,7 +1085,7 @@ class _ActionSheetGestureDetector extends StatelessWidget {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/dialog/cupertino_action_sheet.0.dart}
+/// {@example /example/lib/dialog/cupertino_action_sheet.0.dart#body}
 ///
 /// </callout-box>
 ///

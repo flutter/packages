@@ -352,7 +352,7 @@ class _SegmentSeparatorState extends State<_SegmentSeparator>
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/segmented_control/cupertino_sliding_segmented_control.0.dart}
+/// {@example /example/lib/segmented_control/cupertino_sliding_segmented_control.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -522,7 +522,7 @@ class CupertinoSlidingSegmentedControl<T extends Object> extends StatefulWidget 
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro cupertino_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/segmented_control/cupertino_sliding_segmented_control.0.dart}
+  /// {@example /example/lib/segmented_control/cupertino_sliding_segmented_control.0.dart#body}
   ///
   /// </callout-box>
   final bool isMomentary;
