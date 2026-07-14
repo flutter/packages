@@ -29,14 +29,14 @@
 // The following outputs the generated Dart code to the console as a dry run:
 //
 // ```
-// dart dev/tools/localization/bin/gen_localizations.dart
+// dart script/l10n/bin/gen_localizations.dart
 // ```
 //
 // If you have removed localizations from the canonical localizations, then
 // add the '--remove-undefined' flag to also remove them from the other files.
 //
 // ```
-// dart dev/tools/localization/bin/gen_localizations.dart --remove-undefined
+// dart script/l10n/bin/gen_localizations.dart --remove-undefined
 // ```
 //
 // If the data looks good, use the `-w` or `--overwrite` option to overwrite the
@@ -45,7 +45,7 @@
 // packages/flutter_localizations/lib/l10n/:
 //
 // ```
-// dart dev/tools/localization/bin/gen_localizations.dart --overwrite
+// dart script/l10n/bin/gen_localizations.dart --overwrite
 // ```
 
 import 'dart:io';

@@ -15,7 +15,7 @@
 // Run this program from the root of the git repository.
 //
 // ```
-// dart dev/tools/localization/bin/gen_missing_localizations.dart
+// dart script/l10n/bin/gen_missing_localizations.dart
 // ```
 
 import 'dart:convert';
@@ -25,6 +25,8 @@ import 'package:l10n/localizations_utils.dart';
 import 'package:l10n/localizations_validator.dart';
 
 import 'package:path/path.dart' as path;
+
+// ignore_for_file: avoid_print
 
 Future<void> main(List<String> rawArgs) async {
   var removeUndefined = false;
@@ -140,7 +142,6 @@ void updateMissingResources(
             return found;
           });
           if (shouldWrite) {
-            // ignore: avoid_print
             print('Updating $entityPath by removing extra entries for $extraResources');
           }
         }
@@ -161,7 +162,6 @@ void updateMissingResources(
             ),
           );
           shouldWrite = true;
-          // ignore: avoid_print
           print('Updating $entityPath with missing entries for $missingResources');
         }
         if (shouldWrite) {
