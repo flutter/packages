@@ -2,18 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.15
 
 import 'color_role.dart';
 import 'shape_struct.dart';
+import 'typescale_struct.dart';
 
 class TokenPlainTooltip {
   /// md.comp.plain-tooltip.container.color
   static const TokenColorRole containerColor = TokenColorRole.inverseSurface;
-
-  /// md.comp.plain-tooltip.supporting-text.color
-  static const TokenColorRole supportingTextColor =
-      TokenColorRole.inverseOnSurface;
 
   /// md.comp.plain-tooltip.container.shape
   static const ShapeStruct containerShape = ShapeStruct(
@@ -24,21 +21,16 @@ class TokenPlainTooltip {
     bottomRight: 4.00,
   );
 
-  /// md.comp.plain-tooltip.supporting-text.type
-  static const double supportingTextTypeFontSize = 12.00;
+  /// md.comp.plain-tooltip.supporting-text.color
+  static const TokenColorRole supportingTextColor =
+      TokenColorRole.inverseOnSurface;
 
   /// md.comp.plain-tooltip.supporting-text.type
-  static const double supportingTextTypeFontWeight = 400;
-
-  /// md.comp.plain-tooltip.supporting-text.type
-  static const double supportingTextTypeLineHeight = 16.00;
-
-  /// md.comp.plain-tooltip.supporting-text.type
-  static const double supportingTextTypeLetterSpacing = 0.40;
-
-  /// md.comp.plain-tooltip.supporting-text.type
-  static const String supportingTextTypeFontFamily = 'Roboto';
-
-  /// md.comp.plain-tooltip.supporting-text.font
-  static const String supportingTextFont = 'Roboto';
+  static const TypescaleStruct supportingTextType = TypescaleStruct(
+    fontFamily: 'Roboto',
+    fontSize: 12.00,
+    fontWeight: 400,
+    lineHeight: 16.00,
+    letterSpacing: 0.40,
+  );
 }

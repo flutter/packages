@@ -2,17 +2,20 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 36.0.6
+// Version: 38.0.15
 
 import 'color_role.dart';
 import 'shape_struct.dart';
 
 class TokenMenu {
-  /// md.comp.menu.container.shadow-color
-  static const TokenColorRole containerShadowColor = TokenColorRole.shadow;
+  /// md.comp.menu.container.color
+  static const TokenColorRole containerColor = TokenColorRole.surfaceContainer;
 
   /// md.comp.menu.container.elevation
   static const double containerElevation = 3.00;
+
+  /// md.comp.menu.container.shadow-color
+  static const TokenColorRole containerShadowColor = TokenColorRole.shadow;
 
   /// md.comp.menu.container.shape
   static const ShapeStruct containerShape = ShapeStruct(
@@ -22,7 +25,4 @@ class TokenMenu {
     bottomLeft: 4.00,
     bottomRight: 4.00,
   );
-
-  /// md.comp.menu.container.color
-  static const TokenColorRole containerColor = TokenColorRole.surfaceContainer;
 }
