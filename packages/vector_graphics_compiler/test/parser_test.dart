@@ -414,6 +414,34 @@ ${[for (var i = 2; i <= 30; i++) '    <pattern id="lvl$i" width="10" height="10"
     ]);
   });
 
+  test('Non-standard font-weight="regular" falls back to normal', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <text x="10" y="20" font-size="12" font-weight="regular">Regular text</text>
+</svg>''');
+
+    expect(instructions.text.single.fontWeight, FontWeight.w400);
+  });
+
+  test('Unrecognized font-weight falls back to normal', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <text x="10" y="20" font-size="12" font-weight="wobbly">Some text</text>
+</svg>''');
+
+    expect(instructions.text.single.fontWeight, FontWeight.w400);
+  });
+
+  test('Unrecognized font-weight throws when warnings are errors', () {
+    expect(
+      () => parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <text x="10" y="20" font-size="12" font-weight="wobbly">Some text</text>
+</svg>''', warningsAsErrors: true),
+      throwsStateError,
+    );
+  });
+
   test('Fill rule inheritence', () {
     final VectorInstructions instructions = parseWithoutOptimizers(inheritFillRule);
 

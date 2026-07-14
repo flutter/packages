@@ -1295,6 +1295,10 @@ class SvgParser {
   }
 
   /// Parse the raw font weight string.
+  ///
+  /// An unrecognized value falls back to [normalFontWeight] with a warning,
+  /// following the CSS behavior of ignoring an invalid `font-weight`, or throws
+  /// a [StateError] when warnings are treated as errors.
   FontWeight? parseFontWeight(String? fontWeight) {
     if (fontWeight == null) {
       return null;
@@ -1325,7 +1329,12 @@ class SvgParser {
         return FontWeight.w900;
     }
 
-    throw StateError('Invalid "font-weight": $fontWeight');
+    final errorMessage = 'Invalid "font-weight": $fontWeight';
+    if (_warningsAsErrors) {
+      throw StateError(errorMessage);
+    }
+    print('Warning: $errorMessage. Defaulting to normal.');
+    return normalFontWeight;
   }
 
   /// Converts a SVG Color String (either a # prefixed color string or a named color) to a [Color].
