@@ -103,7 +103,7 @@ import 'constants.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/tab_controller/tab_controller.1.dart}
+/// {@example /example/lib/tab_controller/tab_controller.1.dart#body}
 ///
 /// </callout-box>
 ///

@@ -51,7 +51,7 @@ const Duration _kExpand = Duration(milliseconds: 200);
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/expansion_tile/expansion_tile.1.dart}
+/// {@example /example/lib/expansion_tile/expansion_tile.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -101,7 +101,7 @@ typedef ExpansionTileController = ExpansibleController;
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/expansion_tile/expansion_tile.0.dart}
+/// {@example /example/lib/expansion_tile/expansion_tile.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -114,7 +114,7 @@ typedef ExpansionTileController = ExpansibleController;
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/expansion_tile/expansion_tile.1.dart}
+/// {@example /example/lib/expansion_tile/expansion_tile.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -400,7 +400,7 @@ class ExpansionTile extends StatefulWidget {
   ///   [ExpansionTileThemeData].
   final ShapeBorder? collapsedShape;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// If this is not null and a custom collapsed or expanded shape is provided,
   /// the value of [clipBehavior] will be used to clip the expansion tile.
@@ -497,7 +497,7 @@ class ExpansionTile extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/expansion_tile/expansion_tile.2.dart}
+  /// {@example /example/lib/expansion_tile/expansion_tile.2.dart#body}
   ///
   /// </callout-box>
   final AnimationStyle? expansionAnimationStyle;

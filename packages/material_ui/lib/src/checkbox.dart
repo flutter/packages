@@ -52,7 +52,7 @@ enum _CheckboxType { material, adaptive }
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/checkbox/checkbox.0.dart}
+/// {@example /example/lib/checkbox/checkbox.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -64,7 +64,7 @@ enum _CheckboxType { material, adaptive }
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/checkbox/checkbox.1.dart}
+/// {@example /example/lib/checkbox/checkbox.1.dart#body}
 ///
 /// </callout-box>
 ///

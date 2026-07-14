@@ -421,7 +421,7 @@ class DataCell {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/data_table/data_table.0.dart}
+/// {@example /example/lib/data_table/data_table.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -435,7 +435,7 @@ class DataCell {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/data_table/data_table.1.dart}
+/// {@example /example/lib/data_table/data_table.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -781,7 +781,7 @@ class DataTable extends StatelessWidget {
   /// The style to use when painting the boundary and interior divisions of the table.
   final TableBorder? border;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// This can be used to clip the content within the border of the [DataTable].
   ///

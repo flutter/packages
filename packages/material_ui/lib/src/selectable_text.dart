@@ -93,7 +93,7 @@ class _SelectableTextSelectionGestureDetectorBuilder extends TextSelectionGestur
 /// behavior is useful, for example, to make the text bold while using the
 /// default font family and size.
 ///
-/// {@macro flutter.material.textfield.wantKeepAlive}
+/// {@macro flutter.cupertino.textfield.wantKeepAlive}
 ///
 /// <callout-box>
 ///

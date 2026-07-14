@@ -1,8 +1,15 @@
-## 2.13.0 
+## 2.14.0 
 
 * Adds video quality selection support for HLS/DASH adaptive streams via
   `getVideoTracks()`, `selectVideoTrack()`, and
   `isVideoTrackSupportAvailable()` methods.
+  
+## 2.13.0
+
+* Adds `preventsDisplaySleepDuringVideoPlayback` to `VideoPlayerOptions` and
+  `VideoPlayerValue`, and `setPreventsDisplaySleepDuringVideoPlayback` to
+  `VideoPlayerController`, to control whether the display sleeps during playback
+  on iOS and macOS.
 
 ## 2.12.0
 

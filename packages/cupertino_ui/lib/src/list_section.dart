@@ -159,7 +159,7 @@ enum CupertinoListSectionType {
 /// The [backgroundColor] of the section defaults to
 /// [CupertinoColors.systemGroupedBackground].
 ///
-/// {@macro flutter.material.Material.clipBehavior}
+/// {@macro flutter.cupertino.Material.clipBehavior}
 ///
 /// <callout-box>
 ///
@@ -170,7 +170,7 @@ enum CupertinoListSectionType {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/list_section/list_section_base.0.dart}
+/// {@example /example/lib/list_section/list_section_base.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -184,7 +184,7 @@ enum CupertinoListSectionType {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/list_section/list_section_inset.0.dart}
+/// {@example /example/lib/list_section/list_section_inset.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -241,7 +241,7 @@ class CupertinoListSection extends StatelessWidget {
   /// The [topMargin] is used to specify the margin above the list section. It
   /// matches the iOS look by default.
   ///
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   const CupertinoListSection({
     super.key,
     this.children,
@@ -305,7 +305,7 @@ class CupertinoListSection extends StatelessWidget {
   /// widgets contain leading or not. Used for calculating correct starting
   /// margin for the divider between rows.
   ///
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   const CupertinoListSection.insetGrouped({
     super.key,
     this.children,
@@ -378,7 +378,7 @@ class CupertinoListSection extends StatelessWidget {
   /// Defaults to [CupertinoColors.systemGroupedBackground].
   final Color backgroundColor;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// Defaults to [Clip.hardEdge].
   final Clip clipBehavior;

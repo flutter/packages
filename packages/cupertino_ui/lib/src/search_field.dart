@@ -47,7 +47,7 @@ const double _kMaxPrefixIconSize = 30.0;
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/search_field/cupertino_search_field.0.dart}
+/// {@example /example/lib/search_field/cupertino_search_field.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -64,7 +64,7 @@ const double _kMaxPrefixIconSize = 30.0;
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/search_field/cupertino_search_field.1.dart}
+/// {@example /example/lib/search_field/cupertino_search_field.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -284,7 +284,7 @@ class CupertinoSearchTextField extends StatefulWidget {
   /// necessarily clearing text.
   final VoidCallback? onSuffixTap;
 
-  /// {@macro flutter.material.textfield.restorationId}
+  /// {@macro flutter.cupertino.textfield.restorationId}
   final String? restorationId;
 
   /// {@macro flutter.widgets.Focus.focusNode}
@@ -293,7 +293,7 @@ class CupertinoSearchTextField extends StatefulWidget {
   /// {@macro flutter.widgets.editableText.autofocus}
   final bool autofocus;
 
-  /// {@macro flutter.material.textfield.onTap}
+  /// {@macro flutter.cupertino.textfield.onTap}
   final VoidCallback? onTap;
 
   /// Whether to enable autocorrection.
