@@ -64,6 +64,7 @@ jobs:
           persist-credentials: false
       - name: Create batch release PR
         run: |
+          gh auth setup-git
           gh pr create \
             --base "${NEEDS_CREATE_BATCH_RELEASE_BRANCH_OUTPUTS_RELEASE_BRANCH}" \
             --head "${HEAD_BRANCH_NAME}" \
