@@ -11,8 +11,6 @@ import UIKit
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    GeneratedPluginRegistrant.register(with: self)
-
     weak var registrar = self.registrar(forPlugin: "DummyPlatform")
 
     let factory = DummyPlatformViewFactory(messenger: registrar!.messenger())
