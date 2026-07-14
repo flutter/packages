@@ -295,7 +295,7 @@ class CupertinoSheetTransition extends StatefulWidget {
   /// The gap between the top of the screen and the top of the sheet as a ratio
   /// of the screen height.
   ///
-  ///{@template flutter.cupertino.CupertinoSheetTransition.topGap}
+  ///{@template cupertino_ui.CupertinoSheetTransition.topGap}
   /// This value should be between 0.0 and 0.9, where 0.0 means no gap (sheet
   /// extends to the top of the screen) and 0.9 means the sheet covers only the
   /// bottom 10% of the screen. A value of 0.08 represents 8% of the screen height.
@@ -861,7 +861,7 @@ mixin _CupertinoSheetRouteTransitionMixin<T> on PageRoute<T> {
   /// The gap between the top of the screen and the top of the sheet as a ratio
   /// of the screen height.
   ///
-  /// {@macro flutter.cupertino.CupertinoSheetTransition.topGap}
+  /// {@macro cupertino_ui.CupertinoSheetTransition.topGap}
   double get topGap;
 
   /// Whether a custom top gap has been set.

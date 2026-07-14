@@ -128,25 +128,25 @@ class PopupMenuDivider extends PopupMenuEntry<Never> {
 
   /// The thickness of the line drawn within the [PopupMenuDivider].
   ///
-  /// {@macro flutter.material.Divider.thickness}
+  /// {@macro material_ui.Divider.thickness}
   final double? thickness;
 
   /// The amount of empty space to the leading edge of the [PopupMenuDivider].
   ///
-  /// {@macro flutter.material.Divider.indent}
+  /// {@macro material_ui.Divider.indent}
   final double? indent;
 
   /// The amount of empty space to the trailing edge of the [PopupMenuDivider].
   ///
-  /// {@macro flutter.material.Divider.endIndent}
+  /// {@macro material_ui.Divider.endIndent}
   final double? endIndent;
 
   /// The amount of radius for the border of the [PopupMenuDivider].
   ///
-  /// {@macro flutter.material.Divider.radius}
+  /// {@macro material_ui.Divider.radius}
   final BorderRadiusGeometry? radius;
 
-  /// {@macro flutter.material.Divider.color}
+  /// {@macro material_ui.Divider.color}
   ///
   /// <callout-box>
   ///
@@ -340,7 +340,7 @@ class PopupMenuItem<T> extends PopupMenuEntry<T> {
   /// the [ColorScheme.onSurface] color with 0.38 opacity when the popup menu item is disabled.
   final WidgetStateProperty<TextStyle?>? labelTextStyle;
 
-  /// {@template flutter.material.popupmenu.mouseCursor}
+  /// {@template material_ui.popupmenu.mouseCursor}
   /// The cursor for a mouse pointer when it enters or is hovering over the
   /// widget.
   ///
@@ -1567,7 +1567,7 @@ class PopupMenuButton<T> extends StatefulWidget {
   /// over the button that was used to create it.
   final PopupMenuPosition? position;
 
-  /// {@macro flutter.cupertino.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// The [clipBehavior] argument is used the clip shape of the menu.
   ///

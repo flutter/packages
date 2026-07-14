@@ -97,7 +97,7 @@ class CupertinoTextSelectionToolbar extends StatelessWidget {
     this.toolbarBuilder = _defaultToolbarBuilder,
   }) : assert(children.length > 0);
 
-  /// {@template flutter.cupertino.TextSelectionToolbar.anchorAbove}
+  /// {@template cupertino_ui.TextSelectionToolbar.anchorAbove}
   /// The focal point above which the toolbar attempts to position itself.
   ///
   /// If there is not enough room above before reaching the top of the screen,
@@ -105,13 +105,13 @@ class CupertinoTextSelectionToolbar extends StatelessWidget {
   /// {@endtemplate}
   final Offset anchorAbove;
 
-  /// {@template flutter.cupertino.TextSelectionToolbar.anchorBelow}
+  /// {@template cupertino_ui.TextSelectionToolbar.anchorBelow}
   /// The focal point below which the toolbar attempts to position itself, if it
   /// doesn't fit above [anchorAbove].
   /// {@endtemplate}
   final Offset anchorBelow;
 
-  /// {@template flutter.cupertino.TextSelectionToolbar.children}
+  /// {@template cupertino_ui.TextSelectionToolbar.children}
   /// The children that will be displayed in the text selection toolbar.
   ///
   /// Typically these are buttons.
@@ -124,7 +124,7 @@ class CupertinoTextSelectionToolbar extends StatelessWidget {
   ///     Cupertino-style text selection toolbar text button.
   final List<Widget> children;
 
-  /// {@template flutter.cupertino.TextSelectionToolbar.toolbarBuilder}
+  /// {@template cupertino_ui.TextSelectionToolbar.toolbarBuilder}
   /// Builds the toolbar container.
   ///
   /// Useful for customizing the high-level background of the toolbar. The given

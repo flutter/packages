@@ -99,7 +99,7 @@ class _TextFieldSelectionGestureDetectorBuilder extends TextSelectionGestureDete
 /// To integrate the [TextField] into a [Form] with other [FormField] widgets,
 /// consider using [TextFormField].
 ///
-/// {@macro flutter.cupertino.textfield.wantKeepAlive}
+/// {@macro cupertino_ui.textfield.wantKeepAlive}
 ///
 /// Remember to call [TextEditingController.dispose] on the [TextEditingController]
 /// when it is no longer needed. This will ensure we discard any resources used
@@ -485,7 +485,7 @@ class TextField extends StatefulWidget {
   /// {@macro flutter.widgets.editableText.textAlign}
   final TextAlign textAlign;
 
-  /// {@macro flutter.cupertino.InputDecorator.textAlignVertical}
+  /// {@macro cupertino_ui.InputDecorator.textAlignVertical}
   final TextAlignVertical? textAlignVertical;
 
   /// {@macro flutter.widgets.editableText.textDirection}
@@ -734,7 +734,7 @@ class TextField extends StatefulWidget {
   /// {@macro flutter.widgets.editableText.selectionEnabled}
   bool get selectionEnabled => enableInteractiveSelection;
 
-  /// {@macro flutter.cupertino.textfield.onTap}
+  /// {@macro cupertino_ui.textfield.onTap}
   ///
   /// If [onTapAlwaysCalled] is enabled, this will also be called for consecutive
   /// taps.
@@ -839,12 +839,12 @@ class TextField extends StatefulWidget {
   /// {@macro flutter.services.AutofillConfiguration.autofillHints}
   final Iterable<String>? autofillHints;
 
-  /// {@macro flutter.cupertino.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defaults to [Clip.hardEdge].
   final Clip clipBehavior;
 
-  /// {@macro flutter.cupertino.textfield.restorationId}
+  /// {@macro cupertino_ui.textfield.restorationId}
   final String? restorationId;
 
   /// {@macro flutter.widgets.editableText.scribbleEnabled}
