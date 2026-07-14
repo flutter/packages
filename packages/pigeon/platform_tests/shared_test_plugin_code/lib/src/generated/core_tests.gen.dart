@@ -937,6 +937,7 @@ class TestMessage {
 
 class AnEmptyClass {
   AnEmptyClass();
+
   List<Object?> _toList() {
     return <Object?>[];
   }

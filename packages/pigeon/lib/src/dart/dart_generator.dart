@@ -226,8 +226,8 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         return;
       }
       _writeConstructor(indent, classDefinition);
+      indent.newln();
       if (classDefinition.fields.isNotEmpty) {
-        indent.newln();
         for (final NamedType field in getFieldsInSerializationOrder(classDefinition)) {
           addDocumentationComments(indent, field.documentationComments, docCommentSpec);
 

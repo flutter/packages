@@ -590,6 +590,7 @@ class ClassEvent extends PlatformEvent {
 
 class EmptyEvent extends PlatformEvent {
   EmptyEvent();
+
   List<Object?> _toList() {
     return <Object?>[];
   }
