@@ -95,4 +95,4 @@ jobs:
       env:
         PUB_CREDENTIALS: "${{ secrets.PUB_CREDENTIALS }}"
         INPUTS_BRANCH_NAME: "${{ inputs.branch-name }}"
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

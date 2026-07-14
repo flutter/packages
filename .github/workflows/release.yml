@@ -71,4 +71,4 @@ jobs:
         dart ./script/tool/lib/src/main.dart publish --all-changed --base-sha=HEAD~ --skip-confirmation --remote=origin
       env:
         PUB_CREDENTIALS: "${{ secrets.PUB_CREDENTIALS }}"
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

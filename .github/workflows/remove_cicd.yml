@@ -57,7 +57,7 @@ jobs:
             echo "Result: Label added at $LABEL_TIME is newer than or same as push at $PUSH_TIME. Skipping removal."
           fi
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
           GITHUB_EVENT_PULL_REQUEST_UPDATED_AT: ${{ github.event.pull_request.updated_at }}
           GITHUB_EVENT_REPOSITORY_NAME: ${{ github.event.repository.name }}
 
@@ -66,4 +66,4 @@ jobs:
         run: |
           gh pr edit ${{ github.event.pull_request.number }} -R ${{ github.repository }} --remove-label "CICD"
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
