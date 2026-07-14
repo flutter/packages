@@ -1,6 +1,5 @@
-## 1.1.4
+## NEXT
 
-* Migrate the iOS example to UIScene
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 1.1.3

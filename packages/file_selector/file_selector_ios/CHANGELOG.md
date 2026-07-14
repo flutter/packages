@@ -1,7 +1,3 @@
-## 0.5.3+6
-
-* Migrate the iOS example to UIScene
-
 ## 0.5.3+5
 
 * Improves compatibility with `UIScene`.

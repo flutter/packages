@@ -1,7 +1,3 @@
-## 17.3.1
-
-- Migrate the iOS example to UIScene
-
 ## 17.3.0
 
 - Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.

@@ -1,7 +1,3 @@
-## 0.3.0+17
-
-* Migrate the iOS example to UIScene
-
 ## 0.3.0+16
 
 * Bumps the androidx group across 10 directories with 1 update.

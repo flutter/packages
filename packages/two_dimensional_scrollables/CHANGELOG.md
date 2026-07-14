@@ -1,7 +1,3 @@
-## 0.5.4
-
-* Migrate the iOS example to UIScene
-
 ## 0.5.3
 
 * Fixes hit testing for `TreeView` row content and gestures after horizontal scrolling.

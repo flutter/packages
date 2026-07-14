@@ -1,7 +1,3 @@
-## 0.8.13+7
-
-* Migrate the iOS example to UIScene
-
 ## 0.8.13+6
 
 * Replaces deprecated `kUTTypeGIF` with `UTTypeGIF` to fix iOS 15+ deprecation warnings.
