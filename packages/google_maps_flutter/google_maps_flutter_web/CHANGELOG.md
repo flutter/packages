@@ -1,6 +1,6 @@
 ## 0.6.3
 
-* Add support for my location button.
+* Adds support for my location button.
 
 ## 0.6.2+3
 
