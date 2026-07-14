@@ -51,7 +51,7 @@ class LegacySharedPreferencesTest {
     val flutterData: Map<String, Any> = plugin.getAll("flutter.", null)
 
     assertEquals(5, flutterData.size)
-    assertEquals("Java", flutterData["flutter.Language"])
+    assertEquals("Kotlin", flutterData["flutter.Language"])
     assertEquals(0L, flutterData["flutter.Counter"])
     assertEquals(3.14, flutterData["flutter.Pie"])
     assertEquals(listOf("Flutter", "Dart").toString(), flutterData["flutter.Names"])
@@ -73,13 +73,13 @@ class LegacySharedPreferencesTest {
     var allData: Map<String, Any> = plugin.getAll("flutter.", allowList)
 
     assertEquals(1, allData.size)
-    assertEquals("Java", allData["flutter.Language"])
+    assertEquals("Kotlin", allData["flutter.Language"])
     assertNull(allData["flutter.Counter"])
 
     allData = plugin.getAll("", allowList)
 
     assertEquals(1, allData.size)
-    assertEquals("Java", allData["flutter.Language"])
+    assertEquals("Kotlin", allData["flutter.Language"])
     assertNull(allData["flutter.Counter"])
 
     allData = plugin.getAll("prefix.", allowList)
@@ -91,7 +91,7 @@ class LegacySharedPreferencesTest {
   @Test
   fun setString() {
     val key = "language"
-    val value = "Java"
+    val value = "Kotlin"
     plugin.setString(key, value)
     val flutterData: Map<String, Any> = plugin.getAll("", null)
     assertEquals(value, flutterData[key])
@@ -177,17 +177,17 @@ class LegacySharedPreferencesTest {
   }
 
   private fun addData() {
-    plugin.setString("Language", "Java")
+    plugin.setString("Language", "Kotlin")
     plugin.setInt("Counter", 0L)
     plugin.setDouble("Pie", 3.14)
     plugin.setEncodedStringList("Names", listOf("Flutter", "Dart").toString())
     plugin.setBool("NewToFlutter", false)
-    plugin.setString("flutter.Language", "Java")
+    plugin.setString("flutter.Language", "Kotlin")
     plugin.setInt("flutter.Counter", 0L)
     plugin.setDouble("flutter.Pie", 3.14)
     plugin.setEncodedStringList("flutter.Names", listOf("Flutter", "Dart").toString())
     plugin.setBool("flutter.NewToFlutter", false)
-    plugin.setString("prefix.Language", "Java")
+    plugin.setString("prefix.Language", "Kotlin")
     plugin.setInt("prefix.Counter", 0L)
     plugin.setDouble("prefix.Pie", 3.14)
     plugin.setEncodedStringList("prefix.Names", listOf("Flutter", "Dart").toString())
@@ -313,17 +313,17 @@ class LegacySharedPreferencesTest {
   companion object {
     private val data =
         mapOf<String, Any>(
-            "Language" to "Java",
+            "Language" to "Kotlin",
             "Counter" to 0L,
             "Pie" to 3.14,
             "Names" to listOf("Flutter", "Dart").toString(),
             "NewToFlutter" to false,
-            "flutter.Language" to "Java",
+            "flutter.Language" to "Kotlin",
             "flutter.Counter" to 0L,
             "flutter.Pie" to 3.14,
             "flutter.Names" to listOf("Flutter", "Dart").toString(),
             "flutter.NewToFlutter" to false,
-            "prefix.Language" to "Java",
+            "prefix.Language" to "Kotlin",
             "prefix.Counter" to 0L,
             "prefix.Pie" to 3.14,
             "prefix.Names" to listOf("Flutter", "Dart").toString(),
