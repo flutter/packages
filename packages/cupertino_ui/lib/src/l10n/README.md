@@ -192,7 +192,7 @@ you've added a new widget and it has a tooltip), follow these steps:
    ```
 
    Then you need to add new entries for the string to all of the other
-   language locale files by running:
+   language locale files by running the following from the repo root:
    ```
    dart script/l10n/bin/gen_missing_localizations.dart
    ```
@@ -200,14 +200,16 @@ you've added a new widget and it has a tooltip), follow these steps:
    until they can be translated.
 
    Finally you need to re-generate
-   lib/src/l10n/generated_cupertino_localizations.dart by running:
+   lib/src/l10n/generated_cupertino_localizations.dart by running the following
+   from the repo root:
    ```
    dart script/l10n/bin/gen_localizations.dart --overwrite
    ```
 
    If you got an error when running this command, [this issue](https://github.com/flutter/flutter/issues/104601) might be helpful.
 
-   TL;DR: If you got the same type of errors as discussed in the issue, run this instead:
+   TL;DR: If you got the same type of errors as discussed in the issue, run this
+   instead from the repo root:
    ```
    dart script/l10n/bin/gen_localizations.dart --overwrite --remove-undefined
    ```
@@ -226,7 +228,9 @@ existing string in the CupertinoLocalizations objects, follow these steps:
 2. Update the .arb files. Modify the out-of-date English strings in
    `lib/src/l10n/cupertino_en.arb`.
 
-   You also need to re-generate `lib/src/l10n/generated_cupertino_localizations.dart` by running:
+   You also need to re-generate
+   `lib/src/l10n/generated_cupertino_localizations.dart` by running the
+   following from the repo root:
    ```
    dart script/l10n/bin/gen_localizations.dart --overwrite
    ```
@@ -244,13 +248,14 @@ existing string in the CupertinoLocalizations objects, follow these steps:
 All of the localizations are combined in a single file per library
 using the gen_localizations script.
 
-You can see what that script would generate by running:
+You can see what that script would generate by running the following from the
+repo root:
 
 ```dart
 dart script/l10n/bin/gen_localizations.dart
 ```
 
-Actually update the generated files with:
+Actually update the generated files with the following run from the repo root:
 
 ```dart
 dart script/l10n/bin/gen_localizations.dart --overwrite
