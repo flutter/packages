@@ -9,7 +9,7 @@ import io.flutter.embedding.engine.FlutterEngine
 
 // Extends FlutterActivity to make the FlutterEngine accessible for testing.
 class WebViewTestActivity : FlutterActivity() {
-  var engine: FlutterEngine? = null
+  @JvmField var engine: FlutterEngine? = null
 
   override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
     super.configureFlutterEngine(flutterEngine)

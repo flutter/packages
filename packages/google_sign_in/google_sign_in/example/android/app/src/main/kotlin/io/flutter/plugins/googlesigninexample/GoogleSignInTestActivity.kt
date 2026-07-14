@@ -9,7 +9,7 @@ import io.flutter.embedding.engine.FlutterEngine
 
 // Makes the FlutterEngine accessible for testing.
 class GoogleSignInTestActivity : FlutterActivity() {
-  var engine: FlutterEngine? = null
+  @JvmField var engine: FlutterEngine? = null
 
   override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
     super.configureFlutterEngine(flutterEngine)
