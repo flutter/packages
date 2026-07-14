@@ -2,7 +2,7 @@
 
 * Adds `requiresLocalizedReason` to determine if the current platform implementation
   requires a localized reason for authentication.
-* Make `localizedReason` parameter optional in `authenticate`.
+* Makes `localizedReason` parameter optional in `authenticate`.
 
 ## 2.0.9
 
