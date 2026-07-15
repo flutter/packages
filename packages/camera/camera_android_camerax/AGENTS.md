@@ -6,11 +6,11 @@ for making high quality contributions to the `camera_android_camerax` package.
 ## Architectural Overview
 
 The `camera_android_camerax` package is the Android platform implementation
-of the `camera` plugin, using the **Android Jetpack CameraX** library.
+of the (camera)[../camera] plugin, using the (**Android Jetpack CameraX**)[https://developer.android.com/jetpack/androidx/releases/camera] library.
 
 ### ProxyApi Binding System
 
-This plugin utilizes **Pigeon's ProxyApi** to bind Dart objects directly
+This plugin utilizes (**Pigeon's ProxyApi**)[../../pigeon] to bind Dart objects directly
 to native Android CameraX Java/Kotlin objects.
 
 - **Pigeon Definition**: The API surfaces are defined in
@@ -26,9 +26,9 @@ to native Android CameraX Java/Kotlin objects.
 
 ## Required Steps Before Making Any Changes
 
-Before making any changes, run the
+Before working, run the
 [check-readiness skill](.agents/skills/check-readiness/SKILL.md)
-to ensure your environment has all the required tooling.
+to ensure your environment has all the expected tooling.
 
 ## Required Steps After Making Any Changes
 
@@ -78,7 +78,7 @@ For more in-depth guidance on creating or updating mocks, refer to the
 
 ## Running Tests
 
-When you make a change, add a test if you can (either a Dart unit test,
+When you make a change, add a test if other similar code has tests(either a Dart unit test,
 Android native unit test, or a Flutter integration test). Regardless of
 whether you add a test or not, all tests must pass after you make changes.
 How to run the tests:
