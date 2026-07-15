@@ -53,7 +53,7 @@ void main() {
       testWidgets('shows dates for $locale', (WidgetTester tester) async {
         final expectedDaysOfWeek = testLocales[locale]!['expectedDaysOfWeek'] as List<String>;
         final expectedDaysOfMonth = testLocales[locale]!['expectedDaysOfMonth'] as List<String>;
-        // TODO(Piinks): Clean up this workaround after https://github.com/flutter/flutter/pull/188473 reaches stable
+        // TODO(Piinks): Clean up this workaround after https://github.com/flutter/flutter/pull/188473 reaches stable, https://github.com/flutter/flutter/issues/189528
         final expectedMonthYearHeaders =
             testLocales[locale]!['expectedMonthYearHeader'] as List<String>;
         final textDirection = testLocales[locale]!['textDirection'] as TextDirection;
@@ -71,7 +71,7 @@ void main() {
           textDirection: textDirection,
         );
 
-        // TODO(Piinks): Clean up this workaround after https://github.com/flutter/flutter/pull/188473 reaches stable
+        // TODO(Piinks): Clean up this workaround after https://github.com/flutter/flutter/pull/188473 reaches stable, https://github.com/flutter/flutter/issues/189528
         expect(
           find.byWidgetPredicate(
             (Widget widget) => widget is Text && expectedMonthYearHeaders.contains(widget.data),
