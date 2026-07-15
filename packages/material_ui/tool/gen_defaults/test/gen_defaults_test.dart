@@ -146,6 +146,8 @@ void main() {
           ),
         ),
       );
+    });
+
     test('AppBarTemplateM3 emits M3 AppBar defaults from app bar tokens', () {
       final String contents = const AppBarTemplateM3().generateContents('_AppBarDefaultsM3');
       expect(contents, contains('class _AppBarDefaultsM3 extends AppBarThemeData'));

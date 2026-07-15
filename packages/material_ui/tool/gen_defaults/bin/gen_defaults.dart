@@ -21,5 +21,5 @@ Future<void> main(List<String> args) async {
   final ArgResults argResults = parser.parse(args);
   // TODO(elliette): Add token logger when verbose flag is used.
   final verbose = argResults['verbose'] as bool;
-  const AppBarTemplate().generateFile(verbose: verbose);
+  const AppBarTemplateM3().generateFile(verbose: verbose);
 }

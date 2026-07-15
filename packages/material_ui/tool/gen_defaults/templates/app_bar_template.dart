@@ -8,8 +8,8 @@ import '../data/app_bar_medium.dart';
 import '../data/app_bar_small.dart';
 import 'template.dart';
 
-class AppBarTemplate extends M3TokenTemplate {
-  const AppBarTemplate();
+class AppBarTemplateM3 extends TokenTemplateM3 {
+  const AppBarTemplateM3();
 
   @override
   String get name => 'App Bar';

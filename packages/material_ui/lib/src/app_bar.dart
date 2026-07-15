@@ -34,7 +34,7 @@ import 'tabs.dart';
 import 'text_theme.dart';
 import 'theme.dart';
 
-part 'generated/app_bar_m3_defaults.g.dart';
+part 'generated/app_bar_defaults_m3.g.dart';
 
 // Examples can assume:
 // late String _logoAsset;
