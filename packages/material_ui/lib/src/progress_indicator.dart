@@ -88,7 +88,7 @@ abstract class ProgressIndicator extends StatefulWidget {
   /// for the given use case. See the subclass documentation for details.
   final Color? backgroundColor;
 
-  /// {@template flutter.progress_indicator.ProgressIndicator.color}
+  /// {@template material_ui.progress_indicator.ProgressIndicator.color}
   /// The progress indicator's color.
   ///
   /// This is only used if [ProgressIndicator.valueColor] is null.
@@ -106,7 +106,7 @@ abstract class ProgressIndicator extends StatefulWidget {
   /// is also null then it defaults to the current theme's [ColorScheme.primary].
   final Animation<Color?>? valueColor;
 
-  /// {@template flutter.progress_indicator.ProgressIndicator.semanticsLabel}
+  /// {@template material_ui.progress_indicator.ProgressIndicator.semanticsLabel}
   /// The [SemanticsProperties.label] for this progress indicator.
   ///
   /// This value indicates the purpose of the progress bar, and will be
@@ -115,7 +115,7 @@ abstract class ProgressIndicator extends StatefulWidget {
   /// {@endtemplate}
   final String? semanticsLabel;
 
-  /// {@template flutter.progress_indicator.ProgressIndicator.semanticsValue}
+  /// {@template material_ui.progress_indicator.ProgressIndicator.semanticsValue}
   /// The [SemanticsProperties.value] for this progress indicator.
   ///
   /// This will be used in conjunction with the [semanticsLabel] by
