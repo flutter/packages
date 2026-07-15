@@ -101,7 +101,6 @@ func sendEvents(_ eventListener: EventListener) {
     let api = PigeonApiImplementation()
     let binaryMessenger = engineBridge.applicationRegistrar.messenger()
     ExampleHostApiSetup.setUp(binaryMessenger: binaryMessenger, api: api)
-    let controller = self
     // #docregion swift-init-event
     let eventListener = EventListener()
     StreamEventsStreamHandler.register(with: binaryMessenger, streamHandler: eventListener)
