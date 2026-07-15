@@ -1,6 +1,6 @@
 ## 6.10.0
 
-* Adds `videoPlayerOptions` to `VideoCreationOptions` to allow platform implementations to receive per-player options at creation time.
+* Adds support for setting a preferred audio language during player creation via `VideoPlayerOptions preferredAudioLanguage`.
 
 ## 6.9.0
 
