@@ -7,4 +7,4 @@ package io.flutter.plugins.videoplayerexample
 import io.flutter.embedding.android.FlutterActivity
 
 /** Test Activity that sets the name of the Dart method entrypoint in the manifest. */
-class DriverExtensionActivity : FlutterActivity() {}
+class DriverExtensionActivity : FlutterActivity()
