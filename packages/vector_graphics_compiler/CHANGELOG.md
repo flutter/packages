@@ -1,10 +1,10 @@
 ## 1.3.0
 
-* An unrecognized `font-weight` value now falls back to normal weight with a
-  warning (and still throws when `warningsAsErrors` is set) instead of always
-  throwing, following the CSS behavior of ignoring an invalid `font-weight`.
-  This lets the compiler tolerate non-standard values such as `regular` emitted
-  by some SVG generators.
+* An unrecognized `font-weight` value is now ignored with a warning (and still
+  throws when `warningsAsErrors` is set) instead of always throwing. This
+  preserves an inherited weight, or the initial normal weight at the root, and
+  lets the compiler tolerate non-standard values such as `regular` emitted by
+  some SVG generators.
 
 ## 1.2.6
 
