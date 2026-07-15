@@ -25,27 +25,27 @@ void main() {
         'textDirection': TextDirection.ltr,
         'expectedDaysOfWeek': <String>['S', 'M', 'T', 'W', 'T', 'F', 'S'],
         'expectedDaysOfMonth': List<String>.generate(30, (int i) => '${i + 1}'),
-        'expectedMonthYearHeader': 'September 2017',
+        'expectedMonthYearHeader': <String>['September 2017'],
       },
       // Tests a different first day of week.
       const Locale('ru', 'RU'): <String, dynamic>{
         'textDirection': TextDirection.ltr,
         'expectedDaysOfWeek': <String>['В', 'П', 'В', 'С', 'Ч', 'П', 'С'],
         'expectedDaysOfMonth': List<String>.generate(30, (int i) => '${i + 1}'),
-        'expectedMonthYearHeader': 'сентябрь 2017\u202fг.',
+        'expectedMonthYearHeader': <String>['сентябрь 2017\u202fг.'],
       },
       const Locale('ro', 'RO'): <String, dynamic>{
         'textDirection': TextDirection.ltr,
         'expectedDaysOfWeek': <String>['D', 'L', 'M', 'M', 'J', 'V', 'S'],
         'expectedDaysOfMonth': List<String>.generate(30, (int i) => '${i + 1}'),
-        'expectedMonthYearHeader': 'septembrie 2017',
+        'expectedMonthYearHeader': <String>['septembrie 2017'],
       },
       // Tests RTL.
       const Locale('ar', 'AR'): <String, dynamic>{
         'textDirection': TextDirection.rtl,
         'expectedDaysOfWeek': <String>['ح', 'ن', 'ث', 'ر', 'خ', 'ج', 'س'],
         'expectedDaysOfMonth': List<String>.generate(30, (int i) => arabicNumbers.format(i + 1)),
-        'expectedMonthYearHeader': 'سبتمبر 2017',
+        'expectedMonthYearHeader': <String>['سبتمبر ٢٠١٧', 'سبتمبر 2017'],
       },
     };
 
@@ -53,7 +53,9 @@ void main() {
       testWidgets('shows dates for $locale', (WidgetTester tester) async {
         final expectedDaysOfWeek = testLocales[locale]!['expectedDaysOfWeek'] as List<String>;
         final expectedDaysOfMonth = testLocales[locale]!['expectedDaysOfMonth'] as List<String>;
-        final expectedMonthYearHeader = testLocales[locale]!['expectedMonthYearHeader'] as String;
+        // TODO(Piinks): Clean up this workaround after https://github.com/flutter/flutter/pull/188473 reaches stable, https://github.com/flutter/flutter/issues/189528
+        final expectedMonthYearHeaders =
+            testLocales[locale]!['expectedMonthYearHeader'] as List<String>;
         final textDirection = testLocales[locale]!['textDirection'] as TextDirection;
         final baseDate = DateTime(2017, 9, 27);
 
@@ -68,7 +70,14 @@ void main() {
           locale: locale,
           textDirection: textDirection,
         );
-        expect(find.text(expectedMonthYearHeader), findsOneWidget);
+
+        // TODO(Piinks): Clean up this workaround after https://github.com/flutter/flutter/pull/188473 reaches stable, https://github.com/flutter/flutter/issues/189528
+        expect(
+          find.byWidgetPredicate(
+            (Widget widget) => widget is Text && expectedMonthYearHeaders.contains(widget.data),
+          ),
+          findsOneWidget,
+        );
 
         for (final dayOfWeek in expectedDaysOfWeek) {
           expect(find.text(dayOfWeek), findsWidgets);
