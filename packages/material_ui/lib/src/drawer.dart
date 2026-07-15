@@ -96,8 +96,7 @@ const Duration _kBaseSettleDuration = Duration(milliseconds: 246);
 /// [NavigationDrawerDestination] widgets and/or customized widgets like headlines
 /// and dividers.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows how to create a [Scaffold] that contains an [AppBar] and
 /// a [Drawer]. A user taps the "menu" icon in the [AppBar] to open the
@@ -105,18 +104,25 @@ const Duration _kBaseSettleDuration = Duration(milliseconds: 246);
 /// The [Drawer] displays the four items using a [ListView], which allows the
 /// user to scroll through the items if need be.
 ///
-/// {@example /example/lib/drawer/drawer.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/drawer/drawer.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to migrate the above [Drawer] to a [NavigationDrawer].
 ///
-/// {@example /example/lib/navigation_drawer/navigation_drawer.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/navigation_drawer/navigation_drawer.0.dart#body}
+///
+/// </callout-box>
 ///
 /// An open drawer may be closed with a swipe to close gesture, pressing the
 /// escape key, by tapping the scrim, or by calling pop route function such as
@@ -244,7 +250,7 @@ class Drawer extends StatelessWidget {
   ///    value is used.
   final String? semanticLabel;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// The [clipBehavior] argument specifies how to clip the drawer's [shape].
   ///
@@ -422,8 +428,8 @@ class DrawerController extends StatefulWidget {
   /// The closest instance of [DrawerController] that encloses the given
   /// context, or null if none is found.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   /// Typical usage is as follows:
@@ -432,7 +438,7 @@ class DrawerController extends StatefulWidget {
   /// DrawerController? controller = DrawerController.maybeOf(context);
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// Calling this method will create a dependency on the closest
   /// [DrawerController] in the [context], if there is one.
@@ -454,8 +460,8 @@ class DrawerController extends StatefulWidget {
   /// Calling this method will create a dependency on the closest
   /// [DrawerController] in the [context].
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   /// Typical usage is as follows:
@@ -464,7 +470,7 @@ class DrawerController extends StatefulWidget {
   /// DrawerController controller = DrawerController.of(context);
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   static DrawerController of(BuildContext context) {
     final DrawerController? controller = maybeOf(context);
     assert(() {

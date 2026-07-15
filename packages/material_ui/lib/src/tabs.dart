@@ -159,8 +159,8 @@ class Tab extends StatelessWidget implements PreferredSizeWidget {
   /// null along with `child` or `text`, the default height is 72.0 pixels. Without an `icon`, the
   /// height is 46.0 pixels.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -186,7 +186,7 @@ class Tab extends StatelessWidget implements PreferredSizeWidget {
   /// ),
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   final double? height;
 
   Widget _buildLabelText() {
@@ -950,40 +950,48 @@ typedef TabValueChanged<T> = void Function(T value, int index);
 ///
 /// Uses values from [TabBarThemeData] if it is set in the current context.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample shows the implementation of [TabBar] and [TabBarView] using a [DefaultTabController].
 /// Each [Tab] corresponds to a child of the [TabBarView] in the order they are written.
 ///
-/// {@example /example/lib/tabs/tab_bar.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/tabs/tab_bar.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// [TabBar] can also be implemented by using a [TabController] which provides more options
 /// to control the behavior of the [TabBar] and [TabBarView]. This can be used instead of
 /// a [DefaultTabController], demonstrated below.
 ///
-/// {@example /example/lib/tabs/tab_bar.1.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/tabs/tab_bar.1.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This sample showcases nested Material 3 [TabBar]s. It consists of a primary
 /// [TabBar] with nested a secondary [TabBar]. The primary [TabBar] uses a
 /// [DefaultTabController] while the secondary [TabBar] uses a [TabController].
 ///
-/// {@example /example/lib/tabs/tab_bar.2.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/tabs/tab_bar.2.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This sample showcases how to apply custom behavior based on the scroll in [TabBar].
 /// It utilizes scroll notifications ([ScrollMetricsNotification]
@@ -991,9 +999,13 @@ typedef TabValueChanged<T> = void Function(T value, int index);
 /// to monitor the scroll offset, allowing for interface customization
 /// based on the obtained offset.
 ///
-/// {@example /example/lib/tabs/tab_bar.3.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/tabs/tab_bar.3.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -1062,16 +1074,19 @@ class TabBar extends StatefulWidget implements PreferredSizeWidget {
   /// Secondary tabs are used within a content area to further separate related
   /// content and establish hierarchy.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This sample showcases nested Material 3 [TabBar]s. It consists of a primary
   /// [TabBar] with nested a secondary [TabBar]. The primary [TabBar] uses a
   /// [DefaultTabController] while the secondary [TabBar] uses a [TabController].
   ///
-  /// {@example /example/lib/tabs/tab_bar.2.dart}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// {@example /example/lib/tabs/tab_bar.2.dart#body}
+  ///
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -1392,15 +1407,18 @@ class TabBar extends StatefulWidget implements PreferredSizeWidget {
   /// twice. First to represent hover exiting the initial tab, and then second
   /// for the pointer entering hover over the next tab.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This sample shows how to customize a [Tab] in response to hovering over a
   /// [TabBar].
   ///
-  /// {@example /example/lib/tabs/tab_bar.onHover.dart}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// {@example /example/lib/tabs/tab_bar.onHover.dart#body}
+  ///
+  /// </callout-box>
   final TabValueChanged<bool>? onHover;
 
   /// An optional callback that's called when a [Tab]'s focus state in the
@@ -1415,15 +1433,18 @@ class TabBar extends StatefulWidget implements PreferredSizeWidget {
   /// twice. First to represent focus being lost by the initially focused tab,
   /// and then second for the next tab gaining focus.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This sample shows how to customize a [Tab] based on focus traversal in
   /// enclosing [TabBar].
   ///
-  /// {@example /example/lib/tabs/tab_bar.onFocusChange.dart}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// {@example /example/lib/tabs/tab_bar.onFocusChange.dart#body}
+  ///
+  /// </callout-box>
   final TabValueChanged<bool>? onFocusChange;
 
   /// How the [TabBar]'s scroll view should respond to user input.
@@ -1511,15 +1532,18 @@ class TabBar extends StatefulWidget implements PreferredSizeWidget {
   /// [indicatorSize] is [TabBarIndicatorSize.tab], otherwise it will animate
   /// with an elastic effect if the [indicatorSize] is [TabBarIndicatorSize.label].
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This sample shows how to customize the animation behavior of the tab indicator
   /// by using the [indicatorAnimation] property.
   ///
-  /// {@example /example/lib/tabs/tab_bar.indicator_animation.0.dart}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// {@example /example/lib/tabs/tab_bar.indicator_animation.0.dart#body}
+  ///
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -2281,7 +2305,7 @@ class TabBarView extends StatefulWidget {
   /// {@macro flutter.widgets.pageview.viewportFraction}
   final double viewportFraction;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// Defaults to [Clip.hardEdge].
   final Clip clipBehavior;

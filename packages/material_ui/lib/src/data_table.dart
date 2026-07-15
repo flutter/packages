@@ -408,8 +408,7 @@ class DataCell {
 ///    multiple pages.
 ///  * [CustomScrollView], for greater control over scrolling effects.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample shows how to display a [DataTable] with three columns: name, age, and
 /// role. The columns are defined by three [DataColumn] objects. The table
@@ -418,20 +417,27 @@ class DataCell {
 ///
 /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/data_table.png)
 ///
-/// {@example /example/lib/data_table/data_table.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/data_table/data_table.0.dart#body}
+///
+/// </callout-box>
+///
+///
+/// <callout-box>
 ///
 /// This sample shows how to display a [DataTable] with alternate colors per
 /// row, and a custom color for when the row is selected.
 ///
-/// {@example /example/lib/data_table/data_table.1.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/data_table/data_table.1.dart#body}
+///
+/// </callout-box>
 ///
 /// [DataTable] can be sorted on the basis of any column in [columns] in
 /// ascending or descending order. If [sortColumnIndex] is non-null, then the
@@ -775,7 +781,7 @@ class DataTable extends StatelessWidget {
   /// The style to use when painting the boundary and interior divisions of the table.
   final TableBorder? border;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// This can be used to clip the content within the border of the [DataTable].
   ///

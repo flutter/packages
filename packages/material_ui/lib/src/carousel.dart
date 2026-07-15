@@ -51,8 +51,8 @@ import 'theme.dart';
 /// [CarouselView.weighted] is used, then set the [flexWeights] to only have
 /// one integer in the array.
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -86,7 +86,7 @@ import 'theme.dart';
 /// ),
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// In [CarouselView.weighted], weights are relative proportions. For example,
 /// if the layout weights is `[3, 2, 1]`, it means the first visible item occupies
@@ -112,8 +112,7 @@ import 'theme.dart';
 /// visible items may be slightly compressed during scrolling. The [shrinkExtent]
 /// property controls the minimum allowable size for these compressed items.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// Here is an example to show different carousel layouts that [CarouselView]
 /// and [CarouselView.weighted] can build.
@@ -127,9 +126,13 @@ import 'theme.dart';
 /// This key-driven behavior is dictated by the [ScrollBehavior.pointerAxisModifiers],
 /// while [ScrollBehavior.dragDevices] manages what devices can drag a scrollable.
 ///
-/// {@example /example/lib/carousel/carousel.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/carousel/carousel.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -236,14 +239,17 @@ class CarouselView extends StatefulWidget {
   /// The [itemBuilder] callback will be called only with indices greater than
   /// or equal to zero and less than [itemCount].
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This example shows how to create a carousel with 1000 items using lazy loading:
   ///
-  /// {@example /example/lib/carousel/carousel.1.dart}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// {@example /example/lib/carousel/carousel.1.dart#body}
+  ///
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -284,8 +290,8 @@ class CarouselView extends StatefulWidget {
   /// The [flexWeights] parameter determines the layout, and [itemBuilder]
   /// creates items as they become visible.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -306,7 +312,7 @@ class CarouselView extends StatefulWidget {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///

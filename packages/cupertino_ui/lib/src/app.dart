@@ -67,8 +67,8 @@ import 'theme.dart';
 ///  * The San Francisco font family is unavailable on Android and can result
 ///    in undefined font behavior.
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -89,10 +89,10 @@ import 'theme.dart';
 /// )
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -122,10 +122,10 @@ import 'theme.dart';
 /// )
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -149,7 +149,7 @@ import 'theme.dart';
 /// )
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -372,8 +372,8 @@ class CupertinoApp extends StatefulWidget {
   final bool debugShowCheckedModeBanner;
 
   /// {@macro flutter.widgets.widgetsApp.shortcuts}
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -400,13 +400,13 @@ class CupertinoApp extends StatefulWidget {
   /// }
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   /// {@macro flutter.widgets.widgetsApp.shortcuts.seeAlso}
   final Map<ShortcutActivator, Intent>? shortcuts;
 
   /// {@macro flutter.widgets.widgetsApp.actions}
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -438,14 +438,21 @@ class CupertinoApp extends StatefulWidget {
   /// }
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   /// {@macro flutter.widgets.widgetsApp.actions.seeAlso}
   final Map<Type, Action<Intent>>? actions;
 
   /// {@macro flutter.widgets.widgetsApp.restorationScopeId}
   final String? restorationScopeId;
 
-  /// {@macro flutter.material.materialApp.scrollBehavior}
+  /// {@template flutter.cupertino.materialApp.scrollBehavior}
+  /// The default [ScrollBehavior] for the application.
+  ///
+  /// [ScrollBehavior]s describe how [Scrollable] widgets behave. Providing
+  /// a [ScrollBehavior] can set the default [ScrollPhysics] across
+  /// an application, and manage [Scrollable] decorations like [Scrollbar]s and
+  /// [GlowingOverscrollIndicator]s.
+  /// {@endtemplate}
   ///
   /// When null, defaults to [CupertinoScrollBehavior].
   ///

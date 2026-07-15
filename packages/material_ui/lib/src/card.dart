@@ -29,29 +29,35 @@ enum _CardVariant { elevated, filled, outlined }
 /// some text describing a musical, and the other with buttons for buying
 /// tickets or listening to the show.](https://flutter.github.io/assets-for-api-docs/assets/material/card.png)
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample shows creation of a [Card] widget that shows album information
 /// and two actions.
 ///
-/// {@example /example/lib/card/card.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/card/card.0.dart#body}
+///
+/// </callout-box>
 ///
 /// Sometimes the primary action area of a card is the card itself. Cards can be
 /// one large touch target that shows a detail screen when tapped.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample shows creation of a [Card] widget that can be tapped. When
 /// tapped this [Card]'s [InkWell] displays an "ink splash" that fills the
 /// entire card.
 ///
-/// {@example /example/lib/card/card.1.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/card/card.1.dart#body}
+///
+/// </callout-box>
 ///
 /// For Material Design 2 (when [ThemeData.useMaterial3] is false), there is a
 /// single card type: the elevated card. In that mode the named constructors
@@ -63,15 +69,18 @@ enum _CardVariant { elevated, filled, outlined }
 /// so theme properties (for example [CardThemeData.shape]) apply to every card
 /// variant within the theme's scope.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample shows creation of [Card] widgets for elevated, filled and
 /// outlined types, as described in: https://m3.material.io/components/cards/overview
 ///
-/// {@example /example/lib/card/card.2.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/card/card.2.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -210,7 +219,7 @@ class Card extends StatelessWidget {
   /// If false, the border will be painted behind the [child].
   final bool borderOnForeground;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// If this property is null then the ambient [CardThemeData.clipBehavior] is
   /// used. If that's null then the behavior will be [Clip.none].

@@ -343,7 +343,7 @@ class MaterialButton extends StatelessWidget {
   /// [ButtonThemeData.shape].
   final ShapeBorder? shape;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none].
   final Clip clipBehavior;

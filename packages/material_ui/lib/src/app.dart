@@ -118,8 +118,8 @@ enum ThemeMode {
 /// If [home], [routes], [onGenerateRoute], and [onUnknownRoute] are all null,
 /// and [builder] is not null, then no [Navigator] is created.
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -139,10 +139,10 @@ enum ThemeMode {
 /// )
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -170,10 +170,10 @@ enum ThemeMode {
 /// )
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -196,7 +196,7 @@ enum ThemeMode {
 /// )
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// ## Troubleshooting
 ///
@@ -694,8 +694,8 @@ class MaterialApp extends StatefulWidget {
   final bool debugShowCheckedModeBanner;
 
   /// {@macro flutter.widgets.widgetsApp.shortcuts}
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -722,13 +722,13 @@ class MaterialApp extends StatefulWidget {
   /// }
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   /// {@macro flutter.widgets.widgetsApp.shortcuts.seeAlso}
   final Map<ShortcutActivator, Intent>? shortcuts;
 
   /// {@macro flutter.widgets.widgetsApp.actions}
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -760,21 +760,14 @@ class MaterialApp extends StatefulWidget {
   /// }
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   /// {@macro flutter.widgets.widgetsApp.actions.seeAlso}
   final Map<Type, Action<Intent>>? actions;
 
   /// {@macro flutter.widgets.widgetsApp.restorationScopeId}
   final String? restorationScopeId;
 
-  /// {@template flutter.material.materialApp.scrollBehavior}
-  /// The default [ScrollBehavior] for the application.
-  ///
-  /// [ScrollBehavior]s describe how [Scrollable] widgets behave. Providing
-  /// a [ScrollBehavior] can set the default [ScrollPhysics] across
-  /// an application, and manage [Scrollable] decorations like [Scrollbar]s and
-  /// [GlowingOverscrollIndicator]s.
-  /// {@endtemplate}
+  /// {@macro flutter.cupertino.materialApp.scrollBehavior}
   ///
   /// When null, defaults to [MaterialScrollBehavior].
   ///
@@ -816,15 +809,24 @@ class MaterialApp extends StatefulWidget {
   ///
   /// To disable the theme animation, use [AnimationStyle.noAnimation].
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This sample showcases how to override the theme animation curve and
   /// duration in the [MaterialApp] widget using [AnimationStyle].
   ///
-  /// {@example /example/lib/app/app.0.dart}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@template material_ui.dartpad_guide}
+  /// <small>
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// To see it in action, copy and run this code snippet on [DartPad](https://dartpad.dev/).
+  ///
+  /// </small>
+  /// {@endtemplate}
+  ///
+  /// {@example /example/lib/app/app.0.dart#body}
+  ///
+  /// </callout-box>
   final AnimationStyle? themeAnimationStyle;
 
   @override

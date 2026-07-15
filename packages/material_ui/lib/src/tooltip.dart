@@ -37,8 +37,7 @@ import 'tooltip_visibility.dart';
 ///
 /// {@youtube 560 315 https://www.youtube.com/watch?v=EeEfD5fI-5Q}
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example show a basic [Tooltip] which has a [Text] as child.
 /// [message] contains your label to be shown by the tooltip when
@@ -56,12 +55,15 @@ import 'tooltip_visibility.dart';
 ///
 /// or it can be set directly on each tooltip with [Tooltip.preferBelow].
 ///
-/// {@example /example/lib/tooltip/tooltip.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/tooltip/tooltip.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example covers most of the attributes available in Tooltip.
 /// `decoration` has been used to give a gradient and borderRadius to Tooltip.
@@ -75,31 +77,41 @@ import 'tooltip_visibility.dart';
 /// `waitDuration` accepts a Duration for which a mouse pointer has to hover over the child
 /// widget before the tooltip is shown.
 ///
-/// {@example /example/lib/tooltip/tooltip.1.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/tooltip/tooltip.1.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows a rich [Tooltip] that specifies the [richMessage]
 /// parameter instead of the [message] parameter (only one of these may be
 /// non-null. Any [InlineSpan] can be specified for the [richMessage] attribute,
 /// including [WidgetSpan].
 ///
-/// {@example /example/lib/tooltip/tooltip.2.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/tooltip/tooltip.2.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how [Tooltip] can be shown manually with [TooltipTriggerMode.manual]
 /// by calling the [TooltipState.ensureTooltipVisible] function.
 ///
-/// {@example /example/lib/tooltip/tooltip.3.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/tooltip/tooltip.3.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///

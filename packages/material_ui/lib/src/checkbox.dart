@@ -40,8 +40,7 @@ enum _CheckboxType { material, adaptive }
 ///
 /// Requires one of its ancestors to be a [Material] widget.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows how you can override the default theme of
 /// a [Checkbox] with a [WidgetStateProperty].
@@ -49,18 +48,25 @@ enum _CheckboxType { material, adaptive }
 /// is being pressed, hovered, or focused. Otherwise, the checkbox's color will
 /// be `Colors.red`.
 ///
-/// {@example /example/lib/checkbox/checkbox.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/checkbox/checkbox.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows what the checkbox error state looks like.
 ///
-/// {@example /example/lib/checkbox/checkbox.1.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/checkbox/checkbox.1.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -221,8 +227,8 @@ class Checkbox extends StatefulWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -243,7 +249,7 @@ class Checkbox extends StatefulWidget {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   /// {@endtemplate}
   ///
   /// If null, then the value of [activeColor] is used in the selected

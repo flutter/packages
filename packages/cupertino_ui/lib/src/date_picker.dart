@@ -230,8 +230,7 @@ enum _PickerColumnType {
 /// full screen width. Content texts are shown with
 /// [CupertinoTextThemeData.dateTimePickerTextStyle].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample shows how to implement CupertinoDatePicker with different picker modes.
 /// We can provide initial dateTime value for the picker to display. When user changes
@@ -239,9 +238,13 @@ enum _PickerColumnType {
 ///
 /// CupertinoDatePicker can be displayed directly on a screen or in a popup.
 ///
-/// {@example /example/lib/date_picker/cupertino_date_picker.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/date_picker/cupertino_date_picker.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -483,8 +486,8 @@ class CupertinoDatePicker extends StatefulWidget {
   ///
   /// If the selection overlay builder returns null, no overlay will be drawn.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -519,7 +522,7 @@ class CupertinoDatePicker extends StatefulWidget {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   final SelectionOverlayBuilder? selectionOverlayBuilder;
 
   /// The behavior of reporting the selected date.
@@ -2173,14 +2176,17 @@ enum CupertinoTimerPickerMode {
 /// provides more space than it needs, the picker will position itself according
 /// to its [alignment] property.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows a [CupertinoTimerPicker] that returns a countdown duration.
 ///
-/// {@example /example/lib/date_picker/cupertino_timer_picker.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/date_picker/cupertino_timer_picker.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -2267,8 +2273,8 @@ class CupertinoTimerPicker extends StatefulWidget {
   ///
   /// If the selection overlay builder returns null, no overlay will be drawn.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -2301,7 +2307,7 @@ class CupertinoTimerPicker extends StatefulWidget {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   final SelectionOverlayBuilder? selectionOverlayBuilder;
 
   /// The behavior of reporting the selected duration.

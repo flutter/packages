@@ -211,38 +211,47 @@ class _TweenCurve extends Curve {
 /// to retrieve the controller for the closest [MenuAnchor] ancestor of a given [BuildContext].
 /// More detailed usage of [MenuController] is available in its class documentation.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows how to use a [MenuAnchor] to wrap a button and open a
 /// cascading menu from the button. This example also shows how to use
 /// [onAnimationStatusChanged] to track animation status and toggle the menu.
 ///
-/// {@example /example/lib/menu_anchor/menu_anchor.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/menu_anchor/menu_anchor.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to use a [MenuAnchor] to create a cascading context
 /// menu in a region of the view, positioned where the user clicks the mouse
 /// with Ctrl pressed. The [anchorTapClosesMenu] attribute is set to true so
 /// that clicks on the [MenuAnchor] area will cause the menus to be closed.
 ///
-/// {@example /example/lib/menu_anchor/menu_anchor.1.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/menu_anchor/menu_anchor.1.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example demonstrates a simplified cascading menu using the [MenuAnchor]
 /// widget.
 ///
-/// {@example /example/lib/menu_anchor/menu_anchor.3.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/menu_anchor/menu_anchor.3.dart#body}
+///
+/// </callout-box>
 ///
 /// The [MenuStyle.visualDensity] setting only affects horizontal padding,
 /// and it will never make it negative. Vertical padding is not affected at all.
@@ -329,7 +338,7 @@ class MenuAnchor extends StatefulWidget {
   /// surrounds if it moves because of view insets changes.
   final LayerLink? layerLink;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// Defaults to [Clip.hardEdge].
   final Clip clipBehavior;
@@ -412,8 +421,8 @@ class MenuAnchor extends StatefulWidget {
   /// therefore cannot be used on its own to determine the current animation
   /// direction.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -443,7 +452,7 @@ class MenuAnchor extends StatefulWidget {
   /// );
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// Defaults to null.
   final ValueChanged<AnimationStatus>? onAnimationStatusChanged;
@@ -825,16 +834,20 @@ class _MenuAnchorState extends State<MenuAnchor> with SingleTickerProviderStateM
 /// sure that selecting a menu item and triggering the shortcut do the same
 /// thing, it is recommended that they call the same callback.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
+///
 /// This example shows a [MenuBar] that contains a single top
 /// level menu, containing three items: "About", a checkbox menu item for
 /// showing a message, and "Quit". The items are identified with an enum value,
 /// and the shortcuts are registered globally with the [ShortcutRegistry].
 ///
-/// {@example /example/lib/menu_anchor/menu_bar.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/menu_anchor/menu_bar.0.dart#body}
+///
+/// </callout-box>
 /// {@endtemplate}
 ///
 /// {@macro flutter.material.MenuAcceleratorLabel.accelerator_sample}
@@ -873,7 +886,7 @@ class MenuBar extends StatelessWidget {
   /// Defaults to the ambient [MenuThemeData.style].
   final MenuStyle? style;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none].
   final Clip clipBehavior;
@@ -1030,7 +1043,7 @@ class MenuItemButton extends StatefulWidget {
   /// {@macro flutter.material.inkwell.statesController}
   final MaterialStatesController? statesController;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none].
   final Clip clipBehavior;
@@ -1347,15 +1360,18 @@ class _MenuItemButtonState extends State<MenuItemButton> {
 /// To style the checkbox separately from the button, add a [CheckboxTheme]
 /// ancestor.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows a menu with a checkbox that shows a message in the body
 /// of the app if checked.
 ///
-/// {@example /example/lib/menu_anchor/checkbox_menu_button.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/menu_anchor/checkbox_menu_button.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -1475,7 +1491,7 @@ class CheckboxMenuButton extends StatelessWidget {
   /// {@macro flutter.material.inkwell.statesController}
   final MaterialStatesController? statesController;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none].
   final Clip clipBehavior;
@@ -1546,15 +1562,18 @@ class CheckboxMenuButton extends StatelessWidget {
 /// To style the radio button separately from the overall button, add a
 /// [RadioTheme] ancestor.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows a menu with three radio buttons with shortcuts that
 /// changes the background color of the body when the buttons are selected.
 ///
-/// {@example /example/lib/menu_anchor/radio_menu_button.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/menu_anchor/radio_menu_button.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -1676,7 +1695,7 @@ class RadioMenuButton<T> extends StatelessWidget {
   /// {@macro flutter.material.inkwell.statesController}
   final MaterialStatesController? statesController;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none].
   final Clip clipBehavior;
@@ -1841,7 +1860,7 @@ class SubmenuButton extends StatefulWidget {
   /// top of the [MenuAnchor] region.
   final Offset? alignmentOffset;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// Defaults to [Clip.hardEdge].
   final Clip clipBehavior;
@@ -2941,8 +2960,8 @@ typedef MenuAcceleratorChildBuilder =
 /// not necessary to provide one.
 ///
 /// {@template flutter.material.MenuAcceleratorLabel.accelerator_sample}
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
+///
 /// This example shows a [MenuBar] that handles keyboard
 /// accelerators using [MenuAcceleratorLabel]. To use the accelerators, press
 /// the Alt key to see which letters are underlined in the menu bar, and then
@@ -2950,9 +2969,13 @@ typedef MenuAcceleratorChildBuilder =
 /// since those platforms don't support them natively, so this demo will only
 /// show a regular Material menu bar on those platforms.
 ///
-/// {@example /example/lib/menu_anchor/menu_accelerator_label.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/menu_anchor/menu_accelerator_label.0.dart#body}
+///
+/// </callout-box>
 /// {@endtemplate}
 class MenuAcceleratorLabel extends StatefulWidget {
   /// Creates a const [MenuAcceleratorLabel].
@@ -3604,7 +3627,7 @@ class _MenuPanel extends StatefulWidget {
   /// The menu style that has all the attributes for this menu panel.
   final MenuStyle? menuStyle;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro flutter.cupertino.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none].
   final Clip clipBehavior;

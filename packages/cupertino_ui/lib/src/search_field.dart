@@ -38,29 +38,35 @@ const double _kMaxPrefixIconSize = 30.0;
 /// [controller]. For example, to set the initial value of the text field, use
 /// a [controller] that already contains some text such as:
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This examples shows how to provide initial text to a [CupertinoSearchTextField]
 /// using the [controller] property.
 ///
-/// {@example /example/lib/search_field/cupertino_search_field.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/search_field/cupertino_search_field.0.dart#body}
+///
+/// </callout-box>
 ///
 /// It is recommended to pass a [ValueChanged<String>] to both [onChanged] and
 /// [onSubmitted] parameters in order to be notified once the value of the
 /// field changes or is submitted by the keyboard:
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This examples shows how to be notified of field changes or submitted text from
 /// a [CupertinoSearchTextField].
 ///
-/// {@example /example/lib/search_field/cupertino_search_field.1.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/search_field/cupertino_search_field.1.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -278,7 +284,7 @@ class CupertinoSearchTextField extends StatefulWidget {
   /// necessarily clearing text.
   final VoidCallback? onSuffixTap;
 
-  /// {@macro flutter.material.textfield.restorationId}
+  /// {@macro flutter.cupertino.textfield.restorationId}
   final String? restorationId;
 
   /// {@macro flutter.widgets.Focus.focusNode}
@@ -287,7 +293,7 @@ class CupertinoSearchTextField extends StatefulWidget {
   /// {@macro flutter.widgets.editableText.autofocus}
   final bool autofocus;
 
-  /// {@macro flutter.material.textfield.onTap}
+  /// {@macro flutter.cupertino.textfield.onTap}
   final VoidCallback? onTap;
 
   /// Whether to enable autocorrection.

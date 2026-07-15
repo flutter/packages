@@ -195,9 +195,7 @@ class AdaptiveTextSelectionToolbar extends StatelessWidget {
   /// The children of the toolbar, typically buttons.
   final List<Widget>? children;
 
-  /// {@template flutter.material.AdaptiveTextSelectionToolbar.anchors}
-  /// The location on which to anchor the menu.
-  /// {@endtemplate}
+  /// {@macro flutter.cupertino.AdaptiveTextSelectionToolbar.anchors}
   final TextSelectionToolbarAnchors anchors;
 
   /// Returns the default button label String for the button of the given
@@ -239,15 +237,18 @@ class AdaptiveTextSelectionToolbar extends StatelessWidget {
   /// button appearance for the given platform, but where the toolbar and/or the
   /// button actions and labels may be custom.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This sample demonstrates how to use `getAdaptiveButtons` to generate
   /// default button widgets in a custom toolbar.
   ///
-  /// {@example /example/lib/context_menu/editable_text_toolbar_builder.2.dart}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// {@example /example/lib/context_menu/editable_text_toolbar_builder.2.dart#body}
+  ///
+  /// </callout-box>
   ///
   /// See also:
   ///
