@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:collection';
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
@@ -47,7 +48,11 @@ abstract class RouteMatchBase with Diagnosticable {
   String get matchedLocation;
 
   /// Gets the state that represent this route match.
-  GoRouterState buildState(RouteConfiguration configuration, RouteMatchList matches);
+  GoRouterState buildState(
+    RouteConfiguration configuration,
+    RouteMatchList matches, {
+    required Map<String, dynamic> metadata,
+  });
 
   /// Generates a list of [RouteMatchBase] objects by matching the `route` and
   /// its sub-routes with `uri`.
@@ -310,7 +315,11 @@ class RouteMatch extends RouteMatchBase {
   int get hashCode => Object.hash(route, matchedLocation, pageKey);
 
   @override
-  GoRouterState buildState(RouteConfiguration configuration, RouteMatchList matches) {
+  GoRouterState buildState(
+    RouteConfiguration configuration,
+    RouteMatchList matches, {
+    required Map<String, dynamic> metadata,
+  }) {
     return GoRouterState(
       configuration,
       uri: matches.uri,
@@ -322,7 +331,7 @@ class RouteMatch extends RouteMatchBase {
       path: route.path,
       extra: matches.extra,
       topRoute: matches.lastOrNull?.route,
-      metadata: matches._routeMetadataFor(this),
+      metadata: metadata,
     );
   }
 }
@@ -367,9 +376,9 @@ class ShellRouteMatch extends RouteMatchBase {
   @override
   GoRouterState buildState(
     RouteConfiguration configuration,
-    RouteMatchList matches,
-  ) {
-    final Map<String, dynamic> metadata = matches._routeMetadataFor(this);
+    RouteMatchList matches, {
+    required Map<String, dynamic> metadata,
+  }) {
     // The route related data is stored in the leaf route match.
     final RouteMatch leafMatch = _lastLeaf;
     if (leafMatch is ImperativeRouteMatch) {
@@ -456,8 +465,9 @@ class ImperativeRouteMatch extends RouteMatch {
   @override
   GoRouterState buildState(
     RouteConfiguration configuration,
-    RouteMatchList matches,
-  ) {
+    RouteMatchList matches, {
+    required Map<String, dynamic> metadata,
+  }) {
     return GoRouterState(
       configuration,
       uri: this.matches.uri,
@@ -469,7 +479,7 @@ class ImperativeRouteMatch extends RouteMatch {
       path: route.path,
       extra: this.matches.extra,
       topRoute: this.matches.lastOrNull?.route,
-      metadata: this.matches.topRouteMetadata,
+      metadata: metadata,
     );
   }
 
@@ -765,13 +775,16 @@ class RouteMatchList with Diagnosticable {
     return result;
   }
 
-  Map<String, dynamic> _routeMetadataFor(RouteMatchBase target) {
-    return _metadataForRouteMatch(
-          matches: matches,
-          target: target,
-          inheritedMetadata: const <String, dynamic>{},
-        ) ??
-        const <String, dynamic>{};
+  late final Map<RouteMatchBase, Map<String, dynamic>> _metadataByRouteMatch =
+      _buildMetadataByRouteMatch(matches);
+
+  /// Returns merged metadata for [match].
+  @meta.internal
+  Map<String, dynamic> metadataFor(RouteMatchBase match) {
+    if (match is ImperativeRouteMatch) {
+      return match.matches.topRouteMetadata;
+    }
+    return _metadataByRouteMatch[match] ?? const <String, dynamic>{};
   }
 
   /// Returns merged metadata for the currently matched top route.
@@ -784,10 +797,7 @@ class RouteMatchList with Diagnosticable {
     if (target == null) {
       return const <String, dynamic>{};
     }
-    if (target is ImperativeRouteMatch) {
-      return target.matches.topRouteMetadata;
-    }
-    return _routeMetadataFor(target);
+    return metadataFor(target);
   }
 
   static RouteMatchBase? _lastRouteMatchOrNull(List<RouteMatchBase> matches) {
@@ -801,36 +811,44 @@ class RouteMatchList with Diagnosticable {
     return current;
   }
 
-  static Map<String, dynamic>? _metadataForRouteMatch({
+  static Map<RouteMatchBase, Map<String, dynamic>> _buildMetadataByRouteMatch(
+    List<RouteMatchBase> matches,
+  ) {
+    final Map<RouteMatchBase, Map<String, dynamic>> result =
+        HashMap<RouteMatchBase, Map<String, dynamic>>.identity();
+    _addMetadataByRouteMatch(
+      matches: matches,
+      inheritedMetadata: const <String, dynamic>{},
+      result: result,
+    );
+    return result;
+  }
+
+  static void _addMetadataByRouteMatch({
     required List<RouteMatchBase> matches,
-    required RouteMatchBase target,
     required Map<String, dynamic> inheritedMetadata,
+    required Map<RouteMatchBase, Map<String, dynamic>> result,
   }) {
     var currentInheritedMetadata = inheritedMetadata;
     for (final match in matches) {
-      final Map<String, dynamic> currentMetadata = _mergeMetadata(
-        currentInheritedMetadata,
-        match.route.metadata,
-      );
-      if (identical(match, target)) {
-        return currentMetadata;
-      }
+      final Map<String, dynamic> currentMetadata = match is ImperativeRouteMatch
+          ? match.matches.topRouteMetadata
+          : mergeMetadata(currentInheritedMetadata, match.route.metadata);
+      result[match] = currentMetadata;
       if (match is ShellRouteMatch) {
-        final Map<String, dynamic>? childMetadata = _metadataForRouteMatch(
+        _addMetadataByRouteMatch(
           matches: match.matches,
-          target: target,
           inheritedMetadata: currentMetadata,
+          result: result,
         );
-        if (childMetadata != null) {
-          return childMetadata;
-        }
       }
       currentInheritedMetadata = currentMetadata;
     }
-    return null;
   }
 
-  static Map<String, dynamic> _mergeMetadata(
+  /// Merges metadata inherited from a parent with metadata from its child.
+  @meta.internal
+  static Map<String, dynamic> mergeMetadata(
     Map<String, dynamic> parentMetadata,
     Map<String, dynamic>? currentMetadata,
   ) {

@@ -334,10 +334,7 @@ void main() {
       final routes = <RouteBase>[
         GoRoute(
           path: '/',
-          metadata: const <String, dynamic>{
-            'fromParent': 'yes',
-            'shared': 'parent',
-          },
+          metadata: const <String, dynamic>{'fromParent': 'yes', 'shared': 'parent'},
           builder: (_, _) => const SizedBox.shrink(),
           routes: <RouteBase>[
             GoRoute(
@@ -349,10 +346,7 @@ void main() {
             ),
             GoRoute(
               path: 'override',
-              metadata: const <String, dynamic>{
-                'shared': 'child',
-                'childOnly': true,
-              },
+              metadata: const <String, dynamic>{'shared': 'child', 'childOnly': true},
               builder: (BuildContext context, GoRouterState state) {
                 overriddenState = state;
                 return const Text('override');
@@ -395,28 +389,114 @@ void main() {
       expect(emptyState!.metadata, isNotNull);
     });
 
-    testWidgets('metadata is available after imperative push', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('metadata is accumulated through nested shell routes', (WidgetTester tester) async {
+      GoRouterState? shellState;
+      GoRouterState? leafState;
+
+      final routes = <RouteBase>[
+        GoRoute(
+          path: '/',
+          metadata: const <String, dynamic>{'section': 'root', 'shared': 'root'},
+          builder: (_, _) => const SizedBox.shrink(),
+          routes: <RouteBase>[
+            ShellRoute(
+              metadata: const <String, dynamic>{'shell': true, 'shared': 'shell'},
+              builder: (BuildContext context, GoRouterState state, Widget child) {
+                shellState = state;
+                return child;
+              },
+              routes: <RouteBase>[
+                GoRoute(
+                  path: 'details',
+                  metadata: const <String, dynamic>{'page': 'details', 'shared': 'leaf'},
+                  builder: (BuildContext context, GoRouterState state) {
+                    leafState = state;
+                    return const Text('details');
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+      router.go('/details');
+      await tester.pumpAndSettle();
+
+      expect(shellState, isNotNull);
+      expect(shellState!.metadata, const <String, dynamic>{
+        'section': 'root',
+        'shared': 'shell',
+        'shell': true,
+      });
+      expect(leafState, isNotNull);
+      expect(leafState!.metadata, const <String, dynamic>{
+        'section': 'root',
+        'shared': 'leaf',
+        'shell': true,
+        'page': 'details',
+      });
+      expect(router.state.metadata, leafState!.metadata);
+    });
+
+    testWidgets('metadata is available to redirects and onExit', (WidgetTester tester) async {
+      Map<String, dynamic>? redirectMetadata;
+      Map<String, dynamic>? onExitMetadata;
+
+      final routes = <RouteBase>[
+        GoRoute(
+          path: '/',
+          metadata: const <String, dynamic>{'section': 'root'},
+          builder: (_, _) => const Text('home'),
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'redirect',
+              metadata: const <String, dynamic>{'source': 'redirect'},
+              redirect: (BuildContext context, GoRouterState state) {
+                redirectMetadata = state.metadata;
+                return '/guarded';
+              },
+            ),
+            GoRoute(
+              path: 'guarded',
+              metadata: const <String, dynamic>{'page': 'guarded'},
+              builder: (_, _) => const Text('guarded'),
+              onExit: (BuildContext context, GoRouterState state) {
+                onExitMetadata = state.metadata;
+                return true;
+              },
+            ),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+      router.go('/redirect');
+      await tester.pumpAndSettle();
+
+      expect(redirectMetadata, const <String, dynamic>{'section': 'root', 'source': 'redirect'});
+      expect(find.text('guarded'), findsOneWidget);
+
+      router.go('/');
+      await tester.pumpAndSettle();
+      expect(onExitMetadata, const <String, dynamic>{'section': 'root', 'page': 'guarded'});
+    });
+
+    testWidgets('metadata is available after imperative push', (WidgetTester tester) async {
       GoRouterState? pushedState;
 
       final routes = <RouteBase>[
         GoRoute(
           path: '/',
-          metadata: const <String, dynamic>{
-            'fromParent': true,
-            'presentation': 'base',
-          },
+          metadata: const <String, dynamic>{'fromParent': true, 'presentation': 'base'},
           builder: (BuildContext context, GoRouterState state) {
             return const Text('home');
           },
           routes: <RouteBase>[
             GoRoute(
               path: 'push',
-              metadata: const <String, dynamic>{
-                'presentation': 'pushed',
-                'fromChild': true,
-              },
+              metadata: const <String, dynamic>{'presentation': 'pushed', 'fromChild': true},
               builder: (BuildContext context, GoRouterState state) {
                 pushedState = state;
                 return const Text('push');
