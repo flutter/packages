@@ -25,7 +25,7 @@ void main() {
 
     for (final isM3E in <bool>[true, false]) {
       TokenTemplate buttonTemplate() =>
-          isM3E ? M3EIconButtonTemplate(testPath()) : M3IconButtonTemplate(testPath());
+          isM3E ? IconButtonTemplateM3E(testPath()) : IconButtonTemplateM3(testPath());
 
       String filePath() {
         final fileName = 'icon_button_m3${isM3E ? 'e' : ''}_defaults.g.dart';
@@ -69,12 +69,12 @@ void main() {
     }
 
     test('color generates color expression', () {
-      final template = M3IconButtonTemplate(testPath());
+      final template = IconButtonTemplateM3(testPath());
       expect(template.color(TokenColorRole.onSurface, '_colors'), '_colors.onSurface');
     });
 
     test('colorWithOpacity generates color expression with opacity', () {
-      final template = M3IconButtonTemplate(testPath());
+      final template = IconButtonTemplateM3(testPath());
       expect(
         template.colorWithOpacity(TokenColorRole.onSurface, 0.12, '_colors'),
         '_colors.onSurface.withOpacity(0.12)',
@@ -86,7 +86,7 @@ void main() {
     });
 
     test('shape generates shape expressions', () {
-      final template = M3IconButtonTemplate(testPath());
+      final template = IconButtonTemplateM3(testPath());
       expect(
         template.shape(
           const ShapeStruct(
@@ -126,7 +126,7 @@ void main() {
     });
 
     test('shape throws UnsupportedError for unsupported shape family', () {
-      final template = M3IconButtonTemplate(testPath());
+      final template = IconButtonTemplateM3(testPath());
       expect(
         () => template.shape(
           const ShapeStruct(
@@ -146,7 +146,6 @@ void main() {
         ),
       );
     });
-
     test('will run dart format over the generated file', () {
       final template = UnformattedTemplate(testPath());
       template.generateFile();
