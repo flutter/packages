@@ -553,8 +553,7 @@ class MaterialApp extends StatefulWidget {
   /// and list the [supportedLocales] that the application can handle.
   ///
   /// ```dart
-  /// // The GlobalMaterialLocalizations and GlobalWidgetsLocalizations
-  /// // classes require the following import:
+  /// // The GlobalWidgetsLocalizations class requires the following import:
   /// // import 'package:flutter_localizations/flutter_localizations.dart';
   ///
   /// const MaterialApp(
