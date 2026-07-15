@@ -5,7 +5,7 @@ analyzer:
     - "test_fixes/**"
     # TODO(elliette): Remove the following exclusion once all M3 templates
     # have been migrated. See https://github.com/flutter/flutter/issues/187899.
-    - tool/gen_defaults/temporarily_disabled/**
+    - tool/gen_defaults/temporarily_excluded/**
     # TODO(justinmc): Remove the following exclusion when cross-imports are
     # fixed. See https://github.com/flutter/flutter/issues/177028.
     - "temporarily_disabled_tests/**"
