@@ -670,7 +670,7 @@ class DropdownMenu<T> extends StatefulWidget {
   ///    and notifies its listeners on [TextEditingValue] changes.
   final List<TextInputFormatter>? inputFormatters;
 
-  /// {@macro flutter.material.MenuAnchor.alignmentOffset}
+  /// {@macro material_ui.MenuAnchor.alignmentOffset}
   final Offset? alignmentOffset;
 
   /// Defines the behavior for closing the dropdown menu when an item is selected.
@@ -712,7 +712,7 @@ class DropdownMenu<T> extends StatefulWidget {
   /// {@macro flutter.widgets.editableText.cursorHeight}
   final double? cursorHeight;
 
-  /// {@macro flutter.cupertino.textfield.restorationId}
+  /// {@macro cupertino_ui.textfield.restorationId}
   final String? restorationId;
 
   /// An optional controller that allows opening and closing of the menu from

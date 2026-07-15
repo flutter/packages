@@ -48,20 +48,20 @@ class TextSelectionToolbar extends StatelessWidget {
     required this.children,
   }) : assert(children.length > 0);
 
-  /// {@macro flutter.cupertino.TextSelectionToolbar.anchorAbove}
+  /// {@macro cupertino_ui.TextSelectionToolbar.anchorAbove}
   final Offset anchorAbove;
 
-  /// {@macro flutter.cupertino.TextSelectionToolbar.anchorBelow}
+  /// {@macro cupertino_ui.TextSelectionToolbar.anchorBelow}
   final Offset anchorBelow;
 
-  /// {@macro flutter.cupertino.TextSelectionToolbar.children}
+  /// {@macro cupertino_ui.TextSelectionToolbar.children}
   ///
   /// See also:
   ///   * [TextSelectionToolbarTextButton], which builds a default Material-
   ///     style text selection toolbar text button.
   final List<Widget> children;
 
-  /// {@macro flutter.cupertino.TextSelectionToolbar.toolbarBuilder}
+  /// {@macro cupertino_ui.TextSelectionToolbar.toolbarBuilder}
   final ToolbarBuilder toolbarBuilder;
 
   /// The size of the text selection handles.

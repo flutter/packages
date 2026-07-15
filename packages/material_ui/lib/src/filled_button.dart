@@ -107,7 +107,7 @@ class FilledButton extends ButtonStyleButton {
   /// If [icon] is null, this constructor will create a [FilledButton]
   /// that doesn't display an icon.
   ///
-  /// {@macro flutter.material.ButtonStyle.iconAlignment}
+  /// {@macro material_ui.ButtonStyle.iconAlignment}
   ///
   FilledButton.icon({
     super.key,
@@ -339,7 +339,7 @@ class FilledButton extends ButtonStyleButton {
   /// value for all states, otherwise the values are as specified for
   /// each state, and "others" means all other states.
   ///
-  /// {@macro flutter.material.elevated_button.default_font_size}
+  /// {@macro material_ui.elevated_button.default_font_size}
   ///
   /// The color of the [ButtonStyle.textStyle] is not used, the
   /// [ButtonStyle.foregroundColor] color is used instead.
