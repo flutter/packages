@@ -20,7 +20,6 @@ Future<void> main(List<String> args) async {
   parser.addFlag('verbose', abbr: 'v', help: 'Enable verbose output', negatable: false);
   final ArgResults argResults = parser.parse(args);
   // TODO(elliette): Add token logger when verbose flag is used.
-  // ignore: unused_local_variable
   final verbose = argResults['verbose'] as bool;
   const AppBarTemplate().generateFile(verbose: verbose);
 }
