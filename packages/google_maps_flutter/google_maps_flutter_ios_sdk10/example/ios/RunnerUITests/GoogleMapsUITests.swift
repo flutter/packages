@@ -126,7 +126,7 @@ class GoogleMapsUITests: XCTestCase {
     XCTAssertEqual(originalNortheast.latitude, draggedNortheast.latitude)
     XCTAssertEqual(originalNortheast.longitude, draggedNortheast.longitude)
     XCTAssertEqual(originalSouthwest.latitude, draggedSouthwest.latitude)
-    XCTAssertEqual(originalSouthwest.latitude, draggedSouthwest.latitude)
+    XCTAssertEqual(originalSouthwest.longitude, draggedSouthwest.longitude)
   }
 
   func validateVisibleRegion(
