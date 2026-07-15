@@ -28,13 +28,13 @@ void main() {
           isM3E ? IconButtonTemplateM3E(testPath()) : IconButtonTemplateM3(testPath());
 
       String filePath() {
-        final fileName = 'icon_button_m3${isM3E ? 'e' : ''}_defaults.g.dart';
+        final fileName = 'icon_button_defaults_m3${isM3E ? 'e' : ''}.g.dart';
         return '${testPath()}/$fileName';
       }
 
       group(isM3E ? 'M3E Template' : 'M3 Template', () {
         test(
-          'will generate a part file ending in icon_button_m3${isM3E ? 'e' : ''}_defaults.g.dart',
+          'will generate a part file ending in icon_button_defaults_m3${isM3E ? 'e' : ''}.g.dart',
           () {
             buttonTemplate().generateFile(verbose: true);
             expect(File(filePath()).existsSync(), isTrue);
@@ -150,7 +150,7 @@ void main() {
       final template = UnformattedTemplate(testPath());
       template.generateFile();
 
-      final file = File('${testPath()}/unformatted_m3_defaults.g.dart');
+      final file = File('${testPath()}/unformatted_defaults_m3.g.dart');
       expect(file.readAsStringSync(), contains(formattedClass));
     });
 
