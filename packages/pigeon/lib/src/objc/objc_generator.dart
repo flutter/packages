@@ -535,6 +535,7 @@ class ObjcSourceGenerator extends StructuredGenerator<InternalObjcOptions> {
       dartPackageName: dartPackageName,
     );
     _writeObjcEquality(generatorOptions, indent, classDefinition);
+    _writeObjcDescription(generatorOptions, indent, classDefinition);
     indent.writeln('@end');
     indent.newln();
   }
@@ -590,6 +591,53 @@ class ObjcSourceGenerator extends StructuredGenerator<InternalObjcOptions> {
         }
       }
       indent.writeln('return result;');
+    });
+  }
+
+  void _writeObjcDescription(
+    InternalObjcOptions languageOptions,
+    Indent indent,
+    Class classDefinition,
+  ) {
+    final String className = _className(languageOptions.prefix, classDefinition.name);
+    indent.writeScoped('- (NSString *)description {', '}', () {
+      final Iterable<String> fieldLabels = classDefinition.fields.map((NamedType field) {
+        if (_usesPrimitive(field.type)) {
+          if (field.type.isEnum) {
+            return '${field.name}: %ld';
+          }
+          switch (field.type.baseName) {
+            case 'bool':
+              return '${field.name}: %@';
+            case 'int':
+              return '${field.name}: %ld';
+            case 'double':
+              return '${field.name}: %f';
+          }
+        }
+        return '${field.name}: %@';
+      });
+      final formatString = '$className(${fieldLabels.join(', ')})';
+
+      final Iterable<String> fieldValues = classDefinition.fields.map((NamedType field) {
+        if (_usesPrimitive(field.type)) {
+          if (field.type.isEnum) {
+            return '(long)self.${field.name}';
+          }
+          switch (field.type.baseName) {
+            case 'bool':
+              return 'self.${field.name} ? @"true" : @"false"';
+            case 'int':
+              return '(long)self.${field.name}';
+            case 'double':
+              return 'self.${field.name}';
+          }
+        }
+        return 'self.${field.name}';
+      });
+
+      final String args = <String>['@"$formatString"', ...fieldValues].join(', ');
+      indent.writeln('return [NSString stringWithFormat:$args];');
     });
   }
 
@@ -1677,7 +1725,7 @@ String _propertyTypeForDartType(
 String _capitalize(String str) => str.isEmpty ? '' : str[0].toUpperCase() + str.substring(1);
 
 /// Returns the components of the objc selector that will be generated from
-/// [func], ie the strings between the semicolons.  [lastSelectorComponent] is
+/// [func], ie the strings between the semicolons. [lastSelectorComponent] is
 /// the last component of the selector aka the label of the last parameter which
 /// isn't included in [func].
 /// Example:
@@ -1705,13 +1753,13 @@ Iterable<String> _getSelectorComponents(Method func, String lastSelectorComponen
   }
 }
 
-/// Generates the objc source code method signature for [func].  [returnType] is
+/// Generates the objc source code method signature for [func]. [returnType] is
 /// the return value of method, this may not match the return value in [func]
-/// since [func] may be asynchronous.  The function requires you specify a
+/// since [func] may be asynchronous. The function requires you specify a
 /// [lastArgType] and [lastArgName] for arguments that aren't represented in
-/// [func].  This is typically used for passing in 'error' or 'completion'
+/// [func]. This is typically used for passing in 'error' or 'completion'
 /// arguments that don't exist in the pigeon file but are required in the objc
-/// output.  [argNameFunc] is the function used to generate the argument name
+/// output. [argNameFunc] is the function used to generate the argument name
 /// [func.parameters].
 String _makeObjcSignature({
   required Method func,

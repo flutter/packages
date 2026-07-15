@@ -413,7 +413,22 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
       _openSink(options.swiftOptions?.swiftOut, basePath: options.basePath ?? '');
 
   @override
-  List<Error> validate(InternalPigeonOptions options, Root root) => <Error>[];
+  List<Error> validate(InternalPigeonOptions options, Root root) {
+    final errors = <Error>[];
+    for (final Class classDefinition in root.classes) {
+      for (final NamedType field in classDefinition.fields) {
+        if (field.name == 'description') {
+          errors.add(
+            Error(
+              message:
+                  'Field "description" is not allowed in class "${classDefinition.name}" because it conflicts with Swift\'s NSObject/CustomStringConvertible.description property.',
+            ),
+          );
+        }
+      }
+    }
+    return errors;
+  }
 }
 
 /// A [GeneratorAdapter] that generates C++ source code.
@@ -1732,6 +1747,26 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
 
   @override
   Object? visitEnumDeclaration(dart_ast.EnumDeclaration node) {
+    // Enhanced enums (those with a constructor, fields, methods, or arguments
+    // on their values) aren't supported by Pigeon.
+    final bool isEnhancedEnum =
+        node.body.members.isNotEmpty ||
+        node.body.constants.any((dart_ast.EnumConstantDeclaration e) => e.arguments != null) ||
+        node.namePart.typeParameters != null ||
+        node.namePart is dart_ast.PrimaryConstructorDeclaration ||
+        node.withClause != null ||
+        node.implementsClause != null;
+    if (isEnhancedEnum) {
+      _errors.add(
+        Error(
+          message:
+              'Pigeon doesn\'t support enhanced enums ("${node.namePart.typeName.lexeme}"). '
+              'Use a plain enum without a constructor, fields, methods, type parameters, '
+              'mixins, interfaces, or arguments on its values.',
+          lineNumber: calculateLineNumber(source, node.offset),
+        ),
+      );
+    }
     _enums.add(
       Enum(
         name: node.namePart.typeName.lexeme,
@@ -1746,7 +1781,12 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         documentationComments: _documentationCommentsParser(node.documentationComment?.tokens),
       ),
     );
-    node.visitChildren(this);
+    // Don't visit the children of an enhanced enum: the declaration is
+    // already reported as unsupported, and the visitor doesn't expect
+    // class-like members outside of a class.
+    if (!isEnhancedEnum) {
+      node.visitChildren(this);
+    }
     return null;
   }
 
