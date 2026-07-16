@@ -2,27 +2,35 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import '../data/assist_chip.dart';
 import 'template.dart';
 
-class ActionChipTemplate extends TokenTemplate {
-  const ActionChipTemplate(
-    super.blockName,
-    super.fileName,
-    super.tokens, {
-    super.colorSchemePrefix = '_colors.',
-    super.textThemePrefix = '_textTheme.',
+class ActionChipTemplateM3 extends TokenTemplateM3 {
+  const ActionChipTemplateM3({
+    this.colorSchemePrefix = '_colors',
+    this.textThemePrefix = '_textTheme.',
   });
+
+  final String colorSchemePrefix;
+  final String textThemePrefix;
 
   static const String tokenGroup = 'md.comp.assist-chip';
   static const String flatVariant = '.flat';
   static const String elevatedVariant = '.elevated';
 
   @override
-  String generate() => '''
-class _${blockName}DefaultsM3 extends ChipThemeData {
-  _${blockName}DefaultsM3(this.context, this.isEnabled, this._chipVariant)
+  String get name => 'Action Chip';
+
+  @override
+  String get parentFilePath => 'action_chip.dart';
+
+  @override
+  String generateContents(String className) =>
+      '''
+class $className extends ChipThemeData {
+  $className(this.context, this.isEnabled, this._chipVariant)
     : super(
-        shape: ${shape("$tokenGroup.container")},
+        shape: ${shape(TokenAssistChip.containerShape)},
         showCheckmark: true,
       );
 
@@ -34,17 +42,17 @@ class _${blockName}DefaultsM3 extends ChipThemeData {
 
   @override
   double? get elevation => _chipVariant == _ChipVariant.flat
-    ? ${elevation("$tokenGroup$flatVariant.container")}
-    : isEnabled ? ${elevation("$tokenGroup$elevatedVariant.container")} : ${elevation("$tokenGroup$elevatedVariant.disabled.container")};
+    ? ${TokenAssistChip.flatContainerElevation}
+    : isEnabled ? ${TokenAssistChip.elevatedContainerElevation} : ${TokenAssistChip.elevatedDisabledContainerElevation};
 
   @override
-  double? get pressElevation => ${elevation("$tokenGroup$elevatedVariant.pressed.container")};
+  double? get pressElevation => ${TokenAssistChip.elevatedPressedContainerElevation};
 
   @override
-  TextStyle? get labelStyle => ${textStyle("$tokenGroup.label-text")}?.copyWith(
+  TextStyle? get labelStyle => _textTheme.labelLarge?.copyWith(
     color: isEnabled
-      ? ${color("$tokenGroup.label-text.color")}
-      : ${color("$tokenGroup.disabled.label-text.color")},
+      ? ${color(TokenAssistChip.labelTextColor, colorSchemePrefix)}
+      : ${color(TokenAssistChip.disabledLabelTextColor, colorSchemePrefix)},
   );
 
   @override
@@ -52,21 +60,21 @@ class _${blockName}DefaultsM3 extends ChipThemeData {
     WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled)) {
         return _chipVariant == _ChipVariant.flat
-          ? ${componentColor("$tokenGroup$flatVariant.disabled.container")}
-          : ${componentColor("$tokenGroup$elevatedVariant.disabled.container")};
+          ? null
+          : ${colorWithOpacity(TokenAssistChip.elevatedDisabledContainerColor, TokenAssistChip.elevatedDisabledContainerOpacity, colorSchemePrefix)};
       }
       return _chipVariant == _ChipVariant.flat
-        ? ${componentColor("$tokenGroup$flatVariant.container")}
-        : ${componentColor("$tokenGroup$elevatedVariant.container")};
+        ? null
+        : ${color(TokenAssistChip.elevatedContainerColor, colorSchemePrefix)};
     });
 
   @override
   Color? get shadowColor => _chipVariant == _ChipVariant.flat
-    ? ${colorOrTransparent("$tokenGroup$flatVariant.container.shadow-color")}
-    : ${colorOrTransparent("$tokenGroup$elevatedVariant.container.shadow-color")};
+    ? Colors.transparent
+    : ${color(TokenAssistChip.elevatedContainerShadowColor, colorSchemePrefix)};
 
   @override
-  Color? get surfaceTintColor => ${colorOrTransparent("$tokenGroup.container.surface-tint-layer.color")};
+  Color? get surfaceTintColor => Colors.transparent;
 
   @override
   Color? get checkmarkColor => null;
@@ -77,16 +85,16 @@ class _${blockName}DefaultsM3 extends ChipThemeData {
   @override
   BorderSide? get side => _chipVariant == _ChipVariant.flat
     ? isEnabled
-        ? ${border('$tokenGroup$flatVariant.outline')}
-        : ${border('$tokenGroup$flatVariant.disabled.outline')}
+        ? ${border(color(TokenAssistChip.flatOutlineColor, colorSchemePrefix), width: TokenAssistChip.flatOutlineWidth)}
+        : ${border(colorWithOpacity(TokenAssistChip.flatDisabledOutlineColor, TokenAssistChip.flatDisabledOutlineOpacity, colorSchemePrefix))}
     : const BorderSide(color: Colors.transparent);
 
   @override
   IconThemeData? get iconTheme => IconThemeData(
     color: isEnabled
-      ? ${color("$tokenGroup.with-icon.icon.color")}
-      : ${color("$tokenGroup.with-icon.disabled.icon.color")},
-    size: ${getToken("$tokenGroup.with-icon.icon.size")},
+      ? ${color(TokenAssistChip.withIconIconColor, colorSchemePrefix)}
+      : ${color(TokenAssistChip.withIconDisabledIconColor, colorSchemePrefix)},
+    size: ${TokenAssistChip.withIconIconSize},
   );
 
   @override
