@@ -706,7 +706,7 @@ class DropdownMenu<T> extends StatefulWidget {
   ///    the [TextField] can display.
   final int? maxLines;
 
-  /// {@macro flutter.widgets.TextField.textInputAction}
+  /// {@macro material_ui.TextField.textInputAction}
   final TextInputAction? textInputAction;
 
   /// {@macro flutter.widgets.editableText.cursorHeight}
