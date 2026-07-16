@@ -26,7 +26,7 @@ class GoException implements Exception {
   String toString() => 'GoException: $message';
 }
 
-/// Raised when [Block] is returned from `onEnter` but there is no prior
+/// Raised when `Block` is returned from `onEnter` but there is no prior
 /// route configuration to restore (e.g., an initial deep link was blocked).
 ///
 /// Apps can check for this specific type in `onException` to recover
