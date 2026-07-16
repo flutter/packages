@@ -606,4 +606,143 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byKey(home), findsOneWidget);
   });
+
+  testWidgets('onExit is not called when refreshListenable fires on a pushed route', (
+    WidgetTester tester,
+  ) async {
+    var onExitCount = 0;
+    final home = UniqueKey();
+    final form = UniqueKey();
+    final notifier = ValueNotifier<int>(0);
+    addTearDown(notifier.dispose);
+    final router = GoRouter(
+      initialLocation: '/',
+      refreshListenable: notifier,
+      routes: <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (_, _) => DummyScreen(key: home),
+        ),
+        GoRoute(
+          path: '/form',
+          builder: (_, _) => DummyScreen(key: form),
+          onExit: (BuildContext context, GoRouterState state) {
+            onExitCount++;
+            return true;
+          },
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+    unawaited(router.push('/form'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(form), findsOneWidget);
+    expect(onExitCount, 0);
+
+    // A refreshListenable tick (e.g. a tab-focus claims refresh) re-parses the
+    // encoded current route. That round-trip must be a no-op: onExit fires only
+    // when a route actually leaves the stack, not on a refresh re-decode.
+    notifier.value++;
+    await tester.pumpAndSettle();
+
+    expect(onExitCount, 0);
+    expect(find.byKey(form), findsOneWidget);
+  });
+
+  testWidgets('live push completer is preserved across a refreshListenable tick', (
+    WidgetTester tester,
+  ) async {
+    final home = UniqueKey();
+    final form = UniqueKey();
+    final notifier = ValueNotifier<int>(0);
+    addTearDown(notifier.dispose);
+    final router = GoRouter(
+      initialLocation: '/',
+      refreshListenable: notifier,
+      routes: <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (_, _) => DummyScreen(key: home),
+        ),
+        GoRoute(
+          path: '/form',
+          builder: (_, _) => DummyScreen(key: form),
+          onExit: (BuildContext context, GoRouterState state) => true,
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+    // Capture completion via a flag rather than awaiting the future directly: if
+    // the refresh orphans the live completer (the bug), the future never completes
+    // and `completed` stays false — a synchronous, fail-fast assertion that cannot
+    // hang the suite.
+    var completed = false;
+    Object? completedWith;
+    unawaited(
+      router.push<String>('/form').then((Object? value) {
+        completed = true;
+        completedWith = value;
+      }),
+    );
+    await tester.pumpAndSettle();
+
+    notifier.value++;
+    await tester.pumpAndSettle();
+
+    router.pop<String>('result');
+    await tester.pumpAndSettle();
+
+    expect(completed, isTrue);
+    expect(completedWith, 'result');
+  });
+
+  testWidgets('replace() to the same location still completes its future', (
+    WidgetTester tester,
+  ) async {
+    final home = UniqueKey();
+    final form = UniqueKey();
+    final router = GoRouter(
+      initialLocation: '/',
+      routes: <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (_, _) => DummyScreen(key: home),
+        ),
+        GoRoute(
+          path: '/form',
+          builder: (_, _) => DummyScreen(key: form),
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+    unawaited(router.push<String>('/form'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(form), findsOneWidget);
+
+    // replace() reuses the old match's pageKey and differs only by a new
+    // completer, so the completer must stay part of identity — otherwise the new
+    // configuration equals the current one, setNewRoutePath no-ops, and the
+    // returned future is orphaned.
+    var completed = false;
+    Object? completedWith;
+    unawaited(
+      router.replace<String>('/form').then((Object? value) {
+        completed = true;
+        completedWith = value;
+      }),
+    );
+    await tester.pumpAndSettle();
+
+    router.pop<String>('done');
+    await tester.pumpAndSettle();
+
+    expect(completed, isTrue);
+    expect(completedWith, 'done');
+  });
 }
