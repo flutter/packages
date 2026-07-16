@@ -80,9 +80,17 @@ In these instructions, placeholders are used for the component name. Please subs
    String get parentFilePath => 'component_name.dart';
    ```
 
-6. Once the template compiles, uncomment it in `packages/material_ui/tool/gen_defaults/bin/gen_defaults.dart`:
+   > **[Important]** If the original template used a token instead of a
+   > hard-coded value, then try to locate the equivalent token in
+   > `tool/gen_defaults/data`. If no appropriate token can be found, please add
+   > TODO a comment like: `// TODO(username): Using hard-coded value due to
+   > missing token`. Hard-coded values should only be used as a last resort.
+
+6. Once the template compiles, uncomment it and its respective import in `packages/material_ui/tool/gen_defaults/bin/gen_defaults.dart`:
 
    ```dart
+   import '../templates/component_name_template.dart';
+
    const ComponentNameTemplateM3().generateFile(verbose: verbose);
    ```
 
