@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes an assertion failure when `onException` fires during a blocked initial navigation, and defers the call so a recovery navigation made inside it is no longer silently discarded
+version: patch

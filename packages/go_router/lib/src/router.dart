@@ -271,8 +271,14 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     if (onException != null) {
       parserExceptionHandler = (BuildContext context, RouteMatchList routeMatchList) {
         onException(context, configuration.buildTopLevelGoRouterState(routeMatchList), this);
-        // Avoid updating GoRouterDelegate if onException is provided.
-        return routerDelegate.currentConfiguration;
+        // Prefer the current configuration to avoid updating
+        // GoRouterDelegate with the error match list. Fall back to the
+        // error match list when there is no current configuration yet
+        // (e.g., initial deep link blocked by onEnter). This prevents
+        // an assertion failure in GoRouterDelegate.setNewRoutePath
+        // which requires configuration.isNotEmpty || configuration.isError.
+        final RouteMatchList current = routerDelegate.currentConfiguration;
+        return current.isNotEmpty ? current : routeMatchList;
       };
     } else {
       parserExceptionHandler = null;
