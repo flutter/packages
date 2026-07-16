@@ -8,6 +8,7 @@ import 'package:test/test.dart';
 import '../data/color_role.dart';
 import '../data/shape_struct.dart';
 import '../templates/app_bar_template.dart';
+import '../templates/badge_template.dart';
 import '../templates/template.dart';
 import 'test_fixtures/test_templates.dart';
 
@@ -165,9 +166,19 @@ void main() {
       expect(contents, contains('static const double expandedHeight = 152.0'));
     });
 
-    test('BadgeTemplateM3 emits M3 Badge defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+    test('BadgeTemplateM3 emits M3 Badge defaults from badge tokens', () {
+      final String contents = const BadgeTemplateM3().generateContents('_BadgeDefaultsM3');
+      expect(contents, contains('class _BadgeDefaultsM3 extends BadgeThemeData'));
+      expect(contents, contains('smallSize: 6.0'));
+      expect(contents, contains('largeSize: 16.0'));
+      expect(contents, contains('padding: const EdgeInsets.symmetric(horizontal: 4)'));
+      expect(contents, contains('alignment: AlignmentDirectional.topEnd'));
+      expect(contents, contains('Color? get backgroundColor => _colors.error'));
+      expect(contents, contains('Color? get textColor => _colors.onError'));
+      expect(
+        contents,
+        contains('TextStyle? get textStyle => Theme.of(context).textTheme.labelSmall'),
+      );
     });
 
     test('BannerTemplateM3 emits M3 Banner defaults from tokens', () {

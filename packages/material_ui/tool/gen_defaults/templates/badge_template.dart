@@ -2,22 +2,25 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import '../data/badge.dart';
 import 'template.dart';
 
-class BadgeTemplate extends TokenTemplate {
-  const BadgeTemplate(
-    super.blockName,
-    super.fileName,
-    super.tokens, {
-    super.colorSchemePrefix = '_colors.',
-  });
+class BadgeTemplateM3 extends TokenTemplateM3 {
+  const BadgeTemplateM3();
 
   @override
-  String generate() => '''
-class _${blockName}DefaultsM3 extends BadgeThemeData {
-  _${blockName}DefaultsM3(this.context) : super(
-    smallSize: ${getToken("md.comp.badge.size")},
-    largeSize: ${getToken("md.comp.badge.large.size")},
+  String get name => 'Badge';
+
+  @override
+  String get parentFilePath => 'badge.dart';
+
+  @override
+  String generateContents(String className) =>
+      '''
+class $className extends BadgeThemeData {
+  $className(this.context) : super(
+    smallSize: ${number(TokenBadge.size)},
+    largeSize: ${number(TokenBadge.largeSize)},
     padding: const EdgeInsets.symmetric(horizontal: 4),
     alignment: AlignmentDirectional.topEnd,
   );
@@ -27,13 +30,13 @@ class _${blockName}DefaultsM3 extends BadgeThemeData {
   late final ColorScheme _colors = _theme.colorScheme;
 
   @override
-  Color? get backgroundColor => ${color("md.comp.badge.color")};
+  Color? get backgroundColor => ${color(TokenBadge.color, '_colors')};
 
   @override
-  Color? get textColor => ${color("md.comp.badge.large.label-text.color")};
+  Color? get textColor => ${color(TokenBadge.largeLabelTextColor, '_colors')};
 
   @override
-  TextStyle? get textStyle => ${textStyle("md.comp.badge.large.label-text")};
+  TextStyle? get textStyle => Theme.of(context).textTheme.labelSmall;
 }
 ''';
 }

@@ -14,7 +14,8 @@ import 'package:args/args.dart';
 
 // import '../templates/action_chip_template.dart';
 import '../templates/app_bar_template.dart';
-// import '../templates/badge_template.dart';
+import '../templates/badge_template.dart';
+
 // import '../templates/banner_template.dart';
 // import '../templates/bottom_app_bar_template.dart';
 // import '../templates/bottom_sheet_template.dart';
@@ -65,7 +66,7 @@ Future<void> main(List<String> args) async {
 
   // const ActionChipTemplateM3().generateFile(verbose: verbose);
   const AppBarTemplateM3().generateFile(verbose: verbose);
-  // const BadgeTemplateM3().generateFile(verbose: verbose);
+  const BadgeTemplateM3().generateFile(verbose: verbose);
   // const BannerTemplateM3().generateFile(verbose: verbose);
   // const BottomAppBarTemplateM3().generateFile(verbose: verbose);
   // const BottomSheetTemplateM3().generateFile(verbose: verbose);
