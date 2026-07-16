@@ -31,7 +31,8 @@ In these instructions, placeholders are used for the component name. Please subs
    **Do not skip this step!**
 
    ```bash
-   git commit -am "Move template/generated code out of temporarily_excluded directory"
+   git add -A
+   git commit -m "Move template/generated code out of temporarily_excluded directory"
    ```
 
 4. Locate the respective component file that contains the generated code in `packages/material_ui/lib/src`.
