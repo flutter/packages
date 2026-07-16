@@ -2,14 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import '../data/bottom_app_bar.dart';
 import 'template.dart';
 
-class BottomAppBarTemplate extends TokenTemplateM3 {
-  const BottomAppBarTemplate( {
-    this.colorSchemePrefix = '_colors.',
-  });
-
-  final String colorSchemePrefix;
+class BottomAppBarTemplateM3 extends TokenTemplateM3 {
+  const BottomAppBarTemplateM3();
 
   @override
   String get name => 'Bottom App Bar';
@@ -22,19 +19,19 @@ class BottomAppBarTemplate extends TokenTemplateM3 {
 class $className extends BottomAppBarThemeData {
   $className(this.context)
     : super(
-      elevation: ${elevation('md.comp.bottom-app-bar.container')},
-      height: ${getToken('md.comp.bottom-app-bar.container.height')},
-      shape: const AutomaticNotchedShape(${shape('md.comp.bottom-app-bar.container', '')}),
+      elevation: ${number(TokenBottomAppBar.containerElevation)},
+      height: ${number(TokenBottomAppBar.containerHeight)},
+      shape: const AutomaticNotchedShape(${shape(TokenBottomAppBar.containerShape, '')}),
     );
 
   final BuildContext context;
   late final ColorScheme _colors = Theme.of(context).colorScheme;
 
   @override
-  Color? get color => ${componentColor('md.comp.bottom-app-bar.container')};
+  Color? get color => ${color(TokenBottomAppBar.containerColor, '_colors')};
 
   @override
-  Color? get surfaceTintColor => ${colorOrTransparent('md.comp.bottom-app-bar.container.surface-tint-layer')};
+  Color? get surfaceTintColor => Colors.transparent;
 
   @override
   Color? get shadowColor => Colors.transparent;
