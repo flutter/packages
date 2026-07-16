@@ -8,15 +8,9 @@ import 'template.dart';
 class ActionChipTemplateM3 extends TokenTemplateM3 {
   const ActionChipTemplateM3({
     this.colorSchemePrefix = '_colors',
-    this.textThemePrefix = '_textTheme.',
   });
 
   final String colorSchemePrefix;
-  final String textThemePrefix;
-
-  static const String tokenGroup = 'md.comp.assist-chip';
-  static const String flatVariant = '.flat';
-  static const String elevatedVariant = '.elevated';
 
   @override
   String get name => 'Action Chip';
