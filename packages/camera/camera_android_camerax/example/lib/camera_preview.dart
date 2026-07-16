@@ -21,18 +21,10 @@ class CameraPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('CAMILLE: Calling camera preview build');
     return controller.value.isInitialized
         ? ValueListenableBuilder<CameraValue>(
             valueListenable: controller,
             builder: (BuildContext context, Object? value, Widget? child) {
-              final Size mediaSize = MediaQuery.of(context).size;
-              print('--- REBUILD LOG ---');
-              print('MediaQuery size (UI state): $mediaSize');
-              print(
-                'Controller DeviceOrientation (Plugin state): ${controller.value.deviceOrientation}',
-              );
-              print('-------------------');
               return Stack(
                 fit: StackFit.expand,
                 children: <Widget>[
@@ -46,21 +38,6 @@ class CameraPreview extends StatelessWidget {
           )
         : Container();
   
-  }
-
-  Widget _wrapInRotatedBox({required Widget child}) {
-    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) {
-      return child;
-    }
-
-    return RotatedBox(quarterTurns: _getQuarterTurns(), child: child);
-  }
-
-  bool _isLandscape() {
-    return <DeviceOrientation>[
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ].contains(_getApplicableOrientation());
   }
 
   int _getQuarterTurns() {

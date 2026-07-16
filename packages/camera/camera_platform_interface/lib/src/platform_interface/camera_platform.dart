@@ -355,4 +355,7 @@ abstract class CameraPlatform extends PlatformInterface {
   Future<void> setJpegImageQuality(int cameraId, int quality) {
     throw UnimplementedError('setJpegImageQuality() is not implemented.');
   }
+
+    /// Check whether this platform handles rotation natively.
+  bool handlesRotationNatively() => false;
 }

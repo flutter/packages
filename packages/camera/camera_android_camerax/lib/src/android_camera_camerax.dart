@@ -1386,6 +1386,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     return cameraImageDataStreamController!.stream;
   }
 
+  @override
+  handlesRotationNatively
+
   // Methods for binding UseCases to the lifecycle of the camera controlled
   // by a ProcessCameraProvider instance:
 
