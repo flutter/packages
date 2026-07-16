@@ -260,5 +260,52 @@ void main() {
       expect(find.text('protected'), findsNothing);
       expect(router.state.uri.path, '/fallback');
     });
+
+    testWidgets('renders the default error screen for an unmatched initial navigation '
+        'when onException does not navigate', (WidgetTester tester) async {
+      var exceptionCaught = false;
+
+      await createRouter(
+        <RouteBase>[GoRoute(path: '/', builder: (_, GoRouterState state) => const Text('home'))],
+        tester,
+        initialLocation: '/unmatched-route',
+        onException: (_, _, _) {
+          exceptionCaught = true;
+        },
+      );
+
+      expect(tester.takeException(), isNull);
+      expect(exceptionCaught, isTrue);
+      expect(find.text('Page Not Found'), findsOneWidget);
+    });
+
+    testWidgets('preserves the first installed error configuration when a second '
+        'unmatched navigation also has onException not navigate', (WidgetTester tester) async {
+      final visited = <String>[];
+
+      final GoRouter router = await createRouter(
+        <RouteBase>[GoRoute(path: '/', builder: (_, GoRouterState state) => const Text('home'))],
+        tester,
+        initialLocation: '/first-unmatched',
+        onException: (_, GoRouterState state, _) {
+          visited.add(state.uri.toString());
+        },
+      );
+
+      expect(tester.takeException(), isNull);
+      expect(visited, <String>['/first-unmatched']);
+      expect(router.routerDelegate.currentConfiguration.uri.toString(), '/first-unmatched');
+
+      router.go('/second-unmatched');
+      await tester.pumpAndSettle();
+
+      // onException fires again for the second exception, but the
+      // already-installed error configuration from the first is
+      // preserved instead of being replaced by the second.
+      expect(tester.takeException(), isNull);
+      expect(visited, <String>['/first-unmatched', '/second-unmatched']);
+      expect(router.routerDelegate.currentConfiguration.uri.toString(), '/first-unmatched');
+      expect(find.text('Page Not Found'), findsOneWidget);
+    });
   });
 }
