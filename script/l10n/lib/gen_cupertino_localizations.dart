@@ -75,4 +75,4 @@ const String cupertinoFactoryArguments =
 
 const String cupertinoSupportedLanguagesConstant = 'kCupertinoSupportedLanguages';
 
-const String cupertinoSupportedLanguagesDocMacro = 'flutter.localizations.cupertino.languages';
+const String cupertinoSupportedLanguagesDocMacro = 'cupertino_ui.localizations.languages';

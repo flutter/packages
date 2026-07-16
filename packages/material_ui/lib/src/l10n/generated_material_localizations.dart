@@ -46611,7 +46611,7 @@ final Set<String> kMaterialSupportedLanguages = HashSet<String>.from(const <Stri
 ///
 /// The following locales are supported by this package:
 ///
-/// {@template flutter.localizations.material.languages}
+/// {@template material_ui.localizations.languages}
 ///  * `af` - Afrikaans
 ///  * `am` - Amharic
 ///  * `ar` - Arabic
