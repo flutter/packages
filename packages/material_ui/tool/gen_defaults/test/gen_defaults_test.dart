@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:test/test.dart';
 import '../data/color_role.dart';
 import '../data/shape_struct.dart';
+import '../templates/action_chip_template.dart';
 import '../templates/app_bar_template.dart';
 import '../templates/bottom_sheet_template.dart';
 import '../templates/template.dart';
@@ -150,8 +151,23 @@ void main() {
     });
 
     test('ActionChipTemplateM3 emits M3 ActionChip defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = const ActionChipTemplateM3().generateContents(
+        '_ActionChipDefaultsM3',
+      );
+      expect(contents, contains('class _ActionChipDefaultsM3 extends ChipThemeData'));
+      expect(
+        contents,
+        contains(
+          'shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0)))',
+        ),
+      );
+      expect(contents, contains('showCheckmark: true'));
+      expect(contents, contains('double? get elevation => _chipVariant == _ChipVariant.flat'));
+      expect(contents, contains('? 0.0'));
+      expect(contents, contains(': isEnabled ? 1.0 : 0.0;'));
+      expect(contents, contains('double? get pressElevation => 1.0;'));
+      expect(contents, contains('_colors.onSurface.withOpacity(0.12)'));
+      expect(contents, contains('size: 18.0'));
     });
 
     test('AppBarTemplateM3 emits M3 AppBar defaults from tokens', () {
