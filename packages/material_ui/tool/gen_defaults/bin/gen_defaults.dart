@@ -13,6 +13,7 @@
 import 'package:args/args.dart';
 
 import '../templates/app_bar_template.dart';
+import '../templates/banner_template.dart';
 
 Future<void> main(List<String> args) async {
   // Parse arguments
@@ -22,4 +23,5 @@ Future<void> main(List<String> args) async {
   // TODO(elliette): Add token logger when verbose flag is used.
   final verbose = argResults['verbose'] as bool;
   const AppBarTemplateM3().generateFile(verbose: verbose);
+  const BannerTemplateM3().generateFile(verbose: verbose);
 }

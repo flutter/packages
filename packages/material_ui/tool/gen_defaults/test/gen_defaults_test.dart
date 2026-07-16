@@ -8,6 +8,7 @@ import 'package:test/test.dart';
 import '../data/color_role.dart';
 import '../data/shape_struct.dart';
 import '../templates/app_bar_template.dart';
+import '../templates/banner_template.dart';
 import '../templates/template.dart';
 import 'test_fixtures/test_templates.dart';
 
@@ -159,6 +160,17 @@ void main() {
       expect(contents, contains('static const double expandedHeight = 112.0'));
       expect(contents, contains('static const double expandedHeight = 152.0'));
     });
+
+    test('BannerTemplateM3 emits M3 Banner defaults from banner tokens', () {
+      final String contents = const BannerTemplateM3().generateContents('_BannerDefaultsM3');
+      expect(contents, contains('class _BannerDefaultsM3 extends MaterialBannerThemeData'));
+      expect(contents, contains('elevation: 1.0'));
+      expect(contents, contains('Color? get backgroundColor => _colors.surfaceContainerLow'));
+      expect(contents, contains('Color? get surfaceTintColor => Colors.transparent'));
+      expect(contents, contains('Color? get dividerColor => _colors.outlineVariant'));
+      expect(contents, contains('TextStyle? get contentTextStyle => _textTheme.bodyMedium'));
+    });
+
     test('will run dart format over the generated file', () {
       final template = UnformattedTemplate(testPath());
       template.generateFile();

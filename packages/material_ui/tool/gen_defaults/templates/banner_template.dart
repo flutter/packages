@@ -2,38 +2,41 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import '../data/banner.dart';
+import '../data/divider.dart';
 import 'template.dart';
 
-class BannerTemplate extends TokenTemplate {
-  const BannerTemplate(
-    super.blockName,
-    super.fileName,
-    super.tokens, {
-    super.colorSchemePrefix = '_colors.',
-    super.textThemePrefix = '_textTheme.',
-  });
+class BannerTemplateM3 extends TokenTemplateM3 {
+  const BannerTemplateM3();
 
   @override
-  String generate() => '''
-class _${blockName}DefaultsM3 extends MaterialBannerThemeData {
-  _${blockName}DefaultsM3(this.context)
-    : super(elevation: ${elevation("md.comp.banner.container")});
+  String get name => 'Banner';
+
+  @override
+  String get parentFilePath => 'banner.dart';
+
+  @override
+  String generateContents(String className) =>
+      '''
+class $className extends MaterialBannerThemeData {
+  $className(this.context)
+    : super(elevation: ${number(TokenBanner.containerElevation)});
 
   final BuildContext context;
   late final ColorScheme _colors = Theme.of(context).colorScheme;
   late final TextTheme _textTheme = Theme.of(context).textTheme;
 
   @override
-  Color? get backgroundColor => ${componentColor("md.comp.banner.container")};
+  Color? get backgroundColor => ${color(TokenBanner.containerColor, '_colors')};
 
   @override
-  Color? get surfaceTintColor => ${colorOrTransparent("md.comp.banner.container.surface-tint-layer.color")};
+  Color? get surfaceTintColor => Colors.transparent;
 
   @override
-  Color? get dividerColor => ${color("md.comp.divider.color")};
+  Color? get dividerColor => ${color(TokenDivider.color, '_colors')};
 
   @override
-  TextStyle? get contentTextStyle => ${textStyle("md.comp.banner.supporting-text")};
+  TextStyle? get contentTextStyle => _textTheme.bodyMedium;
 }
 ''';
 }
