@@ -12,6 +12,7 @@
 
 import 'package:args/args.dart';
 
+import '../templates/action_chip_template.dart';
 import '../templates/app_bar_template.dart';
 
 Future<void> main(List<String> args) async {
@@ -21,5 +22,6 @@ Future<void> main(List<String> args) async {
   final ArgResults argResults = parser.parse(args);
   // TODO(elliette): Add token logger when verbose flag is used.
   final verbose = argResults['verbose'] as bool;
+  const ActionChipTemplateM3().generateFile(verbose: verbose);
   const AppBarTemplateM3().generateFile(verbose: verbose);
 }
