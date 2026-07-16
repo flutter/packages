@@ -182,6 +182,23 @@ enum MaterialTapTargetSize {
   shrinkWrap,
 }
 
+/// Defines the Material Design style variant used by Material components.
+enum StyleVariant {
+  /// The Material Design 3 style variant.
+  material3,
+
+  /// The Material Design 3 Expressive style variant.
+  ///
+  /// Material 3 Expressive support is under development. Apps or components
+  /// that opt into this variant may see visual changes as more Expressive
+  /// features get added.
+  ///
+  /// See also:
+  ///
+  /// * the [Material Design 3 Expressive updates](https://m3.material.io/#9f2db05b-ebbb-47c2-892d-1cca35afa386) for design guidelines.
+  material3Expressive,
+}
+
 /// Defines the configuration of the overall visual [Theme] for a [MaterialApp]
 /// or a widget subtree within the app.
 ///
