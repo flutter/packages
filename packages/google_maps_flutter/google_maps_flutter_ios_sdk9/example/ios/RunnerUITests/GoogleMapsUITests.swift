@@ -97,13 +97,8 @@ class GoogleMapsUITests: XCTestCase {
     // https://github.com/flutter/flutter/issues/107913
 
     // Example -33.79495661816674, 151.313996873796
-    var originalNortheast = CLLocationCoordinate2D()
-    // Example -33.90900557679571, 151.10800322145224
-    var originalSouthwest = CLLocationCoordinate2D()
-    validateVisibleRegion(
-      visibleRegionText.label,
-      northeast: &originalNortheast,
-      southwest: &originalSouthwest
+    let (originalNortheast, originalSouthwest) = try XCTUnwrap(
+      validateVisibleRegion(visibleRegionText.label)
     )
     XCTAssertGreaterThan(originalNortheast.latitude, originalSouthwest.latitude)
     XCTAssertGreaterThan(originalNortheast.longitude, originalSouthwest.longitude)
@@ -116,12 +111,8 @@ class GoogleMapsUITests: XCTestCase {
     // Drag the map upward to under the title bar.
     platformView.press(forDuration: 0, thenDragTo: titleBar)
 
-    var draggedNortheast = CLLocationCoordinate2D()
-    var draggedSouthwest = CLLocationCoordinate2D()
-    validateVisibleRegion(
-      visibleRegionText.label,
-      northeast: &draggedNortheast,
-      southwest: &draggedSouthwest
+    let (draggedNortheast, draggedSouthwest) = try XCTUnwrap(
+      validateVisibleRegion(visibleRegionText.label)
     )
     XCTAssertEqual(originalNortheast.latitude, draggedNortheast.latitude)
     XCTAssertEqual(originalNortheast.longitude, draggedNortheast.longitude)
@@ -130,10 +121,8 @@ class GoogleMapsUITests: XCTestCase {
   }
 
   func validateVisibleRegion(
-    _ label: String,
-    northeast: inout CLLocationCoordinate2D,
-    southwest: inout CLLocationCoordinate2D
-  ) {
+    _ label: String
+  ) -> (northeast: CLLocationCoordinate2D, southwest: CLLocationCoordinate2D)? {
     // String will be "VisibleRegion:\nnortheast: LatLng(-33.79495661816674,
     // 151.313996873796),\nsouthwest: LatLng(-33.90900557679571, 151.10800322145224)"
     let scan = Scanner(string: label)
@@ -142,31 +131,33 @@ class GoogleMapsUITests: XCTestCase {
     _ = scan.scanString("VisibleRegion:\nnortheast: LatLng(")
     guard let northeastLatitude = scan.scanDouble() else {
       XCTFail("Failed to scan northeastLatitude")
-      return
+      return nil
     }
     _ = scan.scanString(", ")
     XCTAssertNotEqual(northeastLatitude, 0)
     guard let northeastLongitude = scan.scanDouble() else {
       XCTFail("Failed to scan northeastLongitude")
-      return
+      return nil
     }
     XCTAssertNotEqual(northeastLongitude, 0)
 
     _ = scan.scanString("),\nsouthwest: LatLng(")
     guard let southwestLatitude = scan.scanDouble() else {
       XCTFail("Failed to scan southwestLatitude")
-      return
+      return nil
     }
     XCTAssertNotEqual(southwestLatitude, 0)
     _ = scan.scanString(", ")
     guard let southwestLongitude = scan.scanDouble() else {
       XCTFail("Failed to scan southwestLongitude")
-      return
+      return nil
     }
     XCTAssertNotEqual(southwestLongitude, 0)
 
-    northeast = CLLocationCoordinate2D(latitude: northeastLatitude, longitude: northeastLongitude)
-    southwest = CLLocationCoordinate2D(latitude: southwestLatitude, longitude: southwestLongitude)
+    return (
+      CLLocationCoordinate2D(latitude: northeastLatitude, longitude: northeastLongitude),
+      CLLocationCoordinate2D(latitude: southwestLatitude, longitude: southwestLongitude)
+    )
   }
 
   func testMapClickPage() throws {
