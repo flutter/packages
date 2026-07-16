@@ -94,7 +94,6 @@ class ClusterManagersControllerTests: XCTestCase {
     clusterManagersController.invokeClusteringForEachClusterManager()
 
     // Verify that the markers were added to the cluster manager
-    // Note: Swift bridging of clustersWithIdentifier:error:
     var error: FlutterError? = nil
     if let clusters1 = clusterManagersController.clusters(withIdentifier: clusterManagerId, error: &error) {
       XCTAssertNil(error, "Error should be nil")

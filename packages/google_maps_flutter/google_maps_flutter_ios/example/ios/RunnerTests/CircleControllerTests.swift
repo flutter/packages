@@ -6,6 +6,37 @@ import XCTest
 import GoogleMaps
 @testable import google_maps_flutter_ios
 
+class CircleControllerTests: XCTestCase {
+
+  func testUpdateCircleSetsVisibilityLast() {
+    let circle = PropertyOrderValidatingCircle()
+    FGMCircleController.update(
+      circle,
+      from: FGMPlatformCircle.make(
+        withConsumeTapEvents: false,
+        fill: FGMPlatformColor.make(withRed: 0, green: 0, blue: 0, alpha: 0),
+        stroke: FGMPlatformColor.make(withRed: 0, green: 0, blue: 0, alpha: 0),
+        visible: true,
+        strokeWidth: 0,
+        zIndex: 0,
+        center: FGMPlatformLatLng.make(withLatitude: 0, longitude: 0),
+        radius: 10,
+        circleId: "circle"
+      ),
+      with: CircleControllerTests.mapView()
+    )
+    XCTAssertTrue(circle.hasSetMap)
+  }
+
+  /// Returns a simple map view to add map objects to.
+  static func mapView() -> GMSMapView {
+    let mapViewOptions = GMSMapViewOptions()
+    mapViewOptions.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
+    mapViewOptions.camera = GMSCameraPosition(latitude: 0, longitude: 0, zoom: 0)
+    return PartiallyMockedMapView(options: mapViewOptions)
+  }
+}
+
 /// A GMSCircle that ensures that property updates are made before the map is set.
 class PropertyOrderValidatingCircle: GMSCircle {
   var hasSetMap = false
@@ -82,36 +113,5 @@ class PropertyOrderValidatingCircle: GMSCircle {
         hasSetMap = true
       }
     }
-  }
-}
-
-class CircleControllerTests: XCTestCase {
-
-  func testUpdateCircleSetsVisibilityLast() {
-    let circle = PropertyOrderValidatingCircle()
-    FGMCircleController.update(
-      circle,
-      from: FGMPlatformCircle.make(
-        withConsumeTapEvents: false,
-        fill: FGMPlatformColor.make(withRed: 0, green: 0, blue: 0, alpha: 0),
-        stroke: FGMPlatformColor.make(withRed: 0, green: 0, blue: 0, alpha: 0),
-        visible: true,
-        strokeWidth: 0,
-        zIndex: 0,
-        center: FGMPlatformLatLng.make(withLatitude: 0, longitude: 0),
-        radius: 10,
-        circleId: "circle"
-      ),
-      with: CircleControllerTests.mapView()
-    )
-    XCTAssertTrue(circle.hasSetMap)
-  }
-
-  /// Returns a simple map view to add map objects to.
-  static func mapView() -> GMSMapView {
-    let mapViewOptions = GMSMapViewOptions()
-    mapViewOptions.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
-    mapViewOptions.camera = GMSCameraPosition(latitude: 0, longitude: 0, zoom: 0)
-    return PartiallyMockedMapView(options: mapViewOptions)
   }
 }

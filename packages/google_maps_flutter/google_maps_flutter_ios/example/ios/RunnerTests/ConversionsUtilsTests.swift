@@ -8,28 +8,6 @@ import GoogleMaps
 
 class ConversionUtilsTests: XCTestCase {
 
-  func testGetValueOrNilWithValue() {
-    let key = "key"
-    let value = "value"
-    let dict: [String: Any] = [key: value]
-
-    XCTAssertEqual(FGMGetValueOrNilFromDict(dict, key) as? String, value)
-  }
-
-  func testGetValueOrNilWithNoEntry() {
-    let key = "key"
-    let dict: [String: Any] = [:]
-
-    XCTAssertNil(FGMGetValueOrNilFromDict(dict, key))
-  }
-
-  func testGetValueOrNilWithNSNull() {
-    let key = "key"
-    let dict: [String: Any] = [key: NSNull()]
-
-    XCTAssertNil(FGMGetValueOrNilFromDict(dict, key))
-  }
-
   func testColorFromPlatformColor() {
     let platformRed: Double = 1 / 255.0
     let platformGreen: Double = 2 / 255.0
