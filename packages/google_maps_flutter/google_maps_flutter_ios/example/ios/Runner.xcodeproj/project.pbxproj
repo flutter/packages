@@ -7,6 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A73F1ED02A874D8596718BE8 /* CircleControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8E0364A58CE4D1F8AA3D564 /* CircleControllerTests.swift */; };
+		E680DCBC3E7E41089DF60756 /* ClusterManagersControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FB05BECEF774386944B77D3 /* ClusterManagersControllerTests.swift */; };
+		24A50C44E228413BABF647EF /* ConversionsUtilsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3331542510941C3930DDCB6 /* ConversionsUtilsTests.swift */; };
+		4518AF21C4DF4AA58D1BB89A /* ExtractIconFromDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD78CCDD89347059EA71321 /* ExtractIconFromDataTests.swift */; };
+		67E9ECF639A945B9AB14A2EE /* GoogleMapsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD5F71F034C24D0AA977F27E /* GoogleMapsTests.swift */; };
+		B6EBFD5819964A73A1B0AE2A /* GroundOverlayControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2A4D627F452421DBDA834D2 /* GroundOverlayControllerTests.swift */; };
+		84CBDF074688494FA4924CA0 /* HeatmapControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64D0CE44D4164F2784CA4CD7 /* HeatmapControllerTests.swift */; };
+		B2982FE0843F4FCB8D07D1D3 /* MarkerControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A396257FAF0545FC87D21257 /* MarkerControllerTests.swift */; };
+		A37563E79BA24E4C98D77DD0 /* PolygonControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F220BC4477BC42E8870F2D4E /* PolygonControllerTests.swift */; };
+		6F94C58F3ECF465092D78750 /* PolylineControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 350A657853294B478D70CD62 /* PolylineControllerTests.swift */; };
+		02F1F6249887487CBC3019FC /* TileOverlayControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F65543ABD25496A92F8F91F /* TileOverlayControllerTests.swift */; };
+		71C9A982E01441D0A61ABCC7 /* TileProviderControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54CD823EECFC4BDD8755DD92 /* TileProviderControllerTests.swift */; };
 		0DD7B6C32B744EEF00E857FD /* TileProviderControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DD7B6C22B744EEF00E857FD /* TileProviderControllerTests.m */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		2A6906C72D263DF4001F8426 /* GroundOverlayControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A6906C62D263DE7001F8426 /* GroundOverlayControllerTests.m */; };
@@ -65,6 +77,19 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F8E0364A58CE4D1F8AA3D564 /* CircleControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleControllerTests.swift; sourceTree = "<group>"; };
+		9FB05BECEF774386944B77D3 /* ClusterManagersControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterManagersControllerTests.swift; sourceTree = "<group>"; };
+		D3331542510941C3930DDCB6 /* ConversionsUtilsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversionsUtilsTests.swift; sourceTree = "<group>"; };
+		5BD78CCDD89347059EA71321 /* ExtractIconFromDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtractIconFromDataTests.swift; sourceTree = "<group>"; };
+		CD5F71F034C24D0AA977F27E /* GoogleMapsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleMapsTests.swift; sourceTree = "<group>"; };
+		C2A4D627F452421DBDA834D2 /* GroundOverlayControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroundOverlayControllerTests.swift; sourceTree = "<group>"; };
+		64D0CE44D4164F2784CA4CD7 /* HeatmapControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatmapControllerTests.swift; sourceTree = "<group>"; };
+		A396257FAF0545FC87D21257 /* MarkerControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkerControllerTests.swift; sourceTree = "<group>"; };
+		F220BC4477BC42E8870F2D4E /* PolygonControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolygonControllerTests.swift; sourceTree = "<group>"; };
+		350A657853294B478D70CD62 /* PolylineControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolylineControllerTests.swift; sourceTree = "<group>"; };
+		0F65543ABD25496A92F8F91F /* TileOverlayControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileOverlayControllerTests.swift; sourceTree = "<group>"; };
+		54CD823EECFC4BDD8755DD92 /* TileProviderControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileProviderControllerTests.swift; sourceTree = "<group>"; };
+		65E43D60708A4C5DA931E12E /* RunnerTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RunnerTests-Bridging-Header.h; sourceTree = "<group>"; };
 		0DD7B6C22B744EEF00E857FD /* TileProviderControllerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TileProviderControllerTests.m; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
@@ -244,7 +269,20 @@
 				339355BC2EB3E55600EBF864 /* TileOverlayControllerTests.m */,
 				0DD7B6C22B744EEF00E857FD /* TileProviderControllerTests.m */,
 				F7151F14265D7ED70028CB91 /* Info.plist */,
-			);
+							F8E0364A58CE4D1F8AA3D564 /* CircleControllerTests.swift */,
+				9FB05BECEF774386944B77D3 /* ClusterManagersControllerTests.swift */,
+				D3331542510941C3930DDCB6 /* ConversionsUtilsTests.swift */,
+				5BD78CCDD89347059EA71321 /* ExtractIconFromDataTests.swift */,
+				CD5F71F034C24D0AA977F27E /* GoogleMapsTests.swift */,
+				C2A4D627F452421DBDA834D2 /* GroundOverlayControllerTests.swift */,
+				64D0CE44D4164F2784CA4CD7 /* HeatmapControllerTests.swift */,
+				A396257FAF0545FC87D21257 /* MarkerControllerTests.swift */,
+				F220BC4477BC42E8870F2D4E /* PolygonControllerTests.swift */,
+				350A657853294B478D70CD62 /* PolylineControllerTests.swift */,
+				0F65543ABD25496A92F8F91F /* TileOverlayControllerTests.swift */,
+				54CD823EECFC4BDD8755DD92 /* TileProviderControllerTests.swift */,
+				65E43D60708A4C5DA931E12E /* RunnerTests-Bridging-Header.h */,
+);
 			path = RunnerTests;
 			sourceTree = "<group>";
 		};
@@ -521,7 +559,19 @@
 				2A6906C72D263DF4001F8426 /* GroundOverlayControllerTests.m in Sources */,
 				0DD7B6C32B744EEF00E857FD /* TileProviderControllerTests.m in Sources */,
 				528F16872C62952700148160 /* ExtractIconFromDataTests.m in Sources */,
-			);
+							A73F1ED02A874D8596718BE8 /* CircleControllerTests.swift in Sources */,
+				E680DCBC3E7E41089DF60756 /* ClusterManagersControllerTests.swift in Sources */,
+				24A50C44E228413BABF647EF /* ConversionsUtilsTests.swift in Sources */,
+				4518AF21C4DF4AA58D1BB89A /* ExtractIconFromDataTests.swift in Sources */,
+				67E9ECF639A945B9AB14A2EE /* GoogleMapsTests.swift in Sources */,
+				B6EBFD5819964A73A1B0AE2A /* GroundOverlayControllerTests.swift in Sources */,
+				84CBDF074688494FA4924CA0 /* HeatmapControllerTests.swift in Sources */,
+				B2982FE0843F4FCB8D07D1D3 /* MarkerControllerTests.swift in Sources */,
+				A37563E79BA24E4C98D77DD0 /* PolygonControllerTests.swift in Sources */,
+				6F94C58F3ECF465092D78750 /* PolylineControllerTests.swift in Sources */,
+				02F1F6249887487CBC3019FC /* TileOverlayControllerTests.swift in Sources */,
+				71C9A982E01441D0A61ABCC7 /* TileProviderControllerTests.swift in Sources */,
+);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F7151F1A265D7EE50028CB91 /* Sources */ = {
@@ -616,7 +666,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -667,7 +717,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -749,7 +799,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/Runner";
-			};
+							SWIFT_OBJC_BRIDGING_HEADER = "RunnerTests/RunnerTests-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+};
 			name = Debug;
 		};
 		F7151F18265D7ED70028CB91 /* Release */ = {
@@ -769,7 +821,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/Runner";
-			};
+							SWIFT_OBJC_BRIDGING_HEADER = "RunnerTests/RunnerTests-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+};
 			name = Release;
 		};
 		F7151F26265D7EE50028CB91 /* Debug */ = {
