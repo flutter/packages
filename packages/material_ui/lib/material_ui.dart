@@ -171,6 +171,7 @@ export 'src/snack_bar_theme.dart';
 export 'src/spell_check_suggestions_toolbar.dart';
 export 'src/spell_check_suggestions_toolbar_layout_delegate.dart';
 export 'src/stepper.dart';
+export 'src/style_variant.dart';
 export 'src/switch.dart';
 export 'src/switch_list_tile.dart';
 export 'src/switch_theme.dart';
