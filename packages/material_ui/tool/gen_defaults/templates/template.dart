@@ -109,6 +109,12 @@ abstract class TokenTemplate {
     }
     return '${color(role, prefix)}.withOpacity(${number(opacity)})';
   }
+  
+  /// Generate a [BorderSide] for the given component.
+  String border(String color, {double? width}) {
+    final widthString = (width != null && width != 1.0) ? ', width: $width' : '';
+    return 'BorderSide(color: $color$widthString)';
+  }
 
   /// Generates an [OutlinedBorder] expression for a shape token.
   ///
