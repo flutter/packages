@@ -8,6 +8,7 @@ import 'package:test/test.dart';
 import '../data/color_role.dart';
 import '../data/shape_struct.dart';
 import '../templates/app_bar_template.dart';
+import '../templates/bottom_sheet_template.dart';
 import '../templates/template.dart';
 import 'test_fixtures/test_templates.dart';
 
@@ -159,6 +160,25 @@ void main() {
       expect(contents, contains('static const double expandedHeight = 112.0'));
       expect(contents, contains('static const double expandedHeight = 152.0'));
     });
+
+    test('BottomSheetTemplateM3 emits M3 BottomSheet defaults from bottom sheet tokens', () {
+      final String contents = const BottomSheetTemplateM3().generateContents(
+        '_BottomSheetDefaultsM3',
+      );
+      expect(contents, contains('class _BottomSheetDefaultsM3 extends BottomSheetThemeData'));
+      expect(contents, contains('elevation: 1.0'));
+      expect(contents, contains('modalElevation: 1.0'));
+      expect(
+        contents,
+        contains(
+          'shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(28.0)))',
+        ),
+      );
+      expect(contents, contains('Color? get backgroundColor => _colors.surfaceContainerLow'));
+      expect(contents, contains('Color? get dragHandleColor => _colors.onSurfaceVariant'));
+      expect(contents, contains('Size? get dragHandleSize => const Size(32.0, 4.0)'));
+    });
+
     test('will run dart format over the generated file', () {
       final template = UnformattedTemplate(testPath());
       template.generateFile();
