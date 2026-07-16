@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:test/test.dart';
 import '../data/color_role.dart';
 import '../data/shape_struct.dart';
+import '../templates/action_chip_template.dart';
 import '../templates/app_bar_template.dart';
 import '../templates/template.dart';
 import 'test_fixtures/test_templates.dart';
@@ -159,6 +160,27 @@ void main() {
       expect(contents, contains('static const double expandedHeight = 112.0'));
       expect(contents, contains('static const double expandedHeight = 152.0'));
     });
+
+    test('ActionChipTemplateM3 emits M3 ActionChip defaults from assist chip tokens', () {
+      final String contents = const ActionChipTemplateM3().generateContents(
+        '_ActionChipDefaultsM3',
+      );
+      expect(contents, contains('class _ActionChipDefaultsM3 extends ChipThemeData'));
+      expect(
+        contents,
+        contains(
+          'shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0)))',
+        ),
+      );
+      expect(contents, contains('showCheckmark: true'));
+      expect(contents, contains('double? get elevation => _chipVariant == _ChipVariant.flat'));
+      expect(contents, contains('? 0.0'));
+      expect(contents, contains(': isEnabled ? 1.0 : 0.0;'));
+      expect(contents, contains('double? get pressElevation => 1.0;'));
+      expect(contents, contains('_colors.onSurface.withOpacity(0.12)'));
+      expect(contents, contains('size: 18.0'));
+    });
+
     test('will run dart format over the generated file', () {
       final template = UnformattedTemplate(testPath());
       template.generateFile();
