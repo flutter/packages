@@ -80,26 +80,13 @@ class GoogleMapsUITests: XCTestCase {
       XCTFail("Failed due to not able to find platform view")
     }
 
-    // The semantics type of this element changed between Flutter 3.44 and 3.47, so
-    // look for either one. Once 3.47 reaches stable, this can be simplified back
-    // down to just looking for the element in staticTexts.
-    let titleBarAsStaticText = app.staticTexts["Map coordinates"]
-    let titleBarAsOther = app.otherElements["Map coordinates"]
-    var titleBar: XCUIElement?
-    for _ in 0..<Int(kWaitTime) {
-      if titleBarAsStaticText.waitForExistence(timeout: 1) {
-        titleBar = titleBarAsStaticText
-        break
-      }
-      if titleBarAsOther.waitForExistence(timeout: 1) {
-        titleBar = titleBarAsOther
-        break
-      }
-    }
-    guard let titleBar = titleBar else {
+    // The semantics type of this element changed between Flutter 3.44 and 3.47.
+    // Using descendants(matching: .any) allows finding it regardless of whether
+    // it is a staticText or otherElement.
+    let titleBar = app.descendants(matching: .any)["Map coordinates"]
+    if !titleBar.waitForExistence(timeout: kWaitTime) {
       os_log("%@", log: .default, type: .error, app.debugDescription as NSString)
       XCTFail("Failed due to not able to find title bar")
-      return
     }
 
     let visibleRegionPredicate = NSPredicate(format: "label BEGINSWITH 'VisibleRegion'")
