@@ -2,24 +2,27 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import '../data/sheet_bottom.dart';
 import 'template.dart';
 
-class BottomSheetTemplate extends TokenTemplate {
-  const BottomSheetTemplate(
-    super.blockName,
-    super.fileName,
-    super.tokens, {
-    super.colorSchemePrefix = '_colors.',
-  });
+class BottomSheetTemplateM3 extends TokenTemplateM3 {
+  const BottomSheetTemplateM3();
 
   @override
-  String generate() => '''
-class _${blockName}DefaultsM3 extends BottomSheetThemeData {
-  _${blockName}DefaultsM3(this.context)
+  String get name => 'Bottom Sheet';
+
+  @override
+  String get parentFilePath => 'bottom_sheet.dart';
+
+  @override
+  String generateContents(String className) =>
+      '''
+class $className extends BottomSheetThemeData {
+  $className(this.context)
     : super(
-      elevation: ${elevation("md.comp.sheet.bottom.docked.standard.container")},
-      modalElevation: ${elevation("md.comp.sheet.bottom.docked.modal.container")},
-      shape: ${shape("md.comp.sheet.bottom.docked.container")},
+      elevation: ${number(TokenSheetBottom.dockedStandardContainerElevation)},
+      modalElevation: ${number(TokenSheetBottom.dockedModalContainerElevation)},
+      shape: ${shape(TokenSheetBottom.dockedContainerShape)},
       constraints: const BoxConstraints(maxWidth: 640),
     );
 
@@ -27,19 +30,19 @@ class _${blockName}DefaultsM3 extends BottomSheetThemeData {
   late final ColorScheme _colors = Theme.of(context).colorScheme;
 
   @override
-  Color? get backgroundColor => ${componentColor("md.comp.sheet.bottom.docked.container")};
+  Color? get backgroundColor => ${color(TokenSheetBottom.dockedContainerColor, '_colors')};
 
   @override
-  Color? get surfaceTintColor => ${colorOrTransparent("md.comp.sheet.bottom.docked.container.surface-tint-layer")};
+  Color? get surfaceTintColor => Colors.transparent;
 
   @override
   Color? get shadowColor => Colors.transparent;
 
   @override
-  Color? get dragHandleColor => ${componentColor("md.comp.sheet.bottom.docked.drag-handle")};
+  Color? get dragHandleColor => ${color(TokenSheetBottom.dockedDragHandleColor, '_colors')};
 
   @override
-  Size? get dragHandleSize => ${size("md.comp.sheet.bottom.docked.drag-handle")};
+  Size? get dragHandleSize => const Size(${number(TokenSheetBottom.dockedDragHandleWidth)}, ${number(TokenSheetBottom.dockedDragHandleHeight)});
 
   @override
   BoxConstraints? get constraints => const BoxConstraints(maxWidth: 640.0);

@@ -2,6 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// Do not edit by hand. The code is generated from data in the Material
+// Design token database by the script:
+//   packages/material_ui/tool/gen_defaults/bin/gen_defaults.dart.
+part of '../bottom_sheet.dart';
+
 class _BottomSheetDefaultsM3 extends BottomSheetThemeData {
   _BottomSheetDefaultsM3(this.context)
     : super(
@@ -29,7 +34,7 @@ class _BottomSheetDefaultsM3 extends BottomSheetThemeData {
   Color? get dragHandleColor => _colors.onSurfaceVariant;
 
   @override
-  Size? get dragHandleSize => const Size(32, 4);
+  Size? get dragHandleSize => const Size(32.0, 4.0);
 
   @override
   BoxConstraints? get constraints => const BoxConstraints(maxWidth: 640.0);
