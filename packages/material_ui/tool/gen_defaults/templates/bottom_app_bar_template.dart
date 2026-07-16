@@ -4,18 +4,23 @@
 
 import 'template.dart';
 
-class BottomAppBarTemplate extends TokenTemplate {
-  const BottomAppBarTemplate(
-    super.blockName,
-    super.fileName,
-    super.tokens, {
-    super.colorSchemePrefix = '_colors.',
+class BottomAppBarTemplate extends TokenTemplateM3 {
+  const BottomAppBarTemplate( {
+    this.colorSchemePrefix = '_colors.',
   });
 
+  final String colorSchemePrefix;
+
   @override
-  String generate() => '''
-class _${blockName}DefaultsM3 extends BottomAppBarThemeData {
-  _${blockName}DefaultsM3(this.context)
+  String get name => 'Bottom App Bar';
+
+  @override
+  String get parentFilePath => 'bottom_app_bar.dart';
+
+  @override
+  String generateContents(String className) => '''
+class $className extends BottomAppBarThemeData {
+  $className(this.context)
     : super(
       elevation: ${elevation('md.comp.bottom-app-bar.container')},
       height: ${getToken('md.comp.bottom-app-bar.container.height')},
