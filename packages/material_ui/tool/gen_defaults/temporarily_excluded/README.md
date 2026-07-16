@@ -80,7 +80,7 @@ In these instructions, placeholders are used for the component name. Please subs
    String get parentFilePath => 'component_name.dart';
    ```
 
-6. Once the template compiles, list it in `packages/material_ui/tool/gen_defaults/bin/gen_defaults.dart`:
+6. Once the template compiles, uncomment it in `packages/material_ui/tool/gen_defaults/bin/gen_defaults.dart`:
 
    ```dart
    const ComponentNameTemplateM3().generateFile(verbose: verbose);
@@ -91,3 +91,5 @@ In these instructions, placeholders are used for the component name. Please subs
    ```bash
    dart run tool/gen_defaults/bin/gen_defaults.dart
    ```
+
+8. Fill in the appropriate test case in `packages/material_ui/tool/gen_defaults/test/gen_defaults_test.dart`.
