@@ -178,6 +178,7 @@ void main() {
       expect(contents, contains('Color? get dragHandleColor => _colors.onSurfaceVariant'));
       expect(contents, contains('Size? get dragHandleSize => const Size(32.0, 4.0)'));
     });
+
     test('will run dart format over the generated file', () {
       final template = UnformattedTemplate(testPath());
       template.generateFile();
