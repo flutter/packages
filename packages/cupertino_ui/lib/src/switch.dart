@@ -288,23 +288,23 @@ class CupertinoSwitch extends StatefulWidget {
   /// (or [Color.fromARGB(255, 255, 255, 255)] in high contrast) when null.
   final Color? offLabelColor;
 
-  /// {@template flutter.cupertino.switch.activeThumbImage}
+  /// {@template cupertino_ui.switch.activeThumbImage}
   /// An image to use on the thumb of this switch when the switch is on.
   /// {@endtemplate}
   final ImageProvider? activeThumbImage;
 
-  /// {@template flutter.cupertino.switch.onActiveThumbImageError}
+  /// {@template cupertino_ui.switch.onActiveThumbImageError}
   /// An optional error callback for errors emitted when loading
   /// [activeThumbImage].
   /// {@endtemplate}
   final ImageErrorListener? onActiveThumbImageError;
 
-  /// {@template flutter.cupertino.switch.inactiveThumbImage}
+  /// {@template cupertino_ui.switch.inactiveThumbImage}
   /// An image to use on the thumb of this switch when the switch is off.
   /// {@endtemplate}
   final ImageProvider? inactiveThumbImage;
 
-  /// {@template flutter.cupertino.switch.onInactiveThumbImageError}
+  /// {@template cupertino_ui.switch.onInactiveThumbImageError}
   /// An optional error callback for errors emitted when loading
   /// [inactiveThumbImage].
   /// {@endtemplate}
@@ -474,7 +474,7 @@ class CupertinoSwitch extends StatefulWidget {
   /// {@macro flutter.widgets.Focus.autofocus}
   final bool autofocus;
 
-  /// {@template flutter.cupertino.CupertinoSwitch.applyTheme}
+  /// {@template cupertino_ui.CupertinoSwitch.applyTheme}
   /// Whether to apply the ambient [CupertinoThemeData].
   ///
   /// If true, the track uses [CupertinoThemeData.primaryColor] for the track
@@ -484,7 +484,7 @@ class CupertinoSwitch extends StatefulWidget {
   /// {@endtemplate}
   final bool? applyTheme;
 
-  /// {@template flutter.cupertino.CupertinoSwitch.dragStartBehavior}
+  /// {@template cupertino_ui.CupertinoSwitch.dragStartBehavior}
   /// Determines the way that drag start behavior is handled.
   ///
   /// If set to [DragStartBehavior.start], the drag behavior used to move the

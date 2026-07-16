@@ -141,7 +141,7 @@ class BottomAppBar extends StatefulWidget {
   /// is used. If that's null then the shape will be rectangular with no notch.
   final NotchedShape? shape;
 
-  /// {@macro flutter.cupertino.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none].
   final Clip clipBehavior;

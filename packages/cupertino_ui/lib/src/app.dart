@@ -53,7 +53,7 @@ import 'theme.dart';
 /// widget, which the [CupertinoApp] composes. If you use Material widgets, a
 /// [MaterialApp] also creates the needed dependencies for Cupertino widgets.
 ///
-/// {@template flutter.cupertino.CupertinoApp.defaultSelectionStyle}
+/// {@template cupertino_ui.CupertinoApp.defaultSelectionStyle}
 /// The [CupertinoApp] automatically creates a [DefaultSelectionStyle] with
 /// selectionColor sets to [CupertinoThemeData.primaryColor] with 0.2 opacity
 /// and cursorColor sets to [CupertinoThemeData.primaryColor].
@@ -445,7 +445,7 @@ class CupertinoApp extends StatefulWidget {
   /// {@macro flutter.widgets.widgetsApp.restorationScopeId}
   final String? restorationScopeId;
 
-  /// {@template flutter.cupertino.materialApp.scrollBehavior}
+  /// {@template cupertino_ui.materialApp.scrollBehavior}
   /// The default [ScrollBehavior] for the application.
   ///
   /// [ScrollBehavior]s describe how [Scrollable] widgets behave. Providing

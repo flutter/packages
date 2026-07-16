@@ -117,7 +117,7 @@ class Dialog extends StatelessWidget {
        constraints = null,
        _fullscreen = true;
 
-  /// {@template flutter.material.dialog.backgroundColor}
+  /// {@template material_ui.dialog.backgroundColor}
   /// The background color of the surface of this [Dialog].
   ///
   /// This sets the [Material.color] on this [Dialog]'s [Material].
@@ -131,7 +131,7 @@ class Dialog extends StatelessWidget {
   /// {@endtemplate}
   final Color? backgroundColor;
 
-  /// {@template flutter.material.dialog.elevation}
+  /// {@template material_ui.dialog.elevation}
   /// The z-coordinate of this [Dialog].
   ///
   /// Controls how far above the parent the dialog will appear. Elevation is
@@ -153,7 +153,7 @@ class Dialog extends StatelessWidget {
   /// {@endtemplate}
   final double? elevation;
 
-  /// {@template flutter.material.dialog.shadowColor}
+  /// {@template material_ui.dialog.shadowColor}
   /// The color used to paint a drop shadow under the dialog's [Material],
   /// which reflects the dialog's [elevation].
   ///
@@ -171,7 +171,7 @@ class Dialog extends StatelessWidget {
   /// {@endtemplate}
   final Color? shadowColor;
 
-  /// {@template flutter.material.dialog.surfaceTintColor}
+  /// {@template material_ui.dialog.surfaceTintColor}
   /// The color used as a surface tint overlay on the dialog's background color,
   /// which reflects the dialog's [elevation].
   ///
@@ -195,13 +195,13 @@ class Dialog extends StatelessWidget {
   /// {@endtemplate}
   final Color? surfaceTintColor;
 
-  /// {@macro flutter.cupertino.dialog.insetAnimationDuration}
+  /// {@macro cupertino_ui.dialog.insetAnimationDuration}
   final Duration insetAnimationDuration;
 
-  /// {@macro flutter.cupertino.dialog.insetAnimationCurve}
+  /// {@macro cupertino_ui.dialog.insetAnimationCurve}
   final Curve insetAnimationCurve;
 
-  /// {@template flutter.material.dialog.insetPadding}
+  /// {@template material_ui.dialog.insetPadding}
   /// The amount of padding added to [MediaQueryData.viewInsets] on the outside
   /// of the dialog. This defines the minimum space between the screen's edges
   /// and the dialog.
@@ -210,7 +210,7 @@ class Dialog extends StatelessWidget {
   /// {@endtemplate}
   final EdgeInsets? insetPadding;
 
-  /// {@template flutter.material.dialog.clipBehavior}
+  /// {@template material_ui.dialog.clipBehavior}
   /// Controls how the contents of the dialog are clipped (or not) to the given
   /// [shape].
   ///
@@ -222,7 +222,7 @@ class Dialog extends StatelessWidget {
   /// {@endtemplate}
   final Clip? clipBehavior;
 
-  /// {@template flutter.material.dialog.shape}
+  /// {@template material_ui.dialog.shape}
   /// The shape of this dialog's border.
   ///
   /// Defines the dialog's [Material.shape].
@@ -231,7 +231,7 @@ class Dialog extends StatelessWidget {
   /// {@endtemplate}
   final ShapeBorder? shape;
 
-  /// {@template flutter.material.dialog.alignment}
+  /// {@template material_ui.dialog.alignment}
   /// How to align the [Dialog].
   ///
   /// If null, then [DialogThemeData.alignment] is used. If that is also null, the
@@ -252,7 +252,7 @@ class Dialog extends StatelessWidget {
   /// Defaults to [SemanticsRole.dialog].
   final SemanticsRole semanticsRole;
 
-  /// {@template flutter.material.dialog.constraints}
+  /// {@template material_ui.dialog.constraints}
   /// Constrains the size of the dialog.
   ///
   /// If null, then [DialogThemeData.constraints] is used. If that is also null, the
@@ -737,16 +737,16 @@ class AlertDialog extends StatelessWidget {
   /// 8.0 logical pixels on the left and right.
   final EdgeInsetsGeometry? buttonPadding;
 
-  /// {@macro flutter.material.dialog.backgroundColor}
+  /// {@macro material_ui.dialog.backgroundColor}
   final Color? backgroundColor;
 
-  /// {@macro flutter.material.dialog.elevation}
+  /// {@macro material_ui.dialog.elevation}
   final double? elevation;
 
-  /// {@macro flutter.material.dialog.shadowColor}
+  /// {@macro material_ui.dialog.shadowColor}
   final Color? shadowColor;
 
-  /// {@macro flutter.material.dialog.surfaceTintColor}
+  /// {@macro material_ui.dialog.surfaceTintColor}
   final Color? surfaceTintColor;
 
   /// The semantic label of the dialog used by accessibility frameworks to
@@ -764,19 +764,19 @@ class AlertDialog extends StatelessWidget {
   ///    value is used.
   final String? semanticLabel;
 
-  /// {@macro flutter.material.dialog.insetPadding}
+  /// {@macro material_ui.dialog.insetPadding}
   final EdgeInsets? insetPadding;
 
-  /// {@macro flutter.material.dialog.clipBehavior}
+  /// {@macro material_ui.dialog.clipBehavior}
   final Clip? clipBehavior;
 
-  /// {@macro flutter.material.dialog.shape}
+  /// {@macro material_ui.dialog.shape}
   final ShapeBorder? shape;
 
-  /// {@macro flutter.material.dialog.alignment}
+  /// {@macro material_ui.dialog.alignment}
   final AlignmentGeometry? alignment;
 
-  /// {@macro flutter.material.dialog.constraints}
+  /// {@macro material_ui.dialog.constraints}
   final BoxConstraints? constraints;
 
   /// Determines whether the [title] and [content] widgets are wrapped in a
@@ -1260,16 +1260,16 @@ class SimpleDialog extends StatelessWidget {
   /// the top padding ends up being 24 pixels.
   final EdgeInsetsGeometry contentPadding;
 
-  /// {@macro flutter.material.dialog.backgroundColor}
+  /// {@macro material_ui.dialog.backgroundColor}
   final Color? backgroundColor;
 
-  /// {@macro flutter.material.dialog.elevation}
+  /// {@macro material_ui.dialog.elevation}
   final double? elevation;
 
-  /// {@macro flutter.material.dialog.shadowColor}
+  /// {@macro material_ui.dialog.shadowColor}
   final Color? shadowColor;
 
-  /// {@macro flutter.material.dialog.surfaceTintColor}
+  /// {@macro material_ui.dialog.surfaceTintColor}
   final Color? surfaceTintColor;
 
   /// Style for the text in the [children] of this [SimpleDialog].
@@ -1292,19 +1292,19 @@ class SimpleDialog extends StatelessWidget {
   ///    value is used.
   final String? semanticLabel;
 
-  /// {@macro flutter.material.dialog.insetPadding}
+  /// {@macro material_ui.dialog.insetPadding}
   final EdgeInsets? insetPadding;
 
-  /// {@macro flutter.material.dialog.clipBehavior}
+  /// {@macro material_ui.dialog.clipBehavior}
   final Clip? clipBehavior;
 
-  /// {@macro flutter.material.dialog.shape}
+  /// {@macro material_ui.dialog.shape}
   final ShapeBorder? shape;
 
-  /// {@macro flutter.material.dialog.shape}
+  /// {@macro material_ui.dialog.shape}
   final AlignmentGeometry? alignment;
 
-  /// {@macro flutter.material.dialog.constraints}
+  /// {@macro material_ui.dialog.constraints}
   final BoxConstraints? constraints;
 
   @override
@@ -1592,7 +1592,7 @@ class _DialogContentPage extends Page<void> {
 /// argument is ignored as dialogs are displayed in their own windows which
 /// manage focus traversal independently.
 ///
-/// {@macro flutter.cupertino.dialog.requestFocus}
+/// {@macro cupertino_ui.dialog.requestFocus}
 /// {@macro flutter.widgets.navigator.Route.requestFocus}
 /// If windowing is enabled via `flutter config --enable-windowing`, then this
 /// argument is ignored as dialogs are displayed in their own windows which are

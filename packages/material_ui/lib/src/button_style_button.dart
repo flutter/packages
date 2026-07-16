@@ -29,7 +29,7 @@ import 'theme.dart';
 import 'theme_data.dart';
 import 'tooltip.dart';
 
-/// {@template flutter.material.ButtonStyle.iconAlignment}
+/// {@template material_ui.ButtonStyle.iconAlignment}
 /// Determines the alignment of the icon within the widgets such as:
 ///   - [ElevatedButton.icon],
 ///   - [FilledButton.icon],
@@ -144,7 +144,7 @@ abstract class ButtonStyleButton extends StatefulWidget {
   /// Null by default.
   final ButtonStyle? style;
 
-  /// {@macro flutter.cupertino.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none] unless [ButtonStyle.backgroundBuilder] or
   /// [ButtonStyle.foregroundBuilder] is specified. In those
@@ -157,7 +157,7 @@ abstract class ButtonStyleButton extends StatefulWidget {
   /// {@macro flutter.widgets.Focus.autofocus}
   final bool autofocus;
 
-  /// {@macro flutter.material.inkwell.statesController}
+  /// {@macro material_ui.inkwell.statesController}
   final MaterialStatesController? statesController;
 
   /// Determine whether this subtree represents a button.
@@ -169,7 +169,7 @@ abstract class ButtonStyleButton extends StatefulWidget {
   /// Defaults to true.
   final bool? isSemanticButton;
 
-  /// {@macro flutter.material.ButtonStyle.iconAlignment}
+  /// {@macro material_ui.ButtonStyle.iconAlignment}
   @Deprecated(
     'Remove this parameter as it is now ignored. '
     'Use ButtonStyle.iconAlignment instead. '
