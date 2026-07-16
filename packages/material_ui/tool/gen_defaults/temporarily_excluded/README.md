@@ -7,7 +7,12 @@ https://github.com/flutter/flutter/issues/187899.
 
 ## Instructions for migrating
 
+> Currently all `gen_defaults` migration PRs should be branched off of and rebased against the `m3e_migration` branch, not `main`. 
+
+> Please only format the files you edit.
+
 1. Select an unmigrated component listed in https://github.com/flutter/flutter/issues/187899.
+
 2. Move the respective template and generated code for that template out of `temporarily_excluded/`:
 
    From the `packages/material_ui` directory, run:
@@ -18,6 +23,7 @@ https://github.com/flutter/flutter/issues/187899.
    ```
 
 3. Commit the file moves. This will allow us to review the changes on the PR.
+   **Do not skip this step!**
 
    ```bash
    git commit -am "Move template/generated code out of temporarily_excluded directory"
