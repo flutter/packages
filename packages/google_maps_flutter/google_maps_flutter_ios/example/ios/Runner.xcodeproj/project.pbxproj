@@ -21,9 +21,9 @@
 		71C9A982E01441D0A61ABCC7 /* TileProviderControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54CD823EECFC4BDD8755DD92 /* TileProviderControllerTests.swift */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		2BDE99378062AE3E60B40021 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3ACE0AFE8D82CD5962486AFD /* Pods_RunnerTests.framework */; };
-		3390B45E2F33AFA60094DEB9 /* PartiallyMockedMapView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3390B4582F33AFA60094DEB9 /* PartiallyMockedMapView.m */; };
-		3390B45F2F33AFA60094DEB9 /* TestAssetProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 3390B45A2F33AFA60094DEB9 /* TestAssetProvider.m */; };
-		3390B4602F33AFA60094DEB9 /* TestMapEventHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 3390B45C2F33AFA60094DEB9 /* TestMapEventHandler.m */; };
+		3390B45E2F33AFA60094DEB9 /* PartiallyMockedMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3390B4582F33AFA60094DEB9 /* PartiallyMockedMapView.swift */; };
+		3390B45F2F33AFA60094DEB9 /* TestAssetProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3390B45A2F33AFA60094DEB9 /* TestAssetProvider.swift */; };
+		3390B4602F33AFA60094DEB9 /* TestMapEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3390B45C2F33AFA60094DEB9 /* TestMapEventHandler.swift */; };
 		339DF1F02F1FE49800748863 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 339DF1EF2F1FE49300748863 /* AppDelegate.swift */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
@@ -82,12 +82,9 @@
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		3351C2253008164500700458 /* GoogleMapsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleMapsUITests.swift; sourceTree = "<group>"; };
-		3390B4572F33AFA60094DEB9 /* PartiallyMockedMapView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PartiallyMockedMapView.h; sourceTree = "<group>"; };
-		3390B4582F33AFA60094DEB9 /* PartiallyMockedMapView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PartiallyMockedMapView.m; sourceTree = "<group>"; };
-		3390B4592F33AFA60094DEB9 /* TestAssetProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestAssetProvider.h; sourceTree = "<group>"; };
-		3390B45A2F33AFA60094DEB9 /* TestAssetProvider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestAssetProvider.m; sourceTree = "<group>"; };
-		3390B45B2F33AFA60094DEB9 /* TestMapEventHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestMapEventHandler.h; sourceTree = "<group>"; };
-		3390B45C2F33AFA60094DEB9 /* TestMapEventHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestMapEventHandler.m; sourceTree = "<group>"; };
+		3390B4582F33AFA60094DEB9 /* PartiallyMockedMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartiallyMockedMapView.swift; sourceTree = "<group>"; };
+		3390B45A2F33AFA60094DEB9 /* TestAssetProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAssetProvider.swift; sourceTree = "<group>"; };
+		3390B45C2F33AFA60094DEB9 /* TestMapEventHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestMapEventHandler.swift; sourceTree = "<group>"; };
 		339DF1EF2F1FE49300748863 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		339DF1F12F1FE4AD00748863 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		3ACE0AFE8D82CD5962486AFD /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -155,12 +152,9 @@
 		3390B45D2F33AFA60094DEB9 /* TestUtils */ = {
 			isa = PBXGroup;
 			children = (
-				3390B4572F33AFA60094DEB9 /* PartiallyMockedMapView.h */,
-				3390B4582F33AFA60094DEB9 /* PartiallyMockedMapView.m */,
-				3390B4592F33AFA60094DEB9 /* TestAssetProvider.h */,
-				3390B45A2F33AFA60094DEB9 /* TestAssetProvider.m */,
-				3390B45B2F33AFA60094DEB9 /* TestMapEventHandler.h */,
-				3390B45C2F33AFA60094DEB9 /* TestMapEventHandler.m */,
+				3390B4582F33AFA60094DEB9 /* PartiallyMockedMapView.swift */,
+				3390B45A2F33AFA60094DEB9 /* TestAssetProvider.swift */,
+				3390B45C2F33AFA60094DEB9 /* TestMapEventHandler.swift */,
 			);
 			path = TestUtils;
 			sourceTree = "<group>";
@@ -510,9 +504,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3390B45E2F33AFA60094DEB9 /* PartiallyMockedMapView.m in Sources */,
-				3390B45F2F33AFA60094DEB9 /* TestAssetProvider.m in Sources */,
-				3390B4602F33AFA60094DEB9 /* TestMapEventHandler.m in Sources */,
+				3390B45E2F33AFA60094DEB9 /* PartiallyMockedMapView.swift in Sources */,
+				3390B45F2F33AFA60094DEB9 /* TestAssetProvider.swift in Sources */,
+				3390B4602F33AFA60094DEB9 /* TestMapEventHandler.swift in Sources */,
 							A73F1ED02A874D8596718BE8 /* CircleControllerTests.swift in Sources */,
 				E680DCBC3E7E41089DF60756 /* ClusterManagersControllerTests.swift in Sources */,
 				24A50C44E228413BABF647EF /* ConversionsUtilsTests.swift in Sources */,
