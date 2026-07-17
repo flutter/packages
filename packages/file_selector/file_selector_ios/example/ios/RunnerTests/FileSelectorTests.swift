@@ -48,7 +48,7 @@ final class StubViewPresenterProvider: ViewPresenterProvider {
     let picker = UIDocumentPickerViewController(documentTypes: [], in: UIDocumentPickerMode.import)
     plugin.documentPickerViewControllerOverride = picker
 
-    await confirmation("completion") { completionWasCalled in
+    try await confirmation("completion") { completionWasCalled in
       plugin.openFile(
         config: FileSelectorConfig(utis: [], allowMultiSelection: false)
       ) { result in
@@ -60,7 +60,8 @@ final class StubViewPresenterProvider: ViewPresenterProvider {
         }
         completionWasCalled()
       }
-      plugin.pendingCompletions.first!.documentPicker(
+      let pendingCompletion = try #require(plugin.pendingCompletions.first)
+      pendingCompletion.documentPicker(
         picker,
         didPickDocumentsAt: [URL(string: "file:///file1.txt")!, URL(string: "file:///file2.txt")!])
     }
@@ -73,7 +74,7 @@ final class StubViewPresenterProvider: ViewPresenterProvider {
     let picker = UIDocumentPickerViewController(documentTypes: [], in: UIDocumentPickerMode.import)
     plugin.documentPickerViewControllerOverride = picker
 
-    await confirmation("completion") { completionWasCalled in
+    try await confirmation("completion") { completionWasCalled in
       plugin.openFile(
         config: FileSelectorConfig(utis: [], allowMultiSelection: false)
       ) { result in
@@ -85,7 +86,8 @@ final class StubViewPresenterProvider: ViewPresenterProvider {
         }
         completionWasCalled()
       }
-      plugin.pendingCompletions.first!.documentPickerWasCancelled(picker)
+      let pendingCompletion = try #require(plugin.pendingCompletions.first)
+      pendingCompletion.documentPickerWasCancelled(picker)
     }
     #expect(plugin.pendingCompletions.isEmpty)
   }

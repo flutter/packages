@@ -60,7 +60,7 @@ class TestViewProvider: NSObject, ViewProvider {
       plugin.displayOpenPanel(options: options) { result in
         switch result {
         case .success(let paths):
-          #expect(paths[0] == returnPath)
+          #expect(paths == [returnPath])
         case .failure(let error):
           Issue.record("\(error)")
         }
@@ -68,12 +68,10 @@ class TestViewProvider: NSObject, ViewProvider {
       }
     }
 
-    #expect(panelController.openPanel != nil)
-    if let panel = panelController.openPanel {
-      #expect(panel.canChooseFiles)
-      // For consistency across platforms, directory selection is disabled.
-      #expect(!panel.canChooseDirectories)
-    }
+    let panel = try #require(panelController.openPanel)
+    #expect(panel.canChooseFiles)
+    // For consistency across platforms, directory selection is disabled.
+    #expect(!panel.canChooseDirectories)
   }
 
   @Test func openWithArguments() async throws {
@@ -97,7 +95,7 @@ class TestViewProvider: NSObject, ViewProvider {
       plugin.displayOpenPanel(options: options) { result in
         switch result {
         case .success(let paths):
-          #expect(paths[0] == returnPath)
+          #expect(paths == [returnPath])
         case .failure(let error):
           Issue.record("\(error)")
         }
@@ -105,13 +103,11 @@ class TestViewProvider: NSObject, ViewProvider {
       }
     }
 
-    #expect(panelController.openPanel != nil)
-    if let panel = panelController.openPanel {
-      #expect(panel.directoryURL?.path == "/some/dir")
-      // nameFieldStringValue is not set for NSOpenPanel, only for NSSavePanel
-      #expect(panel.nameFieldStringValue != "a name")
-      #expect(panel.prompt == "Open it!")
-    }
+    let panel = try #require(panelController.openPanel)
+    #expect(panel.directoryURL?.path == "/some/dir")
+    // nameFieldStringValue is not set for NSOpenPanel, only for NSSavePanel
+    #expect(panel.nameFieldStringValue != "a name")
+    #expect(panel.prompt == "Open it!")
   }
 
   @Test func openMultiple() async throws {
@@ -132,9 +128,7 @@ class TestViewProvider: NSObject, ViewProvider {
       plugin.displayOpenPanel(options: options) { result in
         switch result {
         case .success(let paths):
-          #expect(paths.count == returnPaths.count)
-          #expect(paths[0] == returnPaths[0])
-          #expect(paths[1] == returnPaths[1])
+          #expect(paths == returnPaths)
         case .failure(let error):
           Issue.record("\(error)")
         }
@@ -142,7 +136,7 @@ class TestViewProvider: NSObject, ViewProvider {
       }
     }
 
-    #expect(panelController.openPanel != nil)
+    _ = try #require(panelController.openPanel)
   }
 
   @Test func openWithFilter() async throws {
@@ -167,7 +161,7 @@ class TestViewProvider: NSObject, ViewProvider {
       plugin.displayOpenPanel(options: options) { result in
         switch result {
         case .success(let paths):
-          #expect(paths[0] == returnPath)
+          #expect(paths == [returnPath])
         case .failure(let error):
           Issue.record("\(error)")
         }
@@ -175,17 +169,15 @@ class TestViewProvider: NSObject, ViewProvider {
       }
     }
 
-    #expect(panelController.openPanel != nil)
-    if let panel = panelController.openPanel {
-      if #available(macOS 11.0, *) {
-        #expect(panel.allowedContentTypes.contains(UTType.plainText))
-        #expect(panel.allowedContentTypes.contains(UTType.json))
-        #expect(panel.allowedContentTypes.contains(UTType.html))
-        #expect(panel.allowedContentTypes.contains(UTType.image))
-      } else {
-        // MIME type is not supported for the legacy codepath, but the rest should be set.
-        #expect(panel.allowedFileTypes == ["txt", "json", "public.text", "public.image"])
-      }
+    let panel = try #require(panelController.openPanel)
+    if #available(macOS 11.0, *) {
+      #expect(panel.allowedContentTypes.contains(UTType.plainText))
+      #expect(panel.allowedContentTypes.contains(UTType.json))
+      #expect(panel.allowedContentTypes.contains(UTType.html))
+      #expect(panel.allowedContentTypes.contains(UTType.image))
+    } else {
+      // MIME type is not supported for the legacy codepath, but the rest should be set.
+      #expect(panel.allowedFileTypes == ["txt", "json", "public.text", "public.image"])
     }
   }
 
@@ -212,7 +204,7 @@ class TestViewProvider: NSObject, ViewProvider {
       plugin.displayOpenPanel(options: options) { result in
         switch result {
         case .success(let paths):
-          #expect(paths[0] == returnPath)
+          #expect(paths == [returnPath])
         case .failure(let error):
           Issue.record("\(error)")
         }
@@ -220,17 +212,15 @@ class TestViewProvider: NSObject, ViewProvider {
       }
     }
 
-    #expect(panelController.openPanel != nil)
-    if let panel = panelController.openPanel {
-      if #available(macOS 11.0, *) {
-        #expect(panel.allowedContentTypes.count == 1)
-        #expect(panel.allowedContentTypes[0].preferredFilenameExtension == unknownExtension)
-        // If this isn't true, the dynamic type created for the extension won't work as a file
-        // extension filter.
-        #expect(panel.allowedContentTypes[0].conforms(to: UTType.data))
-      } else {
-        #expect(panel.allowedFileTypes == [unknownExtension])
-      }
+    let panel = try #require(panelController.openPanel)
+    if #available(macOS 11.0, *) {
+      #expect(panel.allowedContentTypes.count == 1)
+      #expect(panel.allowedContentTypes[0].preferredFilenameExtension == unknownExtension)
+      // If this isn't true, the dynamic type created for the extension won't work as a file
+      // extension filter.
+      #expect(panel.allowedContentTypes[0].conforms(to: UTType.data))
+    } else {
+      #expect(panel.allowedFileTypes == [unknownExtension])
     }
   }
 
@@ -257,7 +247,7 @@ class TestViewProvider: NSObject, ViewProvider {
       plugin.displayOpenPanel(options: options) { result in
         switch result {
         case .success(let paths):
-          #expect(paths[0] == returnPath)
+          #expect(paths == [returnPath])
         case .failure(let error):
           Issue.record("\(error)")
         }
@@ -265,19 +255,17 @@ class TestViewProvider: NSObject, ViewProvider {
       }
     }
 
-    #expect(panelController.openPanel != nil)
-    if let panel = panelController.openPanel {
-      // On the legacy path, the allowedFileTypes should be set directly.
-      #expect(panel.allowedFileTypes == ["txt", "json", "public.text", "public.image"])
+    let panel = try #require(panelController.openPanel)
+    // On the legacy path, the allowedFileTypes should be set directly.
+    #expect(panel.allowedFileTypes == ["txt", "json", "public.text", "public.image"])
 
-      // They should also be translated to corresponding allowed content types.
-      if #available(macOS 11.0, *) {
-        #expect(panel.allowedContentTypes.contains(UTType.plainText))
-        #expect(panel.allowedContentTypes.contains(UTType.json))
-        #expect(panel.allowedContentTypes.contains(UTType.image))
-        // MIME type is not supported for the legacy codepath.
-        #expect(!panel.allowedContentTypes.contains(UTType.html))
-      }
+    // They should also be translated to corresponding allowed content types.
+    if #available(macOS 11.0, *) {
+      #expect(panel.allowedContentTypes.contains(UTType.plainText))
+      #expect(panel.allowedContentTypes.contains(UTType.json))
+      #expect(panel.allowedContentTypes.contains(UTType.image))
+      // MIME type is not supported for the legacy codepath.
+      #expect(!panel.allowedContentTypes.contains(UTType.html))
     }
   }
 
@@ -304,7 +292,7 @@ class TestViewProvider: NSObject, ViewProvider {
       }
     }
 
-    #expect(panelController.openPanel != nil)
+    _ = try #require(panelController.openPanel)
   }
 
   @Test func saveSimple() async throws {
@@ -329,11 +317,9 @@ class TestViewProvider: NSObject, ViewProvider {
       }
     }
 
-    #expect(panelController.savePanel != nil)
-    if let panel = panelController.savePanel {
-      // By default, "New Folder" button is visible for Save dialogs
-      #expect(panel.canCreateDirectories)
-    }
+    let panel = try #require(panelController.savePanel)
+    // By default, "New Folder" button is visible for Save dialogs
+    #expect(panel.canCreateDirectories)
   }
 
   @Test func saveWithArguments() async throws {
@@ -361,12 +347,10 @@ class TestViewProvider: NSObject, ViewProvider {
       }
     }
 
-    #expect(panelController.savePanel != nil)
-    if let panel = panelController.savePanel {
-      #expect(panel.directoryURL?.path == "/some/dir")
-      #expect(panel.nameFieldStringValue == "a name")
-      #expect(panel.prompt == "Save it!")
-    }
+    let panel = try #require(panelController.savePanel)
+    #expect(panel.directoryURL?.path == "/some/dir")
+    #expect(panel.nameFieldStringValue == "a name")
+    #expect(panel.prompt == "Save it!")
   }
 
   @Test func saveNewFolderHidden() async throws {
@@ -391,10 +375,8 @@ class TestViewProvider: NSObject, ViewProvider {
       }
     }
 
-    #expect(panelController.savePanel != nil)
-    if let panel = panelController.savePanel {
-      #expect(!panel.canCreateDirectories)
-    }
+    let panel = try #require(panelController.savePanel)
+    #expect(!panel.canCreateDirectories)
   }
 
   @Test func saveCancel() async throws {
@@ -416,7 +398,7 @@ class TestViewProvider: NSObject, ViewProvider {
       }
     }
 
-    #expect(panelController.savePanel != nil)
+    _ = try #require(panelController.savePanel)
   }
 
   @Test func getDirectorySimple() async throws {
@@ -437,7 +419,7 @@ class TestViewProvider: NSObject, ViewProvider {
       plugin.displayOpenPanel(options: options) { result in
         switch result {
         case .success(let paths):
-          #expect(paths[0] == returnPath)
+          #expect(paths == [returnPath])
         case .failure(let error):
           Issue.record("\(error)")
         }
@@ -445,17 +427,15 @@ class TestViewProvider: NSObject, ViewProvider {
       }
     }
 
-    #expect(panelController.openPanel != nil)
-    if let panel = panelController.openPanel {
-      #expect(panel.canChooseDirectories)
-      // For consistency across platforms, file selection is disabled.
-      #expect(!panel.canChooseFiles)
-      // The Dart API only allows a single directory to be returned, so users shouldn't be allowed
-      // to select multiple.
-      #expect(!panel.allowsMultipleSelection)
-      // By default, "New Folder" button is hidden for Choose Directory dialogs.
-      #expect(!panel.canCreateDirectories)
-    }
+    let panel = try #require(panelController.openPanel)
+    #expect(panel.canChooseDirectories)
+    // For consistency across platforms, file selection is disabled.
+    #expect(!panel.canChooseFiles)
+    // The Dart API only allows a single directory to be returned, so users shouldn't be allowed
+    // to select multiple.
+    #expect(!panel.allowsMultipleSelection)
+    // By default, "New Folder" button is hidden for Choose Directory dialogs.
+    #expect(!panel.canCreateDirectories)
   }
 
   @Test func getDirectoryCancel() async throws {
@@ -481,7 +461,7 @@ class TestViewProvider: NSObject, ViewProvider {
       }
     }
 
-    #expect(panelController.openPanel != nil)
+    _ = try #require(panelController.openPanel)
   }
 
   @Test func getDirectoriesMultiple() async throws {
@@ -510,15 +490,13 @@ class TestViewProvider: NSObject, ViewProvider {
       }
     }
 
-    #expect(panelController.openPanel != nil)
-    if let panel = panelController.openPanel {
-      #expect(panel.canChooseDirectories)
-      // For consistency across platforms, file selection is disabled.
-      #expect(!panel.canChooseFiles)
-      #expect(panel.allowsMultipleSelection)
-      // By default, "New Folder" button is hidden for Choose Directory dialogs.
-      #expect(!panel.canCreateDirectories)
-    }
+    let panel = try #require(panelController.openPanel)
+    #expect(panel.canChooseDirectories)
+    // For consistency across platforms, file selection is disabled.
+    #expect(!panel.canChooseFiles)
+    #expect(panel.allowsMultipleSelection)
+    // By default, "New Folder" button is hidden for Choose Directory dialogs.
+    #expect(!panel.canCreateDirectories)
   }
 
   @Test func getDirectoryMultipleCancel() async throws {
@@ -544,7 +522,7 @@ class TestViewProvider: NSObject, ViewProvider {
       }
     }
 
-    #expect(panelController.openPanel != nil)
+    _ = try #require(panelController.openPanel)
   }
 
   @Test func getDirectoryNewFolderVisible() async throws {
@@ -566,7 +544,7 @@ class TestViewProvider: NSObject, ViewProvider {
       plugin.displayOpenPanel(options: options) { result in
         switch result {
         case .success(let paths):
-          #expect(paths[0] == returnPath)
+          #expect(paths == [returnPath])
         case .failure(let error):
           Issue.record("\(error)")
         }
@@ -574,9 +552,7 @@ class TestViewProvider: NSObject, ViewProvider {
       }
     }
 
-    #expect(panelController.openPanel != nil)
-    if let panel = panelController.openPanel {
-      #expect(panel.canCreateDirectories)
-    }
+    let panel = try #require(panelController.openPanel)
+    #expect(panel.canCreateDirectories)
   }
 }
