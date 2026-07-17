@@ -36,7 +36,7 @@ class _TextMagnifierExampleAppState extends State<TextMagnifierExampleApp> {
             child: CupertinoTextField(
               textDirection: widget.textDirection,
               // Create a custom magnifier configuration that
-              // this `TextField` will use to build a magnifier with.
+              // this `CupertinoTextField` will use to build a magnifier with.
               magnifierConfiguration: TextMagnifierConfiguration(
                 magnifierBuilder:
                     (_, _, ValueNotifier<MagnifierInfo> magnifierInfo) =>

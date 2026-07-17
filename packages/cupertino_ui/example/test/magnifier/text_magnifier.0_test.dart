@@ -88,8 +88,10 @@ void main() {
       await tester.pumpWidget(
         const example.TextMagnifierExampleApp(text: defaultText),
       );
+      final int textOffset = defaultText.indexOf('e');
 
-      await showMagnifier(tester, defaultText.indexOf('e'));
+      await showMagnifier(tester, textOffset);
+
       expect(find.byType(example.CustomMagnifier), findsOneWidget);
 
       await expectLater(
@@ -112,7 +114,9 @@ void main() {
       const example.TextMagnifierExampleApp(textDirection: .rtl, text: text),
     );
 
-    await showMagnifier(tester, text.indexOf(textToTapOn));
+    final int textOffset = text.indexOf(textToTapOn);
+
+    await showMagnifier(tester, textOffset);
 
     expect(find.byType(example.CustomMagnifier), findsOneWidget);
   }, variant: TargetPlatformVariant.mobile());
