@@ -102,7 +102,7 @@ enum _ScaffoldSlot {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/scaffold/scaffold_messenger.0.dart}
+/// {@example /example/lib/scaffold/scaffold_messenger.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -136,7 +136,7 @@ class ScaffoldMessenger extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/scaffold/scaffold_messenger.of.0.dart}
+  /// {@example /example/lib/scaffold/scaffold_messenger.of.0.dart#body}
   ///
   /// </callout-box>
   ///
@@ -159,7 +159,7 @@ class ScaffoldMessenger extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/scaffold/scaffold_messenger.of.1.dart}
+  /// {@example /example/lib/scaffold/scaffold_messenger.of.1.dart#body}
   ///
   /// </callout-box>
   ///
@@ -292,7 +292,7 @@ class ScaffoldMessengerState extends State<ScaffoldMessenger> with TickerProvide
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/scaffold/scaffold_messenger_state.show_snack_bar.0.dart}
+  /// {@example /example/lib/scaffold/scaffold_messenger_state.show_snack_bar.0.dart#body}
   ///
   /// </callout-box>
   ///
@@ -314,7 +314,7 @@ class ScaffoldMessengerState extends State<ScaffoldMessenger> with TickerProvide
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/scaffold/scaffold_messenger_state.show_snack_bar.0.dart}
+  /// {@example /example/lib/scaffold/scaffold_messenger_state.show_snack_bar.0.dart#body}
   ///
   /// </callout-box>
   ///
@@ -326,7 +326,7 @@ class ScaffoldMessengerState extends State<ScaffoldMessenger> with TickerProvide
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/scaffold/scaffold_messenger_state.show_snack_bar.1.dart}
+  /// {@example /example/lib/scaffold/scaffold_messenger_state.show_snack_bar.1.dart#body}
   ///
   /// </callout-box>
   ///
@@ -349,7 +349,7 @@ class ScaffoldMessengerState extends State<ScaffoldMessenger> with TickerProvide
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/scaffold/scaffold_messenger_state.show_snack_bar.2.dart}
+  /// {@example /example/lib/scaffold/scaffold_messenger_state.show_snack_bar.2.dart#body}
   ///
   /// </callout-box>
   ///
@@ -541,7 +541,7 @@ class ScaffoldMessengerState extends State<ScaffoldMessenger> with TickerProvide
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/scaffold/scaffold_messenger_state.show_material_banner.0.dart}
+  /// {@example /example/lib/scaffold/scaffold_messenger_state.show_material_banner.0.dart#body}
   ///
   /// </callout-box>
   ScaffoldFeatureController<MaterialBanner, MaterialBannerClosedReason> showMaterialBanner(
@@ -1610,7 +1610,7 @@ class _FloatingActionButtonTransitionState extends State<_FloatingActionButtonTr
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/scaffold/scaffold.0.dart}
+/// {@example /example/lib/scaffold/scaffold.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1627,7 +1627,7 @@ class _FloatingActionButtonTransitionState extends State<_FloatingActionButtonTr
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/scaffold/scaffold.1.dart}
+/// {@example /example/lib/scaffold/scaffold.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1646,7 +1646,7 @@ class _FloatingActionButtonTransitionState extends State<_FloatingActionButtonTr
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/scaffold/scaffold.2.dart}
+/// {@example /example/lib/scaffold/scaffold.2.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1699,8 +1699,8 @@ class _FloatingActionButtonTransitionState extends State<_FloatingActionButtonTr
 /// better to add a listener to the [TabController] that updates the
 /// AppBar
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -1718,7 +1718,7 @@ class _FloatingActionButtonTransitionState extends State<_FloatingActionButtonTr
 /// })
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// Although there are some use cases, like a presentation app that
 /// shows embedded flutter content, where nested scaffolds are
@@ -1914,7 +1914,7 @@ class Scaffold extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/scaffold/scaffold.drawer.0.dart}
+  /// {@example /example/lib/scaffold/scaffold.drawer.0.dart#body}
   ///
   /// </callout-box>
   final Widget? drawer;
@@ -1944,7 +1944,7 @@ class Scaffold extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/scaffold/scaffold.end_drawer.0.dart}
+  /// {@example /example/lib/scaffold/scaffold.end_drawer.0.dart#body}
   ///
   /// </callout-box>
   final Widget? endDrawer;
@@ -2041,7 +2041,7 @@ class Scaffold extends StatefulWidget {
   /// [AppBar.primary], is true.
   final bool primary;
 
-  /// {@macro flutter.material.DrawerController.dragStartBehavior}
+  /// {@macro material_ui.DrawerController.dragStartBehavior}
   final DragStartBehavior drawerDragStartBehavior;
 
   /// The width of the area within which a horizontal swipe will open the
@@ -2102,7 +2102,7 @@ class Scaffold extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/scaffold/scaffold.of.0.dart}
+  /// {@example /example/lib/scaffold/scaffold.of.0.dart#body}
   ///
   /// </callout-box>
   ///
@@ -2119,7 +2119,7 @@ class Scaffold extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/scaffold/scaffold.of.1.dart}
+  /// {@example /example/lib/scaffold/scaffold.of.1.dart#body}
   ///
   /// </callout-box>
   ///
@@ -2717,7 +2717,7 @@ class ScaffoldState extends State<Scaffold>
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/scaffold/scaffold_state.show_bottom_sheet.0.dart}
+  /// {@example /example/lib/scaffold/scaffold_state.show_bottom_sheet.0.dart#body}
   ///
   /// </callout-box>
   ///
@@ -2743,7 +2743,7 @@ class ScaffoldState extends State<Scaffold>
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/scaffold/scaffold_state.show_bottom_sheet.1.dart}
+  /// {@example /example/lib/scaffold/scaffold_state.show_bottom_sheet.1.dart#body}
   ///
   /// </callout-box>
   ///

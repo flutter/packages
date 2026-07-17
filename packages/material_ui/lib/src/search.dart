@@ -119,8 +119,8 @@ abstract class SearchDelegate<T> {
   /// [keyboardType] and/or [textInputAction]. Only one of [searchFieldLabel]
   /// and [searchFieldDecorationTheme] may be non-null.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -155,7 +155,7 @@ abstract class SearchDelegate<T> {
   /// }
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   SearchDelegate({
     this.searchFieldLabel,
     this.searchFieldStyle,
@@ -209,10 +209,10 @@ abstract class SearchDelegate<T> {
   ///  * [AppBar.leading], the intended use for the return value of this method.
   Widget? buildLeading(BuildContext context);
 
-  /// {@macro flutter.material.appbar.automaticallyImplyLeading}
+  /// {@macro material_ui.appbar.automaticallyImplyLeading}
   bool? automaticallyImplyLeading;
 
-  /// {@macro flutter.material.appbar.leadingWidth}
+  /// {@macro material_ui.appbar.leadingWidth}
   double? leadingWidth;
 
   /// Widgets to display after the search query in the [AppBar].

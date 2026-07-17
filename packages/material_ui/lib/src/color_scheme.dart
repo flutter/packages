@@ -62,7 +62,7 @@ enum DynamicSchemeVariant {
   fruitSalad,
 }
 
-/// {@template flutter.material.color_scheme.ColorScheme}
+/// {@template material_ui.color_scheme.ColorScheme}
 /// A set of 45 colors based on the
 /// [Material spec](https://m3.material.io/styles/color/the-color-system/color-roles)
 /// that can be used to configure the color properties of most components.
@@ -70,7 +70,7 @@ enum DynamicSchemeVariant {
 ///
 /// ### Colors in Material 3
 ///
-/// {@macro flutter.material.colors.colorRoles}
+/// {@macro material_ui.colors.colorRoles}
 ///
 /// The main accent color groups in the scheme are [primary], [secondary],
 /// and [tertiary].
@@ -123,13 +123,13 @@ enum DynamicSchemeVariant {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/color_scheme/color_scheme.0.dart}
+/// {@example /example/lib/color_scheme/color_scheme.0.dart#body}
 ///
 /// </callout-box>
 ///
 /// ### Setting Colors in Flutter
 ///
-///{@macro flutter.material.colors.settingColors}
+///{@macro material_ui.colors.settingColors}
 @immutable
 class ColorScheme with Diagnosticable {
   /// Create a ColorScheme instance from the given colors.
@@ -267,7 +267,7 @@ class ColorScheme with Diagnosticable {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/color_scheme/color_scheme.0.dart}
+  /// {@example /example/lib/color_scheme/color_scheme.0.dart#body}
   ///
   /// </callout-box>
   ///
@@ -441,8 +441,8 @@ class ColorScheme with Diagnosticable {
   /// For Material 3, use [ColorScheme.fromSeed] to create a color scheme
   /// from a single seed color based on the Material 3 color system.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -460,7 +460,7 @@ class ColorScheme with Diagnosticable {
   /// ),
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   const ColorScheme.light({
     this.brightness = Brightness.light,
     this.primary = const Color(0xff6200ee),
@@ -536,8 +536,8 @@ class ColorScheme with Diagnosticable {
   /// Override the `brightness` property of [ColorScheme.fromSeed] to create a
   /// dark color scheme.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -558,7 +558,7 @@ class ColorScheme with Diagnosticable {
   /// ),
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   const ColorScheme.dark({
     this.brightness = Brightness.dark,
     this.primary = const Color(0xffbb86fc),
@@ -633,8 +633,8 @@ class ColorScheme with Diagnosticable {
   /// from a single seed color based on the Material 3 color system. To create a
   /// high-contrast color scheme, set `contrastLevel` to 1.0.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -652,7 +652,7 @@ class ColorScheme with Diagnosticable {
   /// ),
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   const ColorScheme.highContrastLight({
     this.brightness = Brightness.light,
     this.primary = const Color(0xff0000ba),
@@ -729,8 +729,8 @@ class ColorScheme with Diagnosticable {
   /// dark color scheme. To create a high-contrast color scheme, set
   /// `contrastLevel` to 1.0.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -751,7 +751,7 @@ class ColorScheme with Diagnosticable {
   /// ),
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   const ColorScheme.highContrastDark({
     this.brightness = Brightness.dark,
     this.primary = const Color(0xffefb7ff),
@@ -1738,7 +1738,7 @@ class ColorScheme with Diagnosticable {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/color_scheme/dynamic_content_color.0.dart}
+  /// {@example /example/lib/color_scheme/dynamic_content_color.0.dart#body}
   ///
   /// </callout-box>
   ///

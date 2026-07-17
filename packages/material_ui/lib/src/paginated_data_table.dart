@@ -50,7 +50,7 @@ import 'theme.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/paginated_data_table/paginated_data_table.0.dart}
+/// {@example /example/lib/paginated_data_table/paginated_data_table.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -63,7 +63,7 @@ import 'theme.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/paginated_data_table/paginated_data_table.1.dart}
+/// {@example /example/lib/paginated_data_table/paginated_data_table.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -257,7 +257,7 @@ class PaginatedDataTable extends StatefulWidget {
   /// This value defaults to 56.0 to adhere to the Material Design specifications.
   final double columnSpacing;
 
-  /// {@macro flutter.material.dataTable.showCheckboxColumn}
+  /// {@macro material_ui.dataTable.showCheckboxColumn}
   final bool showCheckboxColumn;
 
   /// Flag to display the pagination buttons to go to the first and last pages.
@@ -266,7 +266,7 @@ class PaginatedDataTable extends StatefulWidget {
   /// The index of the first row to display when the widget is first created.
   final int? initialFirstRowIndex;
 
-  /// {@macro flutter.material.dataTable.dividerThickness}
+  /// {@macro material_ui.dataTable.dividerThickness}
   ///
   /// If null, [DataTableThemeData.dividerThickness] is used. This value
   /// defaults to 1.0.
@@ -330,7 +330,7 @@ class PaginatedDataTable extends StatefulWidget {
   /// {@macro flutter.widgets.scroll_view.primary}
   final bool? primary;
 
-  /// {@macro flutter.material.dataTable.headingRowColor}
+  /// {@macro material_ui.dataTable.headingRowColor}
   final WidgetStateProperty<Color?>? headingRowColor;
 
   /// Controls the visibility of empty rows on the last page of a

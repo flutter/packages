@@ -51,8 +51,8 @@ import 'theme.dart';
 /// [CarouselView.weighted] is used, then set the [flexWeights] to only have
 /// one integer in the array.
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -86,7 +86,7 @@ import 'theme.dart';
 /// ),
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// In [CarouselView.weighted], weights are relative proportions. For example,
 /// if the layout weights is `[3, 2, 1]`, it means the first visible item occupies
@@ -130,7 +130,7 @@ import 'theme.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/carousel/carousel.0.dart}
+/// {@example /example/lib/carousel/carousel.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -247,7 +247,7 @@ class CarouselView extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/carousel/carousel.1.dart}
+  /// {@example /example/lib/carousel/carousel.1.dart#body}
   ///
   /// </callout-box>
   ///
@@ -290,8 +290,8 @@ class CarouselView extends StatefulWidget {
   /// The [flexWeights] parameter determines the layout, and [itemBuilder]
   /// creates items as they become visible.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -312,7 +312,7 @@ class CarouselView extends StatefulWidget {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -480,7 +480,7 @@ class CarouselView extends StatefulWidget {
   /// The child widgets for the carousel.
   final List<Widget> children;
 
-  /// {@template flutter.material.CarouselView.onIndexChanged}
+  /// {@template material_ui.CarouselView.onIndexChanged}
   /// A callback invoked when the leading item changes.
   ///
   /// The leading item is the first visible item in the carousel view.
@@ -1927,7 +1927,7 @@ class CarouselController extends ScrollController {
 
   /// The current leading item index in the [CarouselView].
   ///
-  /// {@macro flutter.material.CarouselView.onIndexChanged}
+  /// {@macro material_ui.CarouselView.onIndexChanged}
   int get leadingItem {
     assert(
       positions.isNotEmpty,

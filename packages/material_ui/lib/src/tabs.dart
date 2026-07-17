@@ -159,8 +159,8 @@ class Tab extends StatelessWidget implements PreferredSizeWidget {
   /// null along with `child` or `text`, the default height is 72.0 pixels. Without an `icon`, the
   /// height is 46.0 pixels.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -186,7 +186,7 @@ class Tab extends StatelessWidget implements PreferredSizeWidget {
   /// ),
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   final double? height;
 
   Widget _buildLabelText() {
@@ -959,7 +959,7 @@ typedef TabValueChanged<T> = void Function(T value, int index);
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/tabs/tab_bar.0.dart}
+/// {@example /example/lib/tabs/tab_bar.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -973,7 +973,7 @@ typedef TabValueChanged<T> = void Function(T value, int index);
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/tabs/tab_bar.1.dart}
+/// {@example /example/lib/tabs/tab_bar.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -987,7 +987,7 @@ typedef TabValueChanged<T> = void Function(T value, int index);
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/tabs/tab_bar.2.dart}
+/// {@example /example/lib/tabs/tab_bar.2.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1003,7 +1003,7 @@ typedef TabValueChanged<T> = void Function(T value, int index);
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/tabs/tab_bar.3.dart}
+/// {@example /example/lib/tabs/tab_bar.3.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1084,7 +1084,7 @@ class TabBar extends StatefulWidget implements PreferredSizeWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/tabs/tab_bar.2.dart}
+  /// {@example /example/lib/tabs/tab_bar.2.dart#body}
   ///
   /// </callout-box>
   ///
@@ -1362,7 +1362,7 @@ class TabBar extends StatefulWidget implements PreferredSizeWidget {
   /// {@macro flutter.widgets.scrollable.dragStartBehavior}
   final DragStartBehavior dragStartBehavior;
 
-  /// {@template flutter.material.tabs.mouseCursor}
+  /// {@template material_ui.tabs.mouseCursor}
   /// The cursor for a mouse pointer when it enters or is hovering over the
   /// individual tab widgets.
   ///
@@ -1416,7 +1416,7 @@ class TabBar extends StatefulWidget implements PreferredSizeWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/tabs/tab_bar.onHover.dart}
+  /// {@example /example/lib/tabs/tab_bar.onHover.dart#body}
   ///
   /// </callout-box>
   final TabValueChanged<bool>? onHover;
@@ -1442,7 +1442,7 @@ class TabBar extends StatefulWidget implements PreferredSizeWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/tabs/tab_bar.onFocusChange.dart}
+  /// {@example /example/lib/tabs/tab_bar.onFocusChange.dart#body}
   ///
   /// </callout-box>
   final TabValueChanged<bool>? onFocusChange;
@@ -1541,7 +1541,7 @@ class TabBar extends StatefulWidget implements PreferredSizeWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/tabs/tab_bar.indicator_animation.0.dart}
+  /// {@example /example/lib/tabs/tab_bar.indicator_animation.0.dart#body}
   ///
   /// </callout-box>
   ///
@@ -2305,7 +2305,7 @@ class TabBarView extends StatefulWidget {
   /// {@macro flutter.widgets.pageview.viewportFraction}
   final double viewportFraction;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defaults to [Clip.hardEdge].
   final Clip clipBehavior;

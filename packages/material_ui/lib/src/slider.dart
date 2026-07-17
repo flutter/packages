@@ -88,7 +88,7 @@ enum SliderInteraction {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/slider/slider.0.dart}
+/// {@example /example/lib/slider/slider.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -101,7 +101,7 @@ enum SliderInteraction {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/slider/slider.1.dart}
+/// {@example /example/lib/slider/slider.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -302,8 +302,8 @@ class Slider extends StatefulWidget {
   /// [StatefulWidget] using the [State.setState] method, so that the parent
   /// gets rebuilt; for example:
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -322,7 +322,7 @@ class Slider extends StatefulWidget {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -341,8 +341,8 @@ class Slider extends StatefulWidget {
   /// The value passed will be the last [value] that the slider had before the
   /// change began.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -364,7 +364,7 @@ class Slider extends StatefulWidget {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -378,8 +378,8 @@ class Slider extends StatefulWidget {
   /// [onChanged] for that), but rather to know when the user has completed
   /// selecting a new [value] by ending a drag or a click.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -401,7 +401,7 @@ class Slider extends StatefulWidget {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -521,7 +521,7 @@ class Slider extends StatefulWidget {
   /// to [ColorScheme.primary] with an opacity of 0.12.
   final WidgetStateProperty<Color?>? overlayColor;
 
-  /// {@template flutter.material.slider.mouseCursor}
+  /// {@template material_ui.slider.mouseCursor}
   /// The cursor for a mouse pointer when it enters or is hovering over the
   /// widget.
   ///
@@ -545,8 +545,8 @@ class Slider extends StatefulWidget {
   /// This is used by accessibility frameworks like TalkBack on Android to
   /// inform users what the currently selected value is with more context.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -570,7 +570,7 @@ class Slider extends StatefulWidget {
   ///  )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// Ignored if this slider is created with [Slider.adaptive]
   final SemanticFormatterCallback? semanticFormatterCallback;

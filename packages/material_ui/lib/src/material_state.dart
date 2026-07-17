@@ -37,7 +37,7 @@ import 'input_border.dart';
 ///    except [WidgetState] can be used outside of Material.
 ///  * [MaterialStateProperty], an interface for objects that "resolve" to
 ///    different values depending on a widget's material state.
-/// {@template flutter.material.MaterialStateProperty.implementations}
+/// {@template material_ui.MaterialStateProperty.implementations}
 ///  * [MaterialStateColor], a [Color] that implements `MaterialStateProperty`
 ///    which is used in APIs that need to accept either a [Color] or a
 ///    `MaterialStateProperty<Color>`.
@@ -107,8 +107,8 @@ typedef MaterialPropertyResolver<T> = WidgetPropertyResolver<T>;
 /// to provide a `defaultValue` to the super constructor, so that we can know
 /// at compile-time what its default color is.
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -134,7 +134,7 @@ typedef MaterialPropertyResolver<T> = WidgetPropertyResolver<T>;
 /// }
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// See also
 ///
@@ -170,7 +170,7 @@ typedef MaterialStateColor = WidgetStateColor;
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/material_state/material_state_mouse_cursor.0.dart}
+/// {@example /example/lib/material_state/material_state_mouse_cursor.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -211,7 +211,7 @@ typedef MaterialStateMouseCursor = WidgetStateMouseCursor;
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/material_state/material_state_border_side.0.dart}
+/// {@example /example/lib/material_state/material_state_border_side.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -246,7 +246,7 @@ typedef MaterialStateBorderSide = WidgetStateBorderSide;
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/material_state/material_state_outlined_border.0.dart}
+/// {@example /example/lib/material_state/material_state_outlined_border.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -487,7 +487,7 @@ class _MaterialStateUnderlineInputBorder extends MaterialStateUnderlineInputBord
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/widget_state_input_border/widget_state_input_border.0.dart}
+/// {@example /example/lib/widget_state_input_border/widget_state_input_border.0.dart#body}
 ///
 /// </callout-box>
 abstract interface class WidgetStateInputBorder
@@ -560,7 +560,7 @@ class _WidgetInputBorderMapper extends WidgetStateMapper<InputBorder>
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/material_state/material_state_property.0.dart}
+/// {@example /example/lib/material_state/material_state_property.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -568,7 +568,7 @@ class _WidgetInputBorderMapper extends WidgetStateMapper<InputBorder>
 ///
 ///  * [WidgetStateProperty], the non-Material version that can be used
 ///    interchangeably with `MaterialStateProperty`.
-/// {@macro flutter.material.MaterialStateProperty.implementations}
+/// {@macro material_ui.MaterialStateProperty.implementations}
 @Deprecated(
   'Use WidgetStateProperty instead. '
   'Moved to the Widgets layer to make code available outside of Material. '

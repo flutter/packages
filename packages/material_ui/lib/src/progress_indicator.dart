@@ -49,7 +49,7 @@ const String _kValueControllerAssertion =
 abstract class ProgressIndicator extends StatefulWidget {
   /// Creates a progress indicator.
   ///
-  /// {@template flutter.material.ProgressIndicator.ProgressIndicator}
+  /// {@template material_ui.ProgressIndicator.ProgressIndicator}
   /// The [value] argument can either be null for an indeterminate
   /// progress indicator, or a non-null value between 0.0 and 1.0 for a
   /// determinate progress indicator.
@@ -88,7 +88,7 @@ abstract class ProgressIndicator extends StatefulWidget {
   /// for the given use case. See the subclass documentation for details.
   final Color? backgroundColor;
 
-  /// {@template flutter.progress_indicator.ProgressIndicator.color}
+  /// {@template material_ui.progress_indicator.ProgressIndicator.color}
   /// The progress indicator's color.
   ///
   /// This is only used if [ProgressIndicator.valueColor] is null.
@@ -106,7 +106,7 @@ abstract class ProgressIndicator extends StatefulWidget {
   /// is also null then it defaults to the current theme's [ColorScheme.primary].
   final Animation<Color?>? valueColor;
 
-  /// {@template flutter.progress_indicator.ProgressIndicator.semanticsLabel}
+  /// {@template material_ui.progress_indicator.ProgressIndicator.semanticsLabel}
   /// The [SemanticsProperties.label] for this progress indicator.
   ///
   /// This value indicates the purpose of the progress bar, and will be
@@ -115,7 +115,7 @@ abstract class ProgressIndicator extends StatefulWidget {
   /// {@endtemplate}
   final String? semanticsLabel;
 
-  /// {@template flutter.progress_indicator.ProgressIndicator.semanticsValue}
+  /// {@template material_ui.progress_indicator.ProgressIndicator.semanticsValue}
   /// The [SemanticsProperties.value] for this progress indicator.
   ///
   /// This will be used in conjunction with the [semanticsLabel] by
@@ -394,7 +394,7 @@ class _LinearProgressIndicatorPainter extends CustomPainter {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/progress_indicator/linear_progress_indicator.0.dart}
+/// {@example /example/lib/progress_indicator/linear_progress_indicator.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -408,11 +408,11 @@ class _LinearProgressIndicatorPainter extends CustomPainter {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/progress_indicator/linear_progress_indicator.1.dart}
+/// {@example /example/lib/progress_indicator/linear_progress_indicator.1.dart#body}
 ///
 /// </callout-box>
 ///
-/// {@macro flutter.material.ProgressIndicator.AnimationSynchronization}
+/// {@macro material_ui.ProgressIndicator.AnimationSynchronization}
 ///
 /// See the documentation of [CircularProgressIndicator] for an example on this
 /// topic.
@@ -426,7 +426,7 @@ class _LinearProgressIndicatorPainter extends CustomPainter {
 class LinearProgressIndicator extends ProgressIndicator {
   /// Creates a linear progress indicator.
   ///
-  /// {@macro flutter.material.ProgressIndicator.ProgressIndicator}
+  /// {@macro material_ui.ProgressIndicator.ProgressIndicator}
   const LinearProgressIndicator({
     super.key,
     super.value,
@@ -450,7 +450,7 @@ class LinearProgressIndicator extends ProgressIndicator {
   }) : assert(minHeight == null || minHeight > 0),
        assert(value == null || controller == null, _kValueControllerAssertion);
 
-  /// {@template flutter.material.LinearProgressIndicator.trackColor}
+  /// {@template material_ui.LinearProgressIndicator.trackColor}
   /// Color of the track being filled by the linear indicator.
   ///
   /// If [LinearProgressIndicator.backgroundColor] is null then the
@@ -461,7 +461,7 @@ class LinearProgressIndicator extends ProgressIndicator {
   @override
   Color? get backgroundColor => super.backgroundColor;
 
-  /// {@template flutter.material.LinearProgressIndicator.minHeight}
+  /// {@template material_ui.LinearProgressIndicator.minHeight}
   /// The minimum height of the line used to draw the linear indicator.
   ///
   /// If [LinearProgressIndicator.minHeight] is null then it will use the
@@ -527,7 +527,7 @@ class LinearProgressIndicator extends ProgressIndicator {
   )
   final bool? year2023;
 
-  /// {@template flutter.material.ProgressIndicator.controller}
+  /// {@template material_ui.ProgressIndicator.controller}
   /// An optional [AnimationController] that controls the animation of this
   /// indeterminate progress indicator.
   ///
@@ -825,7 +825,7 @@ class _CircularProgressIndicatorPainter extends CustomPainter {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/progress_indicator/circular_progress_indicator.0.dart}
+/// {@example /example/lib/progress_indicator/circular_progress_indicator.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -839,11 +839,11 @@ class _CircularProgressIndicatorPainter extends CustomPainter {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/progress_indicator/circular_progress_indicator.1.dart}
+/// {@example /example/lib/progress_indicator/circular_progress_indicator.1.dart#body}
 ///
 /// </callout-box>
 ///
-/// {@template flutter.material.ProgressIndicator.AnimationSynchronization}
+/// {@template material_ui.ProgressIndicator.AnimationSynchronization}
 /// ## Animation synchronization
 ///
 /// When multiple [CircularProgressIndicator]s or [LinearProgressIndicator]s are
@@ -880,7 +880,7 @@ class _CircularProgressIndicatorPainter extends CustomPainter {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/progress_indicator/circular_progress_indicator.2.dart}
+/// {@example /example/lib/progress_indicator/circular_progress_indicator.2.dart#body}
 ///
 /// </callout-box>
 ///
@@ -893,7 +893,7 @@ class _CircularProgressIndicatorPainter extends CustomPainter {
 class CircularProgressIndicator extends ProgressIndicator {
   /// Creates a circular progress indicator.
   ///
-  /// {@macro flutter.material.ProgressIndicator.ProgressIndicator}
+  /// {@macro material_ui.ProgressIndicator.ProgressIndicator}
   const CircularProgressIndicator({
     super.key,
     super.value,
@@ -927,7 +927,7 @@ class CircularProgressIndicator extends ProgressIndicator {
   /// [semanticsLabel], [semanticsValue], [trackGap], [year2023] will be
   /// ignored on iOS & macOS.
   ///
-  /// {@macro flutter.material.ProgressIndicator.ProgressIndicator}
+  /// {@macro material_ui.ProgressIndicator.ProgressIndicator}
   const CircularProgressIndicator.adaptive({
     super.key,
     super.value,
@@ -953,7 +953,7 @@ class CircularProgressIndicator extends ProgressIndicator {
 
   final _ActivityIndicatorType _indicatorType;
 
-  /// {@template flutter.material.CircularProgressIndicator.trackColor}
+  /// {@template material_ui.CircularProgressIndicator.trackColor}
   /// Color of the circular track being filled by the circular indicator.
   ///
   /// If [CircularProgressIndicator.backgroundColor] is null then the
@@ -1040,7 +1040,7 @@ class CircularProgressIndicator extends ProgressIndicator {
   /// padding. Otherwise, defaults to zero padding.
   final EdgeInsetsGeometry? padding;
 
-  /// {@macro flutter.material.ProgressIndicator.controller}
+  /// {@macro material_ui.ProgressIndicator.controller}
   ///
   /// See also:
   ///
@@ -1335,7 +1335,7 @@ class RefreshProgressIndicator extends CircularProgressIndicator {
   /// Rather than creating a refresh progress indicator directly, consider using
   /// a [RefreshIndicator] together with a [Scrollable] widget.
   ///
-  /// {@macro flutter.material.ProgressIndicator.ProgressIndicator}
+  /// {@macro material_ui.ProgressIndicator.ProgressIndicator}
   const RefreshProgressIndicator({
     super.key,
     super.value,
@@ -1352,7 +1352,7 @@ class RefreshProgressIndicator extends CircularProgressIndicator {
     this.indicatorPadding = const EdgeInsets.all(12.0),
   });
 
-  /// {@macro flutter.material.material.elevation}
+  /// {@macro material_ui.material.elevation}
   final double elevation;
 
   /// The amount of space by which to inset the whole indicator.
@@ -1365,7 +1365,7 @@ class RefreshProgressIndicator extends CircularProgressIndicator {
   /// Default stroke width.
   static const double defaultStrokeWidth = 2.5;
 
-  /// {@template flutter.material.RefreshProgressIndicator.backgroundColor}
+  /// {@template material_ui.RefreshProgressIndicator.backgroundColor}
   /// Background color of that fills the circle under the refresh indicator.
   ///
   /// If [RefreshIndicator.backgroundColor] is null then the

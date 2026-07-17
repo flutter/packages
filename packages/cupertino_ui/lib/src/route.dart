@@ -79,7 +79,7 @@ final Animatable<Offset> _kBottomUpTween = Tween<Offset>(
 /// A mixin that replaces the entire screen with an iOS transition for a
 /// [PageRoute].
 ///
-/// {@template flutter.cupertino.cupertinoRouteTransitionMixin}
+/// {@template cupertino_ui.cupertinoRouteTransitionMixin}
 /// The page slides in from the right and exits in reverse. The page also shifts
 /// to the left in parallax when another page enters to cover it.
 ///
@@ -97,7 +97,7 @@ mixin CupertinoRouteTransitionMixin<T> on PageRoute<T> {
   @protected
   Widget buildContent(BuildContext context);
 
-  /// {@template flutter.cupertino.CupertinoRouteTransitionMixin.title}
+  /// {@template cupertino_ui.CupertinoRouteTransitionMixin.title}
   /// A title string for this route.
   ///
   /// Used to auto-populate [CupertinoNavigationBar] and
@@ -272,7 +272,7 @@ mixin CupertinoRouteTransitionMixin<T> on PageRoute<T> {
 
 /// A modal route that replaces the entire screen with an iOS transition.
 ///
-/// {@macro flutter.cupertino.cupertinoRouteTransitionMixin}
+/// {@macro cupertino_ui.cupertinoRouteTransitionMixin}
 ///
 /// By default, when a modal route is replaced by another, the previous route
 /// remains in memory. To free all the resources when this is not necessary, set
@@ -368,7 +368,7 @@ class _PageBasedCupertinoPageRoute<T> extends PageRoute<T> with CupertinoRouteTr
 
 /// A page that creates a cupertino style [PageRoute].
 ///
-/// {@macro flutter.cupertino.cupertinoRouteTransitionMixin}
+/// {@macro cupertino_ui.cupertinoRouteTransitionMixin}
 ///
 /// By default, when a created modal route is replaced by another, the previous
 /// route remains in memory. To free all the resources when this is not
@@ -401,7 +401,7 @@ class CupertinoPage<T> extends Page<T> {
   /// The content to be shown in the [Route] created by this page.
   final Widget child;
 
-  /// {@macro flutter.cupertino.CupertinoRouteTransitionMixin.title}
+  /// {@macro cupertino_ui.CupertinoRouteTransitionMixin.title}
   final String? title;
 
   /// {@macro flutter.widgets.ModalRoute.maintainState}
@@ -1307,7 +1307,7 @@ class CupertinoModalPopupRoute<T> extends PopupRoute<T> {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/route/show_cupertino_modal_popup.0.dart}
+/// {@example /example/lib/route/show_cupertino_modal_popup.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1373,7 +1373,10 @@ Widget _buildCupertinoDialogTransitions(
 /// By default, `useRootNavigator` is `true` and the dialog route created by
 /// this method is pushed to the root navigator.
 ///
-/// {@macro flutter.material.dialog.requestFocus}
+/// {@template cupertino_ui.dialog.requestFocus}
+/// The `requestFocus` argument is used to specify whether the dialog should
+/// request focus when shown.
+/// {@endtemplate}
 /// {@macro flutter.widgets.navigator.Route.requestFocus}
 ///
 /// {@macro flutter.widgets.RawDialogRoute}
@@ -1406,7 +1409,7 @@ Widget _buildCupertinoDialogTransitions(
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/route/show_cupertino_dialog.0.dart}
+/// {@example /example/lib/route/show_cupertino_dialog.0.dart#body}
 ///
 /// </callout-box>
 ///

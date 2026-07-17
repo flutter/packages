@@ -113,7 +113,7 @@ class Adaptation<T> {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/switch/switch.4.dart}
+  /// {@example /example/lib/switch/switch.4.dart#body}
   ///
   /// </callout-box>
   T adapt(ThemeData theme, T defaultValue) => defaultValue;
@@ -137,7 +137,7 @@ class Adaptation<T> {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/theme/theme_extension.1.dart}
+/// {@example /example/lib/theme/theme_extension.1.dart#body}
 ///
 /// </callout-box>
 abstract class ThemeExtension<T extends ThemeExtension<T>> {
@@ -227,7 +227,7 @@ enum MaterialTapTargetSize {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/theme_data/theme_data.0.dart}
+/// {@example /example/lib/theme_data/theme_data.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -841,8 +841,8 @@ class ThemeData with Diagnosticable {
   /// forward we will be converting all the widget implementations to only use
   /// colors or colors derived from those in [ColorScheme].
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -856,7 +856,7 @@ class ThemeData with Diagnosticable {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See <https://material.io/design/color/> for
   /// more discussion on how to pick the right colors.
@@ -1005,7 +1005,7 @@ class ThemeData with Diagnosticable {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/theme/theme_extension.1.dart}
+  /// {@example /example/lib/theme/theme_extension.1.dart#body}
   ///
   /// </callout-box>
   ///
@@ -1176,7 +1176,7 @@ class ThemeData with Diagnosticable {
 
   /// The density value for specifying the compactness of various UI components.
   ///
-  /// {@template flutter.material.themedata.visualDensity}
+  /// {@template material_ui.themedata.visualDensity}
   /// Density, in the context of a UI, is the vertical and horizontal
   /// "compactness" of the elements in the UI. It is unitless, since it means
   /// different things to different UI elements. For buttons, it affects the
@@ -1220,7 +1220,7 @@ class ThemeData with Diagnosticable {
   /// The color of [Material] when it is used as a [Card].
   final Color cardColor;
 
-  /// {@macro flutter.material.color_scheme.ColorScheme}
+  /// {@macro material_ui.color_scheme.ColorScheme}
   ///
   /// This property was added much later than the theme's set of highly specific
   /// colors, like [cardColor], [canvasColor] etc. New components can be defined

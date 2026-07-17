@@ -55,7 +55,7 @@ const double _kScrollbarCrossAxisMargin = 3.0;
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/scrollbar/cupertino_scrollbar.0.dart}
+/// {@example /example/lib/scrollbar/cupertino_scrollbar.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -69,7 +69,7 @@ const double _kScrollbarCrossAxisMargin = 3.0;
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/scrollbar/cupertino_scrollbar.1.dart}
+/// {@example /example/lib/scrollbar/cupertino_scrollbar.1.dart#body}
 ///
 /// </callout-box>
 ///

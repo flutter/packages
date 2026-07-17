@@ -2374,10 +2374,10 @@ class TimePickerDialog extends StatefulWidget {
   /// Callback called when the selected entry mode is changed.
   final EntryModeChangeCallback? onEntryModeChanged;
 
-  /// {@macro flutter.material.time_picker.switchToInputEntryModeIcon}
+  /// {@macro material_ui.time_picker.switchToInputEntryModeIcon}
   final Icon? switchToInputEntryModeIcon;
 
-  /// {@macro flutter.material.time_picker.switchToTimerEntryModeIcon}
+  /// {@macro material_ui.time_picker.switchToTimerEntryModeIcon}
   final Icon? switchToTimerEntryModeIcon;
 
   /// If true and entry mode is [TimePickerEntryMode.input], the hour and minute
@@ -2838,10 +2838,10 @@ class _TimePicker extends StatefulWidget {
   /// Callback called when the selected entry mode is changed.
   final EntryModeChangeCallback? onEntryModeChanged;
 
-  /// {@macro flutter.material.time_picker.switchToInputEntryModeIcon}
+  /// {@macro material_ui.time_picker.switchToInputEntryModeIcon}
   final Icon? switchToInputEntryModeIcon;
 
-  /// {@macro flutter.material.time_picker.switchToTimerEntryModeIcon}
+  /// {@macro material_ui.time_picker.switchToTimerEntryModeIcon}
   final Icon? switchToTimerEntryModeIcon;
 
   /// If true, input fields start empty in input mode.
@@ -3142,8 +3142,8 @@ class _TimePickerState extends State<_TimePicker> with RestorationMixin {
 /// The returned Future resolves to the time selected by the user when the user
 /// closes the dialog. If the user cancels the dialog, null is returned.
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 /// Show a dialog with [initialTime] equal to the current time.
@@ -3155,7 +3155,7 @@ class _TimePickerState extends State<_TimePicker> with RestorationMixin {
 /// );
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// The [context], [barrierDismissible], [barrierColor], [barrierLabel],
 /// [useRootNavigator] and [routeSettings] arguments are passed to [showDialog],
@@ -3179,7 +3179,7 @@ class _TimePickerState extends State<_TimePicker> with RestorationMixin {
 /// parameter to override the default and force the dialog to appear in either
 /// portrait or landscape mode.
 ///
-/// {@template flutter.material.time_picker.switchToInputEntryModeIcon}
+/// {@template material_ui.time_picker.switchToInputEntryModeIcon}
 /// The optional [switchToInputEntryModeIcon] argument can be used to customize
 /// the input method icon that is shown when the [TimePickerEntryMode]
 /// is [TimePickerEntryMode.dial].
@@ -3187,7 +3187,7 @@ class _TimePickerState extends State<_TimePicker> with RestorationMixin {
 /// Defaults to an [Icon] widget with [Icons.keyboard_outlined] as icon.
 /// {@endtemplate}
 ///
-/// {@template flutter.material.time_picker.switchToTimerEntryModeIcon}
+/// {@template material_ui.time_picker.switchToTimerEntryModeIcon}
 /// The optional [switchToTimerEntryModeIcon] argument can be used to customize
 /// the input method icon that is shown when the [TimePickerEntryMode]
 /// is [TimePickerEntryMode.input].
@@ -3201,8 +3201,8 @@ class _TimePickerState extends State<_TimePicker> with RestorationMixin {
 /// [ColorScheme]. The time picker can be further customized by providing a
 /// [TimePickerThemeData] to the overall theme.
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 /// Show a dialog with the text direction overridden to be
@@ -3221,10 +3221,10 @@ class _TimePickerState extends State<_TimePicker> with RestorationMixin {
 /// );
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 /// Show a dialog with time unconditionally displayed in 24 hour
@@ -3243,7 +3243,7 @@ class _TimePickerState extends State<_TimePicker> with RestorationMixin {
 /// );
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// <callout-box>
 ///
@@ -3254,7 +3254,7 @@ class _TimePickerState extends State<_TimePicker> with RestorationMixin {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/time_picker/show_time_picker.0.dart}
+/// {@example /example/lib/time_picker/show_time_picker.0.dart#body}
 ///
 /// </callout-box>
 ///

@@ -48,8 +48,8 @@ import 'text_field.dart';
 /// [CupertinoTextField] class and [CupertinoTextField.borderless],
 /// the constructor.
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -76,7 +76,7 @@ import 'text_field.dart';
 /// )
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// <callout-box>
 ///
@@ -87,7 +87,7 @@ import 'text_field.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/text_form_field_row/cupertino_text_form_field_row.1.dart}
+/// {@example /example/lib/text_form_field_row/cupertino_text_form_field_row.1.dart#body}
 ///
 /// </callout-box>
 class CupertinoTextFormFieldRow extends FormField<String> {
@@ -283,7 +283,10 @@ class CupertinoTextFormFieldRow extends FormField<String> {
   /// initialize its [TextEditingController.text] with [initialValue].
   final TextEditingController? controller;
 
-  /// {@macro flutter.material.TextFormField.onChanged}
+  /// {@template cupertino_ui.TextFormField.onChanged}
+  /// Called when the user initiates a change to the TextField's
+  /// value: when they have inserted or deleted text or reset the form.
+  /// {@endtemplate}
   final ValueChanged<String>? onChanged;
 
   static Widget _defaultContextMenuBuilder(

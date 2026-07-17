@@ -33,7 +33,7 @@ import 'theme.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/reorderable_list/reorderable_list_view.0.dart}
+/// {@example /example/lib/reorderable_list/reorderable_list_view.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -61,7 +61,7 @@ import 'theme.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/reorderable_list/reorderable_list_view.1.dart}
+/// {@example /example/lib/reorderable_list/reorderable_list_view.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -78,7 +78,7 @@ import 'theme.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/reorderable_list/reorderable_list_view.2.dart}
+/// {@example /example/lib/reorderable_list/reorderable_list_view.2.dart#body}
 ///
 /// </callout-box>
 class ReorderableListView extends StatefulWidget {
@@ -179,7 +179,7 @@ class ReorderableListView extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/reorderable_list/reorderable_list_view.reorderable_list_view_builder.0.dart}
+  /// {@example /example/lib/reorderable_list/reorderable_list_view.reorderable_list_view_builder.0.dart#body}
   ///
   /// </callout-box>
   ///
@@ -294,7 +294,7 @@ class ReorderableListView extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/reorderable_list/reorderable_list_view.build_default_drag_handles.0.dart}
+  /// {@example /example/lib/reorderable_list/reorderable_list_view.build_default_drag_handles.0.dart#body}
   ///
   /// </callout-box>
   final bool buildDefaultDragHandles;
@@ -358,7 +358,7 @@ class ReorderableListView extends StatefulWidget {
   /// {@macro flutter.widgets.scrollable.restorationId}
   final String? restorationId;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defaults to [Clip.hardEdge].
   final Clip clipBehavior;

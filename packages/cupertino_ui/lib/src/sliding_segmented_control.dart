@@ -352,7 +352,7 @@ class _SegmentSeparatorState extends State<_SegmentSeparator>
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/segmented_control/cupertino_sliding_segmented_control.0.dart}
+/// {@example /example/lib/segmented_control/cupertino_sliding_segmented_control.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -431,8 +431,8 @@ class CupertinoSlidingSegmentedControl<T extends Object> extends StatefulWidget 
   /// the parent [StatefulWidget] using the [State.setState] method, so that
   /// the parent gets rebuilt; for example:
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -468,7 +468,7 @@ class CupertinoSlidingSegmentedControl<T extends Object> extends StatefulWidget 
   /// }
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   final ValueChanged<T?> onValueChanged;
 
   /// The color used to paint the rounded rect behind the [children] and the separators.
@@ -522,7 +522,7 @@ class CupertinoSlidingSegmentedControl<T extends Object> extends StatefulWidget 
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro cupertino_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/segmented_control/cupertino_sliding_segmented_control.0.dart}
+  /// {@example /example/lib/segmented_control/cupertino_sliding_segmented_control.0.dart#body}
   ///
   /// </callout-box>
   final bool isMomentary;

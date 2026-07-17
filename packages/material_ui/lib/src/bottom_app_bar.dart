@@ -27,8 +27,8 @@ import 'theme.dart';
 ///
 /// Typically used with a [Scaffold] and a [FloatingActionButton].
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -42,7 +42,7 @@ import 'theme.dart';
 /// )
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// <callout-box>
 ///
@@ -54,7 +54,7 @@ import 'theme.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/bottom_app_bar/bottom_app_bar.1.dart}
+/// {@example /example/lib/bottom_app_bar/bottom_app_bar.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -69,7 +69,7 @@ import 'theme.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/bottom_app_bar/bottom_app_bar.2.dart}
+/// {@example /example/lib/bottom_app_bar/bottom_app_bar.2.dart#body}
 ///
 /// </callout-box>
 ///
@@ -141,7 +141,7 @@ class BottomAppBar extends StatefulWidget {
   /// is used. If that's null then the shape will be rectangular with no notch.
   final NotchedShape? shape;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none].
   final Clip clipBehavior;
