@@ -704,6 +704,35 @@ class AllNullableTypesWithoutRecursion {
   std::optional<::flutter::EncodableMap> map_map_;
 };
 
+// A data class without fields for testing empty classes.
+//
+// Generated class from Pigeon that represents data sent in messages.
+class AnEmptyClass {
+ public:
+  // Constructs an object setting all fields.
+  AnEmptyClass();
+
+  bool operator==(const AnEmptyClass& other) const;
+  bool operator!=(const AnEmptyClass& other) const;
+  /// Returns a hash code value for the object. This method is supported for the
+  /// benefit of hash tables.
+  size_t Hash() const;
+  /// Stream output operator for formatted string representation.
+  friend std::ostream& operator<<(std::ostream& os, const AnEmptyClass& obj);
+
+ private:
+  static AnEmptyClass FromEncodableList(const ::flutter::EncodableList& list);
+  ::flutter::EncodableList ToEncodableList() const;
+  friend class AllClassesWrapper;
+  friend class HostIntegrationCoreApi;
+  friend class FlutterIntegrationCoreApi;
+  friend class HostTrivialApi;
+  friend class HostSmallApi;
+  friend class FlutterSmallApi;
+  friend class PigeonInternalCodecSerializer;
+  friend class CoreTestsTest;
+};
+
 // A class for testing nested class handling.
 //
 // This is needed to test nested nullable and non-nullable classes,
@@ -726,7 +755,8 @@ class AllClassesWrapper {
       const AllTypes* all_types, const ::flutter::EncodableList& class_list,
       const ::flutter::EncodableList* nullable_class_list,
       const ::flutter::EncodableMap& class_map,
-      const ::flutter::EncodableMap* nullable_class_map);
+      const ::flutter::EncodableMap* nullable_class_map,
+      const AnEmptyClass* an_empty_class);
 
   ~AllClassesWrapper() = default;
   AllClassesWrapper(const AllClassesWrapper& other);
@@ -761,6 +791,10 @@ class AllClassesWrapper {
   void set_nullable_class_map(const ::flutter::EncodableMap* value_arg);
   void set_nullable_class_map(const ::flutter::EncodableMap& value_arg);
 
+  const AnEmptyClass* an_empty_class() const;
+  void set_an_empty_class(const AnEmptyClass* value_arg);
+  void set_an_empty_class(const AnEmptyClass& value_arg);
+
   bool operator==(const AllClassesWrapper& other) const;
   bool operator!=(const AllClassesWrapper& other) const;
   /// Returns a hash code value for the object. This method is supported for the
@@ -789,6 +823,7 @@ class AllClassesWrapper {
   std::optional<::flutter::EncodableList> nullable_class_list_;
   ::flutter::EncodableMap class_map_;
   std::optional<::flutter::EncodableMap> nullable_class_map_;
+  std::unique_ptr<AnEmptyClass> an_empty_class_;
 };
 
 // A data class containing a List, used in unit tests.

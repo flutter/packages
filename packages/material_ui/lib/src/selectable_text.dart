@@ -93,9 +93,12 @@ class _SelectableTextSelectionGestureDetectorBuilder extends TextSelectionGestur
 /// behavior is useful, for example, to make the text bold while using the
 /// default font family and size.
 ///
-/// {@macro flutter.material.textfield.wantKeepAlive}
+/// {@macro cupertino_ui.textfield.wantKeepAlive}
 ///
-/// {@tool snippet}
+/// <callout-box>
+///
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
 ///
 /// ```dart
 /// const SelectableText(
@@ -104,14 +107,18 @@ class _SelectableTextSelectionGestureDetectorBuilder extends TextSelectionGestur
 ///   style: TextStyle(fontWeight: FontWeight.bold),
 /// )
 /// ```
-/// {@end-tool}
+///
+/// </callout-box>
 ///
 /// Using the [SelectableText.rich] constructor, the [SelectableText] widget can
 /// display a paragraph with differently styled [TextSpan]s. The sample
 /// that follows displays "Hello beautiful world" with different styles
 /// for each word.
 ///
-/// {@tool snippet}
+/// <callout-box>
+///
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
 ///
 /// ```dart
 /// const SelectableText.rich(
@@ -124,7 +131,8 @@ class _SelectableTextSelectionGestureDetectorBuilder extends TextSelectionGestur
 ///   ),
 /// )
 /// ```
-/// {@end-tool}
+///
+/// </callout-box>
 ///
 /// ## Interactivity
 ///

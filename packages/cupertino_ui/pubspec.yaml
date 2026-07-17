@@ -16,13 +16,14 @@ dependencies:
   collection: ^1.19.1
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.20.2
 
 dev_dependencies:
   clock: ^1.1.2
   flutter_goldens:
     path: ../../script/flutter_goldens
-  flutter_localizations:
-    sdk: flutter
   flutter_test:
     sdk: flutter
   # To track memory leaks.
@@ -30,6 +31,7 @@ dev_dependencies:
   material_ui:
     # TODO(justinmc): Use the pub.dev package when published.
     path: ../material_ui
+  path: ^1.9.1
 
 topics:
   - ui

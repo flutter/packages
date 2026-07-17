@@ -836,6 +836,8 @@ class Root extends Node {
     return Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[], constants: <Constant>[]);
   }
 
+  // TODO(tarrinneal): Ensure classes are sorted in topological dependency order; see
+  // https://github.com/flutter/flutter/issues/128330.
   /// All the classes contained in the AST.
   List<Class> classes;
 

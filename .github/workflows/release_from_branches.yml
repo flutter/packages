@@ -12,4 +12,7 @@ jobs:
     with:
       is-batch-release: true
       branch-name: '${{ github.ref_name }}'
-    secrets: inherit
+    secrets:
+      USER_NAME: ${{ secrets.USER_NAME }}
+      USER_EMAIL: ${{ secrets.USER_EMAIL }}
+      PUB_CREDENTIALS: ${{ secrets.PUB_CREDENTIALS }}

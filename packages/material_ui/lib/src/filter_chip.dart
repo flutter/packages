@@ -36,11 +36,17 @@ enum _ChipVariant { flat, elevated }
 ///
 /// Requires one of its ancestors to be a [Material] widget.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This example shows how to use [FilterChip]s to filter through exercises.
 ///
-/// ** See code in examples/api/lib/material/filter_chip/filter_chip.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/filter_chip/filter_chip.0.dart#body}
+///
+/// </callout-box>
 ///
 /// ## Material Design 3
 ///

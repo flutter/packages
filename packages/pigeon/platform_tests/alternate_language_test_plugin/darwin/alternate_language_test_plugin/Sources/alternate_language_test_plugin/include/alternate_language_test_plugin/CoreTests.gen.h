@@ -48,6 +48,7 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @class FLTAllTypes;
 @class FLTAllNullableTypes;
 @class FLTAllNullableTypesWithoutRecursion;
+@class FLTAnEmptyClass;
 @class FLTAllClassesWrapper;
 @class FLTTestMessage;
 
@@ -250,6 +251,10 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @property(nonatomic, copy, nullable) NSDictionary<NSNumber *, NSDictionary<id, id> *> *mapMap;
 @end
 
+/// A data class without fields for testing empty classes.
+@interface FLTAnEmptyClass : NSObject
+@end
+
 /// A class for testing nested class handling.
 ///
 /// This is needed to test nested nullable and non-nullable classes,
@@ -269,7 +274,8 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
                             classMap:(NSDictionary<NSNumber *, FLTAllTypes *> *)classMap
                     nullableClassMap:
                         (nullable NSDictionary<NSNumber *, FLTAllNullableTypesWithoutRecursion *> *)
-                            nullableClassMap;
+                            nullableClassMap
+                        anEmptyClass:(nullable FLTAnEmptyClass *)anEmptyClass;
 @property(nonatomic, strong) FLTAllNullableTypes *allNullableTypes;
 @property(nonatomic, strong, nullable)
     FLTAllNullableTypesWithoutRecursion *allNullableTypesWithoutRecursion;
@@ -280,6 +286,7 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @property(nonatomic, copy) NSDictionary<NSNumber *, FLTAllTypes *> *classMap;
 @property(nonatomic, copy, nullable)
     NSDictionary<NSNumber *, FLTAllNullableTypesWithoutRecursion *> *nullableClassMap;
+@property(nonatomic, strong, nullable) FLTAnEmptyClass *anEmptyClass;
 @end
 
 /// A data class containing a List, used in unit tests.

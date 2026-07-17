@@ -806,6 +806,42 @@ class AllNullableTypesWithoutRecursion {
   }
 }
 
+/// A data class without fields for testing empty classes.
+class AnEmptyClass {
+  AnEmptyClass();
+
+  List<Object?> _toList() {
+    return <Object?>[];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static AnEmptyClass decode(Object result) {
+    result as List<Object?>;
+    return AnEmptyClass();
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! AnEmptyClass || other.runtimeType != runtimeType) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'AnEmptyClass()';
+  }
+}
+
 /// A class for testing nested class handling.
 ///
 /// This is needed to test nested nullable and non-nullable classes,
@@ -820,6 +856,7 @@ class AllClassesWrapper {
     this.nullableClassList,
     required this.classMap,
     this.nullableClassMap,
+    this.anEmptyClass,
   });
 
   AllNullableTypes allNullableTypes;
@@ -836,6 +873,8 @@ class AllClassesWrapper {
 
   Map<int?, AllNullableTypesWithoutRecursion?>? nullableClassMap;
 
+  AnEmptyClass? anEmptyClass;
+
   List<Object?> _toList() {
     return <Object?>[
       allNullableTypes,
@@ -845,6 +884,7 @@ class AllClassesWrapper {
       nullableClassList,
       classMap,
       nullableClassMap,
+      anEmptyClass,
     ];
   }
 
@@ -863,6 +903,7 @@ class AllClassesWrapper {
       classMap: (result[5]! as Map<Object?, Object?>).cast<int?, AllTypes?>(),
       nullableClassMap: (result[6] as Map<Object?, Object?>?)
           ?.cast<int?, AllNullableTypesWithoutRecursion?>(),
+      anEmptyClass: result[7] as AnEmptyClass?,
     );
   }
 
@@ -881,7 +922,8 @@ class AllClassesWrapper {
         _deepEquals(classList, other.classList) &&
         _deepEquals(nullableClassList, other.nullableClassList) &&
         _deepEquals(classMap, other.classMap) &&
-        _deepEquals(nullableClassMap, other.nullableClassMap);
+        _deepEquals(nullableClassMap, other.nullableClassMap) &&
+        _deepEquals(anEmptyClass, other.anEmptyClass);
   }
 
   @override
@@ -890,7 +932,7 @@ class AllClassesWrapper {
 
   @override
   String toString() {
-    return 'AllClassesWrapper(allNullableTypes: $allNullableTypes, allNullableTypesWithoutRecursion: $allNullableTypesWithoutRecursion, allTypes: $allTypes, classList: $classList, nullableClassList: $nullableClassList, classMap: $classMap, nullableClassMap: $nullableClassMap)';
+    return 'AllClassesWrapper(allNullableTypes: $allNullableTypes, allNullableTypesWithoutRecursion: $allNullableTypesWithoutRecursion, allTypes: $allTypes, classList: $classList, nullableClassList: $nullableClassList, classMap: $classMap, nullableClassMap: $nullableClassMap, anEmptyClass: $anEmptyClass)';
   }
 }
 
@@ -960,11 +1002,14 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is AllNullableTypesWithoutRecursion) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is AllClassesWrapper) {
+    } else if (value is AnEmptyClass) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is TestMessage) {
+    } else if (value is AllClassesWrapper) {
       buffer.putUint8(136);
+      writeValue(buffer, value.encode());
+    } else if (value is TestMessage) {
+      buffer.putUint8(137);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -989,8 +1034,10 @@ class _PigeonCodec extends StandardMessageCodec {
       case 134:
         return AllNullableTypesWithoutRecursion.decode(readValue(buffer)!);
       case 135:
-        return AllClassesWrapper.decode(readValue(buffer)!);
+        return AnEmptyClass.decode(readValue(buffer)!);
       case 136:
+        return AllClassesWrapper.decode(readValue(buffer)!);
+      case 137:
         return TestMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

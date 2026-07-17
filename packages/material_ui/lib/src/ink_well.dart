@@ -434,7 +434,7 @@ class InkResponse extends StatelessWidget {
   /// The cursor for a mouse pointer when it enters or is hovering over the
   /// widget.
   ///
-  /// {@template flutter.material.InkWell.mouseCursor}
+  /// {@template material_ui.InkWell.mouseCursor}
   /// If [mouseCursor] is a [WidgetStateMouseCursor],
   /// [WidgetStateProperty.resolve] is used for the following [WidgetState]s:
   ///
@@ -616,12 +616,7 @@ class InkResponse extends StatelessWidget {
   /// duplication of information.
   final bool excludeFromSemantics;
 
-  /// {@template flutter.material.inkwell.onFocusChange}
-  /// Handler called when the focus changes.
-  ///
-  /// Called with true if this widget's node gains focus, and false if it loses
-  /// focus.
-  /// {@endtemplate}
+  /// {@macro cupertino_ui.inkwell.onFocusChange}
   final ValueChanged<bool>? onFocusChange;
 
   /// {@macro flutter.widgets.Focus.autofocus}
@@ -646,7 +641,7 @@ class InkResponse extends StatelessWidget {
   /// slightly more efficient).
   RectCallback? getRectCallback(RenderBox referenceBox) => null;
 
-  /// {@template flutter.material.inkwell.statesController}
+  /// {@template material_ui.inkwell.statesController}
   /// Represents the interactive "state" of this widget in terms of
   /// a set of [WidgetState]s, like [WidgetState.pressed] and
   /// [WidgetState.focused].
@@ -1487,12 +1482,18 @@ class _InkResponseState extends State<_InkResponseStateWidget>
 ///
 /// An example of this situation is as follows:
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// Tap the container to cause it to grow. Then, tap it again and hold before
 /// the widget reaches its maximum size to observe the clipped ink splash.
 ///
-/// ** See code in examples/api/lib/material/ink_well/ink_well.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/ink_well/ink_well.0.dart#body}
+///
+/// </callout-box>
 ///
 /// An InkWell's splashes will not properly update to conform to changes if the
 /// size of its underlying [Material], where the splashes are rendered, changes

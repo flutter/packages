@@ -257,6 +257,9 @@ class AllNullableTypesWithoutRecursion {
   Map<int?, Map<Object?, Object?>?>? mapMap;
 }
 
+/// A data class without fields for testing empty classes.
+class AnEmptyClass {}
+
 /// A class for testing nested class handling.
 ///
 /// This is needed to test nested nullable and non-nullable classes,
@@ -271,6 +274,7 @@ class AllClassesWrapper {
     this.classMap,
     this.nullableClassList,
     this.nullableClassMap,
+    this.anEmptyClass,
   );
   AllNullableTypes allNullableTypes;
   AllNullableTypesWithoutRecursion? allNullableTypesWithoutRecursion;
@@ -279,6 +283,7 @@ class AllClassesWrapper {
   List<AllNullableTypesWithoutRecursion?>? nullableClassList;
   Map<int?, AllTypes?> classMap;
   Map<int?, AllNullableTypesWithoutRecursion?>? nullableClassMap;
+  AnEmptyClass? anEmptyClass;
 }
 
 /// The core interface that each host language plugin must implement in

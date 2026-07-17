@@ -207,5 +207,13 @@ void main() {
       expect(aDoubleConstant, 3.14);
       expect(aBoolConstant, true);
     });
+
+    test('AnEmptyClass basic methods', () {
+      final a = AnEmptyClass();
+      final b = AnEmptyClass();
+      expect(a, b);
+      expect(a.hashCode, b.hashCode);
+      expect(a.toString(), 'AnEmptyClass()');
+    });
   });
 }

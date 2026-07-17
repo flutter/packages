@@ -50,12 +50,18 @@ const Curve _kCupertinoPickerTapToScrollCurve = Curves.easeInOut;
 ///
 /// By default, descendent texts are shown with [CupertinoTextThemeData.pickerTextStyle].
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This example shows a [CupertinoPicker] that displays a list of fruits on a wheel for
 /// selection.
 ///
-/// ** See code in examples/api/lib/cupertino/picker/cupertino_picker.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
+/// {@example /example/lib/picker/cupertino_picker.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -175,7 +181,7 @@ class CupertinoPicker extends StatefulWidget {
   /// If null, an implicit one will be created internally.
   final FixedExtentScrollController? scrollController;
 
-  /// {@template flutter.cupertino.picker.itemExtent}
+  /// {@template cupertino_ui.picker.itemExtent}
   /// The uniform height of all children.
   ///
   /// All children will be given the [BoxConstraints] to match this exact

@@ -570,7 +570,9 @@ class ObjcSourceGenerator extends StructuredGenerator<InternalObjcOptions> {
     final String className = _className(generatorOptions.prefix, classDefinition.name);
 
     indent.writeln('@implementation $className');
-    _writeObjcSourceClassInitializer(generatorOptions, root, indent, classDefinition, className);
+    if (classDefinition.fields.isNotEmpty) {
+      _writeObjcSourceClassInitializer(generatorOptions, root, indent, classDefinition, className);
+    }
     writeClassDecode(
       generatorOptions,
       root,
@@ -605,21 +607,21 @@ class ObjcSourceGenerator extends StructuredGenerator<InternalObjcOptions> {
       indent.writeScoped('if (![object isKindOfClass:[self class]]) {', '}', () {
         indent.writeln('return NO;');
       });
-      indent.writeln('$className *other = ($className *)object;');
-      final Iterable<String> checks = classDefinition.fields.map((NamedType field) {
-        final String name = field.name;
-        if (_usesPrimitive(field.type)) {
-          if (field.type.baseName == 'double') {
-            return '(self.$name == other.$name || (isnan(self.$name) && isnan(other.$name)))';
-          }
-          return 'self.$name == other.$name';
-        } else {
-          return 'FLTPigeonDeepEquals(self.$name, other.$name)';
-        }
-      });
-      if (checks.isEmpty) {
+      if (classDefinition.fields.isEmpty) {
         indent.writeln('return YES;');
       } else {
+        indent.writeln('$className *other = ($className *)object;');
+        final Iterable<String> checks = classDefinition.fields.map((NamedType field) {
+          final String name = field.name;
+          if (_usesPrimitive(field.type)) {
+            if (field.type.baseName == 'double') {
+              return '(self.$name == other.$name || (isnan(self.$name) && isnan(other.$name)))';
+            }
+            return 'self.$name == other.$name';
+          } else {
+            return 'FLTPigeonDeepEquals(self.$name, other.$name)';
+          }
+        });
         indent.writeln('return ${checks.join(' && ')};');
       }
     });
@@ -1963,10 +1965,8 @@ void _writeDataClassDeclaration(
   addDocumentationComments(indent, classDefinition.documentationComments, _docCommentSpec);
 
   indent.writeln('@interface ${_className(prefix, classDefinition.name)} : NSObject');
-  if (getFieldsInSerializationOrder(classDefinition).isNotEmpty) {
-    if (getFieldsInSerializationOrder(
-      classDefinition,
-    ).map((NamedType e) => !e.type.isNullable).any((bool e) => e)) {
+  if (classDefinition.fields.isNotEmpty) {
+    if (classDefinition.fields.any((NamedType e) => !e.type.isNullable)) {
       indent.writeln(
         '$_docCommentPrefix `init` unavailable to enforce nonnull fields, see the `make` class method.',
       );
