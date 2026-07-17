@@ -254,7 +254,8 @@
                                               classList:@[]
                                       nullableClassList:nil
                                                classMap:@{}
-                                       nullableClassMap:nil];
+                                       nullableClassMap:nil
+                                           anEmptyClass:nil];
 }
 
 - (nullable FLTAllNullableTypes *)

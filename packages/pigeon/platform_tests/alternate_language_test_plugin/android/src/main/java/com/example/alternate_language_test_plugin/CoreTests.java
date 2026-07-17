@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /** Generated class from Pigeon. */
 @SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression", "serial"})
@@ -2915,6 +2916,53 @@ public class CoreTests {
   }
 
   /**
+   * A data class without fields for testing empty classes.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class AnEmptyClass {
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(getClass());
+    }
+
+    @Override
+    public String toString() {
+      return "AnEmptyClass{}";
+    }
+
+    public static final class Builder {
+
+      public @NonNull AnEmptyClass build() {
+        AnEmptyClass pigeonReturn = new AnEmptyClass();
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(0);
+      return toListResult;
+    }
+
+    static @NonNull AnEmptyClass fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      AnEmptyClass pigeonResult = new AnEmptyClass();
+      return pigeonResult;
+    }
+  }
+
+  /**
    * A class for testing nested class handling.
    *
    * <p>This is needed to test nested nullable and non-nullable classes, `AllNullableTypes` is
@@ -3005,6 +3053,16 @@ public class CoreTests {
       this.nullableClassMap = setterArg;
     }
 
+    private @Nullable AnEmptyClass anEmptyClass;
+
+    public @Nullable AnEmptyClass getAnEmptyClass() {
+      return anEmptyClass;
+    }
+
+    public void setAnEmptyClass(@Nullable AnEmptyClass setterArg) {
+      this.anEmptyClass = setterArg;
+    }
+
     /** Constructor is non-public to enforce null safety; use Builder. */
     AllClassesWrapper() {}
 
@@ -3024,7 +3082,8 @@ public class CoreTests {
           && pigeonDeepEquals(classList, that.classList)
           && pigeonDeepEquals(nullableClassList, that.nullableClassList)
           && pigeonDeepEquals(classMap, that.classMap)
-          && pigeonDeepEquals(nullableClassMap, that.nullableClassMap);
+          && pigeonDeepEquals(nullableClassMap, that.nullableClassMap)
+          && pigeonDeepEquals(anEmptyClass, that.anEmptyClass);
     }
 
     @Override
@@ -3038,7 +3097,8 @@ public class CoreTests {
             classList,
             nullableClassList,
             classMap,
-            nullableClassMap
+            nullableClassMap,
+            anEmptyClass
           };
       return pigeonDeepHashCode(fields);
     }
@@ -3066,6 +3126,9 @@ public class CoreTests {
           + ", "
           + "nullableClassMap="
           + nullableClassMap
+          + ", "
+          + "anEmptyClass="
+          + anEmptyClass
           + "}";
     }
 
@@ -3130,6 +3193,14 @@ public class CoreTests {
         return this;
       }
 
+      private @Nullable AnEmptyClass anEmptyClass;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setAnEmptyClass(@Nullable AnEmptyClass setterArg) {
+        this.anEmptyClass = setterArg;
+        return this;
+      }
+
       public @NonNull AllClassesWrapper build() {
         AllClassesWrapper pigeonReturn = new AllClassesWrapper();
         pigeonReturn.setAllNullableTypes(allNullableTypes);
@@ -3139,13 +3210,14 @@ public class CoreTests {
         pigeonReturn.setNullableClassList(nullableClassList);
         pigeonReturn.setClassMap(classMap);
         pigeonReturn.setNullableClassMap(nullableClassMap);
+        pigeonReturn.setAnEmptyClass(anEmptyClass);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<>(7);
+      ArrayList<Object> toListResult = new ArrayList<>(8);
       toListResult.add(allNullableTypes);
       toListResult.add(allNullableTypesWithoutRecursion);
       toListResult.add(allTypes);
@@ -3153,6 +3225,7 @@ public class CoreTests {
       toListResult.add(nullableClassList);
       toListResult.add(classMap);
       toListResult.add(nullableClassMap);
+      toListResult.add(anEmptyClass);
       return toListResult;
     }
 
@@ -3174,6 +3247,8 @@ public class CoreTests {
       Object nullableClassMap = pigeonVar_list.get(6);
       pigeonResult.setNullableClassMap(
           (Map<Long, AllNullableTypesWithoutRecursion>) nullableClassMap);
+      Object anEmptyClass = pigeonVar_list.get(7);
+      pigeonResult.setAnEmptyClass((AnEmptyClass) anEmptyClass);
       return pigeonResult;
     }
   }
@@ -3276,8 +3351,10 @@ public class CoreTests {
         case (byte) 134:
           return AllNullableTypesWithoutRecursion.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 135:
-          return AllClassesWrapper.fromList((ArrayList<Object>) readValue(buffer));
+          return AnEmptyClass.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 136:
+          return AllClassesWrapper.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 137:
           return TestMessage.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -3304,11 +3381,14 @@ public class CoreTests {
       } else if (value instanceof AllNullableTypesWithoutRecursion) {
         stream.write(134);
         writeValue(stream, ((AllNullableTypesWithoutRecursion) value).toList());
-      } else if (value instanceof AllClassesWrapper) {
+      } else if (value instanceof AnEmptyClass) {
         stream.write(135);
+        writeValue(stream, ((AnEmptyClass) value).toList());
+      } else if (value instanceof AllClassesWrapper) {
+        stream.write(136);
         writeValue(stream, ((AllClassesWrapper) value).toList());
       } else if (value instanceof TestMessage) {
-        stream.write(136);
+        stream.write(137);
         writeValue(stream, ((TestMessage) value).toList());
       } else {
         super.writeValue(stream, value);

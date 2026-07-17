@@ -1422,6 +1422,59 @@ gchar* core_tests_pigeon_test_all_nullable_types_without_recursion_to_string(
     CoreTestsPigeonTestAllNullableTypesWithoutRecursion* object);
 
 /**
+ * CoreTestsPigeonTestAnEmptyClass:
+ *
+ * A data class without fields for testing empty classes.
+ */
+
+G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestAnEmptyClass,
+                     core_tests_pigeon_test_an_empty_class,
+                     CORE_TESTS_PIGEON_TEST, AN_EMPTY_CLASS, GObject)
+
+/**
+ * core_tests_pigeon_test_an_empty_class_new:
+ *
+ * Creates a new #AnEmptyClass object.
+ *
+ * Returns: a new #CoreTestsPigeonTestAnEmptyClass
+ */
+CoreTestsPigeonTestAnEmptyClass* core_tests_pigeon_test_an_empty_class_new();
+
+/**
+ * core_tests_pigeon_test_an_empty_class_equals:
+ * @a: a #CoreTestsPigeonTestAnEmptyClass.
+ * @b: another #CoreTestsPigeonTestAnEmptyClass.
+ *
+ * Checks if two #CoreTestsPigeonTestAnEmptyClass objects are equal.
+ *
+ * Returns: TRUE if @a and @b are equal.
+ */
+gboolean core_tests_pigeon_test_an_empty_class_equals(
+    CoreTestsPigeonTestAnEmptyClass* a, CoreTestsPigeonTestAnEmptyClass* b);
+
+/**
+ * core_tests_pigeon_test_an_empty_class_hash:
+ * @object: a #CoreTestsPigeonTestAnEmptyClass.
+ *
+ * Calculates a hash code for a #CoreTestsPigeonTestAnEmptyClass object.
+ *
+ * Returns: the hash code.
+ */
+guint core_tests_pigeon_test_an_empty_class_hash(
+    CoreTestsPigeonTestAnEmptyClass* object);
+
+/**
+ * core_tests_pigeon_test_an_empty_class_to_string:
+ * @object: a #CoreTestsPigeonTestAnEmptyClass.
+ *
+ * Returns a string representation of a #CoreTestsPigeonTestAnEmptyClass object.
+ *
+ * Returns: (transfer full): a new string, free with g_free().
+ */
+gchar* core_tests_pigeon_test_an_empty_class_to_string(
+    CoreTestsPigeonTestAnEmptyClass* object);
+
+/**
  * CoreTestsPigeonTestAllClassesWrapper:
  *
  * A class for testing nested class handling.
@@ -1444,6 +1497,7 @@ G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestAllClassesWrapper,
  * nullable_class_list: field in this object.
  * class_map: field in this object.
  * nullable_class_map: field in this object.
+ * an_empty_class: field in this object.
  *
  * Creates a new #AllClassesWrapper object.
  *
@@ -1456,7 +1510,8 @@ core_tests_pigeon_test_all_classes_wrapper_new(
         all_nullable_types_without_recursion,
     CoreTestsPigeonTestAllTypes* all_types, FlValue* class_list,
     FlValue* nullable_class_list, FlValue* class_map,
-    FlValue* nullable_class_map);
+    FlValue* nullable_class_map,
+    CoreTestsPigeonTestAnEmptyClass* an_empty_class);
 
 /**
  * core_tests_pigeon_test_all_classes_wrapper_get_all_nullable_types
@@ -1536,6 +1591,18 @@ FlValue* core_tests_pigeon_test_all_classes_wrapper_get_class_map(
  * Returns: the field value.
  */
 FlValue* core_tests_pigeon_test_all_classes_wrapper_get_nullable_class_map(
+    CoreTestsPigeonTestAllClassesWrapper* object);
+
+/**
+ * core_tests_pigeon_test_all_classes_wrapper_get_an_empty_class
+ * @object: a #CoreTestsPigeonTestAllClassesWrapper.
+ *
+ * Gets the value of the anEmptyClass field of @object.
+ *
+ * Returns: the field value.
+ */
+CoreTestsPigeonTestAnEmptyClass*
+core_tests_pigeon_test_all_classes_wrapper_get_an_empty_class(
     CoreTestsPigeonTestAllClassesWrapper* object);
 
 /**
@@ -1659,6 +1726,7 @@ extern const int core_tests_pigeon_test_all_types_type_id;
 extern const int core_tests_pigeon_test_all_nullable_types_type_id;
 extern const int
     core_tests_pigeon_test_all_nullable_types_without_recursion_type_id;
+extern const int core_tests_pigeon_test_an_empty_class_type_id;
 extern const int core_tests_pigeon_test_all_classes_wrapper_type_id;
 extern const int core_tests_pigeon_test_test_message_type_id;
 
