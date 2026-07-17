@@ -5,7 +5,7 @@
 import GoogleMaps
 import Testing
 
-@testable import google_maps_flutter_ios
+@testable import google_maps_flutter_ios_sdk10
 
 @MainActor struct CircleControllerTests {
 

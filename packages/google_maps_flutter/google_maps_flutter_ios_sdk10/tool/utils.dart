@@ -97,7 +97,7 @@ void updatePackageNameInPathReferences(File file, String packageName) {
 /// package by name.
 void updatePackageNameInImports(File file, String packageName) {
   final String newContents = file.readAsStringSync().replaceAllMapped(
-    RegExp(r'^(@?)import google_maps_flutter_ios[_\w\d]*(;?)$', multiLine: true),
+    RegExp(r'^(@?(?:testable )?)import google_maps_flutter_ios[_\w\d]*(;?)$', multiLine: true),
     (match) => '${match.group(1)}import $packageName${match.group(2)}',
   );
   file.writeAsStringSync(newContents);

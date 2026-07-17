@@ -2,7 +2,7 @@ import Flutter
 import GoogleMaps
 import Testing
 
-@testable import google_maps_flutter_ios
+@testable import google_maps_flutter_ios_sdk10
 
 class StubTileReceiver: NSObject, GMSTileReceiver {
   func receiveTileWith(x: UInt, y: UInt, zoom: UInt, image: UIImage?) {

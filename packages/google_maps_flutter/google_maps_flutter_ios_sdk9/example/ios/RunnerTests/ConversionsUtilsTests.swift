@@ -5,7 +5,7 @@
 import GoogleMaps
 import Testing
 
-@testable import google_maps_flutter_ios
+@testable import google_maps_flutter_ios_sdk9
 
 @MainActor struct ConversionUtilsTests {
 
