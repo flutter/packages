@@ -59,8 +59,8 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
 @MainActor struct GoogleMapsTests {
 
   @Test func plugin() {
-    let plugin = FGMGoogleMapsPlugin()
-    #expect(plugin != nil)
+    // Verify that creating an actual plugin instance succeeds.
+    let _ = FGMGoogleMapsPlugin()
   }
 
   @Test func frameObserver() {

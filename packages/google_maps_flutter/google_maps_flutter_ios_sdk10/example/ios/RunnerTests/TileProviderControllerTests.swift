@@ -44,7 +44,6 @@ class TestTileProvider: NSObject, FGMTileProviderDelegate {
       tileOverlayIdentifier: "foo",
       tileProvider: tileProvider
     )
-    #expect(controller != nil)
 
     await withCheckedContinuation { continuation in
       continuationToResume = continuation

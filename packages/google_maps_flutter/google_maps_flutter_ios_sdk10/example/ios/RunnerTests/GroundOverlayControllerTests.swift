@@ -104,8 +104,11 @@ import Testing
     #expect(abs(groundOverlayController.groundOverlay.anchor.y - 0.5) <= Double.ulpOfOne)
     #expect(groundOverlayController.groundOverlay.zIndex == Int32(platformGroundOverlay.zIndex))
 
-    let convertedPlatformGroundOverlay = try #require(
-      FGMGetPigeonGroundOverlay(groundOverlayController.groundOverlay, "id_1", false, 14.0)
+    let convertedPlatformGroundOverlay = FGMGetPigeonGroundOverlay(
+      groundOverlayController.groundOverlay,
+      "id_1",
+      false,
+      14.0
     )
     #expect(convertedPlatformGroundOverlay.groundOverlayId == "id_1")
     #expect(
@@ -167,8 +170,11 @@ import Testing
     #expect(abs(groundOverlayController.groundOverlay.anchor.y - 0.5) <= Double.ulpOfOne)
     #expect(groundOverlayController.groundOverlay.zIndex == Int32(platformGroundOverlay.zIndex))
 
-    let convertedPlatformGroundOverlay = try #require(
-      FGMGetPigeonGroundOverlay(groundOverlayController.groundOverlay, "id_1", true, nil)
+    let convertedPlatformGroundOverlay = FGMGetPigeonGroundOverlay(
+      groundOverlayController.groundOverlay,
+      "id_1",
+      true,
+      nil
     )
     #expect(convertedPlatformGroundOverlay.groundOverlayId == "id_1")
     #expect(
