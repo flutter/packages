@@ -3,14 +3,14 @@
 // found in the LICENSE file.
 
 // Import private _Test.h headers from the plugin framework
-#import <google_maps_flutter_ios/FGMCircleController_Test.h>
-#import <google_maps_flutter_ios/FGMGoogleMapController_Test.h>
-#import <google_maps_flutter_ios/FGMGroundOverlayController_Test.h>
-#import <google_maps_flutter_ios/FGMHeatmapController_Test.h>
-#import <google_maps_flutter_ios/FGMMarkerController_Test.h>
-#import <google_maps_flutter_ios/FGMPolygonController_Test.h>
-#import <google_maps_flutter_ios/FGMPolylineController_Test.h>
-#import <google_maps_flutter_ios/FGMTileOverlayController_Test.h>
+#import <google_maps_flutter_ios_sdk10/FGMCircleController_Test.h>
+#import <google_maps_flutter_ios_sdk10/FGMGoogleMapController_Test.h>
+#import <google_maps_flutter_ios_sdk10/FGMGroundOverlayController_Test.h>
+#import <google_maps_flutter_ios_sdk10/FGMHeatmapController_Test.h>
+#import <google_maps_flutter_ios_sdk10/FGMMarkerController_Test.h>
+#import <google_maps_flutter_ios_sdk10/FGMPolygonController_Test.h>
+#import <google_maps_flutter_ios_sdk10/FGMPolylineController_Test.h>
+#import <google_maps_flutter_ios_sdk10/FGMTileOverlayController_Test.h>
 
 @interface FGMGoogleMapFactory (Test)
 @property(strong, nonatomic, readonly) id<NSObject> sharedMapServices;

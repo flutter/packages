@@ -96,10 +96,18 @@ void updatePackageNameInPathReferences(File file, String packageName) {
 /// This is necessary for native unit tests, which need to import the Swift
 /// package by name.
 void updatePackageNameInImports(File file, String packageName) {
-  final String newContents = file.readAsStringSync().replaceAllMapped(
-    RegExp(r'^(@?(?:testable )?)import google_maps_flutter_ios[_\w\d]*(;?)$', multiLine: true),
-    (match) => '${match.group(1)}import $packageName${match.group(2)}',
-  );
+  final String newContents = file
+      .readAsStringSync()
+      // Package imports.
+      .replaceAllMapped(
+        RegExp(r'^(@?(?:testable )?)import google_maps_flutter_ios[_\w\d]*(;?)$', multiLine: true),
+        (match) => '${match.group(1)}import $packageName${match.group(2)}',
+      )
+      // Bridging header.
+      .replaceAllMapped(
+        RegExp(r'^#import <google_maps_flutter_ios[_\w\d]*/', multiLine: true),
+        (match) => '#import <$packageName/',
+      );
   file.writeAsStringSync(newContents);
 }
 
