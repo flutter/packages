@@ -22,8 +22,7 @@ sealed class AsyncState<T> {
 
   const factory AsyncState.data(T data) = AsyncStateData<T>._;
 
-  const factory AsyncState.error(Object error, StackTrace? stackTrace) =
-      AsyncStateError<T>._;
+  const factory AsyncState.error(Object error, StackTrace? stackTrace) = AsyncStateError<T>._;
 
   /// Returns a [AsyncState] with the same type `T` but with the data transformed by the `onData` function.
   /// If the current state is not [AsyncStateData], it returns the current state.
@@ -55,10 +54,7 @@ sealed class AsyncState<T> {
   AsyncState<R> flatMapWhenData<R>(AsyncState<R> Function(T data) onData) {
     return switch (this) {
       AsyncStateData<T>(data: final T data) => onData(data),
-      AsyncStateError<T>(
-        error: final Object error,
-        stackTrace: final StackTrace? stackTrace,
-      ) =>
+      AsyncStateError<T>(error: final Object error, stackTrace: final StackTrace? stackTrace) =>
         AsyncState<R>.error(error, stackTrace),
       AsyncState<T>() => AsyncState<R>.loading(),
     };
@@ -77,15 +73,9 @@ sealed class AsyncState<T> {
     return identical(this, other) ||
         switch (this) {
           AsyncStateLoading<T>() => other is AsyncStateLoading<T>,
-          AsyncStateData<T>(data: final T data) =>
-            other is AsyncStateData<T> && other.data == data,
-          AsyncStateError<T>(
-            error: final Object error,
-            stackTrace: final StackTrace? stackTrace,
-          ) =>
-            other is AsyncStateError<T> &&
-                other.error == error &&
-                other.stackTrace == stackTrace,
+          AsyncStateData<T>(data: final T data) => other is AsyncStateData<T> && other.data == data,
+          AsyncStateError<T>(error: final Object error, stackTrace: final StackTrace? stackTrace) =>
+            other is AsyncStateError<T> && other.error == error && other.stackTrace == stackTrace,
         };
   }
 
@@ -93,10 +83,7 @@ sealed class AsyncState<T> {
   int get hashCode => switch (this) {
     AsyncStateLoading<T>() => 0,
     AsyncStateData<T>(data: final T data) => data.hashCode,
-    AsyncStateError<T>(
-      error: final Object error,
-      stackTrace: final StackTrace? stackTrace,
-    ) =>
+    AsyncStateError<T>(error: final Object error, stackTrace: final StackTrace? stackTrace) =>
       error.hashCode ^ stackTrace.hashCode,
   };
 
@@ -105,10 +92,7 @@ sealed class AsyncState<T> {
     return switch (this) {
       AsyncStateLoading<T>() => 'AsyncState.loading()',
       AsyncStateData<T>(data: final T data) => 'AsyncState.data($data)',
-      AsyncStateError<T>(
-        error: final Object error,
-        stackTrace: final StackTrace? stackTrace,
-      ) =>
+      AsyncStateError<T>(error: final Object error, stackTrace: final StackTrace? stackTrace) =>
         'AsyncState.error($error, $stackTrace)',
     };
   }

@@ -60,9 +60,7 @@ Future<void> migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary({
             key,
             (value! as List<Object?>).cast<String>(),
           );
-        } on TypeError catch (
-          _
-        ) {} // Pass over Lists containing non-String values.
+        } on TypeError catch (_) {} // Pass over Lists containing non-String values.
     }
   }
 

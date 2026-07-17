@@ -45,9 +45,7 @@ void main() {
     final api = MessageNestedApi();
     final mock = MockNested();
     TestNestedApi.setUp(mock);
-    final MessageSearchReply reply = await api.search(
-      MessageNested()..request = null,
-    );
+    final MessageSearchReply reply = await api.search(MessageNested()..request = null);
     expect(mock.didCall, true);
     expect(reply.result, null);
   });
@@ -56,9 +54,7 @@ void main() {
     final api = MessageApi();
     final mock = Mock();
     TestHostApi.setUp(mock);
-    final MessageSearchReply reply = await api.search(
-      MessageSearchRequest()..query = 'foo',
-    );
+    final MessageSearchReply reply = await api.search(MessageSearchRequest()..query = 'foo');
     expect(mock.log, <String>['search']);
     expect(reply.result, 'foo');
   });

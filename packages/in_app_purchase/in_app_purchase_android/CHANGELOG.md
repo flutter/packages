@@ -1,3 +1,11 @@
+## 0.5.1
+
+* Adds support to overlay billing related messages. See `InAppPurchaseAndroidPlatformAddition.showInAppMessages`.
+
+## 0.5.0+2
+
+* Bumps the androidx group across 10 directories with 1 update.
+
 ## 0.5.0+1
 
 * Migrates to Built-in Kotlin to support AGP 9.

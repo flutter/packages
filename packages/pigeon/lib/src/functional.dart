@@ -4,10 +4,7 @@
 
 /// A [map] function that calls the function with an enumeration as well as the
 /// value.
-Iterable<U> indexMap<T, U>(
-  Iterable<T> iterable,
-  U Function(int index, T value) func,
-) sync* {
+Iterable<U> indexMap<T, U>(Iterable<T> iterable, U Function(int index, T value) func) sync* {
   var index = 0;
   for (final value in iterable) {
     yield func(index, value);
@@ -24,13 +21,9 @@ void enumerate<T>(Iterable<T> iterable, void Function(int, T) func) {
   }
 }
 
-/// A [map] function that takes in 2 iterables.  The [Iterable]s must be of
+/// A [map] function that takes in 2 iterables. The [Iterable]s must be of
 /// equal length.
-Iterable<V> map2<T, U, V>(
-  Iterable<T> ts,
-  Iterable<U> us,
-  V Function(T t, U u) func,
-) sync* {
+Iterable<V> map2<T, U, V>(Iterable<T> ts, Iterable<U> us, V Function(T t, U u) func) sync* {
   final Iterator<T> itt = ts.iterator;
   final Iterator<U> itu = us.iterator;
   while (itu.moveNext() && itt.moveNext()) {
@@ -41,7 +34,7 @@ Iterable<V> map2<T, U, V>(
   }
 }
 
-/// A [map] function that takes in 3 iterables.  The [Iterable]s must be of
+/// A [map] function that takes in 3 iterables. The [Iterable]s must be of
 /// equal length.
 Iterable<V> map3<T, U, V, W>(
   Iterable<T> ts,

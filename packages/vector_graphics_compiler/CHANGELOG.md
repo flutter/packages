@@ -1,3 +1,9 @@
+## 1.2.6
+
+* Fixes `linux-arm64` host support by selecting the Flutter engine
+  artifact directory from `Abi.current()` instead of a hardcoded
+  `linux-x64`.
+
 ## 1.2.5
 
 * Updates allowed version range of `xml` to include up to 7.0.1.

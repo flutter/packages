@@ -49,9 +49,7 @@ bool _deepEquals(Object? a, Object? b) {
   }
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed.every(
-          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
-        );
+        a.indexed.every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
     if (a.length != b.length) {
@@ -108,10 +106,7 @@ enum FileSelectorExceptionCode {
 }
 
 class FileSelectorNativeException {
-  FileSelectorNativeException({
-    required this.fileSelectorExceptionCode,
-    required this.message,
-  });
+  FileSelectorNativeException({required this.fileSelectorExceptionCode, required this.message});
 
   FileSelectorExceptionCode fileSelectorExceptionCode;
 
@@ -136,17 +131,13 @@ class FileSelectorNativeException {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! FileSelectorNativeException ||
-        other.runtimeType != runtimeType) {
+    if (other is! FileSelectorNativeException || other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(
-          fileSelectorExceptionCode,
-          other.fileSelectorExceptionCode,
-        ) &&
+    return _deepEquals(fileSelectorExceptionCode, other.fileSelectorExceptionCode) &&
         _deepEquals(message, other.message);
   }
 
@@ -178,14 +169,7 @@ class FileResponse {
   FileSelectorNativeException? fileSelectorNativeException;
 
   List<Object?> _toList() {
-    return <Object?>[
-      path,
-      mimeType,
-      name,
-      size,
-      bytes,
-      fileSelectorNativeException,
-    ];
+    return <Object?>[path, mimeType, name, size, bytes, fileSelectorNativeException];
   }
 
   Object encode() {
@@ -218,10 +202,7 @@ class FileResponse {
         _deepEquals(name, other.name) &&
         _deepEquals(size, other.size) &&
         _deepEquals(bytes, other.bytes) &&
-        _deepEquals(
-          fileSelectorNativeException,
-          other.fileSelectorNativeException,
-        );
+        _deepEquals(fileSelectorNativeException, other.fileSelectorNativeException);
   }
 
   @override
@@ -261,8 +242,7 @@ class FileTypes {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(mimeTypes, other.mimeTypes) &&
-        _deepEquals(extensions, other.extensions);
+    return _deepEquals(mimeTypes, other.mimeTypes) && _deepEquals(extensions, other.extensions);
   }
 
   @override
@@ -317,13 +297,11 @@ class FileSelectorApi {
   /// Constructor for [FileSelectorApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  FileSelectorApi({
-    BinaryMessenger? binaryMessenger,
-    String messageChannelSuffix = '',
-  }) : pigeonVar_binaryMessenger = binaryMessenger,
-       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
-           ? '.$messageChannelSuffix'
-           : '';
+  FileSelectorApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+    : pigeonVar_binaryMessenger = binaryMessenger,
+      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+          ? '.$messageChannelSuffix'
+          : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -333,10 +311,7 @@ class FileSelectorApi {
   /// Opens a file dialog for loading files and returns a file path.
   ///
   /// Returns `null` if user cancels the operation.
-  Future<FileResponse?> openFile(
-    String? initialDirectory,
-    FileTypes allowedTypes,
-  ) async {
+  Future<FileResponse?> openFile(String? initialDirectory, FileTypes allowedTypes) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.file_selector_android.FileSelectorApi.openFile$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -344,9 +319,10 @@ class FileSelectorApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[initialDirectory, allowedTypes],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      initialDirectory,
+      allowedTypes,
+    ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -359,10 +335,7 @@ class FileSelectorApi {
 
   /// Opens a file dialog for loading files and returns a list of file responses
   /// chosen by the user.
-  Future<List<FileResponse>> openFiles(
-    String? initialDirectory,
-    FileTypes allowedTypes,
-  ) async {
+  Future<List<FileResponse>> openFiles(String? initialDirectory, FileTypes allowedTypes) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.file_selector_android.FileSelectorApi.openFiles$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -370,9 +343,10 @@ class FileSelectorApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[initialDirectory, allowedTypes],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      initialDirectory,
+      allowedTypes,
+    ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -394,9 +368,9 @@ class FileSelectorApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[initialDirectory],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      initialDirectory,
+    ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(

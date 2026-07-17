@@ -57,9 +57,7 @@ Future<void> runBenchmarks(
   final String nextBenchmark = await _client.requestNextBenchmark();
 
   if (nextBenchmark == LocalBenchmarkServerClient.kManualFallback) {
-    _fallbackToManual(
-      'The server did not tell us which benchmark to run next.',
-    );
+    _fallbackToManual('The server did not tell us which benchmark to run next.');
     return;
   }
 
@@ -68,18 +66,12 @@ Future<void> runBenchmarks(
   final Uri currentUri = Uri.parse(window.location.href);
   // Create a new URI with the parsed value of [benchmarkPath] to ensure the
   // benchmark app is reloaded with the proper configuration.
-  final newUri = Uri.parse(benchmarkPath)
-      .replace(
-        scheme: currentUri.scheme,
-        host: currentUri.host,
-        port: currentUri.port,
-      )
-      .toString();
+  final newUri = Uri.parse(
+    benchmarkPath,
+  ).replace(scheme: currentUri.scheme, host: currentUri.host, port: currentUri.port).toString();
 
   // Reloading the window will trigger the next benchmark to run.
-  await _client.printToConsole(
-    'Client preparing to reload the window to: "$newUri"',
-  );
+  await _client.printToConsole('Client preparing to reload the window to: "$newUri"');
   window.location.replace(newUri);
 }
 
@@ -97,8 +89,7 @@ Future<void> _runBenchmark(String? benchmarkName) async {
       final runner = recorder.isTracingEnabled && !_client.isInManualMode
           ? Runner(
               recorder: recorder,
-              setUpAllDidRun: () =>
-                  _client.startPerformanceTracing(benchmarkName),
+              setUpAllDidRun: () => _client.startPerformanceTracing(benchmarkName),
               tearDownAllWillRun: _client.stopPerformanceTracing,
             )
           : Runner(recorder: recorder);
@@ -120,13 +111,7 @@ Future<void> _runBenchmark(String? benchmarkName) async {
         }
       },
       handleUncaughtError:
-          (
-            Zone self,
-            ZoneDelegate parent,
-            Zone zone,
-            Object error,
-            StackTrace stackTrace,
-          ) async {
+          (Zone self, ZoneDelegate parent, Zone zone, Object error, StackTrace stackTrace) async {
             if (_client.isInManualMode) {
               parent.print(zone, '[$benchmarkName] $error, $stackTrace');
               parent.handleUncaughtError(zone, error, stackTrace);
@@ -264,21 +249,11 @@ class TimeseriesVisualization {
 
     // Draw a horizontal solid line corresponding to the average.
     _ctx.lineWidth = 1;
-    drawLine(
-      0,
-      _normalized(_stats.average),
-      _screenWidth,
-      _normalized(_stats.average),
-    );
+    drawLine(0, _normalized(_stats.average), _screenWidth, _normalized(_stats.average));
 
     // Draw a horizontal dashed line corresponding to the outlier cut off.
     _ctx.setLineDash(<JSNumber>[5.toJS, 5.toJS].toJS);
-    drawLine(
-      0,
-      _normalized(_stats.outlierCutOff),
-      _screenWidth,
-      _normalized(_stats.outlierCutOff),
-    );
+    drawLine(0, _normalized(_stats.outlierCutOff), _screenWidth, _normalized(_stats.outlierCutOff));
 
     // Draw a light red band that shows the noise (1 stddev in each direction).
     _ctx.fillStyle = 'rgba(255,50,50,0.3)'.toJS;
@@ -355,11 +330,7 @@ class LocalBenchmarkServerClient {
   /// Stops the performance tracing session started by [startPerformanceTracing].
   Future<void> stopPerformanceTracing() async {
     _checkNotManualMode();
-    await _requestXhr(
-      '/stop-performance-tracing',
-      method: 'POST',
-      mimeType: 'application/json',
-    );
+    await _requestXhr('/stop-performance-tracing', method: 'POST', mimeType: 'application/json');
   }
 
   /// Sends the profile data collected by the benchmark to the local benchmark
@@ -389,10 +360,7 @@ class LocalBenchmarkServerClient {
       '/on-error',
       method: 'POST',
       mimeType: 'application/json',
-      sendData: json.encode(<String, dynamic>{
-        'error': '$error',
-        'stackTrace': '$stackTrace',
-      }),
+      sendData: json.encode(<String, dynamic>{'error': '$error', 'stackTrace': '$stackTrace'}),
     );
   }
 

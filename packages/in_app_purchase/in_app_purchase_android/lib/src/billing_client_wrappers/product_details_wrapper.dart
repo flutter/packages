@@ -43,8 +43,7 @@ class ProductDetailsWrapper {
   ///
   /// [oneTimePurchaseOfferDetailsList] is only set for [ProductType.inapp].
   /// Returns null for [ProductType.subs].
-  final List<OneTimePurchaseOfferDetailsWrapper>?
-  oneTimePurchaseOfferDetailsList;
+  final List<OneTimePurchaseOfferDetailsWrapper>? oneTimePurchaseOfferDetailsList;
 
   /// The product's id.
   final String productId;
@@ -74,10 +73,7 @@ class ProductDetailsWrapper {
         other.description == description &&
         other.name == name &&
         other.oneTimePurchaseOfferDetails == oneTimePurchaseOfferDetails &&
-        listEquals(
-          other.oneTimePurchaseOfferDetailsList,
-          oneTimePurchaseOfferDetailsList,
-        ) &&
+        listEquals(other.oneTimePurchaseOfferDetailsList, oneTimePurchaseOfferDetailsList) &&
         other.productId == productId &&
         other.productType == productType &&
         listEquals(other.subscriptionOfferDetails, subscriptionOfferDetails) &&
@@ -136,8 +132,7 @@ class ProductDetailsResponseWrapper implements HasBillingResponse {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(billingResult, productDetailsList, unfetchedProductList);
+  int get hashCode => Object.hash(billingResult, productDetailsList, unfetchedProductList);
 }
 
 /// Dart wrapper around [`com.android.billingclient.api.QueryProductDetailsParams.Product`](https://developer.android.com/reference/com/android/billingclient/api/QueryProductDetailsParams.Product).

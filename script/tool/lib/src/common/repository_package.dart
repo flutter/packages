@@ -3,11 +3,13 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
+import 'package:glob/glob.dart';
 import 'package:path/path.dart' as p;
 import 'package:pubspec_parse/pubspec_parse.dart';
 
 import 'ci_config.dart';
 import 'core.dart';
+import 'output_utils.dart';
 import 'pending_changelog_entry.dart';
 
 export 'package:pubspec_parse/pubspec_parse.dart' show Pubspec;
@@ -45,8 +47,7 @@ class RepositoryPackage {
     }
     // For the common federated plugin pattern of `foo/foo_subpackage`, drop
     // the first part since it's not useful.
-    if (components.length >= 2 &&
-        components[1].startsWith('${components[0]}_')) {
+    if (components.length >= 2 && components[1].startsWith('${components[0]}_')) {
       components = components.sublist(1);
     }
     return p.posix.joinAll(components);
@@ -74,16 +75,13 @@ class RepositoryPackage {
   Directory get testDirectory => directory.childDirectory('test');
 
   /// The path to the script that is run by the `custom-test` command.
-  File get customTestScript =>
-      directory.childDirectory('tool').childFile('run_tests.dart');
+  File get customTestScript => directory.childDirectory('tool').childFile('run_tests.dart');
 
   /// The path to the script that is run before publishing.
-  File get prePublishScript =>
-      directory.childDirectory('tool').childFile('pre_publish.dart');
+  File get prePublishScript => directory.childDirectory('tool').childFile('pre_publish.dart');
 
   /// The directory containing pending changelog entries.
-  Directory get pendingChangelogsDirectory =>
-      directory.childDirectory('pending_changelogs');
+  Directory get pendingChangelogsDirectory => directory.childDirectory('pending_changelogs');
 
   /// Returns the directory containing support for [platform].
   Directory platformDirectory(FlutterPlatform platform) {
@@ -115,9 +113,7 @@ class RepositoryPackage {
     return platformDirectory(platform).existsSync();
   }
 
-  late final Pubspec _parsedPubspec = Pubspec.parse(
-    pubspecFile.readAsStringSync(),
-  );
+  late final Pubspec _parsedPubspec = Pubspec.parse(pubspecFile.readAsStringSync());
 
   /// Returns the parsed [pubspecFile].
   ///
@@ -135,10 +131,17 @@ class RepositoryPackage {
 
   /// Returns true if the package depends on Flutter.
   bool requiresFlutter() {
-    const flutterDependency = 'flutter';
     final Pubspec pubspec = parsePubspec();
-    return pubspec.dependencies.containsKey(flutterDependency) ||
-        pubspec.devDependencies.containsKey(flutterDependency);
+    return _includesFlutterSdkDependency(pubspec.dependencies) ||
+        _includesFlutterSdkDependency(pubspec.devDependencies);
+  }
+
+  /// True if this package has a dependency on Flutter.
+  bool _includesFlutterSdkDependency(Map<String, Dependency> deps) {
+    const flutterSdkDependencyName = 'flutter';
+    return deps.values.whereType<SdkDependency>().any(
+      (SdkDependency dependency) => dependency.sdk == flutterSdkDependencyName,
+    );
   }
 
   /// True if this appears to be a federated plugin package, according to
@@ -150,22 +153,18 @@ class RepositoryPackage {
   /// True if this appears to be the app-facing package of a federated plugin,
   /// according to repository conventions.
   bool get isAppFacing =>
-      directory.parent.basename != 'packages' &&
-      directory.basename == directory.parent.basename;
+      directory.parent.basename != 'packages' && directory.basename == directory.parent.basename;
 
   /// True if this appears to be a platform interface package, according to
   /// repository conventions.
-  bool get isPlatformInterface =>
-      directory.basename.endsWith('_platform_interface');
+  bool get isPlatformInterface => directory.basename.endsWith('_platform_interface');
 
   /// True if this appears to be a platform implementation package, according to
   /// repository conventions.
   bool get isPlatformImplementation =>
       // Any part of a federated plugin that isn't the platform interface and
       // isn't the app-facing package should be an implementation package.
-      isFederated &&
-      !isPlatformInterface &&
-      directory.basename != directory.parent.basename;
+      isFederated && !isPlatformInterface && directory.basename != directory.parent.basename;
 
   /// True if this appears to be a top-level package, according to repository
   /// conventions.
@@ -180,9 +179,7 @@ class RepositoryPackage {
       return false;
     }
     // Check whether this is one of the enclosing package's examples.
-    return enclosingPackage.getExamples().any(
-      (RepositoryPackage p) => p.path == path,
-    );
+    return enclosingPackage.getExamples().any((RepositoryPackage p) => p.path == path);
   }
 
   /// Returns the Flutter example packages contained in the package, if any.
@@ -201,24 +198,77 @@ class RepositoryPackage {
         .listSync()
         .where((FileSystemEntity entity) => isPackage(entity))
         // isPackage guarantees that the cast to Directory is safe.
-        .map(
-          (FileSystemEntity entity) => RepositoryPackage(entity as Directory),
-        );
+        .map((FileSystemEntity entity) => RepositoryPackage(entity as Directory));
   }
 
   /// Returns the package that this package is a part of, if any.
-  ///
-  /// Currently this is limited to checking up two directories, since that
-  /// covers all the example structures currently used.
   RepositoryPackage? getEnclosingPackage() {
-    final Directory parent = directory.parent;
-    if (isPackage(parent)) {
-      return RepositoryPackage(parent);
-    }
-    if (isPackage(parent.parent)) {
-      return RepositoryPackage(parent.parent);
+    Directory current = directory.parent;
+    while (current.path != current.parent.path) {
+      if (isPackage(current)) {
+        return RepositoryPackage(current);
+      }
+      // Stop walking up if we hit a known repo root directory.
+      if (current.basename == 'packages' || current.basename == 'third_party') {
+        break;
+      }
+      current = current.parent;
     }
     return null;
+  }
+
+  /// True if this package is located within a directory that is ignored
+  /// by the enclosing package's `.pubignore` file.
+  bool get isPubIgnored {
+    final RepositoryPackage? enclosingPackage = getEnclosingPackage();
+    if (enclosingPackage == null) {
+      return false;
+    }
+    final File pubignoreFile = enclosingPackage.directory.childFile('.pubignore');
+    if (!pubignoreFile.existsSync()) {
+      return false;
+    }
+
+    final String relativePath = p.relative(directory.path, from: enclosingPackage.directory.path);
+    final List<String> segments = p.split(relativePath);
+    final candidatePaths = <String>[];
+    for (var i = 1; i <= segments.length; i++) {
+      final String prefix = p.posix.joinAll(segments.sublist(0, i));
+      candidatePaths.add(prefix);
+      candidatePaths.add('$prefix/');
+    }
+
+    final List<String> ignoreLines = pubignoreFile.readAsLinesSync();
+
+    for (final line in ignoreLines) {
+      final String trimmed = line.trim();
+      if (trimmed.isEmpty || trimmed.startsWith('#')) {
+        continue;
+      }
+
+      var pattern = trimmed;
+      final bool isAnchored = pattern.startsWith('/');
+      if (isAnchored) {
+        pattern = pattern.substring(1);
+      }
+      if (pattern.endsWith('/')) {
+        pattern = '$pattern**';
+      }
+
+      try {
+        final globExact = Glob(pattern);
+        final Glob? globNested = isAnchored ? null : Glob('**/$pattern');
+        for (final candidate in candidatePaths) {
+          if (globExact.matches(candidate) ||
+              (globNested != null && globNested.matches(candidate))) {
+            return true;
+          }
+        }
+      } on FormatException catch (e) {
+        printWarning('Warning: Invalid glob pattern "$trimmed" in ${pubignoreFile.path}: $e');
+      }
+    }
+    return false;
   }
 
   /// Returns all Dart package folders (e.g., examples) under this package.
@@ -231,10 +281,7 @@ class RepositoryPackage {
               // isPackage guarantees that this cast is valid.
               RepositoryPackage(directory as Directory),
         )
-        .where(
-          (RepositoryPackage p) =>
-              includeExamples || (p.directory.basename != 'example'),
-        );
+        .where((RepositoryPackage p) => includeExamples || (p.directory.basename != 'example'));
   }
 
   /// Returns true if the package is not marked as "publish_to: none".
@@ -254,9 +301,7 @@ class RepositoryPackage {
 
     final Directory pendingChangelogsDir = pendingChangelogsDirectory;
     if (!pendingChangelogsDir.existsSync()) {
-      throw FormatException(
-        'No pending_changelogs folder found for $displayName.',
-      );
+      throw FormatException('No pending_changelogs folder found for $displayName.');
     }
 
     final List<File> pendingChangelogFiles = pendingChangelogsDir
@@ -277,9 +322,7 @@ class RepositoryPackage {
       try {
         entries.add(PendingChangelogEntry.parse(file.readAsStringSync(), file));
       } on FormatException catch (e) {
-        throw FormatException(
-          'Malformed pending changelog file: ${file.path}\n$e',
-        );
+        throw FormatException('Malformed pending changelog file: ${file.path}\n$e');
       }
     }
     return entries;

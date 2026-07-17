@@ -3875,7 +3875,7 @@ abstract class PigeonApiRecording(open val pigeonRegistrar: CameraXLibraryPigeon
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiImageCapture(open val pigeonRegistrar: CameraXLibraryPigeonProxyApiRegistrar) {
-  abstract fun pigeon_defaultConstructor(resolutionSelector: androidx.camera.core.resolutionselector.ResolutionSelector?, targetRotation: Long?, flashMode: CameraXFlashMode?): androidx.camera.core.ImageCapture
+  abstract fun pigeon_defaultConstructor(resolutionSelector: androidx.camera.core.resolutionselector.ResolutionSelector?, targetRotation: Long?, flashMode: CameraXFlashMode?, jpegQuality: Long?): androidx.camera.core.ImageCapture
 
   abstract fun resolutionSelector(pigeon_instance: androidx.camera.core.ImageCapture): androidx.camera.core.resolutionselector.ResolutionSelector?
 
@@ -3901,8 +3901,9 @@ abstract class PigeonApiImageCapture(open val pigeonRegistrar: CameraXLibraryPig
             val resolutionSelectorArg = args[1] as androidx.camera.core.resolutionselector.ResolutionSelector?
             val targetRotationArg = args[2] as Long?
             val flashModeArg = args[3] as CameraXFlashMode?
+            val jpegQualityArg = args[4] as Long?
             val wrapped: List<Any?> = try {
-              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(resolutionSelectorArg,targetRotationArg,flashModeArg), pigeon_identifierArg)
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(resolutionSelectorArg,targetRotationArg,flashModeArg,jpegQualityArg), pigeon_identifierArg)
               listOf(null)
             } catch (exception: Throwable) {
               CameraXLibraryPigeonUtils.wrapError(exception)

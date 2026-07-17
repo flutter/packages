@@ -129,6 +129,7 @@ class PigeonOverrides {
     ResolutionSelector? resolutionSelector,
     int? targetRotation,
     CameraXFlashMode? flashMode,
+    int? jpegQuality,
   })? imageCapture_new;
 
   /// Overrides [ResolutionStrategy.new].
@@ -4263,12 +4264,14 @@ class ImageCapture extends UseCase {
     ResolutionSelector? resolutionSelector,
     int? targetRotation,
     CameraXFlashMode? flashMode,
+    int? jpegQuality,
   }) {
     if (PigeonOverrides.imageCapture_new != null) {
       return PigeonOverrides.imageCapture_new!(
         resolutionSelector: resolutionSelector,
         targetRotation: targetRotation,
         flashMode: flashMode,
+        jpegQuality: jpegQuality,
       );
     }
     return ImageCapture.pigeon_new(
@@ -4277,6 +4280,7 @@ class ImageCapture extends UseCase {
       resolutionSelector: resolutionSelector,
       targetRotation: targetRotation,
       flashMode: flashMode,
+      jpegQuality: jpegQuality,
     );
   }
 
@@ -4287,6 +4291,7 @@ class ImageCapture extends UseCase {
     this.resolutionSelector,
     int? targetRotation,
     CameraXFlashMode? flashMode,
+    int? jpegQuality,
   }) : super.pigeon_detached() {
     final int pigeonVar_instanceIdentifier =
         pigeon_instanceManager.addDartCreatedInstance(this);
@@ -4300,12 +4305,13 @@ class ImageCapture extends UseCase {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel
-        .send(<Object?>[
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[
       pigeonVar_instanceIdentifier,
       resolutionSelector,
       targetRotation,
-      flashMode
+      flashMode,
+      jpegQuality
     ]);
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;

@@ -6,26 +6,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
 
 void main() {
-  test(
-    'LaunchOptions have default InAppBrowserConfiguration when not passed',
-    () {
-      expect(
-        const LaunchOptions().browserConfiguration,
-        const InAppBrowserConfiguration(),
-      );
-    },
-  );
+  test('LaunchOptions have default InAppBrowserConfiguration when not passed', () {
+    expect(const LaunchOptions().browserConfiguration, const InAppBrowserConfiguration());
+  });
 
-  test(
-    'passing non-default InAppBrowserConfiguration to LaunchOptions works',
-    () {
-      const browserConfiguration = InAppBrowserConfiguration(showTitle: true);
+  test('passing non-default InAppBrowserConfiguration to LaunchOptions works', () {
+    const browserConfiguration = InAppBrowserConfiguration(showTitle: true);
 
-      const launchOptions = LaunchOptions(
-        browserConfiguration: browserConfiguration,
-      );
+    const launchOptions = LaunchOptions(browserConfiguration: browserConfiguration);
 
-      expect(launchOptions.browserConfiguration, browserConfiguration);
-    },
-  );
+    expect(launchOptions.browserConfiguration, browserConfiguration);
+  });
 }

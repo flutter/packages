@@ -15,35 +15,19 @@ abstract base class SharedPreferencesAsyncPlatform {
   static SharedPreferencesAsyncPlatform? instance;
 
   /// Stores the String [value] associated with the [key].
-  Future<void> setString(
-    String key,
-    String value,
-    SharedPreferencesOptions options,
-  );
+  Future<void> setString(String key, String value, SharedPreferencesOptions options);
 
   /// Stores the bool [value] associated with the [key].
-  Future<void> setBool(
-    String key,
-    bool value,
-    SharedPreferencesOptions options,
-  );
+  Future<void> setBool(String key, bool value, SharedPreferencesOptions options);
 
   /// Stores the double [value] associated with the [key].
-  Future<void> setDouble(
-    String key,
-    double value,
-    SharedPreferencesOptions options,
-  );
+  Future<void> setDouble(String key, double value, SharedPreferencesOptions options);
 
   /// Stores the int [value] associated with the [key].
   Future<void> setInt(String key, int value, SharedPreferencesOptions options);
 
   /// Stores the `List<String>` [value] associated with the [key].
-  Future<void> setStringList(
-    String key,
-    List<String> value,
-    SharedPreferencesOptions options,
-  );
+  Future<void> setStringList(String key, List<String> value, SharedPreferencesOptions options);
 
   /// Retrieves the `String` [value] associated with the [key], if any.
   ///
@@ -73,16 +57,10 @@ abstract base class SharedPreferencesAsyncPlatform {
   ///
   /// Throws a [TypeError] if the returned type is not a `List<String>`.
   /// May return null for unsupported types.
-  Future<List<String>?> getStringList(
-    String key,
-    SharedPreferencesOptions options,
-  );
+  Future<List<String>?> getStringList(String key, SharedPreferencesOptions options);
 
   /// Removes all keys and values in the store that match the given [parameters].
-  Future<void> clear(
-    ClearPreferencesParameters parameters,
-    SharedPreferencesOptions options,
-  );
+  Future<void> clear(ClearPreferencesParameters parameters, SharedPreferencesOptions options);
 
   /// Returns all key/value pairs persisting in this store that match the given [parameters].
   ///

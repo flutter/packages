@@ -121,39 +121,26 @@ class FadeScaleTransition extends StatelessWidget {
   /// [secondaryAnimation].
   final Widget? child;
 
-  static final Animatable<double> _fadeInTransition = CurveTween(
-    curve: const Interval(0.0, 0.3),
-  );
+  static final Animatable<double> _fadeInTransition = CurveTween(curve: const Interval(0.0, 0.3));
   static final Animatable<double> _scaleInTransition = Tween<double>(
     begin: 0.80,
     end: 1.00,
   ).chain(CurveTween(curve: Easing.legacyDecelerate));
-  static final Animatable<double> _fadeOutTransition = Tween<double>(
-    begin: 1.0,
-    end: 0.0,
-  );
+  static final Animatable<double> _fadeOutTransition = Tween<double>(begin: 1.0, end: 0.0);
 
   @override
   Widget build(BuildContext context) {
     return DualTransitionBuilder(
       animation: animation,
-      forwardBuilder:
-          (BuildContext context, Animation<double> animation, Widget? child) {
-            return FadeTransition(
-              opacity: _fadeInTransition.animate(animation),
-              child: ScaleTransition(
-                scale: _scaleInTransition.animate(animation),
-                child: child,
-              ),
-            );
-          },
-      reverseBuilder:
-          (BuildContext context, Animation<double> animation, Widget? child) {
-            return FadeTransition(
-              opacity: _fadeOutTransition.animate(animation),
-              child: child,
-            );
-          },
+      forwardBuilder: (BuildContext context, Animation<double> animation, Widget? child) {
+        return FadeTransition(
+          opacity: _fadeInTransition.animate(animation),
+          child: ScaleTransition(scale: _scaleInTransition.animate(animation), child: child),
+        );
+      },
+      reverseBuilder: (BuildContext context, Animation<double> animation, Widget? child) {
+        return FadeTransition(opacity: _fadeOutTransition.animate(animation), child: child);
+      },
       child: child,
     );
   }

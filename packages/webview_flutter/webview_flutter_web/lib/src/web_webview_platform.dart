@@ -17,9 +17,7 @@ class WebWebViewPlatform extends WebViewPlatform {
   }
 
   @override
-  PlatformWebViewWidget createPlatformWebViewWidget(
-    PlatformWebViewWidgetCreationParams params,
-  ) {
+  PlatformWebViewWidget createPlatformWebViewWidget(PlatformWebViewWidgetCreationParams params) {
     return WebWebViewWidget(params);
   }
 

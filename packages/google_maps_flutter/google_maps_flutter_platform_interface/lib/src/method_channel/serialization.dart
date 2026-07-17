@@ -47,9 +47,7 @@ Object serializeMapsObjectUpdates<T extends MapsObject<T>>(
   _addIfNonNull(
     json,
     _objectIdsToRemoveKey(updates.objectName),
-    updates.objectIdsToRemove
-        .map<String>((MapsObjectId<T> m) => m.value)
-        .toList(),
+    updates.objectIdsToRemove.map<String>((MapsObjectId<T> m) => m.value).toList(),
   );
 
   return json;
@@ -60,34 +58,18 @@ Object serializeHeatmap(Heatmap heatmap) {
   final json = <String, Object>{};
 
   _addIfNonNull(json, _heatmapIdKey, heatmap.heatmapId.value);
-  _addIfNonNull(
-    json,
-    _heatmapDataKey,
-    heatmap.data.map(serializeWeightedLatLng).toList(),
-  );
+  _addIfNonNull(json, _heatmapDataKey, heatmap.data.map(serializeWeightedLatLng).toList());
   _addIfNonNull(json, _heatmapDissipatingKey, heatmap.dissipating);
 
   final HeatmapGradient? gradient = heatmap.gradient;
   if (gradient != null) {
-    _addIfNonNull(
-      json,
-      _heatmapGradientKey,
-      serializeHeatmapGradient(gradient),
-    );
+    _addIfNonNull(json, _heatmapGradientKey, serializeHeatmapGradient(gradient));
   }
   _addIfNonNull(json, _heatmapMaxIntensityKey, heatmap.maxIntensity);
   _addIfNonNull(json, _heatmapOpacityKey, heatmap.opacity);
   _addIfNonNull(json, _heatmapRadiusKey, heatmap.radius.radius);
-  _addIfNonNull(
-    json,
-    _heatmapMinimumZoomIntensityKey,
-    heatmap.minimumZoomIntensity,
-  );
-  _addIfNonNull(
-    json,
-    _heatmapMaximumZoomIntensityKey,
-    heatmap.maximumZoomIntensity,
-  );
+  _addIfNonNull(json, _heatmapMinimumZoomIntensityKey, heatmap.minimumZoomIntensity);
+  _addIfNonNull(json, _heatmapMaximumZoomIntensityKey, heatmap.maximumZoomIntensity);
 
   return json;
 }
@@ -130,9 +112,7 @@ Object serializeHeatmapGradient(HeatmapGradient gradient) {
   _addIfNonNull(
     json,
     _heatmapGradientColorsKey,
-    gradient.colors
-        .map((HeatmapGradientColor e) => e.color.toARGB32())
-        .toList(),
+    gradient.colors.map((HeatmapGradientColor e) => e.color.toARGB32()).toList(),
   );
   _addIfNonNull(
     json,
@@ -155,10 +135,9 @@ HeatmapGradient? deserializeHeatmapGradient(Object? json) {
       .whereType<int>()
       .map((int e) => Color(e))
       .toList();
-  final List<double> startPoints =
-      (map[_heatmapGradientStartPointsKey]! as List<Object?>)
-          .whereType<double>()
-          .toList();
+  final List<double> startPoints = (map[_heatmapGradientStartPointsKey]! as List<Object?>)
+      .whereType<double>()
+      .toList();
   final gradientColors = <HeatmapGradientColor>[];
   for (var i = 0; i < colors.length; i++) {
     gradientColors.add(HeatmapGradientColor(colors[i], startPoints[i]));

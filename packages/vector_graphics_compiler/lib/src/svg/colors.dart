@@ -241,14 +241,10 @@ CssRgbRecord? parseCssRgb(String input) {
   if (match == null) {
     return null;
   }
-  final String? r =
-      match.namedGroup('commaRed') ?? match.namedGroup('spaceRed');
-  final String? g =
-      match.namedGroup('commaGreen') ?? match.namedGroup('spaceGreen');
-  final String? b =
-      match.namedGroup('commaBlue') ?? match.namedGroup('spaceBlue');
-  final String a =
-      match.namedGroup('commaAlpha') ?? match.namedGroup('spaceAlpha') ?? '1';
+  final String? r = match.namedGroup('commaRed') ?? match.namedGroup('spaceRed');
+  final String? g = match.namedGroup('commaGreen') ?? match.namedGroup('spaceGreen');
+  final String? b = match.namedGroup('commaBlue') ?? match.namedGroup('spaceBlue');
+  final String a = match.namedGroup('commaAlpha') ?? match.namedGroup('spaceAlpha') ?? '1';
 
   return (r: r!, g: g!, b: b!, a: a);
 }
@@ -267,17 +263,10 @@ CssHslRecord? parseCssHsl(String input) {
   if (match == null) {
     return null;
   }
-  final String? h =
-      match.namedGroup('commaHue') ?? match.namedGroup('spaceHue');
-  final String? s =
-      match.namedGroup('commaSaturation') ??
-      match.namedGroup('spaceSaturation');
-  final String? l =
-      match.namedGroup('commaLightness') ?? match.namedGroup('spaceLightness');
-  final String a =
-      match.namedGroup('commaHslAlpha') ??
-      match.namedGroup('spaceHslAlpha') ??
-      '1';
+  final String? h = match.namedGroup('commaHue') ?? match.namedGroup('spaceHue');
+  final String? s = match.namedGroup('commaSaturation') ?? match.namedGroup('spaceSaturation');
+  final String? l = match.namedGroup('commaLightness') ?? match.namedGroup('spaceLightness');
+  final String a = match.namedGroup('commaHslAlpha') ?? match.namedGroup('spaceHslAlpha') ?? '1';
 
   return (h: h!, s: s!, l: l!, a: a);
 }
@@ -297,11 +286,7 @@ CssHslRecord? parseCssHsl(String input) {
 Color parseRgbFunction(String colorString) {
   final CssRgbRecord? parsed = parseCssRgb(colorString);
   if (parsed == null) {
-    throw ArgumentError.value(
-      colorString,
-      'colorString',
-      'Invalid CSS rgb/rgba color syntax',
-    );
+    throw ArgumentError.value(colorString, 'colorString', 'Invalid CSS rgb/rgba color syntax');
   }
   return _cssRgbRecordToColor(parsed);
 }
@@ -321,11 +306,7 @@ Color parseRgbFunction(String colorString) {
 Color parseHslFunction(String colorString) {
   final CssHslRecord? parsed = parseCssHsl(colorString);
   if (parsed == null) {
-    throw ArgumentError.value(
-      colorString,
-      'colorString',
-      'Invalid CSS hsl/hsla color syntax',
-    );
+    throw ArgumentError.value(colorString, 'colorString', 'Invalid CSS hsl/hsla color syntax');
   }
   return _cssHslRecordToColor(parsed);
 }

@@ -25,10 +25,7 @@ class SkProductResponseWrapper {
   // TODO(stuartmorgan): Temporarily ignore const warning in other parts of the
   // federated package, and remove this.
   // ignore: prefer_const_constructors_in_immutables
-  SkProductResponseWrapper({
-    required this.products,
-    required this.invalidProductIdentifiers,
-  });
+  SkProductResponseWrapper({required this.products, required this.invalidProductIdentifiers});
 
   /// Constructing an instance from a map from the Objective-C layer.
   ///
@@ -72,9 +69,7 @@ class SkProductResponseWrapper {
   int get hashCode => Object.hash(products, invalidProductIdentifiers);
 
   /// Convert from [SkProductResponseMessage] to [SkProductResponseWrapper]
-  static SkProductResponseWrapper convertFromPigeon(
-    SKProductsResponseMessage msg,
-  ) {
+  static SkProductResponseWrapper convertFromPigeon(SKProductsResponseMessage msg) {
     return SkProductResponseWrapper(
       products: msg.products!
           .map((SKProductMessage e) => SKProductWrapper.convertFromPigeon(e))
@@ -85,9 +80,7 @@ class SkProductResponseWrapper {
 
   /// Convert from [SkProductResponseWrapper] to [SkProductResponseWrapper]
   @visibleForTesting
-  static SKProductsResponseMessage convertToPigeon(
-    SkProductResponseWrapper wrapper,
-  ) {
+  static SKProductsResponseMessage convertToPigeon(SkProductResponseWrapper wrapper) {
     return SKProductsResponseMessage(
       products: wrapper.products
           .map((SKProductWrapper e) => SKProductWrapper.convertToPigeon(e))
@@ -120,9 +113,7 @@ enum SKSubscriptionPeriodUnit {
   year;
 
   /// Convert from [SKSubscriptionPeriodUnitMessage] to [SKSubscriptionPeriodUnit]
-  static SKSubscriptionPeriodUnit convertFromPigeon(
-    SKSubscriptionPeriodUnitMessage msg,
-  ) {
+  static SKSubscriptionPeriodUnit convertFromPigeon(SKSubscriptionPeriodUnitMessage msg) {
     switch (msg) {
       case SKSubscriptionPeriodUnitMessage.day:
         return SKSubscriptionPeriodUnit.day;
@@ -137,9 +128,7 @@ enum SKSubscriptionPeriodUnit {
 
   /// Convert from [SKSubscriptionPeriodUnit] to [SKSubscriptionPeriodUnitMessage]
   @visibleForTesting
-  static SKSubscriptionPeriodUnitMessage convertToPigeon(
-    SKSubscriptionPeriodUnit msg,
-  ) {
+  static SKSubscriptionPeriodUnitMessage convertToPigeon(SKSubscriptionPeriodUnit msg) {
     switch (msg) {
       case SKSubscriptionPeriodUnit.day:
         return SKSubscriptionPeriodUnitMessage.day;
@@ -164,17 +153,12 @@ class SKProductSubscriptionPeriodWrapper {
   // TODO(stuartmorgan): Temporarily ignore const warning in other parts of the
   // federated package, and remove this.
   // ignore: prefer_const_constructors_in_immutables
-  SKProductSubscriptionPeriodWrapper({
-    required this.numberOfUnits,
-    required this.unit,
-  });
+  SKProductSubscriptionPeriodWrapper({required this.numberOfUnits, required this.unit});
 
   /// Constructing an instance from a map from the Objective-C layer.
   ///
   /// This method should only be used with `map` values returned by [SKProductDiscountWrapper.fromJson] or [SKProductWrapper.fromJson].
-  factory SKProductSubscriptionPeriodWrapper.fromJson(
-    Map<String, dynamic>? map,
-  ) {
+  factory SKProductSubscriptionPeriodWrapper.fromJson(Map<String, dynamic>? map) {
     if (map == null) {
       return SKProductSubscriptionPeriodWrapper(
         numberOfUnits: 0,
@@ -255,9 +239,7 @@ enum SKProductDiscountPaymentMode {
   unspecified;
 
   /// Convert from [SKProductDiscountPaymentModeMessage] to [SKProductDiscountPaymentModeWrapper]
-  static SKProductDiscountPaymentMode convertFromPigeon(
-    SKProductDiscountPaymentModeMessage msg,
-  ) {
+  static SKProductDiscountPaymentMode convertFromPigeon(SKProductDiscountPaymentModeMessage msg) {
     switch (msg) {
       case SKProductDiscountPaymentModeMessage.payAsYouGo:
         return SKProductDiscountPaymentMode.payAsYouGo;
@@ -272,9 +254,7 @@ enum SKProductDiscountPaymentMode {
 
   /// Convert from [SKProductDiscountPaymentModeMessage] to [SKProductDiscountPaymentMode]
   @visibleForTesting
-  static SKProductDiscountPaymentModeMessage convertToPigeon(
-    SKProductDiscountPaymentMode wrapper,
-  ) {
+  static SKProductDiscountPaymentModeMessage convertToPigeon(SKProductDiscountPaymentMode wrapper) {
     switch (wrapper) {
       case SKProductDiscountPaymentMode.payAsYouGo:
         return SKProductDiscountPaymentModeMessage.payAsYouGo;
@@ -306,9 +286,7 @@ enum SKProductDiscountType {
   subscription;
 
   /// Convert from [SKProductDiscountTypeMessage] to [SKProductDiscountType]
-  static SKProductDiscountType convertFromPigeon(
-    SKProductDiscountTypeMessage msg,
-  ) {
+  static SKProductDiscountType convertFromPigeon(SKProductDiscountTypeMessage msg) {
     switch (msg) {
       case SKProductDiscountTypeMessage.introductory:
         return SKProductDiscountType.introductory;
@@ -319,9 +297,7 @@ enum SKProductDiscountType {
 
   /// Convert from [SKProductDiscountType] to [SKProductDiscountTypeMessage]
   @visibleForTesting
-  static SKProductDiscountTypeMessage convertToPigeon(
-    SKProductDiscountType wrapper,
-  ) {
+  static SKProductDiscountTypeMessage convertToPigeon(SKProductDiscountType wrapper) {
     switch (wrapper) {
       case SKProductDiscountType.introductory:
         return SKProductDiscountTypeMessage.introductory;
@@ -421,16 +397,12 @@ class SKProductDiscountWrapper {
   );
 
   /// Convert from [SKProductDiscountMessage] to [SKProductDiscountWrapper]
-  static SKProductDiscountWrapper convertFromPigeon(
-    SKProductDiscountMessage msg,
-  ) {
+  static SKProductDiscountWrapper convertFromPigeon(SKProductDiscountMessage msg) {
     return SKProductDiscountWrapper(
       price: msg.price,
       priceLocale: SKPriceLocaleWrapper.convertFromPigeon(msg.priceLocale),
       numberOfPeriods: msg.numberOfPeriods,
-      paymentMode: SKProductDiscountPaymentMode.convertFromPigeon(
-        msg.paymentMode,
-      ),
+      paymentMode: SKProductDiscountPaymentMode.convertFromPigeon(msg.paymentMode),
       subscriptionPeriod: SKProductSubscriptionPeriodWrapper.convertFromPigeon(
         msg.subscriptionPeriod,
       ),
@@ -441,16 +413,12 @@ class SKProductDiscountWrapper {
 
   /// Convert from [SKProductDiscountWrapper] to [SKProductDiscountMessage]
   @visibleForTesting
-  static SKProductDiscountMessage convertToPigeon(
-    SKProductDiscountWrapper wrapper,
-  ) {
+  static SKProductDiscountMessage convertToPigeon(SKProductDiscountWrapper wrapper) {
     return SKProductDiscountMessage(
       price: wrapper.price,
       priceLocale: SKPriceLocaleWrapper.convertToPigeon(wrapper.priceLocale),
       numberOfPeriods: wrapper.numberOfPeriods,
-      paymentMode: SKProductDiscountPaymentMode.convertToPigeon(
-        wrapper.paymentMode,
-      ),
+      paymentMode: SKProductDiscountPaymentMode.convertToPigeon(wrapper.paymentMode),
       subscriptionPeriod: SKProductSubscriptionPeriodWrapper.convertToPigeon(
         wrapper.subscriptionPeriod,
       ),
@@ -588,19 +556,14 @@ class SKProductWrapper {
       price: msg.price,
       subscriptionGroupIdentifier: msg.subscriptionGroupIdentifier,
       subscriptionPeriod: msg.subscriptionPeriod != null
-          ? SKProductSubscriptionPeriodWrapper.convertFromPigeon(
-              msg.subscriptionPeriod!,
-            )
+          ? SKProductSubscriptionPeriodWrapper.convertFromPigeon(msg.subscriptionPeriod!)
           : null,
       introductoryPrice: msg.introductoryPrice != null
           ? SKProductDiscountWrapper.convertFromPigeon(msg.introductoryPrice!)
           : null,
       discounts: msg.discounts != null
           ? msg.discounts!
-                .map(
-                  (SKProductDiscountMessage e) =>
-                      SKProductDiscountWrapper.convertFromPigeon(e),
-                )
+                .map((SKProductDiscountMessage e) => SKProductDiscountWrapper.convertFromPigeon(e))
                 .toList()
           : <SKProductDiscountWrapper>[],
     );
@@ -616,18 +579,13 @@ class SKProductWrapper {
       price: wrapper.price,
       subscriptionGroupIdentifier: wrapper.subscriptionGroupIdentifier,
       subscriptionPeriod: wrapper.subscriptionPeriod != null
-          ? SKProductSubscriptionPeriodWrapper.convertToPigeon(
-              wrapper.subscriptionPeriod!,
-            )
+          ? SKProductSubscriptionPeriodWrapper.convertToPigeon(wrapper.subscriptionPeriod!)
           : null,
       introductoryPrice: wrapper.introductoryPrice != null
           ? SKProductDiscountWrapper.convertToPigeon(wrapper.introductoryPrice!)
           : null,
       discounts: wrapper.discounts
-          .map(
-            (SKProductDiscountWrapper e) =>
-                SKProductDiscountWrapper.convertToPigeon(e),
-          )
+          .map((SKProductDiscountWrapper e) => SKProductDiscountWrapper.convertToPigeon(e))
           .toList(),
     );
   }
@@ -656,11 +614,7 @@ class SKPriceLocaleWrapper {
   /// This method should only be used with `map` values returned by [SKProductWrapper.fromJson] and [SKProductDiscountWrapper.fromJson].
   factory SKPriceLocaleWrapper.fromJson(Map<String, dynamic>? map) {
     if (map == null) {
-      return SKPriceLocaleWrapper(
-        currencyCode: '',
-        currencySymbol: '',
-        countryCode: '',
-      );
+      return SKPriceLocaleWrapper(currencyCode: '', currencySymbol: '', countryCode: '');
     }
     return _$SKPriceLocaleWrapperFromJson(map);
   }

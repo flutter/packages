@@ -23,25 +23,21 @@ import 'package:webview_flutter_wkwebview/src/common/web_kit.g.dart' as _i2;
 // ignore_for_file: subtype_of_sealed_class
 // ignore_for_file: invalid_use_of_internal_member
 
-class _FakePigeonInstanceManager_0 extends _i1.SmartFake
-    implements _i2.PigeonInstanceManager {
+class _FakePigeonInstanceManager_0 extends _i1.SmartFake implements _i2.PigeonInstanceManager {
   _FakePigeonInstanceManager_0(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
 class _FakeWKUIDelegate_1 extends _i1.SmartFake implements _i2.WKUIDelegate {
-  _FakeWKUIDelegate_1(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakeWKUIDelegate_1(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
 }
 
-class _FakeWKUserContentController_2 extends _i1.SmartFake
-    implements _i2.WKUserContentController {
+class _FakeWKUserContentController_2 extends _i1.SmartFake implements _i2.WKUserContentController {
   _FakeWKUserContentController_2(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeWKWebsiteDataStore_3 extends _i1.SmartFake
-    implements _i2.WKWebsiteDataStore {
+class _FakeWKWebsiteDataStore_3 extends _i1.SmartFake implements _i2.WKWebsiteDataStore {
   _FakeWKWebsiteDataStore_3(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -51,20 +47,17 @@ class _FakeWKPreferences_4 extends _i1.SmartFake implements _i2.WKPreferences {
     : super(parent, parentInvocation);
 }
 
-class _FakeWKWebpagePreferences_5 extends _i1.SmartFake
-    implements _i2.WKWebpagePreferences {
+class _FakeWKWebpagePreferences_5 extends _i1.SmartFake implements _i2.WKWebpagePreferences {
   _FakeWKWebpagePreferences_5(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeWKWebViewConfiguration_6 extends _i1.SmartFake
-    implements _i2.WKWebViewConfiguration {
+class _FakeWKWebViewConfiguration_6 extends _i1.SmartFake implements _i2.WKWebViewConfiguration {
   _FakeWKWebViewConfiguration_6(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeUIScrollViewDelegate_7 extends _i1.SmartFake
-    implements _i2.UIScrollViewDelegate {
+class _FakeUIScrollViewDelegate_7 extends _i1.SmartFake implements _i2.UIScrollViewDelegate {
   _FakeUIScrollViewDelegate_7(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -95,9 +88,7 @@ class MockWKUIDelegate extends _i1.Mock implements _i2.WKUIDelegate {
                   _i2.WKSecurityOrigin origin,
                   _i2.WKFrameInfo frame,
                   _i2.MediaCaptureType type,
-                ) => _i3.Future<_i2.PermissionDecision>.value(
-                  _i2.PermissionDecision.deny,
-                ),
+                ) => _i3.Future<_i2.PermissionDecision>.value(_i2.PermissionDecision.deny),
           )
           as _i3.Future<_i2.PermissionDecision> Function(
             _i2.WKUIDelegate,
@@ -108,12 +99,7 @@ class MockWKUIDelegate extends _i1.Mock implements _i2.WKUIDelegate {
           ));
 
   @override
-  _i3.Future<bool> Function(
-    _i2.WKUIDelegate,
-    _i2.WKWebView,
-    String,
-    _i2.WKFrameInfo,
-  )
+  _i3.Future<bool> Function(_i2.WKUIDelegate, _i2.WKWebView, String, _i2.WKFrameInfo)
   get runJavaScriptConfirmPanel =>
       (super.noSuchMethod(
             Invocation.getter(#runJavaScriptConfirmPanel),
@@ -125,12 +111,7 @@ class MockWKUIDelegate extends _i1.Mock implements _i2.WKUIDelegate {
                   _i2.WKFrameInfo frame,
                 ) => _i3.Future<bool>.value(false),
           )
-          as _i3.Future<bool> Function(
-            _i2.WKUIDelegate,
-            _i2.WKWebView,
-            String,
-            _i2.WKFrameInfo,
-          ));
+          as _i3.Future<bool> Function(_i2.WKUIDelegate, _i2.WKWebView, String, _i2.WKFrameInfo));
 
   @override
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
@@ -147,10 +128,7 @@ class MockWKUIDelegate extends _i1.Mock implements _i2.WKUIDelegate {
   _i2.WKUIDelegate pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeWKUIDelegate_1(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
+            returnValue: _FakeWKUIDelegate_1(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.WKUIDelegate);
 
@@ -180,8 +158,7 @@ class MockWKUIDelegate extends _i1.Mock implements _i2.WKUIDelegate {
 /// A class which mocks [WKWebViewConfiguration].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockWKWebViewConfiguration extends _i1.Mock
-    implements _i2.WKWebViewConfiguration {
+class MockWKWebViewConfiguration extends _i1.Mock implements _i2.WKWebViewConfiguration {
   MockWKWebViewConfiguration() {
     _i1.throwOnMissingStub(this);
   }
@@ -198,9 +175,7 @@ class MockWKWebViewConfiguration extends _i1.Mock
           as _i2.PigeonInstanceManager);
 
   @override
-  _i3.Future<void> setUserContentController(
-    _i2.WKUserContentController? controller,
-  ) =>
+  _i3.Future<void> setUserContentController(_i2.WKUserContentController? controller) =>
       (super.noSuchMethod(
             Invocation.method(#setUserContentController, [controller]),
             returnValue: _i3.Future<void>.value(),
@@ -235,10 +210,7 @@ class MockWKWebViewConfiguration extends _i1.Mock
       (super.noSuchMethod(
             Invocation.method(#getWebsiteDataStore, []),
             returnValue: _i3.Future<_i2.WKWebsiteDataStore>.value(
-              _FakeWKWebsiteDataStore_3(
-                this,
-                Invocation.method(#getWebsiteDataStore, []),
-              ),
+              _FakeWKWebsiteDataStore_3(this, Invocation.method(#getWebsiteDataStore, [])),
             ),
           )
           as _i3.Future<_i2.WKWebsiteDataStore>);
@@ -257,10 +229,7 @@ class MockWKWebViewConfiguration extends _i1.Mock
       (super.noSuchMethod(
             Invocation.method(#getPreferences, []),
             returnValue: _i3.Future<_i2.WKPreferences>.value(
-              _FakeWKPreferences_4(
-                this,
-                Invocation.method(#getPreferences, []),
-              ),
+              _FakeWKPreferences_4(this, Invocation.method(#getPreferences, [])),
             ),
           )
           as _i3.Future<_i2.WKPreferences>);
@@ -284,13 +253,9 @@ class MockWKWebViewConfiguration extends _i1.Mock
           as _i3.Future<void>);
 
   @override
-  _i3.Future<void> setMediaTypesRequiringUserActionForPlayback(
-    _i2.AudiovisualMediaType? type,
-  ) =>
+  _i3.Future<void> setMediaTypesRequiringUserActionForPlayback(_i2.AudiovisualMediaType? type) =>
       (super.noSuchMethod(
-            Invocation.method(#setMediaTypesRequiringUserActionForPlayback, [
-              type,
-            ]),
+            Invocation.method(#setMediaTypesRequiringUserActionForPlayback, [type]),
             returnValue: _i3.Future<void>.value(),
             returnValueForMissingStub: _i3.Future<void>.value(),
           )
@@ -313,10 +278,7 @@ class MockWKWebViewConfiguration extends _i1.Mock
   _i2.WKWebViewConfiguration pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeWKWebViewConfiguration_6(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
+            returnValue: _FakeWKWebViewConfiguration_6(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.WKWebViewConfiguration);
 
@@ -346,8 +308,7 @@ class MockWKWebViewConfiguration extends _i1.Mock
 /// A class which mocks [UIScrollViewDelegate].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockUIScrollViewDelegate extends _i1.Mock
-    implements _i2.UIScrollViewDelegate {
+class MockUIScrollViewDelegate extends _i1.Mock implements _i2.UIScrollViewDelegate {
   MockUIScrollViewDelegate() {
     _i1.throwOnMissingStub(this);
   }
@@ -367,10 +328,7 @@ class MockUIScrollViewDelegate extends _i1.Mock
   _i2.UIScrollViewDelegate pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeUIScrollViewDelegate_7(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
+            returnValue: _FakeUIScrollViewDelegate_7(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.UIScrollViewDelegate);
 

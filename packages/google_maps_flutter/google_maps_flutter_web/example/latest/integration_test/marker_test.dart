@@ -66,11 +66,7 @@ void main() {
       LegacyMarkerController(marker: marker, onDragStart: onDragStart);
 
       // Trigger a drag end event...
-      gmaps.event.trigger(
-        marker,
-        'dragstart',
-        gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
-      );
+      gmaps.event.trigger(marker, 'dragstart', gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0));
 
       expect(await methodCalled, isTrue);
     });
@@ -79,11 +75,7 @@ void main() {
       LegacyMarkerController(marker: marker, onDrag: onDrag);
 
       // Trigger a drag end event...
-      gmaps.event.trigger(
-        marker,
-        'drag',
-        gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
-      );
+      gmaps.event.trigger(marker, 'drag', gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0));
 
       expect(await methodCalled, isTrue);
     });
@@ -92,11 +84,7 @@ void main() {
       LegacyMarkerController(marker: marker, onDragEnd: onDragEnd);
 
       // Trigger a drag end event...
-      gmaps.event.trigger(
-        marker,
-        'dragend',
-        gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
-      );
+      gmaps.event.trigger(marker, 'dragend', gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0));
 
       expect(await methodCalled, isTrue);
     });
@@ -116,9 +104,7 @@ void main() {
       expect(marker.position?.lng, equals(54));
     });
 
-    testWidgets('infoWindow null, showInfoWindow.', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('infoWindow null, showInfoWindow.', (WidgetTester tester) async {
       final controller = LegacyMarkerController(marker: marker);
 
       controller.showInfoWindow();
@@ -130,10 +116,7 @@ void main() {
       final infoWindow = gmaps.InfoWindow();
       final map = gmaps.Map(createDivElement());
       marker.set('map', map);
-      final controller = LegacyMarkerController(
-        marker: marker,
-        infoWindow: infoWindow,
-      );
+      final controller = LegacyMarkerController(marker: marker, infoWindow: infoWindow);
 
       controller.showInfoWindow();
 
@@ -145,10 +128,7 @@ void main() {
       final infoWindow = gmaps.InfoWindow();
       final map = gmaps.Map(createDivElement());
       marker.set('map', map);
-      final controller = LegacyMarkerController(
-        marker: marker,
-        infoWindow: infoWindow,
-      );
+      final controller = LegacyMarkerController(marker: marker, infoWindow: infoWindow);
 
       controller.hideInfoWindow();
 
@@ -163,10 +143,7 @@ void main() {
         final infoWindow = gmaps.InfoWindow();
         final map = gmaps.Map(createDivElement());
         marker.set('map', map);
-        controller = LegacyMarkerController(
-          marker: marker,
-          infoWindow: infoWindow,
-        );
+        controller = LegacyMarkerController(marker: marker, infoWindow: infoWindow);
       });
 
       testWidgets('drops gmaps instance', (WidgetTester tester) async {
@@ -175,9 +152,7 @@ void main() {
         expect(controller.marker, isNull);
       });
 
-      testWidgets('cannot call update after remove', (
-        WidgetTester tester,
-      ) async {
+      testWidgets('cannot call update after remove', (WidgetTester tester) async {
         final options = gmaps.MarkerOptions()..draggable = true;
 
         controller.remove();
@@ -187,9 +162,7 @@ void main() {
         }, throwsAssertionError);
       });
 
-      testWidgets('cannot call showInfoWindow after remove', (
-        WidgetTester tester,
-      ) async {
+      testWidgets('cannot call showInfoWindow after remove', (WidgetTester tester) async {
         controller.remove();
 
         expect(() {
@@ -197,9 +170,7 @@ void main() {
         }, throwsStateError);
       });
 
-      testWidgets('cannot call hideInfoWindow after remove', (
-        WidgetTester tester,
-      ) async {
+      testWidgets('cannot call hideInfoWindow after remove', (WidgetTester tester) async {
         controller.remove();
 
         expect(() {
