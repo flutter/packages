@@ -3,43 +3,30 @@
 // found in the LICENSE file.
 
 import 'package:flutter/rendering.dart';
-import 'package:material_ui/material_ui.dart';
-import 'package:cupertino_ui_examples/magnifier/text_magnifier.0.dart'
-    as example;
+import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:cupertino_ui_examples/magnifier/text_magnifier.0.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
-List<TextSelectionPoint> _globalize(
-  Iterable<TextSelectionPoint> points,
-  RenderBox box,
-) {
+List<TextSelectionPoint> _globalize(Iterable<TextSelectionPoint> points, RenderBox box) {
   return points.map<TextSelectionPoint>((TextSelectionPoint point) {
     return TextSelectionPoint(box.localToGlobal(point.point), point.direction);
   }).toList();
 }
 
-RenderEditable _findRenderEditable<T extends State<StatefulWidget>>(
-  WidgetTester tester,
-) {
-  return (tester.state(find.byType(TextField))
-          as TextSelectionGestureDetectorBuilderDelegate)
+RenderEditable _findRenderEditable<T extends State<StatefulWidget>>(WidgetTester tester) {
+  return (tester.state(find.byType(CupertinoTextField)) as TextSelectionGestureDetectorBuilderDelegate)
       .editableTextKey
       .currentState!
       .renderEditable;
 }
 
-Offset _textOffsetToPosition<T extends State<StatefulWidget>>(
-  WidgetTester tester,
-  int offset,
-) {
+Offset _textOffsetToPosition<T extends State<StatefulWidget>>(WidgetTester tester, int offset) {
   final RenderEditable renderEditable = _findRenderEditable(tester);
 
   final List<TextSelectionPoint> endpoints = renderEditable
       .getEndpointsForSelection(TextSelection.collapsed(offset: offset))
       .map<TextSelectionPoint>(
-        (TextSelectionPoint point) => TextSelectionPoint(
-          renderEditable.localToGlobal(point.point),
-          point.direction,
-        ),
+        (TextSelectionPoint point) => TextSelectionPoint(renderEditable.localToGlobal(point.point), point.direction),
       )
       .toList();
 
@@ -65,7 +52,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final TextEditingController controller = tester
-        .firstWidget<TextField>(find.byType(TextField))
+        .firstWidget<CupertinoTextField>(find.byType(CupertinoTextField))
         .controller!;
 
     final TextSelection selection = controller.selection;
@@ -86,32 +73,23 @@ void main() {
   testWidgets(
     'should show custom magnifier on drag',
     (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const example.TextMagnifierExampleApp(text: defaultText),
-      );
+      await tester.pumpWidget(const example.TextMagnifierExampleApp(text: defaultText));
 
       await showMagnifier(tester, defaultText.indexOf('e'));
       expect(find.byType(example.CustomMagnifier), findsOneWidget);
 
-      await expectLater(
-        find.byType(example.TextMagnifierExampleApp),
-        matchesGoldenFile('text_magnifier.0_test.png'),
-      );
+      await expectLater(find.byType(example.TextMagnifierExampleApp), matchesGoldenFile('text_magnifier.0_test.png'));
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{.iOS, .android}),
     // This image is flaky. https://github.com/flutter/flutter/issues/144350
     skip: true,
   );
 
-  testWidgets('should show custom magnifier in RTL', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('should show custom magnifier in RTL', (WidgetTester tester) async {
     const String text = 'أثارت زر';
     const String textToTapOn = 'ت';
 
-    await tester.pumpWidget(
-      const example.TextMagnifierExampleApp(textDirection: .rtl, text: text),
-    );
+    await tester.pumpWidget(const example.TextMagnifierExampleApp(textDirection: .rtl, text: text));
 
     await showMagnifier(tester, text.indexOf(textToTapOn));
 
