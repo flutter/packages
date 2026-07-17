@@ -128,12 +128,8 @@ extension on SK2TransactionMessage {
       id: id.toString(),
       originalId: originalId.toString(),
       productId: productId,
-      purchaseDate: purchaseDate != null
-          ? _secondsToMillisecondsSinceEpochString(purchaseDate!)
-          : '',
-      expirationDate: expirationDate != null
-          ? _secondsToMillisecondsSinceEpochString(expirationDate!)
-          : null,
+      purchaseDate: _secondsToMillisecondsSinceEpochString(purchaseDate) ?? '',
+      expirationDate: _secondsToMillisecondsSinceEpochString(expirationDate),
       quantity: purchasedQuantity,
       appAccountToken: appAccountToken,
       receiptData: receiptData,
@@ -162,16 +158,15 @@ extension on SK2TransactionMessage {
         serverVerificationData: receiptData ?? '',
         source: kIAPSource,
       ),
-      transactionDate: purchaseDate != null
-          ? _secondsToMillisecondsSinceEpochString(purchaseDate!)
-          : null,
+      transactionDate: _secondsToMillisecondsSinceEpochString(purchaseDate),
       status: purchaseStatus,
       purchaseID: id > 0 ? id.toString() : null,
       appAccountToken: appAccountToken,
     );
   }
 
-  String _secondsToMillisecondsSinceEpochString(double date) => (date * 1000).round().toString();
+  String? _secondsToMillisecondsSinceEpochString(double? date) =>
+      date != null ? (date * 1000).round().toString() : null;
 }
 
 /// An observer that listens to all transactions created
