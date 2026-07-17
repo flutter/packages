@@ -576,11 +576,10 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   }
 
   Future<void> onNewCameraSelected(CameraDescription cameraDescription) async {
-    if (controller != null) {
-      return controller!.setDescription(cameraDescription);
-    } else {
-      return _initializeCameraController(cameraDescription);
+    if (controller != null && controller!.value.isRecordingVideo) {
+      return;
     }
+    return _initializeCameraController(cameraDescription);
   }
 
   Future<void> _initializeCameraController(CameraDescription cameraDescription) async {
