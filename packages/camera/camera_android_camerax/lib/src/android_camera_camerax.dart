@@ -441,15 +441,6 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Retrieve info required for correcting the rotation of the camera preview
     // if necessary.
     sensorOrientationDegrees = cameraDescription.sensorOrientation.toDouble();
-    _handlesCropAndRotation = false;
-    // _handlesCropAndRotation = await preview!
-    //     .surfaceProducerHandlesCropAndRotation();
-    _initialDeviceOrientation = _deserializeDeviceOrientation(
-      await deviceOrientationManager.getUiOrientation(),
-    );
-    _initialDefaultDisplayRotation = await deviceOrientationManager
-        .getDefaultDisplayRotation();
-
     return _flutterSurfaceTextureId;
   }
 
