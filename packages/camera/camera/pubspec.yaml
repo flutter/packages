@@ -22,10 +22,10 @@ flutter:
 
 dependencies:
   camera_android_camerax:
-    path: ../camera_android_camerax/
+    path: ../camera_android_camerax/ # testing change
   camera_avfoundation: ^0.10.0
   camera_platform_interface:
-    path: ../camera_platform_interface/
+    path: ../camera_platform_interface/ # testing change
   camera_web: ^0.3.3
   flutter:
     sdk: flutter

@@ -1387,7 +1387,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   }
 
   @override
-  handlesRotationNatively
+  bool handlesRotationNatively() => true;
 
   // Methods for binding UseCases to the lifecycle of the camera controlled
   // by a ProcessCameraProvider instance:

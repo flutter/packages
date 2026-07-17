@@ -20,7 +20,7 @@ flutter:
 dependencies:
   async: ^2.5.0
   camera_platform_interface:
-    path: ../camera_platform_interface/
+    path: ../camera_platform_interface/ # testing change
   flutter:
     sdk: flutter
   meta: ^1.7.0
