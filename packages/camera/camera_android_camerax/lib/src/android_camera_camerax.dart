@@ -18,10 +18,8 @@ import 'package:flutter/services.dart'
         PlatformViewsService,
         StandardMessageCodec;
 import 'package:flutter/widgets.dart' hide AspectRatio;
-import 'package:flutter/widgets.dart' as widgets show AspectRatio;
 import 'package:stream_transform/stream_transform.dart';
 import 'camerax_library.dart';
-import 'rotated_preview_delegate.dart';
 
 /// The Android implementation of [CameraPlatform] that uses the CameraX library.
 class AndroidCameraCameraX extends CameraPlatform {
@@ -269,18 +267,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   late double sensorOrientationDegrees;
 
-  /// Whether or not the Android surface producer automatically handles
-  /// correcting the rotation of camera previews for the device this plugin runs on.
-  late bool _handlesCropAndRotation;
-
-  /// The initial orientation of the device when the camera is created.
-  late DeviceOrientation _initialDeviceOrientation;
-
-  /// The initial rotation of the Android default display when the camera is created.
-  ///
-  /// This is expressed in terms of one of the [Surface] rotation constant.
-  late int _initialDefaultDisplayRotation;
-
   /// Whether or not audio should be enabled for recording video if permission is
   /// granted.
   @visibleForTesting
@@ -386,9 +372,6 @@ class AndroidCameraCameraX extends CameraPlatform {
     CameraDescription cameraDescription,
     MediaSettings? mediaSettings,
   ) async {
-    print(
-      'CAMILLE: CREATING CAMERA WITH LENS DIRECTION: ${cameraDescription.lensDirection}',
-    );
     enableRecordingAudio = mediaSettings?.enableAudio ?? false;
     final CameraPermissionsError? error = await systemServicesManager
         .requestCameraPermissions(enableRecordingAudio);
@@ -521,12 +504,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     // configured camera:
 
     // Retrieve preview resolution.
-    ResolutionInfo? previewResInfo = await preview!.getResolutionInfo();
-    print(
-      'CAMILLE: PREVIEW RESOLUTION INFO: ${previewResInfo!.resolution!.height} x ${previewResInfo!.resolution!.width}',
-    );
-    final ResolutionInfo previewResolutionInfo = previewResInfo!;
-    final double width = previewResolutionInfo.resolution.width.toDouble();
+    final ResolutionInfo? previewResolutionInfo = await preview!
+        .getResolutionInfo();
+    final double width = previewResolutionInfo!.resolution.width.toDouble();
     final double height = previewResolutionInfo.resolution.height.toDouble();
     _cameraLandscapeAspectRatios[cameraId] =
         max(width, height) / min(width, height);
@@ -1066,7 +1046,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] can be retrieved from that call.
   @override
   Widget buildPreview(int cameraId) {
-    print("CAMILLE: rebuilding preview!");
     if (!previewInitiallyBound) {
       // No camera has been created, and thus, the preview UseCase has not been
       // bound to the camera lifecycle, restricting this preview from being
@@ -1107,41 +1086,11 @@ class AndroidCameraCameraX extends CameraPlatform {
       },
     );
 
-    final double? landscapeAspectRatio = _cameraLandscapeAspectRatios[cameraId];
-    if (landscapeAspectRatio == null) {
-      return platformViewLink;
-    }
-
     return Builder(
       builder: (BuildContext context) {
-        final isPortrait =
-            MediaQuery.of(context).orientation == Orientation.portrait;
-        return Center(
-          child: widgets.AspectRatio(
-            aspectRatio: isPortrait
-                ? (1 / landscapeAspectRatio)
-                : landscapeAspectRatio,
-            child: platformViewLink,
-          ),
-        );
+        return Center(child: platformViewLink);
       },
     );
-    // final Stream<DeviceOrientation> deviceOrientationStream =
-    //     onDeviceOrientationChanged().map(
-    //       (DeviceOrientationChangedEvent e) => e.orientation,
-    //     );
-    // final Widget preview = Texture(textureId: cameraId);
-
-    // return RotatedPreviewDelegate(
-    //   handlesCropAndRotation: _handlesCropAndRotation,
-    //   initialDeviceOrientation: _initialDeviceOrientation,
-    //   initialDefaultDisplayRotation: _initialDefaultDisplayRotation,
-    //   deviceOrientationStream: deviceOrientationStream,
-    //   sensorOrientationDegrees: sensorOrientationDegrees,
-    //   cameraIsFrontFacing: cameraIsFrontFacing,
-    //   deviceOrientationManager: deviceOrientationManager,
-    //   child: preview,
-    // );
   }
 
   /// Captures an image using the camera with ID [cameraId] and returns the file where it was saved.
