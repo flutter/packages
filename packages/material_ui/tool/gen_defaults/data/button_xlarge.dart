@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 38.0.15
+// Version: 38.0.58
 
 import 'shape_struct.dart';
-import 'typescale_struct.dart';
+import 'typescale.dart';
 
 class TokenButtonXlarge {
   /// md.comp.button.xlarge.container.height
@@ -36,13 +36,7 @@ class TokenButtonXlarge {
   static const double iconSize = 40.00;
 
   /// md.comp.button.xlarge.label-text
-  static const TypescaleStruct labelText = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 32.00,
-    fontWeight: 400,
-    lineHeight: 40.00,
-    letterSpacing: 0.00,
-  );
+  static const TypescaleStruct labelText = TokenTypescale.headlineLarge;
 
   /// md.comp.button.xlarge.leading-space
   static const double leadingSpace = 64.00;

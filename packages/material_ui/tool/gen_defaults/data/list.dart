@@ -2,11 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 38.0.15
+// Version: 38.0.58
 
 import 'color_role.dart';
 import 'shape_struct.dart';
-import 'typescale_struct.dart';
+import 'typescale.dart';
 
 class TokenList {
   /// md.comp.list.container.shape
@@ -215,13 +215,7 @@ class TokenList {
   static const TokenColorRole listItemLabelTextColor = TokenColorRole.onSurface;
 
   /// md.comp.list.list-item.label-text.type
-  static const TypescaleStruct listItemLabelTextType = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 16.00,
-    fontWeight: 400,
-    lineHeight: 24.00,
-    letterSpacing: 0.50,
-  );
+  static const TypescaleStruct listItemLabelTextType = TokenTypescale.bodyLarge;
 
   /// md.comp.list.list-item.large.leading-video.height
   static const double listItemLargeLeadingVideoHeight = 64.00;
@@ -238,13 +232,8 @@ class TokenList {
       TokenColorRole.onPrimaryContainer;
 
   /// md.comp.list.list-item.leading-avatar-label.type
-  static const TypescaleStruct listItemLeadingAvatarLabelType = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 16.00,
-    fontWeight: 500,
-    lineHeight: 24.00,
-    letterSpacing: 0.15,
-  );
+  static const TypescaleStruct listItemLeadingAvatarLabelType =
+      TokenTypescale.titleMedium;
 
   /// md.comp.list.list-item.leading-avatar.shape
   static const ShapeStruct listItemLeadingAvatarShape = ShapeStruct(
@@ -315,13 +304,7 @@ class TokenList {
       TokenColorRole.onSurfaceVariant;
 
   /// md.comp.list.list-item.overline.type
-  static const TypescaleStruct listItemOverlineType = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 11.00,
-    fontWeight: 500,
-    lineHeight: 16.00,
-    letterSpacing: 0.50,
-  );
+  static const TypescaleStruct listItemOverlineType = TokenTypescale.labelSmall;
 
   /// md.comp.list.list-item.pressed.container.expressive.shape
   static const ShapeStruct listItemPressedContainerExpressiveShape =
@@ -598,13 +581,8 @@ class TokenList {
       TokenColorRole.onSurfaceVariant;
 
   /// md.comp.list.list-item.supporting-text.type
-  static const TypescaleStruct listItemSupportingTextType = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 14.00,
-    fontWeight: 400,
-    lineHeight: 20.00,
-    letterSpacing: 0.25,
-  );
+  static const TypescaleStruct listItemSupportingTextType =
+      TokenTypescale.bodyMedium;
 
   /// md.comp.list.list-item.three-line.container.height
   static const double listItemThreeLineContainerHeight = 88.00;
@@ -631,13 +609,7 @@ class TokenList {
 
   /// md.comp.list.list-item.trailing-supporting-text.type
   static const TypescaleStruct listItemTrailingSupportingTextType =
-      TypescaleStruct(
-        fontFamily: 'Roboto',
-        fontSize: 11.00,
-        fontWeight: 500,
-        lineHeight: 16.00,
-        letterSpacing: 0.50,
-      );
+      TokenTypescale.labelSmall;
 
   /// md.comp.list.list-item.two-line.container.height
   static const double listItemTwoLineContainerHeight = 72.00;

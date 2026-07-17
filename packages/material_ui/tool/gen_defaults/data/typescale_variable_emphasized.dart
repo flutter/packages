@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 38.0.15
+// Version: 38.0.58
 
 import 'typescale_struct.dart';
 
@@ -14,6 +14,7 @@ class TokenTypescaleVariableEmphasized {
     fontWeight: 500,
     lineHeight: 24.00,
     letterSpacing: 0.00,
+    textStyle: 'variable.emphasized.body-large',
   );
 
   /// md.sys.typescale.variable.emphasized.body-medium
@@ -23,6 +24,7 @@ class TokenTypescaleVariableEmphasized {
     fontWeight: 500,
     lineHeight: 20.00,
     letterSpacing: 0.00,
+    textStyle: 'variable.emphasized.body-medium',
   );
 
   /// md.sys.typescale.variable.emphasized.body-small
@@ -32,6 +34,7 @@ class TokenTypescaleVariableEmphasized {
     fontWeight: 500,
     lineHeight: 16.00,
     letterSpacing: 0.00,
+    textStyle: 'variable.emphasized.body-small',
   );
 
   /// md.sys.typescale.variable.emphasized.display-large
@@ -41,6 +44,7 @@ class TokenTypescaleVariableEmphasized {
     fontWeight: 500,
     lineHeight: 64.00,
     letterSpacing: 0.00,
+    textStyle: 'variable.emphasized.display-large',
   );
 
   /// md.sys.typescale.variable.emphasized.display-medium
@@ -50,6 +54,7 @@ class TokenTypescaleVariableEmphasized {
     fontWeight: 500,
     lineHeight: 52.00,
     letterSpacing: 0.00,
+    textStyle: 'variable.emphasized.display-medium',
   );
 
   /// md.sys.typescale.variable.emphasized.display-small
@@ -59,6 +64,7 @@ class TokenTypescaleVariableEmphasized {
     fontWeight: 500,
     lineHeight: 44.00,
     letterSpacing: 0.00,
+    textStyle: 'variable.emphasized.display-small',
   );
 
   /// md.sys.typescale.variable.emphasized.headline-large
@@ -68,6 +74,7 @@ class TokenTypescaleVariableEmphasized {
     fontWeight: 500,
     lineHeight: 40.00,
     letterSpacing: 0.00,
+    textStyle: 'variable.emphasized.headline-large',
   );
 
   /// md.sys.typescale.variable.emphasized.headline-medium
@@ -77,6 +84,7 @@ class TokenTypescaleVariableEmphasized {
     fontWeight: 500,
     lineHeight: 36.00,
     letterSpacing: 0.00,
+    textStyle: 'variable.emphasized.headline-medium',
   );
 
   /// md.sys.typescale.variable.emphasized.headline-small
@@ -86,6 +94,7 @@ class TokenTypescaleVariableEmphasized {
     fontWeight: 500,
     lineHeight: 32.00,
     letterSpacing: 0.00,
+    textStyle: 'variable.emphasized.headline-small',
   );
 
   /// md.sys.typescale.variable.emphasized.label-large
@@ -95,6 +104,7 @@ class TokenTypescaleVariableEmphasized {
     fontWeight: 600,
     lineHeight: 20.00,
     letterSpacing: 0.00,
+    textStyle: 'variable.emphasized.label-large',
   );
 
   /// md.sys.typescale.variable.emphasized.label-medium
@@ -104,6 +114,7 @@ class TokenTypescaleVariableEmphasized {
     fontWeight: 600,
     lineHeight: 16.00,
     letterSpacing: 0.00,
+    textStyle: 'variable.emphasized.label-medium',
   );
 
   /// md.sys.typescale.variable.emphasized.label-small
@@ -113,6 +124,7 @@ class TokenTypescaleVariableEmphasized {
     fontWeight: 600,
     lineHeight: 16.00,
     letterSpacing: 0.00,
+    textStyle: 'variable.emphasized.label-small',
   );
 
   /// md.sys.typescale.variable.emphasized.title-large
@@ -122,6 +134,7 @@ class TokenTypescaleVariableEmphasized {
     fontWeight: 500,
     lineHeight: 28.00,
     letterSpacing: 0.00,
+    textStyle: 'variable.emphasized.title-large',
   );
 
   /// md.sys.typescale.variable.emphasized.title-medium
@@ -131,6 +144,7 @@ class TokenTypescaleVariableEmphasized {
     fontWeight: 600,
     lineHeight: 24.00,
     letterSpacing: 0.00,
+    textStyle: 'variable.emphasized.title-medium',
   );
 
   /// md.sys.typescale.variable.emphasized.title-small
@@ -140,5 +154,6 @@ class TokenTypescaleVariableEmphasized {
     fontWeight: 600,
     lineHeight: 20.00,
     letterSpacing: 0.00,
+    textStyle: 'variable.emphasized.title-small',
   );
 }

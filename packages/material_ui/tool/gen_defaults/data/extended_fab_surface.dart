@@ -2,11 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 38.0.15
+// Version: 38.0.58
 
 import 'color_role.dart';
 import 'shape_struct.dart';
-import 'typescale_struct.dart';
+import 'typescale.dart';
 
 class TokenExtendedFabSurface {
   /// md.comp.extended-fab.surface.container.color
@@ -80,13 +80,7 @@ class TokenExtendedFabSurface {
   static const TokenColorRole labelTextColor = TokenColorRole.primary;
 
   /// md.comp.extended-fab.surface.label-text.type
-  static const TypescaleStruct labelTextType = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 14.00,
-    fontWeight: 500,
-    lineHeight: 20.00,
-    letterSpacing: 0.10,
-  );
+  static const TypescaleStruct labelTextType = TokenTypescale.labelLarge;
 
   /// md.comp.extended-fab.surface.lowered.container.color
   static const TokenColorRole loweredContainerColor =

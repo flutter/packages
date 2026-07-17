@@ -9,6 +9,7 @@ class TypescaleStruct {
     required this.fontWeight,
     required this.lineHeight,
     required this.letterSpacing,
+    this.textStyle,
   });
 
   final String fontFamily;
@@ -16,4 +17,5 @@ class TypescaleStruct {
   final double fontWeight;
   final double lineHeight;
   final double letterSpacing;
+  final String? textStyle;
 }

@@ -2,11 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 38.0.15
+// Version: 38.0.58
 
 import 'color_role.dart';
 import 'shape_struct.dart';
-import 'typescale_struct.dart';
+import 'typescale.dart';
 
 class TokenDateInputModal {
   /// md.comp.date-input.modal.container.color
@@ -42,24 +42,14 @@ class TokenDateInputModal {
       TokenColorRole.onSurfaceVariant;
 
   /// md.comp.date-input.modal.header.headline.type
-  static const TypescaleStruct headerHeadlineType = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 32.00,
-    fontWeight: 400,
-    lineHeight: 40.00,
-    letterSpacing: 0.00,
-  );
+  static const TypescaleStruct headerHeadlineType =
+      TokenTypescale.headlineLarge;
 
   /// md.comp.date-input.modal.header.supporting-text.color
   static const TokenColorRole headerSupportingTextColor =
       TokenColorRole.onSurfaceVariant;
 
   /// md.comp.date-input.modal.header.supporting-text.type
-  static const TypescaleStruct headerSupportingTextType = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 14.00,
-    fontWeight: 500,
-    lineHeight: 20.00,
-    letterSpacing: 0.10,
-  );
+  static const TypescaleStruct headerSupportingTextType =
+      TokenTypescale.labelLarge;
 }
