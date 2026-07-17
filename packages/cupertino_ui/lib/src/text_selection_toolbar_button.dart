@@ -53,25 +53,25 @@ class CupertinoTextSelectionToolbarButton extends StatefulWidget {
        text = null,
        onPressed = buttonItem.onPressed;
 
-  /// {@template flutter.cupertino.CupertinoTextSelectionToolbarButton.child}
+  /// {@template cupertino_ui.CupertinoTextSelectionToolbarButton.child}
   /// The child of this button.
   ///
   /// Usually a [Text] or an [Icon].
   /// {@endtemplate}
   final Widget? child;
 
-  /// {@template flutter.cupertino.CupertinoTextSelectionToolbarButton.onPressed}
+  /// {@template cupertino_ui.CupertinoTextSelectionToolbarButton.onPressed}
   /// Called when this button is pressed.
   /// {@endtemplate}
   final VoidCallback? onPressed;
 
-  /// {@template flutter.cupertino.CupertinoTextSelectionToolbarButton.onPressed}
+  /// {@template cupertino_ui.CupertinoTextSelectionToolbarButton.onPressed}
   /// The buttonItem used to generate the button when using
   /// [CupertinoTextSelectionToolbarButton.buttonItem].
   /// {@endtemplate}
   final ContextMenuButtonItem? buttonItem;
 
-  /// {@template flutter.cupertino.CupertinoTextSelectionToolbarButton.text}
+  /// {@template cupertino_ui.CupertinoTextSelectionToolbarButton.text}
   /// The text used in the button's label when using
   /// [CupertinoTextSelectionToolbarButton.text].
   /// {@endtemplate}

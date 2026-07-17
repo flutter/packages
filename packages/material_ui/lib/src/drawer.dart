@@ -250,7 +250,7 @@ class Drawer extends StatelessWidget {
   ///    value is used.
   final String? semanticLabel;
 
-  /// {@macro flutter.cupertino.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// The [clipBehavior] argument specifies how to clip the drawer's [shape].
   ///
@@ -372,7 +372,7 @@ class DrawerController extends StatefulWidget {
   /// If false, tapping the barrier will not dismiss the drawer.
   final bool drawerBarrierDismissible;
 
-  /// {@template flutter.material.DrawerController.dragStartBehavior}
+  /// {@template material_ui.DrawerController.dragStartBehavior}
   /// Determines the way that drag start behavior is handled.
   ///
   /// If set to [DragStartBehavior.start], the drag behavior used for opening

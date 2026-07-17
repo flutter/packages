@@ -521,7 +521,7 @@ class Slider extends StatefulWidget {
   /// to [ColorScheme.primary] with an opacity of 0.12.
   final WidgetStateProperty<Color?>? overlayColor;
 
-  /// {@template flutter.material.slider.mouseCursor}
+  /// {@template material_ui.slider.mouseCursor}
   /// The cursor for a mouse pointer when it enters or is hovering over the
   /// widget.
   ///
