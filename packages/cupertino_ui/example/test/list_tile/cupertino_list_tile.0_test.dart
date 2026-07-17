@@ -3,11 +3,14 @@
 // found in the LICENSE file.
 
 import 'package:cupertino_ui/cupertino_ui.dart';
-import 'package:cupertino_ui_examples/list_tile/cupertino_list_tile.0.dart' as example;
+import 'package:cupertino_ui_examples/list_tile/cupertino_list_tile.0.dart'
+    as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('CupertinoListTile respects properties', (WidgetTester tester) async {
+  testWidgets('CupertinoListTile respects properties', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(const example.CupertinoListTileApp());
 
     expect(find.text('CupertinoListTile Sample'), findsOne);
@@ -25,7 +28,14 @@ void main() {
     expect(find.byIcon(CupertinoIcons.ellipsis_vertical), findsNWidgets(3));
     expect(find.byIcon(CupertinoIcons.info), findsOne);
 
-    final Finder tileWithBackgroundFinder = find.byKey(const Key('CupertinoListTile with background color'));
-    expect(tester.firstWidget<CupertinoListTile>(tileWithBackgroundFinder).backgroundColor, const Color(0xFF0000FF));
+    final Finder tileWithBackgroundFinder = find.byKey(
+      const Key('CupertinoListTile with background color'),
+    );
+    expect(
+      tester
+          .firstWidget<CupertinoListTile>(tileWithBackgroundFinder)
+          .backgroundColor,
+      const Color(0xFF0000FF),
+    );
   });
 }

@@ -9,13 +9,18 @@ import 'package:cupertino_ui/cupertino_ui.dart';
 void main() => runApp(const TextMagnifierExampleApp(text: 'Hello world!'));
 
 class TextMagnifierExampleApp extends StatefulWidget {
-  const TextMagnifierExampleApp({super.key, this.textDirection = TextDirection.ltr, required this.text});
+  const TextMagnifierExampleApp({
+    super.key,
+    this.textDirection = TextDirection.ltr,
+    required this.text,
+  });
 
   final TextDirection textDirection;
   final String text;
 
   @override
-  State<TextMagnifierExampleApp> createState() => _TextMagnifierExampleAppState();
+  State<TextMagnifierExampleApp> createState() =>
+      _TextMagnifierExampleAppState();
 }
 
 class _TextMagnifierExampleAppState extends State<TextMagnifierExampleApp> {
@@ -33,8 +38,9 @@ class _TextMagnifierExampleAppState extends State<TextMagnifierExampleApp> {
               // Create a custom magnifier configuration that
               // this `TextField` will use to build a magnifier with.
               magnifierConfiguration: TextMagnifierConfiguration(
-                magnifierBuilder: (_, _, ValueNotifier<MagnifierInfo> magnifierInfo) =>
-                    CustomMagnifier(magnifierInfo: magnifierInfo),
+                magnifierBuilder:
+                    (_, _, ValueNotifier<MagnifierInfo> magnifierInfo) =>
+                        CustomMagnifier(magnifierInfo: magnifierInfo),
               ),
               controller: controller,
             ),
@@ -103,7 +109,9 @@ class CustomMagnifier extends StatelessWidget {
             focalPointOffset: Offset(0, magnifierSize.height / 2),
             // Decorate it however we'd like!
             decoration: const MagnifierDecoration(
-              shape: StarBorder(side: BorderSide(color: Color(0xFF00FF00), width: 2)),
+              shape: StarBorder(
+                side: BorderSide(color: Color(0xFF00FF00), width: 2),
+              ),
             ),
             size: magnifierSize,
           ),
