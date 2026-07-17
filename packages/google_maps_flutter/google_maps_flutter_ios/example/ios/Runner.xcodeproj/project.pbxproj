@@ -228,7 +228,7 @@
 				3390B45D2F33AFA60094DEB9 /* TestUtils */,
 				F269303A2BB389BF00BF17C4 /* assets */,
 				F7151F14265D7ED70028CB91 /* Info.plist */,
-							F8E0364A58CE4D1F8AA3D564 /* CircleControllerTests.swift */,
+				F8E0364A58CE4D1F8AA3D564 /* CircleControllerTests.swift */,
 				9FB05BECEF774386944B77D3 /* ClusterManagersControllerTests.swift */,
 				D3331542510941C3930DDCB6 /* ConversionsUtilsTests.swift */,
 				5BD78CCDD89347059EA71321 /* ExtractIconFromDataTests.swift */,
@@ -241,7 +241,7 @@
 				0F65543ABD25496A92F8F91F /* TileOverlayControllerTests.swift */,
 				54CD823EECFC4BDD8755DD92 /* TileProviderControllerTests.swift */,
 				65E43D60708A4C5DA931E12E /* RunnerTests-Bridging-Header.h */,
-);
+			);
 			path = RunnerTests;
 			sourceTree = "<group>";
 		};
@@ -507,7 +507,7 @@
 				3390B45E2F33AFA60094DEB9 /* PartiallyMockedMapView.swift in Sources */,
 				3390B45F2F33AFA60094DEB9 /* TestAssetProvider.swift in Sources */,
 				3390B4602F33AFA60094DEB9 /* TestMapEventHandler.swift in Sources */,
-							A73F1ED02A874D8596718BE8 /* CircleControllerTests.swift in Sources */,
+				A73F1ED02A874D8596718BE8 /* CircleControllerTests.swift in Sources */,
 				E680DCBC3E7E41089DF60756 /* ClusterManagersControllerTests.swift in Sources */,
 				24A50C44E228413BABF647EF /* ConversionsUtilsTests.swift in Sources */,
 				4518AF21C4DF4AA58D1BB89A /* ExtractIconFromDataTests.swift in Sources */,
@@ -519,7 +519,7 @@
 				6F94C58F3ECF465092D78750 /* PolylineControllerTests.swift in Sources */,
 				02F1F6249887487CBC3019FC /* TileOverlayControllerTests.swift in Sources */,
 				71C9A982E01441D0A61ABCC7 /* TileProviderControllerTests.swift in Sources */,
-);
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F7151F1A265D7EE50028CB91 /* Sources */ = {
@@ -614,7 +614,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -665,7 +665,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -747,9 +747,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/Runner";
-							SWIFT_OBJC_BRIDGING_HEADER = "RunnerTests/RunnerTests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "RunnerTests/RunnerTests-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
-};
+			};
 			name = Debug;
 		};
 		F7151F18265D7ED70028CB91 /* Release */ = {
@@ -769,9 +769,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/Runner";
-							SWIFT_OBJC_BRIDGING_HEADER = "RunnerTests/RunnerTests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "RunnerTests/RunnerTests-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
-};
+			};
 			name = Release;
 		};
 		F7151F26265D7EE50028CB91 /* Debug */ = {
