@@ -155,12 +155,11 @@ class ExtractIconFromDataTests: XCTestCase {
     XCTAssertEqual(resultImage?.size.height, 1.0)
   }
 
-  func testExtractIconFromDataBytesAuto() {
+  func testExtractIconFromDataBytesAuto() throws {
     let testImage = createOnePixelImage()
-    let pngData = testImage.pngData()
-    XCTAssertNotNil(pngData)
+    let pngData = try XCTUnwrap(testImage.pngData())
 
-    let typedData = FlutterStandardTypedData(bytes: pngData!)
+    let typedData = FlutterStandardTypedData(bytes: pngData)
     let bitmap = FGMPlatformBitmapBytesMap.make(
       withByteData: typedData,
       bitmapScaling: .auto,
@@ -183,12 +182,11 @@ class ExtractIconFromDataTests: XCTestCase {
     XCTAssertEqual(resultImage?.size.height, 1.0)
   }
 
-  func testExtractIconFromDataBytesAutoWithScaling() {
+  func testExtractIconFromDataBytesAutoWithScaling() throws {
     let testImage = createOnePixelImage()
-    let pngData = testImage.pngData()
-    XCTAssertNotNil(pngData)
+    let pngData = try XCTUnwrap(testImage.pngData())
 
-    let typedData = FlutterStandardTypedData(bytes: pngData!)
+    let typedData = FlutterStandardTypedData(bytes: pngData)
     let bitmap = FGMPlatformBitmapBytesMap.make(
       withByteData: typedData,
       bitmapScaling: .auto,
@@ -210,14 +208,13 @@ class ExtractIconFromDataTests: XCTestCase {
     XCTAssertEqual(resultImage?.size.height, 0.1)
   }
 
-  func testExtractIconFromDataBytesAutoAndSizeWithSameAspectRatio() {
+  func testExtractIconFromDataBytesAutoAndSizeWithSameAspectRatio() throws {
     let testImage = createOnePixelImage()
-    let pngData = testImage.pngData()
-    XCTAssertNotNil(pngData)
+    let pngData = try XCTUnwrap(testImage.pngData())
 
     let width: CGFloat = 15.0
     let height: CGFloat = 15.0
-    let typedData = FlutterStandardTypedData(bytes: pngData!)
+    let typedData = FlutterStandardTypedData(bytes: pngData)
     let bitmap = FGMPlatformBitmapBytesMap.make(
       withByteData: typedData,
       bitmapScaling: .auto,
@@ -246,14 +243,13 @@ class ExtractIconFromDataTests: XCTestCase {
     XCTAssertEqual(resultImage?.size.height, height)
   }
 
-  func testExtractIconFromDataBytesAutoAndSizeWithDifferentAspectRatio() {
+  func testExtractIconFromDataBytesAutoAndSizeWithDifferentAspectRatio() throws {
     let testImage = createOnePixelImage()
-    let pngData = testImage.pngData()
-    XCTAssertNotNil(pngData)
+    let pngData = try XCTUnwrap(testImage.pngData())
 
     let width: CGFloat = 15.0
     let height: CGFloat = 45.0
-    let typedData = FlutterStandardTypedData(bytes: pngData!)
+    let typedData = FlutterStandardTypedData(bytes: pngData)
     let bitmap = FGMPlatformBitmapBytesMap.make(
       withByteData: typedData,
       bitmapScaling: .auto,
@@ -275,12 +271,11 @@ class ExtractIconFromDataTests: XCTestCase {
     XCTAssertEqual(resultImage?.size.height, height)
   }
 
-  func testExtractIconFromDataBytesNoScaling() {
+  func testExtractIconFromDataBytesNoScaling() throws {
     let testImage = createOnePixelImage()
-    let pngData = testImage.pngData()
-    XCTAssertNotNil(pngData)
+    let pngData = try XCTUnwrap(testImage.pngData())
 
-    let typedData = FlutterStandardTypedData(bytes: pngData!)
+    let typedData = FlutterStandardTypedData(bytes: pngData)
     let bitmap = FGMPlatformBitmapBytesMap.make(
       withByteData: typedData,
       bitmapScaling: .none,

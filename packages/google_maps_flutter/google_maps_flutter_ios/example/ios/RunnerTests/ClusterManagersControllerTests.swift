@@ -9,7 +9,7 @@ import Flutter
 
 class ClusterManagersControllerTests: XCTestCase {
 
-  func testClustering() {
+  func testClustering() throws {
     let frame = CGRect(x: 0, y: 0, width: 100, height: 100)
 
     let mapViewOptions = GMSMapViewOptions()
@@ -95,59 +95,40 @@ class ClusterManagersControllerTests: XCTestCase {
 
     // Verify that the markers were added to the cluster manager
     var error: FlutterError? = nil
-    if let clusters1 = clusterManagersController.clusters(withIdentifier: clusterManagerId, error: &error) {
-      XCTAssertNil(error, "Error should be nil")
-      var found = false
-      for cluster in clusters1 {
-        let cmId = cluster.clusterManagerId
-        XCTAssertNotNil(cmId, "Cluster Manager Identifier should not be nil")
-        if cmId == clusterManagerId {
-          let markerIds = cluster.markerIds
-          XCTAssertEqual(markerIds.count, 2, "Cluster should contain two markers")
-          XCTAssertTrue(markerIds.contains(markerId1), "Cluster should contain markerId1")
-          XCTAssertTrue(markerIds.contains(markerId2), "Cluster should contain markerId2")
-          found = true
-          break
-        }
-      }
-      XCTAssertTrue(found)
-    } else {
-      XCTFail("Clusters should not be nil, error: \(String(describing: error))")
-    }
+    let clusters1 = try XCTUnwrap(
+      clusterManagersController.clusters(withIdentifier: clusterManagerId, error: &error)
+    )
+    XCTAssertNil(error, "Error should be nil")
+    let targetCluster = try XCTUnwrap(
+      clusters1.first(where: { $0.clusterManagerId == clusterManagerId })
+    )
+    XCTAssertEqual(targetCluster.markerIds.count, 2, "Cluster should contain two markers")
+    XCTAssertTrue(targetCluster.markerIds.contains(markerId1), "Cluster should contain markerId1")
+    XCTAssertTrue(targetCluster.markerIds.contains(markerId2), "Cluster should contain markerId2")
 
     markersController.removeMarkers(withIdentifiers: [markerId2])
 
     // Verify that the marker2 is removed from the clusterManager
     error = nil
-    if let clusters2 = clusterManagersController.clusters(withIdentifier: clusterManagerId, error: &error) {
-      XCTAssertNil(error, "Error should be nil")
-      var found = false
-      for cluster in clusters2 {
-        let cmId = cluster.clusterManagerId
-        XCTAssertNotNil(cmId, "Cluster Manager ID should not be nil")
-        if cmId == clusterManagerId {
-          let markerIds = cluster.markerIds
-          XCTAssertEqual(markerIds.count, 1, "Cluster should contain one marker")
-          XCTAssertTrue(markerIds.contains(markerId1), "Cluster should contain markerId1")
-          found = true
-          break
-        }
-      }
-      XCTAssertTrue(found)
-    } else {
-      XCTFail("Clusters should not be nil, error: \(String(describing: error))")
-    }
+    let clusters2 = try XCTUnwrap(
+      clusterManagersController.clusters(withIdentifier: clusterManagerId, error: &error)
+    )
+    XCTAssertNil(error, "Error should be nil")
+    let targetCluster2 = try XCTUnwrap(
+      clusters2.first(where: { $0.clusterManagerId == clusterManagerId })
+    )
+    XCTAssertEqual(targetCluster2.markerIds.count, 1, "Cluster should contain one marker")
+    XCTAssertTrue(targetCluster2.markerIds.contains(markerId1), "Cluster should contain markerId1")
 
     markersController.removeMarkers(withIdentifiers: [markerId1])
 
     // Verify that all markers are removed from clusterManager
     error = nil
-    if let clusters3 = clusterManagersController.clusters(withIdentifier: clusterManagerId, error: &error) {
-      XCTAssertNil(error, "Error should be nil")
-      XCTAssertEqual(clusters3.count, 0, "Cluster Manager should not contain any clusters")
-    } else {
-      XCTFail("Clusters should not be nil, error: \(String(describing: error))")
-    }
+    let clusters3 = try XCTUnwrap(
+      clusterManagersController.clusters(withIdentifier: clusterManagerId, error: &error)
+    )
+    XCTAssertNil(error, "Error should be nil")
+    XCTAssertEqual(clusters3.count, 0, "Cluster Manager should not contain any clusters")
 
     // Remove cluster manager
     clusterManagersController.removeClusterManagers(withIdentifiers: [clusterManagerId])

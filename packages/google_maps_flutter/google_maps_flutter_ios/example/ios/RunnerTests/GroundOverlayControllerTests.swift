@@ -10,10 +10,10 @@ class GroundOverlayControllerTests: XCTestCase {
 
   /// Returns a GroundOverlayController object instantiated with position and a mocked map
   /// instance.
-  static func groundOverlayControllerWithPositionWithMockedMap() -> FGMGroundOverlayController {
+  static func groundOverlayControllerWithPositionWithMockedMap() throws -> FGMGroundOverlayController {
     let bundle = Bundle(for: GroundOverlayControllerTests.self)
-    let imagePath = bundle.path(forResource: "widegamut", ofType: "png", inDirectory: "assets")
-    let wideGamutImage = UIImage(contentsOfFile: imagePath!)!
+    let imagePath = try XCTUnwrap(bundle.path(forResource: "widegamut", ofType: "png", inDirectory: "assets"))
+    let wideGamutImage = try XCTUnwrap(UIImage(contentsOfFile: imagePath))
     let groundOverlay = GMSGroundOverlay(
       position: CLLocationCoordinate2D(latitude: 52.4816, longitude: 3.1791),
       icon: wideGamutImage,
@@ -32,10 +32,10 @@ class GroundOverlayControllerTests: XCTestCase {
 
   /// Returns a GroundOverlayController object instantiated with bounds and a mocked map
   /// instance.
-  static func groundOverlayControllerWithBoundsWithMockedMap() -> FGMGroundOverlayController {
+  static func groundOverlayControllerWithBoundsWithMockedMap() throws -> FGMGroundOverlayController {
     let bundle = Bundle(for: GroundOverlayControllerTests.self)
-    let imagePath = bundle.path(forResource: "widegamut", ofType: "png", inDirectory: "assets")
-    let wideGamutImage = UIImage(contentsOfFile: imagePath!)!
+    let imagePath = try XCTUnwrap(bundle.path(forResource: "widegamut", ofType: "png", inDirectory: "assets"))
+    let wideGamutImage = try XCTUnwrap(UIImage(contentsOfFile: imagePath))
     let groundOverlay = GMSGroundOverlay(
       bounds: GMSCoordinateBounds(
         coordinate: CLLocationCoordinate2D(latitude: 10, longitude: 20),
@@ -55,7 +55,7 @@ class GroundOverlayControllerTests: XCTestCase {
   }
 
   func testUpdatingGroundOverlayWithPosition() throws {
-    let groundOverlayController = GroundOverlayControllerTests.groundOverlayControllerWithPositionWithMockedMap()
+    let groundOverlayController = try GroundOverlayControllerTests.groundOverlayControllerWithPositionWithMockedMap()
 
     let position = FGMPlatformLatLng.make(withLatitude: 52.4816, longitude: 3.1791)
 
@@ -123,7 +123,7 @@ class GroundOverlayControllerTests: XCTestCase {
   }
 
   func testUpdatingGroundOverlayWithBounds() throws {
-    let groundOverlayController = GroundOverlayControllerTests.groundOverlayControllerWithBoundsWithMockedMap()
+    let groundOverlayController = try GroundOverlayControllerTests.groundOverlayControllerWithBoundsWithMockedMap()
 
     let bounds = FGMPlatformLatLngBounds.make(
       withNortheast: FGMPlatformLatLng.make(withLatitude: 54.4816, longitude: 5.1791),

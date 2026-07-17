@@ -72,10 +72,9 @@ class MarkerControllerTests: XCTestCase {
       )
     ])
 
-    guard let markerController = controller.markerIdentifierToController[markerIdentifier] as? FGMMarkerController else {
-      XCTFail("Controller not found for \(markerIdentifier)")
-      return
-    }
+    let markerController = try XCTUnwrap(
+      controller.markerIdentifierToController[markerIdentifier] as? FGMMarkerController
+    )
     let marker = try XCTUnwrap(markerController.marker)
 
     let delta = 0.0001
@@ -117,10 +116,9 @@ class MarkerControllerTests: XCTestCase {
       )
     ])
 
-    guard let markerController = controller.markerIdentifierToController[markerIdentifier] as? FGMMarkerController else {
-      XCTFail("Controller not found for \(markerIdentifier)")
-      return
-    }
+    let markerController = try XCTUnwrap(
+      controller.markerIdentifierToController[markerIdentifier] as? FGMMarkerController
+    )
     let marker = try XCTUnwrap(markerController.marker)
 
     XCTAssertTrue(marker.isDraggable)
@@ -157,10 +155,9 @@ class MarkerControllerTests: XCTestCase {
       )
     ])
 
-    guard let markerController = controller.markerIdentifierToController[markerIdentifier] as? FGMMarkerController else {
-      XCTFail("Controller not found for \(markerIdentifier)")
-      return
-    }
+    let markerController = try XCTUnwrap(
+      controller.markerIdentifierToController[markerIdentifier] as? FGMMarkerController
+    )
     let marker = try XCTUnwrap(markerController.marker)
 
     XCTAssertTrue(marker.isFlat)
@@ -197,10 +194,9 @@ class MarkerControllerTests: XCTestCase {
       )
     ])
 
-    guard let markerController = controller.markerIdentifierToController[markerIdentifier] as? FGMMarkerController else {
-      XCTFail("Controller not found for \(markerIdentifier)")
-      return
-    }
+    let markerController = try XCTUnwrap(
+      controller.markerIdentifierToController[markerIdentifier] as? FGMMarkerController
+    )
     let marker = try XCTUnwrap(markerController.marker)
 
     // Visibility is controlled by being set to a map.
@@ -240,10 +236,9 @@ class MarkerControllerTests: XCTestCase {
       )
     ])
 
-    guard let markerController = controller.markerIdentifierToController[markerIdentifier] as? FGMMarkerController else {
-      XCTFail("Controller not found for \(markerIdentifier)")
-      return
-    }
+    let markerController = try XCTUnwrap(
+      controller.markerIdentifierToController[markerIdentifier] as? FGMMarkerController
+    )
     let marker = try XCTUnwrap(markerController.marker)
 
     let delta = 0.0001

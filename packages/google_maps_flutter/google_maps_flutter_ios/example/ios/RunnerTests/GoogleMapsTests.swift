@@ -91,7 +91,7 @@ class GoogleMapsTests: XCTestCase {
     // Retaining the opaque object should be enough to avoid multiple internal initializations,
     // but don't test the internals of the GoogleMaps API. Assume that it does what is documented.
     // https://developers.google.com/maps/documentation/ios-sdk/reference/interface_g_m_s_services#a436e03c32b1c0be74e072310a7158831
-    XCTAssertEqual(factory1.sharedMapServices as? NSObject, factory2.sharedMapServices as? NSObject)
+    XCTAssertIdentical(factory1.sharedMapServices as AnyObject, factory2.sharedMapServices as AnyObject)
   }
 
   func testHandleResultTileDownsamplesWideGamutImages() throws {
