@@ -80,7 +80,10 @@ class GoogleMapsUITests: XCTestCase {
       XCTFail("Failed due to not able to find platform view")
     }
 
-    let titleBar = app.staticTexts["Map coordinates"]
+    // The semantics type of this element changed between Flutter 3.44 and 3.47.
+    // Using descendants(matching: .any) allows finding it regardless of whether
+    // it is a staticText or otherElement.
+    let titleBar = app.descendants(matching: .any)["Map coordinates"]
     if !titleBar.waitForExistence(timeout: kWaitTime) {
       os_log("%@", log: .default, type: .error, app.debugDescription as NSString)
       XCTFail("Failed due to not able to find title bar")
