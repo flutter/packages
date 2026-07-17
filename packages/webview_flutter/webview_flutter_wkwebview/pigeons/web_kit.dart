@@ -407,6 +407,10 @@ abstract class URLRequest extends NSObject {
 /// See https://developer.apple.com/documentation/foundation/httpurlresponse.
 @ProxyApi()
 abstract class HTTPURLResponse extends URLResponse {
+  /// Creates an HTTP URL response object with the specified values.
+  HTTPURLResponse(String url, String? httpVersion, Map<String, String>? headerFields)
+    : super(url, null, 0, null);
+
   /// The response’s HTTP status code.
   late int statusCode;
 }
@@ -416,7 +420,10 @@ abstract class HTTPURLResponse extends URLResponse {
 ///
 /// See https://developer.apple.com/documentation/foundation/urlresponse.
 @ProxyApi()
-abstract class URLResponse extends NSObject {}
+abstract class URLResponse extends NSObject {
+  /// Creates a URL response object with the specified values.
+  URLResponse(String url, String? mimeType, int expectedContentLength, String? textEncodingName);
+}
 
 /// A script that the web view injects into a webpage.
 ///
@@ -489,6 +496,9 @@ abstract class WKFrameInfo extends NSObject {
 /// See https://developer.apple.com/documentation/foundation/nserror.
 @ProxyApi()
 abstract class NSError extends NSObject {
+  /// Creates an error object with the specified values.
+  NSError();
+
   /// The error code.
   late int code;
 
@@ -707,6 +717,15 @@ abstract class WKWebViewConfiguration extends NSObject {
 
   /// The default preferences to use when loading and rendering content.
   WKWebpagePreferences getDefaultWebpagePreferences();
+
+  /// Registers an object to load resources associated with the specified URL
+  /// scheme.
+  ///
+  /// This must be called before the web view is created with this
+  /// configuration. Registering a scheme that WebKit already handles (e.g.
+  /// `http`, `https`, `file`, `data`, `blob`, or `about`) results in an
+  /// exception on the native side.
+  void setURLSchemeHandler(WKURLSchemeHandler? handler, String urlScheme);
 }
 
 /// An object for managing interactions between JavaScript code and your web
@@ -758,6 +777,57 @@ abstract class WKScriptMessageHandler extends NSObject {
   /// Tells the handler that a webpage sent a script message.
   late void Function(WKUserContentController controller, WKScriptMessage message)
   didReceiveScriptMessage;
+}
+
+/// A protocol for loading resources with URL schemes that WebKit doesn't
+/// handle.
+///
+/// See https://developer.apple.com/documentation/webkit/wkurlschemehandler.
+@ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
+abstract class WKURLSchemeHandler extends NSObject {
+  WKURLSchemeHandler();
+
+  /// Asks the handler to begin loading the data for the specified resource.
+  late void Function(WKWebView webView, WKURLSchemeTask urlSchemeTask) startUrlSchemeTask;
+
+  /// Asks the handler to stop loading the data for the specified resource.
+  ///
+  /// After this is called, calling methods on the associated
+  /// [WKURLSchemeTask] is a no-op.
+  late void Function(WKWebView webView, WKURLSchemeTask urlSchemeTask) stopUrlSchemeTask;
+}
+
+/// An interface that WebKit uses to request custom resources from your app.
+///
+/// See https://developer.apple.com/documentation/webkit/wkurlschemetask.
+@ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
+abstract class WKURLSchemeTask extends NSObject {
+  /// The request object that describes the resource to load.
+  late URLRequest request;
+
+  /// Informs WebKit that you created a response object for the request.
+  ///
+  /// This is a no-op if the task was already stopped with
+  /// [WKURLSchemeHandler.stopUrlSchemeTask].
+  void didReceiveResponse(URLResponse response);
+
+  /// Sends some or all of the resource’s data to WebKit.
+  ///
+  /// This is a no-op if the task was already stopped with
+  /// [WKURLSchemeHandler.stopUrlSchemeTask].
+  void didReceiveData(Uint8List data);
+
+  /// Informs WebKit that you finished loading the requested data.
+  ///
+  /// This is a no-op if the task was already stopped with
+  /// [WKURLSchemeHandler.stopUrlSchemeTask].
+  void didFinish();
+
+  /// Sends an error to WebKit indicating that the resource load failed.
+  ///
+  /// This is a no-op if the task was already stopped with
+  /// [WKURLSchemeHandler.stopUrlSchemeTask].
+  void didFailWithError(NSError error);
 }
 
 /// Methods for accepting or rejecting navigation changes, and for tracking the

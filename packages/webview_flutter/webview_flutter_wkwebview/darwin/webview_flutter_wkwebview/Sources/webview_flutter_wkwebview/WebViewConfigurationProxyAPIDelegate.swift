@@ -98,4 +98,11 @@ class WebViewConfigurationProxyAPIDelegate: PigeonApiDelegateWKWebViewConfigurat
   ) throws -> WKWebpagePreferences {
     return pigeonInstance.defaultWebpagePreferences
   }
+
+  func setURLSchemeHandler(
+    pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration,
+    handler: WKURLSchemeHandler?, urlScheme: String
+  ) throws {
+    pigeonInstance.setURLSchemeHandler(handler, forURLScheme: urlScheme)
+  }
 }

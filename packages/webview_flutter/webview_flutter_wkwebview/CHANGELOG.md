@@ -1,3 +1,9 @@
+## 3.27.0
+
+* Adds support for loading resources with custom URL schemes via
+  `WebKitWebViewControllerCreationParams.urlSchemeHandlers`, backed by the
+  native `WKURLSchemeHandler` API.
+
 ## 3.26.0
 
 * Adds new method for accessing a native `WKWebView` from a `FlutterPluginRegistrar`.

@@ -105,6 +105,27 @@ class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
       pigeonRegistrar: registrar, delegate: HTTPURLResponseProxyAPIDelegate())
   }
 
+  func pigeonApiURLResponse(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiURLResponse
+  {
+    return PigeonApiURLResponse(
+      pigeonRegistrar: registrar, delegate: URLResponseProxyAPIDelegate())
+  }
+
+  func pigeonApiWKURLSchemeHandler(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiWKURLSchemeHandler
+  {
+    return PigeonApiWKURLSchemeHandler(
+      pigeonRegistrar: registrar, delegate: URLSchemeHandlerProxyAPIDelegate())
+  }
+
+  func pigeonApiWKURLSchemeTask(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiWKURLSchemeTask
+  {
+    return PigeonApiWKURLSchemeTask(
+      pigeonRegistrar: registrar, delegate: URLSchemeTaskProxyAPIDelegate())
+  }
+
   func pigeonApiWKUserScript(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
     -> PigeonApiWKUserScript
   {

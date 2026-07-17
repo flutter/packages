@@ -275,6 +275,15 @@ class MockWKWebViewConfiguration extends _i1.Mock implements _i2.WKWebViewConfig
           as _i3.Future<_i2.WKWebpagePreferences>);
 
   @override
+  _i3.Future<void> setURLSchemeHandler(_i2.WKURLSchemeHandler? handler, String? urlScheme) =>
+      (super.noSuchMethod(
+            Invocation.method(#setURLSchemeHandler, [handler, urlScheme]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+
+  @override
   _i2.WKWebViewConfiguration pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
