@@ -711,7 +711,6 @@ class EmptyEvent : PlatformEvent() {
     if (this === other) {
       return true
     }
-    val other = other as EmptyEvent
     return true
   }
 

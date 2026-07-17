@@ -348,11 +348,11 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
         indent.writeln('return true');
       });
 
-      indent.writeln('val other = other as ${classDefinition.name}');
       final Iterable<NamedType> fields = getFieldsInSerializationOrder(classDefinition);
       if (fields.isEmpty) {
         indent.writeln('return true');
       } else {
+        indent.writeln('val other = other as ${classDefinition.name}');
         final String utils = _getUtilsClassName(generatorOptions);
         final String comparisons = fields
             .map((NamedType field) => '$utils.deepEquals(this.${field.name}, other.${field.name})')

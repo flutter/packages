@@ -895,6 +895,42 @@ data class AllNullableTypesWithoutRecursion(
 }
 
 /**
+ * A data class without fields for testing empty classes.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+class AnEmptyClass {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): AnEmptyClass {
+      return AnEmptyClass()
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf()
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (other == null || other.javaClass != javaClass) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result = javaClass.hashCode()
+    return result
+  }
+
+  override fun toString(): String {
+    return "AnEmptyClass()"
+  }
+}
+
+/**
  * A class for testing nested class handling.
  *
  * This is needed to test nested nullable and non-nullable classes, `AllNullableTypes` is
@@ -1026,39 +1062,6 @@ data class TestMessage(val testList: List<Any?>? = null) {
   }
 }
 
-/** Generated class from Pigeon that represents data sent in messages. */
-class AnEmptyClass {
-  companion object {
-    fun fromList(pigeonVar_list: List<Any?>): AnEmptyClass {
-      return AnEmptyClass()
-    }
-  }
-
-  fun toList(): List<Any?> {
-    return listOf()
-  }
-
-  override fun equals(other: Any?): Boolean {
-    if (other == null || other.javaClass != javaClass) {
-      return false
-    }
-    if (this === other) {
-      return true
-    }
-    val other = other as AnEmptyClass
-    return true
-  }
-
-  override fun hashCode(): Int {
-    var result = javaClass.hashCode()
-    return result
-  }
-
-  override fun toString(): String {
-    return "AnEmptyClass()"
-  }
-}
-
 private open class CoreTestsPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
@@ -1083,13 +1086,13 @@ private open class CoreTestsPigeonCodec : StandardMessageCodec() {
         }
       }
       135.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllClassesWrapper.fromList(it) }
+        return (readValue(buffer) as? List<Any?>)?.let { AnEmptyClass.fromList(it) }
       }
       136.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { TestMessage.fromList(it) }
+        return (readValue(buffer) as? List<Any?>)?.let { AllClassesWrapper.fromList(it) }
       }
       137.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AnEmptyClass.fromList(it) }
+        return (readValue(buffer) as? List<Any?>)?.let { TestMessage.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
     }
@@ -1121,15 +1124,15 @@ private open class CoreTestsPigeonCodec : StandardMessageCodec() {
         stream.write(134)
         writeValue(stream, value.toList())
       }
-      is AllClassesWrapper -> {
+      is AnEmptyClass -> {
         stream.write(135)
         writeValue(stream, value.toList())
       }
-      is TestMessage -> {
+      is AllClassesWrapper -> {
         stream.write(136)
         writeValue(stream, value.toList())
       }
-      is AnEmptyClass -> {
+      is TestMessage -> {
         stream.write(137)
         writeValue(stream, value.toList())
       }

@@ -926,6 +926,35 @@ struct AllNullableTypesWithoutRecursion: Hashable, CustomStringConvertible {
   }
 }
 
+/// A data class without fields for testing empty classes.
+///
+/// Generated class from Pigeon that represents data sent in messages.
+struct AnEmptyClass: Hashable, CustomStringConvertible {
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> AnEmptyClass? {
+
+    return AnEmptyClass()
+  }
+  func toList() -> [Any?] {
+    return []
+  }
+  static func == (lhs: AnEmptyClass, rhs: AnEmptyClass) -> Bool {
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
+    return true
+  }
+
+  func hash(into hasher: inout Hasher) {
+    hasher.combine("AnEmptyClass")
+  }
+
+  public var description: String {
+    return "AnEmptyClass()"
+  }
+}
+
 /// A class for testing nested class handling.
 ///
 /// This is needed to test nested nullable and non-nullable classes,
@@ -1048,33 +1077,6 @@ struct TestMessage: Hashable, CustomStringConvertible {
   }
 }
 
-/// Generated class from Pigeon that represents data sent in messages.
-struct AnEmptyClass: Hashable, CustomStringConvertible {
-
-  // swift-format-ignore: AlwaysUseLowerCamelCase
-  static func fromList(_ pigeonVar_list: [Any?]) -> AnEmptyClass? {
-
-    return AnEmptyClass()
-  }
-  func toList() -> [Any?] {
-    return []
-  }
-  static func == (lhs: AnEmptyClass, rhs: AnEmptyClass) -> Bool {
-    if Swift.type(of: lhs) != Swift.type(of: rhs) {
-      return false
-    }
-    return true
-  }
-
-  func hash(into hasher: inout Hasher) {
-    hasher.combine("AnEmptyClass")
-  }
-
-  public var description: String {
-    return "AnEmptyClass()"
-  }
-}
-
 private class CoreTestsPigeonCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
@@ -1099,11 +1101,11 @@ private class CoreTestsPigeonCodecReader: FlutterStandardReader {
     case 134:
       return AllNullableTypesWithoutRecursion.fromList(self.readValue() as! [Any?])
     case 135:
-      return AllClassesWrapper.fromList(self.readValue() as! [Any?])
-    case 136:
-      return TestMessage.fromList(self.readValue() as! [Any?])
-    case 137:
       return AnEmptyClass.fromList(self.readValue() as! [Any?])
+    case 136:
+      return AllClassesWrapper.fromList(self.readValue() as! [Any?])
+    case 137:
+      return TestMessage.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
     }
@@ -1130,13 +1132,13 @@ private class CoreTestsPigeonCodecWriter: FlutterStandardWriter {
     } else if let value = value as? AllNullableTypesWithoutRecursion {
       super.writeByte(134)
       super.writeValue(value.toList())
-    } else if let value = value as? AllClassesWrapper {
+    } else if let value = value as? AnEmptyClass {
       super.writeByte(135)
       super.writeValue(value.toList())
-    } else if let value = value as? TestMessage {
+    } else if let value = value as? AllClassesWrapper {
       super.writeByte(136)
       super.writeValue(value.toList())
-    } else if let value = value as? AnEmptyClass {
+    } else if let value = value as? TestMessage {
       super.writeByte(137)
       super.writeValue(value.toList())
     } else {

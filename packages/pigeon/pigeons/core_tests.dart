@@ -251,6 +251,9 @@ class AllNullableTypesWithoutRecursion {
   Map<int?, Map<Object?, Object?>?>? mapMap;
 }
 
+/// A data class without fields for testing empty classes.
+class AnEmptyClass {}
+
 /// A class for testing nested class handling.
 ///
 /// This is needed to test nested nullable and non-nullable classes,
@@ -1467,5 +1470,3 @@ class TestMessage {
   // ignore: always_specify_types, strict_raw_type
   List? testList;
 }
-
-class AnEmptyClass {}

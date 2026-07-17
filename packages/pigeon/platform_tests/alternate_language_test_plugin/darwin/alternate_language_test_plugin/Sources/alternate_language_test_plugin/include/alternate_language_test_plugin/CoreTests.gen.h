@@ -42,9 +42,9 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @class FLTAllTypes;
 @class FLTAllNullableTypes;
 @class FLTAllNullableTypesWithoutRecursion;
+@class FLTAnEmptyClass;
 @class FLTAllClassesWrapper;
 @class FLTTestMessage;
-@class FLTAnEmptyClass;
 
 @interface FLTUnusedClass : NSObject
 + (instancetype)makeWithAField:(nullable id)aField;
@@ -245,6 +245,10 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @property(nonatomic, copy, nullable) NSDictionary<NSNumber *, NSDictionary<id, id> *> *mapMap;
 @end
 
+/// A data class without fields for testing empty classes.
+@interface FLTAnEmptyClass : NSObject
+@end
+
 /// A class for testing nested class handling.
 ///
 /// This is needed to test nested nullable and non-nullable classes,
@@ -283,9 +287,6 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @interface FLTTestMessage : NSObject
 + (instancetype)makeWithTestList:(nullable NSArray<id> *)testList;
 @property(nonatomic, copy, nullable) NSArray<id> *testList;
-@end
-
-@interface FLTAnEmptyClass : NSObject
 @end
 
 /// The codec used by all APIs.

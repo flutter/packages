@@ -2916,6 +2916,53 @@ public class CoreTests {
   }
 
   /**
+   * A data class without fields for testing empty classes.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class AnEmptyClass {
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(getClass());
+    }
+
+    @Override
+    public String toString() {
+      return "AnEmptyClass{}";
+    }
+
+    public static final class Builder {
+
+      public @NonNull AnEmptyClass build() {
+        AnEmptyClass pigeonReturn = new AnEmptyClass();
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(0);
+      return toListResult;
+    }
+
+    static @NonNull AnEmptyClass fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      AnEmptyClass pigeonResult = new AnEmptyClass();
+      return pigeonResult;
+    }
+  }
+
+  /**
    * A class for testing nested class handling.
    *
    * <p>This is needed to test nested nullable and non-nullable classes, `AllNullableTypes` is
@@ -3277,50 +3324,6 @@ public class CoreTests {
     }
   }
 
-  /** Generated class from Pigeon that represents data sent in messages. */
-  public static final class AnEmptyClass {
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) {
-        return true;
-      }
-      if (o == null || getClass() != o.getClass()) {
-        return false;
-      }
-      AnEmptyClass that = (AnEmptyClass) o;
-      return true;
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(getClass());
-    }
-
-    @Override
-    public String toString() {
-      return "AnEmptyClass{}";
-    }
-
-    public static final class Builder {
-
-      public @NonNull AnEmptyClass build() {
-        AnEmptyClass pigeonReturn = new AnEmptyClass();
-        return pigeonReturn;
-      }
-    }
-
-    @NonNull
-    ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<>(0);
-      return toListResult;
-    }
-
-    static @NonNull AnEmptyClass fromList(@NonNull ArrayList<Object> pigeonVar_list) {
-      AnEmptyClass pigeonResult = new AnEmptyClass();
-      return pigeonResult;
-    }
-  }
-
   private static class PigeonCodec extends StandardMessageCodec {
     public static final PigeonCodec INSTANCE = new PigeonCodec();
 
@@ -3348,11 +3351,11 @@ public class CoreTests {
         case (byte) 134:
           return AllNullableTypesWithoutRecursion.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 135:
-          return AllClassesWrapper.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 136:
-          return TestMessage.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 137:
           return AnEmptyClass.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 136:
+          return AllClassesWrapper.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 137:
+          return TestMessage.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -3378,15 +3381,15 @@ public class CoreTests {
       } else if (value instanceof AllNullableTypesWithoutRecursion) {
         stream.write(134);
         writeValue(stream, ((AllNullableTypesWithoutRecursion) value).toList());
-      } else if (value instanceof AllClassesWrapper) {
+      } else if (value instanceof AnEmptyClass) {
         stream.write(135);
+        writeValue(stream, ((AnEmptyClass) value).toList());
+      } else if (value instanceof AllClassesWrapper) {
+        stream.write(136);
         writeValue(stream, ((AllClassesWrapper) value).toList());
       } else if (value instanceof TestMessage) {
-        stream.write(136);
-        writeValue(stream, ((TestMessage) value).toList());
-      } else if (value instanceof AnEmptyClass) {
         stream.write(137);
-        writeValue(stream, ((AnEmptyClass) value).toList());
+        writeValue(stream, ((TestMessage) value).toList());
       } else {
         super.writeValue(stream, value);
       }

@@ -697,6 +697,35 @@ class AllNullableTypesWithoutRecursion {
   std::optional<::flutter::EncodableMap> map_map_;
 };
 
+// A data class without fields for testing empty classes.
+//
+// Generated class from Pigeon that represents data sent in messages.
+class AnEmptyClass {
+ public:
+  // Constructs an object setting all fields.
+  AnEmptyClass();
+
+  bool operator==(const AnEmptyClass& other) const;
+  bool operator!=(const AnEmptyClass& other) const;
+  /// Returns a hash code value for the object. This method is supported for the
+  /// benefit of hash tables.
+  size_t Hash() const;
+  /// Stream output operator for formatted string representation.
+  friend std::ostream& operator<<(std::ostream& os, const AnEmptyClass& obj);
+
+ private:
+  static AnEmptyClass FromEncodableList(const ::flutter::EncodableList& list);
+  ::flutter::EncodableList ToEncodableList() const;
+  friend class AllClassesWrapper;
+  friend class HostIntegrationCoreApi;
+  friend class FlutterIntegrationCoreApi;
+  friend class HostTrivialApi;
+  friend class HostSmallApi;
+  friend class FlutterSmallApi;
+  friend class PigeonInternalCodecSerializer;
+  friend class CoreTestsTest;
+};
+
 // A class for testing nested class handling.
 //
 // This is needed to test nested nullable and non-nullable classes,
@@ -824,33 +853,6 @@ class TestMessage {
   friend class PigeonInternalCodecSerializer;
   friend class CoreTestsTest;
   std::optional<::flutter::EncodableList> test_list_;
-};
-
-// Generated class from Pigeon that represents data sent in messages.
-class AnEmptyClass {
- public:
-  // Constructs an object setting all fields.
-  AnEmptyClass();
-
-  bool operator==(const AnEmptyClass& other) const;
-  bool operator!=(const AnEmptyClass& other) const;
-  /// Returns a hash code value for the object. This method is supported for the
-  /// benefit of hash tables.
-  size_t Hash() const;
-  /// Stream output operator for formatted string representation.
-  friend std::ostream& operator<<(std::ostream& os, const AnEmptyClass& obj);
-
- private:
-  static AnEmptyClass FromEncodableList(const ::flutter::EncodableList& list);
-  ::flutter::EncodableList ToEncodableList() const;
-  friend class AllClassesWrapper;
-  friend class HostIntegrationCoreApi;
-  friend class FlutterIntegrationCoreApi;
-  friend class HostTrivialApi;
-  friend class HostSmallApi;
-  friend class FlutterSmallApi;
-  friend class PigeonInternalCodecSerializer;
-  friend class CoreTestsTest;
 };
 
 class PigeonInternalCodecSerializer

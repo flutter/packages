@@ -171,6 +171,12 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList;
 @end
 
+@interface FLTAnEmptyClass ()
++ (FLTAnEmptyClass *)fromList:(NSArray<id> *)list;
++ (nullable FLTAnEmptyClass *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
 @interface FLTAllClassesWrapper ()
 + (FLTAllClassesWrapper *)fromList:(NSArray<id> *)list;
 + (nullable FLTAllClassesWrapper *)nullableFromList:(NSArray<id> *)list;
@@ -180,12 +186,6 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @interface FLTTestMessage ()
 + (FLTTestMessage *)fromList:(NSArray<id> *)list;
 + (nullable FLTTestMessage *)nullableFromList:(NSArray<id> *)list;
-- (NSArray<id> *)toList;
-@end
-
-@interface FLTAnEmptyClass ()
-+ (FLTAnEmptyClass *)fromList:(NSArray<id> *)list;
-+ (nullable FLTAnEmptyClass *)nullableFromList:(NSArray<id> *)list;
 - (NSArray<id> *)toList;
 @end
 
@@ -902,6 +902,36 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
+@implementation FLTAnEmptyClass
++ (FLTAnEmptyClass *)fromList:(NSArray<id> *)list {
+  FLTAnEmptyClass *pigeonResult = [[FLTAnEmptyClass alloc] init];
+  return pigeonResult;
+}
++ (nullable FLTAnEmptyClass *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FLTAnEmptyClass fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[];
+}
+- (BOOL)isEqual:(id)object {
+  if (self == object) {
+    return YES;
+  }
+  if (![object isKindOfClass:[self class]]) {
+    return NO;
+  }
+  return YES;
+}
+
+- (NSUInteger)hash {
+  NSUInteger result = [self class].hash;
+  return result;
+}
+- (NSString *)description {
+  return [NSString stringWithFormat:@"FLTAnEmptyClass()"];
+}
+@end
+
 @implementation FLTAllClassesWrapper
 + (instancetype)
             makeWithAllNullableTypes:(FLTAllNullableTypes *)allNullableTypes
@@ -1037,37 +1067,6 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
-@implementation FLTAnEmptyClass
-+ (FLTAnEmptyClass *)fromList:(NSArray<id> *)list {
-  FLTAnEmptyClass *pigeonResult = [[FLTAnEmptyClass alloc] init];
-  return pigeonResult;
-}
-+ (nullable FLTAnEmptyClass *)nullableFromList:(NSArray<id> *)list {
-  return (list) ? [FLTAnEmptyClass fromList:list] : nil;
-}
-- (NSArray<id> *)toList {
-  return @[];
-}
-- (BOOL)isEqual:(id)object {
-  if (self == object) {
-    return YES;
-  }
-  if (![object isKindOfClass:[self class]]) {
-    return NO;
-  }
-  FLTAnEmptyClass *other = (FLTAnEmptyClass *)object;
-  return YES;
-}
-
-- (NSUInteger)hash {
-  NSUInteger result = [self class].hash;
-  return result;
-}
-- (NSString *)description {
-  return [NSString stringWithFormat:@"FLTAnEmptyClass()"];
-}
-@end
-
 @interface FLTCoreTestsPigeonCodecReader : FlutterStandardReader
 @end
 @implementation FLTCoreTestsPigeonCodecReader
@@ -1093,11 +1092,11 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     case 134:
       return [FLTAllNullableTypesWithoutRecursion fromList:[self readValue]];
     case 135:
-      return [FLTAllClassesWrapper fromList:[self readValue]];
-    case 136:
-      return [FLTTestMessage fromList:[self readValue]];
-    case 137:
       return [FLTAnEmptyClass fromList:[self readValue]];
+    case 136:
+      return [FLTAllClassesWrapper fromList:[self readValue]];
+    case 137:
+      return [FLTTestMessage fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
@@ -1128,13 +1127,13 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   } else if ([value isKindOfClass:[FLTAllNullableTypesWithoutRecursion class]]) {
     [self writeByte:134];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllClassesWrapper class]]) {
+  } else if ([value isKindOfClass:[FLTAnEmptyClass class]]) {
     [self writeByte:135];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTTestMessage class]]) {
+  } else if ([value isKindOfClass:[FLTAllClassesWrapper class]]) {
     [self writeByte:136];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAnEmptyClass class]]) {
+  } else if ([value isKindOfClass:[FLTTestMessage class]]) {
     [self writeByte:137];
     [self writeValue:[value toList]];
   } else {

@@ -556,21 +556,21 @@ class ObjcSourceGenerator extends StructuredGenerator<InternalObjcOptions> {
       indent.writeScoped('if (![object isKindOfClass:[self class]]) {', '}', () {
         indent.writeln('return NO;');
       });
-      indent.writeln('$className *other = ($className *)object;');
-      final Iterable<String> checks = classDefinition.fields.map((NamedType field) {
-        final String name = field.name;
-        if (_usesPrimitive(field.type)) {
-          if (field.type.baseName == 'double') {
-            return '(self.$name == other.$name || (isnan(self.$name) && isnan(other.$name)))';
-          }
-          return 'self.$name == other.$name';
-        } else {
-          return 'FLTPigeonDeepEquals(self.$name, other.$name)';
-        }
-      });
-      if (checks.isEmpty) {
+      if (classDefinition.fields.isEmpty) {
         indent.writeln('return YES;');
       } else {
+        indent.writeln('$className *other = ($className *)object;');
+        final Iterable<String> checks = classDefinition.fields.map((NamedType field) {
+          final String name = field.name;
+          if (_usesPrimitive(field.type)) {
+            if (field.type.baseName == 'double') {
+              return '(self.$name == other.$name || (isnan(self.$name) && isnan(other.$name)))';
+            }
+            return 'self.$name == other.$name';
+          } else {
+            return 'FLTPigeonDeepEquals(self.$name, other.$name)';
+          }
+        });
         indent.writeln('return ${checks.join(' && ')};');
       }
     });

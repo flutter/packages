@@ -2873,6 +2873,40 @@ size_t PigeonInternalDeepHash(const AllNullableTypesWithoutRecursion& v) {
   return v.Hash();
 }
 
+// AnEmptyClass
+
+AnEmptyClass::AnEmptyClass() {}
+
+EncodableList AnEmptyClass::ToEncodableList() const {
+  EncodableList list;
+  list.reserve(0);
+  return list;
+}
+
+AnEmptyClass AnEmptyClass::FromEncodableList(const EncodableList& list) {
+  AnEmptyClass decoded;
+  return decoded;
+}
+
+bool AnEmptyClass::operator==(const AnEmptyClass& other) const { return true; }
+
+bool AnEmptyClass::operator!=(const AnEmptyClass& other) const {
+  return !(*this == other);
+}
+
+size_t AnEmptyClass::Hash() const {
+  size_t result = 1;
+  return result;
+}
+
+std::ostream& operator<<(std::ostream& os, const AnEmptyClass& obj) {
+  os << "AnEmptyClass(";
+  os << ")";
+  return os;
+}
+
+size_t PigeonInternalDeepHash(const AnEmptyClass& v) { return v.Hash(); }
+
 // AllClassesWrapper
 
 AllClassesWrapper::AllClassesWrapper(const AllNullableTypes& all_nullable_types,
@@ -3252,40 +3286,6 @@ std::ostream& operator<<(std::ostream& os, const TestMessage& obj) {
 
 size_t PigeonInternalDeepHash(const TestMessage& v) { return v.Hash(); }
 
-// AnEmptyClass
-
-AnEmptyClass::AnEmptyClass() {}
-
-EncodableList AnEmptyClass::ToEncodableList() const {
-  EncodableList list;
-  list.reserve(0);
-  return list;
-}
-
-AnEmptyClass AnEmptyClass::FromEncodableList(const EncodableList& list) {
-  AnEmptyClass decoded;
-  return decoded;
-}
-
-bool AnEmptyClass::operator==(const AnEmptyClass& other) const { return true; }
-
-bool AnEmptyClass::operator!=(const AnEmptyClass& other) const {
-  return !(*this == other);
-}
-
-size_t AnEmptyClass::Hash() const {
-  size_t result = 1;
-  return result;
-}
-
-std::ostream& operator<<(std::ostream& os, const AnEmptyClass& obj) {
-  os << "AnEmptyClass(";
-  os << ")";
-  return os;
-}
-
-size_t PigeonInternalDeepHash(const AnEmptyClass& v) { return v.Hash(); }
-
 PigeonInternalCodecSerializer::PigeonInternalCodecSerializer() {}
 
 EncodableValue PigeonInternalCodecSerializer::ReadValueOfType(
@@ -3326,15 +3326,15 @@ EncodableValue PigeonInternalCodecSerializer::ReadValueOfType(
               std::get<EncodableList>(ReadValue(stream))));
     }
     case 135: {
-      return CustomEncodableValue(AllClassesWrapper::FromEncodableList(
+      return CustomEncodableValue(AnEmptyClass::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
     }
     case 136: {
-      return CustomEncodableValue(TestMessage::FromEncodableList(
+      return CustomEncodableValue(AllClassesWrapper::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
     }
     case 137: {
-      return CustomEncodableValue(AnEmptyClass::FromEncodableList(
+      return CustomEncodableValue(TestMessage::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
     }
     default:
@@ -3391,26 +3391,26 @@ void PigeonInternalCodecSerializer::WriteValue(
                  stream);
       return;
     }
-    if (custom_value->type() == typeid(AllClassesWrapper)) {
+    if (custom_value->type() == typeid(AnEmptyClass)) {
       stream->WriteByte(135);
+      WriteValue(
+          EncodableValue(
+              std::any_cast<AnEmptyClass>(*custom_value).ToEncodableList()),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AllClassesWrapper)) {
+      stream->WriteByte(136);
       WriteValue(EncodableValue(std::any_cast<AllClassesWrapper>(*custom_value)
                                     .ToEncodableList()),
                  stream);
       return;
     }
     if (custom_value->type() == typeid(TestMessage)) {
-      stream->WriteByte(136);
-      WriteValue(
-          EncodableValue(
-              std::any_cast<TestMessage>(*custom_value).ToEncodableList()),
-          stream);
-      return;
-    }
-    if (custom_value->type() == typeid(AnEmptyClass)) {
       stream->WriteByte(137);
       WriteValue(
           EncodableValue(
-              std::any_cast<AnEmptyClass>(*custom_value).ToEncodableList()),
+              std::any_cast<TestMessage>(*custom_value).ToEncodableList()),
           stream);
       return;
     }

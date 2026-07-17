@@ -1422,6 +1422,59 @@ gchar* core_tests_pigeon_test_all_nullable_types_without_recursion_to_string(
     CoreTestsPigeonTestAllNullableTypesWithoutRecursion* object);
 
 /**
+ * CoreTestsPigeonTestAnEmptyClass:
+ *
+ * A data class without fields for testing empty classes.
+ */
+
+G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestAnEmptyClass,
+                     core_tests_pigeon_test_an_empty_class,
+                     CORE_TESTS_PIGEON_TEST, AN_EMPTY_CLASS, GObject)
+
+/**
+ * core_tests_pigeon_test_an_empty_class_new:
+ *
+ * Creates a new #AnEmptyClass object.
+ *
+ * Returns: a new #CoreTestsPigeonTestAnEmptyClass
+ */
+CoreTestsPigeonTestAnEmptyClass* core_tests_pigeon_test_an_empty_class_new();
+
+/**
+ * core_tests_pigeon_test_an_empty_class_equals:
+ * @a: a #CoreTestsPigeonTestAnEmptyClass.
+ * @b: another #CoreTestsPigeonTestAnEmptyClass.
+ *
+ * Checks if two #CoreTestsPigeonTestAnEmptyClass objects are equal.
+ *
+ * Returns: TRUE if @a and @b are equal.
+ */
+gboolean core_tests_pigeon_test_an_empty_class_equals(
+    CoreTestsPigeonTestAnEmptyClass* a, CoreTestsPigeonTestAnEmptyClass* b);
+
+/**
+ * core_tests_pigeon_test_an_empty_class_hash:
+ * @object: a #CoreTestsPigeonTestAnEmptyClass.
+ *
+ * Calculates a hash code for a #CoreTestsPigeonTestAnEmptyClass object.
+ *
+ * Returns: the hash code.
+ */
+guint core_tests_pigeon_test_an_empty_class_hash(
+    CoreTestsPigeonTestAnEmptyClass* object);
+
+/**
+ * core_tests_pigeon_test_an_empty_class_to_string:
+ * @object: a #CoreTestsPigeonTestAnEmptyClass.
+ *
+ * Returns a string representation of a #CoreTestsPigeonTestAnEmptyClass object.
+ *
+ * Returns: (transfer full): a new string, free with g_free().
+ */
+gchar* core_tests_pigeon_test_an_empty_class_to_string(
+    CoreTestsPigeonTestAnEmptyClass* object);
+
+/**
  * CoreTestsPigeonTestAllClassesWrapper:
  *
  * A class for testing nested class handling.
@@ -1654,58 +1707,6 @@ guint core_tests_pigeon_test_test_message_hash(
 gchar* core_tests_pigeon_test_test_message_to_string(
     CoreTestsPigeonTestTestMessage* object);
 
-/**
- * CoreTestsPigeonTestAnEmptyClass:
- *
- */
-
-G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestAnEmptyClass,
-                     core_tests_pigeon_test_an_empty_class,
-                     CORE_TESTS_PIGEON_TEST, AN_EMPTY_CLASS, GObject)
-
-/**
- * core_tests_pigeon_test_an_empty_class_new:
- *
- * Creates a new #AnEmptyClass object.
- *
- * Returns: a new #CoreTestsPigeonTestAnEmptyClass
- */
-CoreTestsPigeonTestAnEmptyClass* core_tests_pigeon_test_an_empty_class_new();
-
-/**
- * core_tests_pigeon_test_an_empty_class_equals:
- * @a: a #CoreTestsPigeonTestAnEmptyClass.
- * @b: another #CoreTestsPigeonTestAnEmptyClass.
- *
- * Checks if two #CoreTestsPigeonTestAnEmptyClass objects are equal.
- *
- * Returns: TRUE if @a and @b are equal.
- */
-gboolean core_tests_pigeon_test_an_empty_class_equals(
-    CoreTestsPigeonTestAnEmptyClass* a, CoreTestsPigeonTestAnEmptyClass* b);
-
-/**
- * core_tests_pigeon_test_an_empty_class_hash:
- * @object: a #CoreTestsPigeonTestAnEmptyClass.
- *
- * Calculates a hash code for a #CoreTestsPigeonTestAnEmptyClass object.
- *
- * Returns: the hash code.
- */
-guint core_tests_pigeon_test_an_empty_class_hash(
-    CoreTestsPigeonTestAnEmptyClass* object);
-
-/**
- * core_tests_pigeon_test_an_empty_class_to_string:
- * @object: a #CoreTestsPigeonTestAnEmptyClass.
- *
- * Returns a string representation of a #CoreTestsPigeonTestAnEmptyClass object.
- *
- * Returns: (transfer full): a new string, free with g_free().
- */
-gchar* core_tests_pigeon_test_an_empty_class_to_string(
-    CoreTestsPigeonTestAnEmptyClass* object);
-
 G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestMessageCodec,
                      core_tests_pigeon_test_message_codec,
                      CORE_TESTS_PIGEON_TEST, MESSAGE_CODEC,
@@ -1725,9 +1726,9 @@ extern const int core_tests_pigeon_test_all_types_type_id;
 extern const int core_tests_pigeon_test_all_nullable_types_type_id;
 extern const int
     core_tests_pigeon_test_all_nullable_types_without_recursion_type_id;
+extern const int core_tests_pigeon_test_an_empty_class_type_id;
 extern const int core_tests_pigeon_test_all_classes_wrapper_type_id;
 extern const int core_tests_pigeon_test_test_message_type_id;
-extern const int core_tests_pigeon_test_an_empty_class_type_id;
 
 G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestHostIntegrationCoreApi,
                      core_tests_pigeon_test_host_integration_core_api,

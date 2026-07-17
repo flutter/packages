@@ -800,6 +800,42 @@ class AllNullableTypesWithoutRecursion {
   }
 }
 
+/// A data class without fields for testing empty classes.
+class AnEmptyClass {
+  AnEmptyClass();
+
+  List<Object?> _toList() {
+    return <Object?>[];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static AnEmptyClass decode(Object result) {
+    result as List<Object?>;
+    return AnEmptyClass();
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! AnEmptyClass || other.runtimeType != runtimeType) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'AnEmptyClass()';
+  }
+}
+
 /// A class for testing nested class handling.
 ///
 /// This is needed to test nested nullable and non-nullable classes,
@@ -935,41 +971,6 @@ class TestMessage {
   }
 }
 
-class AnEmptyClass {
-  AnEmptyClass();
-
-  List<Object?> _toList() {
-    return <Object?>[];
-  }
-
-  Object encode() {
-    return _toList();
-  }
-
-  static AnEmptyClass decode(Object result) {
-    result as List<Object?>;
-    return AnEmptyClass();
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  bool operator ==(Object other) {
-    if (other is! AnEmptyClass || other.runtimeType != runtimeType) {
-      return false;
-    }
-    return true;
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
-
-  @override
-  String toString() {
-    return 'AnEmptyClass()';
-  }
-}
-
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -995,13 +996,13 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is AllNullableTypesWithoutRecursion) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is AllClassesWrapper) {
+    } else if (value is AnEmptyClass) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is TestMessage) {
+    } else if (value is AllClassesWrapper) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else if (value is AnEmptyClass) {
+    } else if (value is TestMessage) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
     } else {
@@ -1027,11 +1028,11 @@ class _PigeonCodec extends StandardMessageCodec {
       case 134:
         return AllNullableTypesWithoutRecursion.decode(readValue(buffer)!);
       case 135:
-        return AllClassesWrapper.decode(readValue(buffer)!);
-      case 136:
-        return TestMessage.decode(readValue(buffer)!);
-      case 137:
         return AnEmptyClass.decode(readValue(buffer)!);
+      case 136:
+        return AllClassesWrapper.decode(readValue(buffer)!);
+      case 137:
+        return TestMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }

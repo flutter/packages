@@ -345,13 +345,13 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
     indent.writeScoped('public boolean equals(Object o) {', '}', () {
       indent.writeln('if (this == o) { return true; }');
       indent.writeln('if (o == null || getClass() != o.getClass()) { return false; }');
-      indent.writeln('${classDefinition.name} that = (${classDefinition.name}) o;');
-      final Iterable<String> checks = classDefinition.fields.map((NamedType field) {
-        return 'pigeonDeepEquals(${field.name}, that.${field.name})';
-      });
-      if (checks.isEmpty) {
+      if (classDefinition.fields.isEmpty) {
         indent.writeln('return true;');
       } else {
+        indent.writeln('${classDefinition.name} that = (${classDefinition.name}) o;');
+        final Iterable<String> checks = classDefinition.fields.map((NamedType field) {
+          return 'pigeonDeepEquals(${field.name}, that.${field.name})';
+        });
         indent.writeln('return ${checks.join(' && ')};');
       }
     });
