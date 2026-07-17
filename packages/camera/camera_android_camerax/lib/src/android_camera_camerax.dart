@@ -684,13 +684,11 @@ class AndroidCameraCameraX extends CameraPlatform {
 
         // If there isn't, lock center of entire sensor area by default.
         if (lockedFocusPoint == null) {
-          // final meteringPointFactory = DisplayOrientedMeteringPointFactory(
-          //   cameraInfo: cameraInfo!,
-          //   width: 1,
-          //   height: 1,
-          // );
-          final MeteringPointFactory meteringPointFactory = await _previewView!
-              .getMeteringPointFactory();
+          final meteringPointFactory = DisplayOrientedMeteringPointFactory(
+            cameraInfo: cameraInfo!,
+            width: 1,
+            height: 1,
+          );
           lockedFocusPoint = await meteringPointFactory.createPointWithSize(
             0.5,
             0.5,
@@ -1711,13 +1709,11 @@ class AndroidCameraCameraX extends CameraPlatform {
         );
       }
 
-      // final meteringPointFactory = DisplayOrientedMeteringPointFactory(
-      //   width: 1.0,
-      //   height: 1.0,
-      //   cameraInfo: cameraInfo!,
-      // );
-      final MeteringPointFactory meteringPointFactory = await _previewView!
-          .getMeteringPointFactory();
+      final meteringPointFactory = DisplayOrientedMeteringPointFactory(
+        width: 1.0,
+        height: 1.0,
+        cameraInfo: cameraInfo!,
+      );
       meteringPoint = await meteringPointFactory.createPoint(point.x, point.y);
     }
     return _startFocusAndMeteringFor(
