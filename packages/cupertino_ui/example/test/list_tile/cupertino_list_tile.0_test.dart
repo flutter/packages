@@ -35,7 +35,7 @@ void main() {
       tester
           .firstWidget<CupertinoListTile>(tileWithBackgroundFinder)
           .backgroundColor,
-      CupertinoColors.activeBlue,
+      const Color(0xFF0000FF),
     );
   });
 }
