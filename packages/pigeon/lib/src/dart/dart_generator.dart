@@ -204,22 +204,14 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     }
   }
 
-  String _formatValue(String type, Object value) {
-    if (type == 'String') {
-      return _makeDartStringLiteral(value.toString());
-    } else {
-      return value.toString();
-    }
-  }
+  String _formatValue(String type, Object value) =>
+      type == 'String' ? _makeDartStringLiteral(value.toString()) : value.toString();
 
   String _makeDartStringLiteral(String valStr) {
     final bool hasSpecial =
-        // ignore: use_raw_strings
-        valStr.contains('\\') ||
+        valStr.contains(r'\') ||
         valStr.contains(r'$') ||
-        // ignore: use_raw_strings
         valStr.contains('\n') ||
-        // ignore: use_raw_strings
         valStr.contains('\r');
 
     if (!hasSpecial) {
@@ -229,7 +221,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       if (!valStr.contains('"')) {
         return '"$valStr"';
       }
-      return "r'''$valStr'''";
+      return "'${escapeStringSingleQuotes(valStr)}'";
     }
 
     if (!valStr.contains('\n') && !valStr.contains('\r')) {
@@ -239,6 +231,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       if (!valStr.contains('"')) {
         return 'r"$valStr"';
       }
+      return "'${escapeStringSingleQuotes(valStr)}'";
     }
 
     if (!valStr.contains("'''")) {

@@ -875,7 +875,7 @@ bool isCollectionType(TypeDeclaration type) {
 /// Escapes special characters in a string for use in double-quoted string literals.
 String escapeStringDoubleQuotes(String value) {
   return value
-      .replaceAll('\\', r'\\') // ignore: use_raw_strings
+      .replaceAll(r'\', r'\\')
       .replaceAll('"', r'\"')
       .replaceAll('\n', r'\n')
       .replaceAll('\r', r'\r');
@@ -884,7 +884,7 @@ String escapeStringDoubleQuotes(String value) {
 /// Escapes special characters in a string for use in single-quoted string literals.
 String escapeStringSingleQuotes(String value) {
   return value
-      .replaceAll('\\', r'\\') // ignore: use_raw_strings
+      .replaceAll(r'\', r'\\')
       .replaceAll("'", r"\'")
       .replaceAll('\n', r'\n')
       .replaceAll('\r', r'\r')

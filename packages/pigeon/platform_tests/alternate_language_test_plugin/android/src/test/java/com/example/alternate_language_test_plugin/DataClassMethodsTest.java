@@ -409,7 +409,7 @@ public class DataClassMethodsTest {
   @Test
   public void testConstants() {
     assertEquals("stringConstantValue", CoreTests.aStringConstant);
-    assertEquals("string\\\\$ConstantValue", CoreTests.aStringConstantWithEscapes);
+    assertEquals("string\\'\\\"\\$ConstantValue", CoreTests.aStringConstantWithEscapes);
     assertEquals(42L, CoreTests.anIntConstant);
     assertEquals(3.14, CoreTests.aDoubleConstant, 0.0001);
     assertTrue(CoreTests.aBoolConstant);

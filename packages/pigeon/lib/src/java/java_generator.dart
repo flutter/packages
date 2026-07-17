@@ -222,16 +222,11 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
     }
   }
 
-  String _formatJavaValue(String type, Object value) {
-    if (type == 'String') {
-      final String escaped = escapeStringDoubleQuotes(value.toString());
-      return '"$escaped"';
-    } else if (type == 'int') {
-      return '${value}L';
-    } else {
-      return value.toString();
-    }
-  }
+  String _formatJavaValue(String type, Object value) => switch (type) {
+    'String' => '"${escapeStringDoubleQuotes(value.toString())}"',
+    'int' => '${value}L',
+    _ => value.toString(),
+  };
 
   @override
   void writeEnum(
@@ -1421,12 +1416,13 @@ String _javaTypeForBuiltinGenericDartType(TypeDeclaration type, int numberTypeAr
 
 String? _javaTypeForBuiltinDartType(TypeDeclaration type, {bool primitive = false}) {
   if (primitive) {
-    if (type.baseName == 'bool') {
-      return 'boolean';
-    } else if (type.baseName == 'int') {
-      return 'long';
-    } else if (type.baseName == 'double') {
-      return 'double';
+    switch (type.baseName) {
+      case 'bool':
+        return 'boolean';
+      case 'int':
+        return 'long';
+      case 'double':
+        return 'double';
     }
   }
   const javaTypeForDartTypeMap = <String, String>{

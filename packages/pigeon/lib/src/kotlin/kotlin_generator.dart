@@ -258,16 +258,11 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     }
   }
 
-  String _formatKotlinValue(String type, Object value) {
-    if (type == 'String') {
-      final String escaped = escapeStringDoubleQuotes(value.toString()).replaceAll(r'$', r'\$');
-      return '"$escaped"';
-    } else if (type == 'int') {
-      return '${value}L';
-    } else {
-      return value.toString();
-    }
-  }
+  String _formatKotlinValue(String type, Object value) => switch (type) {
+    'String' => '"${escapeStringDoubleQuotes(value.toString()).replaceAll(r'$', r'\$')}"',
+    'int' => '${value}L',
+    _ => value.toString(),
+  };
 
   @override
   void writeEnum(

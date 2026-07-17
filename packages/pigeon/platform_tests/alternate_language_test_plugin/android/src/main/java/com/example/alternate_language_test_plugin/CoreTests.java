@@ -32,7 +32,7 @@ import java.util.Map;
 public class CoreTests {
 
   public static final String aStringConstant = "stringConstantValue";
-  public static final String aStringConstantWithEscapes = "string\\\\$ConstantValue";
+  public static final String aStringConstantWithEscapes = "string\\'\\\"\\$ConstantValue";
   public static final long anIntConstant = 42L;
   public static final double aDoubleConstant = 3.14;
   public static final boolean aBoolConstant = true;

@@ -1218,58 +1218,30 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final List<Error> validateErrors = _validateAst(completeRoot, source);
     totalErrors.addAll(validateErrors);
 
+    final allowedValueValidators = <String, bool Function(Object?)>{
+      'String': (Object? v) => v is String,
+      'int': (Object? v) => v is int,
+      'double': (Object? v) => v is num,
+      'bool': (Object? v) => v is bool,
+    };
     for (final Constant constant in _constants) {
-      if (constant.type.baseName != 'String' &&
-          constant.type.baseName != 'int' &&
-          constant.type.baseName != 'double' &&
-          constant.type.baseName != 'bool') {
+      final String typeName = constant.type.baseName;
+      final bool Function(Object?)? validator = allowedValueValidators[typeName];
+      if (validator == null) {
         totalErrors.add(
           Error(
             message:
-                'Unsupported constant type: "${constant.type.baseName}". Only String, int, double, and bool are supported.',
+                'Unsupported constant type: "$typeName". Only String, int, double, and bool are supported.',
             lineNumber: constant.offset != null
                 ? calculateLineNumber(source, constant.offset!)
                 : null,
           ),
         );
-      }
-      if (constant.type.baseName == 'String' && constant.value is! String) {
+      } else if (!validator(constant.value)) {
         totalErrors.add(
           Error(
             message:
-                'Constant "${constant.name}" type is String but value is ${constant.value.runtimeType}.',
-            lineNumber: constant.offset != null
-                ? calculateLineNumber(source, constant.offset!)
-                : null,
-          ),
-        );
-      } else if (constant.type.baseName == 'int' && constant.value is! int) {
-        totalErrors.add(
-          Error(
-            message:
-                'Constant "${constant.name}" type is int but value is ${constant.value.runtimeType}.',
-            lineNumber: constant.offset != null
-                ? calculateLineNumber(source, constant.offset!)
-                : null,
-          ),
-        );
-      } else if (constant.type.baseName == 'double' &&
-          constant.value is! double &&
-          constant.value is! int) {
-        totalErrors.add(
-          Error(
-            message:
-                'Constant "${constant.name}" type is double but value is ${constant.value.runtimeType}.',
-            lineNumber: constant.offset != null
-                ? calculateLineNumber(source, constant.offset!)
-                : null,
-          ),
-        );
-      } else if (constant.type.baseName == 'bool' && constant.value is! bool) {
-        totalErrors.add(
-          Error(
-            message:
-                'Constant "${constant.name}" type is bool but value is ${constant.value.runtimeType}.',
+                'Constant "${constant.name}" type is $typeName but value is ${constant.value.runtimeType}.',
             lineNumber: constant.offset != null
                 ? calculateLineNumber(source, constant.offset!)
                 : null,

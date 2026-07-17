@@ -254,11 +254,11 @@
 }
 
 - (void)testConstants {
-  XCTAssertEqualObjects(FLTaStringConstant, @"stringConstantValue");
-  XCTAssertEqualObjects(FLTaStringConstantWithEscapes, @"string\\\\$ConstantValue");
-  XCTAssertEqual(FLTanIntConstant, 42);
-  XCTAssertEqual(FLTaDoubleConstant, 3.14);
-  XCTAssertEqual(FLTaBoolConstant, YES);
+  XCTAssertEqualObjects(FLTAStringConstant, @"stringConstantValue");
+  XCTAssertEqualObjects(FLTAStringConstantWithEscapes, @"string\\'\\\"\\$ConstantValue");
+  XCTAssertEqual(FLTAnIntConstant, 42);
+  XCTAssertEqual(FLTADoubleConstant, 3.14);
+  XCTAssertEqual(FLTABoolConstant, YES);
 }
 
 @end
