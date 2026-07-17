@@ -71,7 +71,7 @@ class EnforceTrackedSkillsPreventPublishingRule extends SkillRule {
       final String normalizedConfigPath = p.canonicalize(File(skillConfig.path).absolute.path);
       if (normalizedConfigPath == normalizedContextPath) {
         pathFound = true;
-        configuredSeverity = skillConfig.rules['prevent-skills-sh-publishing'];
+        configuredSeverity = skillConfig.ruleConfigs['prevent-skills-sh-publishing']?.severity;
         if (configuredSeverity == AnalysisSeverity.error) {
           ruleEnabled = true;
         }
