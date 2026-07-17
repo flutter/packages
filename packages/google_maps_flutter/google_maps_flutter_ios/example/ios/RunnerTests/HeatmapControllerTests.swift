@@ -2,14 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import XCTest
 import GoogleMaps
 import GoogleMapsUtils
+import Testing
+
 @testable import google_maps_flutter_ios
 
-class HeatmapControllerTests: XCTestCase {
+@MainActor struct HeatmapControllerTests {
 
-  func testUpdateHeatmapSetsVisibilityLast() {
+  @Test func updateHeatmapSetsVisibilityLast() {
     let heatmap = PropertyOrderValidatingHeatmap()
     let gradient = FGMPlatformHeatmapGradient.make(
       with: [
@@ -41,7 +42,7 @@ class HeatmapControllerTests: XCTestCase {
       ),
       with: HeatmapControllerTests.mapView()
     )
-    XCTAssertTrue(heatmap.hasSetMap)
+    #expect(heatmap.hasSetMap)
   }
 
   /// Returns a simple map view to add map objects to.
@@ -60,7 +61,7 @@ class PropertyOrderValidatingHeatmap: GMUHeatmapTileLayer {
   override var weightedData: [GMUWeightedLatLng] {
     get { super.weightedData }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.weightedData = newValue
     }
   }
@@ -68,7 +69,7 @@ class PropertyOrderValidatingHeatmap: GMUHeatmapTileLayer {
   override var radius: UInt {
     get { super.radius }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.radius = newValue
     }
   }
@@ -76,7 +77,7 @@ class PropertyOrderValidatingHeatmap: GMUHeatmapTileLayer {
   override var gradient: GMUGradient {
     get { super.gradient }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.gradient = newValue
     }
   }
@@ -84,7 +85,7 @@ class PropertyOrderValidatingHeatmap: GMUHeatmapTileLayer {
   override var minimumZoomIntensity: UInt {
     get { super.minimumZoomIntensity }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.minimumZoomIntensity = newValue
     }
   }
@@ -92,7 +93,7 @@ class PropertyOrderValidatingHeatmap: GMUHeatmapTileLayer {
   override var maximumZoomIntensity: UInt {
     get { super.maximumZoomIntensity }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.maximumZoomIntensity = newValue
     }
   }
@@ -100,7 +101,7 @@ class PropertyOrderValidatingHeatmap: GMUHeatmapTileLayer {
   override var zIndex: Int32 {
     get { super.zIndex }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.zIndex = newValue
     }
   }
@@ -108,7 +109,7 @@ class PropertyOrderValidatingHeatmap: GMUHeatmapTileLayer {
   override var tileSize: Int {
     get { super.tileSize }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.tileSize = newValue
     }
   }
@@ -116,7 +117,7 @@ class PropertyOrderValidatingHeatmap: GMUHeatmapTileLayer {
   override var opacity: Float {
     get { super.opacity }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.opacity = newValue
     }
   }
@@ -124,7 +125,7 @@ class PropertyOrderValidatingHeatmap: GMUHeatmapTileLayer {
   override var fadeIn: Bool {
     get { super.fadeIn }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.fadeIn = newValue
     }
   }

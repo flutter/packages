@@ -2,13 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import XCTest
 import GoogleMaps
+import Testing
+
 @testable import google_maps_flutter_ios
 
-class ConversionUtilsTests: XCTestCase {
+@MainActor struct ConversionUtilsTests {
 
-  func testColorFromPlatformColor() {
+  @Test func colorFromPlatformColor() {
     let platformRed: Double = 1 / 255.0
     let platformGreen: Double = 2 / 255.0
     let platformBlue: Double = 3 / 255.0
@@ -26,15 +27,15 @@ class ConversionUtilsTests: XCTestCase {
     var blue: CGFloat = 0
     var alpha: CGFloat = 0
     let success = color.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
-    XCTAssertTrue(success)
+    #expect(success)
     let accuracy: Double = 0.0001
-    XCTAssertEqual(red, platformRed, accuracy: accuracy)
-    XCTAssertEqual(green, platformGreen, accuracy: accuracy)
-    XCTAssertEqual(blue, platformBlue, accuracy: accuracy)
-    XCTAssertEqual(alpha, platformAlpha, accuracy: accuracy)
+    #expect(abs(Double(red) - platformRed) <= accuracy)
+    #expect(abs(Double(green) - platformGreen) <= accuracy)
+    #expect(abs(Double(blue) - platformBlue) <= accuracy)
+    #expect(abs(Double(alpha) - platformAlpha) <= accuracy)
   }
 
-  func testPlatformColorFromColor() {
+  @Test func platformColorFromColor() {
     let red: Double = 1 / 255.0
     let green: Double = 2 / 255.0
     let blue: Double = 3 / 255.0
@@ -42,26 +43,26 @@ class ConversionUtilsTests: XCTestCase {
     let color = UIColor(red: red, green: green, blue: blue, alpha: alpha)
     let platformColor = FGMGetPigeonColorForColor(color)
     let accuracy: Double = 0.0001
-    XCTAssertEqual(red, platformColor.red, accuracy: accuracy)
-    XCTAssertEqual(green, platformColor.green, accuracy: accuracy)
-    XCTAssertEqual(blue, platformColor.blue, accuracy: accuracy)
-    XCTAssertEqual(alpha, platformColor.alpha, accuracy: accuracy)
+    #expect(abs(red - platformColor.red) <= accuracy)
+    #expect(abs(green - platformColor.green) <= accuracy)
+    #expect(abs(blue - platformColor.blue) <= accuracy)
+    #expect(abs(alpha - platformColor.alpha) <= accuracy)
   }
 
-  func testPointsFromLatLongs() {
+  @Test func pointsFromLatLongs() {
     let latlongs = [
       FGMPlatformLatLng.make(withLatitude: 1, longitude: 2),
       FGMPlatformLatLng.make(withLatitude: 3, longitude: 4),
     ]
     let locations = FGMGetPointsForPigeonLatLngs(latlongs)
-    XCTAssertEqual(locations.count, 2)
-    XCTAssertEqual(locations[0].coordinate.latitude, 1)
-    XCTAssertEqual(locations[0].coordinate.longitude, 2)
-    XCTAssertEqual(locations[1].coordinate.latitude, 3)
-    XCTAssertEqual(locations[1].coordinate.longitude, 4)
+    #expect(locations.count == 2)
+    #expect(locations[0].coordinate.latitude == 1)
+    #expect(locations[0].coordinate.longitude == 2)
+    #expect(locations[1].coordinate.latitude == 3)
+    #expect(locations[1].coordinate.longitude == 4)
   }
 
-  func testHolesFromPointsArray() {
+  @Test func holesFromPointsArray() {
     let pointsArray = [
       [
         FGMPlatformLatLng.make(withLatitude: 1, longitude: 2),
@@ -73,18 +74,18 @@ class ConversionUtilsTests: XCTestCase {
       ],
     ]
     let holes = FGMGetHolesForPigeonLatLngArrays(pointsArray)
-    XCTAssertEqual(holes.count, 2)
-    XCTAssertEqual(holes[0][0].coordinate.latitude, 1)
-    XCTAssertEqual(holes[0][0].coordinate.longitude, 2)
-    XCTAssertEqual(holes[0][1].coordinate.latitude, 3)
-    XCTAssertEqual(holes[0][1].coordinate.longitude, 4)
-    XCTAssertEqual(holes[1][0].coordinate.latitude, 5)
-    XCTAssertEqual(holes[1][0].coordinate.longitude, 6)
-    XCTAssertEqual(holes[1][1].coordinate.latitude, 7)
-    XCTAssertEqual(holes[1][1].coordinate.longitude, 8)
+    #expect(holes.count == 2)
+    #expect(holes[0][0].coordinate.latitude == 1)
+    #expect(holes[0][0].coordinate.longitude == 2)
+    #expect(holes[0][1].coordinate.latitude == 3)
+    #expect(holes[0][1].coordinate.longitude == 4)
+    #expect(holes[1][0].coordinate.latitude == 5)
+    #expect(holes[1][0].coordinate.longitude == 6)
+    #expect(holes[1][1].coordinate.latitude == 7)
+    #expect(holes[1][1].coordinate.longitude == 8)
   }
 
-  func testGetPigeonCameraPositionForPosition() {
+  @Test func getPigeonCameraPositionForPosition() {
     let position = GMSCameraPosition(
       target: CLLocationCoordinate2D(latitude: 1, longitude: 2),
       zoom: 2.0,
@@ -92,49 +93,33 @@ class ConversionUtilsTests: XCTestCase {
       viewingAngle: 75.0
     )
     let pigeonPosition = FGMGetPigeonCameraPositionForPosition(position)
-    XCTAssertEqual(pigeonPosition.target.latitude, position.target.latitude, accuracy: Double.ulpOfOne)
-    XCTAssertEqual(pigeonPosition.target.longitude, position.target.longitude, accuracy: Double.ulpOfOne)
-    XCTAssertEqual(Float(pigeonPosition.zoom), position.zoom, accuracy: Float.ulpOfOne)
-    XCTAssertEqual(pigeonPosition.bearing, position.bearing, accuracy: Double.ulpOfOne)
-    XCTAssertEqual(pigeonPosition.tilt, position.viewingAngle, accuracy: Double.ulpOfOne)
+    #expect(abs(pigeonPosition.target.latitude - position.target.latitude) <= Double.ulpOfOne)
+    #expect(abs(pigeonPosition.target.longitude - position.target.longitude) <= Double.ulpOfOne)
+    #expect(abs(Float(pigeonPosition.zoom) - position.zoom) <= Float.ulpOfOne)
+    #expect(abs(pigeonPosition.bearing - position.bearing) <= Double.ulpOfOne)
+    #expect(abs(pigeonPosition.tilt - position.viewingAngle) <= Double.ulpOfOne)
   }
 
-  func testPigeonPointForGCPoint() {
+  @Test func pigeonPointForGCPoint() {
     let point = CGPoint(x: 10, y: 20)
     let pigeonPoint = FGMGetPigeonPointForCGPoint(point)
-    XCTAssertEqual(pigeonPoint.x, point.x, accuracy: Double.ulpOfOne)
-    XCTAssertEqual(pigeonPoint.y, point.y, accuracy: Double.ulpOfOne)
+    #expect(abs(pigeonPoint.x - Double(point.x)) <= Double.ulpOfOne)
+    #expect(abs(pigeonPoint.y - Double(point.y)) <= Double.ulpOfOne)
   }
 
-  func testPigeonLatLngBoundsForCoordinateBounds() {
+  @Test func pigeonLatLngBoundsForCoordinateBounds() {
     let bounds = GMSCoordinateBounds(
       coordinate: CLLocationCoordinate2D(latitude: 10, longitude: 20),
       coordinate: CLLocationCoordinate2D(latitude: 30, longitude: 40)
     )
     let pigeonBounds = FGMGetPigeonLatLngBoundsForCoordinateBounds(bounds)
-    XCTAssertEqual(
-      pigeonBounds.southwest.latitude,
-      bounds.southWest.latitude,
-      accuracy: Double.ulpOfOne
-    )
-    XCTAssertEqual(
-      pigeonBounds.southwest.longitude,
-      bounds.southWest.longitude,
-      accuracy: Double.ulpOfOne
-    )
-    XCTAssertEqual(
-      pigeonBounds.northeast.latitude,
-      bounds.northEast.latitude,
-      accuracy: Double.ulpOfOne
-    )
-    XCTAssertEqual(
-      pigeonBounds.northeast.longitude,
-      bounds.northEast.longitude,
-      accuracy: Double.ulpOfOne
-    )
+    #expect(abs(pigeonBounds.southwest.latitude - bounds.southWest.latitude) <= Double.ulpOfOne)
+    #expect(abs(pigeonBounds.southwest.longitude - bounds.southWest.longitude) <= Double.ulpOfOne)
+    #expect(abs(pigeonBounds.northeast.latitude - bounds.northEast.latitude) <= Double.ulpOfOne)
+    #expect(abs(pigeonBounds.northeast.longitude - bounds.northEast.longitude) <= Double.ulpOfOne)
   }
 
-  func testGetCameraPostionForPigeonCameraPosition() {
+  @Test func getCameraPostionForPigeonCameraPosition() {
     let pigeonCameraPosition = FGMPlatformCameraPosition.make(
       withBearing: 1.0,
       target: FGMPlatformLatLng.make(withLatitude: 2.0, longitude: 3.0),
@@ -144,31 +129,26 @@ class ConversionUtilsTests: XCTestCase {
 
     let cameraPosition = FGMGetCameraPositionForPigeonCameraPosition(pigeonCameraPosition)
 
-    XCTAssertEqual(
-      cameraPosition.target.latitude,
-      pigeonCameraPosition.target.latitude,
-      accuracy: Double.ulpOfOne
-    )
-    XCTAssertEqual(
-      cameraPosition.target.longitude,
-      pigeonCameraPosition.target.longitude,
-      accuracy: Double.ulpOfOne
-    )
-    XCTAssertEqual(Double(cameraPosition.zoom), pigeonCameraPosition.zoom, accuracy: Double.ulpOfOne)
-    XCTAssertEqual(cameraPosition.bearing, pigeonCameraPosition.bearing, accuracy: Double.ulpOfOne)
-    XCTAssertEqual(cameraPosition.viewingAngle, pigeonCameraPosition.tilt, accuracy: Double.ulpOfOne)
+    #expect(
+      abs(cameraPosition.target.latitude - pigeonCameraPosition.target.latitude) <= Double.ulpOfOne)
+    #expect(
+      abs(cameraPosition.target.longitude - pigeonCameraPosition.target.longitude)
+        <= Double.ulpOfOne)
+    #expect(abs(Double(cameraPosition.zoom) - pigeonCameraPosition.zoom) <= Double.ulpOfOne)
+    #expect(abs(cameraPosition.bearing - pigeonCameraPosition.bearing) <= Double.ulpOfOne)
+    #expect(abs(cameraPosition.viewingAngle - pigeonCameraPosition.tilt) <= Double.ulpOfOne)
   }
 
-  func testCGPointForPigeonPoint() {
+  @Test func cgPointForPigeonPoint() {
     let pigeonPoint = FGMPlatformPoint.makeWith(x: 1.0, y: 2.0)
 
     let point = FGMGetCGPointForPigeonPoint(pigeonPoint)
 
-    XCTAssertEqual(pigeonPoint.x, Double(point.x), accuracy: Double.ulpOfOne)
-    XCTAssertEqual(pigeonPoint.y, Double(point.y), accuracy: Double.ulpOfOne)
+    #expect(abs(pigeonPoint.x - Double(point.x)) <= Double.ulpOfOne)
+    #expect(abs(pigeonPoint.y - Double(point.y)) <= Double.ulpOfOne)
   }
 
-  func testCoordinateBoundsFromLatLongs() {
+  @Test func coordinateBoundsFromLatLongs() {
     let pigeonBounds = FGMPlatformLatLngBounds.make(
       withNortheast: FGMPlatformLatLng.make(withLatitude: 3, longitude: 4),
       southwest: FGMPlatformLatLng.make(withLatitude: 1, longitude: 2)
@@ -177,21 +157,21 @@ class ConversionUtilsTests: XCTestCase {
     let bounds = FGMGetCoordinateBoundsForPigeonLatLngBounds(pigeonBounds)
 
     let accuracy: Double = 0.001
-    XCTAssertEqual(bounds.southWest.latitude, 1, accuracy: accuracy)
-    XCTAssertEqual(bounds.southWest.longitude, 2, accuracy: accuracy)
-    XCTAssertEqual(bounds.northEast.latitude, 3, accuracy: accuracy)
-    XCTAssertEqual(bounds.northEast.longitude, 4, accuracy: accuracy)
+    #expect(abs(bounds.southWest.latitude - 1) <= accuracy)
+    #expect(abs(bounds.southWest.longitude - 2) <= accuracy)
+    #expect(abs(bounds.northEast.latitude - 3) <= accuracy)
+    #expect(abs(bounds.northEast.longitude - 4) <= accuracy)
   }
 
-  func testMapViewTypeFromPigeonType() {
-    XCTAssertEqual(GMSMapViewType.normal, FGMGetMapViewTypeForPigeonMapType(.normal))
-    XCTAssertEqual(GMSMapViewType.satellite, FGMGetMapViewTypeForPigeonMapType(.satellite))
-    XCTAssertEqual(GMSMapViewType.terrain, FGMGetMapViewTypeForPigeonMapType(.terrain))
-    XCTAssertEqual(GMSMapViewType.hybrid, FGMGetMapViewTypeForPigeonMapType(.hybrid))
-    XCTAssertEqual(GMSMapViewType.none, FGMGetMapViewTypeForPigeonMapType(.none))
+  @Test func mapViewTypeFromPigeonType() {
+    #expect(GMSMapViewType.normal == FGMGetMapViewTypeForPigeonMapType(.normal))
+    #expect(GMSMapViewType.satellite == FGMGetMapViewTypeForPigeonMapType(.satellite))
+    #expect(GMSMapViewType.terrain == FGMGetMapViewTypeForPigeonMapType(.terrain))
+    #expect(GMSMapViewType.hybrid == FGMGetMapViewTypeForPigeonMapType(.hybrid))
+    #expect(GMSMapViewType.none == FGMGetMapViewTypeForPigeonMapType(.none))
   }
 
-  func testCameraUpdateFromNewCameraPosition() {
+  @Test func cameraUpdateFromNewCameraPosition() {
     let newPositionUpdate = FGMPlatformCameraUpdateNewCameraPosition.make(
       with: FGMPlatformCameraPosition.make(
         withBearing: 4,
@@ -209,7 +189,7 @@ class ConversionUtilsTests: XCTestCase {
     // implementation would be about as complex as the conversion function itself.
   }
 
-  func testCameraUpdateFromNewLatLong() {
+  @Test func cameraUpdateFromNewLatLong() {
     let lat: Double = 1
     let lng: Double = 2
     let platformUpdate = FGMPlatformCameraUpdateNewLatLng.make(
@@ -225,7 +205,7 @@ class ConversionUtilsTests: XCTestCase {
     // implementation would be about as complex as the conversion function itself.
   }
 
-  func testCameraUpdateFromNewLatLngBounds() {
+  @Test func cameraUpdateFromNewLatLngBounds() {
     let pigeonBounds = FGMPlatformLatLngBounds.make(
       withNortheast: FGMPlatformLatLng.make(withLatitude: 1, longitude: 2),
       southwest: FGMPlatformLatLng.make(withLatitude: 3, longitude: 4)
@@ -246,7 +226,7 @@ class ConversionUtilsTests: XCTestCase {
     // implementation would be about as complex as the conversion function itself.
   }
 
-  func testCameraUpdateFromNewLatLngZoom() {
+  @Test func cameraUpdateFromNewLatLngZoom() {
     let lat: Double = 1
     let lng: Double = 2
     let zoom: Double = 3
@@ -264,7 +244,7 @@ class ConversionUtilsTests: XCTestCase {
     // implementation would be about as complex as the conversion function itself.
   }
 
-  func testCameraUpdateFromScrollBy() {
+  @Test func cameraUpdateFromScrollBy() {
     let x: Double = 1
     let y: Double = 2
     let platformUpdate = FGMPlatformCameraUpdateScrollBy.make(withDx: x, dy: y)
@@ -278,7 +258,7 @@ class ConversionUtilsTests: XCTestCase {
     // implementation would be about as complex as the conversion function itself.
   }
 
-  func testCameraUpdateFromZoomBy() {
+  @Test func cameraUpdateFromZoomBy() {
     let zoom: Double = 1
     let platformUpdateNoPoint = FGMPlatformCameraUpdateZoomBy.make(withAmount: zoom, focus: nil)
 
@@ -291,7 +271,7 @@ class ConversionUtilsTests: XCTestCase {
     // implementation would be about as complex as the conversion function itself.
   }
 
-  func testCameraUpdateFromZoomByWithFocus() {
+  @Test func cameraUpdateFromZoomByWithFocus() {
     let zoom: Double = 1
     let x: Double = 2
     let y: Double = 3
@@ -309,7 +289,7 @@ class ConversionUtilsTests: XCTestCase {
     // implementation would be about as complex as the conversion function itself.
   }
 
-  func testCameraUpdateFromZoomIn() {
+  @Test func cameraUpdateFromZoomIn() {
     let platformUpdate = FGMPlatformCameraUpdateZoom.make(withOut: false)
 
     _ = FGMGetCameraUpdateForPigeonCameraUpdate(
@@ -321,7 +301,7 @@ class ConversionUtilsTests: XCTestCase {
     // implementation would be about as complex as the conversion function itself.
   }
 
-  func testCameraUpdateFromZoomOut() {
+  @Test func cameraUpdateFromZoomOut() {
     let platformUpdate = FGMPlatformCameraUpdateZoom.make(withOut: true)
 
     _ = FGMGetCameraUpdateForPigeonCameraUpdate(
@@ -333,7 +313,7 @@ class ConversionUtilsTests: XCTestCase {
     // implementation would be about as complex as the conversion function itself.
   }
 
-  func testCameraUpdateFromZoomTo() {
+  @Test func cameraUpdateFromZoomTo() {
     let zoom: Double = 1
     let platformUpdate = FGMPlatformCameraUpdateZoomTo.make(withZoom: zoom)
 
@@ -346,7 +326,7 @@ class ConversionUtilsTests: XCTestCase {
     // implementation would be about as complex as the conversion function itself.
   }
 
-  func testStrokeStylesFromPatterns() {
+  @Test func strokeStylesFromPatterns() {
     let patterns = [
       FGMPlatformPatternItem.make(with: .gap, length: 1),
       FGMPlatformPatternItem.make(with: .dash, length: 1),
@@ -355,12 +335,12 @@ class ConversionUtilsTests: XCTestCase {
 
     let patternStrokeStyle = FGMGetStrokeStylesFromPatterns(patterns, strokeColor)
 
-    XCTAssertEqual(patternStrokeStyle.count, 2)
+    #expect(patternStrokeStyle.count == 2)
     // None of the parameters of `patternStrokeStyle` is observable, so we limit to testing
     // the length of this output array.
   }
 
-  func testLengthsFromPatterns() {
+  @Test func lengthsFromPatterns() {
     let gapLength: Double = 10
     let dashLength: Double = 6.4
     let patterns = [
@@ -370,16 +350,16 @@ class ConversionUtilsTests: XCTestCase {
 
     let spanLengths = FGMGetSpanLengthsFromPatterns(patterns)
 
-    XCTAssertEqual(spanLengths.count, 2)
+    #expect(spanLengths.count == 2)
 
     let firstSpanLength = spanLengths[0]
     let secondSpanLength = spanLengths[1]
 
-    XCTAssertEqual(firstSpanLength.doubleValue, gapLength)
-    XCTAssertEqual(secondSpanLength.doubleValue, dashLength)
+    #expect(firstSpanLength.doubleValue == gapLength)
+    #expect(secondSpanLength.doubleValue == dashLength)
   }
 
-  func testWeightedDataFromPlatformWeightedData() {
+  @Test func weightedDataFromPlatformWeightedData() {
     let intensity1: Double = 3.0
     let intensity2: Double = 6.0
     let data = [
@@ -394,11 +374,11 @@ class ConversionUtilsTests: XCTestCase {
     ]
 
     let weightedData = FGMGetWeightedDataForPigeonWeightedData(data)
-    XCTAssertEqual(Double(weightedData[0].intensity), intensity1)
-    XCTAssertEqual(Double(weightedData[1].intensity), intensity2)
+    #expect(Double(weightedData[0].intensity) == intensity1)
+    #expect(Double(weightedData[1].intensity) == intensity2)
   }
 
-  func testGradientFromPlatformGradient() {
+  @Test func gradientFromPlatformGradient() {
     let startPoint: Double = 0.6
     let platformRed: Double = 0.1
     let platformGreen: Double = 0.2
@@ -425,11 +405,11 @@ class ConversionUtilsTests: XCTestCase {
     var alpha: CGFloat = 0
     gradient.colors[0].getRed(&red, green: &green, blue: &blue, alpha: &alpha)
     let accuracy: Double = 0.001
-    XCTAssertEqual(red, CGFloat(platformRed), accuracy: accuracy)
-    XCTAssertEqual(green, CGFloat(platformGreen), accuracy: accuracy)
-    XCTAssertEqual(blue, CGFloat(platformBlue), accuracy: accuracy)
-    XCTAssertEqual(alpha, CGFloat(platformAlpha), accuracy: accuracy)
-    XCTAssertEqual(gradient.startPoints[0].doubleValue, startPoint, accuracy: accuracy)
-    XCTAssertEqual(gradient.mapSize, UInt(colorMapSize))
+    #expect(abs(Double(red) - platformRed) <= accuracy)
+    #expect(abs(Double(green) - platformGreen) <= accuracy)
+    #expect(abs(Double(blue) - platformBlue) <= accuracy)
+    #expect(abs(Double(alpha) - platformAlpha) <= accuracy)
+    #expect(abs(gradient.startPoints[0].doubleValue - startPoint) <= accuracy)
+    #expect(gradient.mapSize == UInt(colorMapSize))
   }
 }

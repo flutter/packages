@@ -1,10 +1,7 @@
-// Copyright 2013 The Flutter Authors
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import XCTest
-import GoogleMaps
 import Flutter
+import GoogleMaps
+import Testing
+
 @testable import google_maps_flutter_ios
 
 class StubTileReceiver: NSObject, GMSTileReceiver {
@@ -15,12 +12,12 @@ class StubTileReceiver: NSObject, GMSTileReceiver {
 
 // A tile provider that expects a single call to
 // tileWithOverlayIdentifier:location:zoom:completion: on the main thread,
-// and then fulfills the expectation.
+// and then confirms it.
 class TestTileProvider: NSObject, FGMTileProviderDelegate {
-  var expectation: XCTestExpectation
+  var onTileCalled: () -> Void
 
-  init(expectation: XCTestExpectation) {
-    self.expectation = expectation
+  init(onTileCalled: @escaping () -> Void) {
+    self.onTileCalled = onTileCalled
     super.init()
   }
 
@@ -30,22 +27,28 @@ class TestTileProvider: NSObject, FGMTileProviderDelegate {
     zoom: Int,
     completion: @escaping (FGMPlatformTile?, FlutterError?) -> Void
   ) {
-    XCTAssertTrue(Thread.isMainThread)
-    expectation.fulfill()
+    #expect(Thread.isMainThread)
+    onTileCalled()
   }
 }
 
-class TileProviderControllerTests: XCTestCase {
+@MainActor struct TileProviderControllerTests {
 
-  func testCallChannelOnPlatformThread() {
-    let expectation = self.expectation(description: "invokeMethod")
-    let tileProvider = TestTileProvider(expectation: expectation)
+  @Test func callChannelOnPlatformThread() async {
+    var continuationToResume: CheckedContinuation<Void, Never>?
+
+    let tileProvider = TestTileProvider {
+      continuationToResume?.resume()
+    }
     let controller = FGMTileProviderController(
       tileOverlayIdentifier: "foo",
       tileProvider: tileProvider
     )
-    XCTAssertNotNil(controller)
-    controller.requestTileFor(x: 0, y: 0, zoom: 0, receiver: StubTileReceiver())
-    wait(for: [expectation], timeout: 10.0)
+    #expect(controller != nil)
+
+    await withCheckedContinuation { continuation in
+      continuationToResume = continuation
+      controller.requestTileFor(x: 0, y: 0, zoom: 0, receiver: StubTileReceiver())
+    }
   }
 }

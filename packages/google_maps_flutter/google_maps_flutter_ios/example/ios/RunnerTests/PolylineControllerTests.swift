@@ -2,11 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import XCTest
 import GoogleMaps
+import Testing
+
 @testable import google_maps_flutter_ios
 
-class PolylineControllerTests: XCTestCase {
+@MainActor struct PolylineControllerTests {
 
   /// Returns GoogleMapPolylineController object instantiated with a mocked map instance
   ///
@@ -45,10 +46,10 @@ class PolylineControllerTests: XCTestCase {
     return polylineControllerWithMockedMap
   }
 
-  func testPatternsSetSpans() {
+  @Test func patternsSetSpans() {
     let polylineController = polylineControllerWithMockedMap()
 
-    XCTAssertNil(polylineController.polyline.spans)
+    #expect(polylineController.polyline.spans == nil)
 
     polylineController.update(
       from: FGMPlatformPolyline.make(
@@ -69,10 +70,10 @@ class PolylineControllerTests: XCTestCase {
     )
 
     // `GMSStyleSpan` doesn't implement `isEqual` so cannot be compared by value at present.
-    XCTAssertNotNil(polylineController.polyline.spans)
+    #expect(polylineController.polyline.spans != nil)
   }
 
-  func testUpdatePolylineSetsVisibilityLast() {
+  @Test func updatePolylineSetsVisibilityLast() {
     let polyline = PropertyOrderValidatingPolyline()
     FGMPolylineController.update(
       polyline,
@@ -90,7 +91,7 @@ class PolylineControllerTests: XCTestCase {
       ),
       with: PolylineControllerTests.mapView()
     )
-    XCTAssertTrue(polyline.hasSetMap)
+    #expect(polyline.hasSetMap)
   }
 
   /// Returns a simple map view to add map objects to.
@@ -119,7 +120,7 @@ class PropertyOrderValidatingPolyline: GMSPolyline {
   override var path: GMSPath? {
     get { super.path }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.path = newValue
     }
   }
@@ -127,7 +128,7 @@ class PropertyOrderValidatingPolyline: GMSPolyline {
   override var strokeWidth: CGFloat {
     get { super.strokeWidth }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.strokeWidth = newValue
     }
   }
@@ -135,7 +136,7 @@ class PropertyOrderValidatingPolyline: GMSPolyline {
   override var strokeColor: UIColor {
     get { super.strokeColor }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.strokeColor = newValue
     }
   }
@@ -143,7 +144,7 @@ class PropertyOrderValidatingPolyline: GMSPolyline {
   override var geodesic: Bool {
     get { super.geodesic }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.geodesic = newValue
     }
   }
@@ -151,7 +152,7 @@ class PropertyOrderValidatingPolyline: GMSPolyline {
   override var title: String? {
     get { super.title }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.title = newValue
     }
   }
@@ -159,7 +160,7 @@ class PropertyOrderValidatingPolyline: GMSPolyline {
   override var isTappable: Bool {
     get { super.isTappable }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.isTappable = newValue
     }
   }
@@ -167,7 +168,7 @@ class PropertyOrderValidatingPolyline: GMSPolyline {
   override var zIndex: Int32 {
     get { super.zIndex }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.zIndex = newValue
     }
   }
@@ -175,7 +176,7 @@ class PropertyOrderValidatingPolyline: GMSPolyline {
   override var userData: Any? {
     get { super.userData }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.userData = newValue
     }
   }

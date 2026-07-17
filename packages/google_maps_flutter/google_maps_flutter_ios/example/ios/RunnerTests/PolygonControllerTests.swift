@@ -2,13 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import XCTest
 import GoogleMaps
+import Testing
+
 @testable import google_maps_flutter_ios
 
-class PolygonControllerTests: XCTestCase {
+@MainActor struct PolygonControllerTests {
 
-  func testUpdatePolygonSetsVisibilityLast() {
+  @Test func updatePolygonSetsVisibilityLast() {
     let polygon = PropertyOrderValidatingPolygon()
     FGMPolygonController.update(
       polygon,
@@ -26,7 +27,7 @@ class PolygonControllerTests: XCTestCase {
       ),
       with: PolygonControllerTests.mapView()
     )
-    XCTAssertTrue(polygon.hasSetMap)
+    #expect(polygon.hasSetMap)
   }
 
   /// Returns a simple map view to add map objects to.
@@ -45,7 +46,7 @@ class PropertyOrderValidatingPolygon: GMSPolygon {
   override var path: GMSPath? {
     get { super.path }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.path = newValue
     }
   }
@@ -53,7 +54,7 @@ class PropertyOrderValidatingPolygon: GMSPolygon {
   override var holes: [GMSPath]? {
     get { super.holes }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.holes = newValue
     }
   }
@@ -61,7 +62,7 @@ class PropertyOrderValidatingPolygon: GMSPolygon {
   override var strokeWidth: CGFloat {
     get { super.strokeWidth }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.strokeWidth = newValue
     }
   }
@@ -69,7 +70,7 @@ class PropertyOrderValidatingPolygon: GMSPolygon {
   override var strokeColor: UIColor? {
     get { super.strokeColor }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.strokeColor = newValue
     }
   }
@@ -77,7 +78,7 @@ class PropertyOrderValidatingPolygon: GMSPolygon {
   override var fillColor: UIColor? {
     get { super.fillColor }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.fillColor = newValue
     }
   }
@@ -85,7 +86,7 @@ class PropertyOrderValidatingPolygon: GMSPolygon {
   override var geodesic: Bool {
     get { super.geodesic }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.geodesic = newValue
     }
   }
@@ -93,7 +94,7 @@ class PropertyOrderValidatingPolygon: GMSPolygon {
   override var title: String? {
     get { super.title }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.title = newValue
     }
   }
@@ -101,7 +102,7 @@ class PropertyOrderValidatingPolygon: GMSPolygon {
   override var isTappable: Bool {
     get { super.isTappable }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.isTappable = newValue
     }
   }
@@ -109,7 +110,7 @@ class PropertyOrderValidatingPolygon: GMSPolygon {
   override var zIndex: Int32 {
     get { super.zIndex }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.zIndex = newValue
     }
   }
@@ -117,7 +118,7 @@ class PropertyOrderValidatingPolygon: GMSPolygon {
   override var userData: Any? {
     get { super.userData }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.userData = newValue
     }
   }

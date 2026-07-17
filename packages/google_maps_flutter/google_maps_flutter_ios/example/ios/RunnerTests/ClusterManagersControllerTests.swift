@@ -2,14 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import XCTest
-import GoogleMaps
 import Flutter
+import GoogleMaps
+import Testing
+
 @testable import google_maps_flutter_ios
 
-class ClusterManagersControllerTests: XCTestCase {
+@MainActor struct ClusterManagersControllerTests {
 
-  func testClustering() throws {
+  @Test func clustering() throws {
     let frame = CGRect(x: 0, y: 0, width: 100, height: 100)
 
     let mapViewOptions = GMSMapViewOptions()
@@ -39,13 +40,13 @@ class ClusterManagersControllerTests: XCTestCase {
 
     // Verify that cluster managers are available
     var clusterManager = clusterManagersController.clusterManager(withIdentifier: clusterManagerId)
-    XCTAssertNotNil(clusterManager, "Cluster Manager should not be nil")
+    #expect(clusterManager != nil)
 
     // Add markers
     let markerId1 = "m1"
     let markerId2 = "m2"
 
-    let zeroPoint = FGMPlatformPoint.makeWith(x:0, y: 0)
+    let zeroPoint = FGMPlatformPoint.makeWith(x: 0, y: 0)
     let zeroLatLng = FGMPlatformLatLng.make(withLatitude: 0, longitude: 0)
     let bitmap = FGMPlatformBitmap.make(
       withBitmap: FGMPlatformBitmapDefaultMarker.make(withHue: 0)
@@ -95,46 +96,46 @@ class ClusterManagersControllerTests: XCTestCase {
 
     // Verify that the markers were added to the cluster manager
     var error: FlutterError? = nil
-    let clusters1 = try XCTUnwrap(
+    let clusters1 = try #require(
       clusterManagersController.clusters(withIdentifier: clusterManagerId, error: &error)
     )
-    XCTAssertNil(error, "Error should be nil")
-    let targetCluster = try XCTUnwrap(
+    #expect(error == nil)
+    let targetCluster = try #require(
       clusters1.first(where: { $0.clusterManagerId == clusterManagerId })
     )
-    XCTAssertEqual(targetCluster.markerIds.count, 2, "Cluster should contain two markers")
-    XCTAssertTrue(targetCluster.markerIds.contains(markerId1), "Cluster should contain markerId1")
-    XCTAssertTrue(targetCluster.markerIds.contains(markerId2), "Cluster should contain markerId2")
+    #expect(targetCluster.markerIds.count == 2)
+    #expect(targetCluster.markerIds.contains(markerId1))
+    #expect(targetCluster.markerIds.contains(markerId2))
 
     markersController.removeMarkers(withIdentifiers: [markerId2])
 
     // Verify that the marker2 is removed from the clusterManager
     error = nil
-    let clusters2 = try XCTUnwrap(
+    let clusters2 = try #require(
       clusterManagersController.clusters(withIdentifier: clusterManagerId, error: &error)
     )
-    XCTAssertNil(error, "Error should be nil")
-    let targetCluster2 = try XCTUnwrap(
+    #expect(error == nil)
+    let targetCluster2 = try #require(
       clusters2.first(where: { $0.clusterManagerId == clusterManagerId })
     )
-    XCTAssertEqual(targetCluster2.markerIds.count, 1, "Cluster should contain one marker")
-    XCTAssertTrue(targetCluster2.markerIds.contains(markerId1), "Cluster should contain markerId1")
+    #expect(targetCluster2.markerIds.count == 1)
+    #expect(targetCluster2.markerIds.contains(markerId1))
 
     markersController.removeMarkers(withIdentifiers: [markerId1])
 
     // Verify that all markers are removed from clusterManager
     error = nil
-    let clusters3 = try XCTUnwrap(
+    let clusters3 = try #require(
       clusterManagersController.clusters(withIdentifier: clusterManagerId, error: &error)
     )
-    XCTAssertNil(error, "Error should be nil")
-    XCTAssertEqual(clusters3.count, 0, "Cluster Manager should not contain any clusters")
+    #expect(error == nil)
+    #expect(clusters3.count == 0)
 
     // Remove cluster manager
     clusterManagersController.removeClusterManagers(withIdentifiers: [clusterManagerId])
 
     // Verify that the cluster manager is removed
     clusterManager = clusterManagersController.clusterManager(withIdentifier: clusterManagerId)
-    XCTAssertNil(clusterManager, "Cluster Manager should be nil")
+    #expect(clusterManager == nil)
   }
 }

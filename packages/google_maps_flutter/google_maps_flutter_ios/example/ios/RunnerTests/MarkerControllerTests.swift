@@ -2,11 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import XCTest
 import GoogleMaps
+import Testing
+
 @testable import google_maps_flutter_ios
 
-class MarkerControllerTests: XCTestCase {
+@MainActor struct MarkerControllerTests {
 
   /// Returns a simple map view for use with marker controllers.
   static func mapView() -> GMSMapView {
@@ -36,7 +37,7 @@ class MarkerControllerTests: XCTestCase {
     return FGMPlatformBitmap.make(withBitmap: FGMPlatformBitmapDefaultMarker.make(withHue: 0))
   }
 
-  func testSetsMarkerNumericProperties() throws {
+  @Test func setsMarkerNumericProperties() throws {
     let mapView = MarkerControllerTests.mapView()
     let eventHandler = TestMapEventHandler()
     let controller = markersController(withMapView: mapView, eventDelegate: eventHandler)
@@ -72,22 +73,22 @@ class MarkerControllerTests: XCTestCase {
       )
     ])
 
-    let markerController = try XCTUnwrap(
+    let markerController = try #require(
       controller.markerIdentifierToController[markerIdentifier] as? FGMMarkerController
     )
-    let marker = try XCTUnwrap(markerController.marker)
+    let marker = try #require(markerController.marker)
 
     let delta = 0.0001
-    XCTAssertEqual(Double(marker.opacity), alpha, accuracy: delta)
-    XCTAssertEqual(marker.rotation, rotation, accuracy: delta)
-    XCTAssertEqual(Double(marker.zIndex), Double(zIndex), accuracy: delta)
-    XCTAssertEqual(Double(marker.groundAnchor.x), anchorX, accuracy: delta)
-    XCTAssertEqual(Double(marker.groundAnchor.y), anchorY, accuracy: delta)
-    XCTAssertEqual(marker.position.latitude, latitude, accuracy: delta)
-    XCTAssertEqual(marker.position.longitude, longitude, accuracy: delta)
+    #expect(abs(Double(marker.opacity) - alpha) <= delta)
+    #expect(abs(marker.rotation - rotation) <= delta)
+    #expect(abs(Double(marker.zIndex) - Double(zIndex)) <= delta)
+    #expect(abs(Double(marker.groundAnchor.x) - anchorX) <= delta)
+    #expect(abs(Double(marker.groundAnchor.y) - anchorY) <= delta)
+    #expect(abs(marker.position.latitude - latitude) <= delta)
+    #expect(abs(marker.position.longitude - longitude) <= delta)
   }
 
-  func testSetsDraggable() throws {
+  @Test func setsDraggable() throws {
     let mapView = MarkerControllerTests.mapView()
     let eventHandler = TestMapEventHandler()
     let controller = markersController(withMapView: mapView, eventDelegate: eventHandler)
@@ -116,17 +117,17 @@ class MarkerControllerTests: XCTestCase {
       )
     ])
 
-    let markerController = try XCTUnwrap(
+    let markerController = try #require(
       controller.markerIdentifierToController[markerIdentifier] as? FGMMarkerController
     )
-    let marker = try XCTUnwrap(markerController.marker)
+    let marker = try #require(markerController.marker)
 
-    XCTAssertTrue(marker.isDraggable)
+    #expect(marker.isDraggable)
   }
 
   // Boolean properties are tested individually to ensure they aren't accidentally cross-assigned from
   // another property.
-  func testSetsFlat() throws {
+  @Test func setsFlat() throws {
     let mapView = MarkerControllerTests.mapView()
     let eventHandler = TestMapEventHandler()
     let controller = markersController(withMapView: mapView, eventDelegate: eventHandler)
@@ -155,17 +156,17 @@ class MarkerControllerTests: XCTestCase {
       )
     ])
 
-    let markerController = try XCTUnwrap(
+    let markerController = try #require(
       controller.markerIdentifierToController[markerIdentifier] as? FGMMarkerController
     )
-    let marker = try XCTUnwrap(markerController.marker)
+    let marker = try #require(markerController.marker)
 
-    XCTAssertTrue(marker.isFlat)
+    #expect(marker.isFlat)
   }
 
   // Boolean properties are tested individually to ensure they aren't accidentally cross-assigned from
   // another property.
-  func testSetsVisible() throws {
+  @Test func setsVisible() throws {
     let mapView = MarkerControllerTests.mapView()
     let eventHandler = TestMapEventHandler()
     let controller = markersController(withMapView: mapView, eventDelegate: eventHandler)
@@ -194,16 +195,16 @@ class MarkerControllerTests: XCTestCase {
       )
     ])
 
-    let markerController = try XCTUnwrap(
+    let markerController = try #require(
       controller.markerIdentifierToController[markerIdentifier] as? FGMMarkerController
     )
-    let marker = try XCTUnwrap(markerController.marker)
+    let marker = try #require(markerController.marker)
 
     // Visibility is controlled by being set to a map.
-    XCTAssertNotNil(marker.map)
+    #expect(marker.map != nil)
   }
 
-  func testSetsMarkerInfoWindowProperties() throws {
+  @Test func setsMarkerInfoWindowProperties() throws {
     let mapView = MarkerControllerTests.mapView()
     let eventHandler = TestMapEventHandler()
     let controller = markersController(withMapView: mapView, eventDelegate: eventHandler)
@@ -236,19 +237,19 @@ class MarkerControllerTests: XCTestCase {
       )
     ])
 
-    let markerController = try XCTUnwrap(
+    let markerController = try #require(
       controller.markerIdentifierToController[markerIdentifier] as? FGMMarkerController
     )
-    let marker = try XCTUnwrap(markerController.marker)
+    let marker = try #require(markerController.marker)
 
     let delta = 0.0001
-    XCTAssertEqual(Double(marker.infoWindowAnchor.x), anchorX, accuracy: delta)
-    XCTAssertEqual(Double(marker.infoWindowAnchor.y), anchorY, accuracy: delta)
-    XCTAssertEqual(marker.title, title)
-    XCTAssertEqual(marker.snippet, snippet)
+    #expect(abs(Double(marker.infoWindowAnchor.x) - anchorX) <= delta)
+    #expect(abs(Double(marker.infoWindowAnchor.y) - anchorY) <= delta)
+    #expect(marker.title == title)
+    #expect(marker.snippet == snippet)
   }
 
-  func testUpdateMarkerSetsVisibilityLast() {
+  @Test func updateMarkerSetsVisibilityLast() {
     let marker = PropertyOrderValidatingAdvancedMarker()
     let collisionBehavior = FGMPlatformMarkerCollisionBehaviorBox(
       value: .requiredAndHidesOptional
@@ -280,10 +281,10 @@ class MarkerControllerTests: XCTestCase {
       screenScale: 1,
       usingOpacityForVisibility: false
     )
-    XCTAssertTrue(marker.hasSetMap)
+    #expect(marker.hasSetMap)
   }
 
-  func testAssetProviderIsRetained() {
+  @Test func assetProviderIsRetained() {
     var markerController: FGMMarkersController?
     weak var weakAssetProvider: TestAssetProvider?
     autoreleasepool {
@@ -298,8 +299,8 @@ class MarkerControllerTests: XCTestCase {
         markerType: .marker
       )
     }
-    XCTAssertNotNil(markerController)
-    XCTAssertNotNil(weakAssetProvider, "AssetProvider should be retained by the marker controller")
+    #expect(markerController != nil)
+    #expect(weakAssetProvider != nil)
   }
 }
 
@@ -310,7 +311,7 @@ class PropertyOrderValidatingAdvancedMarker: GMSAdvancedMarker {
   override var position: CLLocationCoordinate2D {
     get { super.position }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.position = newValue
     }
   }
@@ -318,7 +319,7 @@ class PropertyOrderValidatingAdvancedMarker: GMSAdvancedMarker {
   override var snippet: String? {
     get { super.snippet }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.snippet = newValue
     }
   }
@@ -326,7 +327,7 @@ class PropertyOrderValidatingAdvancedMarker: GMSAdvancedMarker {
   override var icon: UIImage? {
     get { super.icon }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.icon = newValue
     }
   }
@@ -334,7 +335,7 @@ class PropertyOrderValidatingAdvancedMarker: GMSAdvancedMarker {
   override var iconView: UIView? {
     get { super.iconView }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.iconView = newValue
     }
   }
@@ -342,7 +343,7 @@ class PropertyOrderValidatingAdvancedMarker: GMSAdvancedMarker {
   override var tracksViewChanges: Bool {
     get { super.tracksViewChanges }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.tracksViewChanges = newValue
     }
   }
@@ -350,7 +351,7 @@ class PropertyOrderValidatingAdvancedMarker: GMSAdvancedMarker {
   override var tracksInfoWindowChanges: Bool {
     get { super.tracksInfoWindowChanges }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.tracksInfoWindowChanges = newValue
     }
   }
@@ -358,7 +359,7 @@ class PropertyOrderValidatingAdvancedMarker: GMSAdvancedMarker {
   override var groundAnchor: CGPoint {
     get { super.groundAnchor }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.groundAnchor = newValue
     }
   }
@@ -366,7 +367,7 @@ class PropertyOrderValidatingAdvancedMarker: GMSAdvancedMarker {
   override var infoWindowAnchor: CGPoint {
     get { super.infoWindowAnchor }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.infoWindowAnchor = newValue
     }
   }
@@ -374,7 +375,7 @@ class PropertyOrderValidatingAdvancedMarker: GMSAdvancedMarker {
   override var appearAnimation: GMSMarkerAnimation {
     get { super.appearAnimation }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.appearAnimation = newValue
     }
   }
@@ -382,7 +383,7 @@ class PropertyOrderValidatingAdvancedMarker: GMSAdvancedMarker {
   override var isDraggable: Bool {
     get { super.isDraggable }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.isDraggable = newValue
     }
   }
@@ -390,7 +391,7 @@ class PropertyOrderValidatingAdvancedMarker: GMSAdvancedMarker {
   override var isFlat: Bool {
     get { super.isFlat }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.isFlat = newValue
     }
   }
@@ -398,7 +399,7 @@ class PropertyOrderValidatingAdvancedMarker: GMSAdvancedMarker {
   override var rotation: CLLocationDegrees {
     get { super.rotation }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.rotation = newValue
     }
   }
@@ -406,7 +407,7 @@ class PropertyOrderValidatingAdvancedMarker: GMSAdvancedMarker {
   override var opacity: Float {
     get { super.opacity }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.opacity = newValue
     }
   }
@@ -414,7 +415,7 @@ class PropertyOrderValidatingAdvancedMarker: GMSAdvancedMarker {
   override var panoramaView: GMSPanoramaView? {
     get { super.panoramaView }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.panoramaView = newValue
     }
   }
@@ -422,7 +423,7 @@ class PropertyOrderValidatingAdvancedMarker: GMSAdvancedMarker {
   override var title: String? {
     get { super.title }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.title = newValue
     }
   }
@@ -430,7 +431,7 @@ class PropertyOrderValidatingAdvancedMarker: GMSAdvancedMarker {
   override var isTappable: Bool {
     get { super.isTappable }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.isTappable = newValue
     }
   }
@@ -438,7 +439,7 @@ class PropertyOrderValidatingAdvancedMarker: GMSAdvancedMarker {
   override var zIndex: Int32 {
     get { super.zIndex }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.zIndex = newValue
     }
   }
@@ -446,7 +447,7 @@ class PropertyOrderValidatingAdvancedMarker: GMSAdvancedMarker {
   override var userData: Any? {
     get { super.userData }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.userData = newValue
     }
   }
@@ -454,7 +455,7 @@ class PropertyOrderValidatingAdvancedMarker: GMSAdvancedMarker {
   override var collisionBehavior: GMSCollisionBehavior {
     get { super.collisionBehavior }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.collisionBehavior = newValue
     }
   }

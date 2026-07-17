@@ -2,13 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import XCTest
 import GoogleMaps
+import Testing
+
 @testable import google_maps_flutter_ios
 
-class TileOverlayControllerTests: XCTestCase {
+@MainActor struct TileOverlayControllerTests {
 
-  func testUpdateTileOverlaySetsVisibilityLast() {
+  @Test func updateTileOverlaySetsVisibilityLast() {
     let tileLayer = PropertyOrderValidatingTileLayer()
     FGMTileOverlayController.update(
       tileLayer,
@@ -22,7 +23,7 @@ class TileOverlayControllerTests: XCTestCase {
       ),
       with: TileOverlayControllerTests.mapView()
     )
-    XCTAssertTrue(tileLayer.hasSetMap)
+    #expect(tileLayer.hasSetMap)
   }
 
   /// Returns a simple map view to add map objects to.
@@ -41,7 +42,7 @@ class PropertyOrderValidatingTileLayer: GMSTileLayer {
   override var zIndex: Int32 {
     get { super.zIndex }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.zIndex = newValue
     }
   }
@@ -49,7 +50,7 @@ class PropertyOrderValidatingTileLayer: GMSTileLayer {
   override var tileSize: Int {
     get { super.tileSize }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.tileSize = newValue
     }
   }
@@ -57,7 +58,7 @@ class PropertyOrderValidatingTileLayer: GMSTileLayer {
   override var opacity: Float {
     get { super.opacity }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.opacity = newValue
     }
   }
@@ -65,7 +66,7 @@ class PropertyOrderValidatingTileLayer: GMSTileLayer {
   override var fadeIn: Bool {
     get { super.fadeIn }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.fadeIn = newValue
     }
   }

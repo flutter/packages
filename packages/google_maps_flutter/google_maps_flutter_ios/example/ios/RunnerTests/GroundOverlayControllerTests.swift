@@ -2,18 +2,22 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import XCTest
 import GoogleMaps
+import Testing
+
 @testable import google_maps_flutter_ios
 
-class GroundOverlayControllerTests: XCTestCase {
+@MainActor struct GroundOverlayControllerTests {
 
   /// Returns a GroundOverlayController object instantiated with position and a mocked map
   /// instance.
-  static func groundOverlayControllerWithPositionWithMockedMap() throws -> FGMGroundOverlayController {
-    let bundle = Bundle(for: GroundOverlayControllerTests.self)
-    let imagePath = try XCTUnwrap(bundle.path(forResource: "widegamut", ofType: "png", inDirectory: "assets"))
-    let wideGamutImage = try XCTUnwrap(UIImage(contentsOfFile: imagePath))
+  static func groundOverlayControllerWithPositionWithMockedMap() throws
+    -> FGMGroundOverlayController
+  {
+    let bundle = Bundle(for: PropertyOrderValidatingGroundOverlay.self)
+    let imagePath = try #require(
+      bundle.path(forResource: "widegamut", ofType: "png", inDirectory: "assets"))
+    let wideGamutImage = try #require(UIImage(contentsOfFile: imagePath))
     let groundOverlay = GMSGroundOverlay(
       position: CLLocationCoordinate2D(latitude: 52.4816, longitude: 3.1791),
       icon: wideGamutImage,
@@ -32,10 +36,12 @@ class GroundOverlayControllerTests: XCTestCase {
 
   /// Returns a GroundOverlayController object instantiated with bounds and a mocked map
   /// instance.
-  static func groundOverlayControllerWithBoundsWithMockedMap() throws -> FGMGroundOverlayController {
-    let bundle = Bundle(for: GroundOverlayControllerTests.self)
-    let imagePath = try XCTUnwrap(bundle.path(forResource: "widegamut", ofType: "png", inDirectory: "assets"))
-    let wideGamutImage = try XCTUnwrap(UIImage(contentsOfFile: imagePath))
+  static func groundOverlayControllerWithBoundsWithMockedMap() throws -> FGMGroundOverlayController
+  {
+    let bundle = Bundle(for: PropertyOrderValidatingGroundOverlay.self)
+    let imagePath = try #require(
+      bundle.path(forResource: "widegamut", ofType: "png", inDirectory: "assets"))
+    let wideGamutImage = try #require(UIImage(contentsOfFile: imagePath))
     let groundOverlay = GMSGroundOverlay(
       bounds: GMSCoordinateBounds(
         coordinate: CLLocationCoordinate2D(latitude: 10, longitude: 20),
@@ -54,8 +60,9 @@ class GroundOverlayControllerTests: XCTestCase {
     )
   }
 
-  func testUpdatingGroundOverlayWithPosition() throws {
-    let groundOverlayController = try GroundOverlayControllerTests.groundOverlayControllerWithPositionWithMockedMap()
+  @Test func updatingGroundOverlayWithPosition() throws {
+    let groundOverlayController =
+      try GroundOverlayControllerTests.groundOverlayControllerWithPositionWithMockedMap()
 
     let position = FGMPlatformLatLng.make(withLatitude: 52.4816, longitude: 3.1791)
 
@@ -83,47 +90,40 @@ class GroundOverlayControllerTests: XCTestCase {
       screenScale: 1.0
     )
 
-    XCTAssertNotNil(groundOverlayController.groundOverlay.icon)
-    XCTAssertEqual(
-      groundOverlayController.groundOverlay.position.latitude,
-      position.latitude,
-      accuracy: Double.ulpOfOne
-    )
-    XCTAssertEqual(
-      groundOverlayController.groundOverlay.position.longitude,
-      position.longitude,
-      accuracy: Double.ulpOfOne
-    )
-    XCTAssertEqual(Double(groundOverlayController.groundOverlay.opacity), platformGroundOverlay.transparency)
-    XCTAssertEqual(groundOverlayController.groundOverlay.bearing, platformGroundOverlay.bearing)
-    XCTAssertEqual(groundOverlayController.groundOverlay.anchor.x, 0.5, accuracy: Double.ulpOfOne)
-    XCTAssertEqual(groundOverlayController.groundOverlay.anchor.y, 0.5, accuracy: Double.ulpOfOne)
-    XCTAssertEqual(groundOverlayController.groundOverlay.zIndex, Int32(platformGroundOverlay.zIndex))
+    #expect(groundOverlayController.groundOverlay.icon != nil)
+    #expect(
+      abs(groundOverlayController.groundOverlay.position.latitude - position.latitude)
+        <= Double.ulpOfOne)
+    #expect(
+      abs(groundOverlayController.groundOverlay.position.longitude - position.longitude)
+        <= Double.ulpOfOne)
+    #expect(
+      Double(groundOverlayController.groundOverlay.opacity) == platformGroundOverlay.transparency)
+    #expect(groundOverlayController.groundOverlay.bearing == platformGroundOverlay.bearing)
+    #expect(abs(groundOverlayController.groundOverlay.anchor.x - 0.5) <= Double.ulpOfOne)
+    #expect(abs(groundOverlayController.groundOverlay.anchor.y - 0.5) <= Double.ulpOfOne)
+    #expect(groundOverlayController.groundOverlay.zIndex == Int32(platformGroundOverlay.zIndex))
 
-    let convertedPlatformGroundOverlay = try XCTUnwrap(
+    let convertedPlatformGroundOverlay = try #require(
       FGMGetPigeonGroundOverlay(groundOverlayController.groundOverlay, "id_1", false, 14.0)
     )
-    XCTAssertEqual(convertedPlatformGroundOverlay.groundOverlayId, "id_1")
-    XCTAssertEqual(
-      convertedPlatformGroundOverlay.position!.latitude,
-      position.latitude,
-      accuracy: Double.ulpOfOne
-    )
-    XCTAssertEqual(
-      convertedPlatformGroundOverlay.position!.longitude,
-      position.longitude,
-      accuracy: Double.ulpOfOne
-    )
-    XCTAssertEqual(convertedPlatformGroundOverlay.zoomLevel!.doubleValue, 14.0)
-    XCTAssertEqual(convertedPlatformGroundOverlay.transparency, platformGroundOverlay.transparency)
-    XCTAssertEqual(convertedPlatformGroundOverlay.bearing, platformGroundOverlay.bearing)
-    XCTAssertEqual(convertedPlatformGroundOverlay.anchor!.x, 0.5, accuracy: Double.ulpOfOne)
-    XCTAssertEqual(convertedPlatformGroundOverlay.anchor!.y, 0.5, accuracy: Double.ulpOfOne)
-    XCTAssertEqual(convertedPlatformGroundOverlay.zIndex, platformGroundOverlay.zIndex)
+    #expect(convertedPlatformGroundOverlay.groundOverlayId == "id_1")
+    #expect(
+      abs(convertedPlatformGroundOverlay.position!.latitude - position.latitude) <= Double.ulpOfOne)
+    #expect(
+      abs(convertedPlatformGroundOverlay.position!.longitude - position.longitude)
+        <= Double.ulpOfOne)
+    #expect(convertedPlatformGroundOverlay.zoomLevel!.doubleValue == 14.0)
+    #expect(convertedPlatformGroundOverlay.transparency == platformGroundOverlay.transparency)
+    #expect(convertedPlatformGroundOverlay.bearing == platformGroundOverlay.bearing)
+    #expect(abs(convertedPlatformGroundOverlay.anchor!.x - 0.5) <= Double.ulpOfOne)
+    #expect(abs(convertedPlatformGroundOverlay.anchor!.y - 0.5) <= Double.ulpOfOne)
+    #expect(convertedPlatformGroundOverlay.zIndex == platformGroundOverlay.zIndex)
   }
 
-  func testUpdatingGroundOverlayWithBounds() throws {
-    let groundOverlayController = try GroundOverlayControllerTests.groundOverlayControllerWithBoundsWithMockedMap()
+  @Test func updatingGroundOverlayWithBounds() throws {
+    let groundOverlayController =
+      try GroundOverlayControllerTests.groundOverlayControllerWithBoundsWithMockedMap()
 
     let bounds = FGMPlatformLatLngBounds.make(
       withNortheast: FGMPlatformLatLng.make(withLatitude: 54.4816, longitude: 5.1791),
@@ -154,66 +154,43 @@ class GroundOverlayControllerTests: XCTestCase {
       screenScale: 1.0
     )
 
-    XCTAssertNotNil(groundOverlayController.groundOverlay.icon)
-    let overlayBounds = try XCTUnwrap(groundOverlayController.groundOverlay.bounds)
-    XCTAssertEqual(
-      overlayBounds.northEast.latitude,
-      bounds.northeast.latitude,
-      accuracy: Double.ulpOfOne
-    )
-    XCTAssertEqual(
-      overlayBounds.northEast.longitude,
-      bounds.northeast.longitude,
-      accuracy: Double.ulpOfOne
-    )
-    XCTAssertEqual(
-      overlayBounds.southWest.latitude,
-      bounds.southwest.latitude,
-      accuracy: Double.ulpOfOne
-    )
-    XCTAssertEqual(
-      overlayBounds.southWest.longitude,
-      bounds.southwest.longitude,
-      accuracy: Double.ulpOfOne
-    )
-    XCTAssertEqual(Double(groundOverlayController.groundOverlay.opacity), platformGroundOverlay.transparency)
-    XCTAssertEqual(groundOverlayController.groundOverlay.bearing, platformGroundOverlay.bearing)
-    XCTAssertEqual(groundOverlayController.groundOverlay.anchor.x, 0.5, accuracy: Double.ulpOfOne)
-    XCTAssertEqual(groundOverlayController.groundOverlay.anchor.y, 0.5, accuracy: Double.ulpOfOne)
-    XCTAssertEqual(groundOverlayController.groundOverlay.zIndex, Int32(platformGroundOverlay.zIndex))
+    #expect(groundOverlayController.groundOverlay.icon != nil)
+    let overlayBounds = try #require(groundOverlayController.groundOverlay.bounds)
+    #expect(abs(overlayBounds.northEast.latitude - bounds.northeast.latitude) <= Double.ulpOfOne)
+    #expect(abs(overlayBounds.northEast.longitude - bounds.northeast.longitude) <= Double.ulpOfOne)
+    #expect(abs(overlayBounds.southWest.latitude - bounds.southwest.latitude) <= Double.ulpOfOne)
+    #expect(abs(overlayBounds.southWest.longitude - bounds.southwest.longitude) <= Double.ulpOfOne)
+    #expect(
+      Double(groundOverlayController.groundOverlay.opacity) == platformGroundOverlay.transparency)
+    #expect(groundOverlayController.groundOverlay.bearing == platformGroundOverlay.bearing)
+    #expect(abs(groundOverlayController.groundOverlay.anchor.x - 0.5) <= Double.ulpOfOne)
+    #expect(abs(groundOverlayController.groundOverlay.anchor.y - 0.5) <= Double.ulpOfOne)
+    #expect(groundOverlayController.groundOverlay.zIndex == Int32(platformGroundOverlay.zIndex))
 
-    let convertedPlatformGroundOverlay = try XCTUnwrap(
+    let convertedPlatformGroundOverlay = try #require(
       FGMGetPigeonGroundOverlay(groundOverlayController.groundOverlay, "id_1", true, nil)
     )
-    XCTAssertEqual(convertedPlatformGroundOverlay.groundOverlayId, "id_1")
-    XCTAssertEqual(
-      convertedPlatformGroundOverlay.bounds!.northeast.latitude,
-      bounds.northeast.latitude,
-      accuracy: Double.ulpOfOne
-    )
-    XCTAssertEqual(
-      convertedPlatformGroundOverlay.bounds!.northeast.longitude,
-      bounds.northeast.longitude,
-      accuracy: Double.ulpOfOne
-    )
-    XCTAssertEqual(
-      convertedPlatformGroundOverlay.bounds!.southwest.latitude,
-      bounds.southwest.latitude,
-      accuracy: Double.ulpOfOne
-    )
-    XCTAssertEqual(
-      convertedPlatformGroundOverlay.bounds!.southwest.longitude,
-      bounds.southwest.longitude,
-      accuracy: Double.ulpOfOne
-    )
-    XCTAssertEqual(convertedPlatformGroundOverlay.transparency, platformGroundOverlay.transparency)
-    XCTAssertEqual(convertedPlatformGroundOverlay.bearing, platformGroundOverlay.bearing)
-    XCTAssertEqual(convertedPlatformGroundOverlay.anchor!.x, 0.5, accuracy: Double.ulpOfOne)
-    XCTAssertEqual(convertedPlatformGroundOverlay.anchor!.y, 0.5, accuracy: Double.ulpOfOne)
-    XCTAssertEqual(convertedPlatformGroundOverlay.zIndex, platformGroundOverlay.zIndex)
+    #expect(convertedPlatformGroundOverlay.groundOverlayId == "id_1")
+    #expect(
+      abs(convertedPlatformGroundOverlay.bounds!.northeast.latitude - bounds.northeast.latitude)
+        <= Double.ulpOfOne)
+    #expect(
+      abs(convertedPlatformGroundOverlay.bounds!.northeast.longitude - bounds.northeast.longitude)
+        <= Double.ulpOfOne)
+    #expect(
+      abs(convertedPlatformGroundOverlay.bounds!.southwest.latitude - bounds.southwest.latitude)
+        <= Double.ulpOfOne)
+    #expect(
+      abs(convertedPlatformGroundOverlay.bounds!.southwest.longitude - bounds.southwest.longitude)
+        <= Double.ulpOfOne)
+    #expect(convertedPlatformGroundOverlay.transparency == platformGroundOverlay.transparency)
+    #expect(convertedPlatformGroundOverlay.bearing == platformGroundOverlay.bearing)
+    #expect(abs(convertedPlatformGroundOverlay.anchor!.x - 0.5) <= Double.ulpOfOne)
+    #expect(abs(convertedPlatformGroundOverlay.anchor!.y - 0.5) <= Double.ulpOfOne)
+    #expect(convertedPlatformGroundOverlay.zIndex == platformGroundOverlay.zIndex)
   }
 
-  func testUpdateGroundOverlaySetsVisibilityLast() {
+  @Test func updateGroundOverlaySetsVisibilityLast() {
     let groundOverlay = PropertyOrderValidatingGroundOverlay()
     FGMGroundOverlayController.update(
       groundOverlay,
@@ -240,10 +217,10 @@ class GroundOverlayControllerTests: XCTestCase {
       screenScale: 1.0,
       usingBounds: true
     )
-    XCTAssertTrue(groundOverlay.hasSetMap)
+    #expect(groundOverlay.hasSetMap)
   }
 
-  func testAssetProviderIsRetained() {
+  @Test func assetProviderIsRetained() {
     var groundOverlayController: FGMGroundOverlaysController?
     weak var weakAssetProvider: TestAssetProvider?
     autoreleasepool {
@@ -255,8 +232,8 @@ class GroundOverlayControllerTests: XCTestCase {
         assetProvider: assetProvider
       )
     }
-    XCTAssertNotNil(groundOverlayController)
-    XCTAssertNotNil(weakAssetProvider)
+    #expect(groundOverlayController != nil)
+    #expect(weakAssetProvider != nil)
   }
 
   /// Returns a simple map view to add map objects to.
@@ -275,7 +252,7 @@ class PropertyOrderValidatingGroundOverlay: GMSGroundOverlay {
   override var position: CLLocationCoordinate2D {
     get { super.position }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.position = newValue
     }
   }
@@ -283,7 +260,7 @@ class PropertyOrderValidatingGroundOverlay: GMSGroundOverlay {
   override var anchor: CGPoint {
     get { super.anchor }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.anchor = newValue
     }
   }
@@ -291,7 +268,7 @@ class PropertyOrderValidatingGroundOverlay: GMSGroundOverlay {
   override var icon: UIImage? {
     get { super.icon }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.icon = newValue
     }
   }
@@ -299,7 +276,7 @@ class PropertyOrderValidatingGroundOverlay: GMSGroundOverlay {
   override var opacity: Float {
     get { super.opacity }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.opacity = newValue
     }
   }
@@ -307,7 +284,7 @@ class PropertyOrderValidatingGroundOverlay: GMSGroundOverlay {
   override var bearing: CLLocationDirection {
     get { super.bearing }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.bearing = newValue
     }
   }
@@ -315,7 +292,7 @@ class PropertyOrderValidatingGroundOverlay: GMSGroundOverlay {
   override var bounds: GMSCoordinateBounds? {
     get { super.bounds }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.bounds = newValue
     }
   }
@@ -323,7 +300,7 @@ class PropertyOrderValidatingGroundOverlay: GMSGroundOverlay {
   override var title: String? {
     get { super.title }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.title = newValue
     }
   }
@@ -331,7 +308,7 @@ class PropertyOrderValidatingGroundOverlay: GMSGroundOverlay {
   override var isTappable: Bool {
     get { super.isTappable }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.isTappable = newValue
     }
   }
@@ -339,7 +316,7 @@ class PropertyOrderValidatingGroundOverlay: GMSGroundOverlay {
   override var zIndex: Int32 {
     get { super.zIndex }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.zIndex = newValue
     }
   }

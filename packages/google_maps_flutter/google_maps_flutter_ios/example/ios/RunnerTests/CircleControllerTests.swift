@@ -2,13 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import XCTest
 import GoogleMaps
+import Testing
+
 @testable import google_maps_flutter_ios
 
-class CircleControllerTests: XCTestCase {
+@MainActor struct CircleControllerTests {
 
-  func testUpdateCircleSetsVisibilityLast() {
+  @Test func updateCircleSetsVisibilityLast() {
     let circle = PropertyOrderValidatingCircle()
     FGMCircleController.update(
       circle,
@@ -25,7 +26,7 @@ class CircleControllerTests: XCTestCase {
       ),
       with: CircleControllerTests.mapView()
     )
-    XCTAssertTrue(circle.hasSetMap)
+    #expect(circle.hasSetMap)
   }
 
   /// Returns a simple map view to add map objects to.
@@ -44,7 +45,7 @@ class PropertyOrderValidatingCircle: GMSCircle {
   override var position: CLLocationCoordinate2D {
     get { super.position }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.position = newValue
     }
   }
@@ -52,7 +53,7 @@ class PropertyOrderValidatingCircle: GMSCircle {
   override var radius: CLLocationDistance {
     get { super.radius }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.radius = newValue
     }
   }
@@ -60,7 +61,7 @@ class PropertyOrderValidatingCircle: GMSCircle {
   override var strokeWidth: CGFloat {
     get { super.strokeWidth }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.strokeWidth = newValue
     }
   }
@@ -68,7 +69,7 @@ class PropertyOrderValidatingCircle: GMSCircle {
   override var strokeColor: UIColor? {
     get { super.strokeColor }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.strokeColor = newValue
     }
   }
@@ -76,7 +77,7 @@ class PropertyOrderValidatingCircle: GMSCircle {
   override var fillColor: UIColor? {
     get { super.fillColor }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.fillColor = newValue
     }
   }
@@ -84,7 +85,7 @@ class PropertyOrderValidatingCircle: GMSCircle {
   override var title: String? {
     get { super.title }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.title = newValue
     }
   }
@@ -92,7 +93,7 @@ class PropertyOrderValidatingCircle: GMSCircle {
   override var isTappable: Bool {
     get { super.isTappable }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.isTappable = newValue
     }
   }
@@ -100,7 +101,7 @@ class PropertyOrderValidatingCircle: GMSCircle {
   override var zIndex: Int32 {
     get { super.zIndex }
     set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      #expect(!hasSetMap, "Property set after map was set.")
       super.zIndex = newValue
     }
   }

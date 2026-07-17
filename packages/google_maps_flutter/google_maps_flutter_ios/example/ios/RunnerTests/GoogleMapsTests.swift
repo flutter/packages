@@ -2,9 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import XCTest
-import GoogleMaps
 import Flutter
+import GoogleMaps
+import Testing
+
 @testable import google_maps_flutter_ios
 
 class MockCATransaction: NSObject, FGMCATransactionProtocol {
@@ -30,7 +31,9 @@ class StubBinaryMessenger: NSObject, FlutterBinaryMessenger {
   func send(onChannel channel: String, message: Data?) {}
   func send(onChannel channel: String, message: Data?, binaryReply reply: FlutterBinaryReply?) {}
   func cleanUpConnection(_ connection: FlutterBinaryMessengerConnection) {}
-  func setMessageHandlerOnChannel(_ channel: String, binaryMessageHandler handler: FlutterBinaryMessageHandler?) -> FlutterBinaryMessengerConnection {
+  func setMessageHandlerOnChannel(
+    _ channel: String, binaryMessageHandler handler: FlutterBinaryMessageHandler?
+  ) -> FlutterBinaryMessengerConnection {
     return 0
   }
 }
@@ -47,17 +50,20 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
   func messenger() -> any FlutterBinaryMessenger { StubBinaryMessenger() }
   func textures() -> any FlutterTextureRegistry { fatalError() }
   func register(_ factory: any FlutterPlatformViewFactory, withId factoryId: String) {}
-  func register(_ factory: any FlutterPlatformViewFactory, withId factoryId: String, gestureRecognizersBlockingPolicy: FlutterPlatformViewGestureRecognizersBlockingPolicy) {}
+  func register(
+    _ factory: any FlutterPlatformViewFactory, withId factoryId: String,
+    gestureRecognizersBlockingPolicy: FlutterPlatformViewGestureRecognizersBlockingPolicy
+  ) {}
 }
 
-class GoogleMapsTests: XCTestCase {
+@MainActor struct GoogleMapsTests {
 
-  func testPlugin() {
+  @Test func plugin() {
     let plugin = FGMGoogleMapsPlugin()
-    XCTAssertNotNil(plugin)
+    #expect(plugin != nil)
   }
 
-  func testFrameObserver() {
+  @Test func frameObserver() {
     let frame = CGRect(x: 0, y: 0, width: 100, height: 100)
     let options = GMSMapViewOptions()
     options.frame = frame
@@ -74,44 +80,45 @@ class GoogleMapsTests: XCTestCase {
     for _ in 0..<10 {
       _ = controller.view()
     }
-    XCTAssertEqual(mapView.frameObserverCount, 1)
+    #expect(mapView.frameObserverCount == 1)
 
     mapView.frame = frame
-    XCTAssertEqual(mapView.frameObserverCount, 0)
+    #expect(mapView.frameObserverCount == 0)
   }
 
-  func testMapsServiceSync() {
+  @Test func mapsServiceSync() {
     // The API requires a registrar, but this test doesn't actually use it, so just pass in a
     // dummy object rather than set up a full mock.
     let registrar = StubPluginRegistrar()
     let factory1 = FGMGoogleMapFactory(registrar: registrar)
-    XCTAssertNotNil(factory1.sharedMapServices)
+    #expect(factory1.sharedMapServices != nil)
     let factory2 = FGMGoogleMapFactory(registrar: registrar)
     // Test pointer equality, should be same retained singleton +[GMSServices sharedServices] object.
     // Retaining the opaque object should be enough to avoid multiple internal initializations,
     // but don't test the internals of the GoogleMaps API. Assume that it does what is documented.
     // https://developers.google.com/maps/documentation/ios-sdk/reference/interface_g_m_s_services#a436e03c32b1c0be74e072310a7158831
-    XCTAssertIdentical(factory1.sharedMapServices as AnyObject, factory2.sharedMapServices as AnyObject)
+    #expect(factory1.sharedMapServices as AnyObject === factory2.sharedMapServices as AnyObject)
   }
 
-  func testHandleResultTileDownsamplesWideGamutImages() throws {
+  @Test func handleResultTileDownsamplesWideGamutImages() throws {
     let controller = FGMTileProviderController()
 
-    let bundle = Bundle(for: type(of: self))
-    let imagePath = try XCTUnwrap(bundle.path(forResource: "widegamut", ofType: "png", inDirectory: "assets"))
-    let wideGamutImage = try XCTUnwrap(UIImage(contentsOfFile: imagePath))
+    let bundle = Bundle(for: MockCATransaction.self)
+    let imagePath = try #require(
+      bundle.path(forResource: "widegamut", ofType: "png", inDirectory: "assets"))
+    let wideGamutImage = try #require(UIImage(contentsOfFile: imagePath))
 
-    let downsampledImage = try XCTUnwrap(controller.handleResultTile(wideGamutImage))
+    let downsampledImage = try #require(controller.handleResultTile(wideGamutImage))
 
-    let imageRef = try XCTUnwrap(downsampledImage.cgImage)
+    let imageRef = try #require(downsampledImage.cgImage)
     let bitsPerComponent = imageRef.bitsPerComponent
 
     // non wide gamut images use 8 bit format
-    XCTAssertEqual(bitsPerComponent, 8)
-    XCTAssertEqual(imageRef.alphaInfo, .premultipliedLast)
+    #expect(bitsPerComponent == 8)
+    #expect(imageRef.alphaInfo == .premultipliedLast)
   }
 
-  func testAnimateCameraWithUpdate() throws {
+  @Test func animateCameraWithUpdate() throws {
     let frame = CGRect(x: 0, y: 0, width: 100, height: 100)
     let mapViewOptions = GMSMapViewOptions()
     mapViewOptions.frame = frame
@@ -137,13 +144,13 @@ class GoogleMapsTests: XCTestCase {
     var error: FlutterError? = nil
 
     controller.callHandler.animateCamera(with: cameraUpdate, duration: nil, error: &error)
-    XCTAssertNil(error)
-    XCTAssertTrue(mapView.didAnimateCamera)
-    XCTAssertFalse(mockTransactionWrapper.beginCalled)
-    XCTAssertFalse(mockTransactionWrapper.commitCalled)
+    #expect(error == nil)
+    #expect(mapView.didAnimateCamera)
+    #expect(!mockTransactionWrapper.beginCalled)
+    #expect(!mockTransactionWrapper.commitCalled)
   }
 
-  func testAnimateCameraWithUpdateAndDuration() throws {
+  @Test func animateCameraWithUpdateAndDuration() throws {
     let frame = CGRect(x: 0, y: 0, width: 100, height: 100)
     let mapViewOptions = GMSMapViewOptions()
     mapViewOptions.frame = frame
@@ -174,14 +181,14 @@ class GoogleMapsTests: XCTestCase {
       duration: durationMilliseconds,
       error: &error
     )
-    XCTAssertNil(error)
-    XCTAssertTrue(mapView.didAnimateCamera)
-    XCTAssertTrue(mockTransactionWrapper.beginCalled)
-    XCTAssertTrue(mockTransactionWrapper.commitCalled)
-    XCTAssertEqual(mockTransactionWrapper.animationDuration, durationMilliseconds.doubleValue / 1000)
+    #expect(error == nil)
+    #expect(mapView.didAnimateCamera)
+    #expect(mockTransactionWrapper.beginCalled)
+    #expect(mockTransactionWrapper.commitCalled)
+    #expect(mockTransactionWrapper.animationDuration == durationMilliseconds.doubleValue / 1000)
   }
 
-  func testInspectorAPICameraPosition() throws {
+  @Test func inspectorAPICameraPosition() throws {
     let frame = CGRect(x: 0, y: 0, width: 100, height: 100)
     let mapViewOptions = GMSMapViewOptions()
     mapViewOptions.frame = frame
@@ -208,12 +215,12 @@ class GoogleMapsTests: XCTestCase {
     )
 
     var error: FlutterError? = nil
-    let cameraPosition = try XCTUnwrap(inspector.cameraPosition(&error))
-    XCTAssertNil(error)
+    let cameraPosition = try #require(inspector.cameraPosition(&error))
+    #expect(error == nil)
 
-    XCTAssertEqual(cameraPosition.target.latitude, initialCameraPosition.target.latitude)
-    XCTAssertEqual(cameraPosition.target.longitude, initialCameraPosition.target.longitude)
-    XCTAssertEqual(Double(cameraPosition.zoom), Double(initialCameraPosition.zoom))
+    #expect(cameraPosition.target.latitude == initialCameraPosition.target.latitude)
+    #expect(cameraPosition.target.longitude == initialCameraPosition.target.longitude)
+    #expect(Double(cameraPosition.zoom) == Double(initialCameraPosition.zoom))
   }
 
   /// Creates an empty creation parameters object for tests where the values don't matter, just that
