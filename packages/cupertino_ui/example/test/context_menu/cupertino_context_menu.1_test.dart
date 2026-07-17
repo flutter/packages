@@ -2,9 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:material_ui/material_ui.dart';
-import 'package:cupertino_ui_examples/context_menu/cupertino_context_menu.1.dart'
-    as example;
+import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:cupertino_ui_examples/context_menu/cupertino_context_menu.1.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
