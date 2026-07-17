@@ -6,93 +6,6 @@ import XCTest
 import GoogleMaps
 @testable import google_maps_flutter_ios
 
-/// A GMSGroundOverlay that ensures that property updates are made before the map is set.
-class PropertyOrderValidatingGroundOverlay: GMSGroundOverlay {
-  var hasSetMap = false
-
-  override var position: CLLocationCoordinate2D {
-    get { super.position }
-    set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
-      super.position = newValue
-    }
-  }
-
-  override var anchor: CGPoint {
-    get { super.anchor }
-    set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
-      super.anchor = newValue
-    }
-  }
-
-  override var icon: UIImage? {
-    get { super.icon }
-    set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
-      super.icon = newValue
-    }
-  }
-
-  override var opacity: Float {
-    get { super.opacity }
-    set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
-      super.opacity = newValue
-    }
-  }
-
-  override var bearing: CLLocationDirection {
-    get { super.bearing }
-    set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
-      super.bearing = newValue
-    }
-  }
-
-  override var bounds: GMSCoordinateBounds? {
-    get { super.bounds }
-    set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
-      super.bounds = newValue
-    }
-  }
-
-  override var title: String? {
-    get { super.title }
-    set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
-      super.title = newValue
-    }
-  }
-
-  override var isTappable: Bool {
-    get { super.isTappable }
-    set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
-      super.isTappable = newValue
-    }
-  }
-
-  override var zIndex: Int32 {
-    get { super.zIndex }
-    set {
-      XCTAssertFalse(hasSetMap, "Property set after map was set.")
-      super.zIndex = newValue
-    }
-  }
-
-  override var map: GMSMapView? {
-    get { super.map }
-    set {
-      // Don't actually set the map, since that requires more test setup.
-      if newValue != nil {
-        hasSetMap = true
-      }
-    }
-  }
-}
-
 class GroundOverlayControllerTests: XCTestCase {
 
   /// Returns a GroundOverlayController object instantiated with position and a mocked map
@@ -242,23 +155,24 @@ class GroundOverlayControllerTests: XCTestCase {
     )
 
     XCTAssertNotNil(groundOverlayController.groundOverlay.icon)
+    let overlayBounds = try XCTUnwrap(groundOverlayController.groundOverlay.bounds)
     XCTAssertEqual(
-      groundOverlayController.groundOverlay.bounds!.northEast.latitude,
+      overlayBounds.northEast.latitude,
       bounds.northeast.latitude,
       accuracy: Double.ulpOfOne
     )
     XCTAssertEqual(
-      groundOverlayController.groundOverlay.bounds!.northEast.longitude,
+      overlayBounds.northEast.longitude,
       bounds.northeast.longitude,
       accuracy: Double.ulpOfOne
     )
     XCTAssertEqual(
-      groundOverlayController.groundOverlay.bounds!.southWest.latitude,
+      overlayBounds.southWest.latitude,
       bounds.southwest.latitude,
       accuracy: Double.ulpOfOne
     )
     XCTAssertEqual(
-      groundOverlayController.groundOverlay.bounds!.southWest.longitude,
+      overlayBounds.southWest.longitude,
       bounds.southwest.longitude,
       accuracy: Double.ulpOfOne
     )
@@ -351,5 +265,92 @@ class GroundOverlayControllerTests: XCTestCase {
     mapViewOptions.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
     mapViewOptions.camera = GMSCameraPosition(latitude: 0, longitude: 0, zoom: 0)
     return PartiallyMockedMapView(options: mapViewOptions)
+  }
+}
+
+/// A GMSGroundOverlay that ensures that property updates are made before the map is set.
+class PropertyOrderValidatingGroundOverlay: GMSGroundOverlay {
+  var hasSetMap = false
+
+  override var position: CLLocationCoordinate2D {
+    get { super.position }
+    set {
+      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      super.position = newValue
+    }
+  }
+
+  override var anchor: CGPoint {
+    get { super.anchor }
+    set {
+      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      super.anchor = newValue
+    }
+  }
+
+  override var icon: UIImage? {
+    get { super.icon }
+    set {
+      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      super.icon = newValue
+    }
+  }
+
+  override var opacity: Float {
+    get { super.opacity }
+    set {
+      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      super.opacity = newValue
+    }
+  }
+
+  override var bearing: CLLocationDirection {
+    get { super.bearing }
+    set {
+      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      super.bearing = newValue
+    }
+  }
+
+  override var bounds: GMSCoordinateBounds? {
+    get { super.bounds }
+    set {
+      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      super.bounds = newValue
+    }
+  }
+
+  override var title: String? {
+    get { super.title }
+    set {
+      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      super.title = newValue
+    }
+  }
+
+  override var isTappable: Bool {
+    get { super.isTappable }
+    set {
+      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      super.isTappable = newValue
+    }
+  }
+
+  override var zIndex: Int32 {
+    get { super.zIndex }
+    set {
+      XCTAssertFalse(hasSetMap, "Property set after map was set.")
+      super.zIndex = newValue
+    }
+  }
+
+  override var map: GMSMapView? {
+    get { super.map }
+    set {
+      // Don't actually set the map, since that requires more test setup.
+      if newValue != nil {
+        hasSetMap = true
+      }
+    }
   }
 }

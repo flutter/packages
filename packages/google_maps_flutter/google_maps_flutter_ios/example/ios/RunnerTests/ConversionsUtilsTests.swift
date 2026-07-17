@@ -27,7 +27,7 @@ class ConversionUtilsTests: XCTestCase {
     var alpha: CGFloat = 0
     let success = color.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
     XCTAssertTrue(success)
-    let accuracy: CGFloat = 0.0001
+    let accuracy: Double = 0.0001
     XCTAssertEqual(red, platformRed, accuracy: accuracy)
     XCTAssertEqual(green, platformGreen, accuracy: accuracy)
     XCTAssertEqual(blue, platformBlue, accuracy: accuracy)
@@ -94,7 +94,7 @@ class ConversionUtilsTests: XCTestCase {
     let pigeonPosition = FGMGetPigeonCameraPositionForPosition(position)
     XCTAssertEqual(pigeonPosition.target.latitude, position.target.latitude, accuracy: Double.ulpOfOne)
     XCTAssertEqual(pigeonPosition.target.longitude, position.target.longitude, accuracy: Double.ulpOfOne)
-    XCTAssertEqual(Double(pigeonPosition.zoom), Double(position.zoom), accuracy: Double.ulpOfOne)
+    XCTAssertEqual(Float(pigeonPosition.zoom), position.zoom, accuracy: Float.ulpOfOne)
     XCTAssertEqual(pigeonPosition.bearing, position.bearing, accuracy: Double.ulpOfOne)
     XCTAssertEqual(pigeonPosition.tilt, position.viewingAngle, accuracy: Double.ulpOfOne)
   }
@@ -102,8 +102,8 @@ class ConversionUtilsTests: XCTestCase {
   func testPigeonPointForGCPoint() {
     let point = CGPoint(x: 10, y: 20)
     let pigeonPoint = FGMGetPigeonPointForCGPoint(point)
-    XCTAssertEqual(pigeonPoint.x, Double(point.x), accuracy: Double.ulpOfOne)
-    XCTAssertEqual(pigeonPoint.y, Double(point.y), accuracy: Double.ulpOfOne)
+    XCTAssertEqual(pigeonPoint.x, point.x, accuracy: Double.ulpOfOne)
+    XCTAssertEqual(pigeonPoint.y, point.y, accuracy: Double.ulpOfOne)
   }
 
   func testPigeonLatLngBoundsForCoordinateBounds() {
@@ -203,6 +203,10 @@ class ConversionUtilsTests: XCTestCase {
     _ = FGMGetCameraUpdateForPigeonCameraUpdate(
       FGMPlatformCameraUpdate.make(withCameraUpdate: newPositionUpdate)
     )
+    // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
+    // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that
+    // injecting a wrapper would not meaningfully improve test coverage, since the non-test
+    // implementation would be about as complex as the conversion function itself.
   }
 
   func testCameraUpdateFromNewLatLong() {
@@ -215,6 +219,10 @@ class ConversionUtilsTests: XCTestCase {
     _ = FGMGetCameraUpdateForPigeonCameraUpdate(
       FGMPlatformCameraUpdate.make(withCameraUpdate: platformUpdate)
     )
+    // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
+    // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that
+    // injecting a wrapper would not meaningfully improve test coverage, since the non-test
+    // implementation would be about as complex as the conversion function itself.
   }
 
   func testCameraUpdateFromNewLatLngBounds() {
@@ -232,6 +240,10 @@ class ConversionUtilsTests: XCTestCase {
     _ = FGMGetCameraUpdateForPigeonCameraUpdate(
       FGMPlatformCameraUpdate.make(withCameraUpdate: platformUpdate)
     )
+    // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
+    // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that
+    // injecting a wrapper would not meaningfully improve test coverage, since the non-test
+    // implementation would be about as complex as the conversion function itself.
   }
 
   func testCameraUpdateFromNewLatLngZoom() {
@@ -246,6 +258,10 @@ class ConversionUtilsTests: XCTestCase {
     _ = FGMGetCameraUpdateForPigeonCameraUpdate(
       FGMPlatformCameraUpdate.make(withCameraUpdate: platformUpdate)
     )
+    // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
+    // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that
+    // injecting a wrapper would not meaningfully improve test coverage, since the non-test
+    // implementation would be about as complex as the conversion function itself.
   }
 
   func testCameraUpdateFromScrollBy() {
@@ -256,6 +272,10 @@ class ConversionUtilsTests: XCTestCase {
     _ = FGMGetCameraUpdateForPigeonCameraUpdate(
       FGMPlatformCameraUpdate.make(withCameraUpdate: platformUpdate)
     )
+    // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
+    // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that
+    // injecting a wrapper would not meaningfully improve test coverage, since the non-test
+    // implementation would be about as complex as the conversion function itself.
   }
 
   func testCameraUpdateFromZoomBy() {
@@ -265,6 +285,10 @@ class ConversionUtilsTests: XCTestCase {
     _ = FGMGetCameraUpdateForPigeonCameraUpdate(
       FGMPlatformCameraUpdate.make(withCameraUpdate: platformUpdateNoPoint)
     )
+    // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
+    // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that
+    // injecting a wrapper would not meaningfully improve test coverage, since the non-test
+    // implementation would be about as complex as the conversion function itself.
   }
 
   func testCameraUpdateFromZoomByWithFocus() {
@@ -279,6 +303,10 @@ class ConversionUtilsTests: XCTestCase {
     _ = FGMGetCameraUpdateForPigeonCameraUpdate(
       FGMPlatformCameraUpdate.make(withCameraUpdate: platformUpdate)
     )
+    // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
+    // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that
+    // injecting a wrapper would not meaningfully improve test coverage, since the non-test
+    // implementation would be about as complex as the conversion function itself.
   }
 
   func testCameraUpdateFromZoomIn() {
@@ -287,6 +315,10 @@ class ConversionUtilsTests: XCTestCase {
     _ = FGMGetCameraUpdateForPigeonCameraUpdate(
       FGMPlatformCameraUpdate.make(withCameraUpdate: platformUpdate)
     )
+    // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
+    // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that
+    // injecting a wrapper would not meaningfully improve test coverage, since the non-test
+    // implementation would be about as complex as the conversion function itself.
   }
 
   func testCameraUpdateFromZoomOut() {
@@ -295,6 +327,10 @@ class ConversionUtilsTests: XCTestCase {
     _ = FGMGetCameraUpdateForPigeonCameraUpdate(
       FGMPlatformCameraUpdate.make(withCameraUpdate: platformUpdate)
     )
+    // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
+    // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that
+    // injecting a wrapper would not meaningfully improve test coverage, since the non-test
+    // implementation would be about as complex as the conversion function itself.
   }
 
   func testCameraUpdateFromZoomTo() {
@@ -304,6 +340,10 @@ class ConversionUtilsTests: XCTestCase {
     _ = FGMGetCameraUpdateForPigeonCameraUpdate(
       FGMPlatformCameraUpdate.make(withCameraUpdate: platformUpdate)
     )
+    // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
+    // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that
+    // injecting a wrapper would not meaningfully improve test coverage, since the non-test
+    // implementation would be about as complex as the conversion function itself.
   }
 
   func testStrokeStylesFromPatterns() {
@@ -316,6 +356,8 @@ class ConversionUtilsTests: XCTestCase {
     let patternStrokeStyle = FGMGetStrokeStylesFromPatterns(patterns, strokeColor)
 
     XCTAssertEqual(patternStrokeStyle.count, 2)
+    // None of the parameters of `patternStrokeStyle` is observable, so we limit to testing
+    // the length of this output array.
   }
 
   func testLengthsFromPatterns() {
@@ -382,12 +424,12 @@ class ConversionUtilsTests: XCTestCase {
     var blue: CGFloat = 0
     var alpha: CGFloat = 0
     gradient.colors[0].getRed(&red, green: &green, blue: &blue, alpha: &alpha)
-    let accuracy: CGFloat = 0.001
+    let accuracy: Double = 0.001
     XCTAssertEqual(red, CGFloat(platformRed), accuracy: accuracy)
     XCTAssertEqual(green, CGFloat(platformGreen), accuracy: accuracy)
     XCTAssertEqual(blue, CGFloat(platformBlue), accuracy: accuracy)
     XCTAssertEqual(alpha, CGFloat(platformAlpha), accuracy: accuracy)
-    XCTAssertEqual(gradient.startPoints[0].doubleValue, startPoint, accuracy: Double(accuracy))
+    XCTAssertEqual(gradient.startPoints[0].doubleValue, startPoint, accuracy: accuracy)
     XCTAssertEqual(gradient.mapSize, UInt(colorMapSize))
   }
 }

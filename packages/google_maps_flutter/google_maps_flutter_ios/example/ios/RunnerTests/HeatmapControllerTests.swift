@@ -7,6 +7,52 @@ import GoogleMaps
 import GoogleMapsUtils
 @testable import google_maps_flutter_ios
 
+class HeatmapControllerTests: XCTestCase {
+
+  func testUpdateHeatmapSetsVisibilityLast() {
+    let heatmap = PropertyOrderValidatingHeatmap()
+    let gradient = FGMPlatformHeatmapGradient.make(
+      with: [
+        FGMPlatformColor.make(withRed: 0, green: 0, blue: 0, alpha: 0),
+        FGMPlatformColor.make(withRed: 1.0, green: 1.0, blue: 1.0, alpha: 1.0),
+      ],
+      startPoints: [0 as NSNumber, 1 as NSNumber],
+      colorMapSize: 256
+    )
+    FGMHeatmapController.updateHeatmap(
+      heatmap,
+      from: FGMPlatformHeatmap.make(
+        withHeatmapId: "heatmap",
+        data: [
+          FGMPlatformWeightedLatLng.make(
+            withPoint: FGMPlatformLatLng.make(withLatitude: 5.0, longitude: 5.0),
+            weight: 0.5
+          ),
+          FGMPlatformWeightedLatLng.make(
+            withPoint: FGMPlatformLatLng.make(withLatitude: 10.0, longitude: 10.0),
+            weight: 0.75
+          ),
+        ],
+        gradient: gradient,
+        opacity: 0.5,
+        radius: 1,
+        minimumZoomIntensity: 1,
+        maximumZoomIntensity: 2
+      ),
+      with: HeatmapControllerTests.mapView()
+    )
+    XCTAssertTrue(heatmap.hasSetMap)
+  }
+
+  /// Returns a simple map view to add map objects to.
+  static func mapView() -> GMSMapView {
+    let mapViewOptions = GMSMapViewOptions()
+    mapViewOptions.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
+    mapViewOptions.camera = GMSCameraPosition(latitude: 0, longitude: 0, zoom: 0)
+    return PartiallyMockedMapView(options: mapViewOptions)
+  }
+}
+
 /// A GMUHeatmapTileLayer that ensures that property updates are made before the map is set.
 class PropertyOrderValidatingHeatmap: GMUHeatmapTileLayer {
   var hasSetMap = false
@@ -91,51 +137,5 @@ class PropertyOrderValidatingHeatmap: GMUHeatmapTileLayer {
         hasSetMap = true
       }
     }
-  }
-}
-
-class HeatmapControllerTests: XCTestCase {
-
-  func testUpdateHeatmapSetsVisibilityLast() {
-    let heatmap = PropertyOrderValidatingHeatmap()
-    let gradient = FGMPlatformHeatmapGradient.make(
-      with: [
-        FGMPlatformColor.make(withRed: 0, green: 0, blue: 0, alpha: 0),
-        FGMPlatformColor.make(withRed: 1.0, green: 1.0, blue: 1.0, alpha: 1.0),
-      ],
-      startPoints: [0 as NSNumber, 1 as NSNumber],
-      colorMapSize: 256
-    )
-    FGMHeatmapController.updateHeatmap(
-      heatmap,
-      from: FGMPlatformHeatmap.make(
-        withHeatmapId: "heatmap",
-        data: [
-          FGMPlatformWeightedLatLng.make(
-            withPoint: FGMPlatformLatLng.make(withLatitude: 5.0, longitude: 5.0),
-            weight: 0.5
-          ),
-          FGMPlatformWeightedLatLng.make(
-            withPoint: FGMPlatformLatLng.make(withLatitude: 10.0, longitude: 10.0),
-            weight: 0.75
-          ),
-        ],
-        gradient: gradient,
-        opacity: 0.5,
-        radius: 1,
-        minimumZoomIntensity: 1,
-        maximumZoomIntensity: 2
-      ),
-      with: HeatmapControllerTests.mapView()
-    )
-    XCTAssertTrue(heatmap.hasSetMap)
-  }
-
-  /// Returns a simple map view to add map objects to.
-  static func mapView() -> GMSMapView {
-    let mapViewOptions = GMSMapViewOptions()
-    mapViewOptions.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
-    mapViewOptions.camera = GMSCameraPosition(latitude: 0, longitude: 0, zoom: 0)
-    return PartiallyMockedMapView(options: mapViewOptions)
   }
 }

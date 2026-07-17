@@ -88,6 +88,9 @@ class GoogleMapsTests: XCTestCase {
     XCTAssertNotNil(factory1.sharedMapServices)
     let factory2 = FGMGoogleMapFactory(registrar: registrar)
     // Test pointer equality, should be same retained singleton +[GMSServices sharedServices] object.
+    // Retaining the opaque object should be enough to avoid multiple internal initializations,
+    // but don't test the internals of the GoogleMaps API. Assume that it does what is documented.
+    // https://developers.google.com/maps/documentation/ios-sdk/reference/interface_g_m_s_services#a436e03c32b1c0be74e072310a7158831
     XCTAssertEqual(factory1.sharedMapServices as? NSObject, factory2.sharedMapServices as? NSObject)
   }
 
@@ -129,14 +132,7 @@ class GoogleMapsTests: XCTestCase {
     let mockTransactionWrapper = MockCATransaction()
     controller.callHandler.transactionWrapper = mockTransactionWrapper
 
-    let zoomTo = FGMPlatformCameraUpdateNewCameraPosition.make(
-      with: FGMPlatformCameraPosition.make(
-        withBearing: 0.0,
-        target: FGMPlatformLatLng.make(withLatitude: 0.0, longitude: 0.0),
-        tilt: 0.0,
-        zoom: 10.0
-      )
-    )
+    let zoomTo = FGMPlatformCameraUpdateZoomTo.make(withZoom: 10.0)
     let cameraUpdate = FGMPlatformCameraUpdate.make(withCameraUpdate: zoomTo)
     var error: FlutterError? = nil
 

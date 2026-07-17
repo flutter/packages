@@ -6,6 +6,38 @@ import XCTest
 import GoogleMaps
 @testable import google_maps_flutter_ios
 
+class PolygonControllerTests: XCTestCase {
+
+  func testUpdatePolygonSetsVisibilityLast() {
+    let polygon = PropertyOrderValidatingPolygon()
+    FGMPolygonController.update(
+      polygon,
+      from: FGMPlatformPolygon.make(
+        withPolygonId: "polygon",
+        consumesTapEvents: false,
+        fill: FGMPlatformColor.make(withRed: 0, green: 0, blue: 0, alpha: 0),
+        geodesic: false,
+        points: [],
+        holes: [],
+        visible: true,
+        stroke: FGMPlatformColor.make(withRed: 0, green: 0, blue: 0, alpha: 0),
+        strokeWidth: 0,
+        zIndex: 0
+      ),
+      with: PolygonControllerTests.mapView()
+    )
+    XCTAssertTrue(polygon.hasSetMap)
+  }
+
+  /// Returns a simple map view to add map objects to.
+  static func mapView() -> GMSMapView {
+    let mapViewOptions = GMSMapViewOptions()
+    mapViewOptions.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
+    mapViewOptions.camera = GMSCameraPosition(latitude: 0, longitude: 0, zoom: 0)
+    return PartiallyMockedMapView(options: mapViewOptions)
+  }
+}
+
 /// A GMSPolygon that ensures that property updates are made before the map is set.
 class PropertyOrderValidatingPolygon: GMSPolygon {
   var hasSetMap = false
@@ -98,37 +130,5 @@ class PropertyOrderValidatingPolygon: GMSPolygon {
         hasSetMap = true
       }
     }
-  }
-}
-
-class PolygonControllerTests: XCTestCase {
-
-  func testUpdatePolygonSetsVisibilityLast() {
-    let polygon = PropertyOrderValidatingPolygon()
-    FGMPolygonController.update(
-      polygon,
-      from: FGMPlatformPolygon.make(
-        withPolygonId: "polygon",
-        consumesTapEvents: false,
-        fill: FGMPlatformColor.make(withRed: 0, green: 0, blue: 0, alpha: 0),
-        geodesic: false,
-        points: [],
-        holes: [],
-        visible: true,
-        stroke: FGMPlatformColor.make(withRed: 0, green: 0, blue: 0, alpha: 0),
-        strokeWidth: 0,
-        zIndex: 0
-      ),
-      with: PolygonControllerTests.mapView()
-    )
-    XCTAssertTrue(polygon.hasSetMap)
-  }
-
-  /// Returns a simple map view to add map objects to.
-  static func mapView() -> GMSMapView {
-    let mapViewOptions = GMSMapViewOptions()
-    mapViewOptions.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
-    mapViewOptions.camera = GMSCameraPosition(latitude: 0, longitude: 0, zoom: 0)
-    return PartiallyMockedMapView(options: mapViewOptions)
   }
 }

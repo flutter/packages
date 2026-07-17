@@ -92,7 +92,7 @@ class ExtractIconFromDataTests: XCTestCase {
     // As image has same aspect ratio as the original image,
     // only image scale has been changed to match the target size.
     let targetScale = testImage.scale * (testImage.size.width / width)
-    let accuracy: CGFloat = 0.001
+    let accuracy: Double = 0.001
     XCTAssertEqual(resultImage!.scale, targetScale, accuracy: accuracy)
     XCTAssertEqual(resultImage?.size.width, width)
     XCTAssertEqual(resultImage?.size.height, width)
@@ -240,7 +240,7 @@ class ExtractIconFromDataTests: XCTestCase {
     // As image has same aspect ratio as the original image,
     // only image scale has been changed to match the target size.
     let targetScale = testImage.scale * (testImage.size.width / width)
-    let accuracy: CGFloat = 0.001
+    let accuracy: Double = 0.001
     XCTAssertEqual(resultImage!.scale, targetScale, accuracy: accuracy)
     XCTAssertEqual(resultImage?.size.width, width)
     XCTAssertEqual(resultImage?.size.height, height)
