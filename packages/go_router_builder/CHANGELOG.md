@@ -1,6 +1,7 @@
 ## 4.3.2
 
 * Fixes generated routes so `onExit` is only enabled when the route data class overrides it.
+* Updates documented and example `go_router` constraints to require the `hasOverriddenOnExit` route helper.
 
 ## 4.3.1
 
