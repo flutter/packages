@@ -18,10 +18,13 @@ import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 import 'webkit_webview_controller_test.mocks.dart';
 
 @GenerateNiceMocks(<MockSpec<Object>>[
+  MockSpec<HTTPURLResponse>(),
+  MockSpec<NSError>(),
   MockSpec<UIScrollView>(),
   MockSpec<UIScrollViewDelegate>(),
   MockSpec<URL>(),
   MockSpec<URLRequest>(),
+  MockSpec<WKURLSchemeTask>(),
   MockSpec<WKPreferences>(),
   MockSpec<WKScriptMessageHandler>(),
   MockSpec<WKUserContentController>(),
@@ -1787,6 +1790,325 @@ window.addEventListener("error", function(e) {
       );
 
       expect(callbackMessage, 'myMessage');
+    });
+  });
+
+  group('WebKitUrlSchemeHandler', () {
+    (
+      MockWKWebViewConfiguration,
+      void Function(WKWebView, WKURLSchemeTask),
+      void Function(WKWebView, WKURLSchemeTask),
+    )
+    createParamsWithSchemeHandler(WebKitUrlSchemeHandler handler) {
+      final mockConfiguration = MockWKWebViewConfiguration();
+      PigeonOverrides.wKWebViewConfiguration_new =
+          ({
+            void Function(
+              NSObject pigeonInstance,
+              String? keyPath,
+              NSObject? object,
+              Map<KeyValueChangeKey, Object?>? change,
+            )?
+            observeValue,
+          }) {
+            return mockConfiguration;
+          };
+
+      late final void Function(WKWebView, WKURLSchemeTask) capturedStart;
+      late final void Function(WKWebView, WKURLSchemeTask) capturedStop;
+      PigeonOverrides.wKURLSchemeHandler_new =
+          ({
+            required void Function(WKURLSchemeHandler, WKWebView, WKURLSchemeTask)
+            startUrlSchemeTask,
+            required void Function(WKURLSchemeHandler, WKWebView, WKURLSchemeTask)
+            stopUrlSchemeTask,
+            void Function(
+              NSObject pigeonInstance,
+              String? keyPath,
+              NSObject? object,
+              Map<KeyValueChangeKey, Object?>? change,
+            )?
+            observeValue,
+          }) {
+            final instance = WKURLSchemeHandler.pigeon_detached(
+              startUrlSchemeTask: startUrlSchemeTask,
+              stopUrlSchemeTask: stopUrlSchemeTask,
+            );
+            capturedStart = (WKWebView webView, WKURLSchemeTask task) =>
+                startUrlSchemeTask(instance, webView, task);
+            capturedStop = (WKWebView webView, WKURLSchemeTask task) =>
+                stopUrlSchemeTask(instance, webView, task);
+            return instance;
+          };
+
+      WebKitWebViewControllerCreationParams(
+        urlSchemeHandlers: <String, WebKitUrlSchemeHandler>{'test-scheme': handler},
+      );
+
+      return (mockConfiguration, capturedStart, capturedStop);
+    }
+
+    MockWKURLSchemeTask createMockTask({
+      String? url = 'test-scheme://host/resource',
+      String? httpMethod = 'GET',
+    }) {
+      final mockRequest = MockURLRequest();
+      when(mockRequest.getUrl()).thenAnswer((_) async => url);
+      when(mockRequest.getHttpMethod()).thenAnswer((_) async => httpMethod);
+
+      final mockTask = MockWKURLSchemeTask();
+      when(mockTask.request).thenReturn(mockRequest);
+      return mockTask;
+    }
+
+    test('handler is registered with the configuration', () {
+      final handler = WebKitUrlSchemeHandler(onStart: (_) {});
+
+      final (MockWKWebViewConfiguration mockConfiguration, _, _) = createParamsWithSchemeHandler(
+        handler,
+      );
+
+      verify(mockConfiguration.setURLSchemeHandler(any, 'test-scheme'));
+    });
+
+    test('onStart receives the request details', () async {
+      WebKitUrlSchemeTask? receivedTask;
+      final handler = WebKitUrlSchemeHandler(
+        onStart: (WebKitUrlSchemeTask task) => receivedTask = task,
+      );
+
+      final (_, void Function(WKWebView, WKURLSchemeTask) startUrlSchemeTask, _) =
+          createParamsWithSchemeHandler(handler);
+
+      startUrlSchemeTask(MockWKWebView(), createMockTask());
+      await pumpEventQueue();
+
+      expect(receivedTask, isNotNull);
+      expect(receivedTask!.url, 'test-scheme://host/resource');
+      expect(receivedTask!.httpMethod, 'GET');
+      expect(receivedTask!.isStopped, isFalse);
+    });
+
+    test('responding to a task calls through to the native task', () async {
+      WebKitUrlSchemeTask? receivedTask;
+      final handler = WebKitUrlSchemeHandler(
+        onStart: (WebKitUrlSchemeTask task) => receivedTask = task,
+      );
+
+      final (_, void Function(WKWebView, WKURLSchemeTask) startUrlSchemeTask, _) =
+          createParamsWithSchemeHandler(handler);
+
+      final mockResponse = MockHTTPURLResponse();
+      String? responseUrl;
+      int? responseStatusCode;
+      Map<String, String>? responseHeaders;
+      PigeonOverrides.hTTPURLResponse_new =
+          ({
+            required int statusCode,
+            required String url,
+            String? httpVersion,
+            Map<String, String>? headerFields,
+            void Function(
+              NSObject pigeonInstance,
+              String? keyPath,
+              NSObject? object,
+              Map<KeyValueChangeKey, Object?>? change,
+            )?
+            observeValue,
+          }) {
+            responseUrl = url;
+            responseStatusCode = statusCode;
+            responseHeaders = headerFields;
+            return mockResponse;
+          };
+
+      final MockWKURLSchemeTask mockTask = createMockTask();
+      startUrlSchemeTask(MockWKWebView(), mockTask);
+      await pumpEventQueue();
+
+      final data = Uint8List.fromList(<int>[1, 2, 3]);
+      await receivedTask!.didReceiveResponse(
+        statusCode: 200,
+        headers: <String, String>{'Content-Type': 'image/png'},
+      );
+      await receivedTask!.didReceiveData(data);
+      await receivedTask!.didFinish();
+
+      expect(responseUrl, 'test-scheme://host/resource');
+      expect(responseStatusCode, 200);
+      expect(responseHeaders, <String, String>{'Content-Type': 'image/png'});
+      verifyInOrder(<Object>[
+        mockTask.didReceiveResponse(mockResponse),
+        mockTask.didReceiveData(data),
+        mockTask.didFinish(),
+      ]);
+    });
+
+    test('didFail sends an NSError to the native task', () async {
+      WebKitUrlSchemeTask? receivedTask;
+      final handler = WebKitUrlSchemeHandler(
+        onStart: (WebKitUrlSchemeTask task) => receivedTask = task,
+      );
+
+      final (_, void Function(WKWebView, WKURLSchemeTask) startUrlSchemeTask, _) =
+          createParamsWithSchemeHandler(handler);
+
+      final mockError = MockNSError();
+      String? errorDomain;
+      int? errorCode;
+      Map<String, Object?>? errorUserInfo;
+      PigeonOverrides.nSError_new =
+          ({
+            required int code,
+            required String domain,
+            required Map<String, Object?> userInfo,
+            void Function(
+              NSObject pigeonInstance,
+              String? keyPath,
+              NSObject? object,
+              Map<KeyValueChangeKey, Object?>? change,
+            )?
+            observeValue,
+          }) {
+            errorDomain = domain;
+            errorCode = code;
+            errorUserInfo = userInfo;
+            return mockError;
+          };
+
+      final MockWKURLSchemeTask mockTask = createMockTask();
+      startUrlSchemeTask(MockWKWebView(), mockTask);
+      await pumpEventQueue();
+
+      await receivedTask!.didFail(code: 404, localizedDescription: 'not found');
+
+      expect(errorDomain, 'NSURLErrorDomain');
+      expect(errorCode, 404);
+      expect(errorUserInfo, <String, Object?>{'NSLocalizedDescription': 'not found'});
+      verify(mockTask.didFailWithError(mockError));
+    });
+
+    test('onStop marks the task stopped and responses become no-ops', () async {
+      WebKitUrlSchemeTask? startedTask;
+      WebKitUrlSchemeTask? stoppedTask;
+      final handler = WebKitUrlSchemeHandler(
+        onStart: (WebKitUrlSchemeTask task) => startedTask = task,
+        onStop: (WebKitUrlSchemeTask task) => stoppedTask = task,
+      );
+
+      final (
+        _,
+        void Function(WKWebView, WKURLSchemeTask) startUrlSchemeTask,
+        void Function(WKWebView, WKURLSchemeTask) stopUrlSchemeTask,
+      ) = createParamsWithSchemeHandler(
+        handler,
+      );
+
+      final MockWKURLSchemeTask mockTask = createMockTask();
+      final mockWebView = MockWKWebView();
+      startUrlSchemeTask(mockWebView, mockTask);
+      await pumpEventQueue();
+
+      stopUrlSchemeTask(mockWebView, mockTask);
+
+      expect(stoppedTask, same(startedTask));
+      expect(startedTask!.isStopped, isTrue);
+
+      await startedTask!.didFinish();
+      verifyNever(mockTask.didFinish());
+    });
+
+    test('replies after didFinish are no-ops', () async {
+      WebKitUrlSchemeTask? startedTask;
+      final handler = WebKitUrlSchemeHandler(
+        onStart: (WebKitUrlSchemeTask task) => startedTask = task,
+      );
+
+      final (_, void Function(WKWebView, WKURLSchemeTask) startUrlSchemeTask, _) =
+          createParamsWithSchemeHandler(handler);
+
+      final MockWKURLSchemeTask mockTask = createMockTask();
+      startUrlSchemeTask(MockWKWebView(), mockTask);
+      await pumpEventQueue();
+
+      await startedTask!.didFinish();
+
+      await startedTask!.didReceiveResponse(statusCode: 200);
+      await startedTask!.didReceiveData(Uint8List.fromList(<int>[1]));
+      await startedTask!.didFinish();
+      await startedTask!.didFail();
+
+      verify(mockTask.didFinish()).called(1);
+      verifyNever(mockTask.didReceiveResponse(any));
+      verifyNever(mockTask.didReceiveData(any));
+      verifyNever(mockTask.didFailWithError(any));
+      // The task was completed, not stopped by the web view.
+      expect(startedTask!.isStopped, isFalse);
+    });
+
+    test('stop after task completion does not invoke onStop', () async {
+      WebKitUrlSchemeTask? startedTask;
+      WebKitUrlSchemeTask? stoppedTask;
+      final handler = WebKitUrlSchemeHandler(
+        onStart: (WebKitUrlSchemeTask task) => startedTask = task,
+        onStop: (WebKitUrlSchemeTask task) => stoppedTask = task,
+      );
+
+      final (
+        _,
+        void Function(WKWebView, WKURLSchemeTask) startUrlSchemeTask,
+        void Function(WKWebView, WKURLSchemeTask) stopUrlSchemeTask,
+      ) = createParamsWithSchemeHandler(
+        handler,
+      );
+
+      final MockWKURLSchemeTask mockTask = createMockTask();
+      final mockWebView = MockWKWebView();
+      startUrlSchemeTask(mockWebView, mockTask);
+      await pumpEventQueue();
+
+      await startedTask!.didFinish();
+
+      // A stop notification for an already completed task (e.g. the native
+      // `didFinish` call was still in flight during page teardown) requires
+      // no bookkeeping and must not reach the handler.
+      stopUrlSchemeTask(mockWebView, mockTask);
+      await pumpEventQueue();
+
+      expect(stoppedTask, isNull);
+
+      // A brand new task with the same native instance must still be
+      // deliverable afterwards (no stale `stoppedBeforeStart` marker).
+      startedTask = null;
+      startUrlSchemeTask(mockWebView, mockTask);
+      await pumpEventQueue();
+      expect(startedTask, isNotNull);
+      expect(startedTask!.isStopped, isFalse);
+    });
+
+    test('a task stopped during request reading is not delivered', () async {
+      WebKitUrlSchemeTask? startedTask;
+      final handler = WebKitUrlSchemeHandler(
+        onStart: (WebKitUrlSchemeTask task) => startedTask = task,
+      );
+
+      final (
+        _,
+        void Function(WKWebView, WKURLSchemeTask) startUrlSchemeTask,
+        void Function(WKWebView, WKURLSchemeTask) stopUrlSchemeTask,
+      ) = createParamsWithSchemeHandler(
+        handler,
+      );
+
+      final MockWKURLSchemeTask mockTask = createMockTask();
+      final mockWebView = MockWKWebView();
+      // `stop` arrives while `start` is still asynchronously reading the
+      // request details.
+      startUrlSchemeTask(mockWebView, mockTask);
+      stopUrlSchemeTask(mockWebView, mockTask);
+      await pumpEventQueue();
+
+      expect(startedTask, isNull);
     });
   });
 }

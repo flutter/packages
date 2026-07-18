@@ -24,6 +24,9 @@
 		8F1488EB2D2DE27000191744 /* PreferencesProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1488CF2D2DE27000191744 /* PreferencesProxyAPITests.swift */; };
 		8F1488EC2D2DE27000191744 /* FrameInfoProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1488C62D2DE27000191744 /* FrameInfoProxyAPITests.swift */; };
 		8F1488ED2D2DE27000191744 /* ErrorProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1488C52D2DE27000191744 /* ErrorProxyAPITests.swift */; };
+		E6A2538D4B5B4B52B0A3ACC5 /* URLSchemeTaskProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFD6D02E9F0C4CADB7FC8619 /* URLSchemeTaskProxyAPITests.swift */; };
+		D7C23707126645B685F74BF6 /* URLSchemeHandlerProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EF814FFF37A466282FCD60B /* URLSchemeHandlerProxyAPITests.swift */; };
+		3AEB66D42E6D4A51BBBB8B1B /* URLResponseProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF7E1D4C86C49E5B696EADF /* URLResponseProxyAPITests.swift */; };
 		8F1488EE2D2DE27000191744 /* NSObjectProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1488CE2D2DE27000191744 /* NSObjectProxyAPITests.swift */; };
 		8F1488EF2D2DE27000191744 /* NavigationResponseProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1488CD2D2DE27000191744 /* NavigationResponseProxyAPITests.swift */; };
 		8F1488F02D2DE27000191744 /* UserScriptProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1488DE2D2DE27000191744 /* UserScriptProxyAPITests.swift */; };
@@ -101,6 +104,9 @@
 		8F0E23512EEB5D6B002AB342 /* ColorProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ColorProxyAPITests.swift; path = ../../darwin/Tests/ColorProxyAPITests.swift; sourceTree = SOURCE_ROOT; };
 		8F0EDFD22E1F4967001938E6 /* ProxyAPIRegistrarTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProxyAPIRegistrarTests.swift; path = ../../darwin/Tests/ProxyAPIRegistrarTests.swift; sourceTree = SOURCE_ROOT; };
 		8F1488C52D2DE27000191744 /* ErrorProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ErrorProxyAPITests.swift; path = ../../darwin/Tests/ErrorProxyAPITests.swift; sourceTree = SOURCE_ROOT; };
+		FFD6D02E9F0C4CADB7FC8619 /* URLSchemeTaskProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = URLSchemeTaskProxyAPITests.swift; path = ../../darwin/Tests/URLSchemeTaskProxyAPITests.swift; sourceTree = SOURCE_ROOT; };
+		9EF814FFF37A466282FCD60B /* URLSchemeHandlerProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = URLSchemeHandlerProxyAPITests.swift; path = ../../darwin/Tests/URLSchemeHandlerProxyAPITests.swift; sourceTree = SOURCE_ROOT; };
+		ECF7E1D4C86C49E5B696EADF /* URLResponseProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = URLResponseProxyAPITests.swift; path = ../../darwin/Tests/URLResponseProxyAPITests.swift; sourceTree = SOURCE_ROOT; };
 		8F1488C62D2DE27000191744 /* FrameInfoProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FrameInfoProxyAPITests.swift; path = ../../darwin/Tests/FrameInfoProxyAPITests.swift; sourceTree = SOURCE_ROOT; };
 		8F1488C72D2DE27000191744 /* FWFWebViewFlutterWKWebViewExternalAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FWFWebViewFlutterWKWebViewExternalAPITests.swift; path = ../../darwin/Tests/FWFWebViewFlutterWKWebViewExternalAPITests.swift; sourceTree = SOURCE_ROOT; };
 		8F1488C82D2DE27000191744 /* HTTPCookieProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HTTPCookieProxyAPITests.swift; path = ../../darwin/Tests/HTTPCookieProxyAPITests.swift; sourceTree = SOURCE_ROOT; };
@@ -188,6 +194,9 @@
 				8FEC64842DA2C6DC00C48569 /* WebpagePreferencesProxyAPITests.swift */,
 				8F1489002D2DE91C00191744 /* AuthenticationChallengeResponseProxyAPITests.swift */,
 				8F1488C52D2DE27000191744 /* ErrorProxyAPITests.swift */,
+				FFD6D02E9F0C4CADB7FC8619 /* URLSchemeTaskProxyAPITests.swift */,
+				9EF814FFF37A466282FCD60B /* URLSchemeHandlerProxyAPITests.swift */,
+				ECF7E1D4C86C49E5B696EADF /* URLResponseProxyAPITests.swift */,
 				8F1488C62D2DE27000191744 /* FrameInfoProxyAPITests.swift */,
 				8F1488C72D2DE27000191744 /* FWFWebViewFlutterWKWebViewExternalAPITests.swift */,
 				8F1488C82D2DE27000191744 /* HTTPCookieProxyAPITests.swift */,
@@ -491,6 +500,9 @@
 				8F1488EB2D2DE27000191744 /* PreferencesProxyAPITests.swift in Sources */,
 				8F1488EC2D2DE27000191744 /* FrameInfoProxyAPITests.swift in Sources */,
 				8F1488ED2D2DE27000191744 /* ErrorProxyAPITests.swift in Sources */,
+				E6A2538D4B5B4B52B0A3ACC5 /* URLSchemeTaskProxyAPITests.swift in Sources */,
+				D7C23707126645B685F74BF6 /* URLSchemeHandlerProxyAPITests.swift in Sources */,
+				3AEB66D42E6D4A51BBBB8B1B /* URLResponseProxyAPITests.swift in Sources */,
 				8F1488EE2D2DE27000191744 /* NSObjectProxyAPITests.swift in Sources */,
 				8F1488EF2D2DE27000191744 /* NavigationResponseProxyAPITests.swift in Sources */,
 				8FEC64852DA2C6DC00C48569 /* GetTrustResultResponseProxyAPITests.swift in Sources */,

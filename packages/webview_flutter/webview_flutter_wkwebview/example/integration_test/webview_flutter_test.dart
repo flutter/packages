@@ -319,6 +319,254 @@ Future<void> main() async {
     await expectLater(channelCompleter.future, completion('(null)'));
   });
 
+  testWidgets('urlSchemeHandlers loads a resource with a custom scheme', (
+    WidgetTester tester,
+  ) async {
+    final pageFinished = Completer<void>();
+    // A 1x1 transparent PNG.
+    final Uint8List imageBytes = base64Decode(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==',
+    );
+
+    final requestedUrls = <String?>[];
+    final controller = WebKitWebViewController(
+      WebKitWebViewControllerCreationParams(
+        urlSchemeHandlers: <String, WebKitUrlSchemeHandler>{
+          'flutter-test': WebKitUrlSchemeHandler(
+            onStart: (WebKitUrlSchemeTask task) async {
+              requestedUrls.add(task.url);
+              await task.didReceiveResponse(
+                statusCode: 200,
+                headers: <String, String>{
+                  'Content-Type': 'image/png',
+                  'Content-Length': imageBytes.length.toString(),
+                },
+              );
+              await task.didReceiveData(imageBytes);
+              await task.didFinish();
+            },
+          ),
+        },
+      ),
+    );
+    unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+    final delegate = WebKitNavigationDelegate(const WebKitNavigationDelegateCreationParams());
+    unawaited(delegate.setOnPageFinished((_) => pageFinished.complete()));
+    unawaited(controller.setPlatformNavigationDelegate(delegate));
+
+    final imageLoaded = Completer<String>();
+    await controller.addJavaScriptChannel(
+      JavaScriptChannelParams(
+        name: 'ImageLoad',
+        onMessageReceived: (JavaScriptMessage message) {
+          imageLoaded.complete(message.message);
+        },
+      ),
+    );
+
+    await controller.loadHtmlString('''
+      <!DOCTYPE html>
+      <img src="flutter-test://host/image.png"
+           onload="ImageLoad.postMessage('loaded:' + this.naturalWidth)"
+           onerror="ImageLoad.postMessage('error')">
+    ''');
+
+    await tester.pumpWidget(
+      Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ),
+    );
+
+    await pageFinished.future;
+
+    await expectLater(imageLoaded.future, completion('loaded:1'));
+    expect(requestedUrls, <String?>['flutter-test://host/image.png']);
+  });
+
+  testWidgets('urlSchemeHandlers stops in-flight tasks when the page is replaced', (
+    WidgetTester tester,
+  ) async {
+    final startedTask = Completer<WebKitUrlSchemeTask>();
+    final stoppedTask = Completer<WebKitUrlSchemeTask>();
+    final controller = WebKitWebViewController(
+      WebKitWebViewControllerCreationParams(
+        urlSchemeHandlers: <String, WebKitUrlSchemeHandler>{
+          'flutter-test-stop': WebKitUrlSchemeHandler(
+            // Deliberately never responds, so the task stays in flight until
+            // the web view cancels it.
+            onStart: startedTask.complete,
+            onStop: stoppedTask.complete,
+          ),
+        },
+      ),
+    );
+
+    await controller.loadHtmlString('''
+      <!DOCTYPE html>
+      <img src="flutter-test-stop://host/slow.png">
+    ''');
+
+    await tester.pumpWidget(
+      Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ),
+    );
+
+    final WebKitUrlSchemeTask task = await startedTask.future;
+    expect(task.isStopped, isFalse);
+
+    // Replacing the page cancels the resource loads of the previous one.
+    await controller.loadHtmlString('<!DOCTYPE html><p>replaced</p>');
+
+    final WebKitUrlSchemeTask stopped = await stoppedTask.future;
+    expect(stopped, same(task));
+    expect(task.isStopped, isTrue);
+
+    // Responding after the task was stopped must be a harmless no-op.
+    await task.didReceiveResponse(statusCode: 200);
+    await task.didReceiveData(Uint8List.fromList(<int>[1, 2, 3]));
+    await task.didFinish();
+    await task.didFail();
+  });
+
+  testWidgets('urlSchemeHandlers delivers a large response body', (WidgetTester tester) async {
+    const int bodyLength = 3 * 1024 * 1024;
+    final controller = WebKitWebViewController(
+      WebKitWebViewControllerCreationParams(
+        urlSchemeHandlers: <String, WebKitUrlSchemeHandler>{
+          'flutter-test-large': WebKitUrlSchemeHandler(
+            onStart: (WebKitUrlSchemeTask task) async {
+              final html = '<!DOCTYPE html><body>${'A' * bodyLength}</body>';
+              final data = Uint8List.fromList(utf8.encode(html));
+              await task.didReceiveResponse(
+                statusCode: 200,
+                headers: <String, String>{
+                  'Content-Type': 'text/html',
+                  'Content-Length': data.length.toString(),
+                },
+              );
+              await task.didReceiveData(data);
+              await task.didFinish();
+            },
+          ),
+        },
+      ),
+    );
+    unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+    final pageFinished = Completer<void>();
+    final delegate = WebKitNavigationDelegate(const WebKitNavigationDelegateCreationParams());
+    unawaited(delegate.setOnPageFinished((_) => pageFinished.complete()));
+    unawaited(controller.setPlatformNavigationDelegate(delegate));
+
+    // Loads the page itself from the custom scheme, which also covers main
+    // frame navigation to a custom scheme URL.
+    await controller.loadRequest(
+      LoadRequestParams(uri: Uri.parse('flutter-test-large://host/page.html')),
+    );
+
+    await tester.pumpWidget(
+      Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ),
+    );
+
+    await pageFinished.future;
+
+    final Object result = await controller.runJavaScriptReturningResult(
+      'document.body.textContent.length',
+    );
+    expect(result, bodyLength);
+  });
+
+  testWidgets('urlSchemeHandlers handles many concurrent requests', (WidgetTester tester) async {
+    const imageCount = 24;
+    // A 1x1 transparent PNG.
+    final Uint8List imageBytes = base64Decode(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==',
+    );
+
+    final requestedUrls = <String?>[];
+    final controller = WebKitWebViewController(
+      WebKitWebViewControllerCreationParams(
+        urlSchemeHandlers: <String, WebKitUrlSchemeHandler>{
+          'flutter-test-many': WebKitUrlSchemeHandler(
+            onStart: (WebKitUrlSchemeTask task) async {
+              requestedUrls.add(task.url);
+              await task.didReceiveResponse(
+                statusCode: 200,
+                headers: <String, String>{
+                  'Content-Type': 'image/png',
+                  'Content-Length': imageBytes.length.toString(),
+                },
+              );
+              await task.didReceiveData(imageBytes);
+              await task.didFinish();
+            },
+          ),
+        },
+      ),
+    );
+    unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+
+    final allImagesLoaded = Completer<void>();
+    var loadedCount = 0;
+    await controller.addJavaScriptChannel(
+      JavaScriptChannelParams(
+        name: 'ImageCount',
+        onMessageReceived: (JavaScriptMessage message) {
+          if (message.message == 'error') {
+            if (!allImagesLoaded.isCompleted) {
+              allImagesLoaded.completeError(StateError('An image failed to load.'));
+            }
+            return;
+          }
+          loadedCount++;
+          if (loadedCount == imageCount && !allImagesLoaded.isCompleted) {
+            allImagesLoaded.complete();
+          }
+        },
+      ),
+    );
+
+    final imgTags = StringBuffer();
+    for (var i = 0; i < imageCount; i++) {
+      imgTags.write(
+        '<img src="flutter-test-many://host/image_$i.png" '
+        "onload=\"ImageCount.postMessage('$i')\" "
+        "onerror=\"ImageCount.postMessage('error')\">",
+      );
+    }
+    await controller.loadHtmlString('<!DOCTYPE html>$imgTags');
+
+    await tester.pumpWidget(
+      Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ),
+    );
+
+    await allImagesLoaded.future;
+
+    expect(requestedUrls.toSet(), <String>{
+      for (var i = 0; i < imageCount; i++) 'flutter-test-many://host/image_$i.png',
+    });
+  });
+
   testWidgets('resize webview', (WidgetTester tester) async {
     final buttonTapResizeCompleter = Completer<void>();
     final onPageFinished = Completer<void>();

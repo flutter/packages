@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -26,6 +26,7 @@
 		33CC10F32044A3C60003C045 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F22044A3C60003C045 /* Assets.xcassets */; };
 		33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F42044A3C60003C045 /* MainMenu.xib */; };
 		33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* MainFlutterWindow.swift */; };
+		60CB95C6378B4789BE3733BE /* URLSchemeTaskProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14FE72D8B6E54C429AF34FAF /* URLSchemeTaskProxyAPITests.swift */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
 		8FEC64952DA303E200C48569 /* SecCertificateProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FEC64922DA303E200C48569 /* SecCertificateProxyAPITests.swift */; };
 		8FEC64962DA303E200C48569 /* WebpagePreferencesProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FEC64942DA303E200C48569 /* WebpagePreferencesProxyAPITests.swift */; };
@@ -65,6 +66,10 @@
 		8FFBB0692FA1019E00F6659D /* ColorProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFBB0642FA1019E00F6659D /* ColorProxyAPITests.swift */; };
 		8FFBB06A2FA1019E00F6659D /* ProxyAPIRegistrarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFBB0662FA1019E00F6659D /* ProxyAPIRegistrarTests.swift */; };
 		8FFBB06B2FA1019E00F6659D /* WebViewFlutterPluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFBB0672FA1019E00F6659D /* WebViewFlutterPluginTests.swift */; };
+		B2DFEDAB4A014EFA874DE1B2 /* URLResponseProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC74951E00FB4B60A158CE3C /* URLResponseProxyAPITests.swift */; };
+		B7B0BBF2C36B4424BEC5E99A /* URLSchemeHandlerProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1E10DE37D75400AB8E92906 /* URLSchemeHandlerProxyAPITests.swift */; };
+		D748061DE2C87DBDCC18DF8E /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E1045D94ADDB265F1346044B /* Pods_RunnerTests.framework */; };
+		E319A455B8F3150896636C79 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D681EEB0BDE272D1CCE6AE72 /* Pods_Runner.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -98,6 +103,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		14FE72D8B6E54C429AF34FAF /* URLSchemeTaskProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = URLSchemeTaskProxyAPITests.swift; path = ../../darwin/Tests/URLSchemeTaskProxyAPITests.swift; sourceTree = SOURCE_ROOT; };
+		2B5361B7CB263BE6D50140A3 /* Pods-RunnerTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile.xcconfig"; sourceTree = "<group>"; };
 		331C80D5294CF71000263BE5 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		333000ED22D3DE5D00554162 /* Warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Warnings.xcconfig; sourceTree = "<group>"; };
 		335BBD1A22A9A15E00E9071D /* GeneratedPluginRegistrant.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneratedPluginRegistrant.swift; sourceTree = "<group>"; };
@@ -113,6 +120,8 @@
 		33E51913231747F40026EE4D /* DebugProfile.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DebugProfile.entitlements; sourceTree = "<group>"; };
 		33E51914231749380026EE4D /* Release.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = Release.entitlements; sourceTree = "<group>"; };
 		33E5194F232828860026EE4D /* AppInfo.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AppInfo.xcconfig; sourceTree = "<group>"; };
+		405D7FA49AA59C1A3AA1EF2A /* Pods-RunnerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release.xcconfig"; sourceTree = "<group>"; };
+		6B152D41686CC6F5E48B4729 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		784666492D4C4C64000A1A5F /* FlutterFramework */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = FlutterFramework; path = ephemeral/Packages/.packages/FlutterFramework; sourceTree = "<group>"; };
 		78DABEA22ED26510000E7860 /* webview_flutter_wkwebview */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = webview_flutter_wkwebview; path = ../../../darwin/webview_flutter_wkwebview; sourceTree = "<group>"; };
 		78E0A7A72DC9AD7400C4905E /* FlutterGeneratedPluginSwiftPackage */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = FlutterGeneratedPluginSwiftPackage; path = ephemeral/Packages/FlutterGeneratedPluginSwiftPackage; sourceTree = "<group>"; };
@@ -157,6 +166,13 @@
 		8FFBB0662FA1019E00F6659D /* ProxyAPIRegistrarTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProxyAPIRegistrarTests.swift; path = ../../darwin/Tests/ProxyAPIRegistrarTests.swift; sourceTree = SOURCE_ROOT; };
 		8FFBB0672FA1019E00F6659D /* WebViewFlutterPluginTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WebViewFlutterPluginTests.swift; path = ../../darwin/Tests/WebViewFlutterPluginTests.swift; sourceTree = SOURCE_ROOT; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		B1E10DE37D75400AB8E92906 /* URLSchemeHandlerProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = URLSchemeHandlerProxyAPITests.swift; path = ../../darwin/Tests/URLSchemeHandlerProxyAPITests.swift; sourceTree = SOURCE_ROOT; };
+		B8008D7ADDBEEA6EBB841E90 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
+		BF3880335245D63AF1FA4176 /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
+		CC74951E00FB4B60A158CE3C /* URLResponseProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = URLResponseProxyAPITests.swift; path = ../../darwin/Tests/URLResponseProxyAPITests.swift; sourceTree = SOURCE_ROOT; };
+		D681EEB0BDE272D1CCE6AE72 /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DF52759E829AF02B7A83312B /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
+		E1045D94ADDB265F1346044B /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -164,6 +180,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D748061DE2C87DBDCC18DF8E /* Pods_RunnerTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -172,6 +189,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */,
+				E319A455B8F3150896636C79 /* Pods_Runner.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -191,6 +209,9 @@
 				8FEC64942DA303E200C48569 /* WebpagePreferencesProxyAPITests.swift */,
 				8FF1FE842D37201300A5E400 /* AuthenticationChallengeResponseProxyAPITests.swift */,
 				8FF1FE852D37201300A5E400 /* ErrorProxyAPITests.swift */,
+				14FE72D8B6E54C429AF34FAF /* URLSchemeTaskProxyAPITests.swift */,
+				B1E10DE37D75400AB8E92906 /* URLSchemeHandlerProxyAPITests.swift */,
+				CC74951E00FB4B60A158CE3C /* URLResponseProxyAPITests.swift */,
 				8FF1FE862D37201300A5E400 /* FrameInfoProxyAPITests.swift */,
 				8FF1FE872D37201300A5E400 /* FWFWebViewFlutterWKWebViewExternalAPITests.swift */,
 				8FF1FE882D37201300A5E400 /* HTTPCookieProxyAPITests.swift */,
@@ -243,6 +264,7 @@
 				331C80D6294CF71000263BE5 /* RunnerTests */,
 				33CC10EE2044A3C60003C045 /* Products */,
 				57E0600E4AC0FCC05F33A596 /* Pods */,
+				D9648040379E2A7A756FB7C4 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -296,8 +318,23 @@
 		57E0600E4AC0FCC05F33A596 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
+				B8008D7ADDBEEA6EBB841E90 /* Pods-Runner.debug.xcconfig */,
+				DF52759E829AF02B7A83312B /* Pods-Runner.release.xcconfig */,
+				6B152D41686CC6F5E48B4729 /* Pods-Runner.profile.xcconfig */,
+				BF3880335245D63AF1FA4176 /* Pods-RunnerTests.debug.xcconfig */,
+				405D7FA49AA59C1A3AA1EF2A /* Pods-RunnerTests.release.xcconfig */,
+				2B5361B7CB263BE6D50140A3 /* Pods-RunnerTests.profile.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		D9648040379E2A7A756FB7C4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D681EEB0BDE272D1CCE6AE72 /* Pods_Runner.framework */,
+				E1045D94ADDB265F1346044B /* Pods_RunnerTests.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -307,6 +344,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 331C80DE294CF71000263BE5 /* Build configuration list for PBXNativeTarget "RunnerTests" */;
 			buildPhases = (
+				88797F93407BCBA22BC42D6D /* [CP] Check Pods Manifest.lock */,
 				331C80D1294CF70F00263BE5 /* Sources */,
 				331C80D2294CF70F00263BE5 /* Frameworks */,
 				331C80D3294CF70F00263BE5 /* Resources */,
@@ -325,6 +363,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 33CC10FB2044A3C60003C045 /* Build configuration list for PBXNativeTarget "Runner" */;
 			buildPhases = (
+				CBBBA2AE0975DB4E16BCA197 /* [CP] Check Pods Manifest.lock */,
 				33CC10E92044A3C60003C045 /* Sources */,
 				33CC10EA2044A3C60003C045 /* Frameworks */,
 				33CC10EB2044A3C60003C045 /* Resources */,
@@ -385,7 +424,7 @@
 			);
 			mainGroup = 33CC10E42044A3C60003C045;
 			packageReferences = (
-				781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage" */,
+				781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "FlutterGeneratedPluginSwiftPackage" */,
 			);
 			productRefGroup = 33CC10EE2044A3C60003C045 /* Products */;
 			projectDirPath = "";
@@ -456,6 +495,50 @@
 			shellPath = /bin/sh;
 			shellScript = "\"$FLUTTER_ROOT\"/packages/flutter_tools/bin/macos_assemble.sh && touch Flutter/ephemeral/tripwire";
 		};
+		88797F93407BCBA22BC42D6D /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-RunnerTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		CBBBA2AE0975DB4E16BCA197 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Runner-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -482,6 +565,9 @@
 				8FF1FEAE2D37201300A5E400 /* NavigationActionProxyAPITests.swift in Sources */,
 				8FF1FEAF2D37201300A5E400 /* ScrollViewDelegateProxyAPITests.swift in Sources */,
 				8FF1FEB02D37201300A5E400 /* ErrorProxyAPITests.swift in Sources */,
+				60CB95C6378B4789BE3733BE /* URLSchemeTaskProxyAPITests.swift in Sources */,
+				B7B0BBF2C36B4424BEC5E99A /* URLSchemeHandlerProxyAPITests.swift in Sources */,
+				B2DFEDAB4A014EFA874DE1B2 /* URLResponseProxyAPITests.swift in Sources */,
 				8FF1FEB12D37201300A5E400 /* UIDelegateProxyAPITests.swift in Sources */,
 				8FF1FEB22D37201300A5E400 /* WebViewProxyAPITests.swift in Sources */,
 				8FF1FEB32D37201300A5E400 /* URLProtectionSpaceProxyAPITests.swift in Sources */,
@@ -544,6 +630,7 @@
 /* Begin XCBuildConfiguration section */
 		331C80DB294CF71000263BE5 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BF3880335245D63AF1FA4176 /* Pods-RunnerTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
@@ -561,6 +648,7 @@
 		};
 		331C80DC294CF71000263BE5 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 405D7FA49AA59C1A3AA1EF2A /* Pods-RunnerTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
@@ -577,6 +665,7 @@
 		};
 		331C80DD294CF71000263BE5 /* Profile */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2B5361B7CB263BE6D50140A3 /* Pods-RunnerTests.profile.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
@@ -864,7 +953,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage" */ = {
+		781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "FlutterGeneratedPluginSwiftPackage" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage;
 		};

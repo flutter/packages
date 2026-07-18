@@ -7,6 +7,19 @@ import XCTest
 @testable import webview_flutter_wkwebview
 
 class ErrorProxyAPITests: XCTestCase {
+  func testPigeonDefaultConstructor() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiNSError(registrar)
+
+    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(
+      pigeonApi: api, code: 42, domain: "domain",
+      userInfo: [NSLocalizedDescriptionKey: "description"])
+
+    XCTAssertEqual(instance?.code, 42)
+    XCTAssertEqual(instance?.domain, "domain")
+    XCTAssertEqual(instance?.localizedDescription, "description")
+  }
+
   func testCode() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiNSError(registrar)

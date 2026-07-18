@@ -77,6 +77,7 @@ class WebKitWebViewControllerCreationParams extends PlatformWebViewControllerCre
     this.allowsInlineMediaPlayback = false,
     this.limitsNavigationsToAppBoundDomains = false,
     this.javaScriptCanOpenWindowsAutomatically,
+    this.urlSchemeHandlers = const <String, WebKitUrlSchemeHandler>{},
   }) {
     _configuration = WKWebViewConfiguration();
 
@@ -96,6 +97,7 @@ class WebKitWebViewControllerCreationParams extends PlatformWebViewControllerCre
     if (limitsNavigationsToAppBoundDomains) {
       _configuration.setLimitsNavigationsToAppBoundDomains(limitsNavigationsToAppBoundDomains);
     }
+    urlSchemeHandlers.forEach(_registerUrlSchemeHandler);
   }
 
   /// Constructs a [WebKitWebViewControllerCreationParams] using a
@@ -111,14 +113,88 @@ class WebKitWebViewControllerCreationParams extends PlatformWebViewControllerCre
     bool allowsInlineMediaPlayback = false,
     bool limitsNavigationsToAppBoundDomains = false,
     bool? javaScriptCanOpenWindowsAutomatically,
+    Map<String, WebKitUrlSchemeHandler> urlSchemeHandlers =
+        const <String, WebKitUrlSchemeHandler>{},
   }) : this(
          mediaTypesRequiringUserAction: mediaTypesRequiringUserAction,
          allowsInlineMediaPlayback: allowsInlineMediaPlayback,
          limitsNavigationsToAppBoundDomains: limitsNavigationsToAppBoundDomains,
          javaScriptCanOpenWindowsAutomatically: javaScriptCanOpenWindowsAutomatically,
+         urlSchemeHandlers: urlSchemeHandlers,
        );
 
   late final WKWebViewConfiguration _configuration;
+
+  /// The objects that load resources for URL schemes that WebKit doesn't
+  /// handle, keyed by their URL scheme.
+  ///
+  /// Registering a scheme that WebKit already handles (e.g. `http`, `https`,
+  /// `file`, `data`, `blob`, or `about`) results in a
+  /// [PlatformException] on the native side.
+  final Map<String, WebKitUrlSchemeHandler> urlSchemeHandlers;
+
+  // Native handler wrappers, retained so callbacks stay reachable for the
+  // lifetime of the configuration.
+  final Map<String, WKURLSchemeHandler> _nativeUrlSchemeHandlers = <String, WKURLSchemeHandler>{};
+
+  void _registerUrlSchemeHandler(String scheme, WebKitUrlSchemeHandler handler) {
+    // Tasks that received `start` and have not yet completed or been stopped.
+    final activeTasks = <WKURLSchemeTask, WebKitUrlSchemeTask>{};
+    // Tasks whose `start` handling is still asynchronously reading the
+    // request details.
+    final startingTasks = <WKURLSchemeTask>{};
+    // Tasks that received `stop` before the asynchronous `start` handling
+    // finished reading the request details.
+    final stoppedBeforeStart = <WKURLSchemeTask>{};
+
+    final nativeHandler = WKURLSchemeHandler(
+      startUrlSchemeTask:
+          (WKURLSchemeHandler instance, WKWebView webView, WKURLSchemeTask task) async {
+            startingTasks.add(task);
+            try {
+              final String? url = await task.request.getUrl();
+              final String? httpMethod = await task.request.getHttpMethod();
+
+              final wrappedTask = WebKitUrlSchemeTask._(
+                task,
+                url: url,
+                httpMethod: httpMethod,
+                onComplete: () => activeTasks.remove(task),
+              );
+
+              if (stoppedBeforeStart.contains(task)) {
+                // The web view stopped the task while the request details were
+                // being read; responding is a no-op, so don't deliver the task.
+                wrappedTask._stopped = true;
+                return;
+              }
+
+              activeTasks[task] = wrappedTask;
+              handler.onStart(wrappedTask);
+            } finally {
+              startingTasks.remove(task);
+              stoppedBeforeStart.remove(task);
+            }
+          },
+      stopUrlSchemeTask: (WKURLSchemeHandler instance, WKWebView webView, WKURLSchemeTask task) {
+        final WebKitUrlSchemeTask? wrappedTask = activeTasks.remove(task);
+        if (wrappedTask == null) {
+          // Only tasks still reading their request details need the marker;
+          // for a task that already completed or failed to start, the stop
+          // notification requires no bookkeeping.
+          if (startingTasks.contains(task)) {
+            stoppedBeforeStart.add(task);
+          }
+          return;
+        }
+        wrappedTask._stopped = true;
+        handler.onStop?.call(wrappedTask);
+      },
+    );
+
+    _nativeUrlSchemeHandlers[scheme] = nativeHandler;
+    _configuration.setURLSchemeHandler(nativeHandler, scheme);
+  }
 
   /// Media types that require a user gesture to begin playing.
   ///
@@ -143,6 +219,137 @@ class WebKitWebViewControllerCreationParams extends PlatformWebViewControllerCre
   /// When `null`, the platform's native default is used
   /// (`false` on iOS, `true` on macOS).
   final bool? javaScriptCanOpenWindowsAutomatically;
+}
+
+/// A handler that loads resources for a custom URL scheme in a
+/// [WebKitWebViewController].
+///
+/// Set with [WebKitWebViewControllerCreationParams.urlSchemeHandlers].
+///
+/// See https://developer.apple.com/documentation/webkit/wkurlschemehandler.
+@immutable
+class WebKitUrlSchemeHandler {
+  /// Constructs a [WebKitUrlSchemeHandler].
+  const WebKitUrlSchemeHandler({required this.onStart, this.onStop});
+
+  /// Invoked when the web view requests a resource with the associated URL
+  /// scheme.
+  ///
+  /// Respond with the [WebKitUrlSchemeTask.didReceiveResponse],
+  /// [WebKitUrlSchemeTask.didReceiveData], and
+  /// [WebKitUrlSchemeTask.didFinish]/[WebKitUrlSchemeTask.didFail] methods of
+  /// the task.
+  final void Function(WebKitUrlSchemeTask task) onStart;
+
+  /// Invoked when the web view no longer needs the resource of a task
+  /// previously passed to [onStart].
+  ///
+  /// After this is invoked, responding to the task is a no-op.
+  final void Function(WebKitUrlSchemeTask task)? onStop;
+}
+
+/// A task associated with loading a resource for a custom URL scheme.
+///
+/// Passed to the callbacks of a [WebKitUrlSchemeHandler]. To load the
+/// resource, call [didReceiveResponse], then [didReceiveData] one or more
+/// times, and finish with [didFinish]. Call [didFail] if the resource could
+/// not be loaded.
+///
+/// See https://developer.apple.com/documentation/webkit/wkurlschemetask.
+class WebKitUrlSchemeTask {
+  WebKitUrlSchemeTask._(
+    this._task, {
+    required this.url,
+    required this.httpMethod,
+    required this._onComplete,
+  });
+
+  final WKURLSchemeTask _task;
+  final void Function() _onComplete;
+  bool _stopped = false;
+  bool _completed = false;
+
+  /// The URL of the requested resource.
+  final String? url;
+
+  /// The HTTP method of the request.
+  final String? httpMethod;
+
+  /// Whether the web view stopped this task with
+  /// [WebKitUrlSchemeHandler.onStop].
+  ///
+  /// Once true, responding to the task is a no-op.
+  bool get isStopped => _stopped;
+
+  // Whether the task no longer accepts replies: either the web view stopped
+  // it, or it was completed with `didFinish`/`didFail`. Native `WKURLSchemeTask`
+  // methods raise an exception in both cases, so replies become no-ops.
+  bool get _isClosed => _stopped || _completed;
+
+  /// Creates an HTTP response object for the request and informs the web view
+  /// about it.
+  ///
+  /// Must be called before [didReceiveData]. This is a no-op if the task was
+  /// stopped or already completed with [didFinish] or [didFail].
+  Future<void> didReceiveResponse({
+    required int statusCode,
+    Map<String, String> headers = const <String, String>{},
+  }) async {
+    if (_isClosed) {
+      return;
+    }
+    return _task.didReceiveResponse(
+      HTTPURLResponse(url: url ?? '', statusCode: statusCode, headerFields: headers),
+    );
+  }
+
+  /// Sends some or all of the resource’s data to the web view.
+  ///
+  /// May be called multiple times after [didReceiveResponse]. This is a no-op
+  /// if the task was stopped or already completed with [didFinish] or
+  /// [didFail].
+  Future<void> didReceiveData(Uint8List data) async {
+    if (_isClosed) {
+      return;
+    }
+    return _task.didReceiveData(data);
+  }
+
+  /// Informs the web view that the resource finished loading.
+  ///
+  /// After this call, responding to the task is a no-op.
+  Future<void> didFinish() async {
+    if (_isClosed) {
+      return;
+    }
+    _completed = true;
+    _onComplete();
+    return _task.didFinish();
+  }
+
+  /// Informs the web view that the resource failed to load.
+  ///
+  /// After this call, responding to the task is a no-op.
+  Future<void> didFail({
+    String domain = 'NSURLErrorDomain',
+    int code = -1,
+    String? localizedDescription,
+  }) async {
+    if (_isClosed) {
+      return;
+    }
+    _completed = true;
+    _onComplete();
+    return _task.didFailWithError(
+      NSError(
+        domain: domain,
+        code: code,
+        userInfo: <String, Object?>{
+          if (localizedDescription != null) 'NSLocalizedDescription': localizedDescription,
+        },
+      ),
+    );
+  }
 }
 
 /// An implementation of [PlatformWebViewController] with the WebKit api.
