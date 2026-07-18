@@ -1,3 +1,17 @@
+## 2.11.1 (next)
+
+* **Fix**: removed the forced `AVVideoColorPropertiesKey: BT.709` block
+  on the `AVPlayerItemVideoOutput`. The previous setting (added in
+  2.9.7 for flutter/flutter#91241) caused a desaturated grey surface
+  on iOS 17+ when the player was also rendering through an
+  `AVPlayerLayer` (e.g. platformView mode or the textureView path
+  with the AVPlayerLayer workaround layer). Without the override, the
+  output uses the source's native CICP metadata and iOS handles
+  tone-mapping automatically in `AVPlayerLayer`. No regression on
+  HDR sources — `AVPlayerItem.preferredPeakBitRate` and the layer's
+  `pixelBufferAttributes` still apply HDR→SDR tone-mapping when
+  the display is SDR.
+
 ## 2.11.0
 
 * Implements `setPreventsDisplaySleepDuringVideoPlayback` using
