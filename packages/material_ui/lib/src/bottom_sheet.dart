@@ -203,7 +203,7 @@ class BottomSheet extends StatefulWidget {
   /// Defaults to null and falls back to [Material]'s default.
   final ShapeBorder? shape;
 
-  /// {@macro flutter.cupertino.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defines the bottom sheet's [Material.clipBehavior].
   ///
@@ -804,7 +804,7 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
 
 /// A route that represents a Material Design modal bottom sheet.
 ///
-/// {@template flutter.material.ModalBottomSheetRoute}
+/// {@template material_ui.ModalBottomSheetRoute}
 /// A modal bottom sheet is an alternative to a menu or a dialog and prevents
 /// the user from interacting with the rest of the app.
 ///
@@ -938,7 +938,7 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
   /// If this property is not provided, it falls back to [Material]'s default.
   final ShapeBorder? shape;
 
-  /// {@macro flutter.cupertino.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defines the bottom sheet's [Material.clipBehavior].
   ///
@@ -1047,7 +1047,7 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
   /// To disable the modal bottom sheet animation, use [AnimationStyle.noAnimation].
   final AnimationStyle? sheetAnimationStyle;
 
-  /// {@template flutter.material.ModalBottomSheetRoute.barrierOnTapHint}
+  /// {@template material_ui.ModalBottomSheetRoute.barrierOnTapHint}
   /// The semantic hint text that informs users what will happen if they
   /// tap on the widget. Announced in the format of 'Double tap to ...'.
   ///
@@ -1207,7 +1207,7 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
 
 /// Shows a modal Material Design bottom sheet.
 ///
-/// {@macro flutter.material.ModalBottomSheetRoute}
+/// {@macro material_ui.ModalBottomSheetRoute}
 ///
 /// {@macro flutter.widgets.RawDialogRoute}
 ///

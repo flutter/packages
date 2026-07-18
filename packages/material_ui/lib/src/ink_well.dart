@@ -434,7 +434,7 @@ class InkResponse extends StatelessWidget {
   /// The cursor for a mouse pointer when it enters or is hovering over the
   /// widget.
   ///
-  /// {@template flutter.material.InkWell.mouseCursor}
+  /// {@template material_ui.InkWell.mouseCursor}
   /// If [mouseCursor] is a [WidgetStateMouseCursor],
   /// [WidgetStateProperty.resolve] is used for the following [WidgetState]s:
   ///
@@ -616,7 +616,7 @@ class InkResponse extends StatelessWidget {
   /// duplication of information.
   final bool excludeFromSemantics;
 
-  /// {@macro flutter.cupertino.inkwell.onFocusChange}
+  /// {@macro cupertino_ui.inkwell.onFocusChange}
   final ValueChanged<bool>? onFocusChange;
 
   /// {@macro flutter.widgets.Focus.autofocus}
@@ -641,7 +641,7 @@ class InkResponse extends StatelessWidget {
   /// slightly more efficient).
   RectCallback? getRectCallback(RenderBox referenceBox) => null;
 
-  /// {@template flutter.material.inkwell.statesController}
+  /// {@template material_ui.inkwell.statesController}
   /// Represents the interactive "state" of this widget in terms of
   /// a set of [WidgetState]s, like [WidgetState.pressed] and
   /// [WidgetState.focused].

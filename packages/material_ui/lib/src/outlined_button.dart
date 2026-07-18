@@ -101,7 +101,7 @@ class OutlinedButton extends ButtonStyleButton {
   /// If [icon] is null, this constructor will create an outlined button
   /// that doesn't display an icon.
   ///
-  /// {@macro flutter.material.ButtonStyle.iconAlignment}
+  /// {@macro material_ui.ButtonStyle.iconAlignment}
   ///
   OutlinedButton.icon({
     super.key,

@@ -107,7 +107,7 @@ enum ThemeMode {
 /// This widget also configures the observer of the top-level [Navigator] (if
 /// any) to perform [Hero] animations.
 ///
-/// {@template flutter.material.MaterialApp.defaultSelectionStyle}
+/// {@template material_ui.MaterialApp.defaultSelectionStyle}
 /// The [MaterialApp] automatically creates a [DefaultSelectionStyle]. It uses
 /// the colors in the [ThemeData.textSelectionTheme] if they are not null;
 /// otherwise, the [MaterialApp] sets [DefaultSelectionStyle.selectionColor] to
@@ -553,8 +553,7 @@ class MaterialApp extends StatefulWidget {
   /// and list the [supportedLocales] that the application can handle.
   ///
   /// ```dart
-  /// // The GlobalMaterialLocalizations and GlobalWidgetsLocalizations
-  /// // classes require the following import:
+  /// // The GlobalWidgetsLocalizations class requires the following import:
   /// // import 'package:flutter_localizations/flutter_localizations.dart';
   ///
   /// const MaterialApp(
@@ -767,7 +766,7 @@ class MaterialApp extends StatefulWidget {
   /// {@macro flutter.widgets.widgetsApp.restorationScopeId}
   final String? restorationScopeId;
 
-  /// {@macro flutter.cupertino.materialApp.scrollBehavior}
+  /// {@macro cupertino_ui.materialApp.scrollBehavior}
   ///
   /// When null, defaults to [MaterialScrollBehavior].
   ///

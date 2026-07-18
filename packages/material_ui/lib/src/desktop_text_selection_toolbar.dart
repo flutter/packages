@@ -35,10 +35,10 @@ class DesktopTextSelectionToolbar extends StatelessWidget {
   const DesktopTextSelectionToolbar({super.key, required this.anchor, required this.children})
     : assert(children.length > 0);
 
-  /// {@macro flutter.cupertino.DesktopTextSelectionToolbar.anchor}
+  /// {@macro cupertino_ui.DesktopTextSelectionToolbar.anchor}
   final Offset anchor;
 
-  /// {@macro flutter.cupertino.TextSelectionToolbar.children}
+  /// {@macro cupertino_ui.TextSelectionToolbar.children}
   ///
   /// See also:
   ///   * [DesktopTextSelectionToolbarButton], which builds a default
