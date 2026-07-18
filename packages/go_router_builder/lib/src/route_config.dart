@@ -195,7 +195,11 @@ mixin _GoRouteMixin on RouteBaseConfig {
       'onExit',
       routeDataClass.library,
     );
-    return onExit != null && onExit.enclosingElement?.displayName != '_GoRouteDataBase';
+    final String? enclosingName = onExit?.enclosingElement?.displayName;
+    return onExit != null &&
+        enclosingName != '_GoRouteDataBase' &&
+        enclosingName != 'GoRouteData' &&
+        enclosingName != 'RelativeGoRouteData';
   }
 
   // construct path bits using parent bits
