@@ -190,6 +190,14 @@ mixin _GoRouteMixin on RouteBaseConfig {
 
   late final Set<String> _pathParams = pathParametersFromPattern(_basePathForLocation);
 
+  bool get _hasOverriddenOnExit {
+    final MethodElement? onExit = routeDataClass.thisType.lookUpMethod(
+      'onExit',
+      routeDataClass.library,
+    );
+    return onExit != null && onExit.enclosingElement?.displayName != '_GoRouteDataBase';
+  }
+
   // construct path bits using parent bits
   // if there are any queryParam objects, add in the `queryParam` bits
   String get _locationArgs {
@@ -474,7 +482,8 @@ mixin $_mixinName on $routeDataClassName {
       'path: ${escapeDartString(path)},'
       '${name != null ? 'name: ${escapeDartString(name!)},' : ''}'
       '${caseSensitive ? '' : 'caseSensitive: $caseSensitive,'}'
-      '${parentNavigatorKey == null ? '' : 'parentNavigatorKey: $parentNavigatorKey,'}';
+      '${parentNavigatorKey == null ? '' : 'parentNavigatorKey: $parentNavigatorKey,'}'
+      'hasOverriddenOnExit: $_hasOverriddenOnExit,';
 
   @override
   String get routeDataClassName => 'GoRouteData';
@@ -550,7 +559,8 @@ mixin $_mixinName on $routeDataClassName {
   String get routeConstructorParameters =>
       'path: ${escapeDartString(path)},'
       '${caseSensitive ? '' : 'caseSensitive: $caseSensitive,'}'
-      '${parentNavigatorKey == null ? '' : 'parentNavigatorKey: $parentNavigatorKey,'}';
+      '${parentNavigatorKey == null ? '' : 'parentNavigatorKey: $parentNavigatorKey,'}'
+      'hasOverriddenOnExit: $_hasOverriddenOnExit,';
 
   @override
   String get routeDataClassName => 'RelativeGoRouteData';

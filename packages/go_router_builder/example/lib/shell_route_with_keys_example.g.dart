@@ -14,14 +14,20 @@ RouteBase get $myShellRouteData => ShellRouteData.$route(
   navigatorKey: MyShellRouteData.$navigatorKey,
   factory: $MyShellRouteDataExtension._fromState,
   routes: [
-    GoRouteData.$route(path: '/home', factory: $HomeRouteData._fromState),
+    GoRouteData.$route(
+      path: '/home',
+      hasOverriddenOnExit: false,
+      factory: $HomeRouteData._fromState,
+    ),
     GoRouteData.$route(
       path: '/users',
+      hasOverriddenOnExit: false,
       factory: $UsersRouteData._fromState,
       routes: [
         GoRouteData.$route(
           path: ':id',
           parentNavigatorKey: UserRouteData.$parentNavigatorKey,
+          hasOverriddenOnExit: false,
           factory: $UserRouteData._fromState,
         ),
       ],

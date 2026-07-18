@@ -1,5 +1,8 @@
-RouteBase get $goodJson =>
-    GoRouteData.$route(path: '/', factory: $GoodJson._fromState);
+RouteBase get $goodJson => GoRouteData.$route(
+  path: '/',
+  hasOverriddenOnExit: false,
+  factory: $GoodJson._fromState,
+);
 
 mixin $GoodJson on GoRouteData {
   static GoodJson _fromState(GoRouterState state) => GoodJson(

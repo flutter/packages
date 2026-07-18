@@ -1,6 +1,6 @@
 RouteBase get $shellRouteNoConstConstructor => ShellRouteData.$route(
-      factory: $ShellRouteNoConstConstructorExtension._fromState,
-    );
+  factory: $ShellRouteNoConstConstructorExtension._fromState,
+);
 
 extension $ShellRouteNoConstConstructorExtension
     on ShellRouteNoConstConstructor {
@@ -9,8 +9,8 @@ extension $ShellRouteNoConstConstructorExtension
 }
 
 RouteBase get $shellRouteWithConstConstructor => ShellRouteData.$route(
-      factory: $ShellRouteWithConstConstructorExtension._fromState,
-    );
+  factory: $ShellRouteWithConstConstructorExtension._fromState,
+);
 
 extension $ShellRouteWithConstConstructorExtension
     on ShellRouteWithConstConstructor {
@@ -19,9 +19,9 @@ extension $ShellRouteWithConstConstructorExtension
 }
 
 RouteBase get $shellRouteWithRestorationScopeId => ShellRouteData.$route(
-      restorationScopeId: ShellRouteWithRestorationScopeId.$restorationScopeId,
-      factory: $ShellRouteWithRestorationScopeIdExtension._fromState,
-    );
+  restorationScopeId: ShellRouteWithRestorationScopeId.$restorationScopeId,
+  factory: $ShellRouteWithRestorationScopeIdExtension._fromState,
+);
 
 extension $ShellRouteWithRestorationScopeIdExtension
     on ShellRouteWithRestorationScopeId {

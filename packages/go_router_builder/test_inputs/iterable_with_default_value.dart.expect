@@ -1,26 +1,27 @@
 RouteBase get $iterableDefaultValueRoute => GoRouteData.$route(
-      path: '/iterable-default-value-route',
-      factory: $IterableDefaultValueRoute._fromState,
-    );
+  path: '/iterable-default-value-route',
+  hasOverriddenOnExit: false,
+  factory: $IterableDefaultValueRoute._fromState,
+);
 
 mixin $IterableDefaultValueRoute on GoRouteData {
   static IterableDefaultValueRoute _fromState(GoRouterState state) =>
       IterableDefaultValueRoute(
         param:
             state.uri.queryParametersAll['param']?.map(int.parse).cast<int>() ??
-                const <int>[0],
+            const <int>[0],
       );
 
   IterableDefaultValueRoute get _self => this as IterableDefaultValueRoute;
 
   @override
   String get location => GoRouteData.$location(
-        '/iterable-default-value-route',
-        queryParams: {
-          if (!_$iterablesEqual(_self.param, const <int>[0]))
-            'param': _self.param.map((e) => e.toString()).toList(),
-        },
-      );
+    '/iterable-default-value-route',
+    queryParams: {
+      if (!_$iterablesEqual(_self.param, const <int>[0]))
+        'param': _self.param.map((e) => e.toString()).toList(),
+    },
+  );
 
   @override
   void go(BuildContext context) => context.go(location);

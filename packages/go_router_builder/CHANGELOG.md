@@ -1,3 +1,7 @@
+## 4.3.2
+
+* Fixes generated routes so `onExit` is only enabled when the route data class overrides it.
+
 ## 4.3.1
 
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.

@@ -1,23 +1,22 @@
 RouteBase get $requiredNullableTypeArgumentsExtraValueRoute =>
     GoRouteData.$route(
       path: '/default-value-route',
+      hasOverriddenOnExit: false,
       factory: $RequiredNullableTypeArgumentsExtraValueRoute._fromState,
     );
 
 mixin $RequiredNullableTypeArgumentsExtraValueRoute on GoRouteData {
   static RequiredNullableTypeArgumentsExtraValueRoute _fromState(
-          GoRouterState state) =>
-      RequiredNullableTypeArgumentsExtraValueRoute(
-        $extra: state.extra as List<int?>,
-      );
+    GoRouterState state,
+  ) => RequiredNullableTypeArgumentsExtraValueRoute(
+    $extra: state.extra as List<int?>,
+  );
 
   RequiredNullableTypeArgumentsExtraValueRoute get _self =>
       this as RequiredNullableTypeArgumentsExtraValueRoute;
 
   @override
-  String get location => GoRouteData.$location(
-        '/default-value-route',
-      );
+  String get location => GoRouteData.$location('/default-value-route');
 
   @override
   void go(BuildContext context) => context.go(location, extra: _self.$extra);
