@@ -2018,6 +2018,74 @@ window.addEventListener("error", function(e) {
       verifyNever(mockTask.didFinish());
     });
 
+    test('replies after didFinish are no-ops', () async {
+      WebKitUrlSchemeTask? startedTask;
+      final handler = WebKitUrlSchemeHandler(
+        onStart: (WebKitUrlSchemeTask task) => startedTask = task,
+      );
+
+      final (_, void Function(WKWebView, WKURLSchemeTask) startUrlSchemeTask, _) =
+          createParamsWithSchemeHandler(handler);
+
+      final MockWKURLSchemeTask mockTask = createMockTask();
+      startUrlSchemeTask(MockWKWebView(), mockTask);
+      await pumpEventQueue();
+
+      await startedTask!.didFinish();
+
+      await startedTask!.didReceiveResponse(statusCode: 200);
+      await startedTask!.didReceiveData(Uint8List.fromList(<int>[1]));
+      await startedTask!.didFinish();
+      await startedTask!.didFail();
+
+      verify(mockTask.didFinish()).called(1);
+      verifyNever(mockTask.didReceiveResponse(any));
+      verifyNever(mockTask.didReceiveData(any));
+      verifyNever(mockTask.didFailWithError(any));
+      // The task was completed, not stopped by the web view.
+      expect(startedTask!.isStopped, isFalse);
+    });
+
+    test('stop after task completion does not invoke onStop', () async {
+      WebKitUrlSchemeTask? startedTask;
+      WebKitUrlSchemeTask? stoppedTask;
+      final handler = WebKitUrlSchemeHandler(
+        onStart: (WebKitUrlSchemeTask task) => startedTask = task,
+        onStop: (WebKitUrlSchemeTask task) => stoppedTask = task,
+      );
+
+      final (
+        _,
+        void Function(WKWebView, WKURLSchemeTask) startUrlSchemeTask,
+        void Function(WKWebView, WKURLSchemeTask) stopUrlSchemeTask,
+      ) = createParamsWithSchemeHandler(
+        handler,
+      );
+
+      final MockWKURLSchemeTask mockTask = createMockTask();
+      final mockWebView = MockWKWebView();
+      startUrlSchemeTask(mockWebView, mockTask);
+      await pumpEventQueue();
+
+      await startedTask!.didFinish();
+
+      // A stop notification for an already completed task (e.g. the native
+      // `didFinish` call was still in flight during page teardown) requires
+      // no bookkeeping and must not reach the handler.
+      stopUrlSchemeTask(mockWebView, mockTask);
+      await pumpEventQueue();
+
+      expect(stoppedTask, isNull);
+
+      // A brand new task with the same native instance must still be
+      // deliverable afterwards (no stale `stoppedBeforeStart` marker).
+      startedTask = null;
+      startUrlSchemeTask(mockWebView, mockTask);
+      await pumpEventQueue();
+      expect(startedTask, isNotNull);
+      expect(startedTask!.isStopped, isFalse);
+    });
+
     test('a task stopped during request reading is not delivered', () async {
       WebKitUrlSchemeTask? startedTask;
       final handler = WebKitUrlSchemeHandler(

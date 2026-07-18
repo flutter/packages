@@ -140,6 +140,9 @@ class WebKitWebViewControllerCreationParams extends PlatformWebViewControllerCre
   void _registerUrlSchemeHandler(String scheme, WebKitUrlSchemeHandler handler) {
     // Tasks that received `start` and have not yet completed or been stopped.
     final activeTasks = <WKURLSchemeTask, WebKitUrlSchemeTask>{};
+    // Tasks whose `start` handling is still asynchronously reading the
+    // request details.
+    final startingTasks = <WKURLSchemeTask>{};
     // Tasks that received `stop` before the asynchronous `start` handling
     // finished reading the request details.
     final stoppedBeforeStart = <WKURLSchemeTask>{};
@@ -147,30 +150,41 @@ class WebKitWebViewControllerCreationParams extends PlatformWebViewControllerCre
     final nativeHandler = WKURLSchemeHandler(
       startUrlSchemeTask:
           (WKURLSchemeHandler instance, WKWebView webView, WKURLSchemeTask task) async {
-            final String? url = await task.request.getUrl();
-            final String? httpMethod = await task.request.getHttpMethod();
+            startingTasks.add(task);
+            try {
+              final String? url = await task.request.getUrl();
+              final String? httpMethod = await task.request.getHttpMethod();
 
-            final wrappedTask = WebKitUrlSchemeTask._(
-              task,
-              url: url,
-              httpMethod: httpMethod,
-              onComplete: () => activeTasks.remove(task),
-            );
+              final wrappedTask = WebKitUrlSchemeTask._(
+                task,
+                url: url,
+                httpMethod: httpMethod,
+                onComplete: () => activeTasks.remove(task),
+              );
 
-            if (stoppedBeforeStart.remove(task)) {
-              // The web view stopped the task while the request details were
-              // being read; responding is a no-op, so don't deliver the task.
-              wrappedTask._stopped = true;
-              return;
+              if (stoppedBeforeStart.contains(task)) {
+                // The web view stopped the task while the request details were
+                // being read; responding is a no-op, so don't deliver the task.
+                wrappedTask._stopped = true;
+                return;
+              }
+
+              activeTasks[task] = wrappedTask;
+              handler.onStart(wrappedTask);
+            } finally {
+              startingTasks.remove(task);
+              stoppedBeforeStart.remove(task);
             }
-
-            activeTasks[task] = wrappedTask;
-            handler.onStart(wrappedTask);
           },
       stopUrlSchemeTask: (WKURLSchemeHandler instance, WKWebView webView, WKURLSchemeTask task) {
         final WebKitUrlSchemeTask? wrappedTask = activeTasks.remove(task);
         if (wrappedTask == null) {
-          stoppedBeforeStart.add(task);
+          // Only tasks still reading their request details need the marker;
+          // for a task that already completed or failed to start, the stop
+          // notification requires no bookkeeping.
+          if (startingTasks.contains(task)) {
+            stoppedBeforeStart.add(task);
+          }
           return;
         }
         wrappedTask._stopped = true;
@@ -253,6 +267,7 @@ class WebKitUrlSchemeTask {
   final WKURLSchemeTask _task;
   final void Function() _onComplete;
   bool _stopped = false;
+  bool _completed = false;
 
   /// The URL of the requested resource.
   final String? url;
@@ -266,15 +281,21 @@ class WebKitUrlSchemeTask {
   /// Once true, responding to the task is a no-op.
   bool get isStopped => _stopped;
 
+  // Whether the task no longer accepts replies: either the web view stopped
+  // it, or it was completed with `didFinish`/`didFail`. Native `WKURLSchemeTask`
+  // methods raise an exception in both cases, so replies become no-ops.
+  bool get _isClosed => _stopped || _completed;
+
   /// Creates an HTTP response object for the request and informs the web view
   /// about it.
   ///
-  /// Must be called before [didReceiveData].
+  /// Must be called before [didReceiveData]. This is a no-op if the task was
+  /// stopped or already completed with [didFinish] or [didFail].
   Future<void> didReceiveResponse({
     required int statusCode,
     Map<String, String> headers = const <String, String>{},
   }) async {
-    if (_stopped) {
+    if (_isClosed) {
       return;
     }
     return _task.didReceiveResponse(
@@ -284,32 +305,40 @@ class WebKitUrlSchemeTask {
 
   /// Sends some or all of the resource’s data to the web view.
   ///
-  /// May be called multiple times after [didReceiveResponse].
+  /// May be called multiple times after [didReceiveResponse]. This is a no-op
+  /// if the task was stopped or already completed with [didFinish] or
+  /// [didFail].
   Future<void> didReceiveData(Uint8List data) async {
-    if (_stopped) {
+    if (_isClosed) {
       return;
     }
     return _task.didReceiveData(data);
   }
 
   /// Informs the web view that the resource finished loading.
+  ///
+  /// After this call, responding to the task is a no-op.
   Future<void> didFinish() async {
-    if (_stopped) {
+    if (_isClosed) {
       return;
     }
+    _completed = true;
     _onComplete();
     return _task.didFinish();
   }
 
   /// Informs the web view that the resource failed to load.
+  ///
+  /// After this call, responding to the task is a no-op.
   Future<void> didFail({
     String domain = 'NSURLErrorDomain',
     int code = -1,
     String? localizedDescription,
   }) async {
-    if (_stopped) {
+    if (_isClosed) {
       return;
     }
+    _completed = true;
     _onComplete();
     return _task.didFailWithError(
       NSError(
