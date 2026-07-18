@@ -10,10 +10,10 @@ import Testing
 @MainActor struct ConversionUtilsTests {
 
   @Test func colorFromPlatformColor() {
-    let platformRed: Double = 1 / 255.0
-    let platformGreen: Double = 2 / 255.0
-    let platformBlue: Double = 3 / 255.0
-    let platformAlpha: Double = 4 / 255.0
+    let platformRed: CGFloat = 1 / 255.0
+    let platformGreen: CGFloat = 2 / 255.0
+    let platformBlue: CGFloat = 3 / 255.0
+    let platformAlpha: CGFloat = 4 / 255.0
     let color = FGMGetColorForPigeonColor(
       FGMPlatformColor.make(
         withRed: platformRed,
@@ -28,25 +28,23 @@ import Testing
     var alpha: CGFloat = 0
     let success = color.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
     #expect(success)
-    let accuracy: Double = 0.0001
-    #expect(abs(Double(red) - platformRed) <= accuracy)
-    #expect(abs(Double(green) - platformGreen) <= accuracy)
-    #expect(abs(Double(blue) - platformBlue) <= accuracy)
-    #expect(abs(Double(alpha) - platformAlpha) <= accuracy)
+    #expect(abs(red - platformRed) <= CGFloat.ulpOfOne)
+    #expect(abs(green - platformGreen) <= CGFloat.ulpOfOne)
+    #expect(abs(blue - platformBlue) <= CGFloat.ulpOfOne)
+    #expect(abs(alpha - platformAlpha) <= CGFloat.ulpOfOne)
   }
 
   @Test func platformColorFromColor() {
-    let red: Double = 1 / 255.0
-    let green: Double = 2 / 255.0
-    let blue: Double = 3 / 255.0
-    let alpha: Double = 4 / 255.0
+    let red: CGFloat = 1 / 255.0
+    let green: CGFloat = 2 / 255.0
+    let blue: CGFloat = 3 / 255.0
+    let alpha: CGFloat = 4 / 255.0
     let color = UIColor(red: red, green: green, blue: blue, alpha: alpha)
     let platformColor = FGMGetPigeonColorForColor(color)
-    let accuracy: Double = 0.0001
-    #expect(abs(red - platformColor.red) <= accuracy)
-    #expect(abs(green - platformColor.green) <= accuracy)
-    #expect(abs(blue - platformColor.blue) <= accuracy)
-    #expect(abs(alpha - platformColor.alpha) <= accuracy)
+    #expect(abs(red - platformColor.red) <= CGFloat.ulpOfOne)
+    #expect(abs(green - platformColor.green) <= CGFloat.ulpOfOne)
+    #expect(abs(blue - platformColor.blue) <= CGFloat.ulpOfOne)
+    #expect(abs(alpha - platformColor.alpha) <= CGFloat.ulpOfOne)
   }
 
   @Test func pointsFromLatLongs() {
@@ -404,12 +402,11 @@ import Testing
     var blue: CGFloat = 0
     var alpha: CGFloat = 0
     gradient.colors[0].getRed(&red, green: &green, blue: &blue, alpha: &alpha)
-    let accuracy: Double = 0.001
-    #expect(abs(Double(red) - platformRed) <= accuracy)
-    #expect(abs(Double(green) - platformGreen) <= accuracy)
-    #expect(abs(Double(blue) - platformBlue) <= accuracy)
-    #expect(abs(Double(alpha) - platformAlpha) <= accuracy)
-    #expect(abs(gradient.startPoints[0].doubleValue - startPoint) <= accuracy)
+    #expect(abs(red - platformRed) <= CGFloat.ulpOfOne)
+    #expect(abs(green - platformGreen) <= CGFloat.ulpOfOne)
+    #expect(abs(blue - platformBlue) <= CGFloat.ulpOfOne)
+    #expect(abs(alpha - platformAlpha) <= CGFloat.ulpOfOne)
+    #expect(abs(gradient.startPoints[0].doubleValue - startPoint) <= Double.ulpOfOne)
     #expect(gradient.mapSize == UInt(colorMapSize))
   }
 }
