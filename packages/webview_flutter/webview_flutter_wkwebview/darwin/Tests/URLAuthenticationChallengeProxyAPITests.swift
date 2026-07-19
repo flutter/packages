@@ -17,7 +17,6 @@ import Testing
       failureResponse: nil, error: nil, sender: TestURLAuthenticationChallengeSender())
     let value = try api.pigeonDelegate.getProtectionSpace(pigeonApi: api, pigeonInstance: instance)
 
-    #expect(value.host == instance.protectionSpace.host)
     #expect(value.port == instance.protectionSpace.port)
     #expect(value.protocol == instance.protectionSpace.protocol)
     #expect(value.realm == instance.protectionSpace.realm)

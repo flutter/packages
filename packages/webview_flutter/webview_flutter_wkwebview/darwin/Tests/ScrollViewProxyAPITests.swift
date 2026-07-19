@@ -18,9 +18,9 @@ import Testing
       let api = registrar.apiDelegate.pigeonApiUIScrollView(registrar)
 
       let instance = TestScrollView(frame: .zero)
-      let value = try? api.pigeonDelegate.getContentOffset(pigeonApi: api, pigeonInstance: instance)
+      let value = try api.pigeonDelegate.getContentOffset(pigeonApi: api, pigeonInstance: instance)
 
-      #expect(value == [instance.contentOffset.x, instance.contentOffset.y])
+      #expect(value == [instance.contentOffset.x, instance.contentOffset.y] as [Double])
     }
 
     @MainActor @Test func scrollBy() throws {

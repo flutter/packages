@@ -65,9 +65,7 @@ import WebKit
         }
       }
     }
-    #expect(cookies.count == 2)
-    #expect(cookies.contains(cookie1))
-    #expect(cookies.contains(cookie2))
+    #expect(cookies == [cookie1, cookie2])
   }
 }
 

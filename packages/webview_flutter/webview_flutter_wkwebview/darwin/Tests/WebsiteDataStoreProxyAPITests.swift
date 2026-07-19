@@ -29,7 +29,7 @@ import WebKit
     let dataTypes: [WebsiteDataType] = [.localStorage]
     let modificationTimeInSecondsSinceEpoch = 0.0
 
-    let removeDataOfTypesResult = try await withCheckedThrowingContinuation {
+    let _ = try await withCheckedThrowingContinuation {
       (continuation: CheckedContinuation<Bool, Error>) in
       api.pigeonDelegate.removeDataOfTypes(
         pigeonApi: api, pigeonInstance: instance, dataTypes: dataTypes,
@@ -43,6 +43,6 @@ import WebKit
           }
         })
     }
-    #expect(removeDataOfTypesResult == removeDataOfTypesResult)
+    // If the test doesn't throw, it has succeeded.
   }
 }

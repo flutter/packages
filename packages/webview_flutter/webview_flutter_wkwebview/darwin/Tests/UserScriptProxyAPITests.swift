@@ -9,7 +9,7 @@ import WebKit
 @testable import webview_flutter_wkwebview
 
 @Suite struct UserScriptProxyAPITests {
-  @Test func pigeonDefaultConstructor() throws {
+  @MainActor @Test func pigeonDefaultConstructor() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKUserScript(registrar)
 

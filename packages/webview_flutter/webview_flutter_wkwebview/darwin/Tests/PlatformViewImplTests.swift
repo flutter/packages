@@ -11,7 +11,7 @@ import Testing
   import UIKit
 #endif
 
-@Suite struct PlatformViewImplTests {
+@Suite @MainActor struct PlatformViewImplTests {
   #if os(iOS)
     @Test func platformViewImplStoresViewWithAWeakReference() throws {
       var view: UIView? = UIView()

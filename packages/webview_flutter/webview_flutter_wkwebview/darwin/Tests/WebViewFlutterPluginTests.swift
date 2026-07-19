@@ -14,7 +14,7 @@ import Testing
 
 @Suite struct WebViewFlutterPluginTests {
   #if os(iOS)
-    @Test func instanceManagerIsDeallocatedInApplicationWillTerminate() async throws {
+    @MainActor @Test func instanceManagerIsDeallocatedInApplicationWillTerminate() async throws {
       let plugin = WebViewFlutterPlugin(binaryMessenger: TestBinaryMessenger())
       plugin.proxyApiRegistrar!.setUp()
 
@@ -45,7 +45,7 @@ import Testing
       }
     }
 
-    @Test func instanceManagerIsDeallocatedInSceneDidDisconnect() async throws {
+    @MainActor @Test func instanceManagerIsDeallocatedInSceneDidDisconnect() async throws {
       let plugin = WebViewFlutterPlugin(binaryMessenger: TestBinaryMessenger())
       plugin.proxyApiRegistrar!.setUp()
 
