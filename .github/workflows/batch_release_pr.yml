@@ -15,13 +15,12 @@ jobs:
     outputs:
       head_branch_created: ${{ steps.check-branch-exists.outputs.exists }}
       release_branch: ${{ steps.create-branch.outputs.release_branch }} # e.g. release-go_router-17.2.2, returned by branches-for-batch-release tool.
-    env:
-      GITHUB_TOKEN: ${{ secrets.FLUTTERGITHUBBOT_TOKEN }}
     steps:
       - name: checkout repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           token: ${{ secrets.FLUTTERGITHUBBOT_TOKEN }}
+          persist-credentials: false
       - name: "Install Flutter"
         uses: ./.github/workflows/internals/install_flutter
       - name: Set up tools
@@ -33,11 +32,13 @@ jobs:
       - name: create batch release branch
         id: create-branch
         run: |
+          gh auth setup-git
           git config --global user.name "flutteractionsbot"
           git config --global user.email "fluttergithubbot@gmail.com"
           dart ./script/tool/lib/src/main.dart branches-for-batch-release --packages=${GITHUB_EVENT_CLIENT_PAYLOAD_PACKAGE} --branch=${HEAD_BRANCH_NAME} --remote=origin
         env:
           GITHUB_EVENT_CLIENT_PAYLOAD_PACKAGE: ${{ github.event.client_payload.package }}
+          GH_TOKEN: ${{ secrets.FLUTTERGITHUBBOT_TOKEN }}
       - name: Check if branch was created
         id: check-branch-exists
         run: |
@@ -55,20 +56,24 @@ jobs:
       # The create-pull-request action needs both content and pull-requests permissions.
       pull-requests: write
       contents: write
-    env:
-      GITHUB_TOKEN: ${{ secrets.FLUTTERGITHUBBOT_TOKEN }}
     steps:
       - name: checkout repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           ref: ${{ env.HEAD_BRANCH_NAME }}
+          persist-credentials: false
       - name: Create batch release PR
         run: |
+          gh auth setup-git
           gh pr create \
-            --base "${{ needs.create_batch_release_branch.outputs.release_branch }}" \
-            --head "${{ env.HEAD_BRANCH_NAME }}" \
-            --title "[${{ github.event.client_payload.package }}] Batch release" \
-            --body "This PR was created automatically to batch release the \`${{ github.event.client_payload.package }}\`." \
-            --label "override: skip-batch-release-repo-check-${{ github.event.client_payload.package }}"
+            --base "${NEEDS_CREATE_BATCH_RELEASE_BRANCH_OUTPUTS_RELEASE_BRANCH}" \
+            --head "${HEAD_BRANCH_NAME}" \
+            --title "[${GITHUB_EVENT_CLIENT_PAYLOAD_PACKAGE}] Batch release" \
+            --body "This PR was created automatically to batch release the \`${GITHUB_EVENT_CLIENT_PAYLOAD_PACKAGE}\`." \
+            --label "override: skip-batch-release-repo-check-${GITHUB_EVENT_CLIENT_PAYLOAD_PACKAGE}"
+        env:
+          NEEDS_CREATE_BATCH_RELEASE_BRANCH_OUTPUTS_RELEASE_BRANCH: ${{ needs.create_batch_release_branch.outputs.release_branch }}
+          GITHUB_EVENT_CLIENT_PAYLOAD_PACKAGE: ${{ github.event.client_payload.package }}
+          GH_TOKEN: ${{ secrets.FLUTTERGITHUBBOT_TOKEN }}
 
 

@@ -20,7 +20,7 @@ class GioUtils {
   /// Creates a default instance that uses the real libgio.
   GioUtils() {
     try {
-      _gio = DynamicLibrary.open('libgio-2.0.so');
+      _gio = DynamicLibrary.open('libgio-2.0.so.0');
     } on ArgumentError {
       _gio = null;
     }

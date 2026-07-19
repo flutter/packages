@@ -1,6 +1,7 @@
-## NEXT
+## 8.2.0
 
-* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+- Extract the class `Config` to its own file and rename it `GoogleFontsConfig`. The `Config` class is now deprecated.
+- Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 8.1.0
 

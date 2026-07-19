@@ -1909,6 +1909,26 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
 
   @override
   Object? visitEnumDeclaration(dart_ast.EnumDeclaration node) {
+    // Enhanced enums (those with a constructor, fields, methods, or arguments
+    // on their values) aren't supported by Pigeon.
+    final bool isEnhancedEnum =
+        node.body.members.isNotEmpty ||
+        node.body.constants.any((dart_ast.EnumConstantDeclaration e) => e.arguments != null) ||
+        node.namePart.typeParameters != null ||
+        node.namePart is dart_ast.PrimaryConstructorDeclaration ||
+        node.withClause != null ||
+        node.implementsClause != null;
+    if (isEnhancedEnum) {
+      _errors.add(
+        Error(
+          message:
+              'Pigeon doesn\'t support enhanced enums ("${node.namePart.typeName.lexeme}"). '
+              'Use a plain enum without a constructor, fields, methods, type parameters, '
+              'mixins, interfaces, or arguments on its values.',
+          lineNumber: calculateLineNumber(source, node.offset),
+        ),
+      );
+    }
     _enums.add(
       Enum(
         name: node.namePart.typeName.lexeme,
@@ -1923,7 +1943,12 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         documentationComments: _documentationCommentsParser(node.documentationComment?.tokens),
       ),
     );
-    node.visitChildren(this);
+    // Don't visit the children of an enhanced enum: the declaration is
+    // already reported as unsupported, and the visitor doesn't expect
+    // class-like members outside of a class.
+    if (!isEnhancedEnum) {
+      node.visitChildren(this);
+    }
     return null;
   }
 

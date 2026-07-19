@@ -392,11 +392,11 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
         indent.writeln('return true');
       });
 
-      indent.writeln('val other = other as ${classDefinition.name}');
       final Iterable<NamedType> fields = getFieldsInSerializationOrder(classDefinition);
       if (fields.isEmpty) {
         indent.writeln('return true');
       } else {
+        indent.writeln('val other = other as ${classDefinition.name}');
         final String utils = _getUtilsClassName(generatorOptions);
         final String comparisons = fields
             .map((NamedType field) => '$utils.deepEquals(this.${field.name}, other.${field.name})')
@@ -443,24 +443,35 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
 
   void _writeDataClassSignature(Indent indent, Class classDefinition, {bool private = false}) {
     final privateString = private ? 'private ' : '';
-    final classType = classDefinition.isSealed ? 'sealed' : 'data';
+    final String classType;
+    if (classDefinition.isSealed) {
+      classType = 'sealed ';
+    } else if (classDefinition.fields.isEmpty) {
+      classType = '';
+    } else {
+      classType = 'data ';
+    }
     final inheritance = classDefinition.superClass != null
         ? ' : ${classDefinition.superClassName}()'
         : '';
-    indent.write('$privateString$classType class ${classDefinition.name} ');
+    indent.write('$privateString${classType}class ${classDefinition.name} ');
     if (classDefinition.isSealed) {
       return;
     }
-    indent.addScoped('(', ')$inheritance', () {
-      for (final NamedType element in getFieldsInSerializationOrder(classDefinition)) {
-        _writeClassField(indent, element);
-        if (getFieldsInSerializationOrder(classDefinition).last != element) {
-          indent.addln(',');
-        } else {
-          indent.newln();
+    if (classDefinition.fields.isEmpty) {
+      indent.add(inheritance);
+    } else {
+      indent.addScoped('(', ')$inheritance', () {
+        for (final NamedType element in getFieldsInSerializationOrder(classDefinition)) {
+          _writeClassField(indent, element);
+          if (getFieldsInSerializationOrder(classDefinition).last != element) {
+            indent.addln(',');
+          } else {
+            indent.newln();
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   @override
