@@ -11,11 +11,10 @@ import Testing
   @Test func logFlutterMethodFailureDoesNotThrowAnError() throws {
     let registrar = TestProxyApiRegistrar()
 
-    withKnownIssue("Method should log a message and not throw an error.") {
-      #expect(throws: (any Error).self) {
-        try registrar.logFlutterMethodFailure(
-          PigeonError(code: "code", message: "message", details: nil), methodName: "aMethod")
-      }
+    // Method should log a message and not throw an error.
+    #expect(throws: Never.self) {
+      try registrar.logFlutterMethodFailure(
+        PigeonError(code: "code", message: "message", details: nil), methodName: "aMethod")
     }
   }
 }
