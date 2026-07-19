@@ -2,20 +2,21 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import XCTest
+import Foundation
+import Testing
 
 @testable import webview_flutter_wkwebview
 
-class ObjectProxyAPITests: XCTestCase {
-  func testPigeonDefaultConstructor() {
+@Suite struct ObjectProxyAPITests {
+  @Test func pigeonDefaultConstructor() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiNSObject(registrar)
 
     let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api)
-    XCTAssertNotNil(instance)
+    #expect(instance != nil)
   }
 
-  func testAddObserver() {
+  @Test func addObserver() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiNSObject(registrar)
 
@@ -30,10 +31,10 @@ class ObjectProxyAPITests: XCTestCase {
     var nativeOptions: NSKeyValueObservingOptions = []
     nativeOptions.insert(.new)
 
-    XCTAssertEqual(instance.addObserverArgs, [observer, keyPath, nativeOptions.rawValue])
+    #expect(instance.addObserverArgs == [observer, keyPath, nativeOptions.rawValue])
   }
 
-  func testRemoveObserver() {
+  @Test func removeObserver() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiNSObject(registrar)
 
@@ -43,10 +44,10 @@ class ObjectProxyAPITests: XCTestCase {
     try? api.pigeonDelegate.removeObserver(
       pigeonApi: api, pigeonInstance: instance, observer: object, keyPath: keyPath)
 
-    XCTAssertEqual(instance.removeObserverArgs, [object, keyPath])
+    #expect(instance.removeObserverArgs == [object, keyPath])
   }
 
-  func testObserveValue() {
+  @Test func observeValue() throws {
     let api = TestObjectApi()
 
     let registrar = TestProxyApiRegistrar()
@@ -56,7 +57,7 @@ class ObjectProxyAPITests: XCTestCase {
     let change = [NSKeyValueChangeKey.indexesKey: -1]
     instance.observeValue(forKeyPath: keyPath, of: object, change: change, context: nil)
 
-    XCTAssertEqual(api.observeValueArgs, [keyPath, object, [KeyValueChangeKey.indexes: -1]])
+    #expect(api.observeValueArgs == [keyPath, object, [KeyValueChangeKey.indexes: -1]])
   }
 }
 

@@ -2,12 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import XCTest
+import Foundation
+import Testing
 
 @testable import webview_flutter_wkwebview
 
-class HTTPURLResponseProxyAPITests: XCTestCase {
-  func testStatusCode() {
+@Suite struct HTTPURLResponseProxyAPITests {
+  @Test func statusCode() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiHTTPURLResponse(registrar)
 
@@ -15,6 +16,6 @@ class HTTPURLResponseProxyAPITests: XCTestCase {
       url: URL(string: "http://google.com")!, statusCode: 400, httpVersion: nil, headerFields: nil)!
     let value = try? api.pigeonDelegate.statusCode(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, Int64(instance.statusCode))
+    #expect(value == Int64(instance.statusCode))
   }
 }

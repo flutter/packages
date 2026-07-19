@@ -2,22 +2,23 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Foundation
+import Testing
 import WebKit
-import XCTest
 
 @testable import webview_flutter_wkwebview
 
-class UserScriptProxyAPITests: XCTestCase {
-  func testPigeonDefaultConstructor() {
+@Suite struct UserScriptProxyAPITests {
+  @Test func pigeonDefaultConstructor() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKUserScript(registrar)
 
     let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(
       pigeonApi: api, source: "myString", injectionTime: .atDocumentStart, isForMainFrameOnly: true)
-    XCTAssertNotNil(instance)
+    #expect(instance != nil)
   }
 
-  @MainActor func testSource() {
+  @MainActor @Test func source() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKUserScript(registrar)
 
@@ -25,10 +26,10 @@ class UserScriptProxyAPITests: XCTestCase {
       source: "source", injectionTime: .atDocumentEnd, forMainFrameOnly: false)
     let value = try? api.pigeonDelegate.source(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.source)
+    #expect(value == instance.source)
   }
 
-  @MainActor func testInjectionTime() {
+  @MainActor @Test func injectionTime() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKUserScript(registrar)
 
@@ -36,10 +37,10 @@ class UserScriptProxyAPITests: XCTestCase {
       source: "source", injectionTime: .atDocumentEnd, forMainFrameOnly: false)
     let value = try? api.pigeonDelegate.injectionTime(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, .atDocumentEnd)
+    #expect(value == .atDocumentEnd)
   }
 
-  @MainActor func testIsMainFrameOnly() {
+  @MainActor @Test func isMainFrameOnly() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKUserScript(registrar)
 
@@ -47,6 +48,6 @@ class UserScriptProxyAPITests: XCTestCase {
       source: "source", injectionTime: .atDocumentEnd, forMainFrameOnly: false)
     let value = try? api.pigeonDelegate.isForMainFrameOnly(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.isForMainFrameOnly)
+    #expect(value == instance.isForMainFrameOnly)
   }
 }

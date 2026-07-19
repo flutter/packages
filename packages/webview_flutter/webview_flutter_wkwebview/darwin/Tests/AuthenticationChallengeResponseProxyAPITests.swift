@@ -2,22 +2,23 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import XCTest
+import Foundation
+import Testing
 
 @testable import webview_flutter_wkwebview
 
-class AuthenticationChallengeResponseProxyAPITests: XCTestCase {
-  func testPigeonDefaultConstructor() {
+@Suite struct AuthenticationChallengeResponseProxyAPITests {
+  @Test func pigeonDefaultConstructor() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiAuthenticationChallengeResponse(registrar)
 
     let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(
       pigeonApi: api, disposition: UrlSessionAuthChallengeDisposition.useCredential,
       credential: URLCredential())
-    XCTAssertNotNil(instance)
+    #expect(instance != nil)
   }
 
-  func testDisposition() {
+  @Test func disposition() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiAuthenticationChallengeResponse(registrar)
 
@@ -25,10 +26,10 @@ class AuthenticationChallengeResponseProxyAPITests: XCTestCase {
       disposition: .useCredential, credential: URLCredential())
     let value = try? api.pigeonDelegate.disposition(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, UrlSessionAuthChallengeDisposition.useCredential)
+    #expect(value == UrlSessionAuthChallengeDisposition.useCredential)
   }
 
-  func testCredential() {
+  @Test func credential() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiAuthenticationChallengeResponse(registrar)
 
@@ -36,6 +37,6 @@ class AuthenticationChallengeResponseProxyAPITests: XCTestCase {
       disposition: .useCredential, credential: URLCredential())
     let value = try? api.pigeonDelegate.credential(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.credential)
+    #expect(value == instance.credential)
   }
 }

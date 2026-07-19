@@ -2,18 +2,20 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import XCTest
+import Foundation
+import Testing
 
 @testable import webview_flutter_wkwebview
 
-class ProxyAPIRegistrarTests: XCTestCase {
-  func testLogFlutterMethodFailureDoesNotThrowAnError() {
+@Suite struct ProxyAPIRegistrarTests {
+  @Test func logFlutterMethodFailureDoesNotThrowAnError() throws {
     let registrar = TestProxyApiRegistrar()
 
-    XCTExpectFailure("Method should log a message and not throw an error.") {
-      XCTAssertThrowsError(
-        registrar.logFlutterMethodFailure(
-          PigeonError(code: "code", message: "message", details: nil), methodName: "aMethod"))
+    withKnownIssue("Method should log a message and not throw an error.") {
+      #expect(throws: (any Error).self) {
+        try registrar.logFlutterMethodFailure(
+          PigeonError(code: "code", message: "message", details: nil), methodName: "aMethod")
+      }
     }
   }
 }

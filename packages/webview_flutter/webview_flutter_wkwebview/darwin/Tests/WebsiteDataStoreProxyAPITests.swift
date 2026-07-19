@@ -2,25 +2,26 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Foundation
+import Testing
 import WebKit
-import XCTest
 
 @testable import webview_flutter_wkwebview
 
-class WebsiteDataStoreProxyAPITests: XCTestCase {
+@Suite struct WebsiteDataStoreProxyAPITests {
   @available(iOS 17.0, *)
-  @MainActor func testHttpCookieStore() {
+  @MainActor @Test func httpCookieStore() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKWebsiteDataStore(registrar)
 
     let instance = WKWebsiteDataStore.default()
     let value = try? api.pigeonDelegate.httpCookieStore(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.httpCookieStore)
+    #expect(value == instance.httpCookieStore)
   }
 
   @available(iOS 17.0, *)
-  @MainActor func testRemoveDataOfTypes() {
+  @MainActor @Test func removeDataOfTypes() async throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKWebsiteDataStore(registrar)
 
@@ -28,24 +29,20 @@ class WebsiteDataStoreProxyAPITests: XCTestCase {
     let dataTypes: [WebsiteDataType] = [.localStorage]
     let modificationTimeInSecondsSinceEpoch = 0.0
 
-    let removeDataOfTypesExpectation = expectation(
-      description: "Wait for result of removeDataOfTypes.")
-
-    var removeDataOfTypesResult: Bool?
-    api.pigeonDelegate.removeDataOfTypes(
-      pigeonApi: api, pigeonInstance: instance, dataTypes: dataTypes,
-      modificationTimeInSecondsSinceEpoch: modificationTimeInSecondsSinceEpoch,
-      completion: { result in
-        switch result {
-        case .success(let hasRecords):
-          removeDataOfTypesResult = hasRecords
-        case .failure(_): break
-        }
-
-        removeDataOfTypesExpectation.fulfill()
-      })
-
-    wait(for: [removeDataOfTypesExpectation], timeout: 10.0)
-    XCTAssertNotNil(removeDataOfTypesResult)
+    let removeDataOfTypesResult = try await withCheckedThrowingContinuation {
+      (continuation: CheckedContinuation<Bool, Error>) in
+      api.pigeonDelegate.removeDataOfTypes(
+        pigeonApi: api, pigeonInstance: instance, dataTypes: dataTypes,
+        modificationTimeInSecondsSinceEpoch: modificationTimeInSecondsSinceEpoch,
+        completion: { result in
+          switch result {
+          case .success(let hasRecords):
+            continuation.resume(returning: hasRecords)
+          case .failure(let error):
+            continuation.resume(throwing: error)
+          }
+        })
+    }
+    #expect(removeDataOfTypesResult == removeDataOfTypesResult)
   }
 }

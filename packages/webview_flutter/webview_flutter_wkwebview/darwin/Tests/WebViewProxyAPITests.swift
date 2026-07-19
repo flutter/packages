@@ -2,8 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Foundation
+import Testing
 import WebKit
-import XCTest
 
 @testable import webview_flutter_wkwebview
 
@@ -11,7 +12,7 @@ import XCTest
   import UIKit
 #endif
 
-class WebViewProxyAPITests: XCTestCase {
+@Suite struct WebViewProxyAPITests {
   #if os(iOS)
     func webViewProxyAPI(forRegistrar registrar: ProxyAPIRegistrar) -> PigeonApiUIViewWKWebView {
       return registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
@@ -22,38 +23,38 @@ class WebViewProxyAPITests: XCTestCase {
     }
   #endif
 
-  @MainActor func testPigeonDefaultConstructor() {
+  @MainActor @Test func pigeonDefaultConstructor() throws {
     let registrar = TestProxyApiRegistrar()
     let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(
       pigeonApi: api, initialConfiguration: WKWebViewConfiguration())
-    XCTAssertNotNil(instance)
+    #expect(instance != nil)
   }
 
-  @MainActor func testConfiguration() {
+  @MainActor @Test func configuration() throws {
     let registrar = TestProxyApiRegistrar()
     let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
     let value = try? api.pigeonDelegate.configuration(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.configuration)
+    #expect(value == instance.configuration)
   }
 
   #if os(iOS)
-    @MainActor func testScrollView() {
+    @MainActor @Test func scrollView() throws {
       let registrar = TestProxyApiRegistrar()
       let api = webViewProxyAPI(forRegistrar: registrar)
 
       let instance = TestViewWKWebView()
       let value = try? api.pigeonDelegate.scrollView(pigeonApi: api, pigeonInstance: instance)
 
-      XCTAssertEqual(value, instance.scrollView)
+      #expect(value == instance.scrollView)
     }
   #endif
 
-  @MainActor func testSetUIDelegate() {
+  @MainActor @Test func setUIDelegate() throws {
     let registrar = TestProxyApiRegistrar()
     let api = webViewProxyAPI(forRegistrar: registrar)
 
@@ -63,10 +64,10 @@ class WebViewProxyAPITests: XCTestCase {
     try? api.pigeonDelegate.setUIDelegate(
       pigeonApi: api, pigeonInstance: instance, delegate: delegate)
 
-    XCTAssertEqual(instance.uiDelegate as! UIDelegateImpl, delegate)
+    #expect(instance.uiDelegate as! UIDelegateImpl == delegate)
   }
 
-  @MainActor func testSetNavigationDelegate() {
+  @MainActor @Test func setNavigationDelegate() throws {
     let registrar = TestProxyApiRegistrar()
     let api = webViewProxyAPI(forRegistrar: registrar)
 
@@ -76,20 +77,20 @@ class WebViewProxyAPITests: XCTestCase {
     try? api.pigeonDelegate.setNavigationDelegate(
       pigeonApi: api, pigeonInstance: instance, delegate: delegate)
 
-    XCTAssertEqual(instance.navigationDelegate as! NavigationDelegateImpl, delegate)
+    #expect(instance.navigationDelegate as! NavigationDelegateImpl == delegate)
   }
 
-  @MainActor func testGetUrl() {
+  @MainActor @Test func getUrl() throws {
     let registrar = TestProxyApiRegistrar()
     let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
     let value = try? api.pigeonDelegate.getUrl(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.url?.absoluteString)
+    #expect(value == instance.url?.absoluteString)
   }
 
-  @MainActor func testGetEstimatedProgress() {
+  @MainActor @Test func getEstimatedProgress() throws {
     let registrar = TestProxyApiRegistrar()
     let api = webViewProxyAPI(forRegistrar: registrar)
 
@@ -97,10 +98,10 @@ class WebViewProxyAPITests: XCTestCase {
     let value = try? api.pigeonDelegate.getEstimatedProgress(
       pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.estimatedProgress)
+    #expect(value == instance.estimatedProgress)
   }
 
-  @MainActor func testLoad() {
+  @MainActor @Test func load() throws {
     let registrar = TestProxyApiRegistrar()
     let api = webViewProxyAPI(forRegistrar: registrar)
 
@@ -108,10 +109,10 @@ class WebViewProxyAPITests: XCTestCase {
     let request = URLRequestWrapper(URLRequest(url: URL(string: "http://google.com")!))
     try? api.pigeonDelegate.load(pigeonApi: api, pigeonInstance: instance, request: request)
 
-    XCTAssertEqual(instance.loadArgs, [request.value])
+    #expect(instance.loadArgs == [request.value])
   }
 
-  @MainActor func testLoadHtmlString() {
+  @MainActor @Test func loadHtmlString() throws {
     let registrar = TestProxyApiRegistrar()
     let api = webViewProxyAPI(forRegistrar: registrar)
 
@@ -121,10 +122,10 @@ class WebViewProxyAPITests: XCTestCase {
     try? api.pigeonDelegate.loadHtmlString(
       pigeonApi: api, pigeonInstance: instance, string: string, baseUrl: baseUrl)
 
-    XCTAssertEqual(instance.loadHtmlStringArgs, [string, URL(string: baseUrl)])
+    #expect(instance.loadHtmlStringArgs == [string, URL(string: baseUrl)])
   }
 
-  @MainActor func testLoadFileUrl() {
+  @MainActor @Test func loadFileUrl() throws {
     let registrar = TestProxyApiRegistrar()
     let api = webViewProxyAPI(forRegistrar: registrar)
 
@@ -134,15 +135,14 @@ class WebViewProxyAPITests: XCTestCase {
     try? api.pigeonDelegate.loadFileUrl(
       pigeonApi: api, pigeonInstance: instance, url: url, readAccessUrl: readAccessUrl)
 
-    XCTAssertEqual(
-      instance.loadFileUrlArgs,
-      [
+    #expect(
+      instance.loadFileUrlArgs == [
         URL(fileURLWithPath: url, isDirectory: false),
         URL(fileURLWithPath: readAccessUrl, isDirectory: true),
       ])
   }
 
-  @MainActor func testLoadFlutterAsset() {
+  @MainActor @Test func loadFlutterAsset() throws {
     let registrar = TestProxyApiRegistrar()
     let api = webViewProxyAPI(forRegistrar: registrar)
 
@@ -150,75 +150,75 @@ class WebViewProxyAPITests: XCTestCase {
     let key = "assets/www/index.html"
     try? api.pigeonDelegate.loadFlutterAsset(pigeonApi: api, pigeonInstance: instance, key: key)
 
-    XCTAssertEqual(instance.loadFileUrlArgs?.count, 2)
-    let url = try! XCTUnwrap(instance.loadFileUrlArgs![0])
-    let readAccessURL = try! XCTUnwrap(instance.loadFileUrlArgs![1])
+    #expect(instance.loadFileUrlArgs?.count == 2)
+    let url = try #require(instance.loadFileUrlArgs![0])
+    let readAccessURL = try #require(instance.loadFileUrlArgs![1])
 
-    XCTAssertTrue(url.absoluteString.contains("index.html"))
-    XCTAssertTrue(readAccessURL.absoluteString.contains("assets/www/"))
+    #expect(url.absoluteString.contains("index.html"))
+    #expect(readAccessURL.absoluteString.contains("assets/www/"))
   }
 
-  @MainActor func testCanGoBack() {
+  @MainActor @Test func canGoBack() throws {
     let registrar = TestProxyApiRegistrar()
     let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
     let value = try? api.pigeonDelegate.canGoBack(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.canGoBack)
+    #expect(value == instance.canGoBack)
   }
 
-  @MainActor func testCanGoForward() {
+  @MainActor @Test func canGoForward() throws {
     let registrar = TestProxyApiRegistrar()
     let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
     let value = try? api.pigeonDelegate.canGoForward(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.canGoForward)
+    #expect(value == instance.canGoForward)
   }
 
-  @MainActor func testGoBack() {
+  @MainActor @Test func goBack() throws {
     let registrar = TestProxyApiRegistrar()
     let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
     try? api.pigeonDelegate.goBack(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertTrue(instance.goBackCalled)
+    #expect(instance.goBackCalled)
   }
 
-  @MainActor func testGoForward() {
+  @MainActor @Test func goForward() throws {
     let registrar = TestProxyApiRegistrar()
     let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
     try? api.pigeonDelegate.goForward(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertTrue(instance.goForwardCalled)
+    #expect(instance.goForwardCalled)
   }
 
-  @MainActor func testReload() {
+  @MainActor @Test func reload() throws {
     let registrar = TestProxyApiRegistrar()
     let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
     try? api.pigeonDelegate.reload(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertTrue(instance.reloadCalled)
+    #expect(instance.reloadCalled)
   }
 
-  @MainActor func testGetTitle() {
+  @MainActor @Test func getTitle() throws {
     let registrar = TestProxyApiRegistrar()
     let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
     let value = try? api.pigeonDelegate.getTitle(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.title)
+    #expect(value == instance.title)
   }
 
-  @MainActor func testSetAllowsBackForwardNavigationGestures() {
+  @MainActor @Test func setAllowsBackForwardNavigationGestures() throws {
     let registrar = TestProxyApiRegistrar()
     let api = webViewProxyAPI(forRegistrar: registrar)
 
@@ -227,10 +227,10 @@ class WebViewProxyAPITests: XCTestCase {
     try? api.pigeonDelegate.setAllowsBackForwardNavigationGestures(
       pigeonApi: api, pigeonInstance: instance, allow: allow)
 
-    XCTAssertEqual(instance.setAllowsBackForwardNavigationGesturesArgs, [allow])
+    #expect(instance.setAllowsBackForwardNavigationGesturesArgs == [allow])
   }
 
-  @MainActor func testSetCustomUserAgent() {
+  @MainActor @Test func setCustomUserAgent() throws {
     let registrar = TestProxyApiRegistrar()
     let api = webViewProxyAPI(forRegistrar: registrar)
 
@@ -239,10 +239,10 @@ class WebViewProxyAPITests: XCTestCase {
     try? api.pigeonDelegate.setCustomUserAgent(
       pigeonApi: api, pigeonInstance: instance, userAgent: userAgent)
 
-    XCTAssertEqual(instance.setCustomUserAgentArgs, [userAgent])
+    #expect(instance.setCustomUserAgentArgs == [userAgent])
   }
 
-  @MainActor func testEvaluateJavaScript() {
+  @MainActor @Test func evaluateJavaScript() throws {
     let registrar = TestProxyApiRegistrar()
     let api = webViewProxyAPI(forRegistrar: registrar)
 
@@ -261,11 +261,11 @@ class WebViewProxyAPITests: XCTestCase {
         }
       })
 
-    XCTAssertEqual(instance.evaluateJavaScriptArgs, [javaScriptString])
-    XCTAssertEqual(resultValue as! String, "returnValue")
+    #expect(instance.evaluateJavaScriptArgs == [javaScriptString])
+    #expect(resultValue as! String == "returnValue")
   }
 
-  @MainActor func testSetInspectable() {
+  @MainActor @Test func setInspectable() throws {
     let registrar = TestProxyApiRegistrar()
     let api = webViewProxyAPI(forRegistrar: registrar)
 
@@ -274,11 +274,11 @@ class WebViewProxyAPITests: XCTestCase {
     try? api.pigeonDelegate.setInspectable(
       pigeonApi: api, pigeonInstance: instance, inspectable: inspectable)
 
-    XCTAssertEqual(instance.setInspectableArgs, [inspectable])
-    XCTAssertFalse(instance.isInspectable)
+    #expect(instance.setInspectableArgs == [inspectable])
+    #expect(!(instance.isInspectable))
   }
 
-  @MainActor func testSetAllowsLinkPreview() {
+  @MainActor @Test func setAllowsLinkPreview() throws {
     let registrar = TestProxyApiRegistrar()
     let api = webViewProxyAPI(forRegistrar: registrar)
 
@@ -287,42 +287,42 @@ class WebViewProxyAPITests: XCTestCase {
     try? api.pigeonDelegate.setAllowsLinkPreview(
       pigeonApi: api, pigeonInstance: instance, allow: allow)
 
-    XCTAssertEqual(instance.allowsLinkPreview, allow)
+    #expect(instance.allowsLinkPreview == allow)
   }
 
-  @MainActor func testGetCustomUserAgent() {
+  @MainActor @Test func getCustomUserAgent() throws {
     let registrar = TestProxyApiRegistrar()
     let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
     let value = try? api.pigeonDelegate.getCustomUserAgent(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.customUserAgent)
+    #expect(value == instance.customUserAgent)
   }
 
   #if os(iOS)
-    @MainActor func testWebViewContentInsetBehaviorShouldBeNever() {
+    @MainActor @Test func webViewContentInsetBehaviorShouldBeNever() throws {
       let registrar = TestProxyApiRegistrar()
       let api = PigeonApiWKWebView(pigeonRegistrar: registrar, delegate: WebViewProxyAPIDelegate())
 
       let webView = WebViewImpl(
         api: api, registrar: registrar, frame: .zero, configuration: WKWebViewConfiguration())
 
-      XCTAssertEqual(webView.scrollView.contentInsetAdjustmentBehavior, .never)
+      #expect(webView.scrollView.contentInsetAdjustmentBehavior == .never)
     }
 
     @MainActor
-    func testScrollViewsAutomaticallyAdjustsScrollIndicatorInsetsShouldbeFalse() {
+    @Test func scrollViewsAutomaticallyAdjustsScrollIndicatorInsetsShouldbeFalse() throws {
       let registrar = TestProxyApiRegistrar()
       let api = PigeonApiWKWebView(pigeonRegistrar: registrar, delegate: WebViewProxyAPIDelegate())
 
       let webView = WebViewImpl(
         api: api, registrar: registrar, frame: .zero, configuration: WKWebViewConfiguration())
 
-      XCTAssertFalse(webView.scrollView.automaticallyAdjustsScrollIndicatorInsets)
+      #expect(!(webView.scrollView.automaticallyAdjustsScrollIndicatorInsets))
     }
 
-    @MainActor func testContentInsetsSumAlwaysZeroAfterSetFrame() {
+    @MainActor @Test func contentInsetsSumAlwaysZeroAfterSetFrame() throws {
       let registrar = TestProxyApiRegistrar()
       let api = PigeonApiWKWebView(pigeonRegistrar: registrar, delegate: WebViewProxyAPIDelegate())
 
@@ -332,10 +332,10 @@ class WebViewProxyAPITests: XCTestCase {
       webView.scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 300, right: 300)
 
       webView.frame = .zero
-      XCTAssertEqual(webView.scrollView.contentInset, .zero)
+      #expect(webView.scrollView.contentInset == .zero)
     }
 
-    @MainActor func testContentInsetsIsOppositeOfScrollViewAdjustedInset() {
+    @MainActor @Test func contentInsetsIsOppositeOfScrollViewAdjustedInset() throws {
       let registrar = TestProxyApiRegistrar()
       let api = PigeonApiWKWebView(pigeonRegistrar: registrar, delegate: WebViewProxyAPIDelegate())
 
@@ -346,10 +346,10 @@ class WebViewProxyAPITests: XCTestCase {
 
       webView.frame = .zero
       let contentInset: UIEdgeInsets = webView.scrollView.contentInset
-      XCTAssertEqual(contentInset.left, -webView.scrollView.adjustedContentInset.left)
-      XCTAssertEqual(contentInset.top, -webView.scrollView.adjustedContentInset.top)
-      XCTAssertEqual(contentInset.right, -webView.scrollView.adjustedContentInset.right)
-      XCTAssertEqual(contentInset.bottom, -webView.scrollView.adjustedContentInset.bottom)
+      #expect(contentInset.left == -webView.scrollView.adjustedContentInset.left)
+      #expect(contentInset.top == -webView.scrollView.adjustedContentInset.top)
+      #expect(contentInset.right == -webView.scrollView.adjustedContentInset.right)
+      #expect(contentInset.bottom == -webView.scrollView.adjustedContentInset.bottom)
     }
   #endif
 }

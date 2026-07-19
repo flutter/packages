@@ -2,7 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import XCTest
+import Foundation
+import Testing
 
 @testable import webview_flutter_wkwebview
 
@@ -14,26 +15,26 @@ import XCTest
   #error("Unsupported platform.")
 #endif
 
-class RequestProxyAPITests: XCTestCase {
-  func testPigeonDefaultConstructor() {
+@Suite struct RequestProxyAPITests {
+  @Test func pigeonDefaultConstructor() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiURLRequest(registrar)
 
     let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api, url: "myString")
-    XCTAssertNotNil(instance)
+    #expect(instance != nil)
   }
 
-  func testGetUrl() {
+  @Test func getUrl() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiURLRequest(registrar)
 
     let instance = URLRequestWrapper(URLRequest(url: URL(string: "http://google.com")!))
     let value = try? api.pigeonDelegate.getUrl(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.value.url?.absoluteString)
+    #expect(value == instance.value.url?.absoluteString)
   }
 
-  func testSetHttpMethod() {
+  @Test func setHttpMethod() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiURLRequest(registrar)
 
@@ -41,10 +42,10 @@ class RequestProxyAPITests: XCTestCase {
     let method = "GET"
     try? api.pigeonDelegate.setHttpMethod(pigeonApi: api, pigeonInstance: instance, method: method)
 
-    XCTAssertEqual(instance.value.httpMethod, method)
+    #expect(instance.value.httpMethod == method)
   }
 
-  func testGetHttpMethod() {
+  @Test func getHttpMethod() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiURLRequest(registrar)
 
@@ -54,10 +55,10 @@ class RequestProxyAPITests: XCTestCase {
     instance.value.httpMethod = method
     let value = try? api.pigeonDelegate.getHttpMethod(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, method)
+    #expect(value == method)
   }
 
-  func testSetHttpBody() {
+  @Test func setHttpBody() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiURLRequest(registrar)
 
@@ -65,10 +66,10 @@ class RequestProxyAPITests: XCTestCase {
     let body = FlutterStandardTypedData(bytes: Data())
     try? api.pigeonDelegate.setHttpBody(pigeonApi: api, pigeonInstance: instance, body: body)
 
-    XCTAssertEqual(instance.value.httpBody, body.data)
+    #expect(instance.value.httpBody == body.data)
   }
 
-  func testGetHttpBody() {
+  @Test func getHttpBody() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiURLRequest(registrar)
 
@@ -77,10 +78,10 @@ class RequestProxyAPITests: XCTestCase {
     instance.value.httpBody = body.data
     let value = try? api.pigeonDelegate.getHttpBody(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value?.data, body.data)
+    #expect(value?.data == body.data)
   }
 
-  func testSetAllHttpHeaderFields() {
+  @Test func setAllHttpHeaderFields() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiURLRequest(registrar)
 
@@ -89,10 +90,10 @@ class RequestProxyAPITests: XCTestCase {
     try? api.pigeonDelegate.setAllHttpHeaderFields(
       pigeonApi: api, pigeonInstance: instance, fields: fields)
 
-    XCTAssertEqual(instance.value.allHTTPHeaderFields, fields)
+    #expect(instance.value.allHTTPHeaderFields == fields)
   }
 
-  func testGetAllHttpHeaderFields() {
+  @Test func getAllHttpHeaderFields() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiURLRequest(registrar)
 
@@ -103,6 +104,6 @@ class RequestProxyAPITests: XCTestCase {
     let value = try? api.pigeonDelegate.getAllHttpHeaderFields(
       pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, fields)
+    #expect(value == fields)
   }
 }
