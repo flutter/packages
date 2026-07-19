@@ -1,3 +1,7 @@
+## 2.19.13
+
+* Avoids recreating ground overlay images when only other overlay properties change.
+
 ## 2.19.12
 
 * Bumps the androidx group across 10 directories with 1 update.
