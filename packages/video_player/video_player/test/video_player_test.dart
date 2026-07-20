@@ -1030,13 +1030,11 @@ void main() {
         }
 
         expect(isSorted, false, reason: 'Expected captions to be unsorted');
-        expect(captions.map((Caption c) => c.text).toList(), <String>[
-          'one',
-          'two',
-          'three',
-          'five',
-          'four',
-        ], reason: 'Captions should be in original unsorted order');
+        expect(
+          captions.map((Caption c) => c.text).toList(),
+          <String>['one', 'two', 'three', 'five', 'four'],
+          reason: 'Captions should be in original unsorted order',
+        );
       });
 
       test('works when seeking, includes all captions', () async {
@@ -1774,6 +1772,22 @@ void main() {
         );
       });
 
+      test('preferredAudioLanguage is forwarded to createWithOptions', () async {
+        final controller = VideoPlayerController.networkUrl(
+          _localhostUri,
+          videoPlayerOptions: VideoPlayerOptions(preferredAudioLanguage: 'es'),
+        );
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+
+        expect(fakeVideoPlayerPlatform.creationOptions.length, 1);
+        expect(
+          fakeVideoPlayerPlatform.creationOptions[0].videoPlayerOptions?.preferredAudioLanguage,
+          'es',
+        );
+      });
+
       test('true allowBackgroundPlayback continues playback', () async {
         final controller = VideoPlayerController.networkUrl(
           _localhostUri,
@@ -1919,6 +1933,7 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   List<String> calls = <String>[];
   List<DataSource> dataSources = <DataSource>[];
   List<VideoViewType> viewTypes = <VideoViewType>[];
+  List<VideoCreationOptions> creationOptions = <VideoCreationOptions>[];
   final Map<int, StreamController<VideoEvent>> streams = <int, StreamController<VideoEvent>>{};
   List<VideoPlayerOptions?> videoPlayerOptions = <VideoPlayerOptions?>[];
   bool forceInitError = false;
@@ -1965,6 +1980,7 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
     dataSources.add(options.dataSource);
     viewTypes.add(options.viewType);
     videoPlayerOptions.add(options.videoPlayerOptions);
+    creationOptions.add(options);
     return nextPlayerId++;
   }
 
