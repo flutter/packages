@@ -1,6 +1,9 @@
-## NEXT
+## 0.0.2
 
-* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+* Copied over all Material code from flutter/flutter.
+* Copied over Material localizations from flutter/flutter's
+  flutter_localizations package.
+* Unpin material_color_utilities.
 
 ## 0.0.1
 
