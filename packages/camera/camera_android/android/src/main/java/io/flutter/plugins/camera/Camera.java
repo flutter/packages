@@ -1337,7 +1337,7 @@ class Camera
 
     String lowerPath = path.toLowerCase(Locale.ROOT);
     if (!lowerPath.endsWith(".mp4")) {
-      throw new Messages.FlutterError("IOError", "Invalid video extension. Supported: .mp4", null);
+      throw new Messages.FlutterError("IOError", "Invalid video extension. Supported extensions: .mp4", null);
     }
   }
 
