@@ -25,7 +25,6 @@ class CameraPreviewFactory extends PlatformViewFactory {
   @Override
   @SuppressWarnings("unchecked")
   public PlatformView create(@NonNull Context context, int viewId, @Nullable Object args) {
-    // return previewView;
     final Map<String, Object> creationParams = (Map<String, Object>) args;
     return new CameraPreviewView(context, viewId, creationParams, previewView);
   }

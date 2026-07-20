@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:math' show Point, max, min;
+import 'dart:math' show Point;
 
 import 'package:async/async.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
@@ -277,8 +277,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The configured target FPS range for the camera.
   CameraIntegerRange? _targetFpsRange;
 
-  /// The ID of the surface texture that the camera preview is drawn to.
-  late int _flutterSurfaceTextureId;
+  /// The ID of the currently active camera instance.
+  int _cameraId = -1;
+  int _nextCameraId = 0;
 
   /// The configured format of outputted images from image streaming.
   int? _imageAnalysisOutputImageFormat;
@@ -414,7 +415,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     final SurfaceProvider surfaceProvider = await _previewView!.getSurfaceProvider();
     await preview!.setSurfaceProvider(surfaceProvider);
-    _flutterSurfaceTextureId = 3;
+    _cameraId = _nextCameraId++;
 
     // Configure ImageCapture instance.
     imageCapture = ImageCapture(
@@ -433,7 +434,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Retrieve info required for correcting the rotation of the camera preview
     // if necessary.
     sensorOrientationDegrees = cameraDescription.sensorOrientation.toDouble();
-    return _flutterSurfaceTextureId;
+    return _cameraId;
   }
 
   /// Initializes the camera with ID [cameraId] on the device.
@@ -475,13 +476,12 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Bind configured UseCases to ProcessCameraProvider instance & mark Preview
     // instance as bound but not paused. Video capture is bound at first use
     // instead of here.
-
     camera = await processCameraProvider!.bindToLifecycle(cameraSelector!, <UseCase>[
       preview!,
       imageCapture!,
       imageAnalysis!,
     ]);
-    await _updateCameraInfoAndLiveCameraState(_flutterSurfaceTextureId);
+    await _updateCameraInfoAndLiveCameraState(_cameraId);
     previewInitiallyBound = true;
     _previewIsPaused = false;
 
@@ -515,7 +515,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Releases the resources of the accessed camera with ID [cameraId].
   @override
   Future<void> dispose(int cameraId) async {
-    // await preview?.releaseSurfaceProvider();
     await preview?.setSurfaceProvider(null);
     await liveCameraState?.removeObservers();
     await processCameraProvider?.unbindAll();
@@ -974,7 +973,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Retrieve info required for correcting the rotation of the camera preview
     sensorOrientationDegrees = description.sensorOrientation.toDouble();
 
-    await _updateCameraInfoAndLiveCameraState(_flutterSurfaceTextureId);
+    await _updateCameraInfoAndLiveCameraState(_cameraId);
   }
 
   /// Resume the paused preview for the camera with ID [cameraId].
