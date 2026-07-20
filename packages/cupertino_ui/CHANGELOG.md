@@ -3,6 +3,7 @@
 * Copied over all Cupertino code from flutter/flutter.
 * Copied over Cupertino localizations from flutter/flutter's
   flutter_localizations package.
+* Migrated API doc samples and formatting.
 * Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 0.0.1
