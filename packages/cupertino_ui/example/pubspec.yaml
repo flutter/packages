@@ -17,6 +17,7 @@ dependencies:
   test: ^1.31.0
   vector_math: ^2.2.0
   web: ^1.1.1
+  cupertino_icons: ^1.0.9
   cupertino_ui:
     path: ..
   material_ui:

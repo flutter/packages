@@ -4,7 +4,6 @@
 
 // #region body
 import 'package:cupertino_ui/cupertino_ui.dart';
-import 'package:material_ui/material_ui.dart';
 
 /// Flutter code sample for [CupertinoListTile].
 
@@ -37,25 +36,25 @@ class CupertinoListTileExample extends StatelessWidget {
           ),
           CupertinoListTile(
             title: Text('One-line with trailing widget'),
-            trailing: Icon(Icons.more_vert),
+            trailing: Icon(CupertinoIcons.ellipsis_vertical),
           ),
           CupertinoListTile(
             leading: FlutterLogo(),
             title: Text('One-line with both widgets'),
-            trailing: Icon(Icons.more_vert),
+            trailing: Icon(CupertinoIcons.ellipsis_vertical),
           ),
           CupertinoListTile(
             leading: FlutterLogo(size: 56.0),
             title: Text('Two-line CupertinoListTile'),
             subtitle: Text('Here is a subtitle'),
-            trailing: Icon(Icons.more_vert),
-            additionalInfo: Icon(Icons.info),
+            trailing: Icon(CupertinoIcons.ellipsis_vertical),
+            additionalInfo: Icon(CupertinoIcons.info),
           ),
           CupertinoListTile(
             key: Key('CupertinoListTile with background color'),
             leading: FlutterLogo(size: 56.0),
             title: Text('CupertinoListTile with background color'),
-            backgroundColor: Colors.lightBlue,
+            backgroundColor: Color(0xFF0000FF),
           ),
         ],
       ),

@@ -3,24 +3,15 @@
 // found in the LICENSE file.
 
 import 'package:flutter/rendering.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:cupertino_ui_examples/magnifier/text_magnifier.0.dart'
     as example;
 import 'package:flutter_test/flutter_test.dart';
 
-List<TextSelectionPoint> _globalize(
-  Iterable<TextSelectionPoint> points,
-  RenderBox box,
-) {
-  return points.map<TextSelectionPoint>((TextSelectionPoint point) {
-    return TextSelectionPoint(box.localToGlobal(point.point), point.direction);
-  }).toList();
-}
-
 RenderEditable _findRenderEditable<T extends State<StatefulWidget>>(
   WidgetTester tester,
 ) {
-  return (tester.state(find.byType(TextField))
+  return (tester.state(find.byType(CupertinoTextField))
           as TextSelectionGestureDetectorBuilderDelegate)
       .editableTextKey
       .currentState!
@@ -47,40 +38,16 @@ Offset _textOffsetToPosition<T extends State<StatefulWidget>>(
 }
 
 void main() {
-  const Duration durationBetweenActions = Duration(milliseconds: 20);
   const String defaultText = 'I am a magnifier, fear me!';
 
   Future<void> showMagnifier(WidgetTester tester, int textOffset) async {
     assert(textOffset >= 0);
     final Offset tapOffset = _textOffsetToPosition(tester, textOffset);
 
-    // Double tap 'Magnifier' word to show the selection handles.
+    // Long press to show the magnifier.
     final TestGesture testGesture = await tester.startGesture(tapOffset);
-    await tester.pump(durationBetweenActions);
-    await testGesture.up();
-    await tester.pump(durationBetweenActions);
-    await testGesture.down(tapOffset);
-    await tester.pump(durationBetweenActions);
-    await testGesture.up();
-    await tester.pumpAndSettle();
-
-    final TextEditingController controller = tester
-        .firstWidget<TextField>(find.byType(TextField))
-        .controller!;
-
-    final TextSelection selection = controller.selection;
-    final RenderEditable renderEditable = _findRenderEditable(tester);
-    final List<TextSelectionPoint> endpoints = _globalize(
-      renderEditable.getEndpointsForSelection(selection),
-      renderEditable,
-    );
-
-    final Offset handlePos = endpoints.last.point + const Offset(10.0, 10.0);
-
-    final TestGesture gesture = await tester.startGesture(handlePos);
-
-    await gesture.moveTo(_textOffsetToPosition(tester, defaultText.length - 2));
-    await tester.pump();
+    addTearDown(testGesture.removePointer);
+    await tester.pump(const Duration(milliseconds: 600));
   }
 
   testWidgets(
@@ -89,8 +56,10 @@ void main() {
       await tester.pumpWidget(
         const example.TextMagnifierExampleApp(text: defaultText),
       );
+      final int textOffset = defaultText.indexOf('e');
 
-      await showMagnifier(tester, defaultText.indexOf('e'));
+      await showMagnifier(tester, textOffset);
+
       expect(find.byType(example.CustomMagnifier), findsOneWidget);
 
       await expectLater(
@@ -113,7 +82,9 @@ void main() {
       const example.TextMagnifierExampleApp(textDirection: .rtl, text: text),
     );
 
-    await showMagnifier(tester, text.indexOf(textToTapOn));
+    final int textOffset = text.indexOf(textToTapOn);
+
+    await showMagnifier(tester, textOffset);
 
     expect(find.byType(example.CustomMagnifier), findsOneWidget);
   });

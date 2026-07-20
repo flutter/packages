@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:cupertino_ui/cupertino_ui.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:cupertino_ui_examples/list_tile/cupertino_list_tile.0.dart'
     as example;
 import 'package:flutter_test/flutter_test.dart';
@@ -26,8 +25,8 @@ void main() {
     expect(find.text('Two-line CupertinoListTile'), findsOne);
     expect(find.text('Here is a subtitle'), findsOne);
     expect(find.text('CupertinoListTile with background color'), findsOne);
-    expect(find.byIcon(Icons.more_vert), findsNWidgets(3));
-    expect(find.byIcon(Icons.info), findsOne);
+    expect(find.byIcon(CupertinoIcons.ellipsis_vertical), findsNWidgets(3));
+    expect(find.byIcon(CupertinoIcons.info), findsOne);
 
     final Finder tileWithBackgroundFinder = find.byKey(
       const Key('CupertinoListTile with background color'),
@@ -36,7 +35,7 @@ void main() {
       tester
           .firstWidget<CupertinoListTile>(tileWithBackgroundFinder)
           .backgroundColor,
-      Colors.lightBlue,
+      const Color(0xFF0000FF),
     );
   });
 }
