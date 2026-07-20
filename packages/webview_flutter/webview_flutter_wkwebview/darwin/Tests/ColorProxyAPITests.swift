@@ -13,7 +13,7 @@ import Testing
 
 @Suite struct ColorProxyAPITests {
   #if os(iOS)
-    @Test func pigeonDefaultConstructor() throws {
+    @Test func pigeonDefaultConstructor() {
       let registrar = TestProxyApiRegistrar()
       let api = registrar.apiDelegate.pigeonApiUIColor(registrar)
 

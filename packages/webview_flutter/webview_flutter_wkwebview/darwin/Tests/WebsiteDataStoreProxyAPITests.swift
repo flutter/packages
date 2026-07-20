@@ -15,7 +15,7 @@ import WebKit
     let api = registrar.apiDelegate.pigeonApiWKWebsiteDataStore(registrar)
 
     let instance = WKWebsiteDataStore.default()
-    let value = try? api.pigeonDelegate.httpCookieStore(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.httpCookieStore(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.httpCookieStore)
   }
@@ -29,15 +29,14 @@ import WebKit
     let dataTypes: [WebsiteDataType] = [.localStorage]
     let modificationTimeInSecondsSinceEpoch = 0.0
 
-    let _ = try await withCheckedThrowingContinuation {
-      (continuation: CheckedContinuation<Bool, Error>) in
+    try await withCheckedThrowingContinuation { continuation in
       api.pigeonDelegate.removeDataOfTypes(
         pigeonApi: api, pigeonInstance: instance, dataTypes: dataTypes,
         modificationTimeInSecondsSinceEpoch: modificationTimeInSecondsSinceEpoch,
         completion: { result in
           switch result {
-          case .success(let hasRecords):
-            continuation.resume(returning: hasRecords)
+          case .success:
+            continuation.resume()
           case .failure(let error):
             continuation.resume(throwing: error)
           }

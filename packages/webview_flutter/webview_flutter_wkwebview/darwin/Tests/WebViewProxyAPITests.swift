@@ -23,7 +23,7 @@ import WebKit
     }
   #endif
 
-  @MainActor @Test func pigeonDefaultConstructor() throws {
+  @MainActor @Test func pigeonDefaultConstructor() {
     let registrar = TestProxyApiRegistrar()
     let api = webViewProxyAPI(forRegistrar: registrar)
 
@@ -37,7 +37,7 @@ import WebKit
     let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
-    let value = try? api.pigeonDelegate.configuration(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.configuration(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.configuration)
   }
@@ -48,7 +48,7 @@ import WebKit
       let api = webViewProxyAPI(forRegistrar: registrar)
 
       let instance = TestViewWKWebView()
-      let value = try? api.pigeonDelegate.scrollView(pigeonApi: api, pigeonInstance: instance)
+      let value = try api.pigeonDelegate.scrollView(pigeonApi: api, pigeonInstance: instance)
 
       #expect(value == instance.scrollView)
     }
@@ -61,7 +61,7 @@ import WebKit
     let instance = TestViewWKWebView()
     let delegate = UIDelegateImpl(
       api: registrar.apiDelegate.pigeonApiWKUIDelegate(registrar), registrar: registrar)
-    try? api.pigeonDelegate.setUIDelegate(
+    try api.pigeonDelegate.setUIDelegate(
       pigeonApi: api, pigeonInstance: instance, delegate: delegate)
 
     #expect(instance.uiDelegate as! UIDelegateImpl == delegate)
@@ -74,7 +74,7 @@ import WebKit
     let instance = TestViewWKWebView()
     let delegate = NavigationDelegateImpl(
       api: registrar.apiDelegate.pigeonApiWKNavigationDelegate(registrar), registrar: registrar)
-    try? api.pigeonDelegate.setNavigationDelegate(
+    try api.pigeonDelegate.setNavigationDelegate(
       pigeonApi: api, pigeonInstance: instance, delegate: delegate)
 
     #expect(instance.navigationDelegate as! NavigationDelegateImpl == delegate)
@@ -85,7 +85,7 @@ import WebKit
     let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
-    let value = try? api.pigeonDelegate.getUrl(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.getUrl(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.url?.absoluteString)
   }
@@ -95,7 +95,7 @@ import WebKit
     let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
-    let value = try? api.pigeonDelegate.getEstimatedProgress(
+    let value = try api.pigeonDelegate.getEstimatedProgress(
       pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.estimatedProgress)
@@ -107,7 +107,7 @@ import WebKit
 
     let instance = TestViewWKWebView()
     let request = URLRequestWrapper(URLRequest(url: URL(string: "http://google.com")!))
-    try? api.pigeonDelegate.load(pigeonApi: api, pigeonInstance: instance, request: request)
+    try api.pigeonDelegate.load(pigeonApi: api, pigeonInstance: instance, request: request)
 
     #expect(instance.loadArgs == [request.value])
   }
@@ -119,7 +119,7 @@ import WebKit
     let instance = TestViewWKWebView()
     let string = "myString"
     let baseUrl = "http://google.com"
-    try? api.pigeonDelegate.loadHtmlString(
+    try api.pigeonDelegate.loadHtmlString(
       pigeonApi: api, pigeonInstance: instance, string: string, baseUrl: baseUrl)
 
     #expect(instance.loadHtmlStringArgs == [string, URL(string: baseUrl)])
@@ -132,7 +132,7 @@ import WebKit
     let instance = TestViewWKWebView()
     let url = "myDirectory/myFile.txt"
     let readAccessUrl = "myDirectory/"
-    try? api.pigeonDelegate.loadFileUrl(
+    try api.pigeonDelegate.loadFileUrl(
       pigeonApi: api, pigeonInstance: instance, url: url, readAccessUrl: readAccessUrl)
 
     #expect(
@@ -148,11 +148,11 @@ import WebKit
 
     let instance = TestViewWKWebView()
     let key = "assets/www/index.html"
-    try? api.pigeonDelegate.loadFlutterAsset(pigeonApi: api, pigeonInstance: instance, key: key)
+    try api.pigeonDelegate.loadFlutterAsset(pigeonApi: api, pigeonInstance: instance, key: key)
 
     #expect(instance.loadFileUrlArgs?.count == 2)
-    let url = try #require(instance.loadFileUrlArgs![0])
-    let readAccessURL = try #require(instance.loadFileUrlArgs![1])
+    let url = instance.loadFileUrlArgs![0]
+    let readAccessURL = instance.loadFileUrlArgs![1]
 
     #expect(url.absoluteString.contains("index.html"))
     #expect(readAccessURL.absoluteString.contains("assets/www/"))
@@ -163,7 +163,7 @@ import WebKit
     let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
-    let value = try? api.pigeonDelegate.canGoBack(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.canGoBack(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.canGoBack)
   }
@@ -173,7 +173,7 @@ import WebKit
     let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
-    let value = try? api.pigeonDelegate.canGoForward(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.canGoForward(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.canGoForward)
   }
@@ -183,7 +183,7 @@ import WebKit
     let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
-    try? api.pigeonDelegate.goBack(pigeonApi: api, pigeonInstance: instance)
+    try api.pigeonDelegate.goBack(pigeonApi: api, pigeonInstance: instance)
 
     #expect(instance.goBackCalled)
   }
@@ -193,7 +193,7 @@ import WebKit
     let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
-    try? api.pigeonDelegate.goForward(pigeonApi: api, pigeonInstance: instance)
+    try api.pigeonDelegate.goForward(pigeonApi: api, pigeonInstance: instance)
 
     #expect(instance.goForwardCalled)
   }
@@ -203,7 +203,7 @@ import WebKit
     let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
-    try? api.pigeonDelegate.reload(pigeonApi: api, pigeonInstance: instance)
+    try api.pigeonDelegate.reload(pigeonApi: api, pigeonInstance: instance)
 
     #expect(instance.reloadCalled)
   }
@@ -213,7 +213,7 @@ import WebKit
     let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
-    let value = try? api.pigeonDelegate.getTitle(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.getTitle(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.title)
   }
@@ -224,7 +224,7 @@ import WebKit
 
     let instance = TestViewWKWebView()
     let allow = true
-    try? api.pigeonDelegate.setAllowsBackForwardNavigationGestures(
+    try api.pigeonDelegate.setAllowsBackForwardNavigationGestures(
       pigeonApi: api, pigeonInstance: instance, allow: allow)
 
     #expect(instance.setAllowsBackForwardNavigationGesturesArgs == [allow])
@@ -236,7 +236,7 @@ import WebKit
 
     let instance = TestViewWKWebView()
     let userAgent = "myString"
-    try? api.pigeonDelegate.setCustomUserAgent(
+    try api.pigeonDelegate.setCustomUserAgent(
       pigeonApi: api, pigeonInstance: instance, userAgent: userAgent)
 
     #expect(instance.setCustomUserAgentArgs == [userAgent])
@@ -271,7 +271,7 @@ import WebKit
 
     let instance = TestViewWKWebView()
     let inspectable = true
-    try? api.pigeonDelegate.setInspectable(
+    try api.pigeonDelegate.setInspectable(
       pigeonApi: api, pigeonInstance: instance, inspectable: inspectable)
 
     #expect(instance.setInspectableArgs == [inspectable])
@@ -284,7 +284,7 @@ import WebKit
 
     let instance = TestViewWKWebView()
     let allow: Bool = true
-    try? api.pigeonDelegate.setAllowsLinkPreview(
+    try api.pigeonDelegate.setAllowsLinkPreview(
       pigeonApi: api, pigeonInstance: instance, allow: allow)
 
     #expect(instance.allowsLinkPreview == allow)
@@ -295,7 +295,7 @@ import WebKit
     let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
-    let value = try? api.pigeonDelegate.getCustomUserAgent(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.getCustomUserAgent(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.customUserAgent)
   }

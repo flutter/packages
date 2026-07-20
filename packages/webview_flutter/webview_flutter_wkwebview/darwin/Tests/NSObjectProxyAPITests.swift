@@ -8,7 +8,7 @@ import Testing
 @testable import webview_flutter_wkwebview
 
 @Suite struct ObjectProxyAPITests {
-  @Test func pigeonDefaultConstructor() throws {
+  @Test func pigeonDefaultConstructor() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiNSObject(registrar)
 
@@ -24,7 +24,7 @@ import Testing
     let observer = NSObject()
     let keyPath = "myString"
     let options: [KeyValueObservingOptions] = [.newValue]
-    try? api.pigeonDelegate.addObserver(
+    try api.pigeonDelegate.addObserver(
       pigeonApi: api, pigeonInstance: instance, observer: observer, keyPath: keyPath,
       options: options)
 
@@ -41,7 +41,7 @@ import Testing
     let instance = TestObject()
     let object = NSObject()
     let keyPath = "myString"
-    try? api.pigeonDelegate.removeObserver(
+    try api.pigeonDelegate.removeObserver(
       pigeonApi: api, pigeonInstance: instance, observer: object, keyPath: keyPath)
 
     #expect(instance.removeObserverArgs == [object, keyPath])

@@ -14,7 +14,7 @@ import Testing
 
     let instance = HTTPURLResponse(
       url: URL(string: "http://google.com")!, statusCode: 400, httpVersion: nil, headerFields: nil)!
-    let value = try? api.pigeonDelegate.statusCode(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.statusCode(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == Int64(instance.statusCode))
   }

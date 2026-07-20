@@ -13,7 +13,7 @@ import Testing
 
 @Suite struct ScrollViewDelegateProxyAPITests {
   #if os(iOS)
-    @Test func pigeonDefaultConstructor() throws {
+    @Test func pigeonDefaultConstructor() {
       let registrar = TestProxyApiRegistrar()
       let api = registrar.apiDelegate.pigeonApiUIScrollViewDelegate(registrar)
 

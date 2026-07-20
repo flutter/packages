@@ -9,7 +9,7 @@ import WebKit
 @testable import webview_flutter_wkwebview
 
 @Suite struct UserScriptProxyAPITests {
-  @MainActor @Test func pigeonDefaultConstructor() throws {
+  @MainActor @Test func pigeonDefaultConstructor() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKUserScript(registrar)
 
@@ -24,7 +24,7 @@ import WebKit
 
     let instance = WKUserScript(
       source: "source", injectionTime: .atDocumentEnd, forMainFrameOnly: false)
-    let value = try? api.pigeonDelegate.source(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.source(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.source)
   }
@@ -35,7 +35,7 @@ import WebKit
 
     let instance = WKUserScript(
       source: "source", injectionTime: .atDocumentEnd, forMainFrameOnly: false)
-    let value = try? api.pigeonDelegate.injectionTime(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.injectionTime(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == .atDocumentEnd)
   }
@@ -46,7 +46,7 @@ import WebKit
 
     let instance = WKUserScript(
       source: "source", injectionTime: .atDocumentEnd, forMainFrameOnly: false)
-    let value = try? api.pigeonDelegate.isForMainFrameOnly(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.isForMainFrameOnly(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.isForMainFrameOnly)
   }

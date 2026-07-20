@@ -12,7 +12,7 @@ import WebKit
 @Suite struct SecurityOriginProxyAPITests {
   static let testSecurityOrigin = TestSecurityOrigin.customInit()
 
-  @MainActor @Test func host() throws {
+  @MainActor @Test func host() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKSecurityOrigin(registrar)
 
@@ -27,7 +27,7 @@ import WebKit
     let api = registrar.apiDelegate.pigeonApiWKSecurityOrigin(registrar)
 
     let instance = SecurityOriginProxyAPITests.testSecurityOrigin
-    let value = try? api.pigeonDelegate.port(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.port(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == Int64(instance.port))
   }
@@ -37,7 +37,7 @@ import WebKit
     let api = registrar.apiDelegate.pigeonApiWKSecurityOrigin(registrar)
 
     let instance = SecurityOriginProxyAPITests.testSecurityOrigin
-    let value = try? api.pigeonDelegate.securityProtocol(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.securityProtocol(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.`protocol`)
   }

@@ -49,7 +49,7 @@ import Testing
     let api = PigeonApiSecTrust(pigeonRegistrar: registrar, delegate: delegate)
 
     let trust = createTrust(delegate: delegate)
-    let value = try? api.pigeonDelegate.copyExceptions(pigeonApi: api, trust: trust)
+    let value = try api.pigeonDelegate.copyExceptions(pigeonApi: api, trust: trust)
 
     #expect(value?.data == Data())
   }
@@ -60,7 +60,7 @@ import Testing
     let api = PigeonApiSecTrust(pigeonRegistrar: registrar, delegate: delegate)
 
     let trust = createTrust(delegate: delegate)
-    let value = try? api.pigeonDelegate.setExceptions(
+    let value = try api.pigeonDelegate.setExceptions(
       pigeonApi: api, trust: trust, exceptions: FlutterStandardTypedData(bytes: Data()))
 
     #expect(value == false)
@@ -72,10 +72,10 @@ import Testing
     let api = PigeonApiSecTrust(pigeonRegistrar: registrar, delegate: delegate)
 
     let trust = createTrust(delegate: delegate)
-    let value = try? api.pigeonDelegate.getTrustResult(pigeonApi: api, trust: trust)
+    let value = try api.pigeonDelegate.getTrustResult(pigeonApi: api, trust: trust)
 
-    #expect(value?.result == SecTrustResultType.invalid)
-    #expect(value?.resultCode == -1)
+    #expect(value.result == SecTrustResultType.invalid)
+    #expect(value.resultCode == -1)
   }
 
   @Test func copyCertificateChain() throws {
@@ -84,7 +84,7 @@ import Testing
     let api = PigeonApiSecTrust(pigeonRegistrar: registrar, delegate: delegate)
 
     let trust = createTrust(delegate: delegate)
-    let value = try? api.pigeonDelegate.copyCertificateChain(pigeonApi: api, trust: trust)
+    let value = try api.pigeonDelegate.copyCertificateChain(pigeonApi: api, trust: trust)
 
     #expect(value?.count == 1)
     #expect(value?.first?.value != nil)

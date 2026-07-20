@@ -28,10 +28,10 @@ import Testing
     let delegate = TestSecCertificateProxyAPIDelegate()
     let api = PigeonApiSecCertificate(pigeonRegistrar: registrar, delegate: delegate)
 
-    let value = try? api.pigeonDelegate.copyData(
+    let value = try api.pigeonDelegate.copyData(
       pigeonApi: api, certificate: SecCertificateWrapper(value: createDummyCertificate()))
 
-    #expect(value?.data == delegate.data)
+    #expect(value.data == delegate.data)
   }
 }
 

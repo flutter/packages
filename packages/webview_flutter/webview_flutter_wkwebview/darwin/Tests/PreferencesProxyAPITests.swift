@@ -19,7 +19,7 @@ import WebKit
 
       let instance = WKPreferences()
       let enabled = true
-      try? api.pigeonDelegate.setJavaScriptEnabled(
+      try api.pigeonDelegate.setJavaScriptEnabled(
         pigeonApi: api, pigeonInstance: instance, enabled: enabled)
 
       #expect(instance.javaScriptEnabled == enabled)

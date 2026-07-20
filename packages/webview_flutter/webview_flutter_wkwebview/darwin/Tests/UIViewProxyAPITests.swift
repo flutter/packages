@@ -22,7 +22,7 @@ import Testing
       let green = 0.2
       let blue = 0.3
       let alpha = 0.4
-      try? api.pigeonDelegate.setBackgroundColor(
+      try api.pigeonDelegate.setBackgroundColor(
         pigeonApi: api, pigeonInstance: instance,
         value: UIColor(red: red, green: green, blue: blue, alpha: alpha))
 
@@ -35,7 +35,7 @@ import Testing
 
       let instance = UIView(frame: .zero)
       let opaque = true
-      try? api.pigeonDelegate.setOpaque(pigeonApi: api, pigeonInstance: instance, opaque: opaque)
+      try api.pigeonDelegate.setOpaque(pigeonApi: api, pigeonInstance: instance, opaque: opaque)
 
       #expect(instance.isOpaque == opaque)
     }

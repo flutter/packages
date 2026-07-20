@@ -8,7 +8,7 @@ import Testing
 @testable import webview_flutter_wkwebview
 
 @Suite struct URLCredentialProxyAPITests {
-  @Test func withUser() throws {
+  @Test func withUser() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiURLCredential(registrar)
 

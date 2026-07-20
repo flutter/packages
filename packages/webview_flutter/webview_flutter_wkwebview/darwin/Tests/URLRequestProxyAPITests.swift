@@ -16,7 +16,7 @@ import Testing
 #endif
 
 @Suite struct RequestProxyAPITests {
-  @Test func pigeonDefaultConstructor() throws {
+  @Test func pigeonDefaultConstructor() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiURLRequest(registrar)
 
@@ -29,7 +29,7 @@ import Testing
     let api = registrar.apiDelegate.pigeonApiURLRequest(registrar)
 
     let instance = URLRequestWrapper(URLRequest(url: URL(string: "http://google.com")!))
-    let value = try? api.pigeonDelegate.getUrl(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.getUrl(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.value.url?.absoluteString)
   }
@@ -40,7 +40,7 @@ import Testing
 
     let instance = URLRequestWrapper(URLRequest(url: URL(string: "http://google.com")!))
     let method = "GET"
-    try? api.pigeonDelegate.setHttpMethod(pigeonApi: api, pigeonInstance: instance, method: method)
+    try api.pigeonDelegate.setHttpMethod(pigeonApi: api, pigeonInstance: instance, method: method)
 
     #expect(instance.value.httpMethod == method)
   }
@@ -53,7 +53,7 @@ import Testing
 
     let method = "POST"
     instance.value.httpMethod = method
-    let value = try? api.pigeonDelegate.getHttpMethod(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.getHttpMethod(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == method)
   }
@@ -64,7 +64,7 @@ import Testing
 
     let instance = URLRequestWrapper(URLRequest(url: URL(string: "http://google.com")!))
     let body = FlutterStandardTypedData(bytes: Data())
-    try? api.pigeonDelegate.setHttpBody(pigeonApi: api, pigeonInstance: instance, body: body)
+    try api.pigeonDelegate.setHttpBody(pigeonApi: api, pigeonInstance: instance, body: body)
 
     #expect(instance.value.httpBody == body.data)
   }
@@ -76,7 +76,7 @@ import Testing
     let instance = URLRequestWrapper(URLRequest(url: URL(string: "http://google.com")!))
     let body = FlutterStandardTypedData(bytes: Data())
     instance.value.httpBody = body.data
-    let value = try? api.pigeonDelegate.getHttpBody(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.getHttpBody(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value?.data == body.data)
   }
@@ -87,7 +87,7 @@ import Testing
 
     let instance = URLRequestWrapper(URLRequest(url: URL(string: "http://google.com")!))
     let fields = ["key": "value"]
-    try? api.pigeonDelegate.setAllHttpHeaderFields(
+    try api.pigeonDelegate.setAllHttpHeaderFields(
       pigeonApi: api, pigeonInstance: instance, fields: fields)
 
     #expect(instance.value.allHTTPHeaderFields == fields)
@@ -101,7 +101,7 @@ import Testing
     let fields = ["key": "value"]
     instance.value.allHTTPHeaderFields = fields
 
-    let value = try? api.pigeonDelegate.getAllHttpHeaderFields(
+    let value = try api.pigeonDelegate.getAllHttpHeaderFields(
       pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == fields)

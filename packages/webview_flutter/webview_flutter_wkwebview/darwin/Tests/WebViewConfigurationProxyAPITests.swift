@@ -9,7 +9,7 @@ import WebKit
 @testable import webview_flutter_wkwebview
 
 @Suite struct WebViewConfigurationProxyAPITests {
-  @Test func pigeonDefaultConstructor() throws {
+  @Test func pigeonDefaultConstructor() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
 
@@ -23,7 +23,7 @@ import WebKit
 
     let instance = WKWebViewConfiguration()
     let controller = WKUserContentController()
-    try? api.pigeonDelegate.setUserContentController(
+    try api.pigeonDelegate.setUserContentController(
       pigeonApi: api, pigeonInstance: instance, controller: controller)
 
     #expect(instance.userContentController == controller)
@@ -34,7 +34,7 @@ import WebKit
     let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
 
     let instance = WKWebViewConfiguration()
-    let value = try? api.pigeonDelegate.getUserContentController(
+    let value = try api.pigeonDelegate.getUserContentController(
       pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.userContentController)
@@ -46,7 +46,7 @@ import WebKit
 
     let instance = WKWebViewConfiguration()
     let dataStore = WKWebsiteDataStore.default()
-    try? api.pigeonDelegate.setWebsiteDataStore(
+    try api.pigeonDelegate.setWebsiteDataStore(
       pigeonApi: api, pigeonInstance: instance, dataStore: dataStore)
 
     #expect(instance.websiteDataStore == dataStore)
@@ -57,7 +57,7 @@ import WebKit
     let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
 
     let instance = WKWebViewConfiguration()
-    let value = try? api.pigeonDelegate.getWebsiteDataStore(
+    let value = try api.pigeonDelegate.getWebsiteDataStore(
       pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.websiteDataStore)
@@ -69,7 +69,7 @@ import WebKit
 
     let instance = WKWebViewConfiguration()
     let preferences = WKPreferences()
-    try? api.pigeonDelegate.setPreferences(
+    try api.pigeonDelegate.setPreferences(
       pigeonApi: api, pigeonInstance: instance, preferences: preferences)
 
     #expect(instance.preferences == preferences)
@@ -80,7 +80,7 @@ import WebKit
     let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
 
     let instance = WKWebViewConfiguration()
-    let value = try? api.pigeonDelegate.getPreferences(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.getPreferences(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.preferences)
   }
@@ -91,7 +91,7 @@ import WebKit
 
     let instance = WKWebViewConfiguration()
     let allow = true
-    try? api.pigeonDelegate.setAllowsInlineMediaPlayback(
+    try api.pigeonDelegate.setAllowsInlineMediaPlayback(
       pigeonApi: api, pigeonInstance: instance, allow: allow)
 
     // setAllowsInlineMediaPlayback does not existing on macOS; the call above should no-op for macOS.
@@ -107,7 +107,7 @@ import WebKit
 
     let instance = WKWebViewConfiguration()
     let limit = true
-    try? api.pigeonDelegate.setLimitsNavigationsToAppBoundDomains(
+    try api.pigeonDelegate.setLimitsNavigationsToAppBoundDomains(
       pigeonApi: api, pigeonInstance: instance, limit: limit)
 
     #expect(instance.limitsNavigationsToAppBoundDomains == limit)
@@ -119,7 +119,7 @@ import WebKit
 
     let instance = WKWebViewConfiguration()
     let type: AudiovisualMediaType = .none
-    try? api.pigeonDelegate.setMediaTypesRequiringUserActionForPlayback(
+    try api.pigeonDelegate.setMediaTypesRequiringUserActionForPlayback(
       pigeonApi: api, pigeonInstance: instance, type: type)
 
     #expect(instance.mediaTypesRequiringUserActionForPlayback == [])
@@ -130,7 +130,7 @@ import WebKit
     let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
 
     let instance = WKWebViewConfiguration()
-    let value = try? api.pigeonDelegate.getDefaultWebpagePreferences(
+    let value = try api.pigeonDelegate.getDefaultWebpagePreferences(
       pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.defaultWebpagePreferences)

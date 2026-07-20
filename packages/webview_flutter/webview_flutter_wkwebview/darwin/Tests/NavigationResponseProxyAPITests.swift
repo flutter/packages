@@ -9,7 +9,7 @@ import WebKit
 @testable import webview_flutter_wkwebview
 
 @Suite struct NavigationResponseProxyAPITests {
-  @MainActor @Test func response() throws {
+  @MainActor @Test func response() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKNavigationResponse(registrar)
 
@@ -24,7 +24,7 @@ import WebKit
     let api = registrar.apiDelegate.pigeonApiWKNavigationResponse(registrar)
 
     let instance = TestNavigationResponse.instance
-    let value = try? api.pigeonDelegate.isForMainFrame(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.isForMainFrame(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.isForMainFrame)
   }

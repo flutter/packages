@@ -14,9 +14,9 @@ import WebKit
     let api = registrar.apiDelegate.pigeonApiWKNavigationAction(registrar)
 
     let instance: TestNavigationAction? = TestNavigationAction()
-    let value = try? api.pigeonDelegate.request(pigeonApi: api, pigeonInstance: instance!)
+    let value = try api.pigeonDelegate.request(pigeonApi: api, pigeonInstance: instance!)
 
-    #expect(value?.value == instance!.request)
+    #expect(value.value == instance!.request)
   }
 
   @MainActor @Test func targetFrame() throws {
@@ -24,7 +24,7 @@ import WebKit
     let api = registrar.apiDelegate.pigeonApiWKNavigationAction(registrar)
 
     let instance: TestNavigationAction? = TestNavigationAction()
-    let value = try? api.pigeonDelegate.targetFrame(pigeonApi: api, pigeonInstance: instance!)
+    let value = try api.pigeonDelegate.targetFrame(pigeonApi: api, pigeonInstance: instance!)
 
     #expect(value == instance!.targetFrame)
   }
@@ -34,7 +34,7 @@ import WebKit
     let api = registrar.apiDelegate.pigeonApiWKNavigationAction(registrar)
 
     let instance: TestNavigationAction? = TestNavigationAction()
-    let value = try? api.pigeonDelegate.navigationType(pigeonApi: api, pigeonInstance: instance!)
+    let value = try api.pigeonDelegate.navigationType(pigeonApi: api, pigeonInstance: instance!)
 
     #expect(value == .formSubmitted)
   }

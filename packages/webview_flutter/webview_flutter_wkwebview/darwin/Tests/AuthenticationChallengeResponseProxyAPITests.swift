@@ -8,7 +8,7 @@ import Testing
 @testable import webview_flutter_wkwebview
 
 @Suite struct AuthenticationChallengeResponseProxyAPITests {
-  @Test func pigeonDefaultConstructor() throws {
+  @Test func pigeonDefaultConstructor() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiAuthenticationChallengeResponse(registrar)
 
@@ -24,7 +24,7 @@ import Testing
 
     let instance = AuthenticationChallengeResponse(
       disposition: .useCredential, credential: URLCredential())
-    let value = try? api.pigeonDelegate.disposition(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.disposition(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == UrlSessionAuthChallengeDisposition.useCredential)
   }
@@ -35,7 +35,7 @@ import Testing
 
     let instance = AuthenticationChallengeResponse(
       disposition: .useCredential, credential: URLCredential())
-    let value = try? api.pigeonDelegate.credential(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.credential(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.credential)
   }

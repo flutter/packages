@@ -29,7 +29,7 @@ import Testing
 
       let instance = TestScrollView(frame: .zero)
       instance.contentOffset = CGPoint(x: 1.0, y: 1.0)
-      try? api.pigeonDelegate.scrollBy(pigeonApi: api, pigeonInstance: instance, x: 1.0, y: 1.0)
+      try api.pigeonDelegate.scrollBy(pigeonApi: api, pigeonInstance: instance, x: 1.0, y: 1.0)
 
       #expect(instance.setContentOffsetArgs as? [Double] == [2.0, 2.0])
     }
@@ -41,7 +41,7 @@ import Testing
       let instance = TestScrollView(frame: .zero)
       let x = 1.0
       let y = 1.0
-      try? api.pigeonDelegate.setContentOffset(pigeonApi: api, pigeonInstance: instance, x: x, y: y)
+      try api.pigeonDelegate.setContentOffset(pigeonApi: api, pigeonInstance: instance, x: x, y: y)
 
       #expect(instance.setContentOffsetArgs as? [Double] == [x, y])
     }
@@ -53,7 +53,7 @@ import Testing
       let instance = TestScrollView(frame: .zero)
       let delegate = ScrollViewDelegateImpl(
         api: registrar.apiDelegate.pigeonApiUIScrollViewDelegate(registrar), registrar: registrar)
-      try? api.pigeonDelegate.setDelegate(
+      try api.pigeonDelegate.setDelegate(
         pigeonApi: api, pigeonInstance: instance, delegate: delegate)
 
       #expect(instance.setDelegateArgs == [delegate])
@@ -66,7 +66,7 @@ import Testing
 
       let instance = TestScrollView()
       let value = true
-      try? api.pigeonDelegate.setBounces(pigeonApi: api, pigeonInstance: instance, value: value)
+      try api.pigeonDelegate.setBounces(pigeonApi: api, pigeonInstance: instance, value: value)
 
       #expect(instance.bounces == value)
     }
@@ -80,7 +80,7 @@ import Testing
 
         let instance = TestScrollView()
         let value = true
-        try? api.pigeonDelegate.setBouncesHorizontally(
+        try api.pigeonDelegate.setBouncesHorizontally(
           pigeonApi: api, pigeonInstance: instance, value: value)
 
         #expect(instance.bouncesHorizontally == value)
@@ -94,7 +94,7 @@ import Testing
 
         let instance = TestScrollView()
         let value = true
-        try? api.pigeonDelegate.setBouncesVertically(
+        try api.pigeonDelegate.setBouncesVertically(
           pigeonApi: api, pigeonInstance: instance, value: value)
 
         #expect(instance.bouncesVertically == value)
@@ -108,7 +108,7 @@ import Testing
 
       let instance = TestScrollView()
       let value = true
-      try? api.pigeonDelegate.setAlwaysBounceVertical(
+      try api.pigeonDelegate.setAlwaysBounceVertical(
         pigeonApi: api, pigeonInstance: instance, value: value)
 
       #expect(instance.alwaysBounceVertical == value)
@@ -121,7 +121,7 @@ import Testing
 
       let instance = TestScrollView()
       let value = true
-      try? api.pigeonDelegate.setAlwaysBounceHorizontal(
+      try api.pigeonDelegate.setAlwaysBounceHorizontal(
         pigeonApi: api, pigeonInstance: instance, value: value)
 
       #expect(instance.alwaysBounceHorizontal == value)
@@ -133,7 +133,7 @@ import Testing
 
       let instance = TestScrollView()
       let value = true
-      try? api.pigeonDelegate.setShowsVerticalScrollIndicator(
+      try api.pigeonDelegate.setShowsVerticalScrollIndicator(
         pigeonApi: api, pigeonInstance: instance, value: value)
 
       #expect(instance.showsVerticalScrollIndicator == value)
@@ -145,7 +145,7 @@ import Testing
 
       let instance = TestScrollView()
       let value = true
-      try? api.pigeonDelegate.setShowsHorizontalScrollIndicator(
+      try api.pigeonDelegate.setShowsHorizontalScrollIndicator(
         pigeonApi: api, pigeonInstance: instance, value: value)
 
       #expect(instance.showsHorizontalScrollIndicator == value)

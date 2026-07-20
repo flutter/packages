@@ -9,7 +9,7 @@ import WebKit
 @testable import webview_flutter_wkwebview
 
 @Suite struct ScriptMessageProxyAPITests {
-  @MainActor @Test func name() throws {
+  @MainActor @Test func name() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKScriptMessage(registrar)
 
@@ -24,7 +24,7 @@ import WebKit
     let api = registrar.apiDelegate.pigeonApiWKScriptMessage(registrar)
 
     let instance = TestScriptMessage()
-    let value = try? api.pigeonDelegate.body(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.body(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value as! Int == 23)
   }

@@ -8,13 +8,12 @@ import Testing
 @testable import webview_flutter_wkwebview
 
 @Suite struct ProxyAPIRegistrarTests {
-  @Test func logFlutterMethodFailureDoesNotThrowAnError() throws {
+  // Method should log a message and not throw an error. DO NOT add 'throws' to this
+  // test, as it is here to enforce that the method doesn't throw.
+  @Test func logFlutterMethodFailureDoesNotThrowAnError() {
     let registrar = TestProxyApiRegistrar()
 
-    // Method should log a message and not throw an error.
-    #expect(throws: Never.self) {
-      try registrar.logFlutterMethodFailure(
-        PigeonError(code: "code", message: "message", details: nil), methodName: "aMethod")
-    }
+    registrar.logFlutterMethodFailure(
+      PigeonError(code: "code", message: "message", details: nil), methodName: "aMethod")
   }
 }

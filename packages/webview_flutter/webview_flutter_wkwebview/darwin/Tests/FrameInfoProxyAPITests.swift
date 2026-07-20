@@ -15,7 +15,7 @@ import WebKit
     let api = registrar.apiDelegate.pigeonApiWKFrameInfo(registrar)
 
     let instance = TestFrameInfo.instance
-    let value = try? api.pigeonDelegate.isMainFrame(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.isMainFrame(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.isMainFrame)
   }
@@ -25,7 +25,7 @@ import WebKit
     let api = registrar.apiDelegate.pigeonApiWKFrameInfo(registrar)
 
     let instance = TestFrameInfo.instance
-    let value = try? api.pigeonDelegate.request(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.request(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value?.value == instance.request)
   }
@@ -35,7 +35,7 @@ import WebKit
     let api = registrar.apiDelegate.pigeonApiWKFrameInfo(registrar)
 
     let instance = TestFrameInfoWithNilRequest.instance
-    let value = try? api.pigeonDelegate.request(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.request(pigeonApi: api, pigeonInstance: instance)
     // On macOS 15.5+, `WKFrameInfo.request` returns with an empty URLRequest.
     // Previously it would return nil so accept either.
     if value != nil {

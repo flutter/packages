@@ -19,7 +19,7 @@ import WebKit
       .path: "/anything",
     ])!
 
-    try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+    try await withCheckedThrowingContinuation { continuation in
       api.pigeonDelegate.setCookie(
         pigeonApi: api,
         pigeonInstance: instance!,
@@ -51,8 +51,7 @@ import WebKit
     instance!.allCookies = [cookie1, cookie2]
 
     // Test fetching all cookies
-    let cookies = try await withCheckedThrowingContinuation {
-      (continuation: CheckedContinuation<[HTTPCookie], Error>) in
+    let cookies = try await withCheckedThrowingContinuation { continuation in
       api.pigeonDelegate.getAllCookies(
         pigeonApi: api,
         pigeonInstance: instance!

@@ -16,7 +16,7 @@ import WebKit
 
     let instance = WKWebpagePreferences()
     let allow = true
-    try? api.pigeonDelegate.setAllowsContentJavaScript(
+    try api.pigeonDelegate.setAllowsContentJavaScript(
       pigeonApi: api, pigeonInstance: instance, allow: allow)
 
     #expect(instance.allowsContentJavaScript == allow)

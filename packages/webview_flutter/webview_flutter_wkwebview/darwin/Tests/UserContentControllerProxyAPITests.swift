@@ -17,7 +17,7 @@ import WebKit
     let handler = ScriptMessageHandlerImpl(
       api: registrar.apiDelegate.pigeonApiWKScriptMessageHandler(registrar), registrar: registrar)
     let name = "myString"
-    try? api.pigeonDelegate.addScriptMessageHandler(
+    try api.pigeonDelegate.addScriptMessageHandler(
       pigeonApi: api, pigeonInstance: instance, handler: handler, name: name)
 
     #expect(instance.addScriptMessageHandlerArgs == [handler, name])
@@ -29,7 +29,7 @@ import WebKit
 
     let instance = TestUserContentController()
     let name = "myString"
-    try? api.pigeonDelegate.removeScriptMessageHandler(
+    try api.pigeonDelegate.removeScriptMessageHandler(
       pigeonApi: api, pigeonInstance: instance, name: name)
 
     #expect(instance.removeScriptMessageHandlerArgs == [name])
@@ -40,7 +40,7 @@ import WebKit
     let api = registrar.apiDelegate.pigeonApiWKUserContentController(registrar)
 
     let instance = TestUserContentController()
-    try? api.pigeonDelegate.removeAllScriptMessageHandlers(pigeonApi: api, pigeonInstance: instance)
+    try api.pigeonDelegate.removeAllScriptMessageHandlers(pigeonApi: api, pigeonInstance: instance)
 
     #expect(instance.removeAllScriptMessageHandlersCalled)
   }
@@ -51,7 +51,7 @@ import WebKit
 
     let instance = TestUserContentController()
     let userScript = WKUserScript(source: "", injectionTime: .atDocumentEnd, forMainFrameOnly: true)
-    try? api.pigeonDelegate.addUserScript(
+    try api.pigeonDelegate.addUserScript(
       pigeonApi: api, pigeonInstance: instance, userScript: userScript)
 
     #expect(instance.addUserScriptArgs == [userScript])
@@ -62,7 +62,7 @@ import WebKit
     let api = registrar.apiDelegate.pigeonApiWKUserContentController(registrar)
 
     let instance = TestUserContentController()
-    try? api.pigeonDelegate.removeAllUserScripts(pigeonApi: api, pigeonInstance: instance)
+    try api.pigeonDelegate.removeAllUserScripts(pigeonApi: api, pigeonInstance: instance)
 
     #expect(instance.removeAllUserScriptsCalled)
   }

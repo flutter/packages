@@ -14,7 +14,7 @@ import Testing
 
     let code = 0
     let instance = NSError(domain: "", code: code)
-    let value = try? api.pigeonDelegate.code(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.code(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == Int64(code))
   }
@@ -25,7 +25,7 @@ import Testing
 
     let domain = "domain"
     let instance = NSError(domain: domain, code: 0)
-    let value = try? api.pigeonDelegate.domain(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.domain(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == domain)
   }
@@ -36,7 +36,7 @@ import Testing
 
     let userInfo: [String: String?] = ["some": "info"]
     let instance = NSError(domain: "", code: 0, userInfo: userInfo as [String: Any])
-    let value = try? api.pigeonDelegate.userInfo(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.userInfo(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value as! [String: String?] == userInfo)
   }

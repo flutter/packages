@@ -8,7 +8,7 @@ import Testing
 @testable import webview_flutter_wkwebview
 
 @Suite struct ProtectionSpaceProxyAPITests {
-  @Test func host() throws {
+  @Test func host() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiURLProtectionSpace(registrar)
 
@@ -27,7 +27,7 @@ import Testing
     let instance = URLProtectionSpace(
       host: "host", port: 23, protocol: "protocol", realm: "realm", authenticationMethod: "myMethod"
     )
-    let value = try? api.pigeonDelegate.port(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.port(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == Int64(instance.port))
   }
@@ -39,7 +39,7 @@ import Testing
     let instance = URLProtectionSpace(
       host: "host", port: 23, protocol: "protocol", realm: "realm", authenticationMethod: "myMethod"
     )
-    let value = try? api.pigeonDelegate.realm(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.realm(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.realm)
   }
@@ -51,7 +51,7 @@ import Testing
     let instance = URLProtectionSpace(
       host: "host", port: 23, protocol: "protocol", realm: "realm", authenticationMethod: "myMethod"
     )
-    let value = try? api.pigeonDelegate.authenticationMethod(
+    let value = try api.pigeonDelegate.authenticationMethod(
       pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.authenticationMethod)
@@ -64,7 +64,7 @@ import Testing
     let instance = TestProtectionSpace(
       host: "host", port: 23, protocol: "protocol", realm: "realm", authenticationMethod: "myMethod"
     )
-    let value = try? api.pigeonDelegate.getServerTrust(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.getServerTrust(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value!.value == instance.serverTrust)
   }
