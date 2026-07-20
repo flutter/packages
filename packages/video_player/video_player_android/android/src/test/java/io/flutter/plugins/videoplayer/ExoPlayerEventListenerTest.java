@@ -136,7 +136,8 @@ public final class ExoPlayerEventListenerTest {
     assertFalse(eventListener.calledSendInitialized());
 
     Shadows.shadowOf(Looper.getMainLooper())
-      .idleFor(Duration.ofMillis(ExoPlayerEventListener.DURATION_UNSET_INITIALIZATION_TIMEOUT_MS));
+        .idleFor(
+            Duration.ofMillis(ExoPlayerEventListener.DURATION_UNSET_INITIALIZATION_TIMEOUT_MS));
 
     assertTrue(eventListener.calledSendInitialized());
   }
@@ -154,7 +155,7 @@ public final class ExoPlayerEventListenerTest {
     when(mockExoPlayer.getDuration()).thenReturn(10L);
 
     eventListener.onTimelineChanged(
-      mock(Timeline.class), Player.TIMELINE_CHANGE_REASON_SOURCE_UPDATE);
+        mock(Timeline.class), Player.TIMELINE_CHANGE_REASON_SOURCE_UPDATE);
 
     assertTrue(eventListener.calledSendInitialized());
   }
