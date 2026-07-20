@@ -2,8 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-package com.example.test_plugin_example
+package io.flutter.plugins.videoplayerexample
 
 import io.flutter.embedding.android.FlutterActivity
 
-class MainActivity : FlutterActivity()
+/** Test Activity that sets the name of the Dart method entrypoint in the manifest. */
+class DriverExtensionActivity : FlutterActivity()
