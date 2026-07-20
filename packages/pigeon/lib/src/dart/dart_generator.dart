@@ -222,17 +222,19 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
 
     indent.write('${sealed}class ${classDefinition.name} $implements');
     indent.addScoped('{', '}', () {
-      if (classDefinition.fields.isEmpty) {
+      if (classDefinition.isSealed) {
         return;
       }
       _writeConstructor(indent, classDefinition);
       indent.newln();
-      for (final NamedType field in getFieldsInSerializationOrder(classDefinition)) {
-        addDocumentationComments(indent, field.documentationComments, docCommentSpec);
+      if (classDefinition.fields.isNotEmpty) {
+        for (final NamedType field in getFieldsInSerializationOrder(classDefinition)) {
+          addDocumentationComments(indent, field.documentationComments, docCommentSpec);
 
-        final String datatype = addGenericTypes(field.type);
-        indent.writeln('$datatype ${field.name};');
-        indent.newln();
+          final String datatype = addGenericTypes(field.type);
+          indent.writeln('$datatype ${field.name};');
+          indent.newln();
+        }
       }
       _writeToList(indent, classDefinition);
       indent.newln();
@@ -264,6 +266,10 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
 
   void _writeConstructor(Indent indent, Class classDefinition) {
     indent.write(classDefinition.name);
+    if (classDefinition.fields.isEmpty) {
+      indent.addln('();');
+      return;
+    }
     indent.addScoped('({', '});', () {
       for (final NamedType field in getFieldsInSerializationOrder(classDefinition)) {
         final required = !field.type.isNullable && field.defaultValue == null ? 'required ' : '';

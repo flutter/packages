@@ -32,7 +32,7 @@ dev_dependencies:
     git:
       url: https://github.com/flutter/skills.git
       path: tool/dart_skills_lint
-      ref: 8f85e82be6da429980f7cfe84f2f214a06cbfee1
+      ref: 05e5a45fa412ddbdd1d694eee0c71f4bbaea2617
   flutter_test:
     sdk: flutter
   leak_tracker_flutter_testing: any
