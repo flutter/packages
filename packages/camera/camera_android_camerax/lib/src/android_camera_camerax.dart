@@ -904,8 +904,9 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     final List<int> controlModes =
         await camera2CameraInfo.getCameraCharacteristic(
-          CameraCharacteristics.controlAvailableVideoStabilizationModes,
-        ) as List<int>? ??
+              CameraCharacteristics.controlAvailableVideoStabilizationModes,
+            )
+            as List<int>? ??
         const <int>[];
 
     final modes = <VideoStabilizationMode, int>{
