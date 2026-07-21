@@ -76,6 +76,7 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
     var context = authContextFactory.createAuthContext()
     lastCallState = nil
     context.localizedFallbackTitle = strings.localizedFallbackTitle
+    context.localizedCancelTitle = strings.cancelButton
 
     let policy =
       options.biometricOnly
