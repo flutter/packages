@@ -1,3 +1,7 @@
+## 2.0.10
+
+* Bumps androidx.core:core from 1.18.0 to 1.19.0.
+
 ## 2.0.9
 
 * Migrates to Built-in Kotlin to support AGP 9.
