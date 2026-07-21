@@ -1,3 +1,7 @@
+## 0.7.4+2
+
+* Fix NullPointerException when disposing camera during active video recording.
+
 ## 0.7.4+1
 
 * Fixes a `StateError` ("Bad state: No element") in `setFocusMode(FocusMode.auto)`
