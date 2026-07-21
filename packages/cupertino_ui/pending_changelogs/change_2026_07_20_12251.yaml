@@ -4,4 +4,4 @@ changelog: |
     flutter_localizations package.
   - Migrates API doc samples and formatting.
   - Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
-version: patch
+version: minor
