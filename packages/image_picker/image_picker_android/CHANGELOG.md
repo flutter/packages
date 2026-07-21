@@ -1,3 +1,7 @@
+## 0.8.13+20
+
+* Bumps androidx.core:core from 1.18.0 to 1.19.0.
+
 ## 0.8.13+19
 
 * Bumps the androidx group across 10 directories with 1 update.
