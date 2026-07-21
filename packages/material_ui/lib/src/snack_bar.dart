@@ -234,36 +234,45 @@ class _SnackBarActionState extends State<SnackBarAction> {
 /// the floating action button. It also works in the case of a back gesture
 /// transition.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// Here is an example of a [SnackBar] with an [action] button implemented using
 /// [SnackBarAction].
 ///
-/// {@example /example/lib/snack_bar/snack_bar.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/snack_bar/snack_bar.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// Here is an example of a customized [SnackBar]. It utilizes
 /// [behavior], [shape], [padding], [width], and [duration] to customize the
 /// location, appearance, and the duration for which the [SnackBar] is visible.
 ///
-/// {@example /example/lib/snack_bar/snack_bar.1.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/snack_bar/snack_bar.1.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example demonstrates the various [SnackBar] widget components,
 /// including an optional icon, in either floating or fixed format.
 ///
-/// {@example /example/lib/snack_bar/snack_bar.2.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/snack_bar/snack_bar.2.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -497,7 +506,7 @@ class SnackBar extends StatefulWidget {
   /// is used. If that is null, then the default is [DismissDirection.down].
   final DismissDirection? dismissDirection;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defaults to [Clip.hardEdge].
   final Clip clipBehavior;

@@ -69,7 +69,7 @@ class ExpandIcon extends StatefulWidget {
   /// Defaults to a padding of 8 on all sides.
   final EdgeInsetsGeometry padding;
 
-  /// {@template flutter.material.ExpandIcon.color}
+  /// {@template material_ui.ExpandIcon.color}
   /// The color of the icon.
   ///
   /// Defaults to [Colors.black54] when the theme's

@@ -29,7 +29,7 @@ import 'theme.dart';
 import 'theme_data.dart';
 import 'tooltip.dart';
 
-/// {@template flutter.material.ButtonStyle.iconAlignment}
+/// {@template material_ui.ButtonStyle.iconAlignment}
 /// Determines the alignment of the icon within the widgets such as:
 ///   - [ElevatedButton.icon],
 ///   - [FilledButton.icon],
@@ -44,15 +44,18 @@ import 'tooltip.dart';
 ///
 /// Defaults to [IconAlignment.start].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample demonstrates how to use `iconAlignment` to align the button icon to the start
 /// or the end of the button.
 ///
-/// {@example /example/lib/icon_alignment/icon_alignment.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/icon_alignment/icon_alignment.0.dart#body}
+///
+/// </callout-box>
 ///
 /// {@endtemplate}
 enum IconAlignment {
@@ -141,7 +144,7 @@ abstract class ButtonStyleButton extends StatefulWidget {
   /// Null by default.
   final ButtonStyle? style;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none] unless [ButtonStyle.backgroundBuilder] or
   /// [ButtonStyle.foregroundBuilder] is specified. In those
@@ -154,7 +157,7 @@ abstract class ButtonStyleButton extends StatefulWidget {
   /// {@macro flutter.widgets.Focus.autofocus}
   final bool autofocus;
 
-  /// {@macro flutter.material.inkwell.statesController}
+  /// {@macro material_ui.inkwell.statesController}
   final MaterialStatesController? statesController;
 
   /// Determine whether this subtree represents a button.
@@ -166,7 +169,7 @@ abstract class ButtonStyleButton extends StatefulWidget {
   /// Defaults to true.
   final bool? isSemanticButton;
 
-  /// {@macro flutter.material.ButtonStyle.iconAlignment}
+  /// {@macro material_ui.ButtonStyle.iconAlignment}
   @Deprecated(
     'Remove this parameter as it is now ignored. '
     'Use ButtonStyle.iconAlignment instead. '

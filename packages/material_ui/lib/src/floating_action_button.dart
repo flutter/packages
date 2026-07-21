@@ -49,37 +49,46 @@ enum _FloatingActionButtonType { regular, small, large, extended }
 /// disabled. Consider changing the [backgroundColor] if disabling the floating
 /// action button.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows a [FloatingActionButton] in its usual position within a
 /// [Scaffold]. Pressing the button cycles it through a few variations in its
 /// [foregroundColor], [backgroundColor], and [shape]. The button automatically
 /// animates its segue from one set of visual parameters to another.
 ///
-/// {@example /example/lib/floating_action_button/floating_action_button.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/floating_action_button/floating_action_button.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This sample shows all the variants of [FloatingActionButton] widget as
 /// described in: https://m3.material.io/components/floating-action-button/overview.
 ///
-/// {@example /example/lib/floating_action_button/floating_action_button.1.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/floating_action_button/floating_action_button.1.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This sample shows [FloatingActionButton] with additional color mappings as
 /// described in: https://m3.material.io/components/floating-action-button/overview.
 ///
-/// {@example /example/lib/floating_action_button/floating_action_button.2.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/floating_action_button/floating_action_button.2.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -330,7 +339,7 @@ class FloatingActionButton extends StatelessWidget {
   /// If this is set to null, the button will be disabled.
   final VoidCallback? onPressed;
 
-  /// {@macro flutter.material.RawMaterialButton.mouseCursor}
+  /// {@macro material_ui.RawMaterialButton.mouseCursor}
   ///
   /// If this property is null, [FloatingActionButtonThemeData.mouseCursor] is used.
   /// If that is null, [WidgetStateMouseCursor.adaptiveClickable] will be used.
@@ -424,7 +433,7 @@ class FloatingActionButton extends StatelessWidget {
   /// shape as well.
   final ShapeBorder? shape;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none].
   final Clip clipBehavior;

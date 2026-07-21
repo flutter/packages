@@ -73,14 +73,17 @@ const List<double> _kDisabledDarkGradientOpacities = <double>[0.08, 0.14];
 ///     [kMinInteractiveDimensionCupertino] pixels to meet accessibility
 ///     guidelines.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows a toggleable [CupertinoCheckbox].
 ///
-/// {@example /example/lib/checkbox/cupertino_checkbox.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/checkbox/cupertino_checkbox.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -196,7 +199,7 @@ class CupertinoCheckbox extends StatefulWidget {
   /// Defaults to [CupertinoColors.activeBlue].
   final Color? activeColor;
 
-  /// {@template flutter.cupertino.CupertinoCheckbox.fillColor}
+  /// {@template cupertino_ui.CupertinoCheckbox.fillColor}
   /// The color used to fill this checkbox.
   ///
   /// Resolves in the following states:
@@ -205,8 +208,8 @@ class CupertinoCheckbox extends StatefulWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -227,7 +230,7 @@ class CupertinoCheckbox extends StatefulWidget {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   /// {@endtemplate}
   ///
   /// If [fillColor] resolves to null for the requested state, then the fill color

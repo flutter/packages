@@ -1,3 +1,18 @@
+## 27.2.0
+
+* Adds support for empty data classes.
+
+## 27.1.2
+
+* Reports a clear error when an input file uses an enhanced enum (one with a
+  constructor, fields, methods, or arguments on its values), instead of
+  silently generating incorrect output.
+
+## 27.1.1
+
+* [dart] Adds usage documentation to generated event channel methods, and
+  emits the user's documentation comments on them.
+
 ## 27.1.0
 
 * [swift] Adds `CaseIterable` conformance to generated enums.

@@ -52,14 +52,17 @@ import 'theme_data.dart';
 /// If [onPressed] and [onLongPress] callbacks are null, then the
 /// button will be disabled.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample produces an enabled and a disabled ElevatedButton.
 ///
-/// {@example /example/lib/elevated_button/elevated_button.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/elevated_button/elevated_button.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -94,7 +97,7 @@ class ElevatedButton extends ButtonStyleButton {
   /// If [icon] is null, this constructor will create an [ElevatedButton]
   /// that doesn't display an icon.
   ///
-  /// {@macro flutter.material.ButtonStyle.iconAlignment}
+  /// {@macro material_ui.ButtonStyle.iconAlignment}
   ///
   ElevatedButton.icon({
     super.key,
@@ -289,7 +292,7 @@ class ElevatedButton extends ButtonStyleButton {
   /// value for all states, otherwise the values are as specified for
   /// each state, and "others" means all other states.
   ///
-  /// {@template flutter.material.elevated_button.default_font_size}
+  /// {@template material_ui.elevated_button.default_font_size}
   /// The "default font size" below refers to the font size specified in the
   /// [defaultStyleOf] method (or 14.0 if unspecified), scaled by the
   /// `MediaQuery.textScalerOf(context).scale` method. The names of the
