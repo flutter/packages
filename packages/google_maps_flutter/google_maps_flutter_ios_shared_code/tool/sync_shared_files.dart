@@ -33,7 +33,7 @@ void _syncSharedFiles(Directory packageRoot, String packageName, Directory share
       .map((e) => p.basename(e.path))
       .where(
         (name) =>
-            name.startsWith('google_maps_flutter_ios') &&
+            name.startsWith('google_maps_flutter_ios_') &&
             name != _sharedSourceRootName &&
             name != packageName,
       )
