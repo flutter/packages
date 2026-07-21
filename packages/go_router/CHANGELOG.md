@@ -1,3 +1,10 @@
+## 17.3.1
+
+- Fixes a "Bad state: Future already completed" crash when an imperatively-pushed
+  route's completion is triggered more than once (for example a rapid double-pop).
+  `ImperativeRouteMatch.complete` is now idempotent. See
+  https://github.com/flutter/flutter/issues/156809.
+
 ## 17.3.0
 
 - Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.

@@ -444,6 +444,15 @@ class ImperativeRouteMatch extends RouteMatch {
   /// Called when the corresponding [Route] associated with this route match is
   /// completed.
   void complete([dynamic value]) {
+    // Completing is idempotent. The pushed route can be removed more than once
+    // — e.g. a rapid double-pop, or a pop dispatched while a prior removal is
+    // still in flight on a slow device — which would otherwise call complete()
+    // a second time and throw "Bad state: Future already completed". The
+    // awaited result is delivered by the first completion, so the duplicate is
+    // a no-op. See https://github.com/flutter/flutter/issues/156809.
+    if (completer.isCompleted) {
+      return;
+    }
     completer.complete(value);
   }
 
