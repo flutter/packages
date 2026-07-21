@@ -5,6 +5,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -375,6 +376,32 @@ void main() {
       expect(icon, isNotNull);
       expect(icon!.style.width, '20px');
       expect(icon.style.height, '30px');
+    });
+
+    testWidgets('markers with anchor work', (WidgetTester tester) async {
+      const markerId = MarkerId('1');
+      const anchorOffset = Offset(0.25, 0.75);
+      const updatedAnchorOffset = Offset(-0.6, 1.6);
+
+      final markers = <AdvancedMarker>{AdvancedMarker(markerId: markerId, anchor: anchorOffset)};
+
+      await controller.addMarkers(markers);
+
+      gmaps.AdvancedMarkerElement? marker = controller.markers[markerId]?.marker;
+      expect(marker, isNotNull);
+      expect((marker!.getProperty('anchorLeft'.toJS)! as JSString).toDart, '-25%');
+      expect((marker.getProperty('anchorTop'.toJS)! as JSString).toDart, '-75%');
+
+      final updatedMarkers = <AdvancedMarker>{
+        AdvancedMarker(markerId: markerId, anchor: updatedAnchorOffset),
+      };
+
+      await controller.changeMarkers(updatedMarkers);
+
+      marker = controller.markers[markerId]?.marker;
+      expect(marker, isNotNull);
+      expect((marker!.getProperty('anchorLeft'.toJS)! as JSString).toDart, '60%');
+      expect((marker.getProperty('anchorTop'.toJS)! as JSString).toDart, '-160%');
     });
 
     testWidgets('markers created with text glyph work', (WidgetTester widgetTester) async {
