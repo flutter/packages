@@ -1,6 +1,6 @@
 ## NEXT
 
-* Adds support for batch release of pre-1.0 packgaes.
+* Adds support for batch release of pre-1.0 packages.
 
 ## 0.14.4
 
