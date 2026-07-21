@@ -1,3 +1,7 @@
+## 0.8.13+20
+
+* Bumps androidx.activity:activity from 1.12.4 to 1.13.0.
+
 ## 0.8.13+19
 
 * Bumps the androidx group across 10 directories with 1 update.
