@@ -1,3 +1,8 @@
+## 6.3.1
+
+* Fixes a bug that would cause `authorizeServer` to throw a `PlatformException`
+  due to an expired or revoked token.
+
 ## 6.3.0
 
 * Adds UIScene compatibility.
