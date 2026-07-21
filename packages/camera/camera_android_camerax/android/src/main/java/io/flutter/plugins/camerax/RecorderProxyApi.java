@@ -74,8 +74,7 @@ class RecorderProxyApi extends PigeonApiRecorder {
   private void validateOutputPath(@NonNull String path) {
     File file = new File(path);
     if (file.isDirectory()) {
-      throw new IllegalArgumentException(
-          "The output path is a directory: " + path);
+      throw new IllegalArgumentException("The output path is a directory: " + path);
     }
     File parent = file.getParentFile();
     if (parent != null && !parent.exists()) {
@@ -85,8 +84,7 @@ class RecorderProxyApi extends PigeonApiRecorder {
 
     String lowerPath = path.toLowerCase(Locale.ROOT);
     if (!lowerPath.endsWith(".mp4")) {
-      throw new IllegalArgumentException(
-          "Invalid video extension. Supported: .mp4");
+      throw new IllegalArgumentException("Invalid video extension. Supported: .mp4");
     }
   }
 
