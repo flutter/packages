@@ -14,6 +14,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+extern NSString *const FLTAStringConstant;
+extern NSString *const FLTAStringConstantWithEscapes;
+extern const NSInteger FLTAnIntConstant;
+extern const double FLTADoubleConstant;
+extern const BOOL FLTABoolConstant;
+
 typedef NS_ENUM(NSUInteger, FLTAnEnum) {
   FLTAnEnumOne = 0,
   FLTAnEnumTwo = 1,
