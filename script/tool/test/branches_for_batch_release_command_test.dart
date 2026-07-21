@@ -713,13 +713,6 @@ version: major
       addTearDown(() {
         package.directory.deleteSync(recursive: true);
       });
-
-      package.changelogFile.writeAsStringSync('''
-## 1.0.0
-
-- Old changes
-''');
-      package.directory.childDirectory('pending_changelogs').createSync();
       createPendingChangelogFile(package, 'a.yaml', '''
 changelog: Try to release 1.0 again
 version: promote
