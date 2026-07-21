@@ -15,8 +15,7 @@ import 'package:pigeon/pigeon.dart';
     gobjectHeaderOut: 'linux/messages.g.h',
     gobjectSourceOut: 'linux/messages.g.cc',
     gobjectOptions: GObjectOptions(),
-    kotlinOut:
-        'android/app/src/main/kotlin/dev/flutter/pigeon_example_app/Messages.g.kt',
+    kotlinOut: 'android/app/src/main/kotlin/dev/flutter/pigeon_example_app/Messages.g.kt',
     kotlinOptions: KotlinOptions(),
     javaOut: 'android/app/src/main/java/io/flutter/plugins/Messages.java',
     javaOptions: JavaOptions(),
@@ -37,7 +36,7 @@ enum Code { one, two }
 class MessageData {
   MessageData({required this.code, required this.data});
   String? name;
-  String? description;
+  String? messageDescription;
   Code code;
   Map<String, String> data;
 }
@@ -54,6 +53,7 @@ abstract class ExampleHostApi {
   @async
   bool sendMessage(MessageData message);
 }
+
 // #enddocregion host-definitions
 
 // #docregion flutter-definitions

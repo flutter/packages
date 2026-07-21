@@ -46,18 +46,13 @@ class Tessellator extends Visitor<Node, void>
   Node visitParentNode(ParentNode parentNode, void data) {
     return ParentNode(
       SvgAttributes.empty,
-      children: <Node>[
-        for (final Node child in parentNode.children) child.accept(this, data),
-      ],
+      children: <Node>[for (final Node child in parentNode.children) child.accept(this, data)],
     );
   }
 
   @override
   Node visitResolvedClipNode(ResolvedClipNode clipNode, void data) {
-    return ResolvedClipNode(
-      clips: clipNode.clips,
-      child: clipNode.child.accept(this, data),
-    );
+    return ResolvedClipNode(clips: clipNode.clips, child: clipNode.child.accept(this, data));
   }
 
   @override
@@ -70,13 +65,9 @@ class Tessellator extends Visitor<Node, void>
   }
 
   @override
-  Node visitResolvedTextPositionNode(
-    ResolvedTextPositionNode textPositionNode,
-    void data,
-  ) {
+  Node visitResolvedTextPositionNode(ResolvedTextPositionNode textPositionNode, void data) {
     return ResolvedTextPositionNode(textPositionNode.textPosition, <Node>[
-      for (final Node child in textPositionNode.children)
-        child.accept(this, data),
+      for (final Node child in textPositionNode.children) child.accept(this, data),
     ]);
   }
 
@@ -101,21 +92,12 @@ class Tessellator extends Visitor<Node, void>
             builder.lineTo(line.x, line.y);
           case PathCommandType.cubic:
             final cubic = command as CubicToCommand;
-            builder.cubicTo(
-              cubic.x1,
-              cubic.y1,
-              cubic.x2,
-              cubic.y2,
-              cubic.x3,
-              cubic.y3,
-            );
+            builder.cubicTo(cubic.x1, cubic.y1, cubic.x2, cubic.y2, cubic.x3, cubic.y3);
           case PathCommandType.close:
             builder.close();
         }
       }
-      final Float32List rawVertices = builder.tessellate(
-        fillType: pathNode.path.fillType,
-      );
+      final Float32List rawVertices = builder.tessellate(fillType: pathNode.path.fillType);
       if (rawVertices.isNotEmpty) {
         final vertices = Vertices.fromFloat32List(rawVertices);
         final IndexedVertices indexedVertices = vertices.createIndex();
@@ -156,9 +138,7 @@ class Tessellator extends Visitor<Node, void>
     return SaveLayerNode(
       SvgAttributes.empty,
       paint: layerNode.paint,
-      children: <Node>[
-        for (final Node child in layerNode.children) child.accept(this, data),
-      ],
+      children: <Node>[for (final Node child in layerNode.children) child.accept(this, data)],
     );
   }
 
@@ -169,10 +149,7 @@ class Tessellator extends Visitor<Node, void>
       width: viewportNode.width,
       height: viewportNode.height,
       transform: viewportNode.transform,
-      children: <Node>[
-        for (final Node child in viewportNode.children)
-          child.accept(this, data),
-      ],
+      children: <Node>[for (final Node child in viewportNode.children) child.accept(this, data)],
     );
   }
 
@@ -222,14 +199,7 @@ class VerticesBuilder {
 
   /// Adds a cubic Bezier curve with x1,y1 as the first control point, x2,y2 as
   /// the second control point, and end point x3,y3.
-  void cubicTo(
-    double x1,
-    double y1,
-    double x2,
-    double y2,
-    double x3,
-    double y3,
-  ) {
+  void cubicTo(double x1, double y1, double x2, double y2, double x3, double y3) {
     assert(_builder != null);
     _cubicToFn(_builder!, x1, y1, x2, y2, x3, y3);
   }
@@ -284,36 +254,20 @@ typedef _CreatePathBuilderType = ffi.Pointer<_PathBuilder> Function();
 typedef _create_path_builder_type = ffi.Pointer<_PathBuilder> Function();
 
 final _CreatePathBuilderType _createPathFn = _dylib
-    .lookupFunction<_create_path_builder_type, _CreatePathBuilderType>(
-      'CreatePathBuilder',
-    );
+    .lookupFunction<_create_path_builder_type, _CreatePathBuilderType>('CreatePathBuilder');
 
 typedef _MoveToType = void Function(ffi.Pointer<_PathBuilder>, double, double);
-typedef _move_to_type =
-    ffi.Void Function(ffi.Pointer<_PathBuilder>, ffi.Float, ffi.Float);
+typedef _move_to_type = ffi.Void Function(ffi.Pointer<_PathBuilder>, ffi.Float, ffi.Float);
 
-final _MoveToType _moveToFn = _dylib.lookupFunction<_move_to_type, _MoveToType>(
-  'MoveTo',
-);
+final _MoveToType _moveToFn = _dylib.lookupFunction<_move_to_type, _MoveToType>('MoveTo');
 
 typedef _LineToType = void Function(ffi.Pointer<_PathBuilder>, double, double);
-typedef _line_to_type =
-    ffi.Void Function(ffi.Pointer<_PathBuilder>, ffi.Float, ffi.Float);
+typedef _line_to_type = ffi.Void Function(ffi.Pointer<_PathBuilder>, ffi.Float, ffi.Float);
 
-final _LineToType _lineToFn = _dylib.lookupFunction<_line_to_type, _LineToType>(
-  'LineTo',
-);
+final _LineToType _lineToFn = _dylib.lookupFunction<_line_to_type, _LineToType>('LineTo');
 
 typedef _CubicToType =
-    void Function(
-      ffi.Pointer<_PathBuilder>,
-      double,
-      double,
-      double,
-      double,
-      double,
-      double,
-    );
+    void Function(ffi.Pointer<_PathBuilder>, double, double, double, double, double, double);
 typedef _cubic_to_type =
     ffi.Void Function(
       ffi.Pointer<_PathBuilder>,
@@ -325,24 +279,15 @@ typedef _cubic_to_type =
       ffi.Float,
     );
 
-final _CubicToType _cubicToFn = _dylib
-    .lookupFunction<_cubic_to_type, _CubicToType>('CubicTo');
+final _CubicToType _cubicToFn = _dylib.lookupFunction<_cubic_to_type, _CubicToType>('CubicTo');
 
 typedef _CloseType = void Function(ffi.Pointer<_PathBuilder>, bool);
 typedef _close_type = ffi.Void Function(ffi.Pointer<_PathBuilder>, ffi.Bool);
 
-final _CloseType _closeFn = _dylib.lookupFunction<_close_type, _CloseType>(
-  'Close',
-);
+final _CloseType _closeFn = _dylib.lookupFunction<_close_type, _CloseType>('Close');
 
 typedef _TessellateType =
-    ffi.Pointer<_Vertices> Function(
-      ffi.Pointer<_PathBuilder>,
-      int,
-      double,
-      double,
-      double,
-    );
+    ffi.Pointer<_Vertices> Function(ffi.Pointer<_PathBuilder>, int, double, double, double);
 typedef _tessellate_type =
     ffi.Pointer<_Vertices> Function(
       ffi.Pointer<_PathBuilder>,
@@ -352,19 +297,19 @@ typedef _tessellate_type =
       ffi.Float,
     );
 
-final _TessellateType _tessellateFn = _dylib
-    .lookupFunction<_tessellate_type, _TessellateType>('Tessellate');
+final _TessellateType _tessellateFn = _dylib.lookupFunction<_tessellate_type, _TessellateType>(
+  'Tessellate',
+);
 
 typedef _DestroyType = void Function(ffi.Pointer<_PathBuilder>);
 typedef _destroy_type = ffi.Void Function(ffi.Pointer<_PathBuilder>);
 
-final _DestroyType _destroyFn = _dylib
-    .lookupFunction<_destroy_type, _DestroyType>('DestroyPathBuilder');
+final _DestroyType _destroyFn = _dylib.lookupFunction<_destroy_type, _DestroyType>(
+  'DestroyPathBuilder',
+);
 
 typedef _DestroyVerticesType = void Function(ffi.Pointer<_Vertices>);
 typedef _destroy_vertices_type = ffi.Void Function(ffi.Pointer<_Vertices>);
 
 final _DestroyVerticesType _destroyVerticesFn = _dylib
-    .lookupFunction<_destroy_vertices_type, _DestroyVerticesType>(
-      'DestroyVertices',
-    );
+    .lookupFunction<_destroy_vertices_type, _DestroyVerticesType>('DestroyVertices');

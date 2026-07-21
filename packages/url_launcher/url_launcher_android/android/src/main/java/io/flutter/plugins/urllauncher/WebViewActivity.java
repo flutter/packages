@@ -106,7 +106,8 @@ public class WebViewActivity extends Activity {
     // Open new urls inside the webview itself.
     webview.setWebViewClient(webViewClient);
 
-    // Multi windows is set with FlutterWebChromeClient by default to handle internal bug: b/159892679.
+    // Multi windows is set with FlutterWebChromeClient by default to handle internal bug:
+    // b/159892679.
     webview.getSettings().setSupportMultipleWindows(true);
     webview.setWebChromeClient(new FlutterWebChromeClient());
 

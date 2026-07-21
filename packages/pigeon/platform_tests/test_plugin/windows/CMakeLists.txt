@@ -89,7 +89,7 @@ enable_testing()
 include(FetchContent)
 FetchContent_Declare(
   googletest
-  URL https://github.com/google/googletest/archive/release-1.11.0.zip
+  URL https://github.com/google/googletest/archive/v1.15.2.zip
 )
 # Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
@@ -102,6 +102,7 @@ FetchContent_MakeAvailable(googletest)
 # directly into the test binary rather than using the DLL.
 add_executable(${TEST_RUNNER}
   # Tests.
+  test/data_class_methods_test.cpp
   test/multiple_arity_test.cpp
   test/non_null_fields_test.cpp
   test/nullable_returns_test.cpp

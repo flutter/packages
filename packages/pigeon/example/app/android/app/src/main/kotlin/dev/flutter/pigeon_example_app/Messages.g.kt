@@ -191,7 +191,7 @@ class FlutterError(
     val code: String,
     override val message: String? = null,
     val details: Any? = null
-) : Throwable()
+) : RuntimeException()
 
 enum class Code(val raw: Int) {
   ONE(0),
@@ -207,24 +207,24 @@ enum class Code(val raw: Int) {
 /** Generated class from Pigeon that represents data sent in messages. */
 data class MessageData(
     val name: String? = null,
-    val description: String? = null,
+    val messageDescription: String? = null,
     val code: Code,
     val data: Map<String, String>
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): MessageData {
       val name = pigeonVar_list[0] as String?
-      val description = pigeonVar_list[1] as String?
+      val messageDescription = pigeonVar_list[1] as String?
       val code = pigeonVar_list[2] as Code
       val data = pigeonVar_list[3] as Map<String, String>
-      return MessageData(name, description, code, data)
+      return MessageData(name, messageDescription, code, data)
     }
   }
 
   fun toList(): List<Any?> {
     return listOf(
         name,
-        description,
+        messageDescription,
         code,
         data,
     )
@@ -239,7 +239,7 @@ data class MessageData(
     }
     val other = other as MessageData
     return MessagesPigeonUtils.deepEquals(this.name, other.name) &&
-        MessagesPigeonUtils.deepEquals(this.description, other.description) &&
+        MessagesPigeonUtils.deepEquals(this.messageDescription, other.messageDescription) &&
         MessagesPigeonUtils.deepEquals(this.code, other.code) &&
         MessagesPigeonUtils.deepEquals(this.data, other.data)
   }
@@ -247,10 +247,14 @@ data class MessageData(
   override fun hashCode(): Int {
     var result = javaClass.hashCode()
     result = 31 * result + MessagesPigeonUtils.deepHash(this.name)
-    result = 31 * result + MessagesPigeonUtils.deepHash(this.description)
+    result = 31 * result + MessagesPigeonUtils.deepHash(this.messageDescription)
     result = 31 * result + MessagesPigeonUtils.deepHash(this.code)
     result = 31 * result + MessagesPigeonUtils.deepHash(this.data)
     return result
+  }
+
+  override fun toString(): String {
+    return "MessageData(name=$name, messageDescription=$messageDescription, code=$code, data=$data)"
   }
 }
 

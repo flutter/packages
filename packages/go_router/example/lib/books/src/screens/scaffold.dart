@@ -22,11 +22,7 @@ enum ScaffoldTab {
 /// The scaffold for the book store.
 class BookstoreScaffold extends StatelessWidget {
   /// Creates a [BookstoreScaffold].
-  const BookstoreScaffold({
-    required this.selectedTab,
-    required this.child,
-    super.key,
-  });
+  const BookstoreScaffold({required this.selectedTab, required this.child, super.key});
 
   /// Which tab of the scaffold to display.
   final ScaffoldTab selectedTab;

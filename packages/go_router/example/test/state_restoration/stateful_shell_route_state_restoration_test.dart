@@ -8,9 +8,7 @@ import 'package:go_router_examples/state_restoration/stateful_shell_route_state_
 
 void main() {
   testWidgets('StatefulShellRoute navigation location and route state '
-      'is restored when restorationIds are provided', (
-    WidgetTester tester,
-  ) async {
+      'is restored when restorationIds are provided', (WidgetTester tester) async {
     const homeLabel = 'Home';
     const profileLabel = 'Profile';
 

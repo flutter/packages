@@ -27,9 +27,7 @@ void main() {
   group('#pickImage', () {
     test('calls the method correctly with default arguments', () async {
       api.returnValue = <String>['/foo.png'];
-      final PickedFile? result = await picker.pickImage(
-        source: ImageSource.camera,
-      );
+      final PickedFile? result = await picker.pickImage(source: ImageSource.camera);
 
       expect(result?.path, '/foo.png');
       expect(api.passedSelectionType, _SelectionType.image);
@@ -53,11 +51,7 @@ void main() {
     });
 
     test('passes width and height arguments correctly', () async {
-      await picker.pickImage(
-        source: ImageSource.camera,
-        maxWidth: 10.0,
-        maxHeight: 20.0,
-      );
+      await picker.pickImage(source: ImageSource.camera, maxWidth: 10.0, maxHeight: 20.0);
 
       expect(api.passedMaxSize?.width, 10);
       expect(api.passedMaxSize?.height, 20);
@@ -110,10 +104,7 @@ void main() {
     });
 
     test('camera position can set to front', () async {
-      await picker.pickImage(
-        source: ImageSource.camera,
-        preferredCameraDevice: CameraDevice.front,
-      );
+      await picker.pickImage(source: ImageSource.camera, preferredCameraDevice: CameraDevice.front);
 
       expect(api.passedSource?.camera, SourceCamera.front);
     });
@@ -149,15 +140,9 @@ void main() {
     });
 
     test('does not accept an invalid imageQuality argument', () {
-      expect(
-        () => picker.pickMultiImage(imageQuality: -1),
-        throwsArgumentError,
-      );
+      expect(() => picker.pickMultiImage(imageQuality: -1), throwsArgumentError);
 
-      expect(
-        () => picker.pickMultiImage(imageQuality: 101),
-        throwsArgumentError,
-      );
+      expect(() => picker.pickMultiImage(imageQuality: 101), throwsArgumentError);
     });
 
     test('returns null for an empty list', () async {
@@ -170,9 +155,7 @@ void main() {
   group('#pickVideo', () {
     test('calls the method correctly with default arguments', () async {
       api.returnValue = <String>['/foo.mp4'];
-      final PickedFile? result = await picker.pickVideo(
-        source: ImageSource.camera,
-      );
+      final PickedFile? result = await picker.pickVideo(source: ImageSource.camera);
 
       expect(result?.path, '/foo.mp4');
       expect(api.passedSelectionType, _SelectionType.video);
@@ -192,10 +175,7 @@ void main() {
     });
 
     test('passes the duration argument correctly', () async {
-      await picker.pickVideo(
-        source: ImageSource.camera,
-        maxDuration: const Duration(minutes: 1),
-      );
+      await picker.pickVideo(source: ImageSource.camera, maxDuration: const Duration(minutes: 1));
 
       expect(api.passedMaxDurationSeconds, 60);
     });
@@ -208,10 +188,7 @@ void main() {
     });
 
     test('camera position can set to front', () async {
-      await picker.pickVideo(
-        source: ImageSource.camera,
-        preferredCameraDevice: CameraDevice.front,
-      );
+      await picker.pickVideo(source: ImageSource.camera, preferredCameraDevice: CameraDevice.front);
 
       expect(api.passedSource?.camera, SourceCamera.front);
     });
@@ -243,11 +220,7 @@ void main() {
     });
 
     test('passes the width and height arguments correctly', () async {
-      await picker.getImage(
-        source: ImageSource.camera,
-        maxWidth: 10.0,
-        maxHeight: 20.0,
-      );
+      await picker.getImage(source: ImageSource.camera, maxWidth: 10.0, maxHeight: 20.0);
 
       expect(api.passedMaxSize?.width, 10);
       expect(api.passedMaxSize?.height, 20);
@@ -307,10 +280,7 @@ void main() {
     });
 
     test('camera position can set to front', () async {
-      await picker.getImage(
-        source: ImageSource.camera,
-        preferredCameraDevice: CameraDevice.front,
-      );
+      await picker.getImage(source: ImageSource.camera, preferredCameraDevice: CameraDevice.front);
 
       expect(api.passedSource?.camera, SourceCamera.front);
     });
@@ -354,10 +324,7 @@ void main() {
     test('does not accept an invalid imageQuality argument', () {
       expect(() => picker.getMultiImage(imageQuality: -1), throwsArgumentError);
 
-      expect(
-        () => picker.getMultiImage(imageQuality: 101),
-        throwsArgumentError,
-      );
+      expect(() => picker.getMultiImage(imageQuality: 101), throwsArgumentError);
     });
 
     test('returns null for an empty list', () async {
@@ -390,10 +357,7 @@ void main() {
       await picker.getMedia(
         options: MediaOptions(
           allowMultiple: true,
-          imageOptions: ImageOptions.createAndValidate(
-            maxWidth: 10.0,
-            maxHeight: 20.0,
-          ),
+          imageOptions: ImageOptions.createAndValidate(maxWidth: 10.0, maxHeight: 20.0),
         ),
       );
 
@@ -477,40 +441,28 @@ void main() {
       final Matcher throwsLimitArgumentError = throwsA(
         isA<ArgumentError>()
             .having((ArgumentError error) => error.name, 'name', 'limit')
-            .having(
-              (ArgumentError error) => error.message,
-              'message',
-              'cannot be lower than 2',
-            ),
+            .having((ArgumentError error) => error.message, 'message', 'cannot be lower than 2'),
       );
 
       expect(
-        () => picker.getMedia(
-          options: const MediaOptions(allowMultiple: true, limit: -1),
-        ),
+        () => picker.getMedia(options: const MediaOptions(allowMultiple: true, limit: -1)),
         throwsLimitArgumentError,
       );
 
       expect(
-        () => picker.getMedia(
-          options: const MediaOptions(allowMultiple: true, limit: 0),
-        ),
+        () => picker.getMedia(options: const MediaOptions(allowMultiple: true, limit: 0)),
         throwsLimitArgumentError,
       );
 
       expect(
-        () => picker.getMedia(
-          options: const MediaOptions(allowMultiple: true, limit: 1),
-        ),
+        () => picker.getMedia(options: const MediaOptions(allowMultiple: true, limit: 1)),
         throwsLimitArgumentError,
       );
     });
 
     test('does not accept a not null limit when allowMultiple is false', () {
       expect(
-        () => picker.getMedia(
-          options: const MediaOptions(allowMultiple: false, limit: 5),
-        ),
+        () => picker.getMedia(options: const MediaOptions(allowMultiple: false, limit: 5)),
         throwsArgumentError,
       );
     });
@@ -518,10 +470,7 @@ void main() {
     test('handles a empty path response gracefully', () async {
       api.returnValue = <String>[];
 
-      expect(
-        await picker.getMedia(options: const MediaOptions(allowMultiple: true)),
-        <String>[],
-      );
+      expect(await picker.getMedia(options: const MediaOptions(allowMultiple: true)), <String>[]);
     });
   });
 
@@ -548,10 +497,7 @@ void main() {
     });
 
     test('passes the duration argument correctly', () async {
-      await picker.getVideo(
-        source: ImageSource.camera,
-        maxDuration: const Duration(minutes: 1),
-      );
+      await picker.getVideo(source: ImageSource.camera, maxDuration: const Duration(minutes: 1));
 
       expect(api.passedMaxDurationSeconds, 60);
     });
@@ -570,10 +516,7 @@ void main() {
     });
 
     test('camera position can set to front', () async {
-      await picker.getVideo(
-        source: ImageSource.camera,
-        preferredCameraDevice: CameraDevice.front,
-      );
+      await picker.getVideo(source: ImageSource.camera, preferredCameraDevice: CameraDevice.front);
 
       expect(api.passedSource?.camera, SourceCamera.front);
     });
@@ -595,10 +538,7 @@ void main() {
     test('passes the arguments correctly', () async {
       api.returnValue = <String>[];
       await picker.getMultiVideoWithOptions(
-        options: const MultiVideoPickerOptions(
-          maxDuration: Duration(seconds: 10),
-          limit: 5,
-        ),
+        options: const MultiVideoPickerOptions(maxDuration: Duration(seconds: 10), limit: 5),
       );
 
       expect(api.passedMaxDurationSeconds, 10);
@@ -609,9 +549,7 @@ void main() {
   group('#getImageFromSource', () {
     test('calls the method correctly with default arguments', () async {
       api.returnValue = <String>['/foo.png'];
-      final XFile? result = await picker.getImageFromSource(
-        source: ImageSource.camera,
-      );
+      final XFile? result = await picker.getImageFromSource(source: ImageSource.camera);
 
       expect(result?.path, '/foo.png');
       expect(api.passedSelectionType, _SelectionType.image);
@@ -707,14 +645,8 @@ void main() {
     test('handles a null image path response gracefully', () async {
       api.returnValue = <String>[];
 
-      expect(
-        await picker.getImageFromSource(source: ImageSource.gallery),
-        isNull,
-      );
-      expect(
-        await picker.getImageFromSource(source: ImageSource.camera),
-        isNull,
-      );
+      expect(await picker.getImageFromSource(source: ImageSource.gallery), isNull);
+      expect(await picker.getImageFromSource(source: ImageSource.camera), isNull);
     });
 
     test('camera position defaults to back', () async {
@@ -726,9 +658,7 @@ void main() {
     test('camera position can set to front', () async {
       await picker.getImageFromSource(
         source: ImageSource.camera,
-        options: const ImagePickerOptions(
-          preferredCameraDevice: CameraDevice.front,
-        ),
+        options: const ImagePickerOptions(preferredCameraDevice: CameraDevice.front),
       );
 
       expect(api.passedSource?.camera, SourceCamera.front);
@@ -773,18 +703,14 @@ void main() {
 
     test('passes the image quality argument correctly', () async {
       await picker.getMultiImageWithOptions(
-        options: const MultiImagePickerOptions(
-          imageOptions: ImageOptions(imageQuality: 70),
-        ),
+        options: const MultiImagePickerOptions(imageOptions: ImageOptions(imageQuality: 70)),
       );
 
       expect(api.passedImageQuality, 70);
     });
 
     test('passes the limit argument correctly', () async {
-      await picker.getMultiImageWithOptions(
-        options: const MultiImagePickerOptions(limit: 5),
-      );
+      await picker.getMultiImageWithOptions(options: const MultiImagePickerOptions(limit: 5));
 
       expect(api.passedLimit, 5);
     });
@@ -792,18 +718,14 @@ void main() {
     test('does not accept a negative width or height argument', () {
       expect(
         () => picker.getMultiImageWithOptions(
-          options: const MultiImagePickerOptions(
-            imageOptions: ImageOptions(maxWidth: -1.0),
-          ),
+          options: const MultiImagePickerOptions(imageOptions: ImageOptions(maxWidth: -1.0)),
         ),
         throwsArgumentError,
       );
 
       expect(
         () => picker.getMultiImageWithOptions(
-          options: const MultiImagePickerOptions(
-            imageOptions: ImageOptions(maxHeight: -1.0),
-          ),
+          options: const MultiImagePickerOptions(imageOptions: ImageOptions(maxHeight: -1.0)),
         ),
         throwsArgumentError,
       );
@@ -812,18 +734,14 @@ void main() {
     test('does not accept an invalid imageQuality argument', () {
       expect(
         () => picker.getMultiImageWithOptions(
-          options: const MultiImagePickerOptions(
-            imageOptions: ImageOptions(imageQuality: -1),
-          ),
+          options: const MultiImagePickerOptions(imageOptions: ImageOptions(imageQuality: -1)),
         ),
         throwsArgumentError,
       );
 
       expect(
         () => picker.getMultiImageWithOptions(
-          options: const MultiImagePickerOptions(
-            imageOptions: ImageOptions(imageQuality: 101),
-          ),
+          options: const MultiImagePickerOptions(imageOptions: ImageOptions(imageQuality: 101)),
         ),
         throwsArgumentError,
       );
@@ -833,31 +751,21 @@ void main() {
       final Matcher throwsLimitArgumentError = throwsA(
         isA<ArgumentError>()
             .having((ArgumentError error) => error.name, 'name', 'limit')
-            .having(
-              (ArgumentError error) => error.message,
-              'message',
-              'cannot be lower than 2',
-            ),
+            .having((ArgumentError error) => error.message, 'message', 'cannot be lower than 2'),
       );
 
       expect(
-        () => picker.getMultiImageWithOptions(
-          options: const MultiImagePickerOptions(limit: -1),
-        ),
+        () => picker.getMultiImageWithOptions(options: const MultiImagePickerOptions(limit: -1)),
         throwsLimitArgumentError,
       );
 
       expect(
-        () => picker.getMultiImageWithOptions(
-          options: const MultiImagePickerOptions(limit: 0),
-        ),
+        () => picker.getMultiImageWithOptions(options: const MultiImagePickerOptions(limit: 0)),
         throwsLimitArgumentError,
       );
 
       expect(
-        () => picker.getMultiImageWithOptions(
-          options: const MultiImagePickerOptions(limit: 1),
-        ),
+        () => picker.getMultiImageWithOptions(options: const MultiImagePickerOptions(limit: 1)),
         throwsLimitArgumentError,
       );
     });
@@ -928,19 +836,14 @@ class _FakeImagePickerApi implements ImagePickerApi {
   }
 
   @override
-  Future<List<String>> pickMedia(
-    MediaSelectionOptions mediaSelectionOptions,
-  ) async {
+  Future<List<String>> pickMedia(MediaSelectionOptions mediaSelectionOptions) async {
     passedSelectionType = _SelectionType.media;
     passedMediaSelectionOptions = mediaSelectionOptions;
     return returnValue;
   }
 
   @override
-  Future<String?> pickVideo(
-    SourceSpecification source,
-    int? maxDurationSeconds,
-  ) async {
+  Future<String?> pickVideo(SourceSpecification source, int? maxDurationSeconds) async {
     passedSelectionType = _SelectionType.video;
     passedSource = source;
     passedMaxDurationSeconds = maxDurationSeconds;
@@ -948,10 +851,7 @@ class _FakeImagePickerApi implements ImagePickerApi {
   }
 
   @override
-  Future<List<String>> pickMultiVideo(
-    int? maxDurationSeconds,
-    int? limit,
-  ) async {
+  Future<List<String>> pickMultiVideo(int? maxDurationSeconds, int? limit) async {
     passedSelectionType = _SelectionType.multiVideo;
     passedMaxDurationSeconds = maxDurationSeconds;
     passedLimit = limit;

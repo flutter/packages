@@ -37,8 +37,7 @@ class UpdateMinSdkCommand extends PackageLoopingCommand {
       'in pubspec.yaml to match the given Flutter version.';
 
   @override
-  final PackageLoopingType packageLoopingType =
-      PackageLoopingType.includeAllSubpackages;
+  final PackageLoopingType packageLoopingType = PackageLoopingType.includeAllSubpackages;
 
   @override
   bool get hasLongOutput => false;
@@ -71,16 +70,11 @@ class UpdateMinSdkCommand extends PackageLoopingCommand {
     final VersionRange? flutterRange = _sdkRange(pubspec, flutterSdkKey);
 
     final editablePubspec = YamlEditor(package.pubspecFile.readAsStringSync());
-    if (dartRange != null &&
-        (dartRange.min ?? Version.none) < _dartMinVersion) {
-      editablePubspec.update(<String>[
-        environmentKey,
-        dartSdkKey,
-      ], '^$_dartMinVersion');
+    if (dartRange != null && (dartRange.min ?? Version.none) < _dartMinVersion) {
+      editablePubspec.update(<String>[environmentKey, dartSdkKey], '^$_dartMinVersion');
       print('${indentation}Updating Dart minimum to $_dartMinVersion');
     }
-    if (flutterRange != null &&
-        (flutterRange.min ?? Version.none) < _flutterMinVersion) {
+    if (flutterRange != null && (flutterRange.min ?? Version.none) < _flutterMinVersion) {
       editablePubspec.update(<String>[
         environmentKey,
         flutterSdkKey,

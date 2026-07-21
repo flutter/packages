@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
@@ -38,9 +37,7 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
   @override
   Future<void> init(InitParameters params) async {
     _hostedDomain = params.hostedDomain;
-    _serverClientId =
-        params.serverClientId ??
-        await _hostApi.getGoogleServicesJsonServerClientId();
+    _serverClientId = params.serverClientId ?? await _hostApi.getGoogleServicesJsonServerClientId();
     _nonce = params.nonce;
     // The clientId parameter is not supported on Android.
     // Android apps are identified by their package name and the SHA-1 of their signing key.
@@ -77,18 +74,14 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
         ),
       );
     }
-    return credential == null
-        ? null
-        : _authenticationResultFromPlatformCredential(credential);
+    return credential == null ? null : _authenticationResultFromPlatformCredential(credential);
   }
 
   @override
   bool supportsAuthenticate() => true;
 
   @override
-  Future<AuthenticationResults> authenticate(
-    AuthenticateParameters params,
-  ) async {
+  Future<AuthenticationResults> authenticate(AuthenticateParameters params) async {
     // Attempt to authorize with minimal interaction.
     final PlatformGoogleIdTokenCredential? credential = await _authenticate(
       useButtonFlow: true,
@@ -130,10 +123,7 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
       // https://developer.android.com/identity/authorization#revoke-permissions)
       // an arbitrary granted scope is used here.
       await _hostApi.revokeAccess(
-        PlatformRevokeAccessRequest(
-          accountEmail: entry.key,
-          scopes: <String>[entry.value],
-        ),
+        PlatformRevokeAccessRequest(accountEmail: entry.key, scopes: <String>[entry.value]),
       );
     }
     _cachedAccounts.clear();
@@ -151,9 +141,7 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
       params.request,
       requestOfflineAccess: false,
     );
-    return accessToken == null
-        ? null
-        : ClientAuthorizationTokenData(accessToken: accessToken);
+    return accessToken == null ? null : ClientAuthorizationTokenData(accessToken: accessToken);
   }
 
   @override
@@ -228,16 +216,12 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
           case GetCredentialFailureType.unknown:
             code = GoogleSignInExceptionCode.unknownError;
         }
-        throw GoogleSignInException(
-          code: code,
-          description: message,
-          details: authnResult.details,
-        );
+        throw GoogleSignInException(code: code, description: message, details: authnResult.details);
       case GetCredentialSuccess():
         // Store a preliminary entry using the 'openid' scope, which in practice
         // always seems to be granted at authentication time, so that an account
         // that is authenticated but never authorized can still be disconnected.
-        _cachedAccounts[authnResult.credential.id] = 'openid';
+        _cachedAccounts[authnResult.credential.email] = 'openid';
         return authnResult.credential;
     }
   }
@@ -252,9 +236,7 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
         scopes: request.scopes,
         accountEmail: email,
         hostedDomain: _hostedDomain,
-        serverClientIdForForcedRefreshToken: requestOfflineAccess
-            ? _serverClientId
-            : null,
+        serverClientIdForForcedRefreshToken: requestOfflineAccess ? _serverClientId : null,
       ),
       promptIfUnauthorized: request.promptIfUnauthorized,
     );
@@ -278,11 +260,7 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
           case AuthorizeFailureType.noActivity:
             code = GoogleSignInExceptionCode.uiUnavailable;
         }
-        throw GoogleSignInException(
-          code: code,
-          description: message,
-          details: result.details,
-        );
+        throw GoogleSignInException(code: code, description: message, details: result.details);
       case PlatformAuthorizationResult():
         final String? accessToken = result.accessToken;
         if (accessToken == null) {
@@ -301,68 +279,23 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
             _cachedAccounts[email] = scope;
           }
         }
-        return (
-          accessToken: accessToken,
-          serverAuthCode: result.serverAuthCode,
-        );
+        return (accessToken: accessToken, serverAuthCode: result.serverAuthCode);
     }
   }
 
   AuthenticationResults _authenticationResultFromPlatformCredential(
     PlatformGoogleIdTokenCredential credential,
   ) {
-    // GoogleIdTokenCredential's ID field is documented to return the
-    // email address, not what the other platform SDKs call an ID.
-    // The account ID returned by other platform SDKs and the legacy
-    // Google Sign In for Android SDK is no longer directly exposed, so it
-    // need to be extracted from the token. See
-    // https://stackoverflow.com/a/78064720.
-    // The ID should always be availabe from the token, but if for some reason
-    // it can't be extracted, use the email address instead as a reasonable
-    // fallback method of identifying the account.
-    final String email = credential.id;
-    final String userId = _idFromIdToken(credential.idToken) ?? email;
-
     return AuthenticationResults(
       user: GoogleSignInUserData(
-        email: email,
-        id: userId,
+        email: credential.email,
+        id: credential.uniqueId,
         displayName: credential.displayName,
         photoUrl: credential.profilePictureUri,
       ),
-      authenticationTokens: AuthenticationTokenData(
-        idToken: credential.idToken,
-      ),
+      authenticationTokens: AuthenticationTokenData(idToken: credential.idToken),
     );
   }
-}
-
-/// A codec that can encode/decode JWT payloads.
-///
-/// See https://www.rfc-editor.org/rfc/rfc7519#section-3
-final Codec<Object?, String> _jwtCodec = json.fuse(utf8).fuse(base64);
-
-/// Extracts the user ID from an idToken.
-///
-/// See https://stackoverflow.com/a/78064720
-String? _idFromIdToken(String idToken) {
-  final jwtTokenRegexp = RegExp(
-    r'^(?<header>[^\.\s]+)\.(?<payload>[^\.\s]+)\.(?<signature>[^\.\s]+)$',
-  );
-  final RegExpMatch? match = jwtTokenRegexp.firstMatch(idToken);
-  final String? payload = match?.namedGroup('payload');
-  if (payload != null) {
-    try {
-      final contents =
-          _jwtCodec.decode(base64.normalize(payload)) as Map<String, Object?>?;
-      if (contents != null) {
-        return contents['sub'] as String?;
-      }
-    } catch (_) {
-      return null;
-    }
-  }
-  return null;
 }
 
 /// Options specific to authentication with the lightweight authentication

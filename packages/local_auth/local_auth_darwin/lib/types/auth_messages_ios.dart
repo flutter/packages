@@ -28,8 +28,7 @@ class IOSAuthMessages extends AuthMessages {
   Map<String, String> get args {
     return <String, String>{
       'okButton': cancelButton ?? iOSCancelButton,
-      if (localizedFallbackTitle != null)
-        'localizedFallbackTitle': localizedFallbackTitle!,
+      if (localizedFallbackTitle != null) 'localizedFallbackTitle': localizedFallbackTitle!,
     };
   }
 
@@ -42,8 +41,7 @@ class IOSAuthMessages extends AuthMessages {
           localizedFallbackTitle == other.localizedFallbackTitle;
 
   @override
-  int get hashCode =>
-      Object.hash(super.hashCode, cancelButton, localizedFallbackTitle);
+  int get hashCode => Object.hash(super.hashCode, cancelButton, localizedFallbackTitle);
 }
 
 // Default Strings for IOSAuthMessages plugin. Currently supports English.

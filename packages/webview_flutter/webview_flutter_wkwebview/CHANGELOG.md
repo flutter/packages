@@ -1,3 +1,29 @@
+## 3.26.0
+
+* Adds new method for accessing a native `WKWebView` from a `FlutterPluginRegistrar`.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
+## 3.25.1
+
+* Relands update to prevent message calls when application will terminate.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
+## 3.25.0
+
+* Adds support for retrieving cookies with `PlatformWebViewCookieManager.getCookies`.
+
+## 3.24.5
+
+* Reverts `3.24.4` to prevent missing `FlutterSceneLifeCycleDelegate` build error.
+
+## 3.24.4
+
+* Updates plugin to prevent message calls when application will terminate.
+
+## 3.24.3
+
+* Adds support to get failing url from DNS errors on iOS 26+.
+
 ## 3.24.2
 
 * Fixes dartdoc comments that accidentally used HTML.

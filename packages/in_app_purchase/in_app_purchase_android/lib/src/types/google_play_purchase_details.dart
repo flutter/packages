@@ -26,9 +26,7 @@ class GooglePlayPurchaseDetails extends PurchaseDetails {
   /// Generates a [List] of [PurchaseDetails] based on an Android [Purchase] object.
   ///
   /// The list contains one entry per product.
-  static List<GooglePlayPurchaseDetails> fromPurchase(
-    PurchaseWrapper purchase,
-  ) {
+  static List<GooglePlayPurchaseDetails> fromPurchase(PurchaseWrapper purchase) {
     return purchase.products.map((String productId) {
       final purchaseDetails = GooglePlayPurchaseDetails(
         purchaseID: purchase.orderId,
@@ -44,11 +42,7 @@ class GooglePlayPurchaseDetails extends PurchaseDetails {
       );
 
       if (purchaseDetails.status == PurchaseStatus.error) {
-        purchaseDetails.error = IAPError(
-          source: kIAPSource,
-          code: kPurchaseErrorCode,
-          message: '',
-        );
+        purchaseDetails.error = IAPError(source: kIAPSource, code: kPurchaseErrorCode, message: '');
       }
 
       return purchaseDetails;

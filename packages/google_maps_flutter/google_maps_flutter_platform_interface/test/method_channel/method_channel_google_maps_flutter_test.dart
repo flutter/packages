@@ -25,27 +25,24 @@ void main() {
       required Future<dynamic>? Function(MethodCall call) handler,
     }) {
       final MethodChannel channel = maps.ensureChannelInitialized(mapId);
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(channel, (MethodCall methodCall) {
-            log.add(methodCall.method);
-            return handler(methodCall);
-          });
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+        channel,
+        (MethodCall methodCall) {
+          log.add(methodCall.method);
+          return handler(methodCall);
+        },
+      );
     }
 
-    Future<void> sendPlatformMessage(
-      int mapId,
-      String method,
-      Map<dynamic, dynamic> data,
-    ) async {
+    Future<void> sendPlatformMessage(int mapId, String method, Map<dynamic, dynamic> data) async {
       final ByteData byteData = const StandardMethodCodec().encodeMethodCall(
         MethodCall(method, data),
       );
-      await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .handlePlatformMessage(
-            'plugins.flutter.io/google_maps_$mapId',
-            byteData,
-            (ByteData? data) {},
-          );
+      await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
+        'plugins.flutter.io/google_maps_$mapId',
+        byteData,
+        (ByteData? data) {},
+      );
     }
 
     // Calls each method that uses invokeMethod with a return type other than
@@ -109,34 +106,18 @@ void main() {
       final markerDragStartStream = StreamQueue<MarkerDragStartEvent>(
         maps.onMarkerDragStart(mapId: mapId),
       );
-      final markerDragStream = StreamQueue<MarkerDragEvent>(
-        maps.onMarkerDrag(mapId: mapId),
-      );
+      final markerDragStream = StreamQueue<MarkerDragEvent>(maps.onMarkerDrag(mapId: mapId));
       final markerDragEndStream = StreamQueue<MarkerDragEndEvent>(
         maps.onMarkerDragEnd(mapId: mapId),
       );
 
-      await sendPlatformMessage(
-        mapId,
-        'marker#onDragStart',
-        jsonMarkerDragStartEvent,
-      );
+      await sendPlatformMessage(mapId, 'marker#onDragStart', jsonMarkerDragStartEvent);
       await sendPlatformMessage(mapId, 'marker#onDrag', jsonMarkerDragEvent);
-      await sendPlatformMessage(
-        mapId,
-        'marker#onDragEnd',
-        jsonMarkerDragEndEvent,
-      );
+      await sendPlatformMessage(mapId, 'marker#onDragEnd', jsonMarkerDragEndEvent);
 
-      expect(
-        (await markerDragStartStream.next).value.value,
-        equals('drag-start-marker'),
-      );
+      expect((await markerDragStartStream.next).value.value, equals('drag-start-marker'));
       expect((await markerDragStream.next).value.value, equals('drag-marker'));
-      expect(
-        (await markerDragEndStream.next).value.value,
-        equals('drag-end-marker'),
-      );
+      expect((await markerDragEndStream.next).value.value, equals('drag-end-marker'));
     });
   });
 }

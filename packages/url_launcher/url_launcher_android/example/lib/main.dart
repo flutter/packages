@@ -51,9 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     });
     // Check for Android Custom Tab support.
-    launcher.supportsMode(PreferredLaunchMode.inAppBrowserView).then((
-      bool result,
-    ) {
+    launcher.supportsMode(PreferredLaunchMode.inAppBrowserView).then((bool result) {
       setState(() {
         _hasCustomTabSupport = result;
       });
@@ -72,9 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _launchInNonBrowserExternalApp(String url) async {
     if (!await launcher.launchUrl(
       url,
-      const LaunchOptions(
-        mode: PreferredLaunchMode.externalNonBrowserApplication,
-      ),
+      const LaunchOptions(mode: PreferredLaunchMode.externalNonBrowserApplication),
     )) {
       throw Exception('Could not launch $url');
     }
@@ -117,9 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
       url,
       const LaunchOptions(
         mode: PreferredLaunchMode.inAppWebView,
-        webViewConfiguration: InAppWebViewConfiguration(
-          enableJavaScript: false,
-        ),
+        webViewConfiguration: InAppWebViewConfiguration(enableJavaScript: false),
       ),
     )) {
       throw Exception('Could not launch $url');
@@ -131,9 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
       url,
       const LaunchOptions(
         mode: PreferredLaunchMode.inAppWebView,
-        webViewConfiguration: InAppWebViewConfiguration(
-          enableDomStorage: false,
-        ),
+        webViewConfiguration: InAppWebViewConfiguration(enableDomStorage: false),
       ),
     )) {
       throw Exception('Could not launch $url');
@@ -171,9 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 padding: const EdgeInsets.all(16.0),
                 child: TextField(
                   onChanged: (String text) => _phone = text,
-                  decoration: const InputDecoration(
-                    hintText: 'Input the phone number to launch',
-                  ),
+                  decoration: const InputDecoration(hintText: 'Input the phone number to launch'),
                 ),
               ),
               ElevatedButton(
@@ -186,10 +176,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ? const Text('Make phone call')
                     : const Text('Calling not supported'),
               ),
-              const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text(toLaunch),
-              ),
+              const Padding(padding: EdgeInsets.all(16.0), child: Text(toLaunch)),
               ElevatedButton(
                 onPressed: () => setState(() {
                   _launched = _launchInBrowser(toLaunch);

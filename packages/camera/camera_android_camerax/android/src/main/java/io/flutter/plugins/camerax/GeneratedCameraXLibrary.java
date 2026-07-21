@@ -717,6 +717,7 @@ public class GeneratedCameraXLibrary {
 
     void error(@NonNull Throwable error);
   }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface InstanceManagerHostApi {
     /**
@@ -730,6 +731,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
+
     /**
      * Sets up an instance of `InstanceManagerHostApi` to handle messages through the
      * `binaryMessenger`.
@@ -759,6 +761,7 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface JavaObjectHostApi {
 
@@ -768,6 +771,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
+
     /**
      * Sets up an instance of `JavaObjectHostApi` to handle messages through the `binaryMessenger`.
      */
@@ -797,6 +801,7 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
+
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
   public static class JavaObjectFlutterApi {
     private final @NonNull BinaryMessenger binaryMessenger;
@@ -810,6 +815,7 @@ public class GeneratedCameraXLibrary {
     public interface Reply<T> {
       void reply(T reply);
     }
+
     /** The codec used by JavaObjectFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
@@ -824,6 +830,7 @@ public class GeneratedCameraXLibrary {
           channelReply -> callback.reply(null));
     }
   }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface CameraInfoHostApi {
 
@@ -843,6 +850,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
+
     /**
      * Sets up an instance of `CameraInfoHostApi` to handle messages through the `binaryMessenger`.
      */
@@ -952,6 +960,7 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
+
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
   public static class CameraInfoFlutterApi {
     private final @NonNull BinaryMessenger binaryMessenger;
@@ -965,6 +974,7 @@ public class GeneratedCameraXLibrary {
     public interface Reply<T> {
       void reply(T reply);
     }
+
     /** The codec used by CameraInfoFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
@@ -979,6 +989,7 @@ public class GeneratedCameraXLibrary {
           channelReply -> callback.reply(null));
     }
   }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface CameraSelectorHostApi {
 
@@ -991,6 +1002,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
+
     /**
      * Sets up an instance of `CameraSelectorHostApi` to handle messages through the
      * `binaryMessenger`.
@@ -1052,6 +1064,7 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
+
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
   public static class CameraSelectorFlutterApi {
     private final @NonNull BinaryMessenger binaryMessenger;
@@ -1065,6 +1078,7 @@ public class GeneratedCameraXLibrary {
     public interface Reply<T> {
       void reply(T reply);
     }
+
     /** The codec used by CameraSelectorFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
@@ -1080,6 +1094,7 @@ public class GeneratedCameraXLibrary {
           channelReply -> callback.reply(null));
     }
   }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface ProcessCameraProviderHostApi {
 
@@ -1105,6 +1120,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
+
     /**
      * Sets up an instance of `ProcessCameraProviderHostApi` to handle messages through the
      * `binaryMessenger`.
@@ -1283,6 +1299,7 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
+
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
   public static class ProcessCameraProviderFlutterApi {
     private final @NonNull BinaryMessenger binaryMessenger;
@@ -1296,6 +1313,7 @@ public class GeneratedCameraXLibrary {
     public interface Reply<T> {
       void reply(T reply);
     }
+
     /** The codec used by ProcessCameraProviderFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
@@ -1312,6 +1330,7 @@ public class GeneratedCameraXLibrary {
           channelReply -> callback.reply(null));
     }
   }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface CameraHostApi {
 
@@ -1325,6 +1344,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
+
     /** Sets up an instance of `CameraHostApi` to handle messages through the `binaryMessenger`. */
     static void setup(@NonNull BinaryMessenger binaryMessenger, @Nullable CameraHostApi api) {
       {
@@ -1378,6 +1398,7 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
+
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
   public static class CameraFlutterApi {
     private final @NonNull BinaryMessenger binaryMessenger;
@@ -1391,6 +1412,7 @@ public class GeneratedCameraXLibrary {
     public interface Reply<T> {
       void reply(T reply);
     }
+
     /** The codec used by CameraFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
@@ -1445,6 +1467,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return SystemServicesHostApiCodec.INSTANCE;
     }
+
     /**
      * Sets up an instance of `SystemServicesHostApi` to handle messages through the
      * `binaryMessenger`.
@@ -1510,6 +1533,7 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
+
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
   public static class SystemServicesFlutterApi {
     private final @NonNull BinaryMessenger binaryMessenger;
@@ -1523,6 +1547,7 @@ public class GeneratedCameraXLibrary {
     public interface Reply<T> {
       void reply(T reply);
     }
+
     /** The codec used by SystemServicesFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
@@ -1539,6 +1564,7 @@ public class GeneratedCameraXLibrary {
           channelReply -> callback.reply(null));
     }
   }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface DeviceOrientationManagerHostApi {
 
@@ -1557,6 +1583,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
+
     /**
      * Sets up an instance of `DeviceOrientationManagerHostApi` to handle messages through the
      * `binaryMessenger`.
@@ -1662,6 +1689,7 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
+
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
   public static class DeviceOrientationManagerFlutterApi {
     private final @NonNull BinaryMessenger binaryMessenger;
@@ -1675,6 +1703,7 @@ public class GeneratedCameraXLibrary {
     public interface Reply<T> {
       void reply(T reply);
     }
+
     /** The codec used by DeviceOrientationManagerFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
@@ -1742,6 +1771,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return PreviewHostApiCodec.INSTANCE;
     }
+
     /** Sets up an instance of `PreviewHostApi` to handle messages through the `binaryMessenger`. */
     static void setup(@NonNull BinaryMessenger binaryMessenger, @Nullable PreviewHostApi api) {
       {
@@ -1900,6 +1930,7 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface VideoCaptureHostApi {
 
@@ -1915,6 +1946,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
+
     /**
      * Sets up an instance of `VideoCaptureHostApi` to handle messages through the
      * `binaryMessenger`.
@@ -1999,6 +2031,7 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
+
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
   public static class VideoCaptureFlutterApi {
     private final @NonNull BinaryMessenger binaryMessenger;
@@ -2012,6 +2045,7 @@ public class GeneratedCameraXLibrary {
     public interface Reply<T> {
       void reply(T reply);
     }
+
     /** The codec used by VideoCaptureFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
@@ -2026,6 +2060,7 @@ public class GeneratedCameraXLibrary {
           channelReply -> callback.reply(null));
     }
   }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface RecorderHostApi {
 
@@ -2048,6 +2083,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
+
     /**
      * Sets up an instance of `RecorderHostApi` to handle messages through the `binaryMessenger`.
      */
@@ -2162,6 +2198,7 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
+
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
   public static class RecorderFlutterApi {
     private final @NonNull BinaryMessenger binaryMessenger;
@@ -2175,6 +2212,7 @@ public class GeneratedCameraXLibrary {
     public interface Reply<T> {
       void reply(T reply);
     }
+
     /** The codec used by RecorderFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
@@ -2193,6 +2231,7 @@ public class GeneratedCameraXLibrary {
           channelReply -> callback.reply(null));
     }
   }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface PendingRecordingHostApi {
 
@@ -2203,6 +2242,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
+
     /**
      * Sets up an instance of `PendingRecordingHostApi` to handle messages through the
      * `binaryMessenger`.
@@ -2276,6 +2316,7 @@ public class GeneratedCameraXLibrary {
     public interface Reply<T> {
       void reply(T reply);
     }
+
     /** The codec used by PendingRecordingFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return PendingRecordingFlutterApiCodec.INSTANCE;
@@ -2302,6 +2343,7 @@ public class GeneratedCameraXLibrary {
           channelReply -> callback.reply(null));
     }
   }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface RecordingHostApi {
 
@@ -2317,6 +2359,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
+
     /**
      * Sets up an instance of `RecordingHostApi` to handle messages through the `binaryMessenger`.
      */
@@ -2415,6 +2458,7 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
+
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
   public static class RecordingFlutterApi {
     private final @NonNull BinaryMessenger binaryMessenger;
@@ -2428,6 +2472,7 @@ public class GeneratedCameraXLibrary {
     public interface Reply<T> {
       void reply(T reply);
     }
+
     /** The codec used by RecordingFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
@@ -2442,6 +2487,7 @@ public class GeneratedCameraXLibrary {
           channelReply -> callback.reply(null));
     }
   }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface ImageCaptureHostApi {
 
@@ -2461,6 +2507,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
+
     /**
      * Sets up an instance of `ImageCaptureHostApi` to handle messages through the
      * `binaryMessenger`.
@@ -2622,6 +2669,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return ResolutionStrategyHostApiCodec.INSTANCE;
     }
+
     /**
      * Sets up an instance of `ResolutionStrategyHostApi` to handle messages through the
      * `binaryMessenger`.
@@ -2658,6 +2706,7 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface ResolutionSelectorHostApi {
 
@@ -2671,6 +2720,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
+
     /**
      * Sets up an instance of `ResolutionSelectorHostApi` to handle messages through the
      * `binaryMessenger`.
@@ -2715,6 +2765,7 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface AspectRatioStrategyHostApi {
 
@@ -2725,6 +2776,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
+
     /**
      * Sets up an instance of `AspectRatioStrategyHostApi` to handle messages through the
      * `binaryMessenger`.
@@ -2805,6 +2857,7 @@ public class GeneratedCameraXLibrary {
     public interface Reply<T> {
       void reply(T reply);
     }
+
     /** The codec used by CameraStateFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return CameraStateFlutterApiCodec.INSTANCE;
@@ -2863,6 +2916,7 @@ public class GeneratedCameraXLibrary {
     public interface Reply<T> {
       void reply(T reply);
     }
+
     /** The codec used by ExposureStateFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return ExposureStateFlutterApiCodec.INSTANCE;
@@ -2883,6 +2937,7 @@ public class GeneratedCameraXLibrary {
           channelReply -> callback.reply(null));
     }
   }
+
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
   public static class ZoomStateFlutterApi {
     private final @NonNull BinaryMessenger binaryMessenger;
@@ -2896,6 +2951,7 @@ public class GeneratedCameraXLibrary {
     public interface Reply<T> {
       void reply(T reply);
     }
+
     /** The codec used by ZoomStateFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
@@ -2914,6 +2970,7 @@ public class GeneratedCameraXLibrary {
           channelReply -> callback.reply(null));
     }
   }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface ImageAnalysisHostApi {
 
@@ -2932,6 +2989,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
+
     /**
      * Sets up an instance of `ImageAnalysisHostApi` to handle messages through the
      * `binaryMessenger`.
@@ -3049,6 +3107,7 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface AnalyzerHostApi {
 
@@ -3058,6 +3117,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
+
     /**
      * Sets up an instance of `AnalyzerHostApi` to handle messages through the `binaryMessenger`.
      */
@@ -3087,6 +3147,7 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface ObserverHostApi {
 
@@ -3096,6 +3157,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
+
     /**
      * Sets up an instance of `ObserverHostApi` to handle messages through the `binaryMessenger`.
      */
@@ -3125,6 +3187,7 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
+
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
   public static class ObserverFlutterApi {
     private final @NonNull BinaryMessenger binaryMessenger;
@@ -3138,6 +3201,7 @@ public class GeneratedCameraXLibrary {
     public interface Reply<T> {
       void reply(T reply);
     }
+
     /** The codec used by ObserverFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
@@ -3155,6 +3219,7 @@ public class GeneratedCameraXLibrary {
           channelReply -> callback.reply(null));
     }
   }
+
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
   public static class CameraStateErrorFlutterApi {
     private final @NonNull BinaryMessenger binaryMessenger;
@@ -3168,6 +3233,7 @@ public class GeneratedCameraXLibrary {
     public interface Reply<T> {
       void reply(T reply);
     }
+
     /** The codec used by CameraStateErrorFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
@@ -3224,6 +3290,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return LiveDataHostApiCodec.INSTANCE;
     }
+
     /**
      * Sets up an instance of `LiveDataHostApi` to handle messages through the `binaryMessenger`.
      */
@@ -3345,6 +3412,7 @@ public class GeneratedCameraXLibrary {
     public interface Reply<T> {
       void reply(T reply);
     }
+
     /** The codec used by LiveDataFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return LiveDataFlutterApiCodec.INSTANCE;
@@ -3362,6 +3430,7 @@ public class GeneratedCameraXLibrary {
           channelReply -> callback.reply(null));
     }
   }
+
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
   public static class AnalyzerFlutterApi {
     private final @NonNull BinaryMessenger binaryMessenger;
@@ -3375,6 +3444,7 @@ public class GeneratedCameraXLibrary {
     public interface Reply<T> {
       void reply(T reply);
     }
+
     /** The codec used by AnalyzerFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
@@ -3401,6 +3471,7 @@ public class GeneratedCameraXLibrary {
           channelReply -> callback.reply(null));
     }
   }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface ImageProxyHostApi {
 
@@ -3413,6 +3484,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
+
     /**
      * Sets up an instance of `ImageProxyHostApi` to handle messages through the `binaryMessenger`.
      */
@@ -3466,6 +3538,7 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
+
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
   public static class ImageProxyFlutterApi {
     private final @NonNull BinaryMessenger binaryMessenger;
@@ -3479,6 +3552,7 @@ public class GeneratedCameraXLibrary {
     public interface Reply<T> {
       void reply(T reply);
     }
+
     /** The codec used by ImageProxyFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
@@ -3498,6 +3572,7 @@ public class GeneratedCameraXLibrary {
           channelReply -> callback.reply(null));
     }
   }
+
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
   public static class PlaneProxyFlutterApi {
     private final @NonNull BinaryMessenger binaryMessenger;
@@ -3511,6 +3586,7 @@ public class GeneratedCameraXLibrary {
     public interface Reply<T> {
       void reply(T reply);
     }
+
     /** The codec used by PlaneProxyFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
@@ -3578,6 +3654,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return QualitySelectorHostApiCodec.INSTANCE;
     }
+
     /**
      * Sets up an instance of `QualitySelectorHostApi` to handle messages through the
      * `binaryMessenger`.
@@ -3645,6 +3722,7 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface FallbackStrategyHostApi {
 
@@ -3657,6 +3735,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
+
     /**
      * Sets up an instance of `FallbackStrategyHostApi` to handle messages through the
      * `binaryMessenger`.
@@ -3697,6 +3776,7 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface CameraControlHostApi {
 
@@ -3720,6 +3800,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
+
     /**
      * Sets up an instance of `CameraControlHostApi` to handle messages through the
      * `binaryMessenger`.
@@ -3900,6 +3981,7 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
+
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
   public static class CameraControlFlutterApi {
     private final @NonNull BinaryMessenger binaryMessenger;
@@ -3913,6 +3995,7 @@ public class GeneratedCameraXLibrary {
     public interface Reply<T> {
       void reply(T reply);
     }
+
     /** The codec used by CameraControlFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
@@ -3967,6 +4050,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return FocusMeteringActionHostApiCodec.INSTANCE;
     }
+
     /**
      * Sets up an instance of `FocusMeteringActionHostApi` to handle messages through the
      * `binaryMessenger`.
@@ -4006,6 +4090,7 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface FocusMeteringResultHostApi {
 
@@ -4016,6 +4101,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
+
     /**
      * Sets up an instance of `FocusMeteringResultHostApi` to handle messages through the
      * `binaryMessenger`.
@@ -4051,6 +4137,7 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
+
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
   public static class FocusMeteringResultFlutterApi {
     private final @NonNull BinaryMessenger binaryMessenger;
@@ -4064,6 +4151,7 @@ public class GeneratedCameraXLibrary {
     public interface Reply<T> {
       void reply(T reply);
     }
+
     /** The codec used by FocusMeteringResultFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
@@ -4080,6 +4168,7 @@ public class GeneratedCameraXLibrary {
           channelReply -> callback.reply(null));
     }
   }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface MeteringPointHostApi {
 
@@ -4097,6 +4186,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
+
     /**
      * Sets up an instance of `MeteringPointHostApi` to handle messages through the
      * `binaryMessenger`.
@@ -4232,6 +4322,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return CaptureRequestOptionsHostApiCodec.INSTANCE;
     }
+
     /**
      * Sets up an instance of `CaptureRequestOptionsHostApi` to handle messages through the
      * `binaryMessenger`.
@@ -4267,6 +4358,7 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface Camera2CameraControlHostApi {
 
@@ -4281,6 +4373,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
+
     /**
      * Sets up an instance of `Camera2CameraControlHostApi` to handle messages through the
      * `binaryMessenger`.
@@ -4393,6 +4486,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return ResolutionFilterHostApiCodec.INSTANCE;
     }
+
     /**
      * Sets up an instance of `ResolutionFilterHostApi` to handle messages through the
      * `binaryMessenger`.
@@ -4429,6 +4523,7 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface Camera2CameraInfoHostApi {
 
@@ -4448,6 +4543,7 @@ public class GeneratedCameraXLibrary {
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
+
     /**
      * Sets up an instance of `Camera2CameraInfoHostApi` to handle messages through the
      * `binaryMessenger`.
@@ -4565,6 +4661,7 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
+
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
   public static class Camera2CameraInfoFlutterApi {
     private final @NonNull BinaryMessenger binaryMessenger;
@@ -4578,6 +4675,7 @@ public class GeneratedCameraXLibrary {
     public interface Reply<T> {
       void reply(T reply);
     }
+
     /** The codec used by Camera2CameraInfoFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();

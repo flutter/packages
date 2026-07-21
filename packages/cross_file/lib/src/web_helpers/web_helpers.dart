@@ -8,16 +8,13 @@ import 'package:web/web.dart';
 import '../types/html.dart';
 
 /// Type definition for function that creates anchor elements
-typedef CreateAnchorElement =
-    HTMLAnchorElement Function(String href, String? suggestedName);
+typedef CreateAnchorElement = HTMLAnchorElement Function(String href, String? suggestedName);
 
 /// Create anchor element with download attribute
-HTMLAnchorElement _createAnchorElementImpl(
-  String href,
-  String? suggestedName,
-) => (document.createElement('a') as HTMLAnchorElement)
-  ..href = href
-  ..download = suggestedName ?? 'download';
+HTMLAnchorElement _createAnchorElementImpl(String href, String? suggestedName) =>
+    (document.createElement('a') as HTMLAnchorElement)
+      ..href = href
+      ..download = suggestedName ?? 'download';
 
 /// Function for creating anchor elements. Can be overridden for testing.
 @visibleForTesting
@@ -55,10 +52,7 @@ Future<void> saveFileAs(XFile file) async {
   final Element target = ensureInitialized('__x_file_dom_element');
 
   // Create <a> element.
-  final HTMLAnchorElement element = createAnchorElementFunction(
-    file.path,
-    file.name,
-  );
+  final HTMLAnchorElement element = createAnchorElementFunction(file.path, file.name);
 
   // Clear existing children before appending new one.
   while (target.children.length > 0) {

@@ -2,45 +2,46 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Foundation
+import Testing
 import WebKit
-import XCTest
 
 @testable import webview_flutter_wkwebview
 
-class NavigationActionProxyAPITests: XCTestCase {
-  @MainActor func testRequest() {
+@Suite struct NavigationActionProxyAPITests {
+  @MainActor @Test func request() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKNavigationAction(registrar)
 
     let instance: TestNavigationAction? = TestNavigationAction()
-    let value = try? api.pigeonDelegate.request(pigeonApi: api, pigeonInstance: instance!)
+    let value = try api.pigeonDelegate.request(pigeonApi: api, pigeonInstance: instance!)
 
-    XCTAssertEqual(value?.value, instance!.request)
+    #expect(value.value == instance!.request)
   }
 
-  @MainActor func testTargetFrame() {
+  @MainActor @Test func targetFrame() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKNavigationAction(registrar)
 
     let instance: TestNavigationAction? = TestNavigationAction()
-    let value = try? api.pigeonDelegate.targetFrame(pigeonApi: api, pigeonInstance: instance!)
+    let value = try api.pigeonDelegate.targetFrame(pigeonApi: api, pigeonInstance: instance!)
 
-    XCTAssertEqual(value, instance!.targetFrame)
+    #expect(value == instance!.targetFrame)
   }
 
-  @MainActor func testNavigationType() {
+  @MainActor @Test func navigationType() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKNavigationAction(registrar)
 
     let instance: TestNavigationAction? = TestNavigationAction()
-    let value = try? api.pigeonDelegate.navigationType(pigeonApi: api, pigeonInstance: instance!)
+    let value = try api.pigeonDelegate.navigationType(pigeonApi: api, pigeonInstance: instance!)
 
-    XCTAssertEqual(value, .formSubmitted)
+    #expect(value == .formSubmitted)
   }
 }
 
 class TestNavigationAction: WKNavigationAction {
-  let internalTargetFrame = TestFrameInfo()
+  let internalTargetFrame = TestFrameInfo.instance
 
   override var request: URLRequest {
     return URLRequest(url: URL(string: "http://google.com")!)

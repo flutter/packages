@@ -13,8 +13,7 @@ void main() {
   late Directory packagesDir;
 
   setUp(() {
-    (:packagesDir, processRunner: _, gitProcessRunner: _, gitDir: _) =
-        configureBaseCommandMocks();
+    (:packagesDir, processRunner: _, gitProcessRunner: _, gitDir: _) = configureBaseCommandMocks();
   });
 
   group('pluginSupportsPlatform', () {
@@ -85,99 +84,51 @@ void main() {
       );
 
       expect(
-        pluginSupportsPlatform(
-          platformAndroid,
-          plugin,
-          requiredMode: PlatformSupport.inline,
-        ),
+        pluginSupportsPlatform(platformAndroid, plugin, requiredMode: PlatformSupport.inline),
         isTrue,
       );
       expect(
-        pluginSupportsPlatform(
-          platformAndroid,
-          plugin,
-          requiredMode: PlatformSupport.federated,
-        ),
+        pluginSupportsPlatform(platformAndroid, plugin, requiredMode: PlatformSupport.federated),
         isFalse,
       );
       expect(
-        pluginSupportsPlatform(
-          platformIOS,
-          plugin,
-          requiredMode: PlatformSupport.inline,
-        ),
+        pluginSupportsPlatform(platformIOS, plugin, requiredMode: PlatformSupport.inline),
         isTrue,
       );
       expect(
-        pluginSupportsPlatform(
-          platformIOS,
-          plugin,
-          requiredMode: PlatformSupport.federated,
-        ),
+        pluginSupportsPlatform(platformIOS, plugin, requiredMode: PlatformSupport.federated),
         isFalse,
       );
       expect(
-        pluginSupportsPlatform(
-          platformLinux,
-          plugin,
-          requiredMode: PlatformSupport.inline,
-        ),
+        pluginSupportsPlatform(platformLinux, plugin, requiredMode: PlatformSupport.inline),
         isTrue,
       );
       expect(
-        pluginSupportsPlatform(
-          platformLinux,
-          plugin,
-          requiredMode: PlatformSupport.federated,
-        ),
+        pluginSupportsPlatform(platformLinux, plugin, requiredMode: PlatformSupport.federated),
         isFalse,
       );
       expect(
-        pluginSupportsPlatform(
-          platformMacOS,
-          plugin,
-          requiredMode: PlatformSupport.inline,
-        ),
+        pluginSupportsPlatform(platformMacOS, plugin, requiredMode: PlatformSupport.inline),
         isTrue,
       );
       expect(
-        pluginSupportsPlatform(
-          platformMacOS,
-          plugin,
-          requiredMode: PlatformSupport.federated,
-        ),
+        pluginSupportsPlatform(platformMacOS, plugin, requiredMode: PlatformSupport.federated),
         isFalse,
       );
       expect(
-        pluginSupportsPlatform(
-          platformWeb,
-          plugin,
-          requiredMode: PlatformSupport.inline,
-        ),
+        pluginSupportsPlatform(platformWeb, plugin, requiredMode: PlatformSupport.inline),
         isTrue,
       );
       expect(
-        pluginSupportsPlatform(
-          platformWeb,
-          plugin,
-          requiredMode: PlatformSupport.federated,
-        ),
+        pluginSupportsPlatform(platformWeb, plugin, requiredMode: PlatformSupport.federated),
         isFalse,
       );
       expect(
-        pluginSupportsPlatform(
-          platformWindows,
-          plugin,
-          requiredMode: PlatformSupport.inline,
-        ),
+        pluginSupportsPlatform(platformWindows, plugin, requiredMode: PlatformSupport.inline),
         isTrue,
       );
       expect(
-        pluginSupportsPlatform(
-          platformWindows,
-          plugin,
-          requiredMode: PlatformSupport.federated,
-        ),
+        pluginSupportsPlatform(platformWindows, plugin, requiredMode: PlatformSupport.federated),
         isFalse,
       );
     });
@@ -197,99 +148,51 @@ void main() {
       );
 
       expect(
-        pluginSupportsPlatform(
-          platformAndroid,
-          plugin,
-          requiredMode: PlatformSupport.federated,
-        ),
+        pluginSupportsPlatform(platformAndroid, plugin, requiredMode: PlatformSupport.federated),
         isTrue,
       );
       expect(
-        pluginSupportsPlatform(
-          platformAndroid,
-          plugin,
-          requiredMode: PlatformSupport.inline,
-        ),
+        pluginSupportsPlatform(platformAndroid, plugin, requiredMode: PlatformSupport.inline),
         isFalse,
       );
       expect(
-        pluginSupportsPlatform(
-          platformIOS,
-          plugin,
-          requiredMode: PlatformSupport.federated,
-        ),
+        pluginSupportsPlatform(platformIOS, plugin, requiredMode: PlatformSupport.federated),
         isTrue,
       );
       expect(
-        pluginSupportsPlatform(
-          platformIOS,
-          plugin,
-          requiredMode: PlatformSupport.inline,
-        ),
+        pluginSupportsPlatform(platformIOS, plugin, requiredMode: PlatformSupport.inline),
         isFalse,
       );
       expect(
-        pluginSupportsPlatform(
-          platformLinux,
-          plugin,
-          requiredMode: PlatformSupport.federated,
-        ),
+        pluginSupportsPlatform(platformLinux, plugin, requiredMode: PlatformSupport.federated),
         isTrue,
       );
       expect(
-        pluginSupportsPlatform(
-          platformLinux,
-          plugin,
-          requiredMode: PlatformSupport.inline,
-        ),
+        pluginSupportsPlatform(platformLinux, plugin, requiredMode: PlatformSupport.inline),
         isFalse,
       );
       expect(
-        pluginSupportsPlatform(
-          platformMacOS,
-          plugin,
-          requiredMode: PlatformSupport.federated,
-        ),
+        pluginSupportsPlatform(platformMacOS, plugin, requiredMode: PlatformSupport.federated),
         isTrue,
       );
       expect(
-        pluginSupportsPlatform(
-          platformMacOS,
-          plugin,
-          requiredMode: PlatformSupport.inline,
-        ),
+        pluginSupportsPlatform(platformMacOS, plugin, requiredMode: PlatformSupport.inline),
         isFalse,
       );
       expect(
-        pluginSupportsPlatform(
-          platformWeb,
-          plugin,
-          requiredMode: PlatformSupport.federated,
-        ),
+        pluginSupportsPlatform(platformWeb, plugin, requiredMode: PlatformSupport.federated),
         isTrue,
       );
       expect(
-        pluginSupportsPlatform(
-          platformWeb,
-          plugin,
-          requiredMode: PlatformSupport.inline,
-        ),
+        pluginSupportsPlatform(platformWeb, plugin, requiredMode: PlatformSupport.inline),
         isFalse,
       );
       expect(
-        pluginSupportsPlatform(
-          platformWindows,
-          plugin,
-          requiredMode: PlatformSupport.federated,
-        ),
+        pluginSupportsPlatform(platformWindows, plugin, requiredMode: PlatformSupport.federated),
         isTrue,
       );
       expect(
-        pluginSupportsPlatform(
-          platformWindows,
-          plugin,
-          requiredMode: PlatformSupport.inline,
-        ),
+        pluginSupportsPlatform(platformWindows, plugin, requiredMode: PlatformSupport.inline),
         isFalse,
       );
     });
@@ -329,18 +232,9 @@ void main() {
         'plugin',
         packagesDir,
         platformSupport: <String, PlatformDetails>{
-          platformLinux: const PlatformDetails(
-            PlatformSupport.inline,
-            hasDartCode: true,
-          ),
-          platformMacOS: const PlatformDetails(
-            PlatformSupport.inline,
-            hasDartCode: true,
-          ),
-          platformWindows: const PlatformDetails(
-            PlatformSupport.inline,
-            hasDartCode: true,
-          ),
+          platformLinux: const PlatformDetails(PlatformSupport.inline, hasDartCode: true),
+          platformMacOS: const PlatformDetails(PlatformSupport.inline, hasDartCode: true),
+          platformWindows: const PlatformDetails(PlatformSupport.inline, hasDartCode: true),
         },
       );
 

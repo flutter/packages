@@ -42,7 +42,7 @@ class PrimitiveTest {
     }
 
     verify { binaryMessenger.setMessageHandler(channelName, handlerSlot.captured) }
-    verify { api.anInt(input.toLong()) }
+    verify { api.anInt(input) }
   }
 
   @Test

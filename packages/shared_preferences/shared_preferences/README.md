@@ -58,16 +58,16 @@ To use the `Android SharedPreferences` backend, use the `SharedPreferencesAsyncA
 <?code-excerpt "readme_excerpts.dart (Android_Options1)"?>
 ```dart
 import 'package:shared_preferences_android/shared_preferences_android.dart';
+
 ```
 <?code-excerpt "readme_excerpts.dart (Android_Options2)"?>
 ```dart
-const SharedPreferencesAsyncAndroidOptions options =
-    SharedPreferencesAsyncAndroidOptions(
-      backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
-      originalSharedPreferencesOptions: AndroidSharedPreferencesStoreOptions(
-        fileName: 'the_name_of_a_file',
-      ),
-    );
+const SharedPreferencesAsyncAndroidOptions options = SharedPreferencesAsyncAndroidOptions(
+  backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
+  originalSharedPreferencesOptions: AndroidSharedPreferencesStoreOptions(
+    fileName: 'the_name_of_a_file',
+  ),
+);
 ```
 
 The [SharedPreferences] API uses the native [Android SharedPreferences](https://developer.android.com/reference/android/content/SharedPreferences) tool to store data.
@@ -138,8 +138,7 @@ await asyncPrefs.clear(allowList: <String>{'action', 'repeat'});
 ### SharedPreferencesWithCache
 <?code-excerpt "readme_excerpts.dart (WithCache)"?>
 ```dart
-final SharedPreferencesWithCache
-prefsWithCache = await SharedPreferencesWithCache.create(
+final SharedPreferencesWithCache prefsWithCache = await SharedPreferencesWithCache.create(
   cacheOptions: const SharedPreferencesWithCacheOptions(
     // When an allowlist is included, any keys that aren't included cannot be used.
     allowList: <String>{'repeat', 'action'},
@@ -172,6 +171,7 @@ This can be run on every launch without data loss as long as the `migrationCompl
 <?code-excerpt "main.dart (migrate)"?>
 ```dart
 import 'package:shared_preferences/util/legacy_to_async_migration_util.dart';
+
 // ···
     const sharedPreferencesOptions = SharedPreferencesOptions();
     final SharedPreferences prefs = await SharedPreferences.getInstance();

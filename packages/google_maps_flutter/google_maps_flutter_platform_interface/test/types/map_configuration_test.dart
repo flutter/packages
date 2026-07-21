@@ -18,10 +18,7 @@ void main() {
       compassEnabled: false,
       mapToolbarEnabled: false,
       cameraTargetBounds: CameraTargetBounds(
-        LatLngBounds(
-          northeast: const LatLng(30, 20),
-          southwest: const LatLng(10, 40),
-        ),
+        LatLngBounds(northeast: const LatLng(30, 20), southwest: const LatLng(10, 40)),
       ),
       mapType: MapType.normal,
       minMaxZoomPreference: const MinMaxZoomPreference(1.0, 10.0),
@@ -39,6 +36,9 @@ void main() {
       indoorViewEnabled: false,
       trafficEnabled: false,
       buildingsEnabled: false,
+      mapTypeControlEnabled: false,
+      fullscreenControlEnabled: false,
+      streetViewControlEnabled: false,
       style: 'diff base style',
     );
 
@@ -70,9 +70,7 @@ void main() {
     });
 
     test('handle webGestureHandling', () async {
-      const diff = MapConfiguration(
-        webGestureHandling: WebGestureHandling.none,
-      );
+      const diff = MapConfiguration(webGestureHandling: WebGestureHandling.none);
 
       const empty = MapConfiguration();
       final MapConfiguration updated = diffBase.applyDiff(diff);
@@ -100,10 +98,7 @@ void main() {
       // The diff from empty options should be the diff itself.
       expect(diff.diffFrom(empty), diff);
       // A diff applied to non-empty options should update that field.
-      expect(
-        updated.webCameraControlPosition,
-        WebCameraControlPosition.blockEndInlineEnd,
-      );
+      expect(updated.webCameraControlPosition, WebCameraControlPosition.blockEndInlineEnd);
       // The hash code should change.
       expect(empty.hashCode, isNot(diff.hashCode));
     });
@@ -158,10 +153,7 @@ void main() {
 
     test('handle cameraTargetBounds', () async {
       final newBounds = CameraTargetBounds(
-        LatLngBounds(
-          northeast: const LatLng(55, 15),
-          southwest: const LatLng(5, 15),
-        ),
+        LatLngBounds(northeast: const LatLng(55, 15), southwest: const LatLng(5, 15)),
       );
       final diff = MapConfiguration(cameraTargetBounds: newBounds);
 
@@ -501,6 +493,42 @@ void main() {
       // The hash code should change.
       expect(empty.hashCode, isNot(diff.hashCode));
     });
+
+    test('handle mapTypeControlEnabled', () async {
+      const diff = MapConfiguration(mapTypeControlEnabled: true);
+
+      const empty = MapConfiguration();
+      final MapConfiguration updated = diffBase.applyDiff(diff);
+
+      expect(empty.applyDiff(diff), diff);
+      expect(diff.diffFrom(empty), diff);
+      expect(updated.mapTypeControlEnabled, true);
+      expect(empty.hashCode, isNot(diff.hashCode));
+    });
+
+    test('handle fullscreenControlEnabled', () async {
+      const diff = MapConfiguration(fullscreenControlEnabled: true);
+
+      const empty = MapConfiguration();
+      final MapConfiguration updated = diffBase.applyDiff(diff);
+
+      expect(empty.applyDiff(diff), diff);
+      expect(diff.diffFrom(empty), diff);
+      expect(updated.fullscreenControlEnabled, true);
+      expect(empty.hashCode, isNot(diff.hashCode));
+    });
+
+    test('handle streetViewControlEnabled', () async {
+      const diff = MapConfiguration(streetViewControlEnabled: true);
+
+      const empty = MapConfiguration();
+      final MapConfiguration updated = diffBase.applyDiff(diff);
+
+      expect(empty.applyDiff(diff), diff);
+      expect(diff.diffFrom(empty), diff);
+      expect(updated.streetViewControlEnabled, true);
+      expect(empty.hashCode, isNot(diff.hashCode));
+    });
   });
 
   group('isEmpty', () {
@@ -538,10 +566,7 @@ void main() {
 
     test('is false with cameraTargetBounds', () async {
       final newBounds = CameraTargetBounds(
-        LatLngBounds(
-          northeast: const LatLng(55, 15),
-          southwest: const LatLng(5, 15),
-        ),
+        LatLngBounds(northeast: const LatLng(55, 15), southwest: const LatLng(5, 15)),
       );
       final diff = MapConfiguration(cameraTargetBounds: newBounds);
 
@@ -660,6 +685,24 @@ void main() {
 
     test('is false with colorScheme', () async {
       const diff = MapConfiguration(colorScheme: MapColorScheme.followSystem);
+
+      expect(diff.isEmpty, false);
+    });
+
+    test('is false with mapTypeControlEnabled', () async {
+      const diff = MapConfiguration(mapTypeControlEnabled: true);
+
+      expect(diff.isEmpty, false);
+    });
+
+    test('is false with fullscreenControlEnabled', () async {
+      const diff = MapConfiguration(fullscreenControlEnabled: true);
+
+      expect(diff.isEmpty, false);
+    });
+
+    test('is false with streetViewControlEnabled', () async {
+      const diff = MapConfiguration(streetViewControlEnabled: true);
 
       expect(diff.isEmpty, false);
     });

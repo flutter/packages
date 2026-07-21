@@ -13,15 +13,13 @@ import 'interactive_media_ads.g.dart' as ima;
 import 'platform_views_service_proxy.dart';
 
 /// Android implementation of [PlatformCompanionAdSlotCreationParams].
-final class AndroidCompanionAdSlotCreationParams
-    extends PlatformCompanionAdSlotCreationParams {
+final class AndroidCompanionAdSlotCreationParams extends PlatformCompanionAdSlotCreationParams {
   /// Constructs an [AndroidCompanionAdSlotCreationParams].
   const AndroidCompanionAdSlotCreationParams({
     required super.size,
     super.onClicked,
     @visibleForTesting PlatformViewsServiceProxy? platformViewsProxy,
-  }) : _platformViewsProxy =
-           platformViewsProxy ?? const PlatformViewsServiceProxy(),
+  }) : _platformViewsProxy = platformViewsProxy ?? const PlatformViewsServiceProxy(),
        super();
 
   /// Creates a  [AndroidCompanionAdSlotCreationParams] from an instance of
@@ -45,8 +43,7 @@ base class AndroidCompanionAdSlot extends PlatformCompanionAdSlot {
   /// Constructs an [AndroidCompanionAdSlot].
   AndroidCompanionAdSlot(super.params) : super.implementation();
 
-  late final AndroidCompanionAdSlotCreationParams _androidParams =
-      _initAndroidParams(params);
+  late final AndroidCompanionAdSlotCreationParams _androidParams = _initAndroidParams(params);
 
   // ViewGroup used to display the Ad.
   late final ima.ViewGroup _frameLayout = ima.FrameLayout();
@@ -80,23 +77,17 @@ base class AndroidCompanionAdSlot extends PlatformCompanionAdSlot {
   }
 
   Future<ima.CompanionAdSlot> _initCompanionAdSlot() async {
-    final ima.CompanionAdSlot adSlot = await ima.ImaSdkFactory.instance
-        .createCompanionAdSlot();
+    final ima.CompanionAdSlot adSlot = await ima.ImaSdkFactory.instance.createCompanionAdSlot();
 
     await Future.wait(<Future<void>>[
       adSlot.setContainer(_frameLayout),
       switch (params.size) {
-        final CompanionAdSlotSizeFixed size => adSlot.setSize(
-          size.width,
-          size.height,
-        ),
+        final CompanionAdSlotSizeFixed size => adSlot.setSize(size.width, size.height),
         CompanionAdSlotSizeFluid() => adSlot.setFluidSize(),
       },
       if (params.onClicked != null)
         adSlot.addClickListener(
-          _createAdSlotClickListener(
-            WeakReference<AndroidCompanionAdSlot>(this),
-          ),
+          _createAdSlotClickListener(WeakReference<AndroidCompanionAdSlot>(this)),
         ),
     ]);
 

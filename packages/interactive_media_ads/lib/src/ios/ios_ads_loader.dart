@@ -52,8 +52,7 @@ base class IOSAdsLoader extends PlatformAdsLoader {
     WeakReference<IOSAdsLoader>(this),
   );
 
-  late final IOSAdsLoaderCreationParams _iosParams =
-      params is IOSAdsLoaderCreationParams
+  late final IOSAdsLoaderCreationParams _iosParams = params is IOSAdsLoaderCreationParams
       ? params as IOSAdsLoaderCreationParams
       : IOSAdsLoaderCreationParams.fromPlatformAdsLoaderCreationParams(params);
 
@@ -66,10 +65,8 @@ base class IOSAdsLoader extends PlatformAdsLoader {
   Future<void> requestAds(PlatformAdsRequest request) {
     final IMAAdDisplayContainer adDisplayContainer =
         (_iosParams.container as IOSAdDisplayContainer).adDisplayContainer!;
-    final IMAContentPlayhead? contentProgressProvider =
-        request.contentProgressProvider != null
-        ? (request.contentProgressProvider! as IOSContentProgressProvider)
-              .contentPlayhead
+    final IMAContentPlayhead? contentProgressProvider = request.contentProgressProvider != null
+        ? (request.contentProgressProvider! as IOSContentProgressProvider).contentPlayhead
         : null;
 
     final IMAAdsRequest adsRequest = switch (request) {
@@ -100,16 +97,12 @@ base class IOSAdsLoader extends PlatformAdsLoader {
         adsRequest.setContentKeywords(contentKeywords),
       if (request.contentTitle case final String contentTitle)
         adsRequest.setContentTitle(contentTitle),
-      if (request.liveStreamPrefetchMaxWaitTime
-          case final Duration liveStreamPrefetchMaxWaitTime)
+      if (request.liveStreamPrefetchMaxWaitTime case final Duration liveStreamPrefetchMaxWaitTime)
         adsRequest.setLiveStreamPrefetchSeconds(
-          liveStreamPrefetchMaxWaitTime.inMilliseconds /
-              Duration.millisecondsPerSecond,
+          liveStreamPrefetchMaxWaitTime.inMilliseconds / Duration.millisecondsPerSecond,
         ),
       if (request.vastLoadTimeout case final Duration vastLoadTimeout)
-        adsRequest.setVastLoadTimeout(
-          vastLoadTimeout.inMilliseconds.toDouble(),
-        ),
+        adsRequest.setVastLoadTimeout(vastLoadTimeout.inMilliseconds.toDouble()),
       _adsLoader.requestAds(adsRequest),
     ]);
   }
@@ -121,14 +114,12 @@ base class IOSAdsLoader extends PlatformAdsLoader {
     WeakReference<IOSAdsLoader> interfaceLoader,
   ) {
     return IMAAdsLoaderDelegate(
-      adLoaderLoadedWith: (_, __, IMAAdsLoadedData adsLoadedData) {
+      adLoaderLoadedWith: (_, _, IMAAdsLoadedData adsLoadedData) {
         interfaceLoader.target?._iosParams.onAdsLoaded(
-          PlatformOnAdsLoadedData(
-            manager: IOSAdsManager(adsLoadedData.adsManager!),
-          ),
+          PlatformOnAdsLoadedData(manager: IOSAdsManager(adsLoadedData.adsManager!)),
         );
       },
-      adsLoaderFailedWithErrorData: (_, __, IMAAdLoadingErrorData adErrorData) {
+      adsLoaderFailedWithErrorData: (_, _, IMAAdLoadingErrorData adErrorData) {
         interfaceLoader.target?._iosParams.onAdsLoadError(
           AdsLoadErrorData(
             error: AdError(
@@ -148,7 +139,6 @@ base class IOSAdsLoader extends PlatformAdsLoader {
       _ => IOSImaSettings(_iosParams.settings.params),
     };
 
-    return IMAAdsLoader(settings: settings.nativeSettings)
-      ..setDelegate(_delegate);
+    return IMAAdsLoader(settings: settings.nativeSettings)..setDelegate(_delegate);
   }
 }

@@ -19,15 +19,12 @@ void main() {
         },
       );
 
-      test(
-        'scaled image height and width are same if max width and max height are null',
-        () {
-          expect(
-            calculateSizeOfDownScaledImage(const Size(500, 300), null, null),
-            const Size(500, 300),
-          );
-        },
-      );
+      test('scaled image height and width are same if max width and max height are null', () {
+        expect(
+          calculateSizeOfDownScaledImage(const Size(500, 300), null, null),
+          const Size(500, 300),
+        );
+      });
 
       test('image size is scaled when maxWidth is set', () {
         const imageSize = Size(500, 300);
@@ -92,13 +89,10 @@ void main() {
         expect(isImageQualityValid(100), true);
       });
 
-      test(
-        'image quality is not valid when imageQuality is less than 0 or greater than 100',
-        () {
-          expect(isImageQualityValid(-1), false);
-          expect(isImageQualityValid(101), false);
-        },
-      );
+      test('image quality is not valid when imageQuality is less than 0 or greater than 100', () {
+        expect(isImageQualityValid(-1), false);
+        expect(isImageQualityValid(101), false);
+      });
     });
   });
 }

@@ -26,12 +26,10 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: subtype_of_sealed_class
 
 class _FakeLostData_0 extends _i1.SmartFake implements _i2.LostData {
-  _FakeLostData_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakeLostData_0(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
 }
 
-class _FakeLostDataResponse_1 extends _i1.SmartFake
-    implements _i2.LostDataResponse {
+class _FakeLostDataResponse_1 extends _i1.SmartFake implements _i2.LostDataResponse {
   _FakeLostDataResponse_1(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -39,8 +37,7 @@ class _FakeLostDataResponse_1 extends _i1.SmartFake
 /// A class which mocks [ImagePickerPlatform].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockImagePickerPlatform extends _i1.Mock
-    implements _i3.ImagePickerPlatform {
+class MockImagePickerPlatform extends _i1.Mock implements _i3.ImagePickerPlatform {
   MockImagePickerPlatform() {
     _i1.throwOnMissingStub(this);
   }
@@ -172,10 +169,7 @@ class MockImagePickerPlatform extends _i1.Mock
       (super.noSuchMethod(
             Invocation.method(#getLostData, []),
             returnValue: _i4.Future<_i2.LostDataResponse>.value(
-              _FakeLostDataResponse_1(
-                this,
-                Invocation.method(#getLostData, []),
-              ),
+              _FakeLostDataResponse_1(this, Invocation.method(#getLostData, [])),
             ),
           )
           as _i4.Future<_i2.LostDataResponse>);
@@ -186,10 +180,7 @@ class MockImagePickerPlatform extends _i1.Mock
     _i2.ImagePickerOptions? options = const _i2.ImagePickerOptions(),
   }) =>
       (super.noSuchMethod(
-            Invocation.method(#getImageFromSource, [], {
-              #source: source,
-              #options: options,
-            }),
+            Invocation.method(#getImageFromSource, [], {#source: source, #options: options}),
             returnValue: _i4.Future<_i5.XFile?>.value(),
           )
           as _i4.Future<_i5.XFile?>);
@@ -199,9 +190,7 @@ class MockImagePickerPlatform extends _i1.Mock
     _i2.MultiImagePickerOptions? options = const _i2.MultiImagePickerOptions(),
   }) =>
       (super.noSuchMethod(
-            Invocation.method(#getMultiImageWithOptions, [], {
-              #options: options,
-            }),
+            Invocation.method(#getMultiImageWithOptions, [], {#options: options}),
             returnValue: _i4.Future<List<_i5.XFile>>.value(<_i5.XFile>[]),
           )
           as _i4.Future<List<_i5.XFile>>);
@@ -211,18 +200,13 @@ class MockImagePickerPlatform extends _i1.Mock
     _i2.MultiVideoPickerOptions? options = const _i2.MultiVideoPickerOptions(),
   }) =>
       (super.noSuchMethod(
-            Invocation.method(#getMultiVideoWithOptions, [], {
-              #options: options,
-            }),
+            Invocation.method(#getMultiVideoWithOptions, [], {#options: options}),
             returnValue: _i4.Future<List<_i5.XFile>>.value(<_i5.XFile>[]),
           )
           as _i4.Future<List<_i5.XFile>>);
 
   @override
   bool supportsImageSource(_i2.ImageSource? source) =>
-      (super.noSuchMethod(
-            Invocation.method(#supportsImageSource, [source]),
-            returnValue: false,
-          )
+      (super.noSuchMethod(Invocation.method(#supportsImageSource, [source]), returnValue: false)
           as bool);
 }

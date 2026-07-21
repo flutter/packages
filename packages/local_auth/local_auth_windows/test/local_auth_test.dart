@@ -183,19 +183,13 @@ void main() {
       expect(result, false);
     });
 
-    test(
-      'getEnrolledBiometrics returns expected values when supported',
-      () async {
-        api.supportedReturnValue = true;
+    test('getEnrolledBiometrics returns expected values when supported', () async {
+      api.supportedReturnValue = true;
 
-        final List<BiometricType> result = await plugin.getEnrolledBiometrics();
+      final List<BiometricType> result = await plugin.getEnrolledBiometrics();
 
-        expect(result, <BiometricType>[
-          BiometricType.weak,
-          BiometricType.strong,
-        ]);
-      },
-    );
+      expect(result, <BiometricType>[BiometricType.weak, BiometricType.strong]);
+    });
 
     test('getEnrolledBiometrics returns nothing when unsupported', () async {
       api.supportedReturnValue = false;

@@ -28,16 +28,8 @@ void main() {
         textDirection: TextDirection.ltr,
         child: Column(
           children: <Widget>[
-            GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: LatLng(43.362, -5.849),
-              ),
-            ),
-            GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: LatLng(47.649, -122.350),
-              ),
-            ),
+            GoogleMap(initialCameraPosition: CameraPosition(target: LatLng(43.362, -5.849))),
+            GoogleMap(initialCameraPosition: CameraPosition(target: LatLng(47.649, -122.350))),
           ],
         ),
       ),
@@ -49,13 +41,9 @@ void main() {
     expect(platform.createdIds[1], 1);
   });
 
-  testWidgets('Calls platform.dispose when GoogleMap is disposed of', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('Calls platform.dispose when GoogleMap is disposed of', (WidgetTester tester) async {
     await tester.pumpWidget(
-      const GoogleMap(
-        initialCameraPosition: CameraPosition(target: LatLng(43.3608, -5.8702)),
-      ),
+      const GoogleMap(initialCameraPosition: CameraPosition(target: LatLng(43.3608, -5.8702))),
     );
 
     // Now dispose of the map...

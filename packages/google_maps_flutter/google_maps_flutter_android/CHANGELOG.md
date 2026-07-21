@@ -1,3 +1,32 @@
+## 2.19.12
+
+* Bumps the androidx group across 10 directories with 1 update.
+
+## 2.19.11
+
+* Migrates to Built-in Kotlin to support AGP 9.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
+## 2.19.10
+
+* Updates README to include setup information.
+
+## 2.19.9
+
+* Adds attribution ID for Google Maps SDK usage.
+
+## 2.19.8
+
+* Updates internal implementation to use Kotlin Pigeon.
+
+## 2.19.7
+
+* Fixes warnings in Java code.
+
+## 2.19.6
+
+* Fixes the onTap callback for clustered pin info window taps.
+
 ## 2.19.5
 
 * Fixes a crash when using the legacy map renderer by adding the `org.apache.http.legacy` library.

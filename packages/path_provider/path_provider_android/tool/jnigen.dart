@@ -16,16 +16,8 @@ void main() {
           structure: OutputStructure.singleFile,
         ),
       ),
-      androidSdkConfig: AndroidSdkConfig(
-        addGradleDeps: true,
-        androidExample: 'example/',
-      ),
-      classes: <String>[
-        'android.content.Context',
-        'io.flutter.util.PathUtils',
-        'java.io.File',
-        'android.os.Environment',
-      ],
+      androidSdkConfig: AndroidSdkConfig(addGradleDeps: true, androidExample: 'example/'),
+      classes: <String>['android.content.Context', 'java.io.File', 'android.os.Environment'],
     ),
   );
 }
