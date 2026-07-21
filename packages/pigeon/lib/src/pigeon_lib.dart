@@ -452,16 +452,22 @@ class Pigeon {
   /// [AnalysisContextCollection].
   ParseResults parseFile(String inputPath, {String? sdkPath}) {
     final String normalizedInputPath = path.absolute(path.normalize(inputPath));
-    final _CollectedInput input = _collectInputAndParts(normalizedInputPath);
-    if (input.missingPath != null) {
+    final ({_CollectedInput? input, String? missingPath}) collected = _collectInputAndParts(
+      normalizedInputPath,
+    );
+    if (collected.missingPath != null) {
       return ParseResults(
         root: Root.makeEmpty(),
         errors: <Error>[
-          Error(message: 'File ${input.missingPath} does not exist', filename: input.missingPath),
+          Error(
+            message: 'File ${collected.missingPath} does not exist',
+            filename: collected.missingPath,
+          ),
         ],
         pigeonOptions: null,
       );
     }
+    final _CollectedInput input = collected.input!;
 
     final collection = AnalysisContextCollection(includedPaths: input.paths, sdkPath: sdkPath);
 
@@ -592,7 +598,7 @@ class Pigeon {
     return _MergedSource(content: output.toString(), segments: segments);
   }
 
-  _CollectedInput _collectInputAndParts(String inputPath) {
+  ({_CollectedInput? input, String? missingPath}) _collectInputAndParts(String inputPath) {
     final paths = <String>[];
     final contents = <String, String>{};
     final units = <String, dart_ast.CompilationUnit>{};
@@ -606,12 +612,7 @@ class Pigeon {
       seen.add(currentPath);
       final file = File(currentPath);
       if (!file.existsSync()) {
-        return _CollectedInput(
-          paths: paths,
-          contents: contents,
-          units: units,
-          missingPath: currentPath,
-        );
+        return (input: null, missingPath: currentPath);
       }
       final String content = file.readAsStringSync();
       final dart_ast.CompilationUnit unit = parseString(
@@ -625,7 +626,10 @@ class Pigeon {
       final List<String> partPaths = _getPartPaths(unit.directives, sourcePath: currentPath);
       pending.addAll(partPaths);
     }
-    return _CollectedInput(paths: paths, contents: contents, units: units, missingPath: null);
+    return (
+      input: _CollectedInput(paths: paths, contents: contents, units: units),
+      missingPath: null,
+    );
   }
 
   /// String that describes how the tool is used.
@@ -943,17 +947,11 @@ class ParseResults {
 }
 
 class _CollectedInput {
-  _CollectedInput({
-    required this.paths,
-    required this.contents,
-    required this.units,
-    required this.missingPath,
-  });
+  _CollectedInput({required this.paths, required this.contents, required this.units});
 
   final List<String> paths;
   final Map<String, String> contents;
   final Map<String, dart_ast.CompilationUnit> units;
-  final String? missingPath;
 }
 
 /// The concatenation of an input file and its part files, along with the
