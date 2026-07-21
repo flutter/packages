@@ -1,3 +1,7 @@
+## 1.3.0
+
+* Adds support for iOS SF symbols icons for quick actions.
+
 ## 1.2.4
 
 * Adds support for UIScene lifecycle.

@@ -13,7 +13,13 @@ import 'package:pigeon/pigeon.dart';
 )
 /// Home screen quick-action shortcut item.
 class ShortcutItemMessage {
-  ShortcutItemMessage(this.type, this.localizedTitle, this.localizedSubtitle, this.icon);
+  ShortcutItemMessage(
+    this.type,
+    this.localizedTitle,
+    this.localizedSubtitle,
+    this.icon,
+    this.iosSystemIcon,
+  );
 
   /// The identifier of this item; should be unique within the app.
   String type;
@@ -26,6 +32,9 @@ class ShortcutItemMessage {
 
   /// Name of native resource to be displayed as the icon for this item.
   String? icon;
+
+  /// The name of the SF Symbol to be displayed as the icon for this item on iOS.
+  String? iosSystemIcon;
 }
 
 @HostApi()
