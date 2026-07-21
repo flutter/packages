@@ -1,6 +1,14 @@
-## 0.7.4+2
+## 0.7.4+3
 
 * Fix NullPointerException when disposing camera during active video recording.
+
+## 0.7.4+2
+
+* Bumps cameraxVersion from 1.6.0 to 1.6.1.
+* Updates androidx.camera:camera-core from 1.6.0 to 1.6.1.
+* Updates androidx.camera:camera-camera2 from 1.6.0 to 1.6.1.
+* Updates androidx.camera:camera-lifecycle from 1.6.0 to 1.6.1.
+* Updates androidx.camera:camera-video from 1.6.0 to 1.6.1.
 
 ## 0.7.4+1
 
