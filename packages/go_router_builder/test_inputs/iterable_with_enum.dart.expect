@@ -1,7 +1,8 @@
 RouteBase get $iterableWithEnumRoute => GoRouteData.$route(
-      path: '/iterable-with-enum',
-      factory: $IterableWithEnumRoute._fromState,
-    );
+  path: '/iterable-with-enum',
+  hasOverriddenOnExit: false,
+  factory: $IterableWithEnumRoute._fromState,
+);
 
 mixin $IterableWithEnumRoute on GoRouteData {
   static IterableWithEnumRoute _fromState(GoRouterState state) =>
@@ -15,14 +16,14 @@ mixin $IterableWithEnumRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location(
-        '/iterable-with-enum',
-        queryParams: {
-          if (_self.param != null)
-            'param': _self.param
-                ?.map((e) => _$EnumOnlyUsedInIterableEnumMap[e])
-                .toList(),
-        },
-      );
+    '/iterable-with-enum',
+    queryParams: {
+      if (_self.param != null)
+        'param': _self.param
+            ?.map((e) => _$EnumOnlyUsedInIterableEnumMap[e])
+            .toList(),
+    },
+  );
 
   @override
   void go(BuildContext context) => context.go(location);

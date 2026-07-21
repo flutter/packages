@@ -1,16 +1,15 @@
 RouteBase get $namedRoute => GoRouteData.$route(
-      path: '/named-route',
-      name: 'namedRoute',
-      factory: $NamedRoute._fromState,
-    );
+  path: '/named-route',
+  name: 'namedRoute',
+  hasOverriddenOnExit: false,
+  factory: $NamedRoute._fromState,
+);
 
 mixin $NamedRoute on GoRouteData {
   static NamedRoute _fromState(GoRouterState state) => NamedRoute();
 
   @override
-  String get location => GoRouteData.$location(
-        '/named-route',
-      );
+  String get location => GoRouteData.$location('/named-route');
 
   @override
   void go(BuildContext context) => context.go(location);

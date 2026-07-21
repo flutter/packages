@@ -1,19 +1,19 @@
 RouteBase get $myRoute => GoRouteData.$route(
-      path: '/product/:id',
-      factory: $MyRoute._fromState,
-    );
+  path: '/product/:id',
+  hasOverriddenOnExit: false,
+  factory: $MyRoute._fromState,
+);
 
 mixin $MyRoute on GoRouteData {
-  static MyRoute _fromState(GoRouterState state) => MyRoute(
-        int.parse(state.pathParameters['id']!),
-      );
+  static MyRoute _fromState(GoRouterState state) =>
+      MyRoute(int.parse(state.pathParameters['id']!));
 
   MyRoute get _self => this as MyRoute;
 
   @override
   String get location => GoRouteData.$location(
-        '/product/${Uri.encodeComponent(_self.id.toString())}',
-      );
+    '/product/${Uri.encodeComponent(_self.id.toString())}',
+  );
 
   @override
   void go(BuildContext context) => context.go(location);

@@ -1,20 +1,17 @@
 RouteBase get $requiredExtraValueRoute => GoRouteData.$route(
-      path: '/default-value-route',
-      factory: $RequiredExtraValueRoute._fromState,
-    );
+  path: '/default-value-route',
+  hasOverriddenOnExit: false,
+  factory: $RequiredExtraValueRoute._fromState,
+);
 
 mixin $RequiredExtraValueRoute on GoRouteData {
   static RequiredExtraValueRoute _fromState(GoRouterState state) =>
-      RequiredExtraValueRoute(
-        $extra: state.extra as int,
-      );
+      RequiredExtraValueRoute($extra: state.extra as int);
 
   RequiredExtraValueRoute get _self => this as RequiredExtraValueRoute;
 
   @override
-  String get location => GoRouteData.$location(
-        '/default-value-route',
-      );
+  String get location => GoRouteData.$location('/default-value-route');
 
   @override
   void go(BuildContext context) => context.go(location, extra: _self.$extra);

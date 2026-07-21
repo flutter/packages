@@ -1,3 +1,11 @@
+## 4.3.2
+
+* Fixes generated routes so `onExit` is only enabled when the route data class overrides it,
+  preventing spurious Navigator assertion crashes during rapid back navigation
+  (flutter/flutter#189503).
+* Bumps the documented and example minimum `go_router` constraint to `^17.3.0`
+  to require the `hasOverriddenOnExit` route helper.
+
 ## 4.3.1
 
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.

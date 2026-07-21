@@ -1,0 +1,110 @@
+RouteBase get $homeRoute => GoRouteData.$route(
+  path: '/',
+  hasOverriddenOnExit: false,
+  factory: $HomeRoute._fromState,
+  routes: [
+    GoRouteData.$route(
+      path: 'confirm-exit',
+      hasOverriddenOnExit: true,
+      factory: $ConfirmExitRoute._fromState,
+    ),
+    GoRouteData.$route(
+      path: 'inherited-exit',
+      hasOverriddenOnExit: true,
+      factory: $InheritedExitRoute._fromState,
+    ),
+    RelativeGoRouteData.$route(
+      path: 'relative-exit',
+      hasOverriddenOnExit: true,
+      factory: $RelativeExitRoute._fromState,
+    ),
+  ],
+);
+
+mixin $HomeRoute on GoRouteData {
+  static HomeRoute _fromState(GoRouterState state) => const HomeRoute();
+
+  @override
+  String get location => GoRouteData.$location('/');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $ConfirmExitRoute on GoRouteData {
+  static ConfirmExitRoute _fromState(GoRouterState state) =>
+      const ConfirmExitRoute();
+
+  @override
+  String get location => GoRouteData.$location('/confirm-exit');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $InheritedExitRoute on GoRouteData {
+  static InheritedExitRoute _fromState(GoRouterState state) =>
+      const InheritedExitRoute();
+
+  @override
+  String get location => GoRouteData.$location('/inherited-exit');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $RelativeExitRoute on RelativeGoRouteData {
+  static RelativeExitRoute _fromState(GoRouterState state) =>
+      const RelativeExitRoute();
+
+  @override
+  String get subLocation => RelativeGoRouteData.$location('relative-exit');
+
+  @override
+  String get relativeLocation => './$subLocation';
+
+  @override
+  void goRelative(BuildContext context) => context.go(relativeLocation);
+
+  @override
+  Future<T?> pushRelative<T>(BuildContext context) =>
+      context.push<T>(relativeLocation);
+
+  @override
+  void pushReplacementRelative(BuildContext context) =>
+      context.pushReplacement(relativeLocation);
+
+  @override
+  void replaceRelative(BuildContext context) =>
+      context.replace(relativeLocation);
+}

@@ -8,12 +8,12 @@ To use `go_router_builder`, you need to have the following dependencies in
 ```yaml
 dependencies:
   # ...along with your other dependencies
-  go_router: ^16.2.0
+  go_router: ^17.3.0
 
 dev_dependencies:
   # ...along with your other dev-dependencies
   build_runner: ^2.6.0
-  go_router_builder: ^4.0.1
+  go_router_builder: ^4.3.2
 ```
 
 ### Source code

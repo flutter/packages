@@ -1,27 +1,28 @@
 RouteBase get $route1 => GoRouteData.$route(
-      path: 'route-1',
-      factory: $Route1._fromState,
+  path: 'route-1',
+  hasOverriddenOnExit: false,
+  factory: $Route1._fromState,
+  routes: [
+    RelativeGoRouteData.$route(
+      path: 'relative-route',
+      hasOverriddenOnExit: false,
+      factory: $RelativeRoute._fromState,
       routes: [
         RelativeGoRouteData.$route(
-          path: 'relative-route',
-          factory: $RelativeRoute._fromState,
-          routes: [
-            RelativeGoRouteData.$route(
-              path: 'inner-relative-route',
-              factory: $InnerRelativeRoute._fromState,
-            ),
-          ],
+          path: 'inner-relative-route',
+          hasOverriddenOnExit: false,
+          factory: $InnerRelativeRoute._fromState,
         ),
       ],
-    );
+    ),
+  ],
+);
 
 mixin $Route1 on GoRouteData {
   static Route1 _fromState(GoRouterState state) => const Route1();
 
   @override
-  String get location => GoRouteData.$location(
-        'route-1',
-      );
+  String get location => GoRouteData.$location('route-1');
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -41,9 +42,7 @@ mixin $RelativeRoute on RelativeGoRouteData {
   static RelativeRoute _fromState(GoRouterState state) => const RelativeRoute();
 
   @override
-  String get subLocation => RelativeGoRouteData.$location(
-        'relative-route',
-      );
+  String get subLocation => RelativeGoRouteData.$location('relative-route');
 
   @override
   String get relativeLocation => './$subLocation';
@@ -69,9 +68,8 @@ mixin $InnerRelativeRoute on RelativeGoRouteData {
       const InnerRelativeRoute();
 
   @override
-  String get subLocation => RelativeGoRouteData.$location(
-        'inner-relative-route',
-      );
+  String get subLocation =>
+      RelativeGoRouteData.$location('inner-relative-route');
 
   @override
   String get relativeLocation => './$subLocation';
@@ -93,29 +91,30 @@ mixin $InnerRelativeRoute on RelativeGoRouteData {
 }
 
 RouteBase get $route2 => GoRouteData.$route(
-      path: 'route-2',
-      factory: $Route2._fromState,
+  path: 'route-2',
+  hasOverriddenOnExit: false,
+  factory: $Route2._fromState,
+  routes: [
+    RelativeGoRouteData.$route(
+      path: 'relative-route',
+      hasOverriddenOnExit: false,
+      factory: $RelativeRoute._fromState,
       routes: [
         RelativeGoRouteData.$route(
-          path: 'relative-route',
-          factory: $RelativeRoute._fromState,
-          routes: [
-            RelativeGoRouteData.$route(
-              path: 'inner-relative-route',
-              factory: $InnerRelativeRoute._fromState,
-            ),
-          ],
+          path: 'inner-relative-route',
+          hasOverriddenOnExit: false,
+          factory: $InnerRelativeRoute._fromState,
         ),
       ],
-    );
+    ),
+  ],
+);
 
 mixin $Route2 on GoRouteData {
   static Route2 _fromState(GoRouterState state) => const Route2();
 
   @override
-  String get location => GoRouteData.$location(
-        'route-2',
-      );
+  String get location => GoRouteData.$location('route-2');
 
   @override
   void go(BuildContext context) => context.go(location);
