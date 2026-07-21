@@ -18,13 +18,13 @@ import 'package:pigeon/pigeon.dart';
 class AuthStrings {
   /// Constructs a new instance.
   const AuthStrings({
-    required this.reason,
+    this.reason,
     required this.signInHint,
     required this.cancelButton,
     required this.signInTitle,
   });
 
-  final String reason;
+  final String? reason;
   final String signInHint;
   final String cancelButton;
   final String signInTitle;

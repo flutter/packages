@@ -28,7 +28,7 @@ class LocalAuthentication {
   ///
   /// [localizedReason] is the message to show to user while prompting them
   /// for authentication. This is typically along the lines of: 'Authenticate
-  /// to access MyApp.'. This must not be empty.
+  /// to access MyApp.'.
   ///
   /// Provide [authMessages] if you want to customize messages in the dialogs.
   ///
@@ -46,7 +46,7 @@ class LocalAuthentication {
   /// retry the authentication on foregrounding instead of failing with an error
   /// on backgrounding.
   Future<bool> authenticate({
-    required String localizedReason,
+    String? localizedReason,
     Iterable<AuthMessages> authMessages = const <AuthMessages>[
       IOSAuthMessages(),
       AndroidAuthMessages(),
@@ -97,4 +97,8 @@ class LocalAuthentication {
   /// permissions to use them.
   Future<List<BiometricType>> getAvailableBiometrics() =>
       LocalAuthPlatform.instance.getEnrolledBiometrics();
+
+  /// Returns true if the current platform implementation requires
+  /// a localized reason for authentication.
+  bool requiresLocalizedReason() => LocalAuthPlatform.instance.requiresLocalizedReason();
 }

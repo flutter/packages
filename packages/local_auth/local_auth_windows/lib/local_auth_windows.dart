@@ -26,17 +26,17 @@ class LocalAuthWindows extends LocalAuthPlatform {
 
   @override
   Future<bool> authenticate({
-    required String localizedReason,
+    String? localizedReason,
     required Iterable<AuthMessages> authMessages,
     AuthenticationOptions options = const AuthenticationOptions(),
   }) async {
-    assert(localizedReason.isNotEmpty);
+    assert(!requiresLocalizedReason() || (localizedReason != null && localizedReason.isNotEmpty));
 
     if (options.biometricOnly) {
       throw UnsupportedError("Windows doesn't support the biometricOnly parameter.");
     }
 
-    return switch (await _api.authenticate(localizedReason)) {
+    return switch (await _api.authenticate(localizedReason!)) {
       AuthResult.success => true,
       AuthResult.failure => false,
       AuthResult.noHardware => throw const LocalAuthException(
@@ -85,4 +85,8 @@ class LocalAuthWindows extends LocalAuthPlatform {
   /// Always returns false as this method is not supported on Windows.
   @override
   Future<bool> stopAuthentication() async => false;
+
+  /// Always returns true as Windows requires a localized reason for authentication.
+  @override
+  bool requiresLocalizedReason() => true;
 }

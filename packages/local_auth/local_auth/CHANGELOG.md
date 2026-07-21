@@ -1,3 +1,9 @@
+## 3.1.0
+
+* Adds `requiresLocalizedReason` to determine if the current platform implementation
+  requires a localized reason for authentication.
+* Makes `localizedReason` parameter optional in `authenticate`.
+
 ## 3.0.2
 
 * Clarifies the `getAvailableBiometrics` documentation regarding iOS permission requirements.

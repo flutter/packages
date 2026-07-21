@@ -35,16 +35,16 @@ class LocalAuthDarwin extends LocalAuthPlatform {
 
   @override
   Future<bool> authenticate({
-    required String localizedReason,
+    String? localizedReason,
     required Iterable<AuthMessages> authMessages,
     AuthenticationOptions options = const AuthenticationOptions(),
   }) async {
-    assert(localizedReason.isNotEmpty);
+    assert(!requiresLocalizedReason() || (localizedReason != null && localizedReason.isNotEmpty));
     final AuthResultDetails resultDetails = await _api.authenticate(
       AuthOptions(biometricOnly: options.biometricOnly, sticky: options.stickyAuth),
       _useMacOSAuthMessages
-          ? _pigeonStringsFromMacOSAuthMessages(localizedReason, authMessages)
-          : _pigeonStringsFromiOSAuthMessages(localizedReason, authMessages),
+          ? _pigeonStringsFromMacOSAuthMessages(localizedReason!, authMessages)
+          : _pigeonStringsFromiOSAuthMessages(localizedReason!, authMessages),
     );
     LocalAuthExceptionCode code;
     switch (resultDetails.result) {
@@ -115,6 +115,10 @@ class LocalAuthDarwin extends LocalAuthPlatform {
   /// Always returns false as this method is not supported on iOS or macOS.
   @override
   Future<bool> stopAuthentication() async => false;
+
+  /// Always returns true as iOS and macOS require a localized reason for authentication.
+  @override
+  bool requiresLocalizedReason() => true;
 
   AuthStrings _pigeonStringsFromiOSAuthMessages(
     String localizedReason,
