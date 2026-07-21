@@ -2,7 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import XCTest
+import Foundation
+import Testing
 
 @testable import webview_flutter_wkwebview
 
@@ -10,16 +11,16 @@ import XCTest
   import UIKit
 #endif
 
-class PlatformViewImplTests: XCTestCase {
+@Suite @MainActor struct PlatformViewImplTests {
   #if os(iOS)
-    func testPlatformViewImplStoresViewWithAWeakReference() {
+    @Test func platformViewImplStoresViewWithAWeakReference() throws {
       var view: UIView? = UIView()
       let platformView = PlatformViewImpl(uiView: view!)
 
-      XCTAssertNotNil(platformView.uiView)
+      #expect(platformView.uiView != nil)
 
       view = nil
-      XCTAssertNil(platformView.uiView)
+      #expect(platformView.uiView == nil)
     }
   #endif
 }

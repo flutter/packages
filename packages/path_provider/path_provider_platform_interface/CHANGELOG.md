@@ -1,6 +1,8 @@
-## NEXT
+## 2.1.3
 
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+* Documents the implementation contract for `null` versus `UnsupportedError`
+  return semantics on `getDownloadsPath`.
 
 ## 2.1.2
 

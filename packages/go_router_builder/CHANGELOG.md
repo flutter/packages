@@ -1,6 +1,7 @@
-## NEXT
+## 4.3.1
 
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+* Adds support for analyzer 13.
 
 ## 4.3.0
 

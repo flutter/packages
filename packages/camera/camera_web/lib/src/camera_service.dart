@@ -196,20 +196,29 @@ class CameraService {
       final web.MediaTrackCapabilities videoTrackCapabilities = videoTrack.getCapabilities();
 
       // A list of facing mode capabilities as
-      // the camera may support multiple facing modes.
-      final List<String> facingModeCapabilities =
-          videoTrackCapabilities.facingModeNullable?.toDart
-              .map((JSString e) => e.toDart)
-              .toList() ??
-          <String>[];
+      //The camera may support multiple facing modes.
+      // Some browsers (e.g., Firefox) do not conform to the MediaTrackCapabilities
+      // spec and may return `facingMode` as a non-array value (e.g., an empty string,
+      // a plain object, or a boolean) Rather than the expected DOMString sequence.
+      // We use jsUtil.getProperty to safely read the raw JS value, then explicitly
+      // validate it is a JSArray before accessing its elements to prevent a TypeError.
 
-      if (facingModeCapabilities.isNotEmpty) {
-        final String facingModeCapability = facingModeCapabilities.first;
-        return facingModeCapability;
-      } else {
-        // Return null if there are no facing mode capabilities.
+      final JSAny? facingModeCapabilities = jsUtil.getProperty(
+        videoTrackCapabilities,
+        'facingMode'.toJS,
+      );
+      if (facingModeCapabilities == null || !facingModeCapabilities.isA<JSArray>()) {
         return null;
       }
+
+      final List<JSAny?> facingModes = (facingModeCapabilities as JSArray).toDart;
+
+      if (facingModes.isNotEmpty && facingModes.first.isA<JSString>()) {
+        return (facingModes.first! as JSString).toDart;
+      }
+
+      // Return null if there are no facing mode capabilities.
+      return null;
     }
 
     return facingMode;

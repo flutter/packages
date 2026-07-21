@@ -470,6 +470,7 @@ void main() {
 
 #include <map>
 #include <optional>
+#include <ostream>
 #include <string>
 '''),
       );
@@ -501,6 +502,7 @@ void main() {
 #include <limits>
 #include <map>
 #include <optional>
+#include <sstream>
 #include <string>
 '''),
       );
@@ -2261,6 +2263,82 @@ void main() {
     generator.generate(generatorOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
     expect(code, contains('bool Foo::operator==(const Foo& other) const {'));
+  });
+
+  test('data class operator<<', () {
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[
+        Class(
+          name: 'Foo',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'int', isNullable: false),
+              name: 'bar',
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const generator = CppGenerator();
+    final generatorOptions = OutputFileOptions<InternalCppOptions>(
+      fileType: FileType.source,
+      languageOptions: const InternalCppOptions(
+        cppHeaderOut: '',
+        cppSourceOut: '',
+        headerIncludePath: '',
+      ),
+    );
+    generator.generate(generatorOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('std::ostream& operator<<('));
+    expect(code, contains('os << "bar: ";'));
+    expect(code, contains('os << PigeonInternalToString(obj.bar_);'));
+  });
+
+  test('data class operator<< with nullable pointer', () {
+    final nested = Class(
+      name: 'Nested',
+      fields: <NamedType>[
+        NamedType(
+          type: const TypeDeclaration(baseName: 'int', isNullable: false),
+          name: 'data',
+        ),
+      ],
+    );
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[
+        Class(
+          name: 'Foo',
+          fields: <NamedType>[
+            NamedType(
+              type: TypeDeclaration(baseName: 'Nested', isNullable: true, associatedClass: nested),
+              name: 'nested',
+            ),
+          ],
+        ),
+        nested,
+      ],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const generator = CppGenerator();
+    final generatorOptions = OutputFileOptions<InternalCppOptions>(
+      fileType: FileType.source,
+      languageOptions: const InternalCppOptions(
+        cppHeaderOut: '',
+        cppSourceOut: '',
+        headerIncludePath: '',
+      ),
+    );
+    generator.generate(generatorOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('std::ostream& operator<<('));
+    expect(code, contains('if (obj.nested_) {'));
+    expect(code, contains('os << *obj.nested_;'));
   });
 
   test('data classes implement Hash', () {
