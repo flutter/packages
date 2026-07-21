@@ -1,3 +1,7 @@
+## 0.7.2+2
+
+* Bumps com.google.guava:guava from 33.5.0-android to 33.6.0-android.
+
 ## 0.7.2+1
 
 * Migrates to Built-in Kotlin to support AGP 9.
