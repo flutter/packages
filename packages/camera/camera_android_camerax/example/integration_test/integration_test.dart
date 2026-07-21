@@ -243,4 +243,45 @@ void main() {
     expect(duration, greaterThanOrEqualTo(const Duration(seconds: 4).inMilliseconds));
     await controller.dispose();
   });
+
+  testWidgets('video recording state is cleared after camera is disposed', (
+    WidgetTester tester,
+  ) async {
+    final List<CameraDescription> cameras = await availableCameras();
+    if (cameras.isEmpty) {
+      return;
+    }
+
+    final cameraController = CameraController(
+      cameras[0],
+      mediaSettings: const MediaSettings(resolutionPreset: ResolutionPreset.low),
+    );
+    await cameraController.initialize();
+    await cameraController.startVideoRecording();
+
+    // Dispose the controller, which simulates what the example app does
+    // when the AppLifecycleState becomes inactive (e.g. backgrounding).
+    await cameraController.dispose();
+
+    // Create a new controller (simulating app resume)
+    final newController = CameraController(
+      cameras[0],
+      mediaSettings: const MediaSettings(resolutionPreset: ResolutionPreset.low),
+    );
+    await newController.initialize();
+
+    // Attempt to start a new recording. This should not throw or silently fail.
+    await newController.startVideoRecording();
+
+    // Stop it, ensuring no NPE is thrown by the native side and the file is valid.
+    final XFile file = await newController.stopVideoRecording();
+    expect(file, isNotNull);
+
+    // Ensure the video was saved correctly
+    final videoFile = File(file.path);
+    expect(videoFile.existsSync(), isTrue);
+    expect(videoFile.lengthSync(), greaterThan(0));
+
+    await newController.dispose();
+  });
 }
