@@ -78,10 +78,8 @@ class BranchesForBatchReleaseCommand extends PackageCommand {
     }
 
     final pubspec = Pubspec.parse(package.pubspecFile.readAsStringSync());
-    if (pubspec.version == null || pubspec.version!.major < 1) {
-      printError(
-        'This script only supports packages with version >= 1.0.0. Current version: ${pubspec.version}.',
-      );
+    if (pubspec.version == null) {
+      printError('The package has no version specified.');
       throw ToolExit(_kExitPackageMalformed);
     }
     final _ReleaseInfo releaseInfo = _getReleaseInfo(pendingChangelogs, pubspec.version!);
@@ -131,13 +129,32 @@ class BranchesForBatchReleaseCommand extends PackageCommand {
     }
     final VersionChange effectiveVersionChange = VersionChange.values[versionIndex];
 
-    final Version? newVersion = switch (effectiveVersionChange) {
-      VersionChange.skip => null,
-      VersionChange.major => Version(oldVersion.major + 1, 0, 0),
-      VersionChange.minor => Version(oldVersion.major, oldVersion.minor + 1, 0),
-      VersionChange.patch => Version(oldVersion.major, oldVersion.minor, oldVersion.patch + 1),
-    };
+    final Version? newVersion = _newVersionFollowingDartSemVer(oldVersion, effectiveVersionChange);
     return _ReleaseInfo(newVersion, changelogs);
+  }
+
+  Version? _newVersionFollowingDartSemVer(Version oldVersion, VersionChange change) {
+    if (oldVersion.major == 0) {
+      final oldBuildNumber = oldVersion.build.isEmpty ? 0 : oldVersion.build.first as int;
+      return switch (change) {
+        VersionChange.skip => null,
+        VersionChange.major => Version(0, oldVersion.minor + 1, 0),
+        VersionChange.minor => Version(0, oldVersion.minor, oldVersion.patch + 1),
+        VersionChange.patch => Version(
+          0,
+          oldVersion.minor,
+          oldVersion.patch,
+          build: '${oldBuildNumber + 1}',
+        ),
+      };
+    } else {
+      return switch (change) {
+        VersionChange.skip => null,
+        VersionChange.major => Version(oldVersion.major + 1, 0, 0),
+        VersionChange.minor => Version(oldVersion.major, oldVersion.minor + 1, 0),
+        VersionChange.patch => Version(oldVersion.major, oldVersion.minor, oldVersion.patch + 1),
+      };
+    }
   }
 
   /// Creates a branch with a commit contains the changes for the release.

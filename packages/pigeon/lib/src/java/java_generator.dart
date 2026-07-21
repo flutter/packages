@@ -271,6 +271,7 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
         indent.newln();
       }
       _writeEquality(indent, classDefinition);
+      _writeToString(indent, classDefinition);
 
       _writeClassBuilder(generatorOptions, root, indent, classDefinition);
       writeClassEncode(
@@ -344,11 +345,15 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
     indent.writeScoped('public boolean equals(Object o) {', '}', () {
       indent.writeln('if (this == o) { return true; }');
       indent.writeln('if (o == null || getClass() != o.getClass()) { return false; }');
-      indent.writeln('${classDefinition.name} that = (${classDefinition.name}) o;');
-      final Iterable<String> checks = classDefinition.fields.map((NamedType field) {
-        return 'pigeonDeepEquals(${field.name}, that.${field.name})';
-      });
-      indent.writeln('return ${checks.join(' && ')};');
+      if (classDefinition.fields.isEmpty) {
+        indent.writeln('return true;');
+      } else {
+        indent.writeln('${classDefinition.name} that = (${classDefinition.name}) o;');
+        final Iterable<String> checks = classDefinition.fields.map((NamedType field) {
+          return 'pigeonDeepEquals(${field.name}, that.${field.name})';
+        });
+        indent.writeln('return ${checks.join(' && ')};');
+      }
     });
     indent.newln();
 
@@ -363,6 +368,30 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
       } else {
         indent.writeln('Object[] fields = new Object[] {getClass(), ${fieldNames.join(', ')}};');
         indent.writeln('return pigeonDeepHashCode(fields);');
+      }
+    });
+    indent.newln();
+  }
+
+  void _writeToString(Indent indent, Class classDefinition) {
+    indent.writeln('@Override');
+    indent.writeScoped('public String toString() {', '}', () {
+      final Iterable<String> fieldStrings = classDefinition.fields.map((NamedType field) {
+        final String fieldName = field.name;
+        if (field.type.baseName == 'Uint8List' ||
+            field.type.baseName == 'Int32List' ||
+            field.type.baseName == 'Int64List' ||
+            field.type.baseName == 'Float64List') {
+          return '"$fieldName=" + java.util.Arrays.toString($fieldName)';
+        }
+        return '"$fieldName=" + $fieldName';
+      });
+      if (fieldStrings.isEmpty) {
+        indent.writeln('return "${classDefinition.name}{}";');
+      } else {
+        indent.writeln(
+          'return "${classDefinition.name}{" + ${fieldStrings.join(' + ", " + ')} + "}";',
+        );
       }
     });
     indent.newln();

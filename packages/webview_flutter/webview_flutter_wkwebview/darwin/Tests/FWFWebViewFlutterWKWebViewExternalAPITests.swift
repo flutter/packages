@@ -2,8 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Foundation
+import Testing
 import WebKit
-import XCTest
 
 @testable import webview_flutter_wkwebview
 
@@ -15,8 +16,8 @@ import XCTest
   #error("Unsupported platform.")
 #endif
 
-class FWFWebViewFlutterWKWebViewExternalAPITests: XCTestCase {
-  @MainActor func testWebViewForIdentifier() {
+@Suite struct FWFWebViewFlutterWKWebViewExternalAPITests {
+  @MainActor @Test func webViewForIdentifier() throws {
     let registry = TestRegistry()
 
     #if os(iOS)
@@ -36,23 +37,23 @@ class FWFWebViewFlutterWKWebViewExternalAPITests: XCTestCase {
 
     let result = FWFWebViewFlutterWKWebViewExternalAPI.webView(
       forIdentifier: Int64(webViewIdentifier), withPluginRegistry: registry)
-    XCTAssertEqual(result, webView)
+    #expect(result == webView)
   }
 
-  @MainActor func testWebViewForIdentifierHandlesIncorrectRegistry() {
+  @MainActor @Test func webViewForIdentifierHandlesIncorrectRegistry() throws {
     let registry = TestRegistry()
     // Ensure that passing an empty registry, such as the FlutterAppDelegate
     // in an app that has adopted UIScene, gracefully returns nil.
     let result = FWFWebViewFlutterWKWebViewExternalAPI.webView(
       forIdentifier: 0, withPluginRegistry: registry)
-    XCTAssertEqual(result, nil)
+    #expect(result == nil)
   }
 
   // FlutterPluginRegistrar.valuePublished(byPlugin:) is not available on macOS. This
   // can be removed once this method becomes available.
   // See https://github.com/flutter/flutter/issues/186911.
   #if os(iOS)
-    @MainActor func testWebViewForIdentifierFromRegistrar() {
+    @MainActor @Test func webViewForIdentifierFromRegistrar() throws {
       let registry = TestRegistry()
 
       #if os(iOS)
@@ -72,16 +73,16 @@ class FWFWebViewFlutterWKWebViewExternalAPITests: XCTestCase {
 
       let result = FWFWebViewFlutterWKWebViewExternalAPI.webView(
         forIdentifier: Int64(webViewIdentifier), withPluginRegistrar: registrar)
-      XCTAssertEqual(result, webView)
+      #expect(result == webView)
     }
 
-    @MainActor func testWebViewForIdentifierHandlesIncorrectRegistrar() {
+    @MainActor @Test func webViewForIdentifierHandlesIncorrectRegistrar() throws {
       let registrar = TestFlutterPluginRegistrar()
       // Ensure that passing an empty registry, such as the FlutterAppDelegate
       // in an app that has adopted UIScene, gracefully returns nil.
       let result = FWFWebViewFlutterWKWebViewExternalAPI.webView(
         forIdentifier: 0, withPluginRegistrar: registrar)
-      XCTAssertEqual(result, nil)
+      #expect(result == nil)
     }
   #endif
 }

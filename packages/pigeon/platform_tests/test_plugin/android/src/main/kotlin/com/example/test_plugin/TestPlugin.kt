@@ -113,6 +113,22 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     return list
   }
 
+  override fun echoStringList(stringList: List<String?>): List<String?> {
+    return stringList
+  }
+
+  override fun echoIntList(intList: List<Long?>): List<Long?> {
+    return intList
+  }
+
+  override fun echoDoubleList(doubleList: List<Double?>): List<Double?> {
+    return doubleList
+  }
+
+  override fun echoBoolList(boolList: List<Boolean?>): List<Boolean?> {
+    return boolList
+  }
+
   override fun echoEnumList(enumList: List<AnEnum?>): List<AnEnum?> {
     return enumList
   }
@@ -932,7 +948,8 @@ object SendClass : StreamEventsStreamHandler() {
           DoubleEvent(3.14),
           ObjectsEvent(true),
           EnumEvent(EventEnum.FORTY_TWO),
-          ClassEvent(EventAllNullableTypes(aNullableInt = 0)))
+          ClassEvent(EventAllNullableTypes(aNullableInt = 0)),
+          EmptyEvent())
 
   override fun onListen(p0: Any?, sink: PigeonEventSink<PlatformEvent>) {
     var count: Int = 0

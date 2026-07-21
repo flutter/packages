@@ -171,6 +171,12 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList;
 @end
 
+@interface FLTAnEmptyClass ()
++ (FLTAnEmptyClass *)fromList:(NSArray<id> *)list;
++ (nullable FLTAnEmptyClass *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
 @interface FLTAllClassesWrapper ()
 + (FLTAllClassesWrapper *)fromList:(NSArray<id> *)list;
 + (nullable FLTAllClassesWrapper *)nullableFromList:(NSArray<id> *)list;
@@ -217,6 +223,9 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   NSUInteger result = [self class].hash;
   result = result * 31 + FLTPigeonDeepHash(self.aField);
   return result;
+}
+- (NSString *)description {
+  return [NSString stringWithFormat:@"FLTUnusedClass(aField: %@)", self.aField];
 }
 @end
 
@@ -416,6 +425,21 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   result = result * 31 + FLTPigeonDeepHash(self.listMap);
   result = result * 31 + FLTPigeonDeepHash(self.mapMap);
   return result;
+}
+- (NSString *)description {
+  return [NSString
+      stringWithFormat:
+          @"FLTAllTypes(aBool: %@, anInt: %ld, anInt64: %ld, aDouble: %f, aByteArray: %@, "
+          @"a4ByteArray: %@, a8ByteArray: %@, aFloatArray: %@, anEnum: %ld, anotherEnum: %ld, "
+          @"aString: %@, anObject: %@, list: %@, stringList: %@, intList: %@, doubleList: %@, "
+          @"boolList: %@, enumList: %@, objectList: %@, listList: %@, mapList: %@, map: %@, "
+          @"stringMap: %@, intMap: %@, enumMap: %@, objectMap: %@, listMap: %@, mapMap: %@)",
+          self.aBool ? @"true" : @"false", (long)self.anInt, (long)self.anInt64, self.aDouble,
+          self.aByteArray, self.a4ByteArray, self.a8ByteArray, self.aFloatArray, (long)self.anEnum,
+          (long)self.anotherEnum, self.aString, self.anObject, self.list, self.stringList,
+          self.intList, self.doubleList, self.boolList, self.enumList, self.objectList,
+          self.listList, self.mapList, self.map, self.stringMap, self.intMap, self.enumMap,
+          self.objectMap, self.listMap, self.mapMap];
 }
 @end
 
@@ -636,6 +660,26 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   result = result * 31 + FLTPigeonDeepHash(self.recursiveClassMap);
   return result;
 }
+- (NSString *)description {
+  return [NSString
+      stringWithFormat:@"FLTAllNullableTypes(aNullableBool: %@, aNullableInt: %@, aNullableInt64: "
+                       @"%@, aNullableDouble: %@, aNullableByteArray: %@, aNullable4ByteArray: %@, "
+                       @"aNullable8ByteArray: %@, aNullableFloatArray: %@, aNullableEnum: %@, "
+                       @"anotherNullableEnum: %@, aNullableString: %@, aNullableObject: %@, "
+                       @"allNullableTypes: %@, list: %@, stringList: %@, intList: %@, doubleList: "
+                       @"%@, boolList: %@, enumList: %@, objectList: %@, listList: %@, mapList: "
+                       @"%@, recursiveClassList: %@, map: %@, stringMap: %@, intMap: %@, enumMap: "
+                       @"%@, objectMap: %@, listMap: %@, mapMap: %@, recursiveClassMap: %@)",
+                       self.aNullableBool, self.aNullableInt, self.aNullableInt64,
+                       self.aNullableDouble, self.aNullableByteArray, self.aNullable4ByteArray,
+                       self.aNullable8ByteArray, self.aNullableFloatArray, self.aNullableEnum,
+                       self.anotherNullableEnum, self.aNullableString, self.aNullableObject,
+                       self.allNullableTypes, self.list, self.stringList, self.intList,
+                       self.doubleList, self.boolList, self.enumList, self.objectList,
+                       self.listList, self.mapList, self.recursiveClassList, self.map,
+                       self.stringMap, self.intMap, self.enumMap, self.objectMap, self.listMap,
+                       self.mapMap, self.recursiveClassMap];
+}
 @end
 
 @implementation FLTAllNullableTypesWithoutRecursion
@@ -838,6 +882,54 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   result = result * 31 + FLTPigeonDeepHash(self.mapMap);
   return result;
 }
+- (NSString *)description {
+  return [NSString
+      stringWithFormat:
+          @"FLTAllNullableTypesWithoutRecursion(aNullableBool: %@, aNullableInt: %@, "
+          @"aNullableInt64: %@, aNullableDouble: %@, aNullableByteArray: %@, aNullable4ByteArray: "
+          @"%@, aNullable8ByteArray: %@, aNullableFloatArray: %@, aNullableEnum: %@, "
+          @"anotherNullableEnum: %@, aNullableString: %@, aNullableObject: %@, list: %@, "
+          @"stringList: %@, intList: %@, doubleList: %@, boolList: %@, enumList: %@, objectList: "
+          @"%@, listList: %@, mapList: %@, map: %@, stringMap: %@, intMap: %@, enumMap: %@, "
+          @"objectMap: %@, listMap: %@, mapMap: %@)",
+          self.aNullableBool, self.aNullableInt, self.aNullableInt64, self.aNullableDouble,
+          self.aNullableByteArray, self.aNullable4ByteArray, self.aNullable8ByteArray,
+          self.aNullableFloatArray, self.aNullableEnum, self.anotherNullableEnum,
+          self.aNullableString, self.aNullableObject, self.list, self.stringList, self.intList,
+          self.doubleList, self.boolList, self.enumList, self.objectList, self.listList,
+          self.mapList, self.map, self.stringMap, self.intMap, self.enumMap, self.objectMap,
+          self.listMap, self.mapMap];
+}
+@end
+
+@implementation FLTAnEmptyClass
++ (FLTAnEmptyClass *)fromList:(NSArray<id> *)list {
+  FLTAnEmptyClass *pigeonResult = [[FLTAnEmptyClass alloc] init];
+  return pigeonResult;
+}
++ (nullable FLTAnEmptyClass *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FLTAnEmptyClass fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[];
+}
+- (BOOL)isEqual:(id)object {
+  if (self == object) {
+    return YES;
+  }
+  if (![object isKindOfClass:[self class]]) {
+    return NO;
+  }
+  return YES;
+}
+
+- (NSUInteger)hash {
+  NSUInteger result = [self class].hash;
+  return result;
+}
+- (NSString *)description {
+  return [NSString stringWithFormat:@"FLTAnEmptyClass()"];
+}
 @end
 
 @implementation FLTAllClassesWrapper
@@ -852,7 +944,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
                             classMap:(NSDictionary<NSNumber *, FLTAllTypes *> *)classMap
                     nullableClassMap:
                         (nullable NSDictionary<NSNumber *, FLTAllNullableTypesWithoutRecursion *> *)
-                            nullableClassMap {
+                            nullableClassMap
+                        anEmptyClass:(nullable FLTAnEmptyClass *)anEmptyClass {
   FLTAllClassesWrapper *pigeonResult = [[FLTAllClassesWrapper alloc] init];
   pigeonResult.allNullableTypes = allNullableTypes;
   pigeonResult.allNullableTypesWithoutRecursion = allNullableTypesWithoutRecursion;
@@ -861,6 +954,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.nullableClassList = nullableClassList;
   pigeonResult.classMap = classMap;
   pigeonResult.nullableClassMap = nullableClassMap;
+  pigeonResult.anEmptyClass = anEmptyClass;
   return pigeonResult;
 }
 + (FLTAllClassesWrapper *)fromList:(NSArray<id> *)list {
@@ -872,6 +966,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.nullableClassList = GetNullableObjectAtIndex(list, 4);
   pigeonResult.classMap = GetNullableObjectAtIndex(list, 5);
   pigeonResult.nullableClassMap = GetNullableObjectAtIndex(list, 6);
+  pigeonResult.anEmptyClass = GetNullableObjectAtIndex(list, 7);
   return pigeonResult;
 }
 + (nullable FLTAllClassesWrapper *)nullableFromList:(NSArray<id> *)list {
@@ -886,6 +981,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     self.nullableClassList ?: [NSNull null],
     self.classMap ?: [NSNull null],
     self.nullableClassMap ?: [NSNull null],
+    self.anEmptyClass ?: [NSNull null],
   ];
 }
 - (BOOL)isEqual:(id)object {
@@ -903,7 +999,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
          FLTPigeonDeepEquals(self.classList, other.classList) &&
          FLTPigeonDeepEquals(self.nullableClassList, other.nullableClassList) &&
          FLTPigeonDeepEquals(self.classMap, other.classMap) &&
-         FLTPigeonDeepEquals(self.nullableClassMap, other.nullableClassMap);
+         FLTPigeonDeepEquals(self.nullableClassMap, other.nullableClassMap) &&
+         FLTPigeonDeepEquals(self.anEmptyClass, other.anEmptyClass);
 }
 
 - (NSUInteger)hash {
@@ -915,7 +1012,18 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   result = result * 31 + FLTPigeonDeepHash(self.nullableClassList);
   result = result * 31 + FLTPigeonDeepHash(self.classMap);
   result = result * 31 + FLTPigeonDeepHash(self.nullableClassMap);
+  result = result * 31 + FLTPigeonDeepHash(self.anEmptyClass);
   return result;
+}
+- (NSString *)description {
+  return
+      [NSString stringWithFormat:
+                    @"FLTAllClassesWrapper(allNullableTypes: %@, allNullableTypesWithoutRecursion: "
+                    @"%@, allTypes: %@, classList: %@, nullableClassList: %@, classMap: %@, "
+                    @"nullableClassMap: %@, anEmptyClass: %@)",
+                    self.allNullableTypes, self.allNullableTypesWithoutRecursion, self.allTypes,
+                    self.classList, self.nullableClassList, self.classMap, self.nullableClassMap,
+                    self.anEmptyClass];
 }
 @end
 
@@ -954,6 +1062,9 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   result = result * 31 + FLTPigeonDeepHash(self.testList);
   return result;
 }
+- (NSString *)description {
+  return [NSString stringWithFormat:@"FLTTestMessage(testList: %@)", self.testList];
+}
 @end
 
 @interface FLTCoreTestsPigeonCodecReader : FlutterStandardReader
@@ -981,8 +1092,10 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     case 134:
       return [FLTAllNullableTypesWithoutRecursion fromList:[self readValue]];
     case 135:
-      return [FLTAllClassesWrapper fromList:[self readValue]];
+      return [FLTAnEmptyClass fromList:[self readValue]];
     case 136:
+      return [FLTAllClassesWrapper fromList:[self readValue]];
+    case 137:
       return [FLTTestMessage fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -1014,11 +1127,14 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   } else if ([value isKindOfClass:[FLTAllNullableTypesWithoutRecursion class]]) {
     [self writeByte:134];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllClassesWrapper class]]) {
+  } else if ([value isKindOfClass:[FLTAnEmptyClass class]]) {
     [self writeByte:135];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTTestMessage class]]) {
+  } else if ([value isKindOfClass:[FLTAllClassesWrapper class]]) {
     [self writeByte:136];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FLTTestMessage class]]) {
+    [self writeByte:137];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -1346,6 +1462,106 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
         NSArray<id> *arg_list = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         NSArray<id> *output = [api echoList:arg_list error:&error];
+        callback(wrapResult(output, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Returns the passed list, to test serialization and deserialization.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.pigeon_integration_tests."
+                                                   @"HostIntegrationCoreApi.echoStringList",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()];
+    if (api) {
+      NSCAssert(
+          [api respondsToSelector:@selector(echoStringList:error:)],
+          @"FLTHostIntegrationCoreApi api (%@) doesn't respond to @selector(echoStringList:error:)",
+          api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        NSArray<NSString *> *arg_stringList = GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        NSArray<NSString *> *output = [api echoStringList:arg_stringList error:&error];
+        callback(wrapResult(output, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Returns the passed list, to test serialization and deserialization.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.pigeon_integration_tests."
+                                                   @"HostIntegrationCoreApi.echoIntList",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()];
+    if (api) {
+      NSCAssert(
+          [api respondsToSelector:@selector(echoIntList:error:)],
+          @"FLTHostIntegrationCoreApi api (%@) doesn't respond to @selector(echoIntList:error:)",
+          api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        NSArray<NSNumber *> *arg_intList = GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        NSArray<NSNumber *> *output = [api echoIntList:arg_intList error:&error];
+        callback(wrapResult(output, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Returns the passed list, to test serialization and deserialization.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.pigeon_integration_tests."
+                                                   @"HostIntegrationCoreApi.echoDoubleList",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()];
+    if (api) {
+      NSCAssert(
+          [api respondsToSelector:@selector(echoDoubleList:error:)],
+          @"FLTHostIntegrationCoreApi api (%@) doesn't respond to @selector(echoDoubleList:error:)",
+          api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        NSArray<NSNumber *> *arg_doubleList = GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        NSArray<NSNumber *> *output = [api echoDoubleList:arg_doubleList error:&error];
+        callback(wrapResult(output, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Returns the passed list, to test serialization and deserialization.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.pigeon_integration_tests."
+                                                   @"HostIntegrationCoreApi.echoBoolList",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()];
+    if (api) {
+      NSCAssert(
+          [api respondsToSelector:@selector(echoBoolList:error:)],
+          @"FLTHostIntegrationCoreApi api (%@) doesn't respond to @selector(echoBoolList:error:)",
+          api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        NSArray<NSNumber *> *arg_boolList = GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        NSArray<NSNumber *> *output = [api echoBoolList:arg_boolList error:&error];
         callback(wrapResult(output, error));
       }];
     } else {

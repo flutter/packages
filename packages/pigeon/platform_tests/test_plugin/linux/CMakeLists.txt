@@ -100,7 +100,7 @@ add_executable(${TEST_RUNNER}
   test/nullable_returns_test.cc
   test/null_fields_test.cc
   test/primitive_test.cc
-  test/equality_test.cc
+  test/data_class_methods_test.cc
   # Test utilities.
   test/utils/fake_host_messenger.cc
   test/utils/fake_host_messenger.h

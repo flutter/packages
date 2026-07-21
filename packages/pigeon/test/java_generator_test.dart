@@ -1562,4 +1562,24 @@ void main() {
     expect(code, contains('public boolean equals(Object o) {'));
     expect(code, contains('public int hashCode() {'));
   });
+
+  test('data class toString', () {
+    final classDefinition = Class(
+      name: 'Foobar',
+      fields: <NamedType>[
+        NamedType(
+          type: const TypeDeclaration(baseName: 'int', isNullable: true),
+          name: 'field1',
+        ),
+      ],
+    );
+    final root = Root(apis: <Api>[], classes: <Class>[classDefinition], enums: <Enum>[]);
+    final sink = StringBuffer();
+    const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
+    const generator = JavaGenerator();
+    generator.generate(javaOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('public String toString() {'));
+    expect(code, contains('return "Foobar{" + "field1=" + field1 + "}";'));
+  });
 }

@@ -122,6 +122,15 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('setAllowBackgroundPlayback() has not been implemented.');
   }
 
+  /// Sets whether the screen is prevented from sleeping during video playback.
+  ///
+  /// The default implementation is a no-op, so platforms that do not support
+  /// controlling display sleep will silently use their default behavior.
+  Future<void> setPreventsDisplaySleepDuringVideoPlayback(
+    int playerId,
+    bool preventsDisplaySleepDuringVideoPlayback,
+  ) async {}
+
   /// Sets additional options on web.
   Future<void> setWebOptions(int playerId, VideoPlayerWebOptions options) {
     throw UnimplementedError('setWebOptions() has not been implemented.');
@@ -461,8 +470,13 @@ class VideoPlayerOptions {
   VideoPlayerOptions({
     this.mixWithOthers = false,
     this.allowBackgroundPlayback = false,
+    this.preventsDisplaySleepDuringVideoPlayback = true,
     this.webOptions,
-  });
+    this.backBufferDurationMs,
+  }) : assert(
+         backBufferDurationMs == null || backBufferDurationMs >= 0,
+         'backBufferDurationMs must be zero or greater',
+       );
 
   /// Set this to true to keep playing video in background, when app goes in background.
   /// The default value is false.
@@ -475,8 +489,21 @@ class VideoPlayerOptions {
   /// currently no way to implement this feature in this platform).
   final bool mixWithOthers;
 
+  /// Whether the screen is prevented from sleeping during video playback.
+  ///
+  /// Defaults to `true`.
+  ///
+  /// This option may not be supported on all platforms.
+  final bool preventsDisplaySleepDuringVideoPlayback;
+
   /// Additional web controls
   final VideoPlayerWebOptions? webOptions;
+
+  /// The duration, in milliseconds, of media to retain in the buffer prior to
+  /// the current playback position.
+  ///
+  /// Ignored on platforms that do not support controlling the back buffer.
+  final int? backBufferDurationMs;
 }
 
 /// [VideoPlayerWebOptions] can be optionally used to set additional web settings
@@ -576,13 +603,20 @@ class VideoViewOptions {
 @immutable
 class VideoCreationOptions {
   /// Constructs an instance of [VideoCreationOptions].
-  const VideoCreationOptions({required this.dataSource, required this.viewType});
+  const VideoCreationOptions({
+    required this.dataSource,
+    required this.viewType,
+    this.videoPlayerOptions,
+  });
 
   /// The data source used to create the player.
   final DataSource dataSource;
 
   /// The type of view to be used for displaying the video player
   final VideoViewType viewType;
+
+  /// Additional configuration options for the video player.
+  final VideoPlayerOptions? videoPlayerOptions;
 }
 
 /// Represents an audio track in a video with its metadata.
