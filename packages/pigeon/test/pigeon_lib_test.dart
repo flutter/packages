@@ -72,8 +72,7 @@ void main() {
         partFile.createSync(recursive: true);
         partFile.writeAsStringSync(part.value);
       }
-      final mainFile = File('${dir.path}/source.dart')
-        ..writeAsStringSync(mainSource);
+      final mainFile = File('${dir.path}/source.dart')..writeAsStringSync(mainSource);
       return dartle.parseFile(mainFile.path);
     } finally {
       dir.deleteSync(recursive: true);
@@ -244,10 +243,7 @@ abstract class Api1 {
 ''';
     final ParseResults parseResult = parseSourceWithParts(
       mainSource: mainSource,
-      partSources: <String, String>{
-        'shared_classes.dart': sharedClassesPart,
-        'api.dart': apiPart,
-      },
+      partSources: <String, String>{'shared_classes.dart': sharedClassesPart, 'api.dart': apiPart},
     );
 
     expect(parseResult.errors, isEmpty);
@@ -257,14 +253,9 @@ abstract class Api1 {
     expect(parseResult.root.apis[0].methods[0].name, equals('doit'));
     expect(parseResult.root.apis[0].methods[0].returnType.baseName, 'Output1');
     expect(parseResult.root.apis[0].methods[0].parameters, hasLength(1));
+    expect(parseResult.root.apis[0].methods[0].parameters[0].type.baseName, equals('Input1'));
     expect(
-      parseResult.root.apis[0].methods[0].parameters[0].type.baseName,
-      equals('Input1'),
-    );
-    expect(
-      parseResult.root.classes.map(
-        (Class classDefinition) => classDefinition.name,
-      ),
+      parseResult.root.classes.map((Class classDefinition) => classDefinition.name),
       containsAll(<String>['Input1', 'Output1']),
     );
   });
@@ -301,16 +292,15 @@ class Extra {
 ''';
     final ParseResults parseResult = parseSourceWithParts(
       mainSource: mainSource,
-      partSources: <String, String>{
-        'api.dart': apiPart,
-        'extra.dart': extraPart,
-      },
+      partSources: <String, String>{'api.dart': apiPart, 'extra.dart': extraPart},
     );
     final Error apiAnnotationError = parseResult.errors.firstWhere(
-      (Error error) =>
-          error.message.contains('can only have one API annotation'),
+      (Error error) => error.message.contains('can only have one API annotation'),
     );
-    expect(apiAnnotationError.lineNumber, 4);
+    // The error should point at the `@HostApi()` line in api.dart, not at a
+    // line in the merged source used internally for parsing.
+    expect(apiAnnotationError.filename, endsWith('api.dart'));
+    expect(apiAnnotationError.lineNumber, 3);
   });
 
   test('invalid datatype', () {

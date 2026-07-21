@@ -457,30 +457,23 @@ class Pigeon {
       return ParseResults(
         root: Root.makeEmpty(),
         errors: <Error>[
-          Error(
-            message: 'File ${input.missingPath} does not exist',
-            filename: input.missingPath,
-          ),
+          Error(message: 'File ${input.missingPath} does not exist', filename: input.missingPath),
         ],
         pigeonOptions: null,
       );
     }
 
-    final collection = AnalysisContextCollection(
-      includedPaths: input.paths,
-      sdkPath: sdkPath,
-    );
+    final collection = AnalysisContextCollection(includedPaths: input.paths, sdkPath: sdkPath);
 
     final compilationErrors = <Error>[];
-    final String rootInputString = _getInputString(
-      inputPath: normalizedInputPath,
+    final _MergedSource mergedSource = _mergeSources(
+      paths: input.paths,
       contents: input.contents,
       units: input.units,
-      paths: input.paths,
     );
-    final rootBuilder = RootBuilder(rootInputString);
+    final rootBuilder = RootBuilder(mergedSource.content);
     final dart_ast.CompilationUnit mergedUnit = parseString(
-      content: rootInputString,
+      content: mergedSource.content,
       path: normalizedInputPath,
       throwIfDiagnostics: false,
     ).unit;
@@ -495,10 +488,7 @@ class Pigeon {
               Error(
                 message: diagnostic.message,
                 filename: diagnostic.source.fullName,
-                lineNumber: calculateLineNumber(
-                  diagnostic.source.contents.data,
-                  diagnostic.offset,
-                ),
+                lineNumber: calculateLineNumber(diagnostic.source.contents.data, diagnostic.offset),
               ),
             );
           }
@@ -507,18 +497,23 @@ class Pigeon {
     }
 
     if (compilationErrors.isEmpty) {
-      return rootBuilder.results();
+      final ParseResults results = rootBuilder.results();
+      // Errors from the RootBuilder are located in the merged source, so map
+      // them back to lines in the files they originated from.
+      for (final Error error in results.errors) {
+        final int? mergedLineNumber = error.lineNumber;
+        if (mergedLineNumber != null) {
+          final ({String path, int lineNumber}) location = mergedSource.mapLineNumber(
+            mergedLineNumber,
+          );
+          error.filename = location.path;
+          error.lineNumber = location.lineNumber;
+        }
+      }
+      return results;
     } else {
       return ParseResults(root: Root.makeEmpty(), errors: compilationErrors, pigeonOptions: null);
     }
-  }
-
-  String? _readFileOrNull(String filePath) {
-    final file = File(filePath);
-    if (!file.existsSync()) {
-      return null;
-    }
-    return file.readAsStringSync();
   }
 
   List<String> _getPartPaths(
@@ -530,89 +525,71 @@ class Pigeon {
       if (directive is dart_ast.PartDirective) {
         final String? uri = directive.uri.stringValue;
         if (uri != null) {
-          parts.add(
-            path.absolute(
-              path.normalize(path.join(path.dirname(sourcePath), uri)),
-            ),
-          );
+          parts.add(path.absolute(path.normalize(path.join(path.dirname(sourcePath), uri))));
         }
       }
     }
     return parts;
   }
 
-  ({String body, List<String> imports}) _stripPartsAndCollectImports({
+  /// Replaces the `part`, `part of`, and `library` directives (and, for part
+  /// files, `import` directives) with whitespace so that the remaining content
+  /// keeps the exact line and column positions of the original file.
+  String _blankOutDirectives({
     required String sourceContent,
     required dart_ast.CompilationUnit unit,
-    required bool collectImports,
+    required bool keepImports,
   }) {
-    final imports = <String>[];
-    final removalRanges = <({int start, int end})>[];
+    final List<int> codeUnits = sourceContent.codeUnits.toList();
+    final int space = ' '.codeUnitAt(0);
+    final int newline = '\n'.codeUnitAt(0);
+    final int carriageReturn = '\r'.codeUnitAt(0);
     for (final dart_ast.Directive directive in unit.directives) {
-      if (directive is dart_ast.ImportDirective) {
-        if (collectImports) {
-          imports.add(
-            sourceContent
-                .substring(directive.offset, directive.end)
-                .trimRight(),
-          );
-        }
-        removalRanges.add((start: directive.offset, end: directive.end));
-      } else if (directive is dart_ast.PartDirective ||
+      if (directive is dart_ast.ImportDirective && keepImports) {
+        continue;
+      }
+      if (directive is dart_ast.ImportDirective ||
+          directive is dart_ast.PartDirective ||
           directive is dart_ast.PartOfDirective ||
           directive is dart_ast.LibraryDirective) {
-        removalRanges.add((start: directive.offset, end: directive.end));
+        for (int i = directive.offset; i < directive.end; i++) {
+          if (codeUnits[i] != newline && codeUnits[i] != carriageReturn) {
+            codeUnits[i] = space;
+          }
+        }
       }
     }
-
-    final body = StringBuffer();
-    var start = 0;
-    for (final range in removalRanges) {
-      body.write(sourceContent.substring(start, range.start));
-      start = range.end;
-    }
-    body.write(sourceContent.substring(start));
-    return (body: body.toString().trim(), imports: imports);
+    return String.fromCharCodes(codeUnits);
   }
 
-  String _getInputString({
-    required String inputPath,
+  /// Concatenates the input file and its part files into a single source
+  /// string, preserving the line positions each file's content had in its
+  /// original file so that error locations can be mapped back.
+  _MergedSource _mergeSources({
     required List<String> paths,
     required Map<String, String> contents,
     required Map<String, dart_ast.CompilationUnit> units,
   }) {
-    final ({String body, List<String> imports}) mainResult =
-        _stripPartsAndCollectImports(
-          sourceContent: contents[inputPath]!,
-          unit: units[inputPath]!,
-          collectImports: true,
-        );
-    final List<String> imports = mainResult.imports;
-    final partBodies = <String>[];
-    for (final String currentPath in paths.skip(1)) {
-      final ({String body, List<String> imports}) partResult =
-          _stripPartsAndCollectImports(
-            sourceContent: contents[currentPath]!,
-            unit: units[currentPath]!,
-            collectImports: false,
-          );
-      partBodies.add(partResult.body);
-    }
-
     final output = StringBuffer();
-    if (imports.isNotEmpty) {
-      output.writeln(imports.join('\n'));
-      output.writeln();
-    }
-    output.writeln(mainResult.body);
-    for (final partBody in partBodies) {
-      if (partBody.isNotEmpty) {
-        output.writeln();
-        output.writeln();
-        output.write(partBody);
+    final segments = <({String path, int startLine})>[];
+    var currentLine = 1;
+    for (final currentPath in paths) {
+      // Imports are only valid in the main input file, which is always first.
+      final String blanked = _blankOutDirectives(
+        sourceContent: contents[currentPath]!,
+        unit: units[currentPath]!,
+        keepImports: currentPath == paths.first,
+      );
+      segments.add((path: currentPath, startLine: currentLine));
+      output.write(blanked);
+      int lineCount = '\n'.allMatches(blanked).length;
+      if (!blanked.endsWith('\n')) {
+        output.write('\n');
+        lineCount += 1;
       }
+      currentLine += lineCount;
     }
-    return output.toString().trimRight();
+    return _MergedSource(content: output.toString(), segments: segments);
   }
 
   _CollectedInput _collectInputAndParts(String inputPath) {
@@ -645,18 +622,10 @@ class Pigeon {
       paths.add(currentPath);
       contents[currentPath] = content;
       units[currentPath] = unit;
-      final List<String> partPaths = _getPartPaths(
-        unit.directives,
-        sourcePath: currentPath,
-      );
+      final List<String> partPaths = _getPartPaths(unit.directives, sourcePath: currentPath);
       pending.addAll(partPaths);
     }
-    return _CollectedInput(
-      paths: paths,
-      contents: contents,
-      units: units,
-      missingPath: null,
-    );
+    return _CollectedInput(paths: paths, contents: contents, units: units, missingPath: null);
   }
 
   /// String that describes how the tool is used.
@@ -898,7 +867,7 @@ ${_argParser.usage}''';
             .map(
               (Error err) => Error(
                 message: err.message,
-                filename: internalOptions.input,
+                filename: err.filename ?? internalOptions.input,
                 lineNumber: err.lineNumber,
               ),
             )
@@ -985,4 +954,25 @@ class _CollectedInput {
   final Map<String, String> contents;
   final Map<String, dart_ast.CompilationUnit> units;
   final String? missingPath;
+}
+
+/// The concatenation of an input file and its part files, along with the
+/// merged line at which each file's content starts.
+class _MergedSource {
+  _MergedSource({required this.content, required this.segments});
+
+  final String content;
+  final List<({String path, int startLine})> segments;
+
+  /// Maps a line number in [content] back to the file and line it came from.
+  ({String path, int lineNumber}) mapLineNumber(int mergedLineNumber) {
+    ({String path, int startLine}) segment = segments.first;
+    for (final ({String path, int startLine}) candidate in segments) {
+      if (candidate.startLine > mergedLineNumber) {
+        break;
+      }
+      segment = candidate;
+    }
+    return (path: segment.path, lineNumber: mergedLineNumber - segment.startLine + 1);
+  }
 }
