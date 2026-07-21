@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes Android system/predictive back popping inactive StatefulShellBranch navigators.
+version: patch
