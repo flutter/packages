@@ -200,6 +200,14 @@ void main() {
       );
     });
 
+    test('constants', () {
+      expect(aStringConstant, 'stringConstantValue');
+      expect(aStringConstantWithEscapes, r'''string\'\"\$ConstantValue''');
+      expect(anIntConstant, 42);
+      expect(aDoubleConstant, 3.14);
+      expect(aBoolConstant, true);
+    });
+
     test('AnEmptyClass basic methods', () {
       final a = AnEmptyClass();
       final b = AnEmptyClass();
