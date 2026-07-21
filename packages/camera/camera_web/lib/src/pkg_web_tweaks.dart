@@ -66,3 +66,17 @@ extension type WebTweakMediaTrackConstraints._(JSObject _) implements JSObject {
   @JS('MediaTrackConstraints')
   external factory WebTweakMediaTrackConstraints({JSAny zoom, ConstrainBoolean torch});
 }
+
+extension type WebTweakImageDataSettings._(JSObject _) implements ImageDataSettings {
+  external factory WebTweakImageDataSettings({
+    PredefinedColorSpace colorSpace,
+    WebTweakPredefinedFormat? format,
+  });
+
+  external PredefinedColorSpace get colorSpace;
+  external set colorSpace(PredefinedColorSpace value);
+  external WebTweakPredefinedFormat? get format;
+  external set format(WebTweakPredefinedFormat? value);
+}
+
+typedef WebTweakPredefinedFormat = String;
