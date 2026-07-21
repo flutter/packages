@@ -1,4 +1,4 @@
-# google\_maps\_flutter\_ios\_sdk10
+# google\_maps\_flutter\_ios\_sdk9
 
 An iOS implementation of [`google_maps_flutter`][1] using
 [Google Maps SDK 9.x][2].

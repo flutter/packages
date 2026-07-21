@@ -222,17 +222,19 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
 
     indent.write('${sealed}class ${classDefinition.name} $implements');
     indent.addScoped('{', '}', () {
-      if (classDefinition.fields.isEmpty) {
+      if (classDefinition.isSealed) {
         return;
       }
       _writeConstructor(indent, classDefinition);
       indent.newln();
-      for (final NamedType field in getFieldsInSerializationOrder(classDefinition)) {
-        addDocumentationComments(indent, field.documentationComments, docCommentSpec);
+      if (classDefinition.fields.isNotEmpty) {
+        for (final NamedType field in getFieldsInSerializationOrder(classDefinition)) {
+          addDocumentationComments(indent, field.documentationComments, docCommentSpec);
 
-        final String datatype = addGenericTypes(field.type);
-        indent.writeln('$datatype ${field.name};');
-        indent.newln();
+          final String datatype = addGenericTypes(field.type);
+          indent.writeln('$datatype ${field.name};');
+          indent.newln();
+        }
       }
       _writeToList(indent, classDefinition);
       indent.newln();
@@ -264,6 +266,10 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
 
   void _writeConstructor(Indent indent, Class classDefinition) {
     indent.write(classDefinition.name);
+    if (classDefinition.fields.isEmpty) {
+      indent.addln('();');
+      return;
+    }
     indent.addScoped('({', '});', () {
       for (final NamedType field in getFieldsInSerializationOrder(classDefinition)) {
         final required = !field.type.isNullable && field.defaultValue == null ? 'required ' : '';
@@ -355,6 +361,16 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     indent.writeln('@override');
     indent.writeln('// ignore: avoid_equals_and_hash_code_on_mutable_classes');
     indent.writeln('int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);');
+
+    indent.newln();
+    indent.writeln('@override');
+    indent.writeScoped('String toString() {', '}', () {
+      final Iterable<NamedType> fields = getFieldsInSerializationOrder(classDefinition);
+      final Iterable<String> fieldStrings = fields.map((NamedType field) {
+        return '${field.name}: \$${field.name}';
+      });
+      indent.writeln("return '${classDefinition.name}(${fieldStrings.join(', ')})';");
+    });
   }
 
   @override
@@ -577,8 +593,8 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     indent.write('class ${api.name} ');
     indent.addScoped('{', '}', () {
       indent.format('''
-/// Constructor for [${api.name}].  The [binaryMessenger] named argument is
-/// available for dependency injection.  If it is left null, the default
+/// Constructor for [${api.name}]. The [binaryMessenger] named argument is
+/// available for dependency injection. If it is left null, the default
 /// BinaryMessenger will be used which routes to the host platform.
 ${api.name}({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
     : ${varNamePrefix}binaryMessenger = binaryMessenger,
@@ -622,6 +638,19 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     indent.newln();
     addDocumentationComments(indent, api.documentationComments, docCommentSpec);
     for (final Method func in api.methods) {
+      addDocumentationComments(
+        indent,
+        func.documentationComments,
+        docCommentSpec,
+        generatorComments: <String>[
+          'Returns a broadcast [Stream] of events from the `${func.name}` event channel.',
+          '',
+          'Each call to this method creates a new [EventChannel], so it should',
+          'not be called multiple times for the same `instanceName`. To deliver',
+          'events to multiple listeners, call this method once and listen to the',
+          'returned broadcast stream multiple times instead.',
+        ],
+      );
       indent.format('''
       Stream<${func.returnType.baseName}> ${func.name}(${_getMethodParameterSignature(func.parameters, addTrailingComma: true)} {String instanceName = ''}) {
         if (instanceName.isNotEmpty) {
@@ -1139,7 +1168,7 @@ Object? _extractReplyValueOrThrow(
 \t\t\tdetails: replyList[2],
 \t\t);''');
     // On iOS we can return nil from functions to accommodate error
-    // handling.  Returning a nil value and not returning an error is an
+    // handling. Returning a nil value and not returning an error is an
     // exception.
     indent.format('''
 \t} else if (!isNullValid && (replyList.isNotEmpty && replyList[0] == null)) {

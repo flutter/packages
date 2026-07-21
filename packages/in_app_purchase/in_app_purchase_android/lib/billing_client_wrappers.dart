@@ -6,6 +6,7 @@ export 'src/billing_client_wrappers/alternative_billing_only_reporting_details_w
 export 'src/billing_client_wrappers/billing_client_manager.dart';
 export 'src/billing_client_wrappers/billing_client_wrapper.dart';
 export 'src/billing_client_wrappers/billing_response_wrapper.dart';
+export 'src/billing_client_wrappers/in_app_message_wrapper.dart';
 export 'src/billing_client_wrappers/one_time_purchase_offer_details_wrapper.dart';
 export 'src/billing_client_wrappers/product_details_wrapper.dart';
 export 'src/billing_client_wrappers/product_wrapper.dart';

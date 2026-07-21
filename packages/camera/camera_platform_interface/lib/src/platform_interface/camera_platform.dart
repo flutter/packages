@@ -338,7 +338,12 @@ abstract class CameraPlatform extends PlatformInterface {
   ///
   /// This only applies to images captured in JPEG format.
   /// The [quality] must be between 1 (lowest) and 100 (highest).
-  Future<void> setJpegImageQuality(int cameraId, int quality) {
-    throw UnimplementedError('setJpegImageQuality() is not implemented.');
+  ///
+  /// This is a best-effort setting; platforms that do not support controlling
+  /// the JPEG quality ignore it. The default implementation is a no-op so that
+  /// calling it is always safe.
+  Future<void> setJpegImageQuality(int cameraId, int quality) async {
+    // No-op by default. Platforms that support setting the JPEG quality
+    // override this method.
   }
 }

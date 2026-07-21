@@ -108,7 +108,7 @@ class HostApi {
   /// to specify where to generate the test file.
   ///
   /// Prefer to use a mock of the real [HostApi] with a mocking library for unit
-  /// tests.  Generating this Dart handler is sometimes useful in integration
+  /// tests. Generating this Dart handler is sometimes useful in integration
   /// testing.
   ///
   /// Defaults to `null` in which case no handler will be generated.
@@ -588,7 +588,7 @@ ${_argParser.usage}''';
   /// Convert command-line arguments to [PigeonOptions].
   static PigeonOptions parseArgs(List<String> args) {
     // Note: This function shouldn't perform any logic, just translate the args
-    // to PigeonOptions.  Synthesized values inside of the PigeonOption should
+    // to PigeonOptions. Synthesized values inside of the PigeonOption should
     // get set in the `run` function to accommodate users that are using the
     // `configurePigeon` function.
     final ArgResults results = _argParser.parse(args);
@@ -645,8 +645,8 @@ ${_argParser.usage}''';
     }
   }
 
-  /// The 'main' entrypoint used by the command-line tool.  [args] are the
-  /// command-line arguments.  The optional parameter [adapters] allows you to
+  /// The 'main' entrypoint used by the command-line tool. [args] are the
+  /// command-line arguments. The optional parameter [adapters] allows you to
   /// customize the generators that pigeon will use. The optional parameter
   /// [sdkPath] allows you to specify the Dart SDK path.
   static Future<int> run(List<String> args, {List<GeneratorAdapter>? adapters, String? sdkPath}) {
@@ -654,8 +654,8 @@ ${_argParser.usage}''';
     return runWithOptions(options, adapters: adapters, sdkPath: sdkPath);
   }
 
-  /// The 'main' entrypoint used by external packages.  [options] is
-  /// used when running the code generator.  The optional parameter [adapters] allows you to
+  /// The 'main' entrypoint used by external packages. [options] is
+  /// used when running the code generator. The optional parameter [adapters] allows you to
   /// customize the generators that pigeon will use. The optional parameter
   /// [sdkPath] allows you to specify the Dart SDK path.
   static Future<int> runWithOptions(

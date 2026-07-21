@@ -304,6 +304,14 @@ class BillingClient {
       await _hostApi.createAlternativeBillingOnlyReportingDetailsAsync(),
     );
   }
+
+  /// Overlays billing related messages on top of the calling app.
+  //
+  // For example, show a message to inform users that their subscription payment
+  // has been declined and provide options to take them to fix their payment method.
+  Future<InAppMessageResultWrapper> showInAppMessages() async {
+    return inAppMessageResultWrapperFromPlatform(await _hostApi.showInAppMessages());
+  }
 }
 
 /// Implementation of InAppPurchaseCallbackApi, for use by [BillingClient].

@@ -171,6 +171,12 @@ class ValidateCommand extends PackageLoopingCommand {
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
+    // Packages excluded via .pubignore are not published, consumer-facing
+    // artifacts, so they are exempt from the hygiene checks enforced by this command.
+    if (package.isPubIgnored) {
+      return PackageResult.skip('Ignored by .pubignore');
+    }
+
     final List<String> errors = [
       if (_shouldRun(Validator.repoInfo)) ...await _validateRepoInfo(package),
       if (_shouldRun(Validator.pubspec)) ...await _validatePubspec(package),

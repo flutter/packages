@@ -1,6 +1,10 @@
-## 0.10.11
+## 0.10.12
 
 * Adds support for custom video output path in video recording.
+
+## 0.10.11
+
+* Adds `setJpegImageQuality` for controlling JPEG compression quality.
 
 ## 0.10.10+18
 

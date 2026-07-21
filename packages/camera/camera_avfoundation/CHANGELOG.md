@@ -1,6 +1,10 @@
+## 0.10.2
 ## 0.11.0
 
 * Adds support for custom video output path in video recording.
+
+## 0.10.2
+* Adds `setJpegImageQuality` for controlling JPEG compression quality.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 0.10.1

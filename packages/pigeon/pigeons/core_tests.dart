@@ -251,6 +251,9 @@ class AllNullableTypesWithoutRecursion {
   Map<int?, Map<Object?, Object?>?>? mapMap;
 }
 
+/// A data class without fields for testing empty classes.
+class AnEmptyClass {}
+
 /// A class for testing nested class handling.
 ///
 /// This is needed to test nested nullable and non-nullable classes,
@@ -265,6 +268,7 @@ class AllClassesWrapper {
     this.classMap,
     this.nullableClassList,
     this.nullableClassMap,
+    this.anEmptyClass,
   );
   AllNullableTypes allNullableTypes;
   AllNullableTypesWithoutRecursion? allNullableTypesWithoutRecursion;
@@ -273,6 +277,7 @@ class AllClassesWrapper {
   List<AllNullableTypesWithoutRecursion?>? nullableClassList;
   Map<int?, AllTypes?> classMap;
   Map<int?, AllNullableTypesWithoutRecursion?>? nullableClassMap;
+  AnEmptyClass? anEmptyClass;
 }
 
 /// The core interface that each host language plugin must implement in
@@ -333,6 +338,26 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('echoList:')
   @SwiftFunction('echo(_:)')
   List<Object?> echoList(List<Object?> list);
+
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoStringList:')
+  @SwiftFunction('echo(stringList:)')
+  List<String?> echoStringList(List<String?> stringList);
+
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoIntList:')
+  @SwiftFunction('echo(intList:)')
+  List<int?> echoIntList(List<int?> intList);
+
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoDoubleList:')
+  @SwiftFunction('echo(doubleList:)')
+  List<double?> echoDoubleList(List<double?> doubleList);
+
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoBoolList:')
+  @SwiftFunction('echo(boolList:)')
+  List<bool?> echoBoolList(List<bool?> boolList);
 
   /// Returns the passed list, to test serialization and deserialization.
   @ObjCSelector('echoEnumList:')

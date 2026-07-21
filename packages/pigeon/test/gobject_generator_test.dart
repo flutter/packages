@@ -909,4 +909,31 @@ void main() {
       expect(code, contains('guint test_package_input_hash('));
     }
   });
+
+  test('data classes handle to_string', () {
+    final inputClass = Class(
+      name: 'Input',
+      fields: <NamedType>[
+        NamedType(
+          type: const TypeDeclaration(baseName: 'String', isNullable: true),
+          name: 'input',
+        ),
+      ],
+    );
+    final root = Root(apis: <Api>[], classes: <Class>[inputClass], enums: <Enum>[]);
+    final sink = StringBuffer();
+    const generator = GObjectGenerator();
+    final generatorOptions = OutputFileOptions<InternalGObjectOptions>(
+      fileType: FileType.source,
+      languageOptions: const InternalGObjectOptions(
+        headerIncludePath: '',
+        gobjectHeaderOut: '',
+        gobjectSourceOut: '',
+      ),
+    );
+    generator.generate(generatorOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('gchar* test_package_input_to_string('));
+    expect(code, contains('g_string_new("Input(");'));
+  });
 }

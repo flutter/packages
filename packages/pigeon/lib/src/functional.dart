@@ -21,7 +21,7 @@ void enumerate<T>(Iterable<T> iterable, void Function(int, T) func) {
   }
 }
 
-/// A [map] function that takes in 2 iterables.  The [Iterable]s must be of
+/// A [map] function that takes in 2 iterables. The [Iterable]s must be of
 /// equal length.
 Iterable<V> map2<T, U, V>(Iterable<T> ts, Iterable<U> us, V Function(T t, U u) func) sync* {
   final Iterator<T> itt = ts.iterator;
@@ -34,7 +34,7 @@ Iterable<V> map2<T, U, V>(Iterable<T> ts, Iterable<U> us, V Function(T t, U u) f
   }
 }
 
-/// A [map] function that takes in 3 iterables.  The [Iterable]s must be of
+/// A [map] function that takes in 3 iterables. The [Iterable]s must be of
 /// equal length.
 Iterable<V> map3<T, U, V, W>(
   Iterable<T> ts,

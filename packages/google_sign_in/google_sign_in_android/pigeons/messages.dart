@@ -88,6 +88,7 @@ class PlatformGoogleIdTokenCredential {
   String? familyName;
   String? givenName;
   late String email;
+  late String uniqueId;
   late String idToken;
   String? profilePictureUri;
 }
