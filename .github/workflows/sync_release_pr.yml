@@ -6,6 +6,7 @@ on:
       # As packages opt into batched releases, they need to be added here
       - 'release-go_router-*'
       - 'release-cupertino_ui-*'
+      - 'release-material_ui-*'
 
 jobs:
   create_sync_pr:
