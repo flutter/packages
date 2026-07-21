@@ -786,11 +786,7 @@ public class CameraTest {
               () -> {
                 camera.startVideoRecording(null, invalidPath);
               });
-      // The old test asserted "Invalid path" message. Wait, validateOutputPath will throw first!
-      // Actually, if validateOutputPath throws, it will throw IOError before building.
-      // So this test as originally written was flawed because validateOutputPath catches the
-      // invalidPath before build().
-      // Let's just assert the IOError from validateOutputPath for this test.
+      // Assert the IOError from validateOutputPath which is thrown prior to building.
       assertEquals("IOError", error.code);
     }
   }

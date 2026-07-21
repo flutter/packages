@@ -477,6 +477,26 @@ void main() {
     });
 
     test(
+      'Should pass videoOutputPath when starting recording a video',
+      () async {
+        // Arrange
+        // Act
+        await camera.startVideoRecording(
+          cameraId,
+          videoOutputPath: '/test/path.mp4',
+        );
+
+        // Assert
+        verify(
+          mockCameraApi.startVideoRecording(
+            false,
+            videoOutputPath: '/test/path.mp4',
+          ),
+        ).called(1);
+      },
+    );
+
+    test(
       'Should pass enableStream if callback is passed when starting recording a video',
       () async {
         // Arrange

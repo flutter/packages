@@ -57,7 +57,7 @@ in the merged Android manifest of your app, then take the following steps to rem
 
 #### Custom Video Recording Path
 
-Although it is possible to use an absolute path like `/storage/emulated/0/Download/video.mp4`, this is a fragile practice and may fail on many devices or Android versions due to **Scoped Storage** restrictions.
+If you wish to record a video to a custom file path, you may specify `videoOutputPath` when calling `startVideoRecording()`. Although it is possible to use an absolute path like `/storage/emulated/0/Download/video.mp4`, this is a fragile practice and may fail on many devices or Android versions due to **Scoped Storage** restrictions.
 
 - **Best Practice:** Always use the [path_provider](https://pub.dev/packages/path_provider) package to fetch a safe, writable directory.
 - **Recommended Directory:** Use `getTemporaryDirectory()` or `getApplicationDocumentsDirectory()`.

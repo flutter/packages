@@ -904,9 +904,8 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     final List<int> controlModes =
         await camera2CameraInfo.getCameraCharacteristic(
-              CameraCharacteristics.controlAvailableVideoStabilizationModes,
-            )
-            as List<int>? ??
+          CameraCharacteristics.controlAvailableVideoStabilizationModes,
+        ) as List<int>? ??
         const <int>[];
 
     final modes = <VideoStabilizationMode, int>{
@@ -1115,6 +1114,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Configures and starts a video recording with the camera with ID [cameraId].
   /// Returns silently without doing anything if there is currently an active
   /// recording.
+  ///
+  /// If [videoOutputPath] is specified, the video will be saved to that path.
+  /// Otherwise, it will be saved to a temporary directory.
   ///
   /// Note that the preset resolution is used to configure the recording, but
   /// 240p ([ResolutionPreset.low]) is unsupported and will fallback to
