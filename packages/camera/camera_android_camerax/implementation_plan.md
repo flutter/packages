@@ -124,7 +124,7 @@ Add a Flutter integration test mimicking the app lifecycle pause/resume while re
 Verification ensures the app gracefully handles backgrounding during recordings and cleanly starts new recordings upon resume.
 
 ### Automated Tests (What I can do autonomously)
-As an AI agent, I am unable to launch a local Android Emulator or connect to a physical Android device, meaning I cannot run integration tests (`integration-test`). I will run the following commands to verify compilation and Dart logic:
+As an AI agent, I am unable to launch a local Android Emulator or connect to a physical Android device, meaning I cannot run integration tests (`integration-test`). I will run the following commands to verify compilation, Dart logic, and PR readiness:
 
 ```bash
 # Verify the example APK builds successfully using the flutter tool
@@ -132,7 +132,13 @@ cd example && flutter build apk
 
 # Run unit tests to verify the Dart logic works as expected
 dart run ../../../script/tool/bin/flutter_plugin_tools.dart dart-test --packages=camera_android_camerax
+
+# Verify PR readiness using the pre-push-skill
+dart run ../../../script/tool/bin/flutter_plugin_tools.dart format --packages=camera_android_camerax
+dart run ../../../script/tool/bin/flutter_plugin_tools.dart analyze --packages=camera_android_camerax
+dart run ../../../script/tool/bin/flutter_plugin_tools.dart publish-check --packages=camera_android_camerax
 ```
+*(I will leverage the repository's `.agents/skills/pre-push-skill/SKILL.md` to ensure all checks pass before claiming the work is complete.)*
 
 ### Reviewer Verification
 *Note: This must be explicitly requested in the pull request description.*
