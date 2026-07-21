@@ -627,8 +627,8 @@ class Pigeon {
         continue;
       }
       seen.add(currentPath);
-      final String? content = _readFileOrNull(currentPath);
-      if (content == null) {
+      final file = File(currentPath);
+      if (!file.existsSync()) {
         return _CollectedInput(
           paths: paths,
           contents: contents,
@@ -636,6 +636,7 @@ class Pigeon {
           missingPath: currentPath,
         );
       }
+      final String content = file.readAsStringSync();
       final dart_ast.CompilationUnit unit = parseString(
         content: content,
         path: currentPath,
