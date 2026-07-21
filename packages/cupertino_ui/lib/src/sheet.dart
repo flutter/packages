@@ -158,12 +158,18 @@ typedef _GetSheetDragged = bool Function();
 /// Returns a [Future] that resolves to the value (if any) that was passed to
 /// [Navigator.pop] when the sheet was closed.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This example shows how to navigate to use [showCupertinoSheet] to display a
 /// Cupertino sheet widget with nested navigation.
 ///
-/// ** See code in examples/api/lib/cupertino/sheet/cupertino_sheet.1.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
+/// {@example /example/lib/sheet/cupertino_sheet.1.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -289,7 +295,7 @@ class CupertinoSheetTransition extends StatefulWidget {
   /// The gap between the top of the screen and the top of the sheet as a ratio
   /// of the screen height.
   ///
-  ///{@template flutter.cupertino.CupertinoSheetTransition.topGap}
+  ///{@template cupertino_ui.CupertinoSheetTransition.topGap}
   /// This value should be between 0.0 and 0.9, where 0.0 means no gap (sheet
   /// extends to the top of the screen) and 0.9 means the sheet covers only the
   /// bottom 10% of the screen. A value of 0.08 represents 8% of the screen height.
@@ -608,25 +614,43 @@ class _StretchDragControllerProvider extends InheritedWidget {
 /// scrollable area within the sheet, this parameter can be ignored. See below
 /// for an example.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This example shows how to navigate to [CupertinoSheetRoute] by using it the
 /// same as a regular route.
 ///
-/// ** See code in examples/api/lib/cupertino/sheet/cupertino_sheet.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@tool dartpad}
+/// {@example /example/lib/sheet/cupertino_sheet.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This example shows how to show a Cupertino Sheet with nested navigation manually
 /// set up in order to enable restorable state.
 ///
-/// ** See code in examples/api/lib/cupertino/sheet/cupertino_sheet.2.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@tool dartpad}
+/// {@example /example/lib/sheet/cupertino_sheet.2.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This example shows how to show a Cupertino Sheet with scrollable content.
 ///
-/// ** See code in examples/api/lib/cupertino/sheet/cupertino_sheet.3.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
+/// {@example /example/lib/sheet/cupertino_sheet.3.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///   * [showCupertinoSheet], which is a convenience method for pushing a
@@ -667,11 +691,17 @@ class CupertinoSheetRoute<T> extends PageRoute<T> with _CupertinoSheetRouteTrans
   /// then when a downward drag is applied to the scrollable area while the content
   /// is scrolled to the top, the drag to dismiss behavior of the sheet will be triggered.
   ///
-  /// {@tool dartpad}
+  /// <callout-box>
+  ///
   /// This example shows how to show a Cupertino Sheet with scrollable content.
   ///
-  /// ** See code in examples/api/lib/cupertino/sheet/cupertino_sheet.3.dart **
-  /// {@end-tool}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro cupertino_ui.dartpad_guide}
+  ///
+  /// {@example /example/lib/sheet/cupertino_sheet.3.dart#body}
+  ///
+  /// </callout-box>
   final ScrollableWidgetBuilder? scrollableBuilder;
 
   ScrollableWidgetBuilder get _effectiveBuilder {
@@ -831,7 +861,7 @@ mixin _CupertinoSheetRouteTransitionMixin<T> on PageRoute<T> {
   /// The gap between the top of the screen and the top of the sheet as a ratio
   /// of the screen height.
   ///
-  /// {@macro flutter.cupertino.CupertinoSheetTransition.topGap}
+  /// {@macro cupertino_ui.CupertinoSheetTransition.topGap}
   double get topGap;
 
   /// Whether a custom top gap has been set.

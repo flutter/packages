@@ -33,15 +33,22 @@ const Duration _kScrollbarTimeToFade = Duration(milliseconds: 600);
 /// or [WidgetState.hovered] on desktop and web platforms. These stateful
 /// color choices can be changed using [ScrollbarThemeData.thumbColor].
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This sample shows a [Scrollbar] that executes a fade animation as scrolling
 /// occurs. The Scrollbar will fade into view as the user scrolls, and fade out
 /// when scrolling stops.
 ///
-/// ** See code in examples/api/lib/material/scrollbar/scrollbar.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-/// {@tool dartpad}
+/// {@example /example/lib/scrollbar/scrollbar.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// When [thumbVisibility] is true, the scrollbar thumb will remain visible
 /// without the fade animation. This requires that a [ScrollController] is
 /// provided to controller, or that the [PrimaryScrollController] is available.
@@ -50,8 +57,13 @@ const Duration _kScrollbarTimeToFade = Duration(milliseconds: 600);
 /// that the [Scrollbar] is always visible, since scrolling in the horizontal
 /// axis is less discoverable.
 ///
-/// ** See code in examples/api/lib/material/scrollbar/scrollbar.1.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/scrollbar/scrollbar.1.dart#body}
+///
+/// </callout-box>
 ///
 /// A scrollbar track can be added using [trackVisibility]. This can also be
 /// drawn when triggered by a hover event, or based on any [WidgetState] by

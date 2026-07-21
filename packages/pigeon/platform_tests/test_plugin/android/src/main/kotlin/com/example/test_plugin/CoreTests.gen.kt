@@ -895,6 +895,42 @@ data class AllNullableTypesWithoutRecursion(
 }
 
 /**
+ * A data class without fields for testing empty classes.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+class AnEmptyClass {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): AnEmptyClass {
+      return AnEmptyClass()
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf()
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (other == null || other.javaClass != javaClass) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result = javaClass.hashCode()
+    return result
+  }
+
+  override fun toString(): String {
+    return "AnEmptyClass()"
+  }
+}
+
+/**
  * A class for testing nested class handling.
  *
  * This is needed to test nested nullable and non-nullable classes, `AllNullableTypes` is
@@ -910,7 +946,8 @@ data class AllClassesWrapper(
     val classList: List<AllTypes?>,
     val nullableClassList: List<AllNullableTypesWithoutRecursion?>? = null,
     val classMap: Map<Long?, AllTypes?>,
-    val nullableClassMap: Map<Long?, AllNullableTypesWithoutRecursion?>? = null
+    val nullableClassMap: Map<Long?, AllNullableTypesWithoutRecursion?>? = null,
+    val anEmptyClass: AnEmptyClass? = null
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): AllClassesWrapper {
@@ -921,6 +958,7 @@ data class AllClassesWrapper(
       val nullableClassList = pigeonVar_list[4] as List<AllNullableTypesWithoutRecursion?>?
       val classMap = pigeonVar_list[5] as Map<Long?, AllTypes?>
       val nullableClassMap = pigeonVar_list[6] as Map<Long?, AllNullableTypesWithoutRecursion?>?
+      val anEmptyClass = pigeonVar_list[7] as AnEmptyClass?
       return AllClassesWrapper(
           allNullableTypes,
           allNullableTypesWithoutRecursion,
@@ -928,7 +966,8 @@ data class AllClassesWrapper(
           classList,
           nullableClassList,
           classMap,
-          nullableClassMap)
+          nullableClassMap,
+          anEmptyClass)
     }
   }
 
@@ -941,6 +980,7 @@ data class AllClassesWrapper(
         nullableClassList,
         classMap,
         nullableClassMap,
+        anEmptyClass,
     )
   }
 
@@ -959,7 +999,8 @@ data class AllClassesWrapper(
         CoreTestsPigeonUtils.deepEquals(this.classList, other.classList) &&
         CoreTestsPigeonUtils.deepEquals(this.nullableClassList, other.nullableClassList) &&
         CoreTestsPigeonUtils.deepEquals(this.classMap, other.classMap) &&
-        CoreTestsPigeonUtils.deepEquals(this.nullableClassMap, other.nullableClassMap)
+        CoreTestsPigeonUtils.deepEquals(this.nullableClassMap, other.nullableClassMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.anEmptyClass, other.anEmptyClass)
   }
 
   override fun hashCode(): Int {
@@ -971,11 +1012,12 @@ data class AllClassesWrapper(
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.nullableClassList)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.classMap)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.nullableClassMap)
+    result = 31 * result + CoreTestsPigeonUtils.deepHash(this.anEmptyClass)
     return result
   }
 
   override fun toString(): String {
-    return "AllClassesWrapper(allNullableTypes=$allNullableTypes, allNullableTypesWithoutRecursion=$allNullableTypesWithoutRecursion, allTypes=$allTypes, classList=$classList, nullableClassList=$nullableClassList, classMap=$classMap, nullableClassMap=$nullableClassMap)"
+    return "AllClassesWrapper(allNullableTypes=$allNullableTypes, allNullableTypesWithoutRecursion=$allNullableTypesWithoutRecursion, allTypes=$allTypes, classList=$classList, nullableClassList=$nullableClassList, classMap=$classMap, nullableClassMap=$nullableClassMap, anEmptyClass=$anEmptyClass)"
   }
 }
 
@@ -1044,9 +1086,12 @@ private open class CoreTestsPigeonCodec : StandardMessageCodec() {
         }
       }
       135.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllClassesWrapper.fromList(it) }
+        return (readValue(buffer) as? List<Any?>)?.let { AnEmptyClass.fromList(it) }
       }
       136.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { AllClassesWrapper.fromList(it) }
+      }
+      137.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { TestMessage.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
@@ -1079,12 +1124,16 @@ private open class CoreTestsPigeonCodec : StandardMessageCodec() {
         stream.write(134)
         writeValue(stream, value.toList())
       }
-      is AllClassesWrapper -> {
+      is AnEmptyClass -> {
         stream.write(135)
         writeValue(stream, value.toList())
       }
-      is TestMessage -> {
+      is AllClassesWrapper -> {
         stream.write(136)
+        writeValue(stream, value.toList())
+      }
+      is TestMessage -> {
+        stream.write(137)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)

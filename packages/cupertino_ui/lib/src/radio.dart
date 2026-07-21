@@ -70,7 +70,8 @@ const List<double> _kDisabledDarkGradientOpacities = <double>[0.08, 0.14];
 /// [RadioGroup.groupValue], and the [CupertinoRadio] under it with matching
 /// [value] will be selected.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// Here is an example of CupertinoRadio widgets wrapped in CupertinoListTiles.
 ///
 /// The currently selected character is passed into `RadioGroup.groupValue`, which is
@@ -83,8 +84,13 @@ const List<double> _kDisabledDarkGradientOpacities = <double>[0.08, 0.14];
 /// This causes the buttons to rebuild with the updated `RadioGroup.groupValue`, and
 /// therefore the selection of the second button.
 ///
-/// ** See code in examples/api/lib/cupertino/radio/cupertino_radio.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
+/// {@example /example/lib/radio/cupertino_radio.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -129,14 +135,39 @@ class CupertinoRadio<T> extends StatefulWidget {
   /// {@macro flutter.widget.RawRadio.value}
   final T value;
 
-  /// {@macro flutter.material.Radio.groupValue}
+  /// {@template cupertino_ui.Radio.groupValue}
+  /// The currently selected value for a group of radio buttons.
+  ///
+  /// This radio button is considered selected if its [value] matches the
+  /// [groupValue].
+  ///
+  /// This is deprecated, use [RadioGroup] to manage group value instead.
+  /// {@endtemplate}
   @Deprecated(
     'Use a RadioGroup ancestor to manage group value instead. '
     'This feature was deprecated after v3.32.0-0.0.pre.',
   )
   final T? groupValue;
 
-  /// {@macro flutter.material.Radio.onChanged}
+  /// {@template cupertino_ui.Radio.onChanged}
+  /// Called when the user selects this radio button.
+  ///
+  /// The radio button passes [value] as a parameter to this callback. The radio
+  /// button does not actually change state until the parent widget rebuilds the
+  /// radio button with the new [groupValue].
+  ///
+  /// If null, the radio button will be displayed as disabled.
+  ///
+  /// The provided callback will not be invoked if this radio button is already
+  /// selected and [toggleable] is not set to true.
+  ///
+  /// If the [toggleable] is set to true, tapping a already selected radio will
+  /// invoke this callback with `null` as value.
+  ///
+  /// The callback provided to [onChanged] should update the state of the parent
+  /// [StatefulWidget] using the [State.setState] method, so that the parent
+  /// gets rebuilt.
+  /// {@endtemplate}
   ///
   /// For example:
   ///
@@ -174,12 +205,18 @@ class CupertinoRadio<T> extends StatefulWidget {
 
   /// {@macro flutter.widget.RawRadio.toggleable}
   ///
-  /// {@tool dartpad}
+  /// <callout-box>
+  ///
   /// This example shows how to enable deselecting a radio button by setting the
   /// [toggleable] attribute.
   ///
-  /// ** See code in examples/api/lib/cupertino/radio/cupertino_radio.toggleable.0.dart **
-  /// {@end-tool}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro cupertino_ui.dartpad_guide}
+  ///
+  /// {@example /example/lib/radio/cupertino_radio.toggleable.0.dart#body}
+  ///
+  /// </callout-box>
   final bool toggleable;
 
   /// Controls whether the radio displays in a checkbox style or the default iOS
@@ -220,7 +257,19 @@ class CupertinoRadio<T> extends StatefulWidget {
   /// [RadioGroupRegistry].
   final RadioGroupRegistry<T>? groupRegistry;
 
-  /// {@macro flutter.material.Radio.enabled}
+  /// {@template cupertino_ui.Radio.enabled}
+  /// Whether this widget is interactive.
+  ///
+  /// If not provided, this widget will be interactable if one of the following
+  /// is true:
+  ///
+  /// * A [onChanged] is provided.
+  /// * Having a [RadioGroup] with the same type T above this widget.
+  /// * A [groupRegistry] is provided.
+  ///
+  /// If this is set to true, one of the above condition must also be true.
+  /// Otherwise, an assertion error is thrown.
+  /// {@endtemplate}
   final bool? enabled;
 
   @override

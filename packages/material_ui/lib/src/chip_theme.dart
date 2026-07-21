@@ -62,7 +62,10 @@ class ChipTheme extends InheritedTheme {
   /// Defaults to the ambient [ThemeData.chipTheme] if there is no
   /// [ChipTheme] in the given build context.
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
   ///
   /// ```dart
   /// class Spaceship extends StatelessWidget {
@@ -80,7 +83,8 @@ class ChipTheme extends InheritedTheme {
   ///   }
   /// }
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -122,7 +126,10 @@ class ChipTheme extends InheritedTheme {
 /// you get from [ChipTheme.of], or create an entirely new one with
 /// [ChipThemeData.fromDefaults].
 ///
-/// {@tool snippet}
+/// <callout-box>
+///
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
 ///
 /// ```dart
 /// class CarColor extends StatefulWidget {
@@ -152,7 +159,8 @@ class ChipTheme extends InheritedTheme {
 ///   }
 /// }
 /// ```
-/// {@end-tool}
+///
+/// </callout-box>
 ///
 /// See also:
 ///

@@ -171,6 +171,12 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList;
 @end
 
+@interface FLTAnEmptyClass ()
++ (FLTAnEmptyClass *)fromList:(NSArray<id> *)list;
++ (nullable FLTAnEmptyClass *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
 @interface FLTAllClassesWrapper ()
 + (FLTAllClassesWrapper *)fromList:(NSArray<id> *)list;
 + (nullable FLTAllClassesWrapper *)nullableFromList:(NSArray<id> *)list;
@@ -896,6 +902,36 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
+@implementation FLTAnEmptyClass
++ (FLTAnEmptyClass *)fromList:(NSArray<id> *)list {
+  FLTAnEmptyClass *pigeonResult = [[FLTAnEmptyClass alloc] init];
+  return pigeonResult;
+}
++ (nullable FLTAnEmptyClass *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FLTAnEmptyClass fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[];
+}
+- (BOOL)isEqual:(id)object {
+  if (self == object) {
+    return YES;
+  }
+  if (![object isKindOfClass:[self class]]) {
+    return NO;
+  }
+  return YES;
+}
+
+- (NSUInteger)hash {
+  NSUInteger result = [self class].hash;
+  return result;
+}
+- (NSString *)description {
+  return [NSString stringWithFormat:@"FLTAnEmptyClass()"];
+}
+@end
+
 @implementation FLTAllClassesWrapper
 + (instancetype)
             makeWithAllNullableTypes:(FLTAllNullableTypes *)allNullableTypes
@@ -908,7 +944,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
                             classMap:(NSDictionary<NSNumber *, FLTAllTypes *> *)classMap
                     nullableClassMap:
                         (nullable NSDictionary<NSNumber *, FLTAllNullableTypesWithoutRecursion *> *)
-                            nullableClassMap {
+                            nullableClassMap
+                        anEmptyClass:(nullable FLTAnEmptyClass *)anEmptyClass {
   FLTAllClassesWrapper *pigeonResult = [[FLTAllClassesWrapper alloc] init];
   pigeonResult.allNullableTypes = allNullableTypes;
   pigeonResult.allNullableTypesWithoutRecursion = allNullableTypesWithoutRecursion;
@@ -917,6 +954,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.nullableClassList = nullableClassList;
   pigeonResult.classMap = classMap;
   pigeonResult.nullableClassMap = nullableClassMap;
+  pigeonResult.anEmptyClass = anEmptyClass;
   return pigeonResult;
 }
 + (FLTAllClassesWrapper *)fromList:(NSArray<id> *)list {
@@ -928,6 +966,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.nullableClassList = GetNullableObjectAtIndex(list, 4);
   pigeonResult.classMap = GetNullableObjectAtIndex(list, 5);
   pigeonResult.nullableClassMap = GetNullableObjectAtIndex(list, 6);
+  pigeonResult.anEmptyClass = GetNullableObjectAtIndex(list, 7);
   return pigeonResult;
 }
 + (nullable FLTAllClassesWrapper *)nullableFromList:(NSArray<id> *)list {
@@ -942,6 +981,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     self.nullableClassList ?: [NSNull null],
     self.classMap ?: [NSNull null],
     self.nullableClassMap ?: [NSNull null],
+    self.anEmptyClass ?: [NSNull null],
   ];
 }
 - (BOOL)isEqual:(id)object {
@@ -959,7 +999,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
          FLTPigeonDeepEquals(self.classList, other.classList) &&
          FLTPigeonDeepEquals(self.nullableClassList, other.nullableClassList) &&
          FLTPigeonDeepEquals(self.classMap, other.classMap) &&
-         FLTPigeonDeepEquals(self.nullableClassMap, other.nullableClassMap);
+         FLTPigeonDeepEquals(self.nullableClassMap, other.nullableClassMap) &&
+         FLTPigeonDeepEquals(self.anEmptyClass, other.anEmptyClass);
 }
 
 - (NSUInteger)hash {
@@ -971,16 +1012,18 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   result = result * 31 + FLTPigeonDeepHash(self.nullableClassList);
   result = result * 31 + FLTPigeonDeepHash(self.classMap);
   result = result * 31 + FLTPigeonDeepHash(self.nullableClassMap);
+  result = result * 31 + FLTPigeonDeepHash(self.anEmptyClass);
   return result;
 }
 - (NSString *)description {
   return
-      [NSString stringWithFormat:@"FLTAllClassesWrapper(allNullableTypes: %@, "
-                                 @"allNullableTypesWithoutRecursion: %@, allTypes: %@, classList: "
-                                 @"%@, nullableClassList: %@, classMap: %@, nullableClassMap: %@)",
-                                 self.allNullableTypes, self.allNullableTypesWithoutRecursion,
-                                 self.allTypes, self.classList, self.nullableClassList,
-                                 self.classMap, self.nullableClassMap];
+      [NSString stringWithFormat:
+                    @"FLTAllClassesWrapper(allNullableTypes: %@, allNullableTypesWithoutRecursion: "
+                    @"%@, allTypes: %@, classList: %@, nullableClassList: %@, classMap: %@, "
+                    @"nullableClassMap: %@, anEmptyClass: %@)",
+                    self.allNullableTypes, self.allNullableTypesWithoutRecursion, self.allTypes,
+                    self.classList, self.nullableClassList, self.classMap, self.nullableClassMap,
+                    self.anEmptyClass];
 }
 @end
 
@@ -1049,8 +1092,10 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     case 134:
       return [FLTAllNullableTypesWithoutRecursion fromList:[self readValue]];
     case 135:
-      return [FLTAllClassesWrapper fromList:[self readValue]];
+      return [FLTAnEmptyClass fromList:[self readValue]];
     case 136:
+      return [FLTAllClassesWrapper fromList:[self readValue]];
+    case 137:
       return [FLTTestMessage fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -1082,11 +1127,14 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   } else if ([value isKindOfClass:[FLTAllNullableTypesWithoutRecursion class]]) {
     [self writeByte:134];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllClassesWrapper class]]) {
+  } else if ([value isKindOfClass:[FLTAnEmptyClass class]]) {
     [self writeByte:135];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTTestMessage class]]) {
+  } else if ([value isKindOfClass:[FLTAllClassesWrapper class]]) {
     [self writeByte:136];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FLTTestMessage class]]) {
+    [self writeByte:137];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];

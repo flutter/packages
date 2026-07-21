@@ -32,7 +32,10 @@ import 'constants.dart';
 ///
 /// {@animation 700 540 https://flutter.github.io/assets-for-api-docs/assets/material/tabs.mp4}
 ///
-/// {@tool snippet}
+/// <callout-box>
+///
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
 ///
 /// This widget introduces a [Scaffold] with an [AppBar] and a [TabBar].
 ///
@@ -88,14 +91,21 @@ import 'constants.dart';
 ///   }
 /// }
 /// ```
-/// {@end-tool}
 ///
-/// {@tool dartpad}
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This example shows how to listen to page updates in [TabBar] and [TabBarView]
 /// when using [DefaultTabController].
 ///
-/// ** See code in examples/api/lib/material/tab_controller/tab_controller.1.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/tab_controller/tab_controller.1.dart#body}
+///
+/// </callout-box>
 ///
 class TabController extends ChangeNotifier {
   /// Creates an object that manages the state required by [TabBar] and a
@@ -393,12 +403,17 @@ class DefaultTabController extends StatefulWidget {
   /// The closest instance of [DefaultTabController] that encloses the given
   /// context, or null if none is found.
   ///
-  /// {@tool snippet} Typical usage is as follows:
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  /// Typical usage is as follows:
   ///
   /// ```dart
   /// TabController? controller = DefaultTabController.maybeOf(context);
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   ///
   /// Calling this method will create a dependency on the closest
   /// [DefaultTabController] in the [context], if there is one.
@@ -420,12 +435,17 @@ class DefaultTabController extends StatefulWidget {
   /// Calling this method will create a dependency on the closest
   /// [DefaultTabController] in the [context].
   ///
-  /// {@tool snippet} Typical usage is as follows:
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  /// Typical usage is as follows:
   ///
   /// ```dart
   /// TabController controller = DefaultTabController.of(context);
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   ///
   /// See also:
   ///

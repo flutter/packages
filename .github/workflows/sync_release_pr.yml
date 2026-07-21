@@ -5,6 +5,7 @@ on:
     branches:
       # As packages opt into batched releases, they need to be added here
       - 'release-go_router-*'
+      - 'release-cupertino_ui-*'
 
 jobs:
   create_sync_pr:
@@ -18,11 +19,13 @@ jobs:
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           fetch-depth: 0 # Fetch history to allow branch comparison
+          persist-credentials: false
 
       - name: Create Pull Request
         env:
-          GITHUB_TOKEN: ${{ secrets.FLUTTERGITHUBBOT_TOKEN }}
+          GH_TOKEN: ${{ secrets.FLUTTERGITHUBBOT_TOKEN }}
         run: |
+          gh auth setup-git
           # 1. Fetch main so the runner can see the difference
           git fetch origin main
 
@@ -31,19 +34,19 @@ jobs:
           COMMITS_COUNT=$(git rev-list --count origin/main..HEAD)
 
           if [ "$COMMITS_COUNT" -eq "0" ]; then
-            echo "No new commits found on ${{ github.ref_name }} compared to main. Nothing to sync."
+            echo "No new commits found on ${GITHUB_REF_NAME} compared to main. Nothing to sync."
             exit 0
           fi
 
           # 3. Extract package name for label
-          BRANCH_NAME="${{ github.ref_name }}"
+          BRANCH_NAME="${GITHUB_REF_NAME}"
           TEMP="${BRANCH_NAME#release-}"
           PACKAGE_NAME="${TEMP%-*}"
 
           # 4. Create the PR directly
           gh pr create \
             --base "main" \
-            --head "${{ github.ref_name }}" \
-            --title "Sync ${{ github.ref_name }} to main" \
-            --body "This automated PR syncs the changes from the release branch ${{ github.ref_name }} back to the main branch." \
+            --head "${GITHUB_REF_NAME}" \
+            --title "Sync ${GITHUB_REF_NAME} to main" \
+            --body "This automated PR syncs the changes from the release branch ${GITHUB_REF_NAME} back to the main branch." \
             --label "override: skip-batch-release-repo-check-${PACKAGE_NAME}"

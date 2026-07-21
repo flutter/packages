@@ -723,6 +723,9 @@ protocol CameraApi {
   /// Sets the file format used for taking pictures.
   func setImageFileFormat(
     format: PlatformImageFileFormat, completion: @escaping (Result<Void, Error>) -> Void)
+  /// Sets the JPEG compression quality for still image capture.
+  func setJpegImageQuality(
+    quality: Int64, completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -1362,6 +1365,26 @@ class CameraApiSetup {
       }
     } else {
       setImageFileFormatChannel.setMessageHandler(nil)
+    }
+    /// Sets the JPEG compression quality for still image capture.
+    let setJpegImageQualityChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.setJpegImageQuality\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      setJpegImageQualityChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let qualityArg = args[0] is Int64 ? args[0] as! Int64 : Int64(args[0] as! Int32)
+        api.setJpegImageQuality(quality: qualityArg) { result in
+          switch result {
+          case .success:
+            reply(wrapResult(nil))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      setJpegImageQualityChannel.setMessageHandler(nil)
     }
   }
 }
