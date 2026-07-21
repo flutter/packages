@@ -1,3 +1,7 @@
+## 0.7.5
+
+* Supports video encoding bitrate.
+
 ## 0.7.4+1
 
 * Fixes a `StateError` ("Bad state: No element") in `setFocusMode(FocusMode.auto)`
