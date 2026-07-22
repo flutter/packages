@@ -32,7 +32,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-
 topics:
   - google-maps
   - google-maps-flutter
@@ -41,4 +40,3 @@ topics:
 # The example deliberately includes limited-use secrets.
 false_secrets:
   - /example/**/web/index.html
-

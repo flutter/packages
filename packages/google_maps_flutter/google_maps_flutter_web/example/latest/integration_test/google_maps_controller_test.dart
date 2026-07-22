@@ -500,9 +500,7 @@ void main() {
         testWidgets('translates mapTypeControlEnabled option', (WidgetTester tester) async {
           gmaps.MapOptions? capturedOptions;
           controller = createController(
-            mapConfiguration: const MapConfiguration(
-              mapTypeControlEnabled: true,
-            ),
+            mapConfiguration: const MapConfiguration(mapTypeControlEnabled: true),
           );
           controller.debugSetOverrides(
             createMap: (_, gmaps.MapOptions options) {
@@ -520,9 +518,7 @@ void main() {
         testWidgets('translates fullscreenControlEnabled option', (WidgetTester tester) async {
           gmaps.MapOptions? capturedOptions;
           controller = createController(
-            mapConfiguration: const MapConfiguration(
-              fullscreenControlEnabled: true,
-            ),
+            mapConfiguration: const MapConfiguration(fullscreenControlEnabled: true),
           );
           controller.debugSetOverrides(
             createMap: (_, gmaps.MapOptions options) {
@@ -540,9 +536,7 @@ void main() {
         testWidgets('translates streetViewControlEnabled option', (WidgetTester tester) async {
           gmaps.MapOptions? capturedOptions;
           controller = createController(
-            mapConfiguration: const MapConfiguration(
-              streetViewControlEnabled: true,
-            ),
+            mapConfiguration: const MapConfiguration(streetViewControlEnabled: true),
           );
           controller.debugSetOverrides(
             createMap: (_, gmaps.MapOptions options) {
