@@ -24,8 +24,7 @@ import 'theme.dart';
 /// To create a divider between [ListTile] items, consider using
 /// [ListTile.divideTiles], which is optimized for this case.
 ///
-// TODO(Piinks): Follow up on youtube support
-// {@youtube 560 315 https://www.youtube.com/watch?v=_liUC641Nmk}
+/// Learn more about [Divider] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=_liUC641Nmk).
 ///
 /// The box's total height is controlled by [height]. The appropriate
 /// padding is automatically computed from the height.

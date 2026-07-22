@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'package:cupertino_ui/cupertino_ui.dart';
-library;
-
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/gestures.dart';
 
@@ -25,65 +22,9 @@ const Duration _kScrollbarTimeToFade = Duration(milliseconds: 600);
 /// To add a scrollbar to a [ScrollView], wrap the scroll view
 /// widget in a [Scrollbar] widget.
 ///
-// TODO(Piinks): Follow up on youtube support
-// {@youtube 560 315 https://www.youtube.com/watch?v=DbkIQSvwnZc}
+//// Learn more about [Scrollbar] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=DbkIQSvwnZc).
 ///
-/// A scrollbar thumb indicates which portion of a [ScrollView] is actually
-/// visible.
-///
-/// By default, the thumb will fade in and out as the child scroll view
-/// scrolls. When [thumbVisibility] is true, the scrollbar thumb will remain
-/// visible without the fade animation. This requires that the [ScrollController]
-/// associated with the Scrollable widget is provided to [controller], or that
-/// the [PrimaryScrollController] is being used by that Scrollable widget.
-///
-/// If the scrollbar is wrapped around multiple [ScrollView]s, it only responds to
-/// the nearest ScrollView and shows the corresponding scrollbar thumb by default.
-/// The [notificationPredicate] allows the ability to customize which
-/// [ScrollNotification]s the Scrollbar should listen to.
-///
-/// If the child [ScrollView] is infinitely long, the [RawScrollbar] will not be
-/// painted. In this case, the scrollbar cannot accurately represent the
-/// relative location of the visible area, or calculate the accurate delta to
-/// apply when dragging on the thumb or tapping on the track.
-///
-/// ### Interaction
-///
-/// Scrollbars are interactive and can use the [PrimaryScrollController] if
-/// a [controller] is not set. Interactive Scrollbar thumbs can be dragged along
-/// the main axis of the [ScrollView] to change the [ScrollPosition]. Tapping
-/// along the track exclusive of the thumb will trigger a
-/// [ScrollIncrementType.page] based on the relative position to the thumb.
-///
-/// When using the [PrimaryScrollController], it must not be attached to more
-/// than one [ScrollPosition]. [ScrollView]s that have not been provided a
-/// [ScrollController] and have a [ScrollView.scrollDirection] of
-/// [Axis.vertical] will automatically attach their ScrollPosition to the
-/// PrimaryScrollController. Provide a unique ScrollController to each
-/// [Scrollable] in this case to prevent having multiple ScrollPositions
-/// attached to the PrimaryScrollController.
-///
-/// ### Automatic Scrollbars on Desktop Platforms
-///
-/// Scrollbars are added to most [Scrollable] widgets by default on
-/// desktop platforms. This is done through
-/// [ScrollBehavior.buildScrollbar] as part of an app's
-/// [ScrollConfiguration]. Scrollables that do not use the
-/// [PrimaryScrollController] or have a [ScrollController] provided to them
-/// will receive a unique ScrollController for use with the Scrollbar. In this
-/// case, only one Scrollable can be using the PrimaryScrollController, unless
-/// [interactive] is false. To prevent [Axis.vertical] Scrollables from using
-/// the PrimaryScrollController, set [ScrollView.primary] to false. Scrollable
-/// widgets that do not have automatically applied Scrollbars include
-///
-///   * [EditableText]
-///   * [ListWheelScrollView]
-///   * [PageView]
-///   * [NestedScrollView]
-///   * [DropdownButton]
-///
-/// Default Scrollbars can be disabled for the whole app by setting a
-/// [ScrollBehavior] with `scrollbars` set to false.
+/// {@macro flutter.widgets.Scrollbar}
 ///
 /// Dynamically changes to a [CupertinoScrollbar], an iOS style scrollbar, by
 /// default on the iOS platform.

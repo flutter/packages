@@ -20,8 +20,7 @@ import 'theme.dart';
 
 /// A list whose items the user can interactively reorder by dragging.
 ///
-// TODO(Piinks): Follow up on youtube support
-// {@youtube 560 315 https://www.youtube.com/watch?v=3fB1mxOsqJE}
+//// Learn more about [ReorderableListView] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=3fB1mxOsqJE).
 ///
 /// This sample shows by dragging the user can reorder the items of the list.
 /// The [onReorderItem] parameter will be called when a child
@@ -38,9 +37,9 @@ import 'theme.dart';
 ///
 /// </callout-box>
 ///
-/// By default, on desktop platforms each item will
+/// By default, on [TargetPlatformVariant.desktop] platforms each item will
 /// have a drag handle added on top of it that will allow the user to grab it
-/// to move the item. On mobile platforms, no drag handle will be
+/// to move the item. On [TargetPlatformVariant.mobile], no drag handle will be
 /// added, but when the user long presses anywhere on the item it will start
 /// moving the item. Displaying drag handles can be controlled with
 /// [ReorderableListView.buildDefaultDragHandles].
@@ -322,7 +321,7 @@ class ReorderableListView extends StatefulWidget {
   /// {@macro flutter.widgets.scroll_view.controller}
   final ScrollController? scrollController;
 
-  /// {@macro material_ui.scroll_view.primary}
+  /// {@macro flutter.widgets.scroll_view.primary}
 
   /// Defaults to true when [scrollDirection] is [Axis.vertical] and
   /// [scrollController] is null.

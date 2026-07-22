@@ -78,8 +78,7 @@ enum _ScaffoldSlot {
 
 /// Manages [SnackBar]s and [MaterialBanner]s for descendant [Scaffold]s.
 ///
-// TODO(Piinks): Follow up on youtube support
-// {@youtube 560 315 https://www.youtube.com/watch?v=lytQi-slT5Y}
+/// Learn more about [Scaffold] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=lytQi-slT5Y).
 ///
 /// This class provides APIs for showing snack bars and material banners at the
 /// bottom and top of the screen, respectively.

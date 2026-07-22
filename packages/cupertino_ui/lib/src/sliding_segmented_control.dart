@@ -309,8 +309,7 @@ class _SegmentSeparatorState extends State<_SegmentSeparator>
 
 /// An iOS 13 style segmented control.
 ///
-// TODO(Piinks): Follow up on youtube support
-// {@youtube 560 315 https://www.youtube.com/watch?v=esnBf6V4C34}
+/// Learn more about [CupertinoSlidingSegmentedControl] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=esnBf6V4C34).
 ///
 /// Displays the widgets provided in the [Map] of [children] in a horizontal list.
 /// It allows the user to select between a number of mutually exclusive options,

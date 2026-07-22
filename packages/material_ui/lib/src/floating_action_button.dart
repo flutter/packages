@@ -35,8 +35,7 @@ enum _FloatingActionButtonType { regular, small, large, extended }
 /// to promote a primary action in the application. Floating action buttons are
 /// most commonly used in the [Scaffold.floatingActionButton] field.
 ///
-// TODO(Piinks): Follow up on youtube support
-// {@youtube 560 315 https://www.youtube.com/watch?v=2uaoEDOgk_I}
+/// Learn more about [FloatingActionButton] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=2uaoEDOgk_I).
 ///
 /// Use at most a single floating action button per screen. Floating action
 /// buttons should be used for positive actions such as "create", "share", or

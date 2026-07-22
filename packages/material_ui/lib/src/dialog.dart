@@ -327,8 +327,7 @@ class Dialog extends StatelessWidget {
 /// title and an optional list of actions. The title is displayed above the
 /// content and the actions are displayed below the content.
 ///
-// TODO(Piinks): Follow up on youtube support
-// {@youtube 560 315 https://www.youtube.com/watch?v=75CsnyRXf5I}
+/// Learn more about [AlertDialog] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=75CsnyRXf5I).
 ///
 /// For dialogs that offer the user a choice between several options, consider
 /// using a [SimpleDialog].

@@ -48,8 +48,7 @@ const List<double> _kDisabledDarkGradientOpacities = <double>[0.08, 0.14];
 
 /// A macOS style checkbox.
 ///
-// TODO(Piinks): Follow up on youtube support
-// {@youtube 560 315 https://www.youtube.com/watch?v=ua54JU7k1Us}
+/// Learn more about [CupertinoCheckbox] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=ua54JU7k1Us).
 ///
 /// The checkbox itself does not maintain any state. Instead, when the state of
 /// the checkbox changes, the widget calls the [onChanged] callback. Most

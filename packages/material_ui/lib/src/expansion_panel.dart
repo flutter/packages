@@ -62,8 +62,7 @@ typedef ExpansionPanelHeaderBuilder = Widget Function(BuildContext context, bool
 /// expanded or collapsed. The body of the panel is only visible when it is
 /// expanded.
 ///
-// TODO(Piinks): Follow up on youtube support
-// {@youtube 560 315 https://www.youtube.com/watch?v=2aJZzRMziJc}
+/// Learn more about [ExpansionPanel] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=2aJZzRMziJc).
 ///
 /// Expansion panels are only intended to be used as children for
 /// [ExpansionPanelList].
