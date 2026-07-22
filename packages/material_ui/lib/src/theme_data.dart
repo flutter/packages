@@ -121,7 +121,8 @@ class Adaptation<T> {
 
 /// An interface that defines custom additions to a [ThemeData] object.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=8-szcYzFVao}
+// TODO(Piinks): Follow up on youtube support
+// {@youtube 560 315 https://www.youtube.com/watch?v=8-szcYzFVao}
 ///
 /// Typically used for custom colors. To use, subclass [ThemeExtension],
 /// define a number of fields (e.g. [Color]s), and implement the [copyWith] and

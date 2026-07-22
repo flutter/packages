@@ -39,7 +39,8 @@ import 'toggle_buttons_theme.dart';
 /// that's preferred for applications that are configured for Material 3
 /// (see [ThemeData.useMaterial3]).
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=kVEguaQWGAY}
+// TODO(Piinks): Follow up on youtube support
+// {@youtube 560 315 https://www.youtube.com/watch?v=kVEguaQWGAY}
 ///
 /// ## Updating to [SegmentedButton]
 ///

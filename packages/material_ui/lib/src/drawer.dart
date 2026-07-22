@@ -70,7 +70,8 @@ const Duration _kBaseSettleDuration = Duration(milliseconds: 246);
 /// that's preferred for applications that are configured for Material 3
 /// (see [ThemeData.useMaterial3]).
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=WRj86iHihgY}
+// TODO(Piinks): Follow up on youtube support
+// {@youtube 560 315 https://www.youtube.com/watch?v=WRj86iHihgY}
 ///
 /// Drawers are typically used with the [Scaffold.drawer] property. The child of
 /// the drawer is usually a [ListView] whose first child is a [DrawerHeader]

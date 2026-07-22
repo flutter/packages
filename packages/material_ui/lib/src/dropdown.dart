@@ -924,7 +924,8 @@ class DropdownButtonHideUnderline extends InheritedWidget {
 /// from [DropdownButton] to [DropdownMenu].
 ///
 /// ## Using [DropdownButton]
-/// {@youtube 560 315 https://www.youtube.com/watch?v=ZzQ_PWrFihg}
+// TODO(Piinks): Follow up on youtube support
+// {@youtube 560 315 https://www.youtube.com/watch?v=ZzQ_PWrFihg}
 ///
 /// One ancestor must be a [Material] widget and typically this is
 /// provided by the app's [Scaffold].

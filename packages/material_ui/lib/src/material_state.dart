@@ -532,7 +532,8 @@ class _WidgetInputBorderMapper extends WidgetStateMapper<InputBorder>
 /// on a widget's interactive "state", which is defined as a set
 /// of [MaterialState]s.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=CylXr3AF3uU}
+// TODO(Piinks): Follow up on youtube support
+// {@youtube 560 315 https://www.youtube.com/watch?v=CylXr3AF3uU}
 ///
 /// Material state properties represent values that depend on a widget's material
 /// "state". The state is encoded as a set of [MaterialState] values, like

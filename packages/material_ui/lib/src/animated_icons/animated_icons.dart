@@ -14,7 +14,8 @@ part of material_animated_icons; // ignore: use_string_in_part_of_directives
 ///
 /// The available icons are specified in [AnimatedIcons].
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=pJcbh8pbvJs}
+// TODO(Piinks): Follow up on youtube support
+// {@youtube 560 315 https://www.youtube.com/watch?v=pJcbh8pbvJs}
 ///
 /// <callout-box>
 ///
