@@ -1,3 +1,4 @@
 changelog: |
-  - Adds `maybePop` to `GoRouter`, `GoRouterDelegate`, and `GoRouterHelper`. This method mirrors [Navigator.maybePop] and [BackButton] by returning `false` instead of throwing when there is nothing to pop, and calls [GoRouter.restore] when a pop completes synchronously.
+  - Adds `maybePop` to `GoRouter`, `GoRouterDelegate`, and `GoRouterHelper`. This method mirrors [Navigator.maybePop]'s single-navigator scope by asking only the current navigator (unlike system back via `popRoute`, which may walk multiple navigators), returning `false` instead of throwing when that navigator has nothing to pop, and calling [GoRouter.restore] when a pop completes synchronously.
 version: minor
+

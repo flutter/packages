@@ -64,17 +64,23 @@ extension GoRouterHelper on BuildContext {
     extra: extra,
   );
 
-  /// Returns `true` if there is more than 1 page on the stack.
-  bool canPop() => GoRouter.of(this).canPop();
-
-  /// Pop the top page off the Navigator's page stack if possible.
-  ///
-  /// Returns `true` if a route was popped and `false` otherwise. This method
-  /// does not throw if there is nothing to pop.
+  /// Returns `true` if any navigator in the current route stack can pop.
   ///
   /// See also:
-  /// * [pop], which throws if there is nothing to pop.
-  /// * [canPop], which can be used to check whether a pop is possible.
+  /// * [GoRouter.canPop], for multi-navigator semantics and the difference from
+  ///   [maybePop].
+  bool canPop() => GoRouter.of(this).canPop();
+
+  /// Pop the top page off the current navigator if possible.
+  ///
+  /// Returns `true` if the current navigator handled the request and `false`
+  /// when that navigator has nothing to pop. Only the current navigator is
+  /// consulted; parent navigators are not tried. This may disagree with
+  /// [canPop] under shell routes — see [GoRouter.maybePop].
+  ///
+  /// See also:
+  /// * [pop], which may pop a parent navigator and throws if nothing can pop.
+  /// * [canPop], which reports whether any navigator in the stack can pop.
   Future<bool> maybePop<T extends Object?>([T? result]) => GoRouter.of(this).maybePop<T>(result);
 
   /// Pop the top page off the Navigator's page stack by calling
@@ -148,3 +154,4 @@ extension GoRouterHelper on BuildContext {
     extra: extra,
   );
 }
+

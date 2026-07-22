@@ -385,7 +385,15 @@ class GoRouter implements RouterConfig<RouteMatchList> {
 
   final ValueListenable<RoutingConfig> _routingConfig;
 
-  /// Returns `true` if there is at least two or more route can be pop.
+  /// Returns `true` if any navigator in the current route stack can pop.
+  ///
+  /// This considers the root navigator and nested shell navigators. It may
+  /// return `true` in cases where [maybePop] returns `false`, because
+  /// [maybePop] only consults the current (top-most) navigator.
+  ///
+  /// See also:
+  /// * [pop], which pops from the first navigator that can pop.
+  /// * [maybePop], which safely asks only the current navigator to pop.
   bool canPop() => routerDelegate.canPop();
 
   /// Get a location from route name and parameters.
@@ -550,12 +558,16 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   /// If the top-most route is a pop up or dialog, this method pops it instead
   /// of any GoRoute under it.
   ///
+  /// Unlike [maybePop], this may pop a parent navigator when the current
+  /// (top-most) navigator cannot pop, matching [canPop]'s multi-navigator
+  /// check. Prefer [maybePop] when only the current navigator should be asked.
+  ///
   /// Ensure that the `value` of `routeInformationProvider` is synced
   ///  with `routerDelegate.currentConfiguration`.
   ///
   /// See also:
   /// * [maybePop], which returns `false` instead of throwing if there is
-  ///   nothing to pop.
+  ///   nothing to pop on the current navigator.
   void pop<T extends Object?>([T? result]) {
     assert(() {
       log('popping ${routerDelegate.currentConfiguration.uri}');
@@ -572,10 +584,20 @@ class GoRouter implements RouterConfig<RouteMatchList> {
 
   /// Pop the top-most route off the current screen if possible.
   ///
-  /// This method calls [NavigatorState.maybePop] on the underlying navigators,
-  /// similar to [BackButton]. It returns `true` if a route was popped and
-  /// `false` otherwise. Unlike [pop], this method does not throw if there is
-  /// nothing to pop.
+  /// This method calls [NavigatorState.maybePop] on the current (top-most)
+  /// navigator, matching that API's single-navigator scope. It is not the same
+  /// as system back handling via [GoRouterDelegate.popRoute], which may walk
+  /// multiple navigators.
+  ///
+  /// Returns `true` if the current navigator handled the request (including
+  /// when a [PopScope] blocks the pop) and `false` when that navigator has
+  /// nothing to pop. Unlike [pop], this method does not throw if there is
+  /// nothing to pop, and it does not fall through to parent navigators.
+  ///
+  /// Because only the current navigator is consulted, [canPop] may be `true`
+  /// while this method returns `false` (for example a shell route with a
+  /// single page while the root navigator still has history). Use [pop] when
+  /// parent navigators should be considered.
   ///
   /// When a pop completes synchronously, this method also calls [restore] to
   /// keep the [routeInformationProvider] in sync with
@@ -665,3 +687,4 @@ class _ConstantRoutingConfig extends ValueListenable<RoutingConfig> {
   @override
   final RoutingConfig value;
 }
+

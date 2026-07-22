@@ -193,5 +193,87 @@ void main() {
       expect(find.text('Home'), findsOneWidget);
       expect(await router.routerDelegate.maybePop(), isFalse);
     });
+
+    testWidgets('does not fall through to parent navigators when current cannot pop', (
+      WidgetTester tester,
+    ) async {
+      final shellNavigatorKey = GlobalKey<NavigatorState>();
+      final GoRouter router = GoRouter(
+        initialLocation: '/',
+        routes: <RouteBase>[
+          GoRoute(path: '/', builder: (_, _) => const Text('Home')),
+          ShellRoute(
+            navigatorKey: shellNavigatorKey,
+            builder: (_, _, Widget child) => child,
+            routes: <GoRoute>[
+              GoRoute(path: '/a', builder: (_, _) => const Text('A')),
+            ],
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      // Root can pop (Home -> shell /a); shell itself cannot.
+      router.push('/a');
+      await tester.pumpAndSettle();
+      expect(find.text('A'), findsOneWidget);
+      expect(shellNavigatorKey.currentState?.canPop(), isFalse);
+      expect(router.routerDelegate.navigatorKey.currentState?.canPop(), isTrue);
+      expect(router.canPop(), isTrue);
+
+      // Current navigator declines; must not pop the shell page off root.
+      expect(await router.maybePop(), isFalse);
+      await tester.pumpAndSettle();
+      expect(find.text('A'), findsOneWidget);
+      expect(find.text('Home'), findsNothing);
+
+      // pop() still targets a parent navigator that can pop.
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(find.text('Home'), findsOneWidget);
+    });
+
+    testWidgets('pops the innermost navigator without touching parent history', (
+      WidgetTester tester,
+    ) async {
+      final shellNavigatorKey = GlobalKey<NavigatorState>();
+      final GoRouter router = GoRouter(
+        initialLocation: '/',
+        routes: <RouteBase>[
+          GoRoute(path: '/', builder: (_, _) => const Text('Home')),
+          ShellRoute(
+            navigatorKey: shellNavigatorKey,
+            builder: (_, _, Widget child) => child,
+            routes: <GoRoute>[
+              GoRoute(path: '/a', builder: (_, _) => const Text('A')),
+              GoRoute(path: '/b', builder: (_, _) => const Text('B')),
+            ],
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      // Root keeps Home under the shell; shell stacks /b over /a.
+      router.push('/a');
+      await tester.pumpAndSettle();
+      router.push('/b');
+      await tester.pumpAndSettle();
+      expect(find.text('B'), findsOneWidget);
+      expect(shellNavigatorKey.currentState?.canPop(), isTrue);
+      expect(router.routerDelegate.navigatorKey.currentState?.canPop(), isTrue);
+
+      expect(await router.maybePop(), isTrue);
+      await tester.pumpAndSettle();
+      expect(find.text('A'), findsOneWidget);
+      expect(find.text('B'), findsNothing);
+      expect(find.text('Home'), findsNothing);
+      expect(shellNavigatorKey.currentState?.canPop(), isFalse);
+      expect(router.routerDelegate.navigatorKey.currentState?.canPop(), isTrue);
+    });
   });
 }
+

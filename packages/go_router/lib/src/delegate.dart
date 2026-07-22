@@ -77,7 +77,10 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
     return false;
   }
 
-  /// Returns `true` if the active Navigator can pop.
+  /// Returns `true` if any navigator in the current route stack can pop.
+  ///
+  /// Unlike [maybePop], this considers nested shell navigators as well as the
+  /// root navigator.
   bool canPop() {
     if (navigatorKey.currentState?.canPop() ?? false) {
       return true;
@@ -106,22 +109,32 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
     states.first.pop(result);
   }
 
-  /// Calls [NavigatorState.maybePop] on the current navigator stack.
+  /// Calls [NavigatorState.maybePop] on the current (top-most) navigator.
   ///
-  /// Returns `true` if a route was popped and `false` otherwise. This method
-  /// does not throw if there is nothing to pop.
+  /// Unlike [popRoute], this only consults the first navigator returned by
+  /// [_findCurrentNavigators], matching [Navigator.maybePop]'s single-navigator
+  /// scope. It does not fall through to parent navigators when that navigator
+  /// has nothing to pop (its top route is the first route on that navigator).
+  ///
+  /// This can disagree with [canPop] and [pop] under shell routes: [canPop] is
+  /// true if any navigator in the current stack can pop, and [pop] pops the
+  /// first navigator that [NavigatorState.canPop] reports as true. [maybePop]
+  /// only asks the current navigator, so [canPop] may be `true` while this
+  /// method returns `false`.
+  ///
+  /// Returns `true` if the current navigator handled the request (including
+  /// when a [PopScope] blocks the pop) and `false` when that navigator has
+  /// nothing to pop. This method does not throw if there is nothing to pop.
   Future<bool> maybePop<T extends Object?>([T? result]) async {
-    final Iterable<NavigatorState> states = _findCurrentNavigators();
-    for (final NavigatorState state in states) {
-      if (!state.mounted) {
-        continue;
-      }
-      final bool didPop = await state.maybePop<T>(result);
-      if (didPop) {
-        return true;
-      }
+    final Iterator<NavigatorState> iterator = _findCurrentNavigators().iterator;
+    if (!iterator.moveNext()) {
+      return false;
     }
-    return false;
+    final NavigatorState state = iterator.current;
+    if (!state.mounted) {
+      return false;
+    }
+    return state.maybePop<T>(result);
   }
 
   /// Get a prioritized list of NavigatorStates,
@@ -328,3 +341,4 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
     return SynchronousFuture<void>(null);
   }
 }
+
