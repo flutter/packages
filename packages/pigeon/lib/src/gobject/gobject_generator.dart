@@ -2462,10 +2462,7 @@ bool _isNullablePrimitiveType(TypeDeclaration type) {
     return false;
   }
 
-  return type.isEnum ||
-      type.baseName == 'bool' ||
-      type.baseName == 'int' ||
-      type.baseName == 'double';
+  return type.isEnum || isPrimitiveType(type);
 }
 
 // Whether [type] is a type that needs to stay an FlValue* since it can't be

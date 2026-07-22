@@ -3760,9 +3760,7 @@ String? _swiftTypeForBuiltinDartType(
   if (mapKey && type.baseName == 'Object') {
     return useFfi ? 'NSObject' : 'AnyHashable';
   } else if (swiftTypeForDartTypeMap.containsKey(type.baseName)) {
-    if (useFfi &&
-        !type.isNullable &&
-        (type.baseName == 'int' || type.baseName == 'double' || type.baseName == 'bool')) {
+    if (useFfi && !type.isNullable && isPrimitiveType(type)) {
       return swiftTypeForDartTypeMap[type.baseName];
     }
     if (ffiTypedData) {
@@ -3807,10 +3805,7 @@ String? _ffiTypeForBuiltinDartType(
   if (type.baseName == 'Object' && collectionSubType) {
     return 'NSObject';
   } else if (ffiTypeForDartTypeMap.containsKey(type.baseName)) {
-    if (!type.isNullable &&
-        !forceNullable &&
-        !collectionSubType &&
-        (type.baseName == 'int' || type.baseName == 'double' || type.baseName == 'bool')) {
+    if (!type.isNullable && !forceNullable && !collectionSubType && isPrimitiveType(type)) {
       return _swiftTypeForDartType(type);
     }
     return ffiTypeForDartTypeMap[type.baseName];

@@ -539,4 +539,36 @@ void myMethod() {
       expect(compareTypeDeclarationGenericness(listListNullableObject, listListObject), 1);
     });
   });
+
+  group('isPrimitiveType', () {
+    test('returns true for int, double, bool', () {
+      expect(isPrimitiveType(const TypeDeclaration(baseName: 'int', isNullable: false)), isTrue);
+      expect(isPrimitiveType(const TypeDeclaration(baseName: 'double', isNullable: false)), isTrue);
+      expect(isPrimitiveType(const TypeDeclaration(baseName: 'bool', isNullable: false)), isTrue);
+    });
+
+    test('returns false for other types', () {
+      expect(
+        isPrimitiveType(const TypeDeclaration(baseName: 'String', isNullable: false)),
+        isFalse,
+      );
+      expect(isPrimitiveType(const TypeDeclaration(baseName: 'List', isNullable: false)), isFalse);
+      expect(
+        isPrimitiveType(const TypeDeclaration(baseName: 'Object', isNullable: false)),
+        isFalse,
+      );
+    });
+  });
+
+  group('symbols', () {
+    test('getNullabilitySymbol', () {
+      expect(getNullabilitySymbol(true), '?');
+      expect(getNullabilitySymbol(false), '');
+    });
+
+    test('getForceNonNullSymbol', () {
+      expect(getForceNonNullSymbol(true), '!');
+      expect(getForceNonNullSymbol(false), '');
+    });
+  });
 }

@@ -166,15 +166,12 @@ abstract class _NativeInteropType<T extends _NativeInteropType<T>> {
   }
 
   bool get nonNullableNeedsUnwrapping {
-    return type.baseName != 'int' &&
-        type.baseName != 'double' &&
-        type.baseName != 'bool' &&
-        type.baseName != 'void';
+    return !isPrimitiveType(type) && type.baseName != 'void';
   }
 
   String getDartReturnType(bool forceUnwrap) {
     if (forceUnwrap || type.isNullable || nonNullableNeedsUnwrapping) {
-      return '${type.baseName}$dartCollectionTypeAnnotations${_getNullableSymbol(type.isNullable)}';
+      return '${type.baseName}$dartCollectionTypeAnnotations${getNullabilitySymbol(type.isNullable)}';
     }
     return type.baseName;
   }
@@ -246,7 +243,7 @@ class _FfiType extends _NativeInteropType<_FfiType> {
     bool forceNullable = false,
   }) {
     if (type.isClass) {
-      return '${type.baseName}.fromFfi($varName)${_getForceNonNullSymbol(!type.isNullable)}';
+      return '${type.baseName}.fromFfi($varName)${getForceNonNullSymbol(!type.isNullable)}';
     }
     if (type.isEnum && classField) {
       if (type.isNullable) {
@@ -254,7 +251,7 @@ class _FfiType extends _NativeInteropType<_FfiType> {
           nullable: type.isNullable,
           varName: varName,
           code:
-              '${type.baseName}.values[$varName${_getForceNonNullSymbol(type.isNullable)}.longValue]',
+              '${type.baseName}.values[$varName${getForceNonNullSymbol(type.isNullable)}.longValue]',
         );
       }
       return '${type.baseName}.values[$varName.index]';
@@ -262,10 +259,7 @@ class _FfiType extends _NativeInteropType<_FfiType> {
     var asType = ' as ${getDartReturnType(true)}';
     var castCall = '';
     String getHint(TypeDeclaration type) {
-      if (type.isEnum ||
-          type.baseName == 'double' ||
-          type.baseName == 'bool' ||
-          type.baseName == 'int') {
+      if (type.isEnum || isPrimitiveType(type)) {
         return type.baseName;
       }
       return 'null';
@@ -292,11 +286,9 @@ class _FfiType extends _NativeInteropType<_FfiType> {
     }
 
     final codecCall =
-        '_PigeonFfiCodec.readValue($varName$typeArg)${_getForceNonNullSymbol(!type.isNullable)}';
+        '_PigeonFfiCodec.readValue($varName$typeArg)${getForceNonNullSymbol(!type.isNullable)}';
     String primitiveGetter(String converter, bool classField) {
-      return classField &&
-              !type.isNullable &&
-              (type.baseName == 'int' || type.baseName == 'double' || type.baseName == 'bool')
+      return classField && !type.isNullable && isPrimitiveType(type)
           ? varName
           : '$varName${type.isNullable ? '?' : (forceNullable ? '!' : '')}.$converter';
     }
@@ -310,11 +302,11 @@ class _FfiType extends _NativeInteropType<_FfiType> {
       case 'Object':
         asType = '';
       case 'List':
-        asType = ' as List<Object?>${_getNullableSymbol(type.isNullable)}';
-        castCall = '${_getNullableSymbol(type.isNullable)}.cast$dartCollectionTypeAnnotations()';
+        asType = ' as List<Object?>${getNullabilitySymbol(type.isNullable)}';
+        castCall = '${getNullabilitySymbol(type.isNullable)}.cast$dartCollectionTypeAnnotations()';
       case 'Map':
-        asType = ' as Map<Object?, Object?>${_getNullableSymbol(type.isNullable)}';
-        castCall = '${_getNullableSymbol(type.isNullable)}.cast$dartCollectionTypeAnnotations()';
+        asType = ' as Map<Object?, Object?>${getNullabilitySymbol(type.isNullable)}';
+        castCall = '${getNullabilitySymbol(type.isNullable)}.cast$dartCollectionTypeAnnotations()';
     }
     return '${wrapConditionally('$codecCall$asType', '(', ')', type.baseName != 'Object' && castCall.isNotEmpty)}$castCall';
   }
@@ -327,16 +319,15 @@ class _FfiType extends _NativeInteropType<_FfiType> {
     bool forceNonNull = false,
   }) {
     if (type.isClass) {
-      return '$name${_getNullableSymbol(type.isNullable)}.toFfi()';
+      return '$name${getNullabilitySymbol(type.isNullable)}.toFfi()';
     }
     if (type.isEnum && !type.isNullable) {
       return 'ffi_bridge.${type.baseName}.values[$name]';
     }
-    if (!type.isNullable &&
-        (type.baseName == 'int' || type.baseName == 'double' || type.baseName == 'bool')) {
+    if (!type.isNullable && isPrimitiveType(type)) {
       return name;
     }
-    return '_PigeonFfiCodec.writeValue<${ffiType.ffiName}${_getNullableSymbol(type.isNullable && type.baseName != 'Object')}>($name${type.baseName == 'Object' ? ', generic: true' : ''})';
+    return '_PigeonFfiCodec.writeValue<${ffiType.ffiName}${getNullabilitySymbol(type.isNullable && type.baseName != 'Object')}>($name${type.baseName == 'Object' ? ', generic: true' : ''})';
   }
 
   String getFfiCallReturnType({
@@ -350,16 +341,14 @@ class _FfiType extends _NativeInteropType<_FfiType> {
       return forceNonNullable ? 'NSArray' : 'NSArray?';
     }
     if (type.baseName == 'Object') {
-      return 'NSObject${_getNullableSymbol((forceNullable || type.isNullable) && !forceNonNullable)}';
+      return 'NSObject${getNullabilitySymbol((forceNullable || type.isNullable) && !forceNonNullable)}';
     }
 
-    return '${ffiName.replaceAll('ffi_bridge.', prefix)}${_getNullableSymbol((forceNullable || type.isNullable) && !forceNonNullable)}';
+    return '${ffiName.replaceAll('ffi_bridge.', prefix)}${getNullabilitySymbol((forceNullable || type.isNullable) && !forceNonNullable)}';
   }
 
   String get ffiCollectionTypeAnnotations {
-    if (type.baseName == 'List') {
-      return '<$ffiCollectionTypes>';
-    } else if (type.baseName == 'Map') {
+    if (type.baseName == 'List' || type.baseName == 'Map') {
       return '<$ffiCollectionTypes>';
     }
     return '';
@@ -450,15 +439,15 @@ class _JniType extends _NativeInteropType<_JniType> {
 
   String getToDartCall(TypeDeclaration type, {String varName = '', bool forceConversion = false}) {
     if (type.isClass || type.isEnum) {
-      return '${type.baseName}.fromJni($varName)${_getForceNonNullSymbol(!type.isNullable)}';
+      return '${type.baseName}.fromJni($varName)${getForceNonNullSymbol(!type.isNullable)}';
     }
     var asType = ' as ${getDartReturnType(true)}';
     var castCall = '';
     final codecCall =
-        '_PigeonJniCodec.readValue($varName)${_getForceNonNullSymbol(!type.isNullable)}';
+        '_PigeonJniCodec.readValue($varName)${getForceNonNullSymbol(!type.isNullable)}';
     String primitiveGetter(String converter, bool unwrap) {
       return unwrap
-          ? '$varName${_getNullableSymbol(type.isNullable)}.$converter${'(releaseOriginal: true)'}'
+          ? '$varName${getNullabilitySymbol(type.isNullable)}.$converter${'(releaseOriginal: true)'}'
           : varName;
     }
 
@@ -474,11 +463,11 @@ class _JniType extends _NativeInteropType<_JniType> {
       case 'Object':
         asType = '';
       case 'List':
-        asType = ' as List<Object?>${_getNullableSymbol(type.isNullable)}';
-        castCall = '${_getNullableSymbol(type.isNullable)}.cast$dartCollectionTypeAnnotations()';
+        asType = ' as List<Object?>${getNullabilitySymbol(type.isNullable)}';
+        castCall = '${getNullabilitySymbol(type.isNullable)}.cast$dartCollectionTypeAnnotations()';
       case 'Map':
-        asType = ' as Map<Object?, Object?>${_getNullableSymbol(type.isNullable)}';
-        castCall = '${_getNullableSymbol(type.isNullable)}.cast$dartCollectionTypeAnnotations()';
+        asType = ' as Map<Object?, Object?>${getNullabilitySymbol(type.isNullable)}';
+        castCall = '${getNullabilitySymbol(type.isNullable)}.cast$dartCollectionTypeAnnotations()';
     }
     return '${wrapConditionally('$codecCall$asType', '(', ')', type.baseName != 'Object' && castCall.isNotEmpty)}$castCall';
   }
@@ -490,9 +479,8 @@ class _JniType extends _NativeInteropType<_JniType> {
     bool forceNonNull = false,
   }) {
     if (type.isClass || type.isEnum) {
-      return '$name${_getNullableSymbol(type.isNullable)}.toJni()';
-    } else if (!type.isNullable &&
-        (type.baseName == 'int' || type.baseName == 'double' || type.baseName == 'bool')) {
+      return '$name${getNullabilitySymbol(type.isNullable)}.toJni()';
+    } else if (!type.isNullable && isPrimitiveType(type)) {
       return name;
     }
     return '_PigeonJniCodec.writeValue<${getJniCallReturnType(true)}>($name)';
@@ -504,15 +492,13 @@ class _JniType extends _NativeInteropType<_JniType> {
     bool isAsynchronous = false,
   }) {
     if (forceUnwrap || type.isNullable || nonNullableNeedsUnwrapping) {
-      return '$jniName${getJniCollectionTypeAnnotations(isParameter: isParameter, isAsynchronous: isAsynchronous)}${_getNullableSymbol(type.isNullable)}';
+      return '$jniName${getJniCollectionTypeAnnotations(isParameter: isParameter, isAsynchronous: isAsynchronous)}${getNullabilitySymbol(type.isNullable)}';
     }
     return type.baseName;
   }
 
   String getJniCollectionTypeAnnotations({bool isParameter = false, bool isAsynchronous = false}) {
-    if (type.baseName == 'List') {
-      return '<${getJniCollectionTypes(isParameter: isParameter, isAsynchronous: isAsynchronous)}>';
-    } else if (type.baseName == 'Map') {
+    if (type.baseName == 'List' || type.baseName == 'Map') {
       return '<${getJniCollectionTypes(isParameter: isParameter, isAsynchronous: isAsynchronous)}>';
     }
     return '';
@@ -553,10 +539,6 @@ class _JniType extends _NativeInteropType<_JniType> {
 
   String get jniCollectionTypes => getJniCollectionTypes();
 }
-
-String _getNullableSymbol(bool nullable) => nullable ? '?' : '';
-
-String _getForceNonNullSymbol(bool force) => force ? '!' : '';
 
 String _wrapInNullCheckIfNullable({
   required bool nullable,
@@ -962,7 +944,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
           for (final field in fields) {
             final _FfiType ffiType = _FfiType.fromTypeDeclaration(field.type);
             indent.writeln(
-              '${needsName ? '${field.name}: ' : ''}${ffiType.getToFfiCall(field.type, '${field.name}${ffiType.type.isEnum ? '${_getNullableSymbol(ffiType.type.isNullable)}.index' : ''}', ffiType, classField: true)},',
+              '${needsName ? '${field.name}: ' : ''}${ffiType.getToFfiCall(field.type, '${field.name}${ffiType.type.isEnum ? '${getNullabilitySymbol(ffiType.type.isNullable)}.index' : ''}', ffiType, classField: true)},',
             );
             needsName = true;
           }
@@ -1263,10 +1245,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
                             );
                             String toFfiCall;
                             if (!method.returnType.isNullable &&
-                                (method.returnType.baseName == 'int' ||
-                                    method.returnType.baseName == 'double' ||
-                                    method.returnType.baseName == 'bool' ||
-                                    method.returnType.isEnum)) {
+                                (isPrimitiveType(method.returnType) || method.returnType.isEnum)) {
                               toFfiCall =
                                   '_PigeonFfiCodec.writeValue<${ffiReturnType.ffiName}>(response)';
                             } else {
@@ -1307,10 +1286,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
                           );
                           String toFfiCall;
                           if (!method.returnType.isNullable &&
-                              (method.returnType.baseName == 'int' ||
-                                  method.returnType.baseName == 'double' ||
-                                  method.returnType.baseName == 'bool' ||
-                                  method.returnType.isEnum)) {
+                              (isPrimitiveType(method.returnType) || method.returnType.isEnum)) {
                             toFfiCall =
                                 '_PigeonFfiCodec.writeValue<${ffiReturnType.ffiName}>(response)';
                           } else {
@@ -1398,10 +1374,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
                     indent.writeln('return _PigeonJniCodec._kotlinUnit;');
                   } else {
                     String toJniCall;
-                    if (!method.returnType.isNullable &&
-                        (method.returnType.baseName == 'int' ||
-                            method.returnType.baseName == 'double' ||
-                            method.returnType.baseName == 'bool')) {
+                    if (!method.returnType.isNullable && isPrimitiveType(method.returnType)) {
                       toJniCall = '_PigeonJniCodec.writeValue<${jniReturnType.jniName}>(response)';
                     } else {
                       toJniCall = jniReturnType.getToJniCall(
@@ -1694,10 +1667,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
                   );
                   final forceRes =
                       !returnType.type.isNullable &&
-                          (returnType.type.baseName == 'int' ||
-                              returnType.type.baseName == 'double' ||
-                              returnType.type.baseName == 'String' ||
-                              returnType.type.baseName == 'bool')
+                          (isPrimitiveType(returnType.type) || returnType.type.baseName == 'String')
                       ? '!'
                       : '';
                   if (method.isAsynchronous) {

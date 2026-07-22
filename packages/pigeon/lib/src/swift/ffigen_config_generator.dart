@@ -237,7 +237,7 @@ Future<Uri> _getAppleSdk() async {
       }
     }
   } catch (_) {}
-  return await iOSSdk;
+  return iOSSdk;
 }
 ''');
     sink.write(indent.toString());

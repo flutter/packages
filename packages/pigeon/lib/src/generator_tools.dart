@@ -873,10 +873,21 @@ bool isCollectionType(TypeDeclaration type) {
       (type.baseName.contains('List') || type.baseName == 'Map');
 }
 
+/// Whether the type is a primitive scalar type (bool, int, or double).
+bool isPrimitiveType(TypeDeclaration type) {
+  return type.baseName == 'bool' || type.baseName == 'int' || type.baseName == 'double';
+}
+
 /// Wraps provided [toWrap] with [start] and [end] if [wrap] is true.
 String wrapConditionally(String toWrap, String start, String end, bool wrap) {
   return wrap ? '$start$toWrap$end' : toWrap;
 }
+
+/// Returns '?' if [nullable] is true, otherwise empty string.
+String getNullabilitySymbol(bool nullable) => nullable ? '?' : '';
+
+/// Returns '!' if [force] is true, otherwise empty string.
+String getForceNonNullSymbol(bool force) => force ? '!' : '';
 
 /// Compares [TypeDeclaration]s by how generic they are.
 ///
