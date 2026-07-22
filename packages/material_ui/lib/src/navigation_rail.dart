@@ -28,7 +28,8 @@ const double _kIndicatorHeight = 32;
 /// app to navigate between a small number of views, typically between three and
 /// five.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=y9xchtVTtqQ}
+// TODO(Piinks): Follow up on youtube support
+// {@youtube 560 315 https://www.youtube.com/watch?v=y9xchtVTtqQ}
 ///
 /// The navigation rail is meant for layouts with wide viewports, such as a
 /// desktop web or tablet landscape layout. For smaller layouts, like mobile

@@ -388,7 +388,8 @@ class DataCell {
 /// [Material 2](https://material.io/go/design-data-tables)
 /// design specification.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=ktTajqbhIcY}
+// TODO(Piinks): Follow up on youtube support
+// {@youtube 560 315 https://www.youtube.com/watch?v=ktTajqbhIcY}
 ///
 /// ## Performance considerations
 ///

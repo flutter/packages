@@ -11,7 +11,8 @@
 /// example the [Material
 /// Design](https://docs.flutter.dev/ui/widgets/material) set.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=3PdUaidHc-E}
+// TODO(Piinks): Follow up on youtube support
+// {@youtube 560 315 https://www.youtube.com/watch?v=3PdUaidHc-E}
 ///
 /// See also:
 ///
@@ -19,6 +20,8 @@
 ///    for a catalog of all Cupertino widgets.
 ///  * [flutter.dev/widgets](https://docs.flutter.dev/ui/widgets)
 ///    for a catalog of commonly-used Flutter widgets.
+/// @docImport 'package:flutter_test/flutter_test.dart';
+/// @docImport 'package:intl/intl.dart';
 library cupertino_ui;
 
 export 'package:flutter/widgets.dart';

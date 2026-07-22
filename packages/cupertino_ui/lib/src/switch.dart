@@ -69,7 +69,8 @@ const CupertinoDynamicColor _kOffLabelColor = CupertinoDynamicColor.withBrightne
 ///
 /// Used to toggle the on/off state of a single setting.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=24tg_N4sdMQ}
+// TODO(Piinks): Follow up on youtube support
+// {@youtube 560 315 https://www.youtube.com/watch?v=24tg_N4sdMQ}
 ///
 /// The switch itself does not maintain its toggle state. Instead, when the
 /// toggle state of the switch changes, the widget calls the [onChanged]

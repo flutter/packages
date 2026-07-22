@@ -23,7 +23,8 @@ const Duration kThemeAnimationDuration = Duration(milliseconds: 200);
 ///
 /// A theme describes the colors and typographic choices of an application.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=oTvQDJOBXmM}
+// TODO(Piinks): Follow up on youtube support
+// {@youtube 560 315 https://www.youtube.com/watch?v=oTvQDJOBXmM}
 ///
 /// Descendant widgets obtain the current theme's [ThemeData] object using
 /// [Theme.of]. When a widget uses [Theme.of], it is automatically rebuilt if

@@ -76,7 +76,8 @@ enum _IndicatorType { material, adaptive, noSpinner }
 
 /// A widget that supports the Material "swipe to refresh" idiom.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=ORApMlzwMdM}
+// TODO(Piinks): Follow up on youtube support
+// {@youtube 560 315 https://www.youtube.com/watch?v=ORApMlzwMdM}
 ///
 /// When the child's [Scrollable] descendant overscrolls, an animated circular
 /// progress indicator is faded into view. When the scroll ends, if the

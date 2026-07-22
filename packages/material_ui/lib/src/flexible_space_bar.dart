@@ -44,7 +44,8 @@ enum StretchMode {
 /// The part of a Material Design [AppBar] that expands, collapses, and
 /// stretches.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=mSc7qFzxHDw}
+// TODO(Piinks): Follow up on youtube support
+// {@youtube 560 315 https://www.youtube.com/watch?v=mSc7qFzxHDw}
 ///
 /// Most commonly used in the [SliverAppBar.flexibleSpace] field, a flexible
 /// space bar expands and contracts as the app scrolls so that the [AppBar]
