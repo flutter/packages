@@ -420,6 +420,52 @@ final class InAppPurchase2PluginTests: XCTestCase {
     XCTAssert(callback.lastUpdate.first?.status == .restored)
   }
 
+  func testRestoreMultipleProductsEmitsSingleBatchedUpdate() async throws {
+    // Purchase two subscriptions from different subscription groups so that
+    // both persist in `currentEntitlements` and restoring returns two
+    // transactions.
+    let firstPurchaseExpectation = self.expectation(description: "First purchase should succeed")
+    plugin.purchase(id: "subscription_discounted", options: nil) { result in
+      switch result {
+      case .success:
+        firstPurchaseExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("Purchase should NOT fail. Failed with \(error)")
+      }
+    }
+    await fulfillment(of: [firstPurchaseExpectation], timeout: 5)
+
+    let secondPurchaseExpectation = self.expectation(description: "Second purchase should succeed")
+    plugin.purchase(id: "subscription_silver", options: nil) { result in
+      switch result {
+      case .success:
+        secondPurchaseExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("Purchase should NOT fail. Failed with \(error)")
+      }
+    }
+    await fulfillment(of: [secondPurchaseExpectation], timeout: 5)
+
+    let restoreExpectation = self.expectation(description: "Restore request should succeed")
+    plugin.restorePurchases { result in
+      switch result {
+      case .success():
+        restoreExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("Restore purchases should NOT fail. Failed with \(error)")
+      }
+    }
+    await fulfillment(of: [restoreExpectation], timeout: 5)
+
+    // Both restored transactions must arrive in a single `onTransactionsUpdated`
+    // callback.
+    XCTAssertEqual(callback.lastUpdate.count, 2)
+    XCTAssertTrue(callback.lastUpdate.allSatisfy { $0.status == .restored })
+    XCTAssertEqual(
+      Set(callback.lastUpdate.map { $0.productId }),
+      ["subscription_discounted", "subscription_silver"])
+  }
+
   func testFinishTransaction() async throws {
     let purchaseExpectation = self.expectation(description: "Purchase should succeed")
     let finishExpectation = self.expectation(description: "Finishing purchase should succeed")

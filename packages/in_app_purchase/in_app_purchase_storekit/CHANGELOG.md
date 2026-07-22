@@ -1,3 +1,7 @@
+## 0.4.10+2
+
+* Fixes StoreKi 2 restore transactions not grouping purchases into a single event.
+
 ## 0.4.10+1
 
 * Fixes SK2Transaction to expose the real purchased quantity instead of defaulting to 1.
