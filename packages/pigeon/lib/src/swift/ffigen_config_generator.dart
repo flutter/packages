@@ -88,19 +88,17 @@ import 'package:swiftgen/swiftgen.dart';
     indent.writeScoped('Future<void> main(List<String> args) async {', '}', () {
       indent.writeln("  Directory.current = Platform.script.resolve('.').toFilePath();");
       indent.format('''
-  final Uri sdk;
+  Uri sdk;
   if (args.isNotEmpty) {
-    final String customSdkPath = args[0];
-    final bool isValidSdk =
-        File(path.join(customSdkPath, 'SDKSettings.json')).existsSync() ||
-            File(path.join(customSdkPath, 'SDKSettings.plist')).existsSync();
-    if (!isValidSdk) {
-      stderr.writeln('Error: Specified SDK directory "\$customSdkPath" does not exist or is not a valid Apple SDK directory.');
-      exit(1);
-    }
-    sdk = Uri.directory(customSdkPath);
+    sdk = Uri.directory(args[0]);
   } else {
-    sdk = ${configuredSdkPath != null ? "Uri.directory('$configuredSdkPath')" : "await iOSSdk"};
+    sdk = ${(configuredSdkPath != null && configuredSdkPath.isNotEmpty) ? "Uri.directory('$configuredSdkPath')" : "await _getAppleSdk()"};
+  }
+  final bool isValidSdk =
+      File(path.join(sdk.toFilePath(), 'SDKSettings.json')).existsSync() ||
+          File(path.join(sdk.toFilePath(), 'SDKSettings.plist')).existsSync();
+  if (!isValidSdk) {
+    sdk = await _getAppleSdk();
   }
 ''');
       final String prefix = generatorOptions.swiftOptions.fileSpecificClassNameComponent ?? '';
@@ -187,6 +185,11 @@ import 'package:swiftgen/swiftgen.dart';
               classes.contains(decl.originalName) ||
               enums.contains(decl.originalName),
           module: (fg.Declaration decl) {
+            // Assign declarations to their destination module. Foundation classes starting with 'NS'
+            // return null so ffigen treats them as external system framework types (provided by
+            // package:objective_c) rather than generating local module wrappers for them.
+            // Specific types (like NSURLCredential) return '$moduleName' so ffigen generates the
+            // explicit Dart FFI bindings required by this plugin.
 ${hasAsyncFlutterApi ? '''
             if (decl.originalName == 'NSURLCredential' ||
                 decl.originalName == 'NSURLSessionAuthChallengeDisposition') {
@@ -199,6 +202,11 @@ ${hasAsyncFlutterApi ? '''
         protocols: fg.Protocols(
           include: (fg.Declaration decl) => classes.contains(decl.originalName),
           module: (fg.Declaration decl) {
+            // Assign declarations to their destination module. Foundation classes starting with 'NS'
+            // return null so ffigen treats them as external system framework types (provided by
+            // package:objective_c) rather than generating local module wrappers for them.
+            // Specific types (like NSURLCredential) return '$moduleName' so ffigen generates the
+            // explicit Dart FFI bindings required by this plugin.
 ${hasAsyncFlutterApi ? '''
             if (decl.originalName == 'NSURLCredential' ||
                 decl.originalName == 'NSURLSessionAuthChallengeDisposition') {
@@ -216,6 +224,22 @@ ${hasAsyncFlutterApi ? '''
   );
       ''');
     });
+    indent.format('''
+Future<Uri> _getAppleSdk() async {
+  try {
+    final ProcessResult result = await Process.run('xcrun', <String>['--sdk', 'iphoneos', '--show-sdk-path']);
+    if (result.exitCode == 0) {
+      final String sdkPath = result.stdout.toString().trim();
+      if (sdkPath.isNotEmpty &&
+          (File(path.join(sdkPath, 'SDKSettings.json')).existsSync() ||
+              File(path.join(sdkPath, 'SDKSettings.plist')).existsSync())) {
+        return Uri.directory(sdkPath);
+      }
+    }
+  } catch (_) {}
+  return await iOSSdk;
+}
+''');
     sink.write(indent.toString());
   }
 }
