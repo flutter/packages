@@ -22,7 +22,7 @@ const Duration _kScrollbarTimeToFade = Duration(milliseconds: 600);
 /// To add a scrollbar to a [ScrollView], wrap the scroll view
 /// widget in a [Scrollbar] widget.
 ///
-//// Learn more about [Scrollbar] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=DbkIQSvwnZc).
+/// Learn more about [Scrollbar] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=DbkIQSvwnZc).
 ///
 /// {@macro flutter.widgets.Scrollbar}
 ///

@@ -20,7 +20,7 @@ import 'theme.dart';
 
 /// A list whose items the user can interactively reorder by dragging.
 ///
-//// Learn more about [ReorderableListView] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=3fB1mxOsqJE).
+/// Learn more about [ReorderableListView] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=3fB1mxOsqJE).
 ///
 /// This sample shows by dragging the user can reorder the items of the list.
 /// The [onReorderItem] parameter will be called when a child

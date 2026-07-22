@@ -250,7 +250,7 @@ class NavigationBar extends StatelessWidget {
   /// the [NavigationDestination] is focused, hovered, or pressed.
   final WidgetStateProperty<Color?>? overlayColor;
 
-  //// The text style of the label.
+  /// The text style of the label.
   ///
   /// If null, [NavigationBarThemeData.labelTextStyle] is used. If that
   /// is also null, the default text style is [TextTheme.labelMedium] with
