@@ -6,8 +6,7 @@
 ///
 /// To use, import `package:material_ui/material_ui.dart`.
 ///
-// TODO(Piinks): Follow up on youtube support
-// {@youtube 560 315 https://www.youtube.com/watch?v=DL0Ix1lnC4w}
+/// Learn more about Material Design widgets on the [Flutter YouTube channel](https://www.youtube.com/watch?v=DL0Ix1lnC4w).
 ///
 /// See also:
 ///

@@ -84,8 +84,7 @@ class _SelectableTextSelectionGestureDetectorBuilder extends TextSelectionGestur
 /// The string might break across multiple lines or might all be displayed on
 /// the same line depending on the layout constraints.
 ///
-// TODO(Piinks): Follow up on youtube support
-// {@youtube 560 315 https://www.youtube.com/watch?v=ZSU3ZXOs6hc}
+/// Learn more about [SelectableText] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=ZSU3ZXOs6hc).
 ///
 /// The [style] argument is optional. When omitted, the text will use the style
 /// from the closest enclosing [DefaultTextStyle]. If the given style's

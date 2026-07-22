@@ -150,8 +150,7 @@ enum DropdownMenuCloseBehavior {
 /// A dropdown menu that can be opened from a [TextField]. The selected
 /// menu item is displayed in that field.
 ///
-// TODO(Piinks): Follow up on youtube support
-// {@youtube 560 315 https://www.youtube.com/watch?v=giV9AbM2gd8}
+/// Learn more about [DropdownMenu] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=giV9AbM2gd8).
 ///
 /// This widget is used to help people make a choice from a menu and put the
 /// selected item into the text input field. People can also filter the list based

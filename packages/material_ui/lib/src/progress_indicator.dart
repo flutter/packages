@@ -364,8 +364,7 @@ class _LinearProgressIndicatorPainter extends CustomPainter {
 
 /// A Material Design linear progress indicator, also known as a progress bar.
 ///
-// TODO(Piinks): Follow up on youtube support
-// {@youtube 560 315 https://www.youtube.com/watch?v=O-rhXZLtpv0}
+/// Learn more about [LinearProgressIndicator] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=O-rhXZLtpv0).
 ///
 /// A widget that shows progress along a line. There are two kinds of linear
 /// progress indicators:
@@ -799,8 +798,7 @@ class _CircularProgressIndicatorPainter extends CustomPainter {
 /// A Material Design circular progress indicator, which spins to indicate that
 /// the application is busy.
 ///
-// TODO(Piinks): Follow up on youtube support
-// {@youtube 560 315 https://www.youtube.com/watch?v=O-rhXZLtpv0}
+/// Learn more about [CircularProgressIndicator] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=O-rhXZLtpv0).
 ///
 /// A widget that shows progress along a circle. There are two kinds of circular
 /// progress indicators:

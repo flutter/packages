@@ -11,8 +11,7 @@
 /// example the [Material
 /// Design](https://docs.flutter.dev/ui/widgets/material) set.
 ///
-// TODO(Piinks): Follow up on youtube support
-// {@youtube 560 315 https://www.youtube.com/watch?v=3PdUaidHc-E}
+/// Learn more about Cupertino widgets on the [Flutter YouTube channel](https://www.youtube.com/watch?v=3PdUaidHc-E).
 ///
 /// See also:
 ///

@@ -36,8 +36,7 @@ const double _kVelocityThreshold = 1.0;
 
 /// An iOS-style slider.
 ///
-// TODO(Piinks): Follow up on youtube support
-// {@youtube 560 315 https://www.youtube.com/watch?v=ufb4gIPDmEs}
+/// Learn more about [CupertinoSlider] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=ufb4gIPDmEs).
 ///
 /// Used to select from a range of values.
 ///

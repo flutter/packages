@@ -39,8 +39,7 @@ import 'toggle_buttons_theme.dart';
 /// that's preferred for applications that are configured for Material 3
 /// (see [ThemeData.useMaterial3]).
 ///
-// TODO(Piinks): Follow up on youtube support
-// {@youtube 560 315 https://www.youtube.com/watch?v=kVEguaQWGAY}
+/// Learn more about [ToggleButtons] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=kVEguaQWGAY).
 ///
 /// ## Updating to [SegmentedButton]
 ///

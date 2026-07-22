@@ -12,8 +12,7 @@ import 'theme.dart';
 
 /// {@macro flutter.widgets.RawAutocomplete.RawAutocomplete}
 ///
-// TODO(Piinks): Follow up on youtube support
-// {@youtube 560 315 https://www.youtube.com/watch?v=-Nny8kzW380}
+/// Learn more about [Autocomplete] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=-Nny8kzW380).
 ///
 /// <callout-box>
 ///

@@ -36,8 +36,7 @@ const double _kMaxLabelTextScaleFactor = 1.3;
 
 /// Material 3 Navigation Bar component.
 ///
-// TODO(Piinks): Follow up on youtube support
-// {@youtube 560 315 https://www.youtube.com/watch?v=DVGYddFaLv0}
+/// Learn more about [NavigationBar] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=DVGYddFaLv0).
 ///
 /// Navigation bars offer a persistent and convenient way to switch between
 /// primary destinations in an app.
