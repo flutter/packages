@@ -26,11 +26,11 @@ import 'theme.dart';
 /// The [onReorderItem] parameter will be called when a child
 /// widget is dragged to a new position.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/reorderable_list/reorderable_list_view.0.dart#body}
@@ -49,6 +49,8 @@ import 'theme.dart';
 /// This example demonstrates using the [ReorderableListView.proxyDecorator] callback
 /// to customize the appearance of a list item while it's being dragged.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// While a drag is underway, the widget returned by the [ReorderableListView.proxyDecorator]
@@ -57,8 +59,6 @@ import 'theme.dart';
 /// callback in this example is similar to the default one except that it changes the
 /// proxy item's background color.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/reorderable_list/reorderable_list_view.1.dart#body}
@@ -68,14 +68,14 @@ import 'theme.dart';
 /// This example demonstrates using the [ReorderableListView.proxyDecorator] callback to
 /// customize the appearance of a [Card] while it's being dragged.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// The default [proxyDecorator] wraps the dragged item in a [Material] widget and animates
 /// its elevation. This example demonstrates how to use the [ReorderableListView.proxyDecorator]
 /// callback to update the dragged card elevation without inserted a new [Material] widget.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/reorderable_list/reorderable_list_view.2.dart#body}
@@ -173,10 +173,10 @@ class ReorderableListView extends StatefulWidget {
   /// [ReorderableListView.builder] constructor. Using the [IndexedWidgetBuilder], The
   /// list items are built lazily on demand.
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Replace the following block with a @dartpad directive
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
+  ///
   /// {@macro material_ui.dartpad_guide}
   ///
   /// {@example /example/lib/reorderable_list/reorderable_list_view.reorderable_list_view_builder.0.dart#body}
@@ -286,12 +286,12 @@ class ReorderableListView extends StatefulWidget {
   /// The following sample specifies `buildDefaultDragHandles: false`, and
   /// uses a [Card] at the leading edge of each item for the item's drag handle.
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// <callout-box>
   ///
   ///
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
   /// {@example /example/lib/reorderable_list/reorderable_list_view.build_default_drag_handles.0.dart#body}

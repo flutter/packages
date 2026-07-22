@@ -3142,10 +3142,10 @@ class _TimePickerState extends State<_TimePicker> with RestorationMixin {
 /// The returned Future resolves to the time selected by the user when the user
 /// closes the dialog. If the user cancels the dialog, null is returned.
 ///
-/// <callout-box>
-///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
+/// <callout-box>
+///
 /// Show a dialog with [initialTime] equal to the current time.
 ///
 /// ```dart
@@ -3201,10 +3201,10 @@ class _TimePickerState extends State<_TimePicker> with RestorationMixin {
 /// [ColorScheme]. The time picker can be further customized by providing a
 /// [TimePickerThemeData] to the overall theme.
 ///
-/// <callout-box>
-///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
+/// <callout-box>
+///
 /// Show a dialog with the text direction overridden to be
 /// [TextDirection.rtl].
 ///
@@ -3223,10 +3223,10 @@ class _TimePickerState extends State<_TimePicker> with RestorationMixin {
 ///
 /// </callout-box>
 ///
-/// <callout-box>
-///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
+/// <callout-box>
+///
 /// Show a dialog with time unconditionally displayed in 24 hour
 /// format.
 ///
@@ -3245,13 +3245,13 @@ class _TimePickerState extends State<_TimePicker> with RestorationMixin {
 ///
 /// </callout-box>
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This example illustrates how to open a time picker, and allows exploring
 /// some of the variations in the types of time pickers that may be shown.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/time_picker/show_time_picker.0.dart#body}

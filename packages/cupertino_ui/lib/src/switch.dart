@@ -77,23 +77,23 @@ const CupertinoDynamicColor _kOffLabelColor = CupertinoDynamicColor.withBrightne
 /// callback and rebuild the switch with a new [value] to update the visual
 /// appearance of the switch.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This example shows a toggleable [CupertinoSwitch]. When the thumb slides to
 /// the other side of the track, the switch is toggled between on/off.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
 /// {@example /example/lib/switch/cupertino_switch.0.dart#body}
 ///
 /// </callout-box>
 ///
-/// <callout-box>
-///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
+/// <callout-box>
+///
 ///
 ///
 /// This sample shows how to use a [CupertinoSwitch] in a [CupertinoListTile]. The
@@ -318,10 +318,10 @@ class CupertinoSwitch extends StatefulWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
+  ///
   ///
   /// This example resolves the [trackOutlineColor] based on the current
   /// [WidgetState] of the [CupertinoSwitch], providing a different [Color] when it is
@@ -353,10 +353,10 @@ class CupertinoSwitch extends StatefulWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
+  ///
   ///
   /// This example resolves the [trackOutlineWidth] based on the current
   /// [WidgetState] of the [CupertinoSwitch], providing a different outline width when it is
@@ -391,10 +391,10 @@ class CupertinoSwitch extends StatefulWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
+  ///
   ///
   /// This example resolves the [thumbIcon] based on the current
   /// [WidgetState] of the [CupertinoSwitch], providing a different [Icon] when it is
@@ -427,10 +427,10 @@ class CupertinoSwitch extends StatefulWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
+  ///
   ///
   /// This example resolves the [mouseCursor] based on the current
   /// [WidgetState] of the [CupertinoSwitch], providing a different [mouseCursor] when it is

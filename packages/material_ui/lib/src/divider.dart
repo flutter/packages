@@ -29,6 +29,8 @@ import 'theme.dart';
 /// The box's total height is controlled by [height]. The appropriate
 /// padding is automatically computed from the height.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample shows how to display a Divider between an orange and blue box
@@ -38,21 +40,19 @@ import 'theme.dart';
 ///
 /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/divider.png)
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/divider/divider.0.dart#body}
 ///
 /// </callout-box>
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample shows the creation of [Divider] widget, as described in:
 /// https://m3.material.io/components/divider/overview
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/divider/divider.1.dart#body}
@@ -134,10 +134,10 @@ class Divider extends StatelessWidget {
   /// also null, then [ThemeData.dividerColor] is used.
   /// {@endtemplate}
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
+  ///
   ///
   /// ```dart
   /// const Divider(
@@ -161,10 +161,10 @@ class Divider extends StatelessWidget {
   /// If [context] is null, the default color of [BorderSide] is used and the
   /// default width of 0.0 is used.
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
+  ///
   ///
   /// This example uses this method to create a box that has a divider above and
   /// below it. This is sometimes useful with lists, for instance, to separate a
@@ -240,6 +240,8 @@ class Divider extends StatelessWidget {
 /// The box's total width is controlled by [width]. The appropriate
 /// padding is automatically computed from the width.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample shows how to display a [VerticalDivider] between a purple and orange box
@@ -247,21 +249,19 @@ class Divider extends StatelessWidget {
 /// horizontally centered black line that is 1 logical pixels thick. The grey
 /// line is indented by 20 logical pixels.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/divider/vertical_divider.0.dart#body}
 ///
 /// </callout-box>
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample shows the creation of [VerticalDivider] widget, as described in:
 /// https://m3.material.io/components/divider/overview
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/divider/vertical_divider.1.dart#body}
@@ -326,10 +326,10 @@ class VerticalDivider extends StatelessWidget {
   /// If this is null, then the [DividerThemeData.color] is used. If that is
   /// also null, then [ThemeData.dividerColor] is used.
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
+  ///
   ///
   /// ```dart
   /// const Divider(

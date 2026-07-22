@@ -297,10 +297,10 @@ class TooltipThemeData with Diagnosticable {
 /// Descendant widgets obtain the ambient tooltip theme, a [TooltipThemeData],
 /// using [TooltipTheme.of].
 ///
-/// <callout-box>
-///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
+/// <callout-box>
+///
 ///
 /// Here is an example of a tooltip theme that applies a blue foreground
 /// with non-rounded corners.

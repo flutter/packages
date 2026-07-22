@@ -243,14 +243,14 @@ class DatePickerThemeData with Diagnosticable {
   /// value of [dayBackgroundColor] is used to paint the shape decoration of
   /// the day label.
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// <callout-box>
   ///
   /// This sample demonstrates how to customize the day selector shape decoration
   /// using the [dayShape], [todayForegroundColor], [todayBackgroundColor], and
   /// [todayBorder] properties.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
   /// {@example /example/lib/date_picker/date_picker_theme_day_shape.0.dart#body}
@@ -265,14 +265,14 @@ class DatePickerThemeData with Diagnosticable {
   ///
   /// This will be used instead of the [TextStyle.color] provided in [dayStyle].
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// <callout-box>
   ///
   /// This sample demonstrates how to customize the day selector shape decoration
   /// using the [dayShape], [todayForegroundColor], [todayBackgroundColor], and
   /// [todayBorder] properties.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
   /// {@example /example/lib/date_picker/date_picker_theme_day_shape.0.dart#body}
@@ -293,14 +293,14 @@ class DatePickerThemeData with Diagnosticable {
   /// is used as specified. To omit the border entirely,
   /// set [todayBorder] to [BorderSide.none].
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// <callout-box>
   ///
   /// This sample demonstrates how to customize the day selector shape decoration
   /// using the [dayShape], [todayForegroundColor], [todayBackgroundColor], and
   /// [todayBorder] properties.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
   /// {@example /example/lib/date_picker/date_picker_theme_day_shape.0.dart#body}

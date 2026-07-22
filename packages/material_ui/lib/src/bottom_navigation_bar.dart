@@ -134,6 +134,8 @@ enum BottomNavigationBarLandscapeLayout {
 ///
 /// ## Using [BottomNavigationBar]
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This example shows a [BottomNavigationBar] as it is used within a [Scaffold]
@@ -143,27 +145,27 @@ enum BottomNavigationBarLandscapeLayout {
 /// amber. The `_onItemTapped` function changes the selected item's index
 /// and displays a corresponding message in the center of the [Scaffold].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/bottom_navigation_bar/bottom_navigation_bar.0.dart#body}
 ///
 /// </callout-box>
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This example shows how you would migrate the above [BottomNavigationBar]
 /// to the new [NavigationBar].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/navigation_bar/navigation_bar.0.dart#body}
 ///
 /// </callout-box>
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This example shows a [BottomNavigationBar] as it is used within a [Scaffold]
@@ -176,14 +178,14 @@ enum BottomNavigationBarLandscapeLayout {
 /// selected item's index and displays a corresponding message in the center of
 /// the [Scaffold].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/bottom_navigation_bar/bottom_navigation_bar.1.dart#body}
 ///
 /// </callout-box>
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This example shows [BottomNavigationBar] used in a [Scaffold] Widget with
@@ -191,8 +193,6 @@ enum BottomNavigationBarLandscapeLayout {
 /// uses the [ScrollController] to animate the [ListView] to the top. The second
 /// [BottomNavigationBarItem] shows a Modal Dialog.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/bottom_navigation_bar/bottom_navigation_bar.2.dart#body}

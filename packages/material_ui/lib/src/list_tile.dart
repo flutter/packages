@@ -203,10 +203,10 @@ enum ListTileTitleAlignment {
 /// ancestor. In this case, one can wrap a [Material] widget around the
 /// [ListTile], e.g.:
 ///
-/// <callout-box>
-///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
+/// <callout-box>
+///
 ///
 /// ```dart
 /// const ColoredBox(
@@ -232,19 +232,21 @@ enum ListTileTitleAlignment {
 /// [selectedTileColor], [focusColor], and [hoverColor] as these colors
 /// are not drawn by the list tile itself but by the material widget ancestor.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This example showcases how [ListTile] needs to be wrapped in a [Material]
 /// widget to animate colors.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/list_tile/list_tile.0.dart#body}
 ///
 /// </callout-box>
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This example uses a [ListView] to demonstrate different configurations of
@@ -252,59 +254,57 @@ enum ListTileTitleAlignment {
 ///
 /// ![Different variations of ListTile](https://flutter.github.io/assets-for-api-docs/assets/material/list_tile.png)
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/list_tile/list_tile.1.dart#body}
 ///
 /// </callout-box>
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample shows the creation of a [ListTile] using [ThemeData.useMaterial3] flag,
 /// as described in: https://m3.material.io/components/lists/overview.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/list_tile/list_tile.2.dart#body}
 ///
 /// </callout-box>
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample shows [ListTile]'s [textColor] and [iconColor] can use
 /// [WidgetStateColor] color to change the color of the text and icon
 /// when the [ListTile] is enabled, selected, or disabled.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/list_tile/list_tile.3.dart#body}
 ///
 /// </callout-box>
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample shows [ListTile.titleAlignment] can be used to configure the
 /// [leading] and [trailing] widgets alignment relative to the [title] and
 /// [subtitle] widgets.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/list_tile/list_tile.4.dart#body}
 ///
 /// </callout-box>
 ///
-/// <callout-box>
-///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
+/// <callout-box>
+///
 ///
 /// To use a [ListTile] within a [Row], it needs to be wrapped in an
 /// [Expanded] widget. [ListTile] requires fixed width constraints,
@@ -331,10 +331,10 @@ enum ListTileTitleAlignment {
 ///
 /// </callout-box>
 ///
-/// <callout-box>
-///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
+/// <callout-box>
+///
 ///
 /// Tiles can be much more elaborate. Here is a tile which can be tapped, but
 /// which is disabled when the `_act` variable is not 2. When the tile is
@@ -364,10 +364,10 @@ enum ListTileTitleAlignment {
 /// that are large enough, but it is up to the developer to ensure that
 /// their widgets follow the Material spec.
 ///
-/// <callout-box>
-///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
+/// <callout-box>
+///
 ///
 /// Here is an example of a one-line, non-[dense] ListTile with a
 /// tappable leading widget that adheres to accessibility requirements and
@@ -400,27 +400,27 @@ enum ListTileTitleAlignment {
 /// you're looking for, it's easy to create custom list items with a
 /// combination of other widgets, such as [Row]s and [Column]s.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// Here is an example of a custom list item that resembles a YouTube-related
 /// video list item created with [Expanded] and [Container] widgets.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/list_tile/custom_list_item.0.dart#body}
 ///
 /// </callout-box>
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// Here is an example of an article list item with multiline titles and
 /// subtitles. It utilizes [Row]s and [Column]s, as well as [Expanded] and
 /// [AspectRatio] widgets to organize its layout.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/list_tile/custom_list_item.1.dart#body}
@@ -721,14 +721,14 @@ class ListTile extends StatelessWidget {
   /// By default the selected color is the theme's primary color. The selected color
   /// can be overridden with a [ListTileTheme].
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// <callout-box>
   ///
   /// Here is an example of using a [StatefulWidget] to keep track of the
   /// selected index, and using that to set the [selected] property on the
   /// corresponding [ListTile].
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
   /// {@example /example/lib/list_tile/list_tile.selected.0.dart#body}

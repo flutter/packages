@@ -21,12 +21,12 @@ const Color _kActiveTickColor = CupertinoDynamicColor.withBrightness(
 ///
 /// {@youtube 560 315 https://www.youtube.com/watch?v=AENVH-ZqKDQ}
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This example shows how [CupertinoActivityIndicator] can be customized.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
 /// {@example /example/lib/activity_indicator/cupertino_activity_indicator.0.dart#body}
@@ -207,12 +207,12 @@ class _CupertinoActivityIndicatorPainter extends CustomPainter {
 /// The [CupertinoLinearActivityIndicator] is a linear progress bar that
 /// displays a colored bar to indicate the progress of an ongoing task.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This example shows how [CupertinoLinearActivityIndicator] can be customized.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
 /// {@example /example/lib/activity_indicator/cupertino_linear_activity_indicator.0.dart#body}

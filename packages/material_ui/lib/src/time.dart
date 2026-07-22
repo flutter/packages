@@ -30,10 +30,10 @@ enum DayPeriod {
 /// minute or using [DateTime] object.
 /// Hours are specified between 0 and 23, as in a 24-hour clock.
 ///
-/// <callout-box>
-///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
+/// <callout-box>
+///
 ///
 /// ```dart
 /// TimeOfDay now = TimeOfDay.now();

@@ -47,10 +47,10 @@ import 'material.dart';
 /// generally speaking will match the order they are given in the widget tree,
 /// but this order may appear to be somewhat random in more dynamic situations.
 ///
-/// <callout-box>
-///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
+/// <callout-box>
+///
 ///
 /// This example shows how a [Material] widget can have a yellow rectangle drawn
 /// on it using [Ink], while still having ink effects over the yellow rectangle:
@@ -76,10 +76,10 @@ import 'material.dart';
 ///
 /// </callout-box>
 ///
-/// <callout-box>
-///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
+/// <callout-box>
+///
 ///
 /// The following example shows how an image can be printed on a [Material]
 /// widget with an [InkWell] above it:
@@ -118,6 +118,8 @@ import 'material.dart';
 ///
 /// What to do if you want to clip this [Ink.image]?
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// Wrapping the [Ink] in a clipping widget directly will not work since the
@@ -127,22 +129,20 @@ import 'material.dart';
 /// it is being rendered onto the Scaffold body Material, which isn't wrapped in
 /// the [ClipRRect].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/ink/ink.image_clip.0.dart#body}
 ///
 /// </callout-box>
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// One solution would be to deliberately wrap the [Ink.image] in a [Material].
 /// This makes sure the Material that the image is painted on is also responsible
 /// for clipping said content.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/ink/ink.image_clip.1.dart#body}

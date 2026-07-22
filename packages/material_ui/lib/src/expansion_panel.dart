@@ -171,12 +171,12 @@ class ExpansionPanelRadio extends ExpansionPanel {
 /// previously open panel, which is closing, and the previously closed panel,
 /// which is opening.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// Here is a simple example of how to use [ExpansionPanelList].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/expansion_panel/expansion_panel_list.0.dart#body}
@@ -211,12 +211,12 @@ class ExpansionPanelList extends StatefulWidget {
   /// expand/collapse button is pushed. The [children] objects must be instances
   /// of [ExpansionPanelRadio].
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// <callout-box>
   ///
   /// Here is a simple example of how to implement ExpansionPanelList.radio.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
   /// {@example /example/lib/expansion_panel/expansion_panel_list.expansion_panel_list_radio.0.dart#body}

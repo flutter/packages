@@ -316,10 +316,10 @@ class ProgressIndicatorThemeData with Diagnosticable {
 /// Values specified here are used for [ProgressIndicator] properties that are not
 /// given an explicit non-null value.
 ///
-/// <callout-box>
-///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
+/// <callout-box>
+///
 ///
 /// Here is an example of a progress indicator theme that applies a red indicator
 /// color.

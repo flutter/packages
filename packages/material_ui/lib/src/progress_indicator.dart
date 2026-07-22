@@ -384,28 +384,28 @@ class _LinearProgressIndicatorPainter extends CustomPainter {
 /// The minimum height of the indicator can be specified using [minHeight].
 /// The indicator can be made taller by wrapping the widget with a [SizedBox].
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This example showcases determinate and indeterminate [LinearProgressIndicator]s.
 /// The [LinearProgressIndicator]s will use the ![updated Material 3 Design appearance](https://m3.material.io/components/progress-indicators/overview)
 /// when setting the [LinearProgressIndicator.year2023] flag to false.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/progress_indicator/linear_progress_indicator.0.dart#body}
 ///
 /// </callout-box>
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample shows the creation of a [LinearProgressIndicator] with a changing value.
 /// When toggling the switch, [LinearProgressIndicator] uses a determinate value.
 /// As described in: https://m3.material.io/components/progress-indicators/overview
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/progress_indicator/linear_progress_indicator.1.dart#body}
@@ -815,28 +815,28 @@ class _CircularProgressIndicatorPainter extends CustomPainter {
 /// The indicator arc is displayed with [valueColor], an animated value. To
 /// specify a constant color use: `AlwaysStoppedAnimation<Color>(color)`.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This example showcases determinate and indeterminate [CircularProgressIndicator]s.
 /// The [CircularProgressIndicator]s will use the ![updated Material 3 Design appearance](https://m3.material.io/components/progress-indicators/overview)
 /// when setting the [CircularProgressIndicator.year2023] flag to false.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/progress_indicator/circular_progress_indicator.0.dart#body}
 ///
 /// </callout-box>
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample shows the creation of a [CircularProgressIndicator] with a changing value.
 /// When toggling the switch, [CircularProgressIndicator] uses a determinate value.
 /// As described in: https://m3.material.io/components/progress-indicators/overview
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/progress_indicator/circular_progress_indicator.1.dart#body}
@@ -863,6 +863,8 @@ class _CircularProgressIndicatorPainter extends CustomPainter {
 /// [controller] property of an individual indicator.
 /// {@endtemplate}
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample demonstrates how to synchronize the indeterminate animations
@@ -876,8 +878,6 @@ class _CircularProgressIndicatorPainter extends CustomPainter {
 /// This forces each indicator to create its own internal controller,
 /// causing their animations to become desynchronized.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/progress_indicator/circular_progress_indicator.2.dart#body}

@@ -119,10 +119,10 @@ abstract class SearchDelegate<T> {
   /// [keyboardType] and/or [textInputAction]. Only one of [searchFieldLabel]
   /// and [searchFieldDecorationTheme] may be non-null.
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
+  ///
   ///
   /// ```dart
   /// class CustomSearchHintDelegate extends SearchDelegate<String> {

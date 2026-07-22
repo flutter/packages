@@ -14,10 +14,10 @@ import 'theme.dart';
 /// A [CupertinoMagnifier] used for magnifying text in cases where a user's
 /// finger may be blocking the point of interest, like a selection handle.
 ///
-/// <callout-box>
-///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
+/// <callout-box>
+///
 ///
 /// This sample demonstrates how to use [CupertinoTextMagnifier].
 ///
@@ -226,10 +226,10 @@ class _CupertinoTextMagnifierState extends State<CupertinoTextMagnifier>
 /// A [RawMagnifier] used for magnifying text in cases where a user's
 /// finger may be blocking the point of interest, like a selection handle.
 ///
-/// <callout-box>
-///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
+/// <callout-box>
+///
 ///
 /// This sample demonstrates how to use [CupertinoMagnifier].
 ///

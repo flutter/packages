@@ -57,25 +57,25 @@ import 'toggle_buttons_theme.dart';
 /// The [SegmentedButton.style] is a [ButtonStyle] style field, which can be
 /// used to customize the entire segmented button and the individual segments.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample shows how to migrate [ToggleButtons] that allows multiple
 /// or no selection to [SegmentedButton] that allows multiple or no selection.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/toggle_buttons/toggle_buttons.1.dart#body}
 ///
 /// </callout-box>
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This example showcase [ToggleButtons] in various configurations.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/toggle_buttons/toggle_buttons.0.dart#body}

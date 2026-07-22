@@ -27,10 +27,10 @@ import 'theme.dart';
 ///
 /// Typically used with a [Scaffold] and a [FloatingActionButton].
 ///
-/// <callout-box>
-///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
+/// <callout-box>
+///
 ///
 /// ```dart
 /// Scaffold(
@@ -44,20 +44,22 @@ import 'theme.dart';
 ///
 /// </callout-box>
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This example shows the [BottomAppBar], which can be configured to have a notch using the
 /// [BottomAppBar.shape] property. This also includes an optional [FloatingActionButton], which illustrates
 /// the [FloatingActionButtonLocation]s in relation to the [BottomAppBar].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/bottom_app_bar/bottom_app_bar.1.dart#body}
 ///
 /// </callout-box>
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This example shows Material 3 [BottomAppBar] with its expected look and behaviors.
@@ -65,8 +67,6 @@ import 'theme.dart';
 /// This also includes an optional [FloatingActionButton], which illustrates
 /// the [FloatingActionButtonLocation.endContained].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/bottom_app_bar/bottom_app_bar.2.dart#body}

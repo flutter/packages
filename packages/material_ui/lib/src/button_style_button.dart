@@ -29,6 +29,8 @@ import 'theme.dart';
 import 'theme_data.dart';
 import 'tooltip.dart';
 
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@template material_ui.ButtonStyle.iconAlignment}
 /// Determines the alignment of the icon within the widgets such as:
 ///   - [ElevatedButton.icon],
@@ -49,8 +51,6 @@ import 'tooltip.dart';
 /// This sample demonstrates how to use `iconAlignment` to align the button icon to the start
 /// or the end of the button.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/icon_alignment/icon_alignment.0.dart#body}

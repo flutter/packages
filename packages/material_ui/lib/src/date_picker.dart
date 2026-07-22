@@ -157,13 +157,13 @@ const double _fontSizeToScale = 14.0;
 ///
 /// {@macro flutter.widgets.RawDialogRoute}
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample demonstrates how to create a basic date picker.
 /// Tapping the button displays a date picker which returns the selected date.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/date_picker/show_date_picker.1.dart#body}
@@ -181,6 +181,8 @@ const double _fontSizeToScale = 14.0;
 ///
 /// {@macro flutter.widgets.RestorationManager}
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample demonstrates how to create a restorable Material date picker.
@@ -188,8 +190,6 @@ const double _fontSizeToScale = 14.0;
 /// [MaterialApp.restorationScopeId] and using [Navigator.restorablePush] to
 /// push [DatePickerDialog] when the button is tapped.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/date_picker/show_date_picker.0.dart#body}
@@ -1158,6 +1158,8 @@ typedef SelectableDayForRangePredicate =
 ///
 /// {@macro flutter.widgets.RestorationManager}
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample demonstrates how to create a restorable Material date range picker.
@@ -1165,8 +1167,6 @@ typedef SelectableDayForRangePredicate =
 /// [MaterialApp.restorationScopeId] and using [Navigator.restorablePush] to
 /// push [DateRangePickerDialog] when the button is tapped.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/date_picker/show_date_range_picker.0.dart#body}

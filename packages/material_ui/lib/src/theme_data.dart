@@ -102,6 +102,8 @@ class Adaptation<T> {
   /// uses an empty [SwitchThemeData] if a matching adaptation is not found, for
   /// the sake of backwards compatibility.
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// <callout-box>
   ///
   /// This sample shows how to create and use subclasses of [Adaptation] that
@@ -109,8 +111,6 @@ class Adaptation<T> {
   /// overridden to only customize cupertino-style switches, but it can also be
   /// used to customize any other platforms.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
   /// {@example /example/lib/switch/switch.4.dart#body}
@@ -128,13 +128,13 @@ class Adaptation<T> {
 /// [lerp] methods. The latter will ensure smooth transitions of properties when
 /// switching themes.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample shows how to create and use a subclass of [ThemeExtension] that
 /// defines two colors.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/theme/theme_extension.1.dart#body}
@@ -214,6 +214,8 @@ enum MaterialTapTargetSize {
 /// for the subtree that appears below the new [Theme], or insert a widget
 /// that creates a new BuildContext, like [Builder].
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This example demonstrates how a typical [MaterialApp] specifies
@@ -223,8 +225,6 @@ enum MaterialTapTargetSize {
 /// default configuration of [FloatingActionButton] to show how to
 /// customize the appearance a class of components.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/theme_data/theme_data.0.dart#body}
@@ -841,10 +841,10 @@ class ThemeData with Diagnosticable {
   /// forward we will be converting all the widget implementations to only use
   /// colors or colors derived from those in [ColorScheme].
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
+  ///
   ///
   /// This example will set up an application to use the baseline Material
   /// Design light and dark themes.
@@ -996,13 +996,13 @@ class ThemeData with Diagnosticable {
   ///
   /// To obtain an extension, use [extension].
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// <callout-box>
   ///
   /// This sample shows how to create and use a subclass of [ThemeExtension] that
   /// defines two colors.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
   /// {@example /example/lib/theme/theme_extension.1.dart#body}

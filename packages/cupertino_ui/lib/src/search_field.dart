@@ -38,13 +38,13 @@ const double _kMaxPrefixIconSize = 30.0;
 /// [controller]. For example, to set the initial value of the text field, use
 /// a [controller] that already contains some text such as:
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This examples shows how to provide initial text to a [CupertinoSearchTextField]
 /// using the [controller] property.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
 /// {@example /example/lib/search_field/cupertino_search_field.0.dart#body}
@@ -55,13 +55,13 @@ const double _kMaxPrefixIconSize = 30.0;
 /// [onSubmitted] parameters in order to be notified once the value of the
 /// field changes or is submitted by the keyboard:
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This examples shows how to be notified of field changes or submitted text from
 /// a [CupertinoSearchTextField].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
 /// {@example /example/lib/search_field/cupertino_search_field.1.dart#body}

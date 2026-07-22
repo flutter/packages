@@ -112,14 +112,14 @@ class _TextFieldSelectionGestureDetectorBuilder extends TextSelectionGestureDete
 ///
 /// ## Obscured Input
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This example shows how to create a [TextField] that will obscure input. The
 /// [InputDecoration] surrounds the field in a border using [OutlineInputBorder]
 /// and adds a label.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/text_field/text_field.0.dart#body}
@@ -132,13 +132,13 @@ class _TextFieldSelectionGestureDetectorBuilder extends TextSelectionGestureDete
 /// callback. This callback is applied to the text field's current value when
 /// the user finishes editing.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample shows how to get a value from a TextField via the [onSubmitted]
 /// callback.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/text_field/text_field.1.dart#body}
@@ -171,13 +171,13 @@ class _TextFieldSelectionGestureDetectorBuilder extends TextSelectionGestureDete
 ///
 /// {@macro flutter.widgets.editableText.accessibility}
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample shows how to style a text field to match a filled or outlined
 /// Material Design 3 text field.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/text_field/text_field.2.dart#body}
@@ -192,14 +192,14 @@ class _TextFieldSelectionGestureDetectorBuilder extends TextSelectionGestureDete
 /// [TextField] to ensure proper scroll coordination for [TextField] and its
 /// components like [TextSelectionOverlay].
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample demonstrates how to use the [Shortcuts] and [Actions] widgets
 /// to create a custom `Shift+Enter` keyboard shortcut for inserting a new line
 /// in a [TextField].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/text_field/text_field.3.dart#body}
@@ -383,12 +383,12 @@ class TextField extends StatefulWidget {
   ///
   /// {@macro flutter.widgets.magnifier.intro}
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// <callout-box>
   ///
   /// This sample demonstrates how to customize the magnifier that this text field uses.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
   /// {@example /example/lib/text_field/text_field_magnifier.0.dart#body}
@@ -748,6 +748,8 @@ class TextField extends StatefulWidget {
 
   /// {@macro flutter.widgets.editableText.onTapOutside}
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// <callout-box>
   ///
   /// This example shows how to use a `TextFieldTapRegion` to wrap a set of
@@ -757,8 +759,6 @@ class TextField extends StatefulWidget {
   /// This example includes a generic `SpinnerField<T>` class that you can copy
   /// into your own project and customize.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
   /// {@example /example/lib/text_field/text_field_tap_region.0.dart#body}
@@ -802,10 +802,10 @@ class TextField extends StatefulWidget {
   /// accessibility, but it also needs to be accessible itself. For example,
   /// if returning a Text widget, set the [Text.semanticsLabel] property.
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
+  ///
   ///
   /// ```dart
   /// Widget counter(

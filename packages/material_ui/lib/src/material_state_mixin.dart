@@ -19,10 +19,10 @@ import 'package:flutter/widgets.dart';
 /// to manage the set of active [WidgetState]s, and the calling of [setState]
 /// as necessary.
 ///
-/// <callout-box>
-///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
+/// <callout-box>
+///
 ///
 /// This example shows how to write a [StatefulWidget] that uses the
 /// [MaterialStateMixin] class to watch [WidgetState] values.
@@ -76,10 +76,10 @@ mixin MaterialStateMixin<T extends StatefulWidget> on State<T> {
   /// If supplied, the [onChanged] function is only called when child widgets
   /// report events that make changes to the current set of [WidgetState]s.
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
+  ///
   ///
   /// This example shows how to use the [updateMaterialState] callback factory
   /// in other widgets, including the optional [onChanged] callback.

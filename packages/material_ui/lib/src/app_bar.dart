@@ -123,13 +123,13 @@ class _PreferredAppBarSize extends Size {
 /// to suddenly jump. Wrap the [AppBar] in a [MediaQuery] widget, and adjust its
 /// padding such that the animation is smooth.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample shows an [AppBar] with two simple actions. The first action
 /// opens a [SnackBar], while the second action navigates to a new page.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/app_bar/app_bar.0.dart#body}
@@ -138,14 +138,14 @@ class _PreferredAppBarSize extends Size {
 ///
 /// Material Design 3 introduced new types of app bar.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample shows the creation of an [AppBar] widget with the [shadowColor] and
 /// [scrolledUnderElevation] properties set, as described in:
 /// https://m3.material.io/components/top-app-bar/overview
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/app_bar/app_bar.1.dart#body}
@@ -170,27 +170,27 @@ class _PreferredAppBarSize extends Size {
 /// [ColorScheme.primary]. To remedy the problem, override
 /// [TextButton.style]:
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample shows an [AppBar] with two action buttons with their primary
 /// color set to [ColorScheme.onPrimary].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/app_bar/app_bar.2.dart#body}
 ///
 /// </callout-box>
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This example shows how to listen to a nested Scrollable's scroll notification
 /// in a nested scroll view using the [notificationPredicate] property and use it
 /// to make [scrolledUnderElevation] take effect.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/app_bar/app_bar.3.dart#body}
@@ -285,10 +285,10 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   /// will use a [BackButton] that calls [Navigator.maybePop].
   /// {@endtemplate}
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
+  ///
   ///
   /// The following code shows how the drawer button could be manually specified
   /// instead of relying on [automaticallyImplyLeading]:
@@ -386,10 +386,10 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   /// widget with an [IconButton] that opens the end drawer (using [Icons.menu]).
   /// {@endtemplate}
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
+  ///
   ///
   /// ```dart
   /// Scaffold(
@@ -541,13 +541,13 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   /// zero.
   /// {@endtemplate}
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// <callout-box>
   ///
   /// This sample demonstrates how to implement a custom app bar shape for the
   /// [shape] property.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
   /// {@example /example/lib/app_bar/app_bar.4.dart#body}
@@ -1532,10 +1532,10 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 /// [actions], above the [bottom] (if any). If a [flexibleSpace] widget is
 /// specified then it is stacked behind the toolbar and the bottom widget.
 ///
-/// <callout-box>
-///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
+/// <callout-box>
+///
 ///
 /// This is an example that could be included in a [CustomScrollView]'s
 /// [CustomScrollView.slivers] list:
@@ -1558,25 +1558,25 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 ///
 /// </callout-box>
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// Here is an example of [SliverAppBar] when using [stretch] and [onStretchTrigger].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/app_bar/sliver_app_bar.4.dart#body}
 ///
 /// </callout-box>
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample shows a [SliverAppBar] and its behavior when using the
 /// [pinned], [snap] and [floating] parameters.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/app_bar/sliver_app_bar.1.dart#body}
@@ -1681,12 +1681,12 @@ class SliverAppBar extends StatefulWidget {
   /// title will fade in on the main row. The reverse will happen if it is
   /// expanded again.
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// <callout-box>
   ///
   /// This sample shows how to use [SliverAppBar.medium] in a [CustomScrollView].
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
   /// {@example /example/lib/app_bar/sliver_app_bar.2.dart#body}
@@ -1758,12 +1758,12 @@ class SliverAppBar extends StatefulWidget {
   /// title will fade in on the main row. The reverse will happen if it is
   /// expanded again.
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// <callout-box>
   ///
   /// This sample shows how to use [SliverAppBar.large] in a [CustomScrollView].
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
   /// {@example /example/lib/app_bar/sliver_app_bar.3.dart#body}

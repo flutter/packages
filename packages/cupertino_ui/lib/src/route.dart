@@ -1294,6 +1294,8 @@ class CupertinoModalPopupRoute<T> extends PopupRoute<T> {
 ///
 /// For more information about state restoration, see [RestorationManager].
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample demonstrates how to create a restorable Cupertino modal route.
@@ -1303,8 +1305,6 @@ class CupertinoModalPopupRoute<T> extends PopupRoute<T> {
 ///
 /// {@macro flutter.widgets.RestorationManager}
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
 /// {@example /example/lib/route/show_cupertino_modal_popup.0.dart#body}
@@ -1396,6 +1396,8 @@ Widget _buildCupertinoDialogTransitions(
 ///
 /// For more information about state restoration, see [RestorationManager].
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample demonstrates how to create a restorable Cupertino dialog. This is
@@ -1405,8 +1407,6 @@ Widget _buildCupertinoDialogTransitions(
 ///
 /// {@macro flutter.widgets.RestorationManager}
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
 /// {@example /example/lib/route/show_cupertino_dialog.0.dart#body}

@@ -230,6 +230,8 @@ enum _PickerColumnType {
 /// full screen width. Content texts are shown with
 /// [CupertinoTextThemeData.dateTimePickerTextStyle].
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample shows how to implement CupertinoDatePicker with different picker modes.
@@ -238,8 +240,6 @@ enum _PickerColumnType {
 ///
 /// CupertinoDatePicker can be displayed directly on a screen or in a popup.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
 /// {@example /example/lib/date_picker/cupertino_date_picker.0.dart#body}
@@ -486,10 +486,10 @@ class CupertinoDatePicker extends StatefulWidget {
   ///
   /// If the selection overlay builder returns null, no overlay will be drawn.
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
+  ///
   ///
   ///
   /// This example shows how to recreate the default selection overlay
@@ -2176,12 +2176,12 @@ enum CupertinoTimerPickerMode {
 /// provides more space than it needs, the picker will position itself according
 /// to its [alignment] property.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This example shows a [CupertinoTimerPicker] that returns a countdown duration.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
 /// {@example /example/lib/date_picker/cupertino_timer_picker.0.dart#body}
@@ -2273,10 +2273,10 @@ class CupertinoTimerPicker extends StatefulWidget {
   ///
   /// If the selection overlay builder returns null, no overlay will be drawn.
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
+  ///
   ///
   ///
   /// This example shows how to recreate the default selection overlay

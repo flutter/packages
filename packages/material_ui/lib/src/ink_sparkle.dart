@@ -43,10 +43,10 @@ import 'material.dart';
 ///
 /// When the ripple is removed, [onRemoved] will be called.
 ///
-/// <callout-box>
-///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
+/// <callout-box>
+///
 ///
 /// For typical use, pass the [InkSparkle.splashFactory] to the `splashFactory`
 /// parameter of a button style or [ThemeData].

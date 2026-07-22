@@ -29,10 +29,10 @@ import 'theme.dart';
 /// The [onForegroundImageError] parameter must be null if the [foregroundImage]
 /// is null.
 ///
-/// <callout-box>
-///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
+/// <callout-box>
+///
 ///
 /// If the avatar is to have an image, the image should be specified in the
 /// [backgroundImage] property:
@@ -47,10 +47,10 @@ import 'theme.dart';
 ///
 /// The image will be cropped to have a circle shape.
 ///
-/// <callout-box>
-///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
+/// <callout-box>
+///
 ///
 /// If the avatar is to just have the user's initials, they are typically
 /// provided using a [Text] widget as the [child] and a [backgroundColor]:

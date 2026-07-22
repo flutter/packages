@@ -40,6 +40,8 @@ enum _CheckboxType { material, adaptive }
 ///
 /// Requires one of its ancestors to be a [Material] widget.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This example shows how you can override the default theme of
@@ -48,20 +50,18 @@ enum _CheckboxType { material, adaptive }
 /// is being pressed, hovered, or focused. Otherwise, the checkbox's color will
 /// be `Colors.red`.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/checkbox/checkbox.0.dart#body}
 ///
 /// </callout-box>
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This example shows what the checkbox error state looks like.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/checkbox/checkbox.1.dart#body}
@@ -218,6 +218,8 @@ class Checkbox extends StatefulWidget {
   /// state, it will be used instead of this color.
   final Color? activeColor;
 
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
   /// {@template material_ui.checkbox.fillColor}
   /// The color that fills the checkbox, in all [WidgetState]s.
   ///
@@ -229,8 +231,6 @@ class Checkbox extends StatefulWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
   ///
   /// This example resolves the [fillColor] based on the current [WidgetState]
   /// of the [Checkbox], providing a different [Color] when it is

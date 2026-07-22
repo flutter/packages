@@ -44,6 +44,8 @@ const double _kInnerRadius = 4.5;
 /// [RadioGroup.groupValue], and the [Radio] under it with matching [value]
 /// will be selected.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// Here is an example of Radio widgets wrapped in ListTiles, which is similar
@@ -61,14 +63,14 @@ const double _kInnerRadius = 4.5;
 ///
 /// Requires one of its ancestors to be a [Material] widget.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/radio/radio.0.dart#body}
 ///
 /// </callout-box>
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// Here is an example of how the you can override the default theme of a
@@ -81,8 +83,6 @@ const double _kInnerRadius = 4.5;
 /// - The third [Radio] customizes the [side] property to display a different border color
 ///   when selected or unselected.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/radio/radio.1.dart#body}
@@ -229,13 +229,13 @@ class Radio<T> extends StatefulWidget {
 
   /// {@macro flutter.widget.RawRadio.toggleable}
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// <callout-box>
   ///
   /// This example shows how to enable deselecting a radio button by setting the
   /// [toggleable] attribute.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
   /// {@example /example/lib/radio/radio.toggleable.0.dart#body}
@@ -251,6 +251,8 @@ class Radio<T> extends StatefulWidget {
   /// state, it will be used instead of this color.
   final Color? activeColor;
 
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
   /// {@template material_ui.radio.fillColor}
   /// The color that fills the radio button, in all [WidgetState]s.
   ///
@@ -262,8 +264,6 @@ class Radio<T> extends StatefulWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
   ///
   /// This example resolves the [fillColor] based on the current [WidgetState]
   /// of the [Radio], providing a different [Color] when it is

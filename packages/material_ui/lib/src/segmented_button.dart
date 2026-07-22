@@ -93,25 +93,25 @@ class ButtonSegment<T> {
 /// then the entire segmented button will be disabled, regardless of the
 /// individual segment settings.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample shows how to display a [SegmentedButton] with either a single or
 /// multiple selection.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/segmented_button/segmented_button.0.dart#body}
 ///
 /// </callout-box>
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample showcases how to customize [SegmentedButton] using [SegmentedButton.styleFrom].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/segmented_button/segmented_button.1.dart#body}
@@ -256,10 +256,10 @@ class SegmentedButton<T> extends StatefulWidget {
   /// All parameters default to null. By default this method returns
   /// a [ButtonStyle] that doesn't override anything.
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
+  ///
   ///
   /// For example, to override the default text and icon colors for a
   /// [SegmentedButton], as well as its overlay color, with all of the

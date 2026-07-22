@@ -147,13 +147,13 @@ class _CupertinoTextFieldSelectionGestureDetectorBuilder
 ///
 /// {@macro flutter.widgets.EditableText.onChanged}
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This example shows how to set the initial value of the [CupertinoTextField] using
 /// a [controller] that already contains some text.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
 /// {@example /example/lib/text_field/cupertino_text_field.0.dart#body}
@@ -896,10 +896,10 @@ class CupertinoTextField extends StatefulWidget {
   ///
   /// {@macro flutter.widgets.magnifier.intro}
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
+  ///
   ///
   /// This sample demonstrates how to customize the magnifier that this text field uses.
   ///

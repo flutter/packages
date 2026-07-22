@@ -96,6 +96,8 @@ const Duration _kBaseSettleDuration = Duration(milliseconds: 246);
 /// [NavigationDrawerDestination] widgets and/or customized widgets like headlines
 /// and dividers.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This example shows how to create a [Scaffold] that contains an [AppBar] and
@@ -104,20 +106,18 @@ const Duration _kBaseSettleDuration = Duration(milliseconds: 246);
 /// The [Drawer] displays the four items using a [ListView], which allows the
 /// user to scroll through the items if need be.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/drawer/drawer.0.dart#body}
 ///
 /// </callout-box>
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This example shows how to migrate the above [Drawer] to a [NavigationDrawer].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/navigation_drawer/navigation_drawer.0.dart#body}
@@ -428,10 +428,10 @@ class DrawerController extends StatefulWidget {
   /// The closest instance of [DrawerController] that encloses the given
   /// context, or null if none is found.
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
+  ///
   /// Typical usage is as follows:
   ///
   /// ```dart
@@ -460,10 +460,10 @@ class DrawerController extends StatefulWidget {
   /// Calling this method will create a dependency on the closest
   /// [DrawerController] in the [context].
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
+  ///
   /// Typical usage is as follows:
   ///
   /// ```dart

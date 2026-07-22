@@ -125,10 +125,10 @@ final class PlatformAdaptiveIcons implements Icons {
 ///   uses-material-design: true
 /// ```
 ///
-/// <callout-box>
-///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
+/// <callout-box>
+///
 ///
 /// This example shows how to create a [Row] of [Icon]s in different colors and
 /// sizes. The first [Icon] uses a [Icon.semanticLabel] to announce in accessibility
@@ -177,10 +177,10 @@ abstract final class Icons {
   ///
   /// Use with the [Icon] class to show specific icons.
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
+  ///
   ///
   /// This example shows how to create a share icon that uses the material icon
   /// named "share" on non-Apple platforms, and the icon named "ios share" on

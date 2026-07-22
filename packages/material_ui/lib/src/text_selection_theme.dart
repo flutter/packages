@@ -124,10 +124,10 @@ class TextSelectionThemeData with Diagnosticable {
 /// Values specified here are used for [TextField] and [SelectableText]
 /// properties that are not given an explicit non-null value.
 ///
-/// <callout-box>
-///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
+/// <callout-box>
+///
 ///
 /// Here is an example of a text selection theme that applies a blue cursor
 /// color with light blue selection handles to the child text field.

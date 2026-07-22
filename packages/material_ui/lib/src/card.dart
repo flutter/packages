@@ -29,13 +29,13 @@ enum _CardVariant { elevated, filled, outlined }
 /// some text describing a musical, and the other with buttons for buying
 /// tickets or listening to the show.](https://flutter.github.io/assets-for-api-docs/assets/material/card.png)
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample shows creation of a [Card] widget that shows album information
 /// and two actions.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/card/card.0.dart#body}
@@ -45,14 +45,14 @@ enum _CardVariant { elevated, filled, outlined }
 /// Sometimes the primary action area of a card is the card itself. Cards can be
 /// one large touch target that shows a detail screen when tapped.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample shows creation of a [Card] widget that can be tapped. When
 /// tapped this [Card]'s [InkWell] displays an "ink splash" that fills the
 /// entire card.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/card/card.1.dart#body}
@@ -69,13 +69,13 @@ enum _CardVariant { elevated, filled, outlined }
 /// so theme properties (for example [CardThemeData.shape]) apply to every card
 /// variant within the theme's scope.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample shows creation of [Card] widgets for elevated, filled and
 /// outlined types, as described in: https://m3.material.io/components/cards/overview
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/card/card.2.dart#body}

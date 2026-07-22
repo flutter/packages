@@ -33,6 +33,8 @@ import 'theme.dart';
 /// They are treated as a group and when one is selected, the [onDestinationSelected]
 /// is called with the index into the group that corresponds to the selected destination.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This example shows a [NavigationDrawer] used within a [Scaffold]
@@ -41,8 +43,6 @@ import 'theme.dart';
 /// The [onDestinationSelected] callback changes the selected item's index and displays
 /// a corresponding widget in the body of the [Scaffold].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/navigation_drawer/navigation_drawer.0.dart#body}

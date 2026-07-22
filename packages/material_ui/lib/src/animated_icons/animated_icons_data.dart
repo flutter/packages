@@ -14,13 +14,13 @@ part of material_animated_icons; // ignore: use_string_in_part_of_directives
 ///
 /// Use with [AnimatedIcon] class to show specific animated icons.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This example shows how to create an animated icon. The icon is animated
 /// forward and reverse in a loop.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/animated_icon/animated_icons_data.0.dart#body}

@@ -146,13 +146,13 @@ class ActionIconThemeData with Diagnosticable {
 /// [CloseButtonIcon], [DrawerButtonIcon], and [EndDrawerButtonIcon] in this
 /// widget's subtree.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This example shows how to define custom builders for drawer and back
 /// buttons.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/action_buttons/action_icon_theme.0.dart#body}

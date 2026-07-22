@@ -59,12 +59,12 @@ enum ExpansionTileTransitionMode {
 /// A single-line [CupertinoListTile] with an expansion arrow icon that expands
 /// or collapses the tile to reveal or hide the [child].
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This example shows how to use [CupertinoExpansionTile] with different transition modes.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
 /// {@example /example/lib/expansion_tile/cupertino_expansion_tile.0.dart#body}

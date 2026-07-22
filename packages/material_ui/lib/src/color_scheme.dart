@@ -114,13 +114,13 @@ enum DynamicSchemeVariant {
 /// with on '-Fixed' roles, such as [onPrimaryFixed], they provide a
 /// lower-emphasis option for text and icons.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This example shows all Material [ColorScheme] roles in light and dark
 /// brightnesses.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/color_scheme/color_scheme.0.dart#body}
@@ -257,14 +257,14 @@ class ColorScheme with Diagnosticable {
   /// -1.0 is the lowest; 1.0 is the highest. From Material Design guideline, the
   /// medium and high contrast correspond to 0.5 and 1.0 respectively.
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// <callout-box>
   ///
   /// This sample shows how to use [ColorScheme.fromSeed] to create dynamic
   /// color schemes with different [DynamicSchemeVariant]s and different
   /// contrast level.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
   /// {@example /example/lib/color_scheme/color_scheme.0.dart#body}
@@ -441,10 +441,10 @@ class ColorScheme with Diagnosticable {
   /// For Material 3, use [ColorScheme.fromSeed] to create a color scheme
   /// from a single seed color based on the Material 3 color system.
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
+  ///
   ///
   /// This example demonstrates how to create a color scheme similar to [ColorScheme.light]
   /// using the [ColorScheme.fromSeed] constructor:
@@ -536,10 +536,10 @@ class ColorScheme with Diagnosticable {
   /// Override the `brightness` property of [ColorScheme.fromSeed] to create a
   /// dark color scheme.
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
+  ///
   ///
   /// This example demonstrates how to create a color scheme similar to [ColorScheme.dark]
   /// using the [ColorScheme.fromSeed] constructor:
@@ -633,10 +633,10 @@ class ColorScheme with Diagnosticable {
   /// from a single seed color based on the Material 3 color system. To create a
   /// high-contrast color scheme, set `contrastLevel` to 1.0.
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
+  ///
   ///
   /// This example demonstrates how to create a color scheme similar to [ColorScheme.highContrastLight]
   /// using the [ColorScheme.fromSeed] constructor:
@@ -729,10 +729,10 @@ class ColorScheme with Diagnosticable {
   /// dark color scheme. To create a high-contrast color scheme, set
   /// `contrastLevel` to 1.0.
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
+  ///
   ///
   /// This example demonstrates how to create a color scheme similar to [ColorScheme.highContrastDark]
   /// using the [ColorScheme.fromSeed] constructor:
@@ -1729,13 +1729,13 @@ class ColorScheme with Diagnosticable {
   /// The provided image will be scaled down to a maximum size of 112x112 pixels
   /// during color extraction.
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// <callout-box>
   ///
   /// This sample shows how to use [ColorScheme.fromImageProvider] to create
   /// content-based dynamic color schemes.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
   /// {@example /example/lib/color_scheme/dynamic_content_color.0.dart#body}

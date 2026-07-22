@@ -48,10 +48,10 @@ import 'text_field.dart';
 /// [CupertinoTextField] class and [CupertinoTextField.borderless],
 /// the constructor.
 ///
-/// <callout-box>
-///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
+/// <callout-box>
+///
 ///
 ///
 /// Creates a [CupertinoTextFormFieldRow] with a leading text and validator
@@ -78,13 +78,13 @@ import 'text_field.dart';
 ///
 /// </callout-box>
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This example shows how to move the focus to the next field when the user
 /// presses the SPACE key.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
 /// {@example /example/lib/text_form_field_row/cupertino_text_form_field_row.1.dart#body}

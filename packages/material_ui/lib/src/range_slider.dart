@@ -47,6 +47,8 @@ typedef PaintRangeValueIndicator = void Function(PaintingContext context, Offset
 ///
 /// {@youtube 560 315 https://www.youtube.com/watch?v=ufb4gIPDmEs}
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// ![A range slider widget, consisting of 5 divisions and showing the default
@@ -56,8 +58,6 @@ typedef PaintRangeValueIndicator = void Function(PaintingContext context, Offset
 /// divisions, from 0 to 100. This means are values are split between 0, 20, 40,
 /// 60, 80, and 100. The range values are initialized with 40 and 80 in this demo.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/range_slider/range_slider.0.dart#body}
@@ -203,10 +203,10 @@ class RangeSlider extends StatefulWidget {
   /// [StatefulWidget] using the [State.setState] method, so that the parent
   /// gets rebuilt; for example:
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
+  ///
   ///
   /// ```dart
   /// RangeSlider(
@@ -239,10 +239,10 @@ class RangeSlider extends StatefulWidget {
   /// The values passed will be the last [values] that the slider had before the
   /// change began.
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
+  ///
   ///
   /// ```dart
   /// RangeSlider(
@@ -278,10 +278,10 @@ class RangeSlider extends StatefulWidget {
   /// [onChanged] for that). Rather, it should be used to know when the user has
   /// completed selecting a new [values] by ending a drag or a click.
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
+  ///
   ///
   /// ```dart
   /// RangeSlider(
@@ -395,10 +395,10 @@ class RangeSlider extends StatefulWidget {
   /// This is used by accessibility frameworks like TalkBack on Android to
   /// inform users what the currently selected value is with more context.
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
+  ///
   ///
   /// In the example below, a slider for currency values is configured to
   /// announce a value with a currency label.

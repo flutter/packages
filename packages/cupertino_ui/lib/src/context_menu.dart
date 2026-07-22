@@ -96,26 +96,26 @@ enum _ContextMenuLocation { center, left, right }
 /// background or by calling `Navigator.pop(context)`. Unlike [PopupRoute], it can
 /// also be closed by swiping downwards.
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample shows a very simple [CupertinoContextMenu] for the Flutter logo.
 /// Long press on it to open.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
 /// {@example /example/lib/context_menu/cupertino_context_menu.0.dart#body}
 ///
 /// </callout-box>
 ///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// <callout-box>
 ///
 /// This sample shows a similar CupertinoContextMenu, this time using [builder]
 /// to add a border radius to the widget.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
 /// {@example /example/lib/context_menu/cupertino_context_menu.1.dart#body}
@@ -154,10 +154,10 @@ class CupertinoContextMenu extends StatefulWidget {
   /// Exposes the default border radius for matching iOS 16.0 behavior. This
   /// value was eyeballed from the iOS simulator running iOS 16.0.
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
+  ///
   ///
   ///
   /// Below is example code in order to match the default border radius for an
@@ -264,10 +264,10 @@ class CupertinoContextMenu extends StatefulWidget {
   /// the widget from 0 to [animationOpensAt], and the second stage for when the
   /// widget fully opens up to the menu, from [animationOpensAt] to 1.
   ///
-  /// <callout-box>
-  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
+  ///
   ///
   ///
   /// Below is an example of using [builder] to show an image tile setup to be
@@ -336,6 +336,8 @@ class CupertinoContextMenu extends StatefulWidget {
   ///
   /// </callout-box>
   ///
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// <callout-box>
   ///
   /// Additionally below is an example of a real world use case for [builder].
@@ -348,8 +350,6 @@ class CupertinoContextMenu extends StatefulWidget {
   /// like [CupertinoContextMenu.kEndBoxShadow], to match the native iOS
   /// animation as close as desired.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro cupertino_ui.dartpad_guide}
   ///
   /// {@example /example/lib/context_menu/cupertino_context_menu.1.dart#body}

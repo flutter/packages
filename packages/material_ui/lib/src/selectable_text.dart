@@ -95,10 +95,10 @@ class _SelectableTextSelectionGestureDetectorBuilder extends TextSelectionGestur
 ///
 /// {@macro cupertino_ui.textfield.wantKeepAlive}
 ///
-/// <callout-box>
-///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
+/// <callout-box>
+///
 ///
 /// ```dart
 /// const SelectableText(
@@ -115,10 +115,10 @@ class _SelectableTextSelectionGestureDetectorBuilder extends TextSelectionGestur
 /// that follows displays "Hello beautiful world" with different styles
 /// for each word.
 ///
-/// <callout-box>
-///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
+/// <callout-box>
+///
 ///
 /// ```dart
 /// const SelectableText.rich(
