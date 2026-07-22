@@ -1,3 +1,7 @@
+## 0.8.13+7
+
+* Returns an error when selected image data cannot be decoded.
+
 ## 0.8.13+6
 
 * Replaces deprecated `kUTTypeGIF` with `UTTypeGIF` to fix iOS 15+ deprecation warnings.
