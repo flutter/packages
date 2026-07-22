@@ -408,7 +408,8 @@ class DataCell {
 ///    multiple pages.
 ///  * [CustomScrollView], for greater control over scrolling effects.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This sample shows how to display a [DataTable] with three columns: name, age, and
 /// role. The columns are defined by three [DataColumn] objects. The table
 /// contains three rows of data for three example users, the data for which
@@ -416,16 +417,27 @@ class DataCell {
 ///
 /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/data_table.png)
 ///
-/// ** See code in examples/api/lib/material/data_table/data_table.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/data_table/data_table.0.dart#body}
+///
+/// </callout-box>
 ///
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This sample shows how to display a [DataTable] with alternate colors per
 /// row, and a custom color for when the row is selected.
 ///
-/// ** See code in examples/api/lib/material/data_table/data_table.1.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/data_table/data_table.1.dart#body}
+///
+/// </callout-box>
 ///
 /// [DataTable] can be sorted on the basis of any column in [columns] in
 /// ascending or descending order. If [sortColumnIndex] is non-null, then the
@@ -561,7 +573,7 @@ class DataTable extends StatelessWidget {
   /// row is selectable.
   final ValueSetter<bool?>? onSelectAll;
 
-  /// {@template flutter.material.dataTable.decoration}
+  /// {@template material_ui.dataTable.decoration}
   /// The background and border decoration for the table.
   /// {@endtemplate}
   ///
@@ -569,7 +581,7 @@ class DataTable extends StatelessWidget {
   /// decoration.
   final Decoration? decoration;
 
-  /// {@template flutter.material.dataTable.dataRowColor}
+  /// {@template material_ui.dataTable.dataRowColor}
   /// The background color for the data rows.
   ///
   /// The effective background color can be made to depend on the
@@ -588,7 +600,7 @@ class DataTable extends StatelessWidget {
   /// translucent color. To set a different color for individual rows, see
   /// [DataRow.color].
   ///
-  /// {@template flutter.material.DataTable.dataRowColor}
+  /// {@template material_ui.DataTable.dataRowColor}
   /// ```dart
   /// DataTable(
   ///   dataRowColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
@@ -610,7 +622,7 @@ class DataTable extends StatelessWidget {
   /// {@endtemplate}
   final WidgetStateProperty<Color?>? dataRowColor;
 
-  /// {@template flutter.material.dataTable.dataRowHeight}
+  /// {@template material_ui.dataTable.dataRowHeight}
   /// The height of each row (excluding the row that contains column headings).
   /// {@endtemplate}
   ///
@@ -623,7 +635,7 @@ class DataTable extends StatelessWidget {
   )
   double? get dataRowHeight => dataRowMinHeight == dataRowMaxHeight ? dataRowMinHeight : null;
 
-  /// {@template flutter.material.dataTable.dataRowMinHeight}
+  /// {@template material_ui.dataTable.dataRowMinHeight}
   /// The minimum height of each row (excluding the row that contains column headings).
   /// {@endtemplate}
   ///
@@ -632,7 +644,7 @@ class DataTable extends StatelessWidget {
   /// specifications.
   final double? dataRowMinHeight;
 
-  /// {@template flutter.material.dataTable.dataRowMaxHeight}
+  /// {@template material_ui.dataTable.dataRowMaxHeight}
   /// The maximum height of each row (excluding the row that contains column headings).
   /// {@endtemplate}
   ///
@@ -641,7 +653,7 @@ class DataTable extends StatelessWidget {
   /// specifications.
   final double? dataRowMaxHeight;
 
-  /// {@template flutter.material.dataTable.dataTextStyle}
+  /// {@template material_ui.dataTable.dataTextStyle}
   /// The text style for data rows.
   /// {@endtemplate}
   ///
@@ -649,7 +661,7 @@ class DataTable extends StatelessWidget {
   /// style is [TextTheme.bodyMedium].
   final TextStyle? dataTextStyle;
 
-  /// {@template flutter.material.dataTable.headingRowColor}
+  /// {@template material_ui.dataTable.headingRowColor}
   /// The background color for the heading row.
   ///
   /// The effective background color can be made to depend on the
@@ -661,7 +673,7 @@ class DataTable extends StatelessWidget {
   ///
   /// If null, [DataTableThemeData.headingRowColor] is used.
   ///
-  /// {@template flutter.material.DataTable.headingRowColor}
+  /// {@template material_ui.DataTable.headingRowColor}
   /// ```dart
   /// DataTable(
   ///   columns: _columns,
@@ -683,7 +695,7 @@ class DataTable extends StatelessWidget {
   /// {@endtemplate}
   final WidgetStateProperty<Color?>? headingRowColor;
 
-  /// {@template flutter.material.dataTable.headingRowHeight}
+  /// {@template material_ui.dataTable.headingRowHeight}
   /// The height of the heading row.
   /// {@endtemplate}
   ///
@@ -691,7 +703,7 @@ class DataTable extends StatelessWidget {
   /// defaults to 56.0 to adhere to the Material Design specifications.
   final double? headingRowHeight;
 
-  /// {@template flutter.material.dataTable.headingTextStyle}
+  /// {@template material_ui.dataTable.headingTextStyle}
   /// The text style for the heading row.
   /// {@endtemplate}
   ///
@@ -699,7 +711,7 @@ class DataTable extends StatelessWidget {
   /// text style is [TextTheme.titleSmall].
   final TextStyle? headingTextStyle;
 
-  /// {@template flutter.material.dataTable.horizontalMargin}
+  /// {@template material_ui.dataTable.horizontalMargin}
   /// The horizontal margin between the edges of the table and the content
   /// in the first and last cells of each row.
   ///
@@ -715,7 +727,7 @@ class DataTable extends StatelessWidget {
   /// margin between the checkbox and the content in the first data column.
   final double? horizontalMargin;
 
-  /// {@template flutter.material.dataTable.columnSpacing}
+  /// {@template material_ui.dataTable.columnSpacing}
   /// The horizontal margin between the contents of each data column.
   /// {@endtemplate}
   ///
@@ -723,7 +735,7 @@ class DataTable extends StatelessWidget {
   /// to 56.0 to adhere to the Material Design specifications.
   final double? columnSpacing;
 
-  /// {@template flutter.material.dataTable.showCheckboxColumn}
+  /// {@template material_ui.dataTable.showCheckboxColumn}
   /// Whether the widget should display checkboxes for selectable rows.
   ///
   /// If true, a [Checkbox] will be placed at the beginning of each row that is
@@ -740,7 +752,7 @@ class DataTable extends StatelessWidget {
   /// The list may be empty.
   final List<DataRow> rows;
 
-  /// {@template flutter.material.dataTable.dividerThickness}
+  /// {@template material_ui.dataTable.dividerThickness}
   /// The width of the divider that appears between [TableRow]s.
   ///
   /// Must be greater than or equal to zero.
@@ -756,7 +768,7 @@ class DataTable extends StatelessWidget {
   /// around the table defined by [decoration].
   final bool showBottomBorder;
 
-  /// {@template flutter.material.dataTable.checkboxHorizontalMargin}
+  /// {@template material_ui.dataTable.checkboxHorizontalMargin}
   /// Horizontal margin around the checkbox, if it is displayed.
   /// {@endtemplate}
   ///
@@ -769,7 +781,7 @@ class DataTable extends StatelessWidget {
   /// The style to use when painting the boundary and interior divisions of the table.
   final TableBorder? border;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// This can be used to clip the content within the border of the [DataTable].
   ///

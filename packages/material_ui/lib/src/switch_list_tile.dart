@@ -66,7 +66,11 @@ enum _SwitchListTileType { material, adaptive }
 /// [SwitchListTile] itself but by the [Material] widget ancestor. In this
 /// case, one can wrap a [Material] widget around the [SwitchListTile], e.g.:
 ///
-/// {@tool snippet}
+/// <callout-box>
+///
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
+///
 /// ```dart
 /// ColoredBox(
 ///   color: Colors.green,
@@ -80,7 +84,8 @@ enum _SwitchListTileType { material, adaptive }
 ///   ),
 /// )
 /// ```
-/// {@end-tool}
+///
+/// </callout-box>
 ///
 /// ## Performance considerations when wrapping [SwitchListTile] with [Material]
 ///
@@ -91,21 +96,33 @@ enum _SwitchListTileType { material, adaptive }
 /// To show the [SwitchListTile] as disabled, pass null as the [onChanged]
 /// callback.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// ![SwitchListTile sample](https://flutter.github.io/assets-for-api-docs/assets/material/switch_list_tile.png)
 ///
 /// This widget shows a switch that, when toggled, changes the state of a [bool]
 /// member field called `_lights`.
 ///
-/// ** See code in examples/api/lib/material/switch_list_tile/switch_list_tile.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-/// {@tool dartpad}
+/// {@example /example/lib/switch_list_tile/switch_list_tile.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This sample demonstrates how [SwitchListTile] positions the switch widget
 /// relative to the text in different configurations.
 ///
-/// ** See code in examples/api/lib/material/switch_list_tile/switch_list_tile.1.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/switch_list_tile/switch_list_tile.1.dart#body}
+///
+/// </callout-box>
 ///
 /// ## Semantics in SwitchListTile
 ///
@@ -124,15 +141,21 @@ enum _SwitchListTileType { material, adaptive }
 /// into one. Therefore, it may be necessary to create a custom radio tile
 /// widget to accommodate similar use cases.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// ![Switch list tile semantics sample](https://flutter.github.io/assets-for-api-docs/assets/material/switch_list_tile_semantics.png)
 ///
 /// Here is an example of a custom labeled radio widget, called
 /// LinkedLabelRadio, that includes an interactive [RichText] widget that
 /// handles tap gestures.
 ///
-/// ** See code in examples/api/lib/material/switch_list_tile/custom_labeled_switch.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/switch_list_tile/custom_labeled_switch.0.dart#body}
+///
+/// </callout-box>
 ///
 /// ## SwitchListTile isn't exactly what I want
 ///
@@ -141,14 +164,20 @@ enum _SwitchListTileType { material, adaptive }
 /// combining [Switch] with other widgets, such as [Text], [Padding] and
 /// [InkWell].
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// ![Custom switch list tile sample](https://flutter.github.io/assets-for-api-docs/assets/material/switch_list_tile_custom.png)
 ///
 /// Here is an example of a custom LabeledSwitch widget, but you can easily
 /// make your own configurable widget.
 ///
-/// ** See code in examples/api/lib/material/switch_list_tile/custom_labeled_switch.1.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/switch_list_tile/custom_labeled_switch.1.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -307,7 +336,11 @@ class SwitchListTile extends StatelessWidget {
   /// [StatefulWidget] using the [State.setState] method, so that the parent
   /// gets rebuilt; for example:
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// ```dart
   /// SwitchListTile(
   ///   value: _isSelected,
@@ -319,10 +352,11 @@ class SwitchListTile extends StatelessWidget {
   ///   title: const Text('Selection'),
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   final ValueChanged<bool>? onChanged;
 
-  /// {@macro flutter.material.switch.activeColor}
+  /// {@macro material_ui.switch.activeColor}
   ///
   /// Defaults to [ColorScheme.secondary] of the current [Theme].
   @Deprecated(
@@ -331,44 +365,44 @@ class SwitchListTile extends StatelessWidget {
   )
   final Color? activeColor;
 
-  /// {@macro flutter.material.switch.activeThumbColor}
+  /// {@macro material_ui.switch.activeThumbColor}
   ///
   /// Defaults to [ColorScheme.secondary] of the current [Theme].
   final Color? activeThumbColor;
 
-  /// {@macro flutter.material.switch.activeTrackColor}
+  /// {@macro material_ui.switch.activeTrackColor}
   ///
   /// Defaults to [ColorScheme.secondary] with the opacity set at 50%.
   ///
   /// Ignored if created with [SwitchListTile.adaptive].
   final Color? activeTrackColor;
 
-  /// {@macro flutter.material.switch.inactiveThumbColor}
+  /// {@macro material_ui.switch.inactiveThumbColor}
   ///
   /// Defaults to the colors described in the Material design specification.
   ///
   /// Ignored if created with [SwitchListTile.adaptive].
   final Color? inactiveThumbColor;
 
-  /// {@macro flutter.material.switch.inactiveTrackColor}
+  /// {@macro material_ui.switch.inactiveTrackColor}
   ///
   /// Defaults to the colors described in the Material design specification.
   ///
   /// Ignored if created with [SwitchListTile.adaptive].
   final Color? inactiveTrackColor;
 
-  /// {@macro flutter.material.switch.activeThumbImage}
+  /// {@macro cupertino_ui.switch.activeThumbImage}
   final ImageProvider? activeThumbImage;
 
-  /// {@macro flutter.material.switch.onActiveThumbImageError}
+  /// {@macro cupertino_ui.switch.onActiveThumbImageError}
   final ImageErrorListener? onActiveThumbImageError;
 
-  /// {@macro flutter.material.switch.inactiveThumbImage}
+  /// {@macro cupertino_ui.switch.inactiveThumbImage}
   ///
   /// Ignored if created with [SwitchListTile.adaptive].
   final ImageProvider? inactiveThumbImage;
 
-  /// {@macro flutter.material.switch.onInactiveThumbImageError}
+  /// {@macro cupertino_ui.switch.onInactiveThumbImageError}
   final ImageErrorListener? onInactiveThumbImageError;
 
   /// The color of this switch's thumb.
@@ -397,7 +431,7 @@ class SwitchListTile extends StatelessWidget {
   /// null, then the default value is used.
   final WidgetStateProperty<Color?>? trackColor;
 
-  /// {@macro flutter.material.switch.trackOutlineColor}
+  /// {@macro material_ui.switch.trackOutlineColor}
   ///
   /// The [ListTile] will be focused when this [SwitchListTile] requests focus,
   /// so the focused outline color of the switch will be ignored.
@@ -418,12 +452,12 @@ class SwitchListTile extends StatelessWidget {
   /// also null, then the [Switch] does not have any icons on the thumb.
   final WidgetStateProperty<Icon?>? thumbIcon;
 
-  /// {@macro flutter.material.switch.materialTapTargetSize}
+  /// {@macro material_ui.switch.materialTapTargetSize}
   ///
   /// defaults to [MaterialTapTargetSize.shrinkWrap].
   final MaterialTapTargetSize? materialTapTargetSize;
 
-  /// {@macro flutter.cupertino.CupertinoSwitch.dragStartBehavior}
+  /// {@macro cupertino_ui.CupertinoSwitch.dragStartBehavior}
   final DragStartBehavior dragStartBehavior;
 
   /// The cursor for a mouse pointer when it enters or is hovering over the
@@ -453,7 +487,7 @@ class SwitchListTile extends StatelessWidget {
   /// also null, then the default value is used in the pressed and hovered state.
   final WidgetStateProperty<Color?>? overlayColor;
 
-  /// {@macro flutter.material.switch.splashRadius}
+  /// {@macro material_ui.switch.splashRadius}
   ///
   /// If null, then the value of [SwitchThemeData.splashRadius] is used. If that
   /// is also null, then [kRadialReactionRadius] is used.
@@ -465,13 +499,13 @@ class SwitchListTile extends StatelessWidget {
   /// Controls the interactive states of the backing [ListTile].
   final WidgetStatesController? statesController;
 
-  /// {@macro flutter.material.inkwell.onFocusChange}
+  /// {@macro cupertino_ui.inkwell.onFocusChange}
   final ValueChanged<bool>? onFocusChange;
 
   /// {@macro flutter.widgets.Focus.autofocus}
   final bool autofocus;
 
-  /// {@macro flutter.material.ListTile.tileColor}
+  /// {@macro material_ui.ListTile.tileColor}
   final Color? tileColor;
 
   /// The primary content of the list tile.
@@ -527,7 +561,7 @@ class SwitchListTile extends StatelessWidget {
   /// By default, the value of [controlAffinity] is [ListTileControlAffinity.platform].
   final ListTileControlAffinity? controlAffinity;
 
-  /// {@macro flutter.material.ListTile.shape}
+  /// {@macro material_ui.ListTile.shape}
   final ShapeBorder? shape;
 
   /// If non-null, defines the background color when [SwitchListTile.selected] is true.
@@ -535,32 +569,32 @@ class SwitchListTile extends StatelessWidget {
 
   /// Defines how compact the list tile's layout will be.
   ///
-  /// {@macro flutter.material.themedata.visualDensity}
+  /// {@macro material_ui.themedata.visualDensity}
   final VisualDensity? visualDensity;
 
-  /// {@macro flutter.material.ListTile.enableFeedback}
+  /// {@macro material_ui.ListTile.enableFeedback}
   ///
   /// See also:
   ///
   ///  * [Feedback] for providing platform-specific feedback to certain actions.
   final bool? enableFeedback;
 
-  /// {@macro flutter.material.ListTile.horizontalTitleGap}
+  /// {@macro material_ui.ListTile.horizontalTitleGap}
   final double? horizontalTitleGap;
 
-  /// {@macro flutter.material.ListTile.minVerticalPadding}
+  /// {@macro material_ui.ListTile.minVerticalPadding}
   final double? minVerticalPadding;
 
-  /// {@macro flutter.material.ListTile.minLeadingWidth}
+  /// {@macro material_ui.ListTile.minLeadingWidth}
   final double? minLeadingWidth;
 
-  /// {@macro flutter.material.ListTile.minTileHeight}
+  /// {@macro material_ui.ListTile.minTileHeight}
   final double? minTileHeight;
 
   /// The color for the tile's [Material] when a pointer is hovering over it.
   final Color? hoverColor;
 
-  /// {@macro flutter.cupertino.CupertinoSwitch.applyTheme}
+  /// {@macro cupertino_ui.CupertinoSwitch.applyTheme}
   final bool? applyCupertinoTheme;
 
   /// Whether to add button:true to the semantics if onTap is provided.

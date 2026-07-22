@@ -59,48 +59,48 @@ class RadioThemeData with Diagnosticable {
   /// default value is [WidgetStateMouseCursor.clickable].
   final WidgetStateProperty<MouseCursor?>? mouseCursor;
 
-  /// {@macro flutter.material.radio.fillColor}
+  /// {@macro material_ui.radio.fillColor}
   ///
   /// If specified, overrides the default value of [Radio.fillColor].
   final WidgetStateProperty<Color?>? fillColor;
 
-  /// {@macro flutter.material.radio.overlayColor}
+  /// {@macro material_ui.radio.overlayColor}
   ///
   /// If specified, overrides the default value of [Radio.overlayColor].
   final WidgetStateProperty<Color?>? overlayColor;
 
-  /// {@macro flutter.material.radio.splashRadius}
+  /// {@macro material_ui.radio.splashRadius}
   ///
   /// If specified, overrides the default value of [Radio.splashRadius]. The
   /// default value is [kRadialReactionRadius].
   final double? splashRadius;
 
-  /// {@macro flutter.material.radio.materialTapTargetSize}
+  /// {@macro material_ui.radio.materialTapTargetSize}
   ///
   /// If specified, overrides the default value of
   /// [Radio.materialTapTargetSize]. The default value is the value of
   /// [ThemeData.materialTapTargetSize].
   final MaterialTapTargetSize? materialTapTargetSize;
 
-  /// {@macro flutter.material.radio.visualDensity}
+  /// {@macro material_ui.radio.visualDensity}
   ///
   /// If specified, overrides the default value of [Radio.visualDensity]. The
   /// default value is the value of [ThemeData.visualDensity].
   final VisualDensity? visualDensity;
 
-  /// {@macro flutter.material.Radio.backgroundColor}
+  /// {@macro material_ui.Radio.backgroundColor}
   ///
   /// If specified, overrides the default value of [Radio.backgroundColor]. The
   /// default value is transparent in all states.
   final WidgetStateProperty<Color?>? backgroundColor;
 
-  /// {@macro flutter.material.Radio.side}
+  /// {@macro material_ui.Radio.side}
   ///
   /// If specified, overrides the default value of [Radio.side]. The default
   /// value is a border using the fill color.
   final BorderSide? side;
 
-  /// {@macro flutter.material.Radio.innerRadius}
+  /// {@macro material_ui.Radio.innerRadius}
   ///
   /// If specified, overrides the default value of [Radio.innerRadius]. The
   /// default value is `4.5` in all states.

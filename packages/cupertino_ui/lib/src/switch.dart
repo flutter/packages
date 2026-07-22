@@ -77,14 +77,24 @@ const CupertinoDynamicColor _kOffLabelColor = CupertinoDynamicColor.withBrightne
 /// callback and rebuild the switch with a new [value] to update the visual
 /// appearance of the switch.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This example shows a toggleable [CupertinoSwitch]. When the thumb slides to
 /// the other side of the track, the switch is toggled between on/off.
 ///
-/// ** See code in examples/api/lib/cupertino/switch/cupertino_switch.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@tool snippet}
+/// {@example /example/lib/switch/cupertino_switch.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
+///
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
+///
 ///
 /// This sample shows how to use a [CupertinoSwitch] in a [CupertinoListTile]. The
 /// [MergeSemantics] is used to turn the entire [CupertinoListTile] into a single item
@@ -102,7 +112,8 @@ const CupertinoDynamicColor _kOffLabelColor = CupertinoDynamicColor.withBrightne
 ///   ),
 /// )
 /// ```
-/// {@end-tool}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -277,16 +288,26 @@ class CupertinoSwitch extends StatefulWidget {
   /// (or [Color.fromARGB(255, 255, 255, 255)] in high contrast) when null.
   final Color? offLabelColor;
 
-  /// {@macro flutter.material.switch.activeThumbImage}
+  /// {@template cupertino_ui.switch.activeThumbImage}
+  /// An image to use on the thumb of this switch when the switch is on.
+  /// {@endtemplate}
   final ImageProvider? activeThumbImage;
 
-  /// {@macro flutter.material.switch.onActiveThumbImageError}
+  /// {@template cupertino_ui.switch.onActiveThumbImageError}
+  /// An optional error callback for errors emitted when loading
+  /// [activeThumbImage].
+  /// {@endtemplate}
   final ImageErrorListener? onActiveThumbImageError;
 
-  /// {@macro flutter.material.switch.inactiveThumbImage}
+  /// {@template cupertino_ui.switch.inactiveThumbImage}
+  /// An image to use on the thumb of this switch when the switch is off.
+  /// {@endtemplate}
   final ImageProvider? inactiveThumbImage;
 
-  /// {@macro flutter.material.switch.onInactiveThumbImageError}
+  /// {@template cupertino_ui.switch.onInactiveThumbImageError}
+  /// An optional error callback for errors emitted when loading
+  /// [inactiveThumbImage].
+  /// {@endtemplate}
   final ImageErrorListener? onInactiveThumbImageError;
 
   /// The outline color of this [CupertinoSwitch]'s track.
@@ -297,7 +318,11 @@ class CupertinoSwitch extends StatefulWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// This example resolves the [trackOutlineColor] based on the current
   /// [WidgetState] of the [CupertinoSwitch], providing a different [Color] when it is
   /// [WidgetState.disabled].
@@ -314,7 +339,8 @@ class CupertinoSwitch extends StatefulWidget {
   ///   }),
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   ///
   /// The [CupertinoSwitch] track has no outline by default.
   final WidgetStateProperty<Color?>? trackOutlineColor;
@@ -327,7 +353,11 @@ class CupertinoSwitch extends StatefulWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// This example resolves the [trackOutlineWidth] based on the current
   /// [WidgetState] of the [CupertinoSwitch], providing a different outline width when it is
   /// [WidgetState.disabled].
@@ -344,7 +374,8 @@ class CupertinoSwitch extends StatefulWidget {
   ///   }),
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   ///
   /// Since a [CupertinoSwitch] has no track outline by default, this parameter
   /// is set only if [trackOutlineColor] is provided.
@@ -360,7 +391,11 @@ class CupertinoSwitch extends StatefulWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// This example resolves the [thumbIcon] based on the current
   /// [WidgetState] of the [CupertinoSwitch], providing a different [Icon] when it is
   /// [WidgetState.disabled].
@@ -377,7 +412,8 @@ class CupertinoSwitch extends StatefulWidget {
   ///   }),
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   ///
   /// If null, then the [CupertinoSwitch] does not have any icons on the thumb.
   final WidgetStateProperty<Icon?>? thumbIcon;
@@ -391,7 +427,11 @@ class CupertinoSwitch extends StatefulWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   /// This example resolves the [mouseCursor] based on the current
   /// [WidgetState] of the [CupertinoSwitch], providing a different [mouseCursor] when it is
   /// [WidgetState.disabled].
@@ -408,7 +448,8 @@ class CupertinoSwitch extends StatefulWidget {
   ///   }),
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   ///
   /// If null, then [MouseCursor.defer] is used when the switch is disabled.
   /// When the switch is enabled, [SystemMouseCursors.click] is used on Web, and
@@ -433,7 +474,7 @@ class CupertinoSwitch extends StatefulWidget {
   /// {@macro flutter.widgets.Focus.autofocus}
   final bool autofocus;
 
-  /// {@template flutter.cupertino.CupertinoSwitch.applyTheme}
+  /// {@template cupertino_ui.CupertinoSwitch.applyTheme}
   /// Whether to apply the ambient [CupertinoThemeData].
   ///
   /// If true, the track uses [CupertinoThemeData.primaryColor] for the track
@@ -443,7 +484,7 @@ class CupertinoSwitch extends StatefulWidget {
   /// {@endtemplate}
   final bool? applyTheme;
 
-  /// {@template flutter.cupertino.CupertinoSwitch.dragStartBehavior}
+  /// {@template cupertino_ui.CupertinoSwitch.dragStartBehavior}
   /// Determines the way that drag start behavior is handled.
   ///
   /// If set to [DragStartBehavior.start], the drag behavior used to move the

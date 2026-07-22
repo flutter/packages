@@ -187,6 +187,65 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
   }
 
   @override
+  void writeConstants(
+    InternalDartOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    if (root.constants.isEmpty) {
+      return;
+    }
+    indent.newln();
+    for (final Constant constant in root.constants) {
+      addDocumentationComments(indent, constant.documentationComments, docCommentSpec);
+      final String formattedValue = _formatValue(constant.type.baseName, constant.value);
+      indent.writeln('const ${constant.type.baseName} ${constant.name} = $formattedValue;');
+    }
+  }
+
+  String _formatValue(String type, Object value) =>
+      type == 'String' ? _makeDartStringLiteral(value.toString()) : value.toString();
+
+  String _makeDartStringLiteral(String valStr) {
+    final bool hasSpecial =
+        valStr.contains(r'\') ||
+        valStr.contains(r'$') ||
+        valStr.contains('\n') ||
+        valStr.contains('\r');
+
+    if (!hasSpecial) {
+      if (!valStr.contains("'")) {
+        return "'$valStr'";
+      }
+      if (!valStr.contains('"')) {
+        return '"$valStr"';
+      }
+      return "'${escapeStringSingleQuotes(valStr)}'";
+    }
+
+    if (!valStr.contains('\n') && !valStr.contains('\r')) {
+      if (!valStr.contains("'")) {
+        return "r'$valStr'";
+      }
+      if (!valStr.contains('"')) {
+        return 'r"$valStr"';
+      }
+      return "'${escapeStringSingleQuotes(valStr)}'";
+    }
+
+    if (!valStr.contains("'''")) {
+      return "r'''$valStr'''";
+    }
+    if (!valStr.contains('"""')) {
+      return 'r"""$valStr"""';
+    }
+
+    final String escaped = escapeStringSingleQuotes(valStr);
+    return "'$escaped'";
+  }
+
+  @override
   void writeEnum(
     InternalDartOptions generatorOptions,
     Root root,
@@ -222,17 +281,19 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
 
     indent.write('${sealed}class ${classDefinition.name} $implements');
     indent.addScoped('{', '}', () {
-      if (classDefinition.fields.isEmpty) {
+      if (classDefinition.isSealed) {
         return;
       }
       _writeConstructor(indent, classDefinition);
       indent.newln();
-      for (final NamedType field in getFieldsInSerializationOrder(classDefinition)) {
-        addDocumentationComments(indent, field.documentationComments, docCommentSpec);
+      if (classDefinition.fields.isNotEmpty) {
+        for (final NamedType field in getFieldsInSerializationOrder(classDefinition)) {
+          addDocumentationComments(indent, field.documentationComments, docCommentSpec);
 
-        final String datatype = addGenericTypes(field.type);
-        indent.writeln('$datatype ${field.name};');
-        indent.newln();
+          final String datatype = addGenericTypes(field.type);
+          indent.writeln('$datatype ${field.name};');
+          indent.newln();
+        }
       }
       _writeToList(indent, classDefinition);
       indent.newln();
@@ -264,6 +325,10 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
 
   void _writeConstructor(Indent indent, Class classDefinition) {
     indent.write(classDefinition.name);
+    if (classDefinition.fields.isEmpty) {
+      indent.addln('();');
+      return;
+    }
     indent.addScoped('({', '});', () {
       for (final NamedType field in getFieldsInSerializationOrder(classDefinition)) {
         final required = !field.type.isNullable && field.defaultValue == null ? 'required ' : '';
@@ -632,6 +697,19 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     indent.newln();
     addDocumentationComments(indent, api.documentationComments, docCommentSpec);
     for (final Method func in api.methods) {
+      addDocumentationComments(
+        indent,
+        func.documentationComments,
+        docCommentSpec,
+        generatorComments: <String>[
+          'Returns a broadcast [Stream] of events from the `${func.name}` event channel.',
+          '',
+          'Each call to this method creates a new [EventChannel], so it should',
+          'not be called multiple times for the same `instanceName`. To deliver',
+          'events to multiple listeners, call this method once and listen to the',
+          'returned broadcast stream multiple times instead.',
+        ],
+      );
       indent.format('''
       Stream<${func.returnType.baseName}> ${func.name}(${_getMethodParameterSignature(func.parameters, addTrailingComma: true)} {String instanceName = ''}) {
         if (instanceName.isNotEmpty) {

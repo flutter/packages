@@ -61,14 +61,20 @@ enum _IconButtonVariant { standard, filled, filledTonal, outlined }
 /// requirements in the Material Design specification. The [alignment] controls
 /// how the icon itself is positioned within the hit region.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This sample shows an [IconButton] that uses the Material icon "volume_up" to
 /// increase the volume.
 ///
 /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/icon_button.png)
 ///
-/// ** See code in examples/api/lib/material/icon_button/icon_button.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/icon_button/icon_button.0.dart#body}
+///
+/// </callout-box>
 ///
 /// ### Icon sizes
 ///
@@ -113,7 +119,8 @@ enum _IconButtonVariant { standard, filled, filledTonal, outlined }
 /// the underlying [Material] along with the splash and highlight
 /// [InkResponse] contributed by descendant widgets.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// In this sample the icon button's background color is defined with an [Ink]
 /// widget whose child is an [IconButton]. The icon button's filled background
 /// is a light shade of blue, it's a filled circle, and it's as big as the
@@ -121,8 +128,13 @@ enum _IconButtonVariant { standard, filled, filledTonal, outlined }
 ///
 /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/icon_button_background.png)
 ///
-/// ** See code in examples/api/lib/material/icon_button/icon_button.1.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/icon_button/icon_button.1.dart#body}
+///
+/// </callout-box>
 ///
 /// Material Design 3 introduced new types (standard and contained) of [IconButton]s.
 /// The default [IconButton] is the standard type. To create a filled icon button,
@@ -148,20 +160,32 @@ enum _IconButtonVariant { standard, filled, filledTonal, outlined }
 /// the [IconButton.visualDensity] is set to [VisualDensity.compact]. Users can
 /// customize it by using [IconButtonTheme], [IconButton.style] or [IconButton.visualDensity].
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This sample shows creation of [IconButton] widgets for standard, filled,
 /// filled tonal and outlined types, as described in: https://m3.material.io/components/icon-buttons/overview
 ///
-/// ** See code in examples/api/lib/material/icon_button/icon_button.2.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-/// {@tool dartpad}
+/// {@example /example/lib/icon_button/icon_button.2.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This sample shows creation of [IconButton] widgets with toggle feature for
 /// standard, filled, filled tonal and outlined types, as described
 /// in: https://m3.material.io/components/icon-buttons/overview
 ///
-/// ** See code in examples/api/lib/material/icon_button/icon_button.3.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/icon_button/icon_button.3.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -340,7 +364,7 @@ class IconButton extends StatelessWidget {
 
   /// Defines how compact the icon button's layout will be.
   ///
-  /// {@macro flutter.material.themedata.visualDensity}
+  /// {@macro material_ui.themedata.visualDensity}
   ///
   /// This property can be null. If null, it defaults to [VisualDensity.standard]
   /// in Material Design 3 to make sure the button will be circular on all platforms.
@@ -504,7 +528,7 @@ class IconButton extends StatelessWidget {
   /// If onPressed is set to null, the onLongPress callback is not called.
   final VoidCallback? onLongPress;
 
-  /// {@macro flutter.material.RawMaterialButton.mouseCursor}
+  /// {@macro material_ui.RawMaterialButton.mouseCursor}
   ///
   /// If set to null, will default to [SystemMouseCursors.basic] if [onPressed]
   /// is null, otherwise [WidgetStateMouseCursor.adaptiveClickable].
@@ -597,7 +621,7 @@ class IconButton extends StatelessWidget {
   /// * [ImageIcon], for showing icons from [AssetImage]s or other [ImageProvider]s.
   final Widget? selectedIcon;
 
-  /// {@macro flutter.material.inkwell.statesController}
+  /// {@macro material_ui.inkwell.statesController}
   final MaterialStatesController? statesController;
 
   final _IconButtonVariant _variant;

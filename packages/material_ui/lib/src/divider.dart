@@ -29,7 +29,8 @@ import 'theme.dart';
 /// The box's total height is controlled by [height]. The appropriate
 /// padding is automatically computed from the height.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This sample shows how to display a Divider between an orange and blue box
 /// inside a column. The Divider is 20 logical pixels in height and contains a
 /// vertically centered black line that is 5 logical pixels thick. The black
@@ -37,15 +38,26 @@ import 'theme.dart';
 ///
 /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/divider.png)
 ///
-/// ** See code in examples/api/lib/material/divider/divider.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-/// {@tool dartpad}
+/// {@example /example/lib/divider/divider.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This sample shows the creation of [Divider] widget, as described in:
 /// https://m3.material.io/components/divider/overview
 ///
-/// ** See code in examples/api/lib/material/divider/divider.1.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/divider/divider.1.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -82,7 +94,7 @@ class Divider extends StatelessWidget {
 
   /// The thickness of the line drawn within the divider.
   ///
-  /// {@template flutter.material.Divider.thickness}
+  /// {@template material_ui.Divider.thickness}
   /// A divider with a [thickness] of 0.0 is always drawn as a line with a
   /// height of exactly one device pixel.
   ///
@@ -93,7 +105,7 @@ class Divider extends StatelessWidget {
 
   /// The amount of empty space to the leading edge of the divider.
   ///
-  /// {@template flutter.material.Divider.indent}
+  /// {@template material_ui.Divider.indent}
   /// If this is null, then the [DividerThemeData.indent] is used. If that is
   /// also null, then this defaults to 0.0.
   /// {@endtemplate}
@@ -101,13 +113,13 @@ class Divider extends StatelessWidget {
 
   /// The amount of empty space to the trailing edge of the divider.
   ///
-  /// {@template flutter.material.Divider.endIndent}
+  /// {@template material_ui.Divider.endIndent}
   /// If this is null, then the [DividerThemeData.endIndent] is used. If that is
   /// also null, then this defaults to 0.0.
   /// {@endtemplate}
   final double? endIndent;
 
-  /// {@template flutter.material.Divider.radius}
+  /// {@template material_ui.Divider.radius}
   /// The amount of radius for the border of the divider.
   ///
   /// If this is null, then [DividerThemeData.radius] is used. If that is
@@ -115,21 +127,25 @@ class Divider extends StatelessWidget {
   /// {@endtemplate}
   final BorderRadiusGeometry? radius;
 
-  /// {@template flutter.material.Divider.color}
+  /// {@template material_ui.Divider.color}
   /// The color to use when painting the line.
   ///
   /// If this is null, then the [DividerThemeData.color] is used. If that is
   /// also null, then [ThemeData.dividerColor] is used.
   /// {@endtemplate}
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
   ///
   /// ```dart
   /// const Divider(
   ///   color: Colors.deepOrange,
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   final Color? color;
 
   /// Computes the [BorderSide] that represents a divider.
@@ -145,7 +161,10 @@ class Divider extends StatelessWidget {
   /// If [context] is null, the default color of [BorderSide] is used and the
   /// default width of 0.0 is used.
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
   ///
   /// This example uses this method to create a box that has a divider above and
   /// below it. This is sometimes useful with lists, for instance, to separate a
@@ -162,7 +181,8 @@ class Divider extends StatelessWidget {
   ///   // child: ...
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   static BorderSide createBorderSide(BuildContext? context, {Color? color, double? width}) {
     final DividerThemeData? dividerTheme = context != null ? DividerTheme.of(context) : null;
     final DividerThemeData? defaults = context != null
@@ -220,21 +240,33 @@ class Divider extends StatelessWidget {
 /// The box's total width is controlled by [width]. The appropriate
 /// padding is automatically computed from the width.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This sample shows how to display a [VerticalDivider] between a purple and orange box
 /// inside a [Row]. The [VerticalDivider] is 20 logical pixels in width and contains a
 /// horizontally centered black line that is 1 logical pixels thick. The grey
 /// line is indented by 20 logical pixels.
 ///
-/// ** See code in examples/api/lib/material/divider/vertical_divider.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-/// {@tool dartpad}
+/// {@example /example/lib/divider/vertical_divider.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This sample shows the creation of [VerticalDivider] widget, as described in:
 /// https://m3.material.io/components/divider/overview
 ///
-/// ** See code in examples/api/lib/material/divider/vertical_divider.1.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/divider/vertical_divider.1.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -294,14 +326,18 @@ class VerticalDivider extends StatelessWidget {
   /// If this is null, then the [DividerThemeData.color] is used. If that is
   /// also null, then [ThemeData.dividerColor] is used.
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
   ///
   /// ```dart
   /// const Divider(
   ///   color: Colors.deepOrange,
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   final Color? color;
 
   /// The amount of radius for the border of the divider.

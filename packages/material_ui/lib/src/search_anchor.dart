@@ -86,32 +86,56 @@ typedef ViewBuilder = Widget Function(Iterable<Widget> suggestions);
 /// is in full-screen mode, changing the window size, such as rotating a mobile
 /// device from portrait mode to landscape mode, will not close the search view.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This example shows how to use an IconButton to open a search view in a [SearchAnchor].
 /// It also shows how to use [SearchController] to open or close the search view route.
 ///
-/// ** See code in examples/api/lib/material/search_anchor/search_anchor.2.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-/// {@tool dartpad}
+/// {@example /example/lib/search_anchor/search_anchor.2.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This example shows how to set up a floating (or pinned) AppBar with a
 /// [SearchAnchor] for a title.
 ///
-/// ** See code in examples/api/lib/material/search_anchor/search_anchor.1.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-/// {@tool dartpad}
+/// {@example /example/lib/search_anchor/search_anchor.1.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This example shows how to fetch the search suggestions from a remote API.
 ///
-/// ** See code in examples/api/lib/material/search_anchor/search_anchor.3.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-/// {@tool dartpad}
+/// {@example /example/lib/search_anchor/search_anchor.3.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This example demonstrates fetching the search suggestions asynchronously and
 /// debouncing network calls.
 ///
-/// ** See code in examples/api/lib/material/search_anchor/search_anchor.4.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/search_anchor/search_anchor.4.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -162,12 +186,18 @@ class SearchAnchor extends StatefulWidget {
   /// All the barX parameters are used to customize the anchor. Similarly, all the
   /// viewX parameters are used to override the view's defaults.
   ///
-  /// {@tool dartpad}
+  /// <callout-box>
+  ///
   /// This example shows how to use a [SearchAnchor.bar] which uses a default search
   /// bar to open a search view route.
   ///
-  /// ** See code in examples/api/lib/material/search_anchor/search_anchor.0.dart **
-  /// {@end-tool}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
+  /// {@example /example/lib/search_anchor/search_anchor.0.dart#body}
+  ///
+  /// </callout-box>
   factory SearchAnchor.bar({
     Widget? barLeading,
     Iterable<Widget>? barTrailing,
@@ -399,7 +429,7 @@ class SearchAnchor extends StatefulWidget {
   /// To get a different layout, use [viewBuilder] to override.
   final SuggestionsBuilder suggestionsBuilder;
 
-  /// {@macro flutter.widgets.TextField.textInputAction}
+  /// {@macro material_ui.TextField.textInputAction}
   final TextInputAction? textInputAction;
 
   /// The type of action button to use for the keyboard.
@@ -1387,13 +1417,19 @@ class SearchController extends TextEditingController {
 /// These actions can represent additional modes of searching (like voice search),
 /// a separate high-level action (such as current location) or an overflow menu.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This example demonstrates how to use a [SearchBar] as the return value of the
 /// [SearchAnchor.builder] property. The [SearchBar] also includes a leading search
 /// icon and a trailing action to toggle the brightness.
 ///
-/// ** See code in examples/api/lib/material/search_anchor/search_bar.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/search_anchor/search_bar.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -1572,7 +1608,7 @@ class SearchBar extends StatefulWidget {
   /// {@macro flutter.widgets.editableText.autofocus}
   final bool autoFocus;
 
-  /// {@macro flutter.widgets.TextField.textInputAction}
+  /// {@macro material_ui.TextField.textInputAction}
   final TextInputAction? textInputAction;
 
   /// The type of action button to use for the keyboard.

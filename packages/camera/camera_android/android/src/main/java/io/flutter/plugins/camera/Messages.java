@@ -1079,6 +1079,9 @@ public class Messages {
      */
     void setDescriptionWhileRecording(@NonNull String description);
 
+    /** Sets the JPEG compression quality for still image capture. */
+    void setJpegImageQuality(@NonNull Long quality);
+
     /** The codec used by CameraApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
@@ -1799,6 +1802,31 @@ public class Messages {
                 String descriptionArg = (String) args.get(0);
                 try {
                   api.setDescriptionWhileRecording(descriptionArg);
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.camera_android.CameraApi.setJpegImageQuality"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Long qualityArg = (Long) args.get(0);
+                try {
+                  api.setJpegImageQuality(qualityArg);
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);

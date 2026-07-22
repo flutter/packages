@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - 'release-go_router-*'
+      - 'release-cupertino_ui-*'
+      - 'release-material_ui-*'
 permissions:
   # Release needs to push a tag back to the repo.
   contents: write
@@ -12,4 +14,7 @@ jobs:
     with:
       is-batch-release: true
       branch-name: '${{ github.ref_name }}'
-    secrets: inherit
+    secrets:
+      USER_NAME: ${{ secrets.USER_NAME }}
+      USER_EMAIL: ${{ secrets.USER_EMAIL }}
+      PUB_CREDENTIALS: ${{ secrets.PUB_CREDENTIALS }}

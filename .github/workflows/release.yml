@@ -18,9 +18,10 @@ jobs:
     steps:
     # Checks out a copy of the repo.
     - name: Check out code
-      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       with:
         fetch-depth: 0 # Fetch all history so the tool can get all the tags to determine version.
+        persist-credentials: false
     - name: "Install Flutter"
       uses: ./.github/workflows/internals/install_flutter
     - name: Set up tools
@@ -64,7 +65,10 @@ jobs:
 
     - name: run release
       run: |
+        gh auth setup-git
         git config --global user.name ${{ secrets.USER_NAME }}
         git config --global user.email ${{ secrets.USER_EMAIL }}
         dart ./script/tool/lib/src/main.dart publish --all-changed --base-sha=HEAD~ --skip-confirmation --remote=origin
-      env: {PUB_CREDENTIALS: "${{ secrets.PUB_CREDENTIALS }}"}
+      env:
+        PUB_CREDENTIALS: "${{ secrets.PUB_CREDENTIALS }}"
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
