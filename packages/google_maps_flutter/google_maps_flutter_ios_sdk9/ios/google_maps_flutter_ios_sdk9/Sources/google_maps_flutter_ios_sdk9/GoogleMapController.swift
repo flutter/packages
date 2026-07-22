@@ -42,86 +42,91 @@ class DefaultMapEventHandler: NSObject, FGMMapEventDelegate {
     callbackHandler.didStartCameraMove { _ in }
   }
 
-  func didMoveCameraToPosition(_ cameraPosition: FGMPlatformCameraPosition) {
-    callbackHandler.didMoveCameraToPosition(cameraPosition) { _ in }
+  func didMoveCamera(to cameraPosition: FGMPlatformCameraPosition) {
+    callbackHandler.didMoveCamera(to: cameraPosition) { _ in }
   }
 
   func didIdleCamera() {
     callbackHandler.didIdleCamera { _ in }
   }
 
-  func didTapAtPosition(_ position: FGMPlatformLatLng) {
-    callbackHandler.didTapAtPosition(position) { _ in }
+  func didTap(atPosition position: FGMPlatformLatLng) {
+    callbackHandler.didTap(atPosition: position) { _ in }
   }
 
-  func didLongPressAtPosition(_ position: FGMPlatformLatLng) {
-    callbackHandler.didLongPressAtPosition(position) { _ in }
+  func didLongPress(atPosition position: FGMPlatformLatLng) {
+    callbackHandler.didLongPress(atPosition: position) { _ in }
   }
 
-  func didTapMarkerWithIdentifier(_ markerId: String) {
-    callbackHandler.didTapMarkerWithIdentifier(markerId) { _ in }
+  func didTapMarker(withIdentifier markerId: String) {
+    callbackHandler.didTapMarker(withIdentifier: markerId) { _ in }
   }
 
-  func didStartDragForMarkerWithIdentifier(_ markerId: String, atPosition position: FGMPlatformLatLng) {
-    callbackHandler.didStartDragForMarkerWithIdentifier(markerId, atPosition: position) { _ in }
+  func didStartDragForMarker(
+    withIdentifier markerId: String, atPosition position: FGMPlatformLatLng
+  ) {
+    callbackHandler.didStartDragForMarker(withIdentifier: markerId, atPosition: position) { _ in }
   }
 
-  func didDragMarkerWithIdentifier(_ markerId: String, atPosition position: FGMPlatformLatLng) {
-    callbackHandler.didDragMarkerWithIdentifier(markerId, atPosition: position) { _ in }
+  func didDragMarker(withIdentifier markerId: String, atPosition position: FGMPlatformLatLng) {
+    callbackHandler.didDragMarker(withIdentifier: markerId, atPosition: position) { _ in }
   }
 
-  func didEndDragForMarkerWithIdentifier(_ markerId: String, atPosition position: FGMPlatformLatLng) {
-    callbackHandler.didEndDragForMarkerWithIdentifier(markerId, atPosition: position) { _ in }
+  func didEndDragForMarker(withIdentifier markerId: String, atPosition position: FGMPlatformLatLng)
+  {
+    callbackHandler.didEndDragForMarker(withIdentifier: markerId, atPosition: position) { _ in }
   }
 
-  func didTapInfoWindowOfMarkerWithIdentifier(_ markerId: String) {
-    callbackHandler.didTapInfoWindowOfMarkerWithIdentifier(markerId) { _ in }
+  func didTapInfoWindowOfMarker(withIdentifier markerId: String) {
+    callbackHandler.didTapInfoWindowOfMarker(withIdentifier: markerId) { _ in }
   }
 
-  func didTapCircleWithIdentifier(_ circleId: String) {
-    callbackHandler.didTapCircleWithIdentifier(circleId) { _ in }
+  func didTapCircle(withIdentifier circleId: String) {
+    callbackHandler.didTapCircle(withIdentifier: circleId) { _ in }
   }
 
-  func didTapCluster(_ cluster: FGMPlatformCluster) {
-    callbackHandler.didTapCluster(cluster) { _ in }
+  func didTap(_ cluster: FGMPlatformCluster) {
+    callbackHandler.didTap(cluster) { _ in }
   }
 
-  func didTapPolygonWithIdentifier(_ polygonId: String) {
-    callbackHandler.didTapPolygonWithIdentifier(polygonId) { _ in }
+  func didTapPolygon(withIdentifier polygonId: String) {
+    callbackHandler.didTapPolygon(withIdentifier: polygonId) { _ in }
   }
 
-  func didTapPolylineWithIdentifier(_ polylineId: String) {
-    callbackHandler.didTapPolylineWithIdentifier(polylineId) { _ in }
+  func didTapPolyline(withIdentifier polylineId: String) {
+    callbackHandler.didTapPolyline(withIdentifier: polylineId) { _ in }
   }
 
-  func didTapGroundOverlayWithIdentifier(_ groundOverlayId: String) {
-    callbackHandler.didTapGroundOverlayWithIdentifier(groundOverlayId) { _ in }
+  func didTapGroundOverlay(withIdentifier groundOverlayId: String) {
+    callbackHandler.didTapGroundOverlay(withIdentifier: groundOverlayId) { _ in }
   }
 }
 
-public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformView, FGMTileProviderDelegate {
+public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformView,
+  FGMTileProviderDelegate
+{
   /// The Google Maps SDK map view managed by this controller.
   private(set) var mapView: GMSMapView
   /// The Pigeon callback API implementation, used to send events to the Dart side.
-  var dartCallbackHandler: FGMMapsCallbackApi?
+  var dartCallbackHandler: FGMMapsCallbackApi
   /// The map SDK event handler, which routes events to the Dart callback handler.
-  var mapEventHandler: DefaultMapEventHandler?
+  var mapEventHandler: DefaultMapEventHandler
   // The main Pigeon API implementation, separate to avoid lifetime extension.
-  var callHandler: MapCallHandler!
+  var callHandler: MapCallHandler
   // The inspector API implementation, separate to avoid lifetime extension.
-  var inspector: MapInspector!
+  var inspector: MapInspector
   /// Whether to send notifications about camera position changes to Dart.
   var trackCameraPosition = false
 
   /// Sub-controllers for managing individual map features.
-  var clusterManagersController: FGMClusterManagersController?
-  var markersController: FGMMarkersController?
-  var polygonsController: FGMPolygonsController?
-  var polylinesController: FGMPolylinesController?
-  var circlesController: FGMCirclesController?
-  var heatmapsController: FGMHeatmapsController?
-  var tileOverlaysController: FGMTileOverlaysController?
-  var groundOverlaysController: FGMGroundOverlaysController?
+  var clusterManagersController: FGMClusterManagersController
+  var markersController: FGMMarkersController
+  var polygonsController: FGMPolygonsController
+  var polylinesController: FGMPolylinesController
+  var circlesController: FGMCirclesController
+  var heatmapsController: FGMHeatmapsController
+  var tileOverlaysController: FGMTileOverlaysController
+  var groundOverlaysController: FGMGroundOverlaysController
 
   // The resulting error message, if any, from the last attempt to set the map style.
   // This is used to provide access to errors after the fact, since the map style is generally set at
@@ -129,13 +134,14 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
   // initialization.
   var styleError: String?
 
-  public init(
+  public convenience init(
     frame: CGRect,
     viewIdentifier viewId: Int64,
     creationParameters: FGMPlatformMapViewCreationParams,
     registrar: FlutterPluginRegistrar
   ) {
-    let camera = FGMGetCameraPositionForPigeonCameraPosition(creationParameters.initialCameraPosition)
+    let camera = FGMGetCameraPositionForPigeonCameraPosition(
+      creationParameters.initialCameraPosition)
 
     let options = GMSMapViewOptions()
     options.frame = frame
@@ -144,13 +150,9 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
       options.mapID = GMSMapID(identifier: mapId)
     }
 
-    let mapView = GMSMapView(options: options)
-    self.mapView = mapView
-
-    super.init()
-
-    setup(
-      viewId: viewId,
+    self.init(
+      mapView: GMSMapView(options: options),
+      viewIdentifier: viewId,
       creationParameters: creationParameters,
       assetProvider: DefaultAssetProvider(registrar: registrar),
       binaryMessenger: registrar.messenger()
@@ -164,25 +166,12 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
     assetProvider: FGMAssetProvider,
     binaryMessenger: FlutterBinaryMessenger
   ) {
+
     self.mapView = mapView
 
-    super.init()
-
-    setup(
-      viewId: viewId,
-      creationParameters: creationParameters,
-      assetProvider: assetProvider,
-      binaryMessenger: binaryMessenger
-    )
-  }
-
-  private func setup(
-    viewId: Int64,
-    creationParameters: FGMPlatformMapViewCreationParams,
-    assetProvider: FGMAssetProvider,
-    binaryMessenger: FlutterBinaryMessenger
-  ) {
     mapView.accessibilityElementsHidden = false
+    // TODO(stuartmorgan): avoid calling a state-mutating method in the middle of the init method.
+    // https://github.com/flutter/flutter/issues/104121
     interpretMapConfiguration(creationParameters.mapConfiguration)
     let pigeonSuffix = String(format: "%lld", viewId)
     let dartCallbackHandler = FGMMapsCallbackApi(
@@ -203,7 +192,6 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
       eventDelegate: mapEventHandler
     )
     self.clusterManagersController = clusterManagersController
-
     self.markersController = FGMMarkersController(
       mapView: mapView,
       eventDelegate: mapEventHandler,
@@ -234,30 +222,14 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
       assetProvider: assetProvider
     )
 
-    if let initialClusterManagers = creationParameters.initialClusterManagers {
-      clusterManagersController.addClusterManagers(initialClusterManagers)
-    }
-    if let initialMarkers = creationParameters.initialMarkers {
-      markersController?.addMarkers(initialMarkers)
-    }
-    if let initialPolygons = creationParameters.initialPolygons {
-      polygonsController?.addPolygons(initialPolygons)
-    }
-    if let initialPolylines = creationParameters.initialPolylines {
-      polylinesController?.addPolylines(initialPolylines)
-    }
-    if let initialCircles = creationParameters.initialCircles {
-      circlesController?.addCircles(initialCircles)
-    }
-    if let initialHeatmaps = creationParameters.initialHeatmaps {
-      heatmapsController?.addHeatmaps(initialHeatmaps)
-    }
-    if let initialTileOverlays = creationParameters.initialTileOverlays {
-      tileOverlaysController?.addTileOverlays(initialTileOverlays)
-    }
-    if let initialGroundOverlays = creationParameters.initialGroundOverlays {
-      groundOverlaysController?.addGroundOverlays(initialGroundOverlays)
-    }
+    clusterManagersController.add(creationParameters.initialClusterManagers)
+    markersController.add(creationParameters.initialMarkers)
+    polygonsController.add(creationParameters.initialPolygons)
+    polylinesController.add(creationParameters.initialPolylines)
+    circlesController.add(creationParameters.initialCircles)
+    heatmapsController.add(creationParameters.initialHeatmaps)
+    tileOverlaysController.add(creationParameters.initialTileOverlays)
+    groundOverlaysController.add(creationParameters.initialGroundOverlays)
 
     // Invoke clustering after markers are added.
     clusterManagersController.invokeClusteringForEachClusterManager()
@@ -279,15 +251,13 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
     )
     self.inspector = inspector
     SetUpFGMMapsInspectorApiWithSuffix(binaryMessenger, inspector, pigeonSuffix)
+
+    super.init()
   }
 
   deinit {
-    if let callHandler = callHandler {
-      SetUpFGMMapsApiWithSuffix(callHandler.messenger, nil, callHandler.pigeonSuffix)
-    }
-    if let inspector = inspector {
-      SetUpFGMMapsInspectorApiWithSuffix(inspector.messenger, nil, inspector.pigeonSuffix)
-    }
+    SetUpFGMMapsApiWithSuffix(callHandler.messenger, nil, callHandler.pigeonSuffix)
+    SetUpFGMMapsInspectorApiWithSuffix(inspector.messenger, nil, inspector.pigeonSuffix)
   }
 
   public func view() -> UIView {
@@ -366,12 +336,12 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
     mapView.setMinZoom(minZoom, maxZoom: maxZoom)
   }
 
-  func setPaddingTop(_ top: Float, left: Float, bottom: Float, right: Float) {
+  func setPadding(top: CGFloat, left: CGFloat, bottom: CGFloat, right: CGFloat) {
     mapView.padding = UIEdgeInsets(
-      top: CGFloat(top),
-      left: CGFloat(left),
-      bottom: CGFloat(bottom),
-      right: CGFloat(right)
+      top: top,
+      left: left,
+      bottom: bottom,
+      right: right
     )
   }
 
@@ -405,72 +375,69 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
 
   /// Sets the map style, returning any error string as well as storing that error in `styleError` for
   /// later access.
-  func setMapStyle(_ mapStyle: String?) -> String? {
+  func setMapStyle(_ mapStyle: String) -> String? {
     var errorString: String? = nil
-    if let mapStyle = mapStyle, !mapStyle.isEmpty {
+    if mapStyle.isEmpty {
+      mapView.mapStyle = nil
+    } else {
       do {
-        let style = try GMSMapStyle(jsonString: mapStyle)
-        mapView.mapStyle = style
-      } catch {
+        mapView.mapStyle = try GMSMapStyle(jsonString: mapStyle)
+      } catch let error {
         errorString = error.localizedDescription
       }
-    } else {
-      mapView.mapStyle = nil
     }
-    self.styleError = errorString
+    styleError = errorString
     return errorString
   }
 
   // MARK: - GMSMapViewDelegate methods
 
   public func mapView(_ mapView: GMSMapView, willMove gesture: Bool) {
-    mapEventHandler?.didStartCameraMove()
+    mapEventHandler.didStartCameraMove()
   }
 
   public func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {
     if trackCameraPosition {
-      if let pigeonPos = FGMGetPigeonCameraPositionForPosition(position) {
-        mapEventHandler?.didMoveCameraToPosition(pigeonPos)
-      }
+      mapEventHandler.didMoveCamera(to: FGMGetPigeonCameraPositionForPosition(position))
     }
   }
 
   public func mapView(_ mapView: GMSMapView, idleAt position: GMSCameraPosition) {
-    mapEventHandler?.didIdleCamera()
+    mapEventHandler.didIdleCamera()
   }
 
   public func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
     if let cluster = marker.userData as? GMUStaticCluster {
-      clusterManagersController?.didTapCluster(cluster)
+      clusterManagersController.didTap(cluster)
       return false
     }
     if let markerId = FGMGetMarkerIdentifierFromMarker(marker) {
-      return markersController?.didTapMarkerWithIdentifier(markerId) ?? false
+      return markersController.didTapMarker(withIdentifier: markerId)
     }
     return false
   }
 
   public func mapView(_ mapView: GMSMapView, didEndDragging marker: GMSMarker) {
     if let markerId = FGMGetMarkerIdentifierFromMarker(marker) {
-      markersController?.didEndDraggingMarkerWithIdentifier(markerId, location: marker.position)
+      markersController.didEndDraggingMarker(withIdentifier: markerId, location: marker.position)
     }
   }
 
   public func mapView(_ mapView: GMSMapView, didBeginDragging marker: GMSMarker) {
     if let markerId = FGMGetMarkerIdentifierFromMarker(marker) {
-      markersController?.didStartDraggingMarkerWithIdentifier(markerId, location: marker.position)
+      markersController.didStartDraggingMarker(withIdentifier: markerId, location: marker.position)
     }
   }
 
   public func mapView(_ mapView: GMSMapView, didDrag marker: GMSMarker) {
     if let markerId = FGMGetMarkerIdentifierFromMarker(marker) {
-      markersController?.didDragMarkerWithIdentifier(markerId, location: marker.position)
+      markersController.didDragMarker(withIdentifier: markerId, location: marker.position)
     }
   }
 
   public func mapView(_ mapView: GMSMapView, didTapInfoWindowOf marker: GMSMarker) {
     if let markerId = FGMGetMarkerIdentifierFromMarker(marker) {
-      markersController?.didTapInfoWindowOfMarkerWithIdentifier(markerId)
+      markersController.didTapInfoWindowOfMarker(withIdentifier: markerId)
     }
   }
 
@@ -480,36 +447,32 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
     else {
       return
     }
-    if polylinesController?.hasPolylineWithIdentifier(overlayId) == true {
-      polylinesController?.didTapPolylineWithIdentifier(overlayId)
-    } else if polygonsController?.hasPolygonWithIdentifier(overlayId) == true {
-      polygonsController?.didTapPolygonWithIdentifier(overlayId)
-    } else if circlesController?.hasCircleWithIdentifier(overlayId) == true {
-      circlesController?.didTapCircleWithIdentifier(overlayId)
-    } else if groundOverlaysController?.hasGroundOverlaysWithIdentifier(overlayId) == true {
-      groundOverlaysController?.didTapGroundOverlayWithIdentifier(overlayId)
+    if polylinesController.hasPolyline(withIdentifier: overlayId) == true {
+      polylinesController.didTapPolyline(withIdentifier: overlayId)
+    } else if polygonsController.hasPolygon(withIdentifier: overlayId) == true {
+      polygonsController.didTapPolygon(withIdentifier: overlayId)
+    } else if circlesController.hasCircle(withIdentifier: overlayId) == true {
+      circlesController.didTapCircle(withIdentifier: overlayId)
+    } else if groundOverlaysController.hasGroundOverlays(withIdentifier: overlayId) == true {
+      groundOverlaysController.didTapGroundOverlay(withIdentifier: overlayId)
     }
   }
 
   public func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
-    if let pigeonLatLng = FGMGetPigeonLatLngForCoordinate(coordinate) {
-      mapEventHandler?.didTapAtPosition(pigeonLatLng)
-    }
+    mapEventHandler.didTap(atPosition: FGMGetPigeonLatLngForCoordinate(coordinate))
   }
 
   public func mapView(_ mapView: GMSMapView, didLongPressAt coordinate: CLLocationCoordinate2D) {
-    if let pigeonLatLng = FGMGetPigeonLatLngForCoordinate(coordinate) {
-      mapEventHandler?.didLongPressAtPosition(pigeonLatLng)
-    }
+    mapEventHandler.didLongPress(atPosition: FGMGetPigeonLatLngForCoordinate(coordinate))
   }
 
   func interpretMapConfiguration(_ config: FGMPlatformMapConfiguration) {
     if let cameraTargetBounds = config.cameraTargetBounds {
-      setCameraTargetBounds(
-        cameraTargetBounds.bounds != nil
-          ? FGMGetCoordinateBoundsForPigeonLatLngBounds(cameraTargetBounds.bounds!)
-          : nil
-      )
+      if let bounds = cameraTargetBounds.bounds {
+        setCameraTargetBounds(FGMGetCoordinateBoundsForPigeonLatLngBounds(bounds))
+      } else {
+        setCameraTargetBounds(nil)
+      }
     }
     if let compassEnabled = config.compassEnabled {
       setCompassEnabled(compassEnabled.boolValue)
@@ -527,16 +490,16 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
       setMapType(FGMGetMapViewTypeForPigeonMapType(mapType.value))
     }
     if let zoomData = config.minMaxZoomPreference {
-      let minZoom = zoomData.min != nil ? zoomData.min!.floatValue : kGMSMinZoomLevel
-      let maxZoom = zoomData.max != nil ? zoomData.max!.floatValue : kGMSMaxZoomLevel
+      let minZoom = zoomData.min?.floatValue ?? kGMSMinZoomLevel
+      let maxZoom = zoomData.max?.floatValue ?? kGMSMaxZoomLevel
       setMinZoom(minZoom, maxZoom: maxZoom)
     }
     if let padding = config.padding {
-      setPaddingTop(
-        Float(padding.top),
-        left: Float(padding.left),
-        bottom: Float(padding.bottom),
-        right: Float(padding.right)
+      setPadding(
+        top: CGFloat(padding.top),
+        left: CGFloat(padding.left),
+        bottom: CGFloat(padding.bottom),
+        right: CGFloat(padding.right)
       )
     }
     if let rotateGesturesEnabled = config.rotateGesturesEnabled {
@@ -573,7 +536,7 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
     zoom: Int,
     completion: @escaping (FGMPlatformTile?, FlutterError?) -> Void
   ) {
-    dartCallbackHandler?.tile(
+    dartCallbackHandler.tile(
       withOverlayIdentifier: tileOverlayId,
       location: location,
       zoom: zoom,
@@ -600,153 +563,164 @@ class MapCallHandler: NSObject, FGMMapsApi {
     super.init()
   }
 
-  func waitForMap() throws {
+  func waitForMapWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>) {
     // No-op; this call just ensures synchronization with the platform thread.
   }
 
-  func updateCirclesByAdding(
-    _ toAdd: [FGMPlatformCircle],
-    changing toChange: [FGMPlatformCircle],
-    removing idsToRemove: [String]
-  ) throws {
-    controller?.circlesController?.addCircles(toAdd)
-    controller?.circlesController?.changeCircles(toChange)
-    controller?.circlesController?.removeCirclesWithIdentifiers(idsToRemove)
+  func updateCircles(
+    byAdding toAdd: [FGMPlatformCircle], changing toChange: [FGMPlatformCircle],
+    removing idsToRemove: [String], error: AutoreleasingUnsafeMutablePointer<FlutterError?>
+  ) {
+    controller?.circlesController.add(toAdd)
+    controller?.circlesController.change(toChange)
+    controller?.circlesController.removeCircles(withIdentifiers: idsToRemove)
   }
 
-  func updateHeatmapsByAdding(
-    _ toAdd: [FGMPlatformHeatmap],
-    changing toChange: [FGMPlatformHeatmap],
-    removing idsToRemove: [String]
-  ) throws {
-    controller?.heatmapsController?.addHeatmaps(toAdd)
-    controller?.heatmapsController?.changeHeatmaps(toChange)
-    controller?.heatmapsController?.removeHeatmapsWithIdentifiers(idsToRemove)
+  func updateHeatmaps(
+    byAdding toAdd: [FGMPlatformHeatmap], changing toChange: [FGMPlatformHeatmap],
+    removing idsToRemove: [String], error: AutoreleasingUnsafeMutablePointer<FlutterError?>
+  ) {
+    controller?.heatmapsController.add(toAdd)
+    controller?.heatmapsController.change(toChange)
+    controller?.heatmapsController.removeHeatmaps(withIdentifiers: idsToRemove)
   }
 
-  func updateWithMapConfiguration(_ configuration: FGMPlatformMapConfiguration) throws {
+  func update(
+    with configuration: FGMPlatformMapConfiguration,
+    error: AutoreleasingUnsafeMutablePointer<FlutterError?>
+  ) {
     controller?.interpretMapConfiguration(configuration)
   }
 
-  func updateMarkersByAdding(
-    _ toAdd: [FGMPlatformMarker],
-    changing toChange: [FGMPlatformMarker],
-    removing idsToRemove: [String]
-  ) throws {
-    controller?.markersController?.addMarkers(toAdd)
-    controller?.markersController?.changeMarkers(toChange)
-    controller?.markersController?.removeMarkersWithIdentifiers(idsToRemove)
-    controller?.clusterManagersController?.invokeClusteringForEachClusterManager()
+  func updateMarkers(
+    byAdding toAdd: [FGMPlatformMarker], changing toChange: [FGMPlatformMarker],
+    removing idsToRemove: [String], error: AutoreleasingUnsafeMutablePointer<FlutterError?>
+  ) {
+    controller?.markersController.add(toAdd)
+    controller?.markersController.change(toChange)
+    controller?.markersController.removeMarkers(withIdentifiers: idsToRemove)
+    controller?.clusterManagersController.invokeClusteringForEachClusterManager()
   }
 
-  func updateClusterManagersByAdding(
-    _ toAdd: [FGMPlatformClusterManager],
-    removing idsToRemove: [String]
-  ) throws {
-    controller?.clusterManagersController?.addClusterManagers(toAdd)
-    controller?.clusterManagersController?.removeClusterManagersWithIdentifiers(idsToRemove)
+  func updateClusterManagers(
+    byAdding toAdd: [FGMPlatformClusterManager], removing idsToRemove: [String],
+    error: AutoreleasingUnsafeMutablePointer<FlutterError?>
+  ) {
+    controller?.clusterManagersController.add(toAdd)
+    controller?.clusterManagersController.removeClusterManagers(withIdentifiers: idsToRemove)
   }
 
-  func updatePolygonsByAdding(
-    _ toAdd: [FGMPlatformPolygon],
-    changing toChange: [FGMPlatformPolygon],
-    removing idsToRemove: [String]
-  ) throws {
-    controller?.polygonsController?.addPolygons(toAdd)
-    controller?.polygonsController?.changePolygons(toChange)
-    controller?.polygonsController?.removePolygonWithIdentifiers(idsToRemove)
+  func updatePolygons(
+    byAdding toAdd: [FGMPlatformPolygon], changing toChange: [FGMPlatformPolygon],
+    removing idsToRemove: [String], error: AutoreleasingUnsafeMutablePointer<FlutterError?>
+  ) {
+    controller?.polygonsController.add(toAdd)
+    controller?.polygonsController.change(toChange)
+    controller?.polygonsController.removePolygon(withIdentifiers: idsToRemove)
   }
 
-  func updatePolylinesByAdding(
-    _ toAdd: [FGMPlatformPolyline],
-    changing toChange: [FGMPlatformPolyline],
-    removing idsToRemove: [String]
-  ) throws {
-    controller?.polylinesController?.addPolylines(toAdd)
-    controller?.polylinesController?.changePolylines(toChange)
-    controller?.polylinesController?.removePolylineWithIdentifiers(idsToRemove)
+  func updatePolylines(
+    byAdding toAdd: [FGMPlatformPolyline], changing toChange: [FGMPlatformPolyline],
+    removing idsToRemove: [String], error: AutoreleasingUnsafeMutablePointer<FlutterError?>
+  ) {
+    controller?.polylinesController.add(toAdd)
+    controller?.polylinesController.change(toChange)
+    controller?.polylinesController.removePolyline(withIdentifiers: idsToRemove)
   }
 
-  func updateTileOverlaysByAdding(
-    _ toAdd: [FGMPlatformTileOverlay],
-    changing toChange: [FGMPlatformTileOverlay],
-    removing idsToRemove: [String]
-  ) throws {
-    controller?.tileOverlaysController?.addTileOverlays(toAdd)
-    controller?.tileOverlaysController?.changeTileOverlays(toChange)
-    controller?.tileOverlaysController?.removeTileOverlayWithIdentifiers(idsToRemove)
+  func updateTileOverlays(
+    byAdding toAdd: [FGMPlatformTileOverlay], changing toChange: [FGMPlatformTileOverlay],
+    removing idsToRemove: [String], error: AutoreleasingUnsafeMutablePointer<FlutterError?>
+  ) {
+    controller?.tileOverlaysController.add(toAdd)
+    controller?.tileOverlaysController.change(toChange)
+    controller?.tileOverlaysController.removeTileOverlay(withIdentifiers: idsToRemove)
   }
 
-  func updateGroundOverlaysByAdding(
-    _ toAdd: [FGMPlatformGroundOverlay],
-    changing toChange: [FGMPlatformGroundOverlay],
-    removing idsToRemove: [String]
-  ) throws {
-    controller?.groundOverlaysController?.addGroundOverlays(toAdd)
-    controller?.groundOverlaysController?.changeGroundOverlays(toChange)
-    controller?.groundOverlaysController?.removeGroundOverlaysWithIdentifiers(idsToRemove)
+  func updateGroundOverlays(
+    byAdding toAdd: [FGMPlatformGroundOverlay], changing toChange: [FGMPlatformGroundOverlay],
+    removing idsToRemove: [String], error: AutoreleasingUnsafeMutablePointer<FlutterError?>
+  ) {
+    controller?.groundOverlaysController.add(toAdd)
+    controller?.groundOverlaysController.change(toChange)
+    controller?.groundOverlaysController.removeGroundOverlays(withIdentifiers: idsToRemove)
   }
 
-  func latLng(forScreenCoordinate screenCoordinate: FGMPlatformPoint) throws -> FGMPlatformLatLng? {
+  func latLng(
+    forScreenCoordinate screenCoordinate: FGMPlatformPoint,
+    error: AutoreleasingUnsafeMutablePointer<FlutterError?>
+  ) -> FGMPlatformLatLng? {
     guard let mapView = controller?.mapView else {
-      throw FlutterError(
+      error.pointee = FlutterError(
         code: "GoogleMap uninitialized",
         message: "getLatLng called prior to map initialization",
         details: nil
       )
+      return nil
     }
     let point = FGMGetCGPointForPigeonPoint(screenCoordinate)
     let latlng = mapView.projection.coordinate(for: point)
     return FGMGetPigeonLatLngForCoordinate(latlng)
   }
 
-  func screenCoordinates(forLatLng latLng: FGMPlatformLatLng) throws -> FGMPlatformPoint? {
+  func screenCoordinates(
+    for latLng: FGMPlatformLatLng, error: AutoreleasingUnsafeMutablePointer<FlutterError?>
+  ) -> FGMPlatformPoint? {
     guard let mapView = controller?.mapView else {
-      throw FlutterError(
+      error.pointee = FlutterError(
         code: "GoogleMap uninitialized",
         message: "getScreenCoordinate called prior to map initialization",
         details: nil
       )
+      return nil
     }
     let location = FGMGetCoordinateForPigeonLatLng(latLng)
     let point = mapView.projection.point(for: location)
     return FGMGetPigeonPointForCGPoint(point)
   }
 
-  func visibleMapRegion() throws -> FGMPlatformLatLngBounds? {
+  func visibleMapRegion(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>)
+    -> FGMPlatformLatLngBounds?
+  {
     guard let mapView = controller?.mapView else {
-      throw FlutterError(
+      error.pointee = FlutterError(
         code: "GoogleMap uninitialized",
         message: "getVisibleRegion called prior to map initialization",
         details: nil
       )
+      return nil
     }
     let visibleRegion = mapView.projection.visibleRegion()
     let bounds = GMSCoordinateBounds(region: visibleRegion)
     return FGMGetPigeonLatLngBoundsForCoordinateBounds(bounds)
   }
 
-  func moveCameraWithUpdate(_ cameraUpdate: FGMPlatformCameraUpdate) throws {
+  func moveCamera(
+    with cameraUpdate: FGMPlatformCameraUpdate,
+    error: AutoreleasingUnsafeMutablePointer<FlutterError?>
+  ) {
     guard let update = FGMGetCameraUpdateForPigeonCameraUpdate(cameraUpdate) else {
-      throw FlutterError(
+      error.pointee = FlutterError(
         code: "Invalid update",
         message: "Unrecognized camera update",
         details: nil
       )
+      return
     }
     controller?.mapView.moveCamera(update)
   }
 
-  func animateCameraWithUpdate(
-    _ cameraUpdate: FGMPlatformCameraUpdate,
-    duration durationMilliseconds: NSNumber?
-  ) throws {
+  func animateCamera(
+    with cameraUpdate: FGMPlatformCameraUpdate, duration durationMilliseconds: NSNumber?,
+    error: AutoreleasingUnsafeMutablePointer<FlutterError?>
+  ) {
     guard let update = FGMGetCameraUpdateForPigeonCameraUpdate(cameraUpdate) else {
-      throw FlutterError(
+      error.pointee = FlutterError(
         code: "Invalid update",
         message: "Unrecognized camera update",
         details: nil
       )
+      return
     }
     let transaction = durationMilliseconds != nil ? transactionWrapper : nil
     transaction?.begin()
@@ -757,44 +731,57 @@ class MapCallHandler: NSObject, FGMMapsApi {
     transaction?.commit()
   }
 
-  func currentZoomLevel() throws -> NSNumber? {
+  func currentZoomLevel(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>) -> NSNumber? {
     guard let mapView = controller?.mapView else {
       return nil
     }
     return NSNumber(value: mapView.camera.zoom)
   }
 
-  func showInfoWindowForMarker(withIdentifier markerId: String) throws {
-    try controller?.markersController?.showMarkerInfoWindowWithIdentifier(markerId)
+  func showInfoWindowForMarker(
+    withIdentifier markerId: String, error: AutoreleasingUnsafeMutablePointer<FlutterError?>
+  ) {
+    controller?.markersController.showMarkerInfoWindow(withIdentifier: markerId, error: error)
   }
 
-  func hideInfoWindowForMarker(withIdentifier markerId: String) throws {
-    try controller?.markersController?.hideMarkerInfoWindowWithIdentifier(markerId)
+  func hideInfoWindowForMarker(
+    withIdentifier markerId: String, error: AutoreleasingUnsafeMutablePointer<FlutterError?>
+  ) {
+    controller?.markersController.hideMarkerInfoWindow(withIdentifier: markerId, error: error)
   }
 
-  func isShowingInfoWindowForMarker(withIdentifier markerId: String) throws -> NSNumber? {
-    return try controller?.markersController?.isInfoWindowShownForMarkerWithIdentifier(markerId)
+  func isShowingInfoWindowForMarker(
+    withIdentifier markerId: String, error: AutoreleasingUnsafeMutablePointer<FlutterError?>
+  ) -> NSNumber? {
+    return controller?.markersController.isInfoWindowShownForMarker(
+      withIdentifier: markerId, error: error)
   }
 
-  func setStyle(_ style: String) throws -> String? {
+  func setStyle(_ style: String, error: AutoreleasingUnsafeMutablePointer<FlutterError?>) -> String?
+  {
     return controller?.setMapStyle(style)
   }
 
-  func lastStyleError() throws -> String? {
+  func lastStyleError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>) -> String? {
     return controller?.styleError
   }
 
-  func clearTileCacheForOverlay(withIdentifier tileOverlayId: String) throws {
-    controller?.tileOverlaysController?.clearTileCacheWithIdentifier(tileOverlayId)
+  func clearTileCacheForOverlay(
+    withIdentifier tileOverlayId: String, error: AutoreleasingUnsafeMutablePointer<FlutterError?>
+  ) {
+    controller?.tileOverlaysController.clearTileCache(withIdentifier: tileOverlayId)
   }
 
-  func takeSnapshot() throws -> FlutterStandardTypedData? {
+  func takeSnapshotWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>)
+    -> FlutterStandardTypedData?
+  {
     guard let mapView = controller?.mapView else {
-      throw FlutterError(
+      error.pointee = FlutterError(
         code: "GoogleMap uninitialized",
         message: "takeSnapshot called prior to map initialization",
         details: nil
       )
+      return nil
     }
     let renderer = UIGraphicsImageRenderer(size: mapView.bounds.size)
     let image = renderer.image { context in
@@ -806,11 +793,14 @@ class MapCallHandler: NSObject, FGMMapsApi {
     return nil
   }
 
-  func isAdvancedMarkersAvailable() throws -> NSNumber? {
+  func isAdvancedMarkersAvailable(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>)
+    -> NSNumber?
+  {
     guard let mapView = controller?.mapView else {
       return false
     }
-    let advancedMarkerFlag = mapView.mapCapabilities.rawValue & GMSMapCapabilityFlags.advancedMarkers.rawValue
+    let advancedMarkerFlag =
+      mapView.mapCapabilities.rawValue & GMSMapCapabilityFlags.advancedMarkers.rawValue
     return NSNumber(value: advancedMarkerFlag != 0)
   }
 }
@@ -831,44 +821,57 @@ class MapInspector: NSObject, FGMMapsInspectorApi {
     super.init()
   }
 
-  func areBuildingsEnabled() throws -> NSNumber? {
+  func areBuildingsEnabledWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>)
+    -> NSNumber?
+  {
     guard let mapView = controller?.mapView else {
       return nil
     }
     return NSNumber(value: mapView.isBuildingsEnabled)
   }
 
-  func areRotateGesturesEnabled() throws -> NSNumber? {
+  func areRotateGesturesEnabledWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>)
+    -> NSNumber?
+  {
     guard let mapView = controller?.mapView else {
       return nil
     }
     return NSNumber(value: mapView.settings.rotateGestures)
   }
 
-  func areScrollGesturesEnabled() throws -> NSNumber? {
+  func areScrollGesturesEnabledWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>)
+    -> NSNumber?
+  {
     guard let mapView = controller?.mapView else {
       return nil
     }
     return NSNumber(value: mapView.settings.scrollGestures)
   }
 
-  func areTiltGesturesEnabled() throws -> NSNumber? {
+  func areTiltGesturesEnabledWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>)
+    -> NSNumber?
+  {
     guard let mapView = controller?.mapView else {
       return nil
     }
     return NSNumber(value: mapView.settings.tiltGestures)
   }
 
-  func areZoomGesturesEnabled() throws -> NSNumber? {
+  func areZoomGesturesEnabledWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>)
+    -> NSNumber?
+  {
     guard let mapView = controller?.mapView else {
       return nil
     }
     return NSNumber(value: mapView.settings.zoomGestures)
   }
 
-  func tileOverlay(withIdentifier tileOverlayId: String) throws -> FGMPlatformTileLayer? {
+  func tileOverlay(
+    withIdentifier tileOverlayId: String, error: AutoreleasingUnsafeMutablePointer<FlutterError?>
+  ) -> FGMPlatformTileLayer? {
     guard let controller = controller,
-      let layer = controller.tileOverlaysController?.tileOverlay(withIdentifier: tileOverlayId)?.layer
+      let layer = controller.tileOverlaysController.tileOverlay(withIdentifier: tileOverlayId)?
+        .layer
     else {
       return nil
     }
@@ -880,36 +883,48 @@ class MapInspector: NSObject, FGMMapsInspectorApi {
     )
   }
 
-  func heatmap(withIdentifier heatmapId: String) throws -> FGMPlatformHeatmap? {
-    return controller?.heatmapsController?.heatmap(withIdentifier: heatmapId)
+  func heatmap(
+    withIdentifier heatmapId: String, error: AutoreleasingUnsafeMutablePointer<FlutterError?>
+  ) -> FGMPlatformHeatmap? {
+    return controller?.heatmapsController.heatmap(withIdentifier: heatmapId)
   }
 
-  func clusters(withIdentifier clusterManagerId: String) throws -> [FGMPlatformCluster]? {
-    return try controller?.clusterManagersController?.clustersWithIdentifier(clusterManagerId)
+  func clusters(
+    withIdentifier clusterManagerId: String, error: AutoreleasingUnsafeMutablePointer<FlutterError?>
+  ) -> [FGMPlatformCluster]? {
+    return controller?.clusterManagersController.clusters(
+      withIdentifier: clusterManagerId, error: error)
   }
 
-  func isCompassEnabled() throws -> NSNumber? {
+  func isCompassEnabledWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>)
+    -> NSNumber?
+  {
     guard let mapView = controller?.mapView else {
       return nil
     }
     return NSNumber(value: mapView.settings.compassButton)
   }
 
-  func isMyLocationButtonEnabled() throws -> NSNumber? {
+  func isMyLocationButtonEnabledWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>)
+    -> NSNumber?
+  {
     guard let mapView = controller?.mapView else {
       return nil
     }
     return NSNumber(value: mapView.settings.myLocationButton)
   }
 
-  func isTrafficEnabled() throws -> NSNumber? {
+  func isTrafficEnabledWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>)
+    -> NSNumber?
+  {
     guard let mapView = controller?.mapView else {
       return nil
     }
     return NSNumber(value: mapView.isTrafficEnabled)
   }
 
-  func zoomRange() throws -> FGMPlatformZoomRange? {
+  func zoomRange(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>) -> FGMPlatformZoomRange?
+  {
     guard let mapView = controller?.mapView else {
       return nil
     }
@@ -919,11 +934,15 @@ class MapInspector: NSObject, FGMMapsInspectorApi {
     )
   }
 
-  func groundOverlay(withIdentifier groundOverlayId: String) throws -> FGMPlatformGroundOverlay? {
-    return controller?.groundOverlaysController?.groundOverlay(withIdentifier: groundOverlayId)
+  func groundOverlay(
+    withIdentifier groundOverlayId: String, error: AutoreleasingUnsafeMutablePointer<FlutterError?>
+  ) -> FGMPlatformGroundOverlay? {
+    return controller?.groundOverlaysController.groundOverlay(withIdentifier: groundOverlayId)
   }
 
-  func cameraPosition() throws -> FGMPlatformCameraPosition? {
+  func cameraPosition(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>)
+    -> FGMPlatformCameraPosition?
+  {
     guard let mapView = controller?.mapView else {
       return nil
     }
