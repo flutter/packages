@@ -147,7 +147,7 @@ class Autocomplete<T extends Object> extends StatelessWidget {
 
   /// The [TextEditingController] that is used for the text field.
   ///
-  /// For a detailed introduction, see [RawAutocomplete.focusNode].
+  /// For a detailed introduction, see [RawAutocomplete.textEditingController].
   // TODO(dkwingsmt): Migrate the doc back to macro
   // flutter.widgets.RawAutocomplete.split
   // when https://github.com/flutter/flutter/issues/189629 reaches phase 3.
