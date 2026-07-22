@@ -15,56 +15,6 @@
 #import "FGMTileOverlayController.h"
 #import "google_maps_flutter_pigeon_messages.g.h"
 
-@interface FGMGoogleMapFactory ()
-
-@property(weak, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
-@property(strong, nonatomic, readonly) id<NSObject> sharedMapServices;
-
-@end
-
-@implementation FGMGoogleMapFactory
-
-@synthesize sharedMapServices = _sharedMapServices;
-
-- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  self = [super init];
-  if (self) {
-    _registrar = registrar;
-  }
-  return self;
-}
-
-- (NSObject<FlutterMessageCodec> *)createArgsCodec {
-  return FGMGetGoogleMapsFlutterPigeonMessagesCodec();
-}
-
-- (NSObject<FlutterPlatformView> *)createWithFrame:(CGRect)frame
-                                    viewIdentifier:(int64_t)viewId
-                                         arguments:(id _Nullable)args {
-  // Precache shared map services, if needed.
-  // Retain the shared map services singleton, don't use the result for anything.
-  (void)[self sharedMapServices];
-
-  return [[FGMGoogleMapController alloc] initWithFrame:frame
-                                        viewIdentifier:viewId
-                                    creationParameters:args
-                                             registrar:self.registrar];
-}
-
-- (id<NSObject>)sharedMapServices {
-  if (_sharedMapServices == nil) {
-    // Calling this prepares GMSServices on a background thread controlled
-    // by the GoogleMaps framework.
-    // Retain the singleton to cache the initialization work across all map views.
-    _sharedMapServices = [GMSServices sharedServices];
-  }
-  return _sharedMapServices;
-}
-
-@end
-
-#pragma mark -
-
 /// Non-test implementation of FGMAssetProvider, wrapping a Flutter plugin
 /// registrar.
 @interface FGMDefaultAssetProvider : NSObject <FGMAssetProvider>
