@@ -35,17 +35,13 @@ void main() {
         '--remote=origin',
       ], errorHandler: errorHandler);
 
-  RepositoryPackage createTestPackage() {
-    final RepositoryPackage package = createFakePackage('a_package', packagesDir);
+  RepositoryPackage createTestPackage({String version = '1.0.0'}) {
+    final RepositoryPackage package = createFakePackage('a_package', packagesDir, version: version);
 
     package.changelogFile.writeAsStringSync('''
-## 1.0.0
+## $version
 
 - Old changes
-''');
-    package.pubspecFile.writeAsStringSync('''
-name: a_package
-version: 1.0.0
 ''');
     package.directory.childDirectory('pending_changelogs').createSync();
     return package;
@@ -183,6 +179,89 @@ version: patch
       expect(changelogContent, startsWith('## 1.0.1'));
       expect(changelogContent, contains('A new feature'));
       expect(gitProcessRunner.recordedCalls, orderedEquals(getExpectedGitCalls('1.0.1')));
+    });
+    test('bumps "patch" version for minor pre-1.0', () async {
+      final RepositoryPackage package = createTestPackage(version: '0.1.0');
+      addTearDown(() {
+        package.directory.deleteSync(recursive: true);
+      });
+      createPendingChangelogFile(package, 'a.yaml', '''
+changelog: A new feature
+version: minor
+''');
+
+      final List<String> output = await runBatchCommand();
+
+      expect(
+        output,
+        containsAllInOrder(<String>[
+          'Parsing package "a_package"...',
+          '  Creating new branch "release-branch"...',
+          '  Pushing branch release-branch to remote origin...',
+        ]),
+      );
+
+      expect(package.pubspecFile.readAsStringSync(), contains('version: 0.1.1'));
+      final String changelogContent = package.changelogFile.readAsStringSync();
+      expect(changelogContent, startsWith('## 0.1.1'));
+      expect(changelogContent, contains('A new feature'));
+      expect(gitProcessRunner.recordedCalls, orderedEquals(getExpectedGitCalls('0.1.1')));
+    });
+
+    test('bumps "minor" version for major in pre-1.0', () async {
+      final RepositoryPackage package = createTestPackage(version: '0.1.0');
+      addTearDown(() {
+        package.directory.deleteSync(recursive: true);
+      });
+      createPendingChangelogFile(package, 'a.yaml', '''
+changelog: A new feature
+version: major
+''');
+
+      final List<String> output = await runBatchCommand();
+
+      expect(
+        output,
+        containsAllInOrder(<String>[
+          'Parsing package "a_package"...',
+          '  Creating new branch "release-branch"...',
+          '  Pushing branch release-branch to remote origin...',
+        ]),
+      );
+
+      expect(package.pubspecFile.readAsStringSync(), contains('version: 0.2.0'));
+      final String changelogContent = package.changelogFile.readAsStringSync();
+      expect(changelogContent, startsWith('## 0.2.0'));
+      expect(changelogContent, contains('A new feature'));
+      expect(gitProcessRunner.recordedCalls, orderedEquals(getExpectedGitCalls('0.2.0')));
+    });
+
+    test('bumps build number for patch in pre-1.0', () async {
+      final RepositoryPackage package = createTestPackage(version: '0.1.0');
+      addTearDown(() {
+        package.directory.deleteSync(recursive: true);
+      });
+      createPendingChangelogFile(package, 'a.yaml', '''
+changelog: A new feature
+version: patch
+''');
+
+      final List<String> output = await runBatchCommand();
+
+      expect(
+        output,
+        containsAllInOrder(<String>[
+          'Parsing package "a_package"...',
+          '  Creating new branch "release-branch"...',
+          '  Pushing branch release-branch to remote origin...',
+        ]),
+      );
+
+      expect(package.pubspecFile.readAsStringSync(), contains('version: 0.1.0+1'));
+      final String changelogContent = package.changelogFile.readAsStringSync();
+      expect(changelogContent, startsWith('## 0.1.0+1'));
+      expect(changelogContent, contains('A new feature'));
+      expect(gitProcessRunner.recordedCalls, orderedEquals(getExpectedGitCalls('0.1.0+1')));
     });
 
     test('merges multiple changelogs, minor and major', () async {
@@ -598,44 +677,6 @@ version: major
       );
 
       expect(output.last, contains('Failed to push to release-a_package-2.0.0: error'));
-    });
-
-    test('throws for pre-1.0.0 packages', () async {
-      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
-
-      addTearDown(() {
-        package.directory.deleteSync(recursive: true);
-      });
-
-      // Set a pre-1.0.0 version.
-      package.changelogFile.writeAsStringSync('''
-## 0.5.0
-
-- Old changes
-''');
-      package.pubspecFile.writeAsStringSync('''
-name: a_package
-version: 0.5.0
-''');
-      package.directory.childDirectory('pending_changelogs').createSync();
-      createPendingChangelogFile(package, 'a.yaml', '''
-changelog: A new feature
-version: minor
-''');
-
-      final List<String> output = await runBatchCommand(
-        errorHandler: (Error e) {
-          expect(e, isA<ToolExit>());
-          expect((e as ToolExit).exitCode, 3);
-        },
-      );
-
-      expect(
-        output.last,
-        contains(
-          'This script only supports packages with version >= 1.0.0. Current version: 0.5.0.',
-        ),
-      );
     });
   });
 }

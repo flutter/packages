@@ -12,18 +12,22 @@ List<RouteBase> get $appRoutes => [$homeRoute];
 
 RouteBase get $homeRoute => GoRouteData.$route(
   path: '/',
+  hasOverriddenOnExit: false,
   factory: $HomeRoute._fromState,
   routes: [
     GoRouteData.$route(
       path: '/dashboard',
+      hasOverriddenOnExit: false,
       factory: $DashboardRoute._fromState,
       routes: [
         RelativeGoRouteData.$route(
           path: 'details/:detailId',
+          hasOverriddenOnExit: false,
           factory: $DetailsRoute._fromState,
           routes: [
             RelativeGoRouteData.$route(
               path: 'settings/:settingId',
+              hasOverriddenOnExit: false,
               factory: $SettingsRoute._fromState,
             ),
           ],
@@ -32,10 +36,12 @@ RouteBase get $homeRoute => GoRouteData.$route(
     ),
     RelativeGoRouteData.$route(
       path: 'details/:detailId',
+      hasOverriddenOnExit: false,
       factory: $DetailsRoute._fromState,
       routes: [
         RelativeGoRouteData.$route(
           path: 'settings/:settingId',
+          hasOverriddenOnExit: false,
           factory: $SettingsRoute._fromState,
         ),
       ],

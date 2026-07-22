@@ -61,7 +61,7 @@ void main() {
     const generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
-    expect(code, contains('enum Foobar: Int'));
+    expect(code, contains('enum Foobar: Int, CaseIterable'));
     expect(code, contains('  case one = 0'));
     expect(code, contains('  case two = 1'));
     expect(code, isNot(contains('if (')));
@@ -1515,5 +1515,65 @@ void main() {
     final code = sink.toString();
     expect(code, contains('static func == (lhs: Foobar, rhs: Foobar) -> Bool {'));
     expect(code, contains('func hash(into hasher: inout Hasher) {'));
+  });
+
+  test('data class toString', () {
+    final classDefinition = Class(
+      name: 'Foobar',
+      fields: <NamedType>[
+        NamedType(
+          type: const TypeDeclaration(baseName: 'int', isNullable: true),
+          name: 'field1',
+        ),
+      ],
+    );
+    final root = Root(apis: <Api>[], classes: <Class>[classDefinition], enums: <Enum>[]);
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(swiftOut: '');
+    const generator = SwiftGenerator();
+    generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains(': Hashable, CustomStringConvertible'));
+    expect(code, contains('public var description: String {'));
+    expect(code, contains(r'return "Foobar(field1: \(String(describing: field1)))"'));
+  });
+
+  test('gen constants', () {
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[],
+      enums: <Enum>[],
+      constants: <Constant>[
+        Constant(
+          name: 'stringConst',
+          type: const TypeDeclaration(baseName: 'String', isNullable: false),
+          value: 'hello',
+        ),
+        Constant(
+          name: 'intConst',
+          type: const TypeDeclaration(baseName: 'int', isNullable: false),
+          value: 42,
+        ),
+        Constant(
+          name: 'doubleConst',
+          type: const TypeDeclaration(baseName: 'double', isNullable: false),
+          value: 3.14,
+        ),
+        Constant(
+          name: 'boolConst',
+          type: const TypeDeclaration(baseName: 'bool', isNullable: false),
+          value: true,
+        ),
+      ],
+    );
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(swiftOut: '');
+    const generator = SwiftGenerator();
+    generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('let stringConst: String = "hello"'));
+    expect(code, contains('let intConst: Int64 = 42'));
+    expect(code, contains('let doubleConst: Double = 3.14'));
+    expect(code, contains('let boolConst: Bool = true'));
   });
 }

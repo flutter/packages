@@ -146,6 +146,11 @@ class NullFieldsSearchRequest {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'NullFieldsSearchRequest(query: $query, identifier: $identifier)';
+  }
 }
 
 class NullFieldsSearchReply {
@@ -199,6 +204,11 @@ class NullFieldsSearchReply {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'NullFieldsSearchReply(result: $result, error: $error, indices: $indices, request: $request, type: $type)';
+  }
 }
 
 class _PigeonCodec extends StandardMessageCodec {
@@ -239,8 +249,8 @@ class _PigeonCodec extends StandardMessageCodec {
 }
 
 class NullFieldsHostApi {
-  /// Constructor for [NullFieldsHostApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
+  /// Constructor for [NullFieldsHostApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   NullFieldsHostApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
     : pigeonVar_binaryMessenger = binaryMessenger,

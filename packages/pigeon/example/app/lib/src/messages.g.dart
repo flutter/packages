@@ -12,6 +12,11 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List;
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
+const String aStringConstant = 'stringConstantValue';
+const int anIntConstant = 42;
+const double aDoubleConstant = 3.14;
+const bool aBoolConstant = true;
+
 Object? _extractReplyValueOrThrow(
   List<Object?>? replyList,
   String channelName, {
@@ -111,18 +116,18 @@ int _deepHash(Object? value) {
 enum Code { one, two }
 
 class MessageData {
-  MessageData({this.name, this.description, required this.code, required this.data});
+  MessageData({this.name, this.messageDescription, required this.code, required this.data});
 
   String? name;
 
-  String? description;
+  String? messageDescription;
 
   Code code;
 
   Map<String, String> data;
 
   List<Object?> _toList() {
-    return <Object?>[name, description, code, data];
+    return <Object?>[name, messageDescription, code, data];
   }
 
   Object encode() {
@@ -133,7 +138,7 @@ class MessageData {
     result as List<Object?>;
     return MessageData(
       name: result[0] as String?,
-      description: result[1] as String?,
+      messageDescription: result[1] as String?,
       code: result[2]! as Code,
       data: (result[3]! as Map<Object?, Object?>).cast<String, String>(),
     );
@@ -149,7 +154,7 @@ class MessageData {
       return true;
     }
     return _deepEquals(name, other.name) &&
-        _deepEquals(description, other.description) &&
+        _deepEquals(messageDescription, other.messageDescription) &&
         _deepEquals(code, other.code) &&
         _deepEquals(data, other.data);
   }
@@ -157,6 +162,11 @@ class MessageData {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'MessageData(name: $name, messageDescription: $messageDescription, code: $code, data: $data)';
+  }
 }
 
 class _PigeonCodec extends StandardMessageCodec {
@@ -192,8 +202,8 @@ class _PigeonCodec extends StandardMessageCodec {
 }
 
 class ExampleHostApi {
-  /// Constructor for [ExampleHostApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
+  /// Constructor for [ExampleHostApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   ExampleHostApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
     : pigeonVar_binaryMessenger = binaryMessenger,

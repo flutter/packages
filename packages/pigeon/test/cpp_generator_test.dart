@@ -470,6 +470,7 @@ void main() {
 
 #include <map>
 #include <optional>
+#include <ostream>
 #include <string>
 '''),
       );
@@ -501,6 +502,7 @@ void main() {
 #include <limits>
 #include <map>
 #include <optional>
+#include <sstream>
 #include <string>
 '''),
       );
@@ -2263,6 +2265,82 @@ void main() {
     expect(code, contains('bool Foo::operator==(const Foo& other) const {'));
   });
 
+  test('data class operator<<', () {
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[
+        Class(
+          name: 'Foo',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'int', isNullable: false),
+              name: 'bar',
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const generator = CppGenerator();
+    final generatorOptions = OutputFileOptions<InternalCppOptions>(
+      fileType: FileType.source,
+      languageOptions: const InternalCppOptions(
+        cppHeaderOut: '',
+        cppSourceOut: '',
+        headerIncludePath: '',
+      ),
+    );
+    generator.generate(generatorOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('std::ostream& operator<<('));
+    expect(code, contains('os << "bar: ";'));
+    expect(code, contains('os << PigeonInternalToString(obj.bar_);'));
+  });
+
+  test('data class operator<< with nullable pointer', () {
+    final nested = Class(
+      name: 'Nested',
+      fields: <NamedType>[
+        NamedType(
+          type: const TypeDeclaration(baseName: 'int', isNullable: false),
+          name: 'data',
+        ),
+      ],
+    );
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[
+        Class(
+          name: 'Foo',
+          fields: <NamedType>[
+            NamedType(
+              type: TypeDeclaration(baseName: 'Nested', isNullable: true, associatedClass: nested),
+              name: 'nested',
+            ),
+          ],
+        ),
+        nested,
+      ],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const generator = CppGenerator();
+    final generatorOptions = OutputFileOptions<InternalCppOptions>(
+      fileType: FileType.source,
+      languageOptions: const InternalCppOptions(
+        cppHeaderOut: '',
+        cppSourceOut: '',
+        headerIncludePath: '',
+      ),
+    );
+    generator.generate(generatorOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('std::ostream& operator<<('));
+    expect(code, contains('if (obj.nested_) {'));
+    expect(code, contains('os << *obj.nested_;'));
+  });
+
   test('data classes implement Hash', () {
     final root = Root(
       apis: <Api>[],
@@ -2309,5 +2387,51 @@ void main() {
       final code = sink.toString();
       expect(code, contains('size_t Input::Hash() const {'));
     }
+  });
+
+  test('gen constants', () {
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[],
+      enums: <Enum>[],
+      constants: <Constant>[
+        Constant(
+          name: 'stringConst',
+          type: const TypeDeclaration(baseName: 'String', isNullable: false),
+          value: 'hello',
+        ),
+        Constant(
+          name: 'intConst',
+          type: const TypeDeclaration(baseName: 'int', isNullable: false),
+          value: 42,
+        ),
+        Constant(
+          name: 'doubleConst',
+          type: const TypeDeclaration(baseName: 'double', isNullable: false),
+          value: 3.14,
+        ),
+        Constant(
+          name: 'boolConst',
+          type: const TypeDeclaration(baseName: 'bool', isNullable: false),
+          value: true,
+        ),
+      ],
+    );
+    final sink = StringBuffer();
+    const generator = CppGenerator();
+    final generatorOptions = OutputFileOptions<InternalCppOptions>(
+      fileType: FileType.header,
+      languageOptions: const InternalCppOptions(
+        headerIncludePath: 'foo.h',
+        cppHeaderOut: '',
+        cppSourceOut: '',
+      ),
+    );
+    generator.generate(generatorOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('inline constexpr const char* stringConst = "hello";'));
+    expect(code, contains('inline constexpr int64_t intConst = 42;'));
+    expect(code, contains('inline constexpr double doubleConst = 3.14;'));
+    expect(code, contains('inline constexpr bool boolConst = true;'));
   });
 }

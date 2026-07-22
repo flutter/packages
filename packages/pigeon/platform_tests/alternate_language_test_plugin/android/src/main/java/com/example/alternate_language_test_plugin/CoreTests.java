@@ -26,10 +26,18 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /** Generated class from Pigeon. */
 @SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression", "serial"})
 public class CoreTests {
+
+  public static final String aStringConstant = "stringConstantValue";
+  public static final String aStringConstantWithEscapes = "string\\'\\\"\\$ConstantValue";
+  public static final long anIntConstant = 42L;
+  public static final double aDoubleConstant = 3.14;
+  public static final boolean aBoolConstant = true;
+
   static boolean pigeonDoubleEquals(double a, double b) {
     // Normalize -0.0 to 0.0 and handle NaN equality.
     return (a == 0.0 ? 0.0 : a) == (b == 0.0 ? 0.0 : b) || (Double.isNaN(a) && Double.isNaN(b));
@@ -283,6 +291,11 @@ public class CoreTests {
     public int hashCode() {
       Object[] fields = new Object[] {getClass(), aField};
       return pigeonDeepHashCode(fields);
+    }
+
+    @Override
+    public String toString() {
+      return "UnusedClass{" + "aField=" + aField + "}";
     }
 
     public static final class Builder {
@@ -764,6 +777,95 @@ public class CoreTests {
             mapMap
           };
       return pigeonDeepHashCode(fields);
+    }
+
+    @Override
+    public String toString() {
+      return "AllTypes{"
+          + "aBool="
+          + aBool
+          + ", "
+          + "anInt="
+          + anInt
+          + ", "
+          + "anInt64="
+          + anInt64
+          + ", "
+          + "aDouble="
+          + aDouble
+          + ", "
+          + "aByteArray="
+          + java.util.Arrays.toString(aByteArray)
+          + ", "
+          + "a4ByteArray="
+          + java.util.Arrays.toString(a4ByteArray)
+          + ", "
+          + "a8ByteArray="
+          + java.util.Arrays.toString(a8ByteArray)
+          + ", "
+          + "aFloatArray="
+          + java.util.Arrays.toString(aFloatArray)
+          + ", "
+          + "anEnum="
+          + anEnum
+          + ", "
+          + "anotherEnum="
+          + anotherEnum
+          + ", "
+          + "aString="
+          + aString
+          + ", "
+          + "anObject="
+          + anObject
+          + ", "
+          + "list="
+          + list
+          + ", "
+          + "stringList="
+          + stringList
+          + ", "
+          + "intList="
+          + intList
+          + ", "
+          + "doubleList="
+          + doubleList
+          + ", "
+          + "boolList="
+          + boolList
+          + ", "
+          + "enumList="
+          + enumList
+          + ", "
+          + "objectList="
+          + objectList
+          + ", "
+          + "listList="
+          + listList
+          + ", "
+          + "mapList="
+          + mapList
+          + ", "
+          + "map="
+          + map
+          + ", "
+          + "stringMap="
+          + stringMap
+          + ", "
+          + "intMap="
+          + intMap
+          + ", "
+          + "enumMap="
+          + enumMap
+          + ", "
+          + "objectMap="
+          + objectMap
+          + ", "
+          + "listMap="
+          + listMap
+          + ", "
+          + "mapMap="
+          + mapMap
+          + "}";
     }
 
     public static final class Builder {
@@ -1518,6 +1620,104 @@ public class CoreTests {
             recursiveClassMap
           };
       return pigeonDeepHashCode(fields);
+    }
+
+    @Override
+    public String toString() {
+      return "AllNullableTypes{"
+          + "aNullableBool="
+          + aNullableBool
+          + ", "
+          + "aNullableInt="
+          + aNullableInt
+          + ", "
+          + "aNullableInt64="
+          + aNullableInt64
+          + ", "
+          + "aNullableDouble="
+          + aNullableDouble
+          + ", "
+          + "aNullableByteArray="
+          + java.util.Arrays.toString(aNullableByteArray)
+          + ", "
+          + "aNullable4ByteArray="
+          + java.util.Arrays.toString(aNullable4ByteArray)
+          + ", "
+          + "aNullable8ByteArray="
+          + java.util.Arrays.toString(aNullable8ByteArray)
+          + ", "
+          + "aNullableFloatArray="
+          + java.util.Arrays.toString(aNullableFloatArray)
+          + ", "
+          + "aNullableEnum="
+          + aNullableEnum
+          + ", "
+          + "anotherNullableEnum="
+          + anotherNullableEnum
+          + ", "
+          + "aNullableString="
+          + aNullableString
+          + ", "
+          + "aNullableObject="
+          + aNullableObject
+          + ", "
+          + "allNullableTypes="
+          + allNullableTypes
+          + ", "
+          + "list="
+          + list
+          + ", "
+          + "stringList="
+          + stringList
+          + ", "
+          + "intList="
+          + intList
+          + ", "
+          + "doubleList="
+          + doubleList
+          + ", "
+          + "boolList="
+          + boolList
+          + ", "
+          + "enumList="
+          + enumList
+          + ", "
+          + "objectList="
+          + objectList
+          + ", "
+          + "listList="
+          + listList
+          + ", "
+          + "mapList="
+          + mapList
+          + ", "
+          + "recursiveClassList="
+          + recursiveClassList
+          + ", "
+          + "map="
+          + map
+          + ", "
+          + "stringMap="
+          + stringMap
+          + ", "
+          + "intMap="
+          + intMap
+          + ", "
+          + "enumMap="
+          + enumMap
+          + ", "
+          + "objectMap="
+          + objectMap
+          + ", "
+          + "listMap="
+          + listMap
+          + ", "
+          + "mapMap="
+          + mapMap
+          + ", "
+          + "recursiveClassMap="
+          + recursiveClassMap
+          + "}";
     }
 
     public static final class Builder {
@@ -2276,6 +2476,95 @@ public class CoreTests {
       return pigeonDeepHashCode(fields);
     }
 
+    @Override
+    public String toString() {
+      return "AllNullableTypesWithoutRecursion{"
+          + "aNullableBool="
+          + aNullableBool
+          + ", "
+          + "aNullableInt="
+          + aNullableInt
+          + ", "
+          + "aNullableInt64="
+          + aNullableInt64
+          + ", "
+          + "aNullableDouble="
+          + aNullableDouble
+          + ", "
+          + "aNullableByteArray="
+          + java.util.Arrays.toString(aNullableByteArray)
+          + ", "
+          + "aNullable4ByteArray="
+          + java.util.Arrays.toString(aNullable4ByteArray)
+          + ", "
+          + "aNullable8ByteArray="
+          + java.util.Arrays.toString(aNullable8ByteArray)
+          + ", "
+          + "aNullableFloatArray="
+          + java.util.Arrays.toString(aNullableFloatArray)
+          + ", "
+          + "aNullableEnum="
+          + aNullableEnum
+          + ", "
+          + "anotherNullableEnum="
+          + anotherNullableEnum
+          + ", "
+          + "aNullableString="
+          + aNullableString
+          + ", "
+          + "aNullableObject="
+          + aNullableObject
+          + ", "
+          + "list="
+          + list
+          + ", "
+          + "stringList="
+          + stringList
+          + ", "
+          + "intList="
+          + intList
+          + ", "
+          + "doubleList="
+          + doubleList
+          + ", "
+          + "boolList="
+          + boolList
+          + ", "
+          + "enumList="
+          + enumList
+          + ", "
+          + "objectList="
+          + objectList
+          + ", "
+          + "listList="
+          + listList
+          + ", "
+          + "mapList="
+          + mapList
+          + ", "
+          + "map="
+          + map
+          + ", "
+          + "stringMap="
+          + stringMap
+          + ", "
+          + "intMap="
+          + intMap
+          + ", "
+          + "enumMap="
+          + enumMap
+          + ", "
+          + "objectMap="
+          + objectMap
+          + ", "
+          + "listMap="
+          + listMap
+          + ", "
+          + "mapMap="
+          + mapMap
+          + "}";
+    }
+
     public static final class Builder {
 
       private @Nullable Boolean aNullableBool;
@@ -2634,6 +2923,53 @@ public class CoreTests {
   }
 
   /**
+   * A data class without fields for testing empty classes.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class AnEmptyClass {
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(getClass());
+    }
+
+    @Override
+    public String toString() {
+      return "AnEmptyClass{}";
+    }
+
+    public static final class Builder {
+
+      public @NonNull AnEmptyClass build() {
+        AnEmptyClass pigeonReturn = new AnEmptyClass();
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(0);
+      return toListResult;
+    }
+
+    static @NonNull AnEmptyClass fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      AnEmptyClass pigeonResult = new AnEmptyClass();
+      return pigeonResult;
+    }
+  }
+
+  /**
    * A class for testing nested class handling.
    *
    * <p>This is needed to test nested nullable and non-nullable classes, `AllNullableTypes` is
@@ -2724,6 +3060,16 @@ public class CoreTests {
       this.nullableClassMap = setterArg;
     }
 
+    private @Nullable AnEmptyClass anEmptyClass;
+
+    public @Nullable AnEmptyClass getAnEmptyClass() {
+      return anEmptyClass;
+    }
+
+    public void setAnEmptyClass(@Nullable AnEmptyClass setterArg) {
+      this.anEmptyClass = setterArg;
+    }
+
     /** Constructor is non-public to enforce null safety; use Builder. */
     AllClassesWrapper() {}
 
@@ -2743,7 +3089,8 @@ public class CoreTests {
           && pigeonDeepEquals(classList, that.classList)
           && pigeonDeepEquals(nullableClassList, that.nullableClassList)
           && pigeonDeepEquals(classMap, that.classMap)
-          && pigeonDeepEquals(nullableClassMap, that.nullableClassMap);
+          && pigeonDeepEquals(nullableClassMap, that.nullableClassMap)
+          && pigeonDeepEquals(anEmptyClass, that.anEmptyClass);
     }
 
     @Override
@@ -2757,9 +3104,39 @@ public class CoreTests {
             classList,
             nullableClassList,
             classMap,
-            nullableClassMap
+            nullableClassMap,
+            anEmptyClass
           };
       return pigeonDeepHashCode(fields);
+    }
+
+    @Override
+    public String toString() {
+      return "AllClassesWrapper{"
+          + "allNullableTypes="
+          + allNullableTypes
+          + ", "
+          + "allNullableTypesWithoutRecursion="
+          + allNullableTypesWithoutRecursion
+          + ", "
+          + "allTypes="
+          + allTypes
+          + ", "
+          + "classList="
+          + classList
+          + ", "
+          + "nullableClassList="
+          + nullableClassList
+          + ", "
+          + "classMap="
+          + classMap
+          + ", "
+          + "nullableClassMap="
+          + nullableClassMap
+          + ", "
+          + "anEmptyClass="
+          + anEmptyClass
+          + "}";
     }
 
     public static final class Builder {
@@ -2823,6 +3200,14 @@ public class CoreTests {
         return this;
       }
 
+      private @Nullable AnEmptyClass anEmptyClass;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setAnEmptyClass(@Nullable AnEmptyClass setterArg) {
+        this.anEmptyClass = setterArg;
+        return this;
+      }
+
       public @NonNull AllClassesWrapper build() {
         AllClassesWrapper pigeonReturn = new AllClassesWrapper();
         pigeonReturn.setAllNullableTypes(allNullableTypes);
@@ -2832,13 +3217,14 @@ public class CoreTests {
         pigeonReturn.setNullableClassList(nullableClassList);
         pigeonReturn.setClassMap(classMap);
         pigeonReturn.setNullableClassMap(nullableClassMap);
+        pigeonReturn.setAnEmptyClass(anEmptyClass);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<>(7);
+      ArrayList<Object> toListResult = new ArrayList<>(8);
       toListResult.add(allNullableTypes);
       toListResult.add(allNullableTypesWithoutRecursion);
       toListResult.add(allTypes);
@@ -2846,6 +3232,7 @@ public class CoreTests {
       toListResult.add(nullableClassList);
       toListResult.add(classMap);
       toListResult.add(nullableClassMap);
+      toListResult.add(anEmptyClass);
       return toListResult;
     }
 
@@ -2867,6 +3254,8 @@ public class CoreTests {
       Object nullableClassMap = pigeonVar_list.get(6);
       pigeonResult.setNullableClassMap(
           (Map<Long, AllNullableTypesWithoutRecursion>) nullableClassMap);
+      Object anEmptyClass = pigeonVar_list.get(7);
+      pigeonResult.setAnEmptyClass((AnEmptyClass) anEmptyClass);
       return pigeonResult;
     }
   }
@@ -2903,6 +3292,11 @@ public class CoreTests {
     public int hashCode() {
       Object[] fields = new Object[] {getClass(), testList};
       return pigeonDeepHashCode(fields);
+    }
+
+    @Override
+    public String toString() {
+      return "TestMessage{" + "testList=" + testList + "}";
     }
 
     public static final class Builder {
@@ -2964,8 +3358,10 @@ public class CoreTests {
         case (byte) 134:
           return AllNullableTypesWithoutRecursion.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 135:
-          return AllClassesWrapper.fromList((ArrayList<Object>) readValue(buffer));
+          return AnEmptyClass.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 136:
+          return AllClassesWrapper.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 137:
           return TestMessage.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -2992,11 +3388,14 @@ public class CoreTests {
       } else if (value instanceof AllNullableTypesWithoutRecursion) {
         stream.write(134);
         writeValue(stream, ((AllNullableTypesWithoutRecursion) value).toList());
-      } else if (value instanceof AllClassesWrapper) {
+      } else if (value instanceof AnEmptyClass) {
         stream.write(135);
+        writeValue(stream, ((AnEmptyClass) value).toList());
+      } else if (value instanceof AllClassesWrapper) {
+        stream.write(136);
         writeValue(stream, ((AllClassesWrapper) value).toList());
       } else if (value instanceof TestMessage) {
-        stream.write(136);
+        stream.write(137);
         writeValue(stream, ((TestMessage) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -3085,6 +3484,22 @@ public class CoreTests {
     /** Returns the passed list, to test serialization and deserialization. */
     @NonNull
     List<Object> echoList(@NonNull List<Object> list);
+
+    /** Returns the passed list, to test serialization and deserialization. */
+    @NonNull
+    List<String> echoStringList(@NonNull List<String> stringList);
+
+    /** Returns the passed list, to test serialization and deserialization. */
+    @NonNull
+    List<Long> echoIntList(@NonNull List<Long> intList);
+
+    /** Returns the passed list, to test serialization and deserialization. */
+    @NonNull
+    List<Double> echoDoubleList(@NonNull List<Double> doubleList);
+
+    /** Returns the passed list, to test serialization and deserialization. */
+    @NonNull
+    List<Boolean> echoBoolList(@NonNull List<Boolean> boolList);
 
     /** Returns the passed list, to test serialization and deserialization. */
     @NonNull
@@ -3919,6 +4334,106 @@ public class CoreTests {
                 List<Object> listArg = (List<Object>) args.get(0);
                 try {
                   List<Object> output = api.echoList(listArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoStringList"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                List<String> stringListArg = (List<String>) args.get(0);
+                try {
+                  List<String> output = api.echoStringList(stringListArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoIntList"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                List<Long> intListArg = (List<Long>) args.get(0);
+                try {
+                  List<Long> output = api.echoIntList(intListArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoDoubleList"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                List<Double> doubleListArg = (List<Double>) args.get(0);
+                try {
+                  List<Double> output = api.echoDoubleList(doubleListArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBoolList"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                List<Boolean> boolListArg = (List<Boolean>) args.get(0);
+                try {
+                  List<Boolean> output = api.echoBoolList(boolListArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);

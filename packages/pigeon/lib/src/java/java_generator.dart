@@ -200,10 +200,33 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
     }
     indent.writeln('public class ${generatorOptions.className!} {');
     indent.inc();
-    _writeNumberHelpers(indent);
-    _writeDeepEquals(indent);
-    _writeDeepHashCode(indent);
   }
+
+  @override
+  void writeConstants(
+    InternalJavaOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    if (root.constants.isEmpty) {
+      return;
+    }
+    indent.newln();
+    for (final Constant constant in root.constants) {
+      addDocumentationComments(indent, constant.documentationComments, _docCommentSpec);
+      final String javaType =
+          _javaTypeForBuiltinDartType(constant.type, primitive: true) ?? 'Object';
+      final String formattedValue = _formatJavaValue(constant.type.baseName, constant.value);
+      indent.writeln('public static final $javaType ${constant.name} = $formattedValue;');
+    }
+  }
+
+  String _formatJavaValue(String type, Object value) => switch (type) {
+    'String' => '"${escapeStringDoubleQuotes(value.toString())}"',
+    'int' => '${value}L',
+    _ => value.toString(),
+  };
 
   @override
   void writeEnum(
@@ -271,6 +294,7 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
         indent.newln();
       }
       _writeEquality(indent, classDefinition);
+      _writeToString(indent, classDefinition);
 
       _writeClassBuilder(generatorOptions, root, indent, classDefinition);
       writeClassEncode(
@@ -344,11 +368,15 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
     indent.writeScoped('public boolean equals(Object o) {', '}', () {
       indent.writeln('if (this == o) { return true; }');
       indent.writeln('if (o == null || getClass() != o.getClass()) { return false; }');
-      indent.writeln('${classDefinition.name} that = (${classDefinition.name}) o;');
-      final Iterable<String> checks = classDefinition.fields.map((NamedType field) {
-        return 'pigeonDeepEquals(${field.name}, that.${field.name})';
-      });
-      indent.writeln('return ${checks.join(' && ')};');
+      if (classDefinition.fields.isEmpty) {
+        indent.writeln('return true;');
+      } else {
+        indent.writeln('${classDefinition.name} that = (${classDefinition.name}) o;');
+        final Iterable<String> checks = classDefinition.fields.map((NamedType field) {
+          return 'pigeonDeepEquals(${field.name}, that.${field.name})';
+        });
+        indent.writeln('return ${checks.join(' && ')};');
+      }
     });
     indent.newln();
 
@@ -363,6 +391,30 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
       } else {
         indent.writeln('Object[] fields = new Object[] {getClass(), ${fieldNames.join(', ')}};');
         indent.writeln('return pigeonDeepHashCode(fields);');
+      }
+    });
+    indent.newln();
+  }
+
+  void _writeToString(Indent indent, Class classDefinition) {
+    indent.writeln('@Override');
+    indent.writeScoped('public String toString() {', '}', () {
+      final Iterable<String> fieldStrings = classDefinition.fields.map((NamedType field) {
+        final String fieldName = field.name;
+        if (field.type.baseName == 'Uint8List' ||
+            field.type.baseName == 'Int32List' ||
+            field.type.baseName == 'Int64List' ||
+            field.type.baseName == 'Float64List') {
+          return '"$fieldName=" + java.util.Arrays.toString($fieldName)';
+        }
+        return '"$fieldName=" + $fieldName';
+      });
+      if (fieldStrings.isEmpty) {
+        indent.writeln('return "${classDefinition.name}{}";');
+      } else {
+        indent.writeln(
+          'return "${classDefinition.name}{" + ${fieldStrings.join(' + ", " + ')} + "}";',
+        );
       }
     });
     indent.newln();
@@ -1298,6 +1350,10 @@ protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
     required String dartPackageName,
   }) {
     indent.newln();
+    _writeNumberHelpers(indent);
+    _writeDeepEquals(indent);
+    _writeDeepHashCode(indent);
+    indent.newln();
     _writeErrorClass(indent);
     if (root.containsHostApi) {
       indent.newln();
@@ -1362,7 +1418,17 @@ String _javaTypeForBuiltinGenericDartType(TypeDeclaration type, int numberTypeAr
   }
 }
 
-String? _javaTypeForBuiltinDartType(TypeDeclaration type) {
+String? _javaTypeForBuiltinDartType(TypeDeclaration type, {bool primitive = false}) {
+  if (primitive) {
+    switch (type.baseName) {
+      case 'bool':
+        return 'boolean';
+      case 'int':
+        return 'long';
+      case 'double':
+        return 'double';
+    }
+  }
   const javaTypeForDartTypeMap = <String, String>{
     'bool': 'Boolean',
     'int': 'Long',

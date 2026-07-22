@@ -1,6 +1,10 @@
-## NEXT
+## 0.0.2
 
-* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+- Copies over all Cupertino code from flutter/flutter.
+- Copies over Cupertino localizations from flutter/flutter's
+  flutter_localizations package.
+- Migrates API doc samples and formatting.
+- Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 0.0.1
 

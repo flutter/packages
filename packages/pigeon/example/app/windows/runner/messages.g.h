@@ -13,11 +13,17 @@
 
 #include <map>
 #include <optional>
+#include <ostream>
 #include <string>
 
 namespace pigeon_example {
 
 // Generated class from Pigeon.
+
+inline constexpr const char* aStringConstant = "stringConstantValue";
+inline constexpr int64_t anIntConstant = 42;
+inline constexpr double aDoubleConstant = 3.14;
+inline constexpr bool aBoolConstant = true;
 
 class FlutterError {
  public:
@@ -68,16 +74,17 @@ class MessageData {
   explicit MessageData(const Code& code, const ::flutter::EncodableMap& data);
 
   // Constructs an object setting all fields.
-  explicit MessageData(const std::string* name, const std::string* description,
-                       const Code& code, const ::flutter::EncodableMap& data);
+  explicit MessageData(const std::string* name,
+                       const std::string* message_description, const Code& code,
+                       const ::flutter::EncodableMap& data);
 
   const std::string* name() const;
   void set_name(const std::string_view* value_arg);
   void set_name(std::string_view value_arg);
 
-  const std::string* description() const;
-  void set_description(const std::string_view* value_arg);
-  void set_description(std::string_view value_arg);
+  const std::string* message_description() const;
+  void set_message_description(const std::string_view* value_arg);
+  void set_message_description(std::string_view value_arg);
 
   const Code& code() const;
   void set_code(const Code& value_arg);
@@ -90,6 +97,8 @@ class MessageData {
   /// Returns a hash code value for the object. This method is supported for the
   /// benefit of hash tables.
   size_t Hash() const;
+  /// Stream output operator for formatted string representation.
+  friend std::ostream& operator<<(std::ostream& os, const MessageData& obj);
 
  private:
   static MessageData FromEncodableList(const ::flutter::EncodableList& list);
@@ -98,7 +107,7 @@ class MessageData {
   friend class MessageFlutterApi;
   friend class PigeonInternalCodecSerializer;
   std::optional<std::string> name_;
-  std::optional<std::string> description_;
+  std::optional<std::string> message_description_;
   Code code_;
   ::flutter::EncodableMap data_;
 };
