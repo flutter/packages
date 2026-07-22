@@ -915,3 +915,22 @@ int _calculateGenericScore(TypeDeclaration type, int depth) {
 /// Alias for [compareTypeDeclarationGenericness] to maintain compatibility.
 const int Function(TypeDeclaration, TypeDeclaration) sortByObjectCount =
     compareTypeDeclarationGenericness;
+
+/// Escapes special characters in a string for use in double-quoted string literals.
+String escapeStringDoubleQuotes(String value) {
+  return value
+      .replaceAll(r'\', r'\\')
+      .replaceAll('"', r'\"')
+      .replaceAll('\n', r'\n')
+      .replaceAll('\r', r'\r');
+}
+
+/// Escapes special characters in a string for use in single-quoted string literals.
+String escapeStringSingleQuotes(String value) {
+  return value
+      .replaceAll(r'\', r'\\')
+      .replaceAll("'", r"\'")
+      .replaceAll('\n', r'\n')
+      .replaceAll('\r', r'\r')
+      .replaceAll(r'$', r'\$');
+}

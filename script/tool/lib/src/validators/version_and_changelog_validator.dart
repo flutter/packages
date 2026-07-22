@@ -164,11 +164,11 @@ class VersionAndChangelogValidator {
       pubspec: pubspec,
       ignorePlatformInterfaceBreaks: ignorePlatformInterfaceBreaks,
     );
-    // PR with override: skip-batch-release-repo-check-<package> label is going to sync
-    // changelog.md and pubspec.yaml changes back to main branch.
-    // Proceed with regular version check.
+    // PR with override: batch-<package> label is batching the pending
+    // changelogs into CHANGELOG.md, so do the standard checks instead of batch
+    // checks.
     final bool shouldSkipBatchReleaseRepoCheck = _prLabels.contains(
-      'override: skip-batch-release-repo-check-${pubspec.name}',
+      'override: batch-${pubspec.name}',
     );
     bool versionChanged;
 

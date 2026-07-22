@@ -55,6 +55,7 @@ class FfigenConfigGenerator extends Generator<InternalFfigenConfigOptions> {
 import 'dart:io';
 
 import 'package:ffigen/ffigen.dart' as fg;
+import 'package:path/path.dart' as path;
 import 'package:pub_semver/pub_semver.dart';
 import 'package:swift2objc/swift2objc.dart';
 import 'package:swiftgen/src/config.dart';
@@ -89,7 +90,15 @@ import 'package:swiftgen/swiftgen.dart';
       indent.format('''
   final Uri sdk;
   if (args.isNotEmpty) {
-    sdk = Uri.directory(args[0]);
+    final String customSdkPath = args[0];
+    final bool isValidSdk =
+        File(path.join(customSdkPath, 'SDKSettings.json')).existsSync() ||
+            File(path.join(customSdkPath, 'SDKSettings.plist')).existsSync();
+    if (!isValidSdk) {
+      stderr.writeln('Error: Specified SDK directory "\$customSdkPath" does not exist or is not a valid Apple SDK directory.');
+      exit(1);
+    }
+    sdk = Uri.directory(customSdkPath);
   } else {
     sdk = ${configuredSdkPath != null ? "Uri.directory('$configuredSdkPath')" : "await iOSSdk"};
   }
@@ -134,9 +143,15 @@ import 'package:swiftgen/swiftgen.dart';
       indent.format('''
   var targetTriple = '${configuredSdkTriple ?? ''}';
   if (targetTriple.isEmpty) {
-    targetTriple = sdk.path.toLowerCase().contains('macosx')
-        ? await macOSX64TargetTripleLatest
-        : await iOSArm64TargetTripleLatest;
+    try {
+      targetTriple = sdk.path.toLowerCase().contains('macosx')
+          ? await macOSX64TargetTripleLatest
+          : await iOSArm64TargetTripleLatest;
+    } catch (_) {
+      targetTriple = sdk.path.toLowerCase().contains('macosx')
+          ? 'x86_64-apple-macosx'
+          : 'arm64-apple-ios';
+    }
   }
 
   await SwiftGenerator(

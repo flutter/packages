@@ -199,6 +199,36 @@ class GObjectHeaderGenerator extends StructuredGenerator<InternalGObjectOptions>
   }
 
   @override
+  void writeConstants(
+    InternalGObjectOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    if (root.constants.isEmpty) {
+      return;
+    }
+    indent.newln();
+    final String module = _getModule(generatorOptions, dartPackageName);
+    final String moduleScreaming = toScreamingSnakeCase(module);
+    for (final Constant constant in root.constants) {
+      addDocumentationComments(indent, constant.documentationComments, _docCommentSpec);
+      final String constantName = toScreamingSnakeCase(constant.name);
+      final String type = constant.type.baseName;
+      final String valueStr;
+      if (type == 'String') {
+        final String escaped = escapeStringDoubleQuotes(constant.value.toString());
+        valueStr = '"$escaped"';
+      } else if (type == 'bool') {
+        valueStr = (constant.value as bool) ? 'TRUE' : 'FALSE';
+      } else {
+        valueStr = constant.value.toString();
+      }
+      indent.writeln('#define ${moduleScreaming}_$constantName $valueStr');
+    }
+  }
+
+  @override
   void writeEnum(
     InternalGObjectOptions generatorOptions,
     Root root,

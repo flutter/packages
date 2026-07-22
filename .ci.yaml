@@ -8,6 +8,7 @@
 enabled_branches:
   - main
   - release-go_router-\d+\.\d+\.\d+
+  - release-cupertino_ui-\d+\.\d+\.\d+
 
 platform_properties:
   linux:

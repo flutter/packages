@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - 'release-go_router-*'
+      - 'release-cupertino_ui-*'
 permissions:
   # Release needs to push a tag back to the repo.
   contents: write

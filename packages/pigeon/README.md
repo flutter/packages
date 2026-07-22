@@ -1,3 +1,4 @@
+<?code-excerpt path-base="example/app"?>
 # Pigeon
 
 Pigeon is a code generator tool to make communication between Flutter and the
@@ -114,6 +115,20 @@ Pigeon supports two distinct models for communication between Dart and native co
   - You need synchronous execution for platform APIs on the host thread.
 
 For detailed information on setup, prerequisites, and instructions on how to use Native Interop, see the [Native Interop Guide](./native_interop_guide.md).
+
+### Constants
+
+Pigeon supports generating top-level constants in the generated files. Constants can be defined at the top level of the Pigeon file:
+
+<?code-excerpt "pigeons/messages.dart (constants)"?>
+```dart
+const String aStringConstant = 'stringConstantValue';
+const int anIntConstant = 42;
+const double aDoubleConstant = 3.14;
+const bool aBoolConstant = true;
+```
+
+These constants will be translated into static constants or final variables in the target languages (e.g., `public static final` in Java, `let` in Swift, `const` in Dart, etc.). Only `String`, `int`, `double`, and `bool` constant types are supported.
 
 ## Usage
 

@@ -804,6 +804,38 @@ class EnumMember extends Node {
   }
 }
 
+/// Represents a constant.
+class Constant extends Node {
+  /// Parametric constructor for [Constant].
+  Constant({
+    required this.name,
+    required this.type,
+    required this.value,
+    this.offset,
+    this.documentationComments = const <String>[],
+  });
+
+  /// The name of the constant.
+  final String name;
+
+  /// The type of the constant.
+  final TypeDeclaration type;
+
+  /// The value of the constant.
+  final Object value;
+
+  /// The offset in the source file where the constant appears.
+  final int? offset;
+
+  /// List of documentation comments, separated by line.
+  final List<String> documentationComments;
+
+  @override
+  String toString() {
+    return '(Constant name:$name type:$type value:$value documentationComments:$documentationComments)';
+  }
+}
+
 /// Top-level node for the AST.
 class Root extends Node {
   /// Parametric constructor for [Root].
@@ -813,6 +845,7 @@ class Root extends Node {
     required this.enums,
     this.lists = const <String, TypeDeclaration>{},
     this.maps = const <String, TypeDeclaration>{},
+    this.constants = const <Constant>[],
     this.containsHostApi = false,
     this.containsFlutterApi = false,
     this.containsProxyApi = false,
@@ -827,6 +860,7 @@ class Root extends Node {
       enums: <Enum>[],
       lists: <String, TypeDeclaration>{},
       maps: <String, TypeDeclaration>{},
+      constants: <Constant>[],
     );
   }
 
@@ -846,6 +880,9 @@ class Root extends Node {
 
   /// All of the maps contained in the AST.
   Map<String, TypeDeclaration> maps;
+
+  /// All of the constants contained in the AST.
+  List<Constant> constants;
 
   /// Whether the root has any Host API definitions.
   bool containsHostApi;
@@ -868,6 +905,6 @@ class Root extends Node {
 
   @override
   String toString() {
-    return '(Root classes:$classes apis:$apis enums:$enums lists:$lists maps:$maps containsHostApi:$containsHostApi containsFlutterApi:$containsFlutterApi containsProxyApi:$containsProxyApi)';
+    return '(Root classes:$classes apis:$apis enums:$enums lists:$lists maps:$maps containsHostApi:$containsHostApi containsFlutterApi:$containsFlutterApi containsProxyApi:$containsProxyApi constants:$constants)';
   }
 }
