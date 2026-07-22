@@ -2,11 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 38.0.15
+// Version: 38.0.58
 
 import 'color_role.dart';
 import 'shape_struct.dart';
-import 'typescale_struct.dart';
+import 'typescale.dart';
 
 class TokenChips {
   /// md.comp.chips.avatar.shape
@@ -78,13 +78,7 @@ class TokenChips {
   static const double inputPaddingTrailing = 12.00;
 
   /// md.comp.chips.label-text
-  static const TypescaleStruct labelText = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 14.00,
-    fontWeight: 500,
-    lineHeight: 20.00,
-    letterSpacing: 0.10,
-  );
+  static const TypescaleStruct labelText = TokenTypescale.labelLarge;
 
   /// md.comp.chips.leading-icon.size
   static const double leadingIconSize = 18.00;

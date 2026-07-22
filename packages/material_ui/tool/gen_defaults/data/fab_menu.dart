@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 38.0.15
+// Version: 38.0.58
 
 import 'shape_struct.dart';
-import 'typescale_struct.dart';
+import 'typescale.dart';
 
 class TokenFabMenu {
   /// md.comp.fab-menu.close-button.between-space
@@ -57,13 +57,7 @@ class TokenFabMenu {
   static const double menuItemIconSize = 24.00;
 
   /// md.comp.fab-menu.menu-item.label-text
-  static const TypescaleStruct menuItemLabelText = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 16.00,
-    fontWeight: 500,
-    lineHeight: 24.00,
-    letterSpacing: 0.15,
-  );
+  static const TypescaleStruct menuItemLabelText = TokenTypescale.titleMedium;
 
   /// md.comp.fab-menu.menu-item.leading-space
   static const double menuItemLeadingSpace = 24.00;

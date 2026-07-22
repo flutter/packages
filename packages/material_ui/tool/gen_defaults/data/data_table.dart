@@ -2,10 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 38.0.15
+// Version: 38.0.58
 
 import 'color_role.dart';
 import 'shape_struct.dart';
+import 'typescale.dart';
 
 class TokenDataTable {
   /// md.comp.data-table.container.shape
@@ -27,6 +28,26 @@ class TokenDataTable {
   static const TokenColorRole footerSupportingTextColor =
       TokenColorRole.onSurfaceVariant;
 
+  /// md.comp.data-table.footer.supporting-text.font
+  static const String footerSupportingTextFont =
+      TokenTypescale.bodyMedium.fontFamily;
+
+  /// md.comp.data-table.footer.supporting-text.line-height
+  static const double footerSupportingTextLineHeight =
+      TokenTypescale.bodyMedium.lineHeight;
+
+  /// md.comp.data-table.footer.supporting-text.size
+  static const double footerSupportingTextSize =
+      TokenTypescale.bodyMedium.fontSize;
+
+  /// md.comp.data-table.footer.supporting-text.tracking
+  static const double footerSupportingTextTracking =
+      TokenTypescale.bodyMedium.letterSpacing;
+
+  /// md.comp.data-table.footer.supporting-text.weight
+  static const double footerSupportingTextWeight =
+      TokenTypescale.bodyMedium.fontWeight;
+
   /// md.comp.data-table.header.container.color
   static const TokenColorRole headerContainerColor = TokenColorRole.surface;
 
@@ -36,6 +57,24 @@ class TokenDataTable {
   /// md.comp.data-table.header.headline.color
   static const TokenColorRole headerHeadlineColor =
       TokenColorRole.onSurfaceVariant;
+
+  /// md.comp.data-table.header.headline.font
+  static const String headerHeadlineFont = TokenTypescale.titleSmall.fontFamily;
+
+  /// md.comp.data-table.header.headline.line-height
+  static const double headerHeadlineLineHeight =
+      TokenTypescale.titleSmall.lineHeight;
+
+  /// md.comp.data-table.header.headline.size
+  static const double headerHeadlineSize = TokenTypescale.titleSmall.fontSize;
+
+  /// md.comp.data-table.header.headline.tracking
+  static const double headerHeadlineTracking =
+      TokenTypescale.titleSmall.letterSpacing;
+
+  /// md.comp.data-table.header.headline.weight
+  static const double headerHeadlineWeight =
+      TokenTypescale.titleSmall.fontWeight;
 
   /// md.comp.data-table.header.hover.headline.color
   static const TokenColorRole headerHoverHeadlineColor =
@@ -63,6 +102,25 @@ class TokenDataTable {
 
   /// md.comp.data-table.row-item.label-text.color
   static const TokenColorRole rowItemLabelTextColor = TokenColorRole.onSurface;
+
+  /// md.comp.data-table.row-item.label-text.font
+  static const String rowItemLabelTextFont =
+      TokenTypescale.bodyMedium.fontFamily;
+
+  /// md.comp.data-table.row-item.label-text.line-height
+  static const double rowItemLabelTextLineHeight =
+      TokenTypescale.bodyMedium.lineHeight;
+
+  /// md.comp.data-table.row-item.label-text.size
+  static const double rowItemLabelTextSize = TokenTypescale.bodyMedium.fontSize;
+
+  /// md.comp.data-table.row-item.label-text.tracking
+  static const double rowItemLabelTextTracking =
+      TokenTypescale.bodyMedium.letterSpacing;
+
+  /// md.comp.data-table.row-item.label-text.weight
+  static const double rowItemLabelTextWeight =
+      TokenTypescale.bodyMedium.fontWeight;
 
   /// md.comp.data-table.row-item.outline.color
   static const TokenColorRole rowItemOutlineColor =

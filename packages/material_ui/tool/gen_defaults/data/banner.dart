@@ -2,11 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 38.0.15
+// Version: 38.0.58
 
 import 'color_role.dart';
 import 'shape_struct.dart';
-import 'typescale_struct.dart';
+import 'typescale.dart';
 
 class TokenBanner {
   /// md.comp.banner.container.color
@@ -48,13 +48,7 @@ class TokenBanner {
       TokenColorRole.onSurfaceVariant;
 
   /// md.comp.banner.supporting-text.type
-  static const TypescaleStruct supportingTextType = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 14.00,
-    fontWeight: 400,
-    lineHeight: 20.00,
-    letterSpacing: 0.25,
-  );
+  static const TypescaleStruct supportingTextType = TokenTypescale.bodyMedium;
 
   /// md.comp.banner.with-image.image.shape
   static const ShapeStruct withImageImageShape = ShapeStruct(

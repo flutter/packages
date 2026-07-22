@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 38.0.15
+// Version: 38.0.58
 
 import 'shape_struct.dart';
-import 'typescale_struct.dart';
+import 'typescale.dart';
 
 class TokenBannersBasic {
   /// md.comp.banners.basic.actions.between-space
@@ -39,13 +39,7 @@ class TokenBannersBasic {
   static const double bodyTextTrailingSpace = 48.00;
 
   /// md.comp.banners.basic.body-text.type
-  static const TypescaleStruct bodyTextType = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 14.00,
-    fontWeight: 400,
-    lineHeight: 20.00,
-    letterSpacing: 0.25,
-  );
+  static const TypescaleStruct bodyTextType = TokenTypescale.bodyMedium;
 
   /// md.comp.banners.basic.bottom-space
   static const double bottomSpace = 4.00;

@@ -2,11 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 38.0.15
+// Version: 38.0.58
 
 import 'color_role.dart';
 import 'shape_struct.dart';
-import 'typescale_struct.dart';
+import 'typescale.dart';
 
 class TokenTimePicker {
   /// md.comp.time-picker.clock-dial.color
@@ -17,13 +17,8 @@ class TokenTimePicker {
   static const double clockDialContainerSize = 256.00;
 
   /// md.comp.time-picker.clock-dial.label-text.type
-  static const TypescaleStruct clockDialLabelTextType = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 16.00,
-    fontWeight: 400,
-    lineHeight: 24.00,
-    letterSpacing: 0.50,
-  );
+  static const TypescaleStruct clockDialLabelTextType =
+      TokenTypescale.bodyLarge;
 
   /// md.comp.time-picker.clock-dial.selected.label-text.color
   static const TokenColorRole clockDialSelectedLabelTextColor =
@@ -101,13 +96,7 @@ class TokenTimePicker {
   static const TokenColorRole headlineColor = TokenColorRole.onSurfaceVariant;
 
   /// md.comp.time-picker.headline.type
-  static const TypescaleStruct headlineType = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 12.00,
-    fontWeight: 500,
-    lineHeight: 16.00,
-    letterSpacing: 0.50,
-  );
+  static const TypescaleStruct headlineType = TokenTypescale.labelMedium;
 
   /// md.comp.time-picker.period-selector.container.shape
   static const ShapeStruct periodSelectorContainerShape = ShapeStruct(
@@ -131,13 +120,8 @@ class TokenTimePicker {
   static const double periodSelectorHoverStateLayerOpacity = 0.08;
 
   /// md.comp.time-picker.period-selector.label-text.type
-  static const TypescaleStruct periodSelectorLabelTextType = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 16.00,
-    fontWeight: 500,
-    lineHeight: 24.00,
-    letterSpacing: 0.15,
-  );
+  static const TypescaleStruct periodSelectorLabelTextType =
+      TokenTypescale.titleMedium;
 
   /// md.comp.time-picker.period-selector.outline.color
   static const TokenColorRole periodSelectorOutlineColor =
@@ -240,13 +224,8 @@ class TokenTimePicker {
   static const double timeSelectorHoverStateLayerOpacity = 0.08;
 
   /// md.comp.time-picker.time-selector.label-text.type
-  static const TypescaleStruct timeSelectorLabelTextType = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 57.00,
-    fontWeight: 400,
-    lineHeight: 64.00,
-    letterSpacing: -0.25,
-  );
+  static const TypescaleStruct timeSelectorLabelTextType =
+      TokenTypescale.displayLarge;
 
   /// md.comp.time-picker.time-selector.pressed.state-layer.opacity
   static const double timeSelectorPressedStateLayerOpacity = 0.10;
@@ -288,13 +267,8 @@ class TokenTimePicker {
       TokenColorRole.onSurface;
 
   /// md.comp.time-picker.time-selector.separator.type
-  static const TypescaleStruct timeSelectorSeparatorType = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 57.00,
-    fontWeight: 400,
-    lineHeight: 64.00,
-    letterSpacing: -0.25,
-  );
+  static const TypescaleStruct timeSelectorSeparatorType =
+      TokenTypescale.displayLarge;
 
   /// md.comp.time-picker.time-selector.unselected.container.color
   static const TokenColorRole timeSelectorUnselectedContainerColor =

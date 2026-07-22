@@ -2,11 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 38.0.15
+// Version: 38.0.58
 
 import 'color_role.dart';
 import 'shape_struct.dart';
-import 'typescale_struct.dart';
+import 'typescale.dart';
 
 class TokenSearchView {
   /// md.comp.search-view.contained.background.color
@@ -84,13 +84,7 @@ class TokenSearchView {
   static const TokenColorRole headerInputTextColor = TokenColorRole.onSurface;
 
   /// md.comp.search-view.header.input-text.type
-  static const TypescaleStruct headerInputTextType = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 16.00,
-    fontWeight: 400,
-    lineHeight: 24.00,
-    letterSpacing: 0.50,
-  );
+  static const TypescaleStruct headerInputTextType = TokenTypescale.bodyLarge;
 
   /// md.comp.search-view.header.leading-icon.color
   static const TokenColorRole headerLeadingIconColor = TokenColorRole.onSurface;
@@ -100,13 +94,8 @@ class TokenSearchView {
       TokenColorRole.onSurfaceVariant;
 
   /// md.comp.search-view.header.supporting-text.type
-  static const TypescaleStruct headerSupportingTextType = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 16.00,
-    fontWeight: 400,
-    lineHeight: 24.00,
-    letterSpacing: 0.50,
-  );
+  static const TypescaleStruct headerSupportingTextType =
+      TokenTypescale.bodyLarge;
 
   /// md.comp.search-view.header.trailing-icon.color
   static const TokenColorRole headerTrailingIconColor =

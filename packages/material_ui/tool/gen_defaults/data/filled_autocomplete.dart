@@ -2,11 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 38.0.15
+// Version: 38.0.58
 
 import 'color_role.dart';
 import 'shape_struct.dart';
-import 'typescale_struct.dart';
+import 'typescale.dart';
 
 class TokenFilledAutocomplete {
   /// md.comp.filled-autocomplete.menu.cascading-menu-indicator.icon.color
@@ -259,26 +259,24 @@ class TokenFilledAutocomplete {
       TokenColorRole.onSurface;
 
   /// md.comp.filled-autocomplete.text-field.input-text.type
-  static const TypescaleStruct textFieldInputTextType = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 16.00,
-    fontWeight: 400,
-    lineHeight: 24.00,
-    letterSpacing: 0.50,
-  );
+  static const TypescaleStruct textFieldInputTextType =
+      TokenTypescale.bodyLarge;
 
   /// md.comp.filled-autocomplete.text-field.label-text.color
   static const TokenColorRole textFieldLabelTextColor =
       TokenColorRole.onSurfaceVariant;
 
+  /// md.comp.filled-autocomplete.text-field.label-text.populated.line-height
+  static const double textFieldLabelTextPopulatedLineHeight =
+      TokenTypescale.bodySmall.lineHeight;
+
+  /// md.comp.filled-autocomplete.text-field.label-text.populated.size
+  static const double textFieldLabelTextPopulatedSize =
+      TokenTypescale.bodySmall.fontSize;
+
   /// md.comp.filled-autocomplete.text-field.label-text.type
-  static const TypescaleStruct textFieldLabelTextType = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 16.00,
-    fontWeight: 400,
-    lineHeight: 24.00,
-    letterSpacing: 0.50,
-  );
+  static const TypescaleStruct textFieldLabelTextType =
+      TokenTypescale.bodyLarge;
 
   /// md.comp.filled-autocomplete.text-field.leading-icon.color
   static const TokenColorRole textFieldLeadingIconColor =
@@ -292,13 +290,8 @@ class TokenFilledAutocomplete {
       TokenColorRole.onSurfaceVariant;
 
   /// md.comp.filled-autocomplete.text-field.supporting-text.type
-  static const TypescaleStruct textFieldSupportingTextType = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 12.00,
-    fontWeight: 400,
-    lineHeight: 16.00,
-    letterSpacing: 0.40,
-  );
+  static const TypescaleStruct textFieldSupportingTextType =
+      TokenTypescale.bodySmall;
 
   /// md.comp.filled-autocomplete.text-field.trailing-icon.color
   static const TokenColorRole textFieldTrailingIconColor =

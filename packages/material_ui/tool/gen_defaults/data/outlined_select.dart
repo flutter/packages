@@ -2,11 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 38.0.15
+// Version: 38.0.58
 
 import 'color_role.dart';
 import 'shape_struct.dart';
-import 'typescale_struct.dart';
+import 'typescale.dart';
 
 class TokenOutlinedSelect {
   /// md.comp.outlined-select.menu.cascading-menu-indicator.icon.color
@@ -49,13 +49,8 @@ class TokenOutlinedSelect {
       TokenColorRole.onSurface;
 
   /// md.comp.outlined-select.menu.list-item.label-text.type
-  static const TypescaleStruct menuListItemLabelTextType = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 14.00,
-    fontWeight: 500,
-    lineHeight: 20.00,
-    letterSpacing: 0.10,
-  );
+  static const TypescaleStruct menuListItemLabelTextType =
+      TokenTypescale.labelLarge;
 
   /// md.comp.outlined-select.menu.list-item.selected.container.color
   static const TokenColorRole menuListItemSelectedContainerColor =
@@ -277,26 +272,24 @@ class TokenOutlinedSelect {
       TokenColorRole.onSurface;
 
   /// md.comp.outlined-select.text-field.input-text.type
-  static const TypescaleStruct textFieldInputTextType = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 16.00,
-    fontWeight: 400,
-    lineHeight: 24.00,
-    letterSpacing: 0.50,
-  );
+  static const TypescaleStruct textFieldInputTextType =
+      TokenTypescale.bodyLarge;
 
   /// md.comp.outlined-select.text-field.label-text.color
   static const TokenColorRole textFieldLabelTextColor =
       TokenColorRole.onSurfaceVariant;
 
+  /// md.comp.outlined-select.text-field.label-text.populated.line-height
+  static const double textFieldLabelTextPopulatedLineHeight =
+      TokenTypescale.bodySmall.lineHeight;
+
+  /// md.comp.outlined-select.text-field.label-text.populated.size
+  static const double textFieldLabelTextPopulatedSize =
+      TokenTypescale.bodySmall.fontSize;
+
   /// md.comp.outlined-select.text-field.label-text.type
-  static const TypescaleStruct textFieldLabelTextType = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 16.00,
-    fontWeight: 400,
-    lineHeight: 24.00,
-    letterSpacing: 0.50,
-  );
+  static const TypescaleStruct textFieldLabelTextType =
+      TokenTypescale.bodyLarge;
 
   /// md.comp.outlined-select.text-field.leading-icon.color
   static const TokenColorRole textFieldLeadingIconColor =
@@ -316,13 +309,8 @@ class TokenOutlinedSelect {
       TokenColorRole.onSurfaceVariant;
 
   /// md.comp.outlined-select.text-field.supporting-text.type
-  static const TypescaleStruct textFieldSupportingTextType = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 12.00,
-    fontWeight: 400,
-    lineHeight: 16.00,
-    letterSpacing: 0.40,
-  );
+  static const TypescaleStruct textFieldSupportingTextType =
+      TokenTypescale.bodySmall;
 
   /// md.comp.outlined-select.text-field.trailing-icon.color
   static const TokenColorRole textFieldTrailingIconColor =

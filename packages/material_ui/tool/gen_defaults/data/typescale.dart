@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 38.0.15
+// Version: 38.0.58
 
 import 'typescale_struct.dart';
 
@@ -14,6 +14,7 @@ class TokenTypescale {
     fontWeight: 400,
     lineHeight: 24.00,
     letterSpacing: 0.50,
+    textStyle: 'body-large',
   );
 
   /// md.sys.typescale.body-medium
@@ -23,6 +24,7 @@ class TokenTypescale {
     fontWeight: 400,
     lineHeight: 20.00,
     letterSpacing: 0.25,
+    textStyle: 'body-medium',
   );
 
   /// md.sys.typescale.body-small
@@ -32,6 +34,7 @@ class TokenTypescale {
     fontWeight: 400,
     lineHeight: 16.00,
     letterSpacing: 0.40,
+    textStyle: 'body-small',
   );
 
   /// md.sys.typescale.display-large
@@ -41,6 +44,7 @@ class TokenTypescale {
     fontWeight: 400,
     lineHeight: 64.00,
     letterSpacing: -0.25,
+    textStyle: 'display-large',
   );
 
   /// md.sys.typescale.display-medium
@@ -50,6 +54,7 @@ class TokenTypescale {
     fontWeight: 400,
     lineHeight: 52.00,
     letterSpacing: 0.00,
+    textStyle: 'display-medium',
   );
 
   /// md.sys.typescale.display-small
@@ -59,6 +64,7 @@ class TokenTypescale {
     fontWeight: 400,
     lineHeight: 44.00,
     letterSpacing: 0.00,
+    textStyle: 'display-small',
   );
 
   /// md.sys.typescale.headline-large
@@ -68,6 +74,7 @@ class TokenTypescale {
     fontWeight: 400,
     lineHeight: 40.00,
     letterSpacing: 0.00,
+    textStyle: 'headline-large',
   );
 
   /// md.sys.typescale.headline-medium
@@ -77,6 +84,7 @@ class TokenTypescale {
     fontWeight: 400,
     lineHeight: 36.00,
     letterSpacing: 0.00,
+    textStyle: 'headline-medium',
   );
 
   /// md.sys.typescale.headline-small
@@ -86,6 +94,7 @@ class TokenTypescale {
     fontWeight: 400,
     lineHeight: 32.00,
     letterSpacing: 0.00,
+    textStyle: 'headline-small',
   );
 
   /// md.sys.typescale.label-large
@@ -95,6 +104,7 @@ class TokenTypescale {
     fontWeight: 500,
     lineHeight: 20.00,
     letterSpacing: 0.10,
+    textStyle: 'label-large',
   );
 
   /// md.sys.typescale.label-medium
@@ -104,6 +114,7 @@ class TokenTypescale {
     fontWeight: 500,
     lineHeight: 16.00,
     letterSpacing: 0.50,
+    textStyle: 'label-medium',
   );
 
   /// md.sys.typescale.label-small
@@ -113,6 +124,7 @@ class TokenTypescale {
     fontWeight: 500,
     lineHeight: 16.00,
     letterSpacing: 0.50,
+    textStyle: 'label-small',
   );
 
   /// md.sys.typescale.title-large
@@ -122,6 +134,7 @@ class TokenTypescale {
     fontWeight: 400,
     lineHeight: 28.00,
     letterSpacing: 0.00,
+    textStyle: 'title-large',
   );
 
   /// md.sys.typescale.title-medium
@@ -131,6 +144,7 @@ class TokenTypescale {
     fontWeight: 500,
     lineHeight: 24.00,
     letterSpacing: 0.15,
+    textStyle: 'title-medium',
   );
 
   /// md.sys.typescale.title-small
@@ -140,5 +154,6 @@ class TokenTypescale {
     fontWeight: 500,
     lineHeight: 20.00,
     letterSpacing: 0.10,
+    textStyle: 'title-small',
   );
 }
