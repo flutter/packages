@@ -105,7 +105,7 @@ typedef _GetSheetDragged = bool Function();
 /// Shows a Cupertino-style sheet widget that slides up from the bottom of the
 /// screen and stacks the previous route behind the new sheet.
 ///
-/// Learn more about [CupertinoActionSheet] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=5H-WvH5O29I).
+/// Learn more about [CupertinoSheetRoute] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=5H-WvH5O29I).
 ///
 /// This is a convenience method for displaying [CupertinoSheetRoute] for most
 /// use cases. The Widget returned from `scrollableBuilder` will be used to display
