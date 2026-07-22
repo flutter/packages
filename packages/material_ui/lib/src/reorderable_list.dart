@@ -335,10 +335,10 @@ class ReorderableListView extends StatefulWidget {
 
   /// The relative position of the zero scroll offset.
   ///
-  /// For a detailed introduction, see [ScrollView.anchor].
+  /// For more information, see [ScrollView.anchor].
   // TODO(dkwingsmt): Migrate the doc back to macro
   // flutter.widgets.scroll_view.anchor
-  // when https://github.com/flutter/flutter/issues/189629 reaches phase 3.
+  // https://github.com/flutter/flutter/issues/189629
   final double anchor;
 
   /// {@macro flutter.rendering.RenderViewportBase.cacheExtent}

@@ -113,10 +113,10 @@ class Autocomplete<T extends Object> extends StatelessWidget {
 
   /// The [FocusNode] that is used for the text field.
   ///
-  /// For a detailed introduction, see [RawAutocomplete.focusNode].
+  /// For more information, see [RawAutocomplete.focusNode].
   // TODO(dkwingsmt): Migrate the doc back to macro
   // flutter.widgets.RawAutocomplete.split
-  // when https://github.com/flutter/flutter/issues/189629 reaches phase 3.
+  // https://github.com/flutter/flutter/issues/189629
   ///
   /// If this parameter is not null, then [textEditingController] must also be
   /// non-null.
@@ -147,10 +147,10 @@ class Autocomplete<T extends Object> extends StatelessWidget {
 
   /// The [TextEditingController] that is used for the text field.
   ///
-  /// For a detailed introduction, see [RawAutocomplete.textEditingController].
+  /// For more information, see [RawAutocomplete.textEditingController].
   // TODO(dkwingsmt): Migrate the doc back to macro
   // flutter.widgets.RawAutocomplete.split
-  // when https://github.com/flutter/flutter/issues/189629 reaches phase 3.
+  // https://github.com/flutter/flutter/issues/189629
   ///
   /// If this parameter is not null, then [focusNode] must also be non-null.
   final TextEditingController? textEditingController;

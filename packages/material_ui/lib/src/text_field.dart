@@ -610,10 +610,10 @@ class TextField extends StatefulWidget {
   /// Called when the user initiates a change to the TextField's
   /// value: when they have inserted or deleted text.
   ///
-  /// For a detailed introduction, see [EditableText.onChanged].
+  /// For more information, see [EditableText.onChanged].
   // TODO(dkwingsmt): Migrate the doc back to macro
   // flutter.widgets.editableText.onChanged
-  // when https://github.com/flutter/flutter/issues/189629 reaches phase 3.
+  // https://github.com/flutter/flutter/issues/189629
   ///
   /// See also:
   ///
@@ -872,11 +872,11 @@ class TextField extends StatefulWidget {
   /// Configuration of handler for media content inserted via the system input
   /// method.
   ///
-  /// For a detailed introduction, see
+  /// For more information, see
   /// [EditableText.contentInsertionConfiguration].
   // TODO(dkwingsmt): Migrate the doc back to macro
   // flutter.widgets.editableText.contentInsertionConfiguration
-  // when https://github.com/flutter/flutter/issues/189629 reaches phase 3.
+  // https://github.com/flutter/flutter/issues/189629
   final ContentInsertionConfiguration? contentInsertionConfiguration;
 
   /// {@macro flutter.widgets.EditableText.contextMenuBuilder}

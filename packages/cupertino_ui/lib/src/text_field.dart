@@ -703,10 +703,10 @@ class CupertinoTextField extends StatefulWidget {
   /// Called when the user initiates a change to the TextField's
   /// value: when they have inserted or deleted text.
   ///
-  /// For a detailed introduction, see [EditableText.onChanged].
+  /// For more information, see [EditableText.onChanged].
   // TODO(dkwingsmt): Migrate the doc back to macro
   // flutter.widgets.editableText.onChanged
-  // when https://github.com/flutter/flutter/issues/189629 reaches phase 3.
+  // https://github.com/flutter/flutter/issues/189629
   final ValueChanged<String>? onChanged;
 
   /// {@macro flutter.widgets.editableText.onEditingComplete}
@@ -874,19 +874,18 @@ class CupertinoTextField extends StatefulWidget {
   /// Configuration of handler for media content inserted via the system input
   /// method.
   ///
-  /// For a detailed introduction, see
-  /// [EditableText.contentInsertionConfiguration].
+  /// For more information, see [EditableText.contentInsertionConfiguration].
   // TODO(dkwingsmt): Migrate the doc back to macro
   // flutter.widgets.editableText.contentInsertionConfiguration
-  // when https://github.com/flutter/flutter/issues/189629 reaches phase 3.
+  // https://github.com/flutter/flutter/issues/189629
   final ContentInsertionConfiguration? contentInsertionConfiguration;
 
   /// Builds the text selection toolbar when requested by the user.
   ///
-  /// For a detailed introduction, see [EditableText.contextMenuBuilder].
+  /// For more information, see [EditableText.contextMenuBuilder].
   // TODO(dkwingsmt): Migrate the doc back to macro
   // flutter.widgets.EditableText.contextMenuBuilder
-  // when https://github.com/flutter/flutter/issues/189629 reaches phase 3.
+  // https://github.com/flutter/flutter/issues/189629
   ///
   /// If not provided, will build a default menu based on the platform.
   ///
