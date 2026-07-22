@@ -1,3 +1,7 @@
+## 0.7.4+3
+
+* Bumps com.google.guava:guava from 33.5.0-android to 33.6.0-android.
+
 ## 0.7.4+2
 
 * Bumps cameraxVersion from 1.6.0 to 1.6.1.
