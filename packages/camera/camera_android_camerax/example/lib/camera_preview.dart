@@ -31,7 +31,10 @@ class CameraPreview extends StatelessWidget {
                 child: Stack(
                 fit: StackFit.expand,
                 children: <Widget>[
-                    controller.buildPreview(),
+                    RotatedBox(
+                      quarterTurns: _getQuarterTurns(),
+                      child: controller.buildPreview(),
+                    ),
                     child ?? Container(),
                   ],
                 ),
@@ -40,7 +43,22 @@ class CameraPreview extends StatelessWidget {
             child: child,
           )
         : Container();
-  
+  }
+
+  int _getQuarterTurns() {
+    final Map<DeviceOrientation, int> turns = <DeviceOrientation, int>{
+      DeviceOrientation.portraitUp: 0,
+      DeviceOrientation.landscapeRight: 1,
+      DeviceOrientation.portraitDown: 2,
+      DeviceOrientation.landscapeLeft: 3,
+    };
+    int deviceTurns = turns[controller.value.deviceOrientation] ?? 0;
+    int targetTurns = turns[_getApplicableOrientation()] ?? 0;
+    int quarterTurns = (targetTurns - deviceTurns) % 4;
+    if (quarterTurns < 0) {
+      quarterTurns += 4;
+    }
+    return quarterTurns;
   }
 
   bool _isLandscape() {
