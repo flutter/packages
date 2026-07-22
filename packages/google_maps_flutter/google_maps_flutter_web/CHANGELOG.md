@@ -1,3 +1,7 @@
+## 0.6.3
+
+* Adds support for my location button.
+
 ## 0.6.2+3
 
 * Updates README to include setup information.
