@@ -1940,6 +1940,15 @@ class MockPreviewView extends _i1.Mock implements _i2.PreviewView {
           as _i5.Future<_i2.MeteringPointFactory>);
 
   @override
+  _i5.Future<void> setImplementationMode(_i2.ImplementationMode? mode) =>
+      (super.noSuchMethod(
+            Invocation.method(#setImplementationMode, [mode]),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
+
+  @override
   _i2.PreviewView pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),

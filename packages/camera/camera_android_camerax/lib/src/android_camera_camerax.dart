@@ -576,6 +576,18 @@ class AndroidCameraCameraX extends CameraPlatform {
     await imageCapture!.setTargetRotation(targetLockedRotation);
     await imageAnalysis!.setTargetRotation(targetLockedRotation);
     await videoCapture!.setTargetRotation(targetLockedRotation);
+    
+    // Fall back to COMPATIBLE mode and set target rotation to visually lock the preview.
+    if (preview != null) {
+      await preview!.setTargetRotation(targetLockedRotation);
+    }
+    if (_previewView != null) {
+      await _previewView!.setImplementationMode(ImplementationMode.compatible);
+      if (preview != null) {
+        final SurfaceProvider surfaceProvider = await _previewView!.getSurfaceProvider();
+        await preview!.setSurfaceProvider(surfaceProvider);
+      }
+    }
   }
 
   /// Unlocks the capture orientation of camera with ID [cameraId].
@@ -584,6 +596,15 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Flag that default rotation should be set for UseCases as needed.
     captureOrientationLocked = false;
     _lockedCaptureOrientation = null;
+    
+    // Restore preview to PERFORMANCE mode so it acts as a natively rotating viewfinder again.
+    if (_previewView != null) {
+      await _previewView!.setImplementationMode(ImplementationMode.performance);
+      if (preview != null) {
+        final SurfaceProvider surfaceProvider = await _previewView!.getSurfaceProvider();
+        await preview!.setSurfaceProvider(surfaceProvider);
+      }
+    }
   }
 
   /// Sets the exposure point for automatically determining the exposure values for

@@ -855,7 +855,7 @@ private class CameraXLibraryPigeonProxyApiBaseCodec(val registrar: CameraXLibrar
   }
 
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
-    if (value is Boolean || value is ByteArray || value is Double || value is DoubleArray || value is FloatArray || value is Int || value is IntArray || value is List<*> || value is Long || value is LongArray || value is Map<*, *> || value is String || value is InfoSupportedHardwareLevel || value is AspectRatio || value is CameraStateType || value is LiveDataSupportedType || value is VideoQuality || value is MeteringMode || value is LensFacing || value is CameraXFlashMode || value is ResolutionStrategyFallbackRule || value is AspectRatioStrategyFallbackRule || value is CameraStateErrorCode || value == null) {
+    if (value is Boolean || value is ByteArray || value is Double || value is DoubleArray || value is FloatArray || value is Int || value is IntArray || value is List<*> || value is Long || value is LongArray || value is Map<*, *> || value is String || value is InfoSupportedHardwareLevel || value is AspectRatio || value is CameraStateType || value is LiveDataSupportedType || value is VideoQuality || value is MeteringMode || value is LensFacing || value is CameraXFlashMode || value is ResolutionStrategyFallbackRule || value is AspectRatioStrategyFallbackRule || value is CameraStateErrorCode || value is ImplementationMode || value == null) {
       super.writeValue(stream, value)
       return
     }
@@ -1597,6 +1597,17 @@ enum class CameraStateErrorCode(val raw: Int) {
     }
   }
 }
+
+enum class ImplementationMode(val raw: Int) {
+  PERFORMANCE(0),
+  COMPATIBLE(1);
+
+  companion object {
+    fun ofRaw(raw: Int): ImplementationMode? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
 private open class CameraXLibraryPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
@@ -1655,6 +1666,11 @@ private open class CameraXLibraryPigeonCodec : StandardMessageCodec() {
           CameraStateErrorCode.ofRaw(it.toInt())
         }
       }
+      140.toByte() -> {
+        return (readValue(buffer) as Long?)?.let {
+          ImplementationMode.ofRaw(it.toInt())
+        }
+      }
       else -> super.readValueOfType(type, buffer)
     }
   }
@@ -1702,6 +1718,10 @@ private open class CameraXLibraryPigeonCodec : StandardMessageCodec() {
       }
       is CameraStateErrorCode -> {
         stream.write(139)
+        writeValue(stream, value.raw.toLong())
+      }
+      is ImplementationMode -> {
+        stream.write(140)
         writeValue(stream, value.raw.toLong())
       }
       else -> super.writeValue(stream, value)
@@ -3041,16 +3061,7 @@ abstract class PigeonApiPreview(open val pigeonRegistrar: CameraXLibraryPigeonPr
 
   abstract fun resolutionSelector(pigeon_instance: androidx.camera.core.Preview): androidx.camera.core.resolutionselector.ResolutionSelector?
 
-  /**
-   * Sets a SurfaceProvider to provide a Surface for Preview.
-   *
-   * This is a convenience function that
-   * 1. Creates a `SurfaceProvider` using the `SurfaceProducer` provided by the
-   * Flutter engine.
-   * 2. Sets this method with the created `SurfaceProvider`.
-   * 3. Returns the texture id of the `TextureEntry` that provided the
-   * `SurfaceProducer`.
-   */
+  /** Sets a SurfaceProvider to provide a Surface for Preview. */
   abstract fun setSurfaceProvider(pigeon_instance: androidx.camera.core.Preview, surfaceProvider: androidx.camera.core.Preview.SurfaceProvider?)
 
   /**
@@ -6702,6 +6713,8 @@ abstract class PigeonApiPreviewView(open val pigeonRegistrar: CameraXLibraryPige
 
   abstract fun getMeteringPointFactory(pigeon_instance: androidx.camera.view.PreviewView): androidx.camera.core.MeteringPointFactory
 
+  abstract fun setImplementationMode(pigeon_instance: androidx.camera.view.PreviewView, mode: ImplementationMode)
+
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiPreviewView?) {
@@ -6767,6 +6780,25 @@ abstract class PigeonApiPreviewView(open val pigeonRegistrar: CameraXLibraryPige
             val pigeon_instanceArg = args[0] as androidx.camera.view.PreviewView
             val wrapped: List<Any?> = try {
               listOf(api.getMeteringPointFactory(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              CameraXLibraryPigeonUtils.wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.camera_android_camerax.PreviewView.setImplementationMode", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as androidx.camera.view.PreviewView
+            val modeArg = args[1] as ImplementationMode
+            val wrapped: List<Any?> = try {
+              api.setImplementationMode(pigeon_instanceArg, modeArg)
+              listOf(null)
             } catch (exception: Throwable) {
               CameraXLibraryPigeonUtils.wrapError(exception)
             }

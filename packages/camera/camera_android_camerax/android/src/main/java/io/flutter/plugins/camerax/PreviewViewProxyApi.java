@@ -52,4 +52,13 @@ class PreviewViewProxyApi extends PigeonApiPreviewView {
     public MeteringPointFactory getMeteringPointFactory(PreviewView pigeon_instance) {
         return pigeon_instance.getMeteringPointFactory();
     }
+
+    @Override
+    public void setImplementationMode(@NonNull PreviewView pigeon_instance, @NonNull ImplementationMode mode) {
+        if (mode == ImplementationMode.COMPATIBLE) {
+            pigeon_instance.setImplementationMode(PreviewView.ImplementationMode.COMPATIBLE);
+        } else {
+            pigeon_instance.setImplementationMode(PreviewView.ImplementationMode.PERFORMANCE);
+        }
+    }
 }

@@ -931,6 +931,11 @@ enum CameraStateErrorCode {
   unknown,
 }
 
+enum ImplementationMode {
+  performance,
+  compatible,
+}
+
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -971,6 +976,9 @@ class _PigeonCodec extends StandardMessageCodec {
       writeValue(buffer, value.index);
     }    else if (value is CameraStateErrorCode) {
       buffer.putUint8(139);
+      writeValue(buffer, value.index);
+    }    else if (value is ImplementationMode) {
+      buffer.putUint8(140);
       writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
@@ -1013,6 +1021,9 @@ class _PigeonCodec extends StandardMessageCodec {
       case 139:
         final value = readValue(buffer) as int?;
         return value == null ? null : CameraStateErrorCode.values[value];
+      case 140:
+        final value = readValue(buffer) as int?;
+        return value == null ? null : ImplementationMode.values[value];
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -3203,13 +3214,6 @@ class Preview extends UseCase {
   }
 
   /// Sets a SurfaceProvider to provide a Surface for Preview.
-  ///
-  /// This is a convenience function that
-  /// 1. Creates a `SurfaceProvider` using the `SurfaceProducer` provided by the
-  /// Flutter engine.
-  /// 2. Sets this method with the created `SurfaceProvider`.
-  /// 3. Returns the texture id of the `TextureEntry` that provided the
-  /// `SurfaceProducer`.
   Future<void> setSurfaceProvider(SurfaceProvider? surfaceProvider) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecPreview;
@@ -8922,6 +8926,28 @@ class PreviewView extends PigeonInternalProxyApiBaseClass {
       isNullValid: false,
     );
     return pigeonVar_replyValue! as MeteringPointFactory;
+  }
+
+  Future<void> setImplementationMode(ImplementationMode mode) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecPreviewView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.camera_android_camerax.PreviewView.setImplementationMode';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, mode]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   @override
