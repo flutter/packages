@@ -187,15 +187,12 @@ enum MaterialTapTargetSize {
 /// Named contrast levels for Material 3 color schemes.
 ///
 /// Material 3 color schemes are generated from color roles and tonal palettes.
-/// [standard], [medium], and [high] correspond to the contrast levels that have
-/// token-backed default Material 3 color schemes. Use these constants with
-/// [ThemeData.contrastLevel] when using the default Material 3 color scheme.
+/// When [ThemeData.colorSchemeSeed] is null, use [standard], [medium], or [high]
+/// to select between the default Material 3 color schemes.
 ///
 /// A custom `double` between -1.0 and 1.0 can also be passed to
-/// [ThemeData.contrastLevel] when [ThemeData.colorSchemeSeed] is provided. In
-/// that case, the value is passed to [ColorScheme.fromSeed]. Custom contrast
-/// values do not have token-backed default color schemes, so they are treated
-/// as [standard] when [ThemeData.colorSchemeSeed] is null.
+/// [ThemeData.contrastLevel] when [ThemeData.colorSchemeSeed] is provided, in
+/// which case the value is passed to [ColorScheme.fromSeed].
 ///
 /// See also:
 ///
