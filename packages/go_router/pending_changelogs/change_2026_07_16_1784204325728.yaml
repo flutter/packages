@@ -1,0 +1,3 @@
+changelog: |
+  - Adds `BlockedInitialNavigationException` (a `GoException` subtype), raised when the initial navigation is blocked by `onEnter` with no prior route to restore, so apps can distinguish this case in `onException` without string matching.
+version: minor

@@ -132,7 +132,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         // Surface an error so the app decides how to recover via onException.
         final RouteMatchList blocked = _OnEnterHandler._errorRouteMatchList(
           effectiveRoute.uri,
-          GoException(
+          BlockedInitialNavigationException(
             'Navigation to ${effectiveRoute.uri} was blocked by onEnter with no prior route to restore',
           ),
           extra: infoState.extra,
