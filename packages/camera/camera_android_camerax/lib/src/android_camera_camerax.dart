@@ -513,11 +513,17 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Releases the resources of the accessed camera with ID [cameraId].
   @override
   Future<void> dispose(int cameraId) async {
-    await preview?.releaseSurfaceProvider();
-    await liveCameraState?.removeObservers();
-    await processCameraProvider?.unbindAll();
-    await imageAnalysis?.clearAnalyzer();
-    await deviceOrientationManager.stopListeningForDeviceOrientationChange();
+    await Future.wait(<Future<void>>[
+      if (preview != null) preview!.releaseSurfaceProvider(),
+      if (liveCameraState != null) liveCameraState!.removeObservers(),
+      if (processCameraProvider != null) processCameraProvider!.unbindAll(),
+      if (imageAnalysis != null) imageAnalysis!.clearAnalyzer(),
+      deviceOrientationManager.stopListeningForDeviceOrientationChange(),
+    ]);
+
+    recording = null;
+    pendingRecording = null;
+    videoOutputPath = null;
   }
 
   /// The camera with ID [cameraId] has been initialized.
