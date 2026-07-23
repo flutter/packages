@@ -1,16 +1,16 @@
-RouteBase get $namedRoute => GoRouteData.$route(
-      path: '/named-route',
-      name: 'namedRoute',
-      hasOverriddenOnExit: false,
-      factory: $NamedRoute._fromState,
+RouteBase get $hasOverriddenOnExitRoute => GoRouteData.$route(
+      path: '/has-overridden-on-exit-route',
+      hasOverriddenOnExit: true,
+      factory: $HasOverriddenOnExitRoute._fromState,
     );
 
-mixin $NamedRoute on GoRouteData {
-  static NamedRoute _fromState(GoRouterState state) => NamedRoute();
+mixin $HasOverriddenOnExitRoute on GoRouteData {
+  static HasOverriddenOnExitRoute _fromState(GoRouterState state) =>
+      HasOverriddenOnExitRoute();
 
   @override
   String get location => GoRouteData.$location(
-        '/named-route',
+        '/has-overridden-on-exit-route',
       );
 
   @override

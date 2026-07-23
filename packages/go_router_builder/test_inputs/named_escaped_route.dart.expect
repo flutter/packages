@@ -1,6 +1,7 @@
 RouteBase get $namedEscapedRoute => GoRouteData.$route(
       path: '/named-route',
       name: r'named$Route',
+      hasOverriddenOnExit: false,
       factory: $NamedEscapedRoute._fromState,
     );
 
