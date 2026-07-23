@@ -20,9 +20,7 @@ dependencies:
 
   material_ui:
     path: ..
-  cupertino_ui:
-    # TODO(justinmc): Use the pub.dev package when published.
-    path: ../../cupertino_ui
+  cupertino_ui: ^0.0.2
 
 dev_dependencies:
   integration_test:
