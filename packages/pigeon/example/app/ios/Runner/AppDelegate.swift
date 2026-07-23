@@ -107,7 +107,6 @@ func sendEvents(_ eventListener: EventListener) {
   }
 }
 
-
 // TODO(stuartmorgan): Once 3.33+ reaches stable, remove this subclass and move the setup to
 // AppDelegate.register(...). This approach is only used because this example needs to support
 // both stable and master, and 3.32 doesn't have FlutterPluginRegistrant, while 3.33+ can't use
