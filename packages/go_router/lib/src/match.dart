@@ -785,6 +785,56 @@ class RouteMatchList with Diagnosticable {
     );
   }
 
+  /// Returns a copy of this list where each [ImperativeRouteMatch] adopts the
+  /// completer of the live match with the same [pageKey] in [source].
+  ///
+  /// Decoding an encoded configuration (state restoration, browser
+  /// back/forward, or a `refreshListenable` re-parse) mints a fresh completer
+  /// per imperative match, since the push future cannot be serialized. Carrying
+  /// over the live completer keeps a re-decoded configuration equal to the one
+  /// already on screen, so the no-op fast path holds — no route spuriously
+  /// exits and the in-flight push future is preserved. A [pageKey] is unique
+  /// per push, so it identifies the live match unambiguously.
+  // TODO(loic-sharma): Remove meta library prefix.
+  // https://github.com/flutter/flutter/issues/171410
+  @meta.internal
+  RouteMatchList reconcileImperativeCompleters(RouteMatchList source) {
+    final liveCompleters = <ValueKey<String>, Completer<Object?>>{};
+    source.visitRouteMatches((RouteMatchBase match) {
+      if (match is ImperativeRouteMatch) {
+        liveCompleters[match.pageKey] = match.completer;
+      }
+      return true;
+    });
+    if (liveCompleters.isEmpty) {
+      return this;
+    }
+    return copyWith(matches: _reconcileMatches(matches, liveCompleters));
+  }
+
+  static List<RouteMatchBase> _reconcileMatches(
+    List<RouteMatchBase> matches,
+    Map<ValueKey<String>, Completer<Object?>> liveCompleters,
+  ) {
+    return matches.map<RouteMatchBase>((RouteMatchBase match) {
+      if (match is ImperativeRouteMatch) {
+        final Completer<Object?>? live = liveCompleters[match.pageKey];
+        if (live == null || live == match.completer) {
+          return match;
+        }
+        return ImperativeRouteMatch(
+          pageKey: match.pageKey,
+          matches: match.matches,
+          completer: live,
+        );
+      }
+      if (match is ShellRouteMatch) {
+        return match.copyWith(matches: _reconcileMatches(match.matches, liveCompleters));
+      }
+      return match;
+    }).toList();
+  }
+
   @override
   bool operator ==(Object other) {
     if (other.runtimeType != runtimeType) {
