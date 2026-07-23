@@ -85,12 +85,16 @@ class GroundOverlaysController {
             groundOverlayOptionsBuilder,
             assetManager,
             density,
-            bitmapDescriptorFactoryWrapper);
+            bitmapDescriptorFactoryWrapper,
+            true);
     GroundOverlayOptions options = groundOverlayOptionsBuilder.build();
     final GroundOverlay groundOverlay = googleMap.addGroundOverlay(options);
     if (groundOverlay != null) {
       GroundOverlayController groundOverlayController =
-          new GroundOverlayController(groundOverlay, platformGroundOverlay.getBounds() != null);
+          new GroundOverlayController(
+              groundOverlay,
+              platformGroundOverlay.getBounds() != null,
+              platformGroundOverlay.getImage());
       groundOverlayIdToController.put(groundOverlayId, groundOverlayController);
       googleMapsGroundOverlayIdToDartGroundOverlayId.put(groundOverlay.getId(), groundOverlayId);
     }
@@ -101,12 +105,18 @@ class GroundOverlaysController {
     GroundOverlayController groundOverlayController =
         groundOverlayIdToController.get(groundOverlayId);
     if (groundOverlayController != null) {
+      final PlatformBitmap image = platformGroundOverlay.getImage();
+      final boolean imageChanged = !groundOverlayController.hasImage(image);
       Convert.interpretGroundOverlayOptions(
           platformGroundOverlay,
           groundOverlayController,
           assetManager,
           density,
-          bitmapDescriptorFactoryWrapper);
+          bitmapDescriptorFactoryWrapper,
+          imageChanged);
+      if (imageChanged) {
+        groundOverlayController.setPlatformBitmap(image);
+      }
     }
   }
 
