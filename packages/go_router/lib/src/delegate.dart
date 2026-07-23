@@ -67,7 +67,11 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
     if (lastRoute.onExit != null && navigatorKey.currentContext != null) {
       return !(await lastRoute.onExit!(
         navigatorKey.currentContext!,
-        currentConfiguration.last.buildState(_configuration, currentConfiguration),
+        currentConfiguration.last.buildState(
+          _configuration,
+          currentConfiguration,
+          metadata: currentConfiguration.topRouteMetadata,
+        ),
       ));
     }
 
@@ -156,7 +160,11 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
     scheduleMicrotask(() async {
       final bool onExitResult = await routeBase.onExit!(
         navigatorKey.currentContext!,
-        leafMatch.buildState(_configuration, currentConfiguration),
+        leafMatch.buildState(
+          _configuration,
+          currentConfiguration,
+          metadata: currentConfiguration.metadataFor(leafMatch),
+        ),
       );
       if (onExitResult) {
         _completeRouteMatch(result, match);
@@ -193,8 +201,11 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
 
   /// The top [GoRouterState], the state of the route that was
   /// last used in either [GoRouter.go] or [GoRouter.push].
-  GoRouterState get state =>
-      currentConfiguration.last.buildState(_configuration, currentConfiguration);
+  GoRouterState get state => currentConfiguration.last.buildState(
+    _configuration,
+    currentConfiguration,
+    metadata: currentConfiguration.topRouteMetadata,
+  );
 
   /// For use by the Router architecture as part of the RouterDelegate.
   GlobalKey<NavigatorState> get navigatorKey => _configuration.navigatorKey;
@@ -293,7 +304,11 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
 
     final FutureOr<bool> exitFuture = goRoute.onExit!(
       context,
-      match.buildState(_configuration, currentConfiguration),
+      match.buildState(
+        _configuration,
+        currentConfiguration,
+        metadata: currentConfiguration.metadataFor(match),
+      ),
     );
     if (exitFuture is bool) {
       return handleOnExitResult(exitFuture);
