@@ -65,6 +65,7 @@ import java.util.Objects;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 import org.mockito.InOrder;
 import org.mockito.MockedConstruction;
@@ -713,6 +714,51 @@ public class CameraTest {
   }
 
   @Test
+  public void stopVideoRecording_shouldAbortCaptureSession()
+      throws IOException, CameraAccessException {
+    MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
+    camera.mediaRecorder = mockMediaRecorder;
+    camera.recordingVideo = true;
+    camera.captureFile = File.createTempFile("REC", ".mp4");
+
+    camera.stopVideoRecording();
+
+    verify(mockCaptureSession, times(1)).abortCaptures();
+    verify(mockMediaRecorder, times(1)).stop();
+  }
+
+  @Test
+  public void stopVideoRecording_shouldNotThrowWhenNullCaptureSession()
+      throws IOException, CameraAccessException {
+    MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
+    camera.mediaRecorder = mockMediaRecorder;
+    camera.recordingVideo = true;
+    camera.captureFile = File.createTempFile("REC", ".mp4");
+    camera.captureSession = null;
+
+    camera.stopVideoRecording();
+
+    verify(mockCaptureSession, never()).abortCaptures();
+    verify(mockMediaRecorder, times(1)).stop();
+  }
+
+  @Test
+  public void stopVideoRecording_shouldNotThrowWhenCaptureSessionIsStale()
+      throws IOException, CameraAccessException {
+    MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
+    camera.mediaRecorder = mockMediaRecorder;
+    camera.recordingVideo = true;
+    camera.captureFile = File.createTempFile("REC", ".mp4");
+    doThrow(new IllegalStateException("CameraCaptureSession was already closed"))
+        .when(mockCaptureSession)
+        .abortCaptures();
+
+    camera.stopVideoRecording();
+
+    verify(mockCaptureSession, times(1)).abortCaptures();
+  }
+
+  @Test
   public void setDescriptionWhileRecording_errorsWhenUnsupported() {
     MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
     VideoRenderer mockVideoRenderer = mock(VideoRenderer.class);
@@ -920,6 +966,39 @@ public class CameraTest {
   }
 
   @Test
+  public void setFocusMode_shouldUseSessionSnapshotCapturedAtEntryForUnlockAutoFocus()
+      throws CameraAccessException {
+    // unlockAutoFocus() reads captureSession into a local variable once and reuses it for both
+    // capture() calls. We inject a field mutation during the first call to simulate another
+    // thread setting it to null, and this must not affect the second.
+    when(mockCaptureSession.capture(any(), any(), any()))
+        .thenAnswer(
+            (Answer<Integer>)
+                invocation -> {
+                  camera.captureSession = null;
+                  return 0;
+                });
+
+    camera.setFocusMode(FocusMode.auto);
+
+    verify(mockCaptureSession, times(2)).capture(any(), any(), any());
+  }
+
+  @Test
+  public void setFocusMode_shouldNotThrowWhenUnlockAutoFocusCaptureSessionIsStale()
+      throws CameraAccessException {
+    // captureSession is non-null but the underlying CameraDevice was torn down concurrently, so
+    // capture() throws IllegalStateException rather than CameraAccessException.
+    when(mockCaptureSession.capture(any(), any(), any()))
+        .thenThrow(new IllegalStateException("CameraDevice was already closed"));
+
+    camera.setFocusMode(FocusMode.auto);
+
+    verify(mockCaptureSession, times(1)).capture(any(), any(), any());
+    verify(mockDartMessenger, times(1)).sendCameraErrorEvent(any());
+  }
+
+  @Test
   public void startVideoRecording_shouldPullStreamsFromMediaRecorderAndImageReader()
       throws InterruptedException, IOException, CameraAccessException {
     Camera cameraSpy = spy(camera);
@@ -975,6 +1054,42 @@ public class CameraTest {
         .thenThrow(new CameraAccessException(0, ""));
     camera.setFocusMode(FocusMode.locked);
     verify(mockDartMessenger, times(1)).sendCameraErrorEvent(any());
+  }
+
+  @Test
+  public void setFocusMode_shouldNotThrowWhenLockAutoFocusCaptureSessionIsStale()
+      throws CameraAccessException {
+    when(mockCaptureSession.capture(any(), any(), any()))
+        .thenThrow(new IllegalStateException("CameraDevice was already closed"));
+
+    camera.setFocusMode(FocusMode.locked);
+
+    verify(mockCaptureSession, times(1)).capture(any(), any(), any());
+    verify(mockDartMessenger, times(1)).sendCameraErrorEvent(any());
+  }
+
+  @Test
+  public void setFocusMode_shouldUseSessionSnapshotCapturedAtEntryForLockAutoFocus()
+      throws CameraAccessException {
+    // setFocusMode() reuses the session snapshot captured before lockAutoFocus() runs, so a
+    // field mutation in between (session replaced) must not redirect setRepeatingRequest() to
+    // the new session.
+    CameraCaptureSession newerCaptureSession = mock(CameraCaptureSession.class);
+    when(mockCaptureSession.capture(any(), any(), any()))
+        .thenAnswer(
+            (Answer<Integer>)
+                invocation -> {
+                  camera.captureSession = newerCaptureSession;
+                  return 0;
+                });
+    when(mockCaptureSession.setRepeatingRequest(any(), any(), any()))
+        .thenThrow(new IllegalStateException("CameraCaptureSession was already closed"));
+
+    assertThrows(Messages.FlutterError.class, () -> camera.setFocusMode(FocusMode.locked));
+
+    verify(mockCaptureSession, times(1)).capture(any(), any(), any());
+    verify(mockCaptureSession, times(1)).setRepeatingRequest(any(), any(), any());
+    verify(newerCaptureSession, never()).setRepeatingRequest(any(), any(), any());
   }
 
   @Test
@@ -1126,6 +1241,24 @@ public class CameraTest {
   }
 
   @Test
+  public void pausePreview_shouldThrowFlutterErrorOnIllegalStateException()
+      throws CameraAccessException {
+    doThrow(new IllegalStateException("CameraDevice was already closed"))
+        .when(mockCaptureSession)
+        .stopRepeating();
+
+    assertThrows(Messages.FlutterError.class, camera::pausePreview);
+  }
+
+  @Test
+  public void pausePreview_shouldThrowFlutterErrorOnCameraAccessException()
+      throws CameraAccessException {
+    doThrow(new CameraAccessException(0)).when(mockCaptureSession).stopRepeating();
+
+    assertThrows(Messages.FlutterError.class, camera::pausePreview);
+  }
+
+  @Test
   public void resumePreview_shouldResumePreview() throws CameraAccessException {
     camera.resumePreview();
 
@@ -1142,6 +1275,66 @@ public class CameraTest {
     camera.resumePreview();
 
     verify(mockDartMessenger, times(1)).sendCameraErrorEvent(any());
+  }
+
+  @Test
+  public void resumePreview_shouldSendErrorEventWhenCaptureSessionIsStale()
+      throws CameraAccessException {
+    when(mockCaptureSession.setRepeatingRequest(any(), any(), any()))
+        .thenThrow(new IllegalStateException("CameraDevice was already closed"));
+
+    camera.resumePreview();
+
+    verify(mockDartMessenger, times(1)).sendCameraErrorEvent(any());
+  }
+
+  @Test
+  public void runPrecaptureSequence_shouldStartAePrecaptureSequence() throws CameraAccessException {
+    camera.onPrecapture();
+
+    verify(mockCaptureSession, times(2)).capture(any(), any(), any());
+    verify(mockCaptureSession, times(1)).setRepeatingRequest(any(), any(), any());
+  }
+
+  @Test
+  public void runPrecaptureSequence_shouldSkipCaptureWhenNullCaptureSession()
+      throws CameraAccessException {
+    camera.captureSession = null;
+
+    camera.onPrecapture();
+
+    verify(mockCaptureSession, never()).capture(any(), any(), any());
+  }
+
+  @Test
+  public void runPrecaptureSequence_shouldUseSessionSnapshotCapturedAtEntry()
+      throws CameraAccessException {
+    // runPrecaptureSequence() reads captureSession into a local variable once and reuses it for
+    // both the capture() call and the subsequent refreshPreviewCaptureSession() call. We inject a
+    // field mutation during the capture() call to simulate another thread clearing it, and this
+    // must not affect the refresh.
+    when(mockCaptureSession.capture(any(), any(), any()))
+        .thenAnswer(
+            (Answer<Integer>)
+                invocation -> {
+                  camera.captureSession = null;
+                  return 0;
+                });
+
+    camera.onPrecapture();
+
+    verify(mockCaptureSession, times(1)).setRepeatingRequest(any(), any(), any());
+  }
+
+  @Test
+  public void runPrecaptureSequence_shouldNotThrowWhenCaptureSessionIsStale()
+      throws CameraAccessException {
+    when(mockCaptureSession.capture(any(), any(), any()))
+        .thenThrow(new IllegalStateException("CameraDevice was already closed"));
+
+    camera.onPrecapture();
+
+    verify(mockCaptureSession, times(1)).capture(any(), any(), any());
   }
 
   @Test
@@ -1190,6 +1383,83 @@ public class CameraTest {
     // The session shuold not be aborted as part of this flow, as this breaks capture on some
     // devices, and causes delays on others.
     verify(mockCaptureSession, never()).abortCaptures();
+  }
+
+  @Test
+  public void onConverge_shouldReportErrorWhenCaptureSessionIsStale() throws CameraAccessException {
+    @SuppressWarnings("unchecked")
+    Messages.Result<String> mockResult = mock(Messages.Result.class);
+    ArrayList<CaptureRequest.Builder> mockRequestBuilders = new ArrayList<>();
+    mockRequestBuilders.add(mock(CaptureRequest.Builder.class));
+    CameraDeviceWrapper fakeCamera = new FakeCameraDeviceWrapper(mockRequestBuilders);
+    camera.cameraDevice = fakeCamera;
+    camera.flutterResult = mockResult;
+    camera.pictureImageReader = mock(ImageReader.class);
+    SensorOrientationFeature mockSensorOrientationFeature =
+        mockCameraFeatureFactory.createSensorOrientationFeature(mockCameraProperties, null, null);
+    DeviceOrientationManager mockDeviceOrientationManager = mock(DeviceOrientationManager.class);
+    when(mockSensorOrientationFeature.getDeviceOrientationManager())
+        .thenReturn(mockDeviceOrientationManager);
+    when(mockCaptureSession.capture(any(), any(), any()))
+        .thenThrow(new IllegalStateException("CameraDevice was already closed"));
+
+    camera.onConverged();
+
+    verify(mockDartMessenger, times(1)).error(eq(mockResult), eq("cameraAccess"), any(), eq(null));
+  }
+
+  @Test
+  public void onConverge_shouldSkipCaptureWhenNullCaptureSession() throws CameraAccessException {
+    ArrayList<CaptureRequest.Builder> mockRequestBuilders = new ArrayList<>();
+    mockRequestBuilders.add(mock(CaptureRequest.Builder.class));
+    CameraDeviceWrapper fakeCamera = new FakeCameraDeviceWrapper(mockRequestBuilders);
+    camera.cameraDevice = fakeCamera;
+    camera.pictureImageReader = mock(ImageReader.class);
+    SensorOrientationFeature mockSensorOrientationFeature =
+        mockCameraFeatureFactory.createSensorOrientationFeature(mockCameraProperties, null, null);
+    DeviceOrientationManager mockDeviceOrientationManager = mock(DeviceOrientationManager.class);
+    when(mockSensorOrientationFeature.getDeviceOrientationManager())
+        .thenReturn(mockDeviceOrientationManager);
+    camera.captureSession = null;
+
+    camera.onConverged();
+
+    verify(mockCaptureSession, never()).capture(any(), any(), any());
+  }
+
+  @Test
+  public void onConverge_stillCaptureCallback_ignoresStaleSessionCompletion()
+      throws CameraAccessException {
+    // Reproduces the crash from flutter/flutter#82031: a still-capture completion callback
+    // arrives after captureSession has already been replaced by a newer session. The stale
+    // callback must not run autofocus operations against the newer session.
+    ArrayList<CaptureRequest.Builder> mockRequestBuilders = new ArrayList<>();
+    mockRequestBuilders.add(mock(CaptureRequest.Builder.class));
+    CameraDeviceWrapper fakeCamera = new FakeCameraDeviceWrapper(mockRequestBuilders);
+    camera.cameraDevice = fakeCamera;
+    camera.pictureImageReader = mock(ImageReader.class);
+    SensorOrientationFeature mockSensorOrientationFeature =
+        mockCameraFeatureFactory.createSensorOrientationFeature(mockCameraProperties, null, null);
+    DeviceOrientationManager mockDeviceOrientationManager = mock(DeviceOrientationManager.class);
+    when(mockSensorOrientationFeature.getDeviceOrientationManager())
+        .thenReturn(mockDeviceOrientationManager);
+
+    ArgumentCaptor<CameraCaptureSession.CaptureCallback> callbackCaptor =
+        ArgumentCaptor.forClass(CameraCaptureSession.CaptureCallback.class);
+
+    camera.onConverged();
+
+    verify(mockCaptureSession).capture(any(), callbackCaptor.capture(), any());
+    CameraCaptureSession.CaptureCallback stillCaptureCallback = callbackCaptor.getValue();
+
+    // Simulate the capture session being replaced before the still-capture callback fires.
+    CameraCaptureSession newerCaptureSession = mock(CameraCaptureSession.class);
+    camera.captureSession = newerCaptureSession;
+
+    stillCaptureCallback.onCaptureCompleted(
+        mockCaptureSession, mock(CaptureRequest.class), mock(TotalCaptureResult.class));
+
+    verify(newerCaptureSession, never()).capture(any(), any(), any());
   }
 
   @Test
