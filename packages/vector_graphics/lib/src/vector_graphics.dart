@@ -538,6 +538,7 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
         container: widget.semanticsLabel != null,
         image: true,
         label: widget.semanticsLabel ?? '',
+        textDirection: Directionality.maybeOf(context) ?? TextDirection.ltr,
         child: child,
       );
     }
