@@ -1,0 +1,55 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.annotation.NonNull;
+import androidx.camera.core.MeteringPointFactory;
+import androidx.camera.core.Preview;
+import androidx.camera.view.PreviewView;
+
+class PreviewViewProxyApi extends PigeonApiPreviewView {
+  // Cached previewView.
+  PreviewView previewView;
+
+  PreviewViewProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public ProxyApiRegistrar getPigeonRegistrar() {
+    return (ProxyApiRegistrar) super.getPigeonRegistrar();
+  }
+
+  @NonNull
+  @Override
+  public PreviewView pigeon_defaultConstructor() {
+    PreviewView previewView = new PreviewView(getPigeonRegistrar().getContext());
+    previewView.setLayoutParams(
+        new android.view.ViewGroup.LayoutParams(
+            android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+            android.view.ViewGroup.LayoutParams.MATCH_PARENT));
+    previewView.setScaleType(PreviewView.ScaleType.FILL_CENTER);
+    return previewView;
+  }
+
+  @NonNull
+  @Override
+  public void registerPreviewView(PreviewView pigeon_instance) {
+    getPigeonRegistrar().registerPlatformView(pigeon_instance);
+  }
+
+  @NonNull
+  @Override
+  public Preview.SurfaceProvider getSurfaceProvider(PreviewView pigeon_instance) {
+    return pigeon_instance.getSurfaceProvider();
+  }
+
+    @NonNull
+    @Override
+    public MeteringPointFactory getMeteringPointFactory(PreviewView pigeon_instance) {
+        return pigeon_instance.getMeteringPointFactory();
+    }
+}

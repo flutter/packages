@@ -31,6 +31,7 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
         new ProxyApiRegistrar(
             binding.getBinaryMessenger(),
             binding.getApplicationContext(),
+            binding.getPlatformViewRegistry(),
             binding.getTextureRegistry());
     proxyApiRegistrar.setUp();
   }

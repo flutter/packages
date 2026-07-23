@@ -7,17 +7,26 @@ import 'dart:math' show Point;
 
 import 'package:async/async.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
-import 'package:flutter/foundation.dart' show Uint8List;
-import 'package:flutter/services.dart' show DeviceOrientation, PlatformException;
-import 'package:flutter/widgets.dart' show Texture, Widget, visibleForTesting;
+import 'package:flutter/foundation.dart' show Factory, Uint8List;
+import 'package:flutter/gestures.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart'
+    show
+        AndroidViewController,
+        DeviceOrientation,
+        PlatformException,
+        PlatformViewsService,
+        StandardMessageCodec;
+import 'package:flutter/widgets.dart' hide AspectRatio;
 import 'package:stream_transform/stream_transform.dart';
 import 'camerax_library.dart';
-import 'rotated_preview_delegate.dart';
 
 /// The Android implementation of [CameraPlatform] that uses the CameraX library.
 class AndroidCameraCameraX extends CameraPlatform {
   /// Constructs an [AndroidCameraCameraX].
   AndroidCameraCameraX();
+
+  final Map<int, double> _cameraLandscapeAspectRatios = <int, double>{};
 
   /// Registers this class as the default instance of [CameraPlatform].
   static void registerWith() {
@@ -234,7 +243,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Whether or not a default focus point of the entire sensor area was focused
   /// and locked.
   ///
-  /// This should only be true if [setExposureMode] was called to set
+  /// This should only be true if [setFocusMode] was called to set
   /// [FocusMode.locked] and no previous focus point was set via
   /// [setFocusPoint].
   bool _defaultFocusPointLocked = false;
@@ -254,18 +263,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   late double sensorOrientationDegrees;
 
-  /// Whether or not the Android surface producer automatically handles
-  /// correcting the rotation of camera previews for the device this plugin runs on.
-  late bool _handlesCropAndRotation;
-
-  /// The initial orientation of the device when the camera is created.
-  late DeviceOrientation _initialDeviceOrientation;
-
-  /// The initial rotation of the Android default display when the camera is created.
-  ///
-  /// This is expressed in terms of one of the [Surface] rotation constant.
-  late int _initialDefaultDisplayRotation;
-
   /// Whether or not audio should be enabled for recording video if permission is
   /// granted.
   @visibleForTesting
@@ -280,11 +277,15 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The configured target FPS range for the camera.
   CameraIntegerRange? _targetFpsRange;
 
-  /// The ID of the surface texture that the camera preview is drawn to.
-  late int _flutterSurfaceTextureId;
+  /// The ID of the currently active camera instance.
+  int _cameraId = -1;
+  int _nextCameraId = 0;
 
   /// The configured format of outputted images from image streaming.
   int? _imageAnalysisOutputImageFormat;
+
+  // Platform view camera preview.
+  PreviewView? _previewView;
 
   /// Returns list of all available cameras and their descriptions.
   @override
@@ -400,14 +401,21 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Retrieve a fresh ProcessCameraProvider instance.
     processCameraProvider ??= await ProcessCameraProvider.getInstance();
-    unawaited(processCameraProvider!.unbindAll());
+    await processCameraProvider!.unbindAll();
 
-    // Configure Preview instance.
     preview = Preview(
       resolutionSelector: _presetResolutionSelector,
       targetFpsRange: _targetFpsRange,
     );
-    _flutterSurfaceTextureId = await preview!.setSurfaceProvider(systemServicesManager);
+
+    if (_previewView == null) {
+      _previewView = PreviewView();
+      await _previewView!.registerPreviewView();
+    }
+
+    final SurfaceProvider surfaceProvider = await _previewView!.getSurfaceProvider();
+    await preview!.setSurfaceProvider(surfaceProvider);
+    _cameraId = _nextCameraId++;
 
     // Configure ImageCapture instance.
     imageCapture = ImageCapture(
@@ -426,13 +434,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Retrieve info required for correcting the rotation of the camera preview
     // if necessary.
     sensorOrientationDegrees = cameraDescription.sensorOrientation.toDouble();
-    _handlesCropAndRotation = await preview!.surfaceProducerHandlesCropAndRotation();
-    _initialDeviceOrientation = _deserializeDeviceOrientation(
-      await deviceOrientationManager.getUiOrientation(),
-    );
-    _initialDefaultDisplayRotation = await deviceOrientationManager.getDefaultDisplayRotation();
-
-    return _flutterSurfaceTextureId;
+    return _cameraId;
   }
 
   /// Initializes the camera with ID [cameraId] on the device.
@@ -479,7 +481,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       imageCapture!,
       imageAnalysis!,
     ]);
-    await _updateCameraInfoAndLiveCameraState(_flutterSurfaceTextureId);
+    await _updateCameraInfoAndLiveCameraState(_cameraId);
     previewInitiallyBound = true;
     _previewIsPaused = false;
 
@@ -513,7 +515,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Releases the resources of the accessed camera with ID [cameraId].
   @override
   Future<void> dispose(int cameraId) async {
-    await preview?.releaseSurfaceProvider();
+    await preview?.setSurfaceProvider(null);
     await liveCameraState?.removeObservers();
     await processCameraProvider?.unbindAll();
     await imageAnalysis?.clearAnalyzer();
@@ -971,7 +973,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Retrieve info required for correcting the rotation of the camera preview
     sensorOrientationDegrees = description.sensorOrientation.toDouble();
 
-    await _updateCameraInfoAndLiveCameraState(_flutterSurfaceTextureId);
+    await _updateCameraInfoAndLiveCameraState(_cameraId);
   }
 
   /// Resume the paused preview for the camera with ID [cameraId].
@@ -997,20 +999,40 @@ class AndroidCameraCameraX extends CameraPlatform {
       );
     }
 
-    final Stream<DeviceOrientation> deviceOrientationStream = onDeviceOrientationChanged().map(
-      (DeviceOrientationChangedEvent e) => e.orientation,
-    );
-    final Widget preview = Texture(textureId: cameraId);
+    // This is used in the platform side to register the view.
+    const viewType = 'plugins.flutter.dev/camera_android_camerax';
+    // Pass parameters to the platform side.
+    const creationParams = <String, dynamic>{};
 
-    return RotatedPreviewDelegate(
-      handlesCropAndRotation: _handlesCropAndRotation,
-      initialDeviceOrientation: _initialDeviceOrientation,
-      initialDefaultDisplayRotation: _initialDefaultDisplayRotation,
-      deviceOrientationStream: deviceOrientationStream,
-      sensorOrientationDegrees: sensorOrientationDegrees,
-      cameraIsFrontFacing: cameraIsFrontFacing,
-      deviceOrientationManager: deviceOrientationManager,
-      child: preview,
+    final Widget platformViewLink = PlatformViewLink(
+      viewType: viewType,
+      surfaceFactory: (context, controller) {
+        return AndroidViewSurface(
+          controller: controller as AndroidViewController,
+          gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
+          hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+        );
+      },
+      onCreatePlatformView: (params) {
+        return PlatformViewsService.initSurfaceAndroidView(
+            id: params.id,
+            viewType: viewType,
+            layoutDirection: TextDirection.ltr,
+            creationParams: creationParams,
+            creationParamsCodec: const StandardMessageCodec(),
+            onFocus: () {
+              params.onFocusChanged(true);
+            },
+          )
+          ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
+          ..create();
+      },
+    );
+
+    return Builder(
+      builder: (BuildContext context) {
+        return Center(child: platformViewLink);
+      },
     );
   }
 
@@ -1268,6 +1290,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     );
     return cameraImageDataStreamController!.stream;
   }
+
+  @override
+  bool handlesRotationNatively() => true;
 
   // Methods for binding UseCases to the lifecycle of the camera controlled
   // by a ProcessCameraProvider instance:

@@ -345,4 +345,7 @@ abstract class CameraPlatform extends PlatformInterface {
     // No-op by default. Platforms that support setting the JPEG quality
     // override this method.
   }
+
+  /// Check whether this platform handles rotation natively.
+  bool handlesRotationNatively() => false;
 }

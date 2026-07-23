@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -30,9 +29,9 @@ class CameraPreview extends StatelessWidget {
                     ? controller.value.aspectRatio
                     : (1 / controller.value.aspectRatio),
                 child: Stack(
-                  fit: StackFit.expand,
-                  children: <Widget>[
-                    _wrapInRotatedBox(child: controller.buildPreview()),
+                fit: StackFit.expand,
+                children: <Widget>[
+                    controller.buildPreview(),
                     child ?? Container(),
                   ],
                 ),
@@ -41,14 +40,7 @@ class CameraPreview extends StatelessWidget {
             child: child,
           )
         : Container();
-  }
-
-  Widget _wrapInRotatedBox({required Widget child}) {
-    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) {
-      return child;
-    }
-
-    return RotatedBox(quarterTurns: _getQuarterTurns(), child: child);
+  
   }
 
   bool _isLandscape() {
@@ -56,16 +48,6 @@ class CameraPreview extends StatelessWidget {
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ].contains(_getApplicableOrientation());
-  }
-
-  int _getQuarterTurns() {
-    final turns = <DeviceOrientation, int>{
-      DeviceOrientation.portraitUp: 0,
-      DeviceOrientation.landscapeRight: 1,
-      DeviceOrientation.portraitDown: 2,
-      DeviceOrientation.landscapeLeft: 3,
-    };
-    return turns[_getApplicableOrientation()]!;
   }
 
   DeviceOrientation _getApplicableOrientation() {
