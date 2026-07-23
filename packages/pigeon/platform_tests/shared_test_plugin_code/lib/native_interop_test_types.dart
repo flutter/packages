@@ -274,45 +274,48 @@ final Map<int, NativeInteropAllTypes?> allTypesClassMap = <int, NativeInteropAll
   1: null,
 };
 
-final NIAllNullableTypes genericNIAllNullableTypes = NIAllNullableTypes(
-  aNullableBool: true,
-  aNullableInt: regularInt,
-  aNullableInt64: biggerThanBigInt,
-  aNullableDouble: doublePi,
-  aNullableString: 'Hello host!',
-  aNullableByteArray: Uint8List.fromList(<int>[1, 2, 3]),
-  aNullable4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
-  aNullable8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
-  aNullableFloatArray: Float64List.fromList(<double>[2.71828, doublePi]),
-  aNullableEnum: NativeInteropAnEnum.fourHundredTwentyTwo,
-  aNullableObject: 0,
-  list: list,
-  stringList: stringList,
-  intList: intList,
-  doubleList: doubleList,
-  boolList: boolList,
-  enumList: enumList,
-  objectList: list,
-  listList: listList,
-  mapList: mapList,
-  map: map,
-  stringMap: stringMap,
-  intMap: intMap,
-  enumMap: enumMap,
-  objectMap: map,
-  listMap: listMap,
-  mapMap: mapMap,
-);
+final NativeInteropAllNullableTypes genericNativeInteropAllNullableTypes =
+    NativeInteropAllNullableTypes(
+      aNullableBool: true,
+      aNullableInt: regularInt,
+      aNullableInt64: biggerThanBigInt,
+      aNullableDouble: doublePi,
+      aNullableString: 'Hello host!',
+      aNullableByteArray: Uint8List.fromList(<int>[1, 2, 3]),
+      aNullable4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
+      aNullable8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
+      aNullableFloatArray: Float64List.fromList(<double>[2.71828, doublePi]),
+      aNullableEnum: NativeInteropAnEnum.fourHundredTwentyTwo,
+      aNullableObject: 0,
+      list: list,
+      stringList: stringList,
+      intList: intList,
+      doubleList: doubleList,
+      boolList: boolList,
+      enumList: enumList,
+      objectList: list,
+      listList: listList,
+      mapList: mapList,
+      map: map,
+      stringMap: stringMap,
+      intMap: intMap,
+      enumMap: enumMap,
+      objectMap: map,
+      listMap: listMap,
+      mapMap: mapMap,
+    );
 
-final List<NIAllNullableTypes> nonNullNIAllNullableTypesList = <NIAllNullableTypes>[
-  genericNIAllNullableTypes,
-  NIAllNullableTypes(),
-];
+final List<NativeInteropAllNullableTypes> nonNullNativeInteropAllNullableTypesList =
+    <NativeInteropAllNullableTypes>[
+      genericNativeInteropAllNullableTypes,
+      NativeInteropAllNullableTypes(),
+    ];
 
-final Map<int, NIAllNullableTypes> nonNullNIAllNullableTypesMap = <int, NIAllNullableTypes>{
-  0: genericNIAllNullableTypes,
-  1: NIAllNullableTypes(),
-};
+final Map<int, NativeInteropAllNullableTypes> nonNullNativeInteropAllNullableTypesMap =
+    <int, NativeInteropAllNullableTypes>{
+      0: genericNativeInteropAllNullableTypes,
+      1: NativeInteropAllNullableTypes(),
+    };
 
 final List<NativeInteropAllNullableTypesWithoutRecursion>
 nonNullNativeInteropAllNullableTypesWithoutRecursionList =
@@ -328,54 +331,56 @@ nonNullNativeInteropAllNullableTypesWithoutRecursionMap =
       1: NativeInteropAllNullableTypesWithoutRecursion(),
     };
 
-final List<NIAllNullableTypes?> allNullableTypesList = <NIAllNullableTypes?>[
-  genericNIAllNullableTypes,
-  NIAllNullableTypes(),
+final List<NativeInteropAllNullableTypes?> allNullableTypesList = <NativeInteropAllNullableTypes?>[
+  genericNativeInteropAllNullableTypes,
+  NativeInteropAllNullableTypes(),
   null,
 ];
 
-final Map<int, NIAllNullableTypes?> allNullableTypesMap = <int, NIAllNullableTypes?>{
-  0: genericNIAllNullableTypes,
-  1: NIAllNullableTypes(),
-  2: null,
-};
+final Map<int, NativeInteropAllNullableTypes?> allNullableTypesMap =
+    <int, NativeInteropAllNullableTypes?>{
+      0: genericNativeInteropAllNullableTypes,
+      1: NativeInteropAllNullableTypes(),
+      2: null,
+    };
 
-final NIAllNullableTypes recursiveNIAllNullableTypes = NIAllNullableTypes(
-  aNullableBool: true,
-  aNullableInt: regularInt,
-  aNullableInt64: biggerThanBigInt,
-  aNullableDouble: doublePi,
-  aNullableString: 'Hello host!',
-  aNullableByteArray: Uint8List.fromList(<int>[1, 2, 3]),
-  aNullable4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
-  aNullable8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
-  aNullableFloatArray: Float64List.fromList(<double>[2.71828, doublePi]),
-  aNullableEnum: NativeInteropAnEnum.fourHundredTwentyTwo,
-  aNullableObject: 0,
-  allNullableTypes: genericNIAllNullableTypes,
-  list: list,
-  stringList: stringList,
-  intList: intList,
-  doubleList: doubleList,
-  boolList: boolList,
-  enumList: enumList,
-  objectList: list,
-  listList: listList,
-  mapList: mapList,
-  recursiveClassList: allNullableTypesList,
-  map: map,
-  stringMap: stringMap,
-  intMap: intMap,
-  enumMap: enumMap,
-  objectMap: map,
-  listMap: listMap,
-  mapMap: mapMap,
-  recursiveClassMap: allNullableTypesMap,
-);
+final NativeInteropAllNullableTypes recursiveNativeInteropAllNullableTypes =
+    NativeInteropAllNullableTypes(
+      aNullableBool: true,
+      aNullableInt: regularInt,
+      aNullableInt64: biggerThanBigInt,
+      aNullableDouble: doublePi,
+      aNullableString: 'Hello host!',
+      aNullableByteArray: Uint8List.fromList(<int>[1, 2, 3]),
+      aNullable4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
+      aNullable8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
+      aNullableFloatArray: Float64List.fromList(<double>[2.71828, doublePi]),
+      aNullableEnum: NativeInteropAnEnum.fourHundredTwentyTwo,
+      aNullableObject: 0,
+      allNullableTypes: genericNativeInteropAllNullableTypes,
+      list: list,
+      stringList: stringList,
+      intList: intList,
+      doubleList: doubleList,
+      boolList: boolList,
+      enumList: enumList,
+      objectList: list,
+      listList: listList,
+      mapList: mapList,
+      recursiveClassList: allNullableTypesList,
+      map: map,
+      stringMap: stringMap,
+      intMap: intMap,
+      enumMap: enumMap,
+      objectMap: map,
+      listMap: listMap,
+      mapMap: mapMap,
+      recursiveClassMap: allNullableTypesMap,
+    );
 
 NativeInteropAllClassesWrapper classWrapperMaker() {
   return NativeInteropAllClassesWrapper(
-    allNullableTypes: recursiveNIAllNullableTypes,
+    allNullableTypes: recursiveNativeInteropAllNullableTypes,
     allNullableTypesWithoutRecursion: genericNativeInteropAllNullableTypesWithoutRecursion,
     allTypes: genericNativeInteropAllTypes,
     classList: allTypesClassList,
