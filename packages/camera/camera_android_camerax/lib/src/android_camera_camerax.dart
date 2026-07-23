@@ -11,6 +11,7 @@ import 'package:flutter/foundation.dart' show Uint8List;
 import 'package:flutter/services.dart' show DeviceOrientation, PlatformException;
 import 'package:flutter/widgets.dart' show Texture, Widget, visibleForTesting;
 import 'package:stream_transform/stream_transform.dart';
+
 import 'camerax_library.dart';
 import 'rotated_preview_delegate.dart';
 
@@ -1115,15 +1116,22 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Returns silently without doing anything if there is currently an active
   /// recording.
   ///
+  /// If [videoOutputPath] is specified, the video will be saved to that path.
+  /// Otherwise, it will be saved to a temporary directory.
+  ///
   /// Note that the preset resolution is used to configure the recording, but
   /// 240p ([ResolutionPreset.low]) is unsupported and will fallback to
   /// configure the recording as the next highest available quality.
   ///
   /// This method is deprecated in favour of [startVideoCapturing].
   @override
-  Future<void> startVideoRecording(int cameraId, {Duration? maxVideoDuration}) async {
+  Future<void> startVideoRecording(
+    int cameraId, {
+    Duration? maxVideoDuration,
+    String? videoOutputPath,
+  }) async {
     // Ignore maxVideoDuration, as it is unimplemented and deprecated.
-    return startVideoCapturing(VideoCaptureOptions(cameraId));
+    return startVideoCapturing(VideoCaptureOptions(cameraId, videoOutputPath: videoOutputPath));
   }
 
   /// Starts a video recording and/or streaming session.
@@ -1155,7 +1163,8 @@ class AndroidCameraCameraX extends CameraPlatform {
       );
     }
 
-    videoOutputPath = await systemServicesManager.getTempFilePath(videoPrefix, '.mp4');
+    videoOutputPath =
+        options.videoOutputPath ?? await systemServicesManager.getTempFilePath(videoPrefix, '.mp4');
     pendingRecording = await recorder!.prepareRecording(videoOutputPath!);
 
     if (options.enablePersistentRecording) {

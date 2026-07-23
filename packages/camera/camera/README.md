@@ -6,9 +6,9 @@
 
 A Flutter plugin for iOS, Android and Web allowing access to the device cameras.
 
-|                | Android | iOS       | Web                    |
-|----------------|---------|-----------|------------------------|
-| **Support**    | SDK 24+ | iOS 13.0+ | [See `camera_web `][1] |
+|             | Android | iOS       | Web                    |
+| ----------- | ------- | --------- | ---------------------- |
+| **Support** | SDK 24+ | iOS 13.0+ | [See `camera_web `][1] |
 
 ## Features
 
@@ -91,6 +91,24 @@ Here is a list of all permission error codes that can be thrown:
 - `AudioAccessDeniedWithoutPrompt`: iOS only for now. Thrown when user has previously denied the permission. iOS does not allow prompting alert dialog a second time. Users will have to go to Settings > Privacy > Microphone in order to enable audio access.
 
 - `AudioAccessRestricted`: iOS only for now. Thrown when audio access is restricted and users cannot grant permission (parental control).
+
+### Custom Video Recording Path
+
+You can optionally specify a `videoOutputPath` when calling `startVideoRecording()` to save the recorded video directly to a custom absolute file path on the device.
+
+```dart
+// Always ensure the path ends with the .mp4 extension
+await controller.startVideoRecording(
+  videoOutputPath: '/path/to/your/custom_video.mp4',
+);
+```
+
+#### Platform-Specific Considerations
+
+For platform-specific considerations when saving videos, please see the READMEs on pub.dev for their respective platforms:
+- [Android](https://pub.dev/packages/camera_android)
+- [iOS](https://pub.dev/packages/camera_avfoundation)
+- [Windows](https://pub.dev/packages/camera_windows)
 
 ### Example
 

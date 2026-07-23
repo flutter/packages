@@ -175,8 +175,8 @@ final class CameraApiImpl implements Messages.CameraApi {
   }
 
   @Override
-  public void startVideoRecording(@NonNull Boolean enableStream) {
-    camera.startVideoRecording(enableStream ? imageStreamChannel : null);
+  public void startVideoRecording(@NonNull Boolean enableStream, @Nullable String videoOutputPath) {
+    camera.startVideoRecording(enableStream ? imageStreamChannel : null, videoOutputPath);
   }
 
   @NonNull

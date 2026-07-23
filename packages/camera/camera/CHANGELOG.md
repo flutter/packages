@@ -1,3 +1,7 @@
+## 0.13.0
+
+* Adds `videoOutputPath` support to `startVideoRecording`.
+
 ## 0.12.0+2
 
 * Fixes a crash where a `CameraController` could update its value after being disposed, throwing "A CameraController was used after being disposed".
