@@ -35,7 +35,7 @@ import 'tooltip_visibility.dart';
 /// representation of the widget, which, for example, can be vocalized by a
 /// screen reader.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=EeEfD5fI-5Q}
+/// Learn more about [Tooltip] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=EeEfD5fI-5Q).
 ///
 /// <callout-box>
 ///
