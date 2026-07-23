@@ -507,8 +507,8 @@ struct SK2TransactionMessage: Hashable {
   var id: Int64
   var originalId: Int64
   var productId: String
-  var purchaseDate: String? = nil
-  var expirationDate: String? = nil
+  var purchaseDate: Double? = nil
+  var expirationDate: Double? = nil
   var purchasedQuantity: Int64
   var appAccountToken: String? = nil
   var receiptData: String? = nil
@@ -523,8 +523,8 @@ struct SK2TransactionMessage: Hashable {
     let id = pigeonVar_list[0] as! Int64
     let originalId = pigeonVar_list[1] as! Int64
     let productId = pigeonVar_list[2] as! String
-    let purchaseDate: String? = nilOrValue(pigeonVar_list[3])
-    let expirationDate: String? = nilOrValue(pigeonVar_list[4])
+    let purchaseDate: Double? = nilOrValue(pigeonVar_list[3])
+    let expirationDate: Double? = nilOrValue(pigeonVar_list[4])
     let purchasedQuantity = pigeonVar_list[5] as! Int64
     let appAccountToken: String? = nilOrValue(pigeonVar_list[6])
     let receiptData: String? = nilOrValue(pigeonVar_list[7])
