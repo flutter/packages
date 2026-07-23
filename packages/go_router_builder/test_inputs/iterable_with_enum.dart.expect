@@ -1,5 +1,6 @@
 RouteBase get $iterableWithEnumRoute => GoRouteData.$route(
       path: '/iterable-with-enum',
+      hasOverriddenOnExit: false,
       factory: $IterableWithEnumRoute._fromState,
     );
 
