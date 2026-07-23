@@ -147,7 +147,6 @@ const ColorScheme _colorSchemeLightMediumContrastM3 = ColorScheme(
   outline: Color(0xFF49454F),
   outlineVariant: Color(0xFF79747E),
   onInverseSurface: Color(0xFFFFFFFF),
-  // The following color roles have the same values as the roles in the light color scheme _colorSchemeLightM3.
   background: Color(0xFFFEF7FF),
   surface: Color(0xFFFEF7FF),
   surfaceBright: Color(0xFFFEF7FF),
@@ -200,7 +199,6 @@ const ColorScheme _colorSchemeLightHighContrastM3 = ColorScheme(
   outline: Color(0xFF322F37),
   outlineVariant: Color(0xFF49454F),
   onInverseSurface: Color(0xFFFFFFFF),
-  // The following color roles have the same values as the roles in the light color scheme _colorSchemeLightM3.
   background: Color(0xFFFEF7FF),
   surface: Color(0xFFFEF7FF),
   surfaceBright: Color(0xFFFEF7FF),
@@ -254,7 +252,6 @@ const ColorScheme _colorSchemeDarkMediumContrastM3 = ColorScheme(
   outlineVariant: Color(0xFF938F99),
   onInverseSurface: Color(0xFF1D1B20),
   inversePrimary: Color(0xFF4F378B),
-  // The following color roles have the same values as the roles in the dark color scheme _colorSchemeDarkM3.
   background: Color(0xFF141218),
   surface: Color(0xFF141218),
   surfaceBright: Color(0xFF3B383E),
@@ -307,7 +304,6 @@ const ColorScheme _colorSchemeDarkHighContrastM3 = ColorScheme(
   outlineVariant: Color(0xFFCAC4D0),
   onInverseSurface: Color(0xFF000000),
   inversePrimary: Color(0xFF381E72),
-  // The following color roles have the same values as the roles in the dark color scheme _colorSchemeDarkM3.
   background: Color(0xFF141218),
   surface: Color(0xFF141218),
   surfaceBright: Color(0xFF3B383E),
