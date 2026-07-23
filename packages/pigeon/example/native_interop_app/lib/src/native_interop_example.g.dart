@@ -179,7 +179,7 @@ class _PigeonFfiCodec {
     } else if (NSString.isA(value)) {
       return NSString.as(value).toDartString();
     } else if (ffi_bridge.NativeInteropExamplePigeonTypedData.isA(value)) {
-      return getValueFromPigeonTypedData(value as ffi_bridge.NativeInteropExamplePigeonTypedData);
+      return _getValueFromPigeonTypedData(value as ffi_bridge.NativeInteropExamplePigeonTypedData);
     } else if (NSArray.isA(value)) {
       final NSArray array = NSArray.as(value);
       final List<Object?> res = <Object?>[];
@@ -197,7 +197,7 @@ class _PigeonFfiCodec {
       }
       return res;
     } else if (ffi_bridge.NativeInteropExampleNumberWrapper.isA(value)) {
-      return convertNumberWrapperToDart(ffi_bridge.NativeInteropExampleNumberWrapper.as(value));
+      return _convertNumberWrapperToDart(ffi_bridge.NativeInteropExampleNumberWrapper.as(value));
     } else {
       throw ArgumentError.value(value);
     }
@@ -205,32 +205,32 @@ class _PigeonFfiCodec {
 
   static T writeValue<T extends ObjCObject?>(Object? value, {bool generic = false}) {
     if (value == null) {
-      if (isTypeOrNullableType<T>(ObjCObject) || isTypeOrNullableType<T>(NSObject)) {
+      if (_isTypeOrNullableType<T>(ObjCObject) || _isTypeOrNullableType<T>(NSObject)) {
         return ffi_bridge.NativeInteropExamplePigeonInternalNull() as T;
       }
       return null as T;
     }
     if (value is bool) {
       return (generic
-              ? convertToFfiNumberWrapper(value)
+              ? _convertToFfiNumberWrapper(value)
               : NSNumber.alloc().initWithLong(value ? 1 : 0))
           as T;
     } else if (value is double) {
-      return (generic ? convertToFfiNumberWrapper(value) : NSNumber.alloc().initWithDouble(value))
+      return (generic ? _convertToFfiNumberWrapper(value) : NSNumber.alloc().initWithDouble(value))
           as T;
       // ignore: avoid_double_and_int_checks
     } else if (value is int) {
-      return (generic ? convertToFfiNumberWrapper(value) : NSNumber.alloc().initWithLong(value))
+      return (generic ? _convertToFfiNumberWrapper(value) : NSNumber.alloc().initWithLong(value))
           as T;
     } else if (value is Enum) {
       return (generic
-              ? convertToFfiNumberWrapper(value)
+              ? _convertToFfiNumberWrapper(value)
               : NSNumber.alloc().initWithLong(value.index))
           as T;
     } else if (value is String) {
       return NSString(value) as T;
     } else if (value is TypedData) {
-      return toPigeonTypedData(value) as T;
+      return _toPigeonTypedData(value) as T;
     } else if (value is List) {
       final NSMutableArray res = NSMutableArray();
       for (final Object? entry in value) {
@@ -256,7 +256,7 @@ class _PigeonFfiCodec {
   }
 }
 
-ffi_bridge.NativeInteropExamplePigeonTypedData toPigeonTypedData(TypedData value) {
+ffi_bridge.NativeInteropExamplePigeonTypedData _toPigeonTypedData(TypedData value) {
   final int lengthInBytes = value.lengthInBytes;
   if (value is Uint8List) {
     final int length = value.length;
@@ -297,7 +297,7 @@ ffi_bridge.NativeInteropExamplePigeonTypedData toPigeonTypedData(TypedData value
   throw ArgumentError.value(value);
 }
 
-Object? getValueFromPigeonTypedData(ffi_bridge.NativeInteropExamplePigeonTypedData value) {
+Object? _getValueFromPigeonTypedData(ffi_bridge.NativeInteropExamplePigeonTypedData value) {
   final NSData data = value.data;
   final Pointer<Void> bytes = data.bytes;
   switch (value.type) {
@@ -316,7 +316,7 @@ Object? getValueFromPigeonTypedData(ffi_bridge.NativeInteropExamplePigeonTypedDa
   }
 }
 
-Object? convertNumberWrapperToDart(ffi_bridge.NativeInteropExampleNumberWrapper value) {
+Object? _convertNumberWrapperToDart(ffi_bridge.NativeInteropExampleNumberWrapper value) {
   switch (value.type) {
     case 1:
       return value.number.longValue;
@@ -329,7 +329,7 @@ Object? convertNumberWrapperToDart(ffi_bridge.NativeInteropExampleNumberWrapper 
   }
 }
 
-ffi_bridge.NativeInteropExampleNumberWrapper convertToFfiNumberWrapper(Object value) {
+ffi_bridge.NativeInteropExampleNumberWrapper _convertToFfiNumberWrapper(Object value) {
   switch (value) {
     case int _:
       return ffi_bridge.NativeInteropExampleNumberWrapper.alloc().initWithNumber(
@@ -351,8 +351,8 @@ ffi_bridge.NativeInteropExampleNumberWrapper convertToFfiNumberWrapper(Object va
   }
 }
 
-bool isType<T>(Type t) => T == t;
-bool isTypeOrNullableType<T>(Type t) => isType<T>(t) || isType<T?>(t);
+bool _isType<T>(Type t) => T == t;
+bool _isTypeOrNullableType<T>(Type t) => _isType<T>(t) || _isType<T?>(t);
 
 void _throwNoInstanceError(String channelName) {
   String nameString = 'named $channelName';

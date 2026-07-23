@@ -454,7 +454,7 @@ class _PigeonFfiCodec {
     } else if (NSString.isA(value)) {
       return NSString.as(value).toDartString();
     } else if (ffi_bridge.NiTestsPigeonTypedData.isA(value)) {
-      return getValueFromPigeonTypedData(value as ffi_bridge.NiTestsPigeonTypedData);
+      return _getValueFromPigeonTypedData(value as ffi_bridge.NiTestsPigeonTypedData);
     } else if (NSArray.isA(value)) {
       final NSArray array = NSArray.as(value);
       final List<Object?> res = <Object?>[];
@@ -472,7 +472,7 @@ class _PigeonFfiCodec {
       }
       return res;
     } else if (ffi_bridge.NiTestsNumberWrapper.isA(value)) {
-      return convertNumberWrapperToDart(ffi_bridge.NiTestsNumberWrapper.as(value));
+      return _convertNumberWrapperToDart(ffi_bridge.NiTestsNumberWrapper.as(value));
     } else if (ffi_bridge.NIUnusedClassBridge.isA(value)) {
       return NIUnusedClass.fromFfi(ffi_bridge.NIUnusedClassBridge.as(value));
     } else if (ffi_bridge.NIAllTypesBridge.isA(value)) {
@@ -492,57 +492,57 @@ class _PigeonFfiCodec {
 
   static T writeValue<T extends ObjCObject?>(Object? value, {bool generic = false}) {
     if (value == null) {
-      if (isTypeOrNullableType<T>(ObjCObject) || isTypeOrNullableType<T>(NSObject)) {
+      if (_isTypeOrNullableType<T>(ObjCObject) || _isTypeOrNullableType<T>(NSObject)) {
         return ffi_bridge.NiTestsPigeonInternalNull() as T;
       }
       return null as T;
     }
     if (value is bool) {
       return (generic
-              ? convertToFfiNumberWrapper(value)
+              ? _convertToFfiNumberWrapper(value)
               : NSNumber.alloc().initWithLong(value ? 1 : 0))
           as T;
     } else if (value is double) {
-      return (generic ? convertToFfiNumberWrapper(value) : NSNumber.alloc().initWithDouble(value))
+      return (generic ? _convertToFfiNumberWrapper(value) : NSNumber.alloc().initWithDouble(value))
           as T;
       // ignore: avoid_double_and_int_checks
     } else if (value is int) {
-      return (generic ? convertToFfiNumberWrapper(value) : NSNumber.alloc().initWithLong(value))
+      return (generic ? _convertToFfiNumberWrapper(value) : NSNumber.alloc().initWithLong(value))
           as T;
     } else if (value is Enum) {
       return (generic
-              ? convertToFfiNumberWrapper(value)
+              ? _convertToFfiNumberWrapper(value)
               : NSNumber.alloc().initWithLong(value.index))
           as T;
     } else if (value is String) {
       return NSString(value) as T;
     } else if (value is TypedData) {
-      return toPigeonTypedData(value) as T;
-    } else if (value is List<String> && isTypeOrNullableType<NSMutableArray>(T)) {
+      return _toPigeonTypedData(value) as T;
+    } else if (value is List<String> && _isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final String entry in value) {
         res.addObject(writeValue<NSString>(entry, generic: true));
       }
       return res as T;
-    } else if (value is List<int> && isTypeOrNullableType<NSMutableArray>(T)) {
+    } else if (value is List<int> && _isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final int entry in value) {
         res.addObject(writeValue<NSNumber>(entry, generic: true));
       }
       return res as T;
-    } else if (value is List<double> && isTypeOrNullableType<NSMutableArray>(T)) {
+    } else if (value is List<double> && _isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final double entry in value) {
         res.addObject(writeValue<NSNumber>(entry, generic: true));
       }
       return res as T;
-    } else if (value is List<bool> && isTypeOrNullableType<NSMutableArray>(T)) {
+    } else if (value is List<bool> && _isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final bool entry in value) {
         res.addObject(writeValue<NSNumber>(entry, generic: true));
       }
       return res as T;
-    } else if (value is List<NIAllTypes?> && isTypeOrNullableType<NSMutableArray>(T)) {
+    } else if (value is List<NIAllTypes?> && _isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final NIAllTypes? entry in value) {
         res.addObject(
@@ -552,19 +552,19 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
-    } else if (value is List<NIAnEnum> && isTypeOrNullableType<NSMutableArray>(T)) {
+    } else if (value is List<NIAnEnum> && _isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final NIAnEnum entry in value) {
         res.addObject(writeValue<NSNumber>(entry, generic: true));
       }
       return res as T;
-    } else if (value is List<NIAllNullableTypes> && isTypeOrNullableType<NSMutableArray>(T)) {
+    } else if (value is List<NIAllNullableTypes> && _isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final NIAllNullableTypes entry in value) {
         res.addObject(writeValue<ffi_bridge.NIAllNullableTypesBridge>(entry, generic: true));
       }
       return res as T;
-    } else if (value is List<String?> && isTypeOrNullableType<NSMutableArray>(T)) {
+    } else if (value is List<String?> && _isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final String? entry in value) {
         res.addObject(
@@ -574,7 +574,7 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
-    } else if (value is List<int?> && isTypeOrNullableType<NSMutableArray>(T)) {
+    } else if (value is List<int?> && _isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final int? entry in value) {
         res.addObject(
@@ -584,7 +584,7 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
-    } else if (value is List<double?> && isTypeOrNullableType<NSMutableArray>(T)) {
+    } else if (value is List<double?> && _isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final double? entry in value) {
         res.addObject(
@@ -594,7 +594,7 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
-    } else if (value is List<bool?> && isTypeOrNullableType<NSMutableArray>(T)) {
+    } else if (value is List<bool?> && _isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final bool? entry in value) {
         res.addObject(
@@ -604,7 +604,7 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
-    } else if (value is List<NIAnEnum?> && isTypeOrNullableType<NSMutableArray>(T)) {
+    } else if (value is List<NIAnEnum?> && _isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final NIAnEnum? entry in value) {
         res.addObject(
@@ -614,7 +614,7 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
-    } else if (value is List<NIAllNullableTypes?> && isTypeOrNullableType<NSMutableArray>(T)) {
+    } else if (value is List<NIAllNullableTypes?> && _isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final NIAllNullableTypes? entry in value) {
         res.addObject(
@@ -625,7 +625,7 @@ class _PigeonFfiCodec {
       }
       return res as T;
     } else if (value is List<NIAllNullableTypesWithoutRecursion?> &&
-        isTypeOrNullableType<NSMutableArray>(T)) {
+        _isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final NIAllNullableTypesWithoutRecursion? entry in value) {
         res.addObject(
@@ -638,13 +638,13 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
-    } else if (value is List<List<Object?>> && isTypeOrNullableType<NSMutableArray>(T)) {
+    } else if (value is List<List<Object?>> && _isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final List<Object?> entry in value) {
         res.addObject(writeValue<NSArray>(entry, generic: true));
       }
       return res as T;
-    } else if (value is List<List<Object?>?> && isTypeOrNullableType<NSMutableArray>(T)) {
+    } else if (value is List<List<Object?>?> && _isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final List<Object?>? entry in value) {
         res.addObject(
@@ -654,13 +654,13 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
-    } else if (value is List<Map<Object?, Object?>> && isTypeOrNullableType<NSMutableArray>(T)) {
+    } else if (value is List<Map<Object?, Object?>> && _isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final Map<Object?, Object?> entry in value) {
         res.addObject(writeValue<NSDictionary>(entry, generic: true));
       }
       return res as T;
-    } else if (value is List<Map<Object?, Object?>?> && isTypeOrNullableType<NSMutableArray>(T)) {
+    } else if (value is List<Map<Object?, Object?>?> && _isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final Map<Object?, Object?>? entry in value) {
         res.addObject(
@@ -678,7 +678,7 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
-    } else if (value is Map<String, String> && isTypeOrNullableType<NSDictionary>(T)) {
+    } else if (value is Map<String, String> && _isTypeOrNullableType<NSDictionary>(T)) {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<String, String> entry in value.entries) {
         res.setObject(
@@ -687,7 +687,7 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
-    } else if (value is Map<int, int> && isTypeOrNullableType<NSDictionary>(T)) {
+    } else if (value is Map<int, int> && _isTypeOrNullableType<NSDictionary>(T)) {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<int, int> entry in value.entries) {
         res.setObject(
@@ -696,7 +696,7 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
-    } else if (value is Map<NIAnEnum, NIAnEnum> && isTypeOrNullableType<NSDictionary>(T)) {
+    } else if (value is Map<NIAnEnum, NIAnEnum> && _isTypeOrNullableType<NSDictionary>(T)) {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<NIAnEnum, NIAnEnum> entry in value.entries) {
         res.setObject(
@@ -705,7 +705,7 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
-    } else if (value is Map<int, NIAllNullableTypes> && isTypeOrNullableType<NSDictionary>(T)) {
+    } else if (value is Map<int, NIAllNullableTypes> && _isTypeOrNullableType<NSDictionary>(T)) {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<int, NIAllNullableTypes> entry in value.entries) {
         res.setObject(
@@ -714,7 +714,7 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
-    } else if (value is Map<int?, NIAllTypes?> && isTypeOrNullableType<NSDictionary>(T)) {
+    } else if (value is Map<int?, NIAllTypes?> && _isTypeOrNullableType<NSDictionary>(T)) {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<int?, NIAllTypes?> entry in value.entries) {
         res.setObject(
@@ -723,7 +723,7 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
-    } else if (value is Map<String?, String?> && isTypeOrNullableType<NSDictionary>(T)) {
+    } else if (value is Map<String?, String?> && _isTypeOrNullableType<NSDictionary>(T)) {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<String?, String?> entry in value.entries) {
         res.setObject(
@@ -732,7 +732,7 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
-    } else if (value is Map<int?, int?> && isTypeOrNullableType<NSDictionary>(T)) {
+    } else if (value is Map<int?, int?> && _isTypeOrNullableType<NSDictionary>(T)) {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<int?, int?> entry in value.entries) {
         res.setObject(
@@ -741,7 +741,7 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
-    } else if (value is Map<NIAnEnum?, NIAnEnum?> && isTypeOrNullableType<NSDictionary>(T)) {
+    } else if (value is Map<NIAnEnum?, NIAnEnum?> && _isTypeOrNullableType<NSDictionary>(T)) {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<NIAnEnum?, NIAnEnum?> entry in value.entries) {
         res.setObject(
@@ -750,7 +750,7 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
-    } else if (value is Map<int?, NIAllNullableTypes?> && isTypeOrNullableType<NSDictionary>(T)) {
+    } else if (value is Map<int?, NIAllNullableTypes?> && _isTypeOrNullableType<NSDictionary>(T)) {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<int?, NIAllNullableTypes?> entry in value.entries) {
         res.setObject(
@@ -760,7 +760,7 @@ class _PigeonFfiCodec {
       }
       return res as T;
     } else if (value is Map<int?, NIAllNullableTypesWithoutRecursion?> &&
-        isTypeOrNullableType<NSDictionary>(T)) {
+        _isTypeOrNullableType<NSDictionary>(T)) {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<int?, NIAllNullableTypesWithoutRecursion?> entry in value.entries) {
         res.setObject(
@@ -769,7 +769,7 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
-    } else if (value is Map<int, List<Object?>> && isTypeOrNullableType<NSDictionary>(T)) {
+    } else if (value is Map<int, List<Object?>> && _isTypeOrNullableType<NSDictionary>(T)) {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<int, List<Object?>> entry in value.entries) {
         res.setObject(
@@ -778,7 +778,7 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
-    } else if (value is Map<int?, List<Object?>?> && isTypeOrNullableType<NSDictionary>(T)) {
+    } else if (value is Map<int?, List<Object?>?> && _isTypeOrNullableType<NSDictionary>(T)) {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<int?, List<Object?>?> entry in value.entries) {
         res.setObject(
@@ -787,7 +787,7 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
-    } else if (value is Map<int, Map<Object?, Object?>> && isTypeOrNullableType<NSDictionary>(T)) {
+    } else if (value is Map<int, Map<Object?, Object?>> && _isTypeOrNullableType<NSDictionary>(T)) {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<int, Map<Object?, Object?>> entry in value.entries) {
         res.setObject(
@@ -797,7 +797,7 @@ class _PigeonFfiCodec {
       }
       return res as T;
     } else if (value is Map<int?, Map<Object?, Object?>?> &&
-        isTypeOrNullableType<NSDictionary>(T)) {
+        _isTypeOrNullableType<NSDictionary>(T)) {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<int?, Map<Object?, Object?>?> entry in value.entries) {
         res.setObject(
@@ -831,7 +831,7 @@ class _PigeonFfiCodec {
   }
 }
 
-ffi_bridge.NiTestsPigeonTypedData toPigeonTypedData(TypedData value) {
+ffi_bridge.NiTestsPigeonTypedData _toPigeonTypedData(TypedData value) {
   final int lengthInBytes = value.lengthInBytes;
   if (value is Uint8List) {
     final int length = value.length;
@@ -872,7 +872,7 @@ ffi_bridge.NiTestsPigeonTypedData toPigeonTypedData(TypedData value) {
   throw ArgumentError.value(value);
 }
 
-Object? getValueFromPigeonTypedData(ffi_bridge.NiTestsPigeonTypedData value) {
+Object? _getValueFromPigeonTypedData(ffi_bridge.NiTestsPigeonTypedData value) {
   final NSData data = value.data;
   final Pointer<Void> bytes = data.bytes;
   switch (value.type) {
@@ -891,7 +891,7 @@ Object? getValueFromPigeonTypedData(ffi_bridge.NiTestsPigeonTypedData value) {
   }
 }
 
-Object? convertNumberWrapperToDart(ffi_bridge.NiTestsNumberWrapper value) {
+Object? _convertNumberWrapperToDart(ffi_bridge.NiTestsNumberWrapper value) {
   switch (value.type) {
     case 1:
       return value.number.longValue;
@@ -908,7 +908,7 @@ Object? convertNumberWrapperToDart(ffi_bridge.NiTestsNumberWrapper value) {
   }
 }
 
-ffi_bridge.NiTestsNumberWrapper convertToFfiNumberWrapper(Object value) {
+ffi_bridge.NiTestsNumberWrapper _convertToFfiNumberWrapper(Object value) {
   switch (value) {
     case int _:
       return ffi_bridge.NiTestsNumberWrapper.alloc().initWithNumber(
@@ -934,8 +934,8 @@ ffi_bridge.NiTestsNumberWrapper convertToFfiNumberWrapper(Object value) {
   }
 }
 
-bool isType<T>(Type t) => T == t;
-bool isTypeOrNullableType<T>(Type t) => isType<T>(t) || isType<T?>(t);
+bool _isType<T>(Type t) => T == t;
+bool _isTypeOrNullableType<T>(Type t) => _isType<T>(t) || _isType<T?>(t);
 
 void _throwNoInstanceError(String channelName) {
   String nameString = 'named $channelName';
