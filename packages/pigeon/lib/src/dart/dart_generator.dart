@@ -201,7 +201,7 @@ abstract class _NativeInteropType<T extends _NativeInteropType<T>> {
   }
 
   /// Returns whether this interop type represents a collection (`List` or `Map`).
-  bool get isCollection => isCollectionType(type);
+  bool get isCollection => type.baseName == 'List' || type.baseName == 'Map';
 
   /// Returns generic type annotation arguments (e.g., `<String, int?>`) for Dart `List` or `Map` collection types.
   String get dartCollectionTypeAnnotations {
@@ -1219,7 +1219,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     }
   }
 
-  void _writeNIFlutterApi(
+  void _writeNativeInteropFlutterApi(
     InternalDartOptions generatorOptions,
     Root root,
     Indent indent,
@@ -1471,7 +1471,13 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     indent.newln();
     addDocumentationComments(indent, api.documentationComments, docCommentSpec);
     if (usesNativeInterop(generatorOptions)) {
-      _writeNIFlutterApi(generatorOptions, root, indent, api, dartPackageName: dartPackageName);
+      _writeNativeInteropFlutterApi(
+        generatorOptions,
+        root,
+        indent,
+        api,
+        dartPackageName: dartPackageName,
+      );
     }
 
     indent.write('abstract class ${api.name} ');

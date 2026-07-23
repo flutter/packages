@@ -14,7 +14,9 @@ void main() async {
       summarizerOptions: SummarizerOptions(backend: SummarizerBackend.asm),
       outputConfig: OutputConfig(
         dartConfig: DartCodeOutputConfig(
-          path: Uri.file('../../shared_test_plugin_code/lib/src/generated/ni_tests.gen.jni.dart'),
+          path: Uri.file(
+            '../../shared_test_plugin_code/lib/src/generated/native_interop_tests.gen.jni.dart',
+          ),
           structure: OutputStructure.singleFile,
         ),
       ),
@@ -22,18 +24,18 @@ void main() async {
       classPath: [Uri.directory('build/app/tmp/kotlin-classes/release')],
 
       classes: [
-        'com.example.test_plugin.NiTestsError',
-        'com.example.test_plugin.NIHostIntegrationCoreApi',
-        'com.example.test_plugin.NIHostIntegrationCoreApiRegistrar',
-        'com.example.test_plugin.NIFlutterIntegrationCoreApi',
-        'com.example.test_plugin.NIFlutterIntegrationCoreApiRegistrar',
-        'com.example.test_plugin.NIUnusedClass',
-        'com.example.test_plugin.NIAllTypes',
-        'com.example.test_plugin.NIAllNullableTypes',
-        'com.example.test_plugin.NIAllNullableTypesWithoutRecursion',
-        'com.example.test_plugin.NIAllClassesWrapper',
-        'com.example.test_plugin.NIAnEnum',
-        'com.example.test_plugin.NIAnotherEnum',
+        'com.example.test_plugin.NativeInteropTestsError',
+        'com.example.test_plugin.NativeInteropHostIntegrationCoreApi',
+        'com.example.test_plugin.NativeInteropHostIntegrationCoreApiRegistrar',
+        'com.example.test_plugin.NativeInteropFlutterIntegrationCoreApi',
+        'com.example.test_plugin.NativeInteropFlutterIntegrationCoreApiRegistrar',
+        'com.example.test_plugin.NativeInteropUnusedClass',
+        'com.example.test_plugin.NativeInteropAllTypes',
+        'com.example.test_plugin.NativeInteropAllNullableTypes',
+        'com.example.test_plugin.NativeInteropAllNullableTypesWithoutRecursion',
+        'com.example.test_plugin.NativeInteropAllClassesWrapper',
+        'com.example.test_plugin.NativeInteropAnEnum',
+        'com.example.test_plugin.NativeInteropAnotherEnum',
       ],
     ),
   );

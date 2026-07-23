@@ -300,20 +300,14 @@ ffi_bridge.NativeInteropExamplePigeonTypedData _toPigeonTypedData(TypedData valu
 Object? _getValueFromPigeonTypedData(ffi_bridge.NativeInteropExamplePigeonTypedData value) {
   final NSData data = value.data;
   final Pointer<Void> bytes = data.bytes;
-  switch (value.type) {
-    case 0:
-      return Uint8List.fromList(bytes.cast<Uint8>().asTypedList(data.length));
-    case 1:
-      return Int32List.fromList(bytes.cast<Int32>().asTypedList(data.length ~/ 4));
-    case 2:
-      return Int64List.fromList(bytes.cast<Int64>().asTypedList(data.length ~/ 8));
-    case 3:
-      return Float32List.fromList(bytes.cast<Float>().asTypedList(data.length ~/ 4));
-    case 4:
-      return Float64List.fromList(bytes.cast<Double>().asTypedList(data.length ~/ 8));
-    default:
-      throw ArgumentError.value(value);
-  }
+  return switch (value.type) {
+    0 => Uint8List.fromList(bytes.cast<Uint8>().asTypedList(data.length)),
+    1 => Int32List.fromList(bytes.cast<Int32>().asTypedList(data.length ~/ 4)),
+    2 => Int64List.fromList(bytes.cast<Int64>().asTypedList(data.length ~/ 8)),
+    3 => Float32List.fromList(bytes.cast<Float>().asTypedList(data.length ~/ 4)),
+    4 => Float64List.fromList(bytes.cast<Double>().asTypedList(data.length ~/ 8)),
+    _ => throw ArgumentError.value(value),
+  };
 }
 
 Object? _convertNumberWrapperToDart(ffi_bridge.NativeInteropExampleNumberWrapper value) {

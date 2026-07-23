@@ -12,7 +12,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
 import 'generated.dart';
-import 'ni_integration_tests.dart' as ffi_tests show TargetGenerator, runPigeonNIIntegrationTests;
+import 'native_interop_integration_tests.dart'
+    as ffi_tests
+    show TargetGenerator, runPigeonNativeInteropIntegrationTests;
 import 'proxy_api_integration_tests.dart';
 import 'test_types.dart';
 
@@ -49,7 +51,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
   runProxyApiIntegrationTests(targetGenerator);
 
   if (targetGenerator == TargetGenerator.kotlin || targetGenerator == TargetGenerator.swift) {
-    ffi_tests.runPigeonNIIntegrationTests(
+    ffi_tests.runPigeonNativeInteropIntegrationTests(
       targetGenerator == TargetGenerator.kotlin
           ? ffi_tests.TargetGenerator.kotlin
           : ffi_tests.TargetGenerator.swift,

@@ -27,26 +27,26 @@ Future<void> main(List<String> args) async {
   }
 
   final classes = <String>{
-    'NiTestsPigeonInternalNull',
-    'NiTestsPigeonTypedData',
-    'NiTestsNumberWrapper',
+    'NativeInteropTestsPigeonInternalNull',
+    'NativeInteropTestsPigeonTypedData',
+    'NativeInteropTestsNumberWrapper',
     'NSURLCredential',
-    'NIHostIntegrationCoreApi',
-    'NIHostIntegrationCoreApiSetup',
-    'NIFlutterIntegrationCoreApiBridge',
-    'NIFlutterIntegrationCoreApiRegistrar',
-    'NIUnusedClassBridge',
-    'NIAllTypesBridge',
-    'NIAllNullableTypesBridge',
-    'NIAllNullableTypesWithoutRecursionBridge',
-    'NIAllClassesWrapperBridge',
-    'NiTestsError',
+    'NativeInteropHostIntegrationCoreApi',
+    'NativeInteropHostIntegrationCoreApiSetup',
+    'NativeInteropFlutterIntegrationCoreApiBridge',
+    'NativeInteropFlutterIntegrationCoreApiRegistrar',
+    'NativeInteropUnusedClassBridge',
+    'NativeInteropAllTypesBridge',
+    'NativeInteropAllNullableTypesBridge',
+    'NativeInteropAllNullableTypesWithoutRecursionBridge',
+    'NativeInteropAllClassesWrapperBridge',
+    'NativeInteropTestsError',
   };
   final enums = <String>{
-    'NIAnEnum',
-    'NIAnotherEnum',
+    'NativeInteropAnEnum',
+    'NativeInteropAnotherEnum',
     'NSURLSessionAuthChallengeDisposition',
-    'NiTestsPigeonInternalNumberType',
+    'NativeInteropTestsPigeonInternalNumberType',
   };
   var targetTriple = '';
   if (targetTriple.isEmpty) {
@@ -65,14 +65,20 @@ Future<void> main(List<String> args) async {
     target: Target(triple: targetTriple, sdk: sdk),
     inputs: <SwiftGenInput>[
       ObjCCompatibleSwiftFileInput(
-        files: <Uri>[Uri.file('../darwin/test_plugin/Sources/test_plugin/NiTests.gen.swift')],
+        files: <Uri>[
+          Uri.file('../darwin/test_plugin/Sources/test_plugin/NativeInteropTests.gen.swift'),
+        ],
       ),
     ],
     include: (Declaration d) => classes.contains(d.name) || enums.contains(d.name),
     output: Output(
       module: 'test_plugin',
-      dartFile: Uri.file('../../shared_test_plugin_code/lib/src/generated/ni_tests.gen.ffi.dart'),
-      objectiveCFile: Uri.file('../darwin/test_plugin/Sources/test_plugin_objc_gen/NiTests.gen.m'),
+      dartFile: Uri.file(
+        '../../shared_test_plugin_code/lib/src/generated/native_interop_tests.gen.ffi.dart',
+      ),
+      objectiveCFile: Uri.file(
+        '../darwin/test_plugin/Sources/test_plugin_objc_gen/NativeInteropTests.gen.m',
+      ),
       preamble: '''
   // Copyright 2013 The Flutter Authors
   // Use of this source code is governed by a BSD-style license that can be

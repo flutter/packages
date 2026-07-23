@@ -11,10 +11,10 @@ package com.example.test_plugin
 import android.util.Log
 import androidx.annotation.Keep
 
-private object NiTestsPigeonUtils {
+private object NativeInteropTestsPigeonUtils {
 
-  fun createConnectionError(channelName: String): NiTestsError {
-    return NiTestsError(
+  fun createConnectionError(channelName: String): NativeInteropTestsError {
+    return NativeInteropTestsError(
         "channel-error", "Unable to establish connection on channel: '$channelName'.", "")
   }
 
@@ -23,7 +23,7 @@ private object NiTestsPigeonUtils {
   }
 
   fun wrapError(exception: Throwable): List<Any?> {
-    return if (exception is NiTestsError) {
+    return if (exception is NativeInteropTestsError) {
       listOf(exception.code, exception.message, exception.details)
     } else {
       listOf(
@@ -185,7 +185,7 @@ private object NiTestsPigeonUtils {
  * @property message The error message.
  * @property details The error details. Must be a datatype supported by the api codec.
  */
-class NiTestsError(
+class NativeInteropTestsError(
     val code: String,
     override val message: String? = null,
     val details: Any? = null
@@ -193,7 +193,7 @@ class NiTestsError(
 
 const val defaultInstanceName = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
 
-enum class NIAnEnum(val raw: Int) {
+enum class NativeInteropAnEnum(val raw: Int) {
   ONE(0),
   TWO(1),
   THREE(2),
@@ -201,28 +201,28 @@ enum class NIAnEnum(val raw: Int) {
   FOUR_HUNDRED_TWENTY_TWO(4);
 
   companion object {
-    fun ofRaw(raw: Int): NIAnEnum? {
+    fun ofRaw(raw: Int): NativeInteropAnEnum? {
       return values().firstOrNull { it.raw == raw }
     }
   }
 }
 
-enum class NIAnotherEnum(val raw: Int) {
+enum class NativeInteropAnotherEnum(val raw: Int) {
   JUST_IN_CASE(0);
 
   companion object {
-    fun ofRaw(raw: Int): NIAnotherEnum? {
+    fun ofRaw(raw: Int): NativeInteropAnotherEnum? {
       return values().firstOrNull { it.raw == raw }
     }
   }
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class NIUnusedClass(val aField: Any? = null) {
+data class NativeInteropUnusedClass(val aField: Any? = null) {
   companion object {
-    fun fromList(pigeonVar_list: List<Any?>): NIUnusedClass {
+    fun fromList(pigeonVar_list: List<Any?>): NativeInteropUnusedClass {
       val aField = pigeonVar_list[0]
-      return NIUnusedClass(aField)
+      return NativeInteropUnusedClass(aField)
     }
   }
 
@@ -239,18 +239,18 @@ data class NIUnusedClass(val aField: Any? = null) {
     if (this === other) {
       return true
     }
-    val other = other as NIUnusedClass
-    return NiTestsPigeonUtils.deepEquals(this.aField, other.aField)
+    val other = other as NativeInteropUnusedClass
+    return NativeInteropTestsPigeonUtils.deepEquals(this.aField, other.aField)
   }
 
   override fun hashCode(): Int {
     var result = javaClass.hashCode()
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.aField)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aField)
     return result
   }
 
   override fun toString(): String {
-    return "NIUnusedClass(aField=$aField)"
+    return "NativeInteropUnusedClass(aField=$aField)"
   }
 }
 
@@ -259,7 +259,7 @@ data class NIUnusedClass(val aField: Any? = null) {
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class NIAllTypes(
+data class NativeInteropAllTypes(
     val aBool: Boolean,
     val anInt: Long,
     val anInt64: Long,
@@ -268,8 +268,8 @@ data class NIAllTypes(
     val a4ByteArray: IntArray,
     val a8ByteArray: LongArray,
     val aFloatArray: DoubleArray,
-    val anEnum: NIAnEnum,
-    val anotherEnum: NIAnotherEnum,
+    val anEnum: NativeInteropAnEnum,
+    val anotherEnum: NativeInteropAnotherEnum,
     val aString: String,
     val anObject: Any,
     val list: List<Any?>,
@@ -277,20 +277,20 @@ data class NIAllTypes(
     val intList: List<Long>,
     val doubleList: List<Double>,
     val boolList: List<Boolean>,
-    val enumList: List<NIAnEnum>,
+    val enumList: List<NativeInteropAnEnum>,
     val objectList: List<Any>,
     val listList: List<List<Any?>>,
     val mapList: List<Map<Any?, Any?>>,
     val map: Map<Any, Any?>,
     val stringMap: Map<String, String>,
     val intMap: Map<Long, Long>,
-    val enumMap: Map<NIAnEnum, NIAnEnum>,
+    val enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>,
     val objectMap: Map<Any, Any>,
     val listMap: Map<Long, List<Any?>>,
     val mapMap: Map<Long, Map<Any?, Any?>>
 ) {
   companion object {
-    fun fromList(pigeonVar_list: List<Any?>): NIAllTypes {
+    fun fromList(pigeonVar_list: List<Any?>): NativeInteropAllTypes {
       val aBool = pigeonVar_list[0] as Boolean
       val anInt = pigeonVar_list[1] as Long
       val anInt64 = pigeonVar_list[2] as Long
@@ -299,8 +299,8 @@ data class NIAllTypes(
       val a4ByteArray = pigeonVar_list[5] as IntArray
       val a8ByteArray = pigeonVar_list[6] as LongArray
       val aFloatArray = pigeonVar_list[7] as DoubleArray
-      val anEnum = pigeonVar_list[8] as NIAnEnum
-      val anotherEnum = pigeonVar_list[9] as NIAnotherEnum
+      val anEnum = pigeonVar_list[8] as NativeInteropAnEnum
+      val anotherEnum = pigeonVar_list[9] as NativeInteropAnotherEnum
       val aString = pigeonVar_list[10] as String
       val anObject = pigeonVar_list[11] as Any
       val list = pigeonVar_list[12] as List<Any?>
@@ -308,18 +308,18 @@ data class NIAllTypes(
       val intList = pigeonVar_list[14] as List<Long>
       val doubleList = pigeonVar_list[15] as List<Double>
       val boolList = pigeonVar_list[16] as List<Boolean>
-      val enumList = pigeonVar_list[17] as List<NIAnEnum>
+      val enumList = pigeonVar_list[17] as List<NativeInteropAnEnum>
       val objectList = pigeonVar_list[18] as List<Any>
       val listList = pigeonVar_list[19] as List<List<Any?>>
       val mapList = pigeonVar_list[20] as List<Map<Any?, Any?>>
       val map = pigeonVar_list[21] as Map<Any, Any?>
       val stringMap = pigeonVar_list[22] as Map<String, String>
       val intMap = pigeonVar_list[23] as Map<Long, Long>
-      val enumMap = pigeonVar_list[24] as Map<NIAnEnum, NIAnEnum>
+      val enumMap = pigeonVar_list[24] as Map<NativeInteropAnEnum, NativeInteropAnEnum>
       val objectMap = pigeonVar_list[25] as Map<Any, Any>
       val listMap = pigeonVar_list[26] as Map<Long, List<Any?>>
       val mapMap = pigeonVar_list[27] as Map<Long, Map<Any?, Any?>>
-      return NIAllTypes(
+      return NativeInteropAllTypes(
           aBool,
           anInt,
           anInt64,
@@ -391,72 +391,72 @@ data class NIAllTypes(
     if (this === other) {
       return true
     }
-    val other = other as NIAllTypes
-    return NiTestsPigeonUtils.deepEquals(this.aBool, other.aBool) &&
-        NiTestsPigeonUtils.deepEquals(this.anInt, other.anInt) &&
-        NiTestsPigeonUtils.deepEquals(this.anInt64, other.anInt64) &&
-        NiTestsPigeonUtils.deepEquals(this.aDouble, other.aDouble) &&
-        NiTestsPigeonUtils.deepEquals(this.aByteArray, other.aByteArray) &&
-        NiTestsPigeonUtils.deepEquals(this.a4ByteArray, other.a4ByteArray) &&
-        NiTestsPigeonUtils.deepEquals(this.a8ByteArray, other.a8ByteArray) &&
-        NiTestsPigeonUtils.deepEquals(this.aFloatArray, other.aFloatArray) &&
-        NiTestsPigeonUtils.deepEquals(this.anEnum, other.anEnum) &&
-        NiTestsPigeonUtils.deepEquals(this.anotherEnum, other.anotherEnum) &&
-        NiTestsPigeonUtils.deepEquals(this.aString, other.aString) &&
-        NiTestsPigeonUtils.deepEquals(this.anObject, other.anObject) &&
-        NiTestsPigeonUtils.deepEquals(this.list, other.list) &&
-        NiTestsPigeonUtils.deepEquals(this.stringList, other.stringList) &&
-        NiTestsPigeonUtils.deepEquals(this.intList, other.intList) &&
-        NiTestsPigeonUtils.deepEquals(this.doubleList, other.doubleList) &&
-        NiTestsPigeonUtils.deepEquals(this.boolList, other.boolList) &&
-        NiTestsPigeonUtils.deepEquals(this.enumList, other.enumList) &&
-        NiTestsPigeonUtils.deepEquals(this.objectList, other.objectList) &&
-        NiTestsPigeonUtils.deepEquals(this.listList, other.listList) &&
-        NiTestsPigeonUtils.deepEquals(this.mapList, other.mapList) &&
-        NiTestsPigeonUtils.deepEquals(this.map, other.map) &&
-        NiTestsPigeonUtils.deepEquals(this.stringMap, other.stringMap) &&
-        NiTestsPigeonUtils.deepEquals(this.intMap, other.intMap) &&
-        NiTestsPigeonUtils.deepEquals(this.enumMap, other.enumMap) &&
-        NiTestsPigeonUtils.deepEquals(this.objectMap, other.objectMap) &&
-        NiTestsPigeonUtils.deepEquals(this.listMap, other.listMap) &&
-        NiTestsPigeonUtils.deepEquals(this.mapMap, other.mapMap)
+    val other = other as NativeInteropAllTypes
+    return NativeInteropTestsPigeonUtils.deepEquals(this.aBool, other.aBool) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.anInt, other.anInt) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.anInt64, other.anInt64) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aDouble, other.aDouble) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aByteArray, other.aByteArray) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.a4ByteArray, other.a4ByteArray) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.a8ByteArray, other.a8ByteArray) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aFloatArray, other.aFloatArray) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.anEnum, other.anEnum) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.anotherEnum, other.anotherEnum) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aString, other.aString) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.anObject, other.anObject) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.list, other.list) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.stringList, other.stringList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.intList, other.intList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.doubleList, other.doubleList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.boolList, other.boolList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.enumList, other.enumList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.objectList, other.objectList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.listList, other.listList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.mapList, other.mapList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.map, other.map) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.stringMap, other.stringMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.intMap, other.intMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.enumMap, other.enumMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.objectMap, other.objectMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.listMap, other.listMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.mapMap, other.mapMap)
   }
 
   override fun hashCode(): Int {
     var result = javaClass.hashCode()
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.aBool)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.anInt)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.anInt64)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.aDouble)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.aByteArray)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.a4ByteArray)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.a8ByteArray)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.aFloatArray)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.anEnum)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.anotherEnum)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.aString)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.anObject)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.list)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.stringList)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.intList)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.doubleList)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.boolList)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.enumList)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.objectList)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.listList)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.mapList)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.map)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.stringMap)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.intMap)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.enumMap)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.objectMap)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.listMap)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.mapMap)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aBool)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.anInt)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.anInt64)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aDouble)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aByteArray)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.a4ByteArray)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.a8ByteArray)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aFloatArray)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.anEnum)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.anotherEnum)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aString)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.anObject)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.list)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.stringList)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.intList)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.doubleList)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.boolList)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.enumList)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.objectList)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.listList)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.mapList)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.map)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.stringMap)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.intMap)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.enumMap)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.objectMap)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.listMap)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.mapMap)
     return result
   }
 
   override fun toString(): String {
-    return "NIAllTypes(aBool=$aBool, anInt=$anInt, anInt64=$anInt64, aDouble=$aDouble, aByteArray=${aByteArray.contentToString()}, a4ByteArray=${a4ByteArray.contentToString()}, a8ByteArray=${a8ByteArray.contentToString()}, aFloatArray=${aFloatArray.contentToString()}, anEnum=$anEnum, anotherEnum=$anotherEnum, aString=$aString, anObject=$anObject, list=$list, stringList=$stringList, intList=$intList, doubleList=$doubleList, boolList=$boolList, enumList=$enumList, objectList=$objectList, listList=$listList, mapList=$mapList, map=$map, stringMap=$stringMap, intMap=$intMap, enumMap=$enumMap, objectMap=$objectMap, listMap=$listMap, mapMap=$mapMap)"
+    return "NativeInteropAllTypes(aBool=$aBool, anInt=$anInt, anInt64=$anInt64, aDouble=$aDouble, aByteArray=${aByteArray.contentToString()}, a4ByteArray=${a4ByteArray.contentToString()}, a8ByteArray=${a8ByteArray.contentToString()}, aFloatArray=${aFloatArray.contentToString()}, anEnum=$anEnum, anotherEnum=$anotherEnum, aString=$aString, anObject=$anObject, list=$list, stringList=$stringList, intList=$intList, doubleList=$doubleList, boolList=$boolList, enumList=$enumList, objectList=$objectList, listList=$listList, mapList=$mapList, map=$map, stringMap=$stringMap, intMap=$intMap, enumMap=$enumMap, objectMap=$objectMap, listMap=$listMap, mapMap=$mapMap)"
   }
 }
 
@@ -465,7 +465,7 @@ data class NIAllTypes(
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class NIAllNullableTypes(
+data class NativeInteropAllNullableTypes(
     val aNullableBool: Boolean? = null,
     val aNullableInt: Long? = null,
     val aNullableInt64: Long? = null,
@@ -474,32 +474,32 @@ data class NIAllNullableTypes(
     val aNullable4ByteArray: IntArray? = null,
     val aNullable8ByteArray: LongArray? = null,
     val aNullableFloatArray: DoubleArray? = null,
-    val aNullableEnum: NIAnEnum? = null,
-    val anotherNullableEnum: NIAnotherEnum? = null,
+    val aNullableEnum: NativeInteropAnEnum? = null,
+    val anotherNullableEnum: NativeInteropAnotherEnum? = null,
     val aNullableString: String? = null,
     val aNullableObject: Any? = null,
-    val allNullableTypes: NIAllNullableTypes? = null,
+    val allNullableTypes: NativeInteropAllNullableTypes? = null,
     val list: List<Any?>? = null,
     val stringList: List<String?>? = null,
     val intList: List<Long?>? = null,
     val doubleList: List<Double?>? = null,
     val boolList: List<Boolean?>? = null,
-    val enumList: List<NIAnEnum?>? = null,
+    val enumList: List<NativeInteropAnEnum?>? = null,
     val objectList: List<Any?>? = null,
     val listList: List<List<Any?>?>? = null,
     val mapList: List<Map<Any?, Any?>?>? = null,
-    val recursiveClassList: List<NIAllNullableTypes?>? = null,
+    val recursiveClassList: List<NativeInteropAllNullableTypes?>? = null,
     val map: Map<Any, Any?>? = null,
     val stringMap: Map<String?, String?>? = null,
     val intMap: Map<Long?, Long?>? = null,
-    val enumMap: Map<NIAnEnum?, NIAnEnum?>? = null,
+    val enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? = null,
     val objectMap: Map<Any?, Any?>? = null,
     val listMap: Map<Long?, List<Any?>?>? = null,
     val mapMap: Map<Long?, Map<Any?, Any?>?>? = null,
-    val recursiveClassMap: Map<Long?, NIAllNullableTypes?>? = null
+    val recursiveClassMap: Map<Long?, NativeInteropAllNullableTypes?>? = null
 ) {
   companion object {
-    fun fromList(pigeonVar_list: List<Any?>): NIAllNullableTypes {
+    fun fromList(pigeonVar_list: List<Any?>): NativeInteropAllNullableTypes {
       val aNullableBool = pigeonVar_list[0] as Boolean?
       val aNullableInt = pigeonVar_list[1] as Long?
       val aNullableInt64 = pigeonVar_list[2] as Long?
@@ -508,30 +508,30 @@ data class NIAllNullableTypes(
       val aNullable4ByteArray = pigeonVar_list[5] as IntArray?
       val aNullable8ByteArray = pigeonVar_list[6] as LongArray?
       val aNullableFloatArray = pigeonVar_list[7] as DoubleArray?
-      val aNullableEnum = pigeonVar_list[8] as NIAnEnum?
-      val anotherNullableEnum = pigeonVar_list[9] as NIAnotherEnum?
+      val aNullableEnum = pigeonVar_list[8] as NativeInteropAnEnum?
+      val anotherNullableEnum = pigeonVar_list[9] as NativeInteropAnotherEnum?
       val aNullableString = pigeonVar_list[10] as String?
       val aNullableObject = pigeonVar_list[11]
-      val allNullableTypes = pigeonVar_list[12] as NIAllNullableTypes?
+      val allNullableTypes = pigeonVar_list[12] as NativeInteropAllNullableTypes?
       val list = pigeonVar_list[13] as List<Any?>?
       val stringList = pigeonVar_list[14] as List<String?>?
       val intList = pigeonVar_list[15] as List<Long?>?
       val doubleList = pigeonVar_list[16] as List<Double?>?
       val boolList = pigeonVar_list[17] as List<Boolean?>?
-      val enumList = pigeonVar_list[18] as List<NIAnEnum?>?
+      val enumList = pigeonVar_list[18] as List<NativeInteropAnEnum?>?
       val objectList = pigeonVar_list[19] as List<Any?>?
       val listList = pigeonVar_list[20] as List<List<Any?>?>?
       val mapList = pigeonVar_list[21] as List<Map<Any?, Any?>?>?
-      val recursiveClassList = pigeonVar_list[22] as List<NIAllNullableTypes?>?
+      val recursiveClassList = pigeonVar_list[22] as List<NativeInteropAllNullableTypes?>?
       val map = pigeonVar_list[23] as Map<Any, Any?>?
       val stringMap = pigeonVar_list[24] as Map<String?, String?>?
       val intMap = pigeonVar_list[25] as Map<Long?, Long?>?
-      val enumMap = pigeonVar_list[26] as Map<NIAnEnum?, NIAnEnum?>?
+      val enumMap = pigeonVar_list[26] as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
       val objectMap = pigeonVar_list[27] as Map<Any?, Any?>?
       val listMap = pigeonVar_list[28] as Map<Long?, List<Any?>?>?
       val mapMap = pigeonVar_list[29] as Map<Long?, Map<Any?, Any?>?>?
-      val recursiveClassMap = pigeonVar_list[30] as Map<Long?, NIAllNullableTypes?>?
-      return NIAllNullableTypes(
+      val recursiveClassMap = pigeonVar_list[30] as Map<Long?, NativeInteropAllNullableTypes?>?
+      return NativeInteropAllNullableTypes(
           aNullableBool,
           aNullableInt,
           aNullableInt64,
@@ -609,88 +609,94 @@ data class NIAllNullableTypes(
     if (this === other) {
       return true
     }
-    val other = other as NIAllNullableTypes
-    return NiTestsPigeonUtils.deepEquals(this.aNullableBool, other.aNullableBool) &&
-        NiTestsPigeonUtils.deepEquals(this.aNullableInt, other.aNullableInt) &&
-        NiTestsPigeonUtils.deepEquals(this.aNullableInt64, other.aNullableInt64) &&
-        NiTestsPigeonUtils.deepEquals(this.aNullableDouble, other.aNullableDouble) &&
-        NiTestsPigeonUtils.deepEquals(this.aNullableByteArray, other.aNullableByteArray) &&
-        NiTestsPigeonUtils.deepEquals(this.aNullable4ByteArray, other.aNullable4ByteArray) &&
-        NiTestsPigeonUtils.deepEquals(this.aNullable8ByteArray, other.aNullable8ByteArray) &&
-        NiTestsPigeonUtils.deepEquals(this.aNullableFloatArray, other.aNullableFloatArray) &&
-        NiTestsPigeonUtils.deepEquals(this.aNullableEnum, other.aNullableEnum) &&
-        NiTestsPigeonUtils.deepEquals(this.anotherNullableEnum, other.anotherNullableEnum) &&
-        NiTestsPigeonUtils.deepEquals(this.aNullableString, other.aNullableString) &&
-        NiTestsPigeonUtils.deepEquals(this.aNullableObject, other.aNullableObject) &&
-        NiTestsPigeonUtils.deepEquals(this.allNullableTypes, other.allNullableTypes) &&
-        NiTestsPigeonUtils.deepEquals(this.list, other.list) &&
-        NiTestsPigeonUtils.deepEquals(this.stringList, other.stringList) &&
-        NiTestsPigeonUtils.deepEquals(this.intList, other.intList) &&
-        NiTestsPigeonUtils.deepEquals(this.doubleList, other.doubleList) &&
-        NiTestsPigeonUtils.deepEquals(this.boolList, other.boolList) &&
-        NiTestsPigeonUtils.deepEquals(this.enumList, other.enumList) &&
-        NiTestsPigeonUtils.deepEquals(this.objectList, other.objectList) &&
-        NiTestsPigeonUtils.deepEquals(this.listList, other.listList) &&
-        NiTestsPigeonUtils.deepEquals(this.mapList, other.mapList) &&
-        NiTestsPigeonUtils.deepEquals(this.recursiveClassList, other.recursiveClassList) &&
-        NiTestsPigeonUtils.deepEquals(this.map, other.map) &&
-        NiTestsPigeonUtils.deepEquals(this.stringMap, other.stringMap) &&
-        NiTestsPigeonUtils.deepEquals(this.intMap, other.intMap) &&
-        NiTestsPigeonUtils.deepEquals(this.enumMap, other.enumMap) &&
-        NiTestsPigeonUtils.deepEquals(this.objectMap, other.objectMap) &&
-        NiTestsPigeonUtils.deepEquals(this.listMap, other.listMap) &&
-        NiTestsPigeonUtils.deepEquals(this.mapMap, other.mapMap) &&
-        NiTestsPigeonUtils.deepEquals(this.recursiveClassMap, other.recursiveClassMap)
+    val other = other as NativeInteropAllNullableTypes
+    return NativeInteropTestsPigeonUtils.deepEquals(this.aNullableBool, other.aNullableBool) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aNullableInt, other.aNullableInt) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aNullableInt64, other.aNullableInt64) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aNullableDouble, other.aNullableDouble) &&
+        NativeInteropTestsPigeonUtils.deepEquals(
+            this.aNullableByteArray, other.aNullableByteArray) &&
+        NativeInteropTestsPigeonUtils.deepEquals(
+            this.aNullable4ByteArray, other.aNullable4ByteArray) &&
+        NativeInteropTestsPigeonUtils.deepEquals(
+            this.aNullable8ByteArray, other.aNullable8ByteArray) &&
+        NativeInteropTestsPigeonUtils.deepEquals(
+            this.aNullableFloatArray, other.aNullableFloatArray) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aNullableEnum, other.aNullableEnum) &&
+        NativeInteropTestsPigeonUtils.deepEquals(
+            this.anotherNullableEnum, other.anotherNullableEnum) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aNullableString, other.aNullableString) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aNullableObject, other.aNullableObject) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.allNullableTypes, other.allNullableTypes) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.list, other.list) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.stringList, other.stringList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.intList, other.intList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.doubleList, other.doubleList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.boolList, other.boolList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.enumList, other.enumList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.objectList, other.objectList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.listList, other.listList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.mapList, other.mapList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(
+            this.recursiveClassList, other.recursiveClassList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.map, other.map) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.stringMap, other.stringMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.intMap, other.intMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.enumMap, other.enumMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.objectMap, other.objectMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.listMap, other.listMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.mapMap, other.mapMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.recursiveClassMap, other.recursiveClassMap)
   }
 
   override fun hashCode(): Int {
     var result = javaClass.hashCode()
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.aNullableBool)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.aNullableInt)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.aNullableInt64)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.aNullableDouble)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.aNullableByteArray)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.aNullable4ByteArray)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.aNullable8ByteArray)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.aNullableFloatArray)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.aNullableEnum)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.anotherNullableEnum)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.aNullableString)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.aNullableObject)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.allNullableTypes)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.list)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.stringList)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.intList)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.doubleList)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.boolList)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.enumList)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.objectList)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.listList)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.mapList)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.recursiveClassList)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.map)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.stringMap)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.intMap)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.enumMap)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.objectMap)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.listMap)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.mapMap)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.recursiveClassMap)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aNullableBool)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aNullableInt)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aNullableInt64)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aNullableDouble)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aNullableByteArray)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aNullable4ByteArray)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aNullable8ByteArray)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aNullableFloatArray)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aNullableEnum)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.anotherNullableEnum)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aNullableString)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aNullableObject)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.allNullableTypes)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.list)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.stringList)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.intList)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.doubleList)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.boolList)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.enumList)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.objectList)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.listList)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.mapList)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.recursiveClassList)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.map)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.stringMap)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.intMap)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.enumMap)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.objectMap)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.listMap)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.mapMap)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.recursiveClassMap)
     return result
   }
 
   override fun toString(): String {
-    return "NIAllNullableTypes(aNullableBool=$aNullableBool, aNullableInt=$aNullableInt, aNullableInt64=$aNullableInt64, aNullableDouble=$aNullableDouble, aNullableByteArray=${aNullableByteArray?.contentToString()}, aNullable4ByteArray=${aNullable4ByteArray?.contentToString()}, aNullable8ByteArray=${aNullable8ByteArray?.contentToString()}, aNullableFloatArray=${aNullableFloatArray?.contentToString()}, aNullableEnum=$aNullableEnum, anotherNullableEnum=$anotherNullableEnum, aNullableString=$aNullableString, aNullableObject=$aNullableObject, allNullableTypes=$allNullableTypes, list=$list, stringList=$stringList, intList=$intList, doubleList=$doubleList, boolList=$boolList, enumList=$enumList, objectList=$objectList, listList=$listList, mapList=$mapList, recursiveClassList=$recursiveClassList, map=$map, stringMap=$stringMap, intMap=$intMap, enumMap=$enumMap, objectMap=$objectMap, listMap=$listMap, mapMap=$mapMap, recursiveClassMap=$recursiveClassMap)"
+    return "NativeInteropAllNullableTypes(aNullableBool=$aNullableBool, aNullableInt=$aNullableInt, aNullableInt64=$aNullableInt64, aNullableDouble=$aNullableDouble, aNullableByteArray=${aNullableByteArray?.contentToString()}, aNullable4ByteArray=${aNullable4ByteArray?.contentToString()}, aNullable8ByteArray=${aNullable8ByteArray?.contentToString()}, aNullableFloatArray=${aNullableFloatArray?.contentToString()}, aNullableEnum=$aNullableEnum, anotherNullableEnum=$anotherNullableEnum, aNullableString=$aNullableString, aNullableObject=$aNullableObject, allNullableTypes=$allNullableTypes, list=$list, stringList=$stringList, intList=$intList, doubleList=$doubleList, boolList=$boolList, enumList=$enumList, objectList=$objectList, listList=$listList, mapList=$mapList, recursiveClassList=$recursiveClassList, map=$map, stringMap=$stringMap, intMap=$intMap, enumMap=$enumMap, objectMap=$objectMap, listMap=$listMap, mapMap=$mapMap, recursiveClassMap=$recursiveClassMap)"
   }
 }
 
 /**
  * The primary purpose for this class is to ensure coverage of Swift structs with nullable items, as
- * the primary [NIAllNullableTypes] class is being used to test Swift classes.
+ * the primary [NativeInteropAllNullableTypes] class is being used to test Swift classes.
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class NIAllNullableTypesWithoutRecursion(
+data class NativeInteropAllNullableTypesWithoutRecursion(
     val aNullableBool: Boolean? = null,
     val aNullableInt: Long? = null,
     val aNullableInt64: Long? = null,
@@ -699,8 +705,8 @@ data class NIAllNullableTypesWithoutRecursion(
     val aNullable4ByteArray: IntArray? = null,
     val aNullable8ByteArray: LongArray? = null,
     val aNullableFloatArray: DoubleArray? = null,
-    val aNullableEnum: NIAnEnum? = null,
-    val anotherNullableEnum: NIAnotherEnum? = null,
+    val aNullableEnum: NativeInteropAnEnum? = null,
+    val anotherNullableEnum: NativeInteropAnotherEnum? = null,
     val aNullableString: String? = null,
     val aNullableObject: Any? = null,
     val list: List<Any?>? = null,
@@ -708,20 +714,20 @@ data class NIAllNullableTypesWithoutRecursion(
     val intList: List<Long?>? = null,
     val doubleList: List<Double?>? = null,
     val boolList: List<Boolean?>? = null,
-    val enumList: List<NIAnEnum?>? = null,
+    val enumList: List<NativeInteropAnEnum?>? = null,
     val objectList: List<Any?>? = null,
     val listList: List<List<Any?>?>? = null,
     val mapList: List<Map<Any?, Any?>?>? = null,
     val map: Map<Any, Any?>? = null,
     val stringMap: Map<String?, String?>? = null,
     val intMap: Map<Long?, Long?>? = null,
-    val enumMap: Map<NIAnEnum?, NIAnEnum?>? = null,
+    val enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? = null,
     val objectMap: Map<Any?, Any?>? = null,
     val listMap: Map<Long?, List<Any?>?>? = null,
     val mapMap: Map<Long?, Map<Any?, Any?>?>? = null
 ) {
   companion object {
-    fun fromList(pigeonVar_list: List<Any?>): NIAllNullableTypesWithoutRecursion {
+    fun fromList(pigeonVar_list: List<Any?>): NativeInteropAllNullableTypesWithoutRecursion {
       val aNullableBool = pigeonVar_list[0] as Boolean?
       val aNullableInt = pigeonVar_list[1] as Long?
       val aNullableInt64 = pigeonVar_list[2] as Long?
@@ -730,8 +736,8 @@ data class NIAllNullableTypesWithoutRecursion(
       val aNullable4ByteArray = pigeonVar_list[5] as IntArray?
       val aNullable8ByteArray = pigeonVar_list[6] as LongArray?
       val aNullableFloatArray = pigeonVar_list[7] as DoubleArray?
-      val aNullableEnum = pigeonVar_list[8] as NIAnEnum?
-      val anotherNullableEnum = pigeonVar_list[9] as NIAnotherEnum?
+      val aNullableEnum = pigeonVar_list[8] as NativeInteropAnEnum?
+      val anotherNullableEnum = pigeonVar_list[9] as NativeInteropAnotherEnum?
       val aNullableString = pigeonVar_list[10] as String?
       val aNullableObject = pigeonVar_list[11]
       val list = pigeonVar_list[12] as List<Any?>?
@@ -739,18 +745,18 @@ data class NIAllNullableTypesWithoutRecursion(
       val intList = pigeonVar_list[14] as List<Long?>?
       val doubleList = pigeonVar_list[15] as List<Double?>?
       val boolList = pigeonVar_list[16] as List<Boolean?>?
-      val enumList = pigeonVar_list[17] as List<NIAnEnum?>?
+      val enumList = pigeonVar_list[17] as List<NativeInteropAnEnum?>?
       val objectList = pigeonVar_list[18] as List<Any?>?
       val listList = pigeonVar_list[19] as List<List<Any?>?>?
       val mapList = pigeonVar_list[20] as List<Map<Any?, Any?>?>?
       val map = pigeonVar_list[21] as Map<Any, Any?>?
       val stringMap = pigeonVar_list[22] as Map<String?, String?>?
       val intMap = pigeonVar_list[23] as Map<Long?, Long?>?
-      val enumMap = pigeonVar_list[24] as Map<NIAnEnum?, NIAnEnum?>?
+      val enumMap = pigeonVar_list[24] as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
       val objectMap = pigeonVar_list[25] as Map<Any?, Any?>?
       val listMap = pigeonVar_list[26] as Map<Long?, List<Any?>?>?
       val mapMap = pigeonVar_list[27] as Map<Long?, Map<Any?, Any?>?>?
-      return NIAllNullableTypesWithoutRecursion(
+      return NativeInteropAllNullableTypesWithoutRecursion(
           aNullableBool,
           aNullableInt,
           aNullableInt64,
@@ -822,104 +828,111 @@ data class NIAllNullableTypesWithoutRecursion(
     if (this === other) {
       return true
     }
-    val other = other as NIAllNullableTypesWithoutRecursion
-    return NiTestsPigeonUtils.deepEquals(this.aNullableBool, other.aNullableBool) &&
-        NiTestsPigeonUtils.deepEquals(this.aNullableInt, other.aNullableInt) &&
-        NiTestsPigeonUtils.deepEquals(this.aNullableInt64, other.aNullableInt64) &&
-        NiTestsPigeonUtils.deepEquals(this.aNullableDouble, other.aNullableDouble) &&
-        NiTestsPigeonUtils.deepEquals(this.aNullableByteArray, other.aNullableByteArray) &&
-        NiTestsPigeonUtils.deepEquals(this.aNullable4ByteArray, other.aNullable4ByteArray) &&
-        NiTestsPigeonUtils.deepEquals(this.aNullable8ByteArray, other.aNullable8ByteArray) &&
-        NiTestsPigeonUtils.deepEquals(this.aNullableFloatArray, other.aNullableFloatArray) &&
-        NiTestsPigeonUtils.deepEquals(this.aNullableEnum, other.aNullableEnum) &&
-        NiTestsPigeonUtils.deepEquals(this.anotherNullableEnum, other.anotherNullableEnum) &&
-        NiTestsPigeonUtils.deepEquals(this.aNullableString, other.aNullableString) &&
-        NiTestsPigeonUtils.deepEquals(this.aNullableObject, other.aNullableObject) &&
-        NiTestsPigeonUtils.deepEquals(this.list, other.list) &&
-        NiTestsPigeonUtils.deepEquals(this.stringList, other.stringList) &&
-        NiTestsPigeonUtils.deepEquals(this.intList, other.intList) &&
-        NiTestsPigeonUtils.deepEquals(this.doubleList, other.doubleList) &&
-        NiTestsPigeonUtils.deepEquals(this.boolList, other.boolList) &&
-        NiTestsPigeonUtils.deepEquals(this.enumList, other.enumList) &&
-        NiTestsPigeonUtils.deepEquals(this.objectList, other.objectList) &&
-        NiTestsPigeonUtils.deepEquals(this.listList, other.listList) &&
-        NiTestsPigeonUtils.deepEquals(this.mapList, other.mapList) &&
-        NiTestsPigeonUtils.deepEquals(this.map, other.map) &&
-        NiTestsPigeonUtils.deepEquals(this.stringMap, other.stringMap) &&
-        NiTestsPigeonUtils.deepEquals(this.intMap, other.intMap) &&
-        NiTestsPigeonUtils.deepEquals(this.enumMap, other.enumMap) &&
-        NiTestsPigeonUtils.deepEquals(this.objectMap, other.objectMap) &&
-        NiTestsPigeonUtils.deepEquals(this.listMap, other.listMap) &&
-        NiTestsPigeonUtils.deepEquals(this.mapMap, other.mapMap)
+    val other = other as NativeInteropAllNullableTypesWithoutRecursion
+    return NativeInteropTestsPigeonUtils.deepEquals(this.aNullableBool, other.aNullableBool) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aNullableInt, other.aNullableInt) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aNullableInt64, other.aNullableInt64) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aNullableDouble, other.aNullableDouble) &&
+        NativeInteropTestsPigeonUtils.deepEquals(
+            this.aNullableByteArray, other.aNullableByteArray) &&
+        NativeInteropTestsPigeonUtils.deepEquals(
+            this.aNullable4ByteArray, other.aNullable4ByteArray) &&
+        NativeInteropTestsPigeonUtils.deepEquals(
+            this.aNullable8ByteArray, other.aNullable8ByteArray) &&
+        NativeInteropTestsPigeonUtils.deepEquals(
+            this.aNullableFloatArray, other.aNullableFloatArray) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aNullableEnum, other.aNullableEnum) &&
+        NativeInteropTestsPigeonUtils.deepEquals(
+            this.anotherNullableEnum, other.anotherNullableEnum) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aNullableString, other.aNullableString) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aNullableObject, other.aNullableObject) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.list, other.list) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.stringList, other.stringList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.intList, other.intList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.doubleList, other.doubleList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.boolList, other.boolList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.enumList, other.enumList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.objectList, other.objectList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.listList, other.listList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.mapList, other.mapList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.map, other.map) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.stringMap, other.stringMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.intMap, other.intMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.enumMap, other.enumMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.objectMap, other.objectMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.listMap, other.listMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.mapMap, other.mapMap)
   }
 
   override fun hashCode(): Int {
     var result = javaClass.hashCode()
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.aNullableBool)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.aNullableInt)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.aNullableInt64)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.aNullableDouble)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.aNullableByteArray)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.aNullable4ByteArray)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.aNullable8ByteArray)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.aNullableFloatArray)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.aNullableEnum)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.anotherNullableEnum)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.aNullableString)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.aNullableObject)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.list)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.stringList)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.intList)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.doubleList)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.boolList)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.enumList)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.objectList)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.listList)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.mapList)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.map)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.stringMap)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.intMap)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.enumMap)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.objectMap)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.listMap)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.mapMap)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aNullableBool)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aNullableInt)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aNullableInt64)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aNullableDouble)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aNullableByteArray)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aNullable4ByteArray)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aNullable8ByteArray)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aNullableFloatArray)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aNullableEnum)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.anotherNullableEnum)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aNullableString)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aNullableObject)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.list)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.stringList)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.intList)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.doubleList)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.boolList)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.enumList)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.objectList)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.listList)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.mapList)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.map)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.stringMap)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.intMap)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.enumMap)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.objectMap)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.listMap)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.mapMap)
     return result
   }
 
   override fun toString(): String {
-    return "NIAllNullableTypesWithoutRecursion(aNullableBool=$aNullableBool, aNullableInt=$aNullableInt, aNullableInt64=$aNullableInt64, aNullableDouble=$aNullableDouble, aNullableByteArray=${aNullableByteArray?.contentToString()}, aNullable4ByteArray=${aNullable4ByteArray?.contentToString()}, aNullable8ByteArray=${aNullable8ByteArray?.contentToString()}, aNullableFloatArray=${aNullableFloatArray?.contentToString()}, aNullableEnum=$aNullableEnum, anotherNullableEnum=$anotherNullableEnum, aNullableString=$aNullableString, aNullableObject=$aNullableObject, list=$list, stringList=$stringList, intList=$intList, doubleList=$doubleList, boolList=$boolList, enumList=$enumList, objectList=$objectList, listList=$listList, mapList=$mapList, map=$map, stringMap=$stringMap, intMap=$intMap, enumMap=$enumMap, objectMap=$objectMap, listMap=$listMap, mapMap=$mapMap)"
+    return "NativeInteropAllNullableTypesWithoutRecursion(aNullableBool=$aNullableBool, aNullableInt=$aNullableInt, aNullableInt64=$aNullableInt64, aNullableDouble=$aNullableDouble, aNullableByteArray=${aNullableByteArray?.contentToString()}, aNullable4ByteArray=${aNullable4ByteArray?.contentToString()}, aNullable8ByteArray=${aNullable8ByteArray?.contentToString()}, aNullableFloatArray=${aNullableFloatArray?.contentToString()}, aNullableEnum=$aNullableEnum, anotherNullableEnum=$anotherNullableEnum, aNullableString=$aNullableString, aNullableObject=$aNullableObject, list=$list, stringList=$stringList, intList=$intList, doubleList=$doubleList, boolList=$boolList, enumList=$enumList, objectList=$objectList, listList=$listList, mapList=$mapList, map=$map, stringMap=$stringMap, intMap=$intMap, enumMap=$enumMap, objectMap=$objectMap, listMap=$listMap, mapMap=$mapMap)"
   }
 }
 
 /**
  * A class for testing nested class handling.
  *
- * This is needed to test nested nullable and non-nullable classes, `NIAllNullableTypes` is
- * non-nullable here as it is easier to instantiate than `NIAllTypes` when testing doesn't require
- * both (ie. testing null classes).
+ * This is needed to test nested nullable and non-nullable classes, `NativeInteropAllNullableTypes`
+ * is non-nullable here as it is easier to instantiate than `NativeInteropAllTypes` when testing
+ * doesn't require both (ie. testing null classes).
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class NIAllClassesWrapper(
-    val allNullableTypes: NIAllNullableTypes,
-    val allNullableTypesWithoutRecursion: NIAllNullableTypesWithoutRecursion? = null,
-    val allTypes: NIAllTypes? = null,
-    val classList: List<NIAllTypes?>,
-    val nullableClassList: List<NIAllNullableTypesWithoutRecursion?>? = null,
-    val classMap: Map<Long?, NIAllTypes?>,
-    val nullableClassMap: Map<Long?, NIAllNullableTypesWithoutRecursion?>? = null
+data class NativeInteropAllClassesWrapper(
+    val allNullableTypes: NativeInteropAllNullableTypes,
+    val allNullableTypesWithoutRecursion: NativeInteropAllNullableTypesWithoutRecursion? = null,
+    val allTypes: NativeInteropAllTypes? = null,
+    val classList: List<NativeInteropAllTypes?>,
+    val nullableClassList: List<NativeInteropAllNullableTypesWithoutRecursion?>? = null,
+    val classMap: Map<Long?, NativeInteropAllTypes?>,
+    val nullableClassMap: Map<Long?, NativeInteropAllNullableTypesWithoutRecursion?>? = null
 ) {
   companion object {
-    fun fromList(pigeonVar_list: List<Any?>): NIAllClassesWrapper {
-      val allNullableTypes = pigeonVar_list[0] as NIAllNullableTypes
+    fun fromList(pigeonVar_list: List<Any?>): NativeInteropAllClassesWrapper {
+      val allNullableTypes = pigeonVar_list[0] as NativeInteropAllNullableTypes
       val allNullableTypesWithoutRecursion =
-          pigeonVar_list[1] as NIAllNullableTypesWithoutRecursion?
-      val allTypes = pigeonVar_list[2] as NIAllTypes?
-      val classList = pigeonVar_list[3] as List<NIAllTypes?>
-      val nullableClassList = pigeonVar_list[4] as List<NIAllNullableTypesWithoutRecursion?>?
-      val classMap = pigeonVar_list[5] as Map<Long?, NIAllTypes?>
-      val nullableClassMap = pigeonVar_list[6] as Map<Long?, NIAllNullableTypesWithoutRecursion?>?
-      return NIAllClassesWrapper(
+          pigeonVar_list[1] as NativeInteropAllNullableTypesWithoutRecursion?
+      val allTypes = pigeonVar_list[2] as NativeInteropAllTypes?
+      val classList = pigeonVar_list[3] as List<NativeInteropAllTypes?>
+      val nullableClassList =
+          pigeonVar_list[4] as List<NativeInteropAllNullableTypesWithoutRecursion?>?
+      val classMap = pigeonVar_list[5] as Map<Long?, NativeInteropAllTypes?>
+      val nullableClassMap =
+          pigeonVar_list[6] as Map<Long?, NativeInteropAllNullableTypesWithoutRecursion?>?
+      return NativeInteropAllClassesWrapper(
           allNullableTypes,
           allNullableTypesWithoutRecursion,
           allTypes,
@@ -949,43 +962,46 @@ data class NIAllClassesWrapper(
     if (this === other) {
       return true
     }
-    val other = other as NIAllClassesWrapper
-    return NiTestsPigeonUtils.deepEquals(this.allNullableTypes, other.allNullableTypes) &&
-        NiTestsPigeonUtils.deepEquals(
+    val other = other as NativeInteropAllClassesWrapper
+    return NativeInteropTestsPigeonUtils.deepEquals(
+        this.allNullableTypes, other.allNullableTypes) &&
+        NativeInteropTestsPigeonUtils.deepEquals(
             this.allNullableTypesWithoutRecursion, other.allNullableTypesWithoutRecursion) &&
-        NiTestsPigeonUtils.deepEquals(this.allTypes, other.allTypes) &&
-        NiTestsPigeonUtils.deepEquals(this.classList, other.classList) &&
-        NiTestsPigeonUtils.deepEquals(this.nullableClassList, other.nullableClassList) &&
-        NiTestsPigeonUtils.deepEquals(this.classMap, other.classMap) &&
-        NiTestsPigeonUtils.deepEquals(this.nullableClassMap, other.nullableClassMap)
+        NativeInteropTestsPigeonUtils.deepEquals(this.allTypes, other.allTypes) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.classList, other.classList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.nullableClassList, other.nullableClassList) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.classMap, other.classMap) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.nullableClassMap, other.nullableClassMap)
   }
 
   override fun hashCode(): Int {
     var result = javaClass.hashCode()
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.allNullableTypes)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.allNullableTypesWithoutRecursion)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.allTypes)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.classList)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.nullableClassList)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.classMap)
-    result = 31 * result + NiTestsPigeonUtils.deepHash(this.nullableClassMap)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.allNullableTypes)
+    result =
+        31 * result + NativeInteropTestsPigeonUtils.deepHash(this.allNullableTypesWithoutRecursion)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.allTypes)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.classList)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.nullableClassList)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.classMap)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.nullableClassMap)
     return result
   }
 
   override fun toString(): String {
-    return "NIAllClassesWrapper(allNullableTypes=$allNullableTypes, allNullableTypesWithoutRecursion=$allNullableTypesWithoutRecursion, allTypes=$allTypes, classList=$classList, nullableClassList=$nullableClassList, classMap=$classMap, nullableClassMap=$nullableClassMap)"
+    return "NativeInteropAllClassesWrapper(allNullableTypes=$allNullableTypes, allNullableTypesWithoutRecursion=$allNullableTypesWithoutRecursion, allTypes=$allTypes, classList=$classList, nullableClassList=$nullableClassList, classMap=$classMap, nullableClassMap=$nullableClassMap)"
   }
 }
 
-val NIHostIntegrationCoreApiInstances: MutableMap<String, NIHostIntegrationCoreApiRegistrar> =
+val NativeInteropHostIntegrationCoreApiInstances:
+    MutableMap<String, NativeInteropHostIntegrationCoreApiRegistrar> =
     mutableMapOf()
 
 @Keep
-abstract class NIHostIntegrationCoreApi {
+abstract class NativeInteropHostIntegrationCoreApi {
   /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */
   abstract fun noop()
   /** Returns the passed object, to test serialization and deserialization. */
-  abstract fun echoAllTypes(everything: NIAllTypes): NIAllTypes
+  abstract fun echoAllTypes(everything: NativeInteropAllTypes): NativeInteropAllTypes
   /** Returns an error, to test error handling. */
   abstract fun throwError(): Any?
   /** Returns an error from a void function, to test error handling. */
@@ -1021,13 +1037,17 @@ abstract class NIHostIntegrationCoreApi {
   /** Returns the passed list, to test serialization and deserialization. */
   abstract fun echoBoolList(boolList: List<Boolean?>): List<Boolean?>
   /** Returns the passed list, to test serialization and deserialization. */
-  abstract fun echoEnumList(enumList: List<NIAnEnum?>): List<NIAnEnum?>
+  abstract fun echoEnumList(enumList: List<NativeInteropAnEnum?>): List<NativeInteropAnEnum?>
   /** Returns the passed list, to test serialization and deserialization. */
-  abstract fun echoClassList(classList: List<NIAllNullableTypes?>): List<NIAllNullableTypes?>
+  abstract fun echoClassList(
+      classList: List<NativeInteropAllNullableTypes?>
+  ): List<NativeInteropAllNullableTypes?>
   /** Returns the passed list, to test serialization and deserialization. */
-  abstract fun echoNonNullEnumList(enumList: List<NIAnEnum>): List<NIAnEnum>
+  abstract fun echoNonNullEnumList(enumList: List<NativeInteropAnEnum>): List<NativeInteropAnEnum>
   /** Returns the passed list, to test serialization and deserialization. */
-  abstract fun echoNonNullClassList(classList: List<NIAllNullableTypes>): List<NIAllNullableTypes>
+  abstract fun echoNonNullClassList(
+      classList: List<NativeInteropAllNullableTypes>
+  ): List<NativeInteropAllNullableTypes>
   /** Returns the passed map, to test serialization and deserialization. */
   abstract fun echoMap(map: Map<Any?, Any?>): Map<Any?, Any?>
   /** Returns the passed map, to test serialization and deserialization. */
@@ -1035,27 +1055,33 @@ abstract class NIHostIntegrationCoreApi {
   /** Returns the passed map, to test serialization and deserialization. */
   abstract fun echoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?>
   /** Returns the passed map, to test serialization and deserialization. */
-  abstract fun echoEnumMap(enumMap: Map<NIAnEnum?, NIAnEnum?>): Map<NIAnEnum?, NIAnEnum?>
+  abstract fun echoEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
   /** Returns the passed map, to test serialization and deserialization. */
   abstract fun echoClassMap(
-      classMap: Map<Long?, NIAllNullableTypes?>
-  ): Map<Long?, NIAllNullableTypes?>
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>
+  ): Map<Long?, NativeInteropAllNullableTypes?>
   /** Returns the passed map, to test serialization and deserialization. */
   abstract fun echoNonNullStringMap(stringMap: Map<String, String>): Map<String, String>
   /** Returns the passed map, to test serialization and deserialization. */
   abstract fun echoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long>
   /** Returns the passed map, to test serialization and deserialization. */
-  abstract fun echoNonNullEnumMap(enumMap: Map<NIAnEnum, NIAnEnum>): Map<NIAnEnum, NIAnEnum>
+  abstract fun echoNonNullEnumMap(
+      enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>
+  ): Map<NativeInteropAnEnum, NativeInteropAnEnum>
   /** Returns the passed map, to test serialization and deserialization. */
   abstract fun echoNonNullClassMap(
-      classMap: Map<Long, NIAllNullableTypes>
-  ): Map<Long, NIAllNullableTypes>
+      classMap: Map<Long, NativeInteropAllNullableTypes>
+  ): Map<Long, NativeInteropAllNullableTypes>
   /** Returns the passed class to test nested class serialization and deserialization. */
-  abstract fun echoClassWrapper(wrapper: NIAllClassesWrapper): NIAllClassesWrapper
+  abstract fun echoClassWrapper(
+      wrapper: NativeInteropAllClassesWrapper
+  ): NativeInteropAllClassesWrapper
   /** Returns the passed enum to test serialization and deserialization. */
-  abstract fun echoEnum(anEnum: NIAnEnum): NIAnEnum
+  abstract fun echoEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum
   /** Returns the passed enum to test serialization and deserialization. */
-  abstract fun echoAnotherEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum
+  abstract fun echoAnotherEnum(anotherEnum: NativeInteropAnotherEnum): NativeInteropAnotherEnum
   /** Returns the default string. */
   abstract fun echoNamedDefaultString(aString: String): String
   /** Returns passed in double. */
@@ -1063,31 +1089,33 @@ abstract class NIHostIntegrationCoreApi {
   /** Returns passed in int. */
   abstract fun echoRequiredInt(anInt: Long): Long
   /** Returns the passed object, to test serialization and deserialization. */
-  abstract fun echoAllNullableTypes(everything: NIAllNullableTypes?): NIAllNullableTypes?
+  abstract fun echoAllNullableTypes(
+      everything: NativeInteropAllNullableTypes?
+  ): NativeInteropAllNullableTypes?
   /** Returns the passed object, to test serialization and deserialization. */
   abstract fun echoAllNullableTypesWithoutRecursion(
-      everything: NIAllNullableTypesWithoutRecursion?
-  ): NIAllNullableTypesWithoutRecursion?
+      everything: NativeInteropAllNullableTypesWithoutRecursion?
+  ): NativeInteropAllNullableTypesWithoutRecursion?
   /**
    * Returns the inner `aString` value from the wrapped object, to test sending of nested objects.
    */
-  abstract fun extractNestedNullableString(wrapper: NIAllClassesWrapper): String?
+  abstract fun extractNestedNullableString(wrapper: NativeInteropAllClassesWrapper): String?
   /**
    * Returns the inner `aString` value from the wrapped object, to test sending of nested objects.
    */
-  abstract fun createNestedNullableString(nullableString: String?): NIAllClassesWrapper
+  abstract fun createNestedNullableString(nullableString: String?): NativeInteropAllClassesWrapper
 
   abstract fun sendMultipleNullableTypes(
       aNullableBool: Boolean?,
       aNullableInt: Long?,
       aNullableString: String?
-  ): NIAllNullableTypes
+  ): NativeInteropAllNullableTypes
   /** Returns passed in arguments of multiple types. */
   abstract fun sendMultipleNullableTypesWithoutRecursion(
       aNullableBool: Boolean?,
       aNullableInt: Long?,
       aNullableString: String?
-  ): NIAllNullableTypesWithoutRecursion
+  ): NativeInteropAllNullableTypesWithoutRecursion
   /** Returns passed in int. */
   abstract fun echoNullableInt(aNullableInt: Long?): Long?
   /** Returns passed in double. */
@@ -1109,17 +1137,21 @@ abstract class NIHostIntegrationCoreApi {
   /** Returns the passed list, to test serialization and deserialization. */
   abstract fun echoNullableList(aNullableList: List<Any?>?): List<Any?>?
   /** Returns the passed list, to test serialization and deserialization. */
-  abstract fun echoNullableEnumList(enumList: List<NIAnEnum?>?): List<NIAnEnum?>?
+  abstract fun echoNullableEnumList(
+      enumList: List<NativeInteropAnEnum?>?
+  ): List<NativeInteropAnEnum?>?
   /** Returns the passed list, to test serialization and deserialization. */
   abstract fun echoNullableClassList(
-      classList: List<NIAllNullableTypes?>?
-  ): List<NIAllNullableTypes?>?
+      classList: List<NativeInteropAllNullableTypes?>?
+  ): List<NativeInteropAllNullableTypes?>?
   /** Returns the passed list, to test serialization and deserialization. */
-  abstract fun echoNullableNonNullEnumList(enumList: List<NIAnEnum>?): List<NIAnEnum>?
+  abstract fun echoNullableNonNullEnumList(
+      enumList: List<NativeInteropAnEnum>?
+  ): List<NativeInteropAnEnum>?
   /** Returns the passed list, to test serialization and deserialization. */
   abstract fun echoNullableNonNullClassList(
-      classList: List<NIAllNullableTypes>?
-  ): List<NIAllNullableTypes>?
+      classList: List<NativeInteropAllNullableTypes>?
+  ): List<NativeInteropAllNullableTypes>?
   /** Returns the passed map, to test serialization and deserialization. */
   abstract fun echoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
   /** Returns the passed map, to test serialization and deserialization. */
@@ -1127,27 +1159,31 @@ abstract class NIHostIntegrationCoreApi {
   /** Returns the passed map, to test serialization and deserialization. */
   abstract fun echoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>?
   /** Returns the passed map, to test serialization and deserialization. */
-  abstract fun echoNullableEnumMap(enumMap: Map<NIAnEnum?, NIAnEnum?>?): Map<NIAnEnum?, NIAnEnum?>?
+  abstract fun echoNullableEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
   /** Returns the passed map, to test serialization and deserialization. */
   abstract fun echoNullableClassMap(
-      classMap: Map<Long?, NIAllNullableTypes?>?
-  ): Map<Long?, NIAllNullableTypes?>?
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>?
+  ): Map<Long?, NativeInteropAllNullableTypes?>?
   /** Returns the passed map, to test serialization and deserialization. */
   abstract fun echoNullableNonNullStringMap(stringMap: Map<String, String>?): Map<String, String>?
   /** Returns the passed map, to test serialization and deserialization. */
   abstract fun echoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>?
   /** Returns the passed map, to test serialization and deserialization. */
   abstract fun echoNullableNonNullEnumMap(
-      enumMap: Map<NIAnEnum, NIAnEnum>?
-  ): Map<NIAnEnum, NIAnEnum>?
+      enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>?
+  ): Map<NativeInteropAnEnum, NativeInteropAnEnum>?
   /** Returns the passed map, to test serialization and deserialization. */
   abstract fun echoNullableNonNullClassMap(
-      classMap: Map<Long, NIAllNullableTypes>?
-  ): Map<Long, NIAllNullableTypes>?
+      classMap: Map<Long, NativeInteropAllNullableTypes>?
+  ): Map<Long, NativeInteropAllNullableTypes>?
 
-  abstract fun echoNullableEnum(anEnum: NIAnEnum?): NIAnEnum?
+  abstract fun echoNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum?
 
-  abstract fun echoAnotherNullableEnum(anotherEnum: NIAnotherEnum?): NIAnotherEnum?
+  abstract fun echoAnotherNullableEnum(
+      anotherEnum: NativeInteropAnotherEnum?
+  ): NativeInteropAnotherEnum?
   /** Returns passed in int. */
   abstract fun echoOptionalNullableInt(aNullableInt: Long?): Long?
   /** Returns the passed in string. */
@@ -1178,11 +1214,13 @@ abstract class NIHostIntegrationCoreApi {
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
   abstract suspend fun echoAsyncList(list: List<Any?>): List<Any?>
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
-  abstract suspend fun echoAsyncEnumList(enumList: List<NIAnEnum?>): List<NIAnEnum?>
+  abstract suspend fun echoAsyncEnumList(
+      enumList: List<NativeInteropAnEnum?>
+  ): List<NativeInteropAnEnum?>
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
   abstract suspend fun echoAsyncClassList(
-      classList: List<NIAllNullableTypes?>
-  ): List<NIAllNullableTypes?>
+      classList: List<NativeInteropAllNullableTypes?>
+  ): List<NativeInteropAllNullableTypes?>
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   abstract suspend fun echoAsyncMap(map: Map<Any?, Any?>): Map<Any?, Any?>
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
@@ -1191,16 +1229,18 @@ abstract class NIHostIntegrationCoreApi {
   abstract suspend fun echoAsyncIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?>
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   abstract suspend fun echoAsyncEnumMap(
-      enumMap: Map<NIAnEnum?, NIAnEnum?>
-  ): Map<NIAnEnum?, NIAnEnum?>
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   abstract suspend fun echoAsyncClassMap(
-      classMap: Map<Long?, NIAllNullableTypes?>
-  ): Map<Long?, NIAllNullableTypes?>
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>
+  ): Map<Long?, NativeInteropAllNullableTypes?>
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
-  abstract suspend fun echoAsyncEnum(anEnum: NIAnEnum): NIAnEnum
+  abstract suspend fun echoAsyncEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
-  abstract suspend fun echoAnotherAsyncEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum
+  abstract suspend fun echoAnotherAsyncEnum(
+      anotherEnum: NativeInteropAnotherEnum
+  ): NativeInteropAnotherEnum
   /** Responds with an error from an async function returning a value. */
   abstract suspend fun throwAsyncError(): Any?
   /** Responds with an error from an async void function. */
@@ -1208,15 +1248,17 @@ abstract class NIHostIntegrationCoreApi {
   /** Responds with a Flutter error from an async function returning a value. */
   abstract suspend fun throwAsyncFlutterError(): Any?
   /** Returns the passed object, to test async serialization and deserialization. */
-  abstract suspend fun echoAsyncNIAllTypes(everything: NIAllTypes): NIAllTypes
+  abstract suspend fun echoAsyncNativeInteropAllTypes(
+      everything: NativeInteropAllTypes
+  ): NativeInteropAllTypes
   /** Returns the passed object, to test serialization and deserialization. */
-  abstract suspend fun echoAsyncNullableNIAllNullableTypes(
-      everything: NIAllNullableTypes?
-  ): NIAllNullableTypes?
+  abstract suspend fun echoAsyncNullableNativeInteropAllNullableTypes(
+      everything: NativeInteropAllNullableTypes?
+  ): NativeInteropAllNullableTypes?
   /** Returns the passed object, to test serialization and deserialization. */
-  abstract suspend fun echoAsyncNullableNIAllNullableTypesWithoutRecursion(
-      everything: NIAllNullableTypesWithoutRecursion?
-  ): NIAllNullableTypesWithoutRecursion?
+  abstract suspend fun echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+      everything: NativeInteropAllNullableTypesWithoutRecursion?
+  ): NativeInteropAllNullableTypesWithoutRecursion?
   /** Returns passed in int asynchronously. */
   abstract suspend fun echoAsyncNullableInt(anInt: Long?): Long?
   /** Returns passed in double asynchronously. */
@@ -1238,11 +1280,13 @@ abstract class NIHostIntegrationCoreApi {
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
   abstract suspend fun echoAsyncNullableList(list: List<Any?>?): List<Any?>?
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
-  abstract suspend fun echoAsyncNullableEnumList(enumList: List<NIAnEnum?>?): List<NIAnEnum?>?
+  abstract suspend fun echoAsyncNullableEnumList(
+      enumList: List<NativeInteropAnEnum?>?
+  ): List<NativeInteropAnEnum?>?
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
   abstract suspend fun echoAsyncNullableClassList(
-      classList: List<NIAllNullableTypes?>?
-  ): List<NIAllNullableTypes?>?
+      classList: List<NativeInteropAllNullableTypes?>?
+  ): List<NativeInteropAllNullableTypes?>?
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   abstract suspend fun echoAsyncNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
@@ -1253,16 +1297,18 @@ abstract class NIHostIntegrationCoreApi {
   abstract suspend fun echoAsyncNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>?
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   abstract suspend fun echoAsyncNullableEnumMap(
-      enumMap: Map<NIAnEnum?, NIAnEnum?>?
-  ): Map<NIAnEnum?, NIAnEnum?>?
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   abstract suspend fun echoAsyncNullableClassMap(
-      classMap: Map<Long?, NIAllNullableTypes?>?
-  ): Map<Long?, NIAllNullableTypes?>?
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>?
+  ): Map<Long?, NativeInteropAllNullableTypes?>?
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
-  abstract suspend fun echoAsyncNullableEnum(anEnum: NIAnEnum?): NIAnEnum?
+  abstract suspend fun echoAsyncNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum?
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
-  abstract suspend fun echoAnotherAsyncNullableEnum(anotherEnum: NIAnotherEnum?): NIAnotherEnum?
+  abstract suspend fun echoAnotherAsyncNullableEnum(
+      anotherEnum: NativeInteropAnotherEnum?
+  ): NativeInteropAnotherEnum?
 
   abstract fun callFlutterNoop()
 
@@ -1270,27 +1316,29 @@ abstract class NIHostIntegrationCoreApi {
 
   abstract fun callFlutterThrowErrorFromVoid()
 
-  abstract fun callFlutterEchoNIAllTypes(everything: NIAllTypes): NIAllTypes
+  abstract fun callFlutterEchoNativeInteropAllTypes(
+      everything: NativeInteropAllTypes
+  ): NativeInteropAllTypes
 
-  abstract fun callFlutterEchoNIAllNullableTypes(
-      everything: NIAllNullableTypes?
-  ): NIAllNullableTypes?
+  abstract fun callFlutterEchoNativeInteropAllNullableTypes(
+      everything: NativeInteropAllNullableTypes?
+  ): NativeInteropAllNullableTypes?
 
   abstract fun callFlutterSendMultipleNullableTypes(
       aNullableBool: Boolean?,
       aNullableInt: Long?,
       aNullableString: String?
-  ): NIAllNullableTypes
+  ): NativeInteropAllNullableTypes
 
-  abstract fun callFlutterEchoNIAllNullableTypesWithoutRecursion(
-      everything: NIAllNullableTypesWithoutRecursion?
-  ): NIAllNullableTypesWithoutRecursion?
+  abstract fun callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(
+      everything: NativeInteropAllNullableTypesWithoutRecursion?
+  ): NativeInteropAllNullableTypesWithoutRecursion?
 
   abstract fun callFlutterSendMultipleNullableTypesWithoutRecursion(
       aNullableBool: Boolean?,
       aNullableInt: Long?,
       aNullableString: String?
-  ): NIAllNullableTypesWithoutRecursion
+  ): NativeInteropAllNullableTypesWithoutRecursion
 
   abstract fun callFlutterEchoBool(aBool: Boolean): Boolean
 
@@ -1310,17 +1358,21 @@ abstract class NIHostIntegrationCoreApi {
 
   abstract fun callFlutterEchoList(list: List<Any?>): List<Any?>
 
-  abstract fun callFlutterEchoEnumList(enumList: List<NIAnEnum?>): List<NIAnEnum?>
+  abstract fun callFlutterEchoEnumList(
+      enumList: List<NativeInteropAnEnum?>
+  ): List<NativeInteropAnEnum?>
 
   abstract fun callFlutterEchoClassList(
-      classList: List<NIAllNullableTypes?>
-  ): List<NIAllNullableTypes?>
+      classList: List<NativeInteropAllNullableTypes?>
+  ): List<NativeInteropAllNullableTypes?>
 
-  abstract fun callFlutterEchoNonNullEnumList(enumList: List<NIAnEnum>): List<NIAnEnum>
+  abstract fun callFlutterEchoNonNullEnumList(
+      enumList: List<NativeInteropAnEnum>
+  ): List<NativeInteropAnEnum>
 
   abstract fun callFlutterEchoNonNullClassList(
-      classList: List<NIAllNullableTypes>
-  ): List<NIAllNullableTypes>
+      classList: List<NativeInteropAllNullableTypes>
+  ): List<NativeInteropAllNullableTypes>
 
   abstract fun callFlutterEchoMap(map: Map<Any?, Any?>): Map<Any?, Any?>
 
@@ -1328,27 +1380,31 @@ abstract class NIHostIntegrationCoreApi {
 
   abstract fun callFlutterEchoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?>
 
-  abstract fun callFlutterEchoEnumMap(enumMap: Map<NIAnEnum?, NIAnEnum?>): Map<NIAnEnum?, NIAnEnum?>
+  abstract fun callFlutterEchoEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
 
   abstract fun callFlutterEchoClassMap(
-      classMap: Map<Long?, NIAllNullableTypes?>
-  ): Map<Long?, NIAllNullableTypes?>
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>
+  ): Map<Long?, NativeInteropAllNullableTypes?>
 
   abstract fun callFlutterEchoNonNullStringMap(stringMap: Map<String, String>): Map<String, String>
 
   abstract fun callFlutterEchoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long>
 
   abstract fun callFlutterEchoNonNullEnumMap(
-      enumMap: Map<NIAnEnum, NIAnEnum>
-  ): Map<NIAnEnum, NIAnEnum>
+      enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>
+  ): Map<NativeInteropAnEnum, NativeInteropAnEnum>
 
   abstract fun callFlutterEchoNonNullClassMap(
-      classMap: Map<Long, NIAllNullableTypes>
-  ): Map<Long, NIAllNullableTypes>
+      classMap: Map<Long, NativeInteropAllNullableTypes>
+  ): Map<Long, NativeInteropAllNullableTypes>
 
-  abstract fun callFlutterEchoEnum(anEnum: NIAnEnum): NIAnEnum
+  abstract fun callFlutterEchoEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum
 
-  abstract fun callFlutterEchoNIAnotherEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum
+  abstract fun callFlutterEchoNativeInteropAnotherEnum(
+      anotherEnum: NativeInteropAnotherEnum
+  ): NativeInteropAnotherEnum
 
   abstract fun callFlutterEchoNullableBool(aBool: Boolean?): Boolean?
 
@@ -1368,17 +1424,21 @@ abstract class NIHostIntegrationCoreApi {
 
   abstract fun callFlutterEchoNullableList(list: List<Any?>?): List<Any?>?
 
-  abstract fun callFlutterEchoNullableEnumList(enumList: List<NIAnEnum?>?): List<NIAnEnum?>?
+  abstract fun callFlutterEchoNullableEnumList(
+      enumList: List<NativeInteropAnEnum?>?
+  ): List<NativeInteropAnEnum?>?
 
   abstract fun callFlutterEchoNullableClassList(
-      classList: List<NIAllNullableTypes?>?
-  ): List<NIAllNullableTypes?>?
+      classList: List<NativeInteropAllNullableTypes?>?
+  ): List<NativeInteropAllNullableTypes?>?
 
-  abstract fun callFlutterEchoNullableNonNullEnumList(enumList: List<NIAnEnum>?): List<NIAnEnum>?
+  abstract fun callFlutterEchoNullableNonNullEnumList(
+      enumList: List<NativeInteropAnEnum>?
+  ): List<NativeInteropAnEnum>?
 
   abstract fun callFlutterEchoNullableNonNullClassList(
-      classList: List<NIAllNullableTypes>?
-  ): List<NIAllNullableTypes>?
+      classList: List<NativeInteropAllNullableTypes>?
+  ): List<NativeInteropAllNullableTypes>?
 
   abstract fun callFlutterEchoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
 
@@ -1389,12 +1449,12 @@ abstract class NIHostIntegrationCoreApi {
   abstract fun callFlutterEchoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>?
 
   abstract fun callFlutterEchoNullableEnumMap(
-      enumMap: Map<NIAnEnum?, NIAnEnum?>?
-  ): Map<NIAnEnum?, NIAnEnum?>?
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
 
   abstract fun callFlutterEchoNullableClassMap(
-      classMap: Map<Long?, NIAllNullableTypes?>?
-  ): Map<Long?, NIAllNullableTypes?>?
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>?
+  ): Map<Long?, NativeInteropAllNullableTypes?>?
 
   abstract fun callFlutterEchoNullableNonNullStringMap(
       stringMap: Map<String, String>?
@@ -1403,28 +1463,32 @@ abstract class NIHostIntegrationCoreApi {
   abstract fun callFlutterEchoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>?
 
   abstract fun callFlutterEchoNullableNonNullEnumMap(
-      enumMap: Map<NIAnEnum, NIAnEnum>?
-  ): Map<NIAnEnum, NIAnEnum>?
+      enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>?
+  ): Map<NativeInteropAnEnum, NativeInteropAnEnum>?
 
   abstract fun callFlutterEchoNullableNonNullClassMap(
-      classMap: Map<Long, NIAllNullableTypes>?
-  ): Map<Long, NIAllNullableTypes>?
+      classMap: Map<Long, NativeInteropAllNullableTypes>?
+  ): Map<Long, NativeInteropAllNullableTypes>?
 
-  abstract fun callFlutterEchoNullableEnum(anEnum: NIAnEnum?): NIAnEnum?
+  abstract fun callFlutterEchoNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum?
 
-  abstract fun callFlutterEchoAnotherNullableEnum(anotherEnum: NIAnotherEnum?): NIAnotherEnum?
+  abstract fun callFlutterEchoAnotherNullableEnum(
+      anotherEnum: NativeInteropAnotherEnum?
+  ): NativeInteropAnotherEnum?
 
   abstract suspend fun callFlutterNoopAsync()
 
-  abstract suspend fun callFlutterEchoAsyncNIAllTypes(everything: NIAllTypes): NIAllTypes
+  abstract suspend fun callFlutterEchoAsyncNativeInteropAllTypes(
+      everything: NativeInteropAllTypes
+  ): NativeInteropAllTypes
 
-  abstract suspend fun callFlutterEchoAsyncNullableNIAllNullableTypes(
-      everything: NIAllNullableTypes?
-  ): NIAllNullableTypes?
+  abstract suspend fun callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(
+      everything: NativeInteropAllNullableTypes?
+  ): NativeInteropAllNullableTypes?
 
-  abstract suspend fun callFlutterEchoAsyncNullableNIAllNullableTypesWithoutRecursion(
-      everything: NIAllNullableTypesWithoutRecursion?
-  ): NIAllNullableTypesWithoutRecursion?
+  abstract suspend fun callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+      everything: NativeInteropAllNullableTypesWithoutRecursion?
+  ): NativeInteropAllNullableTypesWithoutRecursion?
 
   abstract suspend fun callFlutterEchoAsyncBool(aBool: Boolean): Boolean
 
@@ -1446,17 +1510,21 @@ abstract class NIHostIntegrationCoreApi {
 
   abstract suspend fun callFlutterEchoAsyncList(list: List<Any?>): List<Any?>
 
-  abstract suspend fun callFlutterEchoAsyncEnumList(enumList: List<NIAnEnum?>): List<NIAnEnum?>
+  abstract suspend fun callFlutterEchoAsyncEnumList(
+      enumList: List<NativeInteropAnEnum?>
+  ): List<NativeInteropAnEnum?>
 
   abstract suspend fun callFlutterEchoAsyncClassList(
-      classList: List<NIAllNullableTypes?>
-  ): List<NIAllNullableTypes?>
+      classList: List<NativeInteropAllNullableTypes?>
+  ): List<NativeInteropAllNullableTypes?>
 
-  abstract suspend fun callFlutterEchoAsyncNonNullEnumList(enumList: List<NIAnEnum>): List<NIAnEnum>
+  abstract suspend fun callFlutterEchoAsyncNonNullEnumList(
+      enumList: List<NativeInteropAnEnum>
+  ): List<NativeInteropAnEnum>
 
   abstract suspend fun callFlutterEchoAsyncNonNullClassList(
-      classList: List<NIAllNullableTypes>
-  ): List<NIAllNullableTypes>
+      classList: List<NativeInteropAllNullableTypes>
+  ): List<NativeInteropAllNullableTypes>
 
   abstract suspend fun callFlutterEchoAsyncMap(map: Map<Any?, Any?>): Map<Any?, Any?>
 
@@ -1467,16 +1535,18 @@ abstract class NIHostIntegrationCoreApi {
   abstract suspend fun callFlutterEchoAsyncIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?>
 
   abstract suspend fun callFlutterEchoAsyncEnumMap(
-      enumMap: Map<NIAnEnum?, NIAnEnum?>
-  ): Map<NIAnEnum?, NIAnEnum?>
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
 
   abstract suspend fun callFlutterEchoAsyncClassMap(
-      classMap: Map<Long?, NIAllNullableTypes?>
-  ): Map<Long?, NIAllNullableTypes?>
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>
+  ): Map<Long?, NativeInteropAllNullableTypes?>
 
-  abstract suspend fun callFlutterEchoAsyncEnum(anEnum: NIAnEnum): NIAnEnum
+  abstract suspend fun callFlutterEchoAsyncEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum
 
-  abstract suspend fun callFlutterEchoAnotherAsyncEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum
+  abstract suspend fun callFlutterEchoAnotherAsyncEnum(
+      anotherEnum: NativeInteropAnotherEnum
+  ): NativeInteropAnotherEnum
 
   abstract suspend fun callFlutterEchoAsyncNullableBool(aBool: Boolean?): Boolean?
 
@@ -1501,20 +1571,20 @@ abstract class NIHostIntegrationCoreApi {
   abstract suspend fun callFlutterEchoAsyncNullableList(list: List<Any?>?): List<Any?>?
 
   abstract suspend fun callFlutterEchoAsyncNullableEnumList(
-      enumList: List<NIAnEnum?>?
-  ): List<NIAnEnum?>?
+      enumList: List<NativeInteropAnEnum?>?
+  ): List<NativeInteropAnEnum?>?
 
   abstract suspend fun callFlutterEchoAsyncNullableClassList(
-      classList: List<NIAllNullableTypes?>?
-  ): List<NIAllNullableTypes?>?
+      classList: List<NativeInteropAllNullableTypes?>?
+  ): List<NativeInteropAllNullableTypes?>?
 
   abstract suspend fun callFlutterEchoAsyncNullableNonNullEnumList(
-      enumList: List<NIAnEnum>?
-  ): List<NIAnEnum>?
+      enumList: List<NativeInteropAnEnum>?
+  ): List<NativeInteropAnEnum>?
 
   abstract suspend fun callFlutterEchoAsyncNullableNonNullClassList(
-      classList: List<NIAllNullableTypes>?
-  ): List<NIAllNullableTypes>?
+      classList: List<NativeInteropAllNullableTypes>?
+  ): List<NativeInteropAllNullableTypes>?
 
   abstract suspend fun callFlutterEchoAsyncNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
 
@@ -1527,22 +1597,24 @@ abstract class NIHostIntegrationCoreApi {
   ): Map<Long?, Long?>?
 
   abstract suspend fun callFlutterEchoAsyncNullableEnumMap(
-      enumMap: Map<NIAnEnum?, NIAnEnum?>?
-  ): Map<NIAnEnum?, NIAnEnum?>?
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
 
   abstract suspend fun callFlutterEchoAsyncNullableClassMap(
-      classMap: Map<Long?, NIAllNullableTypes?>?
-  ): Map<Long?, NIAllNullableTypes?>?
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>?
+  ): Map<Long?, NativeInteropAllNullableTypes?>?
 
-  abstract suspend fun callFlutterEchoAsyncNullableEnum(anEnum: NIAnEnum?): NIAnEnum?
+  abstract suspend fun callFlutterEchoAsyncNullableEnum(
+      anEnum: NativeInteropAnEnum?
+  ): NativeInteropAnEnum?
 
   abstract suspend fun callFlutterEchoAnotherAsyncNullableEnum(
-      anotherEnum: NIAnotherEnum?
-  ): NIAnotherEnum?
+      anotherEnum: NativeInteropAnotherEnum?
+  ): NativeInteropAnotherEnum?
   /** Returns true if the handler is run on a main thread. */
   abstract fun defaultIsMainThread(): Boolean
   /**
-   * Spawns a background thread and calls `noop` on the [NIFlutterIntegrationCoreApi].
+   * Spawns a background thread and calls `noop` on the [NativeInteropFlutterIntegrationCoreApi].
    *
    * Returns the result of whether the flutter call was successful.
    */
@@ -1550,21 +1622,21 @@ abstract class NIHostIntegrationCoreApi {
 }
 
 @Keep
-class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
-  var api: NIHostIntegrationCoreApi? = null
+class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegrationCoreApi() {
+  var api: NativeInteropHostIntegrationCoreApi? = null
 
   fun register(
-      api: NIHostIntegrationCoreApi,
+      api: NativeInteropHostIntegrationCoreApi,
       name: String = defaultInstanceName
-  ): NIHostIntegrationCoreApiRegistrar {
+  ): NativeInteropHostIntegrationCoreApiRegistrar {
     this.api = api
-    NIHostIntegrationCoreApiInstances[name] = this
+    NativeInteropHostIntegrationCoreApiInstances[name] = this
     return this
   }
 
   @Keep
-  fun getInstance(name: String): NIHostIntegrationCoreApiRegistrar? {
-    return NIHostIntegrationCoreApiInstances[name]
+  fun getInstance(name: String): NativeInteropHostIntegrationCoreApiRegistrar? {
+    return NativeInteropHostIntegrationCoreApiInstances[name]
   }
   /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */
   override fun noop() {
@@ -1575,10 +1647,10 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed object, to test serialization and deserialization. */
-  override fun echoAllTypes(everything: NIAllTypes): NIAllTypes {
+  override fun echoAllTypes(everything: NativeInteropAllTypes): NativeInteropAllTypes {
     api?.let {
       try {
         return it.echoAllTypes(everything)
@@ -1586,7 +1658,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns an error, to test error handling. */
   override fun throwError(): Any? {
@@ -1597,7 +1669,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns an error from a void function, to test error handling. */
   override fun throwErrorFromVoid() {
@@ -1608,7 +1680,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns a Flutter error, to test error handling. */
   override fun throwFlutterError(): Any? {
@@ -1619,7 +1691,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns passed in int. */
   override fun echoInt(anInt: Long): Long {
@@ -1630,7 +1702,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns passed in double. */
   override fun echoDouble(aDouble: Double): Double {
@@ -1641,7 +1713,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed in boolean. */
   override fun echoBool(aBool: Boolean): Boolean {
@@ -1652,7 +1724,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed in string. */
   override fun echoString(aString: String): String {
@@ -1663,7 +1735,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed in Uint8List. */
   override fun echoUint8List(aUint8List: ByteArray): ByteArray {
@@ -1674,7 +1746,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed in Int32List. */
   override fun echoInt32List(aInt32List: IntArray): IntArray {
@@ -1685,7 +1757,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed in Int64List. */
   override fun echoInt64List(aInt64List: LongArray): LongArray {
@@ -1696,7 +1768,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed in Float64List. */
   override fun echoFloat64List(aFloat64List: DoubleArray): DoubleArray {
@@ -1707,7 +1779,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed in generic Object. */
   override fun echoObject(anObject: Any): Any {
@@ -1718,7 +1790,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed list, to test serialization and deserialization. */
   override fun echoList(list: List<Any?>): List<Any?> {
@@ -1729,7 +1801,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed list, to test serialization and deserialization. */
   override fun echoStringList(stringList: List<String?>): List<String?> {
@@ -1740,7 +1812,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed list, to test serialization and deserialization. */
   override fun echoIntList(intList: List<Long?>): List<Long?> {
@@ -1751,7 +1823,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed list, to test serialization and deserialization. */
   override fun echoDoubleList(doubleList: List<Double?>): List<Double?> {
@@ -1762,7 +1834,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed list, to test serialization and deserialization. */
   override fun echoBoolList(boolList: List<Boolean?>): List<Boolean?> {
@@ -1773,10 +1845,10 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoEnumList(enumList: List<NIAnEnum?>): List<NIAnEnum?> {
+  override fun echoEnumList(enumList: List<NativeInteropAnEnum?>): List<NativeInteropAnEnum?> {
     api?.let {
       try {
         return it.echoEnumList(enumList)
@@ -1784,10 +1856,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoClassList(classList: List<NIAllNullableTypes?>): List<NIAllNullableTypes?> {
+  override fun echoClassList(
+      classList: List<NativeInteropAllNullableTypes?>
+  ): List<NativeInteropAllNullableTypes?> {
     api?.let {
       try {
         return it.echoClassList(classList)
@@ -1795,10 +1869,10 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoNonNullEnumList(enumList: List<NIAnEnum>): List<NIAnEnum> {
+  override fun echoNonNullEnumList(enumList: List<NativeInteropAnEnum>): List<NativeInteropAnEnum> {
     api?.let {
       try {
         return it.echoNonNullEnumList(enumList)
@@ -1806,10 +1880,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoNonNullClassList(classList: List<NIAllNullableTypes>): List<NIAllNullableTypes> {
+  override fun echoNonNullClassList(
+      classList: List<NativeInteropAllNullableTypes>
+  ): List<NativeInteropAllNullableTypes> {
     api?.let {
       try {
         return it.echoNonNullClassList(classList)
@@ -1817,7 +1893,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
@@ -1828,7 +1904,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoStringMap(stringMap: Map<String?, String?>): Map<String?, String?> {
@@ -1839,7 +1915,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
@@ -1850,10 +1926,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoEnumMap(enumMap: Map<NIAnEnum?, NIAnEnum?>): Map<NIAnEnum?, NIAnEnum?> {
+  override fun echoEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?> {
     api?.let {
       try {
         return it.echoEnumMap(enumMap)
@@ -1861,12 +1939,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoClassMap(
-      classMap: Map<Long?, NIAllNullableTypes?>
-  ): Map<Long?, NIAllNullableTypes?> {
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>
+  ): Map<Long?, NativeInteropAllNullableTypes?> {
     api?.let {
       try {
         return it.echoClassMap(classMap)
@@ -1874,7 +1952,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoNonNullStringMap(stringMap: Map<String, String>): Map<String, String> {
@@ -1885,7 +1963,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long> {
@@ -1896,10 +1974,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoNonNullEnumMap(enumMap: Map<NIAnEnum, NIAnEnum>): Map<NIAnEnum, NIAnEnum> {
+  override fun echoNonNullEnumMap(
+      enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>
+  ): Map<NativeInteropAnEnum, NativeInteropAnEnum> {
     api?.let {
       try {
         return it.echoNonNullEnumMap(enumMap)
@@ -1907,12 +1987,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoNonNullClassMap(
-      classMap: Map<Long, NIAllNullableTypes>
-  ): Map<Long, NIAllNullableTypes> {
+      classMap: Map<Long, NativeInteropAllNullableTypes>
+  ): Map<Long, NativeInteropAllNullableTypes> {
     api?.let {
       try {
         return it.echoNonNullClassMap(classMap)
@@ -1920,10 +2000,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed class to test nested class serialization and deserialization. */
-  override fun echoClassWrapper(wrapper: NIAllClassesWrapper): NIAllClassesWrapper {
+  override fun echoClassWrapper(
+      wrapper: NativeInteropAllClassesWrapper
+  ): NativeInteropAllClassesWrapper {
     api?.let {
       try {
         return it.echoClassWrapper(wrapper)
@@ -1931,10 +2013,10 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed enum to test serialization and deserialization. */
-  override fun echoEnum(anEnum: NIAnEnum): NIAnEnum {
+  override fun echoEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum {
     api?.let {
       try {
         return it.echoEnum(anEnum)
@@ -1942,10 +2024,10 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed enum to test serialization and deserialization. */
-  override fun echoAnotherEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum {
+  override fun echoAnotherEnum(anotherEnum: NativeInteropAnotherEnum): NativeInteropAnotherEnum {
     api?.let {
       try {
         return it.echoAnotherEnum(anotherEnum)
@@ -1953,7 +2035,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the default string. */
   override fun echoNamedDefaultString(aString: String): String {
@@ -1964,7 +2046,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns passed in double. */
   override fun echoOptionalDefaultDouble(aDouble: Double): Double {
@@ -1975,7 +2057,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns passed in int. */
   override fun echoRequiredInt(anInt: Long): Long {
@@ -1986,10 +2068,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed object, to test serialization and deserialization. */
-  override fun echoAllNullableTypes(everything: NIAllNullableTypes?): NIAllNullableTypes? {
+  override fun echoAllNullableTypes(
+      everything: NativeInteropAllNullableTypes?
+  ): NativeInteropAllNullableTypes? {
     api?.let {
       try {
         return it.echoAllNullableTypes(everything)
@@ -1997,12 +2081,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed object, to test serialization and deserialization. */
   override fun echoAllNullableTypesWithoutRecursion(
-      everything: NIAllNullableTypesWithoutRecursion?
-  ): NIAllNullableTypesWithoutRecursion? {
+      everything: NativeInteropAllNullableTypesWithoutRecursion?
+  ): NativeInteropAllNullableTypesWithoutRecursion? {
     api?.let {
       try {
         return it.echoAllNullableTypesWithoutRecursion(everything)
@@ -2010,12 +2094,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /**
    * Returns the inner `aString` value from the wrapped object, to test sending of nested objects.
    */
-  override fun extractNestedNullableString(wrapper: NIAllClassesWrapper): String? {
+  override fun extractNestedNullableString(wrapper: NativeInteropAllClassesWrapper): String? {
     api?.let {
       try {
         return it.extractNestedNullableString(wrapper)
@@ -2023,12 +2107,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /**
    * Returns the inner `aString` value from the wrapped object, to test sending of nested objects.
    */
-  override fun createNestedNullableString(nullableString: String?): NIAllClassesWrapper {
+  override fun createNestedNullableString(nullableString: String?): NativeInteropAllClassesWrapper {
     api?.let {
       try {
         return it.createNestedNullableString(nullableString)
@@ -2036,14 +2120,14 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun sendMultipleNullableTypes(
       aNullableBool: Boolean?,
       aNullableInt: Long?,
       aNullableString: String?
-  ): NIAllNullableTypes {
+  ): NativeInteropAllNullableTypes {
     api?.let {
       try {
         return it.sendMultipleNullableTypes(aNullableBool, aNullableInt, aNullableString)
@@ -2051,14 +2135,14 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns passed in arguments of multiple types. */
   override fun sendMultipleNullableTypesWithoutRecursion(
       aNullableBool: Boolean?,
       aNullableInt: Long?,
       aNullableString: String?
-  ): NIAllNullableTypesWithoutRecursion {
+  ): NativeInteropAllNullableTypesWithoutRecursion {
     api?.let {
       try {
         return it.sendMultipleNullableTypesWithoutRecursion(
@@ -2067,7 +2151,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns passed in int. */
   override fun echoNullableInt(aNullableInt: Long?): Long? {
@@ -2078,7 +2162,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns passed in double. */
   override fun echoNullableDouble(aNullableDouble: Double?): Double? {
@@ -2089,7 +2173,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed in boolean. */
   override fun echoNullableBool(aNullableBool: Boolean?): Boolean? {
@@ -2100,7 +2184,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed in string. */
   override fun echoNullableString(aNullableString: String?): String? {
@@ -2111,7 +2195,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed in Uint8List. */
   override fun echoNullableUint8List(aNullableUint8List: ByteArray?): ByteArray? {
@@ -2122,7 +2206,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed in Int32List. */
   override fun echoNullableInt32List(aNullableInt32List: IntArray?): IntArray? {
@@ -2133,7 +2217,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed in Int64List. */
   override fun echoNullableInt64List(aNullableInt64List: LongArray?): LongArray? {
@@ -2144,7 +2228,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed in Float64List. */
   override fun echoNullableFloat64List(aNullableFloat64List: DoubleArray?): DoubleArray? {
@@ -2155,7 +2239,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed in generic Object. */
   override fun echoNullableObject(aNullableObject: Any?): Any? {
@@ -2166,7 +2250,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed list, to test serialization and deserialization. */
   override fun echoNullableList(aNullableList: List<Any?>?): List<Any?>? {
@@ -2177,10 +2261,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoNullableEnumList(enumList: List<NIAnEnum?>?): List<NIAnEnum?>? {
+  override fun echoNullableEnumList(
+      enumList: List<NativeInteropAnEnum?>?
+  ): List<NativeInteropAnEnum?>? {
     api?.let {
       try {
         return it.echoNullableEnumList(enumList)
@@ -2188,12 +2274,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed list, to test serialization and deserialization. */
   override fun echoNullableClassList(
-      classList: List<NIAllNullableTypes?>?
-  ): List<NIAllNullableTypes?>? {
+      classList: List<NativeInteropAllNullableTypes?>?
+  ): List<NativeInteropAllNullableTypes?>? {
     api?.let {
       try {
         return it.echoNullableClassList(classList)
@@ -2201,10 +2287,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoNullableNonNullEnumList(enumList: List<NIAnEnum>?): List<NIAnEnum>? {
+  override fun echoNullableNonNullEnumList(
+      enumList: List<NativeInteropAnEnum>?
+  ): List<NativeInteropAnEnum>? {
     api?.let {
       try {
         return it.echoNullableNonNullEnumList(enumList)
@@ -2212,12 +2300,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed list, to test serialization and deserialization. */
   override fun echoNullableNonNullClassList(
-      classList: List<NIAllNullableTypes>?
-  ): List<NIAllNullableTypes>? {
+      classList: List<NativeInteropAllNullableTypes>?
+  ): List<NativeInteropAllNullableTypes>? {
     api?.let {
       try {
         return it.echoNullableNonNullClassList(classList)
@@ -2225,7 +2313,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
@@ -2236,7 +2324,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoNullableStringMap(stringMap: Map<String?, String?>?): Map<String?, String?>? {
@@ -2247,7 +2335,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>? {
@@ -2258,12 +2346,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoNullableEnumMap(
-      enumMap: Map<NIAnEnum?, NIAnEnum?>?
-  ): Map<NIAnEnum?, NIAnEnum?>? {
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? {
     api?.let {
       try {
         return it.echoNullableEnumMap(enumMap)
@@ -2271,12 +2359,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoNullableClassMap(
-      classMap: Map<Long?, NIAllNullableTypes?>?
-  ): Map<Long?, NIAllNullableTypes?>? {
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>?
+  ): Map<Long?, NativeInteropAllNullableTypes?>? {
     api?.let {
       try {
         return it.echoNullableClassMap(classMap)
@@ -2284,7 +2372,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoNullableNonNullStringMap(stringMap: Map<String, String>?): Map<String, String>? {
@@ -2295,7 +2383,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>? {
@@ -2306,12 +2394,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoNullableNonNullEnumMap(
-      enumMap: Map<NIAnEnum, NIAnEnum>?
-  ): Map<NIAnEnum, NIAnEnum>? {
+      enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>?
+  ): Map<NativeInteropAnEnum, NativeInteropAnEnum>? {
     api?.let {
       try {
         return it.echoNullableNonNullEnumMap(enumMap)
@@ -2319,12 +2407,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoNullableNonNullClassMap(
-      classMap: Map<Long, NIAllNullableTypes>?
-  ): Map<Long, NIAllNullableTypes>? {
+      classMap: Map<Long, NativeInteropAllNullableTypes>?
+  ): Map<Long, NativeInteropAllNullableTypes>? {
     api?.let {
       try {
         return it.echoNullableNonNullClassMap(classMap)
@@ -2332,10 +2420,10 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
-  override fun echoNullableEnum(anEnum: NIAnEnum?): NIAnEnum? {
+  override fun echoNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum? {
     api?.let {
       try {
         return it.echoNullableEnum(anEnum)
@@ -2343,10 +2431,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
-  override fun echoAnotherNullableEnum(anotherEnum: NIAnotherEnum?): NIAnotherEnum? {
+  override fun echoAnotherNullableEnum(
+      anotherEnum: NativeInteropAnotherEnum?
+  ): NativeInteropAnotherEnum? {
     api?.let {
       try {
         return it.echoAnotherNullableEnum(anotherEnum)
@@ -2354,7 +2444,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns passed in int. */
   override fun echoOptionalNullableInt(aNullableInt: Long?): Long? {
@@ -2365,7 +2455,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed in string. */
   override fun echoNamedNullableString(aNullableString: String?): String? {
@@ -2376,7 +2466,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /**
    * A no-op function taking no arguments and returning no value, to sanity test basic asynchronous
@@ -2390,7 +2480,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns passed in int asynchronously. */
   override suspend fun echoAsyncInt(anInt: Long): Long {
@@ -2401,7 +2491,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns passed in double asynchronously. */
   override suspend fun echoAsyncDouble(aDouble: Double): Double {
@@ -2412,7 +2502,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed in boolean asynchronously. */
   override suspend fun echoAsyncBool(aBool: Boolean): Boolean {
@@ -2423,7 +2513,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed string asynchronously. */
   override suspend fun echoAsyncString(aString: String): String {
@@ -2434,7 +2524,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed in Uint8List asynchronously. */
   override suspend fun echoAsyncUint8List(aUint8List: ByteArray): ByteArray {
@@ -2445,7 +2535,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed in Int32List asynchronously. */
   override suspend fun echoAsyncInt32List(aInt32List: IntArray): IntArray {
@@ -2456,7 +2546,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed in Int64List asynchronously. */
   override suspend fun echoAsyncInt64List(aInt64List: LongArray): LongArray {
@@ -2467,7 +2557,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed in Float64List asynchronously. */
   override suspend fun echoAsyncFloat64List(aFloat64List: DoubleArray): DoubleArray {
@@ -2478,7 +2568,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed in generic Object asynchronously. */
   override suspend fun echoAsyncObject(anObject: Any): Any {
@@ -2489,7 +2579,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncList(list: List<Any?>): List<Any?> {
@@ -2500,10 +2590,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncEnumList(enumList: List<NIAnEnum?>): List<NIAnEnum?> {
+  override suspend fun echoAsyncEnumList(
+      enumList: List<NativeInteropAnEnum?>
+  ): List<NativeInteropAnEnum?> {
     api?.let {
       try {
         return it.echoAsyncEnumList(enumList)
@@ -2511,12 +2603,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncClassList(
-      classList: List<NIAllNullableTypes?>
-  ): List<NIAllNullableTypes?> {
+      classList: List<NativeInteropAllNullableTypes?>
+  ): List<NativeInteropAllNullableTypes?> {
     api?.let {
       try {
         return it.echoAsyncClassList(classList)
@@ -2524,7 +2616,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
@@ -2535,7 +2627,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncStringMap(stringMap: Map<String?, String?>): Map<String?, String?> {
@@ -2546,7 +2638,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
@@ -2557,12 +2649,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncEnumMap(
-      enumMap: Map<NIAnEnum?, NIAnEnum?>
-  ): Map<NIAnEnum?, NIAnEnum?> {
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?> {
     api?.let {
       try {
         return it.echoAsyncEnumMap(enumMap)
@@ -2570,12 +2662,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncClassMap(
-      classMap: Map<Long?, NIAllNullableTypes?>
-  ): Map<Long?, NIAllNullableTypes?> {
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>
+  ): Map<Long?, NativeInteropAllNullableTypes?> {
     api?.let {
       try {
         return it.echoAsyncClassMap(classMap)
@@ -2583,10 +2675,10 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncEnum(anEnum: NIAnEnum): NIAnEnum {
+  override suspend fun echoAsyncEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum {
     api?.let {
       try {
         return it.echoAsyncEnum(anEnum)
@@ -2594,10 +2686,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAnotherAsyncEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum {
+  override suspend fun echoAnotherAsyncEnum(
+      anotherEnum: NativeInteropAnotherEnum
+  ): NativeInteropAnotherEnum {
     api?.let {
       try {
         return it.echoAnotherAsyncEnum(anotherEnum)
@@ -2605,7 +2699,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Responds with an error from an async function returning a value. */
   override suspend fun throwAsyncError(): Any? {
@@ -2616,7 +2710,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Responds with an error from an async void function. */
   override suspend fun throwAsyncErrorFromVoid() {
@@ -2627,7 +2721,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Responds with a Flutter error from an async function returning a value. */
   override suspend fun throwAsyncFlutterError(): Any? {
@@ -2638,44 +2732,46 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed object, to test async serialization and deserialization. */
-  override suspend fun echoAsyncNIAllTypes(everything: NIAllTypes): NIAllTypes {
+  override suspend fun echoAsyncNativeInteropAllTypes(
+      everything: NativeInteropAllTypes
+  ): NativeInteropAllTypes {
     api?.let {
       try {
-        return it.echoAsyncNIAllTypes(everything)
+        return it.echoAsyncNativeInteropAllTypes(everything)
       } catch (e: Exception) {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed object, to test serialization and deserialization. */
-  override suspend fun echoAsyncNullableNIAllNullableTypes(
-      everything: NIAllNullableTypes?
-  ): NIAllNullableTypes? {
+  override suspend fun echoAsyncNullableNativeInteropAllNullableTypes(
+      everything: NativeInteropAllNullableTypes?
+  ): NativeInteropAllNullableTypes? {
     api?.let {
       try {
-        return it.echoAsyncNullableNIAllNullableTypes(everything)
+        return it.echoAsyncNullableNativeInteropAllNullableTypes(everything)
       } catch (e: Exception) {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed object, to test serialization and deserialization. */
-  override suspend fun echoAsyncNullableNIAllNullableTypesWithoutRecursion(
-      everything: NIAllNullableTypesWithoutRecursion?
-  ): NIAllNullableTypesWithoutRecursion? {
+  override suspend fun echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+      everything: NativeInteropAllNullableTypesWithoutRecursion?
+  ): NativeInteropAllNullableTypesWithoutRecursion? {
     api?.let {
       try {
-        return it.echoAsyncNullableNIAllNullableTypesWithoutRecursion(everything)
+        return it.echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(everything)
       } catch (e: Exception) {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns passed in int asynchronously. */
   override suspend fun echoAsyncNullableInt(anInt: Long?): Long? {
@@ -2686,7 +2782,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns passed in double asynchronously. */
   override suspend fun echoAsyncNullableDouble(aDouble: Double?): Double? {
@@ -2697,7 +2793,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed in boolean asynchronously. */
   override suspend fun echoAsyncNullableBool(aBool: Boolean?): Boolean? {
@@ -2708,7 +2804,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed string asynchronously. */
   override suspend fun echoAsyncNullableString(aString: String?): String? {
@@ -2719,7 +2815,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed in Uint8List asynchronously. */
   override suspend fun echoAsyncNullableUint8List(aUint8List: ByteArray?): ByteArray? {
@@ -2730,7 +2826,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed in Int32List asynchronously. */
   override suspend fun echoAsyncNullableInt32List(aInt32List: IntArray?): IntArray? {
@@ -2741,7 +2837,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed in Int64List asynchronously. */
   override suspend fun echoAsyncNullableInt64List(aInt64List: LongArray?): LongArray? {
@@ -2752,7 +2848,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed in Float64List asynchronously. */
   override suspend fun echoAsyncNullableFloat64List(aFloat64List: DoubleArray?): DoubleArray? {
@@ -2763,7 +2859,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed in generic Object asynchronously. */
   override suspend fun echoAsyncNullableObject(anObject: Any?): Any? {
@@ -2774,7 +2870,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncNullableList(list: List<Any?>?): List<Any?>? {
@@ -2785,10 +2881,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncNullableEnumList(enumList: List<NIAnEnum?>?): List<NIAnEnum?>? {
+  override suspend fun echoAsyncNullableEnumList(
+      enumList: List<NativeInteropAnEnum?>?
+  ): List<NativeInteropAnEnum?>? {
     api?.let {
       try {
         return it.echoAsyncNullableEnumList(enumList)
@@ -2796,12 +2894,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncNullableClassList(
-      classList: List<NIAllNullableTypes?>?
-  ): List<NIAllNullableTypes?>? {
+      classList: List<NativeInteropAllNullableTypes?>?
+  ): List<NativeInteropAllNullableTypes?>? {
     api?.let {
       try {
         return it.echoAsyncNullableClassList(classList)
@@ -2809,7 +2907,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
@@ -2820,7 +2918,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncNullableStringMap(
@@ -2833,7 +2931,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>? {
@@ -2844,12 +2942,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncNullableEnumMap(
-      enumMap: Map<NIAnEnum?, NIAnEnum?>?
-  ): Map<NIAnEnum?, NIAnEnum?>? {
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? {
     api?.let {
       try {
         return it.echoAsyncNullableEnumMap(enumMap)
@@ -2857,12 +2955,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncNullableClassMap(
-      classMap: Map<Long?, NIAllNullableTypes?>?
-  ): Map<Long?, NIAllNullableTypes?>? {
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>?
+  ): Map<Long?, NativeInteropAllNullableTypes?>? {
     api?.let {
       try {
         return it.echoAsyncNullableClassMap(classMap)
@@ -2870,10 +2968,10 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncNullableEnum(anEnum: NIAnEnum?): NIAnEnum? {
+  override suspend fun echoAsyncNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum? {
     api?.let {
       try {
         return it.echoAsyncNullableEnum(anEnum)
@@ -2881,10 +2979,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAnotherAsyncNullableEnum(anotherEnum: NIAnotherEnum?): NIAnotherEnum? {
+  override suspend fun echoAnotherAsyncNullableEnum(
+      anotherEnum: NativeInteropAnotherEnum?
+  ): NativeInteropAnotherEnum? {
     api?.let {
       try {
         return it.echoAnotherAsyncNullableEnum(anotherEnum)
@@ -2892,7 +2992,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterNoop() {
@@ -2903,7 +3003,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterThrowError(): Any? {
@@ -2914,7 +3014,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterThrowErrorFromVoid() {
@@ -2925,38 +3025,40 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
-  override fun callFlutterEchoNIAllTypes(everything: NIAllTypes): NIAllTypes {
+  override fun callFlutterEchoNativeInteropAllTypes(
+      everything: NativeInteropAllTypes
+  ): NativeInteropAllTypes {
     api?.let {
       try {
-        return it.callFlutterEchoNIAllTypes(everything)
+        return it.callFlutterEchoNativeInteropAllTypes(everything)
       } catch (e: Exception) {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
-  override fun callFlutterEchoNIAllNullableTypes(
-      everything: NIAllNullableTypes?
-  ): NIAllNullableTypes? {
+  override fun callFlutterEchoNativeInteropAllNullableTypes(
+      everything: NativeInteropAllNullableTypes?
+  ): NativeInteropAllNullableTypes? {
     api?.let {
       try {
-        return it.callFlutterEchoNIAllNullableTypes(everything)
+        return it.callFlutterEchoNativeInteropAllNullableTypes(everything)
       } catch (e: Exception) {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterSendMultipleNullableTypes(
       aNullableBool: Boolean?,
       aNullableInt: Long?,
       aNullableString: String?
-  ): NIAllNullableTypes {
+  ): NativeInteropAllNullableTypes {
     api?.let {
       try {
         return it.callFlutterSendMultipleNullableTypes(aNullableBool, aNullableInt, aNullableString)
@@ -2964,27 +3066,27 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
-  override fun callFlutterEchoNIAllNullableTypesWithoutRecursion(
-      everything: NIAllNullableTypesWithoutRecursion?
-  ): NIAllNullableTypesWithoutRecursion? {
+  override fun callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(
+      everything: NativeInteropAllNullableTypesWithoutRecursion?
+  ): NativeInteropAllNullableTypesWithoutRecursion? {
     api?.let {
       try {
-        return it.callFlutterEchoNIAllNullableTypesWithoutRecursion(everything)
+        return it.callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(everything)
       } catch (e: Exception) {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterSendMultipleNullableTypesWithoutRecursion(
       aNullableBool: Boolean?,
       aNullableInt: Long?,
       aNullableString: String?
-  ): NIAllNullableTypesWithoutRecursion {
+  ): NativeInteropAllNullableTypesWithoutRecursion {
     api?.let {
       try {
         return it.callFlutterSendMultipleNullableTypesWithoutRecursion(
@@ -2993,7 +3095,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoBool(aBool: Boolean): Boolean {
@@ -3004,7 +3106,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoInt(anInt: Long): Long {
@@ -3015,7 +3117,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoDouble(aDouble: Double): Double {
@@ -3026,7 +3128,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoString(aString: String): String {
@@ -3037,7 +3139,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoUint8List(list: ByteArray): ByteArray {
@@ -3048,7 +3150,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoInt32List(list: IntArray): IntArray {
@@ -3059,7 +3161,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoInt64List(list: LongArray): LongArray {
@@ -3070,7 +3172,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoFloat64List(list: DoubleArray): DoubleArray {
@@ -3081,7 +3183,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoList(list: List<Any?>): List<Any?> {
@@ -3092,10 +3194,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
-  override fun callFlutterEchoEnumList(enumList: List<NIAnEnum?>): List<NIAnEnum?> {
+  override fun callFlutterEchoEnumList(
+      enumList: List<NativeInteropAnEnum?>
+  ): List<NativeInteropAnEnum?> {
     api?.let {
       try {
         return it.callFlutterEchoEnumList(enumList)
@@ -3103,12 +3207,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoClassList(
-      classList: List<NIAllNullableTypes?>
-  ): List<NIAllNullableTypes?> {
+      classList: List<NativeInteropAllNullableTypes?>
+  ): List<NativeInteropAllNullableTypes?> {
     api?.let {
       try {
         return it.callFlutterEchoClassList(classList)
@@ -3116,10 +3220,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
-  override fun callFlutterEchoNonNullEnumList(enumList: List<NIAnEnum>): List<NIAnEnum> {
+  override fun callFlutterEchoNonNullEnumList(
+      enumList: List<NativeInteropAnEnum>
+  ): List<NativeInteropAnEnum> {
     api?.let {
       try {
         return it.callFlutterEchoNonNullEnumList(enumList)
@@ -3127,12 +3233,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoNonNullClassList(
-      classList: List<NIAllNullableTypes>
-  ): List<NIAllNullableTypes> {
+      classList: List<NativeInteropAllNullableTypes>
+  ): List<NativeInteropAllNullableTypes> {
     api?.let {
       try {
         return it.callFlutterEchoNonNullClassList(classList)
@@ -3140,7 +3246,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
@@ -3151,7 +3257,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoStringMap(stringMap: Map<String?, String?>): Map<String?, String?> {
@@ -3162,7 +3268,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
@@ -3173,12 +3279,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoEnumMap(
-      enumMap: Map<NIAnEnum?, NIAnEnum?>
-  ): Map<NIAnEnum?, NIAnEnum?> {
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?> {
     api?.let {
       try {
         return it.callFlutterEchoEnumMap(enumMap)
@@ -3186,12 +3292,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoClassMap(
-      classMap: Map<Long?, NIAllNullableTypes?>
-  ): Map<Long?, NIAllNullableTypes?> {
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>
+  ): Map<Long?, NativeInteropAllNullableTypes?> {
     api?.let {
       try {
         return it.callFlutterEchoClassMap(classMap)
@@ -3199,7 +3305,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoNonNullStringMap(
@@ -3212,7 +3318,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long> {
@@ -3223,12 +3329,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoNonNullEnumMap(
-      enumMap: Map<NIAnEnum, NIAnEnum>
-  ): Map<NIAnEnum, NIAnEnum> {
+      enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>
+  ): Map<NativeInteropAnEnum, NativeInteropAnEnum> {
     api?.let {
       try {
         return it.callFlutterEchoNonNullEnumMap(enumMap)
@@ -3236,12 +3342,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoNonNullClassMap(
-      classMap: Map<Long, NIAllNullableTypes>
-  ): Map<Long, NIAllNullableTypes> {
+      classMap: Map<Long, NativeInteropAllNullableTypes>
+  ): Map<Long, NativeInteropAllNullableTypes> {
     api?.let {
       try {
         return it.callFlutterEchoNonNullClassMap(classMap)
@@ -3249,10 +3355,10 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
-  override fun callFlutterEchoEnum(anEnum: NIAnEnum): NIAnEnum {
+  override fun callFlutterEchoEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum {
     api?.let {
       try {
         return it.callFlutterEchoEnum(anEnum)
@@ -3260,18 +3366,20 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
-  override fun callFlutterEchoNIAnotherEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum {
+  override fun callFlutterEchoNativeInteropAnotherEnum(
+      anotherEnum: NativeInteropAnotherEnum
+  ): NativeInteropAnotherEnum {
     api?.let {
       try {
-        return it.callFlutterEchoNIAnotherEnum(anotherEnum)
+        return it.callFlutterEchoNativeInteropAnotherEnum(anotherEnum)
       } catch (e: Exception) {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoNullableBool(aBool: Boolean?): Boolean? {
@@ -3282,7 +3390,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoNullableInt(anInt: Long?): Long? {
@@ -3293,7 +3401,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoNullableDouble(aDouble: Double?): Double? {
@@ -3304,7 +3412,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoNullableString(aString: String?): String? {
@@ -3315,7 +3423,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoNullableUint8List(list: ByteArray?): ByteArray? {
@@ -3326,7 +3434,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoNullableInt32List(list: IntArray?): IntArray? {
@@ -3337,7 +3445,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoNullableInt64List(list: LongArray?): LongArray? {
@@ -3348,7 +3456,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoNullableFloat64List(list: DoubleArray?): DoubleArray? {
@@ -3359,7 +3467,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoNullableList(list: List<Any?>?): List<Any?>? {
@@ -3370,10 +3478,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
-  override fun callFlutterEchoNullableEnumList(enumList: List<NIAnEnum?>?): List<NIAnEnum?>? {
+  override fun callFlutterEchoNullableEnumList(
+      enumList: List<NativeInteropAnEnum?>?
+  ): List<NativeInteropAnEnum?>? {
     api?.let {
       try {
         return it.callFlutterEchoNullableEnumList(enumList)
@@ -3381,12 +3491,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoNullableClassList(
-      classList: List<NIAllNullableTypes?>?
-  ): List<NIAllNullableTypes?>? {
+      classList: List<NativeInteropAllNullableTypes?>?
+  ): List<NativeInteropAllNullableTypes?>? {
     api?.let {
       try {
         return it.callFlutterEchoNullableClassList(classList)
@@ -3394,10 +3504,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
-  override fun callFlutterEchoNullableNonNullEnumList(enumList: List<NIAnEnum>?): List<NIAnEnum>? {
+  override fun callFlutterEchoNullableNonNullEnumList(
+      enumList: List<NativeInteropAnEnum>?
+  ): List<NativeInteropAnEnum>? {
     api?.let {
       try {
         return it.callFlutterEchoNullableNonNullEnumList(enumList)
@@ -3405,12 +3517,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoNullableNonNullClassList(
-      classList: List<NIAllNullableTypes>?
-  ): List<NIAllNullableTypes>? {
+      classList: List<NativeInteropAllNullableTypes>?
+  ): List<NativeInteropAllNullableTypes>? {
     api?.let {
       try {
         return it.callFlutterEchoNullableNonNullClassList(classList)
@@ -3418,7 +3530,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
@@ -3429,7 +3541,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoNullableStringMap(
@@ -3442,7 +3554,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>? {
@@ -3453,12 +3565,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoNullableEnumMap(
-      enumMap: Map<NIAnEnum?, NIAnEnum?>?
-  ): Map<NIAnEnum?, NIAnEnum?>? {
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? {
     api?.let {
       try {
         return it.callFlutterEchoNullableEnumMap(enumMap)
@@ -3466,12 +3578,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoNullableClassMap(
-      classMap: Map<Long?, NIAllNullableTypes?>?
-  ): Map<Long?, NIAllNullableTypes?>? {
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>?
+  ): Map<Long?, NativeInteropAllNullableTypes?>? {
     api?.let {
       try {
         return it.callFlutterEchoNullableClassMap(classMap)
@@ -3479,7 +3591,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoNullableNonNullStringMap(
@@ -3492,7 +3604,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>? {
@@ -3503,12 +3615,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoNullableNonNullEnumMap(
-      enumMap: Map<NIAnEnum, NIAnEnum>?
-  ): Map<NIAnEnum, NIAnEnum>? {
+      enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>?
+  ): Map<NativeInteropAnEnum, NativeInteropAnEnum>? {
     api?.let {
       try {
         return it.callFlutterEchoNullableNonNullEnumMap(enumMap)
@@ -3516,12 +3628,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override fun callFlutterEchoNullableNonNullClassMap(
-      classMap: Map<Long, NIAllNullableTypes>?
-  ): Map<Long, NIAllNullableTypes>? {
+      classMap: Map<Long, NativeInteropAllNullableTypes>?
+  ): Map<Long, NativeInteropAllNullableTypes>? {
     api?.let {
       try {
         return it.callFlutterEchoNullableNonNullClassMap(classMap)
@@ -3529,10 +3641,10 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
-  override fun callFlutterEchoNullableEnum(anEnum: NIAnEnum?): NIAnEnum? {
+  override fun callFlutterEchoNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum? {
     api?.let {
       try {
         return it.callFlutterEchoNullableEnum(anEnum)
@@ -3540,10 +3652,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
-  override fun callFlutterEchoAnotherNullableEnum(anotherEnum: NIAnotherEnum?): NIAnotherEnum? {
+  override fun callFlutterEchoAnotherNullableEnum(
+      anotherEnum: NativeInteropAnotherEnum?
+  ): NativeInteropAnotherEnum? {
     api?.let {
       try {
         return it.callFlutterEchoAnotherNullableEnum(anotherEnum)
@@ -3551,7 +3665,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterNoopAsync() {
@@ -3562,44 +3676,47 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
-  override suspend fun callFlutterEchoAsyncNIAllTypes(everything: NIAllTypes): NIAllTypes {
+  override suspend fun callFlutterEchoAsyncNativeInteropAllTypes(
+      everything: NativeInteropAllTypes
+  ): NativeInteropAllTypes {
     api?.let {
       try {
-        return it.callFlutterEchoAsyncNIAllTypes(everything)
+        return it.callFlutterEchoAsyncNativeInteropAllTypes(everything)
       } catch (e: Exception) {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
-  override suspend fun callFlutterEchoAsyncNullableNIAllNullableTypes(
-      everything: NIAllNullableTypes?
-  ): NIAllNullableTypes? {
+  override suspend fun callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(
+      everything: NativeInteropAllNullableTypes?
+  ): NativeInteropAllNullableTypes? {
     api?.let {
       try {
-        return it.callFlutterEchoAsyncNullableNIAllNullableTypes(everything)
+        return it.callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(everything)
       } catch (e: Exception) {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
-  override suspend fun callFlutterEchoAsyncNullableNIAllNullableTypesWithoutRecursion(
-      everything: NIAllNullableTypesWithoutRecursion?
-  ): NIAllNullableTypesWithoutRecursion? {
+  override suspend fun callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+      everything: NativeInteropAllNullableTypesWithoutRecursion?
+  ): NativeInteropAllNullableTypesWithoutRecursion? {
     api?.let {
       try {
-        return it.callFlutterEchoAsyncNullableNIAllNullableTypesWithoutRecursion(everything)
+        return it.callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+            everything)
       } catch (e: Exception) {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncBool(aBool: Boolean): Boolean {
@@ -3610,7 +3727,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncInt(anInt: Long): Long {
@@ -3621,7 +3738,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncDouble(aDouble: Double): Double {
@@ -3632,7 +3749,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncString(aString: String): String {
@@ -3643,7 +3760,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncUint8List(list: ByteArray): ByteArray {
@@ -3654,7 +3771,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncInt32List(list: IntArray): IntArray {
@@ -3665,7 +3782,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncInt64List(list: LongArray): LongArray {
@@ -3676,7 +3793,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncFloat64List(list: DoubleArray): DoubleArray {
@@ -3687,7 +3804,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncObject(anObject: Any): Any {
@@ -3698,7 +3815,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncList(list: List<Any?>): List<Any?> {
@@ -3709,10 +3826,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
-  override suspend fun callFlutterEchoAsyncEnumList(enumList: List<NIAnEnum?>): List<NIAnEnum?> {
+  override suspend fun callFlutterEchoAsyncEnumList(
+      enumList: List<NativeInteropAnEnum?>
+  ): List<NativeInteropAnEnum?> {
     api?.let {
       try {
         return it.callFlutterEchoAsyncEnumList(enumList)
@@ -3720,12 +3839,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncClassList(
-      classList: List<NIAllNullableTypes?>
-  ): List<NIAllNullableTypes?> {
+      classList: List<NativeInteropAllNullableTypes?>
+  ): List<NativeInteropAllNullableTypes?> {
     api?.let {
       try {
         return it.callFlutterEchoAsyncClassList(classList)
@@ -3733,12 +3852,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncNonNullEnumList(
-      enumList: List<NIAnEnum>
-  ): List<NIAnEnum> {
+      enumList: List<NativeInteropAnEnum>
+  ): List<NativeInteropAnEnum> {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNonNullEnumList(enumList)
@@ -3746,12 +3865,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncNonNullClassList(
-      classList: List<NIAllNullableTypes>
-  ): List<NIAllNullableTypes> {
+      classList: List<NativeInteropAllNullableTypes>
+  ): List<NativeInteropAllNullableTypes> {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNonNullClassList(classList)
@@ -3759,7 +3878,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
@@ -3770,7 +3889,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncStringMap(
@@ -3783,7 +3902,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
@@ -3794,12 +3913,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncEnumMap(
-      enumMap: Map<NIAnEnum?, NIAnEnum?>
-  ): Map<NIAnEnum?, NIAnEnum?> {
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?> {
     api?.let {
       try {
         return it.callFlutterEchoAsyncEnumMap(enumMap)
@@ -3807,12 +3926,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncClassMap(
-      classMap: Map<Long?, NIAllNullableTypes?>
-  ): Map<Long?, NIAllNullableTypes?> {
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>
+  ): Map<Long?, NativeInteropAllNullableTypes?> {
     api?.let {
       try {
         return it.callFlutterEchoAsyncClassMap(classMap)
@@ -3820,10 +3939,10 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
-  override suspend fun callFlutterEchoAsyncEnum(anEnum: NIAnEnum): NIAnEnum {
+  override suspend fun callFlutterEchoAsyncEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum {
     api?.let {
       try {
         return it.callFlutterEchoAsyncEnum(anEnum)
@@ -3831,10 +3950,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
-  override suspend fun callFlutterEchoAnotherAsyncEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum {
+  override suspend fun callFlutterEchoAnotherAsyncEnum(
+      anotherEnum: NativeInteropAnotherEnum
+  ): NativeInteropAnotherEnum {
     api?.let {
       try {
         return it.callFlutterEchoAnotherAsyncEnum(anotherEnum)
@@ -3842,7 +3963,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncNullableBool(aBool: Boolean?): Boolean? {
@@ -3853,7 +3974,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncNullableInt(anInt: Long?): Long? {
@@ -3864,7 +3985,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncNullableDouble(aDouble: Double?): Double? {
@@ -3875,7 +3996,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncNullableString(aString: String?): String? {
@@ -3886,7 +4007,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncNullableUint8List(list: ByteArray?): ByteArray? {
@@ -3897,7 +4018,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncNullableInt32List(list: IntArray?): IntArray? {
@@ -3908,7 +4029,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncNullableInt64List(list: LongArray?): LongArray? {
@@ -3919,7 +4040,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncNullableFloat64List(list: DoubleArray?): DoubleArray? {
@@ -3930,7 +4051,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterThrowFlutterErrorAsync(): Any? {
@@ -3941,7 +4062,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncNullableObject(anObject: Any?): Any? {
@@ -3952,7 +4073,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncNullableList(list: List<Any?>?): List<Any?>? {
@@ -3963,12 +4084,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncNullableEnumList(
-      enumList: List<NIAnEnum?>?
-  ): List<NIAnEnum?>? {
+      enumList: List<NativeInteropAnEnum?>?
+  ): List<NativeInteropAnEnum?>? {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNullableEnumList(enumList)
@@ -3976,12 +4097,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncNullableClassList(
-      classList: List<NIAllNullableTypes?>?
-  ): List<NIAllNullableTypes?>? {
+      classList: List<NativeInteropAllNullableTypes?>?
+  ): List<NativeInteropAllNullableTypes?>? {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNullableClassList(classList)
@@ -3989,12 +4110,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncNullableNonNullEnumList(
-      enumList: List<NIAnEnum>?
-  ): List<NIAnEnum>? {
+      enumList: List<NativeInteropAnEnum>?
+  ): List<NativeInteropAnEnum>? {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNullableNonNullEnumList(enumList)
@@ -4002,12 +4123,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncNullableNonNullClassList(
-      classList: List<NIAllNullableTypes>?
-  ): List<NIAllNullableTypes>? {
+      classList: List<NativeInteropAllNullableTypes>?
+  ): List<NativeInteropAllNullableTypes>? {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNullableNonNullClassList(classList)
@@ -4015,7 +4136,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
@@ -4026,7 +4147,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncNullableStringMap(
@@ -4039,7 +4160,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncNullableIntMap(
@@ -4052,12 +4173,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncNullableEnumMap(
-      enumMap: Map<NIAnEnum?, NIAnEnum?>?
-  ): Map<NIAnEnum?, NIAnEnum?>? {
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNullableEnumMap(enumMap)
@@ -4065,12 +4186,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAsyncNullableClassMap(
-      classMap: Map<Long?, NIAllNullableTypes?>?
-  ): Map<Long?, NIAllNullableTypes?>? {
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>?
+  ): Map<Long?, NativeInteropAllNullableTypes?>? {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNullableClassMap(classMap)
@@ -4078,10 +4199,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
-  override suspend fun callFlutterEchoAsyncNullableEnum(anEnum: NIAnEnum?): NIAnEnum? {
+  override suspend fun callFlutterEchoAsyncNullableEnum(
+      anEnum: NativeInteropAnEnum?
+  ): NativeInteropAnEnum? {
     api?.let {
       try {
         return it.callFlutterEchoAsyncNullableEnum(anEnum)
@@ -4089,12 +4212,12 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 
   override suspend fun callFlutterEchoAnotherAsyncNullableEnum(
-      anotherEnum: NIAnotherEnum?
-  ): NIAnotherEnum? {
+      anotherEnum: NativeInteropAnotherEnum?
+  ): NativeInteropAnotherEnum? {
     api?.let {
       try {
         return it.callFlutterEchoAnotherAsyncNullableEnum(anotherEnum)
@@ -4102,7 +4225,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /** Returns true if the handler is run on a main thread. */
   override fun defaultIsMainThread(): Boolean {
@@ -4113,10 +4236,10 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
   /**
-   * Spawns a background thread and calls `noop` on the [NIFlutterIntegrationCoreApi].
+   * Spawns a background thread and calls `noop` on the [NativeInteropFlutterIntegrationCoreApi].
    *
    * Returns the result of whether the flutter call was successful.
    */
@@ -4128,7 +4251,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
         throw e
       }
     }
-    error("NIHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been set")
   }
 }
 /**
@@ -4137,22 +4260,26 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
  *
  * Generated class from Pigeon that represents Flutter messages that can be called from Kotlin.
  */
-val registeredNIFlutterIntegrationCoreApi: MutableMap<String, NIFlutterIntegrationCoreApi> =
+val registeredNativeInteropFlutterIntegrationCoreApi:
+    MutableMap<String, NativeInteropFlutterIntegrationCoreApi> =
     mutableMapOf()
 
-class NIFlutterIntegrationCoreApiRegistrar() {
+class NativeInteropFlutterIntegrationCoreApiRegistrar() {
   /// Map that stores instances
 
-  fun registerInstance(api: NIFlutterIntegrationCoreApi, name: String = defaultInstanceName) {
-    registeredNIFlutterIntegrationCoreApi[name] = api
+  fun registerInstance(
+      api: NativeInteropFlutterIntegrationCoreApi,
+      name: String = defaultInstanceName
+  ) {
+    registeredNativeInteropFlutterIntegrationCoreApi[name] = api
   }
 
-  fun getInstance(name: String = defaultInstanceName): NIFlutterIntegrationCoreApi? {
-    return registeredNIFlutterIntegrationCoreApi[name]
+  fun getInstance(name: String = defaultInstanceName): NativeInteropFlutterIntegrationCoreApi? {
+    return registeredNativeInteropFlutterIntegrationCoreApi[name]
   }
 }
 
-interface NIFlutterIntegrationCoreApi {
+interface NativeInteropFlutterIntegrationCoreApi {
   /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */
   fun noop()
   /** Returns a Flutter error, to test error handling. */
@@ -4162,9 +4289,11 @@ interface NIFlutterIntegrationCoreApi {
   /** Responds with an error from an async void function. */
   fun throwErrorFromVoid()
   /** Returns the passed object, to test serialization and deserialization. */
-  fun echoNIAllTypes(everything: NIAllTypes): NIAllTypes
+  fun echoNativeInteropAllTypes(everything: NativeInteropAllTypes): NativeInteropAllTypes
   /** Returns the passed object, to test serialization and deserialization. */
-  fun echoNIAllNullableTypes(everything: NIAllNullableTypes?): NIAllNullableTypes?
+  fun echoNativeInteropAllNullableTypes(
+      everything: NativeInteropAllNullableTypes?
+  ): NativeInteropAllNullableTypes?
   /**
    * Returns passed in arguments of multiple types.
    *
@@ -4174,11 +4303,11 @@ interface NIFlutterIntegrationCoreApi {
       aNullableBool: Boolean?,
       aNullableInt: Long?,
       aNullableString: String?
-  ): NIAllNullableTypes
+  ): NativeInteropAllNullableTypes
   /** Returns the passed object, to test serialization and deserialization. */
-  fun echoNIAllNullableTypesWithoutRecursion(
-      everything: NIAllNullableTypesWithoutRecursion?
-  ): NIAllNullableTypesWithoutRecursion?
+  fun echoNativeInteropAllNullableTypesWithoutRecursion(
+      everything: NativeInteropAllNullableTypesWithoutRecursion?
+  ): NativeInteropAllNullableTypesWithoutRecursion?
   /**
    * Returns passed in arguments of multiple types.
    *
@@ -4188,7 +4317,7 @@ interface NIFlutterIntegrationCoreApi {
       aNullableBool: Boolean?,
       aNullableInt: Long?,
       aNullableString: String?
-  ): NIAllNullableTypesWithoutRecursion
+  ): NativeInteropAllNullableTypesWithoutRecursion
   /** Returns the passed boolean, to test serialization and deserialization. */
   fun echoBool(aBool: Boolean): Boolean
   /** Returns the passed int, to test serialization and deserialization. */
@@ -4208,13 +4337,17 @@ interface NIFlutterIntegrationCoreApi {
   /** Returns the passed list, to test serialization and deserialization. */
   fun echoList(list: List<Any?>): List<Any?>
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoEnumList(enumList: List<NIAnEnum?>): List<NIAnEnum?>
+  fun echoEnumList(enumList: List<NativeInteropAnEnum?>): List<NativeInteropAnEnum?>
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoClassList(classList: List<NIAllNullableTypes?>): List<NIAllNullableTypes?>
+  fun echoClassList(
+      classList: List<NativeInteropAllNullableTypes?>
+  ): List<NativeInteropAllNullableTypes?>
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoNonNullEnumList(enumList: List<NIAnEnum>): List<NIAnEnum>
+  fun echoNonNullEnumList(enumList: List<NativeInteropAnEnum>): List<NativeInteropAnEnum>
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoNonNullClassList(classList: List<NIAllNullableTypes>): List<NIAllNullableTypes>
+  fun echoNonNullClassList(
+      classList: List<NativeInteropAllNullableTypes>
+  ): List<NativeInteropAllNullableTypes>
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoMap(map: Map<Any?, Any?>): Map<Any?, Any?>
   /** Returns the passed map, to test serialization and deserialization. */
@@ -4222,21 +4355,29 @@ interface NIFlutterIntegrationCoreApi {
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?>
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoEnumMap(enumMap: Map<NIAnEnum?, NIAnEnum?>): Map<NIAnEnum?, NIAnEnum?>
+  fun echoEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoClassMap(classMap: Map<Long?, NIAllNullableTypes?>): Map<Long?, NIAllNullableTypes?>
+  fun echoClassMap(
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>
+  ): Map<Long?, NativeInteropAllNullableTypes?>
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoNonNullStringMap(stringMap: Map<String, String>): Map<String, String>
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long>
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNonNullEnumMap(enumMap: Map<NIAnEnum, NIAnEnum>): Map<NIAnEnum, NIAnEnum>
+  fun echoNonNullEnumMap(
+      enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>
+  ): Map<NativeInteropAnEnum, NativeInteropAnEnum>
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNonNullClassMap(classMap: Map<Long, NIAllNullableTypes>): Map<Long, NIAllNullableTypes>
+  fun echoNonNullClassMap(
+      classMap: Map<Long, NativeInteropAllNullableTypes>
+  ): Map<Long, NativeInteropAllNullableTypes>
   /** Returns the passed enum to test serialization and deserialization. */
-  fun echoEnum(anEnum: NIAnEnum): NIAnEnum
+  fun echoEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum
   /** Returns the passed enum to test serialization and deserialization. */
-  fun echoNIAnotherEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum
+  fun echoNativeInteropAnotherEnum(anotherEnum: NativeInteropAnotherEnum): NativeInteropAnotherEnum
   /** Returns the passed boolean, to test serialization and deserialization. */
   fun echoNullableBool(aBool: Boolean?): Boolean?
   /** Returns the passed int, to test serialization and deserialization. */
@@ -4256,13 +4397,17 @@ interface NIFlutterIntegrationCoreApi {
   /** Returns the passed list, to test serialization and deserialization. */
   fun echoNullableList(list: List<Any?>?): List<Any?>?
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoNullableEnumList(enumList: List<NIAnEnum?>?): List<NIAnEnum?>?
+  fun echoNullableEnumList(enumList: List<NativeInteropAnEnum?>?): List<NativeInteropAnEnum?>?
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoNullableClassList(classList: List<NIAllNullableTypes?>?): List<NIAllNullableTypes?>?
+  fun echoNullableClassList(
+      classList: List<NativeInteropAllNullableTypes?>?
+  ): List<NativeInteropAllNullableTypes?>?
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoNullableNonNullEnumList(enumList: List<NIAnEnum>?): List<NIAnEnum>?
+  fun echoNullableNonNullEnumList(enumList: List<NativeInteropAnEnum>?): List<NativeInteropAnEnum>?
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoNullableNonNullClassList(classList: List<NIAllNullableTypes>?): List<NIAllNullableTypes>?
+  fun echoNullableNonNullClassList(
+      classList: List<NativeInteropAllNullableTypes>?
+  ): List<NativeInteropAllNullableTypes>?
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
   /** Returns the passed map, to test serialization and deserialization. */
@@ -4270,25 +4415,29 @@ interface NIFlutterIntegrationCoreApi {
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>?
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNullableEnumMap(enumMap: Map<NIAnEnum?, NIAnEnum?>?): Map<NIAnEnum?, NIAnEnum?>?
+  fun echoNullableEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoNullableClassMap(
-      classMap: Map<Long?, NIAllNullableTypes?>?
-  ): Map<Long?, NIAllNullableTypes?>?
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>?
+  ): Map<Long?, NativeInteropAllNullableTypes?>?
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoNullableNonNullStringMap(stringMap: Map<String, String>?): Map<String, String>?
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>?
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNullableNonNullEnumMap(enumMap: Map<NIAnEnum, NIAnEnum>?): Map<NIAnEnum, NIAnEnum>?
+  fun echoNullableNonNullEnumMap(
+      enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>?
+  ): Map<NativeInteropAnEnum, NativeInteropAnEnum>?
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoNullableNonNullClassMap(
-      classMap: Map<Long, NIAllNullableTypes>?
-  ): Map<Long, NIAllNullableTypes>?
+      classMap: Map<Long, NativeInteropAllNullableTypes>?
+  ): Map<Long, NativeInteropAllNullableTypes>?
   /** Returns the passed enum to test serialization and deserialization. */
-  fun echoNullableEnum(anEnum: NIAnEnum?): NIAnEnum?
+  fun echoNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum?
   /** Returns the passed enum to test serialization and deserialization. */
-  fun echoAnotherNullableEnum(anotherEnum: NIAnotherEnum?): NIAnotherEnum?
+  fun echoAnotherNullableEnum(anotherEnum: NativeInteropAnotherEnum?): NativeInteropAnotherEnum?
   /**
    * A no-op function taking no arguments and returning no value, to sanity test basic asynchronous
    * calling.
@@ -4297,15 +4446,17 @@ interface NIFlutterIntegrationCoreApi {
 
   suspend fun throwFlutterErrorAsync(): Any?
 
-  suspend fun echoAsyncNIAllTypes(everything: NIAllTypes): NIAllTypes
+  suspend fun echoAsyncNativeInteropAllTypes(
+      everything: NativeInteropAllTypes
+  ): NativeInteropAllTypes
 
-  suspend fun echoAsyncNullableNIAllNullableTypes(
-      everything: NIAllNullableTypes?
-  ): NIAllNullableTypes?
+  suspend fun echoAsyncNullableNativeInteropAllNullableTypes(
+      everything: NativeInteropAllNullableTypes?
+  ): NativeInteropAllNullableTypes?
 
-  suspend fun echoAsyncNullableNIAllNullableTypesWithoutRecursion(
-      everything: NIAllNullableTypesWithoutRecursion?
-  ): NIAllNullableTypesWithoutRecursion?
+  suspend fun echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+      everything: NativeInteropAllNullableTypesWithoutRecursion?
+  ): NativeInteropAllNullableTypesWithoutRecursion?
 
   suspend fun echoAsyncBool(aBool: Boolean): Boolean
 
@@ -4327,15 +4478,19 @@ interface NIFlutterIntegrationCoreApi {
 
   suspend fun echoAsyncList(list: List<Any?>): List<Any?>
 
-  suspend fun echoAsyncEnumList(enumList: List<NIAnEnum?>): List<NIAnEnum?>
+  suspend fun echoAsyncEnumList(enumList: List<NativeInteropAnEnum?>): List<NativeInteropAnEnum?>
 
-  suspend fun echoAsyncClassList(classList: List<NIAllNullableTypes?>): List<NIAllNullableTypes?>
+  suspend fun echoAsyncClassList(
+      classList: List<NativeInteropAllNullableTypes?>
+  ): List<NativeInteropAllNullableTypes?>
 
-  suspend fun echoAsyncNonNullEnumList(enumList: List<NIAnEnum>): List<NIAnEnum>
+  suspend fun echoAsyncNonNullEnumList(
+      enumList: List<NativeInteropAnEnum>
+  ): List<NativeInteropAnEnum>
 
   suspend fun echoAsyncNonNullClassList(
-      classList: List<NIAllNullableTypes>
-  ): List<NIAllNullableTypes>
+      classList: List<NativeInteropAllNullableTypes>
+  ): List<NativeInteropAllNullableTypes>
 
   suspend fun echoAsyncMap(map: Map<Any?, Any?>): Map<Any?, Any?>
 
@@ -4343,15 +4498,17 @@ interface NIFlutterIntegrationCoreApi {
 
   suspend fun echoAsyncIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?>
 
-  suspend fun echoAsyncEnumMap(enumMap: Map<NIAnEnum?, NIAnEnum?>): Map<NIAnEnum?, NIAnEnum?>
+  suspend fun echoAsyncEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
 
   suspend fun echoAsyncClassMap(
-      classMap: Map<Long?, NIAllNullableTypes?>
-  ): Map<Long?, NIAllNullableTypes?>
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>
+  ): Map<Long?, NativeInteropAllNullableTypes?>
 
-  suspend fun echoAsyncEnum(anEnum: NIAnEnum): NIAnEnum
+  suspend fun echoAsyncEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum
 
-  suspend fun echoAnotherAsyncEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum
+  suspend fun echoAnotherAsyncEnum(anotherEnum: NativeInteropAnotherEnum): NativeInteropAnotherEnum
 
   suspend fun echoAsyncNullableBool(aBool: Boolean?): Boolean?
 
@@ -4373,17 +4530,21 @@ interface NIFlutterIntegrationCoreApi {
 
   suspend fun echoAsyncNullableList(list: List<Any?>?): List<Any?>?
 
-  suspend fun echoAsyncNullableEnumList(enumList: List<NIAnEnum?>?): List<NIAnEnum?>?
+  suspend fun echoAsyncNullableEnumList(
+      enumList: List<NativeInteropAnEnum?>?
+  ): List<NativeInteropAnEnum?>?
 
   suspend fun echoAsyncNullableClassList(
-      classList: List<NIAllNullableTypes?>?
-  ): List<NIAllNullableTypes?>?
+      classList: List<NativeInteropAllNullableTypes?>?
+  ): List<NativeInteropAllNullableTypes?>?
 
-  suspend fun echoAsyncNullableNonNullEnumList(enumList: List<NIAnEnum>?): List<NIAnEnum>?
+  suspend fun echoAsyncNullableNonNullEnumList(
+      enumList: List<NativeInteropAnEnum>?
+  ): List<NativeInteropAnEnum>?
 
   suspend fun echoAsyncNullableNonNullClassList(
-      classList: List<NIAllNullableTypes>?
-  ): List<NIAllNullableTypes>?
+      classList: List<NativeInteropAllNullableTypes>?
+  ): List<NativeInteropAllNullableTypes>?
 
   suspend fun echoAsyncNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
 
@@ -4392,14 +4553,16 @@ interface NIFlutterIntegrationCoreApi {
   suspend fun echoAsyncNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>?
 
   suspend fun echoAsyncNullableEnumMap(
-      enumMap: Map<NIAnEnum?, NIAnEnum?>?
-  ): Map<NIAnEnum?, NIAnEnum?>?
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
 
   suspend fun echoAsyncNullableClassMap(
-      classMap: Map<Long?, NIAllNullableTypes?>?
-  ): Map<Long?, NIAllNullableTypes?>?
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>?
+  ): Map<Long?, NativeInteropAllNullableTypes?>?
 
-  suspend fun echoAsyncNullableEnum(anEnum: NIAnEnum?): NIAnEnum?
+  suspend fun echoAsyncNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum?
 
-  suspend fun echoAnotherAsyncNullableEnum(anotherEnum: NIAnotherEnum?): NIAnotherEnum?
+  suspend fun echoAnotherAsyncNullableEnum(
+      anotherEnum: NativeInteropAnotherEnum?
+  ): NativeInteropAnotherEnum?
 }

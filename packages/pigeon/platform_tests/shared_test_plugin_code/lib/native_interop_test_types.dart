@@ -6,7 +6,7 @@
 
 import 'package:flutter/foundation.dart';
 
-import 'src/generated/ni_tests.gen.dart';
+import 'src/generated/native_interop_tests.gen.dart';
 
 const int biggerThanBigInt = 3000000000;
 const int regularInt = 42;
@@ -22,12 +22,12 @@ final List<double> nonNullDoubleList = <double>[1, 2.99999, 3, 3.14];
 
 final List<bool> nonNullBoolList = <bool>[true, false, true, false];
 
-final List<NIAnEnum> nonNullEnumList = <NIAnEnum>[
-  NIAnEnum.one,
-  NIAnEnum.two,
-  NIAnEnum.three,
-  NIAnEnum.fortyTwo,
-  NIAnEnum.fourHundredTwentyTwo,
+final List<NativeInteropAnEnum> nonNullEnumList = <NativeInteropAnEnum>[
+  NativeInteropAnEnum.one,
+  NativeInteropAnEnum.two,
+  NativeInteropAnEnum.three,
+  NativeInteropAnEnum.fortyTwo,
+  NativeInteropAnEnum.fourHundredTwentyTwo,
 ];
 
 final List<List<Object>> nonNullListList = <List<Object>>[
@@ -54,12 +54,13 @@ final Map<double, double> nonNullDoubleMap = <double, double>{0.0: 0, 1.1: 2.0, 
 
 final Map<int, bool> nonNullBoolMap = <int, bool>{0: true, 1: false, 2: true};
 
-final Map<NIAnEnum, NIAnEnum> nonNullEnumMap = <NIAnEnum, NIAnEnum>{
-  NIAnEnum.one: NIAnEnum.one,
-  NIAnEnum.two: NIAnEnum.two,
-  NIAnEnum.three: NIAnEnum.three,
-  NIAnEnum.fortyTwo: NIAnEnum.fortyTwo,
-};
+final Map<NativeInteropAnEnum, NativeInteropAnEnum> nonNullEnumMap =
+    <NativeInteropAnEnum, NativeInteropAnEnum>{
+      NativeInteropAnEnum.one: NativeInteropAnEnum.one,
+      NativeInteropAnEnum.two: NativeInteropAnEnum.two,
+      NativeInteropAnEnum.three: NativeInteropAnEnum.three,
+      NativeInteropAnEnum.fortyTwo: NativeInteropAnEnum.fortyTwo,
+    };
 
 final Map<int, List<Object>> nonNullListMap = <int, List<Object>>{
   0: nonNullList,
@@ -98,12 +99,12 @@ final List<double?> doubleList = <double?>[1, 2.99999, 3, 3.14, null];
 
 final List<bool?> boolList = <bool?>[true, false, true, false, null];
 
-final List<NIAnEnum?> enumList = <NIAnEnum?>[
-  NIAnEnum.one,
-  NIAnEnum.two,
-  NIAnEnum.three,
-  NIAnEnum.fortyTwo,
-  NIAnEnum.fourHundredTwentyTwo,
+final List<NativeInteropAnEnum?> enumList = <NativeInteropAnEnum?>[
+  NativeInteropAnEnum.one,
+  NativeInteropAnEnum.two,
+  NativeInteropAnEnum.three,
+  NativeInteropAnEnum.fortyTwo,
+  NativeInteropAnEnum.fourHundredTwentyTwo,
   null,
 ];
 
@@ -146,13 +147,14 @@ final Map<double?, double?> doubleMap = <double?, double?>{
 
 final Map<int?, bool?> boolMap = <int?, bool?>{0: true, 1: false, 2: true, 3: null};
 
-final Map<NIAnEnum?, NIAnEnum?> enumMap = <NIAnEnum?, NIAnEnum?>{
-  NIAnEnum.one: NIAnEnum.one,
-  NIAnEnum.two: NIAnEnum.two,
-  NIAnEnum.three: NIAnEnum.three,
-  NIAnEnum.fortyTwo: NIAnEnum.fortyTwo,
-  NIAnEnum.fourHundredTwentyTwo: null,
-};
+final Map<NativeInteropAnEnum?, NativeInteropAnEnum?> enumMap =
+    <NativeInteropAnEnum?, NativeInteropAnEnum?>{
+      NativeInteropAnEnum.one: NativeInteropAnEnum.one,
+      NativeInteropAnEnum.two: NativeInteropAnEnum.two,
+      NativeInteropAnEnum.three: NativeInteropAnEnum.three,
+      NativeInteropAnEnum.fortyTwo: NativeInteropAnEnum.fortyTwo,
+      NativeInteropAnEnum.fourHundredTwentyTwo: null,
+    };
 
 final Map<int?, List<Object?>?> listMap = <int?, List<Object?>?>{
   0: list,
@@ -184,8 +186,9 @@ final List<Map<Object?, Object?>?> mapList = <Map<Object?, Object?>?>[
   null,
 ];
 
-final NIAllNullableTypesWithoutRecursion genericNIAllNullableTypesWithoutRecursion =
-    NIAllNullableTypesWithoutRecursion(
+final NativeInteropAllNullableTypesWithoutRecursion
+genericNativeInteropAllNullableTypesWithoutRecursion =
+    NativeInteropAllNullableTypesWithoutRecursion(
       aNullableBool: true,
       aNullableInt: regularInt,
       aNullableInt64: biggerThanBigInt,
@@ -195,7 +198,7 @@ final NIAllNullableTypesWithoutRecursion genericNIAllNullableTypesWithoutRecursi
       aNullable4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
       aNullable8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
       aNullableFloatArray: Float64List.fromList(<double>[2.71828, doublePi]),
-      aNullableEnum: NIAnEnum.fourHundredTwentyTwo,
+      aNullableEnum: NativeInteropAnEnum.fourHundredTwentyTwo,
       aNullableObject: 'nullable',
       list: list,
       stringList: stringList,
@@ -215,21 +218,21 @@ final NIAllNullableTypesWithoutRecursion genericNIAllNullableTypesWithoutRecursi
       mapMap: mapMap,
     );
 
-final List<NIAllNullableTypesWithoutRecursion?> allNullableTypesWithoutRecursionList =
-    <NIAllNullableTypesWithoutRecursion?>[
-      genericNIAllNullableTypesWithoutRecursion,
-      NIAllNullableTypesWithoutRecursion(),
+final List<NativeInteropAllNullableTypesWithoutRecursion?> allNullableTypesWithoutRecursionList =
+    <NativeInteropAllNullableTypesWithoutRecursion?>[
+      genericNativeInteropAllNullableTypesWithoutRecursion,
+      NativeInteropAllNullableTypesWithoutRecursion(),
       null,
     ];
 
-final Map<int, NIAllNullableTypesWithoutRecursion?> allNullableTypesWithoutRecursionMap =
-    <int, NIAllNullableTypesWithoutRecursion?>{
-      0: genericNIAllNullableTypesWithoutRecursion,
-      1: NIAllNullableTypesWithoutRecursion(),
+final Map<int, NativeInteropAllNullableTypesWithoutRecursion?> allNullableTypesWithoutRecursionMap =
+    <int, NativeInteropAllNullableTypesWithoutRecursion?>{
+      0: genericNativeInteropAllNullableTypesWithoutRecursion,
+      1: NativeInteropAllNullableTypesWithoutRecursion(),
       2: null,
     };
 
-final NIAllTypes genericNIAllTypes = NIAllTypes(
+final NativeInteropAllTypes genericNativeInteropAllTypes = NativeInteropAllTypes(
   aBool: true,
   anInt: regularInt,
   anInt64: biggerThanBigInt,
@@ -239,7 +242,7 @@ final NIAllTypes genericNIAllTypes = NIAllTypes(
   a4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
   a8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
   aFloatArray: Float64List.fromList(<double>[2.71828, doublePi]),
-  anEnum: NIAnEnum.fortyTwo,
+  anEnum: NativeInteropAnEnum.fortyTwo,
   anObject: 'notNullable',
   list: nonNullList,
   stringList: nonNullStringList,
@@ -261,9 +264,15 @@ final NIAllTypes genericNIAllTypes = NIAllTypes(
   mapMap: nonNullMapMap,
 );
 
-final List<NIAllTypes?> allTypesClassList = <NIAllTypes?>[genericNIAllTypes, null];
+final List<NativeInteropAllTypes?> allTypesClassList = <NativeInteropAllTypes?>[
+  genericNativeInteropAllTypes,
+  null,
+];
 
-final Map<int, NIAllTypes?> allTypesClassMap = <int, NIAllTypes?>{0: genericNIAllTypes, 1: null};
+final Map<int, NativeInteropAllTypes?> allTypesClassMap = <int, NativeInteropAllTypes?>{
+  0: genericNativeInteropAllTypes,
+  1: null,
+};
 
 final NIAllNullableTypes genericNIAllNullableTypes = NIAllNullableTypes(
   aNullableBool: true,
@@ -275,7 +284,7 @@ final NIAllNullableTypes genericNIAllNullableTypes = NIAllNullableTypes(
   aNullable4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
   aNullable8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
   aNullableFloatArray: Float64List.fromList(<double>[2.71828, doublePi]),
-  aNullableEnum: NIAnEnum.fourHundredTwentyTwo,
+  aNullableEnum: NativeInteropAnEnum.fourHundredTwentyTwo,
   aNullableObject: 0,
   list: list,
   stringList: stringList,
@@ -305,16 +314,18 @@ final Map<int, NIAllNullableTypes> nonNullNIAllNullableTypesMap = <int, NIAllNul
   1: NIAllNullableTypes(),
 };
 
-final List<NIAllNullableTypesWithoutRecursion> nonNullNIAllNullableTypesWithoutRecursionList =
-    <NIAllNullableTypesWithoutRecursion>[
-      genericNIAllNullableTypesWithoutRecursion,
-      NIAllNullableTypesWithoutRecursion(),
+final List<NativeInteropAllNullableTypesWithoutRecursion>
+nonNullNativeInteropAllNullableTypesWithoutRecursionList =
+    <NativeInteropAllNullableTypesWithoutRecursion>[
+      genericNativeInteropAllNullableTypesWithoutRecursion,
+      NativeInteropAllNullableTypesWithoutRecursion(),
     ];
 
-final Map<int, NIAllNullableTypesWithoutRecursion> nonNullNIAllNullableTypesWithoutRecursionMap =
-    <int, NIAllNullableTypesWithoutRecursion>{
-      0: genericNIAllNullableTypesWithoutRecursion,
-      1: NIAllNullableTypesWithoutRecursion(),
+final Map<int, NativeInteropAllNullableTypesWithoutRecursion>
+nonNullNativeInteropAllNullableTypesWithoutRecursionMap =
+    <int, NativeInteropAllNullableTypesWithoutRecursion>{
+      0: genericNativeInteropAllNullableTypesWithoutRecursion,
+      1: NativeInteropAllNullableTypesWithoutRecursion(),
     };
 
 final List<NIAllNullableTypes?> allNullableTypesList = <NIAllNullableTypes?>[
@@ -339,7 +350,7 @@ final NIAllNullableTypes recursiveNIAllNullableTypes = NIAllNullableTypes(
   aNullable4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
   aNullable8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
   aNullableFloatArray: Float64List.fromList(<double>[2.71828, doublePi]),
-  aNullableEnum: NIAnEnum.fourHundredTwentyTwo,
+  aNullableEnum: NativeInteropAnEnum.fourHundredTwentyTwo,
   aNullableObject: 0,
   allNullableTypes: genericNIAllNullableTypes,
   list: list,
@@ -362,11 +373,11 @@ final NIAllNullableTypes recursiveNIAllNullableTypes = NIAllNullableTypes(
   recursiveClassMap: allNullableTypesMap,
 );
 
-NIAllClassesWrapper classWrapperMaker() {
-  return NIAllClassesWrapper(
+NativeInteropAllClassesWrapper classWrapperMaker() {
+  return NativeInteropAllClassesWrapper(
     allNullableTypes: recursiveNIAllNullableTypes,
-    allNullableTypesWithoutRecursion: genericNIAllNullableTypesWithoutRecursion,
-    allTypes: genericNIAllTypes,
+    allNullableTypesWithoutRecursion: genericNativeInteropAllNullableTypesWithoutRecursion,
+    allTypes: genericNativeInteropAllTypes,
     classList: allTypesClassList,
     classMap: allTypesClassMap,
     nullableClassList: allNullableTypesWithoutRecursionList,

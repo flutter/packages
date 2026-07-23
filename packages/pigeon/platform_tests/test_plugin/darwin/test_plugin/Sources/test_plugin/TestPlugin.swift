@@ -50,7 +50,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     proxyApiRegistrar = ProxyApiTestsPigeonProxyApiRegistrar(
       binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
     proxyApiRegistrar!.setUp()
-    NIHostIntegrationCoreApiSetup.register(api: NITestsClass())
+    NativeInteropHostIntegrationCoreApiSetup.register(api: NativeInteropTestsClass())
   }
 
   public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
@@ -1257,25 +1257,25 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 }
 
-class NITestsClass: NSObject, NIHostIntegrationCoreApi {
+class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
   func noop() throws {
     return
   }
 
-  func echo(_ everything: NIAllTypes) throws -> NIAllTypes {
+  func echo(_ everything: NativeInteropAllTypes) throws -> NativeInteropAllTypes {
     return everything
   }
 
   func throwError() throws -> Any? {
-    throw NiTestsError(code: "code", message: "message", details: "details")
+    throw NativeInteropTestsError(code: "code", message: "message", details: "details")
   }
 
   func throwErrorFromVoid() throws {
-    throw NiTestsError(code: "code", message: "message", details: "details")
+    throw NativeInteropTestsError(code: "code", message: "message", details: "details")
   }
 
   func throwFlutterError() throws -> Any? {
-    throw NiTestsError(code: "code", message: "message", details: "details")
+    throw NativeInteropTestsError(code: "code", message: "message", details: "details")
   }
 
   func echo(_ anInt: Int64) throws -> Int64 {
@@ -1330,7 +1330,9 @@ class NITestsClass: NSObject, NIHostIntegrationCoreApi {
     return intMap
   }
 
-  func echo(enumMap: [NIAnEnum?: NIAnEnum?]) throws -> [NIAnEnum?: NIAnEnum?] {
+  func echo(enumMap: [NativeInteropAnEnum?: NativeInteropAnEnum?]) throws -> [NativeInteropAnEnum?:
+    NativeInteropAnEnum?]
+  {
     return enumMap
   }
 
@@ -1338,11 +1340,11 @@ class NITestsClass: NSObject, NIHostIntegrationCoreApi {
     return classMap
   }
 
-  func echo(_ anEnum: NIAnEnum) throws -> NIAnEnum {
+  func echo(_ anEnum: NativeInteropAnEnum) throws -> NativeInteropAnEnum {
     return anEnum
   }
 
-  func echo(_ anotherEnum: NIAnotherEnum) throws -> NIAnotherEnum {
+  func echo(_ anotherEnum: NativeInteropAnotherEnum) throws -> NativeInteropAnotherEnum {
     return anotherEnum
   }
 
@@ -1366,7 +1368,7 @@ class NITestsClass: NSObject, NIHostIntegrationCoreApi {
     return aNullableString
   }
 
-  func echoNonNull(enumList: [NIAnEnum]) throws -> [NIAnEnum] {
+  func echoNonNull(enumList: [NativeInteropAnEnum]) throws -> [NativeInteropAnEnum] {
     return enumList
   }
 
@@ -1382,7 +1384,9 @@ class NITestsClass: NSObject, NIHostIntegrationCoreApi {
     return intMap
   }
 
-  func echoNonNull(enumMap: [NIAnEnum: NIAnEnum]) throws -> [NIAnEnum: NIAnEnum] {
+  func echoNonNull(enumMap: [NativeInteropAnEnum: NativeInteropAnEnum]) throws
+    -> [NativeInteropAnEnum: NativeInteropAnEnum]
+  {
     return enumMap
   }
 
@@ -1418,7 +1422,7 @@ class NITestsClass: NSObject, NIHostIntegrationCoreApi {
     return aNullableList
   }
 
-  func echoNullable(enumList: [NIAnEnum?]?) throws -> [NIAnEnum?]? {
+  func echoNullable(enumList: [NativeInteropAnEnum?]?) throws -> [NativeInteropAnEnum?]? {
     return enumList
   }
 
@@ -1434,7 +1438,9 @@ class NITestsClass: NSObject, NIHostIntegrationCoreApi {
     return intMap
   }
 
-  func echoNullable(enumMap: [NIAnEnum?: NIAnEnum?]?) throws -> [NIAnEnum?: NIAnEnum?]? {
+  func echoNullable(enumMap: [NativeInteropAnEnum?: NativeInteropAnEnum?]?) throws
+    -> [NativeInteropAnEnum?: NativeInteropAnEnum?]?
+  {
     return enumMap
   }
 
@@ -1444,15 +1450,15 @@ class NITestsClass: NSObject, NIHostIntegrationCoreApi {
     return classMap
   }
 
-  func echoNullable(_ anEnum: NIAnEnum?) throws -> NIAnEnum? {
+  func echoNullable(_ anEnum: NativeInteropAnEnum?) throws -> NativeInteropAnEnum? {
     return anEnum
   }
 
-  func echoNullable(_ anotherEnum: NIAnotherEnum?) throws -> NIAnotherEnum? {
+  func echoNullable(_ anotherEnum: NativeInteropAnotherEnum?) throws -> NativeInteropAnotherEnum? {
     return anotherEnum
   }
 
-  func echoNullableNonNull(enumList: [NIAnEnum]?) throws -> [NIAnEnum]? {
+  func echoNullableNonNull(enumList: [NativeInteropAnEnum]?) throws -> [NativeInteropAnEnum]? {
     return enumList
   }
 
@@ -1472,7 +1478,9 @@ class NITestsClass: NSObject, NIHostIntegrationCoreApi {
     return intMap
   }
 
-  func echoNullableNonNull(enumMap: [NIAnEnum: NIAnEnum]?) throws -> [NIAnEnum: NIAnEnum]? {
+  func echoNullableNonNull(enumMap: [NativeInteropAnEnum: NativeInteropAnEnum]?) throws
+    -> [NativeInteropAnEnum: NativeInteropAnEnum]?
+  {
     return enumMap
   }
 
@@ -1482,12 +1490,12 @@ class NITestsClass: NSObject, NIHostIntegrationCoreApi {
     return classMap
   }
 
-  func extractNestedNullableString(from wrapper: NIAllClassesWrapper) throws -> String? {
+  func extractNestedNullableString(from wrapper: NativeInteropAllClassesWrapper) throws -> String? {
     return wrapper.allNullableTypes.aNullableString
   }
 
-  func createNestedObject(with nullableString: String?) throws -> NIAllClassesWrapper {
-    return NIAllClassesWrapper(
+  func createNestedObject(with nullableString: String?) throws -> NativeInteropAllClassesWrapper {
+    return NativeInteropAllClassesWrapper(
       allNullableTypes: .init(aNullableString: nullableString), classList: [],
       classMap: [:])
   }
@@ -1501,8 +1509,8 @@ class NITestsClass: NSObject, NIHostIntegrationCoreApi {
 
   func sendMultipleNullableTypesWithoutRecursion(
     aBool aNullableBool: Bool?, anInt aNullableInt: Int64?, aString aNullableString: String?
-  ) throws -> NIAllNullableTypesWithoutRecursion {
-    return NIAllNullableTypesWithoutRecursion(
+  ) throws -> NativeInteropAllNullableTypesWithoutRecursion {
+    return NativeInteropAllNullableTypesWithoutRecursion(
       aNullableBool: aNullableBool, aNullableInt: aNullableInt, aNullableString: aNullableString)
   }
 
@@ -1530,7 +1538,7 @@ class NITestsClass: NSObject, NIHostIntegrationCoreApi {
     return list
   }
 
-  func echoAsync(enumList: [NIAnEnum?]) async throws -> [NIAnEnum?] {
+  func echoAsync(enumList: [NativeInteropAnEnum?]) async throws -> [NativeInteropAnEnum?] {
     return enumList
   }
 
@@ -1550,7 +1558,9 @@ class NITestsClass: NSObject, NIHostIntegrationCoreApi {
     return intMap
   }
 
-  func echoAsync(enumMap: [NIAnEnum?: NIAnEnum?]) async throws -> [NIAnEnum?: NIAnEnum?] {
+  func echoAsync(enumMap: [NativeInteropAnEnum?: NativeInteropAnEnum?]) async throws
+    -> [NativeInteropAnEnum?: NativeInteropAnEnum?]
+  {
     return enumMap
   }
 
@@ -1560,27 +1570,27 @@ class NITestsClass: NSObject, NIHostIntegrationCoreApi {
     return classMap
   }
 
-  func echoAsync(_ anEnum: NIAnEnum) async throws -> NIAnEnum {
+  func echoAsync(_ anEnum: NativeInteropAnEnum) async throws -> NativeInteropAnEnum {
     return anEnum
   }
 
-  func echoAsync(_ anotherEnum: NIAnotherEnum) async throws -> NIAnotherEnum {
+  func echoAsync(_ anotherEnum: NativeInteropAnotherEnum) async throws -> NativeInteropAnotherEnum {
     return anotherEnum
   }
 
   func throwAsyncError() async throws -> Any? {
-    throw NiTestsError(code: "code", message: "message", details: "details")
+    throw NativeInteropTestsError(code: "code", message: "message", details: "details")
   }
 
   func throwAsyncErrorFromVoid() async throws {
-    throw NiTestsError(code: "code", message: "message", details: "details")
+    throw NativeInteropTestsError(code: "code", message: "message", details: "details")
   }
 
   func throwAsyncFlutterError() async throws -> Any? {
-    throw NiTestsError(code: "code", message: "message", details: "details")
+    throw NativeInteropTestsError(code: "code", message: "message", details: "details")
   }
 
-  func echoAsync(_ everything: NIAllTypes) async throws -> NIAllTypes {
+  func echoAsync(_ everything: NativeInteropAllTypes) async throws -> NativeInteropAllTypes {
     return everything
   }
 
@@ -1588,8 +1598,8 @@ class NITestsClass: NSObject, NIHostIntegrationCoreApi {
     return everything
   }
 
-  func echoAsync(_ everything: NIAllNullableTypesWithoutRecursion?) async throws
-    -> NIAllNullableTypesWithoutRecursion?
+  func echoAsync(_ everything: NativeInteropAllNullableTypesWithoutRecursion?) async throws
+    -> NativeInteropAllNullableTypesWithoutRecursion?
   {
     return everything
   }
@@ -1634,7 +1644,8 @@ class NITestsClass: NSObject, NIHostIntegrationCoreApi {
     return list
   }
 
-  func echoAsyncNullable(enumList: [NIAnEnum?]?) async throws -> [NIAnEnum?]? {
+  func echoAsyncNullable(enumList: [NativeInteropAnEnum?]?) async throws -> [NativeInteropAnEnum?]?
+  {
     return enumList
   }
 
@@ -1654,7 +1665,9 @@ class NITestsClass: NSObject, NIHostIntegrationCoreApi {
     return intMap
   }
 
-  func echoAsyncNullable(enumMap: [NIAnEnum?: NIAnEnum?]?) async throws -> [NIAnEnum?: NIAnEnum?]? {
+  func echoAsyncNullable(enumMap: [NativeInteropAnEnum?: NativeInteropAnEnum?]?) async throws
+    -> [NativeInteropAnEnum?: NativeInteropAnEnum?]?
+  {
     return enumMap
   }
 
@@ -1664,138 +1677,156 @@ class NITestsClass: NSObject, NIHostIntegrationCoreApi {
     return classMap
   }
 
-  func echoAsyncNullable(_ anEnum: NIAnEnum?) async throws -> NIAnEnum? {
+  func echoAsyncNullable(_ anEnum: NativeInteropAnEnum?) async throws -> NativeInteropAnEnum? {
     return anEnum
   }
 
-  func echoAsyncNullable(_ anotherEnum: NIAnotherEnum?) async throws -> NIAnotherEnum? {
+  func echoAsyncNullable(_ anotherEnum: NativeInteropAnotherEnum?) async throws
+    -> NativeInteropAnotherEnum?
+  {
     return anotherEnum
   }
 
   func callFlutterNoop() throws {
-    guard let flutterApi = NIFlutterIntegrationCoreApi.getInstance() else {
-      throw NiTestsError(
-        code: "not_registered", message: "NIFlutterIntegrationCoreApi not registered", details: nil)
+    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
+      throw NativeInteropTestsError(
+        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
+        details: nil)
     }
     try flutterApi.noop()
   }
 
   func callFlutterThrowError() throws -> Any? {
-    guard let flutterApi = NIFlutterIntegrationCoreApi.getInstance() else {
-      throw NiTestsError(
-        code: "not_registered", message: "NIFlutterIntegrationCoreApi not registered", details: nil)
+    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
+      throw NativeInteropTestsError(
+        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
+        details: nil)
     }
     return try flutterApi.throwError()
   }
 
   func callFlutterThrowErrorFromVoid() throws {
-    guard let flutterApi = NIFlutterIntegrationCoreApi.getInstance() else {
-      throw NiTestsError(
-        code: "not_registered", message: "NIFlutterIntegrationCoreApi not registered", details: nil)
+    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
+      throw NativeInteropTestsError(
+        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
+        details: nil)
     }
     try flutterApi.throwErrorFromVoid()
   }
 
-  func callFlutterEcho(_ everything: NIAllTypes) throws -> NIAllTypes {
-    guard let flutterApi = NIFlutterIntegrationCoreApi.getInstance() else {
-      throw NiTestsError(
-        code: "not_registered", message: "NIFlutterIntegrationCoreApi not registered", details: nil)
+  func callFlutterEcho(_ everything: NativeInteropAllTypes) throws -> NativeInteropAllTypes {
+    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
+      throw NativeInteropTestsError(
+        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
+        details: nil)
     }
-    return try flutterApi.echoNIAllTypes(everything: everything)
+    return try flutterApi.echoNativeInteropAllTypes(everything: everything)
   }
 
   func callFlutterEcho(_ aBool: Bool) throws -> Bool {
-    guard let flutterApi = NIFlutterIntegrationCoreApi.getInstance() else {
-      throw NiTestsError(
-        code: "not_registered", message: "NIFlutterIntegrationCoreApi not registered", details: nil)
+    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
+      throw NativeInteropTestsError(
+        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
+        details: nil)
     }
     return try flutterApi.echoBool(aBool: aBool)
   }
 
   func callFlutterEcho(_ anInt: Int64) throws -> Int64 {
-    guard let flutterApi = NIFlutterIntegrationCoreApi.getInstance() else {
-      throw NiTestsError(
-        code: "not_registered", message: "NIFlutterIntegrationCoreApi not registered", details: nil)
+    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
+      throw NativeInteropTestsError(
+        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
+        details: nil)
     }
     return try flutterApi.echoInt(anInt: anInt)
   }
 
   func callFlutterEcho(_ aDouble: Double) throws -> Double {
-    guard let flutterApi = NIFlutterIntegrationCoreApi.getInstance() else {
-      throw NiTestsError(
-        code: "not_registered", message: "NIFlutterIntegrationCoreApi not registered", details: nil)
+    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
+      throw NativeInteropTestsError(
+        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
+        details: nil)
     }
     return try flutterApi.echoDouble(aDouble: aDouble)
   }
 
   func callFlutterEcho(_ aString: String) throws -> String {
-    guard let flutterApi = NIFlutterIntegrationCoreApi.getInstance() else {
-      throw NiTestsError(
-        code: "not_registered", message: "NIFlutterIntegrationCoreApi not registered", details: nil)
+    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
+      throw NativeInteropTestsError(
+        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
+        details: nil)
     }
     return try flutterApi.echoString(aString: aString)
   }
 
   func callFlutterEcho(_ list: [UInt8]) throws -> [UInt8] {
-    guard let flutterApi = NIFlutterIntegrationCoreApi.getInstance() else {
-      throw NiTestsError(
-        code: "not_registered", message: "NIFlutterIntegrationCoreApi not registered", details: nil)
+    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
+      throw NativeInteropTestsError(
+        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
+        details: nil)
     }
     return try flutterApi.echoUint8List(list: list)
   }
 
   func callFlutterEcho(_ list: [Int32]) throws -> [Int32] {
-    guard let flutterApi = NIFlutterIntegrationCoreApi.getInstance() else {
-      throw NiTestsError(
-        code: "not_registered", message: "NIFlutterIntegrationCoreApi not registered", details: nil)
+    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
+      throw NativeInteropTestsError(
+        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
+        details: nil)
     }
     return try flutterApi.echoInt32List(list: list)
   }
 
   func callFlutterEcho(_ list: [Int64]) throws -> [Int64] {
-    guard let flutterApi = NIFlutterIntegrationCoreApi.getInstance() else {
-      throw NiTestsError(
-        code: "not_registered", message: "NIFlutterIntegrationCoreApi not registered", details: nil)
+    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
+      throw NativeInteropTestsError(
+        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
+        details: nil)
     }
     return try flutterApi.echoInt64List(list: list)
   }
 
   func callFlutterEcho(_ list: [Float64]) throws -> [Float64] {
-    guard let flutterApi = NIFlutterIntegrationCoreApi.getInstance() else {
-      throw NiTestsError(
-        code: "not_registered", message: "NIFlutterIntegrationCoreApi not registered", details: nil)
+    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
+      throw NativeInteropTestsError(
+        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
+        details: nil)
     }
     return try flutterApi.echoFloat64List(list: list)
   }
 
   func callFlutterEcho(_ list: [Any?]) throws -> [Any?] {
-    guard let flutterApi = NIFlutterIntegrationCoreApi.getInstance() else {
-      throw NiTestsError(
-        code: "not_registered", message: "NIFlutterIntegrationCoreApi not registered", details: nil)
+    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
+      throw NativeInteropTestsError(
+        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
+        details: nil)
     }
     return try flutterApi.echoList(list: list)
   }
 
-  func callFlutterEcho(enumList: [NIAnEnum?]) throws -> [NIAnEnum?] {
-    guard let flutterApi = NIFlutterIntegrationCoreApi.getInstance() else {
-      throw NiTestsError(
-        code: "not_registered", message: "NIFlutterIntegrationCoreApi not registered", details: nil)
+  func callFlutterEcho(enumList: [NativeInteropAnEnum?]) throws -> [NativeInteropAnEnum?] {
+    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
+      throw NativeInteropTestsError(
+        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
+        details: nil)
     }
     return try flutterApi.echoEnumList(enumList: enumList)
   }
 
   func callFlutterEcho(classList: [NIAllNullableTypes?]) throws -> [NIAllNullableTypes?] {
-    guard let flutterApi = NIFlutterIntegrationCoreApi.getInstance() else {
-      throw NiTestsError(
-        code: "not_registered", message: "NIFlutterIntegrationCoreApi not registered", details: nil)
+    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
+      throw NativeInteropTestsError(
+        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
+        details: nil)
     }
     return try flutterApi.echoClassList(classList: classList)
   }
 
-  func callFlutterEchoNonNull(enumList: [NIAnEnum]) throws -> [NIAnEnum] {
-    guard let flutterApi = NIFlutterIntegrationCoreApi.getInstance() else {
-      throw NiTestsError(
-        code: "not_registered", message: "NIFlutterIntegrationCoreApi not registered", details: nil)
+  func callFlutterEchoNonNull(enumList: [NativeInteropAnEnum]) throws -> [NativeInteropAnEnum] {
+    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
+      throw NativeInteropTestsError(
+        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
+        details: nil)
     }
     return try flutterApi.echoNonNullEnumList(enumList: enumList)
   }

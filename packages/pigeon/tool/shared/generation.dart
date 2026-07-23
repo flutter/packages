@@ -34,7 +34,7 @@ const Map<String, Set<GeneratorLanguage>> _unsupportedFiles = <String, Set<Gener
     GeneratorLanguage.java,
     GeneratorLanguage.objc,
   },
-  'ni_tests': <GeneratorLanguage>{
+  'native_interop_tests': <GeneratorLanguage>{
     GeneratorLanguage.cpp,
     GeneratorLanguage.gobject,
     GeneratorLanguage.java,
@@ -103,7 +103,7 @@ Future<int> generateTestPigeons({required String baseDir, bool includeOverflow =
     'nullable_returns',
     'primitive',
     'proxy_api_tests',
-    'ni_tests',
+    'native_interop_tests',
   };
 
   const testPluginName = 'test_plugin';
@@ -142,7 +142,7 @@ Future<int> generateTestPigeons({required String baseDir, bool includeOverflow =
           : '$outputBase/android/src/main/kotlin/com/example/test_plugin/$pascalCaseName.gen.kt',
       kotlinPackage: 'com.example.test_plugin',
       kotlinErrorClassName: kotlinErrorName,
-      kotlinUseJni: input == 'ni_tests',
+      kotlinUseJni: input == 'native_interop_tests',
       kotlinIncludeErrorClass: input != 'primitive',
       // iOS/macOS
       swiftOut: skipLanguages.contains(GeneratorLanguage.swift)
@@ -150,7 +150,7 @@ Future<int> generateTestPigeons({required String baseDir, bool includeOverflow =
           : '$outputBase/darwin/$testPluginName/Sources/$testPluginName/$pascalCaseName.gen.swift',
       swiftErrorClassName: swiftErrorClassName,
       swiftIncludeErrorClass: input != 'primitive',
-      swiftUseFfi: input == 'ni_tests',
+      swiftUseFfi: input == 'native_interop_tests',
       swiftAppDirectory: '$outputBase/example',
       // Linux
       gobjectHeaderOut: skipLanguages.contains(GeneratorLanguage.gobject)
