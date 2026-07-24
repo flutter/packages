@@ -1,0 +1,32 @@
+{
+  "repo_criteria": [
+    "evals/cross_skill_rubric.json"
+  ],
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Simulate running the check-readiness skill. Assume the `tool/check.dart` script executed successfully. Based on the skill's 'Handling the Results' instructions, what should you say to the user?",
+      "expected_chat_output": [
+        "The response explicitly states that the environment is clean.",
+        "The response explicitly states that dependencies are resolved.",
+        "The response explicitly states that it is ready for new work."
+      ],
+      "expected_repo_state": [
+        "No files were modified in the repository."
+      ],
+      "agent_config": "reidbaker-agent"
+    },
+    {
+      "id": 2,
+      "prompt": "Simulate running the check-readiness skill. Assume the `tool/check.dart` script failed with the output: 'Error: symlink at lib/foo is broken'. Based on the skill's 'Handling the Results' instructions, what should you say to the user?",
+      "expected_chat_output": [
+        "The response explicitly explains that the check failed because a symlink at lib/foo is broken.",
+        "The response explicitly offers to help the user resolve the issue."
+      ],
+      "expected_repo_state": [
+        "No files were modified in the repository."
+      ],
+      "agent_config": "reidbaker-agent"
+    }
+  ]
+}
