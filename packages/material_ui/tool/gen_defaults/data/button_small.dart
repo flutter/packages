@@ -2,9 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 38.0.15
+// Version: 38.1.2
 
 import 'shape_struct.dart';
+import 'typescale.dart';
 import 'typescale_struct.dart';
 
 class TokenButtonSmall {
@@ -36,13 +37,7 @@ class TokenButtonSmall {
   static const double iconSize = 20.00;
 
   /// md.comp.button.small.label-text
-  static const TypescaleStruct labelText = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 14.00,
-    fontWeight: 500,
-    lineHeight: 20.00,
-    letterSpacing: 0.10,
-  );
+  static const TypescaleStruct labelText = TokenTypescale.labelLarge;
 
   /// md.comp.button.small.leading-space
   static const double leadingSpace = 16.00;
