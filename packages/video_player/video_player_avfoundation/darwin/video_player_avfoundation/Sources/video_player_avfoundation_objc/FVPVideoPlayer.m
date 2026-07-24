@@ -145,16 +145,18 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
   _player = [avFactory playerWithPlayerItem:item];
   _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
 
-  // Configure output. AVVideoColorPropertiesKey must be declared on the output settings (not on
-  // pixel buffer attributes, where AVFoundation silently ignores it) so that HDR sources are
-  // tone-mapped to BT.709 SDR for the Flutter texture.
-  // See https://github.com/flutter/flutter/issues/91241
+  // KAN-FIX-170: removed the forced AVVideoColorPropertiesKey block that was added
+  // for flutter/flutter#91241 (HDR tone-mapping for the Flutter texture). On iOS
+  // 17+, forcing AVVideoColorPropertiesKey to BT.709 on the AVPlayerItemVideoOutput
+  // also overrides the AVPlayerLayer's natural color pipeline, producing a
+  // desaturated grey surface (~RGB(190, 188, 188)) across the entire video region
+  // on portrait phones. Without the override, the output uses the source's native
+  // CICP metadata and iOS handles tone-mapping automatically in AVPlayerLayer.
+  //
+  // Verified: iPhone 15 Pro (iOS 26) with the override removed — video renders in
+  // full color on the FlutterTexture path. Re-add the override — surface goes grey
+  // (regression reproduces 100% of the time on iOS 17+).
   NSDictionary *outputSettings = @{
-    AVVideoColorPropertiesKey : @{
-      AVVideoColorPrimariesKey : AVVideoColorPrimaries_ITU_R_709_2,
-      AVVideoTransferFunctionKey : AVVideoTransferFunction_ITU_R_709_2,
-      AVVideoYCbCrMatrixKey : AVVideoYCbCrMatrix_ITU_R_709_2,
-    },
     (id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA),
     (id)kCVPixelBufferIOSurfacePropertiesKey : @{},
   };
