@@ -96,6 +96,19 @@ class Surface {
   static const int rotation270 = 3;
 }
 
+/// Allowed resolution mode constants for [ResolutionSelector].
+class ResolutionSelectorAllowedResolutionMode {
+  /// CameraX prefers capture rate over higher resolution.
+  ///
+  /// See https://developer.android.com/reference/kotlin/androidx/camera/core/resolutionselector/ResolutionSelector#PREFER_CAPTURE_RATE_OVER_HIGHER_RESOLUTION().
+  static const int preferCaptureRateOverHigherResolution = 0;
+
+  /// CameraX prefers higher resolution over capture rate.
+  ///
+  /// See https://developer.android.com/reference/kotlin/androidx/camera/core/resolutionselector/ResolutionSelector#PREFER_HIGHER_RESOLUTION_OVER_CAPTURE_RATE().
+  static const int preferHigherResolutionOverCaptureRate = 1;
+}
+
 /// An interface for retrieving camera information.
 ///
 /// See https://developer.android.com/reference/androidx/camera/core/CameraInfo.
