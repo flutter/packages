@@ -23,6 +23,11 @@ class MyLocationController {
   Future<void> displayAndWatchMyLocation(
     MarkersController<Object?, Object> markersController,
   ) async {
+    if (_watchId != null) {
+      _geolocationApi.clearWatch(_watchId!);
+      _watchId = null;
+    }
+
     final Marker marker = await _createBlueDotMarker();
 
     if (_lastKnownLocation != null) {
